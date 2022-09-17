@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Testing helpers to write testable code by abstracting away system dependencies.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Testably.Abstractions\Testably.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="FileSystemMock.*.cs">
+      <DependentUpon>FileSystemMock.cs</DependentUpon>
+    </Compile>
+    <Compile Update="TimeSystemMock.*.cs">
+      <DependentUpon>TimeSystemMock.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="FileSystemMock - Copy.ICallbackHandler.cs">
+      <DependentUpon>FileSystemMock.cs</DependentUpon>
+    </Compile>
+    <Compile Update="FileSystemMock - Copy.Path.cs">
+      <DependentUpon>FileSystemMock.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>

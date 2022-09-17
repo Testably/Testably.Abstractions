@@ -1,0 +1,49 @@
+<Project>
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Feature.Flags.props', '$(MSBuildThisFileDirectory)/'))" />
+
+  <PropertyGroup>
+    <Authors>Testably</Authors>
+    <Copyright>Copyright (c) 2022 Testably</Copyright>
+    <PackageTags>abstractions testing</PackageTags>
+    <PackageProjectUrl>https://github.com/Testably/Testably.Abstractions</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>logo_256x256.png</PackageIcon>
+    <RepositoryUrl>https://github.com/Testably/Testably.Abstractions.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <MinVerTagPrefix>v</MinVerTagPrefix>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>1701;1702</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MinVer" Version="4.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Nullable" Version="1.2.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$([MSBuild]::GetPathOfFileAbove('logo_256x256.png', '$(MSBuildThisFileDirectory)../Docs/Images/'))"
+          Pack="true" PackagePath="/" />
+    <None Include="$([MSBuild]::GetPathOfFileAbove('README.md', '$(MSBuildThisFileDirectory)../'))" Pack="true"
+          PackagePath="/" />
+  </ItemGroup>
+
+</Project>
