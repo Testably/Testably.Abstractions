@@ -62,7 +62,7 @@ public partial class TimeSystemTests
         [Fact]
         public void UnixEpoch_ShouldReturnDefaultValue()
         {
-            DateTime expectedResult = new (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            DateTime expectedResult = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             TimeSystem timeSystem = new();
 
             DateTime result = timeSystem.DateTime.UnixEpoch;

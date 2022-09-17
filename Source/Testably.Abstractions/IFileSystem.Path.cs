@@ -41,14 +41,6 @@ public partial interface IFileSystem
         /// <inheritdoc cref="Path.Combine(string[])" />
         string Combine(params string[] paths);
 
-#if FEATURE_PATH_ADVANCED
-        /// <inheritdoc cref="Path.EndsInDirectorySeparator(ReadOnlySpan{char})" />
-        bool EndsInDirectorySeparator(ReadOnlySpan<char> path);
-
-        /// <inheritdoc cref="Path.EndsInDirectorySeparator(string)" />
-        bool EndsInDirectorySeparator(string path);
-#endif
-
 #if FEATURE_SPAN
         /// <inheritdoc cref="Path.GetDirectoryName(ReadOnlySpan{char})" />
         ReadOnlySpan<char> GetDirectoryName(ReadOnlySpan<char> path);
@@ -108,6 +100,14 @@ public partial interface IFileSystem
 #if FEATURE_PATH_RELATIVE
         /// <inheritdoc cref="Path.IsPathFullyQualified(string)" />
         bool IsPathFullyQualified(string path);
+#endif
+
+#if FEATURE_PATH_ADVANCED
+        /// <inheritdoc cref="Path.EndsInDirectorySeparator(ReadOnlySpan{char})" />
+        bool EndsInDirectorySeparator(ReadOnlySpan<char> path);
+
+        /// <inheritdoc cref="Path.EndsInDirectorySeparator(string)" />
+        bool EndsInDirectorySeparator(string path);
 #endif
 
 #if FEATURE_PATH_JOIN

@@ -17,6 +17,8 @@ public sealed partial class FileSystemMock : IFileSystem
     /// </summary>
     public IGenerator Generate { get; }
 
+    internal IInMemoryFileSystem InMemoryFileSystem { get; }
+
     private readonly FileSystemMockCallbackHandler _callbackHandler;
     private readonly DirectoryMock _directoryMock;
     private readonly FileMock _fileMock;
@@ -27,11 +29,12 @@ public sealed partial class FileSystemMock : IFileSystem
     /// </summary>
     public FileSystemMock()
     {
+        Generate = new FileGenerator(this);
+        InMemoryFileSystem = new InMemoryFileSystem(this);
         _callbackHandler = new FileSystemMockCallbackHandler();
         _directoryMock = new DirectoryMock(this, _callbackHandler);
         _fileMock = new FileMock(this, _callbackHandler);
         _pathMock = new PathMock(this);
-        Generate = new FileGenerator(this);
     }
 
     #region IFileSystem Members

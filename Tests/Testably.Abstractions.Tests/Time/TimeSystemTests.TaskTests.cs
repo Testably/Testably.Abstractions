@@ -27,7 +27,8 @@ public partial class TimeSystemTests
                .ConfigureAwait(false);
             DateTime after = DateTime.UtcNow;
 
-            after.Should().BeOnOrAfter(before.AddMilliseconds(millisecondsTimeout).ApplySystemClockTolerance());
+            after.Should().BeOnOrAfter(before.AddMilliseconds(millisecondsTimeout)
+               .ApplySystemClockTolerance());
             exception.Should().BeAssignableTo<TaskCanceledException>();
         }
 
@@ -38,9 +39,9 @@ public partial class TimeSystemTests
             TimeSystem timeSystem = new();
 
             Exception? exception = await Record.ExceptionAsync(async () =>
-                {
-                    await timeSystem.Task.Delay(-2).ConfigureAwait(false);
-                }).ConfigureAwait(false);
+            {
+                await timeSystem.Task.Delay(-2).ConfigureAwait(false);
+            }).ConfigureAwait(false);
 
             exception.Should().BeAssignableTo<ArgumentOutOfRangeException>();
         }
@@ -55,7 +56,8 @@ public partial class TimeSystemTests
             await timeSystem.Task.Delay(millisecondsTimeout).ConfigureAwait(false);
             DateTime after = DateTime.UtcNow;
 
-            after.Should().BeOnOrAfter(before.AddMilliseconds(millisecondsTimeout).ApplySystemClockTolerance());
+            after.Should().BeOnOrAfter(before.AddMilliseconds(millisecondsTimeout)
+               .ApplySystemClockTolerance());
         }
 
         [Fact]
@@ -87,11 +89,11 @@ public partial class TimeSystemTests
             TimeSystem timeSystem = new();
 
             Exception? exception = await Record.ExceptionAsync(async () =>
-                {
-                    await timeSystem.Task
-                       .Delay(TimeSpan.FromMilliseconds(-2))
-                       .ConfigureAwait(false);
-                }).ConfigureAwait(false);
+            {
+                await timeSystem.Task
+                   .Delay(TimeSpan.FromMilliseconds(-2))
+                   .ConfigureAwait(false);
+            }).ConfigureAwait(false);
 
             exception.Should().BeAssignableTo<ArgumentOutOfRangeException>();
         }

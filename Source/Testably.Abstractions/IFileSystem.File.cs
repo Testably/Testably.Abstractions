@@ -1,5 +1,4 @@
-﻿using System.IO;
-#if FEATURE_SPAN
+﻿#if FEATURE_SPAN
 #endif
 
 namespace Testably.Abstractions;

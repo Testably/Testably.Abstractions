@@ -1,5 +1,4 @@
 ﻿using Testably.Abstractions.Helpers;
-using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
 

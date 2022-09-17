@@ -9,5 +9,9 @@ internal class FileGenerator : FileSystemMock.IGenerator
         _fileSystem = fileSystem;
     }
 
+    #region IGenerator Members
+
     public IFileSystem FileSystem => _fileSystem;
+
+    #endregion
 }

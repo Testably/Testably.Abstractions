@@ -733,7 +733,8 @@ public partial class FileSystemMockTests
 
         [Theory]
         [AutoData]
-        public void TrimEndingDirectorySeparator_DirectoryChar_ShouldTrim(string directory)
+        public void TrimEndingDirectorySeparator_DirectoryChar_ShouldTrim(
+            string directory)
         {
             string path = directory + FileSystem.Path.DirectorySeparatorChar;
 

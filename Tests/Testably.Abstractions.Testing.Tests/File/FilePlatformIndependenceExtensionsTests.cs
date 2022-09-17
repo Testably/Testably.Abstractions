@@ -34,7 +34,7 @@ public class FilePlatformIndependenceExtensionsTests
             return;
         }
 
-        char[] separatorChars = new[]
+        char[] separatorChars =
         {
             Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar
         };
@@ -58,7 +58,7 @@ public class FilePlatformIndependenceExtensionsTests
             return;
         }
 
-        char[] separatorChars = new[]
+        char[] separatorChars =
         {
             Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar
         };
