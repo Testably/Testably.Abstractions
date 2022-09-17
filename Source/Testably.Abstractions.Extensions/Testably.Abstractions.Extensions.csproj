@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Extensions to write testable code by abstracting away system dependencies.</Description>
+    <RootNamespace>Testably.Abstractions</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Testably.Abstractions\Testably.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

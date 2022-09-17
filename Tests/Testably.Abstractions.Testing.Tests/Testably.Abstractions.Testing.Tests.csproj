@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="File\FileSystemMockTests.*.cs">
+      <DependentUpon>File\FileSystemMockTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Time\TimeSystemMockTests.*.cs">
+      <DependentUpon>Time\TimeSystemMockTests.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>

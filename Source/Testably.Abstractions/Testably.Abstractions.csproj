@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Write testable code by abstracting away system dependencies.</Description>
+    <RootNamespace>Testably.Abstractions</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Update="IFileSystem.*.cs">
+      <DependentUpon>IFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="FileSystem.*.cs">
+      <DependentUpon>FileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ITimeSystem.*.cs">
+      <DependentUpon>ITimeSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="TimeSystem.*.cs">
+      <DependentUpon>TimeSystem.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>
