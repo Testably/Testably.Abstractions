@@ -1,4 +1,4 @@
-![Testably.Abstractions](/Docs/Images/social-preview.png)
+![Testably.Abstractions](https://raw.githubusercontent.com/Testably/Testably.Abstractions/main/Docs/Images/social-preview.png)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Testably_Testably.Abstractions)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=Testably_Testably.Abstractions)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Testably_Testably.Abstractions)
