@@ -18,8 +18,9 @@ public sealed partial class FileSystemMock : IFileSystem
     public IGenerator Generate { get; }
 
     private readonly FileSystemMockCallbackHandler _callbackHandler;
-    private readonly PathMock _pathMock;
+    private readonly DirectoryMock _directoryMock;
     private readonly FileMock _fileMock;
+    private readonly PathMock _pathMock;
 
     /// <summary>
     ///     Initializes the <see cref="FileSystemMock" />.
@@ -27,18 +28,22 @@ public sealed partial class FileSystemMock : IFileSystem
     public FileSystemMock()
     {
         _callbackHandler = new FileSystemMockCallbackHandler();
-        _pathMock = new PathMock(this);
+        _directoryMock = new DirectoryMock(this, _callbackHandler);
         _fileMock = new FileMock(this, _callbackHandler);
+        _pathMock = new PathMock(this);
         Generate = new FileGenerator(this);
     }
 
     #region IFileSystem Members
 
-    /// <inheritdoc cref="IFileSystem.Path" />
-    public IFileSystem.IPath Path => _pathMock;
+    /// <inheritdoc cref="IFileSystem.Directory" />
+    public IFileSystem.IDirectory Directory => _directoryMock;
 
     /// <inheritdoc cref="IFileSystem.File" />
     public IFileSystem.IFile File => _fileMock;
+
+    /// <inheritdoc cref="IFileSystem.Path" />
+    public IFileSystem.IPath Path => _pathMock;
 
     #endregion
 }

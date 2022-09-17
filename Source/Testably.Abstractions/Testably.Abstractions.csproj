@@ -20,4 +20,10 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="IFileSystem - Copy.File.cs">
+      <DependentUpon>IFileSystem.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>

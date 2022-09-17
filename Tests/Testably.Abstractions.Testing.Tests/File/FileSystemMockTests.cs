@@ -6,6 +6,16 @@ namespace Testably.Abstractions.Testing.Tests.File;
 public partial class FileSystemMockTests
 {
     [Fact]
+    public void Directory_ShouldSetExtensionPoint()
+    {
+        FileSystemMock fileSystem = new();
+
+        IFileSystem result = fileSystem.Directory.FileSystem;
+
+        result.Should().Be(fileSystem);
+    }
+
+    [Fact]
     public void File_ShouldSetExtensionPoint()
     {
         FileSystemMock fileSystem = new();

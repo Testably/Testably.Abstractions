@@ -6,14 +6,19 @@
 public partial interface IFileSystem
 {
     /// <summary>
-    ///     Abstractions for <see cref="System.IO.Path" />.
+    ///     Abstractions for <see cref="System.IO.Directory" />.
     /// </summary>
-    IPath Path { get; }
+    IDirectory Directory { get; }
 
     /// <summary>
     ///     Abstractions for <see cref="System.IO.File" />.
     /// </summary>
     IFile File { get; }
+
+    /// <summary>
+    ///     Abstractions for <see cref="System.IO.Path" />.
+    /// </summary>
+    IPath Path { get; }
 
     /// <summary>
     ///     Interface to support implementing extension methods on top of nested <see cref="IFileSystem" /> interfaces.
