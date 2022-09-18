@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !NETSTANDARD2_0
+using System;
+#endif
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
@@ -104,6 +106,31 @@ public abstract class PathSystem : IFileSystem.IPath
     public string? GetFileNameWithoutExtension(string? path)
         => Path.GetFileNameWithoutExtension(path);
 
+    /// <inheritdoc cref="Path.GetFullPath(string)" />
+    public string GetFullPath(string path)
+        => Path.GetFullPath(path);
+
+#if FEATURE_PATH_RELATIVE
+    /// <inheritdoc cref="Path.GetFullPath(string, string)" />
+    public string GetFullPath(string path, string basePath)
+        => Path.GetFullPath(path, basePath);
+#endif
+
+    /// <inheritdoc cref="Path.GetInvalidFileNameChars()" />
+    public char[] GetInvalidFileNameChars() => Path.GetInvalidFileNameChars();
+
+    /// <inheritdoc cref="Path.GetInvalidPathChars()" />
+    public char[] GetInvalidPathChars() => Path.GetInvalidPathChars();
+
+#if FEATURE_SPAN
+    /// <inheritdoc cref="Path.GetPathRoot(ReadOnlySpan{char})" />
+    public ReadOnlySpan<char> GetPathRoot(ReadOnlySpan<char> path)
+        => Path.GetPathRoot(path);
+#endif
+
+    /// <inheritdoc cref="Path.GetPathRoot(string?)" />
+    public string? GetPathRoot(string? path) => Path.GetPathRoot(path);
+
     /// <inheritdoc cref="Path.GetRandomFileName()" />
     public string GetRandomFileName()
         => Path.GetRandomFileName();
@@ -113,6 +140,12 @@ public abstract class PathSystem : IFileSystem.IPath
     public string GetRelativePath(string relativeTo, string path)
         => Path.GetRelativePath(relativeTo, path);
 #endif
+
+    /// <inheritdoc cref="Path.GetTempPath()" />
+    public string GetTempPath() => Path.GetTempPath();
+
+    /// <inheritdoc cref="Path.GetTempFileName()" />
+    public string GetTempFileName() => Path.GetTempFileName();
 
 #if FEATURE_SPAN
     /// <inheritdoc cref="Path.HasExtension(ReadOnlySpan{char})" />
@@ -136,7 +169,15 @@ public abstract class PathSystem : IFileSystem.IPath
         => Path.IsPathFullyQualified(path);
 #endif
 
-    #endregion
+#if FEATURE_SPAN
+    /// <inheritdoc cref="Path.IsPathRooted(ReadOnlySpan{char})" />
+    public bool IsPathRooted(ReadOnlySpan<char> path) => Path.IsPathRooted(path);
+#endif
+
+    /// <inheritdoc cref="Path.IsPathRooted(string)" />
+    public bool IsPathRooted(string? path) => Path.IsPathRooted(path);
+
+#endregion
 
 #if FEATURE_PATH_ADVANCED
     /// <inheritdoc cref="Path.EndsInDirectorySeparator(ReadOnlySpan{char})" />

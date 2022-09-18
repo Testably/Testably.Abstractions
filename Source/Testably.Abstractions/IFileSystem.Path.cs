@@ -76,6 +76,28 @@ public partial interface IFileSystem
         [return: NotNullIfNotNull("path")]
         string? GetFileNameWithoutExtension(string? path);
 
+        /// <inheritdoc cref="Path.GetFullPath(string)" />
+        string GetFullPath(string path);
+
+#if FEATURE_PATH_RELATIVE
+        /// <inheritdoc cref="Path.GetFullPath(string, string)" />
+        string GetFullPath(string path, string basePath);
+#endif
+
+        /// <inheritdoc cref="Path.GetInvalidFileNameChars()" />
+        char[] GetInvalidFileNameChars();
+
+        /// <inheritdoc cref="Path.GetInvalidPathChars()" />
+        char[] GetInvalidPathChars();
+
+#if FEATURE_SPAN
+        /// <inheritdoc cref="Path.GetPathRoot(ReadOnlySpan{char})" />
+        ReadOnlySpan<char> GetPathRoot(ReadOnlySpan<char> path);
+#endif
+
+        /// <inheritdoc cref="Path.GetPathRoot(string?)" />
+        string? GetPathRoot(string? path);
+
         /// <inheritdoc cref="Path.GetRandomFileName()" />
         string GetRandomFileName();
 
@@ -83,6 +105,12 @@ public partial interface IFileSystem
         /// <inheritdoc cref="Path.GetRelativePath(string, string)" />
         string GetRelativePath(string relativeTo, string path);
 #endif
+
+        /// <inheritdoc cref="Path.GetTempPath()" />
+        string GetTempPath();
+
+        /// <inheritdoc cref="Path.GetTempFileName()" />
+        string GetTempFileName();
 
 #if FEATURE_SPAN
         /// <inheritdoc cref="Path.HasExtension(ReadOnlySpan{char})" />
@@ -101,6 +129,14 @@ public partial interface IFileSystem
         /// <inheritdoc cref="Path.IsPathFullyQualified(string)" />
         bool IsPathFullyQualified(string path);
 #endif
+
+#if FEATURE_SPAN
+        /// <inheritdoc cref="Path.IsPathRooted(ReadOnlySpan{char})" />
+        bool IsPathRooted(ReadOnlySpan<char> path);
+#endif
+
+        /// <inheritdoc cref="Path.IsPathRooted(string?)" />
+        bool IsPathRooted([NotNullWhen(true)] string? path);
 
 #if FEATURE_PATH_ADVANCED
         /// <inheritdoc cref="Path.EndsInDirectorySeparator(ReadOnlySpan{char})" />

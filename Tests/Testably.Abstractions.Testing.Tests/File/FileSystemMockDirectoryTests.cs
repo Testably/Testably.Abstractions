@@ -48,17 +48,20 @@ public abstract partial class FileSystemMockDirectoryTests
            .Which.Message.Should().Be("Path cannot be the empty string or all whitespace. (Parameter 'path')");
     }
 
-    [Theory, MemberData(nameof(InvalidPathCharacter))]
-    public void CreateDirectory_IllegalCharacters_ShouldThrowArgumentException(char invalidPathChar)
+    [Fact]
+    public void CreateDirectory_IllegalCharacters_ShouldThrowArgumentException()
     {
-        var path = "foo" + invalidPathChar + "bar";
-        var expectedMessage =
-            $"The filename, directory name, or volume label syntax is incorrect. : '{Path.Combine(BasePath, path)}'";
-        var exception =
-            Record.Exception(() => FileSystem.Directory.CreateDirectory(path));
+        foreach (var c in FileSystem.Path.GetInvalidPathChars().Where(c => c != '\0'))
+        {
+            var path = "foo" + c + "bar";
+            var expectedMessage =
+                $"The filename, directory name, or volume label syntax is incorrect. : '{Path.Combine(BasePath, path)}'";
+            var exception =
+                Record.Exception(() => FileSystem.Directory.CreateDirectory(path));
 
-        exception.Should().BeAssignableTo<IOException>()
-           .Which.Message.Should().Be(expectedMessage);
+            exception.Should().BeAssignableTo<IOException>()
+               .Which.Message.Should().Be(expectedMessage);
+        }
     }
 
     [Fact]
@@ -74,7 +77,5 @@ public abstract partial class FileSystemMockDirectoryTests
            .Which.Message.Should().Be(expectedMessage);
     }
 
-
-    public static IEnumerable<object[]> InvalidPathCharacter =>
-        System.IO.Path.GetInvalidPathChars().Where(c => c != '\0').Select(c => new object[] { c });
+    
 }
