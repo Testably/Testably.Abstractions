@@ -17,7 +17,7 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
     internal FileSystemInfoMock(string path, FileSystemMock fileSystem)
     {
         OriginalPath = path;
-        _path = path;//TODO Adjust
+        _path = fileSystem.Path.GetFullPath(path).NormalizePath().TrimEnd(' ');
         FileSystem = fileSystem;
         _creationTime = fileSystem.TimeSystem.DateTime.UtcNow;
         _lastAccessTime = fileSystem.TimeSystem.DateTime.UtcNow;
@@ -98,7 +98,7 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
 #endif
 
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Name" />
-    public string Name => FileSystem.Path.GetFileName(_path);
+    public string Name => FileSystem.Path.GetFileName(_path.TrimEnd(FileSystem.Path.DirectorySeparatorChar, FileSystem.Path.AltDirectorySeparatorChar));
 
 #if FEATURE_FILESYSTEM_LINK
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreateAsSymbolicLink(string)" />

@@ -107,12 +107,12 @@ public abstract class PathSystem : IFileSystem.IPath
         => Path.GetFileNameWithoutExtension(path);
 
     /// <inheritdoc cref="Path.GetFullPath(string)" />
-    public string GetFullPath(string path)
+    public virtual string GetFullPath(string path)
         => Path.GetFullPath(path);
 
 #if FEATURE_PATH_RELATIVE
     /// <inheritdoc cref="Path.GetFullPath(string, string)" />
-    public string GetFullPath(string path, string basePath)
+    public virtual string GetFullPath(string path, string basePath)
         => Path.GetFullPath(path, basePath);
 #endif
 

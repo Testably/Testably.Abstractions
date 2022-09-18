@@ -23,7 +23,7 @@ public static class FilePlatformIndependenceExtensions
             ? PathTransformRegex
                .Replace(path, "${path}")
                .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
-            : path;
+            : path?.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 
     /// <summary>
     ///     Normalizes the given path so that it works on all platforms.

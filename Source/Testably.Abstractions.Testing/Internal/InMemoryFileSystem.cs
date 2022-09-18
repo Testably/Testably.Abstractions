@@ -8,7 +8,6 @@ namespace Testably.Abstractions.Testing.Internal;
 
 internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
 {
-    private static readonly char[] AdditionalInvalidPathChars = { '*', '?' };
     public IFileSystem FileSystem => _fileSystem;
     private readonly FileSystemMock _fileSystem;
 
@@ -26,7 +25,8 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
     /// <inheritdoc />
     public IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path)
     {
-        return _files.GetOrAdd(path, p => new DirectoryInfoMock(path, _fileSystem)) as
+        return _files.GetOrAdd(path.NormalizeAndTrimPath(_fileSystem),
+                p => new DirectoryInfoMock(path, _fileSystem)) as
             IFileSystem.IDirectoryInfo;
     }
 
@@ -38,42 +38,15 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
             return false;
         }
 
-        return _files.ContainsKey(path);
+        return _files.ContainsKey(path.NormalizeAndTrimPath(_fileSystem));
     }
 
     /// <inheritdoc />
     public bool Delete(string path)
     {
-        return _files.TryRemove(path, out _);
-    }
-
-    /// <summary>
-    ///     Determines whether the given path contains illegal characters.
-    /// </summary>
-    public bool HasIllegalCharacters(string path)
-    {
-        if (path == null)
-        {
-            throw new ArgumentNullException(nameof(path));
-        }
-
-        //TODO Add to IPath interface and use from _fileSystem
-        char[] invalidPathChars = Path.GetInvalidPathChars();
-
-        if (path.IndexOfAny(invalidPathChars) >= 0)
-        {
-            return true;
-        }
-
-        return path.IndexOfAny(AdditionalInvalidPathChars) >= 0;
+        return _files.TryRemove(path.NormalizeAndTrimPath(_fileSystem), out _);
     }
 
     #endregion
 
-    public IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path,
-                                                         Func<string, DirectoryInfoMock>
-                                                             func)
-    {
-        return _files.GetOrAdd(path, func) as IFileSystem.IDirectoryInfo;
-    }
 }

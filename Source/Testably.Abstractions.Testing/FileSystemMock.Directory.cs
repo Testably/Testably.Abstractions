@@ -273,22 +273,9 @@ public sealed partial class FileSystemMock
 
         private IFileSystem.IDirectoryInfo CreateDirectoryInternal(string? path)
         {
-            if (path == null)
-            {
-                throw new ArgumentNullException(nameof(path));
-            }
+            path.ThrowCommonExceptionsIfPathIsInvalid(_fileSystem);
 
-            if (path.Length == 0)
-            {
-                throw new ArgumentException("Path cannot be the empty string or all whitespace.", nameof(path));
-            }
-
-            if (path.IndexOf('\0') > 0)
-            {
-                throw new ArgumentException("Illegal characters in path.", nameof(path));
-            }
-
-            if (_fileSystem.InMemoryFileSystem.HasIllegalCharacters(path))
+            if (path.HasIllegalCharacters(_fileSystem))
             {
                 throw new IOException($"The filename, directory name, or volume label syntax is incorrect. : '{_fileSystem.Path.Combine(_fileSystem.Directory.GetCurrentDirectory(), path)}'");
             }

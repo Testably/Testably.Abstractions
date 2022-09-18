@@ -27,11 +27,6 @@ public sealed partial class FileSystemMock
         bool Delete(string path);
 
         /// <summary>
-        /// Checks if the <paramref name="path"/> contains any illegal characters.
-        /// </summary>
-        bool HasIllegalCharacters(string path);
-
-        /// <summary>
         /// The current directory used in <see cref="System.IO.Directory.GetCurrentDirectory()"/> and <see cref="System.IO.Directory.SetCurrentDirectory(string)"/>
         /// </summary>
         string CurrentDirectory { get; set; }
