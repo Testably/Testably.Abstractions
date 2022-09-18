@@ -25,7 +25,7 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
     /// <inheritdoc />
     public IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path)
     {
-        return _files.GetOrAdd(path.NormalizeAndTrimPath(_fileSystem),
+        return _files.GetOrAdd(_fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
                 p => new DirectoryInfoMock(path, _fileSystem)) as
             IFileSystem.IDirectoryInfo;
     }
@@ -38,13 +38,13 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
             return false;
         }
 
-        return _files.ContainsKey(path.NormalizeAndTrimPath(_fileSystem));
+        return _files.ContainsKey(_fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem));
     }
 
     /// <inheritdoc />
     public bool Delete(string path)
     {
-        return _files.TryRemove(path.NormalizeAndTrimPath(_fileSystem), out _);
+        return _files.TryRemove(_fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem), out _);
     }
 
     #endregion

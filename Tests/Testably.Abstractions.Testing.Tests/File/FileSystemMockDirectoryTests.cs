@@ -1,3 +1,4 @@
+using AutoFixture.Xunit2;
 using FluentAssertions;
 using System;
 using System.IO;
@@ -84,18 +85,51 @@ public abstract partial class FileSystemMockDirectoryTests
     [InlineData(" ")]
     [InlineData("/")]
     [InlineData("\\")]
-    public void CreateDirectory_TrailingDirectorySeparator_ShouldNotBeTrimmed(string suffix)
+    public void CreateDirectory_TrailingDirectorySeparator_ShouldNotBeTrimmed(
+        string suffix)
     {
         string name = "foobar";
         string nameWithSuffix = "foobar" + suffix;
 
-        IFileSystem.IDirectoryInfo result = FileSystem.Directory.CreateDirectory(nameWithSuffix);
+        IFileSystem.IDirectoryInfo result =
+            FileSystem.Directory.CreateDirectory(nameWithSuffix);
 
         result.ToString().Should().Be(nameWithSuffix);
         result.Name.Should().Be(name);
         result.FullName.Should().Be(Path.Combine(BasePath, nameWithSuffix
            .TrimEnd(' ')
-           .Replace(FileSystem.Path.AltDirectorySeparatorChar, FileSystem.Path.DirectorySeparatorChar)));
+           .Replace(FileSystem.Path.AltDirectorySeparatorChar,
+                FileSystem.Path.DirectorySeparatorChar)));
         FileSystem.Directory.Exists(name).Should().BeTrue();
+    }
+
+    [Theory]
+    [AutoData]
+    public void Delete_FullPath_ShouldDeleteDirectory(string directoryName)
+    {
+        IFileSystem.IDirectoryInfo result =
+            FileSystem.Directory.CreateDirectory(directoryName);
+
+        FileSystem.Directory.Delete(result.FullName);
+
+        bool exists = FileSystem.Directory.Exists(directoryName);
+
+        exists.Should().BeFalse();
+        result.Exists.Should().BeFalse();
+    }
+
+    [Theory]
+    [AutoData]
+    public void Delete_ShouldDeleteDirectory(string directoryName)
+    {
+        IFileSystem.IDirectoryInfo result =
+            FileSystem.Directory.CreateDirectory(directoryName);
+
+        FileSystem.Directory.Delete(directoryName);
+
+        bool exists = FileSystem.Directory.Exists(directoryName);
+
+        exists.Should().BeFalse();
+        result.Exists.Should().BeFalse();
     }
 }

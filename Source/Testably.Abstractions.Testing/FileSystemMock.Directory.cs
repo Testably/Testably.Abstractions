@@ -33,7 +33,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="Directory.Delete(string)" />
         public void Delete(string path)
-            => System.IO.Directory.Delete(path);
+            => _fileSystem.InMemoryFileSystem.Delete(path);
 
         /// <inheritdoc cref="Directory.Delete(string, bool)" />
         public void Delete(string path, bool recursive)
@@ -282,25 +282,6 @@ public sealed partial class FileSystemMock
 
             IFileSystem.IDirectoryInfo? directory =
                 _fileSystem.InMemoryFileSystem.GetOrAddDirectory(path);
-            //path = mockFileDataAccessor.Path.GetFullPath(path).TrimSlashes();
-            //if (XFS.IsWindowsPlatform())
-            //{
-            //    path = path.TrimEnd(' ');
-            //}
-            //
-            //if (!Exists(path))
-            //{
-            //    mockFileDataAccessor.AddDirectory(path);
-            //}
-            //
-            //var created = new DirectoryInfoMock(mockFileDataAccessor, path);
-            //
-            //if (directorySecurity != null)
-            //{
-            //    created.SetAccessControl(directorySecurity);
-            //}
-            //
-            //return created;
             return directory ?? throw new NotImplementedException();
         }
     }
