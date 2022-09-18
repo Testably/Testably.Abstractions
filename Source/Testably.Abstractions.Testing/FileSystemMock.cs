@@ -42,6 +42,7 @@ public sealed partial class FileSystemMock : IFileSystem
         _fileMock = new FileMock(this, _callbackHandler);
         _pathMock = new PathMock(this);
         DirectoryInfo = new DirectoryInfoFactoryMock(this, _callbackHandler);
+        FileInfo = new FileInfoFactoryMock(this, _callbackHandler);
     }
 
     #region IFileSystem Members
@@ -54,6 +55,9 @@ public sealed partial class FileSystemMock : IFileSystem
 
     /// <inheritdoc cref="IFileSystem.File" />
     public IFileSystem.IFile File => _fileMock;
+
+    /// <inheritdoc cref="IFileSystem.FileInfo" />
+    public IFileSystem.IFileInfoFactory FileInfo { get; }
 
     /// <inheritdoc cref="IFileSystem.Path" />
     public IFileSystem.IPath Path => _pathMock;

@@ -8,6 +8,6 @@ public partial interface IFileSystem
     public interface IFileInfoFactory : IFileSystemExtensionPoint
     {
         /// <inheritdoc cref="System.IO.FileInfo(string)" />
-        IFileInfo Create(string path);
+        IFileInfo New(string path);
     }
 }

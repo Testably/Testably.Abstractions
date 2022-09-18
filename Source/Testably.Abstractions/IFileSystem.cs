@@ -21,6 +21,11 @@ public partial interface IFileSystem
     IFile File { get; }
 
     /// <summary>
+    ///     Factory for abstracting creation of <see cref="System.IO.FileInfo" />.
+    /// </summary>
+    IFileInfoFactory FileInfo { get; }
+
+    /// <summary>
     ///     Abstractions for <see cref="System.IO.Path" />.
     /// </summary>
     IPath Path { get; }

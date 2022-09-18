@@ -12,11 +12,6 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
 
     internal FileSystemInfoMock(string path, FileSystemMock fileSystem)
     {
-        if (path == null)
-        {
-            throw new ArgumentNullException(nameof(path));
-        }
-
         if (path == string.Empty)
         {
             throw new ArgumentException("The path is empty.", nameof(path));

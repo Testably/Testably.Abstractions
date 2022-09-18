@@ -19,10 +19,10 @@ internal class DirectoryInfoMock : FileSystemInfoMock, IFileSystem.IDirectoryInf
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Parent" />
     public IFileSystem.IDirectoryInfo? Parent =>
-        Create(FileSystem.Path.GetDirectoryName(FullName), FileSystem);
+        New(FileSystem.Path.GetDirectoryName(FullName), FileSystem);
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Root" />
-    public IFileSystem.IDirectoryInfo Root => Create("".PrefixRoot(), FileSystem);
+    public IFileSystem.IDirectoryInfo Root => New("".PrefixRoot(), FileSystem);
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Create()" />
     public void Create() => FileSystem.Directory.CreateDirectory(FullName);
@@ -163,7 +163,7 @@ internal class DirectoryInfoMock : FileSystemInfoMock, IFileSystem.IDirectoryInf
     #endregion
 
     [return: NotNullIfNotNull("path")]
-    internal static DirectoryInfoMock? Create(string? path, FileSystemMock fileSystem)
+    internal static DirectoryInfoMock? New(string? path, FileSystemMock fileSystem)
     {
         if (path == null)
         {

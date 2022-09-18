@@ -1,4 +1,5 @@
-﻿using Testably.Abstractions.Testing.Internal;
+﻿using System;
+using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Internal.Models;
 
 namespace Testably.Abstractions.Testing;
@@ -18,9 +19,16 @@ public sealed partial class FileSystemMock
 
         #region IDirectoryInfoFactory Members
 
-        /// <inheritdoc />
-        public IFileSystem.IDirectoryInfo New(string path) =>
-            new DirectoryInfoMock(path, _fileSystem);
+        /// <inheritdoc cref="IFileSystem.IDirectoryInfoFactory.New(string)" />
+        public IFileSystem.IDirectoryInfo New(string path)
+        {
+            if (path == null)
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
+
+            return DirectoryInfoMock.New(path, _fileSystem);
+        }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
         public IFileSystem FileSystem => _fileSystem;
