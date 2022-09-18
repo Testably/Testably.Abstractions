@@ -22,7 +22,7 @@ public sealed partial class FileSystem
             => DirectoryInfoWrapper.FromDirectoryInfo(
                 System.IO.Directory.CreateDirectory(path), FileSystem);
 
-#if FEATURE_DIRECTORY_ADVANCED
+#if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="Directory.CreateSymbolicLink(string, string)" />
         public FileSystemInfo CreateSymbolicLink(string path, string pathToTarget)
             => System.IO.Directory.CreateSymbolicLink(path, pathToTarget);
@@ -53,7 +53,7 @@ public sealed partial class FileSystem
                 searchPattern,
                 searchOption);
 
-#if FEATURE_DIRECTORY_ENUMERATION_OPTIONS
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="Directory.EnumerateDirectories(string, string, EnumerationOptions)" />
         public IEnumerable<string> EnumerateDirectories(string path,
                                                         string searchPattern,
@@ -77,7 +77,7 @@ public sealed partial class FileSystem
                                                   SearchOption searchOption)
             => System.IO.Directory.EnumerateFiles(path, searchPattern, searchOption);
 
-#if FEATURE_DIRECTORY_ENUMERATION_OPTIONS
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="Directory.EnumerateFiles(string, string, EnumerationOptions)" />
         public IEnumerable<string> EnumerateFiles(string path,
                                                   string searchPattern,
@@ -102,7 +102,7 @@ public sealed partial class FileSystem
             => System.IO.Directory.EnumerateFileSystemEntries(path, searchPattern,
                 searchOption);
 
-#if FEATURE_DIRECTORY_ENUMERATION_OPTIONS
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="Directory.EnumerateFileSystemEntries(string, string, EnumerationOptions)" />
         public IEnumerable<string> EnumerateFileSystemEntries(string path,
             string searchPattern,
@@ -142,7 +142,7 @@ public sealed partial class FileSystem
                                        SearchOption searchOption)
             => System.IO.Directory.GetDirectories(path, searchPattern, searchOption);
 
-#if FEATURE_DIRECTORY_ENUMERATION_OPTIONS
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="Directory.GetDirectories(string, string, EnumerationOptions)" />
         public string[] GetDirectories(string path,
                                        string searchPattern,
@@ -169,7 +169,7 @@ public sealed partial class FileSystem
                                  SearchOption searchOption)
             => System.IO.Directory.GetFiles(path, searchPattern, searchOption);
 
-#if FEATURE_DIRECTORY_ENUMERATION_OPTIONS
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="Directory.GetFiles(string, string, EnumerationOptions)" />
         public string[] GetFiles(string path,
                                  string searchPattern,
@@ -192,7 +192,7 @@ public sealed partial class FileSystem
             => System.IO.Directory.GetFileSystemEntries(path, searchPattern,
                 searchOption);
 
-#if FEATURE_DIRECTORY_ENUMERATION_OPTIONS
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="Directory.GetFileSystemEntries(string, string, EnumerationOptions)" />
         public string[] GetFileSystemEntries(string path,
                                              string searchPattern,
@@ -230,7 +230,7 @@ public sealed partial class FileSystem
         public void Move(string sourceDirName, string destDirName)
             => System.IO.Directory.Move(sourceDirName, destDirName);
 
-#if FEATURE_DIRECTORY_ADVANCED
+#if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="Directory.ResolveLinkTarget(string, bool)" />
         public FileSystemInfo? ResolveLinkTarget(string linkPath, bool returnFinalTarget)
             => System.IO.Directory.ResolveLinkTarget(linkPath, returnFinalTarget);

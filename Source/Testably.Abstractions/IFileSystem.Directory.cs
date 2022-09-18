@@ -15,7 +15,7 @@ public partial interface IFileSystem
         /// <inheritdoc cref="Directory.CreateDirectory(string)" />
         IDirectoryInfo CreateDirectory(string path);
 
-#if FEATURE_DIRECTORY_ADVANCED
+#if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="Directory.CreateSymbolicLink(string, string)" />
         FileSystemInfo CreateSymbolicLink(string path, string pathToTarget);
 #endif
@@ -37,7 +37,7 @@ public partial interface IFileSystem
                                                  string searchPattern,
                                                  SearchOption searchOption);
 
-#if FEATURE_DIRECTORY_ENUMERATION_OPTIONS
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="Directory.EnumerateDirectories(string, string, EnumerationOptions)" />
         IEnumerable<string> EnumerateDirectories(string path,
                                                  string searchPattern,
@@ -55,7 +55,7 @@ public partial interface IFileSystem
                                            string searchPattern,
                                            SearchOption searchOption);
 
-#if FEATURE_DIRECTORY_ENUMERATION_OPTIONS
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="Directory.EnumerateFiles(string, string, EnumerationOptions)" />
         IEnumerable<string> EnumerateFiles(string path,
                                            string searchPattern,
@@ -73,7 +73,7 @@ public partial interface IFileSystem
                                                        string searchPattern,
                                                        SearchOption searchOption);
 
-#if FEATURE_DIRECTORY_ENUMERATION_OPTIONS
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="Directory.EnumerateFileSystemEntries(string, string, EnumerationOptions)" />
         IEnumerable<string> EnumerateFileSystemEntries(string path,
                                                        string searchPattern,
@@ -104,7 +104,7 @@ public partial interface IFileSystem
                                 string searchPattern,
                                 SearchOption searchOption);
 
-#if FEATURE_DIRECTORY_ENUMERATION_OPTIONS
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="Directory.GetDirectories(string, string, EnumerationOptions)" />
         string[] GetDirectories(string path,
                                 string searchPattern,
@@ -125,7 +125,7 @@ public partial interface IFileSystem
                           string searchPattern,
                           SearchOption searchOption);
 
-#if FEATURE_DIRECTORY_ENUMERATION_OPTIONS
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="Directory.GetFiles(string, string, EnumerationOptions)" />
         string[] GetFiles(string path,
                           string searchPattern,
@@ -143,7 +143,7 @@ public partial interface IFileSystem
                                       string searchPattern,
                                       SearchOption searchOption);
 
-#if FEATURE_DIRECTORY_ENUMERATION_OPTIONS
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="Directory.GetFileSystemEntries(string, string, EnumerationOptions)" />
         string[] GetFileSystemEntries(string path,
                                       string searchPattern,
@@ -171,7 +171,7 @@ public partial interface IFileSystem
         /// <inheritdoc cref="Directory.Move(string, string)" />
         void Move(string sourceDirName, string destDirName);
 
-#if FEATURE_DIRECTORY_ADVANCED
+#if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="Directory.ResolveLinkTarget(string, bool)" />
         FileSystemInfo? ResolveLinkTarget(string linkPath, bool returnFinalTarget);
 #endif

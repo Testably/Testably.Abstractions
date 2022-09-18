@@ -4,9 +4,9 @@ namespace Testably.Abstractions.Testing.Internal;
 
 internal static class InMemoryFileSystemHelper
 {
-    public static MockDirectoryInfo CreateDirectoryInfo(
+    public static DirectoryInfoMock CreateDirectoryInfo(
         FileSystemMock fileSystemMock, string path)
     {
-        return new MockDirectoryInfo(fileSystemMock, path);
+        return new DirectoryInfoMock(path, fileSystemMock);
     }
 }

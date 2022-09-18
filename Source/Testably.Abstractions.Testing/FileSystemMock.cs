@@ -17,6 +17,11 @@ public sealed partial class FileSystemMock : IFileSystem
     /// </summary>
     public IGenerator Generate { get; }
 
+    /// <summary>
+    ///     The used time system.
+    /// </summary>
+    public ITimeSystem TimeSystem { get; private set; }
+
     internal IInMemoryFileSystem InMemoryFileSystem { get; }
 
     private readonly FileSystemMockCallbackHandler _callbackHandler;
@@ -29,6 +34,7 @@ public sealed partial class FileSystemMock : IFileSystem
     /// </summary>
     public FileSystemMock()
     {
+        TimeSystem = new TimeSystem();
         Generate = new FileGenerator(this);
         InMemoryFileSystem = new InMemoryFileSystem(this);
         _callbackHandler = new FileSystemMockCallbackHandler();

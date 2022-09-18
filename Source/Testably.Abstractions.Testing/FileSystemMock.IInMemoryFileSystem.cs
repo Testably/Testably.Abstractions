@@ -13,8 +13,15 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     Gets or adds a directory.
         /// </summary>
-        IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path,
-                                                      Func<string, MockDirectoryInfo>
-                                                          func);
+        IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path);
+        /// <summary>
+        /// Checks if a <see cref="FileSystemInfoMock"/> exists on the given <paramref name="path"/>.
+        /// </summary>
+        bool Exists(string path);
+
+        /// <summary>
+        /// Deletes the <see cref="FileSystemInfoMock"/> on the given <paramref name="path"/>.
+        /// </summary>
+        bool Delete(string path);
     }
 }
