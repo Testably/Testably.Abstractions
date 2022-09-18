@@ -3,6 +3,7 @@ using FluentAssertions;
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Xunit;
 
 namespace Testably.Abstractions.Testing.Tests.File;
@@ -223,12 +224,19 @@ public abstract partial class FileSystemMockDirectoryTests
     {
         string name = "foobar";
         string nameWithSuffix = "foobar" + suffix;
+        var expectedName = name;
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            expectedName = nameWithSuffix.Replace(
+                FileSystem.Path.AltDirectorySeparatorChar,
+                FileSystem.Path.DirectorySeparatorChar);
+        }
 
         IFileSystem.IDirectoryInfo result =
             FileSystem.Directory.CreateDirectory(nameWithSuffix);
 
         result.ToString().Should().Be(nameWithSuffix);
-        result.Name.Should().Be(name);
+        result.Name.Should().Be(expectedName);
         result.FullName.Should().Be(Path.Combine(BasePath, nameWithSuffix
            .TrimEnd(' ')
            .Replace(FileSystem.Path.AltDirectorySeparatorChar,
@@ -240,10 +248,10 @@ public abstract partial class FileSystemMockDirectoryTests
     [AutoData]
     public void CreationTime_ShouldBeSet(string path)
     {
-        DateTime start = TimeSystem.DateTime.Now.ApplySystemClockTolerance();
+        DateTime start = TimeSystem.DateTime.Now;
         IFileSystem.IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
 
-        result.CreationTime.Should().BeOnOrAfter(start);
+        result.CreationTime.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
         result.CreationTime.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
         result.CreationTime.Kind.Should().Be(DateTimeKind.Local);
     }
@@ -252,10 +260,10 @@ public abstract partial class FileSystemMockDirectoryTests
     [AutoData]
     public void CreationTimeUtc_ShouldBeSet(string path)
     {
-        DateTime start = TimeSystem.DateTime.UtcNow.ApplySystemClockTolerance();
+        DateTime start = TimeSystem.DateTime.UtcNow;
         IFileSystem.IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
 
-        result.CreationTimeUtc.Should().BeOnOrAfter(start);
+        result.CreationTimeUtc.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
         result.CreationTimeUtc.Should().BeOnOrBefore(TimeSystem.DateTime.UtcNow);
         result.CreationTimeUtc.Kind.Should().Be(DateTimeKind.Utc);
     }
@@ -295,17 +303,17 @@ public abstract partial class FileSystemMockDirectoryTests
     public void LastAccessTime_CreateSubDirectory_ShouldUpdateLastAccessAndLastWriteTime(
         string path, string subPath)
     {
-        DateTime start = TimeSystem.DateTime.Now.ApplySystemClockTolerance();
+        DateTime start = TimeSystem.DateTime.Now;
         IFileSystem.IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
         TimeSystem.Thread.Sleep(100);
-        DateTime sleepTime = TimeSystem.DateTime.Now.ApplySystemClockTolerance();
+        DateTime sleepTime = TimeSystem.DateTime.Now;
         FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(path, subPath));
 
-        result.CreationTime.Should().BeOnOrAfter(start);
+        result.CreationTime.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
         result.CreationTime.Should().BeBefore(sleepTime);
-        result.LastAccessTime.Should().BeOnOrAfter(sleepTime);
+        result.LastAccessTime.Should().BeOnOrAfter(sleepTime.ApplySystemClockTolerance());
         result.LastAccessTime.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
-        result.LastWriteTime.Should().BeOnOrAfter(sleepTime);
+        result.LastWriteTime.Should().BeOnOrAfter(sleepTime.ApplySystemClockTolerance());
         result.LastWriteTime.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
     }
 
@@ -313,10 +321,10 @@ public abstract partial class FileSystemMockDirectoryTests
     [AutoData]
     public void LastAccessTime_ShouldBeSet(string path)
     {
-        DateTime start = TimeSystem.DateTime.Now.ApplySystemClockTolerance();
+        DateTime start = TimeSystem.DateTime.Now;
         IFileSystem.IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
 
-        result.LastAccessTime.Should().BeOnOrAfter(start);
+        result.LastAccessTime.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
         result.LastAccessTime.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
         result.LastAccessTime.Kind.Should().Be(DateTimeKind.Local);
     }
@@ -325,10 +333,10 @@ public abstract partial class FileSystemMockDirectoryTests
     [AutoData]
     public void LastAccessTimeUtc_ShouldBeSet(string path)
     {
-        DateTime start = TimeSystem.DateTime.UtcNow.ApplySystemClockTolerance();
+        DateTime start = TimeSystem.DateTime.UtcNow;
         IFileSystem.IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
 
-        result.LastAccessTimeUtc.Should().BeOnOrAfter(start);
+        result.LastAccessTimeUtc.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
         result.LastAccessTimeUtc.Should().BeOnOrBefore(TimeSystem.DateTime.UtcNow);
         result.LastAccessTimeUtc.Kind.Should().Be(DateTimeKind.Utc);
     }
@@ -337,10 +345,10 @@ public abstract partial class FileSystemMockDirectoryTests
     [AutoData]
     public void LastWriteTime_ShouldBeSet(string path)
     {
-        DateTime start = TimeSystem.DateTime.Now.ApplySystemClockTolerance();
+        DateTime start = TimeSystem.DateTime.Now;
         IFileSystem.IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
 
-        result.LastWriteTime.Should().BeOnOrAfter(start);
+        result.LastWriteTime.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
         result.LastWriteTime.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
         result.LastWriteTime.Kind.Should().Be(DateTimeKind.Local);
     }
@@ -349,10 +357,10 @@ public abstract partial class FileSystemMockDirectoryTests
     [AutoData]
     public void LastWriteTimeUtc_ShouldBeSet(string path)
     {
-        DateTime start = TimeSystem.DateTime.UtcNow.ApplySystemClockTolerance();
+        DateTime start = TimeSystem.DateTime.UtcNow;
         IFileSystem.IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
 
-        result.LastWriteTimeUtc.Should().BeOnOrAfter(start);
+        result.LastWriteTimeUtc.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
         result.LastWriteTimeUtc.Should().BeOnOrBefore(TimeSystem.DateTime.UtcNow);
         result.LastWriteTimeUtc.Kind.Should().Be(DateTimeKind.Utc);
     }
