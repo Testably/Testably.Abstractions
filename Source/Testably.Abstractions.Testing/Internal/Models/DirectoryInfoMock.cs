@@ -13,8 +13,19 @@ internal class DirectoryInfoMock : FileSystemInfoMock, IFileSystem.IDirectoryInf
     {
     }
 
+    internal static DirectoryInfoMock? Create(string? path, FileSystemMock fileSystem)
+    {
+        if (path == null)
+        {
+            return null;
+        }
+
+        return new DirectoryInfoMock(path, fileSystem);
+    }
+
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Parent" />
-    public IFileSystem.IDirectoryInfo? Parent => throw new NotImplementedException();
+    public IFileSystem.IDirectoryInfo? Parent =>
+        DirectoryInfoMock.Create(FileSystem.Path.GetDirectoryName(FullName), FileSystem);
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Root" />
     public IFileSystem.IDirectoryInfo Root => throw new NotImplementedException();

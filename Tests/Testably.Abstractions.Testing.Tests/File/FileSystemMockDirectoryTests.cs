@@ -80,6 +80,25 @@ public abstract partial class FileSystemMockDirectoryTests
         result.FullName.Should().StartWith(BasePath);
     }
 
+    [Theory, AutoData]
+    public void CreateDirectory_ShouldCreateParentDirectories(string directoryLevel1, string directoryLevel2, string directoryLevel3)
+    {
+        var path =
+            FileSystem.Path.Combine(directoryLevel1, directoryLevel2, directoryLevel3);
+
+        IFileSystem.IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
+
+        result.Name.Should().Be(directoryLevel3);
+        result.Exists.Should().BeTrue();
+        result.ToString().Should().Be(path);
+        result.Parent!.Name.Should().Be(directoryLevel2);
+        result.Parent.Exists.Should().BeTrue();
+        result.Parent.ToString().Should().Be(result.Parent.FullName);
+        result.Parent.Parent!.Name.Should().Be(directoryLevel1);
+        result.Parent.Parent.Exists.Should().BeTrue();
+        result.Parent.Parent.ToString().Should().Be(result.Parent.Parent.FullName);
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
