@@ -117,7 +117,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="Directory.Exists(string)" />
         public bool Exists([NotNullWhen(true)] string? path)
-            => System.IO.Directory.Exists(path);
+            => _fileSystem.InMemoryFileSystem.Exists(path);
 
         /// <inheritdoc cref="Directory.GetCreationTime(string)" />
         public DateTime GetCreationTime(string path)
@@ -129,7 +129,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="Directory.GetCurrentDirectory()" />
         public string GetCurrentDirectory()
-            => System.IO.Directory.GetCurrentDirectory();
+            => _fileSystem.InMemoryFileSystem.CurrentDirectory;
 
         /// <inheritdoc cref="Directory.GetDirectories(string)" />
         public string[] GetDirectories(string path)
@@ -248,7 +248,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="Directory.SetCurrentDirectory(string)" />
         public void SetCurrentDirectory(string path)
-            => System.IO.Directory.SetCurrentDirectory(path);
+            => _fileSystem.InMemoryFileSystem.CurrentDirectory = path;
 
         /// <inheritdoc cref="Directory.SetLastAccessTime(string, DateTime)" />
         public void SetLastAccessTime(string path, DateTime lastAccessTime)
@@ -271,22 +271,27 @@ public sealed partial class FileSystemMock
 
         #endregion
 
-        private IFileSystem.IDirectoryInfo CreateDirectoryInternal(string path)
+        private IFileSystem.IDirectoryInfo CreateDirectoryInternal(string? path)
         {
-            //if (path == null)
-            //{
-            //    throw new ArgumentNullException(nameof(path));
-            //}
-            //
-            //if (path.Length == 0)
-            //{
-            //    throw new ArgumentException(StringResources.Manager.GetString("PATH_CANNOT_BE_THE_EMPTY_STRING_OR_ALL_WHITESPACE"), "path");
-            //}
-            //
-            //if (_fileSystem.InMemoryFileSystem.PathVerifier.HasIllegalCharacters(path, true))
-            //{
-            //    throw CommonExceptions.IllegalCharactersInPath(nameof(path));
-            //}
+            if (path == null)
+            {
+                throw new ArgumentNullException(nameof(path));
+            }
+
+            if (path.Length == 0)
+            {
+                throw new ArgumentException("Path cannot be the empty string or all whitespace.", nameof(path));
+            }
+
+            if (path.IndexOf('\0') > 0)
+            {
+                throw new ArgumentException("Illegal characters in path.", nameof(path));
+            }
+
+            if (_fileSystem.InMemoryFileSystem.HasIllegalCharacters(path))
+            {
+                throw new IOException($"The filename, directory name, or volume label syntax is incorrect. : '{_fileSystem.Path.Combine(_fileSystem.Directory.GetCurrentDirectory(), path)}'");
+            }
 
             IFileSystem.IDirectoryInfo? directory =
                 _fileSystem.InMemoryFileSystem.GetOrAddDirectory(path);
@@ -309,7 +314,7 @@ public sealed partial class FileSystemMock
             //}
             //
             //return created;
-            return directory!;
+            return directory ?? throw new NotImplementedException();
         }
     }
 }

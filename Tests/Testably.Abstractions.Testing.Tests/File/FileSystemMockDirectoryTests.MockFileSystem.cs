@@ -17,6 +17,7 @@ public abstract partial class FileSystemMockDirectoryTests
         public MockFileSystem() : base(new FileSystemMock(), "tmp".PrefixRoot())
         {
             FileSystem.Directory.CreateDirectory(BasePath);
+            FileSystem.Directory.SetCurrentDirectory(BasePath);
         }
     }
 }

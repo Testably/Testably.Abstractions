@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Testably.Abstractions.Testing.Internal.Models;
 
 namespace Testably.Abstractions.Testing;
@@ -13,15 +14,26 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     Gets or adds a directory.
         /// </summary>
+        /// 
         IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path);
         /// <summary>
         /// Checks if a <see cref="FileSystemInfoMock"/> exists on the given <paramref name="path"/>.
         /// </summary>
-        bool Exists(string path);
+        bool Exists([NotNullWhen(true)] string? path);
 
         /// <summary>
         /// Deletes the <see cref="FileSystemInfoMock"/> on the given <paramref name="path"/>.
         /// </summary>
         bool Delete(string path);
+
+        /// <summary>
+        /// Checks if the <paramref name="path"/> contains any illegal characters.
+        /// </summary>
+        bool HasIllegalCharacters(string path);
+
+        /// <summary>
+        /// The current directory used in <see cref="System.IO.Directory.GetCurrentDirectory()"/> and <see cref="System.IO.Directory.SetCurrentDirectory(string)"/>
+        /// </summary>
+        string CurrentDirectory { get; set; }
     }
 }
