@@ -37,7 +37,7 @@ internal static class PathHelper
 
     internal static string TrimOnWindows(this string path)
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
             return path.TrimEnd(' ');
         }
