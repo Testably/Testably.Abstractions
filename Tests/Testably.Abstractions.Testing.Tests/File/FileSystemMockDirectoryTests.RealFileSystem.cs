@@ -13,7 +13,8 @@ public abstract partial class FileSystemMockDirectoryTests
         private readonly ITestOutputHelper _testOutputHelper;
 
         public RealFileSystem(ITestOutputHelper testOutputHelper)
-            : base(new FileSystem(), new TimeSystem(), Helpers.CreateEmptyTemporaryDirectory())
+            : base(new FileSystem(), new TimeSystem(),
+                Helpers.CreateEmptyTemporaryDirectory())
         {
             _testOutputHelper = testOutputHelper;
             _testOutputHelper.WriteLine($"Use '{BasePath}' as current directory.");

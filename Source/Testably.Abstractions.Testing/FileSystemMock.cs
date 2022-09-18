@@ -20,7 +20,7 @@ public sealed partial class FileSystemMock : IFileSystem
     /// <summary>
     ///     The used time system.
     /// </summary>
-    public ITimeSystem TimeSystem { get; private set; }
+    public ITimeSystem TimeSystem { get; }
 
     internal IInMemoryFileSystem InMemoryFileSystem { get; }
 

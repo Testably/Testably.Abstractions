@@ -106,11 +106,11 @@ public partial interface IFileSystem
         string GetRelativePath(string relativeTo, string path);
 #endif
 
-        /// <inheritdoc cref="Path.GetTempPath()" />
-        string GetTempPath();
-
         /// <inheritdoc cref="Path.GetTempFileName()" />
         string GetTempFileName();
+
+        /// <inheritdoc cref="Path.GetTempPath()" />
+        string GetTempPath();
 
 #if FEATURE_SPAN
         /// <inheritdoc cref="Path.HasExtension(ReadOnlySpan{char})" />

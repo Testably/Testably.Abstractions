@@ -277,7 +277,8 @@ public sealed partial class FileSystemMock
 
             if (path.HasIllegalCharacters(_fileSystem))
             {
-                throw new IOException($"The filename, directory name, or volume label syntax is incorrect. : '{_fileSystem.Path.Combine(_fileSystem.Directory.GetCurrentDirectory(), path)}'");
+                throw new IOException(
+                    $"The filename, directory name, or volume label syntax is incorrect. : '{_fileSystem.Path.Combine(_fileSystem.Directory.GetCurrentDirectory(), path)}'");
             }
 
             IFileSystem.IDirectoryInfo? directory =

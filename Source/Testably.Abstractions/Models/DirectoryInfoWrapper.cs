@@ -228,7 +228,7 @@ internal class DirectoryInfoWrapper : FileSystemInfoWrapper, IFileSystem.IDirect
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.MoveTo(string)" />
     public void MoveTo(string destDirName) => _instance.MoveTo(destDirName);
 
-#endregion
+    #endregion
 
     [return: NotNullIfNotNull("instance")]
     internal static DirectoryInfoWrapper? FromDirectoryInfo(DirectoryInfo? instance,

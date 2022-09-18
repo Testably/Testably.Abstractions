@@ -1,8 +1,8 @@
-﻿#if !NETSTANDARD2_0
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
+#if !NETSTANDARD2_0
 using System;
 #endif
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
 
 namespace Testably.Abstractions.Helpers;
 
@@ -177,7 +177,7 @@ public abstract class PathSystem : IFileSystem.IPath
     /// <inheritdoc cref="Path.IsPathRooted(string)" />
     public bool IsPathRooted(string? path) => Path.IsPathRooted(path);
 
-#endregion
+    #endregion
 
 #if FEATURE_PATH_ADVANCED
     /// <inheritdoc cref="Path.EndsInDirectorySeparator(ReadOnlySpan{char})" />

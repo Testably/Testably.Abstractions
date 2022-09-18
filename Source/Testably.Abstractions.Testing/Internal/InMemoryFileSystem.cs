@@ -72,7 +72,7 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
                 _ => new DirectoryInfoMock(parentPath, _fileSystem),
                 (_, fileSystemInfo) =>
                     fileSystemInfo.AdjustTimes(TimeAdjustments.LastAccessTime |
-                                              TimeAdjustments.LastWriteTime));
+                                               TimeAdjustments.LastWriteTime));
         }
 
         return new DirectoryInfoMock(path, _fileSystem);

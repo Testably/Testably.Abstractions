@@ -43,7 +43,8 @@ public partial interface IFileSystem
 #endif
         void Decrypt();
 
-        /// <inheritdoc cref="FileInfo.Encrypt()" />/>
+        /// <inheritdoc cref="FileInfo.Encrypt()" />
+        /// />
 #if NET6_0_OR_GREATER
         [SupportedOSPlatform("windows")]
 #endif

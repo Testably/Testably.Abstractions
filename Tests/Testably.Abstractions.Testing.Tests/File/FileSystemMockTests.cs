@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Testably.Abstractions.Testing.Tests.File;
 
-public partial class FileSystemMockTests
+public class FileSystemMockTests
 {
     [Fact]
     public void Directory_ShouldSetExtensionPoint()

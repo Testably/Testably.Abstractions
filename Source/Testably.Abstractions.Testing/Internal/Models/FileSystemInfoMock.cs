@@ -21,7 +21,7 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
         AdjustTimes(TimeAdjustments.All);
     }
 
-#region IFileSystemInfo Members
+    #region IFileSystemInfo Members
 
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTime" />
     public DateTime CreationTime
@@ -99,7 +99,7 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
         => throw new NotImplementedException();
 #endif
 
-#endregion
+    #endregion
 
 #if NETSTANDARD2_0
     /// <inheritdoc cref="object.ToString()" />

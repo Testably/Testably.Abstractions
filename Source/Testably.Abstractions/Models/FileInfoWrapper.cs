@@ -16,17 +16,7 @@ internal class FileInfoWrapper : FileSystemInfoWrapper, IFileSystem.IFileInfo
         _fileSystem = fileSystem;
     }
 
-    [return: NotNullIfNotNull("instance")]
-    internal static FileInfoWrapper? FromFileInfo(FileInfo? instance,
-                                                       IFileSystem fileSystem)
-    {
-        if (instance == null)
-        {
-            return null;
-        }
-
-        return new FileInfoWrapper(instance, fileSystem);
-    }
+    #region IFileInfo Members
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.Length" />
     public long Length => _instance.Length;
@@ -50,11 +40,11 @@ internal class FileInfoWrapper : FileSystemInfoWrapper, IFileSystem.IFileInfo
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.CopyTo(string)" />
     public IFileSystem.IFileInfo CopyTo(string destFileName)
-        => FileInfoWrapper.FromFileInfo(_instance.CopyTo(destFileName), _fileSystem);
+        => FromFileInfo(_instance.CopyTo(destFileName), _fileSystem);
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.CopyTo(string, bool)" />
     public IFileSystem.IFileInfo CopyTo(string destFileName, bool overwrite)
-        => FileInfoWrapper.FromFileInfo(_instance.CopyTo(destFileName, overwrite), _fileSystem);
+        => FromFileInfo(_instance.CopyTo(destFileName, overwrite), _fileSystem);
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.Create()" />
     public FileStream Create() => _instance.Create();
@@ -79,7 +69,8 @@ internal class FileInfoWrapper : FileSystemInfoWrapper, IFileSystem.IFileInfo
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
     /// <inheritdoc cref="IFileSystem.IFileInfo.MoveTo(string, bool)" />
-    public void MoveTo(string destFileName, bool overwrite) => _instance.MoveTo(destFileName, overwrite);
+    public void MoveTo(string destFileName, bool overwrite) =>
+        _instance.MoveTo(destFileName, overwrite);
 #endif
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode)" />
@@ -102,11 +93,10 @@ internal class FileInfoWrapper : FileSystemInfoWrapper, IFileSystem.IFileInfo
     /// <inheritdoc cref="IFileSystem.IFileInfo.OpenWrite()" />
     public FileStream OpenWrite() => _instance.OpenWrite();
 
-
     /// <inheritdoc cref="IFileSystem.IFileInfo.Replace(string, string?)" />
     public IFileSystem.IFileInfo Replace(string destinationFileName,
                                          string? destinationBackupFileName)
-        => FileInfoWrapper.FromFileInfo(
+        => FromFileInfo(
             _instance.Replace(destinationFileName, destinationBackupFileName),
             _fileSystem);
 
@@ -114,7 +104,22 @@ internal class FileInfoWrapper : FileSystemInfoWrapper, IFileSystem.IFileInfo
     public IFileSystem.IFileInfo Replace(string destinationFileName,
                                          string? destinationBackupFileName,
                                          bool ignoreMetadataErrors)
-        => FileInfoWrapper.FromFileInfo(
-            _instance.Replace(destinationFileName, destinationBackupFileName, ignoreMetadataErrors),
+        => FromFileInfo(
+            _instance.Replace(destinationFileName, destinationBackupFileName,
+                ignoreMetadataErrors),
             _fileSystem);
+
+    #endregion
+
+    [return: NotNullIfNotNull("instance")]
+    internal static FileInfoWrapper? FromFileInfo(FileInfo? instance,
+                                                  IFileSystem fileSystem)
+    {
+        if (instance == null)
+        {
+            return null;
+        }
+
+        return new FileInfoWrapper(instance, fileSystem);
+    }
 }

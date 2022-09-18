@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Testably.Abstractions.Testing.Internal.Models;
 
 namespace Testably.Abstractions.Testing;
@@ -12,23 +11,24 @@ public sealed partial class FileSystemMock
     public interface IInMemoryFileSystem
     {
         /// <summary>
-        ///     Gets or adds a directory.
+        ///     The current directory used in <see cref="System.IO.Directory.GetCurrentDirectory()" /> and
+        ///     <see cref="System.IO.Directory.SetCurrentDirectory(string)" />
         /// </summary>
-        /// 
-        IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path);
-        /// <summary>
-        /// Checks if a <see cref="FileSystemInfoMock"/> exists on the given <paramref name="path"/>.
-        /// </summary>
-        bool Exists([NotNullWhen(true)] string? path);
+        string CurrentDirectory { get; set; }
 
         /// <summary>
-        /// Deletes the <see cref="FileSystemInfoMock"/> on the given <paramref name="path"/>.
+        ///     Deletes the <see cref="FileSystemInfoMock" /> on the given <paramref name="path" />.
         /// </summary>
         bool Delete(string path);
 
         /// <summary>
-        /// The current directory used in <see cref="System.IO.Directory.GetCurrentDirectory()"/> and <see cref="System.IO.Directory.SetCurrentDirectory(string)"/>
+        ///     Checks if a <see cref="FileSystemInfoMock" /> exists on the given <paramref name="path" />.
         /// </summary>
-        string CurrentDirectory { get; set; }
+        bool Exists([NotNullWhen(true)] string? path);
+
+        /// <summary>
+        ///     Gets or adds a directory.
+        /// </summary>
+        IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path);
     }
 }
