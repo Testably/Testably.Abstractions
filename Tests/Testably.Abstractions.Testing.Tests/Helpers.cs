@@ -13,7 +13,7 @@ public static class Helpers
     /// <param name="time">The time on which the tolerance should be applied.</param>
     public static DateTime ApplySystemClockTolerance(this DateTime time)
     {
-        return time.AddMilliseconds(-15);
+        return time.AddMilliseconds(-25);
     }
 
     /// <summary>

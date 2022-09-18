@@ -18,7 +18,7 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
         }
 
         OriginalPath = path;
-        FullName = fileSystem.Path.GetFullPath(path).NormalizePath().TrimEnd(' ');
+        FullName = fileSystem.Path.GetFullPath(path).NormalizePath().TrimOnWindows();
         FileSystem = fileSystem;
         AdjustTimes(TimeAdjustments.All);
     }

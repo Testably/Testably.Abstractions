@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal.Models;
 
 namespace Testably.Abstractions.Testing.Internal;
@@ -63,6 +64,11 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
         }
 
         parents.Reverse();
+        TimeAdjustments timeAdjustments = TimeAdjustments.LastWriteTime;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            timeAdjustments |= TimeAdjustments.LastAccessTime;
+        }
         foreach (string? parentPath in parents)
         {
             string key = _fileSystem.Path.GetFullPath(parentPath)
@@ -71,8 +77,7 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
                 key,
                 _ => new DirectoryInfoMock(parentPath, _fileSystem),
                 (_, fileSystemInfo) =>
-                    fileSystemInfo.AdjustTimes(TimeAdjustments.LastAccessTime |
-                                               TimeAdjustments.LastWriteTime));
+                    fileSystemInfo.AdjustTimes(timeAdjustments));
         }
 
         return new DirectoryInfoMock(path, _fileSystem);

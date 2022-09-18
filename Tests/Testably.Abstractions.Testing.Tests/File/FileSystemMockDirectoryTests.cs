@@ -109,26 +109,33 @@ public abstract partial class FileSystemMockDirectoryTests
 
     [Theory]
     [InlineData("")]
-    [InlineData(" ")]
     [InlineData("/")]
     [InlineData("\\")]
     public void Create_TrailingDirectorySeparator_ShouldNotBeTrimmed(
         string suffix)
     {
-        string name = "foobar";
         string nameWithSuffix = "foobar" + suffix;
+        string expectedName = nameWithSuffix;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            expectedName = expectedName.TrimEnd(' ');
+        }
+        else if (suffix == "\\" || suffix == " ")
+        {
+            //TODO: This case is only supported on Windows
+            return;
+        }
 
         IFileSystem.IDirectoryInfo result =
             FileSystem.DirectoryInfo.New(nameWithSuffix);
         result.Create();
 
         result.ToString().Should().Be(nameWithSuffix);
-        result.Name.Should().Be(name);
-        result.FullName.Should().Be(Path.Combine(BasePath, nameWithSuffix
-           .TrimEnd(' ')
+        result.Name.Should().Be(expectedName.TrimEnd(FileSystem.Path.DirectorySeparatorChar, FileSystem.Path.AltDirectorySeparatorChar));
+        result.FullName.Should().Be(Path.Combine(BasePath, expectedName
            .Replace(FileSystem.Path.AltDirectorySeparatorChar,
                 FileSystem.Path.DirectorySeparatorChar)));
-        FileSystem.Directory.Exists(name).Should().BeTrue();
+        FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
     }
 
     [Fact]
@@ -222,26 +229,27 @@ public abstract partial class FileSystemMockDirectoryTests
     public void CreateDirectory_TrailingDirectorySeparator_ShouldNotBeTrimmed(
         string suffix)
     {
-        string name = "foobar";
         string nameWithSuffix = "foobar" + suffix;
-        var expectedName = name;
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        string expectedName = nameWithSuffix;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            expectedName = nameWithSuffix.Replace(
-                FileSystem.Path.AltDirectorySeparatorChar,
-                FileSystem.Path.DirectorySeparatorChar);
+            expectedName = expectedName.TrimEnd(' ');
+        }
+        else if (suffix == "\\")
+        {
+            //This case is only supported on Windows
+            return;
         }
 
         IFileSystem.IDirectoryInfo result =
             FileSystem.Directory.CreateDirectory(nameWithSuffix);
 
         result.ToString().Should().Be(nameWithSuffix);
-        result.Name.Should().Be(expectedName);
-        result.FullName.Should().Be(Path.Combine(BasePath, nameWithSuffix
-           .TrimEnd(' ')
+        result.Name.Should().Be(expectedName.TrimEnd(FileSystem.Path.DirectorySeparatorChar, FileSystem.Path.AltDirectorySeparatorChar));
+        result.FullName.Should().Be(Path.Combine(BasePath, expectedName
            .Replace(FileSystem.Path.AltDirectorySeparatorChar,
                 FileSystem.Path.DirectorySeparatorChar)));
-        FileSystem.Directory.Exists(name).Should().BeTrue();
+        FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
     }
 
     [Theory]
@@ -311,8 +319,17 @@ public abstract partial class FileSystemMockDirectoryTests
 
         result.CreationTime.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
         result.CreationTime.Should().BeBefore(sleepTime);
-        result.LastAccessTime.Should().BeOnOrAfter(sleepTime.ApplySystemClockTolerance());
-        result.LastAccessTime.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
+        // Last Access Time is only updated on Windows
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            result.LastAccessTime.Should().BeOnOrAfter(sleepTime.ApplySystemClockTolerance());
+            result.LastAccessTime.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
+        }
+        else
+        {
+            result.LastAccessTime.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
+            result.LastAccessTime.Should().BeBefore(sleepTime);
+        }
         result.LastWriteTime.Should().BeOnOrAfter(sleepTime.ApplySystemClockTolerance());
         result.LastWriteTime.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
     }
