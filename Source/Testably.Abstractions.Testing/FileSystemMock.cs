@@ -34,7 +34,7 @@ public sealed partial class FileSystemMock : IFileSystem
     /// </summary>
     public FileSystemMock()
     {
-        TimeSystem = new TimeSystem();
+        TimeSystem = new TimeSystemMock(TimeProvider.Now());
         Generate = new FileGenerator(this);
         InMemoryFileSystem = new InMemoryFileSystem(this);
         _callbackHandler = new FileSystemMockCallbackHandler();

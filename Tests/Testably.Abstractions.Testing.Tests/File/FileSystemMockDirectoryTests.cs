@@ -3,6 +3,7 @@ using FluentAssertions;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Xunit;
 
 namespace Testably.Abstractions.Testing.Tests.File;
@@ -10,11 +11,13 @@ namespace Testably.Abstractions.Testing.Tests.File;
 public abstract partial class FileSystemMockDirectoryTests
 {
     public IFileSystem FileSystem { get; }
+    public ITimeSystem TimeSystem { get; }
     public string BasePath { get; }
 
-    protected FileSystemMockDirectoryTests(IFileSystem fileSystem, string basePath)
+    protected FileSystemMockDirectoryTests(IFileSystem fileSystem, ITimeSystem timeSystem, string basePath)
     {
         FileSystem = fileSystem;
+        TimeSystem = timeSystem;
         BasePath = basePath;
     }
 
@@ -45,6 +48,90 @@ public abstract partial class FileSystemMockDirectoryTests
             exception.Should().BeAssignableTo<IOException>()
                .Which.Message.Should().Be(expectedMessage);
         }
+    }
+
+    [Theory, AutoData]
+    public void CreationTime_ShouldBeSet(string path)
+    {
+        var start = TimeSystem.DateTime.Now.ApplySystemClockTolerance();
+        var result = FileSystem.Directory.CreateDirectory(path);
+
+        result.CreationTime.Should().BeOnOrAfter(start);
+        result.CreationTime.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
+        result.CreationTime.Kind.Should().Be(DateTimeKind.Local);
+    }
+
+    [Theory, AutoData]
+    public void CreationTimeUtc_ShouldBeSet(string path)
+    {
+        var start = TimeSystem.DateTime.UtcNow.ApplySystemClockTolerance();
+        var result = FileSystem.Directory.CreateDirectory(path);
+
+        result.CreationTimeUtc.Should().BeOnOrAfter(start);
+        result.CreationTimeUtc.Should().BeOnOrBefore(TimeSystem.DateTime.UtcNow);
+        result.CreationTimeUtc.Kind.Should().Be(DateTimeKind.Utc);
+    }
+
+    [Theory, AutoData]
+    public void LastAccessTime_ShouldBeSet(string path)
+    {
+        var start = TimeSystem.DateTime.Now.ApplySystemClockTolerance();
+        var result = FileSystem.Directory.CreateDirectory(path);
+
+        result.LastAccessTime.Should().BeOnOrAfter(start);
+        result.LastAccessTime.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
+        result.LastAccessTime.Kind.Should().Be(DateTimeKind.Local);
+    }
+
+    [Theory, AutoData]
+    public void LastAccessTimeUtc_ShouldBeSet(string path)
+    {
+        var start = TimeSystem.DateTime.UtcNow.ApplySystemClockTolerance();
+        var result = FileSystem.Directory.CreateDirectory(path);
+
+        result.LastAccessTimeUtc.Should().BeOnOrAfter(start);
+        result.LastAccessTimeUtc.Should().BeOnOrBefore(TimeSystem.DateTime.UtcNow);
+        result.LastAccessTimeUtc.Kind.Should().Be(DateTimeKind.Utc);
+    }
+
+    [Theory, AutoData]
+    public void LastAccessTime_CreateSubDirectory_ShouldUpdateLastAccessAndLastWriteTime(
+        string path, string subPath)
+    {
+        var start = TimeSystem.DateTime.Now.ApplySystemClockTolerance();
+        var result = FileSystem.Directory.CreateDirectory(path);
+        TimeSystem.Thread.Sleep(100);
+        var sleepTime = TimeSystem.DateTime.Now.ApplySystemClockTolerance();
+        FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(path, subPath));
+
+        result.CreationTime.Should().BeOnOrAfter(start);
+        result.CreationTime.Should().BeBefore(sleepTime);
+        result.LastAccessTime.Should().BeOnOrAfter(sleepTime);
+        result.LastAccessTime.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
+        result.LastWriteTime.Should().BeOnOrAfter(sleepTime);
+        result.LastWriteTime.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
+    }
+
+    [Theory, AutoData]
+    public void LastWriteTime_ShouldBeSet(string path)
+    {
+        var start = TimeSystem.DateTime.Now.ApplySystemClockTolerance();
+        var result = FileSystem.Directory.CreateDirectory(path);
+
+        result.LastWriteTime.Should().BeOnOrAfter(start);
+        result.LastWriteTime.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
+        result.LastWriteTime.Kind.Should().Be(DateTimeKind.Local);
+    }
+
+    [Theory, AutoData]
+    public void LastWriteTimeUtc_ShouldBeSet(string path)
+    {
+        var start = TimeSystem.DateTime.UtcNow.ApplySystemClockTolerance();
+        var result = FileSystem.Directory.CreateDirectory(path);
+
+        result.LastWriteTimeUtc.Should().BeOnOrAfter(start);
+        result.LastWriteTimeUtc.Should().BeOnOrBefore(TimeSystem.DateTime.UtcNow);
+        result.LastWriteTimeUtc.Kind.Should().Be(DateTimeKind.Utc);
     }
 
     [Fact]
