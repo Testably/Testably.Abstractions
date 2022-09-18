@@ -7,10 +7,17 @@
 /// </summary>
 public sealed partial class FileSystem : IFileSystem
 {
+    /// <inheritdoc cref="IFileSystem.IFileInfo" />
+    public IFileSystem.IFileInfoFactory FileInfo => new FileInfoFactory(this);
+
     #region IFileSystem Members
 
     /// <inheritdoc cref="IFileSystem.Directory" />
     public IFileSystem.IDirectory Directory => new DirectoryFileSystem(this);
+
+    /// <inheritdoc cref="IFileSystem.DirectoryInfo" />
+    public IFileSystem.IDirectoryInfoFactory DirectoryInfo =>
+        new DirectoryInfoFactory(this);
 
     /// <inheritdoc cref="IFileSystem.File" />
     public IFileSystem.IFile File => new FileFileSystem(this);

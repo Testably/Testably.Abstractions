@@ -55,7 +55,7 @@ public partial interface IFileSystem
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="FileSystemInfo.ResolveLinkTarget(bool)" />
-        FileSystemInfo? ResolveLinkTarget(bool returnFinalTarget);
+        IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget);
 #endif
     }
 }

@@ -56,9 +56,9 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
         string? parent = FileSystem.Path.GetDirectoryName(
             path.TrimEnd(FileSystem.Path.DirectorySeparatorChar,
                 FileSystem.Path.AltDirectorySeparatorChar));
-        while (parent != null)
+        while (!string.IsNullOrEmpty(parent))
         {
-            parents.Add(parent);
+            parents.Add(parent!);
             parent = FileSystem.Path.GetDirectoryName(parent);
         }
 

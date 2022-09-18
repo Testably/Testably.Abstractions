@@ -11,6 +11,11 @@ public partial interface IFileSystem
     IDirectory Directory { get; }
 
     /// <summary>
+    ///     Factory for abstracting creation of <see cref="System.IO.DirectoryInfo" />.
+    /// </summary>
+    IDirectoryInfoFactory DirectoryInfo { get; }
+
+    /// <summary>
     ///     Abstractions for <see cref="System.IO.File" />.
     /// </summary>
     IFile File { get; }

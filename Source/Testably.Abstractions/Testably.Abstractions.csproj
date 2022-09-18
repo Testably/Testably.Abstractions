@@ -27,6 +27,9 @@
     <Compile Update="IFileSystem - Copy.File.cs">
       <DependentUpon>IFileSystem.cs</DependentUpon>
     </Compile>
+    <Compile Update="IFileSystem - Copy.IDirectoryInfo.cs">
+      <DependentUpon>IFileSystem.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

@@ -7,11 +7,12 @@ namespace Testably.Abstractions.Models;
 internal class FileSystemInfoWrapper : IFileSystem.IFileSystemInfo
 {
     private readonly FileSystemInfo _instance;
+    private readonly IFileSystem _fileSystem;
 
     internal FileSystemInfoWrapper(FileSystemInfo instance, IFileSystem fileSystem)
     {
         _instance = instance;
-        _ = fileSystem;
+        _fileSystem = fileSystem;
     }
 
     #region IFileSystemInfo Members
@@ -87,8 +88,9 @@ internal class FileSystemInfoWrapper : IFileSystem.IFileSystemInfo
 
 #if FEATURE_FILESYSTEM_LINK
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.ResolveLinkTarget(bool)" />
-    public FileSystemInfo? ResolveLinkTarget(bool returnFinalTarget)
-        => _instance.ResolveLinkTarget(returnFinalTarget);
+    public IFileSystem.IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget)
+        => FromFileSystemInfo(_instance.ResolveLinkTarget(returnFinalTarget),
+            _fileSystem);
 #endif
 
     #endregion

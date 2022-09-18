@@ -16,11 +16,31 @@ public class FileSystemTests
     }
 
     [Fact]
+    public void DirectoryInfo_ShouldSetExtensionPoint()
+    {
+        FileSystem fileSystem = new();
+
+        IFileSystem result = fileSystem.DirectoryInfo.FileSystem;
+
+        result.Should().Be(fileSystem);
+    }
+
+    [Fact]
     public void File_ShouldSetExtensionPoint()
     {
         FileSystem fileSystem = new();
 
         IFileSystem result = fileSystem.File.FileSystem;
+
+        result.Should().Be(fileSystem);
+    }
+
+    [Fact]
+    public void FileInfo_ShouldSetExtensionPoint()
+    {
+        FileSystem fileSystem = new();
+
+        IFileSystem result = fileSystem.FileInfo.FileSystem;
 
         result.Should().Be(fileSystem);
     }

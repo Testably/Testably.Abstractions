@@ -1,7 +1,4 @@
 ﻿using System;
-#if !NETSTANDARD2_0
-using System.IO;
-#endif
 
 namespace Testably.Abstractions.Testing.Internal.Models;
 
@@ -15,6 +12,16 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
 
     internal FileSystemInfoMock(string path, FileSystemMock fileSystem)
     {
+        if (path == null)
+        {
+            throw new ArgumentNullException(nameof(path));
+        }
+
+        if (path == string.Empty)
+        {
+            throw new ArgumentException("The path is empty.", nameof(path));
+        }
+
         OriginalPath = path;
         FullName = fileSystem.Path.GetFullPath(path).NormalizePath().TrimEnd(' ');
         FileSystem = fileSystem;
@@ -95,7 +102,7 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
 
 #if FEATURE_FILESYSTEM_LINK
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.ResolveLinkTarget(bool)" />
-    public FileSystemInfo? ResolveLinkTarget(bool returnFinalTarget)
+    public IFileSystem.IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget)
         => throw new NotImplementedException();
 #endif
 
@@ -104,7 +111,7 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
 #if NETSTANDARD2_0
     /// <inheritdoc cref="object.ToString()" />
 #else
-    /// <inheritdoc cref="FileSystemInfo.ToString()" />
+    /// <inheritdoc cref="System.IO.FileSystemInfo.ToString()" />
 #endif
     public override string ToString() => OriginalPath;
 

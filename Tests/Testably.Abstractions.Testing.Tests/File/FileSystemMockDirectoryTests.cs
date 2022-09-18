@@ -22,6 +22,115 @@ public abstract partial class FileSystemMockDirectoryTests
     }
 
     [Fact]
+    public void Create_Empty_ShouldThrowArgumentException()
+    {
+        Exception? exception =
+            Record.Exception(() => FileSystem.DirectoryInfo.New(string.Empty));
+
+        exception.Should().BeAssignableTo<ArgumentException>()
+           .Which.ParamName.Should().Be("path");
+        exception.Should().BeAssignableTo<ArgumentException>()
+           .Which.Message.Should()
+           .Be("The path is empty. (Parameter 'path')");
+    }
+
+    [Fact]
+    public void Create_IllegalCharacters_ShouldThrowArgumentException()
+    {
+        foreach (char c in FileSystem.Path.GetInvalidPathChars().Where(c => c != '\0'))
+        {
+            string path = "foo" + c + "bar";
+            string expectedMessage =
+                $"The filename, directory name, or volume label syntax is incorrect. : '{Path.Combine(BasePath, path)}'";
+            Exception? exception =
+                Record.Exception(() => FileSystem.DirectoryInfo.New(path).Create());
+
+            exception.Should().BeAssignableTo<IOException>()
+               .Which.Message.Should().Be(expectedMessage);
+        }
+    }
+
+    [Fact]
+    public void Create_Null_ShouldThrowArgumentNullException()
+    {
+        Exception? exception =
+            Record.Exception(() => FileSystem.DirectoryInfo.New(null!));
+
+        exception.Should().BeAssignableTo<ArgumentNullException>().Which.ParamName
+           .Should().Be("path");
+    }
+
+    [Fact]
+    public void Create_NullCharacter_ShouldThrowArgumentException()
+    {
+        string path = "foo\0bar";
+        string expectedMessage =
+            "Illegal characters in path. (Parameter 'path')";
+        Exception? exception =
+            Record.Exception(() => FileSystem.DirectoryInfo.New(path).Create());
+
+        exception.Should().BeAssignableTo<ArgumentException>()
+           .Which.Message.Should().Be(expectedMessage);
+    }
+
+    [Fact]
+    public void Create_ShouldCreateInBasePath()
+    {
+        IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.New("foo");
+        result.Create();
+        bool exists = FileSystem.Directory.Exists("foo");
+
+        exists.Should().BeTrue();
+        result.FullName.Should().StartWith(BasePath);
+    }
+
+    [Theory]
+    [AutoData]
+    public void Create_ShouldCreateParentDirectories(
+        string directoryLevel1, string directoryLevel2, string directoryLevel3)
+    {
+        string path =
+            FileSystem.Path.Combine(directoryLevel1, directoryLevel2, directoryLevel3);
+
+        IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
+        result.Create();
+
+        result.Name.Should().Be(directoryLevel3);
+        result.Exists.Should().BeTrue();
+        result.ToString().Should().Be(path);
+        result.Parent!.Name.Should().Be(directoryLevel2);
+        result.Parent.Exists.Should().BeTrue();
+        result.Parent.ToString().Should().Be(result.Parent.FullName);
+        result.Parent.Parent!.Name.Should().Be(directoryLevel1);
+        result.Parent.Parent.Exists.Should().BeTrue();
+        result.Parent.Parent.ToString().Should().Be(result.Parent.Parent.FullName);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("/")]
+    [InlineData("\\")]
+    public void Create_TrailingDirectorySeparator_ShouldNotBeTrimmed(
+        string suffix)
+    {
+        string name = "foobar";
+        string nameWithSuffix = "foobar" + suffix;
+
+        IFileSystem.IDirectoryInfo result =
+            FileSystem.DirectoryInfo.New(nameWithSuffix);
+        result.Create();
+
+        result.ToString().Should().Be(nameWithSuffix);
+        result.Name.Should().Be(name);
+        result.FullName.Should().Be(Path.Combine(BasePath, nameWithSuffix
+           .TrimEnd(' ')
+           .Replace(FileSystem.Path.AltDirectorySeparatorChar,
+                FileSystem.Path.DirectorySeparatorChar)));
+        FileSystem.Directory.Exists(name).Should().BeTrue();
+    }
+
+    [Fact]
     public void CreateDirectory_Empty_ShouldThrowArgumentException()
     {
         Exception? exception =
@@ -246,5 +355,16 @@ public abstract partial class FileSystemMockDirectoryTests
         result.LastWriteTimeUtc.Should().BeOnOrAfter(start);
         result.LastWriteTimeUtc.Should().BeOnOrBefore(TimeSystem.DateTime.UtcNow);
         result.LastWriteTimeUtc.Kind.Should().Be(DateTimeKind.Utc);
+    }
+
+    [Theory]
+    [AutoData]
+    public void Root_ShouldExist(string path)
+    {
+        string expectedRoot = "".PrefixRoot();
+        IFileSystem.IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
+
+        result.Root.Exists.Should().BeTrue();
+        result.Root.FullName.Should().Be(expectedRoot);
     }
 }

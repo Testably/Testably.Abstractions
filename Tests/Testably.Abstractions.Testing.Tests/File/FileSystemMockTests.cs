@@ -16,6 +16,16 @@ public class FileSystemMockTests
     }
 
     [Fact]
+    public void DirectoryInfo_ShouldSetExtensionPoint()
+    {
+        FileSystemMock fileSystem = new();
+
+        IFileSystem result = fileSystem.DirectoryInfo.FileSystem;
+
+        result.Should().Be(fileSystem);
+    }
+
+    [Fact]
     public void File_ShouldSetExtensionPoint()
     {
         FileSystemMock fileSystem = new();

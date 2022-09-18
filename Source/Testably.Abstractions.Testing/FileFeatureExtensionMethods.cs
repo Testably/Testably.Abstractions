@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+#if !FEATURE_PATH_ADVANCED
 using System.Runtime.InteropServices;
+#endif
 
 namespace Testably.Abstractions.Testing;
 

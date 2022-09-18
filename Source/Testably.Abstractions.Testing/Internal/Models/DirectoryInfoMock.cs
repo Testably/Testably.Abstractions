@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Testably.Abstractions.Testing.Internal.Models;
@@ -9,8 +10,8 @@ namespace Testably.Abstractions.Testing.Internal.Models;
 /// </summary>
 internal class DirectoryInfoMock : FileSystemInfoMock, IFileSystem.IDirectoryInfo
 {
-    internal DirectoryInfoMock(string path, FileSystemMock fileSystem) : base(path,
-        fileSystem)
+    internal DirectoryInfoMock(string path, FileSystemMock fileSystem)
+        : base(path, fileSystem)
     {
     }
 
@@ -21,10 +22,10 @@ internal class DirectoryInfoMock : FileSystemInfoMock, IFileSystem.IDirectoryInf
         Create(FileSystem.Path.GetDirectoryName(FullName), FileSystem);
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Root" />
-    public IFileSystem.IDirectoryInfo Root => throw new NotImplementedException();
+    public IFileSystem.IDirectoryInfo Root => Create("".PrefixRoot(), FileSystem);
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Create()" />
-    public void Create() => throw new NotImplementedException();
+    public void Create() => FileSystem.Directory.CreateDirectory(FullName);
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.CreateSubdirectory(string)" />
     public IFileSystem.IDirectoryInfo CreateSubdirectory(string path) =>
@@ -161,6 +162,7 @@ internal class DirectoryInfoMock : FileSystemInfoMock, IFileSystem.IDirectoryInf
 
     #endregion
 
+    [return: NotNullIfNotNull("path")]
     internal static DirectoryInfoMock? Create(string? path, FileSystemMock fileSystem)
     {
         if (path == null)

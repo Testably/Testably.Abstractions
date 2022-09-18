@@ -3,9 +3,11 @@ using FluentAssertions;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Xunit;
+#if FEATURE_PATH_RELATIVE
+using System.Runtime.InteropServices;
+#endif
 
 namespace Testably.Abstractions.Testing.Tests.File;
 
@@ -497,7 +499,6 @@ public abstract partial class FileSystemMockPathTests
         result.Should().Be(Path.VolumeSeparatorChar);
     }
 #if FEATURE_SPAN
-
     [Theory]
     [AutoData]
     public void GetDirectoryName_Span_ShouldReturnDirectory(
@@ -589,7 +590,6 @@ public abstract partial class FileSystemMockPathTests
     }
 #endif
 #if FEATURE_PATH_RELATIVE
-
     [Theory]
     [AutoData]
     public void GetRelativePath_CommonParentDirectory_ShouldReturnRelativePath(
