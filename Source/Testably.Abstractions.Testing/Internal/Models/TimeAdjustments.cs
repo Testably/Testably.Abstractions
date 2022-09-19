@@ -32,5 +32,5 @@ internal enum TimeAdjustments
     /// <summary>
     ///     Adjusts all times on the <see cref="FileSystemInfoMock" />
     /// </summary>
-    All = ~0
+    All = CreationTime | LastAccessTime | LastWriteTime,
 }

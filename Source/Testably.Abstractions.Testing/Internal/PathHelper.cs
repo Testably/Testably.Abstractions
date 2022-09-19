@@ -59,7 +59,7 @@ internal static class PathHelper
                 "Path cannot be the empty string or all whitespace.", nameof(path));
         }
 
-        if (path.IndexOf('\0') > 0)
+        if (path.IndexOf('\0') >= 0)
         {
             throw new ArgumentException("Illegal characters in path.", nameof(path));
         }
