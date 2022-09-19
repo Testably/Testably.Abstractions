@@ -197,14 +197,7 @@ public abstract partial class FileSystemMockDirectoryTests
         bool exists = FileSystem.Directory.Exists("foo");
 
         exists.Should().BeTrue();
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            result.FullName.Should().StartWith("/private" + BasePath);
-        }
-        else
-        {
-            result.FullName.Should().StartWith(BasePath);
-        }
+        result.FullName.Should().StartWith(BasePath);
     }
 
     [Theory]
