@@ -2,14 +2,30 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="File\FileSystemTests.*.cs">
-      <DependentUpon>File\FileSystemTests.cs</DependentUpon>
+    <Compile Update="FileSystemTests.*.cs">
+      <DependentUpon>FileSystemTests.cs</DependentUpon>
     </Compile>
-    <Compile Update="Time\TimeSystemTests.*.cs">
-      <DependentUpon>Time\TimeSystemTests.cs</DependentUpon>
+    <Compile Update="FileSystemDirectoryTests.*.cs">
+      <DependentUpon>FileSystemDirectoryTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="FileSystemPathTests.*.cs">
+      <DependentUpon>FileSystemPathTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="TimeSystemTests.*.cs">
+      <DependentUpon>TimeSystemTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="TimeSystemDateTimeTests.*.cs">
+      <DependentUpon>TimeSystemDateTimeTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="TimeSystemTaskTests.*.cs">
+      <DependentUpon>TimeSystemTaskTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="TimeSystemThreadTests.*.cs">
+      <DependentUpon>TimeSystemThreadTests.cs</DependentUpon>
     </Compile>
   </ItemGroup>
 

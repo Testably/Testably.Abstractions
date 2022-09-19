@@ -2,9 +2,11 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using Testably.Abstractions.Testing;
+using Testably.Abstractions.Tests.TestHelpers;
 using Xunit;
 
-namespace Testably.Abstractions.Testing.Tests.Time;
+namespace Testably.Abstractions.Tests.Testing;
 
 public class TimeProviderTests
 {
@@ -38,7 +40,7 @@ public class TimeProviderTests
     [Fact]
     public void Set_ShouldReturnFixedDateTime()
     {
-        DateTime now = Helpers.GetRandomTime();
+        DateTime now = TimeTestHelper.GetRandomTime();
         TimeSystemMock.ITimeProvider timeProvider = TimeProvider.Set(now);
 
         DateTime result1 = timeProvider.Read();

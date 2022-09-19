@@ -1,20 +1,21 @@
 using System;
 using System.IO;
 using System.Threading;
+using Testably.Abstractions.Tests.TestHelpers;
 using Xunit.Abstractions;
 
-namespace Testably.Abstractions.Testing.Tests.File;
+namespace Testably.Abstractions.Tests;
 
-public abstract partial class FileSystemMockDirectoryTests
+public abstract partial class FileSystemDirectoryTests
 {
     // ReSharper disable once UnusedMember.Global
-    public sealed class RealFileSystem : FileSystemMockDirectoryTests, IDisposable
+    public sealed class RealFileSystem : FileSystemDirectoryTests, IDisposable
     {
         private readonly ITestOutputHelper _testOutputHelper;
 
         public RealFileSystem(ITestOutputHelper testOutputHelper)
             : base(new FileSystem(), new TimeSystem(),
-                Helpers.CreateEmptyTemporaryDirectory())
+                FileTestHelper.CreateEmptyTemporaryDirectory())
         {
             _testOutputHelper = testOutputHelper;
             _testOutputHelper.WriteLine($"Use '{BasePath}' as current directory.");
@@ -37,7 +38,7 @@ public abstract partial class FileSystemMockDirectoryTests
                 {
                     try
                     {
-                        Helpers.ForceDeleteDirectory(BasePath);
+                        FileTestHelper.ForceDeleteDirectory(BasePath);
                     }
                     catch (Exception)
                     {

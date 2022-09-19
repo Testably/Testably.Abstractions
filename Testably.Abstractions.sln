@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.Tests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.Testing", "Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj", "{2C22AEA2-80F2-4F43-907D-97CEA51EA89F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.Testing.Tests", "Tests\Testably.Abstractions.Testing.Tests\Testably.Abstractions.Testing.Tests.csproj", "{7EB03191-2C23-4187-8331-97CBCC954318}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.Extensions", "Source\Testably.Abstractions.Extensions\Testably.Abstractions.Extensions.csproj", "{70A61227-E004-4818-8061-8ED61D35984D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.Extensions.Tests", "Tests\Testably.Abstractions.Extensions.Tests\Testably.Abstractions.Extensions.Tests.csproj", "{5356838D-3796-45B6-8227-0F023093D9A9}"
@@ -65,10 +63,6 @@ Global
 		{2C22AEA2-80F2-4F43-907D-97CEA51EA89F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C22AEA2-80F2-4F43-907D-97CEA51EA89F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C22AEA2-80F2-4F43-907D-97CEA51EA89F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7EB03191-2C23-4187-8331-97CBCC954318}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7EB03191-2C23-4187-8331-97CBCC954318}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7EB03191-2C23-4187-8331-97CBCC954318}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7EB03191-2C23-4187-8331-97CBCC954318}.Release|Any CPU.Build.0 = Release|Any CPU
 		{70A61227-E004-4818-8061-8ED61D35984D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{70A61227-E004-4818-8061-8ED61D35984D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70A61227-E004-4818-8061-8ED61D35984D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -87,7 +81,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{DC4C2936-8CEA-4382-BD87-10BDB3FE3D2F} = {61F335A6-9CE0-4040-A34F-E70B1A55077D}
-		{7EB03191-2C23-4187-8331-97CBCC954318} = {61F335A6-9CE0-4040-A34F-E70B1A55077D}
 		{5356838D-3796-45B6-8227-0F023093D9A9} = {61F335A6-9CE0-4040-A34F-E70B1A55077D}
 		{46A32BAE-9421-458C-96E5-D5019BEE61F2} = {D9F78F4F-F04D-4FEA-83C4-BDB6430C74D7}
 		{7545AC28-1399-4AF5-9C63-0507F78F017A} = {94F99274-3518-45D0-83A4-6F370D6FE74B}

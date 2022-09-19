@@ -3,19 +3,18 @@ using FluentAssertions;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
-using System.Threading.Tasks;
-using Xunit;
-#if FEATURE_PATH_RELATIVE
 using System.Runtime.InteropServices;
-#endif
+using System.Threading.Tasks;
+using Testably.Abstractions.Testing;
+using Xunit;
 
-namespace Testably.Abstractions.Testing.Tests.File;
+namespace Testably.Abstractions.Tests;
 
-public abstract partial class FileSystemMockPathTests
+public abstract partial class FileSystemPathTests
 {
     public IFileSystem FileSystem { get; }
 
-    protected FileSystemMockPathTests(IFileSystem fileSystem)
+    protected FileSystemPathTests(IFileSystem fileSystem)
     {
         FileSystem = fileSystem;
     }

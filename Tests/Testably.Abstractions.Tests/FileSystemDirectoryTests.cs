@@ -4,17 +4,19 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Testably.Abstractions.Testing;
+using Testably.Abstractions.Tests.TestHelpers;
 using Xunit;
 
-namespace Testably.Abstractions.Testing.Tests.File;
+namespace Testably.Abstractions.Tests;
 
-public abstract partial class FileSystemMockDirectoryTests
+public abstract partial class FileSystemDirectoryTests
 {
     public IFileSystem FileSystem { get; }
     public ITimeSystem TimeSystem { get; }
     public string BasePath { get; }
 
-    protected FileSystemMockDirectoryTests(IFileSystem fileSystem, ITimeSystem timeSystem,
+    protected FileSystemDirectoryTests(IFileSystem fileSystem, ITimeSystem timeSystem,
                                            string basePath)
     {
         FileSystem = fileSystem;

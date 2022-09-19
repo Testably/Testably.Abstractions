@@ -2,9 +2,10 @@ using AutoFixture.Xunit2;
 using FluentAssertions;
 using System.IO;
 using System.Runtime.InteropServices;
+using Testably.Abstractions.Testing;
 using Xunit;
 
-namespace Testably.Abstractions.Testing.Tests.File;
+namespace Testably.Abstractions.Tests.Testing;
 
 public class FilePlatformIndependenceExtensionsTests
 {

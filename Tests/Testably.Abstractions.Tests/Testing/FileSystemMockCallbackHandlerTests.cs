@@ -1,9 +1,10 @@
 ﻿using FluentAssertions;
+using Testably.Abstractions.Testing;
 using Xunit;
 
-namespace Testably.Abstractions.Testing.Tests.File;
+namespace Testably.Abstractions.Tests.Testing;
 
-public class FileSystemMockCallbackHandler
+public class FileSystemMockCallbackHandlerTests
 {
     [Fact]
     public void DummyTest_AsCallbacksAreNotYetImplemented()
