@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Testing.Tests;
 
@@ -31,6 +32,11 @@ public static class Helpers
         } while (Directory.Exists(tmpDirectory));
 
         Directory.CreateDirectory(tmpDirectory);
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            return "/private" + tmpDirectory;
+        }
+
         return tmpDirectory;
     }
 

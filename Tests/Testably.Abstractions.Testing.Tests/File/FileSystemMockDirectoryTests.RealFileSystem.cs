@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading;
 using Xunit.Abstractions;
 
@@ -19,14 +18,7 @@ public abstract partial class FileSystemMockDirectoryTests
         {
             _testOutputHelper = testOutputHelper;
             _testOutputHelper.WriteLine($"Use '{BasePath}' as current directory.");
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                Directory.SetCurrentDirectory("/private" + BasePath);
-            }
-            else
-            {
-                Directory.SetCurrentDirectory(BasePath);
-            }
+            Directory.SetCurrentDirectory(BasePath);
         }
 
         #region IDisposable Members
