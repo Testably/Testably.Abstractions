@@ -69,6 +69,7 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
         {
             timeAdjustments |= TimeAdjustments.LastAccessTime;
         }
+
         foreach (string? parentPath in parents)
         {
             string key = _fileSystem.Path.GetFullPath(parentPath)

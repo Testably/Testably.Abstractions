@@ -146,7 +146,8 @@ public abstract class PathSystem : IFileSystem.IPath
 
     /// <inheritdoc cref="Path.GetTempFileName()" />
 #if !NETSTANDARD2_0
-    [Obsolete("Insecure temporary file creation methods should not be used. Use `Path.Combine(Path.GetTempPath(), Path.GetRandomFileName())` instead.")]
+    [Obsolete(
+        "Insecure temporary file creation methods should not be used. Use `Path.Combine(Path.GetTempPath(), Path.GetRandomFileName())` instead.")]
 #endif
     public string GetTempFileName() => Path.GetTempFileName();
 

@@ -16,19 +16,6 @@ internal class FileInfoMock : FileSystemInfoMock, IFileSystem.IFileInfo
 
     #region IFileInfo Members
 
-    #endregion
-
-    [return: NotNullIfNotNull("path")]
-    internal static FileInfoMock? New(string? path, FileSystemMock fileSystem)
-    {
-        if (path == null)
-        {
-            return null;
-        }
-
-        return new FileInfoMock(path, fileSystem);
-    }
-
     /// <inheritdoc />
     public long Length { get; }
 
@@ -45,10 +32,12 @@ internal class FileInfoMock : FileSystemInfoMock, IFileSystem.IFileInfo
     public StreamWriter AppendText() => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public IFileSystem.IFileInfo CopyTo(string destFileName) => throw new NotImplementedException();
+    public IFileSystem.IFileInfo CopyTo(string destFileName) =>
+        throw new NotImplementedException();
 
     /// <inheritdoc />
-    public IFileSystem.IFileInfo CopyTo(string destFileName, bool overwrite) => throw new NotImplementedException();
+    public IFileSystem.IFileInfo CopyTo(string destFileName, bool overwrite) =>
+        throw new NotImplementedException();
 
     /// <inheritdoc />
     public FileStream Create() => throw new NotImplementedException();
@@ -66,16 +55,19 @@ internal class FileInfoMock : FileSystemInfoMock, IFileSystem.IFileInfo
     public void MoveTo(string destFileName) => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public void MoveTo(string destFileName, bool overwrite) => throw new NotImplementedException();
+    public void MoveTo(string destFileName, bool overwrite) =>
+        throw new NotImplementedException();
 
     /// <inheritdoc />
     public FileStream Open(FileMode mode) => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public FileStream Open(FileMode mode, FileAccess access) => throw new NotImplementedException();
+    public FileStream Open(FileMode mode, FileAccess access) =>
+        throw new NotImplementedException();
 
     /// <inheritdoc />
-    public FileStream Open(FileMode mode, FileAccess access, FileShare share) => throw new NotImplementedException();
+    public FileStream Open(FileMode mode, FileAccess access, FileShare share) =>
+        throw new NotImplementedException();
 
     /// <inheritdoc />
     public FileStream OpenRead() => throw new NotImplementedException();
@@ -87,10 +79,26 @@ internal class FileInfoMock : FileSystemInfoMock, IFileSystem.IFileInfo
     public FileStream OpenWrite() => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public IFileSystem.IFileInfo Replace(string destinationFileName, string? destinationBackupFileName) => throw new NotImplementedException();
+    public IFileSystem.IFileInfo Replace(string destinationFileName,
+                                         string? destinationBackupFileName) =>
+        throw new NotImplementedException();
 
     /// <inheritdoc />
-    public IFileSystem.IFileInfo Replace(string destinationFileName, string? destinationBackupFileName,
+    public IFileSystem.IFileInfo Replace(string destinationFileName,
+                                         string? destinationBackupFileName,
                                          bool ignoreMetadataErrors) =>
         throw new NotImplementedException();
+
+    #endregion
+
+    [return: NotNullIfNotNull("path")]
+    internal static FileInfoMock? New(string? path, FileSystemMock fileSystem)
+    {
+        if (path == null)
+        {
+            return null;
+        }
+
+        return new FileInfoMock(path, fileSystem);
+    }
 }

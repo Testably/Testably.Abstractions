@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using Testably.Abstractions.Testing.Internal.Models;
 
 namespace Testably.Abstractions.Testing.Internal;
 
@@ -35,16 +34,6 @@ internal static class PathHelper
            .TrimEndingDirectorySeparator(path.NormalizePath())
            .TrimOnWindows();
 
-    internal static string TrimOnWindows(this string path)
-    {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            return path.TrimEnd(' ');
-        }
-
-        return path;
-    }
-
     internal static void ThrowCommonExceptionsIfPathIsInvalid(
         [NotNull] this string? path, IFileSystem fileSystem)
     {
@@ -63,5 +52,15 @@ internal static class PathHelper
         {
             throw new ArgumentException("Illegal characters in path.", nameof(path));
         }
+    }
+
+    internal static string TrimOnWindows(this string path)
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            return path.TrimEnd(' ');
+        }
+
+        return path;
     }
 }

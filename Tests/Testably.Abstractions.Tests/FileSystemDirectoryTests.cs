@@ -17,7 +17,7 @@ public abstract partial class FileSystemDirectoryTests
     public string BasePath { get; }
 
     protected FileSystemDirectoryTests(IFileSystem fileSystem, ITimeSystem timeSystem,
-                                           string basePath)
+                                       string basePath)
     {
         FileSystem = fileSystem;
         TimeSystem = timeSystem;
@@ -133,7 +133,9 @@ public abstract partial class FileSystemDirectoryTests
         result.Create();
 
         result.ToString().Should().Be(nameWithSuffix);
-        result.Name.Should().Be(expectedName.TrimEnd(FileSystem.Path.DirectorySeparatorChar, FileSystem.Path.AltDirectorySeparatorChar));
+        result.Name.Should().Be(expectedName.TrimEnd(
+            FileSystem.Path.DirectorySeparatorChar,
+            FileSystem.Path.AltDirectorySeparatorChar));
         result.FullName.Should().Be(Path.Combine(BasePath, expectedName
            .Replace(FileSystem.Path.AltDirectorySeparatorChar,
                 FileSystem.Path.DirectorySeparatorChar)));
@@ -247,7 +249,9 @@ public abstract partial class FileSystemDirectoryTests
             FileSystem.Directory.CreateDirectory(nameWithSuffix);
 
         result.ToString().Should().Be(nameWithSuffix);
-        result.Name.Should().Be(expectedName.TrimEnd(FileSystem.Path.DirectorySeparatorChar, FileSystem.Path.AltDirectorySeparatorChar));
+        result.Name.Should().Be(expectedName.TrimEnd(
+            FileSystem.Path.DirectorySeparatorChar,
+            FileSystem.Path.AltDirectorySeparatorChar));
         result.FullName.Should().Be(Path.Combine(BasePath, expectedName
            .Replace(FileSystem.Path.AltDirectorySeparatorChar,
                 FileSystem.Path.DirectorySeparatorChar)));
@@ -324,7 +328,8 @@ public abstract partial class FileSystemDirectoryTests
         // Last Access Time is only updated on Windows
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            result.LastAccessTime.Should().BeOnOrAfter(sleepTime.ApplySystemClockTolerance());
+            result.LastAccessTime.Should()
+               .BeOnOrAfter(sleepTime.ApplySystemClockTolerance());
             result.LastAccessTime.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
         }
         else
@@ -332,6 +337,7 @@ public abstract partial class FileSystemDirectoryTests
             result.LastAccessTime.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
             result.LastAccessTime.Should().BeBefore(sleepTime);
         }
+
         result.LastWriteTime.Should().BeOnOrAfter(sleepTime.ApplySystemClockTolerance());
         result.LastWriteTime.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
     }
