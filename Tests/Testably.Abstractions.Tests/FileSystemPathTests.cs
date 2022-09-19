@@ -5,13 +5,14 @@ using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests;
 
-public abstract partial class FileSystemPathTests
+public abstract class FileSystemPathTests<TFileSystem>
+    where TFileSystem : IFileSystem
 {
     #region Test Setup
 
-    public IFileSystem FileSystem { get; }
+    public TFileSystem FileSystem { get; }
 
-    protected FileSystemPathTests(IFileSystem fileSystem)
+    protected FileSystemPathTests(TFileSystem fileSystem)
     {
         FileSystem = fileSystem;
     }

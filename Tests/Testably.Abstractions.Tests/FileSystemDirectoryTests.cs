@@ -4,16 +4,19 @@ using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Tests;
 
-public abstract partial class FileSystemDirectoryTests
+public abstract class FileSystemDirectoryTests<TFileSystem>
+    where TFileSystem : IFileSystem
 {
     #region Test Setup
 
-    public IFileSystem FileSystem { get; }
+    public TFileSystem FileSystem { get; }
     public ITimeSystem TimeSystem { get; }
     public string BasePath { get; }
 
-    protected FileSystemDirectoryTests(IFileSystem fileSystem, ITimeSystem timeSystem,
-                                       string basePath)
+    protected FileSystemDirectoryTests(
+        TFileSystem fileSystem,
+        ITimeSystem timeSystem,
+        string basePath)
     {
         FileSystem = fileSystem;
         TimeSystem = timeSystem;
