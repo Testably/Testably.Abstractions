@@ -12,12 +12,16 @@ namespace Testably.Abstractions.Tests;
 
 public abstract partial class FileSystemPathTests
 {
+    #region Test Setup
+
     public IFileSystem FileSystem { get; }
 
     protected FileSystemPathTests(IFileSystem fileSystem)
     {
         FileSystem = fileSystem;
     }
+
+    #endregion
 
     [Fact]
     public void AltDirectorySeparatorChar_ShouldReturnDefaultValue()

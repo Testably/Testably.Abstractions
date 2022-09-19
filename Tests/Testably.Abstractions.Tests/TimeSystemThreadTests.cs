@@ -7,12 +7,16 @@ namespace Testably.Abstractions.Tests;
 public abstract class TimeSystemThreadTests<TTimeSystem>
     where TTimeSystem : ITimeSystem
 {
+    #region Test Setup
+
     public TTimeSystem TimeSystem { get; }
 
     protected TimeSystemThreadTests(TTimeSystem timeSystem)
     {
         TimeSystem = timeSystem;
     }
+
+    #endregion
 
     [Fact]
     public void Sleep_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()

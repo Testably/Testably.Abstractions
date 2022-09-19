@@ -12,6 +12,8 @@ namespace Testably.Abstractions.Tests;
 
 public abstract partial class FileSystemDirectoryTests
 {
+    #region Test Setup
+
     public IFileSystem FileSystem { get; }
     public ITimeSystem TimeSystem { get; }
     public string BasePath { get; }
@@ -23,6 +25,8 @@ public abstract partial class FileSystemDirectoryTests
         TimeSystem = timeSystem;
         BasePath = basePath;
     }
+
+    #endregion
 
     [Fact]
     public void Create_Empty_ShouldThrowArgumentException()

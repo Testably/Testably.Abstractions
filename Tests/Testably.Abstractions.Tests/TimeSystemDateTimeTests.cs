@@ -7,12 +7,16 @@ namespace Testably.Abstractions.Tests;
 public abstract class TimeSystemDateTimeTests<TTimeSystem>
     where TTimeSystem : ITimeSystem
 {
+    #region Test Setup
+
     public TTimeSystem TimeSystem { get; }
 
     protected TimeSystemDateTimeTests(TTimeSystem timeSystem)
     {
         TimeSystem = timeSystem;
     }
+
+    #endregion
 
     [Fact]
     public void MaxValue_ShouldReturnDefaultValue()

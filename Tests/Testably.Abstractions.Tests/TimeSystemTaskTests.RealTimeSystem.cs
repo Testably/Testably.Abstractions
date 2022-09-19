@@ -12,9 +12,13 @@ public abstract partial class TimeSystemTaskTests
     // ReSharper disable once UnusedMember.Global
     public sealed class RealTimeSystem : TimeSystemTaskTests<TimeSystem>
     {
+        #region Test Setup
+
         public RealTimeSystem() : base(new TimeSystem())
         {
         }
+
+        #endregion
 
         [Fact]
         public async Task

@@ -11,9 +11,13 @@ public abstract partial class TimeSystemDateTimeTests
     // ReSharper disable once UnusedMember.Global
     public sealed class MockTimeSystem : TimeSystemDateTimeTests<TimeSystemMock>
     {
+        #region Test Setup
+
         public MockTimeSystem() : base(new TimeSystemMock())
         {
         }
+
+        #endregion
 
         [Fact]
         public void MaxValue_FakedValue_ShouldReturnFakedValue()

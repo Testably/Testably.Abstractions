@@ -5,12 +5,16 @@ namespace Testably.Abstractions.Tests;
 
 public abstract partial class FileSystemTests
 {
+    #region Test Setup
+
     public IFileSystem FileSystem { get; }
 
     protected FileSystemTests(IFileSystem fileSystem)
     {
         FileSystem = fileSystem;
     }
+
+    #endregion
 
     [Fact]
     public void Directory_ShouldSetExtensionPoint()

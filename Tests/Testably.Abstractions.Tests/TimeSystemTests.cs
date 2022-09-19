@@ -6,12 +6,16 @@ namespace Testably.Abstractions.Tests;
 public abstract class TimeSystemTests<TTimeSystem>
     where TTimeSystem : ITimeSystem
 {
+    #region Test Setup
+
     public TTimeSystem TimeSystem { get; }
 
     protected TimeSystemTests(TTimeSystem timeSystem)
     {
         TimeSystem = timeSystem;
     }
+
+    #endregion
 
     [Fact]
     public void DateTime_ShouldSetExtensionPoint()

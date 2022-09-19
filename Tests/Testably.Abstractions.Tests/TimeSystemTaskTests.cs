@@ -9,12 +9,16 @@ namespace Testably.Abstractions.Tests;
 public abstract class TimeSystemTaskTests<TTimeSystem>
     where TTimeSystem : ITimeSystem
 {
+    #region Test Setup
+
     public TTimeSystem TimeSystem { get; }
 
     protected TimeSystemTaskTests(TTimeSystem timeSystem)
     {
         TimeSystem = timeSystem;
     }
+
+    #endregion
 
     [Fact]
     public async Task

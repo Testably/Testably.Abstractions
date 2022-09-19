@@ -9,9 +9,13 @@ public abstract partial class TimeSystemDateTimeTests
     // ReSharper disable once UnusedMember.Global
     public sealed class RealTimeSystem : TimeSystemDateTimeTests<TimeSystem>
     {
+        #region Test Setup
+
         public RealTimeSystem() : base(new TimeSystem())
         {
         }
+
+        #endregion
 
         [Fact]
         public void Now_ShouldReturnDefaultValue()
