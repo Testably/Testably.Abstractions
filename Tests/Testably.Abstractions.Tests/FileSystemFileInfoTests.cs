@@ -1,7 +1,3 @@
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-
 namespace Testably.Abstractions.Tests;
 
 public abstract class FileSystemFileSystemInfoTests<TFileSystem>
@@ -22,13 +18,12 @@ public abstract class FileSystemFileSystemInfoTests<TFileSystem>
         TimeSystem = timeSystem;
         BasePath = basePath;
     }
-    
 
     #endregion
 
     [Fact]
     public void X()
     {
-        var sut = FileSystem.FileInfo.New("foo");
+        IFileSystem.IFileInfo sut = FileSystem.FileInfo.New("foo");
     }
 }

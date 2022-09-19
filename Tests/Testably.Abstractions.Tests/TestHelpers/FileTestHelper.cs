@@ -5,6 +5,8 @@ namespace Testably.Abstractions.Tests.TestHelpers;
 
 public static class FileTestHelper
 {
+    public const string RealFileSystemCollection = nameof(RealFileSystemCollection);
+
     /// <summary>
     ///     Creates a new and empty directory in the temporary path.
     /// </summary>

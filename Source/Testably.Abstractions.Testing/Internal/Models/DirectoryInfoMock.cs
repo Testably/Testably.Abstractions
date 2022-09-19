@@ -29,7 +29,7 @@ internal class DirectoryInfoMock : FileSystemInfoMock, IFileSystem.IDirectoryInf
     public void Create()
     {
         FileSystem.Directory.CreateDirectory(FullName);
-        Exists = true;
+        ResetExists();
     }
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.CreateSubdirectory(string)" />

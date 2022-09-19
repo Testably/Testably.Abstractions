@@ -1,17 +1,12 @@
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-
 namespace Testably.Abstractions.Tests;
 
 public abstract class FileSystemFileTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    #region Test Setup
+    public string BasePath { get; }
 
     public TFileSystem FileSystem { get; }
     public ITimeSystem TimeSystem { get; }
-    public string BasePath { get; }
 
     protected FileSystemFileTests(
         TFileSystem fileSystem,
@@ -22,6 +17,4 @@ public abstract class FileSystemFileTests<TFileSystem>
         TimeSystem = timeSystem;
         BasePath = basePath;
     }
-
-    #endregion
 }

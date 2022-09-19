@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Testably.Abstractions.Models;
 
 namespace Testably.Abstractions;
@@ -26,7 +27,8 @@ public sealed partial class FileSystem
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="IFileSystem.IDirectory.CreateSymbolicLink(string, string)" />
-        public IFileSystem.IFileSystemInfo CreateSymbolicLink(string path, string pathToTarget)
+        public IFileSystem.IFileSystemInfo CreateSymbolicLink(
+            string path, string pathToTarget)
             => FileSystemInfoWrapper.FromFileSystemInfo(
                 System.IO.Directory.CreateSymbolicLink(path, pathToTarget), FileSystem);
 #endif
@@ -50,7 +52,7 @@ public sealed partial class FileSystem
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateDirectories(string, string, System.IO.SearchOption)" />
         public IEnumerable<string> EnumerateDirectories(string path,
                                                         string searchPattern,
-                                                        System.IO.SearchOption searchOption)
+                                                        SearchOption searchOption)
             => System.IO.Directory.EnumerateDirectories(
                 path,
                 searchPattern,
@@ -60,7 +62,8 @@ public sealed partial class FileSystem
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateDirectories(string, string, System.IO.EnumerationOptions)" />
         public IEnumerable<string> EnumerateDirectories(string path,
                                                         string searchPattern,
-                                                        System.IO.EnumerationOptions enumerationOptions)
+                                                        EnumerationOptions
+                                                            enumerationOptions)
             => System.IO.Directory.EnumerateDirectories(path,
                 searchPattern,
                 enumerationOptions);
@@ -77,14 +80,14 @@ public sealed partial class FileSystem
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFiles(string, string, System.IO.SearchOption)" />
         public IEnumerable<string> EnumerateFiles(string path,
                                                   string searchPattern,
-                                                  System.IO.SearchOption searchOption)
+                                                  SearchOption searchOption)
             => System.IO.Directory.EnumerateFiles(path, searchPattern, searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFiles(string, string, System.IO.EnumerationOptions)" />
         public IEnumerable<string> EnumerateFiles(string path,
                                                   string searchPattern,
-                                                  System.IO.EnumerationOptions enumerationOptions)
+                                                  EnumerationOptions enumerationOptions)
             => System.IO.Directory.EnumerateFiles(path, searchPattern,
                 enumerationOptions);
 #endif
@@ -101,7 +104,7 @@ public sealed partial class FileSystem
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string, string, System.IO.SearchOption)" />
         public IEnumerable<string> EnumerateFileSystemEntries(string path,
             string searchPattern,
-            System.IO.SearchOption searchOption)
+            SearchOption searchOption)
             => System.IO.Directory.EnumerateFileSystemEntries(path,
                 searchPattern,
                 searchOption);
@@ -110,7 +113,7 @@ public sealed partial class FileSystem
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string, string, System.IO.EnumerationOptions)" />
         public IEnumerable<string> EnumerateFileSystemEntries(string path,
             string searchPattern,
-            System.IO.EnumerationOptions
+            EnumerationOptions
                 enumerationOptions)
             => System.IO.Directory.EnumerateFileSystemEntries(path, searchPattern,
                 enumerationOptions);
@@ -143,14 +146,14 @@ public sealed partial class FileSystem
         /// <inheritdoc cref="IFileSystem.IDirectory.GetDirectories(string, string, System.IO.SearchOption)" />
         public string[] GetDirectories(string path,
                                        string searchPattern,
-                                       System.IO.SearchOption searchOption)
+                                       SearchOption searchOption)
             => System.IO.Directory.GetDirectories(path, searchPattern, searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="IFileSystem.IDirectory.GetDirectories(string, string, System.IO.EnumerationOptions)" />
         public string[] GetDirectories(string path,
                                        string searchPattern,
-                                       System.IO.EnumerationOptions enumerationOptions)
+                                       EnumerationOptions enumerationOptions)
             => System.IO.Directory.GetDirectories(path, searchPattern,
                 enumerationOptions);
 #endif
@@ -170,14 +173,14 @@ public sealed partial class FileSystem
         /// <inheritdoc cref="IFileSystem.IDirectory.GetFiles(string, string, System.IO.SearchOption)" />
         public string[] GetFiles(string path,
                                  string searchPattern,
-                                 System.IO.SearchOption searchOption)
+                                 SearchOption searchOption)
             => System.IO.Directory.GetFiles(path, searchPattern, searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="IFileSystem.IDirectory.GetFiles(string, string, System.IO.EnumerationOptions)" />
         public string[] GetFiles(string path,
                                  string searchPattern,
-                                 System.IO.EnumerationOptions enumerationOptions)
+                                 EnumerationOptions enumerationOptions)
             => System.IO.Directory.GetFiles(path, searchPattern, enumerationOptions);
 #endif
 
@@ -192,7 +195,7 @@ public sealed partial class FileSystem
         /// <inheritdoc cref="IFileSystem.IDirectory.GetFileSystemEntries(string, string, System.IO.SearchOption)" />
         public string[] GetFileSystemEntries(string path,
                                              string searchPattern,
-                                             System.IO.SearchOption searchOption)
+                                             SearchOption searchOption)
             => System.IO.Directory.GetFileSystemEntries(path,
                 searchPattern,
                 searchOption);
@@ -201,7 +204,7 @@ public sealed partial class FileSystem
         /// <inheritdoc cref="IFileSystem.IDirectory.GetFileSystemEntries(string, string, System.IO.EnumerationOptions)" />
         public string[] GetFileSystemEntries(string path,
                                              string searchPattern,
-                                             System.IO.EnumerationOptions enumerationOptions)
+                                             EnumerationOptions enumerationOptions)
             => System.IO.Directory.GetFileSystemEntries(path,
                 searchPattern,
                 enumerationOptions);
@@ -239,9 +242,11 @@ public sealed partial class FileSystem
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="IFileSystem.IDirectory.ResolveLinkTarget(string, bool)" />
-        public IFileSystem.IFileSystemInfo? ResolveLinkTarget(string linkPath, bool returnFinalTarget)
+        public IFileSystem.IFileSystemInfo? ResolveLinkTarget(
+            string linkPath, bool returnFinalTarget)
             => FileSystemInfoWrapper.FromFileSystemInfo(
-                System.IO.Directory.ResolveLinkTarget(linkPath, returnFinalTarget), FileSystem);
+                System.IO.Directory.ResolveLinkTarget(linkPath, returnFinalTarget),
+                FileSystem);
 #endif
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetCreationTime(string, DateTime)" />

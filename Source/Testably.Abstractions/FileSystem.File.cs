@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Text;
 #if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
 #endif
-using System.Text;
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,7 +22,7 @@ public sealed partial class FileSystem
             FileSystem = fileSystem;
         }
 
-#region IFile Members
+        #region IFile Members
 
         /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
         public IFileSystem FileSystem { get; }
@@ -36,22 +36,6 @@ public sealed partial class FileSystem
                                    Encoding encoding)
             => System.IO.File.AppendAllLines(path, contents, encoding);
 
-#if FEATURE_FILESYSTEM_ASYNC
-        /// <inheritdoc cref="IFileSystem.IFile.AppendAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
-        public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
-                                        CancellationToken cancellationToken =
-                                            default(CancellationToken))
-            => System.IO.File.AppendAllLinesAsync(path, contents, cancellationToken);
-
-        /// <inheritdoc cref="IFileSystem.IFile.AppendAllLinesAsync(string, IEnumerable{string}, Encoding, CancellationToken)" />
-        public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
-                                        Encoding encoding,
-                                        CancellationToken cancellationToken =
-                                            default(CancellationToken))
-            => System.IO.File.AppendAllLinesAsync(path, contents, encoding,
-                cancellationToken);
-#endif
-
         /// <inheritdoc cref="IFileSystem.IFile.AppendAllText(string, string?)" />
         public void AppendAllText(string path, string? contents)
             => System.IO.File.AppendAllText(path, contents);
@@ -59,21 +43,6 @@ public sealed partial class FileSystem
         /// <inheritdoc cref="IFileSystem.IFile.AppendAllText(string, string?, Encoding)" />
         public void AppendAllText(string path, string? contents, Encoding encoding)
             => System.IO.File.AppendAllText(path, contents, encoding);
-
-#if FEATURE_FILESYSTEM_ASYNC
-        /// <inheritdoc cref="IFileSystem.IFile.AppendAllTextAsync(string, string?, CancellationToken)" />
-        public Task AppendAllTextAsync(string path, string? contents,
-                                       CancellationToken cancellationToken =
-                                           default(CancellationToken))
-            => System.IO.File.AppendAllTextAsync(path, contents, cancellationToken);
-
-        /// <inheritdoc cref="IFileSystem.IFile.AppendAllTextAsync(string, string?, Encoding, CancellationToken)" />
-        public Task AppendAllTextAsync(string path, string? contents, Encoding encoding,
-                                       CancellationToken cancellationToken =
-                                           default(CancellationToken))
-            => System.IO.File.AppendAllTextAsync(path, contents, encoding,
-                cancellationToken);
-#endif
 
         /// <inheritdoc cref="IFileSystem.IFile.AppendText(string)" />
         public StreamWriter AppendText(string path)
@@ -220,20 +189,6 @@ public sealed partial class FileSystem
         public string[] ReadAllLines(string path, Encoding encoding)
             => System.IO.File.ReadAllLines(path, encoding);
 
-#if FEATURE_FILESYSTEM_ASYNC
-        /// <inheritdoc cref="IFileSystem.IFile.ReadAllLinesAsync(string, CancellationToken)" />
-        public Task<string[]> ReadAllLinesAsync(string path,
-                                                CancellationToken cancellationToken =
-                                                    default(CancellationToken))
-            => System.IO.File.ReadAllLinesAsync(path, cancellationToken);
-
-        /// <inheritdoc cref="IFileSystem.IFile.ReadAllLinesAsync(string, Encoding, CancellationToken)" />
-        public Task<string[]> ReadAllLinesAsync(string path, Encoding encoding,
-                                                CancellationToken cancellationToken =
-                                                    default(CancellationToken))
-            => System.IO.File.ReadAllLinesAsync(path, encoding, cancellationToken);
-#endif
-
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllText(string)" />
         public string ReadAllText(string path)
             => System.IO.File.ReadAllText(path);
@@ -241,20 +196,6 @@ public sealed partial class FileSystem
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllText(string, Encoding)" />
         public string ReadAllText(string path, Encoding encoding)
             => System.IO.File.ReadAllText(path, encoding);
-
-#if FEATURE_FILESYSTEM_ASYNC
-        /// <inheritdoc cref="IFileSystem.IFile.ReadAllTextAsync(string, CancellationToken)" />
-        public Task<string> ReadAllTextAsync(string path,
-                                             CancellationToken cancellationToken =
-                                                 default(CancellationToken))
-            => System.IO.File.ReadAllTextAsync(path, cancellationToken);
-
-        /// <inheritdoc cref="IFileSystem.IFile.ReadAllTextAsync(string, Encoding, CancellationToken)" />
-        public Task<string> ReadAllTextAsync(string path, Encoding encoding,
-                                             CancellationToken cancellationToken =
-                                                 default(CancellationToken))
-            => System.IO.File.ReadAllTextAsync(path, encoding, cancellationToken);
-#endif
 
         /// <inheritdoc cref="IFileSystem.IFile.ReadLines(string)" />
         public IEnumerable<string> ReadLines(string path)
@@ -339,6 +280,75 @@ public sealed partial class FileSystem
                                   Encoding encoding)
             => System.IO.File.WriteAllLines(path, contents, encoding);
 
+        /// <inheritdoc cref="IFileSystem.IFile.WriteAllText(string, string?)" />
+        public void WriteAllText(string path, string? contents)
+            => System.IO.File.WriteAllText(path, contents);
+
+        /// <inheritdoc cref="IFileSystem.IFile.WriteAllText(string, string?, Encoding)" />
+        public void WriteAllText(string path, string? contents, Encoding encoding)
+            => System.IO.File.WriteAllText(path, contents, encoding);
+
+        #endregion
+
+#if FEATURE_FILESYSTEM_ASYNC
+        /// <inheritdoc cref="IFileSystem.IFile.AppendAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
+        public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
+                                        CancellationToken cancellationToken =
+                                            default(CancellationToken))
+            => System.IO.File.AppendAllLinesAsync(path, contents, cancellationToken);
+
+        /// <inheritdoc cref="IFileSystem.IFile.AppendAllLinesAsync(string, IEnumerable{string}, Encoding, CancellationToken)" />
+        public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
+                                        Encoding encoding,
+                                        CancellationToken cancellationToken =
+                                            default(CancellationToken))
+            => System.IO.File.AppendAllLinesAsync(path, contents, encoding,
+                cancellationToken);
+#endif
+
+#if FEATURE_FILESYSTEM_ASYNC
+        /// <inheritdoc cref="IFileSystem.IFile.AppendAllTextAsync(string, string?, CancellationToken)" />
+        public Task AppendAllTextAsync(string path, string? contents,
+                                       CancellationToken cancellationToken =
+                                           default(CancellationToken))
+            => System.IO.File.AppendAllTextAsync(path, contents, cancellationToken);
+
+        /// <inheritdoc cref="IFileSystem.IFile.AppendAllTextAsync(string, string?, Encoding, CancellationToken)" />
+        public Task AppendAllTextAsync(string path, string? contents, Encoding encoding,
+                                       CancellationToken cancellationToken =
+                                           default(CancellationToken))
+            => System.IO.File.AppendAllTextAsync(path, contents, encoding,
+                cancellationToken);
+#endif
+
+#if FEATURE_FILESYSTEM_ASYNC
+        /// <inheritdoc cref="IFileSystem.IFile.ReadAllLinesAsync(string, CancellationToken)" />
+        public Task<string[]> ReadAllLinesAsync(string path,
+                                                CancellationToken cancellationToken =
+                                                    default(CancellationToken))
+            => System.IO.File.ReadAllLinesAsync(path, cancellationToken);
+
+        /// <inheritdoc cref="IFileSystem.IFile.ReadAllLinesAsync(string, Encoding, CancellationToken)" />
+        public Task<string[]> ReadAllLinesAsync(string path, Encoding encoding,
+                                                CancellationToken cancellationToken =
+                                                    default(CancellationToken))
+            => System.IO.File.ReadAllLinesAsync(path, encoding, cancellationToken);
+#endif
+
+#if FEATURE_FILESYSTEM_ASYNC
+        /// <inheritdoc cref="IFileSystem.IFile.ReadAllTextAsync(string, CancellationToken)" />
+        public Task<string> ReadAllTextAsync(string path,
+                                             CancellationToken cancellationToken =
+                                                 default(CancellationToken))
+            => System.IO.File.ReadAllTextAsync(path, cancellationToken);
+
+        /// <inheritdoc cref="IFileSystem.IFile.ReadAllTextAsync(string, Encoding, CancellationToken)" />
+        public Task<string> ReadAllTextAsync(string path, Encoding encoding,
+                                             CancellationToken cancellationToken =
+                                                 default(CancellationToken))
+            => System.IO.File.ReadAllTextAsync(path, encoding, cancellationToken);
+#endif
+
 #if FEATURE_FILESYSTEM_ASYNC
         /// <inheritdoc cref="IFileSystem.IFile.WriteAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
         public Task WriteAllLinesAsync(string path, IEnumerable<string> contents,
@@ -355,14 +365,6 @@ public sealed partial class FileSystem
                 cancellationToken);
 #endif
 
-        /// <inheritdoc cref="IFileSystem.IFile.WriteAllText(string, string?)" />
-        public void WriteAllText(string path, string? contents)
-            => System.IO.File.WriteAllText(path, contents);
-
-        /// <inheritdoc cref="IFileSystem.IFile.WriteAllText(string, string?, Encoding)" />
-        public void WriteAllText(string path, string? contents, Encoding encoding)
-            => System.IO.File.WriteAllText(path, contents, encoding);
-
 #if FEATURE_FILESYSTEM_ASYNC
         /// <inheritdoc cref="IFileSystem.IFile.WriteAllTextAsync(string, string?, CancellationToken)" />
         public Task WriteAllTextAsync(string path, string? contents,
@@ -377,7 +379,5 @@ public sealed partial class FileSystem
             => System.IO.File.WriteAllTextAsync(path, contents, encoding,
                 cancellationToken);
 #endif
-
-#endregion
     }
 }

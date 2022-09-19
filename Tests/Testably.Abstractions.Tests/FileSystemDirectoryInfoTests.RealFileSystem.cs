@@ -7,7 +7,9 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemDirectoryInfoTests
 {
     // ReSharper disable once UnusedMember.Global
-    public sealed class RealFileSystem : FileSystemDirectoryInfoTests<FileSystem>, IDisposable
+    [Collection(FileTestHelper.RealFileSystemCollection)]
+    public sealed class RealFileSystem : FileSystemDirectoryInfoTests<FileSystem>,
+        IDisposable
     {
         private readonly ITestOutputHelper _testOutputHelper;
 
