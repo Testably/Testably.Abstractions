@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+#if NET6_0_OR_GREATER
+using System.Runtime.Versioning;
+#endif
 using System.Text;
+#if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
+#endif
 
 namespace Testably.Abstractions;
 
@@ -16,7 +22,7 @@ public sealed partial class FileSystem
             FileSystem = fileSystem;
         }
 
-        #region IFile Members
+#region IFile Members
 
         /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
         public IFileSystem FileSystem { get; }
@@ -30,6 +36,7 @@ public sealed partial class FileSystem
                                    Encoding encoding)
             => System.IO.File.AppendAllLines(path, contents, encoding);
 
+#if FEATURE_FILESYSTEM_ASYNC
         /// <inheritdoc cref="IFileSystem.IFile.AppendAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
         public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
                                         CancellationToken cancellationToken =
@@ -43,6 +50,7 @@ public sealed partial class FileSystem
                                             default(CancellationToken))
             => System.IO.File.AppendAllLinesAsync(path, contents, encoding,
                 cancellationToken);
+#endif
 
         /// <inheritdoc cref="IFileSystem.IFile.AppendAllText(string, string?)" />
         public void AppendAllText(string path, string? contents)
@@ -52,6 +60,7 @@ public sealed partial class FileSystem
         public void AppendAllText(string path, string? contents, Encoding encoding)
             => System.IO.File.AppendAllText(path, contents, encoding);
 
+#if FEATURE_FILESYSTEM_ASYNC
         /// <inheritdoc cref="IFileSystem.IFile.AppendAllTextAsync(string, string?, CancellationToken)" />
         public Task AppendAllTextAsync(string path, string? contents,
                                        CancellationToken cancellationToken =
@@ -64,6 +73,7 @@ public sealed partial class FileSystem
                                            default(CancellationToken))
             => System.IO.File.AppendAllTextAsync(path, contents, encoding,
                 cancellationToken);
+#endif
 
         /// <inheritdoc cref="IFileSystem.IFile.AppendText(string)" />
         public StreamWriter AppendText(string path)
@@ -89,15 +99,20 @@ public sealed partial class FileSystem
         public FileStream Create(string path, int bufferSize, FileOptions options)
             => System.IO.File.Create(path, bufferSize, options);
 
+#if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="IFileSystem.IFile.CreateSymbolicLink(string, string)" />
         public FileSystemInfo CreateSymbolicLink(string path, string pathToTarget)
             => System.IO.File.CreateSymbolicLink(path, pathToTarget);
+#endif
 
         /// <inheritdoc cref="IFileSystem.IFile.CreateText(string)" />
         public StreamWriter CreateText(string path)
             => System.IO.File.CreateText(path);
 
         /// <inheritdoc cref="IFileSystem.IFile.Decrypt(string)" />
+#if NET6_0_OR_GREATER
+        [SupportedOSPlatform("windows")]
+#endif
         public void Decrypt(string path)
             => System.IO.File.Decrypt(path);
 
@@ -106,11 +121,14 @@ public sealed partial class FileSystem
             => System.IO.File.Delete(path);
 
         /// <inheritdoc cref="IFileSystem.IFile.Encrypt(string)" />
+#if NET6_0_OR_GREATER
+        [SupportedOSPlatform("windows")]
+#endif
         public void Encrypt(string path)
             => System.IO.File.Encrypt(path);
 
         /// <inheritdoc cref="IFileSystem.IFile.Exists(string?)" />
-        public bool Exists(string? path)
+        public bool Exists([NotNullWhen(true)] string? path)
             => System.IO.File.Exists(path);
 
         /// <inheritdoc cref="IFileSystem.IFile.GetAttributes(string)" />
@@ -145,9 +163,11 @@ public sealed partial class FileSystem
         public void Move(string sourceFileName, string destFileName)
             => System.IO.File.Move(sourceFileName, destFileName);
 
+#if FEATURE_FILE_MOVETO_OVERWRITE
         /// <inheritdoc cref="IFileSystem.IFile.Move(string, string, bool)" />
         public void Move(string sourceFileName, string destFileName, bool overwrite)
             => System.IO.File.Move(sourceFileName, destFileName, overwrite);
+#endif
 
         /// <inheritdoc cref="IFileSystem.IFile.Open(string, FileMode)" />
         public FileStream Open(string path, FileMode mode)
@@ -162,9 +182,11 @@ public sealed partial class FileSystem
                                FileShare share)
             => System.IO.File.Open(path, mode, access, share);
 
+#if FEATURE_FILESYSTEM_STREAM_OPTIONS
         /// <inheritdoc cref="IFileSystem.IFile.Open(string, FileStreamOptions)" />
         public FileStream Open(string path, FileStreamOptions options)
             => System.IO.File.Open(path, options);
+#endif
 
         /// <inheritdoc cref="IFileSystem.IFile.OpenRead(string)" />
         public FileStream OpenRead(string path)
@@ -182,11 +204,13 @@ public sealed partial class FileSystem
         public byte[] ReadAllBytes(string path)
             => System.IO.File.ReadAllBytes(path);
 
+#if FEATURE_FILESYSTEM_ASYNC
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllBytesAsync(string, CancellationToken)" />
         public Task<byte[]> ReadAllBytesAsync(string path,
                                               CancellationToken cancellationToken =
                                                   default(CancellationToken))
             => System.IO.File.ReadAllBytesAsync(path, cancellationToken);
+#endif
 
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllLines(string)" />
         public string[] ReadAllLines(string path)
@@ -196,6 +220,7 @@ public sealed partial class FileSystem
         public string[] ReadAllLines(string path, Encoding encoding)
             => System.IO.File.ReadAllLines(path, encoding);
 
+#if FEATURE_FILESYSTEM_ASYNC
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllLinesAsync(string, CancellationToken)" />
         public Task<string[]> ReadAllLinesAsync(string path,
                                                 CancellationToken cancellationToken =
@@ -207,6 +232,7 @@ public sealed partial class FileSystem
                                                 CancellationToken cancellationToken =
                                                     default(CancellationToken))
             => System.IO.File.ReadAllLinesAsync(path, encoding, cancellationToken);
+#endif
 
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllText(string)" />
         public string ReadAllText(string path)
@@ -216,6 +242,7 @@ public sealed partial class FileSystem
         public string ReadAllText(string path, Encoding encoding)
             => System.IO.File.ReadAllText(path, encoding);
 
+#if FEATURE_FILESYSTEM_ASYNC
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllTextAsync(string, CancellationToken)" />
         public Task<string> ReadAllTextAsync(string path,
                                              CancellationToken cancellationToken =
@@ -227,6 +254,7 @@ public sealed partial class FileSystem
                                              CancellationToken cancellationToken =
                                                  default(CancellationToken))
             => System.IO.File.ReadAllTextAsync(path, encoding, cancellationToken);
+#endif
 
         /// <inheritdoc cref="IFileSystem.IFile.ReadLines(string)" />
         public IEnumerable<string> ReadLines(string path)
@@ -248,9 +276,11 @@ public sealed partial class FileSystem
             => System.IO.File.Replace(sourceFileName, destinationFileName,
                 destinationBackupFileName, ignoreMetadataErrors);
 
+#if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="IFileSystem.IFile.ResolveLinkTarget(string, bool)" />
         public FileSystemInfo? ResolveLinkTarget(string linkPath, bool returnFinalTarget)
             => System.IO.File.ResolveLinkTarget(linkPath, returnFinalTarget);
+#endif
 
         /// <inheritdoc cref="IFileSystem.IFile.SetAttributes(string, FileAttributes)" />
         public void SetAttributes(string path, FileAttributes fileAttributes)
@@ -284,11 +314,13 @@ public sealed partial class FileSystem
         public void WriteAllBytes(string path, byte[] bytes)
             => System.IO.File.WriteAllBytes(path, bytes);
 
+#if FEATURE_FILESYSTEM_ASYNC
         /// <inheritdoc cref="IFileSystem.IFile.WriteAllBytesAsync(string, byte[], CancellationToken)" />
         public Task WriteAllBytesAsync(string path, byte[] bytes,
                                        CancellationToken cancellationToken =
                                            default(CancellationToken))
             => System.IO.File.WriteAllBytesAsync(path, bytes, cancellationToken);
+#endif
 
         /// <inheritdoc cref="IFileSystem.IFile.WriteAllLines(string, string[])" />
         public void WriteAllLines(string path, string[] contents)
@@ -307,6 +339,7 @@ public sealed partial class FileSystem
                                   Encoding encoding)
             => System.IO.File.WriteAllLines(path, contents, encoding);
 
+#if FEATURE_FILESYSTEM_ASYNC
         /// <inheritdoc cref="IFileSystem.IFile.WriteAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
         public Task WriteAllLinesAsync(string path, IEnumerable<string> contents,
                                        CancellationToken cancellationToken =
@@ -320,6 +353,7 @@ public sealed partial class FileSystem
                                            default(CancellationToken))
             => System.IO.File.WriteAllLinesAsync(path, contents, encoding,
                 cancellationToken);
+#endif
 
         /// <inheritdoc cref="IFileSystem.IFile.WriteAllText(string, string?)" />
         public void WriteAllText(string path, string? contents)
@@ -329,6 +363,7 @@ public sealed partial class FileSystem
         public void WriteAllText(string path, string? contents, Encoding encoding)
             => System.IO.File.WriteAllText(path, contents, encoding);
 
+#if FEATURE_FILESYSTEM_ASYNC
         /// <inheritdoc cref="IFileSystem.IFile.WriteAllTextAsync(string, string?, CancellationToken)" />
         public Task WriteAllTextAsync(string path, string? contents,
                                       CancellationToken cancellationToken =
@@ -341,7 +376,8 @@ public sealed partial class FileSystem
                                           default(CancellationToken))
             => System.IO.File.WriteAllTextAsync(path, contents, encoding,
                 cancellationToken);
+#endif
 
-        #endregion
+#endregion
     }
 }
