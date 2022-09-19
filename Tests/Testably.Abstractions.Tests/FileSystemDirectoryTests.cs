@@ -289,8 +289,7 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
     {
         IFileSystem.IDirectoryInfo result =
             FileSystem.Directory.CreateDirectory(directoryName);
-
-        FileSystem.Directory.Delete(result.FullName);
+        FileSystem.Directory.Delete(directoryName);
 
         bool exists = FileSystem.Directory.Exists(directoryName);
 
@@ -389,16 +388,5 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
         result.LastWriteTimeUtc.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
         result.LastWriteTimeUtc.Should().BeOnOrBefore(TimeSystem.DateTime.UtcNow);
         result.LastWriteTimeUtc.Kind.Should().Be(DateTimeKind.Utc);
-    }
-
-    [Theory]
-    [AutoData]
-    public void Root_ShouldExist(string path)
-    {
-        string expectedRoot = "".PrefixRoot();
-        IFileSystem.IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
-
-        result.Root.Exists.Should().BeTrue();
-        result.Root.FullName.Should().Be(expectedRoot);
     }
 }

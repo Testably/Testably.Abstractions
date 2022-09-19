@@ -40,8 +40,16 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
     }
 
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
-    public bool Exists
-        => FileSystem.InMemoryFileSystem.Exists(FullName);
+    public bool Exists {
+        get
+        {
+            _exists ??= FileSystem.InMemoryFileSystem.Exists(FullName);
+            return _exists.Value;
+        }
+        internal set { _exists = value; }
+    }
+
+    private bool? _exists;
 
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Extension" />
     public string Extension
@@ -98,7 +106,10 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
 
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Delete()" />
     public void Delete()
-        => FileSystem.InMemoryFileSystem.Delete(FullName);
+    {
+        FileSystem.InMemoryFileSystem.Delete(FullName);
+        Exists = false;
+    }
 
 #if FEATURE_FILESYSTEM_LINK
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.ResolveLinkTarget(bool)" />

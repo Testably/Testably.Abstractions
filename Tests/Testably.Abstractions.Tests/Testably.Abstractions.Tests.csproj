@@ -9,8 +9,14 @@
     <Compile Update="FileSystemTests.*.cs">
       <DependentUpon>FileSystemTests.cs</DependentUpon>
     </Compile>
+    <Compile Update="FileSystemDirectoryInfoTests.*.cs">
+      <DependentUpon>FileSystemDirectoryInfoTests.cs</DependentUpon>
+    </Compile>
     <Compile Update="FileSystemDirectoryTests.*.cs">
       <DependentUpon>FileSystemDirectoryTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="FileSystemFileInfoTests.*.cs">
+      <DependentUpon>FileSystemFileInfoTests.cs</DependentUpon>
     </Compile>
     <Compile Update="FileSystemFileTests.*.cs">
       <DependentUpon>FileSystemFileTests.cs</DependentUpon>

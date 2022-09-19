@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.Testing.Internal;
+using Testably.Abstractions.Testing.Internal.Models;
 
 namespace Testably.Abstractions.Testing;
 
@@ -31,8 +32,9 @@ public sealed partial class FileSystemMock
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="Directory.CreateSymbolicLink(string, string)" />
-        public FileSystemInfo CreateSymbolicLink(string path, string pathToTarget)
-            => System.IO.Directory.CreateSymbolicLink(path, pathToTarget);
+        public IFileSystem.IFileSystemInfo CreateSymbolicLink(
+            string path, string pathToTarget)
+            => throw new NotImplementedException();
 #endif
 
         /// <inheritdoc cref="Directory.Delete(string)" />
@@ -238,8 +240,9 @@ public sealed partial class FileSystemMock
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="Directory.ResolveLinkTarget(string, bool)" />
-        public FileSystemInfo? ResolveLinkTarget(string linkPath, bool returnFinalTarget)
-            => System.IO.Directory.ResolveLinkTarget(linkPath, returnFinalTarget);
+        public IFileSystem.IFileSystemInfo? ResolveLinkTarget(
+            string linkPath, bool returnFinalTarget)
+            => throw new NotImplementedException();
 #endif
 
         /// <inheritdoc cref="Directory.SetCreationTime(string, DateTime)" />

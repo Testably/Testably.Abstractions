@@ -27,11 +27,14 @@ internal class DirectoryInfoMock : FileSystemInfoMock, IFileSystem.IDirectoryInf
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Create()" />
     public void Create()
-        => FileSystem.Directory.CreateDirectory(FullName);
+    {
+        FileSystem.Directory.CreateDirectory(FullName);
+        Exists = true;
+    }
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.CreateSubdirectory(string)" />
     public IFileSystem.IDirectoryInfo CreateSubdirectory(string path)
-        => throw new NotImplementedException();
+        => FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(FullName, path));
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Delete(bool)" />
     public void Delete(bool recursive)
