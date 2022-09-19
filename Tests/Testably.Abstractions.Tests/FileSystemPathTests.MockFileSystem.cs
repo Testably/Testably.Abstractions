@@ -1,5 +1,3 @@
-using Testably.Abstractions.Testing;
-
 namespace Testably.Abstractions.Tests;
 
 public abstract partial class FileSystemPathTests

@@ -1,5 +1,3 @@
-using System;
-
 namespace Testably.Abstractions.Tests.TestHelpers;
 
 public static class TimeTestHelper

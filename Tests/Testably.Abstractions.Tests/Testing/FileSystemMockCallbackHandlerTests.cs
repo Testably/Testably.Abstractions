@@ -1,8 +1,4 @@
-﻿using FluentAssertions;
-using Testably.Abstractions.Testing;
-using Xunit;
-
-namespace Testably.Abstractions.Tests.Testing;
+﻿namespace Testably.Abstractions.Tests.Testing;
 
 public class FileSystemMockCallbackHandlerTests
 {

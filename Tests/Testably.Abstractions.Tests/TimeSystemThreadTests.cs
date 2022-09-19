@@ -1,7 +1,3 @@
-using FluentAssertions;
-using System;
-using Xunit;
-
 namespace Testably.Abstractions.Tests;
 
 public abstract class TimeSystemThreadTests<TTimeSystem>
