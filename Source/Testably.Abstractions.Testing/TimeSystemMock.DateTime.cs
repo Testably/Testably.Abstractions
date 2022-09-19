@@ -20,13 +20,16 @@ public sealed partial class TimeSystemMock
         #region IDateTime Members
 
         /// <inheritdoc cref="ITimeSystem.IDateTime.MaxValue" />
-        public DateTime MaxValue => _timeSystemMock.TimeProvider.MaxValue;
+        public DateTime MaxValue
+            => _timeSystemMock.TimeProvider.MaxValue;
 
         /// <inheritdoc cref="ITimeSystem.IDateTime.MinValue" />
-        public DateTime MinValue => _timeSystemMock.TimeProvider.MinValue;
+        public DateTime MinValue
+            => _timeSystemMock.TimeProvider.MinValue;
 
         /// <inheritdoc cref="ITimeSystem.IDateTime.UnixEpoch" />
-        public DateTime UnixEpoch => _timeSystemMock.TimeProvider.UnixEpoch;
+        public DateTime UnixEpoch
+            => _timeSystemMock.TimeProvider.UnixEpoch;
 
         /// <inheritdoc cref="ITimeSystem.IDateTime.Now" />
         public DateTime Now
@@ -62,7 +65,8 @@ public sealed partial class TimeSystemMock
         }
 
         /// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
-        public ITimeSystem TimeSystem => _timeSystemMock;
+        public ITimeSystem TimeSystem
+            => _timeSystemMock;
 
         #endregion
     }

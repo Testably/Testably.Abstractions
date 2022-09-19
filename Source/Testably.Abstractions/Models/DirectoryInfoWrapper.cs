@@ -28,7 +28,8 @@ internal class DirectoryInfoWrapper : FileSystemInfoWrapper, IFileSystem.IDirect
         => FromDirectoryInfo(_instance.Root, _fileSystem);
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Create()" />
-    public void Create() => _instance.Create();
+    public void Create()
+        => _instance.Create();
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.CreateSubdirectory(string)" />
     public IFileSystem.IDirectoryInfo CreateSubdirectory(string path)
@@ -226,7 +227,8 @@ internal class DirectoryInfoWrapper : FileSystemInfoWrapper, IFileSystem.IDirect
 #endif
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.MoveTo(string)" />
-    public void MoveTo(string destDirName) => _instance.MoveTo(destDirName);
+    public void MoveTo(string destDirName)
+        => _instance.MoveTo(destDirName);
 
     #endregion
 

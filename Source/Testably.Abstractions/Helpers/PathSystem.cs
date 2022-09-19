@@ -117,10 +117,12 @@ public abstract class PathSystem : IFileSystem.IPath
 #endif
 
     /// <inheritdoc cref="Path.GetInvalidFileNameChars()" />
-    public char[] GetInvalidFileNameChars() => Path.GetInvalidFileNameChars();
+    public char[] GetInvalidFileNameChars()
+        => Path.GetInvalidFileNameChars();
 
     /// <inheritdoc cref="Path.GetInvalidPathChars()" />
-    public char[] GetInvalidPathChars() => Path.GetInvalidPathChars();
+    public char[] GetInvalidPathChars()
+        => Path.GetInvalidPathChars();
 
 #if FEATURE_SPAN
     /// <inheritdoc cref="Path.GetPathRoot(ReadOnlySpan{char})" />
@@ -129,7 +131,8 @@ public abstract class PathSystem : IFileSystem.IPath
 #endif
 
     /// <inheritdoc cref="Path.GetPathRoot(string?)" />
-    public string? GetPathRoot(string? path) => Path.GetPathRoot(path);
+    public string? GetPathRoot(string? path)
+        => Path.GetPathRoot(path);
 
     /// <inheritdoc cref="Path.GetRandomFileName()" />
     public string GetRandomFileName()
@@ -142,14 +145,16 @@ public abstract class PathSystem : IFileSystem.IPath
 #endif
 
     /// <inheritdoc cref="Path.GetTempPath()" />
-    public string GetTempPath() => Path.GetTempPath();
+    public string GetTempPath()
+        => Path.GetTempPath();
 
     /// <inheritdoc cref="Path.GetTempFileName()" />
 #if !NETSTANDARD2_0
     [Obsolete(
         "Insecure temporary file creation methods should not be used. Use `Path.Combine(Path.GetTempPath(), Path.GetRandomFileName())` instead.")]
 #endif
-    public string GetTempFileName() => Path.GetTempFileName();
+    public string GetTempFileName()
+        => Path.GetTempFileName();
 
 #if FEATURE_SPAN
     /// <inheritdoc cref="Path.HasExtension(ReadOnlySpan{char})" />
@@ -175,11 +180,13 @@ public abstract class PathSystem : IFileSystem.IPath
 
 #if FEATURE_SPAN
     /// <inheritdoc cref="Path.IsPathRooted(ReadOnlySpan{char})" />
-    public bool IsPathRooted(ReadOnlySpan<char> path) => Path.IsPathRooted(path);
+    public bool IsPathRooted(ReadOnlySpan<char> path)
+        => Path.IsPathRooted(path);
 #endif
 
     /// <inheritdoc cref="Path.IsPathRooted(string)" />
-    public bool IsPathRooted(string? path) => Path.IsPathRooted(path);
+    public bool IsPathRooted(string? path)
+        => Path.IsPathRooted(path);
 
     #endregion
 

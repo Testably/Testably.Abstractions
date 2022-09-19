@@ -31,7 +31,8 @@ public sealed partial class FileSystemMock
         }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
-        public IFileSystem FileSystem => _fileSystem;
+        public IFileSystem FileSystem
+            => _fileSystem;
 
         #endregion
     }

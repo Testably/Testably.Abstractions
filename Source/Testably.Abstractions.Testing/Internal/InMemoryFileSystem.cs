@@ -8,7 +8,9 @@ namespace Testably.Abstractions.Testing.Internal;
 
 internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
 {
-    public IFileSystem FileSystem => _fileSystem;
+    public IFileSystem FileSystem
+        => _fileSystem;
+
     private readonly FileSystemMock _fileSystem;
 
     private readonly ConcurrentDictionary<string, FileSystemInfoMock> _files = new();

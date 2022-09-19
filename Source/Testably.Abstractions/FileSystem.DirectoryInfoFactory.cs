@@ -15,8 +15,9 @@ public sealed partial class FileSystem
         #region IDirectoryInfoFactory Members
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfoFactory.New" />
-        public IFileSystem.IDirectoryInfo New(string path) =>
-            DirectoryInfoWrapper.FromDirectoryInfo(new DirectoryInfo(path), FileSystem);
+        public IFileSystem.IDirectoryInfo New(string path)
+            => DirectoryInfoWrapper.FromDirectoryInfo(new DirectoryInfo(path),
+                FileSystem);
 
         /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
         public IFileSystem FileSystem { get; }

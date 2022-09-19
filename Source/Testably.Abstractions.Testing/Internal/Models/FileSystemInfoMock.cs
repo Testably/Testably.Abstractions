@@ -40,10 +40,12 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
     }
 
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
-    public bool Exists => FileSystem.InMemoryFileSystem.Exists(FullName);
+    public bool Exists
+        => FileSystem.InMemoryFileSystem.Exists(FullName);
 
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Extension" />
-    public string Extension => FileSystem.Path.GetExtension(FullName);
+    public string Extension
+        => FileSystem.Path.GetExtension(FullName);
 
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.FullName" />
     public string FullName { get; }
@@ -78,13 +80,15 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
 
 #if FEATURE_FILESYSTEM_LINK
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.LinkTarget" />
-    public string? LinkTarget => throw new NotImplementedException();
+    public string? LinkTarget
+        => throw new NotImplementedException();
 #endif
 
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Name" />
-    public string Name => FileSystem.Path.GetFileName(FullName.TrimEnd(
-        FileSystem.Path.DirectorySeparatorChar,
-        FileSystem.Path.AltDirectorySeparatorChar));
+    public string Name
+        => FileSystem.Path.GetFileName(FullName.TrimEnd(
+            FileSystem.Path.DirectorySeparatorChar,
+            FileSystem.Path.AltDirectorySeparatorChar));
 
 #if FEATURE_FILESYSTEM_LINK
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreateAsSymbolicLink(string)" />
@@ -93,7 +97,8 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
 #endif
 
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Delete()" />
-    public void Delete() => FileSystem.InMemoryFileSystem.Delete(FullName);
+    public void Delete()
+        => FileSystem.InMemoryFileSystem.Delete(FullName);
 
 #if FEATURE_FILESYSTEM_LINK
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.ResolveLinkTarget(bool)" />
@@ -108,7 +113,8 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
 #else
     /// <inheritdoc cref="System.IO.FileSystemInfo.ToString()" />
 #endif
-    public override string ToString() => OriginalPath;
+    public override string ToString()
+        => OriginalPath;
 
     internal FileSystemInfoMock AdjustTimes(TimeAdjustments timeAdjustments)
     {

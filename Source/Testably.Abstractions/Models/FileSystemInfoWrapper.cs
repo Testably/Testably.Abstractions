@@ -32,13 +32,16 @@ internal class FileSystemInfoWrapper : IFileSystem.IFileSystemInfo
     }
 
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
-    public bool Exists => _instance.Exists;
+    public bool Exists
+        => _instance.Exists;
 
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Extension" />
-    public string Extension => _instance.Extension;
+    public string Extension
+        => _instance.Extension;
 
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.FullName" />
-    public string FullName => _instance.FullName;
+    public string FullName
+        => _instance.FullName;
 
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastAccessTime" />
     public DateTime LastAccessTime
@@ -70,11 +73,13 @@ internal class FileSystemInfoWrapper : IFileSystem.IFileSystemInfo
 
 #if FEATURE_FILESYSTEM_LINK
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.LinkTarget" />
-    public string? LinkTarget => _instance.LinkTarget;
+    public string? LinkTarget
+        => _instance.LinkTarget;
 #endif
 
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Name" />
-    public string Name => _instance.Name;
+    public string Name
+        => _instance.Name;
 
 #if FEATURE_FILESYSTEM_LINK
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreateAsSymbolicLink(string)" />
@@ -100,7 +105,8 @@ internal class FileSystemInfoWrapper : IFileSystem.IFileSystemInfo
 #else
     /// <inheritdoc cref="FileSystemInfo.ToString()" />
 #endif
-    public override string ToString() => _instance.ToString();
+    public override string ToString()
+        => _instance.ToString();
 
     [return: NotNullIfNotNull("instance")]
     internal static FileSystemInfoWrapper? FromFileSystemInfo(FileSystemInfo? instance,

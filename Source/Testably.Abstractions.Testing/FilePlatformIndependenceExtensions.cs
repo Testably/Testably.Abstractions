@@ -18,8 +18,8 @@ public static class FilePlatformIndependenceExtensions
     ///     Normalizes the given path so that it works on all platforms.
     /// </summary>
     [return: NotNullIfNotNull("path")]
-    public static string? NormalizePath(this string? path) =>
-        path != null && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+    public static string? NormalizePath(this string? path)
+        => path != null && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
             ? PathTransformRegex
                .Replace(path, "${path}")
                .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)

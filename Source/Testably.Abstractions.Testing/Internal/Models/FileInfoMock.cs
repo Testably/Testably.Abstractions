@@ -29,65 +29,75 @@ internal class FileInfoMock : FileSystemInfoMock, IFileSystem.IFileInfo
     public bool IsReadOnly { get; set; }
 
     /// <inheritdoc />
-    public StreamWriter AppendText() => throw new NotImplementedException();
+    public StreamWriter AppendText()
+        => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public IFileSystem.IFileInfo CopyTo(string destFileName) =>
-        throw new NotImplementedException();
+    public IFileSystem.IFileInfo CopyTo(string destFileName)
+        => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public IFileSystem.IFileInfo CopyTo(string destFileName, bool overwrite) =>
-        throw new NotImplementedException();
+    public IFileSystem.IFileInfo CopyTo(string destFileName, bool overwrite)
+        => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public FileStream Create() => throw new NotImplementedException();
+    public FileStream Create()
+        => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public StreamWriter CreateText() => throw new NotImplementedException();
+    public StreamWriter CreateText()
+        => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public void Decrypt() => throw new NotImplementedException();
+    public void Decrypt()
+        => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public void Encrypt() => throw new NotImplementedException();
+    public void Encrypt()
+        => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public void MoveTo(string destFileName) => throw new NotImplementedException();
+    public void MoveTo(string destFileName)
+        => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public void MoveTo(string destFileName, bool overwrite) =>
-        throw new NotImplementedException();
+    public void MoveTo(string destFileName, bool overwrite)
+        => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public FileStream Open(FileMode mode) => throw new NotImplementedException();
+    public FileStream Open(FileMode mode)
+        => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public FileStream Open(FileMode mode, FileAccess access) =>
-        throw new NotImplementedException();
+    public FileStream Open(FileMode mode, FileAccess access)
+        => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public FileStream Open(FileMode mode, FileAccess access, FileShare share) =>
-        throw new NotImplementedException();
+    public FileStream Open(FileMode mode, FileAccess access, FileShare share)
+        => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public FileStream OpenRead() => throw new NotImplementedException();
+    public FileStream OpenRead()
+        => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public StreamReader OpenText() => throw new NotImplementedException();
+    public StreamReader OpenText()
+        => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public FileStream OpenWrite() => throw new NotImplementedException();
+    public FileStream OpenWrite()
+        => throw new NotImplementedException();
 
     /// <inheritdoc />
     public IFileSystem.IFileInfo Replace(string destinationFileName,
-                                         string? destinationBackupFileName) =>
-        throw new NotImplementedException();
+                                         string? destinationBackupFileName)
+        => throw new NotImplementedException();
 
     /// <inheritdoc />
     public IFileSystem.IFileInfo Replace(string destinationFileName,
                                          string? destinationBackupFileName,
-                                         bool ignoreMetadataErrors) =>
-        throw new NotImplementedException();
+                                         bool ignoreMetadataErrors)
+        => throw new NotImplementedException();
 
     #endregion
 

@@ -10,13 +10,16 @@ public sealed partial class TimeSystem : ITimeSystem
     #region ITimeSystem Members
 
     /// <inheritdoc cref="ITimeSystem.DateTime" />
-    public ITimeSystem.IDateTime DateTime => new DateTimeSystem(this);
+    public ITimeSystem.IDateTime DateTime
+        => new DateTimeSystem(this);
 
     /// <inheritdoc cref="ITimeSystem.Task" />
-    public ITimeSystem.ITask Task => new TaskSystem(this);
+    public ITimeSystem.ITask Task
+        => new TaskSystem(this);
 
     /// <inheritdoc cref="ITimeSystem.Thread" />
-    public ITimeSystem.IThread Thread => new ThreadSystem(this);
+    public ITimeSystem.IThread Thread
+        => new ThreadSystem(this);
 
     #endregion
 }

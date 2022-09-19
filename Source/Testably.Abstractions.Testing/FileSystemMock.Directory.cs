@@ -267,7 +267,8 @@ public sealed partial class FileSystemMock
             => System.IO.Directory.SetLastWriteTimeUtc(path, lastWriteTimeUtc);
 
         /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
-        public IFileSystem FileSystem => _fileSystem;
+        public IFileSystem FileSystem
+            => _fileSystem;
 
         #endregion
 

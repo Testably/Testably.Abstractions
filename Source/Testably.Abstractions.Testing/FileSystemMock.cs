@@ -10,7 +10,8 @@ public sealed partial class FileSystemMock : IFileSystem
     /// <summary>
     ///     The callback handler for the <see cref="FileSystemMock" />.
     /// </summary>
-    public ICallbackHandler On => _callbackHandler;
+    public ICallbackHandler On
+        => _callbackHandler;
 
     /// <summary>
     ///     The generator to create test helper files.
@@ -48,19 +49,22 @@ public sealed partial class FileSystemMock : IFileSystem
     #region IFileSystem Members
 
     /// <inheritdoc cref="IFileSystem.Directory" />
-    public IFileSystem.IDirectory Directory => _directoryMock;
+    public IFileSystem.IDirectory Directory
+        => _directoryMock;
 
     /// <inheritdoc cref="IFileSystem.DirectoryInfo" />
     public IFileSystem.IDirectoryInfoFactory DirectoryInfo { get; }
 
     /// <inheritdoc cref="IFileSystem.File" />
-    public IFileSystem.IFile File => _fileMock;
+    public IFileSystem.IFile File
+        => _fileMock;
 
     /// <inheritdoc cref="IFileSystem.FileInfo" />
     public IFileSystem.IFileInfoFactory FileInfo { get; }
 
     /// <inheritdoc cref="IFileSystem.Path" />
-    public IFileSystem.IPath Path => _pathMock;
+    public IFileSystem.IPath Path
+        => _pathMock;
 
     #endregion
 }

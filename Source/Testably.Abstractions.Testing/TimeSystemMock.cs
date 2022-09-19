@@ -18,7 +18,8 @@ public sealed partial class TimeSystemMock : ITimeSystem
     /// <summary>
     ///     The callback handler for the <see cref="TimeSystemMock" />
     /// </summary>
-    public ICallbackHandler On => _callbackHandler;
+    public ICallbackHandler On
+        => _callbackHandler;
 
     private readonly TimeSystemMockCallbackHandler _callbackHandler;
     private readonly DateTimeMock _dateTimeMock;
@@ -54,13 +55,16 @@ public sealed partial class TimeSystemMock : ITimeSystem
     #region ITimeSystem Members
 
     /// <inheritdoc cref="ITimeSystem.DateTime" />
-    public ITimeSystem.IDateTime DateTime => _dateTimeMock;
+    public ITimeSystem.IDateTime DateTime
+        => _dateTimeMock;
 
     /// <inheritdoc cref="ITimeSystem.Thread" />
-    public ITimeSystem.IThread Thread => _threadMock;
+    public ITimeSystem.IThread Thread
+        => _threadMock;
 
     /// <inheritdoc cref="ITimeSystem.Task" />
-    public ITimeSystem.ITask Task => _taskMock;
+    public ITimeSystem.ITask Task
+        => _taskMock;
 
     #endregion
 }

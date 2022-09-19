@@ -19,10 +19,12 @@ internal class FileInfoWrapper : FileSystemInfoWrapper, IFileSystem.IFileInfo
     #region IFileInfo Members
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.Length" />
-    public long Length => _instance.Length;
+    public long Length
+        => _instance.Length;
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.DirectoryName" />
-    public string? DirectoryName => _instance.DirectoryName;
+    public string? DirectoryName
+        => _instance.DirectoryName;
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.Directory" />
     public IFileSystem.IDirectoryInfo? Directory
@@ -36,7 +38,8 @@ internal class FileInfoWrapper : FileSystemInfoWrapper, IFileSystem.IFileInfo
     }
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.AppendText()" />
-    public StreamWriter AppendText() => _instance.AppendText();
+    public StreamWriter AppendText()
+        => _instance.AppendText();
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.CopyTo(string)" />
     public IFileSystem.IFileInfo CopyTo(string destFileName)
@@ -47,34 +50,40 @@ internal class FileInfoWrapper : FileSystemInfoWrapper, IFileSystem.IFileInfo
         => FromFileInfo(_instance.CopyTo(destFileName, overwrite), _fileSystem);
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.Create()" />
-    public FileStream Create() => _instance.Create();
+    public FileStream Create()
+        => _instance.Create();
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.CreateText()" />
-    public StreamWriter CreateText() => _instance.CreateText();
+    public StreamWriter CreateText()
+        => _instance.CreateText();
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.Decrypt()" />
 #if NET6_0_OR_GREATER
     [SupportedOSPlatform("windows")]
 #endif
-    public void Decrypt() => _instance.Decrypt();
+    public void Decrypt()
+        => _instance.Decrypt();
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.Encrypt()" />
 #if NET6_0_OR_GREATER
     [SupportedOSPlatform("windows")]
 #endif
-    public void Encrypt() => _instance.Encrypt();
+    public void Encrypt()
+        => _instance.Encrypt();
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.MoveTo(string)" />
-    public void MoveTo(string destFileName) => _instance.MoveTo(destFileName);
+    public void MoveTo(string destFileName)
+        => _instance.MoveTo(destFileName);
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
     /// <inheritdoc cref="IFileSystem.IFileInfo.MoveTo(string, bool)" />
-    public void MoveTo(string destFileName, bool overwrite) =>
-        _instance.MoveTo(destFileName, overwrite);
+    public void MoveTo(string destFileName, bool overwrite)
+        => _instance.MoveTo(destFileName, overwrite);
 #endif
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode)" />
-    public FileStream Open(FileMode mode) => _instance.Open(mode);
+    public FileStream Open(FileMode mode)
+        => _instance.Open(mode);
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode, FileAccess)" />
     public FileStream Open(FileMode mode, FileAccess access)
@@ -85,13 +94,16 @@ internal class FileInfoWrapper : FileSystemInfoWrapper, IFileSystem.IFileInfo
         => _instance.Open(mode, access, share);
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.OpenRead()" />
-    public FileStream OpenRead() => _instance.OpenRead();
+    public FileStream OpenRead()
+        => _instance.OpenRead();
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.OpenText()" />
-    public StreamReader OpenText() => _instance.OpenText();
+    public StreamReader OpenText()
+        => _instance.OpenText();
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.OpenWrite()" />
-    public FileStream OpenWrite() => _instance.OpenWrite();
+    public FileStream OpenWrite()
+        => _instance.OpenWrite();
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.Replace(string, string?)" />
     public IFileSystem.IFileInfo Replace(string destinationFileName,

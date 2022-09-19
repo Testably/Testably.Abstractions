@@ -44,7 +44,8 @@ public sealed partial class TimeSystemMock
         }
 
         /// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
-        public ITimeSystem TimeSystem => _timeSystemMock;
+        public ITimeSystem TimeSystem
+            => _timeSystemMock;
 
         #endregion
     }

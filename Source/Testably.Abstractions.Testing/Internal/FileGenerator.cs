@@ -11,7 +11,8 @@ internal class FileGenerator : FileSystemMock.IGenerator
 
     #region IGenerator Members
 
-    public IFileSystem FileSystem => _fileSystem;
+    public IFileSystem FileSystem
+        => _fileSystem;
 
     #endregion
 }
