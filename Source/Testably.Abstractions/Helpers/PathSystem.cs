@@ -23,9 +23,6 @@ public abstract class PathSystem : IFileSystem.IPath
 
     #region IPath Members
 
-    /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
-    public IFileSystem FileSystem { get; }
-
     /// <inheritdoc cref="Path.AltDirectorySeparatorChar" />
     public char AltDirectorySeparatorChar
         => Path.AltDirectorySeparatorChar;
@@ -33,6 +30,9 @@ public abstract class PathSystem : IFileSystem.IPath
     /// <inheritdoc cref="Path.DirectorySeparatorChar" />
     public char DirectorySeparatorChar
         => Path.DirectorySeparatorChar;
+
+    /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+    public IFileSystem FileSystem { get; }
 
     /// <inheritdoc cref="Path.PathSeparator" />
     public char PathSeparator
@@ -144,10 +144,6 @@ public abstract class PathSystem : IFileSystem.IPath
         => Path.GetRelativePath(relativeTo, path);
 #endif
 
-    /// <inheritdoc cref="Path.GetTempPath()" />
-    public string GetTempPath()
-        => Path.GetTempPath();
-
     /// <inheritdoc cref="Path.GetTempFileName()" />
 #if !NETSTANDARD2_0
     [Obsolete(
@@ -155,6 +151,10 @@ public abstract class PathSystem : IFileSystem.IPath
 #endif
     public string GetTempFileName()
         => Path.GetTempFileName();
+
+    /// <inheritdoc cref="Path.GetTempPath()" />
+    public string GetTempPath()
+        => Path.GetTempPath();
 
 #if FEATURE_SPAN
     /// <inheritdoc cref="Path.HasExtension(ReadOnlySpan{char})" />

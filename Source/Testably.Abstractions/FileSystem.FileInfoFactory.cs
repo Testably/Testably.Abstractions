@@ -14,12 +14,12 @@ public sealed partial class FileSystem
 
         #region IFileInfoFactory Members
 
+        /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+        public IFileSystem FileSystem { get; }
+
         /// <inheritdoc cref="IFileSystem.IFileInfoFactory.New" />
         public IFileSystem.IFileInfo New(string path)
             => FileInfoWrapper.FromFileInfo(new FileInfo(path), FileSystem);
-
-        /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
-        public IFileSystem FileSystem { get; }
 
         #endregion
     }

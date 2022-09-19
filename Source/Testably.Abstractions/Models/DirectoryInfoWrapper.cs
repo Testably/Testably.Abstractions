@@ -7,8 +7,8 @@ namespace Testably.Abstractions.Models;
 
 internal class DirectoryInfoWrapper : FileSystemInfoWrapper, IFileSystem.IDirectoryInfo
 {
-    private readonly DirectoryInfo _instance;
     private readonly IFileSystem _fileSystem;
+    private readonly DirectoryInfo _instance;
 
     internal DirectoryInfoWrapper(DirectoryInfo instance, IFileSystem fileSystem)
         : base(instance, fileSystem)

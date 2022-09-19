@@ -17,16 +17,16 @@ internal class FileInfoMock : FileSystemInfoMock, IFileSystem.IFileInfo
     #region IFileInfo Members
 
     /// <inheritdoc />
-    public long Length { get; }
+    public IFileSystem.IDirectoryInfo? Directory { get; }
 
     /// <inheritdoc />
     public string? DirectoryName { get; }
 
     /// <inheritdoc />
-    public IFileSystem.IDirectoryInfo? Directory { get; }
+    public bool IsReadOnly { get; set; }
 
     /// <inheritdoc />
-    public bool IsReadOnly { get; set; }
+    public long Length { get; }
 
     /// <inheritdoc />
     public StreamWriter AppendText()

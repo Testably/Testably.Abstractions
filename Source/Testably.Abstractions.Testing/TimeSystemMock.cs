@@ -11,20 +11,20 @@ namespace Testably.Abstractions.Testing;
 public sealed partial class TimeSystemMock : ITimeSystem
 {
     /// <summary>
-    ///     The time provider for the currently simulated system time.
-    /// </summary>
-    public ITimeProvider TimeProvider { get; }
-
-    /// <summary>
     ///     The callback handler for the <see cref="TimeSystemMock" />
     /// </summary>
     public ICallbackHandler On
         => _callbackHandler;
 
+    /// <summary>
+    ///     The time provider for the currently simulated system time.
+    /// </summary>
+    public ITimeProvider TimeProvider { get; }
+
     private readonly TimeSystemMockCallbackHandler _callbackHandler;
     private readonly DateTimeMock _dateTimeMock;
-    private readonly ThreadMock _threadMock;
     private readonly TaskMock _taskMock;
+    private readonly ThreadMock _threadMock;
 
     /// <summary>
     ///     Initializes the <see cref="TimeSystemMock" /> with a random time.
@@ -58,13 +58,13 @@ public sealed partial class TimeSystemMock : ITimeSystem
     public ITimeSystem.IDateTime DateTime
         => _dateTimeMock;
 
-    /// <inheritdoc cref="ITimeSystem.Thread" />
-    public ITimeSystem.IThread Thread
-        => _threadMock;
-
     /// <inheritdoc cref="ITimeSystem.Task" />
     public ITimeSystem.ITask Task
         => _taskMock;
+
+    /// <inheritdoc cref="ITimeSystem.Thread" />
+    public ITimeSystem.IThread Thread
+        => _threadMock;
 
     #endregion
 }

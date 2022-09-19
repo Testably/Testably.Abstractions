@@ -11,9 +11,9 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
     public IFileSystem FileSystem
         => _fileSystem;
 
-    private readonly FileSystemMock _fileSystem;
-
     private readonly ConcurrentDictionary<string, FileSystemInfoMock> _files = new();
+
+    private readonly FileSystemMock _fileSystem;
 
     public InMemoryFileSystem(FileSystemMock fileSystem)
     {
@@ -25,11 +25,10 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
     public string CurrentDirectory { get; set; } = "".PrefixRoot();
 
     /// <inheritdoc />
-    public IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path)
+    public bool Delete(string path)
     {
-        return _files.GetOrAdd(
-            _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
-            _ => CreateDirectoryInternal(path)) as IFileSystem.IDirectoryInfo;
+        return _files.TryRemove(
+            _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem), out _);
     }
 
     /// <inheritdoc />
@@ -45,10 +44,11 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
     }
 
     /// <inheritdoc />
-    public bool Delete(string path)
+    public IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path)
     {
-        return _files.TryRemove(
-            _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem), out _);
+        return _files.GetOrAdd(
+            _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
+            _ => CreateDirectoryInternal(path)) as IFileSystem.IDirectoryInfo;
     }
 
     #endregion

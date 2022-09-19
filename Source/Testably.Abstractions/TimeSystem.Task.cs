@@ -15,6 +15,9 @@ public sealed partial class TimeSystem
 
         #region ITask Members
 
+        /// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+        public ITimeSystem TimeSystem { get; }
+
         /// <inheritdoc cref="ITimeSystem.ITask.Delay(int)" />
         public Task Delay(int millisecondsDelay)
         {
@@ -39,9 +42,6 @@ public sealed partial class TimeSystem
         {
             return System.Threading.Tasks.Task.Delay(delay, cancellationToken);
         }
-
-        /// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
-        public ITimeSystem TimeSystem { get; }
 
         #endregion
     }

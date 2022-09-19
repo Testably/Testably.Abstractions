@@ -10,17 +10,17 @@ public partial interface IFileSystem
     /// </summary>
     public interface IFileInfo : IFileSystemInfo
     {
-        /// <inheritdoc cref="FileInfo.Length" />
-        long Length { get; }
+        /// <inheritdoc cref="FileInfo.Directory" />
+        IDirectoryInfo? Directory { get; }
 
         /// <inheritdoc cref="FileInfo.DirectoryName" />
         string? DirectoryName { get; }
 
-        /// <inheritdoc cref="FileInfo.Directory" />
-        IDirectoryInfo? Directory { get; }
-
         /// <inheritdoc cref="FileInfo.IsReadOnly" />
         bool IsReadOnly { get; set; }
+
+        /// <inheritdoc cref="FileInfo.Length" />
+        long Length { get; }
 
         /// <inheritdoc cref="FileInfo.AppendText()" />
         public StreamWriter AppendText();

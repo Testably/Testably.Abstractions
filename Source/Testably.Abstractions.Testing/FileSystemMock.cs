@@ -8,15 +8,15 @@ namespace Testably.Abstractions.Testing;
 public sealed partial class FileSystemMock : IFileSystem
 {
     /// <summary>
+    ///     The generator to create test helper files.
+    /// </summary>
+    public IGenerator Generate { get; }
+
+    /// <summary>
     ///     The callback handler for the <see cref="FileSystemMock" />.
     /// </summary>
     public ICallbackHandler On
         => _callbackHandler;
-
-    /// <summary>
-    ///     The generator to create test helper files.
-    /// </summary>
-    public IGenerator Generate { get; }
 
     /// <summary>
     ///     The used time system.

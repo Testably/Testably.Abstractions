@@ -13,6 +13,9 @@ public sealed partial class TimeSystem
 
         #region IThread Members
 
+        /// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+        public ITimeSystem TimeSystem { get; }
+
         /// <inheritdoc cref="ITimeSystem.IThread.Sleep(int)" />
         public void Sleep(int millisecondsTimeout)
         {
@@ -24,9 +27,6 @@ public sealed partial class TimeSystem
         {
             System.Threading.Thread.Sleep(timeout);
         }
-
-        /// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
-        public ITimeSystem TimeSystem { get; }
 
         #endregion
     }

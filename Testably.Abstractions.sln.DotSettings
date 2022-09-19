@@ -73,8 +73,6 @@
           &lt;And&gt;&#xD;
             &lt;Kind Is="Field" /&gt;&#xD;
             &lt;Static /&gt;&#xD;
-                                                                                                     
-                                                                                                        
           &lt;/And&gt;&#xD;
         &lt;/Or&gt;&#xD;
       &lt;/Entry.Match&gt;&#xD;
@@ -83,7 +81,6 @@
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Properties, Indexers"&gt;&#xD;
-                                                                
       &lt;Entry.Match&gt;&#xD;
         &lt;Or&gt;&#xD;
           &lt;Kind Is="Property" /&gt;&#xD;
@@ -106,97 +103,22 @@
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Setup/Teardown Methods"&gt;&#xD;
-                                                        
-                                     
-                                               
-                        
-                                        
-                                                                  
       &lt;Entry.Match&gt;&#xD;
         &lt;Or&gt;&#xD;
           &lt;Kind Is="Constructor" /&gt;&#xD;
-                            
-                                            
-                                   
-                             
-                          
-                                 
-                                 
-                                                    
-                                  
-                         
-                        
-                                        
-                                             
-                                
           &lt;And&gt;&#xD;
             &lt;Kind Is="Method" /&gt;&#xD;
             &lt;ImplementsInterface Name="System.IDisposable" /&gt;&#xD;
-                                   
-                             
           &lt;/And&gt;&#xD;
         &lt;/Or&gt;&#xD;
       &lt;/Entry.Match&gt;&#xD;
-                                 
-                             
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Kind Order="Constructor" /&gt;&#xD;
-                        
-                                           
-                                                   
-                                
-                                              
-                                 
       &lt;/Entry.SortBy&gt;&#xD;
-                               
-                                  
     &lt;/Entry&gt;&#xD;
-                        
-                                         
-                                                           
-                                
-                         
-                                             
-                                            
-                          
-                                 
-                         
     &lt;Entry DisplayName="Test Methods" Priority="100"&gt;&#xD;
-                                               
-                                  
-                                                             
       &lt;Entry.Match&gt;&#xD;
-                           
-                                                 
-                                  
         &lt;Or&gt;&#xD;
-                                   
-                           
-                                                   
-                                  
-                                                                 
-                                   
-                           
-                                                    
-                                  
-                                                                  
-                                   
-                           
-                                                           
-                                  
-                                                                
-                                   
-                           
-                                                           
-                                  
-                                                                
-                                   
-                           
-                                      
-                        
-                                      
-                                                        
-                                
           &lt;And&gt;&#xD;
             &lt;Kind Is="Method" /&gt;&#xD;
             &lt;HasAttribute Name="Xunit.FactAttribute" /&gt;&#xD;
@@ -289,7 +211,6 @@
       &lt;Entry DisplayName="Interface Members"&gt;&#xD;
         &lt;Entry.Match&gt;&#xD;
           &lt;And&gt;&#xD;
-                                             
             &lt;Kind Is="Member" /&gt;&#xD;
             &lt;ImplementsInterface /&gt;&#xD;
           &lt;/And&gt;&#xD;
@@ -319,6 +240,7 @@
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Kind Is="Member" /&gt;&#xD;
         &lt;Access /&gt;&#xD;
+        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Properties, Indexers"&gt;&#xD;
@@ -330,6 +252,7 @@
       &lt;/Entry.Match&gt;&#xD;
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Access /&gt;&#xD;
+        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Fields"&gt;&#xD;
@@ -340,6 +263,7 @@
       &lt;/Entry.Match&gt;&#xD;
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Access /&gt;&#xD;
+        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Constructors"&gt;&#xD;
@@ -356,6 +280,10 @@
       &lt;Entry.Match&gt;&#xD;
         &lt;Kind Is="Event" /&gt;&#xD;
       &lt;/Entry.Match&gt;&#xD;
+      &lt;Entry.SortBy&gt;&#xD;
+        &lt;Access /&gt;&#xD;
+        &lt;Name /&gt;&#xD;
+      &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Public Delegates" Priority="100"&gt;&#xD;
       &lt;Entry.Match&gt;&#xD;
@@ -384,6 +312,21 @@
       &lt;Region.GroupBy&gt;&#xD;
         &lt;ImplementsInterface Immediate="True" /&gt;&#xD;
       &lt;/Region.GroupBy&gt;&#xD;
+      &lt;Entry DisplayName="Interface Properties, Indexers"&gt;&#xD;
+        &lt;Entry.Match&gt;&#xD;
+          &lt;And&gt;&#xD;
+            &lt;Or&gt;&#xD;
+              &lt;Kind Is="Property" /&gt;&#xD;
+              &lt;Kind Is="Indexer" /&gt;&#xD;
+            &lt;/Or&gt;&#xD;
+            &lt;ImplementsInterface /&gt;&#xD;
+          &lt;/And&gt;&#xD;
+        &lt;/Entry.Match&gt;&#xD;
+        &lt;Entry.SortBy&gt;&#xD;
+          &lt;Access /&gt;&#xD;
+          &lt;Name /&gt;&#xD;
+        &lt;/Entry.SortBy&gt;&#xD;
+      &lt;/Entry&gt;&#xD;
       &lt;Entry DisplayName="Interface Members"&gt;&#xD;
         &lt;Entry.Match&gt;&#xD;
           &lt;And&gt;&#xD;
@@ -393,6 +336,7 @@
         &lt;/Entry.Match&gt;&#xD;
         &lt;Entry.SortBy&gt;&#xD;
           &lt;ImplementsInterface /&gt;&#xD;
+          &lt;Name /&gt;&#xD;
         &lt;/Entry.SortBy&gt;&#xD;
       &lt;/Entry&gt;&#xD;
     &lt;/Region&gt;&#xD;

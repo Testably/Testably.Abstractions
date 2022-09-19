@@ -17,6 +17,9 @@ public sealed partial class FileSystem
 
         #region IDirectory Members
 
+        /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+        public IFileSystem FileSystem { get; }
+
         /// <inheritdoc cref="Directory.CreateDirectory(string)" />
         public IFileSystem.IDirectoryInfo CreateDirectory(string path)
             => DirectoryInfoWrapper.FromDirectoryInfo(
@@ -263,9 +266,6 @@ public sealed partial class FileSystem
         /// <inheritdoc cref="Directory.SetLastWriteTimeUtc(string, DateTime)" />
         public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
             => System.IO.Directory.SetLastWriteTimeUtc(path, lastWriteTimeUtc);
-
-        /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
-        public IFileSystem FileSystem { get; }
 
         #endregion
     }

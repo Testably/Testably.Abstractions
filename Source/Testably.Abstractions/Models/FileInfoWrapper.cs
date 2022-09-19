@@ -6,8 +6,8 @@ namespace Testably.Abstractions.Models;
 
 internal class FileInfoWrapper : FileSystemInfoWrapper, IFileSystem.IFileInfo
 {
-    private readonly FileInfo _instance;
     private readonly IFileSystem _fileSystem;
+    private readonly FileInfo _instance;
 
     internal FileInfoWrapper(FileInfo instance, IFileSystem fileSystem)
         : base(instance, fileSystem)
@@ -18,17 +18,13 @@ internal class FileInfoWrapper : FileSystemInfoWrapper, IFileSystem.IFileInfo
 
     #region IFileInfo Members
 
-    /// <inheritdoc cref="IFileSystem.IFileInfo.Length" />
-    public long Length
-        => _instance.Length;
+    /// <inheritdoc cref="IFileSystem.IFileInfo.Directory" />
+    public IFileSystem.IDirectoryInfo? Directory
+        => DirectoryInfoWrapper.FromDirectoryInfo(_instance.Directory, _fileSystem);
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.DirectoryName" />
     public string? DirectoryName
         => _instance.DirectoryName;
-
-    /// <inheritdoc cref="IFileSystem.IFileInfo.Directory" />
-    public IFileSystem.IDirectoryInfo? Directory
-        => DirectoryInfoWrapper.FromDirectoryInfo(_instance.Directory, _fileSystem);
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.IsReadOnly" />
     public bool IsReadOnly
@@ -36,6 +32,10 @@ internal class FileInfoWrapper : FileSystemInfoWrapper, IFileSystem.IFileInfo
         get => _instance.IsReadOnly;
         set => _instance.IsReadOnly = value;
     }
+
+    /// <inheritdoc cref="IFileSystem.IFileInfo.Length" />
+    public long Length
+        => _instance.Length;
 
     /// <inheritdoc cref="IFileSystem.IFileInfo.AppendText()" />
     public StreamWriter AppendText()

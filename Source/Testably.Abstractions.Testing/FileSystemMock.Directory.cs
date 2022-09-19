@@ -21,6 +21,10 @@ public sealed partial class FileSystemMock
 
         #region IDirectory Members
 
+        /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+        public IFileSystem FileSystem
+            => _fileSystem;
+
         /// <inheritdoc cref="Directory.CreateDirectory(string)" />
         public IFileSystem.IDirectoryInfo CreateDirectory(string path)
             => CreateDirectoryInternal(path);
@@ -265,10 +269,6 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="Directory.SetLastWriteTimeUtc(string, DateTime)" />
         public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
             => System.IO.Directory.SetLastWriteTimeUtc(path, lastWriteTimeUtc);
-
-        /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
-        public IFileSystem FileSystem
-            => _fileSystem;
 
         #endregion
 

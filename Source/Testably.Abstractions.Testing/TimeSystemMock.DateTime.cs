@@ -27,10 +27,6 @@ public sealed partial class TimeSystemMock
         public DateTime MinValue
             => _timeSystemMock.TimeProvider.MinValue;
 
-        /// <inheritdoc cref="ITimeSystem.IDateTime.UnixEpoch" />
-        public DateTime UnixEpoch
-            => _timeSystemMock.TimeProvider.UnixEpoch;
-
         /// <inheritdoc cref="ITimeSystem.IDateTime.Now" />
         public DateTime Now
         {
@@ -42,16 +38,9 @@ public sealed partial class TimeSystemMock
             }
         }
 
-        /// <inheritdoc cref="ITimeSystem.IDateTime.UtcNow" />
-        public DateTime UtcNow
-        {
-            get
-            {
-                DateTime value = _timeSystemMock.TimeProvider.Read().ToUniversalTime();
-                _callbackHandler.InvokeDateTimeReadCallbacks(value);
-                return value;
-            }
-        }
+        /// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+        public ITimeSystem TimeSystem
+            => _timeSystemMock;
 
         /// <inheritdoc cref="ITimeSystem.IDateTime.Today" />
         public DateTime Today
@@ -64,9 +53,20 @@ public sealed partial class TimeSystemMock
             }
         }
 
-        /// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
-        public ITimeSystem TimeSystem
-            => _timeSystemMock;
+        /// <inheritdoc cref="ITimeSystem.IDateTime.UnixEpoch" />
+        public DateTime UnixEpoch
+            => _timeSystemMock.TimeProvider.UnixEpoch;
+
+        /// <inheritdoc cref="ITimeSystem.IDateTime.UtcNow" />
+        public DateTime UtcNow
+        {
+            get
+            {
+                DateTime value = _timeSystemMock.TimeProvider.Read().ToUniversalTime();
+                _callbackHandler.InvokeDateTimeReadCallbacks(value);
+                return value;
+            }
+        }
 
         #endregion
     }

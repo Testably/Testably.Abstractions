@@ -19,6 +19,10 @@ public sealed partial class FileSystemMock
 
         #region IDirectoryInfoFactory Members
 
+        /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+        public IFileSystem FileSystem
+            => _fileSystem;
+
         /// <inheritdoc cref="IFileSystem.IDirectoryInfoFactory.New(string)" />
         public IFileSystem.IDirectoryInfo New(string path)
         {
@@ -29,10 +33,6 @@ public sealed partial class FileSystemMock
 
             return DirectoryInfoMock.New(path, _fileSystem);
         }
-
-        /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
-        public IFileSystem FileSystem
-            => _fileSystem;
 
         #endregion
     }
