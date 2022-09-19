@@ -20,11 +20,15 @@
 	<s:Int64 x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/BLANK_LINES_AFTER_USING_LIST/@EntryValue">0</s:Int64>
 	<s:Int64 x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/KEEP_BLANK_LINES_IN_CODE/@EntryValue">1</s:Int64>
 	<s:Int64 x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/KEEP_BLANK_LINES_IN_DECLARATIONS/@EntryValue">1</s:Int64>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/KEEP_EXISTING_EXPR_MEMBER_ARRANGEMENT/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/OUTDENT_DOTS/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_ACCESSORHOLDER_ATTRIBUTE_ON_SAME_LINE_EX/@EntryValue">NEVER</s:String>
+	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_EXPR_METHOD_ON_SINGLE_LINE/@EntryValue">NEVER</s:String>
+	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_EXPR_PROPERTY_ON_SINGLE_LINE/@EntryValue">NEVER</s:String>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/SPACE_WITHIN_SINGLE_LINE_ARRAY_INITIALIZER_BRACES/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/USE_CONTINUOUS_INDENT_INSIDE_INITIALIZER_BRACES/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/USE_CONTINUOUS_INDENT_INSIDE_PARENS/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_BEFORE_ARROW_WITH_EXPRESSIONS/@EntryValue">True</s:Boolean>
 	<s:Int64 x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_LIMIT/@EntryValue">90</s:Int64>
 	<s:String x:Key="/Default/CodeStyle/CSharpFileLayoutPatterns/Pattern/@EntryValue">&lt;?xml version="1.0" encoding="utf-16"?&gt;&#xD;
 &lt;Patterns xmlns="urn:schemas-jetbrains-com:member-reordering-patterns"&gt;&#xD;
@@ -62,137 +66,64 @@
         &lt;/HasMember&gt;&#xD;
       &lt;/And&gt;&#xD;
     &lt;/TypePattern.Match&gt;&#xD;
-    &lt;Entry DisplayName="Static Fields and Constants"&gt;&#xD;
-      &lt;Entry.Match&gt;&#xD;
-        &lt;Or&gt;&#xD;
-          &lt;Kind Is="Constant" /&gt;&#xD;
-          &lt;And&gt;&#xD;
+    &lt;Region Name="Test Setup"&gt;&#xD;
+      &lt;Entry DisplayName="Static Fields and Constants"&gt;&#xD;
+        &lt;Entry.Match&gt;&#xD;
+          &lt;Or&gt;&#xD;
+            &lt;Kind Is="Constant" /&gt;&#xD;
+            &lt;And&gt;&#xD;
+              &lt;Kind Is="Field" /&gt;&#xD;
+              &lt;Static /&gt;&#xD;
+            &lt;/And&gt;&#xD;
+          &lt;/Or&gt;&#xD;
+        &lt;/Entry.Match&gt;&#xD;
+        &lt;Entry.SortBy&gt;&#xD;
+          &lt;Kind Is="Member" /&gt;&#xD;
+          &lt;Name /&gt;&#xD;
+        &lt;/Entry.SortBy&gt;&#xD;
+      &lt;/Entry&gt;&#xD;
+      &lt;Entry DisplayName="Properties, Indexers"&gt;&#xD;
+        &lt;Entry.Match&gt;&#xD;
+          &lt;Or&gt;&#xD;
+            &lt;Kind Is="Property" /&gt;&#xD;
+            &lt;Kind Is="Indexer" /&gt;&#xD;
+          &lt;/Or&gt;&#xD;
+        &lt;/Entry.Match&gt;&#xD;
+        &lt;Entry.SortBy&gt;&#xD;
+          &lt;Access /&gt;&#xD;
+          &lt;Name /&gt;&#xD;
+        &lt;/Entry.SortBy&gt;&#xD;
+      &lt;/Entry&gt;&#xD;
+      &lt;Entry DisplayName="Fields"&gt;&#xD;
+        &lt;Entry.Match&gt;&#xD;
+          &lt;Or&gt;&#xD;
             &lt;Kind Is="Field" /&gt;&#xD;
-            &lt;Static /&gt;&#xD;
-                                                                                                     
-                                                                                                        
-          &lt;/And&gt;&#xD;
-        &lt;/Or&gt;&#xD;
-      &lt;/Entry.Match&gt;&#xD;
-      &lt;Entry.SortBy&gt;&#xD;
-        &lt;Kind Order="Constant Field" /&gt;&#xD;
-      &lt;/Entry.SortBy&gt;&#xD;
-    &lt;/Entry&gt;&#xD;
-    &lt;Entry DisplayName="Properties, Indexers"&gt;&#xD;
-                                                                
-      &lt;Entry.Match&gt;&#xD;
-        &lt;Or&gt;&#xD;
-          &lt;Kind Is="Property" /&gt;&#xD;
-          &lt;Kind Is="Indexer" /&gt;&#xD;
-        &lt;/Or&gt;&#xD;
-      &lt;/Entry.Match&gt;&#xD;
-      &lt;Entry.SortBy&gt;&#xD;
-        &lt;Access /&gt;&#xD;
-      &lt;/Entry.SortBy&gt;&#xD;
-    &lt;/Entry&gt;&#xD;
-    &lt;Entry DisplayName="Fields"&gt;&#xD;
-      &lt;Entry.Match&gt;&#xD;
-        &lt;Or&gt;&#xD;
-          &lt;Kind Is="Field" /&gt;&#xD;
-        &lt;/Or&gt;&#xD;
-      &lt;/Entry.Match&gt;&#xD;
-      &lt;Entry.SortBy&gt;&#xD;
-        &lt;Access Order="Public Protected Internal Private" /&gt;&#xD;
-        &lt;Name /&gt;&#xD;
-      &lt;/Entry.SortBy&gt;&#xD;
-    &lt;/Entry&gt;&#xD;
-    &lt;Entry DisplayName="Setup/Teardown Methods"&gt;&#xD;
-                                                        
-                                     
-                                               
-                        
-                                        
-                                                                  
-      &lt;Entry.Match&gt;&#xD;
-        &lt;Or&gt;&#xD;
-          &lt;Kind Is="Constructor" /&gt;&#xD;
-                            
-                                            
-                                   
-                             
-                          
-                                 
-                                 
-                                                    
-                                  
-                         
-                        
-                                        
-                                             
-                                
-          &lt;And&gt;&#xD;
-            &lt;Kind Is="Method" /&gt;&#xD;
-            &lt;ImplementsInterface Name="System.IDisposable" /&gt;&#xD;
-                                   
-                             
-          &lt;/And&gt;&#xD;
-        &lt;/Or&gt;&#xD;
-      &lt;/Entry.Match&gt;&#xD;
-                                 
-                             
-      &lt;Entry.SortBy&gt;&#xD;
-        &lt;Kind Order="Constructor" /&gt;&#xD;
-                        
-                                           
-                                                   
-                                
-                                              
-                                 
-      &lt;/Entry.SortBy&gt;&#xD;
-                               
-                                  
-    &lt;/Entry&gt;&#xD;
-                        
-                                         
-                                                           
-                                
-                         
-                                             
-                                            
-                          
-                                 
-                         
+          &lt;/Or&gt;&#xD;
+        &lt;/Entry.Match&gt;&#xD;
+        &lt;Entry.SortBy&gt;&#xD;
+          &lt;Access Order="Public Protected Internal Private" /&gt;&#xD;
+          &lt;Name /&gt;&#xD;
+        &lt;/Entry.SortBy&gt;&#xD;
+      &lt;/Entry&gt;&#xD;
+      &lt;Entry DisplayName="Setup/Teardown Methods"&gt;&#xD;
+        &lt;Entry.Match&gt;&#xD;
+          &lt;Or&gt;&#xD;
+            &lt;Kind Is="Constructor" /&gt;&#xD;
+            &lt;And&gt;&#xD;
+              &lt;Kind Is="Method" /&gt;&#xD;
+              &lt;ImplementsInterface Name="System.IDisposable" /&gt;&#xD;
+            &lt;/And&gt;&#xD;
+          &lt;/Or&gt;&#xD;
+        &lt;/Entry.Match&gt;&#xD;
+        &lt;Entry.SortBy&gt;&#xD;
+          &lt;Kind Is="Member" /&gt;&#xD;
+          &lt;Name /&gt;&#xD;
+        &lt;/Entry.SortBy&gt;&#xD;
+      &lt;/Entry&gt;&#xD;
+    &lt;/Region&gt;&#xD;
     &lt;Entry DisplayName="Test Methods" Priority="100"&gt;&#xD;
-                                               
-                                  
-                                                             
       &lt;Entry.Match&gt;&#xD;
-                           
-                                                 
-                                  
         &lt;Or&gt;&#xD;
-                                   
-                           
-                                                   
-                                  
-                                                                 
-                                   
-                           
-                                                    
-                                  
-                                                                  
-                                   
-                           
-                                                           
-                                  
-                                                                
-                                   
-                           
-                                                           
-                                  
-                                                                
-                                   
-                           
-                                      
-                        
-                                      
-                                                        
-                                
           &lt;And&gt;&#xD;
             &lt;Kind Is="Method" /&gt;&#xD;
             &lt;HasAttribute Name="Xunit.FactAttribute" /&gt;&#xD;
@@ -208,12 +139,20 @@
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Region Name="Helpers"&gt;&#xD;
-      &lt;Entry DisplayName="All other members" /&gt;&#xD;
+      &lt;Entry DisplayName="All other members"&gt;&#xD;
+        &lt;Entry.SortBy&gt;&#xD;
+          &lt;Access /&gt;&#xD;
+          &lt;Name /&gt;&#xD;
+        &lt;/Entry.SortBy&gt;&#xD;
+      &lt;/Entry&gt;&#xD;
     &lt;/Region&gt;&#xD;
     &lt;Entry DisplayName="Nested Types"&gt;&#xD;
       &lt;Entry.Match&gt;&#xD;
         &lt;Kind Is="Type" /&gt;&#xD;
       &lt;/Entry.Match&gt;&#xD;
+      &lt;Entry.SortBy&gt;&#xD;
+        &lt;Name /&gt;&#xD;
+      &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
   &lt;/TypePattern&gt;&#xD;
   &lt;TypePattern DisplayName="Unit Tests"&gt;&#xD;
@@ -285,7 +224,6 @@
       &lt;Entry DisplayName="Interface Members"&gt;&#xD;
         &lt;Entry.Match&gt;&#xD;
           &lt;And&gt;&#xD;
-                                             
             &lt;Kind Is="Member" /&gt;&#xD;
             &lt;ImplementsInterface /&gt;&#xD;
           &lt;/And&gt;&#xD;
@@ -301,7 +239,7 @@
       &lt;/Entry.Match&gt;&#xD;
     &lt;/Entry&gt;&#xD;
   &lt;/TypePattern&gt;&#xD;
-  &lt;TypePattern DisplayName="Default Pattern"&gt;&#xD;
+  &lt;TypePattern DisplayName="Default Pattern" RemoveRegions="AllExceptGenerated"&gt;&#xD;
     &lt;Entry DisplayName="Static Fields and Constants"&gt;&#xD;
       &lt;Entry.Match&gt;&#xD;
         &lt;Or&gt;&#xD;
@@ -315,6 +253,7 @@
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Kind Is="Member" /&gt;&#xD;
         &lt;Access /&gt;&#xD;
+        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Properties, Indexers"&gt;&#xD;
@@ -326,6 +265,7 @@
       &lt;/Entry.Match&gt;&#xD;
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Access /&gt;&#xD;
+        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Fields"&gt;&#xD;
@@ -336,6 +276,7 @@
       &lt;/Entry.Match&gt;&#xD;
       &lt;Entry.SortBy&gt;&#xD;
         &lt;Access /&gt;&#xD;
+        &lt;Name /&gt;&#xD;
       &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Constructors"&gt;&#xD;
@@ -352,6 +293,10 @@
       &lt;Entry.Match&gt;&#xD;
         &lt;Kind Is="Event" /&gt;&#xD;
       &lt;/Entry.Match&gt;&#xD;
+      &lt;Entry.SortBy&gt;&#xD;
+        &lt;Access /&gt;&#xD;
+        &lt;Name /&gt;&#xD;
+      &lt;/Entry.SortBy&gt;&#xD;
     &lt;/Entry&gt;&#xD;
     &lt;Entry DisplayName="Public Delegates" Priority="100"&gt;&#xD;
       &lt;Entry.Match&gt;&#xD;
@@ -380,6 +325,21 @@
       &lt;Region.GroupBy&gt;&#xD;
         &lt;ImplementsInterface Immediate="True" /&gt;&#xD;
       &lt;/Region.GroupBy&gt;&#xD;
+      &lt;Entry DisplayName="Interface Properties, Indexers"&gt;&#xD;
+        &lt;Entry.Match&gt;&#xD;
+          &lt;And&gt;&#xD;
+            &lt;Or&gt;&#xD;
+              &lt;Kind Is="Property" /&gt;&#xD;
+              &lt;Kind Is="Indexer" /&gt;&#xD;
+            &lt;/Or&gt;&#xD;
+            &lt;ImplementsInterface /&gt;&#xD;
+          &lt;/And&gt;&#xD;
+        &lt;/Entry.Match&gt;&#xD;
+        &lt;Entry.SortBy&gt;&#xD;
+          &lt;Access /&gt;&#xD;
+          &lt;Name /&gt;&#xD;
+        &lt;/Entry.SortBy&gt;&#xD;
+      &lt;/Entry&gt;&#xD;
       &lt;Entry DisplayName="Interface Members"&gt;&#xD;
         &lt;Entry.Match&gt;&#xD;
           &lt;And&gt;&#xD;
@@ -389,6 +349,7 @@
         &lt;/Entry.Match&gt;&#xD;
         &lt;Entry.SortBy&gt;&#xD;
           &lt;ImplementsInterface /&gt;&#xD;
+          &lt;Name /&gt;&#xD;
         &lt;/Entry.SortBy&gt;&#xD;
       &lt;/Entry&gt;&#xD;
     &lt;/Region&gt;&#xD;
@@ -439,5 +400,6 @@
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ESettingsUpgrade_002ECSharpPlaceAttributeOnSameLineMigration/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ESettingsUpgrade_002EMigrateBlankLinesAroundFieldToBlankLinesAroundProperty/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ESettingsUpgrade_002EMigrateThisQualifierSettings/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Subdirectory/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Testably/@EntryIndexedValue">True</s:Boolean>
 </wpf:ResourceDictionary>

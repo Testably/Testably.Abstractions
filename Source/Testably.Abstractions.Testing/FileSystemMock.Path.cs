@@ -1,5 +1,4 @@
 ﻿using Testably.Abstractions.Helpers;
-using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
 
@@ -7,9 +6,24 @@ public sealed partial class FileSystemMock
 {
     private sealed class PathMock : PathSystem
     {
+        private readonly FileSystemMock _fileSystem;
+
         internal PathMock(FileSystemMock fileSystem)
             : base(fileSystem)
         {
+            _fileSystem = fileSystem;
+        }
+
+        /// <inheritdoc cref="IFileSystem.IPath.GetFullPath(string)" />
+        public override string GetFullPath(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return string.Empty;
+            }
+
+            return System.IO.Path.Combine(_fileSystem.InMemoryFileSystem.CurrentDirectory,
+                path);
         }
     }
 }

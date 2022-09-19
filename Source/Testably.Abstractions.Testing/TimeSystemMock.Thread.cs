@@ -7,8 +7,8 @@ public sealed partial class TimeSystemMock
 {
     private sealed class ThreadMock : ITimeSystem.IThread
     {
-        private readonly TimeSystemMock _timeSystemMock;
         private readonly TimeSystemMockCallbackHandler _callbackHandler;
+        private readonly TimeSystemMock _timeSystemMock;
 
         internal ThreadMock(TimeSystemMock timeSystem,
                             TimeSystemMockCallbackHandler callbackHandler)
@@ -18,6 +18,10 @@ public sealed partial class TimeSystemMock
         }
 
         #region IThread Members
+
+        /// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+        public ITimeSystem TimeSystem
+            => _timeSystemMock;
 
         public void Sleep(int millisecondsTimeout)
         {
@@ -42,9 +46,6 @@ public sealed partial class TimeSystemMock
             System.Threading.Thread.Sleep(0);
             _callbackHandler.InvokeThreadSleepCallbacks(timeout);
         }
-
-        /// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
-        public ITimeSystem TimeSystem => _timeSystemMock;
 
         #endregion
     }

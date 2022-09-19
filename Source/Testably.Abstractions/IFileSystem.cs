@@ -6,14 +6,29 @@
 public partial interface IFileSystem
 {
     /// <summary>
-    ///     Abstractions for <see cref="System.IO.Path" />.
+    ///     Abstractions for <see cref="System.IO.Directory" />.
     /// </summary>
-    IPath Path { get; }
+    IDirectory Directory { get; }
+
+    /// <summary>
+    ///     Factory for abstracting creation of <see cref="System.IO.DirectoryInfo" />.
+    /// </summary>
+    IDirectoryInfoFactory DirectoryInfo { get; }
 
     /// <summary>
     ///     Abstractions for <see cref="System.IO.File" />.
     /// </summary>
     IFile File { get; }
+
+    /// <summary>
+    ///     Factory for abstracting creation of <see cref="System.IO.FileInfo" />.
+    /// </summary>
+    IFileInfoFactory FileInfo { get; }
+
+    /// <summary>
+    ///     Abstractions for <see cref="System.IO.Path" />.
+    /// </summary>
+    IPath Path { get; }
 
     /// <summary>
     ///     Interface to support implementing extension methods on top of nested <see cref="IFileSystem" /> interfaces.

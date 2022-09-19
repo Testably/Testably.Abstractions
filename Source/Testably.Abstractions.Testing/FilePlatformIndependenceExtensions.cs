@@ -7,7 +7,8 @@ namespace Testably.Abstractions.Testing;
 
 /// <summary>
 ///     Provides extension methods to simplify writing platform independent tests.
-/// </summary>8
+/// </summary>
+/// 8
 [ExcludeFromCodeCoverage]
 public static class FilePlatformIndependenceExtensions
 {
@@ -17,12 +18,12 @@ public static class FilePlatformIndependenceExtensions
     ///     Normalizes the given path so that it works on all platforms.
     /// </summary>
     [return: NotNullIfNotNull("path")]
-    public static string? NormalizePath(this string? path) =>
-        path != null && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+    public static string? NormalizePath(this string? path)
+        => path != null && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
             ? PathTransformRegex
                .Replace(path, "${path}")
                .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
-            : path;
+            : path?.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 
     /// <summary>
     ///     Normalizes the given path so that it works on all platforms.

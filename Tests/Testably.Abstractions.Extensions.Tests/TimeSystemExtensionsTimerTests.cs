@@ -164,7 +164,7 @@ public class TimeSystemExtensionsTimerTests
         out int expectedIterations,
         out TimeSpan[] receivedIntervals)
     {
-        var random = new Random();
+        Random random = new();
         interval = TimeSpan.FromSeconds(random.Next(1, 100));
         expectedIterations = random.Next(5, 15);
         receivedIntervals = new TimeSpan[expectedIterations];

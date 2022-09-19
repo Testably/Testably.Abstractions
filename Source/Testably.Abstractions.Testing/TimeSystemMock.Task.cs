@@ -9,8 +9,8 @@ public sealed partial class TimeSystemMock
 {
     private sealed class TaskMock : ITimeSystem.ITask
     {
-        private readonly TimeSystemMock _timeSystemMock;
         private readonly TimeSystemMockCallbackHandler _callbackHandler;
+        private readonly TimeSystemMock _timeSystemMock;
 
         internal TaskMock(TimeSystemMock timeSystem,
                           TimeSystemMockCallbackHandler callbackHandler)
@@ -20,6 +20,10 @@ public sealed partial class TimeSystemMock
         }
 
         #region ITask Members
+
+        /// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+        public ITimeSystem TimeSystem
+            => _timeSystemMock;
 
         public Task Delay(int millisecondsDelay)
         {
@@ -60,9 +64,6 @@ public sealed partial class TimeSystemMock
             _callbackHandler.InvokeTaskDelayCallbacks(delay);
             return System.Threading.Tasks.Task.CompletedTask;
         }
-
-        /// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
-        public ITimeSystem TimeSystem => _timeSystemMock;
 
         #endregion
     }

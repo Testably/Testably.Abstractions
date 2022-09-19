@@ -1,6 +1,8 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
+#if !NETSTANDARD2_0
+using System;
+#endif
 
 namespace Testably.Abstractions.Helpers;
 
@@ -21,9 +23,6 @@ public abstract class PathSystem : IFileSystem.IPath
 
     #region IPath Members
 
-    /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
-    public IFileSystem FileSystem { get; }
-
     /// <inheritdoc cref="Path.AltDirectorySeparatorChar" />
     public char AltDirectorySeparatorChar
         => Path.AltDirectorySeparatorChar;
@@ -31,6 +30,9 @@ public abstract class PathSystem : IFileSystem.IPath
     /// <inheritdoc cref="Path.DirectorySeparatorChar" />
     public char DirectorySeparatorChar
         => Path.DirectorySeparatorChar;
+
+    /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+    public IFileSystem FileSystem { get; }
 
     /// <inheritdoc cref="Path.PathSeparator" />
     public char PathSeparator
@@ -104,6 +106,34 @@ public abstract class PathSystem : IFileSystem.IPath
     public string? GetFileNameWithoutExtension(string? path)
         => Path.GetFileNameWithoutExtension(path);
 
+    /// <inheritdoc cref="Path.GetFullPath(string)" />
+    public virtual string GetFullPath(string path)
+        => Path.GetFullPath(path);
+
+#if FEATURE_PATH_RELATIVE
+    /// <inheritdoc cref="Path.GetFullPath(string, string)" />
+    public virtual string GetFullPath(string path, string basePath)
+        => Path.GetFullPath(path, basePath);
+#endif
+
+    /// <inheritdoc cref="Path.GetInvalidFileNameChars()" />
+    public char[] GetInvalidFileNameChars()
+        => Path.GetInvalidFileNameChars();
+
+    /// <inheritdoc cref="Path.GetInvalidPathChars()" />
+    public char[] GetInvalidPathChars()
+        => Path.GetInvalidPathChars();
+
+#if FEATURE_SPAN
+    /// <inheritdoc cref="Path.GetPathRoot(ReadOnlySpan{char})" />
+    public ReadOnlySpan<char> GetPathRoot(ReadOnlySpan<char> path)
+        => Path.GetPathRoot(path);
+#endif
+
+    /// <inheritdoc cref="Path.GetPathRoot(string?)" />
+    public string? GetPathRoot(string? path)
+        => Path.GetPathRoot(path);
+
     /// <inheritdoc cref="Path.GetRandomFileName()" />
     public string GetRandomFileName()
         => Path.GetRandomFileName();
@@ -113,6 +143,18 @@ public abstract class PathSystem : IFileSystem.IPath
     public string GetRelativePath(string relativeTo, string path)
         => Path.GetRelativePath(relativeTo, path);
 #endif
+
+    /// <inheritdoc cref="Path.GetTempFileName()" />
+#if !NETSTANDARD2_0
+    [Obsolete(
+        "Insecure temporary file creation methods should not be used. Use `Path.Combine(Path.GetTempPath(), Path.GetRandomFileName())` instead.")]
+#endif
+    public string GetTempFileName()
+        => Path.GetTempFileName();
+
+    /// <inheritdoc cref="Path.GetTempPath()" />
+    public string GetTempPath()
+        => Path.GetTempPath();
 
 #if FEATURE_SPAN
     /// <inheritdoc cref="Path.HasExtension(ReadOnlySpan{char})" />
@@ -135,6 +177,16 @@ public abstract class PathSystem : IFileSystem.IPath
     public bool IsPathFullyQualified(string path)
         => Path.IsPathFullyQualified(path);
 #endif
+
+#if FEATURE_SPAN
+    /// <inheritdoc cref="Path.IsPathRooted(ReadOnlySpan{char})" />
+    public bool IsPathRooted(ReadOnlySpan<char> path)
+        => Path.IsPathRooted(path);
+#endif
+
+    /// <inheritdoc cref="Path.IsPathRooted(string)" />
+    public bool IsPathRooted(string? path)
+        => Path.IsPathRooted(path);
 
     #endregion
 

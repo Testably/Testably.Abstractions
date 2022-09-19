@@ -6,8 +6,8 @@ namespace Testably.Abstractions.Timer;
 
 internal sealed class Timer : IStoppedTimer, IRunningTimer
 {
-    private readonly ITimeSystem _timeSystem;
     private CancellationTokenSource? _runningCancellationTokenSource;
+    private readonly ITimeSystem _timeSystem;
 
     public Timer(
         ITimeSystem timeSystem,
@@ -33,6 +33,11 @@ internal sealed class Timer : IStoppedTimer, IRunningTimer
     #endregion
 
     #region IStoppedTimer Members
+
+    public Action<CancellationToken> Callback { get; }
+
+    public TimeSpan Interval { get; }
+    public Action<Exception>? OnError { get; }
 
     /// <inheritdoc cref="IDisposable.Dispose()" />
     public void Dispose()
@@ -77,10 +82,6 @@ internal sealed class Timer : IStoppedTimer, IRunningTimer
 
         return this;
     }
-
-    public TimeSpan Interval { get; }
-    public Action<CancellationToken> Callback { get; }
-    public Action<Exception>? OnError { get; }
 
     #endregion
 

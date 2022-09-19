@@ -1,0 +1,304 @@
+﻿using FluentAssertions;
+using System;
+using System.Threading;
+using Testably.Abstractions.Testing;
+using Testably.Abstractions.Tests.TestHelpers;
+using Xunit;
+
+namespace Testably.Abstractions.Tests.Testing;
+
+public class TimeSystemMockCallbackHandlerTests
+{
+    [Fact]
+    public void
+        OnDateTimeRead_DisposedCallback_ShouldNotBeCalled()
+    {
+        DateTime expectedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Local);
+        TimeSystemMock timeSystem = new(expectedTime);
+        DateTime? receivedTime = null;
+        IDisposable disposable = timeSystem.On.DateTimeRead(d => receivedTime = d);
+
+        disposable.Dispose();
+        _ = timeSystem.DateTime.Now;
+
+        receivedTime.Should().BeNull();
+    }
+
+    [Fact]
+    public void
+        OnDateTimeRead_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
+    {
+        DateTime expectedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Local);
+        TimeSystemMock timeSystem = new(expectedTime);
+        DateTime? receivedTime1 = null;
+        DateTime? receivedTime2 = null;
+
+        using (timeSystem.On.DateTimeRead(d => receivedTime1 = d))
+        {
+            timeSystem.On.DateTimeRead(d => receivedTime2 = d).Dispose();
+            _ = timeSystem.DateTime.Now;
+        }
+
+        receivedTime1.Should().Be(expectedTime);
+        receivedTime2.Should().BeNull();
+    }
+
+    [Fact]
+    public void
+        OnDateTimeRead_MultipleCallbacks_ShouldAllBeCalled()
+    {
+        DateTime expectedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Local);
+        TimeSystemMock timeSystem = new(expectedTime);
+        DateTime? receivedTime1 = null;
+        DateTime? receivedTime2 = null;
+
+        using (timeSystem.On.DateTimeRead(d => receivedTime1 = d))
+        {
+            using (timeSystem.On.DateTimeRead(d => receivedTime2 = d))
+            {
+                _ = timeSystem.DateTime.Now;
+            }
+        }
+
+        receivedTime1.Should().Be(expectedTime);
+        receivedTime2.Should().Be(expectedTime);
+    }
+
+    [Fact]
+    public void
+        OnDateTimeRead_Today_ShouldExecuteCallbackWithCorrectParameter()
+    {
+        DateTime expectedTime = TimeTestHelper.GetRandomTime().Date;
+        TimeSystemMock timeSystem = new(expectedTime);
+        DateTime? receivedTime = null;
+
+        using (timeSystem.On.DateTimeRead(d => receivedTime = d))
+        {
+            _ = timeSystem.DateTime.Today;
+        }
+
+        receivedTime.Should().Be(expectedTime);
+    }
+
+    [Fact]
+    public void
+        OnDateTimeRead_UtcNow_ShouldExecuteCallbackWithCorrectParameter()
+    {
+        DateTime expectedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Utc);
+        TimeSystemMock timeSystem = new(expectedTime);
+        DateTime? receivedTime = null;
+
+        using (timeSystem.On.DateTimeRead(d => receivedTime = d))
+        {
+            _ = timeSystem.DateTime.UtcNow;
+        }
+
+        receivedTime.Should().Be(expectedTime);
+    }
+
+    [Fact]
+    public void
+        OnTaskDelay_DisposedCallback_ShouldNotBeCalled()
+    {
+        int millisecondsDelay = new Random().Next();
+        TimeSystemMock timeSystem = new();
+        TimeSpan? receivedDelay = null;
+        IDisposable disposable = timeSystem.On.TaskDelay(d => receivedDelay = d);
+
+        disposable.Dispose();
+        timeSystem.Task.Delay(millisecondsDelay);
+
+        receivedDelay.Should().BeNull();
+    }
+
+    [Fact]
+    public void
+        OnTaskDelay_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
+    {
+        TimeSpan expectedDelay = TimeTestHelper.GetRandomInterval();
+        TimeSystemMock timeSystem = new();
+        TimeSpan? receivedDelay1 = null;
+        TimeSpan? receivedDelay2 = null;
+
+        using (timeSystem.On.TaskDelay(d => receivedDelay1 = d))
+        {
+            timeSystem.On.TaskDelay(d => receivedDelay2 = d).Dispose();
+            timeSystem.Task.Delay(expectedDelay);
+        }
+
+        receivedDelay1.Should().Be(expectedDelay);
+        receivedDelay2.Should().BeNull();
+    }
+
+    [Fact]
+    public void
+        OnTaskDelay_MultipleCallbacks_ShouldAllBeCalled()
+    {
+        TimeSpan expectedDelay = TimeTestHelper.GetRandomInterval();
+        TimeSystemMock timeSystem = new();
+        TimeSpan? receivedDelay1 = null;
+        TimeSpan? receivedDelay2 = null;
+
+        using (timeSystem.On.TaskDelay(d => receivedDelay1 = d))
+        {
+            using (timeSystem.On.TaskDelay(d => receivedDelay2 = d))
+            {
+                timeSystem.Task.Delay(expectedDelay);
+            }
+        }
+
+        receivedDelay1.Should().Be(expectedDelay);
+        receivedDelay2.Should().Be(expectedDelay);
+    }
+
+    [Fact]
+    public void
+        OnTaskDelay_WithMillisecondsAndWithCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
+    {
+        int millisecondsDelay = new Random().Next();
+        TimeSystemMock timeSystem = new();
+        TimeSpan receivedDelay = TimeSpan.Zero;
+
+        using (timeSystem.On.TaskDelay(d => receivedDelay = d))
+        {
+            timeSystem.Task.Delay(millisecondsDelay, CancellationToken.None);
+        }
+
+        receivedDelay.TotalMilliseconds.Should().Be(millisecondsDelay);
+    }
+
+    [Fact]
+    public void
+        OnTaskDelay_WithMillisecondsAndWithoutCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
+    {
+        int millisecondsDelay = new Random().Next();
+        TimeSystemMock timeSystem = new();
+        TimeSpan receivedDelay = TimeSpan.Zero;
+
+        using (timeSystem.On.TaskDelay(d => receivedDelay = d))
+        {
+            timeSystem.Task.Delay(millisecondsDelay);
+        }
+
+        receivedDelay.TotalMilliseconds.Should().Be(millisecondsDelay);
+    }
+
+    [Fact]
+    public void
+        OnTaskDelay_WithTimeSpanAndWithCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
+    {
+        TimeSpan expectedDelay = TimeTestHelper.GetRandomInterval();
+        TimeSystemMock timeSystem = new();
+        TimeSpan receivedDelay = TimeSpan.Zero;
+
+        using (timeSystem.On.TaskDelay(d => receivedDelay = d))
+        {
+            timeSystem.Task.Delay(expectedDelay, CancellationToken.None);
+        }
+
+        receivedDelay.Should().Be(expectedDelay);
+    }
+
+    [Fact]
+    public void
+        OnTaskDelay_WithTimeSpanAndWithoutCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
+    {
+        TimeSpan expectedDelay = TimeTestHelper.GetRandomInterval();
+        TimeSystemMock timeSystem = new();
+        TimeSpan receivedDelay = TimeSpan.Zero;
+
+        using (timeSystem.On.TaskDelay(d => receivedDelay = d))
+        {
+            timeSystem.Task.Delay(expectedDelay);
+        }
+
+        receivedDelay.Should().Be(expectedDelay);
+    }
+
+    [Fact]
+    public void
+        OnThreadSleep_DisposedCallback_ShouldNotBeCalled()
+    {
+        int millisecondsTimeout = new Random().Next();
+        TimeSystemMock timeSystem = new();
+        TimeSpan? receivedTimeout = null;
+        IDisposable disposable = timeSystem.On.ThreadSleep(d => receivedTimeout = d);
+
+        disposable.Dispose();
+        timeSystem.Thread.Sleep(millisecondsTimeout);
+
+        receivedTimeout.Should().BeNull();
+    }
+
+    [Fact]
+    public void
+        OnThreadSleep_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
+    {
+        TimeSpan expectedTimeout = TimeTestHelper.GetRandomInterval();
+        TimeSystemMock timeSystem = new();
+        TimeSpan? receivedTimeout1 = null;
+        TimeSpan? receivedTimeout2 = null;
+
+        using (timeSystem.On.ThreadSleep(d => receivedTimeout1 = d))
+        {
+            timeSystem.On.ThreadSleep(d => receivedTimeout2 = d).Dispose();
+            timeSystem.Thread.Sleep(expectedTimeout);
+        }
+
+        receivedTimeout1.Should().Be(expectedTimeout);
+        receivedTimeout2.Should().BeNull();
+    }
+
+    [Fact]
+    public void
+        OnThreadSleep_MultipleCallbacks_ShouldAllBeCalled()
+    {
+        TimeSpan expectedTimeout = TimeTestHelper.GetRandomInterval();
+        TimeSystemMock timeSystem = new();
+        TimeSpan? receivedTimeout1 = null;
+        TimeSpan? receivedTimeout2 = null;
+
+        using (timeSystem.On.ThreadSleep(d => receivedTimeout1 = d))
+        {
+            using (timeSystem.On.ThreadSleep(d => receivedTimeout2 = d))
+            {
+                timeSystem.Thread.Sleep(expectedTimeout);
+            }
+        }
+
+        receivedTimeout1.Should().Be(expectedTimeout);
+        receivedTimeout2.Should().Be(expectedTimeout);
+    }
+
+    [Fact]
+    public void
+        OnThreadSleep_WithMilliseconds_ShouldExecuteCallbackWithCorrectParameter()
+    {
+        int millisecondsTimeout = new Random().Next();
+        TimeSystemMock timeSystem = new();
+        TimeSpan receivedTimeout = TimeSpan.Zero;
+
+        using (timeSystem.On.ThreadSleep(d => receivedTimeout = d))
+        {
+            timeSystem.Thread.Sleep(millisecondsTimeout);
+        }
+
+        receivedTimeout.TotalMilliseconds.Should().Be(millisecondsTimeout);
+    }
+
+    [Fact]
+    public void
+        OnThreadSleep_WithTimeSpan_ShouldExecuteCallbackWithCorrectParameter()
+    {
+        TimeSpan expectedTimeout = TimeTestHelper.GetRandomInterval();
+        TimeSystemMock timeSystem = new();
+        TimeSpan receivedTimeout = TimeSpan.Zero;
+
+        using (timeSystem.On.ThreadSleep(d => receivedTimeout = d))
+        {
+            timeSystem.Thread.Sleep(expectedTimeout);
+        }
+
+        receivedTimeout.Should().Be(expectedTimeout);
+    }
+}

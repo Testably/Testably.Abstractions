@@ -9,10 +9,10 @@ namespace Examples.TimeSystem.Timer;
 /// </summary>
 public sealed class TimerExample : IDisposable
 {
-    private readonly ITimeSystem _timeSystem;
-    private readonly ISynchronization _synchronization;
     private readonly Action<Exception>? _errorHandler;
     private IRunningTimer? _runningTimer;
+    private readonly ISynchronization _synchronization;
+    private readonly ITimeSystem _timeSystem;
 
     public TimerExample(
         ITimeSystem timeSystem,
