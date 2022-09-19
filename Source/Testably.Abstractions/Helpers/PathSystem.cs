@@ -145,6 +145,7 @@ public abstract class PathSystem : IFileSystem.IPath
     public string GetTempPath() => Path.GetTempPath();
 
     /// <inheritdoc cref="Path.GetTempFileName()" />
+    [Obsolete("Insecure temporary file creation methods should not be used. Use `Path.Combine(Path.GetTempPath(), Path.GetRandomFileName())` instead.")]
     public string GetTempFileName() => Path.GetTempFileName();
 
 #if FEATURE_SPAN

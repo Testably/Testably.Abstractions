@@ -107,6 +107,7 @@ public partial interface IFileSystem
 #endif
 
         /// <inheritdoc cref="Path.GetTempFileName()" />
+        [Obsolete("Insecure temporary file creation methods should not be used. Use `Path.Combine(Path.GetTempPath(), Path.GetRandomFileName())` instead.")]
         string GetTempFileName();
 
         /// <inheritdoc cref="Path.GetTempPath()" />
