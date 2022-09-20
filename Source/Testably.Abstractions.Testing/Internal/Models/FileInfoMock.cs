@@ -61,6 +61,10 @@ internal class FileInfoMock : FileSystemInfoMock, IFileSystem.IFileInfo
         => throw new NotImplementedException();
 
     /// <inheritdoc />
+    public void MoveTo(string destFileName, bool overwrite)
+        => throw new NotImplementedException();
+
+    /// <inheritdoc />
     public FileStream Open(FileMode mode)
         => throw new NotImplementedException();
 
@@ -96,10 +100,6 @@ internal class FileInfoMock : FileSystemInfoMock, IFileSystem.IFileInfo
         => throw new NotImplementedException();
 
     #endregion
-
-    /// <inheritdoc />
-    public void MoveTo(string destFileName, bool overwrite)
-        => throw new NotImplementedException();
 
     [return: NotNullIfNotNull("path")]
     internal static FileInfoMock? New(string? path, FileSystemMock fileSystem)

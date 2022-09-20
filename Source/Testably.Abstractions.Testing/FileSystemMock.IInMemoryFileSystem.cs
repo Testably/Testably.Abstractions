@@ -19,7 +19,7 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     Deletes the <see cref="FileSystemInfoMock" /> on the given <paramref name="path" />.
         /// </summary>
-        bool Delete(string path);
+        bool Delete(string path, bool recursive = false);
 
         /// <summary>
         ///     Checks if a <see cref="FileSystemInfoMock" /> exists on the given <paramref name="path" />.

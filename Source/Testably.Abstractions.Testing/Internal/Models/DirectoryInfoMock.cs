@@ -23,7 +23,7 @@ internal class DirectoryInfoMock : FileSystemInfoMock, IFileSystem.IDirectoryInf
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Root" />
     public IFileSystem.IDirectoryInfo Root
-        => New("".PrefixRoot(), FileSystem);
+        => New(string.Empty.PrefixRoot(), FileSystem);
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Create()" />
     public void Create()
@@ -38,7 +38,10 @@ internal class DirectoryInfoMock : FileSystemInfoMock, IFileSystem.IDirectoryInf
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Delete(bool)" />
     public void Delete(bool recursive)
-        => throw new NotImplementedException();
+    {
+        FileSystem.InMemoryFileSystem.Delete(FullName, recursive);
+        ResetExists();
+    }
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories()" />
     public IEnumerable<IFileSystem.IDirectoryInfo> EnumerateDirectories()

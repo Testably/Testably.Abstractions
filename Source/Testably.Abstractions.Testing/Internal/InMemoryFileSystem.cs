@@ -1,6 +1,8 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal.Models;
 
@@ -22,13 +24,35 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
 
     #region IInMemoryFileSystem Members
 
-    public string CurrentDirectory { get; set; } = "".PrefixRoot();
+    public string CurrentDirectory { get; set; } = string.Empty.PrefixRoot();
 
     /// <inheritdoc />
-    public bool Delete(string path)
+    public bool Delete(string path, bool recursive)
     {
-        return _files.TryRemove(
-            _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem), out _);
+        string key = _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem);
+        if (!_files.TryGetValue(key, out FileSystemInfoMock? fileSystemInfo))
+        {
+            return false;
+        }
+
+        if (fileSystemInfo is IFileSystem.IDirectoryInfo)
+        {
+            string start = key + FileSystem.Path.DirectorySeparatorChar;
+            if (recursive)
+            {
+                foreach (KeyValuePair<string, FileSystemInfoMock> file in _files.Where(x
+                    => x.Key.StartsWith(start)))
+                {
+                    _files.TryRemove(file.Key, out _);
+                }
+            }
+            else if (_files.Any(x => x.Key.StartsWith(start)))
+            {
+                throw new IOException($"The directory is not empty. : '{path}'");
+            }
+        }
+
+        return _files.TryRemove(key, out _);
     }
 
     /// <inheritdoc />

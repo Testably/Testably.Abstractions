@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace Testably.Abstractions.Tests;
 
 public abstract class FileSystemDirectoryInfoTests<TFileSystem>
@@ -65,6 +67,75 @@ public abstract class FileSystemDirectoryInfoTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    public void Delete_MissingDirectory_ShouldDeleteDirectory(string path)
+    {
+        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+        sut.Exists.Should().BeFalse();
+
+        Exception? exception = Record.Exception(() =>
+        {
+            sut.Delete();
+        });
+
+        exception.Should().BeOfType<DirectoryNotFoundException>()
+           .Which.Message.Should()
+           .Be($"Could not find a part of the path '{sut.FullName}'.");
+    }
+
+    [Theory]
+    [AutoData]
+    public void Delete_Recursive_WithSubdirectory_ShouldDeleteDirectoryWithContent(
+        string path, string subdirectory)
+    {
+        string subdirectoryPath = FileSystem.Path.Combine(path, subdirectory);
+        FileSystem.Directory.CreateDirectory(subdirectoryPath);
+        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+        sut.Exists.Should().BeTrue();
+
+        sut.Delete(true);
+
+        sut.Exists.Should().BeFalse();
+        FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
+        FileSystem.Directory.Exists(subdirectoryPath).Should().BeFalse();
+    }
+
+    [Theory]
+    [AutoData]
+    public void Delete_ShouldDeleteDirectory(string path)
+    {
+        FileSystem.Directory.CreateDirectory(path);
+        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+        sut.Exists.Should().BeTrue();
+
+        sut.Delete();
+
+        sut.Exists.Should().BeFalse();
+        FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
+    }
+
+    [Theory]
+    [AutoData]
+    public void Delete_WithSubdirectory_ShouldNotDeleteDirectory(
+        string path, string subdirectory)
+    {
+        FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(path, subdirectory));
+        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+        sut.Exists.Should().BeTrue();
+
+        Exception? exception = Record.Exception(() =>
+        {
+            sut.Delete();
+        });
+
+        exception.Should().BeOfType<IOException>()
+           .Which.Message.Should()
+           .Be($"The directory is not empty. : '{sut.FullName}'");
+        sut.Exists.Should().BeTrue();
+        FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
+    }
+
+    [Theory]
+    [AutoData]
     public void Exists_ArbitraryPath_ShouldBeFalse(string path)
     {
         IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
@@ -117,7 +188,7 @@ public abstract class FileSystemDirectoryInfoTests<TFileSystem>
     [AutoData]
     public void Root_ShouldExist(string path)
     {
-        string expectedRoot = "".PrefixRoot();
+        string expectedRoot = string.Empty.PrefixRoot();
         IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
 
         result.Root.Exists.Should().BeTrue();

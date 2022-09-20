@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace Testably.Abstractions.Testing.Internal.Models;
 
@@ -112,7 +113,14 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Delete()" />
     public void Delete()
     {
+        if (!FileSystem.InMemoryFileSystem.Exists(FullName))
+        {
+            throw new DirectoryNotFoundException(
+                $"Could not find a part of the path '{FullName}'.");
+        }
+
         FileSystem.InMemoryFileSystem.Delete(FullName);
+        ResetExists();
     }
 
 #if FEATURE_FILESYSTEM_LINK
