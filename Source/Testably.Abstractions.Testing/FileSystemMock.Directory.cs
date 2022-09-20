@@ -38,7 +38,13 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="Directory.Delete(string)" />
         public void Delete(string path)
-            => _fileSystem.InMemoryFileSystem.Delete(path);
+        {
+            if (!_fileSystem.InMemoryFileSystem.Delete(path))
+            {
+                throw new DirectoryNotFoundException(
+                    $"Could not find a part of the path '{_fileSystem.Path.GetFullPath(path)}'.");
+            }
+        }
 
         /// <inheritdoc cref="Directory.Delete(string, bool)" />
         public void Delete(string path, bool recursive)

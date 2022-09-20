@@ -314,6 +314,21 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    public void Delete_MissingDirectory_ShouldDeleteDirectory(string directoryName)
+    {
+        var expectedPath = Path.Combine(BasePath, directoryName);
+        var exception = Record.Exception(() =>
+        {
+            FileSystem.Directory.Delete(directoryName);
+        });
+
+        exception.Should().BeOfType<DirectoryNotFoundException>()
+           .Which.Message.Should()
+           .Be($"Could not find a part of the path '{expectedPath}'.");
+    }
+
+    [Theory]
+    [AutoData]
     public void LastAccessTime_CreateSubDirectory_ShouldUpdateLastAccessAndLastWriteTime(
         string path, string subPath)
     {

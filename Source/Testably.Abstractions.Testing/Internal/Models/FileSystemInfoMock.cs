@@ -113,13 +113,11 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Delete()" />
     public void Delete()
     {
-        if (!FileSystem.InMemoryFileSystem.Exists(FullName))
+        if (!FileSystem.InMemoryFileSystem.Delete(FullName))
         {
             throw new DirectoryNotFoundException(
                 $"Could not find a part of the path '{FullName}'.");
         }
-
-        FileSystem.InMemoryFileSystem.Delete(FullName);
         ResetExists();
     }
 
