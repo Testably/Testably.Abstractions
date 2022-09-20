@@ -20,34 +20,36 @@ public sealed partial class FileSystem
         /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
         public IFileSystem FileSystem { get; }
 
-        /// <inheritdoc cref="Directory.CreateDirectory(string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.CreateDirectory(string)" />
         public IFileSystem.IDirectoryInfo CreateDirectory(string path)
             => DirectoryInfoWrapper.FromDirectoryInfo(
                 System.IO.Directory.CreateDirectory(path), FileSystem);
 
 #if FEATURE_FILESYSTEM_LINK
-        /// <inheritdoc cref="Directory.CreateSymbolicLink(string, string)" />
-        public FileSystemInfo CreateSymbolicLink(string path, string pathToTarget)
-            => System.IO.Directory.CreateSymbolicLink(path, pathToTarget);
+        /// <inheritdoc cref="IFileSystem.IDirectory.CreateSymbolicLink(string, string)" />
+        public IFileSystem.IFileSystemInfo CreateSymbolicLink(
+            string path, string pathToTarget)
+            => FileSystemInfoWrapper.FromFileSystemInfo(
+                System.IO.Directory.CreateSymbolicLink(path, pathToTarget), FileSystem);
 #endif
 
-        /// <inheritdoc cref="Directory.Delete(string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.Delete(string)" />
         public void Delete(string path)
             => System.IO.Directory.Delete(path);
 
-        /// <inheritdoc cref="Directory.Delete(string, bool)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.Delete(string, bool)" />
         public void Delete(string path, bool recursive)
             => System.IO.Directory.Delete(path, recursive);
 
-        /// <inheritdoc cref="Directory.EnumerateDirectories(string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateDirectories(string)" />
         public IEnumerable<string> EnumerateDirectories(string path)
             => System.IO.Directory.EnumerateDirectories(path);
 
-        /// <inheritdoc cref="Directory.EnumerateDirectories(string, string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateDirectories(string, string)" />
         public IEnumerable<string> EnumerateDirectories(string path, string searchPattern)
             => System.IO.Directory.EnumerateDirectories(path, searchPattern);
 
-        /// <inheritdoc cref="Directory.EnumerateDirectories(string, string, SearchOption)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateDirectories(string, string, System.IO.SearchOption)" />
         public IEnumerable<string> EnumerateDirectories(string path,
                                                         string searchPattern,
                                                         SearchOption searchOption)
@@ -57,31 +59,32 @@ public sealed partial class FileSystem
                 searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-        /// <inheritdoc cref="Directory.EnumerateDirectories(string, string, EnumerationOptions)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateDirectories(string, string, System.IO.EnumerationOptions)" />
         public IEnumerable<string> EnumerateDirectories(string path,
                                                         string searchPattern,
                                                         EnumerationOptions
                                                             enumerationOptions)
-            => System.IO.Directory.EnumerateDirectories(path, searchPattern,
+            => System.IO.Directory.EnumerateDirectories(path,
+                searchPattern,
                 enumerationOptions);
 #endif
 
-        /// <inheritdoc cref="Directory.EnumerateFiles(string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFiles(string)" />
         public IEnumerable<string> EnumerateFiles(string path)
             => System.IO.Directory.EnumerateFiles(path);
 
-        /// <inheritdoc cref="Directory.EnumerateFiles(string, string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFiles(string, string)" />
         public IEnumerable<string> EnumerateFiles(string path, string searchPattern)
             => System.IO.Directory.EnumerateFiles(path, searchPattern);
 
-        /// <inheritdoc cref="Directory.EnumerateFiles(string, string, SearchOption)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFiles(string, string, System.IO.SearchOption)" />
         public IEnumerable<string> EnumerateFiles(string path,
                                                   string searchPattern,
                                                   SearchOption searchOption)
             => System.IO.Directory.EnumerateFiles(path, searchPattern, searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-        /// <inheritdoc cref="Directory.EnumerateFiles(string, string, EnumerationOptions)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFiles(string, string, System.IO.EnumerationOptions)" />
         public IEnumerable<string> EnumerateFiles(string path,
                                                   string searchPattern,
                                                   EnumerationOptions enumerationOptions)
@@ -89,24 +92,25 @@ public sealed partial class FileSystem
                 enumerationOptions);
 #endif
 
-        /// <inheritdoc cref="Directory.EnumerateFileSystemEntries(string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string)" />
         public IEnumerable<string> EnumerateFileSystemEntries(string path)
             => System.IO.Directory.EnumerateFileSystemEntries(path);
 
-        /// <inheritdoc cref="Directory.EnumerateFileSystemEntries(string, string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string, string)" />
         public IEnumerable<string> EnumerateFileSystemEntries(
             string path, string searchPattern)
             => System.IO.Directory.EnumerateFileSystemEntries(path, searchPattern);
 
-        /// <inheritdoc cref="Directory.EnumerateFileSystemEntries(string, string, SearchOption)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string, string, System.IO.SearchOption)" />
         public IEnumerable<string> EnumerateFileSystemEntries(string path,
             string searchPattern,
             SearchOption searchOption)
-            => System.IO.Directory.EnumerateFileSystemEntries(path, searchPattern,
+            => System.IO.Directory.EnumerateFileSystemEntries(path,
+                searchPattern,
                 searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-        /// <inheritdoc cref="Directory.EnumerateFileSystemEntries(string, string, EnumerationOptions)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string, string, System.IO.EnumerationOptions)" />
         public IEnumerable<string> EnumerateFileSystemEntries(string path,
             string searchPattern,
             EnumerationOptions
@@ -115,38 +119,38 @@ public sealed partial class FileSystem
                 enumerationOptions);
 #endif
 
-        /// <inheritdoc cref="Directory.Exists(string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.Exists(string)" />
         public bool Exists([NotNullWhen(true)] string? path)
             => System.IO.Directory.Exists(path);
 
-        /// <inheritdoc cref="Directory.GetCreationTime(string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetCreationTime(string)" />
         public DateTime GetCreationTime(string path)
             => System.IO.Directory.GetCreationTime(path);
 
-        /// <inheritdoc cref="Directory.GetCreationTimeUtc(string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetCreationTimeUtc(string)" />
         public DateTime GetCreationTimeUtc(string path)
             => System.IO.Directory.GetCreationTimeUtc(path);
 
-        /// <inheritdoc cref="Directory.GetCurrentDirectory()" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetCurrentDirectory()" />
         public string GetCurrentDirectory()
             => System.IO.Directory.GetCurrentDirectory();
 
-        /// <inheritdoc cref="Directory.GetDirectories(string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetDirectories(string)" />
         public string[] GetDirectories(string path)
             => System.IO.Directory.GetDirectories(path);
 
-        /// <inheritdoc cref="Directory.GetDirectories(string, string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetDirectories(string, string)" />
         public string[] GetDirectories(string path, string searchPattern)
             => System.IO.Directory.GetDirectories(path, searchPattern);
 
-        /// <inheritdoc cref="Directory.GetDirectories(string, string, SearchOption)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetDirectories(string, string, System.IO.SearchOption)" />
         public string[] GetDirectories(string path,
                                        string searchPattern,
                                        SearchOption searchOption)
             => System.IO.Directory.GetDirectories(path, searchPattern, searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-        /// <inheritdoc cref="Directory.GetDirectories(string, string, EnumerationOptions)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetDirectories(string, string, System.IO.EnumerationOptions)" />
         public string[] GetDirectories(string path,
                                        string searchPattern,
                                        EnumerationOptions enumerationOptions)
@@ -154,116 +158,122 @@ public sealed partial class FileSystem
                 enumerationOptions);
 #endif
 
-        /// <inheritdoc cref="Directory.GetDirectoryRoot(string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetDirectoryRoot(string)" />
         public string GetDirectoryRoot(string path)
             => System.IO.Directory.GetDirectoryRoot(path);
 
-        /// <inheritdoc cref="Directory.GetFiles(string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetFiles(string)" />
         public string[] GetFiles(string path)
             => System.IO.Directory.GetFiles(path);
 
-        /// <inheritdoc cref="Directory.GetFiles(string, string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetFiles(string, string)" />
         public string[] GetFiles(string path, string searchPattern)
             => System.IO.Directory.GetFiles(path, searchPattern);
 
-        /// <inheritdoc cref="Directory.GetFiles(string, string, SearchOption)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetFiles(string, string, System.IO.SearchOption)" />
         public string[] GetFiles(string path,
                                  string searchPattern,
                                  SearchOption searchOption)
             => System.IO.Directory.GetFiles(path, searchPattern, searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-        /// <inheritdoc cref="Directory.GetFiles(string, string, EnumerationOptions)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetFiles(string, string, System.IO.EnumerationOptions)" />
         public string[] GetFiles(string path,
                                  string searchPattern,
                                  EnumerationOptions enumerationOptions)
             => System.IO.Directory.GetFiles(path, searchPattern, enumerationOptions);
 #endif
 
-        /// <inheritdoc cref="Directory.GetFileSystemEntries(string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetFileSystemEntries(string)" />
         public string[] GetFileSystemEntries(string path)
             => System.IO.Directory.GetFileSystemEntries(path);
 
-        /// <inheritdoc cref="Directory.GetFileSystemEntries(string, string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetFileSystemEntries(string, string)" />
         public string[] GetFileSystemEntries(string path, string searchPattern)
             => System.IO.Directory.GetFileSystemEntries(path, searchPattern);
 
-        /// <inheritdoc cref="Directory.GetFileSystemEntries(string, string, SearchOption)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetFileSystemEntries(string, string, System.IO.SearchOption)" />
         public string[] GetFileSystemEntries(string path,
                                              string searchPattern,
                                              SearchOption searchOption)
-            => System.IO.Directory.GetFileSystemEntries(path, searchPattern,
+            => System.IO.Directory.GetFileSystemEntries(path,
+                searchPattern,
                 searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-        /// <inheritdoc cref="Directory.GetFileSystemEntries(string, string, EnumerationOptions)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetFileSystemEntries(string, string, System.IO.EnumerationOptions)" />
         public string[] GetFileSystemEntries(string path,
                                              string searchPattern,
                                              EnumerationOptions enumerationOptions)
-            => System.IO.Directory.GetFileSystemEntries(path, searchPattern,
+            => System.IO.Directory.GetFileSystemEntries(path,
+                searchPattern,
                 enumerationOptions);
 #endif
 
-        /// <inheritdoc cref="Directory.GetLastAccessTime(string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetLastAccessTime(string)" />
         public DateTime GetLastAccessTime(string path)
             => System.IO.Directory.GetLastAccessTime(path);
 
-        /// <inheritdoc cref="Directory.GetLastAccessTimeUtc(string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetLastAccessTimeUtc(string)" />
         public DateTime GetLastAccessTimeUtc(string path)
             => System.IO.Directory.GetLastAccessTimeUtc(path);
 
-        /// <inheritdoc cref="Directory.GetLastWriteTime(string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetLastWriteTime(string)" />
         public DateTime GetLastWriteTime(string path)
             => System.IO.Directory.GetLastWriteTime(path);
 
-        /// <inheritdoc cref="Directory.GetLastWriteTimeUtc(string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetLastWriteTimeUtc(string)" />
         public DateTime GetLastWriteTimeUtc(string path)
             => System.IO.Directory.GetLastWriteTimeUtc(path);
 
-        /// <inheritdoc cref="Directory.GetLogicalDrives()" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetLogicalDrives()" />
         public string[] GetLogicalDrives()
             => System.IO.Directory.GetLogicalDrives();
 
-        /// <inheritdoc cref="Directory.GetParent(string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.GetParent(string)" />
         public IFileSystem.IDirectoryInfo? GetParent(string path)
-            => DirectoryInfoWrapper.FromDirectoryInfo(System.IO.Directory.GetParent(path),
+            => DirectoryInfoWrapper.FromDirectoryInfo(
+                System.IO.Directory.GetParent(path),
                 FileSystem);
 
-        /// <inheritdoc cref="Directory.Move(string, string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.Move(string, string)" />
         public void Move(string sourceDirName, string destDirName)
             => System.IO.Directory.Move(sourceDirName, destDirName);
 
 #if FEATURE_FILESYSTEM_LINK
-        /// <inheritdoc cref="Directory.ResolveLinkTarget(string, bool)" />
-        public FileSystemInfo? ResolveLinkTarget(string linkPath, bool returnFinalTarget)
-            => System.IO.Directory.ResolveLinkTarget(linkPath, returnFinalTarget);
+        /// <inheritdoc cref="IFileSystem.IDirectory.ResolveLinkTarget(string, bool)" />
+        public IFileSystem.IFileSystemInfo? ResolveLinkTarget(
+            string linkPath, bool returnFinalTarget)
+            => FileSystemInfoWrapper.FromFileSystemInfo(
+                System.IO.Directory.ResolveLinkTarget(linkPath, returnFinalTarget),
+                FileSystem);
 #endif
 
-        /// <inheritdoc cref="Directory.SetCreationTime(string, DateTime)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.SetCreationTime(string, DateTime)" />
         public void SetCreationTime(string path, DateTime creationTime)
             => System.IO.Directory.SetCreationTime(path, creationTime);
 
-        /// <inheritdoc cref="Directory.SetCreationTimeUtc(string, DateTime)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.SetCreationTimeUtc(string, DateTime)" />
         public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
             => System.IO.Directory.SetCreationTimeUtc(path, creationTimeUtc);
 
-        /// <inheritdoc cref="Directory.SetCurrentDirectory(string)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.SetCurrentDirectory(string)" />
         public void SetCurrentDirectory(string path)
             => System.IO.Directory.SetCurrentDirectory(path);
 
-        /// <inheritdoc cref="Directory.SetLastAccessTime(string, DateTime)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.SetLastAccessTime(string, DateTime)" />
         public void SetLastAccessTime(string path, DateTime lastAccessTime)
             => System.IO.Directory.SetLastAccessTime(path, lastAccessTime);
 
-        /// <inheritdoc cref="Directory.SetLastAccessTimeUtc(string, DateTime)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.SetLastAccessTimeUtc(string, DateTime)" />
         public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
             => System.IO.Directory.SetLastAccessTimeUtc(path, lastAccessTimeUtc);
 
-        /// <inheritdoc cref="Directory.SetLastWriteTime(string, DateTime)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.SetLastWriteTime(string, DateTime)" />
         public void SetLastWriteTime(string path, DateTime lastWriteTime)
             => System.IO.Directory.SetLastWriteTime(path, lastWriteTime);
 
-        /// <inheritdoc cref="Directory.SetLastWriteTimeUtc(string, DateTime)" />
+        /// <inheritdoc cref="IFileSystem.IDirectory.SetLastWriteTimeUtc(string, DateTime)" />
         public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
             => System.IO.Directory.SetLastWriteTimeUtc(path, lastWriteTimeUtc);
 

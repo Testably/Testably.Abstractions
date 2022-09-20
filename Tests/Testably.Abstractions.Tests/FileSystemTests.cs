@@ -1,15 +1,13 @@
-using FluentAssertions;
-using Xunit;
-
 namespace Testably.Abstractions.Tests;
 
-public abstract partial class FileSystemTests
+public abstract class FileSystemTests<TFileSystem>
+    where TFileSystem : IFileSystem
 {
     #region Test Setup
 
-    public IFileSystem FileSystem { get; }
+    public TFileSystem FileSystem { get; }
 
-    protected FileSystemTests(IFileSystem fileSystem)
+    protected FileSystemTests(TFileSystem fileSystem)
     {
         FileSystem = fileSystem;
     }

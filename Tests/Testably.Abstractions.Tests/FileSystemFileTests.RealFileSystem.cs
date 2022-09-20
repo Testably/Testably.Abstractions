@@ -4,11 +4,11 @@ using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Tests;
 
-public abstract partial class FileSystemDirectoryTests
+public abstract partial class FileSystemFileTests
 {
     // ReSharper disable once UnusedMember.Global
     [Collection(FileTestHelper.RealFileSystemCollection)]
-    public sealed class RealFileSystem : FileSystemDirectoryTests<FileSystem>, IDisposable
+    public sealed class RealFileSystem : FileSystemFileTests<FileSystem>, IDisposable
     {
         private readonly ITestOutputHelper _testOutputHelper;
 

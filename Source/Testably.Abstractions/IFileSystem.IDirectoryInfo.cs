@@ -32,8 +32,8 @@ public partial interface IFileSystem
         IEnumerable<IDirectoryInfo> EnumerateDirectories(string searchPattern);
 
         /// <inheritdoc cref="DirectoryInfo.EnumerateDirectories(string, SearchOption)" />
-        IEnumerable<IDirectoryInfo> EnumerateDirectories(
-            string searchPattern, SearchOption searchOption);
+        IEnumerable<IDirectoryInfo> EnumerateDirectories(string searchPattern,
+                                                         SearchOption searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="DirectoryInfo.EnumerateDirectories(string, EnumerationOptions)" />

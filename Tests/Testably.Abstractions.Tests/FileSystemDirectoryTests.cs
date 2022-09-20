@@ -1,25 +1,22 @@
-using AutoFixture.Xunit2;
-using FluentAssertions;
-using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Testably.Abstractions.Testing;
-using Testably.Abstractions.Tests.TestHelpers;
-using Xunit;
 
 namespace Testably.Abstractions.Tests;
 
-public abstract partial class FileSystemDirectoryTests
+public abstract class FileSystemDirectoryTests<TFileSystem>
+    where TFileSystem : IFileSystem
 {
     #region Test Setup
 
-    public IFileSystem FileSystem { get; }
+    public TFileSystem FileSystem { get; }
     public ITimeSystem TimeSystem { get; }
     public string BasePath { get; }
 
-    protected FileSystemDirectoryTests(IFileSystem fileSystem, ITimeSystem timeSystem,
-                                       string basePath)
+    protected FileSystemDirectoryTests(
+        TFileSystem fileSystem,
+        ITimeSystem timeSystem,
+        string basePath)
     {
         FileSystem = fileSystem;
         TimeSystem = timeSystem;
@@ -34,9 +31,9 @@ public abstract partial class FileSystemDirectoryTests
         Exception? exception =
             Record.Exception(() => FileSystem.DirectoryInfo.New(string.Empty));
 
-        exception.Should().BeAssignableTo<ArgumentException>()
+        exception.Should().BeOfType<ArgumentException>()
            .Which.ParamName.Should().Be("path");
-        exception.Should().BeAssignableTo<ArgumentException>()
+        exception.Should().BeOfType<ArgumentException>()
            .Which.Message.Should()
            .Be("The path is empty. (Parameter 'path')");
     }
@@ -52,7 +49,7 @@ public abstract partial class FileSystemDirectoryTests
             Exception? exception =
                 Record.Exception(() => FileSystem.DirectoryInfo.New(path).Create());
 
-            exception.Should().BeAssignableTo<IOException>()
+            exception.Should().BeOfType<IOException>()
                .Which.Message.Should().Be(expectedMessage);
         }
     }
@@ -63,7 +60,7 @@ public abstract partial class FileSystemDirectoryTests
         Exception? exception =
             Record.Exception(() => FileSystem.DirectoryInfo.New(null!));
 
-        exception.Should().BeAssignableTo<ArgumentNullException>().Which.ParamName
+        exception.Should().BeOfType<ArgumentNullException>().Which.ParamName
            .Should().Be("path");
     }
 
@@ -76,7 +73,7 @@ public abstract partial class FileSystemDirectoryTests
         Exception? exception =
             Record.Exception(() => FileSystem.DirectoryInfo.New(path).Create());
 
-        exception.Should().BeAssignableTo<ArgumentException>()
+        exception.Should().BeOfType<ArgumentException>()
            .Which.Message.Should().Be(expectedMessage);
     }
 
@@ -152,9 +149,9 @@ public abstract partial class FileSystemDirectoryTests
         Exception? exception =
             Record.Exception(() => FileSystem.Directory.CreateDirectory(string.Empty));
 
-        exception.Should().BeAssignableTo<ArgumentException>()
+        exception.Should().BeOfType<ArgumentException>()
            .Which.ParamName.Should().Be("path");
-        exception.Should().BeAssignableTo<ArgumentException>()
+        exception.Should().BeOfType<ArgumentException>()
            .Which.Message.Should()
            .Be("Path cannot be the empty string or all whitespace. (Parameter 'path')");
     }
@@ -170,7 +167,7 @@ public abstract partial class FileSystemDirectoryTests
             Exception? exception =
                 Record.Exception(() => FileSystem.Directory.CreateDirectory(path));
 
-            exception.Should().BeAssignableTo<IOException>()
+            exception.Should().BeOfType<IOException>()
                .Which.Message.Should().Be(expectedMessage);
         }
     }
@@ -181,7 +178,7 @@ public abstract partial class FileSystemDirectoryTests
         Exception? exception =
             Record.Exception(() => FileSystem.Directory.CreateDirectory(null!));
 
-        exception.Should().BeAssignableTo<ArgumentNullException>().Which.ParamName
+        exception.Should().BeOfType<ArgumentNullException>().Which.ParamName
            .Should().Be("path");
     }
 
@@ -194,7 +191,7 @@ public abstract partial class FileSystemDirectoryTests
         Exception? exception =
             Record.Exception(() => FileSystem.Directory.CreateDirectory(path));
 
-        exception.Should().BeAssignableTo<ArgumentException>()
+        exception.Should().BeOfType<ArgumentException>()
            .Which.Message.Should().Be(expectedMessage);
     }
 
@@ -292,8 +289,7 @@ public abstract partial class FileSystemDirectoryTests
     {
         IFileSystem.IDirectoryInfo result =
             FileSystem.Directory.CreateDirectory(directoryName);
-
-        FileSystem.Directory.Delete(result.FullName);
+        FileSystem.Directory.Delete(directoryName);
 
         bool exists = FileSystem.Directory.Exists(directoryName);
 
@@ -314,6 +310,21 @@ public abstract partial class FileSystemDirectoryTests
 
         exists.Should().BeFalse();
         result.Exists.Should().BeFalse();
+    }
+
+    [Theory]
+    [AutoData]
+    public void Delete_MissingDirectory_ShouldDeleteDirectory(string directoryName)
+    {
+        var expectedPath = Path.Combine(BasePath, directoryName);
+        var exception = Record.Exception(() =>
+        {
+            FileSystem.Directory.Delete(directoryName);
+        });
+
+        exception.Should().BeOfType<DirectoryNotFoundException>()
+           .Which.Message.Should()
+           .Be($"Could not find a part of the path '{expectedPath}'.");
     }
 
     [Theory]
@@ -392,16 +403,5 @@ public abstract partial class FileSystemDirectoryTests
         result.LastWriteTimeUtc.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
         result.LastWriteTimeUtc.Should().BeOnOrBefore(TimeSystem.DateTime.UtcNow);
         result.LastWriteTimeUtc.Kind.Should().Be(DateTimeKind.Utc);
-    }
-
-    [Theory]
-    [AutoData]
-    public void Root_ShouldExist(string path)
-    {
-        string expectedRoot = "".PrefixRoot();
-        IFileSystem.IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
-
-        result.Root.Exists.Should().BeTrue();
-        result.Root.FullName.Should().Be(expectedRoot);
     }
 }

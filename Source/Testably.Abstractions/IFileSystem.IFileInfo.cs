@@ -77,10 +77,12 @@ public partial interface IFileSystem
         FileStream OpenWrite();
 
         /// <inheritdoc cref="FileInfo.Replace(string, string?)" />
-        IFileInfo Replace(string destinationFileName, string? destinationBackupFileName);
+        IFileInfo Replace(string destinationFileName,
+                          string? destinationBackupFileName);
 
         /// <inheritdoc cref="FileInfo.Replace(string, string?, bool)" />
-        IFileInfo Replace(string destinationFileName, string? destinationBackupFileName,
+        IFileInfo Replace(string destinationFileName,
+                          string? destinationBackupFileName,
                           bool ignoreMetadataErrors);
     }
 }

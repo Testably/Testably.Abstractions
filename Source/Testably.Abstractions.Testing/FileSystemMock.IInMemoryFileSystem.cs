@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Testably.Abstractions.Testing.Internal.Models;
 
 namespace Testably.Abstractions.Testing;
@@ -19,7 +21,14 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     Deletes the <see cref="FileSystemInfoMock" /> on the given <paramref name="path" />.
         /// </summary>
-        bool Delete(string path);
+        bool Delete(string path, bool recursive = false);
+
+        /// <summary>
+        ///     Enumerates all directories under <paramref name="path" /> that match the <paramref name="expression" />.
+        /// </summary>
+        IEnumerable<TFileSystemInfoInfo> Enumerate<TFileSystemInfoInfo>(
+            string path, string expression, EnumerationOptions enumerationOptions)
+            where TFileSystemInfoInfo : IFileSystem.IFileSystemInfo;
 
         /// <summary>
         ///     Checks if a <see cref="FileSystemInfoMock" /> exists on the given <paramref name="path" />.

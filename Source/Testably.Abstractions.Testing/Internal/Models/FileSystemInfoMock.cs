@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace Testably.Abstractions.Testing.Internal.Models;
 
@@ -41,7 +42,20 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
 
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
     public bool Exists
-        => FileSystem.InMemoryFileSystem.Exists(FullName);
+    {
+        get
+        {
+            _exists ??= FileSystem.InMemoryFileSystem.Exists(FullName);
+            return _exists.Value;
+        }
+    }
+
+    private bool? _exists;
+
+    protected void ResetExists()
+    {
+        _exists = null;
+    }
 
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Extension" />
     public string Extension
@@ -98,7 +112,14 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
 
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Delete()" />
     public void Delete()
-        => FileSystem.InMemoryFileSystem.Delete(FullName);
+    {
+        if (!FileSystem.InMemoryFileSystem.Delete(FullName))
+        {
+            throw new DirectoryNotFoundException(
+                $"Could not find a part of the path '{FullName}'.");
+        }
+        ResetExists();
+    }
 
 #if FEATURE_FILESYSTEM_LINK
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.ResolveLinkTarget(bool)" />

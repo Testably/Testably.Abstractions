@@ -1,22 +1,18 @@
-using AutoFixture.Xunit2;
-using FluentAssertions;
-using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Testably.Abstractions.Testing;
-using Xunit;
 
 namespace Testably.Abstractions.Tests;
 
-public abstract partial class FileSystemPathTests
+public abstract class FileSystemPathTests<TFileSystem>
+    where TFileSystem : IFileSystem
 {
     #region Test Setup
 
-    public IFileSystem FileSystem { get; }
+    public TFileSystem FileSystem { get; }
 
-    protected FileSystemPathTests(IFileSystem fileSystem)
+    protected FileSystemPathTests(TFileSystem fileSystem)
     {
         FileSystem = fileSystem;
     }
@@ -97,8 +93,8 @@ public abstract partial class FileSystemPathTests
         Exception? exception2 = Record.Exception(() =>
             FileSystem.Path.Combine(null!, path));
 
-        exception1.Should().BeAssignableTo<ArgumentNullException>();
-        exception2.Should().BeAssignableTo<ArgumentNullException>();
+        exception1.Should().BeOfType<ArgumentNullException>();
+        exception2.Should().BeOfType<ArgumentNullException>();
     }
 
     [Theory]
@@ -154,9 +150,9 @@ public abstract partial class FileSystemPathTests
         Exception? exception3 = Record.Exception(() =>
             FileSystem.Path.Combine(null!, null!, path));
 
-        exception1.Should().BeAssignableTo<ArgumentNullException>();
-        exception2.Should().BeAssignableTo<ArgumentNullException>();
-        exception3.Should().BeAssignableTo<ArgumentNullException>();
+        exception1.Should().BeOfType<ArgumentNullException>();
+        exception2.Should().BeOfType<ArgumentNullException>();
+        exception3.Should().BeOfType<ArgumentNullException>();
     }
 
     [Theory]
@@ -218,10 +214,10 @@ public abstract partial class FileSystemPathTests
         Exception? exception4 = Record.Exception(() =>
             FileSystem.Path.Combine(null!, null!, null!, path));
 
-        exception1.Should().BeAssignableTo<ArgumentNullException>();
-        exception2.Should().BeAssignableTo<ArgumentNullException>();
-        exception3.Should().BeAssignableTo<ArgumentNullException>();
-        exception4.Should().BeAssignableTo<ArgumentNullException>();
+        exception1.Should().BeOfType<ArgumentNullException>();
+        exception2.Should().BeOfType<ArgumentNullException>();
+        exception3.Should().BeOfType<ArgumentNullException>();
+        exception4.Should().BeOfType<ArgumentNullException>();
     }
 
     [Theory]
@@ -260,7 +256,7 @@ public abstract partial class FileSystemPathTests
         Exception? exception = Record.Exception(() =>
             FileSystem.Path.Combine(null!));
 
-        exception.Should().BeAssignableTo<ArgumentNullException>();
+        exception.Should().BeOfType<ArgumentNullException>();
     }
 
     [Theory]
@@ -304,11 +300,11 @@ public abstract partial class FileSystemPathTests
         Exception? exception5 = Record.Exception(() =>
             FileSystem.Path.Combine(null!, null!, null!, null!, path));
 
-        exception1.Should().BeAssignableTo<ArgumentNullException>();
-        exception2.Should().BeAssignableTo<ArgumentNullException>();
-        exception3.Should().BeAssignableTo<ArgumentNullException>();
-        exception4.Should().BeAssignableTo<ArgumentNullException>();
-        exception5.Should().BeAssignableTo<ArgumentNullException>();
+        exception1.Should().BeOfType<ArgumentNullException>();
+        exception2.Should().BeOfType<ArgumentNullException>();
+        exception3.Should().BeOfType<ArgumentNullException>();
+        exception4.Should().BeOfType<ArgumentNullException>();
+        exception5.Should().BeOfType<ArgumentNullException>();
     }
 
     [Theory]

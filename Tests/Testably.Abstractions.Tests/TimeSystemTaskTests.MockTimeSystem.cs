@@ -1,9 +1,5 @@
-using FluentAssertions;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Testably.Abstractions.Testing;
-using Xunit;
 
 namespace Testably.Abstractions.Tests;
 
@@ -34,7 +30,7 @@ public abstract partial class TimeSystemTaskTests
             DateTime after = TimeSystem.DateTime.UtcNow;
 
             after.Should().Be(before);
-            exception.Should().BeAssignableTo<TaskCanceledException>();
+            exception.Should().BeOfType<TaskCanceledException>();
         }
 
         [Fact]
@@ -51,7 +47,7 @@ public abstract partial class TimeSystemTaskTests
             DateTime after = TimeSystem.DateTime.UtcNow;
 
             after.Should().Be(before);
-            exception.Should().BeAssignableTo<TaskCanceledException>();
+            exception.Should().BeOfType<TaskCanceledException>();
         }
     }
 }

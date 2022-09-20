@@ -1,7 +1,3 @@
-using FluentAssertions;
-using System;
-using Xunit;
-
 namespace Testably.Abstractions.Tests;
 
 public abstract class TimeSystemThreadTests<TTimeSystem>
@@ -23,7 +19,7 @@ public abstract class TimeSystemThreadTests<TTimeSystem>
     {
         Exception? exception = Record.Exception(() => TimeSystem.Thread.Sleep(-2));
 
-        exception.Should().BeAssignableTo<ArgumentOutOfRangeException>();
+        exception.Should().BeOfType<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -45,7 +41,7 @@ public abstract class TimeSystemThreadTests<TTimeSystem>
         Exception? exception = Record.Exception(() =>
             TimeSystem.Thread.Sleep(TimeSpan.FromMilliseconds(-2)));
 
-        exception.Should().BeAssignableTo<ArgumentOutOfRangeException>();
+        exception.Should().BeOfType<ArgumentOutOfRangeException>();
     }
 
     [Fact]

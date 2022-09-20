@@ -1,9 +1,9 @@
 namespace Testably.Abstractions.Tests;
 
-public abstract partial class FileSystemDirectoryTests
+public abstract partial class FileSystemFileTests
 {
     // ReSharper disable once UnusedMember.Global
-    public sealed class MockFileSystem : FileSystemDirectoryTests<FileSystemMock>
+    public sealed class MockFileSystem : FileSystemFileTests<FileSystemMock>
     {
         public MockFileSystem() : this(new FileSystemMock())
         {

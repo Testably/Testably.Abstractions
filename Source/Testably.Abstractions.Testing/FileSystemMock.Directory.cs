@@ -31,13 +31,20 @@ public sealed partial class FileSystemMock
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="Directory.CreateSymbolicLink(string, string)" />
-        public FileSystemInfo CreateSymbolicLink(string path, string pathToTarget)
-            => System.IO.Directory.CreateSymbolicLink(path, pathToTarget);
+        public IFileSystem.IFileSystemInfo CreateSymbolicLink(
+            string path, string pathToTarget)
+            => throw new NotImplementedException();
 #endif
 
         /// <inheritdoc cref="Directory.Delete(string)" />
         public void Delete(string path)
-            => _fileSystem.InMemoryFileSystem.Delete(path);
+        {
+            if (!_fileSystem.InMemoryFileSystem.Delete(path))
+            {
+                throw new DirectoryNotFoundException(
+                    $"Could not find a part of the path '{_fileSystem.Path.GetFullPath(path)}'.");
+            }
+        }
 
         /// <inheritdoc cref="Directory.Delete(string, bool)" />
         public void Delete(string path, bool recursive)
@@ -238,8 +245,9 @@ public sealed partial class FileSystemMock
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="Directory.ResolveLinkTarget(string, bool)" />
-        public FileSystemInfo? ResolveLinkTarget(string linkPath, bool returnFinalTarget)
-            => System.IO.Directory.ResolveLinkTarget(linkPath, returnFinalTarget);
+        public IFileSystem.IFileSystemInfo? ResolveLinkTarget(
+            string linkPath, bool returnFinalTarget)
+            => throw new NotImplementedException();
 #endif
 
         /// <inheritdoc cref="Directory.SetCreationTime(string, DateTime)" />

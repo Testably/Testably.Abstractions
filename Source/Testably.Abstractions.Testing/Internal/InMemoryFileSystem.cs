@@ -1,6 +1,9 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal.Models;
 
@@ -22,16 +25,72 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
 
     #region IInMemoryFileSystem Members
 
-    public string CurrentDirectory { get; set; } = "".PrefixRoot();
+    /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.CurrentDirectory" />
+    public string CurrentDirectory { get; set; } = string.Empty.PrefixRoot();
 
-    /// <inheritdoc />
-    public bool Delete(string path)
+    /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.Delete(string, bool)" />
+    public bool Delete(string path, bool recursive = false)
     {
-        return _files.TryRemove(
-            _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem), out _);
+        string key = _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem);
+        if (!_files.TryGetValue(key, out FileSystemInfoMock? fileSystemInfo))
+        {
+            return false;
+        }
+
+        if (fileSystemInfo is IFileSystem.IDirectoryInfo)
+        {
+            string start = key + FileSystem.Path.DirectorySeparatorChar;
+            if (recursive)
+            {
+                foreach (KeyValuePair<string, FileSystemInfoMock> file in _files.Where(x
+                    => x.Key.StartsWith(start)))
+                {
+                    _files.TryRemove(file.Key, out _);
+                }
+            }
+            else if (_files.Any(x => x.Key.StartsWith(start)))
+            {
+                throw new IOException($"Directory not empty : '{path}'");
+            }
+        }
+
+        return _files.TryRemove(key, out _);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.Enumerate{TFileSystemInfo}(string, string, EnumerationOptions)" />
+    public IEnumerable<TFileSystemInfo> Enumerate<TFileSystemInfo>(string path,
+        string expression,
+        EnumerationOptions enumerationOptions)
+        where TFileSystemInfo : IFileSystem.IFileSystemInfo
+    {
+        ValidateExpression(expression);
+        string key = _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem);
+        string start = key + FileSystem.Path.DirectorySeparatorChar;
+        foreach (FileSystemInfoMock file in _files
+           .Where(x => x.Key.StartsWith(start))
+           .Select(x => x.Value))
+        {
+            if (file is TFileSystemInfo matchingType)
+            {
+                string? parentPath =
+                    FileSystem.Path.GetDirectoryName(file.FullName);
+                if (!enumerationOptions.RecurseSubdirectories && parentPath != key)
+                {
+                    continue;
+                }
+
+                if (!EnumerationOptionsHelper.MatchesPattern(enumerationOptions,
+                    matchingType.Name, expression))
+                {
+                    continue;
+                }
+
+                yield return matchingType;
+            }
+        }
+    }
+
+    /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.Exists(string?)" />
     public bool Exists([NotNullWhen(true)] string? path)
     {
         if (path == null)
@@ -43,7 +102,7 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
            .NormalizeAndTrimPath(_fileSystem));
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetOrAddDirectory(string)" />
     public IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path)
     {
         return _files.GetOrAdd(
@@ -61,7 +120,7 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
                 FileSystem.Path.AltDirectorySeparatorChar));
         while (!string.IsNullOrEmpty(parent))
         {
-            parents.Add(parent!);
+            parents.Add(parent);
             parent = FileSystem.Path.GetDirectoryName(parent);
         }
 
@@ -84,5 +143,15 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
         }
 
         return new DirectoryInfoMock(path, _fileSystem);
+    }
+
+    private static void ValidateExpression(string expression)
+    {
+        if (expression.Contains('\0'))
+        {
+            throw new ArgumentException(
+                $"Illegal characters in path '{{0}}'. (Parameter '{expression}')",
+                nameof(expression));
+        }
     }
 }

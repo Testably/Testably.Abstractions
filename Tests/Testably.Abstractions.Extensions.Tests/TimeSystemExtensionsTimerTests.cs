@@ -1,9 +1,5 @@
-﻿using FluentAssertions;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
-using Testably.Abstractions.Testing;
-using Xunit;
 
 namespace Testably.Abstractions.Extensions.Tests;
 

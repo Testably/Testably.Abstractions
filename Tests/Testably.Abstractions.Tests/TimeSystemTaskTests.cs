@@ -1,8 +1,4 @@
-using FluentAssertions;
-using System;
 using System.Threading.Tasks;
-using Testably.Abstractions.Tests.TestHelpers;
-using Xunit;
 
 namespace Testably.Abstractions.Tests;
 
@@ -29,7 +25,7 @@ public abstract class TimeSystemTaskTests<TTimeSystem>
             await TimeSystem.Task.Delay(-2).ConfigureAwait(false);
         }).ConfigureAwait(false);
 
-        exception.Should().BeAssignableTo<ArgumentOutOfRangeException>();
+        exception.Should().BeOfType<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -56,7 +52,7 @@ public abstract class TimeSystemTaskTests<TTimeSystem>
                .ConfigureAwait(false);
         }).ConfigureAwait(false);
 
-        exception.Should().BeAssignableTo<ArgumentOutOfRangeException>();
+        exception.Should().BeOfType<ArgumentOutOfRangeException>();
     }
 
     [Fact]

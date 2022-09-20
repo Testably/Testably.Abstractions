@@ -23,7 +23,7 @@ internal sealed class TimeProviderImplementation : TimeSystemMock.ITimeProvider
 #if NETSTANDARD2_0
     /// <inheritdoc cref="ITimeSystem.IDateTime.UnixEpoch" />
     public DateTime UnixEpoch { get; set; } =
-        new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 #else
     /// <inheritdoc cref="TimeSystemMock.ITimeProvider.UnixEpoch" />
     public DateTime UnixEpoch { get; set; } = DateTime.UnixEpoch;

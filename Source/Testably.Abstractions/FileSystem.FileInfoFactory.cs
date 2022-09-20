@@ -19,7 +19,9 @@ public sealed partial class FileSystem
 
         /// <inheritdoc cref="IFileSystem.IFileInfoFactory.New" />
         public IFileSystem.IFileInfo New(string path)
-            => FileInfoWrapper.FromFileInfo(new FileInfo(path), FileSystem);
+            => FileInfoWrapper.FromFileInfo(
+                new FileInfo(path),
+                FileSystem);
 
         #endregion
     }
