@@ -4,7 +4,7 @@ using System.Runtime.Versioning;
 
 namespace Testably.Abstractions.Models;
 
-internal class FileInfoWrapper : FileSystemInfoWrapper, IFileSystem.IFileInfo
+internal sealed class FileInfoWrapper : FileSystemInfoWrapper, IFileSystem.IFileInfo
 {
     private readonly IFileSystem _fileSystem;
     private readonly FileInfo _instance;

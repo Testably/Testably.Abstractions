@@ -1,5 +1,5 @@
 ﻿namespace Testably.Abstractions.Testing.Internal;
 
-internal class FileSystemMockCallbackHandler : FileSystemMock.ICallbackHandler
+internal sealed class FileSystemMockCallbackHandler : FileSystemMock.ICallbackHandler
 {
 }

@@ -1,44 +1,43 @@
 ﻿using System;
-using System.Collections.Concurrent;
 
 namespace Testably.Abstractions.Testing.Internal;
 
-internal class TimeSystemMockCallbackHandler : TimeSystemMock.ICallbackHandler
+internal sealed class TimeSystemMockCallbackHandler : TimeSystemMock.ICallbackHandler
 {
-    private readonly ConcurrentDictionary<Guid, Action<DateTime>>
-        _dateTimeReadCallbacks =
-            new();
+    private readonly Notification.INotificationFactory<DateTime>
+        _dateTimeReadCallbacks = Notification.CreateFactory<DateTime>();
 
-    private readonly ConcurrentDictionary<Guid, Action<TimeSpan>>
-        _taskDelayCallbacks =
-            new();
+    private readonly Notification.INotificationFactory<TimeSpan>
+        _taskDelayCallbacks = Notification.CreateFactory<TimeSpan>();
 
-    private readonly ConcurrentDictionary<Guid, Action<TimeSpan>>
-        _threadSleepCallbacks =
-            new();
+    private readonly Notification.INotificationFactory<TimeSpan>
+        _threadSleepCallbacks = Notification.CreateFactory<TimeSpan>();
 
     #region ICallbackHandler Members
 
     /// <inheritdoc cref="TimeSystemMock.ICallbackHandler.DateTimeRead(Action{DateTime})" />
-    public IDisposable DateTimeRead(Action<DateTime> callback)
-        => CallbackHandler.RegisterCallback(_dateTimeReadCallbacks, callback);
+    public Notification.IAwaitableCallback<DateTime> DateTimeRead(
+        Action<DateTime>? callback = null)
+        => _dateTimeReadCallbacks.RegisterCallback(callback);
 
     /// <inheritdoc cref="TimeSystemMock.ICallbackHandler.TaskDelay(Action{TimeSpan})" />
-    public IDisposable TaskDelay(Action<TimeSpan> callback)
-        => CallbackHandler.RegisterCallback(_taskDelayCallbacks, callback);
+    public Notification.IAwaitableCallback<TimeSpan> TaskDelay(
+        Action<TimeSpan>? callback = null)
+        => _taskDelayCallbacks.RegisterCallback(callback);
 
     /// <inheritdoc cref="TimeSystemMock.ICallbackHandler.ThreadSleep(Action{TimeSpan})" />
-    public IDisposable ThreadSleep(Action<TimeSpan> callback)
-        => CallbackHandler.RegisterCallback(_threadSleepCallbacks, callback);
+    public Notification.IAwaitableCallback<TimeSpan> ThreadSleep(
+        Action<TimeSpan>? callback = null)
+        => _threadSleepCallbacks.RegisterCallback(callback);
 
     #endregion
 
     public void InvokeDateTimeReadCallbacks(DateTime now)
-        => CallbackHandler.InvokeCallbacks(_dateTimeReadCallbacks, now);
+        => _dateTimeReadCallbacks.InvokeCallbacks(now);
 
     public void InvokeTaskDelayCallbacks(TimeSpan delay)
-        => CallbackHandler.InvokeCallbacks(_taskDelayCallbacks, delay);
+        => _taskDelayCallbacks.InvokeCallbacks(delay);
 
     public void InvokeThreadSleepCallbacks(TimeSpan timeout)
-        => CallbackHandler.InvokeCallbacks(_threadSleepCallbacks, timeout);
+        => _threadSleepCallbacks.InvokeCallbacks(timeout);
 }

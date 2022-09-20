@@ -9,7 +9,7 @@ using Testably.Abstractions.Testing.Internal.Models;
 
 namespace Testably.Abstractions.Testing.Internal;
 
-internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
+internal sealed class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
 {
     public IFileSystem FileSystem
         => _fileSystem;

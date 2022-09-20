@@ -1,6 +1,6 @@
 ﻿namespace Testably.Abstractions.Testing.Internal;
 
-internal class FileGenerator : FileSystemMock.IGenerator
+internal sealed class FileGenerator : FileSystemMock.IGenerator
 {
     private readonly FileSystemMock _fileSystem;
 
