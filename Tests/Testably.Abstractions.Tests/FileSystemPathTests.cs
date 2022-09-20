@@ -93,8 +93,8 @@ public abstract class FileSystemPathTests<TFileSystem>
         Exception? exception2 = Record.Exception(() =>
             FileSystem.Path.Combine(null!, path));
 
-        exception1.Should().BeAssignableTo<ArgumentNullException>();
-        exception2.Should().BeAssignableTo<ArgumentNullException>();
+        exception1.Should().BeOfType<ArgumentNullException>();
+        exception2.Should().BeOfType<ArgumentNullException>();
     }
 
     [Theory]
@@ -150,9 +150,9 @@ public abstract class FileSystemPathTests<TFileSystem>
         Exception? exception3 = Record.Exception(() =>
             FileSystem.Path.Combine(null!, null!, path));
 
-        exception1.Should().BeAssignableTo<ArgumentNullException>();
-        exception2.Should().BeAssignableTo<ArgumentNullException>();
-        exception3.Should().BeAssignableTo<ArgumentNullException>();
+        exception1.Should().BeOfType<ArgumentNullException>();
+        exception2.Should().BeOfType<ArgumentNullException>();
+        exception3.Should().BeOfType<ArgumentNullException>();
     }
 
     [Theory]
@@ -214,10 +214,10 @@ public abstract class FileSystemPathTests<TFileSystem>
         Exception? exception4 = Record.Exception(() =>
             FileSystem.Path.Combine(null!, null!, null!, path));
 
-        exception1.Should().BeAssignableTo<ArgumentNullException>();
-        exception2.Should().BeAssignableTo<ArgumentNullException>();
-        exception3.Should().BeAssignableTo<ArgumentNullException>();
-        exception4.Should().BeAssignableTo<ArgumentNullException>();
+        exception1.Should().BeOfType<ArgumentNullException>();
+        exception2.Should().BeOfType<ArgumentNullException>();
+        exception3.Should().BeOfType<ArgumentNullException>();
+        exception4.Should().BeOfType<ArgumentNullException>();
     }
 
     [Theory]
@@ -256,7 +256,7 @@ public abstract class FileSystemPathTests<TFileSystem>
         Exception? exception = Record.Exception(() =>
             FileSystem.Path.Combine(null!));
 
-        exception.Should().BeAssignableTo<ArgumentNullException>();
+        exception.Should().BeOfType<ArgumentNullException>();
     }
 
     [Theory]
@@ -300,11 +300,11 @@ public abstract class FileSystemPathTests<TFileSystem>
         Exception? exception5 = Record.Exception(() =>
             FileSystem.Path.Combine(null!, null!, null!, null!, path));
 
-        exception1.Should().BeAssignableTo<ArgumentNullException>();
-        exception2.Should().BeAssignableTo<ArgumentNullException>();
-        exception3.Should().BeAssignableTo<ArgumentNullException>();
-        exception4.Should().BeAssignableTo<ArgumentNullException>();
-        exception5.Should().BeAssignableTo<ArgumentNullException>();
+        exception1.Should().BeOfType<ArgumentNullException>();
+        exception2.Should().BeOfType<ArgumentNullException>();
+        exception3.Should().BeOfType<ArgumentNullException>();
+        exception4.Should().BeOfType<ArgumentNullException>();
+        exception5.Should().BeOfType<ArgumentNullException>();
     }
 
     [Theory]

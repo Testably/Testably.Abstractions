@@ -33,7 +33,7 @@ public abstract partial class TimeSystemTaskTests
 
             after.Should().BeOnOrAfter(before.AddMilliseconds(millisecondsTimeout)
                .ApplySystemClockTolerance());
-            exception.Should().BeAssignableTo<TaskCanceledException>();
+            exception.Should().BeOfType<TaskCanceledException>();
         }
 
         [Fact]
@@ -54,7 +54,7 @@ public abstract partial class TimeSystemTaskTests
             DateTime after = TimeSystem.DateTime.UtcNow;
 
             after.Should().BeOnOrAfter(before.Add(timeout).ApplySystemClockTolerance());
-            exception.Should().BeAssignableTo<TaskCanceledException>();
+            exception.Should().BeOfType<TaskCanceledException>();
         }
     }
 }

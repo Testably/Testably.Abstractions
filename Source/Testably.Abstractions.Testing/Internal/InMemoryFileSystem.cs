@@ -65,7 +65,7 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
     {
         if (expression.Contains('\0'))
         {
-            throw new ArgumentException("Argument_InvalidPathChars", nameof(expression));
+            throw new ArgumentException($"Illegal characters in path '{{0}}'. (Parameter '{expression}')", nameof(expression));
         }
 
         if (path.Contains('\0'))

@@ -31,9 +31,9 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
         Exception? exception =
             Record.Exception(() => FileSystem.DirectoryInfo.New(string.Empty));
 
-        exception.Should().BeAssignableTo<ArgumentException>()
+        exception.Should().BeOfType<ArgumentException>()
            .Which.ParamName.Should().Be("path");
-        exception.Should().BeAssignableTo<ArgumentException>()
+        exception.Should().BeOfType<ArgumentException>()
            .Which.Message.Should()
            .Be("The path is empty. (Parameter 'path')");
     }
@@ -49,7 +49,7 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
             Exception? exception =
                 Record.Exception(() => FileSystem.DirectoryInfo.New(path).Create());
 
-            exception.Should().BeAssignableTo<IOException>()
+            exception.Should().BeOfType<IOException>()
                .Which.Message.Should().Be(expectedMessage);
         }
     }
@@ -60,7 +60,7 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
         Exception? exception =
             Record.Exception(() => FileSystem.DirectoryInfo.New(null!));
 
-        exception.Should().BeAssignableTo<ArgumentNullException>().Which.ParamName
+        exception.Should().BeOfType<ArgumentNullException>().Which.ParamName
            .Should().Be("path");
     }
 
@@ -73,7 +73,7 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
         Exception? exception =
             Record.Exception(() => FileSystem.DirectoryInfo.New(path).Create());
 
-        exception.Should().BeAssignableTo<ArgumentException>()
+        exception.Should().BeOfType<ArgumentException>()
            .Which.Message.Should().Be(expectedMessage);
     }
 
@@ -149,9 +149,9 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
         Exception? exception =
             Record.Exception(() => FileSystem.Directory.CreateDirectory(string.Empty));
 
-        exception.Should().BeAssignableTo<ArgumentException>()
+        exception.Should().BeOfType<ArgumentException>()
            .Which.ParamName.Should().Be("path");
-        exception.Should().BeAssignableTo<ArgumentException>()
+        exception.Should().BeOfType<ArgumentException>()
            .Which.Message.Should()
            .Be("Path cannot be the empty string or all whitespace. (Parameter 'path')");
     }
@@ -167,7 +167,7 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
             Exception? exception =
                 Record.Exception(() => FileSystem.Directory.CreateDirectory(path));
 
-            exception.Should().BeAssignableTo<IOException>()
+            exception.Should().BeOfType<IOException>()
                .Which.Message.Should().Be(expectedMessage);
         }
     }
@@ -178,7 +178,7 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
         Exception? exception =
             Record.Exception(() => FileSystem.Directory.CreateDirectory(null!));
 
-        exception.Should().BeAssignableTo<ArgumentNullException>().Which.ParamName
+        exception.Should().BeOfType<ArgumentNullException>().Which.ParamName
            .Should().Be("path");
     }
 
@@ -191,7 +191,7 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
         Exception? exception =
             Record.Exception(() => FileSystem.Directory.CreateDirectory(path));
 
-        exception.Should().BeAssignableTo<ArgumentException>()
+        exception.Should().BeOfType<ArgumentException>()
            .Which.Message.Should().Be(expectedMessage);
     }
 

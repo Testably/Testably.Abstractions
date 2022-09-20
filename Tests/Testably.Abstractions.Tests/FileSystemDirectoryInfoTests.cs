@@ -190,6 +190,25 @@ public abstract class FileSystemDirectoryInfoTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    public void EnumerateDirectories_WithNewline_ShouldThrowArgumentException(
+        string path)
+    {
+        IFileSystem.IDirectoryInfo baseDirectory =
+            FileSystem.DirectoryInfo.New(path);
+        string searchPattern = "foo\0bar";
+
+        Exception? exception = Record.Exception(() =>
+        {
+            _ = baseDirectory.EnumerateDirectories(searchPattern).FirstOrDefault();
+        });
+
+        exception.Should().BeOfType<ArgumentException>()
+           .Which.Message.Should().Contain("Illegal characters in path")
+           .And.Contain($" (Parameter '{searchPattern}')");
+    }
+
+    [Theory]
+    [AutoData]
     public void
         EnumerateDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
             string path)
