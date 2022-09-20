@@ -8,7 +8,7 @@ namespace Examples.TimeSystem.Timer;
 
 public class TimerExampleTest
 {
-    [Fact(Skip = Examples.ExampleTest)]
+    [ExampleTest]
     public void Exception_ShouldBeHandled()
     {
         Exception thrownException = new("foo");
@@ -32,7 +32,7 @@ public class TimerExampleTest
         receivedException.Should().Be(thrownException);
     }
 
-    [Fact(Skip = Examples.ExampleTest)]
+    [ExampleTest]
     public void Execute_ShouldBeCalledRepeatedly()
     {
         int iterationCount = 5;
