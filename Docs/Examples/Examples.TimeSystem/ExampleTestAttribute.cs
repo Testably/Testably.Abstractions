@@ -1,4 +1,4 @@
-﻿#if EXECUTE_EXAMPLE_TESTS
+#if EXECUTE_EXAMPLE_TESTS
 using Xunit;
 
 namespace Examples.TimeSystem;

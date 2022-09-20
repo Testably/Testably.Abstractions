@@ -138,6 +138,7 @@ public abstract class FileSystemDirectoryInfoTests<TFileSystem>
             exception.Should().BeOfType<IOException>()
                .Which.Message.Should().Contain($"'{sut.FullName}'");
         }
+
         sut.Exists.Should().BeTrue();
         FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
     }
