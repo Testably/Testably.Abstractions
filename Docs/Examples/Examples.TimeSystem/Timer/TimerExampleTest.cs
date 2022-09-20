@@ -2,7 +2,6 @@
 using System;
 using System.Threading;
 using Testably.Abstractions.Testing;
-using Xunit;
 
 namespace Examples.TimeSystem.Timer;
 

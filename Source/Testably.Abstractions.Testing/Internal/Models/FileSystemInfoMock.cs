@@ -118,6 +118,7 @@ internal class FileSystemInfoMock : IFileSystem.IFileSystemInfo
             throw new DirectoryNotFoundException(
                 $"Could not find a part of the path '{FullName}'.");
         }
+
         ResetExists();
     }
 

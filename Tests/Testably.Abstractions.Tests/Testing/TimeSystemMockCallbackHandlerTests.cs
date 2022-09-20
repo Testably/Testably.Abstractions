@@ -6,11 +6,75 @@ namespace Testably.Abstractions.Tests.Testing;
 public class TimeSystemMockCallbackHandlerTests
 {
     [Fact]
+    public void AwaitableCallback_Amount_ShouldOnlyReturnAfterNumberOfCallbacks()
+    {
+        TimeSystemMock timeSystem = new();
+        int totalCount = 0;
+        int filteredCount = 0;
+        Notification.IAwaitableCallback<TimeSpan> wait = timeSystem.On.ThreadSleep(_ =>
+        {
+            totalCount++;
+        });
+        Task.Run(() =>
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                timeSystem.Thread.Sleep(10 * i);
+            }
+        });
+
+        bool result = wait.Wait(t =>
+        {
+            filteredCount++;
+            return true;
+        }, count: 6);
+
+        filteredCount.Should().BeGreaterOrEqualTo(totalCount - 1).And
+           .BeLessOrEqualTo(totalCount);
+        result.Should().BeTrue();
+        totalCount.Should().BeGreaterOrEqualTo(6);
+    }
+
+    [Fact]
+    public void AwaitableCallback_Filter_ShouldOnlyUpdateAfterFilteredValue()
+    {
+        TimeSystemMock timeSystem = new();
+        int totalCount = 0;
+        int filteredCount = 0;
+        Notification.IAwaitableCallback<TimeSpan> wait = timeSystem.On.ThreadSleep(_ =>
+        {
+            totalCount++;
+        });
+        Task.Run(() =>
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                timeSystem.Thread.Sleep(10 * i);
+            }
+        });
+
+        bool result = wait.Wait(t =>
+        {
+            if (t.TotalMilliseconds > 60)
+            {
+                filteredCount++;
+                return true;
+            }
+
+            return false;
+        });
+
+        filteredCount.Should().BeLessThan(totalCount);
+        result.Should().BeTrue();
+        totalCount.Should().BeGreaterOrEqualTo(6);
+    }
+
+    [Fact]
     public void AwaitableCallback_ShouldWaitForCallbackExecution()
     {
         TimeSystemMock timeSystem = new();
         bool isCalled = false;
-        IAwaitableCallback wait = timeSystem.On.DateTimeRead(_ =>
+        Notification.IAwaitableCallback<DateTime> wait = timeSystem.On.DateTimeRead(_ =>
         {
             isCalled = true;
         });
@@ -27,21 +91,21 @@ public class TimeSystemMockCallbackHandlerTests
     }
 
     [Fact]
-    public void AwaitableCallback2_ShouldWaitForCallbackExecution()
+    public void AwaitableCallback_TimeoutExpired_ShouldStopAfterTimeout()
     {
         TimeSystemMock timeSystem = new();
         bool isCalled = false;
-        IAwaitableCallback wait = timeSystem.On.DateTimeRead(_ =>
+        Notification.IAwaitableCallback<DateTime> wait = timeSystem.On.DateTimeRead(_ =>
         {
             isCalled = true;
         });
         Task.Run(() =>
         {
-            Thread.Sleep(100);
+            Thread.Sleep(1000);
             _ = timeSystem.DateTime.Now;
         });
 
-        bool result = wait.Wait(10);
+        bool result = wait.Wait(timeout: 10);
 
         result.Should().BeFalse();
         isCalled.Should().BeFalse();

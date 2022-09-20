@@ -83,8 +83,10 @@ internal static class EnumerationOptionsHelper
     }
 
     /// <summary>
-    /// This method was inspired by the `FileSystemEnumerableFactory.NormalizeInputs` in .NET6.<para />
-    /// <seealso href="https://github.com/dotnet/runtime/blob/174e04336e4a073416cb0baebb2be72728b9d64b/src/libraries/System.Private.CoreLib/src/System/IO/Enumeration/FileSystemEnumerableFactory.cs#L27"/>
+    ///     This method was inspired by the `FileSystemEnumerableFactory.NormalizeInputs` in .NET6.
+    ///     <para />
+    ///     <seealso
+    ///         href="https://github.com/dotnet/runtime/blob/174e04336e4a073416cb0baebb2be72728b9d64b/src/libraries/System.Private.CoreLib/src/System/IO/Enumeration/FileSystemEnumerableFactory.cs#L27" />
     /// </summary>
     /// <param name="expression"></param>
     /// <returns></returns>
