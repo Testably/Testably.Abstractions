@@ -19,11 +19,12 @@ using System;
 namespace Examples.TimeSystem;
 
 /// <summary>
-///     Used to skip example unit tests to illustrate code examples in this project.
+///     Used to illustrate example tests in this project.
 ///     <para />
-///     In order for these tests to execute, set the variable "<c>EXECUTE_EXAMPLE_TESTS</c>", e.g. in the .csproj file
-///     <br />
-///     see example for a snippet to add to the .csproj file.
+///     These tests are not executed by default!
+///     <para />
+///     In order for these tests to execute, the variable "<c>EXECUTE_EXAMPLE_TESTS</c>" must be set,<br />
+///     e.g. in the .csproj file (see example for a snippet).
 /// </summary>
 /// <example>
 ///     <PropertyGroup>
