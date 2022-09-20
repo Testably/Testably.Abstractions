@@ -145,7 +145,7 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
         return new DirectoryInfoMock(path, _fileSystem);
     }
 
-    private void ValidateExpression(string expression)
+    private static void ValidateExpression(string expression)
     {
         if (expression.Contains('\0'))
         {
