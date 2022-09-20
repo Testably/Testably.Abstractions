@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Testing.Internal.Models;
 /// <summary>
 ///     A mocked directory in the <see cref="InMemoryFileSystem" />.
 /// </summary>
-internal class DirectoryInfoMock : FileSystemInfoMock, IFileSystem.IDirectoryInfo
+internal sealed class DirectoryInfoMock : FileSystemInfoMock, IFileSystem.IDirectoryInfo
 {
     internal DirectoryInfoMock(string path, FileSystemMock fileSystem)
         : base(path, fileSystem)

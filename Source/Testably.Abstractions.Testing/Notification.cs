@@ -14,7 +14,7 @@ public static class Notification
         return new NotificationFactory<TValue>();
     }
 
-    private class NotificationFactory<TValue> : INotificationFactory<TValue>
+    private sealed class NotificationFactory<TValue> : INotificationFactory<TValue>
     {
         private readonly ConcurrentDictionary<Guid, CallbackWaiter> _callbackWaiters =
             new();

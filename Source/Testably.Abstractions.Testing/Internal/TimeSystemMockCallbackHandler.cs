@@ -2,7 +2,7 @@
 
 namespace Testably.Abstractions.Testing.Internal;
 
-internal class TimeSystemMockCallbackHandler : TimeSystemMock.ICallbackHandler
+internal sealed class TimeSystemMockCallbackHandler : TimeSystemMock.ICallbackHandler
 {
     private readonly Notification.INotificationFactory<DateTime>
         _dateTimeReadCallbacks = Notification.CreateFactory<DateTime>();
