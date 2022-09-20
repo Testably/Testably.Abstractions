@@ -28,6 +28,10 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <Nullable>annotations</Nullable>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="MinVer" Version="4.2.0">
       <PrivateAssets>all</PrivateAssets>

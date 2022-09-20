@@ -45,24 +45,28 @@ internal class DirectoryInfoMock : FileSystemInfoMock, IFileSystem.IDirectoryInf
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories()" />
     public IEnumerable<IFileSystem.IDirectoryInfo> EnumerateDirectories()
-        => throw new NotImplementedException();
+        => FileSystem.InMemoryFileSystem.Enumerate<IFileSystem.IDirectoryInfo>(FullName,
+            "*", EnumerationOptionsHelper.Compatible);
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories(string)" />
     public IEnumerable<IFileSystem.IDirectoryInfo>
         EnumerateDirectories(string searchPattern)
-        => throw new NotImplementedException();
+        => FileSystem.InMemoryFileSystem.Enumerate<IFileSystem.IDirectoryInfo>(FullName,
+            searchPattern, EnumerationOptionsHelper.Compatible);
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories(string, SearchOption)" />
     public IEnumerable<IFileSystem.IDirectoryInfo> EnumerateDirectories(
         string searchPattern, SearchOption searchOption)
-        => throw new NotImplementedException();
+        => FileSystem.InMemoryFileSystem.Enumerate<IFileSystem.IDirectoryInfo>(FullName,
+            searchPattern, EnumerationOptionsHelper.FromSearchOption(searchOption));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories(string, EnumerationOptions)" />
     public IEnumerable<IFileSystem.IDirectoryInfo> EnumerateDirectories(
         string searchPattern,
         EnumerationOptions enumerationOptions)
-        => throw new NotImplementedException();
+        => FileSystem.InMemoryFileSystem.Enumerate<IFileSystem.IDirectoryInfo>(FullName,
+            searchPattern, enumerationOptions);
 #endif
 
     /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateFiles()" />

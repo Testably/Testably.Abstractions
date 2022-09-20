@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -24,9 +25,10 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
 
     #region IInMemoryFileSystem Members
 
+    /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.CurrentDirectory" />
     public string CurrentDirectory { get; set; } = string.Empty.PrefixRoot();
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.Delete(string, bool)" />
     public bool Delete(string path, bool recursive)
     {
         string key = _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem);
@@ -55,7 +57,48 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
         return _files.TryRemove(key, out _);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.Enumerate{TFileSystemInfo}(string, string, EnumerationOptions)" />
+    public IEnumerable<TFileSystemInfo> Enumerate<TFileSystemInfo>(string path,
+        string expression,
+        EnumerationOptions enumerationOptions)
+        where TFileSystemInfo : IFileSystem.IFileSystemInfo
+    {
+        if (expression.Contains('\0'))
+        {
+            throw new ArgumentException("Argument_InvalidPathChars", nameof(expression));
+        }
+
+        if (path.Contains('\0'))
+        {
+            throw new ArgumentException("Argument_InvalidPathChars", nameof(path));
+        }
+
+        string key = _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem);
+        string start = key + FileSystem.Path.DirectorySeparatorChar;
+        foreach (KeyValuePair<string, FileSystemInfoMock> file in _files
+           .Where(x => x.Key.StartsWith(start)))
+        {
+            if (file.Value is TFileSystemInfo matchingType)
+            {
+                string? parentPath =
+                    FileSystem.Path.GetDirectoryName(file.Value.FullName);
+                if (!enumerationOptions.RecurseSubdirectories && parentPath != key)
+                {
+                    continue;
+                }
+
+                if (!EnumerationOptionsHelper.MatchesPattern(enumerationOptions,
+                    matchingType.Name, expression))
+                {
+                    continue;
+                }
+
+                yield return matchingType;
+            }
+        }
+    }
+
+    /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.Exists(string?)" />
     public bool Exists([NotNullWhen(true)] string? path)
     {
         if (path == null)
@@ -67,7 +110,7 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
            .NormalizeAndTrimPath(_fileSystem));
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetOrAddDirectory(string)" />
     public IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path)
     {
         return _files.GetOrAdd(
@@ -85,7 +128,7 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
                 FileSystem.Path.AltDirectorySeparatorChar));
         while (!string.IsNullOrEmpty(parent))
         {
-            parents.Add(parent!);
+            parents.Add(parent);
             parent = FileSystem.Path.GetDirectoryName(parent);
         }
 
