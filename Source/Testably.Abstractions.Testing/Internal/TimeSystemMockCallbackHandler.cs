@@ -5,30 +5,30 @@ namespace Testably.Abstractions.Testing.Internal;
 
 internal class TimeSystemMockCallbackHandler : TimeSystemMock.ICallbackHandler
 {
-    private readonly ConcurrentDictionary<Guid, Action<DateTime>>
+    private readonly ConcurrentDictionary<Guid, CallbackHandler.CallbackWaiter<DateTime>>
         _dateTimeReadCallbacks =
             new();
 
-    private readonly ConcurrentDictionary<Guid, Action<TimeSpan>>
+    private readonly ConcurrentDictionary<Guid, CallbackHandler.CallbackWaiter<TimeSpan>>
         _taskDelayCallbacks =
             new();
 
-    private readonly ConcurrentDictionary<Guid, Action<TimeSpan>>
+    private readonly ConcurrentDictionary<Guid, CallbackHandler.CallbackWaiter<TimeSpan>>
         _threadSleepCallbacks =
             new();
 
     #region ICallbackHandler Members
 
     /// <inheritdoc cref="TimeSystemMock.ICallbackHandler.DateTimeRead(Action{DateTime})" />
-    public IDisposable DateTimeRead(Action<DateTime> callback)
+    public IAwaitableCallback DateTimeRead(Action<DateTime>? callback = null)
         => CallbackHandler.RegisterCallback(_dateTimeReadCallbacks, callback);
 
     /// <inheritdoc cref="TimeSystemMock.ICallbackHandler.TaskDelay(Action{TimeSpan})" />
-    public IDisposable TaskDelay(Action<TimeSpan> callback)
+    public IAwaitableCallback TaskDelay(Action<TimeSpan>? callback = null)
         => CallbackHandler.RegisterCallback(_taskDelayCallbacks, callback);
 
     /// <inheritdoc cref="TimeSystemMock.ICallbackHandler.ThreadSleep(Action{TimeSpan})" />
-    public IDisposable ThreadSleep(Action<TimeSpan> callback)
+    public IAwaitableCallback ThreadSleep(Action<TimeSpan>? callback = null)
         => CallbackHandler.RegisterCallback(_threadSleepCallbacks, callback);
 
     #endregion

@@ -1,9 +1,52 @@
 ﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.Testing;
 
 public class TimeSystemMockCallbackHandlerTests
 {
+    [Fact]
+    public void AwaitableCallback_ShouldWaitForCallbackExecution()
+    {
+        TimeSystemMock timeSystem = new();
+        bool isCalled = false;
+        IAwaitableCallback wait = timeSystem.On.DateTimeRead(_ =>
+        {
+            isCalled = true;
+        });
+        Task.Run(() =>
+        {
+            Thread.Sleep(10);
+            _ = timeSystem.DateTime.Now;
+        });
+
+        bool result = wait.Wait();
+
+        result.Should().BeTrue();
+        isCalled.Should().BeTrue();
+    }
+
+    [Fact]
+    public void AwaitableCallback2_ShouldWaitForCallbackExecution()
+    {
+        TimeSystemMock timeSystem = new();
+        bool isCalled = false;
+        IAwaitableCallback wait = timeSystem.On.DateTimeRead(_ =>
+        {
+            isCalled = true;
+        });
+        Task.Run(() =>
+        {
+            Thread.Sleep(100);
+            _ = timeSystem.DateTime.Now;
+        });
+
+        bool result = wait.Wait(10);
+
+        result.Should().BeFalse();
+        isCalled.Should().BeFalse();
+    }
+
     [Fact]
     public void
         OnDateTimeRead_DisposedCallback_ShouldNotBeCalled()

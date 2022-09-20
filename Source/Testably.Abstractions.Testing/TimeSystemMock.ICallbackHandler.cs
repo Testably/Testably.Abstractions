@@ -18,7 +18,7 @@ public sealed partial class TimeSystemMock
         ///     <para />
         ///     Returns an <see cref="IDisposable" /> to un-register the callback.
         /// </summary>
-        IDisposable DateTimeRead(Action<DateTime> callback);
+        IAwaitableCallback DateTimeRead(Action<DateTime>? callback = null);
 
         /// <summary>
         ///     Callback executed when any of the following <c>Task.Delay</c> overloads is called:<br />
@@ -29,7 +29,7 @@ public sealed partial class TimeSystemMock
         ///     <para />
         ///     Returns an <see cref="IDisposable" /> to un-register the callback.
         /// </summary>
-        IDisposable TaskDelay(Action<TimeSpan> callback);
+        IAwaitableCallback TaskDelay(Action<TimeSpan>? callback = null);
 
         /// <summary>
         ///     Callback executed when any of the following <c>Thread.Sleep</c> overloads is called:<br />
@@ -38,6 +38,6 @@ public sealed partial class TimeSystemMock
         ///     <para />
         ///     Returns an <see cref="IDisposable" /> to un-register the callback.
         /// </summary>
-        IDisposable ThreadSleep(Action<TimeSpan> callback);
+        IAwaitableCallback ThreadSleep(Action<TimeSpan>? callback = null);
     }
 }
