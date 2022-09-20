@@ -90,12 +90,10 @@ public static class Notification
             internal void Invoke(TValue value)
             {
                 _callback?.Invoke(value);
-                if (_filter?.Invoke(value) != false)
+                if (_filter?.Invoke(value) != false &&
+                    Interlocked.Decrement(ref _count) <= 0)
                 {
-                    if (Interlocked.Decrement(ref _count) <= 0)
-                    {
-                        _reset?.Set();
-                    }
+                    _reset?.Set();
                 }
             }
         }
