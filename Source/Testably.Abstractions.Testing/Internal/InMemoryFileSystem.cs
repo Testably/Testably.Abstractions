@@ -63,16 +63,7 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
         EnumerationOptions enumerationOptions)
         where TFileSystemInfo : IFileSystem.IFileSystemInfo
     {
-        if (expression.Contains('\0'))
-        {
-            throw new ArgumentException($"Illegal characters in path '{{0}}'. (Parameter '{expression}')", nameof(expression));
-        }
-
-        if (path.Contains('\0'))
-        {
-            throw new ArgumentException("Argument_InvalidPathChars", nameof(path));
-        }
-
+        ValidateExpression(expression);
         string key = _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem);
         string start = key + FileSystem.Path.DirectorySeparatorChar;
         foreach (FileSystemInfoMock file in _files
@@ -152,5 +143,15 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
         }
 
         return new DirectoryInfoMock(path, _fileSystem);
+    }
+
+    private void ValidateExpression(string expression)
+    {
+        if (expression.Contains('\0'))
+        {
+            throw new ArgumentException(
+                $"Illegal characters in path '{{0}}'. (Parameter '{expression}')",
+                nameof(expression));
+        }
     }
 }

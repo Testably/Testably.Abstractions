@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Tests;
 
@@ -130,8 +131,13 @@ public abstract class FileSystemDirectoryInfoTests<TFileSystem>
         });
 
         exception.Should().BeOfType<IOException>()
-           .Which.Message.Should()
-           .Contain($"'{sut.FullName}'").And.Contain("not empty");
+           .Which.Message.Should().Contain("not empty");
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            // Path information only available on Windows
+            exception.Should().BeOfType<IOException>()
+               .Which.Message.Should().Contain($"'{sut.FullName}'");
+        }
         sut.Exists.Should().BeTrue();
         FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
     }
