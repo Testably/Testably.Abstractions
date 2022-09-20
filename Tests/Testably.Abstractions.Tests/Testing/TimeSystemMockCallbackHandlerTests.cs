@@ -1,5 +1,4 @@
 ﻿using System.Threading;
-using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.Testing;
 
@@ -15,15 +14,15 @@ public class TimeSystemMockCallbackHandlerTests
         {
             totalCount++;
         });
-        Task.Run(() =>
+        new Thread(() =>
         {
             for (int i = 0; i < 10; i++)
             {
                 timeSystem.Thread.Sleep(10 * i);
             }
-        });
+        }).Start();
 
-        bool result = wait.Wait(t =>
+        bool result = wait.Wait(_ =>
         {
             filteredCount++;
             return true;
@@ -45,13 +44,13 @@ public class TimeSystemMockCallbackHandlerTests
         {
             totalCount++;
         });
-        Task.Run(() =>
+        new Thread(() =>
         {
             for (int i = 0; i < 10; i++)
             {
                 timeSystem.Thread.Sleep(10 * i);
             }
-        });
+        }).Start();
 
         bool result = wait.Wait(t =>
         {
@@ -78,11 +77,11 @@ public class TimeSystemMockCallbackHandlerTests
         {
             isCalled = true;
         });
-        Task.Run(() =>
+        new Thread(() =>
         {
             Thread.Sleep(10);
             _ = timeSystem.DateTime.Now;
-        });
+        }).Start();
 
         bool result = wait.Wait();
 
@@ -99,11 +98,11 @@ public class TimeSystemMockCallbackHandlerTests
         {
             isCalled = true;
         });
-        Task.Run(() =>
+        new Thread(() =>
         {
             Thread.Sleep(1000);
             _ = timeSystem.DateTime.Now;
-        });
+        }).Start();
 
         bool result = wait.Wait(timeout: 10);
 
