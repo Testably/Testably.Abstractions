@@ -20,10 +20,4 @@ public abstract class FileSystemFileSystemInfoTests<TFileSystem>
     }
 
     #endregion
-
-    [Fact]
-    public void X()
-    {
-        IFileSystem.IFileInfo sut = FileSystem.FileInfo.New("foo");
-    }
 }

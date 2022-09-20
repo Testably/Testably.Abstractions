@@ -131,7 +131,7 @@ public abstract class FileSystemDirectoryInfoTests<TFileSystem>
 
         exception.Should().BeOfType<IOException>()
            .Which.Message.Should()
-           .Be($"The directory is not empty. : '{sut.FullName}'");
+           .Contain($"'{sut.FullName}'").And.Contain("not empty");
         sut.Exists.Should().BeTrue();
         FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
     }

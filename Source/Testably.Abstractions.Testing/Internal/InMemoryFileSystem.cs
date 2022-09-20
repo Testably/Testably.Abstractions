@@ -29,7 +29,7 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
     public string CurrentDirectory { get; set; } = string.Empty.PrefixRoot();
 
     /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.Delete(string, bool)" />
-    public bool Delete(string path, bool recursive)
+    public bool Delete(string path, bool recursive = false)
     {
         string key = _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem);
         if (!_files.TryGetValue(key, out FileSystemInfoMock? fileSystemInfo))
@@ -50,7 +50,7 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
             }
             else if (_files.Any(x => x.Key.StartsWith(start)))
             {
-                throw new IOException($"The directory is not empty. : '{path}'");
+                throw new IOException($"Directory not empty : '{path}'");
             }
         }
 
@@ -75,13 +75,14 @@ internal class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
 
         string key = _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem);
         string start = key + FileSystem.Path.DirectorySeparatorChar;
-        foreach (KeyValuePair<string, FileSystemInfoMock> file in _files
-           .Where(x => x.Key.StartsWith(start)))
+        foreach (FileSystemInfoMock file in _files
+           .Where(x => x.Key.StartsWith(start))
+           .Select(x => x.Value))
         {
-            if (file.Value is TFileSystemInfo matchingType)
+            if (file is TFileSystemInfo matchingType)
             {
                 string? parentPath =
-                    FileSystem.Path.GetDirectoryName(file.Value.FullName);
+                    FileSystem.Path.GetDirectoryName(file.FullName);
                 if (!enumerationOptions.RecurseSubdirectories && parentPath != key)
                 {
                     continue;
