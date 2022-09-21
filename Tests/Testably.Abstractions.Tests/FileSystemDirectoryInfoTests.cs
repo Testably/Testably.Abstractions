@@ -195,6 +195,33 @@ public abstract class FileSystemDirectoryInfoTests<TFileSystem>
         }
     }
 
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
+    [Theory]
+    [AutoData]
+    public void
+        EnumerateDirectories_WithEnumerationOptions_ShouldConsiderSetOptions(
+            string path)
+    {
+        IFileSystem.IDirectoryInfo baseDirectory =
+            FileSystem.Directory.CreateDirectory(path);
+        baseDirectory.CreateSubdirectory("foo/xyz");
+        baseDirectory.CreateSubdirectory("bar");
+
+        List<IFileSystem.IDirectoryInfo> result = baseDirectory
+           .EnumerateDirectories("XYZ",
+                new EnumerationOptions
+                {
+                    MatchCasing = MatchCasing.CaseInsensitive,
+                    RecurseSubdirectories = true
+                }).ToList();
+
+        result.Count.Should().Be(1);
+        result.Should().NotContain(d => d.Name == "foo");
+        result.Should().Contain(d => d.Name == "xyz");
+        result.Should().NotContain(d => d.Name == "bar");
+    }
+#endif
+
     [Theory]
     [AutoData]
     public void EnumerateDirectories_WithNewline_ShouldThrowArgumentException(

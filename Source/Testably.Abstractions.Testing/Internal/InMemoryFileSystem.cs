@@ -50,7 +50,7 @@ internal sealed class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
             }
             else if (_files.Any(x => x.Key.StartsWith(start)))
             {
-                throw new IOException($"Directory not empty : '{path}'");
+                throw new IOException($"Directory not empty : '{_fileSystem.Path.GetFullPath(path)}'");
             }
         }
 
@@ -108,6 +108,17 @@ internal sealed class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
         return _files.GetOrAdd(
             _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
             _ => CreateDirectoryInternal(path)) as IFileSystem.IDirectoryInfo;
+    }
+
+    /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetSubdirectoryPath(string, string)" />
+    public string GetSubdirectoryPath(string fullFilePath, string givenPath)
+    {
+        if (_fileSystem.Path.IsPathRooted(givenPath))
+        {
+            return fullFilePath;
+        }
+
+        return fullFilePath.Substring(CurrentDirectory.Length + 1);
     }
 
     #endregion

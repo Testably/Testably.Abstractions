@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
@@ -48,24 +49,46 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="Directory.Delete(string, bool)" />
         public void Delete(string path, bool recursive)
-            => System.IO.Directory.Delete(path, recursive);
+        {
+            if (!_fileSystem.InMemoryFileSystem.Delete(path, recursive))
+            {
+                throw new DirectoryNotFoundException(
+                    $"Could not find a part of the path '{_fileSystem.Path.GetFullPath(path)}'.");
+            }
+        }
 
         /// <inheritdoc cref="Directory.EnumerateDirectories(string)" />
         public IEnumerable<string> EnumerateDirectories(string path)
-            => System.IO.Directory.EnumerateDirectories(path);
+            => _fileSystem.InMemoryFileSystem.Enumerate<IFileSystem.IDirectoryInfo>(
+                    path,
+                    "*",
+                    EnumerationOptionsHelper.Compatible)
+               .Select(x => _fileSystem.InMemoryFileSystem.GetSubdirectoryPath(
+                    x.FullName,
+                    path));
 
         /// <inheritdoc cref="Directory.EnumerateDirectories(string, string)" />
         public IEnumerable<string> EnumerateDirectories(string path, string searchPattern)
-            => System.IO.Directory.EnumerateDirectories(path, searchPattern);
+            => _fileSystem.InMemoryFileSystem.Enumerate<IFileSystem.IDirectoryInfo>(
+                    path,
+                    searchPattern,
+                    EnumerationOptionsHelper.Compatible)
+               .Select(x => _fileSystem.InMemoryFileSystem.GetSubdirectoryPath(
+                    x.FullName,
+                    path));
 
         /// <inheritdoc cref="Directory.EnumerateDirectories(string, string, SearchOption)" />
         public IEnumerable<string> EnumerateDirectories(string path,
                                                         string searchPattern,
                                                         SearchOption searchOption)
-            => System.IO.Directory.EnumerateDirectories(
-                path,
-                searchPattern,
-                searchOption);
+            => _fileSystem.InMemoryFileSystem
+               .Enumerate<IFileSystem.IDirectoryInfo>(
+                    path,
+                    searchPattern,
+                    EnumerationOptionsHelper.FromSearchOption(searchOption))
+               .Select(x => _fileSystem.InMemoryFileSystem.GetSubdirectoryPath(
+                    x.FullName,
+                    path));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="Directory.EnumerateDirectories(string, string, EnumerationOptions)" />
@@ -73,8 +96,14 @@ public sealed partial class FileSystemMock
                                                         string searchPattern,
                                                         EnumerationOptions
                                                             enumerationOptions)
-            => System.IO.Directory.EnumerateDirectories(path, searchPattern,
-                enumerationOptions);
+            => _fileSystem.InMemoryFileSystem
+               .Enumerate<IFileSystem.IDirectoryInfo>(
+                    path,
+                    searchPattern,
+                    enumerationOptions)
+               .Select(x => _fileSystem.InMemoryFileSystem.GetSubdirectoryPath(
+                    x.FullName,
+                    path));
 #endif
 
         /// <inheritdoc cref="Directory.EnumerateFiles(string)" />

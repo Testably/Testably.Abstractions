@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -289,11 +290,10 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
     {
         IFileSystem.IDirectoryInfo result =
             FileSystem.Directory.CreateDirectory(directoryName);
-        FileSystem.Directory.Delete(directoryName);
 
-        bool exists = FileSystem.Directory.Exists(directoryName);
+        FileSystem.Directory.Delete(result.FullName);
 
-        exists.Should().BeFalse();
+        FileSystem.Directory.Exists(directoryName).Should().BeFalse();
         result.Exists.Should().BeFalse();
     }
 
@@ -314,6 +314,37 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    public void Delete_Recursive_MissingDirectory_ShouldDeleteDirectory(
+        string directoryName)
+    {
+        string expectedPath = Path.Combine(BasePath, directoryName);
+        Exception? exception = Record.Exception(() =>
+        {
+            FileSystem.Directory.Delete(directoryName, true);
+        });
+
+        exception.Should().BeOfType<DirectoryNotFoundException>()
+           .Which.Message.Should()
+           .Be($"Could not find a part of the path '{expectedPath}'.");
+    }
+
+    [Theory]
+    [AutoData]
+    public void Delete_Recursive_WithSubdirectory_ShouldDeleteDirectoryWithContent(
+        string path, string subdirectory)
+    {
+        string subdirectoryPath = FileSystem.Path.Combine(path, subdirectory);
+        FileSystem.Directory.CreateDirectory(subdirectoryPath);
+        FileSystem.Directory.Exists(path).Should().BeTrue();
+
+        FileSystem.Directory.Delete(path, true);
+
+        FileSystem.Directory.Exists(path).Should().BeFalse();
+        FileSystem.Directory.Exists(subdirectoryPath).Should().BeFalse();
+    }
+
+    [Theory]
+    [AutoData]
     public void Delete_ShouldDeleteDirectory(string directoryName)
     {
         IFileSystem.IDirectoryInfo result =
@@ -325,6 +356,197 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
 
         exists.Should().BeFalse();
         result.Exists.Should().BeFalse();
+    }
+
+    [Theory]
+    [AutoData]
+    public void Delete_WithSubdirectory_ShouldNotDeleteDirectory(
+        string path, string subdirectory)
+    {
+        FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(path, subdirectory));
+        FileSystem.Directory.Exists(path).Should().BeTrue();
+
+        Exception? exception = Record.Exception(() =>
+        {
+            FileSystem.Directory.Delete(path);
+        });
+
+        exception.Should().BeOfType<IOException>()
+           .Which.Message.Should().Contain($"'{Path.Combine(BasePath, path)}'")
+           .And.Match(s => s.Contains("directory", StringComparison.OrdinalIgnoreCase))
+           .And.Contain("not empty");
+    }
+
+    [Theory]
+    [AutoData]
+    public void
+        EnumerateDirectories_SearchOptionAllDirectories_FullPath_ShouldReturnAllSubdirectoriesWithFullPath(
+            string path)
+    {
+        IFileSystem.IDirectoryInfo baseDirectory =
+            FileSystem.Directory.CreateDirectory(path);
+        baseDirectory.CreateSubdirectory("foo/xyz");
+        baseDirectory.CreateSubdirectory("bar");
+
+        List<string> result = FileSystem.Directory
+           .EnumerateDirectories(baseDirectory.FullName, "*", SearchOption.AllDirectories)
+           .ToList();
+
+        result.Count.Should().Be(3);
+        result.Should().Contain(FileSystem.Path.Combine(baseDirectory.FullName, "foo"));
+        result.Should()
+           .Contain(FileSystem.Path.Combine(baseDirectory.FullName, "foo", "xyz"));
+        result.Should().Contain(FileSystem.Path.Combine(baseDirectory.FullName, "bar"));
+    }
+
+    [Theory]
+    [AutoData]
+    public void
+        EnumerateDirectories_SearchOptionAllDirectories_ShouldReturnAllSubdirectories(
+            string path)
+    {
+        IFileSystem.IDirectoryInfo baseDirectory =
+            FileSystem.Directory.CreateDirectory(path);
+        baseDirectory.CreateSubdirectory("foo/xyz");
+        baseDirectory.CreateSubdirectory("bar");
+
+        List<string> result = FileSystem.Directory
+           .EnumerateDirectories(path, "*", SearchOption.AllDirectories).ToList();
+
+        result.Count.Should().Be(3);
+        result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
+        result.Should().Contain(FileSystem.Path.Combine(path, "foo", "xyz"));
+        result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
+    }
+
+    [Theory]
+    [InlineAutoData(true, "")]
+    [InlineAutoData(true, "*")]
+    [InlineAutoData(true, ".")]
+    [InlineAutoData(true, "*.*")]
+    [InlineData(true, "a*c", "abc")]
+    [InlineData(true, "ab*c", "abc")]
+    [InlineData(true, "abc?", "abc")]
+    [InlineData(false, "ab?c", "abc")]
+    [InlineData(false, "ac", "abc")]
+    public void EnumerateDirectories_SearchPattern_ShouldReturnExpectedValue(
+        bool expectToBeFound, string searchPattern, string subdirectoryName)
+    {
+        IFileSystem.IDirectoryInfo baseDirectory =
+            FileSystem.Directory.CreateDirectory("foo");
+        baseDirectory.CreateSubdirectory(subdirectoryName);
+
+        List<string> result = FileSystem.Directory
+           .EnumerateDirectories("foo", searchPattern).ToList();
+
+        if (expectToBeFound)
+        {
+            result.Should().ContainSingle(
+                FileSystem.Path.Combine("foo", subdirectoryName),
+                $"it should match {searchPattern}");
+        }
+        else
+        {
+            result.Should()
+               .BeEmpty($"{subdirectoryName} should not match {searchPattern}");
+        }
+    }
+
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
+    [Theory]
+    [AutoData]
+    public void
+        EnumerateDirectories_WithEnumerationOptions_ShouldConsiderSetOptions(
+            string path)
+    {
+        IFileSystem.IDirectoryInfo baseDirectory =
+            FileSystem.Directory.CreateDirectory(path);
+        baseDirectory.CreateSubdirectory("foo/xyz");
+        baseDirectory.CreateSubdirectory("bar");
+
+        List<string> result = FileSystem.Directory
+           .EnumerateDirectories(path, "XYZ",
+                new EnumerationOptions
+                {
+                    MatchCasing = MatchCasing.CaseInsensitive,
+                    RecurseSubdirectories = true
+                }).ToList();
+
+        result.Count.Should().Be(1);
+        result.Should().NotContain(FileSystem.Path.Combine(path, "foo"));
+        result.Should().Contain(FileSystem.Path.Combine(path, "foo", "xyz"));
+        result.Should().NotContain(FileSystem.Path.Combine(path, "bar"));
+    }
+#endif
+
+    [Theory]
+    [AutoData]
+    public void EnumerateDirectories_WithNewline_ShouldThrowArgumentException(
+        string path)
+    {
+        string searchPattern = "foo\0bar";
+
+        Exception? exception = Record.Exception(() =>
+        {
+            _ = FileSystem.Directory.EnumerateDirectories(path, searchPattern)
+               .FirstOrDefault();
+        });
+
+        exception.Should().BeOfType<ArgumentException>()
+           .Which.Message.Should().Contain("Illegal characters in path")
+           .And.Contain($" (Parameter '{searchPattern}')");
+    }
+
+    [Theory]
+    [AutoData]
+    public void
+        EnumerateDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
+            string path)
+    {
+        IFileSystem.IDirectoryInfo baseDirectory =
+            FileSystem.Directory.CreateDirectory(path);
+        baseDirectory.CreateSubdirectory("foo/xyz");
+        baseDirectory.CreateSubdirectory("bar");
+
+        List<string> result = FileSystem.Directory.EnumerateDirectories(path).ToList();
+
+        result.Count.Should().Be(2);
+        result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
+        result.Should().NotContain(FileSystem.Path.Combine(path, "foo", "xyz"));
+        result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
+    }
+
+    [Theory]
+    [AutoData]
+    public void EnumerateDirectories_WithSearchPattern_ShouldReturnMatchingSubdirectory(
+        string path)
+    {
+        IFileSystem.IDirectoryInfo baseDirectory =
+            FileSystem.Directory.CreateDirectory(path);
+        baseDirectory.CreateSubdirectory("foo");
+        baseDirectory.CreateSubdirectory("bar");
+
+        IEnumerable<string> result =
+            FileSystem.Directory.EnumerateDirectories(path, "foo");
+
+        result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
+    }
+
+    [Theory]
+    [AutoData]
+    public void
+        EnumerateDirectories_WithSearchPatternInSubdirectory_ShouldReturnMatchingSubdirectory(
+            string path)
+    {
+        IFileSystem.IDirectoryInfo baseDirectory =
+            FileSystem.Directory.CreateDirectory(path);
+        baseDirectory.CreateSubdirectory("foo/xyz");
+        baseDirectory.CreateSubdirectory("bar/xyz");
+
+        IEnumerable<string> result = FileSystem.Directory
+           .EnumerateDirectories(path, "xyz", SearchOption.AllDirectories);
+
+        result.Count().Should().Be(2);
     }
 
     [Theory]
