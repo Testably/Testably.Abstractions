@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
-using Testably.Abstractions.Testing.Internal;
 #if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
 #endif

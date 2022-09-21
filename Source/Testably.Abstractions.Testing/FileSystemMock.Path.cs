@@ -22,7 +22,8 @@ public sealed partial class FileSystemMock
                 return string.Empty;
             }
 
-            return System.IO.Path.Combine(_fileSystem.InMemoryFileSystem.CurrentDirectory,
+            return System.IO.Path.Combine(
+                _fileSystem.FileSystemContainer.CurrentDirectory,
                 path);
         }
     }

@@ -1,6 +1,4 @@
 ﻿using System;
-using Testably.Abstractions.Testing.Internal;
-using Testably.Abstractions.Testing.Internal.Models;
 
 namespace Testably.Abstractions.Testing;
 

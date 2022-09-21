@@ -8,7 +8,6 @@ namespace Testably.Abstractions.Testing;
 /// <summary>
 ///     Provides extension methods to simplify writing platform independent tests.
 /// </summary>
-/// 8
 [ExcludeFromCodeCoverage]
 public static class FilePlatformIndependenceExtensions
 {
