@@ -131,10 +131,12 @@ public abstract class FileSystemDirectoryInfoTests<TFileSystem>
         });
 
         exception.Should().BeOfType<IOException>()
-           .Which.Message.Should().Contain("not empty");
+           .Which.Message.Should()
+           .Match(s => s.Contains("directory", StringComparison.OrdinalIgnoreCase))
+           .And.Contain("not empty");
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            // Path information only available on Windows
+            // Path information only included in exception message on Windows
             exception.Should().BeOfType<IOException>()
                .Which.Message.Should().Contain($"'{sut.FullName}'");
         }
@@ -194,6 +196,33 @@ public abstract class FileSystemDirectoryInfoTests<TFileSystem>
                .BeEmpty($"{subdirectoryName} should not match {searchPattern}");
         }
     }
+
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
+    [Theory]
+    [AutoData]
+    public void
+        EnumerateDirectories_WithEnumerationOptions_ShouldConsiderSetOptions(
+            string path)
+    {
+        IFileSystem.IDirectoryInfo baseDirectory =
+            FileSystem.Directory.CreateDirectory(path);
+        baseDirectory.CreateSubdirectory("foo/xyz");
+        baseDirectory.CreateSubdirectory("bar");
+
+        List<IFileSystem.IDirectoryInfo> result = baseDirectory
+           .EnumerateDirectories("XYZ",
+                new EnumerationOptions
+                {
+                    MatchCasing = MatchCasing.CaseInsensitive,
+                    RecurseSubdirectories = true
+                }).ToList();
+
+        result.Count.Should().Be(1);
+        result.Should().NotContain(d => d.Name == "foo");
+        result.Should().Contain(d => d.Name == "xyz");
+        result.Should().NotContain(d => d.Name == "bar");
+    }
+#endif
 
     [Theory]
     [AutoData]
