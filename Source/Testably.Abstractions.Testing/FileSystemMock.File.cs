@@ -9,7 +9,6 @@ using System.Runtime.Versioning;
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
-using Testably.Abstractions.Testing;
 #endif
 
 namespace Testably.Abstractions.Testing;
