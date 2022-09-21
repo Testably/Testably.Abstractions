@@ -24,13 +24,8 @@ namespace Examples;
 ///     These tests are not executed by default!
 ///     <para />
 ///     In order for these tests to execute, the variable "<c>EXECUTE_EXAMPLE_TESTS</c>" must be set,<br />
-///     e.g. in the .csproj file (see example for a snippet).
+///     e.g. in the `Directory.Build.props` file (see `Directory.Build.props.template` for an example).
 /// </summary>
-/// <example>
-///     <PropertyGroup>
-///         <DefineConstants>$(DefineConstants);EXECUTE_EXAMPLE_TESTS</DefineConstants>
-///     </PropertyGroup>
-/// </example>
 public class ExampleTestAttribute
     : Attribute
 {
