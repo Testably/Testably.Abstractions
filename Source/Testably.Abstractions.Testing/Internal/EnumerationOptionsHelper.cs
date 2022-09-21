@@ -2,8 +2,6 @@
 using System.IO;
 using System.IO.Enumeration;
 using System.Runtime.InteropServices;
-#if !NETSTANDARD2_0
-#endif
 
 namespace Testably.Abstractions.Testing.Internal;
 

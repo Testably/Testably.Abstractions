@@ -1,17 +1,10 @@
-﻿using Testably.Abstractions.Testing.Internal;
-
-namespace Testably.Abstractions.Testing;
+﻿namespace Testably.Abstractions.Testing;
 
 /// <summary>
 ///     A test helper for simulating the file system. Implements <see cref="IFileSystem" />.
 /// </summary>
 public sealed partial class FileSystemMock : IFileSystem
 {
-    /// <summary>
-    ///     The generator to create test helper files.
-    /// </summary>
-    public IGenerator Generate { get; }
-
     /// <summary>
     ///     The callback handler for the <see cref="FileSystemMock" />.
     /// </summary>
@@ -23,7 +16,7 @@ public sealed partial class FileSystemMock : IFileSystem
     /// </summary>
     public ITimeSystem TimeSystem { get; }
 
-    internal IInMemoryFileSystem InMemoryFileSystem { get; }
+    internal IInMemoryFileSystem FileSystemContainer { get; }
 
     private readonly FileSystemMockCallbackHandler _callbackHandler;
     private readonly DirectoryMock _directoryMock;
@@ -36,8 +29,7 @@ public sealed partial class FileSystemMock : IFileSystem
     public FileSystemMock()
     {
         TimeSystem = new TimeSystemMock(TimeProvider.Now());
-        Generate = new FileGenerator(this);
-        InMemoryFileSystem = new InMemoryFileSystem(this);
+        FileSystemContainer = new InMemoryFileSystem(this);
         _callbackHandler = new FileSystemMockCallbackHandler();
         _directoryMock = new DirectoryMock(this, _callbackHandler);
         _fileMock = new FileMock(this, _callbackHandler);

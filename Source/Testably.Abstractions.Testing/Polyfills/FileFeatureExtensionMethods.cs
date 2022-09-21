@@ -1,21 +1,20 @@
-﻿using System.Diagnostics.CodeAnalysis;
-#if !FEATURE_PATH_ADVANCED
+﻿#if !FEATURE_PATH_ADVANCED
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-#endif
 
+// ReSharper disable once CheckNamespace
 namespace Testably.Abstractions.Testing;
 
 /// <summary>
 ///     Provides extension methods to simplify writing platform independent tests.
 /// </summary>
 [ExcludeFromCodeCoverage]
-public static class FileFeatureExtensionMethods
+internal static class FileFeatureExtensionMethods
 {
-#if !FEATURE_PATH_ADVANCED
     /// <summary>
     ///     Trims one trailing directory separator beyond the root of the path.
     /// </summary>
-    public static string TrimEndingDirectorySeparator(
+    internal static string TrimEndingDirectorySeparator(
         this IFileSystem.IPath pathSystem,
         string path)
     {
@@ -48,5 +47,5 @@ public static class FileFeatureExtensionMethods
 
         return trimmed;
     }
-#endif
 }
+#endif
