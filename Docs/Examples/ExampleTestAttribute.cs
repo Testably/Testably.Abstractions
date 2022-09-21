@@ -1,7 +1,7 @@
 #if EXECUTE_EXAMPLE_TESTS
 using Xunit;
 
-namespace Examples.TimeSystem;
+namespace Examples;
 
 /// <summary>
 ///     Activated example test attribute will execute the example unit tests. This was achieved by setting the
@@ -16,7 +16,7 @@ public class ExampleTestAttribute
 #else
 using System;
 
-namespace Examples.TimeSystem;
+namespace Examples;
 
 /// <summary>
 ///     Used to illustrate example tests in this project.

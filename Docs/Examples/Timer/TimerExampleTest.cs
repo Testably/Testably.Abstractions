@@ -3,7 +3,7 @@ using System;
 using System.Threading;
 using Testably.Abstractions.Testing;
 
-namespace Examples.TimeSystem.Timer;
+namespace Examples.Timer;
 
 public class TimerExampleTest
 {

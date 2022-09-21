@@ -2,7 +2,7 @@
 using System.Threading;
 using Testably.Abstractions;
 
-namespace Examples.TimeSystem.Timer;
+namespace Examples.Timer;
 
 /// <summary>
 ///     This example illustrates usage of a timer to execute a synchronization repeatedly.
