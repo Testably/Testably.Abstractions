@@ -1,0 +1,13 @@
+<!--
+Create a file "Directory.Build.props" in the "Examples" directory from this template to enable executing the example tests
+
+NOTE:
+This file is excluded from .gitignore, so that this setting can be set locally without affecting GIT!
+-->
+<Project>
+
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);EXECUTE_EXAMPLE_TESTS</DefineConstants>
+  </PropertyGroup>
+
+</Project>

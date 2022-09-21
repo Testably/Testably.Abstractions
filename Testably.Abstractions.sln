@@ -22,7 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.Exten
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{D9F78F4F-F04D-4FEA-83C4-BDB6430C74D7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples.TimeSystem", "Docs\Examples\Examples.TimeSystem\Examples.TimeSystem.csproj", "{46A32BAE-9421-458C-96E5-D5019BEE61F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples", "Docs\Examples\Examples.csproj", "{46A32BAE-9421-458C-96E5-D5019BEE61F2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{7545AC28-1399-4AF5-9C63-0507F78F017A}"
 	ProjectSection(SolutionItems) = preProject

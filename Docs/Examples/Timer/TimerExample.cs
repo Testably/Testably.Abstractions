@@ -2,10 +2,13 @@
 using System.Threading;
 using Testably.Abstractions;
 
-namespace Examples.TimeSystem.Timer;
+namespace Examples.Timer;
 
 /// <summary>
-///     This example illustrates usage of a timer to execute a synchronization repeatedly.
+///     This example illustrates usage of a timer to execute a synchronization repeatedly.<br />
+///     The <see cref="TimerExample.Start" /> method starts a background timer that takes care of the repeated triggering
+///     of the <see cref="ISynchronization.Execute" /> method every <see cref="ISynchronization.Interval" />. The necessary
+///     dependencies are provided in the constructor.
 /// </summary>
 public sealed class TimerExample : IDisposable
 {
