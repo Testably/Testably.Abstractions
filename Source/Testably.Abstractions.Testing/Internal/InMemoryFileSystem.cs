@@ -50,7 +50,8 @@ internal sealed class InMemoryFileSystem : FileSystemMock.IInMemoryFileSystem
             }
             else if (_files.Any(x => x.Key.StartsWith(start)))
             {
-                throw new IOException($"Directory not empty : '{_fileSystem.Path.GetFullPath(path)}'");
+                throw new IOException(
+                    $"Directory not empty : '{_fileSystem.Path.GetFullPath(path)}'");
             }
         }
 

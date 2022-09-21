@@ -41,7 +41,7 @@ public sealed partial class FileSystemMock
         IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path);
 
         /// <summary>
-        /// Returns the relative subdirectory path from <paramref name="fullFilePath"/> to the <paramref name="givenPath"/>.
+        ///     Returns the relative subdirectory path from <paramref name="fullFilePath" /> to the <paramref name="givenPath" />.
         /// </summary>
         string GetSubdirectoryPath(string fullFilePath, string givenPath);
     }

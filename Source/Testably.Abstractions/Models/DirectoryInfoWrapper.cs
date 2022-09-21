@@ -5,7 +5,8 @@ using System.Linq;
 
 namespace Testably.Abstractions.Models;
 
-internal sealed class DirectoryInfoWrapper : FileSystemInfoWrapper, IFileSystem.IDirectoryInfo
+internal sealed class DirectoryInfoWrapper : FileSystemInfoWrapper,
+    IFileSystem.IDirectoryInfo
 {
     private readonly IFileSystem _fileSystem;
     private readonly DirectoryInfo _instance;
