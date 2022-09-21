@@ -372,9 +372,15 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
         });
 
         exception.Should().BeOfType<IOException>()
-           .Which.Message.Should().Contain($"'{Path.Combine(BasePath, path)}'")
-           .And.Match(s => s.Contains("directory", StringComparison.OrdinalIgnoreCase))
+           .Which.Message.Should()
+           .Match(s => s.Contains("directory", StringComparison.OrdinalIgnoreCase))
            .And.Contain("not empty");
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            // Path information only included in exception message on Windows
+            exception.Should().BeOfType<IOException>()
+               .Which.Message.Should().Contain($"'{Path.Combine(BasePath, path)}'");
+        }
     }
 
     [Theory]

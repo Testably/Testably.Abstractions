@@ -131,10 +131,12 @@ public abstract class FileSystemDirectoryInfoTests<TFileSystem>
         });
 
         exception.Should().BeOfType<IOException>()
-           .Which.Message.Should().Contain("not empty");
+           .Which.Message.Should()
+           .Match(s => s.Contains("directory", StringComparison.OrdinalIgnoreCase))
+           .And.Contain("not empty");
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            // Path information only available on Windows
+            // Path information only included in exception message on Windows
             exception.Should().BeOfType<IOException>()
                .Which.Message.Should().Contain($"'{sut.FullName}'");
         }
