@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Runtime.Versioning;
 
 namespace Testably.Abstractions.Testing;
 
@@ -18,84 +19,92 @@ public sealed partial class FileSystemMock
 
         #region IFileInfo Members
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.Directory" />
         public IFileSystem.IDirectoryInfo? Directory { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.DirectoryName" />
         public string? DirectoryName { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.IsReadOnly" />
         public bool IsReadOnly { get; set; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.Length" />
         public long Length { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.AppendText()" />
         public StreamWriter AppendText()
             => throw new NotImplementedException();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.CopyTo(string)" />
         public IFileSystem.IFileInfo CopyTo(string destFileName)
             => throw new NotImplementedException();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.CopyTo(string, bool)" />
         public IFileSystem.IFileInfo CopyTo(string destFileName, bool overwrite)
             => throw new NotImplementedException();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.Create()" />
         public FileStream Create()
             => throw new NotImplementedException();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.CreateText()" />
         public StreamWriter CreateText()
             => throw new NotImplementedException();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.Decrypt()" />
+#if NET6_0_OR_GREATER
+        [SupportedOSPlatform("windows")]
+#endif
         public void Decrypt()
             => throw new NotImplementedException();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.Encrypt()" />
+#if NET6_0_OR_GREATER
+        [SupportedOSPlatform("windows")]
+#endif
         public void Encrypt()
             => throw new NotImplementedException();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.MoveTo(string)" />
         public void MoveTo(string destFileName)
             => throw new NotImplementedException();
 
-        /// <inheritdoc />
+#if FEATURE_FILE_MOVETO_OVERWRITE
+        /// <inheritdoc cref="IFileSystem.IFileInfo.MoveTo(string, bool)" />
         public void MoveTo(string destFileName, bool overwrite)
             => throw new NotImplementedException();
+#endif
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode)" />
         public FileStream Open(FileMode mode)
             => throw new NotImplementedException();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode, FileAccess)" />
         public FileStream Open(FileMode mode, FileAccess access)
             => throw new NotImplementedException();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode, FileAccess, FileShare)" />
         public FileStream Open(FileMode mode, FileAccess access, FileShare share)
             => throw new NotImplementedException();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.OpenRead()" />
         public FileStream OpenRead()
             => throw new NotImplementedException();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.OpenText()" />
         public StreamReader OpenText()
             => throw new NotImplementedException();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.OpenWrite()" />
         public FileStream OpenWrite()
             => throw new NotImplementedException();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.Replace(string, string?)" />
         public IFileSystem.IFileInfo Replace(string destinationFileName,
                                              string? destinationBackupFileName)
             => throw new NotImplementedException();
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IFileSystem.IFileInfo.Replace(string, string?, bool)" />
         public IFileSystem.IFileInfo Replace(string destinationFileName,
                                              string? destinationBackupFileName,
                                              bool ignoreMetadataErrors)
