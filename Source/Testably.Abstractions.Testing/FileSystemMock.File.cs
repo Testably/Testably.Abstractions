@@ -213,11 +213,11 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.ReadLines(string)" />
         public IEnumerable<string> ReadLines(string path)
-            => System.IO.File.ReadLines(path);
+            => ReadLines(path, Encoding.Default);
 
         /// <inheritdoc cref="IFileSystem.IFile.ReadLines(string, Encoding)" />
         public IEnumerable<string> ReadLines(string path, Encoding encoding)
-            => System.IO.File.ReadLines(path, encoding);
+            => ExtractLines(ReadAllText(path, encoding));
 
         /// <inheritdoc cref="IFileSystem.IFile.Replace(string, string, string)" />
         public void Replace(string sourceFileName, string destinationFileName,
@@ -400,5 +400,18 @@ public sealed partial class FileSystemMock
             => System.IO.File.WriteAllTextAsync(path, contents, encoding,
                 cancellationToken);
 #endif
+        private static IEnumerable<string> ExtractLines(string contents)
+        {
+            if (string.IsNullOrEmpty(contents))
+            {
+                yield break;
+            }
+            using (var reader = new StringReader(contents))
+            {
+                while (reader.ReadLine() is { } line) {
+                    yield return line;
+                }
+            }
+        }
     }
 }

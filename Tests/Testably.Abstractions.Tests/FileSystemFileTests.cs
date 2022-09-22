@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Testably.Abstractions.Tests;
@@ -7,6 +8,8 @@ public abstract class FileSystemFileTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
     #region Test Setup
+
+    private const string SpecialCharactersContent = "_€_Ä_Ö_Ü";
 
     public string BasePath { get; }
 
@@ -41,21 +44,11 @@ public abstract class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    public void WriteAllText_ShouldCreateFileWithText(string path, string contents)
+    public void
+        ReadAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(
+            string path)
     {
-        FileSystem.File.WriteAllText(path, contents);
-
-        string result = FileSystem.File.ReadAllText(path);
-
-        result.Should().Be(contents);
-    }
-
-    [Theory]
-    [AutoData]
-    public void WriteAllText_WithDifferentEncoding_SpecialCharacters_ShouldNotReturnSameText(
-        string path)
-    {
-        string contents = "_€";
+        string contents = SpecialCharactersContent;
         Encoding writeEncoding = Encoding.ASCII;
         Encoding readEncoding = Encoding.UTF8;
         FileSystem.File.WriteAllText(path, contents, writeEncoding);
@@ -64,6 +57,62 @@ public abstract class FileSystemFileTests<TFileSystem>
 
         result.Should().NotBe(contents,
             $"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
+    }
+
+    [Theory]
+    [AutoData]
+    public void ReadLines_MissingFile_ShouldThrow(string path)
+    {
+        Exception? exception = Record.Exception(() =>
+        {
+            _ = FileSystem.File.ReadLines(path).FirstOrDefault();
+        });
+
+        exception.Should().BeOfType<FileNotFoundException>()
+           .Which.Message.Should()
+           .Be($"Could not find file '{FileSystem.Path.GetFullPath(path)}'.");
+    }
+
+    [Theory]
+    [AutoData]
+    public void ReadLines_ShouldEnumerateLines(string path, string[] lines)
+    {
+        string contents = string.Join(Environment.NewLine, lines);
+        FileSystem.File.WriteAllText(path, contents);
+
+        string[] results = FileSystem.File.ReadLines(path).ToArray();
+
+        results.Should().BeEquivalentTo(lines);
+    }
+
+    [Theory]
+    [AutoData]
+    public void
+        ReadLines_WithDifferentEncoding_ShouldNotReturnWrittenText(
+            string path, string[] lines)
+    {
+        lines[1] = SpecialCharactersContent;
+        string contents = string.Join(Environment.NewLine, lines);
+        Encoding writeEncoding = Encoding.ASCII;
+        Encoding readEncoding = Encoding.UTF8;
+        FileSystem.File.WriteAllText(path, contents, writeEncoding);
+
+        string[] result = FileSystem.File.ReadLines(path, readEncoding).ToArray();
+
+        result.Should().NotBeEquivalentTo(lines,
+            $"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
+        result[0].Should().Be(lines[0]);
+    }
+
+    [Theory]
+    [AutoData]
+    public void WriteAllText_ShouldCreateFileWithText(string path, string contents)
+    {
+        FileSystem.File.WriteAllText(path, contents);
+
+        string result = FileSystem.File.ReadAllText(path);
+
+        result.Should().Be(contents);
     }
 
     [Theory]
