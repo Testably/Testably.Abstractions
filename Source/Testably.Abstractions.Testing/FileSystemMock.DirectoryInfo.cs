@@ -209,10 +209,10 @@ public sealed partial class FileSystemMock
             return new DirectoryInfoMock(fullName, originalPath, fileSystem);
         }
 
-        [return: NotNullIfNotNull("originalpath")]
-        internal static DirectoryInfoMock? New(string path, string? originalpath, FileSystemMock fileSystem, bool x = false)
+        [return: NotNullIfNotNull("path")]
+        internal static DirectoryInfoMock? New(string? path, string originalpath, FileSystemMock fileSystem)
         {
-            if (originalpath == null)
+            if (path == null)
             {
                 return null;
             }
@@ -235,12 +235,12 @@ public sealed partial class FileSystemMock
         private static IFileSystem.IDirectoryInfo CreateParent(
             DirectoryInfoMock child, FileSystemMock fileSystem)
         {
-            var parentPath = fileSystem.Path.GetDirectoryName(child.FullName)!;
-#if NETFRAMEWORK
-            return new DirectoryInfoMock(fileSystem.Path.GetFullPath(parentPath), fileSystem.Path.GetFileName(parentPath)!, fileSystem);
-#else
+            var parentPath = fileSystem.Path.GetDirectoryName(child.FullName);
+            if (parentPath == null)
+            {
+                return child.Root;
+            }
             return New(parentPath, parentPath, fileSystem);
-#endif
         }
     }
 }

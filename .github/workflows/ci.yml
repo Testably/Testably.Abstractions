@@ -32,7 +32,7 @@ jobs:
         run: dotnet test --no-build
 
   windows-test:
-    name: Test .NET Framework
+    name: Test (.NET Framework)
     runs-on: windows-latest
     steps:
       - name: Checkout sources
@@ -48,7 +48,7 @@ jobs:
       - name: Navigate to Workspace
         run: cd $GITHUB_WORKSPACE
       - name: Restore Packages
-        run: nuget restore
+        run: nuget restore Testably.Abstractions.sln
       - name: Build Solution
         run: msbuild.exe Testably.Abstractions.sln /p:platform="Any CPU" /p:configuration="Release"
       - name: Run Tests
