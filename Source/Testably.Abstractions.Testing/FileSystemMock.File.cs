@@ -9,6 +9,7 @@ using System.Runtime.Versioning;
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.VisualBasic;
 #endif
 
 namespace Testably.Abstractions.Testing;
@@ -196,7 +197,16 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllText(string)" />
         public string ReadAllText(string path)
-            => System.IO.File.ReadAllText(path);
+        {
+            IInMemoryFileSystem.IWritableFileInfo? fileInfo =
+                _fileSystem.FileSystemContainer.GetFile(path);
+            if (fileInfo != null)
+            {
+                return Encoding.Default.GetString(fileInfo.GetBytes());
+            }
+
+            throw new NotImplementedException();
+        }
 
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllText(string, Encoding)" />
         public string ReadAllText(string path, Encoding encoding)
@@ -287,7 +297,14 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.WriteAllText(string, string?)" />
         public void WriteAllText(string path, string? contents)
-            => System.IO.File.WriteAllText(path, contents);
+        {
+            IInMemoryFileSystem.IWritableFileInfo? fileInfo =
+                _fileSystem.FileSystemContainer.GetOrAddFile(path);
+            if (fileInfo != null && contents != null)
+            {
+                fileInfo.WriteBytes(Encoding.Default.GetBytes(contents));
+            }
+        }
 
         /// <inheritdoc cref="IFileSystem.IFile.WriteAllText(string, string?, Encoding)" />
         public void WriteAllText(string path, string? contents, Encoding encoding)

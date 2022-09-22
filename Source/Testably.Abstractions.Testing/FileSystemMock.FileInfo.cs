@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Runtime.Versioning;
 using Testably.Abstractions.Testing.Internal;
 
@@ -11,14 +12,18 @@ public sealed partial class FileSystemMock
     /// <summary>
     ///     A mocked file in the <see cref="InMemoryFileSystem" />.
     /// </summary>
-    private sealed class FileInfoMock : FileSystemInfoMock, IFileSystem.IFileInfo
+    private sealed class FileInfoMock : FileSystemInfoMock,
+        IInMemoryFileSystem.IWritableFileInfo
     {
-        internal FileInfoMock(string fullName, string originalPath, FileSystemMock fileSystem)
+        private byte[] _bytes = Array.Empty<byte>();
+
+        internal FileInfoMock(string fullName, string originalPath,
+                              FileSystemMock fileSystem)
             : base(fullName, originalPath, fileSystem)
         {
         }
 
-        #region IFileInfo Members
+        #region IWritableFileInfo Members
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Directory" />
         public IFileSystem.IDirectoryInfo? Directory { get; }
@@ -111,6 +116,21 @@ public sealed partial class FileSystemMock
                                              bool ignoreMetadataErrors)
             => throw new NotImplementedException();
 
+        /// <inheritdoc cref="IInMemoryFileSystem.IWritableFileInfo.AppendBytes(byte[])" />
+        public void AppendBytes(byte[] bytes)
+        {
+            _bytes = _bytes.Concat(bytes).ToArray();
+        }
+
+        /// <inheritdoc cref="IInMemoryFileSystem.IWritableFileInfo.GetBytes()" />
+        public byte[] GetBytes() => _bytes;
+
+        /// <inheritdoc cref="IInMemoryFileSystem.IWritableFileInfo.WriteBytes(byte[])" />
+        public void WriteBytes(byte[] bytes)
+        {
+            _bytes = bytes;
+        }
+
         #endregion
 
         [return: NotNullIfNotNull("path")]
@@ -133,9 +153,10 @@ public sealed partial class FileSystemMock
 #if NETFRAMEWORK
             var originalPath = fileSystem.Path.GetFileName(path.TrimEnd(' '));
 #else
-            var originalPath = path;
+            string originalPath = path;
 #endif
-            var fullName = fileSystem.Path.GetFullPath(path).NormalizePath().TrimOnWindows();
+            string fullName = fileSystem.Path.GetFullPath(path).NormalizePath()
+               .TrimOnWindows();
             return new FileInfoMock(fullName, originalPath, fileSystem);
         }
     }

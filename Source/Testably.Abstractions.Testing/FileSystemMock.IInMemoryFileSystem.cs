@@ -35,13 +35,45 @@ public sealed partial class FileSystemMock
         bool Exists([NotNullWhen(true)] string? path);
 
         /// <summary>
+        ///     Gets a file if it exists.<br />
+        ///     Returns <c>null</c>, if the file does not exist.
+        /// </summary>
+        IWritableFileInfo? GetFile(string path);
+
+        /// <summary>
         ///     Gets or adds a directory.
         /// </summary>
         IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path);
 
         /// <summary>
+        ///     Gets or adds a file.
+        /// </summary>
+        IWritableFileInfo? GetOrAddFile(string path);
+
+        /// <summary>
         ///     Returns the relative subdirectory path from <paramref name="fullFilePath" /> to the <paramref name="givenPath" />.
         /// </summary>
         string GetSubdirectoryPath(string fullFilePath, string givenPath);
+
+        /// <summary>
+        ///     An <see cref="IFileSystem.IFileInfo" /> which allows writing to the underlying byte array.
+        /// </summary>
+        public interface IWritableFileInfo : IFileSystem.IFileInfo
+        {
+            /// <summary>
+            ///     Appends the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
+            /// </summary>
+            void AppendBytes(byte[] bytes);
+
+            /// <summary>
+            ///     Gets the bytes in the <see cref="IFileSystem.IFileInfo" />.
+            /// </summary>
+            byte[] GetBytes();
+
+            /// <summary>
+            ///     Writes the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
+            /// </summary>
+            void WriteBytes(byte[] bytes);
+        }
     }
 }

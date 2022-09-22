@@ -113,6 +113,28 @@ public sealed partial class FileSystemMock
                 _ => CreateDirectoryInternal(path)) as IFileSystem.IDirectoryInfo;
         }
 
+        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetOrAddFile(string)" />
+        public IInMemoryFileSystem.IWritableFileInfo? GetOrAddFile(string path)
+        {
+            return _files.GetOrAdd(
+                _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
+                _ => CreateFileInternal(path)) as IInMemoryFileSystem.IWritableFileInfo;
+        }
+
+        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetFile(string)" />
+        public IInMemoryFileSystem.IWritableFileInfo? GetFile(string path)
+        {
+            if (_files.TryGetValue(
+                _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
+                out var fileInfo))
+            {
+                return fileInfo as IInMemoryFileSystem.IWritableFileInfo;
+            }
+
+            return null;
+        }
+
+
         /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetSubdirectoryPath(string, string)" />
         public string GetSubdirectoryPath(string fullFilePath, string givenPath)
         {
@@ -124,8 +146,12 @@ public sealed partial class FileSystemMock
             return fullFilePath.Substring(CurrentDirectory.Length + 1);
         }
 
-#endregion
+        #endregion
 
+        private FileSystemInfoMock CreateFileInternal(string path)
+        {
+            return FileInfoMock.New(path, _fileSystem);
+        }
         private FileSystemInfoMock CreateDirectoryInternal(string path)
         {
             List<string> parents = new();
