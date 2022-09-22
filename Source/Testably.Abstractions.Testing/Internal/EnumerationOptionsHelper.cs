@@ -65,6 +65,12 @@ internal static class EnumerationOptionsHelper
                                      bool ignoreCase,
                                      bool useExtendedWildcards)
     {
+#if NETFRAMEWORK
+        if (expression == "")
+        {
+            return false;
+        }
+#endif
         if (useExtendedWildcards)
         {
             expression = SimplifyExpression(expression);

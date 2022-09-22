@@ -14,24 +14,19 @@ public sealed partial class FileSystemMock
         private DateTime _lastWriteTime;
         protected readonly string OriginalPath;
 
-        internal FileSystemInfoMock(string path, FileSystemMock fileSystem)
+        internal FileSystemInfoMock(string fullName, string originalPath, FileSystemMock fileSystem)
         {
-            if (path == string.Empty)
-            {
+            FullName = fullName;
 #if NETFRAMEWORK
-                throw new ArgumentException("The path is not of a legal form.");
+            OriginalPath = originalPath.TrimOnWindows();
 #else
-                throw new ArgumentException("The path is empty.", nameof(path));
+            OriginalPath = originalPath;
 #endif
-            }
-
-            OriginalPath = path;
-            FullName = fileSystem.Path.GetFullPath(path).NormalizePath().TrimOnWindows();
             FileSystem = fileSystem;
             AdjustTimes(TimeAdjustments.All);
         }
 
-        #region IFileSystemInfo Members
+#region IFileSystemInfo Members
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTime" />
         public DateTime CreationTime
@@ -138,7 +133,7 @@ public sealed partial class FileSystemMock
             => throw new NotImplementedException();
 #endif
 
-        #endregion
+#endregion
 
 #if NETSTANDARD2_0
         /// <inheritdoc cref="object.ToString()" />

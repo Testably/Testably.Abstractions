@@ -211,12 +211,12 @@ public abstract class FileSystemDirectoryInfoTests<TFileSystem>
         if (expectToBeFound)
         {
             result.Should().ContainSingle(d => d.Name == subdirectoryName,
-                $"it should match {searchPattern}");
+                $"it should match '{searchPattern}'");
         }
         else
         {
             result.Should()
-               .BeEmpty($"{subdirectoryName} should not match {searchPattern}");
+               .BeEmpty($"{subdirectoryName} should not match '{searchPattern}'");
         }
     }
 

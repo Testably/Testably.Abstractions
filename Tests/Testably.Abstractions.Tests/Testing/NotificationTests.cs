@@ -1,9 +1,21 @@
 ﻿using System.Threading;
+using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Tests.Testing;
 
 public class NotificationTests
 {
+    #region Test Setup
+
+    private readonly ITestOutputHelper _testOutputHelper;
+
+    public NotificationTests(ITestOutputHelper testOutputHelper)
+    {
+        _testOutputHelper = testOutputHelper;
+    }
+
+    #endregion
+
     [Fact]
     public void AwaitableCallback_Amount_ShouldOnlyReturnAfterNumberOfCallbacks()
     {
@@ -48,6 +60,7 @@ public class NotificationTests
         {
             for (int i = 0; i < 10; i++)
             {
+                _testOutputHelper.WriteLine($"Trigger Thread.Sleep for {10 * i}ms...");
                 timeSystem.Thread.Sleep(10 * i);
             }
         }).Start();
@@ -57,8 +70,13 @@ public class NotificationTests
             if (t.TotalMilliseconds > 60)
             {
                 filteredCount++;
+                _testOutputHelper.WriteLine(
+                    $"  Filter for {t} > 60ms: matched ({filteredCount} times)");
                 return true;
             }
+
+            _testOutputHelper.WriteLine(
+                $"  Filter for {t} > 60ms : no match ({filteredCount} times)");
 
             return false;
         });

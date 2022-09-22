@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.Versioning;
+using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
 
@@ -12,8 +13,8 @@ public sealed partial class FileSystemMock
     /// </summary>
     private sealed class FileInfoMock : FileSystemInfoMock, IFileSystem.IFileInfo
     {
-        internal FileInfoMock(string path, FileSystemMock fileSystem)
-            : base(path, fileSystem)
+        internal FileInfoMock(string fullName, string originalPath, FileSystemMock fileSystem)
+            : base(fullName, originalPath, fileSystem)
         {
         }
 
@@ -120,7 +121,22 @@ public sealed partial class FileSystemMock
                 return null;
             }
 
-            return new FileInfoMock(path, fileSystem);
+            if (path == string.Empty)
+            {
+#if NETFRAMEWORK
+                throw new ArgumentException("The path is not of a legal form.");
+#else
+                throw new ArgumentException("The path is empty.", nameof(path));
+#endif
+            }
+
+#if NETFRAMEWORK
+            var originalPath = fileSystem.Path.GetFileName(path.TrimEnd(' '));
+#else
+            var originalPath = path;
+#endif
+            var fullName = fileSystem.Path.GetFullPath(path).NormalizePath().TrimOnWindows();
+            return new FileInfoMock(fullName, originalPath, fileSystem);
         }
     }
 }
