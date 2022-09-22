@@ -240,7 +240,11 @@ public sealed partial class FileSystemMock
             {
                 return child.Root;
             }
+#if NETFRAMEWORK
+            return new DirectoryInfoMock(fileSystem.Path.GetFullPath(parentPath), fileSystem.Path.GetFileName(parentPath), fileSystem);
+#else
             return New(parentPath, parentPath, fileSystem);
+#endif
         }
     }
 }
