@@ -1,3 +1,6 @@
+using System.IO;
+using System.Text;
+
 namespace Testably.Abstractions.Tests;
 
 public abstract class FileSystemFileTests<TFileSystem>
@@ -24,6 +27,20 @@ public abstract class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    public void ReadAllText_MissingFile_ShouldThrow(string path)
+    {
+        Exception? exception = Record.Exception(() =>
+        {
+            FileSystem.File.ReadAllText(path);
+        });
+
+        exception.Should().BeOfType<FileNotFoundException>()
+           .Which.Message.Should()
+           .Be($"Could not find file '{FileSystem.Path.GetFullPath(path)}'.");
+    }
+
+    [Theory]
+    [AutoData]
     public void WriteAllText_ShouldCreateFileWithText(string path, string contents)
     {
         FileSystem.File.WriteAllText(path, contents);
@@ -31,6 +48,22 @@ public abstract class FileSystemFileTests<TFileSystem>
         string result = FileSystem.File.ReadAllText(path);
 
         result.Should().Be(contents);
+    }
+
+    [Theory]
+    [AutoData]
+    public void WriteAllText_WithDifferentEncoding_SpecialCharacters_ShouldNotReturnSameText(
+        string path)
+    {
+        string contents = "_€";
+        Encoding writeEncoding = Encoding.ASCII;
+        Encoding readEncoding = Encoding.UTF8;
+        FileSystem.File.WriteAllText(path, contents, writeEncoding);
+
+        string result = FileSystem.File.ReadAllText(path, readEncoding);
+
+        result.Should().NotBe(contents,
+            $"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
     }
 
     [Theory]
