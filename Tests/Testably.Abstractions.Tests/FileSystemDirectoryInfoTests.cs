@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+#if !NETFRAMEWORK
 using System.Runtime.InteropServices;
+#endif
 
 namespace Testably.Abstractions.Tests;
 
@@ -35,7 +37,12 @@ public abstract class FileSystemDirectoryInfoTests<TFileSystem>
 
         sut.Create();
 
+#if NETFRAMEWORK
+        // The DirectoryInfo is not updated in .NET Framework!
+        sut.Exists.Should().BeFalse();
+#else
         sut.Exists.Should().BeTrue();
+#endif
         FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
     }
 
@@ -97,7 +104,12 @@ public abstract class FileSystemDirectoryInfoTests<TFileSystem>
 
         sut.Delete(true);
 
+#if NETFRAMEWORK
+        // The DirectoryInfo is not updated in .NET Framework!
+        sut.Exists.Should().BeTrue();
+#else
         sut.Exists.Should().BeFalse();
+#endif
         FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
         FileSystem.Directory.Exists(subdirectoryPath).Should().BeFalse();
     }
@@ -112,7 +124,12 @@ public abstract class FileSystemDirectoryInfoTests<TFileSystem>
 
         sut.Delete();
 
+#if NETFRAMEWORK
+        // The DirectoryInfo is not updated in .NET Framework!
+        sut.Exists.Should().BeTrue();
+#else
         sut.Exists.Should().BeFalse();
+#endif
         FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
     }
 
@@ -134,12 +151,14 @@ public abstract class FileSystemDirectoryInfoTests<TFileSystem>
            .Which.Message.Should()
            .Match(s => s.Contains("directory", StringComparison.OrdinalIgnoreCase))
            .And.Contain("not empty");
+#if !NETFRAMEWORK
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            // Path information only included in exception message on Windows
+            // Path information only included in exception message on Windows and not in .NET Framework
             exception.Should().BeOfType<IOException>()
                .Which.Message.Should().Contain($"'{sut.FullName}'");
         }
+#endif
 
         sut.Exists.Should().BeTrue();
         FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
@@ -166,7 +185,11 @@ public abstract class FileSystemDirectoryInfoTests<TFileSystem>
     }
 
     [Theory]
+#if NETFRAMEWORK
+    [InlineAutoData(false, "")]
+#else
     [InlineAutoData(true, "")]
+#endif
     [InlineAutoData(true, "*")]
     [InlineAutoData(true, ".")]
     [InlineAutoData(true, "*.*")]
@@ -238,9 +261,15 @@ public abstract class FileSystemDirectoryInfoTests<TFileSystem>
             _ = baseDirectory.EnumerateDirectories(searchPattern).FirstOrDefault();
         });
 
+#if NETFRAMEWORK
+        // The searchPattern is not included in .NET Framework
+        exception.Should().BeOfType<ArgumentException>()
+           .Which.Message.Should().Contain("Illegal characters in path");
+#else
         exception.Should().BeOfType<ArgumentException>()
            .Which.Message.Should().Contain("Illegal characters in path")
            .And.Contain($" (Parameter '{searchPattern}')");
+#endif
     }
 
     [Theory]

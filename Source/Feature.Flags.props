@@ -1,6 +1,6 @@
 <Project>
-
   <PropertyGroup>
+    <DefineConstants Condition="'$(TargetFramework)' == 'net472' OR '$(TargetFramework)' == 'netstandard2.0'">$(DefineConstants);NETFRAMEWORK</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'netstandard2.1'">$(DefineConstants);FEATURE_FILESYSTEM_ASYNC;FEATURE_FILESYSTEM_ENUMERATION_OPTIONS;FEATURE_PATH_JOIN;FEATURE_PATH_RELATIVE;FEATURE_SPAN</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">$(DefineConstants);FEATURE_FILESYSTEM_STREAM_OPTIONS;FEATURE_FILESYSTEM_LINK;FEATURE_PATH_ADVANCED;FEATURE_FILE_MOVETO_OVERWRITE</DefineConstants>
   </PropertyGroup>

@@ -96,10 +96,17 @@ internal static class EnumerationOptionsHelper
             return expression;
         }
 
+#if NETFRAMEWORK
+        if (expression == "." || expression == "*.*")
+        {
+            return "*";
+        }
+#else
         if (string.IsNullOrEmpty(expression) || expression == "." || expression == "*.*")
         {
             return "*";
         }
+#endif
 
         if (Path.DirectorySeparatorChar != '\\' &&
             expression.IndexOfAny(unixEscapeChars) != -1)

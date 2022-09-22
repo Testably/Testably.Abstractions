@@ -18,7 +18,11 @@ public sealed partial class FileSystemMock
         {
             if (path == string.Empty)
             {
+#if NETFRAMEWORK
+                throw new ArgumentException("The path is not of a legal form.");
+#else
                 throw new ArgumentException("The path is empty.", nameof(path));
+#endif
             }
 
             OriginalPath = path;
@@ -57,7 +61,10 @@ public sealed partial class FileSystemMock
 
         protected void ResetExists()
         {
+#if !NETFRAMEWORK
+            // The DirectoryInfo is not updated in .NET Framework!
             _exists = null;
+#endif
         }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Extension" />
@@ -134,7 +141,7 @@ public sealed partial class FileSystemMock
         #endregion
 
 #if NETSTANDARD2_0
-    /// <inheritdoc cref="object.ToString()" />
+        /// <inheritdoc cref="object.ToString()" />
 #else
         /// <inheritdoc cref="System.IO.FileSystemInfo.ToString()" />
 #endif

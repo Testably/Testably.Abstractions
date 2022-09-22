@@ -32,11 +32,16 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
         Exception? exception =
             Record.Exception(() => FileSystem.DirectoryInfo.New(string.Empty));
 
+#if NETFRAMEWORK
+        exception.Should().BeOfType<ArgumentException>()
+        .Which.Message.Should().Be("The path is not of a legal form.");
+#else
         exception.Should().BeOfType<ArgumentException>()
            .Which.ParamName.Should().Be("path");
         exception.Should().BeOfType<ArgumentException>()
            .Which.Message.Should()
            .Be("The path is empty. (Parameter 'path')");
+#endif
     }
 
     [Fact]
@@ -45,13 +50,18 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
         foreach (char c in FileSystem.Path.GetInvalidPathChars().Where(c => c != '\0'))
         {
             string path = "foo" + c + "bar";
-            string expectedMessage =
-                $"The filename, directory name, or volume label syntax is incorrect. : '{Path.Combine(BasePath, path)}'";
             Exception? exception =
                 Record.Exception(() => FileSystem.DirectoryInfo.New(path).Create());
 
+#if NETFRAMEWORK
+            exception.Should().BeOfType<ArgumentException>()
+               .Which.Message.Should().Be("Illegal characters in path.");
+#else
+            string expectedMessage =
+                $"The filename, directory name, or volume label syntax is incorrect. : '{FileSystem.Path.Combine(BasePath, path)}'";
             exception.Should().BeOfType<IOException>()
                .Which.Message.Should().Be(expectedMessage);
+#endif
         }
     }
 
@@ -69,13 +79,12 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
     public void Create_NullCharacter_ShouldThrowArgumentException()
     {
         string path = "foo\0bar";
-        string expectedMessage =
-            "Illegal characters in path. (Parameter 'path')";
+        string expectedMessage = "Illegal characters in path.";
         Exception? exception =
             Record.Exception(() => FileSystem.DirectoryInfo.New(path).Create());
 
         exception.Should().BeOfType<ArgumentException>()
-           .Which.Message.Should().Be(expectedMessage);
+           .Which.Message.Should().Contain(expectedMessage);
     }
 
     [Fact]
@@ -105,10 +114,18 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
         result.ToString().Should().Be(path);
         result.Parent!.Name.Should().Be(directoryLevel2);
         result.Parent.Exists.Should().BeTrue();
+#if NETFRAMEWORK
+        result.Parent.ToString().Should().Be(result.Parent.Name);
+#else
         result.Parent.ToString().Should().Be(result.Parent.FullName);
+#endif
         result.Parent.Parent!.Name.Should().Be(directoryLevel1);
         result.Parent.Parent.Exists.Should().BeTrue();
+#if NETFRAMEWORK
+        result.Parent.Parent.ToString().Should().Be(result.Parent.Parent.Name);
+#else
         result.Parent.Parent.ToString().Should().Be(result.Parent.Parent.FullName);
+#endif
     }
 
     [Theory]
