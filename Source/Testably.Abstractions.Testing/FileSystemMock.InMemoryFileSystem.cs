@@ -124,7 +124,7 @@ public sealed partial class FileSystemMock
             return fullFilePath.Substring(CurrentDirectory.Length + 1);
         }
 
-        #endregion
+#endregion
 
         private FileSystemInfoMock CreateDirectoryInternal(string path)
         {
@@ -152,12 +152,16 @@ public sealed partial class FileSystemMock
                    .NormalizeAndTrimPath(_fileSystem);
                 _files.AddOrUpdate(
                     key,
-                    _ => new DirectoryInfoMock(parentPath, _fileSystem),
+                    _ => DirectoryInfoMock.New(parentPath, _fileSystem),
                     (_, fileSystemInfo) =>
                         fileSystemInfo.AdjustTimes(timeAdjustments));
             }
 
-            return new DirectoryInfoMock(path, _fileSystem);
+#if NETFRAMEWORK
+            return DirectoryInfoMock.New(path, _fileSystem.Path.GetFileName(path), _fileSystem);
+#else
+            return DirectoryInfoMock.New(path, _fileSystem);
+#endif
         }
 
         private static void ValidateExpression(string expression)

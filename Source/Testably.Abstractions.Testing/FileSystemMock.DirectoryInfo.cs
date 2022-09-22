@@ -14,8 +14,8 @@ public sealed partial class FileSystemMock
     private sealed class DirectoryInfoMock : FileSystemInfoMock,
         IFileSystem.IDirectoryInfo
     {
-        internal DirectoryInfoMock(string path, FileSystemMock fileSystem)
-            : base(path, fileSystem)
+        internal DirectoryInfoMock(string fullName, string originalPath, FileSystemMock fileSystem)
+            : base(fullName, originalPath, fileSystem)
         {
         }
 
@@ -23,7 +23,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Parent" />
         public IFileSystem.IDirectoryInfo? Parent
-            => New(FileSystem.Path.GetDirectoryName(FullName), FileSystem);
+            => CreateParent(this, FileSystem);
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Root" />
         public IFileSystem.IDirectoryInfo Root
@@ -195,7 +195,56 @@ public sealed partial class FileSystemMock
                 return null;
             }
 
-            return new DirectoryInfoMock(path, fileSystem);
+            if (path == string.Empty)
+            {
+#if NETFRAMEWORK
+                throw new ArgumentException("The path is not of a legal form.");
+#else
+                throw new ArgumentException("The path is empty.", nameof(path));
+#endif
+            }
+
+            var originalPath = path;
+            var fullName = fileSystem.Path.GetFullPath(path).NormalizePath().TrimOnWindows();
+            return new DirectoryInfoMock(fullName, originalPath, fileSystem);
+        }
+
+        [return: NotNullIfNotNull("path")]
+        internal static DirectoryInfoMock? New(string? path, string originalpath, FileSystemMock fileSystem)
+        {
+            if (path == null)
+            {
+                return null;
+            }
+
+            if (path == string.Empty)
+            {
+#if NETFRAMEWORK
+                throw new ArgumentException("The path is not of a legal form.");
+#else
+                throw new ArgumentException("The path is empty.", nameof(originalpath));
+#endif
+            }
+
+            var originalPath = originalpath;
+            path = fileSystem.Path.GetFullPath(path).NormalizePath()
+               .TrimOnWindows();
+            return new DirectoryInfoMock(path, originalPath, fileSystem);
+        }
+
+        private static IFileSystem.IDirectoryInfo CreateParent(
+            DirectoryInfoMock child, FileSystemMock fileSystem)
+        {
+            var parentPath = fileSystem.Path.GetDirectoryName(child.FullName);
+            if (parentPath == null)
+            {
+                return child.Root;
+            }
+#if NETFRAMEWORK
+            return new DirectoryInfoMock(fileSystem.Path.GetFullPath(parentPath), fileSystem.Path.GetFileName(parentPath), fileSystem);
+#else
+            return New(parentPath, parentPath, fileSystem);
+#endif
         }
     }
 }

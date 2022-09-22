@@ -1,15 +1,28 @@
 ﻿using System.Threading;
+using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Tests.Testing;
 
 public class NotificationTests
 {
+    #region Test Setup
+
+    private readonly ITestOutputHelper _testOutputHelper;
+
+    public NotificationTests(ITestOutputHelper testOutputHelper)
+    {
+        _testOutputHelper = testOutputHelper;
+    }
+
+    #endregion
+
     [Fact]
     public void AwaitableCallback_Amount_ShouldOnlyReturnAfterNumberOfCallbacks()
     {
         TimeSystemMock timeSystem = new();
         int totalCount = 0;
         int filteredCount = 0;
+        ManualResetEventSlim ms = new ManualResetEventSlim();
         Notification.IAwaitableCallback<TimeSpan> wait = timeSystem.On.ThreadSleep(_ =>
         {
             totalCount++;
@@ -18,12 +31,26 @@ public class NotificationTests
         {
             for (int i = 0; i < 10; i++)
             {
+                timeSystem.Thread.Sleep(0);
+                if (ms.Wait(20))
+                {
+                    break;
+                }
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
                 timeSystem.Thread.Sleep(10 * i);
             }
         }).Start();
 
-        bool result = wait.Wait(_ =>
+        bool result = wait.Wait(t =>
         {
+            if (t.TotalMilliseconds > 0)
+            {
+                ms.Set();
+            }
+
             filteredCount++;
             return true;
         }, count: 6);
@@ -40,6 +67,7 @@ public class NotificationTests
         TimeSystemMock timeSystem = new();
         int totalCount = 0;
         int filteredCount = 0;
+        ManualResetEventSlim ms = new ManualResetEventSlim();
         Notification.IAwaitableCallback<TimeSpan> wait = timeSystem.On.ThreadSleep(_ =>
         {
             totalCount++;
@@ -48,17 +76,37 @@ public class NotificationTests
         {
             for (int i = 0; i < 10; i++)
             {
+                timeSystem.Thread.Sleep(0);
+                if (ms.Wait(20))
+                {
+                    break;
+                }
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                _testOutputHelper.WriteLine($"Trigger Thread.Sleep for {10 * i}ms...");
                 timeSystem.Thread.Sleep(10 * i);
             }
         }).Start();
 
         bool result = wait.Wait(t =>
         {
+            if (t.TotalMilliseconds > 0)
+            {
+                ms.Set();
+            }
+
             if (t.TotalMilliseconds > 60)
             {
                 filteredCount++;
+                _testOutputHelper.WriteLine(
+                    $"  Filter for {t} > 60ms: matched ({filteredCount} times)");
                 return true;
             }
+
+            _testOutputHelper.WriteLine(
+                $"  Filter for {t} > 60ms : no match ({filteredCount} times)");
 
             return false;
         });

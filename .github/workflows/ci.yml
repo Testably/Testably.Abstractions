@@ -5,7 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-
+    
 jobs:
   test:
     name: Test
@@ -27,7 +27,32 @@ jobs:
             5.0.x
             6.0.x
       - name: Run tests
-        run: dotnet test
+        run: dotnet build /p:NetCoreOnly=True
+      - name: Run tests
+        run: dotnet test --no-build
+
+  windows-test:
+    name: Test (.NET Framework)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1.0.5
+      - name: Setup VSTest
+        uses: darenm/Setup-VSTest@v1
+      - name: Navigate to Workspace
+        run: cd $GITHUB_WORKSPACE
+      - name: Restore Packages
+        run: nuget restore Testably.Abstractions.sln
+      - name: Build Solution
+        run: msbuild.exe Testably.Abstractions.sln /p:platform="Any CPU" /p:configuration="Release"
+      - name: Run Tests
+        run: vstest.console.exe .\Tests\Testably.Abstractions.Tests\bin\Release\net472\Testably.Abstractions.Tests.dll .\Tests\Testably.Abstractions.Extensions.Tests\bin\Release\net472\Testably.Abstractions.Extensions.Tests.dll
 
   analyze:
     name: Static code analysis
