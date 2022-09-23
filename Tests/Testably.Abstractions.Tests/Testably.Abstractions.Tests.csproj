@@ -38,4 +38,28 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Mock/MockFileSystem.*.cs">
+      <DependentUpon>Mock/MockFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Mock/MockTimeSystem.*.cs">
+      <DependentUpon>Mock/MockTimeSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Real/RealFileSystem.*.cs">
+      <DependentUpon>Real/RealFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Real/RealTimeSystem.*.cs">
+      <DependentUpon>Real/RealTimeSystem.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="FileSystemDirectoryInfoTests - Copy.Delete.cs">
+      <DependentUpon>FileSystemDirectoryInfoTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="FileSystemFileTests - Copy.AppendAllLines.cs">
+      <DependentUpon>FileSystemFileTests.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
@@ -26,7 +27,10 @@ public sealed partial class FileSystemMock
         ///     Enumerates all directories under <paramref name="path" /> that match the <paramref name="expression" />.
         /// </summary>
         IEnumerable<TFileSystemInfoInfo> Enumerate<TFileSystemInfoInfo>(
-            string path, string expression, EnumerationOptions enumerationOptions)
+            string path,
+            string expression,
+            EnumerationOptions enumerationOptions,
+            Func<Exception> notFoundException)
             where TFileSystemInfoInfo : IFileSystem.IFileSystemInfo;
 
         /// <summary>
@@ -35,13 +39,45 @@ public sealed partial class FileSystemMock
         bool Exists([NotNullWhen(true)] string? path);
 
         /// <summary>
+        ///     Gets a file if it exists.<br />
+        ///     Returns <c>null</c>, if the file does not exist.
+        /// </summary>
+        IWritableFileInfo? GetFile(string path);
+
+        /// <summary>
         ///     Gets or adds a directory.
         /// </summary>
         IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path);
 
         /// <summary>
+        ///     Gets or adds a file.
+        /// </summary>
+        IWritableFileInfo? GetOrAddFile(string path);
+
+        /// <summary>
         ///     Returns the relative subdirectory path from <paramref name="fullFilePath" /> to the <paramref name="givenPath" />.
         /// </summary>
         string GetSubdirectoryPath(string fullFilePath, string givenPath);
+
+        /// <summary>
+        ///     An <see cref="IFileSystem.IFileInfo" /> which allows writing to the underlying byte array.
+        /// </summary>
+        public interface IWritableFileInfo : IFileSystem.IFileInfo
+        {
+            /// <summary>
+            ///     Appends the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
+            /// </summary>
+            void AppendBytes(byte[] bytes);
+
+            /// <summary>
+            ///     Gets the bytes in the <see cref="IFileSystem.IFileInfo" />.
+            /// </summary>
+            byte[] GetBytes();
+
+            /// <summary>
+            ///     Writes the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
+            /// </summary>
+            void WriteBytes(byte[] bytes);
+        }
     }
 }
