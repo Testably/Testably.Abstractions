@@ -17,6 +17,9 @@ internal class FileSystemInfoWrapper : IFileSystem.IFileSystemInfo
 
     #region IFileSystemInfo Members
 
+    /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Attributes" />
+    public FileAttributes Attributes { get; set; }
+
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTime" />
     public DateTime CreationTime
     {
@@ -90,6 +93,10 @@ internal class FileSystemInfoWrapper : IFileSystem.IFileSystemInfo
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Delete()" />
     public void Delete()
         => _instance.Delete();
+
+    /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Refresh()" />
+    public void Refresh()
+        => _instance.Refresh();
 
 #if FEATURE_FILESYSTEM_LINK
     /// <inheritdoc cref="IFileSystem.IFileSystemInfo.ResolveLinkTarget(bool)" />

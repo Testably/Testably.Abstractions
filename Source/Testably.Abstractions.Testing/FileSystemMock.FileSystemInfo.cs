@@ -28,7 +28,10 @@ public sealed partial class FileSystemMock
             AdjustTimes(TimeAdjustments.All);
         }
 
-#region IFileSystemInfo Members
+        #region IFileSystemInfo Members
+
+        /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Attributes" />
+        public FileAttributes Attributes { get; set; }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTime" />
         public DateTime CreationTime
@@ -116,6 +119,12 @@ public sealed partial class FileSystemMock
         public void CreateAsSymbolicLink(string pathToTarget)
             => throw new NotImplementedException();
 #endif
+
+        /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Refresh()" />
+        public void Refresh()
+        {
+            ResetExists();
+        }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Delete()" />
         public void Delete()

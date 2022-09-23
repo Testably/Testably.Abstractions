@@ -67,6 +67,11 @@ public partial interface IFileSystem
         /// <inheritdoc cref="FileInfo.Open(FileMode, FileAccess, FileShare)" />
         FileStream Open(FileMode mode, FileAccess access, FileShare share);
 
+#if FEATURE_FILESYSTEM_STREAM_OPTIONS
+        /// <inheritdoc cref="FileInfo.Open(FileStreamOptions)" />
+        FileStream Open(FileStreamOptions options);
+#endif
+
         /// <inheritdoc cref="FileInfo.OpenRead()" />
         FileStream OpenRead();
 

@@ -39,6 +39,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Parity/ParityTests.*.cs">
+      <DependentUpon>Parity/ParityTests.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Mock/MockFileSystem.*.cs">
       <DependentUpon>Mock/MockFileSystem.cs</DependentUpon>
     </Compile>
