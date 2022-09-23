@@ -1,6 +1,5 @@
 #if FEATURE_FILESYSTEM_ASYNC
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,7 +25,8 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    public async Task ReadAllBytesAsync_MissingFile_ShouldThrowFileNotFoundException(string path)
+    public async Task ReadAllBytesAsync_MissingFile_ShouldThrowFileNotFoundException(
+        string path)
     {
         Exception? exception = await Record.ExceptionAsync(() =>
             FileSystem.File.ReadAllBytesAsync(path));

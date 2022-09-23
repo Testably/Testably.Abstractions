@@ -26,22 +26,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    public async Task ReadAllTextAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
-        string path)
-    {
-        CancellationTokenSource cts = new();
-        cts.Cancel();
-
-        Exception? exception = await Record.ExceptionAsync(() =>
-            FileSystem.File.ReadAllTextAsync(path, Encoding.UTF8, cts.Token));
-
-        exception.Should().BeOfType<TaskCanceledException>()
-           .Which.Message.Should().Be("A task was canceled.");
-    }
-
-
-    [Theory]
-    [AutoData]
     public async Task
         AppendAllTextAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
             string path, string contents)

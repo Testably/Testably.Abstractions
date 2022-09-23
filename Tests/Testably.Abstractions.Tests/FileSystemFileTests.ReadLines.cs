@@ -9,6 +9,17 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
     [Theory]
     [AutoData]
+    public void ReadLines_EmptyFile_ShouldEnumerateLines(string path)
+    {
+        FileSystem.File.WriteAllText(path, null);
+
+        string[] results = FileSystem.File.ReadLines(path).ToArray();
+
+        results.Should().BeEmpty();
+    }
+
+    [Theory]
+    [AutoData]
     public void ReadLines_MissingFile_ShouldThrowFileNotFoundException(string path)
     {
         Exception? exception = Record.Exception(() =>
@@ -31,17 +42,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         string[] results = FileSystem.File.ReadLines(path).ToArray();
 
         results.Should().BeEquivalentTo(lines);
-    }
-
-    [Theory]
-    [AutoData]
-    public void ReadLines_EmptyFile_ShouldEnumerateLines(string path)
-    {
-        FileSystem.File.WriteAllText(path, null);
-
-        string[] results = FileSystem.File.ReadLines(path).ToArray();
-
-        results.Should().BeEmpty();
     }
 
     [Theory]

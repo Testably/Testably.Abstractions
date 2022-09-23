@@ -13,6 +13,38 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
     [Theory]
     [AutoData]
+    public async Task AppendAllLinesAsync_Cancelled_ShouldThrowTaskCanceledException(
+        string path, List<string> contents)
+    {
+        CancellationTokenSource cts = new();
+        cts.Cancel();
+
+        Exception? exception = await Record.ExceptionAsync(() =>
+            FileSystem.File.AppendAllLinesAsync(path, contents, cts.Token));
+
+        exception.Should().BeOfType<TaskCanceledException>()
+           .Which.Message.Should().Be("A task was canceled.");
+    }
+
+    [Theory]
+    [AutoData]
+    public async Task
+        AppendAllLinesAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
+            string path, List<string> contents)
+    {
+        CancellationTokenSource cts = new();
+        cts.Cancel();
+
+        Exception? exception = await Record.ExceptionAsync(() =>
+            FileSystem.File.AppendAllLinesAsync(path, contents, Encoding.UTF8,
+                cts.Token));
+
+        exception.Should().BeOfType<TaskCanceledException>()
+           .Which.Message.Should().Be("A task was canceled.");
+    }
+
+    [Theory]
+    [AutoData]
     public async Task AppendAllLinesAsync_ExistingFile_ShouldAppendLinesToFile(
         string path, List<string> previousContents, List<string> contents)
     {
@@ -38,36 +70,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    public async Task AppendAllLinesAsync_Cancelled_ShouldThrowTaskCanceledException(
-        string path, List<string> contents)
-    {
-        CancellationTokenSource cts = new();
-        cts.Cancel();
-
-        Exception? exception = await Record.ExceptionAsync(() => 
-            FileSystem.File.AppendAllLinesAsync(path, contents, cts.Token));
-
-        exception.Should().BeOfType<TaskCanceledException>()
-           .Which.Message.Should().Be("A task was canceled.");
-    }
-
-    [Theory]
-    [AutoData]
-    public async Task AppendAllLinesAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
-        string path, List<string> contents)
-    {
-        CancellationTokenSource cts = new();
-        cts.Cancel();
-
-        Exception? exception = await Record.ExceptionAsync(() =>
-            FileSystem.File.AppendAllLinesAsync(path, contents, Encoding.UTF8, cts.Token));
-
-        exception.Should().BeOfType<TaskCanceledException>()
-           .Which.Message.Should().Be("A task was canceled.");
-    }
-
-    [Theory]
-    [AutoData]
     public async Task AppendAllLinesAsync_ShouldEndWithNewline(string path)
     {
         string[] contents = { "foo", "bar" };
@@ -80,9 +82,10 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [MemberAutoData(nameof(GetEncodingDifference))]
-    public async Task AppendAllLinesAsync_WithDifferentEncoding_ShouldNotReturnWrittenText(
-        string specialLine, Encoding writeEncoding, Encoding readEncoding,
-        string path, string[] contents)
+    public async Task
+        AppendAllLinesAsync_WithDifferentEncoding_ShouldNotReturnWrittenText(
+            string specialLine, Encoding writeEncoding, Encoding readEncoding,
+            string path, string[] contents)
     {
         contents[1] = specialLine;
         await FileSystem.File.AppendAllLinesAsync(path, contents, writeEncoding);

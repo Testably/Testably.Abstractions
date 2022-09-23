@@ -26,8 +26,9 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    public async Task ReadAllLinesAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
-        string path)
+    public async Task
+        ReadAllLinesAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
+            string path)
     {
         CancellationTokenSource cts = new();
         cts.Cancel();
@@ -41,7 +42,8 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    public async Task ReadAllLinesAsync_MissingFile_ShouldThrowFileNotFoundException(string path)
+    public async Task ReadAllLinesAsync_MissingFile_ShouldThrowFileNotFoundException(
+        string path)
     {
         Exception? exception = await Record.ExceptionAsync(() =>
             FileSystem.File.ReadAllLinesAsync(path));
