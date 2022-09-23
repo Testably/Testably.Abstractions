@@ -22,7 +22,7 @@ public class NotificationTests
         TimeSystemMock timeSystem = new();
         int totalCount = 0;
         int filteredCount = 0;
-        ManualResetEventSlim ms = new ManualResetEventSlim();
+        ManualResetEventSlim ms = new();
         Notification.IAwaitableCallback<TimeSpan> wait = timeSystem.On.ThreadSleep(_ =>
         {
             totalCount++;
@@ -67,7 +67,7 @@ public class NotificationTests
         TimeSystemMock timeSystem = new();
         int totalCount = 0;
         int filteredCount = 0;
-        ManualResetEventSlim ms = new ManualResetEventSlim();
+        ManualResetEventSlim ms = new();
         Notification.IAwaitableCallback<TimeSpan> wait = timeSystem.On.ThreadSleep(_ =>
         {
             totalCount++;

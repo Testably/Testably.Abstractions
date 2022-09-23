@@ -9,38 +9,38 @@ public static partial class RealFileSystem
 {
     private const string RealFileSystemCollection = nameof(RealFileSystemCollection);
 
-    // ReSharper disable once UnusedMember.Global
-    [Collection(RealFileSystemCollection)]
-    public sealed class Tests : FileSystemTests<FileSystem>
-    {
-        public Tests() : base(new FileSystem())
-        {
-        }
-    }
-
     /// <summary>
-    ///     Creates a new and empty directory in the temporary path.
+    ///     Force deletes the directory at the given <paramref name="path" />.<br />
+    ///     Removes the <see cref="FileAttributes.ReadOnly" /> flag, if necessary.
+    ///     <para />
+    ///     If <paramref name="recursive" /> is set (default <c>true</c>), the sub directories are force deleted as well.
     /// </summary>
-    private static string UseBasePath(ITestOutputHelper testOutputHelper)
+    private static void ForceDeleteDirectory(string path, bool recursive = true)
     {
-        string basePath;
-
-        do
+        if (!Directory.Exists(path))
         {
-            basePath = Path.Combine(
-                Path.GetTempPath(),
-                Path.GetFileNameWithoutExtension(Path.GetRandomFileName()));
-        } while (Directory.Exists(basePath));
-
-        Directory.CreateDirectory(basePath);
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            basePath = "/private" + basePath;
+            return;
         }
 
-        testOutputHelper.WriteLine($"Use '{basePath}' as current directory.");
-        Directory.SetCurrentDirectory(basePath);
-        return basePath;
+        DirectoryInfo directory = new(path) { Attributes = FileAttributes.Normal };
+
+        foreach (FileInfo info in directory.EnumerateFiles("*",
+            SearchOption.TopDirectoryOnly))
+        {
+            info.Attributes = FileAttributes.Normal;
+            info.Delete();
+        }
+
+        if (recursive)
+        {
+            foreach (DirectoryInfo info in directory.EnumerateDirectories("*",
+                SearchOption.TopDirectoryOnly))
+            {
+                ForceDeleteDirectory(info.FullName, recursive);
+            }
+        }
+
+        Directory.Delete(path);
     }
 
     private static void TryCleanup(string basePath, ITestOutputHelper testOutputHelper)
@@ -81,36 +81,36 @@ public static partial class RealFileSystem
     }
 
     /// <summary>
-    ///     Force deletes the directory at the given <paramref name="path" />.<br />
-    ///     Removes the <see cref="FileAttributes.ReadOnly" /> flag, if necessary.
-    ///     <para />
-    ///     If <paramref name="recursive" /> is set (default <c>true</c>), the sub directories are force deleted as well.
+    ///     Creates a new and empty directory in the temporary path.
     /// </summary>
-    private static void ForceDeleteDirectory(string path, bool recursive = true)
+    private static string UseBasePath(ITestOutputHelper testOutputHelper)
     {
-        if (!Directory.Exists(path))
+        string basePath;
+
+        do
         {
-            return;
+            basePath = Path.Combine(
+                Path.GetTempPath(),
+                Path.GetFileNameWithoutExtension(Path.GetRandomFileName()));
+        } while (Directory.Exists(basePath));
+
+        Directory.CreateDirectory(basePath);
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            basePath = "/private" + basePath;
         }
 
-        DirectoryInfo directory = new(path) { Attributes = FileAttributes.Normal };
+        testOutputHelper.WriteLine($"Use '{basePath}' as current directory.");
+        Directory.SetCurrentDirectory(basePath);
+        return basePath;
+    }
 
-        foreach (FileInfo info in directory.EnumerateFiles("*",
-            SearchOption.TopDirectoryOnly))
+    // ReSharper disable once UnusedMember.Global
+    [Collection(RealFileSystemCollection)]
+    public sealed class Tests : FileSystemTests<FileSystem>
+    {
+        public Tests() : base(new FileSystem())
         {
-            info.Attributes = FileAttributes.Normal;
-            info.Delete();
         }
-
-        if (recursive)
-        {
-            foreach (DirectoryInfo info in directory.EnumerateDirectories("*",
-                SearchOption.TopDirectoryOnly))
-            {
-                ForceDeleteDirectory(info.FullName, recursive);
-            }
-        }
-
-        Directory.Delete(path);
     }
 }

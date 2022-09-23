@@ -53,4 +53,10 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="FileSystemDirectoryInfoTests - Copy.Delete.cs">
+      <DependentUpon>FileSystemDirectoryInfoTests.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>
