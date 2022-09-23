@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Text;
 #if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
@@ -34,12 +35,22 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.AppendAllLines(string, IEnumerable{string})" />
         public void AppendAllLines(string path, IEnumerable<string> contents)
-            => System.IO.File.AppendAllLines(path, contents);
+            => AppendAllLines(path, contents, Encoding.Default);
 
         /// <inheritdoc cref="IFileSystem.IFile.AppendAllLines(string, IEnumerable{string}, Encoding)" />
         public void AppendAllLines(string path, IEnumerable<string> contents,
                                    Encoding encoding)
-            => System.IO.File.AppendAllLines(path, contents, encoding);
+
+        {
+            IInMemoryFileSystem.IWritableFileInfo? fileInfo =
+                _fileSystem.FileSystemContainer.GetOrAddFile(path);
+            if (fileInfo != null)
+            {
+                fileInfo.AppendBytes(encoding.GetBytes(
+                    contents.Aggregate(string.Empty,
+                        (a, b) => a + b + Environment.NewLine)));
+            }
+        }
 
         /// <inheritdoc cref="IFileSystem.IFile.AppendAllText(string, string?)" />
         public void AppendAllText(string path, string? contents)
@@ -103,7 +114,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.Exists(string?)" />
         public bool Exists([NotNullWhen(true)] string? path)
-            => System.IO.File.Exists(path);
+            => _fileSystem.FileSystemContainer.Exists(path);
 
         /// <inheritdoc cref="IFileSystem.IFile.GetAttributes(string)" />
         public FileAttributes GetAttributes(string path)
@@ -188,11 +199,11 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllLines(string)" />
         public string[] ReadAllLines(string path)
-            => System.IO.File.ReadAllLines(path);
+            => ReadAllLines(path, Encoding.Default);
 
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllLines(string, Encoding)" />
         public string[] ReadAllLines(string path, Encoding encoding)
-            => System.IO.File.ReadAllLines(path, encoding);
+            => ReadLines(path, encoding).ToArray();
 
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllText(string)" />
         public string ReadAllText(string path)
@@ -208,7 +219,8 @@ public sealed partial class FileSystemMock
                 return encoding.GetString(fileInfo.GetBytes());
             }
 
-            throw new FileNotFoundException($"Could not find file '{_fileSystem.Path.GetFullPath(path)}'.");
+            throw new FileNotFoundException(
+                $"Could not find file '{_fileSystem.Path.GetFullPath(path)}'.");
         }
 
         /// <inheritdoc cref="IFileSystem.IFile.ReadLines(string)" />
@@ -311,6 +323,22 @@ public sealed partial class FileSystemMock
 
         #endregion
 
+        private static IEnumerable<string> ExtractLines(string contents)
+        {
+            if (string.IsNullOrEmpty(contents))
+            {
+                yield break;
+            }
+
+            using (StringReader reader = new StringReader(contents))
+            {
+                while (reader.ReadLine() is { } line)
+                {
+                    yield return line;
+                }
+            }
+        }
+
 #if FEATURE_FILESYSTEM_ASYNC
         /// <inheritdoc cref="IFileSystem.IFile.AppendAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
         public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
@@ -400,18 +428,5 @@ public sealed partial class FileSystemMock
             => System.IO.File.WriteAllTextAsync(path, contents, encoding,
                 cancellationToken);
 #endif
-        private static IEnumerable<string> ExtractLines(string contents)
-        {
-            if (string.IsNullOrEmpty(contents))
-            {
-                yield break;
-            }
-            using (var reader = new StringReader(contents))
-            {
-                while (reader.ReadLine() is { } line) {
-                    yield return line;
-                }
-            }
-        }
     }
 }
