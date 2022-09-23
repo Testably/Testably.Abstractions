@@ -52,21 +52,27 @@ public sealed partial class FileSystemMock
         public IEnumerable<IFileSystem.IDirectoryInfo> EnumerateDirectories()
             => FileSystem.FileSystemContainer.Enumerate<IFileSystem.IDirectoryInfo>(
                 FullName,
-                "*", EnumerationOptionsHelper.Compatible);
+                "*", 
+                EnumerationOptionsHelper.Compatible,
+                DirectoryNotFoundException(FullName));
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories(string)" />
         public IEnumerable<IFileSystem.IDirectoryInfo>
             EnumerateDirectories(string searchPattern)
             => FileSystem.FileSystemContainer.Enumerate<IFileSystem.IDirectoryInfo>(
                 FullName,
-                searchPattern, EnumerationOptionsHelper.Compatible);
+                searchPattern,
+                EnumerationOptionsHelper.Compatible,
+                DirectoryNotFoundException(FullName));
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories(string, SearchOption)" />
         public IEnumerable<IFileSystem.IDirectoryInfo> EnumerateDirectories(
             string searchPattern, SearchOption searchOption)
             => FileSystem.FileSystemContainer.Enumerate<IFileSystem.IDirectoryInfo>(
                 FullName,
-                searchPattern, EnumerationOptionsHelper.FromSearchOption(searchOption));
+                searchPattern,
+                EnumerationOptionsHelper.FromSearchOption(searchOption),
+                DirectoryNotFoundException(FullName));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories(string, EnumerationOptions)" />
@@ -75,7 +81,9 @@ public sealed partial class FileSystemMock
             EnumerationOptions enumerationOptions)
             => FileSystem.FileSystemContainer.Enumerate<IFileSystem.IDirectoryInfo>(
                 FullName,
-                searchPattern, enumerationOptions);
+                searchPattern,
+                enumerationOptions,
+                DirectoryNotFoundException(FullName));
 #endif
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateFiles()" />
@@ -245,6 +253,12 @@ public sealed partial class FileSystemMock
 #else
             return New(parentPath, parentPath, fileSystem);
 #endif
+        }
+
+        private static Func<Exception> DirectoryNotFoundException(string path)
+        {
+            return () => new DirectoryNotFoundException(
+                $"Could not find a part of the path '{path}'.");
         }
     }
 }

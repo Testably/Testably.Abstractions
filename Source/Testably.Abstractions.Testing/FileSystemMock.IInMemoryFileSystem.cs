@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
@@ -26,7 +27,10 @@ public sealed partial class FileSystemMock
         ///     Enumerates all directories under <paramref name="path" /> that match the <paramref name="expression" />.
         /// </summary>
         IEnumerable<TFileSystemInfoInfo> Enumerate<TFileSystemInfoInfo>(
-            string path, string expression, EnumerationOptions enumerationOptions)
+            string path,
+            string expression,
+            EnumerationOptions enumerationOptions,
+            Func<Exception> notFoundException)
             where TFileSystemInfoInfo : IFileSystem.IFileSystemInfo;
 
         /// <summary>

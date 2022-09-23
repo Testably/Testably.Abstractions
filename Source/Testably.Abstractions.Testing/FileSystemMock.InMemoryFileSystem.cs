@@ -59,16 +59,21 @@ public sealed partial class FileSystemMock
             return _files.TryRemove(key, out _);
         }
 
-        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.Enumerate{TFileSystemInfo}(string, string, EnumerationOptions)" />
+        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.Enumerate{TFileSystemInfo}(string, string, EnumerationOptions, Func{Exception})" />
         public IEnumerable<TFileSystemInfo> Enumerate<TFileSystemInfo>(string path,
             string expression,
-            EnumerationOptions enumerationOptions)
+            EnumerationOptions enumerationOptions,
+            Func<Exception> notFoundException)
             where TFileSystemInfo : IFileSystem.IFileSystemInfo
         {
             ValidateExpression(expression);
             string key = _fileSystem.Path.GetFullPath(path)
                .NormalizeAndTrimPath(_fileSystem);
             string start = key + _fileSystem.Path.DirectorySeparatorChar;
+            if (!_files.ContainsKey(key))
+            {
+                throw notFoundException();
+            }
             foreach (FileSystemInfoMock file in _files
                .Where(x => x.Key.StartsWith(start))
                .Select(x => x.Value))

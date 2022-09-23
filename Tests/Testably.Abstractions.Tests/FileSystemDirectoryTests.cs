@@ -620,6 +620,23 @@ public abstract class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    public void
+        EnumerateDirectories_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+            string path)
+    {
+        string expectedPath = Path.Combine(BasePath, path);
+        Exception? exception =
+            Record.Exception(()
+                => FileSystem.Directory.EnumerateDirectories(path).ToList());
+
+        exception.Should().BeOfType<DirectoryNotFoundException>()
+           .Which.Message.Should()
+           .Be($"Could not find a part of the path '{expectedPath}'.");
+        FileSystem.Directory.Exists(path).Should().BeFalse();
+    }
+
+    [Theory]
+    [AutoData]
     public void EnumerateDirectories_WithSearchPattern_ShouldReturnMatchingSubdirectory(
         string path)
     {

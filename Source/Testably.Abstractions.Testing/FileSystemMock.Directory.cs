@@ -62,7 +62,8 @@ public sealed partial class FileSystemMock
             => _fileSystem.FileSystemContainer.Enumerate<IFileSystem.IDirectoryInfo>(
                     path,
                     "*",
-                    EnumerationOptionsHelper.Compatible)
+                    EnumerationOptionsHelper.Compatible,
+                    DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
                .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
                     x.FullName,
                     path));
@@ -72,7 +73,8 @@ public sealed partial class FileSystemMock
             => _fileSystem.FileSystemContainer.Enumerate<IFileSystem.IDirectoryInfo>(
                     path,
                     searchPattern,
-                    EnumerationOptionsHelper.Compatible)
+                    EnumerationOptionsHelper.Compatible,
+                    DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
                .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
                     x.FullName,
                     path));
@@ -85,7 +87,8 @@ public sealed partial class FileSystemMock
                .Enumerate<IFileSystem.IDirectoryInfo>(
                     path,
                     searchPattern,
-                    EnumerationOptionsHelper.FromSearchOption(searchOption))
+                    EnumerationOptionsHelper.FromSearchOption(searchOption),
+                    DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
                .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
                     x.FullName,
                     path));
@@ -100,7 +103,8 @@ public sealed partial class FileSystemMock
                .Enumerate<IFileSystem.IDirectoryInfo>(
                     path,
                     searchPattern,
-                    enumerationOptions)
+                    enumerationOptions,
+                    DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
                .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
                     x.FullName,
                     path));
@@ -322,6 +326,12 @@ public sealed partial class FileSystemMock
             IFileSystem.IDirectoryInfo? directory =
                 _fileSystem.FileSystemContainer.GetOrAddDirectory(path);
             return directory ?? throw new NotImplementedException();
+        }
+
+        private static Func<Exception> DirectoryNotFoundException(string path)
+        {
+            return () => new DirectoryNotFoundException(
+                $"Could not find a part of the path '{path}'.");
         }
     }
 }
