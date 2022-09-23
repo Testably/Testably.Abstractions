@@ -1,16 +1,16 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Testably.Abstractions.Tests;
+namespace Testably.Abstractions.Tests.Real;
 
-public abstract partial class TimeSystemTaskTests
+public static partial class RealTimeSystem
 {
     // ReSharper disable once UnusedMember.Global
-    public sealed class RealTimeSystem : TimeSystemTaskTests<TimeSystem>
+    public sealed class TaskTests : TimeSystemTaskTests<TimeSystem>
     {
         #region Test Setup
 
-        public RealTimeSystem() : base(new TimeSystem())
+        public TaskTests() : base(new TimeSystem())
         {
         }
 

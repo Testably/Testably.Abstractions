@@ -1,13 +1,13 @@
-namespace Testably.Abstractions.Tests;
+namespace Testably.Abstractions.Tests.Mock;
 
-public abstract partial class TimeSystemDateTimeTests
+public static partial class MockTimeSystem
 {
     // ReSharper disable once UnusedMember.Global
-    public sealed class MockTimeSystem : TimeSystemDateTimeTests<TimeSystemMock>
+    public sealed class DateTimeTests : TimeSystemDateTimeTests<TimeSystemMock>
     {
         #region Test Setup
 
-        public MockTimeSystem() : base(new TimeSystemMock())
+        public DateTimeTests() : base(new TimeSystemMock())
         {
         }
 

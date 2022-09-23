@@ -1,13 +1,13 @@
-namespace Testably.Abstractions.Tests;
+namespace Testably.Abstractions.Tests.Real;
 
-public abstract partial class TimeSystemDateTimeTests
+public static partial class RealTimeSystem
 {
     // ReSharper disable once UnusedMember.Global
-    public sealed class RealTimeSystem : TimeSystemDateTimeTests<TimeSystem>
+    public sealed class DateTimeTests : TimeSystemDateTimeTests<TimeSystem>
     {
         #region Test Setup
 
-        public RealTimeSystem() : base(new TimeSystem())
+        public DateTimeTests() : base(new TimeSystem())
         {
         }
 
