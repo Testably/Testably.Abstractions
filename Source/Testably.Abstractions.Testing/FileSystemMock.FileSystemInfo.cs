@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+#if NETFRAMEWORK
 using Testably.Abstractions.Testing.Internal;
+#endif
 
 namespace Testably.Abstractions.Testing;
 
