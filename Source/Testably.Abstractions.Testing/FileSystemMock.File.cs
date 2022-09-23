@@ -58,7 +58,7 @@ public sealed partial class FileSystemMock
                                         Encoding encoding,
                                         CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfCancelled(cancellationToken);
             AppendAllLines(path, contents, encoding);
             return Task.CompletedTask;
         }
@@ -90,7 +90,7 @@ public sealed partial class FileSystemMock
         public Task AppendAllTextAsync(string path, string? contents, Encoding encoding,
                                        CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfCancelled(cancellationToken);
             AppendAllText(path, contents, encoding);
             return Task.CompletedTask;
         }
@@ -241,7 +241,7 @@ public sealed partial class FileSystemMock
                                               CancellationToken cancellationToken =
                                                   default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfCancelled(cancellationToken);
             return Task.FromResult(ReadAllBytes(path));
         }
 #endif
@@ -267,7 +267,7 @@ public sealed partial class FileSystemMock
             Encoding encoding,
             CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfCancelled(cancellationToken);
             return Task.FromResult(ReadAllLines(path, encoding));
         }
 #endif
@@ -303,7 +303,7 @@ public sealed partial class FileSystemMock
             Encoding encoding,
             CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfCancelled(cancellationToken);
             return Task.FromResult(ReadAllText(path, encoding));
         }
 #endif
@@ -376,7 +376,7 @@ public sealed partial class FileSystemMock
         public Task WriteAllBytesAsync(string path, byte[] bytes,
                                        CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfCancelled(cancellationToken);
             WriteAllBytes(path, bytes);
             return Task.CompletedTask;
         }
@@ -422,7 +422,7 @@ public sealed partial class FileSystemMock
             Encoding encoding,
             CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfCancelled(cancellationToken);
             WriteAllLines(path, contents, encoding);
             return Task.CompletedTask;
         }
@@ -453,13 +453,23 @@ public sealed partial class FileSystemMock
         public Task WriteAllTextAsync(string path, string? contents, Encoding encoding,
                                       CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfCancelled(cancellationToken);
             WriteAllText(path, contents, encoding);
             return Task.CompletedTask;
         }
 #endif
 
-        #endregion
+#endregion
+
+#if FEATURE_FILESYSTEM_ASYNC
+        private static void ThrowIfCancelled(CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                throw new TaskCanceledException("A task was canceled.");
+            }
+        }
+#endif
 
         private static IEnumerable<string> EnumerateLines(string contents)
         {

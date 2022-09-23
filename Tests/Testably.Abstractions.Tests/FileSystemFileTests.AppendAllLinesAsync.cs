@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests;
 
+// ReSharper disable MethodHasAsyncOverload
 public abstract partial class FileSystemFileTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
@@ -32,6 +34,36 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
         FileSystem.File.Exists(path).Should().BeTrue();
         FileSystem.File.ReadAllLines(path).Should().BeEquivalentTo(contents);
+    }
+
+    [Theory]
+    [AutoData]
+    public async Task AppendAllLinesAsync_Cancelled_ShouldThrowTaskCanceledException(
+        string path, List<string> contents)
+    {
+        CancellationTokenSource cts = new();
+        cts.Cancel();
+
+        Exception? exception = await Record.ExceptionAsync(() => 
+            FileSystem.File.AppendAllLinesAsync(path, contents, cts.Token));
+
+        exception.Should().BeOfType<TaskCanceledException>()
+           .Which.Message.Should().Be("A task was canceled.");
+    }
+
+    [Theory]
+    [AutoData]
+    public async Task AppendAllLinesAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
+        string path, List<string> contents)
+    {
+        CancellationTokenSource cts = new();
+        cts.Cancel();
+
+        Exception? exception = await Record.ExceptionAsync(() =>
+            FileSystem.File.AppendAllLinesAsync(path, contents, Encoding.UTF8, cts.Token));
+
+        exception.Should().BeOfType<TaskCanceledException>()
+           .Which.Message.Should().Be("A task was canceled.");
     }
 
     [Theory]

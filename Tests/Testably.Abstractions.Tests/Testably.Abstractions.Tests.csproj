@@ -57,6 +57,9 @@
     <Compile Update="FileSystemDirectoryInfoTests - Copy.Delete.cs">
       <DependentUpon>FileSystemDirectoryInfoTests.cs</DependentUpon>
     </Compile>
+    <Compile Update="FileSystemFileTests - Copy.AppendAllLines.cs">
+      <DependentUpon>FileSystemFileTests.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

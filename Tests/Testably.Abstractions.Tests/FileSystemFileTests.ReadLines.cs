@@ -34,6 +34,17 @@ public abstract partial class FileSystemFileTests<TFileSystem>
     }
 
     [Theory]
+    [AutoData]
+    public void ReadLines_EmptyFile_ShouldEnumerateLines(string path)
+    {
+        FileSystem.File.WriteAllText(path, null);
+
+        string[] results = FileSystem.File.ReadLines(path).ToArray();
+
+        results.Should().BeEmpty();
+    }
+
+    [Theory]
     [MemberAutoData(nameof(GetEncodingDifference))]
     public void ReadLines_WithDifferentEncoding_ShouldNotReturnWrittenText(
         string specialLine, Encoding writeEncoding, Encoding readEncoding,
