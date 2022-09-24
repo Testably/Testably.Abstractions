@@ -26,7 +26,9 @@ jobs:
             5.0.x
             6.0.x
       - name: Run tests
-        run: dotnet test
+        run: dotnet build /p:NetCoreOnly=True
+      - name: Run tests
+        run: dotnet test --no-build
 
   deploy:
     name: Deploy
