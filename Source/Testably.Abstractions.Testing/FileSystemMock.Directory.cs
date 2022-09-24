@@ -59,14 +59,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateDirectories(string)" />
         public IEnumerable<string> EnumerateDirectories(string path)
-            => _fileSystem.FileSystemContainer.Enumerate<IFileSystem.IDirectoryInfo>(
-                    path,
-                    "*",
-                    EnumerationOptionsHelper.Compatible,
-                    DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
-               .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
-                    x.FullName,
-                    path));
+            => EnumerateDirectories(path, "*");
 
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateDirectories(string, string)" />
         public IEnumerable<string> EnumerateDirectories(string path, string searchPattern)
@@ -112,48 +105,89 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFiles(string)" />
         public IEnumerable<string> EnumerateFiles(string path)
-            => throw new NotImplementedException();
+            => EnumerateFiles(path, "*");
 
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFiles(string, string)" />
         public IEnumerable<string> EnumerateFiles(string path, string searchPattern)
-            => throw new NotImplementedException();
+            => _fileSystem.FileSystemContainer.Enumerate<IFileSystem.IFileInfo>(
+                    path,
+                    searchPattern,
+                    EnumerationOptionsHelper.Compatible,
+                    DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
+               .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
+                    x.FullName,
+                    path));
 
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFiles(string, string, SearchOption)" />
         public IEnumerable<string> EnumerateFiles(string path,
                                                   string searchPattern,
                                                   SearchOption searchOption)
-            => throw new NotImplementedException();
+            => _fileSystem.FileSystemContainer.Enumerate<IFileSystem.IFileInfo>(
+                    path,
+                    searchPattern,
+                    EnumerationOptionsHelper.FromSearchOption(searchOption),
+                    DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
+               .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
+                    x.FullName,
+                    path));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFiles(string, string, EnumerationOptions)" />
         public IEnumerable<string> EnumerateFiles(string path,
                                                   string searchPattern,
                                                   EnumerationOptions enumerationOptions)
-            => throw new NotImplementedException();
+            => _fileSystem.FileSystemContainer.Enumerate<IFileSystem.IFileInfo>(
+                    path,
+                    searchPattern,
+                    enumerationOptions,
+                    DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
+               .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
+                    x.FullName,
+                    path));
 #endif
 
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string)" />
         public IEnumerable<string> EnumerateFileSystemEntries(string path)
-            => throw new NotImplementedException();
+            => EnumerateFileSystemEntries(path, "*");
 
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string, string)" />
         public IEnumerable<string> EnumerateFileSystemEntries(
             string path, string searchPattern)
-            => throw new NotImplementedException();
+            => _fileSystem.FileSystemContainer.Enumerate<IFileSystem.IFileSystemInfo>(
+                    path,
+                    searchPattern,
+                    EnumerationOptionsHelper.Compatible,
+                    DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
+               .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
+                    x.FullName,
+                    path));
 
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string, string, SearchOption)" />
         public IEnumerable<string> EnumerateFileSystemEntries(string path,
             string searchPattern,
             SearchOption searchOption)
-            => throw new NotImplementedException();
+            => _fileSystem.FileSystemContainer.Enumerate<IFileSystem.IFileSystemInfo>(
+                    path,
+                    searchPattern,
+                    EnumerationOptionsHelper.FromSearchOption(searchOption),
+                    DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
+               .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
+                    x.FullName,
+                    path));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string, string, EnumerationOptions)" />
         public IEnumerable<string> EnumerateFileSystemEntries(string path,
             string searchPattern,
-            EnumerationOptions
-                enumerationOptions)
-            => throw new NotImplementedException();
+            EnumerationOptions                enumerationOptions)
+            => _fileSystem.FileSystemContainer.Enumerate<IFileSystem.IFileSystemInfo>(
+                    path,
+                    searchPattern,
+                    enumerationOptions,
+                    DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
+               .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
+                    x.FullName,
+                    path));
 #endif
 
         /// <inheritdoc cref="IFileSystem.IDirectory.Exists(string)" />
