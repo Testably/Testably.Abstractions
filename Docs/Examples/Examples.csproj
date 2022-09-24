@@ -10,7 +10,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
   </PropertyGroup>
-	
+
   <ItemGroup>
     <PackageReference Include="Testably.Abstractions.Extensions" Version="0.2.0" />
     <PackageReference Include="Testably.Abstractions.Testing" Version="0.2.0" />
