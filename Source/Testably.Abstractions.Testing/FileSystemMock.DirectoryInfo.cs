@@ -33,7 +33,7 @@ public sealed partial class FileSystemMock
         public void Create()
         {
             FileSystem.Directory.CreateDirectory(FullName);
-            ResetExists();
+            Refresh();
         }
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.CreateSubdirectory(string)" />
@@ -45,7 +45,7 @@ public sealed partial class FileSystemMock
         public void Delete(bool recursive)
         {
             FileSystem.FileSystemContainer.Delete(FullName, recursive);
-            ResetExists();
+            Refresh();
         }
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories()" />

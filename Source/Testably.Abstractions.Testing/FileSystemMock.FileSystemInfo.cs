@@ -59,14 +59,6 @@ public sealed partial class FileSystemMock
 
         private bool? _exists;
 
-        protected void ResetExists()
-        {
-#if !NETFRAMEWORK
-            // The DirectoryInfo is not updated in .NET Framework!
-            _exists = null;
-#endif
-        }
-
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Extension" />
         public string Extension
             => FileSystem.Path.GetExtension(FullName);
@@ -123,7 +115,10 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Refresh()" />
         public void Refresh()
         {
-            ResetExists();
+#if !NETFRAMEWORK
+            // The DirectoryInfo is not updated in .NET Framework!
+            _exists = null;
+#endif
         }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Delete()" />
@@ -135,7 +130,7 @@ public sealed partial class FileSystemMock
                     $"Could not find a part of the path '{FullName}'.");
             }
 
-            ResetExists();
+            Refresh();
         }
 
 #if FEATURE_FILESYSTEM_LINK
