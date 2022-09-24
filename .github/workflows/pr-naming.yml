@@ -26,6 +26,7 @@ jobs:
             feat
             doc
             refactor
+            chore
           scopes: |
             file
             time
