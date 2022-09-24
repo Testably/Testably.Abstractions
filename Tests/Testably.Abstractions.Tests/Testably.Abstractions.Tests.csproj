@@ -66,6 +66,9 @@
     <Compile Update="FileSystemFileTests - Copy.AppendAllLines.cs">
       <DependentUpon>FileSystemFileTests.cs</DependentUpon>
     </Compile>
+    <Compile Update="Parity\ParityTests - Copy.Net6.cs">
+      <DependentUpon>Parity/ParityTests.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>
