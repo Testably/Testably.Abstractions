@@ -10,6 +10,9 @@ public partial interface IFileSystem
     /// </summary>
     public interface IFileSystemInfo
     {
+        /// <inheritdoc cref="FileSystemInfo.Attributes" />
+        FileAttributes Attributes { get; set; }
+
         /// <inheritdoc cref="FileSystemInfo.CreationTime" />
         DateTime CreationTime { get; set; }
 
@@ -52,6 +55,9 @@ public partial interface IFileSystem
 
         /// <inheritdoc cref="FileSystemInfo.Delete()" />
         void Delete();
+
+        /// <inheritdoc cref="FileSystemInfo.Refresh()" />
+        void Refresh();
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="FileSystemInfo.ResolveLinkTarget(bool)" />

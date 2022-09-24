@@ -39,6 +39,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Parity/ParityTests.*.cs">
+      <DependentUpon>Parity/ParityTests.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Mock/MockFileSystem.*.cs">
       <DependentUpon>Mock/MockFileSystem.cs</DependentUpon>
     </Compile>
@@ -59,6 +65,9 @@
     </Compile>
     <Compile Update="FileSystemFileTests - Copy.AppendAllLines.cs">
       <DependentUpon>FileSystemFileTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Parity\ParityTests - Copy.Net6.cs">
+      <DependentUpon>Parity/ParityTests.cs</DependentUpon>
     </Compile>
   </ItemGroup>
 

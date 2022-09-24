@@ -93,6 +93,12 @@ internal sealed class FileInfoWrapper : FileSystemInfoWrapper, IFileSystem.IFile
     public FileStream Open(FileMode mode, FileAccess access, FileShare share)
         => _instance.Open(mode, access, share);
 
+#if FEATURE_FILESYSTEM_STREAM_OPTIONS
+    /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileStreamOptions)" />
+    public FileStream Open(FileStreamOptions options)
+        => _instance.Open(options);
+#endif
+
     /// <inheritdoc cref="IFileSystem.IFileInfo.OpenRead()" />
     public FileStream OpenRead()
         => _instance.OpenRead();

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+#if NETFRAMEWORK
 using Testably.Abstractions.Testing.Internal;
+#endif
 
 namespace Testably.Abstractions.Testing;
 
@@ -26,7 +28,10 @@ public sealed partial class FileSystemMock
             AdjustTimes(TimeAdjustments.All);
         }
 
-#region IFileSystemInfo Members
+        #region IFileSystemInfo Members
+
+        /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Attributes" />
+        public FileAttributes Attributes { get; set; }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTime" />
         public DateTime CreationTime
@@ -53,14 +58,6 @@ public sealed partial class FileSystemMock
         }
 
         private bool? _exists;
-
-        protected void ResetExists()
-        {
-#if !NETFRAMEWORK
-            // The DirectoryInfo is not updated in .NET Framework!
-            _exists = null;
-#endif
-        }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Extension" />
         public string Extension
@@ -115,6 +112,15 @@ public sealed partial class FileSystemMock
             => throw new NotImplementedException();
 #endif
 
+        /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Refresh()" />
+        public void Refresh()
+        {
+#if !NETFRAMEWORK
+            // The DirectoryInfo is not updated in .NET Framework!
+            _exists = null;
+#endif
+        }
+
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Delete()" />
         public void Delete()
         {
@@ -124,7 +130,7 @@ public sealed partial class FileSystemMock
                     $"Could not find a part of the path '{FullName}'.");
             }
 
-            ResetExists();
+            Refresh();
         }
 
 #if FEATURE_FILESYSTEM_LINK

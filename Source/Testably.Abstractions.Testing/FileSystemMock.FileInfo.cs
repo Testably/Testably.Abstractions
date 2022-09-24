@@ -93,6 +93,12 @@ public sealed partial class FileSystemMock
         public FileStream Open(FileMode mode, FileAccess access, FileShare share)
             => throw new NotImplementedException();
 
+#if FEATURE_FILESYSTEM_STREAM_OPTIONS
+        /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileStreamOptions)" />
+        public FileStream Open(FileStreamOptions options)
+            => throw new NotImplementedException();
+#endif
+
         /// <inheritdoc cref="IFileSystem.IFileInfo.OpenRead()" />
         public FileStream OpenRead()
             => throw new NotImplementedException();
