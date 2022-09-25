@@ -1,7 +1,11 @@
-name: .NET Stryker unit test quality check
+name: .NET Stryker
 
 on:
   workflow_dispatch
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
     
 jobs:
   stryker:
