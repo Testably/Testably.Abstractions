@@ -70,7 +70,8 @@ public class RandomProviderTests
 
     [Theory]
     [AutoData]
-    public void GenerateRandom_NextBytes_ShouldReturnSpecifiedValue(int seed, byte[] value)
+    public void GenerateRandom_NextBytes_ShouldReturnSpecifiedValue(
+        int seed, byte[] value)
     {
         List<byte[]> results = new();
         RandomSystemMock.IRandomProvider randomProvider = RandomProvider.GenerateRandom(
@@ -79,7 +80,7 @@ public class RandomProviderTests
         IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
         for (int i = 0; i < 100; i++)
         {
-            var buffer = new byte[value.Length];
+            byte[] buffer = new byte[value.Length];
             random.NextBytes(buffer);
             results.Add(buffer);
         }
@@ -90,7 +91,8 @@ public class RandomProviderTests
 #if FEATURE_SPAN
     [Theory]
     [AutoData]
-    public void GenerateRandom_NextBytes_Span_ShouldReturnSpecifiedValue(int seed, byte[] value)
+    public void GenerateRandom_NextBytes_Span_ShouldReturnSpecifiedValue(
+        int seed, byte[] value)
     {
         List<byte[]> results = new();
         RandomSystemMock.IRandomProvider randomProvider = RandomProvider.GenerateRandom(
@@ -99,7 +101,7 @@ public class RandomProviderTests
         IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
         for (int i = 0; i < 100; i++)
         {
-            var buffer = new byte[value.Length];
+            byte[] buffer = new byte[value.Length];
             random.NextBytes(buffer.AsSpan());
             results.Add(buffer);
         }
@@ -110,7 +112,8 @@ public class RandomProviderTests
 
     [Theory]
     [AutoData]
-    public void GenerateRandom_NextDouble_ShouldReturnSpecifiedValue(int seed, double value)
+    public void GenerateRandom_NextDouble_ShouldReturnSpecifiedValue(
+        int seed, double value)
     {
         List<double> results = new();
         RandomSystemMock.IRandomProvider randomProvider = RandomProvider.GenerateRandom(
@@ -128,7 +131,8 @@ public class RandomProviderTests
 #if FEATURE_RANDOM_ADVANCED
     [Theory]
     [AutoData]
-    public void GenerateRandom_NextSingle_ShouldReturnSpecifiedValue(int seed, float value)
+    public void GenerateRandom_NextSingle_ShouldReturnSpecifiedValue(
+        int seed, float value)
     {
         List<float> results = new();
         RandomSystemMock.IRandomProvider randomProvider = RandomProvider.GenerateRandom(
@@ -252,7 +256,8 @@ public class RandomProviderTests
         int index = 0;
         List<int> results = new();
         RandomSystemMock.IRandomProvider randomProvider = RandomProvider.GenerateRandom(
-            new RandomProvider.RandomGenerator(intGenerator: () => values[index++ % values.Length]));
+            new RandomProvider.RandomGenerator(intGenerator: ()
+                => values[index++ % values.Length]));
 
         IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
         for (int i = 0; i < 100; i++)

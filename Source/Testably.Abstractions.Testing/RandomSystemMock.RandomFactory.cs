@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Testably.Abstractions.Testing;
+﻿namespace Testably.Abstractions.Testing;
 
 public sealed partial class RandomSystemMock
 {
@@ -20,11 +18,13 @@ public sealed partial class RandomSystemMock
 
         /// <inheritdoc cref="IRandomSystem.IRandomFactory.Shared" />
         public IRandomSystem.IRandom Shared
-            => _randomSystemMock.RandomProvider.GetRandom(Testing.RandomProvider.SharedSeed);
+            => _randomSystemMock.RandomProvider.GetRandom(Testing.RandomProvider
+               .SharedSeed);
 
         /// <inheritdoc cref="IRandomSystem.IRandomFactory.New()" />
         public IRandomSystem.IRandom New()
-            => _randomSystemMock.RandomProvider.GetRandom(Testing.RandomProvider.NewSeed());
+            => _randomSystemMock.RandomProvider.GetRandom(
+                Testing.RandomProvider.NewSeed());
 
         /// <inheritdoc cref="IRandomSystem.IRandomFactory.New(int)" />
         public IRandomSystem.IRandom New(int seed)

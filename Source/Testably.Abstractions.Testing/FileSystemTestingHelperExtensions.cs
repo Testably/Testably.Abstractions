@@ -45,7 +45,8 @@ public static class FileSystemTestingHelperExtensions
                                                      IRandomSystem? randomSystem = null)
     {
         randomSystem ??= new RandomSystem();
-        directoryName ??= FileNames[randomSystem.Random.Shared.Next(FileNames.Length - 1)];
+        directoryName ??=
+            FileNames[randomSystem.Random.Shared.Next(FileNames.Length - 1)];
         int suffix = randomSystem.Random.Shared.Next(suffixMaxValue);
         return $"{directoryName}-{suffix}";
     }
@@ -88,7 +89,8 @@ public static class FileSystemTestingHelperExtensions
     {
         randomSystem ??= new RandomSystem();
         fileExtension ??=
-            CommonFileExtensions[randomSystem.Random.Shared.Next(CommonFileExtensions.Length - 1)];
+            CommonFileExtensions[
+                randomSystem.Random.Shared.Next(CommonFileExtensions.Length - 1)];
         return fileExtension.TrimStart('.');
     }
 
