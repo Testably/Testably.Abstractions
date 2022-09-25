@@ -55,9 +55,9 @@ public static class TimeProvider
         public DateTime MinValue { get; set; } = DateTime.MinValue;
 
 #if NETSTANDARD2_0
-    /// <inheritdoc cref="ITimeSystem.IDateTime.UnixEpoch" />
-    public DateTime UnixEpoch { get; set; } =
-        new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        /// <inheritdoc cref="ITimeSystem.IDateTime.UnixEpoch" />
+        public DateTime UnixEpoch { get; set; } =
+            new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 #else
         /// <inheritdoc cref="TimeSystemMock.ITimeProvider.UnixEpoch" />
         public DateTime UnixEpoch { get; set; } = DateTime.UnixEpoch;

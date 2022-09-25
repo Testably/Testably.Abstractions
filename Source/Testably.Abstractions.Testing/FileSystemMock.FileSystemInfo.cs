@@ -16,7 +16,8 @@ public sealed partial class FileSystemMock
         private DateTime _lastWriteTime;
         protected readonly string OriginalPath;
 
-        internal FileSystemInfoMock(string fullName, string originalPath, FileSystemMock fileSystem)
+        internal FileSystemInfoMock(string fullName, string originalPath,
+                                    FileSystemMock fileSystem)
         {
             FullName = fullName;
 #if NETFRAMEWORK
@@ -139,7 +140,7 @@ public sealed partial class FileSystemMock
             => throw new NotImplementedException();
 #endif
 
-#endregion
+        #endregion
 
 #if NETSTANDARD2_0
         /// <inheritdoc cref="object.ToString()" />

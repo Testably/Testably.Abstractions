@@ -459,7 +459,7 @@ public sealed partial class FileSystemMock
         }
 #endif
 
-#endregion
+        #endregion
 
 #if FEATURE_FILESYSTEM_ASYNC
         private static void ThrowIfCancelled(CancellationToken cancellationToken)

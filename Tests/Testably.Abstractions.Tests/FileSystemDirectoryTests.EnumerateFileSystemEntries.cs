@@ -38,7 +38,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
            .GenerateRandomFile(subdirectory.FullName);
 
         List<string> result = FileSystem.Directory
-           .EnumerateFileSystemEntries(baseDirectory.FullName, "*", SearchOption.AllDirectories)
+           .EnumerateFileSystemEntries(baseDirectory.FullName, "*",
+                SearchOption.AllDirectories)
            .ToList();
 
         result.Count.Should().Be(3);
@@ -164,10 +165,13 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     {
         IFileSystem.IFileInfo foundFile1 = FileSystem.GenerateRandomFile(path);
         IFileSystem.IFileInfo foundFile2 = FileSystem.GenerateRandomFile(path);
-        var foundSubdirectory = FileSystem.GenerateRandomSubdirectory(path);
-        IFileSystem.IFileInfo notFoundFile = FileSystem.GenerateRandomFile(foundSubdirectory.FullName);
+        IFileSystem.IDirectoryInfo foundSubdirectory =
+            FileSystem.GenerateRandomSubdirectory(path);
+        IFileSystem.IFileInfo notFoundFile =
+            FileSystem.GenerateRandomFile(foundSubdirectory.FullName);
 
-        List<string> result = FileSystem.Directory.EnumerateFileSystemEntries(path).ToList();
+        List<string> result =
+            FileSystem.Directory.EnumerateFileSystemEntries(path).ToList();
 
         result.Count.Should().Be(3);
         result.Should().Contain(foundFile1.ToString());
@@ -178,15 +182,17 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    public void EnumerateFileSystemEntries_WithSearchPattern_ShouldReturnMatchingFileSystemEntries(
-        string path)
+    public void
+        EnumerateFileSystemEntries_WithSearchPattern_ShouldReturnMatchingFileSystemEntries(
+            string path)
     {
         IFileSystem.IFileInfo foundFile1 = FileSystem.GenerateRandomFile(path);
         IFileSystem.IFileInfo foundFile2 = FileSystem.GenerateRandomFile(path);
         IFileSystem.IFileInfo notFoundFile =
             FileSystem.GenerateRandomFileInRandomSubdirectoryOf(path);
 
-        List<string> result = FileSystem.Directory.EnumerateFileSystemEntries(path, foundFile1.Name)
+        List<string> result = FileSystem.Directory
+           .EnumerateFileSystemEntries(path, foundFile1.Name)
            .ToList();
 
         result.Count.Should().Be(1);

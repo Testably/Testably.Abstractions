@@ -143,7 +143,8 @@ public static class FileSystemTestingHelperExtensions
         do
         {
             IFileSystem.IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New(
-                    fileSystem.Path.Combine(basePath, fileSystem.GenerateRandomDirectoryName(directoryName)));
+                fileSystem.Path.Combine(basePath,
+                    fileSystem.GenerateRandomDirectoryName(directoryName)));
             if (!directoryInfo.Exists)
             {
                 directoryInfo.Create();
