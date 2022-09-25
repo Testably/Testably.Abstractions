@@ -1,6 +1,4 @@
-﻿using Testably.Abstractions.Testing.Internal;
-
-namespace Testably.Abstractions.Testing;
+﻿namespace Testably.Abstractions.Testing;
 
 /// <summary>
 ///     Helper extension methods for testing purposes.
@@ -43,10 +41,13 @@ public static class FileSystemTestingHelperExtensions
     /// </summary>
     public static string GenerateRandomDirectoryName(this IFileSystem fileSystem,
                                                      string? directoryName = null,
-                                                     int suffixMaxValue = 100000)
+                                                     int suffixMaxValue = 100000,
+                                                     IRandomSystem? randomSystem = null)
     {
-        directoryName ??= FileNames[ThreadSafeRandom.Next(FileNames.Length - 1)];
-        int suffix = ThreadSafeRandom.Next(suffixMaxValue);
+        randomSystem ??= new RandomSystem();
+        directoryName ??=
+            FileNames[randomSystem.Random.Shared.Next(FileNames.Length - 1)];
+        int suffix = randomSystem.Random.Shared.Next(suffixMaxValue);
         return $"{directoryName}-{suffix}";
     }
 
@@ -83,10 +84,13 @@ public static class FileSystemTestingHelperExtensions
     ///     but a leading dot is removed.
     /// </summary>
     public static string GenerateRandomFileExtension(this IFileSystem fileSystem,
-                                                     string? fileExtension = null)
+                                                     string? fileExtension = null,
+                                                     IRandomSystem? randomSystem = null)
     {
+        randomSystem ??= new RandomSystem();
         fileExtension ??=
-            CommonFileExtensions[ThreadSafeRandom.Next(CommonFileExtensions.Length - 1)];
+            CommonFileExtensions[
+                randomSystem.Random.Shared.Next(CommonFileExtensions.Length - 1)];
         return fileExtension.TrimStart('.');
     }
 
@@ -118,11 +122,13 @@ public static class FileSystemTestingHelperExtensions
     public static string GenerateRandomFileName(this IFileSystem fileSystem,
                                                 string? fileExtension = null,
                                                 string? fileName = null,
-                                                int suffixMaxValue = 100000)
+                                                int suffixMaxValue = 100000,
+                                                IRandomSystem? randomSystem = null)
     {
+        randomSystem ??= new RandomSystem();
         fileExtension = fileSystem.GenerateRandomFileExtension(fileExtension);
-        fileName ??= FileNames[ThreadSafeRandom.Next(FileNames.Length - 1)];
-        int suffix = ThreadSafeRandom.Next(suffixMaxValue);
+        fileName ??= FileNames[randomSystem.Random.Shared.Next(FileNames.Length - 1)];
+        int suffix = randomSystem.Random.Shared.Next(suffixMaxValue);
         return $"{fileName}-{suffix}.{fileExtension}";
     }
 
