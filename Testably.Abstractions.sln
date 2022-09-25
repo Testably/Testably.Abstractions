@@ -42,6 +42,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\ci.yml = .github\workflows\ci.yml
 		.github\workflows\pr-naming.yml = .github\workflows\pr-naming.yml
 		.github\workflows\release.yml = .github\workflows\release.yml
+		.github\workflows\stryker.yml = .github\workflows\stryker.yml
 	EndProjectSection
 EndProject
 Global

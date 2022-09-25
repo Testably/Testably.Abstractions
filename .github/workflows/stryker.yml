@@ -1,0 +1,29 @@
+name: .NET Stryker unit test quality check
+
+on:
+  workflow_dispatch
+    
+jobs:
+  stryker:
+    name: Analyze Testably.Abstractions.Extensions with Stryker
+    runs-on: windows-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Install .NET Stryker
+        shell: powershell
+        run: |
+          dotnet tool install dotnet-stryker --global
+          dotnet tool restore
+      - name: Analyze Testably.Abstractions.Extensions
+        shell: powershell
+        run: |
+          cd .\Tests\Testably.Abstractions.Extensions.Tests
+          dotnet stryker -p "Testably.Abstractions.Extensions.csproj"
+      - name: Upload Report for Testably.Abstractions.Extensions
+        uses: actions/upload-artifact@v3
+        with:
+          name: Extensions
+          path: StrykerOutput/**/*.html
