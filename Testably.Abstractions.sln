@@ -33,6 +33,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2FDB2AAE-E5CE-483E-A1A6-EC0B0A4AD67B}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\Directory.Build.props = Tests\Directory.Build.props
+		Tests\stryker-config-extensions.json = Tests\stryker-config-extensions.json
+		Tests\stryker-config.json = Tests\stryker-config.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{5E35E265-7110-47A0-9E3E-B5180BBB5AA6}"
@@ -42,6 +44,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\ci.yml = .github\workflows\ci.yml
 		.github\workflows\pr-naming.yml = .github\workflows\pr-naming.yml
 		.github\workflows\release.yml = .github\workflows\release.yml
+		.github\workflows\stryker.yml = .github\workflows\stryker.yml
 	EndProjectSection
 EndProject
 Global

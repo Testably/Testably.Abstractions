@@ -1,0 +1,12 @@
+{
+  "stryker-config": {
+    "test-projects": [
+      "./Tests/Testably.Abstractions.Extensions.Tests/Testably.Abstractions.Extensions.Tests.csproj"
+    ],
+    "project": "Testably.Abstractions.Extensions.csproj",
+    "target-framework": "net6.0",
+    "coverage-analysis": "all",
+    "reporters": [ "html", "json", "cleartexttree" ],
+    "mutation-level": "Advanced"
+  }
+}

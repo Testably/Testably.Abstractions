@@ -1,0 +1,33 @@
+name: .NET Stryker
+
+on:
+  pull_request:
+    branches: [main]
+    
+jobs:
+  stryker:
+    name: Analyze quality of unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Install .NET Stryker
+        shell: bash
+        run: |
+          dotnet tool install dotnet-stryker --global
+          dotnet tool restore
+      - name: Analyze Testably.Abstractions
+        shell: bash
+        run: |
+          dotnet stryker -f Tests/stryker-config.json
+      - name: Analyze Testably.Abstractions.Extensions
+        shell: bash
+        run: |
+          dotnet stryker -f Tests/stryker-config-extensions.json
+      - name: Upload Report for Testably.Abstractions
+        uses: actions/upload-artifact@v3
+        with:
+          name: Stryker
+          path: StrykerOutput/**/*.html
