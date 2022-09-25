@@ -7,6 +7,9 @@
     "target-framework": "net6.0",
     "coverage-analysis": "all",
     "reporters": [ "html", "json", "cleartexttree", "dashboard" ],
-    "mutation-level": "Advanced"
+    "mutation-level": "Advanced",
+    "dashboard": {
+      "module": "Abstractions"
+    }
   }
 }
