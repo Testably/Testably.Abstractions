@@ -54,6 +54,22 @@ jobs:
       - name: Run Tests
         run: vstest.console.exe .\Tests\Testably.Abstractions.Tests\bin\Release\net472\Testably.Abstractions.Tests.dll .\Tests\Testably.Abstractions.Extensions.Tests\bin\Release\net472\Testably.Abstractions.Extensions.Tests.dll
 
+  stryker:
+    name: Analyze Unit Test with .NET Stryker
+    runs-on: windows-latest
+    steps:
+      - name: Analyze Testably.Abstractions.Extensions with Stryker
+        shell: powershell
+        run: |
+          dotnet tool install dotnet-stryker --global
+          dotnet tool restore
+          cd .\Tests\Testably.Abstractions.Extensions.Tests
+          dotnet stryker -p "Testably.Abstractions.Extensions.csproj"
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Stryker
+          path: StrykerOutput/**/*.html
+  
   analyze:
     name: Static code analysis
     runs-on: windows-latest
