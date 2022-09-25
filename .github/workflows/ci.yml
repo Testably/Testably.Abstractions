@@ -1,3 +1,32 @@
+Skip to content
+Search or jump to…
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@vbreuss 
+Testably
+/
+Testably.Abstractions
+Public
+Code
+Issues
+Pull requests
+1
+Actions
+Projects
+Security
+Insights
+Settings
+Testably.Abstractions/.github/workflows/ci.yml
+@vbreuss
+vbreuss Update ci.yml
+Latest commit 3eac6b7 17 seconds ago
+ History
+ 1 contributor
+102 lines (98 sloc)  3.55 KB
+
 name: Continuous Integration
 
 on:
@@ -90,9 +119,28 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Testably_Testably.Abstractions" /o:"testably" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+          dotnet tool install minver-cli
+          dotnet tool restore
+          $version = minver -t v
+          $v,$p = $version -split '-',2
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Testably_Testably.Abstractions" /o:"testably" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /v:"$v" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
           dotnet tool install --global dotnet-coverage
           dotnet restore -s 'nuget.config'
           dotnet build --no-incremental /p:NetCoreOnly=True
           dotnet-coverage collect 'dotnet test --no-build' -f xml  -o 'coverage.xml'
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+Footer
+© 2022 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+Testably.Abstractions/ci.yml at 3eac6b773651a0b493425e2d69f8a44ca29fbc06 · Testably/Testably.Abstractions
