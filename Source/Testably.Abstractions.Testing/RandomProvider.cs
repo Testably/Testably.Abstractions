@@ -50,31 +50,46 @@ public static class RandomProvider
     public class RandomGenerator : IRandomSystem.IRandom
     {
         private readonly Func<int>? _intGenerator;
+#if FEATURE_RANDOM_ADVANCED
         private readonly Func<long>? _longGenerator;
-        private readonly Func<double>? _doubleGenerator;
         private readonly Func<float>? _singleGenerator;
+#endif
+        private readonly Func<double>? _doubleGenerator;
         private readonly Func<byte[]>? _byteGenerator;
         private readonly IRandomSystem.IRandom _random;
 
+#if FEATURE_RANDOM_ADVANCED
         /// <summary>
-        ///     Initializes a new instance of <see cref="RandomGenerator" /> which allows specifying explicit generators.
+        ///     Initializes a new instance of <see cref="RandomGenerator" /> which allows specifying explicit generators:<br />
+        ///     - <paramref name="intGenerator" />: The generator for <c>int</c> values.
+        ///     - <paramref name="longGenerator" />: The generator for <c>long</c> values.
+        ///     - <paramref name="singleGenerator" />: The generator for <c>float</c> values.
+        ///     - <paramref name="doubleGenerator" />: The generator for <c>double</c> values.
+        ///     - <paramref name="byteGenerator" />: The generator for <c>byte[]</c> values.
         /// </summary>
-        /// <param name="intGenerator">The generator for <c>int</c> values.</param>
-        /// <param name="longGenerator">The generator for <c>long</c> values.</param>
-        /// <param name="doubleGenerator">The generator for <c>double</c> values.</param>
-        /// <param name="singleGenerator">The generator for <c>float</c> values.</param>
-        /// <param name="byteGenerator">The generator for filling <c>byte[]</c> values.</param>
+#else
+        /// <summary>
+        ///     Initializes a new instance of <see cref="RandomGenerator" /> which allows specifying explicit generators:<br />
+        ///     - <paramref name="intGenerator"/>: The generator for <c>int</c> values.
+        ///     - <paramref name="doubleGenerator"/>: The generator for <c>double</c> values.
+        ///     - <paramref name="byteGenerator"/>: The generator for <c>byte[]</c> values.
+        /// </summary>
+#endif
         public RandomGenerator(
             Func<int>? intGenerator = null,
+#if FEATURE_RANDOM_ADVANCED
             Func<long>? longGenerator = null,
-            Func<double>? doubleGenerator = null,
             Func<float>? singleGenerator = null,
+#endif
+            Func<double>? doubleGenerator = null,
             Func<byte[]>? byteGenerator = null)
         {
             _intGenerator = intGenerator;
+#if FEATURE_RANDOM_ADVANCED
             _longGenerator = longGenerator;
-            _doubleGenerator = doubleGenerator;
             _singleGenerator = singleGenerator;
+#endif
+            _doubleGenerator = doubleGenerator;
             _byteGenerator = byteGenerator;
             _random = new RandomSystem().Random.Shared;
         }
@@ -102,7 +117,7 @@ public static class RandomProvider
         {
             if (_byteGenerator != null)
             {
-                var bytes = _byteGenerator.Invoke();
+                byte[] bytes = _byteGenerator.Invoke();
                 Array.Copy(bytes, buffer, Math.Min(bytes.Length, buffer.Length));
             }
             else
@@ -117,7 +132,7 @@ public static class RandomProvider
         {
             if (_byteGenerator != null)
             {
-                var bytes = _byteGenerator.Invoke();
+                byte[] bytes = _byteGenerator.Invoke();
                 bytes.AsSpan().Slice(0, buffer.Length).CopyTo(buffer);
             }
             else
@@ -172,7 +187,7 @@ public static class RandomProvider
         private Guid DefaultGuidGenerator()
             => Guid.NewGuid();
 
-        private IRandomSystem.IRandom DefaultRandomGenerator(int seed)
+        private IRandomSystem.IRandom DefaultRandomGenerator(int _)
             => new RandomGenerator();
 
         #region IRandomProvider Members

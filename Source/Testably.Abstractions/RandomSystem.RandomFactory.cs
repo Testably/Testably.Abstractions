@@ -9,7 +9,7 @@ public sealed partial class RandomSystem
     /// </summary>
     private sealed class RandomFactory : IRandomSystem.IRandomFactory
     {
-        [ThreadStatic] private static RandomWrapper? _local;
+        private RandomWrapper? _shared;
 
         private static readonly Random Global = new();
 
@@ -30,7 +30,7 @@ public sealed partial class RandomSystem
         {
             get
             {
-                if (_local is null)
+                if (_shared is null)
                 {
                     int seed;
                     lock (Global)
@@ -38,10 +38,10 @@ public sealed partial class RandomSystem
                         seed = Global.Next();
                     }
 
-                    _local = new RandomWrapper(new Random(seed));
+                    _shared = new RandomWrapper(new Random(seed));
                 }
 
-                return _local;
+                return _shared;
             }
         }
 
@@ -53,7 +53,7 @@ public sealed partial class RandomSystem
         public IRandomSystem.IRandom New(int seed)
             => new RandomWrapper(new Random(seed));
 
-        private class RandomWrapper : IRandomSystem.IRandom
+        private sealed class RandomWrapper : IRandomSystem.IRandom
         {
             private readonly Random _instance;
 
