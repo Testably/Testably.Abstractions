@@ -90,11 +90,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          dotnet tool install minver-cli
-          dotnet tool restore
-          $version = minver -t v
-          $v,$p = $version -split '-',2
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Testably_Testably.Abstractions" /o:"testably" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /v:"$v" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Testably_Testably.Abstractions" /o:"testably" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
           dotnet tool install --global dotnet-coverage
           dotnet restore -s 'nuget.config'
           dotnet build --no-incremental /p:NetCoreOnly=True
