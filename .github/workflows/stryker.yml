@@ -25,7 +25,7 @@ jobs:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
-          dotnet stryker -f Tests/stryker-config.json
+          dotnet stryker -f Tests/stryker-config.json -v "${GITHUB_REF#refs/heads/}"
       - name: Analyze Testably.Abstractions.Extensions
         shell: bash
         run: |
