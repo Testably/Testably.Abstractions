@@ -12,6 +12,11 @@ public sealed partial class FileSystemMock : IFileSystem
         => _callbackHandler;
 
     /// <summary>
+    ///     The used random system.
+    /// </summary>
+    public IRandomSystem RandomSystem { get; }
+
+    /// <summary>
     ///     The used time system.
     /// </summary>
     public ITimeSystem TimeSystem { get; }
@@ -28,6 +33,7 @@ public sealed partial class FileSystemMock : IFileSystem
     /// </summary>
     public FileSystemMock()
     {
+        RandomSystem = new RandomSystem();
         TimeSystem = new TimeSystemMock(TimeProvider.Now());
         FileSystemContainer = new InMemoryFileSystem(this);
         _callbackHandler = new FileSystemMockCallbackHandler();

@@ -4,6 +4,9 @@ namespace Testably.Abstractions;
 
 public sealed partial class RandomSystem
 {
+    /// <summary>
+    ///     <see href="https://andrewlock.net/building-a-thread-safe-random-implementation-for-dotnet-framework/" />
+    /// </summary>
     private sealed class RandomFactory : IRandomSystem.IRandomFactory
     {
         [ThreadStatic] private static RandomWrapper? _local;
