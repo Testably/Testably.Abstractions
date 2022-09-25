@@ -84,27 +84,18 @@ jobs:
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-      - name: Set version using MinVer
-        shell: powershell
-        run: |
-          dotnet tool install minver-cli --global
-          dotnet tool restore
-          $version = minver -t v
-          $v,$p = $version -split '-',2
-          echo "PRODUCT_VERSION=$v"
-          echo "PRODUCT_VERSION=$v" >> $GITHUB_ENV
-      - name: Use the value
-        id: step_two
-        run: |
-          echo "${{ env.PRODUCT_VERSION }}" # This will output '0.2.1'
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          echo "${{ env.PRODUCT_VERSION }}"
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Testably_Testably.Abstractions" /o:"testably" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /v:"${{ env.PRODUCT_VERSION }}" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+          dotnet tool install minver-cli --global
+          dotnet tool restore
+          $version = minver -t v
+          $productVersion,$prerelease = $version -split '-',2
+          echo "Detected product version: $productVersion"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Testably_Testably.Abstractions" /o:"testably" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /v:"$productVersion" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
           dotnet tool install --global dotnet-coverage
           dotnet restore -s 'nuget.config'
           dotnet build --no-incremental /p:NetCoreOnly=True
