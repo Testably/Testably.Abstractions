@@ -31,9 +31,3 @@ jobs:
         with:
           name: Stryker
           path: StrykerOutput/**/*.html
-      - name: Mutation Annotation Report
-        uses: johanholmerin/mutation-report-action@0.2.0
-        if: ${{ always() }} # Upload even if tests don't pass testing threshold
-        with:
-          repo-token: '${{ secrets.GITHUB_TOKEN }}'
-          report-json: './reports/mutation/mutation.json' # Optional, default
