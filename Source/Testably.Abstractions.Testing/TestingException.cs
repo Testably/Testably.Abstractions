@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Testably.Abstractions.Testing;
 
 /// <summary>
 ///     Custom <see cref="TestingException" /> when using the test system incorrectly.
 /// </summary>
+[Serializable]
 public class TestingException : Exception
 {
     /// <summary>
@@ -21,6 +23,15 @@ public class TestingException : Exception
     /// </summary>
     public TestingException(string message, Exception inner)
         : base(message, inner)
+    {
+    }
+
+    /// <summary>
+    ///     Initializes a new instance of <see cref="TestingException" /> for serialization.
+    ///     <para />
+    ///     Without this constructor, deserialization will fail!
+    /// </summary>
+    protected TestingException(SerializationInfo info, StreamingContext context)
     {
     }
 }
