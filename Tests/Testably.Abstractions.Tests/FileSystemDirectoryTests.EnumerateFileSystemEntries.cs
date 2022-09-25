@@ -201,11 +201,9 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         result.Should().NotContain(notFoundFile.ToString());
     }
 
-    [Theory]
-    [AutoData]
+    [Fact]
     public void
-        EnumerateFileSystemEntries_WithSearchPatternInSubdirectory_ShouldReturnMatchingFileSystemEntriesInSubdirectories(
-            string path1, string path2)
+        EnumerateFileSystemEntries_WithSearchPatternInSubdirectory_ShouldReturnMatchingFileSystemEntriesInSubdirectories()
     {
         IFileSystem.IFileInfo foundFile1 = FileSystem
            .GenerateRandomFileInRandomSubdirectoryOf(fileName: "foobar");

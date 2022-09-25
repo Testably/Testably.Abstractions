@@ -1,5 +1,4 @@
-﻿using System;
-using Testably.Abstractions.Testing.Internal;
+﻿using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
 
@@ -32,8 +31,7 @@ public static class FileSystemTestingHelperExtensions
                 fileSystem.Path.Combine(basePath, fileNameWithExtension));
         if (fileInfo.Exists)
         {
-            //TODO: Custom exception
-            throw new Exception($"The file '{fileInfo.FullName}' already exists!");
+            throw new TestingException($"The file '{fileInfo.FullName}' already exists!");
         }
 
         fileSystem.File.WriteAllText(fileInfo.FullName, null);
