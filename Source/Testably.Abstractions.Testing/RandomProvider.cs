@@ -18,7 +18,7 @@ public static class RandomProvider
     /// <summary>
     ///     The default implementation for a random provider.
     /// </summary>
-    public static RandomSystemMock.IRandomProvider Default
+    public static RandomSystemMock.IRandomProvider Default()
         => new RandomProviderImplementation();
 
     /// <summary>
@@ -31,9 +31,9 @@ public static class RandomProvider
     ///     Initializes the <see cref="RandomSystemMock.RandomProvider" /> with an explicit global
     ///     <see cref="IRandomSystem.IRandom" /> generator.
     /// </summary>
-    public static RandomSystemMock.IRandomProvider GenerateGuid(
-        Func<IRandomSystem.IRandom> randomGenerator)
-        => new RandomProviderImplementation(randomGenerator: _ => randomGenerator());
+    public static RandomSystemMock.IRandomProvider GenerateRandom(
+        IRandomSystem.IRandom randomGenerator)
+        => new RandomProviderImplementation(randomGenerator: _ => randomGenerator);
 
     /// <summary>
     ///     Returns the next seed used when creating a new Random instance without seed.
@@ -53,7 +53,7 @@ public static class RandomProvider
         private readonly Func<long>? _longGenerator;
         private readonly Func<double>? _doubleGenerator;
         private readonly Func<float>? _singleGenerator;
-        private readonly Action<byte[]>? _byteGenerator;
+        private readonly Func<byte[]>? _byteGenerator;
         private readonly IRandomSystem.IRandom _random;
 
         /// <summary>
@@ -69,7 +69,7 @@ public static class RandomProvider
             Func<long>? longGenerator = null,
             Func<double>? doubleGenerator = null,
             Func<float>? singleGenerator = null,
-            Action<byte[]>? byteGenerator = null)
+            Func<byte[]>? byteGenerator = null)
         {
             _intGenerator = intGenerator;
             _longGenerator = longGenerator;
@@ -102,7 +102,8 @@ public static class RandomProvider
         {
             if (_byteGenerator != null)
             {
-                _byteGenerator.Invoke(buffer);
+                var bytes = _byteGenerator.Invoke();
+                Array.Copy(bytes, buffer, Math.Min(bytes.Length, buffer.Length));
             }
             else
             {
@@ -116,7 +117,8 @@ public static class RandomProvider
         {
             if (_byteGenerator != null)
             {
-                _byteGenerator.Invoke(buffer.ToArray());
+                var bytes = _byteGenerator.Invoke();
+                bytes.AsSpan().Slice(0, buffer.Length).CopyTo(buffer);
             }
             else
             {
@@ -128,6 +130,7 @@ public static class RandomProvider
         /// <inheritdoc cref="IRandomSystem.IRandom.NextDouble()" />
         public double NextDouble()
             => _doubleGenerator?.Invoke() ?? _random.NextDouble();
+
 #if FEATURE_RANDOM_ADVANCED
         /// <inheritdoc cref="IRandomSystem.IRandom.NextInt64()" />
         public long NextInt64()

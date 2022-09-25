@@ -18,7 +18,7 @@ public sealed partial class RandomSystemMock : IRandomSystem
     /// <summary>
     ///     Initializes the <see cref="RandomSystemMock" /> with a fixed seed random.
     /// </summary>
-    public RandomSystemMock() : this(Testing.RandomProvider.Default)
+    public RandomSystemMock() : this(Testing.RandomProvider.Default())
     {
     }
 
