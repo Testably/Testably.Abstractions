@@ -53,7 +53,7 @@ jobs:
         run: msbuild.exe Testably.Abstractions.sln /p:platform="Any CPU" /p:configuration="Release"
       - name: Run Tests
         run: vstest.console.exe .\Tests\Testably.Abstractions.Tests\bin\Release\net472\Testably.Abstractions.Tests.dll .\Tests\Testably.Abstractions.Extensions.Tests\bin\Release\net472\Testably.Abstractions.Extensions.Tests.dll
-        
+
   analyze:
     name: Static code analysis
     runs-on: windows-latest
