@@ -1,6 +1,8 @@
 name: .NET Stryker
 
-on: workflow_dispatch
+on:
+  pull_request:
+    branches: [main]
     
 jobs:
   stryker:
