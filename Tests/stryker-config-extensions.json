@@ -1,5 +1,9 @@
 {
   "stryker-config": {
+    "project-info": {
+      "name": "github.com/Testably/Testably.Abstractions",
+      "module": "Testably.Abstractions.Extensions"
+    },
     "test-projects": [
       "./Tests/Testably.Abstractions.Extensions.Tests/Testably.Abstractions.Extensions.Tests.csproj"
     ],

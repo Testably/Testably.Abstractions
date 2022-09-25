@@ -19,6 +19,8 @@ jobs:
           dotnet tool install dotnet-stryker --global
           dotnet tool restore
       - name: Analyze Testably.Abstractions
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
           dotnet stryker -f Tests/stryker-config.json
