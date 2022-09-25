@@ -26,10 +26,12 @@ public sealed partial class FileSystemMock
         #region IWritableFileInfo Members
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Directory" />
-        public IFileSystem.IDirectoryInfo? Directory { get; }
+        public IFileSystem.IDirectoryInfo? Directory
+            => DirectoryInfoMock.New(DirectoryName, FileSystem);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.DirectoryName" />
-        public string? DirectoryName { get; }
+        public string? DirectoryName
+            => FileSystem.Path.GetDirectoryName(OriginalPath);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.IsReadOnly" />
         public bool IsReadOnly { get; set; }
@@ -157,7 +159,7 @@ public sealed partial class FileSystemMock
             }
 
 #if NETFRAMEWORK
-            var originalPath = fileSystem.Path.GetFileName(path.TrimEnd(' '));
+            string originalPath = path.TrimEnd(' ');
 #else
             string originalPath = path;
 #endif

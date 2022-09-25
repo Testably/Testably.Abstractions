@@ -32,4 +32,7 @@ internal static class ThreadSafeRandom
 
     public static int Next()
         => Instance.Next();
+
+    public static int Next(int maxValue)
+        => Instance.Next(maxValue);
 }
