@@ -57,7 +57,7 @@ public class RandomProviderTests
     {
         List<int> results = new();
         RandomSystemMock.IRandomProvider randomProvider = RandomProvider.GenerateRandom(
-            new RandomProvider.RandomGenerator(() => value));
+            new RandomProvider.RandomGenerator(intGenerator: () => value));
 
         IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
         for (int i = 0; i < 100; i++)
@@ -152,7 +152,7 @@ public class RandomProviderTests
         int maxValue = 10;
         List<int> results = new();
         RandomSystemMock.IRandomProvider randomProvider = RandomProvider.GenerateRandom(
-            new RandomProvider.RandomGenerator(() => value));
+            new RandomProvider.RandomGenerator(intGenerator: () => value));
         int expectedValue = Math.Min(value, maxValue - 1);
 
         IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
@@ -173,7 +173,7 @@ public class RandomProviderTests
         int maxValue = 20;
         List<int> results = new();
         RandomSystemMock.IRandomProvider randomProvider = RandomProvider.GenerateRandom(
-            new RandomProvider.RandomGenerator(() => value));
+            new RandomProvider.RandomGenerator(intGenerator: () => value));
         int expectedValue = Math.Max(Math.Min(value, maxValue - 1), minValue);
 
         IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
@@ -252,7 +252,7 @@ public class RandomProviderTests
         int index = 0;
         List<int> results = new();
         RandomSystemMock.IRandomProvider randomProvider = RandomProvider.GenerateRandom(
-            new RandomProvider.RandomGenerator(() => values[index++ % values.Length]));
+            new RandomProvider.RandomGenerator(intGenerator: () => values[index++ % values.Length]));
 
         IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
         for (int i = 0; i < 100; i++)

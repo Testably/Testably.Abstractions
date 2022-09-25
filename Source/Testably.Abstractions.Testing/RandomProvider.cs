@@ -38,7 +38,6 @@ public static class RandomProvider
     /// <summary>
     ///     Returns the next seed used when creating a new Random instance without seed.
     /// </summary>
-    /// <returns></returns>
     public static int NewSeed()
     {
         return Interlocked.Increment(ref _currentSeed);
@@ -70,12 +69,13 @@ public static class RandomProvider
 #else
         /// <summary>
         ///     Initializes a new instance of <see cref="RandomGenerator" /> which allows specifying explicit generators:<br />
-        ///     - <paramref name="intGenerator"/>: The generator for <c>int</c> values.
-        ///     - <paramref name="doubleGenerator"/>: The generator for <c>double</c> values.
-        ///     - <paramref name="byteGenerator"/>: The generator for <c>byte[]</c> values.
+        ///     - <paramref name="intGenerator" />: The generator for <c>int</c> values.
+        ///     - <paramref name="doubleGenerator" />: The generator for <c>double</c> values.
+        ///     - <paramref name="byteGenerator" />: The generator for <c>byte[]</c> values.
         /// </summary>
 #endif
         public RandomGenerator(
+            int seed = SharedSeed,
             Func<int>? intGenerator = null,
 #if FEATURE_RANDOM_ADVANCED
             Func<long>? longGenerator = null,
@@ -91,7 +91,14 @@ public static class RandomProvider
 #endif
             _doubleGenerator = doubleGenerator;
             _byteGenerator = byteGenerator;
-            _random = new RandomSystem().Random.Shared;
+            if (seed != SharedSeed)
+            {
+                _random = new RandomSystem().Random.New(seed);
+            }
+            else
+            {
+                _random = new RandomSystem().Random.Shared;
+            }
         }
 
         /// <inheritdoc cref="IRandomSystem.IRandom.Next()" />
@@ -187,8 +194,8 @@ public static class RandomProvider
         private Guid DefaultGuidGenerator()
             => Guid.NewGuid();
 
-        private IRandomSystem.IRandom DefaultRandomGenerator(int _)
-            => new RandomGenerator();
+        private IRandomSystem.IRandom DefaultRandomGenerator(int seed)
+            => new RandomGenerator(seed: seed);
 
         #region IRandomProvider Members
 
