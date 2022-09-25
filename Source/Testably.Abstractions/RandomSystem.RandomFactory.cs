@@ -4,12 +4,9 @@ namespace Testably.Abstractions;
 
 public sealed partial class RandomSystem
 {
-    /// <summary>
-    ///     <see href="https://andrewlock.net/building-a-thread-safe-random-implementation-for-dotnet-framework/" />
-    /// </summary>
     private sealed class RandomFactory : IRandomSystem.IRandomFactory
     {
-        private RandomWrapper? _shared;
+        private IRandomSystem.IRandom? _shared;
 
         private static readonly Random Global = new();
 
@@ -32,13 +29,7 @@ public sealed partial class RandomSystem
             {
                 if (_shared is null)
                 {
-                    int seed;
-                    lock (Global)
-                    {
-                        seed = Global.Next();
-                    }
-
-                    _shared = new RandomWrapper(new Random(seed));
+                    _shared = CreateThreadSafeRandomWrapper();
                 }
 
                 return _shared;
@@ -47,11 +38,25 @@ public sealed partial class RandomSystem
 
         /// <inheritdoc cref="IRandomSystem.IRandomFactory.New()" />
         public IRandomSystem.IRandom New()
-            => new RandomWrapper(new Random());
+            => CreateThreadSafeRandomWrapper();
 
         /// <inheritdoc cref="IRandomSystem.IRandomFactory.New(int)" />
         public IRandomSystem.IRandom New(int seed)
             => new RandomWrapper(new Random(seed));
+
+        /// <summary>
+        ///     <see href="https://andrewlock.net/building-a-thread-safe-random-implementation-for-dotnet-framework/" />
+        /// </summary>
+        private static IRandomSystem.IRandom CreateThreadSafeRandomWrapper()
+        {
+            int seed;
+            lock (Global)
+            {
+                seed = Global.Next();
+            }
+
+            return new RandomWrapper(new Random(seed));
+        }
 
         private sealed class RandomWrapper : IRandomSystem.IRandom
         {
