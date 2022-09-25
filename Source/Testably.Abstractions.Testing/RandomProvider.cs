@@ -133,14 +133,14 @@ public static class RandomProvider
         public long NextInt64()
             => _longGenerator?.Invoke() ?? _random.NextInt64();
 
-        /// <inheritdoc cref="IRandomSystem.IRandom.NextInt64(int)" />
-        public long NextInt64(int maxValue)
+        /// <inheritdoc cref="IRandomSystem.IRandom.NextInt64(long)" />
+        public long NextInt64(long maxValue)
             => Math.Min(
                 _longGenerator?.Invoke() ?? _random.NextInt64(maxValue),
                 maxValue - 1);
 
-        /// <inheritdoc cref="IRandomSystem.IRandom.NextInt64(int, int)" />
-        public long NextInt64(int minValue, int maxValue)
+        /// <inheritdoc cref="IRandomSystem.IRandom.NextInt64(long, long)" />
+        public long NextInt64(long minValue, long maxValue)
             => Math.Min(
                 Math.Max(
                     _longGenerator?.Invoke() ?? _random.NextInt64(minValue, maxValue),

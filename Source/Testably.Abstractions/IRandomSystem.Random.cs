@@ -23,10 +23,10 @@ public partial interface IRandomSystem
         long NextInt64();
 
         /// <inheritdoc cref="Random.NextInt64(long)" />
-        long NextInt64(int maxValue);
+        long NextInt64(long maxValue);
 
         /// <inheritdoc cref="Random.NextInt64(long, long)" />
-        long NextInt64(int minValue, int maxValue);
+        long NextInt64(long minValue, long maxValue);
 
         /// <inheritdoc cref="Random.NextSingle()" />
         float NextSingle();

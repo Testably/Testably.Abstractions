@@ -93,12 +93,12 @@ public sealed partial class RandomSystem
             public long NextInt64()
                 => _instance.NextInt64();
 
-            /// <inheritdoc cref="IRandomSystem.IRandom.NextInt64(int)" />
-            public long NextInt64(int maxValue)
+            /// <inheritdoc cref="IRandomSystem.IRandom.NextInt64(long)" />
+            public long NextInt64(long maxValue)
                 => _instance.NextInt64(maxValue);
 
-            /// <inheritdoc cref="IRandomSystem.IRandom.NextInt64(int, int)" />
-            public long NextInt64(int minValue, int maxValue)
+            /// <inheritdoc cref="IRandomSystem.IRandom.NextInt64(long, long)" />
+            public long NextInt64(long minValue, long maxValue)
                 => _instance.NextInt64(minValue, maxValue);
 
             /// <inheritdoc cref="IRandomSystem.IRandom.NextSingle()" />
