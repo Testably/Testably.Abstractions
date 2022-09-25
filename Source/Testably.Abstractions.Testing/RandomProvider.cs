@@ -28,17 +28,44 @@ public static class RandomProvider
         => new RandomProviderImplementation(guidGenerator: guidGenerator);
 
     /// <summary>
-    ///     Initializes the <see cref="RandomSystemMock.RandomProvider" /> with an explicit global
-    ///     <see cref="IRandomSystem.IRandom" /> generator.
+    ///     Initializes the <see cref="RandomSystemMock.RandomProvider" /> with explicit generators.
     /// </summary>
-    public static RandomSystemMock.IRandomProvider GenerateRandom(
-        IRandomSystem.IRandom randomGenerator)
-        => new RandomProviderImplementation(randomGenerator: _ => randomGenerator);
+    public static RandomSystemMock.IRandomProvider Generate(
+        int seed = SharedSeed,
+        Func<Guid>? guidGenerator = null,
+        Func<int>? intGenerator = null,
+#if FEATURE_RANDOM_ADVANCED
+        Func<long>? longGenerator = null,
+        Func<float>? singleGenerator = null,
+#endif
+        Func<double>? doubleGenerator = null,
+        Func<byte[]>? byteGenerator = null)
+        => new RandomProviderImplementation(
+            guidGenerator,
+            _ => new RandomGenerator(
+                seed,
+                intGenerator,
+#if FEATURE_RANDOM_ADVANCED
+                longGenerator,
+                singleGenerator,
+#endif
+                doubleGenerator,
+                byteGenerator));
+
+    /// <summary>
+    ///     Initializes the <see cref="RandomSystemMock.RandomProvider" /> with explicit generators.
+    /// </summary>
+    public static RandomSystemMock.IRandomProvider Generate(
+        Func<Guid>? guidGenerator = null,
+        Func<int, IRandomSystem.IRandom>? randomGenerator = null)
+        => new RandomProviderImplementation(
+            guidGenerator,
+            randomGenerator);
 
     /// <summary>
     ///     Returns the next seed used when creating a new Random instance without seed.
     /// </summary>
-    public static int NewSeed()
+    internal static int NewSeed()
     {
         return Interlocked.Increment(ref _currentSeed);
     }
@@ -184,8 +211,8 @@ public static class RandomProvider
         private readonly Func<int, IRandomSystem.IRandom> _randomGenerator;
 
         public RandomProviderImplementation(
-            Func<int, IRandomSystem.IRandom>? randomGenerator = null,
-            Func<Guid>? guidGenerator = null)
+            Func<Guid>? guidGenerator = null,
+            Func<int, IRandomSystem.IRandom>? randomGenerator = null)
         {
             _guidGenerator = guidGenerator ?? DefaultGuidGenerator;
             _randomGenerator = randomGenerator ?? DefaultRandomGenerator;

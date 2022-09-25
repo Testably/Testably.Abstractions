@@ -26,7 +26,7 @@ public abstract class RandomSystemRandomTests<TRandomSystem>
 
         for (int i = 0; i < 100; i++)
         {
-            results.Add(RandomSystem.Random.Shared.Next());
+            results.Add(RandomSystem.Random.New().Next());
         }
 
         results.Should().OnlyHaveUniqueItems();
