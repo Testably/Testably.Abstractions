@@ -91,16 +91,16 @@ jobs:
           dotnet tool restore
           $version = minver -t v
           $v,$p = $version -split '-',2
-          echo "SONAR_VERSION=$v"
-          echo "SONAR_VERSION=$v" >> $GITHUB_ENV
+          echo "PRODUCT_VERSION=$v"
+          echo "PRODUCT_VERSION=$v" >> $GITHUB_ENV
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_VERSION: ${{ env.SONAR_VERSION }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Testably_Testably.Abstractions" /o:"testably" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /v:"${{ env.SONAR_VERSION }}" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+          echo "${{ env.PRODUCT_VERSION }}"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Testably_Testably.Abstractions" /o:"testably" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /v:"${{ env.PRODUCT_VERSION }}" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
           dotnet tool install --global dotnet-coverage
           dotnet restore -s 'nuget.config'
           dotnet build --no-incremental /p:NetCoreOnly=True
