@@ -90,7 +90,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          dotnet tool install minver-cli
+          dotnet tool install minver-cli --global
           dotnet tool restore
           $version = minver -t v
           $v,$p = $version -split '-',2
