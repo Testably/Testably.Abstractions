@@ -93,6 +93,10 @@ jobs:
           $v,$p = $version -split '-',2
           echo "PRODUCT_VERSION=$v"
           echo "PRODUCT_VERSION=$v" >> $GITHUB_ENV
+      - name: Use the value
+        id: step_two
+        run: |
+          echo "${{ env.PRODUCT_VERSION }}" # This will output '0.2.1'
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
