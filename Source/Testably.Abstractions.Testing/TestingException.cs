@@ -32,6 +32,7 @@ public class TestingException : Exception
     ///     Without this constructor, deserialization will fail!
     /// </summary>
     protected TestingException(SerializationInfo info, StreamingContext context)
+        : base(info, context)
     {
     }
 }
