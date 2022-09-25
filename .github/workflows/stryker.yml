@@ -18,12 +18,22 @@ jobs:
         run: |
           dotnet tool install dotnet-stryker --global
           dotnet tool restore
+      - name: Analyze Testably.Abstractions
+        shell: bash
+        run: |
+          dotnet stryker -f Tests/stryker-config.json
       - name: Analyze Testably.Abstractions.Extensions
         shell: bash
         run: |
-          dotnet stryker -tp "./Tests/Testably.Abstractions.Extensions.Tests" -p "Testably.Abstractions.Extensions.csproj"
-      - name: Upload Report for Testably.Abstractions.Extensions
+          dotnet stryker -f Tests/stryker-config-extensions.json
+      - name: Upload Report for Testably.Abstractions
         uses: actions/upload-artifact@v3
         with:
-          name: Extensions
+          name: Stryker
           path: StrykerOutput/**/*.html
+      - name: Mutation Annotation Report
+        uses: johanholmerin/mutation-report-action@0.2.0
+        if: ${{ always() }} # Upload even if tests don't pass testing threshold
+        with:
+          repo-token: '${{ secrets.GITHUB_TOKEN }}'
+          report-json: './reports/mutation/mutation.json' # Optional, default
