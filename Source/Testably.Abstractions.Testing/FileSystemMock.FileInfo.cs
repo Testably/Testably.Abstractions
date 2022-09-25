@@ -2,8 +2,10 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Runtime.Versioning;
 using Testably.Abstractions.Testing.Internal;
+#if NET6_0_OR_GREATER
+using System.Runtime.Versioning;
+#endif
 
 namespace Testably.Abstractions.Testing;
 
@@ -26,10 +28,12 @@ public sealed partial class FileSystemMock
         #region IWritableFileInfo Members
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Directory" />
-        public IFileSystem.IDirectoryInfo? Directory { get; }
+        public IFileSystem.IDirectoryInfo? Directory
+            => DirectoryInfoMock.New(DirectoryName, FileSystem);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.DirectoryName" />
-        public string? DirectoryName { get; }
+        public string? DirectoryName
+            => FileSystem.Path.GetDirectoryName(OriginalPath);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.IsReadOnly" />
         public bool IsReadOnly { get; set; }
@@ -157,7 +161,7 @@ public sealed partial class FileSystemMock
             }
 
 #if NETFRAMEWORK
-            var originalPath = fileSystem.Path.GetFileName(path.TrimEnd(' '));
+            string originalPath = path.TrimEnd(' ');
 #else
             string originalPath = path;
 #endif

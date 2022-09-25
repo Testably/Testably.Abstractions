@@ -38,10 +38,9 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
             exception.Should().BeOfType<ArgumentException>()
                .Which.Message.Should().Be("Illegal characters in path.");
 #else
-            string expectedMessage =
-                $"The filename, directory name, or volume label syntax is incorrect. : '{FileSystem.Path.Combine(BasePath, path)}'";
+            string expectedMessage = $"'{FileSystem.Path.Combine(BasePath, path)}'";
             exception.Should().BeOfType<IOException>()
-               .Which.Message.Should().Be(expectedMessage);
+               .Which.Message.Should().Contain(expectedMessage);
 #endif
         }
     }
@@ -168,13 +167,11 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
                 Record.Exception(() => FileSystem.Directory.CreateDirectory(path));
 
 #if NETFRAMEWORK
-            exception.Should().BeOfType<ArgumentException>()
-               .Which.Message.Should().Be("Illegal characters in path.");
+            exception.Should().BeOfType<ArgumentException>();
 #else
-            string expectedMessage =
-                $"The filename, directory name, or volume label syntax is incorrect. : '{Path.Combine(BasePath, path)}'";
+            string expectedMessage = $"'{Path.Combine(BasePath, path)}'";
             exception.Should().BeOfType<IOException>()
-               .Which.Message.Should().Be(expectedMessage);
+               .Which.Message.Should().Contain(expectedMessage);
 #endif
         }
     }

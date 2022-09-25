@@ -80,10 +80,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
             sut.Delete();
         });
 
-        exception.Should().BeOfType<IOException>()
-           .Which.Message.Should()
-           .Match(s => s.Contains("directory", StringComparison.OrdinalIgnoreCase))
-           .And.Contain("not empty");
+        exception.Should().BeOfType<IOException>();
 #if !NETFRAMEWORK
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {

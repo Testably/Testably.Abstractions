@@ -4,7 +4,6 @@ using System.Reflection;
 
 namespace Testably.Abstractions.Tests.Parity;
 
-
 public class ParityExclusions
 {
     public List<FieldInfo?> DirectoryFields = new();
@@ -51,10 +50,7 @@ public class ParityExclusions
 #pragma warning restore CS0618
     };
 
-    public List<Type> BaseTypes = new()
-    {
-        typeof(object), typeof(MarshalByRefObject)
-    };
+    public List<Type> BaseTypes = new() { typeof(object), typeof(MarshalByRefObject) };
 
     public List<MethodInfo?> PathMethods = new();
 }

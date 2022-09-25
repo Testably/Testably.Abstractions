@@ -59,11 +59,12 @@ public sealed partial class FileSystemMock
             return _files.TryRemove(key, out _);
         }
 
-        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.Enumerate{TFileSystemInfo}(string, string, EnumerationOptions, Func{Exception})" />
+        /// <inheritdoc
+        ///     cref="FileSystemMock.IInMemoryFileSystem.Enumerate{TFileSystemInfo}(string, string, EnumerationOptions, Func{Exception})" />
         public IEnumerable<TFileSystemInfo> Enumerate<TFileSystemInfo>(string path,
-            string expression,
-            EnumerationOptions enumerationOptions,
-            Func<Exception> notFoundException)
+                                                                       string expression,
+                                                                       EnumerationOptions enumerationOptions,
+                                                                       Func<Exception> notFoundException)
             where TFileSystemInfo : IFileSystem.IFileSystemInfo
         {
             ValidateExpression(expression);
@@ -74,6 +75,7 @@ public sealed partial class FileSystemMock
             {
                 throw notFoundException();
             }
+
             foreach (FileSystemInfoMock file in _files
                .Where(x => x.Key.StartsWith(start))
                .Select(x => x.Value))
@@ -131,14 +133,13 @@ public sealed partial class FileSystemMock
         {
             if (_files.TryGetValue(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
-                out var fileInfo))
+                out FileSystemInfoMock? fileInfo))
             {
                 return fileInfo as IInMemoryFileSystem.IWritableFileInfo;
             }
 
             return null;
         }
-
 
         /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetSubdirectoryPath(string, string)" />
         public string GetSubdirectoryPath(string fullFilePath, string givenPath)
@@ -157,6 +158,7 @@ public sealed partial class FileSystemMock
         {
             return FileInfoMock.New(path, _fileSystem);
         }
+
         private FileSystemInfoMock CreateDirectoryInternal(string path)
         {
             List<string> parents = new();
@@ -189,7 +191,8 @@ public sealed partial class FileSystemMock
             }
 
 #if NETFRAMEWORK
-            return DirectoryInfoMock.New(path, _fileSystem.Path.GetFileName(path), _fileSystem);
+            return DirectoryInfoMock.New(path, _fileSystem.Path.GetFileName(path),
+                _fileSystem);
 #else
             return DirectoryInfoMock.New(path, _fileSystem);
 #endif
