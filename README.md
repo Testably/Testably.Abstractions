@@ -65,7 +65,7 @@ public void StoreData_ShouldWriteValidFile()
   builder.Services.AddSingleton<ITimeSystem, TimeSystem>();
   ```
 
-You can now use the interfaces in your services!
+**You can now use the interfaces in your services!**
 
 # Abstractions
 ![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions)  
