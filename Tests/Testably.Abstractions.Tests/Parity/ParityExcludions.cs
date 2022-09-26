@@ -6,6 +6,8 @@ namespace Testably.Abstractions.Tests.Parity;
 
 public class ParityExclusions
 {
+    public List<Type> BaseTypes = new() { typeof(object), typeof(MarshalByRefObject) };
+
     public List<FieldInfo?> DirectoryFields = new();
 
     public List<MethodInfo?> DirectoryInfoMethods = new()
@@ -28,6 +30,13 @@ public class ParityExclusions
 
     public List<PropertyInfo?> FileInfoProperties = new();
 
+    public List<MethodInfo?> FileMethods = new()
+    {
+#if NET6_0_OR_GREATER
+        typeof(File).GetMethod(nameof(File.OpenHandle))
+#endif
+    };
+
     public List<MethodInfo?> FileSystemInfoMethods = new()
     {
         typeof(FileSystemInfo).GetMethod(nameof(FileSystemInfo.GetObjectData)),
@@ -35,13 +44,9 @@ public class ParityExclusions
     };
 
     public List<PropertyInfo?> FileSystemInfoProperties = new();
+    public List<FieldInfo?> GuidFields = new();
 
-    public List<MethodInfo?> FileMethods = new()
-    {
-#if NET6_0_OR_GREATER
-        typeof(File).GetMethod(nameof(File.OpenHandle))
-#endif
-    };
+    public List<MethodInfo?> GuidMethods = new();
 
     public List<FieldInfo?> PathFields = new()
     {
@@ -50,7 +55,8 @@ public class ParityExclusions
 #pragma warning restore CS0618
     };
 
-    public List<Type> BaseTypes = new() { typeof(object), typeof(MarshalByRefObject) };
-
     public List<MethodInfo?> PathMethods = new();
+
+    public List<MethodInfo?> RandomMethods = new();
+    public List<PropertyInfo?> RandomProperties = new();
 }

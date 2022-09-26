@@ -5,6 +5,11 @@ namespace Testably.Abstractions.Tests.TestHelpers;
 
 internal static class ParityCheckHelper
 {
+    public static string PrintConstructor(this ConstructorInfo constructor)
+    {
+        return
+            $"new {constructor.DeclaringType!.Name}({string.Join(", ", constructor.GetParameters().Select(x => PrintType(x.ParameterType) + " " + x.Name))})";
+    }
     public static string PrintMethod(this MethodInfo method, string namePrefix = "")
     {
         return
@@ -126,6 +131,25 @@ internal static class ParityCheckHelper
         return false;
     }
 
+    public static bool ContainsEquivalentMethod(this Type abstractionType,
+                                                ConstructorInfo systemConstructor)
+    {
+        foreach (MethodInfo abstractionMethod in abstractionType
+           .GetMethods(
+                BindingFlags.Public |
+                BindingFlags.Instance |
+                BindingFlags.FlattenHierarchy)
+           .Where(x => x.Name == "New"))
+        {
+            if (AreMethodsEqual(systemConstructor, abstractionMethod))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static bool ArePropertiesEqual(FieldInfo systemField,
                                            PropertyInfo abstractionProperty)
     {
@@ -200,8 +224,47 @@ internal static class ParityCheckHelper
             }
         }
 
-        if (!IsTypeNameEqual(systemMethod.ReturnParameter.Name,
-            abstractionMethod.ReturnParameter.Name))
+        if (!IsTypeNameEqual(systemMethod.ReturnParameter.ParameterType.Name,
+            abstractionMethod.ReturnParameter.ParameterType.Name))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool AreMethodsEqual(ConstructorInfo systemConstructor,
+                                        MethodInfo abstractionMethod)
+    {
+        ParameterInfo[] systemParameters = systemConstructor.GetParameters();
+        ParameterInfo[] abstractionParameters = abstractionMethod.GetParameters();
+        if (systemParameters.Length != abstractionParameters.Length)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < systemParameters.Length; i++)
+        {
+            if (!string.Equals(systemParameters[i].Name, abstractionParameters[i].Name))
+            {
+                return false;
+            }
+
+            if (!Equals(systemParameters[i].DefaultValue,
+                abstractionParameters[i].DefaultValue))
+            {
+                return false;
+            }
+
+            if (!IsTypeNameEqual(systemParameters[i].ParameterType.Name,
+                abstractionParameters[i].ParameterType.Name))
+            {
+                return false;
+            }
+        }
+
+        if (!IsTypeNameEqual(systemConstructor.DeclaringType!.Name,
+            abstractionMethod.ReturnParameter.ParameterType.Name))
         {
             return false;
         }
