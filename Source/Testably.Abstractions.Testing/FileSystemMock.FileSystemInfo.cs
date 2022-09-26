@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
-#if NETFRAMEWORK
 using Testably.Abstractions.Testing.Internal;
-#endif
 
 namespace Testably.Abstractions.Testing;
 
@@ -21,10 +19,11 @@ public sealed partial class FileSystemMock
         {
             FullName = fullName;
 #if NETFRAMEWORK
-            OriginalPath = originalPath.TrimOnWindows();
+            OriginalPath = originalPath.RemoveLeadingDot().TrimOnWindows();
 #else
-            OriginalPath = originalPath;
+            OriginalPath = originalPath.RemoveLeadingDot();
 #endif
+
             FileSystem = fileSystem;
             AdjustTimes(TimeAdjustments.All);
         }

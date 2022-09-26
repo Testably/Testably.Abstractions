@@ -70,14 +70,13 @@ public sealed partial class FileSystemMock
             ValidateExpression(expression);
             string key = _fileSystem.Path.GetFullPath(path)
                .NormalizeAndTrimPath(_fileSystem);
-            string start = key + _fileSystem.Path.DirectorySeparatorChar;
             if (!_files.ContainsKey(key))
             {
                 throw notFoundException();
             }
 
             foreach (FileSystemInfoMock file in _files
-               .Where(x => x.Key.StartsWith(start))
+               .Where(x => x.Key.StartsWith(key) && x.Key != key)
                .Select(x => x.Value))
             {
                 if (file is TFileSystemInfo matchingType)
@@ -147,6 +146,11 @@ public sealed partial class FileSystemMock
             if (_fileSystem.Path.IsPathRooted(givenPath))
             {
                 return fullFilePath;
+            }
+
+            if (CurrentDirectory == string.Empty.PrefixRoot())
+            {
+                return fullFilePath.Substring(CurrentDirectory.Length);
             }
 
             return fullFilePath.Substring(CurrentDirectory.Length + 1);

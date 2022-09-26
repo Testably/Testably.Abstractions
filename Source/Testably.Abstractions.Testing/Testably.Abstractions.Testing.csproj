@@ -9,6 +9,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="FileSystemInitializer.*.cs">
+      <DependentUpon>FileSystemInitializer.cs</DependentUpon>
+    </Compile>
     <Compile Update="FileSystemMock.*.cs">
       <DependentUpon>FileSystemMock.cs</DependentUpon>
     </Compile>

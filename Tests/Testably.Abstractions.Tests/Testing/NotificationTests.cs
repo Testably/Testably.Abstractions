@@ -46,7 +46,7 @@ public class NotificationTests
 
         bool result = wait.Wait(t =>
         {
-            if (t.TotalMilliseconds > 0)
+            if (t.TotalMilliseconds == 0)
             {
                 ms.Set();
             }
@@ -92,7 +92,7 @@ public class NotificationTests
 
         bool result = wait.Wait(t =>
         {
-            if (t.TotalMilliseconds > 0)
+            if (t.TotalMilliseconds == 0)
             {
                 ms.Set();
             }

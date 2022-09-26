@@ -22,9 +22,9 @@ public sealed partial class FileSystemMock
                 return string.Empty;
             }
 
-            return System.IO.Path.Combine(
+            return System.IO.Path.GetFullPath(System.IO.Path.Combine(
                 _fileSystem.FileSystemContainer.CurrentDirectory,
-                path);
+                path));
         }
     }
 }

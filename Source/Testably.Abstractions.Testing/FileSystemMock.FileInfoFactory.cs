@@ -22,14 +22,14 @@ public sealed partial class FileSystemMock
             => _fileSystem;
 
         /// <inheritdoc cref="IFileSystem.IFileInfoFactory.New(string)" />
-        public IFileSystem.IFileInfo New(string path)
+        public IFileSystem.IFileInfo New(string fileName)
         {
-            if (path == null)
+            if (fileName == null)
             {
-                throw new ArgumentNullException(nameof(path));
+                throw new ArgumentNullException(nameof(fileName));
             }
 
-            return FileInfoMock.New(path, _fileSystem);
+            return FileInfoMock.New(fileName, _fileSystem);
         }
 
         #endregion

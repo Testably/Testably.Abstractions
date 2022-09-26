@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Testing.Internal;
@@ -69,6 +70,16 @@ internal static class PathHelper
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             return path.TrimEnd(' ');
+        }
+
+        return path;
+    }
+
+    internal static string RemoveLeadingDot(this string path)
+    {
+        while (path.StartsWith($".{Path.DirectorySeparatorChar}"))
+        {
+            path = path.Substring(2);
         }
 
         return path;
