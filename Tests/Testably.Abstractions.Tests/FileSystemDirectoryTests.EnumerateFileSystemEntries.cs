@@ -29,23 +29,23 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         EnumerateFileSystemEntries_SearchOptionAllDirectories_FullPath_ShouldReturnAllFileSystemEntriesWithFullPath(
             string path)
     {
-        IFileSystem.IDirectoryInfo baseDirectory =
-            FileSystem.Directory.CreateDirectory(path);
-        IFileSystem.IFileInfo file1 = FileSystem.GenerateRandomFile(path);
-        IFileSystem.IDirectoryInfo subdirectory = FileSystem
-           .GenerateRandomSubdirectory(path);
-        IFileSystem.IFileInfo file2 = FileSystem
-           .GenerateRandomFile(subdirectory.FullName);
+        FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+            FileSystem.InitializeIn(path)
+               .WithAFile()
+               .WithASubdirectory().Initialized(s => s
+                   .WithAFile());
 
         List<string> result = FileSystem.Directory
-           .EnumerateFileSystemEntries(baseDirectory.FullName, "*",
+           .EnumerateFileSystemEntries(
+                FileSystem.Path.GetFullPath(path),
+                "*",
                 SearchOption.AllDirectories)
            .ToList();
 
         result.Count.Should().Be(3);
-        result.Should().Contain(file1.FullName);
-        result.Should().Contain(subdirectory.FullName);
-        result.Should().Contain(file2.FullName);
+        result.Should().Contain(initialized[0].FullName);
+        result.Should().Contain(initialized[1].FullName);
+        result.Should().Contain(initialized[2].FullName);
     }
 
     [Theory]
@@ -54,22 +54,20 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         EnumerateFileSystemEntries_SearchOptionAllDirectories_ShouldReturnAllFileSystemEntries(
             string path)
     {
-        IFileSystem.IFileInfo file1 = FileSystem.GenerateRandomFile(path);
-        IFileSystem.IDirectoryInfo subdirectory = FileSystem
-           .GenerateRandomSubdirectory(path);
-        IFileSystem.IFileInfo file2 = FileSystem
-           .GenerateRandomFile(subdirectory.FullName);
+        FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+            FileSystem.InitializeIn(path)
+               .WithAFile()
+               .WithASubdirectory().Initialized(s => s
+                   .WithAFile());
 
         List<string> result = FileSystem.Directory
            .EnumerateFileSystemEntries(path, "*", SearchOption.AllDirectories)
            .ToList();
 
         result.Count.Should().Be(3);
-        result.Should().Contain(FileSystem.Path.Combine(path, file1.Name));
-        result.Should()
-           .Contain(FileSystem.Path.Combine(path, subdirectory.Name));
-        result.Should()
-           .Contain(FileSystem.Path.Combine(path, subdirectory.Name, file2.Name));
+        result.Should().Contain(initialized[0].ToString());
+        result.Should().Contain(initialized[1].ToString());
+        result.Should().Contain(initialized[2].ToString());
     }
 
     [Theory]
@@ -89,7 +87,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     public void EnumerateFileSystemEntries_SearchPattern_ShouldReturnExpectedValue(
         bool expectToBeFound, string searchPattern, string fileName)
     {
-        FileSystem.GenerateFile(fileName);
+        FileSystem.Initialize().WithFile(fileName);
 
         List<string> result = FileSystem.Directory
            .EnumerateFileSystemEntries(".", searchPattern).ToList();
@@ -114,14 +112,14 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         EnumerateFileSystemEntries_WithEnumerationOptions_ShouldConsiderSetOptions(
             string path)
     {
-        IFileSystem.IFileInfo file1 = FileSystem.GenerateRandomFile(path);
-        IFileSystem.IDirectoryInfo subdirectory = FileSystem
-           .GenerateRandomSubdirectory(path);
-        IFileSystem.IFileInfo file2 = FileSystem
-           .GenerateRandomFile(subdirectory.FullName);
+        FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+            FileSystem.InitializeIn(path)
+               .WithAFile()
+               .WithASubdirectory().Initialized(s => s
+                   .WithAFile());
 
         List<string> result = FileSystem.Directory
-           .EnumerateFileSystemEntries(path, file2.Name.ToUpper(),
+           .EnumerateFileSystemEntries(path, initialized[2].Name.ToUpper(),
                 new EnumerationOptions
                 {
                     MatchCasing = MatchCasing.CaseInsensitive,
@@ -129,9 +127,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
                 }).ToList();
 
         result.Count.Should().Be(1);
-        result.Should().NotContain(FileSystem.Path.Combine(path, file1.Name));
-        result.Should()
-           .Contain(FileSystem.Path.Combine(path, subdirectory.Name, file2.Name));
+        result.Should().NotContain(initialized[0].ToString());
+        result.Should().Contain(initialized[2].ToString());
     }
 #endif
 
@@ -163,21 +160,21 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         EnumerateFileSystemEntries_WithoutSearchString_ShouldReturnAllFileSystemEntriesInDirectSubdirectories(
             string path)
     {
-        IFileSystem.IFileInfo foundFile1 = FileSystem.GenerateRandomFile(path);
-        IFileSystem.IFileInfo foundFile2 = FileSystem.GenerateRandomFile(path);
-        IFileSystem.IDirectoryInfo foundSubdirectory =
-            FileSystem.GenerateRandomSubdirectory(path);
-        IFileSystem.IFileInfo notFoundFile =
-            FileSystem.GenerateRandomFile(foundSubdirectory.FullName);
+        FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+            FileSystem.InitializeIn(path)
+               .WithAFile()
+               .WithAFile()
+               .WithASubdirectory().Initialized(s => s
+                   .WithAFile());
 
         List<string> result =
             FileSystem.Directory.EnumerateFileSystemEntries(path).ToList();
 
         result.Count.Should().Be(3);
-        result.Should().Contain(foundFile1.ToString());
-        result.Should().Contain(foundFile2.ToString());
-        result.Should().Contain(foundSubdirectory.ToString());
-        result.Should().NotContain(notFoundFile.ToString());
+        result.Should().Contain(initialized[0].ToString());
+        result.Should().Contain(initialized[1].ToString());
+        result.Should().Contain(initialized[2].ToString());
+        result.Should().NotContain(initialized[3].ToString());
     }
 
     [Theory]
@@ -186,37 +183,42 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         EnumerateFileSystemEntries_WithSearchPattern_ShouldReturnMatchingFileSystemEntries(
             string path)
     {
-        IFileSystem.IFileInfo foundFile1 = FileSystem.GenerateRandomFile(path);
-        IFileSystem.IFileInfo foundFile2 = FileSystem.GenerateRandomFile(path);
-        IFileSystem.IFileInfo notFoundFile =
-            FileSystem.GenerateRandomFileInRandomSubdirectoryOf(path);
+        FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+            FileSystem.InitializeIn(path)
+               .WithAFile()
+               .WithAFile()
+               .WithASubdirectory().Initialized(s => s
+                   .WithAFile());
 
         List<string> result = FileSystem.Directory
-           .EnumerateFileSystemEntries(path, foundFile1.Name)
+           .EnumerateFileSystemEntries(path, initialized[0].Name)
            .ToList();
 
         result.Count.Should().Be(1);
-        result.Should().Contain(foundFile1.ToString());
-        result.Should().NotContain(foundFile2.ToString());
-        result.Should().NotContain(notFoundFile.ToString());
+        result.Should().Contain(initialized[0].ToString());
+        result.Should().NotContain(initialized[1].ToString());
+        result.Should().NotContain(initialized[3].ToString());
     }
 
     [Fact]
     public void
         EnumerateFileSystemEntries_WithSearchPatternInSubdirectory_ShouldReturnMatchingFileSystemEntriesInSubdirectories()
     {
-        IFileSystem.IFileInfo foundFile1 = FileSystem
-           .GenerateRandomFileInRandomSubdirectoryOf(fileName: "foobar");
-        IFileSystem.IFileInfo foundFile2 = FileSystem
-           .GenerateRandomFileInRandomSubdirectoryOf(fileName: "foobar");
-        _ = FileSystem.GenerateRandomFileInRandomSubdirectoryOf();
+        FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+            FileSystem.Initialize()
+               .WithASubdirectory().Initialized(s => s
+                   .WithAFile("foobar"))
+               .WithASubdirectory().Initialized(s => s
+                   .WithAFile("foobar"))
+               .WithASubdirectory().Initialized(s => s
+                   .WithAFile());
 
         IEnumerable<string> result = FileSystem.Directory
-           .EnumerateFileSystemEntries(".", "foobar-*.*", SearchOption.AllDirectories)
+           .EnumerateFileSystemEntries(".", "*.foobar", SearchOption.AllDirectories)
            .ToArray();
 
         result.Count().Should().Be(2);
-        result.Should().Contain(foundFile1.ToString());
-        result.Should().Contain(foundFile2.ToString());
+        result.Should().Contain(initialized[1].ToString());
+        result.Should().Contain(initialized[3].ToString());
     }
 }

@@ -53,14 +53,14 @@ public static partial class FileSystemInitializer
         public IFileSystem.IFileInfo File { get; }
 
         /// <summary>
-        ///     Sets the contents of the <see cref="File" /> to <paramref name="contents" />.
-        /// </summary>
-        IFileManipulator HasStringContent(string contents);
-
-        /// <summary>
         ///     Sets the contents of the <see cref="File" /> to <paramref name="bytes" />.
         /// </summary>
         IFileManipulator HasBytesContent(byte[] bytes);
+
+        /// <summary>
+        ///     Sets the contents of the <see cref="File" /> to <paramref name="contents" />.
+        /// </summary>
+        IFileManipulator HasStringContent(string contents);
     }
 
     /// <summary>
@@ -72,6 +72,14 @@ public static partial class FileSystemInitializer
         /// <summary>
         /// </summary>
         TFileSystem FileSystem { get; }
+
+        /// <summary>
+        ///     Gives access to the created files or directories in the order of the initialization.
+        /// </summary>
+        IFileSystem.IFileSystemInfo this[int index]
+        {
+            get;
+        }
 
         /// <summary>
         ///     Initializes the <see cref="IFileSystem" /> with a randomly named file.

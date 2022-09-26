@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Testably.Abstractions.Testing;
 
@@ -78,17 +79,17 @@ public static partial class FileSystemInitializer
             /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
             public IFileSystem FileSystem { get; }
 
-            /// <inheritdoc cref="IFileManipulator.HasStringContent" />
-            public IFileManipulator HasStringContent(string contents)
-            {
-                FileSystem.File.WriteAllText(File.FullName, contents);
-                return this;
-            }
-
             /// <inheritdoc cref="IFileManipulator.HasBytesContent" />
             public IFileManipulator HasBytesContent(byte[] bytes)
             {
                 FileSystem.File.WriteAllBytes(File.FullName, bytes);
+                return this;
+            }
+
+            /// <inheritdoc cref="IFileManipulator.HasStringContent" />
+            public IFileManipulator HasStringContent(string contents)
+            {
+                FileSystem.File.WriteAllText(File.FullName, contents);
                 return this;
             }
 
@@ -102,6 +103,9 @@ public static partial class FileSystemInitializer
     {
         private readonly string _basePath;
 
+        private readonly Dictionary<int, IFileSystem.IFileSystemInfo>
+            _initializedFileSystemInfos = new();
+
         public Initializer(TFileSystem fileSystem, string basePath)
         {
             _basePath = basePath;
@@ -110,14 +114,16 @@ public static partial class FileSystemInitializer
 
         protected Initializer(Initializer<TFileSystem> parent)
         {
-            _basePath = parent._basePath;
             FileSystem = parent.FileSystem;
+            _initializedFileSystemInfos = parent._initializedFileSystemInfos;
+            _basePath = parent._basePath;
         }
 
         internal Initializer(Initializer<TFileSystem> parent,
                              IFileSystem.IDirectoryInfo subdirectory)
         {
             FileSystem = parent.FileSystem;
+            _initializedFileSystemInfos = parent._initializedFileSystemInfos;
             _basePath = FileSystem.Path.Combine(parent._basePath, subdirectory.Name);
         }
 
@@ -125,6 +131,10 @@ public static partial class FileSystemInitializer
 
         /// <inheritdoc cref="IFileSystemInitializer{TFileSystem}.FileSystem" />
         public TFileSystem FileSystem { get; }
+
+        /// <inheritdoc cref="IFileSystemInitializer{TFileSystem}.this[int]" />
+        public IFileSystem.IFileSystemInfo this[int index]
+            => _initializedFileSystemInfos[index];
 
         /// <inheritdoc cref="IFileSystemInitializer{TFileSystem}.WithAFile(string?)" />
         public IFileSystemFileInitializer<TFileSystem> WithAFile(string? extension = null)
@@ -145,9 +155,9 @@ public static partial class FileSystemInitializer
             string directoryName;
             do
             {
-                directoryName = FileSystem.Path.Combine(_basePath,
-                    GenerateRandomDirectoryName());
-            } while (FileSystem.Directory.Exists(directoryName));
+                directoryName = GenerateRandomDirectoryName();
+            } while (FileSystem.Directory.Exists(
+                FileSystem.Path.Combine(_basePath, directoryName)));
 
             return WithSubdirectory(directoryName);
         }
@@ -164,6 +174,9 @@ public static partial class FileSystemInitializer
             }
 
             FileSystem.File.WriteAllText(fileInfo.FullName, null);
+            _initializedFileSystemInfos.Add(
+                _initializedFileSystemInfos.Count,
+                fileInfo);
 
             return new FileInitializer<TFileSystem>(this, fileInfo);
         }
@@ -181,6 +194,9 @@ public static partial class FileSystemInitializer
             }
 
             FileSystem.Directory.CreateDirectory(directoryInfo.FullName);
+            _initializedFileSystemInfos.Add(
+                _initializedFileSystemInfos.Count,
+                directoryInfo);
 
             return new DirectoryInitializer<TFileSystem>(this, directoryInfo);
         }
