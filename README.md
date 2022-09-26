@@ -68,7 +68,7 @@ public void StoreData_ShouldWriteValidFile()
 **You can now use the interfaces in your services!**
 
 # Abstractions
-![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions)  
+[![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions)](https://www.nuget.org/packages/Testably.Abstractions)  
 
 ## File
 The `IFileSystem` interface abstracts away the following methods:
@@ -91,7 +91,7 @@ The `ITimeSystem` interface abstracts away the following methods:
   `Task.Delay`
 
 # Testing
-![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions.Testing)  
+[![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions.Testing)](https://www.nuget.org/packages/Testably.Abstractions.Testing)  
 In order to simplify testing, the `Testably.Abstractions.Testing` projects provides mocked instances for the abstraction interfaces:
 - `FileSystemMock` allows replacing the `IFileSystem` with an in-memory file system.
 - `RandomSystemMock` allows providing explicit values for Guid or random values.
@@ -101,6 +101,6 @@ In order to simplify testing, the `Testably.Abstractions.Testing` projects provi
   - `Task.Delay` will return a completed task straight away, but advance the time according to the delay.
 
 # Extensions
-![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions.Extensions)  
+[![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions.Extensions)](https://www.nuget.org/packages/Testably.Abstractions.Extensions)  
 The extensions project provides some methods, based on the interfaces that simplify common tasks.
 See [Examples project](/Docs/Examples) provides some examples of their usage.
