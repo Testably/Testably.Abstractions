@@ -2,12 +2,12 @@
   "stryker-config": {
     "project-info": {
       "name": "github.com/Testably/Testably.Abstractions",
-      "module": "Testably.Abstractions.Extensions"
+      "module": "Testably.Abstractions.Testing"
     },
     "test-projects": [
-      "./Tests/Testably.Abstractions.Extensions.Tests/Testably.Abstractions.Extensions.Tests.csproj"
+      "./Tests/Testably.Abstractions.Tests/Testably.Abstractions.Tests.csproj"
     ],
-    "project": "Testably.Abstractions.Extensions.csproj",
+    "project": "Testably.Abstractions.Testing.csproj",
     "target-framework": "net6.0",
     "coverage-analysis": "all",
     "reporters": [ "html", "json", "cleartexttree", "dashboard" ],
