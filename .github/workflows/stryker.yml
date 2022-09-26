@@ -3,8 +3,6 @@ name: .NET Stryker
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
     
 jobs:
   stryker:
@@ -26,10 +24,18 @@ jobs:
         shell: bash
         run: |
           dotnet stryker -f Tests/stryker-config.json -v "${GITHUB_REF#refs/heads/}"
-      - name: Analyze Testably.Abstractions.Extensions
+      - name: Analyze Testably.Abstractions.Testing
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
-          dotnet stryker -f Tests/stryker-config-extensions.json
+          dotnet stryker -f Tests/stryker-config-testing.json -v "${GITHUB_REF#refs/heads/}"
+      - name: Analyze Testably.Abstractions.Extensions
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        shell: bash
+        run: |
+          dotnet stryker -f Tests/stryker-config-extensions.json -v "${GITHUB_REF#refs/heads/}"
       - name: Upload Report for Testably.Abstractions
         uses: actions/upload-artifact@v3
         with:
