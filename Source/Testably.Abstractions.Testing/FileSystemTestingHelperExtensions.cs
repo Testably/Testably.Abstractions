@@ -29,7 +29,7 @@ public static class FileSystemTestingHelperExtensions
                 fileSystem.Path.Combine(basePath, fileNameWithExtension));
         if (fileInfo.Exists)
         {
-            throw new TestingException($"The file '{fileInfo.FullName}' already exists!");
+            throw new FileSystemInitializer.TestingException($"The file '{fileInfo.FullName}' already exists!");
         }
 
         fileSystem.File.WriteAllText(fileInfo.FullName, null);
