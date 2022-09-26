@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions;
+﻿using System.IO;
+
+namespace Testably.Abstractions;
 
 public partial interface IFileSystem
 {
@@ -9,5 +11,10 @@ public partial interface IFileSystem
     {
         /// <inheritdoc cref="System.IO.FileInfo(string)" />
         IFileInfo New(string fileName);
+
+        /// <summary>
+        ///     Wraps the <paramref name="fileInfo"/> to the testably interface <see cref="IFileInfo"/>.
+        /// </summary>
+        IFileInfo Wrap(FileInfo fileInfo);
     }
 }

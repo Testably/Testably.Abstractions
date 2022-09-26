@@ -1,8 +1,12 @@
+using System.IO;
+
 namespace Testably.Abstractions.Tests;
 
 public abstract class FileSystemFileSystemInfoTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
+    #region Test Setup
+
     public string BasePath { get; }
 
     public TFileSystem FileSystem { get; }
@@ -17,4 +21,40 @@ public abstract class FileSystemFileSystemInfoTests<TFileSystem>
         TimeSystem = timeSystem;
         BasePath = basePath;
     }
+
+    #endregion
+
+    [Fact]
+    public void New_Null_ShouldThrowArgumentNullException()
+    {
+        var exception = Record.Exception(() =>
+        {
+            var result = FileSystem.FileInfo.New(null!);
+        });
+
+        exception.Should().BeOfType<ArgumentNullException>();
+    }
+
+    [Theory]
+    [AutoData]
+    public void New_ShouldCreateNewFileInfoFromPath(string path)
+    {
+        var result = FileSystem.FileInfo.New(path);
+
+        result.ToString().Should().Be(path);
+        result.Exists.Should().BeFalse();
+    }
+
+    [Theory]
+    [AutoData]
+    public void Wrap_ShouldWrapFromFileInfo(string path)
+    {
+        var fileInfo = new FileInfo(path);
+
+        var result = FileSystem.FileInfo.Wrap(fileInfo);
+
+        result.FullName.Should().Be(fileInfo.FullName);
+        result.Exists.Should().Be(fileInfo.Exists);
+    }
+
 }
