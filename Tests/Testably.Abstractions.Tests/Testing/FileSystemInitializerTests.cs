@@ -89,10 +89,8 @@ public class FileSystemInitializerTests
         sut.Directory.EnumerateFiles(".", fileName).Should().ContainSingle();
     }
 
-    [Theory]
-    [AutoData]
-    public void Initialize_WithNestedSubdirectories_ShouldCreateAllNestedDirectories(
-        string fileName)
+    [Fact]
+    public void Initialize_WithNestedSubdirectories_ShouldCreateAllNestedDirectories()
     {
         FileSystemMock sut = new();
         sut.Initialize()
