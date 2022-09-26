@@ -10,7 +10,7 @@
     "project": "Testably.Abstractions.Extensions.csproj",
     "target-framework": "net6.0",
     "coverage-analysis": "all",
-    "reporters": [ "html", "json", "cleartexttree", "dashboard" ],
+    "reporters": [ "html", "json", "cleartext", "dashboard" ],
     "mutation-level": "Advanced"
   }
 }
