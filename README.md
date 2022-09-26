@@ -70,18 +70,18 @@ public void StoreData_ShouldWriteValidFile()
 # Abstractions
 ![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions)  
 
-## File Abstractions
+## File
 The `IFileSystem` interface abstracts away the following methods:
 - `Path` methods
 - `Directory` methods
 - `File` methods
 
-## Random Abstractions
+## Random
 The `IRandomSystem` interface abstracts away the following methods:
 - `Random` methods
 - `Guid` methods
 
-## Time Abstractions
+## Time
 The `ITimeSystem` interface abstracts away the following methods:
 - `DateTime` methods:  
   `DateTime.Now`, `DateTime.UtcNow` and `DateTime.Today`
