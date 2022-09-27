@@ -2,18 +2,6 @@
 
 public static partial class FileSystemInitializer
 {
-    private static readonly string[] CommonFileExtensions =
-    {
-        ".avi", ".bat", ".bin", ".bmp", ".csv", ".docx", ".exe", ".gif", ".html",
-        ".ini", ".iso", ".jpeg", ".midi", ".mov", ".mpeg", ".png", ".rar", ".tmp",
-        ".txt", ".xlsx", ".zip"
-    };
-
-    private static readonly string[] FileNames =
-    {
-        "~WRL001", "foo", "bar", "_", "With whitespace"
-    };
-
     /// <summary>
     ///     Generates a random directory name in the format <c>{directoryName}-{suffix}</c>.
     /// </summary>
@@ -21,9 +9,10 @@ public static partial class FileSystemInitializer
                                                        int suffixMaxValue = 100000,
                                                        IRandomSystem? randomSystem = null)
     {
+        string[] directoryNames = { "~WRL001", "foo", "bar", "_", "With whitespace" };
         randomSystem ??= new RandomSystem();
         directoryName ??=
-            FileNames[randomSystem.Random.Shared.Next(FileNames.Length - 1)];
+            directoryNames[randomSystem.Random.Shared.Next(directoryNames.Length - 1)];
         int suffix = randomSystem.Random.Shared.Next(suffixMaxValue);
         return $"{directoryName}-{suffix}";
     }
@@ -37,10 +26,16 @@ public static partial class FileSystemInitializer
     internal static string GenerateRandomFileExtension(string? fileExtension = null,
                                                        IRandomSystem? randomSystem = null)
     {
+        string[] commonFileExtensions =
+        {
+            ".avi", ".bat", ".bin", ".bmp", ".csv", ".docx", ".exe", ".gif", ".html",
+            ".ini", ".iso", ".jpeg", ".midi", ".mov", ".mpeg", ".png", ".rar", ".tmp",
+            ".txt", ".xlsx", ".zip"
+        };
         randomSystem ??= new RandomSystem();
         fileExtension ??=
-            CommonFileExtensions[
-                randomSystem.Random.Shared.Next(CommonFileExtensions.Length - 1)];
+            commonFileExtensions[
+                randomSystem.Random.Shared.Next(commonFileExtensions.Length - 1)];
         return fileExtension.TrimStart('.');
     }
 
@@ -52,9 +47,10 @@ public static partial class FileSystemInitializer
                                                   int suffixMaxValue = 100000,
                                                   IRandomSystem? randomSystem = null)
     {
+        string[] fileNames = { "~WRL001", "foo", "bar", "_", "With whitespace" };
         randomSystem ??= new RandomSystem();
         fileExtension = GenerateRandomFileExtension(fileExtension);
-        fileName ??= FileNames[randomSystem.Random.Shared.Next(FileNames.Length - 1)];
+        fileName ??= fileNames[randomSystem.Random.Shared.Next(fileNames.Length - 1)];
         int suffix = randomSystem.Random.Shared.Next(suffixMaxValue);
         return $"{fileName}-{suffix}.{fileExtension}";
     }

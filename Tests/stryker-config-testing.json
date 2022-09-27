@@ -12,10 +12,8 @@
     "coverage-analysis": "all",
     "reporters": [ "html", "json", "cleartext", "dashboard" ],
     "mutation-level": "Advanced",
-    "files-to-exclude": [
-      {
-        "pattern": "/FileSystemInitializer.Helpers.cs"
-      }
+    "ignore-methods": [
+      "FileSystemInitializer.GenerateRandom*"
     ]
   }
 }
