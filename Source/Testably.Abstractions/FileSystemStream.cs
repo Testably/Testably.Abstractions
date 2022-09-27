@@ -60,18 +60,23 @@ public abstract class FileSystemStream : Stream
     private readonly Stream _stream;
 
     /// <summary>
-    ///     Initializes a new instance of <see cref="FileSystemStream" />.
+    /// Initializes a new instance of <see cref="FileSystemStream"/>.
     /// </summary>
-    /// <param name="stream">The wrapped <see cref="Stream" />.</param>
-    /// <param name="name">The <see cref="FileStream.Name" /> of the stream.</param>
-    /// <param name="isAsync">
-    ///     The <see cref="FileStream.IsAsync" /> flag, indicating if the <see cref="FileStream" /> was
-    ///     opened asynchronously or synchronously.
-    /// </param>
-    protected FileSystemStream(Stream stream, string name, bool isAsync = false)
+    /// <param name="stream">The wrapped <see cref="Stream"/>.</param>
+    /// <param name="path">The <see cref="FileStream.Name"/> of the stream.</param>
+    /// <param name="isAsync">The <see cref="FileStream.IsAsync"/> flag, indicating if the <see cref="FileStream"/> was opened asynchronously or synchronously.</param>
+    protected FileSystemStream(Stream stream, string? path, bool isAsync = false)
     {
+        if (path is null)
+        {
+            throw new ArgumentNullException(nameof(path), "SR.ArgumentNull_Path");
+        }
+        if (path.Length == 0)
+        {
+            throw new ArgumentException("SR.Argument_EmptyPath", nameof(path));
+        }
         _stream = stream;
-        Name = name;
+        Name = path;
         IsAsync = isAsync;
     }
 
@@ -96,7 +101,7 @@ public abstract class FileSystemStream : Stream
         => _stream.Close();
 
     /// <inheritdoc cref="Stream.CopyTo(Stream, int)" />
-    public override void CopyTo(Stream destination, int bufferSize)
+    public new void CopyTo(Stream destination, int bufferSize)
         => _stream.CopyTo(destination, bufferSize);
 
     /// <inheritdoc cref="Stream.CopyToAsync(Stream, int, CancellationToken)" />
@@ -125,9 +130,11 @@ public abstract class FileSystemStream : Stream
     public override int Read(byte[] buffer, int offset, int count)
         => _stream.Read(buffer, offset, count);
 
+#if FEATURE_SPAN
     /// <inheritdoc cref="Stream.Read(Span{byte})" />
     public override int Read(Span<byte> buffer)
         => _stream.Read(buffer);
+#endif
 
     /// <inheritdoc cref="Stream.ReadAsync(byte[], int, int, CancellationToken)" />
     public override Task<int> ReadAsync(byte[] buffer,
@@ -136,10 +143,12 @@ public abstract class FileSystemStream : Stream
                                         CancellationToken cancellationToken)
         => _stream.ReadAsync(buffer, offset, count, cancellationToken);
 
+#if FEATURE_SPAN
     /// <inheritdoc cref="Stream.ReadAsync(Memory{byte}, CancellationToken)" />
     public override ValueTask<int> ReadAsync(Memory<byte> buffer,
                                              CancellationToken cancellationToken = new())
         => _stream.ReadAsync(buffer, cancellationToken);
+#endif
 
     /// <inheritdoc cref="Stream.ReadByte()" />
     public override int ReadByte()
@@ -161,9 +170,11 @@ public abstract class FileSystemStream : Stream
     public override void Write(byte[] buffer, int offset, int count)
         => _stream.Write(buffer, offset, count);
 
+#if FEATURE_SPAN
     /// <inheritdoc cref="Stream.Write(ReadOnlySpan{byte})" />
     public override void Write(ReadOnlySpan<byte> buffer)
         => _stream.Write(buffer);
+#endif
 
     /// <inheritdoc cref="Stream.WriteAsync(byte[], int, int, CancellationToken)" />
     public override Task WriteAsync(byte[] buffer,
@@ -172,10 +183,12 @@ public abstract class FileSystemStream : Stream
                                     CancellationToken cancellationToken)
         => _stream.WriteAsync(buffer, offset, count, cancellationToken);
 
+#if FEATURE_SPAN
     /// <inheritdoc cref="Stream.WriteAsync(ReadOnlyMemory{byte}, CancellationToken)" />
     public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer,
                                          CancellationToken cancellationToken = new())
         => _stream.WriteAsync(buffer, cancellationToken);
+#endif
 
     /// <inheritdoc cref="Stream.WriteByte(byte)" />
     public override void WriteByte(byte value)
@@ -189,6 +202,7 @@ public abstract class FileSystemStream : Stream
 
     #endregion
 
+#if FEATURE_VALUETASK
     #region IAsyncDisposable
 
     /// <inheritdoc cref="IAsyncDisposable.DisposeAsync()" />
@@ -196,4 +210,5 @@ public abstract class FileSystemStream : Stream
         => _stream.DisposeAsync();
 
     #endregion
+#endif
 }

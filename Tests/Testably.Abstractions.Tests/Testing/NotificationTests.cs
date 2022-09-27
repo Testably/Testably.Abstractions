@@ -50,7 +50,7 @@ public class NotificationTests
             {
                 ms.Set();
             }
-
+            
             filteredCount++;
             return true;
         }, count: 6);
