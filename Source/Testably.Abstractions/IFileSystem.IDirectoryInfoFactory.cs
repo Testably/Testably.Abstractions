@@ -13,7 +13,7 @@ public partial interface IFileSystem
         IDirectoryInfo New(string path);
 
         /// <summary>
-        ///     Wraps the <paramref name="directoryInfo" /> to the testably interface <see cref="IDirectoryInfo" />.
+        ///     Wraps the <paramref name="directoryInfo" /> to the testable interface <see cref="IDirectoryInfo" />.
         /// </summary>
         IDirectoryInfo Wrap(DirectoryInfo directoryInfo);
     }

@@ -50,7 +50,7 @@ public static class RandomProvider
     ///     Initializes the <see cref="RandomSystemMock.RandomProvider" /> with explicit generators.
     /// </summary>
     public static RandomSystemMock.IRandomProvider Generate(
-    Func<int, IRandomSystem.IRandom>? randomGenerator,
+        Func<int, IRandomSystem.IRandom>? randomGenerator,
         Func<Guid>? guidGenerator = null)
         => new RandomProviderImplementation(
             randomGenerator,
@@ -199,6 +199,7 @@ public static class RandomProvider
         public float NextSingle()
             => _singleGenerator?.Invoke() ?? _random.NextSingle();
 #endif
+
         #endregion
     }
 
@@ -209,7 +210,7 @@ public static class RandomProvider
 
         public RandomProviderImplementation(
             Func<int, IRandomSystem.IRandom>? randomGenerator = null,
-        Func<Guid>? guidGenerator = null)
+            Func<Guid>? guidGenerator = null)
         {
             _guidGenerator = guidGenerator ?? DefaultGuidGenerator;
             _randomGenerator = randomGenerator ?? DefaultRandomGenerator;
