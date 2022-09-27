@@ -26,9 +26,9 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     [Fact]
     public void New_Null_ShouldThrowArgumentNullException()
     {
-        var exception = Record.Exception(() =>
+        Exception? exception = Record.Exception(() =>
         {
-            var result = FileSystem.DirectoryInfo.New(null!);
+            IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.New(null!);
         });
 
         exception.Should().BeOfType<ArgumentNullException>();
@@ -38,7 +38,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     [AutoData]
     public void New_ShouldCreateNewDirectoryInfoFromPath(string path)
     {
-        var result = FileSystem.DirectoryInfo.New(path);
+        IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
 
         result.ToString().Should().Be(path);
         result.Exists.Should().BeFalse();
@@ -48,9 +48,9 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     [AutoData]
     public void Wrap_ShouldWrapFromDirectoryInfo(string path)
     {
-        var directoryInfo = new DirectoryInfo(path);
+        DirectoryInfo directoryInfo = new DirectoryInfo(path);
 
-        var result = FileSystem.DirectoryInfo.Wrap(directoryInfo);
+        IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.Wrap(directoryInfo);
 
         result.FullName.Should().Be(directoryInfo.FullName);
         result.Exists.Should().Be(directoryInfo.Exists);

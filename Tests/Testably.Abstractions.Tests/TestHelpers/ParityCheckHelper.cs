@@ -10,6 +10,7 @@ internal static class ParityCheckHelper
         return
             $"new {constructor.DeclaringType!.Name}({string.Join(", ", constructor.GetParameters().Select(x => PrintType(x.ParameterType) + " " + x.Name))})";
     }
+
     public static string PrintMethod(this MethodInfo method, string namePrefix = "")
     {
         return

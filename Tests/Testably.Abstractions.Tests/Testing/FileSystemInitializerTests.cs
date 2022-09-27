@@ -47,7 +47,7 @@ public class FileSystemInitializerTests
         });
 
         exception.Should().BeOfType<FileSystemInitializer.TestingException>()
-            .Which.Message.Should().Contain(fileName);
+           .Which.Message.Should().Contain(fileName);
     }
 
     [Theory]
@@ -121,7 +121,7 @@ public class FileSystemInitializerTests
         });
 
         exception.Should().BeOfType<FileSystemInitializer.TestingException>()
-            .Which.Message.Should().Contain(directoryName);
+           .Which.Message.Should().Contain(directoryName);
     }
 
     [Theory]

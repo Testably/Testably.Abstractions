@@ -13,7 +13,7 @@ public partial interface IFileSystem
         IFileInfo New(string fileName);
 
         /// <summary>
-        ///     Wraps the <paramref name="fileInfo"/> to the testably interface <see cref="IFileInfo"/>.
+        ///     Wraps the <paramref name="fileInfo" /> to the testably interface <see cref="IFileInfo" />.
         /// </summary>
         IFileInfo Wrap(FileInfo fileInfo);
     }

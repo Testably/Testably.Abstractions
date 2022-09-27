@@ -27,9 +27,9 @@ public abstract class FileSystemFileSystemInfoTests<TFileSystem>
     [Fact]
     public void New_Null_ShouldThrowArgumentNullException()
     {
-        var exception = Record.Exception(() =>
+        Exception? exception = Record.Exception(() =>
         {
-            var result = FileSystem.FileInfo.New(null!);
+            IFileSystem.IFileInfo result = FileSystem.FileInfo.New(null!);
         });
 
         exception.Should().BeOfType<ArgumentNullException>();
@@ -39,7 +39,7 @@ public abstract class FileSystemFileSystemInfoTests<TFileSystem>
     [AutoData]
     public void New_ShouldCreateNewFileInfoFromPath(string path)
     {
-        var result = FileSystem.FileInfo.New(path);
+        IFileSystem.IFileInfo result = FileSystem.FileInfo.New(path);
 
         result.ToString().Should().Be(path);
         result.Exists.Should().BeFalse();
@@ -49,12 +49,11 @@ public abstract class FileSystemFileSystemInfoTests<TFileSystem>
     [AutoData]
     public void Wrap_ShouldWrapFromFileInfo(string path)
     {
-        var fileInfo = new FileInfo(path);
+        FileInfo fileInfo = new FileInfo(path);
 
-        var result = FileSystem.FileInfo.Wrap(fileInfo);
+        IFileSystem.IFileInfo result = FileSystem.FileInfo.Wrap(fileInfo);
 
         result.FullName.Should().Be(fileInfo.FullName);
         result.Exists.Should().Be(fileInfo.Exists);
     }
-
 }
