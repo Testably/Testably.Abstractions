@@ -19,6 +19,12 @@ public abstract class RandomSystemGuidTests<TRandomSystem>
     #endregion
 
     [Fact]
+    public void Empty_ShouldReturnEmptyGuid()
+    {
+        RandomSystem.Guid.Empty.Should().Be(Guid.Empty);
+    }
+
+    [Fact]
     public void NewGuid_ShouldBeThreadSafeAndReturnUniqueItems()
     {
         ConcurrentBag<Guid> results = new();
@@ -29,12 +35,6 @@ public abstract class RandomSystemGuidTests<TRandomSystem>
         });
 
         results.Should().OnlyHaveUniqueItems();
-    }
-
-    [Fact]
-    public void Empty_ShouldReturnEmptyGuid()
-    {
-        RandomSystem.Guid.Empty.Should().Be(Guid.Empty);
     }
 
 #if FEATURE_GUID_PARSE

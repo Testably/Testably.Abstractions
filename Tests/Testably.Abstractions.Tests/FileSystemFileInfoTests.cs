@@ -29,7 +29,7 @@ public abstract class FileSystemFileSystemInfoTests<TFileSystem>
     {
         Exception? exception = Record.Exception(() =>
         {
-            IFileSystem.IFileInfo result = FileSystem.FileInfo.New(null!);
+            _ = FileSystem.FileInfo.New(null!);
         });
 
         exception.Should().BeOfType<ArgumentNullException>();
@@ -49,7 +49,7 @@ public abstract class FileSystemFileSystemInfoTests<TFileSystem>
     [AutoData]
     public void Wrap_ShouldWrapFromFileInfo(string path)
     {
-        FileInfo fileInfo = new FileInfo(path);
+        FileInfo fileInfo = new(path);
 
         IFileSystem.IFileInfo result = FileSystem.FileInfo.Wrap(fileInfo);
 

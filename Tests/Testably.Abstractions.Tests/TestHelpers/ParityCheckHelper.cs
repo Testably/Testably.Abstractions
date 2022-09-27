@@ -5,50 +5,50 @@ namespace Testably.Abstractions.Tests.TestHelpers;
 
 internal static class ParityCheckHelper
 {
-    public static string PrintConstructor(this ConstructorInfo constructor)
+    public static bool ContainsEquivalentMethod(this Type abstractionType,
+                                                MethodInfo systemMethod)
     {
-        return
-            $"new {constructor.DeclaringType!.Name}({string.Join(", ", constructor.GetParameters().Select(x => PrintType(x.ParameterType) + " " + x.Name))})";
-    }
-
-    public static string PrintMethod(this MethodInfo method, string namePrefix = "")
-    {
-        return
-            $"{method.ReturnType.PrintType()} {namePrefix}{method.Name}({string.Join(", ", method.GetParameters().Select(x => PrintType(x.ParameterType) + " " + x.Name))})";
-    }
-
-    public static string PrintField(this FieldInfo property, string namePrefix = "")
-    {
-        return
-            $"{property.FieldType.PrintType()} {namePrefix}{property.Name}{{ {(property.IsInitOnly ? "get; " : "get; set; ")}}}";
-    }
-
-    public static string PrintProperty(this PropertyInfo property, string namePrefix = "")
-    {
-        return
-            $"{property.PropertyType.PrintType()} {namePrefix}{property.Name}{{ {(property.CanRead ? "get; " : "")}{(property.CanRead ? "set; " : "")}}}";
-    }
-
-    public static string PrintType(this Type type)
-    {
-        if (type == typeof(void))
+        foreach (MethodInfo abstractionMethod in abstractionType
+           .GetMethods(
+                BindingFlags.Public |
+                BindingFlags.Instance |
+                BindingFlags.FlattenHierarchy)
+           .Where(x => x.Name == systemMethod.Name))
         {
-            return "void";
+            if (AreMethodsEqual(systemMethod, abstractionMethod))
+            {
+                return true;
+            }
         }
 
-        if (type == typeof(string))
+        foreach (Type @interface in abstractionType.GetInterfaces())
         {
-            return "string";
+            if (ContainsEquivalentMethod(@interface, systemMethod))
+            {
+                return true;
+            }
         }
 
-        if (type.GenericTypeArguments.Length > 0)
+        return false;
+    }
+
+    public static bool ContainsEquivalentMethod(this Type abstractionType,
+                                                ConstructorInfo systemConstructor)
+    {
+        foreach (MethodInfo abstractionMethod in abstractionType
+           .GetMethods(
+                BindingFlags.Public |
+                BindingFlags.Instance |
+                BindingFlags.FlattenHierarchy)
+           .Where(x => x.Name == "New"))
         {
-            return type.Name.Substring(0, type.Name.Length - 2) +
-                   "<" + string.Join(",",
-                       type.GenericTypeArguments.Select(x => x.PrintType())) + ">";
+            if (AreMethodsEqual(systemConstructor, abstractionMethod))
+            {
+                return true;
+            }
         }
 
-        return type.Name;
+        return false;
     }
 
     public static bool ContainsEquivalentProperty(this Type abstractionType,
@@ -105,94 +105,50 @@ internal static class ParityCheckHelper
         return false;
     }
 
-    public static bool ContainsEquivalentMethod(this Type abstractionType,
-                                                MethodInfo systemMethod)
+    public static string PrintConstructor(this ConstructorInfo constructor)
     {
-        foreach (MethodInfo abstractionMethod in abstractionType
-           .GetMethods(
-                BindingFlags.Public |
-                BindingFlags.Instance |
-                BindingFlags.FlattenHierarchy)
-           .Where(x => x.Name == systemMethod.Name))
-        {
-            if (AreMethodsEqual(systemMethod, abstractionMethod))
-            {
-                return true;
-            }
-        }
-
-        foreach (Type @interface in abstractionType.GetInterfaces())
-        {
-            if (ContainsEquivalentMethod(@interface, systemMethod))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return
+            $"new {constructor.DeclaringType!.Name}({string.Join(", ", constructor.GetParameters().Select(x => PrintType(x.ParameterType) + " " + x.Name))})";
     }
 
-    public static bool ContainsEquivalentMethod(this Type abstractionType,
-                                                ConstructorInfo systemConstructor)
+    public static string PrintField(this FieldInfo property, string namePrefix = "")
     {
-        foreach (MethodInfo abstractionMethod in abstractionType
-           .GetMethods(
-                BindingFlags.Public |
-                BindingFlags.Instance |
-                BindingFlags.FlattenHierarchy)
-           .Where(x => x.Name == "New"))
-        {
-            if (AreMethodsEqual(systemConstructor, abstractionMethod))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return
+            $"{property.FieldType.PrintType()} {namePrefix}{property.Name}{{ {(property.IsInitOnly ? "get; " : "get; set; ")}}}";
     }
 
-    private static bool ArePropertiesEqual(FieldInfo systemField,
-                                           PropertyInfo abstractionProperty)
+    public static string PrintMethod(this MethodInfo method, string namePrefix = "")
     {
-        if (!IsTypeNameEqual(systemField.FieldType.Name,
-            abstractionProperty.PropertyType.Name))
-        {
-            return false;
-        }
-
-        if (systemField.IsInitOnly)
-        {
-            return abstractionProperty.CanRead && !abstractionProperty.CanWrite;
-        }
-
-        if (systemField.IsPublic)
-        {
-            return abstractionProperty.CanRead && abstractionProperty.CanWrite;
-        }
-
-        return true;
+        return
+            $"{method.ReturnType.PrintType()} {namePrefix}{method.Name}({string.Join(", ", method.GetParameters().Select(x => PrintType(x.ParameterType) + " " + x.Name))})";
     }
 
-    private static bool ArePropertiesEqual(PropertyInfo systemProperty,
-                                           PropertyInfo abstractionProperty)
+    public static string PrintProperty(this PropertyInfo property, string namePrefix = "")
     {
-        if (!IsTypeNameEqual(systemProperty.PropertyType.Name,
-            abstractionProperty.PropertyType.Name))
+        return
+            $"{property.PropertyType.PrintType()} {namePrefix}{property.Name}{{ {(property.CanRead ? "get; " : "")}{(property.CanRead ? "set; " : "")}}}";
+    }
+
+    public static string PrintType(this Type type)
+    {
+        if (type == typeof(void))
         {
-            return false;
+            return "void";
         }
 
-        if (systemProperty.CanRead != abstractionProperty.CanRead)
+        if (type == typeof(string))
         {
-            return false;
+            return "string";
         }
 
-        if (systemProperty.CanWrite != abstractionProperty.CanWrite)
+        if (type.GenericTypeArguments.Length > 0)
         {
-            return false;
+            return type.Name.Substring(0, type.Name.Length - 2) +
+                   "<" + string.Join(",",
+                       type.GenericTypeArguments.Select(x => x.PrintType())) + ">";
         }
 
-        return true;
+        return type.Name;
     }
 
     private static bool AreMethodsEqual(MethodInfo systemMethod,
@@ -266,6 +222,50 @@ internal static class ParityCheckHelper
 
         if (!IsTypeNameEqual(systemConstructor.DeclaringType!.Name,
             abstractionMethod.ReturnParameter.ParameterType.Name))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool ArePropertiesEqual(FieldInfo systemField,
+                                           PropertyInfo abstractionProperty)
+    {
+        if (!IsTypeNameEqual(systemField.FieldType.Name,
+            abstractionProperty.PropertyType.Name))
+        {
+            return false;
+        }
+
+        if (systemField.IsInitOnly)
+        {
+            return abstractionProperty.CanRead && !abstractionProperty.CanWrite;
+        }
+
+        if (systemField.IsPublic)
+        {
+            return abstractionProperty.CanRead && abstractionProperty.CanWrite;
+        }
+
+        return true;
+    }
+
+    private static bool ArePropertiesEqual(PropertyInfo systemProperty,
+                                           PropertyInfo abstractionProperty)
+    {
+        if (!IsTypeNameEqual(systemProperty.PropertyType.Name,
+            abstractionProperty.PropertyType.Name))
+        {
+            return false;
+        }
+
+        if (systemProperty.CanRead != abstractionProperty.CanRead)
+        {
+            return false;
+        }
+
+        if (systemProperty.CanWrite != abstractionProperty.CanWrite)
         {
             return false;
         }
