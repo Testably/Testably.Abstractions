@@ -50,7 +50,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
         exception.Should().BeOfType<FileNotFoundException>()
            .Which.Message.Should()
-           .Be($"Could not find file '{FileSystem.Path.GetFullPath(path)}'.");
+           .Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
     [Theory]

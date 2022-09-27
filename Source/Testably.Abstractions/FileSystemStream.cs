@@ -69,11 +69,11 @@ public abstract class FileSystemStream : Stream
     {
         if (path is null)
         {
-            throw new ArgumentNullException(nameof(path), "SR.ArgumentNull_Path");
+            throw new ArgumentNullException(nameof(path), "Path cannot be null.");
         }
         if (path.Length == 0)
         {
-            throw new ArgumentException("SR.Argument_EmptyPath", nameof(path));
+            throw new ArgumentException("Empty path name is not legal.", nameof(path));
         }
         _stream = stream;
         Name = path;
@@ -95,10 +95,6 @@ public abstract class FileSystemStream : Stream
                                             AsyncCallback? callback,
                                             object? state)
         => _stream.BeginWrite(buffer, offset, count, callback, state);
-
-    /// <inheritdoc cref="Stream.Close()" />
-    public override void Close()
-        => _stream.Close();
 
     /// <inheritdoc cref="Stream.CopyTo(Stream, int)" />
     public new void CopyTo(Stream destination, int bufferSize)
@@ -193,22 +189,11 @@ public abstract class FileSystemStream : Stream
     /// <inheritdoc cref="Stream.WriteByte(byte)" />
     public override void WriteByte(byte value)
         => _stream.WriteByte(value);
-
-    #region IDisposable
-
-    /// <inheritdoc cref="IDisposable.Dispose()" />
-    protected new void Dispose()
-        => _stream.Dispose();
-
-    #endregion
-
-#if FEATURE_VALUETASK
-    #region IAsyncDisposable
-
-    /// <inheritdoc cref="IAsyncDisposable.DisposeAsync()" />
-    public override ValueTask DisposeAsync()
-        => _stream.DisposeAsync();
-
-    #endregion
-#endif
+    
+    /// <inheritdoc cref="Stream.Dispose(bool)" />
+    protected override void Dispose(bool disposing)
+    {
+        _stream.Dispose();
+        base.Dispose(disposing);
+    }
 }

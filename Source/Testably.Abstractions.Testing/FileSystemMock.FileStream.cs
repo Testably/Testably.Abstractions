@@ -44,8 +44,8 @@ public sealed partial class FileSystemMock
         {
             if ((access & FileAccess.Read) != 0 && mode == FileMode.Append)
             {
-                throw new ArgumentException("SR.Argument_InvalidAppendMode",
-                    nameof(options));
+                throw new ArgumentException("Combining FileMode: Append with FileAccess: Read is invalid.",
+                    nameof(access));
             }
 
             if ((access & FileAccess.Write) == 0)
@@ -151,7 +151,7 @@ public sealed partial class FileSystemMock
             base.Write(buffer, offset, count);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="FileSystemStream.Dispose(bool)" />
         protected override void Dispose(bool disposing)
         {
             if (_isDisposed)
