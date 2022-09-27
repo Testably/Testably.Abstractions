@@ -52,7 +52,7 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
         result.Should().Be(contents);
     }
 
-    [Theory(Skip="TODO: File Access lock is not yet implemented for MockFileSystem")]
+    [Theory(Skip = "TODO: File Access lock is not yet implemented for MockFileSystem")]
     [AutoData]
     public void Write_KeepOpen_ShouldCreateValidFileStream(string path, string contents)
     {
@@ -85,7 +85,7 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    public void New_EmptyPath_ShouldThrowArgumentNullException(FileMode mode)
+    public void New_EmptyPath_ShouldThrowArgumentException(FileMode mode)
     {
         Exception? exception = Record.Exception(() =>
         {
@@ -102,12 +102,12 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    public void New_InvalidAccess_ShouldThrowArgumentNullException(
-        string path, FileMode mode)
+    public void New_AppendAccessWithReadWriteMode_ShouldThrowArgumentException(
+        string path)
     {
         Exception? exception = Record.Exception(() =>
         {
-            FileSystem.FileStream.New(path, FileMode.Append, FileAccess.Read);
+            FileSystem.FileStream.New(path, FileMode.Append, FileAccess.ReadWrite);
         });
 
 #if NETFRAMEWORK
@@ -116,5 +116,78 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
         exception.Should().BeOfType<ArgumentException>()
            .Which.ParamName.Should().Be("access");
 #endif
+        exception!.Message.Should()
+           .Contain(FileMode.Append.ToString());
+    }
+
+    [Theory]
+    [InlineAutoData(FileMode.Append)]
+    [InlineAutoData(FileMode.Truncate)]
+    [InlineAutoData(FileMode.Create)]
+    [InlineAutoData(FileMode.CreateNew)]
+    [InlineAutoData(FileMode.Append)]
+    public void New_InvalidModeForReadAccess_ShouldThrowArgumentException(
+        FileMode mode, string path)
+    {
+        FileAccess access = FileAccess.Read;
+        Exception? exception = Record.Exception(() =>
+        {
+            FileSystem.FileStream.New(path, mode, access);
+        });
+
+#if NETFRAMEWORK
+        exception.Should().BeOfType<ArgumentException>();
+#else
+        exception.Should().BeOfType<ArgumentException>()
+           .Which.ParamName.Should().Be("access");
+#endif
+        exception!.Message.Should()
+           .Contain(mode.ToString()).And
+           .Contain(access.ToString());
+    }
+
+    [Theory]
+    [InlineAutoData(FileMode.Open)]
+    [InlineAutoData(FileMode.Truncate)]
+    public void New_MissingFileWithIncorrectMode_ShouldThrowArgumentException(
+        FileMode mode, string path)
+    {
+        Exception? exception = Record.Exception(() =>
+        {
+            FileSystem.FileStream.New(path, mode);
+        });
+
+        exception.Should().BeOfType<FileNotFoundException>()
+           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+    }
+
+    [Theory]
+    [AutoData]
+    public void New_ExistingFileWithCreateNewMode_ShouldThrowArgumentException(
+        string path)
+    {
+        FileSystem.File.WriteAllText(path, "foo");
+        Exception? exception = Record.Exception(() =>
+        {
+            FileSystem.FileStream.New(path, FileMode.CreateNew);
+        });
+
+        exception.Should().BeOfType<IOException>()
+           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+    }
+
+    [Theory]
+    [AutoData]
+    public void New_SamePathAsExistingDirectory_ShouldThrowUnauthorizedAccessException(
+        string path)
+    {
+        FileSystem.Directory.CreateDirectory(path);
+        Exception? exception = Record.Exception(() =>
+        {
+            FileSystem.FileStream.New(path, FileMode.CreateNew);
+        });
+
+        exception.Should().BeOfType<UnauthorizedAccessException>()
+           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using static System.Net.WebRequestMethods;
 
 namespace Testably.Abstractions.Testing;
 
@@ -28,7 +27,8 @@ public sealed partial class FileSystemMock
                                 FileShare share,
                                 int bufferSize,
                                 FileOptions options)
-            : this(new MemoryStream(), fileSystem, path, mode, access, share, bufferSize, options)
+            : this(new MemoryStream(), fileSystem, path, mode, access, share, bufferSize,
+                options)
         {
         }
 
@@ -42,20 +42,39 @@ public sealed partial class FileSystemMock
                                FileOptions options)
             : base(stream, path, (options & FileOptions.Asynchronous) != 0)
         {
-            if ((access & FileAccess.Read) != 0 && mode == FileMode.Append)
+            if (mode == FileMode.Append)
             {
-                throw new ArgumentException("Combining FileMode: Append with FileAccess: Read is invalid.",
+                if (access == FileAccess.Read)
+                {
+                    throw new ArgumentException(
+                        $"Combining FileMode: {mode} with FileAccess: {access} is invalid.",
+                        nameof(access));
+                }
+
+                if (access != FileAccess.Write)
+                {
+                    throw new ArgumentException(
+                        $"{mode} access can be requested only in write-only mode.",
+                        nameof(access));
+                }
+            }
+
+            if (access.HasFlag(FileAccess.Read) &&
+                mode == FileMode.Append)
+            {
+                throw new ArgumentException(
+                    $"Combining FileMode: {mode} with FileAccess: {access} is invalid.",
                     nameof(access));
             }
 
-            if ((access & FileAccess.Write) == 0)
+            if (!access.HasFlag(FileAccess.Write))
             {
                 if (mode == FileMode.Truncate || mode == FileMode.CreateNew ||
                     mode == FileMode.Create || mode == FileMode.Append)
                 {
                     throw new ArgumentException(
-                        "SR.Format(SR.Argument_InvalidFileModeAndAccessCombo, options.Mode, options.Access)",
-                        nameof(options));
+                        $"Combining FileMode: {mode} with FileAccess: {access} is invalid.",
+                        nameof(access));
                 }
             }
 
@@ -67,21 +86,28 @@ public sealed partial class FileSystemMock
             _bufferSize = bufferSize;
             _options = options;
 
-            var file = _fileSystem.FileSystemContainer.GetFile(Name);
+            IInMemoryFileSystem.IWritableFileInfo? file =
+                _fileSystem.FileSystemContainer.GetFile(Name);
             if (file == null)
             {
-                if (_mode.Equals(FileMode.Open) || _mode.Equals(FileMode.Truncate))
+                if (_mode.Equals(FileMode.Open) ||
+                    _mode.Equals(FileMode.Truncate))
                 {
-                    throw new Exception("CommonExceptions.FileNotFound(path)");
+                    throw new FileNotFoundException(
+                        $"Could not find file '{_fileSystem.Path.GetFullPath(Name)}'.");
                 }
-                file = _fileSystem.FileSystemContainer.GetOrAddFile(Name);
+
+                file = _fileSystem.FileSystemContainer.GetOrAddFile(Name)
+                       ?? throw new UnauthorizedAccessException(
+                           $"Access to the path '{_fileSystem.Path.GetFullPath(Name)}' is denied.");
             }
             else if (_mode.Equals(FileMode.CreateNew))
             {
-                throw new Exception("FileAlreadyExists(path)");
+                throw new IOException(
+                    $"The file '{_fileSystem.Path.GetFullPath(Name)}' already exists.");
             }
 
-            _file = file ?? throw new Exception("Could not create file");
+            _file = file;
 
             InitializeStream();
         }
@@ -92,8 +118,8 @@ public sealed partial class FileSystemMock
 
             //var timeAdjustments = GetTimeAdjustmentsForFileStreamWhenFileExists(mode, access);
             //mockFileDataAccessor.AdjustTimes(fileData, timeAdjustments);
-            var existingContents = _file.GetBytes();
-            var keepExistingContents =
+            byte[] existingContents = _file.GetBytes();
+            bool keepExistingContents =
                 existingContents.Length > 0 &&
                 _mode != FileMode.Truncate && _mode != FileMode.Create;
             if (keepExistingContents)
@@ -158,6 +184,7 @@ public sealed partial class FileSystemMock
             {
                 return;
             }
+
             InternalFlush();
             base.Dispose(disposing);
             OnClose();
@@ -173,10 +200,10 @@ public sealed partial class FileSystemMock
         private void InternalFlush()
         {
             /* reset back to the beginning .. */
-            var position = _stream.Position;
+            long position = _stream.Position;
             _stream.Seek(0, SeekOrigin.Begin);
             /* .. read everything out */
-            var data = new byte[Length];
+            byte[] data = new byte[Length];
             _stream.Read(data, 0, (int)Length);
             /* restore to original position */
             _stream.Seek(position, SeekOrigin.Begin);
