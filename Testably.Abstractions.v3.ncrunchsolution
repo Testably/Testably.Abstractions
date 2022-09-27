@@ -1,9 +1,0 @@
-﻿<SolutionConfiguration>
-  <Settings>
-    <AllowParallelTestExecution>True</AllowParallelTestExecution>
-    <MetricsExclusionList>
-      <Value>Docs\Examples\Examples.TimeSystem\Examples.TimeSystem.csproj</Value>
-    </MetricsExclusionList>
-    <SolutionConfigured>True</SolutionConfigured>
-  </Settings>
-</SolutionConfiguration>
