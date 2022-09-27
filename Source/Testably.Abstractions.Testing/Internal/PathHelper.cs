@@ -35,6 +35,16 @@ internal static class PathHelper
            .TrimEndingDirectorySeparator(path.NormalizePath())
            .TrimOnWindows();
 
+    internal static string RemoveLeadingDot(this string path)
+    {
+        while (path.StartsWith($".{Path.DirectorySeparatorChar}"))
+        {
+            path = path.Substring(2);
+        }
+
+        return path;
+    }
+
     internal static void ThrowCommonExceptionsIfPathIsInvalid(
         [NotNull] this string? path, IFileSystem fileSystem)
     {
@@ -70,16 +80,6 @@ internal static class PathHelper
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             return path.TrimEnd(' ');
-        }
-
-        return path;
-    }
-
-    internal static string RemoveLeadingDot(this string path)
-    {
-        while (path.StartsWith($".{Path.DirectorySeparatorChar}"))
-        {
-            path = path.Substring(2);
         }
 
         return path;

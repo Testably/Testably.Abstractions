@@ -46,7 +46,8 @@ public class FileSystemInitializerTests
             sut.Initialize().WithFile(fileName);
         });
 
-        exception.Should().BeOfType<FileSystemInitializer.TestingException>();
+        exception.Should().BeOfType<FileSystemInitializer.TestingException>()
+           .Which.Message.Should().Contain(fileName);
     }
 
     [Theory]
@@ -110,26 +111,27 @@ public class FileSystemInitializerTests
     [Theory]
     [AutoData]
     public void Initialize_WithSubdirectory_Existing_ShouldThrowTestingException(
-        string fileName)
+        string directoryName)
     {
         FileSystemMock sut = new();
-        sut.Directory.CreateDirectory(fileName);
+        sut.Directory.CreateDirectory(directoryName);
         Exception? exception = Record.Exception(() =>
         {
-            sut.Initialize().WithSubdirectory(fileName);
+            sut.Initialize().WithSubdirectory(directoryName);
         });
 
-        exception.Should().BeOfType<FileSystemInitializer.TestingException>();
+        exception.Should().BeOfType<FileSystemInitializer.TestingException>()
+           .Which.Message.Should().Contain(directoryName);
     }
 
     [Theory]
     [AutoData]
     public void Initialize_WithSubdirectory_ShouldCreateDirectoryWithGivenDirectoryName(
-        string fileName)
+        string directoryName)
     {
         FileSystemMock sut = new();
-        sut.Initialize().WithSubdirectory(fileName);
+        sut.Initialize().WithSubdirectory(directoryName);
 
-        sut.Directory.EnumerateDirectories(".", fileName).Should().ContainSingle();
+        sut.Directory.EnumerateDirectories(".", directoryName).Should().ContainSingle();
     }
 }

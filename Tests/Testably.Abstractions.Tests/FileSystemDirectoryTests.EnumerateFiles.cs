@@ -36,7 +36,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
                    .WithAFile());
 
         List<string> result = FileSystem.Directory
-           .EnumerateFiles(FileSystem.Path.GetFullPath(path), "*", SearchOption.AllDirectories)
+           .EnumerateFiles(FileSystem.Path.GetFullPath(path), "*",
+                SearchOption.AllDirectories)
            .ToList();
 
         result.Count.Should().Be(2);
@@ -111,7 +112,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
                .WithAFile()
                .WithASubdirectory().Initialized(s => s
                    .WithAFile());
-        
+
         List<string> result = FileSystem.Directory
            .EnumerateFiles(path, initialized[2].Name.ToUpper(),
                 new EnumerationOptions
@@ -181,7 +182,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
                .WithASubdirectory().Initialized(s => s
                    .WithAFile());
 
-        List<string> result = FileSystem.Directory.EnumerateFiles(path, initialized[0].Name)
+        List<string> result = FileSystem.Directory
+           .EnumerateFiles(path, initialized[0].Name)
            .ToList();
 
         result.Count.Should().Be(1);

@@ -18,6 +18,17 @@ public partial interface IRandomSystem
         /// <inheritdoc cref="Random.Next(int, int)" />
         int Next(int minValue, int maxValue);
 
+        /// <inheritdoc cref="Random.NextBytes(byte[])" />
+        void NextBytes(byte[] buffer);
+
+#if FEATURE_SPAN
+        /// <inheritdoc cref="Random.NextBytes(Span{byte})" />
+        void NextBytes(Span<byte> buffer);
+#endif
+
+        /// <inheritdoc cref="Random.NextDouble()" />
+        double NextDouble();
+
 #if FEATURE_RANDOM_ADVANCED
         /// <inheritdoc cref="Random.NextInt64()" />
         long NextInt64();
@@ -30,17 +41,6 @@ public partial interface IRandomSystem
 
         /// <inheritdoc cref="Random.NextSingle()" />
         float NextSingle();
-#endif
-
-        /// <inheritdoc cref="Random.NextDouble()" />
-        double NextDouble();
-
-        /// <inheritdoc cref="Random.NextBytes(byte[])" />
-        void NextBytes(byte[] buffer);
-
-#if FEATURE_SPAN
-        /// <inheritdoc cref="Random.NextBytes(Span{byte})" />
-        void NextBytes(Span<byte> buffer);
 #endif
     }
 }

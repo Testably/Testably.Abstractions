@@ -6,9 +6,8 @@ public sealed partial class RandomSystem
 {
     private sealed class RandomFactory : IRandomSystem.IRandomFactory
     {
-        private IRandomSystem.IRandom? _shared;
-
         private static readonly Random Global = new();
+        private IRandomSystem.IRandom? _shared;
 
         internal RandomFactory(RandomSystem timeSystem)
         {
@@ -19,8 +18,6 @@ public sealed partial class RandomSystem
 
         /// <inheritdoc cref="IRandomSystem.IRandomSystemExtensionPoint.RandomSystem" />
         public IRandomSystem RandomSystem { get; }
-
-        #endregion
 
         /// <inheritdoc cref="IRandomSystem.IRandomFactory.Shared" />
         public IRandomSystem.IRandom Shared
@@ -44,6 +41,8 @@ public sealed partial class RandomSystem
         public IRandomSystem.IRandom New(int seed)
             => new RandomWrapper(new Random(seed));
 
+        #endregion
+
         /// <summary>
         ///     <see href="https://andrewlock.net/building-a-thread-safe-random-implementation-for-dotnet-framework/" />
         /// </summary>
@@ -66,6 +65,8 @@ public sealed partial class RandomSystem
             {
                 _instance = instance;
             }
+
+            #region IRandom Members
 
             /// <inheritdoc cref="IRandomSystem.IRandom.Next()" />
             public int Next()
@@ -110,6 +111,8 @@ public sealed partial class RandomSystem
             public float NextSingle()
                 => _instance.NextSingle();
 #endif
+
+            #endregion
         }
     }
 }

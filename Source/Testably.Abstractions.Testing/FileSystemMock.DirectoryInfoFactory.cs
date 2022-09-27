@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace Testably.Abstractions.Testing;
 
@@ -31,6 +32,13 @@ public sealed partial class FileSystemMock
 
             return DirectoryInfoMock.New(path, _fileSystem);
         }
+
+        /// <inheritdoc cref="IFileSystem.IDirectoryInfoFactory.Wrap(DirectoryInfo)" />
+        public IFileSystem.IDirectoryInfo Wrap(DirectoryInfo directoryInfo)
+            => new DirectoryInfoMock(
+                directoryInfo.FullName,
+                directoryInfo.ToString(),
+                _fileSystem);
 
         #endregion
     }

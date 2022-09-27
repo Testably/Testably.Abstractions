@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace Testably.Abstractions.Tests;
 
 public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
@@ -21,9 +23,31 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
     #endregion
 
+    [Fact]
+    public void New_Null_ShouldThrowArgumentNullException()
+    {
+        Exception? exception = Record.Exception(() =>
+        {
+            _ = FileSystem.DirectoryInfo.New(null!);
+        });
+
+        exception.Should().BeOfType<ArgumentNullException>();
+    }
+
     [Theory]
     [AutoData]
-    public void Parent_ArbitraryPaths_ShouldNotBeNull(string path1, string path2,
+    public void New_ShouldCreateNewDirectoryInfoFromPath(string path)
+    {
+        IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
+
+        result.ToString().Should().Be(path);
+        result.Exists.Should().BeFalse();
+    }
+
+    [Theory]
+    [AutoData]
+    public void Parent_ArbitraryPaths_ShouldNotBeNull(string path1,
+                                                      string path2,
                                                       string path3)
     {
         string path = FileSystem.Path.Combine(path1, path2, path3);
@@ -45,5 +69,17 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
         result.Root.Exists.Should().BeTrue();
         result.Root.FullName.Should().Be(expectedRoot);
+    }
+
+    [Theory]
+    [AutoData]
+    public void Wrap_ShouldWrapFromDirectoryInfo(string path)
+    {
+        DirectoryInfo directoryInfo = new(path);
+
+        IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.Wrap(directoryInfo);
+
+        result.FullName.Should().Be(directoryInfo.FullName);
+        result.Exists.Should().Be(directoryInfo.Exists);
     }
 }

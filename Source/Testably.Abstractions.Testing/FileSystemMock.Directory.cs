@@ -179,7 +179,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string, string, EnumerationOptions)" />
         public IEnumerable<string> EnumerateFileSystemEntries(string path,
             string searchPattern,
-            EnumerationOptions                enumerationOptions)
+            EnumerationOptions enumerationOptions)
             => _fileSystem.FileSystemContainer.Enumerate<IFileSystem.IFileSystemInfo>(
                     path,
                     searchPattern,

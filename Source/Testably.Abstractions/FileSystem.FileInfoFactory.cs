@@ -23,6 +23,12 @@ public sealed partial class FileSystem
                 new FileInfo(fileName),
                 FileSystem);
 
+        /// <inheritdoc cref="IFileSystem.IFileInfoFactory.Wrap(FileInfo)" />
+        public IFileSystem.IFileInfo Wrap(FileInfo fileInfo)
+            => FileInfoWrapper.FromFileInfo(
+                fileInfo,
+                FileSystem);
+
         #endregion
     }
 }

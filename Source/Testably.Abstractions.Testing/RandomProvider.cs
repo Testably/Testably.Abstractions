@@ -22,12 +22,6 @@ public static class RandomProvider
         => new RandomProviderImplementation();
 
     /// <summary>
-    ///     Initializes the <see cref="RandomSystemMock.RandomProvider" /> with an explicit <see cref="Guid" /> generator.
-    /// </summary>
-    public static RandomSystemMock.IRandomProvider GenerateGuid(Func<Guid> guidGenerator)
-        => new RandomProviderImplementation(guidGenerator: guidGenerator);
-
-    /// <summary>
     ///     Initializes the <see cref="RandomSystemMock.RandomProvider" /> with explicit generators.
     /// </summary>
     public static RandomSystemMock.IRandomProvider Generate(
@@ -41,7 +35,6 @@ public static class RandomProvider
         Func<double>? doubleGenerator = null,
         Func<byte[]>? byteGenerator = null)
         => new RandomProviderImplementation(
-            guidGenerator,
             _ => new RandomGenerator(
                 seed,
                 intGenerator,
@@ -50,17 +43,18 @@ public static class RandomProvider
                 singleGenerator,
 #endif
                 doubleGenerator,
-                byteGenerator));
+                byteGenerator),
+            guidGenerator);
 
     /// <summary>
     ///     Initializes the <see cref="RandomSystemMock.RandomProvider" /> with explicit generators.
     /// </summary>
     public static RandomSystemMock.IRandomProvider Generate(
-        Func<Guid>? guidGenerator = null,
-        Func<int, IRandomSystem.IRandom>? randomGenerator = null)
+        Func<int, IRandomSystem.IRandom>? randomGenerator,
+        Func<Guid>? guidGenerator = null)
         => new RandomProviderImplementation(
-            guidGenerator,
-            randomGenerator);
+            randomGenerator,
+            guidGenerator);
 
     /// <summary>
     ///     Returns the next seed used when creating a new Random instance without seed.
@@ -75,13 +69,13 @@ public static class RandomProvider
     /// </summary>
     public class RandomGenerator : IRandomSystem.IRandom
     {
+        private readonly Func<byte[]>? _byteGenerator;
+        private readonly Func<double>? _doubleGenerator;
         private readonly Func<int>? _intGenerator;
 #if FEATURE_RANDOM_ADVANCED
         private readonly Func<long>? _longGenerator;
         private readonly Func<float>? _singleGenerator;
 #endif
-        private readonly Func<double>? _doubleGenerator;
-        private readonly Func<byte[]>? _byteGenerator;
         private readonly IRandomSystem.IRandom _random;
 
 #if FEATURE_RANDOM_ADVANCED
@@ -111,13 +105,13 @@ public static class RandomProvider
             Func<double>? doubleGenerator = null,
             Func<byte[]>? byteGenerator = null)
         {
+            _byteGenerator = byteGenerator;
+            _doubleGenerator = doubleGenerator;
             _intGenerator = intGenerator;
 #if FEATURE_RANDOM_ADVANCED
             _longGenerator = longGenerator;
             _singleGenerator = singleGenerator;
 #endif
-            _doubleGenerator = doubleGenerator;
-            _byteGenerator = byteGenerator;
             if (seed != SharedSeed)
             {
                 _random = new RandomSystem().Random.New(seed);
@@ -127,6 +121,8 @@ public static class RandomProvider
                 _random = new RandomSystem().Random.Shared;
             }
         }
+
+        #region IRandom Members
 
         /// <inheritdoc cref="IRandomSystem.IRandom.Next()" />
         public int Next()
@@ -203,6 +199,8 @@ public static class RandomProvider
         public float NextSingle()
             => _singleGenerator?.Invoke() ?? _random.NextSingle();
 #endif
+
+        #endregion
     }
 
     private sealed class RandomProviderImplementation : RandomSystemMock.IRandomProvider
@@ -211,18 +209,12 @@ public static class RandomProvider
         private readonly Func<int, IRandomSystem.IRandom> _randomGenerator;
 
         public RandomProviderImplementation(
-            Func<Guid>? guidGenerator = null,
-            Func<int, IRandomSystem.IRandom>? randomGenerator = null)
+            Func<int, IRandomSystem.IRandom>? randomGenerator = null,
+            Func<Guid>? guidGenerator = null)
         {
             _guidGenerator = guidGenerator ?? DefaultGuidGenerator;
             _randomGenerator = randomGenerator ?? DefaultRandomGenerator;
         }
-
-        private Guid DefaultGuidGenerator()
-            => Guid.NewGuid();
-
-        private IRandomSystem.IRandom DefaultRandomGenerator(int seed)
-            => new RandomGenerator(seed: seed);
 
         #region IRandomProvider Members
 
@@ -235,5 +227,11 @@ public static class RandomProvider
             => _randomGenerator(seed);
 
         #endregion
+
+        private Guid DefaultGuidGenerator()
+            => Guid.NewGuid();
+
+        private IRandomSystem.IRandom DefaultRandomGenerator(int seed)
+            => new RandomGenerator(seed: seed);
     }
 }
