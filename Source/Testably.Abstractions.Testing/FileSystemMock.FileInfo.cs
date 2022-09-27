@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Testably.Abstractions.Testing.Internal;
 #if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
@@ -18,6 +20,8 @@ public sealed partial class FileSystemMock
         IInMemoryFileSystem.IWritableFileInfo
     {
         private byte[] _bytes = Array.Empty<byte>();
+
+        private ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
 
         internal FileInfoMock(string fullName, string originalPath,
                               FileSystemMock fileSystem)
@@ -142,6 +146,80 @@ public sealed partial class FileSystemMock
         }
 
         #endregion
+
+        /// <inheritdoc cref="IInMemoryFileSystem.IWritableFileInfo.RequestAccess(FileAccess, FileShare)" />
+        public IDisposable RequestAccess(FileAccess access, FileShare share)
+        {
+            if (CanGetAccess(access, share))
+            {
+                Guid guid = Guid.NewGuid();
+                var fileHandle = new FileHandle(guid, ReleaseAccess, access, share);
+                _fileHandles.TryAdd(guid, fileHandle);
+                return fileHandle;
+            }
+            throw new IOException(
+                $"The process cannot access the file '{FullName}' because it is being used by another process.");
+        }
+
+        private void ReleaseAccess(Guid guid)
+        {
+            _fileHandles.TryRemove(guid, out _);
+        }
+
+        private bool CanGetAccess(FileAccess access, FileShare share)
+        {
+            foreach (var fileHandle in _fileHandles)
+            {
+                if (!fileHandle.Value.GrantAccess(access, share))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private sealed class FileHandle : IDisposable
+        {
+            private readonly Action<Guid> _releaseCallback;
+            private readonly FileAccess _access;
+            private readonly FileShare _share;
+            private readonly Guid _key;
+
+            public FileHandle(Guid key, Action<Guid> releaseCallback, FileAccess access, FileShare share)
+            {
+                _releaseCallback = releaseCallback;
+                _access = access;
+                _share = share;
+                _key = key;
+            }
+
+            public bool GrantAccess(FileAccess access, FileShare share)
+            {
+                return CheckAccessWithShare(access, _share) &&
+                       CheckAccessWithShare(_access, share);
+            }
+
+            private bool CheckAccessWithShare(FileAccess access, FileShare share)
+            {
+                switch (access)
+                {
+                    case FileAccess.Read:
+                        return share.HasFlag(FileShare.Read);
+                    case FileAccess.Write:
+                        return share.HasFlag(FileShare.Write);
+                    default:
+                        return share == FileShare.ReadWrite;
+                }
+            }
+
+            /// <inheritdoc cref="IDisposable.Dispose()" />
+            public void Dispose()
+            {
+                _releaseCallback.Invoke(_key);
+            }
+
+        }
 
         [return: NotNullIfNotNull("path")]
         internal static FileInfoMock? New(string? path, FileSystemMock fileSystem)

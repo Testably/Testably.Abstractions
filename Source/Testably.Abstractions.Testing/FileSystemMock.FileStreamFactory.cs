@@ -9,7 +9,7 @@ public sealed partial class FileSystemMock
     {
         private readonly FileSystemMock _fileSystem;
         private const int DefaultBufferSize = 4096;
-        private const FileShare DefaultShare = FileShare.Read;
+        internal const FileShare DefaultShare = FileShare.Read;
         private const bool DefaultUseAsync = false;
 
         internal FileStreamFactoryMock(FileSystemMock fileSystem,

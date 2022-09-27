@@ -18,6 +18,7 @@ public sealed partial class FileSystemMock
         private readonly FileOptions _options;
         private readonly MemoryStream _stream;
         private bool _isDisposed;
+        private readonly IDisposable _accessLock;
         private readonly IInMemoryFileSystem.IWritableFileInfo _file;
 
         internal FileStreamMock(FileSystemMock fileSystem,
@@ -107,6 +108,7 @@ public sealed partial class FileSystemMock
                     $"The file '{_fileSystem.Path.GetFullPath(Name)}' already exists.");
             }
 
+            _accessLock = file.RequestAccess(access, share);
             _file = file;
 
             InitializeStream();
@@ -185,6 +187,7 @@ public sealed partial class FileSystemMock
                 return;
             }
 
+            _accessLock.Dispose();
             InternalFlush();
             base.Dispose(disposing);
             OnClose();
