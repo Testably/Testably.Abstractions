@@ -7,13 +7,9 @@ on:
     branches: [main]
     
 jobs:
-  test:
-    name: Test
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
+  test-macos:
+    name: Test (MacOS)
+    runs-on: macos-latest
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -22,23 +18,51 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: | 
-            3.1.x
+          dotnet-version: |
             5.0.x
             6.0.x
-      - name: Run tests
+      - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
         run: dotnet test --no-build
 
-  windows-test:
-    name: Test (.NET Framework)
+  test-ubuntu:
+    name: Test (Ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: |
+            5.0.x
+            6.0.x
+      - name: Build solution
+        run: dotnet build /p:NetCoreOnly=True
+      - name: Run tests
+        run: dotnet test --no-build
+
+  test-windows:
+    name: Test (Windows)
     runs-on: windows-latest
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: |
+            5.0.x
+            6.0.x
+      - name: Build solution (.NET core)
+        run: dotnet build /p:NetCoreOnly=True
+      - name: Run tests (.NET core)
+        run: dotnet test --no-build
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
       - name: Setup NuGet
@@ -49,9 +73,9 @@ jobs:
         run: cd $GITHUB_WORKSPACE
       - name: Restore Packages
         run: nuget restore Testably.Abstractions.sln
-      - name: Build Solution
+      - name: Build Solution (.NET Framework)
         run: msbuild.exe Testably.Abstractions.sln /p:platform="Any CPU" /p:configuration="Release"
-      - name: Run Tests
+      - name: Run Tests (.NET Framework)
         run: vstest.console.exe .\Tests\Testably.Abstractions.Tests\bin\Release\net472\Testably.Abstractions.Tests.dll .\Tests\Testably.Abstractions.Extensions.Tests\bin\Release\net472\Testably.Abstractions.Extensions.Tests.dll
 
   analyze:
