@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -317,9 +316,6 @@ public static class RandomProvider
         private Generator<Guid> DefaultGuidGenerator
             => Generator<Guid>.FromCallback(Guid.NewGuid);
 
-        private readonly ConcurrentDictionary<int, IRandomSystem.IRandom>
-            _generatedRandoms = new();
-
         private readonly Generator<Guid> _guidGenerator;
         private readonly Func<int, IRandomSystem.IRandom> _randomGenerator;
 
@@ -344,6 +340,6 @@ public static class RandomProvider
         #endregion
 
         private IRandomSystem.IRandom DefaultRandomGenerator(int seed)
-            => _generatedRandoms.GetOrAdd(seed, s => new RandomGenerator(seed: s));
+            => new RandomGenerator(seed: seed);
     }
 }

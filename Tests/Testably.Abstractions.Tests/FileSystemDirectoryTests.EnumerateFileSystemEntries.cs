@@ -123,7 +123,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
                 new EnumerationOptions
                 {
                     MatchCasing = MatchCasing.CaseInsensitive,
-                    RecurseSubdirectories = true
+                    RecurseSubdirectories = true,
+                    ReturnSpecialDirectories = true
                 }).ToList();
 
         result.Count.Should().Be(1);
