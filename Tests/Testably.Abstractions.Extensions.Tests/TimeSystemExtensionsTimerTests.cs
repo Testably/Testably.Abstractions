@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
@@ -228,7 +229,7 @@ public class TimeSystemExtensionsTimerTests
         TimeSpan callbackDuration = TimeSpan.FromSeconds(2);
         DateTime startTime = new(2010, 5, 2, 10, 0, 0, DateTimeKind.Utc);
         TimeSystemMock timeSystem = new(TimeProvider.Use(startTime));
-        List<DateTime> requestedTimes = new();
+        ConcurrentBag<DateTime> requestedTimes = new();
         timeSystem.On.DateTimeRead(t =>
         {
             requestedTimes.Add(t);
@@ -239,8 +240,10 @@ public class TimeSystemExtensionsTimerTests
 
         IStoppedTimer timer = timeSystem.CreateTimer(
             interval,
-            _ =>
+            token =>
             {
+                Thread.Sleep(10);
+                token.ThrowIfCancellationRequested();
                 timeSystem.Thread.Sleep(callbackDuration);
                 expectedIterations--;
                 if (expectedIterations < 0)
