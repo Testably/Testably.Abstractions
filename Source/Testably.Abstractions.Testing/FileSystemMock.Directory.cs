@@ -42,7 +42,8 @@ public sealed partial class FileSystemMock
         {
             if (!_fileSystem.FileSystemContainer.Delete(path))
             {
-                throw ExceptionFactory.DirectoryNotFound(_fileSystem.Path.GetFullPath(path));
+                throw ExceptionFactory.DirectoryNotFound(
+                    _fileSystem.Path.GetFullPath(path));
             }
         }
 
@@ -51,7 +52,8 @@ public sealed partial class FileSystemMock
         {
             if (!_fileSystem.FileSystemContainer.Delete(path, recursive))
             {
-                throw ExceptionFactory.DirectoryNotFound(_fileSystem.Path.GetFullPath(path));
+                throw ExceptionFactory.DirectoryNotFound(
+                    _fileSystem.Path.GetFullPath(path));
             }
         }
 
@@ -230,7 +232,8 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetDirectoryRoot(string)" />
         public string GetDirectoryRoot(string path)
-            => throw new NotImplementedException();
+            => _fileSystem.Path.GetPathRoot(_fileSystem.Path.GetFullPath(path)) ??
+               throw ExceptionFactory.PathIsEmpty(nameof(path));
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetFiles(string)" />
         public string[] GetFiles(string path)
@@ -273,7 +276,8 @@ public sealed partial class FileSystemMock
         public string[] GetFileSystemEntries(string path,
                                              string searchPattern,
                                              EnumerationOptions enumerationOptions)
-            => EnumerateFileSystemEntries(path, searchPattern, enumerationOptions).ToArray();
+            => EnumerateFileSystemEntries(path, searchPattern, enumerationOptions)
+               .ToArray();
 #endif
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLastAccessTime(string)" />
@@ -317,11 +321,29 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetCreationTime(string, DateTime)" />
         public void SetCreationTime(string path, DateTime creationTime)
-            => throw new NotImplementedException();
+        {
+            IFileSystem.IDirectoryInfo? fileSystemInfo =
+                _fileSystem.FileSystemContainer.GetDirectory(path);
+            if (fileSystemInfo == null)
+            {
+                throw ExceptionFactory.FileNotFound(FileSystem.Path.GetFullPath(path));
+            }
+
+            fileSystemInfo.CreationTime = creationTime;
+        }
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetCreationTimeUtc(string, DateTime)" />
         public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
-            => throw new NotImplementedException();
+        {
+            IFileSystem.IDirectoryInfo? fileSystemInfo =
+                _fileSystem.FileSystemContainer.GetDirectory(path);
+            if (fileSystemInfo == null)
+            {
+                throw ExceptionFactory.FileNotFound(FileSystem.Path.GetFullPath(path));
+            }
+
+            fileSystemInfo.CreationTimeUtc = creationTimeUtc;
+        }
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetCurrentDirectory(string)" />
         public void SetCurrentDirectory(string path)
@@ -329,19 +351,55 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetLastAccessTime(string, DateTime)" />
         public void SetLastAccessTime(string path, DateTime lastAccessTime)
-            => throw new NotImplementedException();
+        {
+            IFileSystem.IDirectoryInfo? fileSystemInfo =
+                _fileSystem.FileSystemContainer.GetDirectory(path);
+            if (fileSystemInfo == null)
+            {
+                throw ExceptionFactory.FileNotFound(FileSystem.Path.GetFullPath(path));
+            }
+
+            fileSystemInfo.LastAccessTime = lastAccessTime;
+        }
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetLastAccessTimeUtc(string, DateTime)" />
         public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
-            => throw new NotImplementedException();
+        {
+            IFileSystem.IDirectoryInfo? fileSystemInfo =
+                _fileSystem.FileSystemContainer.GetDirectory(path);
+            if (fileSystemInfo == null)
+            {
+                throw ExceptionFactory.FileNotFound(FileSystem.Path.GetFullPath(path));
+            }
+
+            fileSystemInfo.LastAccessTimeUtc = lastAccessTimeUtc;
+        }
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetLastWriteTime(string, DateTime)" />
         public void SetLastWriteTime(string path, DateTime lastWriteTime)
-            => throw new NotImplementedException();
+        {
+            IFileSystem.IDirectoryInfo? fileSystemInfo =
+                _fileSystem.FileSystemContainer.GetDirectory(path);
+            if (fileSystemInfo == null)
+            {
+                throw ExceptionFactory.FileNotFound(FileSystem.Path.GetFullPath(path));
+            }
+
+            fileSystemInfo.LastWriteTime = lastWriteTime;
+        }
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetLastWriteTimeUtc(string, DateTime)" />
         public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
-            => throw new NotImplementedException();
+        {
+            IFileSystem.IDirectoryInfo? fileSystemInfo =
+                _fileSystem.FileSystemContainer.GetDirectory(path);
+            if (fileSystemInfo == null)
+            {
+                throw ExceptionFactory.FileNotFound(FileSystem.Path.GetFullPath(path));
+            }
+
+            fileSystemInfo.LastWriteTimeUtc = lastWriteTimeUtc;
+        }
 
         #endregion
 
@@ -352,7 +410,8 @@ public sealed partial class FileSystemMock
             if (path.HasIllegalCharacters(_fileSystem))
             {
                 throw ExceptionFactory.PathHasIncorrectSyntax(
-                    _fileSystem.Path.Combine(_fileSystem.Directory.GetCurrentDirectory(), path));
+                    _fileSystem.Path.Combine(_fileSystem.Directory.GetCurrentDirectory(),
+                        path));
             }
 
             IFileSystem.IDirectoryInfo? directory =
