@@ -73,6 +73,7 @@ public static class RandomProvider
     {
         private readonly Func<T> _callback;
         private readonly IEnumerator<T>? _enumerator;
+        private bool _isDisposed;
 
         private Generator(Func<T> callback)
         {
@@ -84,7 +85,11 @@ public static class RandomProvider
             _enumerator = enumerable.GetEnumerator();
             _callback = () =>
             {
-                _enumerator.MoveNext();
+                if (!_enumerator.MoveNext())
+                {
+                    _enumerator.Reset();
+                    _enumerator.MoveNext();
+                }
                 return _enumerator.Current;
             };
         }
@@ -92,7 +97,11 @@ public static class RandomProvider
         #region IDisposable Members
 
         /// <inheritdoc cref="IDisposable.Dispose()" />
-        public void Dispose() => _enumerator?.Dispose();
+        public void Dispose()
+        {
+            _isDisposed = true;
+            _enumerator?.Dispose();
+        }
 
         #endregion
 
@@ -110,7 +119,7 @@ public static class RandomProvider
         /// <summary>
         ///     Creates a generator that gets the elements from the provided <paramref name="callback" />
         /// </summary>
-        public static Generator<T> FromDelegate(Func<T> callback)
+        public static Generator<T> FromCallback(Func<T> callback)
         {
             return new Generator<T>(callback);
         }
@@ -136,6 +145,10 @@ public static class RandomProvider
         /// </summary>
         public T GetNext()
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(nameof(Generator<T>));
+            }
             return _callback();
         }
 
@@ -143,7 +156,7 @@ public static class RandomProvider
         ///     Implicit operator to convert from a <see cref="Func{T}" /> to a <see cref="Generator{T}" />.
         /// </summary>
         public static implicit operator Generator<T>(Func<T> callback)
-            => FromDelegate(callback);
+            => FromCallback(callback);
 
         /// <summary>
         ///     Implicit operator to convert from an array of <typeparamref name="T" /> to a <see cref="Generator{T}" />.
@@ -302,7 +315,7 @@ public static class RandomProvider
     private sealed class RandomProviderImplementation : RandomSystemMock.IRandomProvider
     {
         private Generator<Guid> DefaultGuidGenerator
-            => Generator<Guid>.FromDelegate(Guid.NewGuid);
+            => Generator<Guid>.FromCallback(Guid.NewGuid);
 
         private readonly ConcurrentDictionary<int, IRandomSystem.IRandom>
             _generatedRandoms = new();
@@ -331,6 +344,6 @@ public static class RandomProvider
         #endregion
 
         private IRandomSystem.IRandom DefaultRandomGenerator(int seed)
-            => new RandomGenerator(seed: seed); //_generatedRandoms.GetOrAdd(seed, s => );
+            => _generatedRandoms.GetOrAdd(seed, s => new RandomGenerator(seed: s));
     }
 }
