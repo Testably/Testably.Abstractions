@@ -25,6 +25,10 @@ public sealed partial class FileSystem : IFileSystem
     public IFileSystem.IFileInfoFactory FileInfo
         => new FileInfoFactory(this);
 
+    /// <inheritdoc cref="IFileSystem.FileStream" />
+    public IFileSystem.IFileStreamFactory FileStream
+        => new FileStreamFactory(this);
+
     /// <inheritdoc cref="IFileSystem.Path" />
     public IFileSystem.IPath Path
         => new PathFileSystem(this);

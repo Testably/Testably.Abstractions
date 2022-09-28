@@ -76,7 +76,12 @@ public sealed partial class FileSystemMock
                 _fileSystem.FileSystemContainer.GetOrAddFile(path);
             if (fileInfo != null && contents != null)
             {
-                fileInfo.AppendBytes(encoding.GetBytes(contents));
+                using (fileInfo.RequestAccess(
+                    FileAccess.ReadWrite,
+                    FileStreamFactoryMock.DefaultShare))
+                {
+                    fileInfo.AppendBytes(encoding.GetBytes(contents));
+                }
             }
         }
 
@@ -228,7 +233,12 @@ public sealed partial class FileSystemMock
                 _fileSystem.FileSystemContainer.GetFile(path);
             if (fileInfo != null)
             {
-                return fileInfo.GetBytes();
+                using (fileInfo.RequestAccess(
+                    FileAccess.Read,
+                    FileStreamFactoryMock.DefaultShare))
+                {
+                    return fileInfo.GetBytes();
+                }
             }
 
             throw new FileNotFoundException(
@@ -283,7 +293,12 @@ public sealed partial class FileSystemMock
                 _fileSystem.FileSystemContainer.GetFile(path);
             if (fileInfo != null)
             {
-                return encoding.GetString(fileInfo.GetBytes());
+                using (fileInfo.RequestAccess(
+                    FileAccess.Read,
+                    FileStreamFactoryMock.DefaultShare))
+                {
+                    return encoding.GetString(fileInfo.GetBytes());
+                }
             }
 
             throw new FileNotFoundException(
@@ -367,7 +382,12 @@ public sealed partial class FileSystemMock
                 _fileSystem.FileSystemContainer.GetOrAddFile(path);
             if (fileInfo != null)
             {
-                fileInfo.WriteBytes(bytes);
+                using (fileInfo.RequestAccess(
+                    FileAccess.Write,
+                    FileStreamFactoryMock.DefaultShare))
+                {
+                    fileInfo.WriteBytes(bytes);
+                }
             }
         }
 
@@ -439,7 +459,12 @@ public sealed partial class FileSystemMock
                 _fileSystem.FileSystemContainer.GetOrAddFile(path);
             if (fileInfo != null && contents != null)
             {
-                fileInfo.WriteBytes(encoding.GetBytes(contents));
+                using (fileInfo.RequestAccess(
+                    FileAccess.Write,
+                    FileStreamFactoryMock.DefaultShare))
+                {
+                    fileInfo.WriteBytes(encoding.GetBytes(contents));
+                }
             }
         }
 

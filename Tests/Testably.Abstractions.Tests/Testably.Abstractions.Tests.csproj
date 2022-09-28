@@ -71,6 +71,12 @@
     <Compile Update="FileSystemFileTests - Copy.AppendAllLines.cs">
       <DependentUpon>FileSystemFileTests.cs</DependentUpon>
     </Compile>
+    <Compile Update="Mock\MockFileSystem - Copy %282%29.FileTests.cs">
+      <DependentUpon>Mock/MockFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Mock\MockFileSystem - Copy.FileTests.cs">
+      <DependentUpon>Mock/MockFileSystem.cs</DependentUpon>
+    </Compile>
     <Compile Update="Parity\ParityTests - Copy.Net6.cs">
       <DependentUpon>Parity/ParityTests.cs</DependentUpon>
     </Compile>

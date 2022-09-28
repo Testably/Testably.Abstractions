@@ -78,6 +78,12 @@ public sealed partial class FileSystemMock
             ///     Writes the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
             /// </summary>
             void WriteBytes(byte[] bytes);
+
+            /// <summary>
+            /// Requests access to this file with the given <paramref name="share"/>.<para />
+            /// The returned <see cref="IDisposable"/> is used to 
+            /// </summary>
+            IDisposable RequestAccess(FileAccess access, FileShare share);
         }
     }
 }
