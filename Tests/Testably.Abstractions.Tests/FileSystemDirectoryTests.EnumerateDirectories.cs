@@ -145,15 +145,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
                .FirstOrDefault();
         });
 
-#if NETFRAMEWORK
-        // The searchPattern is not included in .NET Framework
-        exception.Should().BeOfType<ArgumentException>()
-           .Which.Message.Should().Contain("Illegal characters in path");
-#else
-        exception.Should().BeOfType<ArgumentException>()
-           .Which.Message.Should().Contain("Illegal characters in path")
-           .And.Contain($" (Parameter '{searchPattern}')");
-#endif
+        exception.Should().BeOfType<ArgumentException>();
     }
 
     [Theory]

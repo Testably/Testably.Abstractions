@@ -126,8 +126,7 @@ public sealed partial class FileSystemMock
         {
             if (!FileSystem.FileSystemContainer.Delete(FullName))
             {
-                throw new DirectoryNotFoundException(
-                    $"Could not find a part of the path '{FullName}'.");
+                throw ExceptionFactory.DirectoryNotFound(FullName);
             }
 
             Refresh();

@@ -193,15 +193,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         Exception? exception =
             Record.Exception(() => FileSystem.Directory.CreateDirectory(path));
 
-#if NETFRAMEWORK
-        exception.Should().BeOfType<ArgumentException>()
-           .Which.Message.Should().Be("Illegal characters in path.");
-#else
-        string expectedMessage =
-            "Illegal characters in path. (Parameter 'path')";
-        exception.Should().BeOfType<ArgumentException>()
-           .Which.Message.Should().Be(expectedMessage);
-#endif
+        exception.Should().BeOfType<ArgumentException>();
     }
 
     [Fact]
