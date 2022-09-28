@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -70,19 +71,28 @@ public static class RandomProvider
     /// </summary>
     public sealed class Generator<T> : IDisposable
     {
-        private readonly IDisposable? _disposable;
-        private readonly Func<T> _getNextCallback;
+        private readonly Func<T> _callback;
+        private readonly IEnumerator<T>? _enumerator;
 
-        private Generator(Func<T> getNextCallback, IDisposable? disposable = null)
+        private Generator(Func<T> callback)
         {
-            _getNextCallback = getNextCallback;
-            _disposable = disposable;
+            _callback = callback;
+        }
+
+        private Generator(IEnumerable<T> enumerable)
+        {
+            _enumerator = enumerable.GetEnumerator();
+            _callback = () =>
+            {
+                _enumerator.MoveNext();
+                return _enumerator.Current;
+            };
         }
 
         #region IDisposable Members
 
         /// <inheritdoc cref="IDisposable.Dispose()" />
-        public void Dispose() => _disposable?.Dispose();
+        public void Dispose() => _enumerator?.Dispose();
 
         #endregion
 
@@ -110,13 +120,7 @@ public static class RandomProvider
         /// </summary>
         public static Generator<T> FromEnumerable(IEnumerable<T> enumerable)
         {
-            IEnumerator<T> enumerator = enumerable.GetEnumerator();
-            return new Generator<T>(() =>
-            {
-                T result = enumerator.Current;
-                enumerator.MoveNext();
-                return result;
-            }, enumerator);
+            return new Generator<T>(enumerable);
         }
 
         /// <summary>
@@ -132,7 +136,7 @@ public static class RandomProvider
         /// </summary>
         public T GetNext()
         {
-            return _getNextCallback();
+            return _callback();
         }
 
         /// <summary>
@@ -300,6 +304,9 @@ public static class RandomProvider
         private Generator<Guid> DefaultGuidGenerator
             => Generator<Guid>.FromDelegate(Guid.NewGuid);
 
+        private readonly ConcurrentDictionary<int, IRandomSystem.IRandom>
+            _generatedRandoms = new();
+
         private readonly Generator<Guid> _guidGenerator;
         private readonly Func<int, IRandomSystem.IRandom> _randomGenerator;
 
@@ -324,6 +331,6 @@ public static class RandomProvider
         #endregion
 
         private IRandomSystem.IRandom DefaultRandomGenerator(int seed)
-            => new RandomGenerator(seed: seed);
+            => new RandomGenerator(seed: seed); //_generatedRandoms.GetOrAdd(seed, s => );
     }
 }

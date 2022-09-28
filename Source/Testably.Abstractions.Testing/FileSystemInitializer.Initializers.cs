@@ -139,10 +139,13 @@ public static partial class FileSystemInitializer
         /// <inheritdoc cref="IFileSystemInitializer{TFileSystem}.WithAFile(string?)" />
         public IFileSystemFileInitializer<TFileSystem> WithAFile(string? extension = null)
         {
+            IRandomSystem randomSystem = (FileSystem as FileSystemMock)?.RandomSystem ??
+                                         new RandomSystem();
             string fileName;
             do
             {
-                fileName = GenerateRandomFileName(extension);
+                fileName =
+                    $"{randomSystem.GenerateFileName()}-{randomSystem.Random.Shared.Next(10000)}.{randomSystem.GenerateFileExtension(extension)}";
             } while (FileSystem.File.Exists(
                 FileSystem.Path.Combine(_basePath, fileName)));
 
@@ -152,10 +155,13 @@ public static partial class FileSystemInitializer
         /// <inheritdoc cref="IFileSystemInitializer{TFileSystem}.WithASubdirectory()" />
         public IFileSystemDirectoryInitializer<TFileSystem> WithASubdirectory()
         {
+            IRandomSystem randomSystem = (FileSystem as FileSystemMock)?.RandomSystem ??
+                                         new RandomSystem();
             string directoryName;
             do
             {
-                directoryName = GenerateRandomDirectoryName();
+                directoryName =
+                    $"{randomSystem.GenerateFileName()}-{randomSystem.Random.Shared.Next(10000)}";
             } while (FileSystem.Directory.Exists(
                 FileSystem.Path.Combine(_basePath, directoryName)));
 
