@@ -25,19 +25,19 @@ jobs:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
-          dotnet stryker -f Tests/stryker-config.json -v "${GITHUB_REF#refs/heads/}" -r Dashboard
+          dotnet stryker -f Tests/stryker-config.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "html" -r "cleartext"
       - name: Analyze Testably.Abstractions.Testing
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
-          dotnet stryker -f Tests/stryker-config-testing.json -v "${GITHUB_REF#refs/heads/}" -r Dashboard
+          dotnet stryker -f Tests/stryker-config-testing.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "html" -r "cleartext"
       - name: Analyze Testably.Abstractions.Extensions
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
-          dotnet stryker -f Tests/stryker-config-extensions.json -v "${GITHUB_REF#refs/heads/}" -r Dashboard
+          dotnet stryker -f Tests/stryker-config-extensions.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "html" -r "cleartext"
       - name: Upload Report for Testably.Abstractions
         uses: actions/upload-artifact@v3
         with:
