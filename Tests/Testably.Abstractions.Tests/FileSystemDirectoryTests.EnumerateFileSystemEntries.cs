@@ -124,10 +124,11 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
                 {
                     MatchCasing = MatchCasing.CaseInsensitive,
                     RecurseSubdirectories = true,
-                    ReturnSpecialDirectories = true
+                    // Filename could start with a leading '.' indicating it as Hidden in Linux
+                    AttributesToSkip = FileAttributes.System
                 }).ToList();
 
-        result.Count.Should().Be(1);
+        result.Count.Should().Be(1, $"{initialized[2]} should be found.");
         result.Should().NotContain(initialized[0].ToString());
         result.Should().Contain(initialized[2].ToString());
     }
