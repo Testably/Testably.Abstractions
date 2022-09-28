@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 
 namespace Testably.Abstractions.Extensions.Tests;
@@ -257,12 +256,12 @@ public class TimeSystemExtensionsTimerTests
         ms.Wait(1000);
         timer.Dispose();
 
-        foreach (DateTime requestedTime in requestedTimes
-           .Where(x => x != startTime))
+        foreach (DateTime requestedTime in requestedTimes)
         {
             // Ensures that only one thread added a Thread.Sleep!
             // Therefore the second Start stopped the first Task.
-            requestedTime.Second.Should().Match(s => s % 10 == 2);
+            requestedTime.Second.Should()
+               .Match(s => s % 10 == 2 || s % 10 == 0);
         }
     }
 
