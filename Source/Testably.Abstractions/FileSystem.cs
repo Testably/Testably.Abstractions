@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions;
+﻿using static Testably.Abstractions.IFileSystem;
+
+namespace Testably.Abstractions;
 
 /// <summary>
 ///     Default implementation for file-related system dependencies.
@@ -16,6 +18,10 @@ public sealed partial class FileSystem : IFileSystem
     /// <inheritdoc cref="IFileSystem.DirectoryInfo" />
     public IFileSystem.IDirectoryInfoFactory DirectoryInfo
         => new DirectoryInfoFactory(this);
+
+    /// <inheritdoc cref="IFileSystem.DriveInfo" />
+    public IFileSystem.IDriveInfoFactory DriveInfo
+        => new DriveInfoFactory(this);
 
     /// <inheritdoc cref="IFileSystem.File" />
     public IFileSystem.IFile File
