@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Data.Common;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Testing;
 
@@ -98,9 +100,16 @@ public sealed partial class FileSystemMock
                         $"Could not find file '{_fileSystem.Path.GetFullPath(Name)}'.");
                 }
 
-                file = _fileSystem.FileSystemContainer.GetOrAddFile(Name)
-                       ?? throw new UnauthorizedAccessException(
-                           $"Access to the path '{_fileSystem.Path.GetFullPath(Name)}' is denied.");
+                file = _fileSystem.FileSystemContainer.GetOrAddFile(Name);
+                if (file == null)
+                {
+                    if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        throw new IOException($"The file '{_fileSystem.Path.GetFullPath(Name)}' already exists.");
+                    }
+                    throw new UnauthorizedAccessException(
+                        $"Access to the path '{_fileSystem.Path.GetFullPath(Name)}' is denied.");
+                }
             }
             else if (_mode.Equals(FileMode.CreateNew))
             {
@@ -109,6 +118,7 @@ public sealed partial class FileSystemMock
             }
 
             _accessLock = file.RequestAccess(access, share);
+
             _file = file;
 
             InitializeStream();

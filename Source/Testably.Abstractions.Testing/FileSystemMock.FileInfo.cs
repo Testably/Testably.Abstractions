@@ -3,8 +3,10 @@ using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Testably.Abstractions.Testing.Internal;
+using static System.Net.WebRequestMethods;
 #if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
 #endif
@@ -190,12 +192,23 @@ public sealed partial class FileSystemMock
             {
                 _releaseCallback = releaseCallback;
                 _access = access;
-                _share = share;
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    _share = FileShare.ReadWrite;
+                }
+                else
+                {
+                    _share = share;
+                }
                 _key = key;
             }
 
             public bool GrantAccess(FileAccess access, FileShare share)
             {
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    share = FileShare.ReadWrite;
+                }
                 return CheckAccessWithShare(access, _share) &&
                        CheckAccessWithShare(_access, share);
             }

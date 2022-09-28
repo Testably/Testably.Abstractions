@@ -1,8 +1,11 @@
 using System.Collections.Concurrent;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Testably.Abstractions.Tests.TestHelpers.Attributes;
 
 namespace Testably.Abstractions.Tests;
 
@@ -28,16 +31,16 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
     #endregion
 
     [Theory]
-    [InlineAutoData(FileAccess.Read, FileShare.Read, FileAccess.ReadWrite,
-        FileShare.Read)]
-    [InlineAutoData(FileAccess.ReadWrite, FileShare.Read, FileAccess.Read,
-        FileShare.Read)]
-    [InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite, FileAccess.ReadWrite,
-        FileShare.Read)]
-    [InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite, FileAccess.ReadWrite,
-        FileShare.Write)]
-    [InlineAutoData(FileAccess.Read, FileShare.Read, FileAccess.ReadWrite,
-        FileShare.ReadWrite)]
+    [InlineAutoData(FileAccess.Read, FileShare.Read,
+        FileAccess.ReadWrite, FileShare.Read)]
+    [InlineAutoData(FileAccess.ReadWrite, FileShare.Read,
+        FileAccess.Read, FileShare.Read)]
+    [InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite,
+        FileAccess.ReadWrite, FileShare.Read)]
+    [InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite,
+        FileAccess.ReadWrite, FileShare.Write)]
+    [InlineAutoData(FileAccess.Read, FileShare.Read,
+        FileAccess.ReadWrite, FileShare.ReadWrite)]
     public void FileAccess_ConcurrentAccessWithInvalidScenarios_ShouldThrowIOException(
         FileAccess access1, FileShare share1,
         FileAccess access2, FileShare share2,
@@ -53,8 +56,15 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
                 access2, share2);
         });
 
-        exception.Should().BeOfType<IOException>()
-           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            exception.Should().BeOfType<IOException>($"Access {access1}, Share {share1} of file 1 is incompatible with Access {access2}, Share {share2} of file 2")
+               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        }
+        else
+        {
+            exception.Should().BeNull();
+        }
     }
 
     [Theory]
@@ -170,7 +180,7 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
     public void FileAccess_ReadWhileWriteLockActive_ShouldThrowIOException(
         string path, string contents)
     {
-        FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.CreateNew);
+        FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Create);
 
         byte[] bytes = Encoding.UTF8.GetBytes(contents);
         stream.Write(bytes, 0, bytes.Length);
@@ -179,9 +189,16 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
         {
             FileSystem.File.ReadAllText(path);
         });
-
-        exception.Should().BeOfType<IOException>()
-           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            exception.Should().BeOfType<IOException>()
+               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        }
+        else
+        {
+            exception.Should().BeNull();
+        }
     }
 
     [Theory]
@@ -316,7 +333,7 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    public void New_SamePathAsExistingDirectory_ShouldThrowUnauthorizedAccessException(
+    public void New_SamePathAsExistingDirectory_ShouldThrowException(
         string path)
     {
         FileSystem.Directory.CreateDirectory(path);
@@ -325,8 +342,16 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
             FileSystem.FileStream.New(path, FileMode.CreateNew);
         });
 
-        exception.Should().BeOfType<UnauthorizedAccessException>()
-           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            exception.Should().BeOfType<UnauthorizedAccessException>()
+               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        }
+        else
+        {
+            exception.Should().BeOfType<IOException>()
+               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        }
     }
 
     [Theory]
