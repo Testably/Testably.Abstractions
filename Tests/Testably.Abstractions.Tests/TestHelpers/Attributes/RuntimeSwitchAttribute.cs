@@ -3,6 +3,7 @@
 /// <summary>
 ///     Base attribute that implements <see cref="IRuntimeSwitch" />.
 /// </summary>
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class RuntimeSwitchAttribute : Attribute, IRuntimeSwitch
 {
     /// <summary>
@@ -14,6 +15,10 @@ public class RuntimeSwitchAttribute : Attribute, IRuntimeSwitch
         IsEnabled = isEnabled;
     }
 
+    #region IRuntimeSwitch Members
+
     /// <inheritdoc cref="IRuntimeSwitch.IsEnabled" />
     public bool IsEnabled { get; }
+
+    #endregion
 }

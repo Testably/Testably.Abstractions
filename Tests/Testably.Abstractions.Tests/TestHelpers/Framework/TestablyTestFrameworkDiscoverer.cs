@@ -6,7 +6,7 @@ using Xunit.Sdk;
 namespace Testably.Abstractions.Tests.TestHelpers.Framework;
 
 /// <summary>
-/// Custom <see cref="XunitTestFrameworkDiscoverer"/> that supports the <see cref="IRuntimeSwitch"/> on attributes.
+///     Custom <see cref="XunitTestFrameworkDiscoverer" /> that supports the <see cref="IRuntimeSwitch" /> on attributes.
 /// </summary>
 public class TestablyTestFrameworkDiscoverer : XunitTestFrameworkDiscoverer
 {
@@ -21,14 +21,6 @@ public class TestablyTestFrameworkDiscoverer : XunitTestFrameworkDiscoverer
             diagnosticMessageSink,
             collectionFactory)
     {
-    }
-
-    /// <inheritdoc />
-    protected override bool IsValidTestClass(ITypeInfo type)
-    {
-        return base.IsValidTestClass(type) &&
-               HasDisabledRuntimeSwitch(
-                   type.GetCustomAttributes(typeof(IRuntimeSwitch)));
     }
 
     /// <inheritdoc />
@@ -47,7 +39,16 @@ public class TestablyTestFrameworkDiscoverer : XunitTestFrameworkDiscoverer
                    testMethod.Method.GetCustomAttributes(typeof(IRuntimeSwitch)));
     }
 
-    private bool HasDisabledRuntimeSwitch(IEnumerable<IAttributeInfo?> attributeInfos)
+    /// <inheritdoc />
+    protected override bool IsValidTestClass(ITypeInfo type)
+    {
+        return base.IsValidTestClass(type) &&
+               HasDisabledRuntimeSwitch(
+                   type.GetCustomAttributes(typeof(IRuntimeSwitch)));
+    }
+
+    private static bool HasDisabledRuntimeSwitch(
+        IEnumerable<IAttributeInfo?> attributeInfos)
     {
         foreach (IAttributeInfo? attributeInfo in attributeInfos)
         {
