@@ -1,3 +1,4 @@
+using Testably.Abstractions.Tests.TestHelpers.Attributes;
 using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Tests.Real;
@@ -6,6 +7,7 @@ public static partial class RealFileSystem
 {
     // ReSharper disable once UnusedMember.Global
     [Collection(RealFileSystemCollection)]
+    [ReleaseOnly]
     public sealed class FileSystemInfoTests : FileSystemFileSystemInfoTests<FileSystem>,
         IDisposable
     {
