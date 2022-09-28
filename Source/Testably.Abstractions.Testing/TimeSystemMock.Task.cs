@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
 
@@ -33,8 +34,7 @@ public sealed partial class TimeSystemMock
         {
             if (millisecondsDelay < -1)
             {
-                throw new ArgumentOutOfRangeException(nameof(millisecondsDelay),
-                    "The value needs to be either -1 (signifying an infinite timeout), 0 or a positive integer.");
+                throw ExceptionFactory.TaskDelayOutOfRange(nameof(millisecondsDelay));
             }
 
             return Delay(TimeSpan.FromMilliseconds(millisecondsDelay),
@@ -50,13 +50,12 @@ public sealed partial class TimeSystemMock
         {
             if (delay.TotalMilliseconds < -1)
             {
-                throw new ArgumentOutOfRangeException(nameof(delay),
-                    "The value needs to be either -1 (signifying an infinite timeout), 0 or a positive integer.");
+                throw ExceptionFactory.TaskDelayOutOfRange(nameof(delay));
             }
 
             if (cancellationToken.IsCancellationRequested)
             {
-                throw new TaskCanceledException("A task was canceled.");
+                throw ExceptionFactory.TaskWasCanceled();
             }
 
             _timeSystemMock.TimeProvider.AdvanceBy(delay);

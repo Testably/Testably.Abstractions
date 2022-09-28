@@ -207,9 +207,9 @@ public sealed partial class FileSystemMock
             if (path == string.Empty)
             {
 #if NETFRAMEWORK
-                throw new ArgumentException("The path is not of a legal form.");
+                throw ExceptionFactory.PathHasNoLegalForm();
 #else
-                throw new ArgumentException("The path is empty.", nameof(path));
+                throw ExceptionFactory.PathIsEmpty(nameof(path));
 #endif
             }
 
@@ -231,9 +231,9 @@ public sealed partial class FileSystemMock
             if (path == string.Empty)
             {
 #if NETFRAMEWORK
-                throw new ArgumentException("The path is not of a legal form.");
+                throw ExceptionFactory.PathHasNoLegalForm();
 #else
-                throw new ArgumentException("The path is empty.", nameof(originalpath));
+                throw ExceptionFactory.PathIsEmpty(nameof(originalpath));
 #endif
             }
 

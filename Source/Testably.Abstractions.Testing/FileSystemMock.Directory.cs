@@ -42,8 +42,7 @@ public sealed partial class FileSystemMock
         {
             if (!_fileSystem.FileSystemContainer.Delete(path))
             {
-                throw new DirectoryNotFoundException(
-                    $"Could not find a part of the path '{_fileSystem.Path.GetFullPath(path)}'.");
+                throw ExceptionFactory.DirectoryNotFound(_fileSystem.Path.GetFullPath(path));
             }
         }
 
@@ -52,8 +51,7 @@ public sealed partial class FileSystemMock
         {
             if (!_fileSystem.FileSystemContainer.Delete(path, recursive))
             {
-                throw new DirectoryNotFoundException(
-                    $"Could not find a part of the path '{_fileSystem.Path.GetFullPath(path)}'.");
+                throw ExceptionFactory.DirectoryNotFound(_fileSystem.Path.GetFullPath(path));
             }
         }
 
@@ -347,8 +345,8 @@ public sealed partial class FileSystemMock
 
             if (path.HasIllegalCharacters(_fileSystem))
             {
-                throw new IOException(
-                    $"The filename, directory name, or volume label syntax is incorrect. : '{_fileSystem.Path.Combine(_fileSystem.Directory.GetCurrentDirectory(), path)}'");
+                throw ExceptionFactory.PathHasIncorrectSyntax(
+                    _fileSystem.Path.Combine(_fileSystem.Directory.GetCurrentDirectory(), path));
             }
 
             IFileSystem.IDirectoryInfo? directory =

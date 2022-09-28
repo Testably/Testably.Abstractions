@@ -157,8 +157,8 @@ public sealed partial class FileSystemMock
                 _fileHandles.TryAdd(guid, fileHandle);
                 return fileHandle;
             }
-            throw new IOException(
-                $"The process cannot access the file '{FullName}' because it is being used by another process.");
+
+            throw ExceptionFactory.ProcessCannotAccessTheFile(FullName);
         }
 
         private void ReleaseAccess(Guid guid)
@@ -243,9 +243,9 @@ public sealed partial class FileSystemMock
             if (path == string.Empty)
             {
 #if NETFRAMEWORK
-                throw new ArgumentException("The path is not of a legal form.");
+                throw ExceptionFactory.PathHasNoLegalForm();
 #else
-                throw new ArgumentException("The path is empty.", nameof(path));
+                throw ExceptionFactory.PathIsEmpty(nameof(path));
 #endif
             }
 

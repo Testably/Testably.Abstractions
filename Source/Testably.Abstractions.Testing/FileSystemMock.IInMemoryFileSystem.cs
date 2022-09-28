@@ -80,8 +80,9 @@ public sealed partial class FileSystemMock
             void WriteBytes(byte[] bytes);
 
             /// <summary>
-            /// Requests access to this file with the given <paramref name="share"/>.<para />
-            /// The returned <see cref="IDisposable"/> is used to 
+            ///     Requests access to this file with the given <paramref name="share" />.
+            ///     <para />
+            ///     The returned <see cref="IDisposable" /> is used to release the access lock.
             /// </summary>
             IDisposable RequestAccess(FileAccess access, FileShare share);
         }

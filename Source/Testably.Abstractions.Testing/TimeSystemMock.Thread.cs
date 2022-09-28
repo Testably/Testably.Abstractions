@@ -1,4 +1,5 @@
 ﻿using System;
+using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
 
@@ -26,8 +27,7 @@ public sealed partial class TimeSystemMock
         {
             if (millisecondsTimeout < -1)
             {
-                throw new ArgumentOutOfRangeException(nameof(millisecondsTimeout),
-                    "Number must be either non-negative and less than or equal to Int32.MaxValue or -1.");
+                throw ExceptionFactory.ThreadSleepOutOfRange(nameof(millisecondsTimeout));
             }
 
             Sleep(TimeSpan.FromMilliseconds(millisecondsTimeout));
@@ -37,8 +37,7 @@ public sealed partial class TimeSystemMock
         {
             if (timeout.TotalMilliseconds < -1)
             {
-                throw new ArgumentOutOfRangeException(nameof(timeout),
-                    "Number must be either non-negative and less than or equal to Int32.MaxValue or -1.");
+                throw ExceptionFactory.ThreadSleepOutOfRange(nameof(timeout));
             }
 
             _timeSystemMock.TimeProvider.AdvanceBy(timeout);

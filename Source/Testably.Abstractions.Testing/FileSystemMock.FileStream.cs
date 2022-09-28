@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
 
@@ -66,8 +67,7 @@ public sealed partial class FileSystemMock
                 if (_mode.Equals(FileMode.Open) ||
                     _mode.Equals(FileMode.Truncate))
                 {
-                    throw new FileNotFoundException(
-                        $"Could not find file '{_fileSystem.Path.GetFullPath(Name)}'.");
+                    throw ExceptionFactory.FileNotFound(_fileSystem.Path.GetFullPath(Name));
                 }
 
                 file = _fileSystem.FileSystemContainer.GetOrAddFile(Name);
@@ -75,18 +75,15 @@ public sealed partial class FileSystemMock
                 {
                     if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
-                        throw new IOException(
-                            $"The file '{_fileSystem.Path.GetFullPath(Name)}' already exists.");
+                        throw ExceptionFactory.FileAlreadyExists(_fileSystem.Path.GetFullPath(Name));
                     }
 
-                    throw new UnauthorizedAccessException(
-                        $"Access to the path '{_fileSystem.Path.GetFullPath(Name)}' is denied.");
+                    throw ExceptionFactory.AccessToPathDenied(_fileSystem.Path.GetFullPath(Name));
                 }
             }
             else if (_mode.Equals(FileMode.CreateNew))
             {
-                throw new IOException(
-                    $"The file '{_fileSystem.Path.GetFullPath(Name)}' already exists.");
+                throw ExceptionFactory.FileAlreadyExists(_fileSystem.Path.GetFullPath(Name));
             }
 
             _accessLock = file.RequestAccess(access, share);
@@ -170,34 +167,26 @@ public sealed partial class FileSystemMock
             {
                 if (access == FileAccess.Read)
                 {
-                    throw new ArgumentException(
-                        $"Combining FileMode: {mode} with FileAccess: {access} is invalid.",
-                        nameof(access));
+                    throw ExceptionFactory.InvalidAccessCombination(mode, access);
                 }
 
                 if (access != FileAccess.Write)
                 {
-                    throw new ArgumentException(
-                        $"{mode} access can be requested only in write-only mode.",
-                        nameof(access));
+                    throw ExceptionFactory.AppendAccessOnlyInWriteOnlyMode();
                 }
             }
 
             if (access.HasFlag(FileAccess.Read) &&
                 mode == FileMode.Append)
             {
-                throw new ArgumentException(
-                    $"Combining FileMode: {mode} with FileAccess: {access} is invalid.",
-                    nameof(access));
+                throw ExceptionFactory.InvalidAccessCombination(mode, access);
             }
 
             if (!access.HasFlag(FileAccess.Write) &&
                 (mode == FileMode.Truncate || mode == FileMode.CreateNew ||
                  mode == FileMode.Create || mode == FileMode.Append))
             {
-                throw new ArgumentException(
-                    $"Combining FileMode: {mode} with FileAccess: {access} is invalid.",
-                    nameof(access));
+                throw ExceptionFactory.InvalidAccessCombination(mode, access);
             }
         }
     }

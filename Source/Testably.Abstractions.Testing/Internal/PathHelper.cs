@@ -55,23 +55,13 @@ internal static class PathHelper
 
         if (path.Length == 0)
         {
-#if NETFRAMEWORK
-            throw new ArgumentException(
-                "Path cannot be the empty string or all whitespace.");
-#else
-            throw new ArgumentException(
-                "Path cannot be the empty string or all whitespace.", nameof(path));
-#endif
+            throw ExceptionFactory.PathCannotBeEmpty();
         }
 #pragma warning disable CA2249 // Consider using String.Contains with char instead of String.IndexOf not possible in .NETSTANDARD2.0
         if (path.IndexOf('\0') >= 0)
 #pragma warning restore CA2249
         {
-#if NETFRAMEWORK
-            throw new ArgumentException("Illegal characters in path.");
-#else
-            throw new ArgumentException("Illegal characters in path.", nameof(path));
-#endif
+            throw ExceptionFactory.PathHasIllegalCharacters(path);
         }
     }
 

@@ -51,8 +51,8 @@ public sealed partial class FileSystemMock
                 }
                 else if (_files.Any(x => x.Key.StartsWith(start)))
                 {
-                    throw new IOException(
-                        $"Directory not empty : '{_fileSystem.Path.GetFullPath(path)}'");
+                    throw ExceptionFactory.DirectoryNotEmpty(
+                        _fileSystem.Path.GetFullPath(path));
                 }
             }
 
@@ -206,9 +206,7 @@ public sealed partial class FileSystemMock
         {
             if (expression.Contains('\0'))
             {
-                throw new ArgumentException(
-                    $"Illegal characters in path '{{0}}'. (Parameter '{expression}')",
-                    nameof(expression));
+                throw ExceptionFactory.PathHasIllegalCharacters(expression);
             }
         }
     }

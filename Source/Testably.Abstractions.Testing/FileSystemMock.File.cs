@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Testably.Abstractions.Testing.Internal;
 #if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
 #endif
@@ -241,8 +242,7 @@ public sealed partial class FileSystemMock
                 }
             }
 
-            throw new FileNotFoundException(
-                $"Could not find file '{_fileSystem.Path.GetFullPath(path)}'.");
+            throw ExceptionFactory.FileNotFound(_fileSystem.Path.GetFullPath(path));
         }
 
 #if FEATURE_FILESYSTEM_ASYNC
@@ -301,8 +301,7 @@ public sealed partial class FileSystemMock
                 }
             }
 
-            throw new FileNotFoundException(
-                $"Could not find file '{_fileSystem.Path.GetFullPath(path)}'.");
+            throw ExceptionFactory.FileNotFound(_fileSystem.Path.GetFullPath(path));
         }
 
 #if FEATURE_FILESYSTEM_ASYNC
@@ -491,7 +490,7 @@ public sealed partial class FileSystemMock
         {
             if (cancellationToken.IsCancellationRequested)
             {
-                throw new TaskCanceledException("A task was canceled.");
+                throw ExceptionFactory.TaskWasCanceled();
             }
         }
 #endif
