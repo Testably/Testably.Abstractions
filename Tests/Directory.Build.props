@@ -1,6 +1,6 @@
 <Project>
 
-  <Import Project="$([MSBuild]::GetPathOfFileAbove('Feature.Flags.props', '$(MSBuildThisFileDirectory)/../Source/'))" />
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Feature.Flags.props', '$(MSBuildThisFileDirectory)/../'))" />
 
   <PropertyGroup>
     <TargetFrameworks Condition="'$(NetCoreOnly)' != 'True'">net6.0;net5.0;net472</TargetFrameworks>
