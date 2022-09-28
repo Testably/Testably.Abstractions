@@ -313,7 +313,7 @@ public static class RandomProvider
 
     private sealed class RandomProviderImplementation : RandomSystemMock.IRandomProvider
     {
-        private Generator<Guid> DefaultGuidGenerator
+        private static Generator<Guid> DefaultGuidGenerator
             => Generator<Guid>.FromCallback(Guid.NewGuid);
 
         private readonly Generator<Guid> _guidGenerator;
