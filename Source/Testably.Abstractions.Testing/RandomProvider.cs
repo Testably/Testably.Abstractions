@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Testably.Abstractions.Testing;
@@ -26,14 +27,14 @@ public static class RandomProvider
     /// </summary>
     public static RandomSystemMock.IRandomProvider Generate(
         int seed = SharedSeed,
-        Func<Guid>? guidGenerator = null,
-        Func<int>? intGenerator = null,
+        Generator<Guid>? guidGenerator = null,
+        Generator<int>? intGenerator = null,
 #if FEATURE_RANDOM_ADVANCED
-        Func<long>? longGenerator = null,
-        Func<float>? singleGenerator = null,
+        Generator<long>? longGenerator = null,
+        Generator<float>? singleGenerator = null,
 #endif
-        Func<double>? doubleGenerator = null,
-        Func<byte[]>? byteGenerator = null)
+        Generator<double>? doubleGenerator = null,
+        Generator<byte[]>? byteGenerator = null)
         => new RandomProviderImplementation(
             _ => new RandomGenerator(
                 seed,
@@ -51,7 +52,7 @@ public static class RandomProvider
     /// </summary>
     public static RandomSystemMock.IRandomProvider Generate(
         Func<int, IRandomSystem.IRandom>? randomGenerator,
-        Func<Guid>? guidGenerator = null)
+        Generator<Guid>? guidGenerator = null)
         => new RandomProviderImplementation(
             randomGenerator,
             guidGenerator);
@@ -65,17 +66,119 @@ public static class RandomProvider
     }
 
     /// <summary>
+    ///     Replaces random element generation of type <typeparamref name="T" />.
+    /// </summary>
+    public sealed class Generator<T> : IDisposable
+    {
+        private readonly Func<T> _callback;
+        private readonly IEnumerator<T>? _enumerator;
+        private bool _isDisposed;
+
+        private Generator(Func<T> callback)
+        {
+            _callback = callback;
+        }
+
+        private Generator(IEnumerable<T> enumerable)
+        {
+            _enumerator = enumerable.GetEnumerator();
+            _callback = () =>
+            {
+                if (!_enumerator.MoveNext())
+                {
+                    _enumerator.Reset();
+                    _enumerator.MoveNext();
+                }
+                return _enumerator.Current;
+            };
+        }
+
+        #region IDisposable Members
+
+        /// <inheritdoc cref="IDisposable.Dispose()" />
+        public void Dispose()
+        {
+            _isDisposed = true;
+            _enumerator?.Dispose();
+        }
+
+        #endregion
+
+        /// <summary>
+        ///     Creates a generator the iterates over the provided <paramref name="values" />.
+        ///     <para />
+        ///     When the end of the array is reached, the values are repeated again from the beginning.
+        /// </summary>
+        public static Generator<T> FromArray(T[] values)
+        {
+            int index = 0;
+            return new Generator<T>(() => values[index++ % values.Length]);
+        }
+
+        /// <summary>
+        ///     Creates a generator that gets the elements from the provided <paramref name="callback" />
+        /// </summary>
+        public static Generator<T> FromCallback(Func<T> callback)
+        {
+            return new Generator<T>(callback);
+        }
+
+        /// <summary>
+        ///     Creates a generator the iterates over the provided <paramref name="enumerable" />.
+        /// </summary>
+        public static Generator<T> FromEnumerable(IEnumerable<T> enumerable)
+        {
+            return new Generator<T>(enumerable);
+        }
+
+        /// <summary>
+        ///     Creates a generator that always returns the fixed <paramref name="value" />.
+        /// </summary>
+        public static Generator<T> FromValue(T value)
+        {
+            return new Generator<T>(() => value);
+        }
+
+        /// <summary>
+        ///     Gets the next value of <typeparamref name="T" />
+        /// </summary>
+        public T GetNext()
+        {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(nameof(Generator<T>));
+            }
+            return _callback();
+        }
+
+        /// <summary>
+        ///     Implicit operator to convert from a <see cref="Func{T}" /> to a <see cref="Generator{T}" />.
+        /// </summary>
+        public static implicit operator Generator<T>(Func<T> callback)
+            => FromCallback(callback);
+
+        /// <summary>
+        ///     Implicit operator to convert from an array of <typeparamref name="T" /> to a <see cref="Generator{T}" />.
+        /// </summary>
+        public static implicit operator Generator<T>(T[] values)
+            => FromArray(values);
+
+        /// <summary>
+        ///     Implicit operator to convert from a fixed <paramref name="value" /> of <typeparamref name="T" /> to a
+        ///     <see cref="Generator{T}" />.
+        /// </summary>
+        public static implicit operator Generator<T>(T value)
+            => FromValue(value);
+    }
+
+    /// <summary>
     ///     A random generator.
     /// </summary>
     public class RandomGenerator : IRandomSystem.IRandom
     {
-        private readonly Func<byte[]>? _byteGenerator;
-        private readonly Func<double>? _doubleGenerator;
-        private readonly Func<int>? _intGenerator;
-#if FEATURE_RANDOM_ADVANCED
-        private readonly Func<long>? _longGenerator;
-        private readonly Func<float>? _singleGenerator;
-#endif
+        private readonly Generator<byte[]>? _byteGenerator;
+        private readonly Generator<double>? _doubleGenerator;
+        private readonly Generator<int>? _intGenerator;
         private readonly IRandomSystem.IRandom _random;
 
 #if FEATURE_RANDOM_ADVANCED
@@ -97,13 +200,13 @@ public static class RandomProvider
 #endif
         public RandomGenerator(
             int seed = SharedSeed,
-            Func<int>? intGenerator = null,
+            Generator<int>? intGenerator = null,
 #if FEATURE_RANDOM_ADVANCED
-            Func<long>? longGenerator = null,
-            Func<float>? singleGenerator = null,
+            Generator<long>? longGenerator = null,
+            Generator<float>? singleGenerator = null,
 #endif
-            Func<double>? doubleGenerator = null,
-            Func<byte[]>? byteGenerator = null)
+            Generator<double>? doubleGenerator = null,
+            Generator<byte[]>? byteGenerator = null)
         {
             _byteGenerator = byteGenerator;
             _doubleGenerator = doubleGenerator;
@@ -126,19 +229,19 @@ public static class RandomProvider
 
         /// <inheritdoc cref="IRandomSystem.IRandom.Next()" />
         public int Next()
-            => _intGenerator?.Invoke() ?? _random.Next();
+            => _intGenerator?.GetNext() ?? _random.Next();
 
         /// <inheritdoc cref="IRandomSystem.IRandom.Next(int)" />
         public int Next(int maxValue)
             => Math.Min(
-                _intGenerator?.Invoke() ?? _random.Next(maxValue),
+                _intGenerator?.GetNext() ?? _random.Next(maxValue),
                 maxValue - 1);
 
         /// <inheritdoc cref="IRandomSystem.IRandom.Next(int, int)" />
         public int Next(int minValue, int maxValue)
             => Math.Min(
                 Math.Max(
-                    _intGenerator?.Invoke() ?? _random.Next(minValue, maxValue),
+                    _intGenerator?.GetNext() ?? _random.Next(minValue, maxValue),
                     minValue),
                 maxValue - 1);
 
@@ -147,7 +250,7 @@ public static class RandomProvider
         {
             if (_byteGenerator != null)
             {
-                byte[] bytes = _byteGenerator.Invoke();
+                byte[] bytes = _byteGenerator.GetNext();
                 Array.Copy(bytes, buffer, Math.Min(bytes.Length, buffer.Length));
             }
             else
@@ -162,7 +265,7 @@ public static class RandomProvider
         {
             if (_byteGenerator != null)
             {
-                byte[] bytes = _byteGenerator.Invoke();
+                byte[] bytes = _byteGenerator.GetNext();
                 bytes.AsSpan().Slice(0, buffer.Length).CopyTo(buffer);
             }
             else
@@ -174,43 +277,51 @@ public static class RandomProvider
 
         /// <inheritdoc cref="IRandomSystem.IRandom.NextDouble()" />
         public double NextDouble()
-            => _doubleGenerator?.Invoke() ?? _random.NextDouble();
+            => _doubleGenerator?.GetNext() ?? _random.NextDouble();
+
+        #endregion
+
+#if FEATURE_RANDOM_ADVANCED
+        private readonly Generator<long>? _longGenerator;
+        private readonly Generator<float>? _singleGenerator;
+#endif
 
 #if FEATURE_RANDOM_ADVANCED
         /// <inheritdoc cref="IRandomSystem.IRandom.NextInt64()" />
         public long NextInt64()
-            => _longGenerator?.Invoke() ?? _random.NextInt64();
+            => _longGenerator?.GetNext() ?? _random.NextInt64();
 
         /// <inheritdoc cref="IRandomSystem.IRandom.NextInt64(long)" />
         public long NextInt64(long maxValue)
             => Math.Min(
-                _longGenerator?.Invoke() ?? _random.NextInt64(maxValue),
+                _longGenerator?.GetNext() ?? _random.NextInt64(maxValue),
                 maxValue - 1);
 
         /// <inheritdoc cref="IRandomSystem.IRandom.NextInt64(long, long)" />
         public long NextInt64(long minValue, long maxValue)
             => Math.Min(
                 Math.Max(
-                    _longGenerator?.Invoke() ?? _random.NextInt64(minValue, maxValue),
+                    _longGenerator?.GetNext() ?? _random.NextInt64(minValue, maxValue),
                     minValue),
                 maxValue - 1);
 
         /// <inheritdoc cref="IRandomSystem.IRandom.NextSingle()" />
         public float NextSingle()
-            => _singleGenerator?.Invoke() ?? _random.NextSingle();
+            => _singleGenerator?.GetNext() ?? _random.NextSingle();
 #endif
-
-        #endregion
     }
 
     private sealed class RandomProviderImplementation : RandomSystemMock.IRandomProvider
     {
-        private readonly Func<Guid> _guidGenerator;
+        private static Generator<Guid> DefaultGuidGenerator
+            => Generator<Guid>.FromCallback(Guid.NewGuid);
+
+        private readonly Generator<Guid> _guidGenerator;
         private readonly Func<int, IRandomSystem.IRandom> _randomGenerator;
 
         public RandomProviderImplementation(
             Func<int, IRandomSystem.IRandom>? randomGenerator = null,
-            Func<Guid>? guidGenerator = null)
+            Generator<Guid>? guidGenerator = null)
         {
             _guidGenerator = guidGenerator ?? DefaultGuidGenerator;
             _randomGenerator = randomGenerator ?? DefaultRandomGenerator;
@@ -220,16 +331,13 @@ public static class RandomProvider
 
         /// <inheritdoc cref="RandomSystemMock.IRandomProvider.GetGuid" />
         public Guid GetGuid()
-            => _guidGenerator();
+            => _guidGenerator.GetNext();
 
         /// <inheritdoc cref="RandomSystemMock.IRandomProvider.GetRandom(int)" />
         public IRandomSystem.IRandom GetRandom(int seed)
             => _randomGenerator(seed);
 
         #endregion
-
-        private Guid DefaultGuidGenerator()
-            => Guid.NewGuid();
 
         private IRandomSystem.IRandom DefaultRandomGenerator(int seed)
             => new RandomGenerator(seed: seed);
