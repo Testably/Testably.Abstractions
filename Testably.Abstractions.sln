@@ -5,6 +5,7 @@ VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{94F99274-3518-45D0-83A4-6F370D6FE74B}"
 	ProjectSection(SolutionItems) = preProject
+		Feature.Flags.props = Feature.Flags.props
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -27,7 +28,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{7545AC28-1399-4AF5-9C63-0507F78F017A}"
 	ProjectSection(SolutionItems) = preProject
 		Source\Directory.Build.props = Source\Directory.Build.props
-		Source\Feature.Flags.props = Source\Feature.Flags.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2FDB2AAE-E5CE-483E-A1A6-EC0B0A4AD67B}"

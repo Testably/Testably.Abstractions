@@ -1,14 +1,13 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Testably.Abstractions.Tests.TestHelpers.Attributes;
 using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Tests.Real;
 
 public static partial class RealFileSystem
 {
-    private const string RealFileSystemCollection = nameof(RealFileSystemCollection);
-
     /// <summary>
     ///     Force deletes the directory at the given <paramref name="path" />.<br />
     ///     Removes the <see cref="FileAttributes.ReadOnly" /> flag, if necessary.
@@ -106,7 +105,7 @@ public static partial class RealFileSystem
     }
 
     // ReSharper disable once UnusedMember.Global
-    [Collection(RealFileSystemCollection)]
+    [Collection(nameof(RealFileSystemTestAttribute))]
     public sealed class Tests : FileSystemTests<FileSystem>
     {
         public Tests() : base(new FileSystem())

@@ -11,11 +11,6 @@
     "target-framework": "net6.0",
     "coverage-analysis": "all",
     "reporters": [ "html", "json", "cleartext", "dashboard" ],
-    "mutation-level": "Advanced",
-    "files-to-exclude": [
-      {
-        "pattern": "/FileSystemInitializer.Helpers.cs"
-      }
-    ]
+    "mutation-level": "Advanced"
   }
 }
