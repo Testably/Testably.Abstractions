@@ -4,9 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
 using Testably.Abstractions.Testing.Internal;
-using static System.Net.WebRequestMethods;
 #if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
 #endif
@@ -23,7 +21,7 @@ public sealed partial class FileSystemMock
     {
         private byte[] _bytes = Array.Empty<byte>();
 
-        private ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
+        private readonly ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
 
         internal FileInfoMock(string fullName, string originalPath,
                               FileSystemMock fileSystem)
@@ -213,7 +211,7 @@ public sealed partial class FileSystemMock
                        CheckAccessWithShare(_access, share);
             }
 
-            private bool CheckAccessWithShare(FileAccess access, FileShare share)
+            private static bool CheckAccessWithShare(FileAccess access, FileShare share)
             {
                 switch (access)
                 {

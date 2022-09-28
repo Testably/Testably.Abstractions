@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Common;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -12,16 +11,22 @@ public sealed partial class FileSystemMock
     /// </summary>
     private sealed class FileStreamMock : FileSystemStream
     {
-        private readonly FileSystemMock _fileSystem;
-        private readonly FileMode _mode;
+        /// <inheritdoc cref="FileSystemStream.CanRead" />
+        public override bool CanRead
+            => _access.HasFlag(FileAccess.Read);
+
+        /// <inheritdoc cref="FileSystemStream.CanWrite" />
+        public override bool CanWrite
+            => _access.HasFlag(FileAccess.Write);
+
         private readonly FileAccess _access;
-        private readonly FileShare _share;
-        private readonly int _bufferSize;
-        private readonly FileOptions _options;
-        private readonly MemoryStream _stream;
-        private bool _isDisposed;
         private readonly IDisposable _accessLock;
         private readonly IInMemoryFileSystem.IWritableFileInfo _file;
+        private readonly FileSystemMock _fileSystem;
+        private bool _isDisposed;
+        private readonly FileMode _mode;
+        private readonly FileOptions _options;
+        private readonly MemoryStream _stream;
 
         internal FileStreamMock(FileSystemMock fileSystem,
                                 string? path,
@@ -44,6 +49,122 @@ public sealed partial class FileSystemMock
                                int bufferSize,
                                FileOptions options)
             : base(stream, path, (options & FileOptions.Asynchronous) != 0)
+        {
+            ThrowIfInvalidModeAccess(mode, access);
+
+            _stream = stream;
+            _fileSystem = fileSystem;
+            _mode = mode;
+            _access = access;
+            _ = bufferSize;
+            _options = options;
+
+            IInMemoryFileSystem.IWritableFileInfo? file =
+                _fileSystem.FileSystemContainer.GetFile(Name);
+            if (file == null)
+            {
+                if (_mode.Equals(FileMode.Open) ||
+                    _mode.Equals(FileMode.Truncate))
+                {
+                    throw new FileNotFoundException(
+                        $"Could not find file '{_fileSystem.Path.GetFullPath(Name)}'.");
+                }
+
+                file = _fileSystem.FileSystemContainer.GetOrAddFile(Name);
+                if (file == null)
+                {
+                    if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        throw new IOException(
+                            $"The file '{_fileSystem.Path.GetFullPath(Name)}' already exists.");
+                    }
+
+                    throw new UnauthorizedAccessException(
+                        $"Access to the path '{_fileSystem.Path.GetFullPath(Name)}' is denied.");
+                }
+            }
+            else if (_mode.Equals(FileMode.CreateNew))
+            {
+                throw new IOException(
+                    $"The file '{_fileSystem.Path.GetFullPath(Name)}' already exists.");
+            }
+
+            _accessLock = file.RequestAccess(access, share);
+
+            _file = file;
+
+            InitializeStream();
+        }
+
+        /// <inheritdoc cref="FileSystemStream.Flush()" />
+        public override void Flush()
+        {
+            InternalFlush();
+        }
+
+        /// <inheritdoc cref="FileSystemStream.Read(byte[], int, int)" />
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            //TimeAdjustments.LastAccessTime
+            return base.Read(buffer, offset, count);
+        }
+
+        /// <inheritdoc cref="FileSystemStream.Write(byte[], int, int)" />
+        public override void Write(byte[] buffer, int offset, int count)
+        {
+            //TimeAdjustments.LastAccessTime | TimeAdjustments.LastWriteTime
+            base.Write(buffer, offset, count);
+        }
+
+        /// <inheritdoc cref="FileSystemStream.Dispose(bool)" />
+        protected override void Dispose(bool disposing)
+        {
+            if (_isDisposed)
+            {
+                return;
+            }
+
+            _accessLock.Dispose();
+            InternalFlush();
+            base.Dispose(disposing);
+            OnClose();
+            _isDisposed = true;
+        }
+
+        private void InitializeStream()
+        {
+            byte[] existingContents = _file.GetBytes();
+            bool keepExistingContents =
+                existingContents.Length > 0 &&
+                _mode != FileMode.Truncate && _mode != FileMode.Create;
+            if (keepExistingContents)
+            {
+                _stream.Write(existingContents, 0, existingContents.Length);
+                _stream.Seek(0, _mode == FileMode.Append
+                    ? SeekOrigin.End
+                    : SeekOrigin.Begin);
+            }
+        }
+
+        private void InternalFlush()
+        {
+            long position = _stream.Position;
+            _stream.Seek(0, SeekOrigin.Begin);
+            byte[] data = new byte[Length];
+            _ = _stream.Read(data, 0, (int)Length);
+            _stream.Seek(position, SeekOrigin.Begin);
+            _file.WriteBytes(data);
+        }
+
+        private void OnClose()
+        {
+            if (_options.HasFlag(FileOptions.DeleteOnClose))
+            {
+                _fileSystem.FileSystemContainer.Delete(Name);
+            }
+        }
+
+        private static void ThrowIfInvalidModeAccess(FileMode mode, FileAccess access)
         {
             if (mode == FileMode.Append)
             {
@@ -70,171 +191,14 @@ public sealed partial class FileSystemMock
                     nameof(access));
             }
 
-            if (!access.HasFlag(FileAccess.Write))
+            if (!access.HasFlag(FileAccess.Write) &&
+                (mode == FileMode.Truncate || mode == FileMode.CreateNew ||
+                 mode == FileMode.Create || mode == FileMode.Append))
             {
-                if (mode == FileMode.Truncate || mode == FileMode.CreateNew ||
-                    mode == FileMode.Create || mode == FileMode.Append)
-                {
-                    throw new ArgumentException(
-                        $"Combining FileMode: {mode} with FileAccess: {access} is invalid.",
-                        nameof(access));
-                }
+                throw new ArgumentException(
+                    $"Combining FileMode: {mode} with FileAccess: {access} is invalid.",
+                    nameof(access));
             }
-
-            _stream = stream;
-            _fileSystem = fileSystem;
-            _mode = mode;
-            _access = access;
-            _share = share;
-            _bufferSize = bufferSize;
-            _options = options;
-
-            IInMemoryFileSystem.IWritableFileInfo? file =
-                _fileSystem.FileSystemContainer.GetFile(Name);
-            if (file == null)
-            {
-                if (_mode.Equals(FileMode.Open) ||
-                    _mode.Equals(FileMode.Truncate))
-                {
-                    throw new FileNotFoundException(
-                        $"Could not find file '{_fileSystem.Path.GetFullPath(Name)}'.");
-                }
-
-                file = _fileSystem.FileSystemContainer.GetOrAddFile(Name);
-                if (file == null)
-                {
-                    if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    {
-                        throw new IOException($"The file '{_fileSystem.Path.GetFullPath(Name)}' already exists.");
-                    }
-                    throw new UnauthorizedAccessException(
-                        $"Access to the path '{_fileSystem.Path.GetFullPath(Name)}' is denied.");
-                }
-            }
-            else if (_mode.Equals(FileMode.CreateNew))
-            {
-                throw new IOException(
-                    $"The file '{_fileSystem.Path.GetFullPath(Name)}' already exists.");
-            }
-
-            _accessLock = file.RequestAccess(access, share);
-
-            _file = file;
-
-            InitializeStream();
-        }
-
-        private void InitializeStream()
-        {
-            //file.CheckFileAccess(path, access);
-
-            //var timeAdjustments = GetTimeAdjustmentsForFileStreamWhenFileExists(mode, access);
-            //mockFileDataAccessor.AdjustTimes(fileData, timeAdjustments);
-            byte[] existingContents = _file.GetBytes();
-            bool keepExistingContents =
-                existingContents.Length > 0 &&
-                _mode != FileMode.Truncate && _mode != FileMode.Create;
-            if (keepExistingContents)
-            {
-                _stream.Write(existingContents, 0, existingContents.Length);
-                _stream.Seek(0, _mode == FileMode.Append
-                    ? SeekOrigin.End
-                    : SeekOrigin.Begin);
-            }
-        }
-        //private TimeAdjustments GetTimeAdjustmentsForFileStreamWhenFileExists(FileMode mode, FileAccess access)
-        //{
-        //    switch (mode)
-        //    {
-        //        case FileMode.Append:
-        //        case FileMode.CreateNew:
-        //            if (access.HasFlag(FileAccess.Read))
-        //            {
-        //                return TimeAdjustments.LastAccessTime;
-        //            }
-        //            return TimeAdjustments.None;
-        //        case FileMode.Create:
-        //        case FileMode.Truncate:
-        //            if (access.HasFlag(FileAccess.Write))
-        //            {
-        //                return TimeAdjustments.LastAccessTime | TimeAdjustments.LastWriteTime;
-        //            }
-        //            return TimeAdjustments.LastAccessTime;
-        //        case FileMode.Open:
-        //        case FileMode.OpenOrCreate:
-        //        default:
-        //            return TimeAdjustments.None;
-        //    }
-        //}
-
-        /// <inheritdoc />
-        public override bool CanRead => _access.HasFlag(FileAccess.Read);
-
-        /// <inheritdoc />
-        public override bool CanWrite => _access.HasFlag(FileAccess.Write);
-
-        /// <inheritdoc />
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            //mockFileDataAccessor.AdjustTimes(fileData,
-            //    TimeAdjustments.LastAccessTime);
-            return base.Read(buffer, offset, count);
-        }
-
-        /// <inheritdoc />
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            //mockFileDataAccessor.AdjustTimes(fileData,
-            //    TimeAdjustments.LastAccessTime | TimeAdjustments.LastWriteTime);
-            base.Write(buffer, offset, count);
-        }
-
-        /// <inheritdoc cref="FileSystemStream.Dispose(bool)" />
-        protected override void Dispose(bool disposing)
-        {
-            if (_isDisposed)
-            {
-                return;
-            }
-
-            _accessLock.Dispose();
-            InternalFlush();
-            base.Dispose(disposing);
-            OnClose();
-            _isDisposed = true;
-        }
-
-        /// <inheritdoc />
-        public override void Flush()
-        {
-            InternalFlush();
-        }
-
-        private void InternalFlush()
-        {
-            /* reset back to the beginning .. */
-            long position = _stream.Position;
-            _stream.Seek(0, SeekOrigin.Begin);
-            /* .. read everything out */
-            byte[] data = new byte[Length];
-            _stream.Read(data, 0, (int)Length);
-            /* restore to original position */
-            _stream.Seek(position, SeekOrigin.Begin);
-            /* .. put it in the mock system */
-            _file.WriteBytes(data);
-        }
-
-        private void OnClose()
-        {
-            if (_options.HasFlag(FileOptions.DeleteOnClose))
-            {
-                _fileSystem.FileSystemContainer.Delete(Name);
-            }
-
-            //if (_options.HasFlag(FileOptions.Encrypted) && mockFileDataAccessor.FileExists(path))
-            //{
-            //    mockFileDataAccessor.FileInfo.FromFileName(path).Encrypt();
-            //}
         }
     }
 }
