@@ -194,11 +194,13 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetCreationTime(string)" />
         public DateTime GetCreationTime(string path)
-            => throw new NotImplementedException();
+            => (_fileSystem.FileSystemContainer.GetDirectory(path) ??
+                _fileSystem.NullFileSystemInfo).CreationTime;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetCreationTimeUtc(string)" />
         public DateTime GetCreationTimeUtc(string path)
-            => throw new NotImplementedException();
+            => (_fileSystem.FileSystemContainer.GetDirectory(path) ??
+                _fileSystem.NullFileSystemInfo).CreationTimeUtc;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetCurrentDirectory()" />
         public string GetCurrentDirectory()
@@ -276,19 +278,23 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLastAccessTime(string)" />
         public DateTime GetLastAccessTime(string path)
-            => throw new NotImplementedException();
+            => (_fileSystem.FileSystemContainer.GetDirectory(path) ??
+                _fileSystem.NullFileSystemInfo).LastAccessTime;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLastAccessTimeUtc(string)" />
         public DateTime GetLastAccessTimeUtc(string path)
-            => throw new NotImplementedException();
+            => (_fileSystem.FileSystemContainer.GetDirectory(path) ??
+                _fileSystem.NullFileSystemInfo).LastAccessTimeUtc;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLastWriteTime(string)" />
         public DateTime GetLastWriteTime(string path)
-            => throw new NotImplementedException();
+            => (_fileSystem.FileSystemContainer.GetDirectory(path) ??
+                _fileSystem.NullFileSystemInfo).LastWriteTime;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLastWriteTimeUtc(string)" />
         public DateTime GetLastWriteTimeUtc(string path)
-            => throw new NotImplementedException();
+            => (_fileSystem.FileSystemContainer.GetDirectory(path) ??
+                _fileSystem.NullFileSystemInfo).LastWriteTimeUtc;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLogicalDrives()" />
         public string[] GetLogicalDrives()

@@ -1,4 +1,7 @@
-﻿namespace Testably.Abstractions.Testing;
+﻿using System.IO;
+using System;
+
+namespace Testably.Abstractions.Testing;
 
 /// <summary>
 ///     A test helper for simulating the file system. Implements <see cref="IFileSystem" />.
@@ -28,6 +31,8 @@ public sealed partial class FileSystemMock : IFileSystem
     private readonly FileMock _fileMock;
     private readonly PathMock _pathMock;
 
+    internal IFileSystem.IFileSystemInfo NullFileSystemInfo { get; }
+
     /// <summary>
     ///     Initializes the <see cref="FileSystemMock" />.
     /// </summary>
@@ -43,6 +48,13 @@ public sealed partial class FileSystemMock : IFileSystem
         DirectoryInfo = new DirectoryInfoFactoryMock(this, _callbackHandler);
         FileInfo = new FileInfoFactoryMock(this, _callbackHandler);
         FileStream = new FileStreamFactoryMock(this, _callbackHandler);
+        NullFileSystemInfo = new FileSystemInfoMock(string.Empty, string.Empty, this)
+        {
+            LastWriteTime = new DateTime(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc),
+            LastAccessTime = new DateTime(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc),
+            CreationTime = new DateTime(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc),
+            Attributes = (FileAttributes)(-1),
+        };
     }
 
     #region IFileSystem Members

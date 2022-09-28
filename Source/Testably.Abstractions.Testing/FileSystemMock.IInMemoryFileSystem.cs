@@ -45,6 +45,12 @@ public sealed partial class FileSystemMock
         IWritableFileInfo? GetFile(string path);
 
         /// <summary>
+        ///     Gets a directory if it exists.<br />
+        ///     Returns <c>null</c>, if the directory does not exist.
+        /// </summary>
+        IFileSystem.IDirectoryInfo? GetDirectory(string path);
+
+        /// <summary>
         ///     Gets or adds a directory.
         /// </summary>
         IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path);

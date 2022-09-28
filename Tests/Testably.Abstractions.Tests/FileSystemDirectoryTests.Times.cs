@@ -5,6 +5,80 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemDirectoryTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
+    /// <summary>
+    ///     The default time returned by the file system if no time has been set.
+    ///     <seealso href="https://learn.microsoft.com/en-us/windows/win32/sysinfo/file-times" />:
+    ///     A file time is a 64-bit value that represents the number of 100-nanosecond intervals that have elapsed
+    ///     since 12:00 A.M. January 1, 1601 Coordinated Universal Time (UTC).
+    /// </summary>
+    internal readonly DateTime NullTime = new(1601, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+    [Theory]
+    [AutoData]
+    public void GetCreationTime_PathNotFound_ShouldReturnNullTime(string path)
+    {
+        DateTime expectedTime = NullTime.ToLocalTime();
+
+        DateTime result = FileSystem.Directory.GetCreationTime(path);
+
+        result.Should().Be(expectedTime);
+    }
+
+    [Theory]
+    [AutoData]
+    public void GetCreationTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
+    {
+        DateTime expectedTime = NullTime.ToUniversalTime();
+
+        DateTime result = FileSystem.Directory.GetCreationTimeUtc(path);
+
+        result.Should().Be(expectedTime);
+    }
+
+    [Theory]
+    [AutoData]
+    public void GetLastAccessTime_PathNotFound_ShouldReturnNullTime(string path)
+    {
+        DateTime expectedTime = NullTime.ToLocalTime();
+
+        DateTime result = FileSystem.Directory.GetLastAccessTime(path);
+
+        result.Should().Be(expectedTime);
+    }
+
+    [Theory]
+    [AutoData]
+    public void GetLastAccessTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
+    {
+        DateTime expectedTime = NullTime.ToUniversalTime();
+
+        DateTime result = FileSystem.Directory.GetLastAccessTimeUtc(path);
+
+        result.Should().Be(expectedTime);
+    }
+
+    [Theory]
+    [AutoData]
+    public void GetLastWriteTime_PathNotFound_ShouldReturnNullTime(string path)
+    {
+        DateTime expectedTime = NullTime.ToLocalTime();
+
+        DateTime result = FileSystem.Directory.GetLastWriteTime(path);
+
+        result.Should().Be(expectedTime);
+    }
+
+    [Theory]
+    [AutoData]
+    public void GetLastWriteTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
+    {
+        DateTime expectedTime = NullTime.ToUniversalTime();
+
+        DateTime result = FileSystem.Directory.GetLastWriteTimeUtc(path);
+
+        result.Should().Be(expectedTime);
+    }
+
     [Theory]
     [AutoData]
     public void CreationTime_ShouldBeSet(string path)
