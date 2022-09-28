@@ -33,10 +33,10 @@ public class TimeProviderTests
     }
 
     [Fact]
-    public void Set_ShouldReturnFixedDateTime()
+    public void Use_ShouldReturnFixedDateTime()
     {
         DateTime now = TimeTestHelper.GetRandomTime();
-        TimeSystemMock.ITimeProvider timeProvider = TimeProvider.Set(now);
+        TimeSystemMock.ITimeProvider timeProvider = TimeProvider.Use(now);
 
         DateTime result1 = timeProvider.Read();
         DateTime result2 = timeProvider.Read();

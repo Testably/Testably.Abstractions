@@ -70,12 +70,10 @@ internal sealed class Timer : IStoppedTimer, IRunningTimer
                     }
 
                     TimeSpan delay = nextPlannedExecution - _timeSystem.DateTime.UtcNow;
-                    if (delay < TimeSpan.Zero)
+                    if (delay > TimeSpan.Zero)
                     {
-                        delay = TimeSpan.Zero;
+                        _timeSystem.Task.TryDelay(delay, linkedToken);
                     }
-
-                    _timeSystem.Task.TryDelay(delay, linkedToken);
                 }
             },
             TaskCreationOptions.LongRunning);
