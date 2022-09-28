@@ -30,7 +30,7 @@ public static class TimeProvider
     /// <summary>
     ///     Initializes the <see cref="TimeSystemMock.TimeProvider" /> with the specified <paramref name="time" />.
     /// </summary>
-    public static TimeSystemMock.ITimeProvider Set(DateTime time)
+    public static TimeSystemMock.ITimeProvider Use(DateTime time)
     {
         return new TimeProviderImplementation(time);
     }

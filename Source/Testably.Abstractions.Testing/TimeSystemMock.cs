@@ -35,7 +35,7 @@ public sealed partial class TimeSystemMock : ITimeSystem
     /// <summary>
     ///     Initializes the <see cref="TimeSystemMock" /> with the specified <paramref name="time" />.
     /// </summary>
-    public TimeSystemMock(DateTime time) : this(Testing.TimeProvider.Set(time))
+    public TimeSystemMock(DateTime time) : this(Testing.TimeProvider.Use(time))
     {
     }
 

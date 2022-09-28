@@ -111,6 +111,19 @@ public sealed partial class FileSystemMock
                .NormalizeAndTrimPath(_fileSystem));
         }
 
+        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetDirectory(string)" />
+        public IFileSystem.IDirectoryInfo? GetDirectory(string path)
+        {
+            if (_files.TryGetValue(
+                _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
+                out FileSystemInfoMock? fileInfo))
+            {
+                return fileInfo as IFileSystem.IDirectoryInfo;
+            }
+
+            return null;
+        }
+
         /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetFile(string)" />
         public IInMemoryFileSystem.IWritableFileInfo? GetFile(string path)
         {

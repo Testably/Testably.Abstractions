@@ -1,10 +1,79 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace Testably.Abstractions.Extensions.Tests;
 
 public class TimeSystemExtensionsTimerTests
 {
+    [Fact]
+    public void Callback_TakesEqualToInterval_ShouldNotDelay()
+    {
+        TimeSpan interval = TimeSpan.FromSeconds(10);
+        TimeSystemMock timeSystem = new();
+        List<TimeSpan> delays = new();
+        timeSystem.On.TaskDelay(delay =>
+        {
+            delays.Add(delay);
+        });
+
+        ManualResetEventSlim ms = new();
+        int expectedIterations = 10;
+
+        IStoppedTimer timer = timeSystem.CreateTimer(
+            interval,
+            _ =>
+            {
+                timeSystem.Thread.Sleep(interval);
+                expectedIterations--;
+                if (expectedIterations < 0)
+                {
+                    ms.Set();
+                }
+            });
+        timer.Start();
+
+        ms.Wait(1000);
+        timer.Dispose();
+
+        delays.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void Callback_TakesLongerThanInterval_ShouldNotDelay()
+    {
+        TimeSpan interval = TimeSpan.FromSeconds(10);
+        TimeSystemMock timeSystem = new();
+        List<TimeSpan> delays = new();
+        timeSystem.On.TaskDelay(delay =>
+        {
+            delays.Add(delay);
+        });
+
+        ManualResetEventSlim ms = new();
+        int expectedIterations = 10;
+
+        IStoppedTimer timer = timeSystem.CreateTimer(
+            interval,
+            _ =>
+            {
+                // delay of -1 milliseconds is treated as infinity, but should not be applied!
+                timeSystem.Thread.Sleep(interval + TimeSpan.FromMilliseconds(1));
+                expectedIterations--;
+                if (expectedIterations < 0)
+                {
+                    ms.Set();
+                }
+            });
+        timer.Start();
+
+        ms.Wait(1000);
+        timer.Dispose();
+
+        delays.Should().BeEmpty();
+    }
+
     [Fact]
     public void CreateTimer_Dispose_ShouldStopIterations()
     {
@@ -151,6 +220,50 @@ public class TimeSystemExtensionsTimerTests
         ms.Wait(1000);
 
         receivedIntervals.Should().AllBeEquivalentTo(interval);
+    }
+
+    [Fact]
+    public void CreateTimer_StartTwice_ShouldStopPreviousRun()
+    {
+        TimeSpan interval = TimeSpan.FromSeconds(10);
+        TimeSpan callbackDuration = TimeSpan.FromSeconds(2);
+        DateTime startTime = new(2010, 5, 2, 10, 0, 0, DateTimeKind.Utc);
+        TimeSystemMock timeSystem = new(TimeProvider.Use(startTime));
+        ConcurrentBag<DateTime> requestedTimes = new();
+        timeSystem.On.DateTimeRead(t =>
+        {
+            requestedTimes.Add(t);
+        });
+
+        ManualResetEventSlim ms = new();
+        int expectedIterations = 10;
+
+        IStoppedTimer timer = timeSystem.CreateTimer(
+            interval,
+            token =>
+            {
+                Thread.Sleep(10);
+                token.ThrowIfCancellationRequested();
+                timeSystem.Thread.Sleep(callbackDuration);
+                expectedIterations--;
+                if (expectedIterations < 0)
+                {
+                    ms.Set();
+                }
+            });
+        timer.Start();
+        timer.Start();
+
+        ms.Wait(1000);
+        timer.Dispose();
+
+        foreach (DateTime requestedTime in requestedTimes
+           .Where(x => x != startTime))
+        {
+            // Ensures that only one thread added a Thread.Sleep!
+            // Therefore the second Start stopped the first Task.
+            requestedTime.Second.Should().Match(s => s % 10 == 2);
+        }
     }
 
     #region Helpers
