@@ -7,7 +7,7 @@ public class RealFileSystemTestAttribute : RuntimeSwitchAttribute
 {
     public RealFileSystemTestAttribute()
 #if DEBUG
-        : base(true)
+        : base(false)
 #else
         : base(true)
 #endif
