@@ -46,6 +46,7 @@ public sealed partial class FileSystemMock : IFileSystem
         _fileMock = new FileMock(this, _callbackHandler);
         _pathMock = new PathMock(this);
         DirectoryInfo = new DirectoryInfoFactoryMock(this, _callbackHandler);
+        DriveInfo = new DriveInfoFactoryMock(this);
         FileInfo = new FileInfoFactoryMock(this, _callbackHandler);
         FileStream = new FileStreamFactoryMock(this, _callbackHandler);
         NullFileSystemInfo = new FileSystemInfoMock(string.Empty, string.Empty, this)
@@ -65,6 +66,9 @@ public sealed partial class FileSystemMock : IFileSystem
 
     /// <inheritdoc cref="IFileSystem.DirectoryInfo" />
     public IFileSystem.IDirectoryInfoFactory DirectoryInfo { get; }
+
+    /// <inheritdoc cref="IFileSystem.DriveInfo" />
+    public IFileSystem.IDriveInfoFactory DriveInfo { get; }
 
     /// <inheritdoc cref="IFileSystem.File" />
     public IFileSystem.IFile File

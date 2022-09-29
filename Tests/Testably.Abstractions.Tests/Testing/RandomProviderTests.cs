@@ -70,8 +70,7 @@ public class RandomProviderTests
     {
         List<int> results = new();
         RandomSystemMock.IRandomProvider randomProvider =
-            RandomProvider.Generate(randomGenerator:
-                s => new RandomProvider.RandomGenerator(s, intGenerator: value));
+            RandomProvider.Generate(seed, intGenerator: value);
 
         IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
         for (int i = 0; i < 100; i++)

@@ -9,6 +9,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 {
     [Theory]
     [AutoData]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void
         EnumerateFiles_MissingDirectory_ShouldThrowDirectoryNotFoundException(
             string path)
@@ -25,6 +26,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void
         EnumerateFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
             string path)
@@ -47,6 +49,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void EnumerateFiles_SearchOptionAllDirectories_ShouldReturnAllFiles(
         string path)
     {
@@ -79,6 +82,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [InlineData(true, "abc?", "abc")]
     [InlineData(false, "ab?c", "abc")]
     [InlineData(false, "ac", "abc")]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void EnumerateFiles_SearchPattern_ShouldReturnExpectedValue(
         bool expectToBeFound, string searchPattern, string fileName)
     {
@@ -103,6 +107,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
     [Theory]
     [AutoData]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void
         EnumerateFiles_WithEnumerationOptions_ShouldConsiderSetOptions(
             string path)
@@ -131,6 +136,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void EnumerateFiles_WithNewline_ShouldThrowArgumentException(
         string path)
     {
@@ -153,6 +159,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void
         EnumerateFiles_WithoutSearchString_ShouldReturnAllFilesInDirectSubdirectories(
             string path)
@@ -174,6 +181,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void EnumerateFiles_WithSearchPattern_ShouldReturnMatchingFiles(
         string path)
     {
@@ -195,6 +203,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     }
 
     [Fact]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void
         EnumerateFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
     {
@@ -218,6 +227,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void
         GetFiles_MissingDirectory_ShouldThrowDirectoryNotFoundException(
             string path)
@@ -234,6 +244,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void
         GetFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
             string path)
@@ -256,6 +267,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void GetFiles_SearchOptionAllDirectories_ShouldReturnAllFiles(
         string path)
     {
@@ -288,6 +300,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [InlineData(true, "abc?", "abc")]
     [InlineData(false, "ab?c", "abc")]
     [InlineData(false, "ac", "abc")]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void GetFiles_SearchPattern_ShouldReturnExpectedValue(
         bool expectToBeFound, string searchPattern, string fileName)
     {
@@ -312,6 +325,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
     [Theory]
     [AutoData]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void
         GetFiles_WithEnumerationOptions_ShouldConsiderSetOptions(
             string path)
@@ -340,6 +354,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void GetFiles_WithNewline_ShouldThrowArgumentException(
         string path)
     {
@@ -362,6 +377,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void
         GetFiles_WithoutSearchString_ShouldReturnAllFilesInDirectSubdirectories(
             string path)
@@ -383,6 +399,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void GetFiles_WithSearchPattern_ShouldReturnMatchingFiles(
         string path)
     {
@@ -404,6 +421,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     }
 
     [Fact]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void
         GetFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
     {

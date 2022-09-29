@@ -11,15 +11,15 @@ public sealed partial class TimeSystem : ITimeSystem
 
     /// <inheritdoc cref="ITimeSystem.DateTime" />
     public ITimeSystem.IDateTime DateTime
-        => new DateTimeSystem(this);
+        => new DateTimeWrapper(this);
 
     /// <inheritdoc cref="ITimeSystem.Task" />
     public ITimeSystem.ITask Task
-        => new TaskSystem(this);
+        => new TaskWrapper(this);
 
     /// <inheritdoc cref="ITimeSystem.Thread" />
     public ITimeSystem.IThread Thread
-        => new ThreadSystem(this);
+        => new ThreadWrapper(this);
 
     #endregion
 }

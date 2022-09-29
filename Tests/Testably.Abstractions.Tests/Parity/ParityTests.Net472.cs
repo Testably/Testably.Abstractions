@@ -15,23 +15,23 @@ public abstract partial class ParityTests
         ///     As we only support .NET Standard 2.0 these are blacklisted.
         /// </summary>
         public Net472(ITestOutputHelper testOutputHelper)
-            : base(new ParityExclusions(), testOutputHelper)
+            : base(new Parity(), testOutputHelper)
         {
             #region Directory
 
-            Blacklisted.DirectoryMethods.Add(typeof(Directory).GetMethod(
+            Parity.Directory.ExcludedMethods.Add(typeof(Directory).GetMethod(
                 nameof(Directory.CreateDirectory),
                 new[] { typeof(string), typeof(DirectorySecurity) }));
-            Blacklisted.DirectoryMethods.Add(typeof(Directory).GetMethod(
+            Parity.Directory.ExcludedMethods.Add(typeof(Directory).GetMethod(
                 nameof(Directory.GetAccessControl),
                 new[] { typeof(string) }));
-            Blacklisted.DirectoryMethods.Add(typeof(Directory).GetMethod(
+            Parity.Directory.ExcludedMethods.Add(typeof(Directory).GetMethod(
                 nameof(Directory.GetAccessControl),
                 new[] { typeof(string), typeof(AccessControlSections) }));
-            Blacklisted.DirectoryMethods.Add(typeof(Directory).GetMethod(
+            Parity.Directory.ExcludedMethods.Add(typeof(Directory).GetMethod(
                 nameof(Directory.SetAccessControl),
                 new[] { typeof(string), typeof(DirectorySecurity) }));
-            Blacklisted.DirectoryMethods.Add(typeof(Directory).GetMethod(
+            Parity.Directory.ExcludedMethods.Add(typeof(Directory).GetMethod(
                 nameof(Directory.GetParent),
                 new[] { typeof(string) }));
 
@@ -39,19 +39,19 @@ public abstract partial class ParityTests
 
             #region DirectoryInfo
 
-            Blacklisted.DirectoryInfoMethods.Add(typeof(DirectoryInfo).GetMethod(
+            Parity.DirectoryInfo.ExcludedMethods.Add(typeof(DirectoryInfo).GetMethod(
                 nameof(DirectoryInfo.Create),
                 new[] { typeof(DirectorySecurity) }));
-            Blacklisted.DirectoryInfoMethods.Add(typeof(DirectoryInfo).GetMethod(
+            Parity.DirectoryInfo.ExcludedMethods.Add(typeof(DirectoryInfo).GetMethod(
                 nameof(DirectoryInfo.CreateSubdirectory),
                 new[] { typeof(string), typeof(DirectorySecurity) }));
-            Blacklisted.DirectoryInfoMethods.Add(typeof(DirectoryInfo).GetMethod(
+            Parity.DirectoryInfo.ExcludedMethods.Add(typeof(DirectoryInfo).GetMethod(
                 nameof(DirectoryInfo.GetAccessControl),
                 Type.EmptyTypes));
-            Blacklisted.DirectoryInfoMethods.Add(typeof(DirectoryInfo).GetMethod(
+            Parity.DirectoryInfo.ExcludedMethods.Add(typeof(DirectoryInfo).GetMethod(
                 nameof(DirectoryInfo.GetAccessControl),
                 new[] { typeof(AccessControlSections) }));
-            Blacklisted.DirectoryInfoMethods.Add(typeof(DirectoryInfo).GetMethod(
+            Parity.DirectoryInfo.ExcludedMethods.Add(typeof(DirectoryInfo).GetMethod(
                 nameof(DirectoryInfo.SetAccessControl),
                 new[] { typeof(DirectorySecurity) }));
 
@@ -59,20 +59,20 @@ public abstract partial class ParityTests
 
             #region File
 
-            Blacklisted.FileMethods.Add(typeof(File).GetMethod(
+            Parity.File.ExcludedMethods.Add(typeof(File).GetMethod(
                 nameof(File.Create),
                 new[]
                 {
                     typeof(string), typeof(int), typeof(FileOptions),
                     typeof(FileSecurity)
                 }));
-            Blacklisted.FileMethods.Add(typeof(File).GetMethod(
+            Parity.File.ExcludedMethods.Add(typeof(File).GetMethod(
                 nameof(File.GetAccessControl),
                 new[] { typeof(string) }));
-            Blacklisted.FileMethods.Add(typeof(File).GetMethod(
+            Parity.File.ExcludedMethods.Add(typeof(File).GetMethod(
                 nameof(File.GetAccessControl),
                 new[] { typeof(string), typeof(AccessControlSections) }));
-            Blacklisted.FileMethods.Add(typeof(File).GetMethod(
+            Parity.File.ExcludedMethods.Add(typeof(File).GetMethod(
                 nameof(File.SetAccessControl),
                 new[] { typeof(string), typeof(FileSecurity) }));
 
@@ -80,13 +80,13 @@ public abstract partial class ParityTests
 
             #region FileInfo
             
-            Blacklisted.FileInfoMethods.Add(typeof(FileInfo).GetMethod(
+            Parity.FileInfo.ExcludedMethods.Add(typeof(FileInfo).GetMethod(
                 nameof(FileInfo.GetAccessControl),
                 Type.EmptyTypes));
-            Blacklisted.FileInfoMethods.Add(typeof(FileInfo).GetMethod(
+            Parity.FileInfo.ExcludedMethods.Add(typeof(FileInfo).GetMethod(
                 nameof(FileInfo.GetAccessControl),
                 new[] { typeof(AccessControlSections) }));
-            Blacklisted.FileInfoMethods.Add(typeof(FileInfo).GetMethod(
+            Parity.FileInfo.ExcludedMethods.Add(typeof(FileInfo).GetMethod(
                 nameof(FileInfo.SetAccessControl),
                 new[] { typeof(FileSecurity) }));
 
@@ -94,27 +94,27 @@ public abstract partial class ParityTests
 
             #region Guid
 
-            Blacklisted.GuidMethods.Add(typeof(Guid).GetMethod(
+            Parity.Guid.ExcludedMethods.Add(typeof(Guid).GetMethod(
                 nameof(Guid.Parse),
                 new[]
                 {
                     typeof(string)
                 }));
-            Blacklisted.GuidMethods.Add(typeof(Guid).GetMethod(
+            Parity.Guid.ExcludedMethods.Add(typeof(Guid).GetMethod(
                 nameof(Guid.ParseExact),
                 new[]
                 {
                     typeof(string),
                     typeof(string)
                 }));
-            Blacklisted.GuidMethods.Add(typeof(Guid).GetMethod(
+            Parity.Guid.ExcludedMethods.Add(typeof(Guid).GetMethod(
                 nameof(Guid.TryParse),
                 new[]
                 {
                     typeof(string),
                     typeof(Guid).MakeByRefType()
                 }));
-            Blacklisted.GuidMethods.Add(typeof(Guid).GetMethod(
+            Parity.Guid.ExcludedMethods.Add(typeof(Guid).GetMethod(
                 nameof(Guid.TryParseExact),
                 new[]
                 {
@@ -127,16 +127,16 @@ public abstract partial class ParityTests
 
             #region Path
 
-            Blacklisted.PathMethods.Add(typeof(Path).GetMethod(
+            Parity.Path.ExcludedMethods.Add(typeof(Path).GetMethod(
                 nameof(Path.ChangeExtension),
                 new[] { typeof(string), typeof(string) }));
-            Blacklisted.PathMethods.Add(typeof(Path).GetMethod(
+            Parity.Path.ExcludedMethods.Add(typeof(Path).GetMethod(
                 nameof(Path.GetExtension),
                 new[] { typeof(string) }));
-            Blacklisted.PathMethods.Add(typeof(Path).GetMethod(
+            Parity.Path.ExcludedMethods.Add(typeof(Path).GetMethod(
                 nameof(Path.GetFileName),
                 new[] { typeof(string) }));
-            Blacklisted.PathMethods.Add(typeof(Path).GetMethod(
+            Parity.Path.ExcludedMethods.Add(typeof(Path).GetMethod(
                 nameof(Path.GetFileNameWithoutExtension),
                 new[] { typeof(string) }));
 

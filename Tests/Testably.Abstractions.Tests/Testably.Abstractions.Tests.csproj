@@ -11,8 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="FileSystemTests.*.cs">
+    <Compile Update="FileSystem*Tests.cs">
       <DependentUpon>FileSystemTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="FileSystemDirectoryInfoFactoryTests.*.cs">
+      <DependentUpon>FileSystemDirectoryInfoFactoryTests.cs</DependentUpon>
     </Compile>
     <Compile Update="FileSystemDirectoryInfoTests.*.cs">
       <DependentUpon>FileSystemDirectoryInfoTests.cs</DependentUpon>
@@ -20,8 +23,26 @@
     <Compile Update="FileSystemDirectoryTests.*.cs">
       <DependentUpon>FileSystemDirectoryTests.cs</DependentUpon>
     </Compile>
+    <Compile Update="FileSystemDriveInfoFactoryTests.*.cs">
+      <DependentUpon>FileSystemDriveInfoFactoryTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="FileSystemDriveInfoTests.*.cs">
+      <DependentUpon>FileSystemDriveInfoTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="FileSystemFileInfoFactoryTests.*.cs">
+      <DependentUpon>FileSystemFileInfoFactoryTests.cs</DependentUpon>
+    </Compile>
     <Compile Update="FileSystemFileInfoTests.*.cs">
       <DependentUpon>FileSystemFileInfoTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="FileSystemFileStreamFactoryTests.*.cs">
+      <DependentUpon>FileSystemFileStreamFactoryTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="FileSystemFileStreamTests.*.cs">
+      <DependentUpon>FileSystemFileStreamTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="FileSystemFileSystemInfoTests.*.cs">
+      <DependentUpon>FileSystemFileSystemInfoTests.cs</DependentUpon>
     </Compile>
     <Compile Update="FileSystemFileTests.*.cs">
       <DependentUpon>FileSystemFileTests.cs</DependentUpon>
@@ -29,7 +50,19 @@
     <Compile Update="FileSystemPathTests.*.cs">
       <DependentUpon>FileSystemPathTests.cs</DependentUpon>
     </Compile>
-    <Compile Update="TimeSystemTests.*.cs">
+    <Compile Update="RandomSystem*Tests.cs">
+      <DependentUpon>RandomSystemTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RandomSystemGuidTests.*.cs">
+      <DependentUpon>RandomSystemGuidTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RandomSystemRandomFactoryTests.*.cs">
+      <DependentUpon>RandomSystemRandomFactoryTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RandomSystemRandomTests.*.cs">
+      <DependentUpon>RandomSystemRandomTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="TimeSystem*Tests.cs">
       <DependentUpon>TimeSystemTests.cs</DependentUpon>
     </Compile>
     <Compile Update="TimeSystemDateTimeTests.*.cs">
@@ -44,41 +77,44 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Parity/ParityTests.*.cs">
-      <DependentUpon>Parity/ParityTests.cs</DependentUpon>
+    <Compile Update="Parity\ParityTests*.cs">
+      <DependentUpon>Parity\ParityTests.cs</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Mock/MockFileSystem.*.cs">
-      <DependentUpon>Mock/MockFileSystem.cs</DependentUpon>
+    <Compile Update="Mock\MockFileSystem*Tests.cs">
+      <DependentUpon>Mock\MockFileSystem.cs</DependentUpon>
     </Compile>
-    <Compile Update="Mock/MockTimeSystem.*.cs">
-      <DependentUpon>Mock/MockTimeSystem.cs</DependentUpon>
+    <Compile Update="Mock\MockRandomSystem.*.cs">
+      <DependentUpon>Mock\MockRandomSystem.cs</DependentUpon>
     </Compile>
-    <Compile Update="Real/RealFileSystem.*.cs">
-      <DependentUpon>Real/RealFileSystem.cs</DependentUpon>
+    <Compile Update="Mock\MockTimeSystem.*.cs">
+      <DependentUpon>Mock\MockTimeSystem.cs</DependentUpon>
     </Compile>
-    <Compile Update="Real/RealTimeSystem.*.cs">
-      <DependentUpon>Real/RealTimeSystem.cs</DependentUpon>
+    <Compile Update="Real\RealFileSystem.*.cs">
+      <DependentUpon>Real\RealFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Real\RealRandomSystem.*.cs">
+      <DependentUpon>Real\RealRandomSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Real\RealTimeSystem.*.cs">
+      <DependentUpon>Real\RealTimeSystem.cs</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="FileSystemDirectoryInfoTests - Copy.Delete.cs">
+    <Compile Update="FileSystemDirectoryInfoTests.Delete.cs">
       <DependentUpon>FileSystemDirectoryInfoTests.cs</DependentUpon>
     </Compile>
-    <Compile Update="FileSystemFileTests - Copy.AppendAllLines.cs">
+    <Compile Update="FileSystemFileTests.AppendAllLines.cs">
       <DependentUpon>FileSystemFileTests.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Mock\MockFileSystem - Copy %282%29.FileTests.cs">
-      <DependentUpon>Mock/MockFileSystem.cs</DependentUpon>
     </Compile>
     <Compile Update="Mock\MockFileSystem - Copy.FileTests.cs">
       <DependentUpon>Mock/MockFileSystem.cs</DependentUpon>
     </Compile>
-    <Compile Update="Parity\ParityTests - Copy.Net6.cs">
-      <DependentUpon>Parity/ParityTests.cs</DependentUpon>
+    <Compile Update="Mock\MockFileSystem.FileTests.cs">
+      <DependentUpon>Mock/MockFileSystem.cs</DependentUpon>
     </Compile>
   </ItemGroup>
 

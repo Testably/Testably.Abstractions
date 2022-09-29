@@ -11,7 +11,7 @@ public sealed partial class RandomSystem : IRandomSystem
 
     /// <inheritdoc cref="IRandomSystem.Guid" />
     public IRandomSystem.IGuid Guid
-        => new GuidRandomSystem(this);
+        => new GuidWrapper(this);
 
     /// <inheritdoc cref="IRandomSystem.Random" />
     public IRandomSystem.IRandomFactory Random

@@ -1,11 +1,13 @@
 using System.Threading;
 using System.Threading.Tasks;
+using Testably.Abstractions.Tests.TestHelpers.Traits;
 
 namespace Testably.Abstractions.Tests.Mock;
 
 public static partial class MockTimeSystem
 {
     // ReSharper disable once UnusedMember.Global
+    [SystemTest(nameof(MockTimeSystem))]
     public sealed class TaskTests : TimeSystemTaskTests<TimeSystemMock>
     {
         #region Test Setup

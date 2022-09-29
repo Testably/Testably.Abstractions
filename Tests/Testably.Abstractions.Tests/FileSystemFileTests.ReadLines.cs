@@ -9,6 +9,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.ReadLines))]
     public void ReadLines_EmptyFile_ShouldEnumerateLines(string path)
     {
         FileSystem.File.WriteAllText(path, null);
@@ -20,6 +21,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.ReadLines))]
     public void ReadLines_MissingFile_ShouldThrowFileNotFoundException(string path)
     {
         Exception? exception = Record.Exception(() =>
@@ -34,6 +36,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.ReadLines))]
     public void ReadLines_ShouldEnumerateLines(string path, string[] lines)
     {
         string contents = string.Join(Environment.NewLine, lines);
@@ -46,6 +49,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [MemberAutoData(nameof(GetEncodingDifference))]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.ReadLines))]
     public void ReadLines_WithDifferentEncoding_ShouldNotReturnWrittenText(
         string specialLine, Encoding writeEncoding, Encoding readEncoding,
         string path, string[] lines)

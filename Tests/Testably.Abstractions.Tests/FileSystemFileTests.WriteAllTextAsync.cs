@@ -10,6 +10,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllTextAsync))]
     public async Task WriteAllTextAsync_Cancelled_ShouldThrowTaskCanceledException(
         string path, string? contents)
     {
@@ -25,6 +26,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllTextAsync))]
     public async Task
         WriteAllTextAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
             string path, string? contents)
@@ -41,6 +43,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllTextAsync))]
     public async Task WriteAllTextAsync_PreviousFile_ShouldOverwriteFileWithText(
         string path, string contents)
     {
@@ -54,6 +57,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllTextAsync))]
     public async Task WriteAllTextAsync_ShouldCreateFileWithText(
         string path, string contents)
     {
@@ -66,6 +70,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllTextAsync))]
     public async Task WriteAllTextAsync_SpecialCharacters_ShouldReturnSameText(
         string path)
     {

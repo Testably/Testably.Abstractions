@@ -7,6 +7,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllBytes))]
     public void WriteAllBytes_PreviousFile_ShouldOverwriteFileWithBytes(
         string path, byte[] contents)
     {
@@ -20,6 +21,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllBytes))]
     public void WriteAllBytes_ShouldCreateFileWithBytes(string path, byte[] contents)
     {
         FileSystem.File.WriteAllBytes(path, contents);

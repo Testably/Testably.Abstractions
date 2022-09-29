@@ -6,6 +6,8 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemDirectoryTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
+    #region Test Setup
+
     public string BasePath { get; }
 
     public TFileSystem FileSystem { get; }
@@ -21,17 +23,10 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         BasePath = basePath;
     }
 
-    [Fact]
-    public void GetDirectoryRoot_ShouldReturnDefaultRoot()
-    {
-        string expectedRoot = "".PrefixRoot();
-
-        string result = FileSystem.Directory.GetDirectoryRoot("foo");
-
-        result.Should().Be(expectedRoot);
-    }
+    #endregion
 
     [Fact]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void GetDirectoryRoot_Empty_ShouldThrowArgumentException()
     {
         Exception? exception = Record.Exception(() =>
@@ -42,10 +37,22 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         exception.Should().BeOfType<ArgumentException>();
     }
 
+    [Fact]
+    [Trait(nameof(FileSystem), nameof(Directory))]
+    public void GetDirectoryRoot_ShouldReturnDefaultRoot()
+    {
+        string expectedRoot = "".PrefixRoot();
+
+        string result = FileSystem.Directory.GetDirectoryRoot("foo");
+
+        result.Should().Be(expectedRoot);
+    }
+
     [Theory]
     [InlineData('A')]
     [InlineData('C')]
     [InlineData('X')]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     [WindowsOnly]
     public void GetDirectoryRoot_SpecificDrive_ShouldReturnRootWithCorrectDrive(
         char drive)

@@ -1,8 +1,11 @@
+using Testably.Abstractions.Tests.TestHelpers.Traits;
+
 namespace Testably.Abstractions.Tests.Real;
 
 public static partial class RealTimeSystem
 {
     // ReSharper disable once UnusedMember.Global
+    [SystemTest(nameof(RealTimeSystem))]
     public sealed class DateTimeTests : TimeSystemDateTimeTests<TimeSystem>
     {
         #region Test Setup
@@ -14,6 +17,7 @@ public static partial class RealTimeSystem
         #endregion
 
         [Fact]
+        [TimeSystemTests.DateTime(nameof(ITimeSystem.IDateTime.Now))]
         public void Now_ShouldReturnDefaultValue()
         {
             DateTime begin = DateTime.Now;
@@ -27,6 +31,7 @@ public static partial class RealTimeSystem
         }
 
         [Fact]
+        [TimeSystemTests.DateTime(nameof(ITimeSystem.IDateTime.Today))]
         public void Today_ShouldReturnDefaultValue()
         {
             DateTime begin = DateTime.Today;
@@ -41,6 +46,7 @@ public static partial class RealTimeSystem
         }
 
         [Fact]
+        [TimeSystemTests.DateTime(nameof(ITimeSystem.IDateTime.UtcNow))]
         public void UtcNow_ShouldReturnDefaultValue()
         {
             DateTime begin = DateTime.UtcNow;

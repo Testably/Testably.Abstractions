@@ -5,30 +5,32 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllText))]
     public void WriteAllText_PreviousFile_ShouldOverwriteFileWithText(
         string path, string contents)
     {
         FileSystem.File.WriteAllText(path, "foo");
+
         FileSystem.File.WriteAllText(path, contents);
 
         string result = FileSystem.File.ReadAllText(path);
-
         result.Should().Be(contents);
     }
 
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllText))]
     public void WriteAllText_ShouldCreateFileWithText(string path, string contents)
     {
         FileSystem.File.WriteAllText(path, contents);
 
         string result = FileSystem.File.ReadAllText(path);
-
         result.Should().Be(contents);
     }
 
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllText))]
     public void WriteAllText_SpecialCharacters_ShouldReturnSameText(string path)
     {
         char[] specialCharacters = { 'Ä', 'Ö', 'Ü', 'ä', 'ö', 'ü', 'ß' };

@@ -8,6 +8,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllText))]
     public void ReadAllText_MissingFile_ShouldThrowFileNotFoundException(string path)
     {
         Exception? exception = Record.Exception(() =>
@@ -22,6 +23,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [MemberAutoData(nameof(GetEncodingDifference))]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllText))]
     public void ReadAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(
         string contents, Encoding writeEncoding, Encoding readEncoding, string path)
     {

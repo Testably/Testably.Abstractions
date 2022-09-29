@@ -5,6 +5,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllLines))]
     public void WriteAllLines_PreviousFile_ShouldOverwriteFileWithText(
         string path, string[] contents)
     {
@@ -18,6 +19,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllLines))]
     public void WriteAllLines_ShouldCreateFileWithText(string path, string[] contents)
     {
         FileSystem.File.WriteAllLines(path, contents);

@@ -11,6 +11,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllLinesAsync))]
     public async Task ReadAllLinesAsync_Cancelled_ShouldThrowTaskCanceledException(
         string path)
     {
@@ -26,6 +27,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllLinesAsync))]
     public async Task
         ReadAllLinesAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
             string path)
@@ -42,6 +44,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllLinesAsync))]
     public async Task ReadAllLinesAsync_MissingFile_ShouldThrowFileNotFoundException(
         string path)
     {
@@ -55,6 +58,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllLinesAsync))]
     public async Task ReadAllLinesAsync_ShouldEnumerateLines(string path, string[] lines)
     {
         string contents = string.Join(Environment.NewLine, lines);
@@ -67,6 +71,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [MemberAutoData(nameof(GetEncodingDifference))]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllLinesAsync))]
     public async Task ReadAllLinesAsync_WithDifferentEncoding_ShouldNotReturnWrittenText(
         string specialLine, Encoding writeEncoding, Encoding readEncoding,
         string path, string[] lines)

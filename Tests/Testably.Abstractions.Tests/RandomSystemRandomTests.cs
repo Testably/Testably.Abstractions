@@ -20,34 +20,8 @@ public abstract class RandomSystemRandomTests<TRandomSystem>
     #endregion
 
     [Fact]
-    public void New_Next_ShouldReturnDifferentValues()
-    {
-        List<int> results = new();
-
-        for (int i = 0; i < 100; i++)
-        {
-            results.Add(RandomSystem.Random.New().Next());
-        }
-
-        results.Should().OnlyHaveUniqueItems();
-    }
-
-    [Theory]
-    [AutoData]
-    public void New_Next_WithSeed_ShouldReturnSameValue(int seed)
-    {
-        List<int> results = new();
-
-        for (int i = 0; i < 100; i++)
-        {
-            results.Add(RandomSystem.Random.New(seed).Next());
-        }
-
-        results.Should().AllBeEquivalentTo(results.First());
-    }
-
-    [Fact]
-    public void Shared_Next_MaxValue_ShouldOnlyReturnValidValues()
+    [RandomSystemTests.Random(nameof(IRandomSystem.IRandom.Next))]
+    public void Next_MaxValue_ShouldOnlyReturnValidValues()
     {
         int maxValue = 10;
         ConcurrentBag<int> results = new();
@@ -61,7 +35,8 @@ public abstract class RandomSystemRandomTests<TRandomSystem>
     }
 
     [Fact]
-    public void Shared_Next_MinAndMaxValue_ShouldOnlyReturnValidValues()
+    [RandomSystemTests.Random(nameof(IRandomSystem.IRandom.Next))]
+    public void Next_MinAndMaxValue_ShouldOnlyReturnValidValues()
     {
         int minValue = 10;
         int maxValue = 20;
@@ -76,7 +51,8 @@ public abstract class RandomSystemRandomTests<TRandomSystem>
     }
 
     [Fact]
-    public void Shared_Next_ShouldBeThreadSafe()
+    [RandomSystemTests.Random(nameof(IRandomSystem.IRandom.Next))]
+    public void Next_ShouldBeThreadSafe()
     {
         ConcurrentBag<int> results = new();
 
@@ -89,7 +65,8 @@ public abstract class RandomSystemRandomTests<TRandomSystem>
     }
 
     [Fact]
-    public void Shared_NextBytes_ShouldBeThreadSafe()
+    [RandomSystemTests.Random(nameof(IRandomSystem.IRandom.NextBytes))]
+    public void NextBytes_ShouldBeThreadSafe()
     {
         ConcurrentBag<byte[]> results = new();
 
@@ -105,7 +82,8 @@ public abstract class RandomSystemRandomTests<TRandomSystem>
 
 #if FEATURE_SPAN
     [Fact]
-    public void Shared_NextBytes_Span_ShouldBeThreadSafe()
+    [RandomSystemTests.Random(nameof(IRandomSystem.IRandom.NextBytes))]
+    public void NextBytes_Span_ShouldBeThreadSafe()
     {
         ConcurrentBag<byte[]> results = new();
 
@@ -121,7 +99,8 @@ public abstract class RandomSystemRandomTests<TRandomSystem>
 #endif
 
     [Fact]
-    public void Shared_NextDouble_ShouldBeThreadSafe()
+    [RandomSystemTests.Random(nameof(IRandomSystem.IRandom.NextDouble))]
+    public void NextDouble_ShouldBeThreadSafe()
     {
         ConcurrentBag<double> results = new();
 
@@ -135,7 +114,8 @@ public abstract class RandomSystemRandomTests<TRandomSystem>
 
 #if FEATURE_RANDOM_ADVANCED
     [Fact]
-    public void Shared_NextInt64_MaxValue_ShouldOnlyReturnValidValues()
+    [RandomSystemTests.Random(nameof(IRandomSystem.IRandom.NextInt64))]
+    public void NextInt64_MaxValue_ShouldOnlyReturnValidValues()
     {
         long maxValue = 10;
         ConcurrentBag<long> results = new();
@@ -149,7 +129,8 @@ public abstract class RandomSystemRandomTests<TRandomSystem>
     }
 
     [Fact]
-    public void Shared_NextInt64_MinAndMaxValue_ShouldOnlyReturnValidValues()
+    [RandomSystemTests.Random(nameof(IRandomSystem.IRandom.NextInt64))]
+    public void NextInt64_MinAndMaxValue_ShouldOnlyReturnValidValues()
     {
         long minValue = 10;
         long maxValue = 20;
@@ -164,7 +145,8 @@ public abstract class RandomSystemRandomTests<TRandomSystem>
     }
 
     [Fact]
-    public void Shared_NextInt64_ShouldBeThreadSafe()
+    [RandomSystemTests.Random(nameof(IRandomSystem.IRandom.NextInt64))]
+    public void NextInt64_ShouldBeThreadSafe()
     {
         ConcurrentBag<long> results = new();
 
@@ -177,7 +159,8 @@ public abstract class RandomSystemRandomTests<TRandomSystem>
     }
 
     [Fact]
-    public void Shared_NextSingle_ShouldBeThreadSafe()
+    [RandomSystemTests.Random(nameof(IRandomSystem.IRandom.NextSingle))]
+    public void NextSingle_ShouldBeThreadSafe()
     {
         ConcurrentBag<float> results = new();
 
