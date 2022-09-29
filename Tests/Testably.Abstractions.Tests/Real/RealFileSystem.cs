@@ -2,6 +2,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Testably.Abstractions.Tests.TestHelpers.Attributes;
+using Testably.Abstractions.Tests.TestHelpers.Traits;
 using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Tests.Real;
@@ -106,6 +107,8 @@ public static partial class RealFileSystem
 
     // ReSharper disable once UnusedMember.Global
     [Collection(nameof(RealFileSystemTestAttribute))]
+    [RealFileSystemTest]
+    [SystemTest(nameof(RealFileSystem))]
     public sealed class Tests : FileSystemTests<FileSystem>
     {
         public Tests() : base(new FileSystem())

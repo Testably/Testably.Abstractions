@@ -4,7 +4,7 @@ using Xunit.Sdk;
 
 namespace Testably.Abstractions.Tests.TestHelpers.Traits;
 
-public class TestabilityTraitDiscoverer : ITraitDiscoverer
+public class SystemTestDiscoverer : ITraitDiscoverer
 {
     internal const string AssemblyName = nameof(Testably) +
                                          "." + nameof(Abstractions) +
@@ -13,23 +13,16 @@ public class TestabilityTraitDiscoverer : ITraitDiscoverer
     internal const string DiscovererTypeName = AssemblyName +
                                                "." + nameof(TestHelpers) +
                                                "." + nameof(Traits) +
-                                               "." + nameof(TestabilityTraitDiscoverer);
+                                               "." + nameof(SystemTestDiscoverer);
 
     #region ITraitDiscoverer Members
 
     public IEnumerable<KeyValuePair<string, string>> GetTraits(
         IAttributeInfo traitAttribute)
     {
-        string? module = traitAttribute.GetNamedArgument<string>("Module");
-        string? submodule = traitAttribute.GetNamedArgument<string>("Submodule");
-        string? method = traitAttribute.GetNamedArgument<string>("Method");
+        string system = traitAttribute.GetNamedArgument<string>("System");
 
-        yield return new KeyValuePair<string, string>(module, submodule);
-        if (method != null)
-        {
-            yield return
-                new KeyValuePair<string, string>($"{module}:{submodule}", method);
-        }
+        yield return new KeyValuePair<string, string>("System", system);
     }
 
     #endregion
