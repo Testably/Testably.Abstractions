@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Reflection;
 
-namespace Testably.Abstractions.Tests.TestHelpers;
+namespace Testably.Abstractions.Tests.Parity;
 
 internal static class ParityCheckHelper
 {
@@ -23,7 +23,7 @@ internal static class ParityCheckHelper
 
         foreach (Type @interface in abstractionType.GetInterfaces())
         {
-            if (ContainsEquivalentMethod(@interface, systemMethod))
+            if (@interface.ContainsEquivalentMethod(systemMethod))
             {
                 return true;
             }
@@ -69,7 +69,7 @@ internal static class ParityCheckHelper
 
         foreach (Type @interface in abstractionType.GetInterfaces())
         {
-            if (ContainsEquivalentProperty(@interface, systemProperty))
+            if (@interface.ContainsEquivalentProperty(systemProperty))
             {
                 return true;
             }
@@ -96,7 +96,7 @@ internal static class ParityCheckHelper
 
         foreach (Type @interface in abstractionType.GetInterfaces())
         {
-            if (ContainsEquivalentProperty(@interface, systemField))
+            if (@interface.ContainsEquivalentProperty(systemField))
             {
                 return true;
             }
@@ -108,7 +108,7 @@ internal static class ParityCheckHelper
     public static string PrintConstructor(this ConstructorInfo constructor)
     {
         return
-            $"new {constructor.DeclaringType!.Name}({string.Join(", ", constructor.GetParameters().Select(x => PrintType(x.ParameterType) + " " + x.Name))})";
+            $"new {constructor.DeclaringType!.Name}({string.Join(", ", constructor.GetParameters().Select(x => x.ParameterType.PrintType() + " " + x.Name))})";
     }
 
     public static string PrintField(this FieldInfo property, string namePrefix = "")
@@ -120,7 +120,7 @@ internal static class ParityCheckHelper
     public static string PrintMethod(this MethodInfo method, string namePrefix = "")
     {
         return
-            $"{method.ReturnType.PrintType()} {namePrefix}{method.Name}({string.Join(", ", method.GetParameters().Select(x => PrintType(x.ParameterType) + " " + x.Name))})";
+            $"{method.ReturnType.PrintType()} {namePrefix}{method.Name}({string.Join(", ", method.GetParameters().Select(x => x.ParameterType.PrintType() + " " + x.Name))})";
     }
 
     public static string PrintProperty(this PropertyInfo property, string namePrefix = "")
@@ -202,7 +202,8 @@ internal static class ParityCheckHelper
 
         for (int i = 0; i < systemParameters.Length; i++)
         {
-            if (!string.Equals(systemParameters[i].Name, abstractionParameters[i].Name))
+            if (!string.Equals(systemParameters[i].Name, abstractionParameters[i].Name,
+                StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }
