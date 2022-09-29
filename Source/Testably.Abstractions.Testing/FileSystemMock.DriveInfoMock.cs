@@ -7,11 +7,11 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class FileSystemMock
 {
-    private sealed class DriveInfoWrapper : IFileSystem.IDriveInfo
+    private sealed class DriveInfoMock : IFileSystem.IDriveInfo
     {
         private readonly DriveInfo _driveInfo;
 
-        internal DriveInfoWrapper(DriveInfo driveInfo, IFileSystem fileSystem)
+        internal DriveInfoMock(DriveInfo driveInfo, IFileSystem fileSystem)
         {
             _driveInfo = driveInfo;
             FileSystem = fileSystem;

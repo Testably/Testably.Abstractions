@@ -4,9 +4,9 @@ namespace Testably.Abstractions;
 
 public sealed partial class TimeSystem
 {
-    private sealed class ThreadSystem : ITimeSystem.IThread
+    private sealed class ThreadWrapper : ITimeSystem.IThread
     {
-        internal ThreadSystem(TimeSystem timeSystem)
+        internal ThreadWrapper(TimeSystem timeSystem)
         {
             TimeSystem = timeSystem;
         }

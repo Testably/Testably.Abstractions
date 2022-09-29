@@ -27,22 +27,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="IFileSystem - Copy.Directory.cs">
+    <Compile Update="IFileSystem.Directory.cs">
       <DependentUpon>IFileSystem.cs</DependentUpon>
     </Compile>
-    <Compile Update="IFileSystem - Copy.File.cs">
+    <Compile Update="IFileSystem.File.cs">
       <DependentUpon>IFileSystem.cs</DependentUpon>
     </Compile>
-    <Compile Update="IFileSystem - Copy.IDirectoryInfo.cs">
+    <Compile Update="IFileSystem.IDirectoryInfo.cs">
       <DependentUpon>IFileSystem.cs</DependentUpon>
     </Compile>
-    <Compile Update="TimeSystem - Copy.DateTime.cs">
+    <Compile Update="TimeSystem.DateTime.cs">
       <DependentUpon>TimeSystem.cs</DependentUpon>
     </Compile>
-    <Compile Update="TimeSystem - Copy.Task.cs">
+    <Compile Update="TimeSystem.Task.cs">
       <DependentUpon>TimeSystem.cs</DependentUpon>
     </Compile>
-    <Compile Update="TimeSystem - Copy.Thread.cs">
+    <Compile Update="TimeSystem.Thread.cs">
       <DependentUpon>TimeSystem.cs</DependentUpon>
     </Compile>
   </ItemGroup>

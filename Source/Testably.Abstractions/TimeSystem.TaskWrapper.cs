@@ -6,9 +6,9 @@ namespace Testably.Abstractions;
 
 public sealed partial class TimeSystem
 {
-    private sealed class TaskSystem : ITimeSystem.ITask
+    private sealed class TaskWrapper : ITimeSystem.ITask
     {
-        internal TaskSystem(TimeSystem timeSystem)
+        internal TaskWrapper(TimeSystem timeSystem)
         {
             TimeSystem = timeSystem;
         }

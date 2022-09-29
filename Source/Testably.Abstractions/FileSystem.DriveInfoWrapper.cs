@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Testably.Abstractions.Models;
 #if NET6_0_OR_GREATER
 using System;
 using System.Runtime.Versioning;

@@ -15,9 +15,9 @@ namespace Testably.Abstractions;
 
 public sealed partial class FileSystem
 {
-    private sealed class FileFileSystem : IFileSystem.IFile
+    private sealed class FileWrapper : IFileSystem.IFile
     {
-        internal FileFileSystem(FileSystem fileSystem)
+        internal FileWrapper(FileSystem fileSystem)
         {
             FileSystem = fileSystem;
         }

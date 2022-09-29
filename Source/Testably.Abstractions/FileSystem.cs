@@ -13,7 +13,7 @@ public sealed partial class FileSystem : IFileSystem
 
     /// <inheritdoc cref="IFileSystem.Directory" />
     public IDirectory Directory
-        => new DirectoryFileSystem(this);
+        => new DirectoryWrapper(this);
 
     /// <inheritdoc cref="IFileSystem.DirectoryInfo" />
     public IDirectoryInfoFactory DirectoryInfo
@@ -25,7 +25,7 @@ public sealed partial class FileSystem : IFileSystem
 
     /// <inheritdoc cref="IFileSystem.File" />
     public IFile File
-        => new FileFileSystem(this);
+        => new FileWrapper(this);
 
     /// <inheritdoc cref="IFileSystem.FileInfo" />
     public IFileInfoFactory FileInfo
@@ -37,7 +37,7 @@ public sealed partial class FileSystem : IFileSystem
 
     /// <inheritdoc cref="IFileSystem.Path" />
     public IPath Path
-        => new PathFileSystem(this);
+        => new PathWrapper(this);
 
     #endregion
 }

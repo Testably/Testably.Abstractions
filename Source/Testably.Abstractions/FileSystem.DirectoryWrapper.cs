@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Testably.Abstractions.Models;
 
 namespace Testably.Abstractions;
 
 public sealed partial class FileSystem
 {
-    private sealed class DirectoryFileSystem : IFileSystem.IDirectory
+    private sealed class DirectoryWrapper : IFileSystem.IDirectory
     {
-        internal DirectoryFileSystem(FileSystem fileSystem)
+        internal DirectoryWrapper(FileSystem fileSystem)
         {
             FileSystem = fileSystem;
         }

@@ -4,9 +4,9 @@ namespace Testably.Abstractions;
 
 public sealed partial class FileSystem
 {
-    private sealed class PathFileSystem : PathSystemBase
+    private sealed class PathWrapper : PathSystemBase
     {
-        public PathFileSystem(FileSystem fileSystem)
+        public PathWrapper(FileSystem fileSystem)
             : base(fileSystem)
         {
         }

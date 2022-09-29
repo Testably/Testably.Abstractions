@@ -4,9 +4,9 @@ namespace Testably.Abstractions;
 
 public sealed partial class TimeSystem
 {
-    private sealed class DateTimeSystem : ITimeSystem.IDateTime
+    private sealed class DateTimeWrapper : ITimeSystem.IDateTime
     {
-        internal DateTimeSystem(TimeSystem timeSystem)
+        internal DateTimeWrapper(TimeSystem timeSystem)
         {
             TimeSystem = timeSystem;
         }

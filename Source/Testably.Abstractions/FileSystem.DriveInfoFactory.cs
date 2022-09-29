@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Linq;
-using Testably.Abstractions.Models;
 
 namespace Testably.Abstractions;
 
