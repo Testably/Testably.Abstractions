@@ -77,7 +77,7 @@ public class ParityCheck
         return parityErrors;
     }
 
-    private IEnumerable<string> GetParityErrorsBetweenInstanceConstructors<
+    private static IEnumerable<string> GetParityErrorsBetweenInstanceConstructors<
         TAbstractionFactory>(
         Type systemType, ITestOutputHelper testOutputHelper)
     {

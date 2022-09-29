@@ -34,13 +34,4 @@ public abstract class FileSystemDriveInfoTests<TFileSystem>
 
         exception.Should().BeOfType<ArgumentNullException>();
     }
-
-    [Fact(Skip = "Not yet implemented")]
-    [Trait(nameof(FileSystem), nameof(DriveInfo))]
-    public void GetDrives_ShouldNotBeEmpty()
-    {
-        IFileSystem.IDriveInfo[] drives = FileSystem.DriveInfo.GetDrives();
-
-        drives.Length.Should().BeGreaterThan(0);
-    }
 }

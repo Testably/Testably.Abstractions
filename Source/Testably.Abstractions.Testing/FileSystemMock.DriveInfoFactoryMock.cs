@@ -23,10 +23,10 @@ public sealed partial class FileSystemMock
         public IFileSystem.IDriveInfo[] GetDrives()
             => throw new System.NotImplementedException();
 
-        /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.New" />
-        public IFileSystem.IDriveInfo New(string path)
+        /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.New(string)" />
+        public IFileSystem.IDriveInfo New(string driveName)
             => new DriveInfoMock(
-                new DriveInfo(path),
+                new DriveInfo(driveName),
                 FileSystem);
 
         /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.Wrap(DriveInfo)" />

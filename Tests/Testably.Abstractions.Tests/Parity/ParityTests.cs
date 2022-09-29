@@ -79,18 +79,6 @@ public abstract partial class ParityTests
         parityErrors.Should().BeEmpty();
     }
 
-    [Fact(Skip = "TODO: Not yet implemented")]
-    public void IFileStreamAndIFileStreamFactory_EnsureParityWith_FileStream()
-    {
-        List<string> parityErrors = Parity.FileStream
-           .GetErrorsToInstanceType<FileSystemStream,
-                IFileSystem.IFileStreamFactory>(
-                typeof(FileStream),
-                _testOutputHelper);
-
-        parityErrors.Should().BeEmpty();
-    }
-
     [Fact]
     public void IFileSystemInfo_EnsureParityWith_FileSystemInfo()
     {

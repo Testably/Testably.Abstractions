@@ -9,11 +9,9 @@ public sealed partial class FileSystemMock
 {
     private sealed class DriveInfoMock : IFileSystem.IDriveInfo
     {
-        private readonly DriveInfo _driveInfo;
-
         internal DriveInfoMock(DriveInfo driveInfo, IFileSystem fileSystem)
         {
-            _driveInfo = driveInfo;
+            _ = driveInfo;
             FileSystem = fileSystem;
         }
 

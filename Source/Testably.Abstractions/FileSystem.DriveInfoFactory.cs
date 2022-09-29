@@ -21,10 +21,10 @@ public sealed partial class FileSystem
         public IFileSystem.IDriveInfo[] GetDrives()
             => System.IO.DriveInfo.GetDrives().Select(Wrap).ToArray();
 
-        /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.New" />
-        public IFileSystem.IDriveInfo New(string path)
+        /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.New(string)" />
+        public IFileSystem.IDriveInfo New(string driveName)
             => new DriveInfoWrapper(
-                new DriveInfo(path),
+                new DriveInfo(driveName),
                 FileSystem);
 
         /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.Wrap(DriveInfo)" />
