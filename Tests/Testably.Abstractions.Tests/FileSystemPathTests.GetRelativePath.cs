@@ -8,6 +8,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 {
     [Theory]
     [AutoData]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.GetRelativePath))]
     public void GetRelativePath_CommonParentDirectory_ShouldReturnRelativePath(
         string baseDirectory, string directory1, string directory2)
     {
@@ -21,6 +22,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.GetRelativePath))]
     public void GetRelativePath_DifferentDrives_ShouldReturnAbsolutePath(
         string path1, string path2)
     {
@@ -39,6 +41,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.GetRelativePath))]
     public void GetRelativePath_RootedPath_ShouldReturnAbsolutePath(
         string baseDirectory, string directory1, string directory2)
     {
@@ -53,6 +56,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.GetRelativePath))]
     public void GetRelativePath_ToItself_ShouldReturnDot(string path)
     {
         string expectedResult = ".";
@@ -61,49 +65,5 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
         result.Should().Be(expectedResult);
     }
-
-    [Theory]
-    [AutoData]
-    public void IsPathFullyQualified_PrefixedRoot_ShouldReturnTrue(
-        string directory)
-    {
-        string path = directory.PrefixRoot();
-        bool result = FileSystem.Path.IsPathFullyQualified(path);
-
-        result.Should().BeTrue();
-    }
-
-    [Theory]
-    [AutoData]
-    public void IsPathFullyQualified_WithoutPrefixedRoot_ShouldReturnFalse(
-        string path)
-    {
-        bool result = FileSystem.Path.IsPathFullyQualified(path);
-
-        result.Should().BeFalse();
-    }
-
-#if FEATURE_SPAN
-    [Theory]
-    [AutoData]
-    public void IsPathFullyQualified_Span_PrefixedRoot_ShouldReturnTrue(
-        string directory)
-    {
-        string path = directory.PrefixRoot();
-        bool result = FileSystem.Path.IsPathFullyQualified(path.AsSpan());
-
-        result.Should().BeTrue();
-    }
-
-    [Theory]
-    [AutoData]
-    public void IsPathFullyQualified_Span_WithoutPrefixedRoot_ShouldReturnFalse(
-        string path)
-    {
-        bool result = FileSystem.Path.IsPathFullyQualified(path.AsSpan());
-
-        result.Should().BeFalse();
-    }
-#endif
 }
 #endif

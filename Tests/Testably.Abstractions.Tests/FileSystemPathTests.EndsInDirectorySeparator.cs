@@ -5,6 +5,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
     [Fact]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.EndsInDirectorySeparator))]
     public void EndsInDirectorySeparator_Empty_ShouldReturnExpectedResult()
     {
         bool result = FileSystem.Path.EndsInDirectorySeparator(string.Empty);
@@ -13,6 +14,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
     }
 
     [Fact]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.EndsInDirectorySeparator))]
     public void EndsInDirectorySeparator_Null_ShouldReturnExpectedResult()
     {
         bool result = FileSystem.Path.EndsInDirectorySeparator(null!);
@@ -21,6 +23,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
     }
 
     [Fact]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.EndsInDirectorySeparator))]
     public void EndsInDirectorySeparator_Span_Empty_ShouldReturnExpectedResult()
     {
         bool result = FileSystem.Path.EndsInDirectorySeparator(string.Empty.AsSpan());
@@ -31,6 +34,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
     [Theory]
     [InlineAutoData('.')]
     [InlineAutoData('a')]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.EndsInDirectorySeparator))]
     public void
         EndsInDirectorySeparator_Span_WithoutTrailingDirectorySeparator_ShouldReturnFalse(
             char lastCharacter, string path)
@@ -44,6 +48,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.EndsInDirectorySeparator))]
     public void
         EndsInDirectorySeparator_Span_WithTrailingDirectorySeparator_ShouldReturnTrue(
             string path)
@@ -58,6 +63,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
     [Theory]
     [InlineAutoData('.')]
     [InlineAutoData('a')]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.EndsInDirectorySeparator))]
     public void
         EndsInDirectorySeparator_WithoutTrailingDirectorySeparator_ShouldReturnFalse(
             char lastCharacter, string path)
@@ -71,6 +77,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.EndsInDirectorySeparator))]
     public void EndsInDirectorySeparator_WithTrailingDirectorySeparator_ShouldReturnTrue(
         string path)
     {
@@ -79,74 +86,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         bool result = FileSystem.Path.EndsInDirectorySeparator(path);
 
         result.Should().BeTrue();
-    }
-
-    [Theory]
-    [AutoData]
-    public void TrimEndingDirectorySeparator_DirectoryChar_ShouldTrim(
-        string directory)
-    {
-        string path = directory + FileSystem.Path.DirectorySeparatorChar;
-
-        string result = FileSystem.Path.TrimEndingDirectorySeparator(path);
-
-        result.Should().Be(directory);
-    }
-
-    [Fact]
-    public void TrimEndingDirectorySeparator_Root_ShouldReturnUnchanged()
-    {
-        string path = string.Empty.PrefixRoot();
-
-        string result = FileSystem.Path.TrimEndingDirectorySeparator(path);
-
-        result.Should().Be(path);
-    }
-
-    [Theory]
-    [AutoData]
-    public void TrimEndingDirectorySeparator_Span_DirectoryChar_ShouldTrim(
-        string directory)
-    {
-        string path = directory + FileSystem.Path.DirectorySeparatorChar;
-
-        ReadOnlySpan<char> result =
-            FileSystem.Path.TrimEndingDirectorySeparator(path.AsSpan());
-
-        result.ToString().Should().Be(directory);
-    }
-
-    [Fact]
-    public void TrimEndingDirectorySeparator_Span_Root_ShouldReturnUnchanged()
-    {
-        string path = string.Empty.PrefixRoot();
-
-        ReadOnlySpan<char> result =
-            FileSystem.Path.TrimEndingDirectorySeparator(path.AsSpan());
-
-        result.ToString().Should().Be(path);
-    }
-
-    [Theory]
-    [AutoData]
-    public void
-        TrimEndingDirectorySeparator_Span_WithoutDirectoryChar_ShouldReturnUnchanged(
-            string path)
-    {
-        ReadOnlySpan<char> result =
-            FileSystem.Path.TrimEndingDirectorySeparator(path.AsSpan());
-
-        result.ToString().Should().Be(path);
-    }
-
-    [Theory]
-    [AutoData]
-    public void TrimEndingDirectorySeparator_WithoutDirectoryChar_ShouldReturnUnchanged(
-        string path)
-    {
-        string result = FileSystem.Path.TrimEndingDirectorySeparator(path);
-
-        result.Should().Be(path);
     }
 }
 #endif

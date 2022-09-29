@@ -25,13 +25,13 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.New" />
         public IFileSystem.IDriveInfo New(string path)
-            => new DriveInfoWrapper(
+            => new DriveInfoMock(
                 new DriveInfo(path),
                 FileSystem);
 
         /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.Wrap(DriveInfo)" />
         public IFileSystem.IDriveInfo Wrap(DriveInfo driveInfo)
-            => new DriveInfoWrapper(
+            => new DriveInfoMock(
                 driveInfo,
                 FileSystem);
 

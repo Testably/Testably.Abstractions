@@ -22,6 +22,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     }
 
     [Fact]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void GetDirectoryRoot_ShouldReturnDefaultRoot()
     {
         string expectedRoot = "".PrefixRoot();
@@ -32,6 +33,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     }
 
     [Fact]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void GetDirectoryRoot_Empty_ShouldThrowArgumentException()
     {
         Exception? exception = Record.Exception(() =>
@@ -46,6 +48,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [InlineData('A')]
     [InlineData('C')]
     [InlineData('X')]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     [WindowsOnly]
     public void GetDirectoryRoot_SpecificDrive_ShouldReturnRootWithCorrectDrive(
         char drive)

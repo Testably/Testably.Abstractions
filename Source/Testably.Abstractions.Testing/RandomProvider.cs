@@ -20,7 +20,7 @@ public static class RandomProvider
     ///     The default implementation for a random provider.
     /// </summary>
     public static RandomSystemMock.IRandomProvider Default()
-        => new RandomProviderImplementation();
+        => new RandomSystemMock.RandomProviderMock();
 
     /// <summary>
     ///     Initializes the <see cref="RandomSystemMock.RandomProvider" /> with explicit generators.
@@ -35,8 +35,8 @@ public static class RandomProvider
 #endif
         Generator<double>? doubleGenerator = null,
         Generator<byte[]>? byteGenerator = null)
-        => new RandomProviderImplementation(
-            _ => new RandomGenerator(
+        => new RandomSystemMock.RandomProviderMock(
+            _ => new RandomSystemMock.RandomMock(
                 seed,
                 intGenerator,
 #if FEATURE_RANDOM_ADVANCED
@@ -53,7 +53,7 @@ public static class RandomProvider
     public static RandomSystemMock.IRandomProvider Generate(
         Func<int, IRandomSystem.IRandom>? randomGenerator,
         Generator<Guid>? guidGenerator = null)
-        => new RandomProviderImplementation(
+        => new RandomSystemMock.RandomProviderMock(
             randomGenerator,
             guidGenerator);
 
@@ -89,6 +89,7 @@ public static class RandomProvider
                     _enumerator.Reset();
                     _enumerator.MoveNext();
                 }
+
                 return _enumerator.Current;
             };
         }
@@ -148,6 +149,7 @@ public static class RandomProvider
             {
                 throw new ObjectDisposedException(nameof(Generator<T>));
             }
+
             return _callback();
         }
 
@@ -169,177 +171,5 @@ public static class RandomProvider
         /// </summary>
         public static implicit operator Generator<T>(T value)
             => FromValue(value);
-    }
-
-    /// <summary>
-    ///     A random generator.
-    /// </summary>
-    public class RandomGenerator : IRandomSystem.IRandom
-    {
-        private readonly Generator<byte[]>? _byteGenerator;
-        private readonly Generator<double>? _doubleGenerator;
-        private readonly Generator<int>? _intGenerator;
-        private readonly IRandomSystem.IRandom _random;
-
-#if FEATURE_RANDOM_ADVANCED
-        /// <summary>
-        ///     Initializes a new instance of <see cref="RandomGenerator" /> which allows specifying explicit generators:<br />
-        ///     - <paramref name="intGenerator" />: The generator for <c>int</c> values.
-        ///     - <paramref name="longGenerator" />: The generator for <c>long</c> values.
-        ///     - <paramref name="singleGenerator" />: The generator for <c>float</c> values.
-        ///     - <paramref name="doubleGenerator" />: The generator for <c>double</c> values.
-        ///     - <paramref name="byteGenerator" />: The generator for <c>byte[]</c> values.
-        /// </summary>
-#else
-        /// <summary>
-        ///     Initializes a new instance of <see cref="RandomGenerator" /> which allows specifying explicit generators:<br />
-        ///     - <paramref name="intGenerator" />: The generator for <c>int</c> values.
-        ///     - <paramref name="doubleGenerator" />: The generator for <c>double</c> values.
-        ///     - <paramref name="byteGenerator" />: The generator for <c>byte[]</c> values.
-        /// </summary>
-#endif
-        public RandomGenerator(
-            int seed = SharedSeed,
-            Generator<int>? intGenerator = null,
-#if FEATURE_RANDOM_ADVANCED
-            Generator<long>? longGenerator = null,
-            Generator<float>? singleGenerator = null,
-#endif
-            Generator<double>? doubleGenerator = null,
-            Generator<byte[]>? byteGenerator = null)
-        {
-            _byteGenerator = byteGenerator;
-            _doubleGenerator = doubleGenerator;
-            _intGenerator = intGenerator;
-#if FEATURE_RANDOM_ADVANCED
-            _longGenerator = longGenerator;
-            _singleGenerator = singleGenerator;
-#endif
-            if (seed != SharedSeed)
-            {
-                _random = new RandomSystem().Random.New(seed);
-            }
-            else
-            {
-                _random = new RandomSystem().Random.Shared;
-            }
-        }
-
-        #region IRandom Members
-
-        /// <inheritdoc cref="IRandomSystem.IRandom.Next()" />
-        public int Next()
-            => _intGenerator?.GetNext() ?? _random.Next();
-
-        /// <inheritdoc cref="IRandomSystem.IRandom.Next(int)" />
-        public int Next(int maxValue)
-            => Math.Min(
-                _intGenerator?.GetNext() ?? _random.Next(maxValue),
-                maxValue - 1);
-
-        /// <inheritdoc cref="IRandomSystem.IRandom.Next(int, int)" />
-        public int Next(int minValue, int maxValue)
-            => Math.Min(
-                Math.Max(
-                    _intGenerator?.GetNext() ?? _random.Next(minValue, maxValue),
-                    minValue),
-                maxValue - 1);
-
-        /// <inheritdoc cref="IRandomSystem.IRandom.NextBytes(byte[])" />
-        public void NextBytes(byte[] buffer)
-        {
-            if (_byteGenerator != null)
-            {
-                byte[] bytes = _byteGenerator.GetNext();
-                Array.Copy(bytes, buffer, Math.Min(bytes.Length, buffer.Length));
-            }
-            else
-            {
-                _random.NextBytes(buffer);
-            }
-        }
-
-#if FEATURE_SPAN
-        /// <inheritdoc cref="IRandomSystem.IRandom.NextBytes(Span{byte})" />
-        public void NextBytes(Span<byte> buffer)
-        {
-            if (_byteGenerator != null)
-            {
-                byte[] bytes = _byteGenerator.GetNext();
-                bytes.AsSpan().Slice(0, buffer.Length).CopyTo(buffer);
-            }
-            else
-            {
-                _random.NextBytes(buffer);
-            }
-        }
-#endif
-
-        /// <inheritdoc cref="IRandomSystem.IRandom.NextDouble()" />
-        public double NextDouble()
-            => _doubleGenerator?.GetNext() ?? _random.NextDouble();
-
-        #endregion
-
-#if FEATURE_RANDOM_ADVANCED
-        private readonly Generator<long>? _longGenerator;
-        private readonly Generator<float>? _singleGenerator;
-#endif
-
-#if FEATURE_RANDOM_ADVANCED
-        /// <inheritdoc cref="IRandomSystem.IRandom.NextInt64()" />
-        public long NextInt64()
-            => _longGenerator?.GetNext() ?? _random.NextInt64();
-
-        /// <inheritdoc cref="IRandomSystem.IRandom.NextInt64(long)" />
-        public long NextInt64(long maxValue)
-            => Math.Min(
-                _longGenerator?.GetNext() ?? _random.NextInt64(maxValue),
-                maxValue - 1);
-
-        /// <inheritdoc cref="IRandomSystem.IRandom.NextInt64(long, long)" />
-        public long NextInt64(long minValue, long maxValue)
-            => Math.Min(
-                Math.Max(
-                    _longGenerator?.GetNext() ?? _random.NextInt64(minValue, maxValue),
-                    minValue),
-                maxValue - 1);
-
-        /// <inheritdoc cref="IRandomSystem.IRandom.NextSingle()" />
-        public float NextSingle()
-            => _singleGenerator?.GetNext() ?? _random.NextSingle();
-#endif
-    }
-
-    private sealed class RandomProviderImplementation : RandomSystemMock.IRandomProvider
-    {
-        private static Generator<Guid> DefaultGuidGenerator
-            => Generator<Guid>.FromCallback(Guid.NewGuid);
-
-        private readonly Generator<Guid> _guidGenerator;
-        private readonly Func<int, IRandomSystem.IRandom> _randomGenerator;
-
-        public RandomProviderImplementation(
-            Func<int, IRandomSystem.IRandom>? randomGenerator = null,
-            Generator<Guid>? guidGenerator = null)
-        {
-            _guidGenerator = guidGenerator ?? DefaultGuidGenerator;
-            _randomGenerator = randomGenerator ?? DefaultRandomGenerator;
-        }
-
-        #region IRandomProvider Members
-
-        /// <inheritdoc cref="RandomSystemMock.IRandomProvider.GetGuid" />
-        public Guid GetGuid()
-            => _guidGenerator.GetNext();
-
-        /// <inheritdoc cref="RandomSystemMock.IRandomProvider.GetRandom(int)" />
-        public IRandomSystem.IRandom GetRandom(int seed)
-            => _randomGenerator(seed);
-
-        #endregion
-
-        private IRandomSystem.IRandom DefaultRandomGenerator(int seed)
-            => new RandomGenerator(seed: seed);
     }
 }

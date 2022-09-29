@@ -14,6 +14,7 @@ public static partial class MockTimeSystem
         #endregion
 
         [Fact]
+        [TimeSystemTests.DateTime(nameof(ITimeSystem.IDateTime.MaxValue))]
         public void MaxValue_FakedValue_ShouldReturnFakedValue()
         {
             DateTime fakedValue = TimeTestHelper.GetRandomTime();
@@ -25,6 +26,7 @@ public static partial class MockTimeSystem
         }
 
         [Fact]
+        [TimeSystemTests.DateTime(nameof(ITimeSystem.IDateTime.MinValue))]
         public void MinValue_FakedValue_ShouldReturnFakedValue()
         {
             DateTime fakedValue = TimeTestHelper.GetRandomTime();
@@ -36,6 +38,7 @@ public static partial class MockTimeSystem
         }
 
         [Fact]
+        [TimeSystemTests.DateTime(nameof(ITimeSystem.IDateTime.Now))]
         public void Now_Repeatedly_ShouldReturnSameTime()
         {
             DateTime result1 = TimeSystem.DateTime.Now;
@@ -45,6 +48,7 @@ public static partial class MockTimeSystem
         }
 
         [Fact]
+        [TimeSystemTests.DateTime(nameof(ITimeSystem.IDateTime.Now))]
         public void Now_SetTime_ShouldReturnSetTime()
         {
             DateTime result1 = TimeSystem.DateTime.Now;
@@ -58,6 +62,7 @@ public static partial class MockTimeSystem
         }
 
         [Fact]
+        [TimeSystemTests.DateTime(nameof(ITimeSystem.IDateTime.Now))]
         public void Now_ShouldReturnLocalTime()
         {
             DateTime result = TimeSystem.DateTime.Now;
@@ -66,6 +71,7 @@ public static partial class MockTimeSystem
         }
 
         [Fact]
+        [TimeSystemTests.DateTime(nameof(ITimeSystem.IDateTime.Today))]
         public void Today_Repeatedly_ShouldReturnSameTime()
         {
             DateTime result1 = TimeSystem.DateTime.Today;
@@ -75,6 +81,7 @@ public static partial class MockTimeSystem
         }
 
         [Fact]
+        [TimeSystemTests.DateTime(nameof(ITimeSystem.IDateTime.Today))]
         public void Today_SetTime_ShouldReturnSetTime()
         {
             DateTime result1 = TimeSystem.DateTime.Today;
@@ -88,6 +95,7 @@ public static partial class MockTimeSystem
         }
 
         [Fact]
+        [TimeSystemTests.DateTime(nameof(ITimeSystem.IDateTime.Today))]
         public void Today_ShouldReturnDateWithoutTime()
         {
             DateTime result = TimeSystem.DateTime.Today;
@@ -96,6 +104,7 @@ public static partial class MockTimeSystem
         }
 
         [Fact]
+        [TimeSystemTests.DateTime(nameof(ITimeSystem.IDateTime.UnixEpoch))]
         public void UnixEpoch_FakedValue_ShouldReturnFakedValue()
         {
             DateTime fakedValue = TimeTestHelper.GetRandomTime();
@@ -107,6 +116,7 @@ public static partial class MockTimeSystem
         }
 
         [Fact]
+        [TimeSystemTests.DateTime(nameof(ITimeSystem.IDateTime.UtcNow))]
         public void UtcNow_Repeatedly_ShouldReturnSameTime()
         {
             DateTime result1 = TimeSystem.DateTime.UtcNow;
@@ -116,6 +126,7 @@ public static partial class MockTimeSystem
         }
 
         [Fact]
+        [TimeSystemTests.DateTime(nameof(ITimeSystem.IDateTime.UtcNow))]
         public void UtcNow_SetTime_ShouldReturnSetTime()
         {
             DateTime result1 = TimeSystem.DateTime.UtcNow;
@@ -129,6 +140,7 @@ public static partial class MockTimeSystem
         }
 
         [Fact]
+        [TimeSystemTests.DateTime(nameof(ITimeSystem.IDateTime.UtcNow))]
         public void UtcNow_ShouldReturnUniversalTime()
         {
             DateTime result = TimeSystem.DateTime.UtcNow;

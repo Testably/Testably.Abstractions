@@ -4,37 +4,41 @@ public abstract partial class FileSystemPathTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
     [Fact]
-    public void GetDirectoryName_Null_ShouldReturnNull()
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.GetExtension))]
+    public void GetExtension_Null_ShouldReturnNull()
     {
-        string? result = FileSystem.Path.GetDirectoryName(null);
+        string? result = FileSystem.Path.GetExtension(null);
 
         result.Should().BeNull();
     }
 
     [Theory]
     [AutoData]
-    public void GetDirectoryName_ShouldReturnDirectory(
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.GetExtension))]
+    public void GetExtension_ShouldReturnDirectory(
         string directory, string filename, string extension)
     {
         string path = directory + FileSystem.Path.DirectorySeparatorChar + filename +
                       "." + extension;
 
-        string? result = FileSystem.Path.GetDirectoryName(path);
+        string result = FileSystem.Path.GetExtension(path);
 
-        result.Should().Be(directory);
+        result.Should().Be("." + extension);
     }
+
 #if FEATURE_SPAN
     [Theory]
     [AutoData]
-    public void GetDirectoryName_Span_ShouldReturnDirectory(
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.GetExtension))]
+    public void GetExtension_Span_ShouldReturnDirectory(
         string directory, string filename, string extension)
     {
         string path = directory + FileSystem.Path.DirectorySeparatorChar + filename +
                       "." + extension;
 
-        ReadOnlySpan<char> result = FileSystem.Path.GetDirectoryName(path.AsSpan());
+        ReadOnlySpan<char> result = FileSystem.Path.GetExtension(path.AsSpan());
 
-        result.ToString().Should().Be(directory);
+        result.ToString().Should().Be("." + extension);
     }
 #endif
 }

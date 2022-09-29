@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using Testably.Abstractions.Models;
 
 namespace Testably.Abstractions;
@@ -19,7 +20,7 @@ public sealed partial class FileSystem
 
         /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.GetDrives()" />
         public IFileSystem.IDriveInfo[] GetDrives()
-            => throw new System.NotImplementedException();
+            => System.IO.DriveInfo.GetDrives().Select(Wrap).ToArray();
 
         /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.New" />
         public IFileSystem.IDriveInfo New(string path)

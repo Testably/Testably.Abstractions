@@ -9,6 +9,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
     [Theory]
     [InlineAutoData((string?)null)]
     [InlineAutoData("")]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
     public void Join_2Paths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
         string? missingPath, string? path)
     {
@@ -21,6 +22,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
     public void Join_2Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
         string path1, string path2)
     {
@@ -34,6 +36,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
     public void Join_2Paths_Span_ShouldReturnPathsCombinedByDirectorySeparatorChar(
         string path1, string path2)
     {
@@ -50,6 +53,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
     [Theory]
     [InlineAutoData((string?)null)]
     [InlineAutoData("")]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
     public void Join_3Paths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
         string? missingPath, string path1, string path2)
     {
@@ -66,6 +70,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
     public void Join_3Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
         string path1, string path2, string path3)
     {
@@ -80,6 +85,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
     public void Join_3Paths_Span_ShouldReturnPathsCombinedByDirectorySeparatorChar(
         string path1, string path2, string path3)
     {
@@ -98,6 +104,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
     [Theory]
     [InlineAutoData((string?)null)]
     [InlineAutoData("")]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
     public void Join_4Paths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
         string? missingPath, string path1, string path2, string path3)
     {
@@ -116,6 +123,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
     public void Join_4Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
         string path1, string path2, string path3, string path4)
     {
@@ -131,6 +139,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
     public void Join_4Paths_Span_ShouldReturnPathsCombinedByDirectorySeparatorChar(
         string path1, string path2, string path3, string path4)
     {
@@ -151,6 +160,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
     [Theory]
     [InlineAutoData((string?)null)]
     [InlineAutoData("")]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
     public void Join_ParamPaths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
         string? missingPath, string path1, string path2, string path3, string path4)
     {
@@ -176,6 +186,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
     public void Join_ParamPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
         string path1, string path2, string path3, string path4, string path5)
     {
@@ -188,96 +199,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         string result = FileSystem.Path.Join(path1, path2, path3, path4, path5);
 
         result.Should().Be(expectedResult);
-    }
-
-    [Theory]
-    [AutoData]
-    public void TryJoin_2Paths_BufferTooLittle_ShouldReturnFalse(
-        string path1, string path2)
-    {
-        string expectedResult = path1
-                                + FileSystem.Path.DirectorySeparatorChar + path2;
-
-        char[] buffer = new char[expectedResult.Length - 1];
-        Span<char> destination = new(buffer);
-
-        bool result = FileSystem.Path.TryJoin(
-            path1.AsSpan(),
-            path2.AsSpan(),
-            destination,
-            out int charsWritten);
-
-        result.Should().BeFalse();
-        charsWritten.Should().Be(0);
-    }
-
-    [Theory]
-    [AutoData]
-    public void TryJoin_2Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
-        string path1, string path2)
-    {
-        string expectedResult = path1
-                                + FileSystem.Path.DirectorySeparatorChar + path2;
-
-        char[] buffer = new char[expectedResult.Length + 10];
-        Span<char> destination = new(buffer);
-
-        bool result = FileSystem.Path.TryJoin(
-            path1.AsSpan(),
-            path2.AsSpan(),
-            destination,
-            out int charsWritten);
-
-        result.Should().BeTrue();
-        charsWritten.Should().Be(expectedResult.Length);
-        destination.Slice(0, charsWritten).ToString().Should().Be(expectedResult);
-    }
-
-    [Theory]
-    [AutoData]
-    public void TryJoin_3Paths_BufferTooLittle_ShouldReturnFalse(
-        string path1, string path2, string path3)
-    {
-        string expectedResult = path1
-                                + FileSystem.Path.DirectorySeparatorChar + path2
-                                + FileSystem.Path.DirectorySeparatorChar + path3;
-
-        char[] buffer = new char[expectedResult.Length - 1];
-        Span<char> destination = new(buffer);
-
-        bool result = FileSystem.Path.TryJoin(
-            path1.AsSpan(),
-            path2.AsSpan(),
-            path3.AsSpan(),
-            destination,
-            out int charsWritten);
-
-        result.Should().BeFalse();
-        charsWritten.Should().Be(0);
-    }
-
-    [Theory]
-    [AutoData]
-    public void TryJoin_3Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
-        string path1, string path2, string path3)
-    {
-        string expectedResult = path1
-                                + FileSystem.Path.DirectorySeparatorChar + path2
-                                + FileSystem.Path.DirectorySeparatorChar + path3;
-
-        char[] buffer = new char[expectedResult.Length + 10];
-        Span<char> destination = new(buffer);
-
-        bool result = FileSystem.Path.TryJoin(
-            path1.AsSpan(),
-            path2.AsSpan(),
-            path3.AsSpan(),
-            destination,
-            out int charsWritten);
-
-        result.Should().BeTrue();
-        charsWritten.Should().Be(expectedResult.Length);
-        destination.Slice(0, charsWritten).ToString().Should().Be(expectedResult);
     }
 }
 #endif

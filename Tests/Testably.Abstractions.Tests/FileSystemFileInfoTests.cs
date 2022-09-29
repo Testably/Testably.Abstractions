@@ -24,6 +24,7 @@ public abstract class FileSystemFileSystemInfoTests<TFileSystem>
     #endregion
 
     [Fact]
+    [Trait(nameof(FileSystem), nameof(FileInfo))]
     public void New_Null_ShouldThrowArgumentNullException()
     {
         Exception? exception = Record.Exception(() =>
@@ -36,6 +37,7 @@ public abstract class FileSystemFileSystemInfoTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [Trait(nameof(FileSystem), nameof(FileInfo))]
     public void New_ShouldCreateNewFileInfoFromPath(string path)
     {
         IFileSystem.IFileInfo result = FileSystem.FileInfo.New(path);
@@ -46,6 +48,7 @@ public abstract class FileSystemFileSystemInfoTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [Trait(nameof(FileSystem), nameof(FileInfo))]
     public void Wrap_ShouldWrapFromFileInfo(string path)
     {
         FileInfo fileInfo = new(path);

@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace Testably.Abstractions.Tests;
 
 public abstract class FileSystemDriveInfoTests<TFileSystem>
@@ -22,6 +24,7 @@ public abstract class FileSystemDriveInfoTests<TFileSystem>
     #endregion
 
     [Fact]
+    [Trait(nameof(FileSystem), nameof(DriveInfo))]
     public void New_Null_ShouldThrowArgumentNullException()
     {
         Exception? exception = Record.Exception(() =>
@@ -30,5 +33,14 @@ public abstract class FileSystemDriveInfoTests<TFileSystem>
         });
 
         exception.Should().BeOfType<ArgumentNullException>();
+    }
+
+    [Fact(Skip = "Not yet implemented")]
+    [Trait(nameof(FileSystem), nameof(DriveInfo))]
+    public void GetDrives_ShouldNotBeEmpty()
+    {
+        IFileSystem.IDriveInfo[] drives = FileSystem.DriveInfo.GetDrives();
+
+        drives.Length.Should().BeGreaterThan(0);
     }
 }

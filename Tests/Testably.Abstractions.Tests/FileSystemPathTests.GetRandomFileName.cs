@@ -7,6 +7,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
     [Fact]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.GetRandomFileName))]
     public void GetRandomFileName_ShouldReturnRandomFileNameWithExtension()
     {
         string result = FileSystem.Path.GetRandomFileName();
@@ -22,6 +23,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
     }
 
     [Fact]
+    [FileSystemTests.Path(nameof(IFileSystem.IPath.GetRandomFileName))]
     public void GetRandomFileName_ShouldReturnRandomStrings()
     {
         ConcurrentBag<string> results = new();

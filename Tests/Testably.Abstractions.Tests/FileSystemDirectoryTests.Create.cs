@@ -8,24 +8,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
     [Fact]
-    public void Create_Empty_ShouldThrowArgumentException()
-    {
-        Exception? exception =
-            Record.Exception(() => FileSystem.DirectoryInfo.New(string.Empty));
-
-#if NETFRAMEWORK
-        exception.Should().BeOfType<ArgumentException>()
-           .Which.Message.Should().Be("The path is not of a legal form.");
-#else
-        exception.Should().BeOfType<ArgumentException>()
-           .Which.ParamName.Should().Be("path");
-        exception.Should().BeOfType<ArgumentException>()
-           .Which.Message.Should()
-           .Be("The path is empty. (Parameter 'path')");
-#endif
-    }
-
-    [Fact]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void Create_IllegalCharacters_ShouldThrowArgumentException()
     {
         foreach (char c in FileSystem.Path.GetInvalidPathChars().Where(c => c != '\0'))
@@ -46,6 +29,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     }
 
     [Fact]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void Create_Null_ShouldThrowArgumentNullException()
     {
         Exception? exception =
@@ -56,6 +40,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     }
 
     [Fact]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void Create_NullCharacter_ShouldThrowArgumentException()
     {
         string path = "foo\0bar";
@@ -68,6 +53,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     }
 
     [Fact]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void Create_ShouldCreateInBasePath()
     {
         IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.New("foo");
@@ -80,6 +66,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void Create_ShouldCreateParentDirectories(
         string directoryLevel1, string directoryLevel2, string directoryLevel3)
     {
@@ -109,6 +96,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [InlineData("")]
     [InlineData("/")]
     [InlineData("\\")]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void Create_TrailingDirectorySeparator_ShouldNotBeTrimmed(
         string suffix)
     {
@@ -139,6 +127,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     }
 
     [Fact]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void CreateDirectory_Empty_ShouldThrowArgumentException()
     {
         Exception? exception =
@@ -158,6 +147,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     }
 
     [Fact]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void CreateDirectory_IllegalCharacters_ShouldThrowArgumentException()
     {
         foreach (char c in FileSystem.Path.GetInvalidPathChars().Where(c => c != '\0'))
@@ -177,6 +167,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     }
 
     [Fact]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void CreateDirectory_Null_ShouldThrowArgumentNullException()
     {
         Exception? exception =
@@ -187,6 +178,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     }
 
     [Fact]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void CreateDirectory_NullCharacter_ShouldThrowArgumentException()
     {
         string path = "foo\0bar";
@@ -197,6 +189,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     }
 
     [Fact]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void CreateDirectory_ShouldCreateDirectoryInBasePath()
     {
         IFileSystem.IDirectoryInfo result = FileSystem.Directory.CreateDirectory("foo");
@@ -208,6 +201,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void CreateDirectory_ShouldCreateParentDirectories(
         string directoryLevel1, string directoryLevel2, string directoryLevel3)
     {
@@ -237,6 +231,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [Theory]
     [InlineData("/")]
     [InlineData("\\")]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void CreateDirectory_TrailingDirectorySeparator_ShouldNotBeTrimmed(
         string suffix)
     {
@@ -260,6 +255,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void CreateDirectory_EmptyOrWhitespace_ShouldReturnEmptyString(
         string suffix)
     {
@@ -285,6 +281,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [InlineData(" ")]
     [InlineData("/")]
     [InlineData("\\")]
+    [Trait(nameof(FileSystem), nameof(Directory))]
     public void CreateDirectory_TrailingDirectorySeparator_ShouldNotBeTrimmed(
         string suffix)
     {

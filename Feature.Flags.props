@@ -6,8 +6,4 @@
     <DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">$(DefineConstants);FEATURE_FILESYSTEM_STREAM_OPTIONS;FEATURE_FILESYSTEM_LINK;FEATURE_PATH_ADVANCED;FEATURE_FILE_MOVETO_OVERWRITE;FEATURE_RANDOM_ADVANCED</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <DefineConstants Condition=" '$(Configuration)' == 'DEBUG' ">$(DefineConstants);DISABLE_TESTS_REALFILESYSTEM</DefineConstants>
-  </PropertyGroup>
-
 </Project>
