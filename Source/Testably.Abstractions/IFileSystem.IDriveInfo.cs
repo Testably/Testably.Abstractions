@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Runtime.Versioning;
 
 namespace Testably.Abstractions;
 
@@ -34,6 +36,14 @@ public partial interface IFileSystem
         long TotalSize { get; }
 
         /// <inheritdoc cref="DriveInfo.VolumeLabel" />
-        string VolumeLabel { get; set; }
+        [AllowNull]
+        string VolumeLabel
+        {
+            get;
+#if NET6_0_OR_GREATER
+            [SupportedOSPlatform("windows")]
+#endif
+            set;
+        }
     }
 }

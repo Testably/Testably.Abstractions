@@ -6,6 +6,18 @@ namespace Testably.Abstractions.Tests.Testing;
 
 public class FileSystemInitializerTests
 {
+
+    [Fact]
+
+    public void X()
+    {
+        var drives = DriveInfo.GetDrives();
+        var logicalDrives = Directory.GetLogicalDrives();
+        foreach (var drive in logicalDrives)
+        {
+            var driveInfo = new DriveInfo(drive);
+        }
+    }
     [Fact]
     public void Initialize_WithAFile_ShouldCreateFile()
     {

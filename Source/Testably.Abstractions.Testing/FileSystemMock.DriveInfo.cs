@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Runtime.Versioning;
 
 namespace Testably.Abstractions.Testing;
 
@@ -52,10 +54,14 @@ public sealed partial class FileSystemMock
         public long TotalSize
             => throw new NotImplementedException();
 
-        /// <inheritdoc cref="IFileSystem.IDriveInfo.VolumeLabel" />
+        /// <inheritdoc cref="IFileSystem.IDriveInfo.VolumeLabel" />7
+        [AllowNull]
         public string VolumeLabel
         {
             get => throw new NotImplementedException();
+#if NET6_0_OR_GREATER
+            [SupportedOSPlatform("windows")]
+#endif
             set => throw new NotImplementedException();
         }
 

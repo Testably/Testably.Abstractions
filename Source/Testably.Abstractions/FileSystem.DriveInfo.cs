@@ -1,5 +1,10 @@
-﻿using System;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using Testably.Abstractions.Models;
+#if NET6_0_OR_GREATER
+using System;
+using System.Runtime.Versioning;
+#endif
 
 namespace Testably.Abstractions;
 
@@ -7,11 +12,11 @@ public sealed partial class FileSystem
 {
     private sealed class DriveInfoWrapper : IFileSystem.IDriveInfo
     {
-        private readonly DriveInfo _driveInfo;
+        private readonly DriveInfo _instance;
 
         internal DriveInfoWrapper(DriveInfo driveInfo, IFileSystem fileSystem)
         {
-            _driveInfo = driveInfo;
+            _instance = driveInfo;
             FileSystem = fileSystem;
         }
 
@@ -22,41 +27,56 @@ public sealed partial class FileSystem
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.AvailableFreeSpace" />
         public long AvailableFreeSpace
-            => throw new NotImplementedException();
+            => _instance.AvailableFreeSpace;
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.DriveFormat" />
         public string DriveFormat
-            => throw new NotImplementedException();
+            => _instance.DriveFormat;
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.DriveType" />
         public DriveType DriveType
-            => throw new NotImplementedException();
+            => _instance.DriveType;
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.IsReady" />
         public bool IsReady
-            => throw new NotImplementedException();
+            => _instance.IsReady;
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.Name" />
         public string Name
-            => throw new NotImplementedException();
+            => _instance.Name;
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.RootDirectory" />
         public IFileSystem.IDirectoryInfo RootDirectory
-            => throw new NotImplementedException();
+            => DirectoryInfoWrapper.FromDirectoryInfo(
+                _instance.RootDirectory,
+                FileSystem);
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.TotalFreeSpace" />
         public long TotalFreeSpace
-            => throw new NotImplementedException();
+            => _instance.TotalFreeSpace;
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.TotalSize" />
         public long TotalSize
-            => throw new NotImplementedException();
+            => _instance.TotalSize;
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.VolumeLabel" />
+        [AllowNull]
         public string VolumeLabel
         {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
+            get => _instance.VolumeLabel;
+#if NET6_0_OR_GREATER
+            [SupportedOSPlatform("windows")]
+            set
+            {
+                if (OperatingSystem.IsWindows())
+                {
+                    _instance.VolumeLabel = value;
+                }
+
+            }
+#else
+            set => _instance.VolumeLabel = value;
+#endif
         }
 
         #endregion
