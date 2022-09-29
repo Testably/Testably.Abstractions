@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class RandomSystemMock
 {
-    private sealed class GuidMock : GuidSystem
+    private sealed class GuidMock : GuidSystemBase
     {
         private readonly RandomSystemMock _randomSystemMock;
 

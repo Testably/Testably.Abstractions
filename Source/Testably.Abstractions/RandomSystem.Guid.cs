@@ -5,7 +5,7 @@ namespace Testably.Abstractions;
 
 public sealed partial class RandomSystem
 {
-    private sealed class GuidRandomSystem : GuidSystem
+    private sealed class GuidRandomSystem : GuidSystemBase
     {
         internal GuidRandomSystem(RandomSystem randomSystem) : base(randomSystem)
         {

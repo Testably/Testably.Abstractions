@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class FileSystemMock
 {
-    private sealed class PathMock : PathSystem
+    private sealed class PathMock : PathSystemBase
     {
         private readonly FileSystemMock _fileSystem;
 

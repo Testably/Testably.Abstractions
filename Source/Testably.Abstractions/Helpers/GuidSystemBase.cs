@@ -10,12 +10,12 @@ namespace Testably.Abstractions.Helpers;
 ///     <para />
 ///     Implements <seealso cref="IRandomSystem.IGuid" />
 /// </summary>
-public abstract class GuidSystem : IRandomSystem.IGuid
+public abstract class GuidSystemBase : IRandomSystem.IGuid
 {
     /// <summary>
-    ///     Initializes a new instance of <see cref="GuidSystem" /> for the given <paramref name="randomSystem" />.
+    ///     Initializes a new instance of <see cref="GuidSystemBase" /> for the given <paramref name="randomSystem" />.
     /// </summary>
-    protected GuidSystem(IRandomSystem randomSystem)
+    protected GuidSystemBase(IRandomSystem randomSystem)
     {
         RandomSystem = randomSystem;
     }

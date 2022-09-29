@@ -12,31 +12,31 @@ public sealed partial class FileSystem : IFileSystem
     #region IFileSystem Members
 
     /// <inheritdoc cref="IFileSystem.Directory" />
-    public IFileSystem.IDirectory Directory
+    public IDirectory Directory
         => new DirectoryFileSystem(this);
 
     /// <inheritdoc cref="IFileSystem.DirectoryInfo" />
-    public IFileSystem.IDirectoryInfoFactory DirectoryInfo
+    public IDirectoryInfoFactory DirectoryInfo
         => new DirectoryInfoFactory(this);
 
     /// <inheritdoc cref="IFileSystem.DriveInfo" />
-    public IFileSystem.IDriveInfoFactory DriveInfo
+    public IDriveInfoFactory DriveInfo
         => new DriveInfoFactory(this);
 
     /// <inheritdoc cref="IFileSystem.File" />
-    public IFileSystem.IFile File
+    public IFile File
         => new FileFileSystem(this);
 
     /// <inheritdoc cref="IFileSystem.FileInfo" />
-    public IFileSystem.IFileInfoFactory FileInfo
+    public IFileInfoFactory FileInfo
         => new FileInfoFactory(this);
 
     /// <inheritdoc cref="IFileSystem.FileStream" />
-    public IFileSystem.IFileStreamFactory FileStream
+    public IFileStreamFactory FileStream
         => new FileStreamFactory(this);
 
     /// <inheritdoc cref="IFileSystem.Path" />
-    public IFileSystem.IPath Path
+    public IPath Path
         => new PathFileSystem(this);
 
     #endregion

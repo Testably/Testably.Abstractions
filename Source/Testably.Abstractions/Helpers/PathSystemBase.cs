@@ -11,12 +11,12 @@ namespace Testably.Abstractions.Helpers;
 ///     <para />
 ///     Implements <seealso cref="IFileSystem.IPath" />
 /// </summary>
-public abstract class PathSystem : IFileSystem.IPath
+public abstract class PathSystemBase : IFileSystem.IPath
 {
     /// <summary>
-    ///     Initializes a new instance of <see cref="PathSystem" /> for the given <paramref name="fileSystem" />.
+    ///     Initializes a new instance of <see cref="PathSystemBase" /> for the given <paramref name="fileSystem" />.
     /// </summary>
-    protected PathSystem(IFileSystem fileSystem)
+    protected PathSystemBase(IFileSystem fileSystem)
     {
         FileSystem = fileSystem;
     }
