@@ -2,7 +2,7 @@ using System.IO;
 
 namespace Testably.Abstractions.Tests;
 
-public abstract class FileSystemFileInfoTests<TFileSystem>
+public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
     #region Test Setup
@@ -12,7 +12,7 @@ public abstract class FileSystemFileInfoTests<TFileSystem>
     public TFileSystem FileSystem { get; }
     public ITimeSystem TimeSystem { get; }
 
-    protected FileSystemFileInfoTests(
+    protected FileSystemDriveInfoFactoryTests(
         TFileSystem fileSystem,
         ITimeSystem timeSystem,
         string basePath)

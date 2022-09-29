@@ -6,7 +6,8 @@ public static partial class MockRandomSystem
 {
     // ReSharper disable once UnusedMember.Global
     [SystemTest(nameof(MockRandomSystem))]
-    public sealed class RandomFactoryTests : RandomSystemRandomFactoryTests<RandomSystemMock>
+    public sealed class
+        RandomFactoryTests : RandomSystemRandomFactoryTests<RandomSystemMock>
     {
         public RandomFactoryTests() : base(new RandomSystemMock())
         {

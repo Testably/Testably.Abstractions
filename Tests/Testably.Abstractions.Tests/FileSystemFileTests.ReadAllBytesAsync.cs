@@ -10,6 +10,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytesAsync))]
     public async Task ReadAllBytesAsync_Cancelled_ShouldThrowTaskCanceledException(
         string path)
     {
@@ -25,6 +26,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytesAsync))]
     public async Task ReadAllBytesAsync_MissingFile_ShouldThrowFileNotFoundException(
         string path)
     {
@@ -38,6 +40,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytesAsync))]
     public async Task ReadAllBytesAsync_ShouldReturnWrittenBytes(
         byte[] contents, string path)
     {

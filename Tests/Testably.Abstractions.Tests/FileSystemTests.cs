@@ -79,6 +79,61 @@ public static class FileSystemTests
     }
 
     /// <summary>
+    ///     Tests for methods in <see cref="IFileSystem.IDirectory" /> in <see cref="IFileSystem" />.
+    /// </summary>
+    public class Directory : TestabilityTraitAttribute
+    {
+        public Directory(string method) : base(nameof(IFileSystem),
+            nameof(IFileSystem.IDirectory), method)
+        {
+        }
+    }
+
+    /// <summary>
+    ///     Tests for methods in <see cref="IFileSystem.IDirectoryInfo" /> in <see cref="IFileSystem" />.
+    /// </summary>
+    public class DirectoryInfo : TestabilityTraitAttribute
+    {
+        public DirectoryInfo(string method) : base(nameof(IFileSystem),
+            nameof(IFileSystem.IDirectoryInfo), method)
+        {
+        }
+    }
+
+    /// <summary>
+    ///     Tests for methods in <see cref="IFileSystem.IDirectoryInfoFactory" /> in <see cref="IFileSystem" />.
+    /// </summary>
+    public class DirectoryInfoFactory : TestabilityTraitAttribute
+    {
+        public DirectoryInfoFactory(string method) : base(nameof(IFileSystem),
+            nameof(IFileSystem.IDirectoryInfoFactory), method)
+        {
+        }
+    }
+
+    /// <summary>
+    ///     Tests for methods in <see cref="IFileSystem.IDriveInfo" /> in <see cref="IFileSystem" />.
+    /// </summary>
+    public class DriveInfo : TestabilityTraitAttribute
+    {
+        public DriveInfo(string method) : base(nameof(IFileSystem),
+            nameof(IFileSystem.IDriveInfo), method)
+        {
+        }
+    }
+
+    /// <summary>
+    ///     Tests for methods in <see cref="IFileSystem.IDriveInfoFactory" /> in <see cref="IFileSystem" />.
+    /// </summary>
+    public class DriveInfoFactory : TestabilityTraitAttribute
+    {
+        public DriveInfoFactory(string method) : base(nameof(IFileSystem),
+            nameof(IFileSystem.IDriveInfoFactory), method)
+        {
+        }
+    }
+
+    /// <summary>
     ///     Tests for methods in <see cref="IFileSystem.IFile" /> in <see cref="IFileSystem" />.
     /// </summary>
     public class File : TestabilityTraitAttribute
@@ -90,12 +145,56 @@ public static class FileSystemTests
     }
 
     /// <summary>
-    ///     Tests for methods in <see cref="IFileSystem.IFileInfoFactory" /> in <see cref="IFileSystem" />.
+    ///     Tests for methods in <see cref="IFileSystem.IFileInfo" /> in <see cref="IFileSystem" />.
     /// </summary>
     public class FileInfo : TestabilityTraitAttribute
     {
         public FileInfo(string method) : base(nameof(IFileSystem),
+            nameof(IFileSystem.IFileInfo), method)
+        {
+        }
+    }
+
+    /// <summary>
+    ///     Tests for methods in <see cref="IFileSystem.IFileInfoFactory" /> in <see cref="IFileSystem" />.
+    /// </summary>
+    public class FileInfoFactory : TestabilityTraitAttribute
+    {
+        public FileInfoFactory(string method) : base(nameof(IFileSystem),
             nameof(IFileSystem.IFileInfoFactory), method)
+        {
+        }
+    }
+
+    /// <summary>
+    ///     Tests for methods in <see cref="FileSystemStream" /> in <see cref="IFileSystem" />.
+    /// </summary>
+    public class FileStream : TestabilityTraitAttribute
+    {
+        public FileStream(string method) : base(nameof(IFileSystem),
+            nameof(FileSystemStream), method)
+        {
+        }
+    }
+
+    /// <summary>
+    ///     Tests for methods in <see cref="IFileSystem.IFileStreamFactory" /> in <see cref="IFileSystem" />.
+    /// </summary>
+    public class FileStreamFactory : TestabilityTraitAttribute
+    {
+        public FileStreamFactory(string method) : base(nameof(IFileSystem),
+            nameof(IFileSystem.IFileStreamFactory), method)
+        {
+        }
+    }
+
+    /// <summary>
+    ///     Tests for methods in <see cref="IFileSystem.IFileSystemInfo" /> in <see cref="IFileSystem" />.
+    /// </summary>
+    public class FileSystemInfo : TestabilityTraitAttribute
+    {
+        public FileSystemInfo(string method) : base(nameof(IFileSystem),
+            nameof(IFileSystem.IFileSystemInfo), method)
         {
         }
     }

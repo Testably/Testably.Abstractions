@@ -7,6 +7,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytes))]
     public void ReadAllBytes_MissingFile_ShouldThrowFileNotFoundException(string path)
     {
         Exception? exception = Record.Exception(() =>
@@ -21,6 +22,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytes))]
     public void ReadAllBytes_ShouldReturnWrittenBytes(
         byte[] contents, string path)
     {

@@ -10,15 +10,14 @@ public static partial class RealFileSystem
     [Collection(nameof(RealFileSystemTestAttribute))]
     [RealFileSystemTest]
     [SystemTest(nameof(RealFileSystem))]
-    public sealed class FileStreamTests : FileSystemFileStreamTests<FileSystem>,
+    public sealed class DriveInfoFactoryTests :
+        FileSystemDriveInfoFactoryTests<FileSystem>,
         IDisposable
     {
         private readonly ITestOutputHelper _testOutputHelper;
 
-        public FileStreamTests(ITestOutputHelper testOutputHelper)
-            : base(
-                new FileSystem(),
-                new TimeSystem(),
+        public DriveInfoFactoryTests(ITestOutputHelper testOutputHelper)
+            : base(new FileSystem(), new TimeSystem(),
                 UseBasePath(testOutputHelper))
         {
             _testOutputHelper = testOutputHelper;
