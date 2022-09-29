@@ -1,5 +1,7 @@
 using System.IO;
+#if !NETFRAMEWORK
 using System.Runtime.InteropServices;
+#endif
 
 namespace Testably.Abstractions.Tests;
 
@@ -52,6 +54,25 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    public void
+        Delete_Recursive_WithSimilarNamedFile_ShouldOnlyDeleteDirectoryAndItsContents(
+            string subdirectory)
+    {
+        string fileName = $"{subdirectory}.txt";
+        FileSystem.Initialize()
+           .WithSubdirectory(subdirectory).Initialized(s => s
+               .WithAFile()
+               .WithASubdirectory())
+           .WithFile(fileName);
+
+        FileSystem.Directory.Delete(subdirectory, true);
+
+        FileSystem.Directory.Exists(subdirectory).Should().BeFalse();
+        FileSystem.File.Exists(fileName).Should().BeTrue();
+    }
+
+    [Theory]
+    [AutoData]
     public void Delete_Recursive_WithSubdirectory_ShouldDeleteDirectoryWithContent(
         string path, string subdirectory)
     {
@@ -78,6 +99,22 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
         exists.Should().BeFalse();
         result.Exists.Should().BeFalse();
+    }
+
+    [Theory]
+    [AutoData]
+    public void Delete_WithSimilarNamedFile_ShouldOnlyDeleteDirectory(
+        string subdirectory)
+    {
+        string fileName = $"{subdirectory}.txt";
+        FileSystem.Initialize()
+           .WithSubdirectory(subdirectory)
+           .WithFile(fileName);
+
+        FileSystem.Directory.Delete(subdirectory);
+
+        FileSystem.Directory.Exists(subdirectory).Should().BeFalse();
+        FileSystem.File.Exists(fileName).Should().BeTrue();
     }
 
     [Theory]
