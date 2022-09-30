@@ -332,6 +332,7 @@ public sealed partial class FileSystemMock
                     throw ExceptionFactory.FileNotFound(
                         FileSystem.Path.GetFullPath(path));
                 }
+
                 throw ExceptionFactory.DirectoryNotFound(
                     FileSystem.Path.GetFullPath(path));
             }
@@ -351,6 +352,7 @@ public sealed partial class FileSystemMock
                     throw ExceptionFactory.FileNotFound(
                         FileSystem.Path.GetFullPath(path));
                 }
+
                 throw ExceptionFactory.DirectoryNotFound(
                     FileSystem.Path.GetFullPath(path));
             }
@@ -374,6 +376,7 @@ public sealed partial class FileSystemMock
                     throw ExceptionFactory.FileNotFound(
                         FileSystem.Path.GetFullPath(path));
                 }
+
                 throw ExceptionFactory.DirectoryNotFound(
                     FileSystem.Path.GetFullPath(path));
             }
@@ -393,6 +396,7 @@ public sealed partial class FileSystemMock
                     throw ExceptionFactory.FileNotFound(
                         FileSystem.Path.GetFullPath(path));
                 }
+
                 throw ExceptionFactory.DirectoryNotFound(
                     FileSystem.Path.GetFullPath(path));
             }
@@ -412,6 +416,7 @@ public sealed partial class FileSystemMock
                     throw ExceptionFactory.FileNotFound(
                         FileSystem.Path.GetFullPath(path));
                 }
+
                 throw ExceptionFactory.DirectoryNotFound(
                     FileSystem.Path.GetFullPath(path));
             }
@@ -431,6 +436,7 @@ public sealed partial class FileSystemMock
                     throw ExceptionFactory.FileNotFound(
                         FileSystem.Path.GetFullPath(path));
                 }
+
                 throw ExceptionFactory.DirectoryNotFound(
                     FileSystem.Path.GetFullPath(path));
             }

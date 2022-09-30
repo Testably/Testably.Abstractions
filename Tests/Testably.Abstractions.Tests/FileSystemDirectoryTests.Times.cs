@@ -210,14 +210,15 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     public void SetCreationTime_ShouldChangeCreationTime(
         string path, DateTime creationTime)
     {
-        Skip.IfNot(Test.RunsOnWindows, "Linux does not have a creation timestamp: https://unix.stackexchange.com/a/102692");
+        Skip.IfNot(Test.RunsOnWindows,
+            "Linux does not have a creation timestamp: https://unix.stackexchange.com/a/102692");
 
         creationTime = creationTime.ToLocalTime();
         DateTime expectedTime = creationTime.ToUniversalTime();
         FileSystem.Directory.CreateDirectory(path);
 
         FileSystem.Directory.SetCreationTime(path, creationTime);
-        
+
         FileSystem.Directory.GetCreationTimeUtc(path)
            .Should().Be(expectedTime);
     }
@@ -251,14 +252,15 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     public void SetCreationTimeUtc_ShouldChangeCreationTime(
         string path, DateTime creationTime)
     {
-        Skip.IfNot(Test.RunsOnWindows, "Linux does not have a creation timestamp: https://unix.stackexchange.com/a/102692");
+        Skip.IfNot(Test.RunsOnWindows,
+            "Linux does not have a creation timestamp: https://unix.stackexchange.com/a/102692");
 
         creationTime = creationTime.ToUniversalTime();
         DateTime expectedTime = creationTime.ToLocalTime();
         FileSystem.Directory.CreateDirectory(path);
 
         FileSystem.Directory.SetCreationTimeUtc(path, creationTime);
-        
+
         FileSystem.Directory.GetCreationTime(path)
            .Should().Be(expectedTime);
     }
@@ -312,7 +314,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         {
             FileSystem.Directory.SetLastAccessTimeUtc(path, lastAccessTime);
         });
-        
+
         if (Test.RunsOnWindows)
         {
             exception.Should().BeOfType<FileNotFoundException>()
@@ -351,7 +353,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         {
             FileSystem.Directory.SetLastWriteTime(path, lastWriteTime);
         });
-        
+
         if (Test.RunsOnWindows)
         {
             exception.Should().BeOfType<FileNotFoundException>()
