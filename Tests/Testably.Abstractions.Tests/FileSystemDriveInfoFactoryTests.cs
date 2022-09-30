@@ -33,12 +33,13 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
         result.Should().NotBeEmpty();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.New))]
     public void New_InvalidDriveName_ShouldThrowArgumentNullException(
         string invalidDriveName)
     {
+        Skip.IfNot(Test.RunsOnWindows);
         Exception? exception = Record.Exception(() =>
         {
             _ = FileSystem.DriveInfo.New(invalidDriveName);
@@ -59,25 +60,29 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
         exception.Should().BeOfType<ArgumentNullException>();
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineData('A')]
     [InlineData('C')]
     [InlineData('X')]
     [FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.New))]
     public void New_WithDriveLetter_ShouldReturnDriveInfo(char driveLetter)
     {
+        Skip.IfNot(Test.RunsOnWindows);
+
         IFileSystem.IDriveInfo result = FileSystem.DriveInfo.New($"{driveLetter}");
 
         result.Name.Should().Be($"{driveLetter}:\\");
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData('A')]
     [InlineAutoData('C')]
     [InlineAutoData('Y')]
     [FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.New))]
     public void New_WithRootedPath_ShouldReturnDriveInfo(char driveLetter, string path)
     {
+        Skip.IfNot(Test.RunsOnWindows);
+
         string rootedPath = path.PrefixRoot(driveLetter);
 
         IFileSystem.IDriveInfo result = FileSystem.DriveInfo.New(rootedPath);
@@ -85,10 +90,12 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
         result.Name.Should().Be($"{driveLetter}:\\");
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.GetDrives))]
     public void Wrap_ShouldReturnDriveInfoWithSameName()
     {
+        Skip.IfNot(Test.RunsOnWindows);
+
         DriveInfo driveInfo = new("C");
         IFileSystem.IDriveInfo result = FileSystem.DriveInfo.Wrap(driveInfo);
 

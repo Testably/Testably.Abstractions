@@ -184,7 +184,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [Theory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetCreationTime))]
-    public void SetCreationTime_PathNotFound_ShouldThrowFileNotFoundException(
+    public void SetCreationTime_PathNotFound_ShouldThrowCorrectException(
         string path, DateTime creationTime)
     {
         Exception? exception = Record.Exception(() =>
@@ -192,8 +192,16 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
             FileSystem.Directory.SetCreationTime(path, creationTime);
         });
 
-        exception.Should().BeOfType<FileNotFoundException>()
-           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        if (Test.RunsOnWindows)
+        {
+            exception.Should().BeOfType<FileNotFoundException>()
+               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        }
+        else
+        {
+            exception.Should().BeOfType<DirectoryNotFoundException>()
+               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        }
     }
 
     [Theory]
@@ -215,7 +223,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [Theory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetCreationTimeUtc))]
-    public void SetCreationTimeUtc_PathNotFound_ShouldThrowFileNotFoundException(
+    public void SetCreationTimeUtc_PathNotFound_ShouldThrowCorrectException(
         string path, DateTime creationTime)
     {
         Exception? exception = Record.Exception(() =>
@@ -223,8 +231,16 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
             FileSystem.Directory.SetCreationTimeUtc(path, creationTime);
         });
 
-        exception.Should().BeOfType<FileNotFoundException>()
-           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        if (Test.RunsOnWindows)
+        {
+            exception.Should().BeOfType<FileNotFoundException>()
+               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        }
+        else
+        {
+            exception.Should().BeOfType<DirectoryNotFoundException>()
+               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        }
     }
 
     [Theory]
@@ -246,7 +262,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [Theory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetLastAccessTime))]
-    public void SetLastAccessTime_PathNotFound_ShouldThrowFileNotFoundException(
+    public void SetLastAccessTime_PathNotFound_ShouldThrowCorrectException(
         string path, DateTime lastAccessTime)
     {
         Exception? exception = Record.Exception(() =>
@@ -254,8 +270,16 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
             FileSystem.Directory.SetLastAccessTime(path, lastAccessTime);
         });
 
-        exception.Should().BeOfType<FileNotFoundException>()
-           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        if (Test.RunsOnWindows)
+        {
+            exception.Should().BeOfType<FileNotFoundException>()
+               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        }
+        else
+        {
+            exception.Should().BeOfType<DirectoryNotFoundException>()
+               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        }
     }
 
     [Theory]
@@ -277,16 +301,24 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [Theory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetLastAccessTimeUtc))]
-    public void SetLastAccessTimeUtc_PathNotFound_ShouldThrowFileNotFoundException(
+    public void SetLastAccessTimeUtc_PathNotFound_ShouldThrowCorrectException(
         string path, DateTime lastAccessTime)
     {
         Exception? exception = Record.Exception(() =>
         {
             FileSystem.Directory.SetLastAccessTimeUtc(path, lastAccessTime);
         });
-
-        exception.Should().BeOfType<FileNotFoundException>()
-           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        
+        if (Test.RunsOnWindows)
+        {
+            exception.Should().BeOfType<FileNotFoundException>()
+               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        }
+        else
+        {
+            exception.Should().BeOfType<DirectoryNotFoundException>()
+               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        }
     }
 
     [Theory]
@@ -308,16 +340,24 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [Theory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetLastWriteTime))]
-    public void SetLastWriteTime_PathNotFound_ShouldThrowFileNotFoundException(
+    public void SetLastWriteTime_PathNotFound_ShouldThrowCorrectException(
         string path, DateTime lastWriteTime)
     {
         Exception? exception = Record.Exception(() =>
         {
             FileSystem.Directory.SetLastWriteTime(path, lastWriteTime);
         });
-
-        exception.Should().BeOfType<FileNotFoundException>()
-           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        
+        if (Test.RunsOnWindows)
+        {
+            exception.Should().BeOfType<FileNotFoundException>()
+               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        }
+        else
+        {
+            exception.Should().BeOfType<DirectoryNotFoundException>()
+               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        }
     }
 
     [Theory]
@@ -339,7 +379,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [Theory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetLastWriteTimeUtc))]
-    public void SetLastWriteTimeUtc_PathNotFound_ShouldThrowFileNotFoundException(
+    public void SetLastWriteTimeUtc_PathNotFound_ShouldThrowCorrectException(
         string path, DateTime lastWriteTime)
     {
         Exception? exception = Record.Exception(() =>
@@ -347,8 +387,16 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
             FileSystem.Directory.SetLastWriteTimeUtc(path, lastWriteTime);
         });
 
-        exception.Should().BeOfType<FileNotFoundException>()
-           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        if (Test.RunsOnWindows)
+        {
+            exception.Should().BeOfType<FileNotFoundException>()
+               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        }
+        else
+        {
+            exception.Should().BeOfType<DirectoryNotFoundException>()
+               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        }
     }
 
     [Theory]
