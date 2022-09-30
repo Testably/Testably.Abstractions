@@ -26,8 +26,10 @@ public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
     [FileSystemTests.DirectoryInfoFactory(nameof(IFileSystem.IDirectoryInfoFactory.New))]
     public void New_EmptyPath_ShouldThrowArgumentException()
     {
-        Exception? exception =
-            Record.Exception(() => FileSystem.DirectoryInfo.New(string.Empty));
+        Exception? exception = Record.Exception(() =>
+        {
+            FileSystem.DirectoryInfo.New(string.Empty);
+        });
 
 #if NETFRAMEWORK
         exception.Should().BeOfType<ArgumentException>()
