@@ -6,6 +6,7 @@ namespace Testably.Abstractions.Tests.Testing;
 public class RandomSystemExtensionsTests
 {
     [Fact]
+    [Trait(nameof(Testing), nameof(RandomSystemExtensions))]
     public void GenerateRandomFileExtension_ShouldNotStartWithDotOrReturnEmptyString()
     {
         RandomSystemMock randomSystem = new(
@@ -34,6 +35,7 @@ public class RandomSystemExtensionsTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(RandomSystemExtensions))]
     public void GenerateRandomFileName_ShouldGenerateEdgeCases()
     {
         RandomSystemMock randomSystem = new(

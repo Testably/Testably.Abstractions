@@ -5,6 +5,7 @@ namespace Testably.Abstractions.Tests.Testing;
 public class TimeSystemMockCallbackHandlerTests
 {
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
     public void
         OnDateTimeRead_DisposedCallback_ShouldNotBeCalled()
     {
@@ -20,6 +21,7 @@ public class TimeSystemMockCallbackHandlerTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
     public void
         OnDateTimeRead_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
     {
@@ -39,6 +41,7 @@ public class TimeSystemMockCallbackHandlerTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
     public void
         OnDateTimeRead_MultipleCallbacks_ShouldAllBeCalled()
     {
@@ -60,6 +63,7 @@ public class TimeSystemMockCallbackHandlerTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
     public void
         OnDateTimeRead_Today_ShouldExecuteCallbackWithCorrectParameter()
     {
@@ -76,6 +80,7 @@ public class TimeSystemMockCallbackHandlerTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
     public void
         OnDateTimeRead_UtcNow_ShouldExecuteCallbackWithCorrectParameter()
     {
@@ -92,6 +97,7 @@ public class TimeSystemMockCallbackHandlerTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
     public void
         OnTaskDelay_DisposedCallback_ShouldNotBeCalled()
     {
@@ -107,6 +113,7 @@ public class TimeSystemMockCallbackHandlerTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
     public void
         OnTaskDelay_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
     {
@@ -126,6 +133,7 @@ public class TimeSystemMockCallbackHandlerTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
     public void
         OnTaskDelay_MultipleCallbacks_ShouldAllBeCalled()
     {
@@ -147,6 +155,7 @@ public class TimeSystemMockCallbackHandlerTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
     public void
         OnTaskDelay_WithMillisecondsAndWithCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
     {
@@ -163,6 +172,7 @@ public class TimeSystemMockCallbackHandlerTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
     public void
         OnTaskDelay_WithMillisecondsAndWithoutCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
     {
@@ -179,6 +189,7 @@ public class TimeSystemMockCallbackHandlerTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
     public void
         OnTaskDelay_WithTimeSpanAndWithCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
     {
@@ -195,6 +206,7 @@ public class TimeSystemMockCallbackHandlerTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
     public void
         OnTaskDelay_WithTimeSpanAndWithoutCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
     {
@@ -211,6 +223,7 @@ public class TimeSystemMockCallbackHandlerTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
     public void
         OnThreadSleep_DisposedCallback_ShouldNotBeCalled()
     {
@@ -226,6 +239,7 @@ public class TimeSystemMockCallbackHandlerTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
     public void
         OnThreadSleep_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
     {
@@ -245,6 +259,7 @@ public class TimeSystemMockCallbackHandlerTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
     public void
         OnThreadSleep_MultipleCallbacks_ShouldAllBeCalled()
     {
@@ -266,6 +281,7 @@ public class TimeSystemMockCallbackHandlerTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
     public void
         OnThreadSleep_WithMilliseconds_ShouldExecuteCallbackWithCorrectParameter()
     {
@@ -282,6 +298,7 @@ public class TimeSystemMockCallbackHandlerTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
     public void
         OnThreadSleep_WithTimeSpan_ShouldExecuteCallbackWithCorrectParameter()
     {

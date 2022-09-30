@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace Testably.Abstractions.Tests;
 
 public abstract class FileSystemDriveInfoTests<TFileSystem>
@@ -22,16 +20,4 @@ public abstract class FileSystemDriveInfoTests<TFileSystem>
     }
 
     #endregion
-
-    [Fact]
-    [Trait(nameof(FileSystem), nameof(DriveInfo))]
-    public void New_Null_ShouldThrowArgumentNullException()
-    {
-        Exception? exception = Record.Exception(() =>
-        {
-            _ = FileSystem.DriveInfo.New(null!);
-        });
-
-        exception.Should().BeOfType<ArgumentNullException>();
-    }
 }

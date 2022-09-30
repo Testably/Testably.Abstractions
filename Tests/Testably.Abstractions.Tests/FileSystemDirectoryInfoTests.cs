@@ -23,27 +23,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
     #endregion
 
-    [Fact]
-    public void New_Null_ShouldThrowArgumentNullException()
-    {
-        Exception? exception = Record.Exception(() =>
-        {
-            _ = FileSystem.DirectoryInfo.New(null!);
-        });
-
-        exception.Should().BeOfType<ArgumentNullException>();
-    }
-
-    [Theory]
-    [AutoData]
-    public void New_ShouldCreateNewDirectoryInfoFromPath(string path)
-    {
-        IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
-
-        result.ToString().Should().Be(path);
-        result.Exists.Should().BeFalse();
-    }
-
     [Theory]
     [AutoData]
     public void Parent_ArbitraryPaths_ShouldNotBeNull(string path1,
