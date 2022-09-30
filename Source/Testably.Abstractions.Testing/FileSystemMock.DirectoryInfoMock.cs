@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.Testing.Internal;
-using OperatingSystem = Testably.Abstractions.Testing.Internal.OperatingSystem;
 
 namespace Testably.Abstractions.Testing;
 
@@ -207,7 +206,7 @@ public sealed partial class FileSystemMock
 
             if (path == string.Empty)
             {
-                if (OperatingSystem.IsNetFramework)
+                if (Framework.IsNetFramework)
                 {
                     throw ExceptionFactory.PathHasNoLegalForm();
                 }
@@ -231,7 +230,7 @@ public sealed partial class FileSystemMock
 
             if (path == string.Empty)
             {
-                if (OperatingSystem.IsNetFramework)
+                if (Framework.IsNetFramework)
                 {
                     throw ExceptionFactory.PathHasNoLegalForm();
                 }
@@ -252,7 +251,7 @@ public sealed partial class FileSystemMock
             {
                 return child.Root;
             }
-            if (OperatingSystem.IsNetFramework)
+            if (Framework.IsNetFramework)
             {
                 return new DirectoryInfoMock(fileSystem.Path.GetFullPath(parentPath),
                     fileSystem.Path.GetFileName(parentPath), fileSystem);

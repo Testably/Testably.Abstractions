@@ -51,7 +51,7 @@ internal static class ExceptionFactory
 
     internal static ArgumentException PathCannotBeEmpty(string paramName = "path")
     {
-        if (OperatingSystem.IsNetFramework)
+        if (Framework.IsNetFramework)
         {
             return new ArgumentException(
                 "Path cannot be the empty string or all whitespace.");

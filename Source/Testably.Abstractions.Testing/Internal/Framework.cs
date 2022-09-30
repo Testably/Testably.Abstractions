@@ -2,11 +2,8 @@
 
 namespace Testably.Abstractions.Testing.Internal;
 
-internal static class OperatingSystem
+internal static class Framework
 {
-    public static bool IsWindows
-        => RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-
     public static bool IsNetFramework
     {
         get
