@@ -29,15 +29,15 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         result.Should().Be(expectedRoot);
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineData('A')]
     [InlineData('C')]
     [InlineData('X')]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetDirectoryRoot))]
-    [WindowsOnly]
     public void GetDirectoryRoot_SpecificDrive_ShouldReturnRootWithCorrectDrive(
         char drive)
     {
+        Skip.IfNot(Test.RunsOnWindows);
         string expectedRoot = "".PrefixRoot(drive);
         string path = Path.Combine($"{drive}:\\foo", "bar");
 
