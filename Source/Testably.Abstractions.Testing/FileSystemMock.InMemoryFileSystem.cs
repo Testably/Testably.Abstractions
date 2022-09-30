@@ -14,12 +14,15 @@ public sealed partial class FileSystemMock
     private sealed class InMemoryFileSystem : IInMemoryFileSystem
     {
         private readonly ConcurrentDictionary<string, FileSystemInfoMock> _files = new();
+        private readonly ConcurrentDictionary<string, DriveInfoMock> _drives = new();
 
         private readonly FileSystemMock _fileSystem;
 
         public InMemoryFileSystem(FileSystemMock fileSystem)
         {
             _fileSystem = fileSystem;
+            DriveInfoMock mainDrive = new("".PrefixRoot(), _fileSystem);
+            _drives.TryAdd(mainDrive.Name, mainDrive);
         }
 
         #region IInMemoryFileSystem Members
@@ -123,6 +126,10 @@ public sealed partial class FileSystemMock
 
             return null;
         }
+
+        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetDrives()" />
+        public IEnumerable<IFileSystem.IDriveInfo> GetDrives()
+            => _drives.Values;
 
         /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetFile(string)" />
         public IInMemoryFileSystem.IWritableFileInfo? GetFile(string path)

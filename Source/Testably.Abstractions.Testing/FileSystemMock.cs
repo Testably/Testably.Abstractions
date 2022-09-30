@@ -40,11 +40,11 @@ public sealed partial class FileSystemMock : IFileSystem
     {
         RandomSystem = new RandomSystem();
         TimeSystem = new TimeSystemMock(TimeProvider.Now());
+        _pathMock = new PathMock(this);
         FileSystemContainer = new InMemoryFileSystem(this);
         _callbackHandler = new FileSystemMockCallbackHandler();
         _directoryMock = new DirectoryMock(this, _callbackHandler);
         _fileMock = new FileMock(this, _callbackHandler);
-        _pathMock = new PathMock(this);
         DirectoryInfo = new DirectoryInfoFactoryMock(this, _callbackHandler);
         DriveInfo = new DriveInfoFactoryMock(this);
         FileInfo = new FileInfoFactoryMock(this, _callbackHandler);

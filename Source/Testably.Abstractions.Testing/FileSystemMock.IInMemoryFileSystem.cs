@@ -39,16 +39,21 @@ public sealed partial class FileSystemMock
         bool Exists([NotNullWhen(true)] string? path);
 
         /// <summary>
-        ///     Gets a file if it exists.<br />
-        ///     Returns <c>null</c>, if the file does not exist.
-        /// </summary>
-        IWritableFileInfo? GetFile(string path);
-
-        /// <summary>
         ///     Gets a directory if it exists.<br />
         ///     Returns <c>null</c>, if the directory does not exist.
         /// </summary>
         IFileSystem.IDirectoryInfo? GetDirectory(string path);
+
+        /// <summary>
+        ///     Returns the drives that are present.
+        /// </summary>
+        IEnumerable<IFileSystem.IDriveInfo> GetDrives();
+
+        /// <summary>
+        ///     Gets a file if it exists.<br />
+        ///     Returns <c>null</c>, if the file does not exist.
+        /// </summary>
+        IWritableFileInfo? GetFile(string path);
 
         /// <summary>
         ///     Gets or adds a directory.

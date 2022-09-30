@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.Versioning;
+using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
 
@@ -9,10 +10,33 @@ public sealed partial class FileSystemMock
 {
     private sealed class DriveInfoMock : IFileSystem.IDriveInfo
     {
-        internal DriveInfoMock(DriveInfo driveInfo, IFileSystem fileSystem)
+        internal DriveInfoMock(string driveName, IFileSystem fileSystem)
         {
-            _ = driveInfo;
+            if (string.IsNullOrEmpty(driveName))
+            {
+                throw new ArgumentNullException(nameof(driveName));
+            }
+
+            driveName = ValidateDriveLetter(driveName, fileSystem);
             FileSystem = fileSystem;
+            Name = driveName;
+        }
+
+        private static string ValidateDriveLetter(string driveName,
+                                                  IFileSystem fileSystem)
+        {
+            if (driveName.Length == 1 &&
+                char.IsLetter(driveName, 0))
+            {
+                return $"{driveName}:\\";
+            }
+
+            if (fileSystem.Path.IsPathRooted(driveName))
+            {
+                return fileSystem.Path.GetPathRoot(driveName)!;
+            }
+
+            throw ExceptionFactory.InvalidDriveName();
         }
 
         #region IDriveInfo Members
@@ -37,8 +61,7 @@ public sealed partial class FileSystemMock
             => throw new NotImplementedException();
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.Name" />
-        public string Name
-            => throw new NotImplementedException();
+        public string Name { get; }
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.RootDirectory" />
         public IFileSystem.IDirectoryInfo RootDirectory
@@ -52,7 +75,8 @@ public sealed partial class FileSystemMock
         public long TotalSize
             => throw new NotImplementedException();
 
-        /// <inheritdoc cref="IFileSystem.IDriveInfo.VolumeLabel" />7
+        /// <inheritdoc cref="IFileSystem.IDriveInfo.VolumeLabel" />
+        /// 7
         [AllowNull]
         public string VolumeLabel
         {
