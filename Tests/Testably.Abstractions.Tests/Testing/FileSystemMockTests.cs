@@ -24,16 +24,13 @@ public class FileSystemMockTests
         drive.VolumeLabel.Should().NotBeNullOrEmpty();
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineData("D:\\")]
     [Trait(nameof(Testing), nameof(FileSystemMock))]
     [WindowsOnly]
     public void WithDrive_NewName_ShouldCreateNewDrives(string driveName)
     {
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            throw new SkipException("Only supported on windows");
-        }
+        Skip.IfNot(RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
         FileSystemMock sut = new();
         sut.WithDrive(driveName);
 
