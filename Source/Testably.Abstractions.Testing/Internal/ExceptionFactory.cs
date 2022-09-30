@@ -43,6 +43,9 @@ internal static class ExceptionFactory
             "Drive name must be a root directory (i.e. 'C:\\') or a drive letter ('C').",
             paramName);
 
+    public static IOException NotEnoughDiskSpace(string name)
+        => new IOException($"There is not enough space on the disk: '{name}'");
+
     internal static ArgumentException PathCannotBeEmpty(string paramName = "path")
     {
 #if NETFRAMEWORK

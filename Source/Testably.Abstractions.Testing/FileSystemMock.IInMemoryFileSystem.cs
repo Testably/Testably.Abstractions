@@ -86,6 +86,13 @@ public sealed partial class FileSystemMock
             void AppendBytes(byte[] bytes);
 
             /// <summary>
+            ///     Clears the content of the <see cref="IFileSystem.IFileInfo" />.
+            ///     <para />
+            ///     This is used to delete the file.
+            /// </summary>
+            void ClearBytes();
+
+            /// <summary>
             ///     Gets the bytes in the <see cref="IFileSystem.IFileInfo" />.
             /// </summary>
             byte[] GetBytes();

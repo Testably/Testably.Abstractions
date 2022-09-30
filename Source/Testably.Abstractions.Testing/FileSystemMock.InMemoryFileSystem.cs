@@ -58,6 +58,10 @@ public sealed partial class FileSystemMock
                         _fileSystem.Path.GetFullPath(path));
                 }
             }
+            else if (fileSystemInfo is IInMemoryFileSystem.IFileInfoMock fileInfoMock)
+            {
+                fileInfoMock.ClearBytes();
+            }
 
             return _files.TryRemove(key, out _);
         }

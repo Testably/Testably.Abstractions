@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions.Testing;
+﻿using System.IO;
+
+namespace Testably.Abstractions.Testing;
 
 public sealed partial class FileSystemMock
 {
@@ -11,5 +13,13 @@ public sealed partial class FileSystemMock
         ///     Changes the total size of the <see cref="IFileSystem.IDriveInfo" />.
         /// </summary>
         IDriveInfoMock SetTotalSize(long totalSize);
+
+        /// <summary>
+        ///     Changes the currently used bytes by <paramref name="usedBytesDelta" />.
+        ///     <para />
+        ///     Throws an <see cref="IOException" /> if the <see cref="IFileSystem.IDriveInfo.AvailableFreeSpace" /> becomes
+        ///     negative.
+        /// </summary>
+        IDriveInfoMock ChangeUsedBytes(long usedBytesDelta);
     }
 }

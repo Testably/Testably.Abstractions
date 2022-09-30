@@ -59,4 +59,19 @@ public class FileSystemMockTests
         drive.TotalFreeSpace.Should().Be(totalSize);
         drive.AvailableFreeSpace.Should().Be(totalSize);
     }
+
+    [Theory]
+    [AutoData]
+    [Trait(nameof(Testing), nameof(FileSystemMock))]
+    public void WithDrive_WithCallback_ShouldUp22dateDrive(long totalSize)
+    {
+        FileSystemMock sut = new();
+        sut.WithDrive(d => d.SetTotalSize(totalSize));
+
+        IFileSystem.IDriveInfo drive = sut.DriveInfo.GetDrives().Single();
+
+        drive.TotalSize.Should().Be(totalSize);
+        drive.TotalFreeSpace.Should().Be(totalSize);
+        drive.AvailableFreeSpace.Should().Be(totalSize);
+    }
 }

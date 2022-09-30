@@ -20,7 +20,13 @@ public sealed partial class FileSystemMock
             driveName = ValidateDriveLetter(driveName, fileSystem);
             FileSystem = fileSystem;
             Name = driveName;
+            TotalSize = 1 * Gigabyte;
         }
+
+        /// <summary>
+        ///     The number of bytes in a Gigabyte.
+        /// </summary>
+        private const long Gigabyte = 1024 * 1024 * 1024;
 
         private static string ValidateDriveLetter(string driveName,
                                                   IFileSystem fileSystem)
@@ -92,14 +98,27 @@ public sealed partial class FileSystemMock
             return this;
         }
 
+        /// <inheritdoc cref="IDriveInfoMock.ChangeUsedBytes(long)" />
+        public IDriveInfoMock ChangeUsedBytes(long usedBytesDelta)
+        {
+            long newUsedBytes = _usedBytes + usedBytesDelta;
+            if (newUsedBytes < 0)
+            {
+                newUsedBytes = 0;
+            }
+
+            if (AvailableFreeSpace < 0)
+            {
+                throw ExceptionFactory.NotEnoughDiskSpace(Name);
+            }
+
+            _usedBytes = newUsedBytes;
+
+            return this;
+        }
+
         #endregion
 
         private long _usedBytes;
-
-        internal void RequestOrFreeBytes(long bytes)
-        {
-            _usedBytes += bytes;
-            //TODO check if free space is available.
-        }
     }
 }

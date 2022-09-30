@@ -23,10 +23,14 @@ public sealed partial class FileSystemMock
 
         private readonly ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
 
+        private IDriveInfoMock _driveInfoMock;
+
         internal FileInfoMock(string fullName, string originalPath,
                               FileSystemMock fileSystem)
             : base(fullName, originalPath, fileSystem)
         {
+            _driveInfoMock = fileSystem.FileSystemContainer.GetOrAddDrive(
+                fileSystem.Path.GetPathRoot(fullName)!);
         }
 
         #region IWritableFileInfo Members
@@ -133,7 +137,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IInMemoryFileSystem.IFileInfoMock.AppendBytes(byte[])" />
         public void AppendBytes(byte[] bytes)
         {
-            _bytes = _bytes.Concat(bytes).ToArray();
+            WriteBytes(_bytes.Concat(bytes).ToArray());
         }
 
         /// <inheritdoc cref="IInMemoryFileSystem.IFileInfoMock.GetBytes()" />
@@ -142,7 +146,14 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IInMemoryFileSystem.IFileInfoMock.WriteBytes(byte[])" />
         public void WriteBytes(byte[] bytes)
         {
+            _driveInfoMock.ChangeUsedBytes(bytes.Length - _bytes.Length);
             _bytes = bytes;
+        }
+        /// <inheritdoc cref="IInMemoryFileSystem.IFileInfoMock.ClearBytes()" />
+        public void ClearBytes()
+        {
+            _driveInfoMock.ChangeUsedBytes(0 - _bytes.Length);
+            _bytes = Array.Empty<byte>();
         }
 
         #endregion
