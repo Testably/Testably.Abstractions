@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace Testably.Abstractions.Tests;
 
 public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>

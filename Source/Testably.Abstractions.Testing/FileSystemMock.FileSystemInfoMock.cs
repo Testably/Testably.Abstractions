@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
@@ -14,6 +18,13 @@ public sealed partial class FileSystemMock
         private DateTime _lastWriteTime;
         protected readonly string OriginalPath;
 
+        private readonly ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
+
+        /// <summary>
+        ///     The <see cref="Drive" /> in which the <see cref="IFileSystem.IFileSystemInfo" /> is stored.
+        /// </summary>
+        protected IDriveInfoMock Drive { get; }
+
         internal FileSystemInfoMock(string fullName, string originalPath,
                                     FileSystemMock fileSystem)
         {
@@ -26,6 +37,15 @@ public sealed partial class FileSystemMock
 
             FileSystem = fileSystem;
             AdjustTimes(TimeAdjustments.All);
+            if (string.IsNullOrEmpty(fullName))
+            {
+                Drive = FileSystem.FileSystemContainer.GetDrives().First();
+            }
+            else
+            {
+                Drive = fileSystem.FileSystemContainer.GetOrAddDrive(
+                    fileSystem.Path.GetPathRoot(fullName)!);
+            }
         }
 
         #region IFileSystemInfo Members
@@ -139,6 +159,98 @@ public sealed partial class FileSystemMock
 #endif
 
         #endregion
+
+        /// <inheritdoc cref="IInMemoryFileSystem.IFileSystemInfoMock.RequestAccess(FileAccess, FileShare)" />
+        public IDisposable RequestAccess(FileAccess access, FileShare share)
+        {
+            if (!Drive.IsReady)
+            {
+                throw ExceptionFactory.NetworkPathNotFound(FullName);
+            }
+
+            if (CanGetAccess(access, share))
+            {
+                Guid guid = Guid.NewGuid();
+                FileHandle fileHandle = new(guid, ReleaseAccess, access, share);
+                _fileHandles.TryAdd(guid, fileHandle);
+                return fileHandle;
+            }
+
+            throw ExceptionFactory.ProcessCannotAccessTheFile(FullName);
+        }
+
+        private void ReleaseAccess(Guid guid)
+        {
+            _fileHandles.TryRemove(guid, out _);
+        }
+
+        private bool CanGetAccess(FileAccess access, FileShare share)
+        {
+            foreach (KeyValuePair<Guid, FileHandle> fileHandle in _fileHandles)
+            {
+                if (!fileHandle.Value.GrantAccess(access, share))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private sealed class FileHandle : IDisposable
+        {
+            private readonly Action<Guid> _releaseCallback;
+            private readonly FileAccess _access;
+            private readonly FileShare _share;
+            private readonly Guid _key;
+
+            public FileHandle(Guid key, Action<Guid> releaseCallback, FileAccess access,
+                              FileShare share)
+            {
+                _releaseCallback = releaseCallback;
+                _access = access;
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    _share = FileShare.ReadWrite;
+                }
+                else
+                {
+                    _share = share;
+                }
+
+                _key = key;
+            }
+
+            public bool GrantAccess(FileAccess access, FileShare share)
+            {
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    share = FileShare.ReadWrite;
+                }
+
+                return CheckAccessWithShare(access, _share) &&
+                       CheckAccessWithShare(_access, share);
+            }
+
+            private static bool CheckAccessWithShare(FileAccess access, FileShare share)
+            {
+                switch (access)
+                {
+                    case FileAccess.Read:
+                        return share.HasFlag(FileShare.Read);
+                    case FileAccess.Write:
+                        return share.HasFlag(FileShare.Write);
+                    default:
+                        return share == FileShare.ReadWrite;
+                }
+            }
+
+            /// <inheritdoc cref="IDisposable.Dispose()" />
+            public void Dispose()
+            {
+                _releaseCallback.Invoke(_key);
+            }
+        }
 
 #if NETSTANDARD2_0
         /// <inheritdoc cref="object.ToString()" />

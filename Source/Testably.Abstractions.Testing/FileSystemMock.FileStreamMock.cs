@@ -22,7 +22,7 @@ public sealed partial class FileSystemMock
 
         private readonly FileAccess _access;
         private readonly IDisposable _accessLock;
-        private readonly IInMemoryFileSystem.IWritableFileInfo _file;
+        private readonly IInMemoryFileSystem.IFileInfoMock _file;
         private readonly FileSystemMock _fileSystem;
         private bool _isDisposed;
         private readonly FileMode _mode;
@@ -60,14 +60,15 @@ public sealed partial class FileSystemMock
             _ = bufferSize;
             _options = options;
 
-            IInMemoryFileSystem.IWritableFileInfo? file =
+            IInMemoryFileSystem.IFileInfoMock? file =
                 _fileSystem.FileSystemContainer.GetFile(Name);
             if (file == null)
             {
                 if (_mode.Equals(FileMode.Open) ||
                     _mode.Equals(FileMode.Truncate))
                 {
-                    throw ExceptionFactory.FileNotFound(_fileSystem.Path.GetFullPath(Name));
+                    throw ExceptionFactory.FileNotFound(
+                        _fileSystem.Path.GetFullPath(Name));
                 }
 
                 file = _fileSystem.FileSystemContainer.GetOrAddFile(Name);
@@ -75,15 +76,18 @@ public sealed partial class FileSystemMock
                 {
                     if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
-                        throw ExceptionFactory.FileAlreadyExists(_fileSystem.Path.GetFullPath(Name));
+                        throw ExceptionFactory.FileAlreadyExists(
+                            _fileSystem.Path.GetFullPath(Name));
                     }
 
-                    throw ExceptionFactory.AccessToPathDenied(_fileSystem.Path.GetFullPath(Name));
+                    throw ExceptionFactory.AccessToPathDenied(
+                        _fileSystem.Path.GetFullPath(Name));
                 }
             }
             else if (_mode.Equals(FileMode.CreateNew))
             {
-                throw ExceptionFactory.FileAlreadyExists(_fileSystem.Path.GetFullPath(Name));
+                throw ExceptionFactory.FileAlreadyExists(
+                    _fileSystem.Path.GetFullPath(Name));
             }
 
             _accessLock = file.RequestAccess(access, share);

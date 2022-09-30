@@ -1,5 +1,5 @@
-﻿using System.IO;
-using System;
+﻿using System;
+using System.IO;
 
 namespace Testably.Abstractions.Testing;
 
@@ -40,11 +40,11 @@ public sealed partial class FileSystemMock : IFileSystem
     {
         RandomSystem = new RandomSystem();
         TimeSystem = new TimeSystemMock(TimeProvider.Now());
+        _pathMock = new PathMock(this);
         FileSystemContainer = new InMemoryFileSystem(this);
         _callbackHandler = new FileSystemMockCallbackHandler();
         _directoryMock = new DirectoryMock(this, _callbackHandler);
         _fileMock = new FileMock(this, _callbackHandler);
-        _pathMock = new PathMock(this);
         DirectoryInfo = new DirectoryInfoFactoryMock(this, _callbackHandler);
         DriveInfo = new DriveInfoFactoryMock(this);
         FileInfo = new FileInfoFactoryMock(this, _callbackHandler);
@@ -56,6 +56,20 @@ public sealed partial class FileSystemMock : IFileSystem
             CreationTime = new DateTime(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc),
             Attributes = (FileAttributes)(-1),
         };
+    }
+
+    /// <summary>
+    ///     Changes the parameters of the specified <paramref name="drive" />.
+    ///     <para />
+    ///     If the <paramref name="drive" /> does not exist, it will be created/mounted.
+    /// </summary>
+    public FileSystemMock WithDrive(string? drive,
+                                    Action<IDriveInfoMock>? driveCallback = null)
+    {
+        IDriveInfoMock driveInfoMock = FileSystemContainer.GetOrAddDrive(
+            drive ?? "".PrefixRoot());
+        driveCallback?.Invoke(driveInfoMock);
+        return this;
     }
 
     #region IFileSystem Members
@@ -85,4 +99,18 @@ public sealed partial class FileSystemMock : IFileSystem
         => _pathMock;
 
     #endregion
+}
+
+/// <summary>
+///     Extension methods for the <see cref="FileSystemMock" />
+/// </summary>
+public static class FileSystemMockExtensions
+{
+    /// <summary>
+    ///     Changes the parameters of the default drive ('C:\' on Windows, '/' on Linux)
+    /// </summary>
+    public static FileSystemMock WithDrive(
+        this FileSystemMock fileSystemMock,
+        Action<FileSystemMock.IDriveInfoMock> driveCallback)
+        => fileSystemMock.WithDrive(null, driveCallback);
 }

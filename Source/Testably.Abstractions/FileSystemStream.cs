@@ -60,21 +60,26 @@ public abstract class FileSystemStream : Stream
     private readonly Stream _stream;
 
     /// <summary>
-    /// Initializes a new instance of <see cref="FileSystemStream"/>.
+    ///     Initializes a new instance of <see cref="FileSystemStream" />.
     /// </summary>
-    /// <param name="stream">The wrapped <see cref="Stream"/>.</param>
-    /// <param name="path">The <see cref="FileStream.Name"/> of the stream.</param>
-    /// <param name="isAsync">The <see cref="FileStream.IsAsync"/> flag, indicating if the <see cref="FileStream"/> was opened asynchronously or synchronously.</param>
+    /// <param name="stream">The wrapped <see cref="Stream" />.</param>
+    /// <param name="path">The <see cref="FileStream.Name" /> of the stream.</param>
+    /// <param name="isAsync">
+    ///     The <see cref="FileStream.IsAsync" /> flag, indicating if the <see cref="FileStream" /> was
+    ///     opened asynchronously or synchronously.
+    /// </param>
     protected FileSystemStream(Stream stream, string? path, bool isAsync = false)
     {
         if (path is null)
         {
             throw new ArgumentNullException(nameof(path), "Path cannot be null.");
         }
+
         if (path.Length == 0)
         {
             throw new ArgumentException("Empty path name is not legal.", nameof(path));
         }
+
         _stream = stream;
         Name = path;
         IsAsync = isAsync;
@@ -189,7 +194,7 @@ public abstract class FileSystemStream : Stream
     /// <inheritdoc cref="Stream.WriteByte(byte)" />
     public override void WriteByte(byte value)
         => _stream.WriteByte(value);
-    
+
     /// <inheritdoc cref="Stream.Dispose(bool)" />
     protected override void Dispose(bool disposing)
     {

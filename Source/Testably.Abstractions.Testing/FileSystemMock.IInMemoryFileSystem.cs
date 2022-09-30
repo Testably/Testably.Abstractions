@@ -39,26 +39,36 @@ public sealed partial class FileSystemMock
         bool Exists([NotNullWhen(true)] string? path);
 
         /// <summary>
-        ///     Gets a file if it exists.<br />
-        ///     Returns <c>null</c>, if the file does not exist.
-        /// </summary>
-        IWritableFileInfo? GetFile(string path);
-
-        /// <summary>
         ///     Gets a directory if it exists.<br />
         ///     Returns <c>null</c>, if the directory does not exist.
         /// </summary>
-        IFileSystem.IDirectoryInfo? GetDirectory(string path);
+        IDirectoryInfoMock? GetDirectory(string path);
+
+        /// <summary>
+        ///     Returns the drives that are present.
+        /// </summary>
+        IEnumerable<IDriveInfoMock> GetDrives();
+
+        /// <summary>
+        ///     Returns the drives that are present.
+        /// </summary>
+        IDriveInfoMock GetOrAddDrive(string driveName);
+
+        /// <summary>
+        ///     Gets a file if it exists.<br />
+        ///     Returns <c>null</c>, if the file does not exist.
+        /// </summary>
+        IFileInfoMock? GetFile(string path);
 
         /// <summary>
         ///     Gets or adds a directory.
         /// </summary>
-        IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path);
+        IDirectoryInfoMock? GetOrAddDirectory(string path);
 
         /// <summary>
         ///     Gets or adds a file.
         /// </summary>
-        IWritableFileInfo? GetOrAddFile(string path);
+        IFileInfoMock? GetOrAddFile(string path);
 
         /// <summary>
         ///     Returns the relative subdirectory path from <paramref name="fullFilePath" /> to the <paramref name="givenPath" />.
@@ -66,14 +76,29 @@ public sealed partial class FileSystemMock
         string GetSubdirectoryPath(string fullFilePath, string givenPath);
 
         /// <summary>
+        ///     An <see cref="IFileSystem.IDirectoryInfo" /> with <see cref="IFileSystemInfoMock" /> functionality.
+        /// </summary>
+        public interface IDirectoryInfoMock : IFileSystem.IDirectoryInfo,
+            IFileSystemInfoMock
+        {
+        }
+
+        /// <summary>
         ///     An <see cref="IFileSystem.IFileInfo" /> which allows writing to the underlying byte array.
         /// </summary>
-        public interface IWritableFileInfo : IFileSystem.IFileInfo
+        public interface IFileInfoMock : IFileSystem.IFileInfo, IFileSystemInfoMock
         {
             /// <summary>
             ///     Appends the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
             /// </summary>
             void AppendBytes(byte[] bytes);
+
+            /// <summary>
+            ///     Clears the content of the <see cref="IFileSystem.IFileInfo" />.
+            ///     <para />
+            ///     This is used to delete the file.
+            /// </summary>
+            void ClearBytes();
 
             /// <summary>
             ///     Gets the bytes in the <see cref="IFileSystem.IFileInfo" />.
@@ -84,7 +109,13 @@ public sealed partial class FileSystemMock
             ///     Writes the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
             /// </summary>
             void WriteBytes(byte[] bytes);
+        }
 
+        /// <summary>
+        ///     An <see cref="IFileSystem.IFileSystemInfo" /> which allows requesting access to.
+        /// </summary>
+        public interface IFileSystemInfoMock : IFileSystem.IFileSystemInfo
+        {
             /// <summary>
             ///     Requests access to this file with the given <paramref name="share" />.
             ///     <para />

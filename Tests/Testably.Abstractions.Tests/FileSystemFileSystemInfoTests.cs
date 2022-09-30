@@ -20,5 +20,4 @@ public abstract class FileSystemFileSystemInfoTests<TFileSystem>
     }
 
     #endregion
-
 }

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
 #if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
@@ -17,11 +15,9 @@ public sealed partial class FileSystemMock
     ///     A mocked file in the <see cref="InMemoryFileSystem" />.
     /// </summary>
     private sealed class FileInfoMock : FileSystemInfoMock,
-        IInMemoryFileSystem.IWritableFileInfo
+        IInMemoryFileSystem.IFileInfoMock
     {
         private byte[] _bytes = Array.Empty<byte>();
-
-        private readonly ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
 
         internal FileInfoMock(string fullName, string originalPath,
                               FileSystemMock fileSystem)
@@ -130,107 +126,30 @@ public sealed partial class FileSystemMock
                                              bool ignoreMetadataErrors)
             => throw new NotImplementedException();
 
-        /// <inheritdoc cref="IInMemoryFileSystem.IWritableFileInfo.AppendBytes(byte[])" />
+        /// <inheritdoc cref="IInMemoryFileSystem.IFileInfoMock.AppendBytes(byte[])" />
         public void AppendBytes(byte[] bytes)
         {
-            _bytes = _bytes.Concat(bytes).ToArray();
+            WriteBytes(_bytes.Concat(bytes).ToArray());
         }
 
-        /// <inheritdoc cref="IInMemoryFileSystem.IWritableFileInfo.GetBytes()" />
+        /// <inheritdoc cref="IInMemoryFileSystem.IFileInfoMock.GetBytes()" />
         public byte[] GetBytes() => _bytes;
 
-        /// <inheritdoc cref="IInMemoryFileSystem.IWritableFileInfo.WriteBytes(byte[])" />
+        /// <inheritdoc cref="IInMemoryFileSystem.IFileInfoMock.WriteBytes(byte[])" />
         public void WriteBytes(byte[] bytes)
         {
+            Drive.ChangeUsedBytes(bytes.Length - _bytes.Length);
             _bytes = bytes;
         }
 
+        /// <inheritdoc cref="IInMemoryFileSystem.IFileInfoMock.ClearBytes()" />
+        public void ClearBytes()
+        {
+            Drive.ChangeUsedBytes(0 - _bytes.Length);
+            _bytes = Array.Empty<byte>();
+        }
+
         #endregion
-
-        /// <inheritdoc cref="IInMemoryFileSystem.IWritableFileInfo.RequestAccess(FileAccess, FileShare)" />
-        public IDisposable RequestAccess(FileAccess access, FileShare share)
-        {
-            if (CanGetAccess(access, share))
-            {
-                Guid guid = Guid.NewGuid();
-                var fileHandle = new FileHandle(guid, ReleaseAccess, access, share);
-                _fileHandles.TryAdd(guid, fileHandle);
-                return fileHandle;
-            }
-
-            throw ExceptionFactory.ProcessCannotAccessTheFile(FullName);
-        }
-
-        private void ReleaseAccess(Guid guid)
-        {
-            _fileHandles.TryRemove(guid, out _);
-        }
-
-        private bool CanGetAccess(FileAccess access, FileShare share)
-        {
-            foreach (var fileHandle in _fileHandles)
-            {
-                if (!fileHandle.Value.GrantAccess(access, share))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private sealed class FileHandle : IDisposable
-        {
-            private readonly Action<Guid> _releaseCallback;
-            private readonly FileAccess _access;
-            private readonly FileShare _share;
-            private readonly Guid _key;
-
-            public FileHandle(Guid key, Action<Guid> releaseCallback, FileAccess access, FileShare share)
-            {
-                _releaseCallback = releaseCallback;
-                _access = access;
-                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    _share = FileShare.ReadWrite;
-                }
-                else
-                {
-                    _share = share;
-                }
-                _key = key;
-            }
-
-            public bool GrantAccess(FileAccess access, FileShare share)
-            {
-                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    share = FileShare.ReadWrite;
-                }
-                return CheckAccessWithShare(access, _share) &&
-                       CheckAccessWithShare(_access, share);
-            }
-
-            private static bool CheckAccessWithShare(FileAccess access, FileShare share)
-            {
-                switch (access)
-                {
-                    case FileAccess.Read:
-                        return share.HasFlag(FileShare.Read);
-                    case FileAccess.Write:
-                        return share.HasFlag(FileShare.Write);
-                    default:
-                        return share == FileShare.ReadWrite;
-                }
-            }
-
-            /// <inheritdoc cref="IDisposable.Dispose()" />
-            public void Dispose()
-            {
-                _releaseCallback.Invoke(_key);
-            }
-
-        }
 
         [return: NotNullIfNotNull("path")]
         internal static FileInfoMock? New(string? path, FileSystemMock fileSystem)

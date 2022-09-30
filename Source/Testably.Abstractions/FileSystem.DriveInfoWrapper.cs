@@ -71,7 +71,6 @@ public sealed partial class FileSystem
                 {
                     _instance.VolumeLabel = value;
                 }
-
             }
 #else
             set => _instance.VolumeLabel = value;
