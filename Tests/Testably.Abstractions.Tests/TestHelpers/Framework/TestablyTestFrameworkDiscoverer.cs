@@ -57,7 +57,7 @@ public class TestablyTestFrameworkDiscoverer : XunitTestFrameworkDiscoverer
                .Attribute as IRuntimeSwitch;
             if (runtimeSwitch?.IsEnabled == false)
             {
-                return true;
+                return false;
             }
         }
 
