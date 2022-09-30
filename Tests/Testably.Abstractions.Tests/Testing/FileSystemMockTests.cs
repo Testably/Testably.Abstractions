@@ -1,6 +1,4 @@
 ﻿using System.Linq;
-using System.Runtime.InteropServices;
-using Testably.Abstractions.Tests.TestHelpers.Attributes;
 
 namespace Testably.Abstractions.Tests.Testing;
 
@@ -26,10 +24,9 @@ public class FileSystemMockTests
     [SkippableTheory]
     [InlineData("D:\\")]
     [Trait(nameof(Testing), nameof(FileSystemMock))]
-    [WindowsOnly]
     public void WithDrive_NewName_ShouldCreateNewDrives(string driveName)
     {
-        Skip.IfNot(RuntimeInformation.IsOSPlatform(OSPlatform.Windows));
+        Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
         FileSystemMock sut = new();
         sut.WithDrive(driveName);
 

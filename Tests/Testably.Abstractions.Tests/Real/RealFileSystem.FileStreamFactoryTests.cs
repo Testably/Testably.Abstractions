@@ -1,4 +1,4 @@
-using Testably.Abstractions.Tests.TestHelpers.Attributes;
+#if !DEBUG || !DISABLE_TESTS_REALFILESYSTEM
 using Testably.Abstractions.Tests.TestHelpers.Traits;
 using Xunit.Abstractions;
 
@@ -7,8 +7,7 @@ namespace Testably.Abstractions.Tests.Real;
 public static partial class RealFileSystem
 {
     // ReSharper disable once UnusedMember.Global
-    [Collection(nameof(RealFileSystemTestAttribute))]
-    [RealFileSystemTest]
+    [Collection(nameof(RealFileSystem))]
     [SystemTest(nameof(RealFileSystem))]
     public sealed class FileStreamFactoryTests :
         FileSystemFileStreamFactoryTests<FileSystem>,
@@ -32,3 +31,4 @@ public static partial class RealFileSystem
         #endregion
     }
 }
+#endif
