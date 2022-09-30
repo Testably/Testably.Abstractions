@@ -8,7 +8,7 @@ on:
 jobs:
   stryker:
     name: Analyze quality of unit tests
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
