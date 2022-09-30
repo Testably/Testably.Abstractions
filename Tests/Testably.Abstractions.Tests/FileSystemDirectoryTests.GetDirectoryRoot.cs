@@ -36,7 +36,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     public void GetDirectoryRoot_SpecificDrive_ShouldReturnRootWithCorrectDrive(
         char drive)
     {
-        Skip.IfNot(Test.RunsOnWindows);
+        Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
         string expectedRoot = "".PrefixRoot(drive);
         string path = Path.Combine($"{drive}:\\foo", "bar");
 

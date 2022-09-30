@@ -26,7 +26,7 @@ public class FileSystemMockTests
     [Trait(nameof(Testing), nameof(FileSystemMock))]
     public void WithDrive_NewName_ShouldCreateNewDrives(string driveName)
     {
-        Skip.IfNot(Test.RunsOnWindows);
+        Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
         FileSystemMock sut = new();
         sut.WithDrive(driveName);
 

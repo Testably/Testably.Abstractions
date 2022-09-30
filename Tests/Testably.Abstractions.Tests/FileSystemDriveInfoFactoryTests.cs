@@ -39,7 +39,7 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
     public void New_InvalidDriveName_ShouldThrowArgumentNullException(
         string invalidDriveName)
     {
-        Skip.IfNot(Test.RunsOnWindows);
+        Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
         Exception? exception = Record.Exception(() =>
         {
             _ = FileSystem.DriveInfo.New(invalidDriveName);
@@ -67,7 +67,7 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
     [FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.New))]
     public void New_WithDriveLetter_ShouldReturnDriveInfo(char driveLetter)
     {
-        Skip.IfNot(Test.RunsOnWindows);
+        Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
 
         IFileSystem.IDriveInfo result = FileSystem.DriveInfo.New($"{driveLetter}");
 
@@ -81,7 +81,7 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
     [FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.New))]
     public void New_WithRootedPath_ShouldReturnDriveInfo(char driveLetter, string path)
     {
-        Skip.IfNot(Test.RunsOnWindows);
+        Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
 
         string rootedPath = path.PrefixRoot(driveLetter);
 
@@ -94,7 +94,7 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
     [FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.GetDrives))]
     public void Wrap_ShouldReturnDriveInfoWithSameName()
     {
-        Skip.IfNot(Test.RunsOnWindows);
+        Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
 
         DriveInfo driveInfo = new("C");
         IFileSystem.IDriveInfo result = FileSystem.DriveInfo.Wrap(driveInfo);
