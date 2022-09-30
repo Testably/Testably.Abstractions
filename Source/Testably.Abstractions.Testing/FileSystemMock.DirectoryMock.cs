@@ -336,11 +336,7 @@ public sealed partial class FileSystemMock
                     FileSystem.Path.GetFullPath(path));
             }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                // Creation Time can only be changed on Windows
-                fileSystemInfo.CreationTime = creationTime;
-            }
+            fileSystemInfo.CreationTime = creationTime;
         }
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetCreationTimeUtc(string, DateTime)" />
@@ -359,11 +355,7 @@ public sealed partial class FileSystemMock
                     FileSystem.Path.GetFullPath(path));
             }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                // Creation Time can only be changed on Windows
-                fileSystemInfo.CreationTimeUtc = creationTimeUtc;
-            }
+            fileSystemInfo.CreationTimeUtc = creationTimeUtc;
         }
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetCurrentDirectory(string)" />

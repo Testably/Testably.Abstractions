@@ -204,23 +204,20 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         }
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetCreationTime))]
     public void SetCreationTime_ShouldChangeCreationTime(
         string path, DateTime creationTime)
     {
+        Skip.IfNot(Test.RunsOnWindows, "Linux does not have a creation timestamp: https://unix.stackexchange.com/a/102692");
+
         creationTime = creationTime.ToLocalTime();
         DateTime expectedTime = creationTime.ToUniversalTime();
-        if (!Test.RunsOnWindows)
-        {
-            // Creation Time can only be changed on Windows
-            expectedTime = FileSystem.Directory.GetCreationTimeUtc(path);
-        }
         FileSystem.Directory.CreateDirectory(path);
 
         FileSystem.Directory.SetCreationTime(path, creationTime);
-
+        
         FileSystem.Directory.GetCreationTimeUtc(path)
            .Should().Be(expectedTime);
     }
@@ -248,23 +245,20 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         }
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetCreationTimeUtc))]
     public void SetCreationTimeUtc_ShouldChangeCreationTime(
         string path, DateTime creationTime)
     {
+        Skip.IfNot(Test.RunsOnWindows, "Linux does not have a creation timestamp: https://unix.stackexchange.com/a/102692");
+
         creationTime = creationTime.ToUniversalTime();
         DateTime expectedTime = creationTime.ToLocalTime();
-        if (!Test.RunsOnWindows)
-        {
-            // Creation Time can only be changed on Windows
-            expectedTime = FileSystem.Directory.GetCreationTime(path);
-        }
         FileSystem.Directory.CreateDirectory(path);
 
         FileSystem.Directory.SetCreationTimeUtc(path, creationTime);
-
+        
         FileSystem.Directory.GetCreationTime(path)
            .Should().Be(expectedTime);
     }
