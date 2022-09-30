@@ -1,5 +1,7 @@
 ﻿using System.Linq;
+using System.Runtime.InteropServices;
 using Testably.Abstractions.Tests.TestHelpers.Attributes;
+using Xunit.Sdk;
 
 namespace Testably.Abstractions.Tests.Testing;
 
@@ -28,6 +30,10 @@ public class FileSystemMockTests
     [WindowsOnly]
     public void WithDrive_NewName_ShouldCreateNewDrives(string driveName)
     {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            throw new SkipException("Only supported on windows");
+        }
         FileSystemMock sut = new();
         sut.WithDrive(driveName);
 
