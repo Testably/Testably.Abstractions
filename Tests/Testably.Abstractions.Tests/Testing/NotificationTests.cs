@@ -118,10 +118,11 @@ public class NotificationTests
         totalCount.Should().BeGreaterOrEqualTo(6);
     }
 
-    [Fact]
+    [SkippableFact]
     [Trait(nameof(Testing), nameof(Notification))]
     public void AwaitableCallback_ShouldWaitForCallbackExecution()
     {
+        Skip.IfNot(Test.RunsOnWindows, "Test is brittle, especially on MacOS.");
         TimeSystemMock timeSystem = new();
         bool isCalled = false;
         Notification.IAwaitableCallback<DateTime> wait = timeSystem.On.DateTimeRead(_ =>
