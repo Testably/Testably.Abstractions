@@ -233,12 +233,12 @@ public sealed partial class FileSystemMock
                 request.Dispose();
             }
 
-#if NETFRAMEWORK
-            return DirectoryInfoMock.New(path, _fileSystem.Path.GetFileName(path),
-                _fileSystem);
-#else
+            if (Framework.IsNetFramework)
+            {
+                return DirectoryInfoMock.New(path, _fileSystem.Path.GetFileName(path),
+                    _fileSystem);
+            }
             return DirectoryInfoMock.New(path, _fileSystem);
-#endif
         }
 
         private FileSystemInfoMock CreateFileInternal(string path)

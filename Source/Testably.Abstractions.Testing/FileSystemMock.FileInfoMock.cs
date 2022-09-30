@@ -161,18 +161,18 @@ public sealed partial class FileSystemMock
 
             if (path == string.Empty)
             {
-#if NETFRAMEWORK
-                throw ExceptionFactory.PathHasNoLegalForm();
-#else
+                if (Framework.IsNetFramework)
+                {
+                    throw ExceptionFactory.PathHasNoLegalForm();
+                }
                 throw ExceptionFactory.PathIsEmpty(nameof(path));
-#endif
             }
 
-#if NETFRAMEWORK
-            string originalPath = path.TrimEnd(' ');
-#else
             string originalPath = path;
-#endif
+            if (Framework.IsNetFramework)
+            {
+                originalPath = originalPath.TrimEnd(' ');
+            }
             string fullName = fileSystem.Path.GetFullPath(path).NormalizePath()
                .TrimOnWindows();
             return new FileInfoMock(fullName, originalPath, fileSystem);

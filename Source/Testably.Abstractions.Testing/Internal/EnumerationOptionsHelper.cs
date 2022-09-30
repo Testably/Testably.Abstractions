@@ -65,12 +65,10 @@ internal static class EnumerationOptionsHelper
                                      bool ignoreCase,
                                      bool useExtendedWildcards)
     {
-#if NETFRAMEWORK
-        if (expression == "")
+        if (Framework.IsNetFramework && expression == "")
         {
             return false;
         }
-#endif
         if (useExtendedWildcards)
         {
             expression = SimplifyExpression(expression);
@@ -102,17 +100,14 @@ internal static class EnumerationOptionsHelper
             return expression;
         }
 
-#if NETFRAMEWORK
         if (expression == "." || expression == "*.*")
         {
             return "*";
         }
-#else
-        if (string.IsNullOrEmpty(expression) || expression == "." || expression == "*.*")
+        if (!Framework.IsNetFramework && string.IsNullOrEmpty(expression))
         {
             return "*";
         }
-#endif
 
         if (Path.DirectorySeparatorChar != '\\' &&
             expression.IndexOfAny(unixEscapeChars) != -1)

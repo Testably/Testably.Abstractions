@@ -29,12 +29,11 @@ public sealed partial class FileSystemMock
                                     FileSystemMock fileSystem)
         {
             FullName = fullName;
-#if NETFRAMEWORK
-            OriginalPath = originalPath.RemoveLeadingDot().TrimOnWindows();
-#else
             OriginalPath = originalPath.RemoveLeadingDot();
-#endif
-
+            if (Framework.IsNetFramework)
+            {
+                OriginalPath = OriginalPath.TrimOnWindows();
+            }
             FileSystem = fileSystem;
             AdjustTimes(TimeAdjustments.All);
             if (string.IsNullOrEmpty(fullName))

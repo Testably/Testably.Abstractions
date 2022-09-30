@@ -206,11 +206,11 @@ public sealed partial class FileSystemMock
 
             if (path == string.Empty)
             {
-#if NETFRAMEWORK
-                throw ExceptionFactory.PathHasNoLegalForm();
-#else
+                if (Framework.IsNetFramework)
+                {
+                    throw ExceptionFactory.PathHasNoLegalForm();
+                }
                 throw ExceptionFactory.PathIsEmpty(nameof(path));
-#endif
             }
 
             string? originalPath = path;
@@ -230,11 +230,11 @@ public sealed partial class FileSystemMock
 
             if (path == string.Empty)
             {
-#if NETFRAMEWORK
-                throw ExceptionFactory.PathHasNoLegalForm();
-#else
-                throw ExceptionFactory.PathIsEmpty(nameof(originalpath));
-#endif
+                if (Framework.IsNetFramework)
+                {
+                    throw ExceptionFactory.PathHasNoLegalForm();
+                }
+                throw ExceptionFactory.PathIsEmpty(nameof(path));
             }
 
             string? originalPath = originalpath;
@@ -251,12 +251,12 @@ public sealed partial class FileSystemMock
             {
                 return child.Root;
             }
-#if NETFRAMEWORK
-            return new DirectoryInfoMock(fileSystem.Path.GetFullPath(parentPath),
-                fileSystem.Path.GetFileName(parentPath), fileSystem);
-#else
+            if (Framework.IsNetFramework)
+            {
+                return new DirectoryInfoMock(fileSystem.Path.GetFullPath(parentPath),
+                    fileSystem.Path.GetFileName(parentPath), fileSystem);
+            }
             return New(parentPath, parentPath, fileSystem);
-#endif
         }
 
         private static Func<Exception> DirectoryNotFoundException(string path)
