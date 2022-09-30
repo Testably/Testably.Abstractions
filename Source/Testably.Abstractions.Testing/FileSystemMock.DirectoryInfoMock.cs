@@ -11,8 +11,7 @@ public sealed partial class FileSystemMock
     /// <summary>
     ///     A mocked directory in the <see cref="InMemoryFileSystem" />.
     /// </summary>
-    private sealed class DirectoryInfoMock : FileSystemInfoMock,
-        IFileSystem.IDirectoryInfo
+    private sealed class DirectoryInfoMock : FileSystemInfoMock, IInMemoryFileSystem.IDirectoryInfoMock
     {
         internal DirectoryInfoMock(string fullName, string originalPath,
                                    FileSystemMock fileSystem)

@@ -12,9 +12,13 @@ public class FileSystemMockTests
         FileSystemMock sut = new();
 
         IFileSystem.IDriveInfo[] drives = sut.DriveInfo.GetDrives();
+        IFileSystem.IDriveInfo drive = drives.Single();
 
-        drives.Length.Should().Be(1);
-        drives.Should().ContainSingle(d => d.Name == expectedDriveName);
+        drive.Name.Should().Be(expectedDriveName);
+        drive.AvailableFreeSpace.Should().BeGreaterThan(0);
+        drive.DriveFormat.Should().Be(FileSystemMock.DriveInfoMock.DefaultDriveFormat);
+        drive.DriveType.Should().Be(FileSystemMock.DriveInfoMock.DefaultDriveType);
+        drive.VolumeLabel.Should().NotBeNullOrEmpty();
     }
 
     [Theory]

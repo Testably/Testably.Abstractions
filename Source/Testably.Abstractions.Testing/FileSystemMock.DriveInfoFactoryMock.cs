@@ -22,17 +22,19 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.GetDrives()" />
         public IFileSystem.IDriveInfo[] GetDrives()
-            => _fileSystem.FileSystemContainer.GetDrives().ToArray();
+            => _fileSystem.FileSystemContainer.GetDrives()
+               .Cast<IFileSystem.IDriveInfo>()
+               .ToArray();
 
         /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.New(string)" />
         public IFileSystem.IDriveInfo New(string driveName)
-            => new DriveInfoMock(driveName, FileSystem);
+            => new DriveInfoMock(driveName, _fileSystem);
 
         /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.Wrap(DriveInfo)" />
         public IFileSystem.IDriveInfo Wrap(DriveInfo driveInfo)
             => new DriveInfoMock(
                 driveInfo.Name,
-                FileSystem);
+                _fileSystem);
 
         #endregion
     }

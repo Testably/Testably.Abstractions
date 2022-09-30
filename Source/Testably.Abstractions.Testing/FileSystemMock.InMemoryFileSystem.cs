@@ -119,13 +119,13 @@ public sealed partial class FileSystemMock
         }
 
         /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetDirectory(string)" />
-        public IFileSystem.IDirectoryInfo? GetDirectory(string path)
+        public IInMemoryFileSystem.IDirectoryInfoMock? GetDirectory(string path)
         {
             if (_files.TryGetValue(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
                 out FileSystemInfoMock? fileInfo))
             {
-                return fileInfo as IFileSystem.IDirectoryInfo;
+                return fileInfo as IInMemoryFileSystem.IDirectoryInfoMock;
             }
 
             return null;
@@ -156,11 +156,16 @@ public sealed partial class FileSystemMock
         }
 
         /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetOrAddDirectory(string)" />
-        public IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path)
+        public IInMemoryFileSystem.IDirectoryInfoMock? GetOrAddDirectory(string path)
         {
             return _files.GetOrAdd(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
-                _ => CreateDirectoryInternal(path)) as IFileSystem.IDirectoryInfo;
+                _ =>
+                {
+                    FileSystemInfoMock directoryMock = CreateDirectoryInternal(path);
+                    directoryMock.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
+                    return directoryMock;
+                }) as IInMemoryFileSystem.IDirectoryInfoMock;
         }
 
         /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetOrAddFile(string)" />
@@ -209,15 +214,23 @@ public sealed partial class FileSystemMock
                 timeAdjustments |= FileSystemInfoMock.TimeAdjustments.LastAccessTime;
             }
 
+            List<IDisposable> requests = new();
             foreach (string? parentPath in parents)
             {
                 string key = _fileSystem.Path.GetFullPath(parentPath)
                    .NormalizeAndTrimPath(_fileSystem);
-                _files.AddOrUpdate(
+                FileSystemInfoMock directory = _files.AddOrUpdate(
                     key,
                     _ => DirectoryInfoMock.New(parentPath, _fileSystem),
                     (_, fileSystemInfo) =>
                         fileSystemInfo.AdjustTimes(timeAdjustments));
+                requests.Add(directory.RequestAccess(FileAccess.Write,
+                    FileShare.ReadWrite));
+            }
+
+            foreach (IDisposable request in requests)
+            {
+                request.Dispose();
             }
 
 #if NETFRAMEWORK

@@ -42,7 +42,7 @@ public sealed partial class FileSystemMock
         ///     Gets a directory if it exists.<br />
         ///     Returns <c>null</c>, if the directory does not exist.
         /// </summary>
-        IFileSystem.IDirectoryInfo? GetDirectory(string path);
+        IDirectoryInfoMock? GetDirectory(string path);
 
         /// <summary>
         ///     Returns the drives that are present.
@@ -63,7 +63,7 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     Gets or adds a directory.
         /// </summary>
-        IFileSystem.IDirectoryInfo? GetOrAddDirectory(string path);
+        IDirectoryInfoMock? GetOrAddDirectory(string path);
 
         /// <summary>
         ///     Gets or adds a file.
@@ -76,9 +76,17 @@ public sealed partial class FileSystemMock
         string GetSubdirectoryPath(string fullFilePath, string givenPath);
 
         /// <summary>
+        ///     An <see cref="IFileSystem.IDirectoryInfo" /> with <see cref="IFileSystemInfoMock" /> functionality.
+        /// </summary>
+        public interface IDirectoryInfoMock : IFileSystem.IDirectoryInfo,
+            IFileSystemInfoMock
+        {
+        }
+
+        /// <summary>
         ///     An <see cref="IFileSystem.IFileInfo" /> which allows writing to the underlying byte array.
         /// </summary>
-        public interface IFileInfoMock : IFileSystem.IFileInfo
+        public interface IFileInfoMock : IFileSystem.IFileInfo, IFileSystemInfoMock
         {
             /// <summary>
             ///     Appends the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
@@ -101,7 +109,13 @@ public sealed partial class FileSystemMock
             ///     Writes the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
             /// </summary>
             void WriteBytes(byte[] bytes);
+        }
 
+        /// <summary>
+        ///     An <see cref="IFileSystem.IFileSystemInfo" /> which allows requesting access to.
+        /// </summary>
+        public interface IFileSystemInfoMock : IFileSystem.IFileSystemInfo
+        {
             /// <summary>
             ///     Requests access to this file with the given <paramref name="share" />.
             ///     <para />

@@ -8,70 +8,74 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class FileSystemMock
 {
-    private sealed class DriveInfoMock : IDriveInfoMock
+    /// <summary>
+    ///     Mocked instance of a <see cref="IFileSystem.IDriveInfo" />
+    /// </summary>
+    public sealed class DriveInfoMock : IDriveInfoMock
     {
-        internal DriveInfoMock(string driveName, IFileSystem fileSystem)
+        /// <summary>
+        ///     The default <see cref="IFileSystem.IDriveInfo.DriveFormat" />.
+        /// </summary>
+        public const string DefaultDriveFormat = "NTFS";
+
+        /// <summary>
+        ///     The default <see cref="IFileSystem.IDriveInfo.DriveType" />.
+        /// </summary>
+        public const DriveType DefaultDriveType = DriveType.Fixed;
+
+        /// <summary>
+        ///     The default total size of a mocked <see cref="IDriveInfoMock" />.
+        ///     <para />
+        ///     The number is equal to 1GB (1 Gigabyte).
+        /// </summary>
+        public const long DefaultTotalSize = 1024 * 1024 * 1024;
+
+        private readonly FileSystemMock _fileSystem;
+
+        private long _usedBytes;
+
+        internal DriveInfoMock(string driveName, FileSystemMock fileSystem)
         {
             if (string.IsNullOrEmpty(driveName))
             {
                 throw new ArgumentNullException(nameof(driveName));
             }
 
+            _fileSystem = fileSystem;
+
             driveName = ValidateDriveLetter(driveName, fileSystem);
-            FileSystem = fileSystem;
             Name = driveName;
-            TotalSize = 1 * Gigabyte;
+            TotalSize = DefaultTotalSize;
+            DriveFormat = DefaultDriveFormat;
+            DriveType = DefaultDriveType;
+            IsReady = true;
         }
 
-        /// <summary>
-        ///     The number of bytes in a Gigabyte.
-        /// </summary>
-        private const long Gigabyte = 1024 * 1024 * 1024;
-
-        private static string ValidateDriveLetter(string driveName,
-                                                  IFileSystem fileSystem)
-        {
-            if (driveName.Length == 1 &&
-                char.IsLetter(driveName, 0))
-            {
-                return $"{driveName}:\\";
-            }
-
-            if (fileSystem.Path.IsPathRooted(driveName))
-            {
-                return fileSystem.Path.GetPathRoot(driveName)!;
-            }
-
-            throw ExceptionFactory.InvalidDriveName();
-        }
-
-        #region IDriveInfo Members
-
-        /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
-        public IFileSystem FileSystem { get; }
+        #region IDriveInfoMock Members
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.AvailableFreeSpace" />
         public long AvailableFreeSpace
             => TotalFreeSpace;
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.DriveFormat" />
-        public string DriveFormat
-            => throw new NotImplementedException();
+        public string DriveFormat { get; private set; }
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.DriveType" />
-        public DriveType DriveType
-            => throw new NotImplementedException();
+        public DriveType DriveType { get; private set; }
+
+        /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+        public IFileSystem FileSystem
+            => _fileSystem;
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.IsReady" />
-        public bool IsReady
-            => throw new NotImplementedException();
+        public bool IsReady { get; private set; }
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.Name" />
         public string Name { get; }
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.RootDirectory" />
         public IFileSystem.IDirectoryInfo RootDirectory
-            => throw new NotImplementedException();
+            => DirectoryInfoMock.New(Name, _fileSystem);
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.TotalFreeSpace" />
         public long TotalFreeSpace
@@ -84,19 +88,12 @@ public sealed partial class FileSystemMock
         [AllowNull]
         public string VolumeLabel
         {
-            get => throw new NotImplementedException();
+            get;
 #if NET6_0_OR_GREATER
             [SupportedOSPlatform("windows")]
 #endif
-            set => throw new NotImplementedException();
-        }
-
-        /// <inheritdoc cref="IDriveInfoMock.SetTotalSize(long)" />
-        public IDriveInfoMock SetTotalSize(long totalSize)
-        {
-            TotalSize = totalSize;
-            return this;
-        }
+            set;
+        } = nameof(FileSystemMock);
 
         /// <inheritdoc cref="IDriveInfoMock.ChangeUsedBytes(long)" />
         public IDriveInfoMock ChangeUsedBytes(long usedBytesDelta)
@@ -117,8 +114,54 @@ public sealed partial class FileSystemMock
             return this;
         }
 
+        /// <inheritdoc cref="IDriveInfoMock.SetDriveFormat(string)" />
+        public IDriveInfoMock SetDriveFormat(
+            string driveFormat = DefaultDriveFormat)
+        {
+            DriveFormat = driveFormat;
+            return this;
+        }
+
+        /// <inheritdoc cref="IDriveInfoMock.SetDriveType(System.IO.DriveType)" />
+        public IDriveInfoMock SetDriveType(
+            DriveType driveType = DefaultDriveType)
+        {
+            DriveType = driveType;
+            return this;
+        }
+
+        /// <inheritdoc cref="IDriveInfoMock.SetIsReady(bool)" />
+        public IDriveInfoMock SetIsReady(bool isReady = true)
+        {
+            IsReady = isReady;
+            return this;
+        }
+
+        /// <inheritdoc cref="IDriveInfoMock.SetTotalSize(long)" />
+        public IDriveInfoMock SetTotalSize(
+            long totalSize = DefaultTotalSize)
+        {
+            TotalSize = totalSize;
+            return this;
+        }
+
         #endregion
 
-        private long _usedBytes;
+        private static string ValidateDriveLetter(string driveName,
+                                                  IFileSystem fileSystem)
+        {
+            if (driveName.Length == 1 &&
+                char.IsLetter(driveName, 0))
+            {
+                return $"{driveName}:\\";
+            }
+
+            if (fileSystem.Path.IsPathRooted(driveName))
+            {
+                return fileSystem.Path.GetPathRoot(driveName)!;
+            }
+
+            throw ExceptionFactory.InvalidDriveName();
+        }
     }
 }
