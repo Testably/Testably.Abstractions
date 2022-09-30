@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.Internal;
+using OperatingSystem = Testably.Abstractions.Testing.Internal.OperatingSystem;
 #if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
 #endif
@@ -161,18 +162,18 @@ public sealed partial class FileSystemMock
 
             if (path == string.Empty)
             {
-#if NETFRAMEWORK
-                throw ExceptionFactory.PathHasNoLegalForm();
-#else
+                if (OperatingSystem.IsNetFramework)
+                {
+                    throw ExceptionFactory.PathHasNoLegalForm();
+                }
                 throw ExceptionFactory.PathIsEmpty(nameof(path));
-#endif
             }
 
-#if NETFRAMEWORK
-            string originalPath = path.TrimEnd(' ');
-#else
             string originalPath = path;
-#endif
+            if (OperatingSystem.IsNetFramework)
+            {
+                originalPath = originalPath.TrimEnd(' ');
+            }
             string fullName = fileSystem.Path.GetFullPath(path).NormalizePath()
                .TrimOnWindows();
             return new FileInfoMock(fullName, originalPath, fileSystem);

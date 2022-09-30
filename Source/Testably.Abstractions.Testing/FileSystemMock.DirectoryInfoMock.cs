@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.Testing.Internal;
+using OperatingSystem = Testably.Abstractions.Testing.Internal.OperatingSystem;
 
 namespace Testably.Abstractions.Testing;
 
@@ -206,11 +207,11 @@ public sealed partial class FileSystemMock
 
             if (path == string.Empty)
             {
-#if NETFRAMEWORK
-                throw ExceptionFactory.PathHasNoLegalForm();
-#else
+                if (OperatingSystem.IsNetFramework)
+                {
+                    throw ExceptionFactory.PathHasNoLegalForm();
+                }
                 throw ExceptionFactory.PathIsEmpty(nameof(path));
-#endif
             }
 
             string? originalPath = path;
@@ -230,11 +231,11 @@ public sealed partial class FileSystemMock
 
             if (path == string.Empty)
             {
-#if NETFRAMEWORK
-                throw ExceptionFactory.PathHasNoLegalForm();
-#else
-                throw ExceptionFactory.PathIsEmpty(nameof(originalpath));
-#endif
+                if (OperatingSystem.IsNetFramework)
+                {
+                    throw ExceptionFactory.PathHasNoLegalForm();
+                }
+                throw ExceptionFactory.PathIsEmpty(nameof(path));
             }
 
             string? originalPath = originalpath;
@@ -251,12 +252,12 @@ public sealed partial class FileSystemMock
             {
                 return child.Root;
             }
-#if NETFRAMEWORK
-            return new DirectoryInfoMock(fileSystem.Path.GetFullPath(parentPath),
-                fileSystem.Path.GetFileName(parentPath), fileSystem);
-#else
+            if (OperatingSystem.IsNetFramework)
+            {
+                return new DirectoryInfoMock(fileSystem.Path.GetFullPath(parentPath),
+                    fileSystem.Path.GetFileName(parentPath), fileSystem);
+            }
             return New(parentPath, parentPath, fileSystem);
-#endif
         }
 
         private static Func<Exception> DirectoryNotFoundException(string path)

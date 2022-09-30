@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
+using OperatingSystem = Testably.Abstractions.Testing.Internal.OperatingSystem;
 
 namespace Testably.Abstractions.Testing;
 
@@ -233,12 +234,12 @@ public sealed partial class FileSystemMock
                 request.Dispose();
             }
 
-#if NETFRAMEWORK
-            return DirectoryInfoMock.New(path, _fileSystem.Path.GetFileName(path),
-                _fileSystem);
-#else
+            if (OperatingSystem.IsNetFramework)
+            {
+                return DirectoryInfoMock.New(path, _fileSystem.Path.GetFileName(path),
+                    _fileSystem);
+            }
             return DirectoryInfoMock.New(path, _fileSystem);
-#endif
         }
 
         private FileSystemInfoMock CreateFileInternal(string path)

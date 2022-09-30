@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
+using OperatingSystem = Testably.Abstractions.Testing.Internal.OperatingSystem;
 
 namespace Testably.Abstractions.Testing;
 
@@ -29,12 +30,11 @@ public sealed partial class FileSystemMock
                                     FileSystemMock fileSystem)
         {
             FullName = fullName;
-#if NETFRAMEWORK
-            OriginalPath = originalPath.RemoveLeadingDot().TrimOnWindows();
-#else
             OriginalPath = originalPath.RemoveLeadingDot();
-#endif
-
+            if (OperatingSystem.IsNetFramework)
+            {
+                OriginalPath = OriginalPath.TrimOnWindows();
+            }
             FileSystem = fileSystem;
             AdjustTimes(TimeAdjustments.All);
             if (string.IsNullOrEmpty(fullName))

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Testably.Abstractions.Testing.Internal;
+using OperatingSystem = Testably.Abstractions.Testing.Internal.OperatingSystem;
 #if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
 #endif
