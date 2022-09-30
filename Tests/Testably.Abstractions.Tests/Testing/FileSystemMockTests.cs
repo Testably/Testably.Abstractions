@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Runtime.InteropServices;
 using Testably.Abstractions.Tests.TestHelpers.Attributes;
-using Xunit.Sdk;
 
 namespace Testably.Abstractions.Tests.Testing;
 
