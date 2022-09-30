@@ -1,7 +1,6 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
-using Testably.Abstractions.Tests.TestHelpers.Attributes;
 using Testably.Abstractions.Tests.TestHelpers.Traits;
 using Xunit.Abstractions;
 
@@ -105,9 +104,9 @@ public static partial class RealFileSystem
         return basePath;
     }
 
+#if !DEBUG || !DISABLE_TESTS_REALFILESYSTEM
     // ReSharper disable once UnusedMember.Global
-    [Collection(nameof(RealFileSystemTestAttribute))]
-    [RealFileSystemTest]
+    [Collection(nameof(RealFileSystem))]
     [SystemTest(nameof(RealFileSystem))]
     public sealed class Tests : FileSystemTests<FileSystem>
     {
@@ -115,4 +114,5 @@ public static partial class RealFileSystem
         {
         }
     }
+#endif
 }
