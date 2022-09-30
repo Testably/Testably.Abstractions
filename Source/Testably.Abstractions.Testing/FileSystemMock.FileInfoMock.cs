@@ -17,7 +17,7 @@ public sealed partial class FileSystemMock
     ///     A mocked file in the <see cref="InMemoryFileSystem" />.
     /// </summary>
     private sealed class FileInfoMock : FileSystemInfoMock,
-        IInMemoryFileSystem.IWritableFileInfo
+        IInMemoryFileSystem.IFileInfoMock
     {
         private byte[] _bytes = Array.Empty<byte>();
 
@@ -130,16 +130,16 @@ public sealed partial class FileSystemMock
                                              bool ignoreMetadataErrors)
             => throw new NotImplementedException();
 
-        /// <inheritdoc cref="IInMemoryFileSystem.IWritableFileInfo.AppendBytes(byte[])" />
+        /// <inheritdoc cref="IInMemoryFileSystem.IFileInfoMock.AppendBytes(byte[])" />
         public void AppendBytes(byte[] bytes)
         {
             _bytes = _bytes.Concat(bytes).ToArray();
         }
 
-        /// <inheritdoc cref="IInMemoryFileSystem.IWritableFileInfo.GetBytes()" />
+        /// <inheritdoc cref="IInMemoryFileSystem.IFileInfoMock.GetBytes()" />
         public byte[] GetBytes() => _bytes;
 
-        /// <inheritdoc cref="IInMemoryFileSystem.IWritableFileInfo.WriteBytes(byte[])" />
+        /// <inheritdoc cref="IInMemoryFileSystem.IFileInfoMock.WriteBytes(byte[])" />
         public void WriteBytes(byte[] bytes)
         {
             _bytes = bytes;
@@ -147,7 +147,7 @@ public sealed partial class FileSystemMock
 
         #endregion
 
-        /// <inheritdoc cref="IInMemoryFileSystem.IWritableFileInfo.RequestAccess(FileAccess, FileShare)" />
+        /// <inheritdoc cref="IInMemoryFileSystem.IFileInfoMock.RequestAccess(FileAccess, FileShare)" />
         public IDisposable RequestAccess(FileAccess access, FileShare share)
         {
             if (CanGetAccess(access, share))

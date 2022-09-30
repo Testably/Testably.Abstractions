@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class FileSystemMock
 {
-    private sealed class DriveInfoMock : IFileSystem.IDriveInfo
+    private sealed class DriveInfoMock : IDriveInfoMock
     {
         internal DriveInfoMock(string driveName, IFileSystem fileSystem)
         {
@@ -46,7 +46,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.AvailableFreeSpace" />
         public long AvailableFreeSpace
-            => throw new NotImplementedException();
+            => TotalFreeSpace;
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.DriveFormat" />
         public string DriveFormat
@@ -69,14 +69,12 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.TotalFreeSpace" />
         public long TotalFreeSpace
-            => throw new NotImplementedException();
+            => TotalSize - _usedBytes;
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.TotalSize" />
-        public long TotalSize
-            => throw new NotImplementedException();
+        public long TotalSize { get; private set; }
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.VolumeLabel" />
-        /// 7
         [AllowNull]
         public string VolumeLabel
         {
@@ -87,6 +85,21 @@ public sealed partial class FileSystemMock
             set => throw new NotImplementedException();
         }
 
+        /// <inheritdoc cref="IDriveInfoMock.SetTotalSize(long)" />
+        public IDriveInfoMock SetTotalSize(long totalSize)
+        {
+            TotalSize = totalSize;
+            return this;
+        }
+
         #endregion
+
+        private long _usedBytes;
+
+        internal void RequestOrFreeBytes(long bytes)
+        {
+            _usedBytes += bytes;
+            //TODO check if free space is available.
+        }
     }
 }

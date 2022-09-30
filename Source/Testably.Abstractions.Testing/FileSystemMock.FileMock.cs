@@ -73,7 +73,7 @@ public sealed partial class FileSystemMock
         public void AppendAllText(string path, string? contents, Encoding encoding)
 
         {
-            IInMemoryFileSystem.IWritableFileInfo? fileInfo =
+            IInMemoryFileSystem.IFileInfoMock? fileInfo =
                 _fileSystem.FileSystemContainer.GetOrAddFile(path);
             if (fileInfo != null && contents != null)
             {
@@ -230,7 +230,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllBytes(string)" />
         public byte[] ReadAllBytes(string path)
         {
-            IInMemoryFileSystem.IWritableFileInfo? fileInfo =
+            IInMemoryFileSystem.IFileInfoMock? fileInfo =
                 _fileSystem.FileSystemContainer.GetFile(path);
             if (fileInfo != null)
             {
@@ -289,7 +289,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllText(string, Encoding)" />
         public string ReadAllText(string path, Encoding encoding)
         {
-            IInMemoryFileSystem.IWritableFileInfo? fileInfo =
+            IInMemoryFileSystem.IFileInfoMock? fileInfo =
                 _fileSystem.FileSystemContainer.GetFile(path);
             if (fileInfo != null)
             {
@@ -377,7 +377,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.WriteAllBytes(string, byte[])" />
         public void WriteAllBytes(string path, byte[] bytes)
         {
-            IInMemoryFileSystem.IWritableFileInfo? fileInfo =
+            IInMemoryFileSystem.IFileInfoMock? fileInfo =
                 _fileSystem.FileSystemContainer.GetOrAddFile(path);
             if (fileInfo != null)
             {
@@ -454,7 +454,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.WriteAllText(string, string?, Encoding)" />
         public void WriteAllText(string path, string? contents, Encoding encoding)
         {
-            IInMemoryFileSystem.IWritableFileInfo? fileInfo =
+            IInMemoryFileSystem.IFileInfoMock? fileInfo =
                 _fileSystem.FileSystemContainer.GetOrAddFile(path);
             if (fileInfo != null && contents != null)
             {

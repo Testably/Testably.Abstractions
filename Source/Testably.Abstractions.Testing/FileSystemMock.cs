@@ -1,5 +1,5 @@
-﻿using System.IO;
-using System;
+﻿using System;
+using System.IO;
 
 namespace Testably.Abstractions.Testing;
 
@@ -58,6 +58,20 @@ public sealed partial class FileSystemMock : IFileSystem
         };
     }
 
+    /// <summary>
+    ///     Changes the parameters of the specified <paramref name="drive" />.
+    ///     <para />
+    ///     If the <paramref name="drive" /> does not exist, it will be created/mounted.
+    /// </summary>
+    public FileSystemMock WithDrive(string? drive,
+                                    Action<IDriveInfoMock>? driveCallback = null)
+    {
+        IDriveInfoMock driveInfoMock = FileSystemContainer.GetOrAddDrive(
+            drive ?? "".PrefixRoot());
+        driveCallback?.Invoke(driveInfoMock);
+        return this;
+    }
+
     #region IFileSystem Members
 
     /// <inheritdoc cref="IFileSystem.Directory" />
@@ -85,4 +99,18 @@ public sealed partial class FileSystemMock : IFileSystem
         => _pathMock;
 
     #endregion
+}
+
+/// <summary>
+///     Extension methods for the <see cref="FileSystemMock" />
+/// </summary>
+public static class FileSystemMockExtensions
+{
+    /// <summary>
+    ///     Changes the parameters of the default drive ('C:\' on Windows, '/' on Linux)
+    /// </summary>
+    public static FileSystemMock WithDrive(
+        this FileSystemMock fileSystemMock,
+        Action<FileSystemMock.IDriveInfoMock> driveCallback)
+        => fileSystemMock.WithDrive(null, driveCallback);
 }

@@ -22,7 +22,7 @@ public sealed partial class FileSystemMock
 
         private readonly FileAccess _access;
         private readonly IDisposable _accessLock;
-        private readonly IInMemoryFileSystem.IWritableFileInfo _file;
+        private readonly IInMemoryFileSystem.IFileInfoMock _file;
         private readonly FileSystemMock _fileSystem;
         private bool _isDisposed;
         private readonly FileMode _mode;
@@ -60,7 +60,7 @@ public sealed partial class FileSystemMock
             _ = bufferSize;
             _options = options;
 
-            IInMemoryFileSystem.IWritableFileInfo? file =
+            IInMemoryFileSystem.IFileInfoMock? file =
                 _fileSystem.FileSystemContainer.GetFile(Name);
             if (file == null)
             {

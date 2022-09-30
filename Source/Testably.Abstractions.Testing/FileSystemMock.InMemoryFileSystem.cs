@@ -127,18 +127,25 @@ public sealed partial class FileSystemMock
             return null;
         }
 
+        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetOrAddDrive(string)" />
+        public IDriveInfoMock GetOrAddDrive(string driveName)
+        {
+            DriveInfoMock drive = new(driveName, _fileSystem);
+            return _drives.GetOrAdd(drive.Name, _ => drive);
+        }
+
         /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetDrives()" />
-        public IEnumerable<IFileSystem.IDriveInfo> GetDrives()
+        public IEnumerable<IDriveInfoMock> GetDrives()
             => _drives.Values;
 
         /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetFile(string)" />
-        public IInMemoryFileSystem.IWritableFileInfo? GetFile(string path)
+        public IInMemoryFileSystem.IFileInfoMock? GetFile(string path)
         {
             if (_files.TryGetValue(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
                 out FileSystemInfoMock? fileInfo))
             {
-                return fileInfo as IInMemoryFileSystem.IWritableFileInfo;
+                return fileInfo as IInMemoryFileSystem.IFileInfoMock;
             }
 
             return null;
@@ -153,11 +160,11 @@ public sealed partial class FileSystemMock
         }
 
         /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetOrAddFile(string)" />
-        public IInMemoryFileSystem.IWritableFileInfo? GetOrAddFile(string path)
+        public IInMemoryFileSystem.IFileInfoMock? GetOrAddFile(string path)
         {
             return _files.GetOrAdd(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
-                _ => CreateFileInternal(path)) as IInMemoryFileSystem.IWritableFileInfo;
+                _ => CreateFileInternal(path)) as IInMemoryFileSystem.IFileInfoMock;
         }
 
         /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetSubdirectoryPath(string, string)" />
