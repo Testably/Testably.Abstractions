@@ -3,14 +3,10 @@
 /// <summary>
 ///     Disables execution of tests against the real file system in DEBUG mode.
 /// </summary>
-public class RealFileSystemTestAttribute : RuntimeSwitchAttribute
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+public class RealFileSystemTestAttribute : Attribute
 {
     public RealFileSystemTestAttribute()
-#if DEBUG && DISABLE_TESTS_REALFILESYSTEM
-        : base(true)
-#else
-        : base(true)
-#endif
     {
     }
 }
