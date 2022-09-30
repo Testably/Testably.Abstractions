@@ -1,11 +1,9 @@
 using System.Collections.Concurrent;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Testably.Abstractions.Tests.TestHelpers.Attributes;
 
 namespace Testably.Abstractions.Tests;
 
@@ -41,6 +39,7 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
         FileAccess.ReadWrite, FileShare.Write)]
     [InlineAutoData(FileAccess.Read, FileShare.Read,
         FileAccess.ReadWrite, FileShare.ReadWrite)]
+    [FileSystemTests.FileStream("Access")]
     public void FileAccess_ConcurrentAccessWithInvalidScenarios_ShouldThrowIOException(
         FileAccess access1, FileShare share1,
         FileAccess access2, FileShare share2,
@@ -71,6 +70,7 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
     [InlineAutoData(FileAccess.Read, FileShare.Read, FileAccess.Read, FileShare.Read)]
     [InlineAutoData(FileAccess.Read, FileShare.ReadWrite, FileAccess.ReadWrite,
         FileShare.Read)]
+    [FileSystemTests.FileStream("Access")]
     public void FileAccess_ConcurrentReadAccessWithValidScenarios_ShouldNotThrowException(
         FileAccess access1, FileShare share1,
         FileAccess access2, FileShare share2,
@@ -96,6 +96,7 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
     [InlineAutoData(FileAccess.Write, FileShare.Write, FileAccess.Write, FileShare.Write)]
     [InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite, FileAccess.ReadWrite,
         FileShare.ReadWrite)]
+    [FileSystemTests.FileStream("Access")]
     public void
         FileAccess_ConcurrentWriteAccessWithValidScenarios_ShouldNotThrowException(
             FileAccess access1, FileShare share1,
@@ -125,6 +126,7 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.FileStream("Access")]
     public void FileAccess_ReadAfterFirstAppend_ShouldContainBothContents(
         string path, string contents1, string contents2)
     {
@@ -151,6 +153,7 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.FileStream("Access")]
     public void FileAccess_ReadBeforeFirstAppend_ShouldOnlyContainSecondContent(
         string path, string contents1, string contents2)
     {
@@ -177,6 +180,7 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.FileStream("Access")]
     public void FileAccess_ReadWhileWriteLockActive_ShouldThrowIOException(
         string path, string contents)
     {
@@ -203,6 +207,7 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.FileStream("Access")]
     public void MultipleParallelReads_ShouldBeAllowed(string path, string contents)
     {
         FileSystem.File.WriteAllText(path, contents);
@@ -227,135 +232,7 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    public void New_AppendAccessWithReadWriteMode_ShouldThrowArgumentException(
-        string path)
-    {
-        Exception? exception = Record.Exception(() =>
-        {
-            FileSystem.FileStream.New(path, FileMode.Append, FileAccess.ReadWrite);
-        });
-
-#if NETFRAMEWORK
-        exception.Should().BeOfType<ArgumentException>();
-#else
-        exception.Should().BeOfType<ArgumentException>()
-           .Which.ParamName.Should().Be("access");
-#endif
-        exception!.Message.Should()
-           .Contain(FileMode.Append.ToString());
-    }
-
-    [Theory]
-    [AutoData]
-    public void New_EmptyPath_ShouldThrowArgumentException(FileMode mode)
-    {
-        Exception? exception = Record.Exception(() =>
-        {
-            FileSystem.FileStream.New(string.Empty, mode);
-        });
-
-#if NETFRAMEWORK
-        exception.Should().BeOfType<ArgumentException>();
-#else
-        exception.Should().BeOfType<ArgumentException>()
-           .Which.ParamName.Should().Be("path");
-#endif
-    }
-
-    [Theory]
-    [AutoData]
-    public void New_ExistingFileWithCreateNewMode_ShouldThrowArgumentException(
-        string path)
-    {
-        FileSystem.File.WriteAllText(path, "foo");
-        Exception? exception = Record.Exception(() =>
-        {
-            FileSystem.FileStream.New(path, FileMode.CreateNew);
-        });
-
-        exception.Should().BeOfType<IOException>()
-           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-    }
-
-    [Theory]
-    [InlineAutoData(FileMode.Append)]
-    [InlineAutoData(FileMode.Truncate)]
-    [InlineAutoData(FileMode.Create)]
-    [InlineAutoData(FileMode.CreateNew)]
-    [InlineAutoData(FileMode.Append)]
-    public void New_InvalidModeForReadAccess_ShouldThrowArgumentException(
-        FileMode mode, string path)
-    {
-        FileAccess access = FileAccess.Read;
-        Exception? exception = Record.Exception(() =>
-        {
-            FileSystem.FileStream.New(path, mode, access);
-        });
-
-#if NETFRAMEWORK
-        exception.Should().BeOfType<ArgumentException>();
-#else
-        exception.Should().BeOfType<ArgumentException>()
-           .Which.ParamName.Should().Be("access");
-#endif
-        exception!.Message.Should()
-           .Contain(mode.ToString()).And
-           .Contain(access.ToString());
-    }
-
-    [Theory]
-    [InlineAutoData(FileMode.Open)]
-    [InlineAutoData(FileMode.Truncate)]
-    public void New_MissingFileWithIncorrectMode_ShouldThrowArgumentException(
-        FileMode mode, string path)
-    {
-        Exception? exception = Record.Exception(() =>
-        {
-            FileSystem.FileStream.New(path, mode);
-        });
-
-        exception.Should().BeOfType<FileNotFoundException>()
-           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-    }
-
-    [Theory]
-    [AutoData]
-    public void New_NullPath_ShouldThrowArgumentNullException(FileMode mode)
-    {
-        Exception? exception = Record.Exception(() =>
-        {
-            FileSystem.FileStream.New(null!, mode);
-        });
-
-        exception.Should().BeOfType<ArgumentNullException>()
-           .Which.ParamName.Should().Be("path");
-    }
-
-    [Theory]
-    [AutoData]
-    public void New_SamePathAsExistingDirectory_ShouldThrowException(
-        string path)
-    {
-        FileSystem.Directory.CreateDirectory(path);
-        Exception? exception = Record.Exception(() =>
-        {
-            FileSystem.FileStream.New(path, FileMode.CreateNew);
-        });
-
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            exception.Should().BeOfType<UnauthorizedAccessException>()
-               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-        }
-        else
-        {
-            exception.Should().BeOfType<IOException>()
-               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-        }
-    }
-
-    [Theory]
-    [AutoData]
+    [FileSystemTests.FileStream(nameof(FileSystemStream.Read))]
     public void Read_ShouldCreateValidFileStream(string path, string contents)
     {
         FileSystem.File.WriteAllText(path, contents, Encoding.UTF8);
@@ -368,6 +245,7 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.FileStream(nameof(FileSystemStream.Write))]
     public void Write_ShouldCreateValidFileStream(string path, string contents)
     {
         FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.CreateNew);

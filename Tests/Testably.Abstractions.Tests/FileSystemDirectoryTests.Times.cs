@@ -20,37 +20,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
-    public void CreateDirectory_ShouldSetCreationTime(string path)
-    {
-        DateTime start = TimeSystem.DateTime.Now;
-
-        FileSystem.Directory.CreateDirectory(path);
-
-        DateTime result = FileSystem.Directory.GetCreationTime(path);
-        result.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
-        result.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
-        result.Kind.Should().Be(DateTimeKind.Local);
-    }
-
-    [Theory]
-    [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
-    public void CreateDirectory_ShouldSetCreationTimeUtc(string path)
-    {
-        DateTime start = TimeSystem.DateTime.UtcNow;
-
-        FileSystem.Directory.CreateDirectory(path);
-
-        DateTime result = FileSystem.Directory.GetCreationTimeUtc(path);
-        result.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
-        result.Should().BeOnOrBefore(TimeSystem.DateTime.UtcNow);
-        result.Kind.Should().Be(DateTimeKind.Utc);
-    }
-
-    [Theory]
-    [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetCreationTime))]
     public void GetCreationTime_PathNotFound_ShouldReturnNullTime(string path)
     {
         DateTime expectedTime = NullTime.ToLocalTime();
@@ -62,7 +32,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetCreationTimeUtc))]
     public void GetCreationTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
     {
         DateTime expectedTime = NullTime.ToUniversalTime();
@@ -74,7 +44,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLastAccessTime))]
     public void GetLastAccessTime_PathNotFound_ShouldReturnNullTime(string path)
     {
         DateTime expectedTime = NullTime.ToLocalTime();
@@ -86,7 +56,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLastAccessTimeUtc))]
     public void GetLastAccessTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
     {
         DateTime expectedTime = NullTime.ToUniversalTime();
@@ -98,7 +68,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLastWriteTime))]
     public void GetLastWriteTime_PathNotFound_ShouldReturnNullTime(string path)
     {
         DateTime expectedTime = NullTime.ToLocalTime();
@@ -110,7 +80,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLastWriteTimeUtc))]
     public void GetLastWriteTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
     {
         DateTime expectedTime = NullTime.ToUniversalTime();
@@ -122,7 +92,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLastAccessTime))]
     public void LastAccessTime_CreateSubDirectory_ShouldUpdateLastAccessAndLastWriteTime(
         string path, string subPath)
     {
@@ -153,7 +123,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLastAccessTime))]
     public void LastAccessTime_ShouldBeSet(string path)
     {
         DateTime start = TimeSystem.DateTime.Now;
@@ -168,7 +138,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLastAccessTimeUtc))]
     public void LastAccessTimeUtc_ShouldBeSet(string path)
     {
         DateTime start = TimeSystem.DateTime.UtcNow;
@@ -183,7 +153,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLastWriteTime))]
     public void LastWriteTime_ShouldBeSet(string path)
     {
         DateTime start = TimeSystem.DateTime.Now;
@@ -198,7 +168,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLastWriteTimeUtc))]
     public void LastWriteTimeUtc_ShouldBeSet(string path)
     {
         DateTime start = TimeSystem.DateTime.UtcNow;
@@ -213,7 +183,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetCreationTime))]
     public void SetCreationTime_PathNotFound_ShouldThrowFileNotFoundException(
         string path, DateTime creationTime)
     {
@@ -228,7 +198,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetCreationTime))]
     public void SetCreationTime_ShouldChangeCreationTime(
         string path, DateTime creationTime)
     {
@@ -244,7 +214,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetCreationTimeUtc))]
     public void SetCreationTimeUtc_PathNotFound_ShouldThrowFileNotFoundException(
         string path, DateTime creationTime)
     {
@@ -259,7 +229,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetCreationTimeUtc))]
     public void SetCreationTimeUtc_ShouldChangeCreationTime(
         string path, DateTime creationTime)
     {
@@ -275,7 +245,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetLastAccessTime))]
     public void SetLastAccessTime_PathNotFound_ShouldThrowFileNotFoundException(
         string path, DateTime lastAccessTime)
     {
@@ -290,7 +260,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetLastAccessTime))]
     public void SetLastAccessTime_ShouldChangeLastAccessTime(
         string path, DateTime lastAccessTime)
     {
@@ -306,7 +276,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetLastAccessTimeUtc))]
     public void SetLastAccessTimeUtc_PathNotFound_ShouldThrowFileNotFoundException(
         string path, DateTime lastAccessTime)
     {
@@ -321,7 +291,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetLastAccessTimeUtc))]
     public void SetLastAccessTimeUtc_ShouldChangeLastAccessTime(
         string path, DateTime lastAccessTime)
     {
@@ -337,7 +307,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetLastWriteTime))]
     public void SetLastWriteTime_PathNotFound_ShouldThrowFileNotFoundException(
         string path, DateTime lastWriteTime)
     {
@@ -352,7 +322,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetLastWriteTime))]
     public void SetLastWriteTime_ShouldChangeLastWriteTime(
         string path, DateTime lastWriteTime)
     {
@@ -368,7 +338,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetLastWriteTimeUtc))]
     public void SetLastWriteTimeUtc_PathNotFound_ShouldThrowFileNotFoundException(
         string path, DateTime lastWriteTime)
     {
@@ -383,7 +353,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    [Trait(nameof(FileSystem), nameof(Directory))]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetLastWriteTimeUtc))]
     public void SetLastWriteTimeUtc_ShouldChangeLastWriteTime(
         string path, DateTime lastWriteTime)
     {
