@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
@@ -326,7 +327,13 @@ public sealed partial class FileSystemMock
                 _fileSystem.FileSystemContainer.GetDirectory(path);
             if (fileSystemInfo == null)
             {
-                throw ExceptionFactory.FileNotFound(FileSystem.Path.GetFullPath(path));
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    throw ExceptionFactory.FileNotFound(
+                        FileSystem.Path.GetFullPath(path));
+                }
+                throw ExceptionFactory.DirectoryNotFound(
+                    FileSystem.Path.GetFullPath(path));
             }
 
             fileSystemInfo.CreationTime = creationTime;
