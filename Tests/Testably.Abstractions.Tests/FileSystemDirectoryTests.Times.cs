@@ -212,6 +212,11 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     {
         creationTime = creationTime.ToLocalTime();
         DateTime expectedTime = creationTime.ToUniversalTime();
+        if (!Test.RunsOnWindows)
+        {
+            // Creation Time can only be changed on Windows
+            expectedTime = FileSystem.Directory.GetCreationTimeUtc(path);
+        }
         FileSystem.Directory.CreateDirectory(path);
 
         FileSystem.Directory.SetCreationTime(path, creationTime);
@@ -251,6 +256,11 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     {
         creationTime = creationTime.ToUniversalTime();
         DateTime expectedTime = creationTime.ToLocalTime();
+        if (!Test.RunsOnWindows)
+        {
+            // Creation Time can only be changed on Windows
+            expectedTime = FileSystem.Directory.GetCreationTime(path);
+        }
         FileSystem.Directory.CreateDirectory(path);
 
         FileSystem.Directory.SetCreationTimeUtc(path, creationTime);
