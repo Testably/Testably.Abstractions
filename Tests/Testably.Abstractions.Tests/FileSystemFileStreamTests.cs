@@ -57,7 +57,8 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            exception.Should().BeOfType<IOException>($"Access {access1}, Share {share1} of file 1 is incompatible with Access {access2}, Share {share2} of file 2")
+            exception.Should().BeOfType<IOException>(
+                    $"Access {access1}, Share {share1} of file 1 is incompatible with Access {access2}, Share {share2} of file 2")
                .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
         }
         else
@@ -193,7 +194,7 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
         {
             FileSystem.File.ReadAllText(path);
         });
-        
+
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             exception.Should().BeOfType<IOException>()

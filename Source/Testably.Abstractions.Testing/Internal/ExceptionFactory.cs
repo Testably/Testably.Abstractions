@@ -44,10 +44,10 @@ internal static class ExceptionFactory
             paramName);
 
     public static IOException NetworkPathNotFound(string path)
-        => new IOException($"The network path was not found. : '{path}'");
+        => new($"The network path was not found. : '{path}'");
 
     public static IOException NotEnoughDiskSpace(string name)
-        => new IOException($"There is not enough space on the disk: '{name}'");
+        => new($"There is not enough space on the disk: '{name}'");
 
     internal static ArgumentException PathCannotBeEmpty(string paramName = "path")
     {

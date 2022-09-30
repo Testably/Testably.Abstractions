@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class RandomSystemMock
 {
-    internal sealed class RandomProviderMock : RandomSystemMock.IRandomProvider
+    internal sealed class RandomProviderMock : IRandomProvider
     {
         private static Generator<Guid> DefaultGuidGenerator
             => Generator<Guid>.FromCallback(System.Guid.NewGuid);
@@ -34,6 +34,6 @@ public sealed partial class RandomSystemMock
         #endregion
 
         private IRandomSystem.IRandom DefaultRandomGenerator(int seed)
-            => new RandomSystemMock.RandomMock(seed: seed);
+            => new RandomMock(seed: seed);
     }
 }

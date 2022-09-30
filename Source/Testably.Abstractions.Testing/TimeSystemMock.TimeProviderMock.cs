@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class TimeSystemMock
 {
-    internal sealed class TimeProviderMock : TimeSystemMock.ITimeProvider
+    internal sealed class TimeProviderMock : ITimeProvider
     {
         private DateTime _now;
         private readonly object _lock = new();

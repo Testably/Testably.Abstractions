@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Testably.Abstractions.Tests.TestHelpers.Attributes;
 
 namespace Testably.Abstractions.Tests.Testing;
 
@@ -24,6 +25,7 @@ public class FileSystemMockTests
     [Theory]
     [InlineData("D:\\")]
     [Trait(nameof(Testing), nameof(FileSystemMock))]
+    [WindowsOnly]
     public void WithDrive_NewName_ShouldCreateNewDrives(string driveName)
     {
         FileSystemMock sut = new();

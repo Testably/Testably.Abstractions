@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
 #if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
@@ -143,6 +141,7 @@ public sealed partial class FileSystemMock
             Drive.ChangeUsedBytes(bytes.Length - _bytes.Length);
             _bytes = bytes;
         }
+
         /// <inheritdoc cref="IInMemoryFileSystem.IFileInfoMock.ClearBytes()" />
         public void ClearBytes()
         {

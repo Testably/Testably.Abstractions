@@ -67,7 +67,8 @@ public sealed partial class FileSystemMock
                 if (_mode.Equals(FileMode.Open) ||
                     _mode.Equals(FileMode.Truncate))
                 {
-                    throw ExceptionFactory.FileNotFound(_fileSystem.Path.GetFullPath(Name));
+                    throw ExceptionFactory.FileNotFound(
+                        _fileSystem.Path.GetFullPath(Name));
                 }
 
                 file = _fileSystem.FileSystemContainer.GetOrAddFile(Name);
@@ -75,15 +76,18 @@ public sealed partial class FileSystemMock
                 {
                     if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
-                        throw ExceptionFactory.FileAlreadyExists(_fileSystem.Path.GetFullPath(Name));
+                        throw ExceptionFactory.FileAlreadyExists(
+                            _fileSystem.Path.GetFullPath(Name));
                     }
 
-                    throw ExceptionFactory.AccessToPathDenied(_fileSystem.Path.GetFullPath(Name));
+                    throw ExceptionFactory.AccessToPathDenied(
+                        _fileSystem.Path.GetFullPath(Name));
                 }
             }
             else if (_mode.Equals(FileMode.CreateNew))
             {
-                throw ExceptionFactory.FileAlreadyExists(_fileSystem.Path.GetFullPath(Name));
+                throw ExceptionFactory.FileAlreadyExists(
+                    _fileSystem.Path.GetFullPath(Name));
             }
 
             _accessLock = file.RequestAccess(access, share);
