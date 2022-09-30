@@ -22,6 +22,7 @@ public abstract partial class ParityTests
     #endregion
 
     [Fact]
+    [Trait(nameof(Testing), nameof(Parity))]
     public void IDirectory_EnsureParityWith_Directory()
     {
         List<string> parityErrors = Parity.Directory
@@ -33,6 +34,7 @@ public abstract partial class ParityTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(Parity))]
     public void IDirectoryInfoAndIDirectoryInfoFactory_EnsureParityWith_DirectoryInfo()
     {
         List<string> parityErrors = Parity.DirectoryInfo
@@ -45,6 +47,7 @@ public abstract partial class ParityTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(Parity))]
     public void IDriveInfoAndIDriveInfoFactory_EnsureParityWith_DriveInfo()
     {
         List<string> parityErrors = Parity.Drive
@@ -57,6 +60,7 @@ public abstract partial class ParityTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(Parity))]
     public void IFile_EnsureParityWith_File()
     {
         List<string> parityErrors = Parity.File
@@ -68,6 +72,7 @@ public abstract partial class ParityTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(Parity))]
     public void IFileInfoAndIFileInfoFactory_EnsureParityWith_FileInfo()
     {
         List<string> parityErrors = Parity.FileInfo
@@ -80,6 +85,7 @@ public abstract partial class ParityTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(Parity))]
     public void IFileSystemInfo_EnsureParityWith_FileSystemInfo()
     {
         List<string> parityErrors = Parity.FileSystemInfo
@@ -91,6 +97,7 @@ public abstract partial class ParityTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(Parity))]
     public void IGuid_EnsureParityWith_Guid()
     {
         List<string> parityErrors = Parity.Guid
@@ -102,6 +109,7 @@ public abstract partial class ParityTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(Parity))]
     public void IPath_EnsureParityWith_Path()
     {
         List<string> parityErrors = Parity.Path
@@ -113,6 +121,7 @@ public abstract partial class ParityTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(Parity))]
     public void IRandomAndIRandomFactory_EnsureParityWith_Random()
     {
         List<string> parityErrors = Parity.Random

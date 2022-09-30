@@ -5,6 +5,7 @@ namespace Testably.Abstractions.Extensions.Tests;
 public class TimeSystemExtensionsTaskTests
 {
     [Fact]
+    [Trait(nameof(Extensions), nameof(ITimeSystem))]
     public void TryDelay_CancelledCancellationToken_ShouldReturnFalse()
     {
         TimeSpan delay = TimeSpan.FromSeconds(1.0);
@@ -18,6 +19,7 @@ public class TimeSystemExtensionsTaskTests
     }
 
     [Fact]
+    [Trait(nameof(Extensions), nameof(ITimeSystem))]
     public void TryDelay_OperationCanceledException_ShouldReturnFalse()
     {
         TimeSpan delay = TimeSpan.FromSeconds(1.0);
@@ -31,6 +33,7 @@ public class TimeSystemExtensionsTaskTests
     }
 
     [Fact]
+    [Trait(nameof(Extensions), nameof(ITimeSystem))]
     public void TryDelay_ShouldDelayBySpecifiedInterval()
     {
         TimeSpan expectedDelay = TimeSpan.FromSeconds(new Random().Next(0, 3600));

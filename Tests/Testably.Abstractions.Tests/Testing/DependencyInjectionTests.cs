@@ -1,10 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Testably.Abstractions.Tests;
+namespace Testably.Abstractions.Tests.Testing;
 
 public class DependencyInjectionTests
 {
     [Fact]
+    [Trait(nameof(Testing), nameof(IServiceProvider))]
     public void FileSystem_ShouldHaveDefaultConstructorForDependencyInjection()
     {
         ServiceCollection services = new();
@@ -17,6 +18,7 @@ public class DependencyInjectionTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(IServiceProvider))]
     public void RandomSystem_ShouldHaveDefaultConstructorForDependencyInjection()
     {
         ServiceCollection services = new();
@@ -29,6 +31,7 @@ public class DependencyInjectionTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(IServiceProvider))]
     public void TimeSystem_ShouldHaveDefaultConstructorForDependencyInjection()
     {
         ServiceCollection services = new();

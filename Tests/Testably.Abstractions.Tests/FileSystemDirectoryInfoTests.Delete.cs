@@ -10,6 +10,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 {
     [Theory]
     [AutoData]
+    [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Delete))]
     public void Delete_MissingDirectory_ShouldDeleteDirectory(string path)
     {
         IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
@@ -27,6 +28,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Delete))]
     public void Delete_Recursive_WithSubdirectory_ShouldDeleteDirectoryWithContent(
         string path, string subdirectory)
     {
@@ -49,6 +51,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Delete))]
     public void Delete_ShouldDeleteDirectory(string path)
     {
         FileSystem.Directory.CreateDirectory(path);
@@ -68,6 +71,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Delete))]
     public void Delete_WithSubdirectory_ShouldNotDeleteDirectory(
         string path, string subdirectory)
     {

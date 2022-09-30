@@ -9,6 +9,7 @@ jobs:
   stryker:
     name: Analyze quality of unit tests
     runs-on: windows-latest
+    timeout-minutes: 180
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3

@@ -5,6 +5,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 {
     [Theory]
     [AutoData]
+    [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Exists))]
     public void Exists_ArbitraryPath_ShouldBeFalse(string path)
     {
         IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
@@ -15,19 +16,8 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
     [Theory]
     [AutoData]
-    public void Exists_ShouldOnlyUpdateOnInitialization(string path)
-    {
-        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-        sut.Exists.Should().BeFalse();
-        FileSystem.Directory.CreateDirectory(path);
-
-        sut.Exists.Should().BeFalse();
-        FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
-    }
-
-    [Theory]
-    [AutoData]
-    public void Exists_ShouldOnlyUpdateOnInitialization2(string path)
+    [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Exists))]
+    public void Exists_ExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
     {
         FileSystem.Directory.CreateDirectory(path);
         IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
@@ -36,5 +26,18 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
         sut.Exists.Should().BeTrue();
         FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
+    }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Exists))]
+    public void Exists_NotExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
+    {
+        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+        sut.Exists.Should().BeFalse();
+        FileSystem.Directory.CreateDirectory(path);
+
+        sut.Exists.Should().BeFalse();
+        FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
     }
 }

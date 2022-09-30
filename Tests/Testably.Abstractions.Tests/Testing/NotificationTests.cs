@@ -17,6 +17,7 @@ public class NotificationTests
     #endregion
 
     [Fact]
+    [Trait(nameof(Testing), nameof(Notification))]
     public void AwaitableCallback_Amount_ShouldOnlyReturnAfterNumberOfCallbacks()
     {
         TimeSystemMock timeSystem = new();
@@ -62,6 +63,7 @@ public class NotificationTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(Notification))]
     public void AwaitableCallback_Filter_ShouldOnlyUpdateAfterFilteredValue()
     {
         TimeSystemMock timeSystem = new();
@@ -117,6 +119,7 @@ public class NotificationTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(Notification))]
     public void AwaitableCallback_ShouldWaitForCallbackExecution()
     {
         TimeSystemMock timeSystem = new();
@@ -138,6 +141,7 @@ public class NotificationTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(Notification))]
     public void AwaitableCallback_TimeoutExpired_ShouldStopAfterTimeout()
     {
         TimeSystemMock timeSystem = new();

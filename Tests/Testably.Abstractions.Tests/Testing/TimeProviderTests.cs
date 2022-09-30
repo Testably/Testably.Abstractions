@@ -6,6 +6,7 @@ namespace Testably.Abstractions.Tests.Testing;
 public class TimeProviderTests
 {
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeProvider))]
     public void Now_ShouldReturnCurrentDateTime()
     {
         DateTime begin = DateTime.UtcNow;
@@ -20,6 +21,7 @@ public class TimeProviderTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeProvider))]
     public void Random_ShouldReturnRandomDateTime()
     {
         ConcurrentBag<DateTime> results = new();
@@ -33,6 +35,7 @@ public class TimeProviderTests
     }
 
     [Fact]
+    [Trait(nameof(Testing), nameof(TimeProvider))]
     public void Use_ShouldReturnFixedDateTime()
     {
         DateTime now = TimeTestHelper.GetRandomTime();

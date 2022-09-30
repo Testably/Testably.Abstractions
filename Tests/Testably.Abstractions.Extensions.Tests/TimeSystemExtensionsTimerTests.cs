@@ -7,6 +7,7 @@ namespace Testably.Abstractions.Extensions.Tests;
 public class TimeSystemExtensionsTimerTests
 {
     [Fact]
+    [Trait(nameof(Extensions), nameof(ITimer))]
     public void Callback_TakesEqualToInterval_ShouldNotDelay()
     {
         TimeSpan interval = TimeSpan.FromSeconds(10);
@@ -40,6 +41,7 @@ public class TimeSystemExtensionsTimerTests
     }
 
     [Fact]
+    [Trait(nameof(Extensions), nameof(ITimer))]
     public void Callback_TakesLongerThanInterval_ShouldNotDelay()
     {
         TimeSpan interval = TimeSpan.FromSeconds(10);
@@ -74,6 +76,7 @@ public class TimeSystemExtensionsTimerTests
     }
 
     [Fact]
+    [Trait(nameof(Extensions), nameof(ITimer))]
     public void CreateTimer_Dispose_ShouldStopIterations()
     {
         TimeSystemMock timeSystem = Initialize(
@@ -102,6 +105,7 @@ public class TimeSystemExtensionsTimerTests
     }
 
     [Fact]
+    [Trait(nameof(Extensions), nameof(ITimer))]
     public void CreateTimer_Exception_ShouldCallOnErrorAndContinueIterations()
     {
         Exception exception = new("foo");
@@ -140,6 +144,7 @@ public class TimeSystemExtensionsTimerTests
     }
 
     [Fact]
+    [Trait(nameof(Extensions), nameof(ITimer))]
     public void CreateTimer_InfiniteDelay_ShouldUseTimeSpanZero()
     {
         TimeSystemMock timeSystem = Initialize(
@@ -167,6 +172,7 @@ public class TimeSystemExtensionsTimerTests
     }
 
     [Fact]
+    [Trait(nameof(Extensions), nameof(ITimer))]
     public void CreateTimer_Start_ShouldIterateUntilCancelled()
     {
         TimeSystemMock timeSystem = Initialize(
@@ -194,6 +200,7 @@ public class TimeSystemExtensionsTimerTests
     }
 
     [Fact]
+    [Trait(nameof(Extensions), nameof(ITimer))]
     public void CreateTimer_Start_ShouldIterateUntilStopped()
     {
         TimeSystemMock timeSystem = Initialize(
@@ -222,6 +229,7 @@ public class TimeSystemExtensionsTimerTests
     }
 
     [Fact]
+    [Trait(nameof(Extensions), nameof(ITimer))]
     public void CreateTimer_StartTwice_ShouldStopPreviousRun()
     {
         TimeSpan interval = TimeSpan.FromSeconds(10);
