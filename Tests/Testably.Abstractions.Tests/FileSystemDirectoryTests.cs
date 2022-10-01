@@ -21,4 +21,14 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     }
 
     #endregion
+
+    [Fact]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLogicalDrives))]
+    public void GetLogicalDrives_ShouldNotBeEmpty()
+    {
+        string[] result = FileSystem.Directory.GetLogicalDrives();
+
+        result.Should().NotBeEmpty();
+        result.Should().Contain("".PrefixRoot());
+    }
 }

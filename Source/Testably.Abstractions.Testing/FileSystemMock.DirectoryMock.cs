@@ -301,7 +301,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLogicalDrives()" />
         public string[] GetLogicalDrives()
-            => throw new NotImplementedException();
+            => _fileSystem.DriveInfo.GetDrives().Select(x => x.Name).ToArray();
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetParent(string)" />
         public IFileSystem.IDirectoryInfo? GetParent(string path)
