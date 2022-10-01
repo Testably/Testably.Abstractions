@@ -68,17 +68,6 @@ public abstract class FileSystemTests<TFileSystem>
 public static class FileSystemTests
 {
     /// <summary>
-    ///     Tests for methods in <see cref="IFileSystem.IFile" /> in <see cref="IFileSystem" />.
-    /// </summary>
-    public class ExtensionPoint : TestabilityTraitAttribute
-    {
-        public ExtensionPoint() : base(nameof(IFileSystem),
-            nameof(IFileSystem.IFileSystemExtensionPoint), null)
-        {
-        }
-    }
-
-    /// <summary>
     ///     Tests for methods in <see cref="IFileSystem.IDirectory" /> in <see cref="IFileSystem" />.
     /// </summary>
     public class Directory : TestabilityTraitAttribute
@@ -129,6 +118,17 @@ public static class FileSystemTests
     {
         public DriveInfoFactory(string method) : base(nameof(IFileSystem),
             nameof(IFileSystem.IDriveInfoFactory), method)
+        {
+        }
+    }
+
+    /// <summary>
+    ///     Tests for methods in <see cref="IFileSystem.IFile" /> in <see cref="IFileSystem" />.
+    /// </summary>
+    public class ExtensionPoint : TestabilityTraitAttribute
+    {
+        public ExtensionPoint() : base(nameof(IFileSystem),
+            nameof(IFileSystem.IFileSystemExtensionPoint), null)
         {
         }
     }
@@ -195,6 +195,28 @@ public static class FileSystemTests
     {
         public FileSystemInfo(string method) : base(nameof(IFileSystem),
             nameof(IFileSystem.IFileSystemInfo), method)
+        {
+        }
+    }
+
+    /// <summary>
+    ///     Tests for methods in <see cref="FileSystemMock.IInterceptionHandler" /> in <see cref="FileSystemMock" />.
+    /// </summary>
+    public class Intercept : TestabilityTraitAttribute
+    {
+        public Intercept(string? method = null) : base(nameof(FileSystemMock),
+            nameof(FileSystemMock.Intercept), method)
+        {
+        }
+    }
+
+    /// <summary>
+    ///     Tests for methods in <see cref="FileSystemMock.INotificationHandler" /> in <see cref="FileSystemMock" />.
+    /// </summary>
+    public class Notify : TestabilityTraitAttribute
+    {
+        public Notify(string? method = null) : base(nameof(FileSystemMock),
+            nameof(FileSystemMock.Notify), method)
         {
         }
     }

@@ -45,7 +45,7 @@ public class NotificationTests
             }
         }).Start();
 
-        bool result = wait.Wait(t =>
+        wait.Wait(t =>
         {
             if (t.TotalMilliseconds == 0)
             {
@@ -58,7 +58,6 @@ public class NotificationTests
 
         filteredCount.Should().BeGreaterOrEqualTo(totalCount - 1).And
            .BeLessOrEqualTo(totalCount);
-        result.Should().BeTrue();
         totalCount.Should().BeGreaterOrEqualTo(6);
     }
 
@@ -92,7 +91,7 @@ public class NotificationTests
             }
         }).Start();
 
-        bool result = wait.Wait(t =>
+        wait.Wait(t =>
         {
             if (t.TotalMilliseconds == 0)
             {
@@ -114,7 +113,6 @@ public class NotificationTests
         });
 
         filteredCount.Should().BeLessThan(totalCount);
-        result.Should().BeTrue();
         totalCount.Should().BeGreaterOrEqualTo(6);
     }
 
@@ -135,15 +133,14 @@ public class NotificationTests
             _ = timeSystem.DateTime.Now;
         }).Start();
 
-        bool result = wait.Wait();
+        wait.Wait();
 
-        result.Should().BeTrue();
         isCalled.Should().BeTrue();
     }
 
     [Fact]
     [Trait(nameof(Testing), nameof(Notification))]
-    public void AwaitableCallback_TimeoutExpired_ShouldStopAfterTimeout()
+    public void AwaitableCallback_TimeoutExpired_ShouldThrowTimeoutException()
     {
         TimeSystemMock timeSystem = new();
         bool isCalled = false;
@@ -157,9 +154,12 @@ public class NotificationTests
             _ = timeSystem.DateTime.Now;
         }).Start();
 
-        bool result = wait.Wait(timeout: 10);
+        Exception? exception = Record.Exception(() =>
+        {
+            wait.Wait(timeout: 10);
+        });
 
-        result.Should().BeFalse();
+        exception.Should().BeOfType<TimeoutException>();
         isCalled.Should().BeFalse();
     }
 }

@@ -9,11 +9,9 @@ public sealed partial class FileSystemMock
     {
         private readonly FileSystemMock _fileSystem;
 
-        internal DirectoryInfoFactoryMock(FileSystemMock fileSystem,
-                                          FileSystemMockCallbackHandler callbackHandler)
+        internal DirectoryInfoFactoryMock(FileSystemMock fileSystem)
         {
             _fileSystem = fileSystem;
-            _ = callbackHandler;
         }
 
         #region IDirectoryInfoFactory Members

@@ -9,10 +9,14 @@ namespace Testably.Abstractions.Testing;
 public sealed partial class FileSystemMock : IFileSystem
 {
     /// <summary>
-    ///     The callback handler for the <see cref="FileSystemMock" />.
+    ///     Intercept events in the <see cref="FileSystemMock" /> before they occur.
     /// </summary>
-    public ICallbackHandler On
-        => _callbackHandler;
+    public IInterceptionHandler Intercept => ChangeHandler;
+
+    /// <summary>
+    ///     Get notified of events in the <see cref="FileSystemMock" /> after they occurred.
+    /// </summary>
+    public INotificationHandler Notify => ChangeHandler;
 
     /// <summary>
     ///     The used random system.
@@ -24,13 +28,23 @@ public sealed partial class FileSystemMock : IFileSystem
     /// </summary>
     public ITimeSystem TimeSystem { get; }
 
+    /// <summary>
+    ///     The underlying storage of directories and files.
+    /// </summary>
     internal IStorage Storage { get; }
 
-    private readonly FileSystemMockCallbackHandler _callbackHandler;
+    /// <summary>
+    ///     The change handler used to notify about events occurring in the <see cref="FileSystemMock" />.
+    /// </summary>
+    internal ChangeHandlerImplementation ChangeHandler { get; }
+
     private readonly DirectoryMock _directoryMock;
     private readonly FileMock _fileMock;
     private readonly PathMock _pathMock;
 
+    /// <summary>
+    ///     The <c>null</c>-object of an <see cref="IFileSystem.IFileSystemInfo" />.
+    /// </summary>
     internal IFileSystem.IFileSystemInfo NullFileSystemInfo { get; }
 
     /// <summary>
@@ -42,13 +56,13 @@ public sealed partial class FileSystemMock : IFileSystem
         TimeSystem = new TimeSystemMock(TimeProvider.Now());
         _pathMock = new PathMock(this);
         Storage = new InMemoryStorage(this);
-        _callbackHandler = new FileSystemMockCallbackHandler();
-        _directoryMock = new DirectoryMock(this, _callbackHandler);
-        _fileMock = new FileMock(this, _callbackHandler);
-        DirectoryInfo = new DirectoryInfoFactoryMock(this, _callbackHandler);
+        ChangeHandler = new ChangeHandlerImplementation(this);
+        _directoryMock = new DirectoryMock(this);
+        _fileMock = new FileMock(this);
+        DirectoryInfo = new DirectoryInfoFactoryMock(this);
         DriveInfo = new DriveInfoFactoryMock(this);
-        FileInfo = new FileInfoFactoryMock(this, _callbackHandler);
-        FileStream = new FileStreamFactoryMock(this, _callbackHandler);
+        FileInfo = new FileInfoFactoryMock(this);
+        FileStream = new FileStreamFactoryMock(this);
         NullFileSystemInfo = new FileSystemInfoMock(string.Empty, string.Empty, this)
         {
             LastWriteTime = new DateTime(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc),
