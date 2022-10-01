@@ -19,31 +19,6 @@ public class FileSystemCallbackHandlerTests
     #endregion
 
     [Theory]
-    [MemberData(nameof(NotificationTriggeringMethods))]
-    [FileSystemTests.CallbackHandler(
-        nameof(FileSystemMock.CallbackChangeTypes.Created))]
-    public void ExecuteCallback_ShouldTriggerNotification(
-        Action<IFileSystem, string>? initialization,
-        Action<IFileSystem, string> callback,
-        FileSystemMock.CallbackChangeTypes expectedChangeType,
-        string path)
-    {
-        string? receivedPath = null;
-        initialization?.Invoke(FileSystem, path);
-
-        FileSystem.Notify
-           .OnChange(c => receivedPath = c.Path,
-                c => c.Type == expectedChangeType)
-           .Execute(() =>
-            {
-                callback.Invoke(FileSystem, path);
-            })
-           .Wait();
-
-        receivedPath.Should().Be(FileSystem.Path.GetFullPath(path));
-    }
-
-    [Theory]
     [AutoData]
     [FileSystemTests.CallbackHandler(
         nameof(FileSystemMock.CallbackChangeTypes.Created))]
@@ -51,13 +26,12 @@ public class FileSystemCallbackHandlerTests
         string path, Exception exceptionToThrow)
     {
         string? receivedPath = null;
-        Exception? exception = null;
         FileSystem.Intercept.Change(_ => throw exceptionToThrow);
-        FileSystem.Notify
+        Exception? exception = FileSystem.Notify
            .OnChange(c => receivedPath = c.Path)
            .Execute(() =>
             {
-                exception = Record.Exception(() =>
+                return Record.Exception(() =>
                 {
                     FileSystem.Directory.CreateDirectory(path);
                 });
@@ -93,6 +67,33 @@ public class FileSystemCallbackHandlerTests
         eventCount.Should().Be(3);
     }
 
+    [Theory]
+    [MemberData(nameof(NotificationTriggeringMethods))]
+    [FileSystemTests.CallbackHandler(
+        nameof(FileSystemMock.CallbackChangeTypes.Created))]
+    public void ExecuteCallback_ShouldTriggerNotification(
+        Action<IFileSystem, string>? initialization,
+        Action<IFileSystem, string> callback,
+        FileSystemMock.CallbackChangeTypes expectedChangeType,
+        string path)
+    {
+        string? receivedPath = null;
+        initialization?.Invoke(FileSystem, path);
+
+        FileSystem.Notify
+           .OnChange(c => receivedPath = c.Path,
+                c => c.Type == expectedChangeType)
+           .Execute(() =>
+            {
+                callback.Invoke(FileSystem, path);
+            })
+           .Wait();
+
+        receivedPath.Should().Be(FileSystem.Path.GetFullPath(path));
+    }
+
+    #region Helpers
+
     public static IEnumerable<object?[]> NotificationTriggeringMethods()
     {
         yield return new object?[]
@@ -109,4 +110,6 @@ public class FileSystemCallbackHandlerTests
             FileSystemMock.CallbackChangeTypes.FileCreated, $"path_{Guid.NewGuid()}"
         };
     }
+
+    #endregion
 }

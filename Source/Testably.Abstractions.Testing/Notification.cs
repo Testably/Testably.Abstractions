@@ -70,12 +70,16 @@ public static class Notification
             #region IAwaitableCallback<TValue> Members
 
             /// <inheritdoc cref="IAwaitableCallback{TValue}.Wait(Func{TValue, bool}?, int, int)" />
-            public bool Wait(Func<TValue, bool>? filter = null, int timeout = 1000,
+            public void Wait(Func<TValue, bool>? filter = null, int timeout = 1000,
                              int count = 1)
             {
                 _count = count;
                 _filter = filter;
-                return _reset.Wait(timeout);
+                if (!_reset.Wait(timeout))
+                {
+                    throw new TimeoutException(
+                        $"The timeout of {timeout}ms expired in the awaitable callback.");
+                }
             }
 
             /// <inheritdoc cref="IDisposable.Dispose()" />
@@ -101,7 +105,7 @@ public static class Notification
                 if (_filter?.Invoke(value) != false &&
                     Interlocked.Decrement(ref _count) <= 0)
                 {
-                    _reset?.Set();
+                    _reset.Set();
                 }
             }
         }
@@ -126,8 +130,8 @@ public static class Notification
         /// <summary>
         ///     Blocks the current thread until the callback is executed.
         ///     <para />
-        ///     Returns <c>false</c> if the <paramref name="timeout" /> expired before the callback was executed, otherwise
-        ///     <c>true</c>.
+        ///     Throws a <see cref="TimeoutException" /> if the <paramref name="timeout" /> expired before the callback was
+        ///     executed.
         /// </summary>
         /// <param name="filter">
         ///     (optional) A filter for the callback to count.<br />
@@ -141,7 +145,39 @@ public static class Notification
         ///     (optional) The number of callbacks to wait.<br />
         ///     Defaults to <c>1</c>
         /// </param>
-        bool Wait(Func<TValue, bool>? filter = null, int timeout = 1000, int count = 1);
+        void Wait(Func<TValue, bool>? filter = null, int timeout = 1000, int count = 1);
+    }
+
+    /// <summary>
+    ///     An object to allow<br />
+    ///     - un-registering a callback by calling <see cref="IDisposable.Dispose()" /><br />
+    ///     - blocking for the callback to be executed
+    /// </summary>
+    public interface
+        IAwaitableCallback<out TValue, out TFunc> : IAwaitableCallback<TValue>
+    {
+        /// <summary>
+        ///     Blocks the current thread until the callback is executed.
+        ///     <para />
+        ///     Throws a <see cref="TimeoutException" /> if the <paramref name="timeout" /> expired before the callback was
+        ///     executed.
+        ///     <para />
+        ///     Returns the value of <typeparamref name="TFunc" /> registered during an "Execute" call.
+        /// </summary>
+        /// <param name="filter">
+        ///     (optional) A filter for the callback to count.<br />
+        ///     Defaults to <c>null</c> which will consider all callbacks.
+        /// </param>
+        /// <param name="timeout">
+        ///     (optional) The timeout in milliseconds to wait on the callback.<br />
+        ///     Defaults to <c>1000</c>ms.
+        /// </param>
+        /// <param name="count">
+        ///     (optional) The number of callbacks to wait.<br />
+        ///     Defaults to <c>1</c>
+        /// </param>
+        new TFunc Wait(Func<TValue, bool>? filter = null, int timeout = 1000,
+                       int count = 1);
     }
 
     /// <summary>
@@ -152,5 +188,46 @@ public static class Notification
     {
         callback();
         return awaitable;
+    }
+
+    /// <summary>
+    ///     Executes the <paramref name="callback" /> and returns the <paramref name="awaitable" />.
+    /// </summary>
+    public static IAwaitableCallback<TValue, TFunc> Execute<TValue, TFunc>(
+        this IAwaitableCallback<TValue> awaitable, Func<TFunc> callback)
+    {
+        TFunc value = callback();
+        return new CallbackWaiterWithValue<TValue, TFunc>(awaitable, value);
+    }
+
+    private sealed class
+        CallbackWaiterWithValue<TValue, TFunc> : IAwaitableCallback<TValue, TFunc>
+    {
+        private readonly IAwaitableCallback<TValue> _awaitableCallback;
+        private readonly TFunc _value;
+
+        public CallbackWaiterWithValue(IAwaitableCallback<TValue> awaitableCallback,
+                                       TFunc value)
+        {
+            _awaitableCallback = awaitableCallback;
+            _value = value;
+        }
+
+        /// <inheritdoc />
+        void IAwaitableCallback<TValue>.Wait(Func<TValue, bool>? filter, int timeout,
+                                             int count)
+            => Wait(filter, timeout, count);
+
+        /// <inheritdoc />
+        public TFunc Wait(Func<TValue, bool>? filter,
+                          int timeout, int count)
+        {
+            _awaitableCallback.Wait(filter, timeout, count);
+            return _value;
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+            => _awaitableCallback.Dispose();
     }
 }
