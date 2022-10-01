@@ -21,7 +21,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
         Exception? exception = Record.Exception(() =>
         {
-            FileSystem.File.WriteAllBytes(path, Encoding.UTF8.GetBytes("foo"));
+            FileSystem.File.WriteAllBytes(path, contents);
         });
 
         exception.Should().BeOfType<DirectoryNotFoundException>()
