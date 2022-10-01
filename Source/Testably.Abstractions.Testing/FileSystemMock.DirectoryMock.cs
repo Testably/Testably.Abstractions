@@ -450,7 +450,7 @@ public sealed partial class FileSystemMock
 
             IFileSystem.IDirectoryInfo? directory =
                 _fileSystem.Storage.GetOrAddDirectory(path);
-            return directory ?? throw new NotImplementedException();
+            return directory ?? throw new NotSupportedException("Internal error: directory could not be created!");
         }
 
         private static Func<Exception> DirectoryNotFoundException(string path)

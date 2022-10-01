@@ -159,6 +159,6 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
             }
         }
 
-        return driveInfo ?? throw new NotImplementedException("No unmapped drive found!");
+        return driveInfo ?? throw new NotSupportedException("No unmapped drive found!");
     }
 }
