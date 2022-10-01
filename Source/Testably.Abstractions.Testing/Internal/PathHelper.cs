@@ -65,6 +65,7 @@ internal static class PathHelper
         }
     }
 
+    [ExcludeFromCodeCoverage]
     internal static string TrimOnWindows(this string path)
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

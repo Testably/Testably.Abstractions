@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Enumeration;
 using System.Runtime.InteropServices;
@@ -10,7 +11,11 @@ internal static class EnumerationOptionsHelper
     /// <summary>
     ///     For internal use. These are the options we want to use if calling the existing Directory/File APIs where you don't
     ///     explicitly specify EnumerationOptions.
+    ///     <para />
+    ///     <see
+    ///         href="https://github.com/dotnet/runtime/blob/v6.0.0/src/libraries/System.Private.CoreLib/src/System/IO/EnumerationOptions.cs#L24" />
     /// </summary>
+    [ExcludeFromCodeCoverage]
     internal static EnumerationOptions Compatible { get; } =
         new()
         {
@@ -19,6 +24,11 @@ internal static class EnumerationOptionsHelper
             IgnoreInaccessible = false
         };
 
+    /// <summary>
+    ///     <see
+    ///         href="https://github.com/dotnet/runtime/blob/v6.0.0/src/libraries/System.Private.CoreLib/src/System/IO/EnumerationOptions.cs#L27" />
+    /// </summary>
+    [ExcludeFromCodeCoverage]
     private static EnumerationOptions CompatibleRecursive { get; } =
         new()
         {
@@ -27,7 +37,10 @@ internal static class EnumerationOptionsHelper
             AttributesToSkip = 0,
             IgnoreInaccessible = false
         };
-
+    /// <summary>
+    /// <see href="https://github.com/dotnet/runtime/blob/v6.0.0/src/libraries/System.Private.CoreLib/src/System/IO/Enumeration/FileSystemEnumerableFactory.cs#L107" />
+    /// </summary>
+    [ExcludeFromCodeCoverage]
     public static bool MatchesPattern(EnumerationOptions enumerationOptions, string name,
                                       string searchString)
     {
@@ -46,7 +59,11 @@ internal static class EnumerationOptionsHelper
 
     /// <summary>
     ///     Converts SearchOptions to FindOptions. Throws if undefined SearchOption.
+    ///     <para />
+    ///     <see
+    ///         href="https://github.com/dotnet/runtime/blob/v6.0.0/src/libraries/System.Private.CoreLib/src/System/IO/EnumerationOptions.cs#L46" />
     /// </summary>
+    [ExcludeFromCodeCoverage]
     internal static EnumerationOptions FromSearchOption(SearchOption searchOption)
     {
         if (searchOption != SearchOption.TopDirectoryOnly &&
@@ -60,6 +77,7 @@ internal static class EnumerationOptionsHelper
             : Compatible;
     }
 
+    [ExcludeFromCodeCoverage]
     private static bool MatchPattern(string expression,
                                      string name,
                                      bool ignoreCase,
@@ -69,6 +87,7 @@ internal static class EnumerationOptionsHelper
         {
             return false;
         }
+
         if (useExtendedWildcards)
         {
             expression = SimplifyExpression(expression);
@@ -88,10 +107,9 @@ internal static class EnumerationOptionsHelper
     ///     This method was inspired by the `FileSystemEnumerableFactory.NormalizeInputs` in .NET6.
     ///     <para />
     ///     <seealso
-    ///         href="https://github.com/dotnet/runtime/blob/174e04336e4a073416cb0baebb2be72728b9d64b/src/libraries/System.Private.CoreLib/src/System/IO/Enumeration/FileSystemEnumerableFactory.cs#L27" />
+    ///         href="https://github.com/dotnet/runtime/blob/v6.0.0/src/libraries/System.Private.CoreLib/src/System/IO/Enumeration/FileSystemEnumerableFactory.cs#L37" />
     /// </summary>
-    /// <param name="expression"></param>
-    /// <returns></returns>
+    [ExcludeFromCodeCoverage]
     private static string SimplifyExpression(string expression)
     {
         char[] unixEscapeChars = { '\\', '"', '<', '>' };
@@ -104,6 +122,7 @@ internal static class EnumerationOptionsHelper
         {
             return "*";
         }
+
         if (!Framework.IsNetFramework && string.IsNullOrEmpty(expression))
         {
             return "*";
