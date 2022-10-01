@@ -31,13 +31,14 @@ public class FileSystemCallbackHandlerTests
         string? receivedPath = null;
         initialization?.Invoke(FileSystem, path);
 
-        Notification.IAwaitableCallback<FileSystemMock.CallbackChange>
-            awaitable = FileSystem.Notify.OnChange(c => receivedPath = c.Path,
-                c => c.Type == expectedChangeType);
-
-        callback.Invoke(FileSystem, path);
-
-        awaitable.Wait();
+        FileSystem.Notify
+           .OnChange(c => receivedPath = c.Path,
+                c => c.Type == expectedChangeType)
+           .Execute(() =>
+            {
+                callback.Invoke(FileSystem, path);
+            })
+           .Wait();
 
         receivedPath.Should().Be(FileSystem.Path.GetFullPath(path));
     }
@@ -50,16 +51,18 @@ public class FileSystemCallbackHandlerTests
         string path, Exception exceptionToThrow)
     {
         string? receivedPath = null;
+        Exception? exception = null;
         FileSystem.Intercept.Change(_ => throw exceptionToThrow);
-        Notification.IAwaitableCallback<FileSystemMock.CallbackChange>
-            awaitable = FileSystem.Notify.OnChange(c => receivedPath = c.Path);
-
-        Exception? exception = Record.Exception(() =>
-        {
-            FileSystem.Directory.CreateDirectory(path);
-        });
-
-        awaitable.Wait(timeout: 50);
+        FileSystem.Notify
+           .OnChange(c => receivedPath = c.Path)
+           .Execute(() =>
+            {
+                exception = Record.Exception(() =>
+                {
+                    FileSystem.Directory.CreateDirectory(path);
+                });
+            })
+           .Wait(timeout: 50);
 
         exception.Should().Be(exceptionToThrow);
         receivedPath.Should().BeNull();
@@ -92,19 +95,18 @@ public class FileSystemCallbackHandlerTests
 
     public static IEnumerable<object?[]> NotificationTriggeringMethods()
     {
-        yield return new Object?[]
+        yield return new object?[]
         {
             null,
             new Action<IFileSystem, string>((f, p) => f.Directory.CreateDirectory(p)),
             FileSystemMock.CallbackChangeTypes.DirectoryCreated,
             $"path_{Guid.NewGuid()}"
         };
-        yield return new Object?[]
+        yield return new object?[]
         {
             null,
             new Action<IFileSystem, string>((f, p) => f.File.WriteAllText(p, null)),
-            FileSystemMock.CallbackChangeTypes.FileCreated,
-            $"path_{Guid.NewGuid()}"
+            FileSystemMock.CallbackChangeTypes.FileCreated, $"path_{Guid.NewGuid()}"
         };
     }
 }

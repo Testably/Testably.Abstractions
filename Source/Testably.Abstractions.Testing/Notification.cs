@@ -96,6 +96,7 @@ public static class Notification
                 {
                     return;
                 }
+
                 _callback?.Invoke(value);
                 if (_filter?.Invoke(value) != false &&
                     Interlocked.Decrement(ref _count) <= 0)
@@ -141,5 +142,15 @@ public static class Notification
         ///     Defaults to <c>1</c>
         /// </param>
         bool Wait(Func<TValue, bool>? filter = null, int timeout = 1000, int count = 1);
+    }
+
+    /// <summary>
+    ///     Executes the <paramref name="callback" /> and returns the <paramref name="awaitable" />.
+    /// </summary>
+    public static IAwaitableCallback<TValue> Execute<TValue>(
+        this IAwaitableCallback<TValue> awaitable, Action callback)
+    {
+        callback();
+        return awaitable;
     }
 }
