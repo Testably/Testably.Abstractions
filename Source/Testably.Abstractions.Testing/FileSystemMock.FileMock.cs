@@ -139,7 +139,14 @@ public sealed partial class FileSystemMock
         [SupportedOSPlatform("windows")]
 #endif
         public void Decrypt(string path)
-            => throw new NotImplementedException();
+        {
+            IStorage.IFileInfoMock? fileInfo =
+                _fileSystem.Storage.GetOrAddFile(path);
+            if (fileInfo != null)
+            {
+                fileInfo.Decrypt();
+            }
+        }
 
         /// <inheritdoc cref="IFileSystem.IFile.Delete(string)" />
         public void Delete(string path)
@@ -156,7 +163,14 @@ public sealed partial class FileSystemMock
         [SupportedOSPlatform("windows")]
 #endif
         public void Encrypt(string path)
-            => throw new NotImplementedException();
+        {
+            IStorage.IFileInfoMock? fileInfo =
+                _fileSystem.Storage.GetOrAddFile(path);
+            if (fileInfo != null)
+            {
+                fileInfo.Encrypt();
+            }
+        }
 
         /// <inheritdoc cref="IFileSystem.IFile.Exists(string?)" />
         public bool Exists([NotNullWhen(true)] string? path)
