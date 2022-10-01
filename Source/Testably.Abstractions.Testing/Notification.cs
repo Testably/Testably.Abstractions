@@ -9,6 +9,26 @@ namespace Testably.Abstractions.Testing;
 /// </summary>
 public static class Notification
 {
+    /// <summary>
+    ///     Executes the <paramref name="callback" /> and returns the <paramref name="awaitable" />.
+    /// </summary>
+    public static IAwaitableCallback<TValue> Execute<TValue>(
+        this IAwaitableCallback<TValue> awaitable, Action callback)
+    {
+        callback();
+        return awaitable;
+    }
+
+    /// <summary>
+    ///     Executes the <paramref name="callback" /> and returns the <paramref name="awaitable" />.
+    /// </summary>
+    public static IAwaitableCallback<TValue, TFunc> Execute<TValue, TFunc>(
+        this IAwaitableCallback<TValue> awaitable, Func<TFunc> callback)
+    {
+        TFunc value = callback();
+        return new CallbackWaiterWithValue<TValue, TFunc>(awaitable, value);
+    }
+
     internal static INotificationFactory<TValue> CreateFactory<TValue>()
     {
         return new NotificationFactory<TValue>();
@@ -49,11 +69,11 @@ public static class Notification
         private sealed class CallbackWaiter : IAwaitableCallback<TValue>
         {
             private readonly Action<TValue>? _callback;
-            private readonly Func<TValue, bool> _predicate;
             private int _count;
             private readonly NotificationFactory<TValue> _factory;
             private Func<TValue, bool>? _filter;
             private readonly Guid _key;
+            private readonly Func<TValue, bool> _predicate;
             private readonly ManualResetEventSlim _reset;
 
             public CallbackWaiter(NotificationFactory<TValue> factory,
@@ -153,8 +173,8 @@ public static class Notification
     ///     - un-registering a callback by calling <see cref="IDisposable.Dispose()" /><br />
     ///     - blocking for the callback to be executed
     /// </summary>
-    public interface
-        IAwaitableCallback<out TValue, out TFunc> : IAwaitableCallback<TValue>
+    public interface IAwaitableCallback<out TValue, out TFunc>
+        : IAwaitableCallback<TValue>
     {
         /// <summary>
         ///     Blocks the current thread until the callback is executed.
@@ -180,28 +200,8 @@ public static class Notification
                        int count = 1);
     }
 
-    /// <summary>
-    ///     Executes the <paramref name="callback" /> and returns the <paramref name="awaitable" />.
-    /// </summary>
-    public static IAwaitableCallback<TValue> Execute<TValue>(
-        this IAwaitableCallback<TValue> awaitable, Action callback)
-    {
-        callback();
-        return awaitable;
-    }
-
-    /// <summary>
-    ///     Executes the <paramref name="callback" /> and returns the <paramref name="awaitable" />.
-    /// </summary>
-    public static IAwaitableCallback<TValue, TFunc> Execute<TValue, TFunc>(
-        this IAwaitableCallback<TValue> awaitable, Func<TFunc> callback)
-    {
-        TFunc value = callback();
-        return new CallbackWaiterWithValue<TValue, TFunc>(awaitable, value);
-    }
-
-    private sealed class
-        CallbackWaiterWithValue<TValue, TFunc> : IAwaitableCallback<TValue, TFunc>
+    private sealed class CallbackWaiterWithValue<TValue, TFunc>
+        : IAwaitableCallback<TValue, TFunc>
     {
         private readonly IAwaitableCallback<TValue> _awaitableCallback;
         private readonly TFunc _value;
@@ -213,10 +213,7 @@ public static class Notification
             _value = value;
         }
 
-        /// <inheritdoc />
-        void IAwaitableCallback<TValue>.Wait(Func<TValue, bool>? filter, int timeout,
-                                             int count)
-            => Wait(filter, timeout, count);
+        #region IAwaitableCallback<TValue,TFunc> Members
 
         /// <inheritdoc />
         public TFunc Wait(Func<TValue, bool>? filter,
@@ -227,7 +224,14 @@ public static class Notification
         }
 
         /// <inheritdoc />
+        void IAwaitableCallback<TValue>.Wait(Func<TValue, bool>? filter, int timeout,
+                                             int count)
+            => Wait(filter, timeout, count);
+
+        /// <inheritdoc />
         public void Dispose()
             => _awaitableCallback.Dispose();
+
+        #endregion
     }
 }
