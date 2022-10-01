@@ -22,6 +22,22 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
     [SkippableTheory]
     [AutoData]
+    [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Decrypt))]
+    public void Decrypt_UnencryptedData_ShouldReturnOriginalText(
+        string path, string contents)
+    {
+        Skip.IfNot(Test.RunsOnWindows);
+
+        FileSystem.File.WriteAllText(path, contents);
+
+        FileSystem.File.Decrypt(path);
+
+        string result = FileSystem.File.ReadAllText(path);
+        result.Should().Be(contents);
+    }
+
+    [SkippableTheory]
+    [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Encrypt))]
     public void Encrypt_ShouldChangeData(
         string path, byte[] bytes)
@@ -34,5 +50,23 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
         byte[] result = FileSystem.File.ReadAllBytes(path);
         result.Should().NotBeEquivalentTo(bytes);
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Encrypt))]
+    public void Encrypt_Twice_ShouldIgnoreTheSecondTime(
+        string path, string contents)
+    {
+        Skip.IfNot(Test.RunsOnWindows);
+
+        FileSystem.File.WriteAllText(path, contents);
+
+        FileSystem.File.Encrypt(path);
+        FileSystem.File.Encrypt(path);
+
+        FileSystem.File.Decrypt(path);
+        string result = FileSystem.File.ReadAllText(path);
+        result.Should().Be(contents);
     }
 }

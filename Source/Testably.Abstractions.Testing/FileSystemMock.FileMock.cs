@@ -144,7 +144,11 @@ public sealed partial class FileSystemMock
                 _fileSystem.Storage.GetOrAddFile(path);
             if (fileInfo != null)
             {
-                fileInfo.Decrypt();
+                if (fileInfo.Attributes.HasFlag(FileAttributes.Encrypted))
+                {
+                    fileInfo.Attributes &= ~FileAttributes.Encrypted;
+                    fileInfo.Decrypt();
+                }
             }
         }
 
@@ -168,7 +172,11 @@ public sealed partial class FileSystemMock
                 _fileSystem.Storage.GetOrAddFile(path);
             if (fileInfo != null)
             {
-                fileInfo.Encrypt();
+                if (!fileInfo.Attributes.HasFlag(FileAttributes.Encrypted))
+                {
+                    fileInfo.Attributes |= FileAttributes.Encrypted;
+                    fileInfo.Encrypt();
+                }
             }
         }
 
