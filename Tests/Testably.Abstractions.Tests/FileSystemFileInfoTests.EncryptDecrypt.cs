@@ -16,7 +16,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     public void Decrypt_EncryptedData_ShouldReturnOriginalText(
         string path, string contents)
     {
-        Skip.IfNot(Test.RunsOnWindows);
+        Skip.IfNot(Test.RunsOnWindows && FileSystem is FileSystemMock, "Encryption depends on the underlying device, if it is supported or not.");
 
         FileSystem.File.WriteAllText(path, contents);
 
@@ -55,7 +55,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     public void Encrypt_ShouldChangeData(
         string path, byte[] bytes)
     {
-        Skip.IfNot(Test.RunsOnWindows && FileSystem is FileSystemMock);
+        Skip.IfNot(Test.RunsOnWindows && FileSystem is FileSystemMock, "Encryption depends on the underlying device, if it is supported or not.");
 
         FileSystem.File.WriteAllBytes(path, bytes);
 
@@ -74,7 +74,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     public void Encrypt_Twice_ShouldIgnoreTheSecondTime(
         string path, string contents)
     {
-        Skip.IfNot(Test.RunsOnWindows);
+        Skip.IfNot(Test.RunsOnWindows && FileSystem is FileSystemMock, "Encryption depends on the underlying device, if it is supported or not.");
 
         FileSystem.File.WriteAllText(path, contents);
 
