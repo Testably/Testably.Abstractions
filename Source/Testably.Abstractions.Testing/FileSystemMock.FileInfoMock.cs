@@ -25,8 +25,6 @@ public sealed partial class FileSystemMock
         {
         }
 
-        #region IWritableFileInfo Members
-
         /// <inheritdoc cref="IFileSystem.IFileInfo.Directory" />
         public IFileSystem.IDirectoryInfo? Directory
             => DirectoryInfoMock.New(DirectoryName, FileSystem);
@@ -148,8 +146,6 @@ public sealed partial class FileSystemMock
             Drive?.ChangeUsedBytes(0 - _bytes.Length);
             _bytes = Array.Empty<byte>();
         }
-
-        #endregion
 
         [return: NotNullIfNotNull("path")]
         internal static FileInfoMock? New(string? path, FileSystemMock fileSystem)

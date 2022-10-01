@@ -301,11 +301,11 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLogicalDrives()" />
         public string[] GetLogicalDrives()
-            => throw new NotImplementedException();
+            => _fileSystem.DriveInfo.GetDrives().Select(x => x.Name).ToArray();
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetParent(string)" />
         public IFileSystem.IDirectoryInfo? GetParent(string path)
-            => throw new NotImplementedException();
+            => _fileSystem.DirectoryInfo.New(path).Parent;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.Move(string, string)" />
         public void Move(string sourceDirName, string destDirName)
@@ -450,7 +450,7 @@ public sealed partial class FileSystemMock
 
             IFileSystem.IDirectoryInfo? directory =
                 _fileSystem.Storage.GetOrAddDirectory(path);
-            return directory ?? throw new NotImplementedException();
+            return directory ?? throw new NotSupportedException("Internal error: directory could not be created!");
         }
 
         private static Func<Exception> DirectoryNotFoundException(string path)
