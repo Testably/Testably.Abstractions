@@ -10,9 +10,9 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     [Theory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(
-        nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
+        nameof(IFileSystem.IDirectoryInfo.GetDirectories))]
     public void
-        EnumerateDirectories_SearchOptionAllDirectories_ShouldReturnAllSubdirectories(
+        GetDirectories_SearchOptionAllDirectories_ShouldReturnAllSubdirectories(
             string path)
     {
         FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
@@ -23,7 +23,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         var baseDirectory = (IFileSystem.IDirectoryInfo)initialized[0];
 
         IFileSystem.IDirectoryInfo[] result = baseDirectory
-           .EnumerateDirectories("*", SearchOption.AllDirectories).ToArray();
+           .GetDirectories("*", SearchOption.AllDirectories);
 
         result.Length.Should().Be(3);
         result.Should().Contain(d => d.Name == "foo");
@@ -46,8 +46,8 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     [InlineData(false, "ab?c", "abc")]
     [InlineData(false, "ac", "abc")]
     [FileSystemTests.DirectoryInfo(
-        nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
-    public void EnumerateDirectories_SearchPattern_ShouldReturnExpectedValue(
+        nameof(IFileSystem.IDirectoryInfo.GetDirectories))]
+    public void GetDirectories_SearchPattern_ShouldReturnExpectedValue(
         bool expectToBeFound, string searchPattern, string subdirectoryName)
     {
         IFileSystem.IDirectoryInfo baseDirectory =
@@ -55,7 +55,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         baseDirectory.CreateSubdirectory(subdirectoryName);
 
         IFileSystem.IDirectoryInfo[] result = baseDirectory
-           .EnumerateDirectories(searchPattern).ToArray();
+           .GetDirectories(searchPattern);
 
         if (expectToBeFound)
         {
@@ -73,9 +73,9 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     [Theory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(
-        nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
+        nameof(IFileSystem.IDirectoryInfo.GetDirectories))]
     public void
-        EnumerateDirectories_WithEnumerationOptions_ShouldConsiderSetOptions(
+        GetDirectories_WithEnumerationOptions_ShouldConsiderSetOptions(
             string path)
     {
         IFileSystem.IDirectoryInfo baseDirectory =
@@ -84,14 +84,14 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         baseDirectory.CreateSubdirectory("bar");
 
         IFileSystem.IDirectoryInfo[] result = baseDirectory
-           .EnumerateDirectories("XYZ",
+           .GetDirectories("XYZ",
                 new EnumerationOptions
                 {
                     MatchCasing = MatchCasing.CaseInsensitive,
                     RecurseSubdirectories = true,
                     // Filename could start with a leading '.' indicating it as Hidden in Linux
                     AttributesToSkip = FileAttributes.System
-                }).ToArray();
+                });
 
         result.Length.Should().Be(1);
         result.Should().NotContain(d => d.Name == "foo");
@@ -103,8 +103,8 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     [Theory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(
-        nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
-    public void EnumerateDirectories_WithNewline_ShouldThrowArgumentException(
+        nameof(IFileSystem.IDirectoryInfo.GetDirectories))]
+    public void GetDirectories_WithNewline_ShouldThrowArgumentException(
         string path)
     {
         IFileSystem.IDirectoryInfo baseDirectory =
@@ -113,7 +113,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
         Exception? exception = Record.Exception(() =>
         {
-            _ = baseDirectory.EnumerateDirectories(searchPattern).FirstOrDefault();
+            _ = baseDirectory.GetDirectories(searchPattern).FirstOrDefault();
         });
 
         exception.Should().BeOfType<ArgumentException>();
@@ -122,9 +122,9 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     [Theory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(
-        nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
+        nameof(IFileSystem.IDirectoryInfo.GetDirectories))]
     public void
-        EnumerateDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
+        GetDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
             string path)
     {
         IFileSystem.IDirectoryInfo baseDirectory =
@@ -133,7 +133,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         baseDirectory.CreateSubdirectory("bar");
 
         IFileSystem.IDirectoryInfo[] result = baseDirectory
-           .EnumerateDirectories().ToArray();
+           .GetDirectories();
 
         result.Length.Should().Be(2);
         result.Should().Contain(d => d.Name == "foo");
@@ -144,8 +144,8 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     [Theory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(
-        nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
-    public void EnumerateDirectories_WithSearchPattern_ShouldReturnMatchingSubdirectory(
+        nameof(IFileSystem.IDirectoryInfo.GetDirectories))]
+    public void GetDirectories_WithSearchPattern_ShouldReturnMatchingSubdirectory(
         string path)
     {
         IFileSystem.IDirectoryInfo baseDirectory =
@@ -154,7 +154,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         baseDirectory.CreateSubdirectory("bar");
 
         IEnumerable<IFileSystem.IDirectoryInfo> result = baseDirectory
-           .EnumerateDirectories("foo");
+           .GetDirectories("foo");
 
         result.Should().ContainSingle(d => d.Name == "foo");
     }
@@ -162,9 +162,9 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     [Theory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(
-        nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
+        nameof(IFileSystem.IDirectoryInfo.GetDirectories))]
     public void
-        EnumerateDirectories_WithSearchPatternInSubdirectory_ShouldReturnMatchingSubdirectory(
+        GetDirectories_WithSearchPatternInSubdirectory_ShouldReturnMatchingSubdirectory(
             string path)
     {
         IFileSystem.IDirectoryInfo baseDirectory =
@@ -173,7 +173,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         baseDirectory.CreateSubdirectory("bar/xyz");
 
         IEnumerable<IFileSystem.IDirectoryInfo> result = baseDirectory
-           .EnumerateDirectories("xyz", SearchOption.AllDirectories);
+           .GetDirectories("xyz", SearchOption.AllDirectories);
 
         result.Count().Should().Be(2);
     }
