@@ -55,7 +55,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     public void Encrypt_ShouldChangeData(
         string path, byte[] bytes)
     {
-        Skip.IfNot(Test.RunsOnWindows || FileSystem is FileSystemMock);
+        Skip.IfNot(Test.RunsOnWindows && FileSystem is FileSystemMock);
 
         FileSystem.File.WriteAllBytes(path, bytes);
 
