@@ -61,7 +61,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Fact]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
-    [Trait("_", "TODO")]
     public void CreateDirectory_IllegalCharacters_ShouldThrowArgumentException()
     {
         var invalidChars = FileSystem.Path

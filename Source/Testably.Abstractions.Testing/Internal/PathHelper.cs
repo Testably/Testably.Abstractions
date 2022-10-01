@@ -67,6 +67,10 @@ internal static class PathHelper
 
         if (path.HasIllegalCharacters(fileSystem))
         {
+            if (Framework.IsNetFramework)
+            {
+                throw ExceptionFactory.PathHasIllegalCharacters(path);
+            }
             throw ExceptionFactory.PathHasIncorrectSyntax(
                 fileSystem.Path.Combine(fileSystem.Directory.GetCurrentDirectory(),
                     path));
