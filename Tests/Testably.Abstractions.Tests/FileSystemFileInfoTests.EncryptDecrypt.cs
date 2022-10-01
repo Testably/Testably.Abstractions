@@ -1,4 +1,6 @@
+#if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
+#endif
 
 namespace Testably.Abstractions.Tests;
 
