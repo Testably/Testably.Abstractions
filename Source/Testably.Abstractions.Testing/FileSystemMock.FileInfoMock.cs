@@ -12,10 +12,10 @@ namespace Testably.Abstractions.Testing;
 public sealed partial class FileSystemMock
 {
     /// <summary>
-    ///     A mocked file in the <see cref="InMemoryFileSystem" />.
+    ///     A mocked file in the <see cref="InMemoryStorage" />.
     /// </summary>
     private sealed class FileInfoMock : FileSystemInfoMock,
-        IInMemoryFileSystem.IFileInfoMock
+        IStorage.IFileInfoMock
     {
         private byte[] _bytes = Array.Empty<byte>();
 
@@ -126,23 +126,23 @@ public sealed partial class FileSystemMock
                                              bool ignoreMetadataErrors)
             => throw new NotImplementedException();
 
-        /// <inheritdoc cref="IInMemoryFileSystem.IFileInfoMock.AppendBytes(byte[])" />
+        /// <inheritdoc cref="IStorage.IFileInfoMock.AppendBytes(byte[])" />
         public void AppendBytes(byte[] bytes)
         {
             WriteBytes(_bytes.Concat(bytes).ToArray());
         }
 
-        /// <inheritdoc cref="IInMemoryFileSystem.IFileInfoMock.GetBytes()" />
+        /// <inheritdoc cref="IStorage.IFileInfoMock.GetBytes()" />
         public byte[] GetBytes() => _bytes;
 
-        /// <inheritdoc cref="IInMemoryFileSystem.IFileInfoMock.WriteBytes(byte[])" />
+        /// <inheritdoc cref="IStorage.IFileInfoMock.WriteBytes(byte[])" />
         public void WriteBytes(byte[] bytes)
         {
             Drive.ChangeUsedBytes(bytes.Length - _bytes.Length);
             _bytes = bytes;
         }
 
-        /// <inheritdoc cref="IInMemoryFileSystem.IFileInfoMock.ClearBytes()" />
+        /// <inheritdoc cref="IStorage.IFileInfoMock.ClearBytes()" />
         public void ClearBytes()
         {
             Drive.ChangeUsedBytes(0 - _bytes.Length);
@@ -165,6 +165,7 @@ public sealed partial class FileSystemMock
                 {
                     throw ExceptionFactory.PathHasNoLegalForm();
                 }
+
                 throw ExceptionFactory.PathIsEmpty(nameof(path));
             }
 
@@ -173,6 +174,7 @@ public sealed partial class FileSystemMock
             {
                 originalPath = originalPath.TrimEnd(' ');
             }
+
             string fullName = fileSystem.Path.GetFullPath(path).NormalizePath()
                .TrimOnWindows();
             return new FileInfoMock(fullName, originalPath, fileSystem);

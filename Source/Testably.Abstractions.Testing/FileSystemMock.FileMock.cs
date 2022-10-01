@@ -73,8 +73,8 @@ public sealed partial class FileSystemMock
         public void AppendAllText(string path, string? contents, Encoding encoding)
 
         {
-            IInMemoryFileSystem.IFileInfoMock? fileInfo =
-                _fileSystem.FileSystemContainer.GetOrAddFile(path);
+            IStorage.IFileInfoMock? fileInfo =
+                _fileSystem.Storage.GetOrAddFile(path);
             if (fileInfo != null && contents != null)
             {
                 using (fileInfo.RequestAccess(
@@ -146,7 +146,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.Delete(string)" />
         public void Delete(string path)
         {
-            if (!_fileSystem.FileSystemContainer.Delete(path))
+            if (!_fileSystem.Storage.Delete(path))
             {
                 throw ExceptionFactory.FileNotFound(
                     _fileSystem.Path.GetFullPath(path));
@@ -162,7 +162,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.Exists(string?)" />
         public bool Exists([NotNullWhen(true)] string? path)
-            => _fileSystem.FileSystemContainer.Exists(path);
+            => _fileSystem.Storage.Exists(path);
 
         /// <inheritdoc cref="IFileSystem.IFile.GetAttributes(string)" />
         public FileAttributes GetAttributes(string path)
@@ -236,8 +236,8 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllBytes(string)" />
         public byte[] ReadAllBytes(string path)
         {
-            IInMemoryFileSystem.IFileInfoMock? fileInfo =
-                _fileSystem.FileSystemContainer.GetFile(path);
+            IStorage.IFileInfoMock? fileInfo =
+                _fileSystem.Storage.GetFile(path);
             if (fileInfo != null)
             {
                 using (fileInfo.RequestAccess(
@@ -295,8 +295,8 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllText(string, Encoding)" />
         public string ReadAllText(string path, Encoding encoding)
         {
-            IInMemoryFileSystem.IFileInfoMock? fileInfo =
-                _fileSystem.FileSystemContainer.GetFile(path);
+            IStorage.IFileInfoMock? fileInfo =
+                _fileSystem.Storage.GetFile(path);
             if (fileInfo != null)
             {
                 using (fileInfo.RequestAccess(
@@ -383,8 +383,8 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.WriteAllBytes(string, byte[])" />
         public void WriteAllBytes(string path, byte[] bytes)
         {
-            IInMemoryFileSystem.IFileInfoMock? fileInfo =
-                _fileSystem.FileSystemContainer.GetOrAddFile(path);
+            IStorage.IFileInfoMock? fileInfo =
+                _fileSystem.Storage.GetOrAddFile(path);
             if (fileInfo != null)
             {
                 using (fileInfo.RequestAccess(
@@ -460,8 +460,8 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.WriteAllText(string, string?, Encoding)" />
         public void WriteAllText(string path, string? contents, Encoding encoding)
         {
-            IInMemoryFileSystem.IFileInfoMock? fileInfo =
-                _fileSystem.FileSystemContainer.GetOrAddFile(path);
+            IStorage.IFileInfoMock? fileInfo =
+                _fileSystem.Storage.GetOrAddFile(path);
             if (fileInfo != null && contents != null)
             {
                 using (fileInfo.RequestAccess(

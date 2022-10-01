@@ -22,7 +22,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.GetDrives()" />
         public IFileSystem.IDriveInfo[] GetDrives()
-            => _fileSystem.FileSystemContainer.GetDrives()
+            => _fileSystem.Storage.GetDrives()
                .Cast<IFileSystem.IDriveInfo>()
                .ToArray();
 

@@ -9,10 +9,10 @@ namespace Testably.Abstractions.Testing;
 public sealed partial class FileSystemMock
 {
     /// <summary>
-    ///     A mocked directory in the <see cref="InMemoryFileSystem" />.
+    ///     A mocked directory in the <see cref="InMemoryStorage" />.
     /// </summary>
     private sealed class DirectoryInfoMock : FileSystemInfoMock,
-        IInMemoryFileSystem.IDirectoryInfoMock
+        IStorage.IDirectoryInfoMock
     {
         internal DirectoryInfoMock(string fullName, string originalPath,
                                    FileSystemMock fileSystem)
@@ -45,13 +45,13 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Delete(bool)" />
         public void Delete(bool recursive)
         {
-            FileSystem.FileSystemContainer.Delete(FullName, recursive);
+            FileSystem.Storage.Delete(FullName, recursive);
             Refresh();
         }
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories()" />
         public IEnumerable<IFileSystem.IDirectoryInfo> EnumerateDirectories()
-            => FileSystem.FileSystemContainer.Enumerate<IFileSystem.IDirectoryInfo>(
+            => FileSystem.Storage.Enumerate<IFileSystem.IDirectoryInfo>(
                 FullName,
                 "*",
                 EnumerationOptionsHelper.Compatible,
@@ -60,7 +60,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories(string)" />
         public IEnumerable<IFileSystem.IDirectoryInfo>
             EnumerateDirectories(string searchPattern)
-            => FileSystem.FileSystemContainer.Enumerate<IFileSystem.IDirectoryInfo>(
+            => FileSystem.Storage.Enumerate<IFileSystem.IDirectoryInfo>(
                 FullName,
                 searchPattern,
                 EnumerationOptionsHelper.Compatible,
@@ -69,7 +69,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories(string, SearchOption)" />
         public IEnumerable<IFileSystem.IDirectoryInfo> EnumerateDirectories(
             string searchPattern, SearchOption searchOption)
-            => FileSystem.FileSystemContainer.Enumerate<IFileSystem.IDirectoryInfo>(
+            => FileSystem.Storage.Enumerate<IFileSystem.IDirectoryInfo>(
                 FullName,
                 searchPattern,
                 EnumerationOptionsHelper.FromSearchOption(searchOption),
@@ -80,7 +80,7 @@ public sealed partial class FileSystemMock
         public IEnumerable<IFileSystem.IDirectoryInfo> EnumerateDirectories(
             string searchPattern,
             EnumerationOptions enumerationOptions)
-            => FileSystem.FileSystemContainer.Enumerate<IFileSystem.IDirectoryInfo>(
+            => FileSystem.Storage.Enumerate<IFileSystem.IDirectoryInfo>(
                 FullName,
                 searchPattern,
                 enumerationOptions,
@@ -210,6 +210,7 @@ public sealed partial class FileSystemMock
                 {
                     throw ExceptionFactory.PathHasNoLegalForm();
                 }
+
                 throw ExceptionFactory.PathIsEmpty(nameof(path));
             }
 
@@ -234,6 +235,7 @@ public sealed partial class FileSystemMock
                 {
                     throw ExceptionFactory.PathHasNoLegalForm();
                 }
+
                 throw ExceptionFactory.PathIsEmpty(nameof(path));
             }
 
@@ -251,11 +253,13 @@ public sealed partial class FileSystemMock
             {
                 return child.Root;
             }
+
             if (Framework.IsNetFramework)
             {
                 return new DirectoryInfoMock(fileSystem.Path.GetFullPath(parentPath),
                     fileSystem.Path.GetFileName(parentPath), fileSystem);
             }
+
             return New(parentPath, parentPath, fileSystem);
         }
 

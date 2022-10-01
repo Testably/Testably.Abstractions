@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Testing;
 public sealed partial class FileSystemMock
 {
     /// <summary>
-    ///     A mocked file stream in the <see cref="InMemoryFileSystem" />.
+    ///     A mocked file stream in the <see cref="InMemoryStorage" />.
     /// </summary>
     private sealed class FileStreamMock : FileSystemStream
     {
@@ -22,7 +22,7 @@ public sealed partial class FileSystemMock
 
         private readonly FileAccess _access;
         private readonly IDisposable _accessLock;
-        private readonly IInMemoryFileSystem.IFileInfoMock _file;
+        private readonly IStorage.IFileInfoMock _file;
         private readonly FileSystemMock _fileSystem;
         private bool _isDisposed;
         private readonly FileMode _mode;
@@ -60,8 +60,8 @@ public sealed partial class FileSystemMock
             _ = bufferSize;
             _options = options;
 
-            IInMemoryFileSystem.IFileInfoMock? file =
-                _fileSystem.FileSystemContainer.GetFile(Name);
+            IStorage.IFileInfoMock? file =
+                _fileSystem.Storage.GetFile(Name);
             if (file == null)
             {
                 if (_mode.Equals(FileMode.Open) ||
@@ -71,7 +71,7 @@ public sealed partial class FileSystemMock
                         _fileSystem.Path.GetFullPath(Name));
                 }
 
-                file = _fileSystem.FileSystemContainer.GetOrAddFile(Name);
+                file = _fileSystem.Storage.GetOrAddFile(Name);
                 if (file == null)
                 {
                     if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -161,7 +161,7 @@ public sealed partial class FileSystemMock
         {
             if (_options.HasFlag(FileOptions.DeleteOnClose))
             {
-                _fileSystem.FileSystemContainer.Delete(Name);
+                _fileSystem.Storage.Delete(Name);
             }
         }
 
