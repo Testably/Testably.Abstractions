@@ -1,3 +1,4 @@
+using Testably.Abstractions.Tests.Mock;
 using Testably.Abstractions.Tests.TestHelpers.Traits;
 
 namespace Testably.Abstractions.Tests;
@@ -74,6 +75,16 @@ public static class FileSystemTests
     {
         public ExtensionPoint() : base(nameof(IFileSystem),
             nameof(IFileSystem.IFileSystemExtensionPoint), null)
+        {
+        }
+    }
+    /// <summary>
+    ///     Tests for methods in <see cref="IFileSystem.IFile" /> in <see cref="IFileSystem" />.
+    /// </summary>
+    public class CallbackHandler : TestabilityTraitAttribute
+    {
+        public CallbackHandler(string? method) : base(nameof(IFileSystem),
+            nameof(FileSystemMock.ICallbackHandler), method)
         {
         }
     }

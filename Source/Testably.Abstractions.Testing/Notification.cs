@@ -30,10 +30,11 @@ public static class Notification
         }
 
         public IAwaitableCallback<TValue> RegisterCallback(
-            Action<TValue>? callback)
+            Action<TValue>? callback,
+            Func<TValue, bool>? predicate = null)
         {
             Guid key = Guid.NewGuid();
-            CallbackWaiter callbackWaiter = new(this, key, callback);
+            CallbackWaiter callbackWaiter = new(this, key, callback, predicate);
             _callbackWaiters.TryAdd(key, callbackWaiter);
             return callbackWaiter;
         }
@@ -48,19 +49,22 @@ public static class Notification
         private sealed class CallbackWaiter : IAwaitableCallback<TValue>
         {
             private readonly Action<TValue>? _callback;
+            private readonly Func<TValue, bool> _predicate;
             private int _count;
             private readonly NotificationFactory<TValue> _factory;
             private Func<TValue, bool>? _filter;
             private readonly Guid _key;
-            private ManualResetEventSlim? _reset;
+            private ManualResetEventSlim _reset;
 
-            public CallbackWaiter(
-                NotificationFactory<TValue> factory,
-                Guid key, Action<TValue>? callback)
+            public CallbackWaiter(NotificationFactory<TValue> factory,
+                                  Guid key, Action<TValue>? callback,
+                                  Func<TValue, bool>? predicate)
             {
                 _factory = factory;
                 _key = key;
                 _callback = callback;
+                _predicate = predicate ?? (_ => true);
+                _reset = new ManualResetEventSlim();
             }
 
             #region IAwaitableCallback<TValue> Members
@@ -71,7 +75,6 @@ public static class Notification
             {
                 _count = count;
                 _filter = filter;
-                _reset ??= new ManualResetEventSlim();
                 return _reset.Wait(timeout);
             }
 
@@ -89,6 +92,10 @@ public static class Notification
             /// <param name="value"></param>
             internal void Invoke(TValue value)
             {
+                if (!_predicate.Invoke(value))
+                {
+                    return;
+                }
                 _callback?.Invoke(value);
                 if (_filter?.Invoke(value) != false &&
                     Interlocked.Decrement(ref _count) <= 0)
@@ -104,7 +111,8 @@ public static class Notification
         void InvokeCallbacks(TValue value);
 
         IAwaitableCallback<TValue> RegisterCallback(
-            Action<TValue>? callback);
+            Action<TValue>? callback,
+            Func<TValue, bool>? predicate = null);
     }
 
     /// <summary>

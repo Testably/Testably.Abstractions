@@ -15,7 +15,8 @@ public sealed partial class FileSystemMock
         ///     <para />
         ///     This allows e.g. to throw custom exceptions instead.
         /// </summary>
-        ICallbackHandler ChangeOccurring(Action<FileSystemChange> callback);
+        ICallbackHandler ChangeOccurring(Action<FileSystemChange> callback,
+                                         Func<FileSystemChange, bool>? predicate = null);
 
         /// <summary>
         ///     Callback executed when any change in the <see cref="FileSystemMock" /> occurred.
@@ -23,7 +24,8 @@ public sealed partial class FileSystemMock
         ///     Returns an <see cref="IDisposable" /> to un-register the callback.
         /// </summary>
         Notification.IAwaitableCallback<FileSystemChange> ChangeOccurred(
-            Action<FileSystemChange>? callback = null);
+            Action<FileSystemChange>? callback = null,
+        Func<FileSystemChange, bool>? predicate = null);
 
         /// <summary>
         ///     Describes the change in the <see cref="FileSystemMock" />.
@@ -51,6 +53,12 @@ public sealed partial class FileSystemMock
                 Path = path;
                 Type = type;
                 NotifyFilters = notifyFilters;
+            }
+
+            /// <inheritdoc cref="object.ToString()" />
+            public override string ToString()
+            {
+                return $"{Type} {Path} [{NotifyFilters}]";
             }
         }
 

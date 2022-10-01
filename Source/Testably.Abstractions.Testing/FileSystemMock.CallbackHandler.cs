@@ -16,18 +16,22 @@ public sealed partial class FileSystemMock
 
         #region ICallbackHandler Members
 
-        /// <inheritdoc cref="FileSystemMock.ICallbackHandler.ChangeOccurring(Action{ICallbackHandler.FileSystemChange})" />
+        /// <inheritdoc
+        ///     cref="FileSystemMock.ICallbackHandler.ChangeOccurring(Action{ICallbackHandler.FileSystemChange}, Func{ICallbackHandler.FileSystemChange,bool})" />
         public ICallbackHandler ChangeOccurring(
-            Action<FileSystemChange> callback)
+            Action<FileSystemChange> callback,
+            Func<FileSystemChange, bool>? predicate = null)
         {
-            _changeOccurringCallbacks.RegisterCallback(callback);
+            _changeOccurringCallbacks.RegisterCallback(callback, predicate);
             return this;
         }
 
-        /// <inheritdoc cref="FileSystemMock.ICallbackHandler.ChangeOccurred(Action{ICallbackHandler.FileSystemChange})" />
+        /// <inheritdoc
+        ///     cref="FileSystemMock.ICallbackHandler.ChangeOccurred(Action{ICallbackHandler.FileSystemChange}, Func{ICallbackHandler.FileSystemChange,bool})" />
         public Notification.IAwaitableCallback<FileSystemChange> ChangeOccurred(
-            Action<FileSystemChange>? callback = null)
-            => _changeOccurredCallbacks.RegisterCallback(callback);
+            Action<FileSystemChange>? callback = null,
+            Func<FileSystemChange, bool>? predicate = null)
+            => _changeOccurredCallbacks.RegisterCallback(callback, predicate);
 
         #endregion
 

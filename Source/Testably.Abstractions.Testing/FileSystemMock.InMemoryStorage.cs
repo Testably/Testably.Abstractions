@@ -175,14 +175,21 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="FileSystemMock.IStorage.GetOrAddDirectory(string)" />
         public IStorage.IDirectoryInfoMock? GetOrAddDirectory(string path)
         {
-            return _files.GetOrAdd(
+            ICallbackHandler.FileSystemChange? fileSystemChange = null;
+            IStorage.IDirectoryInfoMock? directory = _files.GetOrAdd(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
                 _ =>
                 {
                     FileSystemInfoMock directoryMock = CreateDirectoryInternal(path);
                     directoryMock.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
+                    fileSystemChange = _fileSystem.Callback.InvokeChangeOccurring(
+                        directoryMock.FullName,
+                        ICallbackHandler.ChangeType.Created,
+                        NotifyFilters.CreationTime);
                     return directoryMock;
                 }) as IStorage.IDirectoryInfoMock;
+            _fileSystem.Callback.InvokeChangeOccurred(fileSystemChange);
+            return directory;
         }
 
         /// <inheritdoc cref="FileSystemMock.IStorage.GetOrAddFile(string)" />
@@ -241,7 +248,8 @@ public sealed partial class FileSystemMock
                     key,
                     _ =>
                     {
-                        fileSystemChange = _fileSystem.Callback.InvokeChangeOccurring(parentPath,
+                        fileSystemChange = _fileSystem.Callback.InvokeChangeOccurring(
+                            parentPath,
                             ICallbackHandler.ChangeType.Created,
                             NotifyFilters.CreationTime);
                         return DirectoryInfoMock.New(parentPath, _fileSystem);
