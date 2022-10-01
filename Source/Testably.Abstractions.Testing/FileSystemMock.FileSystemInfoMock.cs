@@ -267,7 +267,7 @@ public sealed partial class FileSystemMock
 
         internal FileSystemInfoMock AdjustTimes(TimeAdjustments timeAdjustments)
         {
-            ICallbackHandler.FileSystemChange? fileSystemChange = null;
+            CallbackChange? fileSystemChange = null;
             if (HasNotifyFilters(timeAdjustments, out NotifyFilters notifyFilters))
             {
                 fileSystemChange = FileSystem.Callback.InvokeChangeOccurring(FullName,

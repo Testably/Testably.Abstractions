@@ -24,7 +24,7 @@ public class FileSystemCallbackHandlerTests
     public void CreateDirectory_ShouldTriggerNotification(string path)
     {
         string? receivedPath = null;
-        Notification.IAwaitableCallback<FileSystemMock.ICallbackHandler.FileSystemChange>
+        Notification.IAwaitableCallback<FileSystemMock.CallbackChange>
             awaitable = FileSystem.On.ChangeOccurred(c => receivedPath = c.Path,
                 c => c.Type == FileSystemMock.CallbackChangeType.DirectoryCreated);
 
@@ -43,7 +43,7 @@ public class FileSystemCallbackHandlerTests
         string path, Exception exceptionToThrow)
     {
         string? receivedPath = null;
-        Notification.IAwaitableCallback<FileSystemMock.ICallbackHandler.FileSystemChange>
+        Notification.IAwaitableCallback<FileSystemMock.CallbackChange>
             awaitable = FileSystem.On
                .ChangeOccurring(_ => throw exceptionToThrow)
                .ChangeOccurred(c => receivedPath = c.Path);
@@ -69,7 +69,7 @@ public class FileSystemCallbackHandlerTests
     {
         string path = FileSystem.Path.Combine(path1, path2, path3);
         int eventCount = 0;
-        Notification.IAwaitableCallback<FileSystemMock.ICallbackHandler.FileSystemChange>
+        Notification.IAwaitableCallback<FileSystemMock.CallbackChange>
             awaitable = FileSystem.On.ChangeOccurred(c =>
                 {
                     _testOutputHelper.WriteLine($"Received event {c}");

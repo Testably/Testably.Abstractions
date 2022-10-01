@@ -175,7 +175,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="FileSystemMock.IStorage.GetOrAddDirectory(string)" />
         public IStorage.IDirectoryInfoMock? GetOrAddDirectory(string path)
         {
-            ICallbackHandler.FileSystemChange? fileSystemChange = null;
+            CallbackChange? fileSystemChange = null;
             IStorage.IDirectoryInfoMock? directory = _files.GetOrAdd(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
                 _ =>
@@ -195,7 +195,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="FileSystemMock.IStorage.GetOrAddFile(string)" />
         public IStorage.IFileInfoMock? GetOrAddFile(string path)
         {
-            ICallbackHandler.FileSystemChange? fileSystemChange = null;
+            CallbackChange? fileSystemChange = null;
             var file = _files.GetOrAdd(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
                 _ =>
@@ -255,7 +255,7 @@ public sealed partial class FileSystemMock
             {
                 string key = _fileSystem.Path.GetFullPath(parentPath)
                    .NormalizeAndTrimPath(_fileSystem);
-                ICallbackHandler.FileSystemChange? fileSystemChange = null;
+                CallbackChange? fileSystemChange = null;
                 FileSystemInfoMock directory = _files.AddOrUpdate(
                     key,
                     _ =>
