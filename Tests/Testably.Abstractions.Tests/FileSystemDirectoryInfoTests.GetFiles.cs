@@ -75,13 +75,11 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     }
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-    [Theory]
-    [AutoData]
+    [Fact]
     [FileSystemTests.DirectoryInfo(
         nameof(IFileSystem.IDirectoryInfo.GetFiles))]
     public void
-        GetFiles_WithEnumerationOptions_ShouldConsiderSetOptions(
-            string path)
+        GetFiles_WithEnumerationOptions_ShouldConsiderSetOptions()
     {
         IFileSystem.IDirectoryInfo baseDirectory =
             FileSystem.Initialize()
@@ -126,13 +124,11 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         exception.Should().BeOfType<ArgumentException>();
     }
 
-    [Theory]
-    [AutoData]
+    [Fact]
     [FileSystemTests.DirectoryInfo(
         nameof(IFileSystem.IDirectoryInfo.GetFiles))]
     public void
-        GetFiles_WithoutSearchString_ShouldReturnAllDirectFiles(
-            string path)
+        GetFiles_WithoutSearchString_ShouldReturnAllDirectFiles()
     {
         IFileSystem.IDirectoryInfo baseDirectory =
             FileSystem.Initialize()
@@ -151,12 +147,10 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         result.Should().Contain(d => d.Name == "bar");
     }
 
-    [Theory]
-    [AutoData]
+    [Fact]
     [FileSystemTests.DirectoryInfo(
         nameof(IFileSystem.IDirectoryInfo.GetFiles))]
-    public void GetFiles_WithSearchPattern_ShouldReturnMatchingFiles(
-        string path)
+    public void GetFiles_WithSearchPattern_ShouldReturnMatchingFiles()
     {
         IFileSystem.IDirectoryInfo baseDirectory =
             FileSystem.Initialize()
@@ -171,13 +165,11 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         result.Count().Should().Be(1);
     }
 
-    [Theory]
-    [AutoData]
+    [Fact]
     [FileSystemTests.DirectoryInfo(
         nameof(IFileSystem.IDirectoryInfo.GetFiles))]
     public void
-        GetFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFiles(
-            string path)
+        GetFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFiles()
     {
         IFileSystem.IDirectoryInfo baseDirectory =
             FileSystem.Initialize()
