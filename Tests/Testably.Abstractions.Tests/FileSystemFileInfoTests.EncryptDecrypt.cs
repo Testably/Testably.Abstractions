@@ -1,3 +1,5 @@
+using System.Runtime.Versioning;
+
 namespace Testably.Abstractions.Tests;
 
 public abstract partial class FileSystemFileInfoTests<TFileSystem>
@@ -6,6 +8,9 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Decrypt))]
+#if NET6_0_OR_GREATER
+    [SupportedOSPlatform("windows")]
+#endif
     public void Decrypt_EncryptedData_ShouldReturnOriginalText(
         string path, string contents)
     {
@@ -23,6 +28,9 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Decrypt))]
+#if NET6_0_OR_GREATER
+    [SupportedOSPlatform("windows")]
+#endif
     public void Decrypt_UnencryptedData_ShouldReturnOriginalText(
         string path, string contents)
     {
@@ -39,6 +47,9 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Encrypt))]
+#if NET6_0_OR_GREATER
+    [SupportedOSPlatform("windows")]
+#endif
     public void Encrypt_ShouldChangeData(
         string path, byte[] bytes)
     {
@@ -55,6 +66,9 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Encrypt))]
+#if NET6_0_OR_GREATER
+    [SupportedOSPlatform("windows")]
+#endif
     public void Encrypt_Twice_ShouldIgnoreTheSecondTime(
         string path, string contents)
     {

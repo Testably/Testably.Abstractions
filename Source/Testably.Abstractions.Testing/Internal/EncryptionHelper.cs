@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Testably.Abstractions.Testing.Internal;
 
-internal class EncryptionHelper
+internal static class EncryptionHelper
 {
     /// <summary>
     ///     Encrypts the <paramref name="plainBytes" /> with a fixed encryption algorithm.
@@ -34,7 +34,7 @@ internal class EncryptionHelper
     private static Aes CreateAlgorithm()
     {
         byte[] bytes = Encoding.UTF8.GetBytes(
-            "N`2_Y7{A[B<6v6@R5TW#2cD?dP,AQ -7G'*R}`3{Zo");
+            "THIS IS ONLY A DUMMY ENCRYPTION FOR TESTING PURPOSES!");
 
         using (SHA256? sha256Hash = SHA256.Create())
         {
