@@ -3,14 +3,14 @@ using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Tests;
 
-public class FileSystemCallbackHandlerTests
+public class FileSystemMockNotificationTests
 {
     #region Test Setup
 
     public FileSystemMock FileSystem { get; }
     private readonly ITestOutputHelper _testOutputHelper;
 
-    public FileSystemCallbackHandlerTests(ITestOutputHelper testOutputHelper)
+    public FileSystemMockNotificationTests(ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
         FileSystem = new FileSystemMock();
@@ -20,32 +20,7 @@ public class FileSystemCallbackHandlerTests
 
     [Theory]
     [AutoData]
-    [FileSystemTests.CallbackHandler(
-        nameof(FileSystemMock.ChangeTypes.Created))]
-    public void CreateDirectory_CustomException_ShouldOnlyTriggerChangeOccurring(
-        string path, Exception exceptionToThrow)
-    {
-        string? receivedPath = null;
-        FileSystem.Intercept.Change(_ => throw exceptionToThrow);
-        Exception? exception = FileSystem.Notify
-           .OnChange(c => receivedPath = c.Path)
-           .Execute(() =>
-            {
-                return Record.Exception(() =>
-                {
-                    FileSystem.Directory.CreateDirectory(path);
-                });
-            })
-           .Wait(timeout: 50);
-
-        exception.Should().Be(exceptionToThrow);
-        receivedPath.Should().BeNull();
-    }
-
-    [Theory]
-    [AutoData]
-    [FileSystemTests.CallbackHandler(
-        nameof(FileSystemMock.ChangeTypes.Created))]
+    [FileSystemTests.Notify]
     public void
         CreateDirectory_WithParentDirectories_ShouldTriggerNotificationForEachDirectory(
             string path1, string path2, string path3)
@@ -69,8 +44,7 @@ public class FileSystemCallbackHandlerTests
 
     [Theory]
     [MemberData(nameof(NotificationTriggeringMethods))]
-    [FileSystemTests.CallbackHandler(
-        nameof(FileSystemMock.ChangeTypes.Created))]
+    [FileSystemTests.Notify]
     public void ExecuteCallback_ShouldTriggerNotification(
         Action<IFileSystem, string>? initialization,
         Action<IFileSystem, string> callback,
