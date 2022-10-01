@@ -12,13 +12,9 @@ internal static class PathHelper
     /// <summary>
     ///     Determines whether the given path contains illegal characters.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     internal static bool HasIllegalCharacters(this string path, IFileSystem fileSystem)
     {
-        if (path == null)
-        {
-            throw new ArgumentNullException(nameof(path));
-        }
-
         char[] invalidPathChars = fileSystem.Path.GetInvalidPathChars();
 
         if (path.IndexOfAny(invalidPathChars) >= 0)
@@ -26,7 +22,12 @@ internal static class PathHelper
             return true;
         }
 
-        return path.IndexOfAny(AdditionalInvalidPathChars) >= 0;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            return path.IndexOfAny(AdditionalInvalidPathChars) >= 0;
+        }
+
+        return false;
     }
 
     internal static string
@@ -63,8 +64,20 @@ internal static class PathHelper
         {
             throw ExceptionFactory.PathHasIllegalCharacters(path);
         }
+
+        if (path.HasIllegalCharacters(fileSystem))
+        {
+            if (Framework.IsNetFramework)
+            {
+                throw ExceptionFactory.PathHasIllegalCharacters(path);
+            }
+            throw ExceptionFactory.PathHasIncorrectSyntax(
+                fileSystem.Path.Combine(fileSystem.Directory.GetCurrentDirectory(),
+                    path));
+        }
     }
 
+    [ExcludeFromCodeCoverage]
     internal static string TrimOnWindows(this string path)
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

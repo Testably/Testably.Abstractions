@@ -23,7 +23,7 @@ public sealed partial class FileSystemMock
             }
 
             return System.IO.Path.GetFullPath(System.IO.Path.Combine(
-                _fileSystem.FileSystemContainer.CurrentDirectory,
+                _fileSystem.Storage.CurrentDirectory,
                 path));
         }
     }

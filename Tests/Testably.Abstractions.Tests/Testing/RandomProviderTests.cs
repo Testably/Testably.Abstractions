@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Testably.Abstractions.Tests.Testing;
 
@@ -107,14 +108,32 @@ public class RandomProviderTests
     [Theory]
     [AutoData]
     [Trait(nameof(Testing), nameof(RandomProvider))]
+    public void GenerateRandom_Next_WithoutGenerator_ShouldReturnRandomValues(int seed)
+    {
+        List<int> results = new();
+        RandomSystemMock.IRandomProvider randomProvider =
+            RandomProvider.Generate();
+
+        IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+        for (int i = 0; i < 10; i++)
+        {
+            results.Add(random.Next());
+        }
+
+        results.Should().OnlyHaveUniqueItems();
+    }
+
+    [Theory]
+    [AutoData]
+    [Trait(nameof(Testing), nameof(RandomProvider))]
     public void GenerateRandom_Next_WithMaxValue_ShouldReturnSpecifiedValue(
         int seed, int value)
     {
-        int maxValue = 10;
+        int maxValue = value - 1;
         List<int> results = new();
         RandomSystemMock.IRandomProvider randomProvider =
             RandomProvider.Generate(intGenerator: value);
-        int expectedValue = Math.Min(value, maxValue - 1);
+        int expectedValue = maxValue - 1;
 
         IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
         for (int i = 0; i < 100; i++)
@@ -128,15 +147,36 @@ public class RandomProviderTests
     [Theory]
     [AutoData]
     [Trait(nameof(Testing), nameof(RandomProvider))]
-    public void GenerateRandom_Next_WithMinAndMaxValue_ShouldReturnSpecifiedValue(
+    public void GenerateRandom_Next_WithMinAndMaxValue_Smaller_ShouldReturnSpecifiedValue(
         int seed, int value)
     {
-        int minValue = 10;
-        int maxValue = 20;
+        int minValue = value + 1;
+        int maxValue = minValue + 10;
         List<int> results = new();
         RandomSystemMock.IRandomProvider randomProvider =
             RandomProvider.Generate(intGenerator: value);
-        int expectedValue = Math.Max(Math.Min(value, maxValue - 1), minValue);
+
+        IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+        for (int i = 0; i < 100; i++)
+        {
+            results.Add(random.Next(minValue, maxValue));
+        }
+
+        results.Should().AllBeEquivalentTo(minValue);
+    }
+
+    [Theory]
+    [AutoData]
+    [Trait(nameof(Testing), nameof(RandomProvider))]
+    public void GenerateRandom_Next_WithMinAndMaxValue_Larger_ShouldReturnSpecifiedValue(
+        int seed, int value)
+    {
+        int minValue = value - 10;
+        int maxValue = value - 1;
+        List<int> results = new();
+        RandomSystemMock.IRandomProvider randomProvider =
+            RandomProvider.Generate(intGenerator: value);
+        int expectedValue = maxValue - 1;
 
         IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
         for (int i = 0; i < 100; i++)
@@ -168,6 +208,48 @@ public class RandomProviderTests
         results.Should().AllBeEquivalentTo(value);
     }
 
+    [Theory]
+    [AutoData]
+    [Trait(nameof(Testing), nameof(RandomProvider))]
+    public void
+        GenerateRandom_NextBytes_WithSmallerBuffer_ShouldReturnPartlyInitializedBytes(
+            int seed, byte[] value)
+    {
+        List<byte[]> results = new();
+        RandomSystemMock.IRandomProvider randomProvider =
+            RandomProvider.Generate(byteGenerator: value);
+
+        IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+        for (int i = 0; i < 100; i++)
+        {
+            byte[] buffer = new byte[value.Length + 1];
+            random.NextBytes(buffer);
+            results.Add(buffer);
+        }
+
+        results.Should().AllBeEquivalentTo(value.Concat(new[] { (byte)0 }));
+    }
+
+    [Theory]
+    [AutoData]
+    [Trait(nameof(Testing), nameof(RandomProvider))]
+    public void GenerateRandom_NextBytes_WithoutGenerator_ShouldReturnRandomValues(
+        int seed)
+    {
+        List<byte[]> results = new();
+        RandomSystemMock.IRandomProvider randomProvider = RandomProvider.Generate();
+
+        IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+        for (int i = 0; i < 10; i++)
+        {
+            byte[] buffer = new byte[10];
+            random.NextBytes(buffer);
+            results.Add(buffer);
+        }
+
+        results.Should().OnlyHaveUniqueItems();
+    }
+
 #if FEATURE_SPAN
     [Theory]
     [AutoData]
@@ -188,6 +270,48 @@ public class RandomProviderTests
         }
 
         results.Should().AllBeEquivalentTo(value);
+    }
+
+    [Theory]
+    [AutoData]
+    [Trait(nameof(Testing), nameof(RandomProvider))]
+    public void
+        GenerateRandom_NextBytes_Span_WithSmallerBuffer_ShouldReturnPartlyInitializedBytes(
+            int seed, byte[] value)
+    {
+        List<byte[]> results = new();
+        RandomSystemMock.IRandomProvider randomProvider =
+            RandomProvider.Generate(byteGenerator: value);
+
+        IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+        for (int i = 0; i < 100; i++)
+        {
+            byte[] buffer = new byte[value.Length + 1];
+            random.NextBytes(buffer.AsSpan());
+            results.Add(buffer);
+        }
+
+        results.Should().AllBeEquivalentTo(value.Concat(new[] { (byte)0 }));
+    }
+
+    [Theory]
+    [AutoData]
+    [Trait(nameof(Testing), nameof(RandomProvider))]
+    public void GenerateRandom_NextBytes_Span_WithoutGenerator_ShouldReturnRandomValues(
+        int seed)
+    {
+        List<byte[]> results = new();
+        RandomSystemMock.IRandomProvider randomProvider = RandomProvider.Generate();
+
+        IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+        for (int i = 0; i < 10; i++)
+        {
+            byte[] buffer = new byte[10];
+            random.NextBytes(buffer.AsSpan());
+            results.Add(buffer);
+        }
+
+        results.Should().OnlyHaveUniqueItems();
     }
 #endif
 
@@ -210,6 +334,24 @@ public class RandomProviderTests
         results.Should().AllBeEquivalentTo(value);
     }
 
+    [Theory]
+    [AutoData]
+    [Trait(nameof(Testing), nameof(RandomProvider))]
+    public void GenerateRandom_NextDouble_WithoutGenerator_ShouldReturnRandomValues(int seed)
+    {
+        List<double> results = new();
+        RandomSystemMock.IRandomProvider randomProvider =
+            RandomProvider.Generate();
+
+        IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+        for (int i = 0; i < 10; i++)
+        {
+            results.Add(random.NextDouble());
+        }
+
+        results.Should().OnlyHaveUniqueItems();
+    }
+
 #if FEATURE_RANDOM_ADVANCED
     [Theory]
     [AutoData]
@@ -228,6 +370,24 @@ public class RandomProviderTests
         }
 
         results.Should().AllBeEquivalentTo(value);
+    }
+
+    [Theory]
+    [AutoData]
+    [Trait(nameof(Testing), nameof(RandomProvider))]
+    public void GenerateRandom_NextSingle_WithoutGenerator_ShouldReturnRandomValues(int seed)
+    {
+        List<float> results = new();
+        RandomSystemMock.IRandomProvider randomProvider =
+            RandomProvider.Generate();
+
+        IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+        for (int i = 0; i < 10; i++)
+        {
+            results.Add(random.NextSingle());
+        }
+
+        results.Should().OnlyHaveUniqueItems();
     }
 #endif
 
@@ -256,11 +416,11 @@ public class RandomProviderTests
     public void GenerateRandom_NextInt64_WithMaxValue_ShouldReturnSpecifiedValue(
         int seed, long value)
     {
-        int maxValue = 10;
+        long maxValue = value - 1;
         List<long> results = new();
         RandomSystemMock.IRandomProvider randomProvider =
             RandomProvider.Generate(longGenerator: value);
-        long expectedValue = Math.Min(value, maxValue - 1);
+        long expectedValue = maxValue - 1;
 
         IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
         for (int i = 0; i < 100; i++)
@@ -274,15 +434,15 @@ public class RandomProviderTests
     [Theory]
     [AutoData]
     [Trait(nameof(Testing), nameof(RandomProvider))]
-    public void GenerateRandom_NextInt64_WithMinAndMaxValue_ShouldReturnSpecifiedValue(
+    public void GenerateRandom_NextInt64_WithMinAndMaxValue_Smaller_ShouldReturnSpecifiedValue(
         int seed, long value)
     {
-        long minValue = 10;
-        long maxValue = 20;
+        long minValue = value + 1;
+        long maxValue = minValue + 10;
         List<long> results = new();
         RandomSystemMock.IRandomProvider randomProvider =
             RandomProvider.Generate(longGenerator: value);
-        long expectedValue = Math.Max(Math.Min(value, maxValue - 1), minValue);
+        long expectedValue = minValue;
 
         IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
         for (int i = 0; i < 100; i++)
@@ -291,6 +451,46 @@ public class RandomProviderTests
         }
 
         results.Should().AllBeEquivalentTo(expectedValue);
+    }
+
+    [Theory]
+    [AutoData]
+    [Trait(nameof(Testing), nameof(RandomProvider))]
+    public void GenerateRandom_NextInt64_WithMinAndMaxValue_Larger_ShouldReturnSpecifiedValue(
+        int seed, long value)
+    {
+        long minValue = value - 10;
+        long maxValue = value - 1;
+        List<long> results = new();
+        RandomSystemMock.IRandomProvider randomProvider =
+            RandomProvider.Generate(longGenerator: value);
+        long expectedValue = maxValue - 1;
+
+        IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+        for (int i = 0; i < 100; i++)
+        {
+            results.Add(random.NextInt64(minValue, maxValue));
+        }
+
+        results.Should().AllBeEquivalentTo(expectedValue);
+    }
+
+    [Theory]
+    [AutoData]
+    [Trait(nameof(Testing), nameof(RandomProvider))]
+    public void GenerateRandom_NextInt64_WithoutGenerator_ShouldReturnRandomValues(int seed)
+    {
+        List<long> results = new();
+        RandomSystemMock.IRandomProvider randomProvider =
+            RandomProvider.Generate();
+
+        IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+        for (int i = 0; i < 10; i++)
+        {
+            results.Add(random.NextInt64());
+        }
+
+        results.Should().OnlyHaveUniqueItems();
     }
 #endif
 }

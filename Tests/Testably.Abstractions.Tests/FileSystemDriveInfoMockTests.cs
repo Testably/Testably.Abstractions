@@ -20,6 +20,19 @@ public class FileSystemDriveInfoMockTests
     [Theory]
     [AutoData]
     [FileSystemTests.DriveInfo(nameof(FileSystemMock.IDriveInfoMock.AvailableFreeSpace))]
+    public void AvailableFreeSpace_CannotGetNegative(long size)
+    {
+        FileSystem.WithDrive(d => d.SetTotalSize(size));
+        IFileSystem.IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
+
+        FileSystem.WithDrive(d => d.ChangeUsedBytes(-1));
+
+        drive.AvailableFreeSpace.Should().Be(size);
+    }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.DriveInfo(nameof(FileSystemMock.IDriveInfoMock.AvailableFreeSpace))]
     public void AvailableFreeSpace_ShouldBeSetTotalSize(long size)
     {
         FileSystem.WithDrive(d => d.SetTotalSize(size));
@@ -44,6 +57,27 @@ public class FileSystemDriveInfoMockTests
         IFileSystem.IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
 
         drive.AvailableFreeSpace.Should().Be(0);
+    }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.DriveInfo(nameof(FileSystemMock.IDriveInfoMock.AvailableFreeSpace))]
+    public void AvailableFreeSpace_NotEnoughSpace_ShouldThrowIOException(
+        int fileSize, string path)
+    {
+        byte[] bytes = new byte[fileSize];
+        FileSystem.WithDrive(d => d.SetTotalSize(fileSize - 1));
+        FileSystem.RandomSystem.Random.Shared.NextBytes(bytes);
+
+        Exception? exception = Record.Exception(() =>
+        {
+            FileSystem.File.WriteAllBytes(path, bytes);
+        });
+
+        IFileSystem.IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
+        exception.Should().BeOfType<IOException>()
+           .Which.Message.Should().Contain($"'{drive.Name}'");
+        drive.AvailableFreeSpace.Should().Be(fileSize - 1);
     }
 
     [Theory]

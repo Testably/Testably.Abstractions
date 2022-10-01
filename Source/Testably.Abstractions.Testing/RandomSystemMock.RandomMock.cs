@@ -100,7 +100,8 @@ public sealed partial class RandomSystemMock
             if (_byteGenerator != null)
             {
                 byte[] bytes = _byteGenerator.GetNext();
-                bytes.AsSpan().Slice(0, buffer.Length).CopyTo(buffer);
+                bytes.AsSpan().Slice(0, Math.Min(bytes.Length, buffer.Length))
+                   .CopyTo(buffer);
             }
             else
             {

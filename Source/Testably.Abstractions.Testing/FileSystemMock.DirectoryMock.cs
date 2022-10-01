@@ -41,7 +41,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.Delete(string)" />
         public void Delete(string path)
         {
-            if (!_fileSystem.FileSystemContainer.Delete(path))
+            if (!_fileSystem.Storage.Delete(path))
             {
                 throw ExceptionFactory.DirectoryNotFound(
                     _fileSystem.Path.GetFullPath(path));
@@ -51,7 +51,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.Delete(string, bool)" />
         public void Delete(string path, bool recursive)
         {
-            if (!_fileSystem.FileSystemContainer.Delete(path, recursive))
+            if (!_fileSystem.Storage.Delete(path, recursive))
             {
                 throw ExceptionFactory.DirectoryNotFound(
                     _fileSystem.Path.GetFullPath(path));
@@ -64,12 +64,12 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateDirectories(string, string)" />
         public IEnumerable<string> EnumerateDirectories(string path, string searchPattern)
-            => _fileSystem.FileSystemContainer.Enumerate<IFileSystem.IDirectoryInfo>(
+            => _fileSystem.Storage.Enumerate<IFileSystem.IDirectoryInfo>(
                     path,
                     searchPattern,
                     EnumerationOptionsHelper.Compatible,
                     DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
-               .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
+               .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
                     x.FullName,
                     path));
 
@@ -77,13 +77,13 @@ public sealed partial class FileSystemMock
         public IEnumerable<string> EnumerateDirectories(string path,
                                                         string searchPattern,
                                                         SearchOption searchOption)
-            => _fileSystem.FileSystemContainer
+            => _fileSystem.Storage
                .Enumerate<IFileSystem.IDirectoryInfo>(
                     path,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption),
                     DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
-               .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
+               .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
                     x.FullName,
                     path));
 
@@ -93,13 +93,13 @@ public sealed partial class FileSystemMock
                                                         string searchPattern,
                                                         EnumerationOptions
                                                             enumerationOptions)
-            => _fileSystem.FileSystemContainer
+            => _fileSystem.Storage
                .Enumerate<IFileSystem.IDirectoryInfo>(
                     path,
                     searchPattern,
                     enumerationOptions,
                     DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
-               .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
+               .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
                     x.FullName,
                     path));
 #endif
@@ -110,12 +110,12 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFiles(string, string)" />
         public IEnumerable<string> EnumerateFiles(string path, string searchPattern)
-            => _fileSystem.FileSystemContainer.Enumerate<IFileSystem.IFileInfo>(
+            => _fileSystem.Storage.Enumerate<IFileSystem.IFileInfo>(
                     path,
                     searchPattern,
                     EnumerationOptionsHelper.Compatible,
                     DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
-               .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
+               .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
                     x.FullName,
                     path));
 
@@ -123,12 +123,12 @@ public sealed partial class FileSystemMock
         public IEnumerable<string> EnumerateFiles(string path,
                                                   string searchPattern,
                                                   SearchOption searchOption)
-            => _fileSystem.FileSystemContainer.Enumerate<IFileSystem.IFileInfo>(
+            => _fileSystem.Storage.Enumerate<IFileSystem.IFileInfo>(
                     path,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption),
                     DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
-               .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
+               .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
                     x.FullName,
                     path));
 
@@ -137,12 +137,12 @@ public sealed partial class FileSystemMock
         public IEnumerable<string> EnumerateFiles(string path,
                                                   string searchPattern,
                                                   EnumerationOptions enumerationOptions)
-            => _fileSystem.FileSystemContainer.Enumerate<IFileSystem.IFileInfo>(
+            => _fileSystem.Storage.Enumerate<IFileSystem.IFileInfo>(
                     path,
                     searchPattern,
                     enumerationOptions,
                     DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
-               .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
+               .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
                     x.FullName,
                     path));
 #endif
@@ -154,12 +154,12 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string, string)" />
         public IEnumerable<string> EnumerateFileSystemEntries(
             string path, string searchPattern)
-            => _fileSystem.FileSystemContainer.Enumerate<IFileSystem.IFileSystemInfo>(
+            => _fileSystem.Storage.Enumerate<IFileSystem.IFileSystemInfo>(
                     path,
                     searchPattern,
                     EnumerationOptionsHelper.Compatible,
                     DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
-               .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
+               .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
                     x.FullName,
                     path));
 
@@ -167,12 +167,12 @@ public sealed partial class FileSystemMock
         public IEnumerable<string> EnumerateFileSystemEntries(string path,
             string searchPattern,
             SearchOption searchOption)
-            => _fileSystem.FileSystemContainer.Enumerate<IFileSystem.IFileSystemInfo>(
+            => _fileSystem.Storage.Enumerate<IFileSystem.IFileSystemInfo>(
                     path,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption),
                     DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
-               .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
+               .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
                     x.FullName,
                     path));
 
@@ -181,33 +181,33 @@ public sealed partial class FileSystemMock
         public IEnumerable<string> EnumerateFileSystemEntries(string path,
             string searchPattern,
             EnumerationOptions enumerationOptions)
-            => _fileSystem.FileSystemContainer.Enumerate<IFileSystem.IFileSystemInfo>(
+            => _fileSystem.Storage.Enumerate<IFileSystem.IFileSystemInfo>(
                     path,
                     searchPattern,
                     enumerationOptions,
                     DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
-               .Select(x => _fileSystem.FileSystemContainer.GetSubdirectoryPath(
+               .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
                     x.FullName,
                     path));
 #endif
 
         /// <inheritdoc cref="IFileSystem.IDirectory.Exists(string)" />
         public bool Exists([NotNullWhen(true)] string? path)
-            => _fileSystem.FileSystemContainer.Exists(path);
+            => _fileSystem.Storage.Exists(path);
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetCreationTime(string)" />
         public DateTime GetCreationTime(string path)
-            => (_fileSystem.FileSystemContainer.GetDirectory(path) ??
+            => (_fileSystem.Storage.GetDirectory(path) ??
                 _fileSystem.NullFileSystemInfo).CreationTime;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetCreationTimeUtc(string)" />
         public DateTime GetCreationTimeUtc(string path)
-            => (_fileSystem.FileSystemContainer.GetDirectory(path) ??
+            => (_fileSystem.Storage.GetDirectory(path) ??
                 _fileSystem.NullFileSystemInfo).CreationTimeUtc;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetCurrentDirectory()" />
         public string GetCurrentDirectory()
-            => _fileSystem.FileSystemContainer.CurrentDirectory;
+            => _fileSystem.Storage.CurrentDirectory;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetDirectories(string)" />
         public string[] GetDirectories(string path)
@@ -283,22 +283,22 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLastAccessTime(string)" />
         public DateTime GetLastAccessTime(string path)
-            => (_fileSystem.FileSystemContainer.GetDirectory(path) ??
+            => (_fileSystem.Storage.GetDirectory(path) ??
                 _fileSystem.NullFileSystemInfo).LastAccessTime;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLastAccessTimeUtc(string)" />
         public DateTime GetLastAccessTimeUtc(string path)
-            => (_fileSystem.FileSystemContainer.GetDirectory(path) ??
+            => (_fileSystem.Storage.GetDirectory(path) ??
                 _fileSystem.NullFileSystemInfo).LastAccessTimeUtc;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLastWriteTime(string)" />
         public DateTime GetLastWriteTime(string path)
-            => (_fileSystem.FileSystemContainer.GetDirectory(path) ??
+            => (_fileSystem.Storage.GetDirectory(path) ??
                 _fileSystem.NullFileSystemInfo).LastWriteTime;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLastWriteTimeUtc(string)" />
         public DateTime GetLastWriteTimeUtc(string path)
-            => (_fileSystem.FileSystemContainer.GetDirectory(path) ??
+            => (_fileSystem.Storage.GetDirectory(path) ??
                 _fileSystem.NullFileSystemInfo).LastWriteTimeUtc;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLogicalDrives()" />
@@ -324,7 +324,7 @@ public sealed partial class FileSystemMock
         public void SetCreationTime(string path, DateTime creationTime)
         {
             IFileSystem.IDirectoryInfo? fileSystemInfo =
-                _fileSystem.FileSystemContainer.GetDirectory(path);
+                _fileSystem.Storage.GetDirectory(path);
             if (fileSystemInfo == null)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -344,7 +344,7 @@ public sealed partial class FileSystemMock
         public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
         {
             IFileSystem.IDirectoryInfo? fileSystemInfo =
-                _fileSystem.FileSystemContainer.GetDirectory(path);
+                _fileSystem.Storage.GetDirectory(path);
             if (fileSystemInfo == null)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -362,13 +362,13 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetCurrentDirectory(string)" />
         public void SetCurrentDirectory(string path)
-            => _fileSystem.FileSystemContainer.CurrentDirectory = path;
+            => _fileSystem.Storage.CurrentDirectory = path;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetLastAccessTime(string, DateTime)" />
         public void SetLastAccessTime(string path, DateTime lastAccessTime)
         {
             IFileSystem.IDirectoryInfo? fileSystemInfo =
-                _fileSystem.FileSystemContainer.GetDirectory(path);
+                _fileSystem.Storage.GetDirectory(path);
             if (fileSystemInfo == null)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -388,7 +388,7 @@ public sealed partial class FileSystemMock
         public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
         {
             IFileSystem.IDirectoryInfo? fileSystemInfo =
-                _fileSystem.FileSystemContainer.GetDirectory(path);
+                _fileSystem.Storage.GetDirectory(path);
             if (fileSystemInfo == null)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -408,7 +408,7 @@ public sealed partial class FileSystemMock
         public void SetLastWriteTime(string path, DateTime lastWriteTime)
         {
             IFileSystem.IDirectoryInfo? fileSystemInfo =
-                _fileSystem.FileSystemContainer.GetDirectory(path);
+                _fileSystem.Storage.GetDirectory(path);
             if (fileSystemInfo == null)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -428,7 +428,7 @@ public sealed partial class FileSystemMock
         public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
         {
             IFileSystem.IDirectoryInfo? fileSystemInfo =
-                _fileSystem.FileSystemContainer.GetDirectory(path);
+                _fileSystem.Storage.GetDirectory(path);
             if (fileSystemInfo == null)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -450,15 +450,8 @@ public sealed partial class FileSystemMock
         {
             path.ThrowCommonExceptionsIfPathIsInvalid(_fileSystem);
 
-            if (path.HasIllegalCharacters(_fileSystem))
-            {
-                throw ExceptionFactory.PathHasIncorrectSyntax(
-                    _fileSystem.Path.Combine(_fileSystem.Directory.GetCurrentDirectory(),
-                        path));
-            }
-
             IFileSystem.IDirectoryInfo? directory =
-                _fileSystem.FileSystemContainer.GetOrAddDirectory(path);
+                _fileSystem.Storage.GetOrAddDirectory(path);
             return directory ?? throw new NotImplementedException();
         }
 

@@ -11,26 +11,26 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class FileSystemMock
 {
-    private sealed class InMemoryFileSystem : IInMemoryFileSystem
+    private sealed class InMemoryStorage : IStorage
     {
         private readonly ConcurrentDictionary<string, FileSystemInfoMock> _files = new();
         private readonly ConcurrentDictionary<string, DriveInfoMock> _drives = new();
 
         private readonly FileSystemMock _fileSystem;
 
-        public InMemoryFileSystem(FileSystemMock fileSystem)
+        public InMemoryStorage(FileSystemMock fileSystem)
         {
             _fileSystem = fileSystem;
             DriveInfoMock mainDrive = new("".PrefixRoot(), _fileSystem);
             _drives.TryAdd(mainDrive.Name, mainDrive);
         }
 
-        #region IInMemoryFileSystem Members
+        #region IStorage Members
 
-        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.CurrentDirectory" />
+        /// <inheritdoc cref="FileSystemMock.IStorage.CurrentDirectory" />
         public string CurrentDirectory { get; set; } = string.Empty.PrefixRoot();
 
-        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.Delete(string, bool)" />
+        /// <inheritdoc cref="FileSystemMock.IStorage.Delete(string, bool)" />
         public bool Delete(string path, bool recursive = false)
         {
             string key = _fileSystem.Path.GetFullPath(path)
@@ -58,7 +58,7 @@ public sealed partial class FileSystemMock
                         _fileSystem.Path.GetFullPath(path));
                 }
             }
-            else if (fileSystemInfo is IInMemoryFileSystem.IFileInfoMock fileInfoMock)
+            else if (fileSystemInfo is IStorage.IFileInfoMock fileInfoMock)
             {
                 fileInfoMock.ClearBytes();
             }
@@ -67,7 +67,7 @@ public sealed partial class FileSystemMock
         }
 
         /// <inheritdoc
-        ///     cref="FileSystemMock.IInMemoryFileSystem.Enumerate{TFileSystemInfo}(string, string, EnumerationOptions, Func{Exception})" />
+        ///     cref="FileSystemMock.IStorage.Enumerate{TFileSystemInfo}(string, string, EnumerationOptions, Func{Exception})" />
         public IEnumerable<TFileSystemInfo> Enumerate<TFileSystemInfo>(string path,
                                                                        string expression,
                                                                        EnumerationOptions enumerationOptions,
@@ -106,7 +106,7 @@ public sealed partial class FileSystemMock
             }
         }
 
-        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.Exists(string?)" />
+        /// <inheritdoc cref="FileSystemMock.IStorage.Exists(string?)" />
         public bool Exists([NotNullWhen(true)] string? path)
         {
             if (path == null)
@@ -118,45 +118,62 @@ public sealed partial class FileSystemMock
                .NormalizeAndTrimPath(_fileSystem));
         }
 
-        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetDirectory(string)" />
-        public IInMemoryFileSystem.IDirectoryInfoMock? GetDirectory(string path)
+        /// <inheritdoc cref="FileSystemMock.IStorage.GetDirectory(string)" />
+        public IStorage.IDirectoryInfoMock? GetDirectory(string path)
         {
             if (_files.TryGetValue(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
                 out FileSystemInfoMock? fileInfo))
             {
-                return fileInfo as IInMemoryFileSystem.IDirectoryInfoMock;
+                return fileInfo as IStorage.IDirectoryInfoMock;
             }
 
             return null;
         }
 
-        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetOrAddDrive(string)" />
+        /// <inheritdoc cref="FileSystemMock.IStorage.GetDrive(string)" />
+        public IDriveInfoMock? GetDrive(string? driveName)
+        {
+            if (string.IsNullOrEmpty(driveName))
+            {
+                return null;
+            }
+
+            DriveInfoMock drive = new(driveName, _fileSystem);
+            if (_drives.TryGetValue(drive.Name, out DriveInfoMock? d))
+            {
+                return d;
+            }
+
+            return null;
+        }
+
+        /// <inheritdoc cref="FileSystemMock.IStorage.GetOrAddDrive(string)" />
         public IDriveInfoMock GetOrAddDrive(string driveName)
         {
             DriveInfoMock drive = new(driveName, _fileSystem);
             return _drives.GetOrAdd(drive.Name, _ => drive);
         }
 
-        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetDrives()" />
+        /// <inheritdoc cref="FileSystemMock.IStorage.GetDrives()" />
         public IEnumerable<IDriveInfoMock> GetDrives()
             => _drives.Values;
 
-        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetFile(string)" />
-        public IInMemoryFileSystem.IFileInfoMock? GetFile(string path)
+        /// <inheritdoc cref="FileSystemMock.IStorage.GetFile(string)" />
+        public IStorage.IFileInfoMock? GetFile(string path)
         {
             if (_files.TryGetValue(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
                 out FileSystemInfoMock? fileInfo))
             {
-                return fileInfo as IInMemoryFileSystem.IFileInfoMock;
+                return fileInfo as IStorage.IFileInfoMock;
             }
 
             return null;
         }
 
-        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetOrAddDirectory(string)" />
-        public IInMemoryFileSystem.IDirectoryInfoMock? GetOrAddDirectory(string path)
+        /// <inheritdoc cref="FileSystemMock.IStorage.GetOrAddDirectory(string)" />
+        public IStorage.IDirectoryInfoMock? GetOrAddDirectory(string path)
         {
             return _files.GetOrAdd(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
@@ -165,18 +182,18 @@ public sealed partial class FileSystemMock
                     FileSystemInfoMock directoryMock = CreateDirectoryInternal(path);
                     directoryMock.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
                     return directoryMock;
-                }) as IInMemoryFileSystem.IDirectoryInfoMock;
+                }) as IStorage.IDirectoryInfoMock;
         }
 
-        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetOrAddFile(string)" />
-        public IInMemoryFileSystem.IFileInfoMock? GetOrAddFile(string path)
+        /// <inheritdoc cref="FileSystemMock.IStorage.GetOrAddFile(string)" />
+        public IStorage.IFileInfoMock? GetOrAddFile(string path)
         {
             return _files.GetOrAdd(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
-                _ => CreateFileInternal(path)) as IInMemoryFileSystem.IFileInfoMock;
+                _ => CreateFileInternal(path)) as IStorage.IFileInfoMock;
         }
 
-        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetSubdirectoryPath(string, string)" />
+        /// <inheritdoc cref="FileSystemMock.IStorage.GetSubdirectoryPath(string, string)" />
         public string GetSubdirectoryPath(string fullFilePath, string givenPath)
         {
             if (_fileSystem.Path.IsPathRooted(givenPath))
@@ -238,6 +255,7 @@ public sealed partial class FileSystemMock
                 return DirectoryInfoMock.New(path, _fileSystem.Path.GetFileName(path),
                     _fileSystem);
             }
+
             return DirectoryInfoMock.New(path, _fileSystem);
         }
 

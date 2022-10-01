@@ -1,9 +1,11 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Testing.Internal;
 
 internal static class Framework
 {
+    [ExcludeFromCodeCoverage]
     public static bool IsNetFramework
     {
         get

@@ -25,6 +25,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Parent))]
     public void Parent_ArbitraryPaths_ShouldNotBeNull(string path1,
                                                       string path2,
                                                       string path3)
@@ -41,6 +42,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
     [Theory]
     [AutoData]
+    [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Root))]
     public void Root_ShouldExist(string path)
     {
         string expectedRoot = string.Empty.PrefixRoot();
@@ -48,17 +50,5 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
         result.Root.Exists.Should().BeTrue();
         result.Root.FullName.Should().Be(expectedRoot);
-    }
-
-    [Theory]
-    [AutoData]
-    public void Wrap_ShouldWrapFromDirectoryInfo(string path)
-    {
-        DirectoryInfo directoryInfo = new(path);
-
-        IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.Wrap(directoryInfo);
-
-        result.FullName.Should().Be(directoryInfo.FullName);
-        result.Exists.Should().Be(directoryInfo.Exists);
     }
 }

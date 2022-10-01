@@ -11,6 +11,9 @@
     "target-framework": "net6.0",
     "coverage-analysis": "all",
     "reporters": [ "html", "progress", "cleartext" ],
-    "mutation-level": "Advanced"
+    "mutation-level": "Advanced",
+    "ignore-methods": [
+      "ValidateDriveLetter" // Only tested under windows
+    ]
   }
 }

@@ -23,7 +23,7 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     The <see cref="Drive" /> in which the <see cref="IFileSystem.IFileSystemInfo" /> is stored.
         /// </summary>
-        protected IDriveInfoMock Drive { get; }
+        protected IDriveInfoMock? Drive { get; }
 
         internal FileSystemInfoMock(string fullName, string originalPath,
                                     FileSystemMock fileSystem)
@@ -34,16 +34,17 @@ public sealed partial class FileSystemMock
             {
                 OriginalPath = OriginalPath.TrimOnWindows();
             }
+
             FileSystem = fileSystem;
             AdjustTimes(TimeAdjustments.All);
             if (string.IsNullOrEmpty(fullName))
             {
-                Drive = FileSystem.FileSystemContainer.GetDrives().First();
+                Drive = FileSystem.Storage.GetDrives().First();
             }
             else
             {
-                Drive = fileSystem.FileSystemContainer.GetOrAddDrive(
-                    fileSystem.Path.GetPathRoot(fullName)!);
+                Drive = fileSystem.Storage.GetDrive(
+                            fileSystem.Path.GetPathRoot(fullName));
             }
         }
 
@@ -71,7 +72,7 @@ public sealed partial class FileSystemMock
         {
             get
             {
-                _exists ??= FileSystem.FileSystemContainer.Exists(FullName);
+                _exists ??= FileSystem.Storage.Exists(FullName);
                 return _exists.Value;
             }
         }
@@ -143,7 +144,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Delete()" />
         public void Delete()
         {
-            if (!FileSystem.FileSystemContainer.Delete(FullName))
+            if (!FileSystem.Storage.Delete(FullName))
             {
                 throw ExceptionFactory.DirectoryNotFound(FullName);
             }
@@ -159,9 +160,13 @@ public sealed partial class FileSystemMock
 
         #endregion
 
-        /// <inheritdoc cref="IInMemoryFileSystem.IFileSystemInfoMock.RequestAccess(FileAccess, FileShare)" />
+        /// <inheritdoc cref="IStorage.IFileSystemInfoMock.RequestAccess(FileAccess, FileShare)" />
         public IDisposable RequestAccess(FileAccess access, FileShare share)
         {
+            if (Drive == null)
+            {
+                throw ExceptionFactory.DirectoryNotFound(FullName);
+            }
             if (!Drive.IsReady)
             {
                 throw ExceptionFactory.NetworkPathNotFound(FullName);

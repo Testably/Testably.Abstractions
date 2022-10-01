@@ -24,7 +24,7 @@ public sealed partial class FileSystemMock : IFileSystem
     /// </summary>
     public ITimeSystem TimeSystem { get; }
 
-    internal IInMemoryFileSystem FileSystemContainer { get; }
+    internal IStorage Storage { get; }
 
     private readonly FileSystemMockCallbackHandler _callbackHandler;
     private readonly DirectoryMock _directoryMock;
@@ -41,7 +41,7 @@ public sealed partial class FileSystemMock : IFileSystem
         RandomSystem = new RandomSystem();
         TimeSystem = new TimeSystemMock(TimeProvider.Now());
         _pathMock = new PathMock(this);
-        FileSystemContainer = new InMemoryFileSystem(this);
+        Storage = new InMemoryStorage(this);
         _callbackHandler = new FileSystemMockCallbackHandler();
         _directoryMock = new DirectoryMock(this, _callbackHandler);
         _fileMock = new FileMock(this, _callbackHandler);
@@ -66,7 +66,7 @@ public sealed partial class FileSystemMock : IFileSystem
     public FileSystemMock WithDrive(string? drive,
                                     Action<IDriveInfoMock>? driveCallback = null)
     {
-        IDriveInfoMock driveInfoMock = FileSystemContainer.GetOrAddDrive(
+        IDriveInfoMock driveInfoMock = Storage.GetOrAddDrive(
             drive ?? "".PrefixRoot());
         driveCallback?.Invoke(driveInfoMock);
         return this;

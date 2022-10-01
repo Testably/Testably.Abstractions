@@ -10,7 +10,7 @@ public sealed partial class FileSystemMock
     /// <summary>
     ///     The container storing the current data of the <see cref="IFileSystem" /> in memory.
     /// </summary>
-    public interface IInMemoryFileSystem
+    public interface IStorage
     {
         /// <summary>
         ///     The current directory used in <see cref="System.IO.Directory.GetCurrentDirectory()" /> and
@@ -43,6 +43,12 @@ public sealed partial class FileSystemMock
         ///     Returns <c>null</c>, if the directory does not exist.
         /// </summary>
         IDirectoryInfoMock? GetDirectory(string path);
+
+        /// <summary>
+        ///     Returns the drive if it is present.<br />
+        ///     Returns <c>null</c>, if the drive does not exist.
+        /// </summary>
+        IDriveInfoMock? GetDrive(string? driveName);
 
         /// <summary>
         ///     Returns the drives that are present.
