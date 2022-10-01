@@ -305,7 +305,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetParent(string)" />
         public IFileSystem.IDirectoryInfo? GetParent(string path)
-            => throw new NotImplementedException();
+            => _fileSystem.DirectoryInfo.New(path).Parent;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.Move(string, string)" />
         public void Move(string sourceDirName, string destDirName)
