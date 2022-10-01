@@ -42,8 +42,9 @@ public sealed partial class FileSystemMock
             }
             else
             {
-                Drive = fileSystem.FileSystemContainer.GetOrAddDrive(
-                    fileSystem.Path.GetPathRoot(fullName)!);
+                Drive = fileSystem.FileSystemContainer.GetDrive(
+                    fileSystem.Path.GetPathRoot(fullName))
+                        ?? throw ExceptionFactory.DirectoryNotFound(FullName);
             }
         }
 

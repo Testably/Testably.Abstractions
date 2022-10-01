@@ -45,6 +45,12 @@ public sealed partial class FileSystemMock
         IDirectoryInfoMock? GetDirectory(string path);
 
         /// <summary>
+        ///     Returns the drive if it is present.<br />
+        /// Returns <c>null</c>, if the drive does not exist.
+        /// </summary>
+        IDriveInfoMock? GetDrive(string? driveName);
+
+        /// <summary>
         ///     Returns the drives that are present.
         /// </summary>
         IEnumerable<IDriveInfoMock> GetDrives();

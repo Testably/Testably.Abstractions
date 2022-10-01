@@ -131,6 +131,22 @@ public sealed partial class FileSystemMock
             return null;
         }
 
+        /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetDrive(string)" />
+        public IDriveInfoMock? GetDrive(string? driveName)
+        {
+            if (string.IsNullOrEmpty(driveName))
+            {
+                return null;
+            }
+            DriveInfoMock drive = new(driveName, _fileSystem);
+            if (_drives.TryGetValue(drive.Name, out var d))
+            {
+                return d;
+            }
+
+            return null;
+        }
+
         /// <inheritdoc cref="FileSystemMock.IInMemoryFileSystem.GetOrAddDrive(string)" />
         public IDriveInfoMock GetOrAddDrive(string driveName)
         {
