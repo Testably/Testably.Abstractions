@@ -138,14 +138,14 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IStorage.IFileInfoMock.WriteBytes(byte[])" />
         public void WriteBytes(byte[] bytes)
         {
-            Drive.ChangeUsedBytes(bytes.Length - _bytes.Length);
+            Drive?.ChangeUsedBytes(bytes.Length - _bytes.Length);
             _bytes = bytes;
         }
 
         /// <inheritdoc cref="IStorage.IFileInfoMock.ClearBytes()" />
         public void ClearBytes()
         {
-            Drive.ChangeUsedBytes(0 - _bytes.Length);
+            Drive?.ChangeUsedBytes(0 - _bytes.Length);
             _bytes = Array.Empty<byte>();
         }
 

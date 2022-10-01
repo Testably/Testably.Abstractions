@@ -23,7 +23,7 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     The <see cref="Drive" /> in which the <see cref="IFileSystem.IFileSystemInfo" /> is stored.
         /// </summary>
-        protected IDriveInfoMock Drive { get; }
+        protected IDriveInfoMock? Drive { get; }
 
         internal FileSystemInfoMock(string fullName, string originalPath,
                                     FileSystemMock fileSystem)
@@ -44,8 +44,7 @@ public sealed partial class FileSystemMock
             else
             {
                 Drive = fileSystem.Storage.GetDrive(
-                            fileSystem.Path.GetPathRoot(fullName))
-                        ?? throw ExceptionFactory.DirectoryNotFound(FullName);
+                            fileSystem.Path.GetPathRoot(fullName));
             }
         }
 
@@ -164,6 +163,10 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IStorage.IFileSystemInfoMock.RequestAccess(FileAccess, FileShare)" />
         public IDisposable RequestAccess(FileAccess access, FileShare share)
         {
+            if (Drive == null)
+            {
+                throw ExceptionFactory.DirectoryNotFound(FullName);
+            }
             if (!Drive.IsReady)
             {
                 throw ExceptionFactory.NetworkPathNotFound(FullName);

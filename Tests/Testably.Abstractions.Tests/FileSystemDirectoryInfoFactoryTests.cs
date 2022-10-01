@@ -73,7 +73,7 @@ public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
     [FileSystemTests.DirectoryInfoFactory(nameof(IFileSystem.IDirectoryInfoFactory.Wrap))]
     public void Wrap_ShouldWrapFromDirectoryInfo(string path)
     {
-        DirectoryInfo directoryInfo = new(path);
+        DirectoryInfo directoryInfo = new("S:\\" + path);
 
         IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.Wrap(directoryInfo);
 
