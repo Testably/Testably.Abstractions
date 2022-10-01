@@ -70,14 +70,24 @@ public sealed partial class FileSystemMock
         [SupportedOSPlatform("windows")]
 #endif
         public void Decrypt()
-            => throw new NotImplementedException();
+        {
+            using (RequestAccess(FileAccess.Write, FileShare.Read))
+            {
+                WriteBytes(EncryptionHelper.Decrypt(GetBytes()));
+            }
+        }
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Encrypt()" />
 #if NET6_0_OR_GREATER
         [SupportedOSPlatform("windows")]
 #endif
         public void Encrypt()
-            => throw new NotImplementedException();
+        {
+            using (RequestAccess(FileAccess.Write, FileShare.Read))
+            {
+                WriteBytes(EncryptionHelper.Encrypt(GetBytes()));
+            }
+        }
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.MoveTo(string)" />
         public void MoveTo(string destFileName)
