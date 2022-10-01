@@ -12,11 +12,9 @@ public sealed partial class FileSystemMock
         internal const FileShare DefaultShare = FileShare.Read;
         private const bool DefaultUseAsync = false;
 
-        internal FileStreamFactoryMock(FileSystemMock fileSystem,
-                                       FileSystemMockCallbackHandler callbackHandler)
+        internal FileStreamFactoryMock(FileSystemMock fileSystem)
         {
             _fileSystem = fileSystem;
-            _ = callbackHandler;
         }
 
         #region IFileStreamFactory Members

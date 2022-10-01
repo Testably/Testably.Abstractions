@@ -12,7 +12,7 @@ public sealed partial class FileSystemMock : IFileSystem
     ///     The callback handler for the <see cref="FileSystemMock" />.
     /// </summary>
     public ICallbackHandler On
-        => _callbackHandler;
+        => Callback;
 
     /// <summary>
     ///     The used random system.
@@ -26,7 +26,7 @@ public sealed partial class FileSystemMock : IFileSystem
 
     internal IStorage Storage { get; }
 
-    private readonly FileSystemMockCallbackHandler _callbackHandler;
+    internal FileSystemMockCallbackHandler Callback { get; }
     private readonly DirectoryMock _directoryMock;
     private readonly FileMock _fileMock;
     private readonly PathMock _pathMock;
@@ -42,13 +42,13 @@ public sealed partial class FileSystemMock : IFileSystem
         TimeSystem = new TimeSystemMock(TimeProvider.Now());
         _pathMock = new PathMock(this);
         Storage = new InMemoryStorage(this);
-        _callbackHandler = new FileSystemMockCallbackHandler();
-        _directoryMock = new DirectoryMock(this, _callbackHandler);
-        _fileMock = new FileMock(this, _callbackHandler);
-        DirectoryInfo = new DirectoryInfoFactoryMock(this, _callbackHandler);
+        Callback = new FileSystemMockCallbackHandler();
+        _directoryMock = new DirectoryMock(this);
+        _fileMock = new FileMock(this);
+        DirectoryInfo = new DirectoryInfoFactoryMock(this);
         DriveInfo = new DriveInfoFactoryMock(this);
-        FileInfo = new FileInfoFactoryMock(this, _callbackHandler);
-        FileStream = new FileStreamFactoryMock(this, _callbackHandler);
+        FileInfo = new FileInfoFactoryMock(this);
+        FileStream = new FileStreamFactoryMock(this);
         NullFileSystemInfo = new FileSystemInfoMock(string.Empty, string.Empty, this)
         {
             LastWriteTime = new DateTime(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc),

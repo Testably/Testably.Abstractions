@@ -236,11 +236,19 @@ public sealed partial class FileSystemMock
             {
                 string key = _fileSystem.Path.GetFullPath(parentPath)
                    .NormalizeAndTrimPath(_fileSystem);
+                ICallbackHandler.FileSystemChange? fileSystemChange = null;
                 FileSystemInfoMock directory = _files.AddOrUpdate(
                     key,
-                    _ => DirectoryInfoMock.New(parentPath, _fileSystem),
+                    _ =>
+                    {
+                        fileSystemChange = _fileSystem.Callback.InvokeChangeOccurring(parentPath,
+                            ICallbackHandler.ChangeType.Created,
+                            NotifyFilters.CreationTime);
+                        return DirectoryInfoMock.New(parentPath, _fileSystem);
+                    },
                     (_, fileSystemInfo) =>
                         fileSystemInfo.AdjustTimes(timeAdjustments));
+                _fileSystem.Callback.InvokeChangeOccurred(fileSystemChange);
                 requests.Add(directory.RequestAccess(FileAccess.Write,
                     FileShare.ReadWrite));
             }

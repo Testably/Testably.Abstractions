@@ -44,7 +44,7 @@ public sealed partial class FileSystemMock
             else
             {
                 Drive = fileSystem.Storage.GetDrive(
-                            fileSystem.Path.GetPathRoot(fullName));
+                    fileSystem.Path.GetPathRoot(fullName));
             }
         }
 
@@ -167,6 +167,7 @@ public sealed partial class FileSystemMock
             {
                 throw ExceptionFactory.DirectoryNotFound(FullName);
             }
+
             if (!Drive.IsReady)
             {
                 throw ExceptionFactory.NetworkPathNotFound(FullName);
@@ -266,6 +267,14 @@ public sealed partial class FileSystemMock
 
         internal FileSystemInfoMock AdjustTimes(TimeAdjustments timeAdjustments)
         {
+            ICallbackHandler.FileSystemChange? fileSystemChange = null;
+            if (HasNotifyFilters(timeAdjustments, out NotifyFilters notifyFilters))
+            {
+                fileSystemChange = FileSystem.Callback.InvokeChangeOccurring(FullName,
+                    ICallbackHandler.ChangeType.Modified,
+                    notifyFilters);
+            }
+
             DateTime now = FileSystem.TimeSystem.DateTime.UtcNow;
             if (timeAdjustments.HasFlag(TimeAdjustments.CreationTime))
             {
@@ -282,7 +291,31 @@ public sealed partial class FileSystemMock
                 LastWriteTime = ConsiderUnspecifiedKind(now);
             }
 
+            FileSystem.Callback.InvokeChangeOccurred(fileSystemChange);
+
             return this;
+        }
+
+        private bool HasNotifyFilters(TimeAdjustments timeAdjustments,
+                                      out NotifyFilters notifyFilters)
+        {
+            notifyFilters = 0;
+            if (timeAdjustments.HasFlag(TimeAdjustments.CreationTime))
+            {
+                notifyFilters |= NotifyFilters.CreationTime;
+            }
+
+            if (timeAdjustments.HasFlag(TimeAdjustments.LastAccessTime))
+            {
+                notifyFilters |= NotifyFilters.LastAccess;
+            }
+
+            if (timeAdjustments.HasFlag(TimeAdjustments.LastWriteTime))
+            {
+                notifyFilters |= NotifyFilters.LastWrite;
+            }
+
+            return notifyFilters > 0;
         }
 
         private static DateTime ConsiderUnspecifiedKind(

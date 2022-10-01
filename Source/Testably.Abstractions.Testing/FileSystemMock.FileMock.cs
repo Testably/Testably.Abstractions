@@ -21,11 +21,9 @@ public sealed partial class FileSystemMock
     {
         private readonly FileSystemMock _fileSystem;
 
-        internal FileMock(FileSystemMock fileSystem,
-                          FileSystemMockCallbackHandler callbackHandler)
+        internal FileMock(FileSystemMock fileSystem)
         {
             _fileSystem = fileSystem;
-            _ = callbackHandler;
         }
 
         #region IFile Members
