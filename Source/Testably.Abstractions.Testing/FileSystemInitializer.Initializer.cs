@@ -39,6 +39,10 @@ public static partial class FileSystemInitializer
         /// <inheritdoc cref="IFileSystemInitializer{TFileSystem}.FileSystem" />
         public TFileSystem FileSystem { get; }
 
+        /// <inheritdoc cref="IFileSystemInitializer{TFileSystem}.BaseDirectory" />
+        public IFileSystem.IDirectoryInfo BaseDirectory
+            => FileSystem.DirectoryInfo.New(_basePath);
+
         /// <inheritdoc cref="IFileSystemInitializer{TFileSystem}.this[int]" />
         public IFileSystem.IFileSystemInfo this[int index]
             => _initializedFileSystemInfos[index];

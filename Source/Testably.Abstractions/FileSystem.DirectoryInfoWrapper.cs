@@ -169,14 +169,16 @@ public sealed partial class FileSystem
         public IFileSystem.IFileInfo[] GetFiles()
             => _instance.GetFiles()
                .Select(fileInfo =>
-                    (IFileSystem.IFileInfo)FromFileSystemInfo(fileInfo, _fileSystem))
+                    (IFileSystem.IFileInfo)FileInfoWrapper.FromFileInfo(fileInfo,
+                        _fileSystem))
                .ToArray();
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetFiles(string)" />
         public IFileSystem.IFileInfo[] GetFiles(string searchPattern)
             => _instance.GetFiles(searchPattern)
                .Select(fileInfo =>
-                    (IFileSystem.IFileInfo)FromFileSystemInfo(fileInfo, _fileSystem))
+                    (IFileSystem.IFileInfo)FileInfoWrapper.FromFileInfo(fileInfo,
+                        _fileSystem))
                .ToArray();
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetFiles(string, SearchOption)" />
@@ -184,7 +186,8 @@ public sealed partial class FileSystem
                                                 SearchOption searchOption)
             => _instance.GetFiles(searchPattern, searchOption)
                .Select(fileInfo =>
-                    (IFileSystem.IFileInfo)FromFileSystemInfo(fileInfo, _fileSystem))
+                    (IFileSystem.IFileInfo)FileInfoWrapper.FromFileInfo(fileInfo,
+                        _fileSystem))
                .ToArray();
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
@@ -193,7 +196,8 @@ public sealed partial class FileSystem
                                                 EnumerationOptions enumerationOptions)
             => _instance.GetFiles(searchPattern, enumerationOptions)
                .Select(fileInfo =>
-                    (IFileSystem.IFileInfo)FromFileSystemInfo(fileInfo, _fileSystem))
+                    (IFileSystem.IFileInfo)FileInfoWrapper.FromFileInfo(fileInfo,
+                        _fileSystem))
                .ToArray();
 #endif
 
