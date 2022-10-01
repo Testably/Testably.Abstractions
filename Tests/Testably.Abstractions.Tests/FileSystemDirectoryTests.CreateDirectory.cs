@@ -61,6 +61,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [Fact]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
+    [Trait("_", "TODO")]
     public void CreateDirectory_IllegalCharacters_ShouldThrowArgumentException()
     {
         var invalidChars = FileSystem.Path
@@ -74,13 +75,20 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
                 FileSystem.Directory.CreateDirectory(path);
             });
 
+            if (Test.RunsOnWindows)
+            {
 #if NETFRAMEWORK
-            exception.Should().BeOfType<ArgumentException>();
+                exception.Should().BeOfType<ArgumentException>();
 #else
-            string expectedMessage = $"'{Path.Combine(BasePath, path)}'";
-            exception.Should().BeOfType<IOException>()
-               .Which.Message.Should().Contain(expectedMessage);
+                string expectedMessage = $"'{Path.Combine(BasePath, path)}'";
+                exception.Should().BeOfType<IOException>($"'{invalidChar}' is an invalid path character.")
+                   .Which.Message.Should().Contain(expectedMessage);
 #endif
+            }
+            else
+            {
+                exception.Should().BeNull();
+            }
         }
     }
 

@@ -12,6 +12,7 @@ internal static class PathHelper
     /// <summary>
     ///     Determines whether the given path contains illegal characters.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     internal static bool HasIllegalCharacters(this string path, IFileSystem fileSystem)
     {
         char[] invalidPathChars = fileSystem.Path.GetInvalidPathChars();
@@ -21,7 +22,12 @@ internal static class PathHelper
             return true;
         }
 
-        return path.IndexOfAny(AdditionalInvalidPathChars) >= 0;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            return path.IndexOfAny(AdditionalInvalidPathChars) >= 0;
+        }
+
+        return false;
     }
 
     internal static string

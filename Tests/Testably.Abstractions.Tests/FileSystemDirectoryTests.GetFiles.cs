@@ -217,7 +217,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
                    .WithAFile());
 
         IEnumerable<string> result = FileSystem.Directory
-           .GetFiles(".\\.", "*.foobar", SearchOption.AllDirectories)
+           .GetFiles(".", "*.foobar", SearchOption.AllDirectories)
            .ToArray();
 
         result.Count().Should().Be(2);
