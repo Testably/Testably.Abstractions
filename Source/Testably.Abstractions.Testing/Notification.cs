@@ -215,16 +215,18 @@ public static class Notification
 
         #region IAwaitableCallback<TValue,TFunc> Members
 
-        /// <inheritdoc />
-        public TFunc Wait(Func<TValue, bool>? filter,
-                          int timeout, int count)
+        /// <inheritdoc cref="IAwaitableCallback{TValue, TFunc}.Wait(Func{TValue, bool},int,int)" />
+        public TFunc Wait(Func<TValue, bool>? filter = null,
+                          int timeout = 1000,
+                          int count = 1)
         {
             _awaitableCallback.Wait(filter, timeout, count);
             return _value;
         }
 
-        /// <inheritdoc />
-        void IAwaitableCallback<TValue>.Wait(Func<TValue, bool>? filter, int timeout,
+        /// <inheritdoc cref="IAwaitableCallback{TValue}.Wait(Func{TValue, bool},int,int)" />
+        void IAwaitableCallback<TValue>.Wait(Func<TValue, bool>? filter,
+                                             int timeout,
                                              int count)
             => Wait(filter, timeout, count);
 
