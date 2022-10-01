@@ -181,11 +181,12 @@ public sealed partial class FileSystemMock
                 _ =>
                 {
                     FileSystemInfoMock directoryMock = CreateDirectoryInternal(path);
-                    directoryMock.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
+                    var access = directoryMock.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
                     fileSystemChange = _fileSystem.Callback.InvokeChangeOccurring(
                         directoryMock.FullName,
-                        CallbackChangeType.DirectoryCreated,
+                        CallbackChangeTypes.DirectoryCreated,
                         NotifyFilters.CreationTime);
+                    access.Dispose();
                     return directoryMock;
                 }) as IStorage.IDirectoryInfoMock;
             _fileSystem.Callback.InvokeChangeOccurred(fileSystemChange);
@@ -201,11 +202,12 @@ public sealed partial class FileSystemMock
                 _ =>
                 {
                     var fileMock = CreateFileInternal(path);
-                    fileMock.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
+                    var access = fileMock.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
                     fileSystemChange = _fileSystem.Callback.InvokeChangeOccurring(
                         fileMock.FullName,
-                        CallbackChangeType.FileCreated,
+                        CallbackChangeTypes.FileCreated,
                         NotifyFilters.CreationTime);
+                    access.Dispose();
                     return fileMock;
                 }) as IStorage.IFileInfoMock;
             _fileSystem.Callback.InvokeChangeOccurred(fileSystemChange);
@@ -262,7 +264,7 @@ public sealed partial class FileSystemMock
                     {
                         fileSystemChange = _fileSystem.Callback.InvokeChangeOccurring(
                             parentPath,
-                            CallbackChangeType.DirectoryCreated,
+                            CallbackChangeTypes.DirectoryCreated,
                             NotifyFilters.CreationTime);
                         return DirectoryInfoMock.New(parentPath, _fileSystem);
                     },

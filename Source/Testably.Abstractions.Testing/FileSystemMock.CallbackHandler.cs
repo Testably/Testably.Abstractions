@@ -36,7 +36,7 @@ public sealed partial class FileSystemMock
         #endregion
 
         public CallbackChange InvokeChangeOccurring(string path,
-                                                      CallbackChangeType changeType,
+                                                      CallbackChangeTypes changeType,
                                                       NotifyFilters notifyFilters)
         {
             CallbackChange fileSystemChange = new(path, changeType, notifyFilters);

@@ -17,14 +17,14 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     The type of the change.
         /// </summary>
-        public CallbackChangeType Type { get; }
+        public CallbackChangeTypes Type { get; }
 
         /// <summary>
         ///     The property changes affected by the change.
         /// </summary>
         public NotifyFilters NotifyFilters { get; }
 
-        internal CallbackChange(string path, CallbackChangeType type,
+        internal CallbackChange(string path, CallbackChangeTypes type,
                                   NotifyFilters notifyFilters)
         {
             Path = path;

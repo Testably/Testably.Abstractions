@@ -9,7 +9,7 @@ public sealed partial class FileSystemMock
     ///     The type of the change in the <see cref="FileSystemMock" />
     /// </summary>
     [Flags]
-    public enum CallbackChangeType
+    public enum CallbackChangeTypes
     {
         /// <summary>
         ///     The file or directory is created.

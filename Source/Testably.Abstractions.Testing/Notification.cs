@@ -54,7 +54,7 @@ public static class Notification
             private readonly NotificationFactory<TValue> _factory;
             private Func<TValue, bool>? _filter;
             private readonly Guid _key;
-            private ManualResetEventSlim _reset;
+            private readonly ManualResetEventSlim _reset;
 
             public CallbackWaiter(NotificationFactory<TValue> factory,
                                   Guid key, Action<TValue>? callback,
