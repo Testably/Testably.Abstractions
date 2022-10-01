@@ -18,11 +18,13 @@ public sealed partial class FileSystemMock
         IStorage.IFileInfoMock
     {
         private byte[] _bytes = Array.Empty<byte>();
+        private readonly IStorage.IFileInfoMock? _file;
 
         internal FileInfoMock(string fullName, string originalPath,
                               FileSystemMock fileSystem)
             : base(fullName, originalPath, fileSystem)
         {
+            _file = FileSystem.Storage.GetFile(fullName);
         }
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Directory" />
@@ -37,7 +39,11 @@ public sealed partial class FileSystemMock
         public bool IsReadOnly { get; set; }
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Length" />
-        public long Length { get; }
+        public long Length
+            => _file?.GetBytes().Length
+               ?? throw ExceptionFactory.FileNotFound(Framework.IsNetFramework
+                   ? OriginalPath
+                   : FullName);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.AppendText()" />
         public StreamWriter AppendText()
