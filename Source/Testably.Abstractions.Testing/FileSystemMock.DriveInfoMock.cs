@@ -98,13 +98,9 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IDriveInfoMock.ChangeUsedBytes(long)" />
         public IDriveInfoMock ChangeUsedBytes(long usedBytesDelta)
         {
-            long newUsedBytes = _usedBytes + usedBytesDelta;
-            if (newUsedBytes < 0)
-            {
-                newUsedBytes = 0;
-            }
+            long newUsedBytes = Math.Max(0, _usedBytes + usedBytesDelta);
 
-            if (AvailableFreeSpace < 0)
+            if (newUsedBytes > TotalSize)
             {
                 throw ExceptionFactory.NotEnoughDiskSpace(Name);
             }
