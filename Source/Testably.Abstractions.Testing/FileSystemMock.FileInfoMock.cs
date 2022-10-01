@@ -103,7 +103,8 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.OpenRead()" />
         public FileSystemStream OpenRead()
-            => throw new NotImplementedException();
+            => new FileStreamMock(FileSystem, FullName, FileMode.Open, FileAccess.Read,
+                FileShare.ReadWrite);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.OpenText()" />
         public StreamReader OpenText()
