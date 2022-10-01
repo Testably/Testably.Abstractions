@@ -14,9 +14,10 @@ public sealed partial class FileSystemMock
         ///     <para />
         ///     This allows e.g. to throw custom exceptions instead.
         /// </summary>
-        INotificationHandler Change(Action<CallbackChange> callback,
-                                         Func<CallbackChange, bool>? predicate = null);
+        FileSystemMock Change(Action<CallbackChange> callback,
+                              Func<CallbackChange, bool>? predicate = null);
     }
+
     /// <summary>
     ///     The callback handler for the <see cref="FileSystemMock" />
     /// </summary>

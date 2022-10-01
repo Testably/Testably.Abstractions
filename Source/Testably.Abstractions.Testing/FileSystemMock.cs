@@ -9,12 +9,6 @@ namespace Testably.Abstractions.Testing;
 public sealed partial class FileSystemMock : IFileSystem
 {
     /// <summary>
-    ///     The callback handler for the <see cref="FileSystemMock" />.
-    /// </summary>
-    public INotificationHandler On
-        => Callback;
-
-    /// <summary>
     ///     The callback handler for intercepting events of the <see cref="FileSystemMock" /> before they occur.
     /// </summary>
     public IInterceptionHandler Intercept => Callback;
@@ -52,7 +46,7 @@ public sealed partial class FileSystemMock : IFileSystem
         TimeSystem = new TimeSystemMock(TimeProvider.Now());
         _pathMock = new PathMock(this);
         Storage = new InMemoryStorage(this);
-        Callback = new FileSystemMockCallbackHandler();
+        Callback = new FileSystemMockCallbackHandler(this);
         _directoryMock = new DirectoryMock(this);
         _fileMock = new FileMock(this);
         DirectoryInfo = new DirectoryInfoFactoryMock(this);

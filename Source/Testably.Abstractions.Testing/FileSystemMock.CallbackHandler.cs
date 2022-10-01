@@ -8,6 +8,13 @@ public sealed partial class FileSystemMock
     internal sealed class FileSystemMockCallbackHandler : IInterceptionHandler,
         INotificationHandler
     {
+        private readonly FileSystemMock _fileSystemMock;
+
+        public FileSystemMockCallbackHandler(FileSystemMock fileSystemMock)
+        {
+            _fileSystemMock = fileSystemMock;
+        }
+
         private readonly Notification.INotificationFactory<CallbackChange>
             _changeOccurringCallbacks = Notification.CreateFactory<CallbackChange>();
 
@@ -18,12 +25,12 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc
         ///     cref="IInterceptionHandler.Change(Action{CallbackChange}, Func{CallbackChange, bool}?)" />
-        public INotificationHandler Change(
+        public FileSystemMock Change(
             Action<CallbackChange> callback,
             Func<CallbackChange, bool>? predicate = null)
         {
             _changeOccurringCallbacks.RegisterCallback(callback, predicate);
-            return this;
+            return _fileSystemMock;
         }
 
         /// <inheritdoc
