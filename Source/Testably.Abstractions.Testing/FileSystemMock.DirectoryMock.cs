@@ -450,13 +450,6 @@ public sealed partial class FileSystemMock
         {
             path.ThrowCommonExceptionsIfPathIsInvalid(_fileSystem);
 
-            if (path.HasIllegalCharacters(_fileSystem))
-            {
-                throw ExceptionFactory.PathHasIncorrectSyntax(
-                    _fileSystem.Path.Combine(_fileSystem.Directory.GetCurrentDirectory(),
-                        path));
-            }
-
             IFileSystem.IDirectoryInfo? directory =
                 _fileSystem.Storage.GetOrAddDirectory(path);
             return directory ?? throw new NotImplementedException();

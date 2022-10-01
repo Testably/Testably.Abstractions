@@ -14,11 +14,6 @@ internal static class PathHelper
     /// </summary>
     internal static bool HasIllegalCharacters(this string path, IFileSystem fileSystem)
     {
-        if (path == null)
-        {
-            throw new ArgumentNullException(nameof(path));
-        }
-
         char[] invalidPathChars = fileSystem.Path.GetInvalidPathChars();
 
         if (path.IndexOfAny(invalidPathChars) >= 0)
@@ -62,6 +57,13 @@ internal static class PathHelper
 #pragma warning restore CA2249
         {
             throw ExceptionFactory.PathHasIllegalCharacters(path);
+        }
+
+        if (path.HasIllegalCharacters(fileSystem))
+        {
+            throw ExceptionFactory.PathHasIncorrectSyntax(
+                fileSystem.Path.Combine(fileSystem.Directory.GetCurrentDirectory(),
+                    path));
         }
     }
 

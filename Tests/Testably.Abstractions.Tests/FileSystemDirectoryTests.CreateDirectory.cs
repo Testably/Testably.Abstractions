@@ -63,9 +63,12 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
     public void CreateDirectory_IllegalCharacters_ShouldThrowArgumentException()
     {
-        foreach (char c in FileSystem.Path.GetInvalidPathChars().Where(c => c != '\0'))
+        var invalidChars = FileSystem.Path
+           .GetInvalidPathChars().Where(c => c != '\0')
+           .Concat(new[] { '*', '?' });
+        foreach (char invalidChar in invalidChars)
         {
-            string path = "foo" + c + "bar";
+            string path = $"{invalidChar}foo{invalidChar}bar";
             Exception? exception = Record.Exception(() =>
             {
                 FileSystem.Directory.CreateDirectory(path);

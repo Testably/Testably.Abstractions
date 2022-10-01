@@ -39,11 +39,12 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
            .Should().Be("path");
     }
 
-    [Fact]
+    [Theory]
+    [InlineData("\0foo")]
+    [InlineData("foo\0bar")]
     [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Create))]
-    public void Create_NullCharacter_ShouldThrowArgumentException()
+    public void Create_NullCharacter_ShouldThrowArgumentException(string path)
     {
-        string path = "foo\0bar";
         string expectedMessage = "Illegal characters in path.";
         Exception? exception =
             Record.Exception(() => FileSystem.DirectoryInfo.New(path).Create());
