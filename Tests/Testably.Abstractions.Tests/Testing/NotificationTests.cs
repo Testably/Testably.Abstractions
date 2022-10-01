@@ -61,10 +61,12 @@ public class NotificationTests
         totalCount.Should().BeGreaterOrEqualTo(6);
     }
 
-    [Fact]
+    [SkippableFact]
     [Trait(nameof(Testing), nameof(Notification))]
     public void AwaitableCallback_Filter_ShouldOnlyUpdateAfterFilteredValue()
     {
+        Skip.IfNot(Test.RunsOnWindows, "Test is brittle, especially on MacOS.");
+
         TimeSystemMock timeSystem = new();
         int totalCount = 0;
         int filteredCount = 0;
