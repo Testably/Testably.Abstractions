@@ -57,16 +57,16 @@ public sealed partial class FileSystem
             => System.IO.File.Copy(sourceFileName, destFileName, overwrite);
 
         /// <inheritdoc cref="IFileSystem.IFile.Create(string)" />
-        public FileStream Create(string path)
-            => System.IO.File.Create(path);
+        public FileSystemStream Create(string path)
+            => new FileStreamWrapper(System.IO.File.Create(path));
 
         /// <inheritdoc cref="IFileSystem.IFile.Create(string, int)" />
-        public FileStream Create(string path, int bufferSize)
-            => System.IO.File.Create(path, bufferSize);
+        public FileSystemStream Create(string path, int bufferSize)
+            => new FileStreamWrapper(System.IO.File.Create(path, bufferSize));
 
         /// <inheritdoc cref="IFileSystem.IFile.Create(string, int, FileOptions)" />
-        public FileStream Create(string path, int bufferSize, FileOptions options)
-            => System.IO.File.Create(path, bufferSize, options);
+        public FileSystemStream Create(string path, int bufferSize, FileOptions options)
+            => new FileStreamWrapper(System.IO.File.Create(path, bufferSize, options));
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="IFileSystem.IFile.CreateSymbolicLink(string, string)" />
@@ -139,35 +139,35 @@ public sealed partial class FileSystem
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFile.Open(string, FileMode)" />
-        public FileStream Open(string path, FileMode mode)
-            => System.IO.File.Open(path, mode);
+        public FileSystemStream Open(string path, FileMode mode)
+            => new FileStreamWrapper(System.IO.File.Open(path, mode));
 
         /// <inheritdoc cref="IFileSystem.IFile.Open(string, FileMode, FileAccess)" />
-        public FileStream Open(string path, FileMode mode, FileAccess access)
-            => System.IO.File.Open(path, mode, access);
+        public FileSystemStream Open(string path, FileMode mode, FileAccess access)
+            => new FileStreamWrapper(System.IO.File.Open(path, mode, access));
 
         /// <inheritdoc cref="IFileSystem.IFile.Open(string, FileMode, FileAccess, FileShare)" />
-        public FileStream Open(string path, FileMode mode, FileAccess access,
+        public FileSystemStream Open(string path, FileMode mode, FileAccess access,
                                FileShare share)
-            => System.IO.File.Open(path, mode, access, share);
+            => new FileStreamWrapper(System.IO.File.Open(path, mode, access, share));
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
         /// <inheritdoc cref="IFileSystem.IFile.Open(string, FileStreamOptions)" />
-        public FileStream Open(string path, FileStreamOptions options)
-            => System.IO.File.Open(path, options);
+        public FileSystemStream Open(string path, FileStreamOptions options)
+            => new FileStreamWrapper(System.IO.File.Open(path, options));
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFile.OpenRead(string)" />
-        public FileStream OpenRead(string path)
-            => System.IO.File.OpenRead(path);
+        public FileSystemStream OpenRead(string path)
+            => new FileStreamWrapper(System.IO.File.OpenRead(path));
 
         /// <inheritdoc cref="IFileSystem.IFile.OpenText(string)" />
         public StreamReader OpenText(string path)
             => System.IO.File.OpenText(path);
 
         /// <inheritdoc cref="IFileSystem.IFile.OpenWrite(string)" />
-        public FileStream OpenWrite(string path)
-            => System.IO.File.OpenWrite(path);
+        public FileSystemStream OpenWrite(string path)
+            => new FileStreamWrapper(System.IO.File.OpenWrite(path));
 
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllBytes(string)" />
         public byte[] ReadAllBytes(string path)

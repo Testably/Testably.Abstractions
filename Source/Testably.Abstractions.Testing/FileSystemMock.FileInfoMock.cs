@@ -52,7 +52,7 @@ public sealed partial class FileSystemMock
             => throw new NotImplementedException();
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Create()" />
-        public FileStream Create()
+        public FileSystemStream Create()
             => throw new NotImplementedException();
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.CreateText()" />
@@ -84,25 +84,25 @@ public sealed partial class FileSystemMock
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode)" />
-        public FileStream Open(FileMode mode)
+        public FileSystemStream Open(FileMode mode)
             => throw new NotImplementedException();
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode, FileAccess)" />
-        public FileStream Open(FileMode mode, FileAccess access)
+        public FileSystemStream Open(FileMode mode, FileAccess access)
             => throw new NotImplementedException();
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode, FileAccess, FileShare)" />
-        public FileStream Open(FileMode mode, FileAccess access, FileShare share)
+        public FileSystemStream Open(FileMode mode, FileAccess access, FileShare share)
             => throw new NotImplementedException();
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileStreamOptions)" />
-        public FileStream Open(FileStreamOptions options)
+        public FileSystemStream Open(FileStreamOptions options)
             => throw new NotImplementedException();
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.OpenRead()" />
-        public FileStream OpenRead()
+        public FileSystemStream OpenRead()
             => throw new NotImplementedException();
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.OpenText()" />
@@ -110,7 +110,7 @@ public sealed partial class FileSystemMock
             => throw new NotImplementedException();
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.OpenWrite()" />
-        public FileStream OpenWrite()
+        public FileSystemStream OpenWrite()
             => throw new NotImplementedException();
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Replace(string, string?)" />
