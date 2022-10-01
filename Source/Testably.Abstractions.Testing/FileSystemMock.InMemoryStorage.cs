@@ -182,14 +182,14 @@ public sealed partial class FileSystemMock
                 {
                     FileSystemInfoMock directoryMock = CreateDirectoryInternal(path);
                     var access = directoryMock.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
-                    fileSystemChange = _fileSystem.ChangeHandler.InvokeChangeOccurring(
+                    fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
                         directoryMock.FullName,
                         ChangeTypes.DirectoryCreated,
                         NotifyFilters.CreationTime);
                     access.Dispose();
                     return directoryMock;
                 }) as IStorage.IDirectoryInfoMock;
-            _fileSystem.ChangeHandler.InvokeChangeOccurred(fileSystemChange);
+            _fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
             return directory;
         }
 
@@ -203,14 +203,14 @@ public sealed partial class FileSystemMock
                 {
                     var fileMock = CreateFileInternal(path);
                     var access = fileMock.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
-                    fileSystemChange = _fileSystem.ChangeHandler.InvokeChangeOccurring(
+                    fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
                         fileMock.FullName,
                         ChangeTypes.FileCreated,
                         NotifyFilters.CreationTime);
                     access.Dispose();
                     return fileMock;
                 }) as IStorage.IFileInfoMock;
-            _fileSystem.ChangeHandler.InvokeChangeOccurred(fileSystemChange);
+            _fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
             return file;
         }
 
@@ -262,7 +262,7 @@ public sealed partial class FileSystemMock
                     key,
                     _ =>
                     {
-                        fileSystemChange = _fileSystem.ChangeHandler.InvokeChangeOccurring(
+                        fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
                             parentPath,
                             ChangeTypes.DirectoryCreated,
                             NotifyFilters.CreationTime);
@@ -270,7 +270,7 @@ public sealed partial class FileSystemMock
                     },
                     (_, fileSystemInfo) =>
                         fileSystemInfo.AdjustTimes(timeAdjustments));
-                _fileSystem.ChangeHandler.InvokeChangeOccurred(fileSystemChange);
+                _fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
                 requests.Add(directory.RequestAccess(FileAccess.Write,
                     FileShare.ReadWrite));
             }

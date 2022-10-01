@@ -46,7 +46,7 @@ public sealed partial class FileSystemMock
 
         #endregion
 
-        public void InvokeChangeOccurred(ChangeDescription? fileSystemChange)
+        internal void NotifyCompletedChange(ChangeDescription? fileSystemChange)
         {
             if (fileSystemChange != null)
             {
@@ -54,7 +54,7 @@ public sealed partial class FileSystemMock
             }
         }
 
-        public ChangeDescription InvokeChangeOccurring(string path,
+        internal ChangeDescription NotifyPendingChange(string path,
                                                        ChangeTypes changeType,
                                                        NotifyFilters notifyFilters)
         {

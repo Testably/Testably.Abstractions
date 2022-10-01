@@ -270,7 +270,8 @@ public sealed partial class FileSystemMock
             ChangeDescription? fileSystemChange = null;
             if (HasNotifyFilters(timeAdjustments, out NotifyFilters notifyFilters))
             {
-                fileSystemChange = FileSystem.ChangeHandler.InvokeChangeOccurring(FullName,
+                fileSystemChange = FileSystem.ChangeHandler.NotifyPendingChange(
+                    FullName,
                     ChangeTypes.Modified,
                     notifyFilters);
             }
@@ -291,7 +292,7 @@ public sealed partial class FileSystemMock
                 LastWriteTime = ConsiderUnspecifiedKind(now);
             }
 
-            FileSystem.ChangeHandler.InvokeChangeOccurred(fileSystemChange);
+            FileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
 
             return this;
         }
