@@ -34,7 +34,7 @@ internal static class EncryptionHelper
     private static Aes CreateAlgorithm()
     {
         byte[] bytes = Encoding.UTF8.GetBytes(
-            "THIS IS ONLY A DUMMY ENCRYPTION FOR TESTING PURPOSES!");
+            "THIS IS ONLY A DUMMY ENCRYPTION FOR TESTING HELPERS!");
 
         using (SHA256? sha256Hash = SHA256.Create())
         {
