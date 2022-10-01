@@ -184,7 +184,7 @@ public sealed partial class FileSystemMock
                     directoryMock.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
                     fileSystemChange = _fileSystem.Callback.InvokeChangeOccurring(
                         directoryMock.FullName,
-                        ICallbackHandler.ChangeType.Created,
+                        CallbackChangeType.DirectoryCreated,
                         NotifyFilters.CreationTime);
                     return directoryMock;
                 }) as IStorage.IDirectoryInfoMock;
@@ -195,9 +195,21 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="FileSystemMock.IStorage.GetOrAddFile(string)" />
         public IStorage.IFileInfoMock? GetOrAddFile(string path)
         {
-            return _files.GetOrAdd(
+            ICallbackHandler.FileSystemChange? fileSystemChange = null;
+            var file = _files.GetOrAdd(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
-                _ => CreateFileInternal(path)) as IStorage.IFileInfoMock;
+                _ =>
+                {
+                    var fileMock = CreateFileInternal(path);
+                    fileMock.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
+                    fileSystemChange = _fileSystem.Callback.InvokeChangeOccurring(
+                        fileMock.FullName,
+                        CallbackChangeType.FileCreated,
+                        NotifyFilters.CreationTime);
+                    return fileMock;
+                }) as IStorage.IFileInfoMock;
+            _fileSystem.Callback.InvokeChangeOccurred(fileSystemChange);
+            return file;
         }
 
         /// <inheritdoc cref="FileSystemMock.IStorage.GetSubdirectoryPath(string, string)" />
@@ -250,7 +262,7 @@ public sealed partial class FileSystemMock
                     {
                         fileSystemChange = _fileSystem.Callback.InvokeChangeOccurring(
                             parentPath,
-                            ICallbackHandler.ChangeType.Created,
+                            CallbackChangeType.DirectoryCreated,
                             NotifyFilters.CreationTime);
                         return DirectoryInfoMock.New(parentPath, _fileSystem);
                     },

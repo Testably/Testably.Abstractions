@@ -20,13 +20,13 @@ public class FileSystemCallbackHandlerTests
     [Theory]
     [AutoData]
     [FileSystemTests.CallbackHandler(
-        nameof(FileSystemMock.ICallbackHandler.ChangeType.Created))]
+        nameof(FileSystemMock.CallbackChangeType.Created))]
     public void CreateDirectory_ShouldTriggerNotification(string path)
     {
         string? receivedPath = null;
         Notification.IAwaitableCallback<FileSystemMock.ICallbackHandler.FileSystemChange>
             awaitable = FileSystem.On.ChangeOccurred(c => receivedPath = c.Path,
-                c => c.Type == FileSystemMock.ICallbackHandler.ChangeType.Created);
+                c => c.Type == FileSystemMock.CallbackChangeType.DirectoryCreated);
 
         FileSystem.Directory.CreateDirectory(path);
 
@@ -38,7 +38,7 @@ public class FileSystemCallbackHandlerTests
     [Theory]
     [AutoData]
     [FileSystemTests.CallbackHandler(
-        nameof(FileSystemMock.ICallbackHandler.ChangeType.Created))]
+        nameof(FileSystemMock.CallbackChangeType.Created))]
     public void CreateDirectory_CustomException_ShouldOnlyTriggerChangeOccurring(
         string path, Exception exceptionToThrow)
     {
@@ -62,7 +62,7 @@ public class FileSystemCallbackHandlerTests
     [Theory]
     [AutoData]
     [FileSystemTests.CallbackHandler(
-        nameof(FileSystemMock.ICallbackHandler.ChangeType.Created))]
+        nameof(FileSystemMock.CallbackChangeType.Created))]
     public void
         CreateDirectory_WithParentDirectories_ShouldTriggerNotificationForEachDirectory(
             string path1, string path2, string path3)
@@ -75,11 +75,11 @@ public class FileSystemCallbackHandlerTests
                     _testOutputHelper.WriteLine($"Received event {c}");
                     eventCount++;
                 },
-                c => c.Type == FileSystemMock.ICallbackHandler.ChangeType.Created);
+                c => c.Type == FileSystemMock.CallbackChangeType.DirectoryCreated);
 
         FileSystem.Directory.CreateDirectory(path);
 
-        awaitable.Wait(timeout: 3000, count: 3);
+        awaitable.Wait(count: 3);
 
         eventCount.Should().Be(3);
     }

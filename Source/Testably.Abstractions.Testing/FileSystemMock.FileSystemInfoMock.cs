@@ -271,7 +271,7 @@ public sealed partial class FileSystemMock
             if (HasNotifyFilters(timeAdjustments, out NotifyFilters notifyFilters))
             {
                 fileSystemChange = FileSystem.Callback.InvokeChangeOccurring(FullName,
-                    ICallbackHandler.ChangeType.Modified,
+                    CallbackChangeType.Modified,
                     notifyFilters);
             }
 

@@ -25,7 +25,7 @@ public sealed partial class FileSystemMock
         /// </summary>
         Notification.IAwaitableCallback<FileSystemChange> ChangeOccurred(
             Action<FileSystemChange>? callback = null,
-        Func<FileSystemChange, bool>? predicate = null);
+            Func<FileSystemChange, bool>? predicate = null);
 
         /// <summary>
         ///     Describes the change in the <see cref="FileSystemMock" />.
@@ -40,14 +40,14 @@ public sealed partial class FileSystemMock
             /// <summary>
             ///     The type of the change.
             /// </summary>
-            public ChangeType Type { get; }
+            public CallbackChangeType Type { get; }
 
             /// <summary>
             ///     The property changes affected by the change.
             /// </summary>
             public NotifyFilters NotifyFilters { get; }
 
-            internal FileSystemChange(string path, ChangeType type,
+            internal FileSystemChange(string path, CallbackChangeType type,
                                       NotifyFilters notifyFilters)
             {
                 Path = path;
@@ -60,32 +60,6 @@ public sealed partial class FileSystemMock
             {
                 return $"{Type} {Path} [{NotifyFilters}]";
             }
-        }
-
-        /// <summary>
-        ///     The type of the change in the <see cref="FileSystemMock" />
-        /// </summary>
-        public enum ChangeType
-        {
-            /// <summary>
-            ///     The file or directory is created.
-            /// </summary>
-            Created,
-
-            /// <summary>
-            ///     The file or directory is removed.
-            /// </summary>
-            Deleted,
-
-            /// <summary>
-            ///     The file or directory is modified.
-            /// </summary>
-            Modified,
-
-            /// <summary>
-            ///     The file or directory is renamed.
-            /// </summary>
-            Renamed
         }
     }
 }
