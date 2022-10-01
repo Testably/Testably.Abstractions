@@ -84,7 +84,7 @@ public static class FileSystemTests
     public class CallbackHandler : TestabilityTraitAttribute
     {
         public CallbackHandler(string? method) : base(nameof(IFileSystem),
-            nameof(FileSystemMock.ICallbackHandler), method)
+            nameof(FileSystemMock.INotificationHandler), method)
         {
         }
     }

@@ -11,8 +11,18 @@ public sealed partial class FileSystemMock : IFileSystem
     /// <summary>
     ///     The callback handler for the <see cref="FileSystemMock" />.
     /// </summary>
-    public ICallbackHandler On
+    public INotificationHandler On
         => Callback;
+
+    /// <summary>
+    ///     The callback handler for intercepting events of the <see cref="FileSystemMock" /> before they occur.
+    /// </summary>
+    public IInterceptionHandler Intercept => Callback;
+
+    /// <summary>
+    ///     The callback handler for notifications of the <see cref="FileSystemMock" /> after an event occurred.
+    /// </summary>
+    public INotificationHandler Notify => Callback;
 
     /// <summary>
     ///     The used random system.

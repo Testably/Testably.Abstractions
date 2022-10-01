@@ -32,7 +32,7 @@ public class FileSystemCallbackHandlerTests
         initialization?.Invoke(FileSystem, path);
 
         Notification.IAwaitableCallback<FileSystemMock.CallbackChange>
-            awaitable = FileSystem.On.ChangeOccurred(c => receivedPath = c.Path,
+            awaitable = FileSystem.Notify.OnChange(c => receivedPath = c.Path,
                 c => c.Type == expectedChangeType);
 
         callback.Invoke(FileSystem, path);
@@ -50,10 +50,9 @@ public class FileSystemCallbackHandlerTests
         string path, Exception exceptionToThrow)
     {
         string? receivedPath = null;
+        FileSystem.Intercept.Change(_ => throw exceptionToThrow);
         Notification.IAwaitableCallback<FileSystemMock.CallbackChange>
-            awaitable = FileSystem.On
-               .ChangeOccurring(_ => throw exceptionToThrow)
-               .ChangeOccurred(c => receivedPath = c.Path);
+            awaitable = FileSystem.Notify.OnChange(c => receivedPath = c.Path);
 
         Exception? exception = Record.Exception(() =>
         {
@@ -77,7 +76,7 @@ public class FileSystemCallbackHandlerTests
         string path = FileSystem.Path.Combine(path1, path2, path3);
         int eventCount = 0;
         Notification.IAwaitableCallback<FileSystemMock.CallbackChange>
-            awaitable = FileSystem.On.ChangeOccurred(c =>
+            awaitable = FileSystem.Notify.OnChange(c =>
                 {
                     _testOutputHelper.WriteLine($"Received event {c}");
                     eventCount++;

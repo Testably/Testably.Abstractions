@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 
 namespace Testably.Abstractions.Testing;
 
@@ -79,6 +78,11 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     The directory is created.
         /// </summary>
-        DirectoryRenamed = Directory | Renamed
+        DirectoryRenamed = Directory | Renamed,
+
+        /// <summary>
+        ///     Any change.
+        /// </summary>
+        Any = ~0
     }
 }

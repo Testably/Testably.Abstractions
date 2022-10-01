@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
-using static Testably.Abstractions.Testing.FileSystemMock.ICallbackHandler;
 
 namespace Testably.Abstractions.Testing;
 
 public sealed partial class FileSystemMock
 {
-    internal sealed class FileSystemMockCallbackHandler : ICallbackHandler
+    internal sealed class FileSystemMockCallbackHandler : IInterceptionHandler,
+        INotificationHandler
     {
         private readonly Notification.INotificationFactory<CallbackChange>
             _changeOccurringCallbacks = Notification.CreateFactory<CallbackChange>();
@@ -17,8 +17,8 @@ public sealed partial class FileSystemMock
         #region ICallbackHandler Members
 
         /// <inheritdoc
-        ///     cref="FileSystemMock.ICallbackHandler.ChangeOccurring(Action{ICallbackHandler.FileSystemChange}, Func{ICallbackHandler.FileSystemChange,bool})" />
-        public ICallbackHandler ChangeOccurring(
+        ///     cref="IInterceptionHandler.Change(Action{CallbackChange}, Func{CallbackChange, bool}?)" />
+        public INotificationHandler Change(
             Action<CallbackChange> callback,
             Func<CallbackChange, bool>? predicate = null)
         {
@@ -27,8 +27,8 @@ public sealed partial class FileSystemMock
         }
 
         /// <inheritdoc
-        ///     cref="FileSystemMock.ICallbackHandler.ChangeOccurred(Action{ICallbackHandler.FileSystemChange}, Func{ICallbackHandler.FileSystemChange,bool})" />
-        public Notification.IAwaitableCallback<CallbackChange> ChangeOccurred(
+        ///     cref="INotificationHandler.OnChange(Action{CallbackChange}?, Func{CallbackChange, bool}?)" />
+        public Notification.IAwaitableCallback<CallbackChange> OnChange(
             Action<CallbackChange>? callback = null,
             Func<CallbackChange, bool>? predicate = null)
             => _changeOccurredCallbacks.RegisterCallback(callback, predicate);
@@ -36,8 +36,8 @@ public sealed partial class FileSystemMock
         #endregion
 
         public CallbackChange InvokeChangeOccurring(string path,
-                                                      CallbackChangeTypes changeType,
-                                                      NotifyFilters notifyFilters)
+                                                    CallbackChangeTypes changeType,
+                                                    NotifyFilters notifyFilters)
         {
             CallbackChange fileSystemChange = new(path, changeType, notifyFilters);
             _changeOccurringCallbacks.InvokeCallbacks(fileSystemChange);
