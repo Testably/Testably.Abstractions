@@ -267,11 +267,11 @@ public sealed partial class FileSystemMock
 
         internal FileSystemInfoMock AdjustTimes(TimeAdjustments timeAdjustments)
         {
-            CallbackChange? fileSystemChange = null;
+            ChangeDescription? fileSystemChange = null;
             if (HasNotifyFilters(timeAdjustments, out NotifyFilters notifyFilters))
             {
-                fileSystemChange = FileSystem.Callback.InvokeChangeOccurring(FullName,
-                    CallbackChangeTypes.Modified,
+                fileSystemChange = FileSystem.ChangeHandler.InvokeChangeOccurring(FullName,
+                    ChangeTypes.Modified,
                     notifyFilters);
             }
 
@@ -291,7 +291,7 @@ public sealed partial class FileSystemMock
                 LastWriteTime = ConsiderUnspecifiedKind(now);
             }
 
-            FileSystem.Callback.InvokeChangeOccurred(fileSystemChange);
+            FileSystem.ChangeHandler.InvokeChangeOccurred(fileSystemChange);
 
             return this;
         }

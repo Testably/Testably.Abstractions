@@ -21,7 +21,7 @@ public class FileSystemCallbackHandlerTests
     [Theory]
     [AutoData]
     [FileSystemTests.CallbackHandler(
-        nameof(FileSystemMock.CallbackChangeTypes.Created))]
+        nameof(FileSystemMock.ChangeTypes.Created))]
     public void CreateDirectory_CustomException_ShouldOnlyTriggerChangeOccurring(
         string path, Exception exceptionToThrow)
     {
@@ -45,20 +45,20 @@ public class FileSystemCallbackHandlerTests
     [Theory]
     [AutoData]
     [FileSystemTests.CallbackHandler(
-        nameof(FileSystemMock.CallbackChangeTypes.Created))]
+        nameof(FileSystemMock.ChangeTypes.Created))]
     public void
         CreateDirectory_WithParentDirectories_ShouldTriggerNotificationForEachDirectory(
             string path1, string path2, string path3)
     {
         string path = FileSystem.Path.Combine(path1, path2, path3);
         int eventCount = 0;
-        Notification.IAwaitableCallback<FileSystemMock.CallbackChange>
+        Notification.IAwaitableCallback<FileSystemMock.ChangeDescription>
             awaitable = FileSystem.Notify.OnChange(c =>
                 {
                     _testOutputHelper.WriteLine($"Received event {c}");
                     eventCount++;
                 },
-                c => c.Type == FileSystemMock.CallbackChangeTypes.DirectoryCreated);
+                c => c.Type == FileSystemMock.ChangeTypes.DirectoryCreated);
 
         FileSystem.Directory.CreateDirectory(path);
 
@@ -70,11 +70,11 @@ public class FileSystemCallbackHandlerTests
     [Theory]
     [MemberData(nameof(NotificationTriggeringMethods))]
     [FileSystemTests.CallbackHandler(
-        nameof(FileSystemMock.CallbackChangeTypes.Created))]
+        nameof(FileSystemMock.ChangeTypes.Created))]
     public void ExecuteCallback_ShouldTriggerNotification(
         Action<IFileSystem, string>? initialization,
         Action<IFileSystem, string> callback,
-        FileSystemMock.CallbackChangeTypes expectedChangeType,
+        FileSystemMock.ChangeTypes expectedChangeType,
         string path)
     {
         string? receivedPath = null;
@@ -100,14 +100,13 @@ public class FileSystemCallbackHandlerTests
         {
             null,
             new Action<IFileSystem, string>((f, p) => f.Directory.CreateDirectory(p)),
-            FileSystemMock.CallbackChangeTypes.DirectoryCreated,
-            $"path_{Guid.NewGuid()}"
+            FileSystemMock.ChangeTypes.DirectoryCreated, $"path_{Guid.NewGuid()}"
         };
         yield return new object?[]
         {
             null,
             new Action<IFileSystem, string>((f, p) => f.File.WriteAllText(p, null)),
-            FileSystemMock.CallbackChangeTypes.FileCreated, $"path_{Guid.NewGuid()}"
+            FileSystemMock.ChangeTypes.FileCreated, $"path_{Guid.NewGuid()}"
         };
     }
 

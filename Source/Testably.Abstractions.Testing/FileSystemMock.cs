@@ -11,12 +11,12 @@ public sealed partial class FileSystemMock : IFileSystem
     /// <summary>
     ///     The callback handler for intercepting events of the <see cref="FileSystemMock" /> before they occur.
     /// </summary>
-    public IInterceptionHandler Intercept => Callback;
+    public IInterceptionHandler Intercept => ChangeHandler;
 
     /// <summary>
     ///     The callback handler for notifications of the <see cref="FileSystemMock" /> after an event occurred.
     /// </summary>
-    public INotificationHandler Notify => Callback;
+    public INotificationHandler Notify => ChangeHandler;
 
     /// <summary>
     ///     The used random system.
@@ -30,7 +30,7 @@ public sealed partial class FileSystemMock : IFileSystem
 
     internal IStorage Storage { get; }
 
-    internal FileSystemMockCallbackHandler Callback { get; }
+    internal ChangeHandlerImplementation ChangeHandler { get; }
     private readonly DirectoryMock _directoryMock;
     private readonly FileMock _fileMock;
     private readonly PathMock _pathMock;
@@ -46,7 +46,7 @@ public sealed partial class FileSystemMock : IFileSystem
         TimeSystem = new TimeSystemMock(TimeProvider.Now());
         _pathMock = new PathMock(this);
         Storage = new InMemoryStorage(this);
-        Callback = new FileSystemMockCallbackHandler(this);
+        ChangeHandler = new ChangeHandlerImplementation(this);
         _directoryMock = new DirectoryMock(this);
         _fileMock = new FileMock(this);
         DirectoryInfo = new DirectoryInfoFactoryMock(this);

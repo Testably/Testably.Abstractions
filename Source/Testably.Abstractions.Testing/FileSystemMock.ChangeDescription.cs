@@ -7,8 +7,13 @@ public sealed partial class FileSystemMock
     /// <summary>
     ///     Describes the change in the <see cref="FileSystemMock" />.
     /// </summary>
-    public class CallbackChange
+    public class ChangeDescription
     {
+        /// <summary>
+        ///     The property changes affected by the change.
+        /// </summary>
+        public NotifyFilters NotifyFilters { get; }
+
         /// <summary>
         ///     The path of the file or directory that changed.
         /// </summary>
@@ -17,15 +22,11 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     The type of the change.
         /// </summary>
-        public CallbackChangeTypes Type { get; }
+        public ChangeTypes Type { get; }
 
-        /// <summary>
-        ///     The property changes affected by the change.
-        /// </summary>
-        public NotifyFilters NotifyFilters { get; }
-
-        internal CallbackChange(string path, CallbackChangeTypes type,
-                                  NotifyFilters notifyFilters)
+        internal ChangeDescription(string path,
+                                   ChangeTypes type,
+                                   NotifyFilters notifyFilters)
         {
             Path = path;
             Type = type;

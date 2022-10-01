@@ -175,42 +175,42 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="FileSystemMock.IStorage.GetOrAddDirectory(string)" />
         public IStorage.IDirectoryInfoMock? GetOrAddDirectory(string path)
         {
-            CallbackChange? fileSystemChange = null;
+            ChangeDescription? fileSystemChange = null;
             IStorage.IDirectoryInfoMock? directory = _files.GetOrAdd(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
                 _ =>
                 {
                     FileSystemInfoMock directoryMock = CreateDirectoryInternal(path);
                     var access = directoryMock.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
-                    fileSystemChange = _fileSystem.Callback.InvokeChangeOccurring(
+                    fileSystemChange = _fileSystem.ChangeHandler.InvokeChangeOccurring(
                         directoryMock.FullName,
-                        CallbackChangeTypes.DirectoryCreated,
+                        ChangeTypes.DirectoryCreated,
                         NotifyFilters.CreationTime);
                     access.Dispose();
                     return directoryMock;
                 }) as IStorage.IDirectoryInfoMock;
-            _fileSystem.Callback.InvokeChangeOccurred(fileSystemChange);
+            _fileSystem.ChangeHandler.InvokeChangeOccurred(fileSystemChange);
             return directory;
         }
 
         /// <inheritdoc cref="FileSystemMock.IStorage.GetOrAddFile(string)" />
         public IStorage.IFileInfoMock? GetOrAddFile(string path)
         {
-            CallbackChange? fileSystemChange = null;
+            ChangeDescription? fileSystemChange = null;
             var file = _files.GetOrAdd(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
                 _ =>
                 {
                     var fileMock = CreateFileInternal(path);
                     var access = fileMock.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
-                    fileSystemChange = _fileSystem.Callback.InvokeChangeOccurring(
+                    fileSystemChange = _fileSystem.ChangeHandler.InvokeChangeOccurring(
                         fileMock.FullName,
-                        CallbackChangeTypes.FileCreated,
+                        ChangeTypes.FileCreated,
                         NotifyFilters.CreationTime);
                     access.Dispose();
                     return fileMock;
                 }) as IStorage.IFileInfoMock;
-            _fileSystem.Callback.InvokeChangeOccurred(fileSystemChange);
+            _fileSystem.ChangeHandler.InvokeChangeOccurred(fileSystemChange);
             return file;
         }
 
@@ -257,20 +257,20 @@ public sealed partial class FileSystemMock
             {
                 string key = _fileSystem.Path.GetFullPath(parentPath)
                    .NormalizeAndTrimPath(_fileSystem);
-                CallbackChange? fileSystemChange = null;
+                ChangeDescription? fileSystemChange = null;
                 FileSystemInfoMock directory = _files.AddOrUpdate(
                     key,
                     _ =>
                     {
-                        fileSystemChange = _fileSystem.Callback.InvokeChangeOccurring(
+                        fileSystemChange = _fileSystem.ChangeHandler.InvokeChangeOccurring(
                             parentPath,
-                            CallbackChangeTypes.DirectoryCreated,
+                            ChangeTypes.DirectoryCreated,
                             NotifyFilters.CreationTime);
                         return DirectoryInfoMock.New(parentPath, _fileSystem);
                     },
                     (_, fileSystemInfo) =>
                         fileSystemInfo.AdjustTimes(timeAdjustments));
-                _fileSystem.Callback.InvokeChangeOccurred(fileSystemChange);
+                _fileSystem.ChangeHandler.InvokeChangeOccurred(fileSystemChange);
                 requests.Add(directory.RequestAccess(FileAccess.Write,
                     FileShare.ReadWrite));
             }
