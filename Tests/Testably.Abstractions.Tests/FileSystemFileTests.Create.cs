@@ -27,4 +27,35 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         FileTestHelper.CheckFileAccess(stream).Should().Be(FileAccess.ReadWrite);
         FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
     }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.Create))]
+    public void Create_WithBufferSize_ShouldUseReadWriteAccessAndNoneShare(
+        string path, int bufferSize)
+    {
+        FileSystem.File.WriteAllText(path, null);
+
+        using FileSystemStream stream = FileSystem.File.Create(path, bufferSize);
+
+        stream.IsAsync.Should().BeFalse();
+        FileTestHelper.CheckFileAccess(stream).Should().Be(FileAccess.ReadWrite);
+        FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
+    }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.Create))]
+    public void Create_WithBufferSizeAndFileOptions_ShouldUseReadWriteAccessAndNoneShare(
+        string path, int bufferSize)
+    {
+        FileSystem.File.WriteAllText(path, null);
+
+        using FileSystemStream stream =
+            FileSystem.File.Create(path, bufferSize, FileOptions.Asynchronous);
+
+        stream.IsAsync.Should().BeTrue();
+        FileTestHelper.CheckFileAccess(stream).Should().Be(FileAccess.ReadWrite);
+        FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
+    }
 }
