@@ -38,6 +38,24 @@ public abstract partial class FileSystemFileTests<TFileSystem>
     }
 
     [Theory]
+    [InlineAutoData(FileMode.Append, FileAccess.Write)]
+    [InlineAutoData(FileMode.Open, FileAccess.ReadWrite)]
+    [InlineAutoData(FileMode.Create, FileAccess.ReadWrite)]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.Open))]
+    public void Open_ShouldUseExpectedAccessDependingOnMode(
+        FileMode mode,
+        FileAccess expectedAccess,
+        string path)
+    {
+        FileSystem.File.WriteAllText(path, null);
+
+        using FileSystemStream stream = FileSystem.File.Open(path, mode);
+
+        FileTestHelper.CheckFileAccess(stream).Should().Be(expectedAccess);
+        FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
+    }
+
+    [Theory]
     [InlineAutoData(FileAccess.Read, FileShare.Write)]
     [InlineAutoData(FileAccess.Write, FileShare.Read)]
     [FileSystemTests.File(nameof(IFileSystem.IFile.Open))]
@@ -67,57 +85,4 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         FileTestHelper.CheckFileAccess(stream).Should().Be(access);
         FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
     }
-
-#if NETFRAMEWORK
-    [Theory]
-    [InlineAutoData(FileMode.Open, FileAccess.ReadWrite)]
-    [InlineAutoData(FileMode.Create, FileAccess.ReadWrite)]
-    [FileSystemTests.File(nameof(IFileSystem.IFile.Open))]
-    public void Open_ShouldUseExpectedAccessDependingOnMode(
-        FileMode mode,
-        FileAccess expectedAccess,
-        string path)
-    {
-        FileSystem.File.WriteAllText(path, null);
-
-        using FileSystemStream stream = FileSystem.File.Open(path, mode);
-
-        FileTestHelper.CheckFileAccess(stream).Should().Be(expectedAccess);
-        FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
-    }
-
-    [Theory]
-    [AutoData]
-    [FileSystemTests.File(nameof(IFileSystem.IFile.Open))]
-    public void Open_AppendMode_ShouldThrowArgumentException(
-        string path)
-    {
-        FileSystem.File.WriteAllText(path, null);
-
-        Exception? exception = Record.Exception(() =>
-        {
-            _ = FileSystem.File.Open(path, FileMode.Append);
-        });
-
-        exception.Should().BeOfType<ArgumentException>();
-    }
-#else
-    [Theory]
-    [InlineAutoData(FileMode.Append, FileAccess.Write)]
-    [InlineAutoData(FileMode.Open, FileAccess.ReadWrite)]
-    [InlineAutoData(FileMode.Create, FileAccess.ReadWrite)]
-    [FileSystemTests.File(nameof(IFileSystem.IFile.Open))]
-    public void Open_ShouldUseExpectedAccessDependingOnMode(
-        FileMode mode,
-        FileAccess expectedAccess,
-        string path)
-    {
-        FileSystem.File.WriteAllText(path, null);
-
-        using FileSystemStream stream = FileSystem.File.Open(path, mode);
-
-        FileTestHelper.CheckFileAccess(stream).Should().Be(expectedAccess);
-        FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
-    }
-#endif
 }

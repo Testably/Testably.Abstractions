@@ -107,19 +107,12 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode)" />
         public FileSystemStream Open(FileMode mode)
-        {
-            if (mode == FileMode.Append && Framework.IsNetFramework)
-            {
-                throw ExceptionFactory.AppendAccessOnlyInWriteOnlyMode();
-            }
-
-            return new FileStreamMock(
+            => new FileStreamMock(
                 FileSystem,
                 FullName,
                 mode,
                 mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite,
                 FileShare.None);
-        }
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode, FileAccess)" />
         public FileSystemStream Open(FileMode mode, FileAccess access)
