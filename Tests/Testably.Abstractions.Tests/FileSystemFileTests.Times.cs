@@ -160,16 +160,8 @@ public abstract partial class FileSystemFileTests<TFileSystem>
             FileSystem.File.SetCreationTime(path, creationTime);
         });
 
-        if (Test.RunsOnWindows)
-        {
-            exception.Should().BeOfType<FileNotFoundException>()
-               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-        }
-        else
-        {
-            exception.Should().BeOfType<FileNotFoundException>()
-               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-        }
+        exception.Should().BeOfType<FileNotFoundException>()
+           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
     [SkippableTheory]
@@ -202,16 +194,8 @@ public abstract partial class FileSystemFileTests<TFileSystem>
             FileSystem.File.SetCreationTimeUtc(path, creationTime);
         });
 
-        if (Test.RunsOnWindows)
-        {
-            exception.Should().BeOfType<FileNotFoundException>()
-               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-        }
-        else
-        {
-            exception.Should().BeOfType<FileNotFoundException>()
-               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-        }
+        exception.Should().BeOfType<FileNotFoundException>()
+           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
     [SkippableTheory]
@@ -244,16 +228,8 @@ public abstract partial class FileSystemFileTests<TFileSystem>
             FileSystem.File.SetLastAccessTime(path, lastAccessTime);
         });
 
-        if (Test.RunsOnWindows)
-        {
-            exception.Should().BeOfType<FileNotFoundException>()
-               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-        }
-        else
-        {
-            exception.Should().BeOfType<FileNotFoundException>()
-               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-        }
+        exception.Should().BeOfType<FileNotFoundException>()
+           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
     [Theory]
@@ -283,16 +259,8 @@ public abstract partial class FileSystemFileTests<TFileSystem>
             FileSystem.File.SetLastAccessTimeUtc(path, lastAccessTime);
         });
 
-        if (Test.RunsOnWindows)
-        {
-            exception.Should().BeOfType<FileNotFoundException>()
-               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-        }
-        else
-        {
-            exception.Should().BeOfType<FileNotFoundException>()
-               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-        }
+        exception.Should().BeOfType<FileNotFoundException>()
+           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
     [Theory]
@@ -322,16 +290,8 @@ public abstract partial class FileSystemFileTests<TFileSystem>
             FileSystem.File.SetLastWriteTime(path, lastWriteTime);
         });
 
-        if (Test.RunsOnWindows)
-        {
-            exception.Should().BeOfType<FileNotFoundException>()
-               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-        }
-        else
-        {
-            exception.Should().BeOfType<FileNotFoundException>()
-               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-        }
+        exception.Should().BeOfType<FileNotFoundException>()
+           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
     [Theory]
@@ -361,16 +321,8 @@ public abstract partial class FileSystemFileTests<TFileSystem>
             FileSystem.File.SetLastWriteTimeUtc(path, lastWriteTime);
         });
 
-        if (Test.RunsOnWindows)
-        {
-            exception.Should().BeOfType<FileNotFoundException>()
-               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-        }
-        else
-        {
-            exception.Should().BeOfType<FileNotFoundException>()
-               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-        }
+        exception.Should().BeOfType<FileNotFoundException>()
+           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
     [Theory]
