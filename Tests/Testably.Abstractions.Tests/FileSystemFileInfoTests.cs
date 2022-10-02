@@ -3,8 +3,6 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileInfoTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    #region Test Setup
-
     public string BasePath { get; }
 
     public TFileSystem FileSystem { get; }
@@ -19,6 +17,4 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         TimeSystem = timeSystem;
         BasePath = basePath;
     }
-
-    #endregion
 }

@@ -52,8 +52,8 @@ public sealed partial class FileSystem
             => FromFileInfo(_instance.CopyTo(destFileName, overwrite), _fileSystem);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Create()" />
-        public FileStream Create()
-            => _instance.Create();
+        public FileSystemStream Create()
+            => new FileStreamWrapper(_instance.Create());
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.CreateText()" />
         public StreamWriter CreateText()
@@ -84,34 +84,34 @@ public sealed partial class FileSystem
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode)" />
-        public FileStream Open(FileMode mode)
-            => _instance.Open(mode);
+        public FileSystemStream Open(FileMode mode)
+            => new FileStreamWrapper(_instance.Open(mode));
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode, FileAccess)" />
-        public FileStream Open(FileMode mode, FileAccess access)
-            => _instance.Open(mode, access);
+        public FileSystemStream Open(FileMode mode, FileAccess access)
+            => new FileStreamWrapper(_instance.Open(mode, access));
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode, FileAccess, FileShare)" />
-        public FileStream Open(FileMode mode, FileAccess access, FileShare share)
-            => _instance.Open(mode, access, share);
+        public FileSystemStream Open(FileMode mode, FileAccess access, FileShare share)
+            => new FileStreamWrapper(_instance.Open(mode, access, share));
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileStreamOptions)" />
-        public FileStream Open(FileStreamOptions options)
-            => _instance.Open(options);
+        public FileSystemStream Open(FileStreamOptions options)
+            => new FileStreamWrapper(_instance.Open(options));
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.OpenRead()" />
-        public FileStream OpenRead()
-            => _instance.OpenRead();
+        public FileSystemStream OpenRead()
+            => new FileStreamWrapper(_instance.OpenRead());
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.OpenText()" />
         public StreamReader OpenText()
             => _instance.OpenText();
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.OpenWrite()" />
-        public FileStream OpenWrite()
-            => _instance.OpenWrite();
+        public FileSystemStream OpenWrite()
+            => new FileStreamWrapper(_instance.OpenWrite());
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Replace(string, string?)" />
         public IFileSystem.IFileInfo Replace(string destinationFileName,

@@ -33,9 +33,9 @@ public sealed partial class FileSystemMock
                                 string? path,
                                 FileMode mode,
                                 FileAccess access,
-                                FileShare share,
-                                int bufferSize,
-                                FileOptions options)
+                                FileShare share = FileShare.Read,
+                                int bufferSize = 4096,
+                                FileOptions options = FileOptions.None)
             : this(new MemoryStream(), fileSystem, path, mode, access, share, bufferSize,
                 options)
         {

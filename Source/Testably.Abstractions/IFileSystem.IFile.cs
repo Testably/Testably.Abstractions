@@ -68,13 +68,13 @@ public partial interface IFileSystem
         void Copy(string sourceFileName, string destFileName, bool overwrite);
 
         /// <inheritdoc cref="File.Create(string)" />
-        FileStream Create(string path);
+        FileSystemStream Create(string path);
 
         /// <inheritdoc cref="File.Create(string, int)" />
-        FileStream Create(string path, int bufferSize);
+        FileSystemStream Create(string path, int bufferSize);
 
         /// <inheritdoc cref="File.Create(string, int, FileOptions)" />
-        FileStream Create(string path, int bufferSize, FileOptions options);
+        FileSystemStream Create(string path, int bufferSize, FileOptions options);
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="File.CreateSymbolicLink(string, string)" />
@@ -133,27 +133,27 @@ public partial interface IFileSystem
 #endif
 
         /// <inheritdoc cref="File.Open(string, FileMode)" />
-        FileStream Open(string path, FileMode mode);
+        FileSystemStream Open(string path, FileMode mode);
 
         /// <inheritdoc cref="File.Open(string, FileMode, FileAccess)" />
-        FileStream Open(string path, FileMode mode, FileAccess access);
+        FileSystemStream Open(string path, FileMode mode, FileAccess access);
 
         /// <inheritdoc cref="File.Open(string, FileMode, FileAccess, FileShare)" />
-        FileStream Open(string path, FileMode mode, FileAccess access, FileShare share);
+        FileSystemStream Open(string path, FileMode mode, FileAccess access, FileShare share);
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
         /// <inheritdoc cref="File.Open(string, FileStreamOptions)" />
-        FileStream Open(string path, FileStreamOptions options);
+        FileSystemStream Open(string path, FileStreamOptions options);
 #endif
 
         /// <inheritdoc cref="File.OpenRead(string)" />
-        FileStream OpenRead(string path);
+        FileSystemStream OpenRead(string path);
 
         /// <inheritdoc cref="File.OpenText(string)" />
         StreamReader OpenText(string path);
 
         /// <inheritdoc cref="File.OpenWrite(string)" />
-        FileStream OpenWrite(string path);
+        FileSystemStream OpenWrite(string path);
 
         /// <inheritdoc cref="File.ReadAllBytes(string)" />
         byte[] ReadAllBytes(string path);

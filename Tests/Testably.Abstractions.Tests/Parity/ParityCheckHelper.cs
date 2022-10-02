@@ -282,7 +282,11 @@ internal static class ParityCheckHelper
             return systemTypeName == null;
         }
 
-        return abstractionTypeName.Equals(systemTypeName) ||
-               abstractionTypeName.Equals("I" + systemTypeName);
+        return systemTypeName != null &&
+               (abstractionTypeName.Equals(systemTypeName) ||
+                abstractionTypeName.Equals("I" + systemTypeName) ||
+                (Parity.AcceptedTypeMapping.TryGetValue(systemTypeName,
+                     out string? acceptedName) &&
+                 acceptedName.Equals(abstractionTypeName)));
     }
 }

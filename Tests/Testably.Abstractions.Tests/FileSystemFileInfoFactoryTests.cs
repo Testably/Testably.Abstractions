@@ -50,6 +50,38 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
     [Theory]
     [AutoData]
     [FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.New))]
+    public void New_ShouldOpenWithExistingContent(string path, string contents)
+    {
+        FileSystem.File.WriteAllText(path, contents);
+
+        IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+
+        using StreamReader streamReader = new(sut.OpenRead());
+        string result = streamReader.ReadToEnd();
+        result.Should().Be(contents);
+    }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.New))]
+    public void New_ShouldSetLength(string path, byte[] bytes)
+    {
+        FileSystem.File.WriteAllBytes(path, bytes);
+
+        //TODO: Reactivate this test
+        //var stream = FileSystem.File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Write);
+        IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+
+        var result = sut.Length;
+
+        //stream.Dispose();
+
+        result.Should().Be(bytes.Length);
+    }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.New))]
     public void Wrap_ShouldWrapFromFileInfo(string path)
     {
         FileInfo fileInfo = new(path);

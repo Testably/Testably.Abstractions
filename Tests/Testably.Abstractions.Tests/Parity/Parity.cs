@@ -1,9 +1,15 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace Testably.Abstractions.Tests.Parity;
 
 public class Parity
 {
+    public static readonly Dictionary<string, string> AcceptedTypeMapping = new()
+    {
+        { nameof(FileStream), nameof(FileSystemStream) }
+    };
+
     public ParityCheck Directory = new();
 
     public ParityCheck DirectoryInfo = new(excludeMethods: new[]

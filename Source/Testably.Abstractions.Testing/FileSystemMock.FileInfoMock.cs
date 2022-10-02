@@ -18,6 +18,8 @@ public sealed partial class FileSystemMock
         IStorage.IFileInfoMock
     {
         private byte[] _bytes = Array.Empty<byte>();
+        private IStorage.IFileInfoMock? _file;
+        private bool _isInitialized;
 
         internal FileInfoMock(string fullName, string originalPath,
                               FileSystemMock fileSystem)
@@ -37,7 +39,17 @@ public sealed partial class FileSystemMock
         public bool IsReadOnly { get; set; }
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Length" />
-        public long Length { get; }
+        public long Length
+        {
+            get
+            {
+                RefreshInternal();
+                return _file?.GetBytes().Length
+                       ?? throw ExceptionFactory.FileNotFound(Framework.IsNetFramework
+                           ? OriginalPath
+                           : FullName);
+            }
+        }
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.AppendText()" />
         public StreamWriter AppendText()
@@ -52,8 +64,8 @@ public sealed partial class FileSystemMock
             => throw new NotImplementedException();
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Create()" />
-        public FileStream Create()
-            => throw new NotImplementedException();
+        public FileSystemStream Create()
+            => FileSystem.File.Create(FullName);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.CreateText()" />
         public StreamWriter CreateText()
@@ -94,34 +106,65 @@ public sealed partial class FileSystemMock
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode)" />
-        public FileStream Open(FileMode mode)
-            => throw new NotImplementedException();
+        public FileSystemStream Open(FileMode mode)
+        {
+            if (mode == FileMode.Append && Framework.IsNetFramework)
+            {
+                throw ExceptionFactory.AppendAccessOnlyInWriteOnlyMode();
+            }
+
+            return new FileStreamMock(
+                FileSystem,
+                FullName,
+                mode,
+                mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite,
+                FileShare.None);
+        }
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode, FileAccess)" />
-        public FileStream Open(FileMode mode, FileAccess access)
-            => throw new NotImplementedException();
+        public FileSystemStream Open(FileMode mode, FileAccess access)
+            => new FileStreamMock(
+                FileSystem,
+                FullName,
+                mode,
+                access,
+                FileShare.None);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode, FileAccess, FileShare)" />
-        public FileStream Open(FileMode mode, FileAccess access, FileShare share)
-            => throw new NotImplementedException();
+        public FileSystemStream Open(FileMode mode, FileAccess access, FileShare share)
+            => new FileStreamMock(
+                FileSystem,
+                FullName,
+                mode,
+                access,
+                share);
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileStreamOptions)" />
-        public FileStream Open(FileStreamOptions options)
-            => throw new NotImplementedException();
+        public FileSystemStream Open(FileStreamOptions options)
+            => FileSystem.File.Open(FullName, options);
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.OpenRead()" />
-        public FileStream OpenRead()
-            => throw new NotImplementedException();
+        public FileSystemStream OpenRead()
+            => new FileStreamMock(
+                FileSystem,
+                FullName,
+                FileMode.Open,
+                FileAccess.Read);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.OpenText()" />
         public StreamReader OpenText()
             => throw new NotImplementedException();
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.OpenWrite()" />
-        public FileStream OpenWrite()
-            => throw new NotImplementedException();
+        public FileSystemStream OpenWrite()
+            => new FileStreamMock(
+                FileSystem,
+                FullName,
+                FileMode.OpenOrCreate,
+                FileAccess.Write,
+                FileShare.None);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Replace(string, string?)" />
         public IFileSystem.IFileInfo Replace(string destinationFileName,
@@ -155,6 +198,17 @@ public sealed partial class FileSystemMock
         {
             Drive?.ChangeUsedBytes(0 - _bytes.Length);
             _bytes = Array.Empty<byte>();
+        }
+
+        private void RefreshInternal()
+        {
+            if (_isInitialized)
+            {
+                return;
+            }
+
+            _isInitialized = true;
+            _file = FileSystem.Storage.GetFile(FullName);
         }
 
         [return: NotNullIfNotNull("path")]

@@ -32,7 +32,7 @@ public partial interface IFileSystem
         IFileInfo CopyTo(string destFileName, bool overwrite);
 
         /// <inheritdoc cref="FileInfo.Create()" />
-        FileStream Create();
+        FileSystemStream Create();
 
         /// <inheritdoc cref="FileInfo.CreateText()" />
         public StreamWriter CreateText();
@@ -59,27 +59,27 @@ public partial interface IFileSystem
 #endif
 
         /// <inheritdoc cref="FileInfo.Open(FileMode)" />
-        FileStream Open(FileMode mode);
+        FileSystemStream Open(FileMode mode);
 
         /// <inheritdoc cref="FileInfo.Open(FileMode, FileAccess)" />
-        FileStream Open(FileMode mode, FileAccess access);
+        FileSystemStream Open(FileMode mode, FileAccess access);
 
         /// <inheritdoc cref="FileInfo.Open(FileMode, FileAccess, FileShare)" />
-        FileStream Open(FileMode mode, FileAccess access, FileShare share);
+        FileSystemStream Open(FileMode mode, FileAccess access, FileShare share);
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
         /// <inheritdoc cref="FileInfo.Open(FileStreamOptions)" />
-        FileStream Open(FileStreamOptions options);
+        FileSystemStream Open(FileStreamOptions options);
 #endif
 
         /// <inheritdoc cref="FileInfo.OpenRead()" />
-        FileStream OpenRead();
+        FileSystemStream OpenRead();
 
         /// <inheritdoc cref="FileInfo.OpenText()" />
         public StreamReader OpenText();
 
         /// <inheritdoc cref="FileInfo.OpenWrite()" />
-        FileStream OpenWrite();
+        FileSystemStream OpenWrite();
 
         /// <inheritdoc cref="FileInfo.Replace(string, string?)" />
         IFileInfo Replace(string destinationFileName,
