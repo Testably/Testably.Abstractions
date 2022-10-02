@@ -18,13 +18,13 @@ public sealed partial class FileSystemMock
         IStorage.IFileInfoMock
     {
         private byte[] _bytes = Array.Empty<byte>();
-        private readonly IStorage.IFileInfoMock? _file;
+        private IStorage.IFileInfoMock? _file;
+        private bool _isInitialized;
 
         internal FileInfoMock(string fullName, string originalPath,
                               FileSystemMock fileSystem)
             : base(fullName, originalPath, fileSystem)
         {
-            _file = FileSystem.Storage.GetFile(fullName);
         }
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Directory" />
@@ -40,10 +40,16 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Length" />
         public long Length
-            => _file?.GetBytes().Length
-               ?? throw ExceptionFactory.FileNotFound(Framework.IsNetFramework
-                   ? OriginalPath
-                   : FullName);
+        {
+            get
+            {
+                RefreshInternal();
+                return _file?.GetBytes().Length
+                       ?? throw ExceptionFactory.FileNotFound(Framework.IsNetFramework
+                           ? OriginalPath
+                           : FullName);
+            }
+        }
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.AppendText()" />
         public StreamWriter AppendText()
@@ -162,6 +168,17 @@ public sealed partial class FileSystemMock
         {
             Drive?.ChangeUsedBytes(0 - _bytes.Length);
             _bytes = Array.Empty<byte>();
+        }
+
+        private void RefreshInternal()
+        {
+            if (_isInitialized)
+            {
+                return;
+            }
+
+            _isInitialized = true;
+            _file = FileSystem.Storage.GetFile(FullName);
         }
 
         [return: NotNullIfNotNull("path")]

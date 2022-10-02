@@ -27,7 +27,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     [Theory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Length))]
-    public void Length(string path, byte[] bytes)
+    public void Length_WhenFileExists_ShouldBeSetCorrectly(string path, byte[] bytes)
     {
         FileSystem.File.WriteAllBytes(path, bytes);
         IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
@@ -35,6 +35,69 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         long result = sut.Length;
 
         result.Should().Be(bytes.Length);
+    }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Length))]
+    public void Length_WhenFileIsCreated_ShouldBeSetCorrectly(string path, byte[] bytes)
+    {
+        IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+
+        FileSystem.File.WriteAllBytes(path, bytes);
+
+        long result = sut.Length;
+
+        result.Should().Be(bytes.Length);
+    }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Length))]
+    public void Length_WhenFileIsCreatedAfterAccessed_ShouldBeSetCorrectly(
+        string path, byte[] bytes)
+    {
+        IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+
+        Exception? exception = Record.Exception(() =>
+        {
+            _ = sut.OpenRead();
+        });
+
+        FileSystem.File.WriteAllBytes(path, bytes);
+
+        long result = sut.Length;
+
+        exception.Should().BeOfType<FileNotFoundException>()
+           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        result.Should().Be(bytes.Length);
+    }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Length))]
+    public void
+        Length_WhenFileIsCreatedAfterLengthAccessed_ShouldThrowFileNotFoundExceptionAgain(
+            string path, byte[] bytes)
+    {
+        IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+
+        Exception? exception = Record.Exception(() =>
+        {
+            _ = sut.Length;
+        });
+
+        FileSystem.File.WriteAllBytes(path, bytes);
+
+        Exception? exception2 = Record.Exception(() =>
+        {
+            _ = sut.Length;
+        });
+
+        exception.Should().BeOfType<FileNotFoundException>()
+           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+        exception2.Should().BeOfType<FileNotFoundException>()
+           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
     [Theory]
