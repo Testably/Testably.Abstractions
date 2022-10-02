@@ -41,7 +41,9 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     }
 
     [Theory]
+#if !NETFRAMEWORK
     [InlineAutoData(FileMode.Append, FileAccess.Write)]
+#endif
     [InlineAutoData(FileMode.Open, FileAccess.ReadWrite)]
     [InlineAutoData(FileMode.Create, FileAccess.ReadWrite)]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Open))]
@@ -58,6 +60,24 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         FileTestHelper.CheckFileAccess(stream).Should().Be(expectedAccess);
         FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
     }
+
+#if NETFRAMEWORK
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Open))]
+    public void Open_AppendMode_ShouldThrowArgumentException(string path)
+    {
+        FileSystem.File.WriteAllText(path, null);
+        IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+
+        Exception? exception = Record.Exception(() =>
+        {
+            _ = sut.Open(FileMode.Append);
+        });
+
+        exception.Should().BeOfType<ArgumentException>();
+    }
+#endif
 
     [Theory]
     [InlineAutoData(FileAccess.Read, FileShare.Write)]
