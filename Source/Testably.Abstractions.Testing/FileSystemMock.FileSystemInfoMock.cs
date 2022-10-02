@@ -216,7 +216,9 @@ public sealed partial class FileSystemMock
                 _access = access;
                 if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    _share = FileShare.ReadWrite;
+                    _share = share == FileShare.None
+                        ? FileShare.None
+                        : FileShare.ReadWrite;
                 }
                 else
                 {

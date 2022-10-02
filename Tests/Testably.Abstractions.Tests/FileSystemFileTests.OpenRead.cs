@@ -29,6 +29,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
         FileTestHelper.CheckFileAccess(stream).Should().Be(FileAccess.Read);
-        FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.Read);
+        FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(
+            Test.RunsOnWindows ? FileShare.Read : FileShare.ReadWrite);
     }
 }
