@@ -65,7 +65,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Create()" />
         public FileSystemStream Create()
-            => throw new NotImplementedException();
+            => FileSystem.File.Create(FullName);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.CreateText()" />
         public StreamWriter CreateText()
@@ -107,26 +107,44 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode)" />
         public FileSystemStream Open(FileMode mode)
-            => throw new NotImplementedException();
+            => new FileStreamMock(
+                FileSystem,
+                FullName,
+                mode,
+                mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite,
+                FileShare.None);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode, FileAccess)" />
         public FileSystemStream Open(FileMode mode, FileAccess access)
-            => throw new NotImplementedException();
+            => new FileStreamMock(
+                FileSystem,
+                FullName,
+                mode,
+                access,
+                FileShare.None);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode, FileAccess, FileShare)" />
         public FileSystemStream Open(FileMode mode, FileAccess access, FileShare share)
-            => throw new NotImplementedException();
+            => new FileStreamMock(
+                FileSystem,
+                FullName,
+                mode,
+                access,
+                share);
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileStreamOptions)" />
         public FileSystemStream Open(FileStreamOptions options)
-            => throw new NotImplementedException();
+            => FileSystem.File.Open(FullName, options);
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.OpenRead()" />
         public FileSystemStream OpenRead()
-            => new FileStreamMock(FileSystem, FullName, FileMode.Open, FileAccess.Read,
-                FileShare.ReadWrite);
+            => new FileStreamMock(
+                FileSystem,
+                FullName,
+                FileMode.Open,
+                FileAccess.Read);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.OpenText()" />
         public StreamReader OpenText()
@@ -134,7 +152,12 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.OpenWrite()" />
         public FileSystemStream OpenWrite()
-            => throw new NotImplementedException();
+            => new FileStreamMock(
+                FileSystem,
+                FullName,
+                FileMode.OpenOrCreate,
+                FileAccess.Write,
+                FileShare.None);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Replace(string, string?)" />
         public IFileSystem.IFileInfo Replace(string destinationFileName,
