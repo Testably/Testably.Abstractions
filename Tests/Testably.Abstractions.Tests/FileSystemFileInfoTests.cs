@@ -94,10 +94,17 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
             _ = sut.Length;
         });
 
+#if NETFRAMEWORK
+        exception.Should().BeOfType<FileNotFoundException>()
+           .Which.Message.Should().Contain($"'{path}'");
+        exception2.Should().BeOfType<FileNotFoundException>()
+           .Which.Message.Should().Contain($"'{path}'");
+#else
         exception.Should().BeOfType<FileNotFoundException>()
            .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
         exception2.Should().BeOfType<FileNotFoundException>()
            .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+#endif
     }
 
     [Theory]
