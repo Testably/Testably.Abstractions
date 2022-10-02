@@ -321,9 +321,9 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.SetCreationTime(string, DateTime)" />
         public void SetCreationTime(string path, DateTime creationTime)
         {
-            IFileSystem.IDirectoryInfo? fileSystemInfo =
+            IFileSystem.IDirectoryInfo? directoryInfo =
                 _fileSystem.Storage.GetDirectory(path);
-            if (fileSystemInfo == null)
+            if (directoryInfo == null)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
@@ -335,15 +335,15 @@ public sealed partial class FileSystemMock
                     FileSystem.Path.GetFullPath(path));
             }
 
-            fileSystemInfo.CreationTime = creationTime;
+            directoryInfo.CreationTime = creationTime;
         }
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetCreationTimeUtc(string, DateTime)" />
         public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
         {
-            IFileSystem.IDirectoryInfo? fileSystemInfo =
+            IFileSystem.IDirectoryInfo? directoryInfo =
                 _fileSystem.Storage.GetDirectory(path);
-            if (fileSystemInfo == null)
+            if (directoryInfo == null)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
@@ -355,7 +355,7 @@ public sealed partial class FileSystemMock
                     FileSystem.Path.GetFullPath(path));
             }
 
-            fileSystemInfo.CreationTimeUtc = creationTimeUtc;
+            directoryInfo.CreationTimeUtc = creationTimeUtc;
         }
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetCurrentDirectory(string)" />
@@ -365,9 +365,9 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.SetLastAccessTime(string, DateTime)" />
         public void SetLastAccessTime(string path, DateTime lastAccessTime)
         {
-            IFileSystem.IDirectoryInfo? fileSystemInfo =
+            IFileSystem.IDirectoryInfo? directoryInfo =
                 _fileSystem.Storage.GetDirectory(path);
-            if (fileSystemInfo == null)
+            if (directoryInfo == null)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
@@ -379,15 +379,15 @@ public sealed partial class FileSystemMock
                     FileSystem.Path.GetFullPath(path));
             }
 
-            fileSystemInfo.LastAccessTime = lastAccessTime;
+            directoryInfo.LastAccessTime = lastAccessTime;
         }
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetLastAccessTimeUtc(string, DateTime)" />
         public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
         {
-            IFileSystem.IDirectoryInfo? fileSystemInfo =
+            IFileSystem.IDirectoryInfo? directoryInfo =
                 _fileSystem.Storage.GetDirectory(path);
-            if (fileSystemInfo == null)
+            if (directoryInfo == null)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
@@ -399,15 +399,15 @@ public sealed partial class FileSystemMock
                     FileSystem.Path.GetFullPath(path));
             }
 
-            fileSystemInfo.LastAccessTimeUtc = lastAccessTimeUtc;
+            directoryInfo.LastAccessTimeUtc = lastAccessTimeUtc;
         }
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetLastWriteTime(string, DateTime)" />
         public void SetLastWriteTime(string path, DateTime lastWriteTime)
         {
-            IFileSystem.IDirectoryInfo? fileSystemInfo =
+            IFileSystem.IDirectoryInfo? directoryInfo =
                 _fileSystem.Storage.GetDirectory(path);
-            if (fileSystemInfo == null)
+            if (directoryInfo == null)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
@@ -419,15 +419,15 @@ public sealed partial class FileSystemMock
                     FileSystem.Path.GetFullPath(path));
             }
 
-            fileSystemInfo.LastWriteTime = lastWriteTime;
+            directoryInfo.LastWriteTime = lastWriteTime;
         }
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetLastWriteTimeUtc(string, DateTime)" />
         public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
         {
-            IFileSystem.IDirectoryInfo? fileSystemInfo =
+            IFileSystem.IDirectoryInfo? directoryInfo =
                 _fileSystem.Storage.GetDirectory(path);
-            if (fileSystemInfo == null)
+            if (directoryInfo == null)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
@@ -439,7 +439,7 @@ public sealed partial class FileSystemMock
                     FileSystem.Path.GetFullPath(path));
             }
 
-            fileSystemInfo.LastWriteTimeUtc = lastWriteTimeUtc;
+            directoryInfo.LastWriteTimeUtc = lastWriteTimeUtc;
         }
 
         #endregion
