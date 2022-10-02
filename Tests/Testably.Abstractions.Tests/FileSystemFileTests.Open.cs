@@ -85,4 +85,29 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         FileTestHelper.CheckFileAccess(stream).Should().Be(access);
         FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
     }
+
+#if FEATURE_FILESYSTEM_STREAM_OPTIONS
+    [Theory]
+    [InlineAutoData(FileAccess.Read, FileShare.Write)]
+    [InlineAutoData(FileAccess.Write, FileShare.Read)]
+    [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Open))]
+    public void Open_WithFileStreamOptions_ShouldUseGivenAccessAndShare(
+        string path,
+        FileAccess access,
+        FileShare share)
+    {
+        FileSystem.File.WriteAllText(path, null);
+        FileStreamOptions options = new()
+        {
+            Mode = FileMode.Open,
+            Access = access,
+            Share = share
+        };
+
+        using FileSystemStream stream = FileSystem.File.Open(path, options);
+
+        FileTestHelper.CheckFileAccess(stream).Should().Be(access);
+        FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(share);
+    }
+#endif
 }
