@@ -11,6 +11,7 @@ using System.Runtime.Versioning;
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 #endif
 
 namespace Testably.Abstractions.Testing;
@@ -204,27 +205,33 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.GetCreationTime(string)" />
         public DateTime GetCreationTime(string path)
-            => throw new NotImplementedException();
+            => (_fileSystem.Storage.GetFile(path) ??
+                _fileSystem.NullFileSystemInfo).CreationTime;
 
         /// <inheritdoc cref="IFileSystem.IFile.GetCreationTimeUtc(string)" />
         public DateTime GetCreationTimeUtc(string path)
-            => throw new NotImplementedException();
+            => (_fileSystem.Storage.GetFile(path) ??
+                _fileSystem.NullFileSystemInfo).CreationTimeUtc;
 
         /// <inheritdoc cref="IFileSystem.IFile.GetLastAccessTime(string)" />
         public DateTime GetLastAccessTime(string path)
-            => throw new NotImplementedException();
+            => (_fileSystem.Storage.GetFile(path) ??
+                _fileSystem.NullFileSystemInfo).LastAccessTime;
 
         /// <inheritdoc cref="IFileSystem.IFile.GetLastAccessTimeUtc(string)" />
         public DateTime GetLastAccessTimeUtc(string path)
-            => throw new NotImplementedException();
+            => (_fileSystem.Storage.GetFile(path) ??
+                _fileSystem.NullFileSystemInfo).LastAccessTimeUtc;
 
         /// <inheritdoc cref="IFileSystem.IFile.GetLastWriteTime(string)" />
         public DateTime GetLastWriteTime(string path)
-            => throw new NotImplementedException();
+            => (_fileSystem.Storage.GetFile(path) ??
+                _fileSystem.NullFileSystemInfo).LastWriteTime;
 
         /// <inheritdoc cref="IFileSystem.IFile.GetLastWriteTimeUtc(string)" />
         public DateTime GetLastWriteTimeUtc(string path)
-            => throw new NotImplementedException();
+            => (_fileSystem.Storage.GetFile(path) ??
+                _fileSystem.NullFileSystemInfo).LastWriteTimeUtc;
 
         /// <inheritdoc cref="IFileSystem.IFile.Move(string, string)" />
         public void Move(string sourceFileName, string destFileName)
@@ -426,27 +433,87 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.SetCreationTime(string, DateTime)" />
         public void SetCreationTime(string path, DateTime creationTime)
-            => throw new NotImplementedException();
+        {
+            IFileSystem.IFileInfo? fileInfo =
+                _fileSystem.Storage.GetFile(path);
+            if (fileInfo == null)
+            {
+                throw ExceptionFactory.FileNotFound(
+                    FileSystem.Path.GetFullPath(path));
+            }
+
+            fileInfo.CreationTime = creationTime;
+        }
 
         /// <inheritdoc cref="IFileSystem.IFile.SetCreationTimeUtc(string, DateTime)" />
         public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
-            => throw new NotImplementedException();
+        {
+            IFileSystem.IFileInfo? fileInfo =
+                _fileSystem.Storage.GetFile(path);
+            if (fileInfo == null)
+            {
+                throw ExceptionFactory.FileNotFound(
+                    FileSystem.Path.GetFullPath(path));
+            }
+
+            fileInfo.CreationTimeUtc = creationTimeUtc;
+        }
 
         /// <inheritdoc cref="IFileSystem.IFile.SetLastAccessTime(string, DateTime)" />
         public void SetLastAccessTime(string path, DateTime lastAccessTime)
-            => throw new NotImplementedException();
+        {
+            IFileSystem.IFileInfo? fileInfo =
+                _fileSystem.Storage.GetFile(path);
+            if (fileInfo == null)
+            {
+                throw ExceptionFactory.FileNotFound(
+                    FileSystem.Path.GetFullPath(path));
+            }
+
+            fileInfo.LastAccessTime = lastAccessTime;
+        }
 
         /// <inheritdoc cref="IFileSystem.IFile.SetLastAccessTimeUtc(string, DateTime)" />
         public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
-            => throw new NotImplementedException();
+        {
+            IFileSystem.IFileInfo? fileInfo =
+                _fileSystem.Storage.GetFile(path);
+            if (fileInfo == null)
+            {
+                throw ExceptionFactory.FileNotFound(
+                    FileSystem.Path.GetFullPath(path));
+            }
+
+            fileInfo.LastAccessTimeUtc = lastAccessTimeUtc;
+        }
 
         /// <inheritdoc cref="IFileSystem.IFile.SetLastWriteTime(string, DateTime)" />
         public void SetLastWriteTime(string path, DateTime lastWriteTime)
-            => throw new NotImplementedException();
+        {
+            IFileSystem.IFileInfo? fileInfo =
+                _fileSystem.Storage.GetFile(path);
+            if (fileInfo == null)
+            {
+                throw ExceptionFactory.FileNotFound(
+                    FileSystem.Path.GetFullPath(path));
+            }
+
+            fileInfo.LastWriteTime = lastWriteTime;
+        }
 
         /// <inheritdoc cref="IFileSystem.IFile.SetLastWriteTimeUtc(string, DateTime)" />
         public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
-            => throw new NotImplementedException();
+        {
+            IFileSystem.IFileInfo? fileInfo =
+                _fileSystem.Storage.GetFile(path);
+            if (fileInfo == null)
+            {
+                throw ExceptionFactory.FileNotFound(
+                    FileSystem.Path.GetFullPath(path));
+            }
+
+            fileInfo.LastWriteTimeUtc = lastWriteTimeUtc;
+        }
 
         /// <inheritdoc cref="IFileSystem.IFile.WriteAllBytes(string, byte[])" />
         public void WriteAllBytes(string path, byte[] bytes)
