@@ -201,7 +201,8 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.GetAttributes(string)" />
         public FileAttributes GetAttributes(string path)
-            => throw new NotImplementedException();
+            => (_fileSystem.Storage.GetFile(path) ??
+                _fileSystem.NullFileSystemInfo).Attributes;
 
         /// <inheritdoc cref="IFileSystem.IFile.GetCreationTime(string)" />
         public DateTime GetCreationTime(string path)
@@ -429,7 +430,17 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.SetAttributes(string, FileAttributes)" />
         public void SetAttributes(string path, FileAttributes fileAttributes)
-            => throw new NotImplementedException();
+        {
+            IFileSystem.IFileInfo? fileInfo =
+                _fileSystem.Storage.GetFile(path);
+            if (fileInfo == null)
+            {
+                throw ExceptionFactory.FileNotFound(
+                    FileSystem.Path.GetFullPath(path));
+            }
+
+            fileInfo.Attributes = fileAttributes;
+        }
 
         /// <inheritdoc cref="IFileSystem.IFile.SetCreationTime(string, DateTime)" />
         public void SetCreationTime(string path, DateTime creationTime)

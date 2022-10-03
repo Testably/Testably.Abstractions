@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Testably.Abstractions.Testing.Internal;
 
@@ -17,6 +18,10 @@ internal static class ExceptionFactory
         => new(
             $"{FileMode.Append} access can be requested only in write-only mode.",
             paramName);
+
+    internal static IOException CannotCreateFileAsAlreadyExists(string path)
+        => new(
+            $"Cannot create '{path}' because a file or directory with the same name already exists.");
 
     internal static IOException DirectoryNotEmpty(string path)
         => new(
