@@ -25,20 +25,22 @@ public abstract partial class FileSystemFileTests<TFileSystem>
     {
         string targetFullPath = FileSystem.Path.GetFullPath(pathToTarget);
         FileSystem.File.WriteAllText(pathToTarget, "foo");
-        FileSystem.File.CreateSymbolicLink(path, pathToTarget);
+        FileSystem.File.CreateSymbolicLink(path, targetFullPath);
         FileSystem.File.Delete(pathToTarget);
         FileSystem.File.WriteAllText(pathToTarget.ToUpper(), contents);
 
-        IFileSystem.IFileSystemInfo? target = FileSystem.File.ResolveLinkTarget(path, false);
+        IFileSystem.IFileSystemInfo? target =
+            FileSystem.File.ResolveLinkTarget(path, false);
 
-        target!.FullName.Should().Be(targetFullPath);
         if (Test.RunsOnWindows)
         {
+            target!.FullName.Should().Be(targetFullPath);
             target.Exists.Should().BeTrue();
             FileSystem.File.ReadAllText(target.FullName).Should().Be(contents);
         }
         else
         {
+            target!.FullName.Should().Be(targetFullPath);
             target.Exists.Should().BeFalse();
         }
     }
@@ -56,11 +58,13 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         for (int i = 0; i < maxLinks; i++)
         {
             string newPath = $"{path}-{i}";
-            FileSystem.File.CreateSymbolicLink(newPath, previousPath);
+            FileSystem.File.CreateSymbolicLink(newPath,
+                Path.Combine(BasePath, previousPath));
             previousPath = newPath;
         }
 
-        IFileSystem.IFileSystemInfo? target = FileSystem.File.ResolveLinkTarget(previousPath, true);
+        IFileSystem.IFileSystemInfo? target =
+            FileSystem.File.ResolveLinkTarget(previousPath, true);
 
         target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToFinalTarget));
     }
@@ -77,10 +81,11 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         for (int i = 0; i < maxLinks; i++)
         {
             string newPath = $"{path}-{i}";
-            FileSystem.File.CreateSymbolicLink(newPath, previousPath);
+            FileSystem.File.CreateSymbolicLink(newPath,
+                Path.Combine(BasePath, previousPath));
             previousPath = newPath;
         }
-        
+
         Exception? exception = Record.Exception(() =>
         {
             _ = FileSystem.File.ResolveLinkTarget(previousPath, true);
@@ -97,11 +102,14 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         string path, string pathToFinalTarget, string pathToMissingFile)
     {
         FileSystem.File.WriteAllText(pathToFinalTarget, null);
-        FileSystem.File.CreateSymbolicLink(pathToMissingFile, pathToFinalTarget);
-        FileSystem.File.CreateSymbolicLink(path, pathToMissingFile);
+        FileSystem.File.CreateSymbolicLink(pathToMissingFile,
+            Path.Combine(BasePath, pathToFinalTarget));
+        FileSystem.File.CreateSymbolicLink(path,
+            Path.Combine(BasePath, pathToMissingFile));
         FileSystem.File.Delete(pathToMissingFile);
 
-        IFileSystem.IFileSystemInfo? target = FileSystem.File.ResolveLinkTarget(path, true);
+        IFileSystem.IFileSystemInfo? target =
+            FileSystem.File.ResolveLinkTarget(path, true);
 
         target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToMissingFile));
     }
@@ -114,7 +122,8 @@ public abstract partial class FileSystemFileTests<TFileSystem>
     {
         FileSystem.Directory.CreateDirectory(path);
 
-        IFileSystem.IFileSystemInfo? target = FileSystem.File.ResolveLinkTarget(path, false);
+        IFileSystem.IFileSystemInfo? target =
+            FileSystem.File.ResolveLinkTarget(path, false);
 
         target.Should().BeNull();
     }
@@ -127,7 +136,8 @@ public abstract partial class FileSystemFileTests<TFileSystem>
     {
         FileSystem.File.WriteAllText(path, null);
 
-        IFileSystem.IFileSystemInfo? target = FileSystem.File.ResolveLinkTarget(path, false);
+        IFileSystem.IFileSystemInfo? target =
+            FileSystem.File.ResolveLinkTarget(path, false);
 
         target.Should().BeNull();
     }
@@ -135,14 +145,32 @@ public abstract partial class FileSystemFileTests<TFileSystem>
     [Theory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.ResolveLinkTarget))]
-    public void ResolveLinkTarget_ShouldFollowSymbolicLink(
+    public void ResolveLinkTarget_RelativePath_ShouldFollowSymbolicLinkUnderWindows(
         string path, string pathToTarget)
     {
         string targetFullPath = FileSystem.Path.GetFullPath(pathToTarget);
         FileSystem.File.WriteAllText(pathToTarget, null);
-        FileSystem.File.CreateSymbolicLink(path, pathToTarget);
+        FileSystem.File.CreateSymbolicLink(path, targetFullPath);
 
-        IFileSystem.IFileSystemInfo? target = FileSystem.File.ResolveLinkTarget(path, false);
+        IFileSystem.IFileSystemInfo? target =
+            FileSystem.File.ResolveLinkTarget(path, false);
+
+        target!.FullName.Should().Be(targetFullPath);
+        target.Exists.Should().BeTrue();
+    }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.ResolveLinkTarget))]
+    public void ResolveLinkTarget_AbsolutePath_ShouldFollowSymbolicLink(
+        string path, string pathToTarget)
+    {
+        string targetFullPath = FileSystem.Path.GetFullPath(pathToTarget);
+        FileSystem.File.WriteAllText(pathToTarget, null);
+        FileSystem.File.CreateSymbolicLink(path, targetFullPath);
+
+        IFileSystem.IFileSystemInfo? target =
+            FileSystem.File.ResolveLinkTarget(path, false);
 
         target!.FullName.Should().Be(targetFullPath);
         target.Exists.Should().BeTrue();
@@ -156,12 +184,14 @@ public abstract partial class FileSystemFileTests<TFileSystem>
     {
         string targetFullPath = FileSystem.Path.GetFullPath(pathToTarget);
         FileSystem.File.WriteAllText(pathToTarget, null);
-        FileSystem.File.CreateSymbolicLink(path, pathToTarget);
+        FileSystem.File.CreateSymbolicLink(path, targetFullPath);
         FileSystem.File.Delete(pathToTarget);
 
-        IFileSystem.IFileSystemInfo? target = FileSystem.File.ResolveLinkTarget(path, false);
+        IFileSystem.IFileSystemInfo? target =
+            FileSystem.File.ResolveLinkTarget(path, false);
 
         target!.FullName.Should().Be(targetFullPath);
+
         target.Exists.Should().BeFalse();
     }
 }

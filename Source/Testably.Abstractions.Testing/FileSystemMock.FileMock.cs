@@ -12,6 +12,9 @@ using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 #endif
+#if FEATURE_FILESYSTEM_LINK
+using System.Runtime.InteropServices;
+#endif
 
 namespace Testably.Abstractions.Testing;
 
@@ -146,6 +149,12 @@ public sealed partial class FileSystemMock
         public IFileSystem.IFileSystemInfo CreateSymbolicLink(
             string path, string pathToTarget)
         {
+            if (!FileSystem.Path.IsPathRooted(pathToTarget) &&
+                !RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                pathToTarget = pathToTarget.PrefixRoot();
+            }
+
             FileSystemInfoMock fileInfo = new(path, path, _fileSystem);
             fileInfo.CreateAsSymbolicLink(pathToTarget);
             return fileInfo;
