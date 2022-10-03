@@ -32,7 +32,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         IFileSystem.IFileSystemInfo? target =
             FileSystem.File.ResolveLinkTarget(path, false);
 
-        if (Test.RunsOnWindows)
+        if (!Test.RunsOnLinux)
         {
             target!.FullName.Should().Be(targetFullPath);
             target.Exists.Should().BeTrue();

@@ -34,7 +34,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
         IFileSystem.IFileSystemInfo? target = fileInfo.ResolveLinkTarget(false);
 
         target!.FullName.Should().Be(targetFullPath);
-        if (Test.RunsOnWindows)
+        if (!Test.RunsOnLinux)
         {
             target.Exists.Should().BeTrue();
             FileSystem.File.ReadAllText(target.FullName).Should().Be(contents);

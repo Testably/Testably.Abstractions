@@ -15,9 +15,9 @@ public sealed partial class FileSystemMock
     private sealed class InMemoryStorage : IStorage
     {
         private readonly ConcurrentDictionary<string, FileSystemInfoMock> _files = new(
-            RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-                ? StringComparer.OrdinalIgnoreCase
-                : StringComparer.Ordinal);
+            RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+                ? StringComparer.Ordinal
+                : StringComparer.OrdinalIgnoreCase);
 
         private readonly ConcurrentDictionary<string, DriveInfoMock> _drives =
             new(StringComparer.OrdinalIgnoreCase);
