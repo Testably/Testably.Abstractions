@@ -13,20 +13,23 @@ public static partial class RealFileSystem
         FileSystemDirectoryInfoFactoryTests<FileSystem>,
         IDisposable
     {
-        private readonly ITestOutputHelper _testOutputHelper;
+        /// <inheritdoc cref="FileSystemDirectoryInfoFactoryTests{TFileSystem}.BasePath" />
+        public override string BasePath => _directoryCleaner.BasePath;
+
+        private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
 
         public DirectoryInfoFactoryTests(ITestOutputHelper testOutputHelper)
-            : base(new FileSystem(), new TimeSystem(),
-                UseBasePath(testOutputHelper))
+            : base(new FileSystem(), new TimeSystem())
         {
-            _testOutputHelper = testOutputHelper;
+            _directoryCleaner = FileSystem
+               .SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);
         }
 
         #region IDisposable Members
 
         /// <inheritdoc cref="IDisposable.Dispose()" />
         public void Dispose()
-            => TryCleanup(BasePath, _testOutputHelper);
+            => _directoryCleaner.Dispose();
 
         #endregion
     }
