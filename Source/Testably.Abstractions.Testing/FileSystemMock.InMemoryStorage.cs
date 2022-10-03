@@ -19,7 +19,8 @@ public sealed partial class FileSystemMock
                 ? StringComparer.OrdinalIgnoreCase
                 : StringComparer.Ordinal);
 
-        private readonly ConcurrentDictionary<string, DriveInfoMock> _drives = new(StringComparer.OrdinalIgnoreCase);
+        private readonly ConcurrentDictionary<string, DriveInfoMock> _drives =
+            new(StringComparer.OrdinalIgnoreCase);
 
         private readonly FileSystemMock _fileSystem;
 
@@ -153,7 +154,6 @@ public sealed partial class FileSystemMock
         public bool TryAddFile(string path,
                                [NotNullWhen(true)] out IFileInfoMock? createdFile)
         {
-            bool wasAdded = false;
             ChangeDescription? fileSystemChange = null;
             createdFile = _files.GetOrAdd(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
@@ -167,19 +167,16 @@ public sealed partial class FileSystemMock
                         ChangeTypes.FileCreated,
                         NotifyFilters.CreationTime);
                     access.Dispose();
-                    wasAdded = true;
                     return fileMock;
                 }) as IFileInfoMock;
-            if (wasAdded == false)
-            {
-                createdFile = null;
-            }
-            else
+            if (fileSystemChange != null && createdFile != null)
             {
                 _fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
+                return true;
             }
 
-            return wasAdded;
+            createdFile = null;
+            return false;
         }
 
         /// <inheritdoc cref="FileSystemMock.IStorage.GetDrive(string)" />
