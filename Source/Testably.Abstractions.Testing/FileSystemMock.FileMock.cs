@@ -11,6 +11,8 @@ using System.Runtime.Versioning;
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
+#endif
+#if FEATURE_FILESYSTEM_LINK
 using System.Runtime.InteropServices;
 #endif
 
@@ -70,7 +72,6 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.AppendAllText(string, string?, Encoding)" />
         public void AppendAllText(string path, string? contents, Encoding encoding)
-
         {
             IStorage.IFileInfoMock? fileInfo =
                 _fileSystem.Storage.GetOrAddFile(path);
@@ -145,8 +146,19 @@ public sealed partial class FileSystemMock
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="IFileSystem.IFile.CreateSymbolicLink(string, string)" />
-        public FileSystemInfo CreateSymbolicLink(string path, string pathToTarget)
-            => throw new NotImplementedException();
+        public IFileSystem.IFileSystemInfo CreateSymbolicLink(
+            string path, string pathToTarget)
+        {
+            if (!FileSystem.Path.IsPathRooted(pathToTarget) &&
+                !RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                pathToTarget = pathToTarget.PrefixRoot();
+            }
+
+            FileSystemInfoMock fileInfo = new(path, path, _fileSystem);
+            fileInfo.CreateAsSymbolicLink(pathToTarget);
+            return fileInfo;
+        }
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFile.CreateText(string)" />
@@ -201,7 +213,8 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.GetAttributes(string)" />
         public FileAttributes GetAttributes(string path)
-            => throw new NotImplementedException();
+            => _fileSystem.Storage.GetFile(path)?.Attributes
+               ?? throw ExceptionFactory.FileNotFound(FileSystem.Path.GetFullPath(path));
 
         /// <inheritdoc cref="IFileSystem.IFile.GetCreationTime(string)" />
         public DateTime GetCreationTime(string path)
@@ -423,13 +436,40 @@ public sealed partial class FileSystemMock
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="IFileSystem.IFile.ResolveLinkTarget(string, bool)" />
-        public FileSystemInfo? ResolveLinkTarget(string linkPath, bool returnFinalTarget)
-            => throw new NotImplementedException();
+        public IFileSystem.IFileSystemInfo? ResolveLinkTarget(
+            string linkPath, bool returnFinalTarget)
+        {
+            IStorage.IFileSystemInfoMock? fileInfo =
+                _fileSystem.Storage.GetFileSystemInfo(linkPath);
+            if (fileInfo != null)
+            {
+                try
+                {
+                    return fileInfo.ResolveLinkTarget(returnFinalTarget);
+                }
+                catch (IOException)
+                {
+                    throw ExceptionFactory.FileNameCannotBeResolved(linkPath);
+                }
+            }
+
+            throw ExceptionFactory.FileNotFound(linkPath);
+        }
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFile.SetAttributes(string, FileAttributes)" />
         public void SetAttributes(string path, FileAttributes fileAttributes)
-            => throw new NotImplementedException();
+        {
+            IFileSystem.IFileInfo? fileInfo =
+                _fileSystem.Storage.GetFile(path);
+            if (fileInfo == null)
+            {
+                throw ExceptionFactory.FileNotFound(
+                    FileSystem.Path.GetFullPath(path));
+            }
+
+            fileInfo.Attributes = fileAttributes;
+        }
 
         /// <inheritdoc cref="IFileSystem.IFile.SetCreationTime(string, DateTime)" />
         public void SetCreationTime(string path, DateTime creationTime)

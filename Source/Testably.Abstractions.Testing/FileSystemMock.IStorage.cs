@@ -45,6 +45,17 @@ public sealed partial class FileSystemMock
         IDirectoryInfoMock? GetDirectory(string path);
 
         /// <summary>
+        ///     Add a file to the storage.
+        /// </summary>
+        bool TryAddFile(string path, [NotNullWhen(true)] out IFileInfoMock? createdFile);
+
+        /// <summary>
+        ///     Gets a file system info if it exists.<br />
+        ///     Returns <c>null</c>, if the file system info does not exist.
+        /// </summary>
+        IFileSystemInfoMock? GetFileSystemInfo(string path);
+
+        /// <summary>
         ///     Returns the drive if it is present.<br />
         ///     Returns <c>null</c>, if the drive does not exist.
         /// </summary>
@@ -115,6 +126,13 @@ public sealed partial class FileSystemMock
             ///     Writes the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
             /// </summary>
             void WriteBytes(byte[] bytes);
+
+#if FEATURE_FILESYSTEM_LINK
+            /// <summary>
+            ///     Sets the link target to <paramref name="pathToTarget" />.
+            /// </summary>
+            void SetLinkTarget(string pathToTarget);
+#endif
         }
 
         /// <summary>

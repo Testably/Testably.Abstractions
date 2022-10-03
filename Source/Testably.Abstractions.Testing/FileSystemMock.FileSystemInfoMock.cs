@@ -16,6 +16,8 @@ public sealed partial class FileSystemMock
         private DateTime _creationTime;
         private DateTime _lastAccessTime;
         private DateTime _lastWriteTime;
+        private bool _isInitialized;
+        protected IStorage.IFileSystemInfoMock? Container;
         protected readonly string OriginalPath;
 
         private readonly ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
@@ -117,7 +119,16 @@ public sealed partial class FileSystemMock
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.LinkTarget" />
         public string? LinkTarget
-            => throw new NotImplementedException();
+        {
+            get
+            {
+                RefreshInternal();
+                return (Container as FileSystemInfoMock)?._linkTarget;
+            }
+            protected set => _linkTarget = value;
+        }
+
+        private string? _linkTarget;
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Name" />
@@ -129,7 +140,19 @@ public sealed partial class FileSystemMock
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreateAsSymbolicLink(string)" />
         public void CreateAsSymbolicLink(string pathToTarget)
-            => throw new NotImplementedException();
+        {
+            if (FileSystem.Storage.TryAddFile(FullName,
+                out IStorage.IFileInfoMock? createdFile))
+            {
+                createdFile.SetLinkTarget(pathToTarget);
+                LinkTarget = pathToTarget;
+                Attributes |= FileAttributes.ReparsePoint;
+            }
+            else
+            {
+                throw ExceptionFactory.CannotCreateFileAsAlreadyExists(OriginalPath);
+            }
+        }
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Refresh()" />
@@ -155,7 +178,44 @@ public sealed partial class FileSystemMock
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.ResolveLinkTarget(bool)" />
         public IFileSystem.IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget)
-            => throw new NotImplementedException();
+        {
+            IStorage.IFileSystemInfoMock? self =
+                FileSystem.Storage.GetFileSystemInfo(FullName);
+            if (returnFinalTarget)
+            {
+                IFileSystem.IFileSystemInfo? linkTarget = self;
+                int maxResolveLinks = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                    ? 63
+                    : 40;
+                for (int i = 0; i < maxResolveLinks; i++)
+                {
+                    IFileSystem.IFileSystemInfo? nextLink =
+                        linkTarget?.ResolveLinkTarget(false);
+
+                    if (nextLink == null)
+                    {
+                        return linkTarget;
+                    }
+
+                    linkTarget = nextLink;
+                }
+
+                if (linkTarget?.LinkTarget != null)
+                {
+                    throw ExceptionFactory.FileNameCannotBeResolved(FullName);
+                }
+
+                return linkTarget;
+            }
+
+            if (self?.LinkTarget != null)
+            {
+                return FileSystem.FileInfo.New(self.LinkTarget) as
+                    IStorage.IFileSystemInfoMock;
+            }
+
+            return null;
+        }
 #endif
 
         #endregion
@@ -300,7 +360,7 @@ public sealed partial class FileSystemMock
         }
 
         private static bool HasNotifyFilters(TimeAdjustments timeAdjustments,
-                                      out NotifyFilters notifyFilters)
+                                             out NotifyFilters notifyFilters)
         {
             notifyFilters = 0;
             if (timeAdjustments.HasFlag(TimeAdjustments.CreationTime))
@@ -336,6 +396,17 @@ public sealed partial class FileSystemMock
             }
 
             return time.ToUniversalTime();
+        }
+
+        protected void RefreshInternal()
+        {
+            if (_isInitialized)
+            {
+                return;
+            }
+
+            _isInitialized = true;
+            Container = FileSystem.Storage.GetFile(FullName);
         }
 
         /// <summary>

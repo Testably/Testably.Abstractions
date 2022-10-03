@@ -9,35 +9,35 @@ namespace Testably.Abstractions.Testing.Internal;
 internal static class ExceptionFactory
 {
     internal static UnauthorizedAccessException AccessToPathDenied(string path)
-        => new(
-            $"Access to the path '{path}' is denied.");
+        => new($"Access to the path '{path}' is denied.");
 
     internal static ArgumentException AppendAccessOnlyInWriteOnlyMode(
         string paramName = "access")
-        => new(
-            $"{FileMode.Append} access can be requested only in write-only mode.",
+        => new($"{FileMode.Append} access can be requested only in write-only mode.",
             paramName);
 
-    internal static IOException DirectoryNotEmpty(string path)
+    internal static IOException CannotCreateFileAsAlreadyExists(string path)
         => new(
-            $"Directory not empty : '{path}'");
+            $"Cannot create '{path}' because a file or directory with the same name already exists.");
+
+    internal static IOException DirectoryNotEmpty(string path)
+        => new($"Directory not empty : '{path}'");
 
     internal static DirectoryNotFoundException DirectoryNotFound(string path)
-        => new(
-            $"Could not find a part of the path '{path}'.");
+        => new($"Could not find a part of the path '{path}'.");
 
     internal static IOException FileAlreadyExists(string path)
-        => new(
-            $"The file '{path}' already exists.");
+        => new($"The file '{path}' already exists.");
+
+    public static IOException FileNameCannotBeResolved(string path)
+        => new($"The name of the file cannot be resolved by the system. : '{path}'");
 
     internal static FileNotFoundException FileNotFound(string path)
-        => new(
-            $"Could not find file '{path}'.");
+        => new($"Could not find file '{path}'.");
 
     internal static ArgumentException InvalidAccessCombination(
         FileMode mode, FileAccess access)
-        => new(
-            $"Combining FileMode: {mode} with FileAccess: {access} is invalid.",
+        => new($"Combining FileMode: {mode} with FileAccess: {access} is invalid.",
             nameof(access));
 
     internal static ArgumentException InvalidDriveName(string paramName = "driveName")
@@ -65,8 +65,7 @@ internal static class ExceptionFactory
 
     internal static ArgumentException PathHasIllegalCharacters(
         string path, string paramName = "path")
-        => new(
-            $"Illegal characters in path '{path}'", paramName);
+        => new($"Illegal characters in path '{path}'", paramName);
 
     internal static IOException PathHasIncorrectSyntax(string path)
         => new(

@@ -1,6 +1,6 @@
 namespace Testably.Abstractions.Tests;
 
-public abstract class FileSystemFileSystemInfoTests<TFileSystem>
+public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
     #region Test Setup

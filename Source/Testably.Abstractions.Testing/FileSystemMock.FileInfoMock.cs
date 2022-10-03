@@ -18,8 +18,6 @@ public sealed partial class FileSystemMock
         IStorage.IFileInfoMock
     {
         private byte[] _bytes = Array.Empty<byte>();
-        private IStorage.IFileInfoMock? _file;
-        private bool _isInitialized;
 
         internal FileInfoMock(string fullName, string originalPath,
                               FileSystemMock fileSystem)
@@ -44,7 +42,7 @@ public sealed partial class FileSystemMock
             get
             {
                 RefreshInternal();
-                return _file?.GetBytes().Length
+                return (Container as IStorage.IFileInfoMock)?.GetBytes().Length
                        ?? throw ExceptionFactory.FileNotFound(Framework.IsNetFramework
                            ? OriginalPath
                            : FullName);
@@ -200,16 +198,14 @@ public sealed partial class FileSystemMock
             _bytes = Array.Empty<byte>();
         }
 
-        private void RefreshInternal()
+#if FEATURE_FILESYSTEM_LINK
+        /// <inheritdoc cref="IStorage.IFileInfoMock.SetLinkTarget(string)" />
+        public void SetLinkTarget(string pathToTarget)
         {
-            if (_isInitialized)
-            {
-                return;
-            }
-
-            _isInitialized = true;
-            _file = FileSystem.Storage.GetFile(FullName);
+            LinkTarget = pathToTarget;
+            Attributes |= FileAttributes.ReparsePoint;
         }
+#endif
 
         [return: NotNullIfNotNull("path")]
         internal static FileInfoMock? New(string? path, FileSystemMock fileSystem)
