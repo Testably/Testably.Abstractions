@@ -69,7 +69,6 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.AppendAllText(string, string?, Encoding)" />
         public void AppendAllText(string path, string? contents, Encoding encoding)
-
         {
             IStorage.IFileInfoMock? fileInfo =
                 _fileSystem.Storage.GetOrAddFile(path);
@@ -144,8 +143,13 @@ public sealed partial class FileSystemMock
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="IFileSystem.IFile.CreateSymbolicLink(string, string)" />
-        public FileSystemInfo CreateSymbolicLink(string path, string pathToTarget)
-            => throw new NotImplementedException();
+        public IFileSystem.IFileSystemInfo CreateSymbolicLink(
+            string path, string pathToTarget)
+        {
+            FileSystemInfoMock fileInfo = new(path, path, _fileSystem);
+            fileInfo.CreateAsSymbolicLink(pathToTarget);
+            return fileInfo;
+        }
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFile.CreateText(string)" />
@@ -423,8 +427,25 @@ public sealed partial class FileSystemMock
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="IFileSystem.IFile.ResolveLinkTarget(string, bool)" />
-        public FileSystemInfo? ResolveLinkTarget(string linkPath, bool returnFinalTarget)
-            => throw new NotImplementedException();
+        public IFileSystem.IFileSystemInfo? ResolveLinkTarget(
+            string linkPath, bool returnFinalTarget)
+        {
+            IStorage.IFileSystemInfoMock? fileInfo =
+                _fileSystem.Storage.GetFileSystemInfo(linkPath);
+            if (fileInfo != null)
+            {
+                try
+                {
+                    return fileInfo.ResolveLinkTarget(returnFinalTarget);
+                }
+                catch (IOException)
+                {
+                    throw ExceptionFactory.FileNameCannotBeResolved(linkPath);
+                }
+            }
+
+            throw ExceptionFactory.FileNotFound(linkPath);
+        }
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFile.SetAttributes(string, FileAttributes)" />

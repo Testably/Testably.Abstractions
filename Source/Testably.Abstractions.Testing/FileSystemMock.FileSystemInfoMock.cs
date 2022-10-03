@@ -202,8 +202,7 @@ public sealed partial class FileSystemMock
 
                 if (linkTarget?.LinkTarget != null)
                 {
-                    throw new IOException(
-                        $"The name of the file cannot be resolved by the system. : '{FullName}'");
+                    throw ExceptionFactory.FileNameCannotBeResolved(FullName);
                 }
 
                 return linkTarget;

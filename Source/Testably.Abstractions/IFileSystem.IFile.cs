@@ -78,7 +78,7 @@ public partial interface IFileSystem
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="File.CreateSymbolicLink(string, string)" />
-        FileSystemInfo CreateSymbolicLink(string path, string pathToTarget);
+        IFileSystemInfo CreateSymbolicLink(string path, string pathToTarget);
 #endif
 
         /// <inheritdoc cref="File.CreateText(string)" />
@@ -217,7 +217,7 @@ public partial interface IFileSystem
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="File.ResolveLinkTarget(string, bool)" />
-        FileSystemInfo? ResolveLinkTarget(string linkPath, bool returnFinalTarget);
+        IFileSystemInfo? ResolveLinkTarget(string linkPath, bool returnFinalTarget);
 #endif
 
         /// <inheritdoc cref="File.SetAttributes(string, FileAttributes)" />
