@@ -11,7 +11,6 @@ using System.Runtime.Versioning;
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
-using System.Runtime.InteropServices;
 #endif
 
 namespace Testably.Abstractions.Testing;
@@ -201,8 +200,8 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.GetAttributes(string)" />
         public FileAttributes GetAttributes(string path)
-            => (_fileSystem.Storage.GetFile(path) ??
-                _fileSystem.NullFileSystemInfo).Attributes;
+            => _fileSystem.Storage.GetFile(path)?.Attributes
+               ?? throw ExceptionFactory.FileNotFound(FileSystem.Path.GetFullPath(path));
 
         /// <inheritdoc cref="IFileSystem.IFile.GetCreationTime(string)" />
         public DateTime GetCreationTime(string path)
