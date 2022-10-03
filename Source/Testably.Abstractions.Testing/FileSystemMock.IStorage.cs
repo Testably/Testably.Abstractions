@@ -128,7 +128,10 @@ public sealed partial class FileSystemMock
             void WriteBytes(byte[] bytes);
 
 #if FEATURE_FILESYSTEM_LINK
-            void SetLinkTarget(string target);
+            /// <summary>
+            ///     Sets the link target to <paramref name="pathToTarget" />.
+            /// </summary>
+            void SetLinkTarget(string pathToTarget);
 #endif
         }
 

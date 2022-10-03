@@ -200,9 +200,9 @@ public sealed partial class FileSystemMock
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="IStorage.IFileInfoMock.SetLinkTarget(string)" />
-        public void SetLinkTarget(string target)
+        public void SetLinkTarget(string pathToTarget)
         {
-            LinkTarget = target;
+            LinkTarget = pathToTarget;
             Attributes |= FileAttributes.ReparsePoint;
         }
 #endif
