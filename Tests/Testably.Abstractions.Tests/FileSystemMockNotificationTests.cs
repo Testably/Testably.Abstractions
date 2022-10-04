@@ -27,17 +27,18 @@ public class FileSystemMockNotificationTests
     {
         string path = FileSystem.Path.Combine(path1, path2, path3);
         int eventCount = 0;
-        Notification.IAwaitableCallback<FileSystemMock.ChangeDescription>
-            awaitable = FileSystem.Notify.OnChange(c =>
+        FileSystem.Notify
+           .OnChange(c =>
                 {
                     _testOutputHelper.WriteLine($"Received event {c}");
                     eventCount++;
                 },
-                c => c.Type == FileSystemMock.ChangeTypes.DirectoryCreated);
-
-        FileSystem.Directory.CreateDirectory(path);
-
-        awaitable.Wait(count: 3);
+                c => c.Type == FileSystemMock.ChangeTypes.DirectoryCreated)
+           .Execute(() =>
+            {
+                FileSystem.Directory.CreateDirectory(path);
+            })
+           .Wait(count: 3);
 
         eventCount.Should().Be(3);
     }

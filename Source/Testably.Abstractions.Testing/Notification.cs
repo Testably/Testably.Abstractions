@@ -15,8 +15,11 @@ public static class Notification
     public static IAwaitableCallback<TValue> Execute<TValue>(
         this IAwaitableCallback<TValue> awaitable, Action callback)
     {
-        callback();
-        return awaitable;
+        return new CallbackWaiterWithValue<TValue, object?>(awaitable, () =>
+        {
+            callback();
+            return null;
+        });
     }
 
     /// <summary>
@@ -25,8 +28,7 @@ public static class Notification
     public static IAwaitableCallback<TValue, TFunc> Execute<TValue, TFunc>(
         this IAwaitableCallback<TValue> awaitable, Func<TFunc> callback)
     {
-        TFunc value = callback();
-        return new CallbackWaiterWithValue<TValue, TFunc>(awaitable, value);
+        return new CallbackWaiterWithValue<TValue, TFunc>(awaitable, callback);
     }
 
     internal static INotificationFactory<TValue> CreateFactory<TValue>()
@@ -89,13 +91,16 @@ public static class Notification
 
             #region IAwaitableCallback<TValue> Members
 
-            /// <inheritdoc cref="IAwaitableCallback{TValue}.Wait(Func{TValue, bool}?, int, int)" />
-            public void Wait(Func<TValue, bool>? filter = null, int timeout = 30000,
-                             int count = 1)
+            /// <inheritdoc cref="IAwaitableCallback{TValue}.Wait(Func{TValue, bool}?, int, int, Action?)" />
+            public void Wait(Func<TValue, bool>? filter = null,
+                             int timeout = 30000,
+                             int count = 1,
+                             Action? executeWhenWaiting = null)
             {
                 _count = count;
                 _filter = filter;
                 _reset.Reset();
+                executeWhenWaiting?.Invoke();
                 if (!_reset.Wait(timeout))
                 {
                     throw new TimeoutException(
@@ -166,7 +171,13 @@ public static class Notification
         ///     (optional) The number of callbacks to wait.<br />
         ///     Defaults to <c>1</c>
         /// </param>
-        void Wait(Func<TValue, bool>? filter = null, int timeout = 30000, int count = 1);
+        /// <param name="executeWhenWaiting">
+        ///     (optional) A callback to execute when waiting started.
+        /// </param>
+        void Wait(Func<TValue, bool>? filter = null,
+                  int timeout = 30000,
+                  int count = 1,
+                  Action? executeWhenWaiting = null);
     }
 
     /// <summary>
@@ -197,39 +208,57 @@ public static class Notification
         ///     (optional) The number of callbacks to wait.<br />
         ///     Defaults to <c>1</c>
         /// </param>
-        new TFunc Wait(Func<TValue, bool>? filter = null, int timeout = 30000,
-                       int count = 1);
+        /// <param name="executeWhenWaiting">
+        ///     (optional) A callback to execute when waiting started.
+        /// </param>
+        new TFunc Wait(Func<TValue, bool>? filter = null,
+                       int timeout = 30000,
+                       int count = 1,
+                       Action? executeWhenWaiting = null);
     }
 
     private sealed class CallbackWaiterWithValue<TValue, TFunc>
         : IAwaitableCallback<TValue, TFunc>
     {
         private readonly IAwaitableCallback<TValue> _awaitableCallback;
-        private readonly TFunc _value;
+        private readonly Func<TFunc> _valueProvider;
 
         public CallbackWaiterWithValue(IAwaitableCallback<TValue> awaitableCallback,
-                                       TFunc value)
+                                       Func<TFunc> valueProvider)
         {
             _awaitableCallback = awaitableCallback;
-            _value = value;
+            _valueProvider = valueProvider;
         }
 
         #region IAwaitableCallback<TValue,TFunc> Members
 
-        /// <inheritdoc cref="IAwaitableCallback{TValue, TFunc}.Wait(Func{TValue, bool},int,int)" />
+        /// <inheritdoc cref="IAwaitableCallback{TValue, TFunc}.Wait(Func{TValue, bool}?,int,int, Action?)" />
         public TFunc Wait(Func<TValue, bool>? filter = null,
                           int timeout = 30000,
-                          int count = 1)
+                          int count = 1,
+                          Action? executeWhenWaiting = null)
         {
-            _awaitableCallback.Wait(filter, timeout, count);
-            return _value;
+            TFunc value = default!;
+            _awaitableCallback.Wait(filter, timeout, count, () =>
+            {
+                executeWhenWaiting?.Invoke();
+                value = _valueProvider();
+            });
+            return value;
         }
 
-        /// <inheritdoc cref="IAwaitableCallback{TValue}.Wait(Func{TValue, bool},int,int)" />
+        /// <inheritdoc cref="IAwaitableCallback{TValue}.Wait(Func{TValue, bool}?,int,int, Action?)" />
         void IAwaitableCallback<TValue>.Wait(Func<TValue, bool>? filter,
                                              int timeout,
-                                             int count)
-            => Wait(filter, timeout, count);
+                                             int count,
+                                             Action? executeWhenWaiting)
+        {
+            _awaitableCallback.Wait(filter, timeout, count, () =>
+            {
+                executeWhenWaiting?.Invoke();
+                _ = _valueProvider();
+            });
+        }
 
         /// <inheritdoc />
         public void Dispose()
