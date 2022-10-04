@@ -8,7 +8,6 @@ public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
     #region Test Setup
 
     public abstract string BasePath { get; }
-
     public TFileSystem FileSystem { get; }
     public ITimeSystem TimeSystem { get; }
 

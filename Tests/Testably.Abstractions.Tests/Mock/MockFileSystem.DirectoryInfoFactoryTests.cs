@@ -6,8 +6,8 @@ public static partial class MockFileSystem
 {
     // ReSharper disable once UnusedMember.Global
     [SystemTest(nameof(MockFileSystem))]
-    public sealed class
-        DirectoryInfoFactoryTests : FileSystemDirectoryInfoFactoryTests<FileSystemMock>
+    public sealed class DirectoryInfoFactoryTests
+        : FileSystemDirectoryInfoFactoryTests<FileSystemMock>, IDisposable
     {
         /// <inheritdoc cref="FileSystemDirectoryInfoFactoryTests{TFileSystem}.BasePath" />
         public override string BasePath => _directoryCleaner.BasePath;
@@ -25,5 +25,13 @@ public static partial class MockFileSystem
             _directoryCleaner = FileSystem
                .SetCurrentDirectoryToEmptyTemporaryDirectory();
         }
+
+        #region IDisposable Members
+
+        /// <inheritdoc cref="IDisposable.Dispose()" />
+        public void Dispose()
+            => _directoryCleaner.Dispose();
+
+        #endregion
     }
 }
