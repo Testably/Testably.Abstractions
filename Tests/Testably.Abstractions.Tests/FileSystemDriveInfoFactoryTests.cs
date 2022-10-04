@@ -23,6 +23,21 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
     #endregion
 
     [Fact]
+    [FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.New))]
+    public void New_DefaultDrive_ShouldBeFixed()
+    {
+        IFileSystem.IDriveInfo result = FileSystem.DriveInfo.New("".PrefixRoot());
+
+        result.AvailableFreeSpace.Should().BeGreaterThan(0);
+        result.DriveFormat.Should().NotBeNull();
+        result.DriveType.Should().Be(DriveType.Fixed);
+        result.IsReady.Should().BeTrue();
+        result.RootDirectory.FullName.Should().Be("".PrefixRoot());
+        result.TotalFreeSpace.Should().BeGreaterThan(0);
+        result.TotalSize.Should().BeGreaterThan(0);
+    }
+
+    [Fact]
     [FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.GetDrives))]
     public void GetDrives_ShouldNotBeEmpty()
     {
@@ -132,8 +147,9 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
         IFileSystem.IDriveInfo driveInfo = GetUnmappedDrive();
 
         path = $"{driveInfo.Name}{path}";
-        IFileSystem.IDirectoryInfo directoryInfo = FileSystem.DirectoryInfo.New(FileSystem.Path.Combine(path, subPath));
-        var parent = directoryInfo.Parent;
+        IFileSystem.IDirectoryInfo directoryInfo =
+            FileSystem.DirectoryInfo.New(FileSystem.Path.Combine(path, subPath));
+        IFileSystem.IDirectoryInfo? parent = directoryInfo.Parent;
 
         Exception? exception = Record.Exception(() =>
         {

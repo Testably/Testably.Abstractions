@@ -36,6 +36,15 @@ public abstract class FileSystemTests<TFileSystem>
 
     [Fact]
     [FileSystemTests.ExtensionPoint]
+    public void DriveInfo_ShouldSetExtensionPoint()
+    {
+        IFileSystem result = FileSystem.DriveInfo.FileSystem;
+
+        result.Should().Be(FileSystem);
+    }
+
+    [Fact]
+    [FileSystemTests.ExtensionPoint]
     public void File_ShouldSetExtensionPoint()
     {
         IFileSystem result = FileSystem.File.FileSystem;
@@ -48,6 +57,15 @@ public abstract class FileSystemTests<TFileSystem>
     public void FileInfo_ShouldSetExtensionPoint()
     {
         IFileSystem result = FileSystem.FileInfo.FileSystem;
+
+        result.Should().Be(FileSystem);
+    }
+
+    [Fact]
+    [FileSystemTests.ExtensionPoint]
+    public void FileStream_ShouldSetExtensionPoint()
+    {
+        IFileSystem result = FileSystem.FileStream.FileSystem;
 
         result.Should().Be(FileSystem);
     }
