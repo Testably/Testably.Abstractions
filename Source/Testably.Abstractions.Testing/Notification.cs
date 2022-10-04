@@ -90,7 +90,7 @@ public static class Notification
             #region IAwaitableCallback<TValue> Members
 
             /// <inheritdoc cref="IAwaitableCallback{TValue}.Wait(Func{TValue, bool}?, int, int)" />
-            public void Wait(Func<TValue, bool>? filter = null, int timeout = 1000,
+            public void Wait(Func<TValue, bool>? filter = null, int timeout = 30000,
                              int count = 1)
             {
                 _count = count;
@@ -159,7 +159,7 @@ public static class Notification
         /// </param>
         /// <param name="timeout">
         ///     (optional) The timeout in milliseconds to wait on the callback.<br />
-        ///     Defaults to <c>30000</c>ms (3 seconds).
+        ///     Defaults to <c>30000</c>ms (30 seconds).
         /// </param>
         /// <param name="count">
         ///     (optional) The number of callbacks to wait.<br />
@@ -190,13 +190,13 @@ public static class Notification
         /// </param>
         /// <param name="timeout">
         ///     (optional) The timeout in milliseconds to wait on the callback.<br />
-        ///     Defaults to <c>1000</c>ms.
+        ///     Defaults to <c>30000</c>ms (30 seconds).
         /// </param>
         /// <param name="count">
         ///     (optional) The number of callbacks to wait.<br />
         ///     Defaults to <c>1</c>
         /// </param>
-        new TFunc Wait(Func<TValue, bool>? filter = null, int timeout = 1000,
+        new TFunc Wait(Func<TValue, bool>? filter = null, int timeout = 30000,
                        int count = 1);
     }
 
