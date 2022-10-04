@@ -21,6 +21,7 @@ public class NotificationTests
 
         new Thread(() =>
         {
+            Thread.Sleep(10);
             for (int i = 1; i <= 10; i++)
             {
                 timeSystem.Thread.Sleep(i);
@@ -46,6 +47,7 @@ public class NotificationTests
 
         new Thread(() =>
         {
+            Thread.Sleep(10);
             for (int i = 1; i <= 10; i++)
             {
                 timeSystem.Thread.Sleep(i);
@@ -61,22 +63,33 @@ public class NotificationTests
     [Trait(nameof(Testing), nameof(Notification))]
     public void AwaitableCallback_ShouldWaitForCallbackExecution()
     {
-        TimeSystemMock timeSystem = new();
-        bool isCalled = false;
-        Notification.IAwaitableCallback<TimeSpan> wait =
-            timeSystem.On.ThreadSleep(_ =>
-            {
-                isCalled = true;
-            });
-
-        new Thread(() =>
+        ManualResetEventSlim ms = new ManualResetEventSlim();
+        try
         {
-            timeSystem.Thread.Sleep(1);
-            Thread.Sleep(1);
-        }).Start();
+            TimeSystemMock timeSystem = new();
+            bool isCalled = false;
+            Notification.IAwaitableCallback<TimeSpan> wait =
+                timeSystem.On.ThreadSleep(_ =>
+                {
+                    isCalled = true;
+                });
 
-        wait.Wait();
-        isCalled.Should().BeTrue();
+            new Thread(() =>
+            {
+                while (!ms.IsSet)
+                {
+                    timeSystem.Thread.Sleep(1);
+                    Thread.Sleep(1);
+                }
+            }).Start();
+
+            wait.Wait();
+            isCalled.Should().BeTrue();
+        }
+        finally
+        {
+            ms.Set();
+        }
     }
 
     [Fact]
