@@ -17,20 +17,23 @@ public sealed partial class TimeSystemMock
 
         #region ICallbackHandler Members
 
-        /// <inheritdoc cref="TimeSystemMock.ICallbackHandler.DateTimeRead(Action{DateTime})" />
+        /// <inheritdoc cref="TimeSystemMock.ICallbackHandler.DateTimeRead(Action{DateTime}?, Func{DateTime, bool}?)" />
         public Notification.IAwaitableCallback<DateTime> DateTimeRead(
-            Action<DateTime>? callback = null)
-            => _dateTimeReadCallbacks.RegisterCallback(callback);
+            Action<DateTime>? callback = null,
+            Func<DateTime, bool>? predicate = null)
+            => _dateTimeReadCallbacks.RegisterCallback(callback, predicate);
 
-        /// <inheritdoc cref="TimeSystemMock.ICallbackHandler.TaskDelay(Action{TimeSpan})" />
+        /// <inheritdoc cref="TimeSystemMock.ICallbackHandler.TaskDelay(Action{TimeSpan}?, Func{TimeSpan, bool}?)" />
         public Notification.IAwaitableCallback<TimeSpan> TaskDelay(
-            Action<TimeSpan>? callback = null)
-            => _taskDelayCallbacks.RegisterCallback(callback);
+            Action<TimeSpan>? callback = null,
+            Func<TimeSpan, bool>? predicate = null)
+            => _taskDelayCallbacks.RegisterCallback(callback, predicate);
 
-        /// <inheritdoc cref="TimeSystemMock.ICallbackHandler.ThreadSleep(Action{TimeSpan})" />
+        /// <inheritdoc cref="TimeSystemMock.ICallbackHandler.ThreadSleep(Action{TimeSpan}?, Func{TimeSpan, bool}?)" />
         public Notification.IAwaitableCallback<TimeSpan> ThreadSleep(
-            Action<TimeSpan>? callback = null)
-            => _threadSleepCallbacks.RegisterCallback(callback);
+            Action<TimeSpan>? callback = null,
+            Func<TimeSpan, bool>? predicate = null)
+            => _threadSleepCallbacks.RegisterCallback(callback, predicate);
 
         #endregion
 
