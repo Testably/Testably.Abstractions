@@ -159,13 +159,13 @@ public static class Notification
         /// </param>
         /// <param name="timeout">
         ///     (optional) The timeout in milliseconds to wait on the callback.<br />
-        ///     Defaults to <c>1000</c>ms.
+        ///     Defaults to <c>30000</c>ms (3 seconds).
         /// </param>
         /// <param name="count">
         ///     (optional) The number of callbacks to wait.<br />
         ///     Defaults to <c>1</c>
         /// </param>
-        void Wait(Func<TValue, bool>? filter = null, int timeout = 1000, int count = 1);
+        void Wait(Func<TValue, bool>? filter = null, int timeout = 30000, int count = 1);
     }
 
     /// <summary>
@@ -217,7 +217,7 @@ public static class Notification
 
         /// <inheritdoc cref="IAwaitableCallback{TValue, TFunc}.Wait(Func{TValue, bool},int,int)" />
         public TFunc Wait(Func<TValue, bool>? filter = null,
-                          int timeout = 1000,
+                          int timeout = 30000,
                           int count = 1)
         {
             _awaitableCallback.Wait(filter, timeout, count);
