@@ -197,7 +197,9 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         await FileSystem.File.WriteAllBytesAsync(path, contents, cts.Token);
         await using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
+#pragma warning disable CA1835
         int result = await stream.ReadAsync(buffer, 0, contents.Length, cts.Token);
+#pragma warning restore CA1835
 
         result.Should().Be(contents.Length);
         buffer.Should().BeEquivalentTo(contents);
@@ -354,7 +356,9 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         CancellationTokenSource cts = new(10000);
         await using FileSystemStream stream = FileSystem.File.Create(path);
 
+#pragma warning disable CA1835
         await stream.WriteAsync(contents, 0, contents.Length, cts.Token);
+#pragma warning restore CA1835
 
         await stream.DisposeAsync();
         (await FileSystem.File.ReadAllBytesAsync(path, cts.Token))

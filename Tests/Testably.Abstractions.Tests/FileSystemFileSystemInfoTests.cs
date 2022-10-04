@@ -31,7 +31,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
     [FileSystemTests.FileSystemInfo(
         nameof(IFileSystem.IFileSystemInfo.Attributes))]
     public void SetAttributes_ShouldBeIgnoredOnAllPlatforms(FileAttributes attributes,
-                                                     string path)
+        string path)
     {
         FileSystem.File.WriteAllText(path, null);
         FileSystem.File.SetAttributes(path, attributes);
@@ -43,7 +43,6 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 
     [Theory]
     [InlineAutoData(FileAttributes.Archive)]
-    [InlineAutoData(FileAttributes.Hidden)]
     [InlineAutoData(FileAttributes.NoScrubData)]
     [InlineAutoData(FileAttributes.NotContentIndexed)]
     [InlineAutoData(FileAttributes.Offline)]
@@ -51,8 +50,8 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
     [InlineAutoData(FileAttributes.Temporary)]
     [FileSystemTests.FileSystemInfo(
         nameof(IFileSystem.IFileSystemInfo.Attributes))]
-    public void SetAttributes_ShouldBeIgnoredOnLinux(FileAttributes attributes,
-                                                     string path)
+    public void SetAttributes_ShouldOnlyWorkOnWindows(FileAttributes attributes,
+                                                      string path)
     {
         FileSystem.File.WriteAllText(path, null);
         FileSystem.File.SetAttributes(path, attributes);
@@ -66,6 +65,28 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
         else
         {
             result.Should().Be(FileAttributes.Normal);
+        }
+    }
+
+    [Theory]
+    [InlineAutoData(FileAttributes.Hidden)]
+    [FileSystemTests.FileSystemInfo(
+        nameof(IFileSystem.IFileSystemInfo.Attributes))]
+    public void SetAttributes_ShouldBeIgnoredOnLinux(FileAttributes attributes,
+                                                     string path)
+    {
+        FileSystem.File.WriteAllText(path, null);
+        FileSystem.File.SetAttributes(path, attributes);
+
+        FileAttributes result = FileSystem.File.GetAttributes(path);
+
+        if (!Test.RunsOnLinux)
+        {
+            result.Should().Be(FileAttributes.Normal);
+        }
+        else
+        {
+            result.Should().Be(attributes);
         }
     }
 
