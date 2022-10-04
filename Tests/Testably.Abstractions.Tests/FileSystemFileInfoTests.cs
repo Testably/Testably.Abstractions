@@ -56,19 +56,12 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     {
         FileSystem.File.WriteAllText(path, null);
         IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
-        fileInfo.Attributes = FileAttributes.ReadOnly | FileAttributes.Hidden;
+        fileInfo.Attributes = FileAttributes.ReadOnly;
 
         fileInfo.IsReadOnly = false;
 
         fileInfo.IsReadOnly.Should().BeFalse();
-        if (Test.RunsOnLinux)
-        {
-            fileInfo.Attributes.Should().Be(FileAttributes.Normal);
-        }
-        else
-        {
-            fileInfo.Attributes.Should().Be(FileAttributes.Hidden);
-        }
+        fileInfo.Attributes.Should().Be(FileAttributes.Normal);
     }
 
     [Theory]
