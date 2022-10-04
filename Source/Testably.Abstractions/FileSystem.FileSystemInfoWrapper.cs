@@ -20,7 +20,11 @@ public sealed partial class FileSystem
         #region IFileSystemInfo Members
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Attributes" />
-        public FileAttributes Attributes { get; set; }
+        public FileAttributes Attributes
+        {
+            get => _instance.Attributes;
+            set => _instance.Attributes = value;
+        }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTime" />
         public DateTime CreationTime

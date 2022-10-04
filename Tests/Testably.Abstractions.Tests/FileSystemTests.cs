@@ -72,8 +72,8 @@ public static class FileSystemTests
     /// </summary>
     public class Directory : TestabilityTraitAttribute
     {
-        public Directory(string method) : base(nameof(IFileSystem),
-            nameof(IFileSystem.IDirectory), method)
+        public Directory(string? method = null) : base(nameof(IFileSystem),
+            nameof(IFileSystem.IDirectory), method ?? " (other) ")
         {
         }
     }
@@ -83,8 +83,8 @@ public static class FileSystemTests
     /// </summary>
     public class DirectoryInfo : TestabilityTraitAttribute
     {
-        public DirectoryInfo(string method) : base(nameof(IFileSystem),
-            nameof(IFileSystem.IDirectoryInfo), method)
+        public DirectoryInfo(string? method = null) : base(nameof(IFileSystem),
+            nameof(IFileSystem.IDirectoryInfo), method ?? " (other) ")
         {
         }
     }
@@ -94,8 +94,8 @@ public static class FileSystemTests
     /// </summary>
     public class DirectoryInfoFactory : TestabilityTraitAttribute
     {
-        public DirectoryInfoFactory(string method) : base(nameof(IFileSystem),
-            nameof(IFileSystem.IDirectoryInfoFactory), method)
+        public DirectoryInfoFactory(string? method = null) : base(nameof(IFileSystem),
+            nameof(IFileSystem.IDirectoryInfoFactory), method ?? " (other) ")
         {
         }
     }
@@ -105,8 +105,8 @@ public static class FileSystemTests
     /// </summary>
     public class DriveInfo : TestabilityTraitAttribute
     {
-        public DriveInfo(string method) : base(nameof(IFileSystem),
-            nameof(IFileSystem.IDriveInfo), method)
+        public DriveInfo(string? method = null) : base(nameof(IFileSystem),
+            nameof(IFileSystem.IDriveInfo), method ?? " (other) ")
         {
         }
     }
@@ -116,8 +116,8 @@ public static class FileSystemTests
     /// </summary>
     public class DriveInfoFactory : TestabilityTraitAttribute
     {
-        public DriveInfoFactory(string method) : base(nameof(IFileSystem),
-            nameof(IFileSystem.IDriveInfoFactory), method)
+        public DriveInfoFactory(string? method = null) : base(nameof(IFileSystem),
+            nameof(IFileSystem.IDriveInfoFactory), method ?? " (other) ")
         {
         }
     }
@@ -138,8 +138,8 @@ public static class FileSystemTests
     /// </summary>
     public class File : TestabilityTraitAttribute
     {
-        public File(string method) : base(nameof(IFileSystem),
-            nameof(IFileSystem.IFile), method)
+        public File(string? method = null) : base(nameof(IFileSystem),
+            nameof(IFileSystem.IFile), method ?? " (other) ")
         {
         }
     }
@@ -149,8 +149,8 @@ public static class FileSystemTests
     /// </summary>
     public class FileInfo : TestabilityTraitAttribute
     {
-        public FileInfo(string method) : base(nameof(IFileSystem),
-            nameof(IFileSystem.IFileInfo), method)
+        public FileInfo(string? method = null) : base(nameof(IFileSystem),
+            nameof(IFileSystem.IFileInfo), method ?? " (other) ")
         {
         }
     }
@@ -160,8 +160,8 @@ public static class FileSystemTests
     /// </summary>
     public class FileInfoFactory : TestabilityTraitAttribute
     {
-        public FileInfoFactory(string method) : base(nameof(IFileSystem),
-            nameof(IFileSystem.IFileInfoFactory), method)
+        public FileInfoFactory(string? method = null) : base(nameof(IFileSystem),
+            nameof(IFileSystem.IFileInfoFactory), method ?? " (other) ")
         {
         }
     }
@@ -182,8 +182,8 @@ public static class FileSystemTests
     /// </summary>
     public class FileStreamFactory : TestabilityTraitAttribute
     {
-        public FileStreamFactory(string method) : base(nameof(IFileSystem),
-            nameof(IFileSystem.IFileStreamFactory), method)
+        public FileStreamFactory(string? method = null) : base(nameof(IFileSystem),
+            nameof(IFileSystem.IFileStreamFactory), method ?? " (other) ")
         {
         }
     }
@@ -193,8 +193,8 @@ public static class FileSystemTests
     /// </summary>
     public class FileSystemInfo : TestabilityTraitAttribute
     {
-        public FileSystemInfo(string method) : base(nameof(IFileSystem),
-            nameof(IFileSystem.IFileSystemInfo), method)
+        public FileSystemInfo(string? method = null) : base(nameof(IFileSystem),
+            nameof(IFileSystem.IFileSystemInfo), method ?? " (other) ")
         {
         }
     }
@@ -205,7 +205,7 @@ public static class FileSystemTests
     public class Intercept : TestabilityTraitAttribute
     {
         public Intercept(string? method = null) : base(nameof(FileSystemMock),
-            nameof(FileSystemMock.Intercept), method)
+            nameof(FileSystemMock.Intercept), method ?? " (other) ")
         {
         }
     }
@@ -216,7 +216,7 @@ public static class FileSystemTests
     public class Notify : TestabilityTraitAttribute
     {
         public Notify(string? method = null) : base(nameof(FileSystemMock),
-            nameof(FileSystemMock.Notify), method)
+            nameof(FileSystemMock.Notify), method ?? " (other) ")
         {
         }
     }
@@ -226,7 +226,7 @@ public static class FileSystemTests
     /// </summary>
     public class Path : TestabilityTraitAttribute
     {
-        public Path(string method) : base(nameof(IFileSystem),
+        public Path(string? method = null) : base(nameof(IFileSystem),
             nameof(IFileSystem.IPath),
             method)
         {
