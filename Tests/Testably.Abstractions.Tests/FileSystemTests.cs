@@ -1,4 +1,3 @@
-using System.IO;
 using Testably.Abstractions.Tests.TestHelpers.Traits;
 
 namespace Testably.Abstractions.Tests;
@@ -172,8 +171,8 @@ public static class FileSystemTests
     /// </summary>
     public class FileStream : TestabilityTraitAttribute
     {
-        public FileStream(string method) : base(nameof(IFileSystem),
-            nameof(FileSystemStream), method)
+        public FileStream(string? method = null) : base(nameof(IFileSystem),
+            nameof(FileSystemStream), method ?? " (other) ")
         {
         }
     }

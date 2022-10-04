@@ -49,7 +49,10 @@ public sealed partial class FileSystemMock
                                FileShare share,
                                int bufferSize,
                                FileOptions options)
-            : base(stream, path, (options & FileOptions.Asynchronous) != 0)
+            : base(
+                stream,
+                path == null ? null : fileSystem.Path.GetFullPath(path),
+                (options & FileOptions.Asynchronous) != 0)
         {
             ThrowIfInvalidModeAccess(mode, access);
 
@@ -108,6 +111,16 @@ public sealed partial class FileSystemMock
         {
             //TimeAdjustments.LastAccessTime
             return base.Read(buffer, offset, count);
+        }
+
+        /// <inheritdoc />
+        public override void SetLength(long value)
+        {
+            if (!_access.HasFlag(FileAccess.Write))
+            {
+                throw ExceptionFactory.StreamDoesNotSupportWriting();
+            }
+            base.SetLength(value);
         }
 
         /// <inheritdoc cref="FileSystemStream.Write(byte[], int, int)" />

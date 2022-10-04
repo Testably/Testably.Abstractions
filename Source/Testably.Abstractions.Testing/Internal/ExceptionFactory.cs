@@ -81,6 +81,9 @@ internal static class ExceptionFactory
         => new(
             $"The process cannot access the file '{path}' because it is being used by another process.");
 
+    public static NotSupportedException StreamDoesNotSupportWriting()
+        => new("Stream does not support writing.");
+
     internal static ArgumentOutOfRangeException TaskDelayOutOfRange(string paramName)
         => new(paramName,
             "The value needs to be either -1 (signifying an infinite timeout), 0 or a positive integer.");
