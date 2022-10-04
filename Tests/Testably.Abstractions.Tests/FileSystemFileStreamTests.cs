@@ -131,8 +131,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
     [Theory]
     [AutoData]
     [FileSystemTests.FileStream]
-    public void Name_ShouldReturnFullPath(
-        string path, string contents)
+    public void Name_ShouldReturnFullPath(string path)
     {
         string expectedName = FileSystem.Path.GetFullPath(path);
         using FileSystemStream stream = FileSystem.File.Create(path);
@@ -193,11 +192,12 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
     [FileSystemTests.FileStream]
     public async Task ReadAsync_ShouldFillBuffer(string path, byte[] contents)
     {
+        CancellationTokenSource cts = new (10000);
         byte[] buffer = new byte[contents.Length];
-        await FileSystem.File.WriteAllBytesAsync(path, contents);
+        await FileSystem.File.WriteAllBytesAsync(path, contents, cts.Token);
         await using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-        int result = await stream.ReadAsync(buffer, 0, contents.Length);
+        int result = await stream.ReadAsync(buffer, 0, contents.Length, cts.Token);
 
         result.Should().Be(contents.Length);
         buffer.Should().BeEquivalentTo(contents);
@@ -351,12 +351,13 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
     [FileSystemTests.FileStream]
     public async Task WriteAsync_ShouldFillBuffer(string path, byte[] contents)
     {
+        CancellationTokenSource cts = new(10000);
         await using FileSystemStream stream = FileSystem.File.Create(path);
 
-        await stream.WriteAsync(contents, 0, contents.Length);
+        await stream.WriteAsync(contents, 0, contents.Length, cts.Token);
 
         await stream.DisposeAsync();
-        (await FileSystem.File.ReadAllBytesAsync(path))
+        (await FileSystem.File.ReadAllBytesAsync(path, cts.Token))
            .Should().BeEquivalentTo(contents);
     }
 #endif
