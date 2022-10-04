@@ -16,149 +16,101 @@ public class NotificationTests
 
     #endregion
 
-    [SkippableFact]
+    [Fact]
     [Trait(nameof(Testing), nameof(Notification))]
     public void AwaitableCallback_Amount_ShouldOnlyReturnAfterNumberOfCallbacks()
     {
-        Skip.IfNot(Test.RunsOnWindows, "Test is brittle, especially on MacOS.");
-
         TimeSystemMock timeSystem = new();
-        int totalCount = 0;
-        int filteredCount = 0;
-        ManualResetEventSlim ms = new();
-        Notification.IAwaitableCallback<TimeSpan> wait = timeSystem.On.ThreadSleep(_ =>
-        {
-            totalCount++;
-        });
+        int receivedCount = 0;
+        Notification.IAwaitableCallback<TimeSpan> wait =
+            timeSystem.On.ThreadSleep(t =>
+            {
+                _testOutputHelper.WriteLine(
+                    $"Received event with {t.TotalMilliseconds}ms");
+                if (t.TotalMilliseconds > 0)
+                {
+                    receivedCount++;
+                }
+            });
+
         new Thread(() =>
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 1; i <= 10; i++)
             {
-                timeSystem.Thread.Sleep(0);
-                if (ms.Wait(20))
-                {
-                    break;
-                }
-            }
-
-            for (int i = 0; i < 10; i++)
-            {
-                timeSystem.Thread.Sleep(10 * i);
+                timeSystem.Thread.Sleep(i);
+                Thread.Sleep(1);
             }
         }).Start();
 
-        wait.Wait(t =>
-        {
-            if (t.TotalMilliseconds == 0)
-            {
-                ms.Set();
-            }
-
-            filteredCount++;
-            return true;
-        }, count: 6);
-
-        filteredCount.Should().BeGreaterOrEqualTo(totalCount - 1).And
-           .BeLessOrEqualTo(totalCount);
-        totalCount.Should().BeGreaterOrEqualTo(6);
+        wait.Wait(count: 7);
+        receivedCount.Should().BeGreaterOrEqualTo(7);
     }
 
-    [SkippableFact]
+    [Fact]
     [Trait(nameof(Testing), nameof(Notification))]
     public void AwaitableCallback_Filter_ShouldOnlyUpdateAfterFilteredValue()
     {
-        Skip.IfNot(Test.RunsOnWindows, "Test is brittle, especially on MacOS.");
-
         TimeSystemMock timeSystem = new();
-        int totalCount = 0;
-        int filteredCount = 0;
-        ManualResetEventSlim ms = new();
-        Notification.IAwaitableCallback<TimeSpan> wait = timeSystem.On.ThreadSleep(_ =>
-        {
-            totalCount++;
-        });
+        int receivedCount = 0;
+        Notification.IAwaitableCallback<TimeSpan> wait =
+            timeSystem.On.ThreadSleep(t =>
+            {
+                _testOutputHelper.WriteLine(
+                    $"Received event with {t.TotalMilliseconds}ms");
+                receivedCount++;
+            });
+
         new Thread(() =>
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 1; i <= 10; i++)
             {
-                timeSystem.Thread.Sleep(0);
-                if (ms.Wait(20))
-                {
-                    break;
-                }
-            }
-
-            for (int i = 0; i < 10; i++)
-            {
-                _testOutputHelper.WriteLine($"Trigger Thread.Sleep for {10 * i}ms...");
-                timeSystem.Thread.Sleep(10 * i);
+                timeSystem.Thread.Sleep(i);
+                Thread.Sleep(1);
             }
         }).Start();
 
-        wait.Wait(t =>
-        {
-            if (t.TotalMilliseconds == 0)
-            {
-                ms.Set();
-            }
-
-            if (t.TotalMilliseconds > 60)
-            {
-                filteredCount++;
-                _testOutputHelper.WriteLine(
-                    $"  Filter for {t} > 60ms: matched ({filteredCount} times)");
-                return true;
-            }
-
-            _testOutputHelper.WriteLine(
-                $"  Filter for {t} > 60ms : no match ({filteredCount} times)");
-
-            return false;
-        });
-
-        filteredCount.Should().BeLessThan(totalCount);
-        totalCount.Should().BeGreaterOrEqualTo(6);
+        wait.Wait(t => t.TotalMilliseconds > 6);
+        receivedCount.Should().BeGreaterOrEqualTo(6);
     }
 
-    [SkippableFact]
+    [Fact]
     [Trait(nameof(Testing), nameof(Notification))]
     public void AwaitableCallback_ShouldWaitForCallbackExecution()
     {
-        Skip.IfNot(Test.RunsOnWindows, "Test is brittle, especially on MacOS.");
-
         TimeSystemMock timeSystem = new();
         bool isCalled = false;
-        Notification.IAwaitableCallback<DateTime> wait = timeSystem.On.DateTimeRead(_ =>
-        {
-            isCalled = true;
-        });
+        Notification.IAwaitableCallback<TimeSpan> wait =
+            timeSystem.On.ThreadSleep(_ =>
+            {
+                _testOutputHelper.WriteLine("Received event");
+                isCalled = true;
+            });
+
         new Thread(() =>
         {
-            Thread.Sleep(10);
-            _ = timeSystem.DateTime.Now;
+            timeSystem.Thread.Sleep(1);
+            Thread.Sleep(1);
         }).Start();
 
         wait.Wait();
-
         isCalled.Should().BeTrue();
     }
 
-    [SkippableFact]
+    [Fact]
     [Trait(nameof(Testing), nameof(Notification))]
     public void AwaitableCallback_TimeoutExpired_ShouldThrowTimeoutException()
     {
-        Skip.IfNot(Test.RunsOnWindows, "Test is brittle, especially on MacOS.");
-
         TimeSystemMock timeSystem = new();
         bool isCalled = false;
-        Notification.IAwaitableCallback<DateTime> wait = timeSystem.On.DateTimeRead(_ =>
+        Notification.IAwaitableCallback<TimeSpan> wait = timeSystem.On.ThreadSleep(_ =>
         {
             isCalled = true;
         });
         new Thread(() =>
         {
+            // Delay larger than timeout of 10ms
             Thread.Sleep(1000);
-            _ = timeSystem.DateTime.Now;
+            timeSystem.Thread.Sleep(1);
         }).Start();
 
         Exception? exception = Record.Exception(() =>
