@@ -34,7 +34,7 @@ public static partial class FileSystemInitializer
             {
                 // It is important to reset the current directory, as otherwise deleting the BasePath
                 // results in a IOException, because the process cannot access the file.
-                Directory.SetCurrentDirectory(Path.GetTempPath());
+                _fileSystem.Directory.SetCurrentDirectory(_fileSystem.Path.GetTempPath());
 
                 _logger?.Invoke($"Cleaning up '{BasePath}'...");
                 for (int i = 10; i >= 0; i--)
