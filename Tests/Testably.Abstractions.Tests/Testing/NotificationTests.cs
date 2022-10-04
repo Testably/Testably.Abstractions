@@ -61,9 +61,38 @@ public class NotificationTests
 
     [Fact]
     [Trait(nameof(Testing), nameof(Notification))]
+    public void AwaitableCallback_Predicate_ShouldOnlyUpdateAfterFilteredValue()
+    {
+        TimeSystemMock timeSystem = new();
+        int receivedCount = 0;
+        ManualResetEventSlim ms = new();
+        Notification.IAwaitableCallback<TimeSpan> wait =
+            timeSystem.On.ThreadSleep(_ =>
+            {
+                receivedCount++;
+            }, t => t.TotalMilliseconds > 6);
+
+        new Thread(() =>
+        {
+            Thread.Sleep(10);
+            for (int i = 1; i <= 10; i++)
+            {
+                timeSystem.Thread.Sleep(i);
+                Thread.Sleep(1);
+            }
+
+            ms.Set();
+        }).Start();
+
+        ms.Wait(30000);
+        receivedCount.Should().BeLessOrEqualTo(4);
+    }
+
+    [Fact]
+    [Trait(nameof(Testing), nameof(Notification))]
     public void AwaitableCallback_ShouldWaitForCallbackExecution()
     {
-        ManualResetEventSlim ms = new ManualResetEventSlim();
+        ManualResetEventSlim ms = new();
         try
         {
             TimeSystemMock timeSystem = new();
@@ -116,5 +145,48 @@ public class NotificationTests
 
         exception.Should().BeOfType<TimeoutException>();
         isCalled.Should().BeFalse();
+    }
+
+    [Theory]
+    [AutoData]
+    [Trait(nameof(Testing), nameof(Notification))]
+    public void Execute_ShouldBeExecutedBeforeWait(int milliseconds)
+    {
+        TimeSystemMock timeSystem = new();
+        int receivedMilliseconds = -1;
+
+        timeSystem.On.ThreadSleep(t =>
+            {
+                receivedMilliseconds = (int)t.TotalMilliseconds;
+            }).Execute(() =>
+            {
+                timeSystem.Thread.Sleep(milliseconds);
+            })
+           .Wait();
+
+        receivedMilliseconds.Should().Be(milliseconds);
+    }
+
+    [Theory]
+    [AutoData]
+    [Trait(nameof(Testing), nameof(Notification))]
+    public void Execute_WithReturnValue_ShouldBeExecutedAndReturnValue(
+        int milliseconds, string result)
+    {
+        TimeSystemMock timeSystem = new();
+        int receivedMilliseconds = -1;
+
+        string actualResult = timeSystem.On.ThreadSleep(t =>
+            {
+                receivedMilliseconds = (int)t.TotalMilliseconds;
+            }).Execute(() =>
+            {
+                timeSystem.Thread.Sleep(milliseconds);
+                return result;
+            })
+           .Wait();
+
+        receivedMilliseconds.Should().Be(milliseconds);
+        actualResult.Should().Be(result);
     }
 }
