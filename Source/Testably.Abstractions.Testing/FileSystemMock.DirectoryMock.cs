@@ -33,7 +33,17 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.CreateSymbolicLink(string, string)" />
         public IFileSystem.IFileSystemInfo CreateSymbolicLink(
             string path, string pathToTarget)
-            => throw new NotImplementedException();
+        {
+            if (!FileSystem.Path.IsPathRooted(pathToTarget) &&
+                !RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                pathToTarget = pathToTarget.PrefixRoot();
+            }
+
+            FileSystemInfoMock fileInfo = new(path, path, _fileSystem);
+            fileInfo.CreateAsSymbolicLink(pathToTarget);
+            return fileInfo;
+        }
 #endif
 
         /// <inheritdoc cref="IFileSystem.IDirectory.Delete(string)" />
@@ -315,7 +325,23 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.ResolveLinkTarget(string, bool)" />
         public IFileSystem.IFileSystemInfo? ResolveLinkTarget(
             string linkPath, bool returnFinalTarget)
-            => throw new NotImplementedException();
+        {
+            IStorage.IFileSystemInfoMock? fileInfo =
+                _fileSystem.Storage.GetFileSystemInfo(linkPath);
+            if (fileInfo != null)
+            {
+                try
+                {
+                    return fileInfo.ResolveLinkTarget(returnFinalTarget);
+                }
+                catch (IOException)
+                {
+                    throw ExceptionFactory.FileNameCannotBeResolved(linkPath);
+                }
+            }
+
+            throw ExceptionFactory.FileNotFound(linkPath);
+        }
 #endif
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetCreationTime(string, DateTime)" />
