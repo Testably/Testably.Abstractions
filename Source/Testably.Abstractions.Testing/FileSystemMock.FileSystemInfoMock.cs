@@ -19,6 +19,7 @@ public sealed partial class FileSystemMock
         private bool _isInitialized;
         protected IStorage.IFileSystemInfoMock? Container;
         protected readonly string OriginalPath;
+        protected bool IsEncrypted;
 
         private readonly ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
 
@@ -64,6 +65,18 @@ public sealed partial class FileSystemMock
                     attributes |= FileAttributes.Hidden;
                 }
 
+#if FEATURE_FILESYSTEM_LINK
+                if (LinkTarget != null)
+                {
+                    attributes |= FileAttributes.ReparsePoint;
+                }
+#endif
+
+                if (IsEncrypted)
+                {
+                    attributes |= FileAttributes.Encrypted;
+                }
+
                 if (attributes == 0)
                 {
                     attributes = FileAttributes.Normal;
@@ -73,13 +86,22 @@ public sealed partial class FileSystemMock
             }
             set
             {
-                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     value &= FileAttributes.Directory |
-                             FileAttributes.Hidden |
-                             FileAttributes.Normal |
                              FileAttributes.ReadOnly |
-                             FileAttributes.ReparsePoint;
+                             FileAttributes.Archive |
+                             FileAttributes.Hidden |
+                             FileAttributes.NoScrubData |
+                             FileAttributes.NotContentIndexed |
+                             FileAttributes.Offline |
+                             FileAttributes.System |
+                             FileAttributes.Temporary;
+                }
+                else
+                {
+                    value &= FileAttributes.Directory |
+                             FileAttributes.ReadOnly;
                 }
 
                 _attributes = value;
