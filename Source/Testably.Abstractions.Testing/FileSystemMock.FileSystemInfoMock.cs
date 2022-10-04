@@ -53,7 +53,40 @@ public sealed partial class FileSystemMock
         #region IFileSystemInfo Members
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Attributes" />
-        public FileAttributes Attributes { get; set; }
+        public FileAttributes Attributes
+        {
+            get
+            {
+                FileAttributes attributes = _attributes;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) &&
+                    System.IO.Path.GetFileName(FullName).StartsWith("."))
+                {
+                    attributes |= FileAttributes.Hidden;
+                }
+
+                if (attributes == 0)
+                {
+                    attributes = FileAttributes.Normal;
+                }
+
+                return attributes;
+            }
+            set
+            {
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    value &= FileAttributes.Directory |
+                             FileAttributes.Hidden |
+                             FileAttributes.Normal |
+                             FileAttributes.ReadOnly |
+                             FileAttributes.ReparsePoint;
+                }
+
+                _attributes = value;
+            }
+        }
+
+        private FileAttributes _attributes;
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTime" />
         public DateTime CreationTime
