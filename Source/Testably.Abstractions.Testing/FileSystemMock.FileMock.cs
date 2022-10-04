@@ -176,7 +176,6 @@ public sealed partial class FileSystemMock
             if (fileInfo != null &&
                 fileInfo.Attributes.HasFlag(FileAttributes.Encrypted))
             {
-                fileInfo.Attributes &= ~FileAttributes.Encrypted;
                 fileInfo.Decrypt();
             }
         }
@@ -202,7 +201,6 @@ public sealed partial class FileSystemMock
             if (fileInfo != null &&
                 !fileInfo.Attributes.HasFlag(FileAttributes.Encrypted))
             {
-                fileInfo.Attributes |= FileAttributes.Encrypted;
                 fileInfo.Encrypt();
             }
         }

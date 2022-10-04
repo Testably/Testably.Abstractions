@@ -19,6 +19,7 @@ public sealed partial class FileSystemMock
         private bool _isInitialized;
         protected IStorage.IFileSystemInfoMock? Container;
         protected readonly string OriginalPath;
+        protected bool IsEncrypted;
 
         private readonly ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
 
@@ -53,7 +54,67 @@ public sealed partial class FileSystemMock
         #region IFileSystemInfo Members
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Attributes" />
-        public FileAttributes Attributes { get; set; }
+        public FileAttributes Attributes
+        {
+            get
+            {
+                FileAttributes attributes = _attributes;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) &&
+                    System.IO.Path.GetFileName(FullName).StartsWith("."))
+                {
+                    attributes |= FileAttributes.Hidden;
+                }
+
+#if FEATURE_FILESYSTEM_LINK
+                if (LinkTarget != null)
+                {
+                    attributes |= FileAttributes.ReparsePoint;
+                }
+#endif
+
+                if (IsEncrypted)
+                {
+                    attributes |= FileAttributes.Encrypted;
+                }
+
+                if (attributes == 0)
+                {
+                    attributes = FileAttributes.Normal;
+                }
+
+                return attributes;
+            }
+            set
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    value &= FileAttributes.Directory |
+                             FileAttributes.ReadOnly |
+                             FileAttributes.Archive |
+                             FileAttributes.Hidden |
+                             FileAttributes.NoScrubData |
+                             FileAttributes.NotContentIndexed |
+                             FileAttributes.Offline |
+                             FileAttributes.System |
+                             FileAttributes.Temporary;
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    value &= FileAttributes.Hidden |
+                             FileAttributes.Directory |
+                             FileAttributes.ReadOnly;
+                }
+                else
+                {
+                    value &= FileAttributes.Directory |
+                             FileAttributes.ReadOnly;
+                }
+
+                _attributes = value;
+            }
+        }
+
+        private FileAttributes _attributes;
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTime" />
         public DateTime CreationTime

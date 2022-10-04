@@ -1,13 +1,10 @@
-using System.Collections.Concurrent;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests;
 
-public abstract class FileSystemFileStreamTests<TFileSystem>
+public abstract partial class FileSystemFileStreamTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
     #region Test Setup
@@ -27,235 +24,379 @@ public abstract class FileSystemFileStreamTests<TFileSystem>
     #endregion
 
     [Theory]
-    [InlineAutoData(FileAccess.Read, FileShare.Read,
-        FileAccess.ReadWrite, FileShare.Read)]
-    [InlineAutoData(FileAccess.ReadWrite, FileShare.Read,
-        FileAccess.Read, FileShare.Read)]
-    [InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite,
-        FileAccess.ReadWrite, FileShare.Read)]
-    [InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite,
-        FileAccess.ReadWrite, FileShare.Write)]
-    [InlineAutoData(FileAccess.Read, FileShare.Read,
-        FileAccess.ReadWrite, FileShare.ReadWrite)]
-    [FileSystemTests.FileStream("Access")]
-    public void FileAccess_ConcurrentAccessWithInvalidScenarios_ShouldThrowIOException(
-        FileAccess access1, FileShare share1,
-        FileAccess access2, FileShare share2,
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public void BeginRead_ShouldCopyContentsToBuffer(
+        string path, byte[] contents)
+    {
+        ManualResetEventSlim ms = new();
+        FileSystem.File.WriteAllBytes(path, contents);
+        using FileSystemStream readStream = FileSystem.File.OpenRead(path);
+
+        byte[] buffer = new byte[contents.Length];
+        readStream.BeginRead(buffer, 0, buffer.Length, ar =>
+        {
+            // ReSharper disable once AccessToDisposedClosure
+            readStream.EndRead(ar);
+            ms.Set();
+        }, null);
+
+        ms.Wait(1000);
+        buffer.Should().BeEquivalentTo(contents);
+    }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public void BeginWrite_ShouldCopyContentsToFile(
+        string path, byte[] contents)
+    {
+        ManualResetEventSlim ms = new();
+        using FileSystemStream writeStream = FileSystem.File.Create(path);
+
+        writeStream.BeginWrite(contents, 0, contents.Length, ar =>
+        {
+            // ReSharper disable once AccessToDisposedClosure
+            writeStream.EndWrite(ar);
+            ms.Set();
+        }, null);
+
+        ms.Wait(1000);
+        writeStream.Dispose();
+        FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(contents);
+    }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public void CanSeek_ShouldReturnTrue(
+        string path, string contents)
+    {
+        FileSystem.File.WriteAllText(path, contents);
+
+        using FileSystemStream stream = FileSystem.File.OpenRead(path);
+
+        stream.CanSeek.Should().BeTrue();
+    }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public void CanTimeout_ShouldReturnFalse(
+        string path, string contents)
+    {
+        FileSystem.File.WriteAllText(path, contents);
+
+        using FileSystemStream stream = FileSystem.File.OpenRead(path);
+
+        stream.CanTimeout.Should().BeFalse();
+    }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public void CopyTo_ShouldCopyBytes(
+        string path, byte[] contents)
+    {
+        byte[] buffer = new byte[contents.Length];
+        FileSystem.File.WriteAllBytes(path, contents);
+        using FileSystemStream stream = FileSystem.File.OpenRead(path);
+        using MemoryStream destination = new(buffer);
+
+        stream.CopyTo(destination);
+
+        destination.Flush();
+        buffer.Should().BeEquivalentTo(contents);
+    }
+
+#if FEATURE_FILESYSTEM_ASYNC
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public async Task CopyToAsync_ShouldCopyBytes(
+        string path, byte[] contents)
+    {
+        byte[] buffer = new byte[contents.Length];
+        await FileSystem.File.WriteAllBytesAsync(path, contents);
+        await using FileSystemStream stream = FileSystem.File.OpenRead(path);
+        using MemoryStream destination = new(buffer);
+
+        await stream.CopyToAsync(destination);
+
+        await destination.FlushAsync();
+        buffer.Should().BeEquivalentTo(contents);
+    }
+#endif
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public void Name_ShouldReturnFullPath(string path)
+    {
+        string expectedName = FileSystem.Path.GetFullPath(path);
+        using FileSystemStream stream = FileSystem.File.Create(path);
+
+        stream.Name.Should().Be(expectedName);
+    }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public void Position_ShouldChangeWhenReading(
+        string path, string contents)
+    {
+        FileSystem.File.WriteAllText(path, contents);
+
+        using FileSystemStream stream = FileSystem.File.OpenRead(path);
+
+        stream.Position.Should().Be(0);
+        stream.ReadByte();
+        stream.Position.Should().Be(1);
+    }
+
+#if FEATURE_SPAN
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public void Read_AsSpan_ShouldFillBuffer(string path, byte[] contents)
+    {
+        byte[] buffer = new byte[contents.Length];
+        FileSystem.File.WriteAllBytes(path, contents);
+        using FileSystemStream stream = FileSystem.File.OpenRead(path);
+
+        int result = stream.Read(buffer.AsSpan());
+
+        result.Should().Be(contents.Length);
+        buffer.Should().BeEquivalentTo(contents);
+    }
+#endif
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public void Read_ShouldFillBuffer(string path, byte[] contents)
+    {
+        byte[] buffer = new byte[contents.Length];
+        FileSystem.File.WriteAllBytes(path, contents);
+        using FileSystemStream stream = FileSystem.File.OpenRead(path);
+
+        int result = stream.Read(buffer, 0, contents.Length);
+
+        result.Should().Be(contents.Length);
+        buffer.Should().BeEquivalentTo(contents);
+    }
+
+#if FEATURE_FILESYSTEM_ASYNC
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public async Task ReadAsync_ShouldFillBuffer(string path, byte[] contents)
+    {
+        CancellationTokenSource cts = new (10000);
+        byte[] buffer = new byte[contents.Length];
+        await FileSystem.File.WriteAllBytesAsync(path, contents, cts.Token);
+        await using FileSystemStream stream = FileSystem.File.OpenRead(path);
+
+#pragma warning disable CA1835
+        int result = await stream.ReadAsync(buffer, 0, contents.Length, cts.Token);
+#pragma warning restore CA1835
+
+        result.Should().Be(contents.Length);
+        buffer.Should().BeEquivalentTo(contents);
+    }
+#endif
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public void ReadByte_ShouldReadSingleByteAndAdvancePosition(
+        string path, byte[] contents)
+    {
+        FileSystem.File.WriteAllBytes(path, contents);
+
+        using FileSystemStream stream = FileSystem.File.OpenRead(path);
+
+        int result1 = stream.ReadByte();
+        int result2 = stream.ReadByte();
+
+        stream.Position.Should().Be(2);
+        result1.Should().Be(contents[0]);
+        result2.Should().Be(contents[1]);
+    }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public void ReadTimeout_ShouldThrowInvalidOperationException(
         string path, string contents)
     {
         FileSystem.File.WriteAllText(path, contents);
 
         Exception? exception = Record.Exception(() =>
         {
-            _ = FileSystem.FileStream.New(path, FileMode.Open,
-                access1, share1);
-            _ = FileSystem.FileStream.New(path, FileMode.Open,
-                access2, share2);
+            using FileSystemStream stream = FileSystem.File.OpenRead(path);
+            _ = stream.ReadTimeout;
         });
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            exception.Should().BeOfType<IOException>(
-                    $"Access {access1}, Share {share1} of file 1 is incompatible with Access {access2}, Share {share2} of file 2")
-               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-        }
-        else
-        {
-            exception.Should().BeNull();
-        }
+        exception.Should().BeOfType<InvalidOperationException>();
     }
 
     [Theory]
-    [InlineAutoData(FileAccess.Read, FileShare.Read, FileAccess.Read, FileShare.Read)]
-    [InlineAutoData(FileAccess.Read, FileShare.ReadWrite, FileAccess.ReadWrite,
-        FileShare.Read)]
-    [FileSystemTests.FileStream("Access")]
-    public void FileAccess_ConcurrentReadAccessWithValidScenarios_ShouldNotThrowException(
-        FileAccess access1, FileShare share1,
-        FileAccess access2, FileShare share2,
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public void Seek_Begin_ShouldSetAbsolutePositionFromBegin(
         string path, string contents)
     {
         FileSystem.File.WriteAllText(path, contents);
 
-        FileSystemStream stream1 = FileSystem.FileStream.New(path, FileMode.Open,
-            access1, share1);
-        FileSystemStream stream2 = FileSystem.FileStream.New(path, FileMode.Open,
-            access2, share2);
+        using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-        using StreamReader sr1 = new(stream1, Encoding.UTF8);
-        using StreamReader sr2 = new(stream2, Encoding.UTF8);
-        string result1 = sr1.ReadToEnd();
-        string result2 = sr2.ReadToEnd();
-
-        result1.Should().Be(contents);
-        result2.Should().Be(contents);
-    }
-
-    [Theory]
-    [InlineAutoData(FileAccess.Write, FileShare.Write, FileAccess.Write, FileShare.Write)]
-    [InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite, FileAccess.ReadWrite,
-        FileShare.ReadWrite)]
-    [FileSystemTests.FileStream("Access")]
-    public void
-        FileAccess_ConcurrentWriteAccessWithValidScenarios_ShouldNotThrowException(
-            FileAccess access1, FileShare share1,
-            FileAccess access2, FileShare share2,
-            string path, string contents1, string contents2)
-    {
-        FileSystem.File.WriteAllText(path, null);
-
-        FileSystemStream stream1 = FileSystem.FileStream.New(path, FileMode.Open,
-            access1, share1);
-        FileSystemStream stream2 = FileSystem.FileStream.New(path, FileMode.Open,
-            access2, share2);
-
-        byte[] bytes1 = Encoding.UTF8.GetBytes(contents1);
-        stream1.Write(bytes1, 0, bytes1.Length);
-        stream1.Flush();
-        byte[] bytes2 = Encoding.UTF8.GetBytes(contents2);
-        stream2.Write(bytes2, 0, bytes2.Length);
-        stream2.Flush();
-
-        stream1.Dispose();
-        stream2.Dispose();
-        string result = FileSystem.File.ReadAllText(path);
-
-        result.Should().Be(contents2);
+        stream.Position.Should().Be(0);
+        stream.Seek(4, SeekOrigin.Begin);
+        stream.Position.Should().Be(4);
     }
 
     [Theory]
     [AutoData]
-    [FileSystemTests.FileStream("Access")]
-    public void FileAccess_ReadAfterFirstAppend_ShouldContainBothContents(
-        string path, string contents1, string contents2)
+    [FileSystemTests.FileStream]
+    public void Seek_Current_ShouldSetRelativePosition(string path, string contents)
     {
-        FileSystem.File.WriteAllText(path, null);
+        FileSystem.File.WriteAllText(path, contents);
 
-        FileSystemStream stream1 = FileSystem.FileStream.New(path, FileMode.Append,
-            FileAccess.Write, FileShare.Write);
+        using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-        byte[] bytes1 = Encoding.UTF8.GetBytes(contents1);
-        stream1.Write(bytes1, 0, bytes1.Length);
-        stream1.Flush();
-
-        FileSystemStream stream2 = FileSystem.FileStream.New(path, FileMode.Append,
-            FileAccess.Write, FileShare.Write);
-        byte[] bytes2 = Encoding.UTF8.GetBytes(contents2);
-        stream2.Write(bytes2, 0, bytes2.Length);
-        stream2.Flush();
-
-        stream1.Dispose();
-        stream2.Dispose();
-        string result = FileSystem.File.ReadAllText(path);
-        result.Should().Be(contents1 + contents2);
+        stream.Position.Should().Be(0);
+        stream.Seek(4, SeekOrigin.Current);
+        stream.Position.Should().Be(4);
+        stream.Seek(3, SeekOrigin.Current);
+        stream.Position.Should().Be(7);
+        stream.Seek(-1, SeekOrigin.Current);
+        stream.Position.Should().Be(6);
     }
 
     [Theory]
     [AutoData]
-    [FileSystemTests.FileStream("Access")]
-    public void FileAccess_ReadBeforeFirstAppend_ShouldOnlyContainSecondContent(
-        string path, string contents1, string contents2)
+    [FileSystemTests.FileStream]
+    public void Seek_End_ShouldSetAbsolutePositionFromEnd(string path, string contents)
     {
-        FileSystem.File.WriteAllText(path, null);
+        FileSystem.File.WriteAllText(path, contents);
 
-        FileSystemStream stream1 = FileSystem.FileStream.New(path, FileMode.Append,
-            FileAccess.Write, FileShare.Write);
-        FileSystemStream stream2 = FileSystem.FileStream.New(path, FileMode.Append,
-            FileAccess.Write, FileShare.Write);
+        using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-        byte[] bytes1 = Encoding.UTF8.GetBytes(contents1);
-        stream1.Write(bytes1, 0, bytes1.Length);
-        stream1.Flush();
-        byte[] bytes2 = Encoding.UTF8.GetBytes(contents2);
-        stream2.Write(bytes2, 0, bytes2.Length);
-        stream2.Flush();
-
-        stream1.Dispose();
-        stream2.Dispose();
-        string result = FileSystem.File.ReadAllText(path);
-
-        result.Should().Be(contents2);
+        stream.Position.Should().Be(0);
+        stream.Seek(-4, SeekOrigin.End);
+        stream.Position.Should().Be(contents.Length - 4);
     }
 
     [Theory]
     [AutoData]
-    [FileSystemTests.FileStream("Access")]
-    public void FileAccess_ReadWhileWriteLockActive_ShouldThrowIOException(
-        string path, string contents)
+    [FileSystemTests.FileStream]
+    public void SetLength(string path, int length)
     {
-        FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Create);
+        using FileSystemStream stream = FileSystem.File.Create(path);
 
-        byte[] bytes = Encoding.UTF8.GetBytes(contents);
-        stream.Write(bytes, 0, bytes.Length);
+        stream.SetLength(length);
+
+        stream.Length.Should().Be(length);
+    }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public void SetLength_ReadOnlyStream_ShouldThrowNotSupportedException(
+        string path, int length)
+    {
+        FileSystem.File.WriteAllText(path, null);
 
         Exception? exception = Record.Exception(() =>
         {
-            FileSystem.File.ReadAllText(path);
+            using FileSystemStream stream = FileSystem.File.OpenRead(path);
+            stream.SetLength(length);
         });
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            exception.Should().BeOfType<IOException>()
-               .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-        }
-        else
-        {
-            exception.Should().BeNull();
-        }
+        exception.Should().BeOfType<NotSupportedException>();
     }
 
+#if FEATURE_SPAN
     [Theory]
     [AutoData]
-    [FileSystemTests.FileStream("Access")]
-    public void MultipleParallelReads_ShouldBeAllowed(string path, string contents)
+    [FileSystemTests.FileStream]
+    public void Write_AsSpan_ShouldFillBuffer(string path, byte[] contents)
     {
-        FileSystem.File.WriteAllText(path, contents);
-        ConcurrentBag<string> results = new();
+        using FileSystemStream stream = FileSystem.File.Create(path);
 
-        ParallelLoopResult wait = Parallel.For(0, 100, _ =>
-        {
-            FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
-                FileAccess.Read, FileShare.Read);
-            using StreamReader sr = new(stream, Encoding.UTF8);
-            results.Add(sr.ReadToEnd());
-        });
-
-        while (!wait.IsCompleted)
-        {
-            Thread.Sleep(10);
-        }
-
-        results.Should().HaveCount(100);
-        results.Should().AllBeEquivalentTo(contents);
-    }
-
-    [Theory]
-    [AutoData]
-    [FileSystemTests.FileStream(nameof(FileSystemStream.Read))]
-    public void Read_ShouldCreateValidFileStream(string path, string contents)
-    {
-        FileSystem.File.WriteAllText(path, contents, Encoding.UTF8);
-        FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open);
-        using StreamReader sr = new(stream, Encoding.UTF8);
-        string result = sr.ReadToEnd();
-
-        result.Should().Be(contents);
-    }
-
-    [Theory]
-    [AutoData]
-    [FileSystemTests.FileStream(nameof(FileSystemStream.Write))]
-    public void Write_ShouldCreateValidFileStream(string path, string contents)
-    {
-        FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.CreateNew);
-
-        byte[] bytes = Encoding.UTF8.GetBytes(contents);
-        stream.Write(bytes, 0, bytes.Length);
+        stream.Write(contents.AsSpan());
 
         stream.Dispose();
+        FileSystem.File.ReadAllBytes(path)
+           .Should().BeEquivalentTo(contents);
+    }
+#endif
 
-        string result = FileSystem.File.ReadAllText(path);
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public void Write_ShouldFillBuffer(string path, byte[] contents)
+    {
+        using FileSystemStream stream = FileSystem.File.Create(path);
 
-        result.Should().Be(contents);
+        stream.Write(contents, 0, contents.Length);
+
+        stream.Dispose();
+        FileSystem.File.ReadAllBytes(path)
+           .Should().BeEquivalentTo(contents);
+    }
+
+#if FEATURE_FILESYSTEM_ASYNC
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public async Task WriteAsync_ShouldFillBuffer(string path, byte[] contents)
+    {
+        CancellationTokenSource cts = new(10000);
+        await using FileSystemStream stream = FileSystem.File.Create(path);
+
+#pragma warning disable CA1835
+        await stream.WriteAsync(contents, 0, contents.Length, cts.Token);
+#pragma warning restore CA1835
+
+        await stream.DisposeAsync();
+        (await FileSystem.File.ReadAllBytesAsync(path, cts.Token))
+           .Should().BeEquivalentTo(contents);
+    }
+#endif
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public void WriteByte_ShouldWriteSingleByteAndAdvancePosition(
+        string path, byte byte1, byte byte2)
+    {
+        using FileSystemStream stream = FileSystem.File.Create(path);
+
+        stream.WriteByte(byte1);
+        stream.WriteByte(byte2);
+
+        stream.Position.Should().Be(2);
+        stream.Dispose();
+        FileSystem.File.ReadAllBytes(path)
+           .Should().BeEquivalentTo(new[] { byte1, byte2 });
+    }
+
+    [Theory]
+    [AutoData]
+    [FileSystemTests.FileStream]
+    public void WriteTimeout_ShouldThrowInvalidOperationException(
+        string path, string contents)
+    {
+        FileSystem.File.WriteAllText(path, contents);
+
+        Exception? exception = Record.Exception(() =>
+        {
+            using FileSystemStream stream = FileSystem.File.OpenRead(path);
+            _ = stream.WriteTimeout;
+        });
+
+        exception.Should().BeOfType<InvalidOperationException>();
     }
 }

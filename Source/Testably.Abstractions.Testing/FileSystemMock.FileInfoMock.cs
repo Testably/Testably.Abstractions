@@ -27,14 +27,26 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Directory" />
         public IFileSystem.IDirectoryInfo? Directory
-            => DirectoryInfoMock.New(DirectoryName, FileSystem);
+            => DirectoryInfoMock.New(
+                FileSystem.Path.GetDirectoryName(OriginalPath),
+                FileSystem);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.DirectoryName" />
         public string? DirectoryName
-            => FileSystem.Path.GetDirectoryName(OriginalPath);
+            => Directory?.FullName;
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.IsReadOnly" />
-        public bool IsReadOnly { get; set; }
+        public bool IsReadOnly
+        {
+            get => (Attributes & FileAttributes.ReadOnly) != 0;
+            set
+            {
+                if (value)
+                    Attributes |= FileAttributes.ReadOnly;
+                else
+                    Attributes &= ~FileAttributes.ReadOnly;
+            }
+        }
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Length" />
         public long Length
@@ -77,6 +89,7 @@ public sealed partial class FileSystemMock
         {
             using (RequestAccess(FileAccess.Write, FileShare.Read))
             {
+                IsEncrypted = false;
                 WriteBytes(EncryptionHelper.Decrypt(GetBytes()));
             }
         }
@@ -89,6 +102,7 @@ public sealed partial class FileSystemMock
         {
             using (RequestAccess(FileAccess.Write, FileShare.Read))
             {
+                IsEncrypted = true;
                 WriteBytes(EncryptionHelper.Encrypt(GetBytes()));
             }
         }
