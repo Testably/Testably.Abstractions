@@ -98,6 +98,12 @@ public sealed partial class FileSystemMock
                              FileAttributes.System |
                              FileAttributes.Temporary;
                 }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    value &= FileAttributes.Hidden |
+                             FileAttributes.Directory |
+                             FileAttributes.ReadOnly;
+                }
                 else
                 {
                     value &= FileAttributes.Directory |

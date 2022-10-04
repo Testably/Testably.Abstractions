@@ -61,13 +61,13 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         fileInfo.IsReadOnly = false;
 
         fileInfo.IsReadOnly.Should().BeFalse();
-        if (Test.RunsOnWindows)
+        if (Test.RunsOnLinux)
         {
-            fileInfo.Attributes.Should().Be(FileAttributes.Hidden);
+            fileInfo.Attributes.Should().Be(FileAttributes.Normal);
         }
         else
         {
-            fileInfo.Attributes.Should().Be(FileAttributes.Normal);
+            fileInfo.Attributes.Should().Be(FileAttributes.Hidden);
         }
     }
 
