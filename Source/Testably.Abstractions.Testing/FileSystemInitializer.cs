@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions.Testing;
+﻿using System;
+
+namespace Testably.Abstractions.Testing;
 
 /// <summary>
 ///     Initializes the <see cref="IFileSystem" /> with test data.
@@ -23,5 +25,21 @@ public static partial class FileSystemInitializer
     {
         fileSystem.Directory.CreateDirectory(basePath);
         return new Initializer<TFileSystem>(fileSystem, basePath);
+    }
+
+    /// <summary>
+    ///     Sets the current directory to a new temporary directory.<br />
+    ///     <see cref="IFileSystem.IDirectory.GetCurrentDirectory()" /> and all relative paths will use this directory.
+    /// </summary>
+    /// <param name="fileSystem">The file system.</param>
+    /// <param name="logger">(optional) A callback to log the cleanup process.</param>
+    /// <returns>
+    ///     A <see cref="IDirectoryCleaner" /> that will
+    ///     force delete all content in the temporary directory on dispose.
+    /// </returns>
+    public static IDirectoryCleaner SetCurrentDirectoryToEmptyTemporaryDirectory(
+        this IFileSystem fileSystem, Action<string>? logger = null)
+    {
+        return new DirectoryCleaner(fileSystem, logger);
     }
 }

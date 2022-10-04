@@ -8,19 +8,16 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 {
     #region Test Setup
 
-    public string BasePath { get; }
-
+    public abstract string BasePath { get; }
     public TFileSystem FileSystem { get; }
     public ITimeSystem TimeSystem { get; }
 
     protected FileSystemFileStreamFactoryTests(
         TFileSystem fileSystem,
-        ITimeSystem timeSystem,
-        string basePath)
+        ITimeSystem timeSystem)
     {
         FileSystem = fileSystem;
         TimeSystem = timeSystem;
-        BasePath = basePath;
     }
 
     #endregion

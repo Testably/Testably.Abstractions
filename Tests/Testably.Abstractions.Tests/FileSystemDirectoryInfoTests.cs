@@ -7,18 +7,16 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 {
     #region Test Setup
 
+    public abstract string BasePath { get; }
     public TFileSystem FileSystem { get; }
     public ITimeSystem TimeSystem { get; }
-    public string BasePath { get; }
 
     protected FileSystemDirectoryInfoTests(
         TFileSystem fileSystem,
-        ITimeSystem timeSystem,
-        string basePath)
+        ITimeSystem timeSystem)
     {
         FileSystem = fileSystem;
         TimeSystem = timeSystem;
-        BasePath = basePath;
     }
 
     #endregion
