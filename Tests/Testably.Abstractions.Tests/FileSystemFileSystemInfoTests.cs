@@ -80,7 +80,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 
         FileAttributes result = FileSystem.File.GetAttributes(path);
 
-        if (!Test.RunsOnLinux)
+        if (Test.RunsOnLinux)
         {
             result.Should().Be(FileAttributes.Normal);
         }
