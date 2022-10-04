@@ -1,21 +1,9 @@
 ﻿using System.Threading;
-using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Tests.Testing;
 
 public class NotificationTests
 {
-    #region Test Setup
-
-    private readonly ITestOutputHelper _testOutputHelper;
-
-    public NotificationTests(ITestOutputHelper testOutputHelper)
-    {
-        _testOutputHelper = testOutputHelper;
-    }
-
-    #endregion
-
     [Fact]
     [Trait(nameof(Testing), nameof(Notification))]
     public void AwaitableCallback_Amount_ShouldOnlyReturnAfterNumberOfCallbacks()
@@ -25,8 +13,6 @@ public class NotificationTests
         Notification.IAwaitableCallback<TimeSpan> wait =
             timeSystem.On.ThreadSleep(t =>
             {
-                _testOutputHelper.WriteLine(
-                    $"Received event with {t.TotalMilliseconds}ms");
                 if (t.TotalMilliseconds > 0)
                 {
                     receivedCount++;
@@ -53,10 +39,8 @@ public class NotificationTests
         TimeSystemMock timeSystem = new();
         int receivedCount = 0;
         Notification.IAwaitableCallback<TimeSpan> wait =
-            timeSystem.On.ThreadSleep(t =>
+            timeSystem.On.ThreadSleep(_ =>
             {
-                _testOutputHelper.WriteLine(
-                    $"Received event with {t.TotalMilliseconds}ms");
                 receivedCount++;
             });
 
@@ -82,7 +66,6 @@ public class NotificationTests
         Notification.IAwaitableCallback<TimeSpan> wait =
             timeSystem.On.ThreadSleep(_ =>
             {
-                _testOutputHelper.WriteLine("Received event");
                 isCalled = true;
             });
 
