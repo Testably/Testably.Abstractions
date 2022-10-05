@@ -13,6 +13,8 @@ public class FileSystemDriveInfoMockTests
     public FileSystemDriveInfoMockTests()
     {
         FileSystem = new FileSystemMock();
+
+        Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
     }
 
     #endregion

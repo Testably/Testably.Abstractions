@@ -51,6 +51,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     public void ResolveLinkTarget_FinalTarget_ShouldFollowSymbolicLinkToFinalTarget(
         string path, string pathToFinalTarget)
     {
+        Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
         int maxLinks = MaxResolveLinks;
 
         FileSystem.Directory.CreateDirectory(pathToFinalTarget);
@@ -75,6 +77,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     public void ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
         string path, string pathToFinalTarget)
     {
+        Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
         int maxLinks = MaxResolveLinks + 1;
         FileSystem.Directory.CreateDirectory(pathToFinalTarget);
         string previousPath = pathToFinalTarget;
@@ -102,6 +106,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         ResolveLinkTarget_MissingDirectoryInLinkChain_ShouldReturnPathToMissingDirectory(
             string path, string pathToFinalTarget, string pathToMissingDirectory)
     {
+        Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
         FileSystem.Directory.CreateDirectory(pathToFinalTarget);
         FileSystem.Directory.CreateSymbolicLink(pathToMissingDirectory,
             Path.Combine(BasePath, pathToFinalTarget));
@@ -183,6 +189,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     public void ResolveLinkTarget_TargetDeletedAfterLinkCreation_ShouldReturnNull(
         string path, string pathToTarget)
     {
+        Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
         string targetFullPath = FileSystem.Path.GetFullPath(pathToTarget);
         FileSystem.Directory.CreateDirectory(pathToTarget);
         FileSystem.Directory.CreateSymbolicLink(path, targetFullPath);

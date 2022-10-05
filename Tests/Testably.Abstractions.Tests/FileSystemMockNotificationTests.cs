@@ -14,6 +14,8 @@ public class FileSystemMockNotificationTests
     {
         _testOutputHelper = testOutputHelper;
         FileSystem = new FileSystemMock();
+
+        Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
     }
 
     #endregion

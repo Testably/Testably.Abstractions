@@ -17,11 +17,13 @@ public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
     {
         FileSystem = fileSystem;
         TimeSystem = timeSystem;
+
+        Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
     }
 
     #endregion
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.DirectoryInfoFactory(nameof(IFileSystem.IDirectoryInfoFactory.New))]
     public void New_EmptyPath_ShouldThrowArgumentException()
     {
@@ -42,7 +44,7 @@ public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
 #endif
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.DirectoryInfoFactory(nameof(IFileSystem.IDirectoryInfoFactory.New))]
     public void New_Null_ShouldThrowArgumentNullException()
     {
@@ -54,7 +56,7 @@ public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
         exception.Should().BeOfType<ArgumentNullException>();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfoFactory(nameof(IFileSystem.IDirectoryInfoFactory.New))]
     public void New_ShouldCreateNewDirectoryInfoFromPath(string path)
@@ -65,7 +67,7 @@ public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
         result.Exists.Should().BeFalse();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfoFactory(nameof(IFileSystem.IDirectoryInfoFactory.Wrap))]
     public void Wrap_ShouldWrapFromDirectoryInfo(string path)

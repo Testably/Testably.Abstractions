@@ -95,7 +95,8 @@ public sealed partial class FileSystemMock
                 if (file is TFileSystemInfo matchingType)
                 {
                     string? parentPath =
-                        _fileSystem.Path.GetDirectoryName(file.FullName);
+                        _fileSystem.Path.GetDirectoryName(
+                            file.FullName.TrimEnd(_fileSystem.Path.DirectorySeparatorChar));
                     if (!enumerationOptions.RecurseSubdirectories && parentPath != key)
                     {
                         continue;

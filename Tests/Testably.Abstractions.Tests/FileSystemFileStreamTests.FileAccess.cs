@@ -27,6 +27,8 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         FileAccess access2, FileShare share2,
         string path, string contents)
     {
+        Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
         FileSystem.File.WriteAllText(path, contents);
 
         Exception? exception = Record.Exception(() =>

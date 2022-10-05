@@ -12,6 +12,8 @@ public abstract partial class FileSystemPathTests<TFileSystem>
     protected FileSystemPathTests(TFileSystem fileSystem)
     {
         FileSystem = fileSystem;
+
+        Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
     }
 
     #endregion

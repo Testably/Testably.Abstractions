@@ -9,6 +9,8 @@ public class FileSystemMockInterceptionTests
     public FileSystemMockInterceptionTests()
     {
         FileSystem = new FileSystemMock();
+
+        Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
     }
 
     #endregion
