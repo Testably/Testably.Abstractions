@@ -17,7 +17,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     #endregion
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void
@@ -45,7 +45,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         }
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void ResolveLinkTarget_FinalTarget_ShouldFollowSymbolicLinkToFinalTarget(
@@ -69,7 +69,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToFinalTarget));
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
@@ -95,7 +95,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
            .Which.Message.Should().Contain($"'{previousPath}'");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void
@@ -115,7 +115,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToMissingDirectory));
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void ResolveLinkTarget_NormalDirectory_ShouldReturnNull(
@@ -129,7 +129,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         target.Should().BeNull();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void ResolveLinkTarget_NormalFile_ShouldReturnNull(
@@ -143,7 +143,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         target.Should().BeNull();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void ResolveLinkTarget_RelativePath_ShouldFollowSymbolicLinkUnderWindows(
@@ -160,7 +160,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         target.Exists.Should().BeTrue();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void ResolveLinkTarget_AbsolutePath_ShouldFollowSymbolicLink(
@@ -177,7 +177,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         target.Exists.Should().BeTrue();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void ResolveLinkTarget_TargetDeletedAfterLinkCreation_ShouldReturnNull(

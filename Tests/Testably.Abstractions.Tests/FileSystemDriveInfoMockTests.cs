@@ -17,7 +17,7 @@ public class FileSystemDriveInfoMockTests
 
     #endregion
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DriveInfo(nameof(FileSystemMock.IDriveInfoMock.AvailableFreeSpace))]
     public void AvailableFreeSpace_CannotGetNegative(long size)
@@ -30,7 +30,7 @@ public class FileSystemDriveInfoMockTests
         drive.AvailableFreeSpace.Should().Be(size);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DriveInfo(nameof(FileSystemMock.IDriveInfoMock.AvailableFreeSpace))]
     public void AvailableFreeSpace_ShouldBeSetTotalSize(long size)
@@ -42,7 +42,7 @@ public class FileSystemDriveInfoMockTests
         drive.AvailableFreeSpace.Should().Be(size);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DriveInfo(nameof(FileSystemMock.IDriveInfoMock.AvailableFreeSpace))]
     public void AvailableFreeSpace_ShouldBeReducedByWritingToFile(
@@ -59,7 +59,7 @@ public class FileSystemDriveInfoMockTests
         drive.AvailableFreeSpace.Should().Be(0);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DriveInfo(nameof(FileSystemMock.IDriveInfoMock.AvailableFreeSpace))]
     public void AvailableFreeSpace_NotEnoughSpace_ShouldThrowIOException(
@@ -80,7 +80,7 @@ public class FileSystemDriveInfoMockTests
         drive.AvailableFreeSpace.Should().Be(fileSize - 1);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DriveInfo(nameof(FileSystemMock.IDriveInfoMock.AvailableFreeSpace))]
     public void AvailableFreeSpace_ShouldBeReleasedWhenDeletingAFile(
@@ -98,7 +98,7 @@ public class FileSystemDriveInfoMockTests
         drive.AvailableFreeSpace.Should().Be(fileSize);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DriveInfo(nameof(FileSystemMock.IDriveInfoMock.SetDriveFormat))]
     public void SetDriveFormat_ShouldChangeDriveFormat(string driveFormat)
@@ -109,7 +109,7 @@ public class FileSystemDriveInfoMockTests
         drive.DriveFormat.Should().Be(driveFormat);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DriveInfo(nameof(FileSystemMock.IDriveInfoMock.SetDriveType))]
     public void SetDriveType_ShouldChangeDriveType(DriveType driveType)
@@ -120,7 +120,7 @@ public class FileSystemDriveInfoMockTests
         drive.DriveType.Should().Be(driveType);
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineData(true)]
     [InlineData(false)]
     [FileSystemTests.DriveInfo(nameof(FileSystemMock.IDriveInfoMock.SetIsReady))]
@@ -132,7 +132,7 @@ public class FileSystemDriveInfoMockTests
         drive.IsReady.Should().Be(isReady);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DriveInfo(nameof(FileSystemMock.IDriveInfoMock.AvailableFreeSpace))]
     public void AvailableFreeSpace_ShouldBeChangedWhenAppendingToAFile(
@@ -152,7 +152,7 @@ public class FileSystemDriveInfoMockTests
         drive.AvailableFreeSpace.Should().Be(expectedRemainingBytes);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DriveInfo(nameof(FileSystemMock.IDriveInfoMock.IsReady))]
     public void NotReady_AccessFile_ShouldThrowIOException(
@@ -169,7 +169,7 @@ public class FileSystemDriveInfoMockTests
         exception.Should().BeOfType<IOException>();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DriveInfo(nameof(FileSystemMock.IDriveInfoMock.IsReady))]
     public void NotReady_AccessDirectory_ShouldThrowIOException(

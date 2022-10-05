@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemDirectoryTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetDirectoryRoot))]
     public void GetDirectoryRoot_Empty_ShouldThrowArgumentException()
     {
@@ -17,7 +17,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         exception.Should().BeOfType<ArgumentException>();
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetDirectoryRoot))]
     public void GetDirectoryRoot_ShouldReturnDefaultRoot()
     {

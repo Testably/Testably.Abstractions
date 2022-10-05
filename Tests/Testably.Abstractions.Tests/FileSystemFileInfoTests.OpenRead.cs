@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileInfoTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.OpenRead))]
     public void OpenRead_MissingFile_ShouldThrowFileNotFoundException(string path)
@@ -21,7 +21,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
            .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.OpenRead))]
     public void OpenRead_ShouldUseReadAccessAndReadShare(string path)

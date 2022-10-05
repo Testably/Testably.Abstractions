@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileInfoTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Create))]
     public void Create_MissingFile_ShouldCreateFile(string path)
@@ -17,7 +17,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         FileSystem.File.Exists(path).Should().BeTrue();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Create))]
     public void Create_ShouldUseReadWriteAccessAndNoneShare(string path)

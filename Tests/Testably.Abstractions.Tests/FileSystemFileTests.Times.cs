@@ -17,7 +17,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
     #endregion
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.GetCreationTime))]
     public void GetCreationTime_PathNotFound_ShouldReturnNullTime(string path)
@@ -29,7 +29,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         result.Should().Be(expectedTime);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.GetCreationTimeUtc))]
     public void GetCreationTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
@@ -41,7 +41,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         result.Should().Be(expectedTime);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.GetLastAccessTime))]
     public void GetLastAccessTime_PathNotFound_ShouldReturnNullTime(string path)
@@ -53,7 +53,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         result.Should().Be(expectedTime);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.GetLastAccessTimeUtc))]
     public void GetLastAccessTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
@@ -65,7 +65,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         result.Should().Be(expectedTime);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.GetLastWriteTime))]
     public void GetLastWriteTime_PathNotFound_ShouldReturnNullTime(string path)
@@ -77,7 +77,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         result.Should().Be(expectedTime);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.GetLastWriteTimeUtc))]
     public void GetLastWriteTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
@@ -89,7 +89,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         result.Should().Be(expectedTime);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.GetLastAccessTime))]
     public void LastAccessTime_ShouldBeSet(string path)
@@ -104,7 +104,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         result.Kind.Should().Be(DateTimeKind.Local);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.GetLastAccessTimeUtc))]
     public void LastAccessTimeUtc_ShouldBeSet(string path)
@@ -119,7 +119,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         result.Kind.Should().Be(DateTimeKind.Utc);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.GetLastWriteTime))]
     public void LastWriteTime_ShouldBeSet(string path)
@@ -134,7 +134,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         result.Kind.Should().Be(DateTimeKind.Local);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.GetLastWriteTimeUtc))]
     public void LastWriteTimeUtc_ShouldBeSet(string path)
@@ -149,7 +149,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         result.Kind.Should().Be(DateTimeKind.Utc);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.SetCreationTime))]
     public void SetCreationTime_PathNotFound_ShouldThrowCorrectException(
@@ -183,7 +183,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Should().Be(expectedTime);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.SetCreationTimeUtc))]
     public void SetCreationTimeUtc_PathNotFound_ShouldThrowCorrectException(
@@ -217,7 +217,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Should().Be(expectedTime);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.SetLastAccessTime))]
     public void SetLastAccessTime_PathNotFound_ShouldThrowCorrectException(
@@ -232,7 +232,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.SetLastAccessTime))]
     public void SetLastAccessTime_ShouldChangeLastAccessTime(
@@ -248,7 +248,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Should().Be(expectedTime);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.SetLastAccessTimeUtc))]
     public void SetLastAccessTimeUtc_PathNotFound_ShouldThrowCorrectException(
@@ -263,7 +263,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.SetLastAccessTimeUtc))]
     public void SetLastAccessTimeUtc_ShouldChangeLastAccessTime(
@@ -279,7 +279,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Should().Be(expectedTime);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.SetLastWriteTime))]
     public void SetLastWriteTime_PathNotFound_ShouldThrowCorrectException(
@@ -294,7 +294,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.SetLastWriteTime))]
     public void SetLastWriteTime_ShouldChangeLastWriteTime(
@@ -310,7 +310,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Should().Be(expectedTime);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.SetLastWriteTimeUtc))]
     public void SetLastWriteTimeUtc_PathNotFound_ShouldThrowCorrectException(
@@ -325,7 +325,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.SetLastWriteTimeUtc))]
     public void SetLastWriteTimeUtc_ShouldChangeLastWriteTime(

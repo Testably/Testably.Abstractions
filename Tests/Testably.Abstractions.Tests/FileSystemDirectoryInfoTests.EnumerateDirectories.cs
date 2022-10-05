@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(
         nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
@@ -31,7 +31,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         result.Should().Contain(d => d.Name == "xyz");
     }
 
-    [Theory]
+    [SkippableTheory]
 #if NETFRAMEWORK
     [InlineAutoData(false, "")]
 #else
@@ -70,7 +70,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     }
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(
         nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
@@ -100,7 +100,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     }
 #endif
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(
         nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
@@ -119,7 +119,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         exception.Should().BeOfType<ArgumentException>();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(
         nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
@@ -141,7 +141,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         result.Should().Contain(d => d.Name == "bar");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(
         nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
@@ -159,7 +159,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         result.Should().ContainSingle(d => d.Name == "foo");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(
         nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]

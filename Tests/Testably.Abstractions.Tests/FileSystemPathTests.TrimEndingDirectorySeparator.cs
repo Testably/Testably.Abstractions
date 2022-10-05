@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemPathTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.TrimEndingDirectorySeparator))]
     public void TrimEndingDirectorySeparator_DirectoryChar_ShouldTrim(
@@ -17,7 +17,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().Be(directory);
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.TrimEndingDirectorySeparator))]
     public void TrimEndingDirectorySeparator_Root_ShouldReturnUnchanged()
     {
@@ -28,7 +28,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().Be(path);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.TrimEndingDirectorySeparator))]
     public void TrimEndingDirectorySeparator_Span_DirectoryChar_ShouldTrim(
@@ -42,7 +42,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.ToString().Should().Be(directory);
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.TrimEndingDirectorySeparator))]
     public void TrimEndingDirectorySeparator_Span_Root_ShouldReturnUnchanged()
     {
@@ -54,7 +54,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.ToString().Should().Be(path);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.TrimEndingDirectorySeparator))]
     public void
@@ -67,7 +67,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.ToString().Should().Be(path);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.TrimEndingDirectorySeparator))]
     public void TrimEndingDirectorySeparator_WithoutDirectoryChar_ShouldReturnUnchanged(

@@ -16,7 +16,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
     #endregion
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.AltDirectorySeparatorChar))]
     public void AltDirectorySeparatorChar_ShouldReturnDefaultValue()
     {
@@ -25,7 +25,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().Be(Path.AltDirectorySeparatorChar);
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.DirectorySeparatorChar))]
     public void DirectorySeparatorChar_ShouldReturnDefaultValue()
     {
@@ -34,7 +34,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().Be(Path.DirectorySeparatorChar);
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.PathSeparator))]
     public void PathSeparator_ShouldReturnDefaultValue()
     {
@@ -43,7 +43,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().Be(Path.PathSeparator);
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.VolumeSeparatorChar))]
     public void VolumeSeparatorChar_ShouldReturnDefaultValue()
     {

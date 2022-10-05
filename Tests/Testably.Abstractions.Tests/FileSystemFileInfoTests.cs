@@ -21,7 +21,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
     #endregion
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.FileInfo]
     public void Directory_ShouldReturnParentDirectory()
     {
@@ -35,7 +35,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         file!.Directory!.FullName.Should().Be(initialized[0].FullName);
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.FileInfo]
     public void DirectoryName_ShouldReturnNameOfParentDirectory()
     {
@@ -49,7 +49,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         file!.DirectoryName.Should().Be(initialized[0].FullName);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo]
     public void IsReadOnly_SetToFalse_ShouldRemoveReadOnlyAttribute(string path)
@@ -64,7 +64,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         fileInfo.Attributes.Should().Be(FileAttributes.Normal);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo]
     public void IsReadOnly_SetToTrue_ShouldAddReadOnlyAttribute(string path)
@@ -78,7 +78,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         fileInfo.Attributes.HasFlag(FileAttributes.ReadOnly).Should().BeTrue();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo]
     public void IsReadOnly_ShouldChangeWhenSettingReadOnlyAttribute(string path)
@@ -92,7 +92,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         fileInfo.Attributes.HasFlag(FileAttributes.ReadOnly).Should().BeTrue();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo]
     public void IsReadOnly_ShouldInitializeToReadOnlyAttribute(string path)

@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemPathTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.IsPathFullyQualified))]
     public void IsPathFullyQualified_PrefixedRoot_ShouldReturnTrue(
@@ -17,7 +17,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().BeTrue();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.IsPathFullyQualified))]
     public void IsPathFullyQualified_WithoutPrefixedRoot_ShouldReturnFalse(
@@ -29,7 +29,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
     }
 
 #if FEATURE_SPAN
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.IsPathFullyQualified))]
     public void IsPathFullyQualified_Span_PrefixedRoot_ShouldReturnTrue(
@@ -41,7 +41,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().BeTrue();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.IsPathFullyQualified))]
     public void IsPathFullyQualified_Span_WithoutPrefixedRoot_ShouldReturnFalse(

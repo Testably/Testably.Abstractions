@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemPathTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.GetRelativePath))]
     public void GetRelativePath_CommonParentDirectory_ShouldReturnRelativePath(
@@ -20,7 +20,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().Be(expectedRelativePath);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.GetRelativePath))]
     public void GetRelativePath_DifferentDrives_ShouldReturnAbsolutePath(
@@ -39,7 +39,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().Be(path2);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.GetRelativePath))]
     public void GetRelativePath_RootedPath_ShouldReturnAbsolutePath(
@@ -54,7 +54,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().Be(expectedRelativePath);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.GetRelativePath))]
     public void GetRelativePath_ToItself_ShouldReturnDot(string path)

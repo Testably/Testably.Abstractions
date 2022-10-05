@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Delete))]
     public void Delete_MissingDirectory_ShouldDeleteDirectory(string path)
@@ -26,7 +26,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
            .Be($"Could not find a part of the path '{sut.FullName}'.");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Delete))]
     public void Delete_Recursive_WithSubdirectory_ShouldDeleteDirectoryWithContent(
@@ -49,7 +49,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         FileSystem.Directory.Exists(subdirectoryPath).Should().BeFalse();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Delete))]
     public void Delete_ShouldDeleteDirectory(string path)
@@ -69,7 +69,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Delete))]
     public void Delete_WithSubdirectory_ShouldNotDeleteDirectory(

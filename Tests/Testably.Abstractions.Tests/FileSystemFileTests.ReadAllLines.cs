@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllLines))]
     public void ReadAllLines_MissingFile_ShouldThrowFileNotFoundException(string path)
@@ -21,7 +21,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllLines))]
     public void ReadAllLines_ShouldEnumerateLines(string path, string[] lines)
@@ -34,7 +34,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         results.Should().BeEquivalentTo(lines);
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberAutoData(nameof(GetEncodingDifference))]
     [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllLines))]
     public void ReadAllLines_WithDifferentEncoding_ShouldNotReturnWrittenText(

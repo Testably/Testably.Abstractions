@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemDirectoryTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
     public void Delete_FullPath_ShouldDeleteDirectory(string directoryName)
@@ -22,7 +22,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         result.Exists.Should().BeFalse();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
     public void Delete_MissingDirectory_ShouldDeleteDirectory(string directoryName)
@@ -38,7 +38,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
            .Be($"Could not find a part of the path '{expectedPath}'.");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
     public void Delete_Recursive_MissingDirectory_ShouldDeleteDirectory(
@@ -55,7 +55,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
            .Be($"Could not find a part of the path '{expectedPath}'.");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
     public void
@@ -75,7 +75,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         FileSystem.File.Exists(fileName).Should().BeTrue();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
     public void Delete_Recursive_WithSubdirectory_ShouldDeleteDirectoryWithContent(
@@ -91,7 +91,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         FileSystem.Directory.Exists(subdirectoryPath).Should().BeFalse();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
     public void Delete_ShouldDeleteDirectory(string directoryName)
@@ -107,7 +107,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         result.Exists.Should().BeFalse();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
     public void Delete_WithSimilarNamedFile_ShouldOnlyDeleteDirectory(
@@ -124,7 +124,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         FileSystem.File.Exists(fileName).Should().BeTrue();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
     public void Delete_WithSubdirectory_ShouldNotDeleteDirectory(

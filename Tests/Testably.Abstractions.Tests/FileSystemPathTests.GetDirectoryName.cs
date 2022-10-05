@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemPathTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.GetDirectoryName))]
     public void GetDirectoryName_Null_ShouldReturnNull()
     {
@@ -12,7 +12,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().BeNull();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.GetDirectoryName))]
     public void GetDirectoryName_ShouldReturnDirectory(
@@ -26,7 +26,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().Be(directory);
     }
 #if FEATURE_SPAN
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.GetDirectoryName))]
     public void GetDirectoryName_Span_ShouldReturnDirectory(

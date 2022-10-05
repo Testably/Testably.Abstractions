@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllTextAsync))]
     public async Task WriteAllTextAsync_Cancelled_ShouldThrowTaskCanceledException(
@@ -24,7 +24,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Which.Message.Should().Be("A task was canceled.");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllTextAsync))]
     public async Task
@@ -41,7 +41,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Which.Message.Should().Be("A task was canceled.");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllTextAsync))]
     public async Task WriteAllTextAsync_PreviousFile_ShouldOverwriteFileWithText(
@@ -55,7 +55,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         result.Should().Be(contents);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllTextAsync))]
     public async Task WriteAllTextAsync_ShouldCreateFileWithText(
@@ -68,7 +68,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         result.Should().Be(contents);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllTextAsync))]
     public async Task WriteAllTextAsync_SpecialCharacters_ShouldReturnSameText(

@@ -21,7 +21,7 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 
     #endregion
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.New))]
     public void New_Null_ShouldThrowArgumentNullException()
     {
@@ -33,7 +33,7 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
         exception.Should().BeOfType<ArgumentNullException>();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.New))]
     public void New_ShouldCreateNewFileInfoFromPath(string path)
@@ -44,7 +44,7 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
         result.Exists.Should().BeFalse();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.New))]
     public void New_ShouldOpenWithExistingContent(string path, string contents)
@@ -58,7 +58,7 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
         result.Should().Be(contents);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.New))]
     public void New_ShouldSetLength(string path, byte[] bytes)
@@ -76,7 +76,7 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
         result.Should().Be(bytes.Length);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.New))]
     public void Wrap_ShouldWrapFromFileInfo(string path)

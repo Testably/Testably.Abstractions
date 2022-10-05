@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytes))]
     public void ReadAllBytes_MissingFile_ShouldThrowFileNotFoundException(string path)
@@ -20,7 +20,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytes))]
     public void ReadAllBytes_ShouldReturnWrittenBytes(

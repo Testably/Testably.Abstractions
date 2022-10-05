@@ -17,7 +17,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 
     #endregion
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileSystemInfo(
         nameof(IFileSystem.IFileSystemInfo.ResolveLinkTarget))]
@@ -45,7 +45,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
         }
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileSystemInfo(
         nameof(IFileSystem.IFileSystemInfo.ResolveLinkTarget))]
@@ -71,7 +71,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
         target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToFinalTarget));
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileSystemInfo(
         nameof(IFileSystem.IFileSystemInfo.ResolveLinkTarget))]
@@ -100,7 +100,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
            .Which.Message.Should().Contain($"'{fileInfo.FullName}'");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileSystemInfo(
         nameof(IFileSystem.IFileSystemInfo.ResolveLinkTarget))]
@@ -119,7 +119,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
         target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToMissingFile));
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileSystemInfo(
         nameof(IFileSystem.IFileSystemInfo.ResolveLinkTarget))]
@@ -134,7 +134,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
         target.Should().BeNull();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileSystemInfo(
         nameof(IFileSystem.IFileSystemInfo.ResolveLinkTarget))]
@@ -149,7 +149,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
         target.Should().BeNull();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileSystemInfo(
         nameof(IFileSystem.IFileSystemInfo.ResolveLinkTarget))]
@@ -167,7 +167,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
         target.Exists.Should().BeTrue();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileSystemInfo(
         nameof(IFileSystem.IFileSystemInfo.ResolveLinkTarget))]

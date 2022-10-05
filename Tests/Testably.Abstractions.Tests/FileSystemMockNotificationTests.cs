@@ -18,7 +18,7 @@ public class FileSystemMockNotificationTests
 
     #endregion
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Notify]
     public void
@@ -43,7 +43,7 @@ public class FileSystemMockNotificationTests
         eventCount.Should().Be(3);
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(NotificationTriggeringMethods))]
     [FileSystemTests.Notify]
     public void ExecuteCallback_ShouldTriggerNotification(

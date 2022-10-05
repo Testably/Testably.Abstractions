@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.CreateSymbolicLink))]
     public void CreateSymbolicLink_ShouldCreateSymbolicLink(
@@ -21,7 +21,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Should().BeTrue();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.CreateSymbolicLink))]
     public void CreateSymbolicLink_SourceFileAlreadyExists_ShouldCreateSymbolicLink(

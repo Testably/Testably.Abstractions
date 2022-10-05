@@ -11,7 +11,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllLinesAsync))]
     public async Task AppendAllLinesAsync_Cancelled_ShouldThrowTaskCanceledException(
@@ -27,7 +27,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Which.Message.Should().Be("A task was canceled.");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllLinesAsync))]
     public async Task
@@ -45,7 +45,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Which.Message.Should().Be("A task was canceled.");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllLinesAsync))]
     public async Task AppendAllLinesAsync_ExistingFile_ShouldAppendLinesToFile(
@@ -60,7 +60,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .BeEquivalentTo(previousContents.Concat(contents));
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllLinesAsync))]
     public async Task AppendAllLinesAsync_MissingFile_ShouldCreateFile(
@@ -72,7 +72,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         FileSystem.File.ReadAllLines(path).Should().BeEquivalentTo(contents);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllLinesAsync))]
     public async Task AppendAllLinesAsync_ShouldEndWithNewline(string path)
@@ -85,7 +85,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedResult);
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberAutoData(nameof(GetEncodingDifference))]
     [FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllLinesAsync))]
     public async Task

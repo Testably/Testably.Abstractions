@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemPathTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.ChangeExtension))]
     public void ChangeExtension_EmptyPath_ShouldReturnEmptyString(string extension)
@@ -13,7 +13,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().BeEmpty();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.ChangeExtension))]
     public void ChangeExtension_NullPath_ShouldReturnNull(string extension)
@@ -23,7 +23,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().BeNull();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.ChangeExtension))]
     public void ChangeExtension_WithDirectory_ShouldIncludeDirectory(
@@ -38,7 +38,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().Be(expectedResult);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.ChangeExtension))]
     public void ChangeExtension_WithLeadingDotInExtension_ShouldNotIncludeTwoDots(

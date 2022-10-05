@@ -10,7 +10,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileStreamTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData(FileAccess.Read, FileShare.Read,
         FileAccess.ReadWrite, FileShare.Read)]
     [InlineAutoData(FileAccess.ReadWrite, FileShare.Read,
@@ -49,7 +49,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         }
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData(FileAccess.Read, FileShare.Read, FileAccess.Read, FileShare.Read)]
     [InlineAutoData(FileAccess.Read, FileShare.ReadWrite, FileAccess.ReadWrite,
         FileShare.Read)]
@@ -75,7 +75,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         result2.Should().Be(contents);
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData(FileAccess.Write, FileShare.Write, FileAccess.Write, FileShare.Write)]
     [InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite, FileAccess.ReadWrite,
         FileShare.ReadWrite)]
@@ -107,7 +107,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         result.Should().Be(contents2);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream(nameof(FileAccess))]
     public void FileAccess_ReadAfterFirstAppend_ShouldContainBothContents(
@@ -134,7 +134,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         result.Should().Be(contents1 + contents2);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream(nameof(FileAccess))]
     public void FileAccess_ReadBeforeFirstAppend_ShouldOnlyContainSecondContent(
@@ -161,7 +161,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         result.Should().Be(contents2);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream(nameof(FileAccess))]
     public void FileAccess_ReadWhileWriteLockActive_ShouldThrowIOException(
@@ -188,7 +188,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         }
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream(nameof(FileAccess))]
     public void MultipleParallelReads_ShouldBeAllowed(string path, string contents)
@@ -213,7 +213,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         results.Should().AllBeEquivalentTo(contents);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream(nameof(FileAccess))]
     public void Read_ShouldCreateValidFileStream(string path, string contents)
@@ -226,7 +226,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         result.Should().Be(contents);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream(nameof(FileAccess))]
     public void Write_ShouldCreateValidFileStream(string path, string contents)

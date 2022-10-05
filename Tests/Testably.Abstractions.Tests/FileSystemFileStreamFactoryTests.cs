@@ -22,7 +22,7 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 
     #endregion
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
     public void New_AppendAccessWithReadWriteMode_ShouldThrowArgumentException(
@@ -43,7 +43,7 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
            .Contain(FileMode.Append.ToString());
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
     public void New_EmptyPath_ShouldThrowArgumentException(FileMode mode)
@@ -61,7 +61,7 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 #endif
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
     public void New_ExistingFileWithCreateNewMode_ShouldThrowArgumentException(
@@ -77,7 +77,7 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
            .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData(FileMode.Append)]
     [InlineAutoData(FileMode.Truncate)]
     [InlineAutoData(FileMode.Create)]
@@ -104,7 +104,7 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
            .Contain(access.ToString());
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData(FileMode.Open)]
     [InlineAutoData(FileMode.Truncate)]
     [FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
@@ -120,7 +120,7 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
            .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
     public void New_NullPath_ShouldThrowArgumentNullException(FileMode mode)
@@ -134,7 +134,7 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
            .Which.ParamName.Should().Be("path");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
     public void New_SamePathAsExistingDirectory_ShouldThrowException(

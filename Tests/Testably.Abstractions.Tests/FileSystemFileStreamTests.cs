@@ -23,7 +23,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 
     #endregion
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void BeginRead_ShouldCopyContentsToBuffer(
@@ -45,7 +45,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         buffer.Should().BeEquivalentTo(contents);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void BeginWrite_ShouldCopyContentsToFile(
@@ -66,7 +66,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(contents);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void CanSeek_ShouldReturnTrue(
@@ -79,7 +79,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         stream.CanSeek.Should().BeTrue();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void CanTimeout_ShouldReturnFalse(
@@ -92,7 +92,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         stream.CanTimeout.Should().BeFalse();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void CopyTo_ShouldCopyBytes(
@@ -110,7 +110,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
     }
 
 #if FEATURE_FILESYSTEM_ASYNC
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public async Task CopyToAsync_ShouldCopyBytes(
@@ -128,7 +128,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
     }
 #endif
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void Name_ShouldReturnFullPath(string path)
@@ -139,7 +139,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         stream.Name.Should().Be(expectedName);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void Position_ShouldChangeWhenReading(
@@ -155,7 +155,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
     }
 
 #if FEATURE_SPAN
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void Read_AsSpan_ShouldFillBuffer(string path, byte[] contents)
@@ -171,7 +171,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
     }
 #endif
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void Read_ShouldFillBuffer(string path, byte[] contents)
@@ -187,7 +187,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
     }
 
 #if FEATURE_FILESYSTEM_ASYNC
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public async Task ReadAsync_ShouldFillBuffer(string path, byte[] contents)
@@ -206,7 +206,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
     }
 #endif
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void ReadByte_ShouldReadSingleByteAndAdvancePosition(
@@ -224,7 +224,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         result2.Should().Be(contents[1]);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void ReadTimeout_ShouldThrowInvalidOperationException(
@@ -241,7 +241,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         exception.Should().BeOfType<InvalidOperationException>();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void Seek_Begin_ShouldSetAbsolutePositionFromBegin(
@@ -256,7 +256,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         stream.Position.Should().Be(4);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void Seek_Current_ShouldSetRelativePosition(string path, string contents)
@@ -274,7 +274,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         stream.Position.Should().Be(6);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void Seek_End_ShouldSetAbsolutePositionFromEnd(string path, string contents)
@@ -288,7 +288,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         stream.Position.Should().Be(contents.Length - 4);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void SetLength(string path, int length)
@@ -300,7 +300,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         stream.Length.Should().Be(length);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void SetLength_ReadOnlyStream_ShouldThrowNotSupportedException(
@@ -318,7 +318,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
     }
 
 #if FEATURE_SPAN
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void Write_AsSpan_ShouldFillBuffer(string path, byte[] contents)
@@ -333,7 +333,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
     }
 #endif
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void Write_ShouldFillBuffer(string path, byte[] contents)
@@ -348,7 +348,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
     }
 
 #if FEATURE_FILESYSTEM_ASYNC
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public async Task WriteAsync_ShouldFillBuffer(string path, byte[] contents)
@@ -366,7 +366,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
     }
 #endif
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void WriteByte_ShouldWriteSingleByteAndAdvancePosition(
@@ -383,7 +383,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
            .Should().BeEquivalentTo(new[] { byte1, byte2 });
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileStream]
     public void WriteTimeout_ShouldThrowInvalidOperationException(

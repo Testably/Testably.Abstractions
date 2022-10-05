@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemPathTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.EndsInDirectorySeparator))]
     public void EndsInDirectorySeparator_Empty_ShouldReturnExpectedResult()
     {
@@ -13,7 +13,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().BeFalse();
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.EndsInDirectorySeparator))]
     public void EndsInDirectorySeparator_Null_ShouldReturnExpectedResult()
     {
@@ -22,7 +22,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().BeFalse();
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.EndsInDirectorySeparator))]
     public void EndsInDirectorySeparator_Span_Empty_ShouldReturnExpectedResult()
     {
@@ -31,7 +31,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().BeFalse();
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData('.')]
     [InlineAutoData('a')]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.EndsInDirectorySeparator))]
@@ -46,7 +46,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().BeFalse();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.EndsInDirectorySeparator))]
     public void
@@ -60,7 +60,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().BeTrue();
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData('.')]
     [InlineAutoData('a')]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.EndsInDirectorySeparator))]
@@ -75,7 +75,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().BeFalse();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.EndsInDirectorySeparator))]
     public void EndsInDirectorySeparator_WithTrailingDirectorySeparator_ShouldReturnTrue(

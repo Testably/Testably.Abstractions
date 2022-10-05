@@ -13,7 +13,7 @@ public class FileSystemMockInterceptionTests
 
     #endregion
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Intercept]
     public void CreateDirectory_CustomException_ShouldOnlyTriggerChangeOccurring(
@@ -36,7 +36,7 @@ public class FileSystemMockInterceptionTests
         receivedPath.Should().BeNull();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Intercept]
     public void CreateDirectory_CustomException_ShouldNotCreateDirectory(
