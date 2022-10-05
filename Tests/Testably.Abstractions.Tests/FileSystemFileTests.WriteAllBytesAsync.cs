@@ -9,7 +9,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllBytesAsync))]
     public async Task WriteAllBytesAsync_Cancelled_ShouldThrowTaskCanceledException(
@@ -25,7 +25,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Which.Message.Should().Be("A task was canceled.");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllBytesAsync))]
     public async Task WriteAllBytesAsync_PreviousFile_ShouldOverwriteFileWithBytes(
@@ -39,7 +39,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         result.Should().BeEquivalentTo(contents);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllBytesAsync))]
     public async Task WriteAllBytesAsync_ShouldCreateFileWithBytes(

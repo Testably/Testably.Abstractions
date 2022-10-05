@@ -15,11 +15,13 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     {
         FileSystem = fileSystem;
         TimeSystem = timeSystem;
+
+        Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
     }
 
     #endregion
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLogicalDrives))]
     public void GetLogicalDrives_ShouldNotBeEmpty()
     {
@@ -29,7 +31,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         result.Should().Contain("".PrefixRoot());
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetParent))]
     public void GetParent_ArbitraryPaths_ShouldNotBeNull(string path1,

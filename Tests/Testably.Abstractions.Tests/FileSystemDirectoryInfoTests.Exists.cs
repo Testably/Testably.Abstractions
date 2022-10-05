@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Exists))]
     public void Exists_ArbitraryPath_ShouldBeFalse(string path)
@@ -14,7 +14,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Exists))]
     public void Exists_ExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
@@ -28,7 +28,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Exists))]
     public void Exists_NotExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)

@@ -20,6 +20,8 @@ public abstract partial class FileSystemFileTests<TFileSystem>
     {
         FileSystem = fileSystem;
         TimeSystem = timeSystem;
+
+        Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
     }
 
     #endregion

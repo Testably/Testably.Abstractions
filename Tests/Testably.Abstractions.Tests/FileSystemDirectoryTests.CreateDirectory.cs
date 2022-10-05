@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemDirectoryTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
     public void CreateDirectory_ShouldSetCreationTime(string path)
@@ -22,7 +22,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         result.Kind.Should().Be(DateTimeKind.Local);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
     public void CreateDirectory_ShouldSetCreationTimeUtc(string path)
@@ -37,7 +37,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         result.Kind.Should().Be(DateTimeKind.Utc);
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
     public void CreateDirectory_Empty_ShouldThrowArgumentException()
     {
@@ -59,7 +59,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 #endif
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
     public void CreateDirectory_IllegalCharacters_ShouldThrowArgumentException()
     {
@@ -91,7 +91,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         }
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
     public void CreateDirectory_Null_ShouldThrowArgumentNullException()
     {
@@ -102,7 +102,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
            .Should().Be("path");
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
     public void CreateDirectory_NullCharacter_ShouldThrowArgumentException()
     {
@@ -113,7 +113,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         exception.Should().BeOfType<ArgumentException>();
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
     public void CreateDirectory_ShouldCreateDirectoryInBasePath()
     {
@@ -124,7 +124,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         result.FullName.Should().StartWith(BasePath);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
     public void CreateDirectory_ShouldCreateParentDirectories(
@@ -153,7 +153,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     }
 
 #if NETFRAMEWORK
-    [Theory]
+    [SkippableTheory]
     [InlineData("/")]
     [InlineData("\\")]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
@@ -177,7 +177,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineData("")]
     [InlineData(" ")]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
@@ -201,7 +201,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
     }
 #else
-    [Theory]
+    [SkippableTheory]
     [InlineData("")]
     [InlineData(" ")]
     [InlineData("/")]

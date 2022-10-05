@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemPathTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData((string?)null)]
     [InlineAutoData("")]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
@@ -20,7 +20,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result2.Should().Be(path);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
     public void Join_2Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
@@ -34,7 +34,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().Be(expectedResult);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
     public void Join_2Paths_Span_ShouldReturnPathsCombinedByDirectorySeparatorChar(
@@ -50,7 +50,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().Be(expectedResult);
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData((string?)null)]
     [InlineAutoData("")]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
@@ -68,7 +68,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result3.Should().Be(expectedPath);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
     public void Join_3Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
@@ -83,7 +83,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().Be(expectedResult);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
     public void Join_3Paths_Span_ShouldReturnPathsCombinedByDirectorySeparatorChar(
@@ -101,7 +101,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().Be(expectedResult);
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData((string?)null)]
     [InlineAutoData("")]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
@@ -121,7 +121,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result4.Should().Be(expectedPath);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
     public void Join_4Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
@@ -137,7 +137,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().Be(expectedResult);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
     public void Join_4Paths_Span_ShouldReturnPathsCombinedByDirectorySeparatorChar(
@@ -157,7 +157,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().Be(expectedResult);
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData((string?)null)]
     [InlineAutoData("")]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
@@ -184,7 +184,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result5.Should().Be(expectedPath);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.Join))]
     public void Join_ParamPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(

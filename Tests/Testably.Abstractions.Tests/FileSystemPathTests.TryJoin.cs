@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemPathTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.TryJoin))]
     public void TryJoin_2Paths_BufferTooLittle_ShouldReturnFalse(
@@ -27,7 +27,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         charsWritten.Should().Be(0);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.TryJoin))]
     public void TryJoin_2Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
@@ -50,7 +50,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         destination.Slice(0, charsWritten).ToString().Should().Be(expectedResult);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.TryJoin))]
     public void TryJoin_3Paths_BufferTooLittle_ShouldReturnFalse(
@@ -74,7 +74,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         charsWritten.Should().Be(0);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.TryJoin))]
     public void TryJoin_3Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(

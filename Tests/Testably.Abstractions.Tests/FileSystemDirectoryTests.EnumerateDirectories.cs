@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemDirectoryTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.EnumerateDirectories))]
     public void
@@ -25,7 +25,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         FileSystem.Directory.Exists(path).Should().BeFalse();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.EnumerateDirectories))]
     public void
@@ -48,7 +48,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         result.Should().Contain(FileSystem.Path.Combine(baseDirectory.FullName, "bar"));
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.EnumerateDirectories))]
     public void
@@ -69,7 +69,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
     }
 
-    [Theory]
+    [SkippableTheory]
 #if NETFRAMEWORK
     [InlineAutoData(false, "")]
 #else
@@ -108,7 +108,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     }
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.EnumerateDirectories))]
     public void
@@ -137,7 +137,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     }
 #endif
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.EnumerateDirectories))]
     public void EnumerateDirectories_WithNewline_ShouldThrowArgumentException(
@@ -154,7 +154,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         exception.Should().BeOfType<ArgumentException>();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.EnumerateDirectories))]
     public void
@@ -174,7 +174,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.EnumerateDirectories))]
     public void EnumerateDirectories_WithSearchPattern_ShouldReturnMatchingSubdirectory(
@@ -191,7 +191,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.EnumerateDirectories))]
     public void

@@ -18,11 +18,13 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
     {
         FileSystem = fileSystem;
         TimeSystem = timeSystem;
+
+        Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
     }
 
     #endregion
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.New))]
     public void New_DefaultDrive_ShouldBeFixed()
     {
@@ -37,7 +39,7 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
         result.TotalSize.Should().BeGreaterThan(0);
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.GetDrives))]
     public void GetDrives_ShouldNotBeEmpty()
     {
@@ -61,7 +63,7 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
         exception.Should().BeOfType<ArgumentException>();
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.New))]
     public void New_Null_ShouldThrowArgumentNullException()
     {

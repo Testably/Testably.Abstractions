@@ -14,11 +14,13 @@ public class FileSystemMockNotificationTests
     {
         _testOutputHelper = testOutputHelper;
         FileSystem = new FileSystemMock();
+
+        Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
     }
 
     #endregion
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Notify]
     public void
@@ -43,7 +45,7 @@ public class FileSystemMockNotificationTests
         eventCount.Should().Be(3);
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberData(nameof(NotificationTriggeringMethods))]
     [FileSystemTests.Notify]
     public void ExecuteCallback_ShouldTriggerNotification(

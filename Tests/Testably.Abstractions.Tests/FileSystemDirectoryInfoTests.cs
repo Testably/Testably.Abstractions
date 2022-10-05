@@ -17,11 +17,13 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     {
         FileSystem = fileSystem;
         TimeSystem = timeSystem;
+
+        Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
     }
 
     #endregion
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Parent))]
     public void Parent_ArbitraryPaths_ShouldNotBeNull(string path1,
@@ -38,7 +40,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         sut.Parent.Parent!.Exists.Should().BeFalse();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Root))]
     public void Root_ShouldExist(string path)

@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Create))]
     public void Create_IllegalCharacters_ShouldThrowArgumentException()
     {
@@ -28,7 +28,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         }
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Create))]
     public void Create_Null_ShouldThrowArgumentNullException()
     {
@@ -39,7 +39,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
            .Should().Be("path");
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineData("\0foo")]
     [InlineData("foo\0bar")]
     [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Create))]
@@ -53,7 +53,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
            .Which.Message.Should().Contain(expectedMessage);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Create))]
     public void Create_ShouldCreateDirectory(string path)
@@ -72,7 +72,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Create))]
     public void Create_ShouldCreateInBasePath()
     {
@@ -84,7 +84,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         result.FullName.Should().StartWith(BasePath);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Create))]
     public void Create_ShouldCreateParentDirectories(
@@ -112,7 +112,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 #endif
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineData("")]
     [InlineData("/")]
     [InlineData("\\")]

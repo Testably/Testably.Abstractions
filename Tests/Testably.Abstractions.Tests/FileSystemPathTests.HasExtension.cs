@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemPathTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.HasExtension))]
     public void HasExtension_Null_ShouldReturnFalse()
     {
@@ -12,7 +12,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
         result.Should().BeFalse();
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData(".foo", true)]
     [InlineAutoData(".abc.xyz", true)]
     [InlineAutoData("foo", false)]
@@ -29,7 +29,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
     }
 
 #if FEATURE_SPAN
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData(".foo", true)]
     [InlineAutoData(".abc.xyz", true)]
     [InlineAutoData("foo", false)]

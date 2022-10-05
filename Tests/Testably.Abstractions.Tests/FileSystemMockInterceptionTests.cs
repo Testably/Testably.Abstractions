@@ -9,11 +9,13 @@ public class FileSystemMockInterceptionTests
     public FileSystemMockInterceptionTests()
     {
         FileSystem = new FileSystemMock();
+
+        Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
     }
 
     #endregion
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Intercept]
     public void CreateDirectory_CustomException_ShouldOnlyTriggerChangeOccurring(
@@ -36,7 +38,7 @@ public class FileSystemMockInterceptionTests
         receivedPath.Should().BeNull();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Intercept]
     public void CreateDirectory_CustomException_ShouldNotCreateDirectory(

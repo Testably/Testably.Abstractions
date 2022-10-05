@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemDirectoryTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetFileSystemEntries))]
     public void
@@ -24,7 +24,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         FileSystem.Directory.Exists(path).Should().BeFalse();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetFileSystemEntries))]
     public void
@@ -50,7 +50,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         result.Should().Contain(initialized[2].FullName);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetFileSystemEntries))]
     public void
@@ -73,7 +73,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         result.Should().Contain(initialized[2].ToString());
     }
 
-    [Theory]
+    [SkippableTheory]
 #if NETFRAMEWORK
     [InlineAutoData(false, "")]
 #else
@@ -110,7 +110,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     }
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetFileSystemEntries))]
     public void
@@ -139,7 +139,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     }
 #endif
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetFileSystemEntries))]
     public void GetFileSystemEntries_WithNewline_ShouldThrowArgumentException(
@@ -162,7 +162,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 #endif
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetFileSystemEntries))]
     public void
@@ -186,7 +186,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         result.Should().NotContain(initialized[3].ToString());
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetFileSystemEntries))]
     public void
@@ -210,7 +210,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         result.Should().NotContain(initialized[3].ToString());
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetFileSystemEntries))]
     public void
         GetFileSystemEntries_WithSearchPatternInSubdirectory_ShouldReturnMatchingFileSystemEntriesInSubdirectories()

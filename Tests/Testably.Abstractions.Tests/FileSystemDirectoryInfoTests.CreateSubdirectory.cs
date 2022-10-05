@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.CreateSubdirectory))]
     public void CreateSubdirectory_MissingParent_ShouldCreateDirectory(
@@ -19,7 +19,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         FileSystem.Directory.Exists(result.FullName).Should().BeTrue();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.CreateSubdirectory))]
     public void CreateSubdirectory_ShouldCreateDirectory(string path, string subdirectory)

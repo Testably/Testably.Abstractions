@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileInfoTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Open))]
     public void Open_ExistingFileWithCreateNewMode_ShouldThrowFileNotFoundException(
@@ -23,7 +23,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
            .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Open))]
     public void Open_MissingFileAndIncorrectMode_ShouldThrowFileNotFoundException(
@@ -40,7 +40,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
            .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
-    [Theory]
+    [SkippableTheory]
 #if !NETFRAMEWORK
     [InlineAutoData(FileMode.Append, FileAccess.Write)]
 #endif
@@ -62,7 +62,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     }
 
 #if NETFRAMEWORK
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Open))]
     public void Open_AppendMode_ShouldThrowArgumentException(string path)
@@ -79,7 +79,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     }
 #endif
 
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData(FileAccess.Read, FileShare.Write)]
     [InlineAutoData(FileAccess.Write, FileShare.Read)]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Open))]
@@ -96,7 +96,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(share);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Open))]
     public void Open_ShouldUseNoneShareAsDefault(string path,
@@ -112,7 +112,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     }
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData(FileAccess.Read, FileShare.Write)]
     [InlineAutoData(FileAccess.Write, FileShare.Read)]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Open))]

@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(
         nameof(IFileSystem.IDirectoryInfo.EnumerateFileSystemInfos))]
@@ -37,7 +37,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         result.Should().Contain(d => d.Name == initialized[5].Name);
     }
 
-    [Theory]
+    [SkippableTheory]
 #if NETFRAMEWORK
     [InlineAutoData(false, "")]
 #else
@@ -77,7 +77,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     }
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.DirectoryInfo(
         nameof(IFileSystem.IDirectoryInfo.EnumerateFileSystemInfos))]
     public void
@@ -107,7 +107,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     }
 #endif
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo(
         nameof(IFileSystem.IDirectoryInfo.EnumerateFileSystemInfos))]
@@ -126,7 +126,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         exception.Should().BeOfType<ArgumentException>();
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.DirectoryInfo(
         nameof(IFileSystem.IDirectoryInfo.EnumerateFileSystemInfos))]
     public void
@@ -150,7 +150,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         result.Should().Contain(d => d.Name == "bar");
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.DirectoryInfo(
         nameof(IFileSystem.IDirectoryInfo.EnumerateFileSystemInfos))]
     public void EnumerateFileSystemInfos_WithSearchPattern_ShouldReturnMatchingFiles()
@@ -168,7 +168,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         result.Count().Should().Be(1);
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.DirectoryInfo(
         nameof(IFileSystem.IDirectoryInfo.EnumerateFileSystemInfos))]
     public void

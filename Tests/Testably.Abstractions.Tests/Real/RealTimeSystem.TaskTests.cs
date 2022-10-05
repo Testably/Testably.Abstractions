@@ -18,7 +18,7 @@ public static partial class RealTimeSystem
 
         #endregion
 
-        [Fact]
+        [SkippableFact]
         public async Task
             Delay_Milliseconds_Canceled_ShouldDelayForSpecifiedMilliseconds()
         {
@@ -38,7 +38,7 @@ public static partial class RealTimeSystem
             exception.Should().BeOfType<TaskCanceledException>();
         }
 
-        [Fact]
+        [SkippableFact]
         public async Task Delay_Timespan_Canceled_ShouldDelayForSpecifiedMilliseconds()
         {
             TimeSpan timeout = TimeSpan.FromMilliseconds(100);

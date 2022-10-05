@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllLines))]
     public void WriteAllLines_PreviousFile_ShouldOverwriteFileWithText(
@@ -17,7 +17,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         result.Should().BeEquivalentTo(contents);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllLines))]
     public void WriteAllLines_ShouldCreateFileWithText(string path, string[] contents)

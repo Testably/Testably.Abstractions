@@ -9,7 +9,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllTextAsync))]
     public async Task AppendAllTextAsync_Cancelled_ShouldThrowTaskCanceledException(
@@ -25,7 +25,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Which.Message.Should().Be("A task was canceled.");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllTextAsync))]
     public async Task
@@ -42,7 +42,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Which.Message.Should().Be("A task was canceled.");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllTextAsync))]
     public async Task AppendAllTextAsync_ExistingFile_ShouldAppendLinesToFile(
@@ -57,7 +57,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .BeEquivalentTo(previousContents + contents);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllTextAsync))]
     public async Task AppendAllTextAsync_MissingFile_ShouldCreateFile(
@@ -69,7 +69,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         FileSystem.File.ReadAllLines(path).Should().BeEquivalentTo(contents);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllTextAsync))]
     public async Task AppendAllTextAsync_ShouldNotEndWithNewline(string path)
@@ -81,7 +81,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents);
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberAutoData(nameof(GetEncodingDifference))]
     [FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllTextAsync))]
     public async Task AppendAllTextAsync_WithDifferentEncoding_ShouldNotReturnWrittenText(

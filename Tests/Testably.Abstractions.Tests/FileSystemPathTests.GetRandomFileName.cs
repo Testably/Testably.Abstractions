@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemPathTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.GetRandomFileName))]
     public void GetRandomFileName_ShouldReturnRandomFileNameWithExtension()
     {
@@ -22,7 +22,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
            .Should().NotBeEmpty();
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.Path(nameof(IFileSystem.IPath.GetRandomFileName))]
     public void GetRandomFileName_ShouldReturnRandomStrings()
     {

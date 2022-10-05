@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytesAsync))]
     public async Task ReadAllBytesAsync_Cancelled_ShouldThrowTaskCanceledException(
@@ -24,7 +24,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Which.Message.Should().Be("A task was canceled.");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytesAsync))]
     public async Task ReadAllBytesAsync_MissingFile_ShouldThrowFileNotFoundException(
@@ -38,7 +38,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytesAsync))]
     public async Task ReadAllBytesAsync_ShouldReturnWrittenBytes(

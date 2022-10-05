@@ -17,7 +17,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     #endregion
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void
@@ -45,12 +45,14 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         }
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void ResolveLinkTarget_FinalTarget_ShouldFollowSymbolicLinkToFinalTarget(
         string path, string pathToFinalTarget)
     {
+        Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
         int maxLinks = MaxResolveLinks;
 
         FileSystem.Directory.CreateDirectory(pathToFinalTarget);
@@ -69,12 +71,14 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToFinalTarget));
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
         string path, string pathToFinalTarget)
     {
+        Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
         int maxLinks = MaxResolveLinks + 1;
         FileSystem.Directory.CreateDirectory(pathToFinalTarget);
         string previousPath = pathToFinalTarget;
@@ -95,13 +99,15 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
            .Which.Message.Should().Contain($"'{previousPath}'");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void
         ResolveLinkTarget_MissingDirectoryInLinkChain_ShouldReturnPathToMissingDirectory(
             string path, string pathToFinalTarget, string pathToMissingDirectory)
     {
+        Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
         FileSystem.Directory.CreateDirectory(pathToFinalTarget);
         FileSystem.Directory.CreateSymbolicLink(pathToMissingDirectory,
             Path.Combine(BasePath, pathToFinalTarget));
@@ -115,7 +121,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToMissingDirectory));
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void ResolveLinkTarget_NormalDirectory_ShouldReturnNull(
@@ -129,7 +135,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         target.Should().BeNull();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void ResolveLinkTarget_NormalFile_ShouldReturnNull(
@@ -143,7 +149,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         target.Should().BeNull();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void ResolveLinkTarget_RelativePath_ShouldFollowSymbolicLinkUnderWindows(
@@ -160,7 +166,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         target.Exists.Should().BeTrue();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void ResolveLinkTarget_AbsolutePath_ShouldFollowSymbolicLink(
@@ -177,12 +183,14 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         target.Exists.Should().BeTrue();
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void ResolveLinkTarget_TargetDeletedAfterLinkCreation_ShouldReturnNull(
         string path, string pathToTarget)
     {
+        Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
         string targetFullPath = FileSystem.Path.GetFullPath(pathToTarget);
         FileSystem.Directory.CreateDirectory(pathToTarget);
         FileSystem.Directory.CreateSymbolicLink(path, targetFullPath);

@@ -17,11 +17,13 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
     {
         FileSystem = fileSystem;
         TimeSystem = timeSystem;
+
+        Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
     }
 
     #endregion
 
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData(FileAttributes.Compressed)]
     [InlineAutoData(FileAttributes.Device)]
     [InlineAutoData(FileAttributes.Encrypted)]
@@ -41,7 +43,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
         result.Should().Be(FileAttributes.Normal);
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData(FileAttributes.Archive)]
     [InlineAutoData(FileAttributes.NoScrubData)]
     [InlineAutoData(FileAttributes.NotContentIndexed)]
@@ -68,7 +70,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
         }
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData(FileAttributes.Hidden)]
     [FileSystemTests.FileSystemInfo(
         nameof(IFileSystem.IFileSystemInfo.Attributes))]
@@ -90,7 +92,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
         }
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData(FileAttributes.ReadOnly)]
     [FileSystemTests.FileSystemInfo(
         nameof(IFileSystem.IFileSystemInfo.Attributes))]

@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllText))]
     public void AppendAllText_ExistingFile_ShouldAppendLinesToFile(
@@ -20,7 +20,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .BeEquivalentTo(previousContents + contents);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllText))]
     public void AppendAllText_MissingFile_ShouldCreateFile(
@@ -32,7 +32,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         FileSystem.File.ReadAllLines(path).Should().BeEquivalentTo(contents);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllText))]
     public void AppendAllText_ShouldNotEndWithNewline(string path)
@@ -44,7 +44,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents);
     }
 
-    [Theory]
+    [SkippableTheory]
     [MemberAutoData(nameof(GetEncodingDifference))]
     [FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllText))]
     public void AppendAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(

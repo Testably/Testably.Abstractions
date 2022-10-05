@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileInfoTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Length))]
     public void Length_MissingFile_ShouldThrowFileNotFoundException(string path)
@@ -26,7 +26,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 #endif
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Length))]
     public void Length_WhenFileExists_ShouldBeSetCorrectly(string path, byte[] bytes)
@@ -39,7 +39,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         result.Should().Be(bytes.Length);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Length))]
     public void Length_WhenFileIsCreated_ShouldBeSetCorrectly(string path, byte[] bytes)
@@ -53,7 +53,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         result.Should().Be(bytes.Length);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Length))]
     public void Length_WhenFileIsCreatedAfterAccessed_ShouldBeSetCorrectly(
@@ -75,7 +75,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         result.Should().Be(bytes.Length);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Length))]
     public void

@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.Open))]
     public void Open_ExistingFileWithCreateNewMode_ShouldThrowFileNotFoundException(
@@ -22,7 +22,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.Open))]
     public void Open_MissingFileAndIncorrectMode_ShouldThrowFileNotFoundException(
@@ -37,7 +37,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData(FileMode.Append, FileAccess.Write)]
     [InlineAutoData(FileMode.Open, FileAccess.ReadWrite)]
     [InlineAutoData(FileMode.Create, FileAccess.ReadWrite)]
@@ -55,7 +55,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
     }
 
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData(FileAccess.Read, FileShare.Write)]
     [InlineAutoData(FileAccess.Write, FileShare.Read)]
     [FileSystemTests.File(nameof(IFileSystem.IFile.Open))]
@@ -72,7 +72,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(share);
     }
 
-    [Theory]
+    [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.Open))]
     public void Open_ShouldUseNoneShareAsDefault(string path,
@@ -87,7 +87,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
     }
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
-    [Theory]
+    [SkippableTheory]
     [InlineAutoData(FileAccess.Read, FileShare.Write)]
     [InlineAutoData(FileAccess.Write, FileShare.Read)]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Open))]

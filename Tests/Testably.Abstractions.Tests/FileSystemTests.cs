@@ -12,11 +12,13 @@ public abstract class FileSystemTests<TFileSystem>
     protected FileSystemTests(TFileSystem fileSystem)
     {
         FileSystem = fileSystem;
+        
+        Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
     }
 
     #endregion
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.ExtensionPoint]
     public void Directory_ShouldSetExtensionPoint()
     {
@@ -25,7 +27,7 @@ public abstract class FileSystemTests<TFileSystem>
         result.Should().Be(FileSystem);
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.ExtensionPoint]
     public void DirectoryInfo_ShouldSetExtensionPoint()
     {
@@ -34,7 +36,7 @@ public abstract class FileSystemTests<TFileSystem>
         result.Should().Be(FileSystem);
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.ExtensionPoint]
     public void DriveInfo_ShouldSetExtensionPoint()
     {
@@ -43,7 +45,7 @@ public abstract class FileSystemTests<TFileSystem>
         result.Should().Be(FileSystem);
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.ExtensionPoint]
     public void File_ShouldSetExtensionPoint()
     {
@@ -52,7 +54,7 @@ public abstract class FileSystemTests<TFileSystem>
         result.Should().Be(FileSystem);
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.ExtensionPoint]
     public void FileInfo_ShouldSetExtensionPoint()
     {
@@ -61,7 +63,7 @@ public abstract class FileSystemTests<TFileSystem>
         result.Should().Be(FileSystem);
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.ExtensionPoint]
     public void FileStream_ShouldSetExtensionPoint()
     {
@@ -70,7 +72,7 @@ public abstract class FileSystemTests<TFileSystem>
         result.Should().Be(FileSystem);
     }
 
-    [Fact]
+    [SkippableFact]
     [FileSystemTests.ExtensionPoint]
     public void Path_ShouldSetExtensionPoint()
     {
