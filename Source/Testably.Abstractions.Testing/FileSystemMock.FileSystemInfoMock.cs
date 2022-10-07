@@ -11,7 +11,7 @@ public sealed partial class FileSystemMock
     {
         protected readonly InMemoryLocation Location;
         protected readonly FileSystemMock FileSystem;
-        protected readonly IStorageContainer Container;
+        protected IStorageContainer Container { get; private set; }
         
         internal FileSystemInfoMock(FileSystemMock fileSystem, InMemoryLocation location)
         {
@@ -137,6 +137,18 @@ public sealed partial class FileSystemMock
             // The DirectoryInfo is not updated in .NET Framework!
             _exists = null;
 #endif
+        }
+        private bool _isInitialized;
+
+        protected void RefreshInternal()
+        {
+            if (_isInitialized)
+            {
+                return;
+            }
+
+            Container = FileSystem.Storage.GetContainer(Location);
+            _isInitialized = true;
         }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Delete()" />

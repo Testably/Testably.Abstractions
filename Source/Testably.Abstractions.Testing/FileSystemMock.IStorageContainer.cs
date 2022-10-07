@@ -19,6 +19,29 @@ public sealed partial class FileSystemMock
         void AdjustTimes(TimeAdjustments timeAdjustments);
         IStorageAccessHandle RequestAccess(FileAccess access, FileShare share);
 
+
+        /// <summary>
+        ///     Appends the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
+        /// </summary>
+        void AppendBytes(byte[] bytes);
+
+        /// <summary>
+        ///     Clears the content of the <see cref="IFileSystem.IFileInfo" />.
+        ///     <para />
+        ///     This is used to delete the file.
+        /// </summary>
+        void ClearBytes();
+
+        /// <summary>
+        ///     Gets the bytes in the <see cref="IFileSystem.IFileInfo" />.
+        /// </summary>
+        byte[] GetBytes();
+
+        /// <summary>
+        ///     Writes the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
+        /// </summary>
+        void WriteBytes(byte[] bytes);
+
         /// <summary>
         ///     Flags indicating which times to adjust for a <see cref="FileSystemMock.FileSystemInfoMock" />.
         /// </summary>

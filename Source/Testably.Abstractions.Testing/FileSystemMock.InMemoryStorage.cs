@@ -366,7 +366,7 @@ public sealed partial class FileSystemMock
 
         private FileSystemInfoMock CreateFileInternal(string path)
         {
-            return FileInfoMock.New(path, _fileSystem);
+            return FileInfoMock.New(InMemoryLocation.New(_fileSystem, path), _fileSystem);
         }
 
         private static void ValidateExpression(string expression)
