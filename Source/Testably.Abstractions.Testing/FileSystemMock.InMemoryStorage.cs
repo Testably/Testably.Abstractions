@@ -14,7 +14,7 @@ public sealed partial class FileSystemMock
 {
     internal sealed class InMemoryStorage : IStorage
     {
-        private readonly ConcurrentDictionary<InMemoryLocation, InMemoryContainer>
+        private readonly ConcurrentDictionary<InMemoryLocation, IStorageContainer>
             _containers = new();
 
         private readonly ConcurrentDictionary<string, FileSystemInfoMock> _files = new(
@@ -319,11 +319,11 @@ public sealed partial class FileSystemMock
             }
 
             parents.Reverse();
-            TimeAdjustments timeAdjustments =
-                TimeAdjustments.LastWriteTime;
+            IStorageContainer.TimeAdjustments timeAdjustments =
+                IStorageContainer.TimeAdjustments.LastWriteTime;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                timeAdjustments |= TimeAdjustments.LastAccessTime;
+                timeAdjustments |= IStorageContainer.TimeAdjustments.LastAccessTime;
             }
 
             List<IDisposable> requests = new();
@@ -383,62 +383,7 @@ public sealed partial class FileSystemMock
                 return container;
             }
 
-            return NullContainer.Instance;
-        }
-
-        private class NullContainer : IStorageContainer
-        {
-            /// <summary>
-            ///     The default time returned by the file system if no time has been set.
-            ///     <seealso href="https://learn.microsoft.com/en-us/windows/win32/sysinfo/file-times" />:
-            ///     A file time is a 64-bit value that represents the number of 100-nanosecond intervals that have elapsed
-            ///     since 12:00 A.M. January 1, 1601 Coordinated Universal Time (UTC).
-            /// </summary>
-            private static readonly DateTime NullTime =
-                new DateTime(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc);
-
-            public static IStorageContainer Instance => new NullContainer();
-
-            /// <inheritdoc cref="IStorageContainer.LinkTarget" />
-            public string? LinkTarget
-            {
-                get => null;
-                set => _ = value;
-            }
-
-            /// <inheritdoc cref="IStorageContainer.Attributes" />
-            public FileAttributes Attributes
-            {
-                get => (FileAttributes) (-1);
-                set => _ = value;
-            }
-
-            /// <inheritdoc cref="IStorageContainer.CreationTime" />
-            public DateTime CreationTime
-            {
-                get => NullTime;
-                set => _ = value;
-            }
-
-            /// <inheritdoc cref="IStorageContainer.LastAccessTime" />
-            public DateTime LastAccessTime
-            {
-                get => NullTime;
-                set => _ = value;
-            }
-
-            /// <inheritdoc cref="IStorageContainer.LastWriteTime" />
-            public DateTime LastWriteTime
-            {
-                get => NullTime;
-                set => _ = value;
-            }
-
-            /// <inheritdoc cref="IStorageContainer.AdjustTimes(TimeAdjustments)" />
-            public void AdjustTimes(TimeAdjustments timeAdjustments)
-            {
-                // Ignore in NullContainer
-            }
+            return InMemoryContainer.Null;
         }
     }
 }

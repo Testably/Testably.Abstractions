@@ -54,7 +54,7 @@ public sealed partial class FileSystemMock
             get
             {
                 RefreshInternal();
-                return (Container as IStorage.IFileInfoMock)?.GetBytes().Length
+                return (OldContainer as IStorage.IFileInfoMock)?.GetBytes().Length
                        ?? throw ExceptionFactory.FileNotFound(Framework.IsNetFramework
                            ? OriginalPath
                            : FullName);
@@ -89,7 +89,7 @@ public sealed partial class FileSystemMock
         {
             using (RequestAccess(FileAccess.Write, FileShare.Read))
             {
-                ((InMemoryContainer) _container)._isEncrypted = false;
+                ((InMemoryContainer) Container)._isEncrypted = false;
                 WriteBytes(EncryptionHelper.Decrypt(GetBytes()));
             }
         }
@@ -102,7 +102,7 @@ public sealed partial class FileSystemMock
         {
             using (RequestAccess(FileAccess.Write, FileShare.Read))
             {
-                ((InMemoryContainer)_container)._isEncrypted = true;
+                ((InMemoryContainer)Container)._isEncrypted = true;
                 WriteBytes(EncryptionHelper.Encrypt(GetBytes()));
             }
         }

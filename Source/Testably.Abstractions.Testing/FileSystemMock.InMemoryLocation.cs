@@ -45,7 +45,6 @@ public sealed partial class FileSystemMock
                .NormalizePath()
                .TrimOnWindows();
             _key = fileSystem.Path.TrimEndingDirectorySeparator(FullPath);
-            FullPath = fullPath;
             if (Framework.IsNetFramework)
             {
                 friendlyName = friendlyName.TrimOnWindows();

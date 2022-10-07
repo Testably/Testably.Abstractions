@@ -145,7 +145,7 @@ public sealed partial class FileSystemMock
             ///     <para />
             ///     The returned <see cref="IDisposable" /> is used to release the access lock.
             /// </summary>
-            IAccessHandle RequestAccess(FileAccess access, FileShare share);
+            IStorageAccessHandle RequestAccess(FileAccess access, FileShare share);
         }
     }
 }

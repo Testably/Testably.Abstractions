@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
@@ -13,16 +11,14 @@ public sealed partial class FileSystemMock
     {
         private readonly InMemoryLocation _location;
         protected readonly FileSystemMock FileSystem;
+        protected readonly IStorageContainer Container;
 
 
 
 
         private bool _isInitialized;
-        protected IStorage.IFileSystemInfoMock? Container;
+        protected IStorage.IFileSystemInfoMock? OldContainer;
         protected string OriginalPath => _location.FriendlyName;
-
-        private readonly ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
-        protected readonly IStorageContainer _container;
 
         /// <summary>
         ///     The <see cref="Drive" /> in which the <see cref="IFileSystem.IFileSystemInfo" /> is stored.
@@ -34,7 +30,7 @@ public sealed partial class FileSystemMock
         {
             _location = location;
             FileSystem = fileSystem;
-            _container = fileSystem.Storage.GetContainer(location);
+            Container = fileSystem.Storage.GetContainer(location);
         }
 
         internal FileSystemInfoMock(string fullName, string originalPath,
@@ -48,22 +44,22 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Attributes" />
         public FileAttributes Attributes
         {
-            get => _container.Attributes;
-            set => _container.Attributes = value;
+            get => Container.Attributes;
+            set => Container.Attributes = value;
         }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTime" />
         public DateTime CreationTime
         {
-            get => _container.CreationTime.ToLocalTime();
-            set => _container.CreationTime = value;
+            get => Container.CreationTime.ToLocalTime();
+            set => Container.CreationTime = value;
         }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTimeUtc" />
         public DateTime CreationTimeUtc
         {
-            get => _container.CreationTime.ToUniversalTime();
-            set => _container.CreationTime = value;
+            get => Container.CreationTime.ToUniversalTime();
+            set => Container.CreationTime = value;
         }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
@@ -88,29 +84,29 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastAccessTime" />
         public DateTime LastAccessTime
         {
-            get => _container.LastAccessTime.ToLocalTime();
-            set => _container.LastAccessTime = value;
+            get => Container.LastAccessTime.ToLocalTime();
+            set => Container.LastAccessTime = value;
         }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastAccessTimeUtc" />
         public DateTime LastAccessTimeUtc
         {
-            get => _container.LastAccessTime.ToUniversalTime();
-            set => _container.LastAccessTime = value;
+            get => Container.LastAccessTime.ToUniversalTime();
+            set => Container.LastAccessTime = value;
         }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastWriteTime" />
         public DateTime LastWriteTime
         {
-            get => _container.LastWriteTime.ToLocalTime();
-            set => _container.LastWriteTime = value;
+            get => Container.LastWriteTime.ToLocalTime();
+            set => Container.LastWriteTime = value;
         }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastWriteTimeUtc" />
         public DateTime LastWriteTimeUtc
         {
-            get => _container.LastWriteTime.ToUniversalTime();
-            set => _container.LastWriteTime = value;
+            get => Container.LastWriteTime.ToUniversalTime();
+            set => Container.LastWriteTime = value;
         }
 
 #if FEATURE_FILESYSTEM_LINK
@@ -120,9 +116,9 @@ public sealed partial class FileSystemMock
             get
             {
                 RefreshInternal();
-                return _container.LinkTarget;
+                return Container.LinkTarget;
             }
-            protected set => _container.LinkTarget = value;
+            protected set => Container.LinkTarget = value;
         }
 #endif
 
@@ -216,102 +212,9 @@ public sealed partial class FileSystemMock
         #endregion
 
         /// <inheritdoc cref="IStorage.IFileSystemInfoMock.RequestAccess(FileAccess, FileShare)" />
-        public IAccessHandle RequestAccess(FileAccess access, FileShare share)
+        public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share)
         {
-            if (Drive == null)
-            {
-                throw ExceptionFactory.DirectoryNotFound(FullName);
-            }
-
-            if (!Drive.IsReady)
-            {
-                throw ExceptionFactory.NetworkPathNotFound(FullName);
-            }
-
-            if (CanGetAccess(access, share))
-            {
-                Guid guid = Guid.NewGuid();
-                FileHandle fileHandle = new(guid, ReleaseAccess, access, share);
-                _fileHandles.TryAdd(guid, fileHandle);
-                return fileHandle;
-            }
-
-            throw ExceptionFactory.ProcessCannotAccessTheFile(FullName);
-        }
-
-        private void ReleaseAccess(Guid guid)
-        {
-            _fileHandles.TryRemove(guid, out _);
-        }
-
-        private bool CanGetAccess(FileAccess access, FileShare share)
-        {
-            foreach (KeyValuePair<Guid, FileHandle> fileHandle in _fileHandles)
-            {
-                if (!fileHandle.Value.GrantAccess(access, share))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private sealed class FileHandle : IAccessHandle
-        {
-            private readonly Action<Guid> _releaseCallback;
-            private readonly FileAccess _access;
-            private readonly FileShare _share;
-            private readonly Guid _key;
-
-            public FileHandle(Guid key, Action<Guid> releaseCallback, FileAccess access,
-                              FileShare share)
-            {
-                _releaseCallback = releaseCallback;
-                _access = access;
-                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    _share = share == FileShare.None
-                        ? FileShare.None
-                        : FileShare.ReadWrite;
-                }
-                else
-                {
-                    _share = share;
-                }
-
-                _key = key;
-            }
-
-            public bool GrantAccess(FileAccess access, FileShare share)
-            {
-                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    share = FileShare.ReadWrite;
-                }
-
-                return CheckAccessWithShare(access, _share) &&
-                       CheckAccessWithShare(_access, share);
-            }
-
-            private static bool CheckAccessWithShare(FileAccess access, FileShare share)
-            {
-                switch (access)
-                {
-                    case FileAccess.Read:
-                        return share.HasFlag(FileShare.Read);
-                    case FileAccess.Write:
-                        return share.HasFlag(FileShare.Write);
-                    default:
-                        return share == FileShare.ReadWrite;
-                }
-            }
-
-            /// <inheritdoc cref="IDisposable.Dispose()" />
-            public void Dispose()
-            {
-                _releaseCallback.Invoke(_key);
-            }
+            return Container.RequestAccess(access, share);
         }
 
 #if NETSTANDARD2_0
@@ -322,7 +225,7 @@ public sealed partial class FileSystemMock
         public override string ToString()
             => OriginalPath;
 
-        internal FileSystemInfoMock AdjustTimes(TimeAdjustments timeAdjustments)
+        internal FileSystemInfoMock AdjustTimes(IStorageContainer.TimeAdjustments timeAdjustments)
         {
             ChangeDescription? fileSystemChange = null;
             if (HasNotifyFilters(timeAdjustments, out NotifyFilters notifyFilters))
@@ -333,28 +236,28 @@ public sealed partial class FileSystemMock
                     notifyFilters);
             }
 
-            _container.AdjustTimes(timeAdjustments);
+            Container.AdjustTimes(timeAdjustments);
 
             FileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
 
             return this;
         }
 
-        private static bool HasNotifyFilters(TimeAdjustments timeAdjustments,
+        private static bool HasNotifyFilters(IStorageContainer.TimeAdjustments timeAdjustments,
                                              out NotifyFilters notifyFilters)
         {
             notifyFilters = 0;
-            if (timeAdjustments.HasFlag(TimeAdjustments.CreationTime))
+            if (timeAdjustments.HasFlag(IStorageContainer.TimeAdjustments.CreationTime))
             {
                 notifyFilters |= NotifyFilters.CreationTime;
             }
 
-            if (timeAdjustments.HasFlag(TimeAdjustments.LastAccessTime))
+            if (timeAdjustments.HasFlag(IStorageContainer.TimeAdjustments.LastAccessTime))
             {
                 notifyFilters |= NotifyFilters.LastAccess;
             }
 
-            if (timeAdjustments.HasFlag(TimeAdjustments.LastWriteTime))
+            if (timeAdjustments.HasFlag(IStorageContainer.TimeAdjustments.LastWriteTime))
             {
                 notifyFilters |= NotifyFilters.LastWrite;
             }
@@ -370,7 +273,7 @@ public sealed partial class FileSystemMock
             }
 
             _isInitialized = true;
-            Container = FileSystem.Storage.GetFile(FullName);
+            OldContainer = FileSystem.Storage.GetFile(FullName);
         }
     }
 }
