@@ -399,6 +399,20 @@ public sealed partial class FileSystemMock
 
             public static IStorageContainer Instance => new NullContainer();
 
+            /// <inheritdoc cref="IStorageContainer.LinkTarget" />
+            public string? LinkTarget
+            {
+                get => null;
+                set => _ = value;
+            }
+
+            /// <inheritdoc cref="IStorageContainer.Attributes" />
+            public FileAttributes Attributes
+            {
+                get => (FileAttributes) (-1);
+                set => _ = value;
+            }
+
             /// <inheritdoc cref="IStorageContainer.CreationTime" />
             public DateTime CreationTime
             {
@@ -423,7 +437,7 @@ public sealed partial class FileSystemMock
             /// <inheritdoc cref="IStorageContainer.AdjustTimes(TimeAdjustments)" />
             public void AdjustTimes(TimeAdjustments timeAdjustments)
             {
-
+                // Ignore in NullContainer
             }
         }
     }

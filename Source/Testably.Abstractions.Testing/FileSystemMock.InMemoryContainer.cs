@@ -12,25 +12,22 @@ public sealed partial class FileSystemMock
 {
     internal interface IStorageContainer
     {
-        DateTime CreationTime
-        {
-            get;
-            set;
-        }
+        public string? LinkTarget { get; set; }
 
-        public DateTime LastAccessTime
-        {
-            get;
-            set;
-        }
+        FileAttributes Attributes { get; set; }
 
-        public DateTime LastWriteTime
-        {
-            get;
-            set;
-        }
+        DateTime CreationTime { get; set; }
+
+        public DateTime LastAccessTime { get; set; }
+
+        public DateTime LastWriteTime { get; set; }
 
         void AdjustTimes(TimeAdjustments timeAdjustments);
+    }
+
+    internal interface IAccessHandle : IDisposable
+    {
+
     }
 
     internal class InMemoryContainer : IStorageContainer
@@ -41,12 +38,14 @@ public sealed partial class FileSystemMock
 
         private byte[] _bytes = Array.Empty<byte>();
 
-        private DateTime _creationTime;
 
         private readonly ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
         private readonly FileSystemMock _fileSystem;
+        private DateTime _creationTime;
         private DateTime _lastAccessTime;
         private DateTime _lastWriteTime;
+        private FileAttributes _attributes;
+        internal bool _isEncrypted = false;
         private readonly InMemoryLocation _location;
 
         public InMemoryContainer(ContainerType type,
@@ -60,6 +59,67 @@ public sealed partial class FileSystemMock
         }
 
         #region IStorageContainer Members
+
+        /// <inheritdoc cref="IStorageContainer.Attributes" />
+        public FileAttributes Attributes
+        {
+            get
+            {
+                FileAttributes attributes = _attributes;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) &&
+                    System.IO.Path.GetFileName(_location.FullPath).StartsWith("."))
+                {
+                    attributes |= FileAttributes.Hidden;
+                }
+
+#if FEATURE_FILESYSTEM_LINK
+                if (LinkTarget != null)
+                {
+                    attributes |= FileAttributes.ReparsePoint;
+                }
+#endif
+
+                if (_isEncrypted)
+                {
+                    attributes |= FileAttributes.Encrypted;
+                }
+
+                if (attributes == 0)
+                {
+                    attributes = FileAttributes.Normal;
+                }
+
+                return attributes;
+            }
+            set
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    value &= FileAttributes.Directory |
+                             FileAttributes.ReadOnly |
+                             FileAttributes.Archive |
+                             FileAttributes.Hidden |
+                             FileAttributes.NoScrubData |
+                             FileAttributes.NotContentIndexed |
+                             FileAttributes.Offline |
+                             FileAttributes.System |
+                             FileAttributes.Temporary;
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    value &= FileAttributes.Hidden |
+                             FileAttributes.Directory |
+                             FileAttributes.ReadOnly;
+                }
+                else
+                {
+                    value &= FileAttributes.Directory |
+                             FileAttributes.ReadOnly;
+                }
+
+                _attributes = value;
+            }
+        }
 
         /// <inheritdoc cref="IStorageContainer.CreationTime" />
         public DateTime CreationTime

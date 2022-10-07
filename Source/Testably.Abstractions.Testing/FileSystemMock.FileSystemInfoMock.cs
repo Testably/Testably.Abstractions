@@ -13,13 +13,16 @@ public sealed partial class FileSystemMock
     {
         private readonly InMemoryLocation _location;
         protected readonly FileSystemMock FileSystem;
+
+
+
+
         private bool _isInitialized;
         protected IStorage.IFileSystemInfoMock? Container;
         protected string OriginalPath => _location.FriendlyName;
-        protected bool IsEncrypted;
 
         private readonly ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
-        private readonly IStorageContainer _container;
+        protected readonly IStorageContainer _container;
 
         /// <summary>
         ///     The <see cref="Drive" /> in which the <see cref="IFileSystem.IFileSystemInfo" /> is stored.
@@ -45,65 +48,9 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Attributes" />
         public FileAttributes Attributes
         {
-            get
-            {
-                FileAttributes attributes = _attributes;
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) &&
-                    System.IO.Path.GetFileName(FullName).StartsWith("."))
-                {
-                    attributes |= FileAttributes.Hidden;
-                }
-
-#if FEATURE_FILESYSTEM_LINK
-                if (LinkTarget != null)
-                {
-                    attributes |= FileAttributes.ReparsePoint;
-                }
-#endif
-
-                if (IsEncrypted)
-                {
-                    attributes |= FileAttributes.Encrypted;
-                }
-
-                if (attributes == 0)
-                {
-                    attributes = FileAttributes.Normal;
-                }
-
-                return attributes;
-            }
-            set
-            {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    value &= FileAttributes.Directory |
-                             FileAttributes.ReadOnly |
-                             FileAttributes.Archive |
-                             FileAttributes.Hidden |
-                             FileAttributes.NoScrubData |
-                             FileAttributes.NotContentIndexed |
-                             FileAttributes.Offline |
-                             FileAttributes.System |
-                             FileAttributes.Temporary;
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    value &= FileAttributes.Hidden |
-                             FileAttributes.Directory |
-                             FileAttributes.ReadOnly;
-                }
-                else
-                {
-                    value &= FileAttributes.Directory |
-                             FileAttributes.ReadOnly;
-                }
-
-                _attributes = value;
-            }
+            get => _container.Attributes;
+            set => _container.Attributes = value;
         }
-
-        private FileAttributes _attributes;
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTime" />
         public DateTime CreationTime
@@ -173,12 +120,10 @@ public sealed partial class FileSystemMock
             get
             {
                 RefreshInternal();
-                return (Container as FileSystemInfoMock)?._linkTarget;
+                return _container.LinkTarget;
             }
-            protected set => _linkTarget = value;
+            protected set => _container.LinkTarget = value;
         }
-
-        private string? _linkTarget;
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Name" />
@@ -271,7 +216,7 @@ public sealed partial class FileSystemMock
         #endregion
 
         /// <inheritdoc cref="IStorage.IFileSystemInfoMock.RequestAccess(FileAccess, FileShare)" />
-        public IDisposable RequestAccess(FileAccess access, FileShare share)
+        public IAccessHandle RequestAccess(FileAccess access, FileShare share)
         {
             if (Drive == null)
             {
@@ -312,7 +257,7 @@ public sealed partial class FileSystemMock
             return true;
         }
 
-        private sealed class FileHandle : IDisposable
+        private sealed class FileHandle : IAccessHandle
         {
             private readonly Action<Guid> _releaseCallback;
             private readonly FileAccess _access;

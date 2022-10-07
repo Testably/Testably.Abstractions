@@ -89,7 +89,7 @@ public sealed partial class FileSystemMock
         {
             using (RequestAccess(FileAccess.Write, FileShare.Read))
             {
-                IsEncrypted = false;
+                ((InMemoryContainer) _container)._isEncrypted = false;
                 WriteBytes(EncryptionHelper.Decrypt(GetBytes()));
             }
         }
@@ -102,7 +102,7 @@ public sealed partial class FileSystemMock
         {
             using (RequestAccess(FileAccess.Write, FileShare.Read))
             {
-                IsEncrypted = true;
+                ((InMemoryContainer)_container)._isEncrypted = true;
                 WriteBytes(EncryptionHelper.Encrypt(GetBytes()));
             }
         }

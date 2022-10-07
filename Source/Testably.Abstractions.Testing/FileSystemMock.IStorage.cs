@@ -10,7 +10,7 @@ public sealed partial class FileSystemMock
     /// <summary>
     ///     The container storing the current data of the <see cref="IFileSystem" /> in memory.
     /// </summary>
-    public interface IStorage
+    internal interface IStorage
     {
         /// <summary>
         ///     The current directory used in <see cref="System.IO.Directory.GetCurrentDirectory()" /> and
@@ -95,7 +95,7 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     An <see cref="IFileSystem.IDirectoryInfo" /> with <see cref="IFileSystemInfoMock" /> functionality.
         /// </summary>
-        public interface IDirectoryInfoMock : IFileSystem.IDirectoryInfo,
+        internal interface IDirectoryInfoMock : IFileSystem.IDirectoryInfo,
             IFileSystemInfoMock
         {
         }
@@ -103,7 +103,7 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     An <see cref="IFileSystem.IFileInfo" /> which allows writing to the underlying byte array.
         /// </summary>
-        public interface IFileInfoMock : IFileSystem.IFileInfo, IFileSystemInfoMock
+        internal interface IFileInfoMock : IFileSystem.IFileInfo, IFileSystemInfoMock
         {
             /// <summary>
             ///     Appends the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
@@ -138,14 +138,14 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     An <see cref="IFileSystem.IFileSystemInfo" /> which allows requesting access to.
         /// </summary>
-        public interface IFileSystemInfoMock : IFileSystem.IFileSystemInfo
+        internal interface IFileSystemInfoMock : IFileSystem.IFileSystemInfo
         {
             /// <summary>
             ///     Requests access to this file with the given <paramref name="share" />.
             ///     <para />
             ///     The returned <see cref="IDisposable" /> is used to release the access lock.
             /// </summary>
-            IDisposable RequestAccess(FileAccess access, FileShare share);
+            IAccessHandle RequestAccess(FileAccess access, FileShare share);
         }
     }
 }
