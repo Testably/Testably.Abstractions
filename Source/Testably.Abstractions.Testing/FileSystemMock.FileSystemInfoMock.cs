@@ -9,33 +9,20 @@ public sealed partial class FileSystemMock
 {
     private class FileSystemInfoMock : IFileSystem.IFileSystemInfo
     {
-        private readonly InMemoryLocation _location;
+        protected readonly InMemoryLocation Location;
         protected readonly FileSystemMock FileSystem;
         protected readonly IStorageContainer Container;
-
-
-
-
-        private bool _isInitialized;
-        protected IStorage.IFileSystemInfoMock? OldContainer;
-        protected string OriginalPath => _location.FriendlyName;
-
-        /// <summary>
-        ///     The <see cref="Drive" /> in which the <see cref="IFileSystem.IFileSystemInfo" /> is stored.
-        /// </summary>
-        protected IDriveInfoMock? Drive => _location.Drive;
-
-        internal FileSystemInfoMock(InMemoryLocation location,
-                                    FileSystemMock fileSystem)
+        
+        internal FileSystemInfoMock(FileSystemMock fileSystem, InMemoryLocation location)
         {
-            _location = location;
             FileSystem = fileSystem;
+            Location = location;
             Container = fileSystem.Storage.GetContainer(location);
         }
 
         internal FileSystemInfoMock(string fullName, string originalPath,
                                     FileSystemMock fileSystem)
-        :this(InMemoryLocation.New(fileSystem, fullName, originalPath), fileSystem)
+            : this(fileSystem, InMemoryLocation.New(fileSystem, fullName, originalPath))
         {
         }
 
@@ -79,7 +66,7 @@ public sealed partial class FileSystemMock
             => FileSystem.Path.GetExtension(FullName);
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.FullName" />
-        public string FullName => _location.FullPath;
+        public string FullName => Location.FullPath;
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastAccessTime" />
         public DateTime LastAccessTime
@@ -113,11 +100,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.LinkTarget" />
         public string? LinkTarget
         {
-            get
-            {
-                RefreshInternal();
-                return Container.LinkTarget;
-            }
+            get => Container.LinkTarget;
             protected set => Container.LinkTarget = value;
         }
 #endif
@@ -141,7 +124,8 @@ public sealed partial class FileSystemMock
             }
             else
             {
-                throw ExceptionFactory.CannotCreateFileAsAlreadyExists(OriginalPath);
+                throw ExceptionFactory.CannotCreateFileAsAlreadyExists(Location
+                   .FriendlyName);
             }
         }
 #endif
@@ -223,9 +207,10 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="System.IO.FileSystemInfo.ToString()" />
 #endif
         public override string ToString()
-            => OriginalPath;
+            => Location.FriendlyName;
 
-        internal FileSystemInfoMock AdjustTimes(IStorageContainer.TimeAdjustments timeAdjustments)
+        internal FileSystemInfoMock AdjustTimes(
+            IStorageContainer.TimeAdjustments timeAdjustments)
         {
             ChangeDescription? fileSystemChange = null;
             if (HasNotifyFilters(timeAdjustments, out NotifyFilters notifyFilters))
@@ -243,8 +228,9 @@ public sealed partial class FileSystemMock
             return this;
         }
 
-        private static bool HasNotifyFilters(IStorageContainer.TimeAdjustments timeAdjustments,
-                                             out NotifyFilters notifyFilters)
+        private static bool HasNotifyFilters(
+            IStorageContainer.TimeAdjustments timeAdjustments,
+            out NotifyFilters notifyFilters)
         {
             notifyFilters = 0;
             if (timeAdjustments.HasFlag(IStorageContainer.TimeAdjustments.CreationTime))
@@ -263,17 +249,6 @@ public sealed partial class FileSystemMock
             }
 
             return notifyFilters > 0;
-        }
-
-        protected void RefreshInternal()
-        {
-            if (_isInitialized)
-            {
-                return;
-            }
-
-            _isInitialized = true;
-            OldContainer = FileSystem.Storage.GetFile(FullName);
         }
     }
 }

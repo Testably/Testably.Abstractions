@@ -63,7 +63,7 @@ public sealed partial class FileSystemMock : IFileSystem
         DriveInfo = new DriveInfoFactoryMock(this);
         FileInfo = new FileInfoFactoryMock(this);
         FileStream = new FileStreamFactoryMock(this);
-        NullFileSystemInfo = new FileSystemInfoMock(InMemoryLocation.Null, this)
+        NullFileSystemInfo = new FileSystemInfoMock(this, InMemoryLocation.Null)
         {
             LastWriteTime = new DateTime(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc),
             LastAccessTime = new DateTime(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc),

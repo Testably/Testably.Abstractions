@@ -18,6 +18,7 @@ public sealed partial class FileSystemMock
         IStorage.IFileInfoMock
     {
         private byte[] _bytes = Array.Empty<byte>();
+        private IStorage.IFileSystemInfoMock? OldContainer { get; set; }
 
         internal FileInfoMock(string fullName, string originalPath,
                               FileSystemMock fileSystem)
@@ -25,10 +26,15 @@ public sealed partial class FileSystemMock
         {
         }
 
+        internal FileInfoMock(InMemoryLocation location,
+                              FileSystemMock fileSystem)
+            : base(fileSystem, location)
+        {
+        }
+
         /// <inheritdoc cref="IFileSystem.IFileInfo.Directory" />
         public IFileSystem.IDirectoryInfo? Directory
-            => DirectoryInfoMock.New(
-                FileSystem.Path.GetDirectoryName(OriginalPath),
+            => DirectoryInfoMock.New(Location.GetParent(),
                 FileSystem);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.DirectoryName" />
@@ -56,9 +62,21 @@ public sealed partial class FileSystemMock
                 RefreshInternal();
                 return (OldContainer as IStorage.IFileInfoMock)?.GetBytes().Length
                        ?? throw ExceptionFactory.FileNotFound(Framework.IsNetFramework
-                           ? OriginalPath
-                           : FullName);
+                           ? Location.FriendlyName
+                           : Location.FullPath);
             }
+        }
+        private bool _isInitialized;
+
+        private void RefreshInternal()
+        {
+            if (_isInitialized)
+            {
+                return;
+            }
+
+            OldContainer = FileSystem.Storage.GetFile(FullName);
+            _isInitialized = true;
         }
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.AppendText()" />
@@ -201,14 +219,14 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IStorage.IFileInfoMock.WriteBytes(byte[])" />
         public void WriteBytes(byte[] bytes)
         {
-            Drive?.ChangeUsedBytes(bytes.Length - _bytes.Length);
+            Location.Drive?.ChangeUsedBytes(bytes.Length - _bytes.Length);
             _bytes = bytes;
         }
 
         /// <inheritdoc cref="IStorage.IFileInfoMock.ClearBytes()" />
         public void ClearBytes()
         {
-            Drive?.ChangeUsedBytes(0 - _bytes.Length);
+            Location.Drive?.ChangeUsedBytes(0 - _bytes.Length);
             _bytes = Array.Empty<byte>();
         }
 

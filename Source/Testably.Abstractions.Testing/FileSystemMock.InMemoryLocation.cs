@@ -10,6 +10,8 @@ public sealed partial class FileSystemMock
 {
     internal sealed class InMemoryLocation : IEquatable<InMemoryLocation>
     {
+        private readonly FileSystemMock? _fileSystem;
+
         /// <summary>
         ///     The friendly name from the location of the file or directory.
         /// </summary>
@@ -24,6 +26,17 @@ public sealed partial class FileSystemMock
         ///     The <see cref="Drive" /> in which the <see cref="IFileSystem.IFileSystemInfo" /> is stored.
         /// </summary>
         public IDriveInfoMock? Drive { get; }
+
+        public InMemoryLocation? GetParent()
+        {
+            if (_fileSystem == null)
+            {
+                return null;
+            }
+            return New(_fileSystem,
+                _fileSystem.Path.GetDirectoryName(FullPath),
+                _fileSystem.Path.GetDirectoryName(FriendlyName));
+        }
 
         public static InMemoryLocation Null
         => new InMemoryLocation();
@@ -40,6 +53,7 @@ public sealed partial class FileSystemMock
                                  string fullPath,
                                  string friendlyName)
         {
+            _fileSystem = fileSystem;
             FullPath = fileSystem.Path
                .GetFullPath(fullPath)
                .NormalizePath()

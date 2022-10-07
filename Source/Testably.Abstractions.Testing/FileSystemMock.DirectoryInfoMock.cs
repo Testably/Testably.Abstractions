@@ -21,6 +21,12 @@ public sealed partial class FileSystemMock
         {
         }
 
+        internal DirectoryInfoMock(InMemoryLocation location,
+                                   FileSystemMock fileSystem)
+            : base(fileSystem, location)
+        {
+        }
+
         #region IDirectoryInfo Members
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Parent" />
@@ -228,6 +234,16 @@ public sealed partial class FileSystemMock
             string? fullName = fileSystem.Path.GetFullPath(path).NormalizePath()
                .TrimOnWindows();
             return new DirectoryInfoMock(fullName, originalPath, fileSystem);
+        }
+
+        [return: NotNullIfNotNull("location")]
+        internal static DirectoryInfoMock? New(InMemoryLocation? location, FileSystemMock fileSystem)
+        {
+            if (location == null)
+            {
+                return null;
+            }
+            return new DirectoryInfoMock(location, fileSystem);
         }
 
         [return: NotNullIfNotNull("path")]
