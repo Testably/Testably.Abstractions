@@ -7,6 +7,9 @@
   <PropertyGroup>
     <TargetFrameworks Condition="'$(NetCoreOnly)' != 'True'">net6.0;net5.0;net472</TargetFrameworks>
     <TargetFrameworks Condition="'$(NetCoreOnly)' == 'True'">net6.0;net5.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
