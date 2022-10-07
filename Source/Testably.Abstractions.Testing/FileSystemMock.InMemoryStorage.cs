@@ -386,5 +386,10 @@ public sealed partial class FileSystemMock
 
             return InMemoryContainer.Null;
         }
+
+        public IStorageContainer GetOrCreateContainer(
+            InMemoryLocation location,
+            Func<InMemoryLocation, FileSystemMock, IStorageContainer> containerGenerator)
+            => _containers.GetOrAdd(location, loc => containerGenerator.Invoke(loc, _fileSystem));
     }
 }

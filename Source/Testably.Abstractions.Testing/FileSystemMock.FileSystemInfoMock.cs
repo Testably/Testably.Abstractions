@@ -11,7 +11,7 @@ public sealed partial class FileSystemMock
     {
         protected readonly InMemoryLocation Location;
         protected readonly FileSystemMock FileSystem;
-        protected IStorageContainer Container { get; private set; }
+        protected IStorageContainer Container { get; set; }
         
         internal FileSystemInfoMock(FileSystemMock fileSystem, InMemoryLocation location)
         {

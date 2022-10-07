@@ -34,6 +34,10 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Create()" />
         public void Create()
         {
+            FullName.ThrowCommonExceptionsIfPathIsInvalid(FileSystem);
+            
+            Container = FileSystem.Storage.GetOrCreateContainer(
+                Location, InMemoryContainer.NewDirectory);
             FileSystem.Directory.CreateDirectory(FullName);
             Refresh();
         }
