@@ -141,15 +141,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
         result.Exists.Should().BeTrue();
         result.Parent.Exists.Should().BeTrue();
         result.Parent.Parent.Exists.Should().BeTrue();
-#if NETFRAMEWORK
-        result.ToString().Should().Be(directoryLevel3);
-        result.Parent.ToString().Should().Be(result.Parent.Name);
-        result.Parent.Parent.ToString().Should().Be(result.Parent.Parent.Name);
-#else
-        result.ToString().Should().Be(path);
-        result.Parent.ToString().Should().Be(result.Parent.FullName);
-        result.Parent.Parent.ToString().Should().Be(result.Parent.Parent.FullName);
-#endif
     }
 
 #if NETFRAMEWORK

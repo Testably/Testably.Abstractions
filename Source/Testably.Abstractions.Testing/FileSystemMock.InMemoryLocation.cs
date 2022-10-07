@@ -33,6 +33,12 @@ public sealed partial class FileSystemMock
             {
                 return null;
             }
+
+            if (_fileSystem.Path.GetPathRoot(FullPath) == FullPath)
+            {
+                return null;
+            }
+
             return New(_fileSystem,
                 _fileSystem.Path.GetDirectoryName(FullPath),
                 _fileSystem.Path.GetDirectoryName(FriendlyName));

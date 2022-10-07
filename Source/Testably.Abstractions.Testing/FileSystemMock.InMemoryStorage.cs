@@ -340,7 +340,7 @@ public sealed partial class FileSystemMock
                             parentPath,
                             ChangeTypes.DirectoryCreated,
                             NotifyFilters.CreationTime);
-                        return DirectoryInfoMock.New(parentPath, _fileSystem);
+                        return DirectoryInfoMock.New(InMemoryLocation.New(_fileSystem, parentPath), _fileSystem);
                     },
                     (_, fileSystemInfo) =>
                         fileSystemInfo.AdjustTimes(timeAdjustments));
@@ -356,11 +356,12 @@ public sealed partial class FileSystemMock
 
             if (Framework.IsNetFramework)
             {
-                return DirectoryInfoMock.New(path, _fileSystem.Path.GetFileName(path),
+                return DirectoryInfoMock.New(
+                    InMemoryLocation.New(_fileSystem, path, _fileSystem.Path.GetFileName(path)),
                     _fileSystem);
             }
 
-            return DirectoryInfoMock.New(path, _fileSystem);
+            return DirectoryInfoMock.New(InMemoryLocation.New(_fileSystem, path), _fileSystem);
         }
 
         private FileSystemInfoMock CreateFileInternal(string path)

@@ -15,13 +15,7 @@ public sealed partial class FileSystemMock
     private sealed class DirectoryInfoMock : FileSystemInfoMock,
         IStorage.IDirectoryInfoMock
     {
-        internal DirectoryInfoMock(string fullName, string originalPath,
-                                   FileSystemMock fileSystem)
-            : base(fullName, originalPath, fileSystem)
-        {
-        }
-
-        internal DirectoryInfoMock(InMemoryLocation location,
+        private DirectoryInfoMock(InMemoryLocation location,
                                    FileSystemMock fileSystem)
             : base(fileSystem, location)
         {
@@ -31,11 +25,11 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Parent" />
         public IFileSystem.IDirectoryInfo? Parent
-            => CreateParent(this, FileSystem);
+            => New(Location.GetParent(), FileSystem);
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Root" />
         public IFileSystem.IDirectoryInfo Root
-            => New(string.Empty.PrefixRoot(), FileSystem);
+            => New(InMemoryLocation.New(FileSystem, string.Empty.PrefixRoot()), FileSystem);
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Create()" />
         public void Create()
@@ -211,31 +205,7 @@ public sealed partial class FileSystemMock
             => throw new NotImplementedException();
 
         #endregion
-
-        [return: NotNullIfNotNull("path")]
-        internal static DirectoryInfoMock? New(string? path, FileSystemMock fileSystem)
-        {
-            if (path == null)
-            {
-                return null;
-            }
-
-            if (path == string.Empty)
-            {
-                if (Framework.IsNetFramework)
-                {
-                    throw ExceptionFactory.PathHasNoLegalForm();
-                }
-
-                throw ExceptionFactory.PathIsEmpty(nameof(path));
-            }
-
-            string? originalPath = path;
-            string? fullName = fileSystem.Path.GetFullPath(path).NormalizePath()
-               .TrimOnWindows();
-            return new DirectoryInfoMock(fullName, originalPath, fileSystem);
-        }
-
+        
         [return: NotNullIfNotNull("location")]
         internal static DirectoryInfoMock? New(InMemoryLocation? location, FileSystemMock fileSystem)
         {
@@ -244,49 +214,6 @@ public sealed partial class FileSystemMock
                 return null;
             }
             return new DirectoryInfoMock(location, fileSystem);
-        }
-
-        [return: NotNullIfNotNull("path")]
-        internal static DirectoryInfoMock? New(string? path, string originalpath,
-                                               FileSystemMock fileSystem)
-        {
-            if (path == null)
-            {
-                return null;
-            }
-
-            if (path == string.Empty)
-            {
-                if (Framework.IsNetFramework)
-                {
-                    throw ExceptionFactory.PathHasNoLegalForm();
-                }
-
-                throw ExceptionFactory.PathIsEmpty(nameof(path));
-            }
-
-            string? originalPath = originalpath;
-            path = fileSystem.Path.GetFullPath(path).NormalizePath()
-               .TrimOnWindows();
-            return new DirectoryInfoMock(path, originalPath, fileSystem);
-        }
-
-        private static IFileSystem.IDirectoryInfo CreateParent(
-            DirectoryInfoMock child, FileSystemMock fileSystem)
-        {
-            string? parentPath = fileSystem.Path.GetDirectoryName(child.FullName);
-            if (parentPath == null)
-            {
-                return child.Root;
-            }
-
-            if (Framework.IsNetFramework)
-            {
-                return new DirectoryInfoMock(fileSystem.Path.GetFullPath(parentPath),
-                    fileSystem.Path.GetFileName(parentPath), fileSystem);
-            }
-
-            return New(parentPath, parentPath, fileSystem);
         }
 
         private static Func<Exception> DirectoryNotFoundException(string path)
