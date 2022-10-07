@@ -352,6 +352,10 @@ public sealed partial class FileSystemMock
             set => _ = value;
         }
 
+        /// <inheritdoc cref="IStorageContainer.Type" />
+        public InMemoryContainer.ContainerType Type
+            => InMemoryContainer.ContainerType.Unknown;
+
         /// <inheritdoc cref="IStorageContainer.Attributes" />
         public FileAttributes Attributes
         {

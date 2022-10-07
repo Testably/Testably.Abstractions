@@ -218,6 +218,17 @@ public sealed partial class FileSystemMock
             Attributes |= FileAttributes.ReparsePoint;
         }
 #endif
+        /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
+        public override bool Exists
+        {
+            get
+            {
+                _exists ??= FileSystem.Storage.Exists(FullName);
+                return _exists.Value;
+            }
+        }
+
+        private bool? _exists;
 
         [return: NotNullIfNotNull("location")]
         internal static FileInfoMock? New(InMemoryLocation? location, FileSystemMock fileSystem)

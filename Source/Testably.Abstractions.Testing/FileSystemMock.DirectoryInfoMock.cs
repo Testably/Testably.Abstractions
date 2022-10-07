@@ -38,7 +38,6 @@ public sealed partial class FileSystemMock
             
             Container = FileSystem.Storage.GetOrCreateContainer(
                 Location, InMemoryContainer.NewDirectory);
-            FileSystem.Directory.CreateDirectory(FullName);
             Refresh();
         }
 
@@ -66,11 +65,13 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories(string, SearchOption)" />
         public IEnumerable<IFileSystem.IDirectoryInfo> EnumerateDirectories(
             string searchPattern, SearchOption searchOption)
-            => FileSystem.Storage.Enumerate<IFileSystem.IDirectoryInfo>(
-                FullName,
+            => FileSystem.Storage.Enumerate(
+                InMemoryLocation.New(FileSystem, FullName),
+                InMemoryContainer.ContainerType.Directory,
                 searchPattern,
                 EnumerationOptionsHelper.FromSearchOption(searchOption),
-                DirectoryNotFoundException(FullName));
+                DirectoryNotFoundException(FullName),
+                DirectoryInfoMock.New);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories(string, EnumerationOptions)" />
@@ -95,11 +96,13 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateFiles(string, SearchOption)" />
         public IEnumerable<IFileSystem.IFileInfo> EnumerateFiles(
             string searchPattern, SearchOption searchOption)
-            => FileSystem.Storage.Enumerate<IFileSystem.IFileInfo>(
-                FullName,
+            => FileSystem.Storage.Enumerate(
+                InMemoryLocation.New(FileSystem, FullName),
+                InMemoryContainer.ContainerType.File,
                 searchPattern,
                 EnumerationOptionsHelper.FromSearchOption(searchOption),
-                DirectoryNotFoundException(FullName));
+                DirectoryNotFoundException(FullName),
+                FileInfoMock.New);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateFiles(string, EnumerationOptions)" />

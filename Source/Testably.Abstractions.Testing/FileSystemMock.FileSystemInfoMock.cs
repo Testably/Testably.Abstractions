@@ -50,11 +50,12 @@ public sealed partial class FileSystemMock
         }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
-        public bool Exists
+        public virtual bool Exists
         {
             get
             {
-                _exists ??= FileSystem.Storage.Exists(FullName);
+                RefreshInternal();
+                _exists ??= Container is not NullContainer;
                 return _exists.Value;
             }
         }
@@ -154,7 +155,8 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Delete()" />
         public void Delete()
         {
-            if (!FileSystem.Storage.Delete(FullName))
+            if (!FileSystem.Storage.DeleteContainer(
+                InMemoryLocation.New(FileSystem, FullName)))
             {
                 throw ExceptionFactory.DirectoryNotFound(FullName);
             }

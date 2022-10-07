@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using static Testably.Abstractions.Testing.FileSystemMock.InMemoryContainer;
 
 namespace Testably.Abstractions.Testing;
 
@@ -7,6 +8,7 @@ public sealed partial class FileSystemMock
 {
     internal interface IStorageContainer
     {
+        ContainerType Type { get; }
         FileAttributes Attributes { get; set; }
 
         DateTime CreationTime { get; set; }

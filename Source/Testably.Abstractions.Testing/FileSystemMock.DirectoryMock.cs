@@ -27,7 +27,13 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectory.CreateDirectory(string)" />
         public IFileSystem.IDirectoryInfo CreateDirectory(string path)
-            => CreateDirectoryInternal(path);
+        {
+            var directory = DirectoryInfoMock.New(
+                InMemoryLocation.New(_fileSystem, path),
+                _fileSystem);
+            directory.Create();
+            return directory;
+        }
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="IFileSystem.IDirectory.CreateSymbolicLink(string, string)" />
@@ -49,7 +55,8 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.Delete(string)" />
         public void Delete(string path)
         {
-            if (!_fileSystem.Storage.Delete(path))
+            if (!_fileSystem.Storage.DeleteContainer(
+                InMemoryLocation.New(_fileSystem, path)))
             {
                 throw ExceptionFactory.DirectoryNotFound(
                     _fileSystem.Path.GetFullPath(path));
@@ -59,7 +66,8 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.Delete(string, bool)" />
         public void Delete(string path, bool recursive)
         {
-            if (!_fileSystem.Storage.Delete(path, recursive))
+            if (!_fileSystem.Storage.DeleteContainer(
+                InMemoryLocation.New(_fileSystem, path), recursive))
             {
                 throw ExceptionFactory.DirectoryNotFound(
                     _fileSystem.Path.GetFullPath(path));
@@ -201,7 +209,10 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectory.Exists(string)" />
         public bool Exists([NotNullWhen(true)] string? path)
-            => _fileSystem.Storage.Exists(path);
+        {
+            return DirectoryInfoMock.New(InMemoryLocation.New(_fileSystem, path), _fileSystem)
+              ?.Exists ?? false;
+        }
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetCreationTime(string)" />
         public DateTime GetCreationTime(string path)
