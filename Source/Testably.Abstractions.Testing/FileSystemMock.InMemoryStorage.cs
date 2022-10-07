@@ -17,11 +17,6 @@ public sealed partial class FileSystemMock
         private readonly ConcurrentDictionary<InMemoryLocation, IStorageContainer>
             _containers = new();
 
-        private readonly ConcurrentDictionary<string, FileSystemInfoMock> _files = new(
-            RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
-                ? StringComparer.Ordinal
-                : StringComparer.OrdinalIgnoreCase);
-
         private readonly ConcurrentDictionary<string, DriveInfoMock> _drives =
             new(StringComparer.OrdinalIgnoreCase);
 
@@ -36,97 +31,15 @@ public sealed partial class FileSystemMock
 
         #region IStorage Members
 
-        /// <inheritdoc cref="FileSystemMock.IStorage.CurrentDirectory" />
         public string CurrentDirectory { get; set; } = string.Empty.PrefixRoot();
+        
 
-        /// <inheritdoc cref="FileSystemMock.IStorage.Delete(string, bool)" />
-        public bool Delete(string path, bool recursive = false)
-        {
-            string key = _fileSystem.Path.GetFullPath(path)
-               .NormalizeAndTrimPath(_fileSystem);
-            if (!_files.TryGetValue(key, out FileSystemInfoMock? fileSystemInfo))
-            {
-                return false;
-            }
-
-            if (fileSystemInfo is IFileSystem.IDirectoryInfo)
-            {
-                string start = key + _fileSystem.Path.DirectorySeparatorChar;
-                if (recursive)
-                {
-                    foreach (KeyValuePair<string, FileSystemInfoMock> file in
-                        _files.Where(x
-                            => x.Key.StartsWith(start)))
-                    {
-                        _files.TryRemove(file.Key, out _);
-                    }
-                }
-                else if (_files.Any(x => x.Key.StartsWith(start)))
-                {
-                    throw ExceptionFactory.DirectoryNotEmpty(
-                        _fileSystem.Path.GetFullPath(path));
-                }
-            }
-            else if (fileSystemInfo is IFileInfoMock fileInfoMock)
-            {
-                fileInfoMock.ClearBytes();
-            }
-
-            return _files.TryRemove(key, out _);
-        }
-
-        /// <inheritdoc
-        ///     cref="FileSystemMock.IStorage.Enumerate{TFileSystemInfo}(string, string, EnumerationOptions, Func{Exception})" />
-        public IEnumerable<TFileSystemInfo> Enumerate<TFileSystemInfo>(string path,
-                                                                       string expression,
-                                                                       EnumerationOptions enumerationOptions,
-                                                                       Func<Exception> notFoundException)
-            where TFileSystemInfo : IFileSystem.IFileSystemInfo
-        {
-            ValidateExpression(expression);
-            string key = _fileSystem.Path.GetFullPath(path)
-               .NormalizeAndTrimPath(_fileSystem);
-            if (!_files.ContainsKey(key))
-            {
-                throw notFoundException();
-            }
-
-            foreach (FileSystemInfoMock file in _files
-               .Where(x => x.Key.StartsWith(key) && x.Key != key)
-               .Select(x => x.Value))
-            {
-                if (file is TFileSystemInfo matchingType)
-                {
-                    string? parentPath =
-                        _fileSystem.Path.GetDirectoryName(
-                            file.FullName.TrimEnd(_fileSystem.Path
-                               .DirectorySeparatorChar));
-                    if (!enumerationOptions.RecurseSubdirectories && parentPath != key)
-                    {
-                        continue;
-                    }
-
-                    if (!EnumerationOptionsHelper.MatchesPattern(enumerationOptions,
-                        matchingType.Name, expression))
-                    {
-                        continue;
-                    }
-
-                    yield return matchingType;
-                }
-            }
-        }
-
-        /// <inheritdoc
-        ///     cref="FileSystemMock.IStorage.Enumerate{TFileSystemInfo}(string, string, EnumerationOptions, Func{Exception})" />
-        public IEnumerable<TFileSystemInfo> Enumerate<TFileSystemInfo>(
+        public IEnumerable<InMemoryLocation> EnumerateLocations(
             InMemoryLocation location,
             InMemoryContainer.ContainerType type,
             string expression,
             EnumerationOptions enumerationOptions,
-            Func<Exception> notFoundException,
-            Func<InMemoryLocation?, FileSystemMock, TFileSystemInfo?> factory)
-            where TFileSystemInfo : IFileSystem.IFileSystemInfo
+            Func<Exception> notFoundException)
         {
             ValidateExpression(expression);
             if (!_containers.ContainsKey(location))
@@ -134,13 +47,13 @@ public sealed partial class FileSystemMock
                 throw notFoundException();
             }
 
-            foreach (KeyValuePair<InMemoryLocation, IStorageContainer> file in _containers
+            foreach (KeyValuePair<InMemoryLocation, IStorageContainer> item in _containers
                .Where(x => x.Key.FullPath.StartsWith(location.FullPath) &&
                            !x.Key.Equals(location)))
             {
                 string? parentPath =
                     _fileSystem.Path.GetDirectoryName(
-                        file.Key.FullPath.TrimEnd(_fileSystem.Path
+                        item.Key.FullPath.TrimEnd(_fileSystem.Path
                            .DirectorySeparatorChar));
                 if (!enumerationOptions.RecurseSubdirectories &&
                     parentPath != location.FullPath)
@@ -149,97 +62,76 @@ public sealed partial class FileSystemMock
                 }
 
                 if (!EnumerationOptionsHelper.MatchesPattern(enumerationOptions,
-                    _fileSystem.Path.GetFileName(file.Key.FullPath), expression))
+                    _fileSystem.Path.GetFileName(item.Key.FullPath), expression))
                 {
                     continue;
                 }
 
-                if (file.Value.Type == type ||
-                    type == InMemoryContainer.ContainerType.Unknown)
+                if (type.HasFlag(item.Value.Type))
                 {
-                    var result = factory.Invoke(file.Key, _fileSystem);
-                    if (result != null)
-                    {
-                        yield return result;
-                    }
+                    yield return item.Key;
                 }
             }
         }
 
-        /// <inheritdoc cref="FileSystemMock.IStorage.Exists(string?)" />
-        public bool Exists([NotNullWhen(true)] string? path)
+#if FEATURE_FILESYSTEM_LINK
+        public InMemoryLocation? ResolveLinkTarget(InMemoryLocation location,
+                                                   bool returnFinalTarget = false)
         {
-            if (path == null)
+            if (_containers.TryGetValue(location,
+                    out IStorageContainer? initialContainer) &&
+                initialContainer.LinkTarget != null)
             {
-                return false;
-            }
-
-            return _files.ContainsKey(_fileSystem.Path.GetFullPath(path)
-               .NormalizeAndTrimPath(_fileSystem));
-        }
-
-        /// <inheritdoc cref="FileSystemMock.IStorage.GetDirectory(string)" />
-        public IDirectoryInfoMock? GetDirectory(string path)
-        {
-            if (_files.TryGetValue(
-                _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
-                out FileSystemInfoMock? fileInfo))
-            {
-                return fileInfo as IDirectoryInfoMock;
-            }
-
-            return null;
-        }
-
-        /// <inheritdoc cref="FileSystemMock.IStorage.GetFileSystemInfo(string)" />
-        public IFileSystemInfoMock? GetFileSystemInfo(string path)
-        {
-            if (_files.TryGetValue(
-                _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
-                out FileSystemInfoMock? fileInfo))
-            {
-                return fileInfo as IFileSystemInfoMock;
-            }
-
-            return null;
-        }
-
-        /// <inheritdoc cref="FileSystemMock.IStorage.TryAddFile(string, out FileSystemMock.IStorage.IFileInfoMock?)" />
-        public bool TryAddFile(string path,
-                               [NotNullWhen(true)] out IFileInfoMock? createdFile)
-        {
-            ChangeDescription? fileSystemChange = null;
-
-            InMemoryLocation location = InMemoryLocation.New(_fileSystem, path);
-            _containers.GetOrAdd(
-                location,
-                InMemoryContainer.NewFile(location, _fileSystem));
-
-            createdFile = _files.GetOrAdd(
-                _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
-                _ =>
+                InMemoryLocation nextLocation =
+                    InMemoryLocation.New(_fileSystem, initialContainer.LinkTarget);
+                if (_containers.TryGetValue(nextLocation,
+                    out IStorageContainer? container))
                 {
-                    FileSystemInfoMock fileMock = CreateFileInternal(path);
-                    IDisposable access =
-                        fileMock.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
-                    fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
-                        fileMock.FullName,
-                        ChangeTypes.FileCreated,
-                        NotifyFilters.CreationTime);
-                    access.Dispose();
-                    return fileMock;
-                }) as IFileInfoMock;
-            if (fileSystemChange != null && createdFile != null)
-            {
-                _fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
-                return true;
+                    if (returnFinalTarget)
+                    {
+                        int maxResolveLinks =
+                            RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                                ? 63
+                                : 40;
+                        for (int i = 1; i < maxResolveLinks; i++)
+                        {
+                            if (container.LinkTarget != null)
+                            {
+                                nextLocation = InMemoryLocation.New(_fileSystem,
+                                    container.LinkTarget);
+                                if (!_containers.TryGetValue(nextLocation,
+                                    out IStorageContainer? nextContainer))
+                                {
+                                    return nextLocation;
+                                }
+
+                                container = nextContainer;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        if (container.LinkTarget != null)
+                        {
+                            throw ExceptionFactory.FileNameCannotBeResolved(
+                                location.FullPath);
+                        }
+
+                        ;
+                    }
+
+                    return nextLocation;
+                }
+
+                return nextLocation;
             }
 
-            createdFile = null;
-            return false;
+            return null;
         }
+#endif
 
-        /// <inheritdoc cref="FileSystemMock.IStorage.GetDrive(string)" />
         public IDriveInfoMock? GetDrive(string? driveName)
         {
             if (string.IsNullOrEmpty(driveName))
@@ -256,88 +148,15 @@ public sealed partial class FileSystemMock
             return null;
         }
 
-        /// <inheritdoc cref="FileSystemMock.IStorage.GetOrAddDrive(string)" />
         public IDriveInfoMock GetOrAddDrive(string driveName)
         {
             DriveInfoMock drive = new(driveName, _fileSystem);
             return _drives.GetOrAdd(drive.Name, _ => drive);
         }
 
-        /// <inheritdoc cref="FileSystemMock.IStorage.GetDrives()" />
         public IEnumerable<IDriveInfoMock> GetDrives()
             => _drives.Values;
-
-        /// <inheritdoc cref="FileSystemMock.IStorage.GetFile(string)" />
-        public IFileInfoMock? GetFile(string path)
-        {
-            if (_files.TryGetValue(
-                _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
-                out FileSystemInfoMock? fileInfo))
-            {
-                return fileInfo as IFileInfoMock;
-            }
-
-            return null;
-        }
-
-        /// <inheritdoc cref="FileSystemMock.IStorage.GetOrAddDirectory(string)" />
-        public IDirectoryInfoMock? GetOrAddDirectory(string path)
-        {
-            ChangeDescription? fileSystemChange = null;
-
-            InMemoryLocation location = InMemoryLocation.New(_fileSystem, path);
-            _containers.GetOrAdd(
-                location,
-                InMemoryContainer.NewDirectory(location, _fileSystem));
-
-            IDirectoryInfoMock? directory = _files.GetOrAdd(
-                _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
-                _ =>
-                {
-                    FileSystemInfoMock directoryMock = CreateDirectoryInternal(path);
-                    IDisposable access =
-                        directoryMock.RequestAccess(FileAccess.Write,
-                            FileShare.ReadWrite);
-                    fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
-                        directoryMock.FullName,
-                        ChangeTypes.DirectoryCreated,
-                        NotifyFilters.CreationTime);
-                    access.Dispose();
-                    return directoryMock;
-                }) as IDirectoryInfoMock;
-            _fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
-            return directory;
-        }
-
-        /// <inheritdoc cref="FileSystemMock.IStorage.GetOrAddFile(string)" />
-        public IFileInfoMock? GetOrAddFile(string path)
-        {
-            ChangeDescription? fileSystemChange = null;
-
-            InMemoryLocation location = InMemoryLocation.New(_fileSystem, path);
-            _containers.GetOrAdd(
-                location,
-                InMemoryContainer.NewFile(location, _fileSystem));
-
-            IFileInfoMock? file = _files.GetOrAdd(
-                _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
-                _ =>
-                {
-                    FileSystemInfoMock fileMock = CreateFileInternal(path);
-                    IDisposable access =
-                        fileMock.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
-                    fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
-                        fileMock.FullName,
-                        ChangeTypes.FileCreated,
-                        NotifyFilters.CreationTime);
-                    access.Dispose();
-                    return fileMock;
-                }) as IFileInfoMock;
-            _fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
-            return file;
-        }
-
-        /// <inheritdoc cref="FileSystemMock.IStorage.GetSubdirectoryPath(string, string)" />
+        
         public string GetSubdirectoryPath(string fullFilePath, string givenPath)
         {
             if (_fileSystem.Path.IsPathRooted(givenPath))
@@ -355,67 +174,6 @@ public sealed partial class FileSystemMock
 
         #endregion
 
-        private FileSystemInfoMock CreateDirectoryInternal(string path)
-        {
-            List<string> parents = new();
-            string? parent = _fileSystem.Path.GetDirectoryName(
-                path.TrimEnd(_fileSystem.Path.DirectorySeparatorChar,
-                    _fileSystem.Path.AltDirectorySeparatorChar));
-            while (!string.IsNullOrEmpty(parent))
-            {
-                parents.Add(parent);
-                parent = _fileSystem.Path.GetDirectoryName(parent);
-            }
-
-            parents.Reverse();
-            IStorageContainer.TimeAdjustments timeAdjustments =
-                IStorageContainer.TimeAdjustments.LastWriteTime;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                timeAdjustments |= IStorageContainer.TimeAdjustments.LastAccessTime;
-            }
-
-            List<IDisposable> requests = new();
-            foreach (string? parentPath in parents)
-            {
-                string key = _fileSystem.Path.GetFullPath(parentPath)
-                   .NormalizeAndTrimPath(_fileSystem);
-                ChangeDescription? fileSystemChange = null;
-                FileSystemInfoMock directory = _files.AddOrUpdate(
-                    key,
-                    _ =>
-                    {
-                        fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
-                            parentPath,
-                            ChangeTypes.DirectoryCreated,
-                            NotifyFilters.CreationTime);
-                        return DirectoryInfoMock.New(
-                            InMemoryLocation.New(_fileSystem, parentPath), _fileSystem);
-                    },
-                    (_, fileSystemInfo) =>
-                        fileSystemInfo.AdjustTimes(timeAdjustments));
-                _fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
-                requests.Add(directory.RequestAccess(FileAccess.Write,
-                    FileShare.ReadWrite));
-            }
-
-            foreach (IDisposable request in requests)
-            {
-                request.Dispose();
-            }
-
-            if (Framework.IsNetFramework)
-            {
-                return DirectoryInfoMock.New(
-                    InMemoryLocation.New(_fileSystem, path,
-                        _fileSystem.Path.GetFileName(path)),
-                    _fileSystem);
-            }
-
-            return DirectoryInfoMock.New(InMemoryLocation.New(_fileSystem, path),
-                _fileSystem);
-        }
-
         private FileSystemInfoMock CreateFileInternal(string path)
         {
             return FileInfoMock.New(InMemoryLocation.New(_fileSystem, path), _fileSystem);
@@ -429,8 +187,14 @@ public sealed partial class FileSystemMock
             }
         }
 
-        public IStorageContainer GetContainer(InMemoryLocation location)
+        [return: NotNullIfNotNull("location")]
+        public IStorageContainer? GetContainer(InMemoryLocation? location)
         {
+            if (location == null)
+            {
+                return null;
+            }
+
             if (_containers.TryGetValue(location, out IStorageContainer? container))
             {
                 return container;
@@ -504,12 +268,10 @@ public sealed partial class FileSystemMock
             {
                 foreach (string? parentPath in parents)
                 {
-                    string key = fileSystem.Path.GetFullPath(parentPath)
-                       .NormalizeAndTrimPath(fileSystem);
                     ChangeDescription? fileSystemChange = null;
                     InMemoryLocation parentLocation =
                         InMemoryLocation.New(_fileSystem, parentPath);
-                    IStorageContainer parentContainer = _containers.GetOrAdd(
+                    IStorageContainer parentContainer = _containers.AddOrUpdate(
                         parentLocation,
                         loc =>
                         {
@@ -524,6 +286,11 @@ public sealed partial class FileSystemMock
                                     ChangeTypes.DirectoryCreated,
                                     NotifyFilters.CreationTime);
                             return container;
+                        },
+                        (_, f) =>
+                        {
+                            f.AdjustTimes(timeAdjustments);
+                            return f;
                         });
                     fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
                 }
@@ -546,10 +313,10 @@ public sealed partial class FileSystemMock
 
             if (container.Type == InMemoryContainer.ContainerType.Directory)
             {
+                string start = location.FullPath +
+                               _fileSystem.Path.DirectorySeparatorChar;
                 if (recursive)
                 {
-                    string start = location.FullPath +
-                                   _fileSystem.Path.DirectorySeparatorChar;
                     foreach (InMemoryLocation key in _containers.Keys.Where(x
                         => x.FullPath.StartsWith(start)))
                     {
@@ -560,6 +327,10 @@ public sealed partial class FileSystemMock
                         }
                     }
                 }
+                else if (_containers.Keys.Any(x => x.FullPath.StartsWith(start)))
+                {
+                    throw ExceptionFactory.DirectoryNotEmpty(location.FullPath);
+                }
             }
 
             if (_containers.TryRemove(location, out IStorageContainer? removed))
@@ -568,6 +339,39 @@ public sealed partial class FileSystemMock
                 return true;
             }
 
+            return false;
+        }
+
+        public bool TryAddContainer(InMemoryLocation location,
+                                    InMemoryContainer.ContainerType containerType,
+                                    [NotNullWhen(true)] out IStorageContainer? container)
+        {
+            ChangeDescription? fileSystemChange = null;
+
+            container = _containers.GetOrAdd(
+                location,
+                _ =>
+                {
+                    IStorageContainer container = InMemoryContainer.New(
+                        containerType,
+                        location, _fileSystem);
+                    IDisposable access =
+                        container.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
+                    fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
+                        location.FullPath,
+                        ChangeTypes.FileCreated,
+                        NotifyFilters.CreationTime);
+                    access.Dispose();
+                    return container;
+                });
+
+            if (fileSystemChange != null)
+            {
+                _fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
+                return true;
+            }
+
+            container = null;
             return false;
         }
     }

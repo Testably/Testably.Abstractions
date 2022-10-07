@@ -27,6 +27,8 @@ public class FileSystemMockNotificationTests
         CreateDirectory_WithParentDirectories_ShouldTriggerNotificationForEachDirectory(
             string path1, string path2, string path3)
     {
+        FileSystem.Initialize();
+
         string path = FileSystem.Path.Combine(path1, path2, path3);
         int eventCount = 0;
         FileSystem.Notify
@@ -64,7 +66,7 @@ public class FileSystemMockNotificationTests
             {
                 callback.Invoke(FileSystem, path);
             })
-           .Wait();
+           .Wait(timeout: 30000);
 
         receivedPath.Should().Be(FileSystem.Path.GetFullPath(path));
     }
@@ -76,14 +78,14 @@ public class FileSystemMockNotificationTests
         yield return new object?[]
         {
             null,
-            new Action<IFileSystem, string>((f, p) => f.Directory.CreateDirectory(p)),
-            FileSystemMock.ChangeTypes.DirectoryCreated, $"path_{Guid.NewGuid()}"
+            new Action<IFileSystem, string>((f, p) => f.File.WriteAllText(p, null)),
+            FileSystemMock.ChangeTypes.FileCreated, $"path_{Guid.NewGuid()}"
         };
         yield return new object?[]
         {
             null,
-            new Action<IFileSystem, string>((f, p) => f.File.WriteAllText(p, null)),
-            FileSystemMock.ChangeTypes.FileCreated, $"path_{Guid.NewGuid()}"
+            new Action<IFileSystem, string>((f, p) => f.Directory.CreateDirectory(p)),
+            FileSystemMock.ChangeTypes.DirectoryCreated, $"path_{Guid.NewGuid()}"
         };
     }
 

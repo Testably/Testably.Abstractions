@@ -223,7 +223,9 @@ public sealed partial class FileSystemMock
         {
             get
             {
-                _exists ??= FileSystem.Storage.Exists(FullName);
+                _exists ??=
+                    FileSystem.Storage.GetContainer(
+                        InMemoryLocation.New(FileSystem, FullName)) is not NullContainer;
                 return _exists.Value;
             }
         }
@@ -231,7 +233,7 @@ public sealed partial class FileSystemMock
         private bool? _exists;
 
         [return: NotNullIfNotNull("location")]
-        internal static FileInfoMock? New(InMemoryLocation? location, FileSystemMock fileSystem)
+        internal static new FileInfoMock? New(InMemoryLocation? location, FileSystemMock fileSystem)
         {
             if (location == null)
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
@@ -116,12 +117,9 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreateAsSymbolicLink(string)" />
         public void CreateAsSymbolicLink(string pathToTarget)
         {
-            if (FileSystem.Storage.TryAddFile(FullName,
-                out IStorage.IFileInfoMock? createdFile))
+            if (FileSystem.Storage.TryAddContainer(Location, InMemoryContainer.ContainerType.File, out var container))
             {
-                createdFile.SetLinkTarget(pathToTarget);
-                LinkTarget = pathToTarget;
-                Attributes |= FileAttributes.ReparsePoint;
+                container.LinkTarget = pathToTarget;
             }
             else
             {
@@ -138,6 +136,7 @@ public sealed partial class FileSystemMock
             // The DirectoryInfo is not updated in .NET Framework!
             _exists = null;
 #endif
+            _isInitialized = false;
         }
         private bool _isInitialized;
 
@@ -168,42 +167,20 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.ResolveLinkTarget(bool)" />
         public IFileSystem.IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget)
         {
-            IStorage.IFileSystemInfoMock? self =
-                FileSystem.Storage.GetFileSystemInfo(FullName);
-            if (returnFinalTarget)
+            try
             {
-                IFileSystem.IFileSystemInfo? linkTarget = self;
-                int maxResolveLinks = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-                    ? 63
-                    : 40;
-                for (int i = 0; i < maxResolveLinks; i++)
+                var targetLocation = FileSystem.Storage.ResolveLinkTarget(InMemoryLocation.New(FileSystem, FullName), returnFinalTarget);
+                if (targetLocation != null)
                 {
-                    IFileSystem.IFileSystemInfo? nextLink =
-                        linkTarget?.ResolveLinkTarget(false);
-
-                    if (nextLink == null)
-                    {
-                        return linkTarget;
-                    }
-
-                    linkTarget = nextLink;
+                    return FileSystemInfoMock.New(targetLocation, FileSystem);
                 }
 
-                if (linkTarget?.LinkTarget != null)
-                {
-                    throw ExceptionFactory.FileNameCannotBeResolved(FullName);
-                }
-
-                return linkTarget;
+                return null;
             }
-
-            if (self?.LinkTarget != null)
+            catch (IOException)
             {
-                return FileSystem.FileInfo.New(self.LinkTarget) as
-                    IStorage.IFileSystemInfoMock;
+                throw ExceptionFactory.FileNameCannotBeResolved(FullName);
             }
-
-            return null;
         }
 #endif
 
@@ -263,6 +240,16 @@ public sealed partial class FileSystemMock
             }
 
             return notifyFilters > 0;
+        }
+
+        [return: NotNullIfNotNull("location")]
+        internal static FileSystemInfoMock? New(InMemoryLocation? location, FileSystemMock fileSystem)
+        {
+            if (location == null)
+            {
+                return null;
+            }
+            return new FileSystemInfoMock(fileSystem, location);
         }
     }
 }

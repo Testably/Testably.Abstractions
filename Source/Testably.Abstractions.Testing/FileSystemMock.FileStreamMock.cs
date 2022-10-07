@@ -22,7 +22,7 @@ public sealed partial class FileSystemMock
 
         private readonly FileAccess _access;
         private readonly IDisposable _accessLock;
-        private readonly IStorage.IFileInfoMock _file;
+        private readonly IStorageContainer _file;
         private readonly FileSystemMock _fileSystem;
         private bool _isDisposed;
         private readonly FileMode _mode;
@@ -63,9 +63,9 @@ public sealed partial class FileSystemMock
             _ = bufferSize;
             _options = options;
 
-            IStorage.IFileInfoMock? file =
-                _fileSystem.Storage.GetFile(Name);
-            if (file == null)
+            var location = InMemoryLocation.New(_fileSystem, Name);
+            var file = _fileSystem.Storage.GetContainer(location);
+            if (file is NullContainer)
             {
                 if (_mode.Equals(FileMode.Open) ||
                     _mode.Equals(FileMode.Truncate))
@@ -74,7 +74,7 @@ public sealed partial class FileSystemMock
                         _fileSystem.Path.GetFullPath(Name));
                 }
 
-                file = _fileSystem.Storage.GetOrAddFile(Name);
+                file = _fileSystem.Storage.GetOrCreateContainer(location, InMemoryContainer.NewFile);
                 if (file == null)
                 {
                     if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -174,7 +174,7 @@ public sealed partial class FileSystemMock
         {
             if (_options.HasFlag(FileOptions.DeleteOnClose))
             {
-                _fileSystem.Storage.Delete(Name);
+                _fileSystem.Storage.DeleteContainer(InMemoryLocation.New(_fileSystem, Name));
             }
         }
 

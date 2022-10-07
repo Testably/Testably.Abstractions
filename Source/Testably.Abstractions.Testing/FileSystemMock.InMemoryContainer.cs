@@ -18,14 +18,13 @@ public sealed partial class FileSystemMock
 
         private byte[] _bytes = Array.Empty<byte>();
 
-
         private readonly ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
         private readonly FileSystemMock _fileSystem;
         private DateTime _creationTime;
         private DateTime _lastAccessTime;
         private DateTime _lastWriteTime;
         private FileAttributes _attributes;
-        internal bool _isEncrypted = false;
+        internal bool _isEncrypted;
         private readonly InMemoryLocation _location;
 
         public InMemoryContainer(ContainerType type,
@@ -190,6 +189,13 @@ public sealed partial class FileSystemMock
             return new InMemoryContainer(ContainerType.Directory, location, fileSystem);
         }
 
+        public static IStorageContainer New(ContainerType type,
+                                            InMemoryLocation location,
+                                            FileSystemMock fileSystem)
+        {
+            return new InMemoryContainer(type, location, fileSystem);
+        }
+
         public static IStorageContainer NewFile(InMemoryLocation location,
                                                 FileSystemMock fileSystem)
         {
@@ -204,6 +210,36 @@ public sealed partial class FileSystemMock
         {
             _location.Drive?.ChangeUsedBytes(bytes.Length - _bytes.Length);
             _bytes = bytes;
+        }
+
+        /// <inheritdoc />
+        public void Encrypt()
+        {
+            if (_isEncrypted)
+            {
+                return;
+            }
+
+            using (RequestAccess(FileAccess.Write, FileShare.Read))
+            {
+                _isEncrypted = true;
+                WriteBytes(EncryptionHelper.Encrypt(GetBytes()));
+            }
+        }
+
+        /// <inheritdoc />
+        public void Decrypt()
+        {
+            if (!_isEncrypted)
+            {
+                return;
+            }
+
+            using (RequestAccess(FileAccess.Write, FileShare.Read))
+            {
+                _isEncrypted = false;
+                WriteBytes(EncryptionHelper.Decrypt(GetBytes()));
+            }
         }
 
         private bool CanGetAccess(FileAccess access, FileShare share)
@@ -236,8 +272,9 @@ public sealed partial class FileSystemMock
             return time.ToUniversalTime();
         }
 
-        private static bool HasNotifyFilters(IStorageContainer.TimeAdjustments timeAdjustments,
-                                             out NotifyFilters notifyFilters)
+        private static bool HasNotifyFilters(
+            IStorageContainer.TimeAdjustments timeAdjustments,
+            out NotifyFilters notifyFilters)
         {
             notifyFilters = 0;
             if (timeAdjustments.HasFlag(IStorageContainer.TimeAdjustments.CreationTime))
@@ -263,11 +300,13 @@ public sealed partial class FileSystemMock
             _fileHandles.TryRemove(guid, out _);
         }
 
+        [Flags]
         public enum ContainerType
         {
-            Directory,
-            File,
-            Unknown
+            Directory = 1,
+            File = 2,
+            Unknown = 4,
+            DirectoryOrFile = Directory | File
         }
 
         private sealed class FileHandle : IStorageAccessHandle
@@ -330,8 +369,8 @@ public sealed partial class FileSystemMock
                 }
             }
         }
-
     }
+
     internal sealed class NullContainer : IStorageContainer
     {
         /// <summary>
@@ -341,7 +380,7 @@ public sealed partial class FileSystemMock
         ///     since 12:00 A.M. January 1, 1601 Coordinated Universal Time (UTC).
         /// </summary>
         private static readonly DateTime NullTime =
-            new DateTime(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc);
+            new(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc);
 
         public static IStorageContainer Instance => new NullContainer();
 
@@ -410,6 +449,14 @@ public sealed partial class FileSystemMock
         public void WriteBytes(byte[] bytes)
             => throw new NotImplementedException();
 
+        /// <inheritdoc />
+        public void Encrypt()
+            => throw new NotImplementedException();
+
+        /// <inheritdoc />
+        public void Decrypt()
+            => throw new NotImplementedException();
+
         private sealed class NullStorageAccessHandle : IStorageAccessHandle
         {
             /// <inheritdoc />
@@ -418,5 +465,4 @@ public sealed partial class FileSystemMock
             }
         }
     }
-
 }

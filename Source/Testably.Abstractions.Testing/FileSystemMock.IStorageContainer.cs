@@ -76,5 +76,9 @@ public sealed partial class FileSystemMock
             /// </summary>
             All = CreationTime | LastAccessTime | LastWriteTime,
         }
+
+        void Encrypt();
+
+        void Decrypt();
     }
 }

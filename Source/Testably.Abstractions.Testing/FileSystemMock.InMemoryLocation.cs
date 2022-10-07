@@ -12,6 +12,11 @@ public sealed partial class FileSystemMock
     {
         private readonly FileSystemMock? _fileSystem;
 
+        private static readonly StringComparison StringComparisonMode =
+            RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+                ? StringComparison.Ordinal
+                : StringComparison.OrdinalIgnoreCase;
+
         /// <summary>
         ///     The friendly name from the location of the file or directory.
         /// </summary>
@@ -122,10 +127,7 @@ public sealed partial class FileSystemMock
                 return true;
             }
 
-            return _key.Equals(other._key,
-                RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
-                    ? StringComparison.Ordinal
-                    : StringComparison.OrdinalIgnoreCase);
+            return _key.Equals(other._key, StringComparisonMode);
         }
 
         /// <inheritdoc cref="object.Equals(object?)" />
@@ -135,6 +137,10 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="object.GetHashCode()" />
         public override int GetHashCode()
-            => _key.GetHashCode();
+#if NETSTANDARD2_0
+            => _key.ToLowerInvariant().GetHashCode();
+#else
+            => _key.GetHashCode(StringComparisonMode);
+#endif
     }
 }

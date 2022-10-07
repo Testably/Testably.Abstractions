@@ -16,7 +16,7 @@ public sealed partial class FileSystemMock
         IStorage.IDirectoryInfoMock
     {
         private DirectoryInfoMock(InMemoryLocation location,
-                                   FileSystemMock fileSystem)
+                                  FileSystemMock fileSystem)
             : base(fileSystem, location)
         {
         }
@@ -29,13 +29,14 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Root" />
         public IFileSystem.IDirectoryInfo Root
-            => New(InMemoryLocation.New(FileSystem, string.Empty.PrefixRoot()), FileSystem);
+            => New(InMemoryLocation.New(FileSystem, string.Empty.PrefixRoot()),
+                FileSystem);
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Create()" />
         public void Create()
         {
             FullName.ThrowCommonExceptionsIfPathIsInvalid(FileSystem);
-            
+
             Container = FileSystem.Storage.GetOrCreateContainer(
                 Location, InMemoryContainer.NewDirectory);
             Refresh();
@@ -49,7 +50,11 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Delete(bool)" />
         public void Delete(bool recursive)
         {
-            FileSystem.Storage.Delete(FullName, recursive);
+            if (!FileSystem.Storage.DeleteContainer(
+                InMemoryLocation.New(FileSystem, FullName), recursive))
+            {
+                throw ExceptionFactory.DirectoryNotFound(FullName);
+            }
             Refresh();
         }
 
@@ -65,24 +70,26 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories(string, SearchOption)" />
         public IEnumerable<IFileSystem.IDirectoryInfo> EnumerateDirectories(
             string searchPattern, SearchOption searchOption)
-            => FileSystem.Storage.Enumerate(
-                InMemoryLocation.New(FileSystem, FullName),
-                InMemoryContainer.ContainerType.Directory,
-                searchPattern,
-                EnumerationOptionsHelper.FromSearchOption(searchOption),
-                DirectoryNotFoundException(FullName),
-                DirectoryInfoMock.New);
+            => FileSystem.Storage.EnumerateLocations(
+                    InMemoryLocation.New(FileSystem, FullName),
+                    InMemoryContainer.ContainerType.Directory,
+                    searchPattern,
+                    EnumerationOptionsHelper.FromSearchOption(searchOption),
+                    DirectoryNotFoundException(FullName))
+               .Select(l => DirectoryInfoMock.New(l, FileSystem));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories(string, EnumerationOptions)" />
         public IEnumerable<IFileSystem.IDirectoryInfo> EnumerateDirectories(
             string searchPattern,
             EnumerationOptions enumerationOptions)
-            => FileSystem.Storage.Enumerate<IFileSystem.IDirectoryInfo>(
-                FullName,
-                searchPattern,
-                enumerationOptions,
-                DirectoryNotFoundException(FullName));
+            => FileSystem.Storage.EnumerateLocations(
+                    InMemoryLocation.New(FileSystem, FullName),
+                    InMemoryContainer.ContainerType.Directory,
+                    searchPattern,
+                    enumerationOptions,
+                    DirectoryNotFoundException(FullName))
+               .Select(l => DirectoryInfoMock.New(l, FileSystem));
 #endif
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateFiles()" />
@@ -96,23 +103,25 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateFiles(string, SearchOption)" />
         public IEnumerable<IFileSystem.IFileInfo> EnumerateFiles(
             string searchPattern, SearchOption searchOption)
-            => FileSystem.Storage.Enumerate(
-                InMemoryLocation.New(FileSystem, FullName),
-                InMemoryContainer.ContainerType.File,
-                searchPattern,
-                EnumerationOptionsHelper.FromSearchOption(searchOption),
-                DirectoryNotFoundException(FullName),
-                FileInfoMock.New);
+            => FileSystem.Storage.EnumerateLocations(
+                    InMemoryLocation.New(FileSystem, FullName),
+                    InMemoryContainer.ContainerType.File,
+                    searchPattern,
+                    EnumerationOptionsHelper.FromSearchOption(searchOption),
+                    DirectoryNotFoundException(FullName))
+               .Select(l => FileInfoMock.New(l, FileSystem));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateFiles(string, EnumerationOptions)" />
         public IEnumerable<IFileSystem.IFileInfo> EnumerateFiles(
             string searchPattern, EnumerationOptions enumerationOptions)
-            => FileSystem.Storage.Enumerate<IFileSystem.IFileInfo>(
-                FullName,
-                searchPattern,
-                enumerationOptions,
-                DirectoryNotFoundException(FullName));
+            => FileSystem.Storage.EnumerateLocations(
+                    InMemoryLocation.New(FileSystem, FullName),
+                    InMemoryContainer.ContainerType.File,
+                    searchPattern,
+                    enumerationOptions,
+                    DirectoryNotFoundException(FullName))
+               .Select(l => FileInfoMock.New(l, FileSystem));
 #endif
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateFileSystemInfos()" />
@@ -127,22 +136,26 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateFileSystemInfos(string, SearchOption)" />
         public IEnumerable<IFileSystem.IFileSystemInfo> EnumerateFileSystemInfos(
             string searchPattern, SearchOption searchOption)
-            => FileSystem.Storage.Enumerate<IFileSystem.IFileSystemInfo>(
-                FullName,
-                searchPattern,
-                EnumerationOptionsHelper.FromSearchOption(searchOption),
-                DirectoryNotFoundException(FullName));
+            => FileSystem.Storage.EnumerateLocations(
+                    InMemoryLocation.New(FileSystem, FullName),
+                    InMemoryContainer.ContainerType.DirectoryOrFile,
+                    searchPattern,
+                    EnumerationOptionsHelper.FromSearchOption(searchOption),
+                    DirectoryNotFoundException(FullName))
+               .Select(l => FileSystemInfoMock.New(l, FileSystem));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateFileSystemInfos(string, EnumerationOptions)" />
         public IEnumerable<IFileSystem.IFileSystemInfo> EnumerateFileSystemInfos(
             string searchPattern,
             EnumerationOptions enumerationOptions)
-            => FileSystem.Storage.Enumerate<IFileSystem.IFileSystemInfo>(
-                FullName,
-                searchPattern,
-                enumerationOptions,
-                DirectoryNotFoundException(FullName));
+            => FileSystem.Storage.EnumerateLocations(
+                    InMemoryLocation.New(FileSystem, FullName),
+                    InMemoryContainer.ContainerType.DirectoryOrFile,
+                    searchPattern,
+                    enumerationOptions,
+                    DirectoryNotFoundException(FullName))
+               .Select(l => FileSystemInfoMock.New(l, FileSystem));
 #endif
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetDirectories()" />
@@ -212,14 +225,16 @@ public sealed partial class FileSystemMock
             => throw new NotImplementedException();
 
         #endregion
-        
+
         [return: NotNullIfNotNull("location")]
-        internal static DirectoryInfoMock? New(InMemoryLocation? location, FileSystemMock fileSystem)
+        internal static new DirectoryInfoMock? New(InMemoryLocation? location,
+                                               FileSystemMock fileSystem)
         {
             if (location == null)
             {
                 return null;
             }
+
             return new DirectoryInfoMock(location, fileSystem);
         }
 
