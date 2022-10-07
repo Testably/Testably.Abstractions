@@ -12,13 +12,14 @@ public sealed partial class FileSystemMock
 {
     private class FileSystemInfoMock : IFileSystem.IFileSystemInfo
     {
+        private readonly InMemoryLocation _location;
         protected readonly FileSystemMock FileSystem;
         private DateTime _creationTime;
         private DateTime _lastAccessTime;
         private DateTime _lastWriteTime;
         private bool _isInitialized;
         protected IStorage.IFileSystemInfoMock? Container;
-        protected readonly string OriginalPath;
+        protected string OriginalPath => _location.FriendlyName;
         protected bool IsEncrypted;
 
         private readonly ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
@@ -26,29 +27,20 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     The <see cref="Drive" /> in which the <see cref="IFileSystem.IFileSystemInfo" /> is stored.
         /// </summary>
-        protected IDriveInfoMock? Drive { get; }
+        protected IDriveInfoMock? Drive => _location.Drive;
+
+        internal FileSystemInfoMock(InMemoryLocation location,
+                                    FileSystemMock fileSystem)
+        {
+            _location = location;
+            FileSystem = fileSystem;
+        }
 
         internal FileSystemInfoMock(string fullName, string originalPath,
                                     FileSystemMock fileSystem)
+        :this(InMemoryLocation.New(fileSystem, fullName, originalPath), fileSystem)
         {
-            FullName = fullName;
-            OriginalPath = originalPath.RemoveLeadingDot();
-            if (Framework.IsNetFramework)
-            {
-                OriginalPath = OriginalPath.TrimOnWindows();
-            }
-
-            FileSystem = fileSystem;
             AdjustTimes(TimeAdjustments.All);
-            if (string.IsNullOrEmpty(fullName))
-            {
-                Drive = FileSystem.Storage.GetDrives().First();
-            }
-            else
-            {
-                Drive = fileSystem.Storage.GetDrive(
-                    fileSystem.Path.GetPathRoot(fullName));
-            }
         }
 
         #region IFileSystemInfo Members
@@ -147,7 +139,7 @@ public sealed partial class FileSystemMock
             => FileSystem.Path.GetExtension(FullName);
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.FullName" />
-        public string FullName { get; }
+        public string FullName => _location.FullPath;
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastAccessTime" />
         public DateTime LastAccessTime

@@ -14,6 +14,9 @@ public sealed partial class FileSystemMock
 {
     private sealed class InMemoryStorage : IStorage
     {
+        private readonly ConcurrentDictionary<InMemoryLocation, InMemoryContainer>
+            _containers = new();
+
         private readonly ConcurrentDictionary<string, FileSystemInfoMock> _files = new(
             RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
                 ? StringComparer.Ordinal
@@ -96,7 +99,8 @@ public sealed partial class FileSystemMock
                 {
                     string? parentPath =
                         _fileSystem.Path.GetDirectoryName(
-                            file.FullName.TrimEnd(_fileSystem.Path.DirectorySeparatorChar));
+                            file.FullName.TrimEnd(_fileSystem.Path
+                               .DirectorySeparatorChar));
                     if (!enumerationOptions.RecurseSubdirectories && parentPath != key)
                     {
                         continue;
@@ -156,6 +160,12 @@ public sealed partial class FileSystemMock
                                [NotNullWhen(true)] out IFileInfoMock? createdFile)
         {
             ChangeDescription? fileSystemChange = null;
+
+            var location = InMemoryLocation.New(_fileSystem, path);
+            _containers.GetOrAdd(
+                location,
+                InMemoryContainer.NewFile(location, _fileSystem));
+
             createdFile = _files.GetOrAdd(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
                 _ =>
@@ -225,6 +235,12 @@ public sealed partial class FileSystemMock
         public IDirectoryInfoMock? GetOrAddDirectory(string path)
         {
             ChangeDescription? fileSystemChange = null;
+
+            var location = InMemoryLocation.New(_fileSystem, path);
+            _containers.GetOrAdd(
+                location,
+                InMemoryContainer.NewDirectory(location, _fileSystem));
+
             IDirectoryInfoMock? directory = _files.GetOrAdd(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
                 _ =>
@@ -248,6 +264,12 @@ public sealed partial class FileSystemMock
         public IFileInfoMock? GetOrAddFile(string path)
         {
             ChangeDescription? fileSystemChange = null;
+
+            var location = InMemoryLocation.New(_fileSystem, path);
+            _containers.GetOrAdd(
+                location,
+                InMemoryContainer.NewFile(location, _fileSystem));
+
             IFileInfoMock? file = _files.GetOrAdd(
                 _fileSystem.Path.GetFullPath(path).NormalizeAndTrimPath(_fileSystem),
                 _ =>
