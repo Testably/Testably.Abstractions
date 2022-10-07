@@ -10,32 +10,35 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class FileSystemMock
 {
-    internal sealed class InMemoryContainer
+    internal interface IStorageContainer
     {
-        /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTime" />
-        public DateTime CreationTime
+        DateTime CreationTime
         {
-            get => _creationTime.ToLocalTime();
-            set => _creationTime = ConsiderUnspecifiedKind(value);
+            get;
+            set;
         }
 
-        /// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastAccessTime" />
         public DateTime LastAccessTime
         {
-            get => _lastAccessTime.ToLocalTime();
-            set => _lastAccessTime = ConsiderUnspecifiedKind(value);
+            get;
+            set;
         }
 
-        /// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastWriteTime" />
         public DateTime LastWriteTime
         {
-            get => _lastWriteTime.ToLocalTime();
-            set => _lastWriteTime = ConsiderUnspecifiedKind(value);
+            get;
+            set;
         }
 
+        void AdjustTimes(TimeAdjustments timeAdjustments);
+    }
+
+    internal class InMemoryContainer : IStorageContainer
+    {
         public string? LinkTarget { get; set; }
 
         public ContainerType Type { get; }
+
         private byte[] _bytes = Array.Empty<byte>();
 
         private DateTime _creationTime;
@@ -53,7 +56,53 @@ public sealed partial class FileSystemMock
             _location = location;
             _fileSystem = fileSystem;
             Type = type;
+            AdjustTimes(TimeAdjustments.All);
         }
+
+        #region IStorageContainer Members
+
+        /// <inheritdoc cref="IStorageContainer.CreationTime" />
+        public DateTime CreationTime
+        {
+            get => _creationTime.ToLocalTime();
+            set => _creationTime = ConsiderUnspecifiedKind(value);
+        }
+
+        /// <inheritdoc cref="IStorageContainer.LastAccessTime" />
+        public DateTime LastAccessTime
+        {
+            get => _lastAccessTime.ToLocalTime();
+            set => _lastAccessTime = ConsiderUnspecifiedKind(value);
+        }
+
+        /// <inheritdoc cref="IStorageContainer.LastWriteTime" />
+        public DateTime LastWriteTime
+        {
+            get => _lastWriteTime.ToLocalTime();
+            set => _lastWriteTime = ConsiderUnspecifiedKind(value);
+        }
+
+        /// <inheritdoc cref="IStorageContainer.AdjustTimes(TimeAdjustments)" />
+        public void AdjustTimes(TimeAdjustments timeAdjustments)
+        {
+            DateTime now = _fileSystem.TimeSystem.DateTime.UtcNow;
+            if (timeAdjustments.HasFlag(TimeAdjustments.CreationTime))
+            {
+                CreationTime = ConsiderUnspecifiedKind(now);
+            }
+
+            if (timeAdjustments.HasFlag(TimeAdjustments.LastAccessTime))
+            {
+                LastAccessTime = ConsiderUnspecifiedKind(now);
+            }
+
+            if (timeAdjustments.HasFlag(TimeAdjustments.LastWriteTime))
+            {
+                LastWriteTime = ConsiderUnspecifiedKind(now);
+            }
+        }
+
+        #endregion
 
         /// <inheritdoc cref="IStorage.IFileInfoMock.AppendBytes(byte[])" />
         public void AppendBytes(byte[] bytes)
@@ -112,27 +161,6 @@ public sealed partial class FileSystemMock
         {
             _location.Drive?.ChangeUsedBytes(bytes.Length - _bytes.Length);
             _bytes = bytes;
-        }
-
-        internal InMemoryContainer AdjustTimes(TimeAdjustments timeAdjustments)
-        {
-            DateTime now = _fileSystem.TimeSystem.DateTime.UtcNow;
-            if (timeAdjustments.HasFlag(TimeAdjustments.CreationTime))
-            {
-                CreationTime = ConsiderUnspecifiedKind(now);
-            }
-
-            if (timeAdjustments.HasFlag(TimeAdjustments.LastAccessTime))
-            {
-                LastAccessTime = ConsiderUnspecifiedKind(now);
-            }
-
-            if (timeAdjustments.HasFlag(TimeAdjustments.LastWriteTime))
-            {
-                LastWriteTime = ConsiderUnspecifiedKind(now);
-            }
-
-            return this;
         }
 
         private bool CanGetAccess(FileAccess access, FileShare share)
@@ -259,38 +287,38 @@ public sealed partial class FileSystemMock
                 }
             }
         }
+    }
+
+    /// <summary>
+    ///     Flags indicating which times to adjust for a <see cref="FileSystemMock.FileSystemInfoMock" />.
+    /// </summary>
+    /// .
+    [Flags]
+    internal enum TimeAdjustments
+    {
+        /// <summary>
+        ///     Adjusts no times on the <see cref="FileSystemMock.FileSystemInfoMock" />
+        /// </summary>
+        None = 0,
 
         /// <summary>
-        ///     Flags indicating which times to adjust for a <see cref="FileSystemMock.FileSystemInfoMock" />.
+        ///     Adjusts the <see cref="FileSystemMock.FileSystemInfoMock.CreationTime" />
         /// </summary>
-        /// .
-        [Flags]
-        internal enum TimeAdjustments
-        {
-            /// <summary>
-            ///     Adjusts no times on the <see cref="FileSystemMock.FileSystemInfoMock" />
-            /// </summary>
-            None = 0,
+        CreationTime = 1 << 0,
 
-            /// <summary>
-            ///     Adjusts the <see cref="FileSystemMock.FileSystemInfoMock.CreationTime" />
-            /// </summary>
-            CreationTime = 1 << 0,
+        /// <summary>
+        ///     Adjusts the <see cref="FileSystemMock.FileSystemInfoMock.LastAccessTime" />
+        /// </summary>
+        LastAccessTime = 1 << 1,
 
-            /// <summary>
-            ///     Adjusts the <see cref="FileSystemMock.FileSystemInfoMock.LastAccessTime" />
-            /// </summary>
-            LastAccessTime = 1 << 1,
+        /// <summary>
+        ///     Adjusts the <see cref="FileSystemMock.FileSystemInfoMock.LastWriteTime" />
+        /// </summary>
+        LastWriteTime = 1 << 2,
 
-            /// <summary>
-            ///     Adjusts the <see cref="FileSystemMock.FileSystemInfoMock.LastWriteTime" />
-            /// </summary>
-            LastWriteTime = 1 << 2,
-
-            /// <summary>
-            ///     Adjusts all times on the <see cref="FileSystemMock.FileSystemInfoMock" />
-            /// </summary>
-            All = CreationTime | LastAccessTime | LastWriteTime,
-        }
+        /// <summary>
+        ///     Adjusts all times on the <see cref="FileSystemMock.FileSystemInfoMock" />
+        /// </summary>
+        All = CreationTime | LastAccessTime | LastWriteTime,
     }
 }

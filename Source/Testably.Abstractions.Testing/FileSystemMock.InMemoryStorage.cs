@@ -12,7 +12,7 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class FileSystemMock
 {
-    private sealed class InMemoryStorage : IStorage
+    internal sealed class InMemoryStorage : IStorage
     {
         private readonly ConcurrentDictionary<InMemoryLocation, InMemoryContainer>
             _containers = new();
@@ -319,11 +319,11 @@ public sealed partial class FileSystemMock
             }
 
             parents.Reverse();
-            FileSystemInfoMock.TimeAdjustments timeAdjustments =
-                FileSystemInfoMock.TimeAdjustments.LastWriteTime;
+            TimeAdjustments timeAdjustments =
+                TimeAdjustments.LastWriteTime;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                timeAdjustments |= FileSystemInfoMock.TimeAdjustments.LastAccessTime;
+                timeAdjustments |= TimeAdjustments.LastAccessTime;
             }
 
             List<IDisposable> requests = new();
@@ -373,6 +373,57 @@ public sealed partial class FileSystemMock
             if (expression.Contains('\0'))
             {
                 throw ExceptionFactory.PathHasIllegalCharacters(expression);
+            }
+        }
+
+        public IStorageContainer GetContainer(InMemoryLocation location)
+        {
+            if (_containers.TryGetValue(location, out var container))
+            {
+                return container;
+            }
+
+            return NullContainer.Instance;
+        }
+
+        private class NullContainer : IStorageContainer
+        {
+            /// <summary>
+            ///     The default time returned by the file system if no time has been set.
+            ///     <seealso href="https://learn.microsoft.com/en-us/windows/win32/sysinfo/file-times" />:
+            ///     A file time is a 64-bit value that represents the number of 100-nanosecond intervals that have elapsed
+            ///     since 12:00 A.M. January 1, 1601 Coordinated Universal Time (UTC).
+            /// </summary>
+            private static readonly DateTime NullTime =
+                new DateTime(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc);
+
+            public static IStorageContainer Instance => new NullContainer();
+
+            /// <inheritdoc cref="IStorageContainer.CreationTime" />
+            public DateTime CreationTime
+            {
+                get => NullTime;
+                set => _ = value;
+            }
+
+            /// <inheritdoc cref="IStorageContainer.LastAccessTime" />
+            public DateTime LastAccessTime
+            {
+                get => NullTime;
+                set => _ = value;
+            }
+
+            /// <inheritdoc cref="IStorageContainer.LastWriteTime" />
+            public DateTime LastWriteTime
+            {
+                get => NullTime;
+                set => _ = value;
+            }
+
+            /// <inheritdoc cref="IStorageContainer.AdjustTimes(TimeAdjustments)" />
+            public void AdjustTimes(TimeAdjustments timeAdjustments)
+            {
+
             }
         }
     }

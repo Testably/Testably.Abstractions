@@ -31,7 +31,7 @@ public sealed partial class FileSystemMock : IFileSystem
     /// <summary>
     ///     The underlying storage of directories and files.
     /// </summary>
-    internal IStorage Storage { get; }
+    internal InMemoryStorage Storage { get; }
 
     /// <summary>
     ///     The change handler used to notify about events occurring in the <see cref="FileSystemMock" />.
