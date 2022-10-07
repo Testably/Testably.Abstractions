@@ -16,6 +16,7 @@
 # NCrunch can be used to speed up writing unit tests:
 # https://www.ncrunch.net/
 *.ncrunchsolution
+*.ncrunchproject
 
 
 ############################################################
