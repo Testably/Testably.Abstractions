@@ -66,7 +66,7 @@ public class FileSystemMockNotificationTests
             {
                 callback.Invoke(FileSystem, path);
             })
-           .Wait(timeout: 30000);
+           .Wait();
 
         receivedPath.Should().Be(FileSystem.Path.GetFullPath(path));
     }
@@ -78,14 +78,14 @@ public class FileSystemMockNotificationTests
         yield return new object?[]
         {
             null,
-            new Action<IFileSystem, string>((f, p) => f.File.WriteAllText(p, null)),
-            FileSystemMock.ChangeTypes.FileCreated, $"path_{Guid.NewGuid()}"
+            new Action<IFileSystem, string>((f, p) => f.Directory.CreateDirectory(p)),
+            FileSystemMock.ChangeTypes.DirectoryCreated, $"path_{Guid.NewGuid()}"
         };
         yield return new object?[]
         {
             null,
-            new Action<IFileSystem, string>((f, p) => f.Directory.CreateDirectory(p)),
-            FileSystemMock.ChangeTypes.DirectoryCreated, $"path_{Guid.NewGuid()}"
+            new Action<IFileSystem, string>((f, p) => f.File.WriteAllText(p, null)),
+            FileSystemMock.ChangeTypes.FileCreated, $"path_{Guid.NewGuid()}"
         };
     }
 
