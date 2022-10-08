@@ -28,12 +28,15 @@ public sealed partial class FileSystemMock
                 throw new ArgumentNullException(nameof(path));
             }
 
-            return DirectoryInfoMock.New(InMemoryLocation.New(_fileSystem, path), _fileSystem);
+            return DirectoryInfoMock.New(InMemoryLocation.New(_fileSystem, path),
+                _fileSystem);
         }
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfoFactory.Wrap(DirectoryInfo)" />
         public IFileSystem.IDirectoryInfo Wrap(DirectoryInfo directoryInfo)
-            => DirectoryInfoMock.New(InMemoryLocation.New(_fileSystem, directoryInfo.FullName, directoryInfo.ToString()), _fileSystem);
+            => DirectoryInfoMock.New(
+                InMemoryLocation.New(_fileSystem, directoryInfo.FullName,
+                    directoryInfo.ToString()), _fileSystem);
 
         #endregion
     }

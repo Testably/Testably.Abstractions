@@ -12,7 +12,7 @@ public sealed partial class FileSystemMock
         protected readonly InMemoryLocation Location;
         protected readonly FileSystemMock FileSystem;
         protected IStorageContainer Container { get; set; }
-        
+
         internal FileSystemInfoMock(FileSystemMock fileSystem, InMemoryLocation location)
         {
             FileSystem = fileSystem;
@@ -113,7 +113,8 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreateAsSymbolicLink(string)" />
         public void CreateAsSymbolicLink(string pathToTarget)
         {
-            if (FileSystem.Storage.TryAddContainer(Location, InMemoryContainer.NewFile, out var container))
+            if (FileSystem.Storage.TryAddContainer(Location, InMemoryContainer.NewFile,
+                out IStorageContainer? container))
             {
                 container.LinkTarget = pathToTarget;
             }
@@ -134,6 +135,7 @@ public sealed partial class FileSystemMock
 #endif
             _isInitialized = false;
         }
+
         private bool _isInitialized;
 
         protected void RefreshInternal()
@@ -165,10 +167,12 @@ public sealed partial class FileSystemMock
         {
             try
             {
-                var targetLocation = FileSystem.Storage.ResolveLinkTarget(InMemoryLocation.New(FileSystem, FullName), returnFinalTarget);
+                InMemoryLocation? targetLocation =
+                    FileSystem.Storage.ResolveLinkTarget(
+                        InMemoryLocation.New(FileSystem, FullName), returnFinalTarget);
                 if (targetLocation != null)
                 {
-                    return FileSystemInfoMock.New(targetLocation, FileSystem);
+                    return New(targetLocation, FileSystem);
                 }
 
                 return null;
@@ -189,14 +193,16 @@ public sealed partial class FileSystemMock
 #endif
         public override string ToString()
             => Location.FriendlyName;
-        
+
         [return: NotNullIfNotNull("location")]
-        internal static FileSystemInfoMock? New(InMemoryLocation? location, FileSystemMock fileSystem)
+        internal static FileSystemInfoMock? New(InMemoryLocation? location,
+                                                FileSystemMock fileSystem)
         {
             if (location == null)
             {
                 return null;
             }
+
             return new FileSystemInfoMock(fileSystem, location);
         }
     }

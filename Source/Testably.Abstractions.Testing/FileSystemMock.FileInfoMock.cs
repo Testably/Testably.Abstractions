@@ -15,11 +15,15 @@ public sealed partial class FileSystemMock
     /// </summary>
     private sealed class FileInfoMock : FileSystemInfoMock, IFileSystem.IFileInfo
     {
+        private bool? _exists;
+
         private FileInfoMock(InMemoryLocation location,
-                              FileSystemMock fileSystem)
+                             FileSystemMock fileSystem)
             : base(fileSystem, location)
         {
         }
+
+        #region IFileInfo Members
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Directory" />
         public IFileSystem.IDirectoryInfo? Directory
@@ -29,6 +33,18 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFileInfo.DirectoryName" />
         public string? DirectoryName
             => Directory?.FullName;
+
+        /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
+        public override bool Exists
+        {
+            get
+            {
+                _exists ??=
+                    FileSystem.Storage.GetContainer(
+                        InMemoryLocation.New(FileSystem, FullName)) is not NullContainer;
+                return _exists.Value;
+            }
+        }
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.IsReadOnly" />
         public bool IsReadOnly
@@ -190,27 +206,17 @@ public sealed partial class FileSystemMock
                                              bool ignoreMetadataErrors)
             => throw new NotImplementedException();
 
-        /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
-        public override bool Exists
-        {
-            get
-            {
-                _exists ??=
-                    FileSystem.Storage.GetContainer(
-                        InMemoryLocation.New(FileSystem, FullName)) is not NullContainer;
-                return _exists.Value;
-            }
-        }
-
-        private bool? _exists;
+        #endregion
 
         [return: NotNullIfNotNull("location")]
-        internal static new FileInfoMock? New(InMemoryLocation? location, FileSystemMock fileSystem)
+        internal static new FileInfoMock? New(InMemoryLocation? location,
+                                              FileSystemMock fileSystem)
         {
             if (location == null)
             {
                 return null;
             }
+
             return new FileInfoMock(location, fileSystem);
         }
     }

@@ -29,7 +29,7 @@ public sealed partial class FileSystemMock
         public IFileSystem.IDirectoryInfo CreateDirectory(string path)
         {
             path.ThrowCommonExceptionsIfPathIsInvalid(_fileSystem);
-            var directory = DirectoryInfoMock.New(
+            DirectoryInfoMock directory = DirectoryInfoMock.New(
                 InMemoryLocation.New(_fileSystem, path),
                 _fileSystem);
             directory.Create();
@@ -155,7 +155,8 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string, string)" />
         public IEnumerable<string> EnumerateFileSystemEntries(
             string path, string searchPattern)
-            => EnumerateFileSystemEntries(path, searchPattern, SearchOption.TopDirectoryOnly);
+            => EnumerateFileSystemEntries(path, searchPattern,
+                SearchOption.TopDirectoryOnly);
 
         /// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string, string, SearchOption)" />
         public IEnumerable<string> EnumerateFileSystemEntries(string path,
@@ -321,7 +322,9 @@ public sealed partial class FileSystemMock
         {
             try
             {
-                var targetLocation = _fileSystem.Storage.ResolveLinkTarget(InMemoryLocation.New(_fileSystem, linkPath), returnFinalTarget);
+                InMemoryLocation? targetLocation =
+                    _fileSystem.Storage.ResolveLinkTarget(
+                        InMemoryLocation.New(_fileSystem, linkPath), returnFinalTarget);
                 if (targetLocation != null)
                 {
                     return FileSystemInfoMock.New(targetLocation, _fileSystem);
@@ -339,7 +342,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.SetCreationTime(string, DateTime)" />
         public void SetCreationTime(string path, DateTime creationTime)
         {
-            var directoryInfo =
+            IStorageContainer directoryInfo =
                 _fileSystem.Storage.GetContainer(
                     InMemoryLocation.New(_fileSystem, path));
             if (directoryInfo is NullContainer)
@@ -360,7 +363,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.SetCreationTimeUtc(string, DateTime)" />
         public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
         {
-            var directoryInfo =
+            IStorageContainer directoryInfo =
                 _fileSystem.Storage.GetContainer(
                     InMemoryLocation.New(_fileSystem, path));
             if (directoryInfo is NullContainer)
@@ -385,7 +388,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.SetLastAccessTime(string, DateTime)" />
         public void SetLastAccessTime(string path, DateTime lastAccessTime)
         {
-            var directoryInfo =
+            IStorageContainer directoryInfo =
                 _fileSystem.Storage.GetContainer(
                     InMemoryLocation.New(_fileSystem, path));
             if (directoryInfo is NullContainer)
@@ -406,7 +409,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.SetLastAccessTimeUtc(string, DateTime)" />
         public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
         {
-            var directoryInfo =
+            IStorageContainer directoryInfo =
                 _fileSystem.Storage.GetContainer(
                     InMemoryLocation.New(_fileSystem, path));
             if (directoryInfo is NullContainer)
@@ -427,7 +430,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.SetLastWriteTime(string, DateTime)" />
         public void SetLastWriteTime(string path, DateTime lastWriteTime)
         {
-            var directoryInfo =
+            IStorageContainer directoryInfo =
                 _fileSystem.Storage.GetContainer(
                     InMemoryLocation.New(_fileSystem, path));
             if (directoryInfo is NullContainer)
@@ -448,7 +451,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.SetLastWriteTimeUtc(string, DateTime)" />
         public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
         {
-            var directoryInfo =
+            IStorageContainer directoryInfo =
                 _fileSystem.Storage.GetContainer(
                     InMemoryLocation.New(_fileSystem, path));
             if (directoryInfo is NullContainer)

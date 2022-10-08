@@ -63,8 +63,8 @@ public sealed partial class FileSystemMock
             _ = bufferSize;
             _options = options;
 
-            var location = InMemoryLocation.New(_fileSystem, Name);
-            var file = _fileSystem.Storage.GetContainer(location);
+            InMemoryLocation location = InMemoryLocation.New(_fileSystem, Name);
+            IStorageContainer file = _fileSystem.Storage.GetContainer(location);
             if (file is NullContainer)
             {
                 if (_mode.Equals(FileMode.Open) ||
@@ -74,7 +74,8 @@ public sealed partial class FileSystemMock
                         _fileSystem.Path.GetFullPath(Name));
                 }
 
-                file = _fileSystem.Storage.GetOrCreateContainer(location, InMemoryContainer.NewFile);
+                file = _fileSystem.Storage.GetOrCreateContainer(location,
+                    InMemoryContainer.NewFile);
             }
             else if (file.Type == InMemoryContainer.ContainerType.Directory)
             {
@@ -83,6 +84,7 @@ public sealed partial class FileSystemMock
                     throw ExceptionFactory.FileAlreadyExists(
                         _fileSystem.Path.GetFullPath(Name));
                 }
+
                 throw ExceptionFactory.AccessToPathDenied(
                     _fileSystem.Path.GetFullPath(Name));
             }
@@ -119,6 +121,7 @@ public sealed partial class FileSystemMock
             {
                 throw ExceptionFactory.StreamDoesNotSupportWriting();
             }
+
             base.SetLength(value);
         }
 
@@ -173,7 +176,8 @@ public sealed partial class FileSystemMock
         {
             if (_options.HasFlag(FileOptions.DeleteOnClose))
             {
-                _fileSystem.Storage.DeleteContainer(InMemoryLocation.New(_fileSystem, Name));
+                _fileSystem.Storage.DeleteContainer(
+                    InMemoryLocation.New(_fileSystem, Name));
             }
         }
 

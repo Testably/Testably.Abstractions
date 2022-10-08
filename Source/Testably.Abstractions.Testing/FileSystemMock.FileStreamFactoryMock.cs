@@ -7,10 +7,10 @@ public sealed partial class FileSystemMock
 {
     private sealed class FileStreamFactoryMock : IFileSystem.IFileStreamFactory
     {
-        private readonly FileSystemMock _fileSystem;
-        private const int DefaultBufferSize = 4096;
         internal const FileShare DefaultShare = FileShare.Read;
+        private const int DefaultBufferSize = 4096;
         private const bool DefaultUseAsync = false;
+        private readonly FileSystemMock _fileSystem;
 
         internal FileStreamFactoryMock(FileSystemMock fileSystem)
         {

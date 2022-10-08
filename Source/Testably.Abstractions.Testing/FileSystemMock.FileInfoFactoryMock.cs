@@ -28,7 +28,8 @@ public sealed partial class FileSystemMock
                 throw new ArgumentNullException(nameof(fileName));
             }
 
-            return FileInfoMock.New(InMemoryLocation.New(_fileSystem, fileName), _fileSystem);
+            return FileInfoMock.New(InMemoryLocation.New(_fileSystem, fileName),
+                _fileSystem);
         }
 
         /// <inheritdoc cref="IFileSystem.IFileInfoFactory.Wrap(FileInfo)" />
