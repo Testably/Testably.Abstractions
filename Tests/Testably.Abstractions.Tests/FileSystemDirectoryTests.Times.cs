@@ -338,9 +338,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     public void SetLastAccessTime_Unspecified_ShouldChangeLastAccessTime(
         string path, DateTime lastAccessTime)
     {
-        Skip.IfNot(Test.RunsOnWindows,
-            "Linux does not have a creation timestamp: https://unix.stackexchange.com/a/102692");
-
         lastAccessTime = DateTime.SpecifyKind(lastAccessTime, DateTimeKind.Unspecified);
         FileSystem.Directory.CreateDirectory(path);
 
@@ -397,9 +394,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     public void SetLastAccessTimeUtc_Unspecified_ShouldChangeLastAccessTime(
         string path, DateTime lastAccessTime)
     {
-        Skip.IfNot(Test.RunsOnWindows,
-            "Linux does not have a creation timestamp: https://unix.stackexchange.com/a/102692");
-
         lastAccessTime = DateTime.SpecifyKind(lastAccessTime, DateTimeKind.Unspecified);
         FileSystem.Directory.CreateDirectory(path);
 
@@ -456,9 +450,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     public void SetLastWriteTime_Unspecified_ShouldChangeLastWriteTime(
         string path, DateTime lastWriteTime)
     {
-        Skip.IfNot(Test.RunsOnWindows,
-            "Linux does not have a creation timestamp: https://unix.stackexchange.com/a/102692");
-
         lastWriteTime = DateTime.SpecifyKind(lastWriteTime, DateTimeKind.Unspecified);
         FileSystem.Directory.CreateDirectory(path);
 
@@ -515,9 +506,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     public void SetLastWriteTimeUtc_Unspecified_ShouldChangeLastWriteTime(
         string path, DateTime lastWriteTime)
     {
-        Skip.IfNot(Test.RunsOnWindows,
-            "Linux does not have a creation timestamp: https://unix.stackexchange.com/a/102692");
-
         lastWriteTime = DateTime.SpecifyKind(lastWriteTime, DateTimeKind.Unspecified);
         FileSystem.Directory.CreateDirectory(path);
 

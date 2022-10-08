@@ -5,8 +5,6 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    #region Test Setup
-
     public abstract string BasePath { get; }
     public TFileSystem FileSystem { get; }
     public ITimeSystem TimeSystem { get; }
@@ -21,8 +19,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
     }
 
-    #endregion
-
     [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfo("MissingFile")]
@@ -31,7 +27,11 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     {
         IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
         sut.Attributes.Should().Be((FileAttributes)(-1));
-        sut.Attributes = fileAttributes;
+        Exception? exception = Record.Exception(() =>
+        {
+            sut.Attributes = fileAttributes;
+        });
+        exception.Should().BeOfType<FileNotFoundException>();
         sut.Attributes.Should().Be((FileAttributes)(-1));
     }
 
@@ -42,7 +42,11 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     {
         IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
         sut.CreationTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
-        sut.CreationTime = creationTime;
+        Exception? exception = Record.Exception(() =>
+        {
+            sut.CreationTime = creationTime;
+        });
+        exception.Should().BeOfType<FileNotFoundException>();
         sut.CreationTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
     }
 
@@ -54,7 +58,11 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     {
         IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
         sut.CreationTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
-        sut.CreationTimeUtc = creationTimeUtc;
+        Exception? exception = Record.Exception(() =>
+        {
+            sut.CreationTimeUtc = creationTimeUtc;
+        });
+        exception.Should().BeOfType<FileNotFoundException>();
         sut.CreationTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
     }
 
@@ -65,7 +73,11 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     {
         IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
         sut.LastAccessTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
-        sut.LastAccessTime = lastAccessTime;
+        Exception? exception = Record.Exception(() =>
+        {
+            sut.LastAccessTime = lastAccessTime;
+        });
+        exception.Should().BeOfType<FileNotFoundException>();
         sut.LastAccessTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
     }
 
@@ -77,7 +89,11 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     {
         IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
         sut.LastAccessTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
-        sut.LastAccessTimeUtc = lastAccessTimeUtc;
+        Exception? exception = Record.Exception(() =>
+        {
+            sut.LastAccessTimeUtc = lastAccessTimeUtc;
+        });
+        exception.Should().BeOfType<FileNotFoundException>();
         sut.LastAccessTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
     }
 
@@ -88,7 +104,11 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     {
         IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
         sut.LastWriteTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
-        sut.LastWriteTime = lastWriteTime;
+        Exception? exception = Record.Exception(() =>
+        {
+            sut.LastWriteTime = lastWriteTime;
+        });
+        exception.Should().BeOfType<FileNotFoundException>();
         sut.LastWriteTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
     }
 
@@ -100,7 +120,11 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     {
         IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
         sut.LastWriteTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
-        sut.LastWriteTimeUtc = lastWriteTimeUtc;
+        Exception? exception = Record.Exception(() =>
+        {
+            sut.LastWriteTimeUtc = lastWriteTimeUtc;
+        });
+        exception.Should().BeOfType<FileNotFoundException>();
         sut.LastWriteTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
     }
 
