@@ -1,6 +1,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Tests;
 
@@ -21,7 +22,7 @@ public class FileSystemDriveInfoMockTests
 
     [SkippableTheory]
     [AutoData]
-    [FileSystemTests.DriveInfo(nameof(FileSystemMock.IStorageDrive.AvailableFreeSpace))]
+    [FileSystemTests.DriveInfo(nameof(IStorageDrive.AvailableFreeSpace))]
     public void AvailableFreeSpace_CannotGetNegative(long size)
     {
         FileSystem.WithDrive(d => d.SetTotalSize(size));
@@ -34,7 +35,7 @@ public class FileSystemDriveInfoMockTests
 
     [SkippableTheory]
     [AutoData]
-    [FileSystemTests.DriveInfo(nameof(FileSystemMock.IStorageDrive.AvailableFreeSpace))]
+    [FileSystemTests.DriveInfo(nameof(IStorageDrive.AvailableFreeSpace))]
     public void AvailableFreeSpace_ShouldBeSetTotalSize(long size)
     {
         FileSystem.WithDrive(d => d.SetTotalSize(size));
@@ -46,7 +47,7 @@ public class FileSystemDriveInfoMockTests
 
     [SkippableTheory]
     [AutoData]
-    [FileSystemTests.DriveInfo(nameof(FileSystemMock.IStorageDrive.AvailableFreeSpace))]
+    [FileSystemTests.DriveInfo(nameof(IStorageDrive.AvailableFreeSpace))]
     public void AvailableFreeSpace_ShouldBeReducedByWritingToFile(
         int fileSize, string path)
     {
@@ -63,7 +64,7 @@ public class FileSystemDriveInfoMockTests
 
     [SkippableTheory]
     [AutoData]
-    [FileSystemTests.DriveInfo(nameof(FileSystemMock.IStorageDrive.AvailableFreeSpace))]
+    [FileSystemTests.DriveInfo(nameof(IStorageDrive.AvailableFreeSpace))]
     public void AvailableFreeSpace_NotEnoughSpace_ShouldThrowIOException(
         int fileSize, string path)
     {
@@ -84,7 +85,7 @@ public class FileSystemDriveInfoMockTests
 
     [SkippableTheory]
     [AutoData]
-    [FileSystemTests.DriveInfo(nameof(FileSystemMock.IStorageDrive.AvailableFreeSpace))]
+    [FileSystemTests.DriveInfo(nameof(IStorageDrive.AvailableFreeSpace))]
     public void AvailableFreeSpace_ShouldBeReleasedWhenDeletingAFile(
         int fileSize, string path)
     {
@@ -102,7 +103,7 @@ public class FileSystemDriveInfoMockTests
 
     [SkippableTheory]
     [AutoData]
-    [FileSystemTests.DriveInfo(nameof(FileSystemMock.IStorageDrive.SetDriveFormat))]
+    [FileSystemTests.DriveInfo(nameof(IStorageDrive.SetDriveFormat))]
     public void SetDriveFormat_ShouldChangeDriveFormat(string driveFormat)
     {
         FileSystem.WithDrive(d => d.SetDriveFormat(driveFormat));
@@ -113,7 +114,7 @@ public class FileSystemDriveInfoMockTests
 
     [SkippableTheory]
     [AutoData]
-    [FileSystemTests.DriveInfo(nameof(FileSystemMock.IStorageDrive.SetDriveType))]
+    [FileSystemTests.DriveInfo(nameof(IStorageDrive.SetDriveType))]
     public void SetDriveType_ShouldChangeDriveType(DriveType driveType)
     {
         FileSystem.WithDrive(d => d.SetDriveType(driveType));
@@ -125,7 +126,7 @@ public class FileSystemDriveInfoMockTests
     [SkippableTheory]
     [InlineData(true)]
     [InlineData(false)]
-    [FileSystemTests.DriveInfo(nameof(FileSystemMock.IStorageDrive.SetIsReady))]
+    [FileSystemTests.DriveInfo(nameof(IStorageDrive.SetIsReady))]
     public void SetIsReady_ShouldChangeIsReady(bool isReady)
     {
         FileSystem.WithDrive(d => d.SetIsReady(isReady));
@@ -136,7 +137,7 @@ public class FileSystemDriveInfoMockTests
 
     [SkippableTheory]
     [AutoData]
-    [FileSystemTests.DriveInfo(nameof(FileSystemMock.IStorageDrive.AvailableFreeSpace))]
+    [FileSystemTests.DriveInfo(nameof(IStorageDrive.AvailableFreeSpace))]
     public void AvailableFreeSpace_ShouldBeChangedWhenAppendingToAFile(
         string fileContent1, string fileContent2, int expectedRemainingBytes,
         string path, Encoding encoding)
@@ -156,7 +157,7 @@ public class FileSystemDriveInfoMockTests
 
     [SkippableTheory]
     [AutoData]
-    [FileSystemTests.DriveInfo(nameof(FileSystemMock.IStorageDrive.IsReady))]
+    [FileSystemTests.DriveInfo(nameof(IStorageDrive.IsReady))]
     public void NotReady_AccessFile_ShouldThrowIOException(
         string path, string contents)
     {
@@ -173,7 +174,7 @@ public class FileSystemDriveInfoMockTests
 
     [SkippableTheory]
     [AutoData]
-    [FileSystemTests.DriveInfo(nameof(FileSystemMock.IStorageDrive.IsReady))]
+    [FileSystemTests.DriveInfo(nameof(IStorageDrive.IsReady))]
     public void NotReady_AccessDirectory_ShouldThrowIOException(
         string path)
     {

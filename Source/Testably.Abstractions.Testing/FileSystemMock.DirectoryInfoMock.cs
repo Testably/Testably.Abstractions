@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.Internal;
+using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
 
@@ -73,7 +74,7 @@ public sealed partial class FileSystemMock
             string searchPattern, SearchOption searchOption)
             => FileSystem.Storage.EnumerateLocations(
                     FileSystem.Storage.GetLocation(FullName),
-                    InMemoryContainer.ContainerType.Directory,
+                    ContainerType.Directory,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption))
                .Select(l => New(l, FileSystem));
@@ -85,7 +86,7 @@ public sealed partial class FileSystemMock
             EnumerationOptions enumerationOptions)
             => FileSystem.Storage.EnumerateLocations(
                     FileSystem.Storage.GetLocation(FullName),
-                    InMemoryContainer.ContainerType.Directory,
+                    ContainerType.Directory,
                     searchPattern,
                     enumerationOptions)
                .Select(l => New(l, FileSystem));
@@ -104,7 +105,7 @@ public sealed partial class FileSystemMock
             string searchPattern, SearchOption searchOption)
             => FileSystem.Storage.EnumerateLocations(
                     FileSystem.Storage.GetLocation(FullName),
-                    InMemoryContainer.ContainerType.File,
+                    ContainerType.File,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption))
                .Select(l => FileInfoMock.New(l, FileSystem));
@@ -115,7 +116,7 @@ public sealed partial class FileSystemMock
             string searchPattern, EnumerationOptions enumerationOptions)
             => FileSystem.Storage.EnumerateLocations(
                     FileSystem.Storage.GetLocation(FullName),
-                    InMemoryContainer.ContainerType.File,
+                    ContainerType.File,
                     searchPattern,
                     enumerationOptions)
                .Select(l => FileInfoMock.New(l, FileSystem));
@@ -135,7 +136,7 @@ public sealed partial class FileSystemMock
             string searchPattern, SearchOption searchOption)
             => FileSystem.Storage.EnumerateLocations(
                     FileSystem.Storage.GetLocation(FullName),
-                    InMemoryContainer.ContainerType.DirectoryOrFile,
+                    ContainerType.DirectoryOrFile,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption))
                .Select(l => FileSystemInfoMock.New(l, FileSystem));
@@ -147,7 +148,7 @@ public sealed partial class FileSystemMock
             EnumerationOptions enumerationOptions)
             => FileSystem.Storage.EnumerateLocations(
                     FileSystem.Storage.GetLocation(FullName),
-                    InMemoryContainer.ContainerType.DirectoryOrFile,
+                    ContainerType.DirectoryOrFile,
                     searchPattern,
                     enumerationOptions)
                .Select(l => FileSystemInfoMock.New(l, FileSystem));

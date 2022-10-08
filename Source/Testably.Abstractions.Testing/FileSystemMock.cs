@@ -1,4 +1,5 @@
 ﻿using System;
+using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
 
@@ -112,6 +113,6 @@ public static class FileSystemMockExtensions
     /// </summary>
     public static FileSystemMock WithDrive(
         this FileSystemMock fileSystemMock,
-        Action<FileSystemMock.IStorageDrive> driveCallback)
+        Action<IStorageDrive> driveCallback)
         => fileSystemMock.WithDrive(null, driveCallback);
 }

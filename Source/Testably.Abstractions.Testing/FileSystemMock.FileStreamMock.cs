@@ -2,6 +2,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
+using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
 
@@ -77,7 +78,7 @@ public sealed partial class FileSystemMock
                 file = _fileSystem.Storage.GetOrCreateContainer(location,
                     InMemoryContainer.NewFile);
             }
-            else if (file.Type == InMemoryContainer.ContainerType.Directory)
+            else if (file.Type == ContainerType.Directory)
             {
                 if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
