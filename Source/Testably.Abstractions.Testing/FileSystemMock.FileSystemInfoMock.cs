@@ -53,15 +53,15 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTime" />
         public DateTime CreationTime
         {
-            get => Container.CreationTime.ToLocalTime();
-            set => Container.CreationTime = value;
+            get => Container.CreationTime.Get(DateTimeKind.Local);
+            set => Container.CreationTime.Set(value, DateTimeKind.Local);
         }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTimeUtc" />
         public DateTime CreationTimeUtc
         {
-            get => Container.CreationTime.ToUniversalTime();
-            set => Container.CreationTime = value;
+            get => Container.CreationTime.Get(DateTimeKind.Utc);
+            set => Container.CreationTime.Set(value, DateTimeKind.Utc);
         }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Delete()" />
@@ -97,29 +97,29 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastAccessTime" />
         public DateTime LastAccessTime
         {
-            get => Container.LastAccessTime.ToLocalTime();
-            set => Container.LastAccessTime = value;
+            get => Container.LastAccessTime.Get(DateTimeKind.Local);
+            set => Container.LastAccessTime.Set(value, DateTimeKind.Local);
         }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastAccessTimeUtc" />
         public DateTime LastAccessTimeUtc
         {
-            get => Container.LastAccessTime.ToUniversalTime();
-            set => Container.LastAccessTime = value;
+            get => Container.LastAccessTime.Get(DateTimeKind.Utc);
+            set => Container.LastAccessTime.Set(value, DateTimeKind.Utc);
         }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastWriteTime" />
         public DateTime LastWriteTime
         {
-            get => Container.LastWriteTime.ToLocalTime();
-            set => Container.LastWriteTime = value;
+            get => Container.LastWriteTime.Get(DateTimeKind.Local);
+            set => Container.LastWriteTime.Set(value, DateTimeKind.Local);
         }
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastWriteTimeUtc" />
         public DateTime LastWriteTimeUtc
         {
-            get => Container.LastWriteTime.ToUniversalTime();
-            set => Container.LastWriteTime = value;
+            get => Container.LastWriteTime.Get(DateTimeKind.Utc);
+            set => Container.LastWriteTime.Set(value, DateTimeKind.Utc);
         }
 
 #if FEATURE_FILESYSTEM_LINK

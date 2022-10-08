@@ -228,32 +228,32 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.GetCreationTime(string)" />
         public DateTime GetCreationTime(string path)
             => _fileSystem.Storage.GetContainer(
-                _fileSystem.Storage.GetLocation(path)).CreationTime.ToLocalTime();
+                _fileSystem.Storage.GetLocation(path)).CreationTime.Get(DateTimeKind.Local);
 
         /// <inheritdoc cref="IFileSystem.IFile.GetCreationTimeUtc(string)" />
         public DateTime GetCreationTimeUtc(string path)
             => _fileSystem.Storage.GetContainer(
-                _fileSystem.Storage.GetLocation(path)).CreationTime.ToUniversalTime();
+                _fileSystem.Storage.GetLocation(path)).CreationTime.Get(DateTimeKind.Utc);
 
         /// <inheritdoc cref="IFileSystem.IFile.GetLastAccessTime(string)" />
         public DateTime GetLastAccessTime(string path)
             => _fileSystem.Storage.GetContainer(
-                _fileSystem.Storage.GetLocation(path)).LastAccessTime.ToLocalTime();
+                _fileSystem.Storage.GetLocation(path)).LastAccessTime.Get(DateTimeKind.Local);
 
         /// <inheritdoc cref="IFileSystem.IFile.GetLastAccessTimeUtc(string)" />
         public DateTime GetLastAccessTimeUtc(string path)
             => _fileSystem.Storage.GetContainer(
-                _fileSystem.Storage.GetLocation(path)).LastAccessTime.ToUniversalTime();
+                _fileSystem.Storage.GetLocation(path)).LastAccessTime.Get(DateTimeKind.Utc);
 
         /// <inheritdoc cref="IFileSystem.IFile.GetLastWriteTime(string)" />
         public DateTime GetLastWriteTime(string path)
             => _fileSystem.Storage.GetContainer(
-                _fileSystem.Storage.GetLocation(path)).LastWriteTime.ToLocalTime();
+                _fileSystem.Storage.GetLocation(path)).LastWriteTime.Get(DateTimeKind.Local);
 
         /// <inheritdoc cref="IFileSystem.IFile.GetLastWriteTimeUtc(string)" />
         public DateTime GetLastWriteTimeUtc(string path)
             => _fileSystem.Storage.GetContainer(
-                _fileSystem.Storage.GetLocation(path)).LastWriteTime.ToUniversalTime();
+                _fileSystem.Storage.GetLocation(path)).LastWriteTime.Get(DateTimeKind.Utc);
 
         /// <inheritdoc cref="IFileSystem.IFile.Move(string, string)" />
         public void Move(string sourceFileName, string destFileName)
@@ -494,7 +494,7 @@ public sealed partial class FileSystemMock
                     FileSystem.Path.GetFullPath(path));
             }
 
-            fileInfo.CreationTime = creationTime;
+            fileInfo.CreationTime.Set(creationTime, DateTimeKind.Local);
         }
 
         /// <inheritdoc cref="IFileSystem.IFile.SetCreationTimeUtc(string, DateTime)" />
@@ -509,7 +509,7 @@ public sealed partial class FileSystemMock
                     FileSystem.Path.GetFullPath(path));
             }
 
-            fileInfo.CreationTime = creationTimeUtc;
+            fileInfo.CreationTime.Set(creationTimeUtc, DateTimeKind.Utc);
         }
 
         /// <inheritdoc cref="IFileSystem.IFile.SetLastAccessTime(string, DateTime)" />
@@ -524,7 +524,7 @@ public sealed partial class FileSystemMock
                     FileSystem.Path.GetFullPath(path));
             }
 
-            fileInfo.LastAccessTime = lastAccessTime;
+            fileInfo.LastAccessTime.Set(lastAccessTime, DateTimeKind.Local);
         }
 
         /// <inheritdoc cref="IFileSystem.IFile.SetLastAccessTimeUtc(string, DateTime)" />
@@ -539,7 +539,7 @@ public sealed partial class FileSystemMock
                     FileSystem.Path.GetFullPath(path));
             }
 
-            fileInfo.LastAccessTime = lastAccessTimeUtc;
+            fileInfo.LastAccessTime.Set(lastAccessTimeUtc, DateTimeKind.Utc);
         }
 
         /// <inheritdoc cref="IFileSystem.IFile.SetLastWriteTime(string, DateTime)" />
@@ -554,7 +554,7 @@ public sealed partial class FileSystemMock
                     FileSystem.Path.GetFullPath(path));
             }
 
-            fileInfo.LastWriteTime = lastWriteTime;
+            fileInfo.LastWriteTime.Set(lastWriteTime, DateTimeKind.Local);
         }
 
         /// <inheritdoc cref="IFileSystem.IFile.SetLastWriteTimeUtc(string, DateTime)" />
@@ -569,7 +569,7 @@ public sealed partial class FileSystemMock
                     FileSystem.Path.GetFullPath(path));
             }
 
-            fileInfo.LastWriteTime = lastWriteTimeUtc;
+            fileInfo.LastWriteTime.Set(lastWriteTimeUtc, DateTimeKind.Utc);
         }
 
         /// <inheritdoc cref="IFileSystem.IFile.WriteAllBytes(string, byte[])" />

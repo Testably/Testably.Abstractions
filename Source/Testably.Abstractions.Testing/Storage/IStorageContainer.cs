@@ -12,18 +12,18 @@ internal interface IStorageContainer : IFileSystem.IFileSystemExtensionPoint, IT
     FileAttributes Attributes { get; set; }
 
     /// <inheritdoc cref="System.IO.FileSystemInfo.CreationTime" />
-    DateTime CreationTime { get; set; }
+    ITimeContainer CreationTime { get; }
 
     /// <inheritdoc cref="System.IO.FileSystemInfo.LastAccessTime" />
-    public DateTime LastAccessTime { get; set; }
+    ITimeContainer LastAccessTime { get; }
 
     /// <inheritdoc cref="System.IO.FileSystemInfo.LastWriteTime" />
-    public DateTime LastWriteTime { get; set; }
+    ITimeContainer LastWriteTime { get; }
 
     /// <summary>
     ///     If this instance represents a link, returns the link target's path, otherwise returns <see langword="null" />.
     /// </summary>
-    public string? LinkTarget { get; set; }
+    string? LinkTarget { get; set; }
 
     /// <summary>
     ///     The type of the container indicates if it is a <see cref="ContainerTypes.File" /> or
@@ -72,4 +72,10 @@ internal interface IStorageContainer : IFileSystem.IFileSystemExtensionPoint, IT
     ///     Writes the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
     /// </summary>
     void WriteBytes(byte[] bytes);
+
+    public interface ITimeContainer
+    {
+        DateTime Get(DateTimeKind kind);
+        void Set(DateTime time, DateTimeKind kind);
+    }
 }

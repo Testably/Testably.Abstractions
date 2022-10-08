@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
+using static Testably.Abstractions.Testing.Storage.IStorageContainer;
 
 namespace Testably.Abstractions.Testing.Storage;
 
@@ -12,12 +14,9 @@ internal class InMemoryContainer : IStorageContainer
 {
     private FileAttributes _attributes;
     private byte[] _bytes = Array.Empty<byte>();
-    private DateTime _creationTime;
     private readonly ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
     private readonly FileSystemMock _fileSystem;
     private bool _isEncrypted;
-    private DateTime _lastAccessTime;
-    private DateTime _lastWriteTime;
     private readonly IStorageLocation _location;
 
     public InMemoryContainer(ContainerTypes type,
@@ -33,6 +32,7 @@ internal class InMemoryContainer : IStorageContainer
     #region IStorageContainer Members
 
     /// <inheritdoc cref="IStorageContainer.Attributes" />
+    [ExcludeFromCodeCoverage]
     public FileAttributes Attributes
     {
         get
@@ -94,28 +94,16 @@ internal class InMemoryContainer : IStorageContainer
     }
 
     /// <inheritdoc cref="IStorageContainer.CreationTime" />
-    public DateTime CreationTime
-    {
-        get => _creationTime.ToLocalTime();
-        set => _creationTime = ConsiderUnspecifiedKind(value);
-    }
+    public ITimeContainer CreationTime { get; } = new TimeContainer();
 
     /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
     public IFileSystem FileSystem => _fileSystem;
 
     /// <inheritdoc cref="IStorageContainer.LastAccessTime" />
-    public DateTime LastAccessTime
-    {
-        get => _lastAccessTime.ToLocalTime();
-        set => _lastAccessTime = ConsiderUnspecifiedKind(value);
-    }
+    public ITimeContainer LastAccessTime { get; } = new TimeContainer();
 
     /// <inheritdoc cref="IStorageContainer.LastWriteTime" />
-    public DateTime LastWriteTime
-    {
-        get => _lastWriteTime.ToLocalTime();
-        set => _lastWriteTime = ConsiderUnspecifiedKind(value);
-    }
+    public ITimeContainer LastWriteTime { get; } = new TimeContainer();
 
     /// <inheritdoc cref="IStorageContainer.LinkTarget" />
     public string? LinkTarget { get; set; }
@@ -236,26 +224,40 @@ internal class InMemoryContainer : IStorageContainer
         return true;
     }
 
-    private static DateTime ConsiderUnspecifiedKind(
-        DateTime time,
-        DateTimeKind targetKind = DateTimeKind.Utc)
-    {
-        if (time.Kind == DateTimeKind.Unspecified)
-        {
-            return DateTime.SpecifyKind(time, targetKind);
-        }
-
-        if (targetKind == DateTimeKind.Local)
-        {
-            return time.ToLocalTime();
-        }
-
-        return time.ToUniversalTime();
-    }
-
     private void ReleaseAccess(Guid guid)
     {
         _fileHandles.TryRemove(guid, out _);
+    }
+
+    private class TimeContainer : ITimeContainer
+    {
+        private DateTime _time;
+
+        #region ITimeContainer Members
+
+        /// <inheritdoc />
+        public DateTime Get(DateTimeKind kind)
+            => kind switch
+            {
+                DateTimeKind.Utc => _time.ToUniversalTime(),
+                DateTimeKind.Local => _time.ToLocalTime(),
+                _ => _time
+            };
+
+        /// <inheritdoc />
+        public void Set(DateTime time, DateTimeKind kind)
+        {
+            if (time.Kind == DateTimeKind.Unspecified)
+            {
+                _time = DateTime.SpecifyKind(time, kind);
+            }
+            else
+            {
+                _time = time;
+            }
+        }
+
+        #endregion
     }
 
     private sealed class FileHandle : IStorageAccessHandle

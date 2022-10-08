@@ -169,13 +169,13 @@ public sealed partial class FileSystemMock
         public DateTime GetCreationTime(string path)
             => _fileSystem.Storage.GetContainer(
                     _fileSystem.Storage.GetLocation(path))
-               .CreationTime.ToLocalTime();
+               .CreationTime.Get(DateTimeKind.Local);
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetCreationTimeUtc(string)" />
         public DateTime GetCreationTimeUtc(string path)
             => _fileSystem.Storage.GetContainer(
                     _fileSystem.Storage.GetLocation(path))
-               .CreationTime.ToUniversalTime();
+               .CreationTime.Get(DateTimeKind.Utc);
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetCurrentDirectory()" />
         public string GetCurrentDirectory()
@@ -258,25 +258,25 @@ public sealed partial class FileSystemMock
         public DateTime GetLastAccessTime(string path)
             => _fileSystem.Storage.GetContainer(
                     _fileSystem.Storage.GetLocation(path))
-               .LastAccessTime.ToLocalTime();
+               .LastAccessTime.Get(DateTimeKind.Local);
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLastAccessTimeUtc(string)" />
         public DateTime GetLastAccessTimeUtc(string path)
             => _fileSystem.Storage.GetContainer(
                     _fileSystem.Storage.GetLocation(path))
-               .LastAccessTime.ToUniversalTime();
+               .LastAccessTime.Get(DateTimeKind.Utc);
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLastWriteTime(string)" />
         public DateTime GetLastWriteTime(string path)
             => _fileSystem.Storage.GetContainer(
                     _fileSystem.Storage.GetLocation(path))
-               .LastWriteTime.ToLocalTime();
+               .LastWriteTime.Get(DateTimeKind.Local);
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLastWriteTimeUtc(string)" />
         public DateTime GetLastWriteTimeUtc(string path)
             => _fileSystem.Storage.GetContainer(
                     _fileSystem.Storage.GetLocation(path))
-               .LastWriteTime.ToUniversalTime();
+               .LastWriteTime.Get(DateTimeKind.Utc);
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLogicalDrives()" />
         public string[] GetLogicalDrives()
@@ -315,7 +315,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.SetCreationTimeUtc(string, DateTime)" />
         public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
             => LoadDirectoryInfoOrThrowNotFoundException(path)
-               .CreationTime = creationTimeUtc;
+               .CreationTimeUtc = creationTimeUtc;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetCurrentDirectory(string)" />
         public void SetCurrentDirectory(string path)
@@ -329,7 +329,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.SetLastAccessTimeUtc(string, DateTime)" />
         public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
             => LoadDirectoryInfoOrThrowNotFoundException(path)
-               .LastAccessTime = lastAccessTimeUtc;
+               .LastAccessTimeUtc = lastAccessTimeUtc;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.SetLastWriteTime(string, DateTime)" />
         public void SetLastWriteTime(string path, DateTime lastWriteTime)
@@ -339,7 +339,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.SetLastWriteTimeUtc(string, DateTime)" />
         public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
             => LoadDirectoryInfoOrThrowNotFoundException(path)
-               .LastWriteTime = lastWriteTimeUtc;
+               .LastWriteTimeUtc = lastWriteTimeUtc;
 
         #endregion
 
