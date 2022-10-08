@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
@@ -101,10 +100,7 @@ public sealed partial class FileSystemMock
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.LinkTarget" />
         public string? LinkTarget
-        {
-            get => Container.LinkTarget;
-            protected set => Container.LinkTarget = value;
-        }
+            => Container.LinkTarget;
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Name" />
@@ -186,12 +182,6 @@ public sealed partial class FileSystemMock
 
         #endregion
 
-        /// <inheritdoc cref="IStorage.IFileSystemInfoMock.RequestAccess(FileAccess, FileShare)" />
-        public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share)
-        {
-            return Container.RequestAccess(access, share);
-        }
-
 #if NETSTANDARD2_0
         /// <inheritdoc cref="object.ToString()" />
 #else
@@ -199,49 +189,7 @@ public sealed partial class FileSystemMock
 #endif
         public override string ToString()
             => Location.FriendlyName;
-
-        internal FileSystemInfoMock AdjustTimes(
-            IStorageContainer.TimeAdjustments timeAdjustments)
-        {
-            ChangeDescription? fileSystemChange = null;
-            if (HasNotifyFilters(timeAdjustments, out NotifyFilters notifyFilters))
-            {
-                fileSystemChange = FileSystem.ChangeHandler.NotifyPendingChange(
-                    FullName,
-                    ChangeTypes.Modified,
-                    notifyFilters);
-            }
-
-            Container.AdjustTimes(timeAdjustments);
-
-            FileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
-
-            return this;
-        }
-
-        private static bool HasNotifyFilters(
-            IStorageContainer.TimeAdjustments timeAdjustments,
-            out NotifyFilters notifyFilters)
-        {
-            notifyFilters = 0;
-            if (timeAdjustments.HasFlag(IStorageContainer.TimeAdjustments.CreationTime))
-            {
-                notifyFilters |= NotifyFilters.CreationTime;
-            }
-
-            if (timeAdjustments.HasFlag(IStorageContainer.TimeAdjustments.LastAccessTime))
-            {
-                notifyFilters |= NotifyFilters.LastAccess;
-            }
-
-            if (timeAdjustments.HasFlag(IStorageContainer.TimeAdjustments.LastWriteTime))
-            {
-                notifyFilters |= NotifyFilters.LastWrite;
-            }
-
-            return notifyFilters > 0;
-        }
-
+        
         [return: NotNullIfNotNull("location")]
         internal static FileSystemInfoMock? New(InMemoryLocation? location, FileSystemMock fileSystem)
         {

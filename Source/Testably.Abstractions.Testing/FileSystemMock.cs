@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 
 namespace Testably.Abstractions.Testing;
 
@@ -31,7 +30,7 @@ public sealed partial class FileSystemMock : IFileSystem
     /// <summary>
     ///     The underlying storage of directories and files.
     /// </summary>
-    internal InMemoryStorage Storage { get; }
+    internal IStorage Storage { get; }
 
     /// <summary>
     ///     The change handler used to notify about events occurring in the <see cref="FileSystemMock" />.
@@ -41,11 +40,6 @@ public sealed partial class FileSystemMock : IFileSystem
     private readonly DirectoryMock _directoryMock;
     private readonly FileMock _fileMock;
     private readonly PathMock _pathMock;
-
-    /// <summary>
-    ///     The <c>null</c>-object of an <see cref="IFileSystem.IFileSystemInfo" />.
-    /// </summary>
-    internal IFileSystem.IFileSystemInfo NullFileSystemInfo { get; }
 
     /// <summary>
     ///     Initializes the <see cref="FileSystemMock" />.
@@ -63,13 +57,6 @@ public sealed partial class FileSystemMock : IFileSystem
         DriveInfo = new DriveInfoFactoryMock(this);
         FileInfo = new FileInfoFactoryMock(this);
         FileStream = new FileStreamFactoryMock(this);
-        NullFileSystemInfo = new FileSystemInfoMock(this, InMemoryLocation.Null)
-        {
-            LastWriteTime = new DateTime(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc),
-            LastAccessTime = new DateTime(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc),
-            CreationTime = new DateTime(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc),
-            Attributes = (FileAttributes)(-1),
-        };
     }
 
     /// <summary>

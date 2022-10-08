@@ -6,12 +6,14 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
-using static Testably.Abstractions.Testing.FileSystemMock.IStorage;
 
 namespace Testably.Abstractions.Testing;
 
 public sealed partial class FileSystemMock
 {
+    /// <summary>
+    ///     The container storing the current data of the <see cref="IFileSystem" /> in memory.
+    /// </summary>
     internal sealed class InMemoryStorage : IStorage
     {
         private readonly ConcurrentDictionary<InMemoryLocation, IStorageContainer>
@@ -29,11 +31,9 @@ public sealed partial class FileSystemMock
             _drives.TryAdd(mainDrive.Name, mainDrive);
         }
 
-        #region IStorage Members
-
+        /// <inheritdoc cref="IStorage.CurrentDirectory"/>
         public string CurrentDirectory { get; set; } = string.Empty.PrefixRoot();
         
-
         public IEnumerable<InMemoryLocation> EnumerateLocations(
             InMemoryLocation location,
             InMemoryContainer.ContainerType type,
@@ -132,6 +132,10 @@ public sealed partial class FileSystemMock
         }
 #endif
 
+        /// <summary>
+        ///     Returns the drive if it is present.<br />
+        ///     Returns <c>null</c>, if the drive does not exist.
+        /// </summary>
         public IDriveInfoMock? GetDrive(string? driveName)
         {
             if (string.IsNullOrEmpty(driveName))
@@ -148,12 +152,18 @@ public sealed partial class FileSystemMock
             return null;
         }
 
+        /// <summary>
+        ///     Returns the drives that are present.
+        /// </summary>
         public IDriveInfoMock GetOrAddDrive(string driveName)
         {
             DriveInfoMock drive = new(driveName, _fileSystem);
             return _drives.GetOrAdd(drive.Name, _ => drive);
         }
 
+        /// <summary>
+        ///     Returns the drives that are present.
+        /// </summary>
         public IEnumerable<IDriveInfoMock> GetDrives()
             => _drives.Values;
         
@@ -170,13 +180,6 @@ public sealed partial class FileSystemMock
             }
 
             return fullFilePath.Substring(CurrentDirectory.Length + 1);
-        }
-
-        #endregion
-
-        private FileSystemInfoMock CreateFileInternal(string path)
-        {
-            return FileInfoMock.New(InMemoryLocation.New(_fileSystem, path), _fileSystem);
         }
 
         private static void ValidateExpression(string expression)

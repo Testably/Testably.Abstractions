@@ -19,6 +19,12 @@ public sealed partial class FileSystemMock
         public string? LinkTarget { get; set; }
 
         void AdjustTimes(TimeAdjustments timeAdjustments);
+
+        /// <summary>
+        ///     Requests access to this file with the given <paramref name="share" />.
+        ///     <para />
+        ///     The returned <see cref="IDisposable" /> is used to release the access lock.
+        /// </summary>
         IStorageAccessHandle RequestAccess(FileAccess access, FileShare share);
 
 

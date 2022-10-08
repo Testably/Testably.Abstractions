@@ -1,6 +1,8 @@
 using System.IO;
 using System.Linq;
+#if !NETFRAMEWORK
 using System.Runtime.InteropServices;
+#endif
 
 namespace Testably.Abstractions.Tests;
 

@@ -13,8 +13,7 @@ public sealed partial class FileSystemMock
     /// <summary>
     ///     A mocked file in the <see cref="InMemoryStorage" />.
     /// </summary>
-    private sealed class FileInfoMock : FileSystemInfoMock,
-        IStorage.IFileInfoMock
+    private sealed class FileInfoMock : FileSystemInfoMock, IFileSystem.IFileInfo
     {
         private FileInfoMock(InMemoryLocation location,
                               FileSystemMock fileSystem)
@@ -91,10 +90,9 @@ public sealed partial class FileSystemMock
 #endif
         public void Decrypt()
         {
-            using (RequestAccess(FileAccess.Write, FileShare.Read))
+            using (Container.RequestAccess(FileAccess.Write, FileShare.Read))
             {
-                ((InMemoryContainer)Container)._isEncrypted = false;
-                WriteBytes(EncryptionHelper.Decrypt(GetBytes()));
+                Container.Decrypt();
             }
         }
 
@@ -104,10 +102,9 @@ public sealed partial class FileSystemMock
 #endif
         public void Encrypt()
         {
-            using (RequestAccess(FileAccess.Write, FileShare.Read))
+            using (Container.RequestAccess(FileAccess.Write, FileShare.Read))
             {
-                ((InMemoryContainer)Container)._isEncrypted = true;
-                WriteBytes(EncryptionHelper.Encrypt(GetBytes()));
+                Container.Encrypt();
             }
         }
 
@@ -193,31 +190,6 @@ public sealed partial class FileSystemMock
                                              bool ignoreMetadataErrors)
             => throw new NotImplementedException();
 
-        /// <inheritdoc cref="IStorage.IFileInfoMock.AppendBytes(byte[])" />
-        public void AppendBytes(byte[] bytes)
-        {
-            Container.AppendBytes(bytes);
-        }
-
-        /// <inheritdoc cref="IStorage.IFileInfoMock.GetBytes()" />
-        public byte[] GetBytes() => Container.GetBytes();
-
-        /// <inheritdoc cref="IStorage.IFileInfoMock.WriteBytes(byte[])" />
-        public void WriteBytes(byte[] bytes)
-            => Container.WriteBytes(bytes);
-
-        /// <inheritdoc cref="IStorage.IFileInfoMock.ClearBytes()" />
-        public void ClearBytes()
-            => Container.ClearBytes();
-
-#if FEATURE_FILESYSTEM_LINK
-        /// <inheritdoc cref="IStorage.IFileInfoMock.SetLinkTarget(string)" />
-        public void SetLinkTarget(string pathToTarget)
-        {
-            LinkTarget = pathToTarget;
-            Attributes |= FileAttributes.ReparsePoint;
-        }
-#endif
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
         public override bool Exists
         {

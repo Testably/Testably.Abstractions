@@ -141,7 +141,7 @@ public sealed partial class FileSystemMock
             }
         }
 
-        /// <inheritdoc cref="IStorage.IFileSystemInfoMock.RequestAccess(FileAccess, FileShare)" />
+        /// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare)" />
         public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share)
         {
             if (_location.Drive == null)
@@ -167,20 +167,20 @@ public sealed partial class FileSystemMock
 
         #endregion
 
-        /// <inheritdoc cref="IStorage.IFileInfoMock.AppendBytes(byte[])" />
+        /// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
         public void AppendBytes(byte[] bytes)
         {
             WriteBytes(_bytes.Concat(bytes).ToArray());
         }
 
-        /// <inheritdoc cref="IStorage.IFileInfoMock.ClearBytes()" />
+        /// <inheritdoc cref="IStorageContainer.ClearBytes()" />
         public void ClearBytes()
         {
             _location.Drive?.ChangeUsedBytes(0 - _bytes.Length);
             _bytes = Array.Empty<byte>();
         }
 
-        /// <inheritdoc cref="IStorage.IFileInfoMock.GetBytes()" />
+        /// <inheritdoc cref="IStorageContainer.GetBytes()" />
         public byte[] GetBytes() => _bytes;
 
         public static IStorageContainer NewDirectory(InMemoryLocation location,
@@ -205,7 +205,7 @@ public sealed partial class FileSystemMock
         public static IStorageContainer Null
             => new NullContainer();
 
-        /// <inheritdoc cref="IStorage.IFileInfoMock.WriteBytes(byte[])" />
+        /// <inheritdoc cref="IStorageContainer.WriteBytes(byte[])" />
         public void WriteBytes(byte[] bytes)
         {
             _location.Drive?.ChangeUsedBytes(bytes.Length - _bytes.Length);
