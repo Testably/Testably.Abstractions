@@ -13,11 +13,6 @@
 # https://learn.microsoft.com/en-us/visualstudio/test/remote-testing
 /testenvironments.json
 
-# NCrunch can be used to speed up writing unit tests:
-# https://www.ncrunch.net/
-*.ncrunchsolution
-*.ncrunchproject
-
 
 ############################################################
 ################## VISUAL STUDIO TEMPLATE ##################
