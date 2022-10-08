@@ -34,6 +34,7 @@ internal sealed class InMemoryStorage : IStorage
     /// <inheritdoc cref="IStorage.CurrentDirectory" />
     public string CurrentDirectory { get; set; } = string.Empty.PrefixRoot();
 
+    /// <inheritdoc cref="IStorage.DeleteContainer(IStorageLocation, bool)" />
     public bool DeleteContainer(IStorageLocation location, bool recursive = false)
     {
         if (!_containers.TryGetValue(location, out IStorageContainer? container))
@@ -72,7 +73,9 @@ internal sealed class InMemoryStorage : IStorage
         return false;
     }
 
-    public IEnumerable<IStorageLocation> EnumerateLocations(IStorageLocation location,
+    /// <inheritdoc cref="IStorage.EnumerateLocations(IStorageLocation, ContainerType, string, EnumerationOptions?)" />
+    public IEnumerable<IStorageLocation> EnumerateLocations(
+        IStorageLocation location,
         ContainerType type,
         string expression = "*",
         EnumerationOptions? enumerationOptions = null)
@@ -112,6 +115,7 @@ internal sealed class InMemoryStorage : IStorage
         }
     }
 
+    /// <inheritdoc cref="IStorage.GetContainer(IStorageLocation)" />
     [return: NotNullIfNotNull("location")]
     public IStorageContainer? GetContainer(IStorageLocation? location)
     {
@@ -125,13 +129,10 @@ internal sealed class InMemoryStorage : IStorage
             return container;
         }
 
-        return InMemoryContainer.Null;
+        return NullContainer.New(_fileSystem);
     }
 
-    /// <summary>
-    ///     Returns the drive if it is present.<br />
-    ///     Returns <see langword="null" />, if the drive does not exist.
-    /// </summary>
+    /// <inheritdoc cref="IStorage.GetDrive(string?)" />
     public IStorageDrive? GetDrive(string? driveName)
     {
         if (string.IsNullOrEmpty(driveName))
@@ -148,9 +149,7 @@ internal sealed class InMemoryStorage : IStorage
         return null;
     }
 
-    /// <summary>
-    ///     Returns the drives that are present.
-    /// </summary>
+    /// <inheritdoc cref="IStorage.GetDrives()" />
     public IEnumerable<IStorageDrive> GetDrives()
         => _drives.Values;
 
@@ -174,15 +173,15 @@ internal sealed class InMemoryStorage : IStorage
         return InMemoryLocation.New(drive, _fileSystem.Path.GetFullPath(path), path);
     }
 
-    /// <summary>
-    ///     Returns the drives that are present.
-    /// </summary>
+    /// <inheritdoc cref="IStorage.GetOrAddDrive(string)" />
     public IStorageDrive GetOrAddDrive(string driveName)
     {
         FileSystemMock.DriveInfoMock drive = new(driveName, _fileSystem);
         return _drives.GetOrAdd(drive.Name, _ => drive);
     }
 
+    /// <inheritdoc
+    ///     cref="IStorage.GetOrCreateContainer(IStorageLocation, Func{IStorageLocation, FileSystemMock, IStorageContainer})" />
     public IStorageContainer GetOrCreateContainer(
         IStorageLocation location,
         Func<IStorageLocation, FileSystemMock, IStorageContainer> containerGenerator)
@@ -224,6 +223,7 @@ internal sealed class InMemoryStorage : IStorage
     }
 
 #if FEATURE_FILESYSTEM_LINK
+    /// <inheritdoc cref="IStorage.ResolveLinkTarget(IStorageLocation, bool)" />
     public IStorageLocation? ResolveLinkTarget(IStorageLocation location,
                                                bool returnFinalTarget = false)
     {
@@ -279,10 +279,12 @@ internal sealed class InMemoryStorage : IStorage
     }
 #endif
 
-    public bool TryAddContainer(IStorageLocation location,
-                                Func<IStorageLocation, FileSystemMock,
-                                    IStorageContainer> containerGenerator,
-                                [NotNullWhen(true)] out IStorageContainer? container)
+    /// <inheritdoc
+    ///     cref="IStorage.TryAddContainer(IStorageLocation, Func{IStorageLocation, FileSystemMock, IStorageContainer}, out IStorageContainer?)" />
+    public bool TryAddContainer(
+        IStorageLocation location,
+        Func<IStorageLocation, FileSystemMock, IStorageContainer> containerGenerator,
+        [NotNullWhen(true)] out IStorageContainer? container)
     {
         FileSystemMock.ChangeDescription? fileSystemChange = null;
 
@@ -327,11 +329,11 @@ internal sealed class InMemoryStorage : IStorage
         }
 
         parents.Reverse();
-        IStorageContainer.TimeAdjustments timeAdjustments =
-            IStorageContainer.TimeAdjustments.LastWriteTime;
+        TimeAdjustments timeAdjustments =
+            TimeAdjustments.LastWriteTime;
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            timeAdjustments |= IStorageContainer.TimeAdjustments.LastAccessTime;
+            timeAdjustments |= TimeAdjustments.LastAccessTime;
         }
 
         List<IStorageAccessHandle> requests = new();

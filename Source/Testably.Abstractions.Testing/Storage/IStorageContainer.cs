@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing.Storage;
 /// <summary>
 ///     A container for a stored file or directory in the <see cref="IStorage" />.
 /// </summary>
-internal interface IStorageContainer
+internal interface IStorageContainer : IFileSystem.IFileSystemExtensionPoint, ITimeSystem.ITimeSystemExtensionPoint
 {
     /// <inheritdoc cref="System.IO.FileSystemInfo.Attributes" />
     FileAttributes Attributes { get; set; }
@@ -30,12 +30,6 @@ internal interface IStorageContainer
     ///     <see cref="Directory" />.
     /// </summary>
     ContainerType Type { get; }
-
-    /// <summary>
-    ///     Adjust the times in the <see cref="IStorageContainer" />.
-    /// </summary>
-    /// <param name="timeAdjustments">Flag indicating which times to adjust.</param>
-    void AdjustTimes(TimeAdjustments timeAdjustments);
 
     /// <summary>
     ///     Appends the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
@@ -78,37 +72,4 @@ internal interface IStorageContainer
     ///     Writes the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
     /// </summary>
     void WriteBytes(byte[] bytes);
-
-    /// <summary>
-    ///     Flags indicating which times to adjust for a <see cref="FileSystemMock.FileSystemInfoMock" />.
-    /// </summary>
-    /// .
-    [Flags]
-    internal enum TimeAdjustments
-    {
-        /// <summary>
-        ///     Adjusts no times on the <see cref="FileSystemMock.FileSystemInfoMock" />
-        /// </summary>
-        None = 0,
-
-        /// <summary>
-        ///     Adjusts the <see cref="FileSystemMock.FileSystemInfoMock.CreationTime" />
-        /// </summary>
-        CreationTime = 1 << 0,
-
-        /// <summary>
-        ///     Adjusts the <see cref="FileSystemMock.FileSystemInfoMock.LastAccessTime" />
-        /// </summary>
-        LastAccessTime = 1 << 1,
-
-        /// <summary>
-        ///     Adjusts the <see cref="FileSystemMock.FileSystemInfoMock.LastWriteTime" />
-        /// </summary>
-        LastWriteTime = 1 << 2,
-
-        /// <summary>
-        ///     Adjusts all times on the <see cref="FileSystemMock.FileSystemInfoMock" />
-        /// </summary>
-        All = CreationTime | LastAccessTime | LastWriteTime,
-    }
 }

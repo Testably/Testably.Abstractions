@@ -14,7 +14,11 @@ internal sealed class NullContainer : IStorageContainer
     private static readonly DateTime NullTime =
         new(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc);
 
-    public static IStorageContainer Instance => new NullContainer();
+    private NullContainer(IFileSystem fileSystem, ITimeSystem timeSystem)
+    {
+        FileSystem = fileSystem;
+        TimeSystem = timeSystem;
+    }
 
     #region IStorageContainer Members
 
@@ -31,6 +35,9 @@ internal sealed class NullContainer : IStorageContainer
         get => NullTime;
         set => _ = value;
     }
+
+    /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+    public IFileSystem FileSystem { get; }
 
     /// <inheritdoc cref="IStorageContainer.LastAccessTime" />
     public DateTime LastAccessTime
@@ -53,45 +60,55 @@ internal sealed class NullContainer : IStorageContainer
         set => _ = value;
     }
 
+    /// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+    public ITimeSystem TimeSystem { get; }
+
     /// <inheritdoc cref="IStorageContainer.Type" />
     public ContainerType Type
         => ContainerType.Unknown;
 
-    /// <inheritdoc cref="IStorageContainer.AdjustTimes(IStorageContainer.TimeAdjustments)" />
-    public void AdjustTimes(IStorageContainer.TimeAdjustments timeAdjustments)
+    /// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
+    public void AppendBytes(byte[] bytes)
     {
-        // Ignore in NullContainer TODO
+        // Do nothing in NullContainer
     }
 
-    /// <inheritdoc />
-    public void AppendBytes(byte[] bytes)
-        => throw new NotImplementedException();
-
-    /// <inheritdoc />
+    /// <inheritdoc cref="IStorageContainer.ClearBytes()" />
     public void ClearBytes()
-        => throw new NotImplementedException();
+    {
+        // Do nothing in NullContainer
+    }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="IStorageContainer.Decrypt()" />
     public void Decrypt()
-        => throw new NotImplementedException();
+    {
+        // Do nothing in NullContainer
+    }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="IStorageContainer.Encrypt()" />
     public void Encrypt()
-        => throw new NotImplementedException();
+    {
+        // Do nothing in NullContainer
+    }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="IStorageContainer.GetBytes()" />
     public byte[] GetBytes()
-        => throw new NotImplementedException();
+        => Array.Empty<byte>();
 
     /// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare)" />
     public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share)
         => new NullStorageAccessHandle();
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="IStorageContainer.WriteBytes(byte[])" />
     public void WriteBytes(byte[] bytes)
-        => throw new NotImplementedException();
+    {
+        // Do nothing in NullContainer
+    }
 
     #endregion
+
+    internal static IStorageContainer New(FileSystemMock fileSystem)
+        => new NullContainer(fileSystem, fileSystem.TimeSystem);
 
     private sealed class NullStorageAccessHandle : IStorageAccessHandle
     {
@@ -106,6 +123,7 @@ internal sealed class NullContainer : IStorageContainer
         /// <inheritdoc cref="IDisposable.Dispose()" />
         public void Dispose()
         {
+            // Nothing to do!
         }
 
         #endregion

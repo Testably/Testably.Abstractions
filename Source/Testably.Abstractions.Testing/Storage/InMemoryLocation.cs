@@ -40,19 +40,13 @@ internal sealed class InMemoryLocation : IStorageLocation
 
     #region IStorageLocation Members
 
-    /// <summary>
-    ///     The <see cref="Drive" /> in which the <see cref="IFileSystem.IFileSystemInfo" /> is stored.
-    /// </summary>
+    /// <inheritdoc cref="IStorageLocation.Drive" />
     public IStorageDrive? Drive { get; }
 
-    /// <summary>
-    ///     The friendly name from the location of the file or directory.
-    /// </summary>
+    /// <inheritdoc cref="IStorageLocation.FriendlyName" />
     public string FriendlyName { get; }
 
-    /// <summary>
-    ///     The full path of the location of the file or directory.
-    /// </summary>
+    /// <inheritdoc cref="IStorageLocation.FullPath" />
     public string FullPath { get; }
 
     /// <inheritdoc cref="IEquatable{IStorageLocation}.Equals(IStorageLocation)" />
@@ -97,24 +91,16 @@ internal sealed class InMemoryLocation : IStorageLocation
 
     #endregion
 
-    /// <inheritdoc cref="object.Equals(object?)" />
-    public override bool Equals(object? obj)
-        => ReferenceEquals(this, obj) ||
-           (obj is IStorageLocation other && Equals(other));
-
-    /// <inheritdoc cref="object.GetHashCode()" />
-    public override int GetHashCode()
-#if NETSTANDARD2_0
-            => _key.ToLowerInvariant().GetHashCode();
-#else
-    {
-        return _key.GetHashCode(StringComparisonMode);
-    }
-#endif
-
-    public static InMemoryLocation New(IStorageDrive? drive,
-                                       string path,
-                                       string? friendlyName = null)
+    /// <summary>
+    ///     Creates a new <see cref="IStorageLocation" /> on the specified <paramref name="drive" /> with the given
+    ///     <paramref name="path" />
+    /// </summary>
+    /// <param name="drive">The drive on which the path is located.</param>
+    /// <param name="path">The full path on the <paramref name="drive" />.</param>
+    /// <param name="friendlyName">The friendly name is the provided name or the full path.</param>
+    internal static IStorageLocation New(IStorageDrive? drive,
+                                         string path,
+                                         string? friendlyName = null)
     {
         if (path == string.Empty)
         {
@@ -129,6 +115,21 @@ internal sealed class InMemoryLocation : IStorageLocation
         friendlyName ??= path;
         return new InMemoryLocation(drive, path, friendlyName);
     }
+
+    /// <inheritdoc cref="object.Equals(object?)" />
+    public override bool Equals(object? obj)
+        => ReferenceEquals(this, obj) ||
+           (obj is IStorageLocation other && Equals(other));
+
+#if NETSTANDARD2_0
+    /// <inheritdoc cref="object.GetHashCode()" />
+    public override int GetHashCode()
+            => _key.ToLowerInvariant().GetHashCode();
+#else
+    /// <inheritdoc cref="object.GetHashCode()" />
+    public override int GetHashCode()
+        => _key.GetHashCode(StringComparisonMode);
+#endif
 
     /// <inheritdoc cref="object.ToString()" />
     public override string ToString()

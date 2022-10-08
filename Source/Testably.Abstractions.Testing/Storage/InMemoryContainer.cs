@@ -10,17 +10,11 @@ namespace Testably.Abstractions.Testing.Storage;
 
 internal class InMemoryContainer : IStorageContainer
 {
-    public static IStorageContainer Null
-        => new NullContainer();
-
     private FileAttributes _attributes;
-
     private byte[] _bytes = Array.Empty<byte>();
     private DateTime _creationTime;
-
     private readonly ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
     private readonly FileSystemMock _fileSystem;
-
     private bool _isEncrypted;
     private DateTime _lastAccessTime;
     private DateTime _lastWriteTime;
@@ -33,7 +27,7 @@ internal class InMemoryContainer : IStorageContainer
         _location = location;
         _fileSystem = fileSystem;
         Type = type;
-        AdjustTimes(IStorageContainer.TimeAdjustments.All);
+        this.AdjustTimes(TimeAdjustments.All);
     }
 
     #region IStorageContainer Members
@@ -106,6 +100,9 @@ internal class InMemoryContainer : IStorageContainer
         set => _creationTime = ConsiderUnspecifiedKind(value);
     }
 
+    /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+    public IFileSystem FileSystem => _fileSystem;
+
     /// <inheritdoc cref="IStorageContainer.LastAccessTime" />
     public DateTime LastAccessTime
     {
@@ -120,29 +117,14 @@ internal class InMemoryContainer : IStorageContainer
         set => _lastWriteTime = ConsiderUnspecifiedKind(value);
     }
 
+    /// <inheritdoc cref="IStorageContainer.LinkTarget" />
     public string? LinkTarget { get; set; }
 
+    /// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+    public ITimeSystem TimeSystem => _fileSystem.TimeSystem;
+
+    /// <inheritdoc cref="IStorageContainer.Type" />
     public ContainerType Type { get; }
-
-    /// <inheritdoc cref="IStorageContainer.AdjustTimes(IStorageContainer.TimeAdjustments)" />
-    public void AdjustTimes(IStorageContainer.TimeAdjustments timeAdjustments)
-    {
-        DateTime now = _fileSystem.TimeSystem.DateTime.UtcNow;
-        if (timeAdjustments.HasFlag(IStorageContainer.TimeAdjustments.CreationTime))
-        {
-            CreationTime = ConsiderUnspecifiedKind(now);
-        }
-
-        if (timeAdjustments.HasFlag(IStorageContainer.TimeAdjustments.LastAccessTime))
-        {
-            LastAccessTime = ConsiderUnspecifiedKind(now);
-        }
-
-        if (timeAdjustments.HasFlag(IStorageContainer.TimeAdjustments.LastWriteTime))
-        {
-            LastWriteTime = ConsiderUnspecifiedKind(now);
-        }
-    }
 
     /// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
     public void AppendBytes(byte[] bytes)
@@ -157,7 +139,7 @@ internal class InMemoryContainer : IStorageContainer
         _bytes = Array.Empty<byte>();
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="IStorageContainer.Decrypt()" />
     public void Decrypt()
     {
         if (!_isEncrypted)
@@ -172,7 +154,7 @@ internal class InMemoryContainer : IStorageContainer
         }
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc cref="IStorageContainer.Encrypt()" />
     public void Encrypt()
     {
         if (_isEncrypted)
@@ -223,12 +205,18 @@ internal class InMemoryContainer : IStorageContainer
 
     #endregion
 
+    /// <summary>
+    ///     Create a new directory on the <paramref name="location" />.
+    /// </summary>
     public static IStorageContainer NewDirectory(IStorageLocation location,
                                                  FileSystemMock fileSystem)
     {
         return new InMemoryContainer(ContainerType.Directory, location, fileSystem);
     }
 
+    /// <summary>
+    ///     Create a new file on the <paramref name="location" />.
+    /// </summary>
     public static IStorageContainer NewFile(IStorageLocation location,
                                             FileSystemMock fileSystem)
     {
@@ -296,7 +284,10 @@ internal class InMemoryContainer : IStorageContainer
 
         #region IStorageAccessHandle Members
 
+        /// <inheritdoc cref="IStorageAccessHandle.Access" />
         public FileAccess Access { get; }
+
+        /// <inheritdoc cref="IStorageAccessHandle.Share" />
         public FileShare Share { get; }
 
         /// <inheritdoc cref="IDisposable.Dispose()" />
