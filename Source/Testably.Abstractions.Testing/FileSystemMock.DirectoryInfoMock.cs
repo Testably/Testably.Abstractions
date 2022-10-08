@@ -13,8 +13,8 @@ public sealed partial class FileSystemMock
     /// <summary>
     ///     A mocked directory in the <see cref="InMemoryStorage" />.
     /// </summary>
-    private sealed class DirectoryInfoMock : FileSystemInfoMock,
-        IFileSystem.IDirectoryInfo
+    private sealed class DirectoryInfoMock
+        : FileSystemInfoMock, IFileSystem.IDirectoryInfo
     {
         private DirectoryInfoMock(IStorageLocation location,
                                   FileSystemMock fileSystem)
@@ -38,15 +38,23 @@ public sealed partial class FileSystemMock
         {
             FullName.ThrowCommonExceptionsIfPathIsInvalid(FileSystem);
 
-            Container = FileSystem.Storage.GetOrCreateContainer(
-                Location, InMemoryContainer.NewDirectory);
+            Container = FileSystem.Storage.GetOrCreateContainer(Location,
+                InMemoryContainer.NewDirectory);
+
             Refresh();
         }
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.CreateSubdirectory(string)" />
         public IFileSystem.IDirectoryInfo CreateSubdirectory(string path)
-            => FileSystem.Directory.CreateDirectory(
-                FileSystem.Path.Combine(FullName, path));
+        {
+            path.ThrowCommonExceptionsIfPathIsInvalid(FileSystem);
+
+            DirectoryInfoMock directory = New(
+                FileSystem.Storage.GetLocation(FileSystem.Path.Combine(FullName, path)),
+                FileSystem);
+            directory.Create();
+            return directory;
+        }
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Delete(bool)" />
         public void Delete(bool recursive)
@@ -77,7 +85,7 @@ public sealed partial class FileSystemMock
                     ContainerType.Directory,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption))
-               .Select(l => New(l, FileSystem));
+               .Select(location => New(location, FileSystem));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories(string, EnumerationOptions)" />
@@ -89,7 +97,7 @@ public sealed partial class FileSystemMock
                     ContainerType.Directory,
                     searchPattern,
                     enumerationOptions)
-               .Select(l => New(l, FileSystem));
+               .Select(location => New(location, FileSystem));
 #endif
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateFiles()" />
@@ -108,7 +116,7 @@ public sealed partial class FileSystemMock
                     ContainerType.File,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption))
-               .Select(l => FileInfoMock.New(l, FileSystem));
+               .Select(location => FileInfoMock.New(location, FileSystem));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateFiles(string, EnumerationOptions)" />
@@ -119,7 +127,7 @@ public sealed partial class FileSystemMock
                     ContainerType.File,
                     searchPattern,
                     enumerationOptions)
-               .Select(l => FileInfoMock.New(l, FileSystem));
+               .Select(location => FileInfoMock.New(location, FileSystem));
 #endif
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateFileSystemInfos()" />
@@ -139,7 +147,7 @@ public sealed partial class FileSystemMock
                     ContainerType.DirectoryOrFile,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption))
-               .Select(l => FileSystemInfoMock.New(l, FileSystem));
+               .Select(location => FileSystemInfoMock.New(location, FileSystem));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateFileSystemInfos(string, EnumerationOptions)" />
@@ -151,16 +159,16 @@ public sealed partial class FileSystemMock
                     ContainerType.DirectoryOrFile,
                     searchPattern,
                     enumerationOptions)
-               .Select(l => FileSystemInfoMock.New(l, FileSystem));
+               .Select(location => FileSystemInfoMock.New(location, FileSystem));
 #endif
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetDirectories()" />
         public IFileSystem.IDirectoryInfo[] GetDirectories()
-            => GetDirectories("*", SearchOption.TopDirectoryOnly);
+            => EnumerateDirectories().ToArray();
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetDirectories(string)" />
         public IFileSystem.IDirectoryInfo[] GetDirectories(string searchPattern)
-            => GetDirectories(searchPattern, SearchOption.TopDirectoryOnly);
+            => EnumerateDirectories(searchPattern).ToArray();
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetDirectories(string, SearchOption)" />
         public IFileSystem.IDirectoryInfo[] GetDirectories(
@@ -177,11 +185,11 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetFiles()" />
         public IFileSystem.IFileInfo[] GetFiles()
-            => GetFiles("*", SearchOption.TopDirectoryOnly);
+            => EnumerateFiles().ToArray();
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetFiles(string)" />
         public IFileSystem.IFileInfo[] GetFiles(string searchPattern)
-            => GetFiles(searchPattern, SearchOption.TopDirectoryOnly);
+            => EnumerateFiles(searchPattern).ToArray();
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetFiles(string, SearchOption)" />
         public IFileSystem.IFileInfo[] GetFiles(string searchPattern,
@@ -197,11 +205,11 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetFileSystemInfos()" />
         public IFileSystem.IFileSystemInfo[] GetFileSystemInfos()
-            => GetFileSystemInfos("*", SearchOption.TopDirectoryOnly);
+            => EnumerateFileSystemInfos().ToArray();
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetFileSystemInfos(string)" />
         public IFileSystem.IFileSystemInfo[] GetFileSystemInfos(string searchPattern)
-            => GetFileSystemInfos(searchPattern, SearchOption.TopDirectoryOnly);
+            => EnumerateFileSystemInfos(searchPattern).ToArray();
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetFileSystemInfos(string, SearchOption)" />
         public IFileSystem.IFileSystemInfo[] GetFileSystemInfos(

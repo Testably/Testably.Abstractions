@@ -14,7 +14,8 @@ public sealed partial class FileSystemMock
     /// <summary>
     ///     A mocked file in the <see cref="InMemoryStorage" />.
     /// </summary>
-    private sealed class FileInfoMock : FileSystemInfoMock, IFileSystem.IFileInfo
+    private sealed class FileInfoMock
+        : FileSystemInfoMock, IFileSystem.IFileInfo
     {
         private FileInfoMock(IStorageLocation location,
                              FileSystemMock fileSystem)

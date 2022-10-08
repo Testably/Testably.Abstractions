@@ -163,7 +163,7 @@ public sealed partial class FileSystemMock
             }
             catch (IOException)
             {
-                throw ExceptionFactory.FileNameCannotBeResolved(FullName);
+                throw ExceptionFactory.FileNameCannotBeResolved(Location.FullPath);
             }
         }
 #endif
