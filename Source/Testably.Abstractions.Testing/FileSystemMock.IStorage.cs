@@ -24,7 +24,7 @@ public sealed partial class FileSystemMock
         /// <param name="location">The location at which the container is located.</param>
         /// <param name="recursive">(optional) Is set, also child-containers are deleted recursively.</param>
         /// <returns><see langword="true" />, if the container was found and deleted, otherwise <see langword="false" />.</returns>
-        bool DeleteContainer(InMemoryLocation location, bool recursive = false);
+        bool DeleteContainer(IStorageLocation location, bool recursive = false);
 
         /// <summary>
         ///     Enumerate the locations of files or directories stored under <paramref name="location" />.
@@ -47,8 +47,8 @@ public sealed partial class FileSystemMock
         ///     The location of files or directories that match the <paramref name="type" />, <paramref name="expression" />
         ///     and <paramref name="enumerationOptions" />.
         /// </returns>
-        IEnumerable<InMemoryLocation> EnumerateLocations(
-            InMemoryLocation location,
+        IEnumerable<IStorageLocation> EnumerateLocations(
+            IStorageLocation location,
             InMemoryContainer.ContainerType type,
             string expression = "*",
             EnumerationOptions? enumerationOptions = null);
@@ -64,7 +64,7 @@ public sealed partial class FileSystemMock
         ///     <see cref="NullContainer" />.
         /// </returns>
         [return: NotNullIfNotNull("location")]
-        IStorageContainer? GetContainer(InMemoryLocation? location);
+        IStorageContainer? GetContainer(IStorageLocation? location);
 
         /// <summary>
         ///     Returns the drive if it is present.<br />
@@ -82,9 +82,9 @@ public sealed partial class FileSystemMock
         /// </summary>
         /// <param name="path">The path.</param>
         /// <param name="friendlyName">(optional) the friendly name for the <paramref name="path" />.</param>
-        /// <returns>The <see cref="InMemoryLocation" /> that corresponds to <paramref name="path" />.</returns>
+        /// <returns>The <see cref="IStorageLocation" /> that corresponds to <paramref name="path" />.</returns>
         [return: NotNullIfNotNull("path")]
-        InMemoryLocation? GetLocation(string? path, string? friendlyName = null);
+        IStorageLocation? GetLocation(string? path, string? friendlyName = null);
 
         /// <summary>
         ///     Returns the drives that are present.
@@ -100,8 +100,8 @@ public sealed partial class FileSystemMock
         /// <param name="containerGenerator">The callback used to create a new container at <paramref name="location" />.</param>
         /// <returns>The container at <paramref name="location" />.</returns>
         IStorageContainer GetOrCreateContainer(
-            InMemoryLocation location,
-            Func<InMemoryLocation, FileSystemMock, IStorageContainer> containerGenerator);
+            IStorageLocation location,
+            Func<IStorageLocation, FileSystemMock, IStorageContainer> containerGenerator);
 
 #if FEATURE_FILESYSTEM_LINK
         /// <summary>
@@ -113,7 +113,7 @@ public sealed partial class FileSystemMock
         ///     immediate next link.
         /// </param>
         /// <returns>The location of the link target.</returns>
-        InMemoryLocation? ResolveLinkTarget(InMemoryLocation location,
+        IStorageLocation? ResolveLinkTarget(IStorageLocation location,
                                             bool returnFinalTarget = false);
 #endif
 
@@ -127,8 +127,8 @@ public sealed partial class FileSystemMock
         ///     <see langword="true" /> if the container could be created at <paramref name="location" />,
         ///     otherwise <see langword="false" />.
         /// </returns>
-        bool TryAddContainer(InMemoryLocation location,
-                             Func<InMemoryLocation, FileSystemMock, IStorageContainer>
+        bool TryAddContainer(IStorageLocation location,
+                             Func<IStorageLocation, FileSystemMock, IStorageContainer>
                                  containerGenerator,
                              [NotNullWhen(true)] out IStorageContainer? container);
     }

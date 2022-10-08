@@ -16,7 +16,7 @@ public sealed partial class FileSystemMock
     /// </summary>
     internal sealed class InMemoryStorage : IStorage
     {
-        private readonly ConcurrentDictionary<InMemoryLocation, IStorageContainer>
+        private readonly ConcurrentDictionary<IStorageLocation, IStorageContainer>
             _containers = new();
 
         private readonly ConcurrentDictionary<string, DriveInfoMock> _drives =
@@ -36,7 +36,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IStorage.CurrentDirectory" />
         public string CurrentDirectory { get; set; } = string.Empty.PrefixRoot();
 
-        public bool DeleteContainer(InMemoryLocation location, bool recursive = false)
+        public bool DeleteContainer(IStorageLocation location, bool recursive = false)
         {
             if (!_containers.TryGetValue(location, out IStorageContainer? container))
             {
@@ -49,7 +49,7 @@ public sealed partial class FileSystemMock
                                _fileSystem.Path.DirectorySeparatorChar;
                 if (recursive)
                 {
-                    foreach (InMemoryLocation key in _containers.Keys.Where(x
+                    foreach (IStorageLocation key in _containers.Keys.Where(x
                         => x.FullPath.StartsWith(start)))
                     {
                         if (_containers.TryRemove(key,
@@ -74,7 +74,7 @@ public sealed partial class FileSystemMock
             return false;
         }
 
-        public IEnumerable<InMemoryLocation> EnumerateLocations(InMemoryLocation location,
+        public IEnumerable<IStorageLocation> EnumerateLocations(IStorageLocation location,
             InMemoryContainer.ContainerType type,
             string expression = "*",
             EnumerationOptions? enumerationOptions = null)
@@ -87,7 +87,7 @@ public sealed partial class FileSystemMock
 
             enumerationOptions ??= EnumerationOptionsHelper.Compatible;
 
-            foreach (KeyValuePair<InMemoryLocation, IStorageContainer> item in _containers
+            foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers
                .Where(x => x.Key.FullPath.StartsWith(location.FullPath) &&
                            !x.Key.Equals(location)))
             {
@@ -115,7 +115,7 @@ public sealed partial class FileSystemMock
         }
 
         [return: NotNullIfNotNull("location")]
-        public IStorageContainer? GetContainer(InMemoryLocation? location)
+        public IStorageContainer? GetContainer(IStorageLocation? location)
         {
             if (location == null)
             {
@@ -158,7 +158,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IStorage.GetLocation(string?, string?)" />
         [return: NotNullIfNotNull("path")]
-        public InMemoryLocation? GetLocation(string? path, string? friendlyName = null)
+        public IStorageLocation? GetLocation(string? path, string? friendlyName = null)
         {
             if (path == null)
             {
@@ -186,8 +186,8 @@ public sealed partial class FileSystemMock
         }
 
         public IStorageContainer GetOrCreateContainer(
-            InMemoryLocation location,
-            Func<InMemoryLocation, FileSystemMock, IStorageContainer> containerGenerator)
+            IStorageLocation location,
+            Func<IStorageLocation, FileSystemMock, IStorageContainer> containerGenerator)
         {
             ChangeDescription? fileSystemChange = null;
             IStorageContainer container = _containers.GetOrAdd(location,
@@ -226,14 +226,14 @@ public sealed partial class FileSystemMock
         }
 
 #if FEATURE_FILESYSTEM_LINK
-        public InMemoryLocation? ResolveLinkTarget(InMemoryLocation location,
+        public IStorageLocation? ResolveLinkTarget(IStorageLocation location,
                                                    bool returnFinalTarget = false)
         {
             if (_containers.TryGetValue(location,
                     out IStorageContainer? initialContainer) &&
                 initialContainer.LinkTarget != null)
             {
-                InMemoryLocation nextLocation =
+                IStorageLocation nextLocation =
                     _fileSystem.Storage.GetLocation(initialContainer.LinkTarget);
                 if (_containers.TryGetValue(nextLocation,
                     out IStorageContainer? container))
@@ -269,8 +269,6 @@ public sealed partial class FileSystemMock
                             throw ExceptionFactory.FileNameCannotBeResolved(
                                 location.FullPath);
                         }
-
-                        ;
                     }
 
                     return nextLocation;
@@ -283,8 +281,8 @@ public sealed partial class FileSystemMock
         }
 #endif
 
-        public bool TryAddContainer(InMemoryLocation location,
-                                    Func<InMemoryLocation, FileSystemMock,
+        public bool TryAddContainer(IStorageLocation location,
+                                    Func<IStorageLocation, FileSystemMock,
                                         IStorageContainer> containerGenerator,
                                     [NotNullWhen(true)] out IStorageContainer? container)
         {
@@ -318,7 +316,7 @@ public sealed partial class FileSystemMock
 
         #endregion
 
-        private void CreateParents(FileSystemMock fileSystem, InMemoryLocation location)
+        private void CreateParents(FileSystemMock fileSystem, IStorageLocation location)
         {
             List<string> parents = new();
             string? parent = fileSystem.Path.GetDirectoryName(
@@ -344,9 +342,9 @@ public sealed partial class FileSystemMock
                 foreach (string? parentPath in parents)
                 {
                     ChangeDescription? fileSystemChange = null;
-                    InMemoryLocation parentLocation =
+                    IStorageLocation parentLocation =
                         _fileSystem.Storage.GetLocation(parentPath);
-                    IStorageContainer parentContainer = _containers.AddOrUpdate(
+                    _ = _containers.AddOrUpdate(
                         parentLocation,
                         loc =>
                         {

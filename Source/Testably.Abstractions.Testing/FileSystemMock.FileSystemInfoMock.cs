@@ -9,11 +9,11 @@ public sealed partial class FileSystemMock
 {
     private class FileSystemInfoMock : IFileSystem.IFileSystemInfo
     {
-        protected readonly InMemoryLocation Location;
+        protected readonly IStorageLocation Location;
         protected readonly FileSystemMock FileSystem;
         protected IStorageContainer Container { get; set; }
 
-        internal FileSystemInfoMock(FileSystemMock fileSystem, InMemoryLocation location)
+        internal FileSystemInfoMock(FileSystemMock fileSystem, IStorageLocation location)
         {
             FileSystem = fileSystem;
             Location = location;
@@ -167,7 +167,7 @@ public sealed partial class FileSystemMock
         {
             try
             {
-                InMemoryLocation? targetLocation =
+                IStorageLocation? targetLocation =
                     FileSystem.Storage.ResolveLinkTarget(
                         FileSystem.Storage.GetLocation(FullName), returnFinalTarget);
                 if (targetLocation != null)
@@ -195,7 +195,7 @@ public sealed partial class FileSystemMock
             => Location.FriendlyName;
 
         [return: NotNullIfNotNull("location")]
-        internal static FileSystemInfoMock? New(InMemoryLocation? location,
+        internal static FileSystemInfoMock? New(IStorageLocation? location,
                                                 FileSystemMock fileSystem)
         {
             if (location == null)

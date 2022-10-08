@@ -25,10 +25,10 @@ public sealed partial class FileSystemMock
         private readonly FileSystemMock _fileSystem;
         private DateTime _lastAccessTime;
         private DateTime _lastWriteTime;
-        private readonly InMemoryLocation _location;
+        private readonly IStorageLocation _location;
 
         public InMemoryContainer(ContainerType type,
-                                 InMemoryLocation location,
+                                 IStorageLocation location,
                                  FileSystemMock fileSystem)
         {
             _location = location;
@@ -224,13 +224,13 @@ public sealed partial class FileSystemMock
 
         #endregion
 
-        public static IStorageContainer NewDirectory(InMemoryLocation location,
+        public static IStorageContainer NewDirectory(IStorageLocation location,
                                                      FileSystemMock fileSystem)
         {
             return new InMemoryContainer(ContainerType.Directory, location, fileSystem);
         }
 
-        public static IStorageContainer NewFile(InMemoryLocation location,
+        public static IStorageContainer NewFile(IStorageLocation location,
                                                 FileSystemMock fileSystem)
         {
             return new InMemoryContainer(ContainerType.File, location, fileSystem);

@@ -322,7 +322,7 @@ public sealed partial class FileSystemMock
         {
             try
             {
-                InMemoryLocation? targetLocation =
+                IStorageLocation? targetLocation =
                     _fileSystem.Storage.ResolveLinkTarget(
                         _fileSystem.Storage.GetLocation(linkPath), returnFinalTarget);
                 if (targetLocation != null)

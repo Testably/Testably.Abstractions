@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
 
@@ -7,7 +6,7 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class FileSystemMock
 {
-    internal sealed class InMemoryLocation : IEquatable<InMemoryLocation>
+    internal sealed class InMemoryLocation : IStorageLocation
     {
         private static readonly StringComparison StringComparisonMode =
             RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
@@ -55,10 +54,27 @@ public sealed partial class FileSystemMock
             Drive = drive;
         }
 
-#region IEquatable<InMemoryLocation> Members
+        /// <inheritdoc cref="IStorageLocation.GetParent()" />
+        public IStorageLocation? GetParent()
+        {
+            if (System.IO.Path.GetPathRoot(FullPath) == FullPath)
+            {
+                return null;
+            }
 
-        /// <inheritdoc cref="IEquatable{InMemoryLocation}.Equals(InMemoryLocation)" />
-        public bool Equals(InMemoryLocation? other)
+            string? parentPath = System.IO.Path.GetDirectoryName(FullPath);
+            if (parentPath == null)
+            {
+                return null;
+            }
+
+            return New(Drive,
+                parentPath,
+                System.IO.Path.GetDirectoryName(FriendlyName));
+        }
+
+        /// <inheritdoc cref="IEquatable{IStorageLocation}.Equals(IStorageLocation)" />
+        public bool Equals(IStorageLocation? other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -70,46 +86,32 @@ public sealed partial class FileSystemMock
                 return true;
             }
 
-            return _key.Equals(other._key, StringComparisonMode);
-        }
+            if (other is InMemoryLocation location)
+            {
+                return _key.Equals(location._key, StringComparisonMode);
+            }
 
-#endregion
+            return FullPath.Equals(other.FullPath, StringComparisonMode);
+        }
 
         /// <inheritdoc cref="object.Equals(object?)" />
         public override bool Equals(object? obj)
             => ReferenceEquals(this, obj) ||
-               (obj is InMemoryLocation other && Equals(other));
+               (obj is IStorageLocation other && Equals(other));
 
         /// <inheritdoc cref="object.GetHashCode()" />
         public override int GetHashCode()
 #if NETSTANDARD2_0
             => _key.ToLowerInvariant().GetHashCode();
 #else
-            => _key.GetHashCode(StringComparisonMode);
+        {
+            return _key.GetHashCode(StringComparisonMode);
+        }
 #endif
 
-        public InMemoryLocation? GetParent()
-        {
-            if (System.IO.Path.GetPathRoot(FullPath) == FullPath)
-            {
-                return null;
-            }
-
-            var parentPath = System.IO.Path.GetDirectoryName(FullPath);
-            if (parentPath == null)
-            {
-                return null;
-            }
-
-            return New(Drive,
-                parentPath,
-                System.IO.Path.GetDirectoryName(FriendlyName));
-        }
-
-        [return: NotNullIfNotNull("path")]
-        public static InMemoryLocation? New(IDriveInfoMock? drive,
-                                            string path,
-                                            string? friendlyName = null)
+        public static InMemoryLocation New(IDriveInfoMock? drive,
+                                           string path,
+                                           string? friendlyName = null)
         {
             if (path == string.Empty)
             {

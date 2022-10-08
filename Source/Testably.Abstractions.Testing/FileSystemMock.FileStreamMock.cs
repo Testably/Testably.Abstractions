@@ -63,7 +63,7 @@ public sealed partial class FileSystemMock
             _ = bufferSize;
             _options = options;
 
-            InMemoryLocation location = _fileSystem.Storage.GetLocation(Name);
+            IStorageLocation location = _fileSystem.Storage.GetLocation(Name);
             IStorageContainer file = _fileSystem.Storage.GetContainer(location);
             if (file is NullContainer)
             {

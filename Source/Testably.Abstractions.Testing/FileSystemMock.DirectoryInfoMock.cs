@@ -15,7 +15,7 @@ public sealed partial class FileSystemMock
     private sealed class DirectoryInfoMock : FileSystemInfoMock,
         IFileSystem.IDirectoryInfo
     {
-        private DirectoryInfoMock(InMemoryLocation location,
+        private DirectoryInfoMock(IStorageLocation location,
                                   FileSystemMock fileSystem)
             : base(fileSystem, location)
         {
@@ -222,7 +222,7 @@ public sealed partial class FileSystemMock
         #endregion
 
         [return: NotNullIfNotNull("location")]
-        internal static new DirectoryInfoMock? New(InMemoryLocation? location,
+        internal static new DirectoryInfoMock? New(IStorageLocation? location,
                                                    FileSystemMock fileSystem)
         {
             if (location == null)

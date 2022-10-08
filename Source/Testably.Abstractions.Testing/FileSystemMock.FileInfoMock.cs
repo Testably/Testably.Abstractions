@@ -17,7 +17,7 @@ public sealed partial class FileSystemMock
     {
         private bool? _exists;
 
-        private FileInfoMock(InMemoryLocation location,
+        private FileInfoMock(IStorageLocation location,
                              FileSystemMock fileSystem)
             : base(fileSystem, location)
         {
@@ -209,7 +209,7 @@ public sealed partial class FileSystemMock
         #endregion
 
         [return: NotNullIfNotNull("location")]
-        internal static new FileInfoMock? New(InMemoryLocation? location,
+        internal static new FileInfoMock? New(IStorageLocation? location,
                                               FileSystemMock fileSystem)
         {
             if (location == null)
