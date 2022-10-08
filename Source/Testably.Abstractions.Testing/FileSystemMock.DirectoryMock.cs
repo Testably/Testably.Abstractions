@@ -48,7 +48,7 @@ public sealed partial class FileSystemMock
                 pathToTarget = pathToTarget.PrefixRoot();
             }
 
-            FileSystemInfoMock fileInfo = new(path, path, _fileSystem);
+            FileSystemInfoMock fileInfo = new(_fileSystem, _fileSystem.Storage.GetLocation(path));
             fileInfo.CreateAsSymbolicLink(pathToTarget);
             return fileInfo;
         }

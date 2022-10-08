@@ -14,17 +14,14 @@ public sealed partial class FileSystemMock
         protected readonly FileSystemMock FileSystem;
         protected IStorageContainer Container { get; set; }
 
+        private bool? _exists;
+        private bool _isInitialized;
+
         internal FileSystemInfoMock(FileSystemMock fileSystem, IStorageLocation location)
         {
             FileSystem = fileSystem;
             Location = location;
             Container = fileSystem.Storage.GetContainer(location);
-        }
-
-        internal FileSystemInfoMock(string fullName, string originalPath,
-                                    FileSystemMock fileSystem)
-            : this(fileSystem, fileSystem.Storage.GetLocation(fullName, originalPath))
-        {
         }
 
         #region IFileSystemInfo Members
@@ -35,6 +32,23 @@ public sealed partial class FileSystemMock
             get => Container.Attributes;
             set => Container.Attributes = value;
         }
+
+#if FEATURE_FILESYSTEM_LINK
+        /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreateAsSymbolicLink(string)" />
+        public void CreateAsSymbolicLink(string pathToTarget)
+        {
+            if (FileSystem.Storage.TryAddContainer(Location, InMemoryContainer.NewFile,
+                out IStorageContainer? container))
+            {
+                container.LinkTarget = pathToTarget;
+            }
+            else
+            {
+                throw ExceptionFactory.CannotCreateFileAsAlreadyExists(Location
+                   .FriendlyName);
+            }
+        }
+#endif
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTime" />
         public DateTime CreationTime
@@ -50,6 +64,18 @@ public sealed partial class FileSystemMock
             set => Container.CreationTime = value;
         }
 
+        /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Delete()" />
+        public void Delete()
+        {
+            if (!FileSystem.Storage.DeleteContainer(
+                FileSystem.Storage.GetLocation(FullName)))
+            {
+                throw ExceptionFactory.DirectoryNotFound(FullName);
+            }
+
+            Refresh();
+        }
+
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
         public virtual bool Exists
         {
@@ -60,8 +86,6 @@ public sealed partial class FileSystemMock
                 return _exists.Value;
             }
         }
-
-        private bool? _exists;
 
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Extension" />
         public string Extension
@@ -109,24 +133,7 @@ public sealed partial class FileSystemMock
             => FileSystem.Path.GetFileName(FullName.TrimEnd(
                 FileSystem.Path.DirectorySeparatorChar,
                 FileSystem.Path.AltDirectorySeparatorChar));
-
-#if FEATURE_FILESYSTEM_LINK
-        /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreateAsSymbolicLink(string)" />
-        public void CreateAsSymbolicLink(string pathToTarget)
-        {
-            if (FileSystem.Storage.TryAddContainer(Location, InMemoryContainer.NewFile,
-                out IStorageContainer? container))
-            {
-                container.LinkTarget = pathToTarget;
-            }
-            else
-            {
-                throw ExceptionFactory.CannotCreateFileAsAlreadyExists(Location
-                   .FriendlyName);
-            }
-        }
-#endif
-
+        
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Refresh()" />
         public void Refresh()
         {
@@ -137,31 +144,6 @@ public sealed partial class FileSystemMock
             _isInitialized = false;
         }
 
-        private bool _isInitialized;
-
-        protected void RefreshInternal()
-        {
-            if (_isInitialized)
-            {
-                return;
-            }
-
-            Container = FileSystem.Storage.GetContainer(Location);
-            _isInitialized = true;
-        }
-
-        /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Delete()" />
-        public void Delete()
-        {
-            if (!FileSystem.Storage.DeleteContainer(
-                FileSystem.Storage.GetLocation(FullName)))
-            {
-                throw ExceptionFactory.DirectoryNotFound(FullName);
-            }
-
-            Refresh();
-        }
-
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.ResolveLinkTarget(bool)" />
         public IFileSystem.IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget)
@@ -170,7 +152,8 @@ public sealed partial class FileSystemMock
             {
                 IStorageLocation? targetLocation =
                     FileSystem.Storage.ResolveLinkTarget(
-                        FileSystem.Storage.GetLocation(FullName), returnFinalTarget);
+                        FileSystem.Storage.GetLocation(FullName),
+                        returnFinalTarget);
                 if (targetLocation != null)
                 {
                     return New(targetLocation, FileSystem);
@@ -205,6 +188,17 @@ public sealed partial class FileSystemMock
             }
 
             return new FileSystemInfoMock(fileSystem, location);
+        }
+
+        protected void RefreshInternal()
+        {
+            if (_isInitialized)
+            {
+                return;
+            }
+
+            Container = FileSystem.Storage.GetContainer(Location);
+            _isInitialized = true;
         }
     }
 }

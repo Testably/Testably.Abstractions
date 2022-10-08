@@ -16,8 +16,6 @@ public sealed partial class FileSystemMock
     /// </summary>
     private sealed class FileInfoMock : FileSystemInfoMock, IFileSystem.IFileInfo
     {
-        private bool? _exists;
-
         private FileInfoMock(IStorageLocation location,
                              FileSystemMock fileSystem)
             : base(fileSystem, location)
@@ -34,18 +32,6 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFileInfo.DirectoryName" />
         public string? DirectoryName
             => Directory?.FullName;
-
-        /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
-        public override bool Exists
-        {
-            get
-            {
-                _exists ??=
-                    FileSystem.Storage.GetContainer(
-                        FileSystem.Storage.GetLocation(FullName)) is not NullContainer;
-                return _exists.Value;
-            }
-        }
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.IsReadOnly" />
         public bool IsReadOnly
