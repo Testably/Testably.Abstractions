@@ -78,6 +78,11 @@ public sealed partial class FileSystemMock
             }
             else if (file.Type == InMemoryContainer.ContainerType.Directory)
             {
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    throw ExceptionFactory.FileAlreadyExists(
+                        _fileSystem.Path.GetFullPath(Name));
+                }
                 throw ExceptionFactory.AccessToPathDenied(
                     _fileSystem.Path.GetFullPath(Name));
             }
