@@ -70,7 +70,7 @@ public static partial class FileSystemInitializer
         ///     Force deletes the directory at the given <paramref name="path" />.<br />
         ///     Removes the <see cref="FileAttributes.ReadOnly" /> flag, if necessary.
         ///     <para />
-        ///     If <paramref name="recursive" /> is set (default <c>true</c>), the sub directories are force deleted as well.
+        ///     If <paramref name="recursive" /> is set (default <see langword="true" />), the sub directories are force deleted as well.
         /// </summary>
         private void ForceDeleteDirectory(string path, bool recursive = true)
         {

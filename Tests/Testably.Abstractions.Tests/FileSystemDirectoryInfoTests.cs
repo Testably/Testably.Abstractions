@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace Testably.Abstractions.Tests;
 
 public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
@@ -38,6 +36,16 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         sut.Parent!.Exists.Should().BeFalse();
         sut.Parent.Parent.Should().NotBeNull();
         sut.Parent.Parent!.Exists.Should().BeFalse();
+    }
+
+    [SkippableFact]
+    [AutoData]
+    [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Parent))]
+    public void Parent_Root_ShouldBeNull()
+    {
+        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("".PrefixRoot());
+
+        sut.Parent.Should().BeNull();
     }
 
     [SkippableTheory]

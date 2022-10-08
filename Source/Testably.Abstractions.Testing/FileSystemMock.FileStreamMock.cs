@@ -2,6 +2,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
+using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
 
@@ -22,7 +23,7 @@ public sealed partial class FileSystemMock
 
         private readonly FileAccess _access;
         private readonly IDisposable _accessLock;
-        private readonly IStorage.IFileInfoMock _file;
+        private readonly IStorageContainer _file;
         private readonly FileSystemMock _fileSystem;
         private bool _isDisposed;
         private readonly FileMode _mode;
@@ -63,9 +64,9 @@ public sealed partial class FileSystemMock
             _ = bufferSize;
             _options = options;
 
-            IStorage.IFileInfoMock? file =
-                _fileSystem.Storage.GetFile(Name);
-            if (file == null)
+            IStorageLocation location = _fileSystem.Storage.GetLocation(Name);
+            IStorageContainer file = _fileSystem.Storage.GetContainer(location);
+            if (file is NullContainer)
             {
                 if (_mode.Equals(FileMode.Open) ||
                     _mode.Equals(FileMode.Truncate))
@@ -74,18 +75,19 @@ public sealed partial class FileSystemMock
                         _fileSystem.Path.GetFullPath(Name));
                 }
 
-                file = _fileSystem.Storage.GetOrAddFile(Name);
-                if (file == null)
+                file = _fileSystem.Storage.GetOrCreateContainer(location,
+                    InMemoryContainer.NewFile);
+            }
+            else if (file.Type == ContainerTypes.Directory)
+            {
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    {
-                        throw ExceptionFactory.FileAlreadyExists(
-                            _fileSystem.Path.GetFullPath(Name));
-                    }
-
-                    throw ExceptionFactory.AccessToPathDenied(
+                    throw ExceptionFactory.FileAlreadyExists(
                         _fileSystem.Path.GetFullPath(Name));
                 }
+
+                throw ExceptionFactory.AccessToPathDenied(
+                    _fileSystem.Path.GetFullPath(Name));
             }
             else if (_mode.Equals(FileMode.CreateNew))
             {
@@ -120,6 +122,7 @@ public sealed partial class FileSystemMock
             {
                 throw ExceptionFactory.StreamDoesNotSupportWriting();
             }
+
             base.SetLength(value);
         }
 
@@ -174,7 +177,8 @@ public sealed partial class FileSystemMock
         {
             if (_options.HasFlag(FileOptions.DeleteOnClose))
             {
-                _fileSystem.Storage.Delete(Name);
+                _fileSystem.Storage.DeleteContainer(
+                    _fileSystem.Storage.GetLocation(Name));
             }
         }
 

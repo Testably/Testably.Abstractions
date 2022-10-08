@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 using Testably.Abstractions.Testing.Internal;
+using Testably.Abstractions.Testing.Storage;
 #if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
 #endif
@@ -14,21 +14,20 @@ public sealed partial class FileSystemMock
     /// <summary>
     ///     A mocked file in the <see cref="InMemoryStorage" />.
     /// </summary>
-    private sealed class FileInfoMock : FileSystemInfoMock,
-        IStorage.IFileInfoMock
+    private sealed class FileInfoMock
+        : FileSystemInfoMock, IFileSystem.IFileInfo
     {
-        private byte[] _bytes = Array.Empty<byte>();
-
-        internal FileInfoMock(string fullName, string originalPath,
-                              FileSystemMock fileSystem)
-            : base(fullName, originalPath, fileSystem)
+        private FileInfoMock(IStorageLocation location,
+                             FileSystemMock fileSystem)
+            : base(fileSystem, location)
         {
         }
 
+        #region IFileInfo Members
+
         /// <inheritdoc cref="IFileSystem.IFileInfo.Directory" />
         public IFileSystem.IDirectoryInfo? Directory
-            => DirectoryInfoMock.New(
-                FileSystem.Path.GetDirectoryName(OriginalPath),
+            => DirectoryInfoMock.New(Location.GetParent(),
                 FileSystem);
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.DirectoryName" />
@@ -42,9 +41,13 @@ public sealed partial class FileSystemMock
             set
             {
                 if (value)
+                {
                     Attributes |= FileAttributes.ReadOnly;
+                }
                 else
+                {
                     Attributes &= ~FileAttributes.ReadOnly;
+                }
             }
         }
 
@@ -54,10 +57,14 @@ public sealed partial class FileSystemMock
             get
             {
                 RefreshInternal();
-                return (Container as IStorage.IFileInfoMock)?.GetBytes().Length
-                       ?? throw ExceptionFactory.FileNotFound(Framework.IsNetFramework
-                           ? OriginalPath
-                           : FullName);
+                if (Container is NullContainer)
+                {
+                    throw ExceptionFactory.FileNotFound(Framework.IsNetFramework
+                        ? Location.FriendlyName
+                        : Location.FullPath);
+                }
+
+                return Container.GetBytes().Length;
             }
         }
 
@@ -87,10 +94,9 @@ public sealed partial class FileSystemMock
 #endif
         public void Decrypt()
         {
-            using (RequestAccess(FileAccess.Write, FileShare.Read))
+            using (Container.RequestAccess(FileAccess.Write, FileShare.Read))
             {
-                IsEncrypted = false;
-                WriteBytes(EncryptionHelper.Decrypt(GetBytes()));
+                Container.Decrypt();
             }
         }
 
@@ -100,10 +106,9 @@ public sealed partial class FileSystemMock
 #endif
         public void Encrypt()
         {
-            using (RequestAccess(FileAccess.Write, FileShare.Read))
+            using (Container.RequestAccess(FileAccess.Write, FileShare.Read))
             {
-                IsEncrypted = true;
-                WriteBytes(EncryptionHelper.Encrypt(GetBytes()));
+                Container.Encrypt();
             }
         }
 
@@ -189,65 +194,18 @@ public sealed partial class FileSystemMock
                                              bool ignoreMetadataErrors)
             => throw new NotImplementedException();
 
-        /// <inheritdoc cref="IStorage.IFileInfoMock.AppendBytes(byte[])" />
-        public void AppendBytes(byte[] bytes)
-        {
-            WriteBytes(_bytes.Concat(bytes).ToArray());
-        }
+        #endregion
 
-        /// <inheritdoc cref="IStorage.IFileInfoMock.GetBytes()" />
-        public byte[] GetBytes() => _bytes;
-
-        /// <inheritdoc cref="IStorage.IFileInfoMock.WriteBytes(byte[])" />
-        public void WriteBytes(byte[] bytes)
+        [return: NotNullIfNotNull("location")]
+        internal static new FileInfoMock? New(IStorageLocation? location,
+                                              FileSystemMock fileSystem)
         {
-            Drive?.ChangeUsedBytes(bytes.Length - _bytes.Length);
-            _bytes = bytes;
-        }
-
-        /// <inheritdoc cref="IStorage.IFileInfoMock.ClearBytes()" />
-        public void ClearBytes()
-        {
-            Drive?.ChangeUsedBytes(0 - _bytes.Length);
-            _bytes = Array.Empty<byte>();
-        }
-
-#if FEATURE_FILESYSTEM_LINK
-        /// <inheritdoc cref="IStorage.IFileInfoMock.SetLinkTarget(string)" />
-        public void SetLinkTarget(string pathToTarget)
-        {
-            LinkTarget = pathToTarget;
-            Attributes |= FileAttributes.ReparsePoint;
-        }
-#endif
-
-        [return: NotNullIfNotNull("path")]
-        internal static FileInfoMock? New(string? path, FileSystemMock fileSystem)
-        {
-            if (path == null)
+            if (location == null)
             {
                 return null;
             }
 
-            if (path == string.Empty)
-            {
-                if (Framework.IsNetFramework)
-                {
-                    throw ExceptionFactory.PathHasNoLegalForm();
-                }
-
-                throw ExceptionFactory.PathIsEmpty(nameof(path));
-            }
-
-            string originalPath = path;
-            if (Framework.IsNetFramework)
-            {
-                originalPath = originalPath.TrimEnd(' ');
-            }
-
-            string fullName = fileSystem.Path.GetFullPath(path).NormalizePath()
-               .TrimOnWindows();
-            return new FileInfoMock(fullName, originalPath, fileSystem);
+            return new FileInfoMock(location, fileSystem);
         }
     }
 }

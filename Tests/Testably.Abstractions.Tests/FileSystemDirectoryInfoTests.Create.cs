@@ -103,13 +103,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         result.Parent.Exists.Should().BeTrue();
         result.Parent.Parent.Exists.Should().BeTrue();
         result.ToString().Should().Be(path);
-#if NETFRAMEWORK
-        result.Parent.ToString().Should().Be(result.Parent.Name);
-        result.Parent.Parent.ToString().Should().Be(result.Parent.Parent.Name);
-#else
-        result.Parent.ToString().Should().Be(result.Parent.FullName);
-        result.Parent.Parent.ToString().Should().Be(result.Parent.Parent.FullName);
-#endif
     }
 
     [SkippableTheory]

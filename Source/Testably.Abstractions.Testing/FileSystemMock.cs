@@ -1,5 +1,5 @@
 ﻿using System;
-using System.IO;
+using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
 
@@ -43,11 +43,6 @@ public sealed partial class FileSystemMock : IFileSystem
     private readonly PathMock _pathMock;
 
     /// <summary>
-    ///     The <c>null</c>-object of an <see cref="IFileSystem.IFileSystemInfo" />.
-    /// </summary>
-    internal IFileSystem.IFileSystemInfo NullFileSystemInfo { get; }
-
-    /// <summary>
     ///     Initializes the <see cref="FileSystemMock" />.
     /// </summary>
     public FileSystemMock()
@@ -63,13 +58,6 @@ public sealed partial class FileSystemMock : IFileSystem
         DriveInfo = new DriveInfoFactoryMock(this);
         FileInfo = new FileInfoFactoryMock(this);
         FileStream = new FileStreamFactoryMock(this);
-        NullFileSystemInfo = new FileSystemInfoMock(string.Empty, string.Empty, this)
-        {
-            LastWriteTime = new DateTime(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc),
-            LastAccessTime = new DateTime(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc),
-            CreationTime = new DateTime(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc),
-            Attributes = (FileAttributes)(-1),
-        };
     }
 
     /// <summary>
@@ -78,9 +66,9 @@ public sealed partial class FileSystemMock : IFileSystem
     ///     If the <paramref name="drive" /> does not exist, it will be created/mounted.
     /// </summary>
     public FileSystemMock WithDrive(string? drive,
-                                    Action<IDriveInfoMock>? driveCallback = null)
+                                    Action<IStorageDrive>? driveCallback = null)
     {
-        IDriveInfoMock driveInfoMock = Storage.GetOrAddDrive(
+        IStorageDrive driveInfoMock = Storage.GetOrAddDrive(
             drive ?? "".PrefixRoot());
         driveCallback?.Invoke(driveInfoMock);
         return this;
@@ -125,6 +113,6 @@ public static class FileSystemMockExtensions
     /// </summary>
     public static FileSystemMock WithDrive(
         this FileSystemMock fileSystemMock,
-        Action<FileSystemMock.IDriveInfoMock> driveCallback)
+        Action<IStorageDrive> driveCallback)
         => fileSystemMock.WithDrive(null, driveCallback);
 }

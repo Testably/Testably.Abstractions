@@ -5,15 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Testably.Abstractions.Testing.Internal;
+using Testably.Abstractions.Testing.Storage;
 #if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
 #endif
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
-#endif
-#if FEATURE_FILESYSTEM_LINK
-using System.Runtime.InteropServices;
 #endif
 
 namespace Testably.Abstractions.Testing;
@@ -73,9 +71,11 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.AppendAllText(string, string?, Encoding)" />
         public void AppendAllText(string path, string? contents, Encoding encoding)
         {
-            IStorage.IFileInfoMock? fileInfo =
-                _fileSystem.Storage.GetOrAddFile(path);
-            if (fileInfo != null && contents != null)
+            var fileInfo =
+                _fileSystem.Storage.GetOrCreateContainer(
+                    _fileSystem.Storage.GetLocation(path),
+                    InMemoryContainer.NewFile);
+            if (fileInfo is not NullContainer && contents != null)
             {
                 using (fileInfo.RequestAccess(
                     FileAccess.ReadWrite,
@@ -149,15 +149,16 @@ public sealed partial class FileSystemMock
         public IFileSystem.IFileSystemInfo CreateSymbolicLink(
             string path, string pathToTarget)
         {
-            if (!FileSystem.Path.IsPathRooted(pathToTarget) &&
-                !RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            var location = _fileSystem.Storage.GetLocation(path);
+            if (_fileSystem.Storage.TryAddContainer(location, InMemoryContainer.NewFile, out var container))
             {
-                pathToTarget = pathToTarget.PrefixRoot();
+                container.LinkTarget = pathToTarget;
+                return FileSystemInfoMock.New(location, _fileSystem);
             }
-
-            FileSystemInfoMock fileInfo = new(path, path, _fileSystem);
-            fileInfo.CreateAsSymbolicLink(pathToTarget);
-            return fileInfo;
+            else
+            {
+                throw ExceptionFactory.CannotCreateFileAsAlreadyExists(path);
+            }
         }
 #endif
 
@@ -171,10 +172,10 @@ public sealed partial class FileSystemMock
 #endif
         public void Decrypt(string path)
         {
-            IStorage.IFileInfoMock? fileInfo =
-                _fileSystem.Storage.GetOrAddFile(path);
-            if (fileInfo != null &&
-                fileInfo.Attributes.HasFlag(FileAttributes.Encrypted))
+            var fileInfo =
+                _fileSystem.Storage.GetContainer(
+                    _fileSystem.Storage.GetLocation(path));
+            if (fileInfo is not NullContainer)
             {
                 fileInfo.Decrypt();
             }
@@ -183,7 +184,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.Delete(string)" />
         public void Delete(string path)
         {
-            if (!_fileSystem.Storage.Delete(path))
+            if (!_fileSystem.Storage.DeleteContainer(_fileSystem.Storage.GetLocation(path)))
             {
                 throw ExceptionFactory.FileNotFound(
                     _fileSystem.Path.GetFullPath(path));
@@ -196,10 +197,10 @@ public sealed partial class FileSystemMock
 #endif
         public void Encrypt(string path)
         {
-            IStorage.IFileInfoMock? fileInfo =
-                _fileSystem.Storage.GetOrAddFile(path);
-            if (fileInfo != null &&
-                !fileInfo.Attributes.HasFlag(FileAttributes.Encrypted))
+            var fileInfo =
+                _fileSystem.Storage.GetContainer(
+                    _fileSystem.Storage.GetLocation(path));
+            if (fileInfo is not NullContainer)
             {
                 fileInfo.Encrypt();
             }
@@ -207,42 +208,52 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.Exists(string?)" />
         public bool Exists([NotNullWhen(true)] string? path)
-            => _fileSystem.Storage.Exists(path);
+            => FileInfoMock.New(_fileSystem.Storage.GetLocation(path), _fileSystem)
+              ?.Exists ?? false;
 
         /// <inheritdoc cref="IFileSystem.IFile.GetAttributes(string)" />
         public FileAttributes GetAttributes(string path)
-            => _fileSystem.Storage.GetFile(path)?.Attributes
-               ?? throw ExceptionFactory.FileNotFound(FileSystem.Path.GetFullPath(path));
+        {
+            var container = _fileSystem.Storage
+               .GetContainer(_fileSystem.Storage.GetLocation(path));
+            if (container is NullContainer)
+            {
+                throw ExceptionFactory.FileNotFound(
+                    FileSystem.Path.GetFullPath(path));
+            }
+
+            return container.Attributes;
+        }
 
         /// <inheritdoc cref="IFileSystem.IFile.GetCreationTime(string)" />
         public DateTime GetCreationTime(string path)
-            => (_fileSystem.Storage.GetFile(path) ??
-                _fileSystem.NullFileSystemInfo).CreationTime;
+            => _fileSystem.Storage.GetContainer(
+                _fileSystem.Storage.GetLocation(path)).CreationTime.ToLocalTime();
 
         /// <inheritdoc cref="IFileSystem.IFile.GetCreationTimeUtc(string)" />
         public DateTime GetCreationTimeUtc(string path)
-            => (_fileSystem.Storage.GetFile(path) ??
-                _fileSystem.NullFileSystemInfo).CreationTimeUtc;
+            => _fileSystem.Storage.GetContainer(
+                _fileSystem.Storage.GetLocation(path)).CreationTime.ToUniversalTime();
 
         /// <inheritdoc cref="IFileSystem.IFile.GetLastAccessTime(string)" />
         public DateTime GetLastAccessTime(string path)
-            => (_fileSystem.Storage.GetFile(path) ??
-                _fileSystem.NullFileSystemInfo).LastAccessTime;
+            => _fileSystem.Storage.GetContainer(
+                _fileSystem.Storage.GetLocation(path)).LastAccessTime.ToLocalTime();
 
         /// <inheritdoc cref="IFileSystem.IFile.GetLastAccessTimeUtc(string)" />
         public DateTime GetLastAccessTimeUtc(string path)
-            => (_fileSystem.Storage.GetFile(path) ??
-                _fileSystem.NullFileSystemInfo).LastAccessTimeUtc;
+            => _fileSystem.Storage.GetContainer(
+                _fileSystem.Storage.GetLocation(path)).LastAccessTime.ToUniversalTime();
 
         /// <inheritdoc cref="IFileSystem.IFile.GetLastWriteTime(string)" />
         public DateTime GetLastWriteTime(string path)
-            => (_fileSystem.Storage.GetFile(path) ??
-                _fileSystem.NullFileSystemInfo).LastWriteTime;
+            => _fileSystem.Storage.GetContainer(
+                _fileSystem.Storage.GetLocation(path)).LastWriteTime.ToLocalTime();
 
         /// <inheritdoc cref="IFileSystem.IFile.GetLastWriteTimeUtc(string)" />
         public DateTime GetLastWriteTimeUtc(string path)
-            => (_fileSystem.Storage.GetFile(path) ??
-                _fileSystem.NullFileSystemInfo).LastWriteTimeUtc;
+            => _fileSystem.Storage.GetContainer(
+                _fileSystem.Storage.GetLocation(path)).LastWriteTime.ToUniversalTime();
 
         /// <inheritdoc cref="IFileSystem.IFile.Move(string, string)" />
         public void Move(string sourceFileName, string destFileName)
@@ -322,9 +333,10 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllBytes(string)" />
         public byte[] ReadAllBytes(string path)
         {
-            IStorage.IFileInfoMock? fileInfo =
-                _fileSystem.Storage.GetFile(path);
-            if (fileInfo != null)
+            var fileInfo =
+                _fileSystem.Storage.GetContainer(
+                    _fileSystem.Storage.GetLocation(path));
+            if (fileInfo is not NullContainer)
             {
                 using (fileInfo.RequestAccess(
                     FileAccess.Read,
@@ -381,9 +393,10 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.ReadAllText(string, Encoding)" />
         public string ReadAllText(string path, Encoding encoding)
         {
-            IStorage.IFileInfoMock? fileInfo =
-                _fileSystem.Storage.GetFile(path);
-            if (fileInfo != null)
+            var fileInfo =
+                _fileSystem.Storage.GetContainer(
+                    _fileSystem.Storage.GetLocation(path));
+            if (fileInfo is not NullContainer)
             {
                 using (fileInfo.RequestAccess(
                     FileAccess.Read,
@@ -437,30 +450,30 @@ public sealed partial class FileSystemMock
         public IFileSystem.IFileSystemInfo? ResolveLinkTarget(
             string linkPath, bool returnFinalTarget)
         {
-            IStorage.IFileSystemInfoMock? fileInfo =
-                _fileSystem.Storage.GetFileSystemInfo(linkPath);
-            if (fileInfo != null)
+            try
             {
-                try
+                var targetLocation = _fileSystem.Storage.ResolveLinkTarget(_fileSystem.Storage.GetLocation(linkPath), returnFinalTarget);
+                if (targetLocation != null)
                 {
-                    return fileInfo.ResolveLinkTarget(returnFinalTarget);
+                    return FileSystemInfoMock.New(targetLocation, _fileSystem);
                 }
-                catch (IOException)
-                {
-                    throw ExceptionFactory.FileNameCannotBeResolved(linkPath);
-                }
-            }
 
-            throw ExceptionFactory.FileNotFound(linkPath);
+                return null;
+            }
+            catch (IOException)
+            {
+                throw ExceptionFactory.FileNameCannotBeResolved(linkPath);
+            }
         }
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFile.SetAttributes(string, FileAttributes)" />
         public void SetAttributes(string path, FileAttributes fileAttributes)
         {
-            IFileSystem.IFileInfo? fileInfo =
-                _fileSystem.Storage.GetFile(path);
-            if (fileInfo == null)
+            var fileInfo =
+                _fileSystem.Storage.GetContainer(
+                    _fileSystem.Storage.GetLocation(path));
+            if (fileInfo is NullContainer)
             {
                 throw ExceptionFactory.FileNotFound(
                     FileSystem.Path.GetFullPath(path));
@@ -472,9 +485,10 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.SetCreationTime(string, DateTime)" />
         public void SetCreationTime(string path, DateTime creationTime)
         {
-            IFileSystem.IFileInfo? fileInfo =
-                _fileSystem.Storage.GetFile(path);
-            if (fileInfo == null)
+            var fileInfo =
+                _fileSystem.Storage.GetContainer(
+                    _fileSystem.Storage.GetLocation(path));
+            if (fileInfo is NullContainer)
             {
                 throw ExceptionFactory.FileNotFound(
                     FileSystem.Path.GetFullPath(path));
@@ -486,23 +500,25 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.SetCreationTimeUtc(string, DateTime)" />
         public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
         {
-            IFileSystem.IFileInfo? fileInfo =
-                _fileSystem.Storage.GetFile(path);
-            if (fileInfo == null)
+            var fileInfo =
+                _fileSystem.Storage.GetContainer(
+                    _fileSystem.Storage.GetLocation(path));
+            if (fileInfo is NullContainer)
             {
                 throw ExceptionFactory.FileNotFound(
                     FileSystem.Path.GetFullPath(path));
             }
 
-            fileInfo.CreationTimeUtc = creationTimeUtc;
+            fileInfo.CreationTime = creationTimeUtc;
         }
 
         /// <inheritdoc cref="IFileSystem.IFile.SetLastAccessTime(string, DateTime)" />
         public void SetLastAccessTime(string path, DateTime lastAccessTime)
         {
-            IFileSystem.IFileInfo? fileInfo =
-                _fileSystem.Storage.GetFile(path);
-            if (fileInfo == null)
+            var fileInfo =
+                _fileSystem.Storage.GetContainer(
+                    _fileSystem.Storage.GetLocation(path));
+            if (fileInfo is NullContainer)
             {
                 throw ExceptionFactory.FileNotFound(
                     FileSystem.Path.GetFullPath(path));
@@ -514,23 +530,25 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.SetLastAccessTimeUtc(string, DateTime)" />
         public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
         {
-            IFileSystem.IFileInfo? fileInfo =
-                _fileSystem.Storage.GetFile(path);
-            if (fileInfo == null)
+            var fileInfo =
+                _fileSystem.Storage.GetContainer(
+                    _fileSystem.Storage.GetLocation(path));
+            if (fileInfo is NullContainer)
             {
                 throw ExceptionFactory.FileNotFound(
                     FileSystem.Path.GetFullPath(path));
             }
 
-            fileInfo.LastAccessTimeUtc = lastAccessTimeUtc;
+            fileInfo.LastAccessTime = lastAccessTimeUtc;
         }
 
         /// <inheritdoc cref="IFileSystem.IFile.SetLastWriteTime(string, DateTime)" />
         public void SetLastWriteTime(string path, DateTime lastWriteTime)
         {
-            IFileSystem.IFileInfo? fileInfo =
-                _fileSystem.Storage.GetFile(path);
-            if (fileInfo == null)
+            var fileInfo =
+                _fileSystem.Storage.GetContainer(
+                    _fileSystem.Storage.GetLocation(path));
+            if (fileInfo is NullContainer)
             {
                 throw ExceptionFactory.FileNotFound(
                     FileSystem.Path.GetFullPath(path));
@@ -542,23 +560,26 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.SetLastWriteTimeUtc(string, DateTime)" />
         public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
         {
-            IFileSystem.IFileInfo? fileInfo =
-                _fileSystem.Storage.GetFile(path);
-            if (fileInfo == null)
+            var fileInfo =
+                _fileSystem.Storage.GetContainer(
+                    _fileSystem.Storage.GetLocation(path));
+            if (fileInfo is NullContainer)
             {
                 throw ExceptionFactory.FileNotFound(
                     FileSystem.Path.GetFullPath(path));
             }
 
-            fileInfo.LastWriteTimeUtc = lastWriteTimeUtc;
+            fileInfo.LastWriteTime = lastWriteTimeUtc;
         }
 
         /// <inheritdoc cref="IFileSystem.IFile.WriteAllBytes(string, byte[])" />
         public void WriteAllBytes(string path, byte[] bytes)
         {
-            IStorage.IFileInfoMock? fileInfo =
-                _fileSystem.Storage.GetOrAddFile(path);
-            if (fileInfo != null)
+            var fileInfo =
+                _fileSystem.Storage.GetOrCreateContainer(
+                    _fileSystem.Storage.GetLocation(path),
+                    InMemoryContainer.NewFile);
+            if (fileInfo is not NullContainer)
             {
                 using (fileInfo.RequestAccess(
                     FileAccess.Write,
@@ -633,9 +654,11 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.WriteAllText(string, string?, Encoding)" />
         public void WriteAllText(string path, string? contents, Encoding encoding)
         {
-            IStorage.IFileInfoMock? fileInfo =
-                _fileSystem.Storage.GetOrAddFile(path);
-            if (fileInfo != null && contents != null)
+            var fileInfo =
+                _fileSystem.Storage.GetOrCreateContainer(
+                    _fileSystem.Storage.GetLocation(path),
+                    InMemoryContainer.NewFile);
+            if (fileInfo is not NullContainer && contents != null)
             {
                 using (fileInfo.RequestAccess(
                     FileAccess.Write,

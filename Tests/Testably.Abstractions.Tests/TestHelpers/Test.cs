@@ -12,7 +12,7 @@ public static class Test
 
     public static void SkipIfTestsOnRealFileSystemShouldBeSkipped(IFileSystem fileSystem)
     {
-#if !DEBUG && SKIP_TESTS_ON_REAL_FILESYSTEM
+#if DEBUG && SKIP_TESTS_ON_REAL_FILESYSTEM
         Skip.If(fileSystem is FileSystem,
             "Tests against real FileSystem are skipped in DEBUG mode with the build constant 'SKIP_TESTS_ON_REAL_FILESYSTEM'.");
 #endif

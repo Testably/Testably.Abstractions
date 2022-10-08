@@ -18,7 +18,7 @@ public sealed partial class FileSystemMock
         /// <param name="interceptionCallback">The callback to execute before the change occurred.</param>
         /// <param name="predicate">
         ///     (optional) A predicate used to filter which callbacks should be intercepted.<br />
-        ///     If set to <c>null</c> (default value) all callbacks are intercepted.
+        ///     If set to <see langword="null" /> (default value) all callbacks are intercepted.
         /// </param>
         FileSystemMock Change(Action<ChangeDescription> interceptionCallback,
                               Func<ChangeDescription, bool>? predicate = null);

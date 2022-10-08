@@ -30,6 +30,7 @@ internal static class PathHelper
         return false;
     }
 
+
     internal static string
         NormalizeAndTrimPath(this string path, IFileSystem fileSystem)
         => fileSystem.Path

@@ -28,14 +28,17 @@ public sealed partial class FileSystemMock
                 throw new ArgumentNullException(nameof(fileName));
             }
 
-            return FileInfoMock.New(fileName, _fileSystem);
+            return FileInfoMock.New(
+                _fileSystem.Storage.GetLocation(fileName),
+                _fileSystem);
         }
 
         /// <inheritdoc cref="IFileSystem.IFileInfoFactory.Wrap(FileInfo)" />
         public IFileSystem.IFileInfo Wrap(FileInfo fileInfo)
-            => new FileInfoMock(
-                fileInfo.FullName,
-                fileInfo.ToString(),
+            => FileInfoMock.New(
+                _fileSystem.Storage.GetLocation(
+                    fileInfo.FullName,
+                    fileInfo.ToString()),
                 _fileSystem);
 
         #endregion
