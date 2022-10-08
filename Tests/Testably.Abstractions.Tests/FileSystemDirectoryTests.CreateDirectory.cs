@@ -157,8 +157,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
         IFileSystem.IDirectoryInfo result =
             FileSystem.Directory.CreateDirectory(nameWithSuffix);
-
-        result.ToString().Should().Be("");
+        
         result.Name.Should().Be(expectedName.TrimEnd(
             FileSystem.Path.DirectorySeparatorChar,
             FileSystem.Path.AltDirectorySeparatorChar));
@@ -181,8 +180,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
         IFileSystem.IDirectoryInfo result =
             FileSystem.Directory.CreateDirectory(nameWithSuffix);
-
-        result.ToString().Should().Be(expectedName);
+        
         result.Name.Should().Be(expectedName.TrimEnd(
             FileSystem.Path.DirectorySeparatorChar,
             FileSystem.Path.AltDirectorySeparatorChar));
@@ -215,8 +213,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
         IFileSystem.IDirectoryInfo result =
             FileSystem.Directory.CreateDirectory(nameWithSuffix);
-
-        result.ToString().Should().Be(nameWithSuffix);
+            
         result.Name.Should().Be(expectedName.TrimEnd(
             FileSystem.Path.DirectorySeparatorChar,
             FileSystem.Path.AltDirectorySeparatorChar));
