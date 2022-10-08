@@ -222,6 +222,52 @@ internal sealed class InMemoryStorage : IStorage
         return container;
     }
 
+    /// <inheritdoc cref="IStorage.Move(IStorageLocation, IStorageLocation, bool, bool)" />
+    public IStorageLocation? Move(IStorageLocation source,
+                                  IStorageLocation destination,
+                                  bool overwrite = false,
+                                  bool recursive = false)
+    {
+        lock (_containers)
+        {
+            if (!_containers.TryGetValue(source,
+                out var container))
+            {
+                return null;
+            }
+
+            var children = _containers
+               .Where(x => x.Key.FullPath.StartsWith(source.FullPath) && !x.Key.Equals(source))
+               .ToList();
+            if (children.Any() && !recursive)
+            {
+                throw ExceptionFactory.DirectoryNotEmpty(source.FullPath);
+            }
+
+            using (IDisposable access = container.RequestAccess(
+                FileAccess.Write, FileShare.None))
+            {
+                // TODO: children!
+                if (_containers.TryRemove(source, out var sourceContainer))
+                {
+                    if (overwrite)
+                    {
+                        _containers.TryRemove(destination, out _);
+                    }
+                    if (_containers.TryAdd(destination, sourceContainer))
+                    {
+                        return destination;
+                    }
+
+                    _containers.TryAdd(source, sourceContainer);
+                    throw ExceptionFactory.CannotCreateFileWhenAlreadyExists();
+                }
+            }
+        }
+
+        return source;
+    }
+
 #if FEATURE_FILESYSTEM_LINK
     /// <inheritdoc cref="IStorage.ResolveLinkTarget(IStorageLocation, bool)" />
     public IStorageLocation? ResolveLinkTarget(IStorageLocation location,

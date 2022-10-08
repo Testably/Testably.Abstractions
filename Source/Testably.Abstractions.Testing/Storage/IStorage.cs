@@ -101,6 +101,29 @@ internal interface IStorage
         IStorageLocation location,
         Func<IStorageLocation, FileSystemMock, IStorageContainer> containerGenerator);
 
+    /// <summary>
+    ///     Moves a specified file or directory to a new location and potentially a new file name.<br />
+    ///     This method does work across volumes.
+    /// </summary>
+    /// <param name="source">The source location.</param>
+    /// <param name="destination">The destination location.</param>
+    /// <param name="overwrite">
+    ///     <see langword="true" /> to overwrite the <paramref name="destination" />,
+    ///     otherwise <see langword="false" />.
+    /// </param>
+    /// <param name="recursive">
+    ///     <see langword="true" /> to recursively move child elements the <paramref name="destination" />,
+    ///     otherwise <see langword="false" />.
+    /// </param>
+    /// <returns>
+    ///     The new location of the file or directory.<br />Returns <see langword="null" /> when the
+    ///     <paramref name="source" /> does not exist.
+    /// </returns>
+    IStorageLocation? Move(IStorageLocation source,
+                           IStorageLocation destination,
+                           bool overwrite = false,
+                           bool recursive = false);
+
 #if FEATURE_FILESYSTEM_LINK
     /// <summary>
     ///     Resolves the link target of the container stored at <paramref name="location" />.

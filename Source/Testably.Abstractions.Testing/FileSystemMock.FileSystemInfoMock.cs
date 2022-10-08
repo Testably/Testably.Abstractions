@@ -10,7 +10,7 @@ public sealed partial class FileSystemMock
 {
     private class FileSystemInfoMock : IFileSystem.IFileSystemInfo
     {
-        protected readonly IStorageLocation Location;
+        protected IStorageLocation Location;
         protected readonly FileSystemMock FileSystem;
         protected IStorageContainer Container { get; set; }
 

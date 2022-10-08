@@ -85,8 +85,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
         sut.MoveTo(destinationName);
-
-        sut.ToString().Should().Be(destinationName);
+        
         sut.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
         sut.Exists.Should().BeTrue();
         FileSystem.File.Exists(sourceName).Should().BeFalse();
