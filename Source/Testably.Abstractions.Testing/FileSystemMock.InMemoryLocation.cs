@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
 
@@ -30,47 +29,33 @@ public sealed partial class FileSystemMock
         /// </summary>
         public string FullPath { get; }
 
-        public static InMemoryLocation Null => new();
-
-        private readonly FileSystemMock? _fileSystem;
-
         private readonly string _key;
 
-        private InMemoryLocation()
-        {
-            FullPath = string.Empty;
-            FriendlyName = string.Empty;
-            _key = string.Empty;
-        }
-
-        private InMemoryLocation(FileSystemMock fileSystem,
+        private InMemoryLocation(IDriveInfoMock? drive,
                                  string fullPath,
                                  string friendlyName)
         {
-            _fileSystem = fileSystem;
-            FullPath = fileSystem.Path
-               .GetFullPath(fullPath)
+            FullPath = fullPath
                .NormalizePath()
                .TrimOnWindows();
-            _key = fileSystem.Path.TrimEndingDirectorySeparator(FullPath);
+#if FEATURE_PATH_ADVANCED
+            _key = System.IO.Path.TrimEndingDirectorySeparator(FullPath);
+#else
+            _key = FileFeatureExtensionMethods.TrimEndingDirectorySeparator(
+                FullPath,
+                System.IO.Path.DirectorySeparatorChar,
+                System.IO.Path.AltDirectorySeparatorChar);
+#endif
             if (Framework.IsNetFramework)
             {
                 friendlyName = friendlyName.TrimOnWindows();
             }
 
             FriendlyName = friendlyName.RemoveLeadingDot();
-            if (string.IsNullOrEmpty(FullPath))
-            {
-                Drive = fileSystem.Storage.GetDrives().First();
-            }
-            else
-            {
-                Drive = fileSystem.Storage.GetDrive(
-                    fileSystem.Path.GetPathRoot(FullPath));
-            }
+            Drive = drive;
         }
 
-        #region IEquatable<InMemoryLocation> Members
+#region IEquatable<InMemoryLocation> Members
 
         /// <inheritdoc cref="IEquatable{InMemoryLocation}.Equals(InMemoryLocation)" />
         public bool Equals(InMemoryLocation? other)
@@ -88,7 +73,7 @@ public sealed partial class FileSystemMock
             return _key.Equals(other._key, StringComparisonMode);
         }
 
-        #endregion
+#endregion
 
         /// <inheritdoc cref="object.Equals(object?)" />
         public override bool Equals(object? obj)
@@ -105,31 +90,27 @@ public sealed partial class FileSystemMock
 
         public InMemoryLocation? GetParent()
         {
-            if (_fileSystem == null)
+            if (System.IO.Path.GetPathRoot(FullPath) == FullPath)
             {
                 return null;
             }
 
-            if (_fileSystem.Path.GetPathRoot(FullPath) == FullPath)
+            var parentPath = System.IO.Path.GetDirectoryName(FullPath);
+            if (parentPath == null)
             {
                 return null;
             }
 
-            return New(_fileSystem,
-                _fileSystem.Path.GetDirectoryName(FullPath),
-                _fileSystem.Path.GetDirectoryName(FriendlyName));
+            return New(Drive,
+                parentPath,
+                System.IO.Path.GetDirectoryName(FriendlyName));
         }
 
         [return: NotNullIfNotNull("path")]
-        public static InMemoryLocation? New(FileSystemMock fileSystem,
-                                            string? path,
+        public static InMemoryLocation? New(IDriveInfoMock? drive,
+                                            string path,
                                             string? friendlyName = null)
         {
-            if (path == null)
-            {
-                return null;
-            }
-
             if (path == string.Empty)
             {
                 if (Framework.IsNetFramework)
@@ -141,7 +122,7 @@ public sealed partial class FileSystemMock
             }
 
             friendlyName ??= path;
-            return new InMemoryLocation(fileSystem, path, friendlyName);
+            return new InMemoryLocation(drive, path, friendlyName);
         }
 
         /// <inheritdoc cref="object.ToString()" />

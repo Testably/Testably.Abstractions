@@ -22,7 +22,7 @@ public sealed partial class FileSystemMock
 
         internal FileSystemInfoMock(string fullName, string originalPath,
                                     FileSystemMock fileSystem)
-            : this(fileSystem, InMemoryLocation.New(fileSystem, fullName, originalPath))
+            : this(fileSystem, fileSystem.Storage.GetLocation(fullName, originalPath))
         {
         }
 
@@ -153,7 +153,7 @@ public sealed partial class FileSystemMock
         public void Delete()
         {
             if (!FileSystem.Storage.DeleteContainer(
-                InMemoryLocation.New(FileSystem, FullName)))
+                FileSystem.Storage.GetLocation(FullName)))
             {
                 throw ExceptionFactory.DirectoryNotFound(FullName);
             }
@@ -169,7 +169,7 @@ public sealed partial class FileSystemMock
             {
                 InMemoryLocation? targetLocation =
                     FileSystem.Storage.ResolveLinkTarget(
-                        InMemoryLocation.New(FileSystem, FullName), returnFinalTarget);
+                        FileSystem.Storage.GetLocation(FullName), returnFinalTarget);
                 if (targetLocation != null)
                 {
                     return New(targetLocation, FileSystem);

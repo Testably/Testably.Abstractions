@@ -78,6 +78,15 @@ public sealed partial class FileSystemMock
         IEnumerable<IDriveInfoMock> GetDrives();
 
         /// <summary>
+        ///     Gets the location for the given <paramref name="path" />.
+        /// </summary>
+        /// <param name="path">The path.</param>
+        /// <param name="friendlyName">(optional) the friendly name for the <paramref name="path" />.</param>
+        /// <returns>The <see cref="InMemoryLocation" /> that corresponds to <paramref name="path" />.</returns>
+        [return: NotNullIfNotNull("path")]
+        InMemoryLocation? GetLocation(string? path, string? friendlyName = null);
+
+        /// <summary>
         ///     Returns the drives that are present.
         /// </summary>
         IDriveInfoMock GetOrAddDrive(string driveName);

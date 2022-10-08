@@ -29,7 +29,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Root" />
         public IFileSystem.IDirectoryInfo Root
-            => New(InMemoryLocation.New(FileSystem, string.Empty.PrefixRoot()),
+            => New(FileSystem.Storage.GetLocation(string.Empty.PrefixRoot()),
                 FileSystem);
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.Create()" />
@@ -51,7 +51,7 @@ public sealed partial class FileSystemMock
         public void Delete(bool recursive)
         {
             if (!FileSystem.Storage.DeleteContainer(
-                InMemoryLocation.New(FileSystem, FullName), recursive))
+                FileSystem.Storage.GetLocation(FullName), recursive))
             {
                 throw ExceptionFactory.DirectoryNotFound(FullName);
             }
@@ -72,7 +72,7 @@ public sealed partial class FileSystemMock
         public IEnumerable<IFileSystem.IDirectoryInfo> EnumerateDirectories(
             string searchPattern, SearchOption searchOption)
             => FileSystem.Storage.EnumerateLocations(
-                    InMemoryLocation.New(FileSystem, FullName),
+                    FileSystem.Storage.GetLocation(FullName),
                     InMemoryContainer.ContainerType.Directory,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption))
@@ -84,7 +84,7 @@ public sealed partial class FileSystemMock
             string searchPattern,
             EnumerationOptions enumerationOptions)
             => FileSystem.Storage.EnumerateLocations(
-                    InMemoryLocation.New(FileSystem, FullName),
+                    FileSystem.Storage.GetLocation(FullName),
                     InMemoryContainer.ContainerType.Directory,
                     searchPattern,
                     enumerationOptions)
@@ -103,7 +103,7 @@ public sealed partial class FileSystemMock
         public IEnumerable<IFileSystem.IFileInfo> EnumerateFiles(
             string searchPattern, SearchOption searchOption)
             => FileSystem.Storage.EnumerateLocations(
-                    InMemoryLocation.New(FileSystem, FullName),
+                    FileSystem.Storage.GetLocation(FullName),
                     InMemoryContainer.ContainerType.File,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption))
@@ -114,7 +114,7 @@ public sealed partial class FileSystemMock
         public IEnumerable<IFileSystem.IFileInfo> EnumerateFiles(
             string searchPattern, EnumerationOptions enumerationOptions)
             => FileSystem.Storage.EnumerateLocations(
-                    InMemoryLocation.New(FileSystem, FullName),
+                    FileSystem.Storage.GetLocation(FullName),
                     InMemoryContainer.ContainerType.File,
                     searchPattern,
                     enumerationOptions)
@@ -134,7 +134,7 @@ public sealed partial class FileSystemMock
         public IEnumerable<IFileSystem.IFileSystemInfo> EnumerateFileSystemInfos(
             string searchPattern, SearchOption searchOption)
             => FileSystem.Storage.EnumerateLocations(
-                    InMemoryLocation.New(FileSystem, FullName),
+                    FileSystem.Storage.GetLocation(FullName),
                     InMemoryContainer.ContainerType.DirectoryOrFile,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption))
@@ -146,7 +146,7 @@ public sealed partial class FileSystemMock
             string searchPattern,
             EnumerationOptions enumerationOptions)
             => FileSystem.Storage.EnumerateLocations(
-                    InMemoryLocation.New(FileSystem, FullName),
+                    FileSystem.Storage.GetLocation(FullName),
                     InMemoryContainer.ContainerType.DirectoryOrFile,
                     searchPattern,
                     enumerationOptions)

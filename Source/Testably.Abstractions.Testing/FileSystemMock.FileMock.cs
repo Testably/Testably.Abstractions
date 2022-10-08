@@ -72,7 +72,7 @@ public sealed partial class FileSystemMock
         {
             var fileInfo =
                 _fileSystem.Storage.GetOrCreateContainer(
-                    InMemoryLocation.New(_fileSystem, path),
+                    _fileSystem.Storage.GetLocation(path),
                     InMemoryContainer.NewFile);
             if (fileInfo is not NullContainer && contents != null)
             {
@@ -148,7 +148,7 @@ public sealed partial class FileSystemMock
         public IFileSystem.IFileSystemInfo CreateSymbolicLink(
             string path, string pathToTarget)
         {
-            var location = InMemoryLocation.New(_fileSystem, path);
+            var location = _fileSystem.Storage.GetLocation(path);
             if (_fileSystem.Storage.TryAddContainer(location, InMemoryContainer.NewFile, out var container))
             {
                 container.LinkTarget = pathToTarget;
@@ -173,7 +173,7 @@ public sealed partial class FileSystemMock
         {
             var fileInfo =
                 _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path));
+                    _fileSystem.Storage.GetLocation(path));
             if (fileInfo is not NullContainer)
             {
                 fileInfo.Decrypt();
@@ -183,7 +183,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.Delete(string)" />
         public void Delete(string path)
         {
-            if (!_fileSystem.Storage.DeleteContainer(InMemoryLocation.New(_fileSystem, path)))
+            if (!_fileSystem.Storage.DeleteContainer(_fileSystem.Storage.GetLocation(path)))
             {
                 throw ExceptionFactory.FileNotFound(
                     _fileSystem.Path.GetFullPath(path));
@@ -198,7 +198,7 @@ public sealed partial class FileSystemMock
         {
             var fileInfo =
                 _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path));
+                    _fileSystem.Storage.GetLocation(path));
             if (fileInfo is not NullContainer)
             {
                 fileInfo.Encrypt();
@@ -207,14 +207,14 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.Exists(string?)" />
         public bool Exists([NotNullWhen(true)] string? path)
-            => FileInfoMock.New(InMemoryLocation.New(_fileSystem, path), _fileSystem)
+            => FileInfoMock.New(_fileSystem.Storage.GetLocation(path), _fileSystem)
               ?.Exists ?? false;
 
         /// <inheritdoc cref="IFileSystem.IFile.GetAttributes(string)" />
         public FileAttributes GetAttributes(string path)
         {
             var container = _fileSystem.Storage
-               .GetContainer(InMemoryLocation.New(_fileSystem, path));
+               .GetContainer(_fileSystem.Storage.GetLocation(path));
             if (container is NullContainer)
             {
                 throw ExceptionFactory.FileNotFound(
@@ -227,32 +227,32 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFile.GetCreationTime(string)" />
         public DateTime GetCreationTime(string path)
             => _fileSystem.Storage.GetContainer(
-                InMemoryLocation.New(_fileSystem, path)).CreationTime.ToLocalTime();
+                _fileSystem.Storage.GetLocation(path)).CreationTime.ToLocalTime();
 
         /// <inheritdoc cref="IFileSystem.IFile.GetCreationTimeUtc(string)" />
         public DateTime GetCreationTimeUtc(string path)
             => _fileSystem.Storage.GetContainer(
-                InMemoryLocation.New(_fileSystem, path)).CreationTime.ToUniversalTime();
+                _fileSystem.Storage.GetLocation(path)).CreationTime.ToUniversalTime();
 
         /// <inheritdoc cref="IFileSystem.IFile.GetLastAccessTime(string)" />
         public DateTime GetLastAccessTime(string path)
             => _fileSystem.Storage.GetContainer(
-                InMemoryLocation.New(_fileSystem, path)).LastAccessTime.ToLocalTime();
+                _fileSystem.Storage.GetLocation(path)).LastAccessTime.ToLocalTime();
 
         /// <inheritdoc cref="IFileSystem.IFile.GetLastAccessTimeUtc(string)" />
         public DateTime GetLastAccessTimeUtc(string path)
             => _fileSystem.Storage.GetContainer(
-                InMemoryLocation.New(_fileSystem, path)).LastAccessTime.ToUniversalTime();
+                _fileSystem.Storage.GetLocation(path)).LastAccessTime.ToUniversalTime();
 
         /// <inheritdoc cref="IFileSystem.IFile.GetLastWriteTime(string)" />
         public DateTime GetLastWriteTime(string path)
             => _fileSystem.Storage.GetContainer(
-                InMemoryLocation.New(_fileSystem, path)).LastWriteTime.ToLocalTime();
+                _fileSystem.Storage.GetLocation(path)).LastWriteTime.ToLocalTime();
 
         /// <inheritdoc cref="IFileSystem.IFile.GetLastWriteTimeUtc(string)" />
         public DateTime GetLastWriteTimeUtc(string path)
             => _fileSystem.Storage.GetContainer(
-                InMemoryLocation.New(_fileSystem, path)).LastWriteTime.ToUniversalTime();
+                _fileSystem.Storage.GetLocation(path)).LastWriteTime.ToUniversalTime();
 
         /// <inheritdoc cref="IFileSystem.IFile.Move(string, string)" />
         public void Move(string sourceFileName, string destFileName)
@@ -334,7 +334,7 @@ public sealed partial class FileSystemMock
         {
             var fileInfo =
                 _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path));
+                    _fileSystem.Storage.GetLocation(path));
             if (fileInfo is not NullContainer)
             {
                 using (fileInfo.RequestAccess(
@@ -394,7 +394,7 @@ public sealed partial class FileSystemMock
         {
             var fileInfo =
                 _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path));
+                    _fileSystem.Storage.GetLocation(path));
             if (fileInfo is not NullContainer)
             {
                 using (fileInfo.RequestAccess(
@@ -451,7 +451,7 @@ public sealed partial class FileSystemMock
         {
             try
             {
-                var targetLocation = _fileSystem.Storage.ResolveLinkTarget(InMemoryLocation.New(_fileSystem, linkPath), returnFinalTarget);
+                var targetLocation = _fileSystem.Storage.ResolveLinkTarget(_fileSystem.Storage.GetLocation(linkPath), returnFinalTarget);
                 if (targetLocation != null)
                 {
                     return FileSystemInfoMock.New(targetLocation, _fileSystem);
@@ -471,7 +471,7 @@ public sealed partial class FileSystemMock
         {
             var fileInfo =
                 _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path));
+                    _fileSystem.Storage.GetLocation(path));
             if (fileInfo is NullContainer)
             {
                 throw ExceptionFactory.FileNotFound(
@@ -486,7 +486,7 @@ public sealed partial class FileSystemMock
         {
             var fileInfo =
                 _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path));
+                    _fileSystem.Storage.GetLocation(path));
             if (fileInfo is NullContainer)
             {
                 throw ExceptionFactory.FileNotFound(
@@ -501,7 +501,7 @@ public sealed partial class FileSystemMock
         {
             var fileInfo =
                 _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path));
+                    _fileSystem.Storage.GetLocation(path));
             if (fileInfo is NullContainer)
             {
                 throw ExceptionFactory.FileNotFound(
@@ -516,7 +516,7 @@ public sealed partial class FileSystemMock
         {
             var fileInfo =
                 _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path));
+                    _fileSystem.Storage.GetLocation(path));
             if (fileInfo is NullContainer)
             {
                 throw ExceptionFactory.FileNotFound(
@@ -531,7 +531,7 @@ public sealed partial class FileSystemMock
         {
             var fileInfo =
                 _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path));
+                    _fileSystem.Storage.GetLocation(path));
             if (fileInfo is NullContainer)
             {
                 throw ExceptionFactory.FileNotFound(
@@ -546,7 +546,7 @@ public sealed partial class FileSystemMock
         {
             var fileInfo =
                 _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path));
+                    _fileSystem.Storage.GetLocation(path));
             if (fileInfo is NullContainer)
             {
                 throw ExceptionFactory.FileNotFound(
@@ -561,7 +561,7 @@ public sealed partial class FileSystemMock
         {
             var fileInfo =
                 _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path));
+                    _fileSystem.Storage.GetLocation(path));
             if (fileInfo is NullContainer)
             {
                 throw ExceptionFactory.FileNotFound(
@@ -576,7 +576,7 @@ public sealed partial class FileSystemMock
         {
             var fileInfo =
                 _fileSystem.Storage.GetOrCreateContainer(
-                    InMemoryLocation.New(_fileSystem, path),
+                    _fileSystem.Storage.GetLocation(path),
                     InMemoryContainer.NewFile);
             if (fileInfo is not NullContainer)
             {
@@ -655,7 +655,7 @@ public sealed partial class FileSystemMock
         {
             var fileInfo =
                 _fileSystem.Storage.GetOrCreateContainer(
-                    InMemoryLocation.New(_fileSystem, path),
+                    _fileSystem.Storage.GetLocation(path),
                     InMemoryContainer.NewFile);
             if (fileInfo is not NullContainer && contents != null)
             {

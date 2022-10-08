@@ -30,7 +30,7 @@ public sealed partial class FileSystemMock
         {
             path.ThrowCommonExceptionsIfPathIsInvalid(_fileSystem);
             DirectoryInfoMock directory = DirectoryInfoMock.New(
-                InMemoryLocation.New(_fileSystem, path),
+                _fileSystem.Storage.GetLocation(path),
                 _fileSystem);
             directory.Create();
             return directory;
@@ -57,7 +57,7 @@ public sealed partial class FileSystemMock
         public void Delete(string path)
         {
             if (!_fileSystem.Storage.DeleteContainer(
-                InMemoryLocation.New(_fileSystem, path)))
+                _fileSystem.Storage.GetLocation(path)))
             {
                 throw ExceptionFactory.DirectoryNotFound(
                     _fileSystem.Path.GetFullPath(path));
@@ -68,7 +68,7 @@ public sealed partial class FileSystemMock
         public void Delete(string path, bool recursive)
         {
             if (!_fileSystem.Storage.DeleteContainer(
-                InMemoryLocation.New(_fileSystem, path), recursive))
+                _fileSystem.Storage.GetLocation(path), recursive))
             {
                 throw ExceptionFactory.DirectoryNotFound(
                     _fileSystem.Path.GetFullPath(path));
@@ -88,7 +88,7 @@ public sealed partial class FileSystemMock
                                                         string searchPattern,
                                                         SearchOption searchOption)
             => _fileSystem.Storage.EnumerateLocations(
-                    InMemoryLocation.New(_fileSystem, path),
+                    _fileSystem.Storage.GetLocation(path),
                     InMemoryContainer.ContainerType.Directory,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption))
@@ -103,7 +103,7 @@ public sealed partial class FileSystemMock
                                                         EnumerationOptions
                                                             enumerationOptions)
             => _fileSystem.Storage.EnumerateLocations(
-                    InMemoryLocation.New(_fileSystem, path),
+                    _fileSystem.Storage.GetLocation(path),
                     InMemoryContainer.ContainerType.Directory,
                     searchPattern,
                     enumerationOptions)
@@ -125,7 +125,7 @@ public sealed partial class FileSystemMock
                                                   string searchPattern,
                                                   SearchOption searchOption)
             => _fileSystem.Storage.EnumerateLocations(
-                    InMemoryLocation.New(_fileSystem, path),
+                    _fileSystem.Storage.GetLocation(path),
                     InMemoryContainer.ContainerType.File,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption))
@@ -139,7 +139,7 @@ public sealed partial class FileSystemMock
                                                   string searchPattern,
                                                   EnumerationOptions enumerationOptions)
             => _fileSystem.Storage.EnumerateLocations(
-                    InMemoryLocation.New(_fileSystem, path),
+                    _fileSystem.Storage.GetLocation(path),
                     InMemoryContainer.ContainerType.File,
                     searchPattern,
                     enumerationOptions)
@@ -163,7 +163,7 @@ public sealed partial class FileSystemMock
             string searchPattern,
             SearchOption searchOption)
             => _fileSystem.Storage.EnumerateLocations(
-                    InMemoryLocation.New(_fileSystem, path),
+                    _fileSystem.Storage.GetLocation(path),
                     InMemoryContainer.ContainerType.DirectoryOrFile,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption))
@@ -177,7 +177,7 @@ public sealed partial class FileSystemMock
             string searchPattern,
             EnumerationOptions enumerationOptions)
             => _fileSystem.Storage.EnumerateLocations(
-                    InMemoryLocation.New(_fileSystem, path),
+                    _fileSystem.Storage.GetLocation(path),
                     InMemoryContainer.ContainerType.DirectoryOrFile,
                     searchPattern,
                     enumerationOptions)
@@ -188,19 +188,19 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectory.Exists(string)" />
         public bool Exists([NotNullWhen(true)] string? path)
-            => DirectoryInfoMock.New(InMemoryLocation.New(_fileSystem, path), _fileSystem)
+            => DirectoryInfoMock.New(_fileSystem.Storage.GetLocation(path), _fileSystem)
               ?.Exists ?? false;
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetCreationTime(string)" />
         public DateTime GetCreationTime(string path)
             => _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path))
+                    _fileSystem.Storage.GetLocation(path))
                .CreationTime.ToLocalTime();
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetCreationTimeUtc(string)" />
         public DateTime GetCreationTimeUtc(string path)
             => _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path))
+                    _fileSystem.Storage.GetLocation(path))
                .CreationTime.ToUniversalTime();
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetCurrentDirectory()" />
@@ -282,25 +282,25 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLastAccessTime(string)" />
         public DateTime GetLastAccessTime(string path)
             => _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path))
+                    _fileSystem.Storage.GetLocation(path))
                .LastAccessTime.ToLocalTime();
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLastAccessTimeUtc(string)" />
         public DateTime GetLastAccessTimeUtc(string path)
             => _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path))
+                    _fileSystem.Storage.GetLocation(path))
                .LastAccessTime.ToUniversalTime();
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLastWriteTime(string)" />
         public DateTime GetLastWriteTime(string path)
             => _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path))
+                    _fileSystem.Storage.GetLocation(path))
                .LastWriteTime.ToLocalTime();
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLastWriteTimeUtc(string)" />
         public DateTime GetLastWriteTimeUtc(string path)
             => _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path))
+                    _fileSystem.Storage.GetLocation(path))
                .LastWriteTime.ToUniversalTime();
 
         /// <inheritdoc cref="IFileSystem.IDirectory.GetLogicalDrives()" />
@@ -324,7 +324,7 @@ public sealed partial class FileSystemMock
             {
                 InMemoryLocation? targetLocation =
                     _fileSystem.Storage.ResolveLinkTarget(
-                        InMemoryLocation.New(_fileSystem, linkPath), returnFinalTarget);
+                        _fileSystem.Storage.GetLocation(linkPath), returnFinalTarget);
                 if (targetLocation != null)
                 {
                     return FileSystemInfoMock.New(targetLocation, _fileSystem);
@@ -344,7 +344,7 @@ public sealed partial class FileSystemMock
         {
             IStorageContainer directoryInfo =
                 _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path));
+                    _fileSystem.Storage.GetLocation(path));
             if (directoryInfo is NullContainer)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -365,7 +365,7 @@ public sealed partial class FileSystemMock
         {
             IStorageContainer directoryInfo =
                 _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path));
+                    _fileSystem.Storage.GetLocation(path));
             if (directoryInfo is NullContainer)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -390,7 +390,7 @@ public sealed partial class FileSystemMock
         {
             IStorageContainer directoryInfo =
                 _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path));
+                    _fileSystem.Storage.GetLocation(path));
             if (directoryInfo is NullContainer)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -411,7 +411,7 @@ public sealed partial class FileSystemMock
         {
             IStorageContainer directoryInfo =
                 _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path));
+                    _fileSystem.Storage.GetLocation(path));
             if (directoryInfo is NullContainer)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -432,7 +432,7 @@ public sealed partial class FileSystemMock
         {
             IStorageContainer directoryInfo =
                 _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path));
+                    _fileSystem.Storage.GetLocation(path));
             if (directoryInfo is NullContainer)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -453,7 +453,7 @@ public sealed partial class FileSystemMock
         {
             IStorageContainer directoryInfo =
                 _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path));
+                    _fileSystem.Storage.GetLocation(path));
             if (directoryInfo is NullContainer)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

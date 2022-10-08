@@ -18,13 +18,20 @@ internal static class FileFeatureExtensionMethods
         this IFileSystem.IPath pathSystem,
         string path)
     {
+        return TrimEndingDirectorySeparator(path, pathSystem.DirectorySeparatorChar,
+            pathSystem.AltDirectorySeparatorChar);
+    }
+
+    internal static string TrimEndingDirectorySeparator(
+        string path, char directorySeparatorChar, char altDirectorySeparatorChar)
+    {
         if (string.IsNullOrEmpty(path))
         {
             return path;
         }
 
-        string trimmed = path.TrimEnd(pathSystem.DirectorySeparatorChar,
-            pathSystem.AltDirectorySeparatorChar);
+        string trimmed = path.TrimEnd(directorySeparatorChar,
+            altDirectorySeparatorChar);
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
@@ -32,16 +39,16 @@ internal static class FileFeatureExtensionMethods
                 && char.IsLetter(trimmed[0])
                 && trimmed[1] == ':')
             {
-                return trimmed + pathSystem.DirectorySeparatorChar;
+                return trimmed + directorySeparatorChar;
             }
         }
         else
         {
-            if ((path[0] == pathSystem.DirectorySeparatorChar ||
-                 path[0] == pathSystem.AltDirectorySeparatorChar)
+            if ((path[0] == directorySeparatorChar ||
+                 path[0] == altDirectorySeparatorChar)
                 && trimmed == "")
             {
-                return pathSystem.DirectorySeparatorChar.ToString();
+                return directorySeparatorChar.ToString();
             }
         }
 

@@ -156,6 +156,26 @@ public sealed partial class FileSystemMock
         public IEnumerable<IDriveInfoMock> GetDrives()
             => _drives.Values;
 
+        /// <inheritdoc cref="IStorage.GetLocation(string?, string?)" />
+        [return: NotNullIfNotNull("path")]
+        public InMemoryLocation? GetLocation(string? path, string? friendlyName = null)
+        {
+            if (path == null)
+            {
+                return null;
+            }
+
+            IDriveInfoMock? drive = _fileSystem.Storage.GetDrive(
+                _fileSystem.Path.GetPathRoot(path));
+            if (drive == null &&
+                !_fileSystem.Path.IsPathRooted(path))
+            {
+                drive = _fileSystem.Storage.GetDrives().First();
+            }
+
+            return InMemoryLocation.New(drive, _fileSystem.Path.GetFullPath(path), path);
+        }
+
         /// <summary>
         ///     Returns the drives that are present.
         /// </summary>
@@ -229,7 +249,7 @@ public sealed partial class FileSystemMock
                 initialContainer.LinkTarget != null)
             {
                 InMemoryLocation nextLocation =
-                    InMemoryLocation.New(_fileSystem, initialContainer.LinkTarget);
+                    _fileSystem.Storage.GetLocation(initialContainer.LinkTarget);
                 if (_containers.TryGetValue(nextLocation,
                     out IStorageContainer? container))
                 {
@@ -243,8 +263,8 @@ public sealed partial class FileSystemMock
                         {
                             if (container.LinkTarget != null)
                             {
-                                nextLocation = InMemoryLocation.New(_fileSystem,
-                                    container.LinkTarget);
+                                nextLocation =
+                                    _fileSystem.Storage.GetLocation(container.LinkTarget);
                                 if (!_containers.TryGetValue(nextLocation,
                                     out IStorageContainer? nextContainer))
                                 {
@@ -340,7 +360,7 @@ public sealed partial class FileSystemMock
                 {
                     ChangeDescription? fileSystemChange = null;
                     InMemoryLocation parentLocation =
-                        InMemoryLocation.New(_fileSystem, parentPath);
+                        _fileSystem.Storage.GetLocation(parentPath);
                     IStorageContainer parentContainer = _containers.AddOrUpdate(
                         parentLocation,
                         loc =>

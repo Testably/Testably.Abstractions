@@ -63,7 +63,7 @@ public sealed partial class FileSystemMock
             _ = bufferSize;
             _options = options;
 
-            InMemoryLocation location = InMemoryLocation.New(_fileSystem, Name);
+            InMemoryLocation location = _fileSystem.Storage.GetLocation(Name);
             IStorageContainer file = _fileSystem.Storage.GetContainer(location);
             if (file is NullContainer)
             {
@@ -177,7 +177,7 @@ public sealed partial class FileSystemMock
             if (_options.HasFlag(FileOptions.DeleteOnClose))
             {
                 _fileSystem.Storage.DeleteContainer(
-                    InMemoryLocation.New(_fileSystem, Name));
+                    _fileSystem.Storage.GetLocation(Name));
             }
         }
 

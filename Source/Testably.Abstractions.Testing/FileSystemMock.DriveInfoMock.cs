@@ -75,7 +75,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.RootDirectory" />
         public IFileSystem.IDirectoryInfo RootDirectory
-            => DirectoryInfoMock.New(InMemoryLocation.New(_fileSystem, Name), _fileSystem);
+            => DirectoryInfoMock.New(_fileSystem.Storage.GetLocation(Name), _fileSystem);
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.TotalFreeSpace" />
         public long TotalFreeSpace
