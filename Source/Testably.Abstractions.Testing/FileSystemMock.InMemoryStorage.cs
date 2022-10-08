@@ -225,21 +225,6 @@ public sealed partial class FileSystemMock
             return container;
         }
 
-        public string GetSubdirectoryPath(string fullFilePath, string givenPath)
-        {
-            if (_fileSystem.Path.IsPathRooted(givenPath))
-            {
-                return fullFilePath;
-            }
-
-            if (CurrentDirectory == string.Empty.PrefixRoot())
-            {
-                return fullFilePath.Substring(CurrentDirectory.Length);
-            }
-
-            return fullFilePath.Substring(CurrentDirectory.Length + 1);
-        }
-
 #if FEATURE_FILESYSTEM_LINK
         public InMemoryLocation? ResolveLinkTarget(InMemoryLocation location,
                                                    bool returnFinalTarget = false)

@@ -92,7 +92,7 @@ public sealed partial class FileSystemMock
                     InMemoryContainer.ContainerType.Directory,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption))
-               .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
+               .Select(x => _fileSystem.GetSubdirectoryPath(
                     x.FullPath,
                     path));
 
@@ -107,7 +107,7 @@ public sealed partial class FileSystemMock
                     InMemoryContainer.ContainerType.Directory,
                     searchPattern,
                     enumerationOptions)
-               .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
+               .Select(x => _fileSystem.GetSubdirectoryPath(
                     x.FullPath,
                     path));
 #endif
@@ -129,7 +129,7 @@ public sealed partial class FileSystemMock
                     InMemoryContainer.ContainerType.File,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption))
-               .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
+               .Select(x => _fileSystem.GetSubdirectoryPath(
                     x.FullPath,
                     path));
 
@@ -143,7 +143,7 @@ public sealed partial class FileSystemMock
                     InMemoryContainer.ContainerType.File,
                     searchPattern,
                     enumerationOptions)
-               .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
+               .Select(x => _fileSystem.GetSubdirectoryPath(
                     x.FullPath,
                     path));
 #endif
@@ -167,7 +167,7 @@ public sealed partial class FileSystemMock
                     InMemoryContainer.ContainerType.DirectoryOrFile,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption))
-               .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
+               .Select(x => _fileSystem.GetSubdirectoryPath(
                     x.FullPath,
                     path));
 
@@ -181,7 +181,7 @@ public sealed partial class FileSystemMock
                     InMemoryContainer.ContainerType.DirectoryOrFile,
                     searchPattern,
                     enumerationOptions)
-               .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
+               .Select(x => _fileSystem.GetSubdirectoryPath(
                     x.FullPath,
                     path));
 #endif

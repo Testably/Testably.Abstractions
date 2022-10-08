@@ -103,11 +103,6 @@ public sealed partial class FileSystemMock
             InMemoryLocation location,
             Func<InMemoryLocation, FileSystemMock, IStorageContainer> containerGenerator);
 
-        /// <summary>
-        ///     Returns the relative subdirectory path from <paramref name="fullFilePath" /> to the <paramref name="givenPath" />.
-        /// </summary>
-        string GetSubdirectoryPath(string fullFilePath, string givenPath);
-
 #if FEATURE_FILESYSTEM_LINK
         /// <summary>
         ///     Resolves the link target of the container stored at <paramref name="location" />.
