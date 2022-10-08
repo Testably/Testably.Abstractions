@@ -29,14 +29,14 @@ public sealed partial class FileSystemMock : IFileSystem
     public ITimeSystem TimeSystem { get; }
 
     /// <summary>
-    ///     The underlying storage of directories and files.
-    /// </summary>
-    internal IStorage Storage { get; }
-
-    /// <summary>
     ///     The change handler used to notify about events occurring in the <see cref="FileSystemMock" />.
     /// </summary>
     internal ChangeHandlerImplementation ChangeHandler { get; }
+
+    /// <summary>
+    ///     The underlying storage of directories and files.
+    /// </summary>
+    internal IStorage Storage { get; }
 
     private readonly DirectoryMock _directoryMock;
     private readonly FileMock _fileMock;
@@ -58,20 +58,6 @@ public sealed partial class FileSystemMock : IFileSystem
         DriveInfo = new DriveInfoFactoryMock(this);
         FileInfo = new FileInfoFactoryMock(this);
         FileStream = new FileStreamFactoryMock(this);
-    }
-
-    /// <summary>
-    ///     Changes the parameters of the specified <paramref name="drive" />.
-    ///     <para />
-    ///     If the <paramref name="drive" /> does not exist, it will be created/mounted.
-    /// </summary>
-    public FileSystemMock WithDrive(string? drive,
-                                    Action<IStorageDrive>? driveCallback = null)
-    {
-        IStorageDrive driveInfoMock = Storage.GetOrAddDrive(
-            drive ?? "".PrefixRoot());
-        driveCallback?.Invoke(driveInfoMock);
-        return this;
     }
 
     #region IFileSystem Members
@@ -101,6 +87,20 @@ public sealed partial class FileSystemMock : IFileSystem
         => _pathMock;
 
     #endregion
+
+    /// <summary>
+    ///     Changes the parameters of the specified <paramref name="drive" />.
+    ///     <para />
+    ///     If the <paramref name="drive" /> does not exist, it will be created/mounted.
+    /// </summary>
+    public FileSystemMock WithDrive(string? drive,
+                                    Action<IStorageDrive>? driveCallback = null)
+    {
+        IStorageDrive driveInfoMock = Storage.GetOrAddDrive(
+            drive ?? "".PrefixRoot());
+        driveCallback?.Invoke(driveInfoMock);
+        return this;
+    }
 }
 
 /// <summary>

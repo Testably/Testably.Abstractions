@@ -5,6 +5,8 @@ namespace Testably.Abstractions.Testing.Internal;
 
 internal static class Framework
 {
+    private static bool? _isNetFramework;
+
     [ExcludeFromCodeCoverage]
     public static bool IsNetFramework
     {
@@ -15,6 +17,4 @@ internal static class Framework
             return _isNetFramework.Value;
         }
     }
-
-    private static bool? _isNetFramework;
 }

@@ -29,7 +29,7 @@ internal static class ExceptionFactory
     internal static IOException FileAlreadyExists(string path)
         => new($"The file '{path}' already exists.");
 
-    public static IOException FileNameCannotBeResolved(string path)
+    internal static IOException FileNameCannotBeResolved(string path)
         => new($"The name of the file cannot be resolved by the system. : '{path}'");
 
     internal static FileNotFoundException FileNotFound(string path)
@@ -45,10 +45,10 @@ internal static class ExceptionFactory
             "Drive name must be a root directory (i.e. 'C:\\') or a drive letter ('C').",
             paramName);
 
-    public static IOException NetworkPathNotFound(string path)
+    internal static IOException NetworkPathNotFound(string path)
         => new($"The network path was not found. : '{path}'");
 
-    public static IOException NotEnoughDiskSpace(string name)
+    internal static IOException NotEnoughDiskSpace(string name)
         => new($"There is not enough space on the disk: '{name}'");
 
     internal static ArgumentException PathCannotBeEmpty(string paramName = "path")
@@ -81,7 +81,7 @@ internal static class ExceptionFactory
         => new(
             $"The process cannot access the file '{path}' because it is being used by another process.");
 
-    public static NotSupportedException StreamDoesNotSupportWriting()
+    internal static NotSupportedException StreamDoesNotSupportWriting()
         => new("Stream does not support writing.");
 
     internal static ArgumentOutOfRangeException TaskDelayOutOfRange(string paramName)

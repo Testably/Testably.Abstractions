@@ -4,8 +4,6 @@ namespace Testably.Abstractions.Tests.TestHelpers;
 
 public static class FileTestHelper
 {
-    #region Test Setup
-
     /// <summary>
     ///     The default time returned by the file system if no time has been set.
     ///     <seealso href="https://learn.microsoft.com/en-us/windows/win32/sysinfo/file-times" />:
@@ -14,8 +12,6 @@ public static class FileTestHelper
     /// </summary>
     internal static readonly DateTime NullTime = new(1601, 1, 1, 0, 0, 0,
         DateTimeKind.Utc);
-
-    #endregion
 
     public static FileAccess CheckFileAccess(FileSystemStream stream)
     {

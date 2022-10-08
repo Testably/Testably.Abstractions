@@ -21,21 +21,6 @@ public class FileSystemMockTests
         drive.VolumeLabel.Should().NotBeNullOrEmpty();
     }
 
-    [SkippableTheory]
-    [InlineData("D:\\")]
-    [Trait(nameof(Testing), nameof(FileSystemMock))]
-    public void WithDrive_NewName_ShouldCreateNewDrives(string driveName)
-    {
-        Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
-        FileSystemMock sut = new();
-        sut.WithDrive(driveName);
-
-        IFileSystem.IDriveInfo[] drives = sut.DriveInfo.GetDrives();
-
-        drives.Length.Should().Be(2);
-        drives.Should().ContainSingle(d => d.Name == driveName);
-    }
-
     [Fact]
     [Trait(nameof(Testing), nameof(FileSystemMock))]
     public void WithDrive_ExistingName_ShouldUpdateDrive()
@@ -65,18 +50,22 @@ public class FileSystemMockTests
         drive.AvailableFreeSpace.Should().Be(totalSize);
     }
 
-    [Theory]
-    [AutoData]
+    #region Helpers
+
+    [SkippableTheory]
+    [InlineData("D:\\")]
     [Trait(nameof(Testing), nameof(FileSystemMock))]
-    public void WithDrive_WithCallback_ShouldUp22dateDrive(long totalSize)
+    public void WithDrive_NewName_ShouldCreateNewDrives(string driveName)
     {
+        Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
         FileSystemMock sut = new();
-        sut.WithDrive(d => d.SetTotalSize(totalSize));
+        sut.WithDrive(driveName);
 
-        IFileSystem.IDriveInfo drive = sut.DriveInfo.GetDrives().Single();
+        IFileSystem.IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 
-        drive.TotalSize.Should().Be(totalSize);
-        drive.TotalFreeSpace.Should().Be(totalSize);
-        drive.AvailableFreeSpace.Should().Be(totalSize);
+        drives.Length.Should().Be(2);
+        drives.Should().ContainSingle(d => d.Name == driveName);
     }
+
+    #endregion
 }

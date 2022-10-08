@@ -108,24 +108,6 @@ public class RandomProviderTests
     [Theory]
     [AutoData]
     [Trait(nameof(Testing), nameof(RandomProvider))]
-    public void GenerateRandom_Next_WithoutGenerator_ShouldReturnRandomValues(int seed)
-    {
-        List<int> results = new();
-        RandomSystemMock.IRandomProvider randomProvider =
-            RandomProvider.Generate();
-
-        IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
-        for (int i = 0; i < 10; i++)
-        {
-            results.Add(random.Next());
-        }
-
-        results.Should().OnlyHaveUniqueItems();
-    }
-
-    [Theory]
-    [AutoData]
-    [Trait(nameof(Testing), nameof(RandomProvider))]
     public void GenerateRandom_Next_WithMaxValue_ShouldReturnSpecifiedValue(
         int seed, int value)
     {
@@ -139,6 +121,28 @@ public class RandomProviderTests
         for (int i = 0; i < 100; i++)
         {
             results.Add(random.Next(maxValue));
+        }
+
+        results.Should().AllBeEquivalentTo(expectedValue);
+    }
+
+    [Theory]
+    [AutoData]
+    [Trait(nameof(Testing), nameof(RandomProvider))]
+    public void GenerateRandom_Next_WithMinAndMaxValue_Larger_ShouldReturnSpecifiedValue(
+        int seed, int value)
+    {
+        int minValue = value - 10;
+        int maxValue = value - 1;
+        List<int> results = new();
+        RandomSystemMock.IRandomProvider randomProvider =
+            RandomProvider.Generate(intGenerator: value);
+        int expectedValue = maxValue - 1;
+
+        IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+        for (int i = 0; i < 100; i++)
+        {
+            results.Add(random.Next(minValue, maxValue));
         }
 
         results.Should().AllBeEquivalentTo(expectedValue);
@@ -168,23 +172,19 @@ public class RandomProviderTests
     [Theory]
     [AutoData]
     [Trait(nameof(Testing), nameof(RandomProvider))]
-    public void GenerateRandom_Next_WithMinAndMaxValue_Larger_ShouldReturnSpecifiedValue(
-        int seed, int value)
+    public void GenerateRandom_Next_WithoutGenerator_ShouldReturnRandomValues(int seed)
     {
-        int minValue = value - 10;
-        int maxValue = value - 1;
         List<int> results = new();
         RandomSystemMock.IRandomProvider randomProvider =
-            RandomProvider.Generate(intGenerator: value);
-        int expectedValue = maxValue - 1;
+            RandomProvider.Generate();
 
         IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 10; i++)
         {
-            results.Add(random.Next(minValue, maxValue));
+            results.Add(random.Next());
         }
 
-        results.Should().AllBeEquivalentTo(expectedValue);
+        results.Should().OnlyHaveUniqueItems();
     }
 
     [Theory]
@@ -206,6 +206,26 @@ public class RandomProviderTests
         }
 
         results.Should().AllBeEquivalentTo(value);
+    }
+
+    [Theory]
+    [AutoData]
+    [Trait(nameof(Testing), nameof(RandomProvider))]
+    public void GenerateRandom_NextBytes_WithoutGenerator_ShouldReturnRandomValues(
+        int seed)
+    {
+        List<byte[]> results = new();
+        RandomSystemMock.IRandomProvider randomProvider = RandomProvider.Generate();
+
+        IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+        for (int i = 0; i < 10; i++)
+        {
+            byte[] buffer = new byte[10];
+            random.NextBytes(buffer);
+            results.Add(buffer);
+        }
+
+        results.Should().OnlyHaveUniqueItems();
     }
 
     [Theory]
@@ -233,18 +253,36 @@ public class RandomProviderTests
     [Theory]
     [AutoData]
     [Trait(nameof(Testing), nameof(RandomProvider))]
-    public void GenerateRandom_NextBytes_WithoutGenerator_ShouldReturnRandomValues(
+    public void GenerateRandom_NextDouble_ShouldReturnSpecifiedValue(
+        int seed, double value)
+    {
+        List<double> results = new();
+        RandomSystemMock.IRandomProvider randomProvider =
+            RandomProvider.Generate(doubleGenerator: value);
+
+        IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+        for (int i = 0; i < 100; i++)
+        {
+            results.Add(random.NextDouble());
+        }
+
+        results.Should().AllBeEquivalentTo(value);
+    }
+
+    [Theory]
+    [AutoData]
+    [Trait(nameof(Testing), nameof(RandomProvider))]
+    public void GenerateRandom_NextDouble_WithoutGenerator_ShouldReturnRandomValues(
         int seed)
     {
-        List<byte[]> results = new();
-        RandomSystemMock.IRandomProvider randomProvider = RandomProvider.Generate();
+        List<double> results = new();
+        RandomSystemMock.IRandomProvider randomProvider =
+            RandomProvider.Generate();
 
         IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
         for (int i = 0; i < 10; i++)
         {
-            byte[] buffer = new byte[10];
-            random.NextBytes(buffer);
-            results.Add(buffer);
+            results.Add(random.NextDouble());
         }
 
         results.Should().OnlyHaveUniqueItems();
@@ -314,44 +352,6 @@ public class RandomProviderTests
         results.Should().OnlyHaveUniqueItems();
     }
 #endif
-
-    [Theory]
-    [AutoData]
-    [Trait(nameof(Testing), nameof(RandomProvider))]
-    public void GenerateRandom_NextDouble_ShouldReturnSpecifiedValue(
-        int seed, double value)
-    {
-        List<double> results = new();
-        RandomSystemMock.IRandomProvider randomProvider =
-            RandomProvider.Generate(doubleGenerator: value);
-
-        IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
-        for (int i = 0; i < 100; i++)
-        {
-            results.Add(random.NextDouble());
-        }
-
-        results.Should().AllBeEquivalentTo(value);
-    }
-
-    [Theory]
-    [AutoData]
-    [Trait(nameof(Testing), nameof(RandomProvider))]
-    public void GenerateRandom_NextDouble_WithoutGenerator_ShouldReturnRandomValues(
-        int seed)
-    {
-        List<double> results = new();
-        RandomSystemMock.IRandomProvider randomProvider =
-            RandomProvider.Generate();
-
-        IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
-        for (int i = 0; i < 10; i++)
-        {
-            results.Add(random.NextDouble());
-        }
-
-        results.Should().OnlyHaveUniqueItems();
-    }
 
 #if FEATURE_RANDOM_ADVANCED
     [Theory]

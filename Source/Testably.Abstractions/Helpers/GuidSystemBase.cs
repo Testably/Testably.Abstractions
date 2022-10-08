@@ -22,14 +22,16 @@ public abstract class GuidSystemBase : IRandomSystem.IGuid
 
     #region IGuid Members
 
-    /// <inheritdoc cref="IRandomSystem.IRandomSystemExtensionPoint.RandomSystem" />
-    public IRandomSystem RandomSystem { get; }
-
     /// <inheritdoc cref="IRandomSystem.IGuid.Empty" />
     public Guid Empty => Guid.Empty;
 
+    /// <inheritdoc cref="IRandomSystem.IRandomSystemExtensionPoint.RandomSystem" />
+    public IRandomSystem RandomSystem { get; }
+
     /// <inheritdoc cref="IRandomSystem.IGuid.NewGuid()" />
     public abstract Guid NewGuid();
+
+    #endregion
 
 #if FEATURE_GUID_PARSE
     /// <inheritdoc cref="IRandomSystem.IGuid.Parse(string)" />
@@ -67,6 +69,4 @@ public abstract class GuidSystemBase : IRandomSystem.IGuid
                               out Guid result)
         => Guid.TryParseExact(input, format, out result);
 #endif
-
-    #endregion
 }

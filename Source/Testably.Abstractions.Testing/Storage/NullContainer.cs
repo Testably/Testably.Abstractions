@@ -130,6 +130,8 @@ internal sealed class NullContainer : IStorageContainer
         private readonly DateTime _time =
             new(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc);
 
+        #region ITimeContainer Members
+
         /// <inheritdoc cref="IStorageContainer.ITimeContainer.Get(DateTimeKind)" />
         public DateTime Get(DateTimeKind kind)
             => kind switch
@@ -144,5 +146,7 @@ internal sealed class NullContainer : IStorageContainer
         {
             // Do nothing!
         }
+
+        #endregion
     }
 }

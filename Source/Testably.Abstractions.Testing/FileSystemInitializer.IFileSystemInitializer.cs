@@ -9,16 +9,17 @@ public static partial class FileSystemInitializer
         where TFileSystem : IFileSystem
     {
         /// <summary>
-        /// </summary>
-        TFileSystem FileSystem { get; }
-
-        /// <summary>
         ///     Gives access to the base directory in which the <see cref="FileSystem" /> was initialized.
         /// </summary>
         IFileSystem.IDirectoryInfo BaseDirectory
         {
             get;
         }
+
+        /// <summary>
+        ///     The file system.
+        /// </summary>
+        TFileSystem FileSystem { get; }
 
         /// <summary>
         ///     Gives access to the created files or directories in the order of the initialization.

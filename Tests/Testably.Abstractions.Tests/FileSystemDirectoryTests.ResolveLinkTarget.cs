@@ -6,8 +6,6 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemDirectoryTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    #region Test Setup
-
     /// <summary>
     ///     The maximum number of symbolic links that are followed.<br />
     ///     <see href="https://learn.microsoft.com/en-us/dotnet/api/system.io.directory.resolvelinktarget?view=net-6.0#remarks" />
@@ -15,7 +13,22 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     private static int MaxResolveLinks =>
         Test.RunsOnWindows ? 63 : 40;
 
-    #endregion
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
+    public void ResolveLinkTarget_AbsolutePath_ShouldFollowSymbolicLink(
+        string path, string pathToTarget)
+    {
+        string targetFullPath = FileSystem.Path.GetFullPath(pathToTarget);
+        FileSystem.Directory.CreateDirectory(pathToTarget);
+        FileSystem.Directory.CreateSymbolicLink(path, targetFullPath);
+
+        IFileSystem.IFileSystemInfo? target =
+            FileSystem.Directory.ResolveLinkTarget(path, false);
+
+        target!.FullName.Should().Be(targetFullPath);
+        target.Exists.Should().BeTrue();
+    }
 
     [SkippableTheory]
     [AutoData]
@@ -153,23 +166,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
     public void ResolveLinkTarget_RelativePath_ShouldFollowSymbolicLinkUnderWindows(
-        string path, string pathToTarget)
-    {
-        string targetFullPath = FileSystem.Path.GetFullPath(pathToTarget);
-        FileSystem.Directory.CreateDirectory(pathToTarget);
-        FileSystem.Directory.CreateSymbolicLink(path, targetFullPath);
-
-        IFileSystem.IFileSystemInfo? target =
-            FileSystem.Directory.ResolveLinkTarget(path, false);
-
-        target!.FullName.Should().Be(targetFullPath);
-        target.Exists.Should().BeTrue();
-    }
-
-    [SkippableTheory]
-    [AutoData]
-    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.ResolveLinkTarget))]
-    public void ResolveLinkTarget_AbsolutePath_ShouldFollowSymbolicLink(
         string path, string pathToTarget)
     {
         string targetFullPath = FileSystem.Path.GetFullPath(pathToTarget);

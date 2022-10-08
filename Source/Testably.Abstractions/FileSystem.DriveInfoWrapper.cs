@@ -21,9 +21,6 @@ public sealed partial class FileSystem
 
         #region IDriveInfo Members
 
-        /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
-        public IFileSystem FileSystem { get; }
-
         /// <inheritdoc cref="IFileSystem.IDriveInfo.AvailableFreeSpace" />
         public long AvailableFreeSpace
             => _instance.AvailableFreeSpace;
@@ -35,6 +32,9 @@ public sealed partial class FileSystem
         /// <inheritdoc cref="IFileSystem.IDriveInfo.DriveType" />
         public DriveType DriveType
             => _instance.DriveType;
+
+        /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+        public IFileSystem FileSystem { get; }
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.IsReady" />
         public bool IsReady

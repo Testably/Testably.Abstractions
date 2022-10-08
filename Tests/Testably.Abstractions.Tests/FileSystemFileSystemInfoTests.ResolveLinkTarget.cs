@@ -6,16 +6,12 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    #region Test Setup
-
     /// <summary>
     ///     The maximum number of symbolic links that are followed.<br />
     ///     <see href="https://learn.microsoft.com/en-us/dotnet/api/system.io.directory.resolvelinktarget?view=net-6.0#remarks" />
     /// </summary>
     private static int MaxResolveLinks =>
         Test.RunsOnWindows ? 63 : 40;
-
-    #endregion
 
     [SkippableTheory]
     [AutoData]
