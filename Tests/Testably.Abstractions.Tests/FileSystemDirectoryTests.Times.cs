@@ -6,24 +6,12 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemDirectoryTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    #region Test Setup
-
-    /// <summary>
-    ///     The default time returned by the file system if no time has been set.
-    ///     <seealso href="https://learn.microsoft.com/en-us/windows/win32/sysinfo/file-times" />:
-    ///     A file time is a 64-bit value that represents the number of 100-nanosecond intervals that have elapsed
-    ///     since 12:00 A.M. January 1, 1601 Coordinated Universal Time (UTC).
-    /// </summary>
-    internal readonly DateTime NullTime = new(1601, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-    #endregion
-
     [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetCreationTime))]
     public void GetCreationTime_PathNotFound_ShouldReturnNullTime(string path)
     {
-        DateTime expectedTime = NullTime.ToLocalTime();
+        DateTime expectedTime = FileTestHelper.NullTime.ToLocalTime();
 
         DateTime result = FileSystem.Directory.GetCreationTime(path);
 
@@ -35,7 +23,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetCreationTimeUtc))]
     public void GetCreationTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
     {
-        DateTime expectedTime = NullTime.ToUniversalTime();
+        DateTime expectedTime = FileTestHelper.NullTime.ToUniversalTime();
 
         DateTime result = FileSystem.Directory.GetCreationTimeUtc(path);
 
@@ -47,7 +35,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLastAccessTime))]
     public void GetLastAccessTime_PathNotFound_ShouldReturnNullTime(string path)
     {
-        DateTime expectedTime = NullTime.ToLocalTime();
+        DateTime expectedTime = FileTestHelper.NullTime.ToLocalTime();
 
         DateTime result = FileSystem.Directory.GetLastAccessTime(path);
 
@@ -59,7 +47,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLastAccessTimeUtc))]
     public void GetLastAccessTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
     {
-        DateTime expectedTime = NullTime.ToUniversalTime();
+        DateTime expectedTime = FileTestHelper.NullTime.ToUniversalTime();
 
         DateTime result = FileSystem.Directory.GetLastAccessTimeUtc(path);
 
@@ -71,7 +59,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLastWriteTime))]
     public void GetLastWriteTime_PathNotFound_ShouldReturnNullTime(string path)
     {
-        DateTime expectedTime = NullTime.ToLocalTime();
+        DateTime expectedTime = FileTestHelper.NullTime.ToLocalTime();
 
         DateTime result = FileSystem.Directory.GetLastWriteTime(path);
 
@@ -83,7 +71,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLastWriteTimeUtc))]
     public void GetLastWriteTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
     {
-        DateTime expectedTime = NullTime.ToUniversalTime();
+        DateTime expectedTime = FileTestHelper.NullTime.ToUniversalTime();
 
         DateTime result = FileSystem.Directory.GetLastWriteTimeUtc(path);
 

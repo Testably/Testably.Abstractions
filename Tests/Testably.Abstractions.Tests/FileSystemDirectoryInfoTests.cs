@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace Testably.Abstractions.Tests;
 
 public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
@@ -20,6 +22,87 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     }
 
     #endregion
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.DirectoryInfo("MissingFile")]
+    public void MissingFile_Attributes_ShouldAlwaysBeNegativeOne(
+        FileAttributes fileAttributes)
+    {
+        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
+        sut.Attributes.Should().Be((FileAttributes)(-1));
+        sut.Attributes = fileAttributes;
+        sut.Attributes.Should().Be((FileAttributes)(-1));
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.DirectoryInfo("MissingFile")]
+    public void MissingFile_CreationTime_ShouldAlwaysBeNullTime(DateTime creationTime)
+    {
+        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
+        sut.CreationTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
+        sut.CreationTime = creationTime;
+        sut.CreationTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.DirectoryInfo("MissingFile")]
+    public void MissingFile_CreationTimeUtc_ShouldAlwaysBeNullTime(
+        DateTime creationTimeUtc)
+    {
+        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
+        sut.CreationTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
+        sut.CreationTimeUtc = creationTimeUtc;
+        sut.CreationTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.DirectoryInfo("MissingFile")]
+    public void MissingFile_LastAccessTime_ShouldAlwaysBeNullTime(DateTime lastAccessTime)
+    {
+        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
+        sut.LastAccessTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
+        sut.LastAccessTime = lastAccessTime;
+        sut.LastAccessTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.DirectoryInfo("MissingFile")]
+    public void MissingFile_LastAccessTimeUtc_ShouldAlwaysBeNullTime(
+        DateTime lastAccessTimeUtc)
+    {
+        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
+        sut.LastAccessTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
+        sut.LastAccessTimeUtc = lastAccessTimeUtc;
+        sut.LastAccessTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.DirectoryInfo("MissingFile")]
+    public void MissingFile_LastWriteTime_ShouldAlwaysBeNullTime(DateTime lastWriteTime)
+    {
+        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
+        sut.LastWriteTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
+        sut.LastWriteTime = lastWriteTime;
+        sut.LastWriteTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.DirectoryInfo("MissingFile")]
+    public void MissingFile_LastWriteTimeUtc_ShouldAlwaysBeNullTime(
+        DateTime lastWriteTimeUtc)
+    {
+        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
+        sut.LastWriteTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
+        sut.LastWriteTimeUtc = lastWriteTimeUtc;
+        sut.LastWriteTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
+    }
 
     [SkippableTheory]
     [AutoData]
