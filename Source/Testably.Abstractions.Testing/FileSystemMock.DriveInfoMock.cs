@@ -11,7 +11,7 @@ public sealed partial class FileSystemMock
     /// <summary>
     ///     Mocked instance of a <see cref="IFileSystem.IDriveInfo" />
     /// </summary>
-    public sealed class DriveInfoMock : IDriveInfoMock
+    public sealed class DriveInfoMock : IStorageDrive
     {
         /// <summary>
         ///     The default <see cref="IFileSystem.IDriveInfo.DriveFormat" />.
@@ -24,7 +24,7 @@ public sealed partial class FileSystemMock
         public const DriveType DefaultDriveType = DriveType.Fixed;
 
         /// <summary>
-        ///     The default total size of a mocked <see cref="IDriveInfoMock" />.
+        ///     The default total size of a mocked <see cref="IStorageDrive" />.
         ///     <para />
         ///     The number is equal to 1GB (1 Gigabyte).
         /// </summary>
@@ -95,8 +95,8 @@ public sealed partial class FileSystemMock
             set;
         } = nameof(FileSystemMock);
 
-        /// <inheritdoc cref="IDriveInfoMock.ChangeUsedBytes(long)" />
-        public IDriveInfoMock ChangeUsedBytes(long usedBytesDelta)
+        /// <inheritdoc cref="IStorageDrive.ChangeUsedBytes(long)" />
+        public IStorageDrive ChangeUsedBytes(long usedBytesDelta)
         {
             long newUsedBytes = Math.Max(0, _usedBytes + usedBytesDelta);
 
@@ -110,31 +110,31 @@ public sealed partial class FileSystemMock
             return this;
         }
 
-        /// <inheritdoc cref="IDriveInfoMock.SetDriveFormat(string)" />
-        public IDriveInfoMock SetDriveFormat(
+        /// <inheritdoc cref="IStorageDrive.SetDriveFormat(string)" />
+        public IStorageDrive SetDriveFormat(
             string driveFormat = DefaultDriveFormat)
         {
             DriveFormat = driveFormat;
             return this;
         }
 
-        /// <inheritdoc cref="IDriveInfoMock.SetDriveType(System.IO.DriveType)" />
-        public IDriveInfoMock SetDriveType(
+        /// <inheritdoc cref="IStorageDrive.SetDriveType(System.IO.DriveType)" />
+        public IStorageDrive SetDriveType(
             DriveType driveType = DefaultDriveType)
         {
             DriveType = driveType;
             return this;
         }
 
-        /// <inheritdoc cref="IDriveInfoMock.SetIsReady(bool)" />
-        public IDriveInfoMock SetIsReady(bool isReady = true)
+        /// <inheritdoc cref="IStorageDrive.SetIsReady(bool)" />
+        public IStorageDrive SetIsReady(bool isReady = true)
         {
             IsReady = isReady;
             return this;
         }
 
-        /// <inheritdoc cref="IDriveInfoMock.SetTotalSize(long)" />
-        public IDriveInfoMock SetTotalSize(
+        /// <inheritdoc cref="IStorageDrive.SetTotalSize(long)" />
+        public IStorageDrive SetTotalSize(
             long totalSize = DefaultTotalSize)
         {
             TotalSize = totalSize;

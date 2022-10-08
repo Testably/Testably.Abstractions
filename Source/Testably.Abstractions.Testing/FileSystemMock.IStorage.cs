@@ -70,12 +70,12 @@ public sealed partial class FileSystemMock
         ///     Returns the drive if it is present.<br />
         ///     Returns <see langword="null" />, if the drive does not exist.
         /// </summary>
-        IDriveInfoMock? GetDrive(string? driveName);
+        IStorageDrive? GetDrive(string? driveName);
 
         /// <summary>
         ///     Returns the drives that are present.
         /// </summary>
-        IEnumerable<IDriveInfoMock> GetDrives();
+        IEnumerable<IStorageDrive> GetDrives();
 
         /// <summary>
         ///     Gets the location for the given <paramref name="path" />.
@@ -89,7 +89,7 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     Returns the drives that are present.
         /// </summary>
-        IDriveInfoMock GetOrAddDrive(string driveName);
+        IStorageDrive GetOrAddDrive(string driveName);
 
         /// <summary>
         ///     Returns an existing container at <paramref name="location" />.<br />

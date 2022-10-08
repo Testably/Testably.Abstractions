@@ -6,6 +6,9 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class FileSystemMock
 {
+    /// <summary>
+    ///     A container for a stored file or directory in the <see cref="IStorage" />.
+    /// </summary>
     internal interface IStorageContainer
     {
         /// <inheritdoc cref="System.IO.FileSystemInfo.Attributes" />
@@ -31,6 +34,10 @@ public sealed partial class FileSystemMock
         /// </summary>
         ContainerType Type { get; }
 
+        /// <summary>
+        ///     Adjust the times in the <see cref="IStorageContainer" />.
+        /// </summary>
+        /// <param name="timeAdjustments">Flag indicating which times to adjust.</param>
         void AdjustTimes(TimeAdjustments timeAdjustments);
 
         /// <summary>

@@ -65,9 +65,9 @@ public sealed partial class FileSystemMock : IFileSystem
     ///     If the <paramref name="drive" /> does not exist, it will be created/mounted.
     /// </summary>
     public FileSystemMock WithDrive(string? drive,
-                                    Action<IDriveInfoMock>? driveCallback = null)
+                                    Action<IStorageDrive>? driveCallback = null)
     {
-        IDriveInfoMock driveInfoMock = Storage.GetOrAddDrive(
+        IStorageDrive driveInfoMock = Storage.GetOrAddDrive(
             drive ?? "".PrefixRoot());
         driveCallback?.Invoke(driveInfoMock);
         return this;
@@ -112,6 +112,6 @@ public static class FileSystemMockExtensions
     /// </summary>
     public static FileSystemMock WithDrive(
         this FileSystemMock fileSystemMock,
-        Action<FileSystemMock.IDriveInfoMock> driveCallback)
+        Action<FileSystemMock.IStorageDrive> driveCallback)
         => fileSystemMock.WithDrive(null, driveCallback);
 }

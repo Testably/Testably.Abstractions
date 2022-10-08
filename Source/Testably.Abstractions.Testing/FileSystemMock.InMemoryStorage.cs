@@ -134,7 +134,7 @@ public sealed partial class FileSystemMock
         ///     Returns the drive if it is present.<br />
         ///     Returns <see langword="null" />, if the drive does not exist.
         /// </summary>
-        public IDriveInfoMock? GetDrive(string? driveName)
+        public IStorageDrive? GetDrive(string? driveName)
         {
             if (string.IsNullOrEmpty(driveName))
             {
@@ -153,7 +153,7 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     Returns the drives that are present.
         /// </summary>
-        public IEnumerable<IDriveInfoMock> GetDrives()
+        public IEnumerable<IStorageDrive> GetDrives()
             => _drives.Values;
 
         /// <inheritdoc cref="IStorage.GetLocation(string?, string?)" />
@@ -165,7 +165,7 @@ public sealed partial class FileSystemMock
                 return null;
             }
 
-            IDriveInfoMock? drive = _fileSystem.Storage.GetDrive(
+            IStorageDrive? drive = _fileSystem.Storage.GetDrive(
                 _fileSystem.Path.GetPathRoot(path));
             if (drive == null &&
                 !_fileSystem.Path.IsPathRooted(path))
@@ -179,7 +179,7 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     Returns the drives that are present.
         /// </summary>
-        public IDriveInfoMock GetOrAddDrive(string driveName)
+        public IStorageDrive GetOrAddDrive(string driveName)
         {
             DriveInfoMock drive = new(driveName, _fileSystem);
             return _drives.GetOrAdd(drive.Name, _ => drive);

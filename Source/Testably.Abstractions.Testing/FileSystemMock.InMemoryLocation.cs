@@ -16,7 +16,7 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     The <see cref="Drive" /> in which the <see cref="IFileSystem.IFileSystemInfo" /> is stored.
         /// </summary>
-        public IDriveInfoMock? Drive { get; }
+        public IStorageDrive? Drive { get; }
 
         /// <summary>
         ///     The friendly name from the location of the file or directory.
@@ -30,7 +30,7 @@ public sealed partial class FileSystemMock
 
         private readonly string _key;
 
-        private InMemoryLocation(IDriveInfoMock? drive,
+        private InMemoryLocation(IStorageDrive? drive,
                                  string fullPath,
                                  string friendlyName)
         {
@@ -109,7 +109,7 @@ public sealed partial class FileSystemMock
         }
 #endif
 
-        public static InMemoryLocation New(IDriveInfoMock? drive,
+        public static InMemoryLocation New(IStorageDrive? drive,
                                            string path,
                                            string? friendlyName = null)
         {

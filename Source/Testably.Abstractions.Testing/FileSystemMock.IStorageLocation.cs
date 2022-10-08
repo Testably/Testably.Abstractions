@@ -12,7 +12,7 @@ public sealed partial class FileSystemMock
         /// <summary>
         ///     The <see cref="Drive" /> in which the <see cref="IFileSystem.IFileSystemInfo" /> is stored.
         /// </summary>
-        IDriveInfoMock? Drive { get; }
+        IStorageDrive? Drive { get; }
 
         /// <summary>
         ///     The friendly name from the location of the file or directory.
