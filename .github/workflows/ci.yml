@@ -72,14 +72,7 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
-        run: dotnet test --no-build --logger "trx;LogFileName=test-results.trx"
-      - name: Test Report
-        uses: dorny/test-reporter@v1
-        if: success() || failure()
-        with:
-          name: MacOS Tests
-          path: test-results.trx
-          reporter: dotnet-trx
+        run: dotnet test --no-build
 
   test-ubuntu:
     name: Test (Ubuntu)
@@ -98,14 +91,7 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
-        run: dotnet test --no-build --logger "trx;LogFileName=test-results.trx"
-      - name: Test Report
-        uses: dorny/test-reporter@v1
-        if: success() || failure()
-        with:
-          name: Ubuntu Tests
-          path: test-results.trx
-          reporter: dotnet-trx
+        run: dotnet test --no-build
 
   test-windows:
     name: Test (Windows)
@@ -124,14 +110,7 @@ jobs:
       - name: Build solution (.NET core)
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests (.NET core)
-        run: dotnet test --no-build --logger "trx;LogFileName=test-results.trx"
-      - name: Test Report
-        uses: dorny/test-reporter@v1
-        if: success() || failure()
-        with:
-          name: Windows Tests
-          path: test-results.trx
-          reporter: dotnet-trx
+        run: dotnet test --no-build
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
       - name: Setup NuGet
