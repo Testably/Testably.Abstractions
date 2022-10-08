@@ -75,17 +75,11 @@ public sealed partial class FileSystemMock
                 }
 
                 file = _fileSystem.Storage.GetOrCreateContainer(location, InMemoryContainer.NewFile);
-                if (file == null)
-                {
-                    if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    {
-                        throw ExceptionFactory.FileAlreadyExists(
-                            _fileSystem.Path.GetFullPath(Name));
-                    }
-
-                    throw ExceptionFactory.AccessToPathDenied(
-                        _fileSystem.Path.GetFullPath(Name));
-                }
+            }
+            else if (file.Type == InMemoryContainer.ContainerType.Directory)
+            {
+                throw ExceptionFactory.AccessToPathDenied(
+                    _fileSystem.Path.GetFullPath(Name));
             }
             else if (_mode.Equals(FileMode.CreateNew))
             {

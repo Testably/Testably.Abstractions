@@ -71,8 +71,9 @@ public sealed partial class FileSystemMock
         public void AppendAllText(string path, string? contents, Encoding encoding)
         {
             var fileInfo =
-                _fileSystem.Storage.GetContainer(
-                    InMemoryLocation.New(_fileSystem, path));
+                _fileSystem.Storage.GetOrCreateContainer(
+                    InMemoryLocation.New(_fileSystem, path),
+                    InMemoryContainer.NewFile);
             if (fileInfo is not NullContainer && contents != null)
             {
                 using (fileInfo.RequestAccess(
