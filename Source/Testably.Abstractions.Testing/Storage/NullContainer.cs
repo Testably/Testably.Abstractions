@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing.Storage;
@@ -19,7 +20,7 @@ internal sealed class NullContainer : IStorageContainer
     public FileAttributes Attributes
     {
         get => (FileAttributes)(-1);
-        set => throw ExceptionFactory.FileNotFound("");
+        set => throw ExceptionFactory.FileNotFound(string.Empty);
     }
 
     /// <inheritdoc cref="IStorageContainer.CreationTime" />
@@ -144,7 +145,14 @@ internal sealed class NullContainer : IStorageContainer
 
         /// <inheritdoc cref="IStorageContainer.ITimeContainer.Set(DateTime, DateTimeKind)" />
         public void Set(DateTime time, DateTimeKind kind)
-            => throw ExceptionFactory.FileNotFound(string.Empty);
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                throw ExceptionFactory.FileNotFound(string.Empty);
+            }
+
+            throw ExceptionFactory.DirectoryNotFound(string.Empty);
+        }
 
         #endregion
     }
