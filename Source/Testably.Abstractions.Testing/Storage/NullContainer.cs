@@ -1,19 +1,13 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Runtime.InteropServices;
+using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing.Storage;
 
 internal sealed class NullContainer : IStorageContainer
 {
-    /// <summary>
-    ///     The default time returned by the file system if no time has been set.
-    ///     <seealso href="https://learn.microsoft.com/en-us/windows/win32/sysinfo/file-times" />:
-    ///     A file time is a 64-bit value that represents the number of 100-nanosecond intervals that have elapsed
-    ///     since 12:00 A.M. January 1, 1601 Coordinated Universal Time (UTC).
-    /// </summary>
-    private static readonly DateTime NullTime =
-        new(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc);
-
     private NullContainer(IFileSystem fileSystem, ITimeSystem timeSystem)
     {
         FileSystem = fileSystem;
@@ -26,34 +20,23 @@ internal sealed class NullContainer : IStorageContainer
     public FileAttributes Attributes
     {
         get => (FileAttributes)(-1);
-        set => _ = value;
+        set => throw ExceptionFactory.FileNotFound(string.Empty);
     }
 
     /// <inheritdoc cref="IStorageContainer.CreationTime" />
-    public DateTime CreationTime
-    {
-        get => NullTime;
-        set => _ = value;
-    }
+    public IStorageContainer.ITimeContainer CreationTime { get; } = new NullTime();
 
     /// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
     public IFileSystem FileSystem { get; }
 
     /// <inheritdoc cref="IStorageContainer.LastAccessTime" />
-    public DateTime LastAccessTime
-    {
-        get => NullTime;
-        set => _ = value;
-    }
+    public IStorageContainer.ITimeContainer LastAccessTime { get; } = new NullTime();
 
     /// <inheritdoc cref="IStorageContainer.LastWriteTime" />
-    public DateTime LastWriteTime
-    {
-        get => NullTime;
-        set => _ = value;
-    }
+    public IStorageContainer.ITimeContainer LastWriteTime { get; } = new NullTime();
 
     /// <inheritdoc cref="IStorageContainer.LinkTarget" />
+    [ExcludeFromCodeCoverage]
     public string? LinkTarget
     {
         get => null;
@@ -61,6 +44,7 @@ internal sealed class NullContainer : IStorageContainer
     }
 
     /// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+    [ExcludeFromCodeCoverage]
     public ITimeSystem TimeSystem { get; }
 
     /// <inheritdoc cref="IStorageContainer.Type" />
@@ -68,38 +52,45 @@ internal sealed class NullContainer : IStorageContainer
         => ContainerTypes.DirectoryOrFile;
 
     /// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
+    [ExcludeFromCodeCoverage]
     public void AppendBytes(byte[] bytes)
     {
         // Do nothing in NullContainer
     }
 
     /// <inheritdoc cref="IStorageContainer.ClearBytes()" />
+    [ExcludeFromCodeCoverage]
     public void ClearBytes()
     {
         // Do nothing in NullContainer
     }
 
     /// <inheritdoc cref="IStorageContainer.Decrypt()" />
+    [ExcludeFromCodeCoverage]
     public void Decrypt()
     {
         // Do nothing in NullContainer
     }
 
     /// <inheritdoc cref="IStorageContainer.Encrypt()" />
+    [ExcludeFromCodeCoverage]
     public void Encrypt()
     {
         // Do nothing in NullContainer
     }
 
     /// <inheritdoc cref="IStorageContainer.GetBytes()" />
+    [ExcludeFromCodeCoverage]
     public byte[] GetBytes()
         => Array.Empty<byte>();
 
     /// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare)" />
+    [ExcludeFromCodeCoverage]
     public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share)
         => new NullStorageAccessHandle();
 
     /// <inheritdoc cref="IStorageContainer.WriteBytes(byte[])" />
+    [ExcludeFromCodeCoverage]
     public void WriteBytes(byte[] bytes)
     {
         // Do nothing in NullContainer
@@ -110,6 +101,7 @@ internal sealed class NullContainer : IStorageContainer
     internal static IStorageContainer New(FileSystemMock fileSystem)
         => new NullContainer(fileSystem, fileSystem.TimeSystem);
 
+    [ExcludeFromCodeCoverage]
     private sealed class NullStorageAccessHandle : IStorageAccessHandle
     {
         #region IStorageAccessHandle Members
@@ -124,6 +116,42 @@ internal sealed class NullContainer : IStorageContainer
         public void Dispose()
         {
             // Nothing to do!
+        }
+
+        #endregion
+    }
+
+    /// <summary>
+    ///     The default time returned by the file system if no time has been set.
+    ///     <seealso href="https://learn.microsoft.com/en-us/windows/win32/sysinfo/file-times" />:
+    ///     A file time is a 64-bit value that represents the number of 100-nanosecond intervals that have elapsed
+    ///     since 12:00 A.M. January 1, 1601 Coordinated Universal Time (UTC).
+    /// </summary>
+    private sealed class NullTime : IStorageContainer.ITimeContainer
+    {
+        private readonly DateTime _time =
+            new(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc);
+
+        #region ITimeContainer Members
+
+        /// <inheritdoc cref="IStorageContainer.ITimeContainer.Get(DateTimeKind)" />
+        public DateTime Get(DateTimeKind kind)
+            => kind switch
+            {
+                DateTimeKind.Utc => _time.ToUniversalTime(),
+                DateTimeKind.Local => _time.ToLocalTime(),
+                _ => _time
+            };
+
+        /// <inheritdoc cref="IStorageContainer.ITimeContainer.Set(DateTime, DateTimeKind)" />
+        public void Set(DateTime time, DateTimeKind kind)
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                throw ExceptionFactory.FileNotFound(string.Empty);
+            }
+
+            throw ExceptionFactory.DirectoryNotFound(string.Empty);
         }
 
         #endregion

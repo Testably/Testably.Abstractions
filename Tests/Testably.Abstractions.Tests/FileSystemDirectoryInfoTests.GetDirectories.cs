@@ -20,7 +20,8 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
                .WithSubdirectory(path).Initialized(s => s
                    .WithSubdirectory("foo/xyz")
                    .WithSubdirectory("bar"));
-        var baseDirectory = (IFileSystem.IDirectoryInfo)initialized[0];
+        IFileSystem.IDirectoryInfo baseDirectory =
+            (IFileSystem.IDirectoryInfo)initialized[0];
 
         IFileSystem.IDirectoryInfo[] result = baseDirectory
            .GetDirectories("*", SearchOption.AllDirectories);

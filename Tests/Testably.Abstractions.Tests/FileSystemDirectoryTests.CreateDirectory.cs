@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 #if !NETFRAMEWORK
@@ -65,7 +66,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
     public void CreateDirectory_IllegalCharacters_ShouldThrowArgumentException()
     {
-        var invalidChars = FileSystem.Path
+        IEnumerable<char> invalidChars = FileSystem.Path
            .GetInvalidPathChars().Where(c => c != '\0')
            .Concat(new[] { '*', '?' });
         foreach (char invalidChar in invalidChars)
@@ -82,7 +83,9 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
                 exception.Should().BeOfType<ArgumentException>();
 #else
                 string expectedMessage = $"'{Path.Combine(BasePath, path)}'";
-                exception.Should().BeOfType<IOException>($"'{invalidChar}' is an invalid path character.")
+                exception.Should()
+                   .BeOfType<IOException>(
+                        $"'{invalidChar}' is an invalid path character.")
                    .Which.Message.Should().Contain(expectedMessage);
 #endif
             }
@@ -215,7 +218,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
         IFileSystem.IDirectoryInfo result =
             FileSystem.Directory.CreateDirectory(nameWithSuffix);
-            
+
         result.Name.Should().Be(expectedName.TrimEnd(
             FileSystem.Path.DirectorySeparatorChar,
             FileSystem.Path.AltDirectorySeparatorChar));

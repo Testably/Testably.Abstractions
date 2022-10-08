@@ -8,18 +8,6 @@ namespace Testably.Abstractions.Testing.Internal;
 internal static class EncryptionHelper
 {
     /// <summary>
-    ///     Encrypts the <paramref name="plainBytes" /> with a fixed encryption algorithm.
-    /// </summary>
-    internal static byte[] Encrypt(byte[] plainBytes)
-    {
-        using Aes algorithm = CreateAlgorithm();
-        using ICryptoTransform? encryptor = algorithm
-           .CreateEncryptor(algorithm.Key, algorithm.IV);
-
-        return PerformCryptography(encryptor, plainBytes);
-    }
-
-    /// <summary>
     ///     Encrypts the <paramref name="cypherBytes" /> with a fixed encryption algorithm.
     /// </summary>
     internal static byte[] Decrypt(byte[] cypherBytes)
@@ -29,6 +17,18 @@ internal static class EncryptionHelper
            .CreateDecryptor(algorithm.Key, algorithm.IV);
 
         return PerformCryptography(decryptor, cypherBytes);
+    }
+
+    /// <summary>
+    ///     Encrypts the <paramref name="plainBytes" /> with a fixed encryption algorithm.
+    /// </summary>
+    internal static byte[] Encrypt(byte[] plainBytes)
+    {
+        using Aes algorithm = CreateAlgorithm();
+        using ICryptoTransform? encryptor = algorithm
+           .CreateEncryptor(algorithm.Key, algorithm.IV);
+
+        return PerformCryptography(encryptor, plainBytes);
     }
 
     private static Aes CreateAlgorithm()

@@ -194,7 +194,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
     [FileSystemTests.FileStream]
     public async Task ReadAsync_ShouldFillBuffer(string path, byte[] contents)
     {
-        CancellationTokenSource cts = new (10000);
+        CancellationTokenSource cts = new(10000);
         byte[] buffer = new byte[contents.Length];
         await FileSystem.File.WriteAllBytesAsync(path, contents, cts.Token);
         await using FileSystemStream stream = FileSystem.File.OpenRead(path);

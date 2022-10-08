@@ -52,7 +52,7 @@ public sealed partial class FileSystemMock
             IsReady = true;
         }
 
-        #region IDriveInfoMock Members
+        #region IStorageDrive Members
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.AvailableFreeSpace" />
         public long AvailableFreeSpace

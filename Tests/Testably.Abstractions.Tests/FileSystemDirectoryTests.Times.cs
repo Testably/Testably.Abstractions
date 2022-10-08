@@ -6,24 +6,12 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemDirectoryTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    #region Test Setup
-
-    /// <summary>
-    ///     The default time returned by the file system if no time has been set.
-    ///     <seealso href="https://learn.microsoft.com/en-us/windows/win32/sysinfo/file-times" />:
-    ///     A file time is a 64-bit value that represents the number of 100-nanosecond intervals that have elapsed
-    ///     since 12:00 A.M. January 1, 1601 Coordinated Universal Time (UTC).
-    /// </summary>
-    internal readonly DateTime NullTime = new(1601, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-    #endregion
-
     [SkippableTheory]
     [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetCreationTime))]
     public void GetCreationTime_PathNotFound_ShouldReturnNullTime(string path)
     {
-        DateTime expectedTime = NullTime.ToLocalTime();
+        DateTime expectedTime = FileTestHelper.NullTime.ToLocalTime();
 
         DateTime result = FileSystem.Directory.GetCreationTime(path);
 
@@ -35,7 +23,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetCreationTimeUtc))]
     public void GetCreationTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
     {
-        DateTime expectedTime = NullTime.ToUniversalTime();
+        DateTime expectedTime = FileTestHelper.NullTime.ToUniversalTime();
 
         DateTime result = FileSystem.Directory.GetCreationTimeUtc(path);
 
@@ -47,7 +35,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLastAccessTime))]
     public void GetLastAccessTime_PathNotFound_ShouldReturnNullTime(string path)
     {
-        DateTime expectedTime = NullTime.ToLocalTime();
+        DateTime expectedTime = FileTestHelper.NullTime.ToLocalTime();
 
         DateTime result = FileSystem.Directory.GetLastAccessTime(path);
 
@@ -59,7 +47,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLastAccessTimeUtc))]
     public void GetLastAccessTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
     {
-        DateTime expectedTime = NullTime.ToUniversalTime();
+        DateTime expectedTime = FileTestHelper.NullTime.ToUniversalTime();
 
         DateTime result = FileSystem.Directory.GetLastAccessTimeUtc(path);
 
@@ -71,7 +59,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLastWriteTime))]
     public void GetLastWriteTime_PathNotFound_ShouldReturnNullTime(string path)
     {
-        DateTime expectedTime = NullTime.ToLocalTime();
+        DateTime expectedTime = FileTestHelper.NullTime.ToLocalTime();
 
         DateTime result = FileSystem.Directory.GetLastWriteTime(path);
 
@@ -83,7 +71,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLastWriteTimeUtc))]
     public void GetLastWriteTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
     {
-        DateTime expectedTime = NullTime.ToUniversalTime();
+        DateTime expectedTime = FileTestHelper.NullTime.ToUniversalTime();
 
         DateTime result = FileSystem.Directory.GetLastWriteTimeUtc(path);
 
@@ -225,6 +213,26 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [SkippableTheory]
     [AutoData]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetCreationTime))]
+    public void SetCreationTime_Unspecified_ShouldChangeCreationTime(
+        string path, DateTime creationTime)
+    {
+        Skip.IfNot(Test.RunsOnWindows,
+            "Linux does not have a creation timestamp: https://unix.stackexchange.com/a/102692");
+
+        creationTime = DateTime.SpecifyKind(creationTime, DateTimeKind.Unspecified);
+        FileSystem.Directory.CreateDirectory(path);
+
+        FileSystem.Directory.SetCreationTime(path, creationTime);
+
+        FileSystem.Directory.GetCreationTimeUtc(path)
+           .Should().Be(creationTime.ToUniversalTime());
+        FileSystem.Directory.GetCreationTime(path)
+           .Should().Be(creationTime);
+    }
+
+    [SkippableTheory]
+    [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetCreationTimeUtc))]
     public void SetCreationTimeUtc_PathNotFound_ShouldThrowCorrectException(
         string path, DateTime creationTime)
@@ -263,6 +271,26 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
         FileSystem.Directory.GetCreationTime(path)
            .Should().Be(expectedTime);
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetCreationTime))]
+    public void SetCreationTimeUtc_Unspecified_ShouldChangeCreationTime(
+        string path, DateTime creationTime)
+    {
+        Skip.IfNot(Test.RunsOnWindows,
+            "Linux does not have a creation timestamp: https://unix.stackexchange.com/a/102692");
+
+        creationTime = DateTime.SpecifyKind(creationTime, DateTimeKind.Unspecified);
+        FileSystem.Directory.CreateDirectory(path);
+
+        FileSystem.Directory.SetCreationTimeUtc(path, creationTime);
+
+        FileSystem.Directory.GetCreationTimeUtc(path)
+           .Should().Be(creationTime);
+        FileSystem.Directory.GetCreationTime(path)
+           .Should().Be(creationTime.ToLocalTime());
     }
 
     [SkippableTheory]
@@ -306,6 +334,23 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [SkippableTheory]
     [AutoData]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetLastAccessTime))]
+    public void SetLastAccessTime_Unspecified_ShouldChangeLastAccessTime(
+        string path, DateTime lastAccessTime)
+    {
+        lastAccessTime = DateTime.SpecifyKind(lastAccessTime, DateTimeKind.Unspecified);
+        FileSystem.Directory.CreateDirectory(path);
+
+        FileSystem.Directory.SetLastAccessTime(path, lastAccessTime);
+
+        FileSystem.Directory.GetLastAccessTimeUtc(path)
+           .Should().Be(lastAccessTime.ToUniversalTime());
+        FileSystem.Directory.GetLastAccessTime(path)
+           .Should().Be(lastAccessTime);
+    }
+
+    [SkippableTheory]
+    [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetLastAccessTimeUtc))]
     public void SetLastAccessTimeUtc_PathNotFound_ShouldThrowCorrectException(
         string path, DateTime lastAccessTime)
@@ -341,6 +386,23 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
         FileSystem.Directory.GetLastAccessTime(path)
            .Should().Be(expectedTime);
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetLastAccessTime))]
+    public void SetLastAccessTimeUtc_Unspecified_ShouldChangeLastAccessTime(
+        string path, DateTime lastAccessTime)
+    {
+        lastAccessTime = DateTime.SpecifyKind(lastAccessTime, DateTimeKind.Unspecified);
+        FileSystem.Directory.CreateDirectory(path);
+
+        FileSystem.Directory.SetLastAccessTimeUtc(path, lastAccessTime);
+
+        FileSystem.Directory.GetLastAccessTimeUtc(path)
+           .Should().Be(lastAccessTime);
+        FileSystem.Directory.GetLastAccessTime(path)
+           .Should().Be(lastAccessTime.ToLocalTime());
     }
 
     [SkippableTheory]
@@ -384,6 +446,23 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [SkippableTheory]
     [AutoData]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetLastWriteTime))]
+    public void SetLastWriteTime_Unspecified_ShouldChangeLastWriteTime(
+        string path, DateTime lastWriteTime)
+    {
+        lastWriteTime = DateTime.SpecifyKind(lastWriteTime, DateTimeKind.Unspecified);
+        FileSystem.Directory.CreateDirectory(path);
+
+        FileSystem.Directory.SetLastWriteTime(path, lastWriteTime);
+
+        FileSystem.Directory.GetLastWriteTimeUtc(path)
+           .Should().Be(lastWriteTime.ToUniversalTime());
+        FileSystem.Directory.GetLastWriteTime(path)
+           .Should().Be(lastWriteTime);
+    }
+
+    [SkippableTheory]
+    [AutoData]
     [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetLastWriteTimeUtc))]
     public void SetLastWriteTimeUtc_PathNotFound_ShouldThrowCorrectException(
         string path, DateTime lastWriteTime)
@@ -419,5 +498,22 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
         FileSystem.Directory.GetLastWriteTime(path)
            .Should().Be(expectedTime);
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.SetLastWriteTime))]
+    public void SetLastWriteTimeUtc_Unspecified_ShouldChangeLastWriteTime(
+        string path, DateTime lastWriteTime)
+    {
+        lastWriteTime = DateTime.SpecifyKind(lastWriteTime, DateTimeKind.Unspecified);
+        FileSystem.Directory.CreateDirectory(path);
+
+        FileSystem.Directory.SetLastWriteTimeUtc(path, lastWriteTime);
+
+        FileSystem.Directory.GetLastWriteTimeUtc(path)
+           .Should().Be(lastWriteTime);
+        FileSystem.Directory.GetLastWriteTime(path)
+           .Should().Be(lastWriteTime.ToLocalTime());
     }
 }

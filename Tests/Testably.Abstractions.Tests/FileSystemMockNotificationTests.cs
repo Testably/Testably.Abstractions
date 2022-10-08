@@ -5,8 +5,6 @@ namespace Testably.Abstractions.Tests;
 
 public class FileSystemMockNotificationTests
 {
-    #region Test Setup
-
     public FileSystemMock FileSystem { get; }
     private readonly ITestOutputHelper _testOutputHelper;
 
@@ -17,8 +15,6 @@ public class FileSystemMockNotificationTests
 
         Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
     }
-
-    #endregion
 
     [SkippableTheory]
     [AutoData]
@@ -71,8 +67,6 @@ public class FileSystemMockNotificationTests
         receivedPath.Should().Be(FileSystem.Path.GetFullPath(path));
     }
 
-    #region Helpers
-
     public static IEnumerable<object?[]> NotificationTriggeringMethods()
     {
         yield return new object?[]
@@ -88,6 +82,4 @@ public class FileSystemMockNotificationTests
             FileSystemMock.ChangeTypes.FileCreated, $"path_{Guid.NewGuid()}"
         };
     }
-
-    #endregion
 }

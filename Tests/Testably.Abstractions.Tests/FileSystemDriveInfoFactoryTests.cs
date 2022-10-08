@@ -6,8 +6,6 @@ namespace Testably.Abstractions.Tests;
 public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    #region Test Setup
-
     public abstract string BasePath { get; }
     public TFileSystem FileSystem { get; }
     public ITimeSystem TimeSystem { get; }
@@ -22,7 +20,59 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
         Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
     }
 
-    #endregion
+    [SkippableFact]
+    [FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.GetDrives))]
+    public void GetDrives_ShouldNotBeEmpty()
+    {
+        IFileSystem.IDriveInfo[] result = FileSystem.DriveInfo.GetDrives();
+
+        result.Should().NotBeEmpty();
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.DriveInfoFactory("MissingDrives")]
+    public void MissingDrive_CreateDirectoryInfo_ShouldOnlyThrowWhenAccessingData(
+        string path, string subPath)
+    {
+        Skip.IfNot(Test.RunsOnWindows);
+
+        IFileSystem.IDriveInfo driveInfo = GetUnmappedDrive();
+
+        path = $"{driveInfo.Name}{path}";
+        IFileSystem.IDirectoryInfo directoryInfo =
+            FileSystem.DirectoryInfo.New(FileSystem.Path.Combine(path, subPath));
+        IFileSystem.IDirectoryInfo? parent = directoryInfo.Parent;
+
+        Exception? exception = Record.Exception(() =>
+        {
+            _ = parent!.EnumerateDirectories().ToArray();
+        });
+
+        exception.Should().BeOfType<DirectoryNotFoundException>()
+           .Which.Message.Should().Contain($"'{path}'");
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.DriveInfoFactory("MissingDrives")]
+    public void MissingDrive_WriteAllBytes_ShouldThrowDirectoryNotFoundException(
+        string path, byte[] contents)
+    {
+        Skip.IfNot(Test.RunsOnWindows);
+
+        IFileSystem.IDriveInfo driveInfo = GetUnmappedDrive();
+
+        path = $"{driveInfo.Name}{path}";
+
+        Exception? exception = Record.Exception(() =>
+        {
+            FileSystem.File.WriteAllBytes(path, contents);
+        });
+
+        exception.Should().BeOfType<DirectoryNotFoundException>()
+           .Which.Message.Should().Contain($"'{path}'");
+    }
 
     [SkippableFact]
     [FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.New))]
@@ -37,15 +87,6 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
         result.RootDirectory.FullName.Should().Be("".PrefixRoot());
         result.TotalFreeSpace.Should().BeGreaterThan(0);
         result.TotalSize.Should().BeGreaterThan(0);
-    }
-
-    [SkippableFact]
-    [FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.GetDrives))]
-    public void GetDrives_ShouldNotBeEmpty()
-    {
-        IFileSystem.IDriveInfo[] result = FileSystem.DriveInfo.GetDrives();
-
-        result.Should().NotBeEmpty();
     }
 
     [SkippableTheory]
@@ -115,51 +156,6 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
         IFileSystem.IDriveInfo result = FileSystem.DriveInfo.Wrap(driveInfo);
 
         result.Name.Should().Be(driveInfo.Name);
-    }
-
-    [SkippableTheory]
-    [AutoData]
-    [FileSystemTests.DriveInfoFactory("MissingDrives")]
-    public void MissingDrive_WriteAllBytes_ShouldThrowDirectoryNotFoundException(
-        string path, byte[] contents)
-    {
-        Skip.IfNot(Test.RunsOnWindows);
-
-        IFileSystem.IDriveInfo driveInfo = GetUnmappedDrive();
-
-        path = $"{driveInfo.Name}{path}";
-
-        Exception? exception = Record.Exception(() =>
-        {
-            FileSystem.File.WriteAllBytes(path, contents);
-        });
-
-        exception.Should().BeOfType<DirectoryNotFoundException>()
-           .Which.Message.Should().Contain($"'{path}'");
-    }
-
-    [SkippableTheory]
-    [AutoData]
-    [FileSystemTests.DriveInfoFactory("MissingDrives")]
-    public void MissingDrive_CreateDirectoryInfo_ShouldOnlyThrowWhenAccessingData(
-        string path, string subPath)
-    {
-        Skip.IfNot(Test.RunsOnWindows);
-
-        IFileSystem.IDriveInfo driveInfo = GetUnmappedDrive();
-
-        path = $"{driveInfo.Name}{path}";
-        IFileSystem.IDirectoryInfo directoryInfo =
-            FileSystem.DirectoryInfo.New(FileSystem.Path.Combine(path, subPath));
-        IFileSystem.IDirectoryInfo? parent = directoryInfo.Parent;
-
-        Exception? exception = Record.Exception(() =>
-        {
-            _ = parent!.EnumerateDirectories().ToArray();
-        });
-
-        exception.Should().BeOfType<DirectoryNotFoundException>()
-           .Which.Message.Should().Contain($"'{path}'");
     }
 
     private IFileSystem.IDriveInfo GetUnmappedDrive()
