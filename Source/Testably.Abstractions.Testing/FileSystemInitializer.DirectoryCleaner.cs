@@ -24,7 +24,7 @@ public static partial class FileSystemInitializer
 
         #region IDirectoryCleaner Members
 
-        /// <inheritdoc cref="IDirectoryCleaner.BasePath"/>
+        /// <inheritdoc cref="IDirectoryCleaner.BasePath" />
         public string BasePath { get; }
 
         /// <inheritdoc cref="IDisposable.Dispose()" />
@@ -70,7 +70,8 @@ public static partial class FileSystemInitializer
         ///     Force deletes the directory at the given <paramref name="path" />.<br />
         ///     Removes the <see cref="FileAttributes.ReadOnly" /> flag, if necessary.
         ///     <para />
-        ///     If <paramref name="recursive" /> is set (default <see langword="true" />), the sub directories are force deleted as well.
+        ///     If <paramref name="recursive" /> is set (default <see langword="true" />), the sub directories are force deleted as
+        ///     well.
         /// </summary>
         private void ForceDeleteDirectory(string path, bool recursive = true)
         {

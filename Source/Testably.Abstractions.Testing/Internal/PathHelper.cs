@@ -30,7 +30,6 @@ internal static class PathHelper
         return false;
     }
 
-
     internal static string
         NormalizeAndTrimPath(this string path, IFileSystem fileSystem)
         => fileSystem.Path
@@ -72,6 +71,7 @@ internal static class PathHelper
             {
                 throw ExceptionFactory.PathHasIllegalCharacters(path);
             }
+
             throw ExceptionFactory.PathHasIncorrectSyntax(
                 fileSystem.Path.Combine(fileSystem.Directory.GetCurrentDirectory(),
                     path));

@@ -71,7 +71,7 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
         //var stream = FileSystem.File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Write);
         IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
 
-        var result = sut.Length;
+        long result = sut.Length;
 
         //stream.Dispose();
 

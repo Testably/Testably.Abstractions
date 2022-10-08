@@ -37,8 +37,10 @@ internal static class EnumerationOptionsHelper
             AttributesToSkip = 0,
             IgnoreInaccessible = false
         };
+
     /// <summary>
-    /// <see href="https://github.com/dotnet/runtime/blob/v6.0.0/src/libraries/System.Private.CoreLib/src/System/IO/Enumeration/FileSystemEnumerableFactory.cs#L107" />
+    ///     <see
+    ///         href="https://github.com/dotnet/runtime/blob/v6.0.0/src/libraries/System.Private.CoreLib/src/System/IO/Enumeration/FileSystemEnumerableFactory.cs#L107" />
     /// </summary>
     [ExcludeFromCodeCoverage]
     public static bool MatchesPattern(EnumerationOptions enumerationOptions, string name,

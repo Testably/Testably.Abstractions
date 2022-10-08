@@ -337,7 +337,8 @@ public class RandomProviderTests
     [Theory]
     [AutoData]
     [Trait(nameof(Testing), nameof(RandomProvider))]
-    public void GenerateRandom_NextDouble_WithoutGenerator_ShouldReturnRandomValues(int seed)
+    public void GenerateRandom_NextDouble_WithoutGenerator_ShouldReturnRandomValues(
+        int seed)
     {
         List<double> results = new();
         RandomSystemMock.IRandomProvider randomProvider =
@@ -375,7 +376,8 @@ public class RandomProviderTests
     [Theory]
     [AutoData]
     [Trait(nameof(Testing), nameof(RandomProvider))]
-    public void GenerateRandom_NextSingle_WithoutGenerator_ShouldReturnRandomValues(int seed)
+    public void GenerateRandom_NextSingle_WithoutGenerator_ShouldReturnRandomValues(
+        int seed)
     {
         List<float> results = new();
         RandomSystemMock.IRandomProvider randomProvider =
@@ -434,8 +436,9 @@ public class RandomProviderTests
     [Theory]
     [AutoData]
     [Trait(nameof(Testing), nameof(RandomProvider))]
-    public void GenerateRandom_NextInt64_WithMinAndMaxValue_Smaller_ShouldReturnSpecifiedValue(
-        int seed, long value)
+    public void
+        GenerateRandom_NextInt64_WithMinAndMaxValue_Smaller_ShouldReturnSpecifiedValue(
+            int seed, long value)
     {
         long minValue = value + 1;
         long maxValue = minValue + 10;
@@ -456,8 +459,9 @@ public class RandomProviderTests
     [Theory]
     [AutoData]
     [Trait(nameof(Testing), nameof(RandomProvider))]
-    public void GenerateRandom_NextInt64_WithMinAndMaxValue_Larger_ShouldReturnSpecifiedValue(
-        int seed, long value)
+    public void
+        GenerateRandom_NextInt64_WithMinAndMaxValue_Larger_ShouldReturnSpecifiedValue(
+            int seed, long value)
     {
         long minValue = value - 10;
         long maxValue = value - 1;
@@ -478,7 +482,8 @@ public class RandomProviderTests
     [Theory]
     [AutoData]
     [Trait(nameof(Testing), nameof(RandomProvider))]
-    public void GenerateRandom_NextInt64_WithoutGenerator_ShouldReturnRandomValues(int seed)
+    public void GenerateRandom_NextInt64_WithoutGenerator_ShouldReturnRandomValues(
+        int seed)
     {
         List<long> results = new();
         RandomSystemMock.IRandomProvider randomProvider =

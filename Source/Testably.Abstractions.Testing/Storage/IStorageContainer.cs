@@ -6,7 +6,8 @@ namespace Testably.Abstractions.Testing.Storage;
 /// <summary>
 ///     A container for a stored file or directory in the <see cref="IStorage" />.
 /// </summary>
-internal interface IStorageContainer : IFileSystem.IFileSystemExtensionPoint, ITimeSystem.ITimeSystemExtensionPoint
+internal interface IStorageContainer : IFileSystem.IFileSystemExtensionPoint,
+    ITimeSystem.ITimeSystemExtensionPoint
 {
     /// <inheritdoc cref="System.IO.FileSystemInfo.Attributes" />
     FileAttributes Attributes { get; set; }
@@ -73,9 +74,19 @@ internal interface IStorageContainer : IFileSystem.IFileSystemExtensionPoint, IT
     /// </summary>
     void WriteBytes(byte[] bytes);
 
+    /// <summary>
+    ///     A container to allow reading/writing <see cref="DateTime" />s with consistent <see cref="DateTimeKind" />.
+    /// </summary>
     public interface ITimeContainer
     {
+        /// <summary>
+        ///     Get the <see cref="DateTime" /> in the given <paramref name="kind" />.
+        /// </summary>
         DateTime Get(DateTimeKind kind);
+
+        /// <summary>
+        ///     Set the <see cref="DateTime" /> to the <paramref name="time" /> in the given <paramref name="kind" />.
+        /// </summary>
         void Set(DateTime time, DateTimeKind kind);
     }
 }

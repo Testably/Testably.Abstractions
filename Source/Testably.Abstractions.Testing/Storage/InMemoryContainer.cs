@@ -235,7 +235,7 @@ internal class InMemoryContainer : IStorageContainer
 
         #region ITimeContainer Members
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ITimeContainer.Get(DateTimeKind)" />
         public DateTime Get(DateTimeKind kind)
             => kind switch
             {
@@ -244,7 +244,7 @@ internal class InMemoryContainer : IStorageContainer
                 _ => _time
             };
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ITimeContainer.Set(DateTime, DateTimeKind)" />
         public void Set(DateTime time, DateTimeKind kind)
         {
             if (time.Kind == DateTimeKind.Unspecified)

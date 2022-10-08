@@ -99,9 +99,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         FileSystem.File.WriteAllText(path, null);
         FileStreamOptions options = new()
         {
-            Mode = FileMode.Open,
-            Access = access,
-            Share = share
+            Mode = FileMode.Open, Access = access, Share = share
         };
 
         using FileSystemStream stream = FileSystem.File.Open(path, options);

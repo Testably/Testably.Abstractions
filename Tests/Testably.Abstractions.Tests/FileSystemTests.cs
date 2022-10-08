@@ -12,7 +12,7 @@ public abstract class FileSystemTests<TFileSystem>
     protected FileSystemTests(TFileSystem fileSystem)
     {
         FileSystem = fileSystem;
-        
+
         Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
     }
 

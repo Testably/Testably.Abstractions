@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Text;
-#if NET6_0_OR_GREATER
+﻿#if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
 #endif
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
 #endif
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Text;
 using static Testably.Abstractions.IFileSystem;
 
 namespace Testably.Abstractions;

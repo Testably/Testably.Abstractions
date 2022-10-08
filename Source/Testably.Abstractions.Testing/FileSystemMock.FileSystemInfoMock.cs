@@ -133,7 +133,7 @@ public sealed partial class FileSystemMock
             => FileSystem.Path.GetFileName(FullName.TrimEnd(
                 FileSystem.Path.DirectorySeparatorChar,
                 FileSystem.Path.AltDirectorySeparatorChar));
-        
+
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.Refresh()" />
         public void Refresh()
         {
