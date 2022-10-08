@@ -42,7 +42,7 @@ internal sealed class InMemoryStorage : IStorage
             return false;
         }
 
-        if (container.Type == ContainerType.Directory)
+        if (container.Type == ContainerTypes.Directory)
         {
             string start = location.FullPath +
                            _fileSystem.Path.DirectorySeparatorChar;
@@ -73,10 +73,10 @@ internal sealed class InMemoryStorage : IStorage
         return false;
     }
 
-    /// <inheritdoc cref="IStorage.EnumerateLocations(IStorageLocation, ContainerType, string, EnumerationOptions?)" />
+    /// <inheritdoc cref="IStorage.EnumerateLocations(IStorageLocation, ContainerTypes, string, EnumerationOptions?)" />
     public IEnumerable<IStorageLocation> EnumerateLocations(
         IStorageLocation location,
-        ContainerType type,
+        ContainerTypes type,
         string expression = "*",
         EnumerationOptions? enumerationOptions = null)
     {
@@ -192,7 +192,7 @@ internal sealed class InMemoryStorage : IStorage
             {
                 IStorageContainer container =
                     containerGenerator.Invoke(loc, _fileSystem);
-                if (container.Type == ContainerType.Directory)
+                if (container.Type == ContainerTypes.Directory)
                 {
                     CreateParents(_fileSystem, loc);
                     IStorageAccessHandle access =
@@ -238,35 +238,8 @@ internal sealed class InMemoryStorage : IStorage
             {
                 if (returnFinalTarget)
                 {
-                    int maxResolveLinks =
-                        RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-                            ? 63
-                            : 40;
-                    for (int i = 1; i < maxResolveLinks; i++)
-                    {
-                        if (container.LinkTarget != null)
-                        {
-                            nextLocation =
-                                _fileSystem.Storage.GetLocation(container.LinkTarget);
-                            if (!_containers.TryGetValue(nextLocation,
-                                out IStorageContainer? nextContainer))
-                            {
-                                return nextLocation;
-                            }
-
-                            container = nextContainer;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-
-                    if (container.LinkTarget != null)
-                    {
-                        throw ExceptionFactory.FileNameCannotBeResolved(
-                            location.FullPath);
-                    }
+                    nextLocation = ResolveFinalLinkTarget(container, location) ??
+                                   nextLocation;
                 }
 
                 return nextLocation;
@@ -276,6 +249,40 @@ internal sealed class InMemoryStorage : IStorage
         }
 
         return null;
+    }
+
+    private IStorageLocation? ResolveFinalLinkTarget(IStorageContainer container,
+                                                     IStorageLocation originalLocation)
+    {
+        int maxResolveLinks =
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? 63
+                : 40;
+        IStorageLocation? nextLocation = null;
+        for (int i = 1; i < maxResolveLinks; i++)
+        {
+            if (container.LinkTarget == null)
+            {
+                break;
+            }
+
+            nextLocation = _fileSystem.Storage.GetLocation(container.LinkTarget);
+            if (!_containers.TryGetValue(nextLocation,
+                out IStorageContainer? nextContainer))
+            {
+                return nextLocation;
+            }
+
+            container = nextContainer;
+        }
+
+        if (container.LinkTarget != null)
+        {
+            throw ExceptionFactory.FileNameCannotBeResolved(
+                originalLocation.FullPath);
+        }
+
+        return nextLocation;
     }
 #endif
 

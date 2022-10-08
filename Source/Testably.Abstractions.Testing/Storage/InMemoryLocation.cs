@@ -70,6 +70,21 @@ internal sealed class InMemoryLocation : IStorageLocation
         return FullPath.Equals(other.FullPath, StringComparisonMode);
     }
 
+    /// <inheritdoc cref="object.Equals(object?)" />
+    public override bool Equals(object? obj)
+        => ReferenceEquals(this, obj) ||
+           (obj is IStorageLocation other && Equals(other));
+
+#if NETSTANDARD2_0
+    /// <inheritdoc cref="object.GetHashCode()" />
+    public override int GetHashCode()
+            => _key.ToLowerInvariant().GetHashCode();
+#else
+    /// <inheritdoc cref="object.GetHashCode()" />
+    public override int GetHashCode()
+        => _key.GetHashCode(StringComparisonMode);
+#endif
+
     /// <inheritdoc cref="IStorageLocation.GetParent()" />
     public IStorageLocation? GetParent()
     {
@@ -115,21 +130,6 @@ internal sealed class InMemoryLocation : IStorageLocation
         friendlyName ??= path;
         return new InMemoryLocation(drive, path, friendlyName);
     }
-
-    /// <inheritdoc cref="object.Equals(object?)" />
-    public override bool Equals(object? obj)
-        => ReferenceEquals(this, obj) ||
-           (obj is IStorageLocation other && Equals(other));
-
-#if NETSTANDARD2_0
-    /// <inheritdoc cref="object.GetHashCode()" />
-    public override int GetHashCode()
-            => _key.ToLowerInvariant().GetHashCode();
-#else
-    /// <inheritdoc cref="object.GetHashCode()" />
-    public override int GetHashCode()
-        => _key.GetHashCode(StringComparisonMode);
-#endif
 
     /// <inheritdoc cref="object.ToString()" />
     public override string ToString()

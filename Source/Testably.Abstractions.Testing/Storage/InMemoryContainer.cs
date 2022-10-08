@@ -20,7 +20,7 @@ internal class InMemoryContainer : IStorageContainer
     private DateTime _lastWriteTime;
     private readonly IStorageLocation _location;
 
-    public InMemoryContainer(ContainerType type,
+    public InMemoryContainer(ContainerTypes type,
                              IStorageLocation location,
                              FileSystemMock fileSystem)
     {
@@ -124,7 +124,7 @@ internal class InMemoryContainer : IStorageContainer
     public ITimeSystem TimeSystem => _fileSystem.TimeSystem;
 
     /// <inheritdoc cref="IStorageContainer.Type" />
-    public ContainerType Type { get; }
+    public ContainerTypes Type { get; }
 
     /// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
     public void AppendBytes(byte[] bytes)
@@ -211,7 +211,7 @@ internal class InMemoryContainer : IStorageContainer
     public static IStorageContainer NewDirectory(IStorageLocation location,
                                                  FileSystemMock fileSystem)
     {
-        return new InMemoryContainer(ContainerType.Directory, location, fileSystem);
+        return new InMemoryContainer(ContainerTypes.Directory, location, fileSystem);
     }
 
     /// <summary>
@@ -220,7 +220,7 @@ internal class InMemoryContainer : IStorageContainer
     public static IStorageContainer NewFile(IStorageLocation location,
                                             FileSystemMock fileSystem)
     {
-        return new InMemoryContainer(ContainerType.File, location, fileSystem);
+        return new InMemoryContainer(ContainerTypes.File, location, fileSystem);
     }
 
     private bool CanGetAccess(FileAccess access, FileShare share)

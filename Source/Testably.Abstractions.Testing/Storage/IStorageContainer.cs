@@ -26,10 +26,10 @@ internal interface IStorageContainer : IFileSystem.IFileSystemExtensionPoint, IT
     public string? LinkTarget { get; set; }
 
     /// <summary>
-    ///     The type of the container indicates if it is a <see cref="ContainerType.File" /> or
+    ///     The type of the container indicates if it is a <see cref="ContainerTypes.File" /> or
     ///     <see cref="Directory" />.
     /// </summary>
-    ContainerType Type { get; }
+    ContainerTypes Type { get; }
 
     /// <summary>
     ///     Appends the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.

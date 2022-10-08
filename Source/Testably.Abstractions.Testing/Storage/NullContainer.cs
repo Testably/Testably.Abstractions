@@ -64,8 +64,8 @@ internal sealed class NullContainer : IStorageContainer
     public ITimeSystem TimeSystem { get; }
 
     /// <inheritdoc cref="IStorageContainer.Type" />
-    public ContainerType Type
-        => ContainerType.Unknown;
+    public ContainerTypes Type
+        => ContainerTypes.DirectoryOrFile;
 
     /// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
     public void AppendBytes(byte[] bytes)

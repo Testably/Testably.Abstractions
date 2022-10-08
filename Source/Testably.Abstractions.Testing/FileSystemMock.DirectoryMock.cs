@@ -73,7 +73,7 @@ public sealed partial class FileSystemMock
                                                         SearchOption searchOption)
             => _fileSystem.Storage.EnumerateLocations(
                     _fileSystem.Storage.GetLocation(path),
-                    ContainerType.Directory,
+                    ContainerTypes.Directory,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption))
                .Select(x => _fileSystem.GetSubdirectoryPath(x.FullPath, path));
@@ -86,7 +86,7 @@ public sealed partial class FileSystemMock
                                                             enumerationOptions)
             => _fileSystem.Storage.EnumerateLocations(
                     _fileSystem.Storage.GetLocation(path),
-                    ContainerType.Directory,
+                    ContainerTypes.Directory,
                     searchPattern,
                     enumerationOptions)
                .Select(x => _fileSystem.GetSubdirectoryPath(x.FullPath, path));
@@ -106,7 +106,7 @@ public sealed partial class FileSystemMock
                                                   SearchOption searchOption)
             => _fileSystem.Storage.EnumerateLocations(
                     _fileSystem.Storage.GetLocation(path),
-                    ContainerType.File,
+                    ContainerTypes.File,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption))
                .Select(x => _fileSystem.GetSubdirectoryPath(x.FullPath, path));
@@ -118,7 +118,7 @@ public sealed partial class FileSystemMock
                                                   EnumerationOptions enumerationOptions)
             => _fileSystem.Storage.EnumerateLocations(
                     _fileSystem.Storage.GetLocation(path),
-                    ContainerType.File,
+                    ContainerTypes.File,
                     searchPattern,
                     enumerationOptions)
                .Select(x => _fileSystem.GetSubdirectoryPath(x.FullPath, path));
@@ -141,7 +141,7 @@ public sealed partial class FileSystemMock
             SearchOption searchOption)
             => _fileSystem.Storage.EnumerateLocations(
                     _fileSystem.Storage.GetLocation(path),
-                    ContainerType.DirectoryOrFile,
+                    ContainerTypes.DirectoryOrFile,
                     searchPattern,
                     EnumerationOptionsHelper.FromSearchOption(searchOption))
                .Select(x => _fileSystem.GetSubdirectoryPath(x.FullPath, path));
@@ -153,7 +153,7 @@ public sealed partial class FileSystemMock
             EnumerationOptions enumerationOptions)
             => _fileSystem.Storage.EnumerateLocations(
                     _fileSystem.Storage.GetLocation(path),
-                    ContainerType.DirectoryOrFile,
+                    ContainerTypes.DirectoryOrFile,
                     searchPattern,
                     enumerationOptions)
                .Select(x => _fileSystem.GetSubdirectoryPath(x.FullPath, path));

@@ -47,7 +47,7 @@ internal interface IStorage
     /// </returns>
     IEnumerable<IStorageLocation> EnumerateLocations(
         IStorageLocation location,
-        ContainerType type,
+        ContainerTypes type,
         string expression = "*",
         EnumerationOptions? enumerationOptions = null);
 
