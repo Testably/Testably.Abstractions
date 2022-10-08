@@ -19,7 +19,7 @@ public sealed partial class TimeSystemMock
         /// <param name="callback">The callback to execute after <c>DateTime</c> was read.</param>
         /// <param name="predicate">
         ///     (optional) A predicate used to filter which callbacks should be notified.<br />
-        ///     If set to <c>null</c> (default value) all callbacks are notified.
+        ///     If set to <see langword="null" /> (default value) all callbacks are notified.
         /// </param>
         /// <returns>An <see cref="Notification.IAwaitableCallback{DateTime}" /> to un-register the callback on dispose.</returns>
         Notification.IAwaitableCallback<DateTime> DateTimeRead(
@@ -36,7 +36,7 @@ public sealed partial class TimeSystemMock
         /// <param name="callback">The callback to execute after the <c>Task.Delay</c> was called.</param>
         /// <param name="predicate">
         ///     (optional) A predicate used to filter which callbacks should be notified.<br />
-        ///     If set to <c>null</c> (default value) all callbacks are notified.
+        ///     If set to <see langword="null" /> (default value) all callbacks are notified.
         /// </param>
         /// <returns>An <see cref="Notification.IAwaitableCallback{TimeSpan}" /> to un-register the callback on dispose.</returns>
         Notification.IAwaitableCallback<TimeSpan> TaskDelay(
@@ -51,7 +51,7 @@ public sealed partial class TimeSystemMock
         /// <param name="callback">The callback to execute after the <c>Thread.Sleep</c> was called.</param>
         /// <param name="predicate">
         ///     (optional) A predicate used to filter which callbacks should be notified.<br />
-        ///     If set to <c>null</c> (default value) all callbacks are notified.
+        ///     If set to <see langword="null" /> (default value) all callbacks are notified.
         /// </param>
         /// <returns>An <see cref="Notification.IAwaitableCallback{TimeSpan}" /> to un-register the callback on dispose.</returns>
         Notification.IAwaitableCallback<TimeSpan> ThreadSleep(

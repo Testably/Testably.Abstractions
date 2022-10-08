@@ -149,7 +149,7 @@ public sealed partial class FileSystemMock
             string path, string pathToTarget)
         {
             var location = InMemoryLocation.New(_fileSystem, path);
-            if (_fileSystem.Storage.TryAddContainer(location, InMemoryContainer.ContainerType.File, out var container))
+            if (_fileSystem.Storage.TryAddContainer(location, InMemoryContainer.NewFile, out var container))
             {
                 container.LinkTarget = pathToTarget;
                 return FileSystemInfoMock.New(location, _fileSystem);

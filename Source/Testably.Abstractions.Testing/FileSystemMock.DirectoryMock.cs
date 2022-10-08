@@ -91,8 +91,7 @@ public sealed partial class FileSystemMock
                     InMemoryLocation.New(_fileSystem, path),
                     InMemoryContainer.ContainerType.Directory,
                     searchPattern,
-                    EnumerationOptionsHelper.FromSearchOption(searchOption),
-                    DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
+                    EnumerationOptionsHelper.FromSearchOption(searchOption))
                .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
                     x.FullPath,
                     path));
@@ -107,8 +106,7 @@ public sealed partial class FileSystemMock
                     InMemoryLocation.New(_fileSystem, path),
                     InMemoryContainer.ContainerType.Directory,
                     searchPattern,
-                    enumerationOptions,
-                    DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
+                    enumerationOptions)
                .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
                     x.FullPath,
                     path));
@@ -130,8 +128,7 @@ public sealed partial class FileSystemMock
                     InMemoryLocation.New(_fileSystem, path),
                     InMemoryContainer.ContainerType.File,
                     searchPattern,
-                    EnumerationOptionsHelper.FromSearchOption(searchOption),
-                    DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
+                    EnumerationOptionsHelper.FromSearchOption(searchOption))
                .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
                     x.FullPath,
                     path));
@@ -145,8 +142,7 @@ public sealed partial class FileSystemMock
                     InMemoryLocation.New(_fileSystem, path),
                     InMemoryContainer.ContainerType.File,
                     searchPattern,
-                    enumerationOptions,
-                    DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
+                    enumerationOptions)
                .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
                     x.FullPath,
                     path));
@@ -169,8 +165,7 @@ public sealed partial class FileSystemMock
                     InMemoryLocation.New(_fileSystem, path),
                     InMemoryContainer.ContainerType.DirectoryOrFile,
                     searchPattern,
-                    EnumerationOptionsHelper.FromSearchOption(searchOption),
-                    DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
+                    EnumerationOptionsHelper.FromSearchOption(searchOption))
                .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
                     x.FullPath,
                     path));
@@ -184,8 +179,7 @@ public sealed partial class FileSystemMock
                     InMemoryLocation.New(_fileSystem, path),
                     InMemoryContainer.ContainerType.DirectoryOrFile,
                     searchPattern,
-                    enumerationOptions,
-                    DirectoryNotFoundException(_fileSystem.Path.GetFullPath(path)))
+                    enumerationOptions)
                .Select(x => _fileSystem.Storage.GetSubdirectoryPath(
                     x.FullPath,
                     path));
@@ -473,11 +467,5 @@ public sealed partial class FileSystemMock
         }
 
         #endregion
-
-        private static Func<Exception> DirectoryNotFoundException(string path)
-        {
-            return () => new DirectoryNotFoundException(
-                $"Could not find a part of the path '{path}'.");
-        }
     }
 }

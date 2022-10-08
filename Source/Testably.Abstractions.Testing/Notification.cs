@@ -161,7 +161,7 @@ public static class Notification
         /// </summary>
         /// <param name="filter">
         ///     (optional) A filter for the callback to count.<br />
-        ///     Defaults to <c>null</c> which will consider all callbacks.
+        ///     Defaults to <see langword="null" /> which will consider all callbacks.
         /// </param>
         /// <param name="timeout">
         ///     (optional) The timeout in milliseconds to wait on the callback.<br />
@@ -198,7 +198,7 @@ public static class Notification
         /// </summary>
         /// <param name="filter">
         ///     (optional) A filter for the callback to count.<br />
-        ///     Defaults to <c>null</c> which will consider all callbacks.
+        ///     Defaults to <see langword="null" /> which will consider all callbacks.
         /// </param>
         /// <param name="timeout">
         ///     (optional) The timeout in milliseconds to wait on the callback.<br />

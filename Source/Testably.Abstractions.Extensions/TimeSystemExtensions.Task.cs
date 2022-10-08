@@ -11,8 +11,8 @@ public static partial class TimeSystemExtensions
     /// <summary>
     ///     Tries to delay executing by the specified <paramref name="delay" />.
     ///     <para />
-    ///     Returns <c>true</c> if the Task delayed for the complete <paramref name="delay" />,
-    ///     <c>false</c> if the delay was aborted via the <paramref name="cancellationToken" />.
+    ///     Returns <see langword="true" /> if the Task delayed for the complete <paramref name="delay" />,
+    ///     <see langword="false" /> if the delay was aborted via the <paramref name="cancellationToken" />.
     /// </summary>
     public static bool TryDelay(
         this ITimeSystem.ITask timeSystem,

@@ -34,18 +34,18 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IStorage.CurrentDirectory"/>
         public string CurrentDirectory { get; set; } = string.Empty.PrefixRoot();
         
-        public IEnumerable<InMemoryLocation> EnumerateLocations(
-            InMemoryLocation location,
+        public IEnumerable<InMemoryLocation> EnumerateLocations(InMemoryLocation location,
             InMemoryContainer.ContainerType type,
-            string expression,
-            EnumerationOptions enumerationOptions,
-            Func<Exception> notFoundException)
+            string expression = "*",
+            EnumerationOptions? enumerationOptions = null)
         {
             ValidateExpression(expression);
             if (!_containers.ContainsKey(location))
             {
-                throw notFoundException();
+                throw ExceptionFactory.DirectoryNotFound(location.FullPath);
             }
+
+            enumerationOptions ??= EnumerationOptionsHelper.Compatible;
 
             foreach (KeyValuePair<InMemoryLocation, IStorageContainer> item in _containers
                .Where(x => x.Key.FullPath.StartsWith(location.FullPath) &&
@@ -134,7 +134,7 @@ public sealed partial class FileSystemMock
 
         /// <summary>
         ///     Returns the drive if it is present.<br />
-        ///     Returns <c>null</c>, if the drive does not exist.
+        ///     Returns <see langword="null" />, if the drive does not exist.
         /// </summary>
         public IDriveInfoMock? GetDrive(string? driveName)
         {
@@ -346,7 +346,7 @@ public sealed partial class FileSystemMock
         }
 
         public bool TryAddContainer(InMemoryLocation location,
-                                    InMemoryContainer.ContainerType containerType,
+                                    Func<InMemoryLocation, FileSystemMock, IStorageContainer> containerGenerator,
                                     [NotNullWhen(true)] out IStorageContainer? container)
         {
             ChangeDescription? fileSystemChange = null;
@@ -355,9 +355,7 @@ public sealed partial class FileSystemMock
                 location,
                 _ =>
                 {
-                    IStorageContainer container = InMemoryContainer.New(
-                        containerType,
-                        location, _fileSystem);
+                    IStorageContainer container = containerGenerator(location, _fileSystem);
                     IDisposable access =
                         container.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
                     fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(

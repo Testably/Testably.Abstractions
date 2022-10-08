@@ -113,7 +113,7 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreateAsSymbolicLink(string)" />
         public void CreateAsSymbolicLink(string pathToTarget)
         {
-            if (FileSystem.Storage.TryAddContainer(Location, InMemoryContainer.ContainerType.File, out var container))
+            if (FileSystem.Storage.TryAddContainer(Location, InMemoryContainer.NewFile, out var container))
             {
                 container.LinkTarget = pathToTarget;
             }

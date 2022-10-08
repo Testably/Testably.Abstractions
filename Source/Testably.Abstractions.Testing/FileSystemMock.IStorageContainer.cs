@@ -8,25 +8,30 @@ public sealed partial class FileSystemMock
 {
     internal interface IStorageContainer
     {
-        ContainerType Type { get; }
+        /// <inheritdoc cref="System.IO.FileSystemInfo.Attributes" />
         FileAttributes Attributes { get; set; }
 
+        /// <inheritdoc cref="System.IO.FileSystemInfo.CreationTime" />
         DateTime CreationTime { get; set; }
 
+        /// <inheritdoc cref="System.IO.FileSystemInfo.LastAccessTime" />
         public DateTime LastAccessTime { get; set; }
 
+        /// <inheritdoc cref="System.IO.FileSystemInfo.LastWriteTime" />
         public DateTime LastWriteTime { get; set; }
-        public string? LinkTarget { get; set; }
-
-        void AdjustTimes(TimeAdjustments timeAdjustments);
 
         /// <summary>
-        ///     Requests access to this file with the given <paramref name="share" />.
-        ///     <para />
-        ///     The returned <see cref="IDisposable" /> is used to release the access lock.
+        ///     If this instance represents a link, returns the link target's path, otherwise returns <see langword="null" />.
         /// </summary>
-        IStorageAccessHandle RequestAccess(FileAccess access, FileShare share);
+        public string? LinkTarget { get; set; }
 
+        /// <summary>
+        ///     The type of the container indicates if it is a <see cref="ContainerType.File" /> or
+        ///     <see cref="ContainerType.Directory" />.
+        /// </summary>
+        ContainerType Type { get; }
+
+        void AdjustTimes(TimeAdjustments timeAdjustments);
 
         /// <summary>
         ///     Appends the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
@@ -41,9 +46,29 @@ public sealed partial class FileSystemMock
         void ClearBytes();
 
         /// <summary>
+        ///     Decrypts the file content and removes the <see cref="FileAttributes.Encrypted" /> attribute.
+        ///     <para />
+        ///     Does nothing if the file is not encrypted.
+        /// </summary>
+        void Decrypt();
+
+        /// <summary>
+        ///     Encrypts the file content and adds the <see cref="FileAttributes.Encrypted" /> attribute.
+        ///     <para />
+        ///     Does nothing if the file is already encrypted.
+        /// </summary>
+        void Encrypt();
+
+        /// <summary>
         ///     Gets the bytes in the <see cref="IFileSystem.IFileInfo" />.
         /// </summary>
         byte[] GetBytes();
+
+        /// <summary>
+        ///     Requests access to this file with the given <paramref name="share" />.
+        /// </summary>
+        /// <returns>An <see cref="IStorageAccessHandle" /> that is used to release the access lock on dispose.</returns>
+        IStorageAccessHandle RequestAccess(FileAccess access, FileShare share);
 
         /// <summary>
         ///     Writes the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
@@ -82,9 +107,5 @@ public sealed partial class FileSystemMock
             /// </summary>
             All = CreationTime | LastAccessTime | LastWriteTime,
         }
-
-        void Encrypt();
-
-        void Decrypt();
     }
 }
