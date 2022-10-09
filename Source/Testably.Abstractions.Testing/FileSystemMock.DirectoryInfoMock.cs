@@ -226,7 +226,14 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfo.MoveTo(string)" />
         public void MoveTo(string destDirName)
-            => throw new NotImplementedException();
+        {
+            Location = FileSystem.Storage.Move(
+                           FileSystem.Storage.GetLocation(FullName),
+                           FileSystem.Storage.GetLocation(destDirName),
+                           recursive: true)
+                       ?? throw ExceptionFactory.DirectoryNotFound(FullName);
+            Refresh();
+        }
 
         #endregion
 

@@ -228,49 +228,53 @@ internal sealed class InMemoryStorage : IStorage
                                   bool overwrite = false,
                                   bool recursive = false)
     {
-        lock (_containers)
+        if (!_containers.TryGetValue(source,
+            out IStorageContainer? container))
         {
-            if (!_containers.TryGetValue(source,
-                out IStorageContainer? container))
-            {
-                return null;
-            }
+            return null;
+        }
 
-            List<KeyValuePair<IStorageLocation, IStorageContainer>> children = _containers
-               .Where(x => x.Key.FullPath.StartsWith(source.FullPath) &&
-                           !x.Key.Equals(source))
-               .ToList();
-            if (children.Any() && !recursive)
-            {
-                throw ExceptionFactory.DirectoryNotEmpty(source.FullPath);
-            }
+        List<IStorageLocation> children =
+            EnumerateLocations(source, ContainerTypes.DirectoryOrFile).ToList();
+        if (children.Any() && !recursive)
+        {
+            throw ExceptionFactory.DirectoryNotEmpty(source.FullPath);
+        }
 
-            using (IDisposable access = container.RequestAccess(
-                FileAccess.Write, FileShare.None))
+        using (_ = container.RequestAccess(
+            FileAccess.Write, FileShare.None))
+        {
+            if (children.Any() && recursive)
             {
-                // TODO: children!
-                if (_containers.TryRemove(source, out IStorageContainer? sourceContainer))
+                foreach (IStorageLocation child in children)
                 {
-                    if (overwrite)
-                    {
-                        if (_containers.TryRemove(destination,
-                            out IStorageContainer? existingContainer))
-                        {
-                            existingContainer.ClearBytes();
-                        }
-                    }
-
-                    if (_containers.TryAdd(destination, sourceContainer))
-                    {
-                        int bytesLength = sourceContainer.GetBytes().Length;
-                        source.Drive?.ChangeUsedBytes(-1 * bytesLength);
-                        destination.Drive?.ChangeUsedBytes(bytesLength);
-                        return destination;
-                    }
-
-                    _containers.TryAdd(source, sourceContainer);
-                    throw ExceptionFactory.CannotCreateFileWhenAlreadyExists();
+                    IStorageLocation childDestination = _fileSystem
+                       .GetMoveLocation(child, source, destination);
+                    Move(child, childDestination, recursive: true);
                 }
+            }
+
+            if (_containers.TryRemove(source, out IStorageContainer? sourceContainer))
+            {
+                if (overwrite)
+                {
+                    if (_containers.TryRemove(destination,
+                        out IStorageContainer? existingContainer))
+                    {
+                        existingContainer.ClearBytes();
+                    }
+                }
+
+                if (_containers.TryAdd(destination, sourceContainer))
+                {
+                    int bytesLength = sourceContainer.GetBytes().Length;
+                    source.Drive?.ChangeUsedBytes(-1 * bytesLength);
+                    destination.Drive?.ChangeUsedBytes(bytesLength);
+                    return destination;
+                }
+
+                _containers.TryAdd(source, sourceContainer);
+                throw ExceptionFactory.CannotCreateFileWhenAlreadyExists();
             }
         }
 
