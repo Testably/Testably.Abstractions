@@ -95,6 +95,7 @@ public static partial class FileSystemInitializer
                 _initializedFileSystemInfos.Count,
                 fileInfo);
 
+            fileInfo.Refresh();
             return new FileInitializer<TFileSystem>(this, fileInfo);
         }
 
@@ -115,6 +116,7 @@ public static partial class FileSystemInitializer
                 _initializedFileSystemInfos.Count,
                 directoryInfo);
 
+            directoryInfo.Refresh();
             return new DirectoryInitializer<TFileSystem>(this, directoryInfo);
         }
 

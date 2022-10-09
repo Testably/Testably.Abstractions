@@ -12,16 +12,29 @@ public sealed partial class FileSystemMock
     {
         protected IStorageLocation Location;
         protected readonly FileSystemMock FileSystem;
-        protected IStorageContainer Container { get; set; }
+
+        protected IStorageContainer Container
+        {
+            get
+            {
+                if (_container is NullContainer)
+                {
+                    RefreshInternal();
+                }
+                return _container;
+            }
+            set => _container = value;
+        }
 
         private bool? _exists;
         private bool _isInitialized;
+        private IStorageContainer _container;
 
         internal FileSystemInfoMock(FileSystemMock fileSystem, IStorageLocation location)
         {
             FileSystem = fileSystem;
             Location = location;
-            Container = fileSystem.Storage.GetContainer(location);
+            _container = fileSystem.Storage.GetContainer(location);
         }
 
         #region IFileSystemInfo Members
