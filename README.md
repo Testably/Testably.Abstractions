@@ -7,7 +7,7 @@ At the core of this library are the abstraction interfaces, which allow replacin
 
  - The `IFileSystem` interface abstracts away all I/O-related functionality from the `System.IO` namespace:
    Static methods are directly implemented on the `IFileSystem` interface.
-   Constructors (e.g. `new FileInfo(string)`) are implemented as factory methods (`IFileSystem.FileInfo.New(string)`).
+   Constructors are implemented as factory methods, e.g. `IFileSystem.FileInfo.New(string)` instead of `new FileInfo(string)`.
 
  - The `ITimeSystem` interface abstracts away time-related functionality:
    `DateTime` methods give access to the current time
@@ -56,9 +56,7 @@ public void StoreData_ShouldWriteValidFile()
 ```
 
 # Getting Started
-[![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions)](https://www.nuget.org/packages/Testably.Abstractions)  
-[![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions.Testing)](https://www.nuget.org/packages/Testably.Abstractions.Testing)  
-- Install `Testably.Abstractions` as nuget package in your productive projects and `Testably.Abstractions.Testing` as nuget package in your test projects.
+- Install `Testably.Abstractions` [![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions)](https://www.nuget.org/packages/Testably.Abstractions) as nuget package in your productive projects and `Testably.Abstractions.Testing` [![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions.Testing)](https://www.nuget.org/packages/Testably.Abstractions.Testing) as nuget package in your test projects.
   ```ps
   dotnet add package Testably.Abstractions
   dotnet add package Testably.Abstractions.Testing
@@ -76,7 +74,8 @@ public void StoreData_ShouldWriteValidFile()
 
 # Testing
 In order to simplify testing, the `Testably.Abstractions.Testing` projects provides mocked instances for the abstraction interfaces:
-These support configuration using fluent syntax, e.g.
+
+These support configuration using fluent syntax:
 ```csharp
   new FileSystemMock()
     .Initialize()
@@ -84,9 +83,4 @@ These support configuration using fluent syntax, e.g.
         .WithASubdirectory().Initialized(s => s
             .WithAFile(".txt"));
 ```
-initializes the mocked file system with a random file and a random sub-directory containing a ".txt" file.
-
-# Extensions
-[![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions.Extensions)](https://www.nuget.org/packages/Testably.Abstractions.Extensions)  
-The extensions project provides some methods, based on the interfaces that simplify common tasks.
-See [Examples project](/Docs/Examples) provides some examples of their usage.
+This initializes the mocked file system with a random file and a random sub-directory containing a ".txt" file.
