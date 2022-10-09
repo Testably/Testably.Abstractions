@@ -1,5 +1,4 @@
 using System.IO;
-using System.Linq;
 
 namespace Testably.Abstractions.Tests;
 
@@ -82,6 +81,26 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         FileSystem.File.Exists(sourceName).Should().BeFalse();
         FileSystem.File.Exists(destinationName).Should().BeTrue();
         FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.Move))]
+    public void Move_SourceLocked_ShouldThrowIOException(
+        string sourceName,
+        string destinationName)
+    {
+        FileSystem.File.WriteAllText(sourceName, null);
+        using FileSystemStream stream = FileSystem.File.Open(sourceName, FileMode.Open,
+            FileAccess.Read, FileShare.Read);
+
+        Exception? exception = Record.Exception(() =>
+        {
+            FileSystem.File.Move(sourceName, destinationName);
+        });
+
+        exception.Should().BeOfType<IOException>();
+        FileSystem.File.Exists(destinationName).Should().BeFalse();
     }
 
     [SkippableTheory]

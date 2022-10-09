@@ -96,6 +96,27 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.MoveTo))]
+    public void MoveTo_SourceLocked_ShouldThrowIOException(
+        string sourceName,
+        string destinationName)
+    {
+        FileSystem.File.WriteAllText(sourceName, null);
+        using FileSystemStream stream = FileSystem.File.Open(sourceName, FileMode.Open,
+            FileAccess.Read, FileShare.Read);
+        IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+
+        Exception? exception = Record.Exception(() =>
+        {
+            sut.MoveTo(destinationName);
+        });
+
+        exception.Should().BeOfType<IOException>();
+        FileSystem.File.Exists(destinationName).Should().BeFalse();
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.MoveTo))]
     public void MoveTo_SourceMissing_ShouldThrowFileNotFoundException(
         string sourceName,
         string destinationName)
