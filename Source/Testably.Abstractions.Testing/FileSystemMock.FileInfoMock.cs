@@ -114,12 +114,25 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.MoveTo(string)" />
         public void MoveTo(string destFileName)
-            => throw new NotImplementedException();
+        {
+            Location = FileSystem.Storage.Move(
+                           FileSystem.Storage.GetLocation(FullName),
+                           FileSystem.Storage.GetLocation(destFileName))
+                       ?? throw ExceptionFactory.FileNotFound(FullName);
+            Refresh();
+        }
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
         /// <inheritdoc cref="IFileSystem.IFileInfo.MoveTo(string, bool)" />
         public void MoveTo(string destFileName, bool overwrite)
-            => throw new NotImplementedException();
+        {
+            Location = FileSystem.Storage.Move(
+                    FileSystem.Storage.GetLocation(FullName),
+                    FileSystem.Storage.GetLocation(destFileName),
+                    overwrite)
+                ?? throw ExceptionFactory.FileNotFound(FullName);
+            Refresh();
+        }
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode)" />

@@ -20,6 +20,9 @@ internal static class ExceptionFactory
         => new(
             $"Cannot create '{path}' because a file or directory with the same name already exists.");
 
+    internal static IOException CannotCreateFileWhenAlreadyExists()
+        => new("Cannot create a file when that file already exists.");
+
     internal static IOException DirectoryNotEmpty(string path)
         => new($"Directory not empty : '{path}'");
 

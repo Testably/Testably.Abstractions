@@ -262,12 +262,14 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.Move(string, string)" />
         public void Move(string sourceFileName, string destFileName)
-            => throw new NotImplementedException();
+            => _fileSystem.FileInfo.New(sourceFileName)
+               .MoveTo(destFileName);
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
         /// <inheritdoc cref="IFileSystem.IFile.Move(string, string, bool)" />
         public void Move(string sourceFileName, string destFileName, bool overwrite)
-            => throw new NotImplementedException();
+            => _fileSystem.FileInfo.New(sourceFileName)
+               .MoveTo(destFileName, overwrite);
 #endif
 
         /// <inheritdoc cref="IFileSystem.IFile.Open(string, FileMode)" />

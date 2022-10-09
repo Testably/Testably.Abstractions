@@ -288,7 +288,8 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDirectory.Move(string, string)" />
         public void Move(string sourceDirName, string destDirName)
-            => throw new NotImplementedException();
+            => _fileSystem.DirectoryInfo.New(sourceDirName)
+               .MoveTo(destDirName);
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="IFileSystem.IDirectory.ResolveLinkTarget(string, bool)" />
