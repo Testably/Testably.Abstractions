@@ -4,13 +4,13 @@ using System.IO;
 
 namespace Testably.Abstractions.Tests;
 
-public abstract partial class FileSystemDirectoryTests<TFileSystem>
+public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
     [SkippableTheory]
     [AutoData]
-    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Move))]
-    public void Move_ShouldMoveDirectoryWithContent(string source, string destination)
+    [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.MoveTo))]
+    public void MoveTo_ShouldMoveDirectoryWithContent(string source, string destination)
     {
         FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
             FileSystem.InitializeIn(source)
@@ -18,8 +18,9 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
                .WithASubdirectory().Initialized(s => s
                    .WithAFile()
                    .WithASubdirectory());
+        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(source);
 
-        FileSystem.Directory.Move(source, destination);
+        sut.MoveTo(destination);
 
         FileSystem.Directory.Exists(source).Should().BeFalse();
         FileSystem.Directory.Exists(destination).Should().BeTrue();
@@ -37,8 +38,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [SkippableTheory]
     [AutoData]
-    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Move))]
-    public void Move_WithLockedFile_ShouldNotMoveDirectoryAtAll(
+    [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.MoveTo))]
+    public void MoveTo_WithLockedFile_ShouldNotMoveDirectoryAtAll(
         string source, string destination)
     {
         FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
@@ -47,13 +48,14 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
                .WithASubdirectory().Initialized(s => s
                    .WithAFile()
                    .WithASubdirectory());
+        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(source);
         using FileSystemStream stream = FileSystem.File.Open(initialized[2].FullName,
             FileMode.Open,
             FileAccess.Read, FileShare.Read);
 
         Exception? exception = Record.Exception(() =>
         {
-            FileSystem.Directory.Move(source, destination);
+            sut.MoveTo(destination);
         });
 
         exception.Should().BeOfType<IOException>();
@@ -73,8 +75,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
     [SkippableTheory]
     [AutoData]
-    [FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Move))]
-    public void Move_WithReadOnlyFile_ShouldMoveDirectoryWithContent(
+    [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.MoveTo))]
+    public void MoveTo_WithReadOnlyFile_ShouldMoveDirectoryWithContent(
         string source, string destination)
     {
         FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
@@ -84,8 +86,9 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
                    .WithAFile()
                    .WithASubdirectory());
         initialized[2].Attributes = FileAttributes.ReadOnly;
+        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(source);
 
-        FileSystem.Directory.Move(source, destination);
+        sut.MoveTo(destination);
 
         FileSystem.Directory.Exists(source).Should().BeFalse();
         FileSystem.Directory.Exists(destination).Should().BeTrue();

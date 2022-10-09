@@ -128,9 +128,13 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
             sut.MoveTo(destinationName);
         });
 
+#if NETFRAMEWORK
+        exception.Should().BeOfType<FileNotFoundException>();
+#else
         exception.Should().BeOfType<FileNotFoundException>()
            .Which.Message.Should()
            .Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
+#endif
         FileSystem.File.Exists(destinationName).Should().BeFalse();
     }
 }

@@ -228,57 +228,20 @@ internal sealed class InMemoryStorage : IStorage
                                   bool overwrite = false,
                                   bool recursive = false)
     {
-        if (!_containers.TryGetValue(source,
-            out IStorageContainer? container))
+        List<Rollback> rollbacks = new();
+        try
         {
-            return null;
+            return MoveInternal(source, destination, overwrite, recursive, rollbacks);
         }
-
-        List<IStorageLocation> children =
-            EnumerateLocations(source, ContainerTypes.DirectoryOrFile).ToList();
-        if (children.Any() && !recursive)
+        catch (Exception)
         {
-            throw ExceptionFactory.DirectoryNotEmpty(source.FullPath);
-        }
-
-        using (_ = container.RequestAccess(
-            FileAccess.Write, FileShare.None))
-        {
-            if (children.Any() && recursive)
+            foreach (Rollback rollback in rollbacks)
             {
-                foreach (IStorageLocation child in children)
-                {
-                    IStorageLocation childDestination = _fileSystem
-                       .GetMoveLocation(child, source, destination);
-                    Move(child, childDestination, recursive: true);
-                }
+                rollback.Execute();
             }
 
-            if (_containers.TryRemove(source, out IStorageContainer? sourceContainer))
-            {
-                if (overwrite)
-                {
-                    if (_containers.TryRemove(destination,
-                        out IStorageContainer? existingContainer))
-                    {
-                        existingContainer.ClearBytes();
-                    }
-                }
-
-                if (_containers.TryAdd(destination, sourceContainer))
-                {
-                    int bytesLength = sourceContainer.GetBytes().Length;
-                    source.Drive?.ChangeUsedBytes(-1 * bytesLength);
-                    destination.Drive?.ChangeUsedBytes(bytesLength);
-                    return destination;
-                }
-
-                _containers.TryAdd(source, sourceContainer);
-                throw ExceptionFactory.CannotCreateFileWhenAlreadyExists();
-            }
+            throw;
         }
-
-        return source;
     }
 
 #if FEATURE_FILESYSTEM_LINK
@@ -308,40 +271,6 @@ internal sealed class InMemoryStorage : IStorage
         }
 
         return null;
-    }
-
-    private IStorageLocation? ResolveFinalLinkTarget(IStorageContainer container,
-                                                     IStorageLocation originalLocation)
-    {
-        int maxResolveLinks =
-            RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-                ? 63
-                : 40;
-        IStorageLocation? nextLocation = null;
-        for (int i = 1; i < maxResolveLinks; i++)
-        {
-            if (container.LinkTarget == null)
-            {
-                break;
-            }
-
-            nextLocation = _fileSystem.Storage.GetLocation(container.LinkTarget);
-            if (!_containers.TryGetValue(nextLocation,
-                out IStorageContainer? nextContainer))
-            {
-                return nextLocation;
-            }
-
-            container = nextContainer;
-        }
-
-        if (container.LinkTarget != null)
-        {
-            throw ExceptionFactory.FileNameCannotBeResolved(
-                originalLocation.FullPath);
-        }
-
-        return nextLocation;
     }
 #endif
 
@@ -443,11 +372,124 @@ internal sealed class InMemoryStorage : IStorage
         }
     }
 
+    private IStorageLocation? MoveInternal(IStorageLocation source,
+                                           IStorageLocation destination,
+                                           bool overwrite,
+                                           bool recursive,
+                                           List<Rollback>? rollbacks = null)
+    {
+        if (!_containers.TryGetValue(source,
+            out IStorageContainer? container))
+        {
+            return null;
+        }
+
+        List<IStorageLocation> children =
+            EnumerateLocations(source, ContainerTypes.DirectoryOrFile).ToList();
+        if (children.Any() && !recursive)
+        {
+            throw ExceptionFactory.DirectoryNotEmpty(source.FullPath);
+        }
+
+        using (_ = container.RequestAccess(
+            FileAccess.Write, FileShare.None))
+        {
+            if (children.Any() && recursive)
+            {
+                foreach (IStorageLocation child in children)
+                {
+                    IStorageLocation childDestination = _fileSystem
+                       .GetMoveLocation(child, source, destination);
+                    MoveInternal(child, childDestination, overwrite, recursive,
+                        rollbacks: rollbacks);
+                }
+            }
+
+            if (_containers.TryRemove(source, out IStorageContainer? sourceContainer))
+            {
+                if (overwrite)
+                {
+                    if (_containers.TryRemove(destination,
+                        out IStorageContainer? existingContainer))
+                    {
+                        existingContainer.ClearBytes();
+                    }
+                }
+
+                if (_containers.TryAdd(destination, sourceContainer))
+                {
+                    int bytesLength = sourceContainer.GetBytes().Length;
+                    source.Drive?.ChangeUsedBytes(-1 * bytesLength);
+                    destination.Drive?.ChangeUsedBytes(bytesLength);
+                    rollbacks?.Add(new Rollback(
+                        () => MoveInternal(destination, source, true, false)));
+                    return destination;
+                }
+
+                _containers.TryAdd(source, sourceContainer);
+                throw ExceptionFactory.CannotCreateFileWhenAlreadyExists();
+            }
+        }
+
+        return source;
+    }
+
+#if FEATURE_FILESYSTEM_LINK
+    private IStorageLocation? ResolveFinalLinkTarget(IStorageContainer container,
+                                                     IStorageLocation originalLocation)
+    {
+        int maxResolveLinks =
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? 63
+                : 40;
+        IStorageLocation? nextLocation = null;
+        for (int i = 1; i < maxResolveLinks; i++)
+        {
+            if (container.LinkTarget == null)
+            {
+                break;
+            }
+
+            nextLocation = _fileSystem.Storage.GetLocation(container.LinkTarget);
+            if (!_containers.TryGetValue(nextLocation,
+                out IStorageContainer? nextContainer))
+            {
+                return nextLocation;
+            }
+
+            container = nextContainer;
+        }
+
+        if (container.LinkTarget != null)
+        {
+            throw ExceptionFactory.FileNameCannotBeResolved(
+                originalLocation.FullPath);
+        }
+
+        return nextLocation;
+    }
+#endif
+
     private static void ValidateExpression(string expression)
     {
         if (expression.Contains('\0'))
         {
             throw ExceptionFactory.PathHasIllegalCharacters(expression);
+        }
+    }
+
+    private class Rollback
+    {
+        private readonly Action _onRollback;
+
+        public Rollback(Action onRollback)
+        {
+            _onRollback = onRollback;
+        }
+
+        public void Execute()
+        {
+            _onRollback.Invoke();
         }
     }
 }
