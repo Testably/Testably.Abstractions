@@ -144,6 +144,10 @@ public sealed partial class FileSystemMock
 
         #endregion
 
+        /// <inheritdoc cref="object.ToString()" />
+        public override string ToString()
+            => Name;
+
         private static string ValidateDriveLetter(string driveName,
                                                   IFileSystem fileSystem)
         {

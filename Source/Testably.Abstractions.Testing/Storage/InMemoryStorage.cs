@@ -231,13 +231,14 @@ internal sealed class InMemoryStorage : IStorage
         lock (_containers)
         {
             if (!_containers.TryGetValue(source,
-                out var container))
+                out IStorageContainer? container))
             {
                 return null;
             }
 
-            var children = _containers
-               .Where(x => x.Key.FullPath.StartsWith(source.FullPath) && !x.Key.Equals(source))
+            List<KeyValuePair<IStorageLocation, IStorageContainer>> children = _containers
+               .Where(x => x.Key.FullPath.StartsWith(source.FullPath) &&
+                           !x.Key.Equals(source))
                .ToList();
             if (children.Any() && !recursive)
             {
@@ -248,14 +249,22 @@ internal sealed class InMemoryStorage : IStorage
                 FileAccess.Write, FileShare.None))
             {
                 // TODO: children!
-                if (_containers.TryRemove(source, out var sourceContainer))
+                if (_containers.TryRemove(source, out IStorageContainer? sourceContainer))
                 {
                     if (overwrite)
                     {
-                        _containers.TryRemove(destination, out _);
+                        if (_containers.TryRemove(destination,
+                            out IStorageContainer? existingContainer))
+                        {
+                            existingContainer.ClearBytes();
+                        }
                     }
+
                     if (_containers.TryAdd(destination, sourceContainer))
                     {
+                        int bytesLength = sourceContainer.GetBytes().Length;
+                        source.Drive?.ChangeUsedBytes(-1 * bytesLength);
+                        destination.Drive?.ChangeUsedBytes(bytesLength);
                         return destination;
                     }
 
