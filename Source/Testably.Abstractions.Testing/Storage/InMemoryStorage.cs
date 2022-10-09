@@ -407,13 +407,11 @@ internal sealed class InMemoryStorage : IStorage
 
             if (_containers.TryRemove(source, out IStorageContainer? sourceContainer))
             {
-                if (overwrite)
-                {
-                    if (_containers.TryRemove(destination,
+                if (overwrite &&
+                    _containers.TryRemove(destination,
                         out IStorageContainer? existingContainer))
-                    {
-                        existingContainer.ClearBytes();
-                    }
+                {
+                    existingContainer.ClearBytes();
                 }
 
                 if (_containers.TryAdd(destination, sourceContainer))
@@ -478,7 +476,7 @@ internal sealed class InMemoryStorage : IStorage
         }
     }
 
-    private class Rollback
+    private sealed class Rollback
     {
         private readonly Action _onRollback;
 
