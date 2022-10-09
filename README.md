@@ -18,7 +18,7 @@ At the core of this library are the abstraction interfaces, which allow replacin
    `Random` methods implement a thread-safe Shared instance also under .NET Framework
    `Guid` methods allow creating new GUIDs.
 
-# Basic Usage
+# Basic Example
 Use the interfaces and their default implementations using your prefered dependency injection method, e.g.:
 ```csharp
 private readonly IFileSystem _fileSystem;
