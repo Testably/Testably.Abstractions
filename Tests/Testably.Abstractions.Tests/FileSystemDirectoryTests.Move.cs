@@ -49,26 +49,48 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
                    .WithASubdirectory());
         using FileSystemStream stream = FileSystem.File.Open(initialized[2].FullName,
             FileMode.Open,
-            FileAccess.Read, FileShare.Read);
+            FileAccess.Read,
+            FileShare.Read);
 
         Exception? exception = Record.Exception(() =>
         {
             FileSystem.Directory.Move(source, destination);
         });
 
-        exception.Should().BeOfType<IOException>();
-        FileSystem.Directory.Exists(source).Should().BeTrue();
-        FileSystem.Directory.Exists(destination).Should().BeFalse();
-        IFileSystem.IDirectoryInfo sourceDirectory =
-            FileSystem.DirectoryInfo.New(source);
-        sourceDirectory.GetFiles(initialized[0].Name)
-           .Should().ContainSingle();
-        sourceDirectory.GetDirectories(initialized[1].Name)
-           .Should().ContainSingle();
-        sourceDirectory.GetFiles(initialized[2].Name, SearchOption.AllDirectories);
-        sourceDirectory
-           .GetDirectories(initialized[3].Name, SearchOption.AllDirectories)
-           .Should().ContainSingle();
+        if (Test.RunsOnWindows)
+        {
+            exception.Should().BeOfType<IOException>();
+            FileSystem.Directory.Exists(source).Should().BeTrue();
+            FileSystem.Directory.Exists(destination).Should().BeFalse();
+            IFileSystem.IDirectoryInfo sourceDirectory =
+                FileSystem.DirectoryInfo.New(source);
+            sourceDirectory.GetFiles(initialized[0].Name)
+               .Should().ContainSingle();
+            sourceDirectory.GetDirectories(initialized[1].Name)
+               .Should().ContainSingle();
+            sourceDirectory.GetFiles(initialized[2].Name, SearchOption.AllDirectories)
+               .Should().ContainSingle();
+            sourceDirectory
+               .GetDirectories(initialized[3].Name, SearchOption.AllDirectories)
+               .Should().ContainSingle();
+        }
+        else
+        {
+            exception.Should().BeNull();
+            FileSystem.Directory.Exists(source).Should().BeFalse();
+            FileSystem.Directory.Exists(destination).Should().BeTrue();
+            IFileSystem.IDirectoryInfo destinationDirectory =
+                FileSystem.DirectoryInfo.New(destination);
+            destinationDirectory.GetFiles(initialized[0].Name)
+               .Should().ContainSingle();
+            destinationDirectory.GetDirectories(initialized[1].Name)
+               .Should().ContainSingle();
+            destinationDirectory.GetFiles(initialized[2].Name, SearchOption.AllDirectories)
+               .Should().ContainSingle();
+            destinationDirectory
+               .GetDirectories(initialized[3].Name, SearchOption.AllDirectories)
+               .Should().ContainSingle();
+        }
     }
 
     [SkippableTheory]

@@ -99,8 +99,16 @@ public abstract partial class FileSystemFileTests<TFileSystem>
             FileSystem.File.Move(sourceName, destinationName);
         });
 
-        exception.Should().BeOfType<IOException>();
-        FileSystem.File.Exists(destinationName).Should().BeFalse();
+        if (Test.RunsOnWindows)
+        {
+            exception.Should().BeOfType<IOException>();
+            FileSystem.File.Exists(destinationName).Should().BeFalse();
+        }
+        else
+        {
+            FileSystem.File.Exists(sourceName).Should().BeFalse();
+            FileSystem.File.Exists(destinationName).Should().BeTrue();
+        }
     }
 
     [SkippableTheory]

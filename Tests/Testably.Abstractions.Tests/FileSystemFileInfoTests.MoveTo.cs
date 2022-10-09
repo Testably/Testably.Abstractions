@@ -109,9 +109,17 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         {
             sut.MoveTo(destinationName);
         });
-
-        exception.Should().BeOfType<IOException>();
-        FileSystem.File.Exists(destinationName).Should().BeFalse();
+        
+        if (Test.RunsOnWindows)
+        {
+            exception.Should().BeOfType<IOException>();
+            FileSystem.File.Exists(destinationName).Should().BeFalse();
+        }
+        else
+        {
+            FileSystem.File.Exists(sourceName).Should().BeFalse();
+            FileSystem.File.Exists(destinationName).Should().BeTrue();
+        }
     }
 
     [SkippableTheory]
