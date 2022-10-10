@@ -7,182 +7,182 @@ namespace Testably.Abstractions.Tests.Parity;
 
 public class ParityCheck
 {
-    public List<Type> ExcludedBaseTypes =
-        new() { typeof(object), typeof(MarshalByRefObject) };
+	public List<Type> ExcludedBaseTypes =
+		new() { typeof(object), typeof(MarshalByRefObject) };
 
-    public List<FieldInfo?> ExcludedFields = new();
+	public List<FieldInfo?> ExcludedFields = new();
 
-    public List<MethodInfo?> ExcludedMethods = new();
-    public List<PropertyInfo?> ExcludedProperties = new();
+	public List<MethodInfo?> ExcludedMethods = new();
+	public List<PropertyInfo?> ExcludedProperties = new();
 
-    public ParityCheck(Type[]? excludeBaseTypes = null,
-                       FieldInfo?[]? excludeFields = null,
-                       MethodInfo?[]? excludeMethods = null,
-                       PropertyInfo?[]? excludeProperties = null)
-    {
-        if (excludeBaseTypes != null)
-        {
-            ExcludedBaseTypes.AddRange(excludeBaseTypes);
-        }
+	public ParityCheck(Type[]? excludeBaseTypes = null,
+	                   FieldInfo?[]? excludeFields = null,
+	                   MethodInfo?[]? excludeMethods = null,
+	                   PropertyInfo?[]? excludeProperties = null)
+	{
+		if (excludeBaseTypes != null)
+		{
+			ExcludedBaseTypes.AddRange(excludeBaseTypes);
+		}
 
-        if (excludeFields != null)
-        {
-            ExcludedFields.AddRange(excludeFields);
-        }
+		if (excludeFields != null)
+		{
+			ExcludedFields.AddRange(excludeFields);
+		}
 
-        if (excludeMethods != null)
-        {
-            ExcludedMethods.AddRange(excludeMethods);
-        }
+		if (excludeMethods != null)
+		{
+			ExcludedMethods.AddRange(excludeMethods);
+		}
 
-        if (excludeProperties != null)
-        {
-            ExcludedProperties.AddRange(excludeProperties);
-        }
-    }
+		if (excludeProperties != null)
+		{
+			ExcludedProperties.AddRange(excludeProperties);
+		}
+	}
 
-    public List<string> GetErrorsToInstanceType<TAbstraction>(
-        Type systemType, ITestOutputHelper testOutputHelper)
-    {
-        List<string> parityErrors = new();
-        parityErrors.AddRange(GetParityErrorsBetweenInstanceProperties<TAbstraction>(
-            systemType, testOutputHelper));
-        parityErrors.AddRange(GetParityErrorsBetweenInstanceMethods<TAbstraction>(
-            systemType, testOutputHelper));
-        return parityErrors;
-    }
+	public List<string> GetErrorsToInstanceType<TAbstraction>(
+		Type systemType, ITestOutputHelper testOutputHelper)
+	{
+		List<string> parityErrors = new();
+		parityErrors.AddRange(GetParityErrorsBetweenInstanceProperties<TAbstraction>(
+			systemType, testOutputHelper));
+		parityErrors.AddRange(GetParityErrorsBetweenInstanceMethods<TAbstraction>(
+			systemType, testOutputHelper));
+		return parityErrors;
+	}
 
-    public List<string> GetErrorsToInstanceType<TAbstraction, TAbstractionFactory>(
-        Type systemType, ITestOutputHelper testOutputHelper)
-    {
-        List<string> parityErrors = new();
-        parityErrors.AddRange(
-            GetParityErrorsBetweenInstanceConstructors<TAbstractionFactory>(
-                systemType, testOutputHelper));
-        parityErrors.AddRange(GetParityErrorsBetweenInstanceProperties<TAbstraction>(
-            systemType, testOutputHelper));
-        parityErrors.AddRange(GetParityErrorsBetweenInstanceMethods<TAbstraction>(
-            systemType, testOutputHelper));
-        return parityErrors;
-    }
+	public List<string> GetErrorsToInstanceType<TAbstraction, TAbstractionFactory>(
+		Type systemType, ITestOutputHelper testOutputHelper)
+	{
+		List<string> parityErrors = new();
+		parityErrors.AddRange(
+			GetParityErrorsBetweenInstanceConstructors<TAbstractionFactory>(
+				systemType, testOutputHelper));
+		parityErrors.AddRange(GetParityErrorsBetweenInstanceProperties<TAbstraction>(
+			systemType, testOutputHelper));
+		parityErrors.AddRange(GetParityErrorsBetweenInstanceMethods<TAbstraction>(
+			systemType, testOutputHelper));
+		return parityErrors;
+	}
 
-    public List<string> GetErrorsToStaticType<TAbstraction>(
-        Type systemType, ITestOutputHelper testOutputHelper)
-    {
-        List<string> parityErrors = new();
-        parityErrors.AddRange(GetParityErrorsBetweenStaticFields<TAbstraction>(
-            systemType, testOutputHelper));
-        parityErrors.AddRange(GetParityErrorsBetweenStaticMethods<TAbstraction>(
-            systemType, testOutputHelper));
-        return parityErrors;
-    }
+	public List<string> GetErrorsToStaticType<TAbstraction>(
+		Type systemType, ITestOutputHelper testOutputHelper)
+	{
+		List<string> parityErrors = new();
+		parityErrors.AddRange(GetParityErrorsBetweenStaticFields<TAbstraction>(
+			systemType, testOutputHelper));
+		parityErrors.AddRange(GetParityErrorsBetweenStaticMethods<TAbstraction>(
+			systemType, testOutputHelper));
+		return parityErrors;
+	}
 
-    private static IEnumerable<string> GetParityErrorsBetweenInstanceConstructors<
-        TAbstractionFactory>(
-        Type systemType, ITestOutputHelper testOutputHelper)
-    {
-        foreach (ConstructorInfo constructor in systemType
-           .GetConstructors()
-           .OrderBy(f => f.Name)
-           .ThenBy(m => m.GetParameters().Length))
-        {
-            testOutputHelper.WriteLine(
-                $"Check parity for constructor {constructor.PrintConstructor()}");
-            if (!typeof(TAbstractionFactory)
-               .ContainsEquivalentMethod(constructor))
-            {
-                yield return constructor.PrintConstructor();
-            }
-        }
-    }
+	private static IEnumerable<string> GetParityErrorsBetweenInstanceConstructors<
+		TAbstractionFactory>(
+		Type systemType, ITestOutputHelper testOutputHelper)
+	{
+		foreach (ConstructorInfo constructor in systemType
+		   .GetConstructors()
+		   .OrderBy(f => f.Name)
+		   .ThenBy(m => m.GetParameters().Length))
+		{
+			testOutputHelper.WriteLine(
+				$"Check parity for constructor {constructor.PrintConstructor()}");
+			if (!typeof(TAbstractionFactory)
+			   .ContainsEquivalentMethod(constructor))
+			{
+				yield return constructor.PrintConstructor();
+			}
+		}
+	}
 
-    private IEnumerable<string> GetParityErrorsBetweenInstanceMethods<TAbstraction>(
-        Type systemType, ITestOutputHelper testOutputHelper)
-    {
-        foreach (MethodInfo method in systemType
-           .GetMethods(
-                BindingFlags.Public |
-                BindingFlags.Instance)
-           .Where(p => p.DeclaringType == null ||
-                       !ExcludedBaseTypes.Contains(p.DeclaringType))
-           .Where(m => !ExcludedMethods.Contains(m))
-           .Where(m => !m.IsSpecialName)
-           .OrderBy(m => m.Name)
-           .ThenBy(m => m.GetParameters().Length))
-        {
-            testOutputHelper.WriteLine(
-                $"Check parity for method {method.PrintMethod($"{systemType.Name}.")}");
-            if (!typeof(TAbstraction)
-               .ContainsEquivalentMethod(method))
-            {
-                yield return method.PrintMethod();
-            }
-        }
-    }
+	private IEnumerable<string> GetParityErrorsBetweenInstanceMethods<TAbstraction>(
+		Type systemType, ITestOutputHelper testOutputHelper)
+	{
+		foreach (MethodInfo method in systemType
+		   .GetMethods(
+				BindingFlags.Public |
+				BindingFlags.Instance)
+		   .Where(p => p.DeclaringType == null ||
+		               !ExcludedBaseTypes.Contains(p.DeclaringType))
+		   .Where(m => !ExcludedMethods.Contains(m))
+		   .Where(m => !m.IsSpecialName)
+		   .OrderBy(m => m.Name)
+		   .ThenBy(m => m.GetParameters().Length))
+		{
+			testOutputHelper.WriteLine(
+				$"Check parity for method {method.PrintMethod($"{systemType.Name}.")}");
+			if (!typeof(TAbstraction)
+			   .ContainsEquivalentMethod(method))
+			{
+				yield return method.PrintMethod();
+			}
+		}
+	}
 
-    private IEnumerable<string> GetParityErrorsBetweenInstanceProperties<TAbstraction>(
-        Type systemType, ITestOutputHelper testOutputHelper)
-    {
-        foreach (PropertyInfo property in systemType
-           .GetProperties(
-                BindingFlags.Public |
-                BindingFlags.Instance)
-           .Where(p => p.DeclaringType == null ||
-                       !ExcludedBaseTypes.Contains(p.DeclaringType))
-           .Where(p => !ExcludedProperties.Contains(p))
-           .Where(p => !p.IsSpecialName)
-           .OrderBy(p => p.Name))
-        {
-            testOutputHelper.WriteLine(
-                $"Check parity for property {property.PrintProperty($"{systemType.Name}.")}");
-            if (!typeof(TAbstraction)
-               .ContainsEquivalentProperty(property))
-            {
-                yield return property.PrintProperty();
-            }
-        }
-    }
+	private IEnumerable<string> GetParityErrorsBetweenInstanceProperties<TAbstraction>(
+		Type systemType, ITestOutputHelper testOutputHelper)
+	{
+		foreach (PropertyInfo property in systemType
+		   .GetProperties(
+				BindingFlags.Public |
+				BindingFlags.Instance)
+		   .Where(p => p.DeclaringType == null ||
+		               !ExcludedBaseTypes.Contains(p.DeclaringType))
+		   .Where(p => !ExcludedProperties.Contains(p))
+		   .Where(p => !p.IsSpecialName)
+		   .OrderBy(p => p.Name))
+		{
+			testOutputHelper.WriteLine(
+				$"Check parity for property {property.PrintProperty($"{systemType.Name}.")}");
+			if (!typeof(TAbstraction)
+			   .ContainsEquivalentProperty(property))
+			{
+				yield return property.PrintProperty();
+			}
+		}
+	}
 
-    private IEnumerable<string> GetParityErrorsBetweenStaticFields<TAbstraction>(
-        Type systemType, ITestOutputHelper testOutputHelper)
-    {
-        foreach (FieldInfo field in systemType
-           .GetFields(
-                BindingFlags.Public |
-                BindingFlags.Static)
-           .Where(f => !ExcludedFields.Contains(f))
-           .Where(f => !f.IsSpecialName)
-           .OrderBy(f => f.Name))
-        {
-            testOutputHelper.WriteLine(
-                $"Check parity for static field {field.PrintField($"{systemType.Name}.")}");
-            if (!typeof(TAbstraction)
-               .ContainsEquivalentProperty(field))
-            {
-                yield return field.PrintField();
-            }
-        }
-    }
+	private IEnumerable<string> GetParityErrorsBetweenStaticFields<TAbstraction>(
+		Type systemType, ITestOutputHelper testOutputHelper)
+	{
+		foreach (FieldInfo field in systemType
+		   .GetFields(
+				BindingFlags.Public |
+				BindingFlags.Static)
+		   .Where(f => !ExcludedFields.Contains(f))
+		   .Where(f => !f.IsSpecialName)
+		   .OrderBy(f => f.Name))
+		{
+			testOutputHelper.WriteLine(
+				$"Check parity for static field {field.PrintField($"{systemType.Name}.")}");
+			if (!typeof(TAbstraction)
+			   .ContainsEquivalentProperty(field))
+			{
+				yield return field.PrintField();
+			}
+		}
+	}
 
-    private IEnumerable<string> GetParityErrorsBetweenStaticMethods<TAbstraction>(
-        Type systemType, ITestOutputHelper testOutputHelper)
-    {
-        foreach (MethodInfo method in systemType
-           .GetMethods(
-                BindingFlags.Public |
-                BindingFlags.Static)
-           .Where(f => !ExcludedMethods.Contains(f))
-           .Where(f => !f.IsSpecialName)
-           .OrderBy(f => f.Name)
-           .ThenBy(m => m.GetParameters().Length))
-        {
-            testOutputHelper.WriteLine(
-                $"Check parity for static method {method.PrintMethod($"{systemType.Name}.")}");
-            if (!typeof(TAbstraction)
-               .ContainsEquivalentMethod(method))
-            {
-                yield return method.PrintMethod();
-            }
-        }
-    }
+	private IEnumerable<string> GetParityErrorsBetweenStaticMethods<TAbstraction>(
+		Type systemType, ITestOutputHelper testOutputHelper)
+	{
+		foreach (MethodInfo method in systemType
+		   .GetMethods(
+				BindingFlags.Public |
+				BindingFlags.Static)
+		   .Where(f => !ExcludedMethods.Contains(f))
+		   .Where(f => !f.IsSpecialName)
+		   .OrderBy(f => f.Name)
+		   .ThenBy(m => m.GetParameters().Length))
+		{
+			testOutputHelper.WriteLine(
+				$"Check parity for static method {method.PrintMethod($"{systemType.Name}.")}");
+			if (!typeof(TAbstraction)
+			   .ContainsEquivalentMethod(method))
+			{
+				yield return method.PrintMethod();
+			}
+		}
+	}
 }

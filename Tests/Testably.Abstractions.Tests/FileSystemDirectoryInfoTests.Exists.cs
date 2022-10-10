@@ -1,43 +1,43 @@
 namespace Testably.Abstractions.Tests;
 
 public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
-    where TFileSystem : IFileSystem
+	where TFileSystem : IFileSystem
 {
-    [SkippableTheory]
-    [AutoData]
-    [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Exists))]
-    public void Exists_ArbitraryPath_ShouldBeFalse(string path)
-    {
-        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Exists))]
+	public void Exists_ArbitraryPath_ShouldBeFalse(string path)
+	{
+		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 
-        sut.Exists.Should().BeFalse();
-        FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
-    }
+		sut.Exists.Should().BeFalse();
+		FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
+	}
 
-    [SkippableTheory]
-    [AutoData]
-    [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Exists))]
-    public void Exists_ExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
-    {
-        FileSystem.Directory.CreateDirectory(path);
-        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-        sut.Exists.Should().BeTrue();
-        FileSystem.Directory.Delete(path);
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Exists))]
+	public void Exists_ExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
+	{
+		FileSystem.Directory.CreateDirectory(path);
+		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+		sut.Exists.Should().BeTrue();
+		FileSystem.Directory.Delete(path);
 
-        sut.Exists.Should().BeTrue();
-        FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
-    }
+		sut.Exists.Should().BeTrue();
+		FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
+	}
 
-    [SkippableTheory]
-    [AutoData]
-    [FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Exists))]
-    public void Exists_NotExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
-    {
-        IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-        sut.Exists.Should().BeFalse();
-        FileSystem.Directory.CreateDirectory(path);
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Exists))]
+	public void Exists_NotExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
+	{
+		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+		sut.Exists.Should().BeFalse();
+		FileSystem.Directory.CreateDirectory(path);
 
-        sut.Exists.Should().BeFalse();
-        FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
-    }
+		sut.Exists.Should().BeFalse();
+		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
+	}
 }

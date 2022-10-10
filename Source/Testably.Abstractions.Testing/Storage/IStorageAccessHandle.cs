@@ -8,13 +8,13 @@ namespace Testably.Abstractions.Testing.Storage;
 /// </summary>
 internal interface IStorageAccessHandle : IDisposable
 {
-    /// <summary>
-    ///     The <see cref="FileAccess" /> that this access handle has.
-    /// </summary>
-    FileAccess Access { get; }
+	/// <summary>
+	///     The <see cref="FileAccess" /> that this access handle has.
+	/// </summary>
+	FileAccess Access { get; }
 
-    /// <summary>
-    ///     The <see cref="FileShare" /> that this access handle allows.
-    /// </summary>
-    FileShare Share { get; }
+	/// <summary>
+	///     The <see cref="FileShare" /> that this access handle allows.
+	/// </summary>
+	FileShare Share { get; }
 }

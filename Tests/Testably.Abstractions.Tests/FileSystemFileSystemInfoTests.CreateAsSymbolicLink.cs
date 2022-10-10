@@ -4,43 +4,43 @@ using System.IO;
 namespace Testably.Abstractions.Tests;
 
 public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
-    where TFileSystem : IFileSystem
+	where TFileSystem : IFileSystem
 {
-    [SkippableTheory]
-    [AutoData]
-    [FileSystemTests.FileSystemInfo(
-        nameof(IFileSystem.IFileSystemInfo.CreateAsSymbolicLink))]
-    public void CreateAsSymbolicLink_ShouldCreateSymbolicLink(
-        string path, string pathToTarget)
-    {
-        FileSystem.File.WriteAllText(pathToTarget, null);
-        IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.FileSystemInfo(
+		nameof(IFileSystem.IFileSystemInfo.CreateAsSymbolicLink))]
+	public void CreateAsSymbolicLink_ShouldCreateSymbolicLink(
+		string path, string pathToTarget)
+	{
+		FileSystem.File.WriteAllText(pathToTarget, null);
+		IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
-        fileInfo.CreateAsSymbolicLink(pathToTarget);
+		fileInfo.CreateAsSymbolicLink(pathToTarget);
 
-        FileSystem.File.GetAttributes(path)
-           .HasFlag(FileAttributes.ReparsePoint)
-           .Should().BeTrue();
-    }
+		FileSystem.File.GetAttributes(path)
+		   .HasFlag(FileAttributes.ReparsePoint)
+		   .Should().BeTrue();
+	}
 
-    [SkippableTheory]
-    [AutoData]
-    [FileSystemTests.FileSystemInfo(
-        nameof(IFileSystem.IFileSystemInfo.CreateAsSymbolicLink))]
-    public void CreateAsSymbolicLink_SourceFileAlreadyExists_ShouldCreateSymbolicLink(
-        string path, string pathToTarget)
-    {
-        FileSystem.File.WriteAllText(pathToTarget, null);
-        FileSystem.File.WriteAllText(path, "foo");
-        IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.FileSystemInfo(
+		nameof(IFileSystem.IFileSystemInfo.CreateAsSymbolicLink))]
+	public void CreateAsSymbolicLink_SourceFileAlreadyExists_ShouldCreateSymbolicLink(
+		string path, string pathToTarget)
+	{
+		FileSystem.File.WriteAllText(pathToTarget, null);
+		FileSystem.File.WriteAllText(path, "foo");
+		IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
-        Exception? exception = Record.Exception(() =>
-        {
-            fileInfo.CreateAsSymbolicLink(pathToTarget);
-        });
+		Exception? exception = Record.Exception(() =>
+		{
+			fileInfo.CreateAsSymbolicLink(pathToTarget);
+		});
 
-        exception.Should().BeOfType<IOException>()
-           .Which.Message.Should().Contain($"'{path}'");
-    }
+		exception.Should().BeOfType<IOException>()
+		   .Which.Message.Should().Contain($"'{path}'");
+	}
 }
 #endif

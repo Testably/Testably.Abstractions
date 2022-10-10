@@ -7,62 +7,62 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class TimeSystemMock
 {
-    private sealed class TaskMock : ITimeSystem.ITask
-    {
-        private readonly TimeSystemMockCallbackHandler _callbackHandler;
-        private readonly TimeSystemMock _timeSystemMock;
+	private sealed class TaskMock : ITimeSystem.ITask
+	{
+		private readonly TimeSystemMockCallbackHandler _callbackHandler;
+		private readonly TimeSystemMock _timeSystemMock;
 
-        internal TaskMock(TimeSystemMock timeSystem,
-                          TimeSystemMockCallbackHandler callbackHandler)
-        {
-            _timeSystemMock = timeSystem;
-            _callbackHandler = callbackHandler;
-        }
+		internal TaskMock(TimeSystemMock timeSystem,
+		                  TimeSystemMockCallbackHandler callbackHandler)
+		{
+			_timeSystemMock = timeSystem;
+			_callbackHandler = callbackHandler;
+		}
 
-        #region ITask Members
+		#region ITask Members
 
-        /// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
-        public ITimeSystem TimeSystem
-            => _timeSystemMock;
+		/// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+		public ITimeSystem TimeSystem
+			=> _timeSystemMock;
 
-        public Task Delay(int millisecondsDelay)
-        {
-            return Delay(millisecondsDelay, CancellationToken.None);
-        }
+		public Task Delay(int millisecondsDelay)
+		{
+			return Delay(millisecondsDelay, CancellationToken.None);
+		}
 
-        public Task Delay(int millisecondsDelay, CancellationToken cancellationToken)
-        {
-            if (millisecondsDelay < -1)
-            {
-                throw ExceptionFactory.TaskDelayOutOfRange(nameof(millisecondsDelay));
-            }
+		public Task Delay(int millisecondsDelay, CancellationToken cancellationToken)
+		{
+			if (millisecondsDelay < -1)
+			{
+				throw ExceptionFactory.TaskDelayOutOfRange(nameof(millisecondsDelay));
+			}
 
-            return Delay(TimeSpan.FromMilliseconds(millisecondsDelay),
-                cancellationToken);
-        }
+			return Delay(TimeSpan.FromMilliseconds(millisecondsDelay),
+				cancellationToken);
+		}
 
-        public Task Delay(TimeSpan delay)
-        {
-            return Delay(delay, CancellationToken.None);
-        }
+		public Task Delay(TimeSpan delay)
+		{
+			return Delay(delay, CancellationToken.None);
+		}
 
-        public Task Delay(TimeSpan delay, CancellationToken cancellationToken)
-        {
-            if (delay.TotalMilliseconds < -1)
-            {
-                throw ExceptionFactory.TaskDelayOutOfRange(nameof(delay));
-            }
+		public Task Delay(TimeSpan delay, CancellationToken cancellationToken)
+		{
+			if (delay.TotalMilliseconds < -1)
+			{
+				throw ExceptionFactory.TaskDelayOutOfRange(nameof(delay));
+			}
 
-            if (cancellationToken.IsCancellationRequested)
-            {
-                throw ExceptionFactory.TaskWasCanceled();
-            }
+			if (cancellationToken.IsCancellationRequested)
+			{
+				throw ExceptionFactory.TaskWasCanceled();
+			}
 
-            _timeSystemMock.TimeProvider.AdvanceBy(delay);
-            _callbackHandler.InvokeTaskDelayCallbacks(delay);
-            return System.Threading.Tasks.Task.CompletedTask;
-        }
+			_timeSystemMock.TimeProvider.AdvanceBy(delay);
+			_callbackHandler.InvokeTaskDelayCallbacks(delay);
+			return System.Threading.Tasks.Task.CompletedTask;
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }
