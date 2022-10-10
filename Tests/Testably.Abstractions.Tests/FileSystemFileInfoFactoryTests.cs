@@ -78,9 +78,18 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
         result.Should().Be(bytes.Length);
     }
 
+    [SkippableFact]
+    [FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.Wrap))]
+    public void Wrap_Null_ShouldReturnNull()
+    {
+        IFileSystem.IFileInfo? result = FileSystem.FileInfo.Wrap(null);
+
+        result.Should().BeNull();
+    }
+
     [SkippableTheory]
     [AutoData]
-    [FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.New))]
+    [FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.Wrap))]
     public void Wrap_ShouldWrapFromFileInfo(string path)
     {
         FileInfo fileInfo = new(path);
