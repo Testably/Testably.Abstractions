@@ -184,7 +184,11 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         });
 
         exception.Should().BeOfType<FileNotFoundException>();
-        FileSystem.File.Exists(backupName).Should().BeFalse();
+        if (Test.RunsOnWindows)
+        {
+            // Behaviour on Linux/MacOS is uncertain
+            FileSystem.File.Exists(backupName).Should().BeFalse();
+        }
     }
 
     [SkippableTheory]
