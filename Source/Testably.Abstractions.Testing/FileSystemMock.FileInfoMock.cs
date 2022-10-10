@@ -86,7 +86,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.CreateText()" />
         public StreamWriter CreateText()
-            => throw new NotImplementedException();
+            => new(Create());
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Decrypt()" />
 #if NET6_0_OR_GREATER
@@ -127,10 +127,10 @@ public sealed partial class FileSystemMock
         public void MoveTo(string destFileName, bool overwrite)
         {
             Location = FileSystem.Storage.Move(
-                    FileSystem.Storage.GetLocation(FullName),
-                    FileSystem.Storage.GetLocation(destFileName),
-                    overwrite)
-                ?? throw ExceptionFactory.FileNotFound(FullName);
+                           FileSystem.Storage.GetLocation(FullName),
+                           FileSystem.Storage.GetLocation(destFileName),
+                           overwrite)
+                       ?? throw ExceptionFactory.FileNotFound(FullName);
             Refresh();
         }
 #endif
