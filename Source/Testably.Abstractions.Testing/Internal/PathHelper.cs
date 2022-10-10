@@ -73,8 +73,7 @@ internal static class PathHelper
 			}
 
 			throw ExceptionFactory.PathHasIncorrectSyntax(
-				fileSystem.Path.Combine(fileSystem.Directory.GetCurrentDirectory(),
-					path));
+				fileSystem.Path.GetFullPath(path));
 		}
 	}
 
