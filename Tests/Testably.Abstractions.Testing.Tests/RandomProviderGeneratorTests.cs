@@ -196,7 +196,7 @@ public class RandomProviderGeneratorTests
 	public void Operator_FromCallback(Guid value)
 	{
 		int maxRange = 100;
-		RandomProvider.Generator<Guid> sut = () => value;
+		RandomProvider.Generator<Guid> sut = (Func<Guid>)(() => value);
 
 		Guid[] results = new Guid[maxRange];
 		for (int i = 0; i < maxRange; i++)
