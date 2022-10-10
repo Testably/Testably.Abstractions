@@ -140,6 +140,8 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         string destinationName,
         string backupName)
     {
+        Skip.IfNot(Test.RunsOnWindows, "Tests sometimes throw IOException on Linux");
+
         FileSystem.Directory.CreateDirectory(sourceName);
         FileSystem.File.WriteAllText(destinationName, null);
 

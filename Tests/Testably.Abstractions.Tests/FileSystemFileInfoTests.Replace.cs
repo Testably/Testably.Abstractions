@@ -150,6 +150,8 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         string destinationName,
         string backupName)
     {
+        Skip.IfNot(Test.RunsOnWindows, "Tests sometimes throw IOException on Linux");
+
         FileSystem.Directory.CreateDirectory(sourceName);
         FileSystem.File.WriteAllText(destinationName, null);
         IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
