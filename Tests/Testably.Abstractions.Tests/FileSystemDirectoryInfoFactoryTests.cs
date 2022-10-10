@@ -67,6 +67,15 @@ public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
         result.Exists.Should().BeFalse();
     }
 
+    [SkippableFact]
+    [FileSystemTests.DirectoryInfoFactory(nameof(IFileSystem.IDirectoryInfoFactory.Wrap))]
+    public void Wrap_Null_ShouldReturnNull()
+    {
+        IFileSystem.IDirectoryInfo? result = FileSystem.DirectoryInfo.Wrap(null);
+
+        result.Should().BeNull();
+    }
+
     [SkippableTheory]
     [AutoData]
     [FileSystemTests.DirectoryInfoFactory(nameof(IFileSystem.IDirectoryInfoFactory.Wrap))]

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Testably.Abstractions.Testing;
@@ -34,11 +35,12 @@ public sealed partial class FileSystemMock
         }
 
         /// <inheritdoc cref="IFileSystem.IDirectoryInfoFactory.Wrap(DirectoryInfo)" />
-        public IFileSystem.IDirectoryInfo Wrap(DirectoryInfo directoryInfo)
+        [return: NotNullIfNotNull("directoryInfo")]
+        public IFileSystem.IDirectoryInfo? Wrap(DirectoryInfo? directoryInfo)
             => DirectoryInfoMock.New(
                 _fileSystem.Storage.GetLocation(
-                    directoryInfo.FullName,
-                    directoryInfo.ToString()),
+                    directoryInfo?.FullName,
+                    directoryInfo?.ToString()),
                 _fileSystem);
 
         #endregion
