@@ -87,7 +87,8 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
                .Should().ContainSingle();
             destinationDirectory.GetDirectories(initialized[1].Name)
                .Should().ContainSingle();
-            destinationDirectory.GetFiles(initialized[2].Name, SearchOption.AllDirectories)
+            destinationDirectory
+               .GetFiles(initialized[2].Name, SearchOption.AllDirectories)
                .Should().ContainSingle();
             destinationDirectory
                .GetDirectories(initialized[3].Name, SearchOption.AllDirectories)

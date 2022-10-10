@@ -21,6 +21,7 @@ public sealed partial class FileSystemMock
                 {
                     RefreshInternal();
                 }
+
                 return _container;
             }
             set => _container = value;

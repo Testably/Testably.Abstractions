@@ -84,9 +84,10 @@ internal sealed class NullContainer : IStorageContainer
     public byte[] GetBytes()
         => Array.Empty<byte>();
 
-    /// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare)" />
+    /// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool)" />
     [ExcludeFromCodeCoverage]
-    public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share)
+    public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share,
+                                              bool ignoreMetadataError = true)
         => new NullStorageAccessHandle();
 
     /// <inheritdoc cref="IStorageContainer.WriteBytes(byte[])" />

@@ -67,7 +67,8 @@ internal interface IStorageContainer : IFileSystem.IFileSystemExtensionPoint,
     ///     Requests access to this file with the given <paramref name="share" />.
     /// </summary>
     /// <returns>An <see cref="IStorageAccessHandle" /> that is used to release the access lock on dispose.</returns>
-    IStorageAccessHandle RequestAccess(FileAccess access, FileShare share);
+    IStorageAccessHandle RequestAccess(FileAccess access, FileShare share,
+                                       bool ignoreMetadataError = true);
 
     /// <summary>
     ///     Writes the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.

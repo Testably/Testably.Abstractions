@@ -40,17 +40,17 @@ internal sealed class InMemoryStorage : IStorage
                                   bool overwrite = false)
     {
         if (!_containers.TryGetValue(source,
-            out IStorageContainer? container))
+            out IStorageContainer? sourceContainer))
         {
             return null;
         }
 
-        if (container.Type != ContainerTypes.File)
+        if (sourceContainer.Type != ContainerTypes.File)
         {
             throw ExceptionFactory.AccessToPathDenied(source.FullPath);
         }
 
-        using (_ = container.RequestAccess(FileAccess.ReadWrite, FileShare.None))
+        using (_ = sourceContainer.RequestAccess(FileAccess.ReadWrite, FileShare.None))
         {
             if (overwrite &&
                 _containers.TryRemove(destination,
@@ -63,10 +63,14 @@ internal sealed class InMemoryStorage : IStorage
                 InMemoryContainer.NewFile(destination, _fileSystem);
             if (_containers.TryAdd(destination, copiedContainer))
             {
-                copiedContainer.WriteBytes(container.GetBytes());
-                copiedContainer.Attributes = container.Attributes;
-                copiedContainer.LastWriteTime.Set(container.LastWriteTime.Get(DateTimeKind.Local), DateTimeKind.Local);
-                copiedContainer.LastAccessTime.Set(container.LastAccessTime.Get(DateTimeKind.Local), DateTimeKind.Local);
+                copiedContainer.WriteBytes(sourceContainer.GetBytes());
+                copiedContainer.Attributes = sourceContainer.Attributes;
+                copiedContainer.LastWriteTime.Set(
+                    sourceContainer.LastWriteTime.Get(DateTimeKind.Local),
+                    DateTimeKind.Local);
+                copiedContainer.LastAccessTime.Set(
+                    sourceContainer.LastAccessTime.Get(DateTimeKind.Local),
+                    DateTimeKind.Local);
                 return destination;
             }
 
@@ -281,6 +285,64 @@ internal sealed class InMemoryStorage : IStorage
             }
 
             throw;
+        }
+    }
+
+    /// <inheritdoc cref="IStorage.Replace(IStorageLocation, IStorageLocation, IStorageLocation?, bool)" />
+    public IStorageLocation? Replace(IStorageLocation source,
+                                     IStorageLocation destination,
+                                     IStorageLocation? backup,
+                                     bool ignoreMetadataErrors = false)
+    {
+        if (!_containers.TryGetValue(source,
+            out IStorageContainer? sourceContainer))
+        {
+            return null;
+        }
+
+        if (!_containers.TryGetValue(destination,
+            out IStorageContainer? destinationContainer))
+        {
+            return null;
+        }
+
+        if (sourceContainer.Type != ContainerTypes.File ||
+            destinationContainer.Type != ContainerTypes.File)
+        {
+            throw ExceptionFactory.AccessToPathDenied(source.FullPath);
+        }
+
+        using (_ = sourceContainer.RequestAccess(FileAccess.ReadWrite, FileShare.None,
+            ignoreMetadataErrors))
+        {
+            using (_ = destinationContainer.RequestAccess(FileAccess.ReadWrite,
+                FileShare.None, ignoreMetadataErrors))
+            {
+                if (_containers.TryRemove(destination,
+                    out IStorageContainer? existingDestinationContainer))
+                {
+                    int destinationBytesLength =
+                        existingDestinationContainer.GetBytes().Length;
+                    destination.Drive?.ChangeUsedBytes(-1 * destinationBytesLength);
+                    if (backup != null)
+                    {
+                        backup.Drive?.ChangeUsedBytes(destinationBytesLength);
+                        _containers.TryAdd(backup, existingDestinationContainer);
+                    }
+
+                    if (_containers.TryRemove(source,
+                        out IStorageContainer? existingSourceContainer))
+                    {
+                        int sourceBytesLength = existingSourceContainer.GetBytes().Length;
+                        source.Drive?.ChangeUsedBytes(-1 * sourceBytesLength);
+                        destination.Drive?.ChangeUsedBytes(sourceBytesLength);
+                        _containers.TryAdd(destination, existingSourceContainer);
+                        return destination;
+                    }
+                }
+
+                throw ExceptionFactory.CannotCreateFileWhenAlreadyExists();
+            }
         }
     }
 
