@@ -35,7 +35,7 @@ public sealed partial class FileSystemMock
 
         private long _usedBytes;
 
-        internal DriveInfoMock(string driveName, FileSystemMock fileSystem)
+        private DriveInfoMock(string driveName, FileSystemMock fileSystem)
         {
             if (string.IsNullOrEmpty(driveName))
             {
@@ -163,6 +163,18 @@ public sealed partial class FileSystemMock
             }
 
             throw ExceptionFactory.InvalidDriveName();
+        }
+
+        [return: NotNullIfNotNull("driveName")]
+        internal static DriveInfoMock? New(string? driveName,
+                                           FileSystemMock fileSystem)
+        {
+            if (driveName == null)
+            {
+                return null;
+            }
+
+            return new DriveInfoMock(driveName, fileSystem);
         }
     }
 }

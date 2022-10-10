@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 
 namespace Testably.Abstractions;
@@ -19,17 +20,20 @@ public sealed partial class FileSystem
 
         /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.GetDrives()" />
         public IFileSystem.IDriveInfo[] GetDrives()
-            => System.IO.DriveInfo.GetDrives().Select(Wrap).ToArray();
+            => System.IO.DriveInfo.GetDrives()
+               .Select(driveInfo => Wrap(driveInfo))
+               .ToArray();
 
         /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.New(string)" />
         public IFileSystem.IDriveInfo New(string driveName)
-            => new DriveInfoWrapper(
+            => DriveInfoWrapper.FromDriveInfo(
                 new DriveInfo(driveName),
                 FileSystem);
 
         /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.Wrap(DriveInfo)" />
-        public IFileSystem.IDriveInfo Wrap(DriveInfo driveInfo)
-            => new DriveInfoWrapper(
+        [return: NotNullIfNotNull("driveInfo")]
+        public IFileSystem.IDriveInfo? Wrap(DriveInfo? driveInfo)
+            => DriveInfoWrapper.FromDriveInfo(
                 driveInfo,
                 FileSystem);
 

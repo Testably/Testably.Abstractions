@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
+using static Testably.Abstractions.Testing.FileSystemMock;
 
 namespace Testably.Abstractions.Testing.Storage;
 
@@ -25,7 +26,7 @@ internal sealed class InMemoryStorage : IStorage
     public InMemoryStorage(FileSystemMock fileSystem)
     {
         _fileSystem = fileSystem;
-        FileSystemMock.DriveInfoMock mainDrive = new("".PrefixRoot(), _fileSystem);
+        FileSystemMock.DriveInfoMock mainDrive = DriveInfoMock.New("".PrefixRoot(), _fileSystem);
         _drives.TryAdd(mainDrive.Name, mainDrive);
     }
 
@@ -184,7 +185,7 @@ internal sealed class InMemoryStorage : IStorage
             return null;
         }
 
-        FileSystemMock.DriveInfoMock drive = new(driveName, _fileSystem);
+        FileSystemMock.DriveInfoMock drive = DriveInfoMock.New(driveName, _fileSystem);
         if (_drives.TryGetValue(drive.Name, out IStorageDrive? d))
         {
             return d;
@@ -220,7 +221,7 @@ internal sealed class InMemoryStorage : IStorage
     /// <inheritdoc cref="IStorage.GetOrAddDrive(string)" />
     public IStorageDrive GetOrAddDrive(string driveName)
     {
-        FileSystemMock.DriveInfoMock drive = new(driveName, _fileSystem);
+        FileSystemMock.DriveInfoMock drive = DriveInfoMock.New(driveName, _fileSystem);
         return _drives.GetOrAdd(drive.Name, _ => drive);
     }
 

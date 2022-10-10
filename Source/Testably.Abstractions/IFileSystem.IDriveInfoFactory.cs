@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
 
 namespace Testably.Abstractions;
 
@@ -18,6 +19,7 @@ public partial interface IFileSystem
         /// <summary>
         ///     Wraps the <paramref name="driveInfo" /> to the testable interface <see cref="IDriveInfo" />.
         /// </summary>
-        IDriveInfo Wrap(DriveInfo driveInfo);
+        [return: NotNullIfNotNull("driveInfo")]
+        IDriveInfo? Wrap(DriveInfo? driveInfo);
     }
 }

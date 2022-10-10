@@ -13,7 +13,7 @@ public sealed partial class FileSystem
     {
         private readonly DriveInfo _instance;
 
-        internal DriveInfoWrapper(DriveInfo driveInfo, IFileSystem fileSystem)
+        private DriveInfoWrapper(DriveInfo driveInfo, IFileSystem fileSystem)
         {
             _instance = driveInfo;
             FileSystem = fileSystem;
@@ -79,5 +79,17 @@ public sealed partial class FileSystem
         }
 
         #endregion
+
+        [return: NotNullIfNotNull("instance")]
+        internal static DriveInfoWrapper? FromDriveInfo(DriveInfo? instance,
+                                                      IFileSystem fileSystem)
+        {
+            if (instance == null)
+            {
+                return null;
+            }
+
+            return new DriveInfoWrapper(instance, fileSystem);
+        }
     }
 }
