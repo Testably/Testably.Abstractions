@@ -8,6 +8,25 @@ public abstract partial class FileSystemFileTests<TFileSystem>
     [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.Replace))]
+    public void Replace_DestinationIsDirectory_ShouldThrowUnauthorizedAccessException(
+        string sourceName,
+        string destinationName,
+        string backupName)
+    {
+        FileSystem.File.WriteAllText(sourceName, null);
+        FileSystem.Directory.CreateDirectory(destinationName);
+
+        Exception? exception = Record.Exception(() =>
+        {
+            FileSystem.File.Replace(sourceName, destinationName, backupName);
+        });
+
+        exception.Should().BeOfType<UnauthorizedAccessException>();
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.Replace))]
     public void Replace_DestinationMissing_ShouldThrowFileNotFoundException(
         string sourceName,
         string destinationName,
@@ -111,6 +130,25 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
         FileSystem.File.Exists(backupName).Should().BeTrue();
         FileSystem.File.ReadAllText(backupName).Should().Be(destinationContents);
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.Replace))]
+    public void Replace_SourceIsDirectory_ShouldThrowUnauthorizedAccessException(
+        string sourceName,
+        string destinationName,
+        string backupName)
+    {
+        FileSystem.Directory.CreateDirectory(sourceName);
+        FileSystem.File.WriteAllText(destinationName, null);
+
+        Exception? exception = Record.Exception(() =>
+        {
+            FileSystem.File.Replace(sourceName, destinationName, backupName);
+        });
+
+        exception.Should().BeOfType<UnauthorizedAccessException>();
     }
 
     [SkippableTheory]
