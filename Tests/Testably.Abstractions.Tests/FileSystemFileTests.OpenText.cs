@@ -9,7 +9,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.OpenText))]
     public void OpenText_MissingFile_ShouldThrowFileNotFoundException(
-        string path, string appendText)
+        string path)
     {
         Exception? exception = Record.Exception(() =>
         {

@@ -8,23 +8,8 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.OpenText))]
-    public void OpenText_ShouldReturnFileContent(
-        string path, string contents)
-    {
-        FileSystem.File.WriteAllText(path, contents);
-        IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
-
-        using StreamReader stream = fileInfo.OpenText();
-
-        string result = stream.ReadToEnd();
-        result.Should().Be(contents);
-    }
-
-    [SkippableTheory]
-    [AutoData]
-    [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.OpenText))]
     public void OpenText_MissingFile_ShouldThrowFileNotFoundException(
-        string path, string appendText)
+        string path)
     {
         IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
@@ -35,5 +20,20 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
         exception.Should().BeOfType<FileNotFoundException>()
            .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.OpenText))]
+    public void OpenText_ShouldReturnFileContent(
+        string path, string contents)
+    {
+        FileSystem.File.WriteAllText(path, contents);
+        IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+
+        using StreamReader stream = fileInfo.OpenText();
+
+        string result = stream.ReadToEnd();
+        result.Should().Be(contents);
     }
 }
