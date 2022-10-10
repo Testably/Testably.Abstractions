@@ -54,6 +54,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         {
             exception.Should().BeOfType<DirectoryNotFoundException>();
         }
+
         sut.CreationTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
     }
 
@@ -77,6 +78,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         {
             exception.Should().BeOfType<DirectoryNotFoundException>();
         }
+
         sut.CreationTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
     }
 
@@ -99,6 +101,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         {
             exception.Should().BeOfType<DirectoryNotFoundException>();
         }
+
         sut.LastAccessTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
     }
 
@@ -122,6 +125,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         {
             exception.Should().BeOfType<DirectoryNotFoundException>();
         }
+
         sut.LastAccessTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
     }
 
@@ -144,6 +148,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         {
             exception.Should().BeOfType<DirectoryNotFoundException>();
         }
+
         sut.LastWriteTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
     }
 
@@ -167,6 +172,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
         {
             exception.Should().BeOfType<DirectoryNotFoundException>();
         }
+
         sut.LastWriteTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
     }
 

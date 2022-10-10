@@ -74,10 +74,10 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFileInfo.CopyTo(string)" />
         public IFileSystem.IFileInfo CopyTo(string destFileName)
         {
-            var location = FileSystem.Storage.Copy(
-                               Location,
-                               FileSystem.Storage.GetLocation(destFileName))
-                           ?? throw ExceptionFactory.FileNotFound(FullName);
+            IStorageLocation location = FileSystem.Storage.Copy(
+                                            Location,
+                                            FileSystem.Storage.GetLocation(destFileName))
+                                        ?? throw ExceptionFactory.FileNotFound(FullName);
             Refresh();
             return FileSystem.FileInfo.New(location.FullPath);
         }
@@ -85,11 +85,11 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFileInfo.CopyTo(string, bool)" />
         public IFileSystem.IFileInfo CopyTo(string destFileName, bool overwrite)
         {
-            var location = FileSystem.Storage.Copy(
-                               Location,
-                               FileSystem.Storage.GetLocation(destFileName),
-                               overwrite)
-                           ?? throw ExceptionFactory.FileNotFound(FullName);
+            IStorageLocation location = FileSystem.Storage.Copy(
+                                            Location,
+                                            FileSystem.Storage.GetLocation(destFileName),
+                                            overwrite)
+                                        ?? throw ExceptionFactory.FileNotFound(FullName);
             Refresh();
             return FileSystem.FileInfo.New(location.FullPath);
         }
@@ -214,11 +214,13 @@ public sealed partial class FileSystemMock
         public IFileSystem.IFileInfo Replace(string destinationFileName,
                                              string? destinationBackupFileName)
         {
-            var location = FileSystem.Storage.Replace(
-                               Location,
-                               FileSystem.Storage.GetLocation(destinationFileName),
-                               FileSystem.Storage.GetLocation(destinationBackupFileName))
-                           ?? throw ExceptionFactory.FileNotFound(FullName);
+            IStorageLocation location = FileSystem.Storage.Replace(
+                                            Location,
+                                            FileSystem.Storage.GetLocation(
+                                                destinationFileName),
+                                            FileSystem.Storage.GetLocation(
+                                                destinationBackupFileName))
+                                        ?? throw ExceptionFactory.FileNotFound(FullName);
             Refresh();
             return FileSystem.FileInfo.New(location.FullPath);
         }
@@ -228,12 +230,14 @@ public sealed partial class FileSystemMock
                                              string? destinationBackupFileName,
                                              bool ignoreMetadataErrors)
         {
-            var location = FileSystem.Storage.Replace(
-                               Location,
-                               FileSystem.Storage.GetLocation(destinationFileName),
-                               FileSystem.Storage.GetLocation(destinationBackupFileName),
-                               ignoreMetadataErrors)
-                           ?? throw ExceptionFactory.FileNotFound(FullName);
+            IStorageLocation location = FileSystem.Storage.Replace(
+                                            Location,
+                                            FileSystem.Storage.GetLocation(
+                                                destinationFileName),
+                                            FileSystem.Storage.GetLocation(
+                                                destinationBackupFileName),
+                                            ignoreMetadataErrors)
+                                        ?? throw ExceptionFactory.FileNotFound(FullName);
             Refresh();
             return FileSystem.FileInfo.New(location.FullPath);
         }

@@ -116,7 +116,8 @@ public abstract partial class FileSystemFileTests<TFileSystem>
            .Which.Message.Should().Contain($"'{sourceName}'");
 #else
         exception.Should().BeOfType<UnauthorizedAccessException>()
-           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
+           .Which.Message.Should()
+           .Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
 #endif
         FileSystem.Directory.Exists(sourceName).Should().BeTrue();
         FileSystem.File.Exists(destinationName).Should().BeFalse();

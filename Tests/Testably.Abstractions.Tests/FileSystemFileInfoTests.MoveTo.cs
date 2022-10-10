@@ -85,7 +85,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
         sut.MoveTo(destinationName);
-        
+
         sut.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
         sut.Exists.Should().BeTrue();
         FileSystem.File.Exists(sourceName).Should().BeFalse();
@@ -109,7 +109,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         {
             sut.MoveTo(destinationName);
         });
-        
+
         if (Test.RunsOnWindows)
         {
             exception.Should().BeOfType<IOException>();

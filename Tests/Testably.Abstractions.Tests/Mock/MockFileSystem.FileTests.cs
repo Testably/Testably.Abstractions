@@ -68,7 +68,7 @@ public static partial class MockFileSystem
             int bytes1Length,
             int bytes2Length)
         {
-            RandomSystem randomSystem = new RandomSystem();
+            RandomSystem randomSystem = new();
             byte[] bytes1 = new byte[bytes1Length];
             byte[] bytes2 = new byte[bytes2Length];
             randomSystem.Random.Shared.NextBytes(bytes1);

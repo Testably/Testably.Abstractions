@@ -123,7 +123,8 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         });
 
         exception.Should().BeOfType<UnauthorizedAccessException>()
-           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
+           .Which.Message.Should()
+           .Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
         FileSystem.Directory.Exists(sourceName).Should().BeTrue();
         FileSystem.File.Exists(destinationName).Should().BeFalse();
     }
