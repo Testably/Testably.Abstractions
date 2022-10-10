@@ -70,7 +70,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.AppendText()" />
         public StreamWriter AppendText()
-            => throw new NotImplementedException();
+            => new(Open(FileMode.Append, FileAccess.Write));
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.CopyTo(string)" />
         public IFileSystem.IFileInfo CopyTo(string destFileName)
