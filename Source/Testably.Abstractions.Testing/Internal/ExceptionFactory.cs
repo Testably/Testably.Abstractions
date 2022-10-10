@@ -8,8 +8,10 @@ namespace Testably.Abstractions.Testing.Internal;
 [ExcludeFromCodeCoverage]
 internal static class ExceptionFactory
 {
-    internal static UnauthorizedAccessException AccessToPathDenied(string path)
-        => new($"Access to the path '{path}' is denied.");
+    internal static UnauthorizedAccessException AccessToPathDenied(string path = "")
+        => new(string.IsNullOrEmpty(path)
+            ? "Access to the path is denied."
+            : $"Access to the path '{path}' is denied.");
 
     internal static ArgumentException AppendAccessOnlyInWriteOnlyMode(
         string paramName = "access")

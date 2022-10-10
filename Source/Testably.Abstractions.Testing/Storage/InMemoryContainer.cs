@@ -160,8 +160,9 @@ internal class InMemoryContainer : IStorageContainer
     /// <inheritdoc cref="IStorageContainer.GetBytes()" />
     public byte[] GetBytes() => _bytes;
 
-    /// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare)" />
-    public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share)
+    /// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool)" />
+    public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share,
+                                              bool ignoreMetadataError = true)
     {
         if (_location.Drive == null)
         {
@@ -171,6 +172,13 @@ internal class InMemoryContainer : IStorageContainer
         if (!_location.Drive.IsReady)
         {
             throw ExceptionFactory.NetworkPathNotFound(_location.FullPath);
+        }
+
+        if (!ignoreMetadataError &&
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
+            Attributes.HasFlag(FileAttributes.ReadOnly))
+        {
+            throw ExceptionFactory.AccessToPathDenied();
         }
 
         if (CanGetAccess(access, share))

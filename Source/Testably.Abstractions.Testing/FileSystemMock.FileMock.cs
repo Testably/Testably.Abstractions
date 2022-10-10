@@ -473,14 +473,20 @@ public sealed partial class FileSystemMock
             => EnumerateLines(ReadAllText(path, encoding));
 
         /// <inheritdoc cref="IFileSystem.IFile.Replace(string, string, string)" />
-        public void Replace(string sourceFileName, string destinationFileName,
+        public void Replace(string sourceFileName,
+                            string destinationFileName,
                             string? destinationBackupFileName)
-            => throw new NotImplementedException();
+            => _fileSystem.FileInfo.New(sourceFileName)
+               .Replace(destinationFileName, destinationBackupFileName);
 
         /// <inheritdoc cref="IFileSystem.IFile.Replace(string, string, string, bool)" />
-        public void Replace(string sourceFileName, string destinationFileName,
-                            string? destinationBackupFileName, bool ignoreMetadataErrors)
-            => throw new NotImplementedException();
+        public void Replace(string sourceFileName,
+                            string destinationFileName,
+                            string? destinationBackupFileName,
+                            bool ignoreMetadataErrors)
+            => _fileSystem.FileInfo.New(sourceFileName)
+               .Replace(destinationFileName, destinationBackupFileName,
+                    ignoreMetadataErrors);
 
 #if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="IFileSystem.IFile.ResolveLinkTarget(string, bool)" />

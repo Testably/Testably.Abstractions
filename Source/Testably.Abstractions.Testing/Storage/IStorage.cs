@@ -142,6 +142,29 @@ internal interface IStorage
                            bool overwrite = false,
                            bool recursive = false);
 
+    /// <summary>
+    ///     Replaces the <paramref name="destination" /> file with the <paramref name="source" /> and moving it to the
+    ///     <paramref name="backup" /> location.<br />
+    ///     This method does work across volumes.
+    /// </summary>
+    /// <param name="source">The source location.</param>
+    /// <param name="destination">The destination location.</param>
+    /// <param name="backup">The backup location.</param>
+    /// <param name="ignoreMetadataErrors">
+    ///     <see langword="true" /> to ignore merge errors (such as attributes and access control lists (ACLs)) from the
+    ///     replaced file;
+    ///     otherwise <see langword="false" />.
+    /// </param>
+    /// <returns>
+    ///     The new location of the file.<br />
+    ///     Returns <see langword="null" /> when the <paramref name="source" /> or  the <paramref name="destination" /> does
+    ///     not exist.
+    /// </returns>
+    IStorageLocation? Replace(IStorageLocation source,
+                              IStorageLocation destination,
+                              IStorageLocation? backup,
+                              bool ignoreMetadataErrors = false);
+
 #if FEATURE_FILESYSTEM_LINK
     /// <summary>
     ///     Resolves the link target of the container stored at <paramref name="location" />.

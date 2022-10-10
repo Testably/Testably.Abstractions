@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Storage;
@@ -214,13 +213,30 @@ public sealed partial class FileSystemMock
         /// <inheritdoc cref="IFileSystem.IFileInfo.Replace(string, string?)" />
         public IFileSystem.IFileInfo Replace(string destinationFileName,
                                              string? destinationBackupFileName)
-            => throw new NotImplementedException();
+        {
+            var location = FileSystem.Storage.Replace(
+                               Location,
+                               FileSystem.Storage.GetLocation(destinationFileName),
+                               FileSystem.Storage.GetLocation(destinationBackupFileName))
+                           ?? throw ExceptionFactory.FileNotFound(FullName);
+            Refresh();
+            return FileSystem.FileInfo.New(location.FullPath);
+        }
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Replace(string, string?, bool)" />
         public IFileSystem.IFileInfo Replace(string destinationFileName,
                                              string? destinationBackupFileName,
                                              bool ignoreMetadataErrors)
-            => throw new NotImplementedException();
+        {
+            var location = FileSystem.Storage.Replace(
+                               Location,
+                               FileSystem.Storage.GetLocation(destinationFileName),
+                               FileSystem.Storage.GetLocation(destinationBackupFileName),
+                               ignoreMetadataErrors)
+                           ?? throw ExceptionFactory.FileNotFound(FullName);
+            Refresh();
+            return FileSystem.FileInfo.New(location.FullPath);
+        }
 
         #endregion
 
