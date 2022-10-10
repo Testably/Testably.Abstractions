@@ -5,46 +5,46 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class TimeSystemMock
 {
-    private sealed class ThreadMock : ITimeSystem.IThread
-    {
-        private readonly TimeSystemMockCallbackHandler _callbackHandler;
-        private readonly TimeSystemMock _timeSystemMock;
+	private sealed class ThreadMock : ITimeSystem.IThread
+	{
+		private readonly TimeSystemMockCallbackHandler _callbackHandler;
+		private readonly TimeSystemMock _timeSystemMock;
 
-        internal ThreadMock(TimeSystemMock timeSystem,
-                            TimeSystemMockCallbackHandler callbackHandler)
-        {
-            _timeSystemMock = timeSystem;
-            _callbackHandler = callbackHandler;
-        }
+		internal ThreadMock(TimeSystemMock timeSystem,
+		                    TimeSystemMockCallbackHandler callbackHandler)
+		{
+			_timeSystemMock = timeSystem;
+			_callbackHandler = callbackHandler;
+		}
 
-        #region IThread Members
+		#region IThread Members
 
-        /// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
-        public ITimeSystem TimeSystem
-            => _timeSystemMock;
+		/// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+		public ITimeSystem TimeSystem
+			=> _timeSystemMock;
 
-        public void Sleep(int millisecondsTimeout)
-        {
-            if (millisecondsTimeout < -1)
-            {
-                throw ExceptionFactory.ThreadSleepOutOfRange(nameof(millisecondsTimeout));
-            }
+		public void Sleep(int millisecondsTimeout)
+		{
+			if (millisecondsTimeout < -1)
+			{
+				throw ExceptionFactory.ThreadSleepOutOfRange(nameof(millisecondsTimeout));
+			}
 
-            Sleep(TimeSpan.FromMilliseconds(millisecondsTimeout));
-        }
+			Sleep(TimeSpan.FromMilliseconds(millisecondsTimeout));
+		}
 
-        public void Sleep(TimeSpan timeout)
-        {
-            if (timeout.TotalMilliseconds < -1)
-            {
-                throw ExceptionFactory.ThreadSleepOutOfRange(nameof(timeout));
-            }
+		public void Sleep(TimeSpan timeout)
+		{
+			if (timeout.TotalMilliseconds < -1)
+			{
+				throw ExceptionFactory.ThreadSleepOutOfRange(nameof(timeout));
+			}
 
-            _timeSystemMock.TimeProvider.AdvanceBy(timeout);
-            System.Threading.Thread.Sleep(0);
-            _callbackHandler.InvokeThreadSleepCallbacks(timeout);
-        }
+			_timeSystemMock.TimeProvider.AdvanceBy(timeout);
+			System.Threading.Thread.Sleep(0);
+			_callbackHandler.InvokeThreadSleepCallbacks(timeout);
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

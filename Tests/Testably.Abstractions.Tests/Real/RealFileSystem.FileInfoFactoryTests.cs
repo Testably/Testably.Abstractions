@@ -6,31 +6,31 @@ namespace Testably.Abstractions.Tests.Real;
 
 public static partial class RealFileSystem
 {
-    // ReSharper disable once UnusedMember.Global
-    [Collection(nameof(RealFileSystem))]
-    [SystemTest(nameof(RealFileSystem))]
-    public sealed class FileInfoFactoryTests : FileSystemFileInfoFactoryTests<FileSystem>,
-        IDisposable
-    {
-        /// <inheritdoc cref="FileSystemFileInfoFactoryTests{TFileSystem}.BasePath" />
-        public override string BasePath => _directoryCleaner.BasePath;
+	// ReSharper disable once UnusedMember.Global
+	[Collection(nameof(RealFileSystem))]
+	[SystemTest(nameof(RealFileSystem))]
+	public sealed class FileInfoFactoryTests : FileSystemFileInfoFactoryTests<FileSystem>,
+		IDisposable
+	{
+		/// <inheritdoc cref="FileSystemFileInfoFactoryTests{TFileSystem}.BasePath" />
+		public override string BasePath => _directoryCleaner.BasePath;
 
-        private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
+		private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
 
-        public FileInfoFactoryTests(ITestOutputHelper testOutputHelper)
-            : base(new FileSystem(), new TimeSystem())
-        {
-            _directoryCleaner = FileSystem
-               .SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);
-        }
+		public FileInfoFactoryTests(ITestOutputHelper testOutputHelper)
+			: base(new FileSystem(), new TimeSystem())
+		{
+			_directoryCleaner = FileSystem
+			   .SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);
+		}
 
-        #region IDisposable Members
+		#region IDisposable Members
 
-        /// <inheritdoc cref="IDisposable.Dispose()" />
-        public void Dispose()
-            => _directoryCleaner.Dispose();
+		/// <inheritdoc cref="IDisposable.Dispose()" />
+		public void Dispose()
+			=> _directoryCleaner.Dispose();
 
-        #endregion
-    }
+		#endregion
+	}
 }
 #endif

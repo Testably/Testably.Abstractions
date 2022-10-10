@@ -9,8 +9,8 @@ namespace Testably.Abstractions;
 /// </summary>
 public interface IStoppedTimer : ITimer
 {
-    /// <summary>
-    ///     Starts the timer.
-    /// </summary>
-    IRunningTimer Start(CancellationToken cancellationToken = default);
+	/// <summary>
+	///     Starts the timer.
+	/// </summary>
+	IRunningTimer Start(CancellationToken cancellationToken = default);
 }

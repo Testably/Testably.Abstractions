@@ -3,33 +3,33 @@ using System.IO;
 namespace Testably.Abstractions.Tests;
 
 public abstract partial class FileSystemFileTests<TFileSystem>
-    where TFileSystem : IFileSystem
+	where TFileSystem : IFileSystem
 {
-    [SkippableTheory]
-    [AutoData]
-    [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytes))]
-    public void ReadAllBytes_MissingFile_ShouldThrowFileNotFoundException(string path)
-    {
-        Exception? exception = Record.Exception(() =>
-        {
-            FileSystem.File.ReadAllBytes(path);
-        });
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytes))]
+	public void ReadAllBytes_MissingFile_ShouldThrowFileNotFoundException(string path)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.ReadAllBytes(path);
+		});
 
-        exception.Should().BeOfType<FileNotFoundException>()
-           .Which.Message.Should()
-           .Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-    }
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.Message.Should()
+		   .Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+	}
 
-    [SkippableTheory]
-    [AutoData]
-    [FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytes))]
-    public void ReadAllBytes_ShouldReturnWrittenBytes(
-        byte[] contents, string path)
-    {
-        FileSystem.File.WriteAllBytes(path, contents);
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytes))]
+	public void ReadAllBytes_ShouldReturnWrittenBytes(
+		byte[] contents, string path)
+	{
+		FileSystem.File.WriteAllBytes(path, contents);
 
-        byte[] result = FileSystem.File.ReadAllBytes(path);
+		byte[] result = FileSystem.File.ReadAllBytes(path);
 
-        result.Should().BeEquivalentTo(contents);
-    }
+		result.Should().BeEquivalentTo(contents);
+	}
 }

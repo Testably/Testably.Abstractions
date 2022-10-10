@@ -5,17 +5,17 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class RandomSystemMock
 {
-    private sealed class GuidMock : GuidSystemBase
-    {
-        private readonly RandomSystemMock _randomSystemMock;
+	private sealed class GuidMock : GuidSystemBase
+	{
+		private readonly RandomSystemMock _randomSystemMock;
 
-        internal GuidMock(RandomSystemMock randomSystem) : base(randomSystem)
-        {
-            _randomSystemMock = randomSystem;
-        }
+		internal GuidMock(RandomSystemMock randomSystem) : base(randomSystem)
+		{
+			_randomSystemMock = randomSystem;
+		}
 
-        /// <inheritdoc cref="IRandomSystem.IGuid.NewGuid()" />
-        public override Guid NewGuid()
-            => _randomSystemMock.RandomProvider.GetGuid();
-    }
+		/// <inheritdoc cref="IRandomSystem.IGuid.NewGuid()" />
+		public override Guid NewGuid()
+			=> _randomSystemMock.RandomProvider.GetGuid();
+	}
 }

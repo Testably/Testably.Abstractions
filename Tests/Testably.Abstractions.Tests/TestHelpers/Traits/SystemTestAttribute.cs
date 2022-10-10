@@ -3,15 +3,15 @@
 namespace Testably.Abstractions.Tests.TestHelpers.Traits;
 
 [TraitDiscoverer(
-    SystemTestDiscoverer.DiscovererTypeName,
-    SystemTestDiscoverer.AssemblyName)]
+	SystemTestDiscoverer.DiscovererTypeName,
+	SystemTestDiscoverer.AssemblyName)]
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
 public class SystemTestAttribute : Attribute, ITraitAttribute
 {
-    public string System { get; }
+	public string System { get; }
 
-    public SystemTestAttribute(string system)
-    {
-        System = system;
-    }
+	public SystemTestAttribute(string system)
+	{
+		System = system;
+	}
 }

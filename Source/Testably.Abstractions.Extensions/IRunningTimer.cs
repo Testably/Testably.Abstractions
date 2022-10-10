@@ -5,8 +5,8 @@
 /// </summary>
 public interface IRunningTimer : ITimer
 {
-    /// <summary>
-    ///     Stops the current timer.
-    /// </summary>
-    IStoppedTimer Stop();
+	/// <summary>
+	///     Stops the current timer.
+	/// </summary>
+	IStoppedTimer Stop();
 }
