@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 
@@ -26,9 +27,16 @@ public sealed partial class FileSystem
 
         /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.New(string)" />
         public IFileSystem.IDriveInfo New(string driveName)
-            => DriveInfoWrapper.FromDriveInfo(
+        {
+            if (driveName == null)
+            {
+                throw new ArgumentNullException(nameof(driveName));
+            }
+
+            return DriveInfoWrapper.FromDriveInfo(
                 new DriveInfo(driveName),
                 FileSystem);
+        }
 
         /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.Wrap(DriveInfo)" />
         [return: NotNullIfNotNull("driveInfo")]

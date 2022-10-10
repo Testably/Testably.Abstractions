@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 
@@ -29,7 +30,14 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.New(string)" />
         public IFileSystem.IDriveInfo New(string driveName)
-            => DriveInfoMock.New(driveName, _fileSystem);
+        {
+            if (driveName == null)
+            {
+                throw new ArgumentNullException(nameof(driveName));
+            }
+
+            return DriveInfoMock.New(driveName, _fileSystem);
+        }
 
         /// <inheritdoc cref="IFileSystem.IDriveInfoFactory.Wrap(DriveInfo)" />
         [return: NotNullIfNotNull("driveInfo")]
