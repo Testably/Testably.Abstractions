@@ -7,8 +7,6 @@ namespace Testably.Abstractions.Tests;
 public abstract partial class FileSystemFileStreamTests<TFileSystem>
     where TFileSystem : IFileSystem
 {
-    #region Test Setup
-
     public abstract string BasePath { get; }
     public TFileSystem FileSystem { get; }
     public ITimeSystem TimeSystem { get; }
@@ -22,8 +20,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 
         Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
     }
-
-    #endregion
 
     [SkippableTheory]
     [AutoData]
@@ -92,6 +88,32 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
         using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
         stream.CanTimeout.Should().BeFalse();
+    }
+
+    [SkippableFact]
+    [FileSystemTests.FileStream]
+    public void Constructor_EmptyPath_ShouldThrowArgumentException()
+    {
+        Exception? exception = Record.Exception(() =>
+        {
+            FileSystem.FileStream.New("", FileMode.Open);
+        });
+
+        exception.Should().BeOfType<ArgumentException>()
+           .Which.Message.Should().NotBeNullOrWhiteSpace();
+    }
+
+    [SkippableFact]
+    [FileSystemTests.FileStream]
+    public void Constructor_NullPath_ShouldThrowArgumentNullException()
+    {
+        Exception? exception = Record.Exception(() =>
+        {
+            FileSystem.FileStream.New(null!, FileMode.Open);
+        });
+
+        exception.Should().BeOfType<ArgumentNullException>()
+           .Which.Message.Should().NotBeNullOrWhiteSpace();
     }
 
     [SkippableTheory]

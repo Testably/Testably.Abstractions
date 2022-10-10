@@ -59,6 +59,7 @@ public sealed partial class FileSystem
             => _instance.TotalSize;
 
         /// <inheritdoc cref="IFileSystem.IDriveInfo.VolumeLabel" />
+        [ExcludeFromCodeCoverage]
         [AllowNull]
         public string VolumeLabel
         {
