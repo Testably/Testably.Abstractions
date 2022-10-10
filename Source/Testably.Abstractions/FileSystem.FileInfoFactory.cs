@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
 
 namespace Testably.Abstractions;
 
@@ -23,7 +24,8 @@ public sealed partial class FileSystem
                 FileSystem);
 
         /// <inheritdoc cref="IFileSystem.IFileInfoFactory.Wrap(FileInfo)" />
-        public IFileSystem.IFileInfo Wrap(FileInfo fileInfo)
+        [return: NotNullIfNotNull("fileInfo")]
+        public IFileSystem.IFileInfo? Wrap(FileInfo? fileInfo)
             => FileInfoWrapper.FromFileInfo(
                 fileInfo,
                 FileSystem);

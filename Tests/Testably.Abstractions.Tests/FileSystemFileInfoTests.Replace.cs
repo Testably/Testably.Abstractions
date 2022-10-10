@@ -8,6 +8,26 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Replace))]
+    public void Replace_DestinationIsDirectory_ShouldThrowUnauthorizedAccessException(
+        string sourceName,
+        string destinationName,
+        string backupName)
+    {
+        FileSystem.File.WriteAllText(sourceName, null);
+        FileSystem.Directory.CreateDirectory(destinationName);
+        IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+
+        Exception? exception = Record.Exception(() =>
+        {
+            sut.Replace(destinationName, backupName);
+        });
+
+        exception.Should().BeOfType<UnauthorizedAccessException>();
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Replace))]
     public void Replace_DestinationMissing_ShouldThrowFileNotFoundException(
         string sourceName,
         string destinationName,
@@ -120,6 +140,28 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
         FileSystem.File.Exists(backupName).Should().BeTrue();
         FileSystem.File.ReadAllText(backupName).Should().Be(destinationContents);
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Replace))]
+    public void Replace_SourceIsDirectory_ShouldThrowUnauthorizedAccessException(
+        string sourceName,
+        string destinationName,
+        string backupName)
+    {
+        Skip.IfNot(Test.RunsOnWindows, "Tests sometimes throw IOException on Linux");
+
+        FileSystem.Directory.CreateDirectory(sourceName);
+        FileSystem.File.WriteAllText(destinationName, null);
+        IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+
+        Exception? exception = Record.Exception(() =>
+        {
+            sut.Replace(destinationName, backupName);
+        });
+
+        exception.Should().BeOfType<UnauthorizedAccessException>();
     }
 
     [SkippableTheory]

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
+using static Testably.Abstractions.Testing.FileSystemMock;
 
 namespace Testably.Abstractions.Testing.Storage;
 
@@ -25,7 +26,7 @@ internal sealed class InMemoryStorage : IStorage
     public InMemoryStorage(FileSystemMock fileSystem)
     {
         _fileSystem = fileSystem;
-        FileSystemMock.DriveInfoMock mainDrive = new("".PrefixRoot(), _fileSystem);
+        DriveInfoMock mainDrive = DriveInfoMock.New("".PrefixRoot(), _fileSystem);
         _drives.TryAdd(mainDrive.Name, mainDrive);
     }
 
@@ -184,7 +185,7 @@ internal sealed class InMemoryStorage : IStorage
             return null;
         }
 
-        FileSystemMock.DriveInfoMock drive = new(driveName, _fileSystem);
+        DriveInfoMock drive = DriveInfoMock.New(driveName, _fileSystem);
         if (_drives.TryGetValue(drive.Name, out IStorageDrive? d))
         {
             return d;
@@ -220,7 +221,7 @@ internal sealed class InMemoryStorage : IStorage
     /// <inheritdoc cref="IStorage.GetOrAddDrive(string)" />
     public IStorageDrive GetOrAddDrive(string driveName)
     {
-        FileSystemMock.DriveInfoMock drive = new(driveName, _fileSystem);
+        DriveInfoMock drive = DriveInfoMock.New(driveName, _fileSystem);
         return _drives.GetOrAdd(drive.Name, _ => drive);
     }
 
@@ -230,7 +231,7 @@ internal sealed class InMemoryStorage : IStorage
         IStorageLocation location,
         Func<IStorageLocation, FileSystemMock, IStorageContainer> containerGenerator)
     {
-        FileSystemMock.ChangeDescription? fileSystemChange = null;
+        ChangeDescription? fileSystemChange = null;
         IStorageContainer container = _containers.GetOrAdd(location,
             loc =>
             {
@@ -244,7 +245,7 @@ internal sealed class InMemoryStorage : IStorage
                             FileShare.ReadWrite);
                     fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
                         location.FullPath,
-                        FileSystemMock.ChangeTypes.DirectoryCreated,
+                        ChangeTypes.DirectoryCreated,
                         NotifyFilters.CreationTime);
                     access.Dispose();
                 }
@@ -255,7 +256,7 @@ internal sealed class InMemoryStorage : IStorage
                             FileShare.ReadWrite);
                     fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
                         location.FullPath,
-                        FileSystemMock.ChangeTypes.FileCreated,
+                        ChangeTypes.FileCreated,
                         NotifyFilters.CreationTime);
                     access.Dispose();
                 }
@@ -383,7 +384,7 @@ internal sealed class InMemoryStorage : IStorage
         Func<IStorageLocation, FileSystemMock, IStorageContainer> containerGenerator,
         [NotNullWhen(true)] out IStorageContainer? container)
     {
-        FileSystemMock.ChangeDescription? fileSystemChange = null;
+        ChangeDescription? fileSystemChange = null;
 
         container = _containers.GetOrAdd(
             location,
@@ -395,7 +396,7 @@ internal sealed class InMemoryStorage : IStorage
                     container.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
                 fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
                     location.FullPath,
-                    FileSystemMock.ChangeTypes.FileCreated,
+                    ChangeTypes.FileCreated,
                     NotifyFilters.CreationTime);
                 access.Dispose();
                 return container;
@@ -438,7 +439,7 @@ internal sealed class InMemoryStorage : IStorage
         {
             foreach (string? parentPath in parents)
             {
-                FileSystemMock.ChangeDescription? fileSystemChange = null;
+                ChangeDescription? fileSystemChange = null;
                 IStorageLocation parentLocation =
                     _fileSystem.Storage.GetLocation(parentPath);
                 _ = _containers.AddOrUpdate(
@@ -453,7 +454,7 @@ internal sealed class InMemoryStorage : IStorage
                         fileSystemChange =
                             fileSystem.ChangeHandler.NotifyPendingChange(
                                 parentPath,
-                                FileSystemMock.ChangeTypes.DirectoryCreated,
+                                ChangeTypes.DirectoryCreated,
                                 NotifyFilters.CreationTime);
                         return container;
                     },

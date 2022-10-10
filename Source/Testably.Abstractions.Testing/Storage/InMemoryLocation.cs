@@ -26,8 +26,8 @@ internal sealed class InMemoryLocation : IStorageLocation
 #else
             _key = FileFeatureExtensionMethods.TrimEndingDirectorySeparator(
                 FullPath,
-                System.IO.Path.DirectorySeparatorChar,
-                System.IO.Path.AltDirectorySeparatorChar);
+                Path.DirectorySeparatorChar,
+                Path.AltDirectorySeparatorChar);
 #endif
         if (Framework.IsNetFramework)
         {

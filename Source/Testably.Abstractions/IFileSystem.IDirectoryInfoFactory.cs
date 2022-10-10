@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
 
 namespace Testably.Abstractions;
 
@@ -15,6 +16,7 @@ public partial interface IFileSystem
         /// <summary>
         ///     Wraps the <paramref name="directoryInfo" /> to the testable interface <see cref="IDirectoryInfo" />.
         /// </summary>
-        IDirectoryInfo Wrap(DirectoryInfo directoryInfo);
+        [return: NotNullIfNotNull("directoryInfo")]
+        IDirectoryInfo? Wrap(DirectoryInfo? directoryInfo);
     }
 }
