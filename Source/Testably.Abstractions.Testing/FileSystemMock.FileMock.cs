@@ -108,11 +108,13 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.Copy(string, string)" />
         public void Copy(string sourceFileName, string destFileName)
-            => throw new NotImplementedException();
+            => _fileSystem.FileInfo.New(sourceFileName)
+               .CopyTo(destFileName);
 
         /// <inheritdoc cref="IFileSystem.IFile.Copy(string, string, bool)" />
         public void Copy(string sourceFileName, string destFileName, bool overwrite)
-            => throw new NotImplementedException();
+            => _fileSystem.FileInfo.New(sourceFileName)
+               .CopyTo(destFileName, overwrite);
 
         /// <inheritdoc cref="IFileSystem.IFile.Create(string)" />
         public FileSystemStream Create(string path)
