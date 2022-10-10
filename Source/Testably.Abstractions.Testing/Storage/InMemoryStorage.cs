@@ -34,6 +34,46 @@ internal sealed class InMemoryStorage : IStorage
     /// <inheritdoc cref="IStorage.CurrentDirectory" />
     public string CurrentDirectory { get; set; } = string.Empty.PrefixRoot();
 
+    /// <inheritdoc cref="IStorage.Copy(IStorageLocation, IStorageLocation, bool)" />
+    public IStorageLocation? Copy(IStorageLocation source,
+                                  IStorageLocation destination,
+                                  bool overwrite = false)
+    {
+        if (!_containers.TryGetValue(source,
+            out IStorageContainer? container))
+        {
+            return null;
+        }
+
+        if (container.Type != ContainerTypes.File)
+        {
+            throw new Exception("TODO");
+        }
+
+        using (_ = container.RequestAccess(FileAccess.ReadWrite, FileShare.None))
+        {
+            if (overwrite &&
+                _containers.TryRemove(destination,
+                    out IStorageContainer? existingContainer))
+            {
+                existingContainer.ClearBytes();
+            }
+
+            IStorageContainer copiedContainer =
+                InMemoryContainer.NewFile(destination, _fileSystem);
+            if (_containers.TryAdd(destination, copiedContainer))
+            {
+                copiedContainer.WriteBytes(container.GetBytes());
+                copiedContainer.Attributes = container.Attributes;
+                copiedContainer.LastWriteTime.Set(container.LastWriteTime.Get(DateTimeKind.Local), DateTimeKind.Local);
+                copiedContainer.LastAccessTime.Set(container.LastAccessTime.Get(DateTimeKind.Local), DateTimeKind.Local);
+                return destination;
+            }
+
+            throw ExceptionFactory.CannotCreateFileWhenAlreadyExists();
+        }
+    }
+
     /// <inheritdoc cref="IStorage.DeleteContainer(IStorageLocation, bool)" />
     public bool DeleteContainer(IStorageLocation location, bool recursive = false)
     {

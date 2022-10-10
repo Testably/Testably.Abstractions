@@ -83,8 +83,12 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     public void CopyTo_ShouldCopyFileWithContent(
         string sourceName, string destinationName, string contents)
     {
+        Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
         FileSystem.File.WriteAllText(sourceName, contents);
         IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+
+        TimeSystem.Thread.Sleep(1000);
 
         IFileSystem.IFileInfo result = sut.CopyTo(destinationName);
 
@@ -92,6 +96,9 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         sut.Exists.Should().BeTrue();
         result.Exists.Should().BeTrue();
         result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
+        result.CreationTime.Should().NotBe(sut.CreationTime);
+        result.LastAccessTime.Should().Be(sut.LastAccessTime);
+        result.LastWriteTime.Should().Be(sut.LastWriteTime);
         FileSystem.File.Exists(sourceName).Should().BeTrue();
         FileSystem.File.ReadAllText(sourceName).Should().Be(contents);
         FileSystem.File.Exists(destinationName).Should().BeTrue();

@@ -74,11 +74,26 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.CopyTo(string)" />
         public IFileSystem.IFileInfo CopyTo(string destFileName)
-            => throw new NotImplementedException();
+        {
+            var location = FileSystem.Storage.Copy(
+                               FileSystem.Storage.GetLocation(FullName),
+                               FileSystem.Storage.GetLocation(destFileName))
+                           ?? throw ExceptionFactory.FileNotFound(FullName);
+            Refresh();
+            return FileSystem.FileInfo.New(location.FullPath);
+        }
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.CopyTo(string, bool)" />
         public IFileSystem.IFileInfo CopyTo(string destFileName, bool overwrite)
-            => throw new NotImplementedException();
+        {
+            var location = FileSystem.Storage.Copy(
+                               FileSystem.Storage.GetLocation(FullName),
+                               FileSystem.Storage.GetLocation(destFileName),
+                               overwrite)
+                           ?? throw ExceptionFactory.FileNotFound(FullName);
+            Refresh();
+            return FileSystem.FileInfo.New(location.FullPath);
+        }
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Create()" />
         public FileSystemStream Create()
