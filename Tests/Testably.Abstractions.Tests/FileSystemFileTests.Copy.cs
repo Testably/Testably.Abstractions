@@ -119,7 +119,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
         else
         {
             FileSystem.File.Exists(sourceName).Should().BeTrue();
-            FileSystem.File.Exists(destinationName).Should().BeTrue();
+            FileSystem.File.Exists(destinationName).Should().BeFalse();
         }
     }
 
