@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Testably.Abstractions.Tests.Testing;
+namespace Testably.Abstractions.Tests;
 
 public class DependencyInjectionTests
 {

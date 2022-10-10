@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Testably.Abstractions.Tests.Testing;
+namespace Testably.Abstractions.Testing.Tests;
 
 public class RandomProviderTests
 {

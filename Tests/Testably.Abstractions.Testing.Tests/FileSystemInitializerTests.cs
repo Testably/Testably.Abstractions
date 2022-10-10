@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Testably.Abstractions.Tests.Testing;
+namespace Testably.Abstractions.Testing.Tests;
 
 public class FileSystemInitializerTests
 {

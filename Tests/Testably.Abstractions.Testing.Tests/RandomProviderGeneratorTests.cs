@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Testably.Abstractions.Tests.Testing;
+namespace Testably.Abstractions.Testing.Tests;
 
 public class RandomProviderGeneratorTests
 {
@@ -196,7 +196,7 @@ public class RandomProviderGeneratorTests
 	public void Operator_FromCallback(Guid value)
 	{
 		int maxRange = 100;
-		RandomProvider.Generator<Guid> sut = (Func<Guid>)(() => value);
+		RandomProvider.Generator<Guid> sut = () => value;
 
 		Guid[] results = new Guid[maxRange];
 		for (int i = 0; i < maxRange; i++)

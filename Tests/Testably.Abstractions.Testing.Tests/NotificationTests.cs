@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace Testably.Abstractions.Tests.Testing;
+namespace Testably.Abstractions.Testing.Tests;
 
 public class NotificationTests
 {
