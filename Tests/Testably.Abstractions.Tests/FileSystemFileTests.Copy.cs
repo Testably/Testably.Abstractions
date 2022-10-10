@@ -85,10 +85,12 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
         FileSystem.File.GetCreationTime(destinationName)
            .Should().NotBe(FileSystem.File.GetCreationTime(sourceName));
+#if !NETFRAMEWORK
         FileSystem.File.GetLastAccessTime(destinationName)
            .Should().Be(FileSystem.File.GetLastAccessTime(sourceName));
         FileSystem.File.GetLastWriteTime(destinationName)
            .Should().Be(FileSystem.File.GetLastWriteTime(sourceName));
+#endif
         FileSystem.File.Exists(sourceName).Should().BeTrue();
         FileSystem.File.ReadAllText(sourceName).Should().Be(contents);
         FileSystem.File.Exists(destinationName).Should().BeTrue();

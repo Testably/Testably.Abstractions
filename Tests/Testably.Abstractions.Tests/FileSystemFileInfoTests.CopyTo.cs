@@ -97,8 +97,10 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
         result.Exists.Should().BeTrue();
         result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
         result.CreationTime.Should().NotBe(sut.CreationTime);
+#if !NETFRAMEWORK
         result.LastAccessTime.Should().Be(sut.LastAccessTime);
         result.LastWriteTime.Should().Be(sut.LastWriteTime);
+#endif
         FileSystem.File.Exists(sourceName).Should().BeTrue();
         FileSystem.File.ReadAllText(sourceName).Should().Be(contents);
         FileSystem.File.Exists(destinationName).Should().BeTrue();
