@@ -17,6 +17,24 @@ internal interface IStorage
     string CurrentDirectory { get; set; }
 
     /// <summary>
+    ///     Copies a specified file to a new location.<br />
+    ///     This method does work across volumes.
+    /// </summary>
+    /// <param name="source">The source location.</param>
+    /// <param name="destination">The destination location.</param>
+    /// <param name="overwrite">
+    ///     <see langword="true" /> to overwrite the <paramref name="destination" />,
+    ///     otherwise <see langword="false" />.
+    /// </param>
+    /// <returns>
+    ///     The new location of the file.<br />
+    ///     Returns <see langword="null" /> when the <paramref name="source" /> does not exist.
+    /// </returns>
+    IStorageLocation? Copy(IStorageLocation source,
+                           IStorageLocation destination,
+                           bool overwrite = false);
+
+    /// <summary>
     ///     Deletes the container stored at <paramref name="location" />.
     /// </summary>
     /// <param name="location">The location at which the container is located.</param>
@@ -116,8 +134,8 @@ internal interface IStorage
     ///     otherwise <see langword="false" />.
     /// </param>
     /// <returns>
-    ///     The new location of the file or directory.<br />Returns <see langword="null" /> when the
-    ///     <paramref name="source" /> does not exist.
+    ///     The new location of the file or directory.<br />
+    ///     Returns <see langword="null" /> when the <paramref name="source" /> does not exist.
     /// </returns>
     IStorageLocation? Move(IStorageLocation source,
                            IStorageLocation destination,
