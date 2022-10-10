@@ -104,7 +104,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.AppendText(string)" />
         public StreamWriter AppendText(string path)
-            => throw new NotImplementedException();
+            => FileSystem.FileInfo.New(path).AppendText();
 
         /// <inheritdoc cref="IFileSystem.IFile.Copy(string, string)" />
         public void Copy(string sourceFileName, string destFileName)
@@ -163,7 +163,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.CreateText(string)" />
         public StreamWriter CreateText(string path)
-            => throw new NotImplementedException();
+            => FileSystem.FileInfo.New(path).CreateText();
 
         /// <inheritdoc cref="IFileSystem.IFile.Decrypt(string)" />
 #if NET6_0_OR_GREATER
@@ -326,7 +326,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFile.OpenText(string)" />
         public StreamReader OpenText(string path)
-            => throw new NotImplementedException();
+            => FileSystem.FileInfo.New(path).OpenText();
 
         /// <inheritdoc cref="IFileSystem.IFile.OpenWrite(string)" />
         public FileSystemStream OpenWrite(string path)

@@ -70,7 +70,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.AppendText()" />
         public StreamWriter AppendText()
-            => throw new NotImplementedException();
+            => new(Open(FileMode.Append, FileAccess.Write));
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.CopyTo(string)" />
         public IFileSystem.IFileInfo CopyTo(string destFileName)
@@ -86,7 +86,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.CreateText()" />
         public StreamWriter CreateText()
-            => throw new NotImplementedException();
+            => new(Create());
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.Decrypt()" />
 #if NET6_0_OR_GREATER
@@ -127,10 +127,10 @@ public sealed partial class FileSystemMock
         public void MoveTo(string destFileName, bool overwrite)
         {
             Location = FileSystem.Storage.Move(
-                    FileSystem.Storage.GetLocation(FullName),
-                    FileSystem.Storage.GetLocation(destFileName),
-                    overwrite)
-                ?? throw ExceptionFactory.FileNotFound(FullName);
+                           FileSystem.Storage.GetLocation(FullName),
+                           FileSystem.Storage.GetLocation(destFileName),
+                           overwrite)
+                       ?? throw ExceptionFactory.FileNotFound(FullName);
             Refresh();
         }
 #endif
@@ -185,7 +185,7 @@ public sealed partial class FileSystemMock
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.OpenText()" />
         public StreamReader OpenText()
-            => throw new NotImplementedException();
+            => new(OpenRead());
 
         /// <inheritdoc cref="IFileSystem.IFileInfo.OpenWrite()" />
         public FileSystemStream OpenWrite()
