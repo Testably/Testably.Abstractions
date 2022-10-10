@@ -8,7 +8,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.CreateText))]
-    public void CreateText_ShouldCreateFileIfMissing(
+    public void CreateText_MissingFile_ShouldCreateFile(
         string path, string appendText)
     {
         IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);

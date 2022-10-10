@@ -27,7 +27,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
     [SkippableTheory]
     [AutoData]
     [FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.AppendText))]
-    public void AppendText_ShouldCreateFileIfMissing(
+    public void AppendText_MissingFile_ShouldCreateFile(
         string path, string appendText)
     {
         IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
