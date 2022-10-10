@@ -13,12 +13,6 @@ public static class TimeTestHelper
 		return time.AddMilliseconds(-25);
 	}
 
-	public static TimeSpan GetRandomInterval(double secondsMultiplier = 60)
-	{
-		Random random = new();
-		return TimeSpan.FromSeconds(random.NextDouble() * secondsMultiplier);
-	}
-
 	public static DateTime GetRandomTime(DateTimeKind kind = DateTimeKind.Unspecified)
 	{
 		Random random = new();

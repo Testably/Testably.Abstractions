@@ -5,13 +5,15 @@
       "module": "Testably.Abstractions.Testing"
     },
     "test-projects": [
-      "./Tests/Testably.Abstractions.Tests/Testably.Abstractions.Tests.csproj"
+      "./Tests/Testably.Abstractions.Tests/Testably.Abstractions.Tests.csproj",
+      "./Tests/Testably.Abstractions.Testing.Tests/Testably.Abstractions.Testing.Tests.csproj"
     ],
     "project": "Testably.Abstractions.Testing.csproj",
     "target-framework": "net6.0",
     "reporters": [ "html", "progress", "cleartext" ],
     "mutation-level": "Advanced",
     "ignore-methods": [
+      "*Exception.ctor",
       "ValidateDriveLetter" // Only tested under windows
     ]
   }

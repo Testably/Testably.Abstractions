@@ -26,7 +26,7 @@ internal sealed class InMemoryStorage : IStorage
 	public InMemoryStorage(FileSystemMock fileSystem)
 	{
 		_fileSystem = fileSystem;
-		DriveInfoMock mainDrive = DriveInfoMock.New("".PrefixRoot(), _fileSystem);
+		DriveInfoMock mainDrive = DriveInfoMock.New(CurrentDirectory, _fileSystem);
 		_drives.TryAdd(mainDrive.Name, mainDrive);
 	}
 
