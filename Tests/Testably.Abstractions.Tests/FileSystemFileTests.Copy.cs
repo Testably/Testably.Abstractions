@@ -98,6 +98,31 @@ public abstract partial class FileSystemFileTests<TFileSystem>
     [SkippableTheory]
     [AutoData]
     [FileSystemTests.File(nameof(IFileSystem.IFile.Copy))]
+    public void Copy_SourceIsDirectory_ShouldThrowIOExceptionAndNotCopyFile(
+        string sourceName,
+        string destinationName)
+    {
+        FileSystem.Directory.CreateDirectory(sourceName);
+
+        Exception? exception = Record.Exception(() =>
+        {
+            FileSystem.File.Copy(sourceName, destinationName);
+        });
+
+#if NETFRAMEWORK
+        exception.Should().BeOfType<UnauthorizedAccessException>()
+           .Which.Message.Should().Contain($"'{sourceName}'");
+#else
+        exception.Should().BeOfType<UnauthorizedAccessException>()
+           .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
+#endif
+        FileSystem.Directory.Exists(sourceName).Should().BeTrue();
+        FileSystem.File.Exists(destinationName).Should().BeFalse();
+    }
+
+    [SkippableTheory]
+    [AutoData]
+    [FileSystemTests.File(nameof(IFileSystem.IFile.Copy))]
     public void Copy_SourceLocked_ShouldThrowIOException(
         string sourceName,
         string destinationName)

@@ -47,7 +47,7 @@ internal sealed class InMemoryStorage : IStorage
 
         if (container.Type != ContainerTypes.File)
         {
-            throw new Exception("TODO");
+            throw ExceptionFactory.AccessToPathDenied(source.FullPath);
         }
 
         using (_ = container.RequestAccess(FileAccess.ReadWrite, FileShare.None))

@@ -76,7 +76,7 @@ public sealed partial class FileSystemMock
         public IFileSystem.IFileInfo CopyTo(string destFileName)
         {
             var location = FileSystem.Storage.Copy(
-                               FileSystem.Storage.GetLocation(FullName),
+                               Location,
                                FileSystem.Storage.GetLocation(destFileName))
                            ?? throw ExceptionFactory.FileNotFound(FullName);
             Refresh();
@@ -87,7 +87,7 @@ public sealed partial class FileSystemMock
         public IFileSystem.IFileInfo CopyTo(string destFileName, bool overwrite)
         {
             var location = FileSystem.Storage.Copy(
-                               FileSystem.Storage.GetLocation(FullName),
+                               Location,
                                FileSystem.Storage.GetLocation(destFileName),
                                overwrite)
                            ?? throw ExceptionFactory.FileNotFound(FullName);
@@ -131,7 +131,7 @@ public sealed partial class FileSystemMock
         public void MoveTo(string destFileName)
         {
             Location = FileSystem.Storage.Move(
-                           FileSystem.Storage.GetLocation(FullName),
+                           Location,
                            FileSystem.Storage.GetLocation(destFileName))
                        ?? throw ExceptionFactory.FileNotFound(FullName);
             Refresh();
@@ -142,7 +142,7 @@ public sealed partial class FileSystemMock
         public void MoveTo(string destFileName, bool overwrite)
         {
             Location = FileSystem.Storage.Move(
-                           FileSystem.Storage.GetLocation(FullName),
+                           Location,
                            FileSystem.Storage.GetLocation(destFileName),
                            overwrite)
                        ?? throw ExceptionFactory.FileNotFound(FullName);
