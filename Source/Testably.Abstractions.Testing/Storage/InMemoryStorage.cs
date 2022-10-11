@@ -91,9 +91,8 @@ internal sealed class InMemoryStorage : IStorage
 		if (container.Type == ContainerTypes.Directory)
 		{
 			changeType |= ChangeTypes.Directory;
-			List<IStorageLocation> children =
-				EnumerateLocations(location, ContainerTypes.DirectoryOrFile)
-				   .ToList();
+			IEnumerable<IStorageLocation> children =
+				EnumerateLocations(location, ContainerTypes.DirectoryOrFile);
 			if (recursive)
 			{
 				foreach (IStorageLocation key in children)
