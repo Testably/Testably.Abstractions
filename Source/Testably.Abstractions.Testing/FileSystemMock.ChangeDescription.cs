@@ -11,6 +11,11 @@ public sealed partial class FileSystemMock
 	public class ChangeDescription
 	{
 		/// <summary>
+		///     The name of the file or directory that changed.
+		/// </summary>
+		public string? Name { get; }
+
+		/// <summary>
 		///     The property changes affected by the change.
 		/// </summary>
 		public NotifyFilters NotifyFilters { get; }
@@ -30,6 +35,7 @@ public sealed partial class FileSystemMock
 		                           NotifyFilters notifyFilters)
 		{
 			Path = location.FullPath;
+			Name = location.FriendlyName;
 			Type = type;
 			NotifyFilters = notifyFilters;
 		}

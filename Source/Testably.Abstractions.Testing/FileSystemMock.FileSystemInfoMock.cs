@@ -81,8 +81,7 @@ public sealed partial class FileSystemMock
 		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Delete()" />
 		public void Delete()
 		{
-			if (!FileSystem.Storage.DeleteContainer(
-				FileSystem.Storage.GetLocation(FullName)))
+			if (!FileSystem.Storage.DeleteContainer(Location))
 			{
 				throw ExceptionFactory.DirectoryNotFound(FullName);
 			}

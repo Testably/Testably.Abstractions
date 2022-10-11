@@ -6,6 +6,7 @@ public class EncryptionHelperTests
 {
 	[Theory]
 	[AutoData]
+	[Trait(nameof(Testing), nameof(EncryptionHelper))]
 	public void Decrypt_ShouldBeDifferentThanBefore(byte[] bytes)
 	{
 		byte[] result = EncryptionHelper.Encrypt(bytes);
@@ -15,6 +16,7 @@ public class EncryptionHelperTests
 
 	[Theory]
 	[AutoData]
+	[Trait(nameof(Testing), nameof(EncryptionHelper))]
 	public void Encrypt_ShouldBeDifferentThanBefore(byte[] bytes)
 	{
 		byte[] result = EncryptionHelper.Encrypt(bytes);
@@ -24,6 +26,7 @@ public class EncryptionHelperTests
 
 	[Theory]
 	[AutoData]
+	[Trait(nameof(Testing), nameof(EncryptionHelper))]
 	public void Encrypt_ThenDecrypt_ShouldBeEquivalentToBefore(byte[] bytes)
 	{
 		byte[] encrypted = EncryptionHelper.Encrypt(bytes);

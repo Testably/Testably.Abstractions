@@ -115,8 +115,39 @@ public sealed partial class FileSystemMock
 		internal static FileSystemWatcherMock New(FileSystemMock fileSystem)
 			=> new(fileSystem);
 
+		private FileSystemEventArgs FromChangeDescription(
+			ChangeDescription changeDescription, WatcherChangeTypes changeType)
+		{
+			string? name = changeDescription.Name;
+			string? path = changeDescription.Path;
+			if (name == null ||
+			    _fileSystem.Path.IsPathRooted(changeDescription.Name))
+			{
+				name = _fileSystem.Path.GetFileName(changeDescription.Path);
+				path = _fileSystem.Path.GetDirectoryName(path);
+			}
+			else if (path.EndsWith(name))
+			{
+				path = path.Substring(0, path.Length - name.Length);
+			}
+
+			return new FileSystemEventArgs(changeType, path ?? "", name);
+		}
+
 		private bool MatchesFilter(ChangeDescription changeDescription)
 		{
+			if (IncludeSubdirectories)
+			{
+				if (!changeDescription.Path.StartsWith(Path))
+				{
+					return false;
+				}
+			}
+			else if (FileSystem.Path.GetDirectoryName(changeDescription.Path) != Path)
+			{
+				return false;
+			}
+
 			if (_filters.Count == 0)
 			{
 				return true;
@@ -135,31 +166,20 @@ public sealed partial class FileSystemMock
 			{
 				if (item.Type.HasFlag(ChangeTypes.Created))
 				{
-					Deleted?.Invoke(this,
-						new FileSystemEventArgs(WatcherChangeTypes.Created,
-							_fileSystem.Path.GetDirectoryName(item.Path) ?? "",
-							_fileSystem.Path.GetFileName(item.Path)));
+					Created?.Invoke(this,
+						FromChangeDescription(item, WatcherChangeTypes.Created));
 				}
+
 				if (item.Type.HasFlag(ChangeTypes.Deleted))
 				{
 					Deleted?.Invoke(this,
-						new FileSystemEventArgs(WatcherChangeTypes.Deleted,
-							_fileSystem.Path.GetDirectoryName(item.Path) ?? "",
-							_fileSystem.Path.GetFileName(item.Path)));
+						FromChangeDescription(item, WatcherChangeTypes.Deleted));
 				}
+
 				if (item.Type.HasFlag(ChangeTypes.Modified))
 				{
-					Deleted?.Invoke(this,
-						new FileSystemEventArgs(WatcherChangeTypes.Changed,
-							_fileSystem.Path.GetDirectoryName(item.Path) ?? "",
-							_fileSystem.Path.GetFileName(item.Path)));
-				}
-				if (item.Type.HasFlag(ChangeTypes.Renamed))
-				{
-					Deleted?.Invoke(this,
-						new FileSystemEventArgs(WatcherChangeTypes.Renamed,
-							_fileSystem.Path.GetDirectoryName(item.Path) ?? "",
-							_fileSystem.Path.GetFileName(item.Path)));
+					Changed?.Invoke(this,
+						FromChangeDescription(item, WatcherChangeTypes.Changed));
 				}
 			}
 		}

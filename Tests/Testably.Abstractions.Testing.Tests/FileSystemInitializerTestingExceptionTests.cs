@@ -9,6 +9,7 @@ public class FileSystemInitializerTestingExceptionTests
 {
 	[Theory]
 	[AutoData]
+	[Trait(nameof(Testing), nameof(FileSystemInitializer.TestingException))]
 	public void
 		TestingException_SerializationAndDeserialization_ShouldKeepMessageAndInnerException(
 			string message, Exception innerException)

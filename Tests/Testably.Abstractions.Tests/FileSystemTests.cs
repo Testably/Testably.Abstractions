@@ -83,15 +83,6 @@ public abstract class FileSystemTests<TFileSystem>
 
 	[SkippableFact]
 	[FileSystemTests.ExtensionPoint]
-	public void FileSystemWatcher_ShouldSetExtensionPoint()
-	{
-		IFileSystem result = FileSystem.FileSystemWatcher.New(".").FileSystem;
-
-		result.Should().Be(FileSystem);
-	}
-
-	[SkippableFact]
-	[FileSystemTests.ExtensionPoint]
 	public void Path_ShouldSetExtensionPoint()
 	{
 		IFileSystem result = FileSystem.Path.FileSystem;

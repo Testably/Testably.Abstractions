@@ -19,6 +19,7 @@ public class InMemoryStorageTests
 	#endregion
 
 	[Fact]
+	[Trait(nameof(Testing), nameof(InMemoryStorage))]
 	public void CurrentDirectory_ShouldBeInitializedToDefaultRoot()
 	{
 		string expectedRoot = string.Empty.PrefixRoot();
@@ -27,6 +28,7 @@ public class InMemoryStorageTests
 
 	[Theory]
 	[AutoData]
+	[Trait(nameof(Testing), nameof(InMemoryStorage))]
 	public void TryAddContainer_ShouldNotifyWhenAdded(string path)
 	{
 		bool receivedNotification = false;
@@ -44,6 +46,7 @@ public class InMemoryStorageTests
 
 	[Theory]
 	[AutoData]
+	[Trait(nameof(Testing), nameof(InMemoryStorage))]
 	public void TryAddContainer_ShouldNotNotifyWhenExistsPreviously(string path)
 	{
 		IStorageLocation location = Storage.GetLocation(path);
