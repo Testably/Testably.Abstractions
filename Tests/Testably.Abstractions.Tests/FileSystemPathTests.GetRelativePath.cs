@@ -32,8 +32,8 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 			return;
 		}
 
-		path1 = path1.PrefixRoot('A');
-		path2 = path2.PrefixRoot('B');
+		path1 = FileTestHelper.RootDrive(path1, 'A');
+		path2 = FileTestHelper.RootDrive(path2, 'B');
 		string result = FileSystem.Path.GetRelativePath(path1, path2);
 
 		result.Should().Be(path2);
@@ -45,7 +45,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	public void GetRelativePath_RootedPath_ShouldReturnAbsolutePath(
 		string baseDirectory, string directory1, string directory2)
 	{
-		baseDirectory = baseDirectory.PrefixRoot();
+		baseDirectory = FileTestHelper.RootDrive(baseDirectory);
 		string path1 = FileSystem.Path.Combine(baseDirectory, directory1);
 		string path2 = FileSystem.Path.Combine(baseDirectory, directory2);
 		string expectedRelativePath = FileSystem.Path.Combine("..", directory2);

@@ -28,7 +28,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		string[] result = FileSystem.Directory.GetLogicalDrives();
 
 		result.Should().NotBeEmpty();
-		result.Should().Contain("".PrefixRoot());
+		result.Should().Contain(FileTestHelper.RootDrive());
 	}
 
 	[SkippableTheory]

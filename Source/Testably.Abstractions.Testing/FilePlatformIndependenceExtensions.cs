@@ -9,7 +9,7 @@ namespace Testably.Abstractions.Testing;
 ///     Provides extension methods to simplify writing platform independent tests.
 /// </summary>
 [ExcludeFromCodeCoverage]
-public static class FilePlatformIndependenceExtensions
+internal static class FilePlatformIndependenceExtensions
 {
 	private static readonly Regex PathTransformRegex = new(@"^[a-zA-Z]:(?<path>.*)$");
 

@@ -21,7 +21,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	[FileSystemTests.Path(nameof(IFileSystem.IPath.TrimEndingDirectorySeparator))]
 	public void TrimEndingDirectorySeparator_Root_ShouldReturnUnchanged()
 	{
-		string path = string.Empty.PrefixRoot();
+		string path = FileTestHelper.RootDrive();
 
 		string result = FileSystem.Path.TrimEndingDirectorySeparator(path);
 
@@ -46,7 +46,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	[FileSystemTests.Path(nameof(IFileSystem.IPath.TrimEndingDirectorySeparator))]
 	public void TrimEndingDirectorySeparator_Span_Root_ShouldReturnUnchanged()
 	{
-		string path = string.Empty.PrefixRoot();
+		string path = FileTestHelper.RootDrive();
 
 		ReadOnlySpan<char> result =
 			FileSystem.Path.TrimEndingDirectorySeparator(path.AsSpan());
