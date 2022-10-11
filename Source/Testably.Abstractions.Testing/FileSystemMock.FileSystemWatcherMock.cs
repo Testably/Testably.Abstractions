@@ -16,17 +16,29 @@ public sealed partial class FileSystemMock
 	/// </summary>
 	public sealed class FileSystemWatcherMock : IFileSystem.IFileSystemWatcher
 	{
-		private CancellationTokenSource? _cancellationTokenSource;
+		private CancellationTokenSource _cancellationTokenSource;
 		private IDisposable? _changeHandler;
-		private readonly BlockingCollection<ChangeDescription> _changes = new(100);
+		private BlockingCollection<ChangeDescription> _changes;
 		private bool _enableRaisingEvents;
 		private readonly FileSystemMock _fileSystem;
 		private readonly List<string> _filters = new();
+		private int _internalBufferSize = 8192;
 		private string _path = string.Empty;
+
+		/// <summary>
+		///     Simulated bytes pre message to calculate the size of the blocking collection relative to the
+		///     <see cref="InternalBufferSize" />.
+		/// </summary>
+		private const int BytesPerMessage = 128;
 
 		private FileSystemWatcherMock(FileSystemMock fileSystem)
 		{
 			_fileSystem = fileSystem;
+			_changes =
+				new BlockingCollection<ChangeDescription>(InternalBufferSize /
+				                                          BytesPerMessage);
+			_cancellationTokenSource = new CancellationTokenSource();
+			_cancellationTokenSource.Cancel();
 		}
 
 		#region IFileSystemWatcher Members
@@ -56,7 +68,9 @@ public sealed partial class FileSystemMock
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Filter" />
 		public string Filter
 		{
-			get => _filters.Count == 0 ? "*" : _filters[0];
+			get => _filters.Count == 0
+				? Framework.IsNetFramework ? "*.*" : "*"
+				: _filters[0];
 			set
 			{
 				_filters.Clear();
@@ -80,16 +94,22 @@ public sealed partial class FileSystemMock
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.InternalBufferSize" />
 		public int InternalBufferSize
 		{
-			get;
-			set;
-		} = 8192;
+			get => _internalBufferSize;
+			set
+			{
+				_internalBufferSize = value;
+				Restart();
+			}
+		}
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.NotifyFilter" />
 		public NotifyFilters NotifyFilter
 		{
 			get;
 			set;
-		}
+		} = NotifyFilters.FileName |
+		    NotifyFilters.DirectoryName |
+		    NotifyFilters.LastWrite;
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Path" />
 		public string Path
@@ -184,6 +204,28 @@ public sealed partial class FileSystemMock
 			}
 		}
 
+		private void Restart()
+		{
+			if (EnableRaisingEvents)
+			{
+				Stop();
+				BlockingCollection<ChangeDescription> changes = _changes;
+				_changes =
+					new BlockingCollection<ChangeDescription>(InternalBufferSize /
+						BytesPerMessage);
+				changes.Dispose();
+				Start();
+			}
+			else
+			{
+				BlockingCollection<ChangeDescription> changes = _changes;
+				_changes =
+					new BlockingCollection<ChangeDescription>(InternalBufferSize /
+						BytesPerMessage);
+				changes.Dispose();
+			}
+		}
+
 		private void Start()
 		{
 			Stop();
@@ -192,26 +234,35 @@ public sealed partial class FileSystemMock
 			{
 				if (!_changes.TryAdd(c, 100))
 				{
-					Error?.Invoke(this, new ErrorEventArgs(new TimeoutException("TODO")));
+					Error?.Invoke(this, new ErrorEventArgs(
+						new InternalBufferOverflowException(
+							$"The internal buffer is greater than the {InternalBufferSize} allowed bytes (~ {_changes.BoundedCapacity} changes).")));
 				}
 			});
 			CancellationToken token = _cancellationTokenSource.Token;
 			Task.Factory.StartNew(() =>
 			{
-				while (!token.IsCancellationRequested)
+				try
 				{
-					if (_changes.TryTake(out ChangeDescription? c, Timeout.Infinite,
-						token))
+					while (!token.IsCancellationRequested)
 					{
-						NotifyChange(c);
+						if (_changes.TryTake(out ChangeDescription? c, Timeout.Infinite,
+							token))
+						{
+							NotifyChange(c);
+						}
 					}
+				}
+				catch (Exception)
+				{
+					//Ignore any exception
 				}
 			}, TaskCreationOptions.LongRunning);
 		}
 
 		private void Stop()
 		{
-			_cancellationTokenSource?.Cancel();
+			_cancellationTokenSource.Cancel();
 			_changeHandler?.Dispose();
 		}
 

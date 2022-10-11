@@ -1,3 +1,5 @@
+using System.IO;
+using System.Threading;
 using Testably.Abstractions.Tests.TestHelpers.Traits;
 
 namespace Testably.Abstractions.Tests.Mock;
@@ -33,5 +35,47 @@ public static partial class MockFileSystem
 			=> _directoryCleaner.Dispose();
 
 		#endregion
+
+		[SkippableTheory]
+		[InlineAutoData(10)]
+		[InlineAutoData(4096)]
+		[FileSystemTests.FileSystemWatcher(nameof(IFileSystem.IFileSystemWatcher.Error))]
+		public void Error_ShouldBeTriggeredWhenBufferOverflows(
+			int internalBufferSize, string path)
+		{
+			FileSystem.Directory.CreateDirectory(path);
+			IFileSystem.IFileSystemWatcher fileSystemWatcher =
+				FileSystem.FileSystemWatcher.New(BasePath);
+			ManualResetEventSlim block1 = new();
+			ManualResetEventSlim block2 = new();
+			ErrorEventArgs? result = null;
+			fileSystemWatcher.InternalBufferSize = internalBufferSize;
+			fileSystemWatcher.Error += (_, eventArgs) =>
+			{
+				result = eventArgs;
+				block1.Set();
+				block2.Set();
+			};
+			fileSystemWatcher.Deleted += (_, _) =>
+			{
+				block1.Wait(10000);
+			};
+			fileSystemWatcher.EnableRaisingEvents = true;
+			FileSystem.Directory.Delete(path);
+			for (int i = 0; i <= internalBufferSize; i++)
+			{
+				if (block1.IsSet)
+				{
+					break;
+				}
+
+				FileSystem.Directory.CreateDirectory($"{i}_{path}");
+			}
+
+			block2.Wait(10000).Should().BeTrue();
+			fileSystemWatcher.Dispose();
+			result.Should().NotBeNull();
+			result!.GetException().Should().BeOfType<TimeoutException>();
+		}
 	}
 }

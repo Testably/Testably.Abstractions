@@ -1,3 +1,6 @@
+using System.IO;
+using System.Threading;
+
 namespace Testably.Abstractions.Tests;
 
 public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>

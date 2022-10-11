@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace Testably.Abstractions.Tests;
 
 public abstract class FileSystemFileSystemWatcherFactoryTests<TFileSystem>
@@ -19,12 +21,20 @@ public abstract class FileSystemFileSystemWatcherFactoryTests<TFileSystem>
 
 	[SkippableFact]
 	[FileSystemTests.FileSystemWatcherFactory(nameof(IFileSystem.IFileSystemWatcherFactory.New))]
-	public void New_ShouldUseEmptyPath()
+	public void New_ShouldInitializeWithDefaultValues()
 	{
 		IFileSystem.IFileSystemWatcher result =
 			FileSystem.FileSystemWatcher.New();
 
 		result.Path.Should().Be("");
+#if NETFRAMEWORK
+		result.Filter.Should().Be("*.*");
+#else
+		result.Filter.Should().Be("*");
+#endif
+		result.IncludeSubdirectories.Should().BeFalse();
+		result.InternalBufferSize.Should().Be(8192);
+		result.NotifyFilter.Should().Be(NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite);
 		result.EnableRaisingEvents.Should().BeFalse();
 	}
 }
