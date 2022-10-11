@@ -8,4 +8,31 @@
     <ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="FileSystemInitializer*Tests.cs">
+      <DependentUpon>FileSystemInitializerTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="FileSystemMock*Tests.cs">
+      <DependentUpon>FileSystemMockTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Notification*Tests.cs">
+      <DependentUpon>NotificationTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RandomProvider*Tests.cs">
+      <DependentUpon>RandomProviderTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RandomProvider*Tests.cs">
+      <DependentUpon>RandomProviderTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RandomSystemMock*Tests.cs">
+      <DependentUpon>RandomSystemMockTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="TimeProvider*Tests.cs">
+      <DependentUpon>TimeProviderTests.cs</DependentUpon>
+    </Compile>
+    <Compile Update="TimeSystemMock*Tests.cs">
+      <DependentUpon>TimeSystemMockTests.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>

@@ -106,19 +106,4 @@
     </Compile>
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="FileSystemDirectoryInfoTests.Delete.cs">
-      <DependentUpon>FileSystemDirectoryInfoTests.cs</DependentUpon>
-    </Compile>
-    <Compile Update="FileSystemFileTests.AppendAllLines.cs">
-      <DependentUpon>FileSystemFileTests.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Mock\MockFileSystem - Copy.FileTests.cs">
-      <DependentUpon>Mock/MockFileSystem.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Mock\MockFileSystem.FileTests.cs">
-      <DependentUpon>Mock/MockFileSystem.cs</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
 </Project>
