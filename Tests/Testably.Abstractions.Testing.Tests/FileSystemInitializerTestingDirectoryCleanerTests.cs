@@ -1,15 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests;
 
 public class FileSystemInitializerTestingDirectoryCleanerTests
 {
-	[Theory]
+	[SkippableTheory]
 	[AutoData]
 	public void Dispose_PermanentError_ShouldNotThrowException(
 		Exception exception)
 	{
+		Skip.If(Test.RunsOnMac, "No access to temporary directories under `/private`");
+
 		FileSystemMock sut = new();
 		List<string> receivedLogs = new();
 		FileSystemInitializer.IDirectoryCleaner directoryCleaner =
@@ -43,7 +46,7 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 		receivedLogs.Should().NotContain("Cleanup was successful :-)");
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void
 		Dispose_ShouldForceDeleteCurrentDirectory()
 	{
@@ -58,7 +61,7 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 		receivedLogs.Should().Contain("Cleanup was successful :-)");
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void Dispose_ShouldResetCurrentDirectory()
 	{
 		FileSystemMock sut = new();
@@ -69,7 +72,7 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 		sut.Directory.GetCurrentDirectory().Should().NotBe(currentDirectory);
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[AutoData]
 	public void
 		Dispose_TemporaryError_ShouldRetryAgain(Exception exception)
@@ -91,7 +94,7 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 		sut.Directory.Exists(currentDirectory).Should().BeFalse();
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void InitializeBasePath_ShouldCreateDirectoryAndLogBasePath()
 	{
 		FileSystemMock sut = new();
