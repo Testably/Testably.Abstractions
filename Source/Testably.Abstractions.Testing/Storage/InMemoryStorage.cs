@@ -87,31 +87,39 @@ internal sealed class InMemoryStorage : IStorage
 			return false;
 		}
 
+		ChangeTypes changeType = ChangeTypes.Deleted;
 		if (container.Type == ContainerTypes.Directory)
 		{
-			string start = location.FullPath +
-			               _fileSystem.Path.DirectorySeparatorChar;
+			changeType |= ChangeTypes.Directory;
+			List<IStorageLocation> children =
+				EnumerateLocations(location, ContainerTypes.DirectoryOrFile)
+				   .ToList();
 			if (recursive)
 			{
-				foreach (IStorageLocation key in _containers.Keys.Where(x
-					=> x.FullPath.StartsWith(start)))
+				foreach (IStorageLocation key in children)
 				{
-					if (_containers.TryRemove(key,
-						out IStorageContainer? removedChild))
-					{
-						removedChild.ClearBytes();
-					}
+					DeleteContainer(key);
 				}
 			}
-			else if (_containers.Keys.Any(x => x.FullPath.StartsWith(start)))
+			else if (children.Any())
 			{
 				throw ExceptionFactory.DirectoryNotEmpty(location.FullPath);
 			}
 		}
+		else
+		{
+			changeType |= ChangeTypes.File;
+		}
 
+		ChangeDescription fileSystemChange =
+			_fileSystem.ChangeHandler.NotifyPendingChange(
+				location.FullPath,
+				changeType,
+				NotifyFilters.DirectoryName);
 		if (_containers.TryRemove(location, out IStorageContainer? removed))
 		{
 			removed.ClearBytes();
+			_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
 			return true;
 		}
 
