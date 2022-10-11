@@ -6,13 +6,16 @@ namespace Testably.Abstractions.Testing.Tests;
 
 public class FileSystemInitializerTestingDirectoryCleanerTests
 {
+	public FileSystemInitializerTestingDirectoryCleanerTests()
+	{
+		Skip.If(Test.RunsOnMac, "No access to temporary directories under `/private`");
+	}
+
 	[SkippableTheory]
 	[AutoData]
 	public void Dispose_PermanentError_ShouldNotThrowException(
 		Exception exception)
 	{
-		Skip.If(Test.RunsOnMac, "No access to temporary directories under `/private`");
-
 		FileSystemMock sut = new();
 		List<string> receivedLogs = new();
 		FileSystemInitializer.IDirectoryCleaner directoryCleaner =
