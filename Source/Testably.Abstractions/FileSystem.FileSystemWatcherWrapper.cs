@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-#if NET6_0_OR_GREATER
-#endif
 
 namespace Testably.Abstractions;
 
@@ -72,7 +71,7 @@ public sealed partial class FileSystem
 			set => _instance.Path = value;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Dispose" />
+		/// <inheritdoc cref="IDisposable.Dispose()" />
 		public void Dispose()
 			=> _instance.Dispose();
 
