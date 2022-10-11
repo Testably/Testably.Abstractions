@@ -58,10 +58,8 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 		receivedLogs.Should().Contain("Cleanup was successful :-)");
 	}
 
-	[Theory]
-	[AutoData]
-	public void
-		Dispose_ShouldResetCurrentDirectory()
+	[Fact]
+	public void Dispose_ShouldResetCurrentDirectory()
 	{
 		FileSystemMock sut = new();
 		FileSystemInitializer.IDirectoryCleaner directoryCleaner =
