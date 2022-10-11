@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Internal;
@@ -17,7 +18,7 @@ public sealed partial class FileSystemMock
 	{
 		private CancellationTokenSource? _cancellationTokenSource;
 		private IDisposable? _changeHandler;
-		private readonly BlockingCollection<ChangeDescription> _changes = new();
+		private readonly BlockingCollection<ChangeDescription> _changes = new(100);
 		private bool _enableRaisingEvents;
 		private readonly FileSystemMock _fileSystem;
 		private readonly List<string> _filters = new();
@@ -81,7 +82,7 @@ public sealed partial class FileSystemMock
 		{
 			get;
 			set;
-		}
+		} = 8192;
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.NotifyFilter" />
 		public NotifyFilters NotifyFilter
@@ -116,15 +117,16 @@ public sealed partial class FileSystemMock
 
 		private bool MatchesFilter(ChangeDescription changeDescription)
 		{
-			if (!EnumerationOptionsHelper.MatchesPattern(
-				EnumerationOptionsHelper.Compatible,
-				_fileSystem.Path.GetFileName(changeDescription.Path),
-				Filter))
+			if (_filters.Count == 0)
 			{
-				return false;
+				return true;
 			}
 
-			return true;
+			return _filters.Any(filter =>
+				EnumerationOptionsHelper.MatchesPattern(
+					EnumerationOptionsHelper.Compatible,
+					_fileSystem.Path.GetFileName(changeDescription.Path),
+					filter));
 		}
 
 		private void NotifyChange(ChangeDescription item)
