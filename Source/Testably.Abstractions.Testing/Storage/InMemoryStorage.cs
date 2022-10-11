@@ -87,31 +87,38 @@ internal sealed class InMemoryStorage : IStorage
 			return false;
 		}
 
+		ChangeTypes changeType = ChangeTypes.Deleted;
 		if (container.Type == ContainerTypes.Directory)
 		{
-			string start = location.FullPath +
-			               _fileSystem.Path.DirectorySeparatorChar;
+			changeType |= ChangeTypes.Directory;
+			IEnumerable<IStorageLocation> children =
+				EnumerateLocations(location, ContainerTypes.DirectoryOrFile);
 			if (recursive)
 			{
-				foreach (IStorageLocation key in _containers.Keys.Where(x
-					=> x.FullPath.StartsWith(start)))
+				foreach (IStorageLocation key in children)
 				{
-					if (_containers.TryRemove(key,
-						out IStorageContainer? removedChild))
-					{
-						removedChild.ClearBytes();
-					}
+					DeleteContainer(key);
 				}
 			}
-			else if (_containers.Keys.Any(x => x.FullPath.StartsWith(start)))
+			else if (children.Any())
 			{
 				throw ExceptionFactory.DirectoryNotEmpty(location.FullPath);
 			}
 		}
+		else
+		{
+			changeType |= ChangeTypes.File;
+		}
 
+		ChangeDescription fileSystemChange =
+			_fileSystem.ChangeHandler.NotifyPendingChange(
+				location.FullPath,
+				changeType,
+				NotifyFilters.DirectoryName);
 		if (_containers.TryRemove(location, out IStorageContainer? removed))
 		{
 			removed.ClearBytes();
+			_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
 			return true;
 		}
 
@@ -240,25 +247,23 @@ internal sealed class InMemoryStorage : IStorage
 				if (container.Type == ContainerTypes.Directory)
 				{
 					CreateParents(_fileSystem, loc);
-					IStorageAccessHandle access =
-						container.RequestAccess(FileAccess.Write,
-							FileShare.ReadWrite);
-					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
-						location.FullPath,
-						ChangeTypes.DirectoryCreated,
-						NotifyFilters.CreationTime);
-					access.Dispose();
+					using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
+					{
+						fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
+							location.FullPath,
+							ChangeTypes.DirectoryCreated,
+							NotifyFilters.CreationTime);
+					}
 				}
 				else
 				{
-					IStorageAccessHandle access =
-						container.RequestAccess(FileAccess.Write,
-							FileShare.ReadWrite);
-					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
-						location.FullPath,
-						ChangeTypes.FileCreated,
-						NotifyFilters.CreationTime);
-					access.Dispose();
+					using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
+					{
+						fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
+							location.FullPath,
+							ChangeTypes.FileCreated,
+							NotifyFilters.CreationTime);
+					}
 				}
 
 				return container;
@@ -392,13 +397,14 @@ internal sealed class InMemoryStorage : IStorage
 			{
 				IStorageContainer container =
 					containerGenerator(location, _fileSystem);
-				IDisposable access =
-					container.RequestAccess(FileAccess.Write, FileShare.ReadWrite);
-				fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
-					location.FullPath,
-					ChangeTypes.FileCreated,
-					NotifyFilters.CreationTime);
-				access.Dispose();
+				using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
+				{
+					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
+						location.FullPath,
+						ChangeTypes.FileCreated,
+						NotifyFilters.CreationTime);
+				}
+
 				return container;
 			});
 
@@ -434,7 +440,7 @@ internal sealed class InMemoryStorage : IStorage
 			timeAdjustments |= TimeAdjustments.LastAccessTime;
 		}
 
-		List<IStorageAccessHandle> requests = new();
+		List<IStorageAccessHandle> accessHandles = new();
 		try
 		{
 			foreach (string? parentPath in parents)
@@ -449,7 +455,7 @@ internal sealed class InMemoryStorage : IStorage
 						IStorageContainer container =
 							InMemoryContainer.NewDirectory(loc, _fileSystem);
 
-						requests.Add(container.RequestAccess(FileAccess.Write,
+						accessHandles.Add(container.RequestAccess(FileAccess.Write,
 							FileShare.ReadWrite));
 						fileSystemChange =
 							fileSystem.ChangeHandler.NotifyPendingChange(
@@ -468,9 +474,9 @@ internal sealed class InMemoryStorage : IStorage
 		}
 		finally
 		{
-			foreach (IStorageAccessHandle request in requests)
+			foreach (IStorageAccessHandle accessHandle in accessHandles)
 			{
-				request.Dispose();
+				accessHandle.Dispose();
 			}
 		}
 	}
@@ -494,8 +500,7 @@ internal sealed class InMemoryStorage : IStorage
 			throw ExceptionFactory.DirectoryNotEmpty(source.FullPath);
 		}
 
-		using (_ = container.RequestAccess(
-			FileAccess.Write, FileShare.None))
+		using (container.RequestAccess(FileAccess.Write, FileShare.None))
 		{
 			if (children.Any() && recursive)
 			{

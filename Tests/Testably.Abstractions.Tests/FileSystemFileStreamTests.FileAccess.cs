@@ -169,7 +169,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 	public void FileAccess_ReadWhileWriteLockActive_ShouldThrowIOException(
 		string path, string contents)
 	{
-		FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Create);
+		using FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Create);
 
 		byte[] bytes = Encoding.UTF8.GetBytes(contents);
 		stream.Write(bytes, 0, bytes.Length);
