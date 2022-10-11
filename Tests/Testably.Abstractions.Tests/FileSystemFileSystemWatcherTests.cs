@@ -7,7 +7,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	public TFileSystem FileSystem { get; }
 	public ITimeSystem TimeSystem { get; }
 
-	public FileSystemFileSystemWatcherTests(
+	protected FileSystemFileSystemWatcherTests(
 		TFileSystem fileSystem,
 		ITimeSystem timeSystem)
 	{
