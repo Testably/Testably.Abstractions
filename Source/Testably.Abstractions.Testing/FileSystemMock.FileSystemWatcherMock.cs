@@ -106,7 +106,7 @@ public sealed partial class FileSystemMock
 			}
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Dispose" />
+		/// <inheritdoc cref="IDisposable.Dispose()" />
 		public void Dispose()
 			=> Stop();
 
@@ -133,10 +133,31 @@ public sealed partial class FileSystemMock
 		{
 			if (MatchesFilter(item))
 			{
+				if (item.Type.HasFlag(ChangeTypes.Created))
+				{
+					Deleted?.Invoke(this,
+						new FileSystemEventArgs(WatcherChangeTypes.Created,
+							_fileSystem.Path.GetDirectoryName(item.Path) ?? "",
+							_fileSystem.Path.GetFileName(item.Path)));
+				}
 				if (item.Type.HasFlag(ChangeTypes.Deleted))
 				{
 					Deleted?.Invoke(this,
 						new FileSystemEventArgs(WatcherChangeTypes.Deleted,
+							_fileSystem.Path.GetDirectoryName(item.Path) ?? "",
+							_fileSystem.Path.GetFileName(item.Path)));
+				}
+				if (item.Type.HasFlag(ChangeTypes.Modified))
+				{
+					Deleted?.Invoke(this,
+						new FileSystemEventArgs(WatcherChangeTypes.Changed,
+							_fileSystem.Path.GetDirectoryName(item.Path) ?? "",
+							_fileSystem.Path.GetFileName(item.Path)));
+				}
+				if (item.Type.HasFlag(ChangeTypes.Renamed))
+				{
+					Deleted?.Invoke(this,
+						new FileSystemEventArgs(WatcherChangeTypes.Renamed,
 							_fileSystem.Path.GetDirectoryName(item.Path) ?? "",
 							_fileSystem.Path.GetFileName(item.Path)));
 				}
