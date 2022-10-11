@@ -198,7 +198,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Parent))]
 	public void Parent_Root_ShouldBeNull()
 	{
-		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("".PrefixRoot());
+		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(FileTestHelper.RootDrive());
 
 		sut.Parent.Should().BeNull();
 	}
@@ -208,7 +208,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Root))]
 	public void Root_ShouldExist(string path)
 	{
-		string expectedRoot = string.Empty.PrefixRoot();
+		string expectedRoot = FileTestHelper.RootDrive();
 		IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
 
 		result.Root.Exists.Should().BeTrue();

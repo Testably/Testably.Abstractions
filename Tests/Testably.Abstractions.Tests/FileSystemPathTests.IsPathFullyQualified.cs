@@ -11,7 +11,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	public void IsPathFullyQualified_PrefixedRoot_ShouldReturnTrue(
 		string directory)
 	{
-		string path = directory.PrefixRoot();
+		string path = FileTestHelper.RootDrive(directory);
 		bool result = FileSystem.Path.IsPathFullyQualified(path);
 
 		result.Should().BeTrue();
@@ -35,7 +35,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	public void IsPathFullyQualified_Span_PrefixedRoot_ShouldReturnTrue(
 		string directory)
 	{
-		string path = directory.PrefixRoot();
+		string path = FileTestHelper.RootDrive(directory);
 		bool result = FileSystem.Path.IsPathFullyQualified(path.AsSpan());
 
 		result.Should().BeTrue();

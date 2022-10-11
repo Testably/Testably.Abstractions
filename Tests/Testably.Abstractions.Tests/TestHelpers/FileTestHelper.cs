@@ -1,4 +1,5 @@
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Tests.TestHelpers;
 
@@ -61,5 +62,15 @@ public static class FileTestHelper
 		}
 
 		return fileShare;
+	}
+
+	public static string RootDrive(string path = "", char driveLetter = 'C')
+	{
+		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+		{
+			return $"{driveLetter}:\\{path}";
+		}
+
+		return "/" + path;
 	}
 }

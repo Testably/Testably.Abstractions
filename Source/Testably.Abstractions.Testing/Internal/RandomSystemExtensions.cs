@@ -1,9 +1,9 @@
-﻿namespace Testably.Abstractions.Testing;
+﻿namespace Testably.Abstractions.Testing.Internal;
 
 /// <summary>
 ///     Extension methods for <see cref="IRandomSystem" /> to generate test data.
 /// </summary>
-public static class RandomSystemExtensions
+internal static class RandomSystemExtensions
 {
 	private static readonly string[] FileExtensions =
 	{

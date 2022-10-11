@@ -1,7 +1,8 @@
 using System.IO;
 using System.Runtime.InteropServices;
+using Testably.Abstractions.Testing.Internal;
 
-namespace Testably.Abstractions.Testing.Tests;
+namespace Testably.Abstractions.Testing.Tests.Internal;
 
 public class FilePlatformIndependenceExtensionsTests
 {

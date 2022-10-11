@@ -3,13 +3,13 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
-namespace Testably.Abstractions.Testing;
+namespace Testably.Abstractions.Testing.Internal;
 
 /// <summary>
 ///     Provides extension methods to simplify writing platform independent tests.
 /// </summary>
 [ExcludeFromCodeCoverage]
-public static class FilePlatformIndependenceExtensions
+internal static class FilePlatformIndependenceExtensions
 {
 	private static readonly Regex PathTransformRegex = new(@"^[a-zA-Z]:(?<path>.*)$");
 
