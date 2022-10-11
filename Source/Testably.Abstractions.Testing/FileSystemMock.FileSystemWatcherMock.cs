@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
 
@@ -12,6 +13,7 @@ public sealed partial class FileSystemMock
 	{
 		private readonly FileSystemMock _fileSystem;
 		private readonly List<string> _filters = new();
+		private string _path = string.Empty;
 
 		private FileSystemWatcherMock(FileSystemMock fileSystem)
 		{
@@ -72,9 +74,16 @@ public sealed partial class FileSystemMock
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Path" />
 		public string Path
 		{
-			get;
-			set;
-		} = string.Empty;
+			get => _path;
+			set
+			{
+				if (!_fileSystem.Directory.Exists(value))
+				{
+					throw ExceptionFactory.DirectoryNameDoesNotExist(value);
+				}
+				_path = value;
+			}
+		}
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Dispose" />
 		public void Dispose()

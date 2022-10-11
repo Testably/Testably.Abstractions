@@ -220,6 +220,28 @@ public static class FileSystemTests
 	}
 
 	/// <summary>
+	///     Tests for methods in <see cref="IFileSystem.IFileSystemWatcher" /> in <see cref="IFileSystem" />.
+	/// </summary>
+	public class FileSystemWatcher : TestabilityTraitAttribute
+	{
+		public FileSystemWatcher(string? method = null) : base(nameof(IFileSystem),
+			nameof(IFileSystem.IFileSystemWatcher), method ?? " (other) ")
+		{
+		}
+	}
+
+	/// <summary>
+	///     Tests for methods in <see cref="IFileSystem.IFileSystemWatcherFactory" /> in <see cref="IFileSystem" />.
+	/// </summary>
+	public class FileSystemWatcherFactory : TestabilityTraitAttribute
+	{
+		public FileSystemWatcherFactory(string? method = null) : base(nameof(IFileSystem),
+			nameof(IFileSystem.IFileSystemWatcherFactory), method ?? " (other) ")
+		{
+		}
+	}
+
+	/// <summary>
 	///     Tests for methods in <see cref="FileSystemMock.IInterceptionHandler" /> in <see cref="FileSystemMock" />.
 	/// </summary>
 	public class Intercept : TestabilityTraitAttribute
