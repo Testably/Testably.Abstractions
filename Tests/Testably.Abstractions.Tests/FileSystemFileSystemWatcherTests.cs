@@ -1,6 +1,6 @@
 namespace Testably.Abstractions.Tests;
 
-public abstract class FileSystemFileSystemWatcherTests<TFileSystem>
+public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	public abstract string BasePath { get; }

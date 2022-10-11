@@ -47,6 +47,7 @@ public sealed partial class FileSystemMock
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcherFactory.Wrap(FileSystemWatcher)" />
 		[return: NotNullIfNotNull("fileSystemWatcher")]
+		// ReSharper disable once ReturnTypeCanBeNotNullable
 		public IFileSystem.IFileSystemWatcher? Wrap(FileSystemWatcher? fileSystemWatcher)
 			=> throw new NotSupportedException(
 				"You cannot wrap an existing FileSystemWatcher in the FileSystemMock instance!");

@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
@@ -11,6 +15,10 @@ public sealed partial class FileSystemMock
 	/// </summary>
 	public sealed class FileSystemWatcherMock : IFileSystem.IFileSystemWatcher
 	{
+		private CancellationTokenSource? _cancellationTokenSource;
+		private IDisposable? _changeHandler;
+		private readonly BlockingCollection<ChangeDescription> _changes = new();
+		private bool _enableRaisingEvents;
 		private readonly FileSystemMock _fileSystem;
 		private readonly List<string> _filters = new();
 		private string _path = string.Empty;
@@ -25,8 +33,19 @@ public sealed partial class FileSystemMock
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.EnableRaisingEvents" />
 		public bool EnableRaisingEvents
 		{
-			get;
-			set;
+			get => _enableRaisingEvents;
+			set
+			{
+				_enableRaisingEvents = value;
+				if (_enableRaisingEvents)
+				{
+					Start();
+				}
+				else
+				{
+					Stop();
+				}
+			}
 		}
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
@@ -81,14 +100,76 @@ public sealed partial class FileSystemMock
 				{
 					throw ExceptionFactory.DirectoryNameDoesNotExist(value);
 				}
+
 				_path = value;
 			}
 		}
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Dispose" />
 		public void Dispose()
+			=> Stop();
+
+		#endregion
+
+		internal static FileSystemWatcherMock New(FileSystemMock fileSystem)
+			=> new(fileSystem);
+
+		private bool MatchesFilter(ChangeDescription changeDescription)
 		{
-			//Stop listening
+			if (!EnumerationOptionsHelper.MatchesPattern(
+				EnumerationOptionsHelper.Compatible,
+				_fileSystem.Path.GetFileName(changeDescription.Path),
+				Filter))
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		private void NotifyChange(ChangeDescription item)
+		{
+			if (MatchesFilter(item))
+			{
+				if (item.Type.HasFlag(ChangeTypes.Deleted))
+				{
+					Deleted?.Invoke(this,
+						new FileSystemEventArgs(WatcherChangeTypes.Deleted,
+							_fileSystem.Path.GetDirectoryName(item.Path) ?? "",
+							_fileSystem.Path.GetFileName(item.Path)));
+				}
+			}
+		}
+
+		private void Start()
+		{
+			Stop();
+			_cancellationTokenSource = new CancellationTokenSource();
+			_changeHandler = _fileSystem.Notify.OnChange(c =>
+			{
+				if (!_changes.TryAdd(c, 100))
+				{
+					Error?.Invoke(this, new ErrorEventArgs(new TimeoutException("TODO")));
+				}
+			});
+			CancellationToken token = _cancellationTokenSource.Token;
+			Task.Factory.StartNew(() =>
+			{
+				while (!token.IsCancellationRequested)
+				{
+					if (_changes.TryTake(out ChangeDescription? c, Timeout.Infinite,
+						token))
+					{
+						NotifyChange(c);
+					}
+				}
+			}, TaskCreationOptions.LongRunning);
+		}
+
+		private void Stop()
+		{
+			_cancellationTokenSource?.Cancel();
+			_changeHandler?.Dispose();
 		}
 
 #pragma warning disable CS0067 //TODO: Should be used and re-enabled
@@ -107,12 +188,5 @@ public sealed partial class FileSystemMock
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Renamed" />
 		public event RenamedEventHandler? Renamed;
 #pragma warning restore CS0067
-
-		#endregion
-
-		internal static FileSystemWatcherMock New(FileSystemMock fileSystem)
-		{
-			return new FileSystemWatcherMock(fileSystem);
-		}
 	}
 }

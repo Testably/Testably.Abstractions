@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
 
@@ -24,11 +25,11 @@ public sealed partial class FileSystemMock
 		/// </summary>
 		public ChangeTypes Type { get; }
 
-		internal ChangeDescription(string path,
+		internal ChangeDescription(IStorageLocation location,
 		                           ChangeTypes type,
 		                           NotifyFilters notifyFilters)
 		{
-			Path = path;
+			Path = location.FullPath;
 			Type = type;
 			NotifyFilters = notifyFilters;
 		}
