@@ -74,6 +74,15 @@ public abstract class FileSystemTests<TFileSystem>
 
 	[SkippableFact]
 	[FileSystemTests.ExtensionPoint]
+	public void FileSystemWatcherFactory_ShouldSetExtensionPoint()
+	{
+		IFileSystem result = FileSystem.FileSystemWatcher.FileSystem;
+
+		result.Should().Be(FileSystem);
+	}
+
+	[SkippableFact]
+	[FileSystemTests.ExtensionPoint]
 	public void Path_ShouldSetExtensionPoint()
 	{
 		IFileSystem result = FileSystem.Path.FileSystem;
@@ -215,6 +224,28 @@ public static class FileSystemTests
 	{
 		public FileSystemInfo(string? method = null) : base(nameof(IFileSystem),
 			nameof(IFileSystem.IFileSystemInfo), method ?? " (other) ")
+		{
+		}
+	}
+
+	/// <summary>
+	///     Tests for methods in <see cref="IFileSystem.IFileSystemWatcher" /> in <see cref="IFileSystem" />.
+	/// </summary>
+	public class FileSystemWatcher : TestabilityTraitAttribute
+	{
+		public FileSystemWatcher(string? method = null) : base(nameof(IFileSystem),
+			nameof(IFileSystem.IFileSystemWatcher), method ?? " (other) ")
+		{
+		}
+	}
+
+	/// <summary>
+	///     Tests for methods in <see cref="IFileSystem.IFileSystemWatcherFactory" /> in <see cref="IFileSystem" />.
+	/// </summary>
+	public class FileSystemWatcherFactory : TestabilityTraitAttribute
+	{
+		public FileSystemWatcherFactory(string? method = null) : base(nameof(IFileSystem),
+			nameof(IFileSystem.IFileSystemWatcherFactory), method ?? " (other) ")
 		{
 		}
 	}

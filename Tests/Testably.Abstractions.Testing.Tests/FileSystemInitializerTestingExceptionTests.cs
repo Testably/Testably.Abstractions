@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Testably.Abstractions.Testing.Tests;
@@ -9,6 +7,7 @@ public class FileSystemInitializerTestingExceptionTests
 {
 	[Theory]
 	[AutoData]
+	[Trait(nameof(Testing), nameof(FileSystemInitializer.TestingException))]
 	public void
 		TestingException_SerializationAndDeserialization_ShouldKeepMessageAndInnerException(
 			string message, Exception innerException)

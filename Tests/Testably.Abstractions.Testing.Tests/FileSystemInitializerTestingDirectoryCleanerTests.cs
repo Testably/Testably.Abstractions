@@ -13,7 +13,8 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 
 	[SkippableTheory]
 	[AutoData]
-	public void Dispose_PermanentError_ShouldNotThrowException(
+	[Trait(nameof(Testing), nameof(FileSystemInitializer.IDirectoryCleaner))]
+	public void Dispose_PermanentFailure_ShouldNotThrowException(
 		Exception exception)
 	{
 		FileSystemMock sut = new();
@@ -50,8 +51,8 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 	}
 
 	[SkippableFact]
-	public void
-		Dispose_ShouldForceDeleteCurrentDirectory()
+	[Trait(nameof(Testing), nameof(FileSystemInitializer.IDirectoryCleaner))]
+	public void Dispose_ShouldForceDeleteCurrentDirectory()
 	{
 		FileSystemMock sut = new();
 		List<string> receivedLogs = new();
@@ -65,6 +66,7 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 	}
 
 	[SkippableFact]
+	[Trait(nameof(Testing), nameof(FileSystemInitializer.IDirectoryCleaner))]
 	public void Dispose_ShouldResetCurrentDirectory()
 	{
 		FileSystemMock sut = new();
@@ -77,8 +79,9 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 
 	[SkippableTheory]
 	[AutoData]
-	public void
-		Dispose_TemporaryError_ShouldRetryAgain(Exception exception)
+	[Trait(nameof(Testing), nameof(FileSystemInitializer.IDirectoryCleaner))]
+	public void Dispose_TemporaryFailure_ShouldRetryAgain(
+		Exception exception)
 	{
 		FileSystemMock sut = new();
 		FileSystemInitializer.IDirectoryCleaner directoryCleaner =
@@ -98,6 +101,7 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 	}
 
 	[SkippableFact]
+	[Trait(nameof(Testing), nameof(FileSystemInitializer.IDirectoryCleaner))]
 	public void InitializeBasePath_ShouldCreateDirectoryAndLogBasePath()
 	{
 		FileSystemMock sut = new();

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
 
@@ -9,6 +10,11 @@ public sealed partial class FileSystemMock
 	/// </summary>
 	public class ChangeDescription
 	{
+		/// <summary>
+		///     The name of the file or directory that changed.
+		/// </summary>
+		public string? Name { get; }
+
 		/// <summary>
 		///     The property changes affected by the change.
 		/// </summary>
@@ -24,11 +30,12 @@ public sealed partial class FileSystemMock
 		/// </summary>
 		public ChangeTypes Type { get; }
 
-		internal ChangeDescription(string path,
+		internal ChangeDescription(IStorageLocation location,
 		                           ChangeTypes type,
 		                           NotifyFilters notifyFilters)
 		{
-			Path = path;
+			Path = location.FullPath;
+			Name = location.FriendlyName;
 			Type = type;
 			NotifyFilters = notifyFilters;
 		}

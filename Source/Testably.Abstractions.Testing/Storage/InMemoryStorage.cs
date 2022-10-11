@@ -112,7 +112,7 @@ internal sealed class InMemoryStorage : IStorage
 
 		ChangeDescription fileSystemChange =
 			_fileSystem.ChangeHandler.NotifyPendingChange(
-				location.FullPath,
+				location,
 				changeType,
 				NotifyFilters.DirectoryName);
 		if (_containers.TryRemove(location, out IStorageContainer? removed))
@@ -250,7 +250,7 @@ internal sealed class InMemoryStorage : IStorage
 					using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
 					{
 						fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
-							location.FullPath,
+							location,
 							ChangeTypes.DirectoryCreated,
 							NotifyFilters.CreationTime);
 					}
@@ -260,7 +260,7 @@ internal sealed class InMemoryStorage : IStorage
 					using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
 					{
 						fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
-							location.FullPath,
+							location,
 							ChangeTypes.FileCreated,
 							NotifyFilters.CreationTime);
 					}
@@ -400,7 +400,7 @@ internal sealed class InMemoryStorage : IStorage
 				using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
 				{
 					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
-						location.FullPath,
+						location,
 						ChangeTypes.FileCreated,
 						NotifyFilters.CreationTime);
 				}
@@ -459,7 +459,7 @@ internal sealed class InMemoryStorage : IStorage
 							FileShare.ReadWrite));
 						fileSystemChange =
 							fileSystem.ChangeHandler.NotifyPendingChange(
-								parentPath,
+								parentLocation,
 								ChangeTypes.DirectoryCreated,
 								NotifyFilters.CreationTime);
 						return container;

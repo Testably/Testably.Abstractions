@@ -7,6 +7,7 @@ namespace Testably.Abstractions.Testing.Tests.Internal;
 public class PathHelperTests
 {
 	[Fact]
+	[Trait(nameof(Testing), nameof(PathHelper))]
 	public void RemoveLeadingDot_MultipleLocalDirectories_ShouldBeRemoved()
 	{
 		string path = Path.Combine(".", ".", ".", "foo");
@@ -17,6 +18,7 @@ public class PathHelperTests
 	}
 
 	[Fact]
+	[Trait(nameof(Testing), nameof(PathHelper))]
 	public void
 		ThrowCommonExceptionsIfPathIsInvalid_StartWithNull_ShouldThrowArgumentException()
 	{
@@ -33,6 +35,7 @@ public class PathHelperTests
 
 	[Theory]
 	[AutoData]
+	[Trait(nameof(Testing), nameof(PathHelper))]
 	public void ThrowCommonExceptionsIfPathIsInvalid_WithInvalidCharacters(
 		char[] invalidChars)
 	{

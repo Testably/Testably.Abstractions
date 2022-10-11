@@ -6,6 +6,7 @@ public class FileSystemExtensionsTests
 {
 	[Theory]
 	[AutoData]
+	[Trait(nameof(Testing), nameof(FileSystemExtensions))]
 	public void GetMoveLocation_LocationNotUnderSource_ShouldThrowNotSupportedException(
 		string location, string source, string destination)
 	{

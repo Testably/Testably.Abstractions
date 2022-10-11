@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
 
@@ -54,11 +55,11 @@ public sealed partial class FileSystemMock
 			}
 		}
 
-		internal ChangeDescription NotifyPendingChange(string path,
+		internal ChangeDescription NotifyPendingChange(IStorageLocation location,
 		                                               ChangeTypes changeType,
 		                                               NotifyFilters notifyFilters)
 		{
-			ChangeDescription fileSystemChange = new(path, changeType, notifyFilters);
+			ChangeDescription fileSystemChange = new(location, changeType, notifyFilters);
 			_changeOccurringCallbacks.InvokeCallbacks(fileSystemChange);
 			return fileSystemChange;
 		}

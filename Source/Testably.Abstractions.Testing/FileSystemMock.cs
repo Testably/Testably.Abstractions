@@ -59,6 +59,7 @@ public sealed partial class FileSystemMock : IFileSystem
 		DriveInfo = new DriveInfoFactoryMock(this);
 		FileInfo = new FileInfoFactoryMock(this);
 		FileStream = new FileStreamFactoryMock(this);
+		FileSystemWatcher = new FileSystemWatcherFactoryMock(this);
 	}
 
 	#region IFileSystem Members
@@ -82,6 +83,9 @@ public sealed partial class FileSystemMock : IFileSystem
 
 	/// <inheritdoc cref="IFileSystem.FileStream" />
 	public IFileSystem.IFileStreamFactory FileStream { get; }
+
+	/// <inheritdoc cref="IFileSystem.FileSystemWatcher" />
+	public IFileSystem.IFileSystemWatcherFactory FileSystemWatcher { get; }
 
 	/// <inheritdoc cref="IFileSystem.Path" />
 	public IFileSystem.IPath Path
