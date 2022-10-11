@@ -64,7 +64,6 @@ public static partial class FileSystemInitializer
 			catch (Exception ex)
 			{
 				_logger?.Invoke($"Could not clean up '{BasePath}' because: {ex}");
-				throw;
 			}
 		}
 

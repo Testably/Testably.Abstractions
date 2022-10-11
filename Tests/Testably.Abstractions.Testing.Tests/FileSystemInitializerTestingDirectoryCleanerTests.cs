@@ -7,8 +7,8 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 {
 	[Theory]
 	[AutoData]
-	public void
-		Dispose_PermanentError_ShouldThrowException(Exception exception)
+	public void Dispose_PermanentError_ShouldNotThrowException(
+		Exception exception)
 	{
 		FileSystemMock sut = new();
 		List<string> receivedLogs = new();
@@ -28,7 +28,7 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 			directoryCleaner.Dispose();
 		});
 
-		receivedException.Should().Be(exception);
+		receivedException.Should().BeNull();
 		exceptionCount.Should().BeGreaterThan(10);
 		foreach (string retryMessage in Enumerable
 		   .Range(1, 10)
