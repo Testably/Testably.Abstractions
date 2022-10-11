@@ -6,7 +6,7 @@ namespace Testably.Abstractions;
 public partial interface IFileSystem
 {
 	/// <summary>
-	///     Factory for abstracting creation of <see cref="System.IO.DriveInfo" />.
+	///     Factory for abstracting the creation of <see cref="System.IO.DriveInfo" />.
 	/// </summary>
 	public interface IDriveInfoFactory : IFileSystemExtensionPoint
 	{

@@ -35,6 +35,10 @@ public sealed partial class FileSystem : IFileSystem
 	public IFileStreamFactory FileStream
 		=> new FileStreamFactory(this);
 
+	/// <inheritdoc cref="IFileSystem.FileSystemWatcher" />
+	public IFileSystemWatcherFactory FileSystemWatcher
+		=> new FileSystemWatcherFactory(this);
+
 	/// <inheritdoc cref="IFileSystem.Path" />
 	public IPath Path
 		=> new PathWrapper(this);

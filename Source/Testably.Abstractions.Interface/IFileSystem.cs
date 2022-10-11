@@ -36,6 +36,11 @@ public partial interface IFileSystem
 	IFileStreamFactory FileStream { get; }
 
 	/// <summary>
+	///     Factory for abstracting creation of <see cref="System.IO.FileSystemWatcher" />.
+	/// </summary>
+	IFileSystemWatcherFactory FileSystemWatcher { get; }
+
+	/// <summary>
 	///     Abstractions for <see cref="System.IO.Path" />.
 	/// </summary>
 	IPath Path { get; }
