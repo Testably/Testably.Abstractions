@@ -37,7 +37,6 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	[FileSystemTests.FileSystemWatcher("Trigger")]
 	public void CreateDirectory_ShouldTriggerCreatedEvent(string path)
 	{
-		FileSystem.Initialize();
 		FileSystemEventArgs? result = null;
 		ManualResetEventSlim ms = new();
 		IFileSystem.IFileSystemWatcher fileSystemWatcher =

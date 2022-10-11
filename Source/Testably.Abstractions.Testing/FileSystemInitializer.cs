@@ -40,6 +40,8 @@ public static partial class FileSystemInitializer
 	public static IDirectoryCleaner SetCurrentDirectoryToEmptyTemporaryDirectory(
 		this IFileSystem fileSystem, Action<string>? logger = null)
 	{
-		return new DirectoryCleaner(fileSystem, logger);
+		DirectoryCleaner directoryCleaner = new(fileSystem, logger);
+		fileSystem.Initialize();
+		return directoryCleaner;
 	}
 }

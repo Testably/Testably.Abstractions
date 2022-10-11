@@ -23,8 +23,6 @@ public class FileSystemMockNotificationTests
 		CreateDirectory_WithParentDirectories_ShouldTriggerNotificationForEachDirectory(
 			string path1, string path2, string path3)
 	{
-		FileSystem.Initialize();
-
 		string path = FileSystem.Path.Combine(path1, path2, path3);
 		int eventCount = 0;
 		FileSystem.Notify
