@@ -97,6 +97,11 @@ public sealed partial class FileSystemMock
 			get => _internalBufferSize;
 			set
 			{
+				if (value < 4096)
+				{
+					value = 4096;
+				}
+
 				_internalBufferSize = value;
 				Restart();
 			}

@@ -1,6 +1,3 @@
-using System.IO;
-using System.Threading;
-
 namespace Testably.Abstractions.Tests;
 
 public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
@@ -35,5 +32,21 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		exception.Should().BeOfType<ArgumentException>()
 		   .Which.Message.Should().Contain(path);
+	}
+
+	[SkippableTheory]
+	[InlineData(-1, 4096)]
+	[InlineData(4095, 4096)]
+	[InlineData(4097, 4097)]
+	[FileSystemTests.FileSystemWatcher(nameof(IFileSystem.IFileSystemWatcher.Path))]
+	public void InternalBufferSize_ShouldAtLeastHave4096Bytes(
+		int bytes, int expectedBytes)
+	{
+		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+
+		fileSystemWatcher.InternalBufferSize = bytes;
+
+		fileSystemWatcher.InternalBufferSize.Should().Be(expectedBytes);
 	}
 }
