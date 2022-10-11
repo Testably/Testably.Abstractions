@@ -78,7 +78,8 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 	[FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.New))]
 	public void New_DefaultDrive_ShouldBeFixed()
 	{
-		IFileSystem.IDriveInfo result = FileSystem.DriveInfo.New(FileTestHelper.RootDrive());
+		IFileSystem.IDriveInfo result =
+			FileSystem.DriveInfo.New(FileTestHelper.RootDrive());
 
 		result.AvailableFreeSpace.Should().BeGreaterThan(0);
 		result.DriveFormat.Should().NotBeNull();

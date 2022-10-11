@@ -42,6 +42,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	public void InternalBufferSize_ShouldAtLeastHave4096Bytes(
 		int bytes, int expectedBytes)
 	{
+		FileSystem.Initialize();
 		IFileSystem.IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 

@@ -40,7 +40,8 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	[AutoData]
 	[FileSystemTests.FileSystemWatcher(
 		nameof(IFileSystem.IFileSystemWatcher.Filter))]
-	public void Filters_ShouldMatchAnyOfTheSpecifiedFilters(string[] filteredPaths, string[] otherPaths)
+	public void Filters_ShouldMatchAnyOfTheSpecifiedFilters(
+		string[] filteredPaths, string[] otherPaths)
 	{
 		foreach (string path in otherPaths.Concat(filteredPaths))
 		{

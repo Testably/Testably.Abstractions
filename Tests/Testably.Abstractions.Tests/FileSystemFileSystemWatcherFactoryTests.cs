@@ -20,7 +20,8 @@ public abstract class FileSystemFileSystemWatcherFactoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.FileSystemWatcherFactory(nameof(IFileSystem.IFileSystemWatcherFactory.New))]
+	[FileSystemTests.FileSystemWatcherFactory(nameof(IFileSystem.IFileSystemWatcherFactory
+	   .New))]
 	public void New_ShouldInitializeWithDefaultValues()
 	{
 		IFileSystem.IFileSystemWatcher result =
@@ -34,7 +35,9 @@ public abstract class FileSystemFileSystemWatcherFactoryTests<TFileSystem>
 #endif
 		result.IncludeSubdirectories.Should().BeFalse();
 		result.InternalBufferSize.Should().Be(8192);
-		result.NotifyFilter.Should().Be(NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite);
+		result.NotifyFilter.Should().Be(NotifyFilters.FileName |
+		                                NotifyFilters.DirectoryName |
+		                                NotifyFilters.LastWrite);
 		result.EnableRaisingEvents.Should().BeFalse();
 	}
 }

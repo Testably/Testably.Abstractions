@@ -9,7 +9,8 @@ public static partial class RealFileSystem
 	// ReSharper disable once UnusedMember.Global
 	[Collection(nameof(RealFileSystem))]
 	[SystemTest(nameof(RealFileSystem))]
-	public sealed class FileSystemWatcherTests : FileSystemFileSystemWatcherTests<FileSystem>,
+	public sealed class FileSystemWatcherTests :
+		FileSystemFileSystemWatcherTests<FileSystem>,
 		IDisposable
 	{
 		/// <inheritdoc cref="FileSystemFileSystemWatcherTests{TFileSystem}.BasePath" />

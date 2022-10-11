@@ -14,7 +14,7 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 	[SkippableTheory]
 	[AutoData]
 	[Trait(nameof(Testing), nameof(FileSystemInitializer.IDirectoryCleaner))]
-	public void Dispose_PermanentError_ShouldNotThrowException(
+	public void Dispose_PermanentFailure_ShouldNotThrowException(
 		Exception exception)
 	{
 		FileSystemMock sut = new();
@@ -80,7 +80,7 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 	[SkippableTheory]
 	[AutoData]
 	[Trait(nameof(Testing), nameof(FileSystemInitializer.IDirectoryCleaner))]
-	public void Dispose_TemporaryError_ShouldRetryAgain(
+	public void Dispose_TemporaryFailure_ShouldRetryAgain(
 		Exception exception)
 	{
 		FileSystemMock sut = new();

@@ -16,6 +16,15 @@ public sealed partial class FileSystemMock
 	/// </summary>
 	public sealed class FileSystemWatcherMock : IFileSystem.IFileSystemWatcher
 	{
+		/// <summary>
+		///     Simulated bytes pre message to calculate the size of the blocking collection relative to the
+		///     <see cref="InternalBufferSize" />.
+		/// </summary>
+		private const int BytesPerMessage = 128;
+
+		private static string DefaultFilter
+			=> Framework.IsNetFramework ? "*.*" : "*";
+
 		private CancellationTokenSource _cancellationTokenSource;
 		private IDisposable? _changeHandler;
 		private BlockingCollection<ChangeDescription> _changes;
@@ -24,12 +33,6 @@ public sealed partial class FileSystemMock
 		private readonly List<string> _filters = new();
 		private int _internalBufferSize = 8192;
 		private string _path = string.Empty;
-
-		/// <summary>
-		///     Simulated bytes pre message to calculate the size of the blocking collection relative to the
-		///     <see cref="InternalBufferSize" />.
-		/// </summary>
-		private const int BytesPerMessage = 128;
 
 		private FileSystemWatcherMock(FileSystemMock fileSystem)
 		{
@@ -69,7 +72,7 @@ public sealed partial class FileSystemMock
 		public string Filter
 		{
 			get => _filters.Count == 0
-				? Framework.IsNetFramework ? "*.*" : "*"
+				? DefaultFilter
 				: _filters[0];
 			set
 			{

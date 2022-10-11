@@ -29,7 +29,7 @@ public static partial class FileSystemInitializer
 		/// <inheritdoc cref="IDisposable.Dispose()" />
 		public void Dispose()
 		{
-			var timeSystem = _fileSystem is FileSystemMock fileSystemMock
+			ITimeSystem timeSystem = _fileSystem is FileSystemMock fileSystemMock
 				? fileSystemMock.TimeSystem
 				: new TimeSystem();
 			try
