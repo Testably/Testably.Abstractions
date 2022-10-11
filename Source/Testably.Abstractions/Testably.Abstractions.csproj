@@ -6,43 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Update="IFileSystem.*.cs">
-      <DependentUpon>IFileSystem.cs</DependentUpon>
-    </Compile>
+    <ProjectReference Include="..\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="FileSystem.*.cs">
       <DependentUpon>FileSystem.cs</DependentUpon>
-    </Compile>
-    <Compile Update="IRandomSystem.*.cs">
-      <DependentUpon>IRandomSystem.cs</DependentUpon>
     </Compile>
     <Compile Update="RandomSystem.*.cs">
       <DependentUpon>RandomSystem.cs</DependentUpon>
     </Compile>
-    <Compile Update="ITimeSystem.*.cs">
-      <DependentUpon>ITimeSystem.cs</DependentUpon>
-    </Compile>
     <Compile Update="TimeSystem.*.cs">
-      <DependentUpon>TimeSystem.cs</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="IFileSystem.Directory.cs">
-      <DependentUpon>IFileSystem.cs</DependentUpon>
-    </Compile>
-    <Compile Update="IFileSystem.File.cs">
-      <DependentUpon>IFileSystem.cs</DependentUpon>
-    </Compile>
-    <Compile Update="IFileSystem.IDirectoryInfo.cs">
-      <DependentUpon>IFileSystem.cs</DependentUpon>
-    </Compile>
-    <Compile Update="TimeSystem.DateTime.cs">
-      <DependentUpon>TimeSystem.cs</DependentUpon>
-    </Compile>
-    <Compile Update="TimeSystem.Task.cs">
-      <DependentUpon>TimeSystem.cs</DependentUpon>
-    </Compile>
-    <Compile Update="TimeSystem.Thread.cs">
       <DependentUpon>TimeSystem.cs</DependentUpon>
     </Compile>
   </ItemGroup>
