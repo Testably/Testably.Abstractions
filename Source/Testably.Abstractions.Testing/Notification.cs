@@ -99,7 +99,6 @@ public static class Notification
 			{
 				_count = count;
 				_filter = filter;
-				_reset.Reset();
 				executeWhenWaiting?.Invoke();
 				if (!_reset.Wait(timeout))
 				{
