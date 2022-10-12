@@ -21,14 +21,7 @@ internal sealed class InMemoryLocation : IStorageLocation
 		FullPath = fullPath
 		   .NormalizePath()
 		   .TrimOnWindows();
-#if FEATURE_PATH_ADVANCED
-		_key = Path.TrimEndingDirectorySeparator(FullPath);
-#else
-			_key = FileFeatureExtensionMethods.TrimEndingDirectorySeparator(
-				FullPath,
-				Path.DirectorySeparatorChar,
-				Path.AltDirectorySeparatorChar);
-#endif
+		_key = NormalizeKey(FullPath);
 		if (Framework.IsNetFramework)
 		{
 			friendlyName = friendlyName.TrimOnWindows();
@@ -67,7 +60,8 @@ internal sealed class InMemoryLocation : IStorageLocation
 			return _key.Equals(location._key, StringComparisonMode);
 		}
 
-		return FullPath.Equals(other.FullPath, StringComparisonMode);
+		return NormalizeKey(FullPath)
+		   .Equals(NormalizeKey(other.FullPath), StringComparisonMode);
 	}
 
 	/// <inheritdoc cref="object.Equals(object?)" />
@@ -78,7 +72,7 @@ internal sealed class InMemoryLocation : IStorageLocation
 #if NETSTANDARD2_0
 	/// <inheritdoc cref="object.GetHashCode()" />
 	public override int GetHashCode()
-			=> _key.ToLowerInvariant().GetHashCode();
+		=> _key.ToLowerInvariant().GetHashCode();
 #else
 	/// <inheritdoc cref="object.GetHashCode()" />
 	public override int GetHashCode()
@@ -130,4 +124,16 @@ internal sealed class InMemoryLocation : IStorageLocation
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> FullPath;
+
+	private static string NormalizeKey(string fullPath)
+	{
+#if FEATURE_PATH_ADVANCED
+		return Path.TrimEndingDirectorySeparator(fullPath);
+#else
+		return FileFeatureExtensionMethods.TrimEndingDirectorySeparator(
+			fullPath,
+			Path.DirectorySeparatorChar,
+			Path.AltDirectorySeparatorChar);
+#endif
+	}
 }
