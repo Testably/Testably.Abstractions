@@ -41,6 +41,8 @@ public class Parity
 		typeof(FileSystemInfo).GetMethod(nameof(ToString))
 	});
 
+	public ParityCheck FileSystemWatcher = new();
+
 	public ParityCheck Guid = new();
 
 	public ParityCheck Path = new(excludeFields: new[]

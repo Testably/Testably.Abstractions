@@ -98,6 +98,19 @@ public abstract partial class ParityTests
 
 	[Fact]
 	[Trait(nameof(Testing), nameof(Parity))]
+	public void IFileSystemWatcherAndIFileSystemWatcherFactory_EnsureParityWith_FileSystemWatcher()
+	{
+		List<string> parityErrors = Parity.FileSystemWatcher
+		   .GetErrorsToInstanceType<IFileSystem.IFileSystemWatcher,
+				IFileSystem.IFileSystemWatcherFactory>(
+				typeof(FileSystemWatcher),
+				_testOutputHelper);
+
+		parityErrors.Should().BeEmpty();
+	}
+
+	[Fact]
+	[Trait(nameof(Testing), nameof(Parity))]
 	public void IGuid_EnsureParityWith_Guid()
 	{
 		List<string> parityErrors = Parity.Guid
