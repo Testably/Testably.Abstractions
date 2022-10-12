@@ -86,7 +86,7 @@ public class InMemoryContainerTests
 	[AutoData]
 	[Trait(nameof(Testing), nameof(InMemoryContainer))]
 	public void RequestAccess_WithoutDrive_ShouldThrowDirectoryNotFoundException(
-		string path, byte[] bytes)
+		string path)
 	{
 		FileSystemMock fileSystem = new();
 		IStorageLocation location = InMemoryLocation.New(null, path);

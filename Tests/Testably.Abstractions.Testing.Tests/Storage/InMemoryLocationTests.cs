@@ -8,22 +8,6 @@ public class InMemoryLocationTests
 	[Theory]
 	[AutoData]
 	[Trait(nameof(Testing), nameof(InMemoryLocation))]
-	public void Equals_ForDummyLocation_ShouldAlsoIgnoreTrailingDirectorySeparator(
-		string path)
-	{
-		string fullPath = Path.GetFullPath(path);
-		IStorageLocation location1 = InMemoryLocation.New(null, fullPath);
-		IStorageLocation location2 =
-			new DummyLocation(fullPath + Path.DirectorySeparatorChar);
-
-		bool result = location1.Equals(location2);
-
-		result.Should().BeTrue();
-	}
-
-	[Theory]
-	[AutoData]
-	[Trait(nameof(Testing), nameof(InMemoryLocation))]
 	public void Equals_ForDummyLocation_ShouldCompareFullPath(
 		string path)
 	{
@@ -50,20 +34,6 @@ public class InMemoryLocationTests
 		bool result = location1.Equals(location2);
 
 		result.Should().BeTrue();
-	}
-
-	[Theory]
-	[AutoData]
-	[Trait(nameof(Testing), nameof(InMemoryLocation))]
-	public void Equals_ForInMemoryLocation_ShouldIgnoreTrailingDirectorySeparator(
-		string path1, string path2)
-	{
-		IStorageLocation location1 = InMemoryLocation.New(null, Path.GetFullPath(path1));
-		IStorageLocation location2 = InMemoryLocation.New(null, Path.GetFullPath(path2));
-
-		bool result = location1.Equals(location2);
-
-		result.Should().BeFalse();
 	}
 
 	[Theory]
@@ -104,7 +74,7 @@ public class InMemoryLocationTests
 	{
 		IStorageLocation location = InMemoryLocation.New(null, path);
 
-		bool result = location.Equals(null);
+		bool result = location.Equals(null!);
 
 		result.Should().BeFalse();
 	}
