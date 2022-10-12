@@ -229,6 +229,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		   .Should().Be(creationTime.ToUniversalTime());
 		FileSystem.Directory.GetCreationTime(path)
 		   .Should().Be(creationTime);
+		FileSystem.Directory.GetCreationTime(path).Kind
+		   .Should().NotBe(DateTimeKind.Unspecified);
 	}
 
 	[SkippableTheory]
@@ -291,6 +293,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		   .Should().Be(creationTime);
 		FileSystem.Directory.GetCreationTime(path)
 		   .Should().Be(creationTime.ToLocalTime());
+		FileSystem.Directory.GetCreationTime(path).Kind
+		   .Should().NotBe(DateTimeKind.Unspecified);
 	}
 
 	[SkippableTheory]
@@ -347,6 +351,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		   .Should().Be(lastAccessTime.ToUniversalTime());
 		FileSystem.Directory.GetLastAccessTime(path)
 		   .Should().Be(lastAccessTime);
+		FileSystem.Directory.GetLastAccessTime(path).Kind
+		   .Should().NotBe(DateTimeKind.Unspecified);
 	}
 
 	[SkippableTheory]
@@ -403,6 +409,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		   .Should().Be(lastAccessTime);
 		FileSystem.Directory.GetLastAccessTime(path)
 		   .Should().Be(lastAccessTime.ToLocalTime());
+		FileSystem.Directory.GetLastAccessTime(path).Kind
+		   .Should().NotBe(DateTimeKind.Unspecified);
 	}
 
 	[SkippableTheory]
@@ -459,6 +467,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		   .Should().Be(lastWriteTime.ToUniversalTime());
 		FileSystem.Directory.GetLastWriteTime(path)
 		   .Should().Be(lastWriteTime);
+		FileSystem.Directory.GetLastWriteTime(path).Kind
+		   .Should().NotBe(DateTimeKind.Unspecified);
 	}
 
 	[SkippableTheory]
@@ -515,5 +525,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		   .Should().Be(lastWriteTime);
 		FileSystem.Directory.GetLastWriteTime(path)
 		   .Should().Be(lastWriteTime.ToLocalTime());
+		FileSystem.Directory.GetLastWriteTime(path).Kind
+		   .Should().NotBe(DateTimeKind.Unspecified);
 	}
 }
