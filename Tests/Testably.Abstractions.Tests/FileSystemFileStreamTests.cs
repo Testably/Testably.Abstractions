@@ -155,6 +155,23 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	[FileSystemTests.FileStream]
+	public void Flush_ShouldNotChangePosition(
+		string path, string contents)
+	{
+		FileSystem.File.WriteAllText(path, contents);
+
+		using FileSystemStream stream = FileSystem.File.OpenRead(path);
+		stream.ReadByte();
+		stream.Position.Should().Be(1);
+
+		stream.Flush();
+
+		stream.Position.Should().Be(1);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.FileStream]
 	public void Name_ShouldReturnFullPath(string path)
 	{
 		string expectedName = FileSystem.Path.GetFullPath(path);

@@ -150,12 +150,10 @@ public sealed partial class FileSystemMock
 
 		private void InitializeStream()
 		{
-			byte[] existingContents = _file.GetBytes();
-			bool keepExistingContents =
-				existingContents.Length > 0 &&
-				_mode != FileMode.Truncate && _mode != FileMode.Create;
-			if (keepExistingContents)
+			if (_mode != FileMode.Create &&
+			    _mode != FileMode.Truncate)
 			{
+				byte[] existingContents = _file.GetBytes();
 				_stream.Write(existingContents, 0, existingContents.Length);
 				_stream.Seek(0, _mode == FileMode.Append
 					? SeekOrigin.End
@@ -195,12 +193,6 @@ public sealed partial class FileSystemMock
 				{
 					throw ExceptionFactory.AppendAccessOnlyInWriteOnlyMode();
 				}
-			}
-
-			if (access.HasFlag(FileAccess.Read) &&
-			    mode == FileMode.Append)
-			{
-				throw ExceptionFactory.InvalidAccessCombination(mode, access);
 			}
 
 			if (!access.HasFlag(FileAccess.Write) &&
