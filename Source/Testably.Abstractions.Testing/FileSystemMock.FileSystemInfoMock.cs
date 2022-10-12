@@ -31,7 +31,7 @@ public sealed partial class FileSystemMock
 		private bool _isInitialized;
 		private IStorageContainer _container;
 
-		internal FileSystemInfoMock(FileSystemMock fileSystem, IStorageLocation location)
+		protected FileSystemInfoMock(FileSystemMock fileSystem, IStorageLocation location)
 		{
 			FileSystem = fileSystem;
 			Location = location;
@@ -190,18 +190,10 @@ public sealed partial class FileSystemMock
 #endif
 		public override string ToString()
 			=> Location.FriendlyName;
-
-		[return: NotNullIfNotNull("location")]
-		internal static FileSystemInfoMock? New(IStorageLocation? location,
+		
+		internal static FileSystemInfoMock New(IStorageLocation location,
 		                                        FileSystemMock fileSystem)
-		{
-			if (location == null)
-			{
-				return null;
-			}
-
-			return new FileSystemInfoMock(fileSystem, location);
-		}
+			=> new(fileSystem, location);
 
 		protected void RefreshInternal()
 		{
