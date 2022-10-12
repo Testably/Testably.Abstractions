@@ -36,7 +36,8 @@ public class TimeSystemMockTests
 		Exception? exception =
 			await Record.ExceptionAsync(() => timeSystem.Task.Delay(-2));
 
-		exception.Should().BeOfType<ArgumentOutOfRangeException>();
+		exception.Should().BeOfType<ArgumentOutOfRangeException>()
+		   .Which.ParamName.Should().Be("millisecondsDelay");
 	}
 
 	[Fact]
@@ -48,7 +49,8 @@ public class TimeSystemMockTests
 			await Record.ExceptionAsync(()
 				=> timeSystem.Task.Delay(TimeSpan.FromMilliseconds(-2)));
 
-		exception.Should().BeOfType<ArgumentOutOfRangeException>();
+		exception.Should().BeOfType<ArgumentOutOfRangeException>()
+		   .Which.ParamName.Should().Be("delay");
 	}
 
 	[Fact]

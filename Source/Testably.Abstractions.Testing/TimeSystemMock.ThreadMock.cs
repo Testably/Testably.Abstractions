@@ -24,14 +24,7 @@ public sealed partial class TimeSystemMock
 			=> _timeSystemMock;
 
 		public void Sleep(int millisecondsTimeout)
-		{
-			if (millisecondsTimeout < -1)
-			{
-				throw ExceptionFactory.ThreadSleepOutOfRange(nameof(millisecondsTimeout));
-			}
-
-			Sleep(TimeSpan.FromMilliseconds(millisecondsTimeout));
-		}
+			=> Sleep(TimeSpan.FromMilliseconds(millisecondsTimeout));
 
 		public void Sleep(TimeSpan timeout)
 		{
