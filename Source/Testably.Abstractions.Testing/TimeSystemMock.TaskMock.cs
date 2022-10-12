@@ -26,9 +26,7 @@ public sealed partial class TimeSystemMock
 			=> _timeSystemMock;
 
 		public Task Delay(int millisecondsDelay)
-		{
-			return Delay(millisecondsDelay, CancellationToken.None);
-		}
+			=> Delay(millisecondsDelay, CancellationToken.None);
 
 		public Task Delay(int millisecondsDelay, CancellationToken cancellationToken)
 		{
@@ -42,9 +40,7 @@ public sealed partial class TimeSystemMock
 		}
 
 		public Task Delay(TimeSpan delay)
-		{
-			return Delay(delay, CancellationToken.None);
-		}
+			=> Delay(delay, CancellationToken.None);
 
 		public Task Delay(TimeSpan delay, CancellationToken cancellationToken)
 		{

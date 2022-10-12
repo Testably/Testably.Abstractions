@@ -28,7 +28,7 @@ public sealed partial class RandomSystemMock
 			=> _guidGenerator.GetNext();
 
 		/// <inheritdoc cref="RandomSystemMock.IRandomProvider.GetRandom(int)" />
-		public IRandomSystem.IRandom GetRandom(int seed)
+		public IRandomSystem.IRandom GetRandom(int seed = SharedSeed)
 			=> _randomGenerator(seed);
 
 		#endregion

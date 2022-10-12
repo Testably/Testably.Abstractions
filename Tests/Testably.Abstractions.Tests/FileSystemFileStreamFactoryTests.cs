@@ -6,8 +6,6 @@ namespace Testably.Abstractions.Tests;
 public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	#region Test Setup
-
 	public abstract string BasePath { get; }
 	public TFileSystem FileSystem { get; }
 	public ITimeSystem TimeSystem { get; }
@@ -21,8 +19,6 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 
 		Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
 	}
-
-	#endregion
 
 	[SkippableTheory]
 	[AutoData]
@@ -66,6 +62,19 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	[FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
+	public void New_ExistingFileWithCreateMode_ShouldIgnoreContent(
+		string path)
+	{
+		FileSystem.File.WriteAllText(path, "foo");
+		FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Create);
+		stream.Dispose();
+
+		FileSystem.File.ReadAllText(path).Should().BeEmpty();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
 	public void New_ExistingFileWithCreateNewMode_ShouldThrowArgumentException(
 		string path)
 	{
@@ -77,6 +86,19 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 
 		exception.Should().BeOfType<IOException>()
 		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
+	public void New_ExistingFileWithTruncateMode_ShouldIgnoreContent(
+		string path)
+	{
+		FileSystem.File.WriteAllText(path, "foo");
+		FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Truncate);
+		stream.Dispose();
+
+		FileSystem.File.ReadAllText(path).Should().BeEmpty();
 	}
 
 	[SkippableTheory]
@@ -125,6 +147,21 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	[FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
+	public void New_MissingFileWithTruncateMode_ShouldIgnoreContent(
+		string path)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.FileStream.New(path, FileMode.Truncate);
+		});
+
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
 	public void New_NullPath_ShouldThrowArgumentNullException(FileMode mode)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -158,5 +195,18 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 			exception.Should().BeOfType<IOException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 		}
+	}
+
+	[SkippableTheory]
+	[InlineAutoData(false)]
+	[InlineAutoData(true)]
+	[FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
+	public void New_WithUseAsyncSet_ShouldSetProperty(bool useAsync, string path)
+	{
+		using FileSystemStream stream = FileSystem.FileStream.New(
+			path, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 1,
+			useAsync);
+
+		stream.IsAsync.Should().Be(useAsync);
 	}
 }

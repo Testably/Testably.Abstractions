@@ -97,6 +97,7 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 		string invalidDriveName)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
+
 		Exception? exception = Record.Exception(() =>
 		{
 			_ = FileSystem.DriveInfo.New(invalidDriveName);
@@ -145,6 +146,15 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 		IFileSystem.IDriveInfo result = FileSystem.DriveInfo.New(rootedPath);
 
 		result.Name.Should().Be($"{driveLetter}:\\");
+	}
+
+	[SkippableFact]
+	[FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.Wrap))]
+	public void Wrap_Null_ShouldReturnNull()
+	{
+		IFileSystem.IDriveInfo? result = FileSystem.DriveInfo.Wrap(null);
+
+		result.Should().BeNull();
 	}
 
 	[SkippableFact]

@@ -66,11 +66,10 @@ public class NotificationTests
 		TimeSystemMock timeSystem = new();
 		int receivedCount = 0;
 		ManualResetEventSlim ms = new();
-		Notification.IAwaitableCallback<TimeSpan> wait =
-			timeSystem.On.ThreadSleep(_ =>
-			{
-				receivedCount++;
-			}, t => t.TotalMilliseconds > 6);
+		timeSystem.On.ThreadSleep(_ =>
+		{
+			receivedCount++;
+		}, t => t.TotalMilliseconds > 6);
 
 		new Thread(() =>
 		{
@@ -154,6 +153,7 @@ public class NotificationTests
 	{
 		TimeSystemMock timeSystem = new();
 		int receivedMilliseconds = -1;
+		bool isExecuted = false;
 
 		timeSystem.On.ThreadSleep(t =>
 			{
@@ -162,9 +162,13 @@ public class NotificationTests
 			{
 				timeSystem.Thread.Sleep(milliseconds);
 			})
-		   .Wait();
+		   .Wait(executeWhenWaiting: () =>
+			{
+				isExecuted = true;
+			});
 
 		receivedMilliseconds.Should().Be(milliseconds);
+		isExecuted.Should().BeTrue();
 	}
 
 	[Theory]
@@ -175,6 +179,7 @@ public class NotificationTests
 	{
 		TimeSystemMock timeSystem = new();
 		int receivedMilliseconds = -1;
+		bool isExecuted = false;
 
 		string actualResult = timeSystem.On.ThreadSleep(t =>
 			{
@@ -184,9 +189,13 @@ public class NotificationTests
 				timeSystem.Thread.Sleep(milliseconds);
 				return result;
 			})
-		   .Wait();
+		   .Wait(executeWhenWaiting: () =>
+			{
+				isExecuted = true;
+			});
 
 		receivedMilliseconds.Should().Be(milliseconds);
 		actualResult.Should().Be(result);
+		isExecuted.Should().BeTrue();
 	}
 }

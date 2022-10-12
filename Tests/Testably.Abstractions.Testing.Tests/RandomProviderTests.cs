@@ -498,4 +498,40 @@ public class RandomProviderTests
 		results.Should().OnlyHaveUniqueItems();
 	}
 #endif
+
+	[Theory]
+	[AutoData]
+	[Trait(nameof(Testing), nameof(RandomProvider))]
+	public void NextBytes_WithoutByteGenerator_ShouldUseRealRandomValuesFromSeed(
+		int seed)
+	{
+		byte[] result = new byte[100];
+		Random random = new(seed);
+		byte[] expectedBytes = new byte[result.Length];
+		random.NextBytes(expectedBytes);
+		RandomSystemMock.IRandomProvider sut = RandomProvider.Generate(seed);
+
+		sut.GetRandom().NextBytes(result);
+
+		result.Should().BeEquivalentTo(expectedBytes);
+	}
+
+#if FEATURE_SPAN
+	[Theory]
+	[AutoData]
+	[Trait(nameof(Testing), nameof(RandomProvider))]
+	public void NextBytes_Span_WithoutByteGenerator_ShouldUseRealRandomValuesFromSeed(
+		int seed)
+	{
+		Span<byte> result = new byte[100];
+		Random random = new(seed);
+		byte[] expectedBytes = new byte[result.Length];
+		random.NextBytes(expectedBytes);
+		RandomSystemMock.IRandomProvider sut = RandomProvider.Generate(seed);
+
+		sut.GetRandom().NextBytes(result);
+
+		result.ToArray().Should().BeEquivalentTo(expectedBytes);
+	}
+#endif
 }
