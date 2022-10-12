@@ -17,6 +17,10 @@ public sealed partial class RandomSystemMock
 		/// <summary>
 		///     Creates the <see cref="IRandomSystem.IRandom" /> instance for the provided <paramref name="seed" />.
 		/// </summary>
-		IRandomSystem.IRandom GetRandom(int seed);
+		/// <param name="seed">
+		///     (optional) The seed used for the generated random instance.<br />
+		///     Defaults to the <see cref="Testing.RandomProvider.SharedSeed" />.
+		/// </param>
+		IRandomSystem.IRandom GetRandom(int seed = Testing.RandomProvider.SharedSeed);
 	}
 }
