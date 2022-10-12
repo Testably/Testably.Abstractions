@@ -13,7 +13,7 @@
     "reporters": [ "html", "progress", "cleartext" ],
     "mutation-level": "Advanced",
     "ignore-methods": [
-      "*Exception.ctor",
+      "ExceptionFactory.*",
       "ValidateDriveLetter" // Only tested under windows
     ]
   }
