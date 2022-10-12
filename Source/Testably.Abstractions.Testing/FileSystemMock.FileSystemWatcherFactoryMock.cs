@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Testably.Abstractions.Testing;
@@ -29,29 +28,50 @@ public sealed partial class FileSystemMock
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcherFactory.New(string)" />
 		public IFileSystem.IFileSystemWatcher New(string path)
 		{
-			FileSystemWatcherMock fileSystemWatcher =
+			FileSystemWatcherMock fileSystemWatcherMock =
 				FileSystemWatcherMock.New(_fileSystem);
-			fileSystemWatcher.Path = path;
-			return fileSystemWatcher;
+			fileSystemWatcherMock.Path = path;
+			return fileSystemWatcherMock;
 		}
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcherFactory.New(string, string)" />
 		public IFileSystem.IFileSystemWatcher New(string path, string filter)
 		{
-			FileSystemWatcherMock fileSystemWatcher =
+			FileSystemWatcherMock fileSystemWatcherMock =
 				FileSystemWatcherMock.New(_fileSystem);
-			fileSystemWatcher.Path = path;
-			fileSystemWatcher.Filter = filter;
-			return fileSystemWatcher;
+			fileSystemWatcherMock.Path = path;
+			fileSystemWatcherMock.Filter = filter;
+			return fileSystemWatcherMock;
 		}
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcherFactory.Wrap(FileSystemWatcher)" />
 		[return: NotNullIfNotNull("fileSystemWatcher")]
 		// ReSharper disable once ReturnTypeCanBeNotNullable
 		public IFileSystem.IFileSystemWatcher? Wrap(FileSystemWatcher? fileSystemWatcher)
-			=> throw new NotSupportedException(
-				"You cannot wrap an existing FileSystemWatcher in the FileSystemMock instance!");
+		{
+			if (fileSystemWatcher == null)
+			{
+				return null;
+			}
 
-		#endregion
+			FileSystemWatcherMock fileSystemWatcherMock =
+				FileSystemWatcherMock.New(_fileSystem);
+			fileSystemWatcherMock.Path = fileSystemWatcher.Path;
+#if FEATURE_FILESYSTEMWATCHER_ADVANCED
+			foreach (var filter in fileSystemWatcher.Filters)
+			{
+				fileSystemWatcherMock.Filters.Add(filter);
+			}
+#else
+			fileSystemWatcherMock.Filter = fileSystemWatcher.Filter;
+#endif
+			fileSystemWatcherMock.NotifyFilter = fileSystemWatcher.NotifyFilter;
+			fileSystemWatcherMock.IncludeSubdirectories = fileSystemWatcher.IncludeSubdirectories;
+			fileSystemWatcherMock.InternalBufferSize = fileSystemWatcher.InternalBufferSize;
+			fileSystemWatcherMock.EnableRaisingEvents = fileSystemWatcher.EnableRaisingEvents;
+			return fileSystemWatcherMock;
+		}
+
+#endregion
 	}
 }

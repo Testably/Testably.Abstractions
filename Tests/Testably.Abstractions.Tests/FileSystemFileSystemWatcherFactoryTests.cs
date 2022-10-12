@@ -20,8 +20,8 @@ public abstract class FileSystemFileSystemWatcherFactoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.FileSystemWatcherFactory(nameof(IFileSystem.IFileSystemWatcherFactory
-	   .New))]
+	[FileSystemTests.FileSystemWatcherFactory(
+		nameof(IFileSystem.IFileSystemWatcherFactory.New))]
 	public void New_ShouldInitializeWithDefaultValues()
 	{
 		IFileSystem.IFileSystemWatcher result =
@@ -39,5 +39,15 @@ public abstract class FileSystemFileSystemWatcherFactoryTests<TFileSystem>
 		                                NotifyFilters.DirectoryName |
 		                                NotifyFilters.LastWrite);
 		result.EnableRaisingEvents.Should().BeFalse();
+	}
+
+	[SkippableFact]
+	[FileSystemTests.FileSystemWatcherFactory(
+		nameof(IFileSystem.IFileSystemWatcherFactory.Wrap))]
+	public void Wrap_Null_ShouldReturnNull()
+	{
+		IFileSystem.IFileSystemWatcher? result = FileSystem.FileSystemWatcher.Wrap(null);
+
+		result.Should().BeNull();
 	}
 }
