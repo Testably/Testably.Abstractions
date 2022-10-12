@@ -125,7 +125,7 @@ internal sealed class InMemoryLocation : IStorageLocation
 	public override string ToString()
 		=> FullPath;
 
-	private string NormalizeKey(string fullPath)
+	private static string NormalizeKey(string fullPath)
 	{
 #if FEATURE_PATH_ADVANCED
 		return Path.TrimEndingDirectorySeparator(fullPath);
