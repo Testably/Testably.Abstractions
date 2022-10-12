@@ -122,6 +122,48 @@ public class NotificationTests
 
 	[Fact]
 	[Trait(nameof(Testing), nameof(Notification))]
+	public void AwaitableCallback_WaitedPreviously_ShouldWaitAgainForCallbackExecution()
+	{
+		int secondThreadMilliseconds = 42;
+		int firstThreadMilliseconds = secondThreadMilliseconds + 1;
+		ManualResetEventSlim ms = new();
+		TimeSystemMock timeSystem = new();
+		bool isCalledFromSecondThread = false;
+		ManualResetEventSlim listening = new();
+		Notification.IAwaitableCallback<TimeSpan> wait =
+			timeSystem.On
+			   .ThreadSleep(t =>
+				{
+					if (t.TotalMilliseconds.Equals(secondThreadMilliseconds))
+					{
+						isCalledFromSecondThread = true;
+					}
+				}).Execute(() => listening.Set());
+		new Thread(() =>
+		{
+			listening.Wait(1000);
+			timeSystem.Thread.Sleep(firstThreadMilliseconds);
+		}).Start();
+		wait.Wait();
+		listening.Reset();
+
+		new Thread(() =>
+		{
+			listening.Wait(1000);
+			if (!ms.IsSet)
+			{
+				// Should only trigger, if the second call to `Wait` still blocks
+				timeSystem.Thread.Sleep(secondThreadMilliseconds);
+			}
+		}).Start();
+
+		wait.Wait();
+		ms.Set();
+		isCalledFromSecondThread.Should().BeTrue();
+	}
+
+	[Fact]
+	[Trait(nameof(Testing), nameof(Notification))]
 	public void AwaitableCallback_TimeoutExpired_ShouldThrowTimeoutException()
 	{
 		TimeSystemMock timeSystem = new();
