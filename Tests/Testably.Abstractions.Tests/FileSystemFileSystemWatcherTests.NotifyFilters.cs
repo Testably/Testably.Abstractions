@@ -146,18 +146,18 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		fileSystemWatcher.NotifyFilter = NotifyFilters.CreationTime |
 		                                 NotifyFilters.DirectoryName |
 		                                 NotifyFilters.FileName;
+		if (!Test.RunsOnMac)
+		{
+			fileSystemWatcher.NotifyFilter |= NotifyFilters.CreationTime;
+		}
 		if (!Test.RunsOnLinux)
 		{
 			fileSystemWatcher.NotifyFilter |= NotifyFilters.Security;
 		}
-
 		if (!Test.RunsOnWindows)
 		{
 			fileSystemWatcher.NotifyFilter |= NotifyFilters.Attributes;
 		}
-		// Test for MAC
-		fileSystemWatcher.NotifyFilter = NotifyFilters.CreationTime |
-		                                 NotifyFilters.DirectoryName;
 
 		fileSystemWatcher.EnableRaisingEvents = true;
 
@@ -169,6 +169,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 	[SkippableTheory]
 	[InlineAutoData(NotifyFilters.Attributes)]
+	[InlineAutoData(NotifyFilters.CreationTime)]
 	[InlineAutoData(NotifyFilters.LastAccess)]
 	[InlineAutoData(NotifyFilters.LastWrite)]
 	[InlineAutoData(NotifyFilters.Security)]
@@ -182,6 +183,12 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		{
 			Skip.If(notifyFilter == NotifyFilters.Security,
 				"`Security` is only set on Linux");
+		}
+
+		if (!Test.RunsOnMac)
+		{
+			Skip.If(notifyFilter == NotifyFilters.CreationTime,
+				"`CreationTime` is only set on MAC");
 		}
 
 		if (Test.RunsOnWindows)
