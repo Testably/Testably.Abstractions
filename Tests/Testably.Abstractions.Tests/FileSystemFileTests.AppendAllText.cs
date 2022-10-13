@@ -45,6 +45,43 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllText))]
+	public void AppendAllText_ShouldUpdateLastAccessAndLastWriteTime(string path)
+	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
+		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
+		FileSystem.File.WriteAllText(path, "foo");
+		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
+		TimeSystem.Thread.Sleep(1500);
+		DateTime updateTime = TimeSystem.DateTime.UtcNow;
+
+		FileSystem.File.AppendAllText(path, "bar");
+
+		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
+		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(path);
+		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
+
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+			lastAccessTime.Should()
+			   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		}
+		else
+		{
+			lastAccessTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+		lastWriteTime.Should()
+		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+	}
+
+	[SkippableTheory]
 	[MemberAutoData(nameof(GetEncodingDifference))]
 	[FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllText))]
 	public void AppendAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(

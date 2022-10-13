@@ -65,13 +65,25 @@ internal sealed class InMemoryStorage : IStorage
 			if (_containers.TryAdd(destination, copiedContainer))
 			{
 				copiedContainer.WriteBytes(sourceContainer.GetBytes());
+				if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				{
+					sourceContainer.AdjustTimes(TimeAdjustments.LastAccessTime);
+				}
+				
 				copiedContainer.Attributes = sourceContainer.Attributes;
+				if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				{
+					copiedContainer.CreationTime.Set(
+						sourceContainer.CreationTime.Get(DateTimeKind.Local),
+						DateTimeKind.Local);
+				}
 				copiedContainer.LastWriteTime.Set(
 					sourceContainer.LastWriteTime.Get(DateTimeKind.Local),
 					DateTimeKind.Local);
 				copiedContainer.LastAccessTime.Set(
 					sourceContainer.LastAccessTime.Get(DateTimeKind.Local),
 					DateTimeKind.Local);
+				copiedContainer.AdjustTimes(TimeAdjustments.LastAccessTime);
 				return destination;
 			}
 

@@ -118,7 +118,14 @@ internal class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
 	public void AppendBytes(byte[] bytes)
 	{
+		TimeAdjustments timeAdjustment = TimeAdjustments.LastWriteTime;
+		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+		{
+			timeAdjustment |= TimeAdjustments.LastAccessTime;
+		}
+
 		WriteBytes(_bytes.Concat(bytes).ToArray());
+		this.AdjustTimes(timeAdjustment);
 	}
 
 	/// <inheritdoc cref="IStorageContainer.ClearBytes()" />
