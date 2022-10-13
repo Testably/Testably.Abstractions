@@ -22,11 +22,13 @@ internal class LockableContainer : IStorageContainer
 
 	private byte[] _bytes = Array.Empty<byte>();
 
-	public LockableContainer(FileSystemMock fileSystem)
+	public LockableContainer(FileSystemMock fileSystem,
+	                         ContainerTypes containerType =
+		                         ContainerTypes.DirectoryOrFile)
 	{
 		FileSystem = fileSystem;
 		TimeSystem = fileSystem.TimeSystem;
-		Type = ContainerTypes.DirectoryOrFile;
+		Type = containerType;
 	}
 
 	#region IStorageContainer Members
