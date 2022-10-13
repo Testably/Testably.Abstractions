@@ -148,13 +148,15 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		                                 NotifyFilters.FileName;
 		if (!Test.RunsOnLinux)
 		{
-			//fileSystemWatcher.NotifyFilter |= NotifyFilters.Security;
+			fileSystemWatcher.NotifyFilter |= NotifyFilters.Security;
 		}
 
 		if (!Test.RunsOnWindows)
 		{
-			//fileSystemWatcher.NotifyFilter |= NotifyFilters.Attributes;
+			fileSystemWatcher.NotifyFilter |= NotifyFilters.Attributes;
 		}
+		// Test for MAC
+		fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
 
 		fileSystemWatcher.EnableRaisingEvents = true;
 
