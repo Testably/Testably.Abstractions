@@ -111,8 +111,15 @@ public sealed partial class FileSystemMock
 		/// <inheritdoc cref="FileSystemStream.Read(byte[], int, int)" />
 		public override int Read(byte[] buffer, int offset, int count)
 		{
-			//TimeAdjustments.LastAccessTime
+			_file.AdjustTimes(TimeAdjustments.LastAccessTime);
 			return base.Read(buffer, offset, count);
+		}
+
+		/// <inheritdoc cref="FileSystemStream.ReadByte()" />
+		public override int ReadByte()
+		{
+			_file.AdjustTimes(TimeAdjustments.LastAccessTime);
+			return base.ReadByte();
 		}
 
 		/// <inheritdoc />
