@@ -81,6 +81,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 			FileSystem.File.ReadAllText(path.Substring(0, 3) + "*" + path.Substring(8));
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>();
+		exception.Should().NotBeNull();
 	}
 }
