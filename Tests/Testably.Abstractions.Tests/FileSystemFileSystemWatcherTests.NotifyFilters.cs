@@ -149,14 +149,14 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		{
 			fileSystemWatcher.NotifyFilter |= NotifyFilters.CreationTime;
 		}
-		if (!Test.RunsOnLinux)
-		{
-			fileSystemWatcher.NotifyFilter |= NotifyFilters.Security;
-		}
-		if (!Test.RunsOnWindows)
-		{
-			fileSystemWatcher.NotifyFilter |= NotifyFilters.Attributes;
-		}
+		//if (!Test.RunsOnLinux)
+		//{
+		//	fileSystemWatcher.NotifyFilter |= NotifyFilters.Security;
+		//}
+		//if (!Test.RunsOnWindows)
+		//{
+		//	fileSystemWatcher.NotifyFilter |= NotifyFilters.Attributes;
+		//}
 
 		fileSystemWatcher.EnableRaisingEvents = true;
 
