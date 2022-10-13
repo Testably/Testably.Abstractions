@@ -27,10 +27,10 @@ internal interface IStorageContainer : IFileSystem.IFileSystemExtensionPoint,
 	string? LinkTarget { get; set; }
 
 	/// <summary>
-	///     The type of the container indicates if it is a <see cref="ContainerTypes.File" /> or
-	///     <see cref="Directory" />.
+	///     The type of the container indicates if it is a <see cref="FileSystemMock.FileSystemTypes.File" /> or
+	///     <see cref="FileSystemMock.FileSystemTypes.Directory" />.
 	/// </summary>
-	ContainerTypes Type { get; }
+	FileSystemMock.FileSystemTypes Type { get; }
 
 	/// <summary>
 	///     Appends the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.

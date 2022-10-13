@@ -78,7 +78,7 @@ public sealed partial class FileSystemMock
 				file = _fileSystem.Storage.GetOrCreateContainer(location,
 					InMemoryContainer.NewFile);
 			}
-			else if (file.Type == ContainerTypes.Directory)
+			else if (file.Type == FileSystemTypes.Directory)
 			{
 				if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				{

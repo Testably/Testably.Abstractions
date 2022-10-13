@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
@@ -28,7 +29,7 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 				exceptionCount++;
 				throw exception;
 			},
-			c => c.Type.HasFlag(FileSystemMock.ChangeTypes.Deleted));
+			c => c.ChangeType.HasFlag(WatcherChangeTypes.Deleted));
 
 		Exception? receivedException = Record.Exception(() =>
 		{
@@ -94,7 +95,7 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 				throw exception;
 			},
 			c => exceptionCount < 3 &&
-			     c.Type.HasFlag(FileSystemMock.ChangeTypes.Deleted));
+			     c.ChangeType.HasFlag(WatcherChangeTypes.Deleted));
 
 		directoryCleaner.Dispose();
 		sut.Directory.Exists(currentDirectory).Should().BeFalse();

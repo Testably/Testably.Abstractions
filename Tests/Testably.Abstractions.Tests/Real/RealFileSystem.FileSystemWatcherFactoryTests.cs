@@ -38,7 +38,7 @@ public static partial class RealFileSystem
 			NotifyFilters notifyFilter,
 			bool enableRaisingEvents)
 		{
-			FileSystemMock fileSystemMock = new FileSystemMock();
+			FileSystemMock fileSystemMock = new();
 			fileSystemMock.Directory.CreateDirectory(path);
 			FileSystem.Directory.CreateDirectory(path);
 			FileSystemWatcher fileSystemWatcher = new(path)

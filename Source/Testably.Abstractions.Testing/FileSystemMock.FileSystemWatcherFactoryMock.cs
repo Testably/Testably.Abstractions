@@ -58,7 +58,7 @@ public sealed partial class FileSystemMock
 				FileSystemWatcherMock.New(_fileSystem);
 			fileSystemWatcherMock.Path = fileSystemWatcher.Path;
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
-			foreach (var filter in fileSystemWatcher.Filters)
+			foreach (string filter in fileSystemWatcher.Filters)
 			{
 				fileSystemWatcherMock.Filters.Add(filter);
 			}
@@ -66,12 +66,15 @@ public sealed partial class FileSystemMock
 			fileSystemWatcherMock.Filter = fileSystemWatcher.Filter;
 #endif
 			fileSystemWatcherMock.NotifyFilter = fileSystemWatcher.NotifyFilter;
-			fileSystemWatcherMock.IncludeSubdirectories = fileSystemWatcher.IncludeSubdirectories;
-			fileSystemWatcherMock.InternalBufferSize = fileSystemWatcher.InternalBufferSize;
-			fileSystemWatcherMock.EnableRaisingEvents = fileSystemWatcher.EnableRaisingEvents;
+			fileSystemWatcherMock.IncludeSubdirectories =
+				fileSystemWatcher.IncludeSubdirectories;
+			fileSystemWatcherMock.InternalBufferSize =
+				fileSystemWatcher.InternalBufferSize;
+			fileSystemWatcherMock.EnableRaisingEvents =
+				fileSystemWatcher.EnableRaisingEvents;
 			return fileSystemWatcherMock;
 		}
 
-#endregion
+		#endregion
 	}
 }

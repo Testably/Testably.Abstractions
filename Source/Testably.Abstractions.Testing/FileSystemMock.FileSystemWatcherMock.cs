@@ -144,7 +144,7 @@ public sealed partial class FileSystemMock
 			=> new(fileSystem);
 
 		private FileSystemEventArgs FromChangeDescription(
-			ChangeDescription changeDescription, WatcherChangeTypes changeType)
+			ChangeDescription changeDescription)
 		{
 			string? name = changeDescription.Name;
 			string? path = changeDescription.Path;
@@ -159,7 +159,8 @@ public sealed partial class FileSystemMock
 				path = path.Substring(0, path.Length - name.Length);
 			}
 
-			return new FileSystemEventArgs(changeType, path ?? "", name);
+			return new FileSystemEventArgs(changeDescription.ChangeType, path ?? "",
+				name);
 		}
 
 		private bool MatchesFilter(ChangeDescription changeDescription)
@@ -192,22 +193,22 @@ public sealed partial class FileSystemMock
 		{
 			if (MatchesFilter(item))
 			{
-				if (item.Type.HasFlag(ChangeTypes.Created))
+				if (item.ChangeType.HasFlag(WatcherChangeTypes.Created))
 				{
 					Created?.Invoke(this,
-						FromChangeDescription(item, WatcherChangeTypes.Created));
+						FromChangeDescription(item));
 				}
 
-				if (item.Type.HasFlag(ChangeTypes.Deleted))
+				if (item.ChangeType.HasFlag(WatcherChangeTypes.Deleted))
 				{
 					Deleted?.Invoke(this,
-						FromChangeDescription(item, WatcherChangeTypes.Deleted));
+						FromChangeDescription(item));
 				}
 
-				if (item.Type.HasFlag(ChangeTypes.Modified))
+				if (item.ChangeType.HasFlag(WatcherChangeTypes.Changed))
 				{
 					Changed?.Invoke(this,
-						FromChangeDescription(item, WatcherChangeTypes.Changed));
+						FromChangeDescription(item));
 				}
 			}
 		}

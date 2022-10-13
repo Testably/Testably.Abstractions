@@ -26,24 +26,29 @@ public sealed partial class FileSystemMock
 		public string Path { get; }
 
 		/// <summary>
-		///     The type of the change.
+		///     Changes that might occur to a file or directory.
 		/// </summary>
-		public ChangeTypes Type { get; }
+		public WatcherChangeTypes ChangeType { get; }
+
+		/// <summary>
+		///     The type of the file system entry where the change originated.
+		/// </summary>
+		public FileSystemTypes FileSystemType { get; }
 
 		internal ChangeDescription(IStorageLocation location,
-		                           ChangeTypes type,
+		                           WatcherChangeTypes changeType,
+		                           FileSystemTypes fileSystemType,
 		                           NotifyFilters notifyFilters)
 		{
 			Path = location.FullPath;
 			Name = location.FriendlyName;
-			Type = type;
+			ChangeType = changeType;
+			FileSystemType = fileSystemType;
 			NotifyFilters = notifyFilters;
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
-		{
-			return $"{Type} {Path} [{NotifyFilters}]";
-		}
+			=> $"{ChangeType} ({FileSystemType}) {Path} [{NotifyFilters}]";
 	}
 }
