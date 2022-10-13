@@ -1,5 +1,7 @@
-﻿using Testably.Abstractions.Testing.Internal;
+﻿using System.IO;
+using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Storage;
+using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.Storage;
 
@@ -64,5 +66,44 @@ public class InMemoryStorageTests
 		result.Should().BeFalse();
 		receivedNotification.Should().BeFalse();
 		container.Should().BeNull();
+	}
+
+	[Theory]
+	[AutoData]
+	[Trait(nameof(Testing), nameof(InMemoryStorage))]
+	public void Move_RequestDeniedForChild_ShouldRollback(
+		string locationPath, string destinationPath)
+	{
+		IStorageLocation location = Storage.GetLocation(locationPath);
+		IStorageLocation destination = Storage.GetLocation(destinationPath);
+		IStorageLocation child1Location =
+			Storage.GetLocation(Path.Combine(locationPath, "foo"));
+		IStorageLocation child2Location =
+			Storage.GetLocation(Path.Combine(locationPath, "bar"));
+		LockableContainer lockedContainer = new(FileSystem);
+		Storage.TryAddContainer(
+			location,
+			InMemoryContainer.NewDirectory,
+			out _);
+		Storage.TryAddContainer(
+			child1Location,
+			InMemoryContainer.NewFile,
+			out _);
+		Storage.TryAddContainer(
+			child2Location,
+			(_, _) => lockedContainer,
+			out _);
+
+		lockedContainer.IsLocked = true;
+
+		Exception? exception = Record.Exception(() =>
+		{
+			Storage.Move(location, destination, recursive: true);
+		});
+
+		Storage.GetContainer(location).Should().NotBeOfType<NullContainer>();
+		Storage.GetContainer(child1Location).Should().NotBeOfType<NullContainer>();
+		Storage.GetContainer(child2Location).Should().NotBeOfType<NullContainer>();
+		exception.Should().BeOfType<IOException>();
 	}
 }

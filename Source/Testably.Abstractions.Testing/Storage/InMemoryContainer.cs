@@ -237,7 +237,7 @@ internal class InMemoryContainer : IStorageContainer
 		_fileHandles.TryRemove(guid, out _);
 	}
 
-	private sealed class TimeContainer : ITimeContainer
+	internal sealed class TimeContainer : ITimeContainer
 	{
 		private DateTime _time;
 
