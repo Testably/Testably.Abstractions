@@ -33,6 +33,5 @@ public static partial class MockFileSystem
 			=> _directoryCleaner.Dispose();
 
 		#endregion
-
 	}
 }

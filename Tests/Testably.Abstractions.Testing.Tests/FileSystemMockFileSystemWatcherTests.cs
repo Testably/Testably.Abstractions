@@ -19,6 +19,7 @@ public sealed class FileSystemMockFileSystemWatcherTests : IDisposable
 	{
 		FileSystem = new FileSystemMock();
 		_directoryCleaner = FileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory();
+		FileSystem.Initialize();
 	}
 
 	#region IDisposable Members
