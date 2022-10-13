@@ -25,7 +25,7 @@ public sealed partial class FileSystemMock
 		private static string DefaultFilter
 			=> Framework.IsNetFramework ? "*.*" : "*";
 
-		private CancellationTokenSource _cancellationTokenSource;
+		private CancellationTokenSource? _cancellationTokenSource;
 		private IDisposable? _changeHandler;
 		private BlockingCollection<ChangeDescription> _changes;
 		private bool _enableRaisingEvents;
@@ -40,8 +40,6 @@ public sealed partial class FileSystemMock
 			_changes =
 				new BlockingCollection<ChangeDescription>(InternalBufferSize /
 				                                          BytesPerMessage);
-			_cancellationTokenSource = new CancellationTokenSource();
-			_cancellationTokenSource.Cancel();
 		}
 
 		#region IFileSystemWatcher Members
@@ -100,12 +98,7 @@ public sealed partial class FileSystemMock
 			get => _internalBufferSize;
 			set
 			{
-				if (value < 4096)
-				{
-					value = 4096;
-				}
-
-				_internalBufferSize = value;
+				_internalBufferSize = Math.Max(value, 4096);
 				Restart();
 			}
 		}
@@ -244,8 +237,7 @@ public sealed partial class FileSystemMock
 				if (!_changes.TryAdd(c, 100))
 				{
 					Error?.Invoke(this, new ErrorEventArgs(
-						new InternalBufferOverflowException(
-							$"The internal buffer is greater than the {InternalBufferSize} allowed bytes (~ {_changes.BoundedCapacity} changes).")));
+						ExceptionFactory.InternalBufferOverflowException(InternalBufferSize, _changes.BoundedCapacity)));
 				}
 			});
 			CancellationToken token = _cancellationTokenSource.Token;
@@ -271,7 +263,7 @@ public sealed partial class FileSystemMock
 
 		private void Stop()
 		{
-			_cancellationTokenSource.Cancel();
+			_cancellationTokenSource?.Cancel();
 			_changeHandler?.Dispose();
 		}
 

@@ -43,6 +43,9 @@ internal static class ExceptionFactory
 	internal static FileNotFoundException FileNotFound(string path)
 		=> new($"Could not find file '{path}'.");
 
+	internal static InternalBufferOverflowException InternalBufferOverflowException(int internalBufferSize, int messages)
+		=> new($"The internal buffer is greater than the {internalBufferSize} allowed bytes (~ {messages} messages).");
+
 	internal static ArgumentException InvalidAccessCombination(
 		FileMode mode, FileAccess access)
 		=> new($"Combining FileMode: {mode} with FileAccess: {access} is invalid.",
