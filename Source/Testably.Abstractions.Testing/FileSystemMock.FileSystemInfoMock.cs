@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Storage;
@@ -190,9 +189,9 @@ public sealed partial class FileSystemMock
 #endif
 		public override string ToString()
 			=> Location.FriendlyName;
-		
+
 		internal static FileSystemInfoMock New(IStorageLocation location,
-		                                        FileSystemMock fileSystem)
+		                                       FileSystemMock fileSystem)
 			=> new(fileSystem, location);
 
 		protected void RefreshInternal()

@@ -23,8 +23,8 @@ internal class LockableContainer : IStorageContainer
 	private byte[] _bytes = Array.Empty<byte>();
 
 	public LockableContainer(FileSystemMock fileSystem,
-	                         ContainerTypes containerType =
-		                         ContainerTypes.DirectoryOrFile)
+	                         FileSystemMock.FileSystemTypes containerType =
+		                         FileSystemMock.FileSystemTypes.DirectoryOrFile)
 	{
 		FileSystem = fileSystem;
 		TimeSystem = fileSystem.TimeSystem;
@@ -58,7 +58,7 @@ internal class LockableContainer : IStorageContainer
 	public ITimeSystem TimeSystem { get; }
 
 	/// <inheritdoc cref="IStorageContainer.Type" />
-	public ContainerTypes Type { get; }
+	public FileSystemMock.FileSystemTypes Type { get; }
 
 	/// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
 	public void AppendBytes(byte[] bytes)
@@ -108,13 +108,13 @@ internal class LockableContainer : IStorageContainer
 
 		#region IStorageAccessHandle Members
 
-		/// <inheritdoc />
+		/// <inheritdoc cref="IStorageAccessHandle.Access" />
 		public FileAccess Access { get; }
 
-		/// <inheritdoc />
+		/// <inheritdoc cref="IStorageAccessHandle.Access" />
 		public FileShare Share { get; }
 
-		/// <inheritdoc />
+		/// <inheritdoc cref="IDisposable.Dispose()" />
 		public void Dispose()
 		{
 		}

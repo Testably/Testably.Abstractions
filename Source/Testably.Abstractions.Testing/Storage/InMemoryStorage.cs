@@ -46,7 +46,7 @@ internal sealed class InMemoryStorage : IStorage
 			return null;
 		}
 
-		if (sourceContainer.Type != ContainerTypes.File)
+		if (sourceContainer.Type != FileSystemTypes.File)
 		{
 			throw ExceptionFactory.AccessToPathDenied(source.FullPath);
 		}
@@ -87,12 +87,10 @@ internal sealed class InMemoryStorage : IStorage
 			return false;
 		}
 
-		ChangeTypes changeType = ChangeTypes.Deleted;
-		if (container.Type == ContainerTypes.Directory)
+		if (container.Type == FileSystemTypes.Directory)
 		{
-			changeType |= ChangeTypes.Directory;
 			IEnumerable<IStorageLocation> children =
-				EnumerateLocations(location, ContainerTypes.DirectoryOrFile);
+				EnumerateLocations(location, FileSystemTypes.DirectoryOrFile);
 			if (recursive)
 			{
 				foreach (IStorageLocation key in children)
@@ -105,15 +103,12 @@ internal sealed class InMemoryStorage : IStorage
 				throw ExceptionFactory.DirectoryNotEmpty(location.FullPath);
 			}
 		}
-		else
-		{
-			changeType |= ChangeTypes.File;
-		}
 
 		ChangeDescription fileSystemChange =
 			_fileSystem.ChangeHandler.NotifyPendingChange(
 				location,
-				changeType,
+				WatcherChangeTypes.Deleted,
+				container.Type,
 				NotifyFilters.DirectoryName);
 		if (_containers.TryRemove(location, out IStorageContainer? removed))
 		{
@@ -125,10 +120,10 @@ internal sealed class InMemoryStorage : IStorage
 		return false;
 	}
 
-	/// <inheritdoc cref="IStorage.EnumerateLocations(IStorageLocation, ContainerTypes, string, EnumerationOptions?)" />
+	/// <inheritdoc cref="IStorage.EnumerateLocations(IStorageLocation, FileSystemTypes, string, EnumerationOptions?)" />
 	public IEnumerable<IStorageLocation> EnumerateLocations(
 		IStorageLocation location,
-		ContainerTypes type,
+		FileSystemTypes type,
 		string expression = "*",
 		EnumerationOptions? enumerationOptions = null)
 	{
@@ -244,26 +239,18 @@ internal sealed class InMemoryStorage : IStorage
 			{
 				IStorageContainer container =
 					containerGenerator.Invoke(loc, _fileSystem);
-				if (container.Type == ContainerTypes.Directory)
+				if (container.Type == FileSystemTypes.Directory)
 				{
 					CreateParents(_fileSystem, loc);
-					using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
-					{
-						fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
-							location,
-							ChangeTypes.DirectoryCreated,
-							NotifyFilters.CreationTime);
-					}
 				}
-				else
+
+				using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
 				{
-					using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
-					{
-						fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
-							location,
-							ChangeTypes.FileCreated,
-							NotifyFilters.CreationTime);
-					}
+					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
+						location,
+						WatcherChangeTypes.Created,
+						container.Type,
+						NotifyFilters.DirectoryName);
 				}
 
 				return container;
@@ -312,8 +299,8 @@ internal sealed class InMemoryStorage : IStorage
 			return null;
 		}
 
-		if (sourceContainer.Type != ContainerTypes.File ||
-		    destinationContainer.Type != ContainerTypes.File)
+		if (sourceContainer.Type != FileSystemTypes.File ||
+		    destinationContainer.Type != FileSystemTypes.File)
 		{
 			throw ExceptionFactory.AccessToPathDenied(source.FullPath);
 		}
@@ -401,8 +388,9 @@ internal sealed class InMemoryStorage : IStorage
 				{
 					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
 						location,
-						ChangeTypes.FileCreated,
-						NotifyFilters.CreationTime);
+						WatcherChangeTypes.Created,
+						container.Type,
+						NotifyFilters.DirectoryName);
 				}
 
 				return container;
@@ -460,8 +448,9 @@ internal sealed class InMemoryStorage : IStorage
 						fileSystemChange =
 							fileSystem.ChangeHandler.NotifyPendingChange(
 								parentLocation,
-								ChangeTypes.DirectoryCreated,
-								NotifyFilters.CreationTime);
+								WatcherChangeTypes.Created,
+								container.Type,
+								NotifyFilters.DirectoryName);
 						return container;
 					},
 					(_, f) =>
@@ -494,7 +483,7 @@ internal sealed class InMemoryStorage : IStorage
 		}
 
 		List<IStorageLocation> children =
-			EnumerateLocations(source, ContainerTypes.DirectoryOrFile).ToList();
+			EnumerateLocations(source, FileSystemTypes.DirectoryOrFile).ToList();
 		if (children.Any() && !recursive)
 		{
 			throw ExceptionFactory.DirectoryNotEmpty(source.FullPath);

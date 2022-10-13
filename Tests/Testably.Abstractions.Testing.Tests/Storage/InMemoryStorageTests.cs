@@ -43,7 +43,7 @@ public class InMemoryStorageTests
 
 		result.Should().BeTrue();
 		receivedNotification.Should().BeTrue();
-		container!.Type.Should().Be(ContainerTypes.Directory);
+		container!.Type.Should().Be(FileSystemMock.FileSystemTypes.Directory);
 	}
 
 	[Theory]

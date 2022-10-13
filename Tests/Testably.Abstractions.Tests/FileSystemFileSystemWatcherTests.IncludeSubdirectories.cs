@@ -42,6 +42,35 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	[AutoData]
 	[FileSystemTests.FileSystemWatcher(
 		nameof(IFileSystem.IFileSystemWatcher.IncludeSubdirectories))]
+	public void
+		IncludeSubdirectories_SetToTrue_ShouldOnlyTriggerNotificationOnSubdirectories(
+			string baseDirectory, string subdirectoryName, string otherDirectory)
+	{
+		FileSystem.Initialize()
+		   .WithSubdirectory(baseDirectory).Initialized(s => s
+			   .WithSubdirectory(subdirectoryName))
+		   .WithSubdirectory(otherDirectory);
+		ManualResetEventSlim ms = new();
+		FileSystemEventArgs? result = null;
+		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(baseDirectory);
+		fileSystemWatcher.Deleted += (_, eventArgs) =>
+		{
+			result = eventArgs;
+			ms.Set();
+		};
+		fileSystemWatcher.IncludeSubdirectories = true;
+		fileSystemWatcher.EnableRaisingEvents = true;
+		FileSystem.Directory.Delete(otherDirectory);
+		ms.Wait(30).Should().BeFalse();
+
+		result.Should().BeNull();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.FileSystemWatcher(
+		nameof(IFileSystem.IFileSystemWatcher.IncludeSubdirectories))]
 	public void IncludeSubdirectories_SetToFalse_ShouldNotTriggerNotification(
 		string baseDirectory, string path)
 	{

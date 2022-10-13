@@ -18,8 +18,7 @@ public sealed partial class RandomSystemMock
 
 		/// <inheritdoc cref="IRandomSystem.IRandomFactory.Shared" />
 		public IRandomSystem.IRandom Shared
-			=> _randomSystemMock.RandomProvider.GetRandom(Testing.RandomProvider
-			   .SharedSeed);
+			=> _randomSystemMock.RandomProvider.GetRandom();
 
 		/// <inheritdoc cref="IRandomSystem.IRandomFactory.New()" />
 		public IRandomSystem.IRandom New()

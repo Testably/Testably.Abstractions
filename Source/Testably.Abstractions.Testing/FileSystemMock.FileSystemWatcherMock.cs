@@ -25,7 +25,7 @@ public sealed partial class FileSystemMock
 		private static string DefaultFilter
 			=> Framework.IsNetFramework ? "*.*" : "*";
 
-		private CancellationTokenSource _cancellationTokenSource;
+		private CancellationTokenSource? _cancellationTokenSource;
 		private IDisposable? _changeHandler;
 		private BlockingCollection<ChangeDescription> _changes;
 		private bool _enableRaisingEvents;
@@ -40,8 +40,6 @@ public sealed partial class FileSystemMock
 			_changes =
 				new BlockingCollection<ChangeDescription>(InternalBufferSize /
 				                                          BytesPerMessage);
-			_cancellationTokenSource = new CancellationTokenSource();
-			_cancellationTokenSource.Cancel();
 		}
 
 		#region IFileSystemWatcher Members
@@ -100,12 +98,7 @@ public sealed partial class FileSystemMock
 			get => _internalBufferSize;
 			set
 			{
-				if (value < 4096)
-				{
-					value = 4096;
-				}
-
-				_internalBufferSize = value;
+				_internalBufferSize = Math.Max(value, 4096);
 				Restart();
 			}
 		}
@@ -144,7 +137,7 @@ public sealed partial class FileSystemMock
 			=> new(fileSystem);
 
 		private FileSystemEventArgs FromChangeDescription(
-			ChangeDescription changeDescription, WatcherChangeTypes changeType)
+			ChangeDescription changeDescription)
 		{
 			string? name = changeDescription.Name;
 			string? path = changeDescription.Path;
@@ -159,7 +152,8 @@ public sealed partial class FileSystemMock
 				path = path.Substring(0, path.Length - name.Length);
 			}
 
-			return new FileSystemEventArgs(changeType, path ?? "", name);
+			return new FileSystemEventArgs(changeDescription.ChangeType, path ?? "",
+				name);
 		}
 
 		private bool MatchesFilter(ChangeDescription changeDescription)
@@ -172,6 +166,11 @@ public sealed partial class FileSystemMock
 				}
 			}
 			else if (FileSystem.Path.GetDirectoryName(changeDescription.Path) != Path)
+			{
+				return false;
+			}
+
+			if ((NotifyFilter & changeDescription.NotifyFilters) == 0)
 			{
 				return false;
 			}
@@ -192,22 +191,22 @@ public sealed partial class FileSystemMock
 		{
 			if (MatchesFilter(item))
 			{
-				if (item.Type.HasFlag(ChangeTypes.Created))
+				if (item.ChangeType.HasFlag(WatcherChangeTypes.Created))
 				{
 					Created?.Invoke(this,
-						FromChangeDescription(item, WatcherChangeTypes.Created));
+						FromChangeDescription(item));
 				}
 
-				if (item.Type.HasFlag(ChangeTypes.Deleted))
+				if (item.ChangeType.HasFlag(WatcherChangeTypes.Deleted))
 				{
 					Deleted?.Invoke(this,
-						FromChangeDescription(item, WatcherChangeTypes.Deleted));
+						FromChangeDescription(item));
 				}
 
-				if (item.Type.HasFlag(ChangeTypes.Modified))
+				if (item.ChangeType.HasFlag(WatcherChangeTypes.Changed))
 				{
 					Changed?.Invoke(this,
-						FromChangeDescription(item, WatcherChangeTypes.Changed));
+						FromChangeDescription(item));
 				}
 			}
 		}
@@ -243,8 +242,8 @@ public sealed partial class FileSystemMock
 				if (!_changes.TryAdd(c, 100))
 				{
 					Error?.Invoke(this, new ErrorEventArgs(
-						new InternalBufferOverflowException(
-							$"The internal buffer is greater than the {InternalBufferSize} allowed bytes (~ {_changes.BoundedCapacity} changes).")));
+						ExceptionFactory.InternalBufferOverflowException(
+							InternalBufferSize, _changes.BoundedCapacity)));
 				}
 			});
 			CancellationToken token = _cancellationTokenSource.Token;
@@ -270,7 +269,7 @@ public sealed partial class FileSystemMock
 
 		private void Stop()
 		{
-			_cancellationTokenSource.Cancel();
+			_cancellationTokenSource?.Cancel();
 			_changeHandler?.Dispose();
 		}
 

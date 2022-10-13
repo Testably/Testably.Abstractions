@@ -56,10 +56,12 @@ public sealed partial class FileSystemMock
 		}
 
 		internal ChangeDescription NotifyPendingChange(IStorageLocation location,
-		                                               ChangeTypes changeType,
+		                                               WatcherChangeTypes changeType,
+		                                               FileSystemTypes fileSystemType,
 		                                               NotifyFilters notifyFilters)
 		{
-			ChangeDescription fileSystemChange = new(location, changeType, notifyFilters);
+			ChangeDescription fileSystemChange =
+				new(location, changeType, fileSystemType, notifyFilters);
 			_changeOccurringCallbacks.InvokeCallbacks(fileSystemChange);
 			return fileSystemChange;
 		}
