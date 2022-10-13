@@ -156,7 +156,8 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 			fileSystemWatcher.NotifyFilter |= NotifyFilters.Attributes;
 		}
 		// Test for MAC
-		fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
+		fileSystemWatcher.NotifyFilter = NotifyFilters.CreationTime |
+		                                 NotifyFilters.DirectoryName;
 
 		fileSystemWatcher.EnableRaisingEvents = true;
 
