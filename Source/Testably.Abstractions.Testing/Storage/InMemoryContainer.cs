@@ -204,9 +204,9 @@ internal class InMemoryContainer : IStorageContainer
 				NotifyFilters.LastAccess |
 				NotifyFilters.LastWrite |
 				NotifyFilters.Size |
-				(RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-					? NotifyFilters.Attributes
-					: NotifyFilters.Security));
+				(RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+					? NotifyFilters.Security
+					: NotifyFilters.Attributes));
 		_location.Drive?.ChangeUsedBytes(bytes.Length - _bytes.Length);
 		_bytes = bytes;
 		_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);

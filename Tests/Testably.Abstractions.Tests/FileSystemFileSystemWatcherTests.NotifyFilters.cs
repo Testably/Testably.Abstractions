@@ -153,10 +153,10 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		{
 			fileSystemWatcher.NotifyFilter |= NotifyFilters.Security;
 		}
-		//if (!Test.RunsOnWindows)
-		//{
-		//	fileSystemWatcher.NotifyFilter |= NotifyFilters.Attributes;
-		//}
+		else
+		{
+			fileSystemWatcher.NotifyFilter |= NotifyFilters.Attributes;
+		}
 
 		fileSystemWatcher.EnableRaisingEvents = true;
 
