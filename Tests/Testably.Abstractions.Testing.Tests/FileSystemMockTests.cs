@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
@@ -50,6 +51,55 @@ public class FileSystemMockTests
 		drive.TotalSize.Should().Be(totalSize);
 		drive.TotalFreeSpace.Should().Be(totalSize);
 		drive.AvailableFreeSpace.Should().Be(totalSize);
+	}
+
+	[Theory]
+	[AutoData]
+	[Trait(nameof(Testing), nameof(FileSystemMock))]
+	public void WithUncDrive_ShouldCreateUncDrive(
+		string path, string contents)
+	{
+		FileSystemMock sut = new();
+		sut.WithUncDrive("UNC-Path");
+		string fullPath = sut.Path.Combine("//UNC-Path", path);
+		sut.File.WriteAllText(fullPath, contents);
+
+		string result = sut.File.ReadAllText(fullPath);
+		result.Should().Be(contents);
+	}
+
+	[Theory]
+	[AutoData]
+	[Trait(nameof(Testing), nameof(FileSystemMock))]
+	public void UncDrive_WriteBytes_ShouldReduceAvailableFreeSpace(
+		string server, string path, byte[] bytes)
+	{
+		FileSystemMock sut = new();
+		string uncPrefix = new(sut.Path.DirectorySeparatorChar, 2);
+		string uncDrive = $"{uncPrefix}{server}";
+		sut.WithUncDrive(uncDrive);
+		IFileSystem.IDriveInfo drive = sut.DriveInfo.New(uncDrive);
+		long previousFreeSpace = drive.AvailableFreeSpace;
+
+		sut.File.WriteAllBytes(Path.Combine(uncDrive, path), bytes);
+
+		drive.AvailableFreeSpace.Should().Be(previousFreeSpace - bytes.Length);
+	}
+
+	[Theory]
+	[AutoData]
+	[Trait(nameof(Testing), nameof(FileSystemMock))]
+	public void WriteAllText_OnUncPath_ShouldThrowDirectoryNotFoundException(
+		string path, string contents)
+	{
+		FileSystemMock sut = new();
+		string fullPath = sut.Path.Combine("//UNC-Path", path);
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.File.WriteAllText(fullPath, contents);
+		});
+
+		exception.Should().BeOfType<DirectoryNotFoundException>();
 	}
 
 	#region Helpers

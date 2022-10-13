@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
 
@@ -36,15 +37,22 @@ public sealed partial class FileSystemMock
 				throw new ArgumentNullException(nameof(driveName));
 			}
 
-			return DriveInfoMock.New(driveName, _fileSystem);
+			DriveInfoMock driveInfo = DriveInfoMock.New(driveName, _fileSystem);
+			IStorageDrive? existingDrive = _fileSystem.Storage.GetDrive(driveInfo.Name);
+			return existingDrive ?? driveInfo;
 		}
 
 		/// <inheritdoc cref="IFileSystem.IDriveInfoFactory.Wrap(DriveInfo)" />
 		[return: NotNullIfNotNull("driveInfo")]
 		public IFileSystem.IDriveInfo? Wrap(DriveInfo? driveInfo)
-			=> DriveInfoMock.New(
-				driveInfo?.Name,
-				_fileSystem);
+		{
+			if (driveInfo?.Name == null)
+			{
+				return null;
+			}
+
+			return New(driveInfo.Name);
+		}
 
 		#endregion
 	}

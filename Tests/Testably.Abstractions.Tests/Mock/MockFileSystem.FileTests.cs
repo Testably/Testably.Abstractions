@@ -89,20 +89,6 @@ public static partial class MockFileSystem
 		}
 #endif
 
-		[SkippableTheory]
-		[AutoData]
-		[FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllText))]
-		public void WriteAllText_UncPath_ShouldCreateDrive(
-			string path, string contents)
-		{
-			string uncPrefix = new(FileSystem.Path.DirectorySeparatorChar, 2);
-			string uncPath = FileSystem.Path.Combine($"{uncPrefix}UNC-Path", path);
-			FileSystem.File.WriteAllText(uncPath, contents);
-
-			string result = FileSystem.File.ReadAllText(uncPath);
-			result.Should().Be(contents);
-		}
-
 		#region IDisposable Members
 
 		/// <inheritdoc cref="IDisposable.Dispose()" />

@@ -24,6 +24,12 @@ public sealed partial class FileSystemMock
 		/// </summary>
 		public const DriveType DefaultDriveType = DriveType.Fixed;
 
+		private static readonly string UncPrefix =
+			new(System.IO.Path.DirectorySeparatorChar, 2);
+
+		private static readonly string UncAltPrefix =
+			new(System.IO.Path.AltDirectorySeparatorChar, 2);
+
 		/// <summary>
 		///     The default total size of a mocked <see cref="IStorageDrive" />.
 		///     <para />
@@ -44,11 +50,12 @@ public sealed partial class FileSystemMock
 
 			_fileSystem = fileSystem;
 
-			string uncPrefix = new(FileSystem.Path.DirectorySeparatorChar, 2);
-			if (driveName.StartsWith(uncPrefix))
+			if (driveName.StartsWith(UncPrefix) ||
+			    driveName.StartsWith(UncAltPrefix))
 			{
 				IsUncPath = true;
-				driveName = fileSystem.Path.GetPathRoot(driveName)!;
+				driveName = UncPrefix +
+				            GetTopmostParentDirectory(driveName.Substring(2))!;
 			}
 			else
 			{
@@ -60,6 +67,22 @@ public sealed partial class FileSystemMock
 			DriveFormat = DefaultDriveFormat;
 			DriveType = DefaultDriveType;
 			IsReady = true;
+		}
+
+		private string GetTopmostParentDirectory(string path)
+		{
+			while (true)
+			{
+				string? child = System.IO.Path.GetDirectoryName(path);
+				if (string.IsNullOrEmpty(child))
+				{
+					break;
+				}
+
+				path = child;
+			}
+
+			return path;
 		}
 
 		/// <summary>
