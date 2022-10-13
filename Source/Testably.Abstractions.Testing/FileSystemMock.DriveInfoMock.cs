@@ -44,13 +44,44 @@ public sealed partial class FileSystemMock
 
 			_fileSystem = fileSystem;
 
-			driveName = ValidateDriveLetter(driveName, fileSystem);
+			if (driveName.IsUncPath())
+			{
+				IsUncPath = true;
+				driveName = PathHelper.UncPrefix +
+				            GetTopmostParentDirectory(driveName.Substring(2));
+			}
+			else
+			{
+				driveName = ValidateDriveLetter(driveName, fileSystem);
+			}
+
 			Name = driveName;
 			TotalSize = DefaultTotalSize;
 			DriveFormat = DefaultDriveFormat;
 			DriveType = DefaultDriveType;
 			IsReady = true;
 		}
+
+		private static string GetTopmostParentDirectory(string path)
+		{
+			while (true)
+			{
+				string? child = System.IO.Path.GetDirectoryName(path);
+				if (string.IsNullOrEmpty(child))
+				{
+					break;
+				}
+
+				path = child;
+			}
+
+			return path;
+		}
+
+		/// <summary>
+		///     Flag indicating if the drive is a UNC drive
+		/// </summary>
+		public bool IsUncPath { get; }
 
 		#region IStorageDrive Members
 

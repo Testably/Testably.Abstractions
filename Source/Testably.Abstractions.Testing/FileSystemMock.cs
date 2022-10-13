@@ -107,17 +107,3 @@ public sealed partial class FileSystemMock : IFileSystem
 		return this;
 	}
 }
-
-/// <summary>
-///     Extension methods for the <see cref="FileSystemMock" />
-/// </summary>
-public static class FileSystemMockExtensions
-{
-	/// <summary>
-	///     Changes the parameters of the default drive ('C:\' on Windows, '/' on Linux)
-	/// </summary>
-	public static FileSystemMock WithDrive(
-		this FileSystemMock fileSystemMock,
-		Action<IStorageDrive> driveCallback)
-		=> fileSystemMock.WithDrive(null, driveCallback);
-}
