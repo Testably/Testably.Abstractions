@@ -196,17 +196,29 @@ internal class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.WriteBytes(byte[])" />
 	public void WriteBytes(byte[] bytes)
 	{
+		NotifyFilters notifyFilters = NotifyFilters.LastAccess |
+		                              NotifyFilters.LastWrite |
+		                              NotifyFilters.Size;
+		if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+		{
+			notifyFilters |= NotifyFilters.Security;
+		}
+		else
+		{
+			notifyFilters |= NotifyFilters.Attributes;
+		}
+
+		if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+		{
+			notifyFilters |= NotifyFilters.CreationTime;
+		}
+
 		ChangeDescription fileSystemChange =
 			_fileSystem.ChangeHandler.NotifyPendingChange(
 				_location,
 				WatcherChangeTypes.Changed,
 				FileSystemTypes.File,
-				NotifyFilters.LastAccess |
-				NotifyFilters.LastWrite |
-				NotifyFilters.Size |
-				(RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
-					? NotifyFilters.Security
-					: NotifyFilters.Attributes));
+				notifyFilters);
 		_location.Drive?.ChangeUsedBytes(bytes.Length - _bytes.Length);
 		_bytes = bytes;
 		_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
