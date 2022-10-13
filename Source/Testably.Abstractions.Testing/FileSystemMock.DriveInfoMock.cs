@@ -62,7 +62,7 @@ public sealed partial class FileSystemMock
 			IsReady = true;
 		}
 
-		private string GetTopmostParentDirectory(string path)
+		private static string GetTopmostParentDirectory(string path)
 		{
 			while (true)
 			{
