@@ -143,8 +143,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 			result = eventArgs;
 			ms.Set();
 		};
-		fileSystemWatcher.NotifyFilter = NotifyFilters.CreationTime |
-		                                 NotifyFilters.DirectoryName |
+		fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName |
 		                                 NotifyFilters.FileName;
 		if (!Test.RunsOnMac)
 		{
