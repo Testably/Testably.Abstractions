@@ -143,19 +143,17 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 			result = eventArgs;
 			ms.Set();
 		};
-		if (Test.RunsOnWindows)
+		fileSystemWatcher.NotifyFilter = NotifyFilters.CreationTime |
+		                                 NotifyFilters.DirectoryName |
+		                                 NotifyFilters.FileName;
+		if (!Test.RunsOnLinux)
 		{
-			fileSystemWatcher.NotifyFilter = NotifyFilters.CreationTime |
-			                                 NotifyFilters.DirectoryName |
-			                                 NotifyFilters.FileName |
-			                                 NotifyFilters.Security;
+			fileSystemWatcher.NotifyFilter |= NotifyFilters.Security;
 		}
-		else
+
+		if (!Test.RunsOnWindows)
 		{
-			fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes |
-			                                 NotifyFilters.CreationTime |
-			                                 NotifyFilters.DirectoryName |
-			                                 NotifyFilters.FileName;
+			fileSystemWatcher.NotifyFilter |= NotifyFilters.Attributes;
 		}
 
 		fileSystemWatcher.EnableRaisingEvents = true;
@@ -177,10 +175,14 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	public void NotifyFilter_WriteFile_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string fileName)
 	{
-		if (Test.RunsOnWindows)
+		if (!Test.RunsOnLinux)
 		{
 			Skip.If(notifyFilter == NotifyFilters.Security,
-				"`Security` is not set on Windows");
+				"`Security` is only set on Linux");
+		}
+
+		if (Test.RunsOnWindows)
+		{
 			Skip.If(notifyFilter == NotifyFilters.LastAccess,
 				"`LastAccess` is not consistently set on the real file system.");
 		}
