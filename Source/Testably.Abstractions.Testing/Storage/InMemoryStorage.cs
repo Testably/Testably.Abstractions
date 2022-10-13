@@ -182,6 +182,11 @@ internal sealed class InMemoryStorage : IStorage
 	/// <inheritdoc cref="IStorage.GetDrive(string?)" />
 	public IStorageDrive? GetDrive(string? driveName)
 	{
+		if (!driveName.IsUncPath())
+		{
+			driveName = _fileSystem.Path.GetPathRoot(driveName);
+		}
+
 		if (string.IsNullOrEmpty(driveName))
 		{
 			return null;
@@ -209,8 +214,7 @@ internal sealed class InMemoryStorage : IStorage
 			return null;
 		}
 
-		IStorageDrive? drive = _fileSystem.Storage.GetDrive(
-			_fileSystem.Path.GetPathRoot(path));
+		IStorageDrive? drive = _fileSystem.Storage.GetDrive(path);
 		if (drive == null &&
 		    !_fileSystem.Path.IsPathRooted(path))
 		{

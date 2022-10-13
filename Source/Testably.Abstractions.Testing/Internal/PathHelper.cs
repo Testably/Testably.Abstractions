@@ -9,6 +9,10 @@ internal static class PathHelper
 {
 	private static readonly char[] AdditionalInvalidPathChars = { '*', '?' };
 
+	internal static readonly string UncPrefix = new(Path.DirectorySeparatorChar, 2);
+
+	internal static readonly string UncAltPrefix = new(Path.AltDirectorySeparatorChar, 2);
+
 	/// <summary>
 	///     Determines whether the given path contains illegal characters.
 	/// </summary>
@@ -44,6 +48,16 @@ internal static class PathHelper
 		}
 
 		return path;
+	}
+
+	internal static bool IsUncPath(this string? path)
+	{
+		if (path == null)
+		{
+			return false;
+		}
+
+		return path.StartsWith(UncPrefix) || path.StartsWith(UncAltPrefix);
 	}
 
 	internal static void ThrowCommonExceptionsIfPathIsInvalid(
