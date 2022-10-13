@@ -193,6 +193,11 @@ internal sealed class InMemoryStorage : IStorage
 			return d;
 		}
 
+		if (drive.IsUncPath)
+		{
+			return drive;
+		}
+
 		return null;
 	}
 

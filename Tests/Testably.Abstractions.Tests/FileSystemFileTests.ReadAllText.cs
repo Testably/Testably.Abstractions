@@ -67,4 +67,20 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 		result.Should().NotBe(contents,
 			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
 	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllText))]
+	public void ReadAllText_WithStarCharacter_ShouldThrowFileNotFoundException(
+		string path, string contents)
+	{
+		FileSystem.File.WriteAllText(path, contents);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.ReadAllText(path.Substring(0, 3) + "*" + path.Substring(8));
+		});
+
+		exception.Should().BeOfType<FileNotFoundException>();
+	}
 }

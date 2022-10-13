@@ -44,13 +44,28 @@ public sealed partial class FileSystemMock
 
 			_fileSystem = fileSystem;
 
-			driveName = ValidateDriveLetter(driveName, fileSystem);
+			string uncPrefix = new(FileSystem.Path.DirectorySeparatorChar, 2);
+			if (driveName.StartsWith(uncPrefix))
+			{
+				IsUncPath = true;
+				driveName = fileSystem.Path.GetPathRoot(driveName)!;
+			}
+			else
+			{
+				driveName = ValidateDriveLetter(driveName, fileSystem);
+			}
+
 			Name = driveName;
 			TotalSize = DefaultTotalSize;
 			DriveFormat = DefaultDriveFormat;
 			DriveType = DefaultDriveType;
 			IsReady = true;
 		}
+
+		/// <summary>
+		///     Flag indicating if the drive is a UNC drive
+		/// </summary>
+		public bool IsUncPath { get; }
 
 		#region IStorageDrive Members
 
