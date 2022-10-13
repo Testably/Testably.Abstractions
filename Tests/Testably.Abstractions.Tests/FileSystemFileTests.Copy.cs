@@ -8,7 +8,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	[FileSystemTests.File(nameof(IFileSystem.IFile.Copy))]
-	public void Copy_ShouldUpdateCreationAndLastAccessTimeOfDestination(
+	public void Copy_ShouldAdjustTimes(
 		string source, string destination)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
@@ -145,22 +145,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 		TimeSystem.Thread.Sleep(1000);
 
 		FileSystem.File.Copy(sourceName, destinationName);
-		if (Test.RunsOnWindows)
-		{
-			FileSystem.File.GetCreationTime(destinationName)
-			   .Should().NotBe(FileSystem.File.GetCreationTime(sourceName));
-		}
-		else
-		{
-			FileSystem.File.GetCreationTime(destinationName)
-			   .Should().Be(FileSystem.File.GetCreationTime(sourceName));
-		}
-#if !NETFRAMEWORK
-		FileSystem.File.GetLastAccessTime(destinationName)
-		   .Should().Be(FileSystem.File.GetLastAccessTime(sourceName));
-		FileSystem.File.GetLastWriteTime(destinationName)
-		   .Should().Be(FileSystem.File.GetLastWriteTime(sourceName));
-#endif
 		FileSystem.File.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.ReadAllText(sourceName).Should().Be(contents);
 		FileSystem.File.Exists(destinationName).Should().BeTrue();

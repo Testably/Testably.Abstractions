@@ -71,6 +71,35 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	[FileSystemTests.File(nameof(IFileSystem.IFile.Move))]
+	public void Move_ShouldNotAdjustTimes(string source, string destination)
+	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
+		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
+		FileSystem.File.WriteAllText(source, "foo");
+		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
+		TimeSystem.Thread.Sleep(1500);
+
+		FileSystem.File.Move(source, destination);
+
+		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(destination);
+		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(destination);
+		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(destination);
+
+		creationTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+		lastAccessTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+		lastWriteTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.File(nameof(IFileSystem.IFile.Move))]
 	public void Move_ShouldMoveFileWithContent(
 		string sourceName, string destinationName, string contents)
 	{

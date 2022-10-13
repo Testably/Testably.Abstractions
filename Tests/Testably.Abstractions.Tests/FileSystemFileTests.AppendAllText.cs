@@ -47,7 +47,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	[FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllText))]
-	public void AppendAllText_ShouldUpdateLastAccessAndLastWriteTime(string path)
+	public void AppendAllText_ShouldAdjustTimes(string path)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
