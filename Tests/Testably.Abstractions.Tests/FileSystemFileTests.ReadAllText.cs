@@ -9,6 +9,39 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllText))]
+	public void ReadAllText_FilenameNotOnWindows_ShouldBeCaseSensitive(
+		string path, string contents1, string contents2)
+	{
+		Skip.If(Test.RunsOnWindows,
+			"File names are case-insensitive only on Windows.");
+
+		FileSystem.File.WriteAllText(path.ToUpperInvariant(), contents1);
+		FileSystem.File.WriteAllText(path.ToLowerInvariant(), contents2);
+
+		string result = FileSystem.File.ReadAllText(path.ToLowerInvariant());
+
+		result.Should().Be(contents2);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllText))]
+	public void ReadAllText_FilenameOnWindows_ShouldBeCaseInsensitive(
+		string path, string contents)
+	{
+		Skip.IfNot(Test.RunsOnWindows,
+			"File names are case-insensitive only on Windows.");
+
+		FileSystem.File.WriteAllText(path.ToUpperInvariant(), contents);
+
+		string result = FileSystem.File.ReadAllText(path.ToLowerInvariant());
+
+		result.Should().Be(contents);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllText))]
 	public void ReadAllText_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
 		Exception? exception = Record.Exception(() =>
