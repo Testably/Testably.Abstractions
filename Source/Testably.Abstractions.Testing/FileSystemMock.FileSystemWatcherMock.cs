@@ -170,6 +170,11 @@ public sealed partial class FileSystemMock
 				return false;
 			}
 
+			if ((NotifyFilter & changeDescription.NotifyFilters) == 0)
+			{
+				return false;
+			}
+
 			if (_filters.Count == 0)
 			{
 				return true;
@@ -237,7 +242,8 @@ public sealed partial class FileSystemMock
 				if (!_changes.TryAdd(c, 100))
 				{
 					Error?.Invoke(this, new ErrorEventArgs(
-						ExceptionFactory.InternalBufferOverflowException(InternalBufferSize, _changes.BoundedCapacity)));
+						ExceptionFactory.InternalBufferOverflowException(
+							InternalBufferSize, _changes.BoundedCapacity)));
 				}
 			});
 			CancellationToken token = _cancellationTokenSource.Token;

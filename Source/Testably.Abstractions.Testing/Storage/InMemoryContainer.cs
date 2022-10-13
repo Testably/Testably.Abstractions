@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
+using static Testably.Abstractions.Testing.FileSystemMock;
 using static Testably.Abstractions.Testing.Storage.IStorageContainer;
 
 namespace Testably.Abstractions.Testing.Storage;
@@ -19,7 +20,7 @@ internal class InMemoryContainer : IStorageContainer
 	private bool _isEncrypted;
 	private readonly IStorageLocation _location;
 
-	public InMemoryContainer(FileSystemMock.FileSystemTypes type,
+	public InMemoryContainer(FileSystemTypes type,
 	                         IStorageLocation location,
 	                         FileSystemMock fileSystem)
 	{
@@ -112,7 +113,7 @@ internal class InMemoryContainer : IStorageContainer
 	public ITimeSystem TimeSystem => _fileSystem.TimeSystem;
 
 	/// <inheritdoc cref="IStorageContainer.Type" />
-	public FileSystemMock.FileSystemTypes Type { get; }
+	public FileSystemTypes Type { get; }
 
 	/// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
 	public void AppendBytes(byte[] bytes)
@@ -195,8 +196,20 @@ internal class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.WriteBytes(byte[])" />
 	public void WriteBytes(byte[] bytes)
 	{
+		ChangeDescription fileSystemChange =
+			_fileSystem.ChangeHandler.NotifyPendingChange(
+				_location,
+				WatcherChangeTypes.Changed,
+				FileSystemTypes.File,
+				NotifyFilters.LastAccess |
+				NotifyFilters.LastWrite |
+				NotifyFilters.Size |
+				(RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+					? NotifyFilters.Attributes
+					: NotifyFilters.Security));
 		_location.Drive?.ChangeUsedBytes(bytes.Length - _bytes.Length);
 		_bytes = bytes;
+		_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
 	}
 
 	#endregion
@@ -207,7 +220,7 @@ internal class InMemoryContainer : IStorageContainer
 	public static IStorageContainer NewDirectory(IStorageLocation location,
 	                                             FileSystemMock fileSystem)
 	{
-		return new InMemoryContainer(FileSystemMock.FileSystemTypes.Directory, location,
+		return new InMemoryContainer(FileSystemTypes.Directory, location,
 			fileSystem);
 	}
 
@@ -217,7 +230,7 @@ internal class InMemoryContainer : IStorageContainer
 	public static IStorageContainer NewFile(IStorageLocation location,
 	                                        FileSystemMock fileSystem)
 	{
-		return new InMemoryContainer(FileSystemMock.FileSystemTypes.File, location,
+		return new InMemoryContainer(FileSystemTypes.File, location,
 			fileSystem);
 	}
 

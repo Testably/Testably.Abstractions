@@ -250,7 +250,7 @@ internal sealed class InMemoryStorage : IStorage
 						location,
 						WatcherChangeTypes.Created,
 						container.Type,
-						NotifyFilters.CreationTime);
+						NotifyFilters.DirectoryName);
 				}
 
 				return container;
@@ -390,7 +390,7 @@ internal sealed class InMemoryStorage : IStorage
 						location,
 						WatcherChangeTypes.Created,
 						container.Type,
-						NotifyFilters.CreationTime);
+						NotifyFilters.DirectoryName);
 				}
 
 				return container;
@@ -450,7 +450,7 @@ internal sealed class InMemoryStorage : IStorage
 								parentLocation,
 								WatcherChangeTypes.Created,
 								container.Type,
-								NotifyFilters.CreationTime);
+								NotifyFilters.DirectoryName);
 						return container;
 					},
 					(_, f) =>
