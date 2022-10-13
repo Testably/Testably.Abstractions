@@ -108,13 +108,13 @@ internal class LockableContainer : IStorageContainer
 
 		#region IStorageAccessHandle Members
 
-		/// <inheritdoc />
+		/// <inheritdoc cref="IStorageAccessHandle.Access" />
 		public FileAccess Access { get; }
 
-		/// <inheritdoc />
+		/// <inheritdoc cref="IStorageAccessHandle.Access" />
 		public FileShare Share { get; }
 
-		/// <inheritdoc />
+		/// <inheritdoc cref="IDisposable.Dispose()" />
 		public void Dispose()
 		{
 		}
