@@ -35,6 +35,30 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 		exception.Should().BeOfType<ArgumentNullException>();
 	}
 
+	[Theory]
+	[InlineData(259)]
+	[InlineData(260)]
+	[FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.New))]
+	public void New_PathTooLong_ShouldThrowPathTooLongExceptionOnNetFramework(
+		int maxLength)
+	{
+		string rootDrive = FileTestHelper.RootDrive();
+		string path = new('a', maxLength - rootDrive.Length);
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = FileSystem.FileInfo.New(rootDrive + path);
+		});
+
+		if (Test.IsNetFramework)
+		{
+			exception.Should().BeOfType<PathTooLongException>();
+		}
+		else
+		{
+			exception.Should().BeNull();
+		}
+	}
+
 	[SkippableTheory]
 	[AutoData]
 	[FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.New))]
