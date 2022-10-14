@@ -35,19 +35,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	[FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllText))]
-	public void AppendAllText_ShouldNotEndWithNewline(string path)
-	{
-		string contents = "foo";
-
-		FileSystem.File.AppendAllText(path, contents);
-
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents);
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllText))]
-	public void AppendAllText_ShouldAdjustTimes(string path)
+	public void AppendAllText_ShouldAdjustTimes(string path, string contents)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
@@ -57,7 +45,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
 
-		FileSystem.File.AppendAllText(path, "bar");
+		FileSystem.File.AppendAllText(path, contents);
 
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(path);
@@ -77,8 +65,21 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			   .BeOnOrBefore(creationTimeEnd);
 		}
+
 		lastWriteTime.Should()
 		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllText))]
+	public void AppendAllText_ShouldNotEndWithNewline(string path)
+	{
+		string contents = "foo";
+
+		FileSystem.File.AppendAllText(path, contents);
+
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents);
 	}
 
 	[SkippableTheory]

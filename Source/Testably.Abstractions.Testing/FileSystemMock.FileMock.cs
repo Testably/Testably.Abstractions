@@ -379,6 +379,7 @@ public sealed partial class FileSystemMock
 					FileAccess.Read,
 					FileStreamFactoryMock.DefaultShare))
 				{
+					fileInfo.AdjustTimes(TimeAdjustments.LastAccessTime);
 					return fileInfo.GetBytes();
 				}
 			}
@@ -439,6 +440,7 @@ public sealed partial class FileSystemMock
 					FileAccess.Read,
 					FileStreamFactoryMock.DefaultShare))
 				{
+					fileInfo.AdjustTimes(TimeAdjustments.LastAccessTime);
 					return encoding.GetString(fileInfo.GetBytes());
 				}
 			}

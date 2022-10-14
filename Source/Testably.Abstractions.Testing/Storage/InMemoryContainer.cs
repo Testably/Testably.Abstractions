@@ -118,14 +118,7 @@ internal class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
 	public void AppendBytes(byte[] bytes)
 	{
-		TimeAdjustments timeAdjustment = TimeAdjustments.LastWriteTime;
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-		{
-			timeAdjustment |= TimeAdjustments.LastAccessTime;
-		}
-
 		WriteBytes(_bytes.Concat(bytes).ToArray());
-		this.AdjustTimes(timeAdjustment);
 	}
 
 	/// <inheritdoc cref="IStorageContainer.ClearBytes()" />
@@ -220,6 +213,12 @@ internal class InMemoryContainer : IStorageContainer
 			notifyFilters |= NotifyFilters.CreationTime;
 		}
 
+		TimeAdjustments timeAdjustment = TimeAdjustments.LastWriteTime;
+		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+		{
+			timeAdjustment |= TimeAdjustments.LastAccessTime;
+		}
+
 		ChangeDescription fileSystemChange =
 			_fileSystem.ChangeHandler.NotifyPendingChange(
 				_location,
@@ -228,6 +227,7 @@ internal class InMemoryContainer : IStorageContainer
 				notifyFilters);
 		_location.Drive?.ChangeUsedBytes(bytes.Length - _bytes.Length);
 		_bytes = bytes;
+		this.AdjustTimes(timeAdjustment);
 		_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
 	}
 

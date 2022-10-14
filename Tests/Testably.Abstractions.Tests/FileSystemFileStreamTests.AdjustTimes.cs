@@ -122,7 +122,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
 		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-		_ = stream.ReadAsync(buffer.AsMemory());
+		_ = await stream.ReadAsync(buffer.AsMemory());
 
 		DateTime lastAccessTime = WaitToBeUpdatedToAfter(
 			() => FileSystem.File.GetLastAccessTimeUtc(path), updateTime);
@@ -156,7 +156,9 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
 		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-		_ = stream.ReadAsync(buffer, 0, 2);
+#pragma warning disable CA1835
+		_ = await stream.ReadAsync(buffer, 0, 2);
+#pragma warning restore CA1835
 
 		DateTime lastAccessTime = WaitToBeUpdatedToAfter(
 			() => FileSystem.File.GetLastAccessTimeUtc(path), updateTime);
@@ -347,7 +349,9 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
 		await using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
+#pragma warning disable CA1835
 		await stream.WriteAsync(contents, 0, 2);
+#pragma warning restore CA1835
 		await stream.DisposeAsync();
 
 		DateTime lastWriteTime = WaitToBeUpdatedToAfter(
