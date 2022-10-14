@@ -1,6 +1,7 @@
 ﻿using Moq;
 using System.IO;
 using Testably.Abstractions.Testing.Internal;
+using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.Internal;
 
@@ -32,11 +33,14 @@ public class PathHelperTests
 		result.Should().BeTrue();
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[AutoData]
 	[Trait(nameof(Testing), nameof(PathHelper))]
 	public void IsUncPath_MixedDirectorySeparatorChars_ShouldReturnFalse(string path)
 	{
+		Skip.IfNot(Test.RunsOnWindows,
+			"Mac and Linux don't have distinctive directory separator chars.");
+
 		path = $"{Path.AltDirectorySeparatorChar}{Path.DirectorySeparatorChar}{path}";
 
 		bool result = path.IsUncPath();
