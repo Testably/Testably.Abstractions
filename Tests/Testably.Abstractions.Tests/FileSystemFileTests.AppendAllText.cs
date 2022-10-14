@@ -54,7 +54,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
 		FileSystem.File.WriteAllText(path, "foo");
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
-		TimeSystem.Thread.Sleep(1500);
+		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
 
 		FileSystem.File.AppendAllText(path, "bar");

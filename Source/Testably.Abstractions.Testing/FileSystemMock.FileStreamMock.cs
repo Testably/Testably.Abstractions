@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Storage;
 
@@ -25,6 +27,7 @@ public sealed partial class FileSystemMock
 		private readonly IDisposable _accessLock;
 		private readonly IStorageContainer _file;
 		private readonly FileSystemMock _fileSystem;
+		private bool _isContentChanged;
 		private bool _isDisposed;
 		private readonly FileMode _mode;
 		private readonly FileOptions _options;
@@ -115,6 +118,34 @@ public sealed partial class FileSystemMock
 			return base.Read(buffer, offset, count);
 		}
 
+#if FEATURE_SPAN
+		/// <inheritdoc cref="FileSystemStream.Read(Span{byte})" />
+		public override int Read(Span<byte> buffer)
+		{
+			_file.AdjustTimes(TimeAdjustments.LastAccessTime);
+			return base.Read(buffer);
+		}
+#endif
+
+		/// <inheritdoc cref="FileSystemStream.ReadAsync(byte[], int, int, CancellationToken)" />
+		public override Task<int> ReadAsync(byte[] buffer, int offset, int count,
+		                                    CancellationToken cancellationToken)
+		{
+			_file.AdjustTimes(TimeAdjustments.LastAccessTime);
+			return base.ReadAsync(buffer, offset, count, cancellationToken);
+		}
+
+#if FEATURE_SPAN
+		/// <inheritdoc cref="FileSystemStream.ReadAsync(Memory{byte}, CancellationToken)" />
+		public override ValueTask<int> ReadAsync(Memory<byte> buffer,
+		                                         CancellationToken cancellationToken =
+			                                         new())
+		{
+			_file.AdjustTimes(TimeAdjustments.LastAccessTime);
+			return base.ReadAsync(buffer, cancellationToken);
+		}
+#endif
+
 		/// <inheritdoc cref="FileSystemStream.ReadByte()" />
 		public override int ReadByte()
 		{
@@ -136,8 +167,42 @@ public sealed partial class FileSystemMock
 		/// <inheritdoc cref="FileSystemStream.Write(byte[], int, int)" />
 		public override void Write(byte[] buffer, int offset, int count)
 		{
-			//TimeAdjustments.LastAccessTime | TimeAdjustments.LastWriteTime
+			_isContentChanged = true;
 			base.Write(buffer, offset, count);
+		}
+
+#if FEATURE_SPAN
+		/// <inheritdoc cref="FileSystemStream.Write(ReadOnlySpan{byte})" />
+		public override void Write(ReadOnlySpan<byte> buffer)
+		{
+			_isContentChanged = true;
+			base.Write(buffer);
+		}
+#endif
+
+		/// <inheritdoc cref="FileSystemStream.WriteAsync(byte[], int, int, CancellationToken)" />
+		public override Task WriteAsync(byte[] buffer, int offset, int count,
+		                                CancellationToken cancellationToken)
+		{
+			_isContentChanged = true;
+			return base.WriteAsync(buffer, offset, count, cancellationToken);
+		}
+
+#if FEATURE_SPAN
+		/// <inheritdoc cref="FileSystemStream.WriteAsync(ReadOnlyMemory{byte}, CancellationToken)" />
+		public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer,
+		                                     CancellationToken cancellationToken = new())
+		{
+			_isContentChanged = true;
+			return base.WriteAsync(buffer, cancellationToken);
+		}
+#endif
+
+		/// <inheritdoc cref="FileSystemStream.WriteByte(byte)" />
+		public override void WriteByte(byte value)
+		{
+			_isContentChanged = true;
+			base.WriteByte(value);
 		}
 
 		/// <inheritdoc cref="FileSystemStream.Dispose(bool)" />
@@ -170,6 +235,13 @@ public sealed partial class FileSystemMock
 
 		private void InternalFlush()
 		{
+			if (_isContentChanged)
+			{
+				_file.AdjustTimes(TimeAdjustments.LastAccessTime |
+				                  TimeAdjustments.LastWriteTime);
+				_isContentChanged = false;
+			}
+
 			long position = _stream.Position;
 			_stream.Seek(0, SeekOrigin.Begin);
 			byte[] data = new byte[Length];

@@ -6,6 +6,11 @@ namespace Testably.Abstractions.Tests.TestHelpers;
 public static class FileTestHelper
 {
 	/// <summary>
+	///     The minimum delay to test if times were adjusted in the real file system.
+	/// </summary>
+	internal static readonly TimeSpan AdjustTimesDelay = TimeSpan.FromMilliseconds(1500);
+
+	/// <summary>
 	///     The default time returned by the file system if no time has been set.
 	///     <seealso href="https://learn.microsoft.com/en-us/windows/win32/sysinfo/file-times" />:
 	///     A file time is a 64-bit value that represents the number of 100-nanosecond intervals that have elapsed
