@@ -11,6 +11,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 	[FileSystemTests.FileStream("AdjustTimes")]
 	public void CopyTo_ShouldAdjustTimes(string path, byte[] contents)
 	{
+		Skip.If(Test.IsNetFramework && FileSystem is FileSystem, "Works unreliable on .NET Framework");
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		byte[] buffer = new byte[contents.Length];
@@ -81,12 +82,13 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		   .BeOnOrBefore(creationTimeEnd);
 	}
 #endif
-
+	
 	[SkippableTheory]
 	[AutoData]
 	[FileSystemTests.FileStream("AdjustTimes")]
 	public void Read_ShouldAdjustTimes(string path, byte[] contents)
 	{
+		Skip.If(Test.IsNetFramework && FileSystem is FileSystem, "Works unreliable on .NET Framework");
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		byte[] buffer = new byte[2];
@@ -162,6 +164,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 	[FileSystemTests.FileStream("AdjustTimes")]
 	public async Task ReadAsync_ShouldAdjustTimes(string path, byte[] contents)
 	{
+		Skip.If(Test.IsNetFramework && FileSystem is FileSystem, "Works unreliable on .NET Framework");
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		byte[] buffer = new byte[2];
@@ -201,6 +204,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 	[FileSystemTests.FileStream("AdjustTimes")]
 	public void ReadByte_ShouldAdjustTimes(string path, byte[] contents)
 	{
+		Skip.If(Test.IsNetFramework && FileSystem is FileSystem, "Works unreliable on .NET Framework");
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
@@ -236,6 +240,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 	[FileSystemTests.FileStream("AdjustTimes")]
 	public void Seek_ShouldNotAdjustTimes(string path, byte[] contents)
 	{
+		Skip.If(Test.IsNetFramework && FileSystem is FileSystem, "Works unreliable on .NET Framework");
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
@@ -313,6 +318,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 	[FileSystemTests.FileStream("AdjustTimes")]
 	public void Write_ShouldAdjustTimes(string path, byte[] contents)
 	{
+		Skip.If(Test.IsNetFramework && FileSystem is FileSystem, "Works unreliable on .NET Framework");
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
@@ -398,6 +404,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 	[FileSystemTests.FileStream("AdjustTimes")]
 	public async Task WriteAsync_ShouldAdjustTimes(string path, byte[] contents)
 	{
+		Skip.If(Test.IsNetFramework && FileSystem is FileSystem, "Works unreliable on .NET Framework");
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
@@ -442,6 +449,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 	[FileSystemTests.FileStream("AdjustTimes")]
 	public void WriteByte_ShouldAdjustTimes(string path, byte[] contents, byte content)
 	{
+		Skip.If(Test.IsNetFramework && FileSystem is FileSystem, "Works unreliable on .NET Framework");
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
