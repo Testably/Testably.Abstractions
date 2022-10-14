@@ -1,4 +1,4 @@
-name: .NET Stryker
+name: "Stryker"
 
 on:
   workflow_dispatch: 
@@ -7,7 +7,7 @@ on:
     
 jobs:
   stryker:
-    name: Analyze quality of unit tests
+    name: Analyze quality of unit tests with .NET Stryker
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
