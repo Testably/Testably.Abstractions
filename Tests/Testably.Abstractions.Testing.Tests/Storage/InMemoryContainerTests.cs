@@ -14,7 +14,8 @@ public class InMemoryContainerTests
 		FileSystemMock fileSystem = new();
 		FileSystemMock.DriveInfoMock drive =
 			FileSystemMock.DriveInfoMock.New("C", fileSystem);
-		IStorageLocation location = InMemoryLocation.New(drive, path);
+		IStorageLocation location = InMemoryLocation.New(drive,
+			fileSystem.Path.GetFullPath(path));
 		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);
 		fileContainer.WriteBytes(bytes);
 		fileContainer.Encrypt();
@@ -34,7 +35,8 @@ public class InMemoryContainerTests
 		FileSystemMock fileSystem = new();
 		FileSystemMock.DriveInfoMock drive =
 			FileSystemMock.DriveInfoMock.New("C", fileSystem);
-		IStorageLocation location = InMemoryLocation.New(drive, path);
+		IStorageLocation location = InMemoryLocation.New(drive,
+			fileSystem.Path.GetFullPath(path));
 		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);
 		fileContainer.WriteBytes(bytes);
 
@@ -52,7 +54,8 @@ public class InMemoryContainerTests
 		FileSystemMock fileSystem = new();
 		FileSystemMock.DriveInfoMock drive =
 			FileSystemMock.DriveInfoMock.New("C", fileSystem);
-		IStorageLocation location = InMemoryLocation.New(drive, path);
+		IStorageLocation location = InMemoryLocation.New(drive,
+			fileSystem.Path.GetFullPath(path));
 		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);
 		fileContainer.WriteBytes(bytes);
 		fileContainer.Encrypt();
@@ -72,7 +75,8 @@ public class InMemoryContainerTests
 		FileSystemMock fileSystem = new();
 		FileSystemMock.DriveInfoMock drive =
 			FileSystemMock.DriveInfoMock.New("C", fileSystem);
-		IStorageLocation location = InMemoryLocation.New(drive, path);
+		IStorageLocation location = InMemoryLocation.New(drive,
+			fileSystem.Path.GetFullPath(path));
 		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);
 		fileContainer.WriteBytes(bytes);
 

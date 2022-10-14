@@ -121,6 +121,7 @@ internal sealed class InMemoryStorage : IStorage
 		{
 			removed.ClearBytes();
 			_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
+			AdjustParentDirectoryTimes(location);
 			return true;
 		}
 
@@ -254,6 +255,8 @@ internal sealed class InMemoryStorage : IStorage
 				{
 					CreateParents(_fileSystem, loc);
 				}
+
+				AdjustParentDirectoryTimes(loc);
 
 				using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
 				{
@@ -404,6 +407,7 @@ internal sealed class InMemoryStorage : IStorage
 						NotifyFilters.DirectoryName);
 				}
 
+				AdjustParentDirectoryTimes(location);
 				return container;
 			});
 
@@ -419,6 +423,18 @@ internal sealed class InMemoryStorage : IStorage
 
 	#endregion
 
+	private void AdjustParentDirectoryTimes(IStorageLocation location)
+	{
+		IStorageContainer? parentContainer = GetContainer(location.GetParent());
+		if (parentContainer != null && parentContainer is not NullContainer)
+		{
+			TimeAdjustments timeAdjustment = TimeAdjustments.LastWriteTime;
+			Execute.OnWindows(()
+				=> timeAdjustment |= TimeAdjustments.LastAccessTime);
+			parentContainer.AdjustTimes(timeAdjustment);
+		}
+	}
+
 	private void CreateParents(FileSystemMock fileSystem, IStorageLocation location)
 	{
 		List<string> parents = new();
@@ -432,10 +448,6 @@ internal sealed class InMemoryStorage : IStorage
 		}
 
 		parents.Reverse();
-		TimeAdjustments timeAdjustments =
-			TimeAdjustments.LastWriteTime;
-		Execute.OnWindows(()
-			=> timeAdjustments |= TimeAdjustments.LastAccessTime);
 
 		List<IStorageAccessHandle> accessHandles = new();
 		try
@@ -462,11 +474,7 @@ internal sealed class InMemoryStorage : IStorage
 								NotifyFilters.DirectoryName);
 						return container;
 					},
-					(_, f) =>
-					{
-						f.AdjustTimes(timeAdjustments);
-						return f;
-					});
+					(_, f) => f);
 				fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
 			}
 		}

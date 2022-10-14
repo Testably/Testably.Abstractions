@@ -13,6 +13,82 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
+	public void CreateDirectory_ShouldAdjustTimes(string path, string subdirectoryName)
+	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
+		string subdirectoryPath = FileSystem.Path.Combine(path, subdirectoryName);
+		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
+		FileSystem.Directory.CreateDirectory(path);
+		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
+		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+		DateTime updateTime = TimeSystem.DateTime.UtcNow;
+
+		FileSystem.Directory.CreateDirectory(subdirectoryPath);
+
+		DateTime creationTime = FileSystem.Directory.GetCreationTimeUtc(path);
+		DateTime lastAccessTime = FileSystem.Directory.GetLastAccessTimeUtc(path);
+		DateTime lastWriteTime = FileSystem.Directory.GetLastWriteTimeUtc(path);
+
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+			lastAccessTime.Should()
+			   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		}
+		else
+		{
+			lastAccessTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+
+		lastWriteTime.Should()
+		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
+	public void CreateDirectory_ShouldAdjustTimesOnlyForDirectParentDirectory(
+		string rootPath)
+	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		
+		string subdirectoryLevel1Path =
+			FileSystem.Path.Combine(rootPath, "lvl1");
+		string subdirectoryLevel2Path =
+			FileSystem.Path.Combine(subdirectoryLevel1Path, "lvl2");
+		string subdirectoryLevel3Path =
+			FileSystem.Path.Combine(subdirectoryLevel2Path, "lvl3");
+		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
+		FileSystem.Directory.CreateDirectory(subdirectoryLevel2Path);
+		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
+		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+
+		FileSystem.Directory.CreateDirectory(subdirectoryLevel3Path);
+
+		foreach (string path in new[] { rootPath, subdirectoryLevel1Path })
+		{
+			DateTime lastAccessTime =
+				FileSystem.Directory.GetLastAccessTimeUtc(path);
+			DateTime lastWriteTime =
+				FileSystem.Directory.GetLastWriteTimeUtc(path);
+
+			lastAccessTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+			lastWriteTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
 	public void CreateDirectory_ShouldSetCreationTime(string path)
 	{
 		DateTime start = TimeSystem.DateTime.Now;

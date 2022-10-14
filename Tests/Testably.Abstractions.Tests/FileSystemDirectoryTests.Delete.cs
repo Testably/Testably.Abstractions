@@ -94,6 +94,45 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
+	public void Delete_ShouldAdjustTimes(string path, string subdirectoryName)
+	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
+		string subdirectoryPath = FileSystem.Path.Combine(path, subdirectoryName);
+		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
+		FileSystem.Directory.CreateDirectory(subdirectoryPath);
+		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
+		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+		DateTime updateTime = TimeSystem.DateTime.UtcNow;
+
+		FileSystem.Directory.Delete(subdirectoryPath);
+
+		DateTime creationTime = FileSystem.Directory.GetCreationTimeUtc(path);
+		DateTime lastAccessTime = FileSystem.Directory.GetLastAccessTimeUtc(path);
+		DateTime lastWriteTime = FileSystem.Directory.GetLastWriteTimeUtc(path);
+
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+			lastAccessTime.Should()
+			   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		}
+		else
+		{
+			lastAccessTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+
+		lastWriteTime.Should()
+		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
 	public void Delete_ShouldDeleteDirectory(string directoryName)
 	{
 		IFileSystem.IDirectoryInfo result =
