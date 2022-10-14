@@ -431,6 +431,7 @@ internal sealed class InMemoryStorage : IStorage
 			parent = fileSystem.Path.GetDirectoryName(parent);
 		}
 
+		string? immediateParent = parents.FirstOrDefault();
 		parents.Reverse();
 		TimeAdjustments timeAdjustments =
 			TimeAdjustments.LastWriteTime;
@@ -462,9 +463,13 @@ internal sealed class InMemoryStorage : IStorage
 								NotifyFilters.DirectoryName);
 						return container;
 					},
-					(_, f) =>
+					(l, f) =>
 					{
-						f.AdjustTimes(timeAdjustments);
+						if (l.FullPath == immediateParent)
+						{
+							f.AdjustTimes(timeAdjustments);
+						}
+
 						return f;
 					});
 				fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
