@@ -46,7 +46,8 @@ internal static class EnumerationOptionsHelper
 	                                  string searchString)
 	{
 		bool ignoreCase =
-			(enumerationOptions.MatchCasing == MatchCasing.PlatformDefault && Execute.IsWindows)
+			(enumerationOptions.MatchCasing == MatchCasing.PlatformDefault &&
+			 Execute.IsWindows)
 			|| enumerationOptions.MatchCasing == MatchCasing.CaseInsensitive;
 
 		return enumerationOptions.MatchType switch

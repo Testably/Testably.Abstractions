@@ -47,7 +47,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
 
 		FileSystem.File.SetAttributes(path, attributes);
-		
+
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(path);
 		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
@@ -58,6 +58,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			   .BeOnOrBefore(creationTimeEnd);
 		}
+
 		lastAccessTime.Should()
 		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 		   .BeOnOrBefore(creationTimeEnd);
