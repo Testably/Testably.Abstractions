@@ -107,9 +107,9 @@ jobs:
           dotnet-version: |
             5.0.x
             6.0.x
-      - name: Build solution (.NET core)
+      - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
-      - name: Run tests (.NET core)
+      - name: Run tests
         run: dotnet test --no-build
         
   test-net-framework:
@@ -130,7 +130,7 @@ jobs:
         run: cd $GITHUB_WORKSPACE
       - name: Restore Packages
         run: nuget restore Testably.Abstractions.sln
-      - name: Build Solution (.NET Framework)
+      - name: Build Solution
         run: msbuild.exe Testably.Abstractions.sln /p:platform="Any CPU" /p:configuration="Release"
-      - name: Run Tests (.NET Framework)
+      - name: Run Tests
         run: vstest.console.exe .\Tests\Testably.Abstractions.Tests\bin\Release\net472\Testably.Abstractions.Tests.dll .\Tests\Testably.Abstractions.Extensions.Tests\bin\Release\net472\Testably.Abstractions.Extensions.Tests.dll
