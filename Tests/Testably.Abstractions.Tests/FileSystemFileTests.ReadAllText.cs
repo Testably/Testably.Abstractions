@@ -59,6 +59,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllText))]
 	public void ReadAllText_ShouldAdjustTimes(string path, string contents)
 	{
+		Skip.If(Test.IsNetFramework && FileSystem is FileSystem, "Works unreliable on .NET Framework");
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
