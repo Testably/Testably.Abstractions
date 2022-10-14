@@ -30,9 +30,13 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
 
-		creationTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+
 		lastAccessTime.Should()
 		   .BeOnOrAfter(updateTime);
 		lastWriteTime.Should()
@@ -63,9 +67,13 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
 
-		creationTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+
 		lastAccessTime.Should()
 		   .BeOnOrAfter(updateTime);
 		lastWriteTime.Should()
@@ -96,9 +104,13 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
 
-		creationTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+
 		lastAccessTime.Should()
 		   .BeOnOrAfter(updateTime);
 		lastWriteTime.Should()
@@ -129,9 +141,13 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
 
-		creationTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+
 		lastAccessTime.Should()
 		   .BeOnOrAfter(updateTime);
 		lastWriteTime.Should()
@@ -165,9 +181,13 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
 
-		creationTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+
 		lastAccessTime.Should()
 		   .BeOnOrAfter(updateTime);
 		lastWriteTime.Should()
@@ -197,9 +217,13 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
 
-		creationTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+
 		lastAccessTime.Should()
 		   .BeOnOrAfter(updateTime);
 		lastWriteTime.Should()
@@ -226,9 +250,13 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(path);
 		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
 
-		creationTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+
 		lastAccessTime.Should()
 		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 		   .BeOnOrBefore(creationTimeEnd);
@@ -260,11 +288,21 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(path);
 
-		creationTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
-		lastAccessTime.Should()
-		   .BeOnOrAfter(updateTime);
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+			lastAccessTime.Should()
+			   .BeOnOrAfter(updateTime);
+		}
+		else
+		{
+			lastAccessTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+
 		lastWriteTime.Should()
 		   .BeOnOrAfter(updateTime);
 	}
@@ -292,11 +330,21 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(path);
 
-		creationTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
-		lastAccessTime.Should()
-		   .BeOnOrAfter(updateTime);
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+			lastAccessTime.Should()
+			   .BeOnOrAfter(updateTime);
+		}
+		else
+		{
+			lastAccessTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+
 		lastWriteTime.Should()
 		   .BeOnOrAfter(updateTime);
 	}
@@ -324,11 +372,21 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(path);
 
-		creationTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
-		lastAccessTime.Should()
-		   .BeOnOrAfter(updateTime);
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+			lastAccessTime.Should()
+			   .BeOnOrAfter(updateTime);
+		}
+		else
+		{
+			lastAccessTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+
 		lastWriteTime.Should()
 		   .BeOnOrAfter(updateTime);
 	}
@@ -359,11 +417,21 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(path);
 
-		creationTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
-		lastAccessTime.Should()
-		   .BeOnOrAfter(updateTime);
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+			lastAccessTime.Should()
+			   .BeOnOrAfter(updateTime);
+		}
+		else
+		{
+			lastAccessTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+
 		lastWriteTime.Should()
 		   .BeOnOrAfter(updateTime);
 	}
@@ -391,11 +459,21 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(path);
 
-		creationTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
-		lastAccessTime.Should()
-		   .BeOnOrAfter(updateTime);
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+			lastAccessTime.Should()
+			   .BeOnOrAfter(updateTime);
+		}
+		else
+		{
+			lastAccessTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+
 		lastWriteTime.Should()
 		   .BeOnOrAfter(updateTime);
 	}
