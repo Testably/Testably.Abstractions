@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
 
@@ -103,8 +104,7 @@ public static class Notification
 				executeWhenWaiting?.Invoke();
 				if (!_reset.Wait(timeout))
 				{
-					throw new TimeoutException(
-						$"The timeout of {timeout}ms expired in the awaitable callback.");
+					throw ExceptionFactory.TimeoutExpired(timeout);
 				}
 			}
 

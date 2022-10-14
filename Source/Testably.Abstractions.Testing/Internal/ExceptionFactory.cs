@@ -102,4 +102,8 @@ internal static class ExceptionFactory
 	internal static ArgumentOutOfRangeException ThreadSleepOutOfRange(string paramName)
 		=> new(paramName,
 			"Number must be either non-negative and less than or equal to Int32.MaxValue or -1.");
+
+	internal static TimeoutException TimeoutExpired(int timeoutMilliseconds)
+		=> new(
+			$"The timeout of {timeoutMilliseconds}ms expired in the awaitable callback.");
 }
