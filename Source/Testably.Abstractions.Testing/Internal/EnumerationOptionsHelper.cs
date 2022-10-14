@@ -83,7 +83,7 @@ internal static class EnumerationOptionsHelper
 	                                 bool ignoreCase,
 	                                 bool useExtendedWildcards)
 	{
-		if (Framework.IsNetFramework && expression == "")
+		if (Execute.IsNetFramework && expression == "")
 		{
 			return false;
 		}
@@ -123,7 +123,7 @@ internal static class EnumerationOptionsHelper
 			return "*";
 		}
 
-		if (!Framework.IsNetFramework && string.IsNullOrEmpty(expression))
+		if (!Execute.IsNetFramework && string.IsNullOrEmpty(expression))
 		{
 			return "*";
 		}

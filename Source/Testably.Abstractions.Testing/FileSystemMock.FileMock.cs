@@ -116,10 +116,8 @@ public sealed partial class FileSystemMock
 			}
 			catch (UnauthorizedAccessException)
 			{
-				if (Framework.IsNetFramework)
-				{
-					throw ExceptionFactory.AccessToPathDenied(sourceFileName);
-				}
+				Execute.OnNetFramework(()
+					=> throw ExceptionFactory.AccessToPathDenied(sourceFileName));
 
 				throw;
 			}
@@ -135,10 +133,8 @@ public sealed partial class FileSystemMock
 			}
 			catch (UnauthorizedAccessException)
 			{
-				if (Framework.IsNetFramework)
-				{
-					throw ExceptionFactory.AccessToPathDenied(sourceFileName);
-				}
+				Execute.OnNetFramework(()
+					=> throw ExceptionFactory.AccessToPathDenied(sourceFileName));
 
 				throw;
 			}

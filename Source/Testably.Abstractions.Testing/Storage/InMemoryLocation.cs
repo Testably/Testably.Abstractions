@@ -21,10 +21,8 @@ internal sealed class InMemoryLocation : IStorageLocation
 		   .NormalizePath()
 		   .TrimOnWindows();
 		_key = NormalizeKey(FullPath);
-		if (Framework.IsNetFramework)
-		{
-			friendlyName = friendlyName.TrimOnWindows();
-		}
+		Execute.OnNetFramework(()
+			=> friendlyName = friendlyName.TrimOnWindows());
 
 		FriendlyName = friendlyName.RemoveLeadingDot();
 		Drive = drive;
@@ -108,10 +106,8 @@ internal sealed class InMemoryLocation : IStorageLocation
 	{
 		if (path == string.Empty)
 		{
-			if (Framework.IsNetFramework)
-			{
-				throw ExceptionFactory.PathHasNoLegalForm();
-			}
+			Execute.OnNetFramework(()
+				=> throw ExceptionFactory.PathHasNoLegalForm());
 
 			throw ExceptionFactory.PathIsEmpty(nameof(path));
 		}

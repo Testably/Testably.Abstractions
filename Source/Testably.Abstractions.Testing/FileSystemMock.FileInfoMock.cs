@@ -58,9 +58,10 @@ public sealed partial class FileSystemMock
 				RefreshInternal();
 				if (Container is NullContainer)
 				{
-					throw ExceptionFactory.FileNotFound(Framework.IsNetFramework
-						? Location.FriendlyName
-						: Location.FullPath);
+					throw ExceptionFactory.FileNotFound(
+						Execute.OnNetFramework(
+							() => Location.FriendlyName,
+							() => Location.FullPath));
 				}
 
 				return Container.GetBytes().Length;
@@ -152,9 +153,10 @@ public sealed partial class FileSystemMock
 		/// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode)" />
 		public FileSystemStream Open(FileMode mode)
 		{
-			if (mode == FileMode.Append && Framework.IsNetFramework)
+			if (mode == FileMode.Append)
 			{
-				throw ExceptionFactory.AppendAccessOnlyInWriteOnlyMode();
+				Execute.OnNetFramework(()
+					=> throw ExceptionFactory.AppendAccessOnlyInWriteOnlyMode());
 			}
 
 			return new FileStreamMock(

@@ -77,10 +77,8 @@ internal static class PathHelper
 
 		if (path.HasIllegalCharacters(fileSystem))
 		{
-			if (Framework.IsNetFramework)
-			{
-				throw ExceptionFactory.PathHasIllegalCharacters(path);
-			}
+			Execute.OnNetFramework(()
+				=> throw ExceptionFactory.PathHasIllegalCharacters(path));
 
 			throw ExceptionFactory.PathHasIncorrectSyntax(
 				fileSystem.Path.GetFullPath(path));
