@@ -105,6 +105,20 @@ public sealed partial class FileSystemMock
 			InitializeStream();
 		}
 
+		/// <inheritdoc cref="FileSystemStream.EndRead(IAsyncResult)" />
+		public override int EndRead(IAsyncResult asyncResult)
+		{
+			_file.AdjustTimes(TimeAdjustments.LastAccessTime);
+			return base.EndRead(asyncResult);
+		}
+
+		/// <inheritdoc cref="FileSystemStream.EndWrite(IAsyncResult)" />
+		public override void EndWrite(IAsyncResult asyncResult)
+		{
+			_isContentChanged = true;
+			base.EndWrite(asyncResult);
+		}
+
 		/// <inheritdoc cref="FileSystemStream.Flush()" />
 		public override void Flush()
 		{
@@ -231,17 +245,20 @@ public sealed partial class FileSystemMock
 					? SeekOrigin.End
 					: SeekOrigin.Begin);
 			}
+			else
+			{
+				_isContentChanged = true;
+			}
 		}
 
 		private void InternalFlush()
 		{
-			if (_isContentChanged)
+			if (!_isContentChanged)
 			{
-				_file.AdjustTimes(TimeAdjustments.LastAccessTime |
-				                  TimeAdjustments.LastWriteTime);
-				_isContentChanged = false;
+				return;
 			}
 
+			_isContentChanged = false;
 			long position = _stream.Position;
 			_stream.Seek(0, SeekOrigin.Begin);
 			byte[] data = new byte[Length];
