@@ -7,9 +7,9 @@ on:
     
 jobs:
   stryker:
-    name: Analyze quality of unit tests with .NET Stryker
+    name: Analyze quality of unit test coverage with .NET Stryker
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 300
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -25,21 +25,16 @@ jobs:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
-          dotnet stryker -f Tests/stryker-config.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "html" -r "cleartext"
-      - name: Analyze Testably.Abstractions.Testing
-        env:
-          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-        shell: bash
-        run: |
-          dotnet stryker -f Tests/stryker-config-testing.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "html" -r "cleartext"
+          dotnet stryker -f Tests/stryker-config.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
       - name: Analyze Testably.Abstractions.Extensions
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
-          dotnet stryker -f Tests/stryker-config-extensions.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "html" -r "cleartext"
-      - name: Upload Report for Testably.Abstractions
-        uses: actions/upload-artifact@v3
-        with:
-          name: Stryker
-          path: StrykerOutput/**/*.html
+          dotnet stryker -f Tests/stryker-config-extensions.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
+      - name: Analyze Testably.Abstractions.Testing
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        shell: bash
+        run: |
+          dotnet stryker -f Tests/stryker-config-testing.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
