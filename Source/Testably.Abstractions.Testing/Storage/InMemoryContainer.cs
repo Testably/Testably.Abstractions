@@ -214,10 +214,12 @@ internal class InMemoryContainer : IStorageContainer
 		this.AdjustTimes(timeAdjustment);
 		Execute.OnNetFramework(() =>
 		{
-			IStorageContainer? parentContainer = _fileSystem.Storage.GetContainer(_location.GetParent());
+			IStorageContainer? parentContainer =
+				_fileSystem.Storage.GetContainer(_location.GetParent());
 			if (parentContainer != null && parentContainer is not NullContainer)
 			{
-				parentContainer.AdjustTimes(TimeAdjustments.LastWriteTime);
+				parentContainer.AdjustTimes(TimeAdjustments.LastAccessTime |
+				                            TimeAdjustments.LastWriteTime);
 			}
 		});
 		_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);

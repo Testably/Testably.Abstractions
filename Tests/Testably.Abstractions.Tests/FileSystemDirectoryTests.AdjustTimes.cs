@@ -152,16 +152,18 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		parentCreationTime.Should()
 		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 		   .BeOnOrBefore(creationTimeEnd);
-		parentLastAccessTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
 		if (Test.IsNetFramework)
 		{
+			parentLastAccessTime.Should()
+			   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 			parentLastWriteTime.Should()
 			   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
+			parentLastAccessTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
 			parentLastWriteTime.Should()
 			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			   .BeOnOrBefore(creationTimeEnd);
