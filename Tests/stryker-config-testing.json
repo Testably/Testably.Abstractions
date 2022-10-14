@@ -15,7 +15,8 @@
     "ignore-methods": [
       "ExceptionFactory.*",
       "Execute.*On*",
-      "ValidateDriveLetter"
+      "ValidateDriveLetter",
+      "System.Threading.Thread.Sleep"
     ]
   }
 }
