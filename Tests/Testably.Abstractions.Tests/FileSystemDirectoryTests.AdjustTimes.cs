@@ -126,7 +126,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	[FileSystemTests.Directory("AdjustTimes")]
-	public void AdjustTimes_WhenUpdatingAFile_ShouldNotAdjustTimes(
+	public void AdjustTimes_WhenUpdatingAFile_ShouldAdjustTimesOnlyOnNetFramework(
 		string path1, string path2, string fileName)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
@@ -138,6 +138,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		FileSystem.File.WriteAllText(filePath, "");
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
 		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+		DateTime updateTime = TimeSystem.DateTime.UtcNow;
 
 		FileSystem.File.AppendAllText(filePath, "foo");
 
@@ -154,8 +155,16 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		parentLastAccessTime.Should()
 		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 		   .BeOnOrBefore(creationTimeEnd);
-		parentLastWriteTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+		if (Test.IsNetFramework)
+		{
+			parentLastWriteTime.Should()
+			   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		}
+		else
+		{
+			parentLastWriteTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
 	}
 }
