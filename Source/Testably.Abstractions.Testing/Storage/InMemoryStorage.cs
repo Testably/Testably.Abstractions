@@ -256,7 +256,7 @@ internal sealed class InMemoryStorage : IStorage
 				}
 
 				IStorageContainer? parentContainer = GetContainer(loc.GetParent());
-				if (parentContainer is InMemoryContainer)
+				if (parentContainer != null && parentContainer is not NullContainer)
 				{
 					TimeAdjustments timeAdjustment = TimeAdjustments.LastWriteTime;
 					Execute.OnWindows(()

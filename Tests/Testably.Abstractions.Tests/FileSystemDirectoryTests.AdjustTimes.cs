@@ -12,7 +12,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	public void AdjustTimes_WhenCreatingAFile_ShouldAdjustTimes(
 		string path1, string path2, string fileName)
 	{
-		//Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		string subdirectoryPath = FileSystem.Path.Combine(path1, path2);
 		string filePath = FileSystem.Path.Combine(subdirectoryPath, fileName);
@@ -60,6 +60,42 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 		   .BeOnOrBefore(creationTimeEnd);
 		rootLastWriteTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.Directory("AdjustTimes")]
+	public void AdjustTimes_WhenUpdatingAFile_ShouldNotAdjustTimes(
+		string path1, string path2, string fileName)
+	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
+		string subdirectoryPath = FileSystem.Path.Combine(path1, path2);
+		string filePath = FileSystem.Path.Combine(subdirectoryPath, fileName);
+		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
+		FileSystem.Directory.CreateDirectory(subdirectoryPath);
+		FileSystem.File.WriteAllText(filePath, "");
+		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
+		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+
+		FileSystem.File.AppendAllText(filePath, "foo");
+
+		DateTime parentCreationTime =
+			FileSystem.Directory.GetCreationTimeUtc(subdirectoryPath);
+		DateTime parentLastAccessTime =
+			FileSystem.Directory.GetLastAccessTimeUtc(subdirectoryPath);
+		DateTime parentLastWriteTime =
+			FileSystem.Directory.GetLastWriteTimeUtc(subdirectoryPath);
+		
+		parentCreationTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+		parentLastAccessTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+		parentLastWriteTime.Should()
 		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 		   .BeOnOrBefore(creationTimeEnd);
 	}
