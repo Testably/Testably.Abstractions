@@ -10,6 +10,43 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Move))]
+	public void Move_ShouldNotAdjustTimes(string source, string destination)
+	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
+		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
+		FileSystem.InitializeIn(source)
+		   .WithAFile()
+		   .WithASubdirectory().Initialized(s => s
+			   .WithAFile()
+			   .WithASubdirectory());
+		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
+		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+
+		FileSystem.Directory.Move(source, destination);
+
+		DateTime creationTime = FileSystem.Directory.GetCreationTimeUtc(destination);
+		DateTime lastAccessTime = FileSystem.Directory.GetLastAccessTimeUtc(destination);
+		DateTime lastWriteTime = FileSystem.Directory.GetLastWriteTimeUtc(destination);
+
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+
+		lastAccessTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+		lastWriteTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Move))]
 	public void Move_ShouldMoveDirectoryWithContent(string source, string destination)
 	{
 		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
