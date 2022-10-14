@@ -70,7 +70,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	public void AdjustTimes_WhenUpdatingAFile_ShouldNotAdjustTimes(
 		string path1, string path2, string fileName)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		//Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		string subdirectoryPath = FileSystem.Path.Combine(path1, path2);
 		string filePath = FileSystem.Path.Combine(subdirectoryPath, fileName);
