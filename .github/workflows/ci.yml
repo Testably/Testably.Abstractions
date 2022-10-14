@@ -111,6 +111,15 @@ jobs:
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests (.NET core)
         run: dotnet test --no-build
+        
+  test-net-framework:
+    name: Test (.NET Framework)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
       - name: Setup NuGet
