@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Testing.Internal;
 
@@ -26,12 +25,9 @@ internal static class PathHelper
 			return true;
 		}
 
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-		{
-			return path.IndexOfAny(AdditionalInvalidPathChars) >= 0;
-		}
-
-		return false;
+		return Execute.OnWindows(
+			() => path.IndexOfAny(AdditionalInvalidPathChars) >= 0,
+			() => false);
 	}
 
 	internal static string
@@ -81,10 +77,8 @@ internal static class PathHelper
 
 		if (path.HasIllegalCharacters(fileSystem))
 		{
-			if (Framework.IsNetFramework)
-			{
-				throw ExceptionFactory.PathHasIllegalCharacters(path);
-			}
+			Execute.OnNetFramework(()
+				=> throw ExceptionFactory.PathHasIllegalCharacters(path));
 
 			throw ExceptionFactory.PathHasIncorrectSyntax(
 				fileSystem.Path.GetFullPath(path));
@@ -93,12 +87,7 @@ internal static class PathHelper
 
 	[ExcludeFromCodeCoverage]
 	internal static string TrimOnWindows(this string path)
-	{
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-		{
-			return path.TrimEnd(' ');
-		}
-
-		return path;
-	}
+		=> Execute.OnWindows(
+			() => path.TrimEnd(' '),
+			() => path);
 }

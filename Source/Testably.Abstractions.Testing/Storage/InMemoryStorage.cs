@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
 using static Testably.Abstractions.Testing.FileSystemMock;
 
@@ -65,18 +64,14 @@ internal sealed class InMemoryStorage : IStorage
 			if (_containers.TryAdd(destination, copiedContainer))
 			{
 				copiedContainer.WriteBytes(sourceContainer.GetBytes());
-				if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-				{
-					sourceContainer.AdjustTimes(TimeAdjustments.LastAccessTime);
-				}
-				
+				Execute.NotOnWindows(()
+					=> sourceContainer.AdjustTimes(TimeAdjustments.LastAccessTime));
+
 				copiedContainer.Attributes = sourceContainer.Attributes;
-				if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-				{
-					copiedContainer.CreationTime.Set(
+				Execute.NotOnWindows(()
+					=> copiedContainer.CreationTime.Set(
 						sourceContainer.CreationTime.Get(DateTimeKind.Local),
-						DateTimeKind.Local);
-				}
+						DateTimeKind.Local));
 				copiedContainer.LastWriteTime.Set(
 					sourceContainer.LastWriteTime.Get(DateTimeKind.Local),
 					DateTimeKind.Local);
@@ -439,10 +434,8 @@ internal sealed class InMemoryStorage : IStorage
 		parents.Reverse();
 		TimeAdjustments timeAdjustments =
 			TimeAdjustments.LastWriteTime;
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-		{
-			timeAdjustments |= TimeAdjustments.LastAccessTime;
-		}
+		Execute.OnWindows(()
+			=> timeAdjustments |= TimeAdjustments.LastAccessTime);
 
 		List<IStorageAccessHandle> accessHandles = new();
 		try
@@ -549,10 +542,7 @@ internal sealed class InMemoryStorage : IStorage
 	private IStorageLocation? ResolveFinalLinkTarget(IStorageContainer container,
 	                                                 IStorageLocation originalLocation)
 	{
-		int maxResolveLinks =
-			RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-				? 63
-				: 40;
+		int maxResolveLinks = Execute.IsWindows ? 63 : 40;
 		IStorageLocation? nextLocation = null;
 		for (int i = 1; i < maxResolveLinks; i++)
 		{

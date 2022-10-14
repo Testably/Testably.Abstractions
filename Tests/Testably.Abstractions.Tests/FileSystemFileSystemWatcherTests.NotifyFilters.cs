@@ -149,6 +149,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		{
 			fileSystemWatcher.NotifyFilter |= NotifyFilters.CreationTime;
 		}
+
 		if (!Test.RunsOnLinux)
 		{
 			fileSystemWatcher.NotifyFilter |= NotifyFilters.Security;

@@ -65,16 +65,11 @@ internal static class ExceptionFactory
 		=> new($"There is not enough space on the disk: '{name}'");
 
 	internal static ArgumentException PathCannotBeEmpty(string paramName = "path")
-	{
-		if (Framework.IsNetFramework)
-		{
-			return new ArgumentException(
-				"Path cannot be the empty string or all whitespace.");
-		}
-
-		return new ArgumentException(
-			"Path cannot be the empty string or all whitespace.", paramName);
-	}
+		=> Execute.OnNetFramework(
+			() => new ArgumentException(
+				"Path cannot be the empty string or all whitespace."),
+			() => new ArgumentException(
+				"Path cannot be the empty string or all whitespace.", paramName));
 
 	internal static ArgumentException PathHasIllegalCharacters(
 		string path, string paramName = "path")
@@ -107,4 +102,8 @@ internal static class ExceptionFactory
 	internal static ArgumentOutOfRangeException ThreadSleepOutOfRange(string paramName)
 		=> new(paramName,
 			"Number must be either non-negative and less than or equal to Int32.MaxValue or -1.");
+
+	internal static TimeoutException TimeoutExpired(int timeoutMilliseconds)
+		=> new(
+			$"The timeout of {timeoutMilliseconds}ms expired in the awaitable callback.");
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
+using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
 
@@ -119,10 +119,8 @@ public static partial class FileSystemInitializer
 			} while (_fileSystem.Directory.Exists(basePath));
 
 			_fileSystem.Directory.CreateDirectory(basePath);
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-			{
-				basePath = "/private" + basePath;
-			}
+
+			Execute.OnMac(() => basePath = "/private" + basePath);
 
 			_logger?.Invoke($"Use '{basePath}' as current directory.");
 			_fileSystem.Directory.SetCurrentDirectory(basePath);

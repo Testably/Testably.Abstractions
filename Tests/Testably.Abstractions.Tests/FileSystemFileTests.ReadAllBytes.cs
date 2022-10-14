@@ -25,7 +25,8 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytes))]
 	public void ReadAllBytes_ShouldAdjustTimes(string path, byte[] contents)
 	{
-		Skip.If(Test.IsNetFramework && FileSystem is FileSystem, "Works unreliable on .NET Framework");
+		Skip.If(Test.IsNetFramework && FileSystem is FileSystem,
+			"Works unreliable on .NET Framework");
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
@@ -46,6 +47,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			   .BeOnOrBefore(creationTimeEnd);
 		}
+
 		lastAccessTime.Should()
 		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		lastWriteTime.Should()

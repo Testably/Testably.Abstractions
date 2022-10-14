@@ -50,7 +50,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
 		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
 
-		var stream = FileSystem.File.Open(path, mode, access);
+		FileSystemStream stream = FileSystem.File.Open(path, mode, access);
 		stream.Dispose();
 
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);

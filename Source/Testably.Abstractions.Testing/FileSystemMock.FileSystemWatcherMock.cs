@@ -23,7 +23,7 @@ public sealed partial class FileSystemMock
 		private const int BytesPerMessage = 128;
 
 		private static string DefaultFilter
-			=> Framework.IsNetFramework ? "*.*" : "*";
+			=> Execute.IsNetFramework ? "*.*" : "*";
 
 		private CancellationTokenSource? _cancellationTokenSource;
 		private IDisposable? _changeHandler;

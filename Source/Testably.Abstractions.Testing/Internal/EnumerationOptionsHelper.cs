@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Enumeration;
-using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Testing.Internal;
 
@@ -48,7 +47,7 @@ internal static class EnumerationOptionsHelper
 	{
 		bool ignoreCase =
 			(enumerationOptions.MatchCasing == MatchCasing.PlatformDefault &&
-			 !RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			 Execute.IsWindows)
 			|| enumerationOptions.MatchCasing == MatchCasing.CaseInsensitive;
 
 		return enumerationOptions.MatchType switch
@@ -85,7 +84,7 @@ internal static class EnumerationOptionsHelper
 	                                 bool ignoreCase,
 	                                 bool useExtendedWildcards)
 	{
-		if (Framework.IsNetFramework && expression == "")
+		if (Execute.IsNetFramework && expression == "")
 		{
 			return false;
 		}
@@ -125,7 +124,7 @@ internal static class EnumerationOptionsHelper
 			return "*";
 		}
 
-		if (!Framework.IsNetFramework && string.IsNullOrEmpty(expression))
+		if (!Execute.IsNetFramework && string.IsNullOrEmpty(expression))
 		{
 			return "*";
 		}

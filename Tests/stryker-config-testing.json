@@ -14,7 +14,9 @@
     "mutation-level": "Advanced",
     "ignore-methods": [
       "ExceptionFactory.*",
-      "ValidateDriveLetter" // Only tested under windows
+      "Execute.*On*",
+      "ValidateDriveLetter",
+      "System.Threading.Thread.Sleep"
     ]
   }
 }

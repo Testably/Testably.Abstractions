@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Internal;
@@ -83,13 +82,11 @@ public sealed partial class FileSystemMock
 			}
 			else if (file.Type == FileSystemTypes.Directory)
 			{
-				if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-				{
-					throw ExceptionFactory.FileAlreadyExists(
-						_fileSystem.Path.GetFullPath(Name));
-				}
+				Execute.OnWindows(() =>
+					throw ExceptionFactory.AccessToPathDenied(
+						_fileSystem.Path.GetFullPath(Name)));
 
-				throw ExceptionFactory.AccessToPathDenied(
+				throw ExceptionFactory.FileAlreadyExists(
 					_fileSystem.Path.GetFullPath(Name));
 			}
 			else if (_mode.Equals(FileMode.CreateNew))

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
 using static Testably.Abstractions.Testing.FileSystemMock;
 using static Testably.Abstractions.Testing.Storage.IStorageContainer;
@@ -39,10 +38,12 @@ internal class InMemoryContainer : IStorageContainer
 		get
 		{
 			FileAttributes attributes = _attributes;
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) &&
-			    Path.GetFileName(_location.FullPath).StartsWith("."))
+			if (Path.GetFileName(_location.FullPath).StartsWith("."))
 			{
-				attributes |= FileAttributes.Hidden;
+				FileAttributes attr = attributes;
+				attributes = Execute.OnLinux(
+					() => attr | FileAttributes.Hidden,
+					() => attr);
 			}
 
 #if FEATURE_FILESYSTEM_LINK
@@ -66,29 +67,22 @@ internal class InMemoryContainer : IStorageContainer
 		}
 		set
 		{
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-			{
-				value &= FileAttributes.Directory |
-				         FileAttributes.ReadOnly |
-				         FileAttributes.Archive |
-				         FileAttributes.Hidden |
-				         FileAttributes.NoScrubData |
-				         FileAttributes.NotContentIndexed |
-				         FileAttributes.Offline |
-				         FileAttributes.System |
-				         FileAttributes.Temporary;
-			}
-			else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-			{
-				value &= FileAttributes.Hidden |
-				         FileAttributes.Directory |
-				         FileAttributes.ReadOnly;
-			}
-			else
-			{
-				value &= FileAttributes.Directory |
-				         FileAttributes.ReadOnly;
-			}
+			value &= Execute.OnWindows(
+				() => FileAttributes.Directory |
+				      FileAttributes.ReadOnly |
+				      FileAttributes.Archive |
+				      FileAttributes.Hidden |
+				      FileAttributes.NoScrubData |
+				      FileAttributes.NotContentIndexed |
+				      FileAttributes.Offline |
+				      FileAttributes.System |
+				      FileAttributes.Temporary,
+				() => Execute.OnLinux(
+					() => FileAttributes.Directory |
+					      FileAttributes.ReadOnly,
+					() => FileAttributes.Hidden |
+					      FileAttributes.Directory |
+					      FileAttributes.ReadOnly));
 
 			_attributes = value;
 		}
@@ -176,10 +170,10 @@ internal class InMemoryContainer : IStorageContainer
 		}
 
 		if (!ignoreMetadataError &&
-		    RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
 		    Attributes.HasFlag(FileAttributes.ReadOnly))
 		{
-			throw ExceptionFactory.AccessToPathDenied();
+			Execute.OnWindows(()
+				=> throw ExceptionFactory.AccessToPathDenied());
 		}
 
 		if (CanGetAccess(access, share))
@@ -199,25 +193,15 @@ internal class InMemoryContainer : IStorageContainer
 		NotifyFilters notifyFilters = NotifyFilters.LastAccess |
 		                              NotifyFilters.LastWrite |
 		                              NotifyFilters.Size;
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-		{
-			notifyFilters |= NotifyFilters.Security;
-		}
-		else
-		{
-			notifyFilters |= NotifyFilters.Attributes;
-		}
-
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-		{
-			notifyFilters |= NotifyFilters.CreationTime;
-		}
+		Execute.OnLinux(
+			() => notifyFilters |= NotifyFilters.Security,
+			() => notifyFilters |= NotifyFilters.Attributes);
+		Execute.OnMac(()
+			=> notifyFilters |= NotifyFilters.CreationTime);
 
 		TimeAdjustments timeAdjustment = TimeAdjustments.LastWriteTime;
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-		{
-			timeAdjustment |= TimeAdjustments.LastAccessTime;
-		}
+		Execute.OnWindows(()
+			=> timeAdjustment |= TimeAdjustments.LastAccessTime);
 
 		ChangeDescription fileSystemChange =
 			_fileSystem.ChangeHandler.NotifyPendingChange(
@@ -312,16 +296,11 @@ internal class InMemoryContainer : IStorageContainer
 		{
 			_releaseCallback = releaseCallback;
 			Access = access;
-			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-			{
-				Share = share == FileShare.None
+			Share = Execute.OnWindows(
+				() => share,
+				() => share == FileShare.None
 					? FileShare.None
-					: FileShare.ReadWrite;
-			}
-			else
-			{
-				Share = share;
-			}
+					: FileShare.ReadWrite);
 
 			_key = key;
 		}
@@ -344,10 +323,8 @@ internal class InMemoryContainer : IStorageContainer
 
 		public bool GrantAccess(FileAccess access, FileShare share)
 		{
-			if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-			{
-				share = FileShare.ReadWrite;
-			}
+			Execute.NotOnWindows(()
+				=> share = FileShare.ReadWrite);
 
 			return CheckAccessWithShare(access, Share) &&
 			       CheckAccessWithShare(Access, share);

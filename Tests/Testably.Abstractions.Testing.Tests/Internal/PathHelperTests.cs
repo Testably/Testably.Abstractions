@@ -1,11 +1,64 @@
 ﻿using Moq;
 using System.IO;
 using Testably.Abstractions.Testing.Internal;
+using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.Internal;
 
 public class PathHelperTests
 {
+	[Theory]
+	[AutoData]
+	[Trait(nameof(Testing), nameof(PathHelper))]
+	public void IsUncPath_AltDirectorySeparatorChar_ShouldReturnTrue(string path)
+	{
+		string prefix = new(Path.AltDirectorySeparatorChar, 2);
+		path = prefix + path;
+
+		bool result = path.IsUncPath();
+
+		result.Should().BeTrue();
+	}
+
+	[Theory]
+	[AutoData]
+	[Trait(nameof(Testing), nameof(PathHelper))]
+	public void IsUncPath_DirectorySeparatorChar_ShouldReturnTrue(string path)
+	{
+		string prefix = new(Path.DirectorySeparatorChar, 2);
+		path = prefix + path;
+
+		bool result = path.IsUncPath();
+
+		result.Should().BeTrue();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[Trait(nameof(Testing), nameof(PathHelper))]
+	public void IsUncPath_MixedDirectorySeparatorChars_ShouldReturnFalse(string path)
+	{
+		Skip.IfNot(Test.RunsOnWindows,
+			"Mac and Linux don't have distinctive directory separator chars.");
+
+		path = $"{Path.AltDirectorySeparatorChar}{Path.DirectorySeparatorChar}{path}";
+
+		bool result = path.IsUncPath();
+
+		result.Should().BeFalse();
+	}
+
+	[Fact]
+	[Trait(nameof(Testing), nameof(PathHelper))]
+	public void IsUncPath_Null_ShouldReturnFalse()
+	{
+		string? path = null;
+
+		bool result = path.IsUncPath();
+
+		result.Should().BeFalse();
+	}
+
 	[Fact]
 	[Trait(nameof(Testing), nameof(PathHelper))]
 	public void RemoveLeadingDot_MultipleLocalDirectories_ShouldBeRemoved()
