@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing.Storage;
@@ -8,7 +7,7 @@ namespace Testably.Abstractions.Testing.Storage;
 internal sealed class InMemoryLocation : IStorageLocation
 {
 	private static readonly StringComparison StringComparisonMode =
-		RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+		Execute.IsLinux
 			? StringComparison.Ordinal
 			: StringComparison.OrdinalIgnoreCase;
 

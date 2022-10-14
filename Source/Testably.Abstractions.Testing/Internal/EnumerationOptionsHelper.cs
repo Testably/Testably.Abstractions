@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Enumeration;
-using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Testing.Internal;
 
@@ -47,8 +46,7 @@ internal static class EnumerationOptionsHelper
 	                                  string searchString)
 	{
 		bool ignoreCase =
-			(enumerationOptions.MatchCasing == MatchCasing.PlatformDefault &&
-			 !RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+			(enumerationOptions.MatchCasing == MatchCasing.PlatformDefault && Execute.IsWindows)
 			|| enumerationOptions.MatchCasing == MatchCasing.CaseInsensitive;
 
 		return enumerationOptions.MatchType switch

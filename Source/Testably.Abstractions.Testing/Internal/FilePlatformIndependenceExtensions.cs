@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 namespace Testably.Abstractions.Testing.Internal;
@@ -18,11 +17,19 @@ internal static class FilePlatformIndependenceExtensions
 	/// </summary>
 	[return: NotNullIfNotNull("path")]
 	public static string? NormalizePath(this string? path)
-		=> path != null && !RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-			? PathTransformRegex
+	{
+		if (path == null)
+		{
+			return null;
+		}
+
+		return Execute.OnWindows(
+			() => path
+			   .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar),
+			() => PathTransformRegex
 			   .Replace(path, "${path}")
-			   .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
-			: path?.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+			   .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar));
+	}
 
 	/// <summary>
 	///     Normalizes the given path so that it works on all platforms.
@@ -40,11 +47,8 @@ internal static class FilePlatformIndependenceExtensions
 			return path;
 		}
 
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-		{
-			return driveLetter + ":\\" + path;
-		}
-
-		return "/" + path;
+		return Execute.OnWindows(
+			() => driveLetter + ":\\" + path,
+			() => "/" + path);
 	}
 }
