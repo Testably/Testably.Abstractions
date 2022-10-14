@@ -58,10 +58,19 @@ jobs:
           dotnet-version: |
             5.0.x
             6.0.x
-      - name: Build solution (.NET core)
+      - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
-      - name: Run tests (.NET core)
+      - name: Run tests
         run: dotnet test --no-build
+
+  test-net-framework:
+    name: Test (.NET Framework)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
       - name: Setup NuGet
@@ -72,15 +81,15 @@ jobs:
         run: cd $GITHUB_WORKSPACE
       - name: Restore Packages
         run: nuget restore Testably.Abstractions.sln
-      - name: Build Solution (.NET Framework)
+      - name: Build solution
         run: msbuild.exe Testably.Abstractions.sln /p:platform="Any CPU" /p:configuration="Release"
-      - name: Run Tests (.NET Framework)
+      - name: Run tests
         run: vstest.console.exe .\Tests\Testably.Abstractions.Tests\bin\Release\net472\Testably.Abstractions.Tests.dll .\Tests\Testably.Abstractions.Extensions.Tests\bin\Release\net472\Testably.Abstractions.Extensions.Tests.dll
 
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    needs: [test-macos, test-ubuntu, test-windows]
+    needs: [test-macos, test-ubuntu, test-windows, test-net-framework]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3

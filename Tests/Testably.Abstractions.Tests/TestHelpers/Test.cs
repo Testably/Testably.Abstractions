@@ -4,6 +4,18 @@ namespace Testably.Abstractions.Tests.TestHelpers;
 
 public static class Test
 {
+	private static bool? _isNetFramework;
+
+	public static bool IsNetFramework
+	{
+		get
+		{
+			_isNetFramework ??= RuntimeInformation
+			   .FrameworkDescription.StartsWith(".NET Framework");
+			return _isNetFramework.Value;
+		}
+	}
+
 	public static bool RunsOnLinux
 		=> RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 

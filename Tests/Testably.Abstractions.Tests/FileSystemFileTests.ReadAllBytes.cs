@@ -23,6 +23,39 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytes))]
+	public void ReadAllBytes_ShouldAdjustTimes(string path, byte[] contents)
+	{
+		Skip.If(Test.IsNetFramework && FileSystem is FileSystem, "Works unreliable on .NET Framework");
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
+		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
+		FileSystem.File.WriteAllBytes(path, contents);
+		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
+		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+		DateTime updateTime = TimeSystem.DateTime.UtcNow;
+
+		_ = FileSystem.File.ReadAllBytes(path);
+
+		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
+		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(path);
+		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
+
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+		lastAccessTime.Should()
+		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		lastWriteTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytes))]
 	public void ReadAllBytes_ShouldReturnWrittenBytes(
 		byte[] contents, string path)
 	{

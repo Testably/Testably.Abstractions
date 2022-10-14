@@ -55,6 +55,39 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllText))]
+	public void ReadAllText_ShouldAdjustTimes(string path, string contents)
+	{
+		Skip.If(Test.IsNetFramework && FileSystem is FileSystem, "Works unreliable on .NET Framework");
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
+		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
+		FileSystem.File.WriteAllText(path, contents);
+		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
+		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+		DateTime updateTime = TimeSystem.DateTime.UtcNow;
+
+		_ = FileSystem.File.ReadAllText(path);
+
+		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
+		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(path);
+		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
+
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+		lastAccessTime.Should()
+		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		lastWriteTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+	}
+
+	[SkippableTheory]
 	[MemberAutoData(nameof(GetEncodingDifference))]
 	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllText))]
 	public void ReadAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(

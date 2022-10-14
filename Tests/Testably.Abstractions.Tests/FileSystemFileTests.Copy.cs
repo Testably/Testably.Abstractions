@@ -8,6 +8,69 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	[FileSystemTests.File(nameof(IFileSystem.IFile.Copy))]
+	public void Copy_ShouldAdjustTimes(
+		string source, string destination)
+	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
+		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
+		FileSystem.File.WriteAllText(source, "foo");
+		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
+		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+		DateTime updateTime = TimeSystem.DateTime.UtcNow;
+
+		FileSystem.File.Copy(source, destination);
+
+		DateTime sourceCreationTime = FileSystem.File.GetCreationTimeUtc(source);
+		DateTime sourceLastAccessTime = FileSystem.File.GetLastAccessTimeUtc(source);
+		DateTime sourceLastWriteTime = FileSystem.File.GetLastWriteTimeUtc(source);
+		DateTime destinationCreationTime =
+			FileSystem.File.GetCreationTimeUtc(destination);
+		DateTime destinationLastAccessTime =
+			FileSystem.File.GetLastAccessTimeUtc(destination);
+		DateTime destinationLastWriteTime =
+			FileSystem.File.GetLastWriteTimeUtc(destination);
+
+		sourceCreationTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+		if (Test.RunsOnWindows)
+		{
+			sourceLastAccessTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+		else
+		{
+			sourceLastAccessTime.Should()
+			   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		}
+
+		sourceLastWriteTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+		if (Test.RunsOnWindows)
+		{
+			destinationCreationTime.Should()
+			   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		}
+		else
+		{
+			destinationCreationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+
+		destinationLastAccessTime.Should()
+		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		destinationLastWriteTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.File(nameof(IFileSystem.IFile.Copy))]
 	public void Copy_DestinationExists_ShouldThrowIOExceptionAndNotCopyFile(
 		string sourceName,
 		string destinationName,
@@ -82,15 +145,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 		TimeSystem.Thread.Sleep(1000);
 
 		FileSystem.File.Copy(sourceName, destinationName);
-
-		FileSystem.File.GetCreationTime(destinationName)
-		   .Should().NotBe(FileSystem.File.GetCreationTime(sourceName));
-#if !NETFRAMEWORK
-		FileSystem.File.GetLastAccessTime(destinationName)
-		   .Should().Be(FileSystem.File.GetLastAccessTime(sourceName));
-		FileSystem.File.GetLastWriteTime(destinationName)
-		   .Should().Be(FileSystem.File.GetLastWriteTime(sourceName));
-#endif
 		FileSystem.File.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.ReadAllText(sourceName).Should().Be(contents);
 		FileSystem.File.Exists(destinationName).Should().BeTrue();

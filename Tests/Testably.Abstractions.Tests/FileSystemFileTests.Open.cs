@@ -38,6 +38,37 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[InlineAutoData(FileMode.Open, FileAccess.Read)]
+	[InlineAutoData(FileMode.OpenOrCreate, FileAccess.ReadWrite)]
+	[FileSystemTests.File(nameof(IFileSystem.IFile.Open))]
+	public void Open_ShouldNotAdjustTimes(FileMode mode, FileAccess access, string path)
+	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
+		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
+		FileSystem.File.WriteAllText(path, "foo");
+		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
+		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+
+		var stream = FileSystem.File.Open(path, mode, access);
+		stream.Dispose();
+
+		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
+		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(path);
+		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
+
+		creationTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+		lastAccessTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+		lastWriteTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+	}
+
+	[SkippableTheory]
 	[InlineAutoData(FileMode.Append, FileAccess.Write)]
 	[InlineAutoData(FileMode.Open, FileAccess.ReadWrite)]
 	[InlineAutoData(FileMode.Create, FileAccess.ReadWrite)]
