@@ -4,10 +4,10 @@ using Testably.Abstractions.Tests.TestHelpers.Traits;
 
 namespace Testably.Abstractions.Tests.TimeSystem.Task;
 
-public static class RealTimeSystem
+public static class RealTimeSystemTests
 {
 	// ReSharper disable once UnusedMember.Global
-	[SystemTest(nameof(RealTimeSystemTests))]
+	[SystemTest(nameof(Tests.TimeSystem.RealTimeSystemTests))]
 	public sealed class TaskTests : TimeSystemTaskTests<Abstractions.TimeSystem>
 	{
 		#region Test Setup
