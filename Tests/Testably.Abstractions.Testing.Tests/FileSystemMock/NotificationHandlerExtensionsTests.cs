@@ -1,12 +1,12 @@
 namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
 
-public class FileSystemMockExtensionsTests
+public class NotificationHandlerExtensionsTests
 {
 	#region Test Setup
 
 	public Testing.FileSystemMock FileSystem { get; }
 
-	public FileSystemMockExtensionsTests()
+	public NotificationHandlerExtensionsTests()
 	{
 		FileSystem = new Testing.FileSystemMock();
 	}
