@@ -47,8 +47,8 @@ internal sealed class NullContainer : IStorageContainer
 	public ITimeSystem TimeSystem { get; }
 
 	/// <inheritdoc cref="IStorageContainer.Type" />
-	public FileSystemMock.FileSystemTypes Type
-		=> FileSystemMock.FileSystemTypes.DirectoryOrFile;
+	public FileSystemTypes Type
+		=> FileSystemTypes.DirectoryOrFile;
 
 	/// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
 	[ExcludeFromCodeCoverage]

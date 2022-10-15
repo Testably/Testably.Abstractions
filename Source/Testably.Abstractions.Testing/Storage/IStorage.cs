@@ -65,7 +65,7 @@ internal interface IStorage
 	/// </returns>
 	IEnumerable<IStorageLocation> EnumerateLocations(
 		IStorageLocation location,
-		FileSystemMock.FileSystemTypes type,
+		FileSystemTypes type,
 		string expression = "*",
 		EnumerationOptions? enumerationOptions = null);
 

@@ -6,11 +6,10 @@ public class FileSystemExtensionsTests
 {
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemExtensions))]
 	public void GetMoveLocation_LocationNotUnderSource_ShouldThrowNotSupportedException(
 		string location, string source, string destination)
 	{
-		FileSystemMock sut = new();
+		Testing.FileSystemMock sut = new();
 		Exception? exception = Record.Exception(() =>
 		{
 			sut.GetMoveLocation(

@@ -2,15 +2,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Testably.Abstractions.Testing.Tests;
+namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
 
-public class FileSystemDriveInfoMockTests
+public class DriveInfoMockTests
 {
-	public FileSystemMock FileSystem { get; }
+	public Testing.FileSystemMock FileSystem { get; }
 
-	public FileSystemDriveInfoMockTests()
+	public DriveInfoMockTests()
 	{
-		FileSystem = new FileSystemMock();
+		FileSystem = new Testing.FileSystemMock();
 	}
 
 	[SkippableTheory]

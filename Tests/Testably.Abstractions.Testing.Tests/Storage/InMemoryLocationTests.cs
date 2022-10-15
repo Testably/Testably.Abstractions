@@ -7,7 +7,20 @@ public class InMemoryLocationTests
 {
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(InMemoryLocation))]
+	public void
+		Equals_AsObject_ForInMemoryLocation_ShouldIgnoreTrailingDirectorySeparator(
+			string path1, string path2)
+	{
+		object location1 = InMemoryLocation.New(null, Path.GetFullPath(path1));
+		object location2 = InMemoryLocation.New(null, Path.GetFullPath(path2));
+
+		bool result = location1.Equals(location2);
+
+		result.Should().BeFalse();
+	}
+
+	[Theory]
+	[AutoData]
 	public void Equals_ForDummyLocation_ShouldCompareFullPath(
 		string path)
 	{
@@ -22,7 +35,6 @@ public class InMemoryLocationTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(InMemoryLocation))]
 	public void Equals_ForInMemoryLocation_ShouldIgnoreTrailingDirectorySeparator(
 		string path)
 	{
@@ -38,22 +50,17 @@ public class InMemoryLocationTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(InMemoryLocation))]
-	public void
-		Equals_AsObject_ForInMemoryLocation_ShouldIgnoreTrailingDirectorySeparator(
-			string path1, string path2)
+	public void Equals_Null_ShouldReturnFalse(string path)
 	{
-		object location1 = InMemoryLocation.New(null, Path.GetFullPath(path1));
-		object location2 = InMemoryLocation.New(null, Path.GetFullPath(path2));
+		IStorageLocation location = InMemoryLocation.New(null, path);
 
-		bool result = location1.Equals(location2);
+		bool result = location.Equals(null!);
 
 		result.Should().BeFalse();
 	}
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(InMemoryLocation))]
 	public void Equals_Object_ForInMemoryLocation_ShouldIgnoreTrailingDirectorySeparator(
 		string path)
 	{
@@ -69,19 +76,6 @@ public class InMemoryLocationTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(InMemoryLocation))]
-	public void Equals_Null_ShouldReturnFalse(string path)
-	{
-		IStorageLocation location = InMemoryLocation.New(null, path);
-
-		bool result = location.Equals(null!);
-
-		result.Should().BeFalse();
-	}
-
-	[Theory]
-	[AutoData]
-	[Trait(nameof(Testing), nameof(InMemoryLocation))]
 	public void Equals_Object_Null_ShouldReturnFalse(string path)
 	{
 		object location = InMemoryLocation.New(null, path);
@@ -93,11 +87,11 @@ public class InMemoryLocationTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(InMemoryLocation))]
-	public void Equals_SameInstance_ShouldReturnTrue(string path)
+	public void Equals_Object_SameInstance_ShouldReturnTrue(string path)
 	{
-		IStorageLocation location = InMemoryLocation.New(null, path);
+		object location = InMemoryLocation.New(null, path);
 
+		// ReSharper disable once EqualExpressionComparison
 		bool result = location.Equals(location);
 
 		result.Should().BeTrue();
@@ -105,12 +99,10 @@ public class InMemoryLocationTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(InMemoryLocation))]
-	public void Equals_Object_SameInstance_ShouldReturnTrue(string path)
+	public void Equals_SameInstance_ShouldReturnTrue(string path)
 	{
-		object location = InMemoryLocation.New(null, path);
+		IStorageLocation location = InMemoryLocation.New(null, path);
 
-		// ReSharper disable once EqualExpressionComparison
 		bool result = location.Equals(location);
 
 		result.Should().BeTrue();

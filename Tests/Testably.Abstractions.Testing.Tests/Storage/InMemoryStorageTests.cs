@@ -9,19 +9,18 @@ public class InMemoryStorageTests
 {
 	#region Test Setup
 
-	internal FileSystemMock FileSystem { get; }
+	internal Testing.FileSystemMock FileSystem { get; }
 	internal IStorage Storage { get; }
 
 	public InMemoryStorageTests()
 	{
-		FileSystem = new FileSystemMock();
+		FileSystem = new Testing.FileSystemMock();
 		Storage = new InMemoryStorage(FileSystem);
 	}
 
 	#endregion
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(InMemoryStorage))]
 	public void CurrentDirectory_ShouldBeInitializedToDefaultRoot()
 	{
 		string expectedRoot = string.Empty.PrefixRoot();
@@ -30,47 +29,6 @@ public class InMemoryStorageTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(InMemoryStorage))]
-	public void TryAddContainer_ShouldNotifyWhenAdded(string path)
-	{
-		bool receivedNotification = false;
-		FileSystem.Notify.OnChange(_ => receivedNotification = true);
-		IStorageLocation location = Storage.GetLocation(path);
-		bool result = Storage.TryAddContainer(
-			location,
-			InMemoryContainer.NewDirectory,
-			out IStorageContainer? container);
-
-		result.Should().BeTrue();
-		receivedNotification.Should().BeTrue();
-		container!.Type.Should().Be(FileSystemMock.FileSystemTypes.Directory);
-	}
-
-	[Theory]
-	[AutoData]
-	[Trait(nameof(Testing), nameof(InMemoryStorage))]
-	public void TryAddContainer_ShouldNotNotifyWhenExistsPreviously(string path)
-	{
-		IStorageLocation location = Storage.GetLocation(path);
-		Storage.TryAddContainer(
-			location,
-			InMemoryContainer.NewDirectory,
-			out _);
-		bool receivedNotification = false;
-		FileSystem.Notify.OnChange(_ => receivedNotification = true);
-		bool result = Storage.TryAddContainer(
-			location,
-			InMemoryContainer.NewDirectory,
-			out IStorageContainer? container);
-
-		result.Should().BeFalse();
-		receivedNotification.Should().BeFalse();
-		container.Should().BeNull();
-	}
-
-	[Theory]
-	[AutoData]
-	[Trait(nameof(Testing), nameof(InMemoryStorage))]
 	public void Move_RequestDeniedForChild_ShouldRollback(
 		string locationPath, string destinationPath)
 	{
@@ -105,5 +63,43 @@ public class InMemoryStorageTests
 		Storage.GetContainer(child1Location).Should().NotBeOfType<NullContainer>();
 		Storage.GetContainer(child2Location).Should().NotBeOfType<NullContainer>();
 		exception.Should().BeOfType<IOException>();
+	}
+
+	[Theory]
+	[AutoData]
+	public void TryAddContainer_ShouldNotifyWhenAdded(string path)
+	{
+		bool receivedNotification = false;
+		FileSystem.Notify.OnChange(_ => receivedNotification = true);
+		IStorageLocation location = Storage.GetLocation(path);
+		bool result = Storage.TryAddContainer(
+			location,
+			InMemoryContainer.NewDirectory,
+			out IStorageContainer? container);
+
+		result.Should().BeTrue();
+		receivedNotification.Should().BeTrue();
+		container!.Type.Should().Be(FileSystemTypes.Directory);
+	}
+
+	[Theory]
+	[AutoData]
+	public void TryAddContainer_ShouldNotNotifyWhenExistsPreviously(string path)
+	{
+		IStorageLocation location = Storage.GetLocation(path);
+		Storage.TryAddContainer(
+			location,
+			InMemoryContainer.NewDirectory,
+			out _);
+		bool receivedNotification = false;
+		FileSystem.Notify.OnChange(_ => receivedNotification = true);
+		bool result = Storage.TryAddContainer(
+			location,
+			InMemoryContainer.NewDirectory,
+			out IStorageContainer? container);
+
+		result.Should().BeFalse();
+		receivedNotification.Should().BeFalse();
+		container.Should().BeNull();
 	}
 }

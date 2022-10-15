@@ -1,12 +1,12 @@
-namespace Testably.Abstractions.Testing.Tests;
+namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
 
-public class FileSystemMockInterceptionTests
+public class InterceptionHandlerTests
 {
-	public FileSystemMock FileSystem { get; }
+	public Testing.FileSystemMock FileSystem { get; }
 
-	public FileSystemMockInterceptionTests()
+	public InterceptionHandlerTests()
 	{
-		FileSystem = new FileSystemMock();
+		FileSystem = new Testing.FileSystemMock();
 	}
 
 	[SkippableTheory]

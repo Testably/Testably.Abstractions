@@ -1,9 +1,9 @@
 ﻿using System.IO;
 using System.Threading;
 
-namespace Testably.Abstractions.Testing.Tests;
+namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
 
-public sealed class FileSystemMockFileSystemWatcherTests : IDisposable
+public sealed class FileSystemWatcherMockTests : IDisposable
 {
 	/// <summary>
 	///     Default number of messages before the buffer overflows is 64:<br />
@@ -12,12 +12,12 @@ public sealed class FileSystemMockFileSystemWatcherTests : IDisposable
 	public const int DefaultMaxMessages = 64;
 
 	public string BasePath => _directoryCleaner.BasePath;
-	public FileSystemMock FileSystem { get; }
-	private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
+	public Testing.FileSystemMock FileSystem { get; }
+	private readonly Testing.FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
 
-	public FileSystemMockFileSystemWatcherTests()
+	public FileSystemWatcherMockTests()
 	{
-		FileSystem = new FileSystemMock();
+		FileSystem = new Testing.FileSystemMock();
 		_directoryCleaner = FileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory();
 		FileSystem.Initialize();
 	}
@@ -32,7 +32,6 @@ public sealed class FileSystemMockFileSystemWatcherTests : IDisposable
 
 	[SkippableTheory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMock.FileSystemWatcherMock))]
 	public void Error_DefaultTo64Messages_ShouldBeTriggeredWhenBufferOverflows(
 		string path)
 	{
@@ -73,7 +72,6 @@ public sealed class FileSystemMockFileSystemWatcherTests : IDisposable
 	[SkippableTheory]
 	[InlineAutoData(4096)]
 	[InlineAutoData(8192)]
-	[Trait(nameof(Testing), nameof(FileSystemMock.FileSystemWatcherMock))]
 	public void Error_ShouldBeTriggeredWhenBufferOverflows(
 		int internalBufferSize, string path)
 	{
@@ -113,9 +111,31 @@ public sealed class FileSystemMockFileSystemWatcherTests : IDisposable
 		result!.GetException().Should().BeOfType<InternalBufferOverflowException>();
 	}
 
+#if FEATURE_FILESYSTEMWATCHER_ADVANCED
 	[SkippableTheory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMock.FileSystemWatcherMock))]
+	public void Filter_ShouldResetFiltersToOnlyContainASingleValue(
+		string[] filters, string expectedFilter)
+	{
+		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+		foreach (string filter in filters)
+		{
+			fileSystemWatcher.Filters.Add(filter);
+		}
+
+		fileSystemWatcher.Filters.Count.Should().Be(filters.Length);
+
+		fileSystemWatcher.Filter = expectedFilter;
+
+		fileSystemWatcher.Filters.Count.Should().Be(1);
+		fileSystemWatcher.Filters.Should().ContainSingle(expectedFilter);
+		fileSystemWatcher.Filter.Should().Be(expectedFilter);
+	}
+#endif
+
+	[SkippableTheory]
+	[AutoData]
 	public void InternalBufferSize_ShouldResetQueue(string path1, string path2)
 	{
 		IFileSystem.IFileSystemWatcher fileSystemWatcher =
@@ -162,28 +182,4 @@ public sealed class FileSystemMockFileSystemWatcherTests : IDisposable
 		fileSystemWatcher.Dispose();
 		result.Should().BeNull();
 	}
-
-#if FEATURE_FILESYSTEMWATCHER_ADVANCED
-	[SkippableTheory]
-	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMock.FileSystemWatcherMock))]
-	public void Filter_ShouldResetFiltersToOnlyContainASingleValue(
-		string[] filters, string expectedFilter)
-	{
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
-			FileSystem.FileSystemWatcher.New(BasePath);
-		foreach (string filter in filters)
-		{
-			fileSystemWatcher.Filters.Add(filter);
-		}
-
-		fileSystemWatcher.Filters.Count.Should().Be(filters.Length);
-
-		fileSystemWatcher.Filter = expectedFilter;
-
-		fileSystemWatcher.Filters.Count.Should().Be(1);
-		fileSystemWatcher.Filters.Should().ContainSingle(expectedFilter);
-		fileSystemWatcher.Filter.Should().Be(expectedFilter);
-	}
-#endif
 }

@@ -5,8 +5,6 @@ namespace Testably.Abstractions.Tests.FileSystem.FileInfoFactory;
 public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	#region Test Setup
-
 	public abstract string BasePath { get; }
 	public TFileSystem FileSystem { get; }
 	public ITimeSystem TimeSystem { get; }
@@ -21,9 +19,18 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 		Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
 	}
 
-	#endregion
+	[SkippableFact]
+	public void New_Null_ShouldThrowArgumentNullException()
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = FileSystem.FileInfo.New(null!);
+		});
 
-	[Theory]
+		exception.Should().BeOfType<ArgumentNullException>();
+	}
+
+	[SkippableTheory]
 	[InlineData(259)]
 	[InlineData(260)]
 	public void New_PathTooLong_ShouldThrowPathTooLongExceptionOnNetFramework(
@@ -44,19 +51,6 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 		{
 			exception.Should().BeNull();
 		}
-	}
-
-	#region Helpers
-
-	[SkippableFact]
-	public void New_Null_ShouldThrowArgumentNullException()
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			_ = FileSystem.FileInfo.New(null!);
-		});
-
-		exception.Should().BeOfType<ArgumentNullException>();
 	}
 
 	[SkippableTheory]
@@ -88,13 +82,12 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
 
-		//TODO: Reactivate this test
-		//var stream = FileSystem.File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Write);
+		var stream = FileSystem.File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Write);
 		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		long result = sut.Length;
 
-		//stream.Dispose();
+		stream.Dispose();
 
 		result.Should().Be(bytes.Length);
 	}
@@ -118,6 +111,4 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 		result.FullName.Should().Be(fileInfo.FullName);
 		result.Exists.Should().Be(fileInfo.Exists);
 	}
-
-	#endregion
 }

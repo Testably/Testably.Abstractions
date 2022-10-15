@@ -1,16 +1,15 @@
 ﻿using System.Threading;
 
-namespace Testably.Abstractions.Testing.Tests;
+namespace Testably.Abstractions.Testing.Tests.Notification;
 
 public class NotificationTests
 {
 	[Fact]
-	[Trait(nameof(Testing), nameof(Notification))]
 	public void AwaitableCallback_Amount_ShouldOnlyReturnAfterNumberOfCallbacks()
 	{
-		TimeSystemMock timeSystem = new();
+		Testing.TimeSystemMock timeSystem = new();
 		int receivedCount = 0;
-		Notification.IAwaitableCallback<TimeSpan> wait =
+		Testing.Notification.IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On.ThreadSleep(t =>
 			{
 				if (t.TotalMilliseconds > 0)
@@ -34,12 +33,11 @@ public class NotificationTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(Notification))]
 	public void AwaitableCallback_Filter_ShouldOnlyUpdateAfterFilteredValue()
 	{
-		TimeSystemMock timeSystem = new();
+		Testing.TimeSystemMock timeSystem = new();
 		int receivedCount = 0;
-		Notification.IAwaitableCallback<TimeSpan> wait =
+		Testing.Notification.IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On.ThreadSleep(_ =>
 			{
 				receivedCount++;
@@ -60,10 +58,9 @@ public class NotificationTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(Notification))]
 	public void AwaitableCallback_Predicate_ShouldOnlyUpdateAfterFilteredValue()
 	{
-		TimeSystemMock timeSystem = new();
+		Testing.TimeSystemMock timeSystem = new();
 		int receivedCount = 0;
 		ManualResetEventSlim ms = new();
 		timeSystem.On.ThreadSleep(_ =>
@@ -88,15 +85,14 @@ public class NotificationTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(Notification))]
 	public void AwaitableCallback_ShouldWaitForCallbackExecution()
 	{
 		ManualResetEventSlim ms = new();
 		try
 		{
-			TimeSystemMock timeSystem = new();
+			Testing.TimeSystemMock timeSystem = new();
 			bool isCalled = false;
-			Notification.IAwaitableCallback<TimeSpan> wait =
+			Testing.Notification.IAwaitableCallback<TimeSpan> wait =
 				timeSystem.On.ThreadSleep(_ =>
 				{
 					isCalled = true;
@@ -121,16 +117,41 @@ public class NotificationTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(Notification))]
+	public void AwaitableCallback_TimeoutExpired_ShouldThrowTimeoutException()
+	{
+		Testing.TimeSystemMock timeSystem = new();
+		bool isCalled = false;
+		Testing.Notification.IAwaitableCallback<TimeSpan> wait =
+			timeSystem.On.ThreadSleep(_ =>
+			{
+				isCalled = true;
+			});
+		new Thread(() =>
+		{
+			// Delay larger than timeout of 10ms
+			Thread.Sleep(1000);
+			timeSystem.Thread.Sleep(1);
+		}).Start();
+
+		Exception? exception = Record.Exception(() =>
+		{
+			wait.Wait(timeout: 10);
+		});
+
+		exception.Should().BeOfType<TimeoutException>();
+		isCalled.Should().BeFalse();
+	}
+
+	[Fact]
 	public void AwaitableCallback_WaitedPreviously_ShouldWaitAgainForCallbackExecution()
 	{
 		int secondThreadMilliseconds = 42;
 		int firstThreadMilliseconds = secondThreadMilliseconds + 1;
 		ManualResetEventSlim ms = new();
-		TimeSystemMock timeSystem = new();
+		Testing.TimeSystemMock timeSystem = new();
 		bool isCalledFromSecondThread = false;
 		ManualResetEventSlim listening = new();
-		Notification.IAwaitableCallback<TimeSpan> wait =
+		Testing.Notification.IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On
 			   .ThreadSleep(t =>
 				{
@@ -162,38 +183,11 @@ public class NotificationTests
 		isCalledFromSecondThread.Should().BeTrue();
 	}
 
-	[Fact]
-	[Trait(nameof(Testing), nameof(Notification))]
-	public void AwaitableCallback_TimeoutExpired_ShouldThrowTimeoutException()
-	{
-		TimeSystemMock timeSystem = new();
-		bool isCalled = false;
-		Notification.IAwaitableCallback<TimeSpan> wait = timeSystem.On.ThreadSleep(_ =>
-		{
-			isCalled = true;
-		});
-		new Thread(() =>
-		{
-			// Delay larger than timeout of 10ms
-			Thread.Sleep(1000);
-			timeSystem.Thread.Sleep(1);
-		}).Start();
-
-		Exception? exception = Record.Exception(() =>
-		{
-			wait.Wait(timeout: 10);
-		});
-
-		exception.Should().BeOfType<TimeoutException>();
-		isCalled.Should().BeFalse();
-	}
-
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(Notification))]
 	public void Execute_ShouldBeExecutedBeforeWait(int milliseconds)
 	{
-		TimeSystemMock timeSystem = new();
+		Testing.TimeSystemMock timeSystem = new();
 		int receivedMilliseconds = -1;
 		bool isExecuted = false;
 
@@ -215,11 +209,10 @@ public class NotificationTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(Notification))]
 	public void Execute_WithReturnValue_ShouldBeExecutedAndReturnValue(
 		int milliseconds, string result)
 	{
-		TimeSystemMock timeSystem = new();
+		Testing.TimeSystemMock timeSystem = new();
 		int receivedMilliseconds = -1;
 		bool isExecuted = false;
 

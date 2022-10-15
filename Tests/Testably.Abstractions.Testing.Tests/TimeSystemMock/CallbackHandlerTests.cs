@@ -1,17 +1,16 @@
 ﻿using System.Threading;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
-namespace Testably.Abstractions.Testing.Tests;
+namespace Testably.Abstractions.Testing.Tests.TimeSystemMock;
 
-public class TimeSystemMockCallbackHandlerTests
+public class CallbackHandlerTests
 {
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
 	public void
 		OnDateTimeRead_DisposedCallback_ShouldNotBeCalled()
 	{
 		DateTime expectedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Local);
-		TimeSystemMock timeSystem = new(expectedTime);
+		Testing.TimeSystemMock timeSystem = new(expectedTime);
 		DateTime? receivedTime = null;
 		IDisposable disposable = timeSystem.On.DateTimeRead(d => receivedTime = d);
 
@@ -22,12 +21,11 @@ public class TimeSystemMockCallbackHandlerTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
 	public void
 		OnDateTimeRead_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
 	{
 		DateTime expectedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Local);
-		TimeSystemMock timeSystem = new(expectedTime);
+		Testing.TimeSystemMock timeSystem = new(expectedTime);
 		DateTime? receivedTime1 = null;
 		DateTime? receivedTime2 = null;
 
@@ -42,12 +40,11 @@ public class TimeSystemMockCallbackHandlerTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
 	public void
 		OnDateTimeRead_MultipleCallbacks_ShouldAllBeCalled()
 	{
 		DateTime expectedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Local);
-		TimeSystemMock timeSystem = new(expectedTime);
+		Testing.TimeSystemMock timeSystem = new(expectedTime);
 		DateTime? receivedTime1 = null;
 		DateTime? receivedTime2 = null;
 
@@ -64,12 +61,11 @@ public class TimeSystemMockCallbackHandlerTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
 	public void
 		OnDateTimeRead_Today_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		DateTime expectedTime = TimeTestHelper.GetRandomTime().Date;
-		TimeSystemMock timeSystem = new(expectedTime);
+		Testing.TimeSystemMock timeSystem = new(expectedTime);
 		DateTime? receivedTime = null;
 
 		using (timeSystem.On.DateTimeRead(d => receivedTime = d))
@@ -81,12 +77,11 @@ public class TimeSystemMockCallbackHandlerTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
 	public void
 		OnDateTimeRead_UtcNow_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		DateTime expectedTime = TimeTestHelper.GetRandomTime(DateTimeKind.Utc);
-		TimeSystemMock timeSystem = new(expectedTime);
+		Testing.TimeSystemMock timeSystem = new(expectedTime);
 		DateTime? receivedTime = null;
 
 		using (timeSystem.On.DateTimeRead(d => receivedTime = d))
@@ -98,12 +93,11 @@ public class TimeSystemMockCallbackHandlerTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
 	public void
 		OnTaskDelay_DisposedCallback_ShouldNotBeCalled()
 	{
 		int millisecondsDelay = new Random().Next();
-		TimeSystemMock timeSystem = new();
+		Testing.TimeSystemMock timeSystem = new();
 		TimeSpan? receivedDelay = null;
 		IDisposable disposable = timeSystem.On.TaskDelay(d => receivedDelay = d);
 
@@ -114,12 +108,11 @@ public class TimeSystemMockCallbackHandlerTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
 	public void
 		OnTaskDelay_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
 	{
 		TimeSpan expectedDelay = TimeTestHelper.GetRandomInterval();
-		TimeSystemMock timeSystem = new();
+		Testing.TimeSystemMock timeSystem = new();
 		TimeSpan? receivedDelay1 = null;
 		TimeSpan? receivedDelay2 = null;
 
@@ -134,12 +127,11 @@ public class TimeSystemMockCallbackHandlerTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
 	public void
 		OnTaskDelay_MultipleCallbacks_ShouldAllBeCalled()
 	{
 		TimeSpan expectedDelay = TimeTestHelper.GetRandomInterval();
-		TimeSystemMock timeSystem = new();
+		Testing.TimeSystemMock timeSystem = new();
 		TimeSpan? receivedDelay1 = null;
 		TimeSpan? receivedDelay2 = null;
 
@@ -156,12 +148,11 @@ public class TimeSystemMockCallbackHandlerTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
 	public void
 		OnTaskDelay_WithMillisecondsAndWithCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		int millisecondsDelay = new Random().Next();
-		TimeSystemMock timeSystem = new();
+		Testing.TimeSystemMock timeSystem = new();
 		TimeSpan receivedDelay = TimeSpan.Zero;
 
 		using (timeSystem.On.TaskDelay(d => receivedDelay = d))
@@ -173,12 +164,11 @@ public class TimeSystemMockCallbackHandlerTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
 	public void
 		OnTaskDelay_WithMillisecondsAndWithoutCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		int millisecondsDelay = new Random().Next();
-		TimeSystemMock timeSystem = new();
+		Testing.TimeSystemMock timeSystem = new();
 		TimeSpan receivedDelay = TimeSpan.Zero;
 
 		using (timeSystem.On.TaskDelay(d => receivedDelay = d))
@@ -190,12 +180,11 @@ public class TimeSystemMockCallbackHandlerTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
 	public void
 		OnTaskDelay_WithTimeSpanAndWithCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		TimeSpan expectedDelay = TimeTestHelper.GetRandomInterval();
-		TimeSystemMock timeSystem = new();
+		Testing.TimeSystemMock timeSystem = new();
 		TimeSpan receivedDelay = TimeSpan.Zero;
 
 		using (timeSystem.On.TaskDelay(d => receivedDelay = d))
@@ -207,12 +196,11 @@ public class TimeSystemMockCallbackHandlerTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
 	public void
 		OnTaskDelay_WithTimeSpanAndWithoutCancellationToken_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		TimeSpan expectedDelay = TimeTestHelper.GetRandomInterval();
-		TimeSystemMock timeSystem = new();
+		Testing.TimeSystemMock timeSystem = new();
 		TimeSpan receivedDelay = TimeSpan.Zero;
 
 		using (timeSystem.On.TaskDelay(d => receivedDelay = d))
@@ -224,12 +212,11 @@ public class TimeSystemMockCallbackHandlerTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
 	public void
 		OnThreadSleep_DisposedCallback_ShouldNotBeCalled()
 	{
 		int millisecondsTimeout = new Random().Next();
-		TimeSystemMock timeSystem = new();
+		Testing.TimeSystemMock timeSystem = new();
 		TimeSpan? receivedTimeout = null;
 		IDisposable disposable = timeSystem.On.ThreadSleep(d => receivedTimeout = d);
 
@@ -240,12 +227,11 @@ public class TimeSystemMockCallbackHandlerTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
 	public void
 		OnThreadSleep_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
 	{
 		TimeSpan expectedTimeout = TimeTestHelper.GetRandomInterval();
-		TimeSystemMock timeSystem = new();
+		Testing.TimeSystemMock timeSystem = new();
 		TimeSpan? receivedTimeout1 = null;
 		TimeSpan? receivedTimeout2 = null;
 
@@ -260,12 +246,11 @@ public class TimeSystemMockCallbackHandlerTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
 	public void
 		OnThreadSleep_MultipleCallbacks_ShouldAllBeCalled()
 	{
 		TimeSpan expectedTimeout = TimeTestHelper.GetRandomInterval();
-		TimeSystemMock timeSystem = new();
+		Testing.TimeSystemMock timeSystem = new();
 		TimeSpan? receivedTimeout1 = null;
 		TimeSpan? receivedTimeout2 = null;
 
@@ -282,12 +267,11 @@ public class TimeSystemMockCallbackHandlerTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
 	public void
 		OnThreadSleep_WithMilliseconds_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		int millisecondsTimeout = new Random().Next();
-		TimeSystemMock timeSystem = new();
+		Testing.TimeSystemMock timeSystem = new();
 		TimeSpan receivedTimeout = TimeSpan.Zero;
 
 		using (timeSystem.On.ThreadSleep(d => receivedTimeout = d))
@@ -299,12 +283,11 @@ public class TimeSystemMockCallbackHandlerTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeSystemMockCallbackHandlerTests))]
 	public void
 		OnThreadSleep_WithTimeSpan_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		TimeSpan expectedTimeout = TimeTestHelper.GetRandomInterval();
-		TimeSystemMock timeSystem = new();
+		Testing.TimeSystemMock timeSystem = new();
 		TimeSpan receivedTimeout = TimeSpan.Zero;
 
 		using (timeSystem.On.ThreadSleep(d => receivedTimeout = d))

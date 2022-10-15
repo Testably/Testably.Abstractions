@@ -2,16 +2,15 @@
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
-namespace Testably.Abstractions.Testing.Tests;
+namespace Testably.Abstractions.Testing.Tests.TimeProvider;
 
 public class TimeProviderTests
 {
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeProvider))]
 	public void Now_ShouldReturnCurrentDateTime()
 	{
 		DateTime begin = DateTime.UtcNow;
-		TimeSystemMock.ITimeProvider timeProvider = TimeProvider.Now();
+		Testing.TimeSystemMock.ITimeProvider timeProvider = Testing.TimeProvider.Now();
 		DateTime end = DateTime.UtcNow;
 
 		DateTime result1 = timeProvider.Read();
@@ -22,25 +21,23 @@ public class TimeProviderTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeProvider))]
 	public void Random_ShouldReturnRandomDateTime()
 	{
 		ConcurrentBag<DateTime> results = new();
 
 		Parallel.For(0, 100, _ =>
 		{
-			results.Add(TimeProvider.Random().Read());
+			results.Add(Testing.TimeProvider.Random().Read());
 		});
 
 		results.Should().OnlyHaveUniqueItems();
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(TimeProvider))]
 	public void Use_ShouldReturnFixedDateTime()
 	{
 		DateTime now = TimeTestHelper.GetRandomTime();
-		TimeSystemMock.ITimeProvider timeProvider = TimeProvider.Use(now);
+		Testing.TimeSystemMock.ITimeProvider timeProvider = Testing.TimeProvider.Use(now);
 
 		DateTime result1 = timeProvider.Read();
 		DateTime result2 = timeProvider.Read();

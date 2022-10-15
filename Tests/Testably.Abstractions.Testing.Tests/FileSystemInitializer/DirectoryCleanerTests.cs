@@ -3,24 +3,23 @@ using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
-namespace Testably.Abstractions.Testing.Tests;
+namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
 
-public class FileSystemInitializerTestingDirectoryCleanerTests
+public class DirectoryCleanerTests
 {
-	public FileSystemInitializerTestingDirectoryCleanerTests()
+	public DirectoryCleanerTests()
 	{
 		Skip.If(Test.RunsOnMac, "No access to temporary directories under `/private`");
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemInitializer.IDirectoryCleaner))]
 	public void Dispose_PermanentFailure_ShouldNotThrowException(
 		Exception exception)
 	{
-		FileSystemMock sut = new();
+		Testing.FileSystemMock sut = new();
 		List<string> receivedLogs = new();
-		FileSystemInitializer.IDirectoryCleaner directoryCleaner =
+		Testing.FileSystemInitializer.IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(m => receivedLogs.Add(m));
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 		int exceptionCount = 0;
@@ -52,12 +51,11 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 	}
 
 	[SkippableFact]
-	[Trait(nameof(Testing), nameof(FileSystemInitializer.IDirectoryCleaner))]
 	public void Dispose_ShouldForceDeleteCurrentDirectory()
 	{
-		FileSystemMock sut = new();
+		Testing.FileSystemMock sut = new();
 		List<string> receivedLogs = new();
-		FileSystemInitializer.IDirectoryCleaner directoryCleaner =
+		Testing.FileSystemInitializer.IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(m => receivedLogs.Add(m));
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 
@@ -67,11 +65,10 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 	}
 
 	[SkippableFact]
-	[Trait(nameof(Testing), nameof(FileSystemInitializer.IDirectoryCleaner))]
 	public void Dispose_ShouldResetCurrentDirectory()
 	{
-		FileSystemMock sut = new();
-		FileSystemInitializer.IDirectoryCleaner directoryCleaner =
+		Testing.FileSystemMock sut = new();
+		Testing.FileSystemInitializer.IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory();
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 		directoryCleaner.Dispose();
@@ -80,12 +77,11 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 
 	[SkippableTheory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemInitializer.IDirectoryCleaner))]
 	public void Dispose_TemporaryFailure_ShouldRetryAgain(
 		Exception exception)
 	{
-		FileSystemMock sut = new();
-		FileSystemInitializer.IDirectoryCleaner directoryCleaner =
+		Testing.FileSystemMock sut = new();
+		Testing.FileSystemInitializer.IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory();
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 		int exceptionCount = 0;
@@ -102,13 +98,12 @@ public class FileSystemInitializerTestingDirectoryCleanerTests
 	}
 
 	[SkippableFact]
-	[Trait(nameof(Testing), nameof(FileSystemInitializer.IDirectoryCleaner))]
 	public void InitializeBasePath_ShouldCreateDirectoryAndLogBasePath()
 	{
-		FileSystemMock sut = new();
+		Testing.FileSystemMock sut = new();
 		List<string> receivedLogs = new();
 
-		using FileSystemInitializer.IDirectoryCleaner directoryCleaner =
+		using Testing.FileSystemInitializer.IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(t => receivedLogs.Add(t));
 
 		string currentDirectory = sut.Directory.GetCurrentDirectory();

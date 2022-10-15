@@ -7,12 +7,11 @@ namespace Testably.Abstractions.Testing.Tests.Internal;
 public class RandomSystemExtensionsTests
 {
 	[Fact]
-	[Trait(nameof(Testing), nameof(RandomSystemExtensions))]
 	public void GenerateRandomFileExtension_ShouldNotStartWithDotOrReturnEmptyString()
 	{
 		RandomSystemMock randomSystem = new(
-			RandomProvider.Generate(
-				intGenerator: RandomProvider.Generator<int>.FromEnumerable(
+			Testing.RandomProvider.Generate(
+				intGenerator: Testing.RandomProvider.Generator<int>.FromEnumerable(
 					Enumerable.Range(0, 1000))));
 
 		List<string> fileExtensions = new();
@@ -36,12 +35,11 @@ public class RandomSystemExtensionsTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(RandomSystemExtensions))]
 	public void GenerateRandomFileName_ShouldGenerateEdgeCases()
 	{
 		RandomSystemMock randomSystem = new(
-			RandomProvider.Generate(
-				intGenerator: RandomProvider.Generator<int>.FromEnumerable(
+			Testing.RandomProvider.Generate(
+				intGenerator: Testing.RandomProvider.Generator<int>.FromEnumerable(
 					Enumerable.Range(0, 1000))));
 
 		List<string> fileNames = new();
