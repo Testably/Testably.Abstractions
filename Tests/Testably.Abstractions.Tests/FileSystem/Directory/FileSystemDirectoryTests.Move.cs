@@ -10,6 +10,34 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Move))]
+	public void Move_ShouldMoveDirectoryWithContent(string source, string destination)
+	{
+		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+			FileSystem.InitializeIn(source)
+			   .WithAFile()
+			   .WithASubdirectory().Initialized(s => s
+				   .WithAFile()
+				   .WithASubdirectory());
+
+		FileSystem.Directory.Move(source, destination);
+
+		FileSystem.Directory.Exists(source).Should().BeFalse();
+		FileSystem.Directory.Exists(destination).Should().BeTrue();
+		FileSystem.Directory.GetFiles(destination, initialized[0].Name)
+		   .Should().ContainSingle();
+		FileSystem.Directory.GetDirectories(destination, initialized[1].Name)
+		   .Should().ContainSingle();
+		FileSystem.Directory.GetFiles(destination, initialized[2].Name,
+				SearchOption.AllDirectories)
+		   .Should().ContainSingle();
+		FileSystem.Directory.GetDirectories(destination, initialized[3].Name,
+				SearchOption.AllDirectories)
+		   .Should().ContainSingle();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Move))]
 	public void Move_ShouldNotAdjustTimes(string source, string destination)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
@@ -42,34 +70,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		lastWriteTime.Should()
 		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 		   .BeOnOrBefore(creationTimeEnd);
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Move))]
-	public void Move_ShouldMoveDirectoryWithContent(string source, string destination)
-	{
-		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
-			FileSystem.InitializeIn(source)
-			   .WithAFile()
-			   .WithASubdirectory().Initialized(s => s
-				   .WithAFile()
-				   .WithASubdirectory());
-
-		FileSystem.Directory.Move(source, destination);
-
-		FileSystem.Directory.Exists(source).Should().BeFalse();
-		FileSystem.Directory.Exists(destination).Should().BeTrue();
-		FileSystem.Directory.GetFiles(destination, initialized[0].Name)
-		   .Should().ContainSingle();
-		FileSystem.Directory.GetDirectories(destination, initialized[1].Name)
-		   .Should().ContainSingle();
-		FileSystem.Directory.GetFiles(destination, initialized[2].Name,
-				SearchOption.AllDirectories)
-		   .Should().ContainSingle();
-		FileSystem.Directory.GetDirectories(destination, initialized[3].Name,
-				SearchOption.AllDirectories)
-		   .Should().ContainSingle();
 	}
 
 	[SkippableTheory]

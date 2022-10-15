@@ -1,12 +1,8 @@
-using System.IO;
-
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfoFactory;
 
 public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	#region Test Setup
-
 	public abstract string BasePath { get; }
 	public TFileSystem FileSystem { get; }
 	public ITimeSystem TimeSystem { get; }
@@ -20,8 +16,6 @@ public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
 
 		Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
 	}
-
-	#endregion
 
 	[SkippableFact]
 	[FileSystemTests.DirectoryInfoFactory(nameof(IFileSystem.IDirectoryInfoFactory.New))]

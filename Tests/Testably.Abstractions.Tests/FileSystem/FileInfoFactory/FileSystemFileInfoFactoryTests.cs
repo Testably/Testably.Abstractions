@@ -23,18 +23,6 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 
 	#endregion
 
-	[SkippableFact]
-	[FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.New))]
-	public void New_Null_ShouldThrowArgumentNullException()
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			_ = FileSystem.FileInfo.New(null!);
-		});
-
-		exception.Should().BeOfType<ArgumentNullException>();
-	}
-
 	[Theory]
 	[InlineData(259)]
 	[InlineData(260)]
@@ -57,6 +45,20 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 		{
 			exception.Should().BeNull();
 		}
+	}
+
+	#region Helpers
+
+	[SkippableFact]
+	[FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.New))]
+	public void New_Null_ShouldThrowArgumentNullException()
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = FileSystem.FileInfo.New(null!);
+		});
+
+		exception.Should().BeOfType<ArgumentNullException>();
 	}
 
 	[SkippableTheory]
@@ -123,4 +125,6 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 		result.FullName.Should().Be(fileInfo.FullName);
 		result.Exists.Should().Be(fileInfo.Exists);
 	}
+
+	#endregion
 }

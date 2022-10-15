@@ -23,6 +23,14 @@ public sealed class RealFileSystemTests :
 		   .SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);
 	}
 
+	#region IDisposable Members
+
+	/// <inheritdoc cref="IDisposable.Dispose()" />
+	public void Dispose()
+		=> _directoryCleaner.Dispose();
+
+	#endregion
+
 	[SkippableTheory]
 	[AutoData]
 	[FileSystemTests.FileSystemWatcherFactory(
@@ -73,14 +81,6 @@ public sealed class RealFileSystemTests :
 		resultOnMockSystem.EnableRaisingEvents.Should()
 		   .Be(fileSystemWatcher.EnableRaisingEvents);
 	}
-
-	#region IDisposable Members
-
-	/// <inheritdoc cref="IDisposable.Dispose()" />
-	public void Dispose()
-		=> _directoryCleaner.Dispose();
-
-	#endregion
 }
 
 #endif

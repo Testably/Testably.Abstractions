@@ -3,8 +3,6 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	#region Test Setup
-
 	public abstract string BasePath { get; }
 	public TFileSystem FileSystem { get; }
 	public ITimeSystem TimeSystem { get; }
@@ -18,8 +16,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 		Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
 	}
-
-	#endregion
 
 	[SkippableFact]
 	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLogicalDrives))]

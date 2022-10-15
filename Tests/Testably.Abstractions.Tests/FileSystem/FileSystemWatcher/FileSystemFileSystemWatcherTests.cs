@@ -18,23 +18,6 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[AutoData]
-	[FileSystemTests.FileSystemWatcher(nameof(IFileSystem.IFileSystemWatcher.Path))]
-	public void Path_SetToNotExistingPath_ShouldThrowArgumentException(string path)
-	{
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
-			FileSystem.FileSystemWatcher.New();
-
-		Exception? exception = Record.Exception(() =>
-		{
-			fileSystemWatcher.Path = path;
-		});
-
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.Message.Should().Contain(path);
-	}
-
-	[SkippableTheory]
 	[InlineData(-1, 4096)]
 	[InlineData(4095, 4096)]
 	[InlineData(4097, 4097)]
@@ -49,5 +32,22 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		fileSystemWatcher.InternalBufferSize = bytes;
 
 		fileSystemWatcher.InternalBufferSize.Should().Be(expectedBytes);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.FileSystemWatcher(nameof(IFileSystem.IFileSystemWatcher.Path))]
+	public void Path_SetToNotExistingPath_ShouldThrowArgumentException(string path)
+	{
+		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New();
+
+		Exception? exception = Record.Exception(() =>
+		{
+			fileSystemWatcher.Path = path;
+		});
+
+		exception.Should().BeOfType<ArgumentException>()
+		   .Which.Message.Should().Contain(path);
 	}
 }

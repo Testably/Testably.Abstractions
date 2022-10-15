@@ -1,5 +1,4 @@
 #if FEATURE_PATH_JOIN
-
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 public abstract partial class FileSystemPathTests<TFileSystem>

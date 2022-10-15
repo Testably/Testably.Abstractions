@@ -149,7 +149,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 			FileSystem.Directory.GetLastAccessTimeUtc(subdirectoryPath);
 		DateTime parentLastWriteTime =
 			FileSystem.Directory.GetLastWriteTimeUtc(subdirectoryPath);
-		
+
 		parentCreationTime.Should()
 		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 		   .BeOnOrBefore(creationTimeEnd);

@@ -1,5 +1,4 @@
 #if FEATURE_PATH_RELATIVE
-
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 public abstract partial class FileSystemPathTests<TFileSystem>

@@ -3,8 +3,6 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 public abstract partial class FileSystemPathTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	#region Test Setup
-
 	public TFileSystem FileSystem { get; }
 
 	protected FileSystemPathTests(TFileSystem fileSystem)
@@ -13,8 +11,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 		Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
 	}
-
-	#endregion
 
 	[SkippableFact]
 	[FileSystemTests.Path(nameof(IFileSystem.IPath.AltDirectorySeparatorChar))]

@@ -2,7 +2,7 @@ using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemInfo;
 
-public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
+public abstract class FileSystemFileSystemInfoTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	public abstract string BasePath { get; }

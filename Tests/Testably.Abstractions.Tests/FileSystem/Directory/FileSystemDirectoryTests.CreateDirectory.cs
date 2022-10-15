@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
@@ -54,7 +52,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		string rootPath)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
-		
+
 		string subdirectoryLevel1Path =
 			FileSystem.Path.Combine(rootPath, "lvl1");
 		string subdirectoryLevel2Path =
@@ -236,7 +234,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 		IFileSystem.IDirectoryInfo result =
 			FileSystem.Directory.CreateDirectory(nameWithSuffix);
-		
+
 		result.Name.Should().Be(expectedName.TrimEnd(
 			FileSystem.Path.DirectorySeparatorChar,
 			FileSystem.Path.AltDirectorySeparatorChar));
@@ -259,7 +257,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 		IFileSystem.IDirectoryInfo result =
 			FileSystem.Directory.CreateDirectory(nameWithSuffix);
-		
+
 		result.Name.Should().Be(expectedName.TrimEnd(
 			FileSystem.Path.DirectorySeparatorChar,
 			FileSystem.Path.AltDirectorySeparatorChar));

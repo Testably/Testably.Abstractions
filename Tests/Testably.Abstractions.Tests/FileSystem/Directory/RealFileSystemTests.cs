@@ -6,7 +6,8 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 [Collection(nameof(DriveInfoFactory.RealFileSystemTests))]
 [SystemTest(nameof(DriveInfoFactory.RealFileSystemTests))]
-public sealed class RealFileSystemTests : FileSystemDirectoryTests<Abstractions.FileSystem>,
+public sealed class RealFileSystemTests :
+	FileSystemDirectoryTests<Abstractions.FileSystem>,
 	IDisposable
 {
 	/// <inheritdoc cref="FileSystemDirectoryTests{TFileSystem}.BasePath" />
