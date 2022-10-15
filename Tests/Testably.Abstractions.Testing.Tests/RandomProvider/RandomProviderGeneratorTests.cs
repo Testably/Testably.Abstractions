@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Testably.Abstractions.Testing.Tests;
+namespace Testably.Abstractions.Testing.Tests.RandomProvider;
 
 public class RandomProviderGeneratorTests
 {
@@ -11,8 +11,8 @@ public class RandomProviderGeneratorTests
 	{
 		int maxRange = 100;
 		IEnumerable<int> enumerable = Enumerable.Range(0, maxRange);
-		RandomProvider.Generator<int> sut =
-			RandomProvider.Generator<int>.FromEnumerable(enumerable);
+		Testing.RandomProvider.Generator<int> sut =
+			Testing.RandomProvider.Generator<int>.FromEnumerable(enumerable);
 		sut.GetNext();
 		sut.GetNext();
 
@@ -29,8 +29,8 @@ public class RandomProviderGeneratorTests
 	[AutoData]
 	public void FromArray_Overflow_ShouldStartAgain(Guid[] values)
 	{
-		RandomProvider.Generator<Guid> sut =
-			RandomProvider.Generator<Guid>.FromArray(values);
+		Testing.RandomProvider.Generator<Guid> sut =
+			Testing.RandomProvider.Generator<Guid>.FromArray(values);
 
 		Guid[] results = new Guid[values.Length * 2];
 		for (int i = 0; i < values.Length * 2; i++)
@@ -45,8 +45,8 @@ public class RandomProviderGeneratorTests
 	[AutoData]
 	public void FromArray_ShouldIterateThroughArrayValue(Guid[] values)
 	{
-		RandomProvider.Generator<Guid> sut =
-			RandomProvider.Generator<Guid>.FromArray(values);
+		Testing.RandomProvider.Generator<Guid> sut =
+			Testing.RandomProvider.Generator<Guid>.FromArray(values);
 
 		Guid[] results = new Guid[values.Length];
 		for (int i = 0; i < values.Length; i++)
@@ -63,7 +63,7 @@ public class RandomProviderGeneratorTests
 		int iterations = 30;
 		int startValue = 10;
 		int executionCount = 0;
-		RandomProvider.Generator<int> sut = RandomProvider.Generator<int>.FromCallback(
+		Testing.RandomProvider.Generator<int> sut = Testing.RandomProvider.Generator<int>.FromCallback(
 			() => startValue + executionCount++);
 
 		int[] results = new int[iterations];
@@ -82,8 +82,8 @@ public class RandomProviderGeneratorTests
 		Mock<IEnumerable<int>> mock = new();
 		Mock<IEnumerator<int>> enumeratorMock = new();
 		mock.Setup(m => m.GetEnumerator()).Returns(enumeratorMock.Object);
-		RandomProvider.Generator<int> sut =
-			RandomProvider.Generator<int>.FromEnumerable(mock.Object);
+		Testing.RandomProvider.Generator<int> sut =
+			Testing.RandomProvider.Generator<int>.FromEnumerable(mock.Object);
 
 		sut.Dispose();
 
@@ -97,8 +97,8 @@ public class RandomProviderGeneratorTests
 		// A list as enumerable does support `Reset`
 		List<int> values = Enumerable.Range(0, maxRange).ToList();
 		IEnumerable<int> enumerable = values;
-		RandomProvider.Generator<int> sut =
-			RandomProvider.Generator<int>.FromEnumerable(enumerable);
+		Testing.RandomProvider.Generator<int> sut =
+			Testing.RandomProvider.Generator<int>.FromEnumerable(enumerable);
 
 		int[] results = new int[maxRange * 2];
 		for (int i = 0; i < maxRange * 2; i++)
@@ -114,8 +114,8 @@ public class RandomProviderGeneratorTests
 	{
 		int maxRange = 100;
 		IEnumerable<int> enumerable = Enumerable.Range(0, maxRange);
-		RandomProvider.Generator<int> sut =
-			RandomProvider.Generator<int>.FromEnumerable(enumerable);
+		Testing.RandomProvider.Generator<int> sut =
+			Testing.RandomProvider.Generator<int>.FromEnumerable(enumerable);
 
 		for (int i = 0; i < maxRange; i++)
 		{
@@ -136,8 +136,8 @@ public class RandomProviderGeneratorTests
 	{
 		int maxRange = 100;
 		IEnumerable<int> enumerable = Enumerable.Range(0, maxRange);
-		RandomProvider.Generator<int> sut =
-			RandomProvider.Generator<int>.FromEnumerable(enumerable);
+		Testing.RandomProvider.Generator<int> sut =
+			Testing.RandomProvider.Generator<int>.FromEnumerable(enumerable);
 
 		int[] results = new int[maxRange];
 		for (int i = 0; i < maxRange; i++)
@@ -153,8 +153,8 @@ public class RandomProviderGeneratorTests
 	public void FromValue_ShouldReturnFixedValue(Guid value)
 	{
 		int maxRange = 100;
-		RandomProvider.Generator<Guid> sut =
-			RandomProvider.Generator<Guid>.FromValue(value);
+		Testing.RandomProvider.Generator<Guid> sut =
+			Testing.RandomProvider.Generator<Guid>.FromValue(value);
 
 		Guid[] results = new Guid[maxRange];
 		for (int i = 0; i < maxRange; i++)
@@ -169,7 +169,7 @@ public class RandomProviderGeneratorTests
 	[AutoData]
 	public void Operator_FromArray(Guid[] values)
 	{
-		RandomProvider.Generator<Guid> sut = values;
+		Testing.RandomProvider.Generator<Guid> sut = values;
 
 		Guid[] results = new Guid[values.Length];
 		for (int i = 0; i < values.Length; i++)
@@ -185,7 +185,7 @@ public class RandomProviderGeneratorTests
 	public void Operator_FromCallback(Guid value)
 	{
 		int maxRange = 100;
-		RandomProvider.Generator<Guid> sut = (Func<Guid>)(() => value);
+		Testing.RandomProvider.Generator<Guid> sut = (Func<Guid>)(() => value);
 
 		Guid[] results = new Guid[maxRange];
 		for (int i = 0; i < maxRange; i++)
@@ -201,7 +201,7 @@ public class RandomProviderGeneratorTests
 	public void Operator_FromValue(Guid value)
 	{
 		int maxRange = 100;
-		RandomProvider.Generator<Guid> sut = value;
+		Testing.RandomProvider.Generator<Guid> sut = value;
 
 		Guid[] results = new Guid[maxRange];
 		for (int i = 0; i < maxRange; i++)
