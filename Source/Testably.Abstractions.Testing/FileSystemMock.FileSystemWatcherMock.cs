@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -131,59 +132,25 @@ public sealed partial class FileSystemMock
 		public void Dispose()
 			=> Stop();
 
+		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Changed" />
+		public event FileSystemEventHandler? Changed;
+
+		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Created" />
+		public event FileSystemEventHandler? Created;
+
+		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Deleted" />
+		public event FileSystemEventHandler? Deleted;
+
+		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Error" />
+		public event ErrorEventHandler? Error;
+
+		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Renamed" />
+		public event RenamedEventHandler? Renamed;
+
 		#endregion
 
 		internal static FileSystemWatcherMock New(FileSystemMock fileSystem)
 			=> new(fileSystem);
-
-		private FileSystemEventArgs ToFileSystemEventArgs(
-			ChangeDescription changeDescription)
-		{
-			string? name = changeDescription.Name;
-			string? path = changeDescription.Path;
-			if (name == null ||
-			    _fileSystem.Path.IsPathRooted(changeDescription.Name))
-			{
-				name = _fileSystem.Path.GetFileName(changeDescription.Path);
-				path = _fileSystem.Path.GetDirectoryName(path);
-			}
-			else if (path.EndsWith(name))
-			{
-				path = path.Substring(0, path.Length - name.Length);
-			}
-
-			return new FileSystemEventArgs(changeDescription.ChangeType, path ?? "",
-				name);
-		}
-
-		private RenamedEventArgs ToRenamedEventArgs(
-			ChangeDescription changeDescription)
-		{
-			string? name = changeDescription.Name;
-			string? path = changeDescription.Path;
-			if (name == null ||
-			    _fileSystem.Path.IsPathRooted(name))
-			{
-				name = _fileSystem.Path.GetFileName(changeDescription.Path);
-				path = _fileSystem.Path.GetDirectoryName(path);
-			}
-			else if (path.EndsWith(name))
-			{
-				path = path.Substring(0, path.Length - name.Length);
-			}
-			string? oldName = changeDescription.OldName;
-			if (oldName == null ||
-			    _fileSystem.Path.IsPathRooted(oldName))
-			{
-				oldName = _fileSystem.Path.GetFileName(changeDescription.OldPath);
-			}
-
-			return new RenamedEventArgs(
-				changeDescription.ChangeType,
-				path ?? "",
-				name,
-				oldName);
-		}
 
 		private bool MatchesFilter(ChangeDescription changeDescription)
 		{
@@ -222,22 +189,35 @@ public sealed partial class FileSystemMock
 			{
 				if (item.ChangeType.HasFlag(WatcherChangeTypes.Created))
 				{
-					Created?.Invoke(this, ToFileSystemEventArgs(item));
+					Created?.Invoke(this, ToFileSystemEventArgs(
+						item.ChangeType, item.Path, item.Name));
 				}
 
 				if (item.ChangeType.HasFlag(WatcherChangeTypes.Deleted))
 				{
-					Deleted?.Invoke(this, ToFileSystemEventArgs(item));
+					Deleted?.Invoke(this, ToFileSystemEventArgs(
+						item.ChangeType, item.Path, item.Name));
 				}
 
 				if (item.ChangeType.HasFlag(WatcherChangeTypes.Changed))
 				{
-					Changed?.Invoke(this, ToFileSystemEventArgs(item));
+					Changed?.Invoke(this, ToFileSystemEventArgs(
+						item.ChangeType, item.Path, item.Name));
 				}
 
 				if (item.ChangeType.HasFlag(WatcherChangeTypes.Renamed))
 				{
-					Renamed?.Invoke(this, ToRenamedEventArgs(item));
+					if (TryMakeRenamedEventArgs(item, out RenamedEventArgs? eventArgs))
+					{
+						Renamed?.Invoke(this, eventArgs);
+					}
+					else if (item.OldPath != null)
+					{
+						Deleted?.Invoke(this, ToFileSystemEventArgs(
+							item.ChangeType, item.OldPath, item.OldName));
+						Created?.Invoke(this, ToFileSystemEventArgs(
+							item.ChangeType, item.Path, item.Name));
+					}
 				}
 			}
 		}
@@ -304,19 +284,70 @@ public sealed partial class FileSystemMock
 			_changeHandler?.Dispose();
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Changed" />
-		public event FileSystemEventHandler? Changed;
+		private FileSystemEventArgs ToFileSystemEventArgs(
+			WatcherChangeTypes changeType,
+			string changePath,
+			string? changeName)
+		{
+			string path = TransformPathAndName(
+				changePath,
+				changeName,
+				out string name);
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Created" />
-		public event FileSystemEventHandler? Created;
+			return new FileSystemEventArgs(changeType,
+				path, name);
+		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Deleted" />
-		public event FileSystemEventHandler? Deleted;
+		private string TransformPathAndName(
+			string changeDescriptionPath,
+			string? changeDescriptionName,
+			out string name)
+		{
+			string? transformedName = changeDescriptionName;
+			string? path = changeDescriptionPath;
+			if (transformedName == null ||
+			    _fileSystem.Path.IsPathRooted(changeDescriptionName))
+			{
+				transformedName = _fileSystem.Path.GetFileName(changeDescriptionPath);
+				path = _fileSystem.Path.GetDirectoryName(path);
+			}
+			else if (path.EndsWith(transformedName))
+			{
+				path = path.Substring(0, path.Length - transformedName.Length);
+			}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Error" />
-		public event ErrorEventHandler? Error;
+			name = transformedName;
+			return path ?? "";
+		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Renamed" />
-		public event RenamedEventHandler? Renamed;
+		private bool TryMakeRenamedEventArgs(
+			ChangeDescription changeDescription,
+			[NotNullWhen(true)] out RenamedEventArgs? eventArgs)
+		{
+			string path = TransformPathAndName(
+				changeDescription.Path,
+				changeDescription.Name,
+				out string name);
+
+			if (changeDescription.OldPath == null ||
+			    System.IO.Path.GetDirectoryName(changeDescription.Path)
+			    != System.IO.Path.GetDirectoryName(changeDescription.OldPath))
+			{
+				eventArgs = null;
+				return false;
+			}
+
+			TransformPathAndName(
+				changeDescription.OldPath,
+				changeDescription.OldName,
+				out string oldName);
+
+			eventArgs = new RenamedEventArgs(
+				changeDescription.ChangeType,
+				path,
+				name,
+				oldName);
+			return true;
+		}
 	}
 }
