@@ -19,8 +19,7 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 		Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
 	}
 
-	[SkippableTheory]
-	[AutoData]
+	[SkippableFact]
 	public void New_EmptyString_ShouldThrowArgumentException()
 	{
 		Exception? exception = Record.Exception(() =>

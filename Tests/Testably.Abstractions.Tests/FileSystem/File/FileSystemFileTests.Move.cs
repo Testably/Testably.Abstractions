@@ -16,9 +16,9 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 		FileSystem.File.Move(sourceName, destinationName);
 
-		if (!Test.RunsOnWindows)
+		if (Test.RunsOnLinux)
 		{
-			// sourceName and destinationName are treated identical on Windows
+			// sourceName and destinationName are considered different only on Linux
 			FileSystem.File.Exists(sourceName).Should().BeFalse();
 		}
 

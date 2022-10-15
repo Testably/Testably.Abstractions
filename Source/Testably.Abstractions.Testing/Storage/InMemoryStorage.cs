@@ -146,7 +146,7 @@ internal sealed class InMemoryStorage : IStorage
 		enumerationOptions ??= EnumerationOptionsHelper.Compatible;
 
 		foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers
-		   .Where(x => x.Key.FullPath.StartsWith(location.FullPath) &&
+		   .Where(x => x.Key.FullPath.StartsWith(location.FullPath, InMemoryLocation.StringComparisonMode) &&
 		               !x.Key.Equals(location)))
 		{
 			string? parentPath =
@@ -154,7 +154,7 @@ internal sealed class InMemoryStorage : IStorage
 					item.Key.FullPath.TrimEnd(_fileSystem.Path
 					   .DirectorySeparatorChar));
 			if (!enumerationOptions.RecurseSubdirectories &&
-			    parentPath != location.FullPath)
+			    parentPath?.Equals(location.FullPath, InMemoryLocation.StringComparisonMode) != true)
 			{
 				continue;
 			}
