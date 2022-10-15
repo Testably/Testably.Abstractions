@@ -15,7 +15,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public void ResolveLinkTarget_AbsolutePath_ShouldFollowSymbolicLink(
 		string path, string pathToTarget)
 	{
@@ -32,7 +31,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public void
 		ResolveLinkTarget_FileWithDifferentCase_ShouldReturnPathToMissingDirectory(
 			string path, string pathToTarget)
@@ -60,7 +58,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public void ResolveLinkTarget_FinalTarget_ShouldFollowSymbolicLinkToFinalTarget(
 		string path, string pathToFinalTarget)
 	{
@@ -86,7 +83,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public void ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
 		string path, string pathToFinalTarget)
 	{
@@ -114,7 +110,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public void
 		ResolveLinkTarget_MissingDirectoryInLinkChain_ShouldReturnPathToMissingDirectory(
 			string path, string pathToFinalTarget, string pathToMissingDirectory)
@@ -136,7 +131,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public void ResolveLinkTarget_NormalDirectory_ShouldReturnNull(
 		string path)
 	{
@@ -150,7 +144,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public void ResolveLinkTarget_NormalFile_ShouldReturnNull(
 		string path)
 	{
@@ -164,7 +157,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public void ResolveLinkTarget_RelativePath_ShouldFollowSymbolicLinkUnderWindows(
 		string path, string pathToTarget)
 	{
@@ -181,7 +173,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public void ResolveLinkTarget_TargetDeletedAfterLinkCreation_ShouldReturnNull(
 		string path, string pathToTarget)
 	{

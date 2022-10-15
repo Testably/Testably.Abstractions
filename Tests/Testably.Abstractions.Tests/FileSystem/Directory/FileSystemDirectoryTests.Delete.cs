@@ -171,7 +171,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		{
 			// Path information only included in exception message on Windows and not in .NET Framework
 			exception.Should().BeOfType<IOException>()
-			   .Which.Message.Should().Contain($"'{System.IO.Path.Combine(BasePath, path)}'");
+			   .Which.Message.Should()
+			   .Contain($"'{System.IO.Path.Combine(BasePath, path)}'");
 		}
 #endif
 	}

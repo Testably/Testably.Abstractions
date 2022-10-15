@@ -413,9 +413,9 @@ public class FileSystemMockExtensionsTests
 			FileSystem.Notify
 			   .OnDeleted(FileSystemTypes.File, _ => isNotified = true)
 			   .Execute(() =>
-			   {
-				   FileSystem.File.WriteAllText(path, null);
-			   })
+				{
+					FileSystem.File.WriteAllText(path, null);
+				})
 			   .Wait(timeout: 50);
 		});
 
@@ -437,9 +437,9 @@ public class FileSystemMockExtensionsTests
 			FileSystem.Notify
 			   .OnDeleted(FileSystemTypes.File, _ => isNotified = true, path2)
 			   .Execute(() =>
-			   {
-				   FileSystem.File.Delete(path1);
-			   })
+				{
+					FileSystem.File.Delete(path1);
+				})
 			   .Wait(timeout: 50);
 		});
 
@@ -463,9 +463,9 @@ public class FileSystemMockExtensionsTests
 			   .OnDeleted(FileSystemTypes.File, _ => isNotified = true,
 					searchPattern: searchPattern)
 			   .Execute(() =>
-			   {
-				   FileSystem.File.Delete(path);
-			   })
+				{
+					FileSystem.File.Delete(path);
+				})
 			   .Wait(timeout: 50);
 		});
 
@@ -492,9 +492,9 @@ public class FileSystemMockExtensionsTests
 		FileSystem.Notify
 		   .OnDeleted(FileSystemTypes.File, _ => isNotified = true)
 		   .Execute(() =>
-		   {
-			   FileSystem.File.Delete(path);
-		   })
+			{
+				FileSystem.File.Delete(path);
+			})
 		   .Wait();
 
 		isNotified.Should().BeTrue();
@@ -515,9 +515,9 @@ public class FileSystemMockExtensionsTests
 			   .OnDeleted(FileSystemTypes.File, _ => isNotified = true,
 					predicate: _ => expectedResult)
 			   .Execute(() =>
-			   {
-				   FileSystem.File.Delete(path);
-			   })
+				{
+					FileSystem.File.Delete(path);
+				})
 			   .Wait(timeout: 50);
 		});
 
@@ -545,9 +545,9 @@ public class FileSystemMockExtensionsTests
 			FileSystem.Notify
 			   .OnChanged(FileSystemTypes.File, _ => isNotified = true)
 			   .Execute(() =>
-			   {
-				   FileSystem.File.WriteAllText(path, null);
-			   })
+				{
+					FileSystem.File.WriteAllText(path, null);
+				})
 			   .Wait(timeout: 50);
 		});
 
@@ -569,9 +569,9 @@ public class FileSystemMockExtensionsTests
 			FileSystem.Notify
 			   .OnChanged(FileSystemTypes.File, _ => isNotified = true, path2)
 			   .Execute(() =>
-			   {
-				   FileSystem.File.AppendAllText(path1, "foo");
-			   })
+				{
+					FileSystem.File.AppendAllText(path1, "foo");
+				})
 			   .Wait(timeout: 50);
 		});
 
@@ -595,9 +595,9 @@ public class FileSystemMockExtensionsTests
 			   .OnChanged(FileSystemTypes.File, _ => isNotified = true,
 					searchPattern: searchPattern)
 			   .Execute(() =>
-			   {
-				   FileSystem.File.AppendAllText(path, "foo");
-			   })
+				{
+					FileSystem.File.AppendAllText(path, "foo");
+				})
 			   .Wait(timeout: 50);
 		});
 
@@ -624,9 +624,9 @@ public class FileSystemMockExtensionsTests
 		FileSystem.Notify
 		   .OnChanged(FileSystemTypes.File, _ => isNotified = true)
 		   .Execute(() =>
-		   {
-			   FileSystem.File.AppendAllText(path, "foo");
-		   })
+			{
+				FileSystem.File.AppendAllText(path, "foo");
+			})
 		   .Wait();
 
 		isNotified.Should().BeTrue();
@@ -647,9 +647,9 @@ public class FileSystemMockExtensionsTests
 			   .OnChanged(FileSystemTypes.File, _ => isNotified = true,
 					predicate: _ => expectedResult)
 			   .Execute(() =>
-			   {
-				   FileSystem.File.AppendAllText(path, "foo");
-			   })
+				{
+					FileSystem.File.AppendAllText(path, "foo");
+				})
 			   .Wait(timeout: 50);
 		});
 

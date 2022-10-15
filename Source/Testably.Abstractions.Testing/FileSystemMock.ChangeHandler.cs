@@ -62,7 +62,8 @@ public sealed partial class FileSystemMock
 		                                               FileSystemTypes fileSystemType,
 		                                               NotifyFilters notifyFilters,
 		                                               IStorageLocation location,
-		                                               IStorageLocation? oldLocation = null)
+		                                               IStorageLocation? oldLocation =
+			                                               null)
 		{
 			ChangeDescription fileSystemChange =
 				new(changeType, fileSystemType, notifyFilters, location, oldLocation);

@@ -27,7 +27,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	
 	public void GetFileNameWithoutExtension_Span_ShouldReturnDirectory(
 		string directory, string filename, string extension)
 	{

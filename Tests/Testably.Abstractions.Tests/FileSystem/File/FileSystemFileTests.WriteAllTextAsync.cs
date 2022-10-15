@@ -10,7 +10,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task WriteAllTextAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path, string? contents)
 	{
@@ -26,7 +25,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task
 		WriteAllTextAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
 			string path, string? contents)
@@ -43,7 +41,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task WriteAllTextAsync_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string contents)
 	{
@@ -57,7 +54,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task WriteAllTextAsync_ShouldCreateFileWithText(
 		string path, string contents)
 	{
@@ -70,7 +66,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task WriteAllTextAsync_SpecialCharacters_ShouldReturnSameText(
 		string path)
 	{

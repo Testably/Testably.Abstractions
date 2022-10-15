@@ -31,7 +31,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 #if FEATURE_FILE_MOVETO_OVERWRITE
 	[SkippableTheory]
 	[AutoData]
-	
 	public void Move_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
 		string sourceName,
 		string destinationName,

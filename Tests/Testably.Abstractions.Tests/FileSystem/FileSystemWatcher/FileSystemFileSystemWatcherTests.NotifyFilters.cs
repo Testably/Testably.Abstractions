@@ -481,9 +481,12 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		ms.Wait(2000).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.ChangeType.Should().Be(WatcherChangeTypes.Renamed);
-		result.FullPath.Should().Be(FileSystem.Path.Combine(BasePath, destinationPath, destinationName));
-		result.Name.Should().Be(FileSystem.Path.Combine(destinationPath, destinationName));
-		result.OldFullPath.Should().Be(FileSystem.Path.Combine(BasePath, sourcePath, sourceName));
+		result.FullPath.Should()
+		   .Be(FileSystem.Path.Combine(BasePath, destinationPath, destinationName));
+		result.Name.Should()
+		   .Be(FileSystem.Path.Combine(destinationPath, destinationName));
+		result.OldFullPath.Should()
+		   .Be(FileSystem.Path.Combine(BasePath, sourcePath, sourceName));
 		result.OldName.Should().Be(FileSystem.Path.Combine(sourcePath, sourceName));
 	}
 }

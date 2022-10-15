@@ -108,7 +108,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[SkippableTheory]
 	[AutoData]
-	
 	public void
 		EnumerateFileSystemEntries_WithEnumerationOptions_ShouldConsiderSetOptions(
 			string path)

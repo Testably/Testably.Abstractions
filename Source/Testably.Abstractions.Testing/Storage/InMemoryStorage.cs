@@ -262,7 +262,8 @@ internal sealed class InMemoryStorage : IStorage
 
 				using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
 				{
-					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(WatcherChangeTypes.Created,
+					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
+						WatcherChangeTypes.Created,
 						container.Type,
 						NotifyFilters.DirectoryName, location);
 				}
@@ -400,7 +401,8 @@ internal sealed class InMemoryStorage : IStorage
 					containerGenerator(location, _fileSystem);
 				using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
 				{
-					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(WatcherChangeTypes.Created,
+					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
+						WatcherChangeTypes.Created,
 						container.Type,
 						NotifyFilters.DirectoryName, location);
 				}
@@ -465,7 +467,8 @@ internal sealed class InMemoryStorage : IStorage
 						accessHandles.Add(container.RequestAccess(FileAccess.Write,
 							FileShare.ReadWrite));
 						fileSystemChange =
-							fileSystem.ChangeHandler.NotifyPendingChange(WatcherChangeTypes.Created,
+							fileSystem.ChangeHandler.NotifyPendingChange(
+								WatcherChangeTypes.Created,
 								container.Type,
 								NotifyFilters.DirectoryName, parentLocation);
 						return container;

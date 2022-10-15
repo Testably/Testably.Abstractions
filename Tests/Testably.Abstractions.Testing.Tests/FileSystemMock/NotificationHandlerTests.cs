@@ -86,15 +86,13 @@ public class NotificationHandlerTests
 		{
 			null,
 			new Action<IFileSystem, string>((f, p) => f.File.WriteAllText(p, null)),
-			WatcherChangeTypes.Created, FileSystemTypes.File,
-			$"path_{Guid.NewGuid()}"
+			WatcherChangeTypes.Created, FileSystemTypes.File, $"path_{Guid.NewGuid()}"
 		};
 		yield return new object?[]
 		{
 			new Action<IFileSystem, string>((f, p) => f.File.WriteAllText(p, null)),
 			new Action<IFileSystem, string>((f, p) => f.File.Delete(p)),
-			WatcherChangeTypes.Deleted, FileSystemTypes.File,
-			$"path_{Guid.NewGuid()}"
+			WatcherChangeTypes.Deleted, FileSystemTypes.File, $"path_{Guid.NewGuid()}"
 		};
 	}
 }

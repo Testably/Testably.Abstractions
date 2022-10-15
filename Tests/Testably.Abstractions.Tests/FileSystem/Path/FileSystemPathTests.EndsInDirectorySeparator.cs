@@ -5,7 +5,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
-	
 	public void EndsInDirectorySeparator_Empty_ShouldReturnExpectedResult()
 	{
 		bool result = FileSystem.Path.EndsInDirectorySeparator(string.Empty);
@@ -14,7 +13,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	
 	public void EndsInDirectorySeparator_Null_ShouldReturnExpectedResult()
 	{
 		bool result = FileSystem.Path.EndsInDirectorySeparator(null!);
@@ -23,7 +21,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	
 	public void EndsInDirectorySeparator_Span_Empty_ShouldReturnExpectedResult()
 	{
 		bool result = FileSystem.Path.EndsInDirectorySeparator(string.Empty.AsSpan());
@@ -34,7 +31,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	[SkippableTheory]
 	[InlineAutoData('.')]
 	[InlineAutoData('a')]
-	
 	public void
 		EndsInDirectorySeparator_Span_WithoutTrailingDirectorySeparator_ShouldReturnFalse(
 			char lastCharacter, string path)
@@ -48,7 +44,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public void
 		EndsInDirectorySeparator_Span_WithTrailingDirectorySeparator_ShouldReturnTrue(
 			string path)
@@ -63,7 +58,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	[SkippableTheory]
 	[InlineAutoData('.')]
 	[InlineAutoData('a')]
-	
 	public void
 		EndsInDirectorySeparator_WithoutTrailingDirectorySeparator_ShouldReturnFalse(
 			char lastCharacter, string path)
@@ -77,7 +71,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public void EndsInDirectorySeparator_WithTrailingDirectorySeparator_ShouldReturnTrue(
 		string path)
 	{

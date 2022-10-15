@@ -264,7 +264,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[InlineData(" ")]
 	[InlineData("/")]
 	[InlineData("\\")]
-	
 	public void CreateDirectory_TrailingDirectorySeparator_ShouldNotBeTrimmed(
 		string suffix)
 	{

@@ -131,7 +131,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 #if FEATURE_FILESYSTEM_ASYNC
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task CopyToAsync_ShouldCopyBytes(
 		string path, byte[] contents)
 	{
@@ -190,7 +189,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	
 	public void Read_AsSpan_ShouldFillBuffer(string path, byte[] contents)
 	{
 		byte[] buffer = new byte[contents.Length];
@@ -221,7 +219,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 #if FEATURE_FILESYSTEM_ASYNC
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task ReadAsync_ShouldFillBuffer(string path, byte[] contents)
 	{
 		CancellationTokenSource cts = new(10000);
@@ -345,7 +342,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	
 	public void Write_AsSpan_ShouldFillBuffer(string path, byte[] contents)
 	{
 		using FileSystemStream stream = FileSystem.File.Create(path);
@@ -374,7 +370,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 #if FEATURE_FILESYSTEM_ASYNC
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task WriteAsync_ShouldFillBuffer(string path, byte[] contents)
 	{
 		CancellationTokenSource cts = new(10000);

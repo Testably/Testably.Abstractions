@@ -8,7 +8,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	
 	public void GetRelativePath_CommonParentDirectory_ShouldReturnRelativePath(
 		string baseDirectory, string directory1, string directory2)
 	{
@@ -22,7 +21,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public void GetRelativePath_DifferentDrives_ShouldReturnAbsolutePath(
 		string path1, string path2)
 	{
@@ -41,7 +39,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public void GetRelativePath_RootedPath_ShouldReturnAbsolutePath(
 		string baseDirectory, string directory1, string directory2)
 	{
@@ -56,7 +53,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public void GetRelativePath_ToItself_ShouldReturnDot(string path)
 	{
 		string expectedResult = ".";
