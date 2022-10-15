@@ -70,7 +70,7 @@ public class InMemoryStorageTests
 	public void TryAddContainer_ShouldNotifyWhenAdded(string path)
 	{
 		bool receivedNotification = false;
-		FileSystem.Notify.OnChange(_ => receivedNotification = true);
+		FileSystem.Notify.OnEvent(_ => receivedNotification = true);
 		IStorageLocation location = Storage.GetLocation(path);
 		bool result = Storage.TryAddContainer(
 			location,
@@ -92,7 +92,7 @@ public class InMemoryStorageTests
 			InMemoryContainer.NewDirectory,
 			out _);
 		bool receivedNotification = false;
-		FileSystem.Notify.OnChange(_ => receivedNotification = true);
+		FileSystem.Notify.OnEvent(_ => receivedNotification = true);
 		bool result = Storage.TryAddContainer(
 			location,
 			InMemoryContainer.NewDirectory,
