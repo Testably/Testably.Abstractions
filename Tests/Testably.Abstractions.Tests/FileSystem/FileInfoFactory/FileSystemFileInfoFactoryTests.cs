@@ -23,7 +23,7 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 
 	#endregion
 
-	[Theory]
+	[SkippableTheory]
 	[InlineData(259)]
 	[InlineData(260)]
 	public void New_PathTooLong_ShouldThrowPathTooLongExceptionOnNetFramework(
