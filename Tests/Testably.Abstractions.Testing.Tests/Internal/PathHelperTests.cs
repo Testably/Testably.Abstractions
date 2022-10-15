@@ -9,7 +9,6 @@ public class PathHelperTests
 {
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(PathHelper))]
 	public void IsUncPath_AltDirectorySeparatorChar_ShouldReturnTrue(string path)
 	{
 		string prefix = new(Path.AltDirectorySeparatorChar, 2);
@@ -22,7 +21,6 @@ public class PathHelperTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(PathHelper))]
 	public void IsUncPath_DirectorySeparatorChar_ShouldReturnTrue(string path)
 	{
 		string prefix = new(Path.DirectorySeparatorChar, 2);
@@ -35,7 +33,6 @@ public class PathHelperTests
 
 	[SkippableTheory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(PathHelper))]
 	public void IsUncPath_MixedDirectorySeparatorChars_ShouldReturnFalse(string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows,
@@ -49,7 +46,6 @@ public class PathHelperTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(PathHelper))]
 	public void IsUncPath_Null_ShouldReturnFalse()
 	{
 		string? path = null;
@@ -60,7 +56,6 @@ public class PathHelperTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(PathHelper))]
 	public void RemoveLeadingDot_MultipleLocalDirectories_ShouldBeRemoved()
 	{
 		string path = Path.Combine(".", ".", ".", "foo");
@@ -71,7 +66,6 @@ public class PathHelperTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(PathHelper))]
 	public void
 		ThrowCommonExceptionsIfPathIsInvalid_StartWithNull_ShouldThrowArgumentException()
 	{
@@ -88,7 +82,6 @@ public class PathHelperTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(PathHelper))]
 	public void ThrowCommonExceptionsIfPathIsInvalid_WithInvalidCharacters(
 		char[] invalidChars)
 	{

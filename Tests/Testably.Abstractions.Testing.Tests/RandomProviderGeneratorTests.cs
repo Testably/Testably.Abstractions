@@ -7,7 +7,6 @@ namespace Testably.Abstractions.Testing.Tests;
 public class RandomProviderGeneratorTests
 {
 	[Fact]
-	[Trait(nameof(Testing), nameof(RandomProvider))]
 	public void Dispose_ShouldThrowObjectDisposedExceptionOnGetNext()
 	{
 		int maxRange = 100;
@@ -28,7 +27,6 @@ public class RandomProviderGeneratorTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(RandomProvider))]
 	public void FromArray_Overflow_ShouldStartAgain(Guid[] values)
 	{
 		RandomProvider.Generator<Guid> sut =
@@ -45,7 +43,6 @@ public class RandomProviderGeneratorTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(RandomProvider))]
 	public void FromArray_ShouldIterateThroughArrayValue(Guid[] values)
 	{
 		RandomProvider.Generator<Guid> sut =
@@ -61,7 +58,6 @@ public class RandomProviderGeneratorTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(RandomProvider))]
 	public void FromCallback_ShouldExecuteCallback()
 	{
 		int iterations = 30;
@@ -81,7 +77,6 @@ public class RandomProviderGeneratorTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(RandomProvider))]
 	public void FromEnumerable_Dispose_ShouldDisposeEnumerator()
 	{
 		Mock<IEnumerable<int>> mock = new();
@@ -96,7 +91,6 @@ public class RandomProviderGeneratorTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(RandomProvider))]
 	public void FromEnumerable_Overflow_List_ShouldResetEnumerator()
 	{
 		int maxRange = 100;
@@ -116,7 +110,6 @@ public class RandomProviderGeneratorTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(RandomProvider))]
 	public void FromEnumerable_Overflow_ShouldResetEnumerator()
 	{
 		int maxRange = 100;
@@ -139,7 +132,6 @@ public class RandomProviderGeneratorTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(RandomProvider))]
 	public void FromEnumerable_ShouldReturnEnumerableValues()
 	{
 		int maxRange = 100;
@@ -158,7 +150,6 @@ public class RandomProviderGeneratorTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(RandomProvider))]
 	public void FromValue_ShouldReturnFixedValue(Guid value)
 	{
 		int maxRange = 100;
@@ -176,7 +167,6 @@ public class RandomProviderGeneratorTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(RandomProvider))]
 	public void Operator_FromArray(Guid[] values)
 	{
 		RandomProvider.Generator<Guid> sut = values;
@@ -192,7 +182,6 @@ public class RandomProviderGeneratorTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(RandomProvider))]
 	public void Operator_FromCallback(Guid value)
 	{
 		int maxRange = 100;
@@ -209,7 +198,6 @@ public class RandomProviderGeneratorTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(RandomProvider))]
 	public void Operator_FromValue(Guid value)
 	{
 		int maxRange = 100;

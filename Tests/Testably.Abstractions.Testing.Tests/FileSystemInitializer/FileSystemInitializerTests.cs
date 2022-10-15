@@ -7,7 +7,6 @@ namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
 public class FileSystemInitializerTests
 {
 	[Fact]
-	[Trait(nameof(Testing), nameof(FileSystemInitializer))]
 	public void Initialize_WithAFile_ShouldCreateFile()
 	{
 		Testing.FileSystemMock sut = new();
@@ -18,7 +17,6 @@ public class FileSystemInitializerTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemInitializer))]
 	public void Initialize_WithAFile_WithExtension_ShouldCreateFileWithExtension(
 		string extension)
 	{
@@ -29,7 +27,6 @@ public class FileSystemInitializerTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(FileSystemInitializer))]
 	public void Initialize_WithASubdirectory_ShouldCreateDirectory()
 	{
 		Testing.FileSystemMock sut = new();
@@ -40,7 +37,6 @@ public class FileSystemInitializerTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemInitializer))]
 	public void Initialize_WithFile_Existing_ShouldThrowTestingException(string fileName)
 	{
 		Testing.FileSystemMock sut = new();
@@ -56,7 +52,6 @@ public class FileSystemInitializerTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemInitializer))]
 	public void Initialize_WithFile_HasBytesContent_ShouldCreateFileWithGivenFileContent(
 		string fileName, byte[] fileContent)
 	{
@@ -72,7 +67,6 @@ public class FileSystemInitializerTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemInitializer))]
 	public void Initialize_WithFile_HasStringContent_ShouldCreateFileWithGivenFileContent(
 		string fileName, string fileContent)
 	{
@@ -88,7 +82,6 @@ public class FileSystemInitializerTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemInitializer))]
 	public void Initialize_WithFile_ShouldCreateFileWithGivenFileName(string fileName)
 	{
 		Testing.FileSystemMock sut = new();
@@ -98,7 +91,6 @@ public class FileSystemInitializerTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(FileSystemInitializer))]
 	public void Initialize_WithNestedSubdirectories_ShouldCreateAllNestedDirectories()
 	{
 		Testing.FileSystemMock sut = new();
@@ -118,7 +110,6 @@ public class FileSystemInitializerTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemInitializer))]
 	public void Initialize_WithSubdirectory_Existing_ShouldThrowTestingException(
 		string directoryName)
 	{
@@ -135,7 +126,6 @@ public class FileSystemInitializerTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemInitializer))]
 	public void Initialize_WithSubdirectory_ShouldCreateDirectoryWithGivenDirectoryName(
 		string directoryName)
 	{

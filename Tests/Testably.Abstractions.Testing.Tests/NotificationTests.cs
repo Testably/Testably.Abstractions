@@ -5,7 +5,6 @@ namespace Testably.Abstractions.Testing.Tests;
 public class NotificationTests
 {
 	[Fact]
-	[Trait(nameof(Testing), nameof(Notification))]
 	public void AwaitableCallback_Amount_ShouldOnlyReturnAfterNumberOfCallbacks()
 	{
 		TimeSystemMock timeSystem = new();
@@ -34,7 +33,6 @@ public class NotificationTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(Notification))]
 	public void AwaitableCallback_Filter_ShouldOnlyUpdateAfterFilteredValue()
 	{
 		TimeSystemMock timeSystem = new();
@@ -60,7 +58,6 @@ public class NotificationTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(Notification))]
 	public void AwaitableCallback_Predicate_ShouldOnlyUpdateAfterFilteredValue()
 	{
 		TimeSystemMock timeSystem = new();
@@ -88,7 +85,6 @@ public class NotificationTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(Notification))]
 	public void AwaitableCallback_ShouldWaitForCallbackExecution()
 	{
 		ManualResetEventSlim ms = new();
@@ -121,7 +117,6 @@ public class NotificationTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(Notification))]
 	public void AwaitableCallback_WaitedPreviously_ShouldWaitAgainForCallbackExecution()
 	{
 		int secondThreadMilliseconds = 42;
@@ -163,7 +158,6 @@ public class NotificationTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(Notification))]
 	public void AwaitableCallback_TimeoutExpired_ShouldThrowTimeoutException()
 	{
 		TimeSystemMock timeSystem = new();
@@ -190,7 +184,6 @@ public class NotificationTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(Notification))]
 	public void Execute_ShouldBeExecutedBeforeWait(int milliseconds)
 	{
 		TimeSystemMock timeSystem = new();
@@ -215,7 +208,6 @@ public class NotificationTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(Notification))]
 	public void Execute_WithReturnValue_ShouldBeExecutedAndReturnValue(
 		int milliseconds, string result)
 	{

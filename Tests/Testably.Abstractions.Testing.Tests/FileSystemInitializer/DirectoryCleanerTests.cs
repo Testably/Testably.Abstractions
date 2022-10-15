@@ -91,7 +91,7 @@ public class DirectoryCleanerTests
 				throw exception;
 			},
 			c => exceptionCount < 3 &&
-				 c.ChangeType.HasFlag(WatcherChangeTypes.Deleted));
+			     c.ChangeType.HasFlag(WatcherChangeTypes.Deleted));
 
 		directoryCleaner.Dispose();
 		sut.Directory.Exists(currentDirectory).Should().BeFalse();

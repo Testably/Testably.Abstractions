@@ -56,7 +56,7 @@ public class NotificationHandlerTests
 		FileSystem.Notify
 		   .OnChange(c => receivedPath = c.Path,
 				c => c.ChangeType == expectedChangeType &&
-					 c.FileSystemType == expectedFileSystemType)
+				     c.FileSystemType == expectedFileSystemType)
 		   .Execute(() =>
 			{
 				callback.Invoke(FileSystem, path);
@@ -79,8 +79,7 @@ public class NotificationHandlerTests
 		{
 			null,
 			new Action<IFileSystem, string>((f, p) => f.File.WriteAllText(p, null)),
-			WatcherChangeTypes.Created, FileSystemTypes.File,
-			$"path_{Guid.NewGuid()}"
+			WatcherChangeTypes.Created, FileSystemTypes.File, $"path_{Guid.NewGuid()}"
 		};
 	}
 }

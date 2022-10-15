@@ -8,7 +8,6 @@ namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
 public class FileSystemMockTests
 {
 	[Fact]
-	[Trait(nameof(Testing), nameof(FileSystemMock))]
 	public void FileSystemMock_ShouldBeInitializedWithASingleDefaultDrive()
 	{
 		string expectedDriveName = "".PrefixRoot();
@@ -19,13 +18,14 @@ public class FileSystemMockTests
 
 		drive.Name.Should().Be(expectedDriveName);
 		drive.AvailableFreeSpace.Should().BeGreaterThan(0);
-		drive.DriveFormat.Should().Be(Testing.FileSystemMock.DriveInfoMock.DefaultDriveFormat);
-		drive.DriveType.Should().Be(Testing.FileSystemMock.DriveInfoMock.DefaultDriveType);
+		drive.DriveFormat.Should()
+		   .Be(Testing.FileSystemMock.DriveInfoMock.DefaultDriveFormat);
+		drive.DriveType.Should()
+		   .Be(Testing.FileSystemMock.DriveInfoMock.DefaultDriveType);
 		drive.VolumeLabel.Should().NotBeNullOrEmpty();
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(FileSystemMock))]
 	public void WithDrive_ExistingName_ShouldUpdateDrive()
 	{
 		string driveName = "".PrefixRoot();
@@ -40,7 +40,6 @@ public class FileSystemMockTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMock))]
 	public void WithDrive_WithCallback_ShouldUpdateDrive(long totalSize)
 	{
 		Testing.FileSystemMock sut = new();
@@ -55,7 +54,6 @@ public class FileSystemMockTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMock))]
 	public void WithUncDrive_ShouldCreateUncDrive(
 		string path, string contents)
 	{
@@ -70,7 +68,6 @@ public class FileSystemMockTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMock))]
 	public void UncDrive_WriteBytes_ShouldReduceAvailableFreeSpace(
 		string server, string path, byte[] bytes)
 	{
@@ -88,7 +85,6 @@ public class FileSystemMockTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMock))]
 	public void WriteAllText_OnUncPath_ShouldThrowDirectoryNotFoundException(
 		string path, string contents)
 	{
@@ -106,7 +102,6 @@ public class FileSystemMockTests
 
 	[SkippableTheory]
 	[InlineData("D:\\")]
-	[Trait(nameof(Testing), nameof(FileSystemMock))]
 	public void WithDrive_NewName_ShouldCreateNewDrives(string driveName)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");

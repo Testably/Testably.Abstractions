@@ -8,7 +8,6 @@ public class FilePlatformIndependenceExtensionsTests
 {
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FilePlatformIndependenceExtensions))]
 	public void NormalizePath_Unix_RootedPath_ShouldRemoveDriveInfo(string part1)
 	{
 		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -25,7 +24,6 @@ public class FilePlatformIndependenceExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FilePlatformIndependenceExtensions))]
 	public void NormalizePath_Unix_ShouldReplaceAltDirectorySeparatorChar(
 		string part1, string part2)
 	{
@@ -50,7 +48,6 @@ public class FilePlatformIndependenceExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FilePlatformIndependenceExtensions))]
 	public void NormalizePath_Windows_ShouldAlsoKeepAltDirectorySeparatorChar(
 		string part1, string part2)
 	{
@@ -73,7 +70,6 @@ public class FilePlatformIndependenceExtensionsTests
 	}
 
 	[Fact]
-	[Trait(nameof(Testing), nameof(FilePlatformIndependenceExtensions))]
 	public void PrefixRoot_Null_ShouldReturnNull()
 	{
 		string? path = null;
@@ -85,7 +81,6 @@ public class FilePlatformIndependenceExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FilePlatformIndependenceExtensions))]
 	public void PrefixRoot_RootedPath_ShouldReturnPath(string path)
 	{
 		path = path.PrefixRoot();
@@ -97,7 +92,6 @@ public class FilePlatformIndependenceExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FilePlatformIndependenceExtensions))]
 	public void PrefixRoot_UnRootedPath_ShouldPrefixRoot(string path)
 	{
 		string result = path.PrefixRoot();

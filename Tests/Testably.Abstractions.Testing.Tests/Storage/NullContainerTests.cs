@@ -5,7 +5,6 @@ namespace Testably.Abstractions.Testing.Tests.Storage;
 public class NullContainerTests
 {
 	[Fact]
-	[Trait(nameof(Testing), nameof(NullContainer))]
 	public void Constructor_ShouldSetFileAndTimeSystem()
 	{
 		Testing.FileSystemMock fileSystem = new();

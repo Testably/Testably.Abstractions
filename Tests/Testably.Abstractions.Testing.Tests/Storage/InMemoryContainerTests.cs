@@ -7,7 +7,6 @@ public class InMemoryContainerTests
 {
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(InMemoryContainer))]
 	public void Decrypt_Encrypted_ShouldDecryptBytes(
 		string path, byte[] bytes)
 	{
@@ -28,7 +27,6 @@ public class InMemoryContainerTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(InMemoryContainer))]
 	public void Decrypt_Unencrypted_ShouldDoNothing(
 		string path, byte[] bytes)
 	{
@@ -47,7 +45,6 @@ public class InMemoryContainerTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(InMemoryContainer))]
 	public void Encrypt_Encrypted_ShouldDoNothing(
 		string path, byte[] bytes)
 	{
@@ -68,7 +65,6 @@ public class InMemoryContainerTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(InMemoryContainer))]
 	public void Encrypt_ShouldEncryptBytes(
 		string path, byte[] bytes)
 	{
@@ -88,7 +84,6 @@ public class InMemoryContainerTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(InMemoryContainer))]
 	public void RequestAccess_WithoutDrive_ShouldThrowDirectoryNotFoundException(
 		string path)
 	{
