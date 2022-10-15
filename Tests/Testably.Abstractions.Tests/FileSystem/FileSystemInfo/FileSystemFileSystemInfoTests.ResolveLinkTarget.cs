@@ -15,8 +15,6 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemInfo(
-		nameof(IFileSystem.IFileSystemInfo.ResolveLinkTarget))]
 	public void ResolveLinkTarget_FileWithDifferentCase_ShouldReturnPathToMissingFile(
 		string path, string pathToTarget, string contents)
 	{
@@ -43,8 +41,6 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemInfo(
-		nameof(IFileSystem.IFileSystemInfo.ResolveLinkTarget))]
 	public void ResolveLinkTarget_FinalTarget_ShouldFollowSymbolicLinkToFinalTarget(
 		string path, string pathToFinalTarget)
 	{
@@ -69,8 +65,6 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemInfo(
-		nameof(IFileSystem.IFileSystemInfo.ResolveLinkTarget))]
 	public void ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
 		string path, string pathToFinalTarget)
 	{
@@ -98,8 +92,6 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemInfo(
-		nameof(IFileSystem.IFileSystemInfo.ResolveLinkTarget))]
 	public void ResolveLinkTarget_MissingFileInLinkChain_ShouldReturnPathToMissingFile(
 		string path, string pathToFinalTarget, string pathToMissingFile)
 	{
@@ -117,8 +109,6 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemInfo(
-		nameof(IFileSystem.IFileSystemInfo.ResolveLinkTarget))]
 	public void ResolveLinkTarget_NormalDirectory_ShouldReturnNull(
 		string path)
 	{
@@ -132,8 +122,6 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemInfo(
-		nameof(IFileSystem.IFileSystemInfo.ResolveLinkTarget))]
 	public void ResolveLinkTarget_NormalFile_ShouldReturnNull(
 		string path)
 	{
@@ -147,8 +135,6 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemInfo(
-		nameof(IFileSystem.IFileSystemInfo.ResolveLinkTarget))]
 	public void ResolveLinkTarget_ShouldFollowSymbolicLink(
 		string path, string pathToTarget)
 	{
@@ -165,8 +151,6 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemInfo(
-		nameof(IFileSystem.IFileSystemInfo.ResolveLinkTarget))]
 	public void ResolveLinkTarget_TargetDeletedAfterLinkCreation_ShouldReturnNull(
 		string path, string pathToTarget)
 	{

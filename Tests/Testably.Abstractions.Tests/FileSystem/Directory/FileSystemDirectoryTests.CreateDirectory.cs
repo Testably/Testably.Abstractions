@@ -1,7 +1,9 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+#if !NETFRAMEWORK
+using System.IO;
 using System.Runtime.InteropServices;
+#endif
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
@@ -10,7 +12,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
 	public void CreateDirectory_ShouldAdjustTimes(string path, string subdirectoryName)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
@@ -49,7 +50,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
 	public void CreateDirectory_ShouldAdjustTimesOnlyForDirectParentDirectory(
 		string rootPath)
 	{
@@ -86,7 +86,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
 	public void CreateDirectory_ShouldSetCreationTime(string path)
 	{
 		DateTime start = TimeSystem.DateTime.Now;
@@ -101,7 +100,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
 	public void CreateDirectory_ShouldSetCreationTimeUtc(string path)
 	{
 		DateTime start = TimeSystem.DateTime.UtcNow;
@@ -115,7 +113,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
 	public void CreateDirectory_Empty_ShouldThrowArgumentException()
 	{
 		Exception? exception = Record.Exception(() =>
@@ -137,7 +134,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
 	public void CreateDirectory_IllegalCharacters_ShouldThrowArgumentException()
 	{
 		IEnumerable<char> invalidChars = FileSystem.Path
@@ -171,7 +167,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
 	public void CreateDirectory_Null_ShouldThrowArgumentNullException()
 	{
 		Exception? exception =
@@ -182,7 +177,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
 	public void CreateDirectory_NullCharacter_ShouldThrowArgumentException()
 	{
 		string path = "foo\0bar";
@@ -193,7 +187,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
 	public void CreateDirectory_ShouldCreateDirectoryInBasePath()
 	{
 		IFileSystem.IDirectoryInfo result = FileSystem.Directory.CreateDirectory("foo");
@@ -205,7 +198,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
 	public void CreateDirectory_ShouldCreateParentDirectories(
 		string directoryLevel1, string directoryLevel2, string directoryLevel3)
 	{
@@ -226,7 +218,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[SkippableTheory]
 	[InlineData("/")]
 	[InlineData("\\")]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
 	public void CreateDirectory_TrailingDirectorySeparator_ShouldNotBeTrimmed(
 		string suffix)
 	{
@@ -249,7 +240,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[SkippableTheory]
 	[InlineData("")]
 	[InlineData(" ")]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
 	public void CreateDirectory_EmptyOrWhitespace_ShouldReturnEmptyString(
 		string suffix)
 	{
@@ -274,7 +264,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[InlineData(" ")]
 	[InlineData("/")]
 	[InlineData("\\")]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateDirectory))]
+	
 	public void CreateDirectory_TrailingDirectorySeparator_ShouldNotBeTrimmed(
 		string suffix)
 	{

@@ -1,5 +1,7 @@
 using System.IO;
+#if FEATURE_SPAN
 using System.Threading.Tasks;
+#endif
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
@@ -8,7 +10,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream("AdjustTimes")]
 	public void CopyTo_ShouldAdjustTimes(string path, byte[] contents)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is Abstractions.FileSystem,
@@ -49,7 +50,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream("AdjustTimes")]
+	
 	public void Read_AsSpan_ShouldAdjustTimes(string path, byte[] contents)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
@@ -86,7 +87,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream("AdjustTimes")]
 	public void Read_ShouldAdjustTimes(string path, byte[] contents)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is Abstractions.FileSystem,
@@ -125,7 +125,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream("AdjustTimes")]
+	
 	public async Task ReadAsync_AsMemory_ShouldAdjustTimes(string path, byte[] contents)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
@@ -163,7 +163,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 #if FEATURE_FILESYSTEM_ASYNC
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream("AdjustTimes")]
+	
 	public async Task ReadAsync_ShouldAdjustTimes(string path, byte[] contents)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is Abstractions.FileSystem,
@@ -204,7 +204,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream("AdjustTimes")]
 	public void ReadByte_ShouldAdjustTimes(string path, byte[] contents)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is Abstractions.FileSystem,
@@ -241,7 +240,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream("AdjustTimes")]
 	public void Seek_ShouldNotAdjustTimes(string path, byte[] contents)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is Abstractions.FileSystem,
@@ -278,7 +276,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream("AdjustTimes")]
+	
 	public void Write_AsSpan_ShouldAdjustTimes(string path, byte[] contents)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
@@ -320,7 +318,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream("AdjustTimes")]
 	public void Write_ShouldAdjustTimes(string path, byte[] contents)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is Abstractions.FileSystem,
@@ -364,7 +361,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream("AdjustTimes")]
+	
 	public async Task WriteAsync_AsMemory_ShouldAdjustTimes(string path, byte[] contents)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
@@ -407,7 +404,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 #if FEATURE_FILESYSTEM_ASYNC
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream("AdjustTimes")]
+	
 	public async Task WriteAsync_ShouldAdjustTimes(string path, byte[] contents)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is Abstractions.FileSystem,
@@ -453,7 +450,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream("AdjustTimes")]
 	public void WriteByte_ShouldAdjustTimes(string path, byte[] contents, byte content)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is Abstractions.FileSystem,

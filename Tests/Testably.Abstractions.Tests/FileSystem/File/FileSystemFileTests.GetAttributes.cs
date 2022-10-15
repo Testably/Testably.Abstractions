@@ -7,7 +7,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.GetAttributes))]
 	public void GetAttributes_MissingFile_GetAttributesShouldReturnAttributes(
 		string path)
 	{

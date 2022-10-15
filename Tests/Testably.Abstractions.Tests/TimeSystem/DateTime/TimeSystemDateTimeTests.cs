@@ -15,7 +15,6 @@ public abstract class TimeSystemDateTimeTests<TTimeSystem>
 	#endregion
 
 	[Fact]
-	[TimeSystemTests.DateTime(nameof(ITimeSystem.IDateTime.MaxValue))]
 	public void MaxValue_ShouldReturnDefaultValue()
 	{
 		System.DateTime expectedResult = System.DateTime.MaxValue;
@@ -26,7 +25,6 @@ public abstract class TimeSystemDateTimeTests<TTimeSystem>
 	}
 
 	[Fact]
-	[TimeSystemTests.DateTime(nameof(ITimeSystem.IDateTime.MinValue))]
 	public void MinValue_ShouldReturnDefaultValue()
 	{
 		System.DateTime expectedResult = System.DateTime.MinValue;
@@ -37,7 +35,6 @@ public abstract class TimeSystemDateTimeTests<TTimeSystem>
 	}
 
 	[Fact]
-	[TimeSystemTests.DateTime(nameof(ITimeSystem.IDateTime.UnixEpoch))]
 	public void UnixEpoch_ShouldReturnDefaultValue()
 	{
 		System.DateTime expectedResult = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);

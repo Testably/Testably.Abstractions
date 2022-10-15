@@ -9,8 +9,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfo(
-		nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
 	public void
 		EnumerateDirectories_SearchOptionAllDirectories_ShouldReturnAllSubdirectories(
 			string path)
@@ -46,8 +44,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	[InlineData(true, "abc?", "abc")]
 	[InlineData(false, "ab?c", "abc")]
 	[InlineData(false, "ac", "abc")]
-	[FileSystemTests.DirectoryInfo(
-		nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
 	public void EnumerateDirectories_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string subdirectoryName)
 	{
@@ -73,8 +69,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfo(
-		nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
 	public void
 		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderSetOptions(
 			string path)
@@ -103,8 +97,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfo(
-		nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
 	public void EnumerateDirectories_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
@@ -122,8 +114,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfo(
-		nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
 	public void
 		EnumerateDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
 			string path)
@@ -144,8 +134,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfo(
-		nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
 	public void EnumerateDirectories_WithSearchPattern_ShouldReturnMatchingSubdirectory(
 		string path)
 	{
@@ -162,8 +150,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfo(
-		nameof(IFileSystem.IDirectoryInfo.EnumerateDirectories))]
 	public void
 		EnumerateDirectories_WithSearchPatternInSubdirectory_ShouldReturnMatchingSubdirectory(
 			string path)

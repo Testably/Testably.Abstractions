@@ -26,7 +26,6 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 	[Theory]
 	[InlineData(259)]
 	[InlineData(260)]
-	[FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.New))]
 	public void New_PathTooLong_ShouldThrowPathTooLongExceptionOnNetFramework(
 		int maxLength)
 	{
@@ -50,7 +49,6 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 	#region Helpers
 
 	[SkippableFact]
-	[FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.New))]
 	public void New_Null_ShouldThrowArgumentNullException()
 	{
 		Exception? exception = Record.Exception(() =>
@@ -63,7 +61,6 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.New))]
 	public void New_ShouldCreateNewFileInfoFromPath(string path)
 	{
 		IFileSystem.IFileInfo result = FileSystem.FileInfo.New(path);
@@ -74,7 +71,6 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.New))]
 	public void New_ShouldOpenWithExistingContent(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
@@ -88,7 +84,6 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.New))]
 	public void New_ShouldSetLength(string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
@@ -105,7 +100,6 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.Wrap))]
 	public void Wrap_Null_ShouldReturnNull()
 	{
 		IFileSystem.IFileInfo? result = FileSystem.FileInfo.Wrap(null);
@@ -115,7 +109,6 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.Wrap))]
 	public void Wrap_ShouldWrapFromFileInfo(string path)
 	{
 		System.IO.FileInfo fileInfo = new(path);

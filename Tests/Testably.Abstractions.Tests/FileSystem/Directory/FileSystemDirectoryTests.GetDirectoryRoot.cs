@@ -4,7 +4,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetDirectoryRoot))]
 	public void GetDirectoryRoot_Empty_ShouldThrowArgumentException()
 	{
 		Exception? exception = Record.Exception(() =>
@@ -16,7 +15,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetDirectoryRoot))]
 	public void GetDirectoryRoot_ShouldReturnDefaultRoot()
 	{
 		string expectedRoot = FileTestHelper.RootDrive();
@@ -30,7 +28,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[InlineData('A')]
 	[InlineData('C')]
 	[InlineData('X')]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetDirectoryRoot))]
 	public void GetDirectoryRoot_SpecificDrive_ShouldReturnRootWithCorrectDrive(
 		char drive)
 	{

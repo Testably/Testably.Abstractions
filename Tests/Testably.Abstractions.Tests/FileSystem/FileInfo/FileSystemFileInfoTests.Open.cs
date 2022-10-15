@@ -7,7 +7,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Open))]
 	public void Open_ExistingFileWithCreateNewMode_ShouldThrowFileNotFoundException(
 		string path)
 	{
@@ -25,7 +24,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Open))]
 	public void Open_MissingFileAndIncorrectMode_ShouldThrowFileNotFoundException(
 		string path)
 	{
@@ -46,7 +44,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 #endif
 	[InlineAutoData(FileMode.Open, FileAccess.ReadWrite)]
 	[InlineAutoData(FileMode.Create, FileAccess.ReadWrite)]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Open))]
 	public void Open_ShouldUseExpectedAccessDependingOnMode(
 		FileMode mode,
 		FileAccess expectedAccess,
@@ -64,7 +61,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 #if NETFRAMEWORK
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Open))]
 	public void Open_AppendMode_ShouldThrowArgumentException(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -82,7 +78,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	[SkippableTheory]
 	[InlineAutoData(FileAccess.Read, FileShare.Write)]
 	[InlineAutoData(FileAccess.Write, FileShare.Read)]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Open))]
 	public void Open_ShouldUseGivenAccessAndShare(string path,
 	                                              FileAccess access,
 	                                              FileShare share)
@@ -98,7 +93,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Open))]
 	public void Open_ShouldUseNoneShareAsDefault(string path,
 	                                             FileAccess access)
 	{
@@ -115,7 +109,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	[SkippableTheory]
 	[InlineAutoData(FileAccess.Read, FileShare.Write)]
 	[InlineAutoData(FileAccess.Write, FileShare.Read)]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Open))]
+	
 	public void Open_WithFileStreamOptions_ShouldUseGivenAccessAndShare(
 		string path,
 		FileAccess access,

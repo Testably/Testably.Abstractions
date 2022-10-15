@@ -6,7 +6,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.IsPathFullyQualified))]
+	
 	public void IsPathFullyQualified_PrefixedRoot_ShouldReturnTrue(
 		string directory)
 	{
@@ -18,7 +18,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.IsPathFullyQualified))]
+	
 	public void IsPathFullyQualified_WithoutPrefixedRoot_ShouldReturnFalse(
 		string path)
 	{
@@ -30,7 +30,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.IsPathFullyQualified))]
+	
 	public void IsPathFullyQualified_Span_PrefixedRoot_ShouldReturnTrue(
 		string directory)
 	{
@@ -42,7 +42,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.IsPathFullyQualified))]
+	
 	public void IsPathFullyQualified_Span_WithoutPrefixedRoot_ShouldReturnFalse(
 		string path)
 	{

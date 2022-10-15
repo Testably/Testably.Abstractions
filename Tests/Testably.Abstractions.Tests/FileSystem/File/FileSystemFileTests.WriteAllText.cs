@@ -5,7 +5,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllText))]
 	public void WriteAllText_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string contents)
 	{
@@ -19,7 +18,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllText))]
 	public void WriteAllText_ShouldAdjustTimes(string path, string contents)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
@@ -57,7 +55,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllText))]
 	public void WriteAllText_ShouldCreateFileWithText(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
@@ -68,7 +65,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.WriteAllText))]
 	public void WriteAllText_SpecialCharacters_ShouldReturnSameText(string path)
 	{
 		char[] specialCharacters = { 'Ä', 'Ö', 'Ü', 'ä', 'ö', 'ü', 'ß' };

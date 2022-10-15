@@ -18,7 +18,6 @@ public abstract class RandomSystemRandomFactoryTests<TRandomSystem>
 	#endregion
 
 	[Fact]
-	[RandomSystemTests.RandomFactory(nameof(IRandomSystem.IRandomFactory.New))]
 	public void New_Next_ShouldReturnDifferentValues()
 	{
 		List<int> results = new();
@@ -33,7 +32,6 @@ public abstract class RandomSystemRandomFactoryTests<TRandomSystem>
 
 	[Theory]
 	[AutoData]
-	[RandomSystemTests.RandomFactory(nameof(IRandomSystem.IRandomFactory.New))]
 	public void New_Next_WithSeed_ShouldReturnSameValue(int seed)
 	{
 		List<int> results = new();
@@ -47,7 +45,6 @@ public abstract class RandomSystemRandomFactoryTests<TRandomSystem>
 	}
 
 	[Fact]
-	[RandomSystemTests.RandomFactory(nameof(IRandomSystem.IRandomFactory.Shared))]
 	public void New_Shared_ShouldReturnDifferentValues()
 	{
 		List<int> results = new();

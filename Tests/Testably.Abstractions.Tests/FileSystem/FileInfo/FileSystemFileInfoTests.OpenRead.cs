@@ -7,7 +7,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.OpenRead))]
 	public void OpenRead_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
 		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
@@ -23,7 +22,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.OpenRead))]
 	public void OpenRead_ShouldUseReadAccessAndReadShare(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);

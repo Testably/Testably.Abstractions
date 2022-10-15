@@ -7,8 +7,6 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemWatcher(nameof(IFileSystem.IFileSystemWatcher
-	   .EnableRaisingEvents))]
 	public void EnableRaisingEvents_SetToFalse_ShouldStop(string path1, string path2)
 	{
 		FileSystem.Initialize().WithSubdirectory(path1).WithSubdirectory(path2);
@@ -32,8 +30,6 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemWatcher(nameof(IFileSystem.IFileSystemWatcher
-	   .EnableRaisingEvents))]
 	public void EnableRaisingEvents_ShouldBeInitializedAsFalse(string path)
 	{
 		FileSystem.Initialize().WithSubdirectory(path);

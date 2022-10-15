@@ -15,7 +15,6 @@ public abstract class TimeSystemThreadTests<TTimeSystem>
 	#endregion
 
 	[Fact]
-	[TimeSystemTests.Thread(nameof(ITimeSystem.IThread.Sleep))]
 	public void Sleep_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
 		Exception? exception = Record.Exception(() => TimeSystem.Thread.Sleep(-2));
@@ -24,7 +23,6 @@ public abstract class TimeSystemThreadTests<TTimeSystem>
 	}
 
 	[Fact]
-	[TimeSystemTests.Thread(nameof(ITimeSystem.IThread.Sleep))]
 	public void Sleep_Milliseconds_ShouldSleepForSpecifiedMilliseconds()
 	{
 		int millisecondsTimeout = 10;
@@ -37,7 +35,6 @@ public abstract class TimeSystemThreadTests<TTimeSystem>
 	}
 
 	[Fact]
-	[TimeSystemTests.Thread(nameof(ITimeSystem.IThread.Sleep))]
 	public void
 		Sleep_Timespan_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
@@ -48,7 +45,6 @@ public abstract class TimeSystemThreadTests<TTimeSystem>
 	}
 
 	[Fact]
-	[TimeSystemTests.Thread(nameof(ITimeSystem.IThread.Sleep))]
 	public void Sleep_Timespan_ShouldSleepForSpecifiedMilliseconds()
 	{
 		TimeSpan timeout = TimeSpan.FromMilliseconds(10);

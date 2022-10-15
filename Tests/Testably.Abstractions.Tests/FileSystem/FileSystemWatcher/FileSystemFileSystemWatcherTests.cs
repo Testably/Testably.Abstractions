@@ -21,7 +21,6 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	[InlineData(-1, 4096)]
 	[InlineData(4095, 4096)]
 	[InlineData(4097, 4097)]
-	[FileSystemTests.FileSystemWatcher(nameof(IFileSystem.IFileSystemWatcher.Path))]
 	public void InternalBufferSize_ShouldAtLeastHave4096Bytes(
 		int bytes, int expectedBytes)
 	{
@@ -36,7 +35,6 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemWatcher(nameof(IFileSystem.IFileSystemWatcher.Path))]
 	public void Path_SetToNotExistingPath_ShouldThrowArgumentException(string path)
 	{
 		IFileSystem.IFileSystemWatcher fileSystemWatcher =

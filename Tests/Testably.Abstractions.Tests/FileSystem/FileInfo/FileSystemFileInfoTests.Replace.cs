@@ -7,7 +7,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Replace))]
 	public void Replace_DestinationIsDirectory_ShouldThrowUnauthorizedAccessException(
 		string sourceName,
 		string destinationName,
@@ -27,7 +26,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Replace))]
 	public void Replace_DestinationMissing_ShouldThrowFileNotFoundException(
 		string sourceName,
 		string destinationName,
@@ -47,7 +45,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Replace))]
 	public void Replace_ReadOnly_WithIgnoreMetadataError_ShouldReplaceFile(
 		string sourceName,
 		string destinationName,
@@ -75,7 +72,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Replace))]
 	public void
 		Replace_ReadOnly_WithoutIgnoreMetadataError_ShouldThrowUnauthorizedAccessException(
 			string sourceName,
@@ -119,7 +115,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Replace))]
 	public void Replace_ShouldReplaceFile(
 		string sourceName,
 		string destinationName,
@@ -144,7 +139,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Replace))]
 	public void Replace_SourceIsDirectory_ShouldThrowUnauthorizedAccessException(
 		string sourceName,
 		string destinationName,
@@ -166,7 +160,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Replace))]
 	public void Replace_SourceLocked_ShouldThrowIOException(
 		string sourceName,
 		string destinationName,
@@ -211,7 +204,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Replace))]
 	public void Replace_SourceMissing_ShouldThrowFileNotFoundException(
 		string sourceName,
 		string destinationName,
@@ -235,7 +227,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Replace))]
 	public void Replace_WithExistingBackupFile_ShouldIgnoreBackup(
 		string sourceName,
 		string destinationName,
@@ -262,7 +253,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Replace))]
 	public void Replace_WithoutBackup_ShouldReplaceFile(
 		string sourceName,
 		string destinationName,

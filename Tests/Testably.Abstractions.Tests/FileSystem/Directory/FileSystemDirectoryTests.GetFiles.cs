@@ -9,7 +9,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetFiles))]
 	public void
 		GetFiles_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
@@ -26,7 +25,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetFiles))]
 	public void
 		GetFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
 			string path)
@@ -49,7 +47,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetFiles))]
 	public void GetFiles_SearchOptionAllDirectories_ShouldReturnAllFiles(
 		string path)
 	{
@@ -82,7 +79,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[InlineData(true, "abc?", "abc")]
 	[InlineData(false, "ab?c", "abc")]
 	[InlineData(false, "ac", "abc")]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetFiles))]
 	public void GetFiles_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string fileName)
 	{
@@ -107,7 +103,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetFiles))]
+	
 	public void
 		GetFiles_WithEnumerationOptions_ShouldConsiderSetOptions(
 			string path)
@@ -136,7 +132,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetFiles))]
 	public void GetFiles_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
@@ -159,7 +154,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetFiles))]
 	public void
 		GetFiles_WithoutSearchString_ShouldReturnAllFilesInDirectSubdirectories(
 			string path)
@@ -181,7 +175,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetFiles))]
 	public void GetFiles_WithSearchPattern_ShouldReturnMatchingFiles(
 		string path)
 	{
@@ -203,7 +196,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetFiles))]
 	public void
 		GetFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
 	{

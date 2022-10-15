@@ -5,7 +5,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Exists))]
 	public void Exists_ArbitraryPath_ShouldBeFalse(string path)
 	{
 		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
@@ -16,7 +15,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Exists))]
 	public void Exists_ExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -30,7 +28,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Exists))]
 	public void Exists_NotExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
 	{
 		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);

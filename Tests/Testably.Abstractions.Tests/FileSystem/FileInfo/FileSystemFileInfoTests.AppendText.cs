@@ -7,7 +7,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.AppendText))]
 	public void AppendText_MissingFile_ShouldCreateFile(
 		string path, string appendText)
 	{
@@ -26,7 +25,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.AppendText))]
 	public void AppendText_ShouldAddTextToExistingFile(
 		string path, string contents, string appendText)
 	{

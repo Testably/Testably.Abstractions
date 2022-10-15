@@ -2,7 +2,7 @@ using Testably.Abstractions.Tests.TestHelpers.Traits;
 
 namespace Testably.Abstractions.Tests.RandomSystem.Random;
 
-public static partial class RealRandomSystem
+public static class RealRandomSystem
 {
 	// ReSharper disable once UnusedMember.Global
 	[SystemTest(nameof(RealRandomSystem))]

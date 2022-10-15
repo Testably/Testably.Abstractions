@@ -20,7 +20,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.FileInfo]
 	public void Directory_ShouldReturnParentDirectory()
 	{
 		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
@@ -34,7 +33,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.FileInfo]
 	public void DirectoryName_ShouldReturnNameOfParentDirectory()
 	{
 		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
@@ -49,7 +47,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo]
 	public void IsReadOnly_SetToFalse_ShouldRemoveReadOnlyAttribute(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -64,7 +61,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo]
 	public void IsReadOnly_SetToTrue_ShouldAddReadOnlyAttribute(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -78,7 +74,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo]
 	public void IsReadOnly_ShouldChangeWhenSettingReadOnlyAttribute(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -92,7 +87,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo]
 	public void IsReadOnly_ShouldInitializeToReadOnlyAttribute(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);

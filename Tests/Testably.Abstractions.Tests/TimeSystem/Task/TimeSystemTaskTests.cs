@@ -15,7 +15,6 @@ public abstract class TimeSystemTaskTests<TTimeSystem>
 	#endregion
 
 	[Fact]
-	[TimeSystemTests.Task(nameof(ITimeSystem.ITask.Delay))]
 	public async System.Threading.Tasks.Task
 		Delay_Milliseconds_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
@@ -28,8 +27,8 @@ public abstract class TimeSystemTaskTests<TTimeSystem>
 	}
 
 	[Fact]
-	[TimeSystemTests.Task(nameof(ITimeSystem.ITask.Delay))]
-	public async System.Threading.Tasks.Task Delay_Milliseconds_ShouldDelayForSpecifiedMilliseconds()
+	public async System.Threading.Tasks.Task
+		Delay_Milliseconds_ShouldDelayForSpecifiedMilliseconds()
 	{
 		int millisecondsTimeout = 100;
 
@@ -42,7 +41,6 @@ public abstract class TimeSystemTaskTests<TTimeSystem>
 	}
 
 	[Fact]
-	[TimeSystemTests.Task(nameof(ITimeSystem.ITask.Delay))]
 	public async System.Threading.Tasks.Task
 		Delay_Timespan_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
@@ -57,8 +55,8 @@ public abstract class TimeSystemTaskTests<TTimeSystem>
 	}
 
 	[Fact]
-	[TimeSystemTests.Task(nameof(ITimeSystem.ITask.Delay))]
-	public async System.Threading.Tasks.Task Delay_Timespan_ShouldDelayForSpecifiedMilliseconds()
+	public async System.Threading.Tasks.Task
+		Delay_Timespan_ShouldDelayForSpecifiedMilliseconds()
 	{
 		TimeSpan timeout = TimeSpan.FromMilliseconds(100);
 

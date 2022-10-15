@@ -11,7 +11,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllTextAsync))]
+	
 	public async Task ReadAllTextAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path)
 	{
@@ -27,7 +27,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllTextAsync))]
+	
 	public async Task
 		ReadAllTextAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
 			string path)
@@ -44,7 +44,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllTextAsync))]
+	
 	public async Task ReadAllTextAsync_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
@@ -58,7 +58,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[MemberAutoData(nameof(GetEncodingDifference))]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllTextAsync))]
+	
 	public async Task ReadAllTextAsync_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string contents, Encoding writeEncoding, Encoding readEncoding, string path)
 	{

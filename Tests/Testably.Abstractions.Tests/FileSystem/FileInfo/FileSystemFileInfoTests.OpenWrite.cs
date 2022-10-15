@@ -7,7 +7,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.OpenWrite))]
 	public void OpenWrite_MissingFile_ShouldCreateFile(string path)
 	{
 		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
@@ -19,7 +18,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.OpenWrite))]
 	public void OpenWrite_ShouldUseWriteAccessAndNoneShare(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);

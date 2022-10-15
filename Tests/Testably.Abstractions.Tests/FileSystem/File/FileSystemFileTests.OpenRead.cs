@@ -7,7 +7,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.OpenRead))]
 	public void OpenRead_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -21,7 +20,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.OpenRead))]
 	public void OpenRead_ShouldUseReadAccessAndReadShare(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);

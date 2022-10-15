@@ -8,7 +8,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateSymbolicLink))]
+	
 	public void CreateSymbolicLink_ShouldCreateSymbolicLink(
 		string path, string pathToTarget)
 	{
@@ -23,7 +23,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.CreateSymbolicLink))]
+	
 	public void CreateSymbolicLink_SourceDirectoryAlreadyExists_ShouldCreateSymbolicLink(
 		string path, string pathToTarget)
 	{

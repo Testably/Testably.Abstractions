@@ -7,7 +7,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Move))]
 	public void Move_DestinationExists_ShouldThrowIOExceptionAndNotMoveFile(
 		string sourceName,
 		string destinationName,
@@ -32,7 +31,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 #if FEATURE_FILE_MOVETO_OVERWRITE
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Move))]
+	
 	public void Move_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
 		string sourceName,
 		string destinationName,
@@ -52,7 +51,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Move))]
 	public void Move_ReadOnly_ShouldMoveFile(
 		string sourceName, string destinationName, string contents)
 	{
@@ -70,7 +68,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Move))]
 	public void Move_ShouldNotAdjustTimes(string source, string destination)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
@@ -99,7 +96,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Move))]
 	public void Move_ShouldMoveFileWithContent(
 		string sourceName, string destinationName, string contents)
 	{
@@ -114,7 +110,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Move))]
 	public void Move_SourceLocked_ShouldThrowIOException(
 		string sourceName,
 		string destinationName)
@@ -142,7 +137,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Move))]
 	public void Move_SourceMissing_ShouldThrowFileNotFoundException(
 		string sourceName,
 		string destinationName)

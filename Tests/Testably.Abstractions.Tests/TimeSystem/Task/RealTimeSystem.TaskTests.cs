@@ -4,10 +4,10 @@ using Testably.Abstractions.Tests.TestHelpers.Traits;
 
 namespace Testably.Abstractions.Tests.TimeSystem.Task;
 
-public static partial class RealTimeSystem
+public static class RealTimeSystem
 {
 	// ReSharper disable once UnusedMember.Global
-	[SystemTest(nameof(Tests.TimeSystem.RealTimeSystemTests))]
+	[SystemTest(nameof(RealTimeSystemTests))]
 	public sealed class TaskTests : TimeSystemTaskTests<Abstractions.TimeSystem>
 	{
 		#region Test Setup
@@ -39,7 +39,8 @@ public static partial class RealTimeSystem
 		}
 
 		[SkippableFact]
-		public async System.Threading.Tasks.Task Delay_Timespan_Canceled_ShouldDelayForSpecifiedMilliseconds()
+		public async System.Threading.Tasks.Task
+			Delay_Timespan_Canceled_ShouldDelayForSpecifiedMilliseconds()
 		{
 			TimeSpan timeout = TimeSpan.FromMilliseconds(100);
 			TimeSpan delay = TimeSpan.FromMilliseconds(timeout.TotalMilliseconds * 100);

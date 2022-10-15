@@ -5,7 +5,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.ChangeExtension))]
 	public void ChangeExtension_EmptyPath_ShouldReturnEmptyString(string extension)
 	{
 		string result = FileSystem.Path.ChangeExtension(string.Empty, extension);
@@ -15,7 +14,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.ChangeExtension))]
 	public void ChangeExtension_NullPath_ShouldReturnNull(string extension)
 	{
 		string? result = FileSystem.Path.ChangeExtension(null, extension);
@@ -25,7 +23,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.ChangeExtension))]
 	public void ChangeExtension_WithDirectory_ShouldIncludeDirectory(
 		string directory, string fileName, string extension)
 	{
@@ -40,7 +37,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.ChangeExtension))]
 	public void ChangeExtension_WithLeadingDotInExtension_ShouldNotIncludeTwoDots(
 		string fileName, string extension)
 	{

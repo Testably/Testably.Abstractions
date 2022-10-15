@@ -8,7 +8,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory("AdjustTimes")]
 	public void AdjustTimes_WhenCreatingAFile_ShouldAdjustTimes(
 		string path1, string path2, string fileName)
 	{
@@ -66,7 +65,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory("AdjustTimes")]
 	public void AdjustTimes_WhenDeletingAFile_ShouldAdjustTimes(
 		string path1, string path2, string fileName)
 	{
@@ -125,7 +123,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory("AdjustTimes")]
 	public void AdjustTimes_WhenUpdatingAFile_ShouldAdjustTimesOnlyOnNetFramework(
 		string path1, string path2, string fileName)
 	{

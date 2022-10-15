@@ -2,6 +2,7 @@ using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemInfo;
 
+// ReSharper disable once PartialTypeWithSinglePart
 public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
@@ -21,8 +22,6 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemInfo(
-		nameof(IFileSystem.IFileSystemInfo.Attributes))]
 	public void SetAttributes_Hidden_OnFileStartingWithDot_ShouldBeSet(string path)
 	{
 		Skip.IfNot(Test.RunsOnLinux);
@@ -40,8 +39,6 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemInfo(
-		nameof(IFileSystem.IFileSystemInfo.Attributes))]
 	public void SetAttributes_Hidden_OnNormalFile_ShouldBeIgnored(string path)
 	{
 		Skip.IfNot(Test.RunsOnLinux);
@@ -63,8 +60,6 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 	[InlineAutoData(FileAttributes.IntegrityStream)]
 	[InlineAutoData(FileAttributes.SparseFile)]
 	[InlineAutoData(FileAttributes.ReparsePoint)]
-	[FileSystemTests.FileSystemInfo(
-		nameof(IFileSystem.IFileSystemInfo.Attributes))]
 	public void SetAttributes_ShouldBeIgnoredOnAllPlatforms(FileAttributes attributes,
 		string path)
 	{
@@ -78,8 +73,6 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[InlineAutoData(FileAttributes.Hidden)]
-	[FileSystemTests.FileSystemInfo(
-		nameof(IFileSystem.IFileSystemInfo.Attributes))]
 	public void SetAttributes_ShouldBeIgnoredOnLinux(FileAttributes attributes,
 	                                                 string path)
 	{
@@ -100,8 +93,6 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[InlineAutoData(FileAttributes.ReadOnly)]
-	[FileSystemTests.FileSystemInfo(
-		nameof(IFileSystem.IFileSystemInfo.Attributes))]
 	public void SetAttributes_ShouldBeSupportedOnAllPlatforms(
 		FileAttributes attributes,
 		string path)
@@ -121,8 +112,6 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 	[InlineAutoData(FileAttributes.Offline)]
 	[InlineAutoData(FileAttributes.System)]
 	[InlineAutoData(FileAttributes.Temporary)]
-	[FileSystemTests.FileSystemInfo(
-		nameof(IFileSystem.IFileSystemInfo.Attributes))]
 	public void SetAttributes_ShouldOnlyWorkOnWindows(FileAttributes attributes,
 	                                                  string path)
 	{

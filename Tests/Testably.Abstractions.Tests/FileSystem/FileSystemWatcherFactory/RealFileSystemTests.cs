@@ -33,8 +33,6 @@ public sealed class RealFileSystemTests :
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemWatcherFactory(
-		nameof(IFileSystem.IFileSystemWatcherFactory.Wrap))]
 	public void Wrap_NotNull_ShouldReturnWrappedInstanceWithSameProperties(
 		string path,
 		string filter,

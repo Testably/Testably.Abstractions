@@ -8,7 +8,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.CreateSymbolicLink))]
+	
 	public void CreateSymbolicLink_ShouldCreateSymbolicLink(
 		string path, string pathToTarget)
 	{
@@ -23,7 +23,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.CreateSymbolicLink))]
+	
 	public void CreateSymbolicLink_SourceFileAlreadyExists_ShouldCreateSymbolicLink(
 		string path, string pathToTarget)
 	{

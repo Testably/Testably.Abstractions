@@ -5,7 +5,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.CreateSubdirectory))]
 	public void CreateSubdirectory_MissingParent_ShouldCreateDirectory(
 		string path, string subdirectory)
 	{
@@ -21,7 +20,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.CreateSubdirectory))]
 	public void CreateSubdirectory_ShouldCreateDirectory(string path, string subdirectory)
 	{
 		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);

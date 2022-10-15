@@ -5,7 +5,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.Combine))]
 	public void Combine_2Paths_OneEmpty_ShouldReturnCombinationOfOtherParts(
 		string path)
 	{
@@ -18,7 +17,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.Combine))]
 	public void Combine_2Paths_OneNull_ShouldThrowArgumentNullException(string path)
 	{
 		Exception? exception1 = Record.Exception(() =>
@@ -32,7 +30,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.Combine))]
 	public void Combine_2Paths_Rooted_ShouldReturnLastRootedPath(
 		string path1, string path2)
 	{
@@ -46,7 +43,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.Combine))]
 	public void Combine_2Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2)
 	{
@@ -60,7 +56,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.Combine))]
 	public void Combine_3Paths_OneEmpty_ShouldReturnCombinationOfOtherParts(
 		string path1, string path2)
 	{
@@ -77,7 +72,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.Combine))]
 	public void Combine_3Paths_OneNull_ShouldThrowArgumentNullException(string path)
 	{
 		Exception? exception1 = Record.Exception(() =>
@@ -94,7 +88,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.Combine))]
 	public void Combine_3Paths_Rooted_ShouldReturnLastRootedPath(
 		string path1, string path2, string path3)
 	{
@@ -109,7 +102,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.Combine))]
 	public void Combine_3Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3)
 	{
@@ -124,7 +116,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.Combine))]
 	public void Combine_4Paths_OneEmpty_ShouldReturnCombinationOfOtherParts(
 		string path1, string path2, string path3)
 	{
@@ -143,7 +134,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.Combine))]
 	public void Combine_4Paths_OneNull_ShouldThrowArgumentNullException(string path)
 	{
 		Exception? exception1 = Record.Exception(() =>
@@ -163,7 +153,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.Combine))]
 	public void Combine_4Paths_Rooted_ShouldReturnLastRootedPath(
 		string path1, string path2, string path3, string path4)
 	{
@@ -179,7 +168,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.Combine))]
 	public void Combine_4Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4)
 	{
@@ -194,7 +182,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.Combine))]
 	public void Combine_ParamPaths_Null_ShouldThrowArgumentNullException()
 	{
 		Exception? exception = Record.Exception(() =>
@@ -205,7 +192,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.Combine))]
 	public void Combine_ParamPaths_OneEmpty_ShouldReturnCombinationOfOtherParts(
 		string path1, string path2, string path3, string path4)
 	{
@@ -231,7 +217,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.Combine))]
 	public void Combine_ParamPaths_OneNull_ShouldThrowArgumentNullException(
 		string path)
 	{
@@ -255,7 +240,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.Combine))]
 	public void Combine_ParamPaths_Rooted_ShouldReturnLastRootedPath(
 		string path1, string path2, string path3, string path4, string path5)
 	{
@@ -272,7 +256,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.Combine))]
 	public void Combine_ParamPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4, string path5)
 	{

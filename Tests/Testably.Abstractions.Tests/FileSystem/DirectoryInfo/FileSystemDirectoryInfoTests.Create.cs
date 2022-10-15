@@ -1,6 +1,8 @@
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+#if !NETFRAMEWORK
+using System.IO;
+#endif
 
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
@@ -8,7 +10,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
-	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Create))]
 	public void Create_IllegalCharacters_ShouldThrowArgumentException()
 	{
 		foreach (char c in FileSystem.Path.GetInvalidPathChars().Where(c => c != '\0'))
@@ -29,7 +30,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Create))]
 	public void Create_Null_ShouldThrowArgumentNullException()
 	{
 		Exception? exception =
@@ -42,7 +42,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	[SkippableTheory]
 	[InlineData("\0foo")]
 	[InlineData("foo\0bar")]
-	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Create))]
 	public void Create_NullCharacter_ShouldThrowArgumentException(string path)
 	{
 		string expectedMessage = "Illegal characters in path.";
@@ -55,7 +54,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Create))]
 	public void Create_ShouldCreateDirectory(string path)
 	{
 		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
@@ -73,7 +71,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Create))]
 	public void Create_ShouldCreateInBasePath()
 	{
 		IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.New("foo");
@@ -86,7 +83,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Create))]
 	public void Create_ShouldCreateParentDirectories(
 		string directoryLevel1, string directoryLevel2, string directoryLevel3)
 	{
@@ -109,7 +105,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	[InlineData("")]
 	[InlineData("/")]
 	[InlineData("\\")]
-	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.Create))]
 	public void Create_TrailingDirectorySeparator_ShouldNotBeTrimmed(
 		string suffix)
 	{

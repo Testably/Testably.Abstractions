@@ -8,8 +8,6 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemWatcher(
-		nameof(IFileSystem.IFileSystemWatcher.NotifyFilter))]
 	public void NotifyFilter_CreateDirectory_ShouldNotNotifyOnOtherFilters(string path)
 	{
 		FileSystem.Initialize();
@@ -39,8 +37,6 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 	[SkippableTheory]
 	[InlineAutoData(NotifyFilters.DirectoryName)]
-	[FileSystemTests.FileSystemWatcher(
-		nameof(IFileSystem.IFileSystemWatcher.NotifyFilter))]
 	public void NotifyFilter_CreateDirectory_ShouldTriggerCreatedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
@@ -68,8 +64,6 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemWatcher(
-		nameof(IFileSystem.IFileSystemWatcher.NotifyFilter))]
 	public void NotifyFilter_DeleteDirectory_ShouldNotNotifyOnOtherFilters(string path)
 	{
 		FileSystem.Initialize().WithSubdirectory(path);
@@ -99,8 +93,6 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 	[SkippableTheory]
 	[InlineAutoData(NotifyFilters.DirectoryName)]
-	[FileSystemTests.FileSystemWatcher(
-		nameof(IFileSystem.IFileSystemWatcher.NotifyFilter))]
 	public void NotifyFilter_DeleteDirectory_ShouldTriggerDeletedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
@@ -128,8 +120,6 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemWatcher(
-		nameof(IFileSystem.IFileSystemWatcher.NotifyFilter))]
 	public void NotifyFilter_WriteFile_ShouldNotNotifyOnOtherFilters(string fileName)
 	{
 		FileSystem.Initialize();
@@ -174,8 +164,6 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	[InlineAutoData(NotifyFilters.LastWrite)]
 	[InlineAutoData(NotifyFilters.Security)]
 	[InlineAutoData(NotifyFilters.Size)]
-	[FileSystemTests.FileSystemWatcher(
-		nameof(IFileSystem.IFileSystemWatcher.NotifyFilter))]
 	public void NotifyFilter_WriteFile_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string fileName)
 	{

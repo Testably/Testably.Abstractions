@@ -7,7 +7,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
 	public void Delete_FullPath_ShouldDeleteDirectory(string directoryName)
 	{
 		IFileSystem.IDirectoryInfo result =
@@ -21,7 +20,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
 	public void Delete_MissingDirectory_ShouldDeleteDirectory(string directoryName)
 	{
 		string expectedPath = System.IO.Path.Combine(BasePath, directoryName);
@@ -37,7 +35,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
 	public void Delete_Recursive_MissingDirectory_ShouldDeleteDirectory(
 		string directoryName)
 	{
@@ -54,7 +51,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
 	public void
 		Delete_Recursive_WithSimilarNamedFile_ShouldOnlyDeleteDirectoryAndItsContents(
 			string subdirectory)
@@ -74,7 +70,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
 	public void Delete_Recursive_WithSubdirectory_ShouldDeleteDirectoryWithContent(
 		string path, string subdirectory)
 	{
@@ -90,7 +85,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
 	public void Delete_ShouldAdjustTimes(string path, string subdirectoryName)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
@@ -129,7 +123,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
 	public void Delete_ShouldDeleteDirectory(string directoryName)
 	{
 		IFileSystem.IDirectoryInfo result =
@@ -145,7 +138,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
 	public void Delete_WithSimilarNamedFile_ShouldOnlyDeleteDirectory(
 		string subdirectory)
 	{
@@ -162,7 +154,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Delete))]
 	public void Delete_WithSubdirectory_ShouldNotDeleteDirectory(
 		string path, string subdirectory)
 	{

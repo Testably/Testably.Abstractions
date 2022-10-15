@@ -7,7 +7,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Create))]
 	public void Create_MissingFile_ShouldCreateFile(string path)
 	{
 		using FileSystemStream stream = FileSystem.File.Create(path);
@@ -17,7 +16,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Create))]
 	public void Create_ShouldUseReadWriteAccessAndNoneShare(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -30,7 +28,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Create))]
 	public void Create_WithBufferSize_ShouldUseReadWriteAccessAndNoneShare(
 		string path, int bufferSize)
 	{
@@ -45,7 +42,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Create))]
 	public void Create_WithBufferSizeAndFileOptions_ShouldUseReadWriteAccessAndNoneShare(
 		string path, int bufferSize)
 	{

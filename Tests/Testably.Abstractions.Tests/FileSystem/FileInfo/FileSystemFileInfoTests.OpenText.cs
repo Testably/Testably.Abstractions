@@ -7,7 +7,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.OpenText))]
 	public void OpenText_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
@@ -24,7 +23,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.OpenText))]
 	public void OpenText_ShouldReturnFileContent(
 		string path, string contents)
 	{

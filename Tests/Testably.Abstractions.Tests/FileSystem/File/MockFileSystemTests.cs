@@ -26,7 +26,6 @@ public sealed class MockFileSystemTests
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Move))]
 	public void Move_DifferentDrive_ShouldAdjustAvailableFreeSpace(
 		string sourceName,
 		string destinationName,
@@ -58,7 +57,7 @@ public sealed class MockFileSystemTests
 #if FEATURE_FILE_MOVETO_OVERWRITE
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Move))]
+	
 	public void Move_Overwrite_ShouldAdjustAvailableFreeSpaceCorrectly(
 		string sourceName,
 		string destinationName,

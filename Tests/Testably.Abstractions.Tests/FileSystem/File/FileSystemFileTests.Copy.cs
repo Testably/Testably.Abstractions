@@ -7,7 +7,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Copy))]
 	public void Copy_ShouldAdjustTimes(
 		string source, string destination)
 	{
@@ -70,7 +69,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Copy))]
 	public void Copy_DestinationExists_ShouldThrowIOExceptionAndNotCopyFile(
 		string sourceName,
 		string destinationName,
@@ -95,7 +93,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 #if FEATURE_FILE_MOVETO_OVERWRITE
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Copy))]
+	
 	public void Copy_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
 		string sourceName,
 		string destinationName,
@@ -116,7 +114,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Copy))]
 	public void Copy_ReadOnly_ShouldCopyFile(
 		string sourceName, string destinationName, string contents)
 	{
@@ -134,7 +131,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Copy))]
 	public void Copy_ShouldCopyFileWithContent(
 		string sourceName, string destinationName, string contents)
 	{
@@ -153,7 +149,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Copy))]
 	public void Copy_SourceIsDirectory_ShouldThrowIOExceptionAndNotCopyFile(
 		string sourceName,
 		string destinationName)
@@ -179,7 +174,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Copy))]
 	public void Copy_SourceLocked_ShouldThrowIOException(
 		string sourceName,
 		string destinationName)
@@ -207,7 +201,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.Copy))]
 	public void Copy_SourceMissing_ShouldThrowFileNotFoundException(
 		string sourceName,
 		string destinationName)

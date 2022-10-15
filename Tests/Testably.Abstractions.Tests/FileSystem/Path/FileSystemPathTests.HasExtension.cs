@@ -4,7 +4,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.HasExtension))]
 	public void HasExtension_Null_ShouldReturnFalse()
 	{
 		bool result = FileSystem.Path.HasExtension(null);
@@ -17,7 +16,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	[InlineAutoData(".abc.xyz", true)]
 	[InlineAutoData("foo", false)]
 	[InlineAutoData(".", false)]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.HasExtension))]
 	public void HasExtension_ShouldReturnExpectedResult(
 		string suffix, bool expectedResult, string filename)
 	{
@@ -34,7 +32,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	[InlineAutoData(".abc.xyz", true)]
 	[InlineAutoData("foo", false)]
 	[InlineAutoData(".", false)]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.HasExtension))]
+	
 	public void HasExtension_Span_ShouldReturnExpectedResult(
 		string suffix, bool expectedResult, string filename)
 	{

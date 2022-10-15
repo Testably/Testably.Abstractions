@@ -7,7 +7,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.OpenWrite))]
 	public void OpenWrite_MissingFile_ShouldCreateFile(string path)
 	{
 		using FileSystemStream stream = FileSystem.File.OpenWrite(path);
@@ -17,7 +16,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.OpenWrite))]
 	public void OpenWrite_ShouldUseWriteAccessAndNoneShare(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);

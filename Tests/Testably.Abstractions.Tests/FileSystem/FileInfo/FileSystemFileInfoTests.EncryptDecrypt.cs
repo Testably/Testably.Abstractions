@@ -9,7 +9,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Decrypt))]
+
 #if NET6_0_OR_GREATER
 	[SupportedOSPlatform("windows")]
 #endif
@@ -30,7 +30,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Decrypt))]
+
 #if NET6_0_OR_GREATER
 	[SupportedOSPlatform("windows")]
 #endif
@@ -49,7 +49,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Encrypt))]
+
 #if NET6_0_OR_GREATER
 	[SupportedOSPlatform("windows")]
 #endif
@@ -69,7 +69,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.Encrypt))]
+
 #if NET6_0_OR_GREATER
 	[SupportedOSPlatform("windows")]
 #endif

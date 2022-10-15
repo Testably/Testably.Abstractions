@@ -7,7 +7,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.MoveTo))]
 	public void MoveTo_DestinationExists_ShouldThrowIOExceptionAndNotMoveFile(
 		string sourceName,
 		string destinationName,
@@ -34,7 +33,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 #if FEATURE_FILE_MOVETO_OVERWRITE
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.MoveTo))]
+	
 	public void MoveTo_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
 		string sourceName,
 		string destinationName,
@@ -58,7 +57,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.MoveTo))]
 	public void MoveTo_ReadOnly_ShouldMoveFile(
 		string sourceName, string destinationName, string contents)
 	{
@@ -77,7 +75,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.MoveTo))]
 	public void MoveTo_ShouldMoveFileWithContent(
 		string sourceName, string destinationName, string contents)
 	{
@@ -95,7 +92,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.MoveTo))]
 	public void MoveTo_SourceLocked_ShouldThrowIOException(
 		string sourceName,
 		string destinationName)
@@ -124,7 +120,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileInfo(nameof(IFileSystem.IFileInfo.MoveTo))]
 	public void MoveTo_SourceMissing_ShouldThrowFileNotFoundException(
 		string sourceName,
 		string destinationName)

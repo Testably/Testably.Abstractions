@@ -9,8 +9,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfo(
-		nameof(IFileSystem.IDirectoryInfo.GetFileSystemInfos))]
 	public void
 		GetFileSystemInfos_SearchOptionAllFiles_ShouldReturnAllFiles(
 			string path)
@@ -51,8 +49,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	[InlineData(true, "abc?", "abc")]
 	[InlineData(false, "ab?c", "abc")]
 	[InlineData(false, "ac", "abc")]
-	[FileSystemTests.DirectoryInfo(
-		nameof(IFileSystem.IDirectoryInfo.GetFileSystemInfos))]
 	public void GetFileSystemInfos_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string fileName)
 	{
@@ -78,8 +74,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[SkippableFact]
-	[FileSystemTests.DirectoryInfo(
-		nameof(IFileSystem.IDirectoryInfo.GetFileSystemInfos))]
 	public void
 		GetFileSystemInfos_WithEnumerationOptions_ShouldConsiderSetOptions()
 	{
@@ -109,8 +103,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfo(
-		nameof(IFileSystem.IDirectoryInfo.GetFileSystemInfos))]
 	public void GetFileSystemInfos_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
@@ -127,8 +119,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.DirectoryInfo(
-		nameof(IFileSystem.IDirectoryInfo.GetFileSystemInfos))]
 	public void
 		GetFileSystemInfos_WithoutSearchString_ShouldReturnAllDirectFilesAndDirectories()
 	{
@@ -151,8 +141,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.DirectoryInfo(
-		nameof(IFileSystem.IDirectoryInfo.GetFileSystemInfos))]
 	public void GetFileSystemInfos_WithSearchPattern_ShouldReturnMatchingFiles()
 	{
 		IFileSystem.IDirectoryInfo baseDirectory =
@@ -169,8 +157,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.DirectoryInfo(
-		nameof(IFileSystem.IDirectoryInfo.GetFileSystemInfos))]
 	public void
 		GetFileSystemInfos_WithSearchPatternInSubdirectory_ShouldReturnMatchingFiles()
 	{

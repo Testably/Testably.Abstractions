@@ -22,7 +22,6 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
 	public void New_AppendAccessWithReadWriteMode_ShouldThrowArgumentException(
 		string path)
 	{
@@ -43,7 +42,6 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
 	public void New_EmptyPath_ShouldThrowArgumentException(FileMode mode)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -61,7 +59,6 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
 	public void New_ExistingFileWithCreateMode_ShouldIgnoreContent(
 		string path)
 	{
@@ -74,7 +71,6 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
 	public void New_ExistingFileWithCreateNewMode_ShouldThrowArgumentException(
 		string path)
 	{
@@ -90,7 +86,6 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
 	public void New_ExistingFileWithTruncateMode_ShouldIgnoreContent(
 		string path)
 	{
@@ -107,7 +102,6 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 	[InlineAutoData(FileMode.Create)]
 	[InlineAutoData(FileMode.CreateNew)]
 	[InlineAutoData(FileMode.Append)]
-	[FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
 	public void New_InvalidModeForReadAccess_ShouldThrowArgumentException(
 		FileMode mode, string path)
 	{
@@ -131,7 +125,6 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 	[SkippableTheory]
 	[InlineAutoData(FileMode.Open)]
 	[InlineAutoData(FileMode.Truncate)]
-	[FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
 	public void New_MissingFileWithIncorrectMode_ShouldThrowArgumentException(
 		FileMode mode, string path)
 	{
@@ -146,7 +139,6 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
 	public void New_MissingFileWithTruncateMode_ShouldIgnoreContent(
 		string path)
 	{
@@ -161,7 +153,6 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
 	public void New_NullPath_ShouldThrowArgumentNullException(FileMode mode)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -175,7 +166,6 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
 	public void New_SamePathAsExistingDirectory_ShouldThrowException(
 		string path)
 	{
@@ -200,7 +190,6 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 	[SkippableTheory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	[FileSystemTests.FileStreamFactory(nameof(IFileSystem.IFileStreamFactory.New))]
 	public void New_WithUseAsyncSet_ShouldSetProperty(bool useAsync, string path)
 	{
 		using FileSystemStream stream = FileSystem.FileStream.New(

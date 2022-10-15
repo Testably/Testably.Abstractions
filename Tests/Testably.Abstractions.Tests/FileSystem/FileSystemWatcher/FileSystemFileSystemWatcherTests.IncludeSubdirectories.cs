@@ -8,8 +8,6 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemWatcher(
-		nameof(IFileSystem.IFileSystemWatcher.IncludeSubdirectories))]
 	public void IncludeSubdirectories_SetToFalse_ShouldNotTriggerNotification(
 		string baseDirectory, string path)
 	{
@@ -35,8 +33,6 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemWatcher(
-		nameof(IFileSystem.IFileSystemWatcher.IncludeSubdirectories))]
 	public void
 		IncludeSubdirectories_SetToTrue_ShouldOnlyTriggerNotificationOnSubdirectories(
 			string baseDirectory, string subdirectoryName, string otherDirectory)
@@ -64,8 +60,6 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemWatcher(
-		nameof(IFileSystem.IFileSystemWatcher.IncludeSubdirectories))]
 	public void IncludeSubdirectories_SetToTrue_ShouldTriggerNotificationOnSubdirectories(
 		string baseDirectory, string subdirectoryName)
 	{

@@ -18,7 +18,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetLogicalDrives))]
 	public void GetLogicalDrives_ShouldNotBeEmpty()
 	{
 		string[] result = FileSystem.Directory.GetLogicalDrives();
@@ -29,7 +28,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.GetParent))]
 	public void GetParent_ArbitraryPaths_ShouldNotBeNull(string path1,
 	                                                     string path2,
 	                                                     string path3)

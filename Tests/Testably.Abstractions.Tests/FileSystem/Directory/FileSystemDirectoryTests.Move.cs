@@ -9,7 +9,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Move))]
 	public void Move_ShouldMoveDirectoryWithContent(string source, string destination)
 	{
 		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
@@ -37,7 +36,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Move))]
 	public void Move_ShouldNotAdjustTimes(string source, string destination)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
@@ -74,7 +72,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Move))]
 	public void Move_WithLockedFile_ShouldNotMoveDirectoryAtAll(
 		string source, string destination)
 	{
@@ -133,7 +130,6 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Directory(nameof(IFileSystem.IDirectory.Move))]
 	public void Move_WithReadOnlyFile_ShouldMoveDirectoryWithContent(
 		string source, string destination)
 	{

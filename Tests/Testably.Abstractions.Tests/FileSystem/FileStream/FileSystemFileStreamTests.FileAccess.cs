@@ -21,7 +21,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		FileAccess.ReadWrite, FileShare.Write)]
 	[InlineAutoData(FileAccess.Read, FileShare.Read,
 		FileAccess.ReadWrite, FileShare.ReadWrite)]
-	[FileSystemTests.FileStream(nameof(FileAccess))]
 	public void FileAccess_ConcurrentAccessWithInvalidScenarios_ShouldThrowIOException(
 		FileAccess access1, FileShare share1,
 		FileAccess access2, FileShare share2,
@@ -55,7 +54,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 	[InlineAutoData(FileAccess.Read, FileShare.Read, FileAccess.Read, FileShare.Read)]
 	[InlineAutoData(FileAccess.Read, FileShare.ReadWrite, FileAccess.ReadWrite,
 		FileShare.Read)]
-	[FileSystemTests.FileStream(nameof(FileAccess))]
 	public void FileAccess_ConcurrentReadAccessWithValidScenarios_ShouldNotThrowException(
 		FileAccess access1, FileShare share1,
 		FileAccess access2, FileShare share2,
@@ -81,7 +79,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 	[InlineAutoData(FileAccess.Write, FileShare.Write, FileAccess.Write, FileShare.Write)]
 	[InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite, FileAccess.ReadWrite,
 		FileShare.ReadWrite)]
-	[FileSystemTests.FileStream(nameof(FileAccess))]
 	public void
 		FileAccess_ConcurrentWriteAccessWithValidScenarios_ShouldNotThrowException(
 			FileAccess access1, FileShare share1,
@@ -111,7 +108,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream(nameof(FileAccess))]
 	public void FileAccess_ReadAfterFirstAppend_ShouldContainBothContents(
 		string path, string contents1, string contents2)
 	{
@@ -138,7 +134,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream(nameof(FileAccess))]
 	public void FileAccess_ReadBeforeFirstAppend_ShouldOnlyContainSecondContent(
 		string path, string contents1, string contents2)
 	{
@@ -165,7 +160,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream(nameof(FileAccess))]
 	public void FileAccess_ReadWhileWriteLockActive_ShouldThrowIOException(
 		string path, string contents)
 	{
@@ -192,7 +186,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream(nameof(FileAccess))]
 	public void MultipleParallelReads_ShouldBeAllowed(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
@@ -217,7 +210,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream(nameof(FileAccess))]
 	public void Read_ShouldCreateValidFileStream(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents, Encoding.UTF8);
@@ -230,7 +222,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream(nameof(FileAccess))]
 	public void Write_ShouldCreateValidFileStream(string path, string contents)
 	{
 		FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.CreateNew);

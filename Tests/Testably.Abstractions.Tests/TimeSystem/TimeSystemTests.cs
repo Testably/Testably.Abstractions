@@ -1,5 +1,3 @@
-using Testably.Abstractions.Tests.TestHelpers.Traits;
-
 namespace Testably.Abstractions.Tests.TimeSystem;
 
 public abstract class TimeSystemTests<TTimeSystem>
@@ -38,45 +36,5 @@ public abstract class TimeSystemTests<TTimeSystem>
 		ITimeSystem result = TimeSystem.Thread.TimeSystem;
 
 		result.Should().Be(TimeSystem);
-	}
-}
-
-/// <summary>
-///     Attributes for <see cref="TimeSystemTests{TTimeSystem}" />
-/// </summary>
-public static class TimeSystemTests
-{
-	/// <summary>
-	///     Tests for methods in <see cref="ITimeSystem.IDateTime" /> in <see cref="ITimeSystem" />.
-	/// </summary>
-	public class DateTime : TestabilityTraitAttribute
-	{
-		public DateTime(string method) : base(nameof(ITimeSystem),
-			nameof(ITimeSystem.IDateTime), method)
-		{
-		}
-	}
-
-	/// <summary>
-	///     Tests for methods in <see cref="ITimeSystem.ITask" /> in <see cref="ITimeSystem" />.
-	/// </summary>
-	public class Task : TestabilityTraitAttribute
-	{
-		public Task(string method) : base(nameof(ITimeSystem),
-			nameof(ITimeSystem.ITask), method)
-		{
-		}
-	}
-
-	/// <summary>
-	///     Tests for methods in <see cref="ITimeSystem.IThread" /> in <see cref="ITimeSystem" />.
-	/// </summary>
-	public class Thread : TestabilityTraitAttribute
-	{
-		public Thread(string method) : base(nameof(ITimeSystem),
-			nameof(ITimeSystem.IThread),
-			method)
-		{
-		}
 	}
 }

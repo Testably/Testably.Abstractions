@@ -7,7 +7,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream]
 	public void Options_DeleteOnClose_ShouldDeleteFileOnClose(
 		string path, string contents)
 	{
@@ -23,7 +22,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileStream]
 	public void Options_DeleteOnClose_ShouldDeleteFileOnDispose(
 		string path, string contents)
 	{

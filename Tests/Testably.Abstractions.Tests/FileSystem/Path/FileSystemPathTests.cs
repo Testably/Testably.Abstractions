@@ -13,7 +13,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.AltDirectorySeparatorChar))]
 	public void AltDirectorySeparatorChar_ShouldReturnDefaultValue()
 	{
 		char result = FileSystem.Path.AltDirectorySeparatorChar;
@@ -22,7 +21,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.DirectorySeparatorChar))]
 	public void DirectorySeparatorChar_ShouldReturnDefaultValue()
 	{
 		char result = FileSystem.Path.DirectorySeparatorChar;
@@ -31,7 +29,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.PathSeparator))]
 	public void PathSeparator_ShouldReturnDefaultValue()
 	{
 		char result = FileSystem.Path.PathSeparator;
@@ -40,7 +37,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.VolumeSeparatorChar))]
 	public void VolumeSeparatorChar_ShouldReturnDefaultValue()
 	{
 		char result = FileSystem.Path.VolumeSeparatorChar;

@@ -1,7 +1,9 @@
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
+#if FEATURE_FILESYSTEMWATCHER_ADVANCED
+using System.Collections.Generic;
+using System.Linq;
+#endif
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
@@ -10,8 +12,6 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemWatcher(
-		nameof(IFileSystem.IFileSystemWatcher.Filter))]
 	public void Filter_Matching_ShouldTriggerNotification(string path)
 	{
 		FileSystem.Initialize().WithSubdirectory(path);
@@ -38,8 +38,6 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemWatcher(
-		nameof(IFileSystem.IFileSystemWatcher.Filter))]
 	public void Filters_ShouldMatchAnyOfTheSpecifiedFilters(
 		string[] filteredPaths, string[] otherPaths)
 	{
@@ -86,8 +84,6 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.FileSystemWatcher(
-		nameof(IFileSystem.IFileSystemWatcher.Filter))]
 	public void Filter_NotMatching_ShouldNotTriggerNotification(
 		string path, string filter)
 	{

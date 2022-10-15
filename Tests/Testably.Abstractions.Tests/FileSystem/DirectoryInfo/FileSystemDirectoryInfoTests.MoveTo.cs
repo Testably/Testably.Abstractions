@@ -9,7 +9,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.MoveTo))]
 	public void MoveTo_ShouldMoveDirectoryWithContent(string source, string destination)
 	{
 		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
@@ -38,7 +37,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.MoveTo))]
 	public void MoveTo_WithLockedFile_ShouldNotMoveDirectoryAtAll(
 		string source, string destination)
 	{
@@ -98,7 +96,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfo(nameof(IFileSystem.IDirectoryInfo.MoveTo))]
 	public void MoveTo_WithReadOnlyFile_ShouldMoveDirectoryWithContent(
 		string source, string destination)
 	{

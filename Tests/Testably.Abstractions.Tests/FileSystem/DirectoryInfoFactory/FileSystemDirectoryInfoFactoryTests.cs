@@ -18,7 +18,6 @@ public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.DirectoryInfoFactory(nameof(IFileSystem.IDirectoryInfoFactory.New))]
 	public void New_EmptyPath_ShouldThrowArgumentException()
 	{
 		Exception? exception = Record.Exception(() =>
@@ -39,7 +38,6 @@ public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.DirectoryInfoFactory(nameof(IFileSystem.IDirectoryInfoFactory.New))]
 	public void New_Null_ShouldThrowArgumentNullException()
 	{
 		Exception? exception = Record.Exception(() =>
@@ -52,7 +50,6 @@ public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfoFactory(nameof(IFileSystem.IDirectoryInfoFactory.New))]
 	public void New_ShouldCreateNewDirectoryInfoFromPath(string path)
 	{
 		IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
@@ -62,7 +59,6 @@ public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.DirectoryInfoFactory(nameof(IFileSystem.IDirectoryInfoFactory.Wrap))]
 	public void Wrap_Null_ShouldReturnNull()
 	{
 		IFileSystem.IDirectoryInfo? result = FileSystem.DirectoryInfo.Wrap(null);
@@ -72,7 +68,6 @@ public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DirectoryInfoFactory(nameof(IFileSystem.IDirectoryInfoFactory.Wrap))]
 	public void Wrap_ShouldWrapFromDirectoryInfo(string path)
 	{
 		System.IO.DirectoryInfo directoryInfo = new("S:\\" + path);

@@ -4,7 +4,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.GetExtension))]
 	public void GetExtension_Null_ShouldReturnNull()
 	{
 		string? result = FileSystem.Path.GetExtension(null);
@@ -14,7 +13,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.GetExtension))]
 	public void GetExtension_ShouldReturnDirectory(
 		string directory, string filename, string extension)
 	{
@@ -29,7 +27,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.Path(nameof(IFileSystem.IPath.GetExtension))]
+	
 	public void GetExtension_Span_ShouldReturnDirectory(
 		string directory, string filename, string extension)
 	{

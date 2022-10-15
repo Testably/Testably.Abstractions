@@ -21,7 +21,6 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.GetDrives))]
 	public void GetDrives_ShouldNotBeEmpty()
 	{
 		IFileSystem.IDriveInfo[] result = FileSystem.DriveInfo.GetDrives();
@@ -31,7 +30,6 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DriveInfoFactory("MissingDrives")]
 	public void MissingDrive_CreateDirectoryInfo_ShouldOnlyThrowWhenAccessingData(
 		string path, string subPath)
 	{
@@ -55,7 +53,6 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DriveInfoFactory("MissingDrives")]
 	public void MissingDrive_WriteAllBytes_ShouldThrowDirectoryNotFoundException(
 		string path, byte[] contents)
 	{
@@ -75,7 +72,6 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.New))]
 	public void New_DefaultDrive_ShouldBeFixed()
 	{
 		IFileSystem.IDriveInfo result =
@@ -92,7 +88,6 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.New))]
 	public void New_InvalidDriveName_ShouldThrowArgumentNullException(
 		string invalidDriveName)
 	{
@@ -107,7 +102,6 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.New))]
 	public void New_Null_ShouldThrowArgumentNullException()
 	{
 		Exception? exception = Record.Exception(() =>
@@ -122,7 +116,6 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 	[InlineData('A')]
 	[InlineData('C')]
 	[InlineData('X')]
-	[FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.New))]
 	public void New_WithDriveLetter_ShouldReturnDriveInfo(char driveLetter)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
@@ -136,7 +129,6 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 	[InlineAutoData('A')]
 	[InlineAutoData('C')]
 	[InlineAutoData('Y')]
-	[FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.New))]
 	public void New_WithRootedPath_ShouldReturnDriveInfo(char driveLetter, string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
@@ -149,7 +141,6 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.FileInfoFactory(nameof(IFileSystem.IFileInfoFactory.Wrap))]
 	public void Wrap_Null_ShouldReturnNull()
 	{
 		IFileSystem.IDriveInfo? result = FileSystem.DriveInfo.Wrap(null);
@@ -158,7 +149,6 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	[FileSystemTests.DriveInfoFactory(nameof(IFileSystem.IDriveInfoFactory.GetDrives))]
 	public void Wrap_ShouldReturnDriveInfoWithSameName()
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");

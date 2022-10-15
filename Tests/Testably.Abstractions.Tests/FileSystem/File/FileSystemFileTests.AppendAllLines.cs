@@ -9,7 +9,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllLines))]
 	public void AppendAllLines_ExistingFile_ShouldAppendLinesToFile(
 		string path, List<string> previousContents, List<string> contents)
 	{
@@ -24,7 +23,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllLines))]
 	public void AppendAllLines_MissingFile_ShouldCreateFile(
 		string path, List<string> contents)
 	{
@@ -36,7 +34,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllLines))]
 	public void AppendAllLines_ShouldEndWithNewline(string path)
 	{
 		string[] contents = { "foo", "bar" };
@@ -49,7 +46,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[MemberAutoData(nameof(GetEncodingDifference))]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.AppendAllLines))]
 	public void AppendAllLines_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string specialLine, Encoding writeEncoding, Encoding readEncoding,
 		string path, string[] contents)

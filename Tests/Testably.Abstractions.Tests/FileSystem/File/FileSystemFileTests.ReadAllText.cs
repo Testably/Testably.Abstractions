@@ -8,7 +8,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllText))]
 	public void ReadAllText_FilenameNotOnWindows_ShouldBeCaseSensitive(
 		string path, string contents1, string contents2)
 	{
@@ -25,7 +24,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllText))]
 	public void ReadAllText_FilenameOnWindows_ShouldBeCaseInsensitive(
 		string path, string contents)
 	{
@@ -41,7 +39,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllText))]
 	public void ReadAllText_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -56,7 +53,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllText))]
 	public void ReadAllText_ShouldAdjustTimes(string path, string contents)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is Abstractions.FileSystem,
@@ -91,7 +87,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[MemberAutoData(nameof(GetEncodingDifference))]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllText))]
 	public void ReadAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string contents, Encoding writeEncoding, Encoding readEncoding, string path)
 	{
@@ -105,7 +100,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllText))]
 	public void ReadAllText_WithStarCharacter_ShouldThrowFileNotFoundException(
 		string path, string contents)
 	{
