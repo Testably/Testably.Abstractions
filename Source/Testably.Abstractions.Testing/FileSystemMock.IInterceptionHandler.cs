@@ -19,7 +19,7 @@ public sealed partial class FileSystemMock
 		///     If set to <see langword="null" /> (default value) all callbacks are intercepted.
 		/// </param>
 		/// <remarks>This allows e.g. to throw custom exceptions instead.</remarks>
-		FileSystemMock Changing(Action<ChangeDescription> interceptionCallback,
-		                        Func<ChangeDescription, bool>? predicate = null);
+		FileSystemMock Event(Action<ChangeDescription> interceptionCallback,
+		                     Func<ChangeDescription, bool>? predicate = null);
 	}
 }

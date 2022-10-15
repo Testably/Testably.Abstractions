@@ -19,7 +19,7 @@ public sealed partial class FileSystemMock
 		///     If set to <see langword="null" /> (default value) all callbacks are notified.
 		/// </param>
 		/// <returns>An <see cref="Notification.IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
-		Notification.IAwaitableCallback<ChangeDescription> OnChange(
+		Notification.IAwaitableCallback<ChangeDescription> OnEvent(
 			Action<ChangeDescription>? notificationCallback = null,
 			Func<ChangeDescription, bool>? predicate = null);
 	}

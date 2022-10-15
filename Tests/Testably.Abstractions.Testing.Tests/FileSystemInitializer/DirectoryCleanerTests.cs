@@ -23,7 +23,7 @@ public class DirectoryCleanerTests
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(m => receivedLogs.Add(m));
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 		int exceptionCount = 0;
-		sut.Intercept.Changing(_ =>
+		sut.Intercept.Event(_ =>
 			{
 				exceptionCount++;
 				throw exception;
@@ -85,7 +85,7 @@ public class DirectoryCleanerTests
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory();
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 		int exceptionCount = 0;
-		sut.Intercept.Changing(_ =>
+		sut.Intercept.Event(_ =>
 			{
 				exceptionCount++;
 				throw exception;
