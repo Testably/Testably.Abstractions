@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
@@ -51,6 +52,19 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 		lastWriteTime.Should()
 		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 		   .BeOnOrBefore(creationTimeEnd);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void ReadAllBytes_ShouldNotGetAReferenceToFileContent(
+		string path, byte[] contents)
+	{
+		FileSystem.File.WriteAllBytes(path, contents.ToArray());
+
+		byte[] results = FileSystem.File.ReadAllBytes(path);
+		results[0] = (byte)~results[0];
+
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(contents);
 	}
 
 	[SkippableTheory]

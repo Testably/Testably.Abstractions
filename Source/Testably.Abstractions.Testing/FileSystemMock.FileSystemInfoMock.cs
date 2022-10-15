@@ -82,7 +82,7 @@ public sealed partial class FileSystemMock
 		{
 			if (!FileSystem.Storage.DeleteContainer(Location))
 			{
-				throw ExceptionFactory.DirectoryNotFound(FullName);
+				throw ExceptionFactory.DirectoryNotFound(Location.FullPath);
 			}
 
 			Refresh();
@@ -101,7 +101,7 @@ public sealed partial class FileSystemMock
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Extension" />
 		public string Extension
-			=> FileSystem.Path.GetExtension(FullName);
+			=> FileSystem.Path.GetExtension(Location.FullPath);
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.FullName" />
 		public string FullName => Location.FullPath;
@@ -142,7 +142,7 @@ public sealed partial class FileSystemMock
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Name" />
 		public string Name
-			=> FileSystem.Path.GetFileName(FullName.TrimEnd(
+			=> FileSystem.Path.GetFileName(Location.FullPath.TrimEnd(
 				FileSystem.Path.DirectorySeparatorChar,
 				FileSystem.Path.AltDirectorySeparatorChar));
 
@@ -164,7 +164,7 @@ public sealed partial class FileSystemMock
 			{
 				IStorageLocation? targetLocation =
 					FileSystem.Storage.ResolveLinkTarget(
-						FileSystem.Storage.GetLocation(FullName),
+						Location,
 						returnFinalTarget);
 				if (targetLocation != null)
 				{

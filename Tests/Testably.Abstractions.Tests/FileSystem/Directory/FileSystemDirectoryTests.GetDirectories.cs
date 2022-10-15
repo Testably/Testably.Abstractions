@@ -167,6 +167,17 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
 	}
 
+	[SkippableFact]
+	public void GetDirectories_WithRelativePath_ShouldReturnRelativePaths()
+	{
+		string path = $"foo{FileSystem.Path.DirectorySeparatorChar}bar";
+		FileSystem.Directory.CreateDirectory(path);
+
+		string[] result = FileSystem.Directory.GetDirectories("foo");
+
+		result.Should().BeEquivalentTo(path);
+	}
+
 	[SkippableTheory]
 	[AutoData]
 	public void GetDirectories_WithSearchPattern_ShouldReturnMatchingSubdirectory(
