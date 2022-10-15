@@ -25,6 +25,23 @@ public class FileSystemMockTests
 		drive.VolumeLabel.Should().NotBeNullOrEmpty();
 	}
 
+	[Theory]
+	[AutoData]
+	public void UncDrive_WriteBytes_ShouldReduceAvailableFreeSpace(
+		string server, string path, byte[] bytes)
+	{
+		Testing.FileSystemMock sut = new();
+		string uncPrefix = new(sut.Path.DirectorySeparatorChar, 2);
+		string uncDrive = $"{uncPrefix}{server}";
+		sut.WithUncDrive(uncDrive);
+		IFileSystem.IDriveInfo drive = sut.DriveInfo.New(uncDrive);
+		long previousFreeSpace = drive.AvailableFreeSpace;
+
+		sut.File.WriteAllBytes(Path.Combine(uncDrive, path), bytes);
+
+		drive.AvailableFreeSpace.Should().Be(previousFreeSpace - bytes.Length);
+	}
+
 	[Fact]
 	public void WithDrive_ExistingName_ShouldUpdateDrive()
 	{
@@ -64,23 +81,6 @@ public class FileSystemMockTests
 
 		string result = sut.File.ReadAllText(fullPath);
 		result.Should().Be(contents);
-	}
-
-	[Theory]
-	[AutoData]
-	public void UncDrive_WriteBytes_ShouldReduceAvailableFreeSpace(
-		string server, string path, byte[] bytes)
-	{
-		Testing.FileSystemMock sut = new();
-		string uncPrefix = new(sut.Path.DirectorySeparatorChar, 2);
-		string uncDrive = $"{uncPrefix}{server}";
-		sut.WithUncDrive(uncDrive);
-		IFileSystem.IDriveInfo drive = sut.DriveInfo.New(uncDrive);
-		long previousFreeSpace = drive.AvailableFreeSpace;
-
-		sut.File.WriteAllBytes(Path.Combine(uncDrive, path), bytes);
-
-		drive.AvailableFreeSpace.Should().Be(previousFreeSpace - bytes.Length);
 	}
 
 	[Theory]

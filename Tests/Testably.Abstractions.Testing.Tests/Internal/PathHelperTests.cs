@@ -31,20 +31,6 @@ public class PathHelperTests
 		result.Should().BeTrue();
 	}
 
-	[SkippableTheory]
-	[AutoData]
-	public void IsUncPath_MixedDirectorySeparatorChars_ShouldReturnFalse(string path)
-	{
-		Skip.IfNot(Test.RunsOnWindows,
-			"Mac and Linux don't have distinctive directory separator chars.");
-
-		path = $"{Path.AltDirectorySeparatorChar}{Path.DirectorySeparatorChar}{path}";
-
-		bool result = path.IsUncPath();
-
-		result.Should().BeFalse();
-	}
-
 	[Fact]
 	public void IsUncPath_Null_ShouldReturnFalse()
 	{
@@ -107,4 +93,22 @@ public class PathHelperTests
 		   .Which.Message.Should().Contain($"'{path}'");
 #endif
 	}
+
+	#region Helpers
+
+	[SkippableTheory]
+	[AutoData]
+	public void IsUncPath_MixedDirectorySeparatorChars_ShouldReturnFalse(string path)
+	{
+		Skip.IfNot(Test.RunsOnWindows,
+			"Mac and Linux don't have distinctive directory separator chars.");
+
+		path = $"{Path.AltDirectorySeparatorChar}{Path.DirectorySeparatorChar}{path}";
+
+		bool result = path.IsUncPath();
+
+		result.Should().BeFalse();
+	}
+
+	#endregion
 }

@@ -63,8 +63,9 @@ public class GeneratorTests
 		int iterations = 30;
 		int startValue = 10;
 		int executionCount = 0;
-		Testing.RandomProvider.Generator<int> sut = Testing.RandomProvider.Generator<int>.FromCallback(
-			() => startValue + executionCount++);
+		Testing.RandomProvider.Generator<int> sut =
+			Testing.RandomProvider.Generator<int>.FromCallback(
+				() => startValue + executionCount++);
 
 		int[] results = new int[iterations];
 		for (int i = 0; i < iterations; i++)

@@ -9,7 +9,8 @@ public class RandomProviderTests
 	public void Default_ShouldReturnRandomGuid()
 	{
 		List<Guid> results = new();
-		RandomSystemMock.IRandomProvider randomProvider = Testing.RandomProvider.Default();
+		RandomSystemMock.IRandomProvider
+			randomProvider = Testing.RandomProvider.Default();
 
 		for (int i = 0; i < 100; i++)
 		{
@@ -23,7 +24,8 @@ public class RandomProviderTests
 	public void Default_ShouldReturnRandomNumbers()
 	{
 		List<int> results = new();
-		RandomSystemMock.IRandomProvider randomProvider = Testing.RandomProvider.Default();
+		RandomSystemMock.IRandomProvider
+			randomProvider = Testing.RandomProvider.Default();
 
 		for (int i = 0; i < 100; i++)
 		{
@@ -203,7 +205,8 @@ public class RandomProviderTests
 		int seed)
 	{
 		List<byte[]> results = new();
-		RandomSystemMock.IRandomProvider randomProvider = Testing.RandomProvider.Generate();
+		RandomSystemMock.IRandomProvider randomProvider =
+			Testing.RandomProvider.Generate();
 
 		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 10; i++)
@@ -276,6 +279,40 @@ public class RandomProviderTests
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
+	public void NextBytes_Span_WithoutByteGenerator_ShouldUseRealRandomValuesFromSeed(
+		int seed)
+	{
+		Span<byte> result = new byte[100];
+		Random random = new(seed);
+		byte[] expectedBytes = new byte[result.Length];
+		random.NextBytes(expectedBytes);
+		RandomSystemMock.IRandomProvider sut = Testing.RandomProvider.Generate(seed);
+
+		sut.GetRandom().NextBytes(result);
+
+		result.ToArray().Should().BeEquivalentTo(expectedBytes);
+	}
+#endif
+
+	[Theory]
+	[AutoData]
+	public void NextBytes_WithoutByteGenerator_ShouldUseRealRandomValuesFromSeed(
+		int seed)
+	{
+		byte[] result = new byte[100];
+		Random random = new(seed);
+		byte[] expectedBytes = new byte[result.Length];
+		random.NextBytes(expectedBytes);
+		RandomSystemMock.IRandomProvider sut = Testing.RandomProvider.Generate(seed);
+
+		sut.GetRandom().NextBytes(result);
+
+		result.Should().BeEquivalentTo(expectedBytes);
+	}
+
+#if FEATURE_SPAN
+	[Theory]
+	[AutoData]
 	public void GenerateRandom_NextBytes_Span_ShouldReturnSpecifiedValue(
 		int seed, byte[] value)
 	{
@@ -321,7 +358,8 @@ public class RandomProviderTests
 		int seed)
 	{
 		List<byte[]> results = new();
-		RandomSystemMock.IRandomProvider randomProvider = Testing.RandomProvider.Generate();
+		RandomSystemMock.IRandomProvider randomProvider =
+			Testing.RandomProvider.Generate();
 
 		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 10; i++)
@@ -471,40 +509,6 @@ public class RandomProviderTests
 		}
 
 		results.Should().OnlyHaveUniqueItems();
-	}
-#endif
-
-	[Theory]
-	[AutoData]
-	public void NextBytes_WithoutByteGenerator_ShouldUseRealRandomValuesFromSeed(
-		int seed)
-	{
-		byte[] result = new byte[100];
-		Random random = new(seed);
-		byte[] expectedBytes = new byte[result.Length];
-		random.NextBytes(expectedBytes);
-		RandomSystemMock.IRandomProvider sut = Testing.RandomProvider.Generate(seed);
-
-		sut.GetRandom().NextBytes(result);
-
-		result.Should().BeEquivalentTo(expectedBytes);
-	}
-
-#if FEATURE_SPAN
-	[Theory]
-	[AutoData]
-	public void NextBytes_Span_WithoutByteGenerator_ShouldUseRealRandomValuesFromSeed(
-		int seed)
-	{
-		Span<byte> result = new byte[100];
-		Random random = new(seed);
-		byte[] expectedBytes = new byte[result.Length];
-		random.NextBytes(expectedBytes);
-		RandomSystemMock.IRandomProvider sut = Testing.RandomProvider.Generate(seed);
-
-		sut.GetRandom().NextBytes(result);
-
-		result.ToArray().Should().BeEquivalentTo(expectedBytes);
 	}
 #endif
 }

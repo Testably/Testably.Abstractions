@@ -117,6 +117,32 @@ public class NotificationTests
 	}
 
 	[Fact]
+	public void AwaitableCallback_TimeoutExpired_ShouldThrowTimeoutException()
+	{
+		Testing.TimeSystemMock timeSystem = new();
+		bool isCalled = false;
+		Testing.Notification.IAwaitableCallback<TimeSpan> wait =
+			timeSystem.On.ThreadSleep(_ =>
+			{
+				isCalled = true;
+			});
+		new Thread(() =>
+		{
+			// Delay larger than timeout of 10ms
+			Thread.Sleep(1000);
+			timeSystem.Thread.Sleep(1);
+		}).Start();
+
+		Exception? exception = Record.Exception(() =>
+		{
+			wait.Wait(timeout: 10);
+		});
+
+		exception.Should().BeOfType<TimeoutException>();
+		isCalled.Should().BeFalse();
+	}
+
+	[Fact]
 	public void AwaitableCallback_WaitedPreviously_ShouldWaitAgainForCallbackExecution()
 	{
 		int secondThreadMilliseconds = 42;
@@ -155,31 +181,6 @@ public class NotificationTests
 		wait.Wait();
 		ms.Set();
 		isCalledFromSecondThread.Should().BeTrue();
-	}
-
-	[Fact]
-	public void AwaitableCallback_TimeoutExpired_ShouldThrowTimeoutException()
-	{
-		Testing.TimeSystemMock timeSystem = new();
-		bool isCalled = false;
-		Testing.Notification.IAwaitableCallback<TimeSpan> wait = timeSystem.On.ThreadSleep(_ =>
-		{
-			isCalled = true;
-		});
-		new Thread(() =>
-		{
-			// Delay larger than timeout of 10ms
-			Thread.Sleep(1000);
-			timeSystem.Thread.Sleep(1);
-		}).Start();
-
-		Exception? exception = Record.Exception(() =>
-		{
-			wait.Wait(timeout: 10);
-		});
-
-		exception.Should().BeOfType<TimeoutException>();
-		isCalled.Should().BeFalse();
 	}
 
 	[Theory]

@@ -111,6 +111,29 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		result!.GetException().Should().BeOfType<InternalBufferOverflowException>();
 	}
 
+#if FEATURE_FILESYSTEMWATCHER_ADVANCED
+	[SkippableTheory]
+	[AutoData]
+	public void Filter_ShouldResetFiltersToOnlyContainASingleValue(
+		string[] filters, string expectedFilter)
+	{
+		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+		foreach (string filter in filters)
+		{
+			fileSystemWatcher.Filters.Add(filter);
+		}
+
+		fileSystemWatcher.Filters.Count.Should().Be(filters.Length);
+
+		fileSystemWatcher.Filter = expectedFilter;
+
+		fileSystemWatcher.Filters.Count.Should().Be(1);
+		fileSystemWatcher.Filters.Should().ContainSingle(expectedFilter);
+		fileSystemWatcher.Filter.Should().Be(expectedFilter);
+	}
+#endif
+
 	[SkippableTheory]
 	[AutoData]
 	public void InternalBufferSize_ShouldResetQueue(string path1, string path2)
@@ -159,27 +182,4 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		fileSystemWatcher.Dispose();
 		result.Should().BeNull();
 	}
-
-#if FEATURE_FILESYSTEMWATCHER_ADVANCED
-	[SkippableTheory]
-	[AutoData]
-	public void Filter_ShouldResetFiltersToOnlyContainASingleValue(
-		string[] filters, string expectedFilter)
-	{
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
-			FileSystem.FileSystemWatcher.New(BasePath);
-		foreach (string filter in filters)
-		{
-			fileSystemWatcher.Filters.Add(filter);
-		}
-
-		fileSystemWatcher.Filters.Count.Should().Be(filters.Length);
-
-		fileSystemWatcher.Filter = expectedFilter;
-
-		fileSystemWatcher.Filters.Count.Should().Be(1);
-		fileSystemWatcher.Filters.Should().ContainSingle(expectedFilter);
-		fileSystemWatcher.Filter.Should().Be(expectedFilter);
-	}
-#endif
 }
