@@ -28,8 +28,8 @@ public sealed partial class FileSystemMock
 		public IFileSystem FileSystem => _fileSystemMock;
 
 		/// <inheritdoc
-		///     cref="IInterceptionHandler.Change(Action{ChangeDescription}, Func{ChangeDescription, bool}?)" />
-		public FileSystemMock Change(
+		///     cref="IInterceptionHandler.Changing" />
+		public FileSystemMock Changing(
 			Action<ChangeDescription> interceptionCallback,
 			Func<ChangeDescription, bool>? predicate = null)
 		{

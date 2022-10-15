@@ -14,7 +14,7 @@ public class InterceptionHandlerTests
 	public void CreateDirectory_CustomException_ShouldNotCreateDirectory(
 		string path, Exception exceptionToThrow)
 	{
-		FileSystem.Intercept.Change(_ =>
+		FileSystem.Intercept.Changing(_ =>
 		{
 			FileSystem.Directory.Exists(path).Should().BeFalse();
 			throw exceptionToThrow;
@@ -40,7 +40,7 @@ public class InterceptionHandlerTests
 		string path, Exception exceptionToThrow)
 	{
 		string? receivedPath = null;
-		FileSystem.Intercept.Change(_ => throw exceptionToThrow);
+		FileSystem.Intercept.Changing(_ => throw exceptionToThrow);
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
