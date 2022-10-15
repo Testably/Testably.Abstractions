@@ -417,10 +417,12 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	[SkippableTheory]
 	[InlineAutoData(NotifyFilters.FileName)]
 	public void
-		NotifyFilter_MoveFile_DifferentDirectories_ShouldNotNotify(
+		NotifyFilter_MoveFile_DifferentDirectories_ShouldNotNotifyOnWindows(
 			NotifyFilters notifyFilter, string sourcePath, string sourceName,
 			string destinationPath, string destinationName)
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		FileSystem.Initialize()
 		   .WithSubdirectory(sourcePath).Initialized(s => s
 			   .WithFile(sourceName))
@@ -434,7 +436,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 			result = eventArgs;
 			ms.Set();
 		};
-		
+
 		fileSystemWatcher.IncludeSubdirectories = true;
 		fileSystemWatcher.EnableRaisingEvents = true;
 
@@ -444,5 +446,44 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		ms.Wait(500).Should().BeFalse();
 		result.Should().BeNull();
+	}
+
+	[SkippableTheory]
+	[InlineAutoData(NotifyFilters.FileName)]
+	public void
+		NotifyFilter_MoveFile_DifferentDirectories_ShouldNotifyOnLinuxOrMac(
+			NotifyFilters notifyFilter, string sourcePath, string sourceName,
+			string destinationPath, string destinationName)
+	{
+		Skip.If(Test.RunsOnWindows);
+
+		FileSystem.Initialize()
+		   .WithSubdirectory(sourcePath).Initialized(s => s
+			   .WithFile(sourceName))
+		   .WithSubdirectory(destinationPath);
+		RenamedEventArgs? result = null;
+		ManualResetEventSlim ms = new();
+		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+		fileSystemWatcher.Renamed += (_, eventArgs) =>
+		{
+			result = eventArgs;
+			ms.Set();
+		};
+
+		fileSystemWatcher.IncludeSubdirectories = true;
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		FileSystem.File.Move(
+			FileSystem.Path.Combine(sourcePath, sourceName),
+			FileSystem.Path.Combine(destinationPath, destinationName));
+
+		ms.Wait(2000).Should().BeTrue();
+		result.Should().NotBeNull();
+		result!.ChangeType.Should().Be(WatcherChangeTypes.Renamed);
+		result.FullPath.Should().Be(FileSystem.Path.Combine(BasePath, destinationPath, destinationName));
+		result.Name.Should().Be(FileSystem.Path.Combine(destinationPath, destinationName));
+		result.OldFullPath.Should().Be(FileSystem.Path.Combine(BasePath, sourcePath, sourceName));
+		result.OldName.Should().Be(FileSystem.Path.Combine(sourcePath, sourceName));
 	}
 }

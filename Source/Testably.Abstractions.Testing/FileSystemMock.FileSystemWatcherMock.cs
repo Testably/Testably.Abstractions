@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Internal;
+using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
 
@@ -207,17 +208,31 @@ public sealed partial class FileSystemMock
 
 				if (item.ChangeType.HasFlag(WatcherChangeTypes.Renamed))
 				{
-					if (TryMakeRenamedEventArgs(item, out RenamedEventArgs? eventArgs))
-					{
-						Renamed?.Invoke(this, eventArgs);
-					}
-					else if (item.OldPath != null)
-					{
-						Deleted?.Invoke(this, ToFileSystemEventArgs(
-							item.ChangeType, item.OldPath, item.OldName));
-						Created?.Invoke(this, ToFileSystemEventArgs(
-							item.ChangeType, item.Path, item.Name));
-					}
+					Execute.OnWindows(
+						() =>
+						{
+							if (TryMakeRenamedEventArgs(item,
+								out RenamedEventArgs? eventArgs))
+							{
+								Renamed?.Invoke(this, eventArgs);
+							}
+							else if (item.OldPath != null)
+							{
+								Deleted?.Invoke(this, ToFileSystemEventArgs(
+									item.ChangeType, item.OldPath, item.OldName));
+								Created?.Invoke(this, ToFileSystemEventArgs(
+									item.ChangeType, item.Path, item.Name));
+							}
+						},
+						() =>
+						{
+							TryMakeRenamedEventArgs(item,
+								out RenamedEventArgs? eventArgs);
+							if (eventArgs != null)
+							{
+								Renamed?.Invoke(this, eventArgs);
+							}
+						});
 				}
 			}
 		}
@@ -324,18 +339,16 @@ public sealed partial class FileSystemMock
 			ChangeDescription changeDescription,
 			[NotNullWhen(true)] out RenamedEventArgs? eventArgs)
 		{
-			string path = TransformPathAndName(
-				changeDescription.Path,
-				changeDescription.Name,
-				out string name);
-
-			if (changeDescription.OldPath == null ||
-			    System.IO.Path.GetDirectoryName(changeDescription.Path)
-			    != System.IO.Path.GetDirectoryName(changeDescription.OldPath))
+			if (changeDescription.OldPath == null)
 			{
 				eventArgs = null;
 				return false;
 			}
+
+			string path = TransformPathAndName(
+				changeDescription.Path,
+				changeDescription.Name,
+				out string name);
 
 			TransformPathAndName(
 				changeDescription.OldPath,
@@ -347,7 +360,9 @@ public sealed partial class FileSystemMock
 				path,
 				name,
 				oldName);
-			return true;
+			return System.IO.Path.GetDirectoryName(changeDescription.Path)?
+			   .Equals(System.IO.Path.GetDirectoryName(changeDescription.OldPath),
+					InMemoryLocation.StringComparisonMode) ?? true;
 		}
 	}
 }
