@@ -2,17 +2,17 @@ using System.Collections.Generic;
 using System.IO;
 using Xunit.Abstractions;
 
-namespace Testably.Abstractions.Testing.Tests;
+namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
 
-public class FileSystemMockNotificationTests
+public class NotificationHandlerTests
 {
-	public FileSystemMock FileSystem { get; }
+	public Testing.FileSystemMock FileSystem { get; }
 	private readonly ITestOutputHelper _testOutputHelper;
 
-	public FileSystemMockNotificationTests(ITestOutputHelper testOutputHelper)
+	public NotificationHandlerTests(ITestOutputHelper testOutputHelper)
 	{
 		_testOutputHelper = testOutputHelper;
-		FileSystem = new FileSystemMock();
+		FileSystem = new Testing.FileSystemMock();
 	}
 
 	[SkippableTheory]
@@ -47,7 +47,7 @@ public class FileSystemMockNotificationTests
 		Action<IFileSystem, string>? initialization,
 		Action<IFileSystem, string> callback,
 		WatcherChangeTypes expectedChangeType,
-		FileSystemMock.FileSystemTypes expectedFileSystemType,
+		FileSystemTypes expectedFileSystemType,
 		string path)
 	{
 		string? receivedPath = null;
@@ -56,7 +56,7 @@ public class FileSystemMockNotificationTests
 		FileSystem.Notify
 		   .OnChange(c => receivedPath = c.Path,
 				c => c.ChangeType == expectedChangeType &&
-				     c.FileSystemType == expectedFileSystemType)
+					 c.FileSystemType == expectedFileSystemType)
 		   .Execute(() =>
 			{
 				callback.Invoke(FileSystem, path);
@@ -72,14 +72,14 @@ public class FileSystemMockNotificationTests
 		{
 			null,
 			new Action<IFileSystem, string>((f, p) => f.Directory.CreateDirectory(p)),
-			WatcherChangeTypes.Created, FileSystemMock.FileSystemTypes.Directory,
+			WatcherChangeTypes.Created, FileSystemTypes.Directory,
 			$"path_{Guid.NewGuid()}"
 		};
 		yield return new object?[]
 		{
 			null,
 			new Action<IFileSystem, string>((f, p) => f.File.WriteAllText(p, null)),
-			WatcherChangeTypes.Created, FileSystemMock.FileSystemTypes.File,
+			WatcherChangeTypes.Created, FileSystemTypes.File,
 			$"path_{Guid.NewGuid()}"
 		};
 	}

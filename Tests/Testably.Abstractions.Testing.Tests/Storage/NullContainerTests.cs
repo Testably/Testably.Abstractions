@@ -8,7 +8,7 @@ public class NullContainerTests
 	[Trait(nameof(Testing), nameof(NullContainer))]
 	public void Constructor_ShouldSetFileAndTimeSystem()
 	{
-		FileSystemMock fileSystem = new();
+		Testing.FileSystemMock fileSystem = new();
 
 		IStorageContainer sut = NullContainer.New(fileSystem);
 

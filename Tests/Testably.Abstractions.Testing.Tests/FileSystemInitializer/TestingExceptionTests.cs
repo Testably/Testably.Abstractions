@@ -1,18 +1,17 @@
 ﻿using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Testably.Abstractions.Testing.Tests;
+namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
 
-public class FileSystemInitializerTestingExceptionTests
+public class TestingExceptionTests
 {
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemInitializer.TestingException))]
 	public void
 		TestingException_SerializationAndDeserialization_ShouldKeepMessageAndInnerException(
 			string message, Exception innerException)
 	{
-		FileSystemInitializer.TestingException originalException =
+		Testing.FileSystemInitializer.TestingException originalException =
 			new(message, innerException);
 
 		byte[] buffer = new byte[4096];
@@ -21,8 +20,8 @@ public class FileSystemInitializerTestingExceptionTests
 		BinaryFormatter formatter = new();
 #pragma warning disable SYSLIB0011 //BinaryFormatter serialization is obsolete - only used in unit test
 		formatter.Serialize(ms, originalException);
-		FileSystemInitializer.TestingException deserializedException =
-			(FileSystemInitializer.TestingException)formatter.Deserialize(ms2);
+		Testing.FileSystemInitializer.TestingException deserializedException =
+			(Testing.FileSystemInitializer.TestingException)formatter.Deserialize(ms2);
 #pragma warning restore SYSLIB0011
 
 		Assert.Equal(originalException.InnerException?.Message,

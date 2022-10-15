@@ -9,12 +9,12 @@ public class InMemoryStorageTests
 {
 	#region Test Setup
 
-	internal FileSystemMock FileSystem { get; }
+	internal Testing.FileSystemMock FileSystem { get; }
 	internal IStorage Storage { get; }
 
 	public InMemoryStorageTests()
 	{
-		FileSystem = new FileSystemMock();
+		FileSystem = new Testing.FileSystemMock();
 		Storage = new InMemoryStorage(FileSystem);
 	}
 
@@ -43,7 +43,7 @@ public class InMemoryStorageTests
 
 		result.Should().BeTrue();
 		receivedNotification.Should().BeTrue();
-		container!.Type.Should().Be(FileSystemMock.FileSystemTypes.Directory);
+		container!.Type.Should().Be(FileSystemTypes.Directory);
 	}
 
 	[Theory]

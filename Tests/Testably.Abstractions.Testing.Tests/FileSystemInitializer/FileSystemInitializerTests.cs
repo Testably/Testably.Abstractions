@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace Testably.Abstractions.Testing.Tests;
+namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
 
 public class FileSystemInitializerTests
 {
@@ -10,7 +10,7 @@ public class FileSystemInitializerTests
 	[Trait(nameof(Testing), nameof(FileSystemInitializer))]
 	public void Initialize_WithAFile_ShouldCreateFile()
 	{
-		FileSystemMock sut = new();
+		Testing.FileSystemMock sut = new();
 		sut.Initialize().WithAFile();
 
 		sut.Directory.EnumerateFiles(".").Should().ContainSingle();
@@ -22,7 +22,7 @@ public class FileSystemInitializerTests
 	public void Initialize_WithAFile_WithExtension_ShouldCreateFileWithExtension(
 		string extension)
 	{
-		FileSystemMock sut = new();
+		Testing.FileSystemMock sut = new();
 		sut.Initialize().WithAFile(extension);
 
 		sut.Directory.EnumerateFiles(".", $"*.{extension}").Should().ContainSingle();
@@ -32,7 +32,7 @@ public class FileSystemInitializerTests
 	[Trait(nameof(Testing), nameof(FileSystemInitializer))]
 	public void Initialize_WithASubdirectory_ShouldCreateDirectory()
 	{
-		FileSystemMock sut = new();
+		Testing.FileSystemMock sut = new();
 		sut.Initialize().WithASubdirectory();
 
 		sut.Directory.EnumerateDirectories(".").Should().ContainSingle();
@@ -43,14 +43,14 @@ public class FileSystemInitializerTests
 	[Trait(nameof(Testing), nameof(FileSystemInitializer))]
 	public void Initialize_WithFile_Existing_ShouldThrowTestingException(string fileName)
 	{
-		FileSystemMock sut = new();
+		Testing.FileSystemMock sut = new();
 		sut.File.WriteAllText(fileName, null);
 		Exception? exception = Record.Exception(() =>
 		{
 			sut.Initialize().WithFile(fileName);
 		});
 
-		exception.Should().BeOfType<FileSystemInitializer.TestingException>()
+		exception.Should().BeOfType<Testing.FileSystemInitializer.TestingException>()
 		   .Which.Message.Should().Contain(fileName);
 	}
 
@@ -60,7 +60,7 @@ public class FileSystemInitializerTests
 	public void Initialize_WithFile_HasBytesContent_ShouldCreateFileWithGivenFileContent(
 		string fileName, byte[] fileContent)
 	{
-		FileSystemMock sut = new();
+		Testing.FileSystemMock sut = new();
 		sut.Initialize()
 		   .WithFile(fileName).Which(f => f
 			   .HasBytesContent(fileContent));
@@ -76,7 +76,7 @@ public class FileSystemInitializerTests
 	public void Initialize_WithFile_HasStringContent_ShouldCreateFileWithGivenFileContent(
 		string fileName, string fileContent)
 	{
-		FileSystemMock sut = new();
+		Testing.FileSystemMock sut = new();
 		sut.Initialize()
 		   .WithFile(fileName).Which(f => f
 			   .HasStringContent(fileContent));
@@ -91,7 +91,7 @@ public class FileSystemInitializerTests
 	[Trait(nameof(Testing), nameof(FileSystemInitializer))]
 	public void Initialize_WithFile_ShouldCreateFileWithGivenFileName(string fileName)
 	{
-		FileSystemMock sut = new();
+		Testing.FileSystemMock sut = new();
 		sut.Initialize().WithFile(fileName);
 
 		sut.Directory.EnumerateFiles(".", fileName).Should().ContainSingle();
@@ -101,7 +101,7 @@ public class FileSystemInitializerTests
 	[Trait(nameof(Testing), nameof(FileSystemInitializer))]
 	public void Initialize_WithNestedSubdirectories_ShouldCreateAllNestedDirectories()
 	{
-		FileSystemMock sut = new();
+		Testing.FileSystemMock sut = new();
 		sut.Initialize()
 		   .WithSubdirectory("foo").Initialized(d => d
 			   .WithSubdirectory("bar").Initialized(s => s
@@ -122,14 +122,14 @@ public class FileSystemInitializerTests
 	public void Initialize_WithSubdirectory_Existing_ShouldThrowTestingException(
 		string directoryName)
 	{
-		FileSystemMock sut = new();
+		Testing.FileSystemMock sut = new();
 		sut.Directory.CreateDirectory(directoryName);
 		Exception? exception = Record.Exception(() =>
 		{
 			sut.Initialize().WithSubdirectory(directoryName);
 		});
 
-		exception.Should().BeOfType<FileSystemInitializer.TestingException>()
+		exception.Should().BeOfType<Testing.FileSystemInitializer.TestingException>()
 		   .Which.Message.Should().Contain(directoryName);
 	}
 
@@ -139,7 +139,7 @@ public class FileSystemInitializerTests
 	public void Initialize_WithSubdirectory_ShouldCreateDirectoryWithGivenDirectoryName(
 		string directoryName)
 	{
-		FileSystemMock sut = new();
+		Testing.FileSystemMock sut = new();
 		sut.Initialize().WithSubdirectory(directoryName);
 
 		sut.Directory.EnumerateDirectories(".", directoryName).Should().ContainSingle();
