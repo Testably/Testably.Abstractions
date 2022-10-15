@@ -24,6 +24,9 @@ public sealed partial class FileSystemMock
 
 		#region IInterceptionHandler Members
 
+		/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+		public IFileSystem FileSystem => _fileSystemMock;
+
 		/// <inheritdoc
 		///     cref="IInterceptionHandler.Change(Action{ChangeDescription}, Func{ChangeDescription, bool}?)" />
 		public FileSystemMock Change(
@@ -55,13 +58,15 @@ public sealed partial class FileSystemMock
 			}
 		}
 
-		internal ChangeDescription NotifyPendingChange(IStorageLocation location,
-		                                               WatcherChangeTypes changeType,
+		internal ChangeDescription NotifyPendingChange(WatcherChangeTypes changeType,
 		                                               FileSystemTypes fileSystemType,
-		                                               NotifyFilters notifyFilters)
+		                                               NotifyFilters notifyFilters,
+		                                               IStorageLocation location,
+		                                               IStorageLocation? oldLocation =
+			                                               null)
 		{
 			ChangeDescription fileSystemChange =
-				new(location, changeType, fileSystemType, notifyFilters);
+				new(changeType, fileSystemType, notifyFilters, location, oldLocation);
 			_changeOccurringCallbacks.InvokeCallbacks(fileSystemChange);
 			return fileSystemChange;
 		}

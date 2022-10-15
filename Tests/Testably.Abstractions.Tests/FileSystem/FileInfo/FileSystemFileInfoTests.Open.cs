@@ -109,7 +109,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	[SkippableTheory]
 	[InlineAutoData(FileAccess.Read, FileShare.Write)]
 	[InlineAutoData(FileAccess.Write, FileShare.Read)]
-	
 	public void Open_WithFileStreamOptions_ShouldUseGivenAccessAndShare(
 		string path,
 		FileAccess access,

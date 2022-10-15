@@ -50,7 +50,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	
 	public void Read_AsSpan_ShouldAdjustTimes(string path, byte[] contents)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
@@ -125,7 +124,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task ReadAsync_AsMemory_ShouldAdjustTimes(string path, byte[] contents)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
@@ -163,7 +161,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 #if FEATURE_FILESYSTEM_ASYNC
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task ReadAsync_ShouldAdjustTimes(string path, byte[] contents)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is Abstractions.FileSystem,
@@ -276,7 +273,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	
 	public void Write_AsSpan_ShouldAdjustTimes(string path, byte[] contents)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
@@ -361,7 +357,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task WriteAsync_AsMemory_ShouldAdjustTimes(string path, byte[] contents)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
@@ -404,7 +399,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 #if FEATURE_FILESYSTEM_ASYNC
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task WriteAsync_ShouldAdjustTimes(string path, byte[] contents)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is Abstractions.FileSystem,

@@ -57,7 +57,6 @@ public sealed class MockFileSystemTests
 #if FEATURE_FILE_MOVETO_OVERWRITE
 	[SkippableTheory]
 	[AutoData]
-	
 	public void Move_Overwrite_ShouldAdjustAvailableFreeSpaceCorrectly(
 		string sourceName,
 		string destinationName,

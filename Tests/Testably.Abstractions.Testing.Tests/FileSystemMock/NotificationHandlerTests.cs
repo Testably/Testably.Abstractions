@@ -77,9 +77,22 @@ public class NotificationHandlerTests
 		};
 		yield return new object?[]
 		{
+			new Action<IFileSystem, string>((f, p) => f.Directory.CreateDirectory(p)),
+			new Action<IFileSystem, string>((f, p) => f.Directory.Delete(p)),
+			WatcherChangeTypes.Deleted, FileSystemTypes.Directory,
+			$"path_{Guid.NewGuid()}"
+		};
+		yield return new object?[]
+		{
 			null,
 			new Action<IFileSystem, string>((f, p) => f.File.WriteAllText(p, null)),
 			WatcherChangeTypes.Created, FileSystemTypes.File, $"path_{Guid.NewGuid()}"
+		};
+		yield return new object?[]
+		{
+			new Action<IFileSystem, string>((f, p) => f.File.WriteAllText(p, null)),
+			new Action<IFileSystem, string>((f, p) => f.File.Delete(p)),
+			WatcherChangeTypes.Deleted, FileSystemTypes.File, $"path_{Guid.NewGuid()}"
 		};
 	}
 }

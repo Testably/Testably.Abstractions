@@ -11,7 +11,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task AppendAllTextAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path, string contents)
 	{
@@ -27,7 +26,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task
 		AppendAllTextAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
 			string path, string contents)
@@ -44,7 +42,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task AppendAllTextAsync_ExistingFile_ShouldAppendLinesToFile(
 		string path, string previousContents, string contents)
 	{
@@ -59,7 +56,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task AppendAllTextAsync_MissingFile_ShouldCreateFile(
 		string path, string contents)
 	{
@@ -71,7 +67,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task AppendAllTextAsync_ShouldNotEndWithNewline(string path)
 	{
 		string contents = "foo";
@@ -83,7 +78,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[MemberAutoData(nameof(GetEncodingDifference))]
-	
 	public async Task AppendAllTextAsync_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string contents, Encoding writeEncoding, Encoding readEncoding,
 		string path)

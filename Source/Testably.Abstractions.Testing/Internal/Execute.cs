@@ -70,6 +70,17 @@ internal static class Execute
 	}
 
 	/// <summary>
+	///     The <paramref name="callback" /> is executed when the operating system is <see cref="OSPlatform.Linux" />.
+	/// </summary>
+	public static void OnLinux(Action callback)
+	{
+		if (IsLinux)
+		{
+			callback();
+		}
+	}
+
+	/// <summary>
 	///     The <paramref name="callback" /> is executed when the operating system is <see cref="OSPlatform.OSX" />.
 	/// </summary>
 	public static void OnMac(Action callback)
@@ -114,11 +125,15 @@ internal static class Execute
 	/// <summary>
 	///     The <paramref name="callback" /> is executed when the operating system is <see cref="OSPlatform.Windows" />.
 	/// </summary>
-	public static void OnWindows(Action callback)
+	public static void OnWindows(Action callback, Action? alternativeCallback = null)
 	{
 		if (IsWindows)
 		{
 			callback();
+		}
+		else
+		{
+			alternativeCallback?.Invoke();
 		}
 	}
 

@@ -32,7 +32,6 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	[InlineAutoData(".abc.xyz", true)]
 	[InlineAutoData("foo", false)]
 	[InlineAutoData(".", false)]
-	
 	public void HasExtension_Span_ShouldReturnExpectedResult(
 		string suffix, bool expectedResult, string filename)
 	{

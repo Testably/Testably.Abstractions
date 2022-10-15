@@ -7,7 +7,7 @@ public sealed partial class FileSystemMock
 	/// <summary>
 	///     The notification handler for the <see cref="FileSystemMock" />.
 	/// </summary>
-	public interface INotificationHandler
+	public interface INotificationHandler : IFileSystem.IFileSystemExtensionPoint
 	{
 		/// <summary>
 		///     Callback executed when any change in the <see cref="FileSystemMock" /> matching the <paramref name="predicate" />

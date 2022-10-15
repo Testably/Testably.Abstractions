@@ -11,7 +11,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task WriteAllBytesAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path, byte[] contents)
 	{
@@ -27,7 +26,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task WriteAllBytesAsync_PreviousFile_ShouldOverwriteFileWithBytes(
 		string path, byte[] contents)
 	{
@@ -41,7 +39,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	
 	public async Task WriteAllBytesAsync_ShouldCreateFileWithBytes(
 		string path, byte[] contents)
 	{

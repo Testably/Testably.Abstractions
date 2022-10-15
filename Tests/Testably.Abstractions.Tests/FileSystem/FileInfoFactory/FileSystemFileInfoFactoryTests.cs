@@ -82,7 +82,8 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
 
-		var stream = FileSystem.File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Write);
+		FileSystemStream stream = FileSystem.File.Open(path, FileMode.Open,
+			FileAccess.Read, FileShare.Write);
 		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		long result = sut.Length;

@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing.Storage;
 
 internal sealed class InMemoryLocation : IStorageLocation
 {
-	private static readonly StringComparison StringComparisonMode =
+	internal static readonly StringComparison StringComparisonMode =
 		Execute.IsLinux
 			? StringComparison.Ordinal
 			: StringComparison.OrdinalIgnoreCase;

@@ -193,9 +193,8 @@ internal class InMemoryContainer : IStorageContainer
 		NotifyFilters notifyFilters = NotifyFilters.LastAccess |
 		                              NotifyFilters.LastWrite |
 		                              NotifyFilters.Size;
-		Execute.OnLinux(
-			() => notifyFilters |= NotifyFilters.Security,
-			() => notifyFilters |= NotifyFilters.Attributes);
+		Execute.OnLinux(()
+			=> notifyFilters |= NotifyFilters.Security);
 		Execute.OnMac(()
 			=> notifyFilters |= NotifyFilters.CreationTime);
 
@@ -204,11 +203,10 @@ internal class InMemoryContainer : IStorageContainer
 			=> timeAdjustment |= TimeAdjustments.LastAccessTime);
 
 		ChangeDescription fileSystemChange =
-			_fileSystem.ChangeHandler.NotifyPendingChange(
-				_location,
-				WatcherChangeTypes.Changed,
+			_fileSystem.ChangeHandler.NotifyPendingChange(WatcherChangeTypes.Changed,
 				FileSystemTypes.File,
-				notifyFilters);
+				notifyFilters,
+				_location);
 		_location.Drive?.ChangeUsedBytes(bytes.Length - _bytes.Length);
 		_bytes = bytes;
 		this.AdjustTimes(timeAdjustment);
