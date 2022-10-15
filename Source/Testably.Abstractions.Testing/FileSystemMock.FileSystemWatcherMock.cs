@@ -162,7 +162,7 @@ public sealed partial class FileSystemMock
 			string? name = changeDescription.Name;
 			string? path = changeDescription.Path;
 			if (name == null ||
-			    _fileSystem.Path.IsPathRooted(changeDescription.Name))
+			    _fileSystem.Path.IsPathRooted(name))
 			{
 				name = _fileSystem.Path.GetFileName(changeDescription.Path);
 				path = _fileSystem.Path.GetDirectoryName(path);
@@ -171,10 +171,18 @@ public sealed partial class FileSystemMock
 			{
 				path = path.Substring(0, path.Length - name.Length);
 			}
+			string? oldName = changeDescription.OldName;
+			if (oldName == null ||
+			    _fileSystem.Path.IsPathRooted(oldName))
+			{
+				oldName = _fileSystem.Path.GetFileName(changeDescription.OldPath);
+			}
 
-			//TODO: Check how to handle renamed event args (where to get the old and new name)!
-			return new RenamedEventArgs(changeDescription.ChangeType, path ?? "",
-				name, name);
+			return new RenamedEventArgs(
+				changeDescription.ChangeType,
+				path ?? "",
+				name,
+				oldName);
 		}
 
 		private bool MatchesFilter(ChangeDescription changeDescription)

@@ -70,6 +70,17 @@ internal static class Execute
 	}
 
 	/// <summary>
+	///     The <paramref name="callback" /> is executed when the operating system is <see cref="OSPlatform.Linux" />.
+	/// </summary>
+	public static void OnLinux(Action callback)
+	{
+		if (IsLinux)
+		{
+			callback();
+		}
+	}
+
+	/// <summary>
 	///     The <paramref name="callback" /> is executed when the operating system is <see cref="OSPlatform.OSX" />.
 	/// </summary>
 	public static void OnMac(Action callback)

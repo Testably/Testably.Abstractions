@@ -111,12 +111,14 @@ internal sealed class InMemoryStorage : IStorage
 			}
 		}
 
+		NotifyFilters notifyFilters =
+			container.Type == FileSystemTypes.Directory
+				? NotifyFilters.DirectoryName
+				: NotifyFilters.FileName;
 		ChangeDescription fileSystemChange =
-			_fileSystem.ChangeHandler.NotifyPendingChange(
-				location,
-				WatcherChangeTypes.Deleted,
+			_fileSystem.ChangeHandler.NotifyPendingChange(WatcherChangeTypes.Deleted,
 				container.Type,
-				NotifyFilters.DirectoryName);
+				notifyFilters, location);
 		if (_containers.TryRemove(location, out IStorageContainer? removed))
 		{
 			removed.ClearBytes();
@@ -260,11 +262,9 @@ internal sealed class InMemoryStorage : IStorage
 
 				using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
 				{
-					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
-						location,
-						WatcherChangeTypes.Created,
+					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(WatcherChangeTypes.Created,
 						container.Type,
-						NotifyFilters.DirectoryName);
+						NotifyFilters.DirectoryName, location);
 				}
 
 				return container;
@@ -400,11 +400,9 @@ internal sealed class InMemoryStorage : IStorage
 					containerGenerator(location, _fileSystem);
 				using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
 				{
-					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
-						location,
-						WatcherChangeTypes.Created,
+					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(WatcherChangeTypes.Created,
 						container.Type,
-						NotifyFilters.DirectoryName);
+						NotifyFilters.DirectoryName, location);
 				}
 
 				AdjustParentDirectoryTimes(location);
@@ -467,11 +465,9 @@ internal sealed class InMemoryStorage : IStorage
 						accessHandles.Add(container.RequestAccess(FileAccess.Write,
 							FileShare.ReadWrite));
 						fileSystemChange =
-							fileSystem.ChangeHandler.NotifyPendingChange(
-								parentLocation,
-								WatcherChangeTypes.Created,
+							fileSystem.ChangeHandler.NotifyPendingChange(WatcherChangeTypes.Created,
 								container.Type,
-								NotifyFilters.DirectoryName);
+								NotifyFilters.DirectoryName, parentLocation);
 						return container;
 					},
 					(_, f) => f);
@@ -519,6 +515,12 @@ internal sealed class InMemoryStorage : IStorage
 				}
 			}
 
+			ChangeDescription fileSystemChange =
+				_fileSystem.ChangeHandler.NotifyPendingChange(WatcherChangeTypes.Renamed,
+					container.Type,
+					NotifyFilters.FileName,
+					destination,
+					source);
 			if (_containers.TryRemove(source, out IStorageContainer? sourceContainer))
 			{
 				if (overwrite &&
@@ -535,6 +537,7 @@ internal sealed class InMemoryStorage : IStorage
 					destination.Drive?.ChangeUsedBytes(bytesLength);
 					rollbacks?.Add(new Rollback(
 						() => MoveInternal(destination, source, true, false)));
+					_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
 					return destination;
 				}
 

@@ -16,6 +16,11 @@ public sealed partial class FileSystemMock
 		public string? Name { get; }
 
 		/// <summary>
+		///     The old name of the file or directory that changed on a <see cref="WatcherChangeTypes.Renamed" /> change.
+		/// </summary>
+		public string? OldName { get; }
+
+		/// <summary>
 		///     The property changes affected by the change.
 		/// </summary>
 		public NotifyFilters NotifyFilters { get; }
@@ -24,6 +29,11 @@ public sealed partial class FileSystemMock
 		///     The path of the file or directory that changed.
 		/// </summary>
 		public string Path { get; }
+
+		/// <summary>
+		///     The old path of the file or directory that changed on a <see cref="WatcherChangeTypes.Renamed" /> change.
+		/// </summary>
+		public string? OldPath { get; }
 
 		/// <summary>
 		///     Changes that might occur to a file or directory.
@@ -35,13 +45,16 @@ public sealed partial class FileSystemMock
 		/// </summary>
 		public FileSystemTypes FileSystemType { get; }
 
-		internal ChangeDescription(IStorageLocation location,
-		                           WatcherChangeTypes changeType,
+		internal ChangeDescription(WatcherChangeTypes changeType,
 		                           FileSystemTypes fileSystemType,
-		                           NotifyFilters notifyFilters)
+		                           NotifyFilters notifyFilters,
+		                           IStorageLocation location,
+		                           IStorageLocation? oldLocation)
 		{
 			Path = location.FullPath;
 			Name = location.FriendlyName;
+			OldPath = oldLocation?.FullPath;
+			OldName = oldLocation?.FriendlyName;
 			ChangeType = changeType;
 			FileSystemType = fileSystemType;
 			NotifyFilters = notifyFilters;
