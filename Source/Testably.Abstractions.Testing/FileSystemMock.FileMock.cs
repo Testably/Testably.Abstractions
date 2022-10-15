@@ -385,7 +385,7 @@ public sealed partial class FileSystemMock
 					FileStreamFactoryMock.DefaultShare))
 				{
 					fileInfo.AdjustTimes(TimeAdjustments.LastAccessTime);
-					return fileInfo.GetBytes();
+					return fileInfo.GetBytes().ToArray();
 				}
 			}
 
