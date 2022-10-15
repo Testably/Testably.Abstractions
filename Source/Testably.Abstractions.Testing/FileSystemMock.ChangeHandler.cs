@@ -24,6 +24,9 @@ public sealed partial class FileSystemMock
 
 		#region IInterceptionHandler Members
 
+		/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+		public IFileSystem FileSystem => _fileSystemMock;
+
 		/// <inheritdoc
 		///     cref="IInterceptionHandler.Change(Action{ChangeDescription}, Func{ChangeDescription, bool}?)" />
 		public FileSystemMock Change(

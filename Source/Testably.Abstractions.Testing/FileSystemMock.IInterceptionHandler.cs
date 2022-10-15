@@ -7,7 +7,7 @@ public sealed partial class FileSystemMock
 	/// <summary>
 	///     The interception handler for the <see cref="FileSystemMock" />.
 	/// </summary>
-	public interface IInterceptionHandler
+	public interface IInterceptionHandler : IFileSystem.IFileSystemExtensionPoint
 	{
 		/// <summary>
 		///     Callback executed when any change in the <see cref="FileSystemMock" /> matching the <paramref name="predicate" />
