@@ -114,10 +114,10 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 		{
 			expectedName = expectedName.TrimEnd(' ');
 		}
-		else if (suffix == "\\" || suffix == " ")
+		else
 		{
-			//TODO: This case is only supported on Windows
-			return;
+			Skip.If(suffix == "\\" || suffix == " ",
+				$"The case with '{suffix}' as suffix is only supported on Windows.");
 		}
 
 		IFileSystem.IDirectoryInfo result =

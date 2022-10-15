@@ -136,7 +136,7 @@ public sealed partial class FileSystemMock
 		internal static FileSystemWatcherMock New(FileSystemMock fileSystem)
 			=> new(fileSystem);
 
-		private FileSystemEventArgs FromChangeDescription(
+		private FileSystemEventArgs ToFileSystemEventArgs(
 			ChangeDescription changeDescription)
 		{
 			string? name = changeDescription.Name;
@@ -154,6 +154,27 @@ public sealed partial class FileSystemMock
 
 			return new FileSystemEventArgs(changeDescription.ChangeType, path ?? "",
 				name);
+		}
+
+		private RenamedEventArgs ToRenamedEventArgs(
+			ChangeDescription changeDescription)
+		{
+			string? name = changeDescription.Name;
+			string? path = changeDescription.Path;
+			if (name == null ||
+			    _fileSystem.Path.IsPathRooted(changeDescription.Name))
+			{
+				name = _fileSystem.Path.GetFileName(changeDescription.Path);
+				path = _fileSystem.Path.GetDirectoryName(path);
+			}
+			else if (path.EndsWith(name))
+			{
+				path = path.Substring(0, path.Length - name.Length);
+			}
+
+			//TODO: Check how to handle renamed event args (where to get the old and new name)!
+			return new RenamedEventArgs(changeDescription.ChangeType, path ?? "",
+				name, name);
 		}
 
 		private bool MatchesFilter(ChangeDescription changeDescription)
@@ -193,20 +214,22 @@ public sealed partial class FileSystemMock
 			{
 				if (item.ChangeType.HasFlag(WatcherChangeTypes.Created))
 				{
-					Created?.Invoke(this,
-						FromChangeDescription(item));
+					Created?.Invoke(this, ToFileSystemEventArgs(item));
 				}
 
 				if (item.ChangeType.HasFlag(WatcherChangeTypes.Deleted))
 				{
-					Deleted?.Invoke(this,
-						FromChangeDescription(item));
+					Deleted?.Invoke(this, ToFileSystemEventArgs(item));
 				}
 
 				if (item.ChangeType.HasFlag(WatcherChangeTypes.Changed))
 				{
-					Changed?.Invoke(this,
-						FromChangeDescription(item));
+					Changed?.Invoke(this, ToFileSystemEventArgs(item));
+				}
+
+				if (item.ChangeType.HasFlag(WatcherChangeTypes.Renamed))
+				{
+					Renamed?.Invoke(this, ToRenamedEventArgs(item));
 				}
 			}
 		}
@@ -273,7 +296,6 @@ public sealed partial class FileSystemMock
 			_changeHandler?.Dispose();
 		}
 
-#pragma warning disable CS0067 //TODO: Should be used and re-enabled
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Changed" />
 		public event FileSystemEventHandler? Changed;
 
@@ -288,6 +310,5 @@ public sealed partial class FileSystemMock
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Renamed" />
 		public event RenamedEventHandler? Renamed;
-#pragma warning restore CS0067
 	}
 }
