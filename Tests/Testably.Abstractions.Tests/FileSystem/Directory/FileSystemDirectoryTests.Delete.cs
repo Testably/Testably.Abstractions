@@ -176,7 +176,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 		exception.Should().BeOfType<IOException>();
 #if !NETFRAMEWORK
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+		if (Test.RunsOnWindows)
 		{
 			// Path information only included in exception message on Windows and not in .NET Framework
 			exception.Should().BeOfType<IOException>()

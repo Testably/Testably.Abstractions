@@ -22,12 +22,12 @@ public class DependencyInjectionTests
 	public void RandomSystem_ShouldHaveDefaultConstructorForDependencyInjection()
 	{
 		ServiceCollection services = new();
-		services.AddSingleton<IRandomSystem, RandomSystem>();
+		services.AddSingleton<IRandomSystem, Abstractions.RandomSystem>();
 		ServiceProvider serviceProvider = services.BuildServiceProvider();
 
 		IRandomSystem result = serviceProvider.GetRequiredService<IRandomSystem>();
 
-		result.Should().BeOfType<RandomSystem>();
+		result.Should().BeOfType<Abstractions.RandomSystem>();
 	}
 
 	[Fact]
@@ -35,11 +35,11 @@ public class DependencyInjectionTests
 	public void TimeSystem_ShouldHaveDefaultConstructorForDependencyInjection()
 	{
 		ServiceCollection services = new();
-		services.AddSingleton<ITimeSystem, TimeSystem>();
+		services.AddSingleton<ITimeSystem, Abstractions.TimeSystem>();
 		ServiceProvider serviceProvider = services.BuildServiceProvider();
 
 		ITimeSystem result = serviceProvider.GetRequiredService<ITimeSystem>();
 
-		result.Should().BeOfType<TimeSystem>();
+		result.Should().BeOfType<Abstractions.TimeSystem>();
 	}
 }

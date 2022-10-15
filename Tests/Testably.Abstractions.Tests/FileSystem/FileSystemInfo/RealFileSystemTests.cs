@@ -16,7 +16,7 @@ public sealed class RealFileSystemTests :
 	private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
 
 	public RealFileSystemTests(ITestOutputHelper testOutputHelper)
-		: base(new Abstractions.FileSystem(), new TimeSystem())
+		: base(new Abstractions.FileSystem(), new Abstractions.TimeSystem())
 	{
 		_directoryCleaner = FileSystem
 		   .SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);

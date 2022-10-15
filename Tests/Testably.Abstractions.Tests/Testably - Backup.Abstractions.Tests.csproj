@@ -12,5 +12,12 @@
     <ProjectReference Include="..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj" />
     <ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="RandomSystem\Guid\" />
+    <Folder Include="TimeSystem\DateTime\" />
+    <Folder Include="TimeSystem\Task\" />
+    <Folder Include="TimeSystem\Thread\" />
+  </ItemGroup>
   
 </Project>
