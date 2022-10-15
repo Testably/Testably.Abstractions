@@ -11,7 +11,7 @@ public static partial class FileSystemMockExtensions
 	/// </summary>
 	/// <param name="handler">The interception handler</param>
 	/// <param name="fileSystemType">The type of the file system entry.</param>
-	/// <param name="interceptionCallback">The callback to execute after the <paramref name="fileSystemType" /> was changed.</param>
+	/// <param name="interceptionCallback">The callback to execute before the <paramref name="fileSystemType" /> is changed.</param>
 	/// <param name="path">
 	///     (optional) The root path in which to search for a changed <paramref name="fileSystemType" />.<br />
 	///     Defaults to the empty string, which matches all root directories.
@@ -21,8 +21,8 @@ public static partial class FileSystemMockExtensions
 	///     Defaults to "*" which matches all <paramref name="fileSystemType" /> names.
 	/// </param>
 	/// <param name="predicate">
-	///     (optional) A predicate used to filter which callbacks should be notified.<br />
-	///     If set to <see langword="null" /> (default value) all callbacks are notified.
+	///     (optional) A predicate used to filter which callbacks should be intercepted.<br />
+	///     If set to <see langword="null" /> (default value) all callbacks are intercepted.
 	/// </param>
 	/// <returns>The <see cref="FileSystemMock" />.</returns>
 	/// <remarks>This allows e.g. to throw custom exceptions instead.</remarks>
@@ -47,7 +47,7 @@ public static partial class FileSystemMockExtensions
 	/// </summary>
 	/// <param name="handler">The interception handler</param>
 	/// <param name="fileSystemType">The type of the file system entry.</param>
-	/// <param name="interceptionCallback">The callback to execute after the <paramref name="fileSystemType" /> was created.</param>
+	/// <param name="interceptionCallback">The callback to execute before the <paramref name="fileSystemType" /> is created.</param>
 	/// <param name="path">
 	///     (optional) The root path in which to search for a created <paramref name="fileSystemType" />.<br />
 	///     Defaults to the empty string, which matches all root directories.
@@ -57,8 +57,8 @@ public static partial class FileSystemMockExtensions
 	///     Defaults to "*" which matches all <paramref name="fileSystemType" /> names.
 	/// </param>
 	/// <param name="predicate">
-	///     (optional) A predicate used to filter which callbacks should be notified.<br />
-	///     If set to <see langword="null" /> (default value) all callbacks are notified.
+	///     (optional) A predicate used to filter which callbacks should be intercepted.<br />
+	///     If set to <see langword="null" /> (default value) all callbacks are intercepted.
 	/// </param>
 	/// <returns>The <see cref="FileSystemMock" />.</returns>
 	/// <remarks>This allows e.g. to throw custom exceptions instead.</remarks>
@@ -83,7 +83,7 @@ public static partial class FileSystemMockExtensions
 	/// </summary>
 	/// <param name="handler">The interception handler</param>
 	/// <param name="fileSystemType">The type of the file system entry.</param>
-	/// <param name="interceptionCallback">The callback to execute after the <paramref name="fileSystemType" /> was deleted.</param>
+	/// <param name="interceptionCallback">The callback to execute before the <paramref name="fileSystemType" /> is deleted.</param>
 	/// <param name="path">
 	///     (optional) The root path in which to search for a deleted <paramref name="fileSystemType" />.<br />
 	///     Defaults to the empty string, which matches all root directories.
@@ -93,8 +93,8 @@ public static partial class FileSystemMockExtensions
 	///     Defaults to "*" which matches all <paramref name="fileSystemType" /> names.
 	/// </param>
 	/// <param name="predicate">
-	///     (optional) A predicate used to filter which callbacks should be notified.<br />
-	///     If set to <see langword="null" /> (default value) all callbacks are notified.
+	///     (optional) A predicate used to filter which callbacks should be intercepted.<br />
+	///     If set to <see langword="null" /> (default value) all callbacks are intercepted.
 	/// </param>
 	/// <returns>The <see cref="FileSystemMock" />.</returns>
 	/// <remarks>This allows e.g. to throw custom exceptions instead.</remarks>
