@@ -208,31 +208,7 @@ public sealed partial class FileSystemMock
 
 				if (item.ChangeType.HasFlag(WatcherChangeTypes.Renamed))
 				{
-					Execute.OnWindows(
-						() =>
-						{
-							if (TryMakeRenamedEventArgs(item,
-								out RenamedEventArgs? eventArgs))
-							{
-								Renamed?.Invoke(this, eventArgs);
-							}
-							else if (item.OldPath != null)
-							{
-								Deleted?.Invoke(this, ToFileSystemEventArgs(
-									item.ChangeType, item.OldPath, item.OldName));
-								Created?.Invoke(this, ToFileSystemEventArgs(
-									item.ChangeType, item.Path, item.Name));
-							}
-						},
-						() =>
-						{
-							TryMakeRenamedEventArgs(item,
-								out RenamedEventArgs? eventArgs);
-							if (eventArgs != null)
-							{
-								Renamed?.Invoke(this, eventArgs);
-							}
-						});
+					TriggerRenameNotification(item);
 				}
 			}
 		}
@@ -334,6 +310,33 @@ public sealed partial class FileSystemMock
 			name = transformedName;
 			return path ?? "";
 		}
+
+		private void TriggerRenameNotification(ChangeDescription item)
+			=> Execute.OnWindows(
+				() =>
+				{
+					if (TryMakeRenamedEventArgs(item,
+						out RenamedEventArgs? eventArgs))
+					{
+						Renamed?.Invoke(this, eventArgs);
+					}
+					else if (item.OldPath != null)
+					{
+						Deleted?.Invoke(this, ToFileSystemEventArgs(
+							item.ChangeType, item.OldPath, item.OldName));
+						Created?.Invoke(this, ToFileSystemEventArgs(
+							item.ChangeType, item.Path, item.Name));
+					}
+				},
+				() =>
+				{
+					TryMakeRenamedEventArgs(item,
+						out RenamedEventArgs? eventArgs);
+					if (eventArgs != null)
+					{
+						Renamed?.Invoke(this, eventArgs);
+					}
+				});
 
 		private bool TryMakeRenamedEventArgs(
 			ChangeDescription changeDescription,

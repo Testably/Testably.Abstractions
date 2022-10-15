@@ -264,6 +264,146 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void
+		NotifyFilter_MoveFile_DifferentDirectories_ShouldNotifyOnLinuxOrMac(
+			string sourcePath, string sourceName,
+			string destinationPath, string destinationName)
+	{
+		Skip.If(Test.RunsOnWindows);
+
+		FileSystem.Initialize()
+		   .WithSubdirectory(sourcePath).Initialized(s => s
+			   .WithFile(sourceName))
+		   .WithSubdirectory(destinationPath);
+		RenamedEventArgs? result = null;
+		ManualResetEventSlim ms = new();
+		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+		fileSystemWatcher.Renamed += (_, eventArgs) =>
+		{
+			result = eventArgs;
+			ms.Set();
+		};
+
+		fileSystemWatcher.IncludeSubdirectories = true;
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		FileSystem.File.Move(
+			FileSystem.Path.Combine(sourcePath, sourceName),
+			FileSystem.Path.Combine(destinationPath, destinationName));
+
+		ms.Wait(2000).Should().BeTrue();
+		result.Should().NotBeNull();
+		result!.ChangeType.Should().Be(WatcherChangeTypes.Renamed);
+		result.FullPath.Should()
+		   .Be(FileSystem.Path.Combine(BasePath, destinationPath, destinationName));
+		result.Name.Should()
+		   .Be(FileSystem.Path.Combine(destinationPath, destinationName));
+		result.OldFullPath.Should()
+		   .Be(FileSystem.Path.Combine(BasePath, sourcePath, sourceName));
+		result.OldName.Should().Be(FileSystem.Path.Combine(sourcePath, sourceName));
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void
+		NotifyFilter_MoveFile_DifferentDirectories_ShouldNotNotifyOnWindows(
+			string sourcePath, string sourceName,
+			string destinationPath, string destinationName)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		FileSystem.Initialize()
+		   .WithSubdirectory(sourcePath).Initialized(s => s
+			   .WithFile(sourceName))
+		   .WithSubdirectory(destinationPath);
+		RenamedEventArgs? result = null;
+		ManualResetEventSlim ms = new();
+		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+		fileSystemWatcher.Renamed += (_, eventArgs) =>
+		{
+			result = eventArgs;
+			ms.Set();
+		};
+
+		fileSystemWatcher.IncludeSubdirectories = true;
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		FileSystem.File.Move(
+			FileSystem.Path.Combine(sourcePath, sourceName),
+			FileSystem.Path.Combine(destinationPath, destinationName));
+
+		ms.Wait(500).Should().BeFalse();
+		result.Should().BeNull();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void NotifyFilter_MoveFile_ShouldNotNotifyOnOtherFilters(
+		string sourceName, string destinationName)
+	{
+		FileSystem.Initialize();
+		FileSystem.File.WriteAllText(sourceName, null);
+		RenamedEventArgs? result = null;
+		ManualResetEventSlim ms = new();
+		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+		fileSystemWatcher.Renamed += (_, eventArgs) =>
+		{
+			result = eventArgs;
+			ms.Set();
+		};
+		fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes |
+		                                 NotifyFilters.CreationTime |
+		                                 NotifyFilters.DirectoryName |
+		                                 NotifyFilters.LastAccess |
+		                                 NotifyFilters.LastWrite |
+		                                 NotifyFilters.Security |
+		                                 NotifyFilters.Size;
+
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		FileSystem.File.Move(sourceName, destinationName);
+
+		ms.Wait(500).Should().BeFalse();
+		result.Should().BeNull();
+	}
+
+	[SkippableTheory]
+	[InlineAutoData(NotifyFilters.FileName)]
+	public void NotifyFilter_MoveFile_ShouldTriggerChangedEventOnNotifyFilters(
+		NotifyFilters notifyFilter, string sourceName, string destinationName)
+	{
+		FileSystem.Initialize();
+		FileSystem.File.WriteAllText(sourceName, "foo");
+		RenamedEventArgs? result = null;
+		ManualResetEventSlim ms = new();
+		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+		fileSystemWatcher.Renamed += (_, eventArgs) =>
+		{
+			result = eventArgs;
+			ms.Set();
+		};
+
+		fileSystemWatcher.NotifyFilter = notifyFilter;
+		fileSystemWatcher.IncludeSubdirectories = true;
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		FileSystem.File.Move(sourceName, destinationName);
+
+		ms.Wait(2000).Should().BeTrue();
+		result.Should().NotBeNull();
+		result!.ChangeType.Should().Be(WatcherChangeTypes.Renamed);
+		result.FullPath.Should().Be(FileSystem.Path.GetFullPath(destinationName));
+		result.Name.Should().Be(FileSystem.Path.GetFileName(destinationName));
+		result.OldFullPath.Should().Be(FileSystem.Path.GetFullPath(sourceName));
+		result.OldName.Should().Be(FileSystem.Path.GetFileName(sourceName));
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void NotifyFilter_WriteFile_ShouldNotNotifyOnOtherFilters(string fileName)
 	{
 		FileSystem.Initialize();
@@ -348,145 +488,5 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(fileName));
 		result.ChangeType.Should().Be(WatcherChangeTypes.Changed);
 		result.Name.Should().Be(FileSystem.Path.GetFileName(fileName));
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void NotifyFilter_MoveFile_ShouldNotNotifyOnOtherFilters(
-		string sourceName, string destinationName)
-	{
-		FileSystem.Initialize();
-		FileSystem.File.WriteAllText(sourceName, null);
-		RenamedEventArgs? result = null;
-		ManualResetEventSlim ms = new();
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
-			FileSystem.FileSystemWatcher.New(BasePath);
-		fileSystemWatcher.Renamed += (_, eventArgs) =>
-		{
-			result = eventArgs;
-			ms.Set();
-		};
-		fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes |
-		                                 NotifyFilters.CreationTime |
-		                                 NotifyFilters.DirectoryName |
-		                                 NotifyFilters.LastAccess |
-		                                 NotifyFilters.LastWrite |
-		                                 NotifyFilters.Security |
-		                                 NotifyFilters.Size;
-
-		fileSystemWatcher.EnableRaisingEvents = true;
-
-		FileSystem.File.Move(sourceName, destinationName);
-
-		ms.Wait(500).Should().BeFalse();
-		result.Should().BeNull();
-	}
-
-	[SkippableTheory]
-	[InlineAutoData(NotifyFilters.FileName)]
-	public void NotifyFilter_MoveFile_ShouldTriggerChangedEventOnNotifyFilters(
-		NotifyFilters notifyFilter, string sourceName, string destinationName)
-	{
-		FileSystem.Initialize();
-		FileSystem.File.WriteAllText(sourceName, "foo");
-		RenamedEventArgs? result = null;
-		ManualResetEventSlim ms = new();
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
-			FileSystem.FileSystemWatcher.New(BasePath);
-		fileSystemWatcher.Renamed += (_, eventArgs) =>
-		{
-			result = eventArgs;
-			ms.Set();
-		};
-
-		fileSystemWatcher.NotifyFilter = notifyFilter;
-		fileSystemWatcher.IncludeSubdirectories = true;
-		fileSystemWatcher.EnableRaisingEvents = true;
-
-		FileSystem.File.Move(sourceName, destinationName);
-
-		ms.Wait(2000).Should().BeTrue();
-		result.Should().NotBeNull();
-		result!.ChangeType.Should().Be(WatcherChangeTypes.Renamed);
-		result.FullPath.Should().Be(FileSystem.Path.GetFullPath(destinationName));
-		result.Name.Should().Be(FileSystem.Path.GetFileName(destinationName));
-		result.OldFullPath.Should().Be(FileSystem.Path.GetFullPath(sourceName));
-		result.OldName.Should().Be(FileSystem.Path.GetFileName(sourceName));
-	}
-
-	[SkippableTheory]
-	[InlineAutoData(NotifyFilters.FileName)]
-	public void
-		NotifyFilter_MoveFile_DifferentDirectories_ShouldNotNotifyOnWindows(
-			NotifyFilters notifyFilter, string sourcePath, string sourceName,
-			string destinationPath, string destinationName)
-	{
-		Skip.IfNot(Test.RunsOnWindows);
-
-		FileSystem.Initialize()
-		   .WithSubdirectory(sourcePath).Initialized(s => s
-			   .WithFile(sourceName))
-		   .WithSubdirectory(destinationPath);
-		RenamedEventArgs? result = null;
-		ManualResetEventSlim ms = new();
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
-			FileSystem.FileSystemWatcher.New(BasePath);
-		fileSystemWatcher.Renamed += (_, eventArgs) =>
-		{
-			result = eventArgs;
-			ms.Set();
-		};
-
-		fileSystemWatcher.IncludeSubdirectories = true;
-		fileSystemWatcher.EnableRaisingEvents = true;
-
-		FileSystem.File.Move(
-			FileSystem.Path.Combine(sourcePath, sourceName),
-			FileSystem.Path.Combine(destinationPath, destinationName));
-
-		ms.Wait(500).Should().BeFalse();
-		result.Should().BeNull();
-	}
-
-	[SkippableTheory]
-	[InlineAutoData(NotifyFilters.FileName)]
-	public void
-		NotifyFilter_MoveFile_DifferentDirectories_ShouldNotifyOnLinuxOrMac(
-			NotifyFilters notifyFilter, string sourcePath, string sourceName,
-			string destinationPath, string destinationName)
-	{
-		Skip.If(Test.RunsOnWindows);
-
-		FileSystem.Initialize()
-		   .WithSubdirectory(sourcePath).Initialized(s => s
-			   .WithFile(sourceName))
-		   .WithSubdirectory(destinationPath);
-		RenamedEventArgs? result = null;
-		ManualResetEventSlim ms = new();
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
-			FileSystem.FileSystemWatcher.New(BasePath);
-		fileSystemWatcher.Renamed += (_, eventArgs) =>
-		{
-			result = eventArgs;
-			ms.Set();
-		};
-
-		fileSystemWatcher.IncludeSubdirectories = true;
-		fileSystemWatcher.EnableRaisingEvents = true;
-
-		FileSystem.File.Move(
-			FileSystem.Path.Combine(sourcePath, sourceName),
-			FileSystem.Path.Combine(destinationPath, destinationName));
-
-		ms.Wait(2000).Should().BeTrue();
-		result.Should().NotBeNull();
-		result!.ChangeType.Should().Be(WatcherChangeTypes.Renamed);
-		result.FullPath.Should()
-		   .Be(FileSystem.Path.Combine(BasePath, destinationPath, destinationName));
-		result.Name.Should()
-		   .Be(FileSystem.Path.Combine(destinationPath, destinationName));
-		result.OldFullPath.Should()
-		   .Be(FileSystem.Path.Combine(BasePath, sourcePath, sourceName));
-		result.OldName.Should().Be(FileSystem.Path.Combine(sourcePath, sourceName));
 	}
 }
