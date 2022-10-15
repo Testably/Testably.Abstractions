@@ -1,0 +1,70 @@
+using System.IO;
+
+namespace Testably.Abstractions.Tests.FileSystem.File;
+
+public abstract partial class FileSystemFileTests<TFileSystem>
+	where TFileSystem : IFileSystem
+{
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytes))]
+	public void ReadAllBytes_MissingFile_ShouldThrowFileNotFoundException(string path)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.ReadAllBytes(path);
+		});
+
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.Message.Should()
+		   .Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytes))]
+	public void ReadAllBytes_ShouldAdjustTimes(string path, byte[] contents)
+	{
+		Skip.If(Test.IsNetFramework && FileSystem is Abstractions.FileSystem,
+			"Works unreliable on .NET Framework");
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
+		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
+		FileSystem.File.WriteAllBytes(path, contents);
+		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
+		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+		DateTime updateTime = TimeSystem.DateTime.UtcNow;
+
+		_ = FileSystem.File.ReadAllBytes(path);
+
+		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
+		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(path);
+		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
+
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+
+		lastAccessTime.Should()
+		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		lastWriteTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	[FileSystemTests.File(nameof(IFileSystem.IFile.ReadAllBytes))]
+	public void ReadAllBytes_ShouldReturnWrittenBytes(
+		byte[] contents, string path)
+	{
+		FileSystem.File.WriteAllBytes(path, contents);
+
+		byte[] result = FileSystem.File.ReadAllBytes(path);
+
+		result.Should().BeEquivalentTo(contents);
+	}
+}

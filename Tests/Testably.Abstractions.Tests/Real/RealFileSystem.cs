@@ -6,11 +6,11 @@ public static partial class RealFileSystem
 {
 #if !DEBUG || !DISABLE_TESTS_REALFILESYSTEM
 	// ReSharper disable once UnusedMember.Global
-	[Collection(nameof(RealFileSystem))]
-	[SystemTest(nameof(RealFileSystem))]
-	public sealed class Tests : FileSystemTests<FileSystem>
+	[Collection(nameof(Abstractions.Tests.FileSystem.DriveInfoFactory.RealFileSystemTests))]
+	[SystemTest(nameof(Abstractions.Tests.FileSystem.DriveInfoFactory.RealFileSystemTests))]
+	public sealed class Tests : FileSystemTests<Abstractions.FileSystem>
 	{
-		public Tests() : base(new FileSystem())
+		public Tests() : base(new Abstractions.FileSystem())
 		{
 		}
 	}

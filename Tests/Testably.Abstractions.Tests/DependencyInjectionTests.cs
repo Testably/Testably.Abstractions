@@ -9,12 +9,12 @@ public class DependencyInjectionTests
 	public void FileSystem_ShouldHaveDefaultConstructorForDependencyInjection()
 	{
 		ServiceCollection services = new();
-		services.AddSingleton<IFileSystem, FileSystem>();
+		services.AddSingleton<IFileSystem, Abstractions.FileSystem>();
 		ServiceProvider serviceProvider = services.BuildServiceProvider();
 
 		IFileSystem result = serviceProvider.GetRequiredService<IFileSystem>();
 
-		result.Should().BeOfType<FileSystem>();
+		result.Should().BeOfType<Abstractions.FileSystem>();
 	}
 
 	[Fact]
