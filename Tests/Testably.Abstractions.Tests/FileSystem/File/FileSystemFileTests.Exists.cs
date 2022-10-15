@@ -10,4 +10,12 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 		result.Should().BeFalse();
 	}
+
+	[SkippableFact]
+	public void Exists_Empty_ShouldReturnFalse()
+	{
+		bool result = FileSystem.File.Exists(string.Empty);
+
+		result.Should().BeFalse();
+	}
 }

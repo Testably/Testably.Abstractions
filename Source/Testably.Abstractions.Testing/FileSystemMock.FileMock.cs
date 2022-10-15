@@ -234,8 +234,17 @@ public sealed partial class FileSystemMock
 
 		/// <inheritdoc cref="IFileSystem.IFile.Exists(string?)" />
 		public bool Exists([NotNullWhen(true)] string? path)
-			=> FileInfoMock.New(_fileSystem.Storage.GetLocation(path), _fileSystem)
-			  ?.Exists ?? false;
+		{
+			if (string.IsNullOrEmpty(path))
+			{
+				return false;
+			}
+
+			return FileInfoMock.New(
+					_fileSystem.Storage.GetLocation(path),
+					_fileSystem)
+			   .Exists;
+		}
 
 		/// <inheritdoc cref="IFileSystem.IFile.GetAttributes(string)" />
 		public FileAttributes GetAttributes(string path)
