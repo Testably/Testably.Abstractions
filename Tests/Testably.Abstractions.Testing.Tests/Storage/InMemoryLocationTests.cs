@@ -109,8 +109,7 @@ public class InMemoryLocationTests
 		result.Should().BeTrue();
 	}
 
-	[Theory]
-	[AutoData]
+	[Fact]
 	public void GetParent_Root_ShouldReturnNull()
 	{
 		IStorageLocation location = InMemoryLocation.New(null, "".PrefixRoot());

@@ -75,7 +75,7 @@ public sealed partial class FileSystemMock
 				_fileSystem.Storage.GetOrCreateContainer(
 					_fileSystem.Storage.GetLocation(path),
 					InMemoryContainer.NewFile);
-			if (fileInfo is not NullContainer && contents != null)
+			if (contents != null)
 			{
 				using (fileInfo.RequestAccess(
 					FileAccess.ReadWrite,
