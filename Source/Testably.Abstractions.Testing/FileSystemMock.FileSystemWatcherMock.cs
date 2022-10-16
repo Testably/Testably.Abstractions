@@ -37,6 +37,7 @@ public sealed partial class FileSystemMock
 		private int _internalBufferSize = 8192;
 		private string _path = string.Empty;
 		private event EventHandler<ChangeDescription>? InternalEvent;
+		private bool _isInitializing;
 
 		private FileSystemWatcherMock(FileSystemMock fileSystem)
 		{
@@ -136,7 +137,10 @@ public sealed partial class FileSystemMock
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.BeginInit()" />
 		public void BeginInit()
-			=> Stop();
+		{
+			_isInitializing = true;
+			Stop();
+		}
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Changed" />
 		public event FileSystemEventHandler? Changed;
@@ -149,7 +153,10 @@ public sealed partial class FileSystemMock
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.EndInit()" />
 		public void EndInit()
-			=> Restart();
+		{
+			_isInitializing = false;
+			Restart();
+		}
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Error" />
 		public event ErrorEventHandler? Error;
@@ -174,7 +181,8 @@ public sealed partial class FileSystemMock
 			{
 				if ((c.ChangeType & changeType) != 0)
 				{
-					tcs.TrySetResult(new WaitForChangedResultMock(c.ChangeType, c.Name, oldName: c.OldName, timedOut: false));
+					tcs.TrySetResult(new WaitForChangedResultMock(c.ChangeType, c.Name,
+						oldName: c.OldName, timedOut: false));
 				}
 			}
 
@@ -285,6 +293,11 @@ public sealed partial class FileSystemMock
 
 		private void Restart()
 		{
+			if (_isInitializing)
+			{
+				return;
+			}
+
 			if (EnableRaisingEvents)
 			{
 				Stop();
@@ -307,6 +320,11 @@ public sealed partial class FileSystemMock
 
 		private void Start()
 		{
+			if (_isInitializing)
+			{
+				return;
+			}
+
 			Stop();
 			_cancellationTokenSource = new CancellationTokenSource();
 			_changeHandler = _fileSystem.Notify.OnEvent(c =>
