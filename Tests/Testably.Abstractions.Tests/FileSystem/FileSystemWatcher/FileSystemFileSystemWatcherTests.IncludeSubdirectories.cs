@@ -74,7 +74,11 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{
-			result = eventArgs;
+			if (!ms.IsSet)
+			{
+				result = eventArgs;
+			}
+
 			ms.Set();
 		};
 		fileSystemWatcher.IncludeSubdirectories = true;
@@ -83,11 +87,8 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		ms.Wait(10000).Should().BeTrue();
 
 		result.Should().NotBeNull();
-		if (!Test.RunsOnLinux)
-		{
-			result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(subdirectoryPath));
-		}
-		result!.ChangeType.Should().Be(WatcherChangeTypes.Deleted);
+		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(subdirectoryPath));
 		result.Name.Should().Be(subdirectoryPath);
+		result!.ChangeType.Should().Be(WatcherChangeTypes.Deleted);
 	}
 }
