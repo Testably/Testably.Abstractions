@@ -7,6 +7,31 @@ namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
 
 public class FileSystemMockTests
 {
+	[Theory]
+	[AutoData]
+	public void FileSystemMock_File_Decrypt(string path, string contents)
+	{
+		Testing.FileSystemMock sut = new();
+		sut.File.WriteAllText(path, contents);
+		sut.File.Encrypt(path);
+
+		sut.File.Decrypt(path);
+
+		sut.File.ReadAllText(path).Should().Be(contents);
+	}
+
+	[Theory]
+	[AutoData]
+	public void FileSystemMock_File_Encrypt(string path, string contents)
+	{
+		Testing.FileSystemMock sut = new();
+		sut.File.WriteAllText(path, contents);
+
+		sut.File.Encrypt(path);
+
+		sut.File.ReadAllText(path).Should().NotBe(contents);
+	}
+
 	[Fact]
 	public void FileSystemMock_ShouldBeInitializedWithASingleDefaultDrive()
 	{
