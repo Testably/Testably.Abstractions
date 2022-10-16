@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace Testably.Abstractions.Testing;
 
@@ -6,12 +7,11 @@ public sealed partial class TimeSystemMock
 {
 	internal sealed class TimeProviderMock : ITimeProvider
 	{
-		private DateTime _now;
-		private readonly object _lock = new();
+		private static readonly AsyncLocal<DateTime> Now = new();
 
 		public TimeProviderMock(DateTime now)
 		{
-			_now = now;
+			Now.Value = now;
 		}
 
 		#region ITimeProvider Members
@@ -34,25 +34,19 @@ public sealed partial class TimeSystemMock
 		/// <inheritdoc cref="TimeSystemMock.ITimeProvider.AdvanceBy(TimeSpan)" />
 		public void AdvanceBy(TimeSpan interval)
 		{
-			lock (_lock)
-			{
-				_now = _now.Add(interval);
-			}
+			Now.Value = Now.Value.Add(interval);
 		}
 
 		/// <inheritdoc cref="TimeSystemMock.ITimeProvider.Read()" />
 		public DateTime Read()
 		{
-			return _now;
+			return Now.Value;
 		}
 
 		/// <inheritdoc cref="TimeSystemMock.ITimeProvider.SetTo(DateTime)" />
 		public void SetTo(DateTime value)
 		{
-			lock (_lock)
-			{
-				_now = value;
-			}
+			Now.Value = value;
 		}
 
 		#endregion
