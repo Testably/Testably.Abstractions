@@ -25,14 +25,17 @@ internal sealed class InMemoryStorage : IStorage
 	public InMemoryStorage(FileSystemMock fileSystem)
 	{
 		_fileSystem = fileSystem;
-		DriveInfoMock mainDrive = DriveInfoMock.New(CurrentDirectory, _fileSystem);
-		_drives.TryAdd(mainDrive.Name, mainDrive);
+		MainDrive = DriveInfoMock.New(CurrentDirectory, _fileSystem);
+		_drives.TryAdd(MainDrive.Name, MainDrive);
 	}
 
 	#region IStorage Members
 
 	/// <inheritdoc cref="IStorage.CurrentDirectory" />
 	public string CurrentDirectory { get; set; } = string.Empty.PrefixRoot();
+
+	/// <inheritdoc cref="IStorage.MainDrive" />
+	public IStorageDrive MainDrive { get; }
 
 	/// <inheritdoc cref="IStorage.Copy(IStorageLocation, IStorageLocation, bool)" />
 	public IStorageLocation? Copy(IStorageLocation source,
@@ -228,7 +231,7 @@ internal sealed class InMemoryStorage : IStorage
 		if (drive == null &&
 		    !_fileSystem.Path.IsPathRooted(path))
 		{
-			drive = _fileSystem.Storage.GetDrives().First();
+			drive = _fileSystem.Storage.MainDrive;
 		}
 
 		return InMemoryLocation.New(drive, _fileSystem.Path.GetFullPath(path), path);

@@ -17,6 +17,11 @@ internal interface IStorage
 	string CurrentDirectory { get; set; }
 
 	/// <summary>
+	///     The main drive.
+	/// </summary>
+	IStorageDrive MainDrive { get; }
+
+	/// <summary>
 	///     Copies a specified file to a new location.<br />
 	///     This method does work across volumes.
 	/// </summary>

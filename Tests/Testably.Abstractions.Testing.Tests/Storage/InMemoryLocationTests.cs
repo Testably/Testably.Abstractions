@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.Tests.Storage;
@@ -106,6 +107,17 @@ public class InMemoryLocationTests
 		bool result = location.Equals(location);
 
 		result.Should().BeTrue();
+	}
+
+	[Theory]
+	[AutoData]
+	public void GetParent_Root_ShouldReturnNull()
+	{
+		IStorageLocation location = InMemoryLocation.New(null, "".PrefixRoot());
+
+		IStorageLocation? result = location.GetParent();
+
+		result.Should().BeNull();
 	}
 
 	private class DummyLocation : IStorageLocation

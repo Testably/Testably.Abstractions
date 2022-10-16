@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.Testing.Internal;
 
@@ -40,6 +41,7 @@ internal sealed class InMemoryLocation : IStorageLocation
 	public string FullPath { get; }
 
 	/// <inheritdoc cref="IEquatable{IStorageLocation}.Equals(IStorageLocation)" />
+	[ExcludeFromCodeCoverage]
 	public bool Equals(IStorageLocation? other)
 	{
 		if (ReferenceEquals(null, other))
