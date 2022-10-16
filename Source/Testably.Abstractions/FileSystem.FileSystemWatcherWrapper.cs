@@ -11,10 +11,10 @@ public sealed partial class FileSystem
 	{
 		private readonly FileSystemWatcher _instance;
 
-		private FileSystemWatcherWrapper(FileSystemWatcher driveInfo,
+		private FileSystemWatcherWrapper(FileSystemWatcher fileSystemWatcher,
 		                                 IFileSystem fileSystem)
 		{
-			_instance = driveInfo;
+			_instance = fileSystemWatcher;
 			FileSystem = fileSystem;
 		}
 
