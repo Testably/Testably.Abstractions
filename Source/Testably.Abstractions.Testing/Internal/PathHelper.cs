@@ -53,7 +53,9 @@ internal static class PathHelper
 			return false;
 		}
 
-		return path.StartsWith(UncPrefix) || path.StartsWith(UncAltPrefix);
+		return Execute.OnWindows(
+			() => path.StartsWith(UncPrefix) || path.StartsWith(UncAltPrefix),
+			() => path.StartsWith(UncPrefix));
 	}
 
 	internal static void ThrowCommonExceptionsIfPathIsInvalid(
