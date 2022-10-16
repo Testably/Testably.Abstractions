@@ -55,7 +55,6 @@ public sealed partial class FileSystemMock
 		{
 			get
 			{
-				RefreshInternal();
 				if (Container is NullContainer)
 				{
 					throw ExceptionFactory.FileNotFound(

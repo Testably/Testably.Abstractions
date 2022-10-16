@@ -32,6 +32,31 @@ public class FileSystemMockTests
 		sut.File.ReadAllText(path).Should().NotBe(contents);
 	}
 
+	[Theory]
+	[AutoData]
+	public void FileSystemMock_FileInfo_Decrypt(string path, string contents)
+	{
+		Testing.FileSystemMock sut = new();
+		sut.File.WriteAllText(path, contents);
+		sut.File.Encrypt(path);
+
+		sut.FileInfo.New(path).Decrypt();
+
+		sut.File.ReadAllText(path).Should().Be(contents);
+	}
+
+	[Theory]
+	[AutoData]
+	public void FileSystemMock_FileInfo_Encrypt(string path, string contents)
+	{
+		Testing.FileSystemMock sut = new();
+		sut.File.WriteAllText(path, contents);
+
+		sut.FileInfo.New(path).Encrypt();
+
+		sut.File.ReadAllText(path).Should().NotBe(contents);
+	}
+
 	[Fact]
 	public void FileSystemMock_ShouldBeInitializedWithASingleDefaultDrive()
 	{
