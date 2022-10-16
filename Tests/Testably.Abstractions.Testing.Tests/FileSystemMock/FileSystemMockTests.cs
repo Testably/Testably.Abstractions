@@ -13,9 +13,11 @@ public class FileSystemMockTests
 	{
 		Testing.FileSystemMock sut = new();
 		sut.File.WriteAllText(path, contents);
+#pragma warning disable CA1416
 		sut.File.Encrypt(path);
 
 		sut.File.Decrypt(path);
+#pragma warning restore CA1416
 
 		sut.File.ReadAllText(path).Should().Be(contents);
 	}
@@ -27,7 +29,9 @@ public class FileSystemMockTests
 		Testing.FileSystemMock sut = new();
 		sut.File.WriteAllText(path, contents);
 
+#pragma warning disable CA1416
 		sut.File.Encrypt(path);
+#pragma warning restore CA1416
 
 		sut.File.ReadAllText(path).Should().NotBe(contents);
 	}
@@ -38,9 +42,11 @@ public class FileSystemMockTests
 	{
 		Testing.FileSystemMock sut = new();
 		sut.File.WriteAllText(path, contents);
+#pragma warning disable CA1416
 		sut.File.Encrypt(path);
 
 		sut.FileInfo.New(path).Decrypt();
+#pragma warning restore CA1416
 
 		sut.File.ReadAllText(path).Should().Be(contents);
 	}
@@ -52,7 +58,9 @@ public class FileSystemMockTests
 		Testing.FileSystemMock sut = new();
 		sut.File.WriteAllText(path, contents);
 
+#pragma warning disable CA1416
 		sut.FileInfo.New(path).Encrypt();
+#pragma warning restore CA1416
 
 		sut.File.ReadAllText(path).Should().NotBe(contents);
 	}
