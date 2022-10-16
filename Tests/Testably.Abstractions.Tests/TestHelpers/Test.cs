@@ -25,6 +25,12 @@ public static class Test
 	public static bool RunsOnWindows
 		=> RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
+	public static void SkipIfBrittleTestsShouldBeSkipped(IFileSystem fileSystem, bool condition = true)
+	{
+		Skip.If(fileSystem is Abstractions.FileSystem && condition,
+			"Brittle tests are skipped on the real file system.");
+	}
+
 	public static void SkipIfLongRunningTestsShouldBeSkipped(IFileSystem fileSystem)
 	{
 #if DEBUG && !INCLUDE_LONGRUNNING_TESTS_ALSO_IN_DEBUG_MODE
