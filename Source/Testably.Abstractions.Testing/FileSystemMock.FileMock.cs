@@ -75,7 +75,7 @@ public sealed partial class FileSystemMock
 				_fileSystem.Storage.GetOrCreateContainer(
 					_fileSystem.Storage.GetLocation(path),
 					InMemoryContainer.NewFile);
-			if (fileInfo is not NullContainer && contents != null)
+			if (contents != null)
 			{
 				using (fileInfo.RequestAccess(
 					FileAccess.ReadWrite,
@@ -208,14 +208,8 @@ public sealed partial class FileSystemMock
 
 		/// <inheritdoc cref="IFileSystem.IFile.Delete(string)" />
 		public void Delete(string path)
-		{
-			if (!_fileSystem.Storage.DeleteContainer(
-				_fileSystem.Storage.GetLocation(path)))
-			{
-				throw ExceptionFactory.FileNotFound(
-					_fileSystem.Path.GetFullPath(path));
-			}
-		}
+			=> _fileSystem.Storage.DeleteContainer(
+				_fileSystem.Storage.GetLocation(path));
 
 		/// <inheritdoc cref="IFileSystem.IFile.Encrypt(string)" />
 #if NET6_0_OR_GREATER
@@ -751,11 +745,6 @@ public sealed partial class FileSystemMock
 
 		private static IEnumerable<string> EnumerateLines(string contents)
 		{
-			if (string.IsNullOrEmpty(contents))
-			{
-				yield break;
-			}
-
 			using (StringReader reader = new(contents))
 			{
 				while (reader.ReadLine() is { } line)

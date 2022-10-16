@@ -98,4 +98,23 @@ public class InMemoryContainerTests
 
 		exception.Should().BeOfType<DirectoryNotFoundException>();
 	}
+
+	[Theory]
+	[InlineAutoData(DateTimeKind.Local)]
+	[InlineAutoData(DateTimeKind.Utc)]
+	public void TimeContainer_Time_Set_WithUnspecifiedKind_ShouldSetToProvidedKind(
+		DateTimeKind kind, string path, DateTime time)
+	{
+		time = DateTime.SpecifyKind(time, DateTimeKind.Unspecified);
+		Testing.FileSystemMock fileSystem = new();
+		IStorageLocation location = InMemoryLocation.New(null, path);
+		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);
+
+		fileContainer.CreationTime.Set(time, kind);
+
+		DateTime result = fileContainer.CreationTime.Get(DateTimeKind.Unspecified);
+
+		result.Should().Be(time);
+		result.Kind.Should().Be(kind);
+	}
 }

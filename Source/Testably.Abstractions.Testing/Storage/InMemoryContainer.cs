@@ -169,12 +169,14 @@ internal class InMemoryContainer : IStorageContainer
 			throw ExceptionFactory.NetworkPathNotFound(_location.FullPath);
 		}
 
-		if (!ignoreMetadataError &&
-		    Attributes.HasFlag(FileAttributes.ReadOnly))
+		Execute.OnWindows(() =>
 		{
-			Execute.OnWindows(()
-				=> throw ExceptionFactory.AccessToPathDenied());
-		}
+			if (!ignoreMetadataError &&
+			    Attributes.HasFlag(FileAttributes.ReadOnly))
+			{
+				throw ExceptionFactory.AccessToPathDenied();
+			}
+		});
 
 		if (CanGetAccess(access, share))
 		{
