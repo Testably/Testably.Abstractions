@@ -35,24 +35,30 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		fileSystemWatcher.BeginInit();
 
 		fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
-		new Thread(() =>
+		try
 		{
-			while (!ms.IsSet)
+			new Thread(() =>
 			{
-				TimeSystem.Thread.Sleep(10);
-				FileSystem.Directory.CreateDirectory(path);
-				FileSystem.Directory.Delete(path);
-			}
-		}).Start();
-		IFileSystem.IFileSystemWatcher.IWaitForChangedResult result =
-			fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, 1000);
+				while (!ms.IsSet)
+				{
+					TimeSystem.Thread.Sleep(10);
+					FileSystem.Directory.CreateDirectory(path);
+					FileSystem.Directory.Delete(path);
+				}
+			}).Start();
+			IFileSystem.IFileSystemWatcher.IWaitForChangedResult result =
+				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, 1000);
 
-		ms.Set();
-		fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
-		result.TimedOut.Should().BeTrue();
-		result.ChangeType.Should().Be(0);
-		result.Name.Should().BeNull();
-		result.OldName.Should().BeNull();
+			fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
+			result.TimedOut.Should().BeTrue();
+			result.ChangeType.Should().Be(0);
+			result.Name.Should().BeNull();
+			result.OldName.Should().BeNull();
+		}
+		finally
+		{
+			ms.Set();
+		}
 	}
 
 	[SkippableFact]
@@ -79,21 +85,27 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		fileSystemWatcher.EndInit();
 
 		fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
-		new Thread(() =>
+		try
 		{
-			while (!ms.IsSet)
+			new Thread(() =>
 			{
-				TimeSystem.Thread.Sleep(10);
-				FileSystem.Directory.CreateDirectory(path);
-				FileSystem.Directory.Delete(path);
-			}
-		}).Start();
-		IFileSystem.IFileSystemWatcher.IWaitForChangedResult result =
-			fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, 100);
+				while (!ms.IsSet)
+				{
+					TimeSystem.Thread.Sleep(10);
+					FileSystem.Directory.CreateDirectory(path);
+					FileSystem.Directory.Delete(path);
+				}
+			}).Start();
+			IFileSystem.IFileSystemWatcher.IWaitForChangedResult result =
+				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, 100);
 
-		ms.Set();
-		fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
-		result.TimedOut.Should().BeFalse();
+			fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
+			result.TimedOut.Should().BeFalse();
+		}
+		finally
+		{
+			ms.Set();
+		}
 	}
 
 	[SkippableTheory]
@@ -138,7 +150,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		fileSystemWatcher.Site.Should().BeNull();
 	}
 
-	[SkippableFact(Skip = "Test")]
+	[SkippableFact]
 	public void Site_ShouldBeWritable()
 	{
 		ISite? site = new Mock<ISite>().Object;
@@ -161,7 +173,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		fileSystemWatcher.SynchronizingObject.Should().BeNull();
 	}
 
-	[SkippableFact(Skip = "Test")]
+	[SkippableFact]
 	public void SynchronizingObject_ShouldBeWritable()
 	{
 		ISynchronizeInvoke? synchronizingObject = new Mock<ISynchronizeInvoke>().Object;
