@@ -1,7 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+#if FEATURE_FILESYSTEMWATCHER_ADVANCED
+using System.Collections.Generic;
+#endif
 
 namespace Testably.Abstractions;
 
@@ -18,7 +21,11 @@ public sealed partial class FileSystem
 			FileSystem = fileSystem;
 		}
 
-		#region IFileSystemWatcher Members
+#region IFileSystemWatcher Members
+
+		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Container" />
+		public IContainer? Container
+			=> _instance.Container;
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.EnableRaisingEvents" />
 		public bool EnableRaisingEvents
@@ -71,6 +78,20 @@ public sealed partial class FileSystem
 			set => _instance.Path = value;
 		}
 
+		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Site" />
+		public ISite? Site
+		{
+			get => _instance.Site;
+			set => _instance.Site = value;
+		}
+
+		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.SynchronizingObject" />
+		public ISynchronizeInvoke? SynchronizingObject
+		{
+			get => _instance.SynchronizingObject;
+			set => _instance.SynchronizingObject = value;
+		}
+
 		/// <inheritdoc cref="IDisposable.Dispose()" />
 		public void Dispose()
 			=> _instance.Dispose();
@@ -110,7 +131,26 @@ public sealed partial class FileSystem
 			remove => _instance.Renamed -= value;
 		}
 
-		#endregion
+		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.BeginInit()" />
+		public void BeginInit()
+			=> _instance.BeginInit();
+
+		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.EndInit()" />
+		public void EndInit()
+			=> _instance.EndInit();
+
+		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.WaitForChanged(WatcherChangeTypes)" />
+		public IFileSystem.IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
+			WatcherChangeTypes changeType)
+			=> new WaitForChangedResultWrapper(_instance.WaitForChanged(changeType));
+
+		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.WaitForChanged(WatcherChangeTypes, int)" />
+		public IFileSystem.IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
+			WatcherChangeTypes changeType, int timeout)
+			=> new WaitForChangedResultWrapper(
+				_instance.WaitForChanged(changeType, timeout));
+
+#endregion
 
 		[return: NotNullIfNotNull("instance")]
 		internal static FileSystemWatcherWrapper? FromFileSystemWatcher(
@@ -122,6 +162,33 @@ public sealed partial class FileSystem
 			}
 
 			return new FileSystemWatcherWrapper(instance, fileSystem);
+		}
+
+		private readonly struct WaitForChangedResultWrapper
+			: IFileSystem.IFileSystemWatcher.IWaitForChangedResult
+		{
+			private readonly WaitForChangedResult _instance;
+
+			public WaitForChangedResultWrapper(WaitForChangedResult instance)
+			{
+				_instance = instance;
+			}
+
+			/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.IWaitForChangedResult.ChangeType" />
+			public WatcherChangeTypes ChangeType
+				=> _instance.ChangeType;
+
+			/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.IWaitForChangedResult.Name" />
+			public string? Name
+				=> _instance.Name;
+
+			/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.IWaitForChangedResult.OldName" />
+			public string? OldName
+				=> _instance.OldName;
+
+			/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.IWaitForChangedResult.TimedOut" />
+			public bool TimedOut
+				=> _instance.TimedOut;
 		}
 	}
 }
