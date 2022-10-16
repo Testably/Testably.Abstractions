@@ -1,7 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+#if FEATURE_FILESYSTEMWATCHER_ADVANCED
+using System.Collections.Generic;
+#endif
 
 namespace Testably.Abstractions;
 
@@ -12,7 +14,7 @@ public partial interface IFileSystem
 	/// </summary>
 	public interface IFileSystemWatcher : IFileSystemExtensionPoint, IDisposable
 	{
-		/// <inheritdoc cref="FileSystemWatcher.Container" />
+		/// <inheritdoc cref="Component.Container" />
 		IContainer? Container { get; }
 
 		/// <inheritdoc cref="FileSystemWatcher.EnableRaisingEvents" />
