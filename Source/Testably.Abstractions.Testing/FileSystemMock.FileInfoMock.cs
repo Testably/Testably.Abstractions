@@ -79,7 +79,6 @@ public sealed partial class FileSystemMock
 				                            Location,
 				                            FileSystem.Storage.GetLocation(destFileName))
 			                            ?? throw ExceptionFactory.FileNotFound(FullName);
-			Refresh();
 			return FileSystem.FileInfo.New(location.FullPath);
 		}
 
@@ -91,7 +90,6 @@ public sealed partial class FileSystemMock
 				                            FileSystem.Storage.GetLocation(destFileName),
 				                            overwrite)
 			                            ?? throw ExceptionFactory.FileNotFound(FullName);
-			Refresh();
 			return FileSystem.FileInfo.New(location.FullPath);
 		}
 
@@ -134,7 +132,6 @@ public sealed partial class FileSystemMock
 				           Location,
 				           FileSystem.Storage.GetLocation(destFileName))
 			           ?? throw ExceptionFactory.FileNotFound(FullName);
-			Refresh();
 		}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
@@ -146,7 +143,6 @@ public sealed partial class FileSystemMock
 				           FileSystem.Storage.GetLocation(destFileName),
 				           overwrite)
 			           ?? throw ExceptionFactory.FileNotFound(FullName);
-			Refresh();
 		}
 #endif
 
@@ -225,7 +221,6 @@ public sealed partial class FileSystemMock
 				                            FileSystem.Storage.GetLocation(
 					                            destinationBackupFileName))
 			                            ?? throw ExceptionFactory.FileNotFound(FullName);
-			Refresh();
 			return FileSystem.FileInfo.New(location.FullPath);
 		}
 
@@ -242,7 +237,6 @@ public sealed partial class FileSystemMock
 					                            destinationBackupFileName),
 				                            ignoreMetadataErrors)
 			                            ?? throw ExceptionFactory.FileNotFound(FullName);
-			Refresh();
 			return FileSystem.FileInfo.New(location.FullPath);
 		}
 
