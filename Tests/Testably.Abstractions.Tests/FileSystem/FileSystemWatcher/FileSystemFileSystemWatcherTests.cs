@@ -22,7 +22,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
 	}
 
-	[SkippableTheory]
+	[SkippableTheory(Skip = "Test")]
 	[AutoData]
 	public void BeginInit_ShouldStopListening(string path)
 	{
@@ -65,7 +65,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		fileSystemWatcher.Container.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[SkippableTheory(Skip = "Test")]
 	[AutoData]
 	public void EndInit_ShouldRestartListening(string path)
 	{
@@ -138,7 +138,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		fileSystemWatcher.Site.Should().BeNull();
 	}
 
-	[SkippableFact]
+	[SkippableFact(Skip = "Test")]
 	public void Site_ShouldBeWritable()
 	{
 		ISite? site = new Mock<ISite>().Object;
@@ -161,7 +161,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		fileSystemWatcher.SynchronizingObject.Should().BeNull();
 	}
 
-	[SkippableFact]
+	[SkippableFact(Skip = "Test")]
 	public void SynchronizingObject_ShouldBeWritable()
 	{
 		ISynchronizeInvoke? synchronizingObject = new Mock<ISynchronizeInvoke>().Object;
