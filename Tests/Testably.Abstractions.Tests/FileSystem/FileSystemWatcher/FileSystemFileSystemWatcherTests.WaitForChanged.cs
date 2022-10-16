@@ -1,5 +1,6 @@
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
@@ -16,7 +17,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		try
 		{
-			new Thread(() =>
+			Task.Run(() =>
 			{
 				while (!ms.IsSet)
 				{
@@ -24,7 +25,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 					FileSystem.Directory.CreateDirectory(path);
 					FileSystem.Directory.Delete(path);
 				}
-			}).Start();
+			});
 
 			using (CancellationTokenSource cts = new(5000))
 			{
@@ -55,7 +56,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		try
 		{
 			fileSystemWatcher.EnableRaisingEvents = true;
-			new Thread(() =>
+			Task.Run(() =>
 			{
 				while (!ms.IsSet)
 				{
@@ -63,7 +64,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 					FileSystem.Directory.CreateDirectory(path);
 					FileSystem.Directory.Delete(path);
 				}
-			}).Start();
+			});
 			IFileSystem.IFileSystemWatcher.IWaitForChangedResult result =
 				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed, 100);
 

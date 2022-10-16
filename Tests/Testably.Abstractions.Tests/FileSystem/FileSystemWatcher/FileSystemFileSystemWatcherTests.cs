@@ -2,6 +2,7 @@ using Moq;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
@@ -37,7 +38,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
 		try
 		{
-			new Thread(() =>
+			Task.Run(() =>
 			{
 				while (!ms.IsSet)
 				{
@@ -45,7 +46,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 					FileSystem.Directory.CreateDirectory(path);
 					FileSystem.Directory.Delete(path);
 				}
-			}).Start();
+			});
 			IFileSystem.IFileSystemWatcher.IWaitForChangedResult result =
 				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, 1000);
 
@@ -87,7 +88,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
 		try
 		{
-			new Thread(() =>
+			Task.Run(() =>
 			{
 				while (!ms.IsSet)
 				{
@@ -95,7 +96,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 					FileSystem.Directory.CreateDirectory(path);
 					FileSystem.Directory.Delete(path);
 				}
-			}).Start();
+			});
 			IFileSystem.IFileSystemWatcher.IWaitForChangedResult result =
 				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, 100);
 
