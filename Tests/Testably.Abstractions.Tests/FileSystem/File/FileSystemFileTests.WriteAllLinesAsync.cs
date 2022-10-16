@@ -49,7 +49,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 		await FileSystem.File.WriteAllLinesAsync(path, contents);
 
 		string[] result = await FileSystem.File.ReadAllLinesAsync(path);
-		result.Should().BeEquivalentTo(contents);
+		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
 	}
 
 	[SkippableTheory]
@@ -60,7 +60,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 		await FileSystem.File.WriteAllLinesAsync(path, contents);
 
 		string[] result = await FileSystem.File.ReadAllLinesAsync(path);
-		result.Should().BeEquivalentTo(contents);
+		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
 	}
 }
 #endif

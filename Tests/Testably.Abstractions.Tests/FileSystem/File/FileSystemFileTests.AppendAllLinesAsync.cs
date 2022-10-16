@@ -54,7 +54,8 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 		FileSystem.File.Exists(path).Should().BeTrue();
 		FileSystem.File.ReadAllLines(path).Should()
-		   .BeEquivalentTo(previousContents.Concat(contents));
+		   .BeEquivalentTo(previousContents.Concat(contents),
+				o => o.WithStrictOrdering());
 	}
 
 	[SkippableTheory]

@@ -62,7 +62,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 		string[] results = await FileSystem.File.ReadAllLinesAsync(path);
 
-		results.Should().BeEquivalentTo(lines);
+		results.Should().BeEquivalentTo(lines, o => o.WithStrictOrdering());
 	}
 
 	[SkippableTheory]

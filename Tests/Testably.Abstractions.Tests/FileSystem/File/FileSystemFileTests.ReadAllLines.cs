@@ -40,7 +40,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 		string[] results = FileSystem.File.ReadAllLines(path);
 
-		results.Should().BeEquivalentTo(lines);
+		results.Should().BeEquivalentTo(lines, o => o.WithStrictOrdering());
 	}
 
 	[SkippableTheory]
