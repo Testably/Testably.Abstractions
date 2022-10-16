@@ -167,8 +167,8 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 			ms.Set();
 		}, null);
 
-		readStream.Dispose();
 		ms.Wait(10000);
+		readStream.Dispose();
 
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(path);
@@ -207,6 +207,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 			(TimeSystem as TimeSystemMock)?.TimeProvider.SynchronizeClock();
 			ms.Set();
 		}, null);
+
 		ms.Wait(10000);
 		writeStream.Dispose();
 
