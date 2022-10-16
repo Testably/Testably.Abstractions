@@ -220,11 +220,16 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 			creationTime.Should()
 			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			   .BeOnOrBefore(creationTimeEnd);
+			lastAccessTime.Should()
+			   .BeOnOrAfter(updateTime);
+		}
+		else
+		{
+			lastAccessTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
 		}
 
-		lastAccessTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
 		lastWriteTime.Should()
 		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
