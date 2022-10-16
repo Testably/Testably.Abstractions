@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 namespace Testably.Abstractions.Testing;
@@ -50,7 +51,6 @@ public sealed partial class TimeSystemMock
 		/// <inheritdoc cref="TimeSystemMock.ITimeProvider.SetTo(DateTime)" />
 		public void SetTo(DateTime value)
 		{
-			CheckSynchronization();
 			Now.Value = value;
 		}
 
@@ -62,6 +62,7 @@ public sealed partial class TimeSystemMock
 
 		#endregion
 
+		[ExcludeFromCodeCoverage]
 		private void CheckSynchronization()
 		{
 			if (_synchronizedTime != null &&

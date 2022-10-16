@@ -92,6 +92,35 @@ public class TimeSystemMockTests
 	}
 
 	[Theory]
+	[InlineData(true, 3000)]
+	[InlineData(false, 2000)]
+	public async Task SynchronizeClock_AdvanceBy_ShouldUseSynchronizedValueAsBase(
+		bool synchronizeClock, int expectedDelay)
+	{
+		Testing.TimeSystemMock timeSystem = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+		await timeSystem.Task.Delay(1000);
+
+		ManualResetEventSlim ms = new();
+		await Task.Run(async () =>
+		{
+			await timeSystem.Task.Delay(1000);
+			if (synchronizeClock)
+			{
+				timeSystem.TimeProvider.SynchronizeClock();
+			}
+
+			ms.Set();
+		});
+		ms.Wait();
+
+		timeSystem.TimeProvider.AdvanceBy(TimeSpan.FromMilliseconds(1000));
+		int mainThreadAfterCompletedTaskDelay =
+			(int)(timeSystem.DateTime.UtcNow - start).TotalMilliseconds;
+		mainThreadAfterCompletedTaskDelay.Should().Be(expectedDelay);
+	}
+
+	[Theory]
 	[InlineData(true, 2000)]
 	[InlineData(false, 1000)]
 	public async Task SynchronizeClock_ShouldSetNowToValueOfCurrentAsyncContext(
