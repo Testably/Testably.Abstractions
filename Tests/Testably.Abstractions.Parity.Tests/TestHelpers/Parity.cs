@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace Testably.Abstractions.Tests.Parity;
+namespace Testably.Abstractions.Parity.Tests.TestHelpers;
 
 public class Parity
 {
