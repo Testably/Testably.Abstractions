@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	[SkippableTheory(Skip = "Test")]
+	[SkippableTheory]
 	[AutoData]
 	public void WaitForChanged_ShouldBlockUntilEventHappens(string path)
 	{
@@ -14,18 +14,18 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		ManualResetEventSlim ms = new();
 		IFileSystem.IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
-		new Thread(() =>
-		{
-			while (!ms.IsSet)
-			{
-				TimeSystem.Thread.Sleep(10);
-				FileSystem.Directory.CreateDirectory(path);
-				FileSystem.Directory.Delete(path);
-			}
-		}).Start();
-
 		try
 		{
+			new Thread(() =>
+			{
+				while (!ms.IsSet)
+				{
+					Thread.Sleep(10);
+					FileSystem.Directory.CreateDirectory(path);
+					FileSystem.Directory.Delete(path);
+				}
+			}).Start();
+
 			using (CancellationTokenSource cts = new(5000))
 			{
 				cts.Token.Register(() => throw new TimeoutException());
@@ -44,7 +44,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		}
 	}
 
-	[SkippableTheory(Skip = "Test")]
+	[SkippableTheory]
 	[AutoData]
 	public void WaitForChanged_Timeout_ShouldReturnTimedOut(string path)
 	{
@@ -52,24 +52,30 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		ManualResetEventSlim ms = new();
 		IFileSystem.IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
-		fileSystemWatcher.EnableRaisingEvents = true;
-		new Thread(() =>
+		try
 		{
-			while (!ms.IsSet)
+			fileSystemWatcher.EnableRaisingEvents = true;
+			new Thread(() =>
 			{
-				TimeSystem.Thread.Sleep(10);
-				FileSystem.Directory.CreateDirectory(path);
-				FileSystem.Directory.Delete(path);
-			}
-		}).Start();
-		IFileSystem.IFileSystemWatcher.IWaitForChangedResult result =
-			fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed, 100);
+				while (!ms.IsSet)
+				{
+					Thread.Sleep(10);
+					FileSystem.Directory.CreateDirectory(path);
+					FileSystem.Directory.Delete(path);
+				}
+			}).Start();
+			IFileSystem.IFileSystemWatcher.IWaitForChangedResult result =
+				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed, 100);
 
-		ms.Set();
-		fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
-		result.TimedOut.Should().BeTrue();
-		result.ChangeType.Should().Be(0);
-		result.Name.Should().BeNull();
-		result.OldName.Should().BeNull();
+			fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
+			result.TimedOut.Should().BeTrue();
+			result.ChangeType.Should().Be(0);
+			result.Name.Should().BeNull();
+			result.OldName.Should().BeNull();
+		}
+		finally
+		{
+			ms.Set();
+		}
 	}
 }
