@@ -74,7 +74,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{
-			if (!ms.IsSet)
+			if (eventArgs.Name == subdirectoryPath)
 			{
 				result = eventArgs;
 			}
