@@ -24,6 +24,7 @@
     <Nullable>enable</Nullable>
     <NoWarn>1701;1702</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <OutputPath>$(SolutionDir)Build\Binaries\$(AssemblyName)</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' != 'Debug' ">
