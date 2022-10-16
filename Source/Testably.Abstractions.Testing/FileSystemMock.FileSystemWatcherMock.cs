@@ -195,9 +195,15 @@ public sealed partial class FileSystemMock
 				InternalEvent -= EventHandler;
 			}
 
-			return tcs.Task.IsFaulted || tcs.Task.IsCanceled
-				? WaitForChangedResultMock.TimedOutResult
-				: tcs.Task.Result;
+#if NETFRAMEWORK
+			return tcs.Task.IsCompleted
+				? tcs.Task.Result
+				: WaitForChangedResultMock.TimedOutResult;
+#else
+			return tcs.Task.IsCompletedSuccessfully
+				? tcs.Task.Result
+				: WaitForChangedResultMock.TimedOutResult;
+#endif
 		}
 
 		#endregion
