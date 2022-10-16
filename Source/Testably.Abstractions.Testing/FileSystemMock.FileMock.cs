@@ -751,11 +751,6 @@ public sealed partial class FileSystemMock
 
 		private static IEnumerable<string> EnumerateLines(string contents)
 		{
-			if (string.IsNullOrEmpty(contents))
-			{
-				yield break;
-			}
-
 			using (StringReader reader = new(contents))
 			{
 				while (reader.ReadLine() is { } line)

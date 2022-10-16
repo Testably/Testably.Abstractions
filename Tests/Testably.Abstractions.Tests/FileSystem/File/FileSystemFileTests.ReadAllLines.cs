@@ -8,6 +8,17 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
+	public void ReadAllLines_Empty_ShouldReturnEmptyArray(string path)
+	{
+		FileSystem.File.WriteAllText(path, "");
+
+		string[] results = FileSystem.File.ReadAllLines(path);
+
+		results.Should().BeEmpty();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void ReadAllLines_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
 		Exception? exception = Record.Exception(() =>
