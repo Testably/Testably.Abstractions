@@ -91,6 +91,38 @@ public class TimeSystemMockTests
 		}
 	}
 
+	[Theory]
+	[InlineData(true, 2000)]
+	[InlineData(false, 1000)]
+	public async Task SynchronizeClock_ShouldSetNowToValueOfCurrentAsyncContext(
+		bool synchronizeClock, int expectedDelay)
+	{
+		Testing.TimeSystemMock timeSystem = new();
+		DateTime start = timeSystem.DateTime.UtcNow;
+		await timeSystem.Task.Delay(1000);
+		int parallelTaskDelay = 0;
+
+		ManualResetEventSlim ms = new();
+		await Task.Run(async () =>
+		{
+			await timeSystem.Task.Delay(1000);
+			parallelTaskDelay =
+				(int)(timeSystem.DateTime.UtcNow - start).TotalMilliseconds;
+			if (synchronizeClock)
+			{
+				timeSystem.TimeProvider.SynchronizeClock();
+			}
+
+			ms.Set();
+		});
+		ms.Wait();
+
+		int mainThreadAfterCompletedTaskDelay =
+			(int)(timeSystem.DateTime.UtcNow - start).TotalMilliseconds;
+		parallelTaskDelay.Should().Be(2000);
+		mainThreadAfterCompletedTaskDelay.Should().Be(expectedDelay);
+	}
+
 	[Fact]
 	public void ParallelThreads_ShouldHaveDistinctTimes()
 	{
@@ -99,7 +131,7 @@ public class TimeSystemMockTests
 		Testing.TimeSystemMock timeSystem = new();
 		DateTime start = timeSystem.DateTime.UtcNow;
 		ConcurrentDictionary<int, List<int>> delaysPerThread = new();
-		CountdownEvent ms = new CountdownEvent(parallelThreads);
+		CountdownEvent ms = new(parallelThreads);
 
 		for (int i = 1; i <= parallelThreads; i++)
 		{

@@ -8,6 +8,8 @@ public sealed partial class TimeSystemMock
 	internal sealed class TimeProviderMock : ITimeProvider
 	{
 		private static readonly AsyncLocal<DateTime> Now = new();
+		private static readonly AsyncLocal<DateTime?> SynchronizedTime = new();
+		private DateTime? _synchronizedTime;
 
 		public TimeProviderMock(DateTime now)
 		{
@@ -34,21 +36,40 @@ public sealed partial class TimeSystemMock
 		/// <inheritdoc cref="TimeSystemMock.ITimeProvider.AdvanceBy(TimeSpan)" />
 		public void AdvanceBy(TimeSpan interval)
 		{
+			CheckSynchronization();
 			Now.Value = Now.Value.Add(interval);
 		}
 
 		/// <inheritdoc cref="TimeSystemMock.ITimeProvider.Read()" />
 		public DateTime Read()
 		{
+			CheckSynchronization();
 			return Now.Value;
 		}
 
 		/// <inheritdoc cref="TimeSystemMock.ITimeProvider.SetTo(DateTime)" />
 		public void SetTo(DateTime value)
 		{
+			CheckSynchronization();
 			Now.Value = value;
 		}
 
+		/// <inheritdoc cref="TimeSystemMock.ITimeProvider.SynchronizeClock()" />
+		public void SynchronizeClock()
+		{
+			_synchronizedTime = Now.Value;
+		}
+
 		#endregion
+
+		private void CheckSynchronization()
+		{
+			if (_synchronizedTime != null &&
+			    SynchronizedTime.Value != _synchronizedTime)
+			{
+				SynchronizedTime.Value = _synchronizedTime;
+				Now.Value = _synchronizedTime.Value;
+			}
+		}
 	}
 }
