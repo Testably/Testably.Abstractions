@@ -208,14 +208,8 @@ public sealed partial class FileSystemMock
 
 		/// <inheritdoc cref="IFileSystem.IFile.Delete(string)" />
 		public void Delete(string path)
-		{
-			if (!_fileSystem.Storage.DeleteContainer(
-				_fileSystem.Storage.GetLocation(path)))
-			{
-				throw ExceptionFactory.FileNotFound(
-					_fileSystem.Path.GetFullPath(path));
-			}
-		}
+			=> _fileSystem.Storage.DeleteContainer(
+				_fileSystem.Storage.GetLocation(path));
 
 		/// <inheritdoc cref="IFileSystem.IFile.Encrypt(string)" />
 #if NET6_0_OR_GREATER
