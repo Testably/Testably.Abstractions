@@ -37,6 +37,24 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void MoveTo_ShouldUpdatePropertiesOfDirectoryInfo(
+		string source, string destination)
+	{
+		FileSystem.InitializeIn(source)
+		   .WithAFile()
+		   .WithASubdirectory().Initialized(s => s
+			   .WithAFile()
+			   .WithASubdirectory());
+		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(source);
+
+		sut.MoveTo(destination);
+
+		sut.FullName.TrimEnd(FileSystem.Path.DirectorySeparatorChar)
+		   .Should().Be(FileSystem.Path.GetFullPath(destination));
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void MoveTo_WithLockedFile_ShouldNotMoveDirectoryAtAll(
 		string source, string destination)
 	{

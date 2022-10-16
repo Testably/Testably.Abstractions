@@ -36,7 +36,7 @@ public static partial class FileSystemMockExtensions
 			string path = "",
 			string searchPattern = "*",
 			Func<FileSystemMock.ChangeDescription, bool>? predicate = null)
-		=> handler.OnChange(notificationCallback,
+		=> handler.OnEvent(notificationCallback,
 			changeDescription => changeDescription.Matches(
 				fileSystemType,
 				WatcherChangeTypes.Changed,
@@ -73,7 +73,7 @@ public static partial class FileSystemMockExtensions
 			string path = "",
 			string searchPattern = "*",
 			Func<FileSystemMock.ChangeDescription, bool>? predicate = null)
-		=> handler.OnChange(notificationCallback,
+		=> handler.OnEvent(notificationCallback,
 			changeDescription => changeDescription.Matches(
 				fileSystemType,
 				WatcherChangeTypes.Created,
@@ -110,7 +110,7 @@ public static partial class FileSystemMockExtensions
 			string path = "",
 			string searchPattern = "*",
 			Func<FileSystemMock.ChangeDescription, bool>? predicate = null)
-		=> handler.OnChange(notificationCallback,
+		=> handler.OnEvent(notificationCallback,
 			changeDescription => changeDescription.Matches(
 				fileSystemType,
 				WatcherChangeTypes.Deleted,

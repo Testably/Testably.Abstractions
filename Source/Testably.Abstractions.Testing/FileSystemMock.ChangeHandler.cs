@@ -28,8 +28,8 @@ public sealed partial class FileSystemMock
 		public IFileSystem FileSystem => _fileSystemMock;
 
 		/// <inheritdoc
-		///     cref="IInterceptionHandler.Change(Action{ChangeDescription}, Func{ChangeDescription, bool}?)" />
-		public FileSystemMock Change(
+		///     cref="IInterceptionHandler.Event" />
+		public FileSystemMock Event(
 			Action<ChangeDescription> interceptionCallback,
 			Func<ChangeDescription, bool>? predicate = null)
 		{
@@ -42,8 +42,8 @@ public sealed partial class FileSystemMock
 		#region INotificationHandler Members
 
 		/// <inheritdoc
-		///     cref="INotificationHandler.OnChange(Action{ChangeDescription}?, Func{ChangeDescription, bool}?)" />
-		public Notification.IAwaitableCallback<ChangeDescription> OnChange(
+		///     cref="INotificationHandler.OnEvent" />
+		public Notification.IAwaitableCallback<ChangeDescription> OnEvent(
 			Action<ChangeDescription>? notificationCallback = null,
 			Func<ChangeDescription, bool>? predicate = null)
 			=> _changeOccurredCallbacks.RegisterCallback(notificationCallback, predicate);

@@ -7,6 +7,27 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
+	public void Move_CaseOnlyChange_ShouldMoveFileWithContent(
+		string name, string contents)
+	{
+		string sourceName = name.ToLower();
+		string destinationName = name.ToUpper();
+		FileSystem.File.WriteAllText(sourceName, contents);
+
+		FileSystem.File.Move(sourceName, destinationName);
+
+		if (Test.RunsOnLinux)
+		{
+			// sourceName and destinationName are considered different only on Linux
+			FileSystem.File.Exists(sourceName).Should().BeFalse();
+		}
+
+		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Move_DestinationExists_ShouldThrowIOExceptionAndNotMoveFile(
 		string sourceName,
 		string destinationName,
@@ -67,6 +88,20 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void Move_ShouldMoveFileWithContent(
+		string sourceName, string destinationName, string contents)
+	{
+		FileSystem.File.WriteAllText(sourceName, contents);
+
+		FileSystem.File.Move(sourceName, destinationName);
+
+		FileSystem.File.Exists(sourceName).Should().BeFalse();
+		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Move_ShouldNotAdjustTimes(string source, string destination)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
@@ -91,20 +126,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 		lastWriteTime.Should()
 		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 		   .BeOnOrBefore(creationTimeEnd);
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void Move_ShouldMoveFileWithContent(
-		string sourceName, string destinationName, string contents)
-	{
-		FileSystem.File.WriteAllText(sourceName, contents);
-
-		FileSystem.File.Move(sourceName, destinationName);
-
-		FileSystem.File.Exists(sourceName).Should().BeFalse();
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
 	}
 
 	[SkippableTheory]
