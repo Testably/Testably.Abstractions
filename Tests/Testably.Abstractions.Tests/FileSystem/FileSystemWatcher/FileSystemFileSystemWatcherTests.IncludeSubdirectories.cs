@@ -83,8 +83,11 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		ms.Wait(10000).Should().BeTrue();
 
 		result.Should().NotBeNull();
-		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(subdirectoryPath));
-		result.ChangeType.Should().Be(WatcherChangeTypes.Deleted);
+		if (!Test.RunsOnLinux)
+		{
+			result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(subdirectoryPath));
+		}
+		result!.ChangeType.Should().Be(WatcherChangeTypes.Deleted);
 		result.Name.Should().Be(subdirectoryPath);
 	}
 }
