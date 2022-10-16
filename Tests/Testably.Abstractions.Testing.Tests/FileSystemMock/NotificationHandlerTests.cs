@@ -32,7 +32,7 @@ public class NotificationHandlerTests
 					eventCount++;
 				},
 				c => c.ChangeType == WatcherChangeTypes.Created)
-		   .Execute(() =>
+		   .ExecuteWhileWaiting(() =>
 			{
 				FileSystem.Directory.CreateDirectory(path);
 			})
@@ -57,7 +57,7 @@ public class NotificationHandlerTests
 		   .OnEvent(c => receivedPath = c.Path,
 				c => c.ChangeType == expectedChangeType &&
 				     c.FileSystemType == expectedFileSystemType)
-		   .Execute(() =>
+		   .ExecuteWhileWaiting(() =>
 			{
 				callback.Invoke(FileSystem, path);
 			})

@@ -23,7 +23,7 @@ public class InterceptionHandlerTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.CreateDirectory(path);
 				})
@@ -45,7 +45,7 @@ public class InterceptionHandlerTests
 		{
 			FileSystem.Notify
 			   .OnEvent(c => receivedPath = c.Path)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.CreateDirectory(path);
 				})

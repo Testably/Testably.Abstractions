@@ -25,7 +25,7 @@ public class NotificationHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnCreated(FileSystemTypes.Directory, _ => isNotified = true)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.Delete(path);
 				})
@@ -47,7 +47,7 @@ public class NotificationHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnCreated(FileSystemTypes.Directory, _ => isNotified = true, path2)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.CreateDirectory(path1);
 				})
@@ -72,7 +72,7 @@ public class NotificationHandlerExtensionsTests
 			FileSystem.Notify
 			   .OnCreated(FileSystemTypes.Directory, _ => isNotified = true,
 					searchPattern: searchPattern)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.CreateDirectory(path);
 				})
@@ -100,7 +100,7 @@ public class NotificationHandlerExtensionsTests
 
 		FileSystem.Notify
 		   .OnCreated(FileSystemTypes.Directory, _ => isNotified = true)
-		   .Execute(() =>
+		   .ExecuteWhileWaiting(() =>
 			{
 				FileSystem.Directory.CreateDirectory(path);
 			})
@@ -122,7 +122,7 @@ public class NotificationHandlerExtensionsTests
 			FileSystem.Notify
 			   .OnCreated(FileSystemTypes.Directory, _ => isNotified = true,
 					predicate: _ => expectedResult)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.CreateDirectory(path);
 				})
@@ -153,7 +153,7 @@ public class NotificationHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnCreated(FileSystemTypes.File, _ => isNotified = true)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.Delete(path);
 				})
@@ -175,7 +175,7 @@ public class NotificationHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnCreated(FileSystemTypes.File, _ => isNotified = true, path2)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.WriteAllText(path1, null);
 				})
@@ -200,7 +200,7 @@ public class NotificationHandlerExtensionsTests
 			FileSystem.Notify
 			   .OnCreated(FileSystemTypes.File, _ => isNotified = true,
 					searchPattern: searchPattern)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.WriteAllText(path, null);
 				})
@@ -228,7 +228,7 @@ public class NotificationHandlerExtensionsTests
 
 		FileSystem.Notify
 		   .OnCreated(FileSystemTypes.File, _ => isNotified = true)
-		   .Execute(() =>
+		   .ExecuteWhileWaiting(() =>
 			{
 				FileSystem.File.WriteAllText(path, null);
 			})
@@ -250,7 +250,7 @@ public class NotificationHandlerExtensionsTests
 			FileSystem.Notify
 			   .OnCreated(FileSystemTypes.File, _ => isNotified = true,
 					predicate: _ => expectedResult)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.WriteAllText(path, null);
 				})
@@ -280,7 +280,7 @@ public class NotificationHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnDeleted(FileSystemTypes.Directory, _ => isNotified = true)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.CreateDirectory(path);
 				})
@@ -304,7 +304,7 @@ public class NotificationHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnDeleted(FileSystemTypes.Directory, _ => isNotified = true, path2)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.Delete(path1);
 				})
@@ -330,7 +330,7 @@ public class NotificationHandlerExtensionsTests
 			FileSystem.Notify
 			   .OnDeleted(FileSystemTypes.Directory, _ => isNotified = true,
 					searchPattern: searchPattern)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.Delete(path);
 				})
@@ -359,7 +359,7 @@ public class NotificationHandlerExtensionsTests
 
 		FileSystem.Notify
 		   .OnDeleted(FileSystemTypes.Directory, _ => isNotified = true)
-		   .Execute(() =>
+		   .ExecuteWhileWaiting(() =>
 			{
 				FileSystem.Directory.Delete(path);
 			})
@@ -382,7 +382,7 @@ public class NotificationHandlerExtensionsTests
 			FileSystem.Notify
 			   .OnDeleted(FileSystemTypes.Directory, _ => isNotified = true,
 					predicate: _ => expectedResult)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.Delete(path);
 				})
@@ -412,7 +412,7 @@ public class NotificationHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnDeleted(FileSystemTypes.File, _ => isNotified = true)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.WriteAllText(path, null);
 				})
@@ -436,7 +436,7 @@ public class NotificationHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnDeleted(FileSystemTypes.File, _ => isNotified = true, path2)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.Delete(path1);
 				})
@@ -462,7 +462,7 @@ public class NotificationHandlerExtensionsTests
 			FileSystem.Notify
 			   .OnDeleted(FileSystemTypes.File, _ => isNotified = true,
 					searchPattern: searchPattern)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.Delete(path);
 				})
@@ -491,7 +491,7 @@ public class NotificationHandlerExtensionsTests
 
 		FileSystem.Notify
 		   .OnDeleted(FileSystemTypes.File, _ => isNotified = true)
-		   .Execute(() =>
+		   .ExecuteWhileWaiting(() =>
 			{
 				FileSystem.File.Delete(path);
 			})
@@ -514,7 +514,7 @@ public class NotificationHandlerExtensionsTests
 			FileSystem.Notify
 			   .OnDeleted(FileSystemTypes.File, _ => isNotified = true,
 					predicate: _ => expectedResult)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.Delete(path);
 				})
@@ -544,7 +544,7 @@ public class NotificationHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnChanged(FileSystemTypes.File, _ => isNotified = true)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.WriteAllText(path, null);
 				})
@@ -568,7 +568,7 @@ public class NotificationHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnChanged(FileSystemTypes.File, _ => isNotified = true, path2)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.AppendAllText(path1, "foo");
 				})
@@ -594,7 +594,7 @@ public class NotificationHandlerExtensionsTests
 			FileSystem.Notify
 			   .OnChanged(FileSystemTypes.File, _ => isNotified = true,
 					searchPattern: searchPattern)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.AppendAllText(path, "foo");
 				})
@@ -623,7 +623,7 @@ public class NotificationHandlerExtensionsTests
 
 		FileSystem.Notify
 		   .OnChanged(FileSystemTypes.File, _ => isNotified = true)
-		   .Execute(() =>
+		   .ExecuteWhileWaiting(() =>
 			{
 				FileSystem.File.AppendAllText(path, "foo");
 			})
@@ -646,7 +646,7 @@ public class NotificationHandlerExtensionsTests
 			FileSystem.Notify
 			   .OnChanged(FileSystemTypes.File, _ => isNotified = true,
 					predicate: _ => expectedResult)
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.AppendAllText(path, "foo");
 				})

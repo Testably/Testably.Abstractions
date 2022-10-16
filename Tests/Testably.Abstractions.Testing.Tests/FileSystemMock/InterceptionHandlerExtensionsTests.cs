@@ -31,7 +31,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.Delete(path);
 				})
@@ -60,7 +60,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.Delete(path1);
 				})
@@ -91,7 +91,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.AppendAllText(path, "foo");
 				})
@@ -129,7 +129,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.AppendAllText(path, "foo");
 				})
@@ -166,7 +166,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.Delete(path);
 				})
@@ -194,7 +194,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.CreateDirectory(path1);
 				})
@@ -224,7 +224,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.CreateDirectory(path);
 				})
@@ -261,7 +261,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.CreateDirectory(path);
 				})
@@ -298,7 +298,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.Delete(path);
 				})
@@ -326,7 +326,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.WriteAllText(path1, null);
 				})
@@ -356,7 +356,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.WriteAllText(path, null);
 				})
@@ -393,7 +393,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.WriteAllText(path, null);
 				})
@@ -429,7 +429,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.CreateDirectory(path);
 				})
@@ -458,7 +458,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.Delete(path1);
 				})
@@ -489,7 +489,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.Delete(path);
 				})
@@ -527,7 +527,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.Delete(path);
 				})
@@ -563,7 +563,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.WriteAllText(path, null);
 				})
@@ -592,7 +592,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.Delete(path1);
 				})
@@ -623,7 +623,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.Delete(path);
 				})
@@ -661,7 +661,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			FileSystem.Notify
 			   .OnEvent()
-			   .Execute(() =>
+			   .ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.Delete(path);
 				})

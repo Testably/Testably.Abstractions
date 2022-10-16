@@ -11,9 +11,10 @@ namespace Testably.Abstractions.Testing;
 public static class Notification
 {
 	/// <summary>
-	///     Executes the <paramref name="callback" /> and returns the <paramref name="awaitable" />.
+	///     Executes the <paramref name="callback" /> while waiting for the notification.
 	/// </summary>
-	public static IAwaitableCallback<TValue> Execute<TValue>(
+	/// <returns>The <paramref name="awaitable" /> callback.</returns>
+	public static IAwaitableCallback<TValue> ExecuteWhileWaiting<TValue>(
 		this IAwaitableCallback<TValue> awaitable, Action callback)
 	{
 		return new CallbackWaiterWithValue<TValue, object?>(awaitable, () =>
@@ -24,9 +25,10 @@ public static class Notification
 	}
 
 	/// <summary>
-	///     Executes the <paramref name="callback" /> and returns the <paramref name="awaitable" />.
+	///     Executes the <paramref name="callback" /> while waiting for the notification.
 	/// </summary>
-	public static IAwaitableCallback<TValue, TFunc> Execute<TValue, TFunc>(
+	/// <returns>The <paramref name="awaitable" /> callback.</returns>
+	public static IAwaitableCallback<TValue, TFunc> ExecuteWhileWaiting<TValue, TFunc>(
 		this IAwaitableCallback<TValue> awaitable, Func<TFunc> callback)
 	{
 		return new CallbackWaiterWithValue<TValue, TFunc>(awaitable, callback);
