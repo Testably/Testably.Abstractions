@@ -239,7 +239,7 @@ public sealed partial class FileSystemMock
 		{
 			Stop();
 			_cancellationTokenSource = new CancellationTokenSource();
-			_changeHandler = _fileSystem.Notify.OnChange(c =>
+			_changeHandler = _fileSystem.Notify.OnEvent(c =>
 			{
 				if (!_changes.TryAdd(c, 100))
 				{

@@ -159,7 +159,7 @@ public class NotificationTests
 					{
 						isCalledFromSecondThread = true;
 					}
-				}).Execute(() => listening.Set());
+				}).ExecuteWhileWaiting(() => listening.Set());
 		new Thread(() =>
 		{
 			listening.Wait(1000);
@@ -191,10 +191,12 @@ public class NotificationTests
 		int receivedMilliseconds = -1;
 		bool isExecuted = false;
 
-		timeSystem.On.ThreadSleep(t =>
+		timeSystem.On
+		   .ThreadSleep(t =>
 			{
 				receivedMilliseconds = (int)t.TotalMilliseconds;
-			}).Execute(() =>
+			})
+		   .ExecuteWhileWaiting(() =>
 			{
 				timeSystem.Thread.Sleep(milliseconds);
 			})
@@ -216,10 +218,12 @@ public class NotificationTests
 		int receivedMilliseconds = -1;
 		bool isExecuted = false;
 
-		string actualResult = timeSystem.On.ThreadSleep(t =>
+		string actualResult = timeSystem.On
+		   .ThreadSleep(t =>
 			{
 				receivedMilliseconds = (int)t.TotalMilliseconds;
-			}).Execute(() =>
+			})
+		   .ExecuteWhileWaiting(() =>
 			{
 				timeSystem.Thread.Sleep(milliseconds);
 				return result;

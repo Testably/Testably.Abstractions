@@ -25,6 +25,21 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void EnumerateFiles_Path_ShouldBeCaseInsensitiveOnWindows(string path)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		FileSystem.Initialize()
+		   .WithSubdirectory(path.ToUpper()).Initialized(s => s
+			   .WithAFile());
+
+		string[] result = FileSystem.Directory.GetFiles(path.ToLower());
+
+		result.Length.Should().Be(1);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void
 		EnumerateFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
 			string path)
@@ -98,6 +113,17 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 			result.Should()
 			   .BeEmpty($"{fileName} should not match {searchPattern}");
 		}
+	}
+
+	[SkippableFact]
+	public void EnumerateFiles_SearchPatternWithTooManyAsterisk_ShouldWorkConsistently()
+	{
+		FileSystem.Initialize()
+		   .WithFile("result.test.001.txt");
+
+		string[] result = FileSystem.Directory.GetFiles(".", "*.test.*.*.*.*");
+
+		result.Length.Should().Be(1);
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS

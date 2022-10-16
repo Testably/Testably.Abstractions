@@ -20,6 +20,17 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
+	public void New_EmptyString_ShouldThrowArgumentException()
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = FileSystem.FileInfo.New(string.Empty);
+		});
+
+		exception.Should().BeOfType<ArgumentException>();
+	}
+
+	[SkippableFact]
 	public void New_Null_ShouldThrowArgumentNullException()
 	{
 		Exception? exception = Record.Exception(() =>

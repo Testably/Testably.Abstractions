@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace Testably.Abstractions.Testing;
 
@@ -6,12 +7,13 @@ public sealed partial class TimeSystemMock
 {
 	internal sealed class TimeProviderMock : ITimeProvider
 	{
-		private DateTime _now;
-		private readonly object _lock = new();
+		private static readonly AsyncLocal<DateTime> Now = new();
+		private static readonly AsyncLocal<DateTime?> SynchronizedTime = new();
+		private DateTime? _synchronizedTime;
 
 		public TimeProviderMock(DateTime now)
 		{
-			_now = now;
+			Now.Value = now;
 		}
 
 		#region ITimeProvider Members
@@ -34,27 +36,40 @@ public sealed partial class TimeSystemMock
 		/// <inheritdoc cref="TimeSystemMock.ITimeProvider.AdvanceBy(TimeSpan)" />
 		public void AdvanceBy(TimeSpan interval)
 		{
-			lock (_lock)
-			{
-				_now = _now.Add(interval);
-			}
+			CheckSynchronization();
+			Now.Value = Now.Value.Add(interval);
 		}
 
 		/// <inheritdoc cref="TimeSystemMock.ITimeProvider.Read()" />
 		public DateTime Read()
 		{
-			return _now;
+			CheckSynchronization();
+			return Now.Value;
 		}
 
 		/// <inheritdoc cref="TimeSystemMock.ITimeProvider.SetTo(DateTime)" />
 		public void SetTo(DateTime value)
 		{
-			lock (_lock)
-			{
-				_now = value;
-			}
+			CheckSynchronization();
+			Now.Value = value;
+		}
+
+		/// <inheritdoc cref="TimeSystemMock.ITimeProvider.SynchronizeClock()" />
+		public void SynchronizeClock()
+		{
+			_synchronizedTime = Now.Value;
 		}
 
 		#endregion
+
+		private void CheckSynchronization()
+		{
+			if (_synchronizedTime != null &&
+			    SynchronizedTime.Value != _synchronizedTime)
+			{
+				SynchronizedTime.Value = _synchronizedTime;
+				Now.Value = _synchronizedTime.Value;
+			}
+		}
 	}
 }

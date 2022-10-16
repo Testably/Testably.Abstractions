@@ -10,17 +10,16 @@ public sealed partial class FileSystemMock
 	public interface IInterceptionHandler : IFileSystem.IFileSystemExtensionPoint
 	{
 		/// <summary>
-		///     Callback executed when any change in the <see cref="FileSystemMock" /> matching the <paramref name="predicate" />
+		///     Callback executed before any change in the <see cref="FileSystemMock" /> matching the <paramref name="predicate" />
 		///     is about to occur.
-		///     <para />
-		///     This allows e.g. to throw custom exceptions instead.
 		/// </summary>
 		/// <param name="interceptionCallback">The callback to execute before the change occurred.</param>
 		/// <param name="predicate">
 		///     (optional) A predicate used to filter which callbacks should be intercepted.<br />
 		///     If set to <see langword="null" /> (default value) all callbacks are intercepted.
 		/// </param>
-		FileSystemMock Change(Action<ChangeDescription> interceptionCallback,
-		                      Func<ChangeDescription, bool>? predicate = null);
+		/// <remarks>This allows e.g. to throw custom exceptions instead.</remarks>
+		FileSystemMock Event(Action<ChangeDescription> interceptionCallback,
+		                     Func<ChangeDescription, bool>? predicate = null);
 	}
 }

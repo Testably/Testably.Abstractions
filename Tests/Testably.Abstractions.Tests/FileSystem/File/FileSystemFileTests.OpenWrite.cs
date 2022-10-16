@@ -24,5 +24,9 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 		FileTestHelper.CheckFileAccess(stream).Should().Be(FileAccess.Write);
 		FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
+		stream.CanRead.Should().BeFalse();
+		stream.CanWrite.Should().BeTrue();
+		stream.CanSeek.Should().BeTrue();
+		stream.CanTimeout.Should().BeFalse();
 	}
 }

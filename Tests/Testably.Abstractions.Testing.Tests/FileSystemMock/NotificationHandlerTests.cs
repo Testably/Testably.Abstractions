@@ -26,13 +26,13 @@ public class NotificationHandlerTests
 		string path = FileSystem.Path.Combine(path1, path2, path3);
 		int eventCount = 0;
 		FileSystem.Notify
-		   .OnChange(c =>
+		   .OnEvent(c =>
 				{
 					_testOutputHelper.WriteLine($"Received event {c}");
 					eventCount++;
 				},
 				c => c.ChangeType == WatcherChangeTypes.Created)
-		   .Execute(() =>
+		   .ExecuteWhileWaiting(() =>
 			{
 				FileSystem.Directory.CreateDirectory(path);
 			})
@@ -54,10 +54,10 @@ public class NotificationHandlerTests
 		initialization?.Invoke(FileSystem, path);
 
 		FileSystem.Notify
-		   .OnChange(c => receivedPath = c.Path,
+		   .OnEvent(c => receivedPath = c.Path,
 				c => c.ChangeType == expectedChangeType &&
 				     c.FileSystemType == expectedFileSystemType)
-		   .Execute(() =>
+		   .ExecuteWhileWaiting(() =>
 			{
 				callback.Invoke(FileSystem, path);
 			})
