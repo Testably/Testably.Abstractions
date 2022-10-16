@@ -63,6 +63,9 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	public void IncludeSubdirectories_SetToTrue_ShouldTriggerNotificationOnSubdirectories(
 		string baseDirectory, string subdirectoryName)
 	{
+		Skip.If(Test.RunsOnLinux && FileSystem is Abstractions.FileSystem,
+			"Test is brittle on Linux against the real file system.");
+
 		FileSystem.Initialize()
 		   .WithSubdirectory(baseDirectory).Initialized(s => s
 			   .WithSubdirectory(subdirectoryName));
@@ -84,7 +87,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(subdirectoryPath));
-		result.ChangeType.Should().Be(WatcherChangeTypes.Deleted);
 		result.Name.Should().Be(subdirectoryPath);
+		result!.ChangeType.Should().Be(WatcherChangeTypes.Deleted);
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -16,7 +17,7 @@ public sealed partial class FileSystemMock
 	/// <summary>
 	///     Mocked instance of a <see cref="IFileSystem.IFileSystemWatcher" />
 	/// </summary>
-	public sealed class FileSystemWatcherMock : IFileSystem.IFileSystemWatcher
+	public sealed class FileSystemWatcherMock : Component, IFileSystem.IFileSystemWatcher
 	{
 		/// <summary>
 		///     Simulated bytes pre message to calculate the size of the blocking collection relative to the
@@ -35,6 +36,8 @@ public sealed partial class FileSystemMock
 		private readonly List<string> _filters = new();
 		private int _internalBufferSize = 8192;
 		private string _path = string.Empty;
+		private event EventHandler<ChangeDescription>? InternalEvent;
+		private bool _isInitializing;
 
 		private FileSystemWatcherMock(FileSystemMock fileSystem)
 		{
@@ -129,9 +132,15 @@ public sealed partial class FileSystemMock
 			}
 		}
 
-		/// <inheritdoc cref="IDisposable.Dispose()" />
-		public void Dispose()
-			=> Stop();
+		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.SynchronizingObject" />
+		public ISynchronizeInvoke? SynchronizingObject { get; set; }
+
+		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.BeginInit()" />
+		public void BeginInit()
+		{
+			_isInitializing = true;
+			Stop();
+		}
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Changed" />
 		public event FileSystemEventHandler? Changed;
@@ -142,13 +151,81 @@ public sealed partial class FileSystemMock
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Deleted" />
 		public event FileSystemEventHandler? Deleted;
 
+		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.EndInit()" />
+		public void EndInit()
+		{
+			_isInitializing = false;
+			Restart();
+		}
+
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Error" />
 		public event ErrorEventHandler? Error;
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Renamed" />
 		public event RenamedEventHandler? Renamed;
 
+		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.WaitForChanged(WatcherChangeTypes)" />
+		public IFileSystem.IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
+			WatcherChangeTypes changeType)
+			=> WaitForChanged(changeType, Timeout.Infinite);
+
+		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.WaitForChanged(WatcherChangeTypes, int)" />
+		public IFileSystem.IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
+			WatcherChangeTypes changeType,
+			int timeout)
+		{
+			TaskCompletionSource<IFileSystem.IFileSystemWatcher.IWaitForChangedResult>
+				tcs = new();
+
+			void EventHandler(object? _, ChangeDescription c)
+			{
+				if ((c.ChangeType & changeType) != 0)
+				{
+					tcs.TrySetResult(new WaitForChangedResultMock(c.ChangeType, c.Name,
+						oldName: c.OldName, timedOut: false));
+				}
+			}
+
+			InternalEvent += EventHandler;
+			try
+			{
+				bool wasEnabled = EnableRaisingEvents;
+				if (!wasEnabled)
+				{
+					EnableRaisingEvents = true;
+				}
+
+				tcs.Task.Wait(timeout);
+				EnableRaisingEvents = wasEnabled;
+			}
+			finally
+			{
+				InternalEvent -= EventHandler;
+			}
+
+#if NETFRAMEWORK
+			return tcs.Task.IsCompleted
+				? tcs.Task.Result
+				: WaitForChangedResultMock.TimedOutResult;
+#else
+			return tcs.Task.IsCompletedSuccessfully
+				? tcs.Task.Result
+				: WaitForChangedResultMock.TimedOutResult;
+#endif
+		}
+
 		#endregion
+
+		/// <inheritdoc cref="Component.Dispose(bool)" />
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				Stop();
+			}
+
+			base.Dispose(disposing);
+		}
 
 		internal static FileSystemWatcherMock New(FileSystemMock fileSystem)
 			=> new(fileSystem);
@@ -186,6 +263,7 @@ public sealed partial class FileSystemMock
 
 		private void NotifyChange(ChangeDescription item)
 		{
+			InternalEvent?.Invoke(this, item);
 			if (MatchesFilter(item))
 			{
 				if (item.ChangeType.HasFlag(WatcherChangeTypes.Created))
@@ -215,6 +293,11 @@ public sealed partial class FileSystemMock
 
 		private void Restart()
 		{
+			if (_isInitializing)
+			{
+				return;
+			}
+
 			if (EnableRaisingEvents)
 			{
 				Stop();
@@ -237,6 +320,11 @@ public sealed partial class FileSystemMock
 
 		private void Start()
 		{
+			if (_isInitializing)
+			{
+				return;
+			}
+
 			Stop();
 			_cancellationTokenSource = new CancellationTokenSource();
 			_changeHandler = _fileSystem.Notify.OnEvent(c =>
@@ -366,6 +454,40 @@ public sealed partial class FileSystemMock
 			return System.IO.Path.GetDirectoryName(changeDescription.Path)?
 			   .Equals(System.IO.Path.GetDirectoryName(changeDescription.OldPath),
 					InMemoryLocation.StringComparisonMode) ?? true;
+		}
+
+		private struct WaitForChangedResultMock
+			: IFileSystem.IFileSystemWatcher.IWaitForChangedResult
+		{
+			public WaitForChangedResultMock(
+				WatcherChangeTypes changeType,
+				string? name,
+				string? oldName,
+				bool timedOut)
+			{
+				ChangeType = changeType;
+				Name = name;
+				OldName = oldName;
+				TimedOut = timedOut;
+			}
+
+			/// <summary>
+			///     The instance representing a timed out <see cref="WaitForChangedResult" />.
+			/// </summary>
+			public static readonly WaitForChangedResultMock TimedOutResult =
+				new(changeType: 0, name: null, oldName: null, timedOut: true);
+
+			/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.IWaitForChangedResult.ChangeType" />
+			public WatcherChangeTypes ChangeType { get; }
+
+			/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.IWaitForChangedResult.Name" />
+			public string? Name { get; }
+
+			/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.IWaitForChangedResult.OldName" />
+			public string? OldName { get; }
+
+			/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.IWaitForChangedResult.TimedOut" />
+			public bool TimedOut { get; }
 		}
 	}
 }

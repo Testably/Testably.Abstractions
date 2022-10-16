@@ -3,22 +3,22 @@ using System.Linq;
 using System.Reflection;
 using Xunit.Abstractions;
 
-namespace Testably.Abstractions.Tests.Parity;
+namespace Testably.Abstractions.Parity.Tests.TestHelpers;
 
 public class ParityCheck
 {
 	public List<Type> ExcludedBaseTypes =
 		new() { typeof(object), typeof(MarshalByRefObject) };
 
-	public List<FieldInfo?> ExcludedFields = new();
+	public List<FieldInfo?> MissingFields = new();
 
-	public List<MethodInfo?> ExcludedMethods = new();
-	public List<PropertyInfo?> ExcludedProperties = new();
+	public List<MethodInfo?> MissingMethods = new();
+	public List<PropertyInfo?> MissingProperties = new();
 
 	public ParityCheck(Type[]? excludeBaseTypes = null,
-	                   FieldInfo?[]? excludeFields = null,
-	                   MethodInfo?[]? excludeMethods = null,
-	                   PropertyInfo?[]? excludeProperties = null)
+					   FieldInfo?[]? excludeFields = null,
+					   MethodInfo?[]? excludeMethods = null,
+					   PropertyInfo?[]? excludeProperties = null)
 	{
 		if (excludeBaseTypes != null)
 		{
@@ -27,17 +27,17 @@ public class ParityCheck
 
 		if (excludeFields != null)
 		{
-			ExcludedFields.AddRange(excludeFields);
+			MissingFields.AddRange(excludeFields);
 		}
 
 		if (excludeMethods != null)
 		{
-			ExcludedMethods.AddRange(excludeMethods);
+			MissingMethods.AddRange(excludeMethods);
 		}
 
 		if (excludeProperties != null)
 		{
-			ExcludedProperties.AddRange(excludeProperties);
+			MissingProperties.AddRange(excludeProperties);
 		}
 	}
 
@@ -104,8 +104,8 @@ public class ParityCheck
 				BindingFlags.Public |
 				BindingFlags.Instance)
 		   .Where(p => p.DeclaringType == null ||
-		               !ExcludedBaseTypes.Contains(p.DeclaringType))
-		   .Where(m => !ExcludedMethods.Contains(m))
+					   !ExcludedBaseTypes.Contains(p.DeclaringType))
+		   .Where(m => !MissingMethods.Contains(m))
 		   .Where(m => !m.IsSpecialName)
 		   .OrderBy(m => m.Name)
 		   .ThenBy(m => m.GetParameters().Length))
@@ -128,8 +128,8 @@ public class ParityCheck
 				BindingFlags.Public |
 				BindingFlags.Instance)
 		   .Where(p => p.DeclaringType == null ||
-		               !ExcludedBaseTypes.Contains(p.DeclaringType))
-		   .Where(p => !ExcludedProperties.Contains(p))
+					   !ExcludedBaseTypes.Contains(p.DeclaringType))
+		   .Where(p => !MissingProperties.Contains(p))
 		   .Where(p => !p.IsSpecialName)
 		   .OrderBy(p => p.Name))
 		{
@@ -150,7 +150,7 @@ public class ParityCheck
 		   .GetFields(
 				BindingFlags.Public |
 				BindingFlags.Static)
-		   .Where(f => !ExcludedFields.Contains(f))
+		   .Where(f => !MissingFields.Contains(f))
 		   .Where(f => !f.IsSpecialName)
 		   .OrderBy(f => f.Name))
 		{
@@ -171,7 +171,7 @@ public class ParityCheck
 		   .GetMethods(
 				BindingFlags.Public |
 				BindingFlags.Static)
-		   .Where(f => !ExcludedMethods.Contains(f))
+		   .Where(f => !MissingMethods.Contains(f))
 		   .Where(f => !f.IsSpecialName)
 		   .OrderBy(f => f.Name)
 		   .ThenBy(m => m.GetParameters().Length))

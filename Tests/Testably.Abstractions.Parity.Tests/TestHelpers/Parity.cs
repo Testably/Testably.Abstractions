@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace Testably.Abstractions.Tests.Parity;
+namespace Testably.Abstractions.Parity.Tests.TestHelpers;
 
 public class Parity
 {
@@ -39,6 +39,12 @@ public class Parity
 		typeof(FileSystemInfo).GetMethod(
 			nameof(System.IO.FileSystemInfo.GetObjectData)),
 		typeof(FileSystemInfo).GetMethod(nameof(ToString))
+	});
+
+	public ParityCheck FileSystemWatcher = new(excludeMethods: new[]
+	{
+		typeof(FileSystemWatcher).GetMethod(
+			nameof(System.IO.FileSystemWatcher.ToString))
 	});
 
 	public ParityCheck Guid = new();

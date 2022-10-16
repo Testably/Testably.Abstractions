@@ -1,12 +1,12 @@
 ﻿using System.Linq;
 using System.Reflection;
 
-namespace Testably.Abstractions.Tests.Parity;
+namespace Testably.Abstractions.Parity.Tests.TestHelpers;
 
 internal static class ParityCheckHelper
 {
 	public static bool ContainsEquivalentMethod(this Type abstractionType,
-	                                            MethodInfo systemMethod)
+												MethodInfo systemMethod)
 	{
 		foreach (MethodInfo abstractionMethod in abstractionType
 		   .GetMethods(
@@ -33,7 +33,7 @@ internal static class ParityCheckHelper
 	}
 
 	public static bool ContainsEquivalentMethod(this Type abstractionType,
-	                                            ConstructorInfo systemConstructor)
+												ConstructorInfo systemConstructor)
 	{
 		foreach (MethodInfo abstractionMethod in abstractionType
 		   .GetMethods(
@@ -52,7 +52,7 @@ internal static class ParityCheckHelper
 	}
 
 	public static bool ContainsEquivalentProperty(this Type abstractionType,
-	                                              PropertyInfo systemProperty)
+												  PropertyInfo systemProperty)
 	{
 		foreach (PropertyInfo abstractionProperty in abstractionType
 		   .GetProperties(
@@ -79,7 +79,7 @@ internal static class ParityCheckHelper
 	}
 
 	public static bool ContainsEquivalentProperty(this Type abstractionType,
-	                                              FieldInfo systemField)
+												  FieldInfo systemField)
 	{
 		foreach (PropertyInfo abstractionProperty in abstractionType
 		   .GetProperties(
@@ -144,15 +144,15 @@ internal static class ParityCheckHelper
 		if (type.GenericTypeArguments.Length > 0)
 		{
 			return type.Name.Substring(0, type.Name.Length - 2) +
-			       "<" + string.Join(",",
-				       type.GenericTypeArguments.Select(x => x.PrintType())) + ">";
+				   "<" + string.Join(",",
+					   type.GenericTypeArguments.Select(x => x.PrintType())) + ">";
 		}
 
 		return type.Name;
 	}
 
 	private static bool AreMethodsEqual(MethodInfo systemMethod,
-	                                    MethodInfo abstractionMethod)
+										MethodInfo abstractionMethod)
 	{
 		ParameterInfo[] systemParameters = systemMethod.GetParameters();
 		ParameterInfo[] abstractionParameters = abstractionMethod.GetParameters();
@@ -191,7 +191,7 @@ internal static class ParityCheckHelper
 	}
 
 	private static bool AreMethodsEqual(ConstructorInfo systemConstructor,
-	                                    MethodInfo abstractionMethod)
+										MethodInfo abstractionMethod)
 	{
 		ParameterInfo[] systemParameters = systemConstructor.GetParameters();
 		ParameterInfo[] abstractionParameters = abstractionMethod.GetParameters();
@@ -231,7 +231,7 @@ internal static class ParityCheckHelper
 	}
 
 	private static bool ArePropertiesEqual(FieldInfo systemField,
-	                                       PropertyInfo abstractionProperty)
+										   PropertyInfo abstractionProperty)
 	{
 		if (!IsTypeNameEqual(systemField.FieldType.Name,
 			abstractionProperty.PropertyType.Name))
@@ -253,7 +253,7 @@ internal static class ParityCheckHelper
 	}
 
 	private static bool ArePropertiesEqual(PropertyInfo systemProperty,
-	                                       PropertyInfo abstractionProperty)
+										   PropertyInfo abstractionProperty)
 	{
 		if (!IsTypeNameEqual(systemProperty.PropertyType.Name,
 			abstractionProperty.PropertyType.Name))
@@ -275,7 +275,7 @@ internal static class ParityCheckHelper
 	}
 
 	private static bool IsTypeNameEqual(string? systemTypeName,
-	                                    string? abstractionTypeName)
+										string? abstractionTypeName)
 	{
 		if (abstractionTypeName == null)
 		{
@@ -283,10 +283,10 @@ internal static class ParityCheckHelper
 		}
 
 		return systemTypeName != null &&
-		       (abstractionTypeName.Equals(systemTypeName) ||
-		        abstractionTypeName.Equals("I" + systemTypeName) ||
-		        (Parity.AcceptedTypeMapping.TryGetValue(systemTypeName,
-			         out string? acceptedName) &&
-		         acceptedName.Equals(abstractionTypeName)));
+			   (abstractionTypeName.Equals(systemTypeName) ||
+				abstractionTypeName.Equals("I" + systemTypeName) ||
+				Parity.AcceptedTypeMapping.TryGetValue(systemTypeName,
+					 out string? acceptedName) &&
+				 acceptedName.Equals(abstractionTypeName));
 	}
 }
