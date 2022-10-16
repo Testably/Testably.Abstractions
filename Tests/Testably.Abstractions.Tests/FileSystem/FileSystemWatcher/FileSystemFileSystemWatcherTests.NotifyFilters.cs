@@ -6,10 +6,22 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
+	/// <summary>
+	///     The delay in milliseconds when expecting a success in the test.
+	/// </summary>
+	private const int ExpectSuccess = 3000;
+
+	/// <summary>
+	///     The delay in milliseconds when expecting a timeout in the test.
+	/// </summary>
+	private const int ExpectTimeout = 500;
+
 	[SkippableTheory]
 	[AutoData]
 	public void NotifyFilter_AppendFile_ShouldNotNotifyOnOtherFilters(string fileName)
 	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
 		FileSystem.Initialize();
 		FileSystemEventArgs? result = null;
 		ManualResetEventSlim ms = new();
@@ -40,7 +52,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		FileSystem.File.AppendAllText(fileName, "foo");
 
-		ms.Wait(500).Should().BeFalse();
+		ms.Wait(ExpectTimeout).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -53,6 +65,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	public void NotifyFilter_AppendFile_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string fileName)
 	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 		if (!Test.RunsOnLinux)
 		{
 			Skip.If(notifyFilter == NotifyFilters.Security,
@@ -87,7 +100,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		FileSystem.File.AppendAllText(fileName, "foo");
 
-		ms.Wait(3000).Should().BeTrue();
+		ms.Wait(ExpectSuccess).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(fileName));
 		result.ChangeType.Should().Be(WatcherChangeTypes.Changed);
@@ -98,6 +111,8 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	[AutoData]
 	public void NotifyFilter_CreateDirectory_ShouldNotNotifyOnOtherFilters(string path)
 	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
 		FileSystem.Initialize();
 		FileSystemEventArgs? result = null;
 		ManualResetEventSlim ms = new();
@@ -119,7 +134,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		FileSystem.Directory.CreateDirectory(path);
 
-		ms.Wait(500).Should().BeFalse();
+		ms.Wait(ExpectTimeout).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -128,6 +143,8 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	public void NotifyFilter_CreateDirectory_ShouldTriggerCreatedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
 		FileSystem.Initialize();
 		FileSystemEventArgs? result = null;
 		ManualResetEventSlim ms = new();
@@ -143,7 +160,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		FileSystem.Directory.CreateDirectory(path);
 
-		ms.Wait(3000).Should().BeTrue();
+		ms.Wait(ExpectSuccess).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(path));
 		result.ChangeType.Should().Be(WatcherChangeTypes.Created);
@@ -154,6 +171,8 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	[AutoData]
 	public void NotifyFilter_DeleteDirectory_ShouldNotNotifyOnOtherFilters(string path)
 	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
 		FileSystem.Initialize().WithSubdirectory(path);
 		FileSystemEventArgs? result = null;
 		ManualResetEventSlim ms = new();
@@ -175,7 +194,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		FileSystem.Directory.Delete(path);
 
-		ms.Wait(500).Should().BeFalse();
+		ms.Wait(ExpectTimeout).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -184,6 +203,8 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	public void NotifyFilter_DeleteDirectory_ShouldTriggerDeletedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
 		FileSystem.Initialize().WithSubdirectory(path);
 		FileSystemEventArgs? result = null;
 		ManualResetEventSlim ms = new();
@@ -199,7 +220,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		FileSystem.Directory.Delete(path);
 
-		ms.Wait(3000).Should().BeTrue();
+		ms.Wait(ExpectSuccess).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(path));
 		result.ChangeType.Should().Be(WatcherChangeTypes.Deleted);
@@ -210,6 +231,8 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	[AutoData]
 	public void NotifyFilter_DeleteFile_ShouldNotNotifyOnOtherFilters(string path)
 	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
 		FileSystem.Initialize().WithFile(path);
 		FileSystemEventArgs? result = null;
 		ManualResetEventSlim ms = new();
@@ -231,7 +254,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		FileSystem.File.Delete(path);
 
-		ms.Wait(500).Should().BeFalse();
+		ms.Wait(ExpectTimeout).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -240,6 +263,8 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	public void NotifyFilter_DeleteFile_ShouldTriggerDeletedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
 		FileSystem.Initialize().WithFile(path);
 		FileSystemEventArgs? result = null;
 		ManualResetEventSlim ms = new();
@@ -255,7 +280,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		FileSystem.File.Delete(path);
 
-		ms.Wait(3000).Should().BeTrue();
+		ms.Wait(ExpectSuccess).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(path));
 		result.ChangeType.Should().Be(WatcherChangeTypes.Deleted);
@@ -269,6 +294,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 			string sourcePath, string sourceName,
 			string destinationPath, string destinationName)
 	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 		Skip.If(Test.RunsOnWindows);
 
 		FileSystem.Initialize()
@@ -292,7 +318,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 			FileSystem.Path.Combine(sourcePath, sourceName),
 			FileSystem.Path.Combine(destinationPath, destinationName));
 
-		ms.Wait(2000).Should().BeTrue();
+		ms.Wait(ExpectSuccess).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.ChangeType.Should().Be(WatcherChangeTypes.Renamed);
 		result.FullPath.Should()
@@ -311,6 +337,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 			string sourcePath, string sourceName,
 			string destinationPath, string destinationName)
 	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 		Skip.IfNot(Test.RunsOnWindows);
 
 		FileSystem.Initialize()
@@ -334,7 +361,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 			FileSystem.Path.Combine(sourcePath, sourceName),
 			FileSystem.Path.Combine(destinationPath, destinationName));
 
-		ms.Wait(500).Should().BeFalse();
+		ms.Wait(ExpectTimeout).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -343,6 +370,8 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	public void NotifyFilter_MoveFile_ShouldNotNotifyOnOtherFilters(
 		string sourceName, string destinationName)
 	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
 		FileSystem.Initialize();
 		FileSystem.File.WriteAllText(sourceName, null);
 		RenamedEventArgs? result = null;
@@ -366,7 +395,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		FileSystem.File.Move(sourceName, destinationName);
 
-		ms.Wait(500).Should().BeFalse();
+		ms.Wait(ExpectTimeout).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -375,6 +404,8 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	public void NotifyFilter_MoveFile_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string sourceName, string destinationName)
 	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
 		FileSystem.Initialize();
 		FileSystem.File.WriteAllText(sourceName, "foo");
 		RenamedEventArgs? result = null;
@@ -393,7 +424,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		FileSystem.File.Move(sourceName, destinationName);
 
-		ms.Wait(2000).Should().BeTrue();
+		ms.Wait(ExpectSuccess).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.ChangeType.Should().Be(WatcherChangeTypes.Renamed);
 		result.FullPath.Should().Be(FileSystem.Path.GetFullPath(destinationName));
@@ -406,6 +437,8 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	[AutoData]
 	public void NotifyFilter_WriteFile_ShouldNotNotifyOnOtherFilters(string fileName)
 	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
 		FileSystem.Initialize();
 		FileSystem.File.WriteAllText(fileName, null);
 		FileSystemEventArgs? result = null;
@@ -437,7 +470,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		FileSystem.File.WriteAllText(fileName, "foo");
 
-		ms.Wait(500).Should().BeFalse();
+		ms.Wait(ExpectTimeout).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -450,6 +483,8 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	public void NotifyFilter_WriteFile_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string fileName)
 	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
 		if (!Test.RunsOnLinux)
 		{
 			Skip.If(notifyFilter == NotifyFilters.Security,
@@ -483,7 +518,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		FileSystem.File.WriteAllText(fileName, "foo");
 
-		ms.Wait(3000).Should().BeTrue();
+		ms.Wait(ExpectSuccess).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(fileName));
 		result.ChangeType.Should().Be(WatcherChangeTypes.Changed);

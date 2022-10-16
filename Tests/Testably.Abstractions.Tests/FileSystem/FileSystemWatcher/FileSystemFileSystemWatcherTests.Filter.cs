@@ -87,6 +87,8 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	public void Filter_NotMatching_ShouldNotTriggerNotification(
 		string path, string filter)
 	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
 		FileSystem.Initialize().WithSubdirectory(path);
 		ManualResetEventSlim ms = new();
 		FileSystemEventArgs? result = null;

@@ -1,3 +1,5 @@
+using Moq;
+using System.ComponentModel;
 using System.IO;
 using System.Threading;
 
@@ -51,6 +53,16 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		result.ChangeType.Should().Be(0);
 		result.Name.Should().BeNull();
 		result.OldName.Should().BeNull();
+	}
+
+	[SkippableFact]
+	public void Container_ShouldBeInitializedWithNull()
+	{
+		FileSystem.Initialize();
+		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+
+		fileSystemWatcher.Container.Should().BeNull();
 	}
 
 	[SkippableTheory]
@@ -114,5 +126,51 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		exception.Should().BeOfType<ArgumentException>()
 		   .Which.Message.Should().Contain(path);
+	}
+
+	[SkippableFact]
+	public void Site_ShouldBeInitializedWithNull()
+	{
+		FileSystem.Initialize();
+		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+
+		fileSystemWatcher.Site.Should().BeNull();
+	}
+
+	[SkippableFact]
+	public void Site_ShouldBeWritable()
+	{
+		ISite? site = new Mock<ISite>().Object;
+		FileSystem.Initialize();
+		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+
+		fileSystemWatcher.Site = site;
+
+		fileSystemWatcher.Site.Should().Be(site);
+	}
+
+	[SkippableFact]
+	public void SynchronizingObject_ShouldBeInitializedWithNull()
+	{
+		FileSystem.Initialize();
+		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+
+		fileSystemWatcher.SynchronizingObject.Should().BeNull();
+	}
+
+	[SkippableFact]
+	public void SynchronizingObject_ShouldBeWritable()
+	{
+		ISynchronizeInvoke? synchronizingObject = new Mock<ISynchronizeInvoke>().Object;
+		FileSystem.Initialize();
+		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+
+		fileSystemWatcher.SynchronizingObject = synchronizingObject;
+
+		fileSystemWatcher.SynchronizingObject.Should().Be(synchronizingObject);
 	}
 }
