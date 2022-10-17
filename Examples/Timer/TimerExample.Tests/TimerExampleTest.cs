@@ -1,3 +1,4 @@
+using AutoFixture.Xunit2;
 using FluentAssertions;
 using System;
 using System.Threading;
@@ -9,13 +10,13 @@ namespace TimerExample.Tests;
 public class TimerExampleTest
 {
 	/// <summary>
-	///     Tests that the `thrownException` is caught and forwarded to the
-	///     errorHandler of the <see cref="SynchronizationTimer" /> constructor parameter.
+	///     Tests that the <paramref name="thrownException" /> is caught and forwarded to the
+	///     error handler of the <see cref="SynchronizationTimer" />.
 	/// </summary>
-	[Fact]
-	public void Exception_ShouldBeHandled()
+	[Theory]
+	[AutoData]
+	public void Exception_ShouldBeHandled(Exception thrownException)
 	{
-		Exception thrownException = new("foo");
 		TimeSystemMock timeSystem = new();
 		Exception? receivedException = null;
 		// Add a fallback timeout that will fail the test latest after 1 second
@@ -42,13 +43,14 @@ public class TimerExampleTest
 	}
 
 	/// <summary>
-	///     Tests that the callback is executed repeatedly (at least `iterationCount` times).
+	///     Tests that the callback is executed repeatedly (at least <paramref name="cancelAfterIterations" /> times).
 	/// </summary>
-	[Fact]
-	public void Execute_ShouldBeCalledRepeatedly()
+	[Theory]
+	[InlineData(5)]
+	[InlineData(200)]
+	public void Execute_ShouldBeCalledRepeatedly(int cancelAfterIterations)
 	{
 		int receivedIterations = 0;
-		int cancelAfterIterations = 5;
 		// Add a fallback timeout that will fail the test latest after 1 second
 		CancellationTokenSource cancellationTokenSource = new(1000);
 		CancellationToken cancellationToken = cancellationTokenSource.Token;
@@ -68,6 +70,6 @@ public class TimerExampleTest
 		sut.Start(cancellationToken);
 
 		cancellationToken.WaitHandle.WaitOne();
-		receivedIterations.Should().BeGreaterOrEqualTo(5);
+		receivedIterations.Should().BeGreaterOrEqualTo(cancelAfterIterations);
 	}
 }
