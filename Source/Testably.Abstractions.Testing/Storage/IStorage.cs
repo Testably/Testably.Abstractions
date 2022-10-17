@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing.Storage;
 
@@ -71,7 +72,7 @@ internal interface IStorage
 	IEnumerable<IStorageLocation> EnumerateLocations(
 		IStorageLocation location,
 		FileSystemTypes type,
-		string expression = "*",
+		string expression = EnumerationOptionsHelper.DefaultSearchPattern,
 		EnumerationOptions? enumerationOptions = null);
 
 	/// <summary>

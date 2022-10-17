@@ -86,7 +86,8 @@ public static partial class FileSystemInitializer
 			IFileSystem.IDirectoryInfo directory = _fileSystem.DirectoryInfo.New(path);
 			directory.Attributes = FileAttributes.Normal;
 
-			foreach (IFileSystem.IFileInfo info in directory.EnumerateFiles("*",
+			foreach (IFileSystem.IFileInfo info in directory.EnumerateFiles(
+				EnumerationOptionsHelper.DefaultSearchPattern,
 				SearchOption.TopDirectoryOnly))
 			{
 				info.Attributes = FileAttributes.Normal;
@@ -96,7 +97,8 @@ public static partial class FileSystemInitializer
 			if (recursive)
 			{
 				foreach (IFileSystem.IDirectoryInfo info in
-					directory.EnumerateDirectories("*",
+					directory.EnumerateDirectories(
+						EnumerationOptionsHelper.DefaultSearchPattern,
 						SearchOption.TopDirectoryOnly))
 				{
 					ForceDeleteDirectory(info.FullName, recursive);

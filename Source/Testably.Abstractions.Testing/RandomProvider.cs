@@ -48,16 +48,6 @@ public static class RandomProvider
 			guidGenerator);
 
 	/// <summary>
-	///     Initializes the <see cref="RandomSystemMock.RandomProvider" /> with explicit generators.
-	/// </summary>
-	public static RandomSystemMock.IRandomProvider Generate(
-		Func<int, IRandomSystem.IRandom>? randomGenerator,
-		Generator<Guid>? guidGenerator = null)
-		=> new RandomSystemMock.RandomProviderMock(
-			randomGenerator,
-			guidGenerator);
-
-	/// <summary>
 	///     Returns the next seed used when creating a new Random instance without seed.
 	/// </summary>
 	internal static int NewSeed()

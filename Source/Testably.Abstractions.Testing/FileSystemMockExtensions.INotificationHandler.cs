@@ -138,7 +138,7 @@ public static partial class FileSystemMockExtensions
 			return false;
 		}
 
-		if (searchPattern != "*" &&
+		if (searchPattern != EnumerationOptionsHelper.DefaultSearchPattern &&
 		    (changeDescription.Name == null ||
 		     !EnumerationOptionsHelper.MatchesPattern(EnumerationOptionsHelper.Compatible,
 			     changeDescription.Name, searchPattern)))

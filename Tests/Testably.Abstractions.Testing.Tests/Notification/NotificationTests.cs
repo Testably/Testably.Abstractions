@@ -143,6 +143,24 @@ public class NotificationTests
 	}
 
 	[Fact]
+	public void AwaitableCallback_Dispose_ShouldStopListening()
+	{
+		Testing.TimeSystemMock timeSystem = new();
+		bool isCalled = false;
+		Testing.Notification.IAwaitableCallback<TimeSpan> wait =
+			timeSystem.On.ThreadSleep(_ =>
+			{
+				isCalled = true;
+			});
+
+		wait.Dispose();
+
+		timeSystem.Thread.Sleep(1);
+		Thread.Sleep(10);
+		isCalled.Should().BeFalse();
+	}
+
+	[Fact]
 	public void AwaitableCallback_WaitedPreviously_ShouldWaitAgainForCallbackExecution()
 	{
 		int secondThreadMilliseconds = 42;

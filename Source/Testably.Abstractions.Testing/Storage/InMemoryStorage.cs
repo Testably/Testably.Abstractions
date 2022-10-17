@@ -137,7 +137,7 @@ internal sealed class InMemoryStorage : IStorage
 	public IEnumerable<IStorageLocation> EnumerateLocations(
 		IStorageLocation location,
 		FileSystemTypes type,
-		string expression = "*",
+		string expression = EnumerationOptionsHelper.DefaultSearchPattern,
 		EnumerationOptions? enumerationOptions = null)
 	{
 		ValidateExpression(expression);

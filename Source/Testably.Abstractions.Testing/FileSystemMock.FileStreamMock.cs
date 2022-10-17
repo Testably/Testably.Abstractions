@@ -82,12 +82,13 @@ public sealed partial class FileSystemMock
 			}
 			else if (file.Type == FileSystemTypes.Directory)
 			{
-				Execute.OnWindows(() =>
-					throw ExceptionFactory.AccessToPathDenied(
-						_fileSystem.Path.GetFullPath(Name)));
-
-				throw ExceptionFactory.FileAlreadyExists(
-					_fileSystem.Path.GetFullPath(Name));
+				Execute.OnWindows(
+					() =>
+						throw ExceptionFactory.AccessToPathDenied(
+							_fileSystem.Path.GetFullPath(Name)),
+					() =>
+						throw ExceptionFactory.FileAlreadyExists(
+							_fileSystem.Path.GetFullPath(Name)));
 			}
 			else if (_mode.Equals(FileMode.CreateNew))
 			{

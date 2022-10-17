@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
 
@@ -93,8 +94,7 @@ public sealed partial class FileSystemMock
 
 		/// <inheritdoc cref="IFileSystem.IFileStreamFactory.Wrap(FileStream)" />
 		public FileSystemStream Wrap(FileStream fileStream)
-			=> throw new NotSupportedException(
-				"You cannot wrap an existing FileStream in the FileSystemMock instance!");
+			=> throw ExceptionFactory.NotSupportedFileStreamWrapping();
 
 		#endregion
 	}

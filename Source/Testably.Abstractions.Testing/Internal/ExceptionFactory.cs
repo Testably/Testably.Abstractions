@@ -8,6 +8,9 @@ namespace Testably.Abstractions.Testing.Internal;
 [ExcludeFromCodeCoverage]
 internal static class ExceptionFactory
 {
+	public static NotSupportedException NotSupportedFileStreamWrapping()
+		=> new("You cannot wrap an existing FileStream in the FileSystemMock instance!");
+
 	internal static UnauthorizedAccessException AccessToPathDenied(string path = "")
 		=> new(string.IsNullOrEmpty(path)
 			? "Access to the path is denied."
