@@ -164,8 +164,8 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 			binaryWriter.Write("Some text");
 		}
 
-		FileSystem.FileInfo.New(source).Length.Should()
-		   .BeGreaterThan(FileSystem.FileInfo.New(destination).Length);
+		FileSystem.File.ReadAllText(source).Should()
+		   .NotBe(FileSystem.File.ReadAllText(destination));
 	}
 
 	[SkippableTheory]
