@@ -47,7 +47,8 @@ public class TimerExampleTest
 	[Fact]
 	public void Execute_ShouldBeCalledRepeatedly()
 	{
-		int iterationCount = 5;
+		int receivedIterations = 0;
+		int cancelAfterIterations = 5;
 		// Add a fallback timeout that will fail the test latest after 1 second
 		CancellationTokenSource cancellationTokenSource = new(1000);
 		CancellationToken cancellationToken = cancellationTokenSource.Token;
@@ -57,7 +58,8 @@ public class TimerExampleTest
 			TimeSpan.FromSeconds(10),
 			_ =>
 			{
-				if (--iterationCount == 0)
+				receivedIterations++;
+				if (--cancelAfterIterations == 0)
 				{
 					cancellationTokenSource.Cancel();
 				}
@@ -66,6 +68,6 @@ public class TimerExampleTest
 		sut.Start(cancellationToken);
 
 		cancellationToken.WaitHandle.WaitOne();
-		//synchronizationMockMock.ExecutionCount.Should().BeGreaterOrEqualTo(5);
+		receivedIterations.Should().BeGreaterOrEqualTo(5);
 	}
 }
