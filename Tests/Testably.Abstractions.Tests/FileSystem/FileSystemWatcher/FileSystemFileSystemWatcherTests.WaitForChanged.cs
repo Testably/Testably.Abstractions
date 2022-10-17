@@ -11,6 +11,8 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	[AutoData]
 	public void WaitForChanged_ShouldBlockUntilEventHappens(string path)
 	{
+		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
+
 		FileSystem.Initialize();
 		ManualResetEventSlim ms = new();
 		IFileSystem.IFileSystemWatcher fileSystemWatcher =
@@ -49,6 +51,8 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	[AutoData]
 	public void WaitForChanged_Timeout_ShouldReturnTimedOut(string path)
 	{
+		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
+
 		FileSystem.Initialize();
 		ManualResetEventSlim ms = new();
 		IFileSystem.IFileSystemWatcher fileSystemWatcher =

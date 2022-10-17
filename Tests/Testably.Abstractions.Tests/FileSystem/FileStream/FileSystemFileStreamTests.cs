@@ -150,18 +150,20 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 	[AutoData]
 	public void EndRead_ShouldNotAdjustTimes(string path, byte[] contents)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
 
 		ManualResetEventSlim ms = new();
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
 		FileSystem.File.WriteAllBytes(path, contents);
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
 		using FileSystemStream readStream = FileSystem.File.OpenRead(path);
+		DateTime updateTime = DateTime.MinValue;
 
 		byte[] buffer = new byte[contents.Length];
 		readStream.BeginRead(buffer, 0, buffer.Length, ar =>
 		{
 			TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+			updateTime = TimeSystem.DateTime.UtcNow;
 			// ReSharper disable once AccessToDisposedClosure
 			readStream.EndRead(ar);
 			ms.Set();
@@ -178,8 +180,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 		   .BeOnOrBefore(creationTimeEnd);
 		lastAccessTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+		   .BeOnOrAfter(updateTime);
 		lastWriteTime.Should()
 		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 		   .BeOnOrBefore(creationTimeEnd);
@@ -189,7 +190,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 	[AutoData]
 	public void EndWrite_ShouldAdjustTimes(string path, byte[] contents)
 	{
-		//Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
 
 		ManualResetEventSlim ms = new();
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;

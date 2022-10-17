@@ -63,7 +63,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	public void IncludeSubdirectories_SetToTrue_ShouldTriggerNotificationOnSubdirectories(
 		string baseDirectory, string subdirectoryName)
 	{
-		Test.SkipIfBrittleTestsShouldBeSkipped(FileSystem, !Test.RunsOnWindows);
+		Test.SkipBrittleTestsOnRealFileSystem(FileSystem, !Test.RunsOnWindows);
 
 		FileSystem.Initialize()
 		   .WithSubdirectory(baseDirectory).Initialized(s => s

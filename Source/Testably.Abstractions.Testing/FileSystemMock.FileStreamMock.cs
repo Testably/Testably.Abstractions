@@ -102,6 +102,13 @@ public sealed partial class FileSystemMock
 			InitializeStream();
 		}
 
+		/// <inheritdoc cref="FileSystemStream.EndRead(IAsyncResult)" />
+		public override int EndRead(IAsyncResult asyncResult)
+		{
+			_file.AdjustTimes(TimeAdjustments.LastAccessTime);
+			return base.EndRead(asyncResult);
+		}
+
 		/// <inheritdoc cref="FileSystemStream.EndWrite(IAsyncResult)" />
 		public override void EndWrite(IAsyncResult asyncResult)
 		{
