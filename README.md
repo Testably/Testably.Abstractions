@@ -15,7 +15,7 @@ At the core of this library are the abstraction interfaces, which allow replacin
  - The `IRandomSystem` interface abstracts away functionality related to randomness:  
    `Random` methods implement a thread-safe Shared instance also under .NET Framework and `Guid` methods allow creating new GUIDs.
 
-# Basic Example
+# Example
 Use the interfaces and their default implementations using your prefered dependency injection method, e.g.:
 ```csharp
 private readonly IFileSystem _fileSystem;
@@ -52,6 +52,8 @@ public void StoreData_ShouldWriteValidFile()
 }
 ```
 
+**More examples can be found in our [examples section](Examples/README.md)!**
+
 # Getting Started
 - Install `Testably.Abstractions` [![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions)](https://www.nuget.org/packages/Testably.Abstractions) as nuget package in your productive projects and `Testably.Abstractions.Testing` [![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions.Testing)](https://www.nuget.org/packages/Testably.Abstractions.Testing) as nuget package in your test projects.
   ```ps
@@ -82,4 +84,4 @@ new FileSystemMock()
         .WithASubdirectory().Initialized(s => s
             .WithAFile(".txt"));
 ```
-Initializes the mocked file system with a second drive 'D:' with 1MB total available space and creates on the default drive 'C:' a random file and a random sub-directory containing a ".txt" file.
+Initializes the mocked file system with a second drive `D:` with 1MB total available space and creates on the default drive `C:` a random file and a random sub-directory containing a ".txt" file.
