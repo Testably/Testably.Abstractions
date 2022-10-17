@@ -606,7 +606,7 @@ internal sealed class InMemoryStorage : IStorage
 		var parentLocation = location.GetParent();
 		if (parentLocation != null && !_containers.TryGetValue(parentLocation, out _))
 		{
-			throw ExceptionFactory.DirectoryNotFound(parentLocation.FullPath);
+			throw ExceptionFactory.DirectoryNotFound();
 		}
 	}
 

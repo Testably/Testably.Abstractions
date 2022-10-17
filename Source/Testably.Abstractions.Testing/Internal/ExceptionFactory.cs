@@ -31,8 +31,10 @@ internal static class ExceptionFactory
 	internal static IOException DirectoryNotEmpty(string path)
 		=> new($"Directory not empty : '{path}'");
 
-	internal static DirectoryNotFoundException DirectoryNotFound(string path)
-		=> new($"Could not find a part of the path '{path}'.");
+	internal static DirectoryNotFoundException DirectoryNotFound(string? path = null)
+		=> new(path == null
+			? "Could not find a part of the path."
+			: $"Could not find a part of the path '{path}'.");
 
 	internal static IOException FileAlreadyExists(string path)
 		=> new($"The file '{path}' already exists.");
