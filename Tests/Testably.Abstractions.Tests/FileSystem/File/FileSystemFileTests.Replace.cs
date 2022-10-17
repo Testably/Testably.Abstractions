@@ -20,7 +20,14 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 			FileSystem.File.Replace(source, destination, null);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>();
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeOfType<DirectoryNotFoundException>();
+		}
+		else
+		{
+			exception.Should().BeOfType<FileNotFoundException>();
+		}
 	}
 
 	[SkippableTheory]

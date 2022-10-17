@@ -42,7 +42,7 @@ internal sealed class InMemoryStorage : IStorage
 	                              IStorageLocation destination,
 	                              bool overwrite = false)
 	{
-		ThrowIfParentDoesNotExist(destination);
+		ThrowIfParentDoesNotExist(destination, _ => ExceptionFactory.DirectoryNotFound());
 
 		if (!_containers.TryGetValue(source,
 			out IStorageContainer? sourceContainer))
@@ -283,7 +283,7 @@ internal sealed class InMemoryStorage : IStorage
 	                              bool overwrite = false,
 	                              bool recursive = false)
 	{
-		ThrowIfParentDoesNotExist(destination);
+		ThrowIfParentDoesNotExist(destination, _ => ExceptionFactory.DirectoryNotFound());
 
 		List<Rollback> rollbacks = new();
 		try
@@ -307,7 +307,9 @@ internal sealed class InMemoryStorage : IStorage
 	                                 IStorageLocation? backup,
 	                                 bool ignoreMetadataErrors = false)
 	{
-		ThrowIfParentDoesNotExist(destination);
+		ThrowIfParentDoesNotExist(destination, p => Execute.OnWindows<IOException>(
+			() => ExceptionFactory.DirectoryNotFound(),
+			() => ExceptionFactory.FileNotFound(p.FullPath)));
 
 		if (!_containers.TryGetValue(source,
 			out IStorageContainer? sourceContainer))
@@ -601,14 +603,14 @@ internal sealed class InMemoryStorage : IStorage
 	}
 #endif
 
-	private void ThrowIfParentDoesNotExist(IStorageLocation location)
+	private void ThrowIfParentDoesNotExist(IStorageLocation location, Func<IStorageLocation, IOException> exceptionCallback)
 	{
 		var parentLocation = location.GetParent();
 		if (parentLocation != null &&
 		    _fileSystem.Path.GetPathRoot(parentLocation.FullPath) != parentLocation.FullPath &&
 		    !_containers.TryGetValue(parentLocation, out _))
 		{
-			throw ExceptionFactory.DirectoryNotFound();
+			throw exceptionCallback(parentLocation);
 		}
 	}
 
