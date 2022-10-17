@@ -13,10 +13,11 @@
     "reporters": [ "html", "progress", "cleartext" ],
     "mutation-level": "Advanced",
     "ignore-methods": [
-      "ExceptionFactory.*",
-      "Execute.*On*",
-      "ValidateDriveLetter",
-      "System.Threading.Thread.Sleep"
+      "ExceptionFactory.*",                    // The exception type is checked, but not the message, as this could be language dependent
+      "Execute.*On*",                          // Indicates operating system specific code
+      "ValidateDriveLetter",                   // Drives are not used in Linux
+      "ThrowCommonExceptionsIfPathIsInvalid",  // Triggered by invalid chars which don't exist in Linux
+      "System.Threading.Thread.Sleep"          // Calls to Thread.Sleep cannot be detected by a test
     ]
   }
 }
