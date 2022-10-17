@@ -142,9 +142,11 @@ public sealed partial class FileSystemMock
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Name" />
 		public string Name
-			=> FileSystem.Path.GetFileName(Location.FullPath.TrimEnd(
-				FileSystem.Path.DirectorySeparatorChar,
-				FileSystem.Path.AltDirectorySeparatorChar));
+			=> FileSystem.Path.GetPathRoot(Location.FullPath) == Location.FullPath
+				? Location.FullPath
+				: FileSystem.Path.GetFileName(Location.FullPath.TrimEnd(
+					FileSystem.Path.DirectorySeparatorChar,
+					FileSystem.Path.AltDirectorySeparatorChar));
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Refresh()" />
 		public void Refresh()
