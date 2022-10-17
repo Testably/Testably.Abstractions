@@ -1,5 +1,4 @@
 ﻿using System;
-using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
@@ -101,8 +100,10 @@ public sealed partial class FileSystemMock : IFileSystem
 	public FileSystemMock WithDrive(string? drive,
 	                                Action<IStorageDrive>? driveCallback = null)
 	{
-		IStorageDrive driveInfoMock = Storage.GetOrAddDrive(
-			drive ?? "".PrefixRoot());
+		IStorageDrive driveInfoMock =
+			drive == null
+				? Storage.MainDrive
+				: Storage.GetOrAddDrive(drive);
 		driveCallback?.Invoke(driveInfoMock);
 		return this;
 	}
