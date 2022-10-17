@@ -60,7 +60,7 @@ public sealed partial class TimeSystemMock
 		}
 
 		#endregion
-		
+
 		private void CheckSynchronization()
 		{
 			if (_synchronizedTime != null &&
