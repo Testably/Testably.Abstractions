@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimerExample", "Timer\Timer
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Timer", "Timer", "{640410B1-7CB3-4482-9B51-959F46C5462C}"
 	ProjectSection(SolutionItems) = preProject
-		README.md = README.md
+		Timer\README.md = Timer\README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimerExample.Tests", "Timer\TimerExample.Tests\TimerExample.Tests.csproj", "{FA948873-1762-4B35-9D1B-0090B90F5CE9}"
