@@ -3,20 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimerExample", "Timer\TimerExample\TimerExample.csproj", "{E59FE9C8-6B68-4D16-A5D7-7D238366ED90}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{641A4EEA-484D-4332-B410-45DE0E95A4C6}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		README.md = README.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Timer", "Timer", "{640410B1-7CB3-4482-9B51-959F46C5462C}"
 	ProjectSection(SolutionItems) = preProject
 		Timer\README.md = Timer\README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimerExample.Tests", "Timer\TimerExample.Tests\TimerExample.Tests.csproj", "{FA948873-1762-4B35-9D1B-0090B90F5CE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimerExample", "Timer\TimerExample\TimerExample.csproj", "{E59FE9C8-6B68-4D16-A5D7-7D238366ED90}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{641A4EEA-484D-4332-B410-45DE0E95A4C6}"
-	ProjectSection(SolutionItems) = preProject
-		Directory.Build.props = Directory.Build.props
-		README.md = README.md
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimerExample.Tests", "Timer\TimerExample.Tests\TimerExample.Tests.csproj", "{FA948873-1762-4B35-9D1B-0090B90F5CE9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

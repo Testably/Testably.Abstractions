@@ -1,20 +1,24 @@
 <Project>
 
   <PropertyGroup>
+    <TestablyAbstractionsVersion>0.5.*</TestablyAbstractionsVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-    <NoWarn>701;1702;CA1845</NoWarn>
+    <NoWarn>701;1702;CA1845;CS7022</NoWarn>
     <OutputPath>$(SolutionDir)..\Build\Examples\$(MSBuildProjectName)</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Testably.Abstractions" Version="0.5.0" />
-    <PackageReference Include="Testably.Abstractions.Extensions" Version="0.5.0" />
-    <PackageReference Include="Testably.Abstractions.Testing" Version="0.5.0" />
+    <PackageReference Include="Testably.Abstractions" Version="$(TestablyAbstractionsVersion)" />
+    <PackageReference Include="Testably.Abstractions.Extensions" Version="$(TestablyAbstractionsVersion)" />
+    <PackageReference Include="Testably.Abstractions.Testing" Version="$(TestablyAbstractionsVersion)" />
   </ItemGroup>
 
   <ItemGroup>
