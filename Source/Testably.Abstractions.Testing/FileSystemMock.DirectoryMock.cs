@@ -367,12 +367,13 @@ public sealed partial class FileSystemMock
 				_fileSystem.DirectoryInfo.New(path);
 			if (!directoryInfo.Exists)
 			{
-				Execute.OnWindows(()
-					=> throw ExceptionFactory.FileNotFound(
-						FileSystem.Path.GetFullPath(path)));
-
-				throw ExceptionFactory.DirectoryNotFound(
-					FileSystem.Path.GetFullPath(path));
+				Execute.OnWindows(
+					() =>
+						throw ExceptionFactory.FileNotFound(
+							FileSystem.Path.GetFullPath(path)),
+					() =>
+						throw ExceptionFactory.DirectoryNotFound(
+							FileSystem.Path.GetFullPath(path)));
 			}
 
 			return directoryInfo;

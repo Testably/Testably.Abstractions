@@ -18,6 +18,14 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
+	public void GetCurrentDirectory_ShouldNotBeRooted()
+	{
+		string result = FileSystem.Directory.GetCurrentDirectory();
+
+		result.Should().NotBe(FileTestHelper.RootDrive());
+	}
+
+	[SkippableFact]
 	public void GetLogicalDrives_ShouldNotBeEmpty()
 	{
 		string[] result = FileSystem.Directory.GetLogicalDrives();
