@@ -66,7 +66,7 @@ internal sealed class InMemoryStorage : IStorage
 				InMemoryContainer.NewFile(destination, _fileSystem);
 			if (_containers.TryAdd(destination, copiedContainer))
 			{
-				copiedContainer.WriteBytes(sourceContainer.GetBytes());
+				copiedContainer.WriteBytes(sourceContainer.GetBytes().ToArray());
 				Execute.NotOnWindows(()
 					=> sourceContainer.AdjustTimes(TimeAdjustments.LastAccessTime));
 
@@ -77,9 +77,6 @@ internal sealed class InMemoryStorage : IStorage
 						DateTimeKind.Local));
 				copiedContainer.LastWriteTime.Set(
 					sourceContainer.LastWriteTime.Get(DateTimeKind.Local),
-					DateTimeKind.Local);
-				copiedContainer.LastAccessTime.Set(
-					sourceContainer.LastAccessTime.Get(DateTimeKind.Local),
 					DateTimeKind.Local);
 				copiedContainer.AdjustTimes(TimeAdjustments.LastAccessTime);
 				return destination;
