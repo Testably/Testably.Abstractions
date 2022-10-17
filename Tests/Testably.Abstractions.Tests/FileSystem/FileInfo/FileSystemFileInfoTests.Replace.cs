@@ -115,6 +115,87 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void Replace_ShouldAddArchiveAttributeOnWindows(
+		string sourceName,
+		string destinationName,
+		string backupName,
+		string sourceContents,
+		string destinationContents,
+		FileAttributes sourceFileAttributes,
+		FileAttributes destinationFileAttributes)
+	{
+		FileSystem.File.WriteAllText(sourceName, sourceContents);
+		FileSystem.File.SetAttributes(sourceName, sourceFileAttributes);
+		FileAttributes expectedSourceAttributes =
+			FileSystem.File.GetAttributes(sourceName);
+		if (Test.RunsOnWindows)
+		{
+			expectedSourceAttributes |= FileAttributes.Archive;
+		}
+
+		FileSystem.File.WriteAllText(destinationName, destinationContents);
+		FileSystem.File.SetAttributes(destinationName, destinationFileAttributes);
+		FileAttributes expectedDestinationAttributes =
+			FileSystem.File.GetAttributes(destinationName);
+		if (Test.RunsOnWindows)
+		{
+			expectedDestinationAttributes |= FileAttributes.Archive;
+		}
+
+		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+
+		sut.Replace(destinationName, backupName, true);
+
+		FileSystem.File.GetAttributes(destinationName)
+		   .Should().Be(expectedSourceAttributes);
+		FileSystem.File.GetAttributes(backupName)
+		   .Should().Be(expectedDestinationAttributes);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Replace_ShouldKeepMetadata(
+		string sourceName,
+		string destinationName,
+		string backupName,
+		string sourceContents,
+		string destinationContents)
+	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
+		FileSystem.File.WriteAllText(sourceName, sourceContents);
+		DateTime sourceLastAccessTime = FileSystem.File.GetLastAccessTime(sourceName);
+		DateTime sourceLastWriteTime = FileSystem.File.GetLastWriteTime(sourceName);
+		TimeSystem.Thread.Sleep(1000);
+
+		FileSystem.File.WriteAllText(destinationName, destinationContents);
+		DateTime destinationCreationTime =
+			FileSystem.File.GetCreationTime(destinationName);
+		DateTime destinationLastAccessTime =
+			FileSystem.File.GetLastAccessTime(destinationName);
+		DateTime destinationLastWriteTime =
+			FileSystem.File.GetLastWriteTime(destinationName);
+		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		TimeSystem.Thread.Sleep(1000);
+
+		sut.Replace(destinationName, backupName);
+
+		FileSystem.File.GetCreationTime(destinationName)
+		   .Should().Be(destinationCreationTime);
+		FileSystem.File.GetLastAccessTime(destinationName)
+		   .Should().Be(sourceLastAccessTime);
+		FileSystem.File.GetLastWriteTime(destinationName)
+		   .Should().Be(sourceLastWriteTime);
+		FileSystem.File.GetCreationTime(backupName)
+		   .Should().Be(destinationCreationTime);
+		FileSystem.File.GetLastAccessTime(backupName)
+		   .Should().Be(destinationLastAccessTime);
+		FileSystem.File.GetLastWriteTime(backupName)
+		   .Should().Be(destinationLastWriteTime);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Replace_ShouldReplaceFile(
 		string sourceName,
 		string destinationName,
