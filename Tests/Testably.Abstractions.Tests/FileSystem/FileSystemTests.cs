@@ -3,8 +3,6 @@ namespace Testably.Abstractions.Tests.FileSystem;
 public abstract partial class FileSystemTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	#region Test Setup
-
 	public abstract string BasePath { get; }
 	public TFileSystem FileSystem { get; }
 	public ITimeSystem TimeSystem { get; }
@@ -17,8 +15,6 @@ public abstract partial class FileSystemTests<TFileSystem>
 
 		Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
 	}
-
-	#endregion
 
 	[SkippableFact]
 	public void Paths_UnderWindows_ShouldUseNormalSlashAndBackslashInterchangeable()

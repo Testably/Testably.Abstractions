@@ -10,13 +10,9 @@ public static class RealTimeSystemTests
 	[SystemTest(nameof(Tests.TimeSystem.RealTimeSystemTests))]
 	public sealed class TaskTests : TimeSystemTaskTests<Abstractions.TimeSystem>
 	{
-		#region Test Setup
-
 		public TaskTests() : base(new Abstractions.TimeSystem())
 		{
 		}
-
-		#endregion
 
 		[SkippableFact]
 		public async System.Threading.Tasks.Task

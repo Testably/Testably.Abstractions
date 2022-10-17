@@ -169,17 +169,6 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 		sut.LastWriteTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
 	}
 
-	[SkippableFact]
-	[AutoData]
-	public void Root_Name_ShouldBeCorrect()
-	{
-		var rootName = FileTestHelper.RootDrive();
-		IFileSystem.IDirectoryInfo sut =
-			FileSystem.DirectoryInfo.New(rootName);
-
-		sut.Name.Should().Be(rootName);
-	}
-
 	[SkippableTheory]
 	[AutoData]
 	public void Parent_ArbitraryPaths_ShouldNotBeNull(string path1,
@@ -204,6 +193,17 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 			FileSystem.DirectoryInfo.New(FileTestHelper.RootDrive());
 
 		sut.Parent.Should().BeNull();
+	}
+
+	[SkippableFact]
+	[AutoData]
+	public void Root_Name_ShouldBeCorrect()
+	{
+		string rootName = FileTestHelper.RootDrive();
+		IFileSystem.IDirectoryInfo sut =
+			FileSystem.DirectoryInfo.New(rootName);
+
+		sut.Name.Should().Be(rootName);
 	}
 
 	[SkippableTheory]

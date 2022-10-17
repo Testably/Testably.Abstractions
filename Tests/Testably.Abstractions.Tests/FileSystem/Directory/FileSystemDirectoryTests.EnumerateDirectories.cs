@@ -7,6 +7,20 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
+	[SkippableFact]
+	public void EnumerateDirectories_AbsolutePath_ShouldNotIncludeTrailingSlash()
+	{
+		FileSystem.Directory.CreateDirectory("foo");
+		FileSystem.Directory.CreateDirectory("bar");
+
+		List<string> result = FileSystem.Directory
+		   .EnumerateDirectories(BasePath)
+		   .ToList();
+
+		result.Should().Contain(FileSystem.Path.Combine(BasePath, "foo"));
+		result.Should().Contain(FileSystem.Path.Combine(BasePath, "bar"));
+	}
+
 	[SkippableTheory]
 	[AutoData]
 	public void
@@ -22,6 +36,37 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		   .Which.Message.Should()
 		   .Be($"Could not find a part of the path '{expectedPath}'.");
 		FileSystem.Directory.Exists(path).Should().BeFalse();
+	}
+
+	[SkippableFact]
+	public void EnumerateDirectories_RelativePath_ShouldNotIncludeTrailingSlash()
+	{
+		string path = ".";
+		FileSystem.Directory.CreateDirectory("foo");
+		FileSystem.Directory.CreateDirectory("bar");
+
+		List<string> result = FileSystem.Directory
+		   .EnumerateDirectories(path)
+		   .ToList();
+
+		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
+		result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
+	}
+
+	[SkippableFact]
+	public void
+		EnumerateDirectories_RelativePathToParentDirectory_ShouldNotIncludeTrailingSlash()
+	{
+		string path = "foo/..";
+		FileSystem.Directory.CreateDirectory("foo");
+		FileSystem.Directory.CreateDirectory("bar");
+
+		List<string> result = FileSystem.Directory
+		   .EnumerateDirectories(path)
+		   .ToList();
+
+		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
+		result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
 	}
 
 	[SkippableTheory]
@@ -198,49 +243,5 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		   .EnumerateDirectories(path, "xyz", SearchOption.AllDirectories);
 
 		result.Count().Should().Be(2);
-	}
-
-	[SkippableFact]
-	public void EnumerateDirectories_AbsolutePath_ShouldNotIncludeTrailingSlash()
-	{
-		FileSystem.Directory.CreateDirectory("foo");
-		FileSystem.Directory.CreateDirectory("bar");
-
-		List<string> result = FileSystem.Directory
-		   .EnumerateDirectories(BasePath)
-		   .ToList();
-
-		result.Should().Contain(FileSystem.Path.Combine(BasePath, "foo"));
-		result.Should().Contain(FileSystem.Path.Combine(BasePath, "bar"));
-	}
-
-	[SkippableFact]
-	public void EnumerateDirectories_RelativePath_ShouldNotIncludeTrailingSlash()
-	{
-		string path = ".";
-		FileSystem.Directory.CreateDirectory("foo");
-		FileSystem.Directory.CreateDirectory("bar");
-
-		List<string> result = FileSystem.Directory
-		   .EnumerateDirectories(path)
-		   .ToList();
-
-		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
-		result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
-	}
-
-	[SkippableFact]
-	public void EnumerateDirectories_RelativePathToParentDirectory_ShouldNotIncludeTrailingSlash()
-	{
-		string path = "foo/..";
-		FileSystem.Directory.CreateDirectory("foo");
-		FileSystem.Directory.CreateDirectory("bar");
-
-		List<string> result = FileSystem.Directory
-		   .EnumerateDirectories(path)
-		   .ToList();
-
-		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
-		result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
 	}
 }

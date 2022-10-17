@@ -25,7 +25,8 @@ public static class Test
 	public static bool RunsOnWindows
 		=> RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
-	public static void SkipBrittleTestsOnRealFileSystem(IFileSystem fileSystem, bool condition = true)
+	public static void SkipBrittleTestsOnRealFileSystem(
+		IFileSystem fileSystem, bool condition = true)
 	{
 		Skip.If(fileSystem is Abstractions.FileSystem && condition,
 			"Brittle tests are skipped on the real file system.");

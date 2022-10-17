@@ -20,12 +20,8 @@ public sealed class RealFileSystemTests : FileSystemTests<Abstractions.FileSyste
 		   .SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);
 	}
 
-	#region IDisposable Members
-
 	/// <inheritdoc cref="IDisposable.Dispose()" />
 	public void Dispose()
 		=> _directoryCleaner.Dispose();
-
-	#endregion
 }
 #endif

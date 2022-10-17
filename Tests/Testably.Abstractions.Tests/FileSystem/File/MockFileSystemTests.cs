@@ -24,6 +24,14 @@ public sealed class MockFileSystemTests
 		   .SetCurrentDirectoryToEmptyTemporaryDirectory();
 	}
 
+	#region IDisposable Members
+
+	/// <inheritdoc cref="IDisposable.Dispose()" />
+	public void Dispose()
+		=> _directoryCleaner.Dispose();
+
+	#endregion
+
 	[SkippableTheory]
 	[AutoData]
 	public void Move_DifferentDrive_ShouldAdjustAvailableFreeSpace(
@@ -83,12 +91,4 @@ public sealed class MockFileSystemTests
 		FileSystem.File.ReadAllBytes(destinationName).Should().BeEquivalentTo(bytes1);
 	}
 #endif
-
-	#region IDisposable Members
-
-	/// <inheritdoc cref="IDisposable.Dispose()" />
-	public void Dispose()
-		=> _directoryCleaner.Dispose();
-
-	#endregion
 }

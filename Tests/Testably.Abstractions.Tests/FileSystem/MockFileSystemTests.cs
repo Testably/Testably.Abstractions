@@ -23,11 +23,7 @@ public sealed class MockFileSystemTests : FileSystemTests<FileSystemMock>
 		   .SetCurrentDirectoryToEmptyTemporaryDirectory();
 	}
 
-	#region IDisposable Members
-
 	/// <inheritdoc cref="IDisposable.Dispose()" />
 	public void Dispose()
 		=> _directoryCleaner.Dispose();
-
-	#endregion
 }
