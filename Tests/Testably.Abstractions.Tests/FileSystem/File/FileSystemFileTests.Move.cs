@@ -28,6 +28,24 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void
+		Move_DestinationDirectoryDoesNotExist_ShouldThrowDirectoryNotFoundException(
+			string source)
+	{
+		FileSystem.Initialize()
+		   .WithFile(source);
+		string destination = FileTestHelper.RootDrive("not-existing/path");
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.Move(source, destination);
+		});
+
+		exception.Should().BeOfType<DirectoryNotFoundException>();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Move_DestinationExists_ShouldThrowIOExceptionAndNotMoveFile(
 		string sourceName,
 		string destinationName,

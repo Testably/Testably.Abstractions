@@ -42,6 +42,8 @@ internal sealed class InMemoryStorage : IStorage
 	                              IStorageLocation destination,
 	                              bool overwrite = false)
 	{
+		ThrowIfParentDoesNotExist(destination);
+
 		if (!_containers.TryGetValue(source,
 			out IStorageContainer? sourceContainer))
 		{
@@ -281,6 +283,8 @@ internal sealed class InMemoryStorage : IStorage
 	                              bool overwrite = false,
 	                              bool recursive = false)
 	{
+		ThrowIfParentDoesNotExist(destination);
+
 		List<Rollback> rollbacks = new();
 		try
 		{
@@ -303,6 +307,8 @@ internal sealed class InMemoryStorage : IStorage
 	                                 IStorageLocation? backup,
 	                                 bool ignoreMetadataErrors = false)
 	{
+		ThrowIfParentDoesNotExist(destination);
+
 		if (!_containers.TryGetValue(source,
 			out IStorageContainer? sourceContainer))
 		{
@@ -594,6 +600,15 @@ internal sealed class InMemoryStorage : IStorage
 		return nextLocation;
 	}
 #endif
+
+	private void ThrowIfParentDoesNotExist(IStorageLocation location)
+	{
+		var parentLocation = location.GetParent();
+		if (parentLocation != null && !_containers.TryGetValue(parentLocation, out _))
+		{
+			throw ExceptionFactory.DirectoryNotFound(parentLocation.FullPath);
+		}
+	}
 
 	private static void ValidateExpression(string expression)
 	{

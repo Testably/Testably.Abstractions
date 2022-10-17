@@ -7,6 +7,24 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
+	public void
+		Copy_DestinationDirectoryDoesNotExist_ShouldThrowDirectoryNotFoundException(
+			string source)
+	{
+		FileSystem.Initialize()
+		   .WithFile(source);
+		string destination = FileTestHelper.RootDrive("not-existing/path/foo.txt");
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.Copy(source, destination);
+		});
+
+		exception.Should().BeOfType<DirectoryNotFoundException>();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Copy_DestinationExists_ShouldThrowIOExceptionAndNotCopyFile(
 		string sourceName,
 		string destinationName,
