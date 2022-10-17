@@ -112,15 +112,15 @@ public static partial class FileSystemInitializer
 
 			do
 			{
-				basePath = _fileSystem.Path.Combine(
+				string localBasePath = _fileSystem.Path.Combine(
 					_fileSystem.Path.GetTempPath(),
 					_fileSystem.Path.GetFileNameWithoutExtension(_fileSystem.Path
 					   .GetRandomFileName()));
+				Execute.OnMac(() => localBasePath = "/private" + localBasePath);
+				basePath = localBasePath;
 			} while (_fileSystem.Directory.Exists(basePath));
 
 			_fileSystem.Directory.CreateDirectory(basePath);
-
-			Execute.OnMac(() => basePath = "/private" + basePath);
 
 			_logger?.Invoke($"Use '{basePath}' as current directory.");
 			_fileSystem.Directory.SetCurrentDirectory(basePath);

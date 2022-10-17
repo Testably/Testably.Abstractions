@@ -7,6 +7,31 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
+	public void
+		Replace_DestinationDirectoryDoesNotExist_ShouldThrowDirectoryNotFoundException(
+			string source)
+	{
+		FileSystem.Initialize()
+		   .WithFile(source);
+		string destination = FileTestHelper.RootDrive("not-existing/path/foo.txt");
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.Replace(source, destination, null);
+		});
+
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeOfType<DirectoryNotFoundException>();
+		}
+		else
+		{
+			exception.Should().BeOfType<FileNotFoundException>();
+		}
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Replace_DestinationIsDirectory_ShouldThrowUnauthorizedAccessException(
 		string sourceName,
 		string destinationName,
