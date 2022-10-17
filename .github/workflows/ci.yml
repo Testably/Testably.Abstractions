@@ -133,4 +133,22 @@ jobs:
       - name: Build solution
         run: msbuild.exe Testably.Abstractions.sln /p:platform="Any CPU" /p:configuration="Release"
       - name: Run tests
-        run: vstest.console.exe .\Build\Tests\net472\Testably.Abstractions.Tests.dll .\Build\Tests\net472\Testably.Abstractions.Extensions.Tests.dll .\Build\Tests\net472\Testably.Abstractions.Parity.Tests.dll .\Build\Tests\net472\Testably.Abstractions.Testing.Tests.dll
+        run: vstest.console.exe .\Build\Tests\Testably.Abstractions.Tests\net472\Testably.Abstractions.Tests.dll .\Build\Tests\Testably.Abstractions.Extensions.Tests\net472\Testably.Abstractions.Extensions.Tests.dll .\Build\Tests\Testably.Abstractions.Parity.Tests\net472\Testably.Abstractions.Parity.Tests.dll .\Build\Tests\Testably.Abstractions.Testing.Tests\net472\Testably.Abstractions.Testing.Tests.dll
+        
+  test-examples:
+    name: Test (Examples)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: |
+            6.0.x
+      - name: Build solution
+        run: dotnet build Examples
+      - name: Run tests
+        run: dotnet test Examples --no-build
