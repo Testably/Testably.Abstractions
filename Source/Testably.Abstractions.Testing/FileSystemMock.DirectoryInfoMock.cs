@@ -69,7 +69,9 @@ public sealed partial class FileSystemMock
 
 		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories()" />
 		public IEnumerable<IFileSystem.IDirectoryInfo> EnumerateDirectories()
-			=> EnumerateDirectories("*", SearchOption.TopDirectoryOnly);
+			=> EnumerateDirectories(
+				EnumerationOptionsHelper.DefaultSearchPattern,
+				SearchOption.TopDirectoryOnly);
 
 		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateDirectories(string)" />
 		public IEnumerable<IFileSystem.IDirectoryInfo>
@@ -101,7 +103,9 @@ public sealed partial class FileSystemMock
 
 		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateFiles()" />
 		public IEnumerable<IFileSystem.IFileInfo> EnumerateFiles()
-			=> EnumerateFiles("*", SearchOption.TopDirectoryOnly);
+			=> EnumerateFiles(
+				EnumerationOptionsHelper.DefaultSearchPattern,
+				SearchOption.TopDirectoryOnly);
 
 		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateFiles(string)" />
 		public IEnumerable<IFileSystem.IFileInfo> EnumerateFiles(string searchPattern)
@@ -131,7 +135,9 @@ public sealed partial class FileSystemMock
 
 		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateFileSystemInfos()" />
 		public IEnumerable<IFileSystem.IFileSystemInfo> EnumerateFileSystemInfos()
-			=> EnumerateFileSystemInfos("*", SearchOption.TopDirectoryOnly);
+			=> EnumerateFileSystemInfos(
+				EnumerationOptionsHelper.DefaultSearchPattern,
+				SearchOption.TopDirectoryOnly);
 
 		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.EnumerateFileSystemInfos(string)" />
 		public IEnumerable<IFileSystem.IFileSystemInfo>
@@ -225,14 +231,11 @@ public sealed partial class FileSystemMock
 
 		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.MoveTo(string)" />
 		public void MoveTo(string destDirName)
-		{
-			Location = FileSystem.Storage.Move(
-				           FileSystem.Storage.GetLocation(FullName),
-				           FileSystem.Storage.GetLocation(destDirName),
-				           recursive: true)
-			           ?? throw ExceptionFactory.DirectoryNotFound(FullName);
-			Refresh();
-		}
+			=> Location = FileSystem.Storage.Move(
+				              FileSystem.Storage.GetLocation(FullName),
+				              FileSystem.Storage.GetLocation(destDirName),
+				              recursive: true)
+			              ?? throw ExceptionFactory.DirectoryNotFound(FullName);
 
 		#endregion
 

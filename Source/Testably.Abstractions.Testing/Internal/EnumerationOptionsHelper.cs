@@ -8,6 +8,12 @@ namespace Testably.Abstractions.Testing.Internal;
 internal static class EnumerationOptionsHelper
 {
 	/// <summary>
+	///     The default search pattern, when none is provided.<br />
+	///     It matches any file or directory.
+	/// </summary>
+	internal const string DefaultSearchPattern = "*";
+
+	/// <summary>
 	///     For internal use. These are the options we want to use if calling the existing Directory/File APIs where you don't
 	///     explicitly specify EnumerationOptions.
 	///     <para />
@@ -114,14 +120,14 @@ internal static class EnumerationOptionsHelper
 	private static string SimplifyExpression(string expression)
 	{
 		char[] unixEscapeChars = { '\\', '"', '<', '>' };
-		if (expression == "*")
+		if (expression == DefaultSearchPattern)
 		{
 			return expression;
 		}
 
 		if (expression == "." || expression == "*.*")
 		{
-			return "*";
+			return DefaultSearchPattern;
 		}
 
 		if (!Execute.IsNetFramework && string.IsNullOrEmpty(expression))

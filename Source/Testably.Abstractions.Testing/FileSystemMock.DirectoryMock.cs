@@ -59,7 +59,9 @@ public sealed partial class FileSystemMock
 
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateDirectories(string)" />
 		public IEnumerable<string> EnumerateDirectories(string path)
-			=> EnumerateDirectories(path, "*", SearchOption.TopDirectoryOnly);
+			=> EnumerateDirectories(path,
+				EnumerationOptionsHelper.DefaultSearchPattern,
+				SearchOption.TopDirectoryOnly);
 
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateDirectories(string, string)" />
 		public IEnumerable<string> EnumerateDirectories(string path, string searchPattern)
@@ -75,7 +77,8 @@ public sealed partial class FileSystemMock
 					searchPattern,
 					EnumerationOptionsHelper.FromSearchOption(searchOption))
 			   .Select(x => _fileSystem
-				   .GetSubdirectoryPath(x.FullPath, path, searchOption == SearchOption.AllDirectories));
+				   .GetSubdirectoryPath(x.FullPath, path,
+						searchOption == SearchOption.AllDirectories));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateDirectories(string, string, EnumerationOptions)" />
@@ -89,12 +92,15 @@ public sealed partial class FileSystemMock
 					searchPattern,
 					enumerationOptions)
 			   .Select(x => _fileSystem
-				   .GetSubdirectoryPath(x.FullPath, path, enumerationOptions.RecurseSubdirectories));
+				   .GetSubdirectoryPath(x.FullPath, path,
+						enumerationOptions.RecurseSubdirectories));
 #endif
 
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFiles(string)" />
 		public IEnumerable<string> EnumerateFiles(string path)
-			=> EnumerateFiles(path, "*", SearchOption.TopDirectoryOnly);
+			=> EnumerateFiles(path,
+				EnumerationOptionsHelper.DefaultSearchPattern,
+				SearchOption.TopDirectoryOnly);
 
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFiles(string, string)" />
 		public IEnumerable<string> EnumerateFiles(string path, string searchPattern)
@@ -110,7 +116,8 @@ public sealed partial class FileSystemMock
 					searchPattern,
 					EnumerationOptionsHelper.FromSearchOption(searchOption))
 			   .Select(x => _fileSystem
-				   .GetSubdirectoryPath(x.FullPath, path, searchOption == SearchOption.AllDirectories));
+				   .GetSubdirectoryPath(x.FullPath, path,
+						searchOption == SearchOption.AllDirectories));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFiles(string, string, EnumerationOptions)" />
@@ -123,12 +130,15 @@ public sealed partial class FileSystemMock
 					searchPattern,
 					enumerationOptions)
 			   .Select(x => _fileSystem
-				   .GetSubdirectoryPath(x.FullPath, path, enumerationOptions.RecurseSubdirectories));
+				   .GetSubdirectoryPath(x.FullPath, path,
+						enumerationOptions.RecurseSubdirectories));
 #endif
 
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string)" />
 		public IEnumerable<string> EnumerateFileSystemEntries(string path)
-			=> EnumerateFileSystemEntries(path, "*", SearchOption.TopDirectoryOnly);
+			=> EnumerateFileSystemEntries(path,
+				EnumerationOptionsHelper.DefaultSearchPattern,
+				SearchOption.TopDirectoryOnly);
 
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string, string)" />
 		public IEnumerable<string> EnumerateFileSystemEntries(
@@ -147,7 +157,8 @@ public sealed partial class FileSystemMock
 					searchPattern,
 					EnumerationOptionsHelper.FromSearchOption(searchOption))
 			   .Select(x => _fileSystem
-				   .GetSubdirectoryPath(x.FullPath, path, searchOption == SearchOption.AllDirectories));
+				   .GetSubdirectoryPath(x.FullPath, path,
+						searchOption == SearchOption.AllDirectories));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string, string, EnumerationOptions)" />
@@ -160,7 +171,8 @@ public sealed partial class FileSystemMock
 					searchPattern,
 					enumerationOptions)
 			   .Select(x => _fileSystem
-				   .GetSubdirectoryPath(x.FullPath, path, enumerationOptions.RecurseSubdirectories));
+				   .GetSubdirectoryPath(x.FullPath, path,
+						enumerationOptions.RecurseSubdirectories));
 #endif
 
 		/// <inheritdoc cref="IFileSystem.IDirectory.Exists(string)" />
