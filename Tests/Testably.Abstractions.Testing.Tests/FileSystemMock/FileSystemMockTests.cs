@@ -15,7 +15,9 @@ public class FileSystemMockTests
 		sut.File.WriteAllText(path, contents);
 #pragma warning disable CA1416
 		sut.File.Encrypt(path);
+#pragma warning restore CA1416
 
+#pragma warning disable CA1416
 		sut.File.Decrypt(path);
 #pragma warning restore CA1416
 
@@ -43,8 +45,10 @@ public class FileSystemMockTests
 		Testing.FileSystemMock sut = new();
 		sut.File.WriteAllText(path, contents);
 #pragma warning disable CA1416
-		sut.File.Encrypt(path);
+		sut.FileInfo.New(path).Encrypt();
+#pragma warning restore CA1416
 
+#pragma warning disable CA1416
 		sut.FileInfo.New(path).Decrypt();
 #pragma warning restore CA1416
 
