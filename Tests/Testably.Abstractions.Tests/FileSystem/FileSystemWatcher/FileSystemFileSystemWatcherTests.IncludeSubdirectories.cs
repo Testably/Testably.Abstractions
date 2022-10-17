@@ -63,8 +63,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	public void IncludeSubdirectories_SetToTrue_ShouldTriggerNotificationOnSubdirectories(
 		string baseDirectory, string subdirectoryName)
 	{
-		Skip.If(!Test.RunsOnWindows && FileSystem is Abstractions.FileSystem,
-			"Test is brittle on Linux or Mac against the real file system.");
+		Test.SkipBrittleTestsOnRealFileSystem(FileSystem, !Test.RunsOnWindows);
 
 		FileSystem.Initialize()
 		   .WithSubdirectory(baseDirectory).Initialized(s => s

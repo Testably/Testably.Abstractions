@@ -148,6 +148,95 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void EndRead_ShouldNotAdjustTimes(string path, byte[] contents)
+	{
+		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
+
+		ManualResetEventSlim ms = new();
+		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
+		FileSystem.File.WriteAllBytes(path, contents);
+		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
+		using FileSystemStream readStream = FileSystem.File.OpenRead(path);
+		DateTime updateTime = DateTime.MinValue;
+
+		byte[] buffer = new byte[contents.Length];
+		readStream.BeginRead(buffer, 0, buffer.Length, ar =>
+		{
+			TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+			updateTime = TimeSystem.DateTime.UtcNow;
+			// ReSharper disable once AccessToDisposedClosure
+			readStream.EndRead(ar);
+			ms.Set();
+		}, null);
+
+		ms.Wait(10000);
+		readStream.Dispose();
+
+		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
+		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(path);
+		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
+
+		creationTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+		lastAccessTime.Should()
+		   .BeOnOrAfter(updateTime);
+		lastWriteTime.Should()
+		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+		   .BeOnOrBefore(creationTimeEnd);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void EndWrite_ShouldAdjustTimes(string path, byte[] contents)
+	{
+		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
+
+		ManualResetEventSlim ms = new();
+		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
+		FileSystem.File.WriteAllBytes(path, contents);
+		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
+		using FileSystemStream writeStream = FileSystem.File.Create(path);
+		DateTime updateTime = DateTime.MinValue;
+
+		writeStream.BeginWrite(contents, 0, contents.Length, ar =>
+		{
+			TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+			updateTime = TimeSystem.DateTime.UtcNow;
+			// ReSharper disable once AccessToDisposedClosure
+			writeStream.EndWrite(ar);
+			(TimeSystem as TimeSystemMock)?.TimeProvider.SynchronizeClock();
+			ms.Set();
+		}, null);
+
+		ms.Wait(10000);
+		writeStream.Dispose();
+
+		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
+		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(path);
+		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
+
+		if (Test.RunsOnWindows)
+		{
+			creationTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+			lastAccessTime.Should()
+			   .BeOnOrAfter(updateTime);
+		}
+		else
+		{
+			lastAccessTime.Should()
+			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			   .BeOnOrBefore(creationTimeEnd);
+		}
+
+		lastWriteTime.Should()
+		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Flush_ShouldNotChangePosition(
 		string path, string contents)
 	{

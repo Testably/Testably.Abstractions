@@ -114,11 +114,15 @@ internal static class Execute
 	/// <remarks>
 	///     See also: <seealso cref="IsNetFramework" />
 	/// </remarks>
-	public static void OnNetFramework(Action callback)
+	public static void OnNetFramework(Action callback, Action? alternativeCallback = null)
 	{
 		if (IsNetFramework)
 		{
 			callback();
+		}
+		else
+		{
+			alternativeCallback?.Invoke();
 		}
 	}
 

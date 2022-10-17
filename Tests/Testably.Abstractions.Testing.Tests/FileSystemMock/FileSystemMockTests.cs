@@ -7,6 +7,68 @@ namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
 
 public class FileSystemMockTests
 {
+	[Theory]
+	[AutoData]
+	public void FileSystemMock_File_Decrypt(string path, string contents)
+	{
+		Testing.FileSystemMock sut = new();
+		sut.File.WriteAllText(path, contents);
+#pragma warning disable CA1416
+		sut.File.Encrypt(path);
+#pragma warning restore CA1416
+
+#pragma warning disable CA1416
+		sut.File.Decrypt(path);
+#pragma warning restore CA1416
+
+		sut.File.ReadAllText(path).Should().Be(contents);
+	}
+
+	[Theory]
+	[AutoData]
+	public void FileSystemMock_File_Encrypt(string path, string contents)
+	{
+		Testing.FileSystemMock sut = new();
+		sut.File.WriteAllText(path, contents);
+
+#pragma warning disable CA1416
+		sut.File.Encrypt(path);
+#pragma warning restore CA1416
+
+		sut.File.ReadAllText(path).Should().NotBe(contents);
+	}
+
+	[Theory]
+	[AutoData]
+	public void FileSystemMock_FileInfo_Decrypt(string path, string contents)
+	{
+		Testing.FileSystemMock sut = new();
+		sut.File.WriteAllText(path, contents);
+#pragma warning disable CA1416
+		sut.FileInfo.New(path).Encrypt();
+#pragma warning restore CA1416
+
+#pragma warning disable CA1416
+		sut.FileInfo.New(path).Decrypt();
+#pragma warning restore CA1416
+
+		sut.File.ReadAllText(path).Should().Be(contents);
+	}
+
+	[Theory]
+	[AutoData]
+	public void FileSystemMock_FileInfo_Encrypt(string path, string contents)
+	{
+		Testing.FileSystemMock sut = new();
+		sut.File.WriteAllText(path, contents);
+
+#pragma warning disable CA1416
+		sut.FileInfo.New(path).Encrypt();
+#pragma warning restore CA1416
+
+		sut.File.ReadAllText(path).Should().NotBe(contents);
+	}
+
 	[Fact]
 	public void FileSystemMock_ShouldBeInitializedWithASingleDefaultDrive()
 	{

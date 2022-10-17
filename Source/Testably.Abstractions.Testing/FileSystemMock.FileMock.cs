@@ -125,20 +125,24 @@ public sealed partial class FileSystemMock
 
 		/// <inheritdoc cref="IFileSystem.IFile.Copy(string, string, bool)" />
 		public void Copy(string sourceFileName, string destFileName, bool overwrite)
-		{
-			try
-			{
-				_fileSystem.FileInfo.New(sourceFileName)
-				   .CopyTo(destFileName, overwrite);
-			}
-			catch (UnauthorizedAccessException)
-			{
-				Execute.OnNetFramework(()
-					=> throw ExceptionFactory.AccessToPathDenied(sourceFileName));
-
-				throw;
-			}
-		}
+			=> Execute.OnNetFramework(
+				() =>
+				{
+					try
+					{
+						_fileSystem.FileInfo.New(sourceFileName)
+						   .CopyTo(destFileName, overwrite);
+					}
+					catch (UnauthorizedAccessException)
+					{
+						throw ExceptionFactory.AccessToPathDenied(sourceFileName);
+					}
+				},
+				() =>
+				{
+					_fileSystem.FileInfo.New(sourceFileName)
+					   .CopyTo(destFileName, overwrite);
+				});
 
 		/// <inheritdoc cref="IFileSystem.IFile.Create(string)" />
 		public FileSystemStream Create(string path)

@@ -50,7 +50,6 @@ public sealed partial class TimeSystemMock
 		/// <inheritdoc cref="TimeSystemMock.ITimeProvider.SetTo(DateTime)" />
 		public void SetTo(DateTime value)
 		{
-			CheckSynchronization();
 			Now.Value = value;
 		}
 
