@@ -1,82 +1,31 @@
 namespace Testably.Abstractions.Tests.FileSystem;
 
-public abstract class FileSystemTests<TFileSystem>
+public abstract partial class FileSystemTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	#region Test Setup
-
+	public abstract string BasePath { get; }
 	public TFileSystem FileSystem { get; }
+	public ITimeSystem TimeSystem { get; }
 
-	protected FileSystemTests(TFileSystem fileSystem)
+	protected FileSystemTests(TFileSystem fileSystem,
+	                          ITimeSystem timeSystem)
 	{
 		FileSystem = fileSystem;
+		TimeSystem = timeSystem;
 
 		Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
 	}
 
-	#endregion
-
 	[SkippableFact]
-	public void Directory_ShouldSetExtensionPoint()
+	public void Paths_UnderWindows_ShouldUseNormalSlashAndBackslashInterchangeable()
 	{
-		IFileSystem result = FileSystem.Directory.FileSystem;
+		Skip.IfNot(Test.RunsOnWindows);
 
-		result.Should().Be(FileSystem);
-	}
+		FileSystem.Directory.CreateDirectory("foo\\bar");
+		FileSystem.File.WriteAllText("foo\\bar\\file.txt", "some content");
 
-	[SkippableFact]
-	public void DirectoryInfo_ShouldSetExtensionPoint()
-	{
-		IFileSystem result = FileSystem.DirectoryInfo.FileSystem;
-
-		result.Should().Be(FileSystem);
-	}
-
-	[SkippableFact]
-	public void DriveInfo_ShouldSetExtensionPoint()
-	{
-		IFileSystem result = FileSystem.DriveInfo.FileSystem;
-
-		result.Should().Be(FileSystem);
-	}
-
-	[SkippableFact]
-	public void File_ShouldSetExtensionPoint()
-	{
-		IFileSystem result = FileSystem.File.FileSystem;
-
-		result.Should().Be(FileSystem);
-	}
-
-	[SkippableFact]
-	public void FileInfo_ShouldSetExtensionPoint()
-	{
-		IFileSystem result = FileSystem.FileInfo.FileSystem;
-
-		result.Should().Be(FileSystem);
-	}
-
-	[SkippableFact]
-	public void FileStream_ShouldSetExtensionPoint()
-	{
-		IFileSystem result = FileSystem.FileStream.FileSystem;
-
-		result.Should().Be(FileSystem);
-	}
-
-	[SkippableFact]
-	public void FileSystemWatcherFactory_ShouldSetExtensionPoint()
-	{
-		IFileSystem result = FileSystem.FileSystemWatcher.FileSystem;
-
-		result.Should().Be(FileSystem);
-	}
-
-	[SkippableFact]
-	public void Path_ShouldSetExtensionPoint()
-	{
-		IFileSystem result = FileSystem.Path.FileSystem;
-
-		result.Should().Be(FileSystem);
+		FileSystem.File.Exists("foo/bar/file.txt").Should().BeTrue();
+		FileSystem.Directory.GetFiles("foo/bar").Length
+		   .Should().Be(1);
 	}
 }

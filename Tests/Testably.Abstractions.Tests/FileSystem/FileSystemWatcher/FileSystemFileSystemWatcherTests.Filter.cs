@@ -35,6 +35,31 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		result.Name.Should().Be(FileSystem.Path.GetFileName(path));
 	}
 
+	[SkippableTheory]
+	[AutoData]
+	public void Filter_NotMatching_ShouldNotTriggerNotification(
+		string path, string filter)
+	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
+		FileSystem.Initialize().WithSubdirectory(path);
+		ManualResetEventSlim ms = new();
+		FileSystemEventArgs? result = null;
+		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+		fileSystemWatcher.Deleted += (_, eventArgs) =>
+		{
+			result = eventArgs;
+			ms.Set();
+		};
+		fileSystemWatcher.Filter = filter;
+		fileSystemWatcher.EnableRaisingEvents = true;
+		FileSystem.Directory.Delete(path);
+		ms.Wait(30).Should().BeFalse();
+
+		result.Should().BeNull();
+	}
+
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
 	[SkippableTheory]
 	[AutoData]
@@ -81,29 +106,4 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		}
 	}
 #endif
-
-	[SkippableTheory]
-	[AutoData]
-	public void Filter_NotMatching_ShouldNotTriggerNotification(
-		string path, string filter)
-	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
-
-		FileSystem.Initialize().WithSubdirectory(path);
-		ManualResetEventSlim ms = new();
-		FileSystemEventArgs? result = null;
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
-			FileSystem.FileSystemWatcher.New(BasePath);
-		fileSystemWatcher.Deleted += (_, eventArgs) =>
-		{
-			result = eventArgs;
-			ms.Set();
-		};
-		fileSystemWatcher.Filter = filter;
-		fileSystemWatcher.EnableRaisingEvents = true;
-		FileSystem.Directory.Delete(path);
-		ms.Wait(30).Should().BeFalse();
-
-		result.Should().BeNull();
-	}
 }

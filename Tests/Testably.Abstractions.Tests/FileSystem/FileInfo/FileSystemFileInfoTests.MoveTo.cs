@@ -74,6 +74,57 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void MoveTo_ShouldAddArchiveAttributeOnWindows(
+		string sourceName,
+		string destinationName,
+		string contents,
+		FileAttributes fileAttributes)
+	{
+		FileSystem.File.WriteAllText(sourceName, contents);
+		FileSystem.File.SetAttributes(sourceName, fileAttributes);
+		FileAttributes expectedAttributes = FileSystem.File.GetAttributes(sourceName);
+		if (Test.RunsOnWindows)
+		{
+			expectedAttributes |= FileAttributes.Archive;
+		}
+
+		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+
+		sut.MoveTo(destinationName);
+
+		FileSystem.File.GetAttributes(destinationName)
+		   .Should().Be(expectedAttributes);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void MoveTo_ShouldKeepMetadata(
+		string sourceName,
+		string destinationName,
+		string contents)
+	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
+		FileSystem.File.WriteAllText(sourceName, contents);
+		DateTime sourceCreationTime = FileSystem.File.GetCreationTime(sourceName);
+		DateTime sourceLastAccessTime = FileSystem.File.GetLastAccessTime(sourceName);
+		DateTime sourceLastWriteTime = FileSystem.File.GetLastWriteTime(sourceName);
+		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+
+		TimeSystem.Thread.Sleep(1000);
+
+		sut.MoveTo(destinationName);
+
+		FileSystem.File.GetCreationTime(destinationName)
+		   .Should().Be(sourceCreationTime);
+		FileSystem.File.GetLastAccessTime(destinationName)
+		   .Should().Be(sourceLastAccessTime);
+		FileSystem.File.GetLastWriteTime(destinationName)
+		   .Should().Be(sourceLastWriteTime);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void MoveTo_ShouldMoveFileWithContent(
 		string sourceName, string destinationName, string contents)
 	{

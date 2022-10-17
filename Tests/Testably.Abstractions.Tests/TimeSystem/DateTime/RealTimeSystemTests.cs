@@ -8,13 +8,9 @@ public static class RealTimeSystemTests
 	[SystemTest(nameof(Tests.TimeSystem.RealTimeSystemTests))]
 	public sealed class DateTimeTests : TimeSystemDateTimeTests<Abstractions.TimeSystem>
 	{
-		#region Test Setup
-
 		public DateTimeTests() : base(new Abstractions.TimeSystem())
 		{
 		}
-
-		#endregion
 
 		[SkippableFact]
 		public void Now_ShouldReturnDefaultValue()

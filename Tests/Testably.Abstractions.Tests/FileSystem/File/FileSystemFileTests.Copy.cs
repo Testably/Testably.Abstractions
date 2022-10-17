@@ -7,6 +7,67 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
+	public void Copy_DestinationExists_ShouldThrowIOExceptionAndNotCopyFile(
+		string sourceName,
+		string destinationName,
+		string sourceContents,
+		string destinationContents)
+	{
+		FileSystem.File.WriteAllText(sourceName, sourceContents);
+		FileSystem.File.WriteAllText(destinationName, destinationContents);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.Copy(sourceName, destinationName);
+		});
+
+		exception.Should().BeOfType<IOException>();
+		FileSystem.File.Exists(sourceName).Should().BeTrue();
+		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
+		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.File.ReadAllText(destinationName).Should().Be(destinationContents);
+	}
+
+#if FEATURE_FILE_MOVETO_OVERWRITE
+	[SkippableTheory]
+	[AutoData]
+	public void Copy_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
+		string sourceName,
+		string destinationName,
+		string sourceContents,
+		string destinationContents)
+	{
+		FileSystem.File.WriteAllText(sourceName, sourceContents);
+		FileSystem.File.WriteAllText(destinationName, destinationContents);
+
+		FileSystem.File.Copy(sourceName, destinationName, true);
+
+		FileSystem.File.Exists(sourceName).Should().BeTrue();
+		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
+		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
+	}
+#endif
+
+	[SkippableTheory]
+	[AutoData]
+	public void Copy_ReadOnly_ShouldCopyFile(
+		string sourceName, string destinationName, string contents)
+	{
+		FileSystem.File.WriteAllText(sourceName, contents);
+		FileSystem.File.SetAttributes(sourceName, FileAttributes.ReadOnly);
+
+		FileSystem.File.Copy(sourceName, destinationName);
+
+		FileSystem.File.Exists(sourceName).Should().BeTrue();
+		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.File.GetAttributes(destinationName)
+		   .Should().HaveFlag(FileAttributes.ReadOnly);
+		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Copy_ShouldAdjustTimes(
 		string source, string destination)
 	{
@@ -69,67 +130,6 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Copy_DestinationExists_ShouldThrowIOExceptionAndNotCopyFile(
-		string sourceName,
-		string destinationName,
-		string sourceContents,
-		string destinationContents)
-	{
-		FileSystem.File.WriteAllText(sourceName, sourceContents);
-		FileSystem.File.WriteAllText(destinationName, destinationContents);
-
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.File.Copy(sourceName, destinationName);
-		});
-
-		exception.Should().BeOfType<IOException>();
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
-		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().Be(destinationContents);
-	}
-
-#if FEATURE_FILE_MOVETO_OVERWRITE
-	[SkippableTheory]
-	[AutoData]
-	public void Copy_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
-		string sourceName,
-		string destinationName,
-		string sourceContents,
-		string destinationContents)
-	{
-		FileSystem.File.WriteAllText(sourceName, sourceContents);
-		FileSystem.File.WriteAllText(destinationName, destinationContents);
-
-		FileSystem.File.Copy(sourceName, destinationName, true);
-
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
-		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
-	}
-#endif
-
-	[SkippableTheory]
-	[AutoData]
-	public void Copy_ReadOnly_ShouldCopyFile(
-		string sourceName, string destinationName, string contents)
-	{
-		FileSystem.File.WriteAllText(sourceName, contents);
-		FileSystem.File.SetAttributes(sourceName, FileAttributes.ReadOnly);
-
-		FileSystem.File.Copy(sourceName, destinationName);
-
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
-		FileSystem.File.GetAttributes(destinationName)
-		   .Should().HaveFlag(FileAttributes.ReadOnly);
-		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
-	}
-
-	[SkippableTheory]
-	[AutoData]
 	public void Copy_ShouldCopyFileWithContent(
 		string sourceName, string destinationName, string contents)
 	{
@@ -144,6 +144,28 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 		FileSystem.File.ReadAllText(sourceName).Should().Be(contents);
 		FileSystem.File.Exists(destinationName).Should().BeTrue();
 		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Copy_ShouldNotUseAReferenceToFileContent(
+		string source, string destination, string contents)
+	{
+		FileSystem.File.WriteAllText(source, contents);
+
+		FileSystem.File.Copy(source, destination);
+
+		using (FileSystemStream stream =
+			FileSystem.File.Open(source, FileMode.Open, FileAccess.ReadWrite))
+		{
+			BinaryWriter binaryWriter = new(stream);
+
+			binaryWriter.Seek(0, SeekOrigin.Begin);
+			binaryWriter.Write("Some text");
+		}
+
+		FileSystem.File.ReadAllText(source).Should()
+		   .NotBe(FileSystem.File.ReadAllText(destination));
 	}
 
 	[SkippableTheory]

@@ -74,7 +74,8 @@ public sealed partial class FileSystemMock
 					FileSystemTypes.Directory,
 					searchPattern,
 					EnumerationOptionsHelper.FromSearchOption(searchOption))
-			   .Select(x => _fileSystem.GetSubdirectoryPath(x.FullPath, path));
+			   .Select(x => _fileSystem
+				   .GetSubdirectoryPath(x.FullPath, path, searchOption == SearchOption.AllDirectories));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateDirectories(string, string, EnumerationOptions)" />
@@ -87,7 +88,8 @@ public sealed partial class FileSystemMock
 					FileSystemTypes.Directory,
 					searchPattern,
 					enumerationOptions)
-			   .Select(x => _fileSystem.GetSubdirectoryPath(x.FullPath, path));
+			   .Select(x => _fileSystem
+				   .GetSubdirectoryPath(x.FullPath, path, enumerationOptions.RecurseSubdirectories));
 #endif
 
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFiles(string)" />
@@ -107,7 +109,8 @@ public sealed partial class FileSystemMock
 					FileSystemTypes.File,
 					searchPattern,
 					EnumerationOptionsHelper.FromSearchOption(searchOption))
-			   .Select(x => _fileSystem.GetSubdirectoryPath(x.FullPath, path));
+			   .Select(x => _fileSystem
+				   .GetSubdirectoryPath(x.FullPath, path, searchOption == SearchOption.AllDirectories));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFiles(string, string, EnumerationOptions)" />
@@ -119,7 +122,8 @@ public sealed partial class FileSystemMock
 					FileSystemTypes.File,
 					searchPattern,
 					enumerationOptions)
-			   .Select(x => _fileSystem.GetSubdirectoryPath(x.FullPath, path));
+			   .Select(x => _fileSystem
+				   .GetSubdirectoryPath(x.FullPath, path, enumerationOptions.RecurseSubdirectories));
 #endif
 
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string)" />
@@ -142,7 +146,8 @@ public sealed partial class FileSystemMock
 					FileSystemTypes.DirectoryOrFile,
 					searchPattern,
 					EnumerationOptionsHelper.FromSearchOption(searchOption))
-			   .Select(x => _fileSystem.GetSubdirectoryPath(x.FullPath, path));
+			   .Select(x => _fileSystem
+				   .GetSubdirectoryPath(x.FullPath, path, searchOption == SearchOption.AllDirectories));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string, string, EnumerationOptions)" />
@@ -154,7 +159,8 @@ public sealed partial class FileSystemMock
 					FileSystemTypes.DirectoryOrFile,
 					searchPattern,
 					enumerationOptions)
-			   .Select(x => _fileSystem.GetSubdirectoryPath(x.FullPath, path));
+			   .Select(x => _fileSystem
+				   .GetSubdirectoryPath(x.FullPath, path, enumerationOptions.RecurseSubdirectories));
 #endif
 
 		/// <inheritdoc cref="IFileSystem.IDirectory.Exists(string)" />

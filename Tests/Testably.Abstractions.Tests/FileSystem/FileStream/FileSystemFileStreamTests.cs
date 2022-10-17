@@ -148,6 +148,25 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void Dispose_ShouldDisposeStream(
+		string path, string contents)
+	{
+		FileSystem.File.WriteAllText(path, contents);
+
+		using Stream stream = FileSystem.File.OpenRead(path);
+		stream.Dispose();
+
+		Exception? exception = Record.Exception(() =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			stream.ReadByte();
+		});
+
+		exception.Should().BeOfType<ObjectDisposedException>();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void EndRead_ShouldNotAdjustTimes(string path, byte[] contents)
 	{
 		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);

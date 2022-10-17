@@ -116,6 +116,19 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
+	public void
+		EnumerateFiles_SearchPatternForFileWithoutExtension_ShouldWorkConsistently()
+	{
+		FileSystem.Initialize()
+		   .WithFile("file_without_extension")
+		   .WithFile("file.with.an.extension");
+
+		string[] result = FileSystem.Directory.GetFiles(".", "*.");
+
+		result.Length.Should().Be(1);
+	}
+
+	[SkippableFact]
 	public void EnumerateFiles_SearchPatternWithTooManyAsterisk_ShouldWorkConsistently()
 	{
 		FileSystem.Initialize()

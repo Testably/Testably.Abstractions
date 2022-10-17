@@ -66,20 +66,18 @@ internal sealed class InMemoryStorage : IStorage
 				InMemoryContainer.NewFile(destination, _fileSystem);
 			if (_containers.TryAdd(destination, copiedContainer))
 			{
-				copiedContainer.WriteBytes(sourceContainer.GetBytes());
+				copiedContainer.WriteBytes(sourceContainer.GetBytes().ToArray());
 				Execute.NotOnWindows(()
 					=> sourceContainer.AdjustTimes(TimeAdjustments.LastAccessTime));
 
 				copiedContainer.Attributes = sourceContainer.Attributes;
-				Execute.NotOnWindows(()
-					=> copiedContainer.CreationTime.Set(
+				Execute.OnWindows(
+					() => copiedContainer.Attributes |= FileAttributes.Archive,
+					() => copiedContainer.CreationTime.Set(
 						sourceContainer.CreationTime.Get(DateTimeKind.Local),
 						DateTimeKind.Local));
 				copiedContainer.LastWriteTime.Set(
 					sourceContainer.LastWriteTime.Get(DateTimeKind.Local),
-					DateTimeKind.Local);
-				copiedContainer.LastAccessTime.Set(
-					sourceContainer.LastAccessTime.Get(DateTimeKind.Local),
 					DateTimeKind.Local);
 				copiedContainer.AdjustTimes(TimeAdjustments.LastAccessTime);
 				return destination;
@@ -338,6 +336,8 @@ internal sealed class InMemoryStorage : IStorage
 					if (backup != null)
 					{
 						backup.Drive?.ChangeUsedBytes(destinationBytesLength);
+						Execute.OnWindows(
+							() => existingDestinationContainer.Attributes |= FileAttributes.Archive);
 						_containers.TryAdd(backup, existingDestinationContainer);
 					}
 
@@ -347,6 +347,11 @@ internal sealed class InMemoryStorage : IStorage
 						int sourceBytesLength = existingSourceContainer.GetBytes().Length;
 						source.Drive?.ChangeUsedBytes(-1 * sourceBytesLength);
 						destination.Drive?.ChangeUsedBytes(sourceBytesLength);
+						Execute.OnWindows(
+							() => existingSourceContainer.Attributes |= FileAttributes.Archive);
+						existingSourceContainer.CreationTime.Set(
+							existingDestinationContainer.CreationTime.Get(DateTimeKind.Utc),
+							DateTimeKind.Utc);
 						_containers.TryAdd(destination, existingSourceContainer);
 						return destination;
 					}
@@ -541,6 +546,8 @@ internal sealed class InMemoryStorage : IStorage
 					int bytesLength = sourceContainer.GetBytes().Length;
 					source.Drive?.ChangeUsedBytes(-1 * bytesLength);
 					destination.Drive?.ChangeUsedBytes(bytesLength);
+					Execute.OnWindows(
+						() => sourceContainer.Attributes |= FileAttributes.Archive);
 					rollbacks?.Add(new Rollback(
 						() => MoveInternal(destination, source, true, false)));
 					_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
