@@ -604,7 +604,9 @@ internal sealed class InMemoryStorage : IStorage
 	private void ThrowIfParentDoesNotExist(IStorageLocation location)
 	{
 		var parentLocation = location.GetParent();
-		if (parentLocation != null && !_containers.TryGetValue(parentLocation, out _))
+		if (parentLocation != null &&
+		    _fileSystem.Path.GetPathRoot(parentLocation.FullPath) != parentLocation.FullPath &&
+		    !_containers.TryGetValue(parentLocation, out _))
 		{
 			throw ExceptionFactory.DirectoryNotFound();
 		}
