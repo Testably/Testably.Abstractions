@@ -53,7 +53,7 @@ public void StoreData_ShouldWriteValidFile()
 }
 ```
 
-**More examples can be found in our [examples section](Examples/README.md)!**
+**More examples can be found in our [examples section](https://github.com/Testably/Testably.Abstractions/blob/main/Examples/README.md)!**
 
 # Getting Started
 - Install `Testably.Abstractions` [![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions)](https://www.nuget.org/packages/Testably.Abstractions) as nuget package in your productive projects and `Testably.Abstractions.Testing` [![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions.Testing)](https://www.nuget.org/packages/Testably.Abstractions.Testing) as nuget package in your test projects.
