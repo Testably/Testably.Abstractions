@@ -37,10 +37,12 @@ public class InitializationTests
 	public void InitializeFileSystemInAGivenCurrentDirectory(string currentDirectory)
 	{
 		FileSystemMock fileSystem = new();
+		var expectedDirectory = fileSystem.Path.GetFullPath(currentDirectory);
+
 		fileSystem.InitializeIn(currentDirectory)
 			.WithASubdirectory();
 
 		fileSystem.Directory.GetCurrentDirectory().Should()
-			.Be(fileSystem.Path.GetFullPath(currentDirectory));
+			.Be(expectedDirectory);
 	}
 }
