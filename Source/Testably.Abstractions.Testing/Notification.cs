@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
@@ -103,7 +104,10 @@ public static class Notification
 				_count = count;
 				_filter = filter;
 				_reset.Reset();
-				executeWhenWaiting?.Invoke();
+				if (executeWhenWaiting != null)
+				{
+					Task.Factory.StartNew(executeWhenWaiting.Invoke);
+				}
 				if (!_reset.Wait(timeout))
 				{
 					throw ExceptionFactory.TimeoutExpired(timeout);
