@@ -25,7 +25,7 @@ internal sealed class InMemoryLocation : IStorageLocation
 		Execute.OnNetFramework(()
 			=> friendlyName = friendlyName.TrimOnWindows());
 
-		FriendlyName = friendlyName.RemoveLeadingDot();
+		FriendlyName = friendlyName;
 		Drive = drive;
 	}
 

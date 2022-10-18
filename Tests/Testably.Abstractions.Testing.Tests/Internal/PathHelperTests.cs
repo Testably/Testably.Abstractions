@@ -56,16 +56,6 @@ public class PathHelperTests
 	}
 
 	[Fact]
-	public void RemoveLeadingDot_MultipleLocalDirectories_ShouldBeRemoved()
-	{
-		string path = Path.Combine(".", ".", ".", "foo");
-
-		string result = path.RemoveLeadingDot();
-
-		result.Should().Be("foo");
-	}
-
-	[Fact]
 	public void
 		ThrowCommonExceptionsIfPathIsInvalid_StartWithNull_ShouldThrowArgumentException()
 	{

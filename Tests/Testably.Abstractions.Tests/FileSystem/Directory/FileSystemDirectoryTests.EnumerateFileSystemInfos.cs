@@ -37,7 +37,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 		List<string> result = FileSystem.Directory
 		   .EnumerateFileSystemEntries(
-				FileSystem.Path.GetFullPath(path),
+				FileSystem.Directory.GetCurrentDirectory(),
 				"*",
 				SearchOption.AllDirectories)
 		   .ToList();
@@ -61,7 +61,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 				   .WithAFile());
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateFileSystemEntries(path, "*", SearchOption.AllDirectories)
+		   .EnumerateFileSystemEntries(".", "*", SearchOption.AllDirectories)
 		   .ToList();
 
 		result.Count.Should().Be(3);
@@ -119,7 +119,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 				   .WithAFile());
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateFileSystemEntries(path, initialized[2].Name.ToUpper(),
+		   .EnumerateFileSystemEntries(".",
+				initialized[2].Name.ToUpper(),
 				new EnumerationOptions
 				{
 					MatchCasing = MatchCasing.CaseInsensitive,
@@ -170,7 +171,9 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 				   .WithAFile());
 
 		List<string> result =
-			FileSystem.Directory.EnumerateFileSystemEntries(path).ToList();
+			FileSystem.Directory
+			   .EnumerateFileSystemEntries(".")
+			   .ToList();
 
 		result.Count.Should().Be(3);
 		result.Should().Contain(initialized[0].ToString());
@@ -193,7 +196,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 				   .WithAFile());
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateFileSystemEntries(path, initialized[0].Name)
+		   .EnumerateFileSystemEntries(".", initialized[0].Name)
 		   .ToList();
 
 		result.Count.Should().Be(1);
