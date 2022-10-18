@@ -9,6 +9,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{641A4EEA-484D-43
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration", "Configuration", "{B177017C-1851-4788-A293-D3934D27F222}"
+	ProjectSection(SolutionItems) = preProject
+		Configuration\README.md = Configuration\README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DependencyInjection.Tests", "Configuration\DependencyInjection.Tests\DependencyInjection.Tests.csproj", "{9B2BAC68-0CB0-4DEC-B50E-E93292E23EDE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileSystemConfiguration.Tests", "Configuration\FileSystemConfiguration.Tests\FileSystemConfiguration.Tests.csproj", "{67A3EC8D-3D6F-4FD9-B9A3-7549BA51C70D}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Timer", "Timer", "{640410B1-7CB3-4482-9B51-959F46C5462C}"
 	ProjectSection(SolutionItems) = preProject
 		Timer\README.md = Timer\README.md
@@ -24,6 +33,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9B2BAC68-0CB0-4DEC-B50E-E93292E23EDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B2BAC68-0CB0-4DEC-B50E-E93292E23EDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B2BAC68-0CB0-4DEC-B50E-E93292E23EDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B2BAC68-0CB0-4DEC-B50E-E93292E23EDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67A3EC8D-3D6F-4FD9-B9A3-7549BA51C70D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67A3EC8D-3D6F-4FD9-B9A3-7549BA51C70D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67A3EC8D-3D6F-4FD9-B9A3-7549BA51C70D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67A3EC8D-3D6F-4FD9-B9A3-7549BA51C70D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E59FE9C8-6B68-4D16-A5D7-7D238366ED90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E59FE9C8-6B68-4D16-A5D7-7D238366ED90}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E59FE9C8-6B68-4D16-A5D7-7D238366ED90}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -37,6 +54,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{9B2BAC68-0CB0-4DEC-B50E-E93292E23EDE} = {B177017C-1851-4788-A293-D3934D27F222}
+		{67A3EC8D-3D6F-4FD9-B9A3-7549BA51C70D} = {B177017C-1851-4788-A293-D3934D27F222}
 		{E59FE9C8-6B68-4D16-A5D7-7D238366ED90} = {640410B1-7CB3-4482-9B51-959F46C5462C}
 		{FA948873-1762-4B35-9D1B-0090B90F5CE9} = {640410B1-7CB3-4482-9B51-959F46C5462C}
 	EndGlobalSection
