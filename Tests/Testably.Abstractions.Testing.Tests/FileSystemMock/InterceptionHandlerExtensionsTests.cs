@@ -89,13 +89,7 @@ public class InterceptionHandlerExtensionsTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.AppendAllText(path, "foo");
-				})
-			   .Wait(timeout: 50);
+			FileSystem.File.AppendAllText(path, "foo");
 		});
 
 		if (expectedResult)
@@ -127,13 +121,7 @@ public class InterceptionHandlerExtensionsTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.AppendAllText(path, "foo");
-				})
-			   .Wait(timeout: 50);
+			FileSystem.File.AppendAllText(path, "foo");
 		});
 
 		if (expectedResult)
@@ -222,13 +210,7 @@ public class InterceptionHandlerExtensionsTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.Directory.CreateDirectory(path);
-				})
-			   .Wait(timeout: 50);
+			FileSystem.Directory.CreateDirectory(path);
 		});
 
 		if (expectedResult)
@@ -259,13 +241,7 @@ public class InterceptionHandlerExtensionsTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.Directory.CreateDirectory(path);
-				})
-			   .Wait(timeout: 50);
+			FileSystem.Directory.CreateDirectory(path);
 		});
 
 		if (expectedResult)
@@ -354,13 +330,7 @@ public class InterceptionHandlerExtensionsTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.WriteAllText(path, null);
-				})
-			   .Wait(timeout: 50);
+			FileSystem.File.WriteAllText(path, null);
 		});
 
 		if (expectedResult)
@@ -391,13 +361,7 @@ public class InterceptionHandlerExtensionsTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.WriteAllText(path, null);
-				})
-			   .Wait(timeout: 50);
+			FileSystem.File.WriteAllText(path, null);
 		});
 
 		if (expectedResult)
@@ -487,13 +451,7 @@ public class InterceptionHandlerExtensionsTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.Directory.Delete(path);
-				})
-			   .Wait(timeout: 50);
+			FileSystem.Directory.Delete(path);
 		});
 
 		if (expectedResult)
@@ -525,13 +483,7 @@ public class InterceptionHandlerExtensionsTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.Directory.Delete(path);
-				})
-			   .Wait(timeout: 50);
+			FileSystem.Directory.Delete(path);
 		});
 
 		if (expectedResult)
@@ -621,13 +573,7 @@ public class InterceptionHandlerExtensionsTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.Delete(path);
-				})
-			   .Wait(timeout: 50);
+			FileSystem.File.Delete(path);
 		});
 
 		if (expectedResult)
@@ -659,13 +605,7 @@ public class InterceptionHandlerExtensionsTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.Delete(path);
-				})
-			   .Wait(timeout: 50);
+			FileSystem.File.Delete(path);
 		});
 
 		if (expectedResult)
