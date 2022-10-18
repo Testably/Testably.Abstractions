@@ -27,5 +27,6 @@ public class InterceptionTests
 		});
 
 		exception.Should().Be(customException);
+		fileSystem.File.Exists("foo/bar.txt").Should().BeFalse();
 	}
 }

@@ -27,7 +27,35 @@ Initialize the file system in "current-directory" with
  - a directory named "foo" which contains a randomly named file
  - a file named "bar.txt"
 
+ In order to use multiple drives on Windows (or network shares) you have to first register the drives or shares:
+ ```csharp
+
+ ```
+
  ### Events
  All changes in the file system trigger certain events. All events can be
- - intercepted, before they occur (and e.g. an exception thrown to prevent the event from completing)
- - notified, after they occured to allow a test to react to changes
+ - intercepted, before they occur (and e.g. an exception thrown to prevent the event from completing) on the `FileSystemMock.Intercept` property:
+   ```csharp
+       FileSystemMock fileSystem = new();
+           fileSystem.Intercept.Creating(FileSystemTypes.File,
+               _ => throw new Exception("my custom exception"));
+   ```
+ - notified, after they occured to allow a test to react to changes on the `FileSystemMock.Notify` property:
+   These methods return an awaitable object that
+   - Removes the notification on dispose
+   - Provides a blocking mechanism until the notification happens
+   ```csharp
+       FileSystemMock fileSystem = new();
+       fileSystem.Notify
+           .OnCreated(FileSystemTypes.File, _ =>
+           {
+               // Do something
+           })
+           .ExecuteWhileWaiting(() =>
+           {
+               // This will trigger the callback
+               fileSystem.File.Create("some-file.txt");
+           })
+           .Wait();
+   ```
+

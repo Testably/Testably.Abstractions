@@ -1,5 +1,7 @@
 using AutoFixture.Xunit2;
 using FluentAssertions;
+using System.IO;
+using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing;
 using Xunit;
 
@@ -7,6 +9,24 @@ namespace FileSystemConfiguration.Tests;
 
 public class InitializationTests
 {
+	/// <summary>
+	///     Initialize the file system in the specified <paramref name="currentDirectory" /> with<br />
+	///     - a randomly named directory
+	/// </summary>
+	[Theory]
+	[AutoData]
+	public void InitializeFileSystemInSpecifiedCurrentDirectory(string currentDirectory)
+	{
+		FileSystemMock fileSystem = new();
+		string expectedDirectory = fileSystem.Path.GetFullPath(currentDirectory);
+
+		fileSystem.InitializeIn(currentDirectory)
+			.WithASubdirectory();
+
+		fileSystem.Directory.GetCurrentDirectory().Should()
+			.Be(expectedDirectory);
+	}
+
 	/// <summary>
 	///     Initialize the file system in the root directory with<br />
 	///     - a randomly named directory
@@ -29,20 +49,19 @@ public class InitializationTests
 	}
 
 	/// <summary>
-	///     Initialize the file system in the specified <paramref name="currentDirectory" /> with<br />
-	///     - a randomly named directory
+	///     The file system is automatically initialized with the main drive.<br />
+	///     UNC servers (or additional drives under windows) can be added if required.
 	/// </summary>
-	[Theory]
-	[AutoData]
-	public void InitializeFileSystemInAGivenCurrentDirectory(string currentDirectory)
+	[Fact]
+	public void InitializeFileSystemWithUncDrive()
 	{
 		FileSystemMock fileSystem = new();
-		var expectedDirectory = fileSystem.Path.GetFullPath(currentDirectory);
+		fileSystem.DriveInfo.GetDrives().Should().HaveCount(1);
 
-		fileSystem.InitializeIn(currentDirectory)
-			.WithASubdirectory();
+		fileSystem.WithUncDrive(@"\\unc-server");
 
-		fileSystem.Directory.GetCurrentDirectory().Should()
-			.Be(expectedDirectory);
+		fileSystem.DriveInfo.GetDrives().Should().HaveCount(2);
+
+		if (RuntimeEnvironment.Is)
 	}
 }
