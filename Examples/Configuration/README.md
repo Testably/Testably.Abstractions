@@ -27,10 +27,11 @@ Initialize the file system in "current-directory" with
  - a directory named "foo" which contains a randomly named file
  - a file named "bar.txt"
 
- In order to use multiple drives on Windows (or network shares) you have to first register the drives or shares:
+ In order to use multiple drives on Windows (or network shares) you have to first register them:
  ```csharp
-
+     fileSystem.WithDrive(@"D:", drive => drive.SetTotalSize(1024));
  ```
+ The optional configuration allows limiting the maximum available space on the drive.
 
  ### Events
  All changes in the file system trigger certain events. All events can be

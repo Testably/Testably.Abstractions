@@ -1,7 +1,10 @@
 using AutoFixture.Xunit2;
 using FluentAssertions;
+using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
+using Testably.Abstractions;
 using Testably.Abstractions.Testing;
 using Xunit;
 
@@ -49,7 +52,8 @@ public class InitializationTests
 	}
 
 	/// <summary>
-	///     The file system is automatically initialized with the main drive.<br />
+	///     The file system is automatically initialized with the main drive
+	///     (`C:` on Windows, `/` on Linux or Mac).<br />
 	///     UNC servers (or additional drives under windows) can be added if required.
 	/// </summary>
 	[Fact]
@@ -62,6 +66,43 @@ public class InitializationTests
 
 		fileSystem.DriveInfo.GetDrives().Should().HaveCount(2);
 
-		if (RuntimeEnvironment.Is)
+		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+		{
+			fileSystem.WithDrive(@"D:");
+
+			fileSystem.DriveInfo.GetDrives().Should().HaveCount(3);
+		}
+	}
+
+	/// <summary>
+	///     The drives can be configured on the <see cref="FileSystemMock" />.
+	///     Per default all drives are initializes with 1GB of free space. All
+	///     file operations are counted against this limit and throw an
+	///     <see cref="IOException" />, when the limit is breached.
+	/// </summary>
+	[Fact]
+	public void LimitAvailableSpaceOnDrives()
+	{
+		FileSystemMock fileSystem = new();
+		IRandomSystem.IRandom random = fileSystem.RandomSystem.Random.Shared;
+		byte[] firstFileContent = new byte[199];
+		byte[] secondFileContent = new byte[2];
+		random.NextBytes(firstFileContent);
+		random.NextBytes(secondFileContent);
+
+		// Limit the main drive to 200 bytes
+		fileSystem.WithDrive(drive => drive.SetTotalSize(200));
+		IFileSystem.IDriveInfo mainDrive = fileSystem.DriveInfo.GetDrives().Single();
+		mainDrive.AvailableFreeSpace.Should().Be(200);
+
+		fileSystem.File.WriteAllBytes("foo", firstFileContent);
+		mainDrive.AvailableFreeSpace.Should().Be(1);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			fileSystem.File.WriteAllBytes("bar", secondFileContent);
+		});
+
+		exception.Should().BeOfType<IOException>();
 	}
 }
