@@ -134,4 +134,16 @@ public class FileSystemInitializerTests
 
 		sut.Directory.EnumerateDirectories(".", directoryName).Should().ContainSingle();
 	}
+
+	[Theory]
+	[AutoData]
+	public void InitializeIn_ShouldSetCurrentDirectory(string path)
+	{
+		Testing.FileSystemMock sut = new();
+		string expectedPath = sut.Path.GetFullPath(path);
+
+		sut.InitializeIn(path);
+
+		sut.Directory.GetCurrentDirectory().Should().Be(expectedPath);
+	}
 }
