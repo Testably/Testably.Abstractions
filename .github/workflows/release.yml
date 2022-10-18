@@ -100,8 +100,10 @@ jobs:
           dotnet-version: |
             6.0.x
       - name: Build solution
-        run: dotnet build Examples
-      - name: Run tests
+        run: dotnet build /p:NetCoreOnly=True
+      - name: Build example solution
+        run: dotnet build Examples /p:UseFileReferenceToTestablyLibraries=True
+      - name: Run example tests
         run: dotnet test Examples --no-build
 
   deploy:
