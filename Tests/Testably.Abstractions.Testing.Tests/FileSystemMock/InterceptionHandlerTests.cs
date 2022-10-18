@@ -21,13 +21,7 @@ public class InterceptionHandlerTests
 		});
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.Directory.CreateDirectory(path);
-				})
-			   .Wait(timeout: 500);
+			FileSystem.Directory.CreateDirectory(path);
 		});
 
 		FileSystem.Directory.Exists(path).Should().BeFalse();
@@ -43,13 +37,7 @@ public class InterceptionHandlerTests
 		FileSystem.Intercept.Event(_ => throw exceptionToThrow);
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Notify
-			   .OnEvent(c => receivedPath = c.Path)
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.Directory.CreateDirectory(path);
-				})
-			   .Wait(timeout: 500);
+			FileSystem.Directory.CreateDirectory(path);
 		});
 
 		exception.Should().Be(exceptionToThrow);

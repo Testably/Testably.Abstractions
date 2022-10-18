@@ -51,6 +51,7 @@ public class NotificationHandlerTests
 		string path)
 	{
 		string? receivedPath = null;
+		FileSystem.Initialize();
 		initialization?.Invoke(FileSystem, path);
 
 		FileSystem.Notify

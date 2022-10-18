@@ -104,11 +104,13 @@ public static class Notification
 				_count = count;
 				_filter = filter;
 				_reset.Reset();
+				Task? task = null;
 				if (executeWhenWaiting != null)
 				{
-					Task.Factory.StartNew(executeWhenWaiting.Invoke);
+					task = Task.Factory.StartNew(executeWhenWaiting.Invoke);
 				}
-				if (!_reset.Wait(timeout))
+				if (!_reset.Wait(timeout) ||
+				    task?.Wait(timeout) == false)
 				{
 					throw ExceptionFactory.TimeoutExpired(timeout);
 				}
