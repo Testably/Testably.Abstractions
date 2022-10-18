@@ -15,7 +15,22 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(UseFileReferenceToTestablyLibraries)' == 'True'">
+    <Reference Include="Testably.Abstractions">
+      <HintPath>..\..\..\Build\Binaries\net6.0\Testably.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Testably.Abstractions.Extensions">
+      <HintPath>..\..\..\Build\Binaries\net6.0\Testably.Abstractions.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Testably.Abstractions.Interface">
+      <HintPath>..\..\..\Build\Binaries\net6.0\Testably.Abstractions.Interface.dll</HintPath>
+    </Reference>
+    <Reference Include="Testably.Abstractions.Testing">
+      <HintPath>..\..\..\Build\Binaries\net6.0\Testably.Abstractions.Testing.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseFileReferenceToTestablyLibraries)' != 'True'">
     <PackageReference Include="Testably.Abstractions" Version="$(TestablyAbstractionsVersion)" />
     <PackageReference Include="Testably.Abstractions.Extensions" Version="$(TestablyAbstractionsVersion)" />
     <PackageReference Include="Testably.Abstractions.Testing" Version="$(TestablyAbstractionsVersion)" />

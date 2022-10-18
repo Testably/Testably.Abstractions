@@ -30,22 +30,6 @@ internal static class PathHelper
 			() => false);
 	}
 
-	internal static string
-		NormalizeAndTrimPath(this string path, IFileSystem fileSystem)
-		=> fileSystem.Path
-		   .TrimEndingDirectorySeparator(path.NormalizePath())
-		   .TrimOnWindows();
-
-	internal static string RemoveLeadingDot(this string path)
-	{
-		while (path.StartsWith($".{Path.DirectorySeparatorChar}"))
-		{
-			path = path.Substring(2);
-		}
-
-		return path;
-	}
-
 	internal static bool IsUncPath(this string? path)
 	{
 		if (path == null)

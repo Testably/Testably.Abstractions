@@ -1,4 +1,5 @@
 ![Testably.Abstractions](https://raw.githubusercontent.com/Testably/Testably.Abstractions/main/Docs/Images/social-preview.png)
+[![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions)](https://www.nuget.org/packages/Testably.Abstractions)
 [![CI](https://github.com/Testably/Testably.Abstractions/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Testably/Testably.Abstractions/actions/workflows/ci.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Testably_Testably.Abstractions)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Testably_Testably.Abstractions)
@@ -53,10 +54,10 @@ public void StoreData_ShouldWriteValidFile()
 }
 ```
 
-**More examples can be found in our [examples section](Examples/README.md)!**
+**More examples can be found in our [examples section](https://github.com/Testably/Testably.Abstractions/blob/main/Examples/README.md)!**
 
 # Getting Started
-- Install `Testably.Abstractions` [![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions)](https://www.nuget.org/packages/Testably.Abstractions) as nuget package in your productive projects and `Testably.Abstractions.Testing` [![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions.Testing)](https://www.nuget.org/packages/Testably.Abstractions.Testing) as nuget package in your test projects.
+- Install `Testably.Abstractions` as nuget package in your productive projects and `Testably.Abstractions.Testing` as nuget package in your test projects.
   ```ps
   dotnet add package Testably.Abstractions
   dotnet add package Testably.Abstractions.Testing

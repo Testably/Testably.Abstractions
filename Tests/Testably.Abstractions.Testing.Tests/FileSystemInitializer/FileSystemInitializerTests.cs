@@ -103,9 +103,9 @@ public class FileSystemInitializerTests
 		   .EnumerateDirectories(".", "*", SearchOption.AllDirectories).ToList();
 
 		result.Count.Should().Be(3);
-		result.Should().Contain("foo");
-		result.Should().Contain(sut.Path.Combine("foo", "bar"));
-		result.Should().Contain(sut.Path.Combine("foo", "bar", "xyz"));
+		result.Should().Contain(sut.Path.Combine(".", "foo"));
+		result.Should().Contain(sut.Path.Combine(".", "foo", "bar"));
+		result.Should().Contain(sut.Path.Combine(".", "foo", "bar", "xyz"));
 	}
 
 	[Theory]
@@ -133,5 +133,17 @@ public class FileSystemInitializerTests
 		sut.Initialize().WithSubdirectory(directoryName);
 
 		sut.Directory.EnumerateDirectories(".", directoryName).Should().ContainSingle();
+	}
+
+	[Theory]
+	[AutoData]
+	public void InitializeIn_ShouldSetCurrentDirectory(string path)
+	{
+		Testing.FileSystemMock sut = new();
+		string expectedPath = sut.Path.GetFullPath(path);
+
+		sut.InitializeIn(path);
+
+		sut.Directory.GetCurrentDirectory().Should().Be(expectedPath);
 	}
 }

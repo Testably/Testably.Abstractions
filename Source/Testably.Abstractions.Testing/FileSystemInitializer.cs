@@ -24,7 +24,8 @@ public static partial class FileSystemInitializer
 		where TFileSystem : IFileSystem
 	{
 		fileSystem.Directory.CreateDirectory(basePath);
-		return new Initializer<TFileSystem>(fileSystem, basePath);
+		fileSystem.Directory.SetCurrentDirectory(basePath);
+		return new Initializer<TFileSystem>(fileSystem, ".");
 	}
 
 	/// <summary>
