@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.Internal;
@@ -35,14 +34,10 @@ internal static class FileSystemExtensions
 
 	/// <summary>
 	///     Returns the relative subdirectory path from <paramref name="fullFilePath" /> to the <paramref name="givenPath" />.
-	///     <br />
-	///     If <paramref name="recurseSubdirectories" /> is <see langword="false" /> and the <paramref name="givenPath" /> is
-	///     not rooted, the result is prefixed with the <paramref name="givenPath" />.
 	/// </summary>
 	internal static string GetSubdirectoryPath(this IFileSystem fileSystem,
 	                                           string fullFilePath,
-	                                           string givenPath,
-	                                           bool recurseSubdirectories)
+	                                           string givenPath)
 	{
 		if (fileSystem.Path.IsPathRooted(givenPath))
 		{
@@ -59,9 +54,9 @@ internal static class FileSystemExtensions
 			fullFilePath = fullFilePath.Substring(currentDirectory.Length + 1);
 		}
 
-		if (!recurseSubdirectories && !fullFilePath.StartsWith(givenPath))
+		if (!fullFilePath.StartsWith(givenPath + fileSystem.Path.DirectorySeparatorChar))
 		{
-			return Path.Combine(givenPath, fullFilePath);
+			return fileSystem.Path.Combine(givenPath, fullFilePath);
 		}
 
 		return fullFilePath;

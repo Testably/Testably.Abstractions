@@ -103,9 +103,9 @@ public class FileSystemInitializerTests
 		   .EnumerateDirectories(".", "*", SearchOption.AllDirectories).ToList();
 
 		result.Count.Should().Be(3);
-		result.Should().Contain("foo");
-		result.Should().Contain(sut.Path.Combine("foo", "bar"));
-		result.Should().Contain(sut.Path.Combine("foo", "bar", "xyz"));
+		result.Should().Contain(sut.Path.Combine(".", "foo"));
+		result.Should().Contain(sut.Path.Combine(".", "foo", "bar"));
+		result.Should().Contain(sut.Path.Combine(".", "foo", "bar", "xyz"));
 	}
 
 	[Theory]

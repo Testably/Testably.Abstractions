@@ -59,11 +59,12 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
-		FileSystem.InitializeIn(source)
-		   .WithAFile()
-		   .WithASubdirectory().Initialized(s => s
+		FileSystem.Initialize()
+		   .WithSubdirectory(source).Initialized(s => s
 			   .WithAFile()
-			   .WithASubdirectory());
+			   .WithASubdirectory().Initialized(t => t
+				   .WithAFile()
+				   .WithASubdirectory()));
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
 		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
 

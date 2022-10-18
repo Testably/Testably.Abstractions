@@ -77,8 +77,7 @@ public sealed partial class FileSystemMock
 					searchPattern,
 					EnumerationOptionsHelper.FromSearchOption(searchOption))
 			   .Select(x => _fileSystem
-				   .GetSubdirectoryPath(x.FullPath, path,
-						searchOption == SearchOption.AllDirectories));
+				   .GetSubdirectoryPath(x.FullPath, path));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateDirectories(string, string, EnumerationOptions)" />
@@ -92,8 +91,7 @@ public sealed partial class FileSystemMock
 					searchPattern,
 					enumerationOptions)
 			   .Select(x => _fileSystem
-				   .GetSubdirectoryPath(x.FullPath, path,
-						enumerationOptions.RecurseSubdirectories));
+				   .GetSubdirectoryPath(x.FullPath, path));
 #endif
 
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFiles(string)" />
@@ -116,8 +114,7 @@ public sealed partial class FileSystemMock
 					searchPattern,
 					EnumerationOptionsHelper.FromSearchOption(searchOption))
 			   .Select(x => _fileSystem
-				   .GetSubdirectoryPath(x.FullPath, path,
-						searchOption == SearchOption.AllDirectories));
+				   .GetSubdirectoryPath(x.FullPath, path));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFiles(string, string, EnumerationOptions)" />
@@ -130,8 +127,7 @@ public sealed partial class FileSystemMock
 					searchPattern,
 					enumerationOptions)
 			   .Select(x => _fileSystem
-				   .GetSubdirectoryPath(x.FullPath, path,
-						enumerationOptions.RecurseSubdirectories));
+				   .GetSubdirectoryPath(x.FullPath, path));
 #endif
 
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string)" />
@@ -157,8 +153,7 @@ public sealed partial class FileSystemMock
 					searchPattern,
 					EnumerationOptionsHelper.FromSearchOption(searchOption))
 			   .Select(x => _fileSystem
-				   .GetSubdirectoryPath(x.FullPath, path,
-						searchOption == SearchOption.AllDirectories));
+				   .GetSubdirectoryPath(x.FullPath, path));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 		/// <inheritdoc cref="IFileSystem.IDirectory.EnumerateFileSystemEntries(string, string, EnumerationOptions)" />
@@ -171,8 +166,7 @@ public sealed partial class FileSystemMock
 					searchPattern,
 					enumerationOptions)
 			   .Select(x => _fileSystem
-				   .GetSubdirectoryPath(x.FullPath, path,
-						enumerationOptions.RecurseSubdirectories));
+				   .GetSubdirectoryPath(x.FullPath, path));
 #endif
 
 		/// <inheritdoc cref="IFileSystem.IDirectory.Exists(string)" />
@@ -337,7 +331,6 @@ public sealed partial class FileSystemMock
 		/// <inheritdoc cref="IFileSystem.IDirectory.SetCurrentDirectory(string)" />
 		public void SetCurrentDirectory(string path)
 		{
-
 			IFileSystem.IDirectoryInfo directoryInfo =
 				_fileSystem.DirectoryInfo.New(path);
 			if (!directoryInfo.Exists)
@@ -345,6 +338,7 @@ public sealed partial class FileSystemMock
 				throw ExceptionFactory.DirectoryNotFound(
 					FileSystem.Path.GetFullPath(path));
 			}
+
 			_fileSystem.Storage.CurrentDirectory = directoryInfo.FullName;
 		}
 
