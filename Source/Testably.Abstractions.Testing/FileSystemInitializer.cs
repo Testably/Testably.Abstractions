@@ -24,6 +24,11 @@ public static partial class FileSystemInitializer
 		where TFileSystem : IFileSystem
 	{
 		fileSystem.Directory.CreateDirectory(basePath);
+		if (fileSystem is FileSystemMock)
+		{
+			//TODO: Check if this could be activated for all file systems
+			fileSystem.Directory.SetCurrentDirectory(basePath);
+		}
 		return new Initializer<TFileSystem>(fileSystem, basePath);
 	}
 

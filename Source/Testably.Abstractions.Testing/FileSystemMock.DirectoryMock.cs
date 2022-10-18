@@ -336,7 +336,17 @@ public sealed partial class FileSystemMock
 
 		/// <inheritdoc cref="IFileSystem.IDirectory.SetCurrentDirectory(string)" />
 		public void SetCurrentDirectory(string path)
-			=> _fileSystem.Storage.CurrentDirectory = path;
+		{
+
+			IFileSystem.IDirectoryInfo directoryInfo =
+				_fileSystem.DirectoryInfo.New(path);
+			if (!directoryInfo.Exists)
+			{
+				throw ExceptionFactory.DirectoryNotFound(
+					FileSystem.Path.GetFullPath(path));
+			}
+			_fileSystem.Storage.CurrentDirectory = directoryInfo.FullName;
+		}
 
 		/// <inheritdoc cref="IFileSystem.IDirectory.SetLastAccessTime(string, DateTime)" />
 		public void SetLastAccessTime(string path, DateTime lastAccessTime)
