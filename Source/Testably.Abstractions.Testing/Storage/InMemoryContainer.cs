@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.Internal;
@@ -32,7 +31,6 @@ internal class InMemoryContainer : IStorageContainer
 	#region IStorageContainer Members
 
 	/// <inheritdoc cref="IStorageContainer.Attributes" />
-	[ExcludeFromCodeCoverage]
 	public FileAttributes Attributes
 	{
 		get
