@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Enumeration;
 
@@ -20,7 +19,6 @@ internal static class EnumerationOptionsHelper
 	///     <see
 	///         href="https://github.com/dotnet/runtime/blob/v6.0.0/src/libraries/System.Private.CoreLib/src/System/IO/EnumerationOptions.cs#L24" />
 	/// </summary>
-	[ExcludeFromCodeCoverage]
 	internal static EnumerationOptions Compatible { get; } =
 		new()
 		{
@@ -33,7 +31,6 @@ internal static class EnumerationOptionsHelper
 	///     <see
 	///         href="https://github.com/dotnet/runtime/blob/v6.0.0/src/libraries/System.Private.CoreLib/src/System/IO/EnumerationOptions.cs#L27" />
 	/// </summary>
-	[ExcludeFromCodeCoverage]
 	private static EnumerationOptions CompatibleRecursive { get; } =
 		new()
 		{
@@ -47,7 +44,6 @@ internal static class EnumerationOptionsHelper
 	///     <see
 	///         href="https://github.com/dotnet/runtime/blob/v6.0.0/src/libraries/System.Private.CoreLib/src/System/IO/Enumeration/FileSystemEnumerableFactory.cs#L107" />
 	/// </summary>
-	[ExcludeFromCodeCoverage]
 	public static bool MatchesPattern(EnumerationOptions enumerationOptions, string name,
 	                                  string searchString)
 	{
@@ -70,7 +66,6 @@ internal static class EnumerationOptionsHelper
 	///     <see
 	///         href="https://github.com/dotnet/runtime/blob/v6.0.0/src/libraries/System.Private.CoreLib/src/System/IO/EnumerationOptions.cs#L46" />
 	/// </summary>
-	[ExcludeFromCodeCoverage]
 	internal static EnumerationOptions FromSearchOption(SearchOption searchOption)
 	{
 		if (searchOption != SearchOption.TopDirectoryOnly &&
@@ -84,7 +79,6 @@ internal static class EnumerationOptionsHelper
 			: Compatible;
 	}
 
-	[ExcludeFromCodeCoverage]
 	private static bool MatchPattern(string expression,
 	                                 string name,
 	                                 bool ignoreCase,
@@ -116,7 +110,6 @@ internal static class EnumerationOptionsHelper
 	///     <seealso
 	///         href="https://github.com/dotnet/runtime/blob/v6.0.0/src/libraries/System.Private.CoreLib/src/System/IO/Enumeration/FileSystemEnumerableFactory.cs#L37" />
 	/// </summary>
-	[ExcludeFromCodeCoverage]
 	private static string SimplifyExpression(string expression)
 	{
 		char[] unixEscapeChars = { '\\', '"', '<', '>' };

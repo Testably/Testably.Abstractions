@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -14,7 +13,7 @@ internal static class EncryptionHelper
 	internal static byte[] Decrypt(byte[] cypherBytes)
 	{
 		using Aes algorithm = CreateAlgorithm();
-		using ICryptoTransform? decryptor = algorithm
+		using ICryptoTransform decryptor = algorithm
 		   .CreateDecryptor(algorithm.Key, algorithm.IV);
 
 		return PerformCryptography(decryptor, cypherBytes);
@@ -31,8 +30,7 @@ internal static class EncryptionHelper
 
 		return PerformCryptography(encryptor, plainBytes);
 	}
-
-	[ExcludeFromCodeCoverage]
+	
 	private static Aes CreateAlgorithm()
 	{
 		byte[] bytes = Encoding.UTF8.GetBytes(

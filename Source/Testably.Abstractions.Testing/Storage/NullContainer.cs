@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.Testing.Internal;
 
@@ -35,7 +34,6 @@ internal sealed class NullContainer : IStorageContainer
 	public IStorageContainer.ITimeContainer LastWriteTime { get; } = new NullTime();
 
 	/// <inheritdoc cref="IStorageContainer.LinkTarget" />
-	[ExcludeFromCodeCoverage]
 	public string? LinkTarget
 	{
 		get => null;
@@ -43,7 +41,6 @@ internal sealed class NullContainer : IStorageContainer
 	}
 
 	/// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
-	[ExcludeFromCodeCoverage]
 	public ITimeSystem TimeSystem { get; }
 
 	/// <inheritdoc cref="IStorageContainer.Type" />
@@ -51,46 +48,39 @@ internal sealed class NullContainer : IStorageContainer
 		=> FileSystemTypes.DirectoryOrFile;
 
 	/// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
-	[ExcludeFromCodeCoverage]
 	public void AppendBytes(byte[] bytes)
 	{
 		// Do nothing in NullContainer
 	}
 
 	/// <inheritdoc cref="IStorageContainer.ClearBytes()" />
-	[ExcludeFromCodeCoverage]
 	public void ClearBytes()
 	{
 		// Do nothing in NullContainer
 	}
 
 	/// <inheritdoc cref="IStorageContainer.Decrypt()" />
-	[ExcludeFromCodeCoverage]
 	public void Decrypt()
 	{
 		// Do nothing in NullContainer
 	}
 
 	/// <inheritdoc cref="IStorageContainer.Encrypt()" />
-	[ExcludeFromCodeCoverage]
 	public void Encrypt()
 	{
 		// Do nothing in NullContainer
 	}
 
 	/// <inheritdoc cref="IStorageContainer.GetBytes()" />
-	[ExcludeFromCodeCoverage]
 	public byte[] GetBytes()
 		=> Array.Empty<byte>();
 
 	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool)" />
-	[ExcludeFromCodeCoverage]
 	public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share,
 	                                          bool ignoreMetadataError = true)
 		=> new NullStorageAccessHandle();
 
 	/// <inheritdoc cref="IStorageContainer.WriteBytes(byte[])" />
-	[ExcludeFromCodeCoverage]
 	public void WriteBytes(byte[] bytes)
 	{
 		// Do nothing in NullContainer
@@ -101,7 +91,6 @@ internal sealed class NullContainer : IStorageContainer
 	internal static IStorageContainer New(FileSystemMock fileSystem)
 		=> new NullContainer(fileSystem, fileSystem.TimeSystem);
 
-	[ExcludeFromCodeCoverage]
 	private sealed class NullStorageAccessHandle : IStorageAccessHandle
 	{
 		#region IStorageAccessHandle Members
