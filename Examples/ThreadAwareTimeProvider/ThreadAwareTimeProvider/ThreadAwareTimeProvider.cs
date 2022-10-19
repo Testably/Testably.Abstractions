@@ -18,13 +18,13 @@ public sealed class ThreadAwareTimeProvider : TimeSystemMock.ITimeProvider
 	#region ITimeProvider Members
 
 	/// <inheritdoc cref="TimeSystemMock.ITimeProvider.MaxValue" />
-	public DateTime MaxValue { get; set; } = System.DateTime.MaxValue;
+	public DateTime MaxValue { get; set; } = DateTime.MaxValue;
 
 	/// <inheritdoc cref="TimeSystemMock.ITimeProvider.MinValue" />
-	public DateTime MinValue { get; set; } = System.DateTime.MinValue;
+	public DateTime MinValue { get; set; } = DateTime.MinValue;
 
 	/// <inheritdoc cref="TimeSystemMock.ITimeProvider.UnixEpoch" />
-	public DateTime UnixEpoch { get; set; } = System.DateTime.UnixEpoch;
+	public DateTime UnixEpoch { get; set; } = DateTime.UnixEpoch;
 
 	/// <inheritdoc cref="TimeSystemMock.ITimeProvider.AdvanceBy(TimeSpan)" />
 	public void AdvanceBy(TimeSpan interval)

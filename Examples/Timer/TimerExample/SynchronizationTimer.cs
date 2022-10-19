@@ -7,11 +7,11 @@ namespace TimerExample;
 public sealed class SynchronizationTimer : IDisposable
 {
 	private readonly Action<Exception>? _errorHandler;
+	private readonly Action<int> _executeCallback;
+	private readonly TimeSpan _interval;
+	private int _iterationCount;
 	private IRunningTimer? _runningTimer;
 	private readonly ITimeSystem _timeSystem;
-	private readonly TimeSpan _interval;
-	private readonly Action<int> _executeCallback;
-	private int _iterationCount;
 
 	public SynchronizationTimer(
 		ITimeSystem timeSystem,
