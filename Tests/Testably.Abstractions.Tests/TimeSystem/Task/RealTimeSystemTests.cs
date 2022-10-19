@@ -25,7 +25,7 @@ public static class RealTimeSystemTests
 
 			Exception? exception = await Record.ExceptionAsync(async () =>
 					await TimeSystem.Task
-					   .Delay(10 * millisecondsTimeout, cancellationToken))
+					   .Delay(100 * millisecondsTimeout, cancellationToken))
 			   .ConfigureAwait(false);
 			System.DateTime after = TimeSystem.DateTime.UtcNow;
 

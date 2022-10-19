@@ -27,18 +27,8 @@ public class InterceptionHandlerExtensionsTests
 			throw exceptionToThrow;
 		});
 
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.Delete(path);
-				})
-			   .Wait(timeout: 50);
-		});
+		FileSystem.File.Delete(path);
 
-		exception.Should().BeNull();
 		isNotified.Should().BeFalse();
 	}
 
@@ -56,18 +46,8 @@ public class InterceptionHandlerExtensionsTests
 			throw exceptionToThrow;
 		}, path2);
 
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.Delete(path1);
-				})
-			   .Wait(timeout: 50);
-		});
+		FileSystem.File.Delete(path1);
 
-		exception.Should().BeNull();
 		isNotified.Should().BeFalse();
 	}
 
@@ -150,18 +130,8 @@ public class InterceptionHandlerExtensionsTests
 			throw exceptionToThrow;
 		});
 
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.Directory.Delete(path);
-				})
-			   .Wait(timeout: 50);
-		});
+		FileSystem.Directory.Delete(path);
 
-		exception.Should().BeNull();
 		isNotified.Should().BeFalse();
 	}
 
@@ -178,18 +148,8 @@ public class InterceptionHandlerExtensionsTests
 			throw exceptionToThrow;
 		}, path2);
 
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.Directory.CreateDirectory(path1);
-				})
-			   .Wait(timeout: 50);
-		});
+		FileSystem.Directory.CreateDirectory(path1);
 
-		exception.Should().BeNull();
 		isNotified.Should().BeFalse();
 	}
 
@@ -270,18 +230,8 @@ public class InterceptionHandlerExtensionsTests
 			throw exceptionToThrow;
 		});
 
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.Delete(path);
-				})
-			   .Wait(timeout: 50);
-		});
+		FileSystem.File.Delete(path);
 
-		exception.Should().BeNull();
 		isNotified.Should().BeFalse();
 	}
 
@@ -298,18 +248,8 @@ public class InterceptionHandlerExtensionsTests
 			throw exceptionToThrow;
 		}, path2);
 
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.WriteAllText(path1, null);
-				})
-			   .Wait(timeout: 50);
-		});
+		FileSystem.File.WriteAllText(path1, null);
 
-		exception.Should().BeNull();
 		isNotified.Should().BeFalse();
 	}
 
@@ -389,18 +329,8 @@ public class InterceptionHandlerExtensionsTests
 			throw exceptionToThrow;
 		});
 
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.Directory.CreateDirectory(path);
-				})
-			   .Wait(timeout: 50);
-		});
+		FileSystem.Directory.CreateDirectory(path);
 
-		exception.Should().BeNull();
 		isNotified.Should().BeFalse();
 	}
 
@@ -418,18 +348,8 @@ public class InterceptionHandlerExtensionsTests
 			throw exceptionToThrow;
 		}, path2);
 
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.Directory.Delete(path1);
-				})
-			   .Wait(timeout: 50);
-		});
+		FileSystem.Directory.Delete(path1);
 
-		exception.Should().BeNull();
 		isNotified.Should().BeFalse();
 	}
 
@@ -511,18 +431,8 @@ public class InterceptionHandlerExtensionsTests
 			throw exceptionToThrow;
 		});
 
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.WriteAllText(path, null);
-				})
-			   .Wait(timeout: 50);
-		});
+		FileSystem.File.WriteAllText(path, null);
 
-		exception.Should().BeNull();
 		isNotified.Should().BeFalse();
 	}
 
@@ -540,18 +450,8 @@ public class InterceptionHandlerExtensionsTests
 			throw exceptionToThrow;
 		}, path2);
 
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Notify
-			   .OnEvent()
-			   .ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.Delete(path1);
-				})
-			   .Wait(timeout: 50);
-		});
+		FileSystem.File.Delete(path1);
 
-		exception.Should().BeNull();
 		isNotified.Should().BeFalse();
 	}
 
