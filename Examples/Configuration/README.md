@@ -1,4 +1,4 @@
-# Configuration Example
+# Configuration example
 This example illustrates how the testing libraries can be configured in unit tests.
 
 ## Dependency Injection

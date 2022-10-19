@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\ThreadAwareTimeProvider\ThreadAwareTimeProvider.csproj" />
+  </ItemGroup>
+
+</Project>
