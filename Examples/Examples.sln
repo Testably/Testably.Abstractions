@@ -27,6 +27,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimerExample", "Timer\Timer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimerExample.Tests", "Timer\TimerExample.Tests\TimerExample.Tests.csproj", "{FA948873-1762-4B35-9D1B-0090B90F5CE9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThreadAwareTimeProvider", "ThreadAwareTimeProvider", "{144C6BB0-7C78-4A84-8875-904885FA3997}"
+	ProjectSection(SolutionItems) = preProject
+		ThreadAwareTimeProvider\README.md = ThreadAwareTimeProvider\README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreadAwareTimeProvider", "ThreadAwareTimeProvider\ThreadAwareTimeProvider\ThreadAwareTimeProvider.csproj", "{D40B69A0-2E8B-4593-95C5-F0D2075532ED}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThreadAwareTimeProvider.Tests", "ThreadAwareTimeProvider\ThreadAwareTimeProvider.Tests\ThreadAwareTimeProvider.Tests.csproj", "{CF2A6351-8621-492B-BF7A-C03F28839DC6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +58,14 @@ Global
 		{FA948873-1762-4B35-9D1B-0090B90F5CE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA948873-1762-4B35-9D1B-0090B90F5CE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA948873-1762-4B35-9D1B-0090B90F5CE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D40B69A0-2E8B-4593-95C5-F0D2075532ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D40B69A0-2E8B-4593-95C5-F0D2075532ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D40B69A0-2E8B-4593-95C5-F0D2075532ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D40B69A0-2E8B-4593-95C5-F0D2075532ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF2A6351-8621-492B-BF7A-C03F28839DC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF2A6351-8621-492B-BF7A-C03F28839DC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF2A6351-8621-492B-BF7A-C03F28839DC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF2A6351-8621-492B-BF7A-C03F28839DC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,6 +75,8 @@ Global
 		{67A3EC8D-3D6F-4FD9-B9A3-7549BA51C70D} = {B177017C-1851-4788-A293-D3934D27F222}
 		{E59FE9C8-6B68-4D16-A5D7-7D238366ED90} = {640410B1-7CB3-4482-9B51-959F46C5462C}
 		{FA948873-1762-4B35-9D1B-0090B90F5CE9} = {640410B1-7CB3-4482-9B51-959F46C5462C}
+		{D40B69A0-2E8B-4593-95C5-F0D2075532ED} = {144C6BB0-7C78-4A84-8875-904885FA3997}
+		{CF2A6351-8621-492B-BF7A-C03F28839DC6} = {144C6BB0-7C78-4A84-8875-904885FA3997}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D439CFB9-E2DD-4DF9-AA90-F321B50EAD16}

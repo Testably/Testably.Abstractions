@@ -40,11 +40,11 @@ public sealed partial class TimeSystemMock : ITimeSystem
 	}
 
 	/// <summary>
-	///     Initializes the <see cref="TimeSystemMock" /> with the specified <paramref name="timeProviderProvider" />.
+	///     Initializes the <see cref="TimeSystemMock" /> with the specified <paramref name="timeProvider" />.
 	/// </summary>
-	public TimeSystemMock(ITimeProvider timeProviderProvider)
+	public TimeSystemMock(ITimeProvider timeProvider)
 	{
-		TimeProvider = timeProviderProvider;
+		TimeProvider = timeProvider;
 		_callbackHandler = new TimeSystemMockCallbackHandler();
 		_dateTimeMock = new DateTimeMock(this, _callbackHandler);
 		_threadMock = new ThreadMock(this, _callbackHandler);

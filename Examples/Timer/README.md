@@ -1,4 +1,4 @@
-# Timer Example
+# Timer example
 This example illustrates the use of the timer extensions in Testably.Abstractions.Extensions.
 
 It uses the `CreateTimer` extension methods on the `ITimeSystem` interface to start a background timer that executes a callback in a fixed interval.

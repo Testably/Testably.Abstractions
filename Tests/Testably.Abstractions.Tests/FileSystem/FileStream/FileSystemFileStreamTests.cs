@@ -224,7 +224,6 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 			updateTime = TimeSystem.DateTime.UtcNow;
 			// ReSharper disable once AccessToDisposedClosure
 			writeStream.EndWrite(ar);
-			(TimeSystem as TimeSystemMock)?.TimeProvider.SynchronizeClock();
 			ms.Set();
 		}, null);
 
