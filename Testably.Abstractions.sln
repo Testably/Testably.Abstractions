@@ -21,10 +21,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.Testi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.Testing.Tests", "Tests\Testably.Abstractions.Testing.Tests\Testably.Abstractions.Testing.Tests.csproj", "{44220872-B6CD-4776-91E9-426D828923D2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.Extensions", "Source\Testably.Abstractions.Extensions\Testably.Abstractions.Extensions.csproj", "{70A61227-E004-4818-8061-8ED61D35984D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.Extensions.Tests", "Tests\Testably.Abstractions.Extensions.Tests\Testably.Abstractions.Extensions.Tests.csproj", "{5356838D-3796-45B6-8227-0F023093D9A9}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{7545AC28-1399-4AF5-9C63-0507F78F017A}"
 	ProjectSection(SolutionItems) = preProject
 		Source\Directory.Build.props = Source\Directory.Build.props
@@ -33,7 +29,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2FDB2AAE-E5CE-483E-A1A6-EC0B0A4AD67B}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\Directory.Build.props = Tests\Directory.Build.props
-		Tests\stryker-config-extensions.json = Tests\stryker-config-extensions.json
 		Tests\stryker-config-testing.json = Tests\stryker-config-testing.json
 		Tests\stryker-config.json = Tests\stryker-config.json
 	EndProjectSection
@@ -76,14 +71,6 @@ Global
 		{44220872-B6CD-4776-91E9-426D828923D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44220872-B6CD-4776-91E9-426D828923D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44220872-B6CD-4776-91E9-426D828923D2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{70A61227-E004-4818-8061-8ED61D35984D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{70A61227-E004-4818-8061-8ED61D35984D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{70A61227-E004-4818-8061-8ED61D35984D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{70A61227-E004-4818-8061-8ED61D35984D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5356838D-3796-45B6-8227-0F023093D9A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5356838D-3796-45B6-8227-0F023093D9A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5356838D-3796-45B6-8227-0F023093D9A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5356838D-3796-45B6-8227-0F023093D9A9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E9A42D82-0609-4D6B-B270-A30176B4FCF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E9A42D82-0609-4D6B-B270-A30176B4FCF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9A42D82-0609-4D6B-B270-A30176B4FCF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -95,7 +82,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{DC4C2936-8CEA-4382-BD87-10BDB3FE3D2F} = {61F335A6-9CE0-4040-A34F-E70B1A55077D}
 		{44220872-B6CD-4776-91E9-426D828923D2} = {61F335A6-9CE0-4040-A34F-E70B1A55077D}
-		{5356838D-3796-45B6-8227-0F023093D9A9} = {61F335A6-9CE0-4040-A34F-E70B1A55077D}
 		{7545AC28-1399-4AF5-9C63-0507F78F017A} = {94F99274-3518-45D0-83A4-6F370D6FE74B}
 		{2FDB2AAE-E5CE-483E-A1A6-EC0B0A4AD67B} = {94F99274-3518-45D0-83A4-6F370D6FE74B}
 		{5E35E265-7110-47A0-9E3E-B5180BBB5AA6} = {94F99274-3518-45D0-83A4-6F370D6FE74B}
