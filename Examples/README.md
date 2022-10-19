@@ -12,5 +12,5 @@ This is an overview of the provided examples for "Testably.Abstractions".
 - **[Timer](Timer/README.md)**  
   This example illustrates the use of the timer extensions in Testably.Abstractions.Extensions.
 
-- **[Zip-File](ZipFile/README.md)**
+- **[Zip-File](ZipFile/README.md)**  
   This example highlights how to use the `IFileSystem` to compress and uncompress directories using `System.IO.Compression`.
