@@ -17,7 +17,7 @@ public class ThreadAwareTimeProviderTests
 	{
 		int parallelTasks = 10;
 		int stepsPerTask = 20;
-		ThreadAwareTimeProvider timeProvider = new ThreadAwareTimeProvider();
+		ThreadAwareTimeProvider timeProvider = new();
 		TimeSystemMock timeSystem = new(timeProvider);
 		DateTime start = timeSystem.DateTime.UtcNow;
 		ConcurrentDictionary<int, List<int>> delaysPerTask = new();
@@ -57,7 +57,7 @@ public class ThreadAwareTimeProviderTests
 	{
 		int parallelThreads = 10;
 		int stepsPerThread = 20;
-		ThreadAwareTimeProvider timeProvider = new ThreadAwareTimeProvider();
+		ThreadAwareTimeProvider timeProvider = new();
 		TimeSystemMock timeSystem = new(timeProvider);
 		DateTime start = timeSystem.DateTime.UtcNow;
 		ConcurrentDictionary<int, List<int>> delaysPerThread = new();
@@ -102,7 +102,7 @@ public class ThreadAwareTimeProviderTests
 	public async Task SynchronizeClock_AdvanceBy_ShouldUseSynchronizedValueAsBase(
 		bool synchronizeClock, int expectedDelay)
 	{
-		ThreadAwareTimeProvider timeProvider = new ThreadAwareTimeProvider();
+		ThreadAwareTimeProvider timeProvider = new();
 		TimeSystemMock timeSystem = new(timeProvider);
 		DateTime start = timeSystem.DateTime.UtcNow;
 		await timeSystem.Task.Delay(1000);
@@ -132,7 +132,7 @@ public class ThreadAwareTimeProviderTests
 	public async Task SynchronizeClock_ShouldSetNowToValueOfCurrentAsyncContext(
 		bool synchronizeClock, int expectedDelay)
 	{
-		ThreadAwareTimeProvider timeProvider = new ThreadAwareTimeProvider();
+		ThreadAwareTimeProvider timeProvider = new();
 		TimeSystemMock timeSystem = new(timeProvider);
 		DateTime start = timeSystem.DateTime.UtcNow;
 		await timeSystem.Task.Delay(1000);
