@@ -1,6 +1,4 @@
-using AutoFixture.Xunit2;
 using FluentAssertions;
-using System;
 using System.Threading;
 using Testably.Abstractions.Testing;
 using Xunit;
@@ -12,9 +10,8 @@ public class NotificationTests
 	/// <summary>
 	///     Notifications allow reacting to an event after it occurred.
 	/// </summary>
-	[Theory]
-	[AutoData]
-	public void Notify_ManualWait(Exception customException)
+	[Fact]
+	public void Notify_ManualWait()
 	{
 		ManualResetEventSlim ms = new();
 		bool isNotified = false;
@@ -37,9 +34,8 @@ public class NotificationTests
 	/// <summary>
 	///     Notifications allow reacting to an event after it occurred.
 	/// </summary>
-	[Theory]
-	[AutoData]
-	public void Notify_UseAwaitableCallback(Exception customException)
+	[Fact]
+	public void Notify_UseAwaitableCallback()
 	{
 		bool isNotified = false;
 		FileSystemMock fileSystem = new();
