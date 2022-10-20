@@ -152,9 +152,8 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 	[SkippableFact]
 	public void Wrap_ShouldReturnDriveInfoWithSameName()
 	{
-		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
+		System.IO.DriveInfo driveInfo = System.IO.DriveInfo.GetDrives().First();
 
-		System.IO.DriveInfo driveInfo = new("C");
 		IFileSystem.IDriveInfo result = FileSystem.DriveInfo.Wrap(driveInfo);
 
 		result.Name.Should().Be(driveInfo.Name);
