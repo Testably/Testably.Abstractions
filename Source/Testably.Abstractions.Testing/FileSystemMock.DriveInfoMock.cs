@@ -120,12 +120,12 @@ public sealed partial class FileSystemMock
 		[AllowNull]
 		public string VolumeLabel
 		{
-			get;
+			get => nameof(FileSystemMock);
 #if NET6_0_OR_GREATER
 			[SupportedOSPlatform("windows")]
 #endif
-			set;
-		} = nameof(FileSystemMock);
+			set => throw ExceptionFactory.VolumeLabelsCanOnlyBeSetForWritableVolumes();
+		}
 
 		/// <inheritdoc cref="IStorageDrive.ChangeUsedBytes(long)" />
 		public IStorageDrive ChangeUsedBytes(long usedBytesDelta)

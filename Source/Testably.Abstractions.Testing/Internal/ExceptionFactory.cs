@@ -109,4 +109,8 @@ internal static class ExceptionFactory
 	internal static TimeoutException TimeoutExpired(int timeoutMilliseconds)
 		=> new(
 			$"The timeout of {timeoutMilliseconds}ms expired in the awaitable callback.");
+
+	internal static UnauthorizedAccessException
+		VolumeLabelsCanOnlyBeSetForWritableVolumes()
+		=> new("Volume labels can only be set for writable local volumes.");
 }
