@@ -197,10 +197,6 @@ jobs:
           version="${GITHUB_REF#refs/heads/release/}"
           git tag "${version}"
           git push origin "${version}"
-      - uses: rickstaa/action-create-tag@v1
-        with:
-          tag: "${GITHUB_REF#refs/heads/release/}"
-          message: "Release ${GITHUB_REF#refs/heads/release/}"
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1.0.5
       - name: Setup .NET
