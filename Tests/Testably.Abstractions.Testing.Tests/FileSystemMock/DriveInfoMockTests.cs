@@ -115,6 +115,9 @@ public class DriveInfoMockTests
 	public void New_DriveNameWithUncPath_ShouldUseTopMostDirectory(
 		string driveName, string expectedName)
 	{
+		expectedName = expectedName
+		   .Replace('/', FileSystem.Path.DirectorySeparatorChar);
+
 		IFileSystem.IDriveInfo drive =
 			Testing.FileSystemMock.DriveInfoMock.New(driveName, FileSystem);
 
