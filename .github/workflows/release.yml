@@ -2,8 +2,8 @@ name: "Release"
 
 on:
   push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+    branches:
+      - 'release/v[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
   test-macos:
@@ -109,6 +109,7 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+    environment: production
     needs: [test-macos, test-ubuntu, test-windows, test-net-framework, test-examples]
     steps:
       - name: Checkout sources
@@ -123,5 +124,10 @@ jobs:
           dotnet-version: 6.0.x
       - name: Build
         run: dotnet build --configuration "Release"
-      - name: Publish
-        run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
+      - name: Upload nuget packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: Nuget
+          path: **\*.nupkg
+#      - name: Publish
+#        run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
