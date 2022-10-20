@@ -49,7 +49,9 @@ public abstract class FileSystemDriveInfoTests<TFileSystem>
 		{
 			if (Test.RunsOnWindows)
 			{
+#pragma warning disable CA1416
 				result.VolumeLabel = previousVolumeLabel;
+#pragma warning restore CA1416
 			}
 		}
 	}
