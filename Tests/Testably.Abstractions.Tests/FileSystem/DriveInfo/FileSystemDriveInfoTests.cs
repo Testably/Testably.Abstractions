@@ -1,6 +1,3 @@
-using System.IO;
-using System.Linq;
-
 namespace Testably.Abstractions.Tests.FileSystem.DriveInfo;
 
 public abstract class FileSystemDriveInfoTests<TFileSystem>
@@ -28,7 +25,9 @@ public abstract class FileSystemDriveInfoTests<TFileSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
+#pragma warning disable CA1416
 			result.VolumeLabel = "TEST";
+#pragma warning restore CA1416
 		});
 
 		exception.Should().BeOfType<UnauthorizedAccessException>();
