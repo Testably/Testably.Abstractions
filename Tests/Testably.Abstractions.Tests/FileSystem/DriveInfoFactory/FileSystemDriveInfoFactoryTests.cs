@@ -84,6 +84,7 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 		result.RootDirectory.FullName.Should().Be(FileTestHelper.RootDrive());
 		result.TotalFreeSpace.Should().BeGreaterThan(0);
 		result.TotalSize.Should().BeGreaterThan(0);
+		result.VolumeLabel.Should().NotBeEmpty();
 	}
 
 	[SkippableTheory]
@@ -153,7 +154,7 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
 
-		DriveInfo driveInfo = new("C");
+		System.IO.DriveInfo driveInfo = new("C");
 		IFileSystem.IDriveInfo result = FileSystem.DriveInfo.Wrap(driveInfo);
 
 		result.Name.Should().Be(driveInfo.Name);

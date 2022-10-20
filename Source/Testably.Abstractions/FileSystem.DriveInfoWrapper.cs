@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 #if NET6_0_OR_GREATER
-using System;
 using System.Runtime.Versioning;
 #endif
 
@@ -65,19 +64,13 @@ public sealed partial class FileSystem
 			get => _instance.VolumeLabel;
 #if NET6_0_OR_GREATER
 			[SupportedOSPlatform("windows")]
-			set
-			{
-				if (OperatingSystem.IsWindows())
-				{
-					_instance.VolumeLabel = value;
-				}
-			}
-#else
-			set => _instance.VolumeLabel = value;
 #endif
+#pragma warning disable CA1416
+			set => _instance.VolumeLabel = value;
+#pragma warning restore CA1416
 		}
 
-		#endregion
+#endregion
 
 		[return: NotNullIfNotNull("instance")]
 		internal static DriveInfoWrapper? FromDriveInfo(DriveInfo? instance,
