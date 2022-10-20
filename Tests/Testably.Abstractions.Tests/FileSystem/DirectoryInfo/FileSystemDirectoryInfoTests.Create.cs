@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Runtime.InteropServices;
 #if !NETFRAMEWORK
 using System.IO;
 #endif
@@ -110,7 +109,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	{
 		string nameWithSuffix = "foobar" + suffix;
 		string expectedName = nameWithSuffix;
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+		if (Test.RunsOnWindows)
 		{
 			expectedName = expectedName.TrimEnd(' ');
 		}

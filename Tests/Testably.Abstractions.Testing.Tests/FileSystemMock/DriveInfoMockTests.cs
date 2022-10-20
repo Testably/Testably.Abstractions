@@ -109,6 +109,64 @@ public class DriveInfoMockTests
 	}
 
 	[SkippableTheory]
+	[InlineData(@"//foo", @"//foo")]
+	[InlineData(@"//foo/bar", @"//foo")]
+	[InlineData(@"//foo/bar/xyz", @"//foo")]
+	public void New_DriveNameWithUncPath_ShouldUseTopMostDirectory(
+		string driveName, string expectedName)
+	{
+		expectedName = expectedName
+		   .Replace('/', FileSystem.Path.DirectorySeparatorChar);
+
+		IFileSystem.IDriveInfo drive =
+			Testing.FileSystemMock.DriveInfoMock.New(driveName, FileSystem);
+
+		drive.Name.Should().Be(expectedName);
+	}
+
+	[SkippableTheory]
+	[InlineData("foo")]
+	public void New_InvalidDriveName_ShouldThrowArgumentException(string driveName)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			Testing.FileSystemMock.DriveInfoMock.New(driveName, FileSystem);
+		});
+
+		exception.Should().BeOfType<ArgumentException>();
+	}
+
+	[SkippableFact]
+	public void New_Null_ShouldReturnNull()
+	{
+		IFileSystem.IDriveInfo? drive =
+			Testing.FileSystemMock.DriveInfoMock.New(null, FileSystem);
+
+		drive.Should().BeNull();
+	}
+
+	[SkippableFact]
+	public void New_UncPath_ShouldSetFlag()
+	{
+		IFileSystem.IDriveInfo drive =
+			Testing.FileSystemMock.DriveInfoMock.New(@"//foo", FileSystem);
+
+		(drive as Testing.FileSystemMock.DriveInfoMock)?.IsUncPath.Should().BeTrue();
+	}
+
+	[SkippableTheory]
+	[InlineData("C", "C:\\")]
+	[InlineData("d", "D:\\")]
+	public void New_ValidDriveName_ShouldAppendColonAndSlash(
+		string driveName, string expectedDriveName)
+	{
+		Testing.FileSystemMock.DriveInfoMock result =
+			Testing.FileSystemMock.DriveInfoMock.New(driveName, FileSystem);
+
+		result.Name.Should().Be(expectedDriveName);
+	}
+
+	[SkippableTheory]
 	[AutoData]
 	public void NotReady_AccessDirectory_ShouldThrowIOException(
 		string path)

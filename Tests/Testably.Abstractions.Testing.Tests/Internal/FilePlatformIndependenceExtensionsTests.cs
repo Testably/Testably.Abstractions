@@ -1,19 +1,27 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
+using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.Internal;
 
 public class FilePlatformIndependenceExtensionsTests
 {
-	[Theory]
+	[Fact]
+	public void NormalizePath_Null_ShouldReturnNull()
+	{
+		string? path = null;
+
+		path = path.NormalizePath();
+
+		path.Should().BeNull();
+	}
+
+	[SkippableTheory]
 	[AutoData]
 	public void NormalizePath_Unix_RootedPath_ShouldRemoveDriveInfo(string part1)
 	{
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-		{
-			return;
-		}
+		Skip.If(Test.RunsOnWindows);
 
 		string path = "C:/" + part1;
 		string expectedPath = part1.PrefixRoot();
@@ -22,15 +30,12 @@ public class FilePlatformIndependenceExtensionsTests
 		path.Should().Be(expectedPath);
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[AutoData]
 	public void NormalizePath_Unix_ShouldReplaceAltDirectorySeparatorChar(
 		string part1, string part2)
 	{
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-		{
-			return;
-		}
+		Skip.If(Test.RunsOnWindows);
 
 		char[] separatorChars =
 		{
@@ -46,15 +51,12 @@ public class FilePlatformIndependenceExtensionsTests
 		}
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[AutoData]
 	public void NormalizePath_Windows_ShouldAlsoKeepAltDirectorySeparatorChar(
 		string part1, string part2)
 	{
-		if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-		{
-			return;
-		}
+		Skip.IfNot(Test.RunsOnWindows);
 
 		char[] separatorChars =
 		{

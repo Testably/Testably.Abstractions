@@ -14,11 +14,11 @@
     "mutation-level": "Advanced",
     "mutate": [
       // The enumeration options helper is a wrapper around Microsoft code
-      "!Testably.Abstractions.Testing/Internal/EnumerationOptionsHelper.cs",
+      "!**/Testably.Abstractions.Testing/Internal/EnumerationOptionsHelper.cs",
       // The exception type is checked, but not the message, as this could be language dependent
-      "!Testably.Abstractions.Testing/Internal/ExceptionFactory.cs",
+      "!**/Testably.Abstractions.Testing/Internal/ExceptionFactory.cs",
       // Indicates operating system specific code
-      "!Testably.Abstractions.Testing/Internal/Execute.cs"
+      "!**/Testably.Abstractions.Testing/Internal/Execute.cs"
     ],
     "ignore-methods": [
       // The exception type is checked, but not the message, as this could be language dependent
@@ -27,6 +27,8 @@
       "Execute.*On*",
       // Drives are not used in Linux
       "ValidateDriveLetter",
+      // The encryption helper is only valid for testing purposes
+      "EncryptionHelper.CreateAlgorithm",
       // Triggered by invalid chars which don't exist in Linux
       "ThrowCommonExceptionsIfPathIsInvalid",
       // Calls to Thread.Sleep cannot be detected by a test

@@ -137,6 +137,22 @@ public class FileSystemInitializerTests
 
 	[Theory]
 	[AutoData]
+	public void Initialize_WithSubdirectory_ShouldExist(string directoryName)
+	{
+		Testing.FileSystemMock sut = new();
+		Testing.FileSystemInitializer.IFileSystemDirectoryInitializer<
+			Testing.FileSystemMock> result =
+			sut.Initialize().WithSubdirectory(directoryName);
+
+#if NETFRAMEWORK
+		result.Directory.Exists.Should().BeFalse();
+#else
+		result.Directory.Exists.Should().BeTrue();
+#endif
+	}
+
+	[Theory]
+	[AutoData]
 	public void InitializeIn_ShouldSetCurrentDirectory(string path)
 	{
 		Testing.FileSystemMock sut = new();

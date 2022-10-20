@@ -196,7 +196,7 @@ public sealed partial class FileSystemMock
 		                                       FileSystemMock fileSystem)
 			=> new(fileSystem, location);
 
-		protected void RefreshInternal()
+		private void RefreshInternal()
 		{
 			if (_isInitialized)
 			{

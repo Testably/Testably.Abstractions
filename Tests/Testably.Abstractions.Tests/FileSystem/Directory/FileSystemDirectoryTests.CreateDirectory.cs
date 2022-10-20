@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 #if !NETFRAMEWORK
 using System.IO;
-using System.Runtime.InteropServices;
 #endif
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
@@ -269,7 +268,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	{
 		string nameWithSuffix = "foobar" + suffix;
 		string expectedName = nameWithSuffix;
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+		if (Test.RunsOnWindows)
 		{
 			expectedName = expectedName.TrimEnd(' ');
 		}

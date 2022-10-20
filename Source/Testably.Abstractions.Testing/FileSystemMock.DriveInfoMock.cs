@@ -38,11 +38,6 @@ public sealed partial class FileSystemMock
 
 		private DriveInfoMock(string driveName, FileSystemMock fileSystem)
 		{
-			if (string.IsNullOrEmpty(driveName))
-			{
-				throw new ArgumentNullException(nameof(driveName));
-			}
-
 			_fileSystem = fileSystem;
 
 			if (driveName.IsUncPath())
@@ -61,22 +56,6 @@ public sealed partial class FileSystemMock
 			DriveFormat = DefaultDriveFormat;
 			DriveType = DefaultDriveType;
 			IsReady = true;
-		}
-
-		private static string GetTopmostParentDirectory(string path)
-		{
-			while (true)
-			{
-				string? child = System.IO.Path.GetDirectoryName(path);
-				if (string.IsNullOrEmpty(child))
-				{
-					break;
-				}
-
-				path = child;
-			}
-
-			return path;
 		}
 
 		/// <summary>
@@ -184,6 +163,22 @@ public sealed partial class FileSystemMock
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
 			=> Name;
+		
+		private string GetTopmostParentDirectory(string path)
+		{
+			while (true)
+			{
+				string? child = FileSystem.Path.GetDirectoryName(path);
+				if (string.IsNullOrEmpty(child))
+				{
+					break;
+				}
+
+				path = child;
+			}
+
+			return path;
+		}
 
 		private static string ValidateDriveLetter(string driveName,
 		                                          IFileSystem fileSystem)
@@ -191,7 +186,7 @@ public sealed partial class FileSystemMock
 			if (driveName.Length == 1 &&
 			    char.IsLetter(driveName, 0))
 			{
-				return $"{driveName}:\\";
+				return $"{driveName.ToUpper()}:\\";
 			}
 
 			if (fileSystem.Path.IsPathRooted(driveName))

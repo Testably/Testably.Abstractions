@@ -20,7 +20,7 @@ public abstract class FileSystemDriveInfoTests<TFileSystem>
 	[SkippableFact]
 	public void VolumeLabel_ShouldBeWritableOnlyOnWindows()
 	{
-		Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		IFileSystem.IDriveInfo result =
 			FileSystem.DriveInfo.New(FileTestHelper.RootDrive());

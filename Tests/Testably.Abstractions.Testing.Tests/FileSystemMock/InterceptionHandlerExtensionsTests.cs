@@ -15,7 +15,6 @@ public class InterceptionHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Changing_File_OtherEvent_ShouldNotTrigger(
 		string path, Exception exceptionToThrow)
 	{
@@ -34,7 +33,6 @@ public class InterceptionHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Changing_File_ShouldConsiderBasePath(string path1, string path2,
 	                                                 Exception exceptionToThrow)
 	{
@@ -54,7 +52,6 @@ public class InterceptionHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData("foo", "f*o", true)]
 	[InlineAutoData("foo", "*fo", false)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Changing_File_ShouldConsiderSearchPattern(
 		string path, string searchPattern, bool expectedResult,
 		Exception exceptionToThrow)
@@ -87,7 +84,6 @@ public class InterceptionHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Changing_File_ShouldUsePredicate(bool expectedResult, string path,
 	                                             Exception exceptionToThrow)
 	{
@@ -118,7 +114,6 @@ public class InterceptionHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Creating_Directory_OtherEvent_ShouldNotTrigger(
 		string path, Exception exceptionToThrow)
 	{
@@ -137,7 +132,6 @@ public class InterceptionHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Creating_Directory_ShouldConsiderBasePath(
 		string path1, string path2, Exception exceptionToThrow)
 	{
@@ -156,7 +150,6 @@ public class InterceptionHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData("foo", "f*o", true)]
 	[InlineAutoData("foo", "*fo", false)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Creating_Directory_ShouldConsiderSearchPattern(
 		string path, string searchPattern, bool expectedResult,
 		Exception exceptionToThrow)
@@ -188,7 +181,6 @@ public class InterceptionHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Creating_Directory_ShouldUsePredicate(bool expectedResult, string path,
 	                                                  Exception exceptionToThrow)
 	{
@@ -218,7 +210,6 @@ public class InterceptionHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Creating_File_OtherEvent_ShouldNotTrigger(
 		string path, Exception exceptionToThrow)
 	{
@@ -237,7 +228,6 @@ public class InterceptionHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Creating_File_ShouldConsiderBasePath(string path1, string path2,
 	                                                 Exception exceptionToThrow)
 	{
@@ -256,7 +246,6 @@ public class InterceptionHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData("foo", "f*o", true)]
 	[InlineAutoData("foo", "*fo", false)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Creating_File_ShouldConsiderSearchPattern(
 		string path, string searchPattern, bool expectedResult,
 		Exception exceptionToThrow)
@@ -288,7 +277,6 @@ public class InterceptionHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Creating_File_ShouldUsePredicate(bool expectedResult, string path,
 	                                             Exception exceptionToThrow)
 	{
@@ -318,7 +306,6 @@ public class InterceptionHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Deleting_Directory_OtherEvent_ShouldNotTrigger(
 		string path, Exception exceptionToThrow)
 	{
@@ -336,7 +323,6 @@ public class InterceptionHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Deleting_Directory_ShouldConsiderBasePath(
 		string path1, string path2, Exception exceptionToThrow)
 	{
@@ -356,7 +342,6 @@ public class InterceptionHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData("foo", "f*o", true)]
 	[InlineAutoData("foo", "*fo", false)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Deleting_Directory_ShouldConsiderSearchPattern(
 		string path, string searchPattern, bool expectedResult,
 		Exception exceptionToThrow)
@@ -389,7 +374,6 @@ public class InterceptionHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Deleting_Directory_ShouldUsePredicate(bool expectedResult, string path,
 	                                                  Exception exceptionToThrow)
 	{
@@ -420,7 +404,6 @@ public class InterceptionHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Deleting_File_OtherEvent_ShouldNotTrigger(
 		string path, Exception exceptionToThrow)
 	{
@@ -438,7 +421,6 @@ public class InterceptionHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Deleting_File_ShouldConsiderBasePath(string path1, string path2,
 	                                                 Exception exceptionToThrow)
 	{
@@ -458,7 +440,6 @@ public class InterceptionHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData("foo", "f*o", true)]
 	[InlineAutoData("foo", "*fo", false)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Deleting_File_ShouldConsiderSearchPattern(
 		string path, string searchPattern, bool expectedResult,
 		Exception exceptionToThrow)
@@ -491,7 +472,6 @@ public class InterceptionHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void Deleting_File_ShouldUsePredicate(bool expectedResult, string path,
 	                                             Exception exceptionToThrow)
 	{
