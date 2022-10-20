@@ -13,16 +13,24 @@
     "reporters": [ "html", "progress", "cleartext" ],
     "mutation-level": "Advanced",
     "mutate": [
-      "!Testably.Abstractions.Testing/Internal/EnumerationOptionsHelper.cs", // The enumeration options helper is a wrapper around Microsoft code
-      "!Testably.Abstractions.Testing/Internal/ExceptionFactory.cs", // The exception type is checked, but not the message, as this could be language dependent
-      "!Testably.Abstractions.Testing/Internal/Execute.cs" // Indicates operating system specific code
+      // The enumeration options helper is a wrapper around Microsoft code
+      "!Testably.Abstractions.Testing/Internal/EnumerationOptionsHelper.cs",
+      // The exception type is checked, but not the message, as this could be language dependent
+      "!Testably.Abstractions.Testing/Internal/ExceptionFactory.cs",
+      // Indicates operating system specific code
+      "!Testably.Abstractions.Testing/Internal/Execute.cs"
     ],
     "ignore-methods": [
-      "ExceptionFactory.*", // The exception type is checked, but not the message, as this could be language dependent
-      "Execute.*On*", // Indicates operating system specific code
-      "ValidateDriveLetter", // Drives are not used in Linux
-      "ThrowCommonExceptionsIfPathIsInvalid", // Triggered by invalid chars which don't exist in Linux
-      "System.Threading.Thread.Sleep" // Calls to Thread.Sleep cannot be detected by a test
+      // The exception type is checked, but not the message, as this could be language dependent
+      "ExceptionFactory.*",
+      // Indicates operating system specific code
+      "Execute.*On*",
+      // Drives are not used in Linux
+      "ValidateDriveLetter",
+      // Triggered by invalid chars which don't exist in Linux
+      "ThrowCommonExceptionsIfPathIsInvalid",
+      // Calls to Thread.Sleep cannot be detected by a test
+      "System.Threading.Thread.Sleep"
     ]
   }
 }
