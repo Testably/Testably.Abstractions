@@ -1,5 +1,4 @@
 using System.IO;
-using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStreamFactory;
 
@@ -175,7 +174,7 @@ public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
 			FileSystem.FileStream.New(path, FileMode.CreateNew);
 		});
 
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<UnauthorizedAccessException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");

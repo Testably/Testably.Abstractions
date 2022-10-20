@@ -1,5 +1,4 @@
 #if FEATURE_PATH_RELATIVE
-using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
@@ -24,7 +23,7 @@ public abstract partial class FileSystemPathTests<TFileSystem>
 	public void GetRelativePath_DifferentDrives_ShouldReturnAbsolutePath(
 		string path1, string path2)
 	{
-		if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+		if (!Test.RunsOnWindows)
 		{
 			// Different drives are only supported on Windows
 			return;

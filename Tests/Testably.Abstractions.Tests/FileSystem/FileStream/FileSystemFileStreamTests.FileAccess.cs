@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,7 +37,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 				access2, share2);
 		});
 
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<IOException>(
 					$"Access {access1}, Share {share1} of file 1 is incompatible with Access {access2}, Share {share2} of file 2")
@@ -173,7 +172,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 			FileSystem.File.ReadAllText(path);
 		});
 
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<IOException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");

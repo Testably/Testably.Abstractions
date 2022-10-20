@@ -1,5 +1,4 @@
 using System.IO;
-using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
@@ -86,7 +85,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		result.CreationTime.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
 		result.CreationTime.Should().BeBefore(sleepTime);
 		// Last Access Time is only updated on Windows
-		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+		if (Test.RunsOnWindows)
 		{
 			result.LastAccessTime.Should()
 			   .BeOnOrAfter(sleepTime.ApplySystemClockTolerance());
