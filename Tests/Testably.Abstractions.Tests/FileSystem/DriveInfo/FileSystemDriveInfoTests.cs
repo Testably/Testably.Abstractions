@@ -30,6 +30,13 @@ public abstract class FileSystemDriveInfoTests<TFileSystem>
 #pragma warning restore CA1416
 		});
 
-		exception.Should().BeOfType<UnauthorizedAccessException>();
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeOfType<UnauthorizedAccessException>();
+		}
+		else
+		{
+			exception.Should().BeOfType<PlatformNotSupportedException>();
+		}
 	}
 }

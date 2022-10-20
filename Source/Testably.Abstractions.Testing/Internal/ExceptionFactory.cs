@@ -67,6 +67,9 @@ internal static class ExceptionFactory
 	internal static IOException NotEnoughDiskSpace(string name)
 		=> new($"There is not enough space on the disk: '{name}'");
 
+	internal static PlatformNotSupportedException OperationNotSupportedOnThisPlatform()
+		=> new("Operation is not supported on this platform.");
+
 	internal static ArgumentException PathCannotBeEmpty(string paramName = "path")
 		=> Execute.OnNetFramework(
 			() => new ArgumentException(
@@ -110,7 +113,6 @@ internal static class ExceptionFactory
 		=> new(
 			$"The timeout of {timeoutMilliseconds}ms expired in the awaitable callback.");
 
-	internal static UnauthorizedAccessException
-		VolumeLabelsCanOnlyBeSetForWritableVolumes()
+	internal static UnauthorizedAccessException VolumeLabelsCannotBeSet()
 		=> new("Volume labels can only be set for writable local volumes.");
 }

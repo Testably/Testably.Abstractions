@@ -124,7 +124,13 @@ public sealed partial class FileSystemMock
 #if NET6_0_OR_GREATER
 			[SupportedOSPlatform("windows")]
 #endif
-			set => throw ExceptionFactory.VolumeLabelsCanOnlyBeSetForWritableVolumes();
+			set
+			{
+				_ = value;
+				Execute.OnWindows(
+					() => throw ExceptionFactory.VolumeLabelsCannotBeSet(),
+					() => throw ExceptionFactory.OperationNotSupportedOnThisPlatform());
+			}
 		}
 
 		/// <inheritdoc cref="IStorageDrive.ChangeUsedBytes(long)" />
