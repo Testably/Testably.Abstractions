@@ -34,6 +34,7 @@ public sealed partial class FileSystemMock
 		private readonly FileSystemMock _fileSystem;
 
 		private long _usedBytes;
+		private string _volumeLabel = nameof(FileSystemMock);
 
 		private DriveInfoMock(string driveName, FileSystemMock fileSystem)
 		{
@@ -120,15 +121,14 @@ public sealed partial class FileSystemMock
 		[AllowNull]
 		public string VolumeLabel
 		{
-			get => nameof(FileSystemMock);
+			get => _volumeLabel;
 #if NET6_0_OR_GREATER
 			[SupportedOSPlatform("windows")]
 #endif
 			set
 			{
-				_ = value;
-				Execute.OnWindows(
-					() => throw ExceptionFactory.VolumeLabelsCannotBeSet(),
+				_volumeLabel = value ?? _volumeLabel;
+				Execute.NotOnWindows(
 					() => throw ExceptionFactory.OperationNotSupportedOnThisPlatform());
 			}
 		}

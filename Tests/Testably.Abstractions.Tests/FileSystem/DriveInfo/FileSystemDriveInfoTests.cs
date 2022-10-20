@@ -18,25 +18,39 @@ public abstract class FileSystemDriveInfoTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void VolumeLabel_ShouldNotBeWritable()
+	public void VolumeLabel_ShouldBeWritableOnlyOnWindows()
 	{
+		Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
+
 		IFileSystem.IDriveInfo result =
 			FileSystem.DriveInfo.New(FileTestHelper.RootDrive());
+		string previousVolumeLabel = result.VolumeLabel;
 
-		Exception? exception = Record.Exception(() =>
+		try
 		{
+			Exception? exception = Record.Exception(() =>
+			{
 #pragma warning disable CA1416
-			result.VolumeLabel = "TEST";
+				result.VolumeLabel = "TEST";
 #pragma warning restore CA1416
-		});
+			});
 
-		if (Test.RunsOnWindows)
-		{
-			exception.Should().BeOfType<UnauthorizedAccessException>();
+			if (Test.RunsOnWindows)
+			{
+				exception.Should().BeNull();
+				result.VolumeLabel.Should().Be("TEST");
+			}
+			else
+			{
+				exception.Should().BeOfType<PlatformNotSupportedException>();
+			}
 		}
-		else
+		finally
 		{
-			exception.Should().BeOfType<PlatformNotSupportedException>();
+			if (Test.RunsOnWindows)
+			{
+				result.VolumeLabel = previousVolumeLabel;
+			}
 		}
 	}
 }
