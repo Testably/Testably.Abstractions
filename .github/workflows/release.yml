@@ -185,7 +185,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     environment: production
-#    needs: [analyze, test-macos, test-ubuntu, test-windows, test-net-framework, test-examples]
+    needs: [analyze, test-macos, test-ubuntu, test-windows, test-net-framework, test-examples]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -212,10 +212,5 @@ jobs:
           sed -i -e 's/Examples\/README.md/https:\/\/github.com\/Testably\/Testably.Abstractions\/blob\/main\/Examples\/README.md/g' ./README.md
       - name: Build
         run: dotnet build --configuration "Release"
-      - name: Upload nuget packages
-        uses: actions/upload-artifact@v3
-        with:
-          name: Nuget
-          path: Build/Binaries/*.nupkg
-#      - name: Publish
-#        run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
+      - name: Publish
+        run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
