@@ -191,6 +191,12 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Tag current commit
+        shell: bash
+        run: |
+          version="${GITHUB_REF#refs/heads/release/}"
+          git tag "${version}"
+          git push origin "${version}"
       - uses: rickstaa/action-create-tag@v1
         with:
           tag: "${GITHUB_REF#refs/heads/release/}"
