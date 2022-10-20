@@ -39,9 +39,8 @@ public class NullContainerTests
 		sut.TimeSystem.Should().Be(fileSystem.TimeSystem);
 	}
 
-	[Theory]
-	[AutoData]
-	public void CreationTime_WithUnspecifiedKind_ShouldReturnNullTime(string path)
+	[Fact]
+	public void CreationTime_WithUnspecifiedKind_ShouldReturnNullTime()
 	{
 		Testing.FileSystemMock fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
@@ -108,9 +107,8 @@ public class NullContainerTests
 		result.Share.Should().Be(share);
 	}
 
-	[Theory]
-	[AutoData]
-	public void Type_ShouldBeDirectoryOrFile(string linkTarget)
+	[Fact]
+	public void Type_ShouldBeDirectoryOrFile()
 	{
 		Testing.FileSystemMock fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
