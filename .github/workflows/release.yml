@@ -17,6 +17,11 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Tag current commit
+        shell: bash
+        run: |
+          version="${GITHUB_REF#refs/heads/release/}"
+          git tag "${version}"
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
         with:
@@ -62,6 +67,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Tag current commit
+        shell: bash
+        run: |
+          version="${GITHUB_REF#refs/heads/release/}"
+          git tag "${version}"
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
@@ -81,6 +91,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Tag current commit
+        shell: bash
+        run: |
+          version="${GITHUB_REF#refs/heads/release/}"
+          git tag "${version}"
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
@@ -100,6 +115,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Tag current commit
+        shell: bash
+        run: |
+          version="${GITHUB_REF#refs/heads/release/}"
+          git tag "${version}"
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
@@ -119,6 +139,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Tag current commit
+        shell: bash
+        run: |
+          version="${GITHUB_REF#refs/heads/release/}"
+          git tag "${version}"
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
       - name: Setup NuGet
@@ -142,6 +167,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Tag current commit
+        shell: bash
+        run: |
+          version="${GITHUB_REF#refs/heads/release/}"
+          git tag "${version}"
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
@@ -163,6 +193,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Tag current commit
+        shell: bash
+        run: |
+          version="${GITHUB_REF#refs/heads/release/}"
+          git tag "${version}"
       - name: Install .NET Stryker
         shell: bash
         run: |
@@ -213,7 +248,7 @@ jobs:
           sed -i -e "s/branch=main/branch=release%2F${version}/g" ./README.md
           sed -i -e "s/Testably.Abstractions%2Fmain/Testably.Abstractions%2Frelease%2F${version}/g" ./README.md
           sed -i -e "s/Testably.Abstractions%2Fmain/Testably.Abstractions%2Frelease%2F${version}/g" ./README.md
-          sed -i -e "s/Testably.Abstractions\/main/Testably.Abstractions\/release\/${version}/g" ./README.md
+          sed -i -e "s/Testably.Abstractions\/main)/Testably.Abstractions\/release\/${version})/g" ./README.md
           # Add absolute path to example section
           sed -i -e 's/Examples\/README.md/https:\/\/github.com\/Testably\/Testably.Abstractions\/blob\/main\/Examples\/README.md/g' ./README.md
       - name: Build
