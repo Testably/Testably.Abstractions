@@ -191,6 +191,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - uses: rickstaa/action-create-tag@v1
+        with:
+          tag: "${GITHUB_REF#refs/heads/release/}"
+          message: "Release ${GITHUB_REF#refs/heads/release/}"
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1.0.5
       - name: Setup .NET
