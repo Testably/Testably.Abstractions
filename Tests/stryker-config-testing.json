@@ -14,11 +14,11 @@
     "mutation-level": "Advanced",
     "mutate": [
       // The enumeration options helper is a wrapper around Microsoft code
-      "!Testably.Abstractions.Testing/Internal/EnumerationOptionsHelper.cs",
+      "!**/Testably.Abstractions.Testing/Internal/EnumerationOptionsHelper.cs",
       // The exception type is checked, but not the message, as this could be language dependent
-      "!Testably.Abstractions.Testing/Internal/ExceptionFactory.cs",
+      "!**/Testably.Abstractions.Testing/Internal/ExceptionFactory.cs",
       // Indicates operating system specific code
-      "!Testably.Abstractions.Testing/Internal/Execute.cs"
+      "!**/Testably.Abstractions.Testing/Internal/Execute.cs"
     ],
     "ignore-methods": [
       // The exception type is checked, but not the message, as this could be language dependent
