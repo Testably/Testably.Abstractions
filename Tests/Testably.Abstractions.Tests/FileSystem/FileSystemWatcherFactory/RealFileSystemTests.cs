@@ -1,12 +1,10 @@
 #if !DEBUG || !DISABLE_TESTS_REALFILESYSTEM
 using System.IO;
-using Testably.Abstractions.Tests.TestHelpers.Traits;
 using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcherFactory;
 
 [Collection(nameof(DriveInfoFactory.RealFileSystemTests))]
-[SystemTest(nameof(DriveInfoFactory.RealFileSystemTests))]
 public sealed class RealFileSystemTests :
 	FileSystemFileSystemWatcherFactoryTests<Abstractions.FileSystem>,
 	IDisposable

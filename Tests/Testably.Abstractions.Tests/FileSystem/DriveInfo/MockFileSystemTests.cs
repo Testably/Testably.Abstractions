@@ -1,8 +1,5 @@
-using Testably.Abstractions.Tests.TestHelpers.Traits;
-
 namespace Testably.Abstractions.Tests.FileSystem.DriveInfo;
 
-[SystemTest(nameof(MockFileSystemTests))]
 public sealed class MockFileSystemTests
 	: FileSystemDriveInfoTests<FileSystemMock>, IDisposable
 {

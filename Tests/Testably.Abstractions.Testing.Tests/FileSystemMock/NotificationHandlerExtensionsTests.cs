@@ -15,7 +15,6 @@ public class NotificationHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnCreated_Directory_OtherEvent_ShouldNotTrigger(string path)
 	{
 		bool isNotified = false;
@@ -38,7 +37,6 @@ public class NotificationHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnCreated_Directory_ShouldConsiderBasePath(string path1, string path2)
 	{
 		bool isNotified = false;
@@ -61,7 +59,6 @@ public class NotificationHandlerExtensionsTests
 	[Theory]
 	[InlineData("foo", "f*o", true)]
 	[InlineData("foo", "*fo", false)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnCreated_Directory_ShouldConsiderSearchPattern(
 		string path, string searchPattern, bool expectedResult)
 	{
@@ -93,7 +90,6 @@ public class NotificationHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnCreated_Directory_ShouldNotifyWhenDirectoryIsCreated(string path)
 	{
 		bool isNotified = false;
@@ -112,7 +108,6 @@ public class NotificationHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnCreated_Directory_ShouldUsePredicate(bool expectedResult, string path)
 	{
 		bool isNotified = false;
@@ -143,7 +138,6 @@ public class NotificationHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnCreated_File_OtherEvent_ShouldNotTrigger(string path)
 	{
 		bool isNotified = false;
@@ -166,7 +160,6 @@ public class NotificationHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnCreated_File_ShouldConsiderBasePath(string path1, string path2)
 	{
 		bool isNotified = false;
@@ -189,7 +182,6 @@ public class NotificationHandlerExtensionsTests
 	[Theory]
 	[InlineData("foo", "f*o", true)]
 	[InlineData("foo", "*fo", false)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnCreated_File_ShouldConsiderSearchPattern(
 		string path, string searchPattern, bool expectedResult)
 	{
@@ -221,7 +213,6 @@ public class NotificationHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnCreated_File_ShouldNotifyWhenFileIsCreated(string path)
 	{
 		bool isNotified = false;
@@ -240,7 +231,6 @@ public class NotificationHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnCreated_File_ShouldUsePredicate(bool expectedResult, string path)
 	{
 		bool isNotified = false;
@@ -271,7 +261,6 @@ public class NotificationHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnDeleted_Directory_OtherEvent_ShouldNotTrigger(string path)
 	{
 		bool isNotified = false;
@@ -293,7 +282,6 @@ public class NotificationHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnDeleted_Directory_ShouldConsiderBasePath(string path1, string path2)
 	{
 		bool isNotified = false;
@@ -318,7 +306,6 @@ public class NotificationHandlerExtensionsTests
 	[Theory]
 	[InlineData("foo", "f*o", true)]
 	[InlineData("foo", "*fo", false)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnDeleted_Directory_ShouldConsiderSearchPattern(
 		string path, string searchPattern, bool expectedResult)
 	{
@@ -351,7 +338,6 @@ public class NotificationHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnDeleted_Directory_ShouldNotifyWhenDirectoryIsDeleted(string path)
 	{
 		bool isNotified = false;
@@ -371,7 +357,6 @@ public class NotificationHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnDeleted_Directory_ShouldUsePredicate(bool expectedResult, string path)
 	{
 		bool isNotified = false;
@@ -403,7 +388,6 @@ public class NotificationHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnDeleted_File_OtherEvent_ShouldNotTrigger(string path)
 	{
 		bool isNotified = false;
@@ -425,7 +409,6 @@ public class NotificationHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnDeleted_File_ShouldConsiderBasePath(string path1, string path2)
 	{
 		bool isNotified = false;
@@ -450,7 +433,6 @@ public class NotificationHandlerExtensionsTests
 	[Theory]
 	[InlineData("foo", "f*o", true)]
 	[InlineData("foo", "*fo", false)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnDeleted_File_ShouldConsiderSearchPattern(
 		string path, string searchPattern, bool expectedResult)
 	{
@@ -483,7 +465,6 @@ public class NotificationHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnDeleted_File_ShouldNotifyWhenFileIsDeleted(string path)
 	{
 		bool isNotified = false;
@@ -503,7 +484,6 @@ public class NotificationHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnDeleted_File_ShouldUsePredicate(bool expectedResult, string path)
 	{
 		bool isNotified = false;
@@ -535,7 +515,6 @@ public class NotificationHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnChanged_File_OtherEvent_ShouldNotTrigger(string path)
 	{
 		bool isNotified = false;
@@ -557,7 +536,6 @@ public class NotificationHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnChanged_File_ShouldConsiderBasePath(string path1, string path2)
 	{
 		bool isNotified = false;
@@ -582,7 +560,6 @@ public class NotificationHandlerExtensionsTests
 	[Theory]
 	[InlineData("foo", "f*o", true)]
 	[InlineData("foo", "*fo", false)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnChanged_File_ShouldConsiderSearchPattern(
 		string path, string searchPattern, bool expectedResult)
 	{
@@ -615,7 +592,6 @@ public class NotificationHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnChanged_File_ShouldNotifyWhenFileIsChanged(string path)
 	{
 		bool isNotified = false;
@@ -635,7 +611,6 @@ public class NotificationHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
-	[Trait(nameof(Testing), nameof(FileSystemMockExtensions))]
 	public void OnChanged_File_ShouldUsePredicate(bool expectedResult, string path)
 	{
 		bool isNotified = false;
