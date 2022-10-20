@@ -197,6 +197,18 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 6.0.x
+      - name: Prepare README.md
+        shell: bash
+        run: |
+          # Remove the quality gate status badge
+          grep -v "Quality Gate Status" ./README.md > ./README.md.backup && mv ./README.md.backup ./README.md
+          # Change status badges to display explicit version
+          sed -i -e 's/branch=main/branch=release%2F${GITHUB_REF#refs/heads/release/}/g' ./README.md
+          sed -i -e 's/Testably.Abstractions%2Fmain/Testably.Abstractions%2Frelease%2Fv0.7.1/g' ./README.md
+          sed -i -e 's/Testably.Abstractions%2Fmain/Testably.Abstractions%2Frelease%2Fv0.7.1/g' ./README.md
+          sed -i -e 's/Testably.Abstractions\/main/Testably.Abstractions\/release\/v0.7.1/g' ./README.md
+          # Add absolute path to example section
+          sed -i -e 's/Examples\/README.md/https:\/\/github.com\/Testably\/Testably.Abstractions\/blob\/main\/Examples\/README.md/g' ./README.md
       - name: Build
         run: dotnet build --configuration "Release"
       - name: Upload nuget packages
