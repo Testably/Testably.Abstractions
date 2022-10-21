@@ -69,7 +69,17 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		fileInfo.IsReadOnly = true;
 
 		fileInfo.IsReadOnly.Should().BeTrue();
-		fileInfo.Attributes.HasFlag(FileAttributes.ReadOnly).Should().BeTrue();
+		fileInfo.Attributes.Should().HaveFlag(FileAttributes.ReadOnly);
+
+		fileInfo.IsReadOnly = true;
+
+		fileInfo.IsReadOnly.Should().BeTrue();
+		fileInfo.Attributes.Should().HaveFlag(FileAttributes.ReadOnly);
+
+		fileInfo.IsReadOnly = false;
+
+		fileInfo.IsReadOnly.Should().BeFalse();
+		fileInfo.Attributes.Should().NotHaveFlag(FileAttributes.ReadOnly);
 	}
 
 	[SkippableTheory]
@@ -82,7 +92,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		fileInfo.Attributes = FileAttributes.ReadOnly | FileAttributes.Encrypted;
 
 		fileInfo.IsReadOnly.Should().BeTrue();
-		fileInfo.Attributes.HasFlag(FileAttributes.ReadOnly).Should().BeTrue();
+		fileInfo.Attributes.Should().HaveFlag(FileAttributes.ReadOnly);
 	}
 
 	[SkippableTheory]
@@ -93,6 +103,6 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
 		fileInfo.IsReadOnly.Should().BeFalse();
-		fileInfo.Attributes.HasFlag(FileAttributes.ReadOnly).Should().BeFalse();
+		fileInfo.Attributes.Should().NotHaveFlag(FileAttributes.ReadOnly);
 	}
 }

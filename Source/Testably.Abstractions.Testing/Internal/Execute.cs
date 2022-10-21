@@ -106,6 +106,21 @@ internal static class Execute
 	}
 
 	/// <summary>
+	///     The <paramref name="callback" /> is executed when the code runs in .NET Framework
+	///     and the <paramref name="predicate" /> is <see langword="true" />.
+	/// </summary>
+	/// <remarks>
+	///     See also: <seealso cref="IsNetFramework" />
+	/// </remarks>
+	public static void OnNetFrameworkIf(bool predicate, Action callback)
+	{
+		if (IsNetFramework && predicate)
+		{
+			callback();
+		}
+	}
+
+	/// <summary>
 	///     The <paramref name="callback" /> is executed when the code runs in .NET Framework.
 	/// </summary>
 	/// <remarks>
