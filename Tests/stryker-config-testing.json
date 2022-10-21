@@ -34,7 +34,9 @@
       // Triggered by invalid chars which don't exist in Linux
       "ThrowCommonExceptionsIfPathIsInvalid",
       // Calls to Thread.Sleep cannot be detected by a test
-      "System.Threading.Thread.Sleep"
+      "System.Threading.Thread.Sleep",
+      // Only framework dependent changes
+      "Testably.Abstractions.Testing.FileMock.Copy"
     ]
   }
 }
