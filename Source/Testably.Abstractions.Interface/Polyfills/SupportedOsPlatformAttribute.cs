@@ -7,11 +7,6 @@ namespace System.Runtime.Versioning;
 ///     Records the operating system (and minimum version) that supports an API. Multiple attributes can be
 ///     applied to indicate support on multiple operating systems.
 /// </summary>
-/// <remarks>
-///     Callers can apply a <see cref="System.Runtime.Versioning.SupportedOSPlatformAttribute " />
-///     or use guards to prevent calls to APIs on unsupported operating systems.
-///     A given platform should only be specified once.
-/// </remarks>
 [AttributeUsage(AttributeTargets.Assembly |
                 AttributeTargets.Class |
                 AttributeTargets.Constructor |
@@ -26,8 +21,16 @@ namespace System.Runtime.Versioning;
 	AllowMultiple = true, Inherited = false)]
 public sealed class SupportedOSPlatformAttribute : Attribute
 {
+	/// <summary>
+	///     The platform name.
+	/// </summary>
 	public string PlatformName { get; }
 
+	/// <summary>
+	///     Records the operating system (and minimum version) that supports an API. Multiple attributes can be
+	///     applied to indicate support on multiple operating systems.
+	/// </summary>
+	/// <param name="platformName"></param>
 	public SupportedOSPlatformAttribute(string platformName)
 	{
 		PlatformName = platformName;

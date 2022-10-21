@@ -36,22 +36,10 @@ public class Net472ParityTests : ParityTests
 		#endregion
 
 		#region DirectoryInfo
-
-		Parity.DirectoryInfo.MissingMethods.Add(typeof(DirectoryInfo).GetMethod(
-			nameof(DirectoryInfo.Create),
-			new[] { typeof(DirectorySecurity) }));
+		
 		Parity.DirectoryInfo.MissingMethods.Add(typeof(DirectoryInfo).GetMethod(
 			nameof(DirectoryInfo.CreateSubdirectory),
 			new[] { typeof(string), typeof(DirectorySecurity) }));
-		Parity.DirectoryInfo.MissingMethods.Add(typeof(DirectoryInfo).GetMethod(
-			nameof(DirectoryInfo.GetAccessControl),
-			Type.EmptyTypes));
-		Parity.DirectoryInfo.MissingMethods.Add(typeof(DirectoryInfo).GetMethod(
-			nameof(DirectoryInfo.GetAccessControl),
-			new[] { typeof(AccessControlSections) }));
-		Parity.DirectoryInfo.MissingMethods.Add(typeof(DirectoryInfo).GetMethod(
-			nameof(DirectoryInfo.SetAccessControl),
-			new[] { typeof(DirectorySecurity) }));
 
 		#endregion
 
@@ -72,20 +60,6 @@ public class Net472ParityTests : ParityTests
 		Parity.File.MissingMethods.Add(typeof(File).GetMethod(
 			nameof(File.SetAccessControl),
 			new[] { typeof(string), typeof(FileSecurity) }));
-
-		#endregion
-
-		#region FileInfo
-
-		Parity.FileInfo.MissingMethods.Add(typeof(FileInfo).GetMethod(
-			nameof(FileInfo.GetAccessControl),
-			Type.EmptyTypes));
-		Parity.FileInfo.MissingMethods.Add(typeof(FileInfo).GetMethod(
-			nameof(FileInfo.GetAccessControl),
-			new[] { typeof(AccessControlSections) }));
-		Parity.FileInfo.MissingMethods.Add(typeof(FileInfo).GetMethod(
-			nameof(FileInfo.SetAccessControl),
-			new[] { typeof(FileSecurity) }));
 
 		#endregion
 
