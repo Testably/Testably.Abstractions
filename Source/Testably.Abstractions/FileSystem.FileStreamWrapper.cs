@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Runtime.Versioning;
 using System.Security.AccessControl;
 
@@ -20,11 +21,13 @@ public sealed partial class FileSystem
 #if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
 		/// <inheritdoc cref="FileSystemStream.GetAccessControl()" />
 		[SupportedOSPlatform("windows")]
+		[ExcludeFromCodeCoverage]
 		public override FileSecurity GetAccessControl()
 			=> _fileStream.GetAccessControl();
 
 		/// <inheritdoc cref="FileSystemStream.SetAccessControl(FileSecurity)" />
 		[SupportedOSPlatform("windows")]
+		[ExcludeFromCodeCoverage]
 		public override void SetAccessControl(FileSecurity fileSecurity)
 			=> _fileStream.SetAccessControl(fileSecurity);
 #endif

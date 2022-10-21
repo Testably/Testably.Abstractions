@@ -37,9 +37,10 @@ public sealed partial class FileSystem
 			=> _instance.Create();
 
 #if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
-		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.CreateDirectory(DirectorySecurity)" />
+		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.Create(System.Security.AccessControl.DirectorySecurity)" />
 		[SupportedOSPlatform("windows")]
-		public void CreateDirectory(DirectorySecurity directorySecurity)
+		[ExcludeFromCodeCoverage]
+		public void Create(DirectorySecurity directorySecurity)
 			=> _instance.Create(directorySecurity);
 #endif
 
@@ -141,11 +142,13 @@ public sealed partial class FileSystem
 #if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
 		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetAccessControl()" />
 		[SupportedOSPlatform("windows")]
+		[ExcludeFromCodeCoverage]
 		public DirectorySecurity GetAccessControl()
 			=> _instance.GetAccessControl();
 
 		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetAccessControl(AccessControlSections)" />
 		[SupportedOSPlatform("windows")]
+		[ExcludeFromCodeCoverage]
 		public DirectorySecurity GetAccessControl(AccessControlSections includeSections)
 			=> _instance.GetAccessControl(includeSections);
 #endif
@@ -265,6 +268,7 @@ public sealed partial class FileSystem
 #if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
 		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.SetAccessControl(DirectorySecurity)" />
 		[SupportedOSPlatform("windows")]
+		[ExcludeFromCodeCoverage]
 		public void SetAccessControl(DirectorySecurity directorySecurity)
 			=> _instance.SetAccessControl(directorySecurity);
 #endif

@@ -22,7 +22,7 @@ public partial interface IFileSystem
 
 #if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
 		/// <inheritdoc cref="FileSystemAclExtensions.Create(DirectoryInfo, DirectorySecurity)" />
-		void CreateDirectory(DirectorySecurity directorySecurity);
+		void Create(DirectorySecurity directorySecurity);
 #endif
 
 		/// <inheritdoc cref="DirectoryInfo.CreateSubdirectory(string)" />

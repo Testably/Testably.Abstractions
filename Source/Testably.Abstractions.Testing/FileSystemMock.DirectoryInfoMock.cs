@@ -46,9 +46,9 @@ public sealed partial class FileSystemMock
 		}
 
 #if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
-		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.CreateDirectory(DirectorySecurity)" />
+		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.Create(System.Security.AccessControl.DirectorySecurity)" />
 		[SupportedOSPlatform("windows")]
-		public void CreateDirectory(DirectorySecurity directorySecurity)
+		public void Create(DirectorySecurity directorySecurity)
 		{
 			FullName.ThrowCommonExceptionsIfPathIsInvalid(FileSystem);
 

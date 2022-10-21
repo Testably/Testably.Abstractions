@@ -73,11 +73,13 @@ public sealed partial class FileSystem
 #if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
 		/// <inheritdoc cref="IFileSystem.IFileInfo.GetAccessControl()" />
 		[SupportedOSPlatform("windows")]
+		[ExcludeFromCodeCoverage]
 		public FileSecurity GetAccessControl()
 			=> _instance.GetAccessControl();
 
 		/// <inheritdoc cref="IFileSystem.IFileInfo.GetAccessControl(AccessControlSections)" />
 		[SupportedOSPlatform("windows")]
+		[ExcludeFromCodeCoverage]
 		public FileSecurity GetAccessControl(AccessControlSections includeSections)
 			=> _instance.GetAccessControl(includeSections);
 #endif
@@ -141,6 +143,7 @@ public sealed partial class FileSystem
 #if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
 		/// <inheritdoc cref="IFileSystem.IFileInfo.SetAccessControl(FileSecurity)" />
 		[SupportedOSPlatform("windows")]
+		[ExcludeFromCodeCoverage]
 		public void SetAccessControl(FileSecurity fileSecurity)
 			=> _instance.SetAccessControl(fileSecurity);
 #endif
