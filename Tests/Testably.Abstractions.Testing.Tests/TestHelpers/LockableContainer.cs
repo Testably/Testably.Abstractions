@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Storage;
 
@@ -32,6 +33,9 @@ internal class LockableContainer : IStorageContainer
 	}
 
 	#region IStorageContainer Members
+	
+	/// <inheritdoc cref="FileSystemSecurity" />
+	public FileSystemSecurity? AccessControl { get; set; }
 
 	/// <inheritdoc cref="IStorageContainer.Attributes" />
 	public FileAttributes Attributes { get; set; }

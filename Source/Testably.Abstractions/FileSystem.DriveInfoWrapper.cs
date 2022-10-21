@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
-#if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
-#endif
 
 namespace Testably.Abstractions;
 
@@ -62,9 +60,7 @@ public sealed partial class FileSystem
 		public string VolumeLabel
 		{
 			get => _instance.VolumeLabel;
-#if NET6_0_OR_GREATER
 			[SupportedOSPlatform("windows")]
-#endif
 #pragma warning disable CA1416
 			set => _instance.VolumeLabel = value;
 #pragma warning restore CA1416

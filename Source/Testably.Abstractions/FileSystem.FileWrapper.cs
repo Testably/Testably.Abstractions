@@ -1,7 +1,4 @@
-﻿#if NET6_0_OR_GREATER
-using System.Runtime.Versioning;
-#endif
-#if FEATURE_FILESYSTEM_ASYNC
+﻿#if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
 #endif
@@ -9,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Runtime.Versioning;
 using System.Text;
 using static Testably.Abstractions.IFileSystem;
 
@@ -82,9 +80,7 @@ public sealed partial class FileSystem
 			=> System.IO.File.CreateText(path);
 
 		/// <inheritdoc cref="IFileSystem.IFile.Decrypt(string)" />
-#if NET6_0_OR_GREATER
 		[SupportedOSPlatform("windows")]
-#endif
 		public void Decrypt(string path)
 			=> System.IO.File.Decrypt(path);
 
@@ -93,9 +89,7 @@ public sealed partial class FileSystem
 			=> System.IO.File.Delete(path);
 
 		/// <inheritdoc cref="IFileSystem.IFile.Encrypt(string)" />
-#if NET6_0_OR_GREATER
 		[SupportedOSPlatform("windows")]
-#endif
 		public void Encrypt(string path)
 			=> System.IO.File.Encrypt(path);
 

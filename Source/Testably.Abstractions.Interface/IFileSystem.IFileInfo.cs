@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Runtime.Versioning;
+using System.Security.AccessControl;
 
 namespace Testably.Abstractions;
 
@@ -38,17 +39,20 @@ public partial interface IFileSystem
 		public StreamWriter CreateText();
 
 		/// <inheritdoc cref="FileInfo.Decrypt()" />
-#if NET6_0_OR_GREATER
 		[SupportedOSPlatform("windows")]
-#endif
 		void Decrypt();
 
 		/// <inheritdoc cref="FileInfo.Encrypt()" />
-		/// />
-#if NET6_0_OR_GREATER
 		[SupportedOSPlatform("windows")]
-#endif
 		void Encrypt();
+
+#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
+		/// <inheritdoc cref="FileSystemAclExtensions.GetAccessControl(FileInfo)"/>
+		FileSecurity GetAccessControl();
+
+		/// <inheritdoc cref="FileSystemAclExtensions.GetAccessControl(FileInfo, AccessControlSections)"/>
+		FileSecurity GetAccessControl(AccessControlSections includeSections);
+#endif
 
 		/// <inheritdoc cref="FileInfo.MoveTo(string)" />
 		void MoveTo(string destFileName);
@@ -89,5 +93,10 @@ public partial interface IFileSystem
 		IFileInfo Replace(string destinationFileName,
 		                  string? destinationBackupFileName,
 		                  bool ignoreMetadataErrors);
+
+#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
+		/// <inheritdoc cref="FileSystemAclExtensions.SetAccessControl(FileInfo, FileSecurity)"/>
+		void SetAccessControl(FileSecurity fileSecurity);
+#endif
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Security.AccessControl;
 
 namespace Testably.Abstractions.Testing.Storage;
 
@@ -9,6 +10,11 @@ namespace Testably.Abstractions.Testing.Storage;
 internal interface IStorageContainer : IFileSystem.IFileSystemExtensionPoint,
 	ITimeSystem.ITimeSystemExtensionPoint
 {
+#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
+	/// <inheritdoc cref="FileSystemSecurity" />
+	FileSystemSecurity? AccessControl { get; set; }
+#endif
+
 	/// <inheritdoc cref="System.IO.FileSystemInfo.Attributes" />
 	FileAttributes Attributes { get; set; }
 
