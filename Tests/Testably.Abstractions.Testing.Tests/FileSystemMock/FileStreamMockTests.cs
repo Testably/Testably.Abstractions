@@ -13,7 +13,9 @@ public class FileStreamMockTests
 		Testing.FileSystemMock fileSystem = new();
 		FileSystemStream fileStream = fileSystem.File.Create("foo");
 
+#pragma warning disable CA1416
 		FileSecurity result = fileStream.GetAccessControl();
+#pragma warning restore CA1416
 
 		result.Should().NotBeNull();
 	}
@@ -25,10 +27,12 @@ public class FileStreamMockTests
 
 		Testing.FileSystemMock fileSystem = new();
 		FileSystemStream fileStream = fileSystem.File.Create("foo");
+#pragma warning disable CA1416
 		FileSecurity fileSecurity = new();
 
 		fileStream.SetAccessControl(fileSecurity);
 		FileSecurity result = fileStream.GetAccessControl();
+#pragma warning restore CA1416
 
 		result.Should().Be(fileSecurity);
 	}
