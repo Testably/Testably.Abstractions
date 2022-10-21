@@ -102,8 +102,7 @@ public class InMemoryStorageTests
 		Storage.CurrentDirectory.Should().Be(expectedRoot);
 	}
 
-	[Theory]
-	[AutoData]
+	[Fact]
 	public void Delete_RaceCondition_ShouldReturnFalse()
 	{
 		Testing.FileSystemMock fileSystem = new();

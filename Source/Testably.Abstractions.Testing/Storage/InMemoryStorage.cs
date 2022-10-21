@@ -342,15 +342,13 @@ internal sealed class InMemoryStorage : IStorage
 					int destinationBytesLength =
 						existingDestinationContainer.GetBytes().Length;
 					destination.Drive?.ChangeUsedBytes(-1 * destinationBytesLength);
-					if (backup != null)
+					if (backup != null &&
+					    _containers.TryAdd(backup, existingDestinationContainer))
 					{
-						if (_containers.TryAdd(backup, existingDestinationContainer))
-						{
-							Execute.OnWindows(
-								() => existingDestinationContainer.Attributes |=
-									FileAttributes.Archive);
-							backup.Drive?.ChangeUsedBytes(destinationBytesLength);
-						}
+						Execute.OnWindows(
+							() => existingDestinationContainer.Attributes |=
+								FileAttributes.Archive);
+						backup.Drive?.ChangeUsedBytes(destinationBytesLength);
 					}
 
 					if (_containers.TryRemove(source,
