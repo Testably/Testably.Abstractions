@@ -101,9 +101,7 @@ public sealed partial class FileSystemMock
 		public string VolumeLabel
 		{
 			get => _volumeLabel;
-#if NET6_0_OR_GREATER
 			[SupportedOSPlatform("windows")]
-#endif
 			set
 			{
 				_volumeLabel = value ?? _volumeLabel;

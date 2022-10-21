@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Text;
-#if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
-#endif
+using System.Text;
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
@@ -85,19 +83,14 @@ public partial interface IFileSystem
 		StreamWriter CreateText(string path);
 
 		/// <inheritdoc cref="File.Decrypt(string)" />
-#if NET6_0_OR_GREATER
 		[SupportedOSPlatform("windows")]
-#endif
 		void Decrypt(string path);
 
 		/// <inheritdoc cref="File.Delete(string)" />
 		void Delete(string path);
 
 		/// <inheritdoc cref="File.Encrypt(string)" />
-		/// />
-#if NET6_0_OR_GREATER
 		[SupportedOSPlatform("windows")]
-#endif
 		void Encrypt(string path);
 
 		/// <inheritdoc cref="File.Exists(string?)" />

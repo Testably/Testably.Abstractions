@@ -1,6 +1,4 @@
-#if NET6_0_OR_GREATER
 using System.Runtime.Versioning;
-#endif
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
@@ -9,10 +7,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-
-#if NET6_0_OR_GREATER
 	[SupportedOSPlatform("windows")]
-#endif
 	public void Decrypt_EncryptedData_ShouldReturnOriginalText(
 		string path, string contents)
 	{
@@ -30,10 +25,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-
-#if NET6_0_OR_GREATER
 	[SupportedOSPlatform("windows")]
-#endif
 	public void Decrypt_UnencryptedData_ShouldReturnOriginalText(
 		string path, string contents)
 	{
@@ -49,10 +41,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-
-#if NET6_0_OR_GREATER
 	[SupportedOSPlatform("windows")]
-#endif
 	public void Encrypt_ShouldChangeData(
 		string path, byte[] bytes)
 	{
@@ -69,10 +58,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-
-#if NET6_0_OR_GREATER
 	[SupportedOSPlatform("windows")]
-#endif
 	public void Encrypt_Twice_ShouldIgnoreTheSecondTime(
 		string path, string contents)
 	{

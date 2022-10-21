@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.Versioning;
+using System.Security.AccessControl;
 using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Internal;
@@ -123,6 +125,13 @@ public sealed partial class FileSystemMock
 			InternalFlush();
 		}
 
+#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
+		/// <inheritdoc cref="FileSystemStream.GetAccessControl()" />
+		[SupportedOSPlatform("windows")]
+		public override FileSecurity GetAccessControl()
+			=> _file.AccessControl as FileSecurity ?? new FileSecurity();
+#endif
+
 		/// <inheritdoc cref="FileSystemStream.Read(byte[], int, int)" />
 		public override int Read(byte[] buffer, int offset, int count)
 		{
@@ -164,6 +173,13 @@ public sealed partial class FileSystemMock
 			_file.AdjustTimes(TimeAdjustments.LastAccessTime);
 			return base.ReadByte();
 		}
+
+#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
+		/// <inheritdoc cref="FileSystemStream.SetAccessControl(FileSecurity)" />
+		[SupportedOSPlatform("windows")]
+		public override void SetAccessControl(FileSecurity fileSecurity)
+			=> _file.AccessControl = fileSecurity;
+#endif
 
 		/// <inheritdoc />
 		public override void SetLength(long value)

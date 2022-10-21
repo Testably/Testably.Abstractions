@@ -40,9 +40,7 @@ public partial interface IFileSystem
 		string VolumeLabel
 		{
 			get;
-#if NET6_0_OR_GREATER
 			[SupportedOSPlatform("windows")]
-#endif
 			set;
 		}
 	}

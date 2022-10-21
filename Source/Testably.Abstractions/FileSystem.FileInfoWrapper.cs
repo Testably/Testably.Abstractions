@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.Versioning;
+using System.Security.AccessControl;
 
 namespace Testably.Abstractions;
 
@@ -60,18 +61,28 @@ public sealed partial class FileSystem
 			=> _instance.CreateText();
 
 		/// <inheritdoc cref="IFileSystem.IFileInfo.Decrypt()" />
-#if NET6_0_OR_GREATER
 		[SupportedOSPlatform("windows")]
-#endif
 		public void Decrypt()
 			=> _instance.Decrypt();
 
 		/// <inheritdoc cref="IFileSystem.IFileInfo.Encrypt()" />
-#if NET6_0_OR_GREATER
 		[SupportedOSPlatform("windows")]
-#endif
 		public void Encrypt()
 			=> _instance.Encrypt();
+
+#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
+		/// <inheritdoc cref="IFileSystem.IFileInfo.GetAccessControl()" />
+		[SupportedOSPlatform("windows")]
+		[ExcludeFromCodeCoverage]
+		public FileSecurity GetAccessControl()
+			=> _instance.GetAccessControl();
+
+		/// <inheritdoc cref="IFileSystem.IFileInfo.GetAccessControl(AccessControlSections)" />
+		[SupportedOSPlatform("windows")]
+		[ExcludeFromCodeCoverage]
+		public FileSecurity GetAccessControl(AccessControlSections includeSections)
+			=> _instance.GetAccessControl(includeSections);
+#endif
 
 		/// <inheritdoc cref="IFileSystem.IFileInfo.MoveTo(string)" />
 		public void MoveTo(string destFileName)
@@ -129,7 +140,15 @@ public sealed partial class FileSystem
 					ignoreMetadataErrors),
 				_fileSystem);
 
-		#endregion
+#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
+		/// <inheritdoc cref="IFileSystem.IFileInfo.SetAccessControl(FileSecurity)" />
+		[SupportedOSPlatform("windows")]
+		[ExcludeFromCodeCoverage]
+		public void SetAccessControl(FileSecurity fileSecurity)
+			=> _instance.SetAccessControl(fileSecurity);
+#endif
+
+#endregion
 
 		[return: NotNullIfNotNull("instance")]
 		internal static FileInfoWrapper? FromFileInfo(FileInfo? instance,

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Security.AccessControl;
 
 namespace Testably.Abstractions;
 
@@ -18,6 +19,11 @@ public partial interface IFileSystem
 
 		/// <inheritdoc cref="DirectoryInfo.Create()" />
 		void Create();
+
+#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
+		/// <inheritdoc cref="FileSystemAclExtensions.Create(DirectoryInfo, DirectorySecurity)" />
+		void Create(DirectorySecurity directorySecurity);
+#endif
 
 		/// <inheritdoc cref="DirectoryInfo.CreateSubdirectory(string)" />
 		IDirectoryInfo CreateSubdirectory(string path);
@@ -74,6 +80,14 @@ public partial interface IFileSystem
 			EnumerationOptions enumerationOptions);
 #endif
 
+#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
+		/// <inheritdoc cref="FileSystemAclExtensions.GetAccessControl(DirectoryInfo)"/>
+		DirectorySecurity GetAccessControl();
+
+		/// <inheritdoc cref="FileSystemAclExtensions.GetAccessControl(DirectoryInfo, AccessControlSections)"/>
+		DirectorySecurity GetAccessControl(AccessControlSections includeSections);
+#endif
+
 		/// <inheritdoc cref="DirectoryInfo.GetDirectories()" />
 		IDirectoryInfo[] GetDirectories();
 
@@ -121,5 +135,10 @@ public partial interface IFileSystem
 
 		/// <inheritdoc cref="DirectoryInfo.MoveTo(string)" />
 		void MoveTo(string destDirName);
+
+#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
+		/// <inheritdoc cref="FileSystemAclExtensions.SetAccessControl(DirectoryInfo, DirectorySecurity)"/>
+		void SetAccessControl(DirectorySecurity directorySecurity);
+#endif
 	}
 }

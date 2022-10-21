@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Runtime.Versioning;
 using System.Text;
 using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Storage;
-#if NET6_0_OR_GREATER
-using System.Runtime.Versioning;
-#endif
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
@@ -196,9 +194,7 @@ public sealed partial class FileSystemMock
 			=> FileSystem.FileInfo.New(path).CreateText();
 
 		/// <inheritdoc cref="IFileSystem.IFile.Decrypt(string)" />
-#if NET6_0_OR_GREATER
 		[SupportedOSPlatform("windows")]
-#endif
 		public void Decrypt(string path)
 		{
 			IStorageContainer fileInfo =
@@ -216,9 +212,7 @@ public sealed partial class FileSystemMock
 				_fileSystem.Storage.GetLocation(path));
 
 		/// <inheritdoc cref="IFileSystem.IFile.Encrypt(string)" />
-#if NET6_0_OR_GREATER
 		[SupportedOSPlatform("windows")]
-#endif
 		public void Encrypt(string path)
 		{
 			IStorageContainer fileInfo =

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Security.AccessControl;
 using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing.Storage;
@@ -13,6 +14,11 @@ internal sealed class NullContainer : IStorageContainer
 	}
 
 	#region IStorageContainer Members
+
+#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
+	/// <inheritdoc cref="FileSystemSecurity" />
+	public FileSystemSecurity? AccessControl { get; set; }
+#endif
 
 	/// <inheritdoc cref="IStorageContainer.Attributes" />
 	public FileAttributes Attributes
