@@ -12,7 +12,7 @@ internal static class EncryptionHelper
 	/// </summary>
 	internal static byte[] Decrypt(byte[] cypherBytes)
 	{
-		using Aes algorithm = CreateAlgorithm();
+		using Aes algorithm = CreateDummyEncryptionAlgorithm();
 		using ICryptoTransform decryptor = algorithm
 		   .CreateDecryptor(algorithm.Key, algorithm.IV);
 
@@ -24,19 +24,19 @@ internal static class EncryptionHelper
 	/// </summary>
 	internal static byte[] Encrypt(byte[] plainBytes)
 	{
-		using Aes algorithm = CreateAlgorithm();
-		using ICryptoTransform? encryptor = algorithm
+		using Aes algorithm = CreateDummyEncryptionAlgorithm();
+		using ICryptoTransform encryptor = algorithm
 		   .CreateEncryptor(algorithm.Key, algorithm.IV);
 
 		return PerformCryptography(encryptor, plainBytes);
 	}
 	
-	private static Aes CreateAlgorithm()
+	private static Aes CreateDummyEncryptionAlgorithm()
 	{
 		byte[] bytes = Encoding.UTF8.GetBytes(
 			"THIS IS ONLY A DUMMY ENCRYPTION FOR TESTING HELPERS!");
 
-		using (SHA256? sha256Hash = SHA256.Create())
+		using (SHA256 sha256Hash = SHA256.Create())
 		{
 			byte[] key = sha256Hash.ComputeHash(bytes);
 			byte[] iv = sha256Hash.ComputeHash(key).Take(16).ToArray();
