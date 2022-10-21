@@ -51,6 +51,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 	{
 		ManualResetEventSlim ms = new();
 		using FileSystemStream writeStream = FileSystem.File.Create(path);
+		writeStream.Flush();
 
 		writeStream.BeginWrite(contents, 0, contents.Length, ar =>
 		{
@@ -148,6 +149,27 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void Dispose_CalledTwiceShouldDoNothing(
+		string path, byte[] contents)
+	{
+		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
+
+		FileSystem.File.WriteAllBytes(path, contents);
+
+		using FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
+			FileAccess.ReadWrite, FileShare.ReadWrite, 10, FileOptions.DeleteOnClose);
+
+		stream.Dispose();
+		FileSystem.File.Exists(path).Should().BeFalse();
+		FileSystem.File.WriteAllText(path, "foo");
+
+		stream.Dispose();
+
+		FileSystem.File.Exists(path).Should().BeTrue();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Dispose_ShouldDisposeStream(
 		string path, string contents)
 	{
@@ -163,6 +185,23 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ObjectDisposedException>();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void EndRead_Null_ShouldThrowArgumentNullException(
+		string path, byte[] contents)
+	{
+		FileSystem.File.WriteAllBytes(path, contents);
+		using FileSystemStream readStream = FileSystem.File.OpenRead(path);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			readStream.EndRead(null!);
+		});
+
+		exception.Should().BeOfType<ArgumentNullException>();
 	}
 
 	[SkippableTheory]
@@ -203,6 +242,21 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		lastWriteTime.Should()
 		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 		   .BeOnOrBefore(creationTimeEnd);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void EndWrite_Null_ShouldThrowArgumentNullException(string path)
+	{
+		using FileSystemStream writeStream = FileSystem.File.Create(path);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			writeStream.EndWrite(null!);
+		});
+
+		exception.Should().BeOfType<ArgumentNullException>();
 	}
 
 	[SkippableTheory]
@@ -256,17 +310,45 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void Flush_ShouldNotChangePosition(
-		string path, string contents)
+		string path, byte[] bytes)
 	{
-		FileSystem.File.WriteAllText(path, contents);
-
-		using FileSystemStream stream = FileSystem.File.OpenRead(path);
-		stream.ReadByte();
-		stream.Position.Should().Be(1);
+		using FileSystemStream stream = FileSystem.File.Create(path);
+		stream.Write(bytes, 0, bytes.Length);
+		stream.Seek(2, SeekOrigin.Begin);
+		stream.Position.Should().Be(2);
 
 		stream.Flush();
 
-		stream.Position.Should().Be(1);
+		stream.Position.Should().Be(2);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Flush_ShouldNotUpdateFileContentWhenAlreadyFlushed(
+		string path, byte[] bytes1, byte[] bytes2)
+	{
+		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
+
+		using FileSystemStream stream1 = FileSystem.File.Open(
+			path,
+			FileMode.OpenOrCreate,
+			FileAccess.ReadWrite,
+			FileShare.ReadWrite);
+		using FileSystemStream stream2 = FileSystem.File.Open(
+			path,
+			FileMode.OpenOrCreate,
+			FileAccess.ReadWrite,
+			FileShare.ReadWrite);
+		stream1.Write(bytes1, 0, bytes1.Length);
+		stream1.Flush();
+		stream2.Write(bytes2, 0, bytes2.Length);
+		stream2.Flush();
+
+		stream1.Flush();
+
+		stream2.Dispose();
+		stream1.Dispose();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes2);
 	}
 
 	[SkippableTheory]
