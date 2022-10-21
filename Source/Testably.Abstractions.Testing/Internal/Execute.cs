@@ -124,6 +124,21 @@ internal static class Execute
 	}
 
 	/// <summary>
+	///     The <paramref name="callback" /> is executed when the code runs in .NET Framework
+	///     and the <paramref name="predicate" /> is <see langword="true" />.
+	/// </summary>
+	/// <remarks>
+	///     See also: <seealso cref="IsNetFramework" />
+	/// </remarks>
+	public static void OnNetFrameworkIf(bool predicate, Action callback)
+	{
+		if (IsNetFramework && predicate)
+		{
+			callback();
+		}
+	}
+
+	/// <summary>
 	///     The <paramref name="callback" /> is executed when the operating system is <see cref="OSPlatform.Windows" />.
 	/// </summary>
 	public static void OnWindows(Action callback, Action? alternativeCallback = null)
@@ -151,5 +166,17 @@ internal static class Execute
 		}
 
 		return alternativeCallback();
+	}
+
+	/// <summary>
+	///     The <paramref name="callback" /> is executed when the operating system is <see cref="OSPlatform.Windows" />
+	///     and the <paramref name="predicate" /> is <see langword="true" />.
+	/// </summary>
+	public static void OnWindowsIf(bool predicate, Action callback)
+	{
+		if (predicate && IsWindows)
+		{
+			callback();
+		}
 	}
 }

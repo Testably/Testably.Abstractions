@@ -33,36 +33,7 @@ internal class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.Attributes" />
 	public FileAttributes Attributes
 	{
-		get
-		{
-			FileAttributes attributes = _attributes;
-			if (Path.GetFileName(_location.FullPath).StartsWith("."))
-			{
-				FileAttributes attr = attributes;
-				attributes = Execute.OnLinux(
-					() => attr | FileAttributes.Hidden,
-					() => attr);
-			}
-
-#if FEATURE_FILESYSTEM_LINK
-			if (LinkTarget != null)
-			{
-				attributes |= FileAttributes.ReparsePoint;
-			}
-#endif
-
-			if (_isEncrypted)
-			{
-				attributes |= FileAttributes.Encrypted;
-			}
-
-			if (attributes == 0)
-			{
-				attributes = FileAttributes.Normal;
-			}
-
-			return attributes;
-		}
+		get => AdjustAttributes(_attributes);
 		set
 		{
 			value &= Execute.OnWindows(
@@ -167,14 +138,9 @@ internal class InMemoryContainer : IStorageContainer
 			throw ExceptionFactory.NetworkPathNotFound(_location.FullPath);
 		}
 
-		Execute.OnWindows(() =>
-		{
-			if (!ignoreMetadataError &&
-			    Attributes.HasFlag(FileAttributes.ReadOnly))
-			{
-				throw ExceptionFactory.AccessToPathDenied();
-			}
-		});
+		Execute.OnWindowsIf(
+			!ignoreMetadataError && Attributes.HasFlag(FileAttributes.ReadOnly),
+			() => throw ExceptionFactory.AccessToPathDenied());
 
 		if (CanGetAccess(access, share))
 		{
@@ -233,6 +199,36 @@ internal class InMemoryContainer : IStorageContainer
 	{
 		return new InMemoryContainer(FileSystemTypes.File, location,
 			fileSystem);
+	}
+
+	internal FileAttributes AdjustAttributes(FileAttributes attributes)
+	{
+		if (Path.GetFileName(_location.FullPath).StartsWith("."))
+		{
+			FileAttributes attr = attributes;
+			attributes = Execute.OnLinux(
+				() => attr | FileAttributes.Hidden,
+				() => attr);
+		}
+
+#if FEATURE_FILESYSTEM_LINK
+		if (LinkTarget != null)
+		{
+			attributes |= FileAttributes.ReparsePoint;
+		}
+#endif
+
+		if (_isEncrypted)
+		{
+			attributes |= FileAttributes.Encrypted;
+		}
+
+		if (attributes == 0)
+		{
+			return FileAttributes.Normal;
+		}
+
+		return attributes;
 	}
 
 	private bool CanGetAccess(FileAccess access, FileShare share)

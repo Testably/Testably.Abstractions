@@ -18,21 +18,27 @@
       // The exception type is checked, but not the message, as this could be language dependent
       "!**/Testably.Abstractions.Testing/Internal/ExceptionFactory.cs",
       // Indicates operating system specific code
-      "!**/Testably.Abstractions.Testing/Internal/Execute.cs"
+      "!**/Testably.Abstractions.Testing/Internal/Execute.cs",
+      // The directory cleaner should cleanup the real file system
+      "!**/Testably.Abstractions.Testing/FileSystemInitializer.DirectoryCleaner.cs"
     ],
     "ignore-methods": [
       // The exception type is checked, but not the message, as this could be language dependent
       "ExceptionFactory.*",
+      // Some checks are redundant but there for performance improvements
+      "InMemoryLocation.Equals",
       // Indicates operating system specific code
-      "Execute.*On*",
+      "Testably.Abstractions.Testing.Internal.Execute.*On*",
       // Drives are not used in Linux
       "ValidateDriveLetter",
       // The encryption helper is only valid for testing purposes
-      "EncryptionHelper.CreateAlgorithm",
+      "CreateDummyEncryptionAlgorithm",
       // Triggered by invalid chars which don't exist in Linux
       "ThrowCommonExceptionsIfPathIsInvalid",
       // Calls to Thread.Sleep cannot be detected by a test
-      "System.Threading.Thread.Sleep"
+      "System.Threading.Thread.Sleep",
+      // Only framework dependent changes
+      "Testably.Abstractions.Testing.FileMock.Copy"
     ]
   }
 }

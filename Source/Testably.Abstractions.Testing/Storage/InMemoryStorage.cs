@@ -81,7 +81,6 @@ internal sealed class InMemoryStorage : IStorage
 				copiedContainer.LastWriteTime.Set(
 					sourceContainer.LastWriteTime.Get(DateTimeKind.Local),
 					DateTimeKind.Local);
-				copiedContainer.AdjustTimes(TimeAdjustments.LastAccessTime);
 				return destination;
 			}
 
@@ -149,7 +148,8 @@ internal sealed class InMemoryStorage : IStorage
 		enumerationOptions ??= EnumerationOptionsHelper.Compatible;
 
 		foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers
-		   .Where(x => x.Key.FullPath.StartsWith(location.FullPath, InMemoryLocation.StringComparisonMode) &&
+		   .Where(x => x.Key.FullPath.StartsWith(location.FullPath,
+			               InMemoryLocation.StringComparisonMode) &&
 		               !x.Key.Equals(location)))
 		{
 			string? parentPath =
@@ -157,7 +157,8 @@ internal sealed class InMemoryStorage : IStorage
 					item.Key.FullPath.TrimEnd(_fileSystem.Path
 					   .DirectorySeparatorChar));
 			if (!enumerationOptions.RecurseSubdirectories &&
-			    parentPath?.Equals(location.FullPath, InMemoryLocation.StringComparisonMode) != true)
+			    parentPath?.Equals(location.FullPath,
+				    InMemoryLocation.StringComparisonMode) != true)
 			{
 				continue;
 			}
@@ -341,12 +342,13 @@ internal sealed class InMemoryStorage : IStorage
 					int destinationBytesLength =
 						existingDestinationContainer.GetBytes().Length;
 					destination.Drive?.ChangeUsedBytes(-1 * destinationBytesLength);
-					if (backup != null)
+					if (backup != null &&
+					    _containers.TryAdd(backup, existingDestinationContainer))
 					{
-						backup.Drive?.ChangeUsedBytes(destinationBytesLength);
 						Execute.OnWindows(
-							() => existingDestinationContainer.Attributes |= FileAttributes.Archive);
-						_containers.TryAdd(backup, existingDestinationContainer);
+							() => existingDestinationContainer.Attributes |=
+								FileAttributes.Archive);
+						backup.Drive?.ChangeUsedBytes(destinationBytesLength);
 					}
 
 					if (_containers.TryRemove(source,
@@ -356,16 +358,18 @@ internal sealed class InMemoryStorage : IStorage
 						source.Drive?.ChangeUsedBytes(-1 * sourceBytesLength);
 						destination.Drive?.ChangeUsedBytes(sourceBytesLength);
 						Execute.OnWindows(
-							() => existingSourceContainer.Attributes |= FileAttributes.Archive);
+							() => existingSourceContainer.Attributes |=
+								FileAttributes.Archive);
 						existingSourceContainer.CreationTime.Set(
-							existingDestinationContainer.CreationTime.Get(DateTimeKind.Utc),
+							existingDestinationContainer.CreationTime.Get(
+								DateTimeKind.Utc),
 							DateTimeKind.Utc);
 						_containers.TryAdd(destination, existingSourceContainer);
 						return destination;
 					}
 				}
 
-				throw ExceptionFactory.CannotCreateFileWhenAlreadyExists();
+				return null;
 			}
 		}
 	}
@@ -603,11 +607,14 @@ internal sealed class InMemoryStorage : IStorage
 	}
 #endif
 
-	private void ThrowIfParentDoesNotExist(IStorageLocation location, Func<IStorageLocation, IOException> exceptionCallback)
+	private void ThrowIfParentDoesNotExist(IStorageLocation location,
+	                                       Func<IStorageLocation, IOException>
+		                                       exceptionCallback)
 	{
-		var parentLocation = location.GetParent();
+		IStorageLocation? parentLocation = location.GetParent();
 		if (parentLocation != null &&
-		    _fileSystem.Path.GetPathRoot(parentLocation.FullPath) != parentLocation.FullPath &&
+		    _fileSystem.Path.GetPathRoot(parentLocation.FullPath) !=
+		    parentLocation.FullPath &&
 		    !_containers.TryGetValue(parentLocation, out _))
 		{
 			throw exceptionCallback(parentLocation);
