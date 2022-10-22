@@ -103,6 +103,10 @@ public sealed partial class FileSystemMock
 		public string Extension
 			=> FileSystem.Path.GetExtension(Location.FullPath);
 
+		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.ExtensionContainer" />
+		public IFileSystem.IFileSystemExtensionContainer ExtensionContainer { get; }
+			= new FileSystemExtensionContainer();
+
 		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.FullName" />
 		public string FullName => Location.FullPath;
 

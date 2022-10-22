@@ -2,8 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Runtime.Versioning;
-using System.Security.AccessControl;
 
 namespace Testably.Abstractions;
 
@@ -35,14 +33,6 @@ public sealed partial class FileSystem
 		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.Create()" />
 		public void Create()
 			=> _instance.Create();
-
-#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
-		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.Create(System.Security.AccessControl.DirectorySecurity)" />
-		[SupportedOSPlatform("windows")]
-		[ExcludeFromCodeCoverage]
-		public void Create(DirectorySecurity directorySecurity)
-			=> _instance.Create(directorySecurity);
-#endif
 
 		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.CreateSubdirectory(string)" />
 		public IFileSystem.IDirectoryInfo CreateSubdirectory(string path)
@@ -137,20 +127,6 @@ public sealed partial class FileSystem
 			=> _instance.EnumerateFileSystemInfos(searchPattern, enumerationOptions)
 			   .Select(fileSystemInfo =>
 					FromFileSystemInfo(fileSystemInfo, _fileSystem));
-#endif
-
-#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
-		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetAccessControl()" />
-		[SupportedOSPlatform("windows")]
-		[ExcludeFromCodeCoverage]
-		public DirectorySecurity GetAccessControl()
-			=> _instance.GetAccessControl();
-
-		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetAccessControl(AccessControlSections)" />
-		[SupportedOSPlatform("windows")]
-		[ExcludeFromCodeCoverage]
-		public DirectorySecurity GetAccessControl(AccessControlSections includeSections)
-			=> _instance.GetAccessControl(includeSections);
 #endif
 
 		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetDirectories()" />
@@ -264,14 +240,6 @@ public sealed partial class FileSystem
 		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.MoveTo(string)" />
 		public void MoveTo(string destDirName)
 			=> _instance.MoveTo(destDirName);
-
-#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
-		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.SetAccessControl(DirectorySecurity)" />
-		[SupportedOSPlatform("windows")]
-		[ExcludeFromCodeCoverage]
-		public void SetAccessControl(DirectorySecurity directorySecurity)
-			=> _instance.SetAccessControl(directorySecurity);
-#endif
 
 #endregion
 

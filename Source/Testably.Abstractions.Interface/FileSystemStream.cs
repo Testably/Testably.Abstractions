@@ -4,6 +4,7 @@ using System.Runtime.Versioning;
 using System.Security.AccessControl;
 using System.Threading;
 using System.Threading.Tasks;
+using static Testably.Abstractions.IFileSystem;
 
 namespace Testably.Abstractions;
 
@@ -87,6 +88,11 @@ public abstract class FileSystemStream : Stream
 		IsAsync = isAsync;
 	}
 
+	/// <summary>
+	///     A container to support extensions on <see cref="IFileSystem.IFileSystemInfo" />.
+	/// </summary>
+	public abstract IFileSystemExtensionContainer ExtensionContainer { get; }
+
 	/// <inheritdoc cref="Stream.BeginRead(byte[], int, int, AsyncCallback?, object?)" />
 	public override IAsyncResult BeginRead(byte[] buffer,
 	                                       int offset,
@@ -128,13 +134,7 @@ public abstract class FileSystemStream : Stream
 	/// <inheritdoc cref="Stream.FlushAsync(CancellationToken)" />
 	public override Task FlushAsync(CancellationToken cancellationToken)
 		=> _stream.FlushAsync(cancellationToken);
-
-#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
-	/// <inheritdoc cref="FileSystemAclExtensions.GetAccessControl(FileStream)"/>
-	[SupportedOSPlatform("windows")]
-	public abstract FileSecurity GetAccessControl();
-#endif
-
+	
 	/// <inheritdoc cref="Stream.Read(byte[], int, int)" />
 	public override int Read(byte[] buffer, int offset, int count)
 		=> _stream.Read(buffer, offset, count);
@@ -166,12 +166,6 @@ public abstract class FileSystemStream : Stream
 	/// <inheritdoc cref="Stream.Seek(long, SeekOrigin)" />
 	public override long Seek(long offset, SeekOrigin origin)
 		=> _stream.Seek(offset, origin);
-
-#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
-	/// <inheritdoc cref="FileSystemAclExtensions.SetAccessControl(FileStream, FileSecurity)"/>
-	[SupportedOSPlatform("windows")]
-	public abstract void SetAccessControl(FileSecurity fileSecurity);
-#endif
 
 	/// <inheritdoc cref="Stream.SetLength(long)" />
 	public override void SetLength(long value)

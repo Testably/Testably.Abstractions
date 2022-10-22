@@ -31,11 +31,6 @@ internal class InMemoryContainer : IStorageContainer
 
 	#region IStorageContainer Members
 
-#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
-	/// <inheritdoc cref="FileSystemSecurity" />
-	public FileSystemSecurity? AccessControl { get; set; }
-#endif
-
 	/// <inheritdoc cref="IStorageContainer.Attributes" />
 	public FileAttributes Attributes
 	{

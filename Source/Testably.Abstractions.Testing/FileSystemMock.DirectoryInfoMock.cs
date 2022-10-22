@@ -45,21 +45,6 @@ public sealed partial class FileSystemMock
 			Refresh();
 		}
 
-#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
-		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.Create(System.Security.AccessControl.DirectorySecurity)" />
-		[SupportedOSPlatform("windows")]
-		public void Create(DirectorySecurity directorySecurity)
-		{
-			FullName.ThrowCommonExceptionsIfPathIsInvalid(FileSystem);
-
-			Container = FileSystem.Storage.GetOrCreateContainer(Location,
-				InMemoryContainer.NewDirectory);
-			Container.AccessControl = directorySecurity;
-
-			Refresh();
-		}
-#endif
-
 		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.CreateSubdirectory(string)" />
 		public IFileSystem.IDirectoryInfo CreateSubdirectory(string path)
 		{
@@ -184,18 +169,6 @@ public sealed partial class FileSystemMock
 			   .Select(location => FileSystemInfoMock.New(location, FileSystem));
 #endif
 
-#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
-		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetAccessControl()" />
-		[SupportedOSPlatform("windows")]
-		public DirectorySecurity GetAccessControl()
-			=> Container.AccessControl as DirectorySecurity ?? new DirectorySecurity();
-
-		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetAccessControl(AccessControlSections)" />
-		[SupportedOSPlatform("windows")]
-		public DirectorySecurity GetAccessControl(AccessControlSections includeSections)
-			=> GetAccessControl();
-#endif
-
 		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.GetDirectories()" />
 		public IFileSystem.IDirectoryInfo[] GetDirectories()
 			=> EnumerateDirectories().ToArray();
@@ -265,13 +238,6 @@ public sealed partial class FileSystemMock
 				              FileSystem.Storage.GetLocation(destDirName),
 				              recursive: true)
 			              ?? throw ExceptionFactory.DirectoryNotFound(FullName);
-
-#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
-		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.SetAccessControl(DirectorySecurity)" />
-		[SupportedOSPlatform("windows")]
-		public void SetAccessControl(DirectorySecurity directorySecurity)
-			=> Container.AccessControl = directorySecurity;
-#endif
 
 		#endregion
 

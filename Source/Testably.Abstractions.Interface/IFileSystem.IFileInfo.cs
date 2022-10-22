@@ -46,14 +46,6 @@ public partial interface IFileSystem
 		[SupportedOSPlatform("windows")]
 		void Encrypt();
 
-#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
-		/// <inheritdoc cref="FileSystemAclExtensions.GetAccessControl(FileInfo)"/>
-		FileSecurity GetAccessControl();
-
-		/// <inheritdoc cref="FileSystemAclExtensions.GetAccessControl(FileInfo, AccessControlSections)"/>
-		FileSecurity GetAccessControl(AccessControlSections includeSections);
-#endif
-
 		/// <inheritdoc cref="FileInfo.MoveTo(string)" />
 		void MoveTo(string destFileName);
 
@@ -93,10 +85,5 @@ public partial interface IFileSystem
 		IFileInfo Replace(string destinationFileName,
 		                  string? destinationBackupFileName,
 		                  bool ignoreMetadataErrors);
-
-#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
-		/// <inheritdoc cref="FileSystemAclExtensions.SetAccessControl(FileInfo, FileSecurity)"/>
-		void SetAccessControl(FileSecurity fileSecurity);
-#endif
 	}
 }

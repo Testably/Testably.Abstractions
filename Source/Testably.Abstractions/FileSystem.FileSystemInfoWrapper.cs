@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions;
 
@@ -15,6 +16,7 @@ public sealed partial class FileSystem
 		{
 			_instance = instance;
 			_fileSystem = fileSystem;
+			ExtensionContainer = new FileSystemExtensionContainer(_instance);
 		}
 
 		#region IFileSystemInfo Members
@@ -47,6 +49,9 @@ public sealed partial class FileSystem
 		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Extension" />
 		public string Extension
 			=> _instance.Extension;
+
+		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.ExtensionContainer" />
+		public IFileSystem.IFileSystemExtensionContainer ExtensionContainer { get; }
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.FullName" />
 		public string FullName
