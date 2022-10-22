@@ -13,16 +13,4 @@
     <ProjectReference Include="..\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="IFileSystem.*.cs">
-      <DependentUpon>IFileSystem.cs</DependentUpon>
-    </Compile>
-    <Compile Update="IRandomSystem.*.cs">
-      <DependentUpon>IRandomSystem.cs</DependentUpon>
-    </Compile>
-    <Compile Update="ITimeSystem.*.cs">
-      <DependentUpon>ITimeSystem.cs</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
 </Project>
