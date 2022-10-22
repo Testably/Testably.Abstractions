@@ -19,7 +19,7 @@ public static class FileInfoAclExtensions
 		}
 
 		return extensionContainer.RetrieveMetadata<FileSecurity>(
-			Constants.AccessControl) ?? new FileSecurity();
+			AccessControlConstants.AccessControl) ?? new FileSecurity();
 	}
 
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.GetAccessControl(FileInfo, AccessControlSections)" />
@@ -36,7 +36,7 @@ public static class FileInfoAclExtensions
 		}
 
 		return extensionContainer.RetrieveMetadata<FileSecurity>(
-			Constants.AccessControl) ?? new FileSecurity();
+			AccessControlConstants.AccessControl) ?? new FileSecurity();
 	}
 
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.SetAccessControl(FileInfo, FileSecurity)" />
@@ -52,7 +52,7 @@ public static class FileInfoAclExtensions
 		}
 		else
 		{
-			extensionContainer.StoreMetadata(Constants.AccessControl,
+			extensionContainer.StoreMetadata(AccessControlConstants.AccessControl,
 				fileSecurity);
 		}
 	}

@@ -22,7 +22,7 @@ public static class DirectoryAclExtensions
 		}
 		else
 		{
-			extensionContainer.StoreMetadata(Constants.AccessControl,
+			extensionContainer.StoreMetadata(AccessControlConstants.AccessControl,
 				directorySecurity);
 			directoryInfo.Create();
 		}
@@ -43,7 +43,7 @@ public static class DirectoryAclExtensions
 		}
 
 		return extensionContainer.RetrieveMetadata<DirectorySecurity>(
-			Constants.AccessControl) ?? new DirectorySecurity();
+			AccessControlConstants.AccessControl) ?? new DirectorySecurity();
 	}
 
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.GetAccessControl(DirectoryInfo, AccessControlSections)" />
@@ -63,7 +63,7 @@ public static class DirectoryAclExtensions
 		}
 
 		return extensionContainer.RetrieveMetadata<DirectorySecurity>(
-			Constants.AccessControl) ?? new DirectorySecurity();
+			AccessControlConstants.AccessControl) ?? new DirectorySecurity();
 	}
 
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.SetAccessControl(DirectoryInfo, DirectorySecurity)" />
@@ -82,7 +82,7 @@ public static class DirectoryAclExtensions
 		}
 		else
 		{
-			extensionContainer.StoreMetadata(Constants.AccessControl,
+			extensionContainer.StoreMetadata(AccessControlConstants.AccessControl,
 				directorySecurity);
 		}
 	}
