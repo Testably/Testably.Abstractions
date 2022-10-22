@@ -29,9 +29,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2FDB2AAE-E5CE-483E-A1A6-EC0B0A4AD67B}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\Directory.Build.props = Tests\Directory.Build.props
-		Tests\stryker-config-accesscontrol.json = Tests\stryker-config-accesscontrol.json
-		Tests\stryker-config-testing.json = Tests\stryker-config-testing.json
-		Tests\stryker-config.json = Tests\stryker-config.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{5E35E265-7110-47A0-9E3E-B5180BBB5AA6}"
@@ -54,6 +51,14 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.Compression", "Source\Testably.Abstractions.Compression\Testably.Abstractions.Compression.csproj", "{D2E3B336-4E60-4C6E-9775-DF51D599DB47}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.Compression.Tests", "Tests\Testably.Abstractions.Compression.Tests\Testably.Abstractions.Compression.Tests.csproj", "{5330AEEE-A915-4FF6-A85D-E9CCA161B654}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stryker", "stryker", "{4D8D7391-1E7B-4051-AD7E-4086AFD4E024}"
+	ProjectSection(SolutionItems) = preProject
+		.github\stryker\Stryker.Config.AccessControl.json = .github\stryker\Stryker.Config.AccessControl.json
+		.github\stryker\Stryker.Config.Compression.json = .github\stryker\Stryker.Config.Compression.json
+		.github\stryker\Stryker.Config.json = .github\stryker\Stryker.Config.json
+		.github\stryker\Stryker.Config.Testing.json = .github\stryker\Stryker.Config.Testing.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -115,6 +120,7 @@ Global
 		{E9A42D82-0609-4D6B-B270-A30176B4FCF2} = {61F335A6-9CE0-4040-A34F-E70B1A55077D}
 		{1B078385-7AAA-4B8D-A88E-2CBCD3011F0D} = {61F335A6-9CE0-4040-A34F-E70B1A55077D}
 		{5330AEEE-A915-4FF6-A85D-E9CCA161B654} = {61F335A6-9CE0-4040-A34F-E70B1A55077D}
+		{4D8D7391-1E7B-4051-AD7E-4086AFD4E024} = {5E35E265-7110-47A0-9E3E-B5180BBB5AA6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EC4D8481-B9FD-41B5-832A-369210993DF4}

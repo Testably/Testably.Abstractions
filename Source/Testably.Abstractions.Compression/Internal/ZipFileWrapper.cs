@@ -237,6 +237,10 @@ internal class ZipFileWrapper : IZipFile
 					_fileSystem.Directory.CreateDirectory(directoryPath);
 				}
 
+				if (_fileSystem.File.Exists(filePath) && !overwriteFiles)
+				{
+					throw new IOException($"The file '{filePath}' already exists.");
+				}
 				using MemoryStream ms = new();
 				entry.Open().CopyTo(ms);
 				_fileSystem.File.WriteAllBytes(filePath, ms.ToArray());
