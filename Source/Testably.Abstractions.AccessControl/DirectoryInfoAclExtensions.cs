@@ -4,6 +4,9 @@ using System.Security.AccessControl;
 
 namespace Testably.Abstractions;
 
+/// <summary>
+///     ACL (access control list) extension methods for <see cref="IFileSystem.IDirectoryInfo" />.
+/// </summary>
 public static class DirectoryInfoAclExtensions
 {
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.Create(DirectoryInfo, DirectorySecurity)" />

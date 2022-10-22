@@ -4,6 +4,9 @@ using System.Security.AccessControl;
 
 namespace Testably.Abstractions;
 
+/// <summary>
+///     ACL (access control list) extension methods for <see cref="FileSystemStream" />.
+/// </summary>
 public static class FileStreamAclExtensions
 {
 	/// <inheritdoc cref="FileSystemAclExtensions.GetAccessControl(FileStream)" />
