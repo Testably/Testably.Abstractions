@@ -249,12 +249,11 @@ internal sealed class InMemoryStorage : IStorage
 		return _drives.GetOrAdd(drive.Name, _ => drive);
 	}
 
-	/// <inheritdoc
-	///     cref="IStorage.GetOrCreateContainer" />
+	/// <inheritdoc cref="IStorage.GetOrCreateContainer" />
 	public IStorageContainer GetOrCreateContainer(
 		IStorageLocation location,
 		Func<IStorageLocation, FileSystemMock, IStorageContainer> containerGenerator,
-		IFileSystem.IFileSystemExtensionContainer? fileSystemExtensionContainer)
+		IFileSystem.IFileSystemExtensionContainer? fileSystemExtensionContainer = null)
 	{
 		ChangeDescription? fileSystemChange = null;
 		IStorageContainer container = _containers.GetOrAdd(location,
@@ -263,7 +262,7 @@ internal sealed class InMemoryStorage : IStorage
 				IStorageContainer container =
 					containerGenerator.Invoke(loc, _fileSystem);
 				(fileSystemExtensionContainer as FileSystemExtensionContainer)?
-					.CopyMetadataTo(container.ExtensionContainer);
+				   .CopyMetadataTo(container.ExtensionContainer);
 				if (container.Type == FileSystemTypes.Directory)
 				{
 					CreateParents(_fileSystem, loc);
