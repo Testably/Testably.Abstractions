@@ -7,7 +7,7 @@ internal class FileSystemExtensionContainer : IFileSystem.IFileSystemExtensionCo
 {
 	private readonly Dictionary<string, object?> _metadata = new();
 
-	/// <inheritdoc cref="IFileSystem.IFileSystemExtensionContainer.HasWrappedInstance{T}(out T?)" />
+	/// <inheritdoc cref="IFileSystem.IFileSystemExtensionContainer.HasWrappedInstance{T}(out T)" />
 	public bool HasWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance)
 	{
 		wrappedInstance = default;
