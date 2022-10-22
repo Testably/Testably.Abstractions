@@ -6,9 +6,30 @@ on:
     branches: [main]
     
 jobs:
-  stryker:
-    name: Analyze quality of unit test coverage with .NET Stryker
+  stryker-ubuntu:
+    name: Analyze quality of unit test coverage with .NET Stryker (Ubuntu)
     runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Install .NET Stryker
+        shell: bash
+        run: |
+          dotnet tool install dotnet-stryker --global
+          dotnet tool restore
+      - name: Analyze Testably.Abstractions.Testing
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        shell: bash
+        run: |
+          dotnet stryker -f Tests/stryker-config-testing.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
+
+  stryker-windows:
+    name: Analyze quality of unit test coverage with .NET Stryker (Windows)
+    runs-on: windows-latest
     timeout-minutes: 300
     steps:
       - name: Checkout sources
@@ -32,9 +53,3 @@ jobs:
         shell: bash
         run: |
           dotnet stryker -f Tests/stryker-config-accesscontrol.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
-      - name: Analyze Testably.Abstractions.Testing
-        env:
-          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-        shell: bash
-        run: |
-          dotnet stryker -f Tests/stryker-config-testing.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
