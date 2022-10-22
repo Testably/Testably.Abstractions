@@ -2,8 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Runtime.Versioning;
-using System.Security.AccessControl;
 using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Storage;
 
@@ -40,7 +38,8 @@ public sealed partial class FileSystemMock
 			FullName.ThrowCommonExceptionsIfPathIsInvalid(FileSystem);
 
 			Container = FileSystem.Storage.GetOrCreateContainer(Location,
-				InMemoryContainer.NewDirectory);
+				InMemoryContainer.NewDirectory,
+				ExtensionContainer);
 
 			Refresh();
 		}

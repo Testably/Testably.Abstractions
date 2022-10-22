@@ -18,7 +18,7 @@ public static class FileStreamAclExtensions
 		}
 
 		return extensionContainer.RetrieveMetadata<FileSecurity>(
-			nameof(FileSystemAclExtensions)) ?? new FileSecurity();
+			Constants.AccessControl) ?? new FileSecurity();
 	}
 
 	/// <inheritdoc cref="FileSystemAclExtensions.SetAccessControl(FileStream, FileSecurity)" />
@@ -34,7 +34,7 @@ public static class FileStreamAclExtensions
 		}
 		else
 		{
-			extensionContainer.StoreMetadata(nameof(FileSystemAclExtensions),
+			extensionContainer.StoreMetadata(Constants.AccessControl,
 				fileSecurity);
 		}
 	}

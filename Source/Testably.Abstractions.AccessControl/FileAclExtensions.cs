@@ -4,13 +4,14 @@ using System.Security.AccessControl;
 
 namespace Testably.Abstractions;
 
-public static class FileInfoAclExtensions
+public static class FileAclExtensions
 {
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.GetAccessControl(FileInfo)" />
 	[SupportedOSPlatform("windows")]
 	public static FileSecurity GetAccessControl(
-		this IFileSystem.IFileInfo fileInfo)
+		this IFileSystem.IFile file, string path)
 	{
+		IFileSystem.IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
 		IFileSystem.IFileSystemExtensionContainer extensionContainer =
 			fileInfo.ExtensionContainer;
 		if (extensionContainer.HasWrappedInstance(out FileInfo? fi))
@@ -25,9 +26,11 @@ public static class FileInfoAclExtensions
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.GetAccessControl(FileInfo, AccessControlSections)" />
 	[SupportedOSPlatform("windows")]
 	public static FileSecurity GetAccessControl(
-		this IFileSystem.IFileInfo fileInfo,
+		this IFileSystem.IFile file,
+		string path,
 		AccessControlSections includeSections)
 	{
+		IFileSystem.IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
 		IFileSystem.IFileSystemExtensionContainer extensionContainer =
 			fileInfo.ExtensionContainer;
 		if (extensionContainer.HasWrappedInstance(out FileInfo? fi))
@@ -41,9 +44,11 @@ public static class FileInfoAclExtensions
 
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.SetAccessControl(FileInfo, FileSecurity)" />
 	[SupportedOSPlatform("windows")]
-	public static void SetAccessControl(this IFileSystem.IFileInfo fileInfo,
+	public static void SetAccessControl(this IFileSystem.IFile file,
+	                                    string path,
 	                                    FileSecurity fileSecurity)
 	{
+		IFileSystem.IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
 		IFileSystem.IFileSystemExtensionContainer extensionContainer =
 			fileInfo.ExtensionContainer;
 		if (extensionContainer.HasWrappedInstance(out FileInfo? fi))

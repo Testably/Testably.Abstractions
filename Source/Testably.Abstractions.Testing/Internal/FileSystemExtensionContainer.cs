@@ -31,4 +31,15 @@ internal class FileSystemExtensionContainer : IFileSystem.IFileSystemExtensionCo
 
 		return default;
 	}
+
+	internal void CopyMetadataTo(IFileSystem.IFileSystemExtensionContainer target)
+	{
+		if (target is FileSystemExtensionContainer targetContainer)
+		{
+			foreach (KeyValuePair<string, object?> item in _metadata)
+			{
+				targetContainer._metadata[item.Key] = item.Value;
+			}
+		}
+	}
 }
