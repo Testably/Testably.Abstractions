@@ -55,7 +55,7 @@ public class DirectoryInfoAclExtensionsTests
 
 #pragma warning disable CA1416
 		DirectorySecurity result =
-			directoryInfo.GetAccessControl(AccessControlSections.All);
+			directoryInfo.GetAccessControl(AccessControlSections.Access);
 #pragma warning restore CA1416
 
 		result.Should().NotBeNull();
@@ -76,7 +76,7 @@ public class DirectoryInfoAclExtensionsTests
 			fileSystem.DirectoryInfo.New("foo").SetAccessControl(originalAccessControl);
 
 			DirectorySecurity currentAccessControl =
-				fileSystem.DirectoryInfo.New("foo").GetAccessControl();
+				fileSystem.DirectoryInfo.New("foo").GetAccessControl(AccessControlSections.Access);
 #pragma warning restore CA1416
 
 			currentAccessControl.HasSameAccessRightsAs(originalAccessControl)

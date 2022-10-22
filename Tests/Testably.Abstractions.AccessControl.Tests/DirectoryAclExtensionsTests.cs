@@ -76,7 +76,7 @@ public class DirectoryAclExtensionsTests
 			fileSystem.Directory.SetAccessControl("foo", originalAccessControl);
 
 			DirectorySecurity currentAccessControl =
-				fileSystem.Directory.GetAccessControl("foo");
+				fileSystem.Directory.GetAccessControl("foo", AccessControlSections.Access);
 #pragma warning restore CA1416
 
 			currentAccessControl.HasSameAccessRightsAs(originalAccessControl)

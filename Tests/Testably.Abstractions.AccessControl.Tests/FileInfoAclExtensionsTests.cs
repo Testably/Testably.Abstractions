@@ -35,7 +35,7 @@ public class FileInfoAclExtensionsTests
 			fileSystem.FileInfo.New("foo").SetAccessControl(originalAccessControl);
 
 			FileSecurity currentAccessControl =
-				fileSystem.FileInfo.New("foo").GetAccessControl();
+				fileSystem.FileInfo.New("foo").GetAccessControl(AccessControlSections.Access);
 #pragma warning restore CA1416
 
 			currentAccessControl.HasSameAccessRightsAs(originalAccessControl)
