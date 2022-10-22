@@ -22,6 +22,27 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void ExtensionContainer_ShouldWrapFileSystemInfoOnRealFileSystem(
+		string path)
+	{
+		FileSystem.File.WriteAllText(path, null);
+		IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+		bool result = fileInfo.ExtensionContainer
+		   .HasWrappedInstance(out System.IO.FileSystemInfo? fileSystemInfo);
+
+		if (FileSystem is Abstractions.FileSystem)
+		{
+			result.Should().BeTrue();
+			fileSystemInfo!.Name.Should().Be(fileInfo.Name);
+		}
+		else
+		{
+			result.Should().BeFalse();
+		}
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void SetAttributes_Hidden_OnFileStartingWithDot_ShouldBeSet(string path)
 	{
 		Skip.IfNot(Test.RunsOnLinux);
