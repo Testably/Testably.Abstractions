@@ -198,7 +198,20 @@ public sealed partial class FileSystemMock
 
 		internal static FileSystemInfoMock New(IStorageLocation location,
 		                                       FileSystemMock fileSystem)
-			=> new(fileSystem, location);
+		{
+			IStorageContainer container = fileSystem.Storage.GetContainer(location);
+			if (container.Type == FileSystemTypes.File)
+			{
+				return FileInfoMock.New(location, fileSystem);
+			}
+
+			if (container.Type == FileSystemTypes.Directory)
+			{
+				return DirectoryInfoMock.New(location, fileSystem);
+			}
+
+			return new FileSystemInfoMock(fileSystem, location);
+		}
 
 		private void RefreshInternal()
 		{
