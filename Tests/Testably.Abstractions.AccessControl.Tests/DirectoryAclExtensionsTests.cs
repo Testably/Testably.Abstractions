@@ -6,6 +6,28 @@ namespace Testably.Abstractions.AccessControl.Tests;
 public class DirectoryAclExtensionsTests
 {
 	[SkippableFact]
+	public void Create_RealFileSystem_ShouldChangeAccessControl()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		FileSystem fileSystem = new();
+		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
+		{
+			fileSystem.Directory.CreateDirectory("foo");
+#pragma warning disable CA1416
+			DirectorySecurity directorySecurity =
+				fileSystem.Directory.GetAccessControl("foo");
+
+			fileSystem.Directory.CreateDirectory("bar", directorySecurity);
+			DirectorySecurity result = fileSystem.Directory.GetAccessControl("bar");
+#pragma warning restore CA1416
+
+			result.HasSameAccessRightsAs(directorySecurity).Should().BeTrue();
+			result.Should().NotBe(directorySecurity);
+		}
+	}
+
+	[SkippableFact]
 	public void Create_ShouldChangeAccessControl()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -20,6 +42,7 @@ public class DirectoryAclExtensionsTests
 #pragma warning restore CA1416
 
 		result.Should().Be(directorySecurity);
+		fileSystem.Directory.Exists("foo").Should().BeTrue();
 	}
 
 	[SkippableFact]
@@ -36,6 +59,30 @@ public class DirectoryAclExtensionsTests
 #pragma warning restore CA1416
 
 		result.Should().NotBeNull();
+	}
+
+	[SkippableFact]
+	public void SetAccessControl_RealFileSystem_ShouldChangeAccessControl()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		FileSystem fileSystem = new();
+		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
+		{
+			fileSystem.Directory.CreateDirectory("foo");
+#pragma warning disable CA1416
+			DirectorySecurity originalAccessControl =
+				fileSystem.Directory.GetAccessControl("foo");
+			fileSystem.Directory.SetAccessControl("foo", originalAccessControl);
+
+			DirectorySecurity currentAccessControl =
+				fileSystem.Directory.GetAccessControl("foo");
+#pragma warning restore CA1416
+
+			currentAccessControl.HasSameAccessRightsAs(originalAccessControl)
+			   .Should().BeTrue();
+			currentAccessControl.Should().NotBe(originalAccessControl);
+		}
 	}
 
 	[SkippableFact]
