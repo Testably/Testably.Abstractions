@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.Versioning;
-using System.Security.AccessControl;
 using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Internal;
@@ -26,7 +24,7 @@ public sealed partial class FileSystemMock
 
 		private readonly FileAccess _access;
 		private readonly IDisposable _accessLock;
-		private readonly IStorageContainer _file;
+		private readonly IStorageContainer _container;
 		private readonly FileSystemMock _fileSystem;
 		private bool _isContentChanged;
 		private bool _isDisposed;
@@ -100,21 +98,19 @@ public sealed partial class FileSystemMock
 
 			_accessLock = file.RequestAccess(access, share);
 
-			_file = file;
+			_container = file;
 
 			InitializeStream();
 		}
 
 		/// <inheritdoc cref="FileSystemStream.ExtensionContainer" />
 		public override IFileSystem.IFileSystemExtensionContainer ExtensionContainer
-		{
-			get;
-		} = new FileSystemExtensionContainer();
+			=> _container.ExtensionContainer;
 
 		/// <inheritdoc cref="FileSystemStream.EndRead(IAsyncResult)" />
 		public override int EndRead(IAsyncResult asyncResult)
 		{
-			_file.AdjustTimes(TimeAdjustments.LastAccessTime);
+			_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 			return base.EndRead(asyncResult);
 		}
 
@@ -134,7 +130,7 @@ public sealed partial class FileSystemMock
 		/// <inheritdoc cref="FileSystemStream.Read(byte[], int, int)" />
 		public override int Read(byte[] buffer, int offset, int count)
 		{
-			_file.AdjustTimes(TimeAdjustments.LastAccessTime);
+			_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 			return base.Read(buffer, offset, count);
 		}
 
@@ -142,7 +138,7 @@ public sealed partial class FileSystemMock
 		/// <inheritdoc cref="FileSystemStream.Read(Span{byte})" />
 		public override int Read(Span<byte> buffer)
 		{
-			_file.AdjustTimes(TimeAdjustments.LastAccessTime);
+			_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 			return base.Read(buffer);
 		}
 #endif
@@ -151,7 +147,7 @@ public sealed partial class FileSystemMock
 		public override Task<int> ReadAsync(byte[] buffer, int offset, int count,
 		                                    CancellationToken cancellationToken)
 		{
-			_file.AdjustTimes(TimeAdjustments.LastAccessTime);
+			_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 			return base.ReadAsync(buffer, offset, count, cancellationToken);
 		}
 
@@ -161,7 +157,7 @@ public sealed partial class FileSystemMock
 		                                         CancellationToken cancellationToken =
 			                                         new())
 		{
-			_file.AdjustTimes(TimeAdjustments.LastAccessTime);
+			_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 			return base.ReadAsync(buffer, cancellationToken);
 		}
 #endif
@@ -169,7 +165,7 @@ public sealed partial class FileSystemMock
 		/// <inheritdoc cref="FileSystemStream.ReadByte()" />
 		public override int ReadByte()
 		{
-			_file.AdjustTimes(TimeAdjustments.LastAccessTime);
+			_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 			return base.ReadByte();
 		}
 
@@ -245,7 +241,7 @@ public sealed partial class FileSystemMock
 			if (_mode != FileMode.Create &&
 			    _mode != FileMode.Truncate)
 			{
-				byte[] existingContents = _file.GetBytes();
+				byte[] existingContents = _container.GetBytes();
 				_stream.Write(existingContents, 0, existingContents.Length);
 				_stream.Seek(0, _mode == FileMode.Append
 					? SeekOrigin.End
@@ -270,7 +266,7 @@ public sealed partial class FileSystemMock
 			byte[] data = new byte[Length];
 			_ = _stream.Read(data, 0, (int)Length);
 			_stream.Seek(position, SeekOrigin.Begin);
-			_file.WriteBytes(data);
+			_container.WriteBytes(data);
 		}
 
 		private void OnClose()

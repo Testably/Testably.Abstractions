@@ -89,7 +89,7 @@ public abstract class FileSystemStream : Stream
 	}
 
 	/// <summary>
-	///     A container to support extensions on <see cref="IFileSystem.IFileSystemInfo" />.
+	///     A container to support extensions on <see cref="FileSystemStream" />.
 	/// </summary>
 	public abstract IFileSystemExtensionContainer ExtensionContainer { get; }
 

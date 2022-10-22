@@ -5,7 +5,7 @@ namespace Testably.Abstractions;
 public partial interface IFileSystem
 {
 	/// <summary>
-	///     A container to support extensions on <see cref="IFileSystem.IFileSystemInfo" />.
+	///     A container to support extensions on <see cref="IFileSystem" /> entities.
 	/// </summary>
 	public interface IFileSystemExtensionContainer
 	{

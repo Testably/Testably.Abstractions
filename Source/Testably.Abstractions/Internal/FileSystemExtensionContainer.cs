@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Testably.Abstractions.Helpers;
+namespace Testably.Abstractions.Internal;
 
 internal class FileSystemExtensionContainer : IFileSystem.IFileSystemExtensionContainer
 {
@@ -32,7 +32,7 @@ internal class FileSystemExtensionContainer : IFileSystem.IFileSystemExtensionCo
 	public T? RetrieveMetadata<T>(string key)
 	{
 		if (_metadata.TryGetValue(key, out object? value) &&
-		    value is T?)
+			value is T?)
 		{
 			return (T?)value;
 		}

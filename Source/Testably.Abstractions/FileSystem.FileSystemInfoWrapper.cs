@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Testably.Abstractions.Helpers;
+using Testably.Abstractions.Internal;
 
 namespace Testably.Abstractions;
 
