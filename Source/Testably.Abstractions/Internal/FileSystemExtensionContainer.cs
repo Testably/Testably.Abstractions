@@ -13,7 +13,7 @@ internal class FileSystemExtensionContainer : IFileSystem.IFileSystemExtensionCo
 		_wrappedInstance = wrappedInstance;
 	}
 
-	/// <inheritdoc cref="IFileSystem.IFileSystemExtensionContainer.HasWrappedInstance{T}(out T?)" />
+	/// <inheritdoc cref="IFileSystem.IFileSystemExtensionContainer.HasWrappedInstance{T}(out T)" />
 	public bool HasWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance)
 	{
 		wrappedInstance = _wrappedInstance is T?
