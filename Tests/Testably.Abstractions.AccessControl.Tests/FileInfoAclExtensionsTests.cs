@@ -1,16 +1,16 @@
 ﻿using System.Security.AccessControl;
-using Testably.Abstractions.Testing.Tests.TestHelpers;
+using Testably.Abstractions.AccessControl.Tests.TestHelpers;
 
-namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
+namespace Testably.Abstractions.AccessControl.Tests;
 
-public class FileInfoMockTests
+public class FileInfoAclExtensionsTests
 {
 	[SkippableFact]
 	public void GetAccessControl_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		Testing.FileSystemMock fileSystem = new();
+		FileSystemMock fileSystem = new();
 		IFileSystem.IFileInfo fileInfo = fileSystem.FileInfo.New("foo");
 
 #pragma warning disable CA1416
@@ -25,7 +25,7 @@ public class FileInfoMockTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		Testing.FileSystemMock fileSystem = new();
+		FileSystemMock fileSystem = new();
 		IFileSystem.IFileInfo fileInfo = fileSystem.FileInfo.New("foo");
 #pragma warning disable CA1416
 		FileSecurity fileSecurity = new();

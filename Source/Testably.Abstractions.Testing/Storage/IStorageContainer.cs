@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Security.AccessControl;
 
 namespace Testably.Abstractions.Testing.Storage;
 
@@ -10,16 +9,16 @@ namespace Testably.Abstractions.Testing.Storage;
 internal interface IStorageContainer : IFileSystem.IFileSystemExtensionPoint,
 	ITimeSystem.ITimeSystemExtensionPoint
 {
-#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
-	/// <inheritdoc cref="FileSystemSecurity" />
-	FileSystemSecurity? AccessControl { get; set; }
-#endif
-
 	/// <inheritdoc cref="System.IO.FileSystemInfo.Attributes" />
 	FileAttributes Attributes { get; set; }
 
 	/// <inheritdoc cref="System.IO.FileSystemInfo.CreationTime" />
 	ITimeContainer CreationTime { get; }
+
+	/// <summary>
+	///     A container to support extensions on <see cref="IStorageContainer" />.
+	/// </summary>
+	IFileSystem.IFileSystemExtensionContainer ExtensionContainer { get; }
 
 	/// <inheritdoc cref="System.IO.FileSystemInfo.LastAccessTime" />
 	ITimeContainer LastAccessTime { get; }

@@ -209,6 +209,12 @@ jobs:
         shell: bash
         run: |
           dotnet stryker -f Tests/stryker-config.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
+      - name: Analyze Testably.Abstractions.AccessControl
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        shell: bash
+        run: |
+          dotnet stryker -f Tests/stryker-config-accesscontrol.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
       - name: Analyze Testably.Abstractions.Testing
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}

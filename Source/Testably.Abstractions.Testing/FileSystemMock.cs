@@ -36,11 +36,12 @@ public sealed partial class FileSystemMock : IFileSystem
 	/// <summary>
 	///     The underlying storage of directories and files.
 	/// </summary>
-	internal IStorage Storage { get; }
+	internal IStorage Storage => _storage;
 
 	private readonly DirectoryMock _directoryMock;
 	private readonly FileMock _fileMock;
 	private readonly PathMock _pathMock;
+	private readonly InMemoryStorage _storage;
 
 	/// <summary>
 	///     Initializes the <see cref="FileSystemMock" />.
@@ -50,7 +51,7 @@ public sealed partial class FileSystemMock : IFileSystem
 		RandomSystem = new RandomSystem();
 		TimeSystem = new TimeSystemMock(TimeProvider.Now());
 		_pathMock = new PathMock(this);
-		Storage = new InMemoryStorage(this);
+		_storage = new InMemoryStorage(this);
 		ChangeHandler = new ChangeHandlerImplementation(this);
 		_directoryMock = new DirectoryMock(this);
 		_fileMock = new FileMock(this);
@@ -91,6 +92,27 @@ public sealed partial class FileSystemMock : IFileSystem
 		=> _pathMock;
 
 	#endregion
+
+	/// <summary>
+	///     Implements a custom access control (ACL) mechanism.
+	///     <para />
+	///     The callback enables granting or rejecting access to arbitrary containers and receives
+	///     the following input parameters:<br />
+	///     - The full path of the file or directory as first parameter<br />
+	///     - The <see cref="IFileSystem.IFileSystemExtensionContainer" /> as second parameter
+	/// </summary>
+	/// <param name="grantRequestCallback">
+	///     A callback that receives the full path as first parameter and the
+	///     <see cref="IFileSystem.IFileSystemExtensionContainer" /> as second parameter and returns <see langword="true" /> if
+	///     the request was granted and <see langword="false" /> if the request was rejected.
+	/// </param>
+	public FileSystemMock WithAccessControl(
+		Func<string, IFileSystem.IFileSystemExtensionContainer, bool>?
+			grantRequestCallback)
+	{
+		_storage.WithAccessControl(grantRequestCallback);
+		return this;
+	}
 
 	/// <summary>
 	///     Changes the parameters of the specified <paramref name="drive" />.

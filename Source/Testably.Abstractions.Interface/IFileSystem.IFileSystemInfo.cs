@@ -25,6 +25,11 @@ public partial interface IFileSystem
 		/// <inheritdoc cref="FileSystemInfo.Extension" />
 		string Extension { get; }
 
+		/// <summary>
+		///     A container to support extensions on <see cref="IFileSystem.IFileSystemInfo" />.
+		/// </summary>
+		IFileSystemExtensionContainer ExtensionContainer { get; }
+
 		/// <inheritdoc cref="FileSystemInfo.FullName" />
 		string FullName { get; }
 

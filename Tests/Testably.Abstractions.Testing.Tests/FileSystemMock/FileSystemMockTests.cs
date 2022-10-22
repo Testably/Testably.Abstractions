@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
 
 public class FileSystemMockTests
 {
-	[Theory]
+	[SkippableTheory]
 	[AutoData]
 	public void FileSystemMock_File_Decrypt(string path, string contents)
 	{
@@ -24,7 +24,7 @@ public class FileSystemMockTests
 		sut.File.ReadAllText(path).Should().Be(contents);
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[AutoData]
 	public void FileSystemMock_File_Encrypt(string path, string contents)
 	{
@@ -38,7 +38,7 @@ public class FileSystemMockTests
 		sut.File.ReadAllText(path).Should().NotBe(contents);
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[AutoData]
 	public void FileSystemMock_FileInfo_Decrypt(string path, string contents)
 	{
@@ -55,7 +55,7 @@ public class FileSystemMockTests
 		sut.File.ReadAllText(path).Should().Be(contents);
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[AutoData]
 	public void FileSystemMock_FileInfo_Encrypt(string path, string contents)
 	{
@@ -69,7 +69,7 @@ public class FileSystemMockTests
 		sut.File.ReadAllText(path).Should().NotBe(contents);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void FileSystemMock_ShouldBeInitializedWithASingleDefaultDrive()
 	{
 		string expectedDriveName = "".PrefixRoot();
@@ -87,7 +87,7 @@ public class FileSystemMockTests
 		drive.VolumeLabel.Should().NotBeNullOrEmpty();
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[AutoData]
 	public void UncDrive_WriteBytes_ShouldReduceAvailableFreeSpace(
 		string server, string path, byte[] bytes)
@@ -104,7 +104,42 @@ public class FileSystemMockTests
 		drive.AvailableFreeSpace.Should().Be(previousFreeSpace - bytes.Length);
 	}
 
-	[Fact]
+	[SkippableTheory]
+	[AutoData]
+	public void WithAccessControl_Denied_CreateDirectoryShouldThrowIOException(
+		string path)
+	{
+		Testing.FileSystemMock sut = new();
+		sut.Initialize();
+		sut.WithAccessControl((_, _) => false);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.Directory.CreateDirectory(path);
+		});
+
+		exception.Should().BeOfType<IOException>();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void WithAccessControl_ShouldConsiderPath(
+		string allowedPath, string deniedPath)
+	{
+		Testing.FileSystemMock sut = new();
+		sut.Initialize();
+		sut.WithAccessControl((p, _) => p == sut.Path.GetFullPath(allowedPath));
+
+		sut.Directory.CreateDirectory(allowedPath);
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.Directory.CreateDirectory(deniedPath);
+		});
+
+		exception.Should().BeOfType<IOException>();
+	}
+
+	[SkippableFact]
 	public void WithDrive_ExistingName_ShouldUpdateDrive()
 	{
 		string driveName = "".PrefixRoot();
@@ -116,51 +151,6 @@ public class FileSystemMockTests
 		drives.Length.Should().Be(1);
 		drives.Should().ContainSingle(d => d.Name == driveName);
 	}
-
-	[Theory]
-	[AutoData]
-	public void WithDrive_WithCallback_ShouldUpdateDrive(long totalSize)
-	{
-		Testing.FileSystemMock sut = new();
-		sut.WithDrive(d => d.SetTotalSize(totalSize));
-
-		IFileSystem.IDriveInfo drive = sut.DriveInfo.GetDrives().Single();
-
-		drive.TotalSize.Should().Be(totalSize);
-		drive.TotalFreeSpace.Should().Be(totalSize);
-		drive.AvailableFreeSpace.Should().Be(totalSize);
-	}
-
-	[Theory]
-	[AutoData]
-	public void WithUncDrive_ShouldCreateUncDrive(
-		string path, string contents)
-	{
-		Testing.FileSystemMock sut = new();
-		sut.WithUncDrive("UNC-Path");
-		string fullPath = sut.Path.Combine("//UNC-Path", path);
-		sut.File.WriteAllText(fullPath, contents);
-
-		string result = sut.File.ReadAllText(fullPath);
-		result.Should().Be(contents);
-	}
-
-	[Theory]
-	[AutoData]
-	public void WriteAllText_OnUncPath_ShouldThrowDirectoryNotFoundException(
-		string path, string contents)
-	{
-		Testing.FileSystemMock sut = new();
-		string fullPath = sut.Path.Combine("//UNC-Path", path);
-		Exception? exception = Record.Exception(() =>
-		{
-			sut.File.WriteAllText(fullPath, contents);
-		});
-
-		exception.Should().BeOfType<DirectoryNotFoundException>();
-	}
-
-	#region Helpers
 
 	[SkippableTheory]
 	[InlineData("D:\\")]
@@ -176,5 +166,46 @@ public class FileSystemMockTests
 		drives.Should().ContainSingle(d => d.Name == driveName);
 	}
 
-	#endregion
+	[SkippableTheory]
+	[AutoData]
+	public void WithDrive_WithCallback_ShouldUpdateDrive(long totalSize)
+	{
+		Testing.FileSystemMock sut = new();
+		sut.WithDrive(d => d.SetTotalSize(totalSize));
+
+		IFileSystem.IDriveInfo drive = sut.DriveInfo.GetDrives().Single();
+
+		drive.TotalSize.Should().Be(totalSize);
+		drive.TotalFreeSpace.Should().Be(totalSize);
+		drive.AvailableFreeSpace.Should().Be(totalSize);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void WithUncDrive_ShouldCreateUncDrive(
+		string path, string contents)
+	{
+		Testing.FileSystemMock sut = new();
+		sut.WithUncDrive("UNC-Path");
+		string fullPath = sut.Path.Combine("//UNC-Path", path);
+		sut.File.WriteAllText(fullPath, contents);
+
+		string result = sut.File.ReadAllText(fullPath);
+		result.Should().Be(contents);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void WriteAllText_OnUncPath_ShouldThrowDirectoryNotFoundException(
+		string path, string contents)
+	{
+		Testing.FileSystemMock sut = new();
+		string fullPath = sut.Path.Combine("//UNC-Path", path);
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.File.WriteAllText(fullPath, contents);
+		});
+
+		exception.Should().BeOfType<DirectoryNotFoundException>();
+	}
 }

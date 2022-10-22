@@ -22,6 +22,9 @@ internal sealed class InMemoryStorage : IStorage
 
 	private readonly FileSystemMock _fileSystem;
 
+	private Func<string, IFileSystem.IFileSystemExtensionContainer, bool>?
+		_grantRequestCallback;
+
 	public InMemoryStorage(FileSystemMock fileSystem)
 	{
 		_fileSystem = fileSystem;
@@ -55,6 +58,7 @@ internal sealed class InMemoryStorage : IStorage
 			throw ExceptionFactory.AccessToPathDenied(source.FullPath);
 		}
 
+		CheckGrantAccess(source, sourceContainer);
 		using (_ = sourceContainer.RequestAccess(FileAccess.ReadWrite, FileShare.None))
 		{
 			if (overwrite &&
@@ -245,11 +249,11 @@ internal sealed class InMemoryStorage : IStorage
 		return _drives.GetOrAdd(drive.Name, _ => drive);
 	}
 
-	/// <inheritdoc
-	///     cref="IStorage.GetOrCreateContainer(IStorageLocation, Func{IStorageLocation, FileSystemMock, IStorageContainer})" />
+	/// <inheritdoc cref="IStorage.GetOrCreateContainer" />
 	public IStorageContainer GetOrCreateContainer(
 		IStorageLocation location,
-		Func<IStorageLocation, FileSystemMock, IStorageContainer> containerGenerator)
+		Func<IStorageLocation, FileSystemMock, IStorageContainer> containerGenerator,
+		IFileSystem.IFileSystemExtensionContainer? fileSystemExtensionContainer = null)
 	{
 		ChangeDescription? fileSystemChange = null;
 		IStorageContainer container = _containers.GetOrAdd(location,
@@ -257,6 +261,8 @@ internal sealed class InMemoryStorage : IStorage
 			{
 				IStorageContainer container =
 					containerGenerator.Invoke(loc, _fileSystem);
+				(fileSystemExtensionContainer as FileSystemExtensionContainer)?
+				   .CopyMetadataTo(container.ExtensionContainer);
 				if (container.Type == FileSystemTypes.Directory)
 				{
 					CreateParents(_fileSystem, loc);
@@ -264,6 +270,7 @@ internal sealed class InMemoryStorage : IStorage
 
 				AdjustParentDirectoryTimes(loc);
 
+				CheckGrantAccess(loc, container);
 				using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
 				{
 					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
@@ -330,6 +337,8 @@ internal sealed class InMemoryStorage : IStorage
 			throw ExceptionFactory.AccessToPathDenied(source.FullPath);
 		}
 
+		CheckGrantAccess(source, sourceContainer);
+		CheckGrantAccess(destination, destinationContainer);
 		using (_ = sourceContainer.RequestAccess(FileAccess.ReadWrite, FileShare.None,
 			ignoreMetadataErrors))
 		{
@@ -419,6 +428,7 @@ internal sealed class InMemoryStorage : IStorage
 			{
 				IStorageContainer container =
 					containerGenerator(location, _fileSystem);
+				CheckGrantAccess(location, container);
 				using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
 				{
 					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
@@ -443,6 +453,13 @@ internal sealed class InMemoryStorage : IStorage
 
 	#endregion
 
+	internal void WithAccessControl(
+		Func<string, IFileSystem.IFileSystemExtensionContainer, bool>?
+			grantRequestCallback)
+	{
+		_grantRequestCallback = grantRequestCallback;
+	}
+
 	private void AdjustParentDirectoryTimes(IStorageLocation location)
 	{
 		IStorageContainer? parentContainer = GetContainer(location.GetParent());
@@ -452,6 +469,20 @@ internal sealed class InMemoryStorage : IStorage
 			Execute.OnWindows(()
 				=> timeAdjustment |= TimeAdjustments.LastAccessTime);
 			parentContainer.AdjustTimes(timeAdjustment);
+		}
+	}
+
+	private void CheckGrantAccess(IStorageLocation location, IStorageContainer container)
+	{
+		if (_grantRequestCallback == null)
+		{
+			return;
+		}
+
+		if (!_grantRequestCallback.Invoke(location.FullPath,
+			container.ExtensionContainer))
+		{
+			throw ExceptionFactory.AclAccessToPathDenied(location.FullPath);
 		}
 	}
 
@@ -484,6 +515,7 @@ internal sealed class InMemoryStorage : IStorage
 						IStorageContainer container =
 							InMemoryContainer.NewDirectory(loc, _fileSystem);
 
+						CheckGrantAccess(loc, container);
 						accessHandles.Add(container.RequestAccess(FileAccess.Write,
 							FileShare.ReadWrite));
 						fileSystemChange =
@@ -525,6 +557,7 @@ internal sealed class InMemoryStorage : IStorage
 			throw ExceptionFactory.DirectoryNotEmpty(source.FullPath);
 		}
 
+		CheckGrantAccess(source, container);
 		using (container.RequestAccess(FileAccess.Write, FileShare.None))
 		{
 			if (children.Any() && recursive)

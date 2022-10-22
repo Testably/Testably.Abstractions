@@ -18,6 +18,7 @@ internal class InMemoryContainer : IStorageContainer
 	private readonly FileSystemMock _fileSystem;
 	private bool _isEncrypted;
 	private readonly IStorageLocation _location;
+	private readonly FileSystemExtensionContainer _extensionContainer = new();
 
 	public InMemoryContainer(FileSystemTypes type,
 	                         IStorageLocation location,
@@ -30,11 +31,6 @@ internal class InMemoryContainer : IStorageContainer
 	}
 
 	#region IStorageContainer Members
-
-#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
-	/// <inheritdoc cref="FileSystemSecurity" />
-	public FileSystemSecurity? AccessControl { get; set; }
-#endif
 
 	/// <inheritdoc cref="IStorageContainer.Attributes" />
 	public FileAttributes Attributes
@@ -65,6 +61,10 @@ internal class InMemoryContainer : IStorageContainer
 
 	/// <inheritdoc cref="IStorageContainer.CreationTime" />
 	public ITimeContainer CreationTime { get; } = new TimeContainer();
+
+	/// <inheritdoc cref="IStorageContainer.ExtensionContainer" />
+	public IFileSystem.IFileSystemExtensionContainer ExtensionContainer
+		=> _extensionContainer;
 
 	/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
 	public IFileSystem FileSystem => _fileSystem;

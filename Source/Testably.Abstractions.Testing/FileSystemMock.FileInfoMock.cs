@@ -109,18 +109,6 @@ public sealed partial class FileSystemMock
 		public void Encrypt()
 			=> Container.Encrypt();
 
-#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
-		/// <inheritdoc cref="IFileSystem.IFileInfo.GetAccessControl()" />
-		[SupportedOSPlatform("windows")]
-		public FileSecurity GetAccessControl()
-			=> Container.AccessControl as FileSecurity ?? new FileSecurity();
-
-		/// <inheritdoc cref="IFileSystem.IFileInfo.GetAccessControl(AccessControlSections)" />
-		[SupportedOSPlatform("windows")]
-		public FileSecurity GetAccessControl(AccessControlSections includeSections)
-			=> GetAccessControl();
-#endif
-
 		/// <inheritdoc cref="IFileSystem.IFileInfo.MoveTo(string)" />
 		public void MoveTo(string destFileName)
 		{
@@ -230,13 +218,6 @@ public sealed partial class FileSystemMock
 			                            ?? throw ExceptionFactory.FileNotFound(FullName);
 			return FileSystem.FileInfo.New(location.FullPath);
 		}
-
-#if FEATURE_FILE_SYSTEM_ACL_EXTENSIONS
-		/// <inheritdoc cref="IFileSystem.IFileInfo.SetAccessControl(FileSecurity)" />
-		[SupportedOSPlatform("windows")]
-		public void SetAccessControl(FileSecurity fileSecurity)
-			=> Container.AccessControl = fileSecurity;
-#endif
 
 		#endregion
 
