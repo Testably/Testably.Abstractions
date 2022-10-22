@@ -3,6 +3,7 @@ using System.Text;
 
 namespace Testably.Abstractions;
 
+/// <inheritdoc cref="ZipFile" />
 public interface IZipFile
 {
 	/// <inheritdoc cref="ZipFile.CreateFromDirectory(string, string)" />
