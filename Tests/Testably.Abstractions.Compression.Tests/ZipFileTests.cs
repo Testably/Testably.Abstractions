@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.IO.Compression;
+using System.Text;
 
 namespace Testably.Abstractions.Compression.Tests;
 
@@ -80,6 +81,31 @@ public abstract class ZipFileTests<TFileSystem>
 	}
 #endif
 
+#if FEATURE_COMPRESSION_OVERWRITE
+	[SkippableTheory]
+	[AutoData]
+	public void CreateFromDirectory_Overwrite_WithEncoding_ShouldOverwriteFile(
+		string contents, Encoding encoding)
+	{
+		FileSystem.Initialize()
+		   .WithSubdirectory("bar").Initialized(s => s
+			   .WithFile("test.txt"))
+		   .WithSubdirectory("foo").Initialized(s => s
+			   .WithFile("test.txt"));
+		FileSystem.File.WriteAllText(FileSystem.Path.Combine("foo", "test.txt"),
+			contents);
+
+		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip",
+			CompressionLevel.Optimal, false, encoding);
+
+		ZipArchive archive = FileSystem.ZipFile()
+		   .Open("destination.zip", ZipArchiveMode.Read, encoding);
+
+		archive.Entries.Count.Should().Be(1);
+		archive.Entries.Should().Contain(e => e.FullName.Equals("test.txt"));
+	}
+#endif
+
 	[SkippableFact]
 	public void CreateFromDirectory_ShouldZipDirectoryContent()
 	{
@@ -91,6 +117,28 @@ public abstract class ZipFileTests<TFileSystem>
 		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip");
 
 		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "bar");
+
+		FileSystem.File.Exists(FileSystem.Path.Combine("bar", "test.txt"))
+		   .Should().BeTrue();
+		FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("bar", "test.txt"))
+		   .Should().BeEquivalentTo(
+				FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("foo", "test.txt")));
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void CreateFromDirectory_WithEncoding_ShouldZipDirectoryContent(
+		Encoding encoding)
+	{
+		FileSystem.Initialize()
+		   .WithSubdirectory("bar")
+		   .WithSubdirectory("foo").Initialized(s => s
+			   .WithFile("test.txt"));
+
+		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip",
+			CompressionLevel.Fastest, false, encoding);
+
+		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "bar", encoding);
 
 		FileSystem.File.Exists(FileSystem.Path.Combine("bar", "test.txt"))
 		   .Should().BeTrue();
