@@ -48,7 +48,7 @@ public sealed partial class FileSystemMock : IFileSystem
 	/// </summary>
 	public FileSystemMock()
 	{
-		RandomSystem = new RandomSystem();
+		RandomSystem = new RandomSystemMock();
 		TimeSystem = new TimeSystemMock(TimeProvider.Now());
 		_pathMock = new PathMock(this);
 		_storage = new InMemoryStorage(this);

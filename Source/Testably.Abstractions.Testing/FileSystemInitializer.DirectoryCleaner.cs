@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
@@ -29,9 +30,7 @@ public static partial class FileSystemInitializer
 		/// <inheritdoc cref="IDisposable.Dispose()" />
 		public void Dispose()
 		{
-			ITimeSystem timeSystem = _fileSystem is FileSystemMock fileSystemMock
-				? fileSystemMock.TimeSystem
-				: new TimeSystem();
+			ITimeSystem? timeSystem = (_fileSystem as FileSystemMock)?.TimeSystem;
 			try
 			{
 				// It is important to reset the current directory, as otherwise deleting the BasePath
@@ -55,7 +54,14 @@ public static partial class FileSystemInitializer
 
 						_logger?.Invoke(
 							$"  Force delete failed! Retry again {i} times in 100ms...");
-						timeSystem.Thread.Sleep(100);
+						if (timeSystem == null)
+						{
+							Thread.Sleep(100);
+						}
+						else
+						{
+							timeSystem.Thread.Sleep(100);
+						}
 					}
 				}
 

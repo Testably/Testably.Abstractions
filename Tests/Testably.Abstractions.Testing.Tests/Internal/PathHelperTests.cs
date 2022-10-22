@@ -63,7 +63,7 @@ public class PathHelperTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			path.ThrowCommonExceptionsIfPathIsInvalid(new FileSystem());
+			path.ThrowCommonExceptionsIfPathIsInvalid(new Testing.FileSystemMock());
 		});
 
 		exception.Should().BeOfType<ArgumentException>()

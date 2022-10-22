@@ -17,7 +17,7 @@ public class RandomSystemExtensionsTests
 		List<string> fileExtensions = new();
 		while (true)
 		{
-			string fileExtension = randomSystem.GenerateFileExtension();
+			string fileExtension = randomSystem.Random.Shared.GenerateFileExtension();
 			if (fileExtensions.Contains(fileExtension))
 			{
 				break;
@@ -45,7 +45,7 @@ public class RandomSystemExtensionsTests
 		List<string> fileNames = new();
 		while (true)
 		{
-			string fileName = randomSystem.GenerateFileName();
+			string fileName = randomSystem.Random.Shared.GenerateFileName();
 			if (fileNames.Contains(fileName))
 			{
 				break;

@@ -51,13 +51,13 @@ public static partial class FileSystemInitializer
 		/// <inheritdoc cref="IFileSystemInitializer{TFileSystem}.WithAFile(string?)" />
 		public IFileSystemFileInitializer<TFileSystem> WithAFile(string? extension = null)
 		{
-			IRandomSystem randomSystem = (FileSystem as FileSystemMock)?.RandomSystem ??
-			                             new RandomSystem();
+			IRandomSystem.IRandom random = (FileSystem as FileSystemMock)?
+			   .RandomSystem.Random.Shared ?? RandomFactory.Shared;
 			string fileName;
 			do
 			{
 				fileName =
-					$"{randomSystem.GenerateFileName()}-{randomSystem.Random.Shared.Next(10000)}.{randomSystem.GenerateFileExtension(extension)}";
+					$"{random.GenerateFileName()}-{random.Next(10000)}.{random.GenerateFileExtension(extension)}";
 			} while (FileSystem.File.Exists(
 				FileSystem.Path.Combine(_basePath, fileName)));
 
@@ -67,13 +67,13 @@ public static partial class FileSystemInitializer
 		/// <inheritdoc cref="IFileSystemInitializer{TFileSystem}.WithASubdirectory()" />
 		public IFileSystemDirectoryInitializer<TFileSystem> WithASubdirectory()
 		{
-			IRandomSystem randomSystem = (FileSystem as FileSystemMock)?.RandomSystem ??
-			                             new RandomSystem();
+			IRandomSystem.IRandom random = (FileSystem as FileSystemMock)?
+			   .RandomSystem.Random.Shared ?? RandomFactory.Shared;
 			string directoryName;
 			do
 			{
 				directoryName =
-					$"{randomSystem.GenerateFileName()}-{randomSystem.Random.Shared.Next(10000)}";
+					$"{random.GenerateFileName()}-{random.Next(10000)}";
 			} while (FileSystem.Directory.Exists(
 				FileSystem.Path.Combine(_basePath, directoryName)));
 

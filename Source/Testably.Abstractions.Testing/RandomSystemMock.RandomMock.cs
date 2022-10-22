@@ -1,4 +1,6 @@
 ﻿using System;
+using Testably.Abstractions.Helpers;
+using Testably.Abstractions.Testing.Internal;
 using static Testably.Abstractions.Testing.RandomProvider;
 
 namespace Testably.Abstractions.Testing;
@@ -51,11 +53,11 @@ public sealed partial class RandomSystemMock
 #endif
 			if (seed != SharedSeed)
 			{
-				_random = new RandomSystem().Random.New(seed);
+				_random = new RandomWrapper(new Random(seed));
 			}
 			else
 			{
-				_random = new RandomSystem().Random.Shared;
+				_random = RandomFactory.Shared;
 			}
 		}
 
