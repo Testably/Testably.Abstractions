@@ -11,6 +11,8 @@ public class DirectoryAclExtensionsTests
 		Skip.IfNot(Test.RunsOnWindows);
 
 		FileSystem fileSystem = new();
+		Test.SkipIfLongRunningTestsShouldBeSkipped(fileSystem);
+
 		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
 		{
 			fileSystem.Directory.CreateDirectory("foo");
@@ -67,6 +69,8 @@ public class DirectoryAclExtensionsTests
 		Skip.IfNot(Test.RunsOnWindows);
 
 		FileSystem fileSystem = new();
+		Test.SkipIfLongRunningTestsShouldBeSkipped(fileSystem);
+
 		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
 		{
 			fileSystem.Directory.CreateDirectory("foo");

@@ -26,6 +26,8 @@ public class FileStreamAclExtensionsTests
 		Skip.IfNot(Test.RunsOnWindows);
 
 		FileSystem fileSystem = new();
+		Test.SkipIfLongRunningTestsShouldBeSkipped(fileSystem);
+
 		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
 		{
 			FileSystemStream fileStream = fileSystem.File.Create("foo");

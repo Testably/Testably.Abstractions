@@ -284,7 +284,9 @@ internal class ZipFileWrapper : IZipFile
 
 				if (file is IFileSystem.IFileInfo fileInfo)
 				{
-					string entryName = file.FullName.Substring(basePath.Length);
+					string entryName = file.FullName
+					   .Substring(basePath.Length + 1)
+					   .Replace("\\", "/");
 					ZipArchiveEntry entry = compressionLevel.HasValue
 						? archive.CreateEntry(entryName, compressionLevel.Value)
 						: archive.CreateEntry(entryName);

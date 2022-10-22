@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.IO.Compression;
 
 namespace Testably.Abstractions.Compression.Tests;
 
@@ -15,6 +16,25 @@ public abstract class ZipFileTests<TFileSystem>
 	{
 		FileSystem = fileSystem;
 		TimeSystem = timeSystem;
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void CreateFromDirectory_IncludeBaseDirectory_ShouldPrependDirectoryName(
+		CompressionLevel compressionLevel)
+	{
+		FileSystem.Initialize()
+		   .WithSubdirectory("foo").Initialized(s => s
+			   .WithFile("test.txt"));
+
+		FileSystem.ZipFile()
+		   .CreateFromDirectory("foo", "destination.zip", compressionLevel, true);
+
+		using ZipArchive archive =
+			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+
+		archive.Entries.Count.Should().Be(1);
+		archive.Entries.Should().Contain(e => e.FullName.Equals("foo/test.txt"));
 	}
 
 	[SkippableFact]
