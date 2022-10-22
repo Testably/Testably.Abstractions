@@ -29,6 +29,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2FDB2AAE-E5CE-483E-A1A6-EC0B0A4AD67B}"
 	ProjectSection(SolutionItems) = preProject
 		Tests\Directory.Build.props = Tests\Directory.Build.props
+		Tests\stryker-config-accesscontrol.json = Tests\stryker-config-accesscontrol.json
 		Tests\stryker-config-testing.json = Tests\stryker-config-testing.json
 		Tests\stryker-config.json = Tests\stryker-config.json
 	EndProjectSection
