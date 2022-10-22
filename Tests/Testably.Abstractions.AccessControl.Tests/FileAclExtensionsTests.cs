@@ -22,6 +22,30 @@ public class FileAclExtensionsTests
 	}
 
 	[SkippableFact]
+	public void SetAccessControl_RealFileSystem_ShouldChangeAccessControl()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		FileSystem fileSystem = new();
+		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
+		{
+			fileSystem.File.WriteAllText("foo", null);
+#pragma warning disable CA1416
+			FileSecurity originalAccessControl =
+				fileSystem.File.GetAccessControl("foo");
+			fileSystem.File.SetAccessControl("foo", originalAccessControl);
+
+			FileSecurity currentAccessControl =
+				fileSystem.File.GetAccessControl("foo", AccessControlSections.Access);
+#pragma warning restore CA1416
+
+			currentAccessControl.HasSameAccessRightsAs(originalAccessControl)
+			   .Should().BeTrue();
+			currentAccessControl.Should().NotBe(originalAccessControl);
+		}
+	}
+
+	[SkippableFact]
 	public void SetAccessControl_ShouldChangeAccessControl()
 	{
 		Skip.IfNot(Test.RunsOnWindows);

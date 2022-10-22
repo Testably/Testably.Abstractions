@@ -309,6 +309,27 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void ExtensionContainer_ShouldWrapFileStreamOnRealFileSystem(
+		string path)
+	{
+		FileSystem.File.WriteAllText(path, null);
+		using FileSystemStream readStream = FileSystem.File.OpenRead(path);
+		bool result = readStream.ExtensionContainer
+		   .HasWrappedInstance(out System.IO.FileStream? fileStream);
+
+		if (FileSystem is Abstractions.FileSystem)
+		{
+			result.Should().BeTrue();
+			fileStream!.Name.Should().Be(readStream.Name);
+		}
+		else
+		{
+			result.Should().BeFalse();
+		}
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Flush_ShouldNotChangePosition(
 		string path, byte[] bytes)
 	{
