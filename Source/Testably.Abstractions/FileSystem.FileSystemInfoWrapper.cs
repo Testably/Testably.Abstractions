@@ -136,6 +136,16 @@ public sealed partial class FileSystem
 				return null;
 			}
 
+			if (instance is FileInfo fileInfo)
+			{
+				return FileInfoWrapper.FromFileInfo(fileInfo, fileSystem);
+			}
+
+			if (instance is DirectoryInfo directoryInfo)
+			{
+				return DirectoryInfoWrapper.FromDirectoryInfo(directoryInfo, fileSystem);
+			}
+
 			return new FileSystemInfoWrapper(instance, fileSystem);
 		}
 	}

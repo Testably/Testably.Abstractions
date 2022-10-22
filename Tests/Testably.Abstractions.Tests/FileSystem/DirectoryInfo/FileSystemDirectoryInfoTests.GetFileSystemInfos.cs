@@ -72,6 +72,29 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 		}
 	}
 
+	[SkippableTheory]
+	[AutoData]
+	public void
+		GetFileSystemInfos_ShouldMatchTypes(string path)
+	{
+		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+			FileSystem.Initialize()
+			   .WithSubdirectory(path).Initialized(s => s
+				   .WithASubdirectory()
+				   .WithAFile());
+		IFileSystem.IDirectoryInfo baseDirectory =
+			(IFileSystem.IDirectoryInfo)initialized[0];
+
+		IFileSystem.IFileSystemInfo[] result = baseDirectory
+		   .GetFileSystemInfos("*");
+
+		result.Length.Should().Be(2);
+		result.Should().Contain(d
+			=> d.Name == initialized[1].Name && d is IFileSystem.IDirectoryInfo);
+		result.Should().Contain(d
+			=> d.Name == initialized[2].Name && d is IFileSystem.IFileInfo);
+	}
+
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[SkippableFact]
 	public void

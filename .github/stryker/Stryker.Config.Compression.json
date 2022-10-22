@@ -1,0 +1,15 @@
+{
+  "stryker-config": {
+    "project-info": {
+      "name": "github.com/Testably/Testably.Abstractions",
+      "module": "Testably.Abstractions.Compression"
+    },
+    "test-projects": [
+      "./Tests/Testably.Abstractions.Compression.Tests/Testably.Abstractions.Compression.Tests.csproj"
+    ],
+    "project": "Testably.Abstractions.Compression.csproj",
+    "target-framework": "net6.0",
+    "reporters": [ "html", "progress", "cleartext" ],
+    "mutation-level": "Advanced"
+  }
+}

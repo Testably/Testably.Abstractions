@@ -76,7 +76,6 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: |
-            5.0.x
             6.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
@@ -100,7 +99,6 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: |
-            5.0.x
             6.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
@@ -124,7 +122,6 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: |
-            5.0.x
             6.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
@@ -203,7 +200,7 @@ jobs:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
-          dotnet stryker -f Tests/stryker-config-testing.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
+          dotnet stryker -f .github/stryker/Stryker.Config.Testing.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
 
   stryker-windows:
     name: Analyze quality of unit test coverage with .NET Stryker (Windows)
@@ -224,13 +221,20 @@ jobs:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
-          dotnet stryker -f Tests/stryker-config.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
+          dotnet stryker -f .github/stryker/Stryker.Config.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
       - name: Analyze Testably.Abstractions.AccessControl
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
-          dotnet stryker -f Tests/stryker-config-accesscontrol.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
+          dotnet stryker -f .github/stryker/Stryker.Config.AccessControl.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
+      - name: Analyze Testably.Abstractions.Compression
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        shell: bash
+        run: |
+          dotnet stryker -f .github/stryker/Stryker.Config.Compression.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
