@@ -38,7 +38,7 @@
       // Calls to Thread.Sleep cannot be detected by a test
       "System.Threading.Thread.Sleep",
       // Ensures that an expectation from developers is met
-      "Debug.Assert",
+      "Debug.Assert"
     ]
   }
 }
