@@ -76,7 +76,6 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: |
-            5.0.x
             6.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
@@ -100,7 +99,6 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: |
-            5.0.x
             6.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
@@ -124,7 +122,6 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: |
-            5.0.x
             6.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
