@@ -85,6 +85,7 @@ internal sealed class InMemoryLocation : IStorageLocation
 		{
 			return null;
 		}
+
 		Debug.Assert(parentPath != null,
 			"When parentPath is null, FullPath must be null or a root path!");
 

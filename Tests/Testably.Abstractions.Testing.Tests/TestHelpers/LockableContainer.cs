@@ -33,7 +33,7 @@ internal class LockableContainer : IStorageContainer
 	}
 
 	#region IStorageContainer Members
-	
+
 	/// <inheritdoc cref="FileSystemSecurity" />
 	public FileSystemSecurity? AccessControl { get; set; }
 

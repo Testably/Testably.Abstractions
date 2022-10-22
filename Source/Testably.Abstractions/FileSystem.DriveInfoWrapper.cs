@@ -66,7 +66,7 @@ public sealed partial class FileSystem
 #pragma warning restore CA1416
 		}
 
-#endregion
+		#endregion
 
 		[return: NotNullIfNotNull("instance")]
 		internal static DriveInfoWrapper? FromDriveInfo(DriveInfo? instance,

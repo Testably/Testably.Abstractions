@@ -6,8 +6,7 @@ namespace Testably.Abstractions.Testing.Internal;
 internal static class RandomFactory
 {
 	private static readonly Random Global = new();
-	[ThreadStatic]
-	private static IRandomSystem.IRandom? _shared;
+	[ThreadStatic] private static IRandomSystem.IRandom? _shared;
 
 	#region IRandomFactory Members
 

@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Runtime.Versioning;
-using System.Security.AccessControl;
 
 namespace Testably.Abstractions;
 

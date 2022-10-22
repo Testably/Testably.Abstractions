@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.Versioning;
-using System.Security.AccessControl;
 using System.Threading;
 using System.Threading.Tasks;
 using static Testably.Abstractions.IFileSystem;
@@ -134,7 +132,7 @@ public abstract class FileSystemStream : Stream
 	/// <inheritdoc cref="Stream.FlushAsync(CancellationToken)" />
 	public override Task FlushAsync(CancellationToken cancellationToken)
 		=> _stream.FlushAsync(cancellationToken);
-	
+
 	/// <inheritdoc cref="Stream.Read(byte[], int, int)" />
 	public override int Read(byte[] buffer, int offset, int count)
 		=> _stream.Read(buffer, offset, count);

@@ -69,7 +69,7 @@ internal static class PathHelper
 				fileSystem.Path.GetFullPath(path));
 		}
 	}
-	
+
 	internal static string TrimOnWindows(this string path)
 		=> Execute.OnWindows(
 			() => path.TrimEnd(' '),

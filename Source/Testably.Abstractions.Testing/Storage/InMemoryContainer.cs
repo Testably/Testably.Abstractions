@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
 using Testably.Abstractions.Testing.Internal;
 using static Testably.Abstractions.Testing.FileSystemMock;
 using static Testably.Abstractions.Testing.Storage.IStorageContainer;

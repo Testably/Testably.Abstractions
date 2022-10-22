@@ -161,7 +161,7 @@ public sealed partial class FileSystemMock
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
 			=> Name;
-		
+
 		private string GetTopmostParentDirectory(string path)
 		{
 			while (true)

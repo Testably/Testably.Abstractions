@@ -1,5 +1,4 @@
 using System.IO;
-using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
