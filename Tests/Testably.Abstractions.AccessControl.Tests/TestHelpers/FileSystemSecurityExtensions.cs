@@ -10,6 +10,7 @@ internal static class FileSystemSecurityExtensions
 	///     Compares to <see cref="FileSystemSecurity" /> objects.
 	///     https://stackoverflow.com/a/17047098
 	/// </summary>
+#pragma warning disable CA1416
 	public static bool HasSameAccessRightsAs(this FileSystemSecurity sourceAccessControl,
 	                             FileSystemSecurity destinationAccessControl)
 	{
@@ -187,4 +188,5 @@ internal static class FileSystemSecurityExtensions
 
 		return true;
 	}
+#pragma warning restore CA1416
 }
