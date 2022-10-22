@@ -23,12 +23,12 @@ internal static class RandomSystemExtensions
 	///     If the <paramref name="fileExtension" /> is specified, it is used directly,
 	///     but a leading dot is removed.
 	/// </summary>
-	public static string GenerateFileExtension(this IRandomSystem randomSystem,
+	public static string GenerateFileExtension(this IRandomSystem.IRandom random,
 	                                           string? fileExtension = null)
 	{
 		fileExtension ??=
 			FileExtensions[
-				randomSystem.Random.Shared.Next(FileExtensions.Length)];
+				random.Next(FileExtensions.Length)];
 		return fileExtension.TrimStart('.');
 	}
 
@@ -37,7 +37,7 @@ internal static class RandomSystemExtensions
 	///     <para />
 	///     If the <paramref name="fileName" /> is specified, it is used directly.
 	/// </summary>
-	public static string GenerateFileName(this IRandomSystem randomSystem,
+	public static string GenerateFileName(this IRandomSystem.IRandom random,
 	                                      string? fileName = null)
-		=> FileNames[randomSystem.Random.Shared.Next(FileNames.Length)];
+		=> FileNames[random.Next(FileNames.Length)];
 }

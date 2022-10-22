@@ -91,7 +91,8 @@ public abstract class ParityTests
 	}
 
 	[Fact]
-	public void IFileSystemWatcherAndIFileSystemWatcherFactory_EnsureParityWith_FileSystemWatcher()
+	public void
+		IFileSystemWatcherAndIFileSystemWatcherFactory_EnsureParityWith_FileSystemWatcher()
 	{
 		List<string> parityErrors = Parity.FileSystemWatcher
 		   .GetErrorsToInstanceType<IFileSystem.IFileSystemWatcher,

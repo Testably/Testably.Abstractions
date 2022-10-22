@@ -21,7 +21,7 @@ public sealed partial class FileSystem
 			FileSystem = fileSystem;
 		}
 
-#region IFileSystemWatcher Members
+		#region IFileSystemWatcher Members
 
 		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Container" />
 		public IContainer? Container
@@ -150,7 +150,7 @@ public sealed partial class FileSystem
 			=> new WaitForChangedResultWrapper(
 				_instance.WaitForChanged(changeType, timeout));
 
-#endregion
+		#endregion
 
 		[return: NotNullIfNotNull("instance")]
 		internal static FileSystemWatcherWrapper? FromFileSystemWatcher(

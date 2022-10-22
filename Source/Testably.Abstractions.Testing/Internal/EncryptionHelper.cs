@@ -30,7 +30,7 @@ internal static class EncryptionHelper
 
 		return PerformCryptography(encryptor, plainBytes);
 	}
-	
+
 	private static Aes CreateDummyEncryptionAlgorithm()
 	{
 		byte[] bytes = Encoding.UTF8.GetBytes(

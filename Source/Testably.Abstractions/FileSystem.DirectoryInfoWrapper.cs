@@ -241,7 +241,7 @@ public sealed partial class FileSystem
 		public void MoveTo(string destDirName)
 			=> _instance.MoveTo(destDirName);
 
-#endregion
+		#endregion
 
 		[return: NotNullIfNotNull("instance")]
 		internal static DirectoryInfoWrapper? FromDirectoryInfo(DirectoryInfo? instance,

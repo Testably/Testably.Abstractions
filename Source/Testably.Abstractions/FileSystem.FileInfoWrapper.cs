@@ -125,7 +125,7 @@ public sealed partial class FileSystem
 					ignoreMetadataErrors),
 				_fileSystem);
 
-#endregion
+		#endregion
 
 		[return: NotNullIfNotNull("instance")]
 		internal static FileInfoWrapper? FromFileInfo(FileInfo? instance,

@@ -109,6 +109,7 @@ public static class Notification
 				{
 					task = Task.Factory.StartNew(executeWhenWaiting.Invoke);
 				}
+
 				if (!_reset.Wait(timeout) ||
 				    task?.Wait(timeout) == false)
 				{

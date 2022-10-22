@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing;
