@@ -31,7 +31,7 @@ public abstract class ZipFileTests<TFileSystem>
 		FileSystem.ZipFile()
 		   .CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
 
-		using ZipArchive archive =
+		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
 		archive.Entries.Count.Should().Be(0);
@@ -49,7 +49,7 @@ public abstract class ZipFileTests<TFileSystem>
 		FileSystem.ZipFile()
 		   .CreateFromDirectory("foo", "destination.zip", compressionLevel, true);
 
-		using ZipArchive archive =
+		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
 		archive.Entries.Count.Should().Be(1);
@@ -69,7 +69,7 @@ public abstract class ZipFileTests<TFileSystem>
 		   .CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false, encoding);
 
-		using ZipArchive archive =
+		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
 		archive.Entries.Count.Should().Be(1);
@@ -95,7 +95,7 @@ public abstract class ZipFileTests<TFileSystem>
 		FileSystem.ZipFile()
 		   .CreateFromDirectory("foo", "destination.zip", compressionLevel, true);
 
-		using ZipArchive archive =
+		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
 		archive.Entries.Count.Should().Be(1);
@@ -162,7 +162,7 @@ public abstract class ZipFileTests<TFileSystem>
 		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip",
 			CompressionLevel.Optimal, false, encoding);
 
-		ZipArchive archive = FileSystem.ZipFile()
+		IZipArchive archive = FileSystem.ZipFile()
 		   .Open("destination.zip", ZipArchiveMode.Read, encoding);
 
 		archive.Entries.Count.Should().Be(1);

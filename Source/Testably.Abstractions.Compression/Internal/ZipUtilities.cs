@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -46,9 +45,6 @@ internal static class ZipUtilities
 			   .EnumerateFileSystemInfos("*", SearchOption.AllDirectories))
 			{
 				directoryIsEmpty = false;
-
-				int entryNameLength = file.FullName.Length - basePath.Length;
-				Debug.Assert(entryNameLength > 0);
 
 				if (file is IFileSystem.IFileInfo fileInfo)
 				{

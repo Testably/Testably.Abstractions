@@ -140,33 +140,36 @@ internal class ZipFileWrapper : IZipFile
 #endif
 
 	/// <inheritdoc cref="IZipFile.Open(string, ZipArchiveMode)" />
-	public ZipArchive Open(string archiveFileName, ZipArchiveMode mode)
-		=> Execute.WhenRealFileSystem(FileSystem,
-			() => ZipFile.Open(archiveFileName, mode),
-			() => ZipUtilities.Open(FileSystem,
-				archiveFileName,
-				mode,
-				entryNameEncoding: null));
+	public IZipArchive Open(string archiveFileName, ZipArchiveMode mode)
+		=> new ZipArchiveWrapper(FileSystem,
+			Execute.WhenRealFileSystem(FileSystem,
+				() => ZipFile.Open(archiveFileName, mode),
+				() => ZipUtilities.Open(FileSystem,
+					archiveFileName,
+					mode,
+					entryNameEncoding: null)));
 
 	/// <inheritdoc cref="IZipFile.Open(string, ZipArchiveMode, Encoding?)" />
-	public ZipArchive Open(string archiveFileName,
-	                       ZipArchiveMode mode,
-	                       Encoding? entryNameEncoding)
-		=> Execute.WhenRealFileSystem(FileSystem,
-			() => ZipFile.Open(archiveFileName, mode, entryNameEncoding),
-			() => ZipUtilities.Open(FileSystem,
-				archiveFileName,
-				mode,
-				entryNameEncoding));
+	public IZipArchive Open(string archiveFileName,
+	                        ZipArchiveMode mode,
+	                        Encoding? entryNameEncoding)
+		=> new ZipArchiveWrapper(FileSystem,
+			Execute.WhenRealFileSystem(FileSystem,
+				() => ZipFile.Open(archiveFileName, mode, entryNameEncoding),
+				() => ZipUtilities.Open(FileSystem,
+					archiveFileName,
+					mode,
+					entryNameEncoding)));
 
 	/// <inheritdoc cref="IZipFile.OpenRead(string)" />
-	public ZipArchive OpenRead(string archiveFileName)
-		=> Execute.WhenRealFileSystem(FileSystem,
-			() => ZipFile.OpenRead(archiveFileName),
-			() => ZipUtilities.Open(FileSystem,
-				archiveFileName,
-				ZipArchiveMode.Read,
-				entryNameEncoding: null));
+	public IZipArchive OpenRead(string archiveFileName)
+		=> new ZipArchiveWrapper(FileSystem,
+			Execute.WhenRealFileSystem(FileSystem,
+				() => ZipFile.OpenRead(archiveFileName),
+				() => ZipUtilities.Open(FileSystem,
+					archiveFileName,
+					ZipArchiveMode.Read,
+					entryNameEncoding: null)));
 
 	#endregion
 }
