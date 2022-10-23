@@ -8,8 +8,7 @@
     <PackageTags>abstractions testing</PackageTags>
     <PackageProjectUrl>https://github.com/Testably/Testably.Abstractions</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageIcon>logo_256x256.png</PackageIcon>
+    <PackageIcon>Docs/logo_256x256.png</PackageIcon>
     <RepositoryUrl>https://github.com/Testably/Testably.Abstractions.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <MinVerTagPrefix>v</MinVerTagPrefix>
@@ -51,9 +50,8 @@
 
   <ItemGroup>
     <None Include="$([MSBuild]::GetPathOfFileAbove('logo_256x256.png', '$(MSBuildThisFileDirectory)../Docs/Images/'))"
-          Pack="true" PackagePath="/" />
-    <None Include="$([MSBuild]::GetPathOfFileAbove('README.md', '$(MSBuildThisFileDirectory)../'))" Pack="true"
-          PackagePath="/" />
+          Pack="true" PackagePath="/Docs/"
+          Link="\Docs\logo_256x256.png"/>
   </ItemGroup>
 
 </Project>
