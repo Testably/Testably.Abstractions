@@ -260,16 +260,23 @@ jobs:
       - name: Prepare README.md
         shell: bash
         run: |
-          version="${GITHUB_REF#refs/heads/release/}"
-          # Remove the quality gate status badge
-          grep -v "Quality Gate Status" ./README.md > ./README.md.backup && mv ./README.md.backup ./README.md
-          # Change status badges to display explicit version
-          sed -i -e "s/branch=main/branch=release%2F${version}/g" ./README.md
-          sed -i -e "s/Testably.Abstractions%2Fmain/Testably.Abstractions%2Frelease%2F${version}/g" ./README.md
-          sed -i -e "s/Testably.Abstractions%2Fmain/Testably.Abstractions%2Frelease%2F${version}/g" ./README.md
-          sed -i -e "s/Testably.Abstractions\/main)/Testably.Abstractions\/release\/${version})/g" ./README.md
-          # Add absolute path to example section
-          sed -i -e 's/Examples\/README.md/https:\/\/github.com\/Testably\/Testably.Abstractions\/blob\/main\/Examples\/README.md/g' ./README.md
+          for f in "README.md" "Docs/AccessControl.md" "Docs/Compression.md" "Docs/Interface.md" "Docs/Testing.md"
+          do
+            echo "Processing $f" # always double quote "$f" filename
+            # do something on $f
+            version="${GITHUB_REF#refs/heads/release/}"
+            # Remove the quality gate status badge
+            grep -v "Quality Gate Status" "./$f" > "./$f.backup" && mv "./$f.backup" "./$f"
+            # Change status badges to display explicit version
+            sed -i -e "s/branch=main/branch=release%2F${version}/g" "./$f"
+            sed -i -e "s/Testably.Abstractions%2Fmain/Testably.Abstractions%2Frelease%2F${version}/g" "./$f"
+            sed -i -e "s/Testably.Abstractions%2Fmain/Testably.Abstractions%2Frelease%2F${version}/g" "./$f"
+            sed -i -e "s/Testably.Abstractions\/main)/Testably.Abstractions\/release\/${version})/g" "./$f"
+            # Add absolute path to example section
+            sed -i -e 's/Examples\/README.md/https:\/\/github.com\/Testably\/Testably.Abstractions\/blob\/main\/Examples\/README.md/g' "./$f"
+            # Add absolute path to example section
+            sed -i -e 's/\(..\/README.md\)/https:\/\/github.com\/Testably\/Testably.Abstractions\/blob\/main\/README.md/g' "./$f"
+          done
       - name: Build
         run: dotnet build --configuration "Release"
       - name: Publish

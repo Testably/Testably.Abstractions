@@ -13,6 +13,6 @@ With this library loaded you can copy ACL settings from one directory to another
 ```csharp
     IFileSystem _fileSystem; // Set using DI
 		
-		DirectorySecurity accessControl = -fileSystem.Directory.GetAccessControl("your-directory");
-		_fileSystem.Directory.SetAccessControl("another-directory", accessControl);
+    DirectorySecurity accessControl = -fileSystem.Directory.GetAccessControl("your-directory");
+    _fileSystem.Directory.SetAccessControl("another-directory", accessControl);
 ```
