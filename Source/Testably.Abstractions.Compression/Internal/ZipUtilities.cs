@@ -71,7 +71,7 @@ internal static class ZipUtilities
 
 			if (includeBaseDirectory && directoryIsEmpty)
 			{
-				string entryName = di.Name;
+				string entryName = di.Name + "/";
 				archive.CreateEntry(entryName);
 			}
 		}

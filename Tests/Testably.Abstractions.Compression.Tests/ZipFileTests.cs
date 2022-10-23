@@ -21,6 +21,42 @@ public abstract class ZipFileTests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[AutoData]
+	public void CreateFromDirectory_EmptySource_DoNotIncludeBaseDirectory_ShouldBeEmpty(
+		CompressionLevel compressionLevel)
+	{
+		FileSystem.Initialize()
+		   .WithSubdirectory("foo");
+
+		FileSystem.ZipFile()
+		   .CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
+
+		using ZipArchive archive =
+			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+
+		archive.Entries.Count.Should().Be(0);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void
+		CreateFromDirectory_EmptySource_IncludeBaseDirectory_ShouldPrependDirectoryName(
+			CompressionLevel compressionLevel)
+	{
+		FileSystem.Initialize()
+		   .WithSubdirectory("foo");
+
+		FileSystem.ZipFile()
+		   .CreateFromDirectory("foo", "destination.zip", compressionLevel, true);
+
+		using ZipArchive archive =
+			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+
+		archive.Entries.Count.Should().Be(1);
+		archive.Entries.Should().Contain(e => e.FullName.Equals("foo/"));
+	}
+
+	[SkippableTheory]
 	[MemberData(nameof(EntryNameEncoding))]
 	public void CreateFromDirectory_EntryNameEncoding_ShouldUseEncoding(
 		string entryName, Encoding encoding, bool encodedCorrectly)

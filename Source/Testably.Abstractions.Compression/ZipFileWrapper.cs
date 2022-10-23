@@ -42,14 +42,13 @@ internal class ZipFileWrapper : IZipFile
 				destinationArchiveFileName,
 				compressionLevel,
 				includeBaseDirectory),
-			() =>
-				ZipUtilities.CreateFromDirectory(
-					FileSystem,
-					sourceDirectoryName,
-					destinationArchiveFileName,
-					compressionLevel,
-					includeBaseDirectory,
-					entryNameEncoding: null));
+			() => ZipUtilities.CreateFromDirectory(
+				FileSystem,
+				sourceDirectoryName,
+				destinationArchiveFileName,
+				compressionLevel,
+				includeBaseDirectory,
+				entryNameEncoding: null));
 
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, string, CompressionLevel, bool, Encoding)" />
 	public void CreateFromDirectory(string sourceDirectoryName,
