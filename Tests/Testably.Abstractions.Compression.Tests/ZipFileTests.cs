@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.IO.Compression;
 using System.Text;
 
@@ -17,6 +18,33 @@ public abstract class ZipFileTests<TFileSystem>
 	{
 		FileSystem = fileSystem;
 		TimeSystem = timeSystem;
+	}
+
+	[SkippableTheory]
+	[MemberData(nameof(EntryNameEncoding))]
+	public void CreateFromDirectory_EntryNameEncoding_ShouldUseEncoding(
+		string entryName, Encoding encoding, bool encodedCorrectly)
+	{
+		FileSystem.Initialize()
+		   .WithSubdirectory("foo").Initialized(s => s
+			   .WithFile(entryName));
+
+		FileSystem.ZipFile()
+		   .CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+				false, encoding);
+
+		using ZipArchive archive =
+			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+
+		archive.Entries.Count.Should().Be(1);
+		if (encodedCorrectly)
+		{
+			archive.Entries.Should().Contain(e => e.Name == entryName);
+		}
+		else
+		{
+			archive.Entries.Should().NotContain(e => e.Name == entryName);
+		}
 	}
 
 	[SkippableTheory]
@@ -173,5 +201,11 @@ public abstract class ZipFileTests<TFileSystem>
 		   .Which.Message.Should().Contain($"'{destinationPath}'");
 		FileSystem.File.ReadAllText(destinationPath)
 		   .Should().NotBe(contents);
+	}
+
+	private static IEnumerable<object[]> EntryNameEncoding()
+	{
+		yield return new object[] { "Dans mes rêves.mp3", Encoding.Default, true };
+		yield return new object[] { "Dans mes rêves.mp3", Encoding.ASCII, false };
 	}
 }
