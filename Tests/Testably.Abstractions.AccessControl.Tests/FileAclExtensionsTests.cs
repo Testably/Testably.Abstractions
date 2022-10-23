@@ -27,6 +27,8 @@ public class FileAclExtensionsTests
 		Skip.IfNot(Test.RunsOnWindows);
 
 		FileSystem fileSystem = new();
+		Test.SkipIfLongRunningTestsShouldBeSkipped(fileSystem);
+
 		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
 		{
 			fileSystem.File.WriteAllText("foo", null);

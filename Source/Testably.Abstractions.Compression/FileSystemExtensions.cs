@@ -1,6 +1,4 @@
-﻿using Testably.Abstractions.Internal;
-
-namespace Testably.Abstractions;
+﻿namespace Testably.Abstractions;
 
 /// <summary>
 ///     Extension method to support abstractions for <see cref="System.IO.Compression.ZipFile" />.
