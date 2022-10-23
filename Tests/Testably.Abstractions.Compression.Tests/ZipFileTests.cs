@@ -239,7 +239,7 @@ public abstract class ZipFileTests<TFileSystem>
 		   .Should().NotBe(contents);
 	}
 
-	private static IEnumerable<object[]> EntryNameEncoding()
+	public static IEnumerable<object[]> EntryNameEncoding()
 	{
 		yield return new object[] { "Dans mes rêves.mp3", Encoding.Default, true };
 		yield return new object[] { "Dans mes rêves.mp3", Encoding.ASCII, false };
