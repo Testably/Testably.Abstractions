@@ -32,4 +32,6 @@ jobs:
             file
             random
             time
+            access-control
+            compression
           requireScope: false
