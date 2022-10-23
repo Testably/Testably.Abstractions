@@ -2,13 +2,14 @@
 
 using Xunit.Abstractions;
 
-namespace Testably.Abstractions.Compression.Tests;
+namespace Testably.Abstractions.Compression.Tests.ZipArchive;
 
+[Collection(nameof(RealFileSystemTests))]
 public sealed class RealFileSystemTests :
-	ZipFileTests<FileSystem>,
+	ZipArchiveTests<FileSystem>,
 	IDisposable
 {
-	/// <inheritdoc cref="ZipFileTests{TFileSystem}.BasePath" />
+	/// <inheritdoc cref="ZipArchiveTests{TFileSystem}.BasePath" />
 	public override string BasePath => _directoryCleaner.BasePath;
 
 	private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;

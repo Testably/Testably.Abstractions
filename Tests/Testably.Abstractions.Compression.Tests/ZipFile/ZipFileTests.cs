@@ -3,7 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 
-namespace Testably.Abstractions.Compression.Tests;
+namespace Testably.Abstractions.Compression.Tests.ZipFile;
 
 public abstract class ZipFileTests<TFileSystem>
 	where TFileSystem : IFileSystem
@@ -243,5 +243,15 @@ public abstract class ZipFileTests<TFileSystem>
 	{
 		yield return new object[] { "Dans mes rêves.mp3", Encoding.Default, true };
 		yield return new object[] { "Dans mes rêves.mp3", Encoding.ASCII, false };
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void FileSystemExtension_ShouldBeSet(
+		CompressionLevel compressionLevel)
+	{
+		IZipFile result = FileSystem.ZipFile();
+
+		result.FileSystem.Should().Be(FileSystem);
 	}
 }
