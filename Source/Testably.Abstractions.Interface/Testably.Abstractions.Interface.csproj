@@ -1,9 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Write testable code by abstracting away system dependencies.</Description>
     <RootNamespace>Testably.Abstractions</RootNamespace>
+    <Description>Interfaces for `Testably.Abstractions` to write testable code by abstracting away system dependencies.</Description>
+    <PackageReadmeFile>Docs/Interface.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(SolutionDir)Docs/Interface.md"
+          Pack="true" PackagePath="/Docs/"
+          Link="Docs\Interface.md" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Update="IFileSystem.*.cs">

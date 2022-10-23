@@ -1,8 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Testing helpers to write testable code by abstracting away system dependencies.</Description>
+    <Description>Testing helpers for `Testably.Abstractions` to write testable code by abstracting away system dependencies.</Description>
+    <PackageReadmeFile>Docs/Testing.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(SolutionDir)Docs/Testing.md"
+          Pack="true" PackagePath="/Docs/"
+          Link="Docs\Testing.md" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />

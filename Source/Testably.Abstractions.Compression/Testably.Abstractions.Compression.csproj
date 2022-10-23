@@ -1,9 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Write testable code by abstracting away system dependencies.</Description>
     <RootNamespace>Testably.Abstractions</RootNamespace>
+    <Description>Compression extension methods for creating and extracting zip files with `Testably.Abstractions`.</Description>
+    <PackageReadmeFile>Docs/Compression.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(SolutionDir)Docs/Compression.md"
+          Pack="true" PackagePath="/Docs/"
+          Link="Docs\Compression.md" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.IO.Compression" Version="4.3.0" />
