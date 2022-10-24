@@ -35,13 +35,10 @@ public static class DirectoryInfoAclExtensions
 	{
 		IFileSystem.IFileSystemExtensionContainer extensionContainer =
 			directoryInfo.ExtensionContainer;
-		if (extensionContainer.HasWrappedInstance(out DirectoryInfo? di))
-		{
-			return di.GetAccessControl();
-		}
-
-		return extensionContainer.RetrieveMetadata<DirectorySecurity>(
-			AccessControlConstants.AccessControl) ?? new DirectorySecurity();
+		return extensionContainer.HasWrappedInstance(out DirectoryInfo? di)
+			? di.GetAccessControl()
+			: extensionContainer.RetrieveMetadata<DirectorySecurity>(
+				AccessControlConstants.AccessControl) ?? new DirectorySecurity();
 	}
 
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.GetAccessControl(DirectoryInfo, AccessControlSections)" />
@@ -52,13 +49,10 @@ public static class DirectoryInfoAclExtensions
 	{
 		IFileSystem.IFileSystemExtensionContainer extensionContainer =
 			directoryInfo.ExtensionContainer;
-		if (extensionContainer.HasWrappedInstance(out DirectoryInfo? di))
-		{
-			return di.GetAccessControl(includeSections);
-		}
-
-		return extensionContainer.RetrieveMetadata<DirectorySecurity>(
-			AccessControlConstants.AccessControl) ?? new DirectorySecurity();
+		return extensionContainer.HasWrappedInstance(out DirectoryInfo? di)
+			? di.GetAccessControl(includeSections)
+			: extensionContainer.RetrieveMetadata<DirectorySecurity>(
+				AccessControlConstants.AccessControl) ?? new DirectorySecurity();
 	}
 
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.SetAccessControl(DirectoryInfo, DirectorySecurity)" />

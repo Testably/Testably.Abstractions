@@ -17,13 +17,10 @@ public static class FileAclExtensions
 		IFileSystem.IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
 		IFileSystem.IFileSystemExtensionContainer extensionContainer =
 			fileInfo.ExtensionContainer;
-		if (extensionContainer.HasWrappedInstance(out FileInfo? fi))
-		{
-			return fi.GetAccessControl();
-		}
-
-		return extensionContainer.RetrieveMetadata<FileSecurity>(
-			AccessControlConstants.AccessControl) ?? new FileSecurity();
+		return extensionContainer.HasWrappedInstance(out FileInfo? fi)
+			? fi.GetAccessControl()
+			: extensionContainer.RetrieveMetadata<FileSecurity>(
+				AccessControlConstants.AccessControl) ?? new FileSecurity();
 	}
 
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.GetAccessControl(FileInfo, AccessControlSections)" />
@@ -36,13 +33,10 @@ public static class FileAclExtensions
 		IFileSystem.IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
 		IFileSystem.IFileSystemExtensionContainer extensionContainer =
 			fileInfo.ExtensionContainer;
-		if (extensionContainer.HasWrappedInstance(out FileInfo? fi))
-		{
-			return fi.GetAccessControl(includeSections);
-		}
-
-		return extensionContainer.RetrieveMetadata<FileSecurity>(
-			AccessControlConstants.AccessControl) ?? new FileSecurity();
+		return extensionContainer.HasWrappedInstance(out FileInfo? fi)
+			? fi.GetAccessControl(includeSections)
+			: extensionContainer.RetrieveMetadata<FileSecurity>(
+				AccessControlConstants.AccessControl) ?? new FileSecurity();
 	}
 
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.SetAccessControl(FileInfo, FileSecurity)" />
