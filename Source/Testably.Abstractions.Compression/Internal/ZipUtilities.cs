@@ -17,9 +17,9 @@ internal static class ZipUtilities
 	internal static void CreateFromDirectory(IFileSystem fileSystem,
 	                                         string sourceDirectoryName,
 	                                         string destinationArchiveFileName,
-	                                         CompressionLevel? compressionLevel,
-	                                         bool includeBaseDirectory,
-	                                         Encoding? entryNameEncoding)
+	                                         CompressionLevel? compressionLevel = null,
+	                                         bool includeBaseDirectory = false,
+	                                         Encoding? entryNameEncoding = null)
 
 	{
 		sourceDirectoryName = fileSystem.Path.GetFullPath(sourceDirectoryName);
@@ -60,7 +60,7 @@ internal static class ZipUtilities
 				else if (file is IFileSystem.IDirectoryInfo directoryInfo &&
 				         directoryInfo.GetFileSystemInfos().Length == 0)
 				{
-					string entryName = file.FullName.Substring(basePath.Length);
+					string entryName = file.FullName.Substring(basePath.Length + 1) + "/";
 					archive.CreateEntry(entryName);
 				}
 			}
@@ -80,8 +80,8 @@ internal static class ZipUtilities
 	internal static void ExtractToDirectory(IFileSystem fileSystem,
 	                                        string sourceArchiveFileName,
 	                                        string destinationDirectoryName,
-	                                        Encoding? entryNameEncoding,
-	                                        bool overwriteFiles)
+	                                        Encoding? entryNameEncoding = null,
+	                                        bool overwriteFiles = false)
 	{
 		if (sourceArchiveFileName == null)
 		{
@@ -131,7 +131,7 @@ internal static class ZipUtilities
 	internal static ZipArchive Open(IFileSystem fileSystem,
 	                                string archiveFileName,
 	                                ZipArchiveMode mode,
-	                                Encoding? entryNameEncoding)
+	                                Encoding? entryNameEncoding = null)
 	{
 		FileMode fileMode;
 		FileAccess access;
@@ -162,7 +162,7 @@ internal static class ZipUtilities
 		}
 
 		FileSystemStream fs = fileSystem.FileStream.New(archiveFileName, fileMode,
-			access, fileShare, bufferSize: 0x1000, useAsync: false);
+			access, fileShare, bufferSize: 0x1000);
 
 		try
 		{

@@ -33,4 +33,24 @@ public abstract class ZipArchiveTests<TFileSystem>
 
 		archive.FileSystem.Should().Be(FileSystem);
 	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void GetEntry_WhenNameIsNotFound_ShouldReturnNull(
+		CompressionLevel compressionLevel)
+	{
+		FileSystem.Initialize()
+		   .WithSubdirectory("foo");
+		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
+		FileSystem.ZipFile()
+		   .CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+				true);
+
+		using IZipArchive archive =
+			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
+
+		archive.GetEntry("bar.txt").Should().BeNull();
+		archive.GetEntry("foo.txt").Should().BeNull();
+		archive.GetEntry("foo/foo.txt").Should().NotBeNull();
+	}
 }

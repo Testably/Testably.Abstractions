@@ -26,10 +26,7 @@ internal sealed class ZipFileWrapper : IZipFile
 			() => ZipUtilities.CreateFromDirectory(
 				FileSystem,
 				sourceDirectoryName,
-				destinationArchiveFileName,
-				compressionLevel: null,
-				includeBaseDirectory: false,
-				entryNameEncoding: null));
+				destinationArchiveFileName));
 
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, string, CompressionLevel, bool)" />
 	public void CreateFromDirectory(string sourceDirectoryName,
@@ -47,8 +44,7 @@ internal sealed class ZipFileWrapper : IZipFile
 				sourceDirectoryName,
 				destinationArchiveFileName,
 				compressionLevel,
-				includeBaseDirectory,
-				entryNameEncoding: null));
+				includeBaseDirectory));
 
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, string, CompressionLevel, bool, Encoding)" />
 	public void CreateFromDirectory(string sourceDirectoryName,
@@ -81,9 +77,7 @@ internal sealed class ZipFileWrapper : IZipFile
 			() => ZipUtilities.ExtractToDirectory(
 				FileSystem,
 				sourceArchiveFileName,
-				destinationDirectoryName,
-				entryNameEncoding: null,
-				overwriteFiles: false));
+				destinationDirectoryName));
 
 #if FEATURE_COMPRESSION_OVERWRITE
 	/// <inheritdoc cref="IZipFile.ExtractToDirectory(string, string, bool)" />
@@ -99,7 +93,6 @@ internal sealed class ZipFileWrapper : IZipFile
 				FileSystem,
 				sourceArchiveFileName,
 				destinationDirectoryName,
-				entryNameEncoding: null,
 				overwriteFiles: overwriteFiles));
 #endif
 
@@ -116,8 +109,7 @@ internal sealed class ZipFileWrapper : IZipFile
 				FileSystem,
 				sourceArchiveFileName,
 				destinationDirectoryName,
-				entryNameEncoding: entryNameEncoding,
-				overwriteFiles: false));
+				entryNameEncoding: entryNameEncoding));
 
 #if FEATURE_COMPRESSION_OVERWRITE
 	/// <inheritdoc cref="IZipFile.ExtractToDirectory(string, string, Encoding?, bool)" />
@@ -146,8 +138,7 @@ internal sealed class ZipFileWrapper : IZipFile
 				() => ZipFile.Open(archiveFileName, mode),
 				() => ZipUtilities.Open(FileSystem,
 					archiveFileName,
-					mode,
-					entryNameEncoding: null)));
+					mode)));
 
 	/// <inheritdoc cref="IZipFile.Open(string, ZipArchiveMode, Encoding?)" />
 	public IZipArchive Open(string archiveFileName,
@@ -168,8 +159,7 @@ internal sealed class ZipFileWrapper : IZipFile
 				() => ZipFile.OpenRead(archiveFileName),
 				() => ZipUtilities.Open(FileSystem,
 					archiveFileName,
-					ZipArchiveMode.Read,
-					entryNameEncoding: null)));
+					ZipArchiveMode.Read)));
 
 	#endregion
 }

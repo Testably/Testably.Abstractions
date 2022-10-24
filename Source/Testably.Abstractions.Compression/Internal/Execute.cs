@@ -30,11 +30,10 @@ internal static class Execute
 	                                      Func<T> onRealFileSystem,
 	                                      Func<T> onMockFileSystem)
 	{
-		if (fileSystem is FileSystem)
-		{
-			return onRealFileSystem();
-		}
+		T returnValue = fileSystem is FileSystem
+			? onRealFileSystem()
+			: onMockFileSystem();
 
-		return onMockFileSystem();
+		return returnValue;
 	}
 }
