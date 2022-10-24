@@ -5,7 +5,7 @@ using System.IO.Compression;
 
 namespace Testably.Abstractions;
 
-internal class ZipArchiveEntryWrapper : IZipArchiveEntry
+internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 {
 	private readonly ZipArchiveEntry _instance;
 

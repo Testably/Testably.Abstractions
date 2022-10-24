@@ -4,7 +4,7 @@ using Testably.Abstractions.Internal;
 
 namespace Testably.Abstractions;
 
-internal class ZipFileWrapper : IZipFile
+internal sealed class ZipFileWrapper : IZipFile
 {
 	public ZipFileWrapper(IFileSystem fileSystem)
 	{

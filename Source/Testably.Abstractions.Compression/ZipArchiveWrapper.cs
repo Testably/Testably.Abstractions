@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Testably.Abstractions;
 
-internal class ZipArchiveWrapper : IZipArchive
+internal sealed class ZipArchiveWrapper : IZipArchive
 {
 	private readonly ZipArchive _instance;
 
@@ -19,9 +19,7 @@ internal class ZipArchiveWrapper : IZipArchive
 
 	/// <inheritdoc cref="IZipArchive.Entries" />
 	public ReadOnlyCollection<IZipArchiveEntry> Entries
-		=> new(_instance.Entries
-		   .Select(e => ZipArchiveEntryWrapper.New(FileSystem, this, e))
-		   .ToList());
+		=> MapToZipArchiveEntries(_instance.Entries);
 
 	/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
 	public IFileSystem FileSystem { get; }
@@ -49,4 +47,10 @@ internal class ZipArchiveWrapper : IZipArchive
 		=> ZipArchiveEntryWrapper.New(FileSystem, this, _instance.GetEntry(entryName));
 
 	#endregion
+
+	private ReadOnlyCollection<IZipArchiveEntry> MapToZipArchiveEntries(
+		ReadOnlyCollection<ZipArchiveEntry> zipArchiveEntries)
+		=> new(zipArchiveEntries
+		   .Select(e => ZipArchiveEntryWrapper.New(FileSystem, this, e))
+		   .ToList());
 }

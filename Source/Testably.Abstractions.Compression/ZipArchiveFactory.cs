@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Testably.Abstractions;
 
-internal class ZipArchiveFactory : IZipArchiveFactory
+internal sealed class ZipArchiveFactory : IZipArchiveFactory
 {
 	public ZipArchiveFactory(IFileSystem fileSystem)
 	{

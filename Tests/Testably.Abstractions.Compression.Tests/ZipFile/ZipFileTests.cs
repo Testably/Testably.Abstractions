@@ -245,10 +245,8 @@ public abstract class ZipFileTests<TFileSystem>
 		yield return new object[] { "Dans mes rêves.mp3", Encoding.ASCII, false };
 	}
 
-	[SkippableTheory]
-	[AutoData]
-	public void FileSystemExtension_ShouldBeSet(
-		CompressionLevel compressionLevel)
+	[SkippableFact]
+	public void FileSystemExtension_ShouldBeSet()
 	{
 		IZipFile result = FileSystem.ZipFile();
 
