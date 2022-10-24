@@ -29,11 +29,7 @@ internal static class Execute
 	public static T WhenRealFileSystem<T>(IFileSystem fileSystem,
 	                                      Func<T> onRealFileSystem,
 	                                      Func<T> onMockFileSystem)
-	{
-		T returnValue = fileSystem is FileSystem
+		=> fileSystem is FileSystem
 			? onRealFileSystem()
 			: onMockFileSystem();
-
-		return returnValue;
-	}
 }

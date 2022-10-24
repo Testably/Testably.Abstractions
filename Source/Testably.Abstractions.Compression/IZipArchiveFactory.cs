@@ -17,6 +17,8 @@ public interface IZipArchiveFactory : IFileSystem.IFileSystemExtensionPoint
 	IZipArchive New(Stream stream, ZipArchiveMode mode, bool leaveOpen);
 
 	/// <inheritdoc cref="ZipArchive(Stream, ZipArchiveMode, bool, Encoding?)" />
-	IZipArchive New(Stream stream, ZipArchiveMode mode, bool leaveOpen,
+	IZipArchive New(Stream stream,
+	                ZipArchiveMode mode,
+	                bool leaveOpen,
 	                Encoding? entryNameEncoding);
 }
