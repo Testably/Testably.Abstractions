@@ -34,10 +34,8 @@ public abstract class ZipArchiveTests<TFileSystem>
 		archive.FileSystem.Should().Be(FileSystem);
 	}
 
-	[SkippableTheory]
-	[AutoData]
-	public void GetEntry_WhenNameIsNotFound_ShouldReturnNull(
-		CompressionLevel compressionLevel)
+	[SkippableFact]
+	public void GetEntry_WhenNameIsNotFound_ShouldReturnNull()
 	{
 		FileSystem.Initialize()
 		   .WithSubdirectory("foo");
