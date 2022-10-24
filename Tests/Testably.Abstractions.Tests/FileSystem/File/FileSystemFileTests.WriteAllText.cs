@@ -7,8 +7,8 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public void WriteAllText_MissingDirectory_PreviousFile_ShouldOverwriteFileWithText(
-		string directory, string path, string contents)
+	public void WriteAllText_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+		string directory, string path)
 	{
 		string fullPath = FileSystem.Path.Combine(directory, path);
 		Exception? exception = Record.Exception(() =>
