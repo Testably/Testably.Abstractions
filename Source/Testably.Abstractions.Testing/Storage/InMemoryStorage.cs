@@ -267,6 +267,16 @@ internal sealed class InMemoryStorage : IStorage
 				{
 					CreateParents(_fileSystem, loc);
 				}
+				else
+				{
+					IStorageLocation? parentLocation = loc.GetParent();
+					if (parentLocation != null &&
+						parentLocation.Drive?.Name != parentLocation.FullPath &&
+					    !_containers.ContainsKey(parentLocation))
+					{
+						throw ExceptionFactory.DirectoryNotFound(loc.FullPath);
+					}
+				}
 
 				AdjustParentDirectoryTimes(loc);
 
