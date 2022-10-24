@@ -26,6 +26,7 @@ public class DirectoryAclExtensionsTests
 
 			result.HasSameAccessRightsAs(directorySecurity).Should().BeTrue();
 			result.Should().NotBe(directorySecurity);
+			fileSystem.Directory.Exists("bar").Should().BeTrue();
 		}
 	}
 
