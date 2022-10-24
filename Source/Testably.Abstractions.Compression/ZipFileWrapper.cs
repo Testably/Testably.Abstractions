@@ -4,7 +4,7 @@ using Testably.Abstractions.Internal;
 
 namespace Testably.Abstractions;
 
-internal class ZipFileWrapper : IZipFile
+internal sealed class ZipFileWrapper : IZipFile
 {
 	public ZipFileWrapper(IFileSystem fileSystem)
 	{
@@ -26,10 +26,7 @@ internal class ZipFileWrapper : IZipFile
 			() => ZipUtilities.CreateFromDirectory(
 				FileSystem,
 				sourceDirectoryName,
-				destinationArchiveFileName,
-				compressionLevel: null,
-				includeBaseDirectory: false,
-				entryNameEncoding: null));
+				destinationArchiveFileName));
 
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, string, CompressionLevel, bool)" />
 	public void CreateFromDirectory(string sourceDirectoryName,
@@ -47,8 +44,7 @@ internal class ZipFileWrapper : IZipFile
 				sourceDirectoryName,
 				destinationArchiveFileName,
 				compressionLevel,
-				includeBaseDirectory,
-				entryNameEncoding: null));
+				includeBaseDirectory));
 
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, string, CompressionLevel, bool, Encoding)" />
 	public void CreateFromDirectory(string sourceDirectoryName,
@@ -81,9 +77,7 @@ internal class ZipFileWrapper : IZipFile
 			() => ZipUtilities.ExtractToDirectory(
 				FileSystem,
 				sourceArchiveFileName,
-				destinationDirectoryName,
-				entryNameEncoding: null,
-				overwriteFiles: false));
+				destinationDirectoryName));
 
 #if FEATURE_COMPRESSION_OVERWRITE
 	/// <inheritdoc cref="IZipFile.ExtractToDirectory(string, string, bool)" />
@@ -99,7 +93,6 @@ internal class ZipFileWrapper : IZipFile
 				FileSystem,
 				sourceArchiveFileName,
 				destinationDirectoryName,
-				entryNameEncoding: null,
 				overwriteFiles: overwriteFiles));
 #endif
 
@@ -116,8 +109,7 @@ internal class ZipFileWrapper : IZipFile
 				FileSystem,
 				sourceArchiveFileName,
 				destinationDirectoryName,
-				entryNameEncoding: entryNameEncoding,
-				overwriteFiles: false));
+				entryNameEncoding: entryNameEncoding));
 
 #if FEATURE_COMPRESSION_OVERWRITE
 	/// <inheritdoc cref="IZipFile.ExtractToDirectory(string, string, Encoding?, bool)" />
@@ -140,33 +132,34 @@ internal class ZipFileWrapper : IZipFile
 #endif
 
 	/// <inheritdoc cref="IZipFile.Open(string, ZipArchiveMode)" />
-	public ZipArchive Open(string archiveFileName, ZipArchiveMode mode)
-		=> Execute.WhenRealFileSystem(FileSystem,
-			() => ZipFile.Open(archiveFileName, mode),
-			() => ZipUtilities.Open(FileSystem,
-				archiveFileName,
-				mode,
-				entryNameEncoding: null));
+	public IZipArchive Open(string archiveFileName, ZipArchiveMode mode)
+		=> new ZipArchiveWrapper(FileSystem,
+			Execute.WhenRealFileSystem(FileSystem,
+				() => ZipFile.Open(archiveFileName, mode),
+				() => ZipUtilities.Open(FileSystem,
+					archiveFileName,
+					mode)));
 
 	/// <inheritdoc cref="IZipFile.Open(string, ZipArchiveMode, Encoding?)" />
-	public ZipArchive Open(string archiveFileName,
-	                       ZipArchiveMode mode,
-	                       Encoding? entryNameEncoding)
-		=> Execute.WhenRealFileSystem(FileSystem,
-			() => ZipFile.Open(archiveFileName, mode, entryNameEncoding),
-			() => ZipUtilities.Open(FileSystem,
-				archiveFileName,
-				mode,
-				entryNameEncoding));
+	public IZipArchive Open(string archiveFileName,
+	                        ZipArchiveMode mode,
+	                        Encoding? entryNameEncoding)
+		=> new ZipArchiveWrapper(FileSystem,
+			Execute.WhenRealFileSystem(FileSystem,
+				() => ZipFile.Open(archiveFileName, mode, entryNameEncoding),
+				() => ZipUtilities.Open(FileSystem,
+					archiveFileName,
+					mode,
+					entryNameEncoding)));
 
 	/// <inheritdoc cref="IZipFile.OpenRead(string)" />
-	public ZipArchive OpenRead(string archiveFileName)
-		=> Execute.WhenRealFileSystem(FileSystem,
-			() => ZipFile.OpenRead(archiveFileName),
-			() => ZipUtilities.Open(FileSystem,
-				archiveFileName,
-				ZipArchiveMode.Read,
-				entryNameEncoding: null));
+	public IZipArchive OpenRead(string archiveFileName)
+		=> new ZipArchiveWrapper(FileSystem,
+			Execute.WhenRealFileSystem(FileSystem,
+				() => ZipFile.OpenRead(archiveFileName),
+				() => ZipUtilities.Open(FileSystem,
+					archiveFileName,
+					ZipArchiveMode.Read)));
 
 	#endregion
 }

@@ -48,14 +48,14 @@ public interface IZipFile : IFileSystem.IFileSystemExtensionPoint
 #endif
 
 	/// <inheritdoc cref="ZipFile.Open(string, ZipArchiveMode)" />
-	ZipArchive Open(string archiveFileName,
-	                ZipArchiveMode mode);
+	IZipArchive Open(string archiveFileName,
+	                 ZipArchiveMode mode);
 
 	/// <inheritdoc cref="IZipFile.Open(string, ZipArchiveMode, Encoding?)" />
-	ZipArchive Open(string archiveFileName,
-	                ZipArchiveMode mode,
-	                Encoding? entryNameEncoding);
+	IZipArchive Open(string archiveFileName,
+	                 ZipArchiveMode mode,
+	                 Encoding? entryNameEncoding);
 
 	/// <inheritdoc cref="ZipFile.OpenRead(string)" />
-	ZipArchive OpenRead(string archiveFileName);
+	IZipArchive OpenRead(string archiveFileName);
 }
