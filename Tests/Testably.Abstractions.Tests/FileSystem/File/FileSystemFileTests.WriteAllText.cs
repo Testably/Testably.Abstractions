@@ -1,8 +1,25 @@
+using System.IO;
+
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 public abstract partial class FileSystemFileTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
+	[SkippableTheory]
+	[AutoData]
+	public void WriteAllText_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+		string directory, string path)
+	{
+		string fullPath = FileSystem.Path.Combine(directory, path);
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.WriteAllText(fullPath, "foo");
+		});
+
+		exception.Should().BeOfType<DirectoryNotFoundException>()
+		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(fullPath)}'");
+	}
+
 	[SkippableTheory]
 	[AutoData]
 	public void WriteAllText_PreviousFile_ShouldOverwriteFileWithText(

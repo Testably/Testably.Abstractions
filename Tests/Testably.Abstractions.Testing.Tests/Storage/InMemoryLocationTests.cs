@@ -138,6 +138,10 @@ public class InMemoryLocationTests
 		/// <inheritdoc cref="IStorageLocation.FullPath" />
 		public string FullPath { get; }
 
+		/// <inheritdoc cref="IStorageLocation.IsRooted" />
+		public bool IsRooted
+			=> false;
+
 		/// <inheritdoc cref="IEquatable{IStorageLocation}.Equals(IStorageLocation)" />
 		public bool Equals(IStorageLocation? other)
 			=> throw new NotSupportedException();

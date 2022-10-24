@@ -25,6 +25,7 @@ internal sealed class InMemoryLocation : IStorageLocation
 		Execute.OnNetFramework(()
 			=> friendlyName = friendlyName.TrimOnWindows());
 
+		IsRooted = drive?.Name == fullPath || drive?.Name.Substring(1) == fullPath;
 		FriendlyName = friendlyName;
 		Drive = drive;
 	}
@@ -39,6 +40,9 @@ internal sealed class InMemoryLocation : IStorageLocation
 
 	/// <inheritdoc cref="IStorageLocation.FullPath" />
 	public string FullPath { get; }
+
+	/// <inheritdoc cref="IStorageLocation.IsRooted" />
+	public bool IsRooted { get; private set; }
 
 	/// <inheritdoc cref="IEquatable{IStorageLocation}.Equals(IStorageLocation)" />
 	public bool Equals(IStorageLocation? other)

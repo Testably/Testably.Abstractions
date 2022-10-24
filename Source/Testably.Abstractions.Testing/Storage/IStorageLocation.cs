@@ -23,6 +23,11 @@ internal interface IStorageLocation : IEquatable<IStorageLocation>
 	string FullPath { get; }
 
 	/// <summary>
+	///     Flag indicating if the location corresponds to a root directory.
+	/// </summary>
+	bool IsRooted { get; }
+
+	/// <summary>
 	///     Get the parent location.
 	/// </summary>
 	/// <returns>
