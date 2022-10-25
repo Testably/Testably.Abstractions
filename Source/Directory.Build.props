@@ -23,7 +23,7 @@
     <Nullable>enable</Nullable>
     <NoWarn>1701;1702</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <OutputPath>$(SolutionDir)Build\Binaries</OutputPath>
+    <OutputPath>..\..\Build\Binaries</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' != 'Debug' ">
