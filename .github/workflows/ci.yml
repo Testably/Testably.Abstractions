@@ -78,10 +78,12 @@ jobs:
             | jq -e '.|any(.body | contains("$dashboardLink"))' | { read test; echo test=$test; }
           if [[ $test -ne "true" ]];
           then
+            echo "Adding comment as none was found..."
+            body="{\"body\":\"Please check the [Stryker mutation testing dashboard]($dashboardLink#mutant).\"}"
             curl -X POST $commentsUrl \
               -H "Accept: application/vnd.github+json" \
               -H "Authorization: token $GITHUB_TOKEN" \
-          	  -d '{"body":"Please check the [Stryker mutation testing dashboard]($dashboardLink#mutant)!"}'
+          	  -d "$body"
           fi
       - name: Install .NET Stryker
         shell: bash
