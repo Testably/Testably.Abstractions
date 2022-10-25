@@ -24,9 +24,25 @@ public static class ZipFileExtensions
 
 	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToDirectory(ZipArchive, string)" />
 	public static void ExtractToDirectory(this IZipArchive source,
-	                                      string destinationDirectoryName) =>
-		ExtractToDirectory(source, destinationDirectoryName, overwriteFiles: false);
+	                                      string destinationDirectoryName)
+	{
+		if (source == null)
+		{
+			throw new ArgumentNullException(nameof(source));
+		}
 
+		if (destinationDirectoryName == null)
+		{
+			throw new ArgumentNullException(nameof(destinationDirectoryName));
+		}
+
+		foreach (IZipArchiveEntry entry in source.Entries)
+		{
+			entry.ExtractRelativeToDirectory(destinationDirectoryName, false);
+		}
+	}
+
+#if FEATURE_COMPRESSION_ADVANCED
 	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToDirectory(ZipArchive, string, bool)" />
 	public static void ExtractToDirectory(this IZipArchive source,
 	                                      string destinationDirectoryName,
@@ -47,6 +63,7 @@ public static class ZipFileExtensions
 			entry.ExtractRelativeToDirectory(destinationDirectoryName, overwriteFiles);
 		}
 	}
+#endif
 
 	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToFile(ZipArchiveEntry, string)" />
 	public static void ExtractToFile(this IZipArchiveEntry source,
@@ -107,8 +124,7 @@ public static class ZipFileExtensions
 		IFileSystem.IDirectoryInfo di =
 			source.FileSystem.Directory.CreateDirectory(destinationDirectoryName);
 		string destinationDirectoryFullPath = di.FullName;
-		if (!destinationDirectoryFullPath.EndsWith(source.FileSystem.Path
-		   .DirectorySeparatorChar))
+		if (!destinationDirectoryFullPath.EndsWith($"{source.FileSystem.Path.DirectorySeparatorChar}"))
 		{
 			destinationDirectoryFullPath += source.FileSystem.Path.DirectorySeparatorChar;
 		}
