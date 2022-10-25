@@ -73,7 +73,7 @@ jobs:
           curl -X GET $commentsUrl \
             -H "Content-Type: application/json" \
             -H "Authorization: token $GITHUB_TOKEN" \
-            | jq -e '.|any(.body | contains($dashboardLink))' | { read test; echo test=$test; }
+            | jq -e '.|any(.body | contains("$dashboardLink"))' | { read test; echo test=$test; }
           if [[ $test -ne "true" ]];
           then
             curl -X POST $commentsUrl \
