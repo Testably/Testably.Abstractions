@@ -72,12 +72,10 @@ jobs:
           commentsUrl="https://api.github.com/repos/Testably/Testably.Abstractions/issues/$prNumber/comments"
           dashboardLink="https://dashboard.stryker-mutator.io/reports/github.com/Testably/Testably.Abstractions/${GITHUB_HEAD_REF}"
           echo "Search for comment in PR#$prNumber containing $dashboardLink..."
-          curl -X GET $commentsUrl \
+          $result = $(curl -X GET $commentsUrl \
             -H "Content-Type: application/json" \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            | jq -e '.|any(.body | contains("$dashboardLink"))' | { read found; echo found=$found; }
-          echo "Found comment? $found"
-          if [[ "$found" -ne "true" ]]
+            -H "Authorization: token $GITHUB_TOKEN"
+          if [[ $result == *"$dashboardLink"* ]]
           then
             echo "Adding comment as none was found..."
             body="{\"body\":\"Please check the [Stryker mutation testing dashboard]($dashboardLink#mutant).\"}"
