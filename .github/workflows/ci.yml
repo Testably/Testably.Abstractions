@@ -66,31 +66,31 @@ jobs:
       - name: Install .NET Stryker
         shell: bash
         run: |
-          dotnet tool install dotnet-stryker --tool-path ./tools
+          dotnet tool install dotnet-stryker --tool-path ../tools
       - name: Analyze Testably.Abstractions
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
-          ./tools/dotnet-stryker -f .github/stryker/Stryker.Config.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --since:main
+          ../tools/dotnet-stryker -f .github/stryker/Stryker.Config.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --since:main
       - name: Analyze Testably.Abstractions.AccessControl
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
-          ./tools/dotnet-stryker -f .github/stryker/Stryker.Config.AccessControl.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --since:main
+          ../tools/dotnet-stryker -f .github/stryker/Stryker.Config.AccessControl.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --since:main
       - name: Analyze Testably.Abstractions.Compression
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
-          ./tools/dotnet-stryker -f .github/stryker/Stryker.Config.Compression.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --since:main
+          ../tools/dotnet-stryker -f .github/stryker/Stryker.Config.Compression.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --since:main
       - name: Analyze Testably.Abstractions.Testing
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
-          ./tools/dotnet-stryker -f .github/stryker/Stryker.Config.Testing.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --since:main
+          ../tools/dotnet-stryker -f .github/stryker/Stryker.Config.Testing.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --since:main
 
   test-macos:
     name: Test (MacOS)
