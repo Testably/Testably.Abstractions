@@ -6,54 +6,6 @@ on:
     branches: [main]
     
 jobs:
-  analyze:
-    name: Static code analysis
-    runs-on: windows-latest
-    steps:
-      - name: Set up JDK 11
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.11
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v1
-        with:
-          path: ~\sonar\cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Cache SonarCloud scanner
-        id: cache-sonar-scanner
-        uses: actions/cache@v1
-        with:
-          path: .\.sonar\scanner
-          key: ${{ runner.os }}-sonar-scanner
-          restore-keys: ${{ runner.os }}-sonar-scanner
-      - name: Install SonarCloud scanner
-        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
-        shell: powershell
-        run: |
-          New-Item -Path .\.sonar\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-      - name: Build and analyze
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
-        run: |
-          dotnet tool install minver-cli --global
-          dotnet tool restore
-          $version = minver -t v
-          $productVersion,$prerelease = $version -split '-',2
-          echo "Detected product version: $productVersion"
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Testably_Testably.Abstractions" /o:"testably" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /v:"$productVersion" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
-          dotnet tool install --global dotnet-coverage
-          dotnet restore -s 'nuget.config'
-          dotnet build --no-incremental /p:NetCoreOnly=True
-          dotnet-coverage collect 'dotnet test --no-build' -f xml  -o 'coverage.xml'
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-
   stryker:
     name: Analyze quality of unit test coverage with .NET Stryker
     runs-on: windows-latest
@@ -66,110 +18,32 @@ jobs:
       - name: Install .NET Stryker
         shell: bash
         run: |
-          dotnet tool install dotnet-stryker --global
-          dotnet tool restore
+          dotnet tool install dotnet-stryker --tool-path ./tools
       - name: Analyze Testably.Abstractions
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
-          dotnet stryker -f .github/stryker/Stryker.Config.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --with-baseline:"${GITHUB_BASE_REF}" --dashboard-api-key ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+          ./tools/dotnet-stryker -f .github/stryker/Stryker.Config.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --with-baseline:"${GITHUB_BASE_REF}" --dashboard-api-key ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
       - name: Analyze Testably.Abstractions.AccessControl
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
-          dotnet stryker -f .github/stryker/Stryker.Config.AccessControl.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --with-baseline:"${GITHUB_BASE_REF}" --dashboard-api-key ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+          ./tools/dotnet-stryker -f .github/stryker/Stryker.Config.AccessControl.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --with-baseline:"${GITHUB_BASE_REF}" --dashboard-api-key ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
       - name: Analyze Testably.Abstractions.Compression
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
-          dotnet stryker -f .github/stryker/Stryker.Config.Compression.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --with-baseline:"${GITHUB_BASE_REF}" --dashboard-api-key ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+          ./tools/dotnet-stryker -f .github/stryker/Stryker.Config.Compression.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --with-baseline:"${GITHUB_BASE_REF}" --dashboard-api-key ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
       - name: Analyze Testably.Abstractions.Testing
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
-          dotnet stryker -f .github/stryker/Stryker.Config.Testing.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --with-baseline:"${GITHUB_BASE_REF}" --dashboard-api-key ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+          ./tools/dotnet-stryker -f .github/stryker/Stryker.Config.Testing.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --with-baseline:"${GITHUB_BASE_REF}" --dashboard-api-key ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
           
-  test-macos:
-    name: Test (MacOS)
-    runs-on: macos-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: |
-            6.0.x
-      - name: Build solution
-        run: dotnet build /p:NetCoreOnly=True
-      - name: Run tests
-        run: dotnet test --no-build
-
-  test-ubuntu:
-    name: Test (Ubuntu)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: |
-            6.0.x
-      - name: Build solution
-        run: dotnet build /p:NetCoreOnly=True
-      - name: Run tests
-        run: dotnet test --no-build
-
-  test-windows:
-    name: Test (Windows)
-    runs-on: windows-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: |
-            6.0.x
-      - name: Build solution
-        run: dotnet build /p:NetCoreOnly=True
-      - name: Run tests
-        run: dotnet test --no-build
-        
-  test-net-framework:
-    name: Test (.NET Framework)
-    runs-on: windows-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v1.0.5
-      - name: Setup VSTest
-        uses: darenm/Setup-VSTest@v1
-      - name: Navigate to Workspace
-        run: cd $GITHUB_WORKSPACE
-      - name: Restore Packages
-        run: nuget restore Testably.Abstractions.sln
-      - name: Build solution
-        run: msbuild.exe Testably.Abstractions.sln /p:platform="Any CPU" /p:configuration="Release"
-      - name: Run tests
-        run: vstest.console.exe .\Build\Tests\Testably.Abstractions.Tests\net472\Testably.Abstractions.Tests.dll .\Build\Tests\Testably.Abstractions.Parity.Tests\net472\Testably.Abstractions.Parity.Tests.dll .\Build\Tests\Testably.Abstractions.Testing.Tests\net472\Testably.Abstractions.Testing.Tests.dll
-        
   test-examples:
     name: Test (Examples)
     runs-on: ubuntu-latest
