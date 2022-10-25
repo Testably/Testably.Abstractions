@@ -69,10 +69,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
-          if [[ ! curl -X GET $URL \
+          curl -X GET $URL \
             -H "Content-Type: application/json" \
             -H "Authorization: token $GITHUB_TOKEN" \
-            | jq -e '.|any(.body | contains("https://dashboard.stryker-mutator.io/reports/github.com/Testably/Testably.Abstractions/${GITHUB_HEAD_REF}"))' ]];
+            | jq -e '.|any(.body | contains("https://dashboard.stryker-mutator.io/reports/github.com/Testably/Testably.Abstractions/${GITHUB_HEAD_REF}"))' | { read test; echo test=$test; }
+          if [[ $test -ne "true" ]];
           then
             curl -X POST $URL \
               -H "Accept: application/vnd.github+json" \
