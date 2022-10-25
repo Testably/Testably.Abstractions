@@ -74,9 +74,12 @@ jobs:
           echo "Search for comment in PR#$prNumber containing $dashboardLink..."
           curl -X GET $commentsUrl \
             -H "Content-Type: application/json" \
+            -H "Authorization: token $GITHUB_TOKEN"
+          curl -X GET $commentsUrl \
+            -H "Content-Type: application/json" \
             -H "Authorization: token $GITHUB_TOKEN" \
             | jq -e '.|any(.body | contains("$dashboardLink"))' | { read test; echo test=$test; }
-          if [[ $test -ne "true" ]];
+          if [[ "$test" -ne "true" ]];
           then
             echo "Adding comment as none was found..."
             body="{\"body\":\"Please check the [Stryker mutation testing dashboard]($dashboardLink#mutant).\"}"
