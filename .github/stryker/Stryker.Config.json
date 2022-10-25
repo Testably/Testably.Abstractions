@@ -9,6 +9,13 @@
     ],
     "project": "Testably.Abstractions.csproj",
     "target-framework": "net6.0",
+    "since": {
+      "enabled": true,
+      "target": "topic/add-stryker-to-prs",
+	  "ignore-changes-in": [
+	    "**/.github/**/*.*"
+      ]
+    },
     "reporters": [ "html", "progress", "cleartext" ],
     "mutation-level": "Advanced"
   }

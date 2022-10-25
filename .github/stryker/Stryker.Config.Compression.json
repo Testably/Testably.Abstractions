@@ -10,6 +10,11 @@
     "project": "Testably.Abstractions.Compression.csproj",
     "target-framework": "net6.0",
     "reporters": [ "html", "progress", "cleartext" ],
+    "since": {
+      "ignore-changes-in": [
+        "**/.github/**/*.*"
+      ]
+    },
     "mutation-level": "Advanced"
   }
 }
