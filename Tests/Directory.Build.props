@@ -15,7 +15,7 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <NoWarn>701;1702;CA1845</NoWarn>
-    <OutputPath>$(SolutionDir)Build\Tests\$(MSBuildProjectName)</OutputPath>
+    <OutputPath>..\..\Build\Tests\$(MSBuildProjectName)</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
