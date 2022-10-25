@@ -74,7 +74,7 @@ jobs:
           echo "Search for comment in PR#$prNumber containing $dashboardLink..."
           $result = $(curl -X GET $commentsUrl \
             -H "Content-Type: application/json" \
-            -H "Authorization: token $GITHUB_TOKEN"
+            -H "Authorization: token $GITHUB_TOKEN")
           if [[ $result == *"$dashboardLink"* ]]
           then
             echo "Adding comment as none was found..."
