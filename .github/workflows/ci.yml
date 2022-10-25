@@ -65,20 +65,21 @@ jobs:
           fetch-depth: 0
       - name: Add comment
         env:
-          URL: ${{ github.event.issue.comments_url }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
-          curl -X GET $URL \
+          commentsUrl="https://api.github.com/repos/Testably/Testably.Abstractions/issues/154/comments"
+          dashboardLink="https://dashboard.stryker-mutator.io/reports/github.com/Testably/Testably.Abstractions/${GITHUB_HEAD_REF}"
+          curl -X GET $commentsUrl \
             -H "Content-Type: application/json" \
             -H "Authorization: token $GITHUB_TOKEN" \
-            | jq -e '.|any(.body | contains("https://dashboard.stryker-mutator.io/reports/github.com/Testably/Testably.Abstractions/${GITHUB_HEAD_REF}"))' | { read test; echo test=$test; }
+            | jq -e '.|any(.body | contains($dashboardLink))' | { read test; echo test=$test; }
           if [[ $test -ne "true" ]];
           then
-            curl -X POST $URL \
+            curl -X POST $commentsUrl \
               -H "Accept: application/vnd.github+json" \
               -H "Authorization: token $GITHUB_TOKEN" \
-          	  -d '{"body":"Please check the [Stryker mutation testing dashboard](https://dashboard.stryker-mutator.io/reports/github.com/Testably/Testably.Abstractions/${GITHUB_HEAD_REF}#mutant)!"}'
+          	  -d '{"body":"Please check the [Stryker mutation testing dashboard]($dashboardLink#mutant)!"}'
           fi
       - name: Install .NET Stryker
         shell: bash
