@@ -129,7 +129,7 @@ public class NotificationTests
 		new Thread(() =>
 		{
 			// Delay larger than timeout of 10ms
-			Thread.Sleep(1000);
+			Thread.Sleep(10000);
 			timeSystem.Thread.Sleep(1);
 		}).Start();
 
