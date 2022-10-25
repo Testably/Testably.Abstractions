@@ -10,6 +10,11 @@
     ],
     "project": "Testably.Abstractions.Testing.csproj",
     "target-framework": "net6.0",
+    "since": {
+      "ignore-changes-in": [
+        "**/.github/**/*.*"
+      ]
+    },
     "reporters": [ "html", "progress", "cleartext" ],
     "mutation-level": "Advanced",
     "mutate": [
