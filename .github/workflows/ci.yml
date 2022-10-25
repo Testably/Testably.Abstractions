@@ -54,6 +54,45 @@ jobs:
           dotnet-coverage collect 'dotnet test --no-build' -f xml  -o 'coverage.xml'
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
+  stryker:
+    name: Analyze quality of unit test coverage with .NET Stryker
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Install .NET Stryker
+        shell: bash
+        run: |
+          dotnet tool install dotnet-stryker --global
+          dotnet tool restore
+      - name: Analyze Testably.Abstractions
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        shell: bash
+        run: |
+          dotnet stryker -f .github/stryker/Stryker.Config.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --with-baseline:"${GITHUB_BASE_REF}"
+      - name: Analyze Testably.Abstractions.AccessControl
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        shell: bash
+        run: |
+          dotnet stryker -f .github/stryker/Stryker.Config.AccessControl.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --with-baseline:"${GITHUB_BASE_REF}"
+      - name: Analyze Testably.Abstractions.Compression
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        shell: bash
+        run: |
+          dotnet stryker -f .github/stryker/Stryker.Config.Compression.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --with-baseline:"${GITHUB_BASE_REF}"
+      - name: Analyze Testably.Abstractions.Testing
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        shell: bash
+        run: |
+          dotnet stryker -f .github/stryker/Stryker.Config.Testing.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --with-baseline:"${GITHUB_BASE_REF}"
+          
   test-macos:
     name: Test (MacOS)
     runs-on: macos-latest
