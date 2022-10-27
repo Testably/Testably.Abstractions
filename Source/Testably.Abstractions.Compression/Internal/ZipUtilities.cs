@@ -7,6 +7,43 @@ namespace Testably.Abstractions.Internal;
 
 internal static class ZipUtilities
 {
+	internal static IZipArchiveEntry CreateEntryFromFile(
+		IZipArchive destination,
+		string sourceFileName,
+		string entryName,
+		CompressionLevel? compressionLevel = null)
+	{
+		if (sourceFileName == null)
+		{
+			throw new ArgumentNullException(nameof(sourceFileName));
+		}
+
+		using (FileSystemStream fs = destination.FileSystem.FileStream.New(sourceFileName,
+			FileMode.Open, FileAccess.Read, FileShare.Read))
+		{
+			IZipArchiveEntry entry = compressionLevel.HasValue
+				? destination.CreateEntry(entryName, compressionLevel.Value)
+				: destination.CreateEntry(entryName);
+
+			DateTime lastWrite =
+				destination.FileSystem.File.GetLastWriteTime(sourceFileName);
+
+			if (lastWrite.Year < 1980 || lastWrite.Year > 2107)
+			{
+				lastWrite = new DateTime(1980, 1, 1, 0, 0, 0);
+			}
+
+			entry.LastWriteTime = lastWrite;
+
+			using (Stream es = entry.Open())
+			{
+				fs.CopyTo(es);
+			}
+
+			return entry;
+		}
+	}
+
 	/// <summary>
 	///     Create a <c>ZipArchive</c> from the files and directories in <paramref name="sourceDirectoryName" />.
 	/// </summary>
@@ -75,6 +112,44 @@ internal static class ZipUtilities
 		}
 	}
 
+	internal static void ExtractRelativeToDirectory(this IZipArchiveEntry source,
+	                                                string destinationDirectoryName,
+	                                                bool overwrite)
+	{
+		if (destinationDirectoryName == null)
+		{
+			throw new ArgumentNullException(nameof(destinationDirectoryName));
+		}
+
+		string fileDestinationPath =
+			source.FileSystem.Path.Combine(destinationDirectoryName,
+				source.FullName.TrimStart(
+					source.FileSystem.Path.DirectorySeparatorChar,
+					source.FileSystem.Path.AltDirectorySeparatorChar));
+		string? directoryPath =
+			source.FileSystem.Path.GetDirectoryName(fileDestinationPath);
+		if (directoryPath != null &&
+		    !source.FileSystem.Directory.Exists(directoryPath))
+		{
+			source.FileSystem.Directory.CreateDirectory(directoryPath);
+		}
+
+		if (source.FullName.EndsWith("/"))
+		{
+			if (source.Length != 0)
+			{
+				throw new IOException(
+					"Zip entry name ends in directory separator character but contains data.");
+			}
+
+			source.FileSystem.Directory.CreateDirectory(fileDestinationPath);
+		}
+		else
+		{
+			ExtractToFile(source, fileDestinationPath, overwrite);
+		}
+	}
+
 	/// <summary>
 	///     Extract the archive at <paramref name="sourceArchiveFileName" /> to the
 	///     <paramref name="destinationDirectoryName" />.
@@ -90,35 +165,44 @@ internal static class ZipUtilities
 			throw new ArgumentNullException(nameof(sourceArchiveFileName));
 		}
 
-		string destinationPath =
-			fileSystem.Path.GetFullPath(destinationDirectoryName);
 		using (ZipArchive archive = Open(fileSystem, sourceArchiveFileName,
 			ZipArchiveMode.Read,
 			entryNameEncoding))
 		{
+			ZipArchiveWrapper wrappedArchive = new(fileSystem, archive);
 			foreach (ZipArchiveEntry entry in archive.Entries)
 			{
-				string filePath =
-					fileSystem.Path.Combine(destinationPath,
-						entry.FullName.TrimStart(
-							fileSystem.Path.DirectorySeparatorChar,
-							fileSystem.Path.AltDirectorySeparatorChar));
-				string? directoryPath = fileSystem.Path.GetDirectoryName(filePath);
-				if (directoryPath != null &&
-				    !fileSystem.Directory.Exists(directoryPath))
-				{
-					fileSystem.Directory.CreateDirectory(directoryPath);
-				}
-
-				if (fileSystem.File.Exists(filePath) && !overwriteFiles)
-				{
-					throw new IOException($"The file '{filePath}' already exists.");
-				}
-
-				using MemoryStream ms = new();
-				entry.Open().CopyTo(ms);
-				fileSystem.File.WriteAllBytes(filePath, ms.ToArray());
+				IZipArchiveEntry wrappedEntry = ZipArchiveEntryWrapper.New(
+					fileSystem, wrappedArchive, entry);
+				ExtractRelativeToDirectory(wrappedEntry, destinationDirectoryName,
+					overwriteFiles);
 			}
+		}
+	}
+
+	internal static void ExtractToFile(IZipArchiveEntry source,
+	                                   string destinationFileName, bool overwrite)
+	{
+		FileMode mode = overwrite ? FileMode.Create : FileMode.CreateNew;
+
+		using (FileSystemStream fileStream = source.FileSystem.FileStream
+		   .New(destinationFileName, mode, FileAccess.Write, FileShare.None))
+		{
+			using (Stream entryStream = source.Open())
+			{
+				entryStream.CopyTo(fileStream);
+			}
+		}
+
+		try
+		{
+			source.FileSystem.File.SetLastWriteTime(destinationFileName,
+				source.LastWriteTime.DateTime);
+		}
+		catch
+		{
+			// some OSes might not support setting the last write time
+			// the extraction should not fail because of that
 		}
 	}
 

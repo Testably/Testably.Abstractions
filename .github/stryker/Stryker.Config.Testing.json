@@ -5,8 +5,8 @@
       "module": "Testably.Abstractions.Testing"
     },
     "test-projects": [
-      "./Tests/Testably.Abstractions.Tests/Testably.Abstractions.Tests.csproj",
-      "./Tests/Testably.Abstractions.Testing.Tests/Testably.Abstractions.Testing.Tests.csproj"
+      "./Testably.Abstractions.Tests/Testably.Abstractions.Tests.csproj",
+      "./Testably.Abstractions.Testing.Tests/Testably.Abstractions.Testing.Tests.csproj"
     ],
     "project": "Testably.Abstractions.Testing.csproj",
     "target-framework": "net6.0",

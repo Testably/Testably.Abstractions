@@ -137,6 +137,23 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void
+		EnumerateFileSystemEntries_WithFileNameStartingWithDirectoryName_ShouldNotBeIncluded(
+			string path)
+	{
+		FileSystem.Initialize()
+		   .WithSubdirectory(path)
+		   .WithFile($"{path}.txt");
+
+		List<string> result = FileSystem.Directory
+		   .EnumerateFileSystemEntries(path, "*", SearchOption.AllDirectories)
+		   .ToList();
+
+		result.Should().BeEmpty();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void EnumerateFileSystemEntries_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{

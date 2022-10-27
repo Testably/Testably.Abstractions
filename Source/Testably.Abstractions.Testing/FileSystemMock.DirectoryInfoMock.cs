@@ -17,11 +17,15 @@ public sealed partial class FileSystemMock
 	{
 		private DirectoryInfoMock(IStorageLocation location,
 		                          FileSystemMock fileSystem)
-			: base(fileSystem, location)
+			: base(fileSystem, location, FileSystemTypes.Directory)
 		{
 		}
 
 		#region IDirectoryInfo Members
+
+		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
+		public override bool Exists
+			=> base.Exists && FileSystemType == FileSystemTypes.Directory;
 
 		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.Parent" />
 		public IFileSystem.IDirectoryInfo? Parent

@@ -9,6 +9,7 @@ public sealed partial class FileSystemMock
 {
 	private class FileSystemInfoMock : IFileSystem.IFileSystemInfo
 	{
+		protected FileSystemTypes FileSystemType { get; }
 		protected IStorageLocation Location;
 		protected readonly FileSystemMock FileSystem;
 
@@ -30,11 +31,14 @@ public sealed partial class FileSystemMock
 		private bool _isInitialized;
 		private IStorageContainer _container;
 
-		protected FileSystemInfoMock(FileSystemMock fileSystem, IStorageLocation location)
+		protected FileSystemInfoMock(FileSystemMock fileSystem, IStorageLocation location, FileSystemTypes fileSystemType)
 		{
 			FileSystem = fileSystem;
 			Location = location;
 			_container = fileSystem.Storage.GetContainer(location);
+			FileSystemType = _container is not NullContainer
+				? _container.Type
+				: fileSystemType;
 		}
 
 		#region IFileSystemInfo Members
@@ -210,7 +214,7 @@ public sealed partial class FileSystemMock
 				return DirectoryInfoMock.New(location, fileSystem);
 			}
 
-			return new FileSystemInfoMock(fileSystem, location);
+			return new FileSystemInfoMock(fileSystem, location, FileSystemTypes.DirectoryOrFile);
 		}
 
 		private void RefreshInternal()

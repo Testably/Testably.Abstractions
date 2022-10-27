@@ -28,6 +28,16 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void Exists_File_ShouldReturnFalse(string path)
+	{
+		FileSystem.File.WriteAllText(path, null);
+		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+
+		sut.Exists.Should().BeFalse();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Exists_NotExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
 	{
 		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);

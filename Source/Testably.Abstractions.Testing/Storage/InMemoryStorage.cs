@@ -151,8 +151,18 @@ internal sealed class InMemoryStorage : IStorage
 
 		enumerationOptions ??= EnumerationOptionsHelper.Compatible;
 
+		string fullPath = location.FullPath;
+#if NETSTANDARD2_0
+		if (!fullPath.EndsWith($"{_fileSystem.Path.DirectorySeparatorChar}"))
+#else
+		if (!fullPath.EndsWith(_fileSystem.Path.DirectorySeparatorChar))
+#endif
+		{
+			fullPath += _fileSystem.Path.DirectorySeparatorChar;
+		}
+
 		foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers
-		   .Where(x => x.Key.FullPath.StartsWith(location.FullPath,
+		   .Where(x => x.Key.FullPath.StartsWith(fullPath,
 			               InMemoryLocation.StringComparisonMode) &&
 		               !x.Key.Equals(location)))
 		{
@@ -271,7 +281,7 @@ internal sealed class InMemoryStorage : IStorage
 				{
 					IStorageLocation? parentLocation = loc.GetParent();
 					if (parentLocation != null &&
-						!parentLocation.IsRooted &&
+					    !parentLocation.IsRooted &&
 					    !_containers.ContainsKey(parentLocation))
 					{
 						throw ExceptionFactory.DirectoryNotFound(loc.FullPath);
@@ -461,7 +471,7 @@ internal sealed class InMemoryStorage : IStorage
 		return false;
 	}
 
-	#endregion
+#endregion
 
 	internal void WithAccessControl(
 		Func<string, IFileSystem.IFileSystemExtensionContainer, bool>?

@@ -16,7 +16,7 @@ public sealed partial class FileSystemMock
 	{
 		private FileInfoMock(IStorageLocation location,
 		                     FileSystemMock fileSystem)
-			: base(fileSystem, location)
+			: base(fileSystem, location, FileSystemTypes.File)
 		{
 		}
 
@@ -30,6 +30,10 @@ public sealed partial class FileSystemMock
 		/// <inheritdoc cref="IFileSystem.IFileInfo.DirectoryName" />
 		public string? DirectoryName
 			=> Directory?.FullName;
+
+		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
+		public override bool Exists
+			=> base.Exists && FileSystemType == FileSystemTypes.File;
 
 		/// <inheritdoc cref="IFileSystem.IFileInfo.IsReadOnly" />
 		public bool IsReadOnly

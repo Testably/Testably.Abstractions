@@ -38,6 +38,13 @@ public interface IZipArchiveEntry : IFileSystem.IFileSystemExtensionPoint
 	/// <inheritdoc cref="ZipArchiveEntry.Delete()" />
 	void Delete();
 
+	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToFile(ZipArchiveEntry, string)" />
+	void ExtractToFile(string destinationFileName);
+
+	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToFile(ZipArchiveEntry, string, bool)" />
+	void ExtractToFile(string destinationFileName,
+	                   bool overwrite);
+
 	/// <inheritdoc cref="ZipArchiveEntry.Open()" />
 	Stream Open();
 }

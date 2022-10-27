@@ -2,7 +2,7 @@
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchive;
 
-public abstract class ZipArchiveTests<TFileSystem>
+public abstract partial class ZipArchiveTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	public abstract string BasePath { get; }

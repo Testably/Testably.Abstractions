@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
+using Testably.Abstractions.Internal;
 
 namespace Testably.Abstractions;
 
@@ -66,6 +67,25 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 	/// <inheritdoc cref="IZipArchiveEntry.Delete()" />
 	public void Delete()
 		=> _instance.Delete();
+
+	/// <inheritdoc cref="IZipArchiveEntry.ExtractToFile(string)" />
+	public void ExtractToFile(string destinationFileName)
+		=> Execute.WhenRealFileSystem(FileSystem,
+			() => _instance.ExtractToFile(destinationFileName),
+			() => ExtractToFile(destinationFileName, false));
+
+	/// <inheritdoc cref="IZipArchiveEntry.ExtractToFile(string, bool)" />
+	public void ExtractToFile(string destinationFileName, bool overwrite)
+	{
+		if (destinationFileName == null)
+		{
+			throw new ArgumentNullException(nameof(destinationFileName));
+		}
+
+		Execute.WhenRealFileSystem(FileSystem,
+			() => _instance.ExtractToFile(destinationFileName, overwrite),
+			() => ZipUtilities.ExtractToFile(this, destinationFileName, overwrite));
+	}
 
 	/// <inheritdoc cref="IZipArchiveEntry.Open()" />
 	public Stream Open()
