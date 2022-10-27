@@ -76,17 +76,16 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 
 	/// <inheritdoc cref="IZipArchiveEntry.ExtractToFile(string, bool)" />
 	public void ExtractToFile(string destinationFileName, bool overwrite)
-		=> Execute.WhenRealFileSystem(FileSystem,
-			() => _instance.ExtractToFile(destinationFileName, overwrite),
-			() =>
-			{
-				if (destinationFileName == null)
-				{
-					throw new ArgumentNullException(nameof(destinationFileName));
-				}
+	{
+		if (destinationFileName == null)
+		{
+			throw new ArgumentNullException(nameof(destinationFileName));
+		}
 
-				ZipUtilities.ExtractToFile(this, destinationFileName, overwrite);
-			});
+		Execute.WhenRealFileSystem(FileSystem,
+			() => _instance.ExtractToFile(destinationFileName, overwrite),
+			() => ZipUtilities.ExtractToFile(this, destinationFileName, overwrite));
+	}
 
 	/// <inheritdoc cref="IZipArchiveEntry.Open()" />
 	public Stream Open()

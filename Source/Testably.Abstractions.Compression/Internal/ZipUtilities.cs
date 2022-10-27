@@ -13,11 +13,6 @@ internal static class ZipUtilities
 		string entryName,
 		CompressionLevel? compressionLevel = null)
 	{
-		if (destination == null)
-		{
-			throw new ArgumentNullException(nameof(destination));
-		}
-
 		if (sourceFileName == null)
 		{
 			throw new ArgumentNullException(nameof(sourceFileName));
@@ -27,12 +22,7 @@ internal static class ZipUtilities
 		{
 			throw new ArgumentNullException(nameof(entryName));
 		}
-
-		// Checking of compressionLevel is passed down to DeflateStream and the IDeflater implementation
-		// as it is a pluggable component that completely encapsulates the meaning of compressionLevel.
-
-		// Argument checking gets passed down to FileStream's ctor and CreateEntry
-
+		
 		using (FileSystemStream fs = destination.FileSystem.FileStream.New(sourceFileName,
 			FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 0x1000,
 			useAsync: false))
@@ -41,10 +31,8 @@ internal static class ZipUtilities
 				? destination.CreateEntry(entryName, compressionLevel.Value)
 				: destination.CreateEntry(entryName);
 
-			DateTime lastWrite = File.GetLastWriteTime(sourceFileName);
-
-			// If file to be archived has an invalid last modified time, use the first datetime representable in the Zip timestamp format
-			// (midnight on January 1, 1980):
+			DateTime lastWrite = destination.FileSystem.File.GetLastWriteTime(sourceFileName);
+			
 			if (lastWrite.Year < 1980 || lastWrite.Year > 2107)
 			{
 				lastWrite = new DateTime(1980, 1, 1, 0, 0, 0);
@@ -133,17 +121,11 @@ internal static class ZipUtilities
 	                                                string destinationDirectoryName,
 	                                                bool overwrite)
 	{
-		if (source == null)
-		{
-			throw new ArgumentNullException(nameof(source));
-		}
-
 		if (destinationDirectoryName == null)
 		{
 			throw new ArgumentNullException(nameof(destinationDirectoryName));
 		}
-
-		// Note that this will give us a good DirectoryInfo even if destinationDirectoryName exists:
+		
 		IFileSystem.IDirectoryInfo di =
 			source.FileSystem.Directory.CreateDirectory(destinationDirectoryName);
 		string destinationDirectoryFullPath = di.FullName;
@@ -171,8 +153,6 @@ internal static class ZipUtilities
 		}
 		else
 		{
-			// If it is a file:
-			// Create containing directory:
 			source.FileSystem.Directory.CreateDirectory(
 				source.FileSystem.Path.GetDirectoryName(fileDestinationPath)!);
 			source.ExtractToFile(fileDestinationPath, overwrite: overwrite);
