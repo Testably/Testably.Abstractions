@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO.Compression;
 using System.Linq;
+using Testably.Abstractions.Internal;
 
 namespace Testably.Abstractions;
 
@@ -41,6 +42,68 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 	                                    CompressionLevel compressionLevel)
 		=> ZipArchiveEntryWrapper.New(FileSystem, this,
 			_instance.CreateEntry(entryName, compressionLevel));
+
+	/// <inheritdoc cref="IZipArchive.CreateEntryFromFile(string, string)" />
+	public IZipArchiveEntry CreateEntryFromFile(string sourceFileName, string entryName)
+		=> Execute.WhenRealFileSystem(FileSystem,
+			() => ZipArchiveEntryWrapper.New(FileSystem, this,
+				_instance.CreateEntryFromFile(
+					sourceFileName,
+					entryName)),
+			() => ZipUtilities.CreateEntryFromFile(this,
+				sourceFileName,
+				entryName));
+
+	/// <inheritdoc cref="IZipArchive.CreateEntryFromFile(string, string, CompressionLevel)" />
+	public IZipArchiveEntry CreateEntryFromFile(string sourceFileName, string entryName,
+	                                            CompressionLevel compressionLevel)
+		=> Execute.WhenRealFileSystem(FileSystem,
+			() => ZipArchiveEntryWrapper.New(FileSystem, this,
+				_instance.CreateEntryFromFile(
+					sourceFileName,
+					entryName,
+					compressionLevel)),
+			() => ZipUtilities.CreateEntryFromFile(this,
+				sourceFileName,
+				entryName,
+				compressionLevel));
+
+	/// <inheritdoc cref="IZipArchive.ExtractToDirectory(string)" />
+	public void ExtractToDirectory(string destinationDirectoryName)
+		=> Execute.WhenRealFileSystem(FileSystem,
+			() => _instance.ExtractToDirectory(destinationDirectoryName),
+			() =>
+			{
+				if (destinationDirectoryName == null)
+				{
+					throw new ArgumentNullException(nameof(destinationDirectoryName));
+				}
+
+				foreach (IZipArchiveEntry entry in Entries)
+				{
+					entry.ExtractRelativeToDirectory(destinationDirectoryName, false);
+				}
+			});
+
+#if FEATURE_COMPRESSION_ADVANCED
+	/// <inheritdoc cref="IZipArchive.ExtractToDirectory(string, bool)" />
+	public void ExtractToDirectory(string destinationDirectoryName, bool overwriteFiles)
+		=> Execute.WhenRealFileSystem(FileSystem,
+			() => _instance.ExtractToDirectory(destinationDirectoryName, overwriteFiles),
+			() =>
+			{
+				if (destinationDirectoryName == null)
+				{
+					throw new ArgumentNullException(nameof(destinationDirectoryName));
+				}
+
+				foreach (IZipArchiveEntry entry in Entries)
+				{
+					entry.ExtractRelativeToDirectory(destinationDirectoryName,
+						overwriteFiles);
+				}
+			});
+#endif
 
 	/// <inheritdoc cref="IZipArchive.GetEntry(string)" />
 	public IZipArchiveEntry? GetEntry(string entryName)

@@ -19,6 +19,25 @@ public interface IZipArchive : IFileSystem.IFileSystemExtensionPoint, IDisposabl
 	/// <inheritdoc cref="ZipArchive.CreateEntry(string, CompressionLevel)" />
 	IZipArchiveEntry CreateEntry(string entryName, CompressionLevel compressionLevel);
 
+	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.CreateEntryFromFile(ZipArchive, string, string)" />
+	IZipArchiveEntry CreateEntryFromFile(string sourceFileName,
+	                                     string entryName);
+
+	/// <inheritdoc
+	///     cref="System.IO.Compression.ZipFileExtensions.CreateEntryFromFile(ZipArchive, string, string, CompressionLevel)" />
+	IZipArchiveEntry CreateEntryFromFile(string sourceFileName,
+	                                     string entryName,
+	                                     CompressionLevel compressionLevel);
+
+	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToDirectory(ZipArchive, string)" />
+	void ExtractToDirectory(string destinationDirectoryName);
+
+#if FEATURE_COMPRESSION_ADVANCED
+	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToDirectory(ZipArchive, string, bool)" />
+	void ExtractToDirectory(string destinationDirectoryName,
+	                        bool overwriteFiles);
+#endif
+
 	/// <inheritdoc cref="ZipArchive.GetEntry(string)" />
 	IZipArchiveEntry? GetEntry(string entryName);
 }

@@ -7,11 +7,11 @@ namespace Testably.Abstractions.Internal;
 
 internal static class ZipUtilities
 {
-	internal static IZipArchiveEntry CreateEntryFromFile(IZipArchive destination,
-	                                                     string sourceFileName,
-	                                                     string entryName,
-	                                                     CompressionLevel?
-		                                                     compressionLevel)
+	internal static IZipArchiveEntry CreateEntryFromFile(
+		IZipArchive destination,
+		string sourceFileName,
+		string entryName,
+		CompressionLevel? compressionLevel = null)
 	{
 		if (destination == null)
 		{

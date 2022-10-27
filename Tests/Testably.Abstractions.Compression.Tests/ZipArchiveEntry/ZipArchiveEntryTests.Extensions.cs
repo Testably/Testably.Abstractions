@@ -1,17 +1,19 @@
 ﻿using System.IO.Compression;
+using System.Linq;
 
-namespace Testably.Abstractions.Compression.Tests.ZipArchive;
+namespace Testably.Abstractions.Compression.Tests.ZipArchiveEntry;
 
-public abstract partial class ZipArchiveTests<TFileSystem>
+public abstract partial class ZipArchiveEntryTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
 	[AutoData]
-	public void ExtractToDirectory_DestinationNull_ShouldThrowArgumentNullException(
+	public void ExtractToFile_DestinationNull_ShouldThrowArgumentNullException(
 		CompressionLevel compressionLevel)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("foo");
+		   .WithSubdirectory("foo").Initialized(s => s
+			   .WithAFile());
 
 		FileSystem.ZipFile()
 		   .CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
@@ -21,21 +23,21 @@ public abstract partial class ZipArchiveTests<TFileSystem>
 			using IZipArchive archive =
 				FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
-			archive.ExtractToDirectory(null!);
+			archive.Entries.Single().ExtractToFile(null!);
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>();
 	}
 
-#if FEATURE_COMPRESSION_ADVANCED
 	[SkippableTheory]
 	[AutoData]
 	public void
-		ExtractToDirectory_DestinationNull_WithOverwrite_ShouldThrowArgumentNullException(
+		ExtractToFile_DestinationNull_WithOverwrite_ShouldThrowArgumentNullException(
 			CompressionLevel compressionLevel)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("foo");
+		   .WithSubdirectory("foo").Initialized(s => s
+			   .WithAFile());
 
 		FileSystem.ZipFile()
 		   .CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
@@ -45,10 +47,9 @@ public abstract partial class ZipArchiveTests<TFileSystem>
 			using IZipArchive archive =
 				FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
-			archive.ExtractToDirectory(null!, true);
+			archive.Entries.Single().ExtractToFile(null!, true);
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>();
 	}
-#endif
 }

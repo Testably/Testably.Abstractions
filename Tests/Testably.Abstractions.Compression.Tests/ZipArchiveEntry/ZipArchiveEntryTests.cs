@@ -5,7 +5,7 @@ using Testably.Abstractions.Compression.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchiveEntry;
 
-public abstract class ZipArchiveEntryTests<TFileSystem>
+public abstract partial class ZipArchiveEntryTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	public abstract string BasePath { get; }
