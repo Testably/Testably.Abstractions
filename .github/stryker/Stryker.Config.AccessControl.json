@@ -5,7 +5,7 @@
       "module": "Testably.Abstractions.AccessControl"
     },
     "test-projects": [
-      "./Tests/Testably.Abstractions.AccessControl.Tests/Testably.Abstractions.AccessControl.Tests.csproj"
+      "./Testably.Abstractions.AccessControl.Tests/Testably.Abstractions.AccessControl.Tests.csproj"
     ],
     "project": "Testably.Abstractions.AccessControl.csproj",
     "target-framework": "net6.0",

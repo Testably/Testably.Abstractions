@@ -5,7 +5,7 @@
       "module": "Testably.Abstractions.Compression"
     },
     "test-projects": [
-      "./Tests/Testably.Abstractions.Compression.Tests/Testably.Abstractions.Compression.Tests.csproj"
+      "./Testably.Abstractions.Compression.Tests/Testably.Abstractions.Compression.Tests.csproj"
     ],
     "project": "Testably.Abstractions.Compression.csproj",
     "target-framework": "net6.0",
