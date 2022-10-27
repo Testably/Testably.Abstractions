@@ -146,12 +146,6 @@ internal static class ZipUtilities
 		}
 		else
 		{
-			if (source.FileSystem.File.Exists(fileDestinationPath) && !overwrite)
-			{
-				throw new IOException(
-					$"The file '{source.FileSystem.Path.GetFullPath(fileDestinationPath)}' already exists.");
-			}
-
 			ExtractToFile(source, fileDestinationPath, overwrite);
 		}
 	}
