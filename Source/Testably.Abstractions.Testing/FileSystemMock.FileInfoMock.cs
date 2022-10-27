@@ -31,6 +31,10 @@ public sealed partial class FileSystemMock
 		public string? DirectoryName
 			=> Directory?.FullName;
 
+		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
+		public override bool Exists
+			=> base.Exists && Container.Type == FileSystemTypes.File;
+
 		/// <inheritdoc cref="IFileSystem.IFileInfo.IsReadOnly" />
 		public bool IsReadOnly
 		{

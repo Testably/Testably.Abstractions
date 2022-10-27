@@ -23,6 +23,10 @@ public sealed partial class FileSystemMock
 
 		#region IDirectoryInfo Members
 
+		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
+		public override bool Exists
+			=> base.Exists && Container.Type == FileSystemTypes.Directory;
+
 		/// <inheritdoc cref="IFileSystem.IDirectoryInfo.Parent" />
 		public IFileSystem.IDirectoryInfo? Parent
 			=> New(Location.GetParent(), FileSystem);

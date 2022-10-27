@@ -17,15 +17,9 @@ internal static class ZipUtilities
 		{
 			throw new ArgumentNullException(nameof(sourceFileName));
 		}
-
-		if (entryName == null)
-		{
-			throw new ArgumentNullException(nameof(entryName));
-		}
 		
 		using (FileSystemStream fs = destination.FileSystem.FileStream.New(sourceFileName,
-			FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 0x1000,
-			useAsync: false))
+			FileMode.Open, FileAccess.Read, FileShare.Read))
 		{
 			IZipArchiveEntry entry = compressionLevel.HasValue
 				? destination.CreateEntry(entryName, compressionLevel.Value)

@@ -47,6 +47,16 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void Exists_Directory_ShouldReturnFalse(string path)
+	{
+		FileSystem.Directory.CreateDirectory(path);
+		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+
+		sut.Exists.Should().BeFalse();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void IsReadOnly_SetToFalse_ShouldRemoveReadOnlyAttribute(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);

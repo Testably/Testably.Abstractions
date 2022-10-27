@@ -27,7 +27,8 @@ public abstract partial class ZipArchiveEntryTests<TFileSystem>
 			archive.Entries.Single().ExtractToFile(null!);
 		});
 
-		exception.Should().BeOfType<ArgumentNullException>();
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.ParamName.Should().Be("destinationFileName");
 	}
 
 	[SkippableTheory]
