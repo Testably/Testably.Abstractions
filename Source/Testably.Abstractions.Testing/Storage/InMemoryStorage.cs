@@ -152,7 +152,8 @@ internal sealed class InMemoryStorage : IStorage
 		enumerationOptions ??= EnumerationOptionsHelper.Compatible;
 
 		foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers
-		   .Where(x => x.Key.FullPath.StartsWith(location.FullPath,
+		   .Where(x => x.Key.FullPath.StartsWith(
+			               location.FullPath + _fileSystem.Path.DirectorySeparatorChar,
 			               InMemoryLocation.StringComparisonMode) &&
 		               !x.Key.Equals(location)))
 		{

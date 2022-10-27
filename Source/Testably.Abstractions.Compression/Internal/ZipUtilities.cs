@@ -17,7 +17,7 @@ internal static class ZipUtilities
 		{
 			throw new ArgumentNullException(nameof(sourceFileName));
 		}
-		
+
 		using (FileSystemStream fs = destination.FileSystem.FileStream.New(sourceFileName,
 			FileMode.Open, FileAccess.Read, FileShare.Read))
 		{
@@ -25,8 +25,9 @@ internal static class ZipUtilities
 				? destination.CreateEntry(entryName, compressionLevel.Value)
 				: destination.CreateEntry(entryName);
 
-			DateTime lastWrite = destination.FileSystem.File.GetLastWriteTime(sourceFileName);
-			
+			DateTime lastWrite =
+				destination.FileSystem.File.GetLastWriteTime(sourceFileName);
+
 			if (lastWrite.Year < 1980 || lastWrite.Year > 2107)
 			{
 				lastWrite = new DateTime(1980, 1, 1, 0, 0, 0);
@@ -119,37 +120,39 @@ internal static class ZipUtilities
 		{
 			throw new ArgumentNullException(nameof(destinationDirectoryName));
 		}
-		
-		IFileSystem.IDirectoryInfo di =
-			source.FileSystem.Directory.CreateDirectory(destinationDirectoryName);
-		string destinationDirectoryFullPath = di.FullName;
-		if (!destinationDirectoryFullPath.EndsWith(
-			$"{source.FileSystem.Path.DirectorySeparatorChar}"))
+
+		string fileDestinationPath =
+			source.FileSystem.Path.Combine(destinationDirectoryName,
+				source.FullName.TrimStart(
+					source.FileSystem.Path.DirectorySeparatorChar,
+					source.FileSystem.Path.AltDirectorySeparatorChar));
+		string? directoryPath =
+			source.FileSystem.Path.GetDirectoryName(fileDestinationPath);
+		if (directoryPath != null &&
+		    !source.FileSystem.Directory.Exists(directoryPath))
 		{
-			destinationDirectoryFullPath += source.FileSystem.Path.DirectorySeparatorChar;
+			source.FileSystem.Directory.CreateDirectory(directoryPath);
 		}
 
-		string fileDestinationPath = source.FileSystem.Path.GetFullPath(
-			source.FileSystem.Path.Combine(destinationDirectoryFullPath,
-				source.FullName));
-
-		//if (!fileDestinationPath.StartsWith(destinationDirectoryFullPath, PathInternal.StringComparison))
-		//	throw new IOException(SR.IO_ExtractingResultsInOutside);
-
-		if (source.FileSystem.Path.GetFileName(fileDestinationPath).Length == 0)
+		if (source.FullName.EndsWith("/"))
 		{
-			// If it is a directory:
-
-			//if (source.Length != 0)
-			//	throw new IOException(SR.IO_DirectoryNameWithData);
+			if (source.Length != 0)
+			{
+				throw new IOException(
+					"Zip entry name ends in directory separator character but contains data.");
+			}
 
 			source.FileSystem.Directory.CreateDirectory(fileDestinationPath);
 		}
 		else
 		{
-			source.FileSystem.Directory.CreateDirectory(
-				source.FileSystem.Path.GetDirectoryName(fileDestinationPath)!);
-			source.ExtractToFile(fileDestinationPath, overwrite: overwrite);
+			if (source.FileSystem.File.Exists(fileDestinationPath) && !overwrite)
+			{
+				throw new IOException(
+					$"The file '{source.FileSystem.Path.GetFullPath(fileDestinationPath)}' already exists.");
+			}
+
+			ExtractToFile(source, fileDestinationPath, overwrite);
 		}
 	}
 
@@ -168,34 +171,17 @@ internal static class ZipUtilities
 			throw new ArgumentNullException(nameof(sourceArchiveFileName));
 		}
 
-		string destinationPath =
-			fileSystem.Path.GetFullPath(destinationDirectoryName);
 		using (ZipArchive archive = Open(fileSystem, sourceArchiveFileName,
 			ZipArchiveMode.Read,
 			entryNameEncoding))
 		{
+			ZipArchiveWrapper wrappedArchive = new(fileSystem, archive);
 			foreach (ZipArchiveEntry entry in archive.Entries)
 			{
-				string filePath =
-					fileSystem.Path.Combine(destinationPath,
-						entry.FullName.TrimStart(
-							fileSystem.Path.DirectorySeparatorChar,
-							fileSystem.Path.AltDirectorySeparatorChar));
-				string? directoryPath = fileSystem.Path.GetDirectoryName(filePath);
-				if (directoryPath != null &&
-				    !fileSystem.Directory.Exists(directoryPath))
-				{
-					fileSystem.Directory.CreateDirectory(directoryPath);
-				}
-
-				if (fileSystem.File.Exists(filePath) && !overwriteFiles)
-				{
-					throw new IOException($"The file '{filePath}' already exists.");
-				}
-
-				using MemoryStream ms = new();
-				entry.Open().CopyTo(ms);
-				fileSystem.File.WriteAllBytes(filePath, ms.ToArray());
+				IZipArchiveEntry wrappedEntry = ZipArchiveEntryWrapper.New(
+					fileSystem, wrappedArchive, entry);
+				ExtractRelativeToDirectory(wrappedEntry, destinationDirectoryName,
+					overwriteFiles);
 			}
 		}
 	}
