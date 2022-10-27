@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
-    <ProjectReference Include="..\Testably.Abstractions\Testably.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>
