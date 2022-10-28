@@ -107,8 +107,13 @@ public abstract class FileSystemStream : Stream
 		=> _stream.BeginWrite(buffer, offset, count, callback, state);
 
 	/// <inheritdoc cref="Stream.CopyTo(Stream, int)" />
-	public new void CopyTo(Stream destination, int bufferSize)
+#if NETSTANDARD2_0
+	public new virtual void CopyTo(Stream destination, int bufferSize)
 		=> _stream.CopyTo(destination, bufferSize);
+#else
+	public override void CopyTo(Stream destination, int bufferSize)
+		=> _stream.CopyTo(destination, bufferSize);
+#endif
 
 	/// <inheritdoc cref="Stream.CopyToAsync(Stream, int, CancellationToken)" />
 	public override Task CopyToAsync(Stream destination,

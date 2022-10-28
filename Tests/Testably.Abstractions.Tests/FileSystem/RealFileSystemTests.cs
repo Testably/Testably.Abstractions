@@ -5,10 +5,11 @@ using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Tests.FileSystem;
 
+// ReSharper disable once UnusedMember.Global
 [Collection(nameof(DriveInfoFactory.RealFileSystemTests))]
 public sealed class RealFileSystemTests : FileSystemTests<RealFileSystem>
 {
-	/// <inheritdoc cref="FileSystemFileSystemInfoTests{TFileSystem}.BasePath" />
+	/// <inheritdoc cref="FileSystemTests{TFileSystem}.BasePath" />
 	public override string BasePath => _directoryCleaner.BasePath;
 
 	private readonly IDirectoryCleaner _directoryCleaner;

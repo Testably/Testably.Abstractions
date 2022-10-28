@@ -25,6 +25,7 @@ internal class FileSystemExtensionContainer : IFileSystemExtensionContainer
 	public T? RetrieveMetadata<T>(string key)
 	{
 		if (_metadata.TryGetValue(key, out object? value) &&
+		    // ReSharper disable once MergeCastWithTypeCheck -- Not possible due to nullable
 		    value is T?)
 		{
 			return (T?)value;

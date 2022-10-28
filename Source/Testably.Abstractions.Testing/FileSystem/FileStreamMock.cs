@@ -106,6 +106,20 @@ internal sealed class FileStreamMock : FileSystemStream
 	public override IFileSystemExtensionContainer ExtensionContainer
 		=> _container.ExtensionContainer;
 
+	/// <inheritdoc cref="FileSystemStream.CopyTo(Stream, int)" />
+	public override void CopyTo(Stream destination, int bufferSize)
+	{
+		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
+		base.CopyTo(destination, bufferSize);
+	}
+	
+	/// <inheritdoc cref="FileSystemStream.CopyToAsync(Stream, int, CancellationToken)" />
+	public override Task CopyToAsync(Stream destination, int bufferSize, CancellationToken cancellationToken)
+	{
+		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
+		return base.CopyToAsync(destination, bufferSize, cancellationToken);
+	}
+
 	/// <inheritdoc cref="FileSystemStream.EndRead(IAsyncResult)" />
 	public override int EndRead(IAsyncResult asyncResult)
 	{

@@ -7,7 +7,6 @@ using System.Linq;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Internal;
-using static Testably.Abstractions.Testing.MockFileSystem;
 
 namespace Testably.Abstractions.Testing.Storage;
 
@@ -282,8 +281,7 @@ internal sealed class InMemoryStorage : IStorage
 				else
 				{
 					IStorageLocation? parentLocation = loc.GetParent();
-					if (parentLocation != null &&
-					    !parentLocation.IsRooted &&
+					if (parentLocation is { IsRooted: false } &&
 					    !_containers.ContainsKey(parentLocation))
 					{
 						throw ExceptionFactory.DirectoryNotFound(loc.FullPath);

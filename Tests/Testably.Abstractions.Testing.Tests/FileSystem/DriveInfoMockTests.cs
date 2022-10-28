@@ -200,7 +200,7 @@ public class DriveInfoMockTests
 	}
 
 	[SkippableFact]
-	public void SetDriveFormat_Default_ShouldBeNtfs()
+	public void SetDriveFormat_Default_ShouldBeNTFS()
 	{
 		FileSystem.WithDrive(d => d.SetDriveFormat());
 

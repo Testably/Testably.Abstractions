@@ -2,6 +2,7 @@ using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchiveEntry;
 
+// ReSharper disable once UnusedMember.Global
 public sealed class MockFileSystemTests
 	: ZipArchiveEntryTests<MockFileSystem>, IDisposable
 {

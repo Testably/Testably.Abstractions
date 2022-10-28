@@ -13,17 +13,7 @@ internal static class RandomFactory
 
 	/// <inheritdoc cref="IRandomFactory.Shared" />
 	public static IRandom Shared
-	{
-		get
-		{
-			if (_shared is null)
-			{
-				_shared = CreateThreadSafeRandomWrapper();
-			}
-
-			return _shared;
-		}
-	}
+		=> _shared ??= CreateThreadSafeRandomWrapper();
 
 	#endregion
 

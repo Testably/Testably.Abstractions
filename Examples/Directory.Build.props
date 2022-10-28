@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <TestablyAbstractionsVersion>0.6.*</TestablyAbstractionsVersion>
+    <TestablyAbstractionsVersion>0.12.*</TestablyAbstractionsVersion>
   </PropertyGroup>
 
   <PropertyGroup>

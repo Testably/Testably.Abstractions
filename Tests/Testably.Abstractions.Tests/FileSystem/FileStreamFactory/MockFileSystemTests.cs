@@ -2,8 +2,8 @@ using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStreamFactory;
 
-public sealed class
-	MockFileSystemTests
+// ReSharper disable once UnusedMember.Global
+public sealed class MockFileSystemTests
 	: FileSystemFileStreamFactoryTests<MockFileSystem>, IDisposable
 {
 	/// <inheritdoc cref="FileSystemFileStreamFactoryTests{TFileSystem}.BasePath" />

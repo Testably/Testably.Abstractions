@@ -2,6 +2,7 @@ using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Tests.FileSystem;
 
+// ReSharper disable once UnusedMember.Global
 public sealed class MockFileSystemTests : FileSystemTests<MockFileSystem>
 {
 	/// <inheritdoc cref="FileSystemTests{TFileSystem}.BasePath" />

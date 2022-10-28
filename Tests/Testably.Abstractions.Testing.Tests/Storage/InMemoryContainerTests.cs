@@ -82,8 +82,10 @@ public class InMemoryContainerTests
 		IStorageLocation location = InMemoryLocation.New(drive,
 			fileSystem.Path.GetFullPath(path));
 
-		InMemoryContainer container = new(FileSystemTypes.File, location, fileSystem);
-		container.LinkTarget = linkTarget;
+		InMemoryContainer container = new(FileSystemTypes.File, location, fileSystem)
+		{
+			LinkTarget = linkTarget
+		};
 
 		FileAttributes result = container.AdjustAttributes(FileAttributes.Normal);
 
