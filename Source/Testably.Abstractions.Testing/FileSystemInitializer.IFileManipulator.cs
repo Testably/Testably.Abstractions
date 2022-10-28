@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions.Testing;
+﻿using Testably.Abstractions.FileSystem;
+
+namespace Testably.Abstractions.Testing;
 
 public static partial class FileSystemInitializer
 {

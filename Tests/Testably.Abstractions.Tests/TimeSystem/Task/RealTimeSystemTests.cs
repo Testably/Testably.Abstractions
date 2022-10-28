@@ -5,9 +5,9 @@ namespace Testably.Abstractions.Tests.TimeSystem.Task;
 
 public static class RealTimeSystemTests
 {
-	public sealed class TaskTests : TimeSystemTaskTests<Abstractions.RealTimeSystem>
+	public sealed class TaskTests : TimeSystemTaskTests<RealTimeSystem>
 	{
-		public TaskTests() : base(new Abstractions.RealTimeSystem())
+		public TaskTests() : base(new RealTimeSystem())
 		{
 		}
 

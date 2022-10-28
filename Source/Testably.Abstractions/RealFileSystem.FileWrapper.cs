@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.Versioning;
 using System.Text;
+using Testably.Abstractions.FileSystem;
 using static Testably.Abstractions.IFileSystem;
 
 namespace Testably.Abstractions;

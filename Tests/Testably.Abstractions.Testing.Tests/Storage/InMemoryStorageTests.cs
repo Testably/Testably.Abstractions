@@ -1,4 +1,6 @@
 ﻿using System.IO;
+using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.RandomSystem;
 using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Storage;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
@@ -9,12 +11,12 @@ public class InMemoryStorageTests
 {
 	#region Test Setup
 
-	internal Testing.MockFileSystem FileSystem { get; }
+	internal MockFileSystem FileSystem { get; }
 	internal IStorage Storage { get; }
 
 	public InMemoryStorageTests()
 	{
-		FileSystem = new Testing.MockFileSystem();
+		FileSystem = new MockFileSystem();
 		Storage = new InMemoryStorage(FileSystem);
 	}
 
@@ -25,7 +27,7 @@ public class InMemoryStorageTests
 	public void Copy_Overwrite_ShouldAdjustAvailableFreeSpace(
 		int file1Size, int file2Size)
 	{
-		Testing.MockFileSystem fileSystem = new();
+		MockFileSystem fileSystem = new();
 		IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot());
 		IRandom random = RandomFactory.Shared;
 		byte[] file1Content = new byte[file1Size];
@@ -49,7 +51,7 @@ public class InMemoryStorageTests
 	public void Replace_WithoutBackup_ShouldNotChangeAvailableFreeSpace(
 		int file1Size, int file2Size)
 	{
-		Testing.MockFileSystem fileSystem = new();
+		MockFileSystem fileSystem = new();
 		IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot());
 		IRandom random = RandomFactory.Shared;
 		byte[] file1Content = new byte[file1Size];
@@ -73,7 +75,7 @@ public class InMemoryStorageTests
 	public void Replace_WithBackup_ShouldChangeAvailableFreeSpace(
 		int file1Size, int file2Size, int file3Size)
 	{
-		Testing.MockFileSystem fileSystem = new();
+		MockFileSystem fileSystem = new();
 		IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot());
 		IRandom random = RandomFactory.Shared;
 		byte[] file1Content = new byte[file1Size];
@@ -105,7 +107,7 @@ public class InMemoryStorageTests
 	[Fact]
 	public void Delete_RaceCondition_ShouldReturnFalse()
 	{
-		Testing.MockFileSystem fileSystem = new();
+		MockFileSystem fileSystem = new();
 		fileSystem.Directory.CreateDirectory("foo");
 		bool isFirstDeletion = true;
 		fileSystem.Intercept.Deleting(FileSystemTypes.Directory, _ =>

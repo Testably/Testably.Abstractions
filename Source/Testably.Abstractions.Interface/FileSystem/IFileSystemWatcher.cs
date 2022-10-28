@@ -5,10 +5,10 @@ using System.IO;
 using System.Collections.ObjectModel;
 #endif
 
-namespace Testably.Abstractions;
+namespace Testably.Abstractions.FileSystem;
 
 /// <summary>
-///     Abstractions for <see cref="System.IO.FileSystemWatcher" />.
+///     Abstractions for <see cref="FileSystemWatcher" />.
 /// </summary>
 public interface IFileSystemWatcher : IFileSystemExtensionPoint, IDisposable
 {
@@ -72,7 +72,7 @@ public interface IFileSystemWatcher : IFileSystemExtensionPoint, IDisposable
 	IWaitForChangedResult WaitForChanged(WatcherChangeTypes changeType, int timeout);
 
 	/// <summary>
-	///     Abstractions for <see cref="System.IO.WaitForChangedResult" />.
+	///     Abstractions for <see cref="WaitForChangedResult" />.
 	/// </summary>
 	public interface IWaitForChangedResult
 	{

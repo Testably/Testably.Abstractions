@@ -3,9 +3,9 @@ namespace Testably.Abstractions.Tests.RandomSystem.RandomFactory;
 public static class RealRandomSystemTests
 {
 	public sealed class
-		RandomFactoryTests : RandomSystemRandomFactoryTests<Abstractions.RealRandomSystem>
+		RandomFactoryTests : RandomSystemRandomFactoryTests<RealRandomSystem>
 	{
-		public RandomFactoryTests() : base(new Abstractions.RealRandomSystem())
+		public RandomFactoryTests() : base(new RealRandomSystem())
 		{
 		}
 	}

@@ -1,4 +1,4 @@
-﻿namespace Testably.Abstractions;
+﻿namespace Testably.Abstractions.RandomSystem;
 
 /// <summary>
 ///     Factory for abstracting creation of <see cref="System.Random" />.

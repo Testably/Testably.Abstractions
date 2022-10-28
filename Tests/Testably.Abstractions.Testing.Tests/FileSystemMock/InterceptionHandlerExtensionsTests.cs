@@ -4,11 +4,11 @@ public class InterceptionHandlerExtensionsTests
 {
 	#region Test Setup
 
-	public Testing.MockFileSystem FileSystem { get; }
+	public MockFileSystem FileSystem { get; }
 
 	public InterceptionHandlerExtensionsTests()
 	{
-		FileSystem = new Testing.MockFileSystem();
+		FileSystem = new MockFileSystem();
 	}
 
 	#endregion

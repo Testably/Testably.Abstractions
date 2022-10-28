@@ -1,20 +1,20 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
-namespace Testably.Abstractions;
+namespace Testably.Abstractions.FileSystem;
 
 /// <summary>
-///     Factory for abstracting the creation of <see cref="System.IO.FileSystemWatcher" />.
+///     Factory for abstracting the creation of <see cref="FileSystemWatcher" />.
 /// </summary>
 public interface IFileSystemWatcherFactory : IFileSystemExtensionPoint
 {
-	/// <inheritdoc cref="System.IO.FileSystemWatcher()" />
+	/// <inheritdoc cref="FileSystemWatcher()" />
 	IFileSystemWatcher New();
 
-	/// <inheritdoc cref="System.IO.FileSystemWatcher(string)" />
+	/// <inheritdoc cref="FileSystemWatcher(string)" />
 	IFileSystemWatcher New(string path);
 
-	/// <inheritdoc cref="System.IO.FileSystemWatcher(string, string)" />
+	/// <inheritdoc cref="FileSystemWatcher(string, string)" />
 	IFileSystemWatcher New(string path, string filter);
 
 	/// <summary>

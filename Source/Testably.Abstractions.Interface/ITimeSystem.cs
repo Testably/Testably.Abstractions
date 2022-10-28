@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions;
+﻿using Testably.Abstractions.TimeSystem;
+
+namespace Testably.Abstractions;
 
 /// <summary>
 ///     Allows abstracting time-related system dependencies.

@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Threading;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
 
@@ -12,12 +13,12 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 	public const int DefaultMaxMessages = 64;
 
 	public string BasePath => _directoryCleaner.BasePath;
-	public Testing.MockFileSystem FileSystem { get; }
+	public MockFileSystem FileSystem { get; }
 	private readonly Testing.FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
 
 	public FileSystemWatcherMockTests()
 	{
-		FileSystem = new Testing.MockFileSystem();
+		FileSystem = new MockFileSystem();
 		_directoryCleaner = FileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory();
 		FileSystem.Initialize();
 	}

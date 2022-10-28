@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions.Testing;
+﻿using Testably.Abstractions.RandomSystem;
+
+namespace Testably.Abstractions.Testing;
 
 public sealed partial class MockRandomSystem
 {

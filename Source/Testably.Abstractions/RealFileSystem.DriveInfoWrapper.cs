@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.Versioning;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions;
 

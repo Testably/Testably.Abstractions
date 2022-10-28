@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions;
+﻿using Testably.Abstractions.RandomSystem;
+
+namespace Testably.Abstractions;
 
 /// <summary>
 ///     Allows abstracting random-related system dependencies.

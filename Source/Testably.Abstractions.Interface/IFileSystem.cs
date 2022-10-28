@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions;
+﻿using Testably.Abstractions.FileSystem;
+
+namespace Testably.Abstractions;
 
 /// <summary>
 ///     Allows abstracting file-related system dependencies.

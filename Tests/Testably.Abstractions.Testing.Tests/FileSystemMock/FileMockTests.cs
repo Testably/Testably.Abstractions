@@ -6,7 +6,7 @@ public class FileMockTests
 	[AutoData]
 	public void SetCreationTime(string path, DateTime creationTime)
 	{
-		Testing.MockFileSystem fileSystem = new();
+		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText(path, "some content");
 
 		fileSystem.File.SetCreationTime(path, creationTime);
@@ -18,7 +18,7 @@ public class FileMockTests
 	[AutoData]
 	public void SetCreationTimeUtc(string path, DateTime creationTime)
 	{
-		Testing.MockFileSystem fileSystem = new();
+		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText(path, "some content");
 
 		fileSystem.File.SetCreationTimeUtc(path, creationTime);

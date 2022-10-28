@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
 
-namespace Testably.Abstractions;
+namespace Testably.Abstractions.FileSystem;
 
 /// <summary>
-///     Abstractions for <see cref="System.IO.FileSystemInfo" />.
+///     Abstractions for <see cref="FileSystemInfo" />.
 /// </summary>
 public interface IFileSystemInfo
 {

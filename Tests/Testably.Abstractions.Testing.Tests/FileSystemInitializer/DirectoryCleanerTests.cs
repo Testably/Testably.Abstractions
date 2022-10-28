@@ -17,7 +17,7 @@ public class DirectoryCleanerTests
 	public void Dispose_PermanentFailure_ShouldNotThrowException(
 		Exception exception)
 	{
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 		List<string> receivedLogs = new();
 		Testing.FileSystemInitializer.IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(m => receivedLogs.Add(m));
@@ -53,7 +53,7 @@ public class DirectoryCleanerTests
 	[SkippableFact]
 	public void Dispose_ShouldForceDeleteCurrentDirectory()
 	{
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 		List<string> receivedLogs = new();
 		Testing.FileSystemInitializer.IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(m => receivedLogs.Add(m));
@@ -67,7 +67,7 @@ public class DirectoryCleanerTests
 	[SkippableFact]
 	public void Dispose_ShouldResetCurrentDirectory()
 	{
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 		Testing.FileSystemInitializer.IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory();
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
@@ -80,7 +80,7 @@ public class DirectoryCleanerTests
 	public void Dispose_TemporaryFailure_ShouldRetryAgain(
 		Exception exception)
 	{
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 		Testing.FileSystemInitializer.IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory();
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
@@ -100,7 +100,7 @@ public class DirectoryCleanerTests
 	[SkippableFact]
 	public void InitializeBasePath_ShouldCreateDirectoryAndLogBasePath()
 	{
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 		List<string> receivedLogs = new();
 
 		using Testing.FileSystemInitializer.IDirectoryCleaner directoryCleaner =

@@ -1,5 +1,6 @@
 ﻿#if !FEATURE_PATH_ADVANCED
 using System.Diagnostics.CodeAnalysis;
+using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Internal;
 
 // ReSharper disable once CheckNamespace

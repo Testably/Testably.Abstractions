@@ -24,7 +24,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 	[AutoData]
 	public void ReadAllBytes_ShouldAdjustTimes(string path, byte[] contents)
 	{
-		Skip.If(Test.IsNetFramework && FileSystem is Abstractions.RealFileSystem,
+		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
 			"Works unreliable on .NET Framework");
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 

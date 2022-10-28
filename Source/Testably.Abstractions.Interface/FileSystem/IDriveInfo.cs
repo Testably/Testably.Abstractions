@@ -2,10 +2,10 @@
 using System.IO;
 using System.Runtime.Versioning;
 
-namespace Testably.Abstractions;
+namespace Testably.Abstractions.FileSystem;
 
 /// <summary>
-///     Abstractions for <see cref="System.IO.DriveInfo" />.
+///     Abstractions for <see cref="DriveInfo" />.
 /// </summary>
 public interface IDriveInfo : IFileSystemExtensionPoint
 {
@@ -38,6 +38,7 @@ public interface IDriveInfo : IFileSystemExtensionPoint
 	string VolumeLabel
 	{
 		get;
-		[SupportedOSPlatform("windows")] set;
+		[SupportedOSPlatform("windows")]
+		set;
 	}
 }

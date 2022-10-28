@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace Testably.Abstractions;
+namespace Testably.Abstractions.TimeSystem;
 
 /// <summary>
-///     Abstractions for <see cref="System.DateTime" />.
+///     Abstractions for <see cref="DateTime" />.
 /// </summary>
 public interface IDateTime : ITimeSystemExtensionPoint
 {

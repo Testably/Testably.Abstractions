@@ -2,10 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Testably.Abstractions;
+namespace Testably.Abstractions.TimeSystem;
 
 /// <summary>
-///     Abstractions for <see cref="System.Threading.Tasks.Task" />.
+///     Abstractions for <see cref="Task" />.
 /// </summary>
 public interface ITask : ITimeSystemExtensionPoint
 {

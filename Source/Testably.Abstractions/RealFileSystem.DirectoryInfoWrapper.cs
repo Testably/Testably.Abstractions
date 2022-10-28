@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions;
 

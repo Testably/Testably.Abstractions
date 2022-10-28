@@ -1,5 +1,6 @@
 using System.IO;
 using System.Threading;
+using Testably.Abstractions.FileSystem;
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading.Tasks;
 #endif
@@ -317,7 +318,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		bool result = readStream.ExtensionContainer
 		   .HasWrappedInstance(out System.IO.FileStream? fileStream);
 
-		if (FileSystem is Abstractions.RealFileSystem)
+		if (FileSystem is RealFileSystem)
 		{
 			result.Should().BeTrue();
 			fileStream!.Name.Should().Be(readStream.Name);

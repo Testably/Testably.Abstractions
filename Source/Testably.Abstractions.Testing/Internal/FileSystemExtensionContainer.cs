@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Testing.Internal;
 

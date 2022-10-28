@@ -1,3 +1,5 @@
+using Testably.Abstractions.FileSystem;
+
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>

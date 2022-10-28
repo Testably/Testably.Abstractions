@@ -2,6 +2,7 @@
 using System.IO.Compression;
 using System.Linq;
 using Testably.Abstractions.Compression.Tests.TestHelpers;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchiveEntry;
 

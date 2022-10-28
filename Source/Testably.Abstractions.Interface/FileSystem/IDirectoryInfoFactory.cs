@@ -1,14 +1,14 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
-namespace Testably.Abstractions;
+namespace Testably.Abstractions.FileSystem;
 
 /// <summary>
-///     Factory for abstracting the creation of <see cref="System.IO.DirectoryInfo" />.
+///     Factory for abstracting the creation of <see cref="DirectoryInfo" />.
 /// </summary>
 public interface IDirectoryInfoFactory : IFileSystemExtensionPoint
 {
-	/// <inheritdoc cref="System.IO.DirectoryInfo(string)" />
+	/// <inheritdoc cref="DirectoryInfo(string)" />
 	IDirectoryInfo New(string path);
 
 	/// <summary>

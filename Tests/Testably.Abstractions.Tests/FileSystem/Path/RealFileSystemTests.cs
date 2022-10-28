@@ -3,9 +3,9 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [Collection(nameof(DriveInfoFactory.RealFileSystemTests))]
-public sealed class RealFileSystemTests : FileSystemPathTests<Abstractions.RealFileSystem>
+public sealed class RealFileSystemTests : FileSystemPathTests<RealFileSystem>
 {
-	public RealFileSystemTests() : base(new Abstractions.RealFileSystem())
+	public RealFileSystemTests() : base(new RealFileSystem())
 	{
 	}
 }

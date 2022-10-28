@@ -1,4 +1,5 @@
 using System.IO;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemInfo;
 
@@ -30,7 +31,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 		bool result = fileInfo.ExtensionContainer
 		   .HasWrappedInstance(out System.IO.FileSystemInfo? fileSystemInfo);
 
-		if (FileSystem is Abstractions.RealFileSystem)
+		if (FileSystem is RealFileSystem)
 		{
 			result.Should().BeTrue();
 			fileSystemInfo!.Name.Should().Be(fileInfo.Name);

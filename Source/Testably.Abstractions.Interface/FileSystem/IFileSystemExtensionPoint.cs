@@ -1,4 +1,4 @@
-﻿namespace Testably.Abstractions;
+﻿namespace Testably.Abstractions.FileSystem;
 
 /// <summary>
 ///     Interface to support implementing extension methods on top of nested <see cref="IFileSystem" /> interfaces.

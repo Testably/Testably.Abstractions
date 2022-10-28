@@ -1,5 +1,6 @@
 ﻿using Moq;
 using System.IO;
+using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
@@ -63,7 +64,7 @@ public class PathHelperTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			path.ThrowCommonExceptionsIfPathIsInvalid(new Testing.MockFileSystem());
+			path.ThrowCommonExceptionsIfPathIsInvalid(new MockFileSystem());
 		});
 
 		exception.Should().BeOfType<ArgumentException>()

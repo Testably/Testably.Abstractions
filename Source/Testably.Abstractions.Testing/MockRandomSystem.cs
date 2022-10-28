@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions.Testing;
+﻿using Testably.Abstractions.RandomSystem;
+
+namespace Testably.Abstractions.Testing;
 
 /// <summary>
 ///     A test helper for manipulating the random system. Implements <see cref="IRandomSystem" />.

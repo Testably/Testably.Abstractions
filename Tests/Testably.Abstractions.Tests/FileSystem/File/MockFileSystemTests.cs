@@ -1,4 +1,5 @@
 using System.Linq;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
@@ -69,7 +70,7 @@ public sealed class MockFileSystemTests
 		int bytes1Length,
 		int bytes2Length)
 	{
-		Abstractions.RealRandomSystem randomSystem = new();
+		RealRandomSystem randomSystem = new();
 		byte[] bytes1 = new byte[bytes1Length];
 		byte[] bytes2 = new byte[bytes2Length];
 		randomSystem.Random.Shared.NextBytes(bytes1);

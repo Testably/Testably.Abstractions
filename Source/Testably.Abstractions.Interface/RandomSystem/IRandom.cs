@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace Testably.Abstractions;
+namespace Testably.Abstractions.RandomSystem;
 
 /// <summary>
-///     Abstractions for <see cref="System.Random" />.
+///     Abstractions for <see cref="Random" />.
 /// </summary>
 public interface IRandom
 {

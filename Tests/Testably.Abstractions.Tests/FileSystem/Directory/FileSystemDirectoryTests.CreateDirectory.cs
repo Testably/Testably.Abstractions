@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Testably.Abstractions.FileSystem;
 #if !NETFRAMEWORK
 using System.IO;
 #endif

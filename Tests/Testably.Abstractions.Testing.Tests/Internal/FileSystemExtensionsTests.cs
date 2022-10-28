@@ -9,7 +9,7 @@ public class FileSystemExtensionsTests
 	public void GetMoveLocation_LocationNotUnderSource_ShouldThrowNotSupportedException(
 		string location, string source, string destination)
 	{
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 		Exception? exception = Record.Exception(() =>
 		{
 			sut.GetMoveLocation(

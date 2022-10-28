@@ -14,7 +14,7 @@ public class ChangeDescriptionTests
 		string path)
 	{
 		IStorageLocation location = InMemoryLocation.New(null, Path.GetFullPath(path));
-		Testing.MockFileSystem.ChangeDescription sut = new(
+		MockFileSystem.ChangeDescription sut = new(
 			changeType,
 			fileSystemType,
 			notifyFilters,
@@ -35,7 +35,7 @@ public class ChangeDescriptionTests
 		string path)
 	{
 		IStorageLocation location = InMemoryLocation.New(null, Path.GetFullPath(path));
-		Testing.MockFileSystem.ChangeDescription sut = new(
+		MockFileSystem.ChangeDescription sut = new(
 			changeType,
 			fileSystemType,
 			notifyFilters,
@@ -56,7 +56,7 @@ public class ChangeDescriptionTests
 		string path)
 	{
 		IStorageLocation location = InMemoryLocation.New(null, Path.GetFullPath(path));
-		Testing.MockFileSystem.ChangeDescription sut = new(
+		MockFileSystem.ChangeDescription sut = new(
 			changeType,
 			fileSystemType,
 			notifyFilters,
@@ -77,7 +77,7 @@ public class ChangeDescriptionTests
 		string path)
 	{
 		IStorageLocation location = InMemoryLocation.New(null, Path.GetFullPath(path));
-		Testing.MockFileSystem.ChangeDescription sut = new(
+		MockFileSystem.ChangeDescription sut = new(
 			changeType,
 			fileSystemType,
 			notifyFilters,

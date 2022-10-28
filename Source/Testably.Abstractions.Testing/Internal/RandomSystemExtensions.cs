@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions.Testing.Internal;
+﻿using Testably.Abstractions.RandomSystem;
+
+namespace Testably.Abstractions.Testing.Internal;
 
 /// <summary>
 ///     Extension methods for <see cref="IRandomSystem" /> to generate test data.

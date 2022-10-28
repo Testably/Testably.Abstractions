@@ -1,14 +1,14 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
-namespace Testably.Abstractions;
+namespace Testably.Abstractions.FileSystem;
 
 /// <summary>
-///     Factory for abstracting the creation of <see cref="System.IO.FileInfo" />.
+///     Factory for abstracting the creation of <see cref="FileInfo" />.
 /// </summary>
 public interface IFileInfoFactory : IFileSystemExtensionPoint
 {
-	/// <inheritdoc cref="System.IO.FileInfo(string)" />
+	/// <inheritdoc cref="FileInfo(string)" />
 	IFileInfo New(string fileName);
 
 	/// <summary>

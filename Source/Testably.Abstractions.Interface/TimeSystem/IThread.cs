@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Testably.Abstractions;
+namespace Testably.Abstractions.TimeSystem;
 
 /// <summary>
 ///     Abstractions for <see cref="System.Threading.Thread" />.

@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Runtime.Versioning;
 using System.Security.AccessControl;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions;
 

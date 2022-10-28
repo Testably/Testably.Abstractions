@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
@@ -11,7 +12,7 @@ public class FileSystemMockTests
 	[AutoData]
 	public void FileSystemMock_File_Decrypt(string path, string contents)
 	{
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
 #pragma warning disable CA1416
 		sut.File.Encrypt(path);
@@ -28,7 +29,7 @@ public class FileSystemMockTests
 	[AutoData]
 	public void FileSystemMock_File_Encrypt(string path, string contents)
 	{
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
 
 #pragma warning disable CA1416
@@ -42,7 +43,7 @@ public class FileSystemMockTests
 	[AutoData]
 	public void FileSystemMock_FileInfo_Decrypt(string path, string contents)
 	{
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
 #pragma warning disable CA1416
 		sut.FileInfo.New(path).Encrypt();
@@ -59,7 +60,7 @@ public class FileSystemMockTests
 	[AutoData]
 	public void FileSystemMock_FileInfo_Encrypt(string path, string contents)
 	{
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
 
 #pragma warning disable CA1416
@@ -73,7 +74,7 @@ public class FileSystemMockTests
 	public void FileSystemMock_ShouldBeInitializedWithASingleDefaultDrive()
 	{
 		string expectedDriveName = "".PrefixRoot();
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 		IDriveInfo drive = drives.Single();
@@ -81,9 +82,9 @@ public class FileSystemMockTests
 		drive.Name.Should().Be(expectedDriveName);
 		drive.AvailableFreeSpace.Should().BeGreaterThan(0);
 		drive.DriveFormat.Should()
-		   .Be(Testing.MockFileSystem.DriveInfoMock.DefaultDriveFormat);
+		   .Be(MockFileSystem.DriveInfoMock.DefaultDriveFormat);
 		drive.DriveType.Should()
-		   .Be(Testing.MockFileSystem.DriveInfoMock.DefaultDriveType);
+		   .Be(MockFileSystem.DriveInfoMock.DefaultDriveType);
 		drive.VolumeLabel.Should().NotBeNullOrEmpty();
 	}
 
@@ -92,7 +93,7 @@ public class FileSystemMockTests
 	public void UncDrive_WriteBytes_ShouldReduceAvailableFreeSpace(
 		string server, string path, byte[] bytes)
 	{
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 		string uncPrefix = new(sut.Path.DirectorySeparatorChar, 2);
 		string uncDrive = $"{uncPrefix}{server}";
 		sut.WithUncDrive(uncDrive);
@@ -109,7 +110,7 @@ public class FileSystemMockTests
 	public void WithAccessControl_Denied_CreateDirectoryShouldThrowIOException(
 		string path)
 	{
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 		sut.Initialize();
 		sut.WithAccessControl((_, _) => false);
 
@@ -126,7 +127,7 @@ public class FileSystemMockTests
 	public void WithAccessControl_ShouldConsiderPath(
 		string allowedPath, string deniedPath)
 	{
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 		sut.Initialize();
 		sut.WithAccessControl((p, _) => p == sut.Path.GetFullPath(allowedPath));
 
@@ -143,7 +144,7 @@ public class FileSystemMockTests
 	public void WithDrive_ExistingName_ShouldUpdateDrive()
 	{
 		string driveName = "".PrefixRoot();
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 		sut.WithDrive(driveName);
 
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
@@ -157,7 +158,7 @@ public class FileSystemMockTests
 	public void WithDrive_NewName_ShouldCreateNewDrives(string driveName)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 		sut.WithDrive(driveName);
 
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
@@ -170,7 +171,7 @@ public class FileSystemMockTests
 	[AutoData]
 	public void WithDrive_WithCallback_ShouldUpdateDrive(long totalSize)
 	{
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 		sut.WithDrive(d => d.SetTotalSize(totalSize));
 
 		IDriveInfo drive = sut.DriveInfo.GetDrives().Single();
@@ -185,7 +186,7 @@ public class FileSystemMockTests
 	public void WithUncDrive_ShouldCreateUncDrive(
 		string path, string contents)
 	{
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 		sut.WithUncDrive("UNC-Path");
 		string fullPath = sut.Path.Combine("//UNC-Path", path);
 		sut.File.WriteAllText(fullPath, contents);
@@ -199,7 +200,7 @@ public class FileSystemMockTests
 	public void WriteAllText_OnUncPath_ShouldThrowDirectoryNotFoundException(
 		string path, string contents)
 	{
-		Testing.MockFileSystem sut = new();
+		MockFileSystem sut = new();
 		string fullPath = sut.Path.Combine("//UNC-Path", path);
 		Exception? exception = Record.Exception(() =>
 		{

@@ -28,14 +28,14 @@ public static class Test
 	public static void SkipBrittleTestsOnRealFileSystem(
 		IFileSystem fileSystem, bool condition = true)
 	{
-		Skip.If(fileSystem is Abstractions.RealFileSystem && condition,
+		Skip.If(fileSystem is RealFileSystem && condition,
 			"Brittle tests are skipped on the real file system.");
 	}
 
 	public static void SkipIfLongRunningTestsShouldBeSkipped(IFileSystem fileSystem)
 	{
 #if DEBUG && !INCLUDE_LONGRUNNING_TESTS_ALSO_IN_DEBUG_MODE
-		Skip.If(fileSystem is Abstractions.RealFileSystem,
+		Skip.If(fileSystem is RealFileSystem,
 			"Long-Running tests are skipped in DEBUG mode unless the build constant 'INCLUDE_LONG_RUNNING_TESTS_ALSO_IN_DEBUG_MODE' is set.");
 #endif
 	}

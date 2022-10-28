@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using Testably.Abstractions.FileSystem;
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
 using System.Collections.ObjectModel;
 #endif

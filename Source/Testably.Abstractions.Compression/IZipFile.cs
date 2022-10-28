@@ -1,5 +1,6 @@
 ﻿using System.IO.Compression;
 using System.Text;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions;
 

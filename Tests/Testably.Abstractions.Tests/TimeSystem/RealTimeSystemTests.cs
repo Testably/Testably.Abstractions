@@ -1,8 +1,8 @@
 namespace Testably.Abstractions.Tests.TimeSystem;
 
-public sealed class RealTimeSystemTests : TimeSystemTests<Abstractions.RealTimeSystem>
+public sealed class RealTimeSystemTests : TimeSystemTests<RealTimeSystem>
 {
-	public RealTimeSystemTests() : base(new Abstractions.RealTimeSystem())
+	public RealTimeSystemTests() : base(new RealTimeSystem())
 	{
 	}
 }

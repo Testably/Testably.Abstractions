@@ -1,4 +1,4 @@
-﻿namespace Testably.Abstractions;
+﻿namespace Testably.Abstractions.TimeSystem;
 
 /// <summary>
 ///     Interface to support implementing extension methods on top of nested <see cref="ITimeSystem" /> interfaces.

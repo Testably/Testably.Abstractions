@@ -1,5 +1,6 @@
 using System.IO;
 using System.Threading;
+using Testably.Abstractions.FileSystem;
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
 using System.Collections.Generic;
 using System.Linq;

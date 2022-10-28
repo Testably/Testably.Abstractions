@@ -1,3 +1,5 @@
+using Testably.Abstractions.FileSystem;
+
 namespace Testably.Abstractions.Tests.FileSystem.DriveInfo;
 
 public abstract class FileSystemDriveInfoTests<TFileSystem>

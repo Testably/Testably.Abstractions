@@ -1,16 +1,17 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
 
 public class DriveInfoMockTests
 {
-	public Testing.MockFileSystem FileSystem { get; }
+	public MockFileSystem FileSystem { get; }
 
 	public DriveInfoMockTests()
 	{
-		FileSystem = new Testing.MockFileSystem();
+		FileSystem = new MockFileSystem();
 	}
 
 	[SkippableTheory]
@@ -119,7 +120,7 @@ public class DriveInfoMockTests
 		   .Replace('/', FileSystem.Path.DirectorySeparatorChar);
 
 		IDriveInfo drive =
-			Testing.MockFileSystem.DriveInfoMock.New(driveName, FileSystem);
+			MockFileSystem.DriveInfoMock.New(driveName, FileSystem);
 
 		drive.Name.Should().Be(expectedName);
 	}
@@ -130,7 +131,7 @@ public class DriveInfoMockTests
 	{
 		Exception? exception = Record.Exception(() =>
 		{
-			Testing.MockFileSystem.DriveInfoMock.New(driveName, FileSystem);
+			MockFileSystem.DriveInfoMock.New(driveName, FileSystem);
 		});
 
 		exception.Should().BeOfType<ArgumentException>();
@@ -140,7 +141,7 @@ public class DriveInfoMockTests
 	public void New_Null_ShouldReturnNull()
 	{
 		IDriveInfo? drive =
-			Testing.MockFileSystem.DriveInfoMock.New(null, FileSystem);
+			MockFileSystem.DriveInfoMock.New(null, FileSystem);
 
 		drive.Should().BeNull();
 	}
@@ -149,9 +150,9 @@ public class DriveInfoMockTests
 	public void New_UncPath_ShouldSetFlag()
 	{
 		IDriveInfo drive =
-			Testing.MockFileSystem.DriveInfoMock.New(@"//foo", FileSystem);
+			MockFileSystem.DriveInfoMock.New(@"//foo", FileSystem);
 
-		(drive as Testing.MockFileSystem.DriveInfoMock)?.IsUncPath.Should().BeTrue();
+		(drive as MockFileSystem.DriveInfoMock)?.IsUncPath.Should().BeTrue();
 	}
 
 	[SkippableTheory]
@@ -160,8 +161,8 @@ public class DriveInfoMockTests
 	public void New_ValidDriveName_ShouldAppendColonAndSlash(
 		string driveName, string expectedDriveName)
 	{
-		Testing.MockFileSystem.DriveInfoMock result =
-			Testing.MockFileSystem.DriveInfoMock.New(driveName, FileSystem);
+		MockFileSystem.DriveInfoMock result =
+			MockFileSystem.DriveInfoMock.New(driveName, FileSystem);
 
 		result.Name.Should().Be(expectedDriveName);
 	}

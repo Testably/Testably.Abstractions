@@ -1,17 +1,17 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
-namespace Testably.Abstractions;
+namespace Testably.Abstractions.FileSystem;
 
 /// <summary>
-///     Factory for abstracting the creation of <see cref="System.IO.DriveInfo" />.
+///     Factory for abstracting the creation of <see cref="DriveInfo" />.
 /// </summary>
 public interface IDriveInfoFactory : IFileSystemExtensionPoint
 {
-	/// <inheritdoc cref="System.IO.DriveInfo.GetDrives()" />
+	/// <inheritdoc cref="DriveInfo.GetDrives()" />
 	IDriveInfo[] GetDrives();
 
-	/// <inheritdoc cref="System.IO.DriveInfo(string)" />
+	/// <inheritdoc cref="DriveInfo(string)" />
 	IDriveInfo New(string driveName);
 
 	/// <summary>

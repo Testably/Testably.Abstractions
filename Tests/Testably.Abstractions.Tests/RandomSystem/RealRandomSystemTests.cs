@@ -1,8 +1,8 @@
 namespace Testably.Abstractions.Tests.RandomSystem;
 
-public sealed class RealRandomSystemTests : RandomSystemTests<Abstractions.RealRandomSystem>
+public sealed class RealRandomSystemTests : RandomSystemTests<RealRandomSystem>
 {
-	public RealRandomSystemTests() : base(new Abstractions.RealRandomSystem())
+	public RealRandomSystemTests() : base(new RealRandomSystem())
 	{
 	}
 }

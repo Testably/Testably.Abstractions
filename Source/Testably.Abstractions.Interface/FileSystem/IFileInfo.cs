@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using System.Runtime.Versioning;
 
-namespace Testably.Abstractions;
+namespace Testably.Abstractions.FileSystem;
 
 /// <summary>
-///     Abstractions for <see cref="System.IO.FileInfo" />.
+///     Abstractions for <see cref="FileInfo" />.
 /// </summary>
 public interface IFileInfo : IFileSystemInfo
 {
@@ -76,10 +76,10 @@ public interface IFileInfo : IFileSystemInfo
 
 	/// <inheritdoc cref="FileInfo.Replace(string, string?)" />
 	IFileInfo Replace(string destinationFileName,
-	                  string? destinationBackupFileName);
+					  string? destinationBackupFileName);
 
 	/// <inheritdoc cref="FileInfo.Replace(string, string?, bool)" />
 	IFileInfo Replace(string destinationFileName,
-	                  string? destinationBackupFileName,
-	                  bool ignoreMetadataErrors);
+					  string? destinationBackupFileName,
+					  bool ignoreMetadataErrors);
 }
