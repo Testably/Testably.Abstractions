@@ -66,9 +66,9 @@ public void StoreData_ShouldWriteValidFile()
 - Configure your dependeny injection framework, e.g. with `Microsoft.Extensions.DependencyInjections` in ASP.NET core:
   ```csharp
   builder.Services
-      .AddSingleton<IFileSystem, FileSystem>()
-      .AddSingleton<IRandomSystem, RandomSystem>()
-      .AddSingleton<ITimeSystem, TimeSystem>();
+      .AddSingleton<IFileSystem, RealFileSystem>()
+      .AddSingleton<IRandomSystem, RealRandomSystem>()
+      .AddSingleton<ITimeSystem, RealTimeSystem>();
   ```
 
 **You can now use the interfaces in your services!**
