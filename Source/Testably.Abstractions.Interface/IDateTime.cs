@@ -14,11 +14,11 @@ public interface IDateTime : ITimeSystemExtensionPoint
 	DateTime MinValue { get; }
 
 #if NETSTANDARD2_0
-		/// <summary>
-		///	 The value of this constant is equivalent to 00:00:00.0000000 UTC, January 1, 1970, in the Gregorian calendar.
-		///	 <see cref="UnixEpoch" /> defines the point in time when Unix time is equal to 0.
-		/// </summary>
-		DateTime UnixEpoch { get; }
+	/// <summary>
+	///     The value of this constant is equivalent to 00:00:00.0000000 UTC, January 1, 1970, in the Gregorian calendar.
+	///     <see cref="UnixEpoch" /> defines the point in time when Unix time is equal to 0.
+	/// </summary>
+	DateTime UnixEpoch { get; }
 #else
 	/// <inheritdoc cref="DateTime.UnixEpoch" />
 	DateTime UnixEpoch { get; }

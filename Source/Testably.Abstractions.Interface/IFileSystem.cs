@@ -44,5 +44,4 @@ public interface IFileSystem
 	///     Abstractions for <see cref="System.IO.Path" />.
 	/// </summary>
 	IPath Path { get; }
-
 }
