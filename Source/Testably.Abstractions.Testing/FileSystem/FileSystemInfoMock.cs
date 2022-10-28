@@ -1,13 +1,5 @@
 ﻿using System;
 using System.IO;
-
-/* Unmerged change from project 'Testably.Abstractions.Testing (netstandard2.0)'
-Before:
-using Testably.Abstractions.FileSystem;
-After:
-using Testably;
-using Testably.Abstractions.FileSystem;
-*/
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Storage;
