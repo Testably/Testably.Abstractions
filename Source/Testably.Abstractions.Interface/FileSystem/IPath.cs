@@ -109,6 +109,7 @@ public interface IPath : IFileSystemExtensionPoint
 	[Obsolete(
 		"Insecure temporary file creation methods should not be used. Use `Path.Combine(Path.GetTempPath(), Path.GetRandomFileName())` instead.")]
 #endif
+	// ReSharper disable once UnusedMember.Global -- marked as Obsolete
 	string GetTempFileName();
 
 	/// <inheritdoc cref="Path.GetTempPath()" />
