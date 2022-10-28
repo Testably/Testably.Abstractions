@@ -6,7 +6,7 @@ using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
 
-public class FileSystemMockTests
+public class MockFileSystemTests
 {
 	[SkippableTheory]
 	[AutoData]

@@ -2,7 +2,7 @@ namespace Testably.Abstractions.Tests.FileSystem;
 
 public sealed class MockFileSystemTests : FileSystemTests<MockFileSystem>
 {
-	/// <inheritdoc cref="FileSystemFileSystemInfoTests{TFileSystem}.BasePath" />
+	/// <inheritdoc cref="FileSystemTests{TFileSystem}.BasePath" />
 	public override string BasePath => _directoryCleaner.BasePath;
 
 	private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystemMock;
 
-public class TimeSystemMockTests
+public class MockTimeSystemTests
 {
 	[Fact]
 	public async Task Delay_Infinite_ShouldNotThrowException()
