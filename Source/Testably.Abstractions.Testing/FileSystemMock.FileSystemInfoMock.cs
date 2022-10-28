@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class FileSystemMock
 {
-	private class FileSystemInfoMock : IFileSystem.IFileSystemInfo
+	private class FileSystemInfoMock : IFileSystemInfo
 	{
 		protected FileSystemTypes FileSystemType { get; }
 		protected IStorageLocation Location;
@@ -43,7 +43,7 @@ public sealed partial class FileSystemMock
 
 		#region IFileSystemInfo Members
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Attributes" />
+		/// <inheritdoc cref="IFileSystemInfo.Attributes" />
 		public FileAttributes Attributes
 		{
 			get => Container.Attributes;
@@ -51,7 +51,7 @@ public sealed partial class FileSystemMock
 		}
 
 #if FEATURE_FILESYSTEM_LINK
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreateAsSymbolicLink(string)" />
+		/// <inheritdoc cref="IFileSystemInfo.CreateAsSymbolicLink(string)" />
 		public void CreateAsSymbolicLink(string pathToTarget)
 		{
 			if (FileSystem.Storage.TryAddContainer(Location, InMemoryContainer.NewFile,
@@ -67,21 +67,21 @@ public sealed partial class FileSystemMock
 		}
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTime" />
+		/// <inheritdoc cref="IFileSystemInfo.CreationTime" />
 		public DateTime CreationTime
 		{
 			get => Container.CreationTime.Get(DateTimeKind.Local);
 			set => Container.CreationTime.Set(value, DateTimeKind.Local);
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTimeUtc" />
+		/// <inheritdoc cref="IFileSystemInfo.CreationTimeUtc" />
 		public DateTime CreationTimeUtc
 		{
 			get => Container.CreationTime.Get(DateTimeKind.Utc);
 			set => Container.CreationTime.Set(value, DateTimeKind.Utc);
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Delete()" />
+		/// <inheritdoc cref="IFileSystemInfo.Delete()" />
 		public void Delete()
 		{
 			if (!FileSystem.Storage.DeleteContainer(Location))
@@ -92,7 +92,7 @@ public sealed partial class FileSystemMock
 			Refresh();
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
+		/// <inheritdoc cref="IFileSystemInfo.Exists" />
 		public virtual bool Exists
 		{
 			get
@@ -103,39 +103,39 @@ public sealed partial class FileSystemMock
 			}
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Extension" />
+		/// <inheritdoc cref="IFileSystemInfo.Extension" />
 		public string Extension
 			=> FileSystem.Path.GetExtension(Location.FullPath);
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.ExtensionContainer" />
-		public IFileSystem.IFileSystemExtensionContainer ExtensionContainer
+		/// <inheritdoc cref="IFileSystemInfo.ExtensionContainer" />
+		public IFileSystemExtensionContainer ExtensionContainer
 			=> Container.ExtensionContainer;
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.FullName" />
+		/// <inheritdoc cref="IFileSystemInfo.FullName" />
 		public string FullName => Location.FullPath;
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastAccessTime" />
+		/// <inheritdoc cref="IFileSystemInfo.LastAccessTime" />
 		public DateTime LastAccessTime
 		{
 			get => Container.LastAccessTime.Get(DateTimeKind.Local);
 			set => Container.LastAccessTime.Set(value, DateTimeKind.Local);
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastAccessTimeUtc" />
+		/// <inheritdoc cref="IFileSystemInfo.LastAccessTimeUtc" />
 		public DateTime LastAccessTimeUtc
 		{
 			get => Container.LastAccessTime.Get(DateTimeKind.Utc);
 			set => Container.LastAccessTime.Set(value, DateTimeKind.Utc);
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastWriteTime" />
+		/// <inheritdoc cref="IFileSystemInfo.LastWriteTime" />
 		public DateTime LastWriteTime
 		{
 			get => Container.LastWriteTime.Get(DateTimeKind.Local);
 			set => Container.LastWriteTime.Set(value, DateTimeKind.Local);
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastWriteTimeUtc" />
+		/// <inheritdoc cref="IFileSystemInfo.LastWriteTimeUtc" />
 		public DateTime LastWriteTimeUtc
 		{
 			get => Container.LastWriteTime.Get(DateTimeKind.Utc);
@@ -143,12 +143,12 @@ public sealed partial class FileSystemMock
 		}
 
 #if FEATURE_FILESYSTEM_LINK
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.LinkTarget" />
+		/// <inheritdoc cref="IFileSystemInfo.LinkTarget" />
 		public string? LinkTarget
 			=> Container.LinkTarget;
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Name" />
+		/// <inheritdoc cref="IFileSystemInfo.Name" />
 		public string Name
 			=> FileSystem.Path.GetPathRoot(Location.FullPath) == Location.FullPath
 				? Location.FullPath
@@ -156,7 +156,7 @@ public sealed partial class FileSystemMock
 					FileSystem.Path.DirectorySeparatorChar,
 					FileSystem.Path.AltDirectorySeparatorChar));
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Refresh()" />
+		/// <inheritdoc cref="IFileSystemInfo.Refresh()" />
 		public void Refresh()
 		{
 #if !NETFRAMEWORK
@@ -167,8 +167,8 @@ public sealed partial class FileSystemMock
 		}
 
 #if FEATURE_FILESYSTEM_LINK
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.ResolveLinkTarget(bool)" />
-		public IFileSystem.IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget)
+		/// <inheritdoc cref="IFileSystemInfo.ResolveLinkTarget(bool)" />
+		public IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget)
 		{
 			try
 			{

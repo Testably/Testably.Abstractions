@@ -31,7 +31,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		FileSystem.Initialize();
 		ManualResetEventSlim ms = new();
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.EnableRaisingEvents = true;
 
@@ -49,7 +49,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 					FileSystem.Directory.Delete(path);
 				}
 			});
-			IFileSystem.IFileSystemWatcher.IWaitForChangedResult result =
+			IFileSystemWatcher.IWaitForChangedResult result =
 				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, 1000);
 
 			fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
@@ -68,7 +68,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	public void Container_ShouldBeInitializedWithNull()
 	{
 		FileSystem.Initialize();
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
 		fileSystemWatcher.Container.Should().BeNull();
@@ -82,7 +82,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		FileSystem.Initialize();
 		ManualResetEventSlim ms = new();
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.EnableRaisingEvents = true;
 		fileSystemWatcher.BeginInit();
@@ -101,7 +101,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 					FileSystem.Directory.Delete(path);
 				}
 			});
-			IFileSystem.IFileSystemWatcher.IWaitForChangedResult result =
+			IFileSystemWatcher.IWaitForChangedResult result =
 				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, 100);
 
 			fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
@@ -121,7 +121,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		int bytes, int expectedBytes)
 	{
 		FileSystem.Initialize();
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
 		fileSystemWatcher.InternalBufferSize = bytes;
@@ -133,7 +133,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	[AutoData]
 	public void Path_SetToNotExistingPath_ShouldThrowArgumentException(string path)
 	{
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();
 
 		Exception? exception = Record.Exception(() =>
@@ -149,7 +149,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	public void Site_ShouldBeInitializedWithNull()
 	{
 		FileSystem.Initialize();
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
 		fileSystemWatcher.Site.Should().BeNull();
@@ -160,7 +160,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	{
 		ISite? site = new Mock<ISite>().Object;
 		FileSystem.Initialize();
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
 		fileSystemWatcher.Site = site;
@@ -172,7 +172,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	public void SynchronizingObject_ShouldBeInitializedWithNull()
 	{
 		FileSystem.Initialize();
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
 		fileSystemWatcher.SynchronizingObject.Should().BeNull();
@@ -183,7 +183,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	{
 		ISynchronizeInvoke? synchronizingObject = new Mock<ISynchronizeInvoke>().Object;
 		FileSystem.Initialize();
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
 		fileSystemWatcher.SynchronizingObject = synchronizingObject;

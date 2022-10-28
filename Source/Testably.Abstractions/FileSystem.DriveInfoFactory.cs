@@ -6,7 +6,7 @@ namespace Testably.Abstractions;
 
 public sealed partial class FileSystem
 {
-	private sealed class DriveInfoFactory : IFileSystem.IDriveInfoFactory
+	private sealed class DriveInfoFactory : IDriveInfoFactory
 	{
 		internal DriveInfoFactory(FileSystem fileSystem)
 		{
@@ -15,24 +15,24 @@ public sealed partial class FileSystem
 
 		#region IDriveInfoFactory Members
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+		/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 		public IFileSystem FileSystem { get; }
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfoFactory.GetDrives()" />
-		public IFileSystem.IDriveInfo[] GetDrives()
+		/// <inheritdoc cref="IDriveInfoFactory.GetDrives()" />
+		public IDriveInfo[] GetDrives()
 			=> System.IO.DriveInfo.GetDrives()
 			   .Select(driveInfo => Wrap(driveInfo))
 			   .ToArray();
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfoFactory.New(string)" />
-		public IFileSystem.IDriveInfo New(string driveName)
+		/// <inheritdoc cref="IDriveInfoFactory.New(string)" />
+		public IDriveInfo New(string driveName)
 			=> DriveInfoWrapper.FromDriveInfo(
 				new DriveInfo(driveName),
 				FileSystem);
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfoFactory.Wrap(DriveInfo)" />
+		/// <inheritdoc cref="IDriveInfoFactory.Wrap(DriveInfo)" />
 		[return: NotNullIfNotNull("driveInfo")]
-		public IFileSystem.IDriveInfo? Wrap(DriveInfo? driveInfo)
+		public IDriveInfo? Wrap(DriveInfo? driveInfo)
 			=> DriveInfoWrapper.FromDriveInfo(
 				driveInfo,
 				FileSystem);

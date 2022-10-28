@@ -77,7 +77,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		string path, string subPath)
 	{
 		DateTime start = TimeSystem.DateTime.Now;
-		IFileSystem.IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
+		IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
 		TimeSystem.Thread.Sleep(100);
 		DateTime sleepTime = TimeSystem.DateTime.Now;
 		FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(path, subPath));

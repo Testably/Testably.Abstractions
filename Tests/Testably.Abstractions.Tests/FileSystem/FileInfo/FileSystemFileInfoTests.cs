@@ -26,7 +26,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 			FileSystem.Initialize()
 			   .WithASubdirectory().Initialized(s => s
 				   .WithAFile());
-		IFileSystem.IFileInfo? file = initialized[1] as IFileSystem.IFileInfo;
+		IFileInfo? file = initialized[1] as IFileInfo;
 
 		file?.Directory.Should().NotBeNull();
 		file!.Directory!.FullName.Should().Be(initialized[0].FullName);
@@ -39,7 +39,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 			FileSystem.Initialize()
 			   .WithASubdirectory().Initialized(s => s
 				   .WithAFile());
-		IFileSystem.IFileInfo? file = initialized[1] as IFileSystem.IFileInfo;
+		IFileInfo? file = initialized[1] as IFileInfo;
 
 		file?.Should().NotBeNull();
 		file!.DirectoryName.Should().Be(initialized[0].FullName);
@@ -50,7 +50,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	public void Exists_Directory_ShouldReturnFalse(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		sut.Exists.Should().BeFalse();
 	}
@@ -60,7 +60,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	public void IsReadOnly_SetToFalse_ShouldRemoveReadOnlyAttribute(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
-		IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 		fileInfo.Attributes = FileAttributes.ReadOnly;
 
 		fileInfo.IsReadOnly = false;
@@ -74,7 +74,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	public void IsReadOnly_SetToTrue_ShouldAddReadOnlyAttribute(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
-		IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
 		fileInfo.IsReadOnly = true;
 
@@ -97,7 +97,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	public void IsReadOnly_ShouldChangeWhenSettingReadOnlyAttribute(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
-		IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
 		fileInfo.Attributes = FileAttributes.ReadOnly | FileAttributes.Encrypted;
 
@@ -110,7 +110,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	public void IsReadOnly_ShouldInitializeToReadOnlyAttribute(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
-		IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
 		fileInfo.IsReadOnly.Should().BeFalse();
 		fileInfo.Attributes.Should().NotHaveFlag(FileAttributes.ReadOnly);

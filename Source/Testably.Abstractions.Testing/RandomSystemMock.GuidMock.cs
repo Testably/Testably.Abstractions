@@ -14,7 +14,7 @@ public sealed partial class RandomSystemMock
 			_randomSystemMock = randomSystem;
 		}
 
-		/// <inheritdoc cref="IRandomSystem.IGuid.NewGuid()" />
+		/// <inheritdoc cref="IGuid.NewGuid()" />
 		public override Guid NewGuid()
 			=> _randomSystemMock.RandomProvider.GetGuid();
 	}

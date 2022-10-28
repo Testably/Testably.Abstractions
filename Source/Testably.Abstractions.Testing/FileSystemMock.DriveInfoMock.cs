@@ -10,17 +10,17 @@ namespace Testably.Abstractions.Testing;
 public sealed partial class FileSystemMock
 {
 	/// <summary>
-	///     Mocked instance of a <see cref="IFileSystem.IDriveInfo" />
+	///     Mocked instance of a <see cref="IDriveInfo" />
 	/// </summary>
 	public sealed class DriveInfoMock : IStorageDrive
 	{
 		/// <summary>
-		///     The default <see cref="IFileSystem.IDriveInfo.DriveFormat" />.
+		///     The default <see cref="IDriveInfo.DriveFormat" />.
 		/// </summary>
 		public const string DefaultDriveFormat = "NTFS";
 
 		/// <summary>
-		///     The default <see cref="IFileSystem.IDriveInfo.DriveType" />.
+		///     The default <see cref="IDriveInfo.DriveType" />.
 		/// </summary>
 		public const DriveType DefaultDriveType = DriveType.Fixed;
 
@@ -65,38 +65,38 @@ public sealed partial class FileSystemMock
 
 		#region IStorageDrive Members
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfo.AvailableFreeSpace" />
+		/// <inheritdoc cref="IDriveInfo.AvailableFreeSpace" />
 		public long AvailableFreeSpace
 			=> TotalFreeSpace;
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfo.DriveFormat" />
+		/// <inheritdoc cref="IDriveInfo.DriveFormat" />
 		public string DriveFormat { get; private set; }
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfo.DriveType" />
+		/// <inheritdoc cref="IDriveInfo.DriveType" />
 		public DriveType DriveType { get; private set; }
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+		/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 		public IFileSystem FileSystem
 			=> _fileSystem;
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfo.IsReady" />
+		/// <inheritdoc cref="IDriveInfo.IsReady" />
 		public bool IsReady { get; private set; }
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfo.Name" />
+		/// <inheritdoc cref="IDriveInfo.Name" />
 		public string Name { get; }
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfo.RootDirectory" />
-		public IFileSystem.IDirectoryInfo RootDirectory
+		/// <inheritdoc cref="IDriveInfo.RootDirectory" />
+		public IDirectoryInfo RootDirectory
 			=> DirectoryInfoMock.New(_fileSystem.Storage.GetLocation(Name), _fileSystem);
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfo.TotalFreeSpace" />
+		/// <inheritdoc cref="IDriveInfo.TotalFreeSpace" />
 		public long TotalFreeSpace
 			=> TotalSize - _usedBytes;
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfo.TotalSize" />
+		/// <inheritdoc cref="IDriveInfo.TotalSize" />
 		public long TotalSize { get; private set; }
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfo.VolumeLabel" />
+		/// <inheritdoc cref="IDriveInfo.VolumeLabel" />
 		[AllowNull]
 		public string VolumeLabel
 		{

@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing;
 public sealed partial class FileSystemMock
 {
 	private sealed class
-		FileSystemWatcherFactoryMock : IFileSystem.IFileSystemWatcherFactory
+		FileSystemWatcherFactoryMock : IFileSystemWatcherFactory
 	{
 		private readonly FileSystemMock _fileSystem;
 
@@ -17,16 +17,16 @@ public sealed partial class FileSystemMock
 
 		#region IFileSystemWatcherFactory Members
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+		/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 		public IFileSystem FileSystem
 			=> _fileSystem;
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcherFactory.New()" />
-		public IFileSystem.IFileSystemWatcher New()
+		/// <inheritdoc cref="IFileSystemWatcherFactory.New()" />
+		public IFileSystemWatcher New()
 			=> FileSystemWatcherMock.New(_fileSystem);
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcherFactory.New(string)" />
-		public IFileSystem.IFileSystemWatcher New(string path)
+		/// <inheritdoc cref="IFileSystemWatcherFactory.New(string)" />
+		public IFileSystemWatcher New(string path)
 		{
 			FileSystemWatcherMock fileSystemWatcherMock =
 				FileSystemWatcherMock.New(_fileSystem);
@@ -34,8 +34,8 @@ public sealed partial class FileSystemMock
 			return fileSystemWatcherMock;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcherFactory.New(string, string)" />
-		public IFileSystem.IFileSystemWatcher New(string path, string filter)
+		/// <inheritdoc cref="IFileSystemWatcherFactory.New(string, string)" />
+		public IFileSystemWatcher New(string path, string filter)
 		{
 			FileSystemWatcherMock fileSystemWatcherMock =
 				FileSystemWatcherMock.New(_fileSystem);
@@ -44,10 +44,10 @@ public sealed partial class FileSystemMock
 			return fileSystemWatcherMock;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcherFactory.Wrap(FileSystemWatcher)" />
+		/// <inheritdoc cref="IFileSystemWatcherFactory.Wrap(FileSystemWatcher)" />
 		[return: NotNullIfNotNull("fileSystemWatcher")]
 		// ReSharper disable once ReturnTypeCanBeNotNullable
-		public IFileSystem.IFileSystemWatcher? Wrap(FileSystemWatcher? fileSystemWatcher)
+		public IFileSystemWatcher? Wrap(FileSystemWatcher? fileSystemWatcher)
 		{
 			if (fileSystemWatcher == null)
 			{

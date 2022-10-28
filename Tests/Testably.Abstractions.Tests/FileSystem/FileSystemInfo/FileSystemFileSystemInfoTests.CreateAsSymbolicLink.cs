@@ -12,7 +12,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 		string path, string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, null);
-		IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
 		fileInfo.CreateAsSymbolicLink(pathToTarget);
 
@@ -28,7 +28,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(pathToTarget, null);
 		FileSystem.File.WriteAllText(path, "foo");
-		IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
 		Exception? exception = Record.Exception(() =>
 		{

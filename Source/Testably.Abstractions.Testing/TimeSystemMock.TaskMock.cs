@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class TimeSystemMock
 {
-	private sealed class TaskMock : ITimeSystem.ITask
+	private sealed class TaskMock : ITask
 	{
 		private readonly TimeSystemMockCallbackHandler _callbackHandler;
 		private readonly TimeSystemMock _timeSystemMock;
@@ -21,7 +21,7 @@ public sealed partial class TimeSystemMock
 
 		#region ITask Members
 
-		/// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+		/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
 		public ITimeSystem TimeSystem
 			=> _timeSystemMock;
 

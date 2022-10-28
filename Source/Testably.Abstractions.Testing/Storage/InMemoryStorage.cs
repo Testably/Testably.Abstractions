@@ -22,7 +22,7 @@ internal sealed class InMemoryStorage : IStorage
 
 	private readonly FileSystemMock _fileSystem;
 
-	private Func<string, IFileSystem.IFileSystemExtensionContainer, bool>?
+	private Func<string, IFileSystemExtensionContainer, bool>?
 		_grantRequestCallback;
 
 	public InMemoryStorage(FileSystemMock fileSystem)
@@ -263,7 +263,7 @@ internal sealed class InMemoryStorage : IStorage
 	public IStorageContainer GetOrCreateContainer(
 		IStorageLocation location,
 		Func<IStorageLocation, FileSystemMock, IStorageContainer> containerGenerator,
-		IFileSystem.IFileSystemExtensionContainer? fileSystemExtensionContainer = null)
+		IFileSystemExtensionContainer? fileSystemExtensionContainer = null)
 	{
 		ChangeDescription? fileSystemChange = null;
 		IStorageContainer container = _containers.GetOrAdd(location,
@@ -474,7 +474,7 @@ internal sealed class InMemoryStorage : IStorage
 #endregion
 
 	internal void WithAccessControl(
-		Func<string, IFileSystem.IFileSystemExtensionContainer, bool>?
+		Func<string, IFileSystemExtensionContainer, bool>?
 			grantRequestCallback)
 	{
 		_grantRequestCallback = grantRequestCallback;

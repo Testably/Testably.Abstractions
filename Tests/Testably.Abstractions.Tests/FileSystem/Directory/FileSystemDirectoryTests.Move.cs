@@ -116,7 +116,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 			exception.Should().BeOfType<IOException>();
 			FileSystem.Directory.Exists(source).Should().BeTrue();
 			FileSystem.Directory.Exists(destination).Should().BeFalse();
-			IFileSystem.IDirectoryInfo sourceDirectory =
+			IDirectoryInfo sourceDirectory =
 				FileSystem.DirectoryInfo.New(source);
 			sourceDirectory.GetFiles(initialized[1].Name)
 			   .Should().ContainSingle();
@@ -133,7 +133,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 			exception.Should().BeNull();
 			FileSystem.Directory.Exists(source).Should().BeFalse();
 			FileSystem.Directory.Exists(destination).Should().BeTrue();
-			IFileSystem.IDirectoryInfo destinationDirectory =
+			IDirectoryInfo destinationDirectory =
 				FileSystem.DirectoryInfo.New(destination);
 			destinationDirectory.GetFiles(initialized[1].Name)
 			   .Should().ContainSingle();
@@ -166,7 +166,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 		FileSystem.Directory.Exists(source).Should().BeFalse();
 		FileSystem.Directory.Exists(destination).Should().BeTrue();
-		IFileSystem.IDirectoryInfo destinationDirectory =
+		IDirectoryInfo destinationDirectory =
 			FileSystem.DirectoryInfo.New(destination);
 		destinationDirectory.GetFiles(initialized[1].Name)
 		   .Should().ContainSingle();

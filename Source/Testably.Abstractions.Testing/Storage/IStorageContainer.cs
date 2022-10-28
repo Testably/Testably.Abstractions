@@ -6,8 +6,8 @@ namespace Testably.Abstractions.Testing.Storage;
 /// <summary>
 ///     A container for a stored file or directory in the <see cref="IStorage" />.
 /// </summary>
-internal interface IStorageContainer : IFileSystem.IFileSystemExtensionPoint,
-	ITimeSystem.ITimeSystemExtensionPoint
+internal interface IStorageContainer : IFileSystemExtensionPoint,
+	ITimeSystemExtensionPoint
 {
 	/// <inheritdoc cref="System.IO.FileSystemInfo.Attributes" />
 	FileAttributes Attributes { get; set; }
@@ -18,7 +18,7 @@ internal interface IStorageContainer : IFileSystem.IFileSystemExtensionPoint,
 	/// <summary>
 	///     A container to support extensions on <see cref="IStorageContainer" />.
 	/// </summary>
-	IFileSystem.IFileSystemExtensionContainer ExtensionContainer { get; }
+	IFileSystemExtensionContainer ExtensionContainer { get; }
 
 	/// <inheritdoc cref="System.IO.FileSystemInfo.LastAccessTime" />
 	ITimeContainer LastAccessTime { get; }
@@ -38,12 +38,12 @@ internal interface IStorageContainer : IFileSystem.IFileSystemExtensionPoint,
 	FileSystemTypes Type { get; }
 
 	/// <summary>
-	///     Appends the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
+	///     Appends the <paramref name="bytes" /> to the <see cref="IFileInfo" />.
 	/// </summary>
 	void AppendBytes(byte[] bytes);
 
 	/// <summary>
-	///     Clears the content of the <see cref="IFileSystem.IFileInfo" />.
+	///     Clears the content of the <see cref="IFileInfo" />.
 	///     <para />
 	///     This is used to delete the file.
 	/// </summary>
@@ -64,7 +64,7 @@ internal interface IStorageContainer : IFileSystem.IFileSystemExtensionPoint,
 	void Encrypt();
 
 	/// <summary>
-	///     Gets the bytes in the <see cref="IFileSystem.IFileInfo" />.
+	///     Gets the bytes in the <see cref="IFileInfo" />.
 	/// </summary>
 	byte[] GetBytes();
 
@@ -76,7 +76,7 @@ internal interface IStorageContainer : IFileSystem.IFileSystemExtensionPoint,
 	                                   bool ignoreMetadataError = true);
 
 	/// <summary>
-	///     Writes the <paramref name="bytes" /> to the <see cref="IFileSystem.IFileInfo" />.
+	///     Writes the <paramref name="bytes" /> to the <see cref="IFileInfo" />.
 	/// </summary>
 	void WriteBytes(byte[] bytes);
 

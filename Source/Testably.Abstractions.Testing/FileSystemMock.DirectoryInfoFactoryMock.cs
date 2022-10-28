@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class FileSystemMock
 {
-	private sealed class DirectoryInfoFactoryMock : IFileSystem.IDirectoryInfoFactory
+	private sealed class DirectoryInfoFactoryMock : IDirectoryInfoFactory
 	{
 		private readonly FileSystemMock _fileSystem;
 
@@ -17,12 +17,12 @@ public sealed partial class FileSystemMock
 
 		#region IDirectoryInfoFactory Members
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+		/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 		public IFileSystem FileSystem
 			=> _fileSystem;
 
-		/// <inheritdoc cref="IFileSystem.IDirectoryInfoFactory.New(string)" />
-		public IFileSystem.IDirectoryInfo New(string path)
+		/// <inheritdoc cref="IDirectoryInfoFactory.New(string)" />
+		public IDirectoryInfo New(string path)
 		{
 			if (path == null)
 			{
@@ -34,9 +34,9 @@ public sealed partial class FileSystemMock
 				_fileSystem);
 		}
 
-		/// <inheritdoc cref="IFileSystem.IDirectoryInfoFactory.Wrap(DirectoryInfo)" />
+		/// <inheritdoc cref="IDirectoryInfoFactory.Wrap(DirectoryInfo)" />
 		[return: NotNullIfNotNull("directoryInfo")]
-		public IFileSystem.IDirectoryInfo? Wrap(DirectoryInfo? directoryInfo)
+		public IDirectoryInfo? Wrap(DirectoryInfo? directoryInfo)
 			=> DirectoryInfoMock.New(
 				_fileSystem.Storage.GetLocation(
 					directoryInfo?.FullName,

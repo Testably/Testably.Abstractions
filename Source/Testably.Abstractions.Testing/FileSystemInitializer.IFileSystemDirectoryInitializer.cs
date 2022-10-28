@@ -14,7 +14,7 @@ public static partial class FileSystemInitializer
 		/// <summary>
 		///     The directory to initialize.
 		/// </summary>
-		public IFileSystem.IDirectoryInfo Directory { get; }
+		public IDirectoryInfo Directory { get; }
 
 		/// <summary>
 		///     Initializes the subdirectory in the <see cref="IFileSystem" /> with test data.

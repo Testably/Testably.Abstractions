@@ -11,7 +11,7 @@ public static partial class FileSystemInitializer
 		/// <summary>
 		///     Gives access to the base directory in which the <see cref="FileSystem" /> was initialized.
 		/// </summary>
-		IFileSystem.IDirectoryInfo BaseDirectory
+		IDirectoryInfo BaseDirectory
 		{
 			get;
 		}
@@ -24,7 +24,7 @@ public static partial class FileSystemInitializer
 		/// <summary>
 		///     Gives access to the created files or directories in the order of the initialization.
 		/// </summary>
-		IFileSystem.IFileSystemInfo this[int index]
+		IFileSystemInfo this[int index]
 		{
 			get;
 		}

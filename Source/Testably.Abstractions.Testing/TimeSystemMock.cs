@@ -54,15 +54,15 @@ public sealed partial class TimeSystemMock : ITimeSystem
 	#region ITimeSystem Members
 
 	/// <inheritdoc cref="ITimeSystem.DateTime" />
-	public ITimeSystem.IDateTime DateTime
+	public IDateTime DateTime
 		=> _dateTimeMock;
 
 	/// <inheritdoc cref="ITimeSystem.Task" />
-	public ITimeSystem.ITask Task
+	public ITask Task
 		=> _taskMock;
 
 	/// <inheritdoc cref="ITimeSystem.Thread" />
-	public ITimeSystem.IThread Thread
+	public IThread Thread
 		=> _threadMock;
 
 	#endregion

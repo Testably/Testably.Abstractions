@@ -5,7 +5,7 @@ using System.IO.Compression;
 namespace Testably.Abstractions;
 
 /// <inheritdoc cref="ZipArchive" />
-public interface IZipArchive : IFileSystem.IFileSystemExtensionPoint, IDisposable
+public interface IZipArchive : IFileSystemExtensionPoint, IDisposable
 {
 	/// <inheritdoc cref="ZipArchive.Entries" />
 	ReadOnlyCollection<IZipArchiveEntry> Entries { get; }

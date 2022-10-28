@@ -10,11 +10,11 @@ public sealed partial class RandomSystem : IRandomSystem
 	#region IRandomSystem Members
 
 	/// <inheritdoc cref="IRandomSystem.Guid" />
-	public IRandomSystem.IGuid Guid
+	public IGuid Guid
 		=> new GuidWrapper(this);
 
 	/// <inheritdoc cref="IRandomSystem.Random" />
-	public IRandomSystem.IRandomFactory Random
+	public IRandomFactory Random
 		=> new RandomFactory(this);
 
 	#endregion

@@ -12,7 +12,7 @@ public sealed partial class FileSystemMock
 	///     A mocked file in the <see cref="InMemoryStorage" />.
 	/// </summary>
 	private sealed class FileInfoMock
-		: FileSystemInfoMock, IFileSystem.IFileInfo
+		: FileSystemInfoMock, IFileInfo
 	{
 		private FileInfoMock(IStorageLocation location,
 		                     FileSystemMock fileSystem)
@@ -22,20 +22,20 @@ public sealed partial class FileSystemMock
 
 		#region IFileInfo Members
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.Directory" />
-		public IFileSystem.IDirectoryInfo? Directory
+		/// <inheritdoc cref="IFileInfo.Directory" />
+		public IDirectoryInfo? Directory
 			=> DirectoryInfoMock.New(Location.GetParent(),
 				FileSystem);
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.DirectoryName" />
+		/// <inheritdoc cref="IFileInfo.DirectoryName" />
 		public string? DirectoryName
 			=> Directory?.FullName;
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
+		/// <inheritdoc cref="IFileSystemInfo.Exists" />
 		public override bool Exists
 			=> base.Exists && FileSystemType == FileSystemTypes.File;
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.IsReadOnly" />
+		/// <inheritdoc cref="IFileInfo.IsReadOnly" />
 		public bool IsReadOnly
 		{
 			get => (Attributes & FileAttributes.ReadOnly) != 0;
@@ -52,7 +52,7 @@ public sealed partial class FileSystemMock
 			}
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.Length" />
+		/// <inheritdoc cref="IFileInfo.Length" />
 		public long Length
 		{
 			get
@@ -69,12 +69,12 @@ public sealed partial class FileSystemMock
 			}
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.AppendText()" />
+		/// <inheritdoc cref="IFileInfo.AppendText()" />
 		public StreamWriter AppendText()
 			=> new(Open(FileMode.Append, FileAccess.Write));
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.CopyTo(string)" />
-		public IFileSystem.IFileInfo CopyTo(string destFileName)
+		/// <inheritdoc cref="IFileInfo.CopyTo(string)" />
+		public IFileInfo CopyTo(string destFileName)
 		{
 			IStorageLocation location = FileSystem.Storage.Copy(
 				                            Location,
@@ -83,8 +83,8 @@ public sealed partial class FileSystemMock
 			return FileSystem.FileInfo.New(location.FullPath);
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.CopyTo(string, bool)" />
-		public IFileSystem.IFileInfo CopyTo(string destFileName, bool overwrite)
+		/// <inheritdoc cref="IFileInfo.CopyTo(string, bool)" />
+		public IFileInfo CopyTo(string destFileName, bool overwrite)
 		{
 			IStorageLocation location = FileSystem.Storage.Copy(
 				                            Location,
@@ -94,25 +94,25 @@ public sealed partial class FileSystemMock
 			return FileSystem.FileInfo.New(location.FullPath);
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.Create()" />
+		/// <inheritdoc cref="IFileInfo.Create()" />
 		public FileSystemStream Create()
 			=> FileSystem.File.Create(FullName);
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.CreateText()" />
+		/// <inheritdoc cref="IFileInfo.CreateText()" />
 		public StreamWriter CreateText()
 			=> new(Create());
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.Decrypt()" />
+		/// <inheritdoc cref="IFileInfo.Decrypt()" />
 		[SupportedOSPlatform("windows")]
 		public void Decrypt()
 			=> Container.Decrypt();
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.Encrypt()" />
+		/// <inheritdoc cref="IFileInfo.Encrypt()" />
 		[SupportedOSPlatform("windows")]
 		public void Encrypt()
 			=> Container.Encrypt();
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.MoveTo(string)" />
+		/// <inheritdoc cref="IFileInfo.MoveTo(string)" />
 		public void MoveTo(string destFileName)
 		{
 			Location = FileSystem.Storage.Move(
@@ -122,7 +122,7 @@ public sealed partial class FileSystemMock
 		}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
-		/// <inheritdoc cref="IFileSystem.IFileInfo.MoveTo(string, bool)" />
+		/// <inheritdoc cref="IFileInfo.MoveTo(string, bool)" />
 		public void MoveTo(string destFileName, bool overwrite)
 		{
 			Location = FileSystem.Storage.Move(
@@ -133,7 +133,7 @@ public sealed partial class FileSystemMock
 		}
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode)" />
+		/// <inheritdoc cref="IFileInfo.Open(FileMode)" />
 		public FileSystemStream Open(FileMode mode)
 		{
 			Execute.OnNetFrameworkIf(mode == FileMode.Append,
@@ -147,7 +147,7 @@ public sealed partial class FileSystemMock
 				FileShare.None);
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode, FileAccess)" />
+		/// <inheritdoc cref="IFileInfo.Open(FileMode, FileAccess)" />
 		public FileSystemStream Open(FileMode mode, FileAccess access)
 			=> new FileStreamMock(
 				FileSystem,
@@ -156,7 +156,7 @@ public sealed partial class FileSystemMock
 				access,
 				FileShare.None);
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileMode, FileAccess, FileShare)" />
+		/// <inheritdoc cref="IFileInfo.Open(FileMode, FileAccess, FileShare)" />
 		public FileSystemStream Open(FileMode mode, FileAccess access, FileShare share)
 			=> new FileStreamMock(
 				FileSystem,
@@ -166,12 +166,12 @@ public sealed partial class FileSystemMock
 				share);
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
-		/// <inheritdoc cref="IFileSystem.IFileInfo.Open(FileStreamOptions)" />
+		/// <inheritdoc cref="IFileInfo.Open(FileStreamOptions)" />
 		public FileSystemStream Open(FileStreamOptions options)
 			=> FileSystem.File.Open(FullName, options);
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.OpenRead()" />
+		/// <inheritdoc cref="IFileInfo.OpenRead()" />
 		public FileSystemStream OpenRead()
 			=> new FileStreamMock(
 				FileSystem,
@@ -179,11 +179,11 @@ public sealed partial class FileSystemMock
 				FileMode.Open,
 				FileAccess.Read);
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.OpenText()" />
+		/// <inheritdoc cref="IFileInfo.OpenText()" />
 		public StreamReader OpenText()
 			=> new(OpenRead());
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.OpenWrite()" />
+		/// <inheritdoc cref="IFileInfo.OpenWrite()" />
 		public FileSystemStream OpenWrite()
 			=> new FileStreamMock(
 				FileSystem,
@@ -192,8 +192,8 @@ public sealed partial class FileSystemMock
 				FileAccess.Write,
 				FileShare.None);
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.Replace(string, string?)" />
-		public IFileSystem.IFileInfo Replace(string destinationFileName,
+		/// <inheritdoc cref="IFileInfo.Replace(string, string?)" />
+		public IFileInfo Replace(string destinationFileName,
 		                                     string? destinationBackupFileName)
 		{
 			IStorageLocation location = FileSystem.Storage.Replace(
@@ -206,8 +206,8 @@ public sealed partial class FileSystemMock
 			return FileSystem.FileInfo.New(location.FullPath);
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileInfo.Replace(string, string?, bool)" />
-		public IFileSystem.IFileInfo Replace(string destinationFileName,
+		/// <inheritdoc cref="IFileInfo.Replace(string, string?, bool)" />
+		public IFileInfo Replace(string destinationFileName,
 		                                     string? destinationBackupFileName,
 		                                     bool ignoreMetadataErrors)
 		{

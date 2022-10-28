@@ -16,7 +16,7 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class FileSystemMock
 {
-	private sealed class FileMock : IFileSystem.IFile
+	private sealed class FileMock : IFile
 	{
 		private readonly FileSystemMock _fileSystem;
 
@@ -27,15 +27,15 @@ public sealed partial class FileSystemMock
 
 		#region IFile Members
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+		/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 		public IFileSystem FileSystem
 			=> _fileSystem;
 
-		/// <inheritdoc cref="IFileSystem.IFile.AppendAllLines(string, IEnumerable{string})" />
+		/// <inheritdoc cref="IFile.AppendAllLines(string, IEnumerable{string})" />
 		public void AppendAllLines(string path, IEnumerable<string> contents)
 			=> AppendAllLines(path, contents, Encoding.Default);
 
-		/// <inheritdoc cref="IFileSystem.IFile.AppendAllLines(string, IEnumerable{string}, Encoding)" />
+		/// <inheritdoc cref="IFile.AppendAllLines(string, IEnumerable{string}, Encoding)" />
 		public void AppendAllLines(
 			string path,
 			IEnumerable<string> contents,
@@ -46,12 +46,12 @@ public sealed partial class FileSystemMock
 				encoding);
 
 #if FEATURE_FILESYSTEM_ASYNC
-		/// <inheritdoc cref="IFileSystem.IFile.AppendAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
+		/// <inheritdoc cref="IFile.AppendAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
 		public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
 		                                CancellationToken cancellationToken = default)
 			=> AppendAllLinesAsync(path, contents, Encoding.Default, cancellationToken);
 
-		/// <inheritdoc cref="IFileSystem.IFile.AppendAllLinesAsync(string, IEnumerable{string}, Encoding, CancellationToken)" />
+		/// <inheritdoc cref="IFile.AppendAllLinesAsync(string, IEnumerable{string}, Encoding, CancellationToken)" />
 		public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
 		                                Encoding encoding,
 		                                CancellationToken cancellationToken = default)
@@ -62,11 +62,11 @@ public sealed partial class FileSystemMock
 		}
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFile.AppendAllText(string, string?)" />
+		/// <inheritdoc cref="IFile.AppendAllText(string, string?)" />
 		public void AppendAllText(string path, string? contents)
 			=> AppendAllText(path, contents, Encoding.Default);
 
-		/// <inheritdoc cref="IFileSystem.IFile.AppendAllText(string, string?, Encoding)" />
+		/// <inheritdoc cref="IFile.AppendAllText(string, string?, Encoding)" />
 		public void AppendAllText(string path, string? contents, Encoding encoding)
 		{
 			IStorageContainer fileInfo =
@@ -85,12 +85,12 @@ public sealed partial class FileSystemMock
 		}
 
 #if FEATURE_FILESYSTEM_ASYNC
-		/// <inheritdoc cref="IFileSystem.IFile.AppendAllTextAsync(string, string?, CancellationToken)" />
+		/// <inheritdoc cref="IFile.AppendAllTextAsync(string, string?, CancellationToken)" />
 		public Task AppendAllTextAsync(string path, string? contents,
 		                               CancellationToken cancellationToken = default)
 			=> AppendAllTextAsync(path, contents, Encoding.Default, cancellationToken);
 
-		/// <inheritdoc cref="IFileSystem.IFile.AppendAllTextAsync(string, string?, Encoding, CancellationToken)" />
+		/// <inheritdoc cref="IFile.AppendAllTextAsync(string, string?, Encoding, CancellationToken)" />
 		public Task AppendAllTextAsync(string path, string? contents, Encoding encoding,
 		                               CancellationToken cancellationToken = default)
 		{
@@ -100,11 +100,11 @@ public sealed partial class FileSystemMock
 		}
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFile.AppendText(string)" />
+		/// <inheritdoc cref="IFile.AppendText(string)" />
 		public StreamWriter AppendText(string path)
 			=> FileSystem.FileInfo.New(path).AppendText();
 
-		/// <inheritdoc cref="IFileSystem.IFile.Copy(string, string)" />
+		/// <inheritdoc cref="IFile.Copy(string, string)" />
 		public void Copy(string sourceFileName, string destFileName)
 		{
 			try
@@ -121,7 +121,7 @@ public sealed partial class FileSystemMock
 			}
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFile.Copy(string, string, bool)" />
+		/// <inheritdoc cref="IFile.Copy(string, string, bool)" />
 		public void Copy(string sourceFileName, string destFileName, bool overwrite)
 			=> Execute.OnNetFramework(
 				() =>
@@ -142,7 +142,7 @@ public sealed partial class FileSystemMock
 					   .CopyTo(destFileName, overwrite);
 				});
 
-		/// <inheritdoc cref="IFileSystem.IFile.Create(string)" />
+		/// <inheritdoc cref="IFile.Create(string)" />
 		public FileSystemStream Create(string path)
 			=> new FileStreamMock(
 				_fileSystem,
@@ -151,7 +151,7 @@ public sealed partial class FileSystemMock
 				FileAccess.ReadWrite,
 				FileShare.None);
 
-		/// <inheritdoc cref="IFileSystem.IFile.Create(string, int)" />
+		/// <inheritdoc cref="IFile.Create(string, int)" />
 		public FileSystemStream Create(string path, int bufferSize)
 			=> new FileStreamMock(
 				_fileSystem,
@@ -161,7 +161,7 @@ public sealed partial class FileSystemMock
 				FileShare.None,
 				bufferSize);
 
-		/// <inheritdoc cref="IFileSystem.IFile.Create(string, int, FileOptions)" />
+		/// <inheritdoc cref="IFile.Create(string, int, FileOptions)" />
 		public FileSystemStream Create(string path, int bufferSize, FileOptions options)
 			=> new FileStreamMock(
 				_fileSystem,
@@ -173,8 +173,8 @@ public sealed partial class FileSystemMock
 				options);
 
 #if FEATURE_FILESYSTEM_LINK
-		/// <inheritdoc cref="IFileSystem.IFile.CreateSymbolicLink(string, string)" />
-		public IFileSystem.IFileSystemInfo CreateSymbolicLink(
+		/// <inheritdoc cref="IFile.CreateSymbolicLink(string, string)" />
+		public IFileSystemInfo CreateSymbolicLink(
 			string path, string pathToTarget)
 		{
 			IStorageLocation location = _fileSystem.Storage.GetLocation(path);
@@ -189,11 +189,11 @@ public sealed partial class FileSystemMock
 		}
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFile.CreateText(string)" />
+		/// <inheritdoc cref="IFile.CreateText(string)" />
 		public StreamWriter CreateText(string path)
 			=> FileSystem.FileInfo.New(path).CreateText();
 
-		/// <inheritdoc cref="IFileSystem.IFile.Decrypt(string)" />
+		/// <inheritdoc cref="IFile.Decrypt(string)" />
 		[SupportedOSPlatform("windows")]
 		public void Decrypt(string path)
 		{
@@ -206,12 +206,12 @@ public sealed partial class FileSystemMock
 			}
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFile.Delete(string)" />
+		/// <inheritdoc cref="IFile.Delete(string)" />
 		public void Delete(string path)
 			=> _fileSystem.Storage.DeleteContainer(
 				_fileSystem.Storage.GetLocation(path));
 
-		/// <inheritdoc cref="IFileSystem.IFile.Encrypt(string)" />
+		/// <inheritdoc cref="IFile.Encrypt(string)" />
 		[SupportedOSPlatform("windows")]
 		public void Encrypt(string path)
 		{
@@ -224,7 +224,7 @@ public sealed partial class FileSystemMock
 			}
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFile.Exists(string?)" />
+		/// <inheritdoc cref="IFile.Exists(string?)" />
 		public bool Exists([NotNullWhen(true)] string? path)
 		{
 			if (string.IsNullOrEmpty(path))
@@ -238,7 +238,7 @@ public sealed partial class FileSystemMock
 			   .Exists;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFile.GetAttributes(string)" />
+		/// <inheritdoc cref="IFile.GetAttributes(string)" />
 		public FileAttributes GetAttributes(string path)
 		{
 			IStorageContainer container = _fileSystem.Storage
@@ -252,54 +252,54 @@ public sealed partial class FileSystemMock
 			return container.Attributes;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFile.GetCreationTime(string)" />
+		/// <inheritdoc cref="IFile.GetCreationTime(string)" />
 		public DateTime GetCreationTime(string path)
 			=> _fileSystem.Storage.GetContainer(
 					_fileSystem.Storage.GetLocation(path)).CreationTime
 			   .Get(DateTimeKind.Local);
 
-		/// <inheritdoc cref="IFileSystem.IFile.GetCreationTimeUtc(string)" />
+		/// <inheritdoc cref="IFile.GetCreationTimeUtc(string)" />
 		public DateTime GetCreationTimeUtc(string path)
 			=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(path)).CreationTime.Get(DateTimeKind.Utc);
 
-		/// <inheritdoc cref="IFileSystem.IFile.GetLastAccessTime(string)" />
+		/// <inheritdoc cref="IFile.GetLastAccessTime(string)" />
 		public DateTime GetLastAccessTime(string path)
 			=> _fileSystem.Storage.GetContainer(
 					_fileSystem.Storage.GetLocation(path)).LastAccessTime
 			   .Get(DateTimeKind.Local);
 
-		/// <inheritdoc cref="IFileSystem.IFile.GetLastAccessTimeUtc(string)" />
+		/// <inheritdoc cref="IFile.GetLastAccessTimeUtc(string)" />
 		public DateTime GetLastAccessTimeUtc(string path)
 			=> _fileSystem.Storage.GetContainer(
 					_fileSystem.Storage.GetLocation(path)).LastAccessTime
 			   .Get(DateTimeKind.Utc);
 
-		/// <inheritdoc cref="IFileSystem.IFile.GetLastWriteTime(string)" />
+		/// <inheritdoc cref="IFile.GetLastWriteTime(string)" />
 		public DateTime GetLastWriteTime(string path)
 			=> _fileSystem.Storage.GetContainer(
 					_fileSystem.Storage.GetLocation(path)).LastWriteTime
 			   .Get(DateTimeKind.Local);
 
-		/// <inheritdoc cref="IFileSystem.IFile.GetLastWriteTimeUtc(string)" />
+		/// <inheritdoc cref="IFile.GetLastWriteTimeUtc(string)" />
 		public DateTime GetLastWriteTimeUtc(string path)
 			=> _fileSystem.Storage.GetContainer(
 					_fileSystem.Storage.GetLocation(path)).LastWriteTime
 			   .Get(DateTimeKind.Utc);
 
-		/// <inheritdoc cref="IFileSystem.IFile.Move(string, string)" />
+		/// <inheritdoc cref="IFile.Move(string, string)" />
 		public void Move(string sourceFileName, string destFileName)
 			=> _fileSystem.FileInfo.New(sourceFileName)
 			   .MoveTo(destFileName);
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
-		/// <inheritdoc cref="IFileSystem.IFile.Move(string, string, bool)" />
+		/// <inheritdoc cref="IFile.Move(string, string, bool)" />
 		public void Move(string sourceFileName, string destFileName, bool overwrite)
 			=> _fileSystem.FileInfo.New(sourceFileName)
 			   .MoveTo(destFileName, overwrite);
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFile.Open(string, FileMode)" />
+		/// <inheritdoc cref="IFile.Open(string, FileMode)" />
 		public FileSystemStream Open(string path, FileMode mode)
 			=> new FileStreamMock(
 				_fileSystem,
@@ -308,7 +308,7 @@ public sealed partial class FileSystemMock
 				mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite,
 				FileShare.None);
 
-		/// <inheritdoc cref="IFileSystem.IFile.Open(string, FileMode, FileAccess)" />
+		/// <inheritdoc cref="IFile.Open(string, FileMode, FileAccess)" />
 		public FileSystemStream Open(string path, FileMode mode, FileAccess access)
 			=> new FileStreamMock(
 				_fileSystem,
@@ -317,7 +317,7 @@ public sealed partial class FileSystemMock
 				access,
 				FileShare.None);
 
-		/// <inheritdoc cref="IFileSystem.IFile.Open(string, FileMode, FileAccess, FileShare)" />
+		/// <inheritdoc cref="IFile.Open(string, FileMode, FileAccess, FileShare)" />
 		public FileSystemStream Open(
 			string path,
 			FileMode mode,
@@ -331,7 +331,7 @@ public sealed partial class FileSystemMock
 				share);
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
-		/// <inheritdoc cref="IFileSystem.IFile.Open(string, FileStreamOptions)" />
+		/// <inheritdoc cref="IFile.Open(string, FileStreamOptions)" />
 		public FileSystemStream Open(string path, FileStreamOptions options)
 			=> new FileStreamMock(
 				_fileSystem,
@@ -343,7 +343,7 @@ public sealed partial class FileSystemMock
 				options.Options);
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFile.OpenRead(string)" />
+		/// <inheritdoc cref="IFile.OpenRead(string)" />
 		public FileSystemStream OpenRead(string path)
 			=> new FileStreamMock(
 				_fileSystem,
@@ -351,11 +351,11 @@ public sealed partial class FileSystemMock
 				FileMode.Open,
 				FileAccess.Read);
 
-		/// <inheritdoc cref="IFileSystem.IFile.OpenText(string)" />
+		/// <inheritdoc cref="IFile.OpenText(string)" />
 		public StreamReader OpenText(string path)
 			=> FileSystem.FileInfo.New(path).OpenText();
 
-		/// <inheritdoc cref="IFileSystem.IFile.OpenWrite(string)" />
+		/// <inheritdoc cref="IFile.OpenWrite(string)" />
 		public FileSystemStream OpenWrite(string path)
 			=> new FileStreamMock(
 				_fileSystem,
@@ -364,7 +364,7 @@ public sealed partial class FileSystemMock
 				FileAccess.Write,
 				FileShare.None);
 
-		/// <inheritdoc cref="IFileSystem.IFile.ReadAllBytes(string)" />
+		/// <inheritdoc cref="IFile.ReadAllBytes(string)" />
 		public byte[] ReadAllBytes(string path)
 		{
 			IStorageContainer fileInfo =
@@ -385,7 +385,7 @@ public sealed partial class FileSystemMock
 		}
 
 #if FEATURE_FILESYSTEM_ASYNC
-		/// <inheritdoc cref="IFileSystem.IFile.ReadAllBytesAsync(string, CancellationToken)" />
+		/// <inheritdoc cref="IFile.ReadAllBytesAsync(string, CancellationToken)" />
 		public Task<byte[]> ReadAllBytesAsync(string path,
 		                                      CancellationToken cancellationToken =
 			                                      default)
@@ -395,22 +395,22 @@ public sealed partial class FileSystemMock
 		}
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFile.ReadAllLines(string)" />
+		/// <inheritdoc cref="IFile.ReadAllLines(string)" />
 		public string[] ReadAllLines(string path)
 			=> ReadAllLines(path, Encoding.Default);
 
-		/// <inheritdoc cref="IFileSystem.IFile.ReadAllLines(string, Encoding)" />
+		/// <inheritdoc cref="IFile.ReadAllLines(string, Encoding)" />
 		public string[] ReadAllLines(string path, Encoding encoding)
 			=> ReadLines(path, encoding).ToArray();
 
 #if FEATURE_FILESYSTEM_ASYNC
-		/// <inheritdoc cref="IFileSystem.IFile.ReadAllLinesAsync(string, CancellationToken)" />
+		/// <inheritdoc cref="IFile.ReadAllLinesAsync(string, CancellationToken)" />
 		public Task<string[]> ReadAllLinesAsync(
 			string path,
 			CancellationToken cancellationToken = default)
 			=> ReadAllLinesAsync(path, Encoding.Default, cancellationToken);
 
-		/// <inheritdoc cref="IFileSystem.IFile.ReadAllLinesAsync(string, Encoding, CancellationToken)" />
+		/// <inheritdoc cref="IFile.ReadAllLinesAsync(string, Encoding, CancellationToken)" />
 		public Task<string[]> ReadAllLinesAsync(
 			string path,
 			Encoding encoding,
@@ -421,11 +421,11 @@ public sealed partial class FileSystemMock
 		}
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFile.ReadAllText(string)" />
+		/// <inheritdoc cref="IFile.ReadAllText(string)" />
 		public string ReadAllText(string path)
 			=> ReadAllText(path, Encoding.Default);
 
-		/// <inheritdoc cref="IFileSystem.IFile.ReadAllText(string, Encoding)" />
+		/// <inheritdoc cref="IFile.ReadAllText(string, Encoding)" />
 		public string ReadAllText(string path, Encoding encoding)
 		{
 			IStorageContainer fileInfo =
@@ -446,13 +446,13 @@ public sealed partial class FileSystemMock
 		}
 
 #if FEATURE_FILESYSTEM_ASYNC
-		/// <inheritdoc cref="IFileSystem.IFile.ReadAllTextAsync(string, CancellationToken)" />
+		/// <inheritdoc cref="IFile.ReadAllTextAsync(string, CancellationToken)" />
 		public Task<string> ReadAllTextAsync(
 			string path,
 			CancellationToken cancellationToken = default)
 			=> ReadAllTextAsync(path, Encoding.Default, cancellationToken);
 
-		/// <inheritdoc cref="IFileSystem.IFile.ReadAllTextAsync(string, Encoding, CancellationToken)" />
+		/// <inheritdoc cref="IFile.ReadAllTextAsync(string, Encoding, CancellationToken)" />
 		public Task<string> ReadAllTextAsync(
 			string path,
 			Encoding encoding,
@@ -463,22 +463,22 @@ public sealed partial class FileSystemMock
 		}
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFile.ReadLines(string)" />
+		/// <inheritdoc cref="IFile.ReadLines(string)" />
 		public IEnumerable<string> ReadLines(string path)
 			=> ReadLines(path, Encoding.Default);
 
-		/// <inheritdoc cref="IFileSystem.IFile.ReadLines(string, Encoding)" />
+		/// <inheritdoc cref="IFile.ReadLines(string, Encoding)" />
 		public IEnumerable<string> ReadLines(string path, Encoding encoding)
 			=> EnumerateLines(ReadAllText(path, encoding));
 
-		/// <inheritdoc cref="IFileSystem.IFile.Replace(string, string, string)" />
+		/// <inheritdoc cref="IFile.Replace(string, string, string)" />
 		public void Replace(string sourceFileName,
 		                    string destinationFileName,
 		                    string? destinationBackupFileName)
 			=> _fileSystem.FileInfo.New(sourceFileName)
 			   .Replace(destinationFileName, destinationBackupFileName);
 
-		/// <inheritdoc cref="IFileSystem.IFile.Replace(string, string, string, bool)" />
+		/// <inheritdoc cref="IFile.Replace(string, string, string, bool)" />
 		public void Replace(string sourceFileName,
 		                    string destinationFileName,
 		                    string? destinationBackupFileName,
@@ -488,8 +488,8 @@ public sealed partial class FileSystemMock
 					ignoreMetadataErrors);
 
 #if FEATURE_FILESYSTEM_LINK
-		/// <inheritdoc cref="IFileSystem.IFile.ResolveLinkTarget(string, bool)" />
-		public IFileSystem.IFileSystemInfo? ResolveLinkTarget(
+		/// <inheritdoc cref="IFile.ResolveLinkTarget(string, bool)" />
+		public IFileSystemInfo? ResolveLinkTarget(
 			string linkPath, bool returnFinalTarget)
 		{
 			try
@@ -511,7 +511,7 @@ public sealed partial class FileSystemMock
 		}
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFile.SetAttributes(string, FileAttributes)" />
+		/// <inheritdoc cref="IFile.SetAttributes(string, FileAttributes)" />
 		public void SetAttributes(string path, FileAttributes fileAttributes)
 		{
 			IStorageContainer fileInfo =
@@ -526,7 +526,7 @@ public sealed partial class FileSystemMock
 			fileInfo.Attributes = fileAttributes;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFile.SetCreationTime(string, DateTime)" />
+		/// <inheritdoc cref="IFile.SetCreationTime(string, DateTime)" />
 		public void SetCreationTime(string path, DateTime creationTime)
 		{
 			IStorageContainer fileInfo =
@@ -541,7 +541,7 @@ public sealed partial class FileSystemMock
 			fileInfo.CreationTime.Set(creationTime, DateTimeKind.Local);
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFile.SetCreationTimeUtc(string, DateTime)" />
+		/// <inheritdoc cref="IFile.SetCreationTimeUtc(string, DateTime)" />
 		public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
 		{
 			IStorageContainer fileInfo =
@@ -556,7 +556,7 @@ public sealed partial class FileSystemMock
 			fileInfo.CreationTime.Set(creationTimeUtc, DateTimeKind.Utc);
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFile.SetLastAccessTime(string, DateTime)" />
+		/// <inheritdoc cref="IFile.SetLastAccessTime(string, DateTime)" />
 		public void SetLastAccessTime(string path, DateTime lastAccessTime)
 		{
 			IStorageContainer fileInfo =
@@ -571,7 +571,7 @@ public sealed partial class FileSystemMock
 			fileInfo.LastAccessTime.Set(lastAccessTime, DateTimeKind.Local);
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFile.SetLastAccessTimeUtc(string, DateTime)" />
+		/// <inheritdoc cref="IFile.SetLastAccessTimeUtc(string, DateTime)" />
 		public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
 		{
 			IStorageContainer fileInfo =
@@ -586,7 +586,7 @@ public sealed partial class FileSystemMock
 			fileInfo.LastAccessTime.Set(lastAccessTimeUtc, DateTimeKind.Utc);
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFile.SetLastWriteTime(string, DateTime)" />
+		/// <inheritdoc cref="IFile.SetLastWriteTime(string, DateTime)" />
 		public void SetLastWriteTime(string path, DateTime lastWriteTime)
 		{
 			IStorageContainer fileInfo =
@@ -601,7 +601,7 @@ public sealed partial class FileSystemMock
 			fileInfo.LastWriteTime.Set(lastWriteTime, DateTimeKind.Local);
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFile.SetLastWriteTimeUtc(string, DateTime)" />
+		/// <inheritdoc cref="IFile.SetLastWriteTimeUtc(string, DateTime)" />
 		public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
 		{
 			IStorageContainer fileInfo =
@@ -616,7 +616,7 @@ public sealed partial class FileSystemMock
 			fileInfo.LastWriteTime.Set(lastWriteTimeUtc, DateTimeKind.Utc);
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFile.WriteAllBytes(string, byte[])" />
+		/// <inheritdoc cref="IFile.WriteAllBytes(string, byte[])" />
 		public void WriteAllBytes(string path, byte[] bytes)
 		{
 			IStorageContainer fileInfo =
@@ -635,7 +635,7 @@ public sealed partial class FileSystemMock
 		}
 
 #if FEATURE_FILESYSTEM_ASYNC
-		/// <inheritdoc cref="IFileSystem.IFile.WriteAllBytesAsync(string, byte[], CancellationToken)" />
+		/// <inheritdoc cref="IFile.WriteAllBytesAsync(string, byte[], CancellationToken)" />
 		public Task WriteAllBytesAsync(string path, byte[] bytes,
 		                               CancellationToken cancellationToken = default)
 		{
@@ -645,22 +645,22 @@ public sealed partial class FileSystemMock
 		}
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFile.WriteAllLines(string, string[])" />
+		/// <inheritdoc cref="IFile.WriteAllLines(string, string[])" />
 		public void WriteAllLines(string path, string[] contents)
 			=> WriteAllLines(path, contents, Encoding.Default);
 
-		/// <inheritdoc cref="IFileSystem.IFile.WriteAllLines(string, IEnumerable{string})" />
+		/// <inheritdoc cref="IFile.WriteAllLines(string, IEnumerable{string})" />
 		public void WriteAllLines(string path, IEnumerable<string> contents)
 			=> WriteAllLines(path, contents, Encoding.Default);
 
-		/// <inheritdoc cref="IFileSystem.IFile.WriteAllLines(string, string[], Encoding)" />
+		/// <inheritdoc cref="IFile.WriteAllLines(string, string[], Encoding)" />
 		public void WriteAllLines(
 			string path,
 			string[] contents,
 			Encoding encoding)
 			=> WriteAllLines(path, contents.AsEnumerable(), encoding);
 
-		/// <inheritdoc cref="IFileSystem.IFile.WriteAllLines(string, IEnumerable{string}, Encoding)" />
+		/// <inheritdoc cref="IFile.WriteAllLines(string, IEnumerable{string}, Encoding)" />
 		public void WriteAllLines(
 			string path,
 			IEnumerable<string> contents,
@@ -671,14 +671,14 @@ public sealed partial class FileSystemMock
 				encoding);
 
 #if FEATURE_FILESYSTEM_ASYNC
-		/// <inheritdoc cref="IFileSystem.IFile.WriteAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
+		/// <inheritdoc cref="IFile.WriteAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
 		public Task WriteAllLinesAsync(
 			string path,
 			IEnumerable<string> contents,
 			CancellationToken cancellationToken = default)
 			=> WriteAllLinesAsync(path, contents, Encoding.Default, cancellationToken);
 
-		/// <inheritdoc cref="IFileSystem.IFile.WriteAllLinesAsync(string, IEnumerable{string}, Encoding, CancellationToken)" />
+		/// <inheritdoc cref="IFile.WriteAllLinesAsync(string, IEnumerable{string}, Encoding, CancellationToken)" />
 		public Task WriteAllLinesAsync(
 			string path,
 			IEnumerable<string> contents,
@@ -691,11 +691,11 @@ public sealed partial class FileSystemMock
 		}
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFile.WriteAllText(string, string?)" />
+		/// <inheritdoc cref="IFile.WriteAllText(string, string?)" />
 		public void WriteAllText(string path, string? contents)
 			=> WriteAllText(path, contents, Encoding.Default);
 
-		/// <inheritdoc cref="IFileSystem.IFile.WriteAllText(string, string?, Encoding)" />
+		/// <inheritdoc cref="IFile.WriteAllText(string, string?, Encoding)" />
 		public void WriteAllText(string path, string? contents, Encoding encoding)
 		{
 			IStorageContainer fileInfo =
@@ -714,12 +714,12 @@ public sealed partial class FileSystemMock
 		}
 
 #if FEATURE_FILESYSTEM_ASYNC
-		/// <inheritdoc cref="IFileSystem.IFile.WriteAllTextAsync(string, string?, CancellationToken)" />
+		/// <inheritdoc cref="IFile.WriteAllTextAsync(string, string?, CancellationToken)" />
 		public Task WriteAllTextAsync(string path, string? contents,
 		                              CancellationToken cancellationToken = default)
 			=> WriteAllTextAsync(path, contents, Encoding.Default, cancellationToken);
 
-		/// <inheritdoc cref="IFileSystem.IFile.WriteAllTextAsync(string, string?, Encoding, CancellationToken)" />
+		/// <inheritdoc cref="IFile.WriteAllTextAsync(string, string?, Encoding, CancellationToken)" />
 		public Task WriteAllTextAsync(string path, string? contents, Encoding encoding,
 		                              CancellationToken cancellationToken = default)
 		{

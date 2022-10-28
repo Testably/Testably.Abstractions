@@ -62,10 +62,10 @@ internal class InMemoryContainer : IStorageContainer
 	public ITimeContainer CreationTime { get; } = new TimeContainer();
 
 	/// <inheritdoc cref="IStorageContainer.ExtensionContainer" />
-	public IFileSystem.IFileSystemExtensionContainer ExtensionContainer
+	public IFileSystemExtensionContainer ExtensionContainer
 		=> _extensionContainer;
 
-	/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 	public IFileSystem FileSystem => _fileSystem;
 
 	/// <inheritdoc cref="IStorageContainer.LastAccessTime" />
@@ -77,7 +77,7 @@ internal class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.LinkTarget" />
 	public string? LinkTarget { get; set; }
 
-	/// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+	/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
 	public ITimeSystem TimeSystem => _fileSystem.TimeSystem;
 
 	/// <inheritdoc cref="IStorageContainer.Type" />

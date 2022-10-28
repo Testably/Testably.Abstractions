@@ -10,12 +10,12 @@ public sealed partial class RandomSystemMock
 	/// <summary>
 	///     A mocked random generator.
 	/// </summary>
-	internal class RandomMock : IRandomSystem.IRandom
+	internal class RandomMock : IRandom
 	{
 		private readonly Generator<byte[]>? _byteGenerator;
 		private readonly Generator<double>? _doubleGenerator;
 		private readonly Generator<int>? _intGenerator;
-		private readonly IRandomSystem.IRandom _random;
+		private readonly IRandom _random;
 
 #if FEATURE_RANDOM_ADVANCED
 		/// <summary>
@@ -63,17 +63,17 @@ public sealed partial class RandomSystemMock
 
 		#region IRandom Members
 
-		/// <inheritdoc cref="IRandomSystem.IRandom.Next()" />
+		/// <inheritdoc cref="IRandom.Next()" />
 		public int Next()
 			=> _intGenerator?.GetNext() ?? _random.Next();
 
-		/// <inheritdoc cref="IRandomSystem.IRandom.Next(int)" />
+		/// <inheritdoc cref="IRandom.Next(int)" />
 		public int Next(int maxValue)
 			=> Math.Min(
 				_intGenerator?.GetNext() ?? _random.Next(maxValue),
 				maxValue - 1);
 
-		/// <inheritdoc cref="IRandomSystem.IRandom.Next(int, int)" />
+		/// <inheritdoc cref="IRandom.Next(int, int)" />
 		public int Next(int minValue, int maxValue)
 			=> Math.Min(
 				Math.Max(
@@ -81,7 +81,7 @@ public sealed partial class RandomSystemMock
 					minValue),
 				maxValue - 1);
 
-		/// <inheritdoc cref="IRandomSystem.IRandom.NextBytes(byte[])" />
+		/// <inheritdoc cref="IRandom.NextBytes(byte[])" />
 		public void NextBytes(byte[] buffer)
 		{
 			if (_byteGenerator != null)
@@ -96,7 +96,7 @@ public sealed partial class RandomSystemMock
 		}
 
 #if FEATURE_SPAN
-		/// <inheritdoc cref="IRandomSystem.IRandom.NextBytes(Span{byte})" />
+		/// <inheritdoc cref="IRandom.NextBytes(Span{byte})" />
 		public void NextBytes(Span<byte> buffer)
 		{
 			if (_byteGenerator != null)
@@ -112,7 +112,7 @@ public sealed partial class RandomSystemMock
 		}
 #endif
 
-		/// <inheritdoc cref="IRandomSystem.IRandom.NextDouble()" />
+		/// <inheritdoc cref="IRandom.NextDouble()" />
 		public double NextDouble()
 			=> _doubleGenerator?.GetNext() ?? _random.NextDouble();
 
@@ -124,17 +124,17 @@ public sealed partial class RandomSystemMock
 #endif
 
 #if FEATURE_RANDOM_ADVANCED
-		/// <inheritdoc cref="IRandomSystem.IRandom.NextInt64()" />
+		/// <inheritdoc cref="IRandom.NextInt64()" />
 		public long NextInt64()
 			=> _longGenerator?.GetNext() ?? _random.NextInt64();
 
-		/// <inheritdoc cref="IRandomSystem.IRandom.NextInt64(long)" />
+		/// <inheritdoc cref="IRandom.NextInt64(long)" />
 		public long NextInt64(long maxValue)
 			=> Math.Min(
 				_longGenerator?.GetNext() ?? _random.NextInt64(maxValue),
 				maxValue - 1);
 
-		/// <inheritdoc cref="IRandomSystem.IRandom.NextInt64(long, long)" />
+		/// <inheritdoc cref="IRandom.NextInt64(long, long)" />
 		public long NextInt64(long minValue, long maxValue)
 			=> Math.Min(
 				Math.Max(
@@ -142,7 +142,7 @@ public sealed partial class RandomSystemMock
 					minValue),
 				maxValue - 1);
 
-		/// <inheritdoc cref="IRandomSystem.IRandom.NextSingle()" />
+		/// <inheritdoc cref="IRandom.NextSingle()" />
 		public float NextSingle()
 			=> _singleGenerator?.GetNext() ?? _random.NextSingle();
 #endif

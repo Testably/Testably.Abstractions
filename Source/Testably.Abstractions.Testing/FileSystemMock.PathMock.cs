@@ -14,7 +14,7 @@ public sealed partial class FileSystemMock
 			_fileSystem = fileSystem;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IPath.GetFullPath(string)" />
+		/// <inheritdoc cref="IPath.GetFullPath(string)" />
 		public override string GetFullPath(string path)
 		{
 			if (string.IsNullOrEmpty(path))

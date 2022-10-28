@@ -22,7 +22,7 @@ public abstract class FileSystemDriveInfoTests<TFileSystem>
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
-		IFileSystem.IDriveInfo result =
+		IDriveInfo result =
 			FileSystem.DriveInfo.New(FileTestHelper.RootDrive());
 		string previousVolumeLabel = result.VolumeLabel;
 

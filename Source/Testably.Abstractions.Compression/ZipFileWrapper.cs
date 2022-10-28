@@ -13,7 +13,7 @@ internal sealed class ZipFileWrapper : IZipFile
 
 	#region IZipFile Members
 
-	/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, string)" />

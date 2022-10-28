@@ -22,7 +22,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		FileSystem.Directory.CreateDirectory(pathToTarget);
 		FileSystem.Directory.CreateSymbolicLink(path, targetFullPath);
 
-		IFileSystem.IFileSystemInfo? target =
+		IFileSystemInfo? target =
 			FileSystem.Directory.ResolveLinkTarget(path, false);
 
 		target!.FullName.Should().Be(targetFullPath);
@@ -41,7 +41,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		FileSystem.Directory.Delete(pathToTarget);
 		FileSystem.Directory.CreateDirectory(pathToTarget.ToUpper());
 
-		IFileSystem.IFileSystemInfo? target =
+		IFileSystemInfo? target =
 			FileSystem.Directory.ResolveLinkTarget(path, false);
 
 		if (!Test.RunsOnLinux)
@@ -75,7 +75,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 			previousPath = newPath;
 		}
 
-		IFileSystem.IFileSystemInfo? target =
+		IFileSystemInfo? target =
 			FileSystem.Directory.ResolveLinkTarget(previousPath, true);
 
 		target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToFinalTarget));
@@ -123,7 +123,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 			System.IO.Path.Combine(BasePath, pathToMissingDirectory));
 		FileSystem.Directory.Delete(pathToMissingDirectory);
 
-		IFileSystem.IFileSystemInfo? target =
+		IFileSystemInfo? target =
 			FileSystem.Directory.ResolveLinkTarget(path, true);
 
 		target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToMissingDirectory));
@@ -136,7 +136,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		IFileSystem.IFileSystemInfo? target =
+		IFileSystemInfo? target =
 			FileSystem.Directory.ResolveLinkTarget(path, false);
 
 		target.Should().BeNull();
@@ -149,7 +149,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(path, null);
 
-		IFileSystem.IFileSystemInfo? target =
+		IFileSystemInfo? target =
 			FileSystem.Directory.ResolveLinkTarget(path, false);
 
 		target.Should().BeNull();
@@ -164,7 +164,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		FileSystem.Directory.CreateDirectory(pathToTarget);
 		FileSystem.Directory.CreateSymbolicLink(path, targetFullPath);
 
-		IFileSystem.IFileSystemInfo? target =
+		IFileSystemInfo? target =
 			FileSystem.Directory.ResolveLinkTarget(path, false);
 
 		target!.FullName.Should().Be(targetFullPath);
@@ -183,7 +183,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		FileSystem.Directory.CreateSymbolicLink(path, targetFullPath);
 		FileSystem.Directory.Delete(pathToTarget);
 
-		IFileSystem.IFileSystemInfo? target =
+		IFileSystemInfo? target =
 			FileSystem.Directory.ResolveLinkTarget(path, false);
 
 		target!.FullName.Should().Be(targetFullPath);

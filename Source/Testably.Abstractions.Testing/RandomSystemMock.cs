@@ -35,11 +35,11 @@ public sealed partial class RandomSystemMock : IRandomSystem
 	#region IRandomSystem Members
 
 	/// <inheritdoc cref="IRandomSystem.Guid" />
-	public IRandomSystem.IGuid Guid
+	public IGuid Guid
 		=> _guidMock;
 
 	/// <inheritdoc cref="IRandomSystem.Random" />
-	public IRandomSystem.IRandomFactory Random
+	public IRandomFactory Random
 		=> _randomFactoryMock;
 
 	#endregion

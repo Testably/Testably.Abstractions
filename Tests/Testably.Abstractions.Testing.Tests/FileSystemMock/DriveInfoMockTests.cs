@@ -18,7 +18,7 @@ public class DriveInfoMockTests
 	public void AvailableFreeSpace_CannotGetNegative(long size)
 	{
 		FileSystem.WithDrive(d => d.SetTotalSize(size));
-		IFileSystem.IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
+		IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
 
 		FileSystem.WithDrive(d => d.ChangeUsedBytes(-1));
 
@@ -39,7 +39,7 @@ public class DriveInfoMockTests
 			FileSystem.File.WriteAllBytes(path, bytes);
 		});
 
-		IFileSystem.IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
+		IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
 		exception.Should().BeOfType<IOException>()
 		   .Which.Message.Should().Contain($"'{drive.Name}'");
 		drive.AvailableFreeSpace.Should().Be(fileSize - 1);
@@ -55,7 +55,7 @@ public class DriveInfoMockTests
 		int fileSize2 = encoding.GetBytes(fileContent2).Length;
 		FileSystem.WithDrive(d
 			=> d.SetTotalSize(fileSize1 + fileSize2 + expectedRemainingBytes));
-		IFileSystem.IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
+		IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
 
 		FileSystem.File.WriteAllText(path, fileContent1, encoding);
 		drive.AvailableFreeSpace.Should().Be(expectedRemainingBytes + fileSize2);
@@ -75,7 +75,7 @@ public class DriveInfoMockTests
 
 		FileSystem.File.WriteAllBytes(path, bytes);
 
-		IFileSystem.IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
+		IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
 
 		drive.AvailableFreeSpace.Should().Be(0);
 	}
@@ -92,7 +92,7 @@ public class DriveInfoMockTests
 		FileSystem.File.WriteAllBytes(path, bytes);
 		FileSystem.File.Delete(path);
 
-		IFileSystem.IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
+		IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
 
 		drive.AvailableFreeSpace.Should().Be(fileSize);
 	}
@@ -103,7 +103,7 @@ public class DriveInfoMockTests
 	{
 		FileSystem.WithDrive(d => d.SetTotalSize(size));
 
-		IFileSystem.IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
+		IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
 
 		drive.AvailableFreeSpace.Should().Be(size);
 	}
@@ -118,7 +118,7 @@ public class DriveInfoMockTests
 		expectedName = expectedName
 		   .Replace('/', FileSystem.Path.DirectorySeparatorChar);
 
-		IFileSystem.IDriveInfo drive =
+		IDriveInfo drive =
 			Testing.FileSystemMock.DriveInfoMock.New(driveName, FileSystem);
 
 		drive.Name.Should().Be(expectedName);
@@ -139,7 +139,7 @@ public class DriveInfoMockTests
 	[SkippableFact]
 	public void New_Null_ShouldReturnNull()
 	{
-		IFileSystem.IDriveInfo? drive =
+		IDriveInfo? drive =
 			Testing.FileSystemMock.DriveInfoMock.New(null, FileSystem);
 
 		drive.Should().BeNull();
@@ -148,7 +148,7 @@ public class DriveInfoMockTests
 	[SkippableFact]
 	public void New_UncPath_ShouldSetFlag()
 	{
-		IFileSystem.IDriveInfo drive =
+		IDriveInfo drive =
 			Testing.FileSystemMock.DriveInfoMock.New(@"//foo", FileSystem);
 
 		(drive as Testing.FileSystemMock.DriveInfoMock)?.IsUncPath.Should().BeTrue();
@@ -202,7 +202,7 @@ public class DriveInfoMockTests
 	{
 		FileSystem.WithDrive(d => d.SetDriveFormat());
 
-		IFileSystem.IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
+		IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
 		drive.DriveFormat.Should().Be("NTFS");
 	}
 
@@ -212,7 +212,7 @@ public class DriveInfoMockTests
 	{
 		FileSystem.WithDrive(d => d.SetDriveFormat(driveFormat));
 
-		IFileSystem.IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
+		IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
 		drive.DriveFormat.Should().Be(driveFormat);
 	}
 
@@ -221,7 +221,7 @@ public class DriveInfoMockTests
 	{
 		FileSystem.WithDrive(d => d.SetDriveType());
 
-		IFileSystem.IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
+		IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
 		drive.DriveType.Should().Be(DriveType.Fixed);
 	}
 
@@ -231,7 +231,7 @@ public class DriveInfoMockTests
 	{
 		FileSystem.WithDrive(d => d.SetDriveType(driveType));
 
-		IFileSystem.IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
+		IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
 		drive.DriveType.Should().Be(driveType);
 	}
 
@@ -242,7 +242,7 @@ public class DriveInfoMockTests
 	{
 		FileSystem.WithDrive(d => d.SetIsReady(isReady));
 
-		IFileSystem.IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
+		IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
 		drive.IsReady.Should().Be(isReady);
 	}
 
@@ -251,7 +251,7 @@ public class DriveInfoMockTests
 	{
 		FileSystem.WithDrive(d => d.SetTotalSize());
 
-		IFileSystem.IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
+		IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
 
 		drive.AvailableFreeSpace.Should().Be(1024 * 1024 * 1024);
 	}

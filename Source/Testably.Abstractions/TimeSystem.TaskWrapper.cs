@@ -6,7 +6,7 @@ namespace Testably.Abstractions;
 
 public sealed partial class TimeSystem
 {
-	private sealed class TaskWrapper : ITimeSystem.ITask
+	private sealed class TaskWrapper : ITask
 	{
 		internal TaskWrapper(TimeSystem timeSystem)
 		{
@@ -15,29 +15,29 @@ public sealed partial class TimeSystem
 
 		#region ITask Members
 
-		/// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+		/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
 		public ITimeSystem TimeSystem { get; }
 
-		/// <inheritdoc cref="ITimeSystem.ITask.Delay(int)" />
+		/// <inheritdoc cref="ITask.Delay(int)" />
 		public Task Delay(int millisecondsDelay)
 		{
 			return System.Threading.Tasks.Task.Delay(millisecondsDelay);
 		}
 
-		/// <inheritdoc cref="ITimeSystem.ITask.Delay(int, CancellationToken)" />
+		/// <inheritdoc cref="ITask.Delay(int, CancellationToken)" />
 		public Task Delay(int millisecondsDelay, CancellationToken cancellationToken)
 		{
 			return System.Threading.Tasks.Task.Delay(millisecondsDelay,
 				cancellationToken);
 		}
 
-		/// <inheritdoc cref="ITimeSystem.ITask.Delay(TimeSpan)" />
+		/// <inheritdoc cref="ITask.Delay(TimeSpan)" />
 		public Task Delay(TimeSpan delay)
 		{
 			return System.Threading.Tasks.Task.Delay(delay);
 		}
 
-		/// <inheritdoc cref="ITimeSystem.ITask.Delay(TimeSpan, CancellationToken)" />
+		/// <inheritdoc cref="ITask.Delay(TimeSpan, CancellationToken)" />
 		public Task Delay(TimeSpan delay, CancellationToken cancellationToken)
 		{
 			return System.Threading.Tasks.Task.Delay(delay, cancellationToken);

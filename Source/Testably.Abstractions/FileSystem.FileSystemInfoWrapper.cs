@@ -7,7 +7,7 @@ namespace Testably.Abstractions;
 
 public sealed partial class FileSystem
 {
-	private class FileSystemInfoWrapper : IFileSystem.IFileSystemInfo
+	private class FileSystemInfoWrapper : IFileSystemInfo
 	{
 		private readonly FileSystemInfo _instance;
 		private readonly IFileSystem _fileSystem;
@@ -21,64 +21,64 @@ public sealed partial class FileSystem
 
 		#region IFileSystemInfo Members
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Attributes" />
+		/// <inheritdoc cref="IFileSystemInfo.Attributes" />
 		public FileAttributes Attributes
 		{
 			get => _instance.Attributes;
 			set => _instance.Attributes = value;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTime" />
+		/// <inheritdoc cref="IFileSystemInfo.CreationTime" />
 		public DateTime CreationTime
 		{
 			get => _instance.CreationTime;
 			set => _instance.CreationTime = value;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreationTimeUtc" />
+		/// <inheritdoc cref="IFileSystemInfo.CreationTimeUtc" />
 		public DateTime CreationTimeUtc
 		{
 			get => _instance.CreationTimeUtc;
 			set => _instance.CreationTimeUtc = value;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Exists" />
+		/// <inheritdoc cref="IFileSystemInfo.Exists" />
 		public bool Exists
 			=> _instance.Exists;
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Extension" />
+		/// <inheritdoc cref="IFileSystemInfo.Extension" />
 		public string Extension
 			=> _instance.Extension;
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.ExtensionContainer" />
-		public IFileSystem.IFileSystemExtensionContainer ExtensionContainer { get; }
+		/// <inheritdoc cref="IFileSystemInfo.ExtensionContainer" />
+		public IFileSystemExtensionContainer ExtensionContainer { get; }
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.FullName" />
+		/// <inheritdoc cref="IFileSystemInfo.FullName" />
 		public string FullName
 			=> _instance.FullName;
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastAccessTime" />
+		/// <inheritdoc cref="IFileSystemInfo.LastAccessTime" />
 		public DateTime LastAccessTime
 		{
 			get => _instance.LastAccessTime;
 			set => _instance.LastAccessTime = value;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastAccessTimeUtc" />
+		/// <inheritdoc cref="IFileSystemInfo.LastAccessTimeUtc" />
 		public DateTime LastAccessTimeUtc
 		{
 			get => _instance.LastAccessTimeUtc;
 			set => _instance.LastAccessTimeUtc = value;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastWriteTime" />
+		/// <inheritdoc cref="IFileSystemInfo.LastWriteTime" />
 		public DateTime LastWriteTime
 		{
 			get => _instance.LastWriteTime;
 			set => _instance.LastWriteTime = value;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.LastWriteTimeUtc" />
+		/// <inheritdoc cref="IFileSystemInfo.LastWriteTimeUtc" />
 		public DateTime LastWriteTimeUtc
 		{
 			get => _instance.LastWriteTimeUtc;
@@ -86,32 +86,32 @@ public sealed partial class FileSystem
 		}
 
 #if FEATURE_FILESYSTEM_LINK
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.LinkTarget" />
+		/// <inheritdoc cref="IFileSystemInfo.LinkTarget" />
 		public string? LinkTarget
 			=> _instance.LinkTarget;
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Name" />
+		/// <inheritdoc cref="IFileSystemInfo.Name" />
 		public string Name
 			=> _instance.Name;
 
 #if FEATURE_FILESYSTEM_LINK
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.CreateAsSymbolicLink(string)" />
+		/// <inheritdoc cref="IFileSystemInfo.CreateAsSymbolicLink(string)" />
 		public void CreateAsSymbolicLink(string pathToTarget)
 			=> _instance.CreateAsSymbolicLink(pathToTarget);
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Delete()" />
+		/// <inheritdoc cref="IFileSystemInfo.Delete()" />
 		public void Delete()
 			=> _instance.Delete();
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.Refresh()" />
+		/// <inheritdoc cref="IFileSystemInfo.Refresh()" />
 		public void Refresh()
 			=> _instance.Refresh();
 
 #if FEATURE_FILESYSTEM_LINK
-		/// <inheritdoc cref="IFileSystem.IFileSystemInfo.ResolveLinkTarget(bool)" />
-		public IFileSystem.IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget)
+		/// <inheritdoc cref="IFileSystemInfo.ResolveLinkTarget(bool)" />
+		public IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget)
 			=> FromFileSystemInfo(_instance.ResolveLinkTarget(returnFinalTarget),
 				_fileSystem);
 #endif

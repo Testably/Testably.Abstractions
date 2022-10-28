@@ -22,7 +22,7 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 	public ReadOnlyCollection<IZipArchiveEntry> Entries
 		=> MapToZipArchiveEntries(_instance.Entries);
 
-	/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IZipArchive.Mode" />

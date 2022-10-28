@@ -10,7 +10,7 @@ public static partial class FileSystemInitializer
 		where TFileSystem : IFileSystem
 	{
 		public DirectoryInitializer(Initializer<TFileSystem> initializer,
-		                            IFileSystem.IDirectoryInfo directory)
+		                            IDirectoryInfo directory)
 			: base(initializer)
 		{
 			Directory = directory;
@@ -19,7 +19,7 @@ public static partial class FileSystemInitializer
 		#region IFileSystemDirectoryInitializer<TFileSystem> Members
 
 		/// <inheritdoc cref="IFileSystemDirectoryInitializer{TFileSystem}.Directory" />
-		public IFileSystem.IDirectoryInfo Directory { get; }
+		public IDirectoryInfo Directory { get; }
 
 		/// <inheritdoc
 		///     cref="IFileSystemDirectoryInitializer{TFileSystem}.Initialized(Action{IFileSystemInitializer{TFileSystem}})" />

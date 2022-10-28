@@ -26,7 +26,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
-		IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 		bool result = fileInfo.ExtensionContainer
 		   .HasWrappedInstance(out System.IO.FileSystemInfo? fileSystemInfo);
 

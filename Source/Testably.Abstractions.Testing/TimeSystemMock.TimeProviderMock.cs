@@ -23,7 +23,7 @@ public sealed partial class TimeSystemMock
 		public DateTime MinValue { get; set; } = System.DateTime.MinValue;
 
 #if NETSTANDARD2_0
-		/// <inheritdoc cref="ITimeSystem.IDateTime.UnixEpoch" />
+		/// <inheritdoc cref="IDateTime.UnixEpoch" />
 		public DateTime UnixEpoch { get; set; } =
 			new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 #else

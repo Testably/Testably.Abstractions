@@ -3,11 +3,11 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Testably.Abstractions.Testing.Internal;
 
-internal class FileSystemExtensionContainer : IFileSystem.IFileSystemExtensionContainer
+internal class FileSystemExtensionContainer : IFileSystemExtensionContainer
 {
 	private readonly Dictionary<string, object?> _metadata = new();
 
-	/// <inheritdoc cref="IFileSystem.IFileSystemExtensionContainer.HasWrappedInstance{T}(out T)" />
+	/// <inheritdoc cref="IFileSystemExtensionContainer.HasWrappedInstance{T}(out T)" />
 	public bool HasWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance)
 	{
 		wrappedInstance = default;
@@ -32,7 +32,7 @@ internal class FileSystemExtensionContainer : IFileSystem.IFileSystemExtensionCo
 		return default;
 	}
 
-	internal void CopyMetadataTo(IFileSystem.IFileSystemExtensionContainer target)
+	internal void CopyMetadataTo(IFileSystemExtensionContainer target)
 	{
 		if (target is FileSystemExtensionContainer targetContainer)
 		{

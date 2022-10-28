@@ -4,7 +4,7 @@ namespace Testably.Abstractions;
 
 public sealed partial class TimeSystem
 {
-	private sealed class ThreadWrapper : ITimeSystem.IThread
+	private sealed class ThreadWrapper : IThread
 	{
 		internal ThreadWrapper(TimeSystem timeSystem)
 		{
@@ -13,16 +13,16 @@ public sealed partial class TimeSystem
 
 		#region IThread Members
 
-		/// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+		/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
 		public ITimeSystem TimeSystem { get; }
 
-		/// <inheritdoc cref="ITimeSystem.IThread.Sleep(int)" />
+		/// <inheritdoc cref="IThread.Sleep(int)" />
 		public void Sleep(int millisecondsTimeout)
 		{
 			System.Threading.Thread.Sleep(millisecondsTimeout);
 		}
 
-		/// <inheritdoc cref="ITimeSystem.IThread.Sleep(TimeSpan)" />
+		/// <inheritdoc cref="IThread.Sleep(TimeSpan)" />
 		public void Sleep(TimeSpan timeout)
 		{
 			System.Threading.Thread.Sleep(timeout);

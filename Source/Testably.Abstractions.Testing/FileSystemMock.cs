@@ -65,30 +65,30 @@ public sealed partial class FileSystemMock : IFileSystem
 	#region IFileSystem Members
 
 	/// <inheritdoc cref="IFileSystem.Directory" />
-	public IFileSystem.IDirectory Directory
+	public IDirectory Directory
 		=> _directoryMock;
 
 	/// <inheritdoc cref="IFileSystem.DirectoryInfo" />
-	public IFileSystem.IDirectoryInfoFactory DirectoryInfo { get; }
+	public IDirectoryInfoFactory DirectoryInfo { get; }
 
 	/// <inheritdoc cref="IFileSystem.DriveInfo" />
-	public IFileSystem.IDriveInfoFactory DriveInfo { get; }
+	public IDriveInfoFactory DriveInfo { get; }
 
 	/// <inheritdoc cref="IFileSystem.File" />
-	public IFileSystem.IFile File
+	public IFile File
 		=> _fileMock;
 
 	/// <inheritdoc cref="IFileSystem.FileInfo" />
-	public IFileSystem.IFileInfoFactory FileInfo { get; }
+	public IFileInfoFactory FileInfo { get; }
 
 	/// <inheritdoc cref="IFileSystem.FileStream" />
-	public IFileSystem.IFileStreamFactory FileStream { get; }
+	public IFileStreamFactory FileStream { get; }
 
 	/// <inheritdoc cref="IFileSystem.FileSystemWatcher" />
-	public IFileSystem.IFileSystemWatcherFactory FileSystemWatcher { get; }
+	public IFileSystemWatcherFactory FileSystemWatcher { get; }
 
 	/// <inheritdoc cref="IFileSystem.Path" />
-	public IFileSystem.IPath Path
+	public IPath Path
 		=> _pathMock;
 
 	#endregion
@@ -99,15 +99,15 @@ public sealed partial class FileSystemMock : IFileSystem
 	///     The callback enables granting or rejecting access to arbitrary containers and receives
 	///     the following input parameters:<br />
 	///     - The full path of the file or directory as first parameter<br />
-	///     - The <see cref="IFileSystem.IFileSystemExtensionContainer" /> as second parameter
+	///     - The <see cref="IFileSystemExtensionContainer" /> as second parameter
 	/// </summary>
 	/// <param name="grantRequestCallback">
 	///     A callback that receives the full path as first parameter and the
-	///     <see cref="IFileSystem.IFileSystemExtensionContainer" /> as second parameter and returns <see langword="true" /> if
+	///     <see cref="IFileSystemExtensionContainer" /> as second parameter and returns <see langword="true" /> if
 	///     the request was granted and <see langword="false" /> if the request was rejected.
 	/// </param>
 	public FileSystemMock WithAccessControl(
-		Func<string, IFileSystem.IFileSystemExtensionContainer, bool>?
+		Func<string, IFileSystemExtensionContainer, bool>?
 			grantRequestCallback)
 	{
 		_storage.WithAccessControl(grantRequestCallback);

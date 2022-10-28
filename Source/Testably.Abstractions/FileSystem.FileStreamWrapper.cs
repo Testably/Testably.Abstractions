@@ -15,7 +15,7 @@ public sealed partial class FileSystem
 		}
 
 		/// <inheritdoc cref="FileSystemStream.ExtensionContainer" />
-		public override IFileSystem.IFileSystemExtensionContainer ExtensionContainer
+		public override IFileSystemExtensionContainer ExtensionContainer
 		{
 			get;
 		}

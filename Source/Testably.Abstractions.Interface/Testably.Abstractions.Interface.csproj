@@ -13,15 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="IFileSystem.*.cs">
-      <DependentUpon>IFileSystem.cs</DependentUpon>
-    </Compile>
-    <Compile Update="IRandomSystem.*.cs">
-      <DependentUpon>IRandomSystem.cs</DependentUpon>
-    </Compile>
-    <Compile Update="ITimeSystem.*.cs">
-      <DependentUpon>ITimeSystem.cs</DependentUpon>
-    </Compile>
+    <AssemblyAttribute Include="System.CLSCompliant">
+      <_Parameter1>true</_Parameter1>
+      <_Parameter1_TypeName>System.Boolean</_Parameter1_TypeName>
+    </AssemblyAttribute>
   </ItemGroup>
 
 </Project>

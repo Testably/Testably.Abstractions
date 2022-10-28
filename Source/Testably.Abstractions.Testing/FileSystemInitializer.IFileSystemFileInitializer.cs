@@ -14,7 +14,7 @@ public static partial class FileSystemInitializer
 		/// <summary>
 		///     The file to initialize.
 		/// </summary>
-		public IFileSystem.IFileInfo File { get; }
+		public IFileInfo File { get; }
 
 		/// <summary>
 		///     Manipulates the <see cref="File" /> in the <see cref="IFileSystem" /> with test data.

@@ -9,7 +9,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[AutoData]
 	public void Delete_FullPath_ShouldDeleteDirectory(string directoryName)
 	{
-		IFileSystem.IDirectoryInfo result =
+		IDirectoryInfo result =
 			FileSystem.Directory.CreateDirectory(directoryName);
 
 		FileSystem.Directory.Delete(result.FullName);
@@ -125,7 +125,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[AutoData]
 	public void Delete_ShouldDeleteDirectory(string directoryName)
 	{
-		IFileSystem.IDirectoryInfo result =
+		IDirectoryInfo result =
 			FileSystem.Directory.CreateDirectory(directoryName);
 
 		FileSystem.Directory.Delete(directoryName);

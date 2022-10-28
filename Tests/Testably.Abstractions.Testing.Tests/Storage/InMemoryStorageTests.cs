@@ -26,8 +26,8 @@ public class InMemoryStorageTests
 		int file1Size, int file2Size)
 	{
 		Testing.FileSystemMock fileSystem = new();
-		IFileSystem.IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot());
-		IRandomSystem.IRandom random = RandomFactory.Shared;
+		IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot());
+		IRandom random = RandomFactory.Shared;
 		byte[] file1Content = new byte[file1Size];
 		byte[] file2Content = new byte[file2Size];
 		random.NextBytes(file1Content);
@@ -50,8 +50,8 @@ public class InMemoryStorageTests
 		int file1Size, int file2Size)
 	{
 		Testing.FileSystemMock fileSystem = new();
-		IFileSystem.IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot());
-		IRandomSystem.IRandom random = RandomFactory.Shared;
+		IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot());
+		IRandom random = RandomFactory.Shared;
 		byte[] file1Content = new byte[file1Size];
 		byte[] file2Content = new byte[file2Size];
 		random.NextBytes(file1Content);
@@ -74,8 +74,8 @@ public class InMemoryStorageTests
 		int file1Size, int file2Size, int file3Size)
 	{
 		Testing.FileSystemMock fileSystem = new();
-		IFileSystem.IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot());
-		IRandomSystem.IRandom random = RandomFactory.Shared;
+		IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot());
+		IRandom random = RandomFactory.Shared;
 		byte[] file1Content = new byte[file1Size];
 		byte[] file2Content = new byte[file2Size];
 		byte[] file3Content = new byte[file3Size];

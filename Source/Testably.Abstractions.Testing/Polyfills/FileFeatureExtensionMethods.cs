@@ -15,7 +15,7 @@ internal static class FileFeatureExtensionMethods
 	///     Trims one trailing directory separator beyond the root of the path.
 	/// </summary>
 	internal static string TrimEndingDirectorySeparator(
-		this IFileSystem.IPath pathSystem,
+		this IPath pathSystem,
 		string path)
 	{
 		return TrimEndingDirectorySeparator(path, pathSystem.DirectorySeparatorChar,

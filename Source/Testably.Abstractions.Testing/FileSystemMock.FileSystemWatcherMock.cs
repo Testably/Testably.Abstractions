@@ -15,9 +15,9 @@ namespace Testably.Abstractions.Testing;
 public sealed partial class FileSystemMock
 {
 	/// <summary>
-	///     Mocked instance of a <see cref="IFileSystem.IFileSystemWatcher" />
+	///     Mocked instance of a <see cref="IFileSystemWatcher" />
 	/// </summary>
-	public sealed class FileSystemWatcherMock : Component, IFileSystem.IFileSystemWatcher
+	public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	{
 		/// <summary>
 		///     Simulated bytes pre message to calculate the size of the blocking collection relative to the
@@ -49,7 +49,7 @@ public sealed partial class FileSystemMock
 
 		#region IFileSystemWatcher Members
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.EnableRaisingEvents" />
+		/// <inheritdoc cref="IFileSystemWatcher.EnableRaisingEvents" />
 		public bool EnableRaisingEvents
 		{
 			get => _enableRaisingEvents;
@@ -67,11 +67,11 @@ public sealed partial class FileSystemMock
 			}
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+		/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 		public IFileSystem FileSystem
 			=> _fileSystem;
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Filter" />
+		/// <inheritdoc cref="IFileSystemWatcher.Filter" />
 		public string Filter
 		{
 			get => _filters.Count == 0
@@ -85,19 +85,19 @@ public sealed partial class FileSystemMock
 		}
 
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Filters" />
+		/// <inheritdoc cref="IFileSystemWatcher.Filters" />
 		public ICollection<string> Filters
 			=> _filters;
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.IncludeSubdirectories" />
+		/// <inheritdoc cref="IFileSystemWatcher.IncludeSubdirectories" />
 		public bool IncludeSubdirectories
 		{
 			get;
 			set;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.InternalBufferSize" />
+		/// <inheritdoc cref="IFileSystemWatcher.InternalBufferSize" />
 		public int InternalBufferSize
 		{
 			get => _internalBufferSize;
@@ -108,7 +108,7 @@ public sealed partial class FileSystemMock
 			}
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.NotifyFilter" />
+		/// <inheritdoc cref="IFileSystemWatcher.NotifyFilter" />
 		public NotifyFilters NotifyFilter
 		{
 			get;
@@ -117,7 +117,7 @@ public sealed partial class FileSystemMock
 		    NotifyFilters.DirectoryName |
 		    NotifyFilters.LastWrite;
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Path" />
+		/// <inheritdoc cref="IFileSystemWatcher.Path" />
 		public string Path
 		{
 			get => _path;
@@ -132,49 +132,49 @@ public sealed partial class FileSystemMock
 			}
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.SynchronizingObject" />
+		/// <inheritdoc cref="IFileSystemWatcher.SynchronizingObject" />
 		public ISynchronizeInvoke? SynchronizingObject { get; set; }
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.BeginInit()" />
+		/// <inheritdoc cref="IFileSystemWatcher.BeginInit()" />
 		public void BeginInit()
 		{
 			_isInitializing = true;
 			Stop();
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Changed" />
+		/// <inheritdoc cref="IFileSystemWatcher.Changed" />
 		public event FileSystemEventHandler? Changed;
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Created" />
+		/// <inheritdoc cref="IFileSystemWatcher.Created" />
 		public event FileSystemEventHandler? Created;
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Deleted" />
+		/// <inheritdoc cref="IFileSystemWatcher.Deleted" />
 		public event FileSystemEventHandler? Deleted;
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.EndInit()" />
+		/// <inheritdoc cref="IFileSystemWatcher.EndInit()" />
 		public void EndInit()
 		{
 			_isInitializing = false;
 			Restart();
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Error" />
+		/// <inheritdoc cref="IFileSystemWatcher.Error" />
 		public event ErrorEventHandler? Error;
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Renamed" />
+		/// <inheritdoc cref="IFileSystemWatcher.Renamed" />
 		public event RenamedEventHandler? Renamed;
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.WaitForChanged(WatcherChangeTypes)" />
-		public IFileSystem.IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
+		/// <inheritdoc cref="IFileSystemWatcher.WaitForChanged(WatcherChangeTypes)" />
+		public IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
 			WatcherChangeTypes changeType)
 			=> WaitForChanged(changeType, Timeout.Infinite);
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.WaitForChanged(WatcherChangeTypes, int)" />
-		public IFileSystem.IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
+		/// <inheritdoc cref="IFileSystemWatcher.WaitForChanged(WatcherChangeTypes, int)" />
+		public IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
 			WatcherChangeTypes changeType,
 			int timeout)
 		{
-			TaskCompletionSource<IFileSystem.IFileSystemWatcher.IWaitForChangedResult>
+			TaskCompletionSource<IFileSystemWatcher.IWaitForChangedResult>
 				tcs = new();
 
 			void EventHandler(object? _, ChangeDescription c)
@@ -457,7 +457,7 @@ public sealed partial class FileSystemMock
 		}
 
 		private struct WaitForChangedResultMock
-			: IFileSystem.IFileSystemWatcher.IWaitForChangedResult
+			: IFileSystemWatcher.IWaitForChangedResult
 		{
 			public WaitForChangedResultMock(
 				WatcherChangeTypes changeType,
@@ -477,16 +477,16 @@ public sealed partial class FileSystemMock
 			public static readonly WaitForChangedResultMock TimedOutResult =
 				new(changeType: 0, name: null, oldName: null, timedOut: true);
 
-			/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.IWaitForChangedResult.ChangeType" />
+			/// <inheritdoc cref="IFileSystemWatcher.IWaitForChangedResult.ChangeType" />
 			public WatcherChangeTypes ChangeType { get; }
 
-			/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.IWaitForChangedResult.Name" />
+			/// <inheritdoc cref="IFileSystemWatcher.IWaitForChangedResult.Name" />
 			public string? Name { get; }
 
-			/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.IWaitForChangedResult.OldName" />
+			/// <inheritdoc cref="IFileSystemWatcher.IWaitForChangedResult.OldName" />
 			public string? OldName { get; }
 
-			/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.IWaitForChangedResult.TimedOut" />
+			/// <inheritdoc cref="IFileSystemWatcher.IWaitForChangedResult.TimedOut" />
 			public bool TimedOut { get; }
 		}
 	}

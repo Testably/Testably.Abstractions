@@ -36,7 +36,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		ManualResetEventSlim block1 = new();
 		ManualResetEventSlim block2 = new();
@@ -77,7 +77,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 	{
 		int maxMessages = internalBufferSize / 128;
 		FileSystem.Directory.CreateDirectory(path);
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		ManualResetEventSlim block1 = new();
 		ManualResetEventSlim block2 = new();
@@ -117,7 +117,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 	public void Filter_ShouldResetFiltersToOnlyContainASingleValue(
 		string[] filters, string expectedFilter)
 	{
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		foreach (string filter in filters)
 		{
@@ -138,7 +138,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 	[AutoData]
 	public void InternalBufferSize_ShouldResetQueue(string path1, string path2)
 	{
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		ManualResetEventSlim block1 = new();
 		ManualResetEventSlim block2 = new();

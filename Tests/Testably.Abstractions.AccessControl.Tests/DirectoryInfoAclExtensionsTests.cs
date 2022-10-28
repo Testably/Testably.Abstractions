@@ -37,7 +37,7 @@ public class DirectoryInfoAclExtensionsTests
 		Skip.IfNot(Test.RunsOnWindows);
 
 		FileSystemMock fileSystem = new();
-		IFileSystem.IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
+		IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
 #pragma warning disable CA1416
 		DirectorySecurity directorySecurity = new();
 
@@ -54,7 +54,7 @@ public class DirectoryInfoAclExtensionsTests
 		Skip.IfNot(Test.RunsOnWindows);
 
 		FileSystemMock fileSystem = new();
-		IFileSystem.IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
+		IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
 
 #pragma warning disable CA1416
 		DirectorySecurity result =
@@ -96,7 +96,7 @@ public class DirectoryInfoAclExtensionsTests
 		Skip.IfNot(Test.RunsOnWindows);
 
 		FileSystemMock fileSystem = new();
-		IFileSystem.IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
+		IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
 #pragma warning disable CA1416
 		DirectorySecurity directorySecurity = new();
 

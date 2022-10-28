@@ -104,7 +104,7 @@ public sealed partial class FileSystemMock
 		}
 
 		/// <inheritdoc cref="FileSystemStream.ExtensionContainer" />
-		public override IFileSystem.IFileSystemExtensionContainer ExtensionContainer
+		public override IFileSystemExtensionContainer ExtensionContainer
 			=> _container.ExtensionContainer;
 
 		/// <inheritdoc cref="FileSystemStream.EndRead(IAsyncResult)" />

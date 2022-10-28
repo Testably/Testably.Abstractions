@@ -68,7 +68,7 @@ internal static class ZipUtilities
 		{
 			bool directoryIsEmpty = true;
 
-			IFileSystem.IDirectoryInfo di =
+			IDirectoryInfo di =
 				fileSystem.DirectoryInfo.New(sourceDirectoryName);
 
 			string basePath = di.FullName;
@@ -78,12 +78,12 @@ internal static class ZipUtilities
 				basePath = di.Parent.FullName;
 			}
 
-			foreach (IFileSystem.IFileSystemInfo file in di
+			foreach (IFileSystemInfo file in di
 			   .EnumerateFileSystemInfos("*", SearchOption.AllDirectories))
 			{
 				directoryIsEmpty = false;
 
-				if (file is IFileSystem.IFileInfo fileInfo)
+				if (file is IFileInfo fileInfo)
 				{
 					string entryName = file.FullName
 					   .Substring(basePath.Length + 1)
@@ -94,7 +94,7 @@ internal static class ZipUtilities
 					using Stream stream = entry.Open();
 					fileInfo.OpenRead().CopyTo(stream);
 				}
-				else if (file is IFileSystem.IDirectoryInfo directoryInfo &&
+				else if (file is IDirectoryInfo directoryInfo &&
 				         directoryInfo.GetFileSystemInfos().Length == 0)
 				{
 #pragma warning disable CA1845

@@ -5,7 +5,7 @@ namespace Testably.Abstractions;
 
 public sealed partial class FileSystem
 {
-	private sealed class DirectoryInfoFactory : IFileSystem.IDirectoryInfoFactory
+	private sealed class DirectoryInfoFactory : IDirectoryInfoFactory
 	{
 		internal DirectoryInfoFactory(FileSystem fileSystem)
 		{
@@ -14,18 +14,18 @@ public sealed partial class FileSystem
 
 		#region IDirectoryInfoFactory Members
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+		/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 		public IFileSystem FileSystem { get; }
 
-		/// <inheritdoc cref="IFileSystem.IDirectoryInfoFactory.New" />
-		public IFileSystem.IDirectoryInfo New(string path)
+		/// <inheritdoc cref="IDirectoryInfoFactory.New" />
+		public IDirectoryInfo New(string path)
 			=> DirectoryInfoWrapper.FromDirectoryInfo(
 				new DirectoryInfo(path),
 				FileSystem);
 
-		/// <inheritdoc cref="IFileSystem.IDirectoryInfoFactory.Wrap(DirectoryInfo)" />
+		/// <inheritdoc cref="IDirectoryInfoFactory.Wrap(DirectoryInfo)" />
 		[return: NotNullIfNotNull("directoryInfo")]
-		public IFileSystem.IDirectoryInfo? Wrap(DirectoryInfo? directoryInfo)
+		public IDirectoryInfo? Wrap(DirectoryInfo? directoryInfo)
 			=> DirectoryInfoWrapper.FromDirectoryInfo(
 				directoryInfo,
 				FileSystem);

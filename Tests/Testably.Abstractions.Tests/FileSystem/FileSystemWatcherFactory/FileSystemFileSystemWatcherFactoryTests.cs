@@ -22,7 +22,7 @@ public abstract class FileSystemFileSystemWatcherFactoryTests<TFileSystem>
 	[SkippableFact]
 	public void New_ShouldInitializeWithDefaultValues()
 	{
-		IFileSystem.IFileSystemWatcher result =
+		IFileSystemWatcher result =
 			FileSystem.FileSystemWatcher.New();
 
 		result.Path.Should().Be("");
@@ -44,7 +44,7 @@ public abstract class FileSystemFileSystemWatcherFactoryTests<TFileSystem>
 	public void New_WithPath_ShouldInitializeWithDefaultValues(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
-		IFileSystem.IFileSystemWatcher result =
+		IFileSystemWatcher result =
 			FileSystem.FileSystemWatcher.New(path);
 
 		result.Path.Should().Be(path);
@@ -67,7 +67,7 @@ public abstract class FileSystemFileSystemWatcherFactoryTests<TFileSystem>
 		string path, string filter)
 	{
 		FileSystem.Directory.CreateDirectory(path);
-		IFileSystem.IFileSystemWatcher result =
+		IFileSystemWatcher result =
 			FileSystem.FileSystemWatcher.New(path, filter);
 
 		result.Path.Should().Be(path);
@@ -83,7 +83,7 @@ public abstract class FileSystemFileSystemWatcherFactoryTests<TFileSystem>
 	[SkippableFact]
 	public void Wrap_Null_ShouldReturnNull()
 	{
-		IFileSystem.IFileSystemWatcher? result = FileSystem.FileSystemWatcher.Wrap(null);
+		IFileSystemWatcher? result = FileSystem.FileSystemWatcher.Wrap(null);
 
 		result.Should().BeNull();
 	}

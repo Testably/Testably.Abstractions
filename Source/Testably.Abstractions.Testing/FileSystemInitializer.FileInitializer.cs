@@ -10,7 +10,7 @@ public static partial class FileSystemInitializer
 		where TFileSystem : IFileSystem
 	{
 		public FileInitializer(Initializer<TFileSystem> initializer,
-		                       IFileSystem.IFileInfo file)
+		                       IFileInfo file)
 			: base(initializer)
 		{
 			File = file;
@@ -19,7 +19,7 @@ public static partial class FileSystemInitializer
 		#region IFileSystemFileInitializer<TFileSystem> Members
 
 		/// <inheritdoc cref="IFileSystemFileInitializer{TFileSystem}.File" />
-		public IFileSystem.IFileInfo File { get; }
+		public IFileInfo File { get; }
 
 		/// <inheritdoc cref="IFileSystemFileInitializer{TFileSystem}.Which(Action{IFileManipulator})" />
 		public IFileSystemFileInitializer<TFileSystem> Which(
@@ -34,7 +34,7 @@ public static partial class FileSystemInitializer
 
 		private sealed class FileManipulator : IFileManipulator
 		{
-			internal FileManipulator(IFileSystem fileSystem, IFileSystem.IFileInfo file)
+			internal FileManipulator(IFileSystem fileSystem, IFileInfo file)
 			{
 				FileSystem = fileSystem;
 				File = file;
@@ -43,9 +43,9 @@ public static partial class FileSystemInitializer
 			#region IFileManipulator Members
 
 			/// <inheritdoc cref="IFileManipulator.File" />
-			public IFileSystem.IFileInfo File { get; }
+			public IFileInfo File { get; }
 
-			/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+			/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 			public IFileSystem FileSystem { get; }
 
 			/// <inheritdoc cref="IFileManipulator.HasBytesContent" />

@@ -89,10 +89,10 @@ public static partial class FileSystemInitializer
 				return;
 			}
 
-			IFileSystem.IDirectoryInfo directory = _fileSystem.DirectoryInfo.New(path);
+			IDirectoryInfo directory = _fileSystem.DirectoryInfo.New(path);
 			directory.Attributes = FileAttributes.Normal;
 
-			foreach (IFileSystem.IFileInfo info in directory.EnumerateFiles(
+			foreach (IFileInfo info in directory.EnumerateFiles(
 				EnumerationOptionsHelper.DefaultSearchPattern,
 				SearchOption.TopDirectoryOnly))
 			{
@@ -102,7 +102,7 @@ public static partial class FileSystemInitializer
 
 			if (recursive)
 			{
-				foreach (IFileSystem.IDirectoryInfo info in
+				foreach (IDirectoryInfo info in
 					directory.EnumerateDirectories(
 						EnumerationOptionsHelper.DefaultSearchPattern,
 						SearchOption.TopDirectoryOnly))

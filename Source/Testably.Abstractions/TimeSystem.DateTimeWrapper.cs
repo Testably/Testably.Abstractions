@@ -4,7 +4,7 @@ namespace Testably.Abstractions;
 
 public sealed partial class TimeSystem
 {
-	private sealed class DateTimeWrapper : ITimeSystem.IDateTime
+	private sealed class DateTimeWrapper : IDateTime
 	{
 		internal DateTimeWrapper(TimeSystem timeSystem)
 		{
@@ -13,36 +13,36 @@ public sealed partial class TimeSystem
 
 		#region IDateTime Members
 
-		/// <inheritdoc cref="ITimeSystem.IDateTime.MaxValue" />
+		/// <inheritdoc cref="IDateTime.MaxValue" />
 		public DateTime MaxValue
 			=> System.DateTime.MaxValue;
 
-		/// <inheritdoc cref="ITimeSystem.IDateTime.MinValue" />
+		/// <inheritdoc cref="IDateTime.MinValue" />
 		public DateTime MinValue
 			=> System.DateTime.MinValue;
 
 #if NETSTANDARD2_0
-		/// <inheritdoc cref="ITimeSystem.IDateTime.UnixEpoch" />
+		/// <inheritdoc cref="IDateTime.UnixEpoch" />
 		public DateTime UnixEpoch => new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 #else
-		/// <inheritdoc cref="ITimeSystem.IDateTime.UnixEpoch" />
+		/// <inheritdoc cref="IDateTime.UnixEpoch" />
 		public DateTime UnixEpoch
 			=> System.DateTime.UnixEpoch;
 #endif
 
-		/// <inheritdoc cref="ITimeSystem.IDateTime.Now" />
+		/// <inheritdoc cref="IDateTime.Now" />
 		public DateTime Now
 			=> System.DateTime.Now;
 
-		/// <inheritdoc cref="ITimeSystem.IDateTime.UtcNow" />
+		/// <inheritdoc cref="IDateTime.UtcNow" />
 		public DateTime UtcNow
 			=> System.DateTime.UtcNow;
 
-		/// <inheritdoc cref="ITimeSystem.IDateTime.Today" />
+		/// <inheritdoc cref="IDateTime.Today" />
 		public DateTime Today
 			=> System.DateTime.Today;
 
-		/// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+		/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
 		public ITimeSystem TimeSystem { get; }
 
 		#endregion

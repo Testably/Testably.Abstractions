@@ -6,7 +6,7 @@ namespace Testably.Abstractions;
 
 public sealed partial class FileSystem
 {
-	private sealed class DriveInfoWrapper : IFileSystem.IDriveInfo
+	private sealed class DriveInfoWrapper : IDriveInfo
 	{
 		private readonly DriveInfo _instance;
 
@@ -18,44 +18,44 @@ public sealed partial class FileSystem
 
 		#region IDriveInfo Members
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfo.AvailableFreeSpace" />
+		/// <inheritdoc cref="IDriveInfo.AvailableFreeSpace" />
 		public long AvailableFreeSpace
 			=> _instance.AvailableFreeSpace;
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfo.DriveFormat" />
+		/// <inheritdoc cref="IDriveInfo.DriveFormat" />
 		public string DriveFormat
 			=> _instance.DriveFormat;
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfo.DriveType" />
+		/// <inheritdoc cref="IDriveInfo.DriveType" />
 		public DriveType DriveType
 			=> _instance.DriveType;
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+		/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 		public IFileSystem FileSystem { get; }
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfo.IsReady" />
+		/// <inheritdoc cref="IDriveInfo.IsReady" />
 		public bool IsReady
 			=> _instance.IsReady;
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfo.Name" />
+		/// <inheritdoc cref="IDriveInfo.Name" />
 		public string Name
 			=> _instance.Name;
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfo.RootDirectory" />
-		public IFileSystem.IDirectoryInfo RootDirectory
+		/// <inheritdoc cref="IDriveInfo.RootDirectory" />
+		public IDirectoryInfo RootDirectory
 			=> DirectoryInfoWrapper.FromDirectoryInfo(
 				_instance.RootDirectory,
 				FileSystem);
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfo.TotalFreeSpace" />
+		/// <inheritdoc cref="IDriveInfo.TotalFreeSpace" />
 		public long TotalFreeSpace
 			=> _instance.TotalFreeSpace;
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfo.TotalSize" />
+		/// <inheritdoc cref="IDriveInfo.TotalSize" />
 		public long TotalSize
 			=> _instance.TotalSize;
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfo.VolumeLabel" />
+		/// <inheritdoc cref="IDriveInfo.VolumeLabel" />
 		[AllowNull]
 		public string VolumeLabel
 		{

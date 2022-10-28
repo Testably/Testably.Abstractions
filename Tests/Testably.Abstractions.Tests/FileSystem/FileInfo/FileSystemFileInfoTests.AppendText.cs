@@ -10,7 +10,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	public void AppendText_MissingFile_ShouldCreateFile(
 		string path, string appendText)
 	{
-		IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
 		using (StreamWriter stream = fileInfo.AppendText())
 		{
@@ -29,7 +29,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		string path, string contents, string appendText)
 	{
 		FileSystem.File.WriteAllText(path, contents);
-		IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
 		using (StreamWriter stream = fileInfo.AppendText())
 		{

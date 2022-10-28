@@ -23,7 +23,7 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 	[SkippableFact]
 	public void GetDrives_ShouldNotBeEmpty()
 	{
-		IFileSystem.IDriveInfo[] result = FileSystem.DriveInfo.GetDrives();
+		IDriveInfo[] result = FileSystem.DriveInfo.GetDrives();
 
 		result.Should().NotBeEmpty();
 	}
@@ -35,12 +35,12 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		IFileSystem.IDriveInfo driveInfo = GetUnmappedDrive();
+		IDriveInfo driveInfo = GetUnmappedDrive();
 
 		path = $"{driveInfo.Name}{path}";
-		IFileSystem.IDirectoryInfo directoryInfo =
+		IDirectoryInfo directoryInfo =
 			FileSystem.DirectoryInfo.New(FileSystem.Path.Combine(path, subPath));
-		IFileSystem.IDirectoryInfo? parent = directoryInfo.Parent;
+		IDirectoryInfo? parent = directoryInfo.Parent;
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -58,7 +58,7 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		IFileSystem.IDriveInfo driveInfo = GetUnmappedDrive();
+		IDriveInfo driveInfo = GetUnmappedDrive();
 
 		path = $"{driveInfo.Name}{path}";
 
@@ -74,7 +74,7 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 	[SkippableFact]
 	public void New_DefaultDrive_ShouldBeFixed()
 	{
-		IFileSystem.IDriveInfo result =
+		IDriveInfo result =
 			FileSystem.DriveInfo.New(FileTestHelper.RootDrive());
 
 		result.AvailableFreeSpace.Should().BeGreaterThan(0);
@@ -121,7 +121,7 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
 
-		IFileSystem.IDriveInfo result = FileSystem.DriveInfo.New($"{driveLetter}");
+		IDriveInfo result = FileSystem.DriveInfo.New($"{driveLetter}");
 
 		result.Name.Should().Be($"{driveLetter}:\\");
 	}
@@ -136,7 +136,7 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 
 		string rootedPath = FileTestHelper.RootDrive(path, driveLetter);
 
-		IFileSystem.IDriveInfo result = FileSystem.DriveInfo.New(rootedPath);
+		IDriveInfo result = FileSystem.DriveInfo.New(rootedPath);
 
 		result.Name.Should().Be($"{driveLetter}:\\");
 	}
@@ -144,7 +144,7 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 	[SkippableFact]
 	public void Wrap_Null_ShouldReturnNull()
 	{
-		IFileSystem.IDriveInfo? result = FileSystem.DriveInfo.Wrap(null);
+		IDriveInfo? result = FileSystem.DriveInfo.Wrap(null);
 
 		result.Should().BeNull();
 	}
@@ -154,14 +154,14 @@ public abstract class FileSystemDriveInfoFactoryTests<TFileSystem>
 	{
 		System.IO.DriveInfo driveInfo = System.IO.DriveInfo.GetDrives().First();
 
-		IFileSystem.IDriveInfo result = FileSystem.DriveInfo.Wrap(driveInfo);
+		IDriveInfo result = FileSystem.DriveInfo.Wrap(driveInfo);
 
 		result.Name.Should().Be(driveInfo.Name);
 	}
 
-	private IFileSystem.IDriveInfo GetUnmappedDrive()
+	private IDriveInfo GetUnmappedDrive()
 	{
-		IFileSystem.IDriveInfo? driveInfo = null;
+		IDriveInfo? driveInfo = null;
 		for (char c = 'A'; c <= 'Z'; c++)
 		{
 			driveInfo = FileSystem.DriveInfo.New($"{c}");

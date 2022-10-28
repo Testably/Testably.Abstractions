@@ -5,16 +5,16 @@ using System.Security.AccessControl;
 namespace Testably.Abstractions;
 
 /// <summary>
-///     ACL (access control list) extension methods for <see cref="IFileSystem.IFileInfo" />.
+///     ACL (access control list) extension methods for <see cref="IFileInfo" />.
 /// </summary>
 public static class FileInfoAclExtensions
 {
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.GetAccessControl(FileInfo)" />
 	[SupportedOSPlatform("windows")]
 	public static FileSecurity GetAccessControl(
-		this IFileSystem.IFileInfo fileInfo)
+		this IFileInfo fileInfo)
 	{
-		IFileSystem.IFileSystemExtensionContainer extensionContainer =
+		IFileSystemExtensionContainer extensionContainer =
 			fileInfo.ExtensionContainer;
 		return extensionContainer.HasWrappedInstance(out FileInfo? fi)
 			? fi.GetAccessControl()
@@ -25,10 +25,10 @@ public static class FileInfoAclExtensions
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.GetAccessControl(FileInfo, AccessControlSections)" />
 	[SupportedOSPlatform("windows")]
 	public static FileSecurity GetAccessControl(
-		this IFileSystem.IFileInfo fileInfo,
+		this IFileInfo fileInfo,
 		AccessControlSections includeSections)
 	{
-		IFileSystem.IFileSystemExtensionContainer extensionContainer =
+		IFileSystemExtensionContainer extensionContainer =
 			fileInfo.ExtensionContainer;
 		return extensionContainer.HasWrappedInstance(out FileInfo? fi)
 			? fi.GetAccessControl(includeSections)
@@ -38,10 +38,10 @@ public static class FileInfoAclExtensions
 
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.SetAccessControl(FileInfo, FileSecurity)" />
 	[SupportedOSPlatform("windows")]
-	public static void SetAccessControl(this IFileSystem.IFileInfo fileInfo,
+	public static void SetAccessControl(this IFileInfo fileInfo,
 	                                    FileSecurity fileSecurity)
 	{
-		IFileSystem.IFileSystemExtensionContainer extensionContainer =
+		IFileSystemExtensionContainer extensionContainer =
 			fileInfo.ExtensionContainer;
 		if (extensionContainer.HasWrappedInstance(out FileInfo? fi))
 		{

@@ -51,7 +51,7 @@ public sealed class RealFileSystemTests :
 			EnableRaisingEvents = enableRaisingEvents
 		};
 
-		IFileSystem.IFileSystemWatcher resultOnRealSystem =
+		IFileSystemWatcher resultOnRealSystem =
 			FileSystem.FileSystemWatcher.Wrap(fileSystemWatcher);
 
 		resultOnRealSystem.Path.Should().Be(fileSystemWatcher.Path);
@@ -64,7 +64,7 @@ public sealed class RealFileSystemTests :
 		resultOnRealSystem.EnableRaisingEvents.Should()
 		   .Be(fileSystemWatcher.EnableRaisingEvents);
 
-		IFileSystem.IFileSystemWatcher resultOnMockSystem =
+		IFileSystemWatcher resultOnMockSystem =
 			fileSystemMock.FileSystemWatcher.Wrap(fileSystemWatcher);
 
 		resultOnMockSystem.Path.Should().Be(fileSystemWatcher.Path);

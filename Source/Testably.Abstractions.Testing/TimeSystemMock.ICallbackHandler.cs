@@ -12,9 +12,9 @@ public sealed partial class TimeSystemMock
 	{
 		/// <summary>
 		///     Callback executed when any of the following <c>DateTime</c> read methods is called:<br />
-		///     - <see cref="ITimeSystem.IDateTime.Now" /><br />
-		///     - <see cref="ITimeSystem.IDateTime.UtcNow" /><br />
-		///     - <see cref="ITimeSystem.IDateTime.Today" />
+		///     - <see cref="IDateTime.Now" /><br />
+		///     - <see cref="IDateTime.UtcNow" /><br />
+		///     - <see cref="IDateTime.Today" />
 		/// </summary>
 		/// <param name="callback">The callback to execute after <c>DateTime</c> was read.</param>
 		/// <param name="predicate">
@@ -28,10 +28,10 @@ public sealed partial class TimeSystemMock
 
 		/// <summary>
 		///     Callback executed when any of the following <c>Task.Delay</c> overloads is called:<br />
-		///     - <see cref="ITimeSystem.ITask.Delay(TimeSpan)" /><br />
-		///     - <see cref="ITimeSystem.ITask.Delay(TimeSpan, CancellationToken)" /><br />
-		///     - <see cref="ITimeSystem.ITask.Delay(int)" /><br />
-		///     - <see cref="ITimeSystem.ITask.Delay(int, CancellationToken)" />
+		///     - <see cref="ITask.Delay(TimeSpan)" /><br />
+		///     - <see cref="ITask.Delay(TimeSpan, CancellationToken)" /><br />
+		///     - <see cref="ITask.Delay(int)" /><br />
+		///     - <see cref="ITask.Delay(int, CancellationToken)" />
 		/// </summary>
 		/// <param name="callback">The callback to execute after the <c>Task.Delay</c> was called.</param>
 		/// <param name="predicate">
@@ -45,8 +45,8 @@ public sealed partial class TimeSystemMock
 
 		/// <summary>
 		///     Callback executed when any of the following <c>Thread.Sleep</c> overloads is called:<br />
-		///     - <see cref="ITimeSystem.IThread.Sleep(TimeSpan)" /><br />
-		///     - <see cref="ITimeSystem.IThread.Sleep(int)" />
+		///     - <see cref="IThread.Sleep(TimeSpan)" /><br />
+		///     - <see cref="IThread.Sleep(int)" />
 		/// </summary>
 		/// <param name="callback">The callback to execute after the <c>Thread.Sleep</c> was called.</param>
 		/// <param name="predicate">

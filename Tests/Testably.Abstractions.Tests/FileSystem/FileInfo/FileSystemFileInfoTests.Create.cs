@@ -9,7 +9,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	[AutoData]
 	public void Create_MissingFile_ShouldCreateFile(string path)
 	{
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		using FileSystemStream stream = sut.Create();
 
@@ -21,7 +21,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	public void Create_ShouldUseReadWriteAccessAndNoneShare(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		using FileSystemStream stream = sut.Create();
 

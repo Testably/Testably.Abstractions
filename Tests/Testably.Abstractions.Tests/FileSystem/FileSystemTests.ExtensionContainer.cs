@@ -42,7 +42,7 @@ public abstract partial class FileSystemTests<TFileSystem>
 		ExtensionContainer_RetrieveMetadata_CorrectKeyAndType_ShouldReturnStoredValue(
 			string name, DateTime time)
 	{
-		IFileSystem.IFileSystemExtensionContainer sut = FileSystem.FileInfo.New(name)
+		IFileSystemExtensionContainer sut = FileSystem.FileInfo.New(name)
 		   .ExtensionContainer;
 
 		sut.StoreMetadata("foo", time);
@@ -56,7 +56,7 @@ public abstract partial class FileSystemTests<TFileSystem>
 	public void ExtensionContainer_RetrieveMetadata_DifferentKey_ShouldReturnNull(
 		string name)
 	{
-		IFileSystem.IFileSystemExtensionContainer sut = FileSystem.FileInfo.New(name)
+		IFileSystemExtensionContainer sut = FileSystem.FileInfo.New(name)
 		   .ExtensionContainer;
 
 		sut.StoreMetadata("foo", DateTime.Now);
@@ -70,7 +70,7 @@ public abstract partial class FileSystemTests<TFileSystem>
 	public void ExtensionContainer_RetrieveMetadata_DifferentType_ShouldReturnNull(
 		string name)
 	{
-		IFileSystem.IFileSystemExtensionContainer sut = FileSystem.FileInfo.New(name)
+		IFileSystemExtensionContainer sut = FileSystem.FileInfo.New(name)
 		   .ExtensionContainer;
 
 		sut.StoreMetadata("foo", DateTime.Now);

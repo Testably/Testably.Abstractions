@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class FileSystemMock
 {
-	private sealed class FileStreamFactoryMock : IFileSystem.IFileStreamFactory
+	private sealed class FileStreamFactoryMock : IFileStreamFactory
 	{
 		internal const FileShare DefaultShare = FileShare.Read;
 		private const int DefaultBufferSize = 4096;
@@ -19,11 +19,11 @@ public sealed partial class FileSystemMock
 
 		#region IFileStreamFactory Members
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+		/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 		public IFileSystem FileSystem
 			=> _fileSystem;
 
-		/// <inheritdoc cref="IFileSystem.IFileStreamFactory.New(string, FileMode)" />
+		/// <inheritdoc cref="IFileStreamFactory.New(string, FileMode)" />
 		public FileSystemStream New(string path, FileMode mode)
 			=> New(path,
 				mode,
@@ -32,18 +32,18 @@ public sealed partial class FileSystemMock
 				DefaultBufferSize,
 				DefaultUseAsync);
 
-		/// <inheritdoc cref="IFileSystem.IFileStreamFactory.New(string, FileMode, FileAccess)" />
+		/// <inheritdoc cref="IFileStreamFactory.New(string, FileMode, FileAccess)" />
 		public FileSystemStream New(string path, FileMode mode, FileAccess access)
 			=> New(path, mode, access, DefaultShare, DefaultBufferSize, DefaultUseAsync);
 
-		/// <inheritdoc cref="IFileSystem.IFileStreamFactory.New(string, FileMode, FileAccess, FileShare)" />
+		/// <inheritdoc cref="IFileStreamFactory.New(string, FileMode, FileAccess, FileShare)" />
 		public FileSystemStream New(string path,
 		                            FileMode mode,
 		                            FileAccess access,
 		                            FileShare share)
 			=> New(path, mode, access, share, DefaultBufferSize, DefaultUseAsync);
 
-		/// <inheritdoc cref="IFileSystem.IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int)" />
+		/// <inheritdoc cref="IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int)" />
 		public FileSystemStream New(string path,
 		                            FileMode mode,
 		                            FileAccess access,
@@ -51,7 +51,7 @@ public sealed partial class FileSystemMock
 		                            int bufferSize)
 			=> New(path, mode, access, share, bufferSize, DefaultUseAsync);
 
-		/// <inheritdoc cref="IFileSystem.IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int, bool)" />
+		/// <inheritdoc cref="IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int, bool)" />
 		public FileSystemStream New(string path,
 		                            FileMode mode,
 		                            FileAccess access,
@@ -65,7 +65,7 @@ public sealed partial class FileSystemMock
 				bufferSize,
 				useAsync ? FileOptions.Asynchronous : FileOptions.None);
 
-		/// <inheritdoc cref="IFileSystem.IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int, FileOptions)" />
+		/// <inheritdoc cref="IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int, FileOptions)" />
 		public FileSystemStream New(string path,
 		                            FileMode mode,
 		                            FileAccess access,
@@ -81,7 +81,7 @@ public sealed partial class FileSystemMock
 				options);
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
-		/// <inheritdoc cref="IFileSystem.IFileStreamFactory.New(string, FileStreamOptions)" />
+		/// <inheritdoc cref="IFileStreamFactory.New(string, FileStreamOptions)" />
 		public FileSystemStream New(string path, FileStreamOptions options)
 			=> New(path,
 				options.Mode,
@@ -91,7 +91,7 @@ public sealed partial class FileSystemMock
 				options.Options);
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFileStreamFactory.Wrap(FileStream)" />
+		/// <inheritdoc cref="IFileStreamFactory.Wrap(FileStream)" />
 		public FileSystemStream Wrap(FileStream fileStream)
 			=> throw ExceptionFactory.NotSupportedFileStreamWrapping();
 

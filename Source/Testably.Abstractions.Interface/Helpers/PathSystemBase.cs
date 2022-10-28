@@ -9,9 +9,9 @@ namespace Testably.Abstractions.Helpers;
 /// <summary>
 ///     Default implementation for <see cref="System.IO.Path" /> abstractions.
 ///     <para />
-///     Implements <seealso cref="IFileSystem.IPath" />
+///     Implements <seealso cref="IPath" />
 /// </summary>
-public abstract class PathSystemBase : IFileSystem.IPath
+public abstract class PathSystemBase : IPath
 {
 	/// <summary>
 	///     Initializes a new instance of <see cref="PathSystemBase" /> for the given <paramref name="fileSystem" />.
@@ -31,7 +31,7 @@ public abstract class PathSystemBase : IFileSystem.IPath
 	public char DirectorySeparatorChar
 		=> Path.DirectorySeparatorChar;
 
-	/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="Path.PathSeparator" />

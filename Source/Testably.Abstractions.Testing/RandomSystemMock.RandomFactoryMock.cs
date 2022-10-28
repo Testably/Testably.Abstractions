@@ -2,7 +2,7 @@
 
 public sealed partial class RandomSystemMock
 {
-	private sealed class RandomFactoryMock : IRandomSystem.IRandomFactory
+	private sealed class RandomFactoryMock : IRandomFactory
 	{
 		private readonly RandomSystemMock _randomSystemMock;
 
@@ -13,20 +13,20 @@ public sealed partial class RandomSystemMock
 
 		#region IRandomFactory Members
 
-		/// <inheritdoc cref="IRandomSystem.IRandomSystemExtensionPoint.RandomSystem" />
+		/// <inheritdoc cref="IRandomSystemExtensionPoint.RandomSystem" />
 		public IRandomSystem RandomSystem => _randomSystemMock;
 
-		/// <inheritdoc cref="IRandomSystem.IRandomFactory.Shared" />
-		public IRandomSystem.IRandom Shared
+		/// <inheritdoc cref="IRandomFactory.Shared" />
+		public IRandom Shared
 			=> _randomSystemMock.RandomProvider.GetRandom();
 
-		/// <inheritdoc cref="IRandomSystem.IRandomFactory.New()" />
-		public IRandomSystem.IRandom New()
+		/// <inheritdoc cref="IRandomFactory.New()" />
+		public IRandom New()
 			=> _randomSystemMock.RandomProvider.GetRandom(
 				Testing.RandomProvider.NewSeed());
 
-		/// <inheritdoc cref="IRandomSystem.IRandomFactory.New(int)" />
-		public IRandomSystem.IRandom New(int seed)
+		/// <inheritdoc cref="IRandomFactory.New(int)" />
+		public IRandom New(int seed)
 			=> _randomSystemMock.RandomProvider.GetRandom(seed);
 
 		#endregion

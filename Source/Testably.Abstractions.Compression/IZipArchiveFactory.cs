@@ -5,7 +5,7 @@ using System.Text;
 namespace Testably.Abstractions;
 
 /// <inheritdoc cref="ZipArchive" />
-public interface IZipArchiveFactory : IFileSystem.IFileSystemExtensionPoint
+public interface IZipArchiveFactory : IFileSystemExtensionPoint
 {
 	/// <inheritdoc cref="ZipArchive(Stream)" />
 	IZipArchive New(Stream stream);

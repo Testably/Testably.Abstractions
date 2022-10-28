@@ -5,17 +5,17 @@ using System.Security.AccessControl;
 namespace Testably.Abstractions;
 
 /// <summary>
-///     ACL (access control list) extension methods for <see cref="IFileSystem.IFile" />.
+///     ACL (access control list) extension methods for <see cref="IFile" />.
 /// </summary>
 public static class FileAclExtensions
 {
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.GetAccessControl(FileInfo)" />
 	[SupportedOSPlatform("windows")]
 	public static FileSecurity GetAccessControl(
-		this IFileSystem.IFile file, string path)
+		this IFile file, string path)
 	{
-		IFileSystem.IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
-		IFileSystem.IFileSystemExtensionContainer extensionContainer =
+		IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
+		IFileSystemExtensionContainer extensionContainer =
 			fileInfo.ExtensionContainer;
 		return extensionContainer.HasWrappedInstance(out FileInfo? fi)
 			? fi.GetAccessControl()
@@ -26,12 +26,12 @@ public static class FileAclExtensions
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.GetAccessControl(FileInfo, AccessControlSections)" />
 	[SupportedOSPlatform("windows")]
 	public static FileSecurity GetAccessControl(
-		this IFileSystem.IFile file,
+		this IFile file,
 		string path,
 		AccessControlSections includeSections)
 	{
-		IFileSystem.IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
-		IFileSystem.IFileSystemExtensionContainer extensionContainer =
+		IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
+		IFileSystemExtensionContainer extensionContainer =
 			fileInfo.ExtensionContainer;
 		return extensionContainer.HasWrappedInstance(out FileInfo? fi)
 			? fi.GetAccessControl(includeSections)
@@ -41,12 +41,12 @@ public static class FileAclExtensions
 
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.SetAccessControl(FileInfo, FileSecurity)" />
 	[SupportedOSPlatform("windows")]
-	public static void SetAccessControl(this IFileSystem.IFile file,
+	public static void SetAccessControl(this IFile file,
 	                                    string path,
 	                                    FileSecurity fileSecurity)
 	{
-		IFileSystem.IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
-		IFileSystem.IFileSystemExtensionContainer extensionContainer =
+		IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
+		IFileSystemExtensionContainer extensionContainer =
 			fileInfo.ExtensionContainer;
 		if (extensionContainer.HasWrappedInstance(out FileInfo? fi))
 		{

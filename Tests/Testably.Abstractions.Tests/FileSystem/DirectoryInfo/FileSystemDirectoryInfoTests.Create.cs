@@ -55,7 +55,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	[AutoData]
 	public void Create_ShouldCreateDirectory(string path)
 	{
-		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 		sut.Exists.Should().BeFalse();
 
 		sut.Create();
@@ -72,7 +72,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	[SkippableFact]
 	public void Create_ShouldCreateInBasePath()
 	{
-		IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.New("foo");
+		IDirectoryInfo result = FileSystem.DirectoryInfo.New("foo");
 		result.Create();
 		bool exists = FileSystem.Directory.Exists("foo");
 
@@ -88,7 +88,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 		string path =
 			FileSystem.Path.Combine(directoryLevel1, directoryLevel2, directoryLevel3);
 
-		IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
+		IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
 		result.Create();
 
 		result.Name.Should().Be(directoryLevel3);
@@ -119,7 +119,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 				$"The case with '{suffix}' as suffix is only supported on Windows.");
 		}
 
-		IFileSystem.IDirectoryInfo result =
+		IDirectoryInfo result =
 			FileSystem.DirectoryInfo.New(nameWithSuffix);
 		result.Create();
 

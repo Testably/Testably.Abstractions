@@ -30,7 +30,7 @@ public static partial class FileSystemInitializer
 
 	/// <summary>
 	///     Sets the current directory to a new temporary directory.<br />
-	///     <see cref="IFileSystem.IDirectory.GetCurrentDirectory()" /> and all relative paths will use this directory.
+	///     <see cref="IDirectory.GetCurrentDirectory()" /> and all relative paths will use this directory.
 	/// </summary>
 	/// <param name="fileSystem">The file system.</param>
 	/// <param name="logger">(optional) A callback to log the cleanup process.</param>

@@ -5,19 +5,19 @@ using System.Security.AccessControl;
 namespace Testably.Abstractions;
 
 /// <summary>
-///     ACL (access control list) extension methods for <see cref="IFileSystem.IDirectory" />.
+///     ACL (access control list) extension methods for <see cref="IDirectory" />.
 /// </summary>
 public static class DirectoryAclExtensions
 {
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.CreateDirectory(DirectorySecurity, string)" />
 	[SupportedOSPlatform("windows")]
-	public static void CreateDirectory(this IFileSystem.IDirectory directory,
+	public static void CreateDirectory(this IDirectory directory,
 	                                   string path,
 	                                   DirectorySecurity directorySecurity)
 	{
-		IFileSystem.IDirectoryInfo directoryInfo =
+		IDirectoryInfo directoryInfo =
 			directory.FileSystem.DirectoryInfo.New(path);
-		IFileSystem.IFileSystemExtensionContainer extensionContainer =
+		IFileSystemExtensionContainer extensionContainer =
 			directoryInfo.ExtensionContainer;
 		if (extensionContainer.HasWrappedInstance(out DirectoryInfo? di))
 		{
@@ -34,11 +34,11 @@ public static class DirectoryAclExtensions
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.GetAccessControl(DirectoryInfo)" />
 	[SupportedOSPlatform("windows")]
 	public static DirectorySecurity GetAccessControl(
-		this IFileSystem.IDirectory directory, string path)
+		this IDirectory directory, string path)
 	{
-		IFileSystem.IDirectoryInfo directoryInfo =
+		IDirectoryInfo directoryInfo =
 			directory.FileSystem.DirectoryInfo.New(path);
-		IFileSystem.IFileSystemExtensionContainer extensionContainer =
+		IFileSystemExtensionContainer extensionContainer =
 			directoryInfo.ExtensionContainer;
 		return extensionContainer.HasWrappedInstance(out DirectoryInfo? di)
 			? di.GetAccessControl()
@@ -49,13 +49,13 @@ public static class DirectoryAclExtensions
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.GetAccessControl(DirectoryInfo, AccessControlSections)" />
 	[SupportedOSPlatform("windows")]
 	public static DirectorySecurity GetAccessControl(
-		this IFileSystem.IDirectory directory,
+		this IDirectory directory,
 		string path,
 		AccessControlSections includeSections)
 	{
-		IFileSystem.IDirectoryInfo directoryInfo =
+		IDirectoryInfo directoryInfo =
 			directory.FileSystem.DirectoryInfo.New(path);
-		IFileSystem.IFileSystemExtensionContainer extensionContainer =
+		IFileSystemExtensionContainer extensionContainer =
 			directoryInfo.ExtensionContainer;
 		return extensionContainer.HasWrappedInstance(out DirectoryInfo? di)
 			? di.GetAccessControl(includeSections)
@@ -65,13 +65,13 @@ public static class DirectoryAclExtensions
 
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.SetAccessControl(DirectoryInfo, DirectorySecurity)" />
 	[SupportedOSPlatform("windows")]
-	public static void SetAccessControl(this IFileSystem.IDirectory directory,
+	public static void SetAccessControl(this IDirectory directory,
 	                                    string path,
 	                                    DirectorySecurity directorySecurity)
 	{
-		IFileSystem.IDirectoryInfo directoryInfo =
+		IDirectoryInfo directoryInfo =
 			directory.FileSystem.DirectoryInfo.New(path);
-		IFileSystem.IFileSystemExtensionContainer extensionContainer =
+		IFileSystemExtensionContainer extensionContainer =
 			directoryInfo.ExtensionContainer;
 		if (extensionContainer.HasWrappedInstance(out DirectoryInfo? di))
 		{

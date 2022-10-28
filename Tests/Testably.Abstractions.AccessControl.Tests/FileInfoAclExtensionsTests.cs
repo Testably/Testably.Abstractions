@@ -11,7 +11,7 @@ public class FileInfoAclExtensionsTests
 		Skip.IfNot(Test.RunsOnWindows);
 
 		FileSystemMock fileSystem = new();
-		IFileSystem.IFileInfo fileInfo = fileSystem.FileInfo.New("foo");
+		IFileInfo fileInfo = fileSystem.FileInfo.New("foo");
 
 #pragma warning disable CA1416
 		FileSecurity result = fileInfo.GetAccessControl(AccessControlSections.All);
@@ -52,7 +52,7 @@ public class FileInfoAclExtensionsTests
 		Skip.IfNot(Test.RunsOnWindows);
 
 		FileSystemMock fileSystem = new();
-		IFileSystem.IFileInfo fileInfo = fileSystem.FileInfo.New("foo");
+		IFileInfo fileInfo = fileSystem.FileInfo.New("foo");
 #pragma warning disable CA1416
 		FileSecurity fileSecurity = new();
 

@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class FileSystemMock
 {
-	private sealed class DriveInfoFactoryMock : IFileSystem.IDriveInfoFactory
+	private sealed class DriveInfoFactoryMock : IDriveInfoFactory
 	{
 		private readonly FileSystemMock _fileSystem;
 
@@ -19,18 +19,18 @@ public sealed partial class FileSystemMock
 
 		#region IDriveInfoFactory Members
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+		/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 		public IFileSystem FileSystem
 			=> _fileSystem;
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfoFactory.GetDrives()" />
-		public IFileSystem.IDriveInfo[] GetDrives()
+		/// <inheritdoc cref="IDriveInfoFactory.GetDrives()" />
+		public IDriveInfo[] GetDrives()
 			=> _fileSystem.Storage.GetDrives()
-			   .Cast<IFileSystem.IDriveInfo>()
+			   .Cast<IDriveInfo>()
 			   .ToArray();
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfoFactory.New(string)" />
-		public IFileSystem.IDriveInfo New(string driveName)
+		/// <inheritdoc cref="IDriveInfoFactory.New(string)" />
+		public IDriveInfo New(string driveName)
 		{
 			if (driveName == null)
 			{
@@ -42,9 +42,9 @@ public sealed partial class FileSystemMock
 			return existingDrive ?? driveInfo;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IDriveInfoFactory.Wrap(DriveInfo)" />
+		/// <inheritdoc cref="IDriveInfoFactory.Wrap(DriveInfo)" />
 		[return: NotNullIfNotNull("driveInfo")]
-		public IFileSystem.IDriveInfo? Wrap(DriveInfo? driveInfo)
+		public IDriveInfo? Wrap(DriveInfo? driveInfo)
 		{
 			if (driveInfo?.Name == null)
 			{

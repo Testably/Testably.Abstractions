@@ -5,12 +5,12 @@ public static partial class FileSystemInitializer
 	/// <summary>
 	///     Manipulates the <see cref="File" /> in the <see cref="IFileSystem" /> with test data.
 	/// </summary>
-	public interface IFileManipulator : IFileSystem.IFileSystemExtensionPoint
+	public interface IFileManipulator : IFileSystemExtensionPoint
 	{
 		/// <summary>
 		///     The file to initialize.
 		/// </summary>
-		public IFileSystem.IFileInfo File { get; }
+		public IFileInfo File { get; }
 
 		/// <summary>
 		///     Sets the contents of the <see cref="File" /> to <paramref name="bytes" />.

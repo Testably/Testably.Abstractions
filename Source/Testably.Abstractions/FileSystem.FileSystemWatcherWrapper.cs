@@ -10,7 +10,7 @@ namespace Testably.Abstractions;
 
 public sealed partial class FileSystem
 {
-	private sealed class FileSystemWatcherWrapper : IFileSystem.IFileSystemWatcher
+	private sealed class FileSystemWatcherWrapper : IFileSystemWatcher
 	{
 		private readonly FileSystemWatcher _instance;
 
@@ -23,21 +23,21 @@ public sealed partial class FileSystem
 
 		#region IFileSystemWatcher Members
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Container" />
+		/// <inheritdoc cref="IFileSystemWatcher.Container" />
 		public IContainer? Container
 			=> _instance.Container;
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.EnableRaisingEvents" />
+		/// <inheritdoc cref="IFileSystemWatcher.EnableRaisingEvents" />
 		public bool EnableRaisingEvents
 		{
 			get => _instance.EnableRaisingEvents;
 			set => _instance.EnableRaisingEvents = value;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+		/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 		public IFileSystem FileSystem { get; }
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Filter" />
+		/// <inheritdoc cref="IFileSystemWatcher.Filter" />
 		public string Filter
 		{
 			get => _instance.Filter;
@@ -45,47 +45,47 @@ public sealed partial class FileSystem
 		}
 
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Filters" />
+		/// <inheritdoc cref="IFileSystemWatcher.Filters" />
 		public ICollection<string> Filters
 			=> _instance.Filters;
 #endif
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.IncludeSubdirectories" />
+		/// <inheritdoc cref="IFileSystemWatcher.IncludeSubdirectories" />
 		public bool IncludeSubdirectories
 		{
 			get => _instance.IncludeSubdirectories;
 			set => _instance.IncludeSubdirectories = value;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.InternalBufferSize" />
+		/// <inheritdoc cref="IFileSystemWatcher.InternalBufferSize" />
 		public int InternalBufferSize
 		{
 			get => _instance.InternalBufferSize;
 			set => _instance.InternalBufferSize = value;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.NotifyFilter" />
+		/// <inheritdoc cref="IFileSystemWatcher.NotifyFilter" />
 		public NotifyFilters NotifyFilter
 		{
 			get => _instance.NotifyFilter;
 			set => _instance.NotifyFilter = value;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Path" />
+		/// <inheritdoc cref="IFileSystemWatcher.Path" />
 		public string Path
 		{
 			get => _instance.Path;
 			set => _instance.Path = value;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Site" />
+		/// <inheritdoc cref="IFileSystemWatcher.Site" />
 		public ISite? Site
 		{
 			get => _instance.Site;
 			set => _instance.Site = value;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.SynchronizingObject" />
+		/// <inheritdoc cref="IFileSystemWatcher.SynchronizingObject" />
 		public ISynchronizeInvoke? SynchronizingObject
 		{
 			get => _instance.SynchronizingObject;
@@ -96,56 +96,56 @@ public sealed partial class FileSystem
 		public void Dispose()
 			=> _instance.Dispose();
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Changed" />
+		/// <inheritdoc cref="IFileSystemWatcher.Changed" />
 		public event FileSystemEventHandler? Changed
 		{
 			add => _instance.Changed += value;
 			remove => _instance.Changed -= value;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Created" />
+		/// <inheritdoc cref="IFileSystemWatcher.Created" />
 		public event FileSystemEventHandler? Created
 		{
 			add => _instance.Created += value;
 			remove => _instance.Created -= value;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Deleted" />
+		/// <inheritdoc cref="IFileSystemWatcher.Deleted" />
 		public event FileSystemEventHandler? Deleted
 		{
 			add => _instance.Deleted += value;
 			remove => _instance.Deleted -= value;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Error" />
+		/// <inheritdoc cref="IFileSystemWatcher.Error" />
 		public event ErrorEventHandler? Error
 		{
 			add => _instance.Error += value;
 			remove => _instance.Error -= value;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.Renamed" />
+		/// <inheritdoc cref="IFileSystemWatcher.Renamed" />
 		public event RenamedEventHandler? Renamed
 		{
 			add => _instance.Renamed += value;
 			remove => _instance.Renamed -= value;
 		}
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.BeginInit()" />
+		/// <inheritdoc cref="IFileSystemWatcher.BeginInit()" />
 		public void BeginInit()
 			=> _instance.BeginInit();
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.EndInit()" />
+		/// <inheritdoc cref="IFileSystemWatcher.EndInit()" />
 		public void EndInit()
 			=> _instance.EndInit();
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.WaitForChanged(WatcherChangeTypes)" />
-		public IFileSystem.IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
+		/// <inheritdoc cref="IFileSystemWatcher.WaitForChanged(WatcherChangeTypes)" />
+		public IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
 			WatcherChangeTypes changeType)
 			=> new WaitForChangedResultWrapper(_instance.WaitForChanged(changeType));
 
-		/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.WaitForChanged(WatcherChangeTypes, int)" />
-		public IFileSystem.IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
+		/// <inheritdoc cref="IFileSystemWatcher.WaitForChanged(WatcherChangeTypes, int)" />
+		public IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
 			WatcherChangeTypes changeType, int timeout)
 			=> new WaitForChangedResultWrapper(
 				_instance.WaitForChanged(changeType, timeout));
@@ -165,7 +165,7 @@ public sealed partial class FileSystem
 		}
 
 		private readonly struct WaitForChangedResultWrapper
-			: IFileSystem.IFileSystemWatcher.IWaitForChangedResult
+			: IFileSystemWatcher.IWaitForChangedResult
 		{
 			private readonly WaitForChangedResult _instance;
 
@@ -174,19 +174,19 @@ public sealed partial class FileSystem
 				_instance = instance;
 			}
 
-			/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.IWaitForChangedResult.ChangeType" />
+			/// <inheritdoc cref="IFileSystemWatcher.IWaitForChangedResult.ChangeType" />
 			public WatcherChangeTypes ChangeType
 				=> _instance.ChangeType;
 
-			/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.IWaitForChangedResult.Name" />
+			/// <inheritdoc cref="IFileSystemWatcher.IWaitForChangedResult.Name" />
 			public string? Name
 				=> _instance.Name;
 
-			/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.IWaitForChangedResult.OldName" />
+			/// <inheritdoc cref="IFileSystemWatcher.IWaitForChangedResult.OldName" />
 			public string? OldName
 				=> _instance.OldName;
 
-			/// <inheritdoc cref="IFileSystem.IFileSystemWatcher.IWaitForChangedResult.TimedOut" />
+			/// <inheritdoc cref="IFileSystemWatcher.IWaitForChangedResult.TimedOut" />
 			public bool TimedOut
 				=> _instance.TimedOut;
 		}

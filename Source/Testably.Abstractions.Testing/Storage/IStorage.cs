@@ -125,7 +125,7 @@ internal interface IStorage
 	IStorageContainer GetOrCreateContainer(IStorageLocation location,
 	                                       Func<IStorageLocation, FileSystemMock,
 		                                       IStorageContainer> containerGenerator,
-	                                       IFileSystem.IFileSystemExtensionContainer?
+	                                       IFileSystemExtensionContainer?
 		                                       fileSystemExtensionContainer = null);
 
 	/// <summary>

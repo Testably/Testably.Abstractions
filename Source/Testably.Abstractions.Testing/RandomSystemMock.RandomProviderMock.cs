@@ -11,10 +11,10 @@ public sealed partial class RandomSystemMock
 			=> Generator<Guid>.FromCallback(System.Guid.NewGuid);
 
 		private readonly Generator<Guid> _guidGenerator;
-		private readonly Func<int, IRandomSystem.IRandom> _randomGenerator;
+		private readonly Func<int, IRandom> _randomGenerator;
 
 		public RandomProviderMock(
-			Func<int, IRandomSystem.IRandom>? randomGenerator = null,
+			Func<int, IRandom>? randomGenerator = null,
 			Generator<Guid>? guidGenerator = null)
 		{
 			_guidGenerator = guidGenerator ?? DefaultGuidGenerator;
@@ -28,12 +28,12 @@ public sealed partial class RandomSystemMock
 			=> _guidGenerator.GetNext();
 
 		/// <inheritdoc cref="RandomSystemMock.IRandomProvider.GetRandom(int)" />
-		public IRandomSystem.IRandom GetRandom(int seed = SharedSeed)
+		public IRandom GetRandom(int seed = SharedSeed)
 			=> _randomGenerator(seed);
 
 		#endregion
 
-		private IRandomSystem.IRandom DefaultRandomGenerator(int seed)
+		private IRandom DefaultRandomGenerator(int seed)
 			=> new RandomMock(seed: seed);
 	}
 }

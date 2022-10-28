@@ -75,7 +75,7 @@ public class RandomProviderTests
 		RandomSystemMock.IRandomProvider randomProvider =
 			Testing.RandomProvider.Generate(seed, intGenerator: value);
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
 		{
 			results.Add(random.Next());
@@ -92,7 +92,7 @@ public class RandomProviderTests
 		RandomSystemMock.IRandomProvider randomProvider =
 			Testing.RandomProvider.Generate(intGenerator: values);
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
 		{
 			results.Add(random.Next());
@@ -112,7 +112,7 @@ public class RandomProviderTests
 			Testing.RandomProvider.Generate(intGenerator: value);
 		int expectedValue = maxValue - 1;
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
 		{
 			results.Add(random.Next(maxValue));
@@ -133,7 +133,7 @@ public class RandomProviderTests
 			Testing.RandomProvider.Generate(intGenerator: value);
 		int expectedValue = maxValue - 1;
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
 		{
 			results.Add(random.Next(minValue, maxValue));
@@ -153,7 +153,7 @@ public class RandomProviderTests
 		RandomSystemMock.IRandomProvider randomProvider =
 			Testing.RandomProvider.Generate(intGenerator: value);
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
 		{
 			results.Add(random.Next(minValue, maxValue));
@@ -170,7 +170,7 @@ public class RandomProviderTests
 		RandomSystemMock.IRandomProvider randomProvider =
 			Testing.RandomProvider.Generate();
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 10; i++)
 		{
 			results.Add(random.Next());
@@ -188,7 +188,7 @@ public class RandomProviderTests
 		RandomSystemMock.IRandomProvider randomProvider =
 			Testing.RandomProvider.Generate(byteGenerator: value);
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
 		{
 			byte[] buffer = new byte[value.Length];
@@ -208,7 +208,7 @@ public class RandomProviderTests
 		RandomSystemMock.IRandomProvider randomProvider =
 			Testing.RandomProvider.Generate();
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 10; i++)
 		{
 			byte[] buffer = new byte[10];
@@ -229,7 +229,7 @@ public class RandomProviderTests
 		RandomSystemMock.IRandomProvider randomProvider =
 			Testing.RandomProvider.Generate(byteGenerator: value);
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
 		{
 			byte[] buffer = new byte[value.Length + 1];
@@ -249,7 +249,7 @@ public class RandomProviderTests
 		RandomSystemMock.IRandomProvider randomProvider =
 			Testing.RandomProvider.Generate(doubleGenerator: value);
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
 		{
 			results.Add(random.NextDouble());
@@ -267,7 +267,7 @@ public class RandomProviderTests
 		RandomSystemMock.IRandomProvider randomProvider =
 			Testing.RandomProvider.Generate();
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 10; i++)
 		{
 			results.Add(random.NextDouble());
@@ -320,7 +320,7 @@ public class RandomProviderTests
 		RandomSystemMock.IRandomProvider randomProvider =
 			Testing.RandomProvider.Generate(byteGenerator: value);
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
 		{
 			byte[] buffer = new byte[value.Length];
@@ -341,7 +341,7 @@ public class RandomProviderTests
 		RandomSystemMock.IRandomProvider randomProvider =
 			Testing.RandomProvider.Generate(byteGenerator: value);
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
 		{
 			byte[] buffer = new byte[value.Length + 1];
@@ -361,7 +361,7 @@ public class RandomProviderTests
 		RandomSystemMock.IRandomProvider randomProvider =
 			Testing.RandomProvider.Generate();
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 10; i++)
 		{
 			byte[] buffer = new byte[10];
@@ -383,7 +383,7 @@ public class RandomProviderTests
 		RandomSystemMock.IRandomProvider randomProvider =
 			Testing.RandomProvider.Generate(singleGenerator: value);
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
 		{
 			results.Add(random.NextSingle());
@@ -401,7 +401,7 @@ public class RandomProviderTests
 		RandomSystemMock.IRandomProvider randomProvider =
 			Testing.RandomProvider.Generate();
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 10; i++)
 		{
 			results.Add(random.NextSingle());
@@ -420,7 +420,7 @@ public class RandomProviderTests
 		RandomSystemMock.IRandomProvider randomProvider =
 			Testing.RandomProvider.Generate(longGenerator: value);
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
 		{
 			results.Add(random.NextInt64());
@@ -440,7 +440,7 @@ public class RandomProviderTests
 			Testing.RandomProvider.Generate(longGenerator: value);
 		long expectedValue = maxValue - 1;
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
 		{
 			results.Add(random.NextInt64(maxValue));
@@ -462,7 +462,7 @@ public class RandomProviderTests
 			Testing.RandomProvider.Generate(longGenerator: value);
 		long expectedValue = minValue;
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
 		{
 			results.Add(random.NextInt64(minValue, maxValue));
@@ -484,7 +484,7 @@ public class RandomProviderTests
 			Testing.RandomProvider.Generate(longGenerator: value);
 		long expectedValue = maxValue - 1;
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
 		{
 			results.Add(random.NextInt64(minValue, maxValue));
@@ -502,7 +502,7 @@ public class RandomProviderTests
 		RandomSystemMock.IRandomProvider randomProvider =
 			Testing.RandomProvider.Generate();
 
-		IRandomSystem.IRandom random = randomProvider.GetRandom(seed);
+		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 10; i++)
 		{
 			results.Add(random.NextInt64());

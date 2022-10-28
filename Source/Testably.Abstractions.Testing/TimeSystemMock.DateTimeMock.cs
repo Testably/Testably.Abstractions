@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Testing;
 
 public sealed partial class TimeSystemMock
 {
-	private sealed class DateTimeMock : ITimeSystem.IDateTime
+	private sealed class DateTimeMock : IDateTime
 	{
 		private readonly TimeSystemMockCallbackHandler _callbackHandler;
 		private readonly TimeSystemMock _timeSystemMock;
@@ -18,15 +18,15 @@ public sealed partial class TimeSystemMock
 
 		#region IDateTime Members
 
-		/// <inheritdoc cref="ITimeSystem.IDateTime.MaxValue" />
+		/// <inheritdoc cref="IDateTime.MaxValue" />
 		public DateTime MaxValue
 			=> _timeSystemMock.TimeProvider.MaxValue;
 
-		/// <inheritdoc cref="ITimeSystem.IDateTime.MinValue" />
+		/// <inheritdoc cref="IDateTime.MinValue" />
 		public DateTime MinValue
 			=> _timeSystemMock.TimeProvider.MinValue;
 
-		/// <inheritdoc cref="ITimeSystem.IDateTime.Now" />
+		/// <inheritdoc cref="IDateTime.Now" />
 		public DateTime Now
 		{
 			get
@@ -37,11 +37,11 @@ public sealed partial class TimeSystemMock
 			}
 		}
 
-		/// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+		/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
 		public ITimeSystem TimeSystem
 			=> _timeSystemMock;
 
-		/// <inheritdoc cref="ITimeSystem.IDateTime.Today" />
+		/// <inheritdoc cref="IDateTime.Today" />
 		public DateTime Today
 		{
 			get
@@ -52,11 +52,11 @@ public sealed partial class TimeSystemMock
 			}
 		}
 
-		/// <inheritdoc cref="ITimeSystem.IDateTime.UnixEpoch" />
+		/// <inheritdoc cref="IDateTime.UnixEpoch" />
 		public DateTime UnixEpoch
 			=> _timeSystemMock.TimeProvider.UnixEpoch;
 
-		/// <inheritdoc cref="ITimeSystem.IDateTime.UtcNow" />
+		/// <inheritdoc cref="IDateTime.UtcNow" />
 		public DateTime UtcNow
 		{
 			get

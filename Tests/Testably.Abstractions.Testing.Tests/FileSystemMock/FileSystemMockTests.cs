@@ -75,8 +75,8 @@ public class FileSystemMockTests
 		string expectedDriveName = "".PrefixRoot();
 		Testing.FileSystemMock sut = new();
 
-		IFileSystem.IDriveInfo[] drives = sut.DriveInfo.GetDrives();
-		IFileSystem.IDriveInfo drive = drives.Single();
+		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
+		IDriveInfo drive = drives.Single();
 
 		drive.Name.Should().Be(expectedDriveName);
 		drive.AvailableFreeSpace.Should().BeGreaterThan(0);
@@ -96,7 +96,7 @@ public class FileSystemMockTests
 		string uncPrefix = new(sut.Path.DirectorySeparatorChar, 2);
 		string uncDrive = $"{uncPrefix}{server}";
 		sut.WithUncDrive(uncDrive);
-		IFileSystem.IDriveInfo drive = sut.DriveInfo.New(uncDrive);
+		IDriveInfo drive = sut.DriveInfo.New(uncDrive);
 		long previousFreeSpace = drive.AvailableFreeSpace;
 
 		sut.File.WriteAllBytes(Path.Combine(uncDrive, path), bytes);
@@ -146,7 +146,7 @@ public class FileSystemMockTests
 		Testing.FileSystemMock sut = new();
 		sut.WithDrive(driveName);
 
-		IFileSystem.IDriveInfo[] drives = sut.DriveInfo.GetDrives();
+		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 
 		drives.Length.Should().Be(1);
 		drives.Should().ContainSingle(d => d.Name == driveName);
@@ -160,7 +160,7 @@ public class FileSystemMockTests
 		Testing.FileSystemMock sut = new();
 		sut.WithDrive(driveName);
 
-		IFileSystem.IDriveInfo[] drives = sut.DriveInfo.GetDrives();
+		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 
 		drives.Length.Should().Be(2);
 		drives.Should().ContainSingle(d => d.Name == driveName);
@@ -173,7 +173,7 @@ public class FileSystemMockTests
 		Testing.FileSystemMock sut = new();
 		sut.WithDrive(d => d.SetTotalSize(totalSize));
 
-		IFileSystem.IDriveInfo drive = sut.DriveInfo.GetDrives().Single();
+		IDriveInfo drive = sut.DriveInfo.GetDrives().Single();
 
 		drive.TotalSize.Should().Be(totalSize);
 		drive.TotalFreeSpace.Should().Be(totalSize);

@@ -9,7 +9,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	[AutoData]
 	public void Length_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -30,7 +30,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	public void Length_WhenFileExists_ShouldBeSetCorrectly(string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		long result = sut.Length;
 
@@ -41,7 +41,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	[AutoData]
 	public void Length_WhenFileIsCreated_ShouldBeSetCorrectly(string path, byte[] bytes)
 	{
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		FileSystem.File.WriteAllBytes(path, bytes);
 
@@ -55,7 +55,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	public void Length_WhenFileIsCreatedAfterAccessed_ShouldBeSetCorrectly(
 		string path, byte[] bytes)
 	{
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -77,7 +77,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		Length_WhenFileIsCreatedAfterLengthAccessed_ShouldThrowFileNotFoundExceptionAgain(
 			string path, byte[] bytes)
 	{
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		Exception? exception = Record.Exception(() =>
 		{

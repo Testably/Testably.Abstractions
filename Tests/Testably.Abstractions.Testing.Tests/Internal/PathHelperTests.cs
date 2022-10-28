@@ -76,7 +76,7 @@ public class PathHelperTests
 		char[] invalidChars)
 	{
 		Mock<IFileSystem> fileSystemMock = new();
-		Mock<IFileSystem.IPath> pathSystemMock = new();
+		Mock<IPath> pathSystemMock = new();
 		fileSystemMock.Setup(m => m.Path).Returns(pathSystemMock.Object);
 		pathSystemMock.Setup(m => m.GetInvalidPathChars()).Returns(invalidChars);
 		pathSystemMock

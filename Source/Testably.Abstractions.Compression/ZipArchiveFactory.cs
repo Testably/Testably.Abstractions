@@ -13,7 +13,7 @@ internal sealed class ZipArchiveFactory : IZipArchiveFactory
 
 	#region IZipArchiveFactory Members
 
-	/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IZipArchiveFactory.New(Stream)" />
