@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Runtime.Versioning;
 using System.Text;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Internal;
