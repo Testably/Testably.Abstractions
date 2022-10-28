@@ -1,7 +1,11 @@
 ﻿using System.IO;
-using System.Runtime.Versioning;
 using System.Security.AccessControl;
 using Testably.Abstractions.FileSystem;
+#if NETSTANDARD2_0 || NETSTANDARD2_1
+using Testably.Abstractions.Polyfills;
+#else
+using System.Runtime.Versioning;
+#endif
 
 namespace Testably.Abstractions;
 

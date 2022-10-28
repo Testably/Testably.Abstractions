@@ -1,6 +1,6 @@
-﻿#if NETSTANDARD2_0 || NETSTANDARD2_1
-// ReSharper disable once CheckNamespace
-namespace System.Runtime.Versioning;
+﻿using System;
+#if NETSTANDARD2_0 || NETSTANDARD2_1
+namespace Testably.Abstractions.Polyfills;
 
 /// <summary>
 ///     Records the operating system (and minimum version) that supports an API. Multiple attributes can be

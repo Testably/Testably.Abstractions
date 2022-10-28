@@ -1,5 +1,3 @@
-using System.Runtime.Versioning;
-
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
 public abstract partial class FileSystemFileInfoTests<TFileSystem>
