@@ -6,13 +6,13 @@ namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
 
 public class NotificationHandlerTests
 {
-	public Testing.FileSystemMock FileSystem { get; }
+	public Testing.MockFileSystem FileSystem { get; }
 	private readonly ITestOutputHelper _testOutputHelper;
 
 	public NotificationHandlerTests(ITestOutputHelper testOutputHelper)
 	{
 		_testOutputHelper = testOutputHelper;
-		FileSystem = new Testing.FileSystemMock();
+		FileSystem = new Testing.MockFileSystem();
 	}
 
 	[SkippableTheory]

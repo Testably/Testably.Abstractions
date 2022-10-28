@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Compression.Tests.ZipFile;
 
 [Collection(nameof(RealFileSystemTests))]
 public sealed class RealFileSystemTests :
-	ZipFileTests<FileSystem>,
+	ZipFileTests<RealFileSystem>,
 	IDisposable
 {
 	/// <inheritdoc cref="ZipFileTests{TFileSystem}.BasePath" />
@@ -15,7 +15,7 @@ public sealed class RealFileSystemTests :
 	private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
 
 	public RealFileSystemTests(ITestOutputHelper testOutputHelper)
-		: base(new FileSystem(), new TimeSystem())
+		: base(new RealFileSystem(), new RealTimeSystem())
 	{
 		_directoryCleaner = FileSystem
 		   .SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);

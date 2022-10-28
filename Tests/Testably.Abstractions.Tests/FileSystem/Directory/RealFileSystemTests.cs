@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 [Collection(nameof(DriveInfoFactory.RealFileSystemTests))]
 public sealed class RealFileSystemTests :
-	FileSystemDirectoryTests<Abstractions.FileSystem>,
+	FileSystemDirectoryTests<Abstractions.RealFileSystem>,
 	IDisposable
 {
 	/// <inheritdoc cref="FileSystemDirectoryTests{TFileSystem}.BasePath" />
@@ -14,7 +14,7 @@ public sealed class RealFileSystemTests :
 	private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
 
 	public RealFileSystemTests(ITestOutputHelper testOutputHelper)
-		: base(new Abstractions.FileSystem(), new Abstractions.TimeSystem())
+		: base(new Abstractions.RealFileSystem(), new Abstractions.RealTimeSystem())
 	{
 		_directoryCleaner = FileSystem
 		   .SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);

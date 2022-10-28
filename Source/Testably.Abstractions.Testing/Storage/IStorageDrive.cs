@@ -19,13 +19,13 @@ public interface IStorageDrive : IDriveInfo
 	///     Changes the <see cref="IDriveInfo.DriveFormat" /> of the mocked <see cref="IDriveInfo" />.
 	/// </summary>
 	IStorageDrive SetDriveFormat(
-		string driveFormat = FileSystemMock.DriveInfoMock.DefaultDriveFormat);
+		string driveFormat = MockFileSystem.DriveInfoMock.DefaultDriveFormat);
 
 	/// <summary>
 	///     Changes the <see cref="IDriveInfo.DriveType" /> of the mocked <see cref="IDriveInfo" />.
 	/// </summary>
 	IStorageDrive SetDriveType(
-		DriveType driveType = FileSystemMock.DriveInfoMock.DefaultDriveType);
+		DriveType driveType = MockFileSystem.DriveInfoMock.DefaultDriveType);
 
 	/// <summary>
 	///     Changes the <see cref="IDriveInfo.IsReady" /> property of the mocked
@@ -37,5 +37,5 @@ public interface IStorageDrive : IDriveInfo
 	///     Changes the total size of the mocked <see cref="IDriveInfo" />.
 	/// </summary>
 	IStorageDrive SetTotalSize(
-		long totalSize = FileSystemMock.DriveInfoMock.DefaultTotalSize);
+		long totalSize = MockFileSystem.DriveInfoMock.DefaultTotalSize);
 }

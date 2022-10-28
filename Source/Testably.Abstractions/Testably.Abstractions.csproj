@@ -7,9 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="$(SolutionDir)README.md"
-          Pack="true" PackagePath="/Docs/"
-          Link="Docs\README.md" />
+    <None Include="$(SolutionDir)README.md" Pack="true" PackagePath="/Docs/" Link="Docs\README.md" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +30,66 @@
     </Compile>
     <Compile Update="TimeSystem.*.cs">
       <DependentUpon>TimeSystem.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="RealRandomSystem.RandomFactory.cs">
+      <DependentUpon>RealRandomSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RealRandomSystem.GuidWrapper.cs">
+      <DependentUpon>RealRandomSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RealFileSystem.PathWrapper.cs">
+      <DependentUpon>RealFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RealFileSystem.FileWrapper.cs">
+      <DependentUpon>RealFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RealFileSystem.FileSystemWatcherWrapper.cs">
+      <DependentUpon>RealFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RealFileSystem.FileSystemWatcherFactory.cs">
+      <DependentUpon>RealFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RealFileSystem.FileSystemInfoWrapper.cs">
+      <DependentUpon>RealFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RealFileSystem.FileStreamWrapper.cs">
+      <DependentUpon>RealFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RealFileSystem.FileStreamFactory.cs">
+      <DependentUpon>RealFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RealFileSystem.FileInfoWrapper.cs">
+      <DependentUpon>RealFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RealFileSystem.FileInfoFactory.cs">
+      <DependentUpon>RealFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RealFileSystem.DriveInfoWrapper.cs">
+      <DependentUpon>RealFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RealFileSystem.DriveInfoFactory.cs">
+      <DependentUpon>RealFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RealFileSystem.DirectoryWrapper.cs">
+      <DependentUpon>RealFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RealFileSystem.DirectoryInfoWrapper.cs">
+      <DependentUpon>RealFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RealFileSystem.DirectoryInfoFactory.cs">
+      <DependentUpon>RealFileSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RealTimeSystem.DateTimeWrapper.cs">
+      <DependentUpon>RealTimeSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RealTimeSystem.TaskWrapper.cs">
+      <DependentUpon>RealTimeSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RealTimeSystem.ThreadWrapper.cs">
+      <DependentUpon>RealTimeSystem.cs</DependentUpon>
     </Compile>
   </ItemGroup>
 

@@ -92,7 +92,7 @@ internal sealed class NullContainer : IStorageContainer
 
 	#endregion
 
-	internal static IStorageContainer New(FileSystemMock fileSystem)
+	internal static IStorageContainer New(MockFileSystem fileSystem)
 		=> new NullContainer(fileSystem, fileSystem.TimeSystem);
 
 	private sealed class NullStorageAccessHandle : IStorageAccessHandle

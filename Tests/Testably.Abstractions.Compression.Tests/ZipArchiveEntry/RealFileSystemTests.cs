@@ -5,7 +5,7 @@ using Xunit.Abstractions;
 namespace Testably.Abstractions.Compression.Tests.ZipArchiveEntry;
 
 [Collection(nameof(RealFileSystemTests))]
-public sealed class RealFileSystemTests : ZipArchiveEntryTests<FileSystem>,
+public sealed class RealFileSystemTests : ZipArchiveEntryTests<RealFileSystem>,
 	IDisposable
 {
 	/// <inheritdoc cref="ZipArchiveEntryTests{TFileSystem}.BasePath" />
@@ -14,7 +14,7 @@ public sealed class RealFileSystemTests : ZipArchiveEntryTests<FileSystem>,
 	private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
 
 	public RealFileSystemTests(ITestOutputHelper testOutputHelper)
-		: base(new FileSystem(), new TimeSystem())
+		: base(new RealFileSystem(), new RealTimeSystem())
 	{
 		_directoryCleaner = FileSystem
 		   .SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);

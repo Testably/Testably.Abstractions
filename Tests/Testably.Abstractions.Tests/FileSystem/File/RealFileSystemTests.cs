@@ -5,7 +5,7 @@ using Xunit.Abstractions;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 [Collection(nameof(DriveInfoFactory.RealFileSystemTests))]
-public sealed class RealFileSystemTests : FileSystemFileTests<Abstractions.FileSystem>,
+public sealed class RealFileSystemTests : FileSystemFileTests<Abstractions.RealFileSystem>,
 	IDisposable
 {
 	/// <inheritdoc cref="FileSystemFileTests{TFileSystem}.BasePath" />
@@ -14,7 +14,7 @@ public sealed class RealFileSystemTests : FileSystemFileTests<Abstractions.FileS
 	private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
 
 	public RealFileSystemTests(ITestOutputHelper testOutputHelper)
-		: base(new Abstractions.FileSystem(), new Abstractions.TimeSystem())
+		: base(new Abstractions.RealFileSystem(), new Abstractions.RealTimeSystem())
 	{
 		_directoryCleaner = FileSystem
 		   .SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);

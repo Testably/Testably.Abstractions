@@ -2,9 +2,9 @@ namespace Testably.Abstractions.Tests.RandomSystem.Random;
 
 public static class MockRandomSystemTests
 {
-	public sealed class RandomTests : RandomSystemRandomTests<RandomSystemMock>
+	public sealed class RandomTests : RandomSystemRandomTests<MockRandomSystem>
 	{
-		public RandomTests() : base(new RandomSystemMock())
+		public RandomTests() : base(new MockRandomSystem())
 		{
 		}
 	}

@@ -10,7 +10,7 @@ public class DirectoryInfoAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystem fileSystem = new();
+		RealFileSystem fileSystem = new();
 		Test.SkipIfLongRunningTestsShouldBeSkipped(fileSystem);
 
 		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
@@ -36,7 +36,7 @@ public class DirectoryInfoAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
 #pragma warning disable CA1416
 		DirectorySecurity directorySecurity = new();
@@ -53,7 +53,7 @@ public class DirectoryInfoAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
 
 #pragma warning disable CA1416
@@ -69,7 +69,7 @@ public class DirectoryInfoAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystem fileSystem = new();
+		RealFileSystem fileSystem = new();
 		Test.SkipIfLongRunningTestsShouldBeSkipped(fileSystem);
 
 		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
@@ -95,7 +95,7 @@ public class DirectoryInfoAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
 #pragma warning disable CA1416
 		DirectorySecurity directorySecurity = new();

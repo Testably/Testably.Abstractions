@@ -3,34 +3,34 @@
 namespace Testably.Abstractions.Testing.Storage;
 
 /// <summary>
-///     Flags indicating which times to adjust for a <see cref="FileSystemMock.FileSystemInfoMock" />.
+///     Flags indicating which times to adjust for a <see cref="MockFileSystem.FileSystemInfoMock" />.
 /// </summary>
 /// .
 [Flags]
 internal enum TimeAdjustments
 {
 	/// <summary>
-	///     Adjusts no times on the <see cref="FileSystemMock.FileSystemInfoMock" />
+	///     Adjusts no times on the <see cref="MockFileSystem.FileSystemInfoMock" />
 	/// </summary>
 	None = 0,
 
 	/// <summary>
-	///     Adjusts the <see cref="FileSystemMock.FileSystemInfoMock.CreationTime" />
+	///     Adjusts the <see cref="MockFileSystem.FileSystemInfoMock.CreationTime" />
 	/// </summary>
 	CreationTime = 1 << 0,
 
 	/// <summary>
-	///     Adjusts the <see cref="FileSystemMock.FileSystemInfoMock.LastAccessTime" />
+	///     Adjusts the <see cref="MockFileSystem.FileSystemInfoMock.LastAccessTime" />
 	/// </summary>
 	LastAccessTime = 1 << 1,
 
 	/// <summary>
-	///     Adjusts the <see cref="FileSystemMock.FileSystemInfoMock.LastWriteTime" />
+	///     Adjusts the <see cref="MockFileSystem.FileSystemInfoMock.LastWriteTime" />
 	/// </summary>
 	LastWriteTime = 1 << 2,
 
 	/// <summary>
-	///     Adjusts all times on the <see cref="FileSystemMock.FileSystemInfoMock" />
+	///     Adjusts all times on the <see cref="MockFileSystem.FileSystemInfoMock" />
 	/// </summary>
 	All = CreationTime | LastAccessTime | LastWriteTime,
 }

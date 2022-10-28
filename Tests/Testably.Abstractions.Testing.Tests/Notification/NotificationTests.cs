@@ -7,7 +7,7 @@ public class NotificationTests
 	[Fact]
 	public void AwaitableCallback_Amount_ShouldOnlyReturnAfterNumberOfCallbacks()
 	{
-		Testing.TimeSystemMock timeSystem = new();
+		Testing.MockTimeSystem timeSystem = new();
 		int receivedCount = 0;
 		Testing.Notification.IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On.ThreadSleep(t =>
@@ -35,7 +35,7 @@ public class NotificationTests
 	[Fact]
 	public void AwaitableCallback_Filter_ShouldOnlyUpdateAfterFilteredValue()
 	{
-		Testing.TimeSystemMock timeSystem = new();
+		Testing.MockTimeSystem timeSystem = new();
 		int receivedCount = 0;
 		Testing.Notification.IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On.ThreadSleep(_ =>
@@ -60,7 +60,7 @@ public class NotificationTests
 	[Fact]
 	public void AwaitableCallback_Predicate_ShouldOnlyUpdateAfterFilteredValue()
 	{
-		Testing.TimeSystemMock timeSystem = new();
+		Testing.MockTimeSystem timeSystem = new();
 		int receivedCount = 0;
 		ManualResetEventSlim ms = new();
 		timeSystem.On.ThreadSleep(_ =>
@@ -90,7 +90,7 @@ public class NotificationTests
 		ManualResetEventSlim ms = new();
 		try
 		{
-			Testing.TimeSystemMock timeSystem = new();
+			Testing.MockTimeSystem timeSystem = new();
 			bool isCalled = false;
 			Testing.Notification.IAwaitableCallback<TimeSpan> wait =
 				timeSystem.On.ThreadSleep(_ =>
@@ -119,7 +119,7 @@ public class NotificationTests
 	[Fact]
 	public void AwaitableCallback_TimeoutExpired_ShouldThrowTimeoutException()
 	{
-		Testing.TimeSystemMock timeSystem = new();
+		Testing.MockTimeSystem timeSystem = new();
 		bool isCalled = false;
 		Testing.Notification.IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On.ThreadSleep(_ =>
@@ -145,7 +145,7 @@ public class NotificationTests
 	[Fact]
 	public void AwaitableCallback_Dispose_ShouldStopListening()
 	{
-		Testing.TimeSystemMock timeSystem = new();
+		Testing.MockTimeSystem timeSystem = new();
 		bool isCalled = false;
 		Testing.Notification.IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On.ThreadSleep(_ =>
@@ -166,7 +166,7 @@ public class NotificationTests
 		int secondThreadMilliseconds = 42;
 		int firstThreadMilliseconds = secondThreadMilliseconds + 1;
 		ManualResetEventSlim ms = new();
-		Testing.TimeSystemMock timeSystem = new();
+		Testing.MockTimeSystem timeSystem = new();
 		bool isCalledFromSecondThread = false;
 		ManualResetEventSlim listening = new();
 		Testing.Notification.IAwaitableCallback<TimeSpan> wait =
@@ -205,7 +205,7 @@ public class NotificationTests
 	[AutoData]
 	public void Execute_ShouldBeExecutedBeforeWait(int milliseconds)
 	{
-		Testing.TimeSystemMock timeSystem = new();
+		Testing.MockTimeSystem timeSystem = new();
 		int receivedMilliseconds = -1;
 		bool isExecuted = false;
 
@@ -232,7 +232,7 @@ public class NotificationTests
 	public void Execute_WithReturnValue_ShouldBeExecutedAndReturnValue(
 		int milliseconds, string result)
 	{
-		Testing.TimeSystemMock timeSystem = new();
+		Testing.MockTimeSystem timeSystem = new();
 		int receivedMilliseconds = -1;
 		bool isExecuted = false;
 

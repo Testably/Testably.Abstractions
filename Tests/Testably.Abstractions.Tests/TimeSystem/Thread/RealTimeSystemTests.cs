@@ -4,9 +4,9 @@ public static class RealTimeSystemTests
 {
 	// ReSharper disable once UnusedMember.Global
 
-	public sealed class ThreadTests : TimeSystemThreadTests<Abstractions.TimeSystem>
+	public sealed class ThreadTests : TimeSystemThreadTests<Abstractions.RealTimeSystem>
 	{
-		public ThreadTests() : base(new Abstractions.TimeSystem())
+		public ThreadTests() : base(new Abstractions.RealTimeSystem())
 		{
 		}
 	}

@@ -30,7 +30,7 @@ public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
 		bool result = fileInfo.ExtensionContainer
 		   .HasWrappedInstance(out System.IO.FileSystemInfo? fileSystemInfo);
 
-		if (FileSystem is Abstractions.FileSystem)
+		if (FileSystem is Abstractions.RealFileSystem)
 		{
 			result.Should().BeTrue();
 			fileSystemInfo!.Name.Should().Be(fileInfo.Name);

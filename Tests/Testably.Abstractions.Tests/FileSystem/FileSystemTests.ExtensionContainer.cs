@@ -12,7 +12,7 @@ public abstract partial class FileSystemTests<TFileSystem>
 		bool result = FileSystem.FileInfo.New(name).ExtensionContainer
 		   .HasWrappedInstance(out System.IO.FileInfo? fileInfo);
 
-		if (FileSystem is Abstractions.FileSystem)
+		if (FileSystem is Abstractions.RealFileSystem)
 		{
 			result.Should().BeTrue();
 			fileInfo!.Name.Should().Be(name);

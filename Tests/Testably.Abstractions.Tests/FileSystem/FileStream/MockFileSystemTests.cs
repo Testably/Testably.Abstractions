@@ -1,18 +1,18 @@
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
 public sealed class MockFileSystemTests
-	: FileSystemFileStreamTests<FileSystemMock>, IDisposable
+	: FileSystemFileStreamTests<MockFileSystem>, IDisposable
 {
 	/// <inheritdoc cref="FileSystemFileStreamTests{TFileSystem}.BasePath" />
 	public override string BasePath => _directoryCleaner.BasePath;
 
 	private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
 
-	public MockFileSystemTests() : this(new FileSystemMock())
+	public MockFileSystemTests() : this(new MockFileSystem())
 	{
 	}
 
-	private MockFileSystemTests(FileSystemMock fileSystemMock) : base(
+	private MockFileSystemTests(MockFileSystem fileSystemMock) : base(
 		fileSystemMock,
 		fileSystemMock.TimeSystem)
 	{

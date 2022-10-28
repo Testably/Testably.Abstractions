@@ -10,7 +10,7 @@ public class TimeProviderTests
 	public void Now_ShouldReturnCurrentDateTime()
 	{
 		DateTime begin = DateTime.UtcNow;
-		Testing.TimeSystemMock.ITimeProvider timeProvider = Testing.TimeProvider.Now();
+		Testing.MockTimeSystem.ITimeProvider timeProvider = Testing.TimeProvider.Now();
 		DateTime end = DateTime.UtcNow;
 
 		DateTime result1 = timeProvider.Read();
@@ -37,7 +37,7 @@ public class TimeProviderTests
 	public void Use_ShouldReturnFixedDateTime()
 	{
 		DateTime now = TimeTestHelper.GetRandomTime();
-		Testing.TimeSystemMock.ITimeProvider timeProvider = Testing.TimeProvider.Use(now);
+		Testing.MockTimeSystem.ITimeProvider timeProvider = Testing.TimeProvider.Use(now);
 
 		DateTime result1 = timeProvider.Read();
 		DateTime result2 = timeProvider.Read();

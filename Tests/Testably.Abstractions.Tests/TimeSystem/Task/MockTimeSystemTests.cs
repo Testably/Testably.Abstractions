@@ -5,11 +5,11 @@ namespace Testably.Abstractions.Tests.TimeSystem.Task;
 
 public static class MockTimeSystemTests
 {
-	public sealed class TaskTests : TimeSystemTaskTests<TimeSystemMock>
+	public sealed class TaskTests : TimeSystemTaskTests<MockTimeSystem>
 	{
 		#region Test Setup
 
-		public TaskTests() : base(new TimeSystemMock())
+		public TaskTests() : base(new MockTimeSystem())
 		{
 		}
 

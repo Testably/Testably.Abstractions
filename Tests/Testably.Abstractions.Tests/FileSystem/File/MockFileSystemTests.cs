@@ -3,18 +3,18 @@ using System.Linq;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 public sealed class MockFileSystemTests
-	: FileSystemFileTests<FileSystemMock>, IDisposable
+	: FileSystemFileTests<MockFileSystem>, IDisposable
 {
 	/// <inheritdoc cref="FileSystemFileTests{TFileSystem}.BasePath" />
 	public override string BasePath => _directoryCleaner.BasePath;
 
 	private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
 
-	public MockFileSystemTests() : this(new FileSystemMock())
+	public MockFileSystemTests() : this(new MockFileSystem())
 	{
 	}
 
-	private MockFileSystemTests(FileSystemMock fileSystemMock) : base(
+	private MockFileSystemTests(MockFileSystem fileSystemMock) : base(
 		fileSystemMock,
 		fileSystemMock.TimeSystem)
 	{
@@ -69,7 +69,7 @@ public sealed class MockFileSystemTests
 		int bytes1Length,
 		int bytes2Length)
 	{
-		Abstractions.RandomSystem randomSystem = new();
+		Abstractions.RealRandomSystem randomSystem = new();
 		byte[] bytes1 = new byte[bytes1Length];
 		byte[] bytes2 = new byte[bytes2Length];
 		randomSystem.Random.Shared.NextBytes(bytes1);

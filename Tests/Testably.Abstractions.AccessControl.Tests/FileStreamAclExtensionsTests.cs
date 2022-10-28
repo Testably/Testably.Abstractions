@@ -10,7 +10,7 @@ public class FileStreamAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		FileSystemStream fileStream = fileSystem.File.Create("foo");
 
 #pragma warning disable CA1416
@@ -25,7 +25,7 @@ public class FileStreamAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystem fileSystem = new();
+		RealFileSystem fileSystem = new();
 		Test.SkipIfLongRunningTestsShouldBeSkipped(fileSystem);
 
 		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
@@ -49,7 +49,7 @@ public class FileStreamAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		FileSystemStream fileStream = fileSystem.File.Create("foo");
 #pragma warning disable CA1416
 		FileSecurity fileSecurity = new();

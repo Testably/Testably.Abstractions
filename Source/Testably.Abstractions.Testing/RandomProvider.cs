@@ -5,7 +5,7 @@ using System.Threading;
 namespace Testably.Abstractions.Testing;
 
 /// <summary>
-///     <see cref="RandomSystemMock.IRandomProvider" />s for use in the constructor of <see cref="RandomSystemMock" />.
+///     <see cref="MockRandomSystem.IRandomProvider" />s for use in the constructor of <see cref="MockRandomSystem" />.
 /// </summary>
 public static class RandomProvider
 {
@@ -19,13 +19,13 @@ public static class RandomProvider
 	/// <summary>
 	///     The default implementation for a random provider.
 	/// </summary>
-	public static RandomSystemMock.IRandomProvider Default()
-		=> new RandomSystemMock.RandomProviderMock();
+	public static MockRandomSystem.IRandomProvider Default()
+		=> new MockRandomSystem.RandomProviderMock();
 
 	/// <summary>
-	///     Initializes the <see cref="RandomSystemMock.RandomProvider" /> with explicit generators.
+	///     Initializes the <see cref="MockRandomSystem.RandomProvider" /> with explicit generators.
 	/// </summary>
-	public static RandomSystemMock.IRandomProvider Generate(
+	public static MockRandomSystem.IRandomProvider Generate(
 		int seed = SharedSeed,
 		Generator<Guid>? guidGenerator = null,
 		Generator<int>? intGenerator = null,
@@ -35,8 +35,8 @@ public static class RandomProvider
 #endif
 		Generator<double>? doubleGenerator = null,
 		Generator<byte[]>? byteGenerator = null)
-		=> new RandomSystemMock.RandomProviderMock(
-			_ => new RandomSystemMock.RandomMock(
+		=> new MockRandomSystem.RandomProviderMock(
+			_ => new MockRandomSystem.RandomMock(
 				seed,
 				intGenerator,
 #if FEATURE_RANDOM_ADVANCED

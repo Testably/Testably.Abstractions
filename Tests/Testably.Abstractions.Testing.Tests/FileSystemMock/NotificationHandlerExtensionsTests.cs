@@ -4,11 +4,11 @@ public class NotificationHandlerExtensionsTests
 {
 	#region Test Setup
 
-	public Testing.FileSystemMock FileSystem { get; }
+	public Testing.MockFileSystem FileSystem { get; }
 
 	public NotificationHandlerExtensionsTests()
 	{
-		FileSystem = new Testing.FileSystemMock();
+		FileSystem = new Testing.MockFileSystem();
 	}
 
 	#endregion

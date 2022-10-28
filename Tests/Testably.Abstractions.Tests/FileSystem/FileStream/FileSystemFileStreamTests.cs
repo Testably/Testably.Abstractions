@@ -317,7 +317,7 @@ public abstract partial class FileSystemFileStreamTests<TFileSystem>
 		bool result = readStream.ExtensionContainer
 		   .HasWrappedInstance(out System.IO.FileStream? fileStream);
 
-		if (FileSystem is Abstractions.FileSystem)
+		if (FileSystem is Abstractions.RealFileSystem)
 		{
 			result.Should().BeTrue();
 			fileStream!.Name.Should().Be(readStream.Name);

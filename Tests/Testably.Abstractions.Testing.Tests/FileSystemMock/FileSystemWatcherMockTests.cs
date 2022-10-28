@@ -12,12 +12,12 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 	public const int DefaultMaxMessages = 64;
 
 	public string BasePath => _directoryCleaner.BasePath;
-	public Testing.FileSystemMock FileSystem { get; }
+	public Testing.MockFileSystem FileSystem { get; }
 	private readonly Testing.FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
 
 	public FileSystemWatcherMockTests()
 	{
-		FileSystem = new Testing.FileSystemMock();
+		FileSystem = new Testing.MockFileSystem();
 		_directoryCleaner = FileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory();
 		FileSystem.Initialize();
 	}

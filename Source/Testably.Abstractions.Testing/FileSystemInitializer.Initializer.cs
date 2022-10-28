@@ -51,7 +51,7 @@ public static partial class FileSystemInitializer
 		/// <inheritdoc cref="IFileSystemInitializer{TFileSystem}.WithAFile(string?)" />
 		public IFileSystemFileInitializer<TFileSystem> WithAFile(string? extension = null)
 		{
-			IRandom random = (FileSystem as FileSystemMock)?
+			IRandom random = (FileSystem as MockFileSystem)?
 			   .RandomSystem.Random.Shared ?? RandomFactory.Shared;
 			string fileName;
 			do
@@ -67,7 +67,7 @@ public static partial class FileSystemInitializer
 		/// <inheritdoc cref="IFileSystemInitializer{TFileSystem}.WithASubdirectory()" />
 		public IFileSystemDirectoryInitializer<TFileSystem> WithASubdirectory()
 		{
-			IRandom random = (FileSystem as FileSystemMock)?
+			IRandom random = (FileSystem as MockFileSystem)?
 			   .RandomSystem.Random.Shared ?? RandomFactory.Shared;
 			string directoryName;
 			do

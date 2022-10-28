@@ -9,12 +9,12 @@ internal static class FileSystemExtensions
 	///     Determines the new <see cref="IStorageLocation" /> when the <paramref name="location" /> is moved
 	///     from <paramref name="source" /> to <paramref name="destination" />.
 	/// </summary>
-	/// <param name="fileSystem">The <see cref="FileSystemMock" />.</param>
+	/// <param name="fileSystem">The <see cref="MockFileSystem" />.</param>
 	/// <param name="location">The original location of the file or directory.</param>
 	/// <param name="source">The source of the move request.</param>
 	/// <param name="destination">The destination of the move request.</param>
 	/// <returns>The new <see cref="IStorageLocation" /> under <paramref name="destination" />.</returns>
-	internal static IStorageLocation GetMoveLocation(this FileSystemMock fileSystem,
+	internal static IStorageLocation GetMoveLocation(this MockFileSystem fileSystem,
 	                                                 IStorageLocation location,
 	                                                 IStorageLocation source,
 	                                                 IStorageLocation destination)

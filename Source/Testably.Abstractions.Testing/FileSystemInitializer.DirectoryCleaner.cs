@@ -30,7 +30,7 @@ public static partial class FileSystemInitializer
 		/// <inheritdoc cref="IDisposable.Dispose()" />
 		public void Dispose()
 		{
-			ITimeSystem? timeSystem = (_fileSystem as FileSystemMock)?.TimeSystem;
+			ITimeSystem? timeSystem = (_fileSystem as MockFileSystem)?.TimeSystem;
 			try
 			{
 				// It is important to reset the current directory, as otherwise deleting the BasePath

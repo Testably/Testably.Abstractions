@@ -23,7 +23,7 @@ internal class LockableContainer : IStorageContainer
 
 	private byte[] _bytes = Array.Empty<byte>();
 
-	public LockableContainer(Testing.FileSystemMock fileSystem,
+	public LockableContainer(Testing.MockFileSystem fileSystem,
 	                         FileSystemTypes containerType =
 		                         FileSystemTypes.DirectoryOrFile)
 	{

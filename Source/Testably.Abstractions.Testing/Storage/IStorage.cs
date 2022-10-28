@@ -123,7 +123,7 @@ internal interface IStorage
 	/// <param name="fileSystemExtensionContainer"></param>
 	/// <returns>The container at <paramref name="location" />.</returns>
 	IStorageContainer GetOrCreateContainer(IStorageLocation location,
-	                                       Func<IStorageLocation, FileSystemMock,
+	                                       Func<IStorageLocation, MockFileSystem,
 		                                       IStorageContainer> containerGenerator,
 	                                       IFileSystemExtensionContainer?
 		                                       fileSystemExtensionContainer = null);
@@ -199,7 +199,7 @@ internal interface IStorage
 	///     otherwise <see langword="false" />.
 	/// </returns>
 	bool TryAddContainer(IStorageLocation location,
-	                     Func<IStorageLocation, FileSystemMock, IStorageContainer>
+	                     Func<IStorageLocation, MockFileSystem, IStorageContainer>
 		                     containerGenerator,
 	                     [NotNullWhen(true)] out IStorageContainer? container);
 }
