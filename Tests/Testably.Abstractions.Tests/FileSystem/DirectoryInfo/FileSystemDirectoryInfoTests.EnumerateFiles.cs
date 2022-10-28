@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
@@ -14,7 +15,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 		EnumerateFiles_SearchOptionAllFiles_ShouldReturnAllFiles(
 			string path)
 	{
-		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
 			   .WithSubdirectory(path).Initialized(s => s
 				   .WithASubdirectory().Initialized(d => d

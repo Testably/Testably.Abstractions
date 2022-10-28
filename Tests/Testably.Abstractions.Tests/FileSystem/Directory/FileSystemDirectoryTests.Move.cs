@@ -1,5 +1,6 @@
 using System.IO;
 using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.Testing.FileSystemInitializer;
 #if !NETFRAMEWORK
 #endif
 
@@ -29,7 +30,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[AutoData]
 	public void Move_ShouldMoveDirectoryWithContent(string source, string destination)
 	{
-		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
 			   .WithSubdirectory(source).Initialized(s => s
 				   .WithAFile()
@@ -95,7 +96,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	public void Move_WithLockedFile_ShouldNotMoveDirectoryAtAll(
 		string source, string destination)
 	{
-		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
 			   .WithSubdirectory(source).Initialized(s => s
 				   .WithAFile()
@@ -154,7 +155,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	public void Move_WithReadOnlyFile_ShouldMoveDirectoryWithContent(
 		string source, string destination)
 	{
-		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
 			   .WithSubdirectory(source).Initialized(s => s
 				   .WithAFile()

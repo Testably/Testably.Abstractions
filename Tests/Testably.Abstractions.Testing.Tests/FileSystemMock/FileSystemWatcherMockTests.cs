@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading;
 using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
 
@@ -14,7 +15,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 
 	public string BasePath => _directoryCleaner.BasePath;
 	public MockFileSystem FileSystem { get; }
-	private readonly Testing.FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
+	private readonly IDirectoryCleaner _directoryCleaner;
 
 	public FileSystemWatcherMockTests()
 	{

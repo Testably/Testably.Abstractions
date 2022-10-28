@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
 
@@ -46,7 +47,7 @@ public class FileSystemInitializerTests
 			sut.Initialize().WithFile(fileName);
 		});
 
-		exception.Should().BeOfType<Testing.FileSystemInitializer.TestingException>()
+		exception.Should().BeOfType<TestingException>()
 		   .Which.Message.Should().Contain(fileName);
 	}
 
@@ -120,7 +121,7 @@ public class FileSystemInitializerTests
 			sut.Initialize().WithSubdirectory(directoryName);
 		});
 
-		exception.Should().BeOfType<Testing.FileSystemInitializer.TestingException>()
+		exception.Should().BeOfType<TestingException>()
 		   .Which.Message.Should().Contain(directoryName);
 	}
 
@@ -140,7 +141,7 @@ public class FileSystemInitializerTests
 	public void Initialize_WithSubdirectory_ShouldExist(string directoryName)
 	{
 		MockFileSystem sut = new();
-		Testing.FileSystemInitializer.IFileSystemDirectoryInitializer<
+		IFileSystemDirectoryInitializer<
 			MockFileSystem> result =
 			sut.Initialize().WithSubdirectory(directoryName);
 

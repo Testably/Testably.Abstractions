@@ -1,5 +1,6 @@
 #if !DEBUG || !DISABLE_TESTS_REALFILESYSTEM
 
+using Testably.Abstractions.Testing.FileSystemInitializer;
 using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Compression.Tests.ZipFile;
@@ -12,7 +13,7 @@ public sealed class RealFileSystemTests :
 	/// <inheritdoc cref="ZipFileTests{TFileSystem}.BasePath" />
 	public override string BasePath => _directoryCleaner.BasePath;
 
-	private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
+	private readonly IDirectoryCleaner _directoryCleaner;
 
 	public RealFileSystemTests(ITestOutputHelper testOutputHelper)
 		: base(new RealFileSystem(), new RealTimeSystem())

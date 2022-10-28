@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Testably.Abstractions.Testing.FileSystemInitializer;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
@@ -19,7 +20,7 @@ public class DirectoryCleanerTests
 	{
 		MockFileSystem sut = new();
 		List<string> receivedLogs = new();
-		Testing.FileSystemInitializer.IDirectoryCleaner directoryCleaner =
+		IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(m => receivedLogs.Add(m));
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 		int exceptionCount = 0;
@@ -55,7 +56,7 @@ public class DirectoryCleanerTests
 	{
 		MockFileSystem sut = new();
 		List<string> receivedLogs = new();
-		Testing.FileSystemInitializer.IDirectoryCleaner directoryCleaner =
+		IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(m => receivedLogs.Add(m));
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 
@@ -68,7 +69,7 @@ public class DirectoryCleanerTests
 	public void Dispose_ShouldResetCurrentDirectory()
 	{
 		MockFileSystem sut = new();
-		Testing.FileSystemInitializer.IDirectoryCleaner directoryCleaner =
+		IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory();
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 		directoryCleaner.Dispose();
@@ -81,7 +82,7 @@ public class DirectoryCleanerTests
 		Exception exception)
 	{
 		MockFileSystem sut = new();
-		Testing.FileSystemInitializer.IDirectoryCleaner directoryCleaner =
+		IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory();
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 		int exceptionCount = 0;
@@ -103,7 +104,7 @@ public class DirectoryCleanerTests
 		MockFileSystem sut = new();
 		List<string> receivedLogs = new();
 
-		using Testing.FileSystemInitializer.IDirectoryCleaner directoryCleaner =
+		using IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(t => receivedLogs.Add(t));
 
 		string currentDirectory = sut.Directory.GetCurrentDirectory();

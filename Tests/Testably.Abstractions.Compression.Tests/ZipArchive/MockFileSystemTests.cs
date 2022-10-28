@@ -1,3 +1,5 @@
+using Testably.Abstractions.Testing.FileSystemInitializer;
+
 namespace Testably.Abstractions.Compression.Tests.ZipArchive;
 
 public sealed class MockFileSystemTests
@@ -6,7 +8,7 @@ public sealed class MockFileSystemTests
 	/// <inheritdoc cref="ZipArchiveTests{TFileSystem}.BasePath" />
 	public override string BasePath => _directoryCleaner.BasePath;
 
-	private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
+	private readonly IDirectoryCleaner _directoryCleaner;
 
 	public MockFileSystemTests() : this(new MockFileSystem())
 	{

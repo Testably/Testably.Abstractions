@@ -1,5 +1,6 @@
 ﻿using System;
 using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
@@ -7,7 +8,7 @@ namespace Testably.Abstractions.Testing;
 /// <summary>
 ///     A test helper for simulating the file system. Implements <see cref="IFileSystem" />.
 /// </summary>
-public sealed partial class MockFileSystem : IFileSystem
+public sealed class MockFileSystem : IFileSystem
 {
 	/// <summary>
 	///     Intercept events in the <see cref="MockFileSystem" /> before they occur.

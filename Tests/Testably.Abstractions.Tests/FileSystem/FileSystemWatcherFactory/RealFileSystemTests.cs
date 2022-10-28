@@ -1,6 +1,7 @@
 #if !DEBUG || !DISABLE_TESTS_REALFILESYSTEM
 using System.IO;
 using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.Testing.FileSystemInitializer;
 using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcherFactory;
@@ -13,7 +14,7 @@ public sealed class RealFileSystemTests :
 	/// <inheritdoc cref="FileSystemFileSystemWatcherFactoryTests{TFileSystem}.BasePath" />
 	public override string BasePath => _directoryCleaner.BasePath;
 
-	private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
+	private readonly IDirectoryCleaner _directoryCleaner;
 
 	public RealFileSystemTests(ITestOutputHelper testOutputHelper)
 		: base(new RealFileSystem(), new RealTimeSystem())

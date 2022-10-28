@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Internal;
 using static Testably.Abstractions.Testing.MockFileSystem;
 

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Storage;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
@@ -11,8 +12,8 @@ public class InMemoryContainerTests
 	public void AdjustAttributes_Decrypt_ShouldNotHaveEncryptedAttribute(string path)
 	{
 		MockFileSystem fileSystem = new();
-		MockFileSystem.DriveInfoMock drive =
-			MockFileSystem.DriveInfoMock.New("C", fileSystem);
+		DriveInfoMock drive =
+			DriveInfoMock.New("C", fileSystem);
 		IStorageLocation location = InMemoryLocation.New(drive,
 			fileSystem.Path.GetFullPath(path));
 
@@ -30,8 +31,8 @@ public class InMemoryContainerTests
 	public void AdjustAttributes_Encrypt_ShouldHaveEncryptedAttribute(string path)
 	{
 		MockFileSystem fileSystem = new();
-		MockFileSystem.DriveInfoMock drive =
-			MockFileSystem.DriveInfoMock.New("C", fileSystem);
+		DriveInfoMock drive =
+			DriveInfoMock.New("C", fileSystem);
 		IStorageLocation location = InMemoryLocation.New(drive,
 			fileSystem.Path.GetFullPath(path));
 
@@ -49,8 +50,8 @@ public class InMemoryContainerTests
 	{
 		path = "." + path;
 		MockFileSystem fileSystem = new();
-		MockFileSystem.DriveInfoMock drive =
-			MockFileSystem.DriveInfoMock.New("C", fileSystem);
+		DriveInfoMock drive =
+			DriveInfoMock.New("C", fileSystem);
 		IStorageLocation location = InMemoryLocation.New(drive,
 			fileSystem.Path.GetFullPath(path));
 
@@ -76,8 +77,8 @@ public class InMemoryContainerTests
 		string? linkTarget, bool shouldHaveReparsePoint, string path)
 	{
 		MockFileSystem fileSystem = new();
-		MockFileSystem.DriveInfoMock drive =
-			MockFileSystem.DriveInfoMock.New("C", fileSystem);
+		DriveInfoMock drive =
+			DriveInfoMock.New("C", fileSystem);
 		IStorageLocation location = InMemoryLocation.New(drive,
 			fileSystem.Path.GetFullPath(path));
 
@@ -103,8 +104,8 @@ public class InMemoryContainerTests
 		string path, byte[] bytes)
 	{
 		MockFileSystem fileSystem = new();
-		MockFileSystem.DriveInfoMock drive =
-			MockFileSystem.DriveInfoMock.New("C", fileSystem);
+		DriveInfoMock drive =
+			DriveInfoMock.New("C", fileSystem);
 		IStorageLocation location = InMemoryLocation.New(drive,
 			fileSystem.Path.GetFullPath(path));
 		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);
@@ -123,8 +124,8 @@ public class InMemoryContainerTests
 		string path, byte[] bytes)
 	{
 		MockFileSystem fileSystem = new();
-		MockFileSystem.DriveInfoMock drive =
-			MockFileSystem.DriveInfoMock.New("C", fileSystem);
+		DriveInfoMock drive =
+			DriveInfoMock.New("C", fileSystem);
 		IStorageLocation location = InMemoryLocation.New(drive,
 			fileSystem.Path.GetFullPath(path));
 		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);
@@ -141,8 +142,8 @@ public class InMemoryContainerTests
 		string path, byte[] bytes)
 	{
 		MockFileSystem fileSystem = new();
-		MockFileSystem.DriveInfoMock drive =
-			MockFileSystem.DriveInfoMock.New("C", fileSystem);
+		DriveInfoMock drive =
+			DriveInfoMock.New("C", fileSystem);
 		IStorageLocation location = InMemoryLocation.New(drive,
 			fileSystem.Path.GetFullPath(path));
 		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);
@@ -161,8 +162,8 @@ public class InMemoryContainerTests
 		string path, byte[] bytes)
 	{
 		MockFileSystem fileSystem = new();
-		MockFileSystem.DriveInfoMock drive =
-			MockFileSystem.DriveInfoMock.New("C", fileSystem);
+		DriveInfoMock drive =
+			DriveInfoMock.New("C", fileSystem);
 		IStorageLocation location = InMemoryLocation.New(drive,
 			fileSystem.Path.GetFullPath(path));
 		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);

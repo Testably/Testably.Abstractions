@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Testably.Abstractions.Testing.FileSystem;
 
 namespace Testably.Abstractions.Testing;
 
@@ -27,12 +28,12 @@ public static partial class MockFileSystemExtensions
 	/// <returns>The <see cref="MockFileSystem" />.</returns>
 	/// <remarks>This allows e.g. to throw custom exceptions instead.</remarks>
 	public static MockFileSystem Changing(
-		this MockFileSystem.IInterceptionHandler handler,
+		this IInterceptionHandler handler,
 		FileSystemTypes fileSystemType,
-		Action<MockFileSystem.ChangeDescription> interceptionCallback,
+		Action<ChangeDescription> interceptionCallback,
 		string path = "",
 		string searchPattern = "*",
-		Func<MockFileSystem.ChangeDescription, bool>? predicate = null)
+		Func<ChangeDescription, bool>? predicate = null)
 		=> handler.Event(interceptionCallback,
 			changeDescription => changeDescription.Matches(
 				fileSystemType,
@@ -63,12 +64,12 @@ public static partial class MockFileSystemExtensions
 	/// <returns>The <see cref="MockFileSystem" />.</returns>
 	/// <remarks>This allows e.g. to throw custom exceptions instead.</remarks>
 	public static MockFileSystem Creating(
-		this MockFileSystem.IInterceptionHandler handler,
+		this IInterceptionHandler handler,
 		FileSystemTypes fileSystemType,
-		Action<MockFileSystem.ChangeDescription> interceptionCallback,
+		Action<ChangeDescription> interceptionCallback,
 		string path = "",
 		string searchPattern = "*",
-		Func<MockFileSystem.ChangeDescription, bool>? predicate = null)
+		Func<ChangeDescription, bool>? predicate = null)
 		=> handler.Event(interceptionCallback,
 			changeDescription => changeDescription.Matches(
 				fileSystemType,
@@ -99,12 +100,12 @@ public static partial class MockFileSystemExtensions
 	/// <returns>The <see cref="MockFileSystem" />.</returns>
 	/// <remarks>This allows e.g. to throw custom exceptions instead.</remarks>
 	public static MockFileSystem Deleting(
-		this MockFileSystem.IInterceptionHandler handler,
+		this IInterceptionHandler handler,
 		FileSystemTypes fileSystemType,
-		Action<MockFileSystem.ChangeDescription> interceptionCallback,
+		Action<ChangeDescription> interceptionCallback,
 		string path = "",
 		string searchPattern = "*",
-		Func<MockFileSystem.ChangeDescription, bool>? predicate = null)
+		Func<ChangeDescription, bool>? predicate = null)
 		=> handler.Event(interceptionCallback,
 			changeDescription => changeDescription.Matches(
 				fileSystemType,

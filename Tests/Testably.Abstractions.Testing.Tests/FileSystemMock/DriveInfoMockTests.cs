@@ -2,6 +2,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.Testing.FileSystem;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
 
@@ -120,7 +121,7 @@ public class DriveInfoMockTests
 		   .Replace('/', FileSystem.Path.DirectorySeparatorChar);
 
 		IDriveInfo drive =
-			MockFileSystem.DriveInfoMock.New(driveName, FileSystem);
+			DriveInfoMock.New(driveName, FileSystem);
 
 		drive.Name.Should().Be(expectedName);
 	}
@@ -131,7 +132,7 @@ public class DriveInfoMockTests
 	{
 		Exception? exception = Record.Exception(() =>
 		{
-			MockFileSystem.DriveInfoMock.New(driveName, FileSystem);
+			DriveInfoMock.New(driveName, FileSystem);
 		});
 
 		exception.Should().BeOfType<ArgumentException>();
@@ -141,7 +142,7 @@ public class DriveInfoMockTests
 	public void New_Null_ShouldReturnNull()
 	{
 		IDriveInfo? drive =
-			MockFileSystem.DriveInfoMock.New(null, FileSystem);
+			DriveInfoMock.New(null, FileSystem);
 
 		drive.Should().BeNull();
 	}
@@ -150,9 +151,9 @@ public class DriveInfoMockTests
 	public void New_UncPath_ShouldSetFlag()
 	{
 		IDriveInfo drive =
-			MockFileSystem.DriveInfoMock.New(@"//foo", FileSystem);
+			DriveInfoMock.New(@"//foo", FileSystem);
 
-		(drive as MockFileSystem.DriveInfoMock)?.IsUncPath.Should().BeTrue();
+		(drive as DriveInfoMock)?.IsUncPath.Should().BeTrue();
 	}
 
 	[SkippableTheory]
@@ -161,8 +162,8 @@ public class DriveInfoMockTests
 	public void New_ValidDriveName_ShouldAppendColonAndSlash(
 		string driveName, string expectedDriveName)
 	{
-		MockFileSystem.DriveInfoMock result =
-			MockFileSystem.DriveInfoMock.New(driveName, FileSystem);
+		DriveInfoMock result =
+			DriveInfoMock.New(driveName, FileSystem);
 
 		result.Name.Should().Be(expectedDriveName);
 	}

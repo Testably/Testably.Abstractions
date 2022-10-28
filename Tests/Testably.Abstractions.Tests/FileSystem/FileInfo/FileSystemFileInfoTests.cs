@@ -1,5 +1,6 @@
 using System.IO;
 using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
@@ -23,7 +24,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	[SkippableFact]
 	public void Directory_ShouldReturnParentDirectory()
 	{
-		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
 			   .WithASubdirectory().Initialized(s => s
 				   .WithAFile());
@@ -36,7 +37,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	[SkippableFact]
 	public void DirectoryName_ShouldReturnNameOfParentDirectory()
 	{
-		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
 			   .WithASubdirectory().Initialized(s => s
 				   .WithAFile());

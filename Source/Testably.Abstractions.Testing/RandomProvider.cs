@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Testably.Abstractions.Testing.RandomSystem;
 
 namespace Testably.Abstractions.Testing;
 
 /// <summary>
-///     <see cref="MockRandomSystem.IRandomProvider" />s for use in the constructor of <see cref="MockRandomSystem" />.
+///     <see cref="IRandomProvider" />s for use in the constructor of <see cref="MockRandomSystem" />.
 /// </summary>
 public static class RandomProvider
 {
@@ -19,13 +20,13 @@ public static class RandomProvider
 	/// <summary>
 	///     The default implementation for a random provider.
 	/// </summary>
-	public static MockRandomSystem.IRandomProvider Default()
-		=> new MockRandomSystem.RandomProviderMock();
+	public static IRandomProvider Default()
+		=> new RandomProviderMock();
 
 	/// <summary>
 	///     Initializes the <see cref="MockRandomSystem.RandomProvider" /> with explicit generators.
 	/// </summary>
-	public static MockRandomSystem.IRandomProvider Generate(
+	public static IRandomProvider Generate(
 		int seed = SharedSeed,
 		Generator<Guid>? guidGenerator = null,
 		Generator<int>? intGenerator = null,
@@ -35,8 +36,8 @@ public static class RandomProvider
 #endif
 		Generator<double>? doubleGenerator = null,
 		Generator<byte[]>? byteGenerator = null)
-		=> new MockRandomSystem.RandomProviderMock(
-			_ => new MockRandomSystem.RandomMock(
+		=> new RandomProviderMock(
+			_ => new RandomMock(
 				seed,
 				intGenerator,
 #if FEATURE_RANDOM_ADVANCED

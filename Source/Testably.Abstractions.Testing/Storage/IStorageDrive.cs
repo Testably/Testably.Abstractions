@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.Testing.FileSystem;
 
 namespace Testably.Abstractions.Testing.Storage;
 
@@ -20,13 +21,13 @@ public interface IStorageDrive : IDriveInfo
 	///     Changes the <see cref="IDriveInfo.DriveFormat" /> of the mocked <see cref="IDriveInfo" />.
 	/// </summary>
 	IStorageDrive SetDriveFormat(
-		string driveFormat = MockFileSystem.DriveInfoMock.DefaultDriveFormat);
+		string driveFormat = DriveInfoMock.DefaultDriveFormat);
 
 	/// <summary>
 	///     Changes the <see cref="IDriveInfo.DriveType" /> of the mocked <see cref="IDriveInfo" />.
 	/// </summary>
 	IStorageDrive SetDriveType(
-		DriveType driveType = MockFileSystem.DriveInfoMock.DefaultDriveType);
+		DriveType driveType = DriveInfoMock.DefaultDriveType);
 
 	/// <summary>
 	///     Changes the <see cref="IDriveInfo.IsReady" /> property of the mocked
@@ -38,5 +39,5 @@ public interface IStorageDrive : IDriveInfo
 	///     Changes the total size of the mocked <see cref="IDriveInfo" />.
 	/// </summary>
 	IStorageDrive SetTotalSize(
-		long totalSize = MockFileSystem.DriveInfoMock.DefaultTotalSize);
+		long totalSize = DriveInfoMock.DefaultTotalSize);
 }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
@@ -29,7 +30,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		EnumerateFileSystemEntries_SearchOptionAllDirectories_FullPath_ShouldReturnAllFileSystemEntriesWithFullPath(
 			string path)
 	{
-		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.InitializeIn(path)
 			   .WithAFile()
 			   .WithASubdirectory().Initialized(s => s
@@ -54,7 +55,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		EnumerateFileSystemEntries_SearchOptionAllDirectories_ShouldReturnAllFileSystemEntries(
 			string path)
 	{
-		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.InitializeIn(path)
 			   .WithAFile()
 			   .WithASubdirectory().Initialized(s => s
@@ -112,7 +113,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		EnumerateFileSystemEntries_WithEnumerationOptions_ShouldConsiderSetOptions(
 			string path)
 	{
-		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.InitializeIn(path)
 			   .WithAFile()
 			   .WithASubdirectory().Initialized(s => s
@@ -180,7 +181,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		EnumerateFileSystemEntries_WithoutSearchString_ShouldReturnAllFileSystemEntriesInDirectSubdirectories(
 			string path)
 	{
-		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.InitializeIn(path)
 			   .WithAFile()
 			   .WithAFile()
@@ -205,7 +206,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		EnumerateFileSystemEntries_WithSearchPattern_ShouldReturnMatchingFileSystemEntries(
 			string path)
 	{
-		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.InitializeIn(path)
 			   .WithAFile()
 			   .WithAFile()
@@ -226,7 +227,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	public void
 		EnumerateFileSystemEntries_WithSearchPatternInSubdirectory_ShouldReturnMatchingFileSystemEntriesInSubdirectories()
 	{
-		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
 			   .WithASubdirectory().Initialized(s => s
 				   .WithAFile("foobar"))

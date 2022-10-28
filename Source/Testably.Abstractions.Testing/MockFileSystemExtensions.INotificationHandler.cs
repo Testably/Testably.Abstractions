@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Storage;
 
@@ -28,14 +29,14 @@ public static partial class MockFileSystemExtensions
 	///     If set to <see langword="null" /> (default value) all callbacks are notified.
 	/// </param>
 	/// <returns>An <see cref="Notification.IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
-	public static Notification.IAwaitableCallback<MockFileSystem.ChangeDescription>
+	public static Notification.IAwaitableCallback<ChangeDescription>
 		OnChanged(
-			this MockFileSystem.INotificationHandler handler,
+			this INotificationHandler handler,
 			FileSystemTypes fileSystemType,
-			Action<MockFileSystem.ChangeDescription>? notificationCallback = null,
+			Action<ChangeDescription>? notificationCallback = null,
 			string path = "",
 			string searchPattern = "*",
-			Func<MockFileSystem.ChangeDescription, bool>? predicate = null)
+			Func<ChangeDescription, bool>? predicate = null)
 		=> handler.OnEvent(notificationCallback,
 			changeDescription => changeDescription.Matches(
 				fileSystemType,
@@ -65,14 +66,14 @@ public static partial class MockFileSystemExtensions
 	///     If set to <see langword="null" /> (default value) all callbacks are notified.
 	/// </param>
 	/// <returns>An <see cref="Notification.IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
-	public static Notification.IAwaitableCallback<MockFileSystem.ChangeDescription>
+	public static Notification.IAwaitableCallback<ChangeDescription>
 		OnCreated(
-			this MockFileSystem.INotificationHandler handler,
+			this INotificationHandler handler,
 			FileSystemTypes fileSystemType,
-			Action<MockFileSystem.ChangeDescription>? notificationCallback = null,
+			Action<ChangeDescription>? notificationCallback = null,
 			string path = "",
 			string searchPattern = "*",
-			Func<MockFileSystem.ChangeDescription, bool>? predicate = null)
+			Func<ChangeDescription, bool>? predicate = null)
 		=> handler.OnEvent(notificationCallback,
 			changeDescription => changeDescription.Matches(
 				fileSystemType,
@@ -102,14 +103,14 @@ public static partial class MockFileSystemExtensions
 	///     If set to <see langword="null" /> (default value) all callbacks are notified.
 	/// </param>
 	/// <returns>An <see cref="Notification.IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
-	public static Notification.IAwaitableCallback<MockFileSystem.ChangeDescription>
+	public static Notification.IAwaitableCallback<ChangeDescription>
 		OnDeleted(
-			this MockFileSystem.INotificationHandler handler,
+			this INotificationHandler handler,
 			FileSystemTypes fileSystemType,
-			Action<MockFileSystem.ChangeDescription>? notificationCallback = null,
+			Action<ChangeDescription>? notificationCallback = null,
 			string path = "",
 			string searchPattern = "*",
-			Func<MockFileSystem.ChangeDescription, bool>? predicate = null)
+			Func<ChangeDescription, bool>? predicate = null)
 		=> handler.OnEvent(notificationCallback,
 			changeDescription => changeDescription.Matches(
 				fileSystemType,
@@ -118,12 +119,12 @@ public static partial class MockFileSystemExtensions
 				searchPattern,
 				predicate));
 
-	private static bool Matches(this MockFileSystem.ChangeDescription changeDescription,
+	private static bool Matches(this ChangeDescription changeDescription,
 	                            FileSystemTypes fileSystemType,
 	                            WatcherChangeTypes changeType,
 	                            string path,
 	                            string searchPattern,
-	                            Func<MockFileSystem.ChangeDescription, bool>? predicate)
+	                            Func<ChangeDescription, bool>? predicate)
 	{
 		if (changeDescription.ChangeType != changeType ||
 		    !changeDescription.FileSystemType.HasFlag(fileSystemType))

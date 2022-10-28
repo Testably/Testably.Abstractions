@@ -31,7 +31,7 @@ Initialize the file system in "current-directory" with
 
  ### Events
  All changes in the file system trigger certain events. All events can be
- - *intercepted*, before they occur (and e.g. an exception thrown to prevent the event from completing) on the `MockFileSystem.Intercept` property:
+ - *intercepted*, before they occur (and e.g. an exception thrown to prevent the event from completing) on the `Intercept` property:
    ```csharp
        MockFileSystem fileSystem = new();
            fileSystem.Intercept.Creating(FileSystemTypes.File,

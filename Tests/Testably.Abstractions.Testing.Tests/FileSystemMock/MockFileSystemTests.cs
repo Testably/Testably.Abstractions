@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
@@ -82,9 +83,9 @@ public class MockFileSystemTests
 		drive.Name.Should().Be(expectedDriveName);
 		drive.AvailableFreeSpace.Should().BeGreaterThan(0);
 		drive.DriveFormat.Should()
-		   .Be(MockFileSystem.DriveInfoMock.DefaultDriveFormat);
+		   .Be(DriveInfoMock.DefaultDriveFormat);
 		drive.DriveType.Should()
-		   .Be(MockFileSystem.DriveInfoMock.DefaultDriveType);
+		   .Be(DriveInfoMock.DefaultDriveType);
 		drive.VolumeLabel.Should().NotBeNullOrEmpty();
 	}
 

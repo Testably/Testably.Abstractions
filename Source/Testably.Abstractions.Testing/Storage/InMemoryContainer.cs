@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.TimeSystem;
 using static Testably.Abstractions.Testing.MockFileSystem;

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
@@ -14,7 +15,7 @@ public class ChangeDescriptionTests
 		string path)
 	{
 		IStorageLocation location = InMemoryLocation.New(null, Path.GetFullPath(path));
-		MockFileSystem.ChangeDescription sut = new(
+		ChangeDescription sut = new(
 			changeType,
 			fileSystemType,
 			notifyFilters,
@@ -35,7 +36,7 @@ public class ChangeDescriptionTests
 		string path)
 	{
 		IStorageLocation location = InMemoryLocation.New(null, Path.GetFullPath(path));
-		MockFileSystem.ChangeDescription sut = new(
+		ChangeDescription sut = new(
 			changeType,
 			fileSystemType,
 			notifyFilters,
@@ -56,7 +57,7 @@ public class ChangeDescriptionTests
 		string path)
 	{
 		IStorageLocation location = InMemoryLocation.New(null, Path.GetFullPath(path));
-		MockFileSystem.ChangeDescription sut = new(
+		ChangeDescription sut = new(
 			changeType,
 			fileSystemType,
 			notifyFilters,
@@ -77,7 +78,7 @@ public class ChangeDescriptionTests
 		string path)
 	{
 		IStorageLocation location = InMemoryLocation.New(null, Path.GetFullPath(path));
-		MockFileSystem.ChangeDescription sut = new(
+		ChangeDescription sut = new(
 			changeType,
 			fileSystemType,
 			notifyFilters,

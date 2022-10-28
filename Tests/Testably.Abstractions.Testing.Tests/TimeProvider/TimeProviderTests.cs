@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
+using Testably.Abstractions.Testing.TimeSystem;
 
 namespace Testably.Abstractions.Testing.Tests.TimeProvider;
 
@@ -10,7 +11,7 @@ public class TimeProviderTests
 	public void Now_ShouldReturnCurrentDateTime()
 	{
 		DateTime begin = DateTime.UtcNow;
-		MockTimeSystem.ITimeProvider timeProvider = Testing.TimeProvider.Now();
+		ITimeProvider timeProvider = Testing.TimeProvider.Now();
 		DateTime end = DateTime.UtcNow;
 
 		DateTime result1 = timeProvider.Read();
@@ -37,7 +38,7 @@ public class TimeProviderTests
 	public void Use_ShouldReturnFixedDateTime()
 	{
 		DateTime now = TimeTestHelper.GetRandomTime();
-		MockTimeSystem.ITimeProvider timeProvider = Testing.TimeProvider.Use(now);
+		ITimeProvider timeProvider = Testing.TimeProvider.Use(now);
 
 		DateTime result1 = timeProvider.Read();
 		DateTime result2 = timeProvider.Read();
