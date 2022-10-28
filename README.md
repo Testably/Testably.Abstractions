@@ -44,7 +44,7 @@ Then you test your class with the mocked types in `Testably.Abstractions.Testing
 [Fact]
 public void StoreData_ShouldWriteValidFile()
 {
-    IFileSystem fileSystem = new FileSystemMock();
+    IFileSystem fileSystem = new MockFileSystem();
     MyService sut = new MyService(fileSystem);
 
     sut.StoreData();
@@ -78,7 +78,7 @@ In order to simplify testing, the `Testably.Abstractions.Testing` projects provi
 
 These mocks are configured using fluent syntax:
 ```csharp
-new FileSystemMock()
+new MockFileSystem()
     .WithDrive("D:", d => d
         .SetTotalSize(1024*1024))
     .Initialize()

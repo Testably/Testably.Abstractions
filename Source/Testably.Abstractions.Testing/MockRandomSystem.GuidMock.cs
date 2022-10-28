@@ -8,15 +8,15 @@ public sealed partial class MockRandomSystem
 {
 	private sealed class GuidMock : GuidSystemBase
 	{
-		private readonly MockRandomSystem _randomSystemMock;
+		private readonly MockRandomSystem _mockRandomSystem;
 
 		internal GuidMock(MockRandomSystem randomSystem) : base(randomSystem)
 		{
-			_randomSystemMock = randomSystem;
+			_mockRandomSystem = randomSystem;
 		}
 
 		/// <inheritdoc cref="IGuid.NewGuid()" />
 		public override Guid NewGuid()
-			=> _randomSystemMock.RandomProvider.GetGuid();
+			=> _mockRandomSystem.RandomProvider.GetGuid();
 	}
 }

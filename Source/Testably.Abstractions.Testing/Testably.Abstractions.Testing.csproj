@@ -17,17 +17,17 @@
     <Compile Update="FileSystemInitializer.*.cs">
       <DependentUpon>FileSystemInitializer.cs</DependentUpon>
     </Compile>
-    <Compile Update="FileSystemMock.*.cs">
-      <DependentUpon>FileSystemMock.cs</DependentUpon>
+    <Compile Update="MockFileSystem.*.cs">
+      <DependentUpon>MockFileSystem.cs</DependentUpon>
     </Compile>
-    <Compile Update="FileSystemMockExtensions.*.cs">
-      <DependentUpon>FileSystemMockExtensions.cs</DependentUpon>
+    <Compile Update="MockFileSystemExtensions.*.cs">
+      <DependentUpon>MockFileSystemExtensions.cs</DependentUpon>
     </Compile>
-    <Compile Update="RandomSystemMock.*.cs">
-      <DependentUpon>RandomSystemMock.cs</DependentUpon>
+    <Compile Update="MockRandomSystem.*.cs">
+      <DependentUpon>MockRandomSystem.cs</DependentUpon>
     </Compile>
-    <Compile Update="TimeSystemMock.*.cs">
-      <DependentUpon>TimeSystemMock.cs</DependentUpon>
+    <Compile Update="MockTimeSystem.*.cs">
+      <DependentUpon>MockTimeSystem.cs</DependentUpon>
     </Compile>
   </ItemGroup>
 

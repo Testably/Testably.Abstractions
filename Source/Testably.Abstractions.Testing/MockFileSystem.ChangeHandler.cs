@@ -16,17 +16,17 @@ public sealed partial class MockFileSystem
 		private readonly Notification.INotificationFactory<ChangeDescription>
 			_changeOccurringCallbacks = Notification.CreateFactory<ChangeDescription>();
 
-		private readonly MockFileSystem _fileSystemMock;
+		private readonly MockFileSystem _mockFileSystem;
 
-		public ChangeHandlerImplementation(MockFileSystem fileSystemMock)
+		public ChangeHandlerImplementation(MockFileSystem mockFileSystem)
 		{
-			_fileSystemMock = fileSystemMock;
+			_mockFileSystem = mockFileSystem;
 		}
 
 		#region IInterceptionHandler Members
 
 		/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
-		public IFileSystem FileSystem => _fileSystemMock;
+		public IFileSystem FileSystem => _mockFileSystem;
 
 		/// <inheritdoc
 		///     cref="IInterceptionHandler.Event" />
@@ -35,7 +35,7 @@ public sealed partial class MockFileSystem
 			Func<ChangeDescription, bool>? predicate = null)
 		{
 			_changeOccurringCallbacks.RegisterCallback(interceptionCallback, predicate);
-			return _fileSystemMock;
+			return _mockFileSystem;
 		}
 
 		#endregion

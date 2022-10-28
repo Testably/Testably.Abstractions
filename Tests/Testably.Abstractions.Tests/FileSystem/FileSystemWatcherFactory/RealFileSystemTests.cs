@@ -40,8 +40,8 @@ public sealed class RealFileSystemTests :
 		NotifyFilters notifyFilter,
 		bool enableRaisingEvents)
 	{
-		MockFileSystem fileSystemMock = new();
-		fileSystemMock.Directory.CreateDirectory(path);
+		MockFileSystem mockFileSystem = new();
+		mockFileSystem.Directory.CreateDirectory(path);
 		FileSystem.Directory.CreateDirectory(path);
 		System.IO.FileSystemWatcher fileSystemWatcher = new(path)
 		{
@@ -66,7 +66,7 @@ public sealed class RealFileSystemTests :
 		   .Be(fileSystemWatcher.EnableRaisingEvents);
 
 		IFileSystemWatcher resultOnMockSystem =
-			fileSystemMock.FileSystemWatcher.Wrap(fileSystemWatcher);
+			mockFileSystem.FileSystemWatcher.Wrap(fileSystemWatcher);
 
 		resultOnMockSystem.Path.Should().Be(fileSystemWatcher.Path);
 		resultOnMockSystem.Filter.Should().Be(fileSystemWatcher.Filter);

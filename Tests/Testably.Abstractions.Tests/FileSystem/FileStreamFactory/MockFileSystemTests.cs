@@ -13,9 +13,9 @@ public sealed class
 	{
 	}
 
-	private MockFileSystemTests(MockFileSystem fileSystemMock) : base(
-		fileSystemMock,
-		fileSystemMock.TimeSystem)
+	private MockFileSystemTests(MockFileSystem mockFileSystem) : base(
+		mockFileSystem,
+		mockFileSystem.TimeSystem)
 	{
 		_directoryCleaner = FileSystem
 		   .SetCurrentDirectoryToEmptyTemporaryDirectory();

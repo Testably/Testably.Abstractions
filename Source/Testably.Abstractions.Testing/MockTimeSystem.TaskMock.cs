@@ -11,12 +11,12 @@ public sealed partial class MockTimeSystem
 	private sealed class TaskMock : ITask
 	{
 		private readonly TimeSystemMockCallbackHandler _callbackHandler;
-		private readonly MockTimeSystem _timeSystemMock;
+		private readonly MockTimeSystem _mockTimeSystem;
 
 		internal TaskMock(MockTimeSystem timeSystem,
 		                  TimeSystemMockCallbackHandler callbackHandler)
 		{
-			_timeSystemMock = timeSystem;
+			_mockTimeSystem = timeSystem;
 			_callbackHandler = callbackHandler;
 		}
 
@@ -24,7 +24,7 @@ public sealed partial class MockTimeSystem
 
 		/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
 		public ITimeSystem TimeSystem
-			=> _timeSystemMock;
+			=> _mockTimeSystem;
 
 		public Task Delay(int millisecondsDelay)
 			=> Delay(millisecondsDelay, CancellationToken.None);
@@ -55,7 +55,7 @@ public sealed partial class MockTimeSystem
 				throw ExceptionFactory.TaskWasCanceled();
 			}
 
-			_timeSystemMock.TimeProvider.AdvanceBy(delay);
+			_mockTimeSystem.TimeProvider.AdvanceBy(delay);
 			_callbackHandler.InvokeTaskDelayCallbacks(delay);
 			return System.Threading.Tasks.Task.CompletedTask;
 		}

@@ -12,22 +12,22 @@ public static partial class MockFileSystemExtensions
 	///     Changes the parameters of the default drive ('C:\' on Windows, '/' on Linux)
 	/// </summary>
 	public static MockFileSystem WithDrive(
-		this MockFileSystem fileSystemMock,
+		this MockFileSystem mockFileSystem,
 		Action<IStorageDrive> driveCallback)
-		=> fileSystemMock.WithDrive(null, driveCallback);
+		=> mockFileSystem.WithDrive(null, driveCallback);
 
 	/// <summary>
 	///     Creates a new UNC (Universal Naming Convention) drive to the given <paramref name="server" />.
 	/// </summary>
-	public static MockFileSystem WithUncDrive(this MockFileSystem fileSystemMock,
+	public static MockFileSystem WithUncDrive(this MockFileSystem mockFileSystem,
 	                                          string server,
 	                                          Action<IStorageDrive>? driveCallback = null)
 	{
-		string uncPrefix = new(fileSystemMock.Path.DirectorySeparatorChar, 2);
+		string uncPrefix = new(mockFileSystem.Path.DirectorySeparatorChar, 2);
 		server = server.TrimStart(
-			fileSystemMock.Path.DirectorySeparatorChar,
-			fileSystemMock.Path.AltDirectorySeparatorChar);
+			mockFileSystem.Path.DirectorySeparatorChar,
+			mockFileSystem.Path.AltDirectorySeparatorChar);
 		string drive = $"{uncPrefix}{server}";
-		return fileSystemMock.WithDrive(drive, driveCallback);
+		return mockFileSystem.WithDrive(drive, driveCallback);
 	}
 }

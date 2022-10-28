@@ -76,9 +76,9 @@ public class PathHelperTests
 	public void ThrowCommonExceptionsIfPathIsInvalid_WithInvalidCharacters(
 		char[] invalidChars)
 	{
-		Mock<IFileSystem> fileSystemMock = new();
+		Mock<IFileSystem> mockFileSystem = new();
 		Mock<IPath> pathSystemMock = new();
-		fileSystemMock.Setup(m => m.Path).Returns(pathSystemMock.Object);
+		mockFileSystem.Setup(m => m.Path).Returns(pathSystemMock.Object);
 		pathSystemMock.Setup(m => m.GetInvalidPathChars()).Returns(invalidChars);
 		pathSystemMock
 		   .Setup(m => m.GetFullPath(It.IsAny<string>()))
@@ -87,7 +87,7 @@ public class PathHelperTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			path.ThrowCommonExceptionsIfPathIsInvalid(fileSystemMock.Object);
+			path.ThrowCommonExceptionsIfPathIsInvalid(mockFileSystem.Object);
 		});
 
 #if NETFRAMEWORK
