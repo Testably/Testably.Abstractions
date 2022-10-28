@@ -92,18 +92,18 @@ public abstract class FileSystemStream : Stream
 
 	/// <inheritdoc cref="Stream.BeginRead(byte[], int, int, AsyncCallback?, object?)" />
 	public override IAsyncResult BeginRead(byte[] buffer,
-										   int offset,
-										   int count,
-										   AsyncCallback? callback,
-										   object? state)
+	                                       int offset,
+	                                       int count,
+	                                       AsyncCallback? callback,
+	                                       object? state)
 		=> _stream.BeginRead(buffer, offset, count, callback, state);
 
 	/// <inheritdoc cref="Stream.BeginWrite(byte[], int, int, AsyncCallback?, object?)" />
 	public override IAsyncResult BeginWrite(byte[] buffer,
-											int offset,
-											int count,
-											AsyncCallback? callback,
-											object? state)
+	                                        int offset,
+	                                        int count,
+	                                        AsyncCallback? callback,
+	                                        object? state)
 		=> _stream.BeginWrite(buffer, offset, count, callback, state);
 
 	/// <inheritdoc cref="Stream.CopyTo(Stream, int)" />
@@ -112,8 +112,8 @@ public abstract class FileSystemStream : Stream
 
 	/// <inheritdoc cref="Stream.CopyToAsync(Stream, int, CancellationToken)" />
 	public override Task CopyToAsync(Stream destination,
-									 int bufferSize,
-									 CancellationToken cancellationToken)
+	                                 int bufferSize,
+	                                 CancellationToken cancellationToken)
 		=> _stream.CopyToAsync(destination, bufferSize, cancellationToken);
 
 	/// <inheritdoc cref="Stream.EndRead(IAsyncResult)" />
@@ -144,15 +144,15 @@ public abstract class FileSystemStream : Stream
 
 	/// <inheritdoc cref="Stream.ReadAsync(byte[], int, int, CancellationToken)" />
 	public override Task<int> ReadAsync(byte[] buffer,
-										int offset,
-										int count,
-										CancellationToken cancellationToken)
+	                                    int offset,
+	                                    int count,
+	                                    CancellationToken cancellationToken)
 		=> _stream.ReadAsync(buffer, offset, count, cancellationToken);
 
 #if FEATURE_SPAN
 	/// <inheritdoc cref="Stream.ReadAsync(Memory{byte}, CancellationToken)" />
 	public override ValueTask<int> ReadAsync(Memory<byte> buffer,
-											 CancellationToken cancellationToken = new())
+	                                         CancellationToken cancellationToken = new())
 		=> _stream.ReadAsync(buffer, cancellationToken);
 #endif
 
@@ -184,15 +184,15 @@ public abstract class FileSystemStream : Stream
 
 	/// <inheritdoc cref="Stream.WriteAsync(byte[], int, int, CancellationToken)" />
 	public override Task WriteAsync(byte[] buffer,
-									int offset,
-									int count,
-									CancellationToken cancellationToken)
+	                                int offset,
+	                                int count,
+	                                CancellationToken cancellationToken)
 		=> _stream.WriteAsync(buffer, offset, count, cancellationToken);
 
 #if FEATURE_SPAN
 	/// <inheritdoc cref="Stream.WriteAsync(ReadOnlyMemory{byte}, CancellationToken)" />
 	public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer,
-										 CancellationToken cancellationToken = new())
+	                                     CancellationToken cancellationToken = new())
 		=> _stream.WriteAsync(buffer, cancellationToken);
 #endif
 

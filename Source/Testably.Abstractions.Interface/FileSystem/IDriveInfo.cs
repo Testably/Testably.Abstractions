@@ -38,7 +38,6 @@ public interface IDriveInfo : IFileSystemExtensionPoint
 	string VolumeLabel
 	{
 		get;
-		[SupportedOSPlatform("windows")]
-		set;
+		[SupportedOSPlatform("windows")] set;
 	}
 }

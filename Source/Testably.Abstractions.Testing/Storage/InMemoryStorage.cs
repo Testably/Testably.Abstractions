@@ -472,7 +472,7 @@ internal sealed class InMemoryStorage : IStorage
 		return false;
 	}
 
-#endregion
+	#endregion
 
 	internal void WithAccessControl(
 		Func<string, IFileSystemExtensionContainer, bool>?

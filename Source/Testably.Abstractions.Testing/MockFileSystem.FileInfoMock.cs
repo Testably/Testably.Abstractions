@@ -195,7 +195,7 @@ public sealed partial class MockFileSystem
 
 		/// <inheritdoc cref="IFileInfo.Replace(string, string?)" />
 		public IFileInfo Replace(string destinationFileName,
-		                                     string? destinationBackupFileName)
+		                         string? destinationBackupFileName)
 		{
 			IStorageLocation location = FileSystem.Storage.Replace(
 				                            Location,
@@ -209,8 +209,8 @@ public sealed partial class MockFileSystem
 
 		/// <inheritdoc cref="IFileInfo.Replace(string, string?, bool)" />
 		public IFileInfo Replace(string destinationFileName,
-		                                     string? destinationBackupFileName,
-		                                     bool ignoreMetadataErrors)
+		                         string? destinationBackupFileName,
+		                         bool ignoreMetadataErrors)
 		{
 			IStorageLocation location = FileSystem.Storage.Replace(
 				                            Location,

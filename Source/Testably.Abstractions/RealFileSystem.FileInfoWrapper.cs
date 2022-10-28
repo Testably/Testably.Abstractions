@@ -112,15 +112,15 @@ public sealed partial class RealFileSystem
 
 		/// <inheritdoc cref="IFileInfo.Replace(string, string?)" />
 		public IFileInfo Replace(string destinationFileName,
-		                                     string? destinationBackupFileName)
+		                         string? destinationBackupFileName)
 			=> FromFileInfo(
 				_instance.Replace(destinationFileName, destinationBackupFileName),
 				_fileSystem);
 
 		/// <inheritdoc cref="IFileInfo.Replace(string, string?, bool)" />
 		public IFileInfo Replace(string destinationFileName,
-		                                     string? destinationBackupFileName,
-		                                     bool ignoreMetadataErrors)
+		                         string? destinationBackupFileName,
+		                         bool ignoreMetadataErrors)
 			=> FromFileInfo(
 				_instance.Replace(destinationFileName, destinationBackupFileName,
 					ignoreMetadataErrors),

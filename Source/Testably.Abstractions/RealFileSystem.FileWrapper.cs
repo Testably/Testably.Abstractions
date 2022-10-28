@@ -1,15 +1,14 @@
-﻿#if FEATURE_FILESYSTEM_ASYNC
-using System.Threading;
-using System.Threading.Tasks;
-#endif
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.Versioning;
 using System.Text;
 using Testably.Abstractions.FileSystem;
-using static Testably.Abstractions.IFileSystem;
+#if FEATURE_FILESYSTEM_ASYNC
+using System.Threading;
+using System.Threading.Tasks;
+#endif
 
 namespace Testably.Abstractions;
 

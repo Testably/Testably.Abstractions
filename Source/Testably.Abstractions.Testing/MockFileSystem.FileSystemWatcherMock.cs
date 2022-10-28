@@ -34,7 +34,6 @@ public sealed partial class MockFileSystem
 		private BlockingCollection<ChangeDescription> _changes;
 		private bool _enableRaisingEvents;
 		private readonly MockFileSystem _fileSystem;
-		private readonly Collection<string> _filters = new();
 		private int _internalBufferSize = 8192;
 		private string _path = string.Empty;
 		private event EventHandler<ChangeDescription>? InternalEvent;
@@ -75,20 +74,19 @@ public sealed partial class MockFileSystem
 		/// <inheritdoc cref="IFileSystemWatcher.Filter" />
 		public string Filter
 		{
-			get => _filters.Count == 0
+			get => Filters.Count == 0
 				? DefaultFilter
-				: _filters[0];
+				: Filters[0];
 			set
 			{
-				_filters.Clear();
-				_filters.Add(value);
+				Filters.Clear();
+				Filters.Add(value);
 			}
 		}
 
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
 		/// <inheritdoc cref="IFileSystemWatcher.Filters" />
-		public Collection<string> Filters
-			=> _filters;
+		public Collection<string> Filters { get; } = new();
 #endif
 
 		/// <inheritdoc cref="IFileSystemWatcher.IncludeSubdirectories" />
@@ -250,12 +248,12 @@ public sealed partial class MockFileSystem
 				return false;
 			}
 
-			if (_filters.Count == 0)
+			if (Filters.Count == 0)
 			{
 				return true;
 			}
 
-			return _filters.Any(filter =>
+			return Filters.Any(filter =>
 				EnumerationOptionsHelper.MatchesPattern(
 					EnumerationOptionsHelper.Compatible,
 					_fileSystem.Path.GetFileName(changeDescription.Path),

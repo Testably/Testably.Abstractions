@@ -184,7 +184,7 @@ public sealed partial class RealFileSystem
 
 		/// <inheritdoc cref="IDirectoryInfo.GetFiles(string, SearchOption)" />
 		public IFileInfo[] GetFiles(string searchPattern,
-		                                        SearchOption searchOption)
+		                            SearchOption searchOption)
 			=> _instance.GetFiles(searchPattern, searchOption)
 			   .Select(fileInfo =>
 					(IFileInfo)FileInfoWrapper.FromFileInfo(fileInfo,
@@ -194,7 +194,7 @@ public sealed partial class RealFileSystem
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 		/// <inheritdoc cref="IDirectoryInfo.GetFiles(string, EnumerationOptions)" />
 		public IFileInfo[] GetFiles(string searchPattern,
-		                                        EnumerationOptions enumerationOptions)
+		                            EnumerationOptions enumerationOptions)
 			=> _instance.GetFiles(searchPattern, enumerationOptions)
 			   .Select(fileInfo =>
 					(IFileInfo)FileInfoWrapper.FromFileInfo(fileInfo,
@@ -230,7 +230,7 @@ public sealed partial class RealFileSystem
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 		/// <inheritdoc cref="IDirectoryInfo.GetFileSystemInfos(string, EnumerationOptions)" />
 		public IFileSystemInfo[] GetFileSystemInfos(string searchPattern,
-			EnumerationOptions enumerationOptions)
+		                                            EnumerationOptions enumerationOptions)
 			=> _instance.GetFileSystemInfos(searchPattern, enumerationOptions)
 			   .Select(fileSystemInfo =>
 					(IFileSystemInfo)FromFileSystemInfo(fileSystemInfo,

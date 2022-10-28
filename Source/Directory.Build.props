@@ -51,7 +51,7 @@
   <ItemGroup>
     <None Include="$([MSBuild]::GetPathOfFileAbove('logo_256x256.png', '$(MSBuildThisFileDirectory)../Docs/Images/'))"
           Pack="true" PackagePath="/Docs/"
-          Link="\Docs\logo_256x256.png"/>
+          Link="\Docs\logo_256x256.png" />
   </ItemGroup>
 
 </Project>

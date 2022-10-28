@@ -7,9 +7,6 @@ using System.Text;
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
-using Testably;
-using Testably.Abstractions;
-using Testably.Abstractions.FileSystem;
 #endif
 
 namespace Testably.Abstractions.FileSystem;
@@ -28,14 +25,14 @@ public interface IFile : IFileSystemExtensionPoint
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="File.AppendAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
 	Task AppendAllLinesAsync(string path,
-							 IEnumerable<string> contents,
-							 CancellationToken cancellationToken = default);
+	                         IEnumerable<string> contents,
+	                         CancellationToken cancellationToken = default);
 
 	/// <inheritdoc cref="File.AppendAllLinesAsync(string, IEnumerable{string}, Encoding, CancellationToken)" />
 	Task AppendAllLinesAsync(string path,
-							 IEnumerable<string> contents,
-							 Encoding encoding,
-							 CancellationToken cancellationToken = default);
+	                         IEnumerable<string> contents,
+	                         Encoding encoding,
+	                         CancellationToken cancellationToken = default);
 #endif
 
 	/// <inheritdoc cref="File.AppendAllText(string, string?)" />
@@ -47,14 +44,14 @@ public interface IFile : IFileSystemExtensionPoint
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="File.AppendAllTextAsync(string, string?, CancellationToken)" />
 	Task AppendAllTextAsync(string path,
-							string? contents,
-							CancellationToken cancellationToken = default);
+	                        string? contents,
+	                        CancellationToken cancellationToken = default);
 
 	/// <inheritdoc cref="File.AppendAllTextAsync(string, string?, Encoding, CancellationToken)" />
 	Task AppendAllTextAsync(string path,
-							string? contents,
-							Encoding encoding,
-							CancellationToken cancellationToken = default);
+	                        string? contents,
+	                        Encoding encoding,
+	                        CancellationToken cancellationToken = default);
 #endif
 
 	/// <inheritdoc cref="File.AppendText(string)" />
@@ -134,7 +131,7 @@ public interface IFile : IFileSystemExtensionPoint
 
 	/// <inheritdoc cref="File.Open(string, FileMode, FileAccess, FileShare)" />
 	FileSystemStream Open(string path, FileMode mode, FileAccess access,
-						  FileShare share);
+	                      FileShare share);
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
 	/// <inheritdoc cref="File.Open(string, FileStreamOptions)" />
@@ -156,7 +153,7 @@ public interface IFile : IFileSystemExtensionPoint
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="File.ReadAllBytesAsync(string, CancellationToken)" />
 	Task<byte[]> ReadAllBytesAsync(string path,
-								   CancellationToken cancellationToken = default);
+	                               CancellationToken cancellationToken = default);
 #endif
 
 	/// <inheritdoc cref="File.ReadAllLines(string)" />
@@ -168,12 +165,12 @@ public interface IFile : IFileSystemExtensionPoint
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="File.ReadAllLinesAsync(string, CancellationToken)" />
 	Task<string[]> ReadAllLinesAsync(string path,
-									 CancellationToken cancellationToken = default);
+	                                 CancellationToken cancellationToken = default);
 
 	/// <inheritdoc cref="File.ReadAllLinesAsync(string, Encoding, CancellationToken)" />
 	Task<string[]> ReadAllLinesAsync(string path,
-									 Encoding encoding,
-									 CancellationToken cancellationToken = default);
+	                                 Encoding encoding,
+	                                 CancellationToken cancellationToken = default);
 #endif
 
 	/// <inheritdoc cref="File.ReadAllText(string)" />
@@ -185,12 +182,12 @@ public interface IFile : IFileSystemExtensionPoint
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="File.ReadAllTextAsync(string, CancellationToken)" />
 	Task<string> ReadAllTextAsync(string path,
-								  CancellationToken cancellationToken = default);
+	                              CancellationToken cancellationToken = default);
 
 	/// <inheritdoc cref="File.ReadAllTextAsync(string, Encoding, CancellationToken)" />
 	Task<string> ReadAllTextAsync(string path,
-								  Encoding encoding,
-								  CancellationToken cancellationToken = default);
+	                              Encoding encoding,
+	                              CancellationToken cancellationToken = default);
 #endif
 
 	/// <inheritdoc cref="File.ReadLines(string)" />
@@ -201,14 +198,14 @@ public interface IFile : IFileSystemExtensionPoint
 
 	/// <inheritdoc cref="File.Replace(string, string, string?)" />
 	void Replace(string sourceFileName,
-				 string destinationFileName,
-				 string? destinationBackupFileName);
+	             string destinationFileName,
+	             string? destinationBackupFileName);
 
 	/// <inheritdoc cref="File.Replace(string, string, string?, bool)" />
 	void Replace(string sourceFileName,
-				 string destinationFileName,
-				 string? destinationBackupFileName,
-				 bool ignoreMetadataErrors);
+	             string destinationFileName,
+	             string? destinationBackupFileName,
+	             bool ignoreMetadataErrors);
 
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="File.ResolveLinkTarget(string, bool)" />
@@ -242,8 +239,8 @@ public interface IFile : IFileSystemExtensionPoint
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="File.WriteAllBytesAsync(string, byte[], CancellationToken)" />
 	Task WriteAllBytesAsync(string path,
-							byte[] bytes,
-							CancellationToken cancellationToken = default);
+	                        byte[] bytes,
+	                        CancellationToken cancellationToken = default);
 #endif
 
 	/// <inheritdoc cref="File.WriteAllLines(string, string[])" />
@@ -261,14 +258,14 @@ public interface IFile : IFileSystemExtensionPoint
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="File.WriteAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
 	Task WriteAllLinesAsync(string path,
-							IEnumerable<string> contents,
-							CancellationToken cancellationToken = default);
+	                        IEnumerable<string> contents,
+	                        CancellationToken cancellationToken = default);
 
 	/// <inheritdoc cref="File.WriteAllLinesAsync(string, IEnumerable{string}, Encoding, CancellationToken)" />
 	Task WriteAllLinesAsync(string path,
-							IEnumerable<string> contents,
-							Encoding encoding,
-							CancellationToken cancellationToken = default);
+	                        IEnumerable<string> contents,
+	                        Encoding encoding,
+	                        CancellationToken cancellationToken = default);
 #endif
 
 	/// <inheritdoc cref="File.WriteAllText(string, string)" />
@@ -280,13 +277,13 @@ public interface IFile : IFileSystemExtensionPoint
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="File.WriteAllTextAsync(string, string?, CancellationToken)" />
 	Task WriteAllTextAsync(string path,
-						   string? contents,
-						   CancellationToken cancellationToken = default);
+	                       string? contents,
+	                       CancellationToken cancellationToken = default);
 
 	/// <inheritdoc cref="File.WriteAllTextAsync(string, string?, Encoding, CancellationToken)" />
 	Task WriteAllTextAsync(string path,
-						   string? contents,
-						   Encoding encoding,
-						   CancellationToken cancellationToken = default);
+	                       string? contents,
+	                       Encoding encoding,
+	                       CancellationToken cancellationToken = default);
 #endif
 }

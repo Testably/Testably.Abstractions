@@ -204,13 +204,13 @@ public sealed partial class MockFileSystem
 
 		/// <inheritdoc cref="IDirectoryInfo.GetFiles(string, SearchOption)" />
 		public IFileInfo[] GetFiles(string searchPattern,
-		                                        SearchOption searchOption)
+		                            SearchOption searchOption)
 			=> EnumerateFiles(searchPattern, searchOption).ToArray();
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 		/// <inheritdoc cref="IDirectoryInfo.GetFiles(string, EnumerationOptions)" />
 		public IFileInfo[] GetFiles(string searchPattern,
-		                                        EnumerationOptions enumerationOptions)
+		                            EnumerationOptions enumerationOptions)
 			=> EnumerateFiles(searchPattern, enumerationOptions).ToArray();
 #endif
 

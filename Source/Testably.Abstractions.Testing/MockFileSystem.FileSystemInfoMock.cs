@@ -32,7 +32,8 @@ public sealed partial class MockFileSystem
 		private bool _isInitialized;
 		private IStorageContainer _container;
 
-		protected FileSystemInfoMock(MockFileSystem fileSystem, IStorageLocation location, FileSystemTypes fileSystemType)
+		protected FileSystemInfoMock(MockFileSystem fileSystem, IStorageLocation location,
+		                             FileSystemTypes fileSystemType)
 		{
 			FileSystem = fileSystem;
 			Location = location;
@@ -215,7 +216,8 @@ public sealed partial class MockFileSystem
 				return DirectoryInfoMock.New(location, fileSystem);
 			}
 
-			return new FileSystemInfoMock(fileSystem, location, FileSystemTypes.DirectoryOrFile);
+			return new FileSystemInfoMock(fileSystem, location,
+				FileSystemTypes.DirectoryOrFile);
 		}
 
 		private void RefreshInternal()

@@ -15,19 +15,19 @@ public interface IFileStreamFactory : IFileSystemExtensionPoint
 
 	/// <inheritdoc cref="FileStream(string, FileMode, FileAccess, FileShare)" />
 	FileSystemStream New(string path, FileMode mode, FileAccess access,
-						 FileShare share);
+	                     FileShare share);
 
 	/// <inheritdoc cref="FileStream(string, FileMode, FileAccess, FileShare, int)" />
 	FileSystemStream New(string path, FileMode mode, FileAccess access,
-						 FileShare share, int bufferSize);
+	                     FileShare share, int bufferSize);
 
 	/// <inheritdoc cref="FileStream(string, FileMode, FileAccess, FileShare, int, bool)" />
 	FileSystemStream New(string path, FileMode mode, FileAccess access,
-						 FileShare share, int bufferSize, bool useAsync);
+	                     FileShare share, int bufferSize, bool useAsync);
 
 	/// <inheritdoc cref="FileStream(string, FileMode, FileAccess, FileShare, int, FileOptions)" />
 	FileSystemStream New(string path, FileMode mode, FileAccess access,
-						 FileShare share, int bufferSize, FileOptions options);
+	                     FileShare share, int bufferSize, FileOptions options);
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
 	/// <inheritdoc cref="FileStream(string, FileStreamOptions)" />
