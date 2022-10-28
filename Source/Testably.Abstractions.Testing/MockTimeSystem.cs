@@ -9,7 +9,7 @@ namespace Testably.Abstractions.Testing;
 ///     <para />
 ///     The <see cref="TimeProvider" /> allows manipulating the simulated system time.
 /// </summary>
-public sealed partial class MockTimeSystem : ITimeSystem
+public sealed class MockTimeSystem : ITimeSystem
 {
 	/// <summary>
 	///     The callback handler for the <see cref="MockTimeSystem" />

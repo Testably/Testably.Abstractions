@@ -169,8 +169,10 @@ public abstract class ZipFileTests<TFileSystem>
 
 	public static IEnumerable<object[]> EntryNameEncoding()
 	{
+		// ReSharper disable StringLiteralTypo
 		yield return new object[] { "Dans mes rêves.mp3", Encoding.Default, true };
 		yield return new object[] { "Dans mes rêves.mp3", Encoding.ASCII, false };
+		// ReSharper restore StringLiteralTypo
 	}
 
 	[SkippableFact]

@@ -2,6 +2,7 @@ using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Tests.FileSystem.DriveInfoFactory;
 
+// ReSharper disable once UnusedMember.Global
 public sealed class MockFileSystemTests
 	: FileSystemDriveInfoFactoryTests<MockFileSystem>, IDisposable
 {

@@ -20,17 +20,7 @@ internal sealed class RandomFactory : IRandomFactory
 
 	/// <inheritdoc cref="IRandomFactory.Shared" />
 	public IRandom Shared
-	{
-		get
-		{
-			if (_shared is null)
-			{
-				_shared = CreateThreadSafeRandomWrapper();
-			}
-
-			return _shared;
-		}
-	}
+		=> _shared ??= CreateThreadSafeRandomWrapper();
 
 	/// <inheritdoc cref="IRandomFactory.New()" />
 	public IRandom New()

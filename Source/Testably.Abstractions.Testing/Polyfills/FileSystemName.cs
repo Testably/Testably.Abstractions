@@ -116,11 +116,11 @@ public static class FileSystemName
 	// ============================
 	// (copied from native impl)
 	//
-	// This routine compares a Dbcs name and an expression and tells the caller
+	// This routine compares a DBCs name and an expression and tells the caller
 	// if the name is in the language defined by the expression.  The input name
 	// cannot contain wildcards, while the expression may contain wildcards.
 	//
-	// Expression wild cards are evaluated as shown in the nondeterministic
+	// Expression wild cards are evaluated as shown in the non-deterministic
 	// finite automatons below.  Note that ~* and ~? are DOS_STAR and DOS_QM.
 	//
 	//		~* is DOS_STAR, ~? is DOS_QM, and ~. is DOS_DOT

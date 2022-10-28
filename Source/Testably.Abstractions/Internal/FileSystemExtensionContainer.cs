@@ -17,6 +17,7 @@ internal class FileSystemExtensionContainer : IFileSystemExtensionContainer
 	/// <inheritdoc cref="IFileSystemExtensionContainer.HasWrappedInstance{T}(out T)" />
 	public bool HasWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance)
 	{
+		// ReSharper disable once MergeCastWithTypeCheck -- Not possible due to nullable
 		wrappedInstance = _wrappedInstance is T?
 			? (T?)_wrappedInstance
 			: default;
@@ -33,7 +34,8 @@ internal class FileSystemExtensionContainer : IFileSystemExtensionContainer
 	public T? RetrieveMetadata<T>(string key)
 	{
 		if (_metadata.TryGetValue(key, out object? value) &&
-		    value is T?)
+		    // ReSharper disable once MergeCastWithTypeCheck -- Not possible due to nullable
+			value is T?)
 		{
 			return (T?)value;
 		}

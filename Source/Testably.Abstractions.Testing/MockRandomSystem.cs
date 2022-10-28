@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Testing;
 ///     <para />
 ///     The <see cref="RandomProvider" /> allows manipulating the simulated random system.
 /// </summary>
-public sealed partial class MockRandomSystem : IRandomSystem
+public sealed class MockRandomSystem : IRandomSystem
 {
 	/// <summary>
 	///     The random provider for the currently simulated system.
