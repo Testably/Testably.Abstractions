@@ -1,4 +1,7 @@
 ﻿using System;
+#if FEATURE_GUID_PARSE
+using System.Diagnostics.CodeAnalysis;
+#endif
 
 namespace Testably.Abstractions;
 
