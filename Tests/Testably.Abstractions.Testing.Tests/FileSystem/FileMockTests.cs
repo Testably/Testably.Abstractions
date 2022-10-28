@@ -1,4 +1,4 @@
-﻿namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
+﻿namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
 public class FileMockTests
 {

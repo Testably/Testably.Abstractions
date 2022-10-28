@@ -5,7 +5,7 @@ using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
-namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
+namespace Testably.Abstractions.Testing.Tests;
 
 public class MockFileSystemTests
 {

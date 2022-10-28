@@ -5,11 +5,11 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 
 internal sealed class DateTimeMock : IDateTime
 {
-	private readonly TimeSystemMockCallbackHandler _callbackHandler;
+	private readonly MockTimeSystemCallbackHandler _callbackHandler;
 	private readonly MockTimeSystem _mockTimeSystem;
 
 	internal DateTimeMock(MockTimeSystem timeSystem,
-						  TimeSystemMockCallbackHandler callbackHandler)
+						  MockTimeSystemCallbackHandler callbackHandler)
 	{
 		_mockTimeSystem = timeSystem;
 		_callbackHandler = callbackHandler;

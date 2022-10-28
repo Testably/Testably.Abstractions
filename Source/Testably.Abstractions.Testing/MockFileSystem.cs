@@ -33,7 +33,7 @@ public sealed class MockFileSystem : IFileSystem
 	/// <summary>
 	///     The change handler used to notify about events occurring in the <see cref="MockFileSystem" />.
 	/// </summary>
-	internal ChangeHandlerImplementation ChangeHandler { get; }
+	internal ChangeHandler ChangeHandler { get; }
 
 	/// <summary>
 	///     The underlying storage of directories and files.
@@ -54,7 +54,7 @@ public sealed class MockFileSystem : IFileSystem
 		TimeSystem = new MockTimeSystem(TimeProvider.Now());
 		_pathMock = new PathMock(this);
 		_storage = new InMemoryStorage(this);
-		ChangeHandler = new ChangeHandlerImplementation(this);
+		ChangeHandler = new ChangeHandler(this);
 		_directoryMock = new DirectoryMock(this);
 		_fileMock = new FileMock(this);
 		DirectoryInfo = new DirectoryInfoFactoryMock(this);

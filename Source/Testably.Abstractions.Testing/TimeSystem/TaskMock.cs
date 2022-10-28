@@ -8,11 +8,11 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 
 internal sealed class TaskMock : ITask
 {
-	private readonly TimeSystemMockCallbackHandler _callbackHandler;
+	private readonly MockTimeSystemCallbackHandler _callbackHandler;
 	private readonly MockTimeSystem _mockTimeSystem;
 
 	internal TaskMock(MockTimeSystem timeSystem,
-					  TimeSystemMockCallbackHandler callbackHandler)
+					  MockTimeSystemCallbackHandler callbackHandler)
 	{
 		_mockTimeSystem = timeSystem;
 		_callbackHandler = callbackHandler;

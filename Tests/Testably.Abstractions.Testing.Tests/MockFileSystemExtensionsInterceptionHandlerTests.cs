@@ -1,4 +1,4 @@
-namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
+namespace Testably.Abstractions.Testing.Tests;
 
 public class InterceptionHandlerExtensionsTests
 {

@@ -2,17 +2,52 @@ using System.Collections.Generic;
 using System.IO;
 using Xunit.Abstractions;
 
-namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
+namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
-public class NotificationHandlerTests
+public class ChangeHandlerTests
 {
 	public MockFileSystem FileSystem { get; }
 	private readonly ITestOutputHelper _testOutputHelper;
 
-	public NotificationHandlerTests(ITestOutputHelper testOutputHelper)
+	public ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 	{
 		_testOutputHelper = testOutputHelper;
 		FileSystem = new MockFileSystem();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void CreateDirectory_CustomException_ShouldNotCreateDirectory(
+		string path, Exception exceptionToThrow)
+	{
+		FileSystem.Intercept.Event(_ =>
+		{
+			FileSystem.Directory.Exists(path).Should().BeFalse();
+			throw exceptionToThrow;
+		});
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.Directory.CreateDirectory(path);
+		});
+
+		FileSystem.Directory.Exists(path).Should().BeFalse();
+		exception.Should().Be(exceptionToThrow);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void CreateDirectory_CustomException_ShouldOnlyTriggerChangeOccurring(
+		string path, Exception exceptionToThrow)
+	{
+		string? receivedPath = null;
+		FileSystem.Intercept.Event(_ => throw exceptionToThrow);
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.Directory.CreateDirectory(path);
+		});
+
+		exception.Should().Be(exceptionToThrow);
+		receivedPath.Should().BeNull();
 	}
 
 	[SkippableTheory]

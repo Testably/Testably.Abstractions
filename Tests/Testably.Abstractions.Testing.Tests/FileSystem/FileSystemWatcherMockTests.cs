@@ -3,7 +3,7 @@ using System.Threading;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.FileSystemInitializer;
 
-namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
+namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
 public sealed class FileSystemWatcherMockTests : IDisposable
 {

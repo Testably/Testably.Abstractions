@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Testably.Abstractions.Testing.Tests.TimeSystemMock;
+namespace Testably.Abstractions.Testing.Tests;
 
 public class MockTimeSystemTests
 {

@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
-namespace Testably.Abstractions.Testing.Tests.TimeSystemMock;
+namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
-public class CallbackHandlerTests
+public class MockTimeSystemCallbackHandlerTests
 {
 	[Fact]
 	public void

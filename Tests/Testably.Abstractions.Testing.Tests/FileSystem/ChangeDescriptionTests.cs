@@ -2,7 +2,7 @@
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Storage;
 
-namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
+namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
 public class ChangeDescriptionTests
 {

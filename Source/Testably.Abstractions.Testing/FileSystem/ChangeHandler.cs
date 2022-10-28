@@ -5,7 +5,7 @@ using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
-internal sealed class ChangeHandlerImplementation : IInterceptionHandler,
+internal sealed class ChangeHandler : IInterceptionHandler,
 	INotificationHandler
 {
 	private readonly Notification.INotificationFactory<ChangeDescription>
@@ -16,7 +16,7 @@ internal sealed class ChangeHandlerImplementation : IInterceptionHandler,
 
 	private readonly MockFileSystem _mockFileSystem;
 
-	public ChangeHandlerImplementation(MockFileSystem mockFileSystem)
+	public ChangeHandler(MockFileSystem mockFileSystem)
 	{
 		_mockFileSystem = mockFileSystem;
 	}

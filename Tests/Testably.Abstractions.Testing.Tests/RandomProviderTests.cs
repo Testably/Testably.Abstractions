@@ -3,7 +3,7 @@ using System.Linq;
 using Testably.Abstractions.RandomSystem;
 using Testably.Abstractions.Testing.RandomSystem;
 
-namespace Testably.Abstractions.Testing.Tests.RandomProvider;
+namespace Testably.Abstractions.Testing.Tests;
 
 public class RandomProviderTests
 {
@@ -12,7 +12,7 @@ public class RandomProviderTests
 	{
 		List<Guid> results = new();
 		IRandomProvider
-			randomProvider = Testing.RandomProvider.Default();
+			randomProvider = RandomProvider.Default();
 
 		for (int i = 0; i < 100; i++)
 		{
@@ -27,7 +27,7 @@ public class RandomProviderTests
 	{
 		List<int> results = new();
 		IRandomProvider
-			randomProvider = Testing.RandomProvider.Default();
+			randomProvider = RandomProvider.Default();
 
 		for (int i = 0; i < 100; i++)
 		{
@@ -43,7 +43,7 @@ public class RandomProviderTests
 	{
 		List<Guid> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate(guidGenerator: guid);
+			RandomProvider.Generate(guidGenerator: guid);
 
 		for (int i = 0; i < 100; i++)
 		{
@@ -59,7 +59,7 @@ public class RandomProviderTests
 	{
 		List<Guid> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate(guidGenerator: guids);
+			RandomProvider.Generate(guidGenerator: guids);
 
 		for (int i = 0; i < 100; i++)
 		{
@@ -75,7 +75,7 @@ public class RandomProviderTests
 	{
 		List<int> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate(seed, intGenerator: value);
+			RandomProvider.Generate(seed, intGenerator: value);
 
 		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
@@ -92,7 +92,7 @@ public class RandomProviderTests
 	{
 		List<int> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate(intGenerator: values);
+			RandomProvider.Generate(intGenerator: values);
 
 		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
@@ -111,7 +111,7 @@ public class RandomProviderTests
 		int maxValue = value - 1;
 		List<int> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate(intGenerator: value);
+			RandomProvider.Generate(intGenerator: value);
 		int expectedValue = maxValue - 1;
 
 		IRandom random = randomProvider.GetRandom(seed);
@@ -132,7 +132,7 @@ public class RandomProviderTests
 		int maxValue = value - 1;
 		List<int> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate(intGenerator: value);
+			RandomProvider.Generate(intGenerator: value);
 		int expectedValue = maxValue - 1;
 
 		IRandom random = randomProvider.GetRandom(seed);
@@ -153,7 +153,7 @@ public class RandomProviderTests
 		int maxValue = minValue + 10;
 		List<int> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate(intGenerator: value);
+			RandomProvider.Generate(intGenerator: value);
 
 		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
@@ -170,7 +170,7 @@ public class RandomProviderTests
 	{
 		List<int> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate();
+			RandomProvider.Generate();
 
 		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 10; i++)
@@ -188,7 +188,7 @@ public class RandomProviderTests
 	{
 		List<byte[]> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate(byteGenerator: value);
+			RandomProvider.Generate(byteGenerator: value);
 
 		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
@@ -208,7 +208,7 @@ public class RandomProviderTests
 	{
 		List<byte[]> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate();
+			RandomProvider.Generate();
 
 		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 10; i++)
@@ -229,7 +229,7 @@ public class RandomProviderTests
 	{
 		List<byte[]> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate(byteGenerator: value);
+			RandomProvider.Generate(byteGenerator: value);
 
 		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
@@ -249,7 +249,7 @@ public class RandomProviderTests
 	{
 		List<double> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate(doubleGenerator: value);
+			RandomProvider.Generate(doubleGenerator: value);
 
 		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
@@ -267,7 +267,7 @@ public class RandomProviderTests
 	{
 		List<double> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate();
+			RandomProvider.Generate();
 
 		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 10; i++)
@@ -288,7 +288,7 @@ public class RandomProviderTests
 		Random random = new(seed);
 		byte[] expectedBytes = new byte[result.Length];
 		random.NextBytes(expectedBytes);
-		IRandomProvider sut = Testing.RandomProvider.Generate(seed);
+		IRandomProvider sut = RandomProvider.Generate(seed);
 
 		sut.GetRandom().NextBytes(result);
 
@@ -305,7 +305,7 @@ public class RandomProviderTests
 		Random random = new(seed);
 		byte[] expectedBytes = new byte[result.Length];
 		random.NextBytes(expectedBytes);
-		IRandomProvider sut = Testing.RandomProvider.Generate(seed);
+		IRandomProvider sut = RandomProvider.Generate(seed);
 
 		sut.GetRandom().NextBytes(result);
 
@@ -320,7 +320,7 @@ public class RandomProviderTests
 	{
 		List<byte[]> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate(byteGenerator: value);
+			RandomProvider.Generate(byteGenerator: value);
 
 		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
@@ -341,7 +341,7 @@ public class RandomProviderTests
 	{
 		List<byte[]> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate(byteGenerator: value);
+			RandomProvider.Generate(byteGenerator: value);
 
 		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
@@ -361,7 +361,7 @@ public class RandomProviderTests
 	{
 		List<byte[]> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate();
+			RandomProvider.Generate();
 
 		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 10; i++)
@@ -383,7 +383,7 @@ public class RandomProviderTests
 	{
 		List<float> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate(singleGenerator: value);
+			RandomProvider.Generate(singleGenerator: value);
 
 		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
@@ -401,7 +401,7 @@ public class RandomProviderTests
 	{
 		List<float> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate();
+			RandomProvider.Generate();
 
 		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 10; i++)
@@ -420,7 +420,7 @@ public class RandomProviderTests
 	{
 		List<long> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate(longGenerator: value);
+			RandomProvider.Generate(longGenerator: value);
 
 		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 100; i++)
@@ -439,7 +439,7 @@ public class RandomProviderTests
 		long maxValue = value - 1;
 		List<long> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate(longGenerator: value);
+			RandomProvider.Generate(longGenerator: value);
 		long expectedValue = maxValue - 1;
 
 		IRandom random = randomProvider.GetRandom(seed);
@@ -461,7 +461,7 @@ public class RandomProviderTests
 		long maxValue = minValue + 10;
 		List<long> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate(longGenerator: value);
+			RandomProvider.Generate(longGenerator: value);
 		long expectedValue = minValue;
 
 		IRandom random = randomProvider.GetRandom(seed);
@@ -483,7 +483,7 @@ public class RandomProviderTests
 		long maxValue = value - 1;
 		List<long> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate(longGenerator: value);
+			RandomProvider.Generate(longGenerator: value);
 		long expectedValue = maxValue - 1;
 
 		IRandom random = randomProvider.GetRandom(seed);
@@ -502,7 +502,7 @@ public class RandomProviderTests
 	{
 		List<long> results = new();
 		IRandomProvider randomProvider =
-			Testing.RandomProvider.Generate();
+			RandomProvider.Generate();
 
 		IRandom random = randomProvider.GetRandom(seed);
 		for (int i = 0; i < 10; i++)

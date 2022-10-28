@@ -22,7 +22,7 @@ public sealed partial class MockTimeSystem : ITimeSystem
 	/// </summary>
 	public ITimeProvider TimeProvider { get; }
 
-	private readonly TimeSystemMockCallbackHandler _callbackHandler;
+	private readonly MockTimeSystemCallbackHandler _callbackHandler;
 	private readonly DateTimeMock _dateTimeMock;
 	private readonly TaskMock _taskMock;
 	private readonly ThreadMock _threadMock;
@@ -47,7 +47,7 @@ public sealed partial class MockTimeSystem : ITimeSystem
 	public MockTimeSystem(ITimeProvider timeProvider)
 	{
 		TimeProvider = timeProvider;
-		_callbackHandler = new TimeSystemMockCallbackHandler();
+		_callbackHandler = new MockTimeSystemCallbackHandler();
 		_dateTimeMock = new DateTimeMock(this, _callbackHandler);
 		_threadMock = new ThreadMock(this, _callbackHandler);
 		_taskMock = new TaskMock(this, _callbackHandler);

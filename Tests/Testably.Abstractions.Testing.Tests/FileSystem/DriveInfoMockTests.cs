@@ -4,7 +4,7 @@ using System.Text;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.FileSystem;
 
-namespace Testably.Abstractions.Testing.Tests.FileSystemMock;
+namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
 public class DriveInfoMockTests
 {

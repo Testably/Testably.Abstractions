@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace Testably.Abstractions.Testing.Tests.Notification;
+namespace Testably.Abstractions.Testing.Tests;
 
 public class NotificationTests
 {
@@ -9,7 +9,7 @@ public class NotificationTests
 	{
 		MockTimeSystem timeSystem = new();
 		int receivedCount = 0;
-		Testing.Notification.IAwaitableCallback<TimeSpan> wait =
+		Notification.IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On.ThreadSleep(t =>
 			{
 				if (t.TotalMilliseconds > 0)
@@ -37,7 +37,7 @@ public class NotificationTests
 	{
 		MockTimeSystem timeSystem = new();
 		int receivedCount = 0;
-		Testing.Notification.IAwaitableCallback<TimeSpan> wait =
+		Notification.IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On.ThreadSleep(_ =>
 			{
 				receivedCount++;
@@ -92,7 +92,7 @@ public class NotificationTests
 		{
 			MockTimeSystem timeSystem = new();
 			bool isCalled = false;
-			Testing.Notification.IAwaitableCallback<TimeSpan> wait =
+			Notification.IAwaitableCallback<TimeSpan> wait =
 				timeSystem.On.ThreadSleep(_ =>
 				{
 					isCalled = true;
@@ -121,7 +121,7 @@ public class NotificationTests
 	{
 		MockTimeSystem timeSystem = new();
 		bool isCalled = false;
-		Testing.Notification.IAwaitableCallback<TimeSpan> wait =
+		Notification.IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On.ThreadSleep(_ =>
 			{
 				isCalled = true;
@@ -147,7 +147,7 @@ public class NotificationTests
 	{
 		MockTimeSystem timeSystem = new();
 		bool isCalled = false;
-		Testing.Notification.IAwaitableCallback<TimeSpan> wait =
+		Notification.IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On.ThreadSleep(_ =>
 			{
 				isCalled = true;
@@ -169,7 +169,7 @@ public class NotificationTests
 		MockTimeSystem timeSystem = new();
 		bool isCalledFromSecondThread = false;
 		ManualResetEventSlim listening = new();
-		Testing.Notification.IAwaitableCallback<TimeSpan> wait =
+		Notification.IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On
 			   .ThreadSleep(t =>
 				{
