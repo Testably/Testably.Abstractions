@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 #endif
 
 namespace Testably.Abstractions;
@@ -23,7 +23,7 @@ public interface IFileSystemWatcher : IFileSystemExtensionPoint, IDisposable
 
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
 	/// <inheritdoc cref="FileSystemWatcher.Filters" />
-	ICollection<string> Filters { get; }
+	Collection<string> Filters { get; }
 #endif
 
 	/// <inheritdoc cref="FileSystemWatcher.IncludeSubdirectories" />

@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 #endif
 
 namespace Testably.Abstractions;
@@ -46,7 +46,7 @@ public sealed partial class FileSystem
 
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
 		/// <inheritdoc cref="IFileSystemWatcher.Filters" />
-		public ICollection<string> Filters
+		public Collection<string> Filters
 			=> _instance.Filters;
 #endif
 

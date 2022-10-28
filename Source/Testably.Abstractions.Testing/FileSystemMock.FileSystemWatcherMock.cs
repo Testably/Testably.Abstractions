@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -33,7 +33,7 @@ public sealed partial class FileSystemMock
 		private BlockingCollection<ChangeDescription> _changes;
 		private bool _enableRaisingEvents;
 		private readonly FileSystemMock _fileSystem;
-		private readonly List<string> _filters = new();
+		private readonly Collection<string> _filters = new();
 		private int _internalBufferSize = 8192;
 		private string _path = string.Empty;
 		private event EventHandler<ChangeDescription>? InternalEvent;
@@ -86,7 +86,7 @@ public sealed partial class FileSystemMock
 
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
 		/// <inheritdoc cref="IFileSystemWatcher.Filters" />
-		public ICollection<string> Filters
+		public Collection<string> Filters
 			=> _filters;
 #endif
 
