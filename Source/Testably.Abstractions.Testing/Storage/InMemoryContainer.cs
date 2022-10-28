@@ -7,7 +7,6 @@ using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.TimeSystem;
-using static Testably.Abstractions.Testing.MockFileSystem;
 using static Testably.Abstractions.Testing.Storage.IStorageContainer;
 
 namespace Testably.Abstractions.Testing.Storage;

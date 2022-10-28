@@ -1,4 +1,7 @@
 ﻿using System;
+#if NETSTANDARD2_0
+using Testably.Abstractions.TimeSystem;
+#endif
 
 namespace Testably.Abstractions.Testing.TimeSystem;
 
