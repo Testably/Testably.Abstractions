@@ -184,7 +184,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	public void AdjustTimes_WhenUpdatingAFile_ShouldAdjustTimesOnlyOnNetFramework(
 		string path1, string path2, string fileName)
 	{
-		Skip.If(Test.IsNetFramework && FileSystem is Abstractions.FileSystem,
+		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
 			"Works unreliable on .NET Framework");
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 

@@ -1,6 +1,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
@@ -15,7 +16,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		FileSystem.Initialize();
 		ManualResetEventSlim ms = new();
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		try
 		{
@@ -32,7 +33,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 			using (CancellationTokenSource cts = new(5000))
 			{
 				cts.Token.Register(() => throw new TimeoutException());
-				IFileSystem.IFileSystemWatcher.IWaitForChangedResult result =
+				IFileSystemWatcher.IWaitForChangedResult result =
 					fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created);
 				fileSystemWatcher.EnableRaisingEvents.Should().BeFalse();
 				result.TimedOut.Should().BeFalse();
@@ -55,7 +56,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		FileSystem.Initialize();
 		ManualResetEventSlim ms = new();
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		try
 		{
@@ -69,7 +70,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 					FileSystem.Directory.Delete(path);
 				}
 			});
-			IFileSystem.IFileSystemWatcher.IWaitForChangedResult result =
+			IFileSystemWatcher.IWaitForChangedResult result =
 				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed, 100);
 
 			fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();

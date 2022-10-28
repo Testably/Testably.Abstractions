@@ -1,8 +1,10 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
+using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Internal;
 using Testably.Abstractions.Testing.Storage;
+using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.Tests.TestHelpers;
 
@@ -23,7 +25,7 @@ internal class LockableContainer : IStorageContainer
 
 	private byte[] _bytes = Array.Empty<byte>();
 
-	public LockableContainer(Testing.FileSystemMock fileSystem,
+	public LockableContainer(MockFileSystem fileSystem,
 	                         FileSystemTypes containerType =
 		                         FileSystemTypes.DirectoryOrFile)
 	{
@@ -45,10 +47,10 @@ internal class LockableContainer : IStorageContainer
 		= new InMemoryContainer.TimeContainer();
 
 	/// <inheritdoc cref="IStorageContainer.ExtensionContainer" />
-	public IFileSystem.IFileSystemExtensionContainer ExtensionContainer { get; }
+	public IFileSystemExtensionContainer ExtensionContainer { get; }
 		= new FileSystemExtensionContainer();
 
-	/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IStorageContainer.LastAccessTime" />
@@ -62,7 +64,7 @@ internal class LockableContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.LinkTarget" />
 	public string? LinkTarget { get; set; }
 
-	/// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+	/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
 	public ITimeSystem TimeSystem { get; }
 
 	/// <inheritdoc cref="IStorageContainer.Type" />

@@ -1,4 +1,5 @@
 using System.IO;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
@@ -15,7 +16,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(sourceName, sourceContents);
 		FileSystem.File.WriteAllText(destinationName, destinationContents);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -41,7 +42,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(sourceName, sourceContents);
 		FileSystem.File.WriteAllText(destinationName, destinationContents);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
 		sut.MoveTo(destinationName, true);
 
@@ -60,7 +61,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		string sourceName, string destinationName, string contents)
 	{
 		FileSystem.File.WriteAllText(sourceName, contents);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 		sut.IsReadOnly = true;
 
 		sut.MoveTo(destinationName);
@@ -88,7 +89,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 			expectedAttributes |= FileAttributes.Archive;
 		}
 
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
 		sut.MoveTo(destinationName);
 
@@ -109,7 +110,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		DateTime sourceCreationTime = FileSystem.File.GetCreationTime(sourceName);
 		DateTime sourceLastAccessTime = FileSystem.File.GetLastAccessTime(sourceName);
 		DateTime sourceLastWriteTime = FileSystem.File.GetLastWriteTime(sourceName);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
 		TimeSystem.Thread.Sleep(1000);
 
@@ -129,7 +130,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		string sourceName, string destinationName, string contents)
 	{
 		FileSystem.File.WriteAllText(sourceName, contents);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
 		sut.MoveTo(destinationName);
 
@@ -149,7 +150,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		FileSystem.File.WriteAllText(sourceName, null);
 		using FileSystemStream stream = FileSystem.File.Open(sourceName, FileMode.Open,
 			FileAccess.Read, FileShare.Read);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -174,7 +175,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		string sourceName,
 		string destinationName)
 	{
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
 		Exception? exception = Record.Exception(() =>
 		{

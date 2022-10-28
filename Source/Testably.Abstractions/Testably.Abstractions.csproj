@@ -7,9 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="$(SolutionDir)README.md"
-          Pack="true" PackagePath="/Docs/"
-          Link="Docs\README.md" />
+    <None Include="$(SolutionDir)README.md" Pack="true" PackagePath="/Docs/" Link="Docs\README.md" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,15 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="FileSystem.*.cs">
-      <DependentUpon>FileSystem.cs</DependentUpon>
-    </Compile>
-    <Compile Update="RandomSystem.*.cs">
-      <DependentUpon>RandomSystem.cs</DependentUpon>
-    </Compile>
-    <Compile Update="TimeSystem.*.cs">
-      <DependentUpon>TimeSystem.cs</DependentUpon>
-    </Compile>
+    <AssemblyAttribute Include="System.CLSCompliant">
+      <_Parameter1>true</_Parameter1>
+      <_Parameter1_TypeName>System.Boolean</_Parameter1_TypeName>
+    </AssemblyAttribute>
   </ItemGroup>
 
 </Project>

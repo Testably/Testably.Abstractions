@@ -3,8 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Internal;
-using static Testably.Abstractions.Testing.FileSystemMock;
+using Testably.Abstractions.TimeSystem;
 using static Testably.Abstractions.Testing.Storage.IStorageContainer;
 
 namespace Testably.Abstractions.Testing.Storage;
@@ -14,14 +16,14 @@ internal class InMemoryContainer : IStorageContainer
 	private FileAttributes _attributes;
 	private byte[] _bytes = Array.Empty<byte>();
 	private readonly ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
-	private readonly FileSystemMock _fileSystem;
+	private readonly MockFileSystem _fileSystem;
 	private bool _isEncrypted;
 	private readonly IStorageLocation _location;
 	private readonly FileSystemExtensionContainer _extensionContainer = new();
 
 	public InMemoryContainer(FileSystemTypes type,
 	                         IStorageLocation location,
-	                         FileSystemMock fileSystem)
+	                         MockFileSystem fileSystem)
 	{
 		_location = location;
 		_fileSystem = fileSystem;
@@ -62,10 +64,10 @@ internal class InMemoryContainer : IStorageContainer
 	public ITimeContainer CreationTime { get; } = new TimeContainer();
 
 	/// <inheritdoc cref="IStorageContainer.ExtensionContainer" />
-	public IFileSystem.IFileSystemExtensionContainer ExtensionContainer
+	public IFileSystemExtensionContainer ExtensionContainer
 		=> _extensionContainer;
 
-	/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 	public IFileSystem FileSystem => _fileSystem;
 
 	/// <inheritdoc cref="IStorageContainer.LastAccessTime" />
@@ -77,7 +79,7 @@ internal class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.LinkTarget" />
 	public string? LinkTarget { get; set; }
 
-	/// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+	/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
 	public ITimeSystem TimeSystem => _fileSystem.TimeSystem;
 
 	/// <inheritdoc cref="IStorageContainer.Type" />
@@ -190,7 +192,7 @@ internal class InMemoryContainer : IStorageContainer
 	///     Create a new directory on the <paramref name="location" />.
 	/// </summary>
 	public static IStorageContainer NewDirectory(IStorageLocation location,
-	                                             FileSystemMock fileSystem)
+	                                             MockFileSystem fileSystem)
 	{
 		return new InMemoryContainer(FileSystemTypes.Directory, location,
 			fileSystem);
@@ -200,7 +202,7 @@ internal class InMemoryContainer : IStorageContainer
 	///     Create a new file on the <paramref name="location" />.
 	/// </summary>
 	public static IStorageContainer NewFile(IStorageLocation location,
-	                                        FileSystemMock fileSystem)
+	                                        MockFileSystem fileSystem)
 	{
 		return new InMemoryContainer(FileSystemTypes.File, location,
 			fileSystem);

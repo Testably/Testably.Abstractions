@@ -2,11 +2,11 @@ namespace Testably.Abstractions.Tests.TimeSystem.DateTime;
 
 public static class MockTimeSystemTests
 {
-	public sealed class DateTimeTests : TimeSystemDateTimeTests<TimeSystemMock>
+	public sealed class DateTimeTests : TimeSystemDateTimeTests<MockTimeSystem>
 	{
 		#region Test Setup
 
-		public DateTimeTests() : base(new TimeSystemMock())
+		public DateTimeTests() : base(new MockTimeSystem())
 		{
 		}
 

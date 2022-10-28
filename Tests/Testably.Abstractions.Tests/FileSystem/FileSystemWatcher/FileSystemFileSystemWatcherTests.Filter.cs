@@ -1,5 +1,6 @@
 using System.IO;
 using System.Threading;
+using Testably.Abstractions.FileSystem;
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		FileSystem.Initialize().WithSubdirectory(path);
 		ManualResetEventSlim ms = new();
 		FileSystemEventArgs? result = null;
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{
@@ -45,7 +46,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 		FileSystem.Initialize().WithSubdirectory(path);
 		ManualResetEventSlim ms = new();
 		FileSystemEventArgs? result = null;
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{
@@ -73,7 +74,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 
 		CountdownEvent ms = new(filteredPaths.Length);
 		List<FileSystemEventArgs> results = new();
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{

@@ -1,21 +1,23 @@
 #if !DEBUG || !DISABLE_TESTS_REALFILESYSTEM
 using System.IO;
+using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.Testing.FileSystemInitializer;
 using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcherFactory;
 
 [Collection(nameof(DriveInfoFactory.RealFileSystemTests))]
 public sealed class RealFileSystemTests :
-	FileSystemFileSystemWatcherFactoryTests<Abstractions.FileSystem>,
+	FileSystemFileSystemWatcherFactoryTests<RealFileSystem>,
 	IDisposable
 {
 	/// <inheritdoc cref="FileSystemFileSystemWatcherFactoryTests{TFileSystem}.BasePath" />
 	public override string BasePath => _directoryCleaner.BasePath;
 
-	private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
+	private readonly IDirectoryCleaner _directoryCleaner;
 
 	public RealFileSystemTests(ITestOutputHelper testOutputHelper)
-		: base(new Abstractions.FileSystem(), new Abstractions.TimeSystem())
+		: base(new RealFileSystem(), new RealTimeSystem())
 	{
 		_directoryCleaner = FileSystem
 		   .SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);
@@ -39,8 +41,8 @@ public sealed class RealFileSystemTests :
 		NotifyFilters notifyFilter,
 		bool enableRaisingEvents)
 	{
-		FileSystemMock fileSystemMock = new();
-		fileSystemMock.Directory.CreateDirectory(path);
+		MockFileSystem mockFileSystem = new();
+		mockFileSystem.Directory.CreateDirectory(path);
 		FileSystem.Directory.CreateDirectory(path);
 		System.IO.FileSystemWatcher fileSystemWatcher = new(path)
 		{
@@ -51,7 +53,7 @@ public sealed class RealFileSystemTests :
 			EnableRaisingEvents = enableRaisingEvents
 		};
 
-		IFileSystem.IFileSystemWatcher resultOnRealSystem =
+		IFileSystemWatcher resultOnRealSystem =
 			FileSystem.FileSystemWatcher.Wrap(fileSystemWatcher);
 
 		resultOnRealSystem.Path.Should().Be(fileSystemWatcher.Path);
@@ -64,8 +66,8 @@ public sealed class RealFileSystemTests :
 		resultOnRealSystem.EnableRaisingEvents.Should()
 		   .Be(fileSystemWatcher.EnableRaisingEvents);
 
-		IFileSystem.IFileSystemWatcher resultOnMockSystem =
-			fileSystemMock.FileSystemWatcher.Wrap(fileSystemWatcher);
+		IFileSystemWatcher resultOnMockSystem =
+			mockFileSystem.FileSystemWatcher.Wrap(fileSystemWatcher);
 
 		resultOnMockSystem.Path.Should().Be(fileSystemWatcher.Path);
 		resultOnMockSystem.Filter.Should().Be(fileSystemWatcher.Filter);

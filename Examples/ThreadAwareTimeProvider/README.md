@@ -6,7 +6,7 @@ This example illustrates how to implement a thread-aware time provider for such 
 The `ThreadAwareTimeProvider` stores the time in a `AsyncLocal` property and provides a `SynchronizeClock` method to synchronize the clock across multiple threads.
 Corresponding unit tests show the correct behaviour.
 
-In order to use this, you just have to inject the custom provider to the `TimeSystemMock`:
+In order to use this, you just have to inject the custom provider to the `MockTimeSystem`:
 ```csharp
-    TimeSystemMock timeSystem = new(new ThreadAwareTimeProvider());
+    MockTimeSystem timeSystem = new(new ThreadAwareTimeProvider());
 ```

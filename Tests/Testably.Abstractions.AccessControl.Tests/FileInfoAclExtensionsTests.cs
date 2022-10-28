@@ -1,5 +1,6 @@
 ﻿using System.Security.AccessControl;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
@@ -10,8 +11,8 @@ public class FileInfoAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystemMock fileSystem = new();
-		IFileSystem.IFileInfo fileInfo = fileSystem.FileInfo.New("foo");
+		MockFileSystem fileSystem = new();
+		IFileInfo fileInfo = fileSystem.FileInfo.New("foo");
 
 #pragma warning disable CA1416
 		FileSecurity result = fileInfo.GetAccessControl(AccessControlSections.All);
@@ -25,7 +26,7 @@ public class FileInfoAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystem fileSystem = new();
+		RealFileSystem fileSystem = new();
 		Test.SkipIfLongRunningTestsShouldBeSkipped(fileSystem);
 
 		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
@@ -37,7 +38,8 @@ public class FileInfoAclExtensionsTests
 			fileSystem.FileInfo.New("foo").SetAccessControl(originalAccessControl);
 
 			FileSecurity currentAccessControl =
-				fileSystem.FileInfo.New("foo").GetAccessControl(AccessControlSections.Access);
+				fileSystem.FileInfo.New("foo")
+				   .GetAccessControl(AccessControlSections.Access);
 #pragma warning restore CA1416
 
 			currentAccessControl.HasSameAccessRightsAs(originalAccessControl)
@@ -51,8 +53,8 @@ public class FileInfoAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystemMock fileSystem = new();
-		IFileSystem.IFileInfo fileInfo = fileSystem.FileInfo.New("foo");
+		MockFileSystem fileSystem = new();
+		IFileInfo fileInfo = fileSystem.FileInfo.New("foo");
 #pragma warning disable CA1416
 		FileSecurity fileSecurity = new();
 

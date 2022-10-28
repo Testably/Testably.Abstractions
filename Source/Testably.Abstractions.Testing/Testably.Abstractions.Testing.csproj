@@ -6,9 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="$(SolutionDir)Docs/Testing.md"
-          Pack="true" PackagePath="/Docs/"
-          Link="Docs\Testing.md" />
+    <None Include="$(SolutionDir)Docs/Testing.md" Pack="true" PackagePath="/Docs/" Link="Docs\Testing.md" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,24 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="FileSystemInitializer.*.cs">
-      <DependentUpon>FileSystemInitializer.cs</DependentUpon>
-    </Compile>
-    <Compile Update="FileSystemMock.*.cs">
-      <DependentUpon>FileSystemMock.cs</DependentUpon>
-    </Compile>
-    <Compile Update="FileSystemMockExtensions.*.cs">
-      <DependentUpon>FileSystemMockExtensions.cs</DependentUpon>
-    </Compile>
-    <Compile Update="RandomSystemMock.*.cs">
-      <DependentUpon>RandomSystemMock.cs</DependentUpon>
-    </Compile>
-    <Compile Update="TimeSystemMock.*.cs">
-      <DependentUpon>TimeSystemMock.cs</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
+    <AssemblyAttribute Include="System.CLSCompliant">
+      <_Parameter1>true</_Parameter1>
+      <_Parameter1_TypeName>System.Boolean</_Parameter1_TypeName>
+    </AssemblyAttribute>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>Testably.Abstractions.Testing.Tests</_Parameter1>
     </AssemblyAttribute>

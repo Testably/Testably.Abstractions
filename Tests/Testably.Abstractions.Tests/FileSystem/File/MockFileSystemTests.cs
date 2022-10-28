@@ -1,22 +1,24 @@
 using System.Linq;
+using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 public sealed class MockFileSystemTests
-	: FileSystemFileTests<FileSystemMock>, IDisposable
+	: FileSystemFileTests<MockFileSystem>, IDisposable
 {
 	/// <inheritdoc cref="FileSystemFileTests{TFileSystem}.BasePath" />
 	public override string BasePath => _directoryCleaner.BasePath;
 
-	private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
+	private readonly IDirectoryCleaner _directoryCleaner;
 
-	public MockFileSystemTests() : this(new FileSystemMock())
+	public MockFileSystemTests() : this(new MockFileSystem())
 	{
 	}
 
-	private MockFileSystemTests(FileSystemMock fileSystemMock) : base(
-		fileSystemMock,
-		fileSystemMock.TimeSystem)
+	private MockFileSystemTests(MockFileSystem mockFileSystem) : base(
+		mockFileSystem,
+		mockFileSystem.TimeSystem)
 	{
 		_directoryCleaner = FileSystem
 		   .SetCurrentDirectoryToEmptyTemporaryDirectory();
@@ -41,9 +43,9 @@ public sealed class MockFileSystemTests
 			"Different drives are only supported on Windows.");
 
 		FileSystem.WithDrive("D").WithDrive("E");
-		IFileSystem.IDriveInfo[] drives = FileSystem.DriveInfo.GetDrives();
-		IFileSystem.IDriveInfo drive1 = drives.First();
-		IFileSystem.IDriveInfo drive2 = drives.Last();
+		IDriveInfo[] drives = FileSystem.DriveInfo.GetDrives();
+		IDriveInfo drive1 = drives.First();
+		IDriveInfo drive2 = drives.Last();
 		string sourcePath = FileSystem.Path.Combine(drive1.Name, sourceName);
 		string destinationPath =
 			FileSystem.Path.Combine(drive2.Name, destinationName);
@@ -69,7 +71,7 @@ public sealed class MockFileSystemTests
 		int bytes1Length,
 		int bytes2Length)
 	{
-		Abstractions.RandomSystem randomSystem = new();
+		RealRandomSystem randomSystem = new();
 		byte[] bytes1 = new byte[bytes1Length];
 		byte[] bytes2 = new byte[bytes2Length];
 		randomSystem.Random.Shared.NextBytes(bytes1);
@@ -77,7 +79,7 @@ public sealed class MockFileSystemTests
 
 		FileSystem.File.WriteAllBytes(sourceName, bytes1);
 		FileSystem.File.WriteAllBytes(destinationName, bytes2);
-		IFileSystem.IDriveInfo drive = FileSystem.DriveInfo.GetDrives().First();
+		IDriveInfo drive = FileSystem.DriveInfo.GetDrives().First();
 		long previousAvailableBytes = drive.AvailableFreeSpace;
 
 		FileSystem.File.Move(sourceName, destinationName, true);

@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Internal;
 
-internal class FileSystemExtensionContainer : IFileSystem.IFileSystemExtensionContainer
+internal class FileSystemExtensionContainer : IFileSystemExtensionContainer
 {
 	private readonly object _wrappedInstance;
 	private readonly Dictionary<string, object?> _metadata = new();
@@ -13,7 +14,7 @@ internal class FileSystemExtensionContainer : IFileSystem.IFileSystemExtensionCo
 		_wrappedInstance = wrappedInstance;
 	}
 
-	/// <inheritdoc cref="IFileSystem.IFileSystemExtensionContainer.HasWrappedInstance{T}(out T)" />
+	/// <inheritdoc cref="IFileSystemExtensionContainer.HasWrappedInstance{T}(out T)" />
 	public bool HasWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance)
 	{
 		wrappedInstance = _wrappedInstance is T?

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Internal;
+using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.Storage;
 
@@ -26,9 +28,9 @@ internal sealed class NullContainer : IStorageContainer
 	public IStorageContainer.ITimeContainer CreationTime { get; } = new NullTime();
 
 	/// <inheritdoc cref="IStorageContainer.ExtensionContainer" />
-	public IFileSystem.IFileSystemExtensionContainer ExtensionContainer { get; }
+	public IFileSystemExtensionContainer ExtensionContainer { get; }
 
-	/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IStorageContainer.LastAccessTime" />
@@ -44,7 +46,7 @@ internal sealed class NullContainer : IStorageContainer
 		set => _ = value;
 	}
 
-	/// <inheritdoc cref="ITimeSystem.ITimeSystemExtensionPoint.TimeSystem" />
+	/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
 	public ITimeSystem TimeSystem { get; }
 
 	/// <inheritdoc cref="IStorageContainer.Type" />
@@ -92,7 +94,7 @@ internal sealed class NullContainer : IStorageContainer
 
 	#endregion
 
-	internal static IStorageContainer New(FileSystemMock fileSystem)
+	internal static IStorageContainer New(MockFileSystem fileSystem)
 		=> new NullContainer(fileSystem, fileSystem.TimeSystem);
 
 	private sealed class NullStorageAccessHandle : IStorageAccessHandle

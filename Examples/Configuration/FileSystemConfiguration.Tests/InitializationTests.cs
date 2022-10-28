@@ -4,7 +4,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Testably.Abstractions;
+using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.RandomSystem;
 using Testably.Abstractions.Testing;
 using Xunit;
 
@@ -20,7 +21,7 @@ public class InitializationTests
 	[AutoData]
 	public void InitializeFileSystemInSpecifiedCurrentDirectory(string currentDirectory)
 	{
-		FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		string expectedDirectory = fileSystem.Path.GetFullPath(currentDirectory);
 
 		fileSystem.InitializeIn(currentDirectory)
@@ -39,7 +40,7 @@ public class InitializationTests
 	[Fact]
 	public void InitializeFileSystemInTheRootDirectory()
 	{
-		FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		fileSystem.Initialize()
 			.WithASubdirectory()
 			.WithSubdirectory("foo").Initialized(s => s
@@ -59,7 +60,7 @@ public class InitializationTests
 	[Fact]
 	public void InitializeFileSystemWithUncDrive()
 	{
-		FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		fileSystem.DriveInfo.GetDrives().Should().HaveCount(1);
 
 		fileSystem.WithUncDrive(@"\\unc-server");
@@ -75,7 +76,7 @@ public class InitializationTests
 	}
 
 	/// <summary>
-	///     The drives can be configured on the <see cref="FileSystemMock" />.
+	///     The drives can be configured on the <see cref="MockFileSystem" />.
 	///     Per default all drives are initializes with 1GB of free space. All
 	///     file operations are counted against this limit and throw an
 	///     <see cref="IOException" />, when the limit is breached.
@@ -83,8 +84,8 @@ public class InitializationTests
 	[Fact]
 	public void LimitAvailableSpaceOnDrives()
 	{
-		FileSystemMock fileSystem = new();
-		IRandomSystem.IRandom random = fileSystem.RandomSystem.Random.Shared;
+		MockFileSystem fileSystem = new();
+		IRandom random = fileSystem.RandomSystem.Random.Shared;
 		byte[] firstFileContent = new byte[199];
 		byte[] secondFileContent = new byte[2];
 		random.NextBytes(firstFileContent);
@@ -92,7 +93,7 @@ public class InitializationTests
 
 		// Limit the main drive to 200 bytes
 		fileSystem.WithDrive(drive => drive.SetTotalSize(200));
-		IFileSystem.IDriveInfo mainDrive = fileSystem.DriveInfo.GetDrives().Single();
+		IDriveInfo mainDrive = fileSystem.DriveInfo.GetDrives().Single();
 		mainDrive.AvailableFreeSpace.Should().Be(200);
 
 		fileSystem.File.WriteAllBytes("foo", firstFileContent);

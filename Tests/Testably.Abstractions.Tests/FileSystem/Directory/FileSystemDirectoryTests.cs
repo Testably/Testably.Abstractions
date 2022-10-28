@@ -1,4 +1,5 @@
 using System.IO;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
@@ -43,10 +44,10 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	                                                     string path3)
 	{
 		string path = FileSystem.Path.Combine(path1, path2, path3);
-		IFileSystem.IDirectoryInfo expectedParent = FileSystem.DirectoryInfo.New(
+		IDirectoryInfo expectedParent = FileSystem.DirectoryInfo.New(
 			FileSystem.Path.Combine(path1, path2));
 
-		IFileSystem.IDirectoryInfo? result = FileSystem.Directory.GetParent(path);
+		IDirectoryInfo? result = FileSystem.Directory.GetParent(path);
 
 		result.Should().NotBeNull();
 		result!.FullName.Should().Be(expectedParent.FullName);

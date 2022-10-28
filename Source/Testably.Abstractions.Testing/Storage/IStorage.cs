@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Internal;
 
 namespace Testably.Abstractions.Testing.Storage;
@@ -123,9 +124,9 @@ internal interface IStorage
 	/// <param name="fileSystemExtensionContainer"></param>
 	/// <returns>The container at <paramref name="location" />.</returns>
 	IStorageContainer GetOrCreateContainer(IStorageLocation location,
-	                                       Func<IStorageLocation, FileSystemMock,
+	                                       Func<IStorageLocation, MockFileSystem,
 		                                       IStorageContainer> containerGenerator,
-	                                       IFileSystem.IFileSystemExtensionContainer?
+	                                       IFileSystemExtensionContainer?
 		                                       fileSystemExtensionContainer = null);
 
 	/// <summary>
@@ -199,7 +200,7 @@ internal interface IStorage
 	///     otherwise <see langword="false" />.
 	/// </returns>
 	bool TryAddContainer(IStorageLocation location,
-	                     Func<IStorageLocation, FileSystemMock, IStorageContainer>
+	                     Func<IStorageLocation, MockFileSystem, IStorageContainer>
 		                     containerGenerator,
 	                     [NotNullWhen(true)] out IStorageContainer? container);
 }

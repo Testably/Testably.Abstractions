@@ -1,10 +1,11 @@
 ﻿using System.IO.Compression;
 using System.Text;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions;
 
 /// <inheritdoc cref="ZipFile" />
-public interface IZipFile : IFileSystem.IFileSystemExtensionPoint
+public interface IZipFile : IFileSystemExtensionPoint
 {
 	/// <inheritdoc cref="ZipFile.CreateFromDirectory(string, string)" />
 	void CreateFromDirectory(string sourceDirectoryName,

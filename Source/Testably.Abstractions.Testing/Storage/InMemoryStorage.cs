@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Internal;
-using static Testably.Abstractions.Testing.FileSystemMock;
+using static Testably.Abstractions.Testing.MockFileSystem;
 
 namespace Testably.Abstractions.Testing.Storage;
 
@@ -20,12 +22,12 @@ internal sealed class InMemoryStorage : IStorage
 	private readonly ConcurrentDictionary<string, IStorageDrive> _drives =
 		new(StringComparer.OrdinalIgnoreCase);
 
-	private readonly FileSystemMock _fileSystem;
+	private readonly MockFileSystem _fileSystem;
 
-	private Func<string, IFileSystem.IFileSystemExtensionContainer, bool>?
+	private Func<string, IFileSystemExtensionContainer, bool>?
 		_grantRequestCallback;
 
-	public InMemoryStorage(FileSystemMock fileSystem)
+	public InMemoryStorage(MockFileSystem fileSystem)
 	{
 		_fileSystem = fileSystem;
 		MainDrive = DriveInfoMock.New(CurrentDirectory, _fileSystem);
@@ -262,8 +264,8 @@ internal sealed class InMemoryStorage : IStorage
 	/// <inheritdoc cref="IStorage.GetOrCreateContainer" />
 	public IStorageContainer GetOrCreateContainer(
 		IStorageLocation location,
-		Func<IStorageLocation, FileSystemMock, IStorageContainer> containerGenerator,
-		IFileSystem.IFileSystemExtensionContainer? fileSystemExtensionContainer = null)
+		Func<IStorageLocation, MockFileSystem, IStorageContainer> containerGenerator,
+		IFileSystemExtensionContainer? fileSystemExtensionContainer = null)
 	{
 		ChangeDescription? fileSystemChange = null;
 		IStorageContainer container = _containers.GetOrAdd(location,
@@ -434,10 +436,10 @@ internal sealed class InMemoryStorage : IStorage
 #endif
 
 	/// <inheritdoc
-	///     cref="IStorage.TryAddContainer(IStorageLocation, Func{IStorageLocation, FileSystemMock, IStorageContainer}, out IStorageContainer?)" />
+	///     cref="IStorage.TryAddContainer(IStorageLocation, Func{IStorageLocation, MockFileSystem, IStorageContainer}, out IStorageContainer?)" />
 	public bool TryAddContainer(
 		IStorageLocation location,
-		Func<IStorageLocation, FileSystemMock, IStorageContainer> containerGenerator,
+		Func<IStorageLocation, MockFileSystem, IStorageContainer> containerGenerator,
 		[NotNullWhen(true)] out IStorageContainer? container)
 	{
 		ChangeDescription? fileSystemChange = null;
@@ -471,10 +473,10 @@ internal sealed class InMemoryStorage : IStorage
 		return false;
 	}
 
-#endregion
+	#endregion
 
 	internal void WithAccessControl(
-		Func<string, IFileSystem.IFileSystemExtensionContainer, bool>?
+		Func<string, IFileSystemExtensionContainer, bool>?
 			grantRequestCallback)
 	{
 		_grantRequestCallback = grantRequestCallback;
@@ -506,7 +508,7 @@ internal sealed class InMemoryStorage : IStorage
 		}
 	}
 
-	private void CreateParents(FileSystemMock fileSystem, IStorageLocation location)
+	private void CreateParents(MockFileSystem fileSystem, IStorageLocation location)
 	{
 		List<string> parents = new();
 		string? parent = fileSystem.Path.GetDirectoryName(

@@ -1,21 +1,23 @@
+using Testably.Abstractions.Testing.FileSystemInitializer;
+
 namespace Testably.Abstractions.Tests.FileSystem.FileStreamFactory;
 
 public sealed class
 	MockFileSystemTests
-	: FileSystemFileStreamFactoryTests<FileSystemMock>, IDisposable
+	: FileSystemFileStreamFactoryTests<MockFileSystem>, IDisposable
 {
 	/// <inheritdoc cref="FileSystemFileStreamFactoryTests{TFileSystem}.BasePath" />
 	public override string BasePath => _directoryCleaner.BasePath;
 
-	private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
+	private readonly IDirectoryCleaner _directoryCleaner;
 
-	public MockFileSystemTests() : this(new FileSystemMock())
+	public MockFileSystemTests() : this(new MockFileSystem())
 	{
 	}
 
-	private MockFileSystemTests(FileSystemMock fileSystemMock) : base(
-		fileSystemMock,
-		fileSystemMock.TimeSystem)
+	private MockFileSystemTests(MockFileSystem mockFileSystem) : base(
+		mockFileSystem,
+		mockFileSystem.TimeSystem)
 	{
 		_directoryCleaner = FileSystem
 		   .SetCurrentDirectoryToEmptyTemporaryDirectory();

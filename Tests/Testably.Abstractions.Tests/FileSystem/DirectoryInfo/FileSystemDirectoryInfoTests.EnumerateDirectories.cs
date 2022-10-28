@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
@@ -13,15 +15,15 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 		EnumerateDirectories_SearchOptionAllDirectories_ShouldReturnAllSubdirectories(
 			string path)
 	{
-		FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
 			   .WithSubdirectory(path).Initialized(s => s
 				   .WithSubdirectory("foo/xyz")
 				   .WithSubdirectory("bar"));
-		IFileSystem.IDirectoryInfo baseDirectory =
-			(IFileSystem.IDirectoryInfo)initialized[0];
+		IDirectoryInfo baseDirectory =
+			(IDirectoryInfo)initialized[0];
 
-		IFileSystem.IDirectoryInfo[] result = baseDirectory
+		IDirectoryInfo[] result = baseDirectory
 		   .EnumerateDirectories("*", SearchOption.AllDirectories).ToArray();
 
 		result.Length.Should().Be(3);
@@ -47,11 +49,11 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	public void EnumerateDirectories_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string subdirectoryName)
 	{
-		IFileSystem.IDirectoryInfo baseDirectory =
+		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory("foo");
 		baseDirectory.CreateSubdirectory(subdirectoryName);
 
-		IFileSystem.IDirectoryInfo[] result = baseDirectory
+		IDirectoryInfo[] result = baseDirectory
 		   .EnumerateDirectories(searchPattern).ToArray();
 
 		if (expectToBeFound)
@@ -73,12 +75,12 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderSetOptions(
 			string path)
 	{
-		IFileSystem.IDirectoryInfo baseDirectory =
+		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
 		baseDirectory.CreateSubdirectory("foo/xyz");
 		baseDirectory.CreateSubdirectory("bar");
 
-		IFileSystem.IDirectoryInfo[] result = baseDirectory
+		IDirectoryInfo[] result = baseDirectory
 		   .EnumerateDirectories("XYZ",
 				new EnumerationOptions
 				{
@@ -100,7 +102,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	public void EnumerateDirectories_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
-		IFileSystem.IDirectoryInfo baseDirectory =
+		IDirectoryInfo baseDirectory =
 			FileSystem.DirectoryInfo.New(path);
 		string searchPattern = "foo\0bar";
 
@@ -118,12 +120,12 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 		EnumerateDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
 			string path)
 	{
-		IFileSystem.IDirectoryInfo baseDirectory =
+		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
 		baseDirectory.CreateSubdirectory("foo/xyz");
 		baseDirectory.CreateSubdirectory("bar");
 
-		IFileSystem.IDirectoryInfo[] result = baseDirectory
+		IDirectoryInfo[] result = baseDirectory
 		   .EnumerateDirectories().ToArray();
 
 		result.Length.Should().Be(2);
@@ -137,12 +139,12 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	public void EnumerateDirectories_WithSearchPattern_ShouldReturnMatchingSubdirectory(
 		string path)
 	{
-		IFileSystem.IDirectoryInfo baseDirectory =
+		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
 		baseDirectory.CreateSubdirectory("foo");
 		baseDirectory.CreateSubdirectory("bar");
 
-		IEnumerable<IFileSystem.IDirectoryInfo> result = baseDirectory
+		IEnumerable<IDirectoryInfo> result = baseDirectory
 		   .EnumerateDirectories("foo");
 
 		result.Should().ContainSingle(d => d.Name == "foo");
@@ -154,12 +156,12 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 		EnumerateDirectories_WithSearchPatternInSubdirectory_ShouldReturnMatchingSubdirectory(
 			string path)
 	{
-		IFileSystem.IDirectoryInfo baseDirectory =
+		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
 		baseDirectory.CreateSubdirectory("foo/xyz");
 		baseDirectory.CreateSubdirectory("bar/xyz");
 
-		IEnumerable<IFileSystem.IDirectoryInfo> result = baseDirectory
+		IEnumerable<IDirectoryInfo> result = baseDirectory
 		   .EnumerateDirectories("xyz", SearchOption.AllDirectories);
 
 		result.Count().Should().Be(2);

@@ -1,4 +1,5 @@
 using System.IO;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
@@ -24,7 +25,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	public void MissingFile_Attributes_ShouldAlwaysBeNegativeOne(
 		FileAttributes fileAttributes)
 	{
-		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		sut.Attributes.Should().Be((FileAttributes)(-1));
 		Exception? exception = Record.Exception(() =>
 		{
@@ -38,7 +39,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	[AutoData]
 	public void MissingFile_CreationTime_ShouldAlwaysBeNullTime(DateTime creationTime)
 	{
-		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		sut.CreationTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
 		Exception? exception = Record.Exception(() =>
 		{
@@ -61,7 +62,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	public void MissingFile_CreationTimeUtc_ShouldAlwaysBeNullTime(
 		DateTime creationTimeUtc)
 	{
-		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		sut.CreationTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
 		Exception? exception = Record.Exception(() =>
 		{
@@ -83,7 +84,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	[AutoData]
 	public void MissingFile_LastAccessTime_ShouldAlwaysBeNullTime(DateTime lastAccessTime)
 	{
-		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		sut.LastAccessTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
 		Exception? exception = Record.Exception(() =>
 		{
@@ -106,7 +107,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	public void MissingFile_LastAccessTimeUtc_ShouldAlwaysBeNullTime(
 		DateTime lastAccessTimeUtc)
 	{
-		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		sut.LastAccessTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
 		Exception? exception = Record.Exception(() =>
 		{
@@ -128,7 +129,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	[AutoData]
 	public void MissingFile_LastWriteTime_ShouldAlwaysBeNullTime(DateTime lastWriteTime)
 	{
-		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		sut.LastWriteTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
 		Exception? exception = Record.Exception(() =>
 		{
@@ -151,7 +152,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	public void MissingFile_LastWriteTimeUtc_ShouldAlwaysBeNullTime(
 		DateTime lastWriteTimeUtc)
 	{
-		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		sut.LastWriteTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
 		Exception? exception = Record.Exception(() =>
 		{
@@ -177,7 +178,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	{
 		string path = FileSystem.Path.Combine(path1, path2, path3);
 
-		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 
 		sut.Parent.Should().NotBeNull();
 		sut.Parent!.Exists.Should().BeFalse();
@@ -189,7 +190,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	[AutoData]
 	public void Parent_Root_ShouldBeNull()
 	{
-		IFileSystem.IDirectoryInfo sut =
+		IDirectoryInfo sut =
 			FileSystem.DirectoryInfo.New(FileTestHelper.RootDrive());
 
 		sut.Parent.Should().BeNull();
@@ -200,7 +201,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	public void Root_Name_ShouldBeCorrect()
 	{
 		string rootName = FileTestHelper.RootDrive();
-		IFileSystem.IDirectoryInfo sut =
+		IDirectoryInfo sut =
 			FileSystem.DirectoryInfo.New(rootName);
 
 		sut.Name.Should().Be(rootName);
@@ -211,7 +212,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	public void Root_ShouldExist(string path)
 	{
 		string expectedRoot = FileTestHelper.RootDrive();
-		IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
+		IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
 
 		result.Root.Exists.Should().BeTrue();
 		result.Root.FullName.Should().Be(expectedRoot);

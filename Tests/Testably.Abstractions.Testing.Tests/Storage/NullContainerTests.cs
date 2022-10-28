@@ -9,7 +9,7 @@ public class NullContainerTests
 	[AutoData]
 	public void AppendBytes_ShouldReturnEmptyArray(byte[] bytes)
 	{
-		Testing.FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
 		sut.AppendBytes(bytes);
@@ -20,7 +20,7 @@ public class NullContainerTests
 	[Fact]
 	public void ClearBytes_ShouldReturnEmptyArray()
 	{
-		Testing.FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
 		sut.ClearBytes();
@@ -31,7 +31,7 @@ public class NullContainerTests
 	[Fact]
 	public void Constructor_ShouldSetFileAndTimeSystem()
 	{
-		Testing.FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
@@ -42,7 +42,7 @@ public class NullContainerTests
 	[Fact]
 	public void CreationTime_WithUnspecifiedKind_ShouldReturnNullTime()
 	{
-		Testing.FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
 		DateTime result = sut.CreationTime.Get(DateTimeKind.Unspecified);
@@ -53,7 +53,7 @@ public class NullContainerTests
 	[Fact]
 	public void Decrypt_ShouldReturnEmptyArray()
 	{
-		Testing.FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
 		sut.Decrypt();
@@ -64,7 +64,7 @@ public class NullContainerTests
 	[Fact]
 	public void Encrypt_ShouldReturnEmptyArray()
 	{
-		Testing.FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
 		sut.Encrypt();
@@ -75,7 +75,7 @@ public class NullContainerTests
 	[Fact]
 	public void GetBytes_ShouldReturnEmptyArray()
 	{
-		Testing.FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
 		sut.GetBytes().Should().BeEmpty();
@@ -85,7 +85,7 @@ public class NullContainerTests
 	[AutoData]
 	public void LinkTarget_ShouldAlwaysReturnNull(string linkTarget)
 	{
-		Testing.FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 		sut.LinkTarget.Should().BeNull();
 
@@ -98,7 +98,7 @@ public class NullContainerTests
 	[AutoData]
 	public void RequestAccess_ShouldReturnEmptyArray(FileAccess access, FileShare share)
 	{
-		Testing.FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
 		IStorageAccessHandle result = sut.RequestAccess(access, share);
@@ -110,7 +110,7 @@ public class NullContainerTests
 	[Fact]
 	public void Type_ShouldBeDirectoryOrFile()
 	{
-		Testing.FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
 		sut.Type.Should().Be(FileSystemTypes.DirectoryOrFile);
@@ -120,7 +120,7 @@ public class NullContainerTests
 	[AutoData]
 	public void WriteBytes_ShouldReturnEmptyArray(byte[] bytes)
 	{
-		Testing.FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
 		sut.WriteBytes(bytes);

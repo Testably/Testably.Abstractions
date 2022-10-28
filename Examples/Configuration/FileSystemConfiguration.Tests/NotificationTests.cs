@@ -15,7 +15,7 @@ public class NotificationTests
 	{
 		ManualResetEventSlim ms = new();
 		bool isNotified = false;
-		FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		fileSystem.Notify.OnCreated(FileSystemTypes.File,
 			_ =>
 			{
@@ -38,7 +38,7 @@ public class NotificationTests
 	public void Notify_UseAwaitableCallback()
 	{
 		bool isNotified = false;
-		FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		fileSystem.Notify
 			.OnCreated(FileSystemTypes.File, _ =>
 			{

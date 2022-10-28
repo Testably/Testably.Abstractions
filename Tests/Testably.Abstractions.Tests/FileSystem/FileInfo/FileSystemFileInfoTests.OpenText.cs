@@ -1,4 +1,5 @@
 using System.IO;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
@@ -10,7 +11,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	public void OpenText_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
-		IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -27,7 +28,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
-		IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
 		using StreamReader stream = fileInfo.OpenText();
 

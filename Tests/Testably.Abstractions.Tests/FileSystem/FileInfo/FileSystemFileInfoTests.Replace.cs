@@ -1,4 +1,5 @@
 using System.IO;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
@@ -14,7 +15,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(sourceName, null);
 		FileSystem.Directory.CreateDirectory(destinationName);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -32,7 +33,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		string backupName)
 	{
 		FileSystem.File.WriteAllText(sourceName, null);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -54,10 +55,10 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(sourceName, sourceContents);
 		FileSystem.File.WriteAllText(destinationName, destinationContents);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 		sut.IsReadOnly = true;
 
-		IFileSystem.IFileInfo result = sut.Replace(destinationName, backupName, true);
+		IFileInfo result = sut.Replace(destinationName, backupName, true);
 
 		sut.Exists.Should().BeFalse();
 		FileSystem.File.Exists(sourceName).Should().BeFalse();
@@ -82,7 +83,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(sourceName, sourceContents);
 		FileSystem.File.WriteAllText(destinationName, destinationContents);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 		sut.IsReadOnly = true;
 
 		Exception? exception = Record.Exception(() =>
@@ -142,7 +143,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 			expectedDestinationAttributes |= FileAttributes.Archive;
 		}
 
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
 		sut.Replace(destinationName, backupName, true);
 
@@ -175,7 +176,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 			FileSystem.File.GetLastAccessTime(destinationName);
 		DateTime destinationLastWriteTime =
 			FileSystem.File.GetLastWriteTime(destinationName);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 		TimeSystem.Thread.Sleep(1000);
 
 		sut.Replace(destinationName, backupName);
@@ -205,9 +206,9 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(sourceName, sourceContents);
 		FileSystem.File.WriteAllText(destinationName, destinationContents);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
-		IFileSystem.IFileInfo result = sut.Replace(destinationName, backupName);
+		IFileInfo result = sut.Replace(destinationName, backupName);
 
 		sut.Exists.Should().BeFalse();
 		FileSystem.File.Exists(sourceName).Should().BeFalse();
@@ -229,7 +230,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 
 		FileSystem.Directory.CreateDirectory(sourceName);
 		FileSystem.File.WriteAllText(destinationName, null);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -252,7 +253,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		FileSystem.File.WriteAllText(destinationName, destinationContents);
 		using FileSystemStream stream = FileSystem.File.Open(sourceName, FileMode.Open,
 			FileAccess.Read, FileShare.Read);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -291,7 +292,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		string backupName)
 	{
 		FileSystem.File.WriteAllText(destinationName, null);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -319,9 +320,9 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		FileSystem.File.WriteAllText(sourceName, sourceContents);
 		FileSystem.File.WriteAllText(destinationName, destinationContents);
 		FileSystem.File.WriteAllText(backupName, backupContents);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
-		IFileSystem.IFileInfo result = sut.Replace(destinationName, null);
+		IFileInfo result = sut.Replace(destinationName, null);
 
 		sut.Exists.Should().BeFalse();
 		FileSystem.File.Exists(sourceName).Should().BeFalse();
@@ -342,9 +343,9 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(sourceName, sourceContents);
 		FileSystem.File.WriteAllText(destinationName, destinationContents);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
-		IFileSystem.IFileInfo result = sut.Replace(destinationName, null);
+		IFileInfo result = sut.Replace(destinationName, null);
 
 		sut.Exists.Should().BeFalse();
 		FileSystem.File.Exists(sourceName).Should().BeFalse();

@@ -1,3 +1,5 @@
+using Testably.Abstractions.FileSystem;
+
 namespace Testably.Abstractions.Tests.FileSystem;
 
 public abstract partial class FileSystemTests<TFileSystem>
@@ -12,7 +14,7 @@ public abstract partial class FileSystemTests<TFileSystem>
 		bool result = FileSystem.FileInfo.New(name).ExtensionContainer
 		   .HasWrappedInstance(out System.IO.FileInfo? fileInfo);
 
-		if (FileSystem is Abstractions.FileSystem)
+		if (FileSystem is RealFileSystem)
 		{
 			result.Should().BeTrue();
 			fileInfo!.Name.Should().Be(name);
@@ -42,7 +44,7 @@ public abstract partial class FileSystemTests<TFileSystem>
 		ExtensionContainer_RetrieveMetadata_CorrectKeyAndType_ShouldReturnStoredValue(
 			string name, DateTime time)
 	{
-		IFileSystem.IFileSystemExtensionContainer sut = FileSystem.FileInfo.New(name)
+		IFileSystemExtensionContainer sut = FileSystem.FileInfo.New(name)
 		   .ExtensionContainer;
 
 		sut.StoreMetadata("foo", time);
@@ -56,7 +58,7 @@ public abstract partial class FileSystemTests<TFileSystem>
 	public void ExtensionContainer_RetrieveMetadata_DifferentKey_ShouldReturnNull(
 		string name)
 	{
-		IFileSystem.IFileSystemExtensionContainer sut = FileSystem.FileInfo.New(name)
+		IFileSystemExtensionContainer sut = FileSystem.FileInfo.New(name)
 		   .ExtensionContainer;
 
 		sut.StoreMetadata("foo", DateTime.Now);
@@ -70,7 +72,7 @@ public abstract partial class FileSystemTests<TFileSystem>
 	public void ExtensionContainer_RetrieveMetadata_DifferentType_ShouldReturnNull(
 		string name)
 	{
-		IFileSystem.IFileSystemExtensionContainer sut = FileSystem.FileInfo.New(name)
+		IFileSystemExtensionContainer sut = FileSystem.FileInfo.New(name)
 		   .ExtensionContainer;
 
 		sut.StoreMetadata("foo", DateTime.Now);

@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions.Testing.Internal;
+﻿using Testably.Abstractions.RandomSystem;
+
+namespace Testably.Abstractions.Testing.Internal;
 
 /// <summary>
 ///     Extension methods for <see cref="IRandomSystem" /> to generate test data.
@@ -23,7 +25,7 @@ internal static class RandomSystemExtensions
 	///     If the <paramref name="fileExtension" /> is specified, it is used directly,
 	///     but a leading dot is removed.
 	/// </summary>
-	public static string GenerateFileExtension(this IRandomSystem.IRandom random,
+	public static string GenerateFileExtension(this IRandom random,
 	                                           string? fileExtension = null)
 	{
 		fileExtension ??=
@@ -37,7 +39,7 @@ internal static class RandomSystemExtensions
 	///     <para />
 	///     If the <paramref name="fileName" /> is specified, it is used directly.
 	/// </summary>
-	public static string GenerateFileName(this IRandomSystem.IRandom random,
+	public static string GenerateFileName(this IRandom random,
 	                                      string? fileName = null)
 		=> FileNames[random.Next(FileNames.Length)];
 }

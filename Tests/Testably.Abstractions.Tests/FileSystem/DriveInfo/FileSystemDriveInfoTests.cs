@@ -1,3 +1,5 @@
+using Testably.Abstractions.FileSystem;
+
 namespace Testably.Abstractions.Tests.FileSystem.DriveInfo;
 
 public abstract class FileSystemDriveInfoTests<TFileSystem>
@@ -22,7 +24,7 @@ public abstract class FileSystemDriveInfoTests<TFileSystem>
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
-		IFileSystem.IDriveInfo result =
+		IDriveInfo result =
 			FileSystem.DriveInfo.New(FileTestHelper.RootDrive());
 		string previousVolumeLabel = result.VolumeLabel;
 

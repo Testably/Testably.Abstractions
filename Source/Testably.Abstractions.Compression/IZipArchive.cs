@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO.Compression;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions;
 
 /// <inheritdoc cref="ZipArchive" />
-public interface IZipArchive : IFileSystem.IFileSystemExtensionPoint, IDisposable
+public interface IZipArchive : IFileSystemExtensionPoint, IDisposable
 {
 	/// <inheritdoc cref="ZipArchive.Entries" />
 	ReadOnlyCollection<IZipArchiveEntry> Entries { get; }

@@ -9,9 +9,9 @@ public class RandomSystemExtensionsTests
 	[Fact]
 	public void GenerateRandomFileExtension_ShouldNotStartWithDotOrReturnEmptyString()
 	{
-		RandomSystemMock randomSystem = new(
-			Testing.RandomProvider.Generate(
-				intGenerator: Testing.RandomProvider.Generator<int>.FromEnumerable(
+		MockRandomSystem randomSystem = new(
+			RandomProvider.Generate(
+				intGenerator: RandomProvider.Generator<int>.FromEnumerable(
 					Enumerable.Range(0, 1000))));
 
 		List<string> fileExtensions = new();
@@ -37,9 +37,9 @@ public class RandomSystemExtensionsTests
 	[Fact]
 	public void GenerateRandomFileName_ShouldGenerateEdgeCases()
 	{
-		RandomSystemMock randomSystem = new(
-			Testing.RandomProvider.Generate(
-				intGenerator: Testing.RandomProvider.Generator<int>.FromEnumerable(
+		MockRandomSystem randomSystem = new(
+			RandomProvider.Generate(
+				intGenerator: RandomProvider.Generator<int>.FromEnumerable(
 					Enumerable.Range(0, 1000))));
 
 		List<string> fileNames = new();

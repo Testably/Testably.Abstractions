@@ -15,7 +15,7 @@ public class InterceptionTests
 	[AutoData]
 	public void Intercept(Exception customException)
 	{
-		FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		fileSystem.Intercept.Creating(FileSystemTypes.File,
 			_ => throw customException);
 

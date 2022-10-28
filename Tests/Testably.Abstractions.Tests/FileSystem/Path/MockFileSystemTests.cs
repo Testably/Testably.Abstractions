@@ -1,8 +1,8 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
-public sealed class MockFileSystemTests : FileSystemPathTests<FileSystemMock>
+public sealed class MockFileSystemTests : FileSystemPathTests<MockFileSystem>
 {
-	public MockFileSystemTests() : base(new FileSystemMock())
+	public MockFileSystemTests() : base(new MockFileSystem())
 	{
 	}
 }

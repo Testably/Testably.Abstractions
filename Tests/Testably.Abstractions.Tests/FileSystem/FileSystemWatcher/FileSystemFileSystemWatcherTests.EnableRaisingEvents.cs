@@ -1,4 +1,5 @@
 using System.Threading;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
@@ -11,7 +12,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	{
 		FileSystem.Initialize().WithSubdirectory(path1).WithSubdirectory(path2);
 		ManualResetEventSlim ms = new();
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, _) =>
 		{
@@ -34,7 +35,7 @@ public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
 	{
 		FileSystem.Initialize().WithSubdirectory(path);
 		ManualResetEventSlim ms = new();
-		IFileSystem.IFileSystemWatcher fileSystemWatcher =
+		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, _) =>
 		{

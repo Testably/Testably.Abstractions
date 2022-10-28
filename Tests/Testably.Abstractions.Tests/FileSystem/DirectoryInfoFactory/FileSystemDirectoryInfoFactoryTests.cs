@@ -1,3 +1,5 @@
+using Testably.Abstractions.FileSystem;
+
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfoFactory;
 
 public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
@@ -52,7 +54,7 @@ public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
 	[AutoData]
 	public void New_ShouldCreateNewDirectoryInfoFromPath(string path)
 	{
-		IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
+		IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
 
 		result.ToString().Should().Be(path);
 		result.Exists.Should().BeFalse();
@@ -61,7 +63,7 @@ public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
 	[SkippableFact]
 	public void Wrap_Null_ShouldReturnNull()
 	{
-		IFileSystem.IDirectoryInfo? result = FileSystem.DirectoryInfo.Wrap(null);
+		IDirectoryInfo? result = FileSystem.DirectoryInfo.Wrap(null);
 
 		result.Should().BeNull();
 	}
@@ -72,7 +74,7 @@ public abstract class FileSystemDirectoryInfoFactoryTests<TFileSystem>
 	{
 		System.IO.DirectoryInfo directoryInfo = new("S:\\" + path);
 
-		IFileSystem.IDirectoryInfo result = FileSystem.DirectoryInfo.Wrap(directoryInfo);
+		IDirectoryInfo result = FileSystem.DirectoryInfo.Wrap(directoryInfo);
 
 		result.FullName.Should().Be(directoryInfo.FullName);
 		result.Exists.Should().Be(directoryInfo.Exists);

@@ -1,5 +1,6 @@
 #if FEATURE_FILESYSTEM_LINK
 using System.IO;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
@@ -22,7 +23,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 		FileSystem.File.WriteAllText(pathToTarget, null);
 		FileSystem.File.CreateSymbolicLink(path, targetFullPath);
 
-		IFileSystem.IFileSystemInfo? target =
+		IFileSystemInfo? target =
 			FileSystem.File.ResolveLinkTarget(path, false);
 
 		target!.FullName.Should().Be(targetFullPath);
@@ -40,7 +41,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 		FileSystem.File.Delete(pathToTarget);
 		FileSystem.File.WriteAllText(pathToTarget.ToUpper(), contents);
 
-		IFileSystem.IFileSystemInfo? target =
+		IFileSystemInfo? target =
 			FileSystem.File.ResolveLinkTarget(path, false);
 
 		if (!Test.RunsOnLinux)
@@ -73,7 +74,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 			previousPath = newPath;
 		}
 
-		IFileSystem.IFileSystemInfo? target =
+		IFileSystemInfo? target =
 			FileSystem.File.ResolveLinkTarget(previousPath, true);
 
 		target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToFinalTarget));
@@ -116,7 +117,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 			System.IO.Path.Combine(BasePath, pathToMissingFile));
 		FileSystem.File.Delete(pathToMissingFile);
 
-		IFileSystem.IFileSystemInfo? target =
+		IFileSystemInfo? target =
 			FileSystem.File.ResolveLinkTarget(path, true);
 
 		target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToMissingFile));
@@ -129,7 +130,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		IFileSystem.IFileSystemInfo? target =
+		IFileSystemInfo? target =
 			FileSystem.File.ResolveLinkTarget(path, false);
 
 		target.Should().BeNull();
@@ -142,7 +143,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(path, null);
 
-		IFileSystem.IFileSystemInfo? target =
+		IFileSystemInfo? target =
 			FileSystem.File.ResolveLinkTarget(path, false);
 
 		target.Should().BeNull();
@@ -157,7 +158,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 		FileSystem.File.WriteAllText(pathToTarget, null);
 		FileSystem.File.CreateSymbolicLink(path, targetFullPath);
 
-		IFileSystem.IFileSystemInfo? target =
+		IFileSystemInfo? target =
 			FileSystem.File.ResolveLinkTarget(path, false);
 
 		target!.FullName.Should().Be(targetFullPath);
@@ -174,7 +175,7 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 		FileSystem.File.CreateSymbolicLink(path, targetFullPath);
 		FileSystem.File.Delete(pathToTarget);
 
-		IFileSystem.IFileSystemInfo? target =
+		IFileSystemInfo? target =
 			FileSystem.File.ResolveLinkTarget(path, false);
 
 		target!.FullName.Should().Be(targetFullPath);

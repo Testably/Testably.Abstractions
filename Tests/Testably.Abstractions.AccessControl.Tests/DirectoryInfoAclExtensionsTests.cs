@@ -1,5 +1,6 @@
 ﻿using System.Security.AccessControl;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
@@ -10,7 +11,7 @@ public class DirectoryInfoAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystem fileSystem = new();
+		RealFileSystem fileSystem = new();
 		Test.SkipIfLongRunningTestsShouldBeSkipped(fileSystem);
 
 		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
@@ -36,8 +37,8 @@ public class DirectoryInfoAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystemMock fileSystem = new();
-		IFileSystem.IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
+		MockFileSystem fileSystem = new();
+		IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
 #pragma warning disable CA1416
 		DirectorySecurity directorySecurity = new();
 
@@ -53,8 +54,8 @@ public class DirectoryInfoAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystemMock fileSystem = new();
-		IFileSystem.IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
+		MockFileSystem fileSystem = new();
+		IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
 
 #pragma warning disable CA1416
 		DirectorySecurity result =
@@ -69,7 +70,7 @@ public class DirectoryInfoAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystem fileSystem = new();
+		RealFileSystem fileSystem = new();
 		Test.SkipIfLongRunningTestsShouldBeSkipped(fileSystem);
 
 		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
@@ -81,7 +82,8 @@ public class DirectoryInfoAclExtensionsTests
 			fileSystem.DirectoryInfo.New("foo").SetAccessControl(originalAccessControl);
 
 			DirectorySecurity currentAccessControl =
-				fileSystem.DirectoryInfo.New("foo").GetAccessControl(AccessControlSections.Access);
+				fileSystem.DirectoryInfo.New("foo")
+				   .GetAccessControl(AccessControlSections.Access);
 #pragma warning restore CA1416
 
 			currentAccessControl.HasSameAccessRightsAs(originalAccessControl)
@@ -95,8 +97,8 @@ public class DirectoryInfoAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystemMock fileSystem = new();
-		IFileSystem.IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
+		MockFileSystem fileSystem = new();
+		IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
 #pragma warning disable CA1416
 		DirectorySecurity directorySecurity = new();
 

@@ -1,21 +1,22 @@
 #if !DEBUG || !DISABLE_TESTS_REALFILESYSTEM
 
+using Testably.Abstractions.Testing.FileSystemInitializer;
 using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfoFactory;
 
 [Collection(nameof(DriveInfoFactory.RealFileSystemTests))]
 public sealed class RealFileSystemTests :
-	FileSystemFileInfoFactoryTests<Abstractions.FileSystem>,
+	FileSystemFileInfoFactoryTests<RealFileSystem>,
 	IDisposable
 {
 	/// <inheritdoc cref="FileSystemFileInfoFactoryTests{TFileSystem}.BasePath" />
 	public override string BasePath => _directoryCleaner.BasePath;
 
-	private readonly FileSystemInitializer.IDirectoryCleaner _directoryCleaner;
+	private readonly IDirectoryCleaner _directoryCleaner;
 
 	public RealFileSystemTests(ITestOutputHelper testOutputHelper)
-		: base(new Abstractions.FileSystem(), new Abstractions.TimeSystem())
+		: base(new RealFileSystem(), new RealTimeSystem())
 	{
 		_directoryCleaner = FileSystem
 		   .SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);

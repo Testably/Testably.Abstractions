@@ -3,7 +3,7 @@
 namespace Testably.Abstractions.Testing;
 
 /// <summary>
-///     Determines the type of an entry in the <see cref="FileSystemMock" />.
+///     Determines the type of an entry in the <see cref="MockFileSystem" />.
 /// </summary>
 [Flags]
 public enum FileSystemTypes

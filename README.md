@@ -44,7 +44,7 @@ Then you test your class with the mocked types in `Testably.Abstractions.Testing
 [Fact]
 public void StoreData_ShouldWriteValidFile()
 {
-    IFileSystem fileSystem = new FileSystemMock();
+    IFileSystem fileSystem = new MockFileSystem();
     MyService sut = new MyService(fileSystem);
 
     sut.StoreData();
@@ -66,9 +66,9 @@ public void StoreData_ShouldWriteValidFile()
 - Configure your dependeny injection framework, e.g. with `Microsoft.Extensions.DependencyInjections` in ASP.NET core:
   ```csharp
   builder.Services
-      .AddSingleton<IFileSystem, FileSystem>()
-      .AddSingleton<IRandomSystem, RandomSystem>()
-      .AddSingleton<ITimeSystem, TimeSystem>();
+      .AddSingleton<IFileSystem, RealFileSystem>()
+      .AddSingleton<IRandomSystem, RealRandomSystem>()
+      .AddSingleton<ITimeSystem, RealTimeSystem>();
   ```
 
 **You can now use the interfaces in your services!**
@@ -78,7 +78,7 @@ In order to simplify testing, the `Testably.Abstractions.Testing` projects provi
 
 These mocks are configured using fluent syntax:
 ```csharp
-new FileSystemMock()
+new MockFileSystem()
     .WithDrive("D:", d => d
         .SetTotalSize(1024*1024))
     .Initialize()

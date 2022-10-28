@@ -1,4 +1,5 @@
 using System.IO;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
@@ -10,7 +11,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	public void CreateText_MissingFile_ShouldCreateFile(
 		string path, string appendText)
 	{
-		IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
 		using (StreamWriter stream = fileInfo.CreateText())
 		{
@@ -29,7 +30,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		string path, string contents, string appendText)
 	{
 		FileSystem.File.WriteAllText(path, contents);
-		IFileSystem.IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
 		using (StreamWriter stream = fileInfo.CreateText())
 		{

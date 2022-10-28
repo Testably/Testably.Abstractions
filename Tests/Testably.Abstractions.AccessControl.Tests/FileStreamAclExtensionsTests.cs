@@ -1,5 +1,6 @@
 ﻿using System.Security.AccessControl;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
@@ -10,7 +11,7 @@ public class FileStreamAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		FileSystemStream fileStream = fileSystem.File.Create("foo");
 
 #pragma warning disable CA1416
@@ -25,7 +26,7 @@ public class FileStreamAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystem fileSystem = new();
+		RealFileSystem fileSystem = new();
 		Test.SkipIfLongRunningTestsShouldBeSkipped(fileSystem);
 
 		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
@@ -49,7 +50,7 @@ public class FileStreamAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		FileSystemStream fileStream = fileSystem.File.Create("foo");
 #pragma warning disable CA1416
 		FileSecurity fileSecurity = new();

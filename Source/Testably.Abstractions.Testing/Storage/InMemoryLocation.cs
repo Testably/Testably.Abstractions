@@ -42,7 +42,7 @@ internal sealed class InMemoryLocation : IStorageLocation
 	public string FullPath { get; }
 
 	/// <inheritdoc cref="IStorageLocation.IsRooted" />
-	public bool IsRooted { get; private set; }
+	public bool IsRooted { get; }
 
 	/// <inheritdoc cref="IEquatable{IStorageLocation}.Equals(IStorageLocation)" />
 	public bool Equals(IStorageLocation? other)

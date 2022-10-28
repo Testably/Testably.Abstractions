@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Testably.Abstractions.FileSystem;
 #if !NETFRAMEWORK
 using System.IO;
 #endif
@@ -188,7 +189,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[SkippableFact]
 	public void CreateDirectory_ShouldCreateDirectoryInBasePath()
 	{
-		IFileSystem.IDirectoryInfo result = FileSystem.Directory.CreateDirectory("foo");
+		IDirectoryInfo result = FileSystem.Directory.CreateDirectory("foo");
 		bool exists = FileSystem.Directory.Exists("foo");
 
 		exists.Should().BeTrue();
@@ -203,7 +204,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		string path =
 			FileSystem.Path.Combine(directoryLevel1, directoryLevel2, directoryLevel3);
 
-		IFileSystem.IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
+		IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
 
 		result.Name.Should().Be(directoryLevel3);
 		result.Parent!.Name.Should().Be(directoryLevel2);
@@ -224,7 +225,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		string expectedName = nameWithSuffix;
 		expectedName = expectedName.TrimEnd(' ');
 
-		IFileSystem.IDirectoryInfo result =
+		IDirectoryInfo result =
 			FileSystem.Directory.CreateDirectory(nameWithSuffix);
 
 		result.Name.Should().Be(expectedName.TrimEnd(
@@ -246,7 +247,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		string expectedName = nameWithSuffix;
 		expectedName = expectedName.TrimEnd(' ');
 
-		IFileSystem.IDirectoryInfo result =
+		IDirectoryInfo result =
 			FileSystem.Directory.CreateDirectory(nameWithSuffix);
 
 		result.Name.Should().Be(expectedName.TrimEnd(
@@ -278,7 +279,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 			return;
 		}
 
-		IFileSystem.IDirectoryInfo result =
+		IDirectoryInfo result =
 			FileSystem.Directory.CreateDirectory(nameWithSuffix);
 
 		result.Name.Should().Be(expectedName.TrimEnd(

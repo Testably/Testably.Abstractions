@@ -1,3 +1,5 @@
+using Testably.Abstractions.FileSystem;
+
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
@@ -8,9 +10,9 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	public void CreateSubdirectory_MissingParent_ShouldCreateDirectory(
 		string path, string subdirectory)
 	{
-		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 		sut.Exists.Should().BeFalse();
-		IFileSystem.IDirectoryInfo result = sut.CreateSubdirectory(subdirectory);
+		IDirectoryInfo result = sut.CreateSubdirectory(subdirectory);
 
 		sut.Exists.Should().BeFalse();
 		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
@@ -22,9 +24,9 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	[AutoData]
 	public void CreateSubdirectory_ShouldCreateDirectory(string path, string subdirectory)
 	{
-		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 		sut.Create();
-		IFileSystem.IDirectoryInfo result = sut.CreateSubdirectory(subdirectory);
+		IDirectoryInfo result = sut.CreateSubdirectory(subdirectory);
 
 		sut.Exists.Should().BeTrue();
 		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();

@@ -1,5 +1,6 @@
 ﻿using System.Security.AccessControl;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
@@ -10,7 +11,7 @@ public class DirectoryAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystem fileSystem = new();
+		RealFileSystem fileSystem = new();
 		Test.SkipIfLongRunningTestsShouldBeSkipped(fileSystem);
 
 		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
@@ -35,8 +36,8 @@ public class DirectoryAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystemMock fileSystem = new();
-		IFileSystem.IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
+		MockFileSystem fileSystem = new();
+		IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
 #pragma warning disable CA1416
 		DirectorySecurity directorySecurity = new();
 
@@ -53,7 +54,7 @@ public class DirectoryAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		fileSystem.Directory.CreateDirectory("foo");
 
 #pragma warning disable CA1416
@@ -69,7 +70,7 @@ public class DirectoryAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystem fileSystem = new();
+		RealFileSystem fileSystem = new();
 		Test.SkipIfLongRunningTestsShouldBeSkipped(fileSystem);
 
 		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
@@ -81,7 +82,8 @@ public class DirectoryAclExtensionsTests
 			fileSystem.Directory.SetAccessControl("foo", originalAccessControl);
 
 			DirectorySecurity currentAccessControl =
-				fileSystem.Directory.GetAccessControl("foo", AccessControlSections.Access);
+				fileSystem.Directory.GetAccessControl("foo",
+					AccessControlSections.Access);
 #pragma warning restore CA1416
 
 			currentAccessControl.HasSameAccessRightsAs(originalAccessControl)
@@ -95,7 +97,7 @@ public class DirectoryAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystemMock fileSystem = new();
+		MockFileSystem fileSystem = new();
 		fileSystem.Directory.CreateDirectory("foo");
 #pragma warning disable CA1416
 		DirectorySecurity directorySecurity = new();

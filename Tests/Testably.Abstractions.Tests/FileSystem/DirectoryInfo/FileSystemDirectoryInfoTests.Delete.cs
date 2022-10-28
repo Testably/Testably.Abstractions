@@ -1,4 +1,5 @@
 using System.IO;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
@@ -9,7 +10,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	[AutoData]
 	public void Delete_MissingDirectory_ShouldDeleteDirectory(string path)
 	{
-		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 		sut.Exists.Should().BeFalse();
 
 		Exception? exception = Record.Exception(() =>
@@ -29,7 +30,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	{
 		string subdirectoryPath = FileSystem.Path.Combine(path, subdirectory);
 		FileSystem.Directory.CreateDirectory(subdirectoryPath);
-		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 		sut.Exists.Should().BeTrue();
 
 		sut.Delete(true);
@@ -49,7 +50,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 	public void Delete_ShouldDeleteDirectory(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
-		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 		sut.Exists.Should().BeTrue();
 
 		sut.Delete();
@@ -69,7 +70,7 @@ public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
 		string path, string subdirectory)
 	{
 		FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(path, subdirectory));
-		IFileSystem.IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 		sut.Exists.Should().BeTrue();
 
 		Exception? exception = Record.Exception(() =>

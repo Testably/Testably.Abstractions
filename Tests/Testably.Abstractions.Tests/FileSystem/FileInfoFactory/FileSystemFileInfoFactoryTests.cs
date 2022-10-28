@@ -1,4 +1,5 @@
 using System.IO;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfoFactory;
 
@@ -68,7 +69,7 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 	[AutoData]
 	public void New_ShouldCreateNewFileInfoFromPath(string path)
 	{
-		IFileSystem.IFileInfo result = FileSystem.FileInfo.New(path);
+		IFileInfo result = FileSystem.FileInfo.New(path);
 
 		result.ToString().Should().Be(path);
 		result.Exists.Should().BeFalse();
@@ -80,7 +81,7 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(path, contents);
 
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		using StreamReader streamReader = new(sut.OpenRead());
 		string result = streamReader.ReadToEnd();
@@ -95,7 +96,7 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 
 		FileSystemStream stream = FileSystem.File.Open(path, FileMode.Open,
 			FileAccess.Read, FileShare.Write);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		long result = sut.Length;
 
@@ -107,7 +108,7 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 	[SkippableFact]
 	public void Wrap_Null_ShouldReturnNull()
 	{
-		IFileSystem.IFileInfo? result = FileSystem.FileInfo.Wrap(null);
+		IFileInfo? result = FileSystem.FileInfo.Wrap(null);
 
 		result.Should().BeNull();
 	}
@@ -118,7 +119,7 @@ public abstract class FileSystemFileInfoFactoryTests<TFileSystem>
 	{
 		System.IO.FileInfo fileInfo = new(path);
 
-		IFileSystem.IFileInfo result = FileSystem.FileInfo.Wrap(fileInfo);
+		IFileInfo result = FileSystem.FileInfo.Wrap(fileInfo);
 
 		result.FullName.Should().Be(fileInfo.FullName);
 		result.Exists.Should().Be(fileInfo.Exists);

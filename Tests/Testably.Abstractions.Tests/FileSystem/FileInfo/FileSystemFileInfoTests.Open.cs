@@ -1,4 +1,5 @@
 using System.IO;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
@@ -11,7 +12,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -27,7 +28,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	public void Open_MissingFileAndIncorrectMode_ShouldThrowFileNotFoundException(
 		string path)
 	{
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -50,7 +51,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		using FileSystemStream stream = sut.Open(mode);
 
@@ -64,7 +65,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	public void Open_AppendMode_ShouldThrowArgumentException(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -83,7 +84,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	                                              FileShare share)
 	{
 		FileSystem.File.WriteAllText(path, null);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		using FileSystemStream stream = sut.Open(FileMode.Open, access, share);
 
@@ -97,7 +98,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	                                             FileAccess access)
 	{
 		FileSystem.File.WriteAllText(path, null);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		using FileSystemStream stream = sut.Open(FileMode.Open, access);
 
@@ -115,7 +116,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 		FileShare share)
 	{
 		FileSystem.File.WriteAllText(path, null);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 		FileStreamOptions options = new()
 		{
 			Mode = FileMode.Open, Access = access, Share = share

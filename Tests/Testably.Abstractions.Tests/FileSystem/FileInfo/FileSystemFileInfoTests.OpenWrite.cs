@@ -1,4 +1,5 @@
 using System.IO;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
@@ -9,7 +10,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	[AutoData]
 	public void OpenWrite_MissingFile_ShouldCreateFile(string path)
 	{
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		using FileSystemStream stream = sut.OpenWrite();
 
@@ -21,7 +22,7 @@ public abstract partial class FileSystemFileInfoTests<TFileSystem>
 	public void OpenWrite_ShouldUseWriteAccessAndNoneShare(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
-		IFileSystem.IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		using FileSystemStream stream = sut.OpenWrite();
 

@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.IO.Compression;
 using System.Text;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions;
 
@@ -13,7 +14,7 @@ internal sealed class ZipArchiveFactory : IZipArchiveFactory
 
 	#region IZipArchiveFactory Members
 
-	/// <inheritdoc cref="IFileSystem.IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IZipArchiveFactory.New(Stream)" />

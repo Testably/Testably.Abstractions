@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Runtime.Versioning;
 using System.Security.AccessControl;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions;
 
@@ -13,7 +14,7 @@ public static class FileStreamAclExtensions
 	[SupportedOSPlatform("windows")]
 	public static FileSecurity GetAccessControl(this FileSystemStream fileStream)
 	{
-		IFileSystem.IFileSystemExtensionContainer extensionContainer =
+		IFileSystemExtensionContainer extensionContainer =
 			fileStream.ExtensionContainer;
 		return extensionContainer.HasWrappedInstance(out FileStream? fs)
 			? fs.GetAccessControl()
@@ -26,7 +27,7 @@ public static class FileStreamAclExtensions
 	public static void SetAccessControl(this FileSystemStream fileStream,
 	                                    FileSecurity fileSecurity)
 	{
-		IFileSystem.IFileSystemExtensionContainer extensionContainer =
+		IFileSystemExtensionContainer extensionContainer =
 			fileStream.ExtensionContainer;
 		if (extensionContainer.HasWrappedInstance(out FileStream? fs))
 		{

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
@@ -30,7 +31,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		GetDirectories_SearchOptionAllDirectories_FullPath_ShouldReturnAllSubdirectoriesWithFullPath(
 			string path)
 	{
-		IFileSystem.IDirectoryInfo baseDirectory =
+		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
 		baseDirectory.CreateSubdirectory("foo/xyz");
 		baseDirectory.CreateSubdirectory("bar");
@@ -52,7 +53,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		GetDirectories_SearchOptionAllDirectories_ShouldReturnAllSubdirectories(
 			string path)
 	{
-		IFileSystem.IDirectoryInfo baseDirectory =
+		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
 		baseDirectory.CreateSubdirectory("foo/xyz");
 		baseDirectory.CreateSubdirectory("bar");
@@ -83,7 +84,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	public void GetDirectories_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string subdirectoryName)
 	{
-		IFileSystem.IDirectoryInfo baseDirectory =
+		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory("foo");
 		baseDirectory.CreateSubdirectory(subdirectoryName);
 
@@ -110,7 +111,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		GetDirectories_WithEnumerationOptions_ShouldConsiderSetOptions(
 			string path)
 	{
-		IFileSystem.IDirectoryInfo baseDirectory =
+		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
 		baseDirectory.CreateSubdirectory("foo/xyz");
 		baseDirectory.CreateSubdirectory("bar");
@@ -154,7 +155,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		GetDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
 			string path)
 	{
-		IFileSystem.IDirectoryInfo baseDirectory =
+		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
 		baseDirectory.CreateSubdirectory("foo/xyz");
 		baseDirectory.CreateSubdirectory("bar");
@@ -183,7 +184,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	public void GetDirectories_WithSearchPattern_ShouldReturnMatchingSubdirectory(
 		string path)
 	{
-		IFileSystem.IDirectoryInfo baseDirectory =
+		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
 		baseDirectory.CreateSubdirectory("foo");
 		baseDirectory.CreateSubdirectory("bar");
@@ -200,7 +201,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		GetDirectories_WithSearchPatternInSubdirectory_ShouldReturnMatchingSubdirectory(
 			string path)
 	{
-		IFileSystem.IDirectoryInfo baseDirectory =
+		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
 		baseDirectory.CreateSubdirectory("foo/xyz");
 		baseDirectory.CreateSubdirectory("bar/xyz");

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.RandomSystem;
 using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Parity.Tests;
@@ -25,7 +27,7 @@ public abstract class ParityTests
 	public void IDirectory_EnsureParityWith_Directory()
 	{
 		List<string> parityErrors = Parity.Directory
-		   .GetErrorsToStaticType<IFileSystem.IDirectory>(
+		   .GetErrorsToStaticType<IDirectory>(
 				typeof(Directory),
 				_testOutputHelper);
 
@@ -36,8 +38,8 @@ public abstract class ParityTests
 	public void IDirectoryInfoAndIDirectoryInfoFactory_EnsureParityWith_DirectoryInfo()
 	{
 		List<string> parityErrors = Parity.DirectoryInfo
-		   .GetErrorsToInstanceType<IFileSystem.IDirectoryInfo,
-				IFileSystem.IDirectoryInfoFactory>(
+		   .GetErrorsToInstanceType<IDirectoryInfo,
+				IDirectoryInfoFactory>(
 				typeof(DirectoryInfo),
 				_testOutputHelper);
 
@@ -48,8 +50,8 @@ public abstract class ParityTests
 	public void IDriveInfoAndIDriveInfoFactory_EnsureParityWith_DriveInfo()
 	{
 		List<string> parityErrors = Parity.Drive
-		   .GetErrorsToInstanceType<IFileSystem.IDriveInfo,
-				IFileSystem.IDriveInfoFactory>(
+		   .GetErrorsToInstanceType<IDriveInfo,
+				IDriveInfoFactory>(
 				typeof(DriveInfo),
 				_testOutputHelper);
 
@@ -60,7 +62,7 @@ public abstract class ParityTests
 	public void IFile_EnsureParityWith_File()
 	{
 		List<string> parityErrors = Parity.File
-		   .GetErrorsToStaticType<IFileSystem.IFile>(
+		   .GetErrorsToStaticType<IFile>(
 				typeof(File),
 				_testOutputHelper);
 
@@ -71,8 +73,8 @@ public abstract class ParityTests
 	public void IFileInfoAndIFileInfoFactory_EnsureParityWith_FileInfo()
 	{
 		List<string> parityErrors = Parity.FileInfo
-		   .GetErrorsToInstanceType<IFileSystem.IFileInfo,
-				IFileSystem.IFileInfoFactory>(
+		   .GetErrorsToInstanceType<IFileInfo,
+				IFileInfoFactory>(
 				typeof(FileInfo),
 				_testOutputHelper);
 
@@ -83,7 +85,7 @@ public abstract class ParityTests
 	public void IFileSystemInfo_EnsureParityWith_FileSystemInfo()
 	{
 		List<string> parityErrors = Parity.FileSystemInfo
-		   .GetErrorsToInstanceType<IFileSystem.IFileSystemInfo>(
+		   .GetErrorsToInstanceType<IFileSystemInfo>(
 				typeof(FileSystemInfo),
 				_testOutputHelper);
 
@@ -95,8 +97,8 @@ public abstract class ParityTests
 		IFileSystemWatcherAndIFileSystemWatcherFactory_EnsureParityWith_FileSystemWatcher()
 	{
 		List<string> parityErrors = Parity.FileSystemWatcher
-		   .GetErrorsToInstanceType<IFileSystem.IFileSystemWatcher,
-				IFileSystem.IFileSystemWatcherFactory>(
+		   .GetErrorsToInstanceType<IFileSystemWatcher,
+				IFileSystemWatcherFactory>(
 				typeof(FileSystemWatcher),
 				_testOutputHelper);
 
@@ -107,7 +109,7 @@ public abstract class ParityTests
 	public void IGuid_EnsureParityWith_Guid()
 	{
 		List<string> parityErrors = Parity.Guid
-		   .GetErrorsToStaticType<IRandomSystem.IGuid>(
+		   .GetErrorsToStaticType<IGuid>(
 				typeof(Guid),
 				_testOutputHelper);
 
@@ -118,7 +120,7 @@ public abstract class ParityTests
 	public void IPath_EnsureParityWith_Path()
 	{
 		List<string> parityErrors = Parity.Path
-		   .GetErrorsToStaticType<IFileSystem.IPath>(
+		   .GetErrorsToStaticType<IPath>(
 				typeof(Path),
 				_testOutputHelper);
 
@@ -129,8 +131,8 @@ public abstract class ParityTests
 	public void IRandomAndIRandomFactory_EnsureParityWith_Random()
 	{
 		List<string> parityErrors = Parity.Random
-		   .GetErrorsToInstanceType<IRandomSystem.IRandom,
-				IRandomSystem.IRandomFactory>(
+		   .GetErrorsToInstanceType<IRandom,
+				IRandomFactory>(
 				typeof(Random),
 				_testOutputHelper);
 

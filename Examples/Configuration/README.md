@@ -35,18 +35,18 @@ Initialize the file system in "current-directory" with
 
  ### Events
  All changes in the file system trigger certain events. All events can be
- - *intercepted*, before they occur (and e.g. an exception thrown to prevent the event from completing) on the `FileSystemMock.Intercept` property:
+ - *intercepted*, before they occur (and e.g. an exception thrown to prevent the event from completing) on the `MockFileSystem.Intercept` property:
    ```csharp
-       FileSystemMock fileSystem = new();
+       MockFileSystem fileSystem = new();
            fileSystem.Intercept.Creating(FileSystemTypes.File,
                _ => throw new Exception("my custom exception"));
    ```
- - *notified*, after they occured to allow a test to react to changes on the `FileSystemMock.Notify` property:
+ - *notified*, after they occured to allow a test to react to changes on the `MockFileSystem.Notify` property:
    These methods return an awaitable object that
    - Removes the notification on dispose
    - Provides a blocking mechanism until the notification happens
    ```csharp
-       FileSystemMock fileSystem = new();
+       MockFileSystem fileSystem = new();
        fileSystem.Notify
            .OnCreated(FileSystemTypes.File, _ =>
            {

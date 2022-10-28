@@ -1,4 +1,5 @@
 ﻿using System;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Testing.Storage;
 
@@ -8,7 +9,7 @@ namespace Testably.Abstractions.Testing.Storage;
 internal interface IStorageLocation : IEquatable<IStorageLocation>
 {
 	/// <summary>
-	///     The <see cref="Drive" /> in which the <see cref="IFileSystem.IFileSystemInfo" /> is stored.
+	///     The <see cref="Drive" /> in which the <see cref="IFileSystemInfo" /> is stored.
 	/// </summary>
 	IStorageDrive? Drive { get; }
 
