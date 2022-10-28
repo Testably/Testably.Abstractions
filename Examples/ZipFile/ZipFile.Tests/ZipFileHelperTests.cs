@@ -3,6 +3,7 @@ using FluentAssertions;
 using System.IO;
 using System.IO.Compression;
 using Testably.Abstractions;
+using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing;
 using Xunit;
 
@@ -17,7 +18,7 @@ public class ZipFileHelperTests
 
 	public ZipFileHelperTests()
 	{
-		FileSystem = new FileSystemMock();
+		FileSystem = new MockFileSystem();
 		ZipFileHelper = new ZipFileHelper(FileSystem);
 	}
 
