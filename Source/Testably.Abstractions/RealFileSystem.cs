@@ -7,7 +7,7 @@ namespace Testably.Abstractions;
 ///     <para />
 ///     Implements <seealso cref="IFileSystem" />
 /// </summary>
-public sealed partial class RealFileSystem : IFileSystem
+public sealed class RealFileSystem : IFileSystem
 {
 	#region IFileSystem Members
 

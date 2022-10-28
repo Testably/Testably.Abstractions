@@ -7,7 +7,7 @@ namespace Testably.Abstractions;
 ///     <para />
 ///     Implements <seealso cref="ITimeSystem" />
 /// </summary>
-public sealed partial class RealTimeSystem : ITimeSystem
+public sealed class RealTimeSystem : ITimeSystem
 {
 	#region ITimeSystem Members
 

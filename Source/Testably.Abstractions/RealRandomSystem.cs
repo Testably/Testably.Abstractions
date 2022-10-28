@@ -7,7 +7,7 @@ namespace Testably.Abstractions;
 ///     <para />
 ///     Implements <seealso cref="IRandomSystem" />
 /// </summary>
-public sealed partial class RealRandomSystem : IRandomSystem
+public sealed class RealRandomSystem : IRandomSystem
 {
 	#region IRandomSystem Members
 
