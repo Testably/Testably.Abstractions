@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading;
-using Testably.Abstractions.Testing;
+using Testably.Abstractions.Testing.TimeSystem;
 
 namespace ThreadAwareTimeProvider;
 
-public sealed class ThreadAwareTimeProvider : MockTimeSystem.ITimeProvider
+public sealed class ThreadAwareTimeProvider : ITimeProvider
 {
 	private static readonly AsyncLocal<DateTime> Now = new();
 	private static readonly AsyncLocal<DateTime?> SynchronizedTime = new();
@@ -17,30 +17,30 @@ public sealed class ThreadAwareTimeProvider : MockTimeSystem.ITimeProvider
 
 	#region ITimeProvider Members
 
-	/// <inheritdoc cref="MockTimeSystem.ITimeProvider.MaxValue" />
+	/// <inheritdoc cref="ITimeProvider.MaxValue" />
 	public DateTime MaxValue { get; set; } = DateTime.MaxValue;
 
-	/// <inheritdoc cref="MockTimeSystem.ITimeProvider.MinValue" />
+	/// <inheritdoc cref="ITimeProvider.MinValue" />
 	public DateTime MinValue { get; set; } = DateTime.MinValue;
 
-	/// <inheritdoc cref="MockTimeSystem.ITimeProvider.UnixEpoch" />
+	/// <inheritdoc cref="ITimeProvider.UnixEpoch" />
 	public DateTime UnixEpoch { get; set; } = DateTime.UnixEpoch;
 
-	/// <inheritdoc cref="MockTimeSystem.ITimeProvider.AdvanceBy(TimeSpan)" />
+	/// <inheritdoc cref="ITimeProvider.AdvanceBy(TimeSpan)" />
 	public void AdvanceBy(TimeSpan interval)
 	{
 		CheckSynchronization();
 		Now.Value = Now.Value.Add(interval);
 	}
 
-	/// <inheritdoc cref="MockTimeSystem.ITimeProvider.Read()" />
+	/// <inheritdoc cref="ITimeProvider.Read()" />
 	public DateTime Read()
 	{
 		CheckSynchronization();
 		return Now.Value;
 	}
 
-	/// <inheritdoc cref="MockTimeSystem.ITimeProvider.SetTo(DateTime)" />
+	/// <inheritdoc cref="ITimeProvider.SetTo(DateTime)" />
 	public void SetTo(DateTime value)
 	{
 		Now.Value = value;

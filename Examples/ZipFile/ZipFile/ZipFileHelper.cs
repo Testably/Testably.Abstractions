@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.IO.Compression;
 using Testably.Abstractions;
+using Testably.Abstractions.FileSystem;
 
 namespace ZipFile;
 
@@ -36,7 +37,7 @@ public sealed class ZipFileHelper
 	/// </summary>
 	/// <param name="stream">
 	///     The stream containing the zip archive.<br />
-	///     E.g. with <see cref="IFileSystem.IFile.OpenRead(string)" /> from the file system.
+	///     E.g. with <see cref="IFile.OpenRead(string)" /> from the file system.
 	/// </param>
 	/// <param name="directory">
 	///     The destination directory in which to extract the <see cref="ZipArchiveEntry" />s from the zip

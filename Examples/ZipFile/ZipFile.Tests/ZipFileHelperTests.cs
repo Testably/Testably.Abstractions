@@ -5,6 +5,7 @@ using System.IO.Compression;
 using Testably.Abstractions;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing;
+using Testably.Abstractions.Testing.FileSystemInitializer;
 using Xunit;
 
 namespace ZipFile.Tests;
@@ -28,7 +29,7 @@ public class ZipFileHelperTests
 	[AutoData]
 	public void CreateZipFromDirectory_ShouldIncludeAllFilesAndSubdirectories(string directory)
 	{
-		FileSystemInitializer.IFileSystemDirectoryInitializer<IFileSystem> initialized
+		IFileSystemDirectoryInitializer<IFileSystem> initialized
 			= FileSystem.Initialize()
 				.WithSubdirectory(directory).Initialized(s => s
 					.WithAFile(".txt")
@@ -59,7 +60,7 @@ public class ZipFileHelperTests
 	[AutoData]
 	public void ExtractZipToDirectory_ShouldExtractAllFilesAndDirectories(string directory)
 	{
-		FileSystemInitializer.IFileSystemDirectoryInitializer<IFileSystem> initialized
+		IFileSystemDirectoryInitializer<IFileSystem> initialized
 			= FileSystem.Initialize()
 				.WithSubdirectory("source").Initialized(s => s
 					.WithAFile(".txt")
