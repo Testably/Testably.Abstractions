@@ -98,9 +98,6 @@ jobs:
         with:
           name: Code coverage (Ubuntu)
           path: "**/coverage.cobertura.xml"
-        with:
-          dotnet-version: |
-            6.0.x
 
   test-windows:
     name: Test (Windows)
