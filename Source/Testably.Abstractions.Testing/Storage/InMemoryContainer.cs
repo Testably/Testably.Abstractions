@@ -324,11 +324,12 @@ internal class InMemoryContainer : IStorageContainer
 
 		public bool GrantAccess(FileAccess access, FileShare share)
 		{
+			FileShare usedShare = share;
 			Execute.NotOnWindows(()
-				=> share = FileShare.ReadWrite);
+				=> usedShare = FileShare.ReadWrite);
 
 			return CheckAccessWithShare(access, Share) &&
-			       CheckAccessWithShare(Access, share);
+			       CheckAccessWithShare(Access, usedShare);
 		}
 
 		private static bool CheckAccessWithShare(FileAccess access, FileShare share)
