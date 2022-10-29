@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Parity.Tests.TestHelpers;
@@ -58,4 +59,10 @@ public class Parity
 	});
 
 	public ParityCheck Random = new();
+	public ParityCheck ZipArchive = new();
+	public ParityCheck ZipArchiveEntry = new(excludeMethods: new[]
+	{
+		typeof(ZipArchiveEntry).GetMethod(nameof(ToString))
+	});
+	public ParityCheck ZipFile = new();
 }

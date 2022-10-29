@@ -261,12 +261,18 @@ internal static class ParityCheckHelper
 			return false;
 		}
 
-		if (systemProperty.CanRead != abstractionProperty.CanRead)
+		var canRead = systemProperty.CanRead &&
+		               !systemProperty.GetMethod.Attributes
+			              .HasFlag(MethodAttributes.Private);
+		if (canRead != abstractionProperty.CanRead)
 		{
 			return false;
 		}
 
-		if (systemProperty.CanWrite != abstractionProperty.CanWrite)
+		var canWrite = systemProperty.CanWrite &&
+		               !systemProperty.SetMethod.Attributes
+			              .HasFlag(MethodAttributes.Private);
+		if (canWrite != abstractionProperty.CanWrite)
 		{
 			return false;
 		}

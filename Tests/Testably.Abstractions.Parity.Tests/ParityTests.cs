@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.RandomSystem;
 using Xunit.Abstractions;
@@ -134,6 +135,39 @@ public abstract class ParityTests
 		   .GetErrorsToInstanceType<IRandom,
 				IRandomFactory>(
 				typeof(Random),
+				_testOutputHelper);
+
+		parityErrors.Should().BeEmpty();
+	}
+
+	[Fact]
+	public void IZipArchive_EnsureParityWith_ZipArchive()
+	{
+		List<string> parityErrors = Parity.ZipArchive
+		   .GetErrorsToInstanceType<IZipArchive>(
+				typeof(ZipArchive),
+				_testOutputHelper);
+
+		parityErrors.Should().BeEmpty();
+	}
+
+	[Fact]
+	public void IZipArchiveEntry_EnsureParityWith_ZipArchiveEntry()
+	{
+		List<string> parityErrors = Parity.ZipArchiveEntry
+		   .GetErrorsToInstanceType<IZipArchiveEntry>(
+				typeof(ZipArchiveEntry),
+				_testOutputHelper);
+
+		parityErrors.Should().BeEmpty();
+	}
+
+	[Fact]
+	public void IZipFile_EnsureParityWith_ZipFile()
+	{
+		List<string> parityErrors = Parity.ZipFile
+		   .GetErrorsToStaticType<IZipFile>(
+				typeof(ZipFile),
 				_testOutputHelper);
 
 		parityErrors.Should().BeEmpty();
