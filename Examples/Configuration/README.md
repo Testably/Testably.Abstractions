@@ -43,8 +43,8 @@ Initialize the file system in "current-directory" with
    ```
  - _notified_, after they occured to allow a test to react to changes on the `MockFileSystem.Notify` property:
    These methods return an awaitable object that
-   * Removes the notification on dispose
-   * Provides a blocking mechanism until the notification happens
+   - Removes the notification on dispose
+   - Provides a blocking mechanism until the notification happens
    ```csharp
        MockFileSystem fileSystem = new();
        fileSystem.Notify
