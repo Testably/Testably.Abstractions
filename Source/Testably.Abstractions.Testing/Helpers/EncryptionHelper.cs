@@ -3,7 +3,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Testably.Abstractions.Testing.Internal;
+namespace Testably.Abstractions.Testing.Helpers;
 
 internal static class EncryptionHelper
 {

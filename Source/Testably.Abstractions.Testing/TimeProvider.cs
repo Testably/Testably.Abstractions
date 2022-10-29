@@ -1,5 +1,5 @@
 ﻿using System;
-using Testably.Abstractions.Testing.Internal;
+using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.TimeSystem;
 
 namespace Testably.Abstractions.Testing;

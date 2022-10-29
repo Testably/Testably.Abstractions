@@ -1,7 +1,7 @@
 ﻿using System;
 using Testably.Abstractions.Helpers;
 using Testably.Abstractions.RandomSystem;
-using Testably.Abstractions.Testing.Internal;
+using Testably.Abstractions.Testing.Helpers;
 using static Testably.Abstractions.Testing.RandomProvider;
 
 namespace Testably.Abstractions.Testing.RandomSystem;

@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Testably.Abstractions.FileSystem;
 
-namespace Testably.Abstractions.Testing.Internal;
+namespace Testably.Abstractions.Testing.Helpers;
 
 internal class FileSystemExtensionContainer : IFileSystemExtensionContainer
 {
