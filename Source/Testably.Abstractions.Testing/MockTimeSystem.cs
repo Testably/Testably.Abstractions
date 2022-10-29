@@ -14,7 +14,7 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// <summary>
 	///     The callback handler for the <see cref="MockTimeSystem" />
 	/// </summary>
-	public ICallbackHandler On
+	public INotificationHandler On
 		=> _callbackHandler;
 
 	/// <summary>
@@ -22,7 +22,7 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// </summary>
 	public ITimeProvider TimeProvider { get; }
 
-	private readonly MockTimeSystemCallbackHandler _callbackHandler;
+	private readonly NotificationHandler _callbackHandler;
 	private readonly DateTimeMock _dateTimeMock;
 	private readonly TaskMock _taskMock;
 	private readonly ThreadMock _threadMock;
@@ -47,7 +47,7 @@ public sealed class MockTimeSystem : ITimeSystem
 	public MockTimeSystem(ITimeProvider timeProvider)
 	{
 		TimeProvider = timeProvider;
-		_callbackHandler = new MockTimeSystemCallbackHandler();
+		_callbackHandler = new NotificationHandler();
 		_dateTimeMock = new DateTimeMock(this, _callbackHandler);
 		_threadMock = new ThreadMock(this, _callbackHandler);
 		_taskMock = new TaskMock(this, _callbackHandler);

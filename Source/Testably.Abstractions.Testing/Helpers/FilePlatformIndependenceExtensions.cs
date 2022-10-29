@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace Testably.Abstractions.Testing.Internal;
+namespace Testably.Abstractions.Testing.Helpers;
 
 /// <summary>
 ///     Provides extension methods to simplify writing platform independent tests.

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using Testably.Abstractions.FileSystem;
-using Testably.Abstractions.Testing.Internal;
+using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.Storage;

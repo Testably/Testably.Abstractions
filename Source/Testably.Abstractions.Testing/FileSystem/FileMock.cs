@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Testably.Abstractions.FileSystem;
-using Testably.Abstractions.Testing.Internal;
+using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;

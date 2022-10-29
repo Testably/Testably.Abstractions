@@ -1,6 +1,6 @@
 ﻿using Testably.Abstractions.RandomSystem;
 
-namespace Testably.Abstractions.Testing.Internal;
+namespace Testably.Abstractions.Testing.Helpers;
 
 /// <summary>
 ///     Extension methods for <see cref="IRandomSystem" /> to generate test data.

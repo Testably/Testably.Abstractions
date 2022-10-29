@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Threading;
-using Testably.Abstractions.Testing.Internal;
+using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.TimeSystem;
 
 internal sealed class ThreadMock : IThread
 {
-	private readonly MockTimeSystemCallbackHandler _callbackHandler;
+	private readonly NotificationHandler _callbackHandler;
 	private readonly MockTimeSystem _mockTimeSystem;
 
 	internal ThreadMock(MockTimeSystem timeSystem,
-						MockTimeSystemCallbackHandler callbackHandler)
+						NotificationHandler callbackHandler)
 	{
 		_mockTimeSystem = timeSystem;
 		_callbackHandler = callbackHandler;

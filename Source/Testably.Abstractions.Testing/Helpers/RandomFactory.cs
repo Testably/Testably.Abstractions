@@ -2,7 +2,7 @@
 using Testably.Abstractions.Helpers;
 using Testably.Abstractions.RandomSystem;
 
-namespace Testably.Abstractions.Testing.Internal;
+namespace Testably.Abstractions.Testing.Helpers;
 
 internal static class RandomFactory
 {

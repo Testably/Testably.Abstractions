@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Testably.Abstractions.Testing.Internal;
+namespace Testably.Abstractions.Testing.Helpers;
 
 internal static class ExceptionFactory
 {
