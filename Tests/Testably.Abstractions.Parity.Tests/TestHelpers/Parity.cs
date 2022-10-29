@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Parity.Tests.TestHelpers;
@@ -11,51 +12,57 @@ public class Parity
 		{ nameof(FileStream), nameof(FileSystemStream) }
 	};
 
-	public ParityCheck Directory = new();
+	public ParityCheck Directory { get; } = new();
 
-	public ParityCheck DirectoryInfo = new(excludeMethods: new[]
+	public ParityCheck DirectoryInfo { get; } = new(excludeMethods: new[]
 	{
 		typeof(DirectoryInfo).GetMethod(nameof(System.IO.DirectoryInfo
 		   .GetObjectData)),
 		typeof(DirectoryInfo).GetMethod(nameof(System.IO.DirectoryInfo.ToString))
 	});
 
-	public ParityCheck Drive = new(excludeMethods: new[]
+	public ParityCheck Drive { get; } = new(excludeMethods: new[]
 	{
 		typeof(DriveInfo).GetMethod(nameof(DriveInfo.ToString))
 	});
 
-	public ParityCheck File = new();
+	public ParityCheck File { get; } = new();
 
-	public ParityCheck FileInfo = new(excludeMethods: new[]
+	public ParityCheck FileInfo { get; } = new(excludeMethods: new[]
 	{
 		typeof(FileInfo).GetMethod(nameof(System.IO.FileInfo.GetObjectData)),
 		typeof(FileInfo).GetMethod(nameof(System.IO.FileInfo.ToString))
 	});
 
-	public ParityCheck FileStream = new();
+	public ParityCheck FileStream { get; } = new();
 
-	public ParityCheck FileSystemInfo = new(excludeMethods: new[]
+	public ParityCheck FileSystemInfo { get; } = new(excludeMethods: new[]
 	{
 		typeof(FileSystemInfo).GetMethod(
 			nameof(System.IO.FileSystemInfo.GetObjectData)),
 		typeof(FileSystemInfo).GetMethod(nameof(ToString))
 	});
 
-	public ParityCheck FileSystemWatcher = new(excludeMethods: new[]
+	public ParityCheck FileSystemWatcher { get; } = new(excludeMethods: new[]
 	{
 		typeof(FileSystemWatcher).GetMethod(
 			nameof(System.IO.FileSystemWatcher.ToString))
 	});
 
-	public ParityCheck Guid = new();
+	public ParityCheck Guid { get; } = new();
 
-	public ParityCheck Path = new(excludeFields: new[]
+	public ParityCheck Path { get; } = new(excludeFields: new[]
 	{
 #pragma warning disable CS0618
 		typeof(Path).GetField(nameof(System.IO.Path.InvalidPathChars))
 #pragma warning restore CS0618
 	});
 
-	public ParityCheck Random = new();
+	public ParityCheck Random { get; } = new();
+	public ParityCheck ZipArchive { get; } = new();
+	public ParityCheck ZipArchiveEntry { get; } = new(excludeMethods: new[]
+	{
+		typeof(ZipArchiveEntry).GetMethod(nameof(ToString))
+	});
+	public ParityCheck ZipFile { get; } = new();
 }

@@ -1,5 +1,6 @@
 ﻿#if NET472
 using System.IO;
+using System.IO.Compression;
 using System.Security.AccessControl;
 using Xunit.Abstractions;
 
@@ -120,6 +121,13 @@ public class Net472ParityTests : ParityTests
 		Parity.Path.MissingMethods.Add(typeof(Path).GetMethod(
 			nameof(Path.GetFileNameWithoutExtension),
 			new[] { typeof(string) }));
+
+		#endregion
+
+		#region ZipArchiveEntry
+
+		Parity.ZipArchiveEntry.MissingProperties.Add(typeof(ZipArchiveEntry).GetProperty(
+			nameof(ZipArchiveEntry.ExternalAttributes)));
 
 		#endregion
 	}

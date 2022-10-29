@@ -5,6 +5,33 @@ namespace Testably.Abstractions.Parity.Tests.TestHelpers;
 
 internal static class ParityCheckHelper
 {
+	public static bool ContainsEquivalentExtensionMethod(this Type abstractionType,
+	                                                     MethodInfo systemMethod)
+	{
+		foreach (MethodInfo abstractionMethod in abstractionType
+		   .GetMethods(
+				BindingFlags.Public |
+				BindingFlags.Instance |
+				BindingFlags.FlattenHierarchy)
+		   .Where(x => x.Name == systemMethod.Name))
+		{
+			if (AreExtensionMethodsEqual(systemMethod, abstractionMethod))
+			{
+				return true;
+			}
+		}
+
+		foreach (Type @interface in abstractionType.GetInterfaces())
+		{
+			if (@interface.ContainsEquivalentMethod(systemMethod))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public static bool ContainsEquivalentMethod(this Type abstractionType,
 	                                            MethodInfo systemMethod)
 	{
@@ -117,10 +144,11 @@ internal static class ParityCheckHelper
 			$"{property.FieldType.PrintType()} {namePrefix}{property.Name}{{ {(property.IsInitOnly ? "get; " : "get; set; ")}}}";
 	}
 
-	public static string PrintMethod(this MethodInfo method, string namePrefix = "")
+	public static string PrintMethod(this MethodInfo method, string namePrefix = "",
+	                                 string firstParameterPrefix = "")
 	{
 		return
-			$"{method.ReturnType.PrintType()} {namePrefix}{method.Name}({string.Join(", ", method.GetParameters().Select(x => x.ParameterType.PrintType() + " " + x.Name))})";
+			$"{method.ReturnType.PrintType()} {namePrefix}{method.Name}({firstParameterPrefix}{string.Join(", ", method.GetParameters().Select(x => x.ParameterType.PrintType() + " " + x.Name))})";
 	}
 
 	public static string PrintProperty(this PropertyInfo property, string namePrefix = "")
@@ -149,6 +177,62 @@ internal static class ParityCheckHelper
 		}
 
 		return type.Name;
+	}
+
+	internal static bool IsTypeNameEqual(string? systemTypeName,
+	                                     string? abstractionTypeName)
+	{
+		if (abstractionTypeName == null)
+		{
+			return systemTypeName == null;
+		}
+
+		return systemTypeName != null &&
+		       (abstractionTypeName.Equals(systemTypeName) ||
+		        abstractionTypeName.Equals("I" + systemTypeName) ||
+		        (Parity.AcceptedTypeMapping.TryGetValue(systemTypeName,
+			         out string? acceptedName) &&
+		         acceptedName.Equals(abstractionTypeName)));
+	}
+
+	private static bool AreExtensionMethodsEqual(MethodInfo systemMethod,
+	                                             MethodInfo abstractionMethod)
+	{
+		ParameterInfo[] systemParameters = systemMethod.GetParameters();
+		ParameterInfo[] abstractionParameters = abstractionMethod.GetParameters();
+		if (systemParameters.Length - 1 != abstractionParameters.Length)
+		{
+			return false;
+		}
+
+		for (int i = 0; i < systemParameters.Length - 1; i++)
+		{
+			if (!string.Equals(systemParameters[i + 1].Name,
+				abstractionParameters[i].Name))
+			{
+				return false;
+			}
+
+			if (!Equals(systemParameters[i + 1].DefaultValue,
+				abstractionParameters[i].DefaultValue))
+			{
+				return false;
+			}
+
+			if (!IsTypeNameEqual(systemParameters[i + 1].ParameterType.Name,
+				abstractionParameters[i].ParameterType.Name))
+			{
+				return false;
+			}
+		}
+
+		if (!IsTypeNameEqual(systemMethod.ReturnParameter.ParameterType.Name,
+			abstractionMethod.ReturnParameter.ParameterType.Name))
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 	private static bool AreMethodsEqual(MethodInfo systemMethod,
@@ -261,32 +345,22 @@ internal static class ParityCheckHelper
 			return false;
 		}
 
-		if (systemProperty.CanRead != abstractionProperty.CanRead)
+		bool canRead = systemProperty.CanRead &&
+		               systemProperty.GetMethod?.Attributes
+			              .HasFlag(MethodAttributes.Private) == false;
+		if (canRead != abstractionProperty.CanRead)
 		{
 			return false;
 		}
 
-		if (systemProperty.CanWrite != abstractionProperty.CanWrite)
+		bool canWrite = systemProperty.CanWrite &&
+		                systemProperty.SetMethod?.Attributes
+			               .HasFlag(MethodAttributes.Private) == false;
+		if (canWrite != abstractionProperty.CanWrite)
 		{
 			return false;
 		}
 
 		return true;
-	}
-
-	private static bool IsTypeNameEqual(string? systemTypeName,
-	                                    string? abstractionTypeName)
-	{
-		if (abstractionTypeName == null)
-		{
-			return systemTypeName == null;
-		}
-
-		return systemTypeName != null &&
-		       (abstractionTypeName.Equals(systemTypeName) ||
-		        abstractionTypeName.Equals("I" + systemTypeName) ||
-		        (Parity.AcceptedTypeMapping.TryGetValue(systemTypeName,
-			         out string? acceptedName) &&
-		         acceptedName.Equals(abstractionTypeName)));
 	}
 }
