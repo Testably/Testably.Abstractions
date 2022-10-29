@@ -1,0 +1,6 @@
+engines:
+  duplication:
+    exclude_paths:
+      - "Tests/**"
+exclude_paths:
+  - ".github/**"
