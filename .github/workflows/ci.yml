@@ -70,7 +70,7 @@ jobs:
       - name: Prepare Reports directory
         shell: bash
         run: |
-          mkdir Tests/StrykerOutput/Reports
+          mkdir Tests/StrykerOutput/Reports -p
       - name: Analyze Testably.Abstractions
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
@@ -145,7 +145,12 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
-        run: dotnet test --no-build
+        run: dotnet test --no-build --collect:"XPlat Code Coverage"
+      - name: Upload coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: Code coverage MacOS
+          path: "**/coverage.cobertura.xml"
 
   test-ubuntu:
     name: Test (Ubuntu)
@@ -163,7 +168,12 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
-        run: dotnet test --no-build
+        run: dotnet test --no-build --collect:"XPlat Code Coverage"
+      - name: Upload coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: Code coverage Ubuntu
+          path: "**/coverage.cobertura.xml"
 
   test-windows:
     name: Test (Windows)
@@ -181,7 +191,12 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
-        run: dotnet test --no-build
+        run: dotnet test --no-build --collect:"XPlat Code Coverage"
+      - name: Upload coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: Code coverage Windows
+          path: "**/coverage.cobertura.xml"
         
   test-net-framework:
     name: Test (.NET Framework)
