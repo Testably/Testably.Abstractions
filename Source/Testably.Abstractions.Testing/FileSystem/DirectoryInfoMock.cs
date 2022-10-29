@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Testably.Abstractions.FileSystem;
-using Testably.Abstractions.Testing.Internal;
+using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;

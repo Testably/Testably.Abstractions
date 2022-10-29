@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.RandomSystem;
-using Testably.Abstractions.Testing.Internal;
+using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 

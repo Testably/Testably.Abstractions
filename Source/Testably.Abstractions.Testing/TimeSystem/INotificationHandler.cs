@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 /// <summary>
 ///     The callback handler for the <see cref="MockTimeSystem" />
 /// </summary>
-public interface ICallbackHandler
+public interface INotificationHandler
 {
 	/// <summary>
 	///     Callback executed when any of the following <c>DateTime</c> read methods is called:<br />

@@ -1,10 +1,14 @@
 ﻿using System;
 using System.IO;
 using Testably.Abstractions.Testing.FileSystem;
+using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing;
 
-public static partial class MockFileSystemExtensions
+/// <summary>
+///     Extension methods for the <see cref="IInterceptionHandler" />
+/// </summary>
+public static class InterceptionHandlerExtensions
 {
 	/// <summary>
 	///     Callback executed before a <paramref name="fileSystemType" /> under <paramref name="path" /> matching the

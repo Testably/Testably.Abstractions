@@ -3,7 +3,7 @@ using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
-public class MockTimeSystemCallbackHandlerTests
+public class NotificationHandlerTests
 {
 	[Fact]
 	public void
