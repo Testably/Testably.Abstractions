@@ -367,7 +367,10 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private void Stop()
 	{
-		_cancellationTokenSource?.Cancel();
+		if (_cancellationTokenSource?.IsCancellationRequested == false)
+		{
+			_cancellationTokenSource.Cancel();
+		}
 		_changeHandler?.Dispose();
 	}
 
