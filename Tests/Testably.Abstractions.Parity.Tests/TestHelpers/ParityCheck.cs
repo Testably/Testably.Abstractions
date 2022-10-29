@@ -41,6 +41,15 @@ public class ParityCheck
 		}
 	}
 
+	public List<string> GetErrorsToExtensionMethods<TAbstraction>(
+		Type systemType, ITestOutputHelper testOutputHelper)
+	{
+		List<string> parityErrors = new();
+		parityErrors.AddRange(GetParityErrorsBetweenExtensionMethods<TAbstraction>(
+			systemType, testOutputHelper));
+		return parityErrors;
+	}
+
 	public List<string> GetErrorsToInstanceType<TAbstraction>(
 		Type systemType, ITestOutputHelper testOutputHelper)
 	{
@@ -75,6 +84,36 @@ public class ParityCheck
 		parityErrors.AddRange(GetParityErrorsBetweenStaticMethods<TAbstraction>(
 			systemType, testOutputHelper));
 		return parityErrors;
+	}
+
+	private IEnumerable<string> GetParityErrorsBetweenExtensionMethods<TAbstraction>(
+		Type systemType, ITestOutputHelper testOutputHelper)
+	{
+		foreach (MethodInfo method in systemType
+		   .GetMethods(
+				BindingFlags.Public |
+				BindingFlags.Static)
+		   .Where(f => !MissingMethods.Contains(f))
+		   .Where(f => !f.IsSpecialName)
+		   .OrderBy(f => f.Name)
+		   .ThenBy(m => m.GetParameters().Length))
+		{
+			ParameterInfo? firstParameter = method.GetParameters().FirstOrDefault();
+			if (firstParameter == null ||
+			    !ParityCheckHelper.IsTypeNameEqual(firstParameter.ParameterType.Name,
+				    typeof(TAbstraction).Name))
+			{
+				continue;
+			}
+
+			testOutputHelper.WriteLine(
+				$"Check parity for static method {method.PrintMethod($"{systemType.Name}.", "this ")}");
+			if (!typeof(TAbstraction)
+			   .ContainsEquivalentExtensionMethod(method))
+			{
+				yield return method.PrintMethod();
+			}
+		}
 	}
 
 	private static IEnumerable<string> GetParityErrorsBetweenInstanceConstructors<

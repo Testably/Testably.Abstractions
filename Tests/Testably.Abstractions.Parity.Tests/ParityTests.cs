@@ -152,11 +152,33 @@ public abstract class ParityTests
 	}
 
 	[Fact]
+	public void IZipArchive_EnsureParityWith_ZipFileExtensions()
+	{
+		List<string> parityErrors = Parity.ZipArchive
+		   .GetErrorsToExtensionMethods<IZipArchive>(
+				typeof(ZipFileExtensions),
+				_testOutputHelper);
+
+		parityErrors.Should().BeEmpty();
+	}
+
+	[Fact]
 	public void IZipArchiveEntry_EnsureParityWith_ZipArchiveEntry()
 	{
 		List<string> parityErrors = Parity.ZipArchiveEntry
 		   .GetErrorsToInstanceType<IZipArchiveEntry>(
 				typeof(ZipArchiveEntry),
+				_testOutputHelper);
+
+		parityErrors.Should().BeEmpty();
+	}
+
+	[Fact]
+	public void IZipArchiveEntry_EnsureParityWith_ZipFileExtensions()
+	{
+		List<string> parityErrors = Parity.ZipArchiveEntry
+		   .GetErrorsToExtensionMethods<IZipArchiveEntry>(
+				typeof(ZipFileExtensions),
 				_testOutputHelper);
 
 		parityErrors.Should().BeEmpty();
