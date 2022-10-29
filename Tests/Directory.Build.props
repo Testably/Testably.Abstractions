@@ -14,6 +14,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
     <NoWarn>701;1702;CA1845</NoWarn>
     <OutputPath>..\..\Build\Tests\$(MSBuildProjectName)</OutputPath>
   </PropertyGroup>
