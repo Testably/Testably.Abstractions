@@ -38,6 +38,7 @@ public static class Test
 		Skip.If(fileSystem is RealFileSystem,
 			"Long-Running tests are skipped in DEBUG mode unless the build constant 'INCLUDE_LONG_RUNNING_TESTS_ALSO_IN_DEBUG_MODE' is set.");
 #endif
+		// Do nothing when in release mode or `INCLUDE_LONGRUNNING_TESTS_ALSO_IN_DEBUG_MODE` is set
 	}
 
 	public static void SkipIfTestsOnRealFileSystemShouldBeSkipped(IFileSystem fileSystem)
@@ -49,5 +50,6 @@ public static class Test
 		Skip.If(fileSystem is Abstractions.FileSystem,
 			"Tests against real FileSystem are skipped in DEBUG mode with the build constant 'SKIP_TESTS_ON_REAL_FILESYSTEM'.");
 #endif
+		// Do nothing when in release mode or `SKIP_TESTS_ON_REAL_FILESYSTEM` is not set
 	}
 }
