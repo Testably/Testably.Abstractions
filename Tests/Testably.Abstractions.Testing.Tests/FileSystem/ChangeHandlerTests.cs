@@ -47,7 +47,7 @@ public class ChangeHandlerTests
 		});
 
 		exception.Should().Be(exceptionToThrow);
-		receivedPath.Should().BeNull();
+		receivedPath!.Should().BeNull();
 	}
 
 	[SkippableTheory]

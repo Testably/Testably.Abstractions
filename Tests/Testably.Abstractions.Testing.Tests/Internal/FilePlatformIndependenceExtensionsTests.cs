@@ -11,7 +11,7 @@ public class FilePlatformIndependenceExtensionsTests
 	{
 		string? path = null;
 
-		path = path.NormalizePath();
+		path = path!.NormalizePath();
 
 		path.Should().BeNull();
 	}
@@ -75,7 +75,7 @@ public class FilePlatformIndependenceExtensionsTests
 	{
 		string? path = null;
 
-		string? result = path.PrefixRoot();
+		string? result = path!.PrefixRoot();
 
 		result.Should().BeNull();
 	}

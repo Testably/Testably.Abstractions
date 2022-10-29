@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Compression;
 using Testably.Abstractions.FileSystem;
@@ -7,10 +8,11 @@ namespace Testably.Abstractions.Parity.Tests.TestHelpers;
 
 public class Parity
 {
-	public static readonly Dictionary<string, string> AcceptedTypeMapping = new()
-	{
-		{ nameof(FileStream), nameof(FileSystemStream) }
-	};
+	public static readonly ReadOnlyDictionary<string, string> AcceptedTypeMapping = new(
+		new Dictionary<string, string>
+		{
+			{ nameof(FileStream), nameof(FileSystemStream) }
+		});
 
 	public ParityCheck Directory { get; } = new();
 
@@ -60,9 +62,11 @@ public class Parity
 
 	public ParityCheck Random { get; } = new();
 	public ParityCheck ZipArchive { get; } = new();
+
 	public ParityCheck ZipArchiveEntry { get; } = new(excludeMethods: new[]
 	{
 		typeof(ZipArchiveEntry).GetMethod(nameof(ToString))
 	});
+
 	public ParityCheck ZipFile { get; } = new();
 }

@@ -51,7 +51,7 @@ public class PathHelperTests
 	{
 		string? path = null;
 
-		bool result = path.IsUncPath();
+		bool result = path!.IsUncPath();
 
 		result.Should().BeFalse();
 	}

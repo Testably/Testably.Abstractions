@@ -7,13 +7,15 @@ namespace Testably.Abstractions.Parity.Tests.TestHelpers;
 
 public class ParityCheck
 {
-	public List<Type> ExcludedBaseTypes =
-		new() { typeof(object), typeof(MarshalByRefObject) };
+	public List<Type> ExcludedBaseTypes { get; } = new()
+	{
+		typeof(object), typeof(MarshalByRefObject)
+	};
 
-	public List<FieldInfo?> MissingFields = new();
+	public List<FieldInfo?> MissingFields { get; } = new();
 
-	public List<MethodInfo?> MissingMethods = new();
-	public List<PropertyInfo?> MissingProperties = new();
+	public List<MethodInfo?> MissingMethods { get; } = new();
+	public List<PropertyInfo?> MissingProperties { get; } = new();
 
 	public ParityCheck(Type[]? excludeBaseTypes = null,
 	                   FieldInfo?[]? excludeFields = null,
