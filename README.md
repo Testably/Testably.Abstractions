@@ -7,15 +7,15 @@
 
 At the core of this library are the abstraction interfaces, which allow replacing system dependencies:
 
- - The `IFileSystem` interface abstracts away all I/O-related functionality from the `System.IO` namespace:  
-   Static methods are directly implemented on the `IFileSystem` interface.
-   Constructors are implemented as factory methods, e.g. `IFileSystem.FileInfo.New(string)` instead of `new FileInfo(string)`.
+- The `IFileSystem` interface abstracts away all I/O-related functionality from the `System.IO` namespace:  
+  Static methods are directly implemented on the `IFileSystem` interface.
+  Constructors are implemented as factory methods, e.g. `IFileSystem.FileInfo.New(string)` instead of `new FileInfo(string)`.
 
- - The `ITimeSystem` interface abstracts away time-related functionality:  
-   `DateTime` methods give access to the current time, `Thread` allows replacing `Thread.Sleep` and `Task` allows replacing `Task.Delay`.
+- The `ITimeSystem` interface abstracts away time-related functionality:  
+  `DateTime` methods give access to the current time, `Thread` allows replacing `Thread.Sleep` and `Task` allows replacing `Task.Delay`.
 
- - The `IRandomSystem` interface abstracts away functionality related to randomness:  
-   `Random` methods implement a thread-safe Shared instance also under .NET Framework and `Guid` methods allow creating new GUIDs.
+- The `IRandomSystem` interface abstracts away functionality related to randomness:  
+  `Random` methods implement a thread-safe Shared instance also under .NET Framework and `Guid` methods allow creating new GUIDs.
 
 # Example
 Use the interfaces and their default implementations using your prefered dependency injection method, e.g.:
