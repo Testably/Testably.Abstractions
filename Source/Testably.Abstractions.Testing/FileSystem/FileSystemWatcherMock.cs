@@ -43,7 +43,7 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		_fileSystem = fileSystem;
 		_changes =
 			new BlockingCollection<ChangeDescription>(InternalBufferSize /
-			                                          BytesPerMessage);
+													  BytesPerMessage);
 	}
 
 	#region IFileSystemWatcher Members
@@ -113,8 +113,8 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		get;
 		set;
 	} = NotifyFilters.FileName |
-	    NotifyFilters.DirectoryName |
-	    NotifyFilters.LastWrite;
+		NotifyFilters.DirectoryName |
+		NotifyFilters.LastWrite;
 
 	/// <inheritdoc cref="IFileSystemWatcher.Path" />
 	public string Path
@@ -325,7 +325,8 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		}
 
 		Stop();
-		_cancellationTokenSource = new CancellationTokenSource();
+		CancellationTokenSource cancellationTokenSource = new();
+		_cancellationTokenSource = cancellationTokenSource;
 		_changeHandler = _fileSystem.Notify.OnEvent(c =>
 		{
 			if (!_changes.TryAdd(c, 100))
@@ -335,25 +336,33 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 						InternalBufferSize, _changes.BoundedCapacity)));
 			}
 		});
-		CancellationToken token = _cancellationTokenSource.Token;
+		CancellationToken token = cancellationTokenSource.Token;
 		Task.Factory.StartNew(() =>
-		{
-			try
-			{
-				while (!token.IsCancellationRequested)
 				{
-					if (_changes.TryTake(out ChangeDescription? c, Timeout.Infinite,
-						token))
+					try
 					{
-						NotifyChange(c);
+						while (!token.IsCancellationRequested)
+						{
+							if (_changes.TryTake(out ChangeDescription? c,
+								Timeout.Infinite,
+								token))
+							{
+								NotifyChange(c);
+							}
+						}
 					}
-				}
-			}
-			catch (Exception)
+					catch (Exception)
+					{
+						//Ignore any exception
+					}
+				},
+				token,
+				TaskCreationOptions.LongRunning,
+				TaskScheduler.Default)
+		   .ContinueWith(_ =>
 			{
-				//Ignore any exception
-			}
-		}, TaskCreationOptions.LongRunning);
+				cancellationTokenSource.Dispose();
+			}, TaskScheduler.Default);
 	}
 
 	private void Stop()
