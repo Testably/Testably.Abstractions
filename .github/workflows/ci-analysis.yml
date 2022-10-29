@@ -73,7 +73,7 @@ jobs:
             -H "Authorization: token $GITHUB_TOKEN")
           if [[ $result != *"$dashboardLink"* ]]
           then
-            body="{\"body\":\"Please check the uploaded report from the stryker build step."
+            body="{\"body\":\"Please check the uploaded report from the stryker build step.\"}"
             curl -X POST $commentsUrl \
               -H "Accept: application/vnd.github+json" \
               -H "Authorization: token $GITHUB_TOKEN" \
