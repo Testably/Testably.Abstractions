@@ -67,6 +67,10 @@ jobs:
         shell: bash
         run: |
           dotnet tool install dotnet-stryker --tool-path ../tools
+      - name: Prepare Reports directory
+        shell: bash
+        run: |
+          mkdir Tests/StrykerOutput/Reports
       - name: Analyze Testably.Abstractions
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
@@ -74,6 +78,7 @@ jobs:
         run: |
           cd Tests
           ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.json -v "${GITHUB_HEAD_REF}" -r "html" -r "cleartext" --since:main
+          mv ./StrykerOutput/**/reports/*.html ./StrykerOutput/Reports/Testably.Abstractions-report.html
       - name: Analyze Testably.Abstractions.AccessControl
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
@@ -81,6 +86,7 @@ jobs:
         run: |
           cd Tests
           ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.AccessControl.json -v "${GITHUB_HEAD_REF}" -r "html" -r "cleartext" --since:main
+          mv ./StrykerOutput/**/reports/*.html ./StrykerOutput/Reports/Testably.Abstractions.AccessControl-report.html
       - name: Analyze Testably.Abstractions.Compression
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
@@ -88,6 +94,7 @@ jobs:
         run: |
           cd Tests
           ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.Compression.json -v "${GITHUB_HEAD_REF}" -r "html" -r "cleartext" --since:main
+          mv ./StrykerOutput/**/reports/*.html ./StrykerOutput/Reports/Testably.Abstractions.Compression-report.html
       - name: Analyze Testably.Abstractions.Testing
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
@@ -95,11 +102,12 @@ jobs:
         run: |
           cd Tests
           ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.Testing.json -v "${GITHUB_HEAD_REF}" -r "html" -r "cleartext" --since:main
+          mv ./StrykerOutput/**/reports/*.html ./StrykerOutput/Reports/Testably.Abstractions.Testing-report.html
       - name: Upload Stryker reports
         uses: actions/upload-artifact@v3
         with:
           name: Stryker
-          path: Tests/StrykerOutput/**/reports/*
+          path: Tests/StrykerOutput/Reports/*
       - name: Add comment to pull request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
