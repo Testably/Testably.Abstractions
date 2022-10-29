@@ -11,7 +11,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 	///     Default number of messages before the buffer overflows is 64:<br />
 	///     <c>internal buffer size / bytes per message = 8192 / 128 = 64</c>
 	/// </summary>
-	public const int DefaultMaxMessages = 64;
+	public static readonly int DefaultMaxMessages = 64;
 
 	public string BasePath => _directoryCleaner.BasePath;
 	public MockFileSystem FileSystem { get; }
