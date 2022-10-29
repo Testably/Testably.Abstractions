@@ -69,7 +69,12 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
-        run: dotnet test --no-build
+        run: dotnet test --no-build --collect:"XPlat Code Coverage"
+      - name: Upload coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: Code coverage (MacOS)
+          path: "**/coverage.cobertura.xml"
 
   test-ubuntu:
     name: Test (Ubuntu)
@@ -87,7 +92,15 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
-        run: dotnet test --no-build
+        run: dotnet test --no-build --collect:"XPlat Code Coverage"
+      - name: Upload coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: Code coverage (Ubuntu)
+          path: "**/coverage.cobertura.xml"
+        with:
+          dotnet-version: |
+            6.0.x
 
   test-windows:
     name: Test (Windows)
@@ -105,7 +118,12 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
-        run: dotnet test --no-build
+        run: dotnet test --no-build --collect:"XPlat Code Coverage"
+      - name: Upload coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: Code coverage (Windows)
+          path: "**/coverage.cobertura.xml"
         
   test-net-framework:
     name: Test (.NET Framework)
@@ -149,3 +167,35 @@ jobs:
         run: dotnet build Examples /p:UseFileReferenceToTestablyLibraries=True
       - name: Run example tests
         run: dotnet test Examples --no-build
+
+  upload-coverage:
+    name: Upload coverage to Codacy
+    needs: [test-macos, test-ubuntu, test-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download code coverage files (MacOS)
+        uses: actions/download-artifact@v3
+        with:
+          name: Code coverage (MacOS)
+          path: Coverage/MacOS
+      - name: Download code coverage files (Ubuntu)
+        uses: actions/download-artifact@v3
+        with:
+          name: Code coverage (Ubuntu)
+          path: Coverage/Ubuntu
+      - name: Download code coverage files (Windows)
+        uses: actions/download-artifact@v3
+        with:
+          name: Code coverage (Windows)
+          path: Coverage/Windows
+      - name: Generate coverage report
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.1.10
+        with:
+          reports: "Coverage/**/coverage.cobertura.xml"
+          targetdir: "coverage-report"
+          reporttypes: "Cobertura"
+      - name: Publish coverage report to Codacy
+        uses: codacy/codacy-coverage-reporter-action@master
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: coverage-report/Cobertura.xml
