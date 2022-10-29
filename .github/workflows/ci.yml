@@ -73,28 +73,33 @@ jobs:
         shell: bash
         run: |
           cd Tests
-          ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --since:main
+          ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.json -v "${GITHUB_HEAD_REF}" -r "html" -r "cleartext" --since:main
       - name: Analyze Testably.Abstractions.AccessControl
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
           cd Tests
-          ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.AccessControl.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --since:main
+          ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.AccessControl.json -v "${GITHUB_HEAD_REF}" -r "html" -r "cleartext" --since:main
       - name: Analyze Testably.Abstractions.Compression
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
           cd Tests
-          ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.Compression.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --since:main
+          ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.Compression.json -v "${GITHUB_HEAD_REF}" -r "html" -r "cleartext" --since:main
       - name: Analyze Testably.Abstractions.Testing
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         shell: bash
         run: |
           cd Tests
-          ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.Testing.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "cleartext" --since:main
+          ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.Testing.json -v "${GITHUB_HEAD_REF}" -r "html" -r "cleartext" --since:main
+      - name: Upload Stryker reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: Stryker
+          path: Tests/StrykerOutput/**/reports/*
       - name: Add comment to pull request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
