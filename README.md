@@ -10,14 +10,12 @@ At the core of this library are the abstraction interfaces, which allow replacin
 - The `IFileSystem` interface abstracts away all I/O-related functionality from the `System.IO` namespace:  
   Static methods are directly implemented on the `IFileSystem` interface.
   Constructors are implemented as factory methods, e.g. `IFileSystem.FileInfo.New(string)` instead of `new FileInfo(string)`.
-
 - The `ITimeSystem` interface abstracts away time-related functionality:  
   `DateTime` methods give access to the current time, `Thread` allows replacing `Thread.Sleep` and `Task` allows replacing `Task.Delay`.
-
 - The `IRandomSystem` interface abstracts away functionality related to randomness:  
   `Random` methods implement a thread-safe Shared instance also under .NET Framework and `Guid` methods allow creating new GUIDs.
 
-# Example
+## Example
 Use the interfaces and their default implementations using your prefered dependency injection method, e.g.:
 ```csharp
 private readonly IFileSystem _fileSystem;
@@ -56,7 +54,8 @@ public void StoreData_ShouldWriteValidFile()
 
 **More examples can be found in the [examples section](Examples/README.md)!**
 
-# Getting Started
+## Getting Started
+
 - Install `Testably.Abstractions` as nuget package in your productive projects and `Testably.Abstractions.Testing` as nuget package in your test projects.
   ```ps
   dotnet add package Testably.Abstractions
@@ -73,7 +72,7 @@ public void StoreData_ShouldWriteValidFile()
 
 **You can now use the interfaces in your services!**
 
-# Testing
+## Testing
 In order to simplify testing, the `Testably.Abstractions.Testing` projects provides mocked instances for the abstraction interfaces:
 
 These mocks are configured using fluent syntax:

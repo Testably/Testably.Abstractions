@@ -92,10 +92,6 @@ internal static class EnumerationOptionsHelper
 		if (useExtendedWildcards)
 		{
 			expression = SimplifyExpression(expression);
-		}
-
-		if (useExtendedWildcards)
-		{
 			return FileSystemName.MatchesWin32Expression(expression,
 				name, ignoreCase);
 		}

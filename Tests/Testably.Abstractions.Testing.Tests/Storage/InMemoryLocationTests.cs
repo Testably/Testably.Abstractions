@@ -144,7 +144,10 @@ public class InMemoryLocationTests
 
 		/// <inheritdoc cref="IEquatable{IStorageLocation}.Equals(IStorageLocation)" />
 		public bool Equals(IStorageLocation? other)
-			=> throw new NotSupportedException();
+		{
+			_ = other;
+			throw new NotSupportedException();
+		}
 
 		/// <inheritdoc cref="IStorageLocation.GetParent()" />
 		public IStorageLocation GetParent()

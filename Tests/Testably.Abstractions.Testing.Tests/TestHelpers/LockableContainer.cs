@@ -14,7 +14,7 @@ namespace Testably.Abstractions.Testing.Tests.TestHelpers;
 ///     Set <see cref="IsLocked" /> to <see langword="true" /> to simulate a locked file
 ///     (<see cref="RequestAccess(FileAccess, FileShare, bool)" /> throws an <see cref="IOException" />).
 /// </summary>
-internal class LockableContainer : IStorageContainer
+internal sealed class LockableContainer : IStorageContainer
 {
 	/// <summary>
 	///     Simulate a locked file, if set to <see langword="true" />.<br />
@@ -127,6 +127,7 @@ internal class LockableContainer : IStorageContainer
 		/// <inheritdoc cref="IDisposable.Dispose()" />
 		public void Dispose()
 		{
+			// Nothing to do
 		}
 
 		#endregion

@@ -31,10 +31,10 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		Skip.IfNot(Test.RunsOnWindows);
 
 		FileSystem.Initialize()
-		   .WithSubdirectory(path.ToUpper()).Initialized(s => s
+		   .WithSubdirectory(path.ToUpperInvariant()).Initialized(s => s
 			   .WithAFile());
 
-		string[] result = FileSystem.Directory.GetFiles(path.ToLower());
+		string[] result = FileSystem.Directory.GetFiles(path.ToLowerInvariant());
 
 		result.Length.Should().Be(1);
 	}

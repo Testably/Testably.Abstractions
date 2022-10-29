@@ -10,9 +10,7 @@ This library contains the abstraction interfaces for [Testably.Abstractions](../
 - The `IFileSystem` interface abstracts away all I/O-related functionality from the `System.IO` namespace:  
   Static methods are directly implemented on the `IFileSystem` interface.
   Constructors are implemented as factory methods, e.g. `IFileSystem.FileInfo.New(string)` instead of `new FileInfo(string)`.
-
 - The `ITimeSystem` interface abstracts away time-related functionality:  
   `DateTime` methods give access to the current time, `Thread` allows replacing `Thread.Sleep` and `Task` allows replacing `Task.Delay`.
-
 - The `IRandomSystem` interface abstracts away functionality related to randomness:  
   `Random` methods implement a thread-safe Shared instance also under .NET Framework and `Guid` methods allow creating new GUIDs.

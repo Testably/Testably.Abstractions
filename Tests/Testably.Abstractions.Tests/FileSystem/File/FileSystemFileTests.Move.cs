@@ -11,8 +11,8 @@ public abstract partial class FileSystemFileTests<TFileSystem>
 	public void Move_CaseOnlyChange_ShouldMoveFileWithContent(
 		string name, string contents)
 	{
-		string sourceName = name.ToLower();
-		string destinationName = name.ToUpper();
+		string sourceName = name.ToLowerInvariant();
+		string destinationName = name.ToUpperInvariant();
 		FileSystem.File.WriteAllText(sourceName, contents);
 
 		FileSystem.File.Move(sourceName, destinationName);

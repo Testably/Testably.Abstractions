@@ -6,6 +6,8 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{94F99274-3518-45D0-83A4-6F370D6FE74B}"
 	ProjectSection(SolutionItems) = preProject
 		.codacy.yml = .codacy.yml
+		CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
+		CONTRIBUTING.md = CONTRIBUTING.md
 		Feature.Flags.props = Feature.Flags.props
 		README.md = README.md
 	EndProjectSection

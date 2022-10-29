@@ -31,13 +31,13 @@ The optional configuration allows limiting the maximum available space on the dr
 
 ### Events
 All changes in the file system trigger certain events. All events can be
-- *intercepted*, before they occur (and e.g. an exception thrown to prevent the event from completing) on the `Intercept` property:
+- _intercepted_, before they occur (and e.g. an exception thrown to prevent the event from completing) on the `Intercept` property:
   ```csharp
       MockFileSystem fileSystem = new();
           fileSystem.Intercept.Creating(FileSystemTypes.File,
               _ => throw new Exception("my custom exception"));
   ```
-- *notified*, after they occured to allow a test to react to changes on the `MockFileSystem.Notify` property:
+- _notified_, after they occured to allow a test to react to changes on the `MockFileSystem.Notify` property:
   These methods return an awaitable object that
   - Removes the notification on dispose
   - Provides a blocking mechanism until the notification happens

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
@@ -182,7 +183,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 		if (driveName.Length == 1 &&
 			char.IsLetter(driveName, 0))
 		{
-			return $"{driveName.ToUpper()}:\\";
+			return $"{driveName.ToUpperInvariant()}:\\";
 		}
 
 		if (fileSystem.Path.IsPathRooted(driveName))
