@@ -12,6 +12,8 @@ public class Parity
 		{ nameof(FileStream), nameof(FileSystemStream) }
 	};
 
+	public ParityCheck Dummy = new();
+
 	public ParityCheck Directory { get; } = new();
 
 	public ParityCheck DirectoryInfo { get; } = new(excludeMethods: new[]
