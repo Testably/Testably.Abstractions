@@ -6,7 +6,10 @@ using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
 
-public static partial class MockFileSystemExtensions
+/// <summary>
+///     Extension methods for the <see cref="INotificationHandler" />
+/// </summary>
+public static class NotificationHandlerExtensions
 {
 	/// <summary>
 	///     Callback executed when a <paramref name="fileSystemType" /> under <paramref name="path" /> matching the
@@ -118,35 +121,4 @@ public static partial class MockFileSystemExtensions
 				handler.FileSystem.Path.GetFullPath(path),
 				searchPattern,
 				predicate));
-
-	private static bool Matches(this ChangeDescription changeDescription,
-	                            FileSystemTypes fileSystemType,
-	                            WatcherChangeTypes changeType,
-	                            string path,
-	                            string searchPattern,
-	                            Func<ChangeDescription, bool>? predicate)
-	{
-		if (changeDescription.ChangeType != changeType ||
-		    !changeDescription.FileSystemType.HasFlag(fileSystemType))
-		{
-			return false;
-		}
-
-		if (!string.IsNullOrEmpty(path) &&
-		    !changeDescription.Path.StartsWith(path,
-			    InMemoryLocation.StringComparisonMode))
-		{
-			return false;
-		}
-
-		if (searchPattern != EnumerationOptionsHelper.DefaultSearchPattern &&
-		    (changeDescription.Name == null ||
-		     !EnumerationOptionsHelper.MatchesPattern(EnumerationOptionsHelper.Compatible,
-			     changeDescription.Name, searchPattern)))
-		{
-			return false;
-		}
-
-		return predicate?.Invoke(changeDescription) ?? true;
-	}
 }
