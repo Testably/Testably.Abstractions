@@ -267,8 +267,8 @@ jobs:
             echo "Processing $f" # always double quote "$f" filename
             # do something on $f
             version="${GITHUB_REF#refs/heads/release/}"
-            # Remove the quality gate status badge
-            grep -v "Quality Gate Status" "./$f" > "./$f.backup" && mv "./$f.backup" "./$f"
+            # Remove the codacy badge as it is not aligned to the release
+            grep -v "Codacy Badge" "./$f" > "./$f.backup" && mv "./$f.backup" "./$f"
             # Change status badges to display explicit version
             sed -i -e "s/branch=main/branch=release%2F${version}/g" "./$f"
             sed -i -e "s/Testably.Abstractions%2Fmain/Testably.Abstractions%2Frelease%2F${version}/g" "./$f"
