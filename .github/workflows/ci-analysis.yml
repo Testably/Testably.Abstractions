@@ -15,18 +15,24 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Download code coverage files (MacOS)
-        uses: actions/download-artifact@v3
+        uses: dawidd6/action-download-artifact@v2
         with:
+          workflow: CI
+          run_id: ${{ github.event.workflow_run.id }}
           name: Code coverage (MacOS)
           path: Coverage/MacOS
       - name: Download code coverage files (Ubuntu)
-        uses: actions/download-artifact@v3
+        uses: dawidd6/action-download-artifact@v2
         with:
+          workflow: CI
+          run_id: ${{ github.event.workflow_run.id }}
           name: Code coverage (Ubuntu)
           path: Coverage/Ubuntu
       - name: Download code coverage files (Windows)
-        uses: actions/download-artifact@v3
+        uses: dawidd6/action-download-artifact@v2
         with:
+          workflow: CI
+          run_id: ${{ github.event.workflow_run.id }}
           name: Code coverage (Windows)
           path: Coverage/Windows
       - name: SonarCloud Scan
@@ -45,12 +51,18 @@ jobs:
     name: Add comments to PR
     runs-on: ubuntu-latest
     steps:
+      - name: Download PR number artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: CI
+          run_id: ${{ github.event.workflow_run.id }}
+          name: PR_NUMBER
       - name: Add Stryker comment to pull request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
-          prNumber="${{ github.event.number }}"
+          prNumber=`cat PR_NUMBER.txt`
           commentsUrl="https://api.github.com/repos/Testably/Testably.Abstractions/issues/$prNumber/comments"
           dashboardLink="uploaded report from the stryker build"
           echo "Search for comment in PR#$prNumber containing $dashboardLink..."
