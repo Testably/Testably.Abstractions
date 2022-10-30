@@ -18,9 +18,9 @@ public abstract partial class ThreadTests<TTimeSystem>
 	{
 		int millisecondsTimeout = 10;
 
-		System.DateTime before = TimeSystem.DateTime.UtcNow;
+		DateTime before = TimeSystem.DateTime.UtcNow;
 		TimeSystem.Thread.Sleep(millisecondsTimeout);
-		System.DateTime after = TimeSystem.DateTime.UtcNow;
+		DateTime after = TimeSystem.DateTime.UtcNow;
 
 		after.Should().BeOnOrAfter(before.AddMilliseconds(millisecondsTimeout));
 	}
@@ -40,9 +40,9 @@ public abstract partial class ThreadTests<TTimeSystem>
 	{
 		TimeSpan timeout = TimeSpan.FromMilliseconds(10);
 
-		System.DateTime before = TimeSystem.DateTime.UtcNow;
+		DateTime before = TimeSystem.DateTime.UtcNow;
 		TimeSystem.Thread.Sleep(timeout);
-		System.DateTime after = TimeSystem.DateTime.UtcNow;
+		DateTime after = TimeSystem.DateTime.UtcNow;
 
 		after.Should().BeOnOrAfter(before.Add(timeout));
 	}

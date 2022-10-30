@@ -46,8 +46,22 @@ public sealed class TestGenerator : ISourceGenerator
 
 	#endregion
 
+	private static string CreateFileName(ClassToGenerate classToGenerate,
+	                                     string fileNamePrefix)
+	{
+		if (classToGenerate.Namespace.StartsWith(
+			"Testably.Abstractions.Tests.FileSystem."))
+		{
+			int prefixLength = "Testably.Abstractions.Tests.FileSystem.".Length;
+			return
+				$"{fileNamePrefix}{classToGenerate.Namespace.Substring(prefixLength)}.{classToGenerate.Name}.cs";
+		}
+
+		return $"{fileNamePrefix}{classToGenerate.Name}.cs";
+	}
+
 	private static void CreateFileSystemTestClasses(GeneratorExecutionContext context,
-													ClassToGenerate classToGenerate)
+	                                                ClassToGenerate classToGenerate)
 	{
 		StringBuilder? sourceBuilder = new(
 			@$"//------------------------------------------------------------------------------
@@ -134,7 +148,7 @@ namespace {classToGenerate.Namespace}.{classToGenerate.Name}
 	}
 
 	private static void CreateRandomSystemTestClasses(GeneratorExecutionContext context,
-													ClassToGenerate classToGenerate)
+	                                                  ClassToGenerate classToGenerate)
 	{
 		StringBuilder? sourceBuilder = new(
 			@$"//------------------------------------------------------------------------------
@@ -184,7 +198,7 @@ namespace {classToGenerate.Namespace}.{classToGenerate.Name}
 	}
 
 	private static void CreateTimeSystemTestClasses(GeneratorExecutionContext context,
-													ClassToGenerate classToGenerate)
+	                                                ClassToGenerate classToGenerate)
 	{
 		StringBuilder? sourceBuilder = new(
 			@$"//------------------------------------------------------------------------------
@@ -233,26 +247,8 @@ namespace {classToGenerate.Namespace}.{classToGenerate.Name}
 			SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
 	}
 
-	private static string CreateFileName(ClassToGenerate classToGenerate,
-	                                     string fileNamePrefix)
-	{
-		if (classToGenerate.Namespace.StartsWith(
-			"Testably.Abstractions.Tests.FileSystem."))
-		{
-			int prefixLength = "Testably.Abstractions.Tests.FileSystem.".Length;
-			return
-				$"{fileNamePrefix}{classToGenerate.Namespace.Substring(prefixLength)}.{classToGenerate.Name}.cs";
-		}
-
-		return $"{fileNamePrefix}{classToGenerate.Name}.cs";
-	}
-
 	private sealed class SyntaxReceiver : ISyntaxReceiver
 	{
-		public readonly List<ClassToGenerate> FileSystemTestClasses = new();
-		public readonly List<ClassToGenerate> RandomSystemTestClasses = new();
-		public readonly List<ClassToGenerate> TimeSystemTestClasses = new();
-
 		/// <summary>
 		///     The marker of the base class to trigger generation of files for FileSystem tests.
 		/// </summary>
@@ -268,6 +264,10 @@ namespace {classToGenerate.Namespace}.{classToGenerate.Name}
 		///     The marker of the base class to trigger generation of files for TimeSystem tests.
 		/// </summary>
 		private const string TimeSystemTestMarker = "TimeSystemTestBase<TTimeSystem>";
+
+		public readonly List<ClassToGenerate> FileSystemTestClasses = new();
+		public readonly List<ClassToGenerate> RandomSystemTestClasses = new();
+		public readonly List<ClassToGenerate> TimeSystemTestClasses = new();
 
 		#region ISyntaxReceiver Members
 
