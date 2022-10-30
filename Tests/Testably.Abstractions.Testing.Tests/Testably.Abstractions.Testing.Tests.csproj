@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj" />
+    <ProjectReference Include="..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>
