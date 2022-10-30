@@ -2,22 +2,13 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Testably.Abstractions.Tests.RandomSystem.Guid;
+namespace Testably.Abstractions.Tests.RandomSystem;
 
-public abstract class RandomSystemGuidTests<TRandomSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class GuidTests<TRandomSystem>
+	: RandomSystemTestBase<TRandomSystem>
 	where TRandomSystem : IRandomSystem
 {
-	#region Test Setup
-
-	public TRandomSystem RandomSystem { get; }
-
-	protected RandomSystemGuidTests(TRandomSystem randomSystem)
-	{
-		RandomSystem = randomSystem;
-	}
-
-	#endregion
-
 	[Fact]
 	public void Empty_ShouldReturnEmptyGuid()
 	{

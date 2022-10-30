@@ -1,19 +1,10 @@
-namespace Testably.Abstractions.Tests.TimeSystem.DateTime;
+namespace Testably.Abstractions.Tests.TimeSystem;
 
-public abstract class TimeSystemDateTimeTests<TTimeSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class DateTimeTests<TTimeSystem>
+	: TimeSystemTestBase<TTimeSystem>
 	where TTimeSystem : ITimeSystem
 {
-	#region Test Setup
-
-	public TTimeSystem TimeSystem { get; }
-
-	protected TimeSystemDateTimeTests(TTimeSystem timeSystem)
-	{
-		TimeSystem = timeSystem;
-	}
-
-	#endregion
-
 	[Fact]
 	public void MaxValue_ShouldReturnDefaultValue()
 	{

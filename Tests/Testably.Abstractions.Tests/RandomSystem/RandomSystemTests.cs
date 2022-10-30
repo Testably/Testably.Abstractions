@@ -1,19 +1,10 @@
 namespace Testably.Abstractions.Tests.RandomSystem;
 
-public abstract class RandomSystemTests<TRandomSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class RandomSystemTests<TRandomSystem>
+	: RandomSystemTestBase<TRandomSystem>
 	where TRandomSystem : IRandomSystem
 {
-	#region Test Setup
-
-	public TRandomSystem RandomSystem { get; }
-
-	protected RandomSystemTests(TRandomSystem randomSystem)
-	{
-		RandomSystem = randomSystem;
-	}
-
-	#endregion
-
 	[Fact]
 	public void Guid_ShouldSetExtensionPoint()
 	{

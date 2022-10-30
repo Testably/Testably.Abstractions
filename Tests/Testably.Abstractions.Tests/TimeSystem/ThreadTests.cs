@@ -1,19 +1,10 @@
-namespace Testably.Abstractions.Tests.TimeSystem.Thread;
+namespace Testably.Abstractions.Tests.TimeSystem;
 
-public abstract class TimeSystemThreadTests<TTimeSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class ThreadTests<TTimeSystem>
+	: TimeSystemTestBase<TTimeSystem>
 	where TTimeSystem : ITimeSystem
 {
-	#region Test Setup
-
-	public TTimeSystem TimeSystem { get; }
-
-	protected TimeSystemThreadTests(TTimeSystem timeSystem)
-	{
-		TimeSystem = timeSystem;
-	}
-
-	#endregion
-
 	[Fact]
 	public void Sleep_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
