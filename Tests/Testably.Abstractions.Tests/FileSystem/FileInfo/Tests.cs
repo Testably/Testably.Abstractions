@@ -4,14 +4,15 @@ using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
-public abstract partial class FileSystemFileInfoTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class Tests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	public abstract string BasePath { get; }
 	public TFileSystem FileSystem { get; }
 	public ITimeSystem TimeSystem { get; }
 
-	protected FileSystemFileInfoTests(
+	protected Tests(
 		TFileSystem fileSystem,
 		ITimeSystem timeSystem)
 	{

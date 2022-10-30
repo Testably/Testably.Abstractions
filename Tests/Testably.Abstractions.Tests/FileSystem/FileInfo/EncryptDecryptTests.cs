@@ -1,6 +1,8 @@
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
-public abstract partial class FileSystemFileInfoTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class EncryptDecryptTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
