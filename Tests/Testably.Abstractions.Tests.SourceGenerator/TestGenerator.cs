@@ -52,62 +52,69 @@ using Testably.Abstractions.Testing.FileSystemInitializer;
 using Testably.Abstractions.Tests.TestHelpers;
 using Xunit.Abstractions;
 
-namespace {classToGenerate.Namespace};
-
-public abstract partial class {classToGenerate.Name}<TFileSystem>
+namespace {classToGenerate.Namespace}
 {{
-	protected {classToGenerate.Name}(TFileSystem fileSystem, ITimeSystem timeSystem)
-		: base(fileSystem, timeSystem)
+	public abstract partial class {classToGenerate.Name}<TFileSystem>
 	{{
+		protected {classToGenerate.Name}(TFileSystem fileSystem, ITimeSystem timeSystem)
+			: base(fileSystem, timeSystem)
+		{{
+		}}
 	}}
 }}
 
-// ReSharper disable once UnusedMember.Global
-public sealed class MockFileSystemTests : {classToGenerate.Name}<MockFileSystem>
+namespace {classToGenerate.Namespace}.{classToGenerate.Name}
 {{
-	/// <inheritdoc cref=""{classToGenerate.Name}{{TFileSystem}}.BasePath"" />
-	public override string BasePath => _directoryCleaner.BasePath;
-
-	private readonly IDirectoryCleaner _directoryCleaner;
-
-	public MockFileSystemTests() : this(new MockFileSystem())
+	// ReSharper disable once UnusedMember.Global
+	public sealed class MockFileSystemTests : {classToGenerate.Name}<MockFileSystem>
 	{{
-	}}
+		/// <inheritdoc cref=""{classToGenerate.Name}{{TFileSystem}}.BasePath"" />
+		public override string BasePath => _directoryCleaner.BasePath;
 
-	private MockFileSystemTests(MockFileSystem mockFileSystem) : base(
-		mockFileSystem,
-		mockFileSystem.TimeSystem)
-	{{
-		_directoryCleaner = FileSystem
-		   .SetCurrentDirectoryToEmptyTemporaryDirectory();
-	}}
+		private readonly IDirectoryCleaner _directoryCleaner;
 
-	/// <inheritdoc cref=""IDisposable.Dispose()"" />
-	public void Dispose()
-		=> _directoryCleaner.Dispose();
+		public MockFileSystemTests() : this(new MockFileSystem())
+		{{
+		}}
+
+		private MockFileSystemTests(MockFileSystem mockFileSystem) : base(
+			mockFileSystem,
+			mockFileSystem.TimeSystem)
+		{{
+			_directoryCleaner = FileSystem
+			   .SetCurrentDirectoryToEmptyTemporaryDirectory();
+		}}
+
+		/// <inheritdoc cref=""IDisposable.Dispose()"" />
+		public void Dispose()
+			=> _directoryCleaner.Dispose();
+	}}
 }}
 
 #if !DEBUG || !DISABLE_TESTS_REALFILESYSTEM
 
-// ReSharper disable once UnusedMember.Global
-[Collection(nameof(DriveInfoFactory.RealFileSystemTests))]
-public sealed class RealFileSystemTests : {classToGenerate.Name}<RealFileSystem>
+namespace {classToGenerate.Namespace}.{classToGenerate.Name}
 {{
-	/// <inheritdoc cref=""{classToGenerate.Name}{{TFileSystem}}.BasePath"" />
-	public override string BasePath => _directoryCleaner.BasePath;
-
-	private readonly IDirectoryCleaner _directoryCleaner;
-
-	public RealFileSystemTests(ITestOutputHelper testOutputHelper)
-		: base(new RealFileSystem(), new RealTimeSystem())
+	// ReSharper disable once UnusedMember.Global
+	[Collection(nameof(RealFileSystemTests))]
+	public sealed class RealFileSystemTests : {classToGenerate.Name}<RealFileSystem>
 	{{
-		_directoryCleaner = FileSystem
-		   .SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);
-	}}
+		/// <inheritdoc cref=""{classToGenerate.Name}{{TFileSystem}}.BasePath"" />
+		public override string BasePath => _directoryCleaner.BasePath;
 
-	/// <inheritdoc cref=""IDisposable.Dispose()"" />
-	public void Dispose()
-		=> _directoryCleaner.Dispose();
+		private readonly IDirectoryCleaner _directoryCleaner;
+
+		public RealFileSystemTests(ITestOutputHelper testOutputHelper)
+			: base(new RealFileSystem(), new RealTimeSystem())
+		{{
+			_directoryCleaner = FileSystem
+			   .SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);
+		}}
+
+		/// <inheritdoc cref=""IDisposable.Dispose()"" />
+		public void Dispose()
+			=> _directoryCleaner.Dispose();
+	}}
 }}
 #endif");
 		string? fileName = CreateClassNamePrefix(classToGenerate) + ".cs";

@@ -6,7 +6,7 @@ using Xunit.Abstractions;
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
 // ReSharper disable once UnusedMember.Global
-[Collection(nameof(DriveInfoFactory.RealFileSystemTests))]
+[Collection(nameof(RealFileSystemTests))]
 public sealed class RealFileSystemTests :
 	FileSystemFileInfoTests<RealFileSystem>,
 	IDisposable

@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
-public abstract partial class FileSystemFileStreamTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class FileStreamAdjustTimesTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
