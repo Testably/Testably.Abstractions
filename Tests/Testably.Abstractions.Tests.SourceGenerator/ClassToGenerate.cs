@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Testably.Abstractions.Tests.SourceGenerator;
 
-public class ClassToGenerate
+internal sealed class ClassToGenerate
 {
 	public string Name { get; }
 	public string Namespace { get; }
@@ -14,7 +14,7 @@ public class ClassToGenerate
 		Name = name;
 	}
 
-	public static ClassToGenerate FromClassDeclarationSyntax(
+	internal static ClassToGenerate FromClassDeclarationSyntax(
 		ClassDeclarationSyntax classDeclarationSyntax)
 	{
 		string @namespace = GetNamespace(classDeclarationSyntax);
