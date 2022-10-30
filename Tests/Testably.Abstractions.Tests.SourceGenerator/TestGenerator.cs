@@ -122,7 +122,7 @@ namespace {classToGenerate.Namespace}.{classToGenerate.Name}
 			SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
 	}
 
-	private static string CreateClassNamePrefix(ClassToGenerate classToGenerate, bool prefixNamespace = false)
+	private static string CreateClassNamePrefix(ClassToGenerate classToGenerate, bool prefixNamespace = true)
 	{
 		if (prefixNamespace && classToGenerate.Namespace.StartsWith("Testably.Abstractions.Tests.FileSystem."))
 		{

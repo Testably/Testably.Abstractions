@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Generated\" />
+    <Folder Include="Generated\Testably.Abstractions.Tests.SourceGenerator\" />
   </ItemGroup>
 
 </Project>
