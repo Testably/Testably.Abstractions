@@ -4,23 +4,10 @@ using Testably.Abstractions.FileSystem;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemInfo;
 
 // ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class FileSystemFileSystemInfoTests<TFileSystem>
+public abstract partial class Tests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	public abstract string BasePath { get; }
-	public TFileSystem FileSystem { get; }
-	public ITimeSystem TimeSystem { get; }
-
-	protected FileSystemFileSystemInfoTests(
-		TFileSystem fileSystem,
-		ITimeSystem timeSystem)
-	{
-		FileSystem = fileSystem;
-		TimeSystem = timeSystem;
-
-		Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
-	}
-
 	[SkippableTheory]
 	[AutoData]
 	public void ExtensionContainer_ShouldWrapFileSystemInfoOnRealFileSystem(

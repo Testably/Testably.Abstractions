@@ -1,6 +1,6 @@
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
-public abstract partial class DirectoryTests<TFileSystem>
+public abstract partial class Tests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]

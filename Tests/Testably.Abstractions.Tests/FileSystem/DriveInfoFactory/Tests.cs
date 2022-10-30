@@ -5,7 +5,7 @@ using Testably.Abstractions.FileSystem;
 namespace Testably.Abstractions.Tests.FileSystem.DriveInfoFactory;
 
 // ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class DriveInfoFactoryTests<TFileSystem>
+public abstract partial class Tests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {

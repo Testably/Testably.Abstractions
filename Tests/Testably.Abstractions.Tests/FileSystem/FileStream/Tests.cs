@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
 // ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class FileStreamTests<TFileSystem>
+public abstract partial class Tests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {

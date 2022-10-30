@@ -4,7 +4,7 @@ using Testably.Abstractions.FileSystem;
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 // ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class DirectoryTests<TFileSystem>
+public abstract partial class Tests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
