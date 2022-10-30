@@ -1,15 +1,12 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
-public abstract partial class FileSystemPathTests<TFileSystem>
+public abstract partial class PathTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	public TFileSystem FileSystem { get; }
-
-	protected FileSystemPathTests(TFileSystem fileSystem)
+	protected PathTests(TFileSystem fileSystem, ITimeSystem timeSystem)
+		: base(fileSystem, timeSystem)
 	{
-		FileSystem = fileSystem;
-
-		Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
 	}
 
 	[SkippableFact]

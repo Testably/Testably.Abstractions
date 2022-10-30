@@ -16,6 +16,9 @@
 # Directory for build output
 /Build
 
+# Generated files
+/Tests/Testably.Abstractions.Tests/Generated
+
 ############################################################
 ################## VISUAL STUDIO TEMPLATE ##################
 ############################################################

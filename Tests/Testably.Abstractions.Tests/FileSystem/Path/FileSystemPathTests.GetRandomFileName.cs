@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
-public abstract partial class FileSystemPathTests<TFileSystem>
+public abstract partial class PathTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]

@@ -4,20 +4,12 @@ using Testably.Abstractions.FileSystem;
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 public abstract partial class FileSystemDirectoryTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	public abstract string BasePath { get; }
-	public TFileSystem FileSystem { get; }
-	public ITimeSystem TimeSystem { get; }
-
-	protected FileSystemDirectoryTests(
-		TFileSystem fileSystem,
-		ITimeSystem timeSystem)
+	protected FileSystemDirectoryTests(TFileSystem fileSystem, ITimeSystem timeSystem)
+		: base(fileSystem, timeSystem)
 	{
-		FileSystem = fileSystem;
-		TimeSystem = timeSystem;
-
-		Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
 	}
 
 	[SkippableFact]

@@ -1,11 +1,18 @@
 #if FEATURE_FILESYSTEM_LINK
 using System.IO;
 
-namespace Testably.Abstractions.Tests.FileSystem.Directory;
+namespace Testably.Abstractions.Tests.FileSystem.Directory.CreateSymbolicLink;
 
-public abstract partial class FileSystemDirectoryTests<TFileSystem>
+public abstract class DirectoryCreateSymbolicLinkTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
+	protected DirectoryCreateSymbolicLinkTests(TFileSystem fileSystem,
+	                                           ITimeSystem timeSystem)
+		: base(fileSystem, timeSystem)
+	{
+	}
+
 	[SkippableTheory]
 	[AutoData]
 	public void CreateSymbolicLink_ShouldCreateSymbolicLink(
