@@ -1,6 +1,8 @@
-namespace Testably.Abstractions.Tests.FileSystem.Directory;
+namespace Testably.Abstractions.Tests.FileSystem.Directory.GetDirectoryRoot;
 
-public abstract partial class FileSystemDirectoryTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class DirectoryGetDirectoryRootTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]

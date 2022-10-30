@@ -4,9 +4,11 @@ using Testably.Abstractions.Testing.FileSystemInitializer;
 #if !NETFRAMEWORK
 #endif
 
-namespace Testably.Abstractions.Tests.FileSystem.Directory;
+namespace Testably.Abstractions.Tests.FileSystem.Directory.Move;
 
-public abstract partial class FileSystemDirectoryTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class DirectoryMoveTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]

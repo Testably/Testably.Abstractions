@@ -3,21 +3,23 @@ using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.FileSystemInitializer;
 
-namespace Testably.Abstractions.Tests.FileSystem.Directory;
+namespace Testably.Abstractions.Tests.FileSystem.Directory.GetFiles;
 
-public abstract partial class FileSystemDirectoryTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class DirectoryGetFilesTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
 	[AutoData]
 	public void
-		EnumerateFiles_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+		GetFiles_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
 	{
 		string expectedPath = System.IO.Path.Combine(BasePath, path);
 		Exception? exception =
 			Record.Exception(()
-				=> FileSystem.Directory.EnumerateFiles(path).ToList());
+				=> FileSystem.Directory.GetFiles(path).ToList());
 
 		exception.Should().BeOfType<DirectoryNotFoundException>()
 		   .Which.Message.Should().Contain($"'{expectedPath}'.");
@@ -26,23 +28,8 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void EnumerateFiles_Path_ShouldBeCaseInsensitiveOnWindows(string path)
-	{
-		Skip.IfNot(Test.RunsOnWindows);
-
-		FileSystem.Initialize()
-		   .WithSubdirectory(path.ToUpperInvariant()).Initialized(s => s
-			   .WithAFile());
-
-		string[] result = FileSystem.Directory.GetFiles(path.ToLowerInvariant());
-
-		result.Length.Should().Be(1);
-	}
-
-	[SkippableTheory]
-	[AutoData]
 	public void
-		EnumerateFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
+		GetFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
@@ -52,7 +39,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 				   .WithAFile());
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateFiles(FileSystem.Directory.GetCurrentDirectory(),
+		   .GetFiles(FileSystem.Directory.GetCurrentDirectory(),
 				"*", SearchOption.AllDirectories)
 		   .ToList();
 
@@ -63,7 +50,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void EnumerateFiles_SearchOptionAllDirectories_ShouldReturnAllFiles(
+	public void GetFiles_SearchOptionAllDirectories_ShouldReturnAllFiles(
 		string path)
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
@@ -73,7 +60,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 				   .WithAFile());
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateFiles(".", "*", SearchOption.AllDirectories)
+		   .GetFiles(".", "*", SearchOption.AllDirectories)
 		   .ToList();
 
 		result.Count.Should().Be(2);
@@ -95,13 +82,13 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[InlineData(true, "abc?", "abc")]
 	[InlineData(false, "ab?c", "abc")]
 	[InlineData(false, "ac", "abc")]
-	public void EnumerateFiles_SearchPattern_ShouldReturnExpectedValue(
+	public void GetFiles_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string fileName)
 	{
 		FileSystem.Initialize().WithFile(fileName);
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateFiles(".", searchPattern).ToList();
+		   .GetFiles(".", searchPattern).ToList();
 
 		if (expectToBeFound)
 		{
@@ -116,35 +103,11 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 		}
 	}
 
-	[SkippableFact]
-	public void
-		EnumerateFiles_SearchPatternForFileWithoutExtension_ShouldWorkConsistently()
-	{
-		FileSystem.Initialize()
-		   .WithFile("file_without_extension")
-		   .WithFile("file.with.an.extension");
-
-		string[] result = FileSystem.Directory.GetFiles(".", "*.");
-
-		result.Length.Should().Be(1);
-	}
-
-	[SkippableFact]
-	public void EnumerateFiles_SearchPatternWithTooManyAsterisk_ShouldWorkConsistently()
-	{
-		FileSystem.Initialize()
-		   .WithFile("result.test.001.txt");
-
-		string[] result = FileSystem.Directory.GetFiles(".", "*.test.*.*.*.*");
-
-		result.Length.Should().Be(1);
-	}
-
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[SkippableTheory]
 	[AutoData]
 	public void
-		EnumerateFiles_WithEnumerationOptions_ShouldConsiderSetOptions(
+		GetFiles_WithEnumerationOptions_ShouldConsiderSetOptions(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
@@ -154,7 +117,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 				   .WithAFile());
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateFiles(".",
+		   .GetFiles(".",
 				initialized[2].Name.ToUpper(),
 				new EnumerationOptions
 				{
@@ -172,14 +135,14 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void EnumerateFiles_WithNewline_ShouldThrowArgumentException(
+	public void GetFiles_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
 		string searchPattern = "foo\0bar";
 
 		Exception? exception = Record.Exception(() =>
 		{
-			_ = FileSystem.Directory.EnumerateFiles(path, searchPattern)
+			_ = FileSystem.Directory.GetFiles(path, searchPattern)
 			   .FirstOrDefault();
 		});
 
@@ -195,7 +158,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		EnumerateFiles_WithoutSearchString_ShouldReturnAllFilesInDirectSubdirectories(
+		GetFiles_WithoutSearchString_ShouldReturnAllFilesInDirectSubdirectories(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
@@ -206,7 +169,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 				   .WithAFile());
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateFiles(".")
+		   .GetFiles(".")
 		   .ToList();
 
 		result.Count.Should().Be(2);
@@ -217,7 +180,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void EnumerateFiles_WithSearchPattern_ShouldReturnMatchingFiles(
+	public void GetFiles_WithSearchPattern_ShouldReturnMatchingFiles(
 		string path)
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
@@ -228,7 +191,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 				   .WithAFile());
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateFiles(".", initialized[0].Name)
+		   .GetFiles(".", initialized[0].Name)
 		   .ToList();
 
 		result.Count.Should().Be(1);
@@ -239,7 +202,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableFact]
 	public void
-		EnumerateFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
+		GetFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
@@ -251,7 +214,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 				   .WithAFile());
 
 		IEnumerable<string> result = FileSystem.Directory
-		   .EnumerateFiles(".", "*.foobar", SearchOption.AllDirectories)
+		   .GetFiles(".", "*.foobar", SearchOption.AllDirectories)
 		   .ToArray();
 
 		result.Count().Should().Be(2);

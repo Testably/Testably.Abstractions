@@ -3,7 +3,7 @@ using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
-public abstract partial class FileSystemDirectoryTests<TFileSystem>
+public abstract partial class DirectoryTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]

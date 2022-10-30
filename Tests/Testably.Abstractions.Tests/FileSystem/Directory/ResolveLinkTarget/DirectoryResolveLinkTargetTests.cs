@@ -2,9 +2,11 @@
 using System.IO;
 using Testably.Abstractions.FileSystem;
 
-namespace Testably.Abstractions.Tests.FileSystem.Directory;
+namespace Testably.Abstractions.Tests.FileSystem.Directory.ResolveLinkTarget;
 
-public abstract partial class FileSystemDirectoryTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class DirectoryResolveLinkTargetTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	/// <summary>

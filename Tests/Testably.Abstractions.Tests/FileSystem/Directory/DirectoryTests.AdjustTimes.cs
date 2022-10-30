@@ -1,8 +1,6 @@
-namespace Testably.Abstractions.Tests.FileSystem.Directory.AdjustTimes;
+namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class DirectoryAdjustTimesTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
+public abstract partial class DirectoryTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]

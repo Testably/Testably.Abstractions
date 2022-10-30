@@ -3,21 +3,23 @@ using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.FileSystemInitializer;
 
-namespace Testably.Abstractions.Tests.FileSystem.Directory;
+namespace Testably.Abstractions.Tests.FileSystem.Directory.GetFileSystemInfos;
 
-public abstract partial class FileSystemDirectoryTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class DirectoryGetFileSystemInfosTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
 	[AutoData]
 	public void
-		EnumerateFileSystemEntries_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+		GetFileSystemEntries_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
 	{
 		string expectedPath = System.IO.Path.Combine(BasePath, path);
 		Exception? exception =
 			Record.Exception(()
-				=> FileSystem.Directory.EnumerateFileSystemEntries(path).ToList());
+				=> FileSystem.Directory.GetFileSystemEntries(path).ToList());
 
 		exception.Should().BeOfType<DirectoryNotFoundException>()
 		   .Which.Message.Should().Contain($"'{expectedPath}'.");
@@ -27,7 +29,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		EnumerateFileSystemEntries_SearchOptionAllDirectories_FullPath_ShouldReturnAllFileSystemEntriesWithFullPath(
+		GetFileSystemEntries_SearchOptionAllDirectories_FullPath_ShouldReturnAllFileSystemEntriesWithFullPath(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
@@ -37,7 +39,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 				   .WithAFile());
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateFileSystemEntries(
+		   .GetFileSystemEntries(
 				FileSystem.Directory.GetCurrentDirectory(),
 				"*",
 				SearchOption.AllDirectories)
@@ -52,7 +54,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		EnumerateFileSystemEntries_SearchOptionAllDirectories_ShouldReturnAllFileSystemEntries(
+		GetFileSystemEntries_SearchOptionAllDirectories_ShouldReturnAllFileSystemEntries(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
@@ -62,7 +64,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 				   .WithAFile());
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateFileSystemEntries(".", "*", SearchOption.AllDirectories)
+		   .GetFileSystemEntries(".", "*", SearchOption.AllDirectories)
 		   .ToList();
 
 		result.Count.Should().Be(3);
@@ -85,13 +87,13 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[InlineData(true, "abc?", "abc")]
 	[InlineData(false, "ab?c", "abc")]
 	[InlineData(false, "ac", "abc")]
-	public void EnumerateFileSystemEntries_SearchPattern_ShouldReturnExpectedValue(
+	public void GetFileSystemEntries_SearchPattern_ShouldReturnExpectedValue(
 		bool expectToBeFound, string searchPattern, string fileName)
 	{
 		FileSystem.Initialize().WithFile(fileName);
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateFileSystemEntries(".", searchPattern).ToList();
+		   .GetFileSystemEntries(".", searchPattern).ToList();
 
 		if (expectToBeFound)
 		{
@@ -110,7 +112,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		EnumerateFileSystemEntries_WithEnumerationOptions_ShouldConsiderSetOptions(
+		GetFileSystemEntries_WithEnumerationOptions_ShouldConsiderSetOptions(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
@@ -120,7 +122,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 				   .WithAFile());
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateFileSystemEntries(".",
+		   .GetFileSystemEntries(".",
 				initialized[2].Name.ToUpper(),
 				new EnumerationOptions
 				{
@@ -138,31 +140,14 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void
-		EnumerateFileSystemEntries_WithFileNameStartingWithDirectoryName_ShouldNotBeIncluded(
-			string path)
-	{
-		FileSystem.Initialize()
-		   .WithSubdirectory(path)
-		   .WithFile($"{path}.txt");
-
-		List<string> result = FileSystem.Directory
-		   .EnumerateFileSystemEntries(path, "*", SearchOption.AllDirectories)
-		   .ToList();
-
-		result.Should().BeEmpty();
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void EnumerateFileSystemEntries_WithNewline_ShouldThrowArgumentException(
+	public void GetFileSystemEntries_WithNewline_ShouldThrowArgumentException(
 		string path)
 	{
 		string searchPattern = "foo\0bar";
 
 		Exception? exception = Record.Exception(() =>
 		{
-			_ = FileSystem.Directory.EnumerateFileSystemEntries(path, searchPattern)
+			_ = FileSystem.Directory.GetFileSystemEntries(path, searchPattern)
 			   .FirstOrDefault();
 		});
 
@@ -178,7 +163,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		EnumerateFileSystemEntries_WithoutSearchString_ShouldReturnAllFileSystemEntriesInDirectSubdirectories(
+		GetFileSystemEntries_WithoutSearchString_ShouldReturnAllFileSystemEntriesInDirectSubdirectories(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
@@ -190,7 +175,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 		List<string> result =
 			FileSystem.Directory
-			   .EnumerateFileSystemEntries(".")
+			   .GetFileSystemEntries(".")
 			   .ToList();
 
 		result.Count.Should().Be(3);
@@ -203,7 +188,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		EnumerateFileSystemEntries_WithSearchPattern_ShouldReturnMatchingFileSystemEntries(
+		GetFileSystemEntries_WithSearchPattern_ShouldReturnMatchingFileSystemEntries(
 			string path)
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
@@ -214,7 +199,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 				   .WithAFile());
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateFileSystemEntries(".", initialized[0].Name)
+		   .GetFileSystemEntries(".", initialized[0].Name)
 		   .ToList();
 
 		result.Count.Should().Be(1);
@@ -225,7 +210,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 
 	[SkippableFact]
 	public void
-		EnumerateFileSystemEntries_WithSearchPatternInSubdirectory_ShouldReturnMatchingFileSystemEntriesInSubdirectories()
+		GetFileSystemEntries_WithSearchPatternInSubdirectory_ShouldReturnMatchingFileSystemEntriesInSubdirectories()
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
@@ -237,7 +222,7 @@ public abstract partial class FileSystemDirectoryTests<TFileSystem>
 				   .WithAFile());
 
 		IEnumerable<string> result = FileSystem.Directory
-		   .EnumerateFileSystemEntries(".", "*.foobar", SearchOption.AllDirectories)
+		   .GetFileSystemEntries(".", "*.foobar", SearchOption.AllDirectories)
 		   .ToArray();
 
 		result.Count().Should().Be(2);
