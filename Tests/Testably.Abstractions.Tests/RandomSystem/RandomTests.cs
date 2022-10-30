@@ -1,22 +1,13 @@
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
-namespace Testably.Abstractions.Tests.RandomSystem.Random;
+namespace Testably.Abstractions.Tests.RandomSystem;
 
-public abstract class RandomSystemRandomTests<TRandomSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class RandomTests<TRandomSystem>
+	: RandomSystemTestBase<TRandomSystem>
 	where TRandomSystem : IRandomSystem
 {
-	#region Test Setup
-
-	public TRandomSystem RandomSystem { get; }
-
-	protected RandomSystemRandomTests(TRandomSystem randomSystem)
-	{
-		RandomSystem = randomSystem;
-	}
-
-	#endregion
-
 	[Fact]
 	public void Next_MaxValue_ShouldOnlyReturnValidValues()
 	{

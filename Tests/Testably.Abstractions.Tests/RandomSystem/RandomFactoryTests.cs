@@ -1,22 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Testably.Abstractions.Tests.RandomSystem.RandomFactory;
+namespace Testably.Abstractions.Tests.RandomSystem;
 
-public abstract class RandomSystemRandomFactoryTests<TRandomSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class RandomFactoryTests<TRandomSystem>
+	: RandomSystemTestBase<TRandomSystem>
 	where TRandomSystem : IRandomSystem
 {
-	#region Test Setup
-
-	public TRandomSystem RandomSystem { get; }
-
-	protected RandomSystemRandomFactoryTests(TRandomSystem randomSystem)
-	{
-		RandomSystem = randomSystem;
-	}
-
-	#endregion
-
 	[Fact]
 	public void New_Next_ShouldReturnDifferentValues()
 	{

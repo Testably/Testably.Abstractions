@@ -1,19 +1,10 @@
-namespace Testably.Abstractions.Tests.TimeSystem.Thread;
+namespace Testably.Abstractions.Tests.TimeSystem;
 
-public abstract class TimeSystemThreadTests<TTimeSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class ThreadTests<TTimeSystem>
+	: TimeSystemTestBase<TTimeSystem>
 	where TTimeSystem : ITimeSystem
 {
-	#region Test Setup
-
-	public TTimeSystem TimeSystem { get; }
-
-	protected TimeSystemThreadTests(TTimeSystem timeSystem)
-	{
-		TimeSystem = timeSystem;
-	}
-
-	#endregion
-
 	[Fact]
 	public void Sleep_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
@@ -27,9 +18,9 @@ public abstract class TimeSystemThreadTests<TTimeSystem>
 	{
 		int millisecondsTimeout = 10;
 
-		System.DateTime before = TimeSystem.DateTime.UtcNow;
+		DateTime before = TimeSystem.DateTime.UtcNow;
 		TimeSystem.Thread.Sleep(millisecondsTimeout);
-		System.DateTime after = TimeSystem.DateTime.UtcNow;
+		DateTime after = TimeSystem.DateTime.UtcNow;
 
 		after.Should().BeOnOrAfter(before.AddMilliseconds(millisecondsTimeout));
 	}
@@ -49,9 +40,9 @@ public abstract class TimeSystemThreadTests<TTimeSystem>
 	{
 		TimeSpan timeout = TimeSpan.FromMilliseconds(10);
 
-		System.DateTime before = TimeSystem.DateTime.UtcNow;
+		DateTime before = TimeSystem.DateTime.UtcNow;
 		TimeSystem.Thread.Sleep(timeout);
-		System.DateTime after = TimeSystem.DateTime.UtcNow;
+		DateTime after = TimeSystem.DateTime.UtcNow;
 
 		after.Should().BeOnOrAfter(before.Add(timeout));
 	}
