@@ -2,7 +2,9 @@
 
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
-public abstract partial class PathTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class GetRelativePathTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
