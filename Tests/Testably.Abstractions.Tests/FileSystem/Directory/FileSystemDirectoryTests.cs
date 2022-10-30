@@ -3,15 +3,11 @@ using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
+// ReSharper disable once PartialTypeWithSinglePart
 public abstract partial class FileSystemDirectoryTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	protected FileSystemDirectoryTests(TFileSystem fileSystem, ITimeSystem timeSystem)
-		: base(fileSystem, timeSystem)
-	{
-	}
-
 	[SkippableFact]
 	public void GetCurrentDirectory_ShouldNotBeRooted()
 	{

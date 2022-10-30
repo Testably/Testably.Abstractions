@@ -1,14 +1,10 @@
 namespace Testably.Abstractions.Tests.FileSystem.Directory.AdjustTimes;
 
-public abstract class DirectoryAdjustTimesTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class DirectoryAdjustTimesTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	protected DirectoryAdjustTimesTests(TFileSystem fileSystem, ITimeSystem timeSystem)
-		: base(fileSystem, timeSystem)
-	{
-	}
-
 	[SkippableTheory]
 	[AutoData]
 	public void AdjustTimes_WhenCreatingAFile_ShouldAdjustTimes(

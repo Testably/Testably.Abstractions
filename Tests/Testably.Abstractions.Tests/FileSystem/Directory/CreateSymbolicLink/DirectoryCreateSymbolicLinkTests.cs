@@ -3,16 +3,11 @@ using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory.CreateSymbolicLink;
 
-public abstract class DirectoryCreateSymbolicLinkTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class DirectoryCreateSymbolicLinkTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	protected DirectoryCreateSymbolicLinkTests(TFileSystem fileSystem,
-	                                           ITimeSystem timeSystem)
-		: base(fileSystem, timeSystem)
-	{
-	}
-
 	[SkippableTheory]
 	[AutoData]
 	public void CreateSymbolicLink_ShouldCreateSymbolicLink(

@@ -15,4 +15,9 @@ public abstract class FileSystemTestBase<TFileSystem>
 
 		Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
 	}
+
+	protected FileSystemTestBase()
+	{
+		throw new NotSupportedException("The SourceGenerator didn't create the corresponding files!");
+	}
 }

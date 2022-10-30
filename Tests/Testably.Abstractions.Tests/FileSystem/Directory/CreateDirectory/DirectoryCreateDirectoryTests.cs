@@ -5,15 +5,11 @@ using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory.CreateDirectory;
 
-public abstract class DirectoryCreateDirectoryTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class DirectoryCreateDirectoryTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	protected DirectoryCreateDirectoryTests(TFileSystem fileSystem, ITimeSystem timeSystem)
-		: base(fileSystem, timeSystem)
-	{
-	}
-
 	[SkippableTheory]
 	[AutoData]
 	public void CreateDirectory_ShouldAdjustTimes(string path, string subdirectoryName)
