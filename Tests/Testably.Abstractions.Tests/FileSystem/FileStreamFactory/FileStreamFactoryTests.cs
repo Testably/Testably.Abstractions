@@ -3,23 +3,11 @@ using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStreamFactory;
 
-public abstract class FileSystemFileStreamFactoryTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class FileStreamFactoryTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	public abstract string BasePath { get; }
-	public TFileSystem FileSystem { get; }
-	public ITimeSystem TimeSystem { get; }
-
-	protected FileSystemFileStreamFactoryTests(
-		TFileSystem fileSystem,
-		ITimeSystem timeSystem)
-	{
-		FileSystem = fileSystem;
-		TimeSystem = timeSystem;
-
-		Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
-	}
-
 	[SkippableTheory]
 	[AutoData]
 	public void New_AppendAccessWithReadWriteMode_ShouldThrowArgumentException(
