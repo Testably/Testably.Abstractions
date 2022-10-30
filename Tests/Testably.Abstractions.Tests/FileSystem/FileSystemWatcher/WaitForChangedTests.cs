@@ -5,7 +5,9 @@ using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
-public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class WaitForChangedTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]

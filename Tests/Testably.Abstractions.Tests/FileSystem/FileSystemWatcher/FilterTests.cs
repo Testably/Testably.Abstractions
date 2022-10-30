@@ -8,7 +8,9 @@ using System.Linq;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
-public abstract partial class FileSystemFileSystemWatcherTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class FilterTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
