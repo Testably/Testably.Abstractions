@@ -7,7 +7,7 @@ using System.Text;
 namespace Testably.Abstractions.Tests.SourceGenerator;
 
 [Generator]
-public class TestGenerator : ISourceGenerator
+public sealed class TestGenerator : ISourceGenerator
 {
 	private SyntaxReceiver? _receiver;
 
@@ -133,7 +133,7 @@ namespace {classToGenerate.Namespace}.{classToGenerate.Name}
 		return classToGenerate.Name;
 	}
 
-	private class SyntaxReceiver : ISyntaxReceiver
+	private sealed class SyntaxReceiver : ISyntaxReceiver
 	{
 		public readonly List<ClassToGenerate> ClassesToGenerate = new();
 
