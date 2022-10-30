@@ -1,3 +1,4 @@
+using AutoFixture;
 using System.Text;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
@@ -83,9 +84,9 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 	[SkippableTheory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
 	public void AppendAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(
-		string contents, Encoding writeEncoding, Encoding readEncoding,
-		string path)
+		string contents, Encoding writeEncoding, Encoding readEncoding)
 	{
+		string path = new Fixture().Create<string>();
 		FileSystem.File.AppendAllText(path, contents, writeEncoding);
 
 		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);

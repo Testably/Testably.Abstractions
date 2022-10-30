@@ -1,3 +1,4 @@
+using AutoFixture;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -49,9 +50,10 @@ public abstract partial class ReadLinesTests<TFileSystem>
 	[SkippableTheory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
 	public void ReadLines_WithDifferentEncoding_ShouldNotReturnWrittenText(
-		string specialLine, Encoding writeEncoding, Encoding readEncoding,
-		string path, string[] lines)
+		string specialLine, Encoding writeEncoding, Encoding readEncoding)
 	{
+		string path = new Fixture().Create<string>();
+		string[] lines = new Fixture().Create<string[]>();
 		lines[1] = specialLine;
 		string contents = string.Join(Environment.NewLine, lines);
 		FileSystem.File.WriteAllText(path, contents, writeEncoding);

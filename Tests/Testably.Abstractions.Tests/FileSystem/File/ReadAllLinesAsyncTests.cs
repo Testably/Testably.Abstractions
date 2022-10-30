@@ -1,4 +1,5 @@
 #if FEATURE_FILESYSTEM_ASYNC
+using AutoFixture;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -70,9 +71,10 @@ public abstract partial class ReadAllLinesAsyncTests<TFileSystem>
 	[SkippableTheory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
 	public async Task ReadAllLinesAsync_WithDifferentEncoding_ShouldNotReturnWrittenText(
-		string specialLine, Encoding writeEncoding, Encoding readEncoding,
-		string path, string[] lines)
+		string specialLine, Encoding writeEncoding, Encoding readEncoding)
 	{
+		string path = new Fixture().Create<string>();
+		string[] lines = new Fixture().Create<string[]>();
 		lines[1] = specialLine;
 		string contents = string.Join(Environment.NewLine, lines);
 		await FileSystem.File.WriteAllTextAsync(path, contents, writeEncoding);

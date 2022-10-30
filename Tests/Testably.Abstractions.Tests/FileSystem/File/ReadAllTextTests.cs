@@ -1,3 +1,4 @@
+using AutoFixture;
 using System.IO;
 using System.Text;
 
@@ -90,8 +91,9 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 	[SkippableTheory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
 	public void ReadAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(
-		string contents, Encoding writeEncoding, Encoding readEncoding, string path)
+		string contents, Encoding writeEncoding, Encoding readEncoding)
 	{
+		string path = new Fixture().Create<string>();
 		FileSystem.File.WriteAllText(path, contents, writeEncoding);
 
 		string result = FileSystem.File.ReadAllText(path, readEncoding);

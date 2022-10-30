@@ -1,4 +1,5 @@
 #if FEATURE_FILESYSTEM_ASYNC
+using AutoFixture;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -87,17 +88,18 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 	[ClassData(typeof(TestDataGetEncodingDifference))]
 	public async Task
 		AppendAllLinesAsync_WithDifferentEncoding_ShouldNotReturnWrittenText(
-			string specialLine, Encoding writeEncoding, Encoding readEncoding,
-			string path, string[] contents)
+			string specialLine, Encoding writeEncoding, Encoding readEncoding)
 	{
-		contents[1] = specialLine;
-		await FileSystem.File.AppendAllLinesAsync(path, contents, writeEncoding);
+		string path = new Fixture().Create<string>();
+		string[] lines = new Fixture().Create<string[]>();
+		lines[1] = specialLine;
+		await FileSystem.File.AppendAllLinesAsync(path, lines, writeEncoding);
 
 		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);
 
-		result.Should().NotBeEquivalentTo(contents,
-			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
-		result[0].Should().Be(contents[0]);
+		result.Should().NotBeEquivalentTo(lines,
+			$"{lines} should be different when encoding from {writeEncoding} to {readEncoding}.");
+		result[0].Should().Be(lines[0]);
 	}
 }
 #endif
