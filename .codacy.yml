@@ -5,3 +5,4 @@ engines:
 exclude_paths:
   - ".github/**"
   - "CODE_OF_CONDUCT.md"
+  - "Tests/Testably.Abstractions.Tests.SourceGenerator/**"
