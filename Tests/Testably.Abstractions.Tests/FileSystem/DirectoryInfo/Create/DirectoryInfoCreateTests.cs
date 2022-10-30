@@ -1,12 +1,12 @@
+using System.IO;
 using System.Linq;
 using Testably.Abstractions.FileSystem;
-#if !NETFRAMEWORK
-using System.IO;
-#endif
 
-namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
+namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo.Create;
 
-public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class DirectoryInfoCreateTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]

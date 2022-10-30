@@ -1,8 +1,10 @@
 using Testably.Abstractions.FileSystem;
 
-namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
+namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo.Exists;
 
-public abstract partial class FileSystemDirectoryInfoTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class DirectoryInfoExistsTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
