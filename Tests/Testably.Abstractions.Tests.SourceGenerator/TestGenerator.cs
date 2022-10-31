@@ -6,6 +6,13 @@ using System.Text;
 
 namespace Testably.Abstractions.Tests.SourceGenerator;
 
+/// <summary>
+///     This generator creates concrete classes in `Testably.Abstractions.Tests` for abstract partial classes, so that the
+///     defined tests run against a real and a mocked system. This works for:<br />
+///     - `IFileSystem`<br />
+///     - `IRandomSystem`<br />
+///     - `ITimeSystem`
+/// </summary>
 [Generator]
 public sealed class TestGenerator : ISourceGenerator
 {
