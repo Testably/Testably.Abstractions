@@ -4,8 +4,10 @@ using System.Linq;
 
 namespace Testably.Abstractions.Testing.Tests;
 
-public class RandomProviderGeneratorTests
+public partial class RandomProviderTests
 {
+	public class GeneratorTests
+	{
 	[Fact]
 	public void Dispose_ShouldThrowObjectDisposedExceptionOnGetNext()
 	{
@@ -214,4 +216,5 @@ public class RandomProviderGeneratorTests
 
 		results.Should().AllBeEquivalentTo(value);
 	}
+}
 }
