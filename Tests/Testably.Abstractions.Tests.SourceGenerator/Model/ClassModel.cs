@@ -1,25 +1,25 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Testably.Abstractions.Tests.SourceGenerator;
+namespace Testably.Abstractions.Tests.SourceGenerator.Model;
 
-internal sealed class ClassToGenerate
+internal sealed class ClassModel
 {
 	public string Name { get; }
 	public string Namespace { get; }
 
-	private ClassToGenerate(string @namespace, string name)
+	private ClassModel(string @namespace, string name)
 	{
 		Namespace = @namespace;
 		Name = name;
 	}
 
-	internal static ClassToGenerate FromClassDeclarationSyntax(
+	internal static ClassModel FromClassDeclarationSyntax(
 		ClassDeclarationSyntax classDeclarationSyntax)
 	{
 		string @namespace = GetNamespace(classDeclarationSyntax);
 		string name = classDeclarationSyntax.Identifier.ToString();
-		return new ClassToGenerate(@namespace, name);
+		return new ClassModel(@namespace, name);
 	}
 
 	/// <summary>
