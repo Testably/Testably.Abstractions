@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Testably.Abstractions.Testing.Tests;
 
-public class GeneratorTests
+public class RandomProviderGeneratorTests
 {
 	[Fact]
 	public void Dispose_ShouldThrowObjectDisposedExceptionOnGetNext()

@@ -1,7 +1,7 @@
 namespace Testably.Abstractions.Tests.TimeSystem;
 
 // ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class TimeSystemTests<TTimeSystem>
+public abstract partial class Tests<TTimeSystem>
 	: TimeSystemTestBase<TTimeSystem>
 	where TTimeSystem : ITimeSystem
 {

@@ -2,7 +2,7 @@
 using System.Linq;
 using Testably.Abstractions.Testing.Helpers;
 
-namespace Testably.Abstractions.Testing.Tests.Internal;
+namespace Testably.Abstractions.Testing.Tests.Helpers;
 
 public class RandomSystemExtensionsTests
 {
