@@ -5,7 +5,7 @@ using Testably.Abstractions.Testing.RandomSystem;
 
 namespace Testably.Abstractions.Testing.Tests;
 
-public class RandomProviderTests
+public partial class RandomProviderTests
 {
 	[Fact]
 	public void Default_ShouldReturnRandomGuid()

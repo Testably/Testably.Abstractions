@@ -3,9 +3,9 @@ using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.FileSystemInitializer;
 
-namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
+namespace Testably.Abstractions.Testing.Tests;
 
-public class FileSystemInitializerTests
+public class FileSystemInitializerExtensionsTests
 {
 	[Fact]
 	public void Initialize_WithAFile_ShouldCreateFile()
