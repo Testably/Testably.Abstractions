@@ -28,7 +28,7 @@ public abstract partial class DeleteTests<TFileSystem>
 		{
 			exception.Should().BeOfType<IOException>()
 			   .Which.Message.Should()
-			   .Contain($"'{FileSystem.Path.GetFullPath(filename)}'");
+			   .Contain($"{filename}'");
 			FileSystem.File.Exists(filename).Should().BeTrue();
 		}
 		else
