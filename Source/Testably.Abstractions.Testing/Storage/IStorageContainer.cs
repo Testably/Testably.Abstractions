@@ -75,7 +75,8 @@ internal interface IStorageContainer : IFileSystemExtensionPoint,
 	/// </summary>
 	/// <returns>An <see cref="IStorageAccessHandle" /> that is used to release the access lock on dispose.</returns>
 	IStorageAccessHandle RequestAccess(FileAccess access, FileShare share,
-	                                   bool ignoreMetadataError = true);
+	                                   bool deleteAccess = false,
+									   bool ignoreMetadataErrors = true);
 
 	/// <summary>
 	///     Writes the <paramref name="bytes" /> to the <see cref="IFileInfo" />.

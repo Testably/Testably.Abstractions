@@ -36,20 +36,4 @@ public abstract partial class OpenReadTests<TFileSystem>
 		FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(
 			Test.RunsOnWindows ? FileShare.Read : FileShare.ReadWrite);
 	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void OpenRead_ShouldDisposeStream(string path)
-	{
-		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
-		FileSystem.File.WriteAllText(fileInfo.FullName, "");
-
-		_ = fileInfo.OpenRead();
-
-		Exception? exception = Record.Exception(() =>
-		{
-			fileInfo.Delete();
-		});
-		exception.Should().BeNull();
-	}
 }

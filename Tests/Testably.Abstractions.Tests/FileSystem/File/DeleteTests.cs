@@ -23,8 +23,17 @@ public abstract partial class DeleteTests<TFileSystem>
 			openfile.Flush();
 		});
 
-		exception.Should().BeOfType<IOException>()
-		   .Which.Message.Should()
-		   .Contain($"'{FileSystem.Path.GetFullPath(filename)}'");
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.Message.Should()
+			   .Contain($"'{FileSystem.Path.GetFullPath(filename)}'");
+			FileSystem.File.Exists(filename).Should().BeTrue();
+		}
+		else
+		{
+			exception.Should().BeNull();
+			FileSystem.File.Exists(filename).Should().BeFalse();
+		}
 	}
 }

@@ -126,12 +126,17 @@ internal sealed class InMemoryStorage : IStorage
 			_fileSystem.ChangeHandler.NotifyPendingChange(WatcherChangeTypes.Deleted,
 				container.Type,
 				notifyFilters, location);
-		if (_containers.TryRemove(location, out IStorageContainer? removed))
+
+		CheckGrantAccess(location, container);
+		using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite, deleteAccess: true))
 		{
-			removed.ClearBytes();
-			_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
-			AdjustParentDirectoryTimes(location);
-			return true;
+			if (_containers.TryRemove(location, out IStorageContainer? removed))
+			{
+				removed.ClearBytes();
+				_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
+				AdjustParentDirectoryTimes(location);
+				return true;
+			}
 		}
 
 		return false;
@@ -360,10 +365,10 @@ internal sealed class InMemoryStorage : IStorage
 		CheckGrantAccess(source, sourceContainer);
 		CheckGrantAccess(destination, destinationContainer);
 		using (_ = sourceContainer.RequestAccess(FileAccess.ReadWrite, FileShare.None,
-			ignoreMetadataErrors))
+			ignoreMetadataErrors: ignoreMetadataErrors))
 		{
 			using (_ = destinationContainer.RequestAccess(FileAccess.ReadWrite,
-				FileShare.None, ignoreMetadataErrors))
+				FileShare.None, ignoreMetadataErrors: ignoreMetadataErrors))
 			{
 				if (_containers.TryRemove(destination,
 					out IStorageContainer? existingDestinationContainer))

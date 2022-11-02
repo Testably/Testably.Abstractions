@@ -81,10 +81,11 @@ internal sealed class NullContainer : IStorageContainer
 	public byte[] GetBytes()
 		=> Array.Empty<byte>();
 
-	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool)" />
+	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool)" />
 	public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share,
-	                                          bool ignoreMetadataError = true)
-		=> new NullStorageAccessHandle(access, share);
+	                                          bool deleteAccess = false,
+	                                          bool ignoreMetadataErrors = true)
+		=> new NullStorageAccessHandle(access, share, deleteAccess);
 
 	/// <inheritdoc cref="IStorageContainer.WriteBytes(byte[])" />
 	public void WriteBytes(byte[] bytes)
@@ -99,16 +100,20 @@ internal sealed class NullContainer : IStorageContainer
 
 	private sealed class NullStorageAccessHandle : IStorageAccessHandle
 	{
-		public NullStorageAccessHandle(FileAccess access, FileShare share)
+		public NullStorageAccessHandle(FileAccess access, FileShare share, bool deleteAccess)
 		{
 			Access = access;
 			Share = share;
+			DeleteAccess = deleteAccess;
 		}
 
 		#region IStorageAccessHandle Members
 
 		/// <inheritdoc cref="IStorageAccessHandle.Access" />
 		public FileAccess Access { get; }
+
+		/// <inheritdoc cref="IStorageAccessHandle.DeleteAccess" />
+		public bool DeleteAccess { get; }
 
 		/// <inheritdoc cref="IStorageAccessHandle.Share" />
 		public FileShare Share { get; }
