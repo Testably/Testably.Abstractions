@@ -583,7 +583,7 @@ internal sealed class InMemoryStorage : IStorage
 		}
 
 		CheckGrantAccess(source, container);
-		using (container.RequestAccess(FileAccess.Write, FileShare.None))
+		using (container.RequestAccess(FileAccess.Write, FileShare.None, hResult: -2147024891))
 		{
 			if (children.Any() && recursive)
 			{

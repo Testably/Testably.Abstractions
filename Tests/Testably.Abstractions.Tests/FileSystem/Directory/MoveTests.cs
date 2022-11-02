@@ -25,7 +25,8 @@ public abstract partial class MoveTests<TFileSystem>
 			FileSystem.Directory.Move(source, destination);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>();
+		exception.Should().BeOfType<DirectoryNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024893);
 	}
 
 	[SkippableTheory]
@@ -117,7 +118,8 @@ public abstract partial class MoveTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<IOException>();
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147024891);
 			FileSystem.Directory.Exists(source).Should().BeTrue();
 			FileSystem.Directory.Exists(destination).Should().BeFalse();
 			IDirectoryInfo sourceDirectory =

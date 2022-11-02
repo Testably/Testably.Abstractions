@@ -131,10 +131,11 @@ internal class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.GetBytes()" />
 	public byte[] GetBytes() => _bytes;
 
-	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool)" />
+	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool, int?)" />
 	public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share,
 	                                          bool deleteAccess = false,
-	                                          bool ignoreMetadataErrors = true)
+	                                          bool ignoreMetadataErrors = true,
+	                                          int? hResult = null)
 	{
 		if (_location.Drive == null)
 		{
@@ -158,7 +159,7 @@ internal class InMemoryContainer : IStorageContainer
 			return fileHandle;
 		}
 
-		throw ExceptionFactory.ProcessCannotAccessTheFile(_location.FullPath);
+		throw ExceptionFactory.ProcessCannotAccessTheFile(_location.FullPath, hResult ?? -2147024864);
 	}
 
 	/// <inheritdoc cref="IStorageContainer.WriteBytes(byte[])" />

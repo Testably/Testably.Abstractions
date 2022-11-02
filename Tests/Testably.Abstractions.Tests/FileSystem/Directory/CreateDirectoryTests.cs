@@ -122,9 +122,13 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 
 #if NETFRAMEWORK
 		exception.Should().BeOfType<ArgumentException>()
+		   .Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeOfType<ArgumentException>()
 		   .Which.Message.Should()
 		   .Be("Path cannot be the empty string or all whitespace.");
 #else
+		exception.Should().BeOfType<ArgumentException>()
+		   .Which.HResult.Should().Be(-2147024809);
 		exception.Should().BeOfType<ArgumentException>()
 		   .Which.ParamName.Should().Be("path");
 		exception.Should().BeOfType<ArgumentException>()
@@ -157,6 +161,8 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 				   .BeOfType<IOException>(
 						$"'{invalidChar}' is an invalid path character.")
 				   .Which.Message.Should().Contain(expectedMessage);
+				exception.Should().BeOfType<IOException>()
+				   .Which.HResult.Should().Be(-2147024773);
 #endif
 			}
 			else
@@ -172,8 +178,10 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		Exception? exception =
 			Record.Exception(() => FileSystem.Directory.CreateDirectory(null!));
 
-		exception.Should().BeOfType<ArgumentNullException>().Which.ParamName
-		   .Should().Be("path");
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.HResult.Should().Be(-2147467261);
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.ParamName.Should().Be("path");
 	}
 
 	[SkippableFact]
@@ -183,7 +191,8 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		Exception? exception =
 			Record.Exception(() => FileSystem.Directory.CreateDirectory(path));
 
-		exception.Should().BeOfType<ArgumentException>();
+		exception.Should().BeOfType<ArgumentException>()
+		   .Which.HResult.Should().Be(-2147024809);
 	}
 
 	[SkippableFact]

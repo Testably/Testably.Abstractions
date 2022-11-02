@@ -13,7 +13,8 @@ public abstract partial class GetDirectoryRootTests<TFileSystem>
 			FileSystem.Directory.GetDirectoryRoot("");
 		});
 
-		exception.Should().BeOfType<ArgumentException>();
+		exception.Should().BeOfType<ArgumentException>()
+		   .Which.HResult.Should().Be(-2147024809);
 	}
 
 	[SkippableFact]
