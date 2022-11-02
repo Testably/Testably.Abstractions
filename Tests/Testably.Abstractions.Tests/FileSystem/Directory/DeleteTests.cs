@@ -54,6 +54,38 @@ public abstract partial class DeleteTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void Delete_Recursive_WithOpenFile_ShouldThrowIOException(
+		string path, string filename)
+	{
+		FileSystem.Initialize()
+		   .WithSubdirectory(path);
+		string filePath = FileSystem.Path.Combine(path, filename);
+		FileSystemStream openFile = FileSystem.File.OpenWrite(filePath);
+		openFile.Write(new byte[] { 0 }, 0, 1);
+		openFile.Flush();
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.Directory.Delete(path, true);
+			openFile.Write(new byte[] { 0 }, 0, 1);
+			openFile.Flush();
+		});
+
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.Message.Should()
+			   .Contain($"{filename}'");
+			FileSystem.File.Exists(filePath).Should().BeTrue();
+		}
+		else
+		{
+			exception.Should().BeNull();
+			FileSystem.File.Exists(filePath).Should().BeFalse();
+		}
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void
 		Delete_Recursive_WithSimilarNamedFile_ShouldOnlyDeleteDirectoryAndItsContents(
 			string subdirectory)

@@ -12,13 +12,13 @@ namespace Testably.Abstractions.Testing.Tests.TestHelpers;
 ///     A <see cref="IStorageContainer" /> for testing purposes.
 ///     <para />
 ///     Set <see cref="IsLocked" /> to <see langword="true" /> to simulate a locked file
-///     (<see cref="RequestAccess(FileAccess, FileShare, bool)" /> throws an <see cref="IOException" />).
+///     (<see cref="RequestAccess(FileAccess, FileShare, bool, bool)" /> throws an <see cref="IOException" />).
 /// </summary>
 internal sealed class LockableContainer : IStorageContainer
 {
 	/// <summary>
 	///     Simulate a locked file, if set to <see langword="true" />.<br />
-	///     In this case <see cref="RequestAccess(FileAccess, FileShare, bool)" /> throws an <see cref="IOException" />,
+	///     In this case <see cref="RequestAccess(FileAccess, FileShare, bool, bool)" /> throws an <see cref="IOException" />,
 	///     otherwise it will succeed.
 	/// </summary>
 	public bool IsLocked { get; set; }
@@ -90,16 +90,17 @@ internal sealed class LockableContainer : IStorageContainer
 	public byte[] GetBytes()
 		=> _bytes;
 
-	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool)" />
+	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool)" />
 	public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share,
-	                                          bool ignoreMetadataError = true)
+	                                          bool deleteAccess = false,
+	                                          bool ignoreMetadataErrors = true)
 	{
 		if (IsLocked)
 		{
 			throw ExceptionFactory.ProcessCannotAccessTheFile("");
 		}
 
-		return new AccessHandle(access, share);
+		return new AccessHandle(access, share, deleteAccess);
 	}
 
 	/// <inheritdoc cref="IStorageContainer.WriteBytes(byte[])" />
@@ -110,16 +111,20 @@ internal sealed class LockableContainer : IStorageContainer
 
 	private class AccessHandle : IStorageAccessHandle
 	{
-		public AccessHandle(FileAccess access, FileShare share)
+		public AccessHandle(FileAccess access, FileShare share, bool deleteAccess)
 		{
 			Access = access;
 			Share = share;
+			DeleteAccess = deleteAccess;
 		}
 
 		#region IStorageAccessHandle Members
 
 		/// <inheritdoc cref="IStorageAccessHandle.Access" />
 		public FileAccess Access { get; }
+
+		/// <inheritdoc cref="IStorageAccessHandle.DeleteAccess" />
+		public bool DeleteAccess { get; }
 
 		/// <inheritdoc cref="IStorageAccessHandle.Access" />
 		public FileShare Share { get; }

@@ -131,9 +131,10 @@ internal class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.GetBytes()" />
 	public byte[] GetBytes() => _bytes;
 
-	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool)" />
+	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool)" />
 	public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share,
-	                                          bool ignoreMetadataError = true)
+	                                          bool deleteAccess = false,
+	                                          bool ignoreMetadataErrors = true)
 	{
 		if (_location.Drive == null)
 		{
@@ -146,13 +147,13 @@ internal class InMemoryContainer : IStorageContainer
 		}
 
 		Execute.OnWindowsIf(
-			!ignoreMetadataError && Attributes.HasFlag(FileAttributes.ReadOnly),
+			!ignoreMetadataErrors && Attributes.HasFlag(FileAttributes.ReadOnly),
 			() => throw ExceptionFactory.AccessToPathDenied());
 
-		if (CanGetAccess(access, share))
+		if (CanGetAccess(access, share, deleteAccess))
 		{
 			Guid guid = Guid.NewGuid();
-			FileHandle fileHandle = new(guid, ReleaseAccess, access, share);
+			FileHandle fileHandle = new(guid, ReleaseAccess, access, share, deleteAccess);
 			_fileHandles.TryAdd(guid, fileHandle);
 			return fileHandle;
 		}
@@ -238,11 +239,11 @@ internal class InMemoryContainer : IStorageContainer
 		return attributes;
 	}
 
-	private bool CanGetAccess(FileAccess access, FileShare share)
+	private bool CanGetAccess(FileAccess access, FileShare share, bool deleteAccess)
 	{
 		foreach (KeyValuePair<Guid, FileHandle> fileHandle in _fileHandles)
 		{
-			if (!fileHandle.Value.GrantAccess(access, share))
+			if (!fileHandle.Value.GrantAccess(access, share, deleteAccess))
 			{
 				return false;
 			}
@@ -293,10 +294,11 @@ internal class InMemoryContainer : IStorageContainer
 		private readonly Action<Guid> _releaseCallback;
 
 		public FileHandle(Guid key, Action<Guid> releaseCallback, FileAccess access,
-		                  FileShare share)
+		                  FileShare share, bool deleteAccess)
 		{
 			_releaseCallback = releaseCallback;
 			Access = access;
+			DeleteAccess = deleteAccess;
 			Share = Execute.OnWindows(
 				() => share,
 				() => share == FileShare.None
@@ -311,6 +313,9 @@ internal class InMemoryContainer : IStorageContainer
 		/// <inheritdoc cref="IStorageAccessHandle.Access" />
 		public FileAccess Access { get; }
 
+		/// <inheritdoc cref="IStorageAccessHandle.DeleteAccess" />
+		public bool DeleteAccess { get; }
+
 		/// <inheritdoc cref="IStorageAccessHandle.Share" />
 		public FileShare Share { get; }
 
@@ -322,15 +327,23 @@ internal class InMemoryContainer : IStorageContainer
 
 		#endregion
 
-		public bool GrantAccess(FileAccess access, FileShare share)
+		public bool GrantAccess(FileAccess access, FileShare share, bool deleteAccess)
 		{
 			FileShare usedShare = share;
 			Execute.NotOnWindows(()
 				=> usedShare = FileShare.ReadWrite);
+			if (deleteAccess && !Execute.IsWindows)
+			{
+				return true;
+			}
 
 			return CheckAccessWithShare(access, Share) &&
 			       CheckAccessWithShare(Access, usedShare);
 		}
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"{Access} | {Share}";
 
 		private static bool CheckAccessWithShare(FileAccess access, FileShare share)
 		{

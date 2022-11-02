@@ -14,6 +14,11 @@ internal interface IStorageAccessHandle : IDisposable
 	FileAccess Access { get; }
 
 	/// <summary>
+	///     Flag indicating, if the access handle resulted from a deletion request.
+	/// </summary>
+	bool DeleteAccess { get; }
+
+	/// <summary>
 	///     The <see cref="FileShare" /> that this access handle allows.
 	/// </summary>
 	FileShare Share { get; }
