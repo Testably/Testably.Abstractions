@@ -19,7 +19,8 @@ public abstract partial class Tests<TFileSystem>
 		{
 			sut.Attributes = fileAttributes;
 		});
-		exception.Should().BeOfType<FileNotFoundException>();
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
 		sut.Attributes.Should().Be((FileAttributes)(-1));
 	}
 
@@ -35,11 +36,13 @@ public abstract partial class Tests<TFileSystem>
 		});
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<FileNotFoundException>();
+			exception.Should().BeOfType<FileNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
-			exception.Should().BeOfType<DirectoryNotFoundException>();
+			exception.Should().BeOfType<DirectoryNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024893);
 		}
 
 		sut.CreationTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
@@ -58,11 +61,13 @@ public abstract partial class Tests<TFileSystem>
 		});
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<FileNotFoundException>();
+			exception.Should().BeOfType<FileNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
-			exception.Should().BeOfType<DirectoryNotFoundException>();
+			exception.Should().BeOfType<DirectoryNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024893);
 		}
 
 		sut.CreationTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
@@ -80,11 +85,13 @@ public abstract partial class Tests<TFileSystem>
 		});
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<FileNotFoundException>();
+			exception.Should().BeOfType<FileNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
-			exception.Should().BeOfType<DirectoryNotFoundException>();
+			exception.Should().BeOfType<DirectoryNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024893);
 		}
 
 		sut.LastAccessTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
@@ -103,11 +110,13 @@ public abstract partial class Tests<TFileSystem>
 		});
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<FileNotFoundException>();
+			exception.Should().BeOfType<FileNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
-			exception.Should().BeOfType<DirectoryNotFoundException>();
+			exception.Should().BeOfType<DirectoryNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024893);
 		}
 
 		sut.LastAccessTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
@@ -125,11 +134,13 @@ public abstract partial class Tests<TFileSystem>
 		});
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<FileNotFoundException>();
+			exception.Should().BeOfType<FileNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
-			exception.Should().BeOfType<DirectoryNotFoundException>();
+			exception.Should().BeOfType<DirectoryNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024893);
 		}
 
 		sut.LastWriteTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
@@ -148,11 +159,13 @@ public abstract partial class Tests<TFileSystem>
 		});
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<FileNotFoundException>();
+			exception.Should().BeOfType<FileNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
-			exception.Should().BeOfType<DirectoryNotFoundException>();
+			exception.Should().BeOfType<DirectoryNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024893);
 		}
 
 		sut.LastWriteTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());

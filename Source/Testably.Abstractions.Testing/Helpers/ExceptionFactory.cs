@@ -107,7 +107,7 @@ internal static class ExceptionFactory
 			paramName)
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = 15
+			HResult = -2147024809
 #endif
 		};
 
@@ -121,7 +121,7 @@ internal static class ExceptionFactory
 		=> new("Operation is not supported on this platform.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = 18
+			HResult = -2146233031
 #endif
 		};
 

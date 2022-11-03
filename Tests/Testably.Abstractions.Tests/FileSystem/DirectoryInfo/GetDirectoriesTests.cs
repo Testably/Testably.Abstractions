@@ -113,7 +113,8 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 			_ = baseDirectory.GetDirectories(searchPattern).FirstOrDefault();
 		});
 
-		exception.Should().BeOfType<ArgumentException>();
+		exception.Should().BeOfType<ArgumentException>()
+		   .Which.HResult.Should().Be(-2147024809);
 	}
 
 	[SkippableTheory]

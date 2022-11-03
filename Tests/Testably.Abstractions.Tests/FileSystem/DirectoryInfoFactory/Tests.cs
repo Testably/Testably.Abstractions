@@ -15,15 +15,11 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.DirectoryInfo.New(string.Empty);
 		});
 
-#if NETFRAMEWORK
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.Message.Should().Be("The path is not of a legal form.");
-#else
+		   .Which.HResult.Should().Be(-2147024809);
+#if !NETFRAMEWORK
 		exception.Should().BeOfType<ArgumentException>()
 		   .Which.ParamName.Should().Be("path");
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.Message.Should()
-		   .Be("The path is empty. (Parameter 'path')");
 #endif
 	}
 
@@ -35,7 +31,8 @@ public abstract partial class Tests<TFileSystem>
 			_ = FileSystem.DirectoryInfo.New(null!);
 		});
 
-		exception.Should().BeOfType<ArgumentNullException>();
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.HResult.Should().Be(-2147467261);
 	}
 
 	[SkippableTheory]

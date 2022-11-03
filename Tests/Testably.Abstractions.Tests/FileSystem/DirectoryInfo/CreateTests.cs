@@ -20,9 +20,13 @@ public abstract partial class CreateTests<TFileSystem>
 
 #if NETFRAMEWORK
 			exception.Should().BeOfType<ArgumentException>()
+			   .Which.HResult.Should().Be(-2147024809);
+			exception.Should().BeOfType<ArgumentException>()
 			   .Which.Message.Should().Be("Illegal characters in path.");
 #else
 			string expectedMessage = $"'{FileSystem.Path.Combine(BasePath, path)}'";
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147024773);
 			exception.Should().BeOfType<IOException>()
 			   .Which.Message.Should().Contain(expectedMessage);
 #endif
@@ -35,6 +39,8 @@ public abstract partial class CreateTests<TFileSystem>
 		Exception? exception =
 			Record.Exception(() => FileSystem.DirectoryInfo.New(null!));
 
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.HResult.Should().Be(-2147467261);
 		exception.Should().BeOfType<ArgumentNullException>().Which.ParamName
 		   .Should().Be("path");
 	}
@@ -48,6 +54,8 @@ public abstract partial class CreateTests<TFileSystem>
 		Exception? exception =
 			Record.Exception(() => FileSystem.DirectoryInfo.New(path).Create());
 
+		exception.Should().BeOfType<ArgumentException>()
+		   .Which.HResult.Should().Be(-2147024809);
 		exception.Should().BeOfType<ArgumentException>()
 		   .Which.Message.Should().Contain(expectedMessage);
 	}
