@@ -89,6 +89,17 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 			_ = fileInfo.ResolveLinkTarget(true);
 		});
 
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147022975);
+		}
+		else
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2146232800);
+		}
+
 		exception.Should().BeOfType<IOException>()
 		   .Which.Message.Should().Contain($"'{fileInfo.FullName}'");
 	}

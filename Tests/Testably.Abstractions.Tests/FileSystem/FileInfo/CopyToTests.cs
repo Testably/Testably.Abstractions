@@ -25,7 +25,17 @@ public abstract partial class CopyToTests<TFileSystem>
 			sut.CopyTo(destinationName);
 		});
 
-		exception.Should().BeOfType<IOException>();
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147024816);
+		}
+		else
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(17);
+		}
+
 		sut.Exists.Should().BeTrue();
 		FileSystem.File.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
@@ -177,6 +187,8 @@ public abstract partial class CopyToTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<UnauthorizedAccessException>()
+		   .Which.HResult.Should().Be(-2147024891);
+		exception.Should().BeOfType<UnauthorizedAccessException>()
 		   .Which.Message.Should()
 		   .Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
 		FileSystem.Directory.Exists(sourceName).Should().BeTrue();
@@ -201,7 +213,8 @@ public abstract partial class CopyToTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<IOException>();
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147024864);
 			FileSystem.File.Exists(destinationName).Should().BeFalse();
 		}
 		else
@@ -224,9 +237,9 @@ public abstract partial class CopyToTests<TFileSystem>
 			sut.CopyTo(destinationName);
 		});
 
-#if NETFRAMEWORK
-		exception.Should().BeOfType<FileNotFoundException>();
-#else
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
+#if !NETFRAMEWORK
 		exception.Should().BeOfType<FileNotFoundException>()
 		   .Which.Message.Should()
 		   .Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");

@@ -18,9 +18,9 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.FileStream.New(path, FileMode.Append, FileAccess.ReadWrite);
 		});
 
-#if NETFRAMEWORK
-		exception.Should().BeOfType<ArgumentException>();
-#else
+		exception.Should().BeOfType<ArgumentException>()
+		   .Which.HResult.Should().Be(-2147024809);
+#if !NETFRAMEWORK
 		exception.Should().BeOfType<ArgumentException>()
 		   .Which.ParamName.Should().Be("access");
 #endif
@@ -37,9 +37,9 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.FileStream.New(string.Empty, mode);
 		});
 
-#if NETFRAMEWORK
-		exception.Should().BeOfType<ArgumentException>();
-#else
+		exception.Should().BeOfType<ArgumentException>()
+		   .Which.HResult.Should().Be(-2147024809);
+#if !NETFRAMEWORK
 		exception.Should().BeOfType<ArgumentException>()
 		   .Which.ParamName.Should().Be("path");
 #endif
@@ -67,6 +67,17 @@ public abstract partial class Tests<TFileSystem>
 		{
 			FileSystem.FileStream.New(path, FileMode.CreateNew);
 		});
+
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147024816);
+		}
+		else
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(17);
+		}
 
 		exception.Should().BeOfType<IOException>()
 		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
@@ -99,9 +110,9 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.FileStream.New(path, mode, access);
 		});
 
-#if NETFRAMEWORK
-		exception.Should().BeOfType<ArgumentException>();
-#else
+		exception.Should().BeOfType<ArgumentException>()
+		   .Which.HResult.Should().Be(-2147024809);
+#if !NETFRAMEWORK
 		exception.Should().BeOfType<ArgumentException>()
 		   .Which.ParamName.Should().Be("access");
 #endif
@@ -122,6 +133,8 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
+		exception.Should().BeOfType<FileNotFoundException>()
 		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
@@ -136,6 +149,8 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
+		exception.Should().BeOfType<FileNotFoundException>()
 		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
@@ -148,6 +163,8 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.FileStream.New(null!, mode);
 		});
 
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.HResult.Should().Be(-2147467261);
 		exception.Should().BeOfType<ArgumentNullException>()
 		   .Which.ParamName.Should().Be("path");
 	}
@@ -166,10 +183,14 @@ public abstract partial class Tests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<UnauthorizedAccessException>()
+			   .Which.HResult.Should().Be(-2147024891);
+			exception.Should().BeOfType<UnauthorizedAccessException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 		}
 		else
 		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(17);
 			exception.Should().BeOfType<IOException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 		}

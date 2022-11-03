@@ -23,6 +23,8 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 
 		exception.Should().BeOfType<DirectoryNotFoundException>()
 		   .Which.Message.Should().Contain($"'{expectedPath}'.");
+		exception.Should().BeOfType<DirectoryNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024893);
 		FileSystem.Directory.Exists(path).Should().BeFalse();
 	}
 
@@ -192,6 +194,8 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 		exception.Should().BeOfType<ArgumentException>()
 		   .Which.Message.Should().Contain($"'{searchPattern}'");
 #endif
+		exception.Should().BeOfType<ArgumentException>()
+		   .Which.HResult.Should().Be(-2147024809);
 	}
 
 	[SkippableTheory]

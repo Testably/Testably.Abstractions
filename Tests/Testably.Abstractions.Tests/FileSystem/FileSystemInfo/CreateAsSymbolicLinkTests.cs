@@ -38,6 +38,17 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 			fileInfo.CreateAsSymbolicLink(pathToTarget);
 		});
 
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147024713);
+		}
+		else
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(17);
+		}
+
 		exception.Should().BeOfType<IOException>()
 		   .Which.Message.Should().Contain($"'{path}'");
 	}

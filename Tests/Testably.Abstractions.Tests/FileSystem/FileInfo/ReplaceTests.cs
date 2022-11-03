@@ -24,7 +24,8 @@ public abstract partial class ReplaceTests<TFileSystem>
 			sut.Replace(destinationName, backupName);
 		});
 
-		exception.Should().BeOfType<UnauthorizedAccessException>();
+		exception.Should().BeOfType<UnauthorizedAccessException>()
+		   .Which.HResult.Should().Be(-2147024891);
 	}
 
 	[SkippableTheory]
@@ -42,7 +43,8 @@ public abstract partial class ReplaceTests<TFileSystem>
 			sut.Replace(destinationName, backupName);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>();
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
 		FileSystem.File.Exists(backupName).Should().BeFalse();
 	}
 
@@ -95,7 +97,8 @@ public abstract partial class ReplaceTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<UnauthorizedAccessException>();
+			exception.Should().BeOfType<UnauthorizedAccessException>()
+			   .Which.HResult.Should().Be(-2147024891);
 			FileSystem.File.Exists(sourceName).Should().BeTrue();
 			FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
 			FileSystem.File.Exists(destinationName).Should().BeTrue();
@@ -239,7 +242,8 @@ public abstract partial class ReplaceTests<TFileSystem>
 			sut.Replace(destinationName, backupName);
 		});
 
-		exception.Should().BeOfType<UnauthorizedAccessException>();
+		exception.Should().BeOfType<UnauthorizedAccessException>()
+		   .Which.HResult.Should().Be(-2147024891);
 	}
 
 	[SkippableTheory]
@@ -265,7 +269,8 @@ public abstract partial class ReplaceTests<TFileSystem>
 		stream.Dispose();
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<IOException>();
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147024864);
 			sut.Exists.Should().BeTrue();
 			FileSystem.File.Exists(sourceName).Should().BeTrue();
 			FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
@@ -301,7 +306,8 @@ public abstract partial class ReplaceTests<TFileSystem>
 			sut.Replace(destinationName, backupName);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>();
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
 		if (Test.RunsOnWindows)
 		{
 			// Behaviour on Linux/MacOS is uncertain

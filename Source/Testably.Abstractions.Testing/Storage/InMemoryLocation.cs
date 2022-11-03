@@ -113,9 +113,6 @@ internal sealed class InMemoryLocation : IStorageLocation
 	{
 		if (path == string.Empty)
 		{
-			Execute.OnNetFramework(()
-				=> throw ExceptionFactory.PathHasNoLegalForm());
-
 			throw ExceptionFactory.PathIsEmpty(nameof(path));
 		}
 

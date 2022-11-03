@@ -172,11 +172,15 @@ public abstract partial class Tests<TFileSystem>
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			exception.Should().BeOfType<FileNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			exception.Should().BeOfType<DirectoryNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024893);
 		}
 	}
 
@@ -233,11 +237,15 @@ public abstract partial class Tests<TFileSystem>
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			exception.Should().BeOfType<FileNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			exception.Should().BeOfType<DirectoryNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024893);
 		}
 	}
 
@@ -294,11 +302,15 @@ public abstract partial class Tests<TFileSystem>
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			exception.Should().BeOfType<FileNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			exception.Should().BeOfType<DirectoryNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024893);
 		}
 	}
 
@@ -349,11 +361,15 @@ public abstract partial class Tests<TFileSystem>
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			exception.Should().BeOfType<FileNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			exception.Should().BeOfType<DirectoryNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024893);
 		}
 	}
 
@@ -404,11 +420,15 @@ public abstract partial class Tests<TFileSystem>
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			exception.Should().BeOfType<FileNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			exception.Should().BeOfType<DirectoryNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024893);
 		}
 	}
 
@@ -459,11 +479,15 @@ public abstract partial class Tests<TFileSystem>
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			exception.Should().BeOfType<FileNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			exception.Should().BeOfType<DirectoryNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024893);
 		}
 	}
 

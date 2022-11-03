@@ -90,14 +90,15 @@ internal sealed class LockableContainer : IStorageContainer
 	public byte[] GetBytes()
 		=> _bytes;
 
-	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool)" />
+	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool, int?)" />
 	public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share,
 	                                          bool deleteAccess = false,
-	                                          bool ignoreMetadataErrors = true)
+	                                          bool ignoreMetadataErrors = true,
+	                                          int? hResult = null)
 	{
 		if (IsLocked)
 		{
-			throw ExceptionFactory.ProcessCannotAccessTheFile("");
+			throw ExceptionFactory.ProcessCannotAccessTheFile("", hResult ?? -1);
 		}
 
 		return new AccessHandle(access, share, deleteAccess);

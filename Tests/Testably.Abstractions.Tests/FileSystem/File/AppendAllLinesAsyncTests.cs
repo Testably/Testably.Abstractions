@@ -26,7 +26,7 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 			FileSystem.File.AppendAllLinesAsync(path, contents, cts.Token));
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.Message.Should().Be("A task was canceled.");
+		   .Which.HResult.Should().Be(-2146233029);
 	}
 
 	[SkippableTheory]
@@ -43,7 +43,7 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 				cts.Token));
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.Message.Should().Be("A task was canceled.");
+		   .Which.HResult.Should().Be(-2146233029);
 	}
 
 	[SkippableTheory]

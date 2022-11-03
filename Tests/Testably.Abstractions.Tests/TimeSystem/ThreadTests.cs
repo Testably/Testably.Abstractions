@@ -10,7 +10,8 @@ public abstract partial class ThreadTests<TTimeSystem>
 	{
 		Exception? exception = Record.Exception(() => TimeSystem.Thread.Sleep(-2));
 
-		exception.Should().BeOfType<ArgumentOutOfRangeException>();
+		exception.Should().BeOfType<ArgumentOutOfRangeException>()
+		   .Which.HResult.Should().Be(-2146233086);
 	}
 
 	[Fact]
@@ -32,7 +33,8 @@ public abstract partial class ThreadTests<TTimeSystem>
 		Exception? exception = Record.Exception(() =>
 			TimeSystem.Thread.Sleep(TimeSpan.FromMilliseconds(-2)));
 
-		exception.Should().BeOfType<ArgumentOutOfRangeException>();
+		exception.Should().BeOfType<ArgumentOutOfRangeException>()
+		   .Which.HResult.Should().Be(-2146233086);
 	}
 
 	[Fact]

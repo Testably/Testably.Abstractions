@@ -140,6 +140,8 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
+		exception.Should().BeOfType<FileNotFoundException>()
 		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
@@ -171,6 +173,8 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.File.SetCreationTimeUtc(path, creationTime);
 		});
 
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
 		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
@@ -204,6 +208,8 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
+		exception.Should().BeOfType<FileNotFoundException>()
 		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
@@ -232,6 +238,8 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.File.SetLastAccessTimeUtc(path, lastAccessTime);
 		});
 
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
 		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
@@ -262,6 +270,8 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
+		exception.Should().BeOfType<FileNotFoundException>()
 		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
@@ -290,6 +300,8 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.File.SetLastWriteTimeUtc(path, lastWriteTime);
 		});
 
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
 		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}

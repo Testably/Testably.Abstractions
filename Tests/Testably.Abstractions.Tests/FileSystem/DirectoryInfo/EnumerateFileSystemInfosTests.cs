@@ -142,7 +142,8 @@ public abstract partial class EnumerateFileSystemInfosTests<TFileSystem>
 			_ = baseDirectory.EnumerateFileSystemInfos(searchPattern).FirstOrDefault();
 		});
 
-		exception.Should().BeOfType<ArgumentException>();
+		exception.Should().BeOfType<ArgumentException>()
+		   .Which.HResult.Should().Be(-2147024809);
 	}
 
 	[SkippableFact]

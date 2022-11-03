@@ -16,7 +16,8 @@ public abstract partial class Tests<TFileSystem>
 			_ = FileSystem.FileInfo.New(string.Empty);
 		});
 
-		exception.Should().BeOfType<ArgumentException>();
+		exception.Should().BeOfType<ArgumentException>()
+		   .Which.HResult.Should().Be(-2147024809);
 	}
 
 	[SkippableFact]
@@ -27,7 +28,8 @@ public abstract partial class Tests<TFileSystem>
 			_ = FileSystem.FileInfo.New(null!);
 		});
 
-		exception.Should().BeOfType<ArgumentNullException>();
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.HResult.Should().Be(-2147467261);
 	}
 
 	[SkippableTheory]
@@ -45,7 +47,8 @@ public abstract partial class Tests<TFileSystem>
 
 		if (Test.IsNetFramework)
 		{
-			exception.Should().BeOfType<PathTooLongException>();
+			exception.Should().BeOfType<PathTooLongException>()
+			   .Which.HResult.Should().Be(-2147024690);
 		}
 		else
 		{

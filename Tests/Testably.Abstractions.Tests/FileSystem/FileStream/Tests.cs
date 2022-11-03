@@ -87,6 +87,8 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
+		   .Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeOfType<ArgumentException>()
 		   .Which.Message.Should().NotBeNullOrWhiteSpace();
 	}
 
@@ -98,6 +100,8 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.FileStream.New(null!, FileMode.Open);
 		});
 
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.HResult.Should().Be(-2147467261);
 		exception.Should().BeOfType<ArgumentNullException>()
 		   .Which.Message.Should().NotBeNullOrWhiteSpace();
 	}
@@ -173,6 +177,8 @@ public abstract partial class Tests<TFileSystem>
 			stream.ReadByte();
 		});
 
+		exception.Should().BeOfType<ObjectDisposedException>()
+		   .Which.HResult.Should().Be(-2146232798);
 		exception.Should().BeOfType<ObjectDisposedException>();
 	}
 
@@ -190,6 +196,8 @@ public abstract partial class Tests<TFileSystem>
 			readStream.EndRead(null!);
 		});
 
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.HResult.Should().Be(-2147467261);
 		exception.Should().BeOfType<ArgumentNullException>();
 	}
 
@@ -245,6 +253,8 @@ public abstract partial class Tests<TFileSystem>
 			writeStream.EndWrite(null!);
 		});
 
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.HResult.Should().Be(-2147467261);
 		exception.Should().BeOfType<ArgumentNullException>();
 	}
 
@@ -464,6 +474,8 @@ public abstract partial class Tests<TFileSystem>
 			_ = stream.ReadTimeout;
 		});
 
+		exception.Should().BeOfType<InvalidOperationException>()
+		   .Which.HResult.Should().Be(-2146233079);
 		exception.Should().BeOfType<InvalidOperationException>();
 	}
 
@@ -535,6 +547,8 @@ public abstract partial class Tests<TFileSystem>
 			stream.SetLength(length);
 		});
 
+		exception.Should().BeOfType<NotSupportedException>()
+		   .Which.HResult.Should().Be(-2146233067);
 		exception.Should().BeOfType<NotSupportedException>();
 	}
 
@@ -613,6 +627,8 @@ public abstract partial class Tests<TFileSystem>
 			_ = stream.WriteTimeout;
 		});
 
+		exception.Should().BeOfType<InvalidOperationException>()
+		   .Which.HResult.Should().Be(-2146233079);
 		exception.Should().BeOfType<InvalidOperationException>();
 	}
 }

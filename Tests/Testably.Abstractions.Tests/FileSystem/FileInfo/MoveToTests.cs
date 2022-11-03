@@ -25,7 +25,17 @@ public abstract partial class MoveToTests<TFileSystem>
 			sut.MoveTo(destinationName);
 		});
 
-		exception.Should().BeOfType<IOException>();
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147024713);
+		}
+		else
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(17);
+		}
+
 		sut.Exists.Should().BeTrue();
 		FileSystem.File.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
@@ -161,7 +171,8 @@ public abstract partial class MoveToTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<IOException>();
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147024864);
 			FileSystem.File.Exists(destinationName).Should().BeFalse();
 		}
 		else
@@ -184,9 +195,9 @@ public abstract partial class MoveToTests<TFileSystem>
 			sut.MoveTo(destinationName);
 		});
 
-#if NETFRAMEWORK
-		exception.Should().BeOfType<FileNotFoundException>();
-#else
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
+#if !NETFRAMEWORK
 		exception.Should().BeOfType<FileNotFoundException>()
 		   .Which.Message.Should()
 		   .Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");

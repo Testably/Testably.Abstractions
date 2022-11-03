@@ -84,7 +84,18 @@ public abstract partial class MoveToTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<IOException>();
+			if (Test.IsNetFramework)
+			{
+				// On .NET Framework the HResult is "-2146232800", but only in `DirectoryInfo.MoveTo` (not in `Directory.Move`)
+				// This peculiar deviation is not supported by the FileSystemMock.
+				exception.Should().BeOfType<IOException>();
+			}
+			else
+			{
+				exception.Should().BeOfType<IOException>()
+				   .Which.HResult.Should().Be(-2147024891);
+			}
+
 			FileSystem.Directory.Exists(source).Should().BeTrue();
 			FileSystem.Directory.Exists(destination).Should().BeFalse();
 			IDirectoryInfo sourceDirectory =
