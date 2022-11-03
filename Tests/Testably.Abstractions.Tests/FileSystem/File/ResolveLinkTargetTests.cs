@@ -104,6 +104,8 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<IOException>()
+		   .Which.HResult.Should().Be(-2147022975);
+		exception.Should().BeOfType<IOException>()
 		   .Which.Message.Should().Contain($"'{previousPath}'");
 	}
 

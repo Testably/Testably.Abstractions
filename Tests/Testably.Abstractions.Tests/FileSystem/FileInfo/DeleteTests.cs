@@ -27,6 +27,8 @@ public abstract partial class DeleteTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147024864);
+			exception.Should().BeOfType<IOException>()
 			   .Which.Message.Should()
 			   .Contain($"{filename}'");
 			FileSystem.File.Exists(filename).Should().BeTrue();

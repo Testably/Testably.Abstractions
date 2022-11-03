@@ -89,7 +89,7 @@ internal sealed class InMemoryStorage : IStorage
 				return destination;
 			}
 
-			throw ExceptionFactory.CannotCreateFileWhenAlreadyExists();
+			throw ExceptionFactory.CannotCreateFileWhenAlreadyExists(-2147024816);
 		}
 	}
 
@@ -321,7 +321,7 @@ internal sealed class InMemoryStorage : IStorage
 		List<Rollback> rollbacks = new();
 		try
 		{
-			return MoveInternal(source, destination, overwrite, recursive, rollbacks);
+			return MoveInternal(source, destination, overwrite, recursive, null, rollbacks);
 		}
 		catch (Exception)
 		{
@@ -567,6 +567,7 @@ internal sealed class InMemoryStorage : IStorage
 	                                       IStorageLocation destination,
 	                                       bool overwrite,
 	                                       bool recursive,
+										   FileSystemTypes? sourceType,
 	                                       List<Rollback>? rollbacks = null)
 	{
 		if (!_containers.TryGetValue(source,
@@ -574,6 +575,8 @@ internal sealed class InMemoryStorage : IStorage
 		{
 			return null;
 		}
+
+		sourceType ??= container.Type;
 
 		List<IStorageLocation> children =
 			EnumerateLocations(source, FileSystemTypes.DirectoryOrFile).ToList();
@@ -583,7 +586,8 @@ internal sealed class InMemoryStorage : IStorage
 		}
 
 		CheckGrantAccess(source, container);
-		using (container.RequestAccess(FileAccess.Write, FileShare.None, hResult: -2147024891))
+		using (container.RequestAccess(FileAccess.Write, FileShare.None,
+			hResult: sourceType == FileSystemTypes.Directory ? -2147024891 : -2147024864))
 		{
 			if (children.Any() && recursive)
 			{
@@ -591,7 +595,7 @@ internal sealed class InMemoryStorage : IStorage
 				{
 					IStorageLocation childDestination = _fileSystem
 					   .GetMoveLocation(child, source, destination);
-					MoveInternal(child, childDestination, overwrite, recursive,
+					MoveInternal(child, childDestination, overwrite, recursive, sourceType,
 						rollbacks: rollbacks);
 				}
 			}
@@ -619,13 +623,16 @@ internal sealed class InMemoryStorage : IStorage
 					Execute.OnWindows(
 						() => sourceContainer.Attributes |= FileAttributes.Archive);
 					rollbacks?.Add(new Rollback(
-						() => MoveInternal(destination, source, true, false)));
+						() => MoveInternal(destination, source, true, false, sourceType)));
 					_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
 					return destination;
 				}
 
 				_containers.TryAdd(source, sourceContainer);
-				throw ExceptionFactory.CannotCreateFileWhenAlreadyExists();
+				throw ExceptionFactory.CannotCreateFileWhenAlreadyExists(
+					sourceType == FileSystemTypes.Directory
+						? -2147024891
+						: -2147024713);
 			}
 		}
 

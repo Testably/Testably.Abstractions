@@ -44,7 +44,8 @@ public abstract partial class MoveTests<TFileSystem>
 			FileSystem.File.Move(source, destination);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>();
+		exception.Should().BeOfType<DirectoryNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024893);
 	}
 
 	[SkippableTheory]
@@ -63,7 +64,8 @@ public abstract partial class MoveTests<TFileSystem>
 			FileSystem.File.Move(sourceName, destinationName);
 		});
 
-		exception.Should().BeOfType<IOException>();
+		exception.Should().BeOfType<IOException>()
+		   .Which.HResult.Should().Be(-2147024713);
 		FileSystem.File.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
 		FileSystem.File.Exists(destinationName).Should().BeTrue();
@@ -166,7 +168,8 @@ public abstract partial class MoveTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<IOException>();
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147024864);
 			FileSystem.File.Exists(destinationName).Should().BeFalse();
 		}
 		else
@@ -187,6 +190,8 @@ public abstract partial class MoveTests<TFileSystem>
 			FileSystem.File.Move(sourceName, destinationName);
 		});
 
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
 		   .Which.Message.Should()
 		   .Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");

@@ -22,7 +22,7 @@ public abstract partial class WriteAllLinesAsyncTests<TFileSystem>
 			FileSystem.File.WriteAllLinesAsync(path, contents, cts.Token));
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.Message.Should().Be("A task was canceled.");
+		   .Which.HResult.Should().Be(-2146233029);
 	}
 
 	[SkippableTheory]
@@ -38,7 +38,7 @@ public abstract partial class WriteAllLinesAsyncTests<TFileSystem>
 			FileSystem.File.WriteAllLinesAsync(path, contents, Encoding.UTF8, cts.Token));
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.Message.Should().Be("A task was canceled.");
+		   .Which.HResult.Should().Be(-2146233029);
 	}
 
 	[SkippableTheory]

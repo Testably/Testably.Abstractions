@@ -24,7 +24,7 @@ public abstract partial class ReadAllLinesAsyncTests<TFileSystem>
 			FileSystem.File.ReadAllLinesAsync(path, cts.Token));
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.Message.Should().Be("A task was canceled.");
+		   .Which.HResult.Should().Be(-2146233029);
 	}
 
 	[SkippableTheory]
@@ -40,7 +40,7 @@ public abstract partial class ReadAllLinesAsyncTests<TFileSystem>
 			FileSystem.File.ReadAllLinesAsync(path, Encoding.UTF8, cts.Token));
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.Message.Should().Be("A task was canceled.");
+		   .Which.HResult.Should().Be(-2146233029);
 	}
 
 	[SkippableTheory]
@@ -51,6 +51,8 @@ public abstract partial class ReadAllLinesAsyncTests<TFileSystem>
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.ReadAllLinesAsync(path));
 
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
 		   .Which.Message.Should()
 		   .Contain($"'{FileSystem.Path.GetFullPath(path)}'");

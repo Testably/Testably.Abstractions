@@ -20,7 +20,7 @@ internal static class ExceptionFactory
 			: $"Access to the path '{path}' is denied.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = 2
+			HResult = -2147024891
 #endif
 		};
 
@@ -42,8 +42,8 @@ internal static class ExceptionFactory
 			$"Cannot create '{path}' because a file or directory with the same name already exists.",
 			-2147024713);
 
-	internal static IOException CannotCreateFileWhenAlreadyExists()
-		=> new("Cannot create a file when that file already exists.", 6);
+	internal static IOException CannotCreateFileWhenAlreadyExists(int hResult)
+		=> new("Cannot create a file when that file already exists.", hResult);
 
 	internal static ArgumentException DirectoryNameDoesNotExist(string path)
 		=> new($"The directory name '{path}' does not exist.", nameof(path))
@@ -67,7 +67,7 @@ internal static class ExceptionFactory
 		};
 
 	internal static IOException FileAlreadyExists(string path)
-		=> new($"The file '{path}' already exists.", 10);
+		=> new($"The file '{path}' already exists.", -2147024816);
 
 	internal static IOException FileNameCannotBeResolved(string path)
 		=> new($"The name of the file cannot be resolved by the system. : '{path}'",
@@ -197,7 +197,7 @@ internal static class ExceptionFactory
 		=> new("A task was canceled.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = 28
+			HResult = -2146233029
 #endif
 		};
 

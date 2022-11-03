@@ -19,6 +19,8 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<DirectoryNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024893);
+		exception.Should().BeOfType<DirectoryNotFoundException>()
 		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(fullPath)}'");
 	}
 
