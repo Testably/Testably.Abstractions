@@ -149,7 +149,7 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 			_ = FileSystem.Directory.GetDirectories(path, searchPattern)
 			   .FirstOrDefault();
 		});
-		
+
 		exception.Should().BeOfType<ArgumentException>()
 		   .Which.HResult.Should().Be(-2147024809);
 	}

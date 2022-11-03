@@ -48,6 +48,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 			exception.Should().BeOfType<IOException>()
 			   .Which.HResult.Should().Be(17);
 		}
+
 		exception.Should().BeOfType<IOException>()
 		   .Which.Message.Should().Contain($"'{path}'");
 	}

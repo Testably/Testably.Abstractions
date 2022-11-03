@@ -78,6 +78,7 @@ public abstract partial class Tests<TFileSystem>
 			exception.Should().BeOfType<IOException>()
 			   .Which.HResult.Should().Be(17);
 		}
+
 		exception.Should().BeOfType<IOException>()
 		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}

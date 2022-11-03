@@ -53,6 +53,7 @@ public abstract partial class CopyTests<TFileSystem>
 			exception.Should().BeOfType<IOException>()
 			   .Which.HResult.Should().Be(17);
 		}
+
 		FileSystem.File.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
 		FileSystem.File.Exists(destinationName).Should().BeTrue();

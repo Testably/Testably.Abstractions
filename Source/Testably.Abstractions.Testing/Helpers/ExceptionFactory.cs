@@ -64,7 +64,8 @@ internal static class ExceptionFactory
 	internal static IOException FileAlreadyExists(string path, int hResult)
 		=> new($"The file '{path}' already exists.", hResult);
 
-	internal static IOException FileNameCannotBeResolved(string path, int hResult = -2147022975)
+	internal static IOException FileNameCannotBeResolved(
+		string path, int hResult = -2147022975)
 		=> new($"The name of the file cannot be resolved by the system. : '{path}'",
 			hResult);
 
@@ -155,8 +156,9 @@ internal static class ExceptionFactory
 		};
 
 	internal static IOException ProcessCannotAccessTheFile(string path, int hResult)
-		=> new($"The process cannot access the file '{path}' because it is being used by another process.",
-				hResult);
+		=> new(
+			$"The process cannot access the file '{path}' because it is being used by another process.",
+			hResult);
 
 	internal static NotSupportedException StreamDoesNotSupportWriting()
 		=> new("Stream does not support writing.")
