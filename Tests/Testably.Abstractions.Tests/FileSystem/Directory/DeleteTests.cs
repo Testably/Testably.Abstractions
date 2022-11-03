@@ -211,6 +211,11 @@ public abstract partial class DeleteTests<TFileSystem>
 			exception.Should().BeOfType<IOException>()
 			   .Which.HResult.Should().Be(-2147024751);
 		}
+		else if (Test.RunsOnMac)
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(66);
+		}
 		else
 		{
 			exception.Should().BeOfType<IOException>()
