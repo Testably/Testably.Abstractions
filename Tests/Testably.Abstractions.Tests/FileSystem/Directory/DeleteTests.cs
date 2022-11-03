@@ -205,9 +205,17 @@ public abstract partial class DeleteTests<TFileSystem>
 		{
 			FileSystem.Directory.Delete(path);
 		});
-		
-		exception.Should().BeOfType<IOException>()
-		   .Which.HResult.Should().Be(-2147024751);
+
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147024751);
+		}
+		else
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(39);
+		}
 #if !NETFRAMEWORK
 		if (Test.RunsOnWindows)
 		{

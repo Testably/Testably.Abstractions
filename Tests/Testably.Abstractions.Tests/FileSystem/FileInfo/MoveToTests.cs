@@ -25,8 +25,17 @@ public abstract partial class MoveToTests<TFileSystem>
 			sut.MoveTo(destinationName);
 		});
 
-		exception.Should().BeOfType<IOException>()
-		   .Which.HResult.Should().Be(-2147024713);
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147024713);
+		}
+		else
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(17);
+		}
+
 		sut.Exists.Should().BeTrue();
 		FileSystem.File.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);

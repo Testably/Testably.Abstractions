@@ -43,8 +43,16 @@ public abstract partial class CopyTests<TFileSystem>
 			FileSystem.File.Copy(sourceName, destinationName);
 		});
 
-		exception.Should().BeOfType<IOException>()
-		   .Which.HResult.Should().Be(-2147024816);
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147024816);
+		}
+		else
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(17);
+		}
 		FileSystem.File.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
 		FileSystem.File.Exists(destinationName).Should().BeTrue();

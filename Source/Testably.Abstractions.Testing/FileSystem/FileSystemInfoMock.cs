@@ -185,7 +185,7 @@ internal class FileSystemInfoMock : IFileSystemInfo
 		}
 		catch (IOException)
 		{
-			throw ExceptionFactory.FileNameCannotBeResolved(Location.FullPath);
+			throw ExceptionFactory.FileNameCannotBeResolved(Location.FullPath, Execute.IsWindows ? -2147022975 : - 2146232800);
 		}
 	}
 #endif

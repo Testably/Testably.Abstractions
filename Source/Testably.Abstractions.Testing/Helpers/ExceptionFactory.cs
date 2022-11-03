@@ -35,7 +35,7 @@ internal static class ExceptionFactory
 	internal static IOException CannotCreateFileAsAlreadyExists(string path)
 		=> new(
 			$"Cannot create '{path}' because a file or directory with the same name already exists.",
-			-2147024713);
+			Execute.IsWindows ? -2147024713 : 17);
 
 	internal static IOException CannotCreateFileWhenAlreadyExists(int hResult)
 		=> new("Cannot create a file when that file already exists.", hResult);
@@ -49,7 +49,7 @@ internal static class ExceptionFactory
 		};
 
 	internal static IOException DirectoryNotEmpty(string path)
-		=> new($"Directory not empty : '{path}'", -2147024751);
+		=> new($"Directory not empty : '{path}'", Execute.IsWindows ? -2147024751 : 39);
 
 	internal static DirectoryNotFoundException DirectoryNotFound(string? path = null)
 		=> new(path == null
@@ -64,9 +64,9 @@ internal static class ExceptionFactory
 	internal static IOException FileAlreadyExists(string path, int hResult)
 		=> new($"The file '{path}' already exists.", hResult);
 
-	internal static IOException FileNameCannotBeResolved(string path)
+	internal static IOException FileNameCannotBeResolved(string path, int hResult = -2147022975)
 		=> new($"The name of the file cannot be resolved by the system. : '{path}'",
-			-2147022975);
+			hResult);
 
 	internal static FileNotFoundException FileNotFound(string path)
 		=> new($"Could not find file '{path}'.")

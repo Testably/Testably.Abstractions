@@ -117,8 +117,16 @@ public abstract partial class DeleteTests<TFileSystem>
 			sut.Delete();
 		});
 
-		exception.Should().BeOfType<IOException>()
-		   .Which.HResult.Should().Be(-2147024751);
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147024751);
+		}
+		else
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(39);
+		}
 		exception.Should().BeOfType<IOException>();
 #if !NETFRAMEWORK
 		if (Test.RunsOnWindows)
