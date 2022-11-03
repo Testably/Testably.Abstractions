@@ -33,7 +33,7 @@ internal static class ExceptionFactory
 			paramName)
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = 4
+			HResult = -2147024809
 #endif
 		};
 
@@ -66,8 +66,8 @@ internal static class ExceptionFactory
 #endif
 		};
 
-	internal static IOException FileAlreadyExists(string path)
-		=> new($"The file '{path}' already exists.", -2147024816);
+	internal static IOException FileAlreadyExists(string path, int hResult)
+		=> new($"The file '{path}' already exists.", hResult);
 
 	internal static IOException FileNameCannotBeResolved(string path)
 		=> new($"The name of the file cannot be resolved by the system. : '{path}'",
@@ -97,7 +97,7 @@ internal static class ExceptionFactory
 			nameof(access))
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = 14
+			HResult = -2147024809
 #endif
 		};
 
@@ -180,7 +180,7 @@ internal static class ExceptionFactory
 		=> new("Stream does not support writing.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = 26
+			HResult = -2146233067
 #endif
 		};
 

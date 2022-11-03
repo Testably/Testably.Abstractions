@@ -87,12 +87,13 @@ internal sealed class FileStreamMock : FileSystemStream
 						_fileSystem.Path.GetFullPath(Name)),
 				() =>
 					throw ExceptionFactory.FileAlreadyExists(
-						_fileSystem.Path.GetFullPath(Name)));
+						_fileSystem.Path.GetFullPath(Name), 17));
 		}
 		else if (_mode.Equals(FileMode.CreateNew))
 		{
 			throw ExceptionFactory.FileAlreadyExists(
-				_fileSystem.Path.GetFullPath(Name));
+				_fileSystem.Path.GetFullPath(Name),
+				Execute.IsWindows ? -2147024816 : 17);
 		}
 
 		_accessLock = file.RequestAccess(access, share);
