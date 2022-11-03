@@ -7,12 +7,7 @@ namespace Testably.Abstractions.Testing.Helpers;
 internal static class ExceptionFactory
 {
 	public static NotSupportedException NotSupportedFileStreamWrapping()
-		=> new("You cannot wrap an existing FileStream in the MockFileSystem instance!")
-		{
-#if FEATURE_EXCEPTION_HRESULT
-			HResult = 1
-#endif
-		};
+		=> new("You cannot wrap an existing FileStream in the MockFileSystem instance!");
 
 	internal static UnauthorizedAccessException AccessToPathDenied(string path = "")
 		=> new(string.IsNullOrEmpty(path)
@@ -25,7 +20,7 @@ internal static class ExceptionFactory
 		};
 
 	internal static IOException AclAccessToPathDenied(string path)
-		=> new($"Access to the path '{path}' is denied.", 3);
+		=> new($"Access to the path '{path}' is denied.");
 
 	internal static ArgumentException AppendAccessOnlyInWriteOnlyMode(
 		string paramName = "access")
@@ -49,7 +44,7 @@ internal static class ExceptionFactory
 		=> new($"The directory name '{path}' does not exist.", nameof(path))
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = 7
+			HResult = -2147024809
 #endif
 		};
 
@@ -84,12 +79,7 @@ internal static class ExceptionFactory
 	internal static InternalBufferOverflowException InternalBufferOverflowException(
 		int internalBufferSize, int messages)
 		=> new(
-			$"The internal buffer is greater than the {internalBufferSize} allowed bytes (~ {messages} messages).")
-		{
-#if FEATURE_EXCEPTION_HRESULT
-			HResult = 13
-#endif
-		};
+			$"The internal buffer is greater than the {internalBufferSize} allowed bytes (~ {messages} messages).");
 
 	internal static ArgumentException InvalidAccessCombination(
 		FileMode mode, FileAccess access)
@@ -112,10 +102,10 @@ internal static class ExceptionFactory
 		};
 
 	internal static IOException NetworkPathNotFound(string path)
-		=> new($"The network path was not found. : '{path}'", 16);
+		=> new($"The network path was not found. : '{path}'");
 
 	internal static IOException NotEnoughDiskSpace(string name)
-		=> new($"There is not enough space on the disk: '{name}'", 17);
+		=> new($"There is not enough space on the disk: '{name}'");
 
 	internal static PlatformNotSupportedException OperationNotSupportedOnThisPlatform()
 		=> new("Operation is not supported on this platform.")
@@ -131,7 +121,7 @@ internal static class ExceptionFactory
 				"Path cannot be the empty string or all whitespace.")
 			{
 #if FEATURE_EXCEPTION_HRESULT
-				HResult = 19
+				HResult = -2147024809
 #endif
 			},
 			() => new ArgumentException(
@@ -155,14 +145,6 @@ internal static class ExceptionFactory
 		=> new(
 			$"The filename, directory name, or volume label syntax is incorrect. : '{path}'",
 			-2147024773);
-
-	internal static ArgumentException PathHasNoLegalForm()
-		=> new("The path is not of a legal form.")
-		{
-#if FEATURE_EXCEPTION_HRESULT
-			HResult = 23
-#endif
-		};
 
 	internal static ArgumentException PathIsEmpty(string paramName)
 		=> new("The path is empty.", paramName)
@@ -189,7 +171,7 @@ internal static class ExceptionFactory
 			"The value needs to be either -1 (signifying an infinite timeout), 0 or a positive integer.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = 27
+			HResult = -2146233086
 #endif
 		};
 
@@ -206,16 +188,11 @@ internal static class ExceptionFactory
 			"Number must be either non-negative and less than or equal to Int32.MaxValue or -1.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = 29
+			HResult = -2146233086
 #endif
 		};
 
 	internal static TimeoutException TimeoutExpired(int timeoutMilliseconds)
 		=> new(
-			$"The timeout of {timeoutMilliseconds}ms expired in the awaitable callback.")
-		{
-#if FEATURE_EXCEPTION_HRESULT
-			HResult = 30
-#endif
-		};
+			$"The timeout of {timeoutMilliseconds}ms expired in the awaitable callback.");
 }

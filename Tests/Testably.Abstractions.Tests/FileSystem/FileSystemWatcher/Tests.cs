@@ -131,6 +131,8 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
+		   .Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeOfType<ArgumentException>()
 		   .Which.Message.Should().Contain(path);
 	}
 

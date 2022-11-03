@@ -16,7 +16,8 @@ public abstract partial class TaskTests<TTimeSystem>
 			await TimeSystem.Task.Delay(-2).ConfigureAwait(false);
 		}).ConfigureAwait(false);
 
-		exception.Should().BeOfType<ArgumentOutOfRangeException>();
+		exception.Should().BeOfType<ArgumentOutOfRangeException>()
+		   .Which.HResult.Should().Be(-2146233086);
 	}
 
 	[Fact]
@@ -44,7 +45,8 @@ public abstract partial class TaskTests<TTimeSystem>
 			   .ConfigureAwait(false);
 		}).ConfigureAwait(false);
 
-		exception.Should().BeOfType<ArgumentOutOfRangeException>();
+		exception.Should().BeOfType<ArgumentOutOfRangeException>()
+		   .Which.HResult.Should().Be(-2146233086);
 	}
 
 	[Fact]
