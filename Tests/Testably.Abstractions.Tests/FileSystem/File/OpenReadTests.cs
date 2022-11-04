@@ -39,4 +39,21 @@ public abstract partial class OpenReadTests<TFileSystem>
 		stream.CanSeek.Should().BeTrue();
 		stream.CanTimeout.Should().BeFalse();
 	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void OpenRead_StreamShouldBeReadOnly(string path)
+	{
+		FileSystem.File.WriteAllText(path, null);
+
+		using FileSystemStream stream = FileSystem.File.OpenRead(path);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			stream.WriteByte(0);
+		});
+
+		exception.Should().BeOfType<NotSupportedException>()
+		   .Which.HResult.Should().Be(-2146233067);
+	}
 }

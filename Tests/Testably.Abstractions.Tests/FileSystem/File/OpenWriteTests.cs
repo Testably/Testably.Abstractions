@@ -32,4 +32,20 @@ public abstract partial class OpenWriteTests<TFileSystem>
 		stream.CanSeek.Should().BeTrue();
 		stream.CanTimeout.Should().BeFalse();
 	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void OpenWrite_StreamShouldNotThrowExceptionWhenReading(string path)
+	{
+		FileSystem.File.WriteAllText(path, null);
+
+		using FileSystemStream stream = FileSystem.File.OpenRead(path);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = stream.ReadByte();
+		});
+
+		exception.Should().BeNull();
+	}
 }
