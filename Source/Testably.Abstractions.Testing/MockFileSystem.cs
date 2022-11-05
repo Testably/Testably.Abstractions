@@ -2,6 +2,7 @@
 using System;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.FileSystem;
+using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
@@ -46,6 +47,8 @@ public sealed class MockFileSystem : IFileSystem
 	private readonly PathMock _pathMock;
 	private readonly InMemoryStorage _storage;
 
+	internal Func<SafeFileHandle, SafeFileHandleMock> SafeFileHandleWrapper { get; private set; }
+
 	/// <summary>
 	///     Initializes the <see cref="MockFileSystem" />.
 	/// </summary>
@@ -63,6 +66,7 @@ public sealed class MockFileSystem : IFileSystem
 		FileInfo = new FileInfoFactoryMock(this);
 		FileStream = new FileStreamFactoryMock(this);
 		FileSystemWatcher = new FileSystemWatcherFactoryMock(this);
+		SafeFileHandleWrapper = _ => throw ExceptionFactory.NotSupportedSafeFileHandle();
 	}
 
 	#region IFileSystem Members
@@ -136,18 +140,9 @@ public sealed class MockFileSystem : IFileSystem
 	/// <summary>
 	///     Registers a <see cref="SafeFileHandle" /> as a mocked file with properties from the <paramref name="wrapper" />.
 	/// </summary>
-	public MockFileSystem RegisterSafeFileHandle(SafeFileHandle safeFileHandle,
-	                                             SafeFileHandleWrapper? wrapper)
+	public MockFileSystem RegisterSafeFileHandle(Func<SafeFileHandle,SafeFileHandleMock> safeFileHandleWrapper)
 	{
-		if (wrapper == null)
-		{
-			_storage.SafeFileHandles.TryRemove(safeFileHandle, out _);
-		}
-		else
-		{
-			_storage.SafeFileHandles.TryAdd(safeFileHandle, wrapper);
-		}
-
+		SafeFileHandleWrapper = safeFileHandleWrapper;
 		return this;
 	}
 }

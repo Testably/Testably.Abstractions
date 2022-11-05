@@ -89,17 +89,13 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 			throw ExceptionFactory.HandleIsInvalid();
 		}
 
-		if (_fileSystem.Storage is InMemoryStorage storage &&
-		    storage.SafeFileHandles.TryGetValue(handle, out var safeFileHandleWrapper))
-		{
-			return New(
-				safeFileHandleWrapper.Path,
-				safeFileHandleWrapper.Mode,
-				access,
-				safeFileHandleWrapper.Share);
-		}
-
-		throw ExceptionFactory.NotSupportedSafeFileHandle();
+		SafeFileHandleMock safeFileHandleMock = _fileSystem
+			.SafeFileHandleWrapper.Invoke(handle);
+		return New(
+			safeFileHandleMock.Path,
+			safeFileHandleMock.Mode,
+			access,
+			safeFileHandleMock.Share);
 	}
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int)" />
@@ -110,18 +106,14 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 			throw ExceptionFactory.HandleIsInvalid();
 		}
 
-		if (_fileSystem.Storage is InMemoryStorage storage &&
-		    storage.SafeFileHandles.TryGetValue(handle, out var safeFileHandleWrapper))
-		{
-			return New(
-				safeFileHandleWrapper.Path,
-				safeFileHandleWrapper.Mode,
-				access,
-				safeFileHandleWrapper.Share,
-				bufferSize);
-		}
-
-		throw ExceptionFactory.NotSupportedSafeFileHandle();
+		SafeFileHandleMock safeFileHandleMock = _fileSystem
+			.SafeFileHandleWrapper.Invoke(handle);
+		return New(
+			safeFileHandleMock.Path,
+			safeFileHandleMock.Mode,
+			access,
+			safeFileHandleMock.Share,
+			bufferSize);
 	}
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int, bool)" />
@@ -134,19 +126,15 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 
 		}
 
-		if (_fileSystem.Storage is InMemoryStorage storage &&
-		    storage.SafeFileHandles.TryGetValue(handle, out var safeFileHandleWrapper))
-		{
-			return New(
-				safeFileHandleWrapper.Path,
-				safeFileHandleWrapper.Mode,
-				access,
-				safeFileHandleWrapper.Share,
-				bufferSize,
-				isAsync);
-		}
-
-		throw ExceptionFactory.NotSupportedSafeFileHandle();
+		SafeFileHandleMock safeFileHandleMock = _fileSystem
+			.SafeFileHandleWrapper.Invoke(handle);
+		return New(
+			safeFileHandleMock.Path,
+			safeFileHandleMock.Mode,
+			access,
+			safeFileHandleMock.Share,
+			bufferSize,
+			isAsync);
 	}
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS

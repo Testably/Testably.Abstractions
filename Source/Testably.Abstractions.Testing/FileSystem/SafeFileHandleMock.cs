@@ -4,9 +4,9 @@ using System.IO;
 namespace Testably.Abstractions.Testing.FileSystem;
 
 /// <summary>
-///     Wrapper for storing information about a <see cref="SafeFileHandle" />.
+///     Mock for storing information about a <see cref="SafeFileHandle" />.
 /// </summary>
-public class SafeFileHandleWrapper
+public class SafeFileHandleMock
 {
 	/// <summary>
 	///     The path used to open the <see cref="SafeFileHandle" />.
@@ -24,12 +24,12 @@ public class SafeFileHandleWrapper
 	public FileShare Share { get; }
 
 	/// <summary>
-	///     Initializes a new instance of <see cref="SafeFileHandleWrapper" /> which stores information about a
+	///     Initializes a new instance of <see cref="SafeFileHandleMock" /> which stores information about a
 	///     <see cref="SafeFileHandle" />.
 	/// </summary>
-	public SafeFileHandleWrapper(string path,
-	                             FileMode mode = FileMode.Open,
-	                             FileShare share = FileShare.None)
+	public SafeFileHandleMock(string path,
+	                          FileMode mode = FileMode.Open,
+	                          FileShare share = FileShare.None)
 	{
 		Path = path;
 		Mode = mode;

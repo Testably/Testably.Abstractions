@@ -19,9 +19,6 @@ internal sealed class InMemoryStorage : IStorage
 	private readonly ConcurrentDictionary<IStorageLocation, IStorageContainer>
 		_containers = new();
 
-	internal readonly ConcurrentDictionary<SafeFileHandle, SafeFileHandleWrapper>
-		SafeFileHandles = new();
-
 	private readonly ConcurrentDictionary<string, IStorageDrive> _drives =
 		new(StringComparer.OrdinalIgnoreCase);
 
