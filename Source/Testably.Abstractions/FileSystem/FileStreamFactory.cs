@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using Microsoft.Win32.SafeHandles;
+using System.IO;
 
 namespace Testably.Abstractions.FileSystem;
 
@@ -54,6 +55,19 @@ internal sealed class FileStreamFactory : IFileStreamFactory
 	                            int bufferSize,
 	                            FileOptions options)
 		=> Wrap(new FileStream(path, mode, access, share, bufferSize, options));
+
+	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess)" />
+	public FileSystemStream New(SafeFileHandle handle, FileAccess access)
+		=> Wrap(new FileStream(handle, access));
+
+	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int)" />
+	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize)
+		=> Wrap(new FileStream(handle, access, bufferSize));
+
+	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int, bool)" />
+	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize,
+	                            bool isAsync)
+		=> Wrap(new FileStream(handle, access, bufferSize, isAsync));
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
 	/// <inheritdoc cref="IFileStreamFactory.New(string, FileStreamOptions)" />

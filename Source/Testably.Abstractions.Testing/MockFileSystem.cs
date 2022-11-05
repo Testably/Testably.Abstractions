@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Storage;
@@ -129,6 +130,24 @@ public sealed class MockFileSystem : IFileSystem
 				? Storage.MainDrive
 				: Storage.GetOrAddDrive(drive);
 		driveCallback?.Invoke(driveInfoMock);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a <see cref="SafeFileHandle" /> as a mocked file under the given <paramref name="path" />.
+	/// </summary>
+	public MockFileSystem RegisterSafeFileHandle(SafeFileHandle safeFileHandle,
+	                                             SafeFileHandleWrapper? wrapper)
+	{
+		if (wrapper == null)
+		{
+			_storage.SafeFileHandles.TryRemove(safeFileHandle, out _);
+		}
+		else
+		{
+			_storage.SafeFileHandles.TryAdd(safeFileHandle, wrapper);
+		}
+
 		return this;
 	}
 }
