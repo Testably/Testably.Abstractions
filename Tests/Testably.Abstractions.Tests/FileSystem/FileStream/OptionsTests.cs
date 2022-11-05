@@ -41,7 +41,7 @@ public abstract partial class OptionsTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Options_Encrypt_ShouldDeleteFileOnDispose(
+	public void Options_Encrypt_ShouldKeepEncryption(
 		string path, string contents1, string contents2)
 	{
 		FileSystem.File.WriteAllText(path, contents1);
@@ -49,7 +49,7 @@ public abstract partial class OptionsTests<TFileSystem>
 
 		using FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
 			FileAccess.ReadWrite, FileShare.None, 10, FileOptions.Encrypted);
-		var bytes = Encoding.Default.GetBytes(contents2);
+		byte[] bytes = Encoding.Default.GetBytes(contents2);
 
 		stream.Write(bytes, 0, bytes.Length);
 		stream.Dispose();
@@ -57,6 +57,46 @@ public abstract partial class OptionsTests<TFileSystem>
 		FileSystem.File.GetAttributes(path).Should().HaveFlag(FileAttributes.Encrypted);
 		FileSystem.File.ReadAllText(path).Should().NotBe(contents2);
 		FileSystem.File.Decrypt(path);
+		FileSystem.File.ReadAllText(path).Should().Be(contents2);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Options_EncryptedWithoutEncryptionOption_ShouldKeepEncryption(
+		string path, string contents1, string contents2)
+	{
+		FileSystem.File.WriteAllText(path, contents1);
+		FileSystem.File.Encrypt(path);
+
+		using FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
+			FileAccess.ReadWrite, FileShare.None, 10);
+		byte[] bytes = Encoding.Default.GetBytes(contents2);
+
+		stream.Write(bytes, 0, bytes.Length);
+		stream.Dispose();
+
+		FileSystem.File.GetAttributes(path).Should().HaveFlag(FileAttributes.Encrypted);
+		FileSystem.File.ReadAllText(path).Should().NotBe(contents2);
+		FileSystem.File.Decrypt(path);
+		FileSystem.File.ReadAllText(path).Should().Be(contents2);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Options_Encrypt_Unencrypted_ShouldBeIgnored(
+		string path, string contents1, string contents2)
+	{
+		FileSystem.File.WriteAllText(path, contents1);
+
+		using FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
+			FileAccess.ReadWrite, FileShare.None, 10, FileOptions.Encrypted);
+		byte[] bytes = Encoding.Default.GetBytes(contents2);
+
+		stream.Write(bytes, 0, bytes.Length);
+		stream.Dispose();
+
+		FileSystem.File.GetAttributes(path).Should()
+		   .NotHaveFlag(FileAttributes.Encrypted);
 		FileSystem.File.ReadAllText(path).Should().Be(contents2);
 	}
 }

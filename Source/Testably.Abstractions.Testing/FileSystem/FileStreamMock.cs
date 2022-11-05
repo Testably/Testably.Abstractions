@@ -314,9 +314,9 @@ internal sealed class FileStreamMock : FileSystemStream
 			_fileSystem.Storage.DeleteContainer(
 				_fileSystem.Storage.GetLocation(Name));
 		}
-		if (_options.HasFlag(FileOptions.Encrypted))
+		if (_options.HasFlag(FileOptions.Encrypted) &&
+		    _container.Attributes.HasFlag(FileAttributes.Encrypted))
 		{
-			//TODO: add test case
 			_fileSystem.Storage
 			   .GetContainer(_fileSystem.Storage.GetLocation(Name))
 			   .Encrypt();
