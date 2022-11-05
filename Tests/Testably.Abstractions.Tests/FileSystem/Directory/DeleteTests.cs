@@ -210,6 +210,12 @@ public abstract partial class DeleteTests<TFileSystem>
 		{
 			exception.Should().BeOfType<IOException>()
 			   .Which.HResult.Should().Be(-2147024751);
+#if !NETFRAMEWORK
+			// Path information only included in exception message on Windows and not in .NET Framework
+			exception.Should().BeOfType<IOException>()
+			   .Which.Message.Should()
+			   .Contain($"'{System.IO.Path.Combine(BasePath, path)}'");
+#endif
 		}
 		else if (Test.RunsOnMac)
 		{
@@ -221,14 +227,5 @@ public abstract partial class DeleteTests<TFileSystem>
 			exception.Should().BeOfType<IOException>()
 			   .Which.HResult.Should().Be(39);
 		}
-#if !NETFRAMEWORK
-		if (Test.RunsOnWindows)
-		{
-			// Path information only included in exception message on Windows and not in .NET Framework
-			exception.Should().BeOfType<IOException>()
-			   .Which.Message.Should()
-			   .Contain($"'{System.IO.Path.Combine(BasePath, path)}'");
-		}
-#endif
 	}
 }
