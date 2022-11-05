@@ -9,6 +9,10 @@ internal static class ExceptionFactory
 	public static NotSupportedException NotSupportedFileStreamWrapping()
 		=> new("You cannot wrap an existing FileStream in the MockFileSystem instance!");
 
+	public static NotSupportedException NotSupportedSafeFileHandle()
+		=> new(
+			"You cannot mock a safe file handle in the mocked file system without registering it explicitly. Use `MockFileSystem.MapSafeFileHandle`!");
+
 	internal static UnauthorizedAccessException AccessToPathDenied(string path = "")
 		=> new(string.IsNullOrEmpty(path)
 			? "Access to the path is denied."
@@ -202,4 +206,7 @@ internal static class ExceptionFactory
 	internal static TimeoutException TimeoutExpired(int timeoutMilliseconds)
 		=> new(
 			$"The timeout of {timeoutMilliseconds}ms expired in the awaitable callback.");
+
+	public static ArgumentException HandleIsInvalid(string? paramName = "handle")
+		=> new("Invalid handle.", paramName);
 }

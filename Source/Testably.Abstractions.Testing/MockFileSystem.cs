@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.FileSystem;
+using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
@@ -45,6 +47,8 @@ public sealed class MockFileSystem : IFileSystem
 	private readonly PathMock _pathMock;
 	private readonly InMemoryStorage _storage;
 
+	internal Func<SafeFileHandle, SafeFileHandleMock> SafeFileHandleMapper { get; private set; }
+
 	/// <summary>
 	///     Initializes the <see cref="MockFileSystem" />.
 	/// </summary>
@@ -62,6 +66,7 @@ public sealed class MockFileSystem : IFileSystem
 		FileInfo = new FileInfoFactoryMock(this);
 		FileStream = new FileStreamFactoryMock(this);
 		FileSystemWatcher = new FileSystemWatcherFactoryMock(this);
+		SafeFileHandleMapper = _ => throw ExceptionFactory.NotSupportedSafeFileHandle();
 	}
 
 	#region IFileSystem Members
@@ -129,6 +134,16 @@ public sealed class MockFileSystem : IFileSystem
 				? Storage.MainDrive
 				: Storage.GetOrAddDrive(drive);
 		driveCallback?.Invoke(driveInfoMock);
+		return this;
+	}
+
+	/// <summary>
+	///     Registers a callback to map a <see cref="SafeFileHandle"/>
+	///     to a <see cref="SafeFileHandleMock"/>.
+	/// </summary>
+	public MockFileSystem MapSafeFileHandle(Func<SafeFileHandle,SafeFileHandleMock> safeFileHandleMapper)
+	{
+		SafeFileHandleMapper = safeFileHandleMapper;
 		return this;
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using Microsoft.Win32.SafeHandles;
+using System.IO;
 
 namespace Testably.Abstractions.FileSystem;
 
@@ -7,6 +8,15 @@ namespace Testably.Abstractions.FileSystem;
 /// </summary>
 public interface IFileStreamFactory : IFileSystemExtensionPoint
 {
+	/// <inheritdoc cref="FileStream(SafeFileHandle, FileAccess)" />
+	FileSystemStream New(SafeFileHandle handle, FileAccess access);
+
+	/// <inheritdoc cref="FileStream(SafeFileHandle ,FileAccess, int)" />
+	FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize);
+
+	/// <inheritdoc cref="FileStream(SafeFileHandle, FileAccess, int, bool)" />
+	FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize, bool isAsync);
+
 	/// <inheritdoc cref="FileStream(string, FileMode)" />
 	FileSystemStream New(string path, FileMode mode);
 

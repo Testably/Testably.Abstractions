@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using Microsoft.Win32.SafeHandles;
+using System.IO;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
+using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
@@ -37,26 +39,26 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 
 	/// <inheritdoc cref="IFileStreamFactory.New(string, FileMode, FileAccess, FileShare)" />
 	public FileSystemStream New(string path,
-								FileMode mode,
-								FileAccess access,
-								FileShare share)
+	                            FileMode mode,
+	                            FileAccess access,
+	                            FileShare share)
 		=> New(path, mode, access, share, DefaultBufferSize, DefaultUseAsync);
 
 	/// <inheritdoc cref="IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int)" />
 	public FileSystemStream New(string path,
-								FileMode mode,
-								FileAccess access,
-								FileShare share,
-								int bufferSize)
+	                            FileMode mode,
+	                            FileAccess access,
+	                            FileShare share,
+	                            int bufferSize)
 		=> New(path, mode, access, share, bufferSize, DefaultUseAsync);
 
 	/// <inheritdoc cref="IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int, bool)" />
 	public FileSystemStream New(string path,
-								FileMode mode,
-								FileAccess access,
-								FileShare share,
-								int bufferSize,
-								bool useAsync)
+	                            FileMode mode,
+	                            FileAccess access,
+	                            FileShare share,
+	                            int bufferSize,
+	                            bool useAsync)
 		=> New(path,
 			mode,
 			access,
@@ -66,11 +68,11 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 
 	/// <inheritdoc cref="IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int, FileOptions)" />
 	public FileSystemStream New(string path,
-								FileMode mode,
-								FileAccess access,
-								FileShare share,
-								int bufferSize,
-								FileOptions options)
+	                            FileMode mode,
+	                            FileAccess access,
+	                            FileShare share,
+	                            int bufferSize,
+	                            FileOptions options)
 		=> new FileStreamMock(_fileSystem,
 			path,
 			mode,
@@ -78,6 +80,62 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 			share,
 			bufferSize,
 			options);
+
+	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess)" />
+	public FileSystemStream New(SafeFileHandle handle, FileAccess access)
+	{
+		if (handle.IsInvalid)
+		{
+			throw ExceptionFactory.HandleIsInvalid();
+		}
+
+		SafeFileHandleMock safeFileHandleMock = _fileSystem
+			.SafeFileHandleMapper.Invoke(handle);
+		return New(
+			safeFileHandleMock.Path,
+			safeFileHandleMock.Mode,
+			access,
+			safeFileHandleMock.Share);
+	}
+
+	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int)" />
+	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize)
+	{
+		if (handle.IsInvalid)
+		{
+			throw ExceptionFactory.HandleIsInvalid();
+		}
+
+		SafeFileHandleMock safeFileHandleMock = _fileSystem
+			.SafeFileHandleMapper.Invoke(handle);
+		return New(
+			safeFileHandleMock.Path,
+			safeFileHandleMock.Mode,
+			access,
+			safeFileHandleMock.Share,
+			bufferSize);
+	}
+
+	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int, bool)" />
+	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize,
+	                            bool isAsync)
+	{
+		if (handle.IsInvalid)
+		{
+			throw ExceptionFactory.HandleIsInvalid();
+
+		}
+
+		SafeFileHandleMock safeFileHandleMock = _fileSystem
+			.SafeFileHandleMapper.Invoke(handle);
+		return New(
+			safeFileHandleMock.Path,
+			safeFileHandleMock.Mode,
+			access,
+			safeFileHandleMock.Share,
+			bufferSize,
+			isAsync);
+	}
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
 	/// <inheritdoc cref="IFileStreamFactory.New(string, FileStreamOptions)" />

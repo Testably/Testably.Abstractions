@@ -131,6 +131,10 @@ internal sealed class FileStreamMock : FileSystemStream
 	/// <inheritdoc cref="FileSystemStream.EndWrite(IAsyncResult)" />
 	public override void EndWrite(IAsyncResult asyncResult)
 	{
+		if (!CanWrite)
+		{
+			throw ExceptionFactory.StreamDoesNotSupportWriting();
+		}
 		_isContentChanged = true;
 		base.EndWrite(asyncResult);
 	}
@@ -186,7 +190,7 @@ internal sealed class FileStreamMock : FileSystemStream
 	/// <inheritdoc />
 	public override void SetLength(long value)
 	{
-		if (!_access.HasFlag(FileAccess.Write))
+		if (!CanWrite)
 		{
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
@@ -197,6 +201,10 @@ internal sealed class FileStreamMock : FileSystemStream
 	/// <inheritdoc cref="FileSystemStream.Write(byte[], int, int)" />
 	public override void Write(byte[] buffer, int offset, int count)
 	{
+		if (!CanWrite)
+		{
+			throw ExceptionFactory.StreamDoesNotSupportWriting();
+		}
 		_isContentChanged = true;
 		base.Write(buffer, offset, count);
 	}
@@ -205,6 +213,10 @@ internal sealed class FileStreamMock : FileSystemStream
 	/// <inheritdoc cref="FileSystemStream.Write(ReadOnlySpan{byte})" />
 	public override void Write(ReadOnlySpan<byte> buffer)
 	{
+		if (!CanWrite)
+		{
+			throw ExceptionFactory.StreamDoesNotSupportWriting();
+		}
 		_isContentChanged = true;
 		base.Write(buffer);
 	}
@@ -214,6 +226,10 @@ internal sealed class FileStreamMock : FileSystemStream
 	public override Task WriteAsync(byte[] buffer, int offset, int count,
 									CancellationToken cancellationToken)
 	{
+		if (!CanWrite)
+		{
+			throw ExceptionFactory.StreamDoesNotSupportWriting();
+		}
 		_isContentChanged = true;
 		return base.WriteAsync(buffer, offset, count, cancellationToken);
 	}
@@ -223,6 +239,10 @@ internal sealed class FileStreamMock : FileSystemStream
 	public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer,
 										 CancellationToken cancellationToken = new())
 	{
+		if (!CanWrite)
+		{
+			throw ExceptionFactory.StreamDoesNotSupportWriting();
+		}
 		_isContentChanged = true;
 		return base.WriteAsync(buffer, cancellationToken);
 	}
@@ -231,6 +251,10 @@ internal sealed class FileStreamMock : FileSystemStream
 	/// <inheritdoc cref="FileSystemStream.WriteByte(byte)" />
 	public override void WriteByte(byte value)
 	{
+		if (!CanWrite)
+		{
+			throw ExceptionFactory.StreamDoesNotSupportWriting();
+		}
 		_isContentChanged = true;
 		base.WriteByte(value);
 	}
