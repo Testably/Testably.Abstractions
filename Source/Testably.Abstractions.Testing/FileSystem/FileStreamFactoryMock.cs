@@ -90,7 +90,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 		}
 
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
-			.SafeFileHandleWrapper.Invoke(handle);
+			.SafeFileHandleMapper.Invoke(handle);
 		return New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
@@ -107,7 +107,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 		}
 
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
-			.SafeFileHandleWrapper.Invoke(handle);
+			.SafeFileHandleMapper.Invoke(handle);
 		return New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
@@ -127,7 +127,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 		}
 
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
-			.SafeFileHandleWrapper.Invoke(handle);
+			.SafeFileHandleMapper.Invoke(handle);
 		return New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,

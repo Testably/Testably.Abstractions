@@ -47,7 +47,7 @@ public sealed class MockFileSystem : IFileSystem
 	private readonly PathMock _pathMock;
 	private readonly InMemoryStorage _storage;
 
-	internal Func<SafeFileHandle, SafeFileHandleMock> SafeFileHandleWrapper { get; private set; }
+	internal Func<SafeFileHandle, SafeFileHandleMock> SafeFileHandleMapper { get; private set; }
 
 	/// <summary>
 	///     Initializes the <see cref="MockFileSystem" />.
@@ -66,7 +66,7 @@ public sealed class MockFileSystem : IFileSystem
 		FileInfo = new FileInfoFactoryMock(this);
 		FileStream = new FileStreamFactoryMock(this);
 		FileSystemWatcher = new FileSystemWatcherFactoryMock(this);
-		SafeFileHandleWrapper = _ => throw ExceptionFactory.NotSupportedSafeFileHandle();
+		SafeFileHandleMapper = _ => throw ExceptionFactory.NotSupportedSafeFileHandle();
 	}
 
 	#region IFileSystem Members
@@ -138,11 +138,12 @@ public sealed class MockFileSystem : IFileSystem
 	}
 
 	/// <summary>
-	///     Registers a <see cref="SafeFileHandle" /> as a mocked file with properties from the <paramref name="wrapper" />.
+	///     Registers a callback to map a <see cref="SafeFileHandle"/>
+	///     to a <see cref="SafeFileHandleMock"/>.
 	/// </summary>
-	public MockFileSystem RegisterSafeFileHandle(Func<SafeFileHandle,SafeFileHandleMock> safeFileHandleWrapper)
+	public MockFileSystem RegisterSafeFileHandle(Func<SafeFileHandle,SafeFileHandleMock> safeFileHandleMapper)
 	{
-		SafeFileHandleWrapper = safeFileHandleWrapper;
+		SafeFileHandleMapper = safeFileHandleMapper;
 		return this;
 	}
 }
