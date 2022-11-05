@@ -1,3 +1,4 @@
+#if EXECUTE_SAFEFILEHANDLE_TESTS
 using Microsoft.Win32.SafeHandles;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -65,3 +66,4 @@ public static class UnmanagedFileLoader
 			IntPtr.Zero);
 	}
 }
+#endif

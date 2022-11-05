@@ -1,3 +1,4 @@
+#if EXECUTE_SAFEFILEHANDLE_TESTS
 using Microsoft.Win32.SafeHandles;
 using System.IO;
 using System.Text;
@@ -153,3 +154,4 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 		cleanup?.Dispose();
 	}
 }
+#endif

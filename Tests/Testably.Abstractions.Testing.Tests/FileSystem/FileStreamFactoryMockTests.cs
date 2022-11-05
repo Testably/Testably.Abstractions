@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32.SafeHandles;
+﻿#if EXECUTE_SAFEFILEHANDLE_TESTS
+using Microsoft.Win32.SafeHandles;
 using System.IO;
 using Testably.Abstractions.Testing.FileSystemInitializer;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
@@ -20,13 +21,13 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 		MockFileSystem.InitializeIn(_directoryCleaner.BasePath);
 	}
 
-	#region IDisposable Members
+#region IDisposable Members
 
 	/// <inheritdoc />
 	public void Dispose()
 		=> _directoryCleaner.Dispose();
 
-	#endregion
+#endregion
 
 	[SkippableTheory]
 	[AutoData]
@@ -92,3 +93,4 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 		                                   nameof(MockFileSystem.MapSafeFileHandle));
 	}
 }
+#endif
