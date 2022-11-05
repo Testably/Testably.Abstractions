@@ -85,7 +85,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 		realFileSystem.File.WriteAllText(path, contents);
 		FileSystem.File.WriteAllText(path, contents);
 		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
-		(FileSystem as MockFileSystem)?.RegisterSafeFileHandle(
+		(FileSystem as MockFileSystem)?.MapSafeFileHandle(
 			_ => new SafeFileHandleMock(path));
 
 		FileSystemStream stream = FileSystem.FileStream.New(handle, FileAccess.ReadWrite);
@@ -112,7 +112,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 		realFileSystem.File.WriteAllText(path, contents);
 		FileSystem.File.WriteAllText(path, contents);
 		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
-		(FileSystem as MockFileSystem)?.RegisterSafeFileHandle(
+		(FileSystem as MockFileSystem)?.MapSafeFileHandle(
 			_ => new SafeFileHandleMock(path));
 
 		FileSystemStream stream =
@@ -141,7 +141,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 		realFileSystem.File.WriteAllText(path, contents);
 		FileSystem.File.WriteAllText(path, contents);
 		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
-		(FileSystem as MockFileSystem)?.RegisterSafeFileHandle(
+		(FileSystem as MockFileSystem)?.MapSafeFileHandle(
 			_ => new SafeFileHandleMock(path));
 
 		FileSystemStream stream =

@@ -11,7 +11,7 @@ internal static class ExceptionFactory
 
 	public static NotSupportedException NotSupportedSafeFileHandle()
 		=> new(
-			"You cannot mock a safe file handle in the mocked file system without registering it explicitly. Use `MockFileSystem.RegisterSafeFileHandle`!");
+			"You cannot mock a safe file handle in the mocked file system without registering it explicitly. Use `MockFileSystem.MapSafeFileHandle`!");
 
 	internal static UnauthorizedAccessException AccessToPathDenied(string path = "")
 		=> new(string.IsNullOrEmpty(path)

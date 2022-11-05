@@ -141,7 +141,7 @@ public sealed class MockFileSystem : IFileSystem
 	///     Registers a callback to map a <see cref="SafeFileHandle"/>
 	///     to a <see cref="SafeFileHandleMock"/>.
 	/// </summary>
-	public MockFileSystem RegisterSafeFileHandle(Func<SafeFileHandle,SafeFileHandleMock> safeFileHandleMapper)
+	public MockFileSystem MapSafeFileHandle(Func<SafeFileHandle,SafeFileHandleMock> safeFileHandleMapper)
 	{
 		SafeFileHandleMapper = safeFileHandleMapper;
 		return this;

@@ -46,7 +46,7 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 
 		exception.Should().BeOfType<NotSupportedException>()
 		   .Which.Message.Should().Contain(nameof(MockFileSystem) + "." +
-		                                   nameof(MockFileSystem.RegisterSafeFileHandle));
+		                                   nameof(MockFileSystem.MapSafeFileHandle));
 	}
 
 	[SkippableTheory]
@@ -67,7 +67,7 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 
 		exception.Should().BeOfType<NotSupportedException>()
 		   .Which.Message.Should().Contain(nameof(MockFileSystem) + "." +
-		                                   nameof(MockFileSystem.RegisterSafeFileHandle));
+		                                   nameof(MockFileSystem.MapSafeFileHandle));
 	}
 
 	[SkippableTheory]
@@ -89,6 +89,6 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 
 		exception.Should().BeOfType<NotSupportedException>()
 		   .Which.Message.Should().Contain(nameof(MockFileSystem) + "." +
-		                                   nameof(MockFileSystem.RegisterSafeFileHandle));
+		                                   nameof(MockFileSystem.MapSafeFileHandle));
 	}
 }
