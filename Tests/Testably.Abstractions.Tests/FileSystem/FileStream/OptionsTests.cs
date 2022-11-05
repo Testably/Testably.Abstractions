@@ -41,9 +41,13 @@ public abstract partial class OptionsTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Options_Encrypt_ShouldKeepEncryption(
+	[SupportedOSPlatform("windows")]
+	public void Options_Encrypt_ShouldKeepEncryptionFlag(
 		string path, string contents1, string contents2)
 	{
+		Skip.IfNot(Test.RunsOnWindows && FileSystem is MockFileSystem,
+			"Encryption depends on the underlying device, if it is supported or not.");
+
 		FileSystem.File.WriteAllText(path, contents1);
 		FileSystem.File.Encrypt(path);
 
@@ -52,19 +56,22 @@ public abstract partial class OptionsTests<TFileSystem>
 		byte[] bytes = Encoding.Default.GetBytes(contents2);
 
 		stream.Write(bytes, 0, bytes.Length);
+		stream.SetLength(bytes.Length);
 		stream.Dispose();
 
 		FileSystem.File.GetAttributes(path).Should().HaveFlag(FileAttributes.Encrypted);
-		FileSystem.File.ReadAllText(path).Should().NotBe(contents2);
-		FileSystem.File.Decrypt(path);
 		FileSystem.File.ReadAllText(path).Should().Be(contents2);
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public void Options_EncryptedWithoutEncryptionOption_ShouldKeepEncryption(
+	[SupportedOSPlatform("windows")]
+	public void Options_EncryptedWithoutEncryptionOption_ShouldKeepEncryptionFlag(
 		string path, string contents1, string contents2)
 	{
+		Skip.IfNot(Test.RunsOnWindows && FileSystem is MockFileSystem,
+			"Encryption depends on the underlying device, if it is supported or not.");
+
 		FileSystem.File.WriteAllText(path, contents1);
 		FileSystem.File.Encrypt(path);
 
@@ -73,11 +80,10 @@ public abstract partial class OptionsTests<TFileSystem>
 		byte[] bytes = Encoding.Default.GetBytes(contents2);
 
 		stream.Write(bytes, 0, bytes.Length);
+		stream.SetLength(bytes.Length);
 		stream.Dispose();
 
 		FileSystem.File.GetAttributes(path).Should().HaveFlag(FileAttributes.Encrypted);
-		FileSystem.File.ReadAllText(path).Should().NotBe(contents2);
-		FileSystem.File.Decrypt(path);
 		FileSystem.File.ReadAllText(path).Should().Be(contents2);
 	}
 

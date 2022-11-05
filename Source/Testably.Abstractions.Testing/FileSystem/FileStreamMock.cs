@@ -314,13 +314,6 @@ internal sealed class FileStreamMock : FileSystemStream
 			_fileSystem.Storage.DeleteContainer(
 				_fileSystem.Storage.GetLocation(Name));
 		}
-		if (_options.HasFlag(FileOptions.Encrypted) &&
-		    _container.Attributes.HasFlag(FileAttributes.Encrypted))
-		{
-			_fileSystem.Storage
-			   .GetContainer(_fileSystem.Storage.GetLocation(Name))
-			   .Encrypt();
-		}
 	}
 
 	private static void ThrowIfInvalidModeAccess(FileMode mode, FileAccess access)
