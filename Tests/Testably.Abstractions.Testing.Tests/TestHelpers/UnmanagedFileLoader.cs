@@ -2,13 +2,13 @@ using Microsoft.Win32.SafeHandles;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace Testably.Abstractions.Tests.FileSystem.FileStreamFactory;
+namespace Testably.Abstractions.Testing.Tests.TestHelpers;
 
 /// <summary>
 ///     <see
 ///         href="https://learn.microsoft.com/en-us/dotnet/api/microsoft.win32.safehandles.safefilehandle?view=net-6.0#examples" />
 /// </summary>
-public class UnmanagedFileLoader
+public static class UnmanagedFileLoader
 {
 	private const uint CreateAlways = 2;
 	private const uint CreateNew = 1;
@@ -17,17 +17,17 @@ public class UnmanagedFileLoader
 	private const uint OpenExisting = 3;
 
 	[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-	public static extern SafeFileHandle CreateFile(string lpFileName,
-	                                               uint dwDesiredAccess,
-	                                               uint dwShareMode,
-	                                               IntPtr lpSecurityAttributes,
-	                                               uint dwCreationDisposition,
-	                                               uint dwFlagsAndAttributes,
-	                                               IntPtr hTemplateFile);
+	private static extern SafeFileHandle CreateFile(string lpFileName,
+	                                                uint dwDesiredAccess,
+	                                                uint dwShareMode,
+	                                                IntPtr lpSecurityAttributes,
+	                                                uint dwCreationDisposition,
+	                                                uint dwFlagsAndAttributes,
+	                                                IntPtr hTemplateFile);
 
-	public SafeFileHandle CreateSafeFileHandle(string? path,
-	                                           FileMode mode = FileMode.Open,
-	                                           FileAccess access = FileAccess.Write)
+	public static SafeFileHandle CreateSafeFileHandle(string? path,
+	                                                  FileMode mode = FileMode.Open,
+	                                                  FileAccess access = FileAccess.Write)
 	{
 		if (string.IsNullOrEmpty(path))
 		{

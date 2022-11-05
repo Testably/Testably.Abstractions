@@ -134,7 +134,7 @@ public sealed class MockFileSystem : IFileSystem
 	}
 
 	/// <summary>
-	///     Registers a <see cref="SafeFileHandle" /> as a mocked file under the given <paramref name="path" />.
+	///     Registers a <see cref="SafeFileHandle" /> as a mocked file with properties from the <paramref name="wrapper" />.
 	/// </summary>
 	public MockFileSystem RegisterSafeFileHandle(SafeFileHandle safeFileHandle,
 	                                             SafeFileHandleWrapper? wrapper)

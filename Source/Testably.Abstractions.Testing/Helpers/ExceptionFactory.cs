@@ -8,8 +8,10 @@ internal static class ExceptionFactory
 {
 	public static NotSupportedException NotSupportedFileStreamWrapping()
 		=> new("You cannot wrap an existing FileStream in the MockFileSystem instance!");
+
 	public static NotSupportedException NotSupportedSafeFileHandle()
-		=> new("You cannot mock a safe file handle in the mocked file system!");
+		=> new(
+			"You cannot mock a safe file handle in the mocked file system without registering it explicitly. Use `MockFileSystem.RegisterSafeFileHandle`!");
 
 	internal static UnauthorizedAccessException AccessToPathDenied(string path = "")
 		=> new(string.IsNullOrEmpty(path)

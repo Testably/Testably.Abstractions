@@ -17,8 +17,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 		string filename, string contents)
 	{
 		string path = FileSystem.Path.GetFullPath(filename);
-		UnmanagedFileLoader unmanagedFileLoader = new();
-		SafeFileHandle handle = unmanagedFileLoader.CreateSafeFileHandle(path);
+		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -37,8 +36,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 		string filename, string contents)
 	{
 		string path = FileSystem.Path.GetFullPath(filename);
-		UnmanagedFileLoader unmanagedFileLoader = new();
-		SafeFileHandle handle = unmanagedFileLoader.CreateSafeFileHandle(path);
+		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -58,8 +56,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 			string filename, string contents)
 	{
 		string path = FileSystem.Path.GetFullPath(filename);
-		UnmanagedFileLoader unmanagedFileLoader = new();
-		SafeFileHandle handle = unmanagedFileLoader.CreateSafeFileHandle(path);
+		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -87,8 +84,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 		string path = realFileSystem.Path.GetFullPath(filename);
 		realFileSystem.File.WriteAllText(path, contents);
 		FileSystem.File.WriteAllText(path, contents);
-		UnmanagedFileLoader unmanagedFileLoader = new();
-		SafeFileHandle handle = unmanagedFileLoader.CreateSafeFileHandle(path);
+		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
 		(FileSystem as MockFileSystem)?.RegisterSafeFileHandle(handle,
 			new SafeFileHandleWrapper(path));
 
@@ -115,8 +111,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 		string path = realFileSystem.Path.GetFullPath(filename);
 		realFileSystem.File.WriteAllText(path, contents);
 		FileSystem.File.WriteAllText(path, contents);
-		UnmanagedFileLoader unmanagedFileLoader = new();
-		SafeFileHandle handle = unmanagedFileLoader.CreateSafeFileHandle(path);
+		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
 		(FileSystem as MockFileSystem)?.RegisterSafeFileHandle(handle,
 			new SafeFileHandleWrapper(path));
 
@@ -145,8 +140,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 		string path = realFileSystem.Path.GetFullPath(filename);
 		realFileSystem.File.WriteAllText(path, contents);
 		FileSystem.File.WriteAllText(path, contents);
-		UnmanagedFileLoader unmanagedFileLoader = new();
-		SafeFileHandle handle = unmanagedFileLoader.CreateSafeFileHandle(path);
+		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
 		(FileSystem as MockFileSystem)?.RegisterSafeFileHandle(handle,
 			new SafeFileHandleWrapper(path));
 
