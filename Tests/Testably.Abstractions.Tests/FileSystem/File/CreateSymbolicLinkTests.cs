@@ -133,7 +133,7 @@ public abstract partial class CreateSymbolicLinkTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateSymbolicLink_WithIllegalPath_ShouldThrowArgumentException(
+	public void CreateSymbolicLink_WithIllegalPath_ShouldThrowArgumentExceptionOnWindows(
 		string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, "some content");
@@ -143,8 +143,15 @@ public abstract partial class CreateSymbolicLinkTests<TFileSystem>
 			FileSystem.File.CreateSymbolicLink(" ", pathToTarget);
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("path");
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeOfType<ArgumentException>()
+			   .Which.ParamName.Should().Be("path");
+		}
+		else
+		{
+			exception.Should().BeNull();
+		}
 	}
 
 	[SkippableTheory]

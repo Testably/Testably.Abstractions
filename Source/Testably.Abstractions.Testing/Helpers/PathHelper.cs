@@ -44,7 +44,7 @@ internal static class PathHelper
 	internal static void ThrowCommonExceptionsIfPathIsInvalid(
 		[NotNull] this string? path, IFileSystem fileSystem)
 	{
-		CheckPathArgument(path, nameof(path), true);
+		CheckPathArgument(path, nameof(path), Execute.IsWindows);
 		CheckPathCharacters(path, fileSystem, nameof(path), null);
 	}
 
