@@ -54,6 +54,7 @@ internal class FileSystemInfoMock : IFileSystemInfo
 	/// <inheritdoc cref="IFileSystemInfo.CreateAsSymbolicLink(string)" />
 	public void CreateAsSymbolicLink(string pathToTarget)
 	{
+		pathToTarget.ThrowCommonExceptionsIfPathToTargetIsInvalid(FileSystem);
 		if (FileSystem.Storage.TryAddContainer(Location, InMemoryContainer.NewFile,
 			out IStorageContainer? container))
 		{

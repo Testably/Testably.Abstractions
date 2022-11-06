@@ -44,29 +44,51 @@ internal static class PathHelper
 	internal static void ThrowCommonExceptionsIfPathIsInvalid(
 		[NotNull] this string? path, IFileSystem fileSystem)
 	{
+		CheckPathArgument(path, nameof(path), true);
+		CheckPathCharacters(path, fileSystem, nameof(path), null);
+	}
+
+	internal static void ThrowCommonExceptionsIfPathToTargetIsInvalid(
+		[NotNull] this string? pathToTarget, IFileSystem fileSystem)
+	{
+		CheckPathArgument(pathToTarget, nameof(pathToTarget), false);
+		CheckPathCharacters(pathToTarget, fileSystem, nameof(pathToTarget), -2147024713);
+	}
+
+	private static void CheckPathArgument([NotNull] string? path, string paramName, bool includeIsEmptyCheck)
+	{
 		if (path == null)
 		{
-			throw new ArgumentNullException(nameof(path));
+			throw new ArgumentNullException(paramName);
 		}
 
 		if (path.Length == 0)
 		{
-			throw ExceptionFactory.PathCannotBeEmpty();
+			throw ExceptionFactory.PathCannotBeEmpty(paramName);
 		}
+
+		if (includeIsEmptyCheck && path.Trim() == string.Empty)
+		{
+			throw ExceptionFactory.PathIsEmpty(paramName);
+		}
+	}
+
+	private static void CheckPathCharacters(string path, IFileSystem fileSystem, string paramName, int? hResult)
+	{
 #pragma warning disable CA2249 // Consider using String.Contains with char instead of String.IndexOf not possible in .NETSTANDARD2.0
 		if (path.IndexOf('\0') >= 0)
 #pragma warning restore CA2249
 		{
-			throw ExceptionFactory.PathHasIllegalCharacters(path);
+			throw ExceptionFactory.PathHasIllegalCharacters(path, paramName, hResult);
 		}
 
 		if (path.HasIllegalCharacters(fileSystem))
 		{
 			Execute.OnNetFramework(()
-				=> throw ExceptionFactory.PathHasIllegalCharacters(path));
+				=> throw ExceptionFactory.PathHasIllegalCharacters(path, paramName, hResult));
 
 			throw ExceptionFactory.PathHasIncorrectSyntax(
-				fileSystem.Path.GetFullPath(path));
+				fileSystem.Path.GetFullPath(path), hResult);
 		}
 	}
 
