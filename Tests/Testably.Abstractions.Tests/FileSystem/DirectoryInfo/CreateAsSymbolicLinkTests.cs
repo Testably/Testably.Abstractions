@@ -1,10 +1,10 @@
 #if FEATURE_FILESYSTEM_LINK
 using System.IO;
 
-namespace Testably.Abstractions.Tests.FileSystem.Directory;
+namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 // ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class CreateSymbolicLinkTests<TFileSystem>
+public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
@@ -15,7 +15,7 @@ public abstract partial class CreateSymbolicLinkTests<TFileSystem>
 	{
 		FileSystem.Directory.CreateDirectory(pathToTarget);
 
-		FileSystem.Directory.CreateSymbolicLink(path, pathToTarget);
+		FileSystem.DirectoryInfo.New(path).CreateAsSymbolicLink(pathToTarget);
 
 		FileSystem.DirectoryInfo.New(path).Attributes
 		   .HasFlag(FileAttributes.ReparsePoint)
@@ -32,7 +32,7 @@ public abstract partial class CreateSymbolicLinkTests<TFileSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Directory.CreateSymbolicLink(path, pathToTarget);
+			FileSystem.DirectoryInfo.New(path).CreateAsSymbolicLink(pathToTarget);
 		});
 
 		if (Test.RunsOnWindows)
@@ -57,7 +57,7 @@ public abstract partial class CreateSymbolicLinkTests<TFileSystem>
 	{
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Directory.CreateSymbolicLink(path, pathToTarget);
+			FileSystem.DirectoryInfo.New(path).CreateAsSymbolicLink(pathToTarget);
 		});
 
 		exception.Should().BeNull();
@@ -88,7 +88,7 @@ public abstract partial class CreateSymbolicLinkTests<TFileSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Directory.CreateSymbolicLink(path, string.Empty);
+			FileSystem.DirectoryInfo.New(path).CreateAsSymbolicLink(string.Empty);
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
@@ -124,7 +124,7 @@ public abstract partial class CreateSymbolicLinkTests<TFileSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Directory.CreateSymbolicLink(path, "bar_?_");
+			FileSystem.DirectoryInfo.New(path).CreateAsSymbolicLink("bar_?_");
 		});
 
 		exception.Should().BeOfType<IOException>()
@@ -133,7 +133,7 @@ public abstract partial class CreateSymbolicLinkTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateSymbolicLink_WithIllegalPath_ShouldThrowArgumentExceptioncOnWindows(
+	public void CreateSymbolicLink_WithIllegalPath_ShouldThrowArgumentExceptionOnWindows(
 		string pathToTarget)
 	{
 		FileSystem.Directory.CreateDirectory(pathToTarget);
@@ -142,7 +142,7 @@ public abstract partial class CreateSymbolicLinkTests<TFileSystem>
 		{
 			FileSystem.Directory.CreateSymbolicLink(" ", pathToTarget);
 		});
-		
+
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<ArgumentException>()
@@ -160,7 +160,7 @@ public abstract partial class CreateSymbolicLinkTests<TFileSystem>
 	{
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Directory.CreateSymbolicLink(path, " ");
+			FileSystem.DirectoryInfo.New(path).CreateAsSymbolicLink(" ");
 		});
 
 		exception.Should().BeNull();
@@ -191,7 +191,7 @@ public abstract partial class CreateSymbolicLinkTests<TFileSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Directory.CreateSymbolicLink(path, null!);
+			FileSystem.DirectoryInfo.New(path).CreateAsSymbolicLink(null!);
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>()

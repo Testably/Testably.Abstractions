@@ -143,24 +143,24 @@ internal static class ExceptionFactory
 			});
 
 	internal static ArgumentException PathHasIllegalCharacters(
-		string path, string paramName = "path")
+		string path, string paramName = "path", int? hResult = -2147024809)
 		=> new($"Illegal characters in path '{path}'", paramName)
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2147024809
+			HResult = hResult ?? -2147024809
 #endif
 		};
 
-	internal static IOException PathHasIncorrectSyntax(string path)
+	internal static IOException PathHasIncorrectSyntax(string path, int? hResult = -2147024773)
 		=> new(
 			$"The filename, directory name, or volume label syntax is incorrect. : '{path}'",
-			-2147024773);
+			hResult ?? -2147024773);
 
-	internal static ArgumentException PathIsEmpty(string paramName)
+	internal static ArgumentException PathIsEmpty(string paramName, int hResult = -2147024809)
 		=> new("The path is empty.", paramName)
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2147024809
+			HResult = hResult
 #endif
 		};
 

@@ -41,6 +41,7 @@ internal sealed class DirectoryMock : IDirectory
 	public IFileSystemInfo CreateSymbolicLink(
 		string path, string pathToTarget)
 	{
+		path.ThrowCommonExceptionsIfPathIsInvalid(_fileSystem);
 		IDirectoryInfo fileSystemInfo =
 			_fileSystem.DirectoryInfo.New(path);
 		fileSystemInfo.CreateAsSymbolicLink(pathToTarget);

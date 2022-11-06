@@ -175,15 +175,11 @@ internal sealed class FileMock : IFile
 	public IFileSystemInfo CreateSymbolicLink(
 		string path, string pathToTarget)
 	{
-		IStorageLocation location = _fileSystem.Storage.GetLocation(path);
-		if (_fileSystem.Storage.TryAddContainer(location, InMemoryContainer.NewFile,
-			out IStorageContainer? container))
-		{
-			container.LinkTarget = pathToTarget;
-			return FileSystemInfoMock.New(location, _fileSystem);
-		}
-
-		throw ExceptionFactory.CannotCreateFileAsAlreadyExists(path);
+		path.ThrowCommonExceptionsIfPathIsInvalid(_fileSystem);
+		IFileInfo fileSystemInfo =
+			_fileSystem.FileInfo.New(path);
+		fileSystemInfo.CreateAsSymbolicLink(pathToTarget);
+		return fileSystemInfo;
 	}
 #endif
 
