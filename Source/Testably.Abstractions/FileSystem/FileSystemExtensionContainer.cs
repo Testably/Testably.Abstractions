@@ -23,7 +23,7 @@ internal class FileSystemExtensionContainer : IFileSystemExtensionContainer
 		return !Equals(wrappedInstance, default(T));
 	}
 
-	/// <inheritdoc cref="StoreMetadata{T}(string, T?)" />
+	/// <inheritdoc cref="StoreMetadata{T}(string, T)" />
 	public void StoreMetadata<T>(string key, T? value)
 	{
 		_metadata[key] = value;

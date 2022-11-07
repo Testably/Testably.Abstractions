@@ -56,7 +56,8 @@ internal static class PathHelper
 		CheckPathCharacters(pathToTarget, fileSystem, nameof(pathToTarget), -2147024713);
 	}
 
-	private static void CheckPathArgument([NotNull] string? path, string paramName, bool includeIsEmptyCheck)
+	private static void CheckPathArgument([NotNull] string? path, string paramName,
+	                                      bool includeIsEmptyCheck)
 	{
 		if (path == null)
 		{
@@ -74,7 +75,8 @@ internal static class PathHelper
 		}
 	}
 
-	private static void CheckPathCharacters(string path, IFileSystem fileSystem, string paramName, int? hResult)
+	private static void CheckPathCharacters(string path, IFileSystem fileSystem,
+	                                        string paramName, int? hResult)
 	{
 #pragma warning disable CA2249 // Consider using String.Contains with char instead of String.IndexOf not possible in .NETSTANDARD2.0
 		if (path.IndexOf('\0') >= 0)
@@ -86,7 +88,8 @@ internal static class PathHelper
 		if (path.HasIllegalCharacters(fileSystem))
 		{
 			Execute.OnNetFramework(()
-				=> throw ExceptionFactory.PathHasIllegalCharacters(path, paramName, hResult));
+				=> throw ExceptionFactory.PathHasIllegalCharacters(path, paramName,
+					hResult));
 
 			throw ExceptionFactory.PathHasIncorrectSyntax(
 				fileSystem.Path.GetFullPath(path), hResult);

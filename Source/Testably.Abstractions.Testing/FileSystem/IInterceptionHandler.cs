@@ -19,5 +19,5 @@ public interface IInterceptionHandler : IFileSystemExtensionPoint
 	/// </param>
 	/// <remarks>This allows e.g. to throw custom exceptions instead.</remarks>
 	MockFileSystem Event(Action<ChangeDescription> interceptionCallback,
-						 Func<ChangeDescription, bool>? predicate = null);
+	                     Func<ChangeDescription, bool>? predicate = null);
 }

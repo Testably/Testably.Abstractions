@@ -46,13 +46,13 @@ internal sealed class FileMock : IFile
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.AppendAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
 	public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
-									CancellationToken cancellationToken = default)
+	                                CancellationToken cancellationToken = default)
 		=> AppendAllLinesAsync(path, contents, Encoding.Default, cancellationToken);
 
 	/// <inheritdoc cref="IFile.AppendAllLinesAsync(string, IEnumerable{string}, Encoding, CancellationToken)" />
 	public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
-									Encoding encoding,
-									CancellationToken cancellationToken = default)
+	                                Encoding encoding,
+	                                CancellationToken cancellationToken = default)
 	{
 		ThrowIfCancelled(cancellationToken);
 		AppendAllLines(path, contents, encoding);
@@ -86,12 +86,12 @@ internal sealed class FileMock : IFile
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.AppendAllTextAsync(string, string?, CancellationToken)" />
 	public Task AppendAllTextAsync(string path, string? contents,
-								   CancellationToken cancellationToken = default)
+	                               CancellationToken cancellationToken = default)
 		=> AppendAllTextAsync(path, contents, Encoding.Default, cancellationToken);
 
 	/// <inheritdoc cref="IFile.AppendAllTextAsync(string, string?, Encoding, CancellationToken)" />
 	public Task AppendAllTextAsync(string path, string? contents, Encoding encoding,
-								   CancellationToken cancellationToken = default)
+	                               CancellationToken cancellationToken = default)
 	{
 		ThrowIfCancelled(cancellationToken);
 		AppendAllText(path, contents, encoding);
@@ -265,8 +265,8 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetCreationTimeUtc(string)" />
 	public DateTime GetCreationTimeUtc(string path)
 		=> _fileSystem.Storage.GetContainer(
-			_fileSystem.Storage.GetLocation(
-				path.EnsureValidFormat(FileSystem)))
+				_fileSystem.Storage.GetLocation(
+					path.EnsureValidFormat(FileSystem)))
 		   .CreationTime.Get(DateTimeKind.Utc);
 
 	/// <inheritdoc cref="IFile.GetLastAccessTime(string)" />
@@ -400,8 +400,8 @@ internal sealed class FileMock : IFile
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.ReadAllBytesAsync(string, CancellationToken)" />
 	public Task<byte[]> ReadAllBytesAsync(string path,
-										  CancellationToken cancellationToken =
-											  default)
+	                                      CancellationToken cancellationToken =
+		                                      default)
 	{
 		ThrowIfCancelled(cancellationToken);
 		return Task.FromResult(ReadAllBytes(path));
@@ -487,16 +487,16 @@ internal sealed class FileMock : IFile
 
 	/// <inheritdoc cref="IFile.Replace(string, string, string)" />
 	public void Replace(string sourceFileName,
-						string destinationFileName,
-						string? destinationBackupFileName)
+	                    string destinationFileName,
+	                    string? destinationBackupFileName)
 		=> _fileSystem.FileInfo.New(sourceFileName)
 		   .Replace(destinationFileName, destinationBackupFileName);
 
 	/// <inheritdoc cref="IFile.Replace(string, string, string, bool)" />
 	public void Replace(string sourceFileName,
-						string destinationFileName,
-						string? destinationBackupFileName,
-						bool ignoreMetadataErrors)
+	                    string destinationFileName,
+	                    string? destinationBackupFileName,
+	                    bool ignoreMetadataErrors)
 		=> _fileSystem.FileInfo.New(sourceFileName)
 		   .Replace(destinationFileName, destinationBackupFileName,
 				ignoreMetadataErrors);
@@ -520,7 +520,8 @@ internal sealed class FileMock : IFile
 		}
 		catch (IOException)
 		{
-			throw ExceptionFactory.FileNameCannotBeResolved(linkPath, Execute.IsWindows ? -2147022975 : -2146232800);
+			throw ExceptionFactory.FileNameCannotBeResolved(linkPath,
+				Execute.IsWindows ? -2147022975 : -2146232800);
 		}
 	}
 #endif
@@ -659,7 +660,7 @@ internal sealed class FileMock : IFile
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.WriteAllBytesAsync(string, byte[], CancellationToken)" />
 	public Task WriteAllBytesAsync(string path, byte[] bytes,
-								   CancellationToken cancellationToken = default)
+	                               CancellationToken cancellationToken = default)
 	{
 		ThrowIfCancelled(cancellationToken);
 		WriteAllBytes(path, bytes);
@@ -739,12 +740,12 @@ internal sealed class FileMock : IFile
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.WriteAllTextAsync(string, string?, CancellationToken)" />
 	public Task WriteAllTextAsync(string path, string? contents,
-								  CancellationToken cancellationToken = default)
+	                              CancellationToken cancellationToken = default)
 		=> WriteAllTextAsync(path, contents, Encoding.Default, cancellationToken);
 
 	/// <inheritdoc cref="IFile.WriteAllTextAsync(string, string?, Encoding, CancellationToken)" />
 	public Task WriteAllTextAsync(string path, string? contents, Encoding encoding,
-								  CancellationToken cancellationToken = default)
+	                              CancellationToken cancellationToken = default)
 	{
 		ThrowIfCancelled(cancellationToken);
 		WriteAllText(path, contents, encoding);

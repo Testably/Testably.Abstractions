@@ -15,7 +15,7 @@ internal sealed class DirectoryInfoMock
 	: FileSystemInfoMock, IDirectoryInfo
 {
 	private DirectoryInfoMock(IStorageLocation location,
-							  MockFileSystem fileSystem)
+	                          MockFileSystem fileSystem)
 		: base(fileSystem, location, FileSystemTypes.Directory)
 	{
 	}
@@ -202,13 +202,13 @@ internal sealed class DirectoryInfoMock
 
 	/// <inheritdoc cref="IDirectoryInfo.GetFiles(string, SearchOption)" />
 	public IFileInfo[] GetFiles(string searchPattern,
-								SearchOption searchOption)
+	                            SearchOption searchOption)
 		=> EnumerateFiles(searchPattern, searchOption).ToArray();
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectoryInfo.GetFiles(string, EnumerationOptions)" />
 	public IFileInfo[] GetFiles(string searchPattern,
-								EnumerationOptions enumerationOptions)
+	                            EnumerationOptions enumerationOptions)
 		=> EnumerateFiles(searchPattern, enumerationOptions).ToArray();
 #endif
 
@@ -236,16 +236,16 @@ internal sealed class DirectoryInfoMock
 	/// <inheritdoc cref="IDirectoryInfo.MoveTo(string)" />
 	public void MoveTo(string destDirName)
 		=> Location = FileSystem.Storage.Move(
-						  FileSystem.Storage.GetLocation(FullName),
-						  FileSystem.Storage.GetLocation(destDirName),
-						  recursive: true)
-					  ?? throw ExceptionFactory.DirectoryNotFound(FullName);
+			              FileSystem.Storage.GetLocation(FullName),
+			              FileSystem.Storage.GetLocation(destDirName),
+			              recursive: true)
+		              ?? throw ExceptionFactory.DirectoryNotFound(FullName);
 
 	#endregion
 
 	[return: NotNullIfNotNull("location")]
 	internal static new DirectoryInfoMock? New(IStorageLocation? location,
-											   MockFileSystem fileSystem)
+	                                           MockFileSystem fileSystem)
 	{
 		if (location == null)
 		{

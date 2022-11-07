@@ -44,10 +44,10 @@ public class ChangeDescription
 	public FileSystemTypes FileSystemType { get; }
 
 	internal ChangeDescription(WatcherChangeTypes changeType,
-							   FileSystemTypes fileSystemType,
-							   NotifyFilters notifyFilters,
-							   IStorageLocation location,
-							   IStorageLocation? oldLocation)
+	                           FileSystemTypes fileSystemType,
+	                           NotifyFilters notifyFilters,
+	                           IStorageLocation location,
+	                           IStorageLocation? oldLocation)
 	{
 		Path = location.FullPath;
 		Name = location.FriendlyName;

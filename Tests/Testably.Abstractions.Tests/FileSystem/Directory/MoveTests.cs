@@ -56,7 +56,7 @@ public abstract partial class MoveTests<TFileSystem>
 		FileSystem.Initialize()
 		   .WithSubdirectory(source);
 
-		var exception = Record.Exception(() =>
+		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Directory.Move(source, destination);
 		});
@@ -72,7 +72,7 @@ public abstract partial class MoveTests<TFileSystem>
 		FileSystem.Initialize()
 		   .WithSubdirectory(path);
 
-		var exception = Record.Exception(() =>
+		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Directory.Move(path, path);
 		});

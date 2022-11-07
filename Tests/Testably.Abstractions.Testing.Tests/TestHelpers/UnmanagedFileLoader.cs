@@ -28,7 +28,8 @@ public static class UnmanagedFileLoader
 
 	public static SafeFileHandle CreateSafeFileHandle(string? path,
 	                                                  FileMode mode = FileMode.Open,
-	                                                  FileAccess access = FileAccess.Write)
+	                                                  FileAccess access =
+ FileAccess.Write)
 	{
 		if (string.IsNullOrEmpty(path))
 		{

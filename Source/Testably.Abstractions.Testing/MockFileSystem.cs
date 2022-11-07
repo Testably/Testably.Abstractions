@@ -47,7 +47,11 @@ public sealed class MockFileSystem : IFileSystem
 	private readonly PathMock _pathMock;
 	private readonly InMemoryStorage _storage;
 
-	internal Func<SafeFileHandle, SafeFileHandleMock> SafeFileHandleMapper { get; private set; }
+	internal Func<SafeFileHandle, SafeFileHandleMock> SafeFileHandleMapper
+	{
+		get;
+		private set;
+	}
 
 	/// <summary>
 	///     Initializes the <see cref="MockFileSystem" />.
@@ -138,10 +142,11 @@ public sealed class MockFileSystem : IFileSystem
 	}
 
 	/// <summary>
-	///     Registers a callback to map a <see cref="SafeFileHandle"/>
-	///     to a <see cref="SafeFileHandleMock"/>.
+	///     Registers a callback to map a <see cref="SafeFileHandle" />
+	///     to a <see cref="SafeFileHandleMock" />.
 	/// </summary>
-	public MockFileSystem MapSafeFileHandle(Func<SafeFileHandle,SafeFileHandleMock> safeFileHandleMapper)
+	public MockFileSystem MapSafeFileHandle(
+		Func<SafeFileHandle, SafeFileHandleMock> safeFileHandleMapper)
 	{
 		SafeFileHandleMapper = safeFileHandleMapper;
 		return this;

@@ -43,7 +43,7 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		_fileSystem = fileSystem;
 		_changes =
 			new BlockingCollection<ChangeDescription>(InternalBufferSize /
-													  BytesPerMessage);
+			                                          BytesPerMessage);
 	}
 
 	#region IFileSystemWatcher Members
@@ -113,8 +113,8 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		get;
 		set;
 	} = NotifyFilters.FileName |
-		NotifyFilters.DirectoryName |
-		NotifyFilters.LastWrite;
+	    NotifyFilters.DirectoryName |
+	    NotifyFilters.LastWrite;
 
 	/// <inheritdoc cref="IFileSystemWatcher.Path" />
 	public string Path
@@ -371,6 +371,7 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		{
 			_cancellationTokenSource.Cancel();
 		}
+
 		_changeHandler?.Dispose();
 	}
 

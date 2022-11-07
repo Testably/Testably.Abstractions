@@ -2,7 +2,6 @@
 using System.IO;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
-using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
@@ -90,7 +89,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 		}
 
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
-			.SafeFileHandleMapper.Invoke(handle);
+		   .SafeFileHandleMapper.Invoke(handle);
 		return New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
@@ -107,7 +106,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 		}
 
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
-			.SafeFileHandleMapper.Invoke(handle);
+		   .SafeFileHandleMapper.Invoke(handle);
 		return New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
@@ -123,11 +122,10 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 		if (handle.IsInvalid)
 		{
 			throw ExceptionFactory.HandleIsInvalid();
-
 		}
 
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
-			.SafeFileHandleMapper.Invoke(handle);
+		   .SafeFileHandleMapper.Invoke(handle);
 		return New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,

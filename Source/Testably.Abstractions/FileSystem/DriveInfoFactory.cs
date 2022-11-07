@@ -19,7 +19,7 @@ internal sealed class DriveInfoFactory : IDriveInfoFactory
 	/// <inheritdoc cref="IDriveInfoFactory.GetDrives()" />
 	public IDriveInfo[] GetDrives()
 		=> DriveInfo.GetDrives()
-		   // ReSharper disable once ConvertClosureToMethodGroup -- Not possible due to nullable
+			// ReSharper disable once ConvertClosureToMethodGroup -- Not possible due to nullable
 		   .Select(driveInfo => Wrap(driveInfo))
 		   .ToArray();
 

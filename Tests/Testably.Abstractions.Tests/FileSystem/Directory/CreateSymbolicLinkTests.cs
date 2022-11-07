@@ -142,7 +142,7 @@ public abstract partial class CreateSymbolicLinkTests<TFileSystem>
 		{
 			FileSystem.Directory.CreateSymbolicLink(" ", pathToTarget);
 		});
-		
+
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<ArgumentException>()

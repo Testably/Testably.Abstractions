@@ -583,12 +583,12 @@ internal sealed class InMemoryStorage : IStorage
 
 		if (container.Type == FileSystemTypes.Directory &&
 		    source.FullPath.Equals(destination.FullPath, Execute.IsNetFramework
-			? StringComparison.OrdinalIgnoreCase
-			: StringComparison.Ordinal))
+			    ? StringComparison.OrdinalIgnoreCase
+			    : StringComparison.Ordinal))
 		{
 			throw ExceptionFactory.MoveSourceMustBeDifferentThanDestination();
 		}
-		
+
 		sourceType ??= container.Type;
 
 		List<IStorageLocation> children =

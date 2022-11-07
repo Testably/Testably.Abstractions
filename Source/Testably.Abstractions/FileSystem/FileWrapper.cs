@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Runtime.Versioning;
 using System.Text;
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;

@@ -15,7 +15,7 @@ internal class FileSystemExtensionContainer : IFileSystemExtensionContainer
 		return false;
 	}
 
-	/// <inheritdoc cref="IFileSystemExtensionContainer.StoreMetadata{T}(string, T?)" />
+	/// <inheritdoc cref="IFileSystemExtensionContainer.StoreMetadata{T}(string, T)" />
 	public void StoreMetadata<T>(string key, T? value)
 	{
 		_metadata[key] = value;

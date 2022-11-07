@@ -58,11 +58,11 @@ internal sealed class ChangeHandler : IInterceptionHandler,
 	}
 
 	internal ChangeDescription NotifyPendingChange(WatcherChangeTypes changeType,
-												   FileSystemTypes fileSystemType,
-												   NotifyFilters notifyFilters,
-												   IStorageLocation location,
-												   IStorageLocation? oldLocation =
-													   null)
+	                                               FileSystemTypes fileSystemType,
+	                                               NotifyFilters notifyFilters,
+	                                               IStorageLocation location,
+	                                               IStorageLocation? oldLocation =
+		                                               null)
 	{
 		ChangeDescription fileSystemChange =
 			new(changeType, fileSystemType, notifyFilters, location, oldLocation);

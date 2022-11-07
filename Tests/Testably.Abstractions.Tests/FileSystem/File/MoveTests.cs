@@ -36,7 +36,7 @@ public abstract partial class MoveTests<TFileSystem>
 		FileSystem.Initialize()
 		   .WithFile(path);
 
-		var exception = Record.Exception(() =>
+		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.File.Move(path, path);
 		});
