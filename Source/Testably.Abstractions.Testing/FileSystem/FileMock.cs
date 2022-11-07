@@ -70,7 +70,7 @@ internal sealed class FileMock : IFile
 		IStorageContainer fileInfo =
 			_fileSystem.Storage.GetOrCreateContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))),
+					path.EnsureValidFormat(FileSystem)),
 				InMemoryContainer.NewFile);
 		if (contents != null)
 		{
@@ -102,7 +102,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.AppendText(string)" />
 	public StreamWriter AppendText(string path)
 		=> FileSystem.FileInfo
-		   .New(path ?? throw new ArgumentNullException(nameof(path)))
+		   .New(path.EnsureValidFormat(FileSystem))
 		   .AppendText();
 
 	/// <inheritdoc cref="IFile.Copy(string, string)" />
@@ -189,7 +189,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.CreateText(string)" />
 	public StreamWriter CreateText(string path)
 		=> FileSystem.FileInfo
-		   .New(path ?? throw new ArgumentNullException(nameof(path)))
+		   .New(path.EnsureValidFormat(FileSystem))
 		   .CreateText();
 
 	/// <inheritdoc cref="IFile.Decrypt(string)" />
@@ -199,7 +199,7 @@ internal sealed class FileMock : IFile
 		IStorageContainer fileInfo =
 			_fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))));
+					path.EnsureValidFormat(FileSystem)));
 		if (fileInfo is not NullContainer)
 		{
 			fileInfo.Decrypt();
@@ -210,7 +210,7 @@ internal sealed class FileMock : IFile
 	public void Delete(string path)
 		=> _fileSystem.Storage.DeleteContainer(
 			_fileSystem.Storage.GetLocation(
-				path ?? throw new ArgumentNullException(nameof(path))));
+				path.EnsureValidFormat(FileSystem)));
 
 	/// <inheritdoc cref="IFile.Encrypt(string)" />
 	[SupportedOSPlatform("windows")]
@@ -219,7 +219,7 @@ internal sealed class FileMock : IFile
 		IStorageContainer fileInfo =
 			_fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))));
+					path.EnsureValidFormat(FileSystem)));
 		if (fileInfo is not NullContainer)
 		{
 			fileInfo.Encrypt();
@@ -245,7 +245,7 @@ internal sealed class FileMock : IFile
 	{
 		IStorageContainer container = _fileSystem.Storage
 		   .GetContainer(_fileSystem.Storage.GetLocation(
-				path ?? throw new ArgumentNullException(nameof(path))));
+				path.EnsureValidFormat(FileSystem)));
 		if (container is NullContainer)
 		{
 			throw ExceptionFactory.FileNotFound(
@@ -259,42 +259,42 @@ internal sealed class FileMock : IFile
 	public DateTime GetCreationTime(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))))
+					path.EnsureValidFormat(FileSystem)))
 		   .CreationTime.Get(DateTimeKind.Local);
 
 	/// <inheritdoc cref="IFile.GetCreationTimeUtc(string)" />
 	public DateTime GetCreationTimeUtc(string path)
 		=> _fileSystem.Storage.GetContainer(
 			_fileSystem.Storage.GetLocation(
-				path ?? throw new ArgumentNullException(nameof(path))))
+				path.EnsureValidFormat(FileSystem)))
 		   .CreationTime.Get(DateTimeKind.Utc);
 
 	/// <inheritdoc cref="IFile.GetLastAccessTime(string)" />
 	public DateTime GetLastAccessTime(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))))
+					path.EnsureValidFormat(FileSystem)))
 		   .LastAccessTime.Get(DateTimeKind.Local);
 
 	/// <inheritdoc cref="IFile.GetLastAccessTimeUtc(string)" />
 	public DateTime GetLastAccessTimeUtc(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))))
+					path.EnsureValidFormat(FileSystem)))
 		   .LastAccessTime.Get(DateTimeKind.Utc);
 
 	/// <inheritdoc cref="IFile.GetLastWriteTime(string)" />
 	public DateTime GetLastWriteTime(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))))
+					path.EnsureValidFormat(FileSystem)))
 		   .LastWriteTime.Get(DateTimeKind.Local);
 
 	/// <inheritdoc cref="IFile.GetLastWriteTimeUtc(string)" />
 	public DateTime GetLastWriteTimeUtc(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))))
+					path.EnsureValidFormat(FileSystem)))
 		   .LastWriteTime.Get(DateTimeKind.Utc);
 
 	/// <inheritdoc cref="IFile.Move(string, string)" />
@@ -364,7 +364,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.OpenText(string)" />
 	public StreamReader OpenText(string path)
 		=> FileSystem.FileInfo
-		   .New(path ?? throw new ArgumentNullException(nameof(path)))
+		   .New(path.EnsureValidFormat(FileSystem))
 		   .OpenText();
 
 	/// <inheritdoc cref="IFile.OpenWrite(string)" />
@@ -382,7 +382,7 @@ internal sealed class FileMock : IFile
 		IStorageContainer fileInfo =
 			_fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))));
+					path.EnsureValidFormat(FileSystem)));
 		if (fileInfo is not NullContainer)
 		{
 			using (fileInfo.RequestAccess(
@@ -444,7 +444,7 @@ internal sealed class FileMock : IFile
 		IStorageContainer fileInfo =
 			_fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))));
+					path.EnsureValidFormat(FileSystem)));
 		if (fileInfo is not NullContainer)
 		{
 			using (fileInfo.RequestAccess(
@@ -531,7 +531,7 @@ internal sealed class FileMock : IFile
 		IStorageContainer fileInfo =
 			_fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))));
+					path.EnsureValidFormat(FileSystem)));
 		if (fileInfo is NullContainer)
 		{
 			throw ExceptionFactory.FileNotFound(
@@ -547,7 +547,7 @@ internal sealed class FileMock : IFile
 		IStorageContainer fileInfo =
 			_fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))));
+					path.EnsureValidFormat(FileSystem)));
 		if (fileInfo is NullContainer)
 		{
 			throw ExceptionFactory.FileNotFound(
@@ -563,7 +563,7 @@ internal sealed class FileMock : IFile
 		IStorageContainer fileInfo =
 			_fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))));
+					path.EnsureValidFormat(FileSystem)));
 		if (fileInfo is NullContainer)
 		{
 			throw ExceptionFactory.FileNotFound(
@@ -579,7 +579,7 @@ internal sealed class FileMock : IFile
 		IStorageContainer fileInfo =
 			_fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))));
+					path.EnsureValidFormat(FileSystem)));
 		if (fileInfo is NullContainer)
 		{
 			throw ExceptionFactory.FileNotFound(
@@ -595,7 +595,7 @@ internal sealed class FileMock : IFile
 		IStorageContainer fileInfo =
 			_fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))));
+					path.EnsureValidFormat(FileSystem)));
 		if (fileInfo is NullContainer)
 		{
 			throw ExceptionFactory.FileNotFound(
@@ -611,7 +611,7 @@ internal sealed class FileMock : IFile
 		IStorageContainer fileInfo =
 			_fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))));
+					path.EnsureValidFormat(FileSystem)));
 		if (fileInfo is NullContainer)
 		{
 			throw ExceptionFactory.FileNotFound(
@@ -627,7 +627,7 @@ internal sealed class FileMock : IFile
 		IStorageContainer fileInfo =
 			_fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))));
+					path.EnsureValidFormat(FileSystem)));
 		if (fileInfo is NullContainer)
 		{
 			throw ExceptionFactory.FileNotFound(
@@ -643,7 +643,7 @@ internal sealed class FileMock : IFile
 		IStorageContainer fileInfo =
 			_fileSystem.Storage.GetOrCreateContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))),
+					path.EnsureValidFormat(FileSystem)),
 				InMemoryContainer.NewFile);
 		if (fileInfo is not NullContainer)
 		{
@@ -723,7 +723,7 @@ internal sealed class FileMock : IFile
 		IStorageContainer fileInfo =
 			_fileSystem.Storage.GetOrCreateContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))),
+					path.EnsureValidFormat(FileSystem)),
 				InMemoryContainer.NewFile);
 		if (fileInfo is not NullContainer && contents != null)
 		{
