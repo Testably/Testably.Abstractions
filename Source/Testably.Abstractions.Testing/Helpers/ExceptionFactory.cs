@@ -209,4 +209,7 @@ internal static class ExceptionFactory
 
 	public static ArgumentException HandleIsInvalid(string? paramName = "handle")
 		=> new("Invalid handle.", paramName);
+
+	public static IOException MoveSourceMustBeDifferentThanDestination()
+		=> new("Source and destination path must be different.", -2146232800);
 }

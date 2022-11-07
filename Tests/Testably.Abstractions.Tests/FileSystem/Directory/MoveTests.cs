@@ -13,6 +13,76 @@ public abstract partial class MoveTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
+	public void Move_CaseOnlyChange_ShouldMoveDirectoryWithContent(string path)
+	{
+		Skip.If(Test.IsNetFramework);
+
+		string source = path.ToLowerInvariant();
+		string destination = path.ToUpperInvariant();
+		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+			FileSystem.Initialize()
+			   .WithSubdirectory(source).Initialized(s => s
+				   .WithAFile()
+				   .WithASubdirectory().Initialized(t => t
+					   .WithAFile()
+					   .WithASubdirectory()));
+
+		FileSystem.Directory.Move(source, destination);
+
+		FileSystem.Directory.Exists(source).Should().Be(Test.RunsOnWindows);
+		FileSystem.Directory.Exists(destination).Should().BeTrue();
+		FileSystem.Directory.GetDirectories(".").Should()
+		   .ContainSingle(d => d.Contains(destination));
+		FileSystem.Directory.GetFiles(destination, initialized[1].Name)
+		   .Should().ContainSingle();
+		FileSystem.Directory.GetDirectories(destination, initialized[2].Name)
+		   .Should().ContainSingle();
+		FileSystem.Directory.GetFiles(destination, initialized[3].Name,
+				SearchOption.AllDirectories)
+		   .Should().ContainSingle();
+		FileSystem.Directory.GetDirectories(destination, initialized[4].Name,
+				SearchOption.AllDirectories)
+		   .Should().ContainSingle();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Move_CaseOnlyChange_ShouldThrowIOExceptionOnNetFramework(string path)
+	{
+		Skip.IfNot(Test.IsNetFramework);
+
+		string source = path.ToLowerInvariant();
+		string destination = path.ToUpperInvariant();
+		FileSystem.Initialize()
+		   .WithSubdirectory(source);
+
+		var exception = Record.Exception(() =>
+		{
+			FileSystem.Directory.Move(source, destination);
+		});
+
+		exception.Should().BeOfType<IOException>()
+		   .Which.HResult.Should().Be(-2146232800);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Move_SourceAndDestinationIdentical_ShouldThrowIOExceptionOnNetFramework(string path)
+	{
+		FileSystem.Initialize()
+		   .WithSubdirectory(path);
+
+		var exception = Record.Exception(() =>
+		{
+			FileSystem.Directory.Move(path, path);
+		});
+
+		exception.Should().BeOfType<IOException>()
+		   .Which.HResult.Should().Be(-2146232800);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Move_DestinationDoesNotExist_ShouldThrowDirectoryNotFoundException(
 		string source)
 	{
@@ -27,6 +97,22 @@ public abstract partial class MoveTests<TFileSystem>
 
 		exception.Should().BeOfType<DirectoryNotFoundException>()
 		   .Which.HResult.Should().Be(-2147024893);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Move_ShouldMoveAttributes(string source, string destination)
+	{
+		FileSystem.Initialize()
+		   .WithSubdirectory(source);
+		FileSystem.DirectoryInfo.New(source).Attributes |= FileAttributes.System;
+		FileAttributes expectedAttributes =
+			FileSystem.DirectoryInfo.New(source).Attributes;
+
+		FileSystem.Directory.Move(source, destination);
+
+		FileSystem.DirectoryInfo.New(destination).Attributes
+		   .Should().Be(expectedAttributes);
 	}
 
 	[SkippableTheory]
