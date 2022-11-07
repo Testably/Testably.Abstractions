@@ -42,7 +42,7 @@ public abstract partial class DeleteTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		Delete_CaseDifferentPath_ShouldThrowDirectoryNotFoundExceptionNotOnWindows(
+		Delete_CaseDifferentPath_ShouldThrowDirectoryNotFoundExceptionOnLinux(
 			string directoryName)
 	{
 		directoryName = directoryName.ToLowerInvariant();
@@ -53,19 +53,19 @@ public abstract partial class DeleteTests<TFileSystem>
 			FileSystem.Directory.Delete(directoryName);
 		});
 
-		if (Test.RunsOnWindows)
-		{
-			exception.Should().BeNull();
-			FileSystem.Directory.Exists(directoryName.ToUpperInvariant())
-			   .Should().BeFalse();
-		}
-		else
+		if (Test.RunsOnLinux)
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
 			   .Which.Message.Should()
 			   .Be($"Could not find a part of the path '{expectedPath}'.");
 			exception.Should().BeOfType<DirectoryNotFoundException>()
 			   .Which.HResult.Should().Be(-2147024893);
+		}
+		else
+		{
+			exception.Should().BeNull();
+			FileSystem.Directory.Exists(directoryName.ToUpperInvariant())
+			   .Should().BeFalse();
 		}
 	}
 
