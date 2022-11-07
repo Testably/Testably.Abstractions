@@ -178,7 +178,7 @@ internal sealed class FileMock : IFile
 	public IFileSystemInfo CreateSymbolicLink(
 		string path, string pathToTarget)
 	{
-		path.ThrowCommonExceptionsIfPathIsInvalid(_fileSystem);
+		path.EnsureValidFormat(_fileSystem);
 		IFileInfo fileSystemInfo =
 			_fileSystem.FileInfo.New(path);
 		fileSystemInfo.CreateAsSymbolicLink(pathToTarget);

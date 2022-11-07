@@ -38,7 +38,7 @@ internal sealed class DirectoryInfoMock
 	/// <inheritdoc cref="IDirectoryInfo.Create()" />
 	public void Create()
 	{
-		FullName.ThrowCommonExceptionsIfPathIsInvalid(FileSystem);
+		FullName.EnsureValidFormat(FileSystem);
 
 		Container = FileSystem.Storage.GetOrCreateContainer(Location,
 			InMemoryContainer.NewDirectory,
@@ -50,7 +50,7 @@ internal sealed class DirectoryInfoMock
 	/// <inheritdoc cref="IDirectoryInfo.CreateSubdirectory(string)" />
 	public IDirectoryInfo CreateSubdirectory(string path)
 	{
-		path.ThrowCommonExceptionsIfPathIsInvalid(FileSystem);
+		path.EnsureValidFormat(FileSystem);
 
 		DirectoryInfoMock directory = New(
 			FileSystem.Storage.GetLocation(FileSystem.Path.Combine(FullName, path)),

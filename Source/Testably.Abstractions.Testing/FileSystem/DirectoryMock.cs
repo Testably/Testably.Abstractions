@@ -26,7 +26,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.CreateDirectory(string)" />
 	public IDirectoryInfo CreateDirectory(string path)
 	{
-		path.ThrowCommonExceptionsIfPathIsInvalid(_fileSystem);
+		path.EnsureValidFormat(_fileSystem);
 
 		DirectoryInfoMock directory = DirectoryInfoMock.New(
 			_fileSystem.Storage.GetLocation(path),
@@ -41,7 +41,7 @@ internal sealed class DirectoryMock : IDirectory
 	public IFileSystemInfo CreateSymbolicLink(
 		string path, string pathToTarget)
 	{
-		path.ThrowCommonExceptionsIfPathIsInvalid(_fileSystem);
+		path.EnsureValidFormat(_fileSystem);
 		IDirectoryInfo fileSystemInfo =
 			_fileSystem.DirectoryInfo.New(path);
 		fileSystemInfo.CreateAsSymbolicLink(pathToTarget);
@@ -51,11 +51,15 @@ internal sealed class DirectoryMock : IDirectory
 
 	/// <inheritdoc cref="IDirectory.Delete(string)" />
 	public void Delete(string path)
-		=> _fileSystem.DirectoryInfo.New(path).Delete();
+		=> _fileSystem.DirectoryInfo
+		   .New(path.EnsureValidFormat(FileSystem))
+		   .Delete();
 
 	/// <inheritdoc cref="IDirectory.Delete(string, bool)" />
 	public void Delete(string path, bool recursive)
-		=> _fileSystem.DirectoryInfo.New(path).Delete(recursive);
+		=> _fileSystem.DirectoryInfo
+		   .New(path.EnsureValidFormat(FileSystem))
+		   .Delete(recursive);
 
 	/// <inheritdoc cref="IDirectory.EnumerateDirectories(string)" />
 	public IEnumerable<string> EnumerateDirectories(string path)
@@ -73,7 +77,7 @@ internal sealed class DirectoryMock : IDirectory
 	                                                SearchOption searchOption)
 		=> _fileSystem.Storage.EnumerateLocations(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))),
+					path.EnsureValidFormat(FileSystem)),
 				FileSystemTypes.Directory,
 				searchPattern,
 				EnumerationOptionsHelper.FromSearchOption(searchOption))
@@ -88,7 +92,7 @@ internal sealed class DirectoryMock : IDirectory
 		                                                enumerationOptions)
 		=> _fileSystem.Storage.EnumerateLocations(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))),
+					path.EnsureValidFormat(FileSystem)),
 				FileSystemTypes.Directory,
 				searchPattern,
 				enumerationOptions)
@@ -112,7 +116,7 @@ internal sealed class DirectoryMock : IDirectory
 	                                          SearchOption searchOption)
 		=> _fileSystem.Storage.EnumerateLocations(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))),
+					path.EnsureValidFormat(FileSystem)),
 				FileSystemTypes.File,
 				searchPattern,
 				EnumerationOptionsHelper.FromSearchOption(searchOption))
@@ -126,7 +130,7 @@ internal sealed class DirectoryMock : IDirectory
 	                                          EnumerationOptions enumerationOptions)
 		=> _fileSystem.Storage.EnumerateLocations(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))),
+					path.EnsureValidFormat(FileSystem)),
 				FileSystemTypes.File,
 				searchPattern,
 				enumerationOptions)
@@ -153,7 +157,7 @@ internal sealed class DirectoryMock : IDirectory
 	                                                      SearchOption searchOption)
 		=> _fileSystem.Storage.EnumerateLocations(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))),
+					path.EnsureValidFormat(FileSystem)),
 				FileSystemTypes.DirectoryOrFile,
 				searchPattern,
 				EnumerationOptionsHelper.FromSearchOption(searchOption))
@@ -168,7 +172,7 @@ internal sealed class DirectoryMock : IDirectory
 		                                                      enumerationOptions)
 		=> _fileSystem.Storage.EnumerateLocations(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))),
+					path.EnsureValidFormat(FileSystem)),
 				FileSystemTypes.DirectoryOrFile,
 				searchPattern,
 				enumerationOptions)
@@ -186,14 +190,14 @@ internal sealed class DirectoryMock : IDirectory
 	public DateTime GetCreationTime(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))))
+					path.EnsureValidFormat(FileSystem)))
 		   .CreationTime.Get(DateTimeKind.Local);
 
 	/// <inheritdoc cref="IDirectory.GetCreationTimeUtc(string)" />
 	public DateTime GetCreationTimeUtc(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))))
+					path.EnsureValidFormat(FileSystem)))
 		   .CreationTime.Get(DateTimeKind.Utc);
 
 	/// <inheritdoc cref="IDirectory.GetCurrentDirectory()" />
@@ -277,28 +281,28 @@ internal sealed class DirectoryMock : IDirectory
 	public DateTime GetLastAccessTime(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))))
+					path.EnsureValidFormat(FileSystem)))
 		   .LastAccessTime.Get(DateTimeKind.Local);
 
 	/// <inheritdoc cref="IDirectory.GetLastAccessTimeUtc(string)" />
 	public DateTime GetLastAccessTimeUtc(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))))
+					path.EnsureValidFormat(FileSystem)))
 		   .LastAccessTime.Get(DateTimeKind.Utc);
 
 	/// <inheritdoc cref="IDirectory.GetLastWriteTime(string)" />
 	public DateTime GetLastWriteTime(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))))
+					path.EnsureValidFormat(FileSystem)))
 		   .LastWriteTime.Get(DateTimeKind.Local);
 
 	/// <inheritdoc cref="IDirectory.GetLastWriteTimeUtc(string)" />
 	public DateTime GetLastWriteTimeUtc(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path ?? throw new ArgumentNullException(nameof(path))))
+					path.EnsureValidFormat(FileSystem)))
 		   .LastWriteTime.Get(DateTimeKind.Utc);
 
 	/// <inheritdoc cref="IDirectory.GetLogicalDrives()" />
@@ -381,7 +385,7 @@ internal sealed class DirectoryMock : IDirectory
 		string path)
 	{
 		IDirectoryInfo directoryInfo =
-			_fileSystem.DirectoryInfo.New(path);
+			_fileSystem.DirectoryInfo.New(path.EnsureValidFormat(FileSystem));
 		if (!directoryInfo.Exists)
 		{
 			Execute.OnWindows(

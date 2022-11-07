@@ -67,7 +67,7 @@ public abstract partial class MoveTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Move_SourceAndDestinationIdentical_ShouldThrowIOExceptionOnNetFramework(string path)
+	public void Move_SourceAndDestinationIdentical_ShouldThrowIOException(string path)
 	{
 		FileSystem.Initialize()
 		   .WithSubdirectory(path);

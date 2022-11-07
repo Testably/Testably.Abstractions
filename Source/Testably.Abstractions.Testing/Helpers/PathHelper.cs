@@ -41,11 +41,12 @@ internal static class PathHelper
 			() => path.StartsWith(UncPrefix));
 	}
 
-	internal static void ThrowCommonExceptionsIfPathIsInvalid(
+	internal static string EnsureValidFormat(
 		[NotNull] this string? path, IFileSystem fileSystem)
 	{
 		CheckPathArgument(path, nameof(path), Execute.IsWindows);
 		CheckPathCharacters(path, fileSystem, nameof(path), null);
+		return path;
 	}
 
 	internal static void ThrowCommonExceptionsIfPathToTargetIsInvalid(

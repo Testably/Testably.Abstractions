@@ -322,13 +322,6 @@ internal sealed class InMemoryStorage : IStorage
 	{
 		ThrowIfParentDoesNotExist(destination, _ => ExceptionFactory.DirectoryNotFound());
 
-		if (source.FullPath.Equals(destination.FullPath, Execute.IsNetFramework
-			? StringComparison.OrdinalIgnoreCase
-			: StringComparison.Ordinal))
-		{
-			throw ExceptionFactory.MoveSourceMustBeDifferentThanDestination();
-		}
-
 		List<Rollback> rollbacks = new();
 		try
 		{
@@ -588,6 +581,14 @@ internal sealed class InMemoryStorage : IStorage
 			return null;
 		}
 
+		if (container.Type == FileSystemTypes.Directory &&
+		    source.FullPath.Equals(destination.FullPath, Execute.IsNetFramework
+			? StringComparison.OrdinalIgnoreCase
+			: StringComparison.Ordinal))
+		{
+			throw ExceptionFactory.MoveSourceMustBeDifferentThanDestination();
+		}
+		
 		sourceType ??= container.Type;
 
 		List<IStorageLocation> children =

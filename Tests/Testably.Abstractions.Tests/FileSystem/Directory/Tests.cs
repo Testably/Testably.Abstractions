@@ -53,6 +53,16 @@ public abstract partial class Tests<TFileSystem>
 		result!.FullName.Should().Be(expectedParent.FullName);
 	}
 
+	[SkippableFact]
+	public void GetParent_Root_ShouldReturnNull()
+	{
+		string path = FileTestHelper.RootDrive();
+
+		IDirectoryInfo? result = FileSystem.Directory.GetParent(path);
+
+		result.Should().BeNull();
+	}
+
 	[SkippableTheory]
 	[AutoData]
 	public void

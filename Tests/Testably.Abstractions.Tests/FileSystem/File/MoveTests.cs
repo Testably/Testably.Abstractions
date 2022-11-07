@@ -31,6 +31,21 @@ public abstract partial class MoveTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void Move_SourceAndDestinationIdentical_ShouldNotThrowException(string path)
+	{
+		FileSystem.Initialize()
+		   .WithFile(path);
+
+		var exception = Record.Exception(() =>
+		{
+			FileSystem.File.Move(path, path);
+		});
+
+		exception.Should().BeNull();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void
 		Move_DestinationDirectoryDoesNotExist_ShouldThrowDirectoryNotFoundException(
 			string source)

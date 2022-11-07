@@ -9,14 +9,6 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 public abstract partial class Tests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	#region Test Setup
-
-	public static IEnumerable<object[]> GetDirectoryCallbacks(string? path)
-		=> GetDirectoryCallbackTestParameters(path!)
-		   .Select(callback => new object[] { callback });
-
-	#endregion
-
 	[Theory]
 	[MemberData(nameof(GetDirectoryCallbacks), parameters: "")]
 	public void Operations_ShouldThrowArgumentExceptionIfPathIsEmpty(
@@ -52,6 +44,43 @@ public abstract partial class Tests<TFileSystem>
 	}
 
 	#region Helpers
+
+	public static IEnumerable<object[]> GetDirectoryCallbacks(string? path)
+		=> GetDirectoryCallbackTestParameters(path!)
+		   .Select(callback => new object[] { callback });
+
+	[SkippableTheory]
+	[MemberData(nameof(GetDirectoryCallbacks), parameters: "Illegal\tCharacter?InPath")]
+	public void
+		Operations_ShouldThrowArgumentExceptionIfPathContainsIllegalCharactersOnWindows(
+			Expression<Action<IDirectory>> callback)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			callback.Compile().Invoke(FileSystem.Directory);
+		});
+
+		if (!Test.RunsOnWindows)
+		{
+			if (exception is IOException ioException)
+			{
+				ioException.HResult.Should().NotBe(-2147024809);
+			}
+		}
+		else
+		{
+			if (Test.IsNetFramework)
+			{
+				exception.Should().BeOfType<ArgumentException>()
+				   .Which.HResult.Should().Be(-2147024809);
+			}
+			else
+			{
+				exception.Should().BeOfType<IOException>()
+				   .Which.HResult.Should().Be(-2147024773);
+			}
+		}
+	}
 
 	private static IEnumerable<Expression<Action<IDirectory>>>
 		GetDirectoryCallbackTestParameters(string path)
@@ -141,8 +170,11 @@ public abstract partial class Tests<TFileSystem>
 			=> directory.GetLastWriteTime(path);
 		yield return directory
 			=> directory.GetLastWriteTimeUtc(path);
-		yield return directory
-			=> directory.GetParent(path);
+		if (string.IsNullOrEmpty(path))
+		{
+			yield return directory
+				=> directory.GetParent(path);
+		}
 		yield return directory
 			=> directory.SetCreationTime(path, DateTime.Now);
 		yield return directory
