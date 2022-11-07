@@ -69,10 +69,11 @@ internal sealed class DirectoryMock : IDirectory
 
 	/// <inheritdoc cref="IDirectory.EnumerateDirectories(string, string, SearchOption)" />
 	public IEnumerable<string> EnumerateDirectories(string path,
-													string searchPattern,
-													SearchOption searchOption)
+	                                                string searchPattern,
+	                                                SearchOption searchOption)
 		=> _fileSystem.Storage.EnumerateLocations(
-				_fileSystem.Storage.GetLocation(path),
+				_fileSystem.Storage.GetLocation(
+					path ?? throw new ArgumentNullException(nameof(path))),
 				FileSystemTypes.Directory,
 				searchPattern,
 				EnumerationOptionsHelper.FromSearchOption(searchOption))
@@ -82,11 +83,12 @@ internal sealed class DirectoryMock : IDirectory
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.EnumerateDirectories(string, string, EnumerationOptions)" />
 	public IEnumerable<string> EnumerateDirectories(string path,
-													string searchPattern,
-													EnumerationOptions
-														enumerationOptions)
+	                                                string searchPattern,
+	                                                EnumerationOptions
+		                                                enumerationOptions)
 		=> _fileSystem.Storage.EnumerateLocations(
-				_fileSystem.Storage.GetLocation(path),
+				_fileSystem.Storage.GetLocation(
+					path ?? throw new ArgumentNullException(nameof(path))),
 				FileSystemTypes.Directory,
 				searchPattern,
 				enumerationOptions)
@@ -106,10 +108,11 @@ internal sealed class DirectoryMock : IDirectory
 
 	/// <inheritdoc cref="IDirectory.EnumerateFiles(string, string, SearchOption)" />
 	public IEnumerable<string> EnumerateFiles(string path,
-											  string searchPattern,
-											  SearchOption searchOption)
+	                                          string searchPattern,
+	                                          SearchOption searchOption)
 		=> _fileSystem.Storage.EnumerateLocations(
-				_fileSystem.Storage.GetLocation(path),
+				_fileSystem.Storage.GetLocation(
+					path ?? throw new ArgumentNullException(nameof(path))),
 				FileSystemTypes.File,
 				searchPattern,
 				EnumerationOptionsHelper.FromSearchOption(searchOption))
@@ -119,10 +122,11 @@ internal sealed class DirectoryMock : IDirectory
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.EnumerateFiles(string, string, EnumerationOptions)" />
 	public IEnumerable<string> EnumerateFiles(string path,
-											  string searchPattern,
-											  EnumerationOptions enumerationOptions)
+	                                          string searchPattern,
+	                                          EnumerationOptions enumerationOptions)
 		=> _fileSystem.Storage.EnumerateLocations(
-				_fileSystem.Storage.GetLocation(path),
+				_fileSystem.Storage.GetLocation(
+					path ?? throw new ArgumentNullException(nameof(path))),
 				FileSystemTypes.File,
 				searchPattern,
 				enumerationOptions)
@@ -145,10 +149,11 @@ internal sealed class DirectoryMock : IDirectory
 
 	/// <inheritdoc cref="IDirectory.EnumerateFileSystemEntries(string, string, SearchOption)" />
 	public IEnumerable<string> EnumerateFileSystemEntries(string path,
-														  string searchPattern,
-														  SearchOption searchOption)
+	                                                      string searchPattern,
+	                                                      SearchOption searchOption)
 		=> _fileSystem.Storage.EnumerateLocations(
-				_fileSystem.Storage.GetLocation(path),
+				_fileSystem.Storage.GetLocation(
+					path ?? throw new ArgumentNullException(nameof(path))),
 				FileSystemTypes.DirectoryOrFile,
 				searchPattern,
 				EnumerationOptionsHelper.FromSearchOption(searchOption))
@@ -158,11 +163,12 @@ internal sealed class DirectoryMock : IDirectory
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.EnumerateFileSystemEntries(string, string, EnumerationOptions)" />
 	public IEnumerable<string> EnumerateFileSystemEntries(string path,
-														  string searchPattern,
-														  EnumerationOptions
-															  enumerationOptions)
+	                                                      string searchPattern,
+	                                                      EnumerationOptions
+		                                                      enumerationOptions)
 		=> _fileSystem.Storage.EnumerateLocations(
-				_fileSystem.Storage.GetLocation(path),
+				_fileSystem.Storage.GetLocation(
+					path ?? throw new ArgumentNullException(nameof(path))),
 				FileSystemTypes.DirectoryOrFile,
 				searchPattern,
 				enumerationOptions)
@@ -179,13 +185,15 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.GetCreationTime(string)" />
 	public DateTime GetCreationTime(string path)
 		=> _fileSystem.Storage.GetContainer(
-				_fileSystem.Storage.GetLocation(path))
+				_fileSystem.Storage.GetLocation(
+					path ?? throw new ArgumentNullException(nameof(path))))
 		   .CreationTime.Get(DateTimeKind.Local);
 
 	/// <inheritdoc cref="IDirectory.GetCreationTimeUtc(string)" />
 	public DateTime GetCreationTimeUtc(string path)
 		=> _fileSystem.Storage.GetContainer(
-				_fileSystem.Storage.GetLocation(path))
+				_fileSystem.Storage.GetLocation(
+					path ?? throw new ArgumentNullException(nameof(path))))
 		   .CreationTime.Get(DateTimeKind.Utc);
 
 	/// <inheritdoc cref="IDirectory.GetCurrentDirectory()" />
@@ -202,15 +210,15 @@ internal sealed class DirectoryMock : IDirectory
 
 	/// <inheritdoc cref="IDirectory.GetDirectories(string, string, SearchOption)" />
 	public string[] GetDirectories(string path,
-								   string searchPattern,
-								   SearchOption searchOption)
+	                               string searchPattern,
+	                               SearchOption searchOption)
 		=> EnumerateDirectories(path, searchPattern, searchOption).ToArray();
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.GetDirectories(string, string, EnumerationOptions)" />
 	public string[] GetDirectories(string path,
-								   string searchPattern,
-								   EnumerationOptions enumerationOptions)
+	                               string searchPattern,
+	                               EnumerationOptions enumerationOptions)
 		=> EnumerateDirectories(path, searchPattern, enumerationOptions).ToArray();
 #endif
 
@@ -230,15 +238,15 @@ internal sealed class DirectoryMock : IDirectory
 
 	/// <inheritdoc cref="IDirectory.GetFiles(string, string, SearchOption)" />
 	public string[] GetFiles(string path,
-							 string searchPattern,
-							 SearchOption searchOption)
+	                         string searchPattern,
+	                         SearchOption searchOption)
 		=> EnumerateFiles(path, searchPattern, searchOption).ToArray();
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.GetFiles(string, string, EnumerationOptions)" />
 	public string[] GetFiles(string path,
-							 string searchPattern,
-							 EnumerationOptions enumerationOptions)
+	                         string searchPattern,
+	                         EnumerationOptions enumerationOptions)
 		=> EnumerateFiles(path, searchPattern, enumerationOptions).ToArray();
 #endif
 
@@ -252,15 +260,15 @@ internal sealed class DirectoryMock : IDirectory
 
 	/// <inheritdoc cref="IDirectory.GetFileSystemEntries(string, string, SearchOption)" />
 	public string[] GetFileSystemEntries(string path,
-										 string searchPattern,
-										 SearchOption searchOption)
+	                                     string searchPattern,
+	                                     SearchOption searchOption)
 		=> EnumerateFileSystemEntries(path, searchPattern, searchOption).ToArray();
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.GetFileSystemEntries(string, string, EnumerationOptions)" />
 	public string[] GetFileSystemEntries(string path,
-										 string searchPattern,
-										 EnumerationOptions enumerationOptions)
+	                                     string searchPattern,
+	                                     EnumerationOptions enumerationOptions)
 		=> EnumerateFileSystemEntries(path, searchPattern, enumerationOptions)
 		   .ToArray();
 #endif
@@ -268,25 +276,29 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.GetLastAccessTime(string)" />
 	public DateTime GetLastAccessTime(string path)
 		=> _fileSystem.Storage.GetContainer(
-				_fileSystem.Storage.GetLocation(path))
+				_fileSystem.Storage.GetLocation(
+					path ?? throw new ArgumentNullException(nameof(path))))
 		   .LastAccessTime.Get(DateTimeKind.Local);
 
 	/// <inheritdoc cref="IDirectory.GetLastAccessTimeUtc(string)" />
 	public DateTime GetLastAccessTimeUtc(string path)
 		=> _fileSystem.Storage.GetContainer(
-				_fileSystem.Storage.GetLocation(path))
+				_fileSystem.Storage.GetLocation(
+					path ?? throw new ArgumentNullException(nameof(path))))
 		   .LastAccessTime.Get(DateTimeKind.Utc);
 
 	/// <inheritdoc cref="IDirectory.GetLastWriteTime(string)" />
 	public DateTime GetLastWriteTime(string path)
 		=> _fileSystem.Storage.GetContainer(
-				_fileSystem.Storage.GetLocation(path))
+				_fileSystem.Storage.GetLocation(
+					path ?? throw new ArgumentNullException(nameof(path))))
 		   .LastWriteTime.Get(DateTimeKind.Local);
 
 	/// <inheritdoc cref="IDirectory.GetLastWriteTimeUtc(string)" />
 	public DateTime GetLastWriteTimeUtc(string path)
 		=> _fileSystem.Storage.GetContainer(
-				_fileSystem.Storage.GetLocation(path))
+				_fileSystem.Storage.GetLocation(
+					path ?? throw new ArgumentNullException(nameof(path))))
 		   .LastWriteTime.Get(DateTimeKind.Utc);
 
 	/// <inheritdoc cref="IDirectory.GetLogicalDrives()" />
