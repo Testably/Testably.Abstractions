@@ -51,4 +51,70 @@ public abstract partial class ExistsTests<TFileSystem>
 		sut.Exists.Should().BeFalse();
 		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
 	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Exists_ShouldNotChangeOnMoveTo(string path, string destination)
+	{
+		FileSystem.Directory.CreateDirectory(path);
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+		sut.Exists.Should().BeTrue();
+
+		sut.MoveTo(destination);
+
+		sut.Exists.Should().BeTrue();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Exists_ShouldUpdateOnCreate(string path)
+	{
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+		sut.Exists.Should().BeFalse();
+
+		sut.Create();
+
+		sut.Exists.Should().BeTrue();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Exists_ShouldUpdateOnDelete(string path)
+	{
+		FileSystem.Directory.CreateDirectory(path);
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+		sut.Exists.Should().BeTrue();
+
+		sut.Delete();
+
+		sut.Exists.Should().BeFalse();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Exists_ShouldUpdateOnRecursiveDelete(string path)
+	{
+		FileSystem.Directory.CreateDirectory(path);
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+		sut.Exists.Should().BeTrue();
+
+		sut.Delete(true);
+
+		sut.Exists.Should().BeFalse();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Exists_ShouldUpdateOnRefresh(string path)
+	{
+		FileSystem.Directory.CreateDirectory(path);
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+		sut.Exists.Should().BeTrue();
+		FileSystem.Directory.Delete(path);
+		sut.Exists.Should().BeTrue();
+
+		sut.Refresh();
+
+		sut.Exists.Should().BeFalse();
+	}
 }
