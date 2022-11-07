@@ -15,7 +15,7 @@ internal sealed class FileInfoFactory : IFileInfoFactory
 	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
-	/// <inheritdoc cref="IFileInfoFactory.New" />
+	/// <inheritdoc cref="IFileInfoFactory.New(string)" />
 	public IFileInfo New(string fileName)
 		=> FileInfoWrapper.FromFileInfo(
 			new FileInfo(fileName),

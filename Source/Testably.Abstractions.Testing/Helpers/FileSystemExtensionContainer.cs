@@ -15,13 +15,13 @@ internal class FileSystemExtensionContainer : IFileSystemExtensionContainer
 		return false;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="IFileSystemExtensionContainer.StoreMetadata{T}(string, T?)" />
 	public void StoreMetadata<T>(string key, T? value)
 	{
 		_metadata[key] = value;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="IFileSystemExtensionContainer.RetrieveMetadata{T}(string)" />
 	public T? RetrieveMetadata<T>(string key)
 	{
 		if (_metadata.TryGetValue(key, out object? value) &&

@@ -187,7 +187,7 @@ internal sealed class FileStreamMock : FileSystemStream
 		return base.ReadByte();
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="FileSystemStream.SetLength(long)" />
 	public override void SetLength(long value)
 	{
 		if (!CanWrite)

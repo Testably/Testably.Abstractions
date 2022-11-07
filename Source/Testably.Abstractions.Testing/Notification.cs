@@ -269,7 +269,7 @@ public static class Notification
 			});
 		}
 
-		/// <inheritdoc />
+		/// <inheritdoc cref="IDisposable.Dispose()" />
 		public void Dispose()
 			=> _awaitableCallback.Dispose();
 

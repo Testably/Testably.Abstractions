@@ -26,7 +26,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 
 	#region IDisposable Members
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="IDisposable.Dispose()" />
 	public void Dispose()
 		=> _directoryCleaner.Dispose();
 
