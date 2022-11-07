@@ -12,6 +12,54 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
+	public void CreateDirectory_AlreadyExisting_ShouldDoNothing(string path)
+	{
+		FileSystem.Directory.CreateDirectory(path);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.Directory.CreateDirectory(path);
+		});
+
+		exception.Should().BeNull();
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+	}
+
+	[SkippableFact]
+	public void CreateDirectory_Root_ShouldNotThrowException()
+	{
+		string path = FileTestHelper.RootDrive();
+		FileSystem.Directory.CreateDirectory(path);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.Directory.CreateDirectory(path);
+		});
+
+		exception.Should().BeNull();
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void CreateDirectory_ShouldTrimTrailingSpacesOnlyOnWindows(string path)
+	{
+		string pathWithSpaces = path + "  ";
+
+		IDirectoryInfo result = FileSystem.Directory.CreateDirectory(pathWithSpaces);
+
+		if (Test.RunsOnWindows)
+		{
+			result.Name.Should().Be(path);
+		}
+		else
+		{
+			result.Name.Should().Be(pathWithSpaces);
+		}
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void CreateDirectory_ShouldAdjustTimes(string path, string subdirectoryName)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);

@@ -6,11 +6,46 @@ public abstract partial class ExistsTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
+	[InlineData("foo")]
+	[InlineData("foo/")]
+	public void Exists_ExistingDirectory_ShouldReturnTrue(string path)
+	{
+		FileSystem.Directory.CreateDirectory(path);
+
+		bool result = FileSystem.Directory.Exists(path);
+
+		result.Should().BeTrue();
+	}
+
+	[SkippableTheory]
 	[AutoData]
 	public void Exists_File_ShouldReturnFalse(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
+		bool result = FileSystem.Directory.Exists(path);
+
+		result.Should().BeFalse();
+	}
+
+	[SkippableTheory]
+	[InlineData(@"\\s")]
+	[InlineData("<")]
+	[InlineData("\t")]
+	public void Exists_IllegalPath_ShouldReturnFalse(string path)
+	{
+		Skip.If(Test.IsNetFramework);
+
+		bool result = FileSystem.Directory.Exists(path);
+
+		result.Should().BeFalse();
+	}
+
+	[SkippableTheory]
+	[InlineData("foo")]
+	[InlineData("foo/")]
+	public void Exists_MissingDirectory_ShouldReturnFalse(string path)
+	{
 		bool result = FileSystem.Directory.Exists(path);
 
 		result.Should().BeFalse();

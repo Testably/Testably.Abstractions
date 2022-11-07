@@ -16,6 +16,18 @@ public abstract partial class Tests<TFileSystem>
 		result.Should().NotBe(FileTestHelper.RootDrive());
 	}
 
+	[SkippableTheory]
+	[AutoData]
+	public void GetDirectoryRoot_ShouldReturnRoot(string path)
+	{
+		string root = FileTestHelper.RootDrive();
+		string rootedPath = root + path;
+
+		string result = FileSystem.Directory.GetDirectoryRoot(rootedPath);
+
+		result.Should().Be(root);
+	}
+
 	[SkippableFact]
 	public void GetLogicalDrives_ShouldNotBeEmpty()
 	{

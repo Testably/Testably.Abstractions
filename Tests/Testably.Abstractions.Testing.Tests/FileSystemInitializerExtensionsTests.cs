@@ -145,11 +145,7 @@ public class FileSystemInitializerExtensionsTests
 			MockFileSystem> result =
 			sut.Initialize().WithSubdirectory(directoryName);
 
-#if NETFRAMEWORK
-		result.Directory.Exists.Should().BeFalse();
-#else
 		result.Directory.Exists.Should().BeTrue();
-#endif
 	}
 
 	[Theory]

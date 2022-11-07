@@ -67,19 +67,19 @@ public abstract partial class ExistsTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Exists_ShouldUpdateOnCreate(string path)
+	public void Exists_ShouldUpdateOnCreateWhenNotNetFramework(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 		sut.Exists.Should().BeFalse();
 
 		sut.Create();
 
-		sut.Exists.Should().BeTrue();
+		sut.Exists.Should().Be(!Test.IsNetFramework);
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public void Exists_ShouldUpdateOnDelete(string path)
+	public void Exists_ShouldUpdateOnDeleteWhenNotNetFramework(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
@@ -87,12 +87,12 @@ public abstract partial class ExistsTests<TFileSystem>
 
 		sut.Delete();
 
-		sut.Exists.Should().BeFalse();
+		sut.Exists.Should().Be(Test.IsNetFramework);
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public void Exists_ShouldUpdateOnRecursiveDelete(string path)
+	public void Exists_ShouldUpdateOnRecursiveDeleteWhenNotNetFramework(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
@@ -100,7 +100,7 @@ public abstract partial class ExistsTests<TFileSystem>
 
 		sut.Delete(true);
 
-		sut.Exists.Should().BeFalse();
+		sut.Exists.Should().Be(Test.IsNetFramework);
 	}
 
 	[SkippableTheory]

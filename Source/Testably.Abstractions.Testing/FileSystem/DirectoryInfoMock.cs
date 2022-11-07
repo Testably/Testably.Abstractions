@@ -44,7 +44,7 @@ internal sealed class DirectoryInfoMock
 			InMemoryContainer.NewDirectory,
 			ExtensionContainer);
 
-		Refresh();
+		ResetCache(!Execute.IsNetFramework);
 	}
 
 	/// <inheritdoc cref="IDirectoryInfo.CreateSubdirectory(string)" />
@@ -68,7 +68,7 @@ internal sealed class DirectoryInfoMock
 			throw ExceptionFactory.DirectoryNotFound(FullName);
 		}
 
-		Refresh();
+		ResetCache(!Execute.IsNetFramework);
 	}
 
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateDirectories()" />
