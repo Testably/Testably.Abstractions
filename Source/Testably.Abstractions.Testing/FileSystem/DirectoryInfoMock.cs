@@ -85,9 +85,8 @@ internal sealed class DirectoryInfoMock
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateDirectories(string, SearchOption)" />
 	public IEnumerable<IDirectoryInfo> EnumerateDirectories(
 		string searchPattern, SearchOption searchOption)
-		=> FileSystem.Storage.EnumerateLocations(
-				FileSystem.Storage.GetLocation(FullName),
-				FileSystemTypes.Directory,
+		=> EnumerateInternal(FileSystemTypes.Directory,
+				FullName,
 				searchPattern,
 				EnumerationOptionsHelper.FromSearchOption(searchOption))
 		   .Select(location => New(location, FileSystem));
@@ -97,9 +96,8 @@ internal sealed class DirectoryInfoMock
 	public IEnumerable<IDirectoryInfo> EnumerateDirectories(
 		string searchPattern,
 		EnumerationOptions enumerationOptions)
-		=> FileSystem.Storage.EnumerateLocations(
-				FileSystem.Storage.GetLocation(FullName),
-				FileSystemTypes.Directory,
+		=> EnumerateInternal(FileSystemTypes.Directory,
+				FullName,
 				searchPattern,
 				enumerationOptions)
 		   .Select(location => New(location, FileSystem));
@@ -118,9 +116,8 @@ internal sealed class DirectoryInfoMock
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateFiles(string, SearchOption)" />
 	public IEnumerable<IFileInfo> EnumerateFiles(
 		string searchPattern, SearchOption searchOption)
-		=> FileSystem.Storage.EnumerateLocations(
-				FileSystem.Storage.GetLocation(FullName),
-				FileSystemTypes.File,
+		=> EnumerateInternal(FileSystemTypes.File,
+				FullName,
 				searchPattern,
 				EnumerationOptionsHelper.FromSearchOption(searchOption))
 		   .Select(location => FileInfoMock.New(location, FileSystem));
@@ -129,9 +126,8 @@ internal sealed class DirectoryInfoMock
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateFiles(string, EnumerationOptions)" />
 	public IEnumerable<IFileInfo> EnumerateFiles(
 		string searchPattern, EnumerationOptions enumerationOptions)
-		=> FileSystem.Storage.EnumerateLocations(
-				FileSystem.Storage.GetLocation(FullName),
-				FileSystemTypes.File,
+		=> EnumerateInternal(FileSystemTypes.File,
+				FullName,
 				searchPattern,
 				enumerationOptions)
 		   .Select(location => FileInfoMock.New(location, FileSystem));
@@ -151,9 +147,8 @@ internal sealed class DirectoryInfoMock
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateFileSystemInfos(string, SearchOption)" />
 	public IEnumerable<IFileSystemInfo> EnumerateFileSystemInfos(
 		string searchPattern, SearchOption searchOption)
-		=> FileSystem.Storage.EnumerateLocations(
-				FileSystem.Storage.GetLocation(FullName),
-				FileSystemTypes.DirectoryOrFile,
+		=> EnumerateInternal(FileSystemTypes.DirectoryOrFile,
+				FullName,
 				searchPattern,
 				EnumerationOptionsHelper.FromSearchOption(searchOption))
 		   .Select(location => FileSystemInfoMock.New(location, FileSystem));
@@ -163,9 +158,8 @@ internal sealed class DirectoryInfoMock
 	public IEnumerable<IFileSystemInfo> EnumerateFileSystemInfos(
 		string searchPattern,
 		EnumerationOptions enumerationOptions)
-		=> FileSystem.Storage.EnumerateLocations(
-				FileSystem.Storage.GetLocation(FullName),
-				FileSystemTypes.DirectoryOrFile,
+		=> EnumerateInternal(FileSystemTypes.DirectoryOrFile,
+				FullName,
 				searchPattern,
 				enumerationOptions)
 		   .Select(location => FileSystemInfoMock.New(location, FileSystem));
@@ -253,5 +247,21 @@ internal sealed class DirectoryInfoMock
 		}
 
 		return new DirectoryInfoMock(location, fileSystem);
+	}
+
+	private IEnumerable<IStorageLocation> EnumerateInternal(FileSystemTypes fileSystemTypes,
+	                                              string path,
+	                                              string searchPattern,
+	                                              EnumerationOptions enumerationOptions)
+	{
+		StorageExtensions.AdjustedLocation adjustedLocation = FileSystem.Storage
+		   .AdjustLocationFromSearchPattern(
+				path.EnsureValidFormat(FileSystem),
+				searchPattern);
+		return FileSystem.Storage.EnumerateLocations(
+				adjustedLocation.Location,
+				fileSystemTypes,
+				adjustedLocation.SearchPattern,
+				enumerationOptions);
 	}
 }

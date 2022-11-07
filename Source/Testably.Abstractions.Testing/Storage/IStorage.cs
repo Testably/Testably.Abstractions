@@ -54,7 +54,7 @@ internal interface IStorage
 	/// </summary>
 	/// <param name="location">The parent location in which the files or directories are searched for.</param>
 	/// <param name="type">The type of the container (file, directory or both).</param>
-	/// <param name="expression">
+	/// <param name="searchPattern">
 	///     (optional) The expression to filter the name of the locations.
 	///     <para />
 	///     Defaults to <c>"*"</c> which matches any name.
@@ -67,13 +67,13 @@ internal interface IStorage
 	///     - Use Win32 expression MatchType
 	/// </param>
 	/// <returns>
-	///     The location of files or directories that match the <paramref name="type" />, <paramref name="expression" />
+	///     The location of files or directories that match the <paramref name="type" />, <paramref name="searchPattern" />
 	///     and <paramref name="enumerationOptions" />.
 	/// </returns>
 	IEnumerable<IStorageLocation> EnumerateLocations(
 		IStorageLocation location,
 		FileSystemTypes type,
-		string expression = EnumerationOptionsHelper.DefaultSearchPattern,
+		string searchPattern = EnumerationOptionsHelper.DefaultSearchPattern,
 		EnumerationOptions? enumerationOptions = null);
 
 	/// <summary>

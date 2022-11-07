@@ -150,10 +150,10 @@ internal sealed class InMemoryStorage : IStorage
 	public IEnumerable<IStorageLocation> EnumerateLocations(
 		IStorageLocation location,
 		FileSystemTypes type,
-		string expression = EnumerationOptionsHelper.DefaultSearchPattern,
+		string searchPattern = EnumerationOptionsHelper.DefaultSearchPattern,
 		EnumerationOptions? enumerationOptions = null)
 	{
-		ValidateExpression(expression);
+		ValidateExpression(searchPattern);
 		if (!_containers.ContainsKey(location))
 		{
 			throw ExceptionFactory.DirectoryNotFound(location.FullPath);
@@ -188,7 +188,7 @@ internal sealed class InMemoryStorage : IStorage
 			}
 
 			if (!EnumerationOptionsHelper.MatchesPattern(enumerationOptions,
-				_fileSystem.Path.GetFileName(item.Key.FullPath), expression))
+				_fileSystem.Path.GetFileName(item.Key.FullPath), searchPattern))
 			{
 				continue;
 			}

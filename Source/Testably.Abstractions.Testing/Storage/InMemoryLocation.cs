@@ -95,7 +95,22 @@ internal sealed class InMemoryLocation : IStorageLocation
 
 		return New(Drive,
 			parentPath,
-			Path.GetDirectoryName(FriendlyName));
+			GetFriendlyNameParent(FriendlyName));
+	}
+
+	private static string? GetFriendlyNameParent(string friendlyName)
+	{
+		if (friendlyName == ".")
+		{
+			return "./..";
+		}
+
+		if (friendlyName.StartsWith("./"))
+		{
+			return "./../" + friendlyName.Substring(2);
+		}
+
+		return Path.GetDirectoryName(friendlyName);
 	}
 
 	#endregion

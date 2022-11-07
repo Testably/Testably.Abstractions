@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
+using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
@@ -75,14 +76,10 @@ internal sealed class DirectoryMock : IDirectory
 	public IEnumerable<string> EnumerateDirectories(string path,
 	                                                string searchPattern,
 	                                                SearchOption searchOption)
-		=> _fileSystem.Storage.EnumerateLocations(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)),
-				FileSystemTypes.Directory,
-				searchPattern,
-				EnumerationOptionsHelper.FromSearchOption(searchOption))
-		   .Select(x => _fileSystem
-			   .GetSubdirectoryPath(x.FullPath, path));
+		=> EnumerateInternal(FileSystemTypes.Directory,
+			path,
+			searchPattern,
+			EnumerationOptionsHelper.FromSearchOption(searchOption));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.EnumerateDirectories(string, string, EnumerationOptions)" />
@@ -90,14 +87,10 @@ internal sealed class DirectoryMock : IDirectory
 	                                                string searchPattern,
 	                                                EnumerationOptions
 		                                                enumerationOptions)
-		=> _fileSystem.Storage.EnumerateLocations(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)),
-				FileSystemTypes.Directory,
-				searchPattern,
-				enumerationOptions)
-		   .Select(x => _fileSystem
-			   .GetSubdirectoryPath(x.FullPath, path));
+		=> EnumerateInternal(FileSystemTypes.Directory,
+			path,
+			searchPattern,
+			enumerationOptions);
 #endif
 
 	/// <inheritdoc cref="IDirectory.EnumerateFiles(string)" />
@@ -114,28 +107,20 @@ internal sealed class DirectoryMock : IDirectory
 	public IEnumerable<string> EnumerateFiles(string path,
 	                                          string searchPattern,
 	                                          SearchOption searchOption)
-		=> _fileSystem.Storage.EnumerateLocations(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)),
-				FileSystemTypes.File,
-				searchPattern,
-				EnumerationOptionsHelper.FromSearchOption(searchOption))
-		   .Select(x => _fileSystem
-			   .GetSubdirectoryPath(x.FullPath, path));
+		=> EnumerateInternal(FileSystemTypes.File,
+			path,
+			searchPattern,
+			EnumerationOptionsHelper.FromSearchOption(searchOption));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.EnumerateFiles(string, string, EnumerationOptions)" />
 	public IEnumerable<string> EnumerateFiles(string path,
 	                                          string searchPattern,
 	                                          EnumerationOptions enumerationOptions)
-		=> _fileSystem.Storage.EnumerateLocations(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)),
-				FileSystemTypes.File,
-				searchPattern,
-				enumerationOptions)
-		   .Select(x => _fileSystem
-			   .GetSubdirectoryPath(x.FullPath, path));
+		=> EnumerateInternal(FileSystemTypes.File,
+			path,
+			searchPattern,
+			enumerationOptions);
 #endif
 
 	/// <inheritdoc cref="IDirectory.EnumerateFileSystemEntries(string)" />
@@ -155,14 +140,10 @@ internal sealed class DirectoryMock : IDirectory
 	public IEnumerable<string> EnumerateFileSystemEntries(string path,
 	                                                      string searchPattern,
 	                                                      SearchOption searchOption)
-		=> _fileSystem.Storage.EnumerateLocations(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)),
-				FileSystemTypes.DirectoryOrFile,
-				searchPattern,
-				EnumerationOptionsHelper.FromSearchOption(searchOption))
-		   .Select(x => _fileSystem
-			   .GetSubdirectoryPath(x.FullPath, path));
+		=> EnumerateInternal(FileSystemTypes.DirectoryOrFile,
+			path,
+			searchPattern,
+			EnumerationOptionsHelper.FromSearchOption(searchOption));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.EnumerateFileSystemEntries(string, string, EnumerationOptions)" />
@@ -170,14 +151,10 @@ internal sealed class DirectoryMock : IDirectory
 	                                                      string searchPattern,
 	                                                      EnumerationOptions
 		                                                      enumerationOptions)
-		=> _fileSystem.Storage.EnumerateLocations(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)),
-				FileSystemTypes.DirectoryOrFile,
-				searchPattern,
-				enumerationOptions)
-		   .Select(x => _fileSystem
-			   .GetSubdirectoryPath(x.FullPath, path));
+		=> EnumerateInternal(FileSystemTypes.DirectoryOrFile,
+			path,
+			searchPattern,
+			enumerationOptions);
 #endif
 
 	/// <inheritdoc cref="IDirectory.Exists(string)" />
@@ -398,5 +375,23 @@ internal sealed class DirectoryMock : IDirectory
 		}
 
 		return directoryInfo;
+	}
+
+	private IEnumerable<string> EnumerateInternal(FileSystemTypes fileSystemTypes,
+	                                              string path,
+	                                              string searchPattern,
+	                                              EnumerationOptions enumerationOptions)
+	{
+		StorageExtensions.AdjustedLocation adjustedLocation = _fileSystem.Storage
+		   .AdjustLocationFromSearchPattern(
+				path.EnsureValidFormat(FileSystem),
+				searchPattern);
+		return _fileSystem.Storage.EnumerateLocations(
+				adjustedLocation.Location,
+				fileSystemTypes,
+				adjustedLocation.SearchPattern,
+				enumerationOptions)
+		   .Select(x => _fileSystem
+			   .GetSubdirectoryPath(x.FullPath, adjustedLocation.GivenPath));
 	}
 }
