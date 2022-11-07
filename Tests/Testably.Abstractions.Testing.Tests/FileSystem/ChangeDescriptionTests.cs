@@ -14,7 +14,8 @@ public class ChangeDescriptionTests
 		NotifyFilters notifyFilters,
 		string path)
 	{
-		IStorageLocation location = InMemoryLocation.New(null, Path.GetFullPath(path));
+		string fullPath = Path.GetFullPath(path);
+		IStorageLocation location = InMemoryLocation.New(null, fullPath);
 		ChangeDescription sut = new(
 			changeType,
 			fileSystemType,
@@ -35,7 +36,8 @@ public class ChangeDescriptionTests
 		NotifyFilters notifyFilters,
 		string path)
 	{
-		IStorageLocation location = InMemoryLocation.New(null, Path.GetFullPath(path));
+		string fullPath = Path.GetFullPath(path);
+		IStorageLocation location = InMemoryLocation.New(null, fullPath);
 		ChangeDescription sut = new(
 			changeType,
 			fileSystemType,
@@ -56,7 +58,8 @@ public class ChangeDescriptionTests
 		NotifyFilters notifyFilters,
 		string path)
 	{
-		IStorageLocation location = InMemoryLocation.New(null, Path.GetFullPath(path));
+		string fullPath = Path.GetFullPath(path);
+		IStorageLocation location = InMemoryLocation.New(null, fullPath);
 		ChangeDescription sut = new(
 			changeType,
 			fileSystemType,
@@ -77,7 +80,8 @@ public class ChangeDescriptionTests
 		NotifyFilters notifyFilters,
 		string path)
 	{
-		IStorageLocation location = InMemoryLocation.New(null, Path.GetFullPath(path));
+		string fullPath = Path.GetFullPath(path);
+		IStorageLocation location = InMemoryLocation.New(null, fullPath);
 		ChangeDescription sut = new(
 			changeType,
 			fileSystemType,
@@ -87,6 +91,6 @@ public class ChangeDescriptionTests
 
 		string result = sut.ToString();
 
-		result.Should().Contain(Path.GetFullPath(path));
+		result.Should().Contain(fullPath);
 	}
 }

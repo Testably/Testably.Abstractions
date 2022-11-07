@@ -15,7 +15,7 @@ internal sealed class DirectoryInfoFactory : IDirectoryInfoFactory
 	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
-	/// <inheritdoc cref="IDirectoryInfoFactory.New" />
+	/// <inheritdoc cref="IDirectoryInfoFactory.New(string)" />
 	public IDirectoryInfo New(string path)
 		=> DirectoryInfoWrapper.FromDirectoryInfo(
 			new DirectoryInfo(path),

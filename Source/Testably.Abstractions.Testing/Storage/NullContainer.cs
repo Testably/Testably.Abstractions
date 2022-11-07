@@ -101,7 +101,8 @@ internal sealed class NullContainer : IStorageContainer
 
 	private sealed class NullStorageAccessHandle : IStorageAccessHandle
 	{
-		public NullStorageAccessHandle(FileAccess access, FileShare share, bool deleteAccess)
+		public NullStorageAccessHandle(FileAccess access, FileShare share,
+		                               bool deleteAccess)
 		{
 			Access = access;
 			Share = share;

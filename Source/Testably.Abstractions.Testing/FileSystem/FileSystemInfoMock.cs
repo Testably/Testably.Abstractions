@@ -31,7 +31,7 @@ internal class FileSystemInfoMock : IFileSystemInfo
 	private IStorageContainer _container;
 
 	protected FileSystemInfoMock(MockFileSystem fileSystem, IStorageLocation location,
-								 FileSystemTypes fileSystemType)
+	                             FileSystemTypes fileSystemType)
 	{
 		FileSystem = fileSystem;
 		Location = location;
@@ -90,7 +90,7 @@ internal class FileSystemInfoMock : IFileSystemInfo
 			throw ExceptionFactory.DirectoryNotFound(Location.FullPath);
 		}
 
-		Refresh();
+		ResetCache(!Execute.IsNetFramework);
 	}
 
 	/// <inheritdoc cref="IFileSystemInfo.Exists" />
@@ -160,11 +160,7 @@ internal class FileSystemInfoMock : IFileSystemInfo
 	/// <inheritdoc cref="IFileSystemInfo.Refresh()" />
 	public void Refresh()
 	{
-#if !NETFRAMEWORK
-		// The DirectoryInfo is not updated in .NET Framework!
-		_exists = null;
-#endif
-		_isInitialized = false;
+		ResetCache(true);
 	}
 
 #if FEATURE_FILESYSTEM_LINK
@@ -186,7 +182,8 @@ internal class FileSystemInfoMock : IFileSystemInfo
 		}
 		catch (IOException)
 		{
-			throw ExceptionFactory.FileNameCannotBeResolved(Location.FullPath, Execute.IsWindows ? -2147022975 : - 2146232800);
+			throw ExceptionFactory.FileNameCannotBeResolved(Location.FullPath,
+				Execute.IsWindows ? -2147022975 : -2146232800);
 		}
 	}
 #endif
@@ -202,7 +199,7 @@ internal class FileSystemInfoMock : IFileSystemInfo
 		=> Location.FriendlyName;
 
 	internal static FileSystemInfoMock New(IStorageLocation location,
-										   MockFileSystem fileSystem)
+	                                       MockFileSystem fileSystem)
 	{
 		IStorageContainer container = fileSystem.Storage.GetContainer(location);
 		if (container.Type == FileSystemTypes.File)
@@ -217,6 +214,16 @@ internal class FileSystemInfoMock : IFileSystemInfo
 
 		return new FileSystemInfoMock(fileSystem, location,
 			FileSystemTypes.DirectoryOrFile);
+	}
+
+	protected void ResetCache(bool resetExistsCache)
+	{
+		if (resetExistsCache)
+		{
+			_exists = null;
+		}
+
+		_isInitialized = false;
 	}
 
 	private void RefreshInternal()

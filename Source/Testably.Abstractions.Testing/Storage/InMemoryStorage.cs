@@ -78,8 +78,9 @@ internal sealed class InMemoryStorage : IStorage
 					=> sourceContainer.AdjustTimes(TimeAdjustments.LastAccessTime));
 
 				copiedContainer.Attributes = sourceContainer.Attributes;
-				Execute.OnWindows(
-					() => copiedContainer.Attributes |= FileAttributes.Archive,
+				Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
+					() => copiedContainer.Attributes |= FileAttributes.Archive);
+				Execute.NotOnWindows(
 					() => copiedContainer.CreationTime.Set(
 						sourceContainer.CreationTime.Get(DateTimeKind.Local),
 						DateTimeKind.Local));
@@ -89,7 +90,9 @@ internal sealed class InMemoryStorage : IStorage
 				return destination;
 			}
 
-			throw ExceptionFactory.CannotCreateFileWhenAlreadyExists(Execute.IsWindows ? -2147024816 : 17);
+			throw ExceptionFactory.CannotCreateFileWhenAlreadyExists(Execute.IsWindows
+				? -2147024816
+				: 17);
 		}
 	}
 
@@ -381,7 +384,7 @@ internal sealed class InMemoryStorage : IStorage
 					if (backup != null &&
 					    _containers.TryAdd(backup, existingDestinationContainer))
 					{
-						Execute.OnWindows(
+						Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
 							() => existingDestinationContainer.Attributes |=
 								FileAttributes.Archive);
 						backup.Drive?.ChangeUsedBytes(destinationBytesLength);
@@ -393,7 +396,7 @@ internal sealed class InMemoryStorage : IStorage
 						int sourceBytesLength = existingSourceContainer.GetBytes().Length;
 						source.Drive?.ChangeUsedBytes(-1 * sourceBytesLength);
 						destination.Drive?.ChangeUsedBytes(sourceBytesLength);
-						Execute.OnWindows(
+						Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
 							() => existingSourceContainer.Attributes |=
 								FileAttributes.Archive);
 						existingSourceContainer.CreationTime.Set(
@@ -578,6 +581,14 @@ internal sealed class InMemoryStorage : IStorage
 			return null;
 		}
 
+		if (container.Type == FileSystemTypes.Directory &&
+		    source.FullPath.Equals(destination.FullPath, Execute.IsNetFramework
+			    ? StringComparison.OrdinalIgnoreCase
+			    : StringComparison.Ordinal))
+		{
+			throw ExceptionFactory.MoveSourceMustBeDifferentThanDestination();
+		}
+
 		sourceType ??= container.Type;
 
 		List<IStorageLocation> children =
@@ -623,7 +634,7 @@ internal sealed class InMemoryStorage : IStorage
 					int bytesLength = sourceContainer.GetBytes().Length;
 					source.Drive?.ChangeUsedBytes(-1 * bytesLength);
 					destination.Drive?.ChangeUsedBytes(bytesLength);
-					Execute.OnWindows(
+					Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
 						() => sourceContainer.Attributes |= FileAttributes.Archive);
 					rollbacks?.Add(new Rollback(
 						() => MoveInternal(destination, source, true, false,

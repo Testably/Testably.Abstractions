@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.IO;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
@@ -43,7 +42,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 		{
 			IsUncPath = true;
 			driveName = PathHelper.UncPrefix +
-						GetTopmostParentDirectory(driveName.Substring(2));
+			            GetTopmostParentDirectory(driveName.Substring(2));
 		}
 		else
 		{
@@ -178,10 +177,10 @@ internal sealed class DriveInfoMock : IStorageDrive
 	}
 
 	private static string ValidateDriveLetter(string driveName,
-											  IFileSystem fileSystem)
+	                                          IFileSystem fileSystem)
 	{
 		if (driveName.Length == 1 &&
-			char.IsLetter(driveName, 0))
+		    char.IsLetter(driveName, 0))
 		{
 			return $"{driveName.ToUpperInvariant()}:\\";
 		}
@@ -196,7 +195,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 
 	[return: NotNullIfNotNull("driveName")]
 	internal static DriveInfoMock? New(string? driveName,
-									   MockFileSystem fileSystem)
+	                                   MockFileSystem fileSystem)
 	{
 		if (driveName == null)
 		{

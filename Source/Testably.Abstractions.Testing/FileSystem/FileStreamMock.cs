@@ -32,25 +32,25 @@ internal sealed class FileStreamMock : FileSystemStream
 	private readonly MemoryStream _stream;
 
 	internal FileStreamMock(MockFileSystem fileSystem,
-							string? path,
-							FileMode mode,
-							FileAccess access,
-							FileShare share = FileShare.Read,
-							int bufferSize = 4096,
-							FileOptions options = FileOptions.None)
+	                        string? path,
+	                        FileMode mode,
+	                        FileAccess access,
+	                        FileShare share = FileShare.Read,
+	                        int bufferSize = 4096,
+	                        FileOptions options = FileOptions.None)
 		: this(new MemoryStream(), fileSystem, path, mode, access, share, bufferSize,
 			options)
 	{
 	}
 
 	private FileStreamMock(MemoryStream stream,
-						   MockFileSystem fileSystem,
-						   string? path,
-						   FileMode mode,
-						   FileAccess access,
-						   FileShare share,
-						   int bufferSize,
-						   FileOptions options)
+	                       MockFileSystem fileSystem,
+	                       string? path,
+	                       FileMode mode,
+	                       FileAccess access,
+	                       FileShare share,
+	                       int bufferSize,
+	                       FileOptions options)
 		: base(
 			stream,
 			path == null ? null : fileSystem.Path.GetFullPath(path),
@@ -70,7 +70,7 @@ internal sealed class FileStreamMock : FileSystemStream
 		if (file is NullContainer)
 		{
 			if (_mode.Equals(FileMode.Open) ||
-				_mode.Equals(FileMode.Truncate))
+			    _mode.Equals(FileMode.Truncate))
 			{
 				throw ExceptionFactory.FileNotFound(
 					_fileSystem.Path.GetFullPath(Name));
@@ -113,9 +113,10 @@ internal sealed class FileStreamMock : FileSystemStream
 		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 		base.CopyTo(destination, bufferSize);
 	}
-	
+
 	/// <inheritdoc cref="FileSystemStream.CopyToAsync(Stream, int, CancellationToken)" />
-	public override Task CopyToAsync(Stream destination, int bufferSize, CancellationToken cancellationToken)
+	public override Task CopyToAsync(Stream destination, int bufferSize,
+	                                 CancellationToken cancellationToken)
 	{
 		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 		return base.CopyToAsync(destination, bufferSize, cancellationToken);
@@ -135,6 +136,7 @@ internal sealed class FileStreamMock : FileSystemStream
 		{
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
+
 		_isContentChanged = true;
 		base.EndWrite(asyncResult);
 	}
@@ -163,7 +165,7 @@ internal sealed class FileStreamMock : FileSystemStream
 
 	/// <inheritdoc cref="FileSystemStream.ReadAsync(byte[], int, int, CancellationToken)" />
 	public override Task<int> ReadAsync(byte[] buffer, int offset, int count,
-										CancellationToken cancellationToken)
+	                                    CancellationToken cancellationToken)
 	{
 		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 		return base.ReadAsync(buffer, offset, count, cancellationToken);
@@ -172,8 +174,8 @@ internal sealed class FileStreamMock : FileSystemStream
 #if FEATURE_SPAN
 	/// <inheritdoc cref="FileSystemStream.ReadAsync(Memory{byte}, CancellationToken)" />
 	public override ValueTask<int> ReadAsync(Memory<byte> buffer,
-											 CancellationToken cancellationToken =
-												 new())
+	                                         CancellationToken cancellationToken =
+		                                         new())
 	{
 		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 		return base.ReadAsync(buffer, cancellationToken);
@@ -187,7 +189,7 @@ internal sealed class FileStreamMock : FileSystemStream
 		return base.ReadByte();
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="FileSystemStream.SetLength(long)" />
 	public override void SetLength(long value)
 	{
 		if (!CanWrite)
@@ -205,6 +207,7 @@ internal sealed class FileStreamMock : FileSystemStream
 		{
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
+
 		_isContentChanged = true;
 		base.Write(buffer, offset, count);
 	}
@@ -217,6 +220,7 @@ internal sealed class FileStreamMock : FileSystemStream
 		{
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
+
 		_isContentChanged = true;
 		base.Write(buffer);
 	}
@@ -224,12 +228,13 @@ internal sealed class FileStreamMock : FileSystemStream
 
 	/// <inheritdoc cref="FileSystemStream.WriteAsync(byte[], int, int, CancellationToken)" />
 	public override Task WriteAsync(byte[] buffer, int offset, int count,
-									CancellationToken cancellationToken)
+	                                CancellationToken cancellationToken)
 	{
 		if (!CanWrite)
 		{
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
+
 		_isContentChanged = true;
 		return base.WriteAsync(buffer, offset, count, cancellationToken);
 	}
@@ -237,12 +242,13 @@ internal sealed class FileStreamMock : FileSystemStream
 #if FEATURE_SPAN
 	/// <inheritdoc cref="FileSystemStream.WriteAsync(ReadOnlyMemory{byte}, CancellationToken)" />
 	public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer,
-										 CancellationToken cancellationToken = new())
+	                                     CancellationToken cancellationToken = new())
 	{
 		if (!CanWrite)
 		{
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
+
 		_isContentChanged = true;
 		return base.WriteAsync(buffer, cancellationToken);
 	}
@@ -255,6 +261,7 @@ internal sealed class FileStreamMock : FileSystemStream
 		{
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
 		}
+
 		_isContentChanged = true;
 		base.WriteByte(value);
 	}
@@ -277,7 +284,7 @@ internal sealed class FileStreamMock : FileSystemStream
 	private void InitializeStream()
 	{
 		if (_mode != FileMode.Create &&
-			_mode != FileMode.Truncate)
+		    _mode != FileMode.Truncate)
 		{
 			byte[] existingContents = _container.GetBytes();
 			_stream.Write(existingContents, 0, existingContents.Length);
@@ -332,8 +339,8 @@ internal sealed class FileStreamMock : FileSystemStream
 		}
 
 		if (!access.HasFlag(FileAccess.Write) &&
-			(mode == FileMode.Truncate || mode == FileMode.CreateNew ||
-			 mode == FileMode.Create || mode == FileMode.Append))
+		    (mode == FileMode.Truncate || mode == FileMode.CreateNew ||
+		     mode == FileMode.Create || mode == FileMode.Append))
 		{
 			throw ExceptionFactory.InvalidAccessCombination(mode, access);
 		}

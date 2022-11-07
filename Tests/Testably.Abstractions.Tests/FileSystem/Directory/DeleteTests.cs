@@ -23,7 +23,8 @@ public abstract partial class DeleteTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Delete_MissingDirectory_ShouldDeleteDirectory(string directoryName)
+	public void Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+		string directoryName)
 	{
 		string expectedPath = System.IO.Path.Combine(BasePath, directoryName);
 		Exception? exception = Record.Exception(() =>
@@ -36,6 +37,36 @@ public abstract partial class DeleteTests<TFileSystem>
 		   .Be($"Could not find a part of the path '{expectedPath}'.");
 		exception.Should().BeOfType<DirectoryNotFoundException>()
 		   .Which.HResult.Should().Be(-2147024893);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void
+		Delete_CaseDifferentPath_ShouldThrowDirectoryNotFoundExceptionOnLinux(
+			string directoryName)
+	{
+		directoryName = directoryName.ToLowerInvariant();
+		FileSystem.Directory.CreateDirectory(directoryName.ToUpperInvariant());
+		string expectedPath = System.IO.Path.Combine(BasePath, directoryName);
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.Directory.Delete(directoryName);
+		});
+
+		if (Test.RunsOnLinux)
+		{
+			exception.Should().BeOfType<DirectoryNotFoundException>()
+			   .Which.Message.Should()
+			   .Be($"Could not find a part of the path '{expectedPath}'.");
+			exception.Should().BeOfType<DirectoryNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024893);
+		}
+		else
+		{
+			exception.Should().BeNull();
+			FileSystem.Directory.Exists(directoryName.ToUpperInvariant())
+			   .Should().BeFalse();
+		}
 	}
 
 	[SkippableTheory]

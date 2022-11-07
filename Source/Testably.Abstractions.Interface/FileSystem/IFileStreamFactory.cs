@@ -15,7 +15,8 @@ public interface IFileStreamFactory : IFileSystemExtensionPoint
 	FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize);
 
 	/// <inheritdoc cref="FileStream(SafeFileHandle, FileAccess, int, bool)" />
-	FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize, bool isAsync);
+	FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize,
+	                     bool isAsync);
 
 	/// <inheritdoc cref="FileStream(string, FileMode)" />
 	FileSystemStream New(string path, FileMode mode);

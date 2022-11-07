@@ -9,6 +9,77 @@ public abstract partial class Tests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
+	[InlineData("foo")]
+	[InlineData("foo/")]
+	public void Extension_ShouldReturnEmptyString(string path)
+	{
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+
+		string result = sut.Extension;
+
+		result.Should().BeEmpty();
+	}
+
+	[SkippableTheory]
+	[InlineData(@"/temp\\folder")]
+	[InlineData(@"/temp/folder")]
+	[InlineData(@"/temp/\\/folder")]
+	public void FullName_ShouldNotNormalizePathOnLinux(string path)
+	{
+		Skip.If(Test.RunsOnWindows);
+
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+
+		sut.FullName.Should().Be(path);
+	}
+
+	[SkippableTheory]
+	[InlineData("foo")]
+	[InlineData("foo/")]
+	public void FullName_ShouldReturnFullPath(string path)
+	{
+		string expectedPath = FileSystem.Path.GetFullPath(path);
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+
+		sut.FullName.Should().Be(expectedPath);
+	}
+
+	[SkippableTheory]
+	[InlineData(@"\\unc\folder", @"\\unc\folder")]
+	[InlineData(@"\\unc/folder\\foo", @"\\unc\folder\foo")]
+	[InlineData(@"c:\temp\\folder", @"c:\temp\folder")]
+	[InlineData(@"c:\temp//folder", @"c:\temp\folder")]
+	[InlineData(@"c:\temp//\\///folder", @"c:\temp\folder")]
+	public void FullName_ShouldReturnNormalizedPathOnWindows(
+		string path, string expectedPath)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+
+		sut.FullName.Should().Be(expectedPath);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void FullName_ShouldTrimTrailingSpacesOnlyOnWindows(string path)
+	{
+		path = FileSystem.Path.GetFullPath(path);
+		string pathWithSpaces = path + "  ";
+
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(pathWithSpaces);
+
+		if (Test.RunsOnWindows)
+		{
+			sut.FullName.Should().Be(path);
+		}
+		else
+		{
+			sut.FullName.Should().Be(pathWithSpaces);
+		}
+	}
+
+	[SkippableTheory]
 	[AutoData]
 	public void MissingFile_Attributes_ShouldAlwaysBeNegativeOne(
 		FileAttributes fileAttributes)
@@ -173,6 +244,24 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void Name_ShouldTrimTrailingSpacesOnlyOnWindows(string path)
+	{
+		string pathWithSpaces = path + "  ";
+
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(pathWithSpaces);
+
+		if (Test.RunsOnWindows)
+		{
+			sut.Name.Should().Be(path);
+		}
+		else
+		{
+			sut.Name.Should().Be(pathWithSpaces);
+		}
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Parent_ArbitraryPaths_ShouldNotBeNull(string path1,
 	                                                  string path2,
 	                                                  string path3)
@@ -205,6 +294,7 @@ public abstract partial class Tests<TFileSystem>
 		IDirectoryInfo sut =
 			FileSystem.DirectoryInfo.New(rootName);
 
+		sut.FullName.Should().Be(rootName);
 		sut.Name.Should().Be(rootName);
 	}
 

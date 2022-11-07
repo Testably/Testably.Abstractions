@@ -12,7 +12,7 @@ internal sealed class TaskMock : ITask
 	private readonly MockTimeSystem _mockTimeSystem;
 
 	internal TaskMock(MockTimeSystem timeSystem,
-					  NotificationHandler callbackHandler)
+	                  NotificationHandler callbackHandler)
 	{
 		_mockTimeSystem = timeSystem;
 		_callbackHandler = callbackHandler;

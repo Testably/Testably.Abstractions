@@ -30,7 +30,8 @@ internal sealed class SyntaxReceiver : ISyntaxReceiver
 			if (marker != null &&
 			    _classModels.TryGetValue(marker, out List<ClassModel>? models))
 			{
-				models!.Add(ClassModel.FromClassDeclarationSyntax(classDeclarationSyntax));
+				models!.Add(
+					ClassModel.FromClassDeclarationSyntax(classDeclarationSyntax));
 			}
 		}
 	}

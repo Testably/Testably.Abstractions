@@ -159,7 +159,8 @@ internal class InMemoryContainer : IStorageContainer
 			return fileHandle;
 		}
 
-		throw ExceptionFactory.ProcessCannotAccessTheFile(_location.FullPath, hResult ?? -2147024864);
+		throw ExceptionFactory.ProcessCannotAccessTheFile(_location.FullPath,
+			hResult ?? -2147024864);
 	}
 
 	/// <inheritdoc cref="IStorageContainer.WriteBytes(byte[])" />

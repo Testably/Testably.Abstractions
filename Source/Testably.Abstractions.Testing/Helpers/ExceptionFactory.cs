@@ -151,12 +151,14 @@ internal static class ExceptionFactory
 #endif
 		};
 
-	internal static IOException PathHasIncorrectSyntax(string path, int? hResult = -2147024773)
+	internal static IOException PathHasIncorrectSyntax(
+		string path, int? hResult = -2147024773)
 		=> new(
 			$"The filename, directory name, or volume label syntax is incorrect. : '{path}'",
 			hResult ?? -2147024773);
 
-	internal static ArgumentException PathIsEmpty(string paramName, int hResult = -2147024809)
+	internal static ArgumentException PathIsEmpty(string paramName,
+	                                              int hResult = -2147024809)
 		=> new("The path is empty.", paramName)
 		{
 #if FEATURE_EXCEPTION_HRESULT
@@ -209,4 +211,7 @@ internal static class ExceptionFactory
 
 	public static ArgumentException HandleIsInvalid(string? paramName = "handle")
 		=> new("Invalid handle.", paramName);
+
+	public static IOException MoveSourceMustBeDifferentThanDestination()
+		=> new("Source and destination path must be different.", -2146232800);
 }
