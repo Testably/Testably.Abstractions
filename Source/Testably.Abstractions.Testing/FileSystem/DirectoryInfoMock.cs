@@ -53,7 +53,9 @@ internal sealed class DirectoryInfoMock
 		path.EnsureValidFormat(FileSystem);
 
 		DirectoryInfoMock directory = New(
-			FileSystem.Storage.GetLocation(FileSystem.Path.Combine(FullName, path)),
+			FileSystem.Storage.GetLocation(
+				FileSystem.Path.Combine(FullName, path
+			   .EnsureValidFormat(FileSystem, nameof(path)))),
 			FileSystem);
 		directory.Create();
 		return directory;
@@ -231,7 +233,8 @@ internal sealed class DirectoryInfoMock
 	public void MoveTo(string destDirName)
 		=> Location = FileSystem.Storage.Move(
 			              FileSystem.Storage.GetLocation(FullName),
-			              FileSystem.Storage.GetLocation(destDirName),
+			              FileSystem.Storage.GetLocation(destDirName
+				             .EnsureValidFormat(FileSystem, nameof(destDirName))),
 			              recursive: true)
 		              ?? throw ExceptionFactory.DirectoryNotFound(FullName);
 
