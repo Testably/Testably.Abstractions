@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.Helpers;
@@ -49,9 +52,28 @@ internal static class FileSystemExtensions
 		{
 			fullFilePath = fullFilePath.Substring(currentDirectory.Length);
 		}
-		else
+		else if (fullFilePath.StartsWith(currentDirectory + Path.DirectorySeparatorChar))
 		{
 			fullFilePath = fullFilePath.Substring(currentDirectory.Length + 1);
+		}
+		else
+		{
+			string? parentName = currentDirectory;
+			while (parentName != null &&
+			       !fullFilePath.StartsWith(parentName + Path.DirectorySeparatorChar))
+			{
+				parentName = Path.GetDirectoryName(parentName);
+				var lastIndex = givenPath.LastIndexOf(Path.DirectorySeparatorChar);
+				if (lastIndex >= 0)
+				{
+					givenPath = givenPath.Substring(0, lastIndex);
+				}
+			}
+
+			if (parentName != null)
+			{
+				fullFilePath = fullFilePath.Substring(parentName.Length + 1);
+			}
 		}
 
 		if (!fullFilePath.StartsWith(givenPath + fileSystem.Path.DirectorySeparatorChar))
