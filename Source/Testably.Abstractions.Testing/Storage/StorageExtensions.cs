@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.Storage;
@@ -24,7 +25,7 @@ internal static class StorageExtensions
 		if (searchPattern.StartsWith(".."))
 		{
 			Stack<string> parentDirectories = new();
-			string givenPathPrefix = "";
+			StringBuilder givenPathPrefix = new();
 
 			while (searchPattern.StartsWith(".." + Path.DirectorySeparatorChar) ||
 			       searchPattern.StartsWith(".." + Path.AltDirectorySeparatorChar))
@@ -33,15 +34,16 @@ internal static class StorageExtensions
 					() => throw ExceptionFactory.SearchPatternCannotContainTwoDots());
 				parentDirectories.Push(Path.GetFileName(location.FullPath));
 				location = location.GetParent() ?? throw new Exception("foo");
-				givenPathPrefix += searchPattern.Substring(0, 3);
+				givenPathPrefix.Append(searchPattern.Substring(0, 3));
 				searchPattern = searchPattern.Substring(3);
 			}
 
 			if (parentDirectories.Any())
 			{
+				givenPathPrefix.Length--;
 				givenPath = Path.Combine(
 					givenPath,
-					givenPathPrefix.Substring(0, givenPathPrefix.Length -1),
+					givenPathPrefix.ToString(),
 					Path.Combine(parentDirectories.ToArray()));
 			}
 		}
