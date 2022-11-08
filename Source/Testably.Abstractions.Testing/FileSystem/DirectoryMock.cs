@@ -292,8 +292,10 @@ internal sealed class DirectoryMock : IDirectory
 
 	/// <inheritdoc cref="IDirectory.Move(string, string)" />
 	public void Move(string sourceDirName, string destDirName)
-		=> _fileSystem.DirectoryInfo.New(sourceDirName)
-		   .MoveTo(destDirName);
+		=> _fileSystem.DirectoryInfo.New(sourceDirName
+			   .EnsureValidFormat(_fileSystem, nameof(sourceDirName)))
+		   .MoveTo(destDirName
+			   .EnsureValidFormat(_fileSystem, nameof(destDirName)));
 
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IDirectory.ResolveLinkTarget(string, bool)" />
@@ -302,10 +304,12 @@ internal sealed class DirectoryMock : IDirectory
 	{
 		try
 		{
-			return _fileSystem.DirectoryInfo.New(linkPath)
+			return _fileSystem.DirectoryInfo.New(linkPath
+				   .EnsureValidFormat(_fileSystem, nameof(linkPath)))
 			   .ResolveLinkTarget(returnFinalTarget);
 		}
-		catch (IOException)
+		catch (IOException ex)
+			when (ex.HResult != -2147024773)
 		{
 			throw ExceptionFactory.FileNameCannotBeResolved(linkPath);
 		}
