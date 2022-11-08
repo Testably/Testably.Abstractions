@@ -141,15 +141,9 @@ public abstract partial class SearchFilterTests<TFileSystem>
 
 	[SkippableTheory]
 	[InlineAutoData("../", 4)]
-	[InlineAutoData("../../", 5)]
-	[InlineAutoData("../../../", 6)]
 	[InlineAutoData("../*", 4)]
-	[InlineAutoData("../../*", 5)]
-	[InlineAutoData("../../../*", 6)]
 	[InlineAutoData("../a*", 2)]
-	[InlineAutoData("../../a*", 2)]
-	[InlineAutoData("../../../a*", 2)]
-	public void SearchPattern_ContainingMultipleTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(string searchPattern, int expectedMatchingFiles)
+	public void SearchPattern_Containing1InstanceOfTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(string searchPattern, int expectedMatchingFiles)
 	{
 		Skip.If(Test.IsNetFramework);
 		string path = FileSystem.Path.Combine("foo", "bar", "xyz");
@@ -163,7 +157,60 @@ public abstract partial class SearchFilterTests<TFileSystem>
 		   .GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
 
 		result.Length.Should().Be(expectedMatchingFiles);
-		result.Should().Contain(System.IO.Path.Combine(".", "..", path, "a.test"));
+		result.Should().Contain(System.IO.Path.Combine(".", "..", "xyz", "a.test"));
+	}
+
+	[SkippableTheory]
+	[InlineAutoData("../../", 5)]
+	[InlineAutoData("../../*", 5)]
+	[InlineAutoData("../../a*", 2)]
+	public void SearchPattern_Containing2InstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(string searchPattern, int expectedMatchingFiles)
+	{
+		Skip.If(Test.IsNetFramework);
+		string path = FileSystem.Path.Combine("foo", "bar", "xyz");
+
+		FileSystem.InitializeIn(path)
+		   .WithFile("test..test")
+		   .WithFile("a.test")
+		   .WithFile("a.test.again");
+
+		string[] result = FileSystem.Directory
+		   .GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
+
+		result.Length.Should().Be(expectedMatchingFiles);
+		if (!searchPattern.EndsWith("a*"))
+		{
+			result.Should().Contain(System.IO.Path.Combine(".", "../..", "bar"));
+			result.Should().Contain(System.IO.Path.Combine(".", "../..", "bar", "xyz"));
+		}
+		result.Should().Contain(System.IO.Path.Combine(".", "../..", "bar", "xyz", "a.test"));
+	}
+
+	[SkippableTheory]
+	[InlineAutoData("../../../", 6)]
+	[InlineAutoData("../../../*", 6)]
+	[InlineAutoData("../../../a*", 2)]
+	public void SearchPattern_Containing3InstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles(string searchPattern, int expectedMatchingFiles)
+	{
+		Skip.If(Test.IsNetFramework);
+		string path = FileSystem.Path.Combine("foo", "bar", "xyz");
+
+		FileSystem.InitializeIn(path)
+		   .WithFile("test..test")
+		   .WithFile("a.test")
+		   .WithFile("a.test.again");
+
+		string[] result = FileSystem.Directory
+		   .GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
+
+		result.Length.Should().Be(expectedMatchingFiles);
+		if (!searchPattern.EndsWith("a*"))
+		{
+			result.Should().Contain(System.IO.Path.Combine(".", "../../..", "foo"));
+			result.Should().Contain(System.IO.Path.Combine(".", "../../..", "foo", "bar"));
+			result.Should().Contain(System.IO.Path.Combine(".", "../../..", "foo", "bar", "xyz"));
+		}
+		result.Should().Contain(System.IO.Path.Combine(".", "../../..", "foo", "bar", "xyz", "a.test"));
 	}
 
 	[SkippableTheory]

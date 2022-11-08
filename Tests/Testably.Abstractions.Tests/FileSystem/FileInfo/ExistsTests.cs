@@ -18,15 +18,13 @@ public abstract partial class ExistsTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[InlineData("foo", "foo")]
 	[InlineData("foo", "foo.")]
 	[InlineData("foo.", "foo")]
-	[InlineData("foo.", "foo.")]
-	public void Exists_ShouldIgnoreTrailingDot(string path1, string path2)
+	public void Exists_ShouldIgnoreTrailingDotOnWindows(string path1, string path2)
 	{
 		FileSystem.File.WriteAllText(path1, "some text");
 		IFileInfo sut = FileSystem.FileInfo.New(path2);
 
-		sut.Exists.Should().BeTrue();
+		sut.Exists.Should().Be(Test.RunsOnWindows);
 	}
 }

@@ -58,24 +58,22 @@ internal static class FileSystemExtensions
 		}
 		else
 		{
-			List<string> parentDirectories = new();
 			string? parentName = currentDirectory;
 			while (parentName != null &&
 			       !fullFilePath.StartsWith(parentName + Path.DirectorySeparatorChar))
 			{
-				parentDirectories.Add(Path.GetFileName(parentName));
 				parentName = Path.GetDirectoryName(parentName);
+				var lastIndex = givenPath.LastIndexOf(Path.DirectorySeparatorChar);
+				if (lastIndex >= 0)
+				{
+					givenPath = givenPath.Substring(0, lastIndex);
+				}
 			}
 
 			if (parentName != null)
 			{
 				fullFilePath = fullFilePath.Substring(parentName.Length + 1);
 			}
-
-			fullFilePath = Path.Combine(
-				Path.Combine(parentDirectories.Select(_ => "..").ToArray()),
-				Path.Combine(parentDirectories.ToArray()),
-				fullFilePath);
 		}
 
 		if (!fullFilePath.StartsWith(givenPath + fileSystem.Path.DirectorySeparatorChar))

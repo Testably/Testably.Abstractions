@@ -23,15 +23,17 @@ internal static class StorageExtensions
 		string givenPath = location.FriendlyName;
 		if (searchPattern.StartsWith(".."))
 		{
-			List<string> parentDirectories = new();
+			Stack<string> parentDirectories = new();
+			string givenPathPrefix = "";
 
 			while (searchPattern.StartsWith(".." + Path.DirectorySeparatorChar) ||
 			       searchPattern.StartsWith(".." + Path.AltDirectorySeparatorChar))
 			{
 				Execute.OnNetFramework(
 					() => throw ExceptionFactory.SearchPatternCannotContainTwoDots());
-				parentDirectories.Add(Path.GetFileName(location.FullPath));
+				parentDirectories.Push(Path.GetFileName(location.FullPath));
 				location = location.GetParent() ?? throw new Exception("foo");
+				givenPathPrefix += searchPattern.Substring(0, 3);
 				searchPattern = searchPattern.Substring(3);
 			}
 
@@ -39,7 +41,7 @@ internal static class StorageExtensions
 			{
 				givenPath = Path.Combine(
 					givenPath,
-					Path.Combine(parentDirectories.Select(_ => "..").ToArray()),
+					givenPathPrefix.Substring(0, givenPathPrefix.Length -1),
 					Path.Combine(parentDirectories.ToArray()));
 			}
 		}
