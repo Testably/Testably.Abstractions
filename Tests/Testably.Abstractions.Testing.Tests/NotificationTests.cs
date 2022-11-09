@@ -33,6 +33,44 @@ public class NotificationTests
 	}
 
 	[Fact]
+	public void AwaitableCallback_Dispose_ShouldStopListening()
+	{
+		MockTimeSystem timeSystem = new();
+		bool isCalled = false;
+		Notification.IAwaitableCallback<TimeSpan> wait =
+			timeSystem.On.ThreadSleep(_ =>
+			{
+				isCalled = true;
+			});
+
+		wait.Dispose();
+
+		timeSystem.Thread.Sleep(1);
+		Thread.Sleep(10);
+		isCalled.Should().BeFalse();
+	}
+
+	[Fact]
+	public void AwaitableCallback_DisposeFromExecuteWhileWaiting_ShouldStopListening()
+	{
+		MockTimeSystem timeSystem = new();
+		bool isCalled = false;
+		Notification.IAwaitableCallback<TimeSpan> wait =
+			timeSystem.On
+			   .ThreadSleep(_ =>
+				{
+					isCalled = true;
+				})
+			   .ExecuteWhileWaiting(() => { });
+
+		wait.Dispose();
+
+		timeSystem.Thread.Sleep(1);
+		Thread.Sleep(10);
+		isCalled.Should().BeFalse();
+	}
+
+	[Fact]
 	public void AwaitableCallback_Filter_ShouldOnlyUpdateAfterFilteredValue()
 	{
 		MockTimeSystem timeSystem = new();
@@ -139,24 +177,6 @@ public class NotificationTests
 		});
 
 		exception.Should().BeOfType<TimeoutException>();
-		isCalled.Should().BeFalse();
-	}
-
-	[Fact]
-	public void AwaitableCallback_Dispose_ShouldStopListening()
-	{
-		MockTimeSystem timeSystem = new();
-		bool isCalled = false;
-		Notification.IAwaitableCallback<TimeSpan> wait =
-			timeSystem.On.ThreadSleep(_ =>
-			{
-				isCalled = true;
-			});
-
-		wait.Dispose();
-
-		timeSystem.Thread.Sleep(1);
-		Thread.Sleep(10);
 		isCalled.Should().BeFalse();
 	}
 

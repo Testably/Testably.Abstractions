@@ -89,11 +89,6 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 #endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access)
 	{
-		if (handle.IsInvalid)
-		{
-			throw ExceptionFactory.HandleIsInvalid();
-		}
-
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
 		   .SafeFileHandleMapper.Invoke(handle);
 		return New(
@@ -109,11 +104,6 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 #endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize)
 	{
-		if (handle.IsInvalid)
-		{
-			throw ExceptionFactory.HandleIsInvalid();
-		}
-
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
 		   .SafeFileHandleMapper.Invoke(handle);
 		return New(
@@ -131,11 +121,6 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize,
 	                            bool isAsync)
 	{
-		if (handle.IsInvalid)
-		{
-			throw ExceptionFactory.HandleIsInvalid();
-		}
-
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
 		   .SafeFileHandleMapper.Invoke(handle);
 		return New(
