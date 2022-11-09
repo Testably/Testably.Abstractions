@@ -39,6 +39,38 @@ public abstract partial class AppendAllLinesTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void AppendAllLines_NullContent_ShouldThrowArgumentNullException(
+		string path)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.AppendAllLines(path, null!);
+		});
+
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.HResult.Should().Be(-2147467261);
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.ParamName.Should().Be("contents");
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void AppendAllLines_NullEncoding_ShouldThrowArgumentNullException(
+		string path)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.AppendAllLines(path, new List<string>(), null!);
+		});
+
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.HResult.Should().Be(-2147467261);
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.ParamName.Should().Be("encoding");
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void AppendAllLines_ShouldEndWithNewline(string path)
 	{
 		string[] contents = { "foo", "bar" };
