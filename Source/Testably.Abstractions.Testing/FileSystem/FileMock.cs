@@ -38,10 +38,14 @@ internal sealed class FileMock : IFile
 		string path,
 		IEnumerable<string> contents,
 		Encoding encoding)
-		=> AppendAllText(
+	{
+		_ = contents ?? throw new ArgumentNullException(nameof(contents));
+		_ = encoding ?? throw new ArgumentNullException(nameof(encoding));
+		AppendAllText(
 			path,
 			contents.Aggregate(string.Empty, (a, b) => a + b + Environment.NewLine),
 			encoding);
+	}
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.AppendAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
