@@ -6,7 +6,7 @@ using Testably.Abstractions.FileSystem;
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 // ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class ParameterExceptionTests<TFileSystem>
+public abstract partial class ExceptionTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
@@ -55,41 +55,17 @@ public abstract partial class ParameterExceptionTests<TFileSystem>
 
 	public static IEnumerable<object?[]> GetDirectoryInfoCallbacks(string? path)
 		=> GetDirectoryInfoCallbackTestParameters(path!)
-		   .Where(item => item.TestType.HasFlag(ToTestType(path)))
+		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
 		   .Select(item => new object?[] { item.Callback, item.ParamName });
-
-	[Flags]
-	private enum TestTypes
-	{
-		Null,
-		Empty,
-		InvalidPath,
-		All = Null | Empty | InvalidPath
-	}
-
-	private static TestTypes ToTestType(string? parameter)
-	{
-		if (parameter == null)
-		{
-			return TestTypes.Null;
-		}
-
-		if (parameter == "")
-		{
-			return TestTypes.Empty;
-		}
-
-		return TestTypes.InvalidPath;
-	}
-
-	private static IEnumerable<(TestTypes TestType, string? ParamName,
+	
+	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string? ParamName,
 			Expression<Action<IDirectoryInfo>> Callback)>
-		GetDirectoryInfoCallbackTestParameters(string path)
+		GetDirectoryInfoCallbackTestParameters(string value)
 	{
-		yield return (TestTypes.All, "path", directoryInfo
-			=> directoryInfo.CreateSubdirectory(path));
-		yield return (TestTypes.All, "destDirName", directoryInfo
-			=> directoryInfo.MoveTo(path));
+		yield return (ExceptionTestHelper.TestTypes.All, "path", directoryInfo
+			=> directoryInfo.CreateSubdirectory(value));
+		yield return (ExceptionTestHelper.TestTypes.All, "destDirName", directoryInfo
+			=> directoryInfo.MoveTo(value));
 	}
 
 	#endregion

@@ -6,7 +6,7 @@ using Testably.Abstractions.FileSystem;
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
 // ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class ParameterExceptionTests<TFileSystem>
+public abstract partial class ExceptionTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
@@ -55,51 +55,27 @@ public abstract partial class ParameterExceptionTests<TFileSystem>
 
 	public static IEnumerable<object?[]> GetFileInfoCallbacks(string? path)
 		=> GetFileInfoCallbackTestParameters(path!)
-		   .Where(item => item.TestType.HasFlag(ToTestType(path)))
+		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
 		   .Select(item => new object?[] { item.Callback, item.ParamName });
-
-	[Flags]
-	private enum TestTypes
-	{
-		Null,
-		Empty,
-		InvalidPath,
-		All = Null | Empty | InvalidPath
-	}
-
-	private static TestTypes ToTestType(string? parameter)
-	{
-		if (parameter == null)
-		{
-			return TestTypes.Null;
-		}
-
-		if (parameter == "")
-		{
-			return TestTypes.Empty;
-		}
-
-		return TestTypes.InvalidPath;
-	}
-
-	private static IEnumerable<(TestTypes TestType, string? ParamName,
+	
+	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string? ParamName,
 			Expression<Action<IFileInfo>> Callback)>
-		GetFileInfoCallbackTestParameters(string path)
+		GetFileInfoCallbackTestParameters(string value)
 	{
-		yield return (TestTypes.All, "destFileName", fileInfo
-			=> fileInfo.CopyTo(path));
-		yield return (TestTypes.All, "destFileName", fileInfo
-			=> fileInfo.CopyTo(path, false));
-		yield return (TestTypes.All, "destFileName", fileInfo
-			=> fileInfo.MoveTo(path));
+		yield return (ExceptionTestHelper.TestTypes.All, "destFileName", fileInfo
+			=> fileInfo.CopyTo(value));
+		yield return (ExceptionTestHelper.TestTypes.All, "destFileName", fileInfo
+			=> fileInfo.CopyTo(value, false));
+		yield return (ExceptionTestHelper.TestTypes.All, "destFileName", fileInfo
+			=> fileInfo.MoveTo(value));
 #if FEATURE_FILE_MOVETO_OVERWRITE
-		yield return (TestTypes.All, "destFileName", fileInfo
-			=> fileInfo.MoveTo(path, false));
+		yield return (ExceptionTestHelper.TestTypes.All, "destFileName", fileInfo
+			=> fileInfo.MoveTo(value, false));
 #endif
-		yield return (TestTypes.All, null, fileInfo
-			=> fileInfo.Replace(path, "bar"));
-		yield return (TestTypes.All, null, fileInfo
-			=> fileInfo.Replace(path, "bar", false));
+		yield return (ExceptionTestHelper.TestTypes.All, null, fileInfo
+			=> fileInfo.Replace(value, "bar"));
+		yield return (ExceptionTestHelper.TestTypes.All, null, fileInfo
+			=> fileInfo.Replace(value, "bar", false));
 	}
 
 	#endregion
