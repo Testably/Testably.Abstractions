@@ -17,6 +17,8 @@ public abstract partial class ExceptionTests<TFileSystem>
 	public void New_ShouldThrowArgumentExceptionIfDriveNameIsInvalid(
 		string driveName)
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.DriveInfo.New(driveName);
