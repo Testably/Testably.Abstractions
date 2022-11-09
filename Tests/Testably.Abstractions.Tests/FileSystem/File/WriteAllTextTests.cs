@@ -1,4 +1,5 @@
 using System.IO;
+using System.Text;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
@@ -72,6 +73,19 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 
 		lastWriteTime.Should()
 		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void WriteAllText_ShouldCreateFileWithBOM(
+		string path)
+	{
+		byte[] expectedBytes = { 255, 254, 0, 0, 65, 0, 0, 0, 65, 0, 0, 0 };
+
+		FileSystem.File.WriteAllText(path, "AA", Encoding.UTF32);
+
+		FileSystem.File.ReadAllBytes(path)
+		   .Should().BeEquivalentTo(expectedBytes);
 	}
 
 	[SkippableTheory]

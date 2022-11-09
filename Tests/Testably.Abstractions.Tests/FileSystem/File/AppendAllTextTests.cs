@@ -30,7 +30,20 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 		FileSystem.File.AppendAllText(path, contents);
 
 		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllLines(path).Should().BeEquivalentTo(contents);
+		FileSystem.File.ReadAllText(path).Should().Be(contents);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void AppendAllText_MissingFile_ShouldCreateFileWithBOM(
+		string path)
+	{
+		byte[] expectedBytes = { 255, 254, 0, 0, 65, 0, 0, 0, 65, 0, 0, 0 };
+
+		FileSystem.File.AppendAllText(path, "AA", Encoding.UTF32);
+
+		FileSystem.File.ReadAllBytes(path)
+		   .Should().BeEquivalentTo(expectedBytes);
 	}
 
 	[SkippableTheory]

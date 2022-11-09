@@ -74,6 +74,38 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public async Task AppendAllLinesAsync_NullContent_ShouldThrowArgumentNullException(
+		string path)
+	{
+		Exception? exception = await Record.ExceptionAsync(async () =>
+		{
+			await FileSystem.File.AppendAllLinesAsync(path, null!);
+		});
+
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.HResult.Should().Be(-2147467261);
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.ParamName.Should().Be("contents");
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public async Task AppendAllLinesAsync_NullEncoding_ShouldThrowArgumentNullException(
+		string path)
+	{
+		Exception? exception = await Record.ExceptionAsync(async () =>
+		{
+			await FileSystem.File.AppendAllLinesAsync(path, new List<string>(), null!);
+		});
+
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.HResult.Should().Be(-2147467261);
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.ParamName.Should().Be("encoding");
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public async Task AppendAllLinesAsync_ShouldEndWithNewline(string path)
 	{
 		string[] contents = { "foo", "bar" };
