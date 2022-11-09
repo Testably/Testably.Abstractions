@@ -1,8 +1,3 @@
-using Moq;
-using System.ComponentModel;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
@@ -71,7 +66,10 @@ public abstract partial class PathTests<TFileSystem>
 
 		exception.Should().BeOfType<ArgumentException>()
 		   .Which.HResult.Should().Be(-2147024809);
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("Path");
+		if (!Test.IsNetFramework)
+		{
+			exception.Should().BeOfType<ArgumentException>()
+			   .Which.ParamName.Should().Be("Path");
+		}
 	}
 }

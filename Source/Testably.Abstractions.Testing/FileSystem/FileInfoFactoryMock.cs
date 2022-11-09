@@ -29,7 +29,7 @@ internal sealed class FileInfoFactoryMock : IFileInfoFactory
 			throw new ArgumentNullException(nameof(fileName));
 		}
 
-		if (fileName.Trim() == "")
+		if (fileName.Trim() == "" && Execute.IsWindows)
 		{
 			throw ExceptionFactory.PathIsEmpty("path");
 		}
