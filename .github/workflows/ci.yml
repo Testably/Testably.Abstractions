@@ -22,7 +22,13 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
-        run: dotnet test --no-build --collect:"XPlat Code Coverage"
+        run: dotnet test --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory "TestResults"
+      - name: Upload test results (MacOS)
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: Test results (MacOS)
+          path: TestResults
       - name: Upload coverage
         uses: actions/upload-artifact@v3
         with:
@@ -45,7 +51,13 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
-        run: dotnet test --no-build --collect:"XPlat Code Coverage"
+        run: dotnet test --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory "TestResults"
+      - name: Upload test results (Ubuntu)
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: Test results (Ubuntu)
+          path: TestResults
       - name: Upload coverage
         uses: actions/upload-artifact@v3
         with:
@@ -68,7 +80,13 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
-        run: dotnet test --no-build --collect:"XPlat Code Coverage"
+        run: dotnet test --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory "TestResults"
+      - name: Upload test results (Windows)
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: Test results (Windows)
+          path: TestResults
       - name: Upload coverage
         uses: actions/upload-artifact@v3
         with:
@@ -96,7 +114,13 @@ jobs:
       - name: Build solution
         run: msbuild.exe Testably.Abstractions.sln /p:platform="Any CPU" /p:configuration="Release"
       - name: Run tests
-        run: vstest.console.exe .\Build\Tests\Testably.Abstractions.Tests\net472\Testably.Abstractions.Tests.dll .\Build\Tests\Testably.Abstractions.Parity.Tests\net472\Testably.Abstractions.Parity.Tests.dll .\Build\Tests\Testably.Abstractions.Testing.Tests\net472\Testably.Abstractions.Testing.Tests.dll
+        run: vstest.console.exe .\Build\Tests\Testably.Abstractions.Tests\net472\Testably.Abstractions.Tests.dll .\Build\Tests\Testably.Abstractions.Parity.Tests\net472\Testably.Abstractions.Parity.Tests.dll .\Build\Tests\Testably.Abstractions.Testing.Tests\net472\Testably.Abstractions.Testing.Tests.dll /Logger:trx /ResultsDirectory:TestResults
+      - name: Upload test results (.NET Framework)
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: Test results (.NET Framework)
+          path: TestResults
         
   test-examples:
     name: Test (Examples)
