@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿#if NET6_0_OR_GREATER
+using Microsoft.Win32.SafeHandles;
+#endif
+using System.IO;
 using System.Linq;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.FileSystem;
@@ -181,6 +184,42 @@ public class MockFileSystemTests
 		drive.TotalFreeSpace.Should().Be(totalSize);
 		drive.AvailableFreeSpace.Should().Be(totalSize);
 	}
+
+#if NET6_0_OR_GREATER
+	[SkippableTheory]
+	[AutoData]
+	public void WithSafeFileHandle_WithCallback_ShouldUpdateDrive(
+		string path, string contents)
+	{
+		MockFileSystem sut = new();
+		sut.File.WriteAllText(path, contents);
+		sut.MapSafeFileHandle(_ => new SafeFileHandleMock(path));
+
+		using FileSystemStream stream =
+			sut.FileStream.New(new SafeFileHandle(), FileAccess.Read);
+		using StreamReader streamReader = new(stream);
+		string result = streamReader.ReadToEnd();
+
+		result.Should().Be(contents);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void WithSafeFileHandle_WithoutMapping_ShouldThrowException(
+		string path, string contents)
+	{
+		MockFileSystem sut = new();
+		sut.File.WriteAllText(path, contents);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.FileStream.New(new SafeFileHandle(), FileAccess.Read);
+		});
+
+		exception.Should().BeOfType<ArgumentException>()
+		   .Which.ParamName.Should().Be("handle");
+	}
+#endif
 
 	[SkippableTheory]
 	[AutoData]

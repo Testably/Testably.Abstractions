@@ -34,6 +34,20 @@ public class TimeProviderTests
 		results.Should().OnlyHaveUniqueItems();
 	}
 
+	[Theory]
+	[AutoData]
+	public void SetTo_ShouldChangeTimeForRead(DateTime time1, DateTime time2)
+	{
+		ITimeProvider timeProvider = TimeProvider.Use(time1);
+
+		DateTime result1 = timeProvider.Read();
+		timeProvider.SetTo(time2);
+		DateTime result2 = timeProvider.Read();
+
+		result1.Should().Be(time1);
+		result2.Should().Be(time2);
+	}
+
 	[Fact]
 	public void Use_ShouldReturnFixedDateTime()
 	{

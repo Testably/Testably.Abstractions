@@ -4,6 +4,9 @@ using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
+#if NET6_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 
 namespace Testably.Abstractions.Testing;
 
@@ -70,7 +73,7 @@ public sealed class MockFileSystem : IFileSystem
 		FileInfo = new FileInfoFactoryMock(this);
 		FileStream = new FileStreamFactoryMock(this);
 		FileSystemWatcher = new FileSystemWatcherFactoryMock(this);
-		SafeFileHandleMapper = _ => throw ExceptionFactory.NotSupportedSafeFileHandle();
+		SafeFileHandleMapper = DefaultSafeFileHandleMapper;
 	}
 
 	#region IFileSystem Members
@@ -144,11 +147,30 @@ public sealed class MockFileSystem : IFileSystem
 	/// <summary>
 	///     Registers a callback to map a <see cref="SafeFileHandle" />
 	///     to a <see cref="SafeFileHandleMock" />.
+	///     <para />
+	///     If set to <see langword="null" /> resets to the default mapper for <see cref="SafeFileHandle" />s.
 	/// </summary>
 	public MockFileSystem MapSafeFileHandle(
-		Func<SafeFileHandle, SafeFileHandleMock> safeFileHandleMapper)
+		Func<SafeFileHandle, SafeFileHandleMock>? safeFileHandleMapper)
 	{
-		SafeFileHandleMapper = safeFileHandleMapper;
+		SafeFileHandleMapper = safeFileHandleMapper ?? DefaultSafeFileHandleMapper;
 		return this;
+	}
+
+	/// <summary>
+	///     Default mapper for handling <see cref="SafeFileHandle" />s in a mocked file system.
+	/// </summary>
+	/// <returns>A <see cref="SafeFileHandleMock" /> that maps the corresponding file in the file system.</returns>
+#if NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
+#endif
+	private static SafeFileHandleMock DefaultSafeFileHandleMapper(SafeFileHandle handle)
+	{
+		if (handle.IsInvalid)
+		{
+			throw ExceptionFactory.HandleIsInvalid();
+		}
+
+		throw ExceptionFactory.NotSupportedSafeFileHandle();
 	}
 }
