@@ -82,6 +82,10 @@ internal sealed class FileMock : IFile
 				FileAccess.ReadWrite,
 				FileStreamFactoryMock.DefaultShare))
 			{
+				if (fileInfo.GetBytes().Length == 0)
+				{
+					fileInfo.WriteBytes(encoding.GetPreamble());
+				}
 				fileInfo.AppendBytes(encoding.GetBytes(contents));
 			}
 		}
@@ -755,7 +759,8 @@ internal sealed class FileMock : IFile
 				FileAccess.Write,
 				FileStreamFactoryMock.DefaultShare))
 			{
-				fileInfo.WriteBytes(encoding.GetBytes(contents));
+				fileInfo.WriteBytes(encoding.GetPreamble());
+				fileInfo.AppendBytes(encoding.GetBytes(contents));
 			}
 		}
 	}
