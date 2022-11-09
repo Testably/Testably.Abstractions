@@ -53,7 +53,7 @@ public class DriveInfoMockTests
 		string fileContent1, string fileContent2, int expectedRemainingBytes,
 		string path, Encoding encoding)
 	{
-		int fileSize1 = encoding.GetBytes(fileContent1).Length;
+		int fileSize1 = encoding.GetPreamble().Length + encoding.GetBytes(fileContent1).Length;
 		int fileSize2 = encoding.GetBytes(fileContent2).Length;
 		FileSystem.WithDrive(d
 			=> d.SetTotalSize(fileSize1 + fileSize2 + expectedRemainingBytes));

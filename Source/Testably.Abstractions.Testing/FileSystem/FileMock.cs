@@ -86,6 +86,7 @@ internal sealed class FileMock : IFile
 				{
 					fileInfo.WriteBytes(encoding.GetPreamble());
 				}
+
 				fileInfo.AppendBytes(encoding.GetBytes(contents));
 			}
 		}
@@ -471,7 +472,11 @@ internal sealed class FileMock : IFile
 				FileStreamFactoryMock.DefaultShare))
 			{
 				fileInfo.AdjustTimes(TimeAdjustments.LastAccessTime);
-				return encoding.GetString(fileInfo.GetBytes());
+				using (MemoryStream ms = new(fileInfo.GetBytes()))
+				using (StreamReader sr = new(ms, encoding))
+				{
+					return sr.ReadToEnd();
+				}
 			}
 		}
 
