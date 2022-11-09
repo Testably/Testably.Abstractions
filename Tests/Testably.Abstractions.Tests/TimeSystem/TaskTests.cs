@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
@@ -7,6 +8,25 @@ public abstract partial class TaskTests<TTimeSystem>
 	: TimeSystemTestBase<TTimeSystem>
 	where TTimeSystem : ITimeSystem
 {
+	[Fact]
+	public async Task
+		Delay_Milliseconds_Cancelled_ShouldThrowTaskCanceledException()
+	{
+		int millisecondsTimeout = 100;
+
+		using CancellationTokenSource cts = new();
+		cts.Cancel();
+
+		Exception? exception = await Record.ExceptionAsync(async () =>
+		{
+			await TimeSystem.Task.Delay(millisecondsTimeout, cts.Token)
+			   .ConfigureAwait(false);
+		});
+
+		exception.Should().BeOfType<TaskCanceledException>()
+		   .Which.HResult.Should().Be(-2146233029);
+	}
+
 	[Fact]
 	public async Task
 		Delay_Milliseconds_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
@@ -32,6 +52,24 @@ public abstract partial class TaskTests<TTimeSystem>
 
 		after.Should().BeOnOrAfter(before.AddMilliseconds(millisecondsTimeout)
 		   .ApplySystemClockTolerance());
+	}
+
+	[Fact]
+	public async Task
+		Delay_Timespan_Cancelled_ShouldThrowTaskCanceledException()
+	{
+		TimeSpan timeout = TimeSpan.FromMilliseconds(100);
+		using CancellationTokenSource cts = new();
+		cts.Cancel();
+
+		Exception? exception = await Record.ExceptionAsync(async () =>
+		{
+			await TimeSystem.Task.Delay(timeout, cts.Token)
+			   .ConfigureAwait(false);
+		});
+
+		exception.Should().BeOfType<TaskCanceledException>()
+		   .Which.HResult.Should().Be(-2146233029);
 	}
 
 	[Fact]

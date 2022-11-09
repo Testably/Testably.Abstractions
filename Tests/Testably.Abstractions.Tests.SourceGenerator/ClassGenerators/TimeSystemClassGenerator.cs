@@ -31,7 +31,7 @@ namespace {@class.Namespace}.{@class.Name}
 	// ReSharper disable once UnusedMember.Global
 	public sealed class MockTimeSystemTests : {@class.Name}<MockTimeSystem>
 	{{
-		public MockTimeSystemTests() : base(new MockTimeSystem())
+		public MockTimeSystemTests() : base(new MockTimeSystem(TimeProvider.Now()))
 		{{
 		}}
 	}}
