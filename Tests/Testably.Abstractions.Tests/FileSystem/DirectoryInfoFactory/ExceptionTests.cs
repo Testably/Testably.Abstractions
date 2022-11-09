@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using Testably.Abstractions.FileSystem;
@@ -14,14 +13,14 @@ public abstract partial class ExceptionTests<TFileSystem>
 	[Theory]
 	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks), parameters: "")]
 	public void Operations_ShouldThrowArgumentExceptionIfPathIsEmpty(
-		Expression<Action<IDirectoryInfoFactory>> callback, string? paramName)
+		Expression<Action<IDirectoryInfoFactory>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
 			callback.Compile().Invoke(FileSystem.DirectoryInfo);
 		});
 
-		if (!Test.IsNetFramework && paramName != null)
+		if (!Test.IsNetFramework && !ignoreParamCheck)
 		{
 			exception.Should().BeOfType<ArgumentException>()
 			   .Which.ParamName.Should().Be(paramName);
@@ -34,7 +33,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	[SkippableTheory]
 	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks), parameters: "  ")]
 	public void Operations_ShouldThrowArgumentExceptionIfPathIsWhitespace(
-		Expression<Action<IDirectoryInfoFactory>> callback, string paramName)
+		Expression<Action<IDirectoryInfoFactory>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -56,14 +55,14 @@ public abstract partial class ExceptionTests<TFileSystem>
 	[Theory]
 	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks), parameters: (string?)null)]
 	public void Operations_ShouldThrowArgumentNullExceptionIfPathIsNull(
-		Expression<Action<IDirectoryInfoFactory>> callback, string? paramName)
+		Expression<Action<IDirectoryInfoFactory>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
 			callback.Compile().Invoke(FileSystem.DirectoryInfo);
 		});
 
-		if (paramName == null)
+		if (ignoreParamCheck)
 		{
 			exception.Should().BeOfType<ArgumentNullException>();
 		}
@@ -79,7 +78,12 @@ public abstract partial class ExceptionTests<TFileSystem>
 	public static IEnumerable<object?[]> GetDirectoryInfoFactoryCallbacks(string? path)
 		=> GetDirectoryInfoFactoryCallbackTestParameters(path!)
 		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
-		   .Select(item => new object?[] { item.Callback, item.ParamName });
+		   .Select(item => new object?[]
+			{
+				item.Callback,
+				item.ParamName,
+				item.TestType.HasFlag(ExceptionTestHelper.TestTypes.IgnoreParamNameCheck)
+			});
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string? ParamName,
 			Expression<Action<IDirectoryInfoFactory>> Callback)>

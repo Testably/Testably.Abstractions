@@ -29,14 +29,14 @@ public abstract partial class ExceptionTests<TFileSystem>
 	[Theory]
 	[MemberData(nameof(GetDriveInfoFactoryCallbacks), parameters: "")]
 	public void Operations_ShouldThrowArgumentExceptionIfPathIsEmpty(
-		Expression<Action<IDriveInfoFactory>> callback, string? paramName)
+		Expression<Action<IDriveInfoFactory>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
 			callback.Compile().Invoke(FileSystem.DriveInfo);
 		});
 
-		if (!Test.IsNetFramework && paramName != null)
+		if (!Test.IsNetFramework && !ignoreParamCheck)
 		{
 			exception.Should().BeOfType<ArgumentException>()
 			   .Which.ParamName.Should().Be(paramName);
@@ -49,14 +49,14 @@ public abstract partial class ExceptionTests<TFileSystem>
 	[Theory]
 	[MemberData(nameof(GetDriveInfoFactoryCallbacks), parameters: (string?)null)]
 	public void Operations_ShouldThrowArgumentNullExceptionIfPathIsNull(
-		Expression<Action<IDriveInfoFactory>> callback, string? paramName)
+		Expression<Action<IDriveInfoFactory>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
 			callback.Compile().Invoke(FileSystem.DriveInfo);
 		});
 
-		if (paramName == null)
+		if (ignoreParamCheck)
 		{
 			exception.Should().BeOfType<ArgumentNullException>();
 		}
@@ -72,9 +72,14 @@ public abstract partial class ExceptionTests<TFileSystem>
 	public static IEnumerable<object?[]> GetDriveInfoFactoryCallbacks(string? path)
 		=> GetDriveInfoFactoryCallbackTestParameters(path!)
 		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
-		   .Select(item => new object?[] { item.Callback, item.ParamName });
+		   .Select(item => new object?[]
+			{
+				item.Callback,
+				item.ParamName,
+				item.TestType.HasFlag(ExceptionTestHelper.TestTypes.IgnoreParamNameCheck)
+			});
 
-	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string? ParamName,
+	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
 			Expression<Action<IDriveInfoFactory>> Callback)>
 		GetDriveInfoFactoryCallbackTestParameters(string value)
 	{
