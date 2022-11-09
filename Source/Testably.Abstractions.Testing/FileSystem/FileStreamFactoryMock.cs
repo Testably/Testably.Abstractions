@@ -1,4 +1,7 @@
 ﻿using Microsoft.Win32.SafeHandles;
+#if NET6_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.IO;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
@@ -81,6 +84,9 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 			options);
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess)" />
+#if NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
+#endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access)
 	{
 		if (handle.IsInvalid)
@@ -98,6 +104,9 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	}
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int)" />
+#if NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
+#endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize)
 	{
 		if (handle.IsInvalid)
@@ -116,6 +125,9 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	}
 
 	/// <inheritdoc cref="IFileStreamFactory.New(SafeFileHandle, FileAccess, int, bool)" />
+#if NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
+#endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize,
 	                            bool isAsync)
 	{

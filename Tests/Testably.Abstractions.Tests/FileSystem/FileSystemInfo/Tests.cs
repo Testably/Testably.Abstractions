@@ -29,6 +29,22 @@ public abstract partial class Tests<TFileSystem>
 		}
 	}
 
+#if FEATURE_FILESYSTEM_LINK
+	[SkippableTheory]
+	[AutoData]
+	public void LinkTarget_ShouldBeSetByCreateAsSymbolicLink(
+		string path, string pathToTarget)
+	{
+		FileSystem.File.WriteAllText(pathToTarget, null);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
+		sut.LinkTarget.Should().BeNull();
+
+		sut.CreateAsSymbolicLink(pathToTarget);
+
+		sut.LinkTarget.Should().Be(pathToTarget);
+	}
+#endif
+
 	[SkippableTheory]
 	[AutoData]
 	public void SetAttributes_Hidden_OnFileStartingWithDot_ShouldBeSet(string path)
