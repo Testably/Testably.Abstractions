@@ -1,6 +1,7 @@
 #if FEATURE_FILESYSTEM_ASYNC
 using AutoFixture;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -59,6 +60,21 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 		FileSystem.File.ReadAllLines(path).Should()
 		   .BeEquivalentTo(previousContents.Concat(contents),
 				o => o.WithStrictOrdering());
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public async Task AppendAllLinesAsync_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+		string missingPath, string fileName, List<string> contents)
+	{
+		string filePath = FileSystem.Path.Combine(missingPath, fileName);
+		Exception? exception = await Record.ExceptionAsync(async() =>
+		{
+			await FileSystem.File.AppendAllLinesAsync(filePath, contents);
+		});
+
+		exception.Should().BeOfType<DirectoryNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024893);
 	}
 
 	[SkippableTheory]
