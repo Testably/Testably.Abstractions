@@ -58,11 +58,17 @@ internal sealed class FileInfoWrapper : FileSystemInfoWrapper, IFileInfo
 
 	/// <inheritdoc cref="IFileInfo.Decrypt()" />
 	[SupportedOSPlatform("windows")]
+#if NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage(Justification = "Encryption on Windows cannot be unit tested.")]
+#endif
 	public void Decrypt()
 		=> _instance.Decrypt();
 
 	/// <inheritdoc cref="IFileInfo.Encrypt()" />
 	[SupportedOSPlatform("windows")]
+#if NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage(Justification = "Encryption on Windows cannot be unit tested.")]
+#endif
 	public void Encrypt()
 		=> _instance.Encrypt();
 

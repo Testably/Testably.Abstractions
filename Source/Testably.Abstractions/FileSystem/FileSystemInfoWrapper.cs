@@ -128,11 +128,6 @@ internal class FileSystemInfoWrapper : IFileSystemInfo
 		FileSystemInfo? instance,
 		IFileSystem fileSystem)
 	{
-		if (instance == null)
-		{
-			return null;
-		}
-
 		if (instance is FileInfo fileInfo)
 		{
 			return FileInfoWrapper.FromFileInfo(fileInfo, fileSystem);
@@ -143,6 +138,6 @@ internal class FileSystemInfoWrapper : IFileSystemInfo
 			return DirectoryInfoWrapper.FromDirectoryInfo(directoryInfo, fileSystem);
 		}
 
-		return new FileSystemInfoWrapper(instance, fileSystem);
+		return null;
 	}
 }

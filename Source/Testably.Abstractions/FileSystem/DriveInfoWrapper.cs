@@ -54,6 +54,9 @@ internal sealed class DriveInfoWrapper : IDriveInfo
 
 	/// <inheritdoc cref="IDriveInfo.VolumeLabel" />
 	[AllowNull]
+#if NET6_0_OR_GREATER
+	[ExcludeFromCodeCoverage(Justification = "Setting the VolumeLabel cannot be unit tested.")]
+#endif
 	public string VolumeLabel
 	{
 		get => _instance.VolumeLabel;

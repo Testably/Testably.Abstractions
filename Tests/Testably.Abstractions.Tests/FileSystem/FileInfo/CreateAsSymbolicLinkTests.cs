@@ -10,12 +10,12 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public void CreateSymbolicLink_ShouldCreateSymbolicLink(
+	public void CreateAsSymbolicLink_ShouldCreateSymbolicLink(
 		string path, string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, null);
 
-		FileSystem.File.CreateSymbolicLink(path, pathToTarget);
+		FileSystem.FileInfo.New(path).CreateAsSymbolicLink(pathToTarget);
 
 		FileSystem.File.GetAttributes(path)
 		   .HasFlag(FileAttributes.ReparsePoint)
@@ -24,7 +24,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateSymbolicLink_SourceFileAlreadyExists_ShouldCreateSymbolicLink(
+	public void CreateAsSymbolicLink_SourceFileAlreadyExists_ShouldCreateSymbolicLink(
 		string path, string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, null);
@@ -32,7 +32,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.File.CreateSymbolicLink(path, pathToTarget);
+			FileSystem.FileInfo.New(path).CreateAsSymbolicLink(pathToTarget);
 		});
 
 		if (Test.RunsOnWindows)
@@ -52,12 +52,12 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateSymbolicLink_TargetFileMissing_ShouldNotThrowException(
+	public void CreateAsSymbolicLink_TargetFileMissing_ShouldNotThrowException(
 		string path, string pathToTarget)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.File.CreateSymbolicLink(path, pathToTarget);
+			FileSystem.FileInfo.New(path).CreateAsSymbolicLink(pathToTarget);
 		});
 
 		exception.Should().BeNull();
@@ -65,14 +65,14 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateSymbolicLink_WithEmptyPath_ShouldThrowArgumentException(
+	public void CreateAsSymbolicLink_WithEmptyPath_ShouldThrowArgumentException(
 		string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, "some content");
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.File.CreateSymbolicLink(string.Empty, pathToTarget);
+			FileSystem.FileInfo.New(string.Empty).CreateAsSymbolicLink(pathToTarget);
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
@@ -81,14 +81,14 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateSymbolicLink_WithEmptyTarget_ShouldThrowArgumentException(
+	public void CreateAsSymbolicLink_WithEmptyTarget_ShouldThrowArgumentException(
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, "some content");
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.File.CreateSymbolicLink(path, string.Empty);
+			FileSystem.FileInfo.New(path).CreateAsSymbolicLink(string.Empty);
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
@@ -97,7 +97,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateSymbolicLink_WithIllegalCharactersInPath_ShouldThrowIOException(
+	public void CreateAsSymbolicLink_WithIllegalCharactersInPath_ShouldThrowIOException(
 		string pathToTarget)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -106,7 +106,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.File.CreateSymbolicLink("bar_?_", pathToTarget);
+			FileSystem.FileInfo.New("bar_?_").CreateAsSymbolicLink(pathToTarget);
 		});
 
 		exception.Should().BeOfType<IOException>()
@@ -115,7 +115,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateSymbolicLink_WithIllegalCharactersInTarget_ShouldThrowIOException(
+	public void CreateAsSymbolicLink_WithIllegalCharactersInTarget_ShouldThrowIOException(
 		string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -124,7 +124,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.File.CreateSymbolicLink(path, "bar_?_");
+			FileSystem.FileInfo.New(path).CreateAsSymbolicLink("bar_?_");
 		});
 
 		exception.Should().BeOfType<IOException>()
@@ -133,14 +133,14 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateSymbolicLink_WithIllegalPath_ShouldThrowArgumentExceptionOnWindows(
+	public void CreateAsSymbolicLink_WithIllegalPath_ShouldThrowArgumentExceptionOnWindows(
 		string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, "some content");
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.File.CreateSymbolicLink(" ", pathToTarget);
+			FileSystem.FileInfo.New(" ").CreateAsSymbolicLink(pathToTarget);
 		});
 
 		if (Test.RunsOnWindows)
@@ -156,11 +156,11 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateSymbolicLink_WithIllegalTarget_ShouldNotThrowException(string path)
+	public void CreateAsSymbolicLink_WithIllegalTarget_ShouldNotThrowException(string path)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.File.CreateSymbolicLink(path, " ");
+			FileSystem.FileInfo.New(path).CreateAsSymbolicLink(" ");
 		});
 
 		exception.Should().BeNull();
@@ -168,30 +168,30 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateSymbolicLink_WithNullPath_ShouldThrowArgumentNullException(
+	public void CreateAsSymbolicLink_WithNullPath_ShouldThrowArgumentNullException(
 		string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, "some content");
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.File.CreateSymbolicLink(null!, pathToTarget);
+			FileSystem.FileInfo.New(null!).CreateAsSymbolicLink(pathToTarget);
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.ParamName.Should().Be("path");
+		   .Which.ParamName.Should().Be("fileName");
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateSymbolicLink_WithNullTarget_ShouldThrowArgumentNullException(
+	public void CreateAsSymbolicLink_WithNullTarget_ShouldThrowArgumentNullException(
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, "some content");
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.File.CreateSymbolicLink(path, null!);
+			FileSystem.FileInfo.New(path).CreateAsSymbolicLink(null!);
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>()
