@@ -30,8 +30,9 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	[Theory]
 	[MemberData(nameof(GetDriveInfoFactoryCallbacks), parameters: "")]
-	public void Operations_ShouldThrowArgumentExceptionIfPathIsEmpty(
-		Expression<Action<IDriveInfoFactory>> callback, string paramName, bool ignoreParamCheck)
+	public void Operations_ShouldThrowArgumentExceptionIfValueIsEmpty(
+		Expression<Action<IDriveInfoFactory>> callback, string paramName,
+		bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
@@ -40,18 +41,23 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		if (!Test.IsNetFramework && !ignoreParamCheck)
 		{
-			exception.Should().BeOfType<ArgumentException>()
-			   .Which.ParamName.Should().Be(paramName);
+			exception.Should().BeOfType<ArgumentException>(
+					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+			   .Which.ParamName.Should().Be(paramName,
+					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeOfType<ArgumentException>(
+				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+		   .Which.HResult.Should().Be(-2147024809,
+				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[Theory]
 	[MemberData(nameof(GetDriveInfoFactoryCallbacks), parameters: (string?)null)]
-	public void Operations_ShouldThrowArgumentNullExceptionIfPathIsNull(
-		Expression<Action<IDriveInfoFactory>> callback, string paramName, bool ignoreParamCheck)
+	public void Operations_ShouldThrowArgumentNullExceptionIfValueIsNull(
+		Expression<Action<IDriveInfoFactory>> callback, string paramName,
+		bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
@@ -60,12 +66,15 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		if (ignoreParamCheck)
 		{
-			exception.Should().BeOfType<ArgumentNullException>();
+			exception.Should().BeOfType<ArgumentNullException>(
+				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 		else
 		{
-			exception.Should().BeOfType<ArgumentNullException>()
-			   .Which.ParamName.Should().Be(paramName);
+			exception.Should().BeOfType<ArgumentNullException>(
+					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+			   .Which.ParamName.Should().Be(paramName,
+					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 	}
 
@@ -76,9 +85,9 @@ public abstract partial class ExceptionTests<TFileSystem>
 		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
 		   .Select(item => new object?[]
 			{
-				item.Callback,
-				item.ParamName,
-				item.TestType.HasFlag(ExceptionTestHelper.TestTypes.IgnoreParamNameCheck)
+				item.Callback, item.ParamName,
+				item.TestType.HasFlag(ExceptionTestHelper.TestTypes
+				   .IgnoreParamNameCheck)
 			});
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,

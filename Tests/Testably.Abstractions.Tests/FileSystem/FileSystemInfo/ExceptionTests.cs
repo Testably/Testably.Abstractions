@@ -13,8 +13,9 @@ public abstract partial class ExceptionTests<TFileSystem>
 {
 	[Theory]
 	[MemberData(nameof(GetFileSystemInfoCallbacks), parameters: "")]
-	public void Operations_ShouldThrowArgumentExceptionIfPathIsEmpty(
-		Expression<Action<IFileSystemInfo>> callback, string paramName, bool ignoreParamCheck)
+	public void Operations_ShouldThrowArgumentExceptionIfValueIsEmpty(
+		Expression<Action<IFileSystemInfo>> callback, string paramName,
+		bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
@@ -23,18 +24,23 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		if (!Test.IsNetFramework && !ignoreParamCheck)
 		{
-			exception.Should().BeOfType<ArgumentException>($"{callback}\n has invalid parameter for '{paramName}'")
-			   .Which.ParamName.Should().Be(paramName);
+			exception.Should().BeOfType<ArgumentException>(
+					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+			   .Which.ParamName.Should().Be(paramName,
+					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 
-		exception.Should().BeOfType<ArgumentException>($"{callback}\n has invalid parameter for '{paramName}'")
-		   .Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeOfType<ArgumentException>(
+				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+		   .Which.HResult.Should().Be(-2147024809,
+				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[Theory]
 	[MemberData(nameof(GetFileSystemInfoCallbacks), parameters: (string?)null)]
-	public void Operations_ShouldThrowArgumentNullExceptionIfPathIsNull(
-		Expression<Action<IFileSystemInfo>> callback, string paramName, bool ignoreParamCheck)
+	public void Operations_ShouldThrowArgumentNullExceptionIfValueIsNull(
+		Expression<Action<IFileSystemInfo>> callback, string paramName,
+		bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
@@ -43,12 +49,15 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		if (ignoreParamCheck)
 		{
-			exception.Should().BeOfType<ArgumentNullException>($"{callback}\n has invalid parameter for '{paramName}'");
+			exception.Should().BeOfType<ArgumentNullException>(
+				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 		else
 		{
-			exception.Should().BeOfType<ArgumentNullException>($"{callback}\n has invalid parameter for '{paramName}'")
-			   .Which.ParamName.Should().Be(paramName);
+			exception.Should().BeOfType<ArgumentNullException>(
+					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+			   .Which.ParamName.Should().Be(paramName,
+					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 	}
 
@@ -59,9 +68,9 @@ public abstract partial class ExceptionTests<TFileSystem>
 		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
 		   .Select(item => new object?[]
 			{
-				item.Callback,
-				item.ParamName,
-				item.TestType.HasFlag(ExceptionTestHelper.TestTypes.IgnoreParamNameCheck)
+				item.Callback, item.ParamName,
+				item.TestType.HasFlag(ExceptionTestHelper.TestTypes
+				   .IgnoreParamNameCheck)
 			});
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string? ParamName,
@@ -69,8 +78,9 @@ public abstract partial class ExceptionTests<TFileSystem>
 		GetFileSystemInfoCallbackTestParameters(string value)
 	{
 #if FEATURE_FILESYSTEM_LINK
-		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "pathToTarget", fileSystemInfo
-			=> fileSystemInfo.CreateAsSymbolicLink(value));
+		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "pathToTarget",
+			fileSystemInfo
+				=> fileSystemInfo.CreateAsSymbolicLink(value));
 #endif
 	}
 
