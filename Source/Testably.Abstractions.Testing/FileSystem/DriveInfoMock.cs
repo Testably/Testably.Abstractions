@@ -56,11 +56,6 @@ internal sealed class DriveInfoMock : IStorageDrive
 		IsReady = true;
 	}
 
-	/// <summary>
-	///     Flag indicating if the drive is a UNC drive
-	/// </summary>
-	public bool IsUncPath { get; }
-
 	#region IStorageDrive Members
 
 	/// <inheritdoc cref="IDriveInfo.AvailableFreeSpace" />
@@ -79,6 +74,11 @@ internal sealed class DriveInfoMock : IStorageDrive
 
 	/// <inheritdoc cref="IDriveInfo.IsReady" />
 	public bool IsReady { get; private set; }
+
+	/// <summary>
+	///     Flag indicating if the drive is a UNC drive
+	/// </summary>
+	public bool IsUncPath { get; }
 
 	/// <inheritdoc cref="IDriveInfo.Name" />
 	public string Name { get; }
