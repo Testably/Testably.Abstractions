@@ -46,4 +46,15 @@ public abstract partial class Tests<TFileSystem>
 			}
 		}
 	}
+
+	[SkippableFact]
+	public void ToString_ShouldReturnDriveName()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		IDriveInfo result =
+			FileSystem.DriveInfo.New(FileTestHelper.RootDrive());
+
+		result.ToString().Should().Be("C:\\");
+	}
 }

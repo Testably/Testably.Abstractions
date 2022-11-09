@@ -55,7 +55,8 @@ internal sealed class DriveInfoWrapper : IDriveInfo
 	/// <inheritdoc cref="IDriveInfo.VolumeLabel" />
 	[AllowNull]
 #if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "Setting the VolumeLabel cannot be unit tested.")]
+	[ExcludeFromCodeCoverage(Justification =
+		"Setting the VolumeLabel cannot be unit tested.")]
 #endif
 	public string VolumeLabel
 	{
@@ -67,6 +68,10 @@ internal sealed class DriveInfoWrapper : IDriveInfo
 	}
 
 	#endregion
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> _instance.ToString();
 
 	[return: NotNullIfNotNull("instance")]
 	internal static DriveInfoWrapper? FromDriveInfo(DriveInfo? instance,
