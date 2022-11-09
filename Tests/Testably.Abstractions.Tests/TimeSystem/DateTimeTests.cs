@@ -26,6 +26,32 @@ public abstract partial class DateTimeTests<TTimeSystem>
 	}
 
 	[Fact]
+	public void Now_ShouldBeSetToNow()
+	{
+		DateTime before = DateTime.Now;
+		DateTime result = TimeSystem.DateTime.Now;
+		DateTime after = DateTime.Now;
+
+		result.Kind.Should().Be(DateTimeKind.Local);
+		result.Should().BeOnOrAfter(before.ApplySystemClockTolerance());
+		result.ApplySystemClockTolerance().Should().BeOnOrBefore(after);
+	}
+
+	[Fact]
+	public void Today_ShouldBeSetToToday()
+	{
+		DateTime before = DateTime.Today;
+		DateTime result = TimeSystem.DateTime.Today;
+		DateTime after = DateTime.Today;
+
+		result.Hour.Should().Be(0);
+		result.Minute.Should().Be(0);
+		result.Second.Should().Be(0);
+		result.Should().BeOnOrAfter(before.ApplySystemClockTolerance());
+		result.ApplySystemClockTolerance().Should().BeOnOrBefore(after);
+	}
+
+	[Fact]
 	public void UnixEpoch_ShouldReturnDefaultValue()
 	{
 		DateTime expectedResult = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -33,5 +59,17 @@ public abstract partial class DateTimeTests<TTimeSystem>
 		DateTime result = TimeSystem.DateTime.UnixEpoch;
 
 		result.Should().Be(expectedResult);
+	}
+
+	[Fact]
+	public void UtcNow_ShouldBeSetToUtcNow()
+	{
+		DateTime before = DateTime.UtcNow;
+		DateTime result = TimeSystem.DateTime.UtcNow;
+		DateTime after = DateTime.UtcNow;
+
+		result.Kind.Should().Be(DateTimeKind.Utc);
+		result.Should().BeOnOrAfter(before.ApplySystemClockTolerance());
+		result.ApplySystemClockTolerance().Should().BeOnOrBefore(after);
 	}
 }

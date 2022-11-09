@@ -12,7 +12,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 {
 	[Theory]
 	[MemberData(nameof(GetFileInfoFactoryCallbacks), parameters: "")]
-	public void Operations_ShouldThrowArgumentExceptionIfPathIsEmpty(
+	public void Operations_ShouldThrowArgumentExceptionIfValueIsEmpty(
 		Expression<Action<IFileInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -23,17 +23,21 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		if (!Test.IsNetFramework && !ignoreParamCheck)
 		{
-			exception.Should().BeOfType<ArgumentException>()
-			   .Which.ParamName.Should().Be(paramName);
+			exception.Should().BeOfType<ArgumentException>(
+					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+			   .Which.ParamName.Should().Be(paramName,
+					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeOfType<ArgumentException>(
+				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+		   .Which.HResult.Should().Be(-2147024809,
+				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[SkippableTheory]
 	[MemberData(nameof(GetFileInfoFactoryCallbacks), parameters: "  ")]
-	public void Operations_ShouldThrowArgumentExceptionIfPathIsWhitespace(
+	public void Operations_ShouldThrowArgumentExceptionIfValueIsWhitespace(
 		Expression<Action<IFileInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -46,17 +50,21 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		if (!Test.IsNetFramework && !ignoreParamCheck)
 		{
-			exception.Should().BeOfType<ArgumentException>()
-			   .Which.ParamName.Should().Be(paramName);
+			exception.Should().BeOfType<ArgumentException>(
+					$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+			   .Which.ParamName.Should().Be(paramName,
+					$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeOfType<ArgumentException>(
+				$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+		   .Which.HResult.Should().Be(-2147024809,
+				$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[Theory]
 	[MemberData(nameof(GetFileInfoFactoryCallbacks), parameters: (string?)null)]
-	public void Operations_ShouldThrowArgumentNullExceptionIfPathIsNull(
+	public void Operations_ShouldThrowArgumentNullExceptionIfValueIsNull(
 		Expression<Action<IFileInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -67,12 +75,15 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		if (ignoreParamCheck)
 		{
-			exception.Should().BeOfType<ArgumentNullException>();
+			exception.Should().BeOfType<ArgumentNullException>(
+				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 		else
 		{
-			exception.Should().BeOfType<ArgumentNullException>()
-			   .Which.ParamName.Should().Be(paramName);
+			exception.Should().BeOfType<ArgumentNullException>(
+					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+			   .Which.ParamName.Should().Be(paramName,
+					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 	}
 
@@ -80,7 +91,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	[MemberData(nameof(GetFileInfoFactoryCallbacks),
 		parameters: "Illegal\tCharacter?InPath")]
 	public void
-		Operations_ShouldThrowCorrectExceptionIfPathContainsIllegalCharactersOnWindows(
+		Operations_ShouldThrowCorrectExceptionIfValueContainsIllegalPathCharactersOnWindows(
 			Expression<Action<IFileInfoFactory>> callback, string paramName,
 			bool ignoreParamCheck)
 	{
@@ -91,12 +102,16 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		if (Test.IsNetFramework)
 		{
-			exception.Should().BeOfType<ArgumentException>()
-			   .Which.HResult.Should().Be(-2147024809);
+			exception.Should().BeOfType<ArgumentException>(
+					$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})")
+			   .Which.HResult.Should().Be(-2147024809,
+					$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 		else
 		{
-			exception.Should().BeNull();
+			exception.Should()
+			   .BeNull(
+					$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 	}
 
@@ -107,8 +122,8 @@ public abstract partial class ExceptionTests<TFileSystem>
 		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
 		   .Select(item => new object?[]
 			{
-				item.Callback, item.ParamName,
-				item.TestType.HasFlag(ExceptionTestHelper.TestTypes
+				item.Callback, item.ParamName, item.TestType.HasFlag(ExceptionTestHelper
+				   .TestTypes
 				   .IgnoreParamNameCheck)
 			});
 

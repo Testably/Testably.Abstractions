@@ -13,8 +13,9 @@ public abstract partial class ExceptionTests<TFileSystem>
 {
 	[Theory]
 	[MemberData(nameof(GetDirectoryInfoCallbacks), parameters: "")]
-	public void Operations_ShouldThrowArgumentExceptionIfPathIsEmpty(
-		Expression<Action<IDirectoryInfo>> callback, string paramName, bool ignoreParamCheck)
+	public void Operations_ShouldThrowArgumentExceptionIfValueIsEmpty(
+		Expression<Action<IDirectoryInfo>> callback, string paramName,
+		bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
@@ -23,18 +24,23 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		if (!Test.IsNetFramework && !ignoreParamCheck)
 		{
-			exception.Should().BeOfType<ArgumentException>()
-			   .Which.ParamName.Should().Be(paramName);
+			exception.Should().BeOfType<ArgumentException>(
+					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+			   .Which.ParamName.Should().Be(paramName,
+					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeOfType<ArgumentException>(
+				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+		   .Which.HResult.Should().Be(-2147024809,
+				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[SkippableTheory]
 	[MemberData(nameof(GetDirectoryInfoCallbacks), parameters: "  ")]
-	public void Operations_ShouldThrowArgumentExceptionIfPathIsWhitespace(
-		Expression<Action<IDirectoryInfo>> callback, string paramName, bool ignoreParamCheck)
+	public void Operations_ShouldThrowArgumentExceptionIfValueIsWhitespace(
+		Expression<Action<IDirectoryInfo>> callback, string paramName,
+		bool ignoreParamCheck)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -45,21 +51,28 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		if (Test.IsNetFramework)
 		{
-			exception.Should().BeNull();
+			exception.Should()
+			   .BeNull(
+					$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 		else
 		{
-			exception.Should().BeOfType<ArgumentException>()
-			   .Which.ParamName.Should().Be(paramName);
-			exception.Should().BeOfType<ArgumentException>()
-			   .Which.HResult.Should().Be(-2147024809);
+			exception.Should().BeOfType<ArgumentException>(
+					$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+			   .Which.ParamName.Should().Be(paramName,
+					$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+			exception.Should().BeOfType<ArgumentException>(
+					$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+			   .Which.HResult.Should().Be(-2147024809,
+					$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 	}
 
 	[Theory]
 	[MemberData(nameof(GetDirectoryInfoCallbacks), parameters: (string?)null)]
-	public void Operations_ShouldThrowArgumentNullExceptionIfPathIsNull(
-		Expression<Action<IDirectoryInfo>> callback, string paramName, bool ignoreParamCheck)
+	public void Operations_ShouldThrowArgumentNullExceptionIfValueIsNull(
+		Expression<Action<IDirectoryInfo>> callback, string paramName,
+		bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
@@ -68,12 +81,15 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		if (ignoreParamCheck)
 		{
-			exception.Should().BeOfType<ArgumentNullException>();
+			exception.Should().BeOfType<ArgumentNullException>(
+				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 		else
 		{
-			exception.Should().BeOfType<ArgumentNullException>()
-			   .Which.ParamName.Should().Be(paramName);
+			exception.Should().BeOfType<ArgumentNullException>(
+					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+			   .Which.ParamName.Should().Be(paramName,
+					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 	}
 
@@ -81,8 +97,9 @@ public abstract partial class ExceptionTests<TFileSystem>
 	[MemberData(nameof(GetDirectoryInfoCallbacks),
 		parameters: "Illegal\tCharacter?InPath")]
 	public void
-		Operations_ShouldThrowCorrectExceptionIfPathContainsIllegalCharactersOnWindows(
-			Expression<Action<IDirectoryInfo>> callback, string paramName, bool ignoreParamCheck)
+		Operations_ShouldThrowCorrectExceptionIfValueContainsIllegalPathCharactersOnWindows(
+			Expression<Action<IDirectoryInfo>> callback, string paramName,
+			bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
@@ -93,20 +110,25 @@ public abstract partial class ExceptionTests<TFileSystem>
 		{
 			if (exception is IOException ioException)
 			{
-				ioException.HResult.Should().NotBe(-2147024809);
+				ioException.HResult.Should().NotBe(-2147024809,
+					$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 			}
 		}
 		else
 		{
 			if (Test.IsNetFramework)
 			{
-				exception.Should().BeOfType<ArgumentException>()
-				   .Which.HResult.Should().Be(-2147024809);
+				exception.Should().BeOfType<ArgumentException>(
+						$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})")
+				   .Which.HResult.Should().Be(-2147024809,
+						$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 			}
 			else
 			{
-				exception.Should().BeOfType<IOException>()
-				   .Which.HResult.Should().Be(-2147024773);
+				exception.Should().BeOfType<IOException>(
+						$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})")
+				   .Which.HResult.Should().Be(-2147024773,
+						$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 			}
 		}
 	}
@@ -118,16 +140,18 @@ public abstract partial class ExceptionTests<TFileSystem>
 		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
 		   .Select(item => new object?[]
 			{
-				item.Callback,
-				item.ParamName,
-				item.TestType.HasFlag(ExceptionTestHelper.TestTypes.IgnoreParamNameCheck)
+				item.Callback, item.ParamName, item.TestType.HasFlag(ExceptionTestHelper
+				   .TestTypes
+				   .IgnoreParamNameCheck)
 			});
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string? ParamName,
 			Expression<Action<IDirectoryInfo>> Callback)>
 		GetDirectoryInfoCallbackTestParameters(string value)
 	{
-		yield return (ExceptionTestHelper.TestTypes.Whitespace |  ExceptionTestHelper.TestTypes.InvalidPath, "path",
+		yield return (
+			ExceptionTestHelper.TestTypes.Whitespace |
+			ExceptionTestHelper.TestTypes.InvalidPath, "path",
 			directoryInfo
 				=> directoryInfo.CreateSubdirectory(value));
 		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "destDirName",

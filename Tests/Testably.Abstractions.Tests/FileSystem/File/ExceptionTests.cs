@@ -15,7 +15,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 {
 	[Theory]
 	[MemberData(nameof(GetFileCallbacks), parameters: "")]
-	public void Operations_ShouldThrowArgumentExceptionIfPathIsEmpty(
+	public void Operations_ShouldThrowArgumentExceptionIfValueIsEmpty(
 		Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -25,50 +25,21 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		if (!Test.IsNetFramework && !ignoreParamCheck)
 		{
-			exception.Should().BeOfType<ArgumentException>($"\n{callback}\n has invalid parameter for '{paramName}'")
-			   .Which.ParamName.Should().Be(paramName, $"\n{callback}\n has invalid parameter for '{paramName}'");
+			exception.Should().BeOfType<ArgumentException>(
+					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+			   .Which.ParamName.Should().Be(paramName,
+					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 
-		exception.Should().BeOfType<ArgumentException>($"\n{callback}\n has invalid parameter for '{paramName}'")
-		   .Which.HResult.Should().Be(-2147024809, $"\n{callback}\n has invalid parameter for HResult");
-	}
-
-	[SkippableTheory]
-	[MemberData(nameof(GetFileCallbacks), parameters: "Illegal\tCharacter?InPath")]
-	public void
-		Operations_ShouldThrowCorrectExceptionIfPathContainsIllegalCharactersOnWindows(
-			Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			callback.Compile().Invoke(FileSystem.File);
-		});
-
-		if (!Test.RunsOnWindows)
-		{
-			if (exception is IOException ioException)
-			{
-				ioException.HResult.Should().NotBe(-2147024809);
-			}
-		}
-		else
-		{
-			if (Test.IsNetFramework)
-			{
-				exception.Should().BeOfType<ArgumentException>($"\n{callback}\n has invalid parameter for '{paramName}'")
-				   .Which.HResult.Should().Be(-2147024809, $"\n{callback}\n has invalid parameter for HResult");
-			}
-			else
-			{
-				exception.Should().BeOfType<IOException>($"\n{callback}\n has invalid parameter for '{paramName}'")
-				   .Which.HResult.Should().Be(-2147024773, $"\n{callback}\n has invalid parameter for HResult");
-			}
-		}
+		exception.Should().BeOfType<ArgumentException>(
+				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+		   .Which.HResult.Should().Be(-2147024809,
+				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks), parameters: "  ")]
-	public void Operations_ShouldThrowArgumentExceptionIfPathIsWhitespace(
+	public void Operations_ShouldThrowArgumentExceptionIfValueIsWhitespace(
 		Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -80,17 +51,21 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		if (!Test.IsNetFramework && !ignoreParamCheck)
 		{
-			exception.Should().BeOfType<ArgumentException>($"\n{callback}\n has invalid parameter for '{paramName}'")
-			   .Which.ParamName.Should().Be(paramName, $"\n{callback}\n has invalid parameter for '{paramName}'");
+			exception.Should().BeOfType<ArgumentException>(
+					$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+			   .Which.ParamName.Should().Be(paramName,
+					$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 
-		exception.Should().BeOfType<ArgumentException>($"\n{callback}\n has invalid parameter for '{paramName}'")
-		   .Which.HResult.Should().Be(-2147024809, $"\n{callback}\n has invalid parameter for HResult");
+		exception.Should().BeOfType<ArgumentException>(
+				$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+		   .Which.HResult.Should().Be(-2147024809,
+				$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[Theory]
 	[MemberData(nameof(GetFileCallbacks), parameters: (string?)null)]
-	public void Operations_ShouldThrowArgumentNullExceptionIfPathIsNull(
+	public void Operations_ShouldThrowArgumentNullExceptionIfValueIsNull(
 		Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -100,12 +75,53 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		if (ignoreParamCheck)
 		{
-			exception.Should().BeOfType<ArgumentNullException>($"\n{callback}\n has invalid parameter for '{paramName}'");
+			exception.Should().BeOfType<ArgumentNullException>(
+				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 		else
 		{
-			exception.Should().BeOfType<ArgumentNullException>($"\n{callback}\n has invalid parameter for '{paramName}'")
-			   .Which.ParamName.Should().Be(paramName, $"\n{callback}\n has invalid parameter for '{paramName}'");
+			exception.Should().BeOfType<ArgumentNullException>(
+					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+			   .Which.ParamName.Should().Be(paramName,
+					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		}
+	}
+
+	[SkippableTheory]
+	[MemberData(nameof(GetFileCallbacks), parameters: "Illegal\tCharacter?InPath")]
+	public void
+		Operations_ShouldThrowCorrectExceptionIfValueContainsIllegalPathCharactersOnWindows(
+			Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			callback.Compile().Invoke(FileSystem.File);
+		});
+
+		if (!Test.RunsOnWindows)
+		{
+			if (exception is IOException ioException)
+			{
+				ioException.HResult.Should().NotBe(-2147024809,
+					$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
+			}
+		}
+		else
+		{
+			if (Test.IsNetFramework)
+			{
+				exception.Should().BeOfType<ArgumentException>(
+						$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})")
+				   .Which.HResult.Should().Be(-2147024809,
+						$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
+			}
+			else
+			{
+				exception.Should().BeOfType<IOException>(
+						$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})")
+				   .Which.HResult.Should().Be(-2147024773,
+						$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
+			}
 		}
 	}
 
@@ -116,9 +132,9 @@ public abstract partial class ExceptionTests<TFileSystem>
 		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
 		   .Select(item => new object?[]
 			{
-				item.Callback,
-				item.ParamName,
-				item.TestType.HasFlag(ExceptionTestHelper.TestTypes.IgnoreParamNameCheck)
+				item.Callback, item.ParamName,
+				item.TestType.HasFlag(ExceptionTestHelper.TestTypes
+				   .IgnoreParamNameCheck)
 			});
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string? ParamName,
@@ -131,7 +147,8 @@ public abstract partial class ExceptionTests<TFileSystem>
 			=> file.AppendAllLines(value, new[] { "foo" }, Encoding.UTF8));
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.AppendAllLinesAsync(value, new[] { "foo" }, CancellationToken.None).GetAwaiter().GetResult());
+			=> file.AppendAllLinesAsync(value, new[] { "foo" }, CancellationToken.None)
+			   .GetAwaiter().GetResult());
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.AppendAllLinesAsync(value, new[] { "foo" }, Encoding.UTF8,
 				CancellationToken.None).GetAwaiter().GetResult());
@@ -142,29 +159,40 @@ public abstract partial class ExceptionTests<TFileSystem>
 			=> file.AppendAllText(value, "foo", Encoding.UTF8));
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.AppendAllTextAsync(value, "foo", CancellationToken.None).GetAwaiter().GetResult());
+			=> file.AppendAllTextAsync(value, "foo", CancellationToken.None).GetAwaiter()
+			   .GetResult());
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.AppendAllTextAsync(value, "foo", Encoding.UTF8,
 				CancellationToken.None).GetAwaiter().GetResult());
 #endif
 		yield return (ExceptionTestHelper.TestTypes.NullOrInvalidPath, "path", file
 			=> file.AppendText(value));
-		yield return (ExceptionTestHelper.TestTypes.AllExceptWhitespace, "sourceFileName", file
-			=> file.Copy(value, "foo"));
+		yield return (ExceptionTestHelper.TestTypes.AllExceptWhitespace, "sourceFileName",
+			file
+				=> file.Copy(value, "foo"));
 		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "destFileName", file
 			=> file.Copy("foo", value));
-		yield return (ExceptionTestHelper.TestTypes.AllExceptWhitespace, "sourceFileName", file
-			=> file.Copy(value, "foo", false));
+		yield return (ExceptionTestHelper.TestTypes.AllExceptWhitespace, "sourceFileName",
+			file
+				=> file.Copy(value, "foo", false));
 		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "destFileName", file
 			=> file.Copy("foo", value, false));
-		yield return (ExceptionTestHelper.TestTypes.Whitespace | ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "sourceFileName", file
-			=> file.Copy(value, "foo"));
-		yield return (ExceptionTestHelper.TestTypes.Whitespace | ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "destFileName", file
-			=> file.Copy("foo", value));
-		yield return (ExceptionTestHelper.TestTypes.Whitespace | ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "sourceFileName", file
-			=> file.Copy(value, "foo", false));
-		yield return (ExceptionTestHelper.TestTypes.Whitespace | ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "destFileName", file
-			=> file.Copy("foo", value, false));
+		yield return (
+			ExceptionTestHelper.TestTypes.Whitespace |
+			ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "sourceFileName", file
+				=> file.Copy(value, "foo"));
+		yield return (
+			ExceptionTestHelper.TestTypes.Whitespace |
+			ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "destFileName", file
+				=> file.Copy("foo", value));
+		yield return (
+			ExceptionTestHelper.TestTypes.Whitespace |
+			ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "sourceFileName", file
+				=> file.Copy(value, "foo", false));
+		yield return (
+			ExceptionTestHelper.TestTypes.Whitespace |
+			ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "destFileName", file
+				=> file.Copy("foo", value, false));
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.Create(value));
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
@@ -215,19 +243,27 @@ public abstract partial class ExceptionTests<TFileSystem>
 			=> file.Move(value, "foo"));
 		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "destFileName", file
 			=> file.Move("foo", value));
-		yield return (ExceptionTestHelper.TestTypes.Whitespace | ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "sourceFileName", file
-			=> file.Move(value, "foo"));
-		yield return (ExceptionTestHelper.TestTypes.Whitespace | ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "destFileName", file
-			=> file.Move("foo", value));
+		yield return (
+			ExceptionTestHelper.TestTypes.Whitespace |
+			ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "sourceFileName", file
+				=> file.Move(value, "foo"));
+		yield return (
+			ExceptionTestHelper.TestTypes.Whitespace |
+			ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "destFileName", file
+				=> file.Move("foo", value));
 #if FEATURE_FILE_MOVETO_OVERWRITE
 		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "sourceFileName", file
 			=> file.Move(value, "foo", false));
 		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "destFileName", file
 			=> file.Move("foo", value, false));
-		yield return (ExceptionTestHelper.TestTypes.Whitespace | ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "sourceFileName", file
-			=> file.Move(value, "foo", false));
-		yield return (ExceptionTestHelper.TestTypes.Whitespace | ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "destFileName", file
-			=> file.Move("foo", value, false));
+		yield return (
+			ExceptionTestHelper.TestTypes.Whitespace |
+			ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "sourceFileName", file
+				=> file.Move(value, "foo", false));
+		yield return (
+			ExceptionTestHelper.TestTypes.Whitespace |
+			ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "destFileName", file
+				=> file.Move("foo", value, false));
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.Open(value, FileMode.Open));
@@ -249,7 +285,8 @@ public abstract partial class ExceptionTests<TFileSystem>
 			=> file.ReadAllBytes(value));
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.ReadAllBytesAsync(value, CancellationToken.None).GetAwaiter().GetResult());
+			=> file.ReadAllBytesAsync(value, CancellationToken.None).GetAwaiter()
+			   .GetResult());
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.ReadAllLines(value));
@@ -257,9 +294,11 @@ public abstract partial class ExceptionTests<TFileSystem>
 			=> file.ReadAllLines(value, Encoding.UTF8));
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.ReadAllLinesAsync(value, CancellationToken.None).GetAwaiter().GetResult());
+			=> file.ReadAllLinesAsync(value, CancellationToken.None).GetAwaiter()
+			   .GetResult());
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.ReadAllLinesAsync(value, Encoding.UTF8, CancellationToken.None).GetAwaiter().GetResult());
+			=> file.ReadAllLinesAsync(value, Encoding.UTF8, CancellationToken.None)
+			   .GetAwaiter().GetResult());
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.ReadAllText(value));
@@ -267,9 +306,11 @@ public abstract partial class ExceptionTests<TFileSystem>
 			=> file.ReadAllText(value, Encoding.UTF8));
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.ReadAllTextAsync(value, CancellationToken.None).GetAwaiter().GetResult());
+			=> file.ReadAllTextAsync(value, CancellationToken.None).GetAwaiter()
+			   .GetResult());
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.ReadAllTextAsync(value, Encoding.UTF8, CancellationToken.None).GetAwaiter().GetResult());
+			=> file.ReadAllTextAsync(value, Encoding.UTF8, CancellationToken.None)
+			   .GetAwaiter().GetResult());
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.ReadLines(value));
@@ -324,7 +365,8 @@ public abstract partial class ExceptionTests<TFileSystem>
 			=> file.WriteAllLines(value, new[] { "foo" }, Encoding.UTF8));
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.WriteAllLinesAsync(value, new[] { "foo" }, CancellationToken.None).GetAwaiter().GetResult());
+			=> file.WriteAllLinesAsync(value, new[] { "foo" }, CancellationToken.None)
+			   .GetAwaiter().GetResult());
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.WriteAllLinesAsync(value, new[] { "foo" }, Encoding.UTF8,
 				CancellationToken.None).GetAwaiter().GetResult());
@@ -335,7 +377,8 @@ public abstract partial class ExceptionTests<TFileSystem>
 			=> file.WriteAllText(value, "foo", Encoding.UTF8));
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.WriteAllTextAsync(value, "foo", CancellationToken.None).GetAwaiter().GetResult());
+			=> file.WriteAllTextAsync(value, "foo", CancellationToken.None).GetAwaiter()
+			   .GetResult());
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.WriteAllTextAsync(value, "foo", Encoding.UTF8,
 				CancellationToken.None).GetAwaiter().GetResult());

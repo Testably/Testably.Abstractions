@@ -13,7 +13,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 {
 	[Theory]
 	[MemberData(nameof(GetFileInfoCallbacks), parameters: "")]
-	public void Operations_ShouldThrowArgumentExceptionIfPathIsEmpty(
+	public void Operations_ShouldThrowArgumentExceptionIfValueIsEmpty(
 		Expression<Action<IFileInfo>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -23,17 +23,21 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		if (!Test.IsNetFramework && !ignoreParamCheck)
 		{
-			exception.Should().BeOfType<ArgumentException>($"{callback}\n has invalid parameter for '{paramName}'")
-			   .Which.ParamName.Should().Be(paramName);
+			exception.Should().BeOfType<ArgumentException>(
+					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+			   .Which.ParamName.Should().Be(paramName,
+					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 
-		exception.Should().BeOfType<ArgumentException>($"{callback}\n has invalid parameter for '{paramName}'")
-		   .Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeOfType<ArgumentException>(
+				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+		   .Which.HResult.Should().Be(-2147024809,
+				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[Theory]
 	[MemberData(nameof(GetFileInfoCallbacks), parameters: (string?)null)]
-	public void Operations_ShouldThrowArgumentNullExceptionIfPathIsNull(
+	public void Operations_ShouldThrowArgumentNullExceptionIfValueIsNull(
 		Expression<Action<IFileInfo>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -43,20 +47,24 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		if (ignoreParamCheck)
 		{
-			exception.Should().BeOfType<ArgumentNullException>($"{callback}\n has invalid parameter for '{paramName}'");
+			exception.Should().BeOfType<ArgumentNullException>(
+				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 		else
 		{
-			exception.Should().BeOfType<ArgumentNullException>($"{callback}\n has invalid parameter for '{paramName}'")
-			   .Which.ParamName.Should().Be(paramName);
+			exception.Should().BeOfType<ArgumentNullException>(
+					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})")
+			   .Which.ParamName.Should().Be(paramName,
+					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 	}
 
 	[SkippableTheory]
 	[MemberData(nameof(GetFileInfoCallbacks), parameters: "Illegal\tCharacter?InPath")]
 	public void
-		Operations_ShouldThrowCorrectExceptionIfPathContainsIllegalCharactersOnWindows(
-			Expression<Action<IFileInfo>> callback, string paramName, bool ignoreParamCheck)
+		Operations_ShouldThrowCorrectExceptionIfValueContainsIllegalPathCharactersOnWindows(
+			Expression<Action<IFileInfo>> callback, string paramName,
+			bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
@@ -67,20 +75,25 @@ public abstract partial class ExceptionTests<TFileSystem>
 		{
 			if (exception is IOException ioException)
 			{
-				ioException.HResult.Should().NotBe(-2147024809);
+				ioException.HResult.Should().NotBe(-2147024809,
+					$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 			}
 		}
 		else
 		{
 			if (Test.IsNetFramework)
 			{
-				exception.Should().BeOfType<ArgumentException>($"{callback}\n has invalid parameter for '{paramName}'")
-				   .Which.HResult.Should().Be(-2147024809);
+				exception.Should().BeOfType<ArgumentException>(
+						$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})")
+				   .Which.HResult.Should().Be(-2147024809,
+						$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 			}
 			else
 			{
-				exception.Should().BeOfType<IOException>($"{callback}\n has invalid parameter for '{paramName}'")
-				   .Which.HResult.Should().Be(-2147024773);
+				exception.Should().BeOfType<IOException>(
+						$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})")
+				   .Which.HResult.Should().Be(-2147024773,
+						$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 			}
 		}
 	}
@@ -92,31 +105,37 @@ public abstract partial class ExceptionTests<TFileSystem>
 		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
 		   .Select(item => new object?[]
 			{
-				item.Callback,
-				item.ParamName,
-				item.TestType.HasFlag(ExceptionTestHelper.TestTypes.IgnoreParamNameCheck)
+				item.Callback, item.ParamName,
+				item.TestType.HasFlag(ExceptionTestHelper.TestTypes
+				   .IgnoreParamNameCheck)
 			});
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string? ParamName,
 			Expression<Action<IFileInfo>> Callback)>
 		GetFileInfoCallbackTestParameters(string value)
 	{
-		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "destFileName", fileInfo
-			=> fileInfo.CopyTo(value));
-		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "destFileName", fileInfo
-			=> fileInfo.CopyTo(value, false));
-		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "destFileName", fileInfo
-			=> fileInfo.MoveTo(value));
+		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "destFileName",
+			fileInfo
+				=> fileInfo.CopyTo(value));
+		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "destFileName",
+			fileInfo
+				=> fileInfo.CopyTo(value, false));
+		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "destFileName",
+			fileInfo
+				=> fileInfo.MoveTo(value));
 #if FEATURE_FILE_MOVETO_OVERWRITE
-		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "destFileName", fileInfo
-			=> fileInfo.MoveTo(value, false));
+		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "destFileName",
+			fileInfo
+				=> fileInfo.MoveTo(value, false));
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All |
-		              ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "destinationFileName", fileInfo
-			=> fileInfo.Replace(value, "bar"));
+		              ExceptionTestHelper.TestTypes.IgnoreParamNameCheck,
+			"destinationFileName", fileInfo
+				=> fileInfo.Replace(value, "bar"));
 		yield return (ExceptionTestHelper.TestTypes.All |
-		              ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "destinationFileName", fileInfo
-			=> fileInfo.Replace(value, "bar", false));
+		              ExceptionTestHelper.TestTypes.IgnoreParamNameCheck,
+			"destinationFileName", fileInfo
+				=> fileInfo.Replace(value, "bar", false));
 	}
 
 	#endregion
