@@ -3,6 +3,29 @@
 internal static class ExceptionTestHelper
 {
 	/// <summary>
+	///     Determines the <see cref="TestTypes" /> according to the provided <paramref name="value" />.
+	/// </summary>
+	internal static TestTypes ToTestType(this string? value)
+	{
+		if (value == null)
+		{
+			return TestTypes.Null;
+		}
+
+		if (value == "")
+		{
+			return TestTypes.Empty;
+		}
+
+		if (value.TrimEnd() == "")
+		{
+			return TestTypes.Whitespace;
+		}
+
+		return TestTypes.InvalidPath;
+	}
+
+	/// <summary>
 	///     Various test types for exception tests.
 	/// </summary>
 	[Flags]
@@ -33,28 +56,5 @@ internal static class ExceptionTestHelper
 		All = Null | Empty | Whitespace | InvalidPath,
 		AllExceptWhitespace = All & ~Whitespace,
 		AllExceptInvalidPath = All & ~InvalidPath
-	}
-
-	/// <summary>
-	///     Determines the <see cref="TestTypes" /> according to the provided <paramref name="value" />.
-	/// </summary>
-	internal static TestTypes ToTestType(this string? value)
-	{
-		if (value == null)
-		{
-			return TestTypes.Null;
-		}
-
-		if (value == "")
-		{
-			return TestTypes.Empty;
-		}
-
-		if (value.TrimEnd() == "")
-		{
-			return TestTypes.Whitespace;
-		}
-
-		return TestTypes.InvalidPath;
 	}
 }

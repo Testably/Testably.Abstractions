@@ -65,6 +65,25 @@ public abstract partial class OptionsTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void Options_Encrypt_Unencrypted_ShouldBeIgnored(
+		string path, string contents1, string contents2)
+	{
+		FileSystem.File.WriteAllText(path, contents1);
+
+		using FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
+			FileAccess.ReadWrite, FileShare.None, 10, FileOptions.Encrypted);
+		byte[] bytes = Encoding.Default.GetBytes(contents2);
+
+		stream.Write(bytes, 0, bytes.Length);
+		stream.Dispose();
+
+		FileSystem.File.GetAttributes(path).Should()
+		   .NotHaveFlag(FileAttributes.Encrypted);
+		FileSystem.File.ReadAllText(path).Should().Be(contents2);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	[SupportedOSPlatform("windows")]
 	public void Options_EncryptedWithoutEncryptionOption_ShouldKeepEncryptionFlag(
 		string path, string contents1, string contents2)
@@ -84,25 +103,6 @@ public abstract partial class OptionsTests<TFileSystem>
 		stream.Dispose();
 
 		FileSystem.File.GetAttributes(path).Should().HaveFlag(FileAttributes.Encrypted);
-		FileSystem.File.ReadAllText(path).Should().Be(contents2);
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void Options_Encrypt_Unencrypted_ShouldBeIgnored(
-		string path, string contents1, string contents2)
-	{
-		FileSystem.File.WriteAllText(path, contents1);
-
-		using FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
-			FileAccess.ReadWrite, FileShare.None, 10, FileOptions.Encrypted);
-		byte[] bytes = Encoding.Default.GetBytes(contents2);
-
-		stream.Write(bytes, 0, bytes.Length);
-		stream.Dispose();
-
-		FileSystem.File.GetAttributes(path).Should()
-		   .NotHaveFlag(FileAttributes.Encrypted);
 		FileSystem.File.ReadAllText(path).Should().Be(contents2);
 	}
 }

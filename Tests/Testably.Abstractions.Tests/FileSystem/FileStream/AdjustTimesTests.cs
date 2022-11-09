@@ -487,6 +487,8 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		   .BeOnOrAfter(updateTime);
 	}
 
+	#region Helpers
+
 	private DateTime WaitToBeUpdatedToAfter(Func<DateTime> callback,
 	                                        DateTime expectedAfter)
 	{
@@ -503,4 +505,6 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 
 		return callback();
 	}
+
+	#endregion
 }

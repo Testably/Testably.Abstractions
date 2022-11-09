@@ -60,7 +60,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 		=> GetFileCallbackTestParameters(path!)
 		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
 		   .Select(item => new object?[] { item.Callback, item.ParamName });
-	
+
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string? ParamName,
 			Expression<Action<IFile>> Callback)>
 		GetFileCallbackTestParameters(string value)

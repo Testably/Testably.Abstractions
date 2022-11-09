@@ -9,6 +9,8 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
+	#region Test Setup
+
 	/// <summary>
 	///     The delay in milliseconds when expecting a success in the test.
 	/// </summary>
@@ -18,6 +20,8 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	///     The delay in milliseconds when expecting a timeout in the test.
 	/// </summary>
 	private const int ExpectTimeout = 500;
+
+	#endregion
 
 	[SkippableTheory]
 	[AutoData]

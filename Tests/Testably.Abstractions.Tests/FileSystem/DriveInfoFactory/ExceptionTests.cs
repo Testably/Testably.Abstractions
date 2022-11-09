@@ -10,6 +10,22 @@ public abstract partial class ExceptionTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
+	[SkippableTheory]
+	[InlineData("?invalid-drive-name")]
+	[InlineData("invalid")]
+	[InlineData(" ")]
+	public void New_ShouldThrowArgumentExceptionIfDriveNameIsInvalid(
+		string driveName)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.DriveInfo.New(driveName);
+		});
+
+		exception.Should().BeOfType<ArgumentException>()
+		   .Which.HResult.Should().Be(-2147024809);
+	}
+
 	[Theory]
 	[MemberData(nameof(GetDriveInfoFactoryCallbacks), parameters: "")]
 	public void Operations_ShouldThrowArgumentExceptionIfPathIsEmpty(
@@ -49,22 +65,6 @@ public abstract partial class ExceptionTests<TFileSystem>
 			exception.Should().BeOfType<ArgumentNullException>()
 			   .Which.ParamName.Should().Be(paramName);
 		}
-	}
-
-	[SkippableTheory]
-	[InlineData("?invalid-drive-name")]
-	[InlineData("invalid")]
-	[InlineData(" ")]
-	public void New_ShouldThrowArgumentExceptionIfDriveNameIsInvalid(
-		string driveName)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.DriveInfo.New(driveName);
-		});
-
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
 	}
 
 	#region Helpers

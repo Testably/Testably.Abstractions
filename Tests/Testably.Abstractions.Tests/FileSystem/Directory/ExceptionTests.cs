@@ -31,27 +31,6 @@ public abstract partial class ExceptionTests<TFileSystem>
 		   .Which.HResult.Should().Be(-2147024809);
 	}
 
-	[Theory]
-	[MemberData(nameof(GetDirectoryCallbacks), parameters: (string?)null)]
-	public void Operations_ShouldThrowArgumentNullExceptionIfPathIsNull(
-		Expression<Action<IDirectory>> callback, string paramName)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			callback.Compile().Invoke(FileSystem.Directory);
-		});
-
-		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.ParamName.Should().Be(paramName);
-	}
-
-	#region Helpers
-
-	public static IEnumerable<object[]> GetDirectoryCallbacks(string? path)
-		=> GetDirectoryCallbackTestParameters(path!)
-		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
-		   .Select(item => new object[] { item.Callback, item.ParamName });
-
 	[SkippableTheory]
 	[MemberData(nameof(GetDirectoryCallbacks), parameters: "  ")]
 	public void Operations_ShouldThrowArgumentExceptionIfPathIsWhitespace(
@@ -72,6 +51,20 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		exception.Should().BeOfType<ArgumentException>()
 		   .Which.HResult.Should().Be(-2147024809);
+	}
+
+	[Theory]
+	[MemberData(nameof(GetDirectoryCallbacks), parameters: (string?)null)]
+	public void Operations_ShouldThrowArgumentNullExceptionIfPathIsNull(
+		Expression<Action<IDirectory>> callback, string paramName)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			callback.Compile().Invoke(FileSystem.Directory);
+		});
+
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.ParamName.Should().Be(paramName);
 	}
 
 	[SkippableTheory]
@@ -106,6 +99,13 @@ public abstract partial class ExceptionTests<TFileSystem>
 			}
 		}
 	}
+
+	#region Helpers
+
+	public static IEnumerable<object[]> GetDirectoryCallbacks(string? path)
+		=> GetDirectoryCallbackTestParameters(path!)
+		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
+		   .Select(item => new object[] { item.Callback, item.ParamName });
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
 			Expression<Action<IDirectory>> Callback)>

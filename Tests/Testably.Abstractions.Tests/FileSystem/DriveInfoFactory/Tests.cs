@@ -154,6 +154,8 @@ public abstract partial class Tests<TFileSystem>
 		result.Name.Should().Be(driveInfo.Name);
 	}
 
+	#region Helpers
+
 	private IDriveInfo GetUnmappedDrive()
 	{
 		IDriveInfo? driveInfo = null;
@@ -168,4 +170,6 @@ public abstract partial class Tests<TFileSystem>
 
 		return driveInfo ?? throw new NotSupportedException("No unmapped drive found!");
 	}
+
+	#endregion
 }

@@ -67,22 +67,6 @@ public abstract partial class MoveTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Move_SourceAndDestinationIdentical_ShouldThrowIOException(string path)
-	{
-		FileSystem.Initialize()
-		   .WithSubdirectory(path);
-
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Directory.Move(path, path);
-		});
-
-		exception.Should().BeOfType<IOException>()
-		   .Which.HResult.Should().Be(-2146232800);
-	}
-
-	[SkippableTheory]
-	[AutoData]
 	public void Move_DestinationDoesNotExist_ShouldThrowDirectoryNotFoundException(
 		string source)
 	{
@@ -178,6 +162,22 @@ public abstract partial class MoveTests<TFileSystem>
 		lastWriteTime.Should()
 		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 		   .BeOnOrBefore(creationTimeEnd);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Move_SourceAndDestinationIdentical_ShouldThrowIOException(string path)
+	{
+		FileSystem.Initialize()
+		   .WithSubdirectory(path);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.Directory.Move(path, path);
+		});
+
+		exception.Should().BeOfType<IOException>()
+		   .Which.HResult.Should().Be(-2146232800);
 	}
 
 	[SkippableTheory]
