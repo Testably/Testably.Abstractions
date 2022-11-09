@@ -1,12 +1,12 @@
-﻿#if NET6_0_OR_GREATER
-using Microsoft.Win32.SafeHandles;
-#endif
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
+#if NET6_0_OR_GREATER
+using Microsoft.Win32.SafeHandles;
+#endif
 
 namespace Testably.Abstractions.Testing.Tests;
 
@@ -94,23 +94,6 @@ public class MockFileSystemTests
 
 	[SkippableTheory]
 	[AutoData]
-	public void UncDrive_WriteBytes_ShouldReduceAvailableFreeSpace(
-		string server, string path, byte[] bytes)
-	{
-		MockFileSystem sut = new();
-		string uncPrefix = new(sut.Path.DirectorySeparatorChar, 2);
-		string uncDrive = $"{uncPrefix}{server}";
-		sut.WithUncDrive(uncDrive);
-		IDriveInfo drive = sut.DriveInfo.New(uncDrive);
-		long previousFreeSpace = drive.AvailableFreeSpace;
-
-		sut.File.WriteAllBytes(Path.Combine(uncDrive, path), bytes);
-
-		drive.AvailableFreeSpace.Should().Be(previousFreeSpace - bytes.Length);
-	}
-
-	[SkippableTheory]
-	[AutoData]
 	public void WithAccessControl_Denied_CreateDirectoryShouldThrowIOException(
 		string path)
 	{
@@ -144,6 +127,23 @@ public class MockFileSystemTests
 		exception.Should().BeOfType<IOException>();
 	}
 
+	[SkippableTheory]
+	[InlineData("D:\\")]
+	public void WithDrive_Duplicate_ShouldUpdateExistingDrive(string driveName)
+	{
+		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
+
+		MockFileSystem sut = new();
+		sut.WithDrive(driveName, d => d.SetTotalSize(100));
+		sut.DriveInfo.GetDrives().Length.Should().Be(2);
+		IDriveInfo drive = sut.DriveInfo.GetDrives().Single(x => x.Name == driveName);
+		drive.TotalSize.Should().Be(100);
+
+		sut.WithDrive(driveName, d => d.SetTotalSize(200));
+		sut.DriveInfo.GetDrives().Length.Should().Be(2);
+		drive.TotalSize.Should().Be(200);
+	}
+
 	[SkippableFact]
 	public void WithDrive_ExistingName_ShouldUpdateDrive()
 	{
@@ -162,6 +162,7 @@ public class MockFileSystemTests
 	public void WithDrive_NewName_ShouldCreateNewDrives(string driveName)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
+
 		MockFileSystem sut = new();
 		sut.WithDrive(driveName);
 
@@ -183,6 +184,67 @@ public class MockFileSystemTests
 		drive.TotalSize.Should().Be(totalSize);
 		drive.TotalFreeSpace.Should().Be(totalSize);
 		drive.AvailableFreeSpace.Should().Be(totalSize);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void WithUncDrive_ShouldCreateUncDrive(
+		string path, string contents)
+	{
+		MockFileSystem sut = new();
+		sut.WithUncDrive("UNC-Path");
+		string fullPath = sut.Path.Combine("//UNC-Path", path);
+		sut.File.WriteAllText(fullPath, contents);
+
+		string result = sut.File.ReadAllText(fullPath);
+		result.Should().Be(contents);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void WithUncDrive_ShouldNotBeIncludedInGetDrives(
+		string server, string path, byte[] bytes)
+	{
+		MockFileSystem sut = new();
+		string uncPrefix = new(sut.Path.DirectorySeparatorChar, 2);
+		string uncDrive = $"{uncPrefix}{server}";
+
+		sut.WithUncDrive(uncDrive);
+
+		sut.Directory.GetLogicalDrives().Length.Should().Be(1);
+		sut.DriveInfo.GetDrives().Length.Should().Be(1);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void WithUncDrive_WriteBytes_ShouldReduceAvailableFreeSpace(
+		string server, string path, byte[] bytes)
+	{
+		MockFileSystem sut = new();
+		string uncPrefix = new(sut.Path.DirectorySeparatorChar, 2);
+		string uncDrive = $"{uncPrefix}{server}";
+		sut.WithUncDrive(uncDrive);
+		IDriveInfo drive = sut.DriveInfo.New(uncDrive);
+		long previousFreeSpace = drive.AvailableFreeSpace;
+
+		sut.File.WriteAllBytes(Path.Combine(uncDrive, path), bytes);
+
+		drive.AvailableFreeSpace.Should().Be(previousFreeSpace - bytes.Length);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void WriteAllText_OnUncPath_ShouldThrowDirectoryNotFoundException(
+		string path, string contents)
+	{
+		MockFileSystem sut = new();
+		string fullPath = sut.Path.Combine("//UNC-Path", path);
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.File.WriteAllText(fullPath, contents);
+		});
+
+		exception.Should().BeOfType<DirectoryNotFoundException>();
 	}
 
 #if NET6_0_OR_GREATER
@@ -220,33 +282,4 @@ public class MockFileSystemTests
 		   .Which.ParamName.Should().Be("handle");
 	}
 #endif
-
-	[SkippableTheory]
-	[AutoData]
-	public void WithUncDrive_ShouldCreateUncDrive(
-		string path, string contents)
-	{
-		MockFileSystem sut = new();
-		sut.WithUncDrive("UNC-Path");
-		string fullPath = sut.Path.Combine("//UNC-Path", path);
-		sut.File.WriteAllText(fullPath, contents);
-
-		string result = sut.File.ReadAllText(fullPath);
-		result.Should().Be(contents);
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void WriteAllText_OnUncPath_ShouldThrowDirectoryNotFoundException(
-		string path, string contents)
-	{
-		MockFileSystem sut = new();
-		string fullPath = sut.Path.Combine("//UNC-Path", path);
-		Exception? exception = Record.Exception(() =>
-		{
-			sut.File.WriteAllText(fullPath, contents);
-		});
-
-		exception.Should().BeOfType<DirectoryNotFoundException>();
-	}
 }

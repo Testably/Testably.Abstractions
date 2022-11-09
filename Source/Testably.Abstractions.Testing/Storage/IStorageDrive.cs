@@ -10,6 +10,11 @@ namespace Testably.Abstractions.Testing.Storage;
 public interface IStorageDrive : IDriveInfo
 {
 	/// <summary>
+	///     Flag indicating if the drive is a UNC drive
+	/// </summary>
+	bool IsUncPath { get; }
+
+	/// <summary>
 	///     Changes the currently used bytes by <paramref name="usedBytesDelta" />.
 	///     <para />
 	///     Throws an <see cref="IOException" /> if the <see cref="IDriveInfo.AvailableFreeSpace" /> becomes

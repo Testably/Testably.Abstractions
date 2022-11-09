@@ -1,5 +1,7 @@
 <Project>
 
+  <Import Project="$(MSBuildThisFileDirectory)/../Directory.Build.props"
+          Condition="Exists('$(MSBuildThisFileDirectory)/../Directory.Build.props')" />
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Feature.Flags.props', '$(MSBuildThisFileDirectory)/../'))" />
 
   <PropertyGroup>

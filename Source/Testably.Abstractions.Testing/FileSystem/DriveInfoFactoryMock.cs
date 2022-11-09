@@ -25,6 +25,7 @@ internal sealed class DriveInfoFactoryMock : IDriveInfoFactory
 	/// <inheritdoc cref="IDriveInfoFactory.GetDrives()" />
 	public IDriveInfo[] GetDrives()
 		=> _fileSystem.Storage.GetDrives()
+		   .Where(x => !x.IsUncPath)
 		   .Cast<IDriveInfo>()
 		   .ToArray();
 
