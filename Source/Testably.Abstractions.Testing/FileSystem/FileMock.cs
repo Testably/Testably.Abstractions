@@ -537,7 +537,7 @@ internal sealed class FileMock : IFile
 
 			return null;
 		}
-		catch (IOException)
+		catch (IOException ex) when (ex.HResult != -2147024773)
 		{
 			throw ExceptionFactory.FileNameCannotBeResolved(linkPath,
 				Execute.IsWindows ? -2147022975 : -2146232800);

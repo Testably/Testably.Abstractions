@@ -11,40 +11,6 @@ public abstract partial class ExceptionTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	[SkippableTheory]
-	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks),
-		parameters: "Illegal\tCharacter?InPath")]
-	public void
-		Operations_ShouldNotThrowAnyExceptionIfPathContainsIllegalCharactersOnWindows(
-			Expression<Action<IDirectoryInfoFactory>> callback, string paramName)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			callback.Compile().Invoke(FileSystem.DirectoryInfo);
-		});
-
-		if (!Test.RunsOnWindows)
-		{
-			if (exception is IOException ioException)
-			{
-				ioException.HResult.Should().NotBe(-2147024809);
-			}
-		}
-		else
-		{
-			if (Test.IsNetFramework)
-			{
-				exception.Should().BeOfType<ArgumentException>()
-				   .Which.HResult.Should().Be(-2147024809);
-			}
-			else
-			{
-				exception.Should().BeOfType<IOException>()
-				   .Which.HResult.Should().Be(-2147024773);
-			}
-		}
-	}
-
 	[Theory]
 	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks), parameters: "")]
 	public void Operations_ShouldThrowArgumentExceptionIfPathIsEmpty(
@@ -119,7 +85,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 			Expression<Action<IDirectoryInfoFactory>> Callback)>
 		GetDirectoryInfoFactoryCallbackTestParameters(string value)
 	{
-		yield return (ExceptionTestHelper.TestTypes.All, "path", directoryInfoFactory
+		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "path", directoryInfoFactory
 			=> directoryInfoFactory.New(value));
 	}
 

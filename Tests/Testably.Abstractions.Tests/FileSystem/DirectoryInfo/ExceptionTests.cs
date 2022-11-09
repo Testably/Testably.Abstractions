@@ -43,14 +43,17 @@ public abstract partial class ExceptionTests<TFileSystem>
 			callback.Compile().Invoke(FileSystem.DirectoryInfo.New("foo"));
 		});
 
-		if (!Test.IsNetFramework)
+		if (Test.IsNetFramework)
+		{
+			exception.Should().BeNull();
+		}
+		else
 		{
 			exception.Should().BeOfType<ArgumentException>()
 			   .Which.ParamName.Should().Be(paramName);
+			exception.Should().BeOfType<ArgumentException>()
+			   .Which.HResult.Should().Be(-2147024809);
 		}
-
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
 	}
 
 	[Theory]
@@ -119,10 +122,10 @@ public abstract partial class ExceptionTests<TFileSystem>
 			Expression<Action<IDirectoryInfo>> Callback)>
 		GetDirectoryInfoCallbackTestParameters(string value)
 	{
-		yield return (ExceptionTestHelper.TestTypes.AllExceptWhitespace, "path",
+		yield return (ExceptionTestHelper.TestTypes.Whitespace |  ExceptionTestHelper.TestTypes.InvalidPath, "path",
 			directoryInfo
 				=> directoryInfo.CreateSubdirectory(value));
-		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "destDirName",
+		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "destDirName",
 			directoryInfo
 				=> directoryInfo.MoveTo(value));
 	}

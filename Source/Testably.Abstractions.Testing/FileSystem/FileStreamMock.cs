@@ -38,7 +38,13 @@ internal sealed class FileStreamMock : FileSystemStream
 	                        FileShare share = FileShare.Read,
 	                        int bufferSize = 4096,
 	                        FileOptions options = FileOptions.None)
-		: this(new MemoryStream(), fileSystem, path, mode, access, share, bufferSize,
+		: this(new MemoryStream(),
+			fileSystem,
+			path.EnsureValidFormat(fileSystem, nameof(path)),
+			mode,
+			access,
+			share,
+			bufferSize,
 			options)
 	{
 	}

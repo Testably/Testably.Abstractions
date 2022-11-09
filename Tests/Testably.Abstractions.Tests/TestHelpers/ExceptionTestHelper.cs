@@ -51,6 +51,8 @@ internal static class ExceptionTestHelper
 		/// </summary>
 		InvalidPath = 8,
 
+		IgnoreParamNameCheck = 128,
+
 		NullOrEmpty = Null | Empty,
 		NullOrInvalidPath = Null | InvalidPath,
 		All = Null | Empty | Whitespace | InvalidPath,

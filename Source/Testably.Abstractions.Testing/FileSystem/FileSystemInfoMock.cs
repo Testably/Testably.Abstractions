@@ -180,7 +180,7 @@ internal class FileSystemInfoMock : IFileSystemInfo
 
 			return null;
 		}
-		catch (IOException)
+		catch (IOException ex) when (ex.HResult != -2147024773)
 		{
 			throw ExceptionFactory.FileNameCannotBeResolved(Location.FullPath,
 				Execute.IsWindows ? -2147022975 : -2146232800);

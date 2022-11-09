@@ -50,12 +50,11 @@ internal sealed class DirectoryInfoMock
 	/// <inheritdoc cref="IDirectoryInfo.CreateSubdirectory(string)" />
 	public IDirectoryInfo CreateSubdirectory(string path)
 	{
-		path.EnsureValidFormat(FileSystem);
-
 		DirectoryInfoMock directory = New(
 			FileSystem.Storage.GetLocation(
 				FileSystem.Path.Combine(FullName, path
-			   .EnsureValidFormat(FileSystem, nameof(path)))),
+			   .EnsureValidFormat(FileSystem, nameof(path),
+						Execute.IsWindows && !Execute.IsNetFramework))),
 			FileSystem);
 		directory.Create();
 		return directory;

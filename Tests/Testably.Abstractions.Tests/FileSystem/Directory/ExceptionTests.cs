@@ -201,14 +201,14 @@ public abstract partial class ExceptionTests<TFileSystem>
 		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "path",
 			directory
 				=> directory.GetParent(value));
-		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "sourceDirName",
+		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "sourceDirName",
 			directory
 				=> directory.Move(value, "foo"));
-		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "destDirName",
+		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "destDirName",
 			directory
 				=> directory.Move("foo", value));
 #if FEATURE_FILESYSTEM_LINK
-		yield return (ExceptionTestHelper.TestTypes.All, "linkPath", directory
+		yield return (ExceptionTestHelper.TestTypes.AllExceptWhitespace, "linkPath", directory
 			=> directory.ResolveLinkTarget(value, false));
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path", directory

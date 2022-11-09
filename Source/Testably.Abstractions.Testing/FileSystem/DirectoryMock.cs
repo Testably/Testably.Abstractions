@@ -288,7 +288,9 @@ internal sealed class DirectoryMock : IDirectory
 
 	/// <inheritdoc cref="IDirectory.GetParent(string)" />
 	public IDirectoryInfo? GetParent(string path)
-		=> _fileSystem.DirectoryInfo.New(path).Parent;
+		=> _fileSystem.DirectoryInfo
+		   .New(path.EnsureValidArgument(_fileSystem, nameof(path)))
+		   .Parent;
 
 	/// <inheritdoc cref="IDirectory.Move(string, string)" />
 	public void Move(string sourceDirName, string destDirName)
