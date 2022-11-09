@@ -77,7 +77,7 @@ internal sealed class FileInfoMock
 		IStorageLocation location = FileSystem.Storage.Copy(
 			                            Location,
 			                            FileSystem.Storage.GetLocation(destFileName
-				                           .EnsureValidFormat(FileSystem,
+				                           .EnsureValidArgument(FileSystem,
 					                            nameof(destFileName))))
 		                            ?? throw ExceptionFactory.FileNotFound(FullName);
 		return FileSystem.FileInfo.New(location.FullPath);
@@ -89,7 +89,7 @@ internal sealed class FileInfoMock
 		IStorageLocation location = FileSystem.Storage.Copy(
 			                            Location,
 			                            FileSystem.Storage.GetLocation(destFileName
-				                           .EnsureValidFormat(FileSystem,
+				                           .EnsureValidArgument(FileSystem,
 					                            nameof(destFileName))),
 			                            overwrite)
 		                            ?? throw ExceptionFactory.FileNotFound(FullName);
@@ -120,7 +120,7 @@ internal sealed class FileInfoMock
 		Location = FileSystem.Storage.Move(
 			           Location,
 			           FileSystem.Storage.GetLocation(destFileName
-				          .EnsureValidFormat(FileSystem, nameof(destFileName))))
+				          .EnsureValidArgument(FileSystem, nameof(destFileName))))
 		           ?? throw ExceptionFactory.FileNotFound(FullName);
 	}
 
@@ -131,7 +131,7 @@ internal sealed class FileInfoMock
 		Location = FileSystem.Storage.Move(
 			           Location,
 			           FileSystem.Storage.GetLocation(destFileName
-				          .EnsureValidFormat(FileSystem, nameof(destFileName))),
+				          .EnsureValidArgument(FileSystem, nameof(destFileName))),
 			           overwrite)
 		           ?? throw ExceptionFactory.FileNotFound(FullName);
 	}
@@ -204,7 +204,7 @@ internal sealed class FileInfoMock
 			                            Location,
 			                            FileSystem.Storage.GetLocation(
 				                            destinationFileName
-					                           .EnsureValidFormat(FileSystem,
+					                           .EnsureValidArgument(FileSystem,
 						                            nameof(destinationFileName))),
 			                            FileSystem.Storage.GetLocation(
 				                            destinationBackupFileName))
@@ -221,7 +221,7 @@ internal sealed class FileInfoMock
 			                            Location,
 			                            FileSystem.Storage.GetLocation(
 				                            destinationFileName
-					                           .EnsureValidFormat(FileSystem,
+					                           .EnsureValidArgument(FileSystem,
 						                            nameof(destinationFileName))),
 			                            FileSystem.Storage.GetLocation(
 				                            destinationBackupFileName),

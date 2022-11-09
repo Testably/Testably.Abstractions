@@ -49,6 +49,13 @@ internal static class PathHelper
 		return path;
 	}
 
+	internal static string EnsureValidArgument(
+		[NotNull] this string? path, IFileSystem fileSystem, string? paramName = null)
+	{
+		CheckPathArgument(path, paramName ?? nameof(path), Execute.IsWindows);
+		return path;
+	}
+
 	internal static void ThrowCommonExceptionsIfPathToTargetIsInvalid(
 		[NotNull] this string? pathToTarget, IFileSystem fileSystem)
 	{

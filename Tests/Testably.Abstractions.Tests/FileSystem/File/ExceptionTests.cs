@@ -87,7 +87,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 			=> file.AppendAllTextAsync(value, "foo", Encoding.UTF8,
 				CancellationToken.None));
 #endif
-		yield return (ExceptionTestHelper.TestTypes.Null | ExceptionTestHelper.TestTypes.InvalidPath, "path", file
+		yield return (ExceptionTestHelper.TestTypes.NullOrInvalidPath, "path", file
 			=> file.AppendText(value));
 		yield return (ExceptionTestHelper.TestTypes.All, "sourceFileName", file
 			=> file.Copy(value, "foo"));
@@ -107,7 +107,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.CreateSymbolicLink(value, "foo"));
 #endif
-		yield return (ExceptionTestHelper.TestTypes.Null | ExceptionTestHelper.TestTypes.InvalidPath, "path", file
+		yield return (ExceptionTestHelper.TestTypes.NullOrInvalidPath, "path", file
 			=> file.CreateText(value));
 
 		if (Test.RunsOnWindows)
@@ -165,7 +165,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.OpenRead(value));
-		yield return (ExceptionTestHelper.TestTypes.Null | ExceptionTestHelper.TestTypes.InvalidPath, "path", file
+		yield return (ExceptionTestHelper.TestTypes.NullOrInvalidPath, "path", file
 			=> file.OpenText(value));
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.OpenWrite(value));

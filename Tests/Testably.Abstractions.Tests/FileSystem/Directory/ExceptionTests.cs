@@ -45,10 +45,39 @@ public abstract partial class ExceptionTests<TFileSystem>
 		   .Which.ParamName.Should().Be(paramName);
 	}
 
+	#region Helpers
+
+	public static IEnumerable<object[]> GetDirectoryCallbacks(string? path)
+		=> GetDirectoryCallbackTestParameters(path!)
+		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
+		   .Select(item => new object[] { item.Callback, item.ParamName });
+
+	[SkippableTheory]
+	[MemberData(nameof(GetDirectoryCallbacks), parameters: "  ")]
+	public void Operations_ShouldThrowArgumentExceptionIfPathIsWhitespace(
+		Expression<Action<IDirectory>> callback, string paramName)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			callback.Compile().Invoke(FileSystem.Directory);
+		});
+
+		if (!Test.IsNetFramework)
+		{
+			exception.Should().BeOfType<ArgumentException>()
+			   .Which.ParamName.Should().Be(paramName);
+		}
+
+		exception.Should().BeOfType<ArgumentException>()
+		   .Which.HResult.Should().Be(-2147024809);
+	}
+
 	[SkippableTheory]
 	[MemberData(nameof(GetDirectoryCallbacks), parameters: "Illegal\tCharacter?InPath")]
 	public void
-		Operations_ShouldThrowArgumentExceptionIfPathContainsIllegalCharactersOnWindows(
+		Operations_ShouldThrowCorrectExceptionIfPathContainsIllegalCharactersOnWindows(
 			Expression<Action<IDirectory>> callback, string paramName)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -78,13 +107,6 @@ public abstract partial class ExceptionTests<TFileSystem>
 		}
 	}
 
-	#region Helpers
-
-	public static IEnumerable<object[]> GetDirectoryCallbacks(string? path)
-		=> GetDirectoryCallbackTestParameters(path!)
-		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
-		   .Select(item => new object[] { item.Callback, item.ParamName });
-	
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
 			Expression<Action<IDirectory>> Callback)>
 		GetDirectoryCallbackTestParameters(string value)
@@ -94,7 +116,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 #if FEATURE_FILESYSTEM_LINK
 		yield return (ExceptionTestHelper.TestTypes.All, "path", directory
 			=> directory.CreateSymbolicLink(value, "foo"));
-		yield return (ExceptionTestHelper.TestTypes.Null | ExceptionTestHelper.TestTypes.Empty, "pathToTarget", directory
+		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "pathToTarget", directory
 			=> directory.CreateSymbolicLink("foo", value));
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path", directory
@@ -176,12 +198,15 @@ public abstract partial class ExceptionTests<TFileSystem>
 			=> directory.GetLastWriteTime(value));
 		yield return (ExceptionTestHelper.TestTypes.All, "path", directory
 			=> directory.GetLastWriteTimeUtc(value));
-		yield return (ExceptionTestHelper.TestTypes.Null | ExceptionTestHelper.TestTypes.Empty, "path", directory
-			=> directory.GetParent(value));
-		yield return (ExceptionTestHelper.TestTypes.Null | ExceptionTestHelper.TestTypes.Empty, "sourceDirName", directory
-			=> directory.Move(value, "foo"));
-		yield return (ExceptionTestHelper.TestTypes.Null | ExceptionTestHelper.TestTypes.Empty, "destDirName", directory
-			=> directory.Move("foo", value));
+		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "path",
+			directory
+				=> directory.GetParent(value));
+		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "sourceDirName",
+			directory
+				=> directory.Move(value, "foo"));
+		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "destDirName",
+			directory
+				=> directory.Move("foo", value));
 #if FEATURE_FILESYSTEM_LINK
 		yield return (ExceptionTestHelper.TestTypes.All, "linkPath", directory
 			=> directory.ResolveLinkTarget(value, false));

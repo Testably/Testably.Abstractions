@@ -3,7 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Testably.Abstractions.FileSystem;
 
-namespace Testably.Abstractions.Tests.FileSystem.DriveInfoFactory;
+namespace Testably.Abstractions.Tests.FileSystem.FileInfoFactory;
 
 // ReSharper disable once PartialTypeWithSinglePart
 public abstract partial class ExceptionTests<TFileSystem>
@@ -11,13 +11,13 @@ public abstract partial class ExceptionTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[Theory]
-	[MemberData(nameof(GetDriveInfoFactoryCallbacks), parameters: "")]
+	[MemberData(nameof(GetFileInfoFactoryCallbacks), parameters: "")]
 	public void Operations_ShouldThrowArgumentExceptionIfPathIsEmpty(
-		Expression<Action<IDriveInfoFactory>> callback, string? paramName)
+		Expression<Action<IFileInfoFactory>> callback, string? paramName)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
-			callback.Compile().Invoke(FileSystem.DriveInfo);
+			callback.Compile().Invoke(FileSystem.FileInfo);
 		});
 
 		if (!Test.IsNetFramework && paramName != null)
@@ -31,13 +31,13 @@ public abstract partial class ExceptionTests<TFileSystem>
 	}
 
 	[Theory]
-	[MemberData(nameof(GetDriveInfoFactoryCallbacks), parameters: (string?)null)]
+	[MemberData(nameof(GetFileInfoFactoryCallbacks), parameters: (string?)null)]
 	public void Operations_ShouldThrowArgumentNullExceptionIfPathIsNull(
-		Expression<Action<IDriveInfoFactory>> callback, string? paramName)
+		Expression<Action<IFileInfoFactory>> callback, string? paramName)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
-			callback.Compile().Invoke(FileSystem.DriveInfo);
+			callback.Compile().Invoke(FileSystem.FileInfo);
 		});
 
 		if (paramName == null)
@@ -51,35 +51,21 @@ public abstract partial class ExceptionTests<TFileSystem>
 		}
 	}
 
-	[SkippableTheory]
-	[InlineData("?invalid-drive-name")]
-	[InlineData("invalid")]
-	[InlineData(" ")]
-	public void New_ShouldThrowArgumentExceptionIfDriveNameIsInvalid(
-		string driveName)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.DriveInfo.New(driveName);
-		});
-
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
-	}
-
 	#region Helpers
 
-	public static IEnumerable<object?[]> GetDriveInfoFactoryCallbacks(string? path)
-		=> GetDriveInfoFactoryCallbackTestParameters(path!)
+	public static IEnumerable<object?[]> GetFileInfoFactoryCallbacks(string? path)
+		=> GetFileInfoFactoryCallbackTestParameters(path!)
 		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
 		   .Select(item => new object?[] { item.Callback, item.ParamName });
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string? ParamName,
-			Expression<Action<IDriveInfoFactory>> Callback)>
-		GetDriveInfoFactoryCallbackTestParameters(string value)
+			Expression<Action<IFileInfoFactory>> Callback)>
+		GetFileInfoFactoryCallbackTestParameters(string value)
 	{
-		yield return (ExceptionTestHelper.TestTypes.All, "driveName", driveInfoFactory
-			=> driveInfoFactory.New(value));
+		yield return (ExceptionTestHelper.TestTypes.Empty, "path", fileInfoFactory
+			=> fileInfoFactory.New(value));
+		yield return (ExceptionTestHelper.TestTypes.Null, "fileName", fileInfoFactory
+			=> fileInfoFactory.New(value));
 	}
 
 	#endregion
