@@ -63,10 +63,10 @@ public class InitializationTests
 		MockFileSystem fileSystem = new();
 		fileSystem.DriveInfo.GetDrives().Should().HaveCount(1);
 
-		fileSystem.WithUncDrive(@"\\unc-server");
+		fileSystem.WithUncDrive(@"//unc-server");
 
 		fileSystem.DriveInfo.GetDrives().Should().HaveCount(1);
-		IDriveInfo drive = fileSystem.DriveInfo.New(@"\\unc-server");
+		IDriveInfo drive = fileSystem.DriveInfo.New(@"//unc-server");
 		drive.IsReady.Should().BeTrue();
 
 		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
