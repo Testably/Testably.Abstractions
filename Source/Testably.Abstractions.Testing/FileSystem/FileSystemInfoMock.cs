@@ -99,7 +99,8 @@ internal class FileSystemInfoMock : IFileSystemInfo
 		get
 		{
 			RefreshInternal();
-			_exists ??= Container is not NullContainer;
+			_exists ??= !string.IsNullOrWhiteSpace(Location.FriendlyName) &&
+			            Container is not NullContainer;
 			return _exists.Value;
 		}
 	}

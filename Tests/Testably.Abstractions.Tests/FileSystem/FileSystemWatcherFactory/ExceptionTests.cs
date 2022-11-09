@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using Testably.Abstractions.FileSystem;
 
-namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfoFactory;
+namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcherFactory;
 
 // ReSharper disable once PartialTypeWithSinglePart
 public abstract partial class ExceptionTests<TFileSystem>
@@ -11,13 +12,13 @@ public abstract partial class ExceptionTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[Theory]
-	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks), parameters: "")]
+	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), parameters: "")]
 	public void Operations_ShouldThrowArgumentExceptionIfPathIsEmpty(
-		Expression<Action<IDirectoryInfoFactory>> callback, string paramName, bool ignoreParamCheck)
+		Expression<Action<IFileSystemWatcherFactory>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
-			callback.Compile().Invoke(FileSystem.DirectoryInfo);
+			callback.Compile().Invoke(FileSystem.FileSystemWatcher);
 		});
 
 		if (!Test.IsNetFramework && !ignoreParamCheck)
@@ -31,18 +32,18 @@ public abstract partial class ExceptionTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks), parameters: "  ")]
+	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), parameters: "  ")]
 	public void Operations_ShouldThrowArgumentExceptionIfPathIsWhitespace(
-		Expression<Action<IDirectoryInfoFactory>> callback, string paramName, bool ignoreParamCheck)
+		Expression<Action<IFileSystemWatcherFactory>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
 		Exception? exception = Record.Exception(() =>
 		{
-			callback.Compile().Invoke(FileSystem.DirectoryInfo);
+			callback.Compile().Invoke(FileSystem.FileSystemWatcher);
 		});
 
-		if (!Test.IsNetFramework && !ignoreParamCheck)
+		if (!Test.IsNetFramework)
 		{
 			exception.Should().BeOfType<ArgumentException>()
 			   .Which.ParamName.Should().Be(paramName);
@@ -53,13 +54,13 @@ public abstract partial class ExceptionTests<TFileSystem>
 	}
 
 	[Theory]
-	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks), parameters: (string?)null)]
+	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), parameters: (string?)null)]
 	public void Operations_ShouldThrowArgumentNullExceptionIfPathIsNull(
-		Expression<Action<IDirectoryInfoFactory>> callback, string paramName, bool ignoreParamCheck)
+		Expression<Action<IFileSystemWatcherFactory>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
-			callback.Compile().Invoke(FileSystem.DirectoryInfo);
+			callback.Compile().Invoke(FileSystem.FileSystemWatcher);
 		});
 
 		if (ignoreParamCheck)
@@ -74,32 +75,35 @@ public abstract partial class ExceptionTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks),
+	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks),
 		parameters: "Illegal\tCharacter?InPath")]
 	public void
 		Operations_ShouldThrowCorrectExceptionIfPathContainsIllegalCharactersOnWindows(
-			Expression<Action<IDirectoryInfoFactory>> callback, string paramName, bool ignoreParamCheck)
+			Expression<Action<IFileSystemWatcherFactory>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
-			callback.Compile().Invoke(FileSystem.DirectoryInfo);
+			callback.Compile().Invoke(FileSystem.FileSystemWatcher);
 		});
 
-		if (Test.IsNetFramework)
+		if (!Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<ArgumentException>()
-			   .Which.HResult.Should().Be(-2147024809);
+			if (exception is IOException ioException)
+			{
+				ioException.HResult.Should().NotBe(-2147024809);
+			}
 		}
 		else
 		{
-			exception.Should().BeNull();
+			exception.Should().BeOfType<ArgumentException>()
+			   .Which.HResult.Should().Be(-2147024809);
 		}
 	}
 
 	#region Helpers
 
-	public static IEnumerable<object?[]> GetDirectoryInfoFactoryCallbacks(string? path)
-		=> GetDirectoryInfoFactoryCallbackTestParameters(path!)
+	public static IEnumerable<object?[]> GetFileSystemWatcherFactoryCallbacks(string? path)
+		=> GetFileSystemWatcherFactoryCallbackTestParameters(path!)
 		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
 		   .Select(item => new object?[]
 			{
@@ -109,11 +113,13 @@ public abstract partial class ExceptionTests<TFileSystem>
 			});
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string? ParamName,
-			Expression<Action<IDirectoryInfoFactory>> Callback)>
-		GetDirectoryInfoFactoryCallbackTestParameters(string value)
+			Expression<Action<IFileSystemWatcherFactory>> Callback)>
+		GetFileSystemWatcherFactoryCallbackTestParameters(string value)
 	{
-		yield return (ExceptionTestHelper.TestTypes.All, "path", directoryInfoFactory
-			=> directoryInfoFactory.New(value));
+		yield return (ExceptionTestHelper.TestTypes.All, "path", fileSystemWatcherFactory
+			=> fileSystemWatcherFactory.New(value));
+		yield return (ExceptionTestHelper.TestTypes.All, "path", fileSystemWatcherFactory
+			=> fileSystemWatcherFactory.New(value, "*"));
 	}
 
 	#endregion

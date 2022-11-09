@@ -51,11 +51,15 @@ internal static class ExceptionTestHelper
 		/// </summary>
 		InvalidPath = 8,
 
+		/// <summary>
+		///     If set, the check for correct <see cref="ArgumentException.ParamName" /> should be ignored.
+		/// </summary>
 		IgnoreParamNameCheck = 128,
 
 		NullOrEmpty = Null | Empty,
 		NullOrInvalidPath = Null | InvalidPath,
 		All = Null | Empty | Whitespace | InvalidPath,
+		AllExceptNull = All & ~Null,
 		AllExceptWhitespace = All & ~Whitespace,
 		AllExceptInvalidPath = All & ~InvalidPath
 	}

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
@@ -29,7 +30,7 @@ internal sealed class
 	{
 		FileSystemWatcherMock fileSystemWatcherMock =
 			FileSystemWatcherMock.New(_fileSystem);
-		fileSystemWatcherMock.Path = path;
+		fileSystemWatcherMock.Path = path.EnsureValidArgument(_fileSystem);
 		return fileSystemWatcherMock;
 	}
 
@@ -38,7 +39,7 @@ internal sealed class
 	{
 		FileSystemWatcherMock fileSystemWatcherMock =
 			FileSystemWatcherMock.New(_fileSystem);
-		fileSystemWatcherMock.Path = path;
+		fileSystemWatcherMock.Path = path.EnsureValidArgument(_fileSystem);
 		fileSystemWatcherMock.Filter = filter;
 		return fileSystemWatcherMock;
 	}

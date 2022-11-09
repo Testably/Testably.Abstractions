@@ -58,4 +58,12 @@ public abstract partial class ExistsTests<TFileSystem>
 
 		result.Should().BeFalse();
 	}
+
+	[SkippableFact]
+	public void Exists_Whitespace_ShouldReturnFalse()
+	{
+		bool result = FileSystem.Directory.Exists("  ");
+
+		result.Should().BeFalse();
+	}
 }
