@@ -99,7 +99,8 @@ internal class FileSystemInfoMock : IFileSystemInfo
 		get
 		{
 			RefreshInternal();
-			_exists ??= Container is not NullContainer;
+			_exists ??= !string.IsNullOrWhiteSpace(Location.FriendlyName) &&
+			            Container is not NullContainer;
 			return _exists.Value;
 		}
 	}
@@ -180,7 +181,7 @@ internal class FileSystemInfoMock : IFileSystemInfo
 
 			return null;
 		}
-		catch (IOException)
+		catch (IOException ex) when (ex.HResult != -2147024773)
 		{
 			throw ExceptionFactory.FileNameCannotBeResolved(Location.FullPath,
 				Execute.IsWindows ? -2147022975 : -2146232800);

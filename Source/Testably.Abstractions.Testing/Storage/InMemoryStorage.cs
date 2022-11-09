@@ -220,14 +220,19 @@ internal sealed class InMemoryStorage : IStorage
 	/// <inheritdoc cref="IStorage.GetDrive(string?)" />
 	public IStorageDrive? GetDrive(string? driveName)
 	{
+		if (string.IsNullOrWhiteSpace(driveName))
+		{
+			return null;
+		}
+
 		if (!driveName.IsUncPath())
 		{
 			driveName = _fileSystem.Path.GetPathRoot(driveName);
-		}
 
-		if (string.IsNullOrEmpty(driveName))
-		{
-			return null;
+			if (string.IsNullOrEmpty(driveName))
+			{
+				return null;
+			}
 		}
 
 		DriveInfoMock drive = DriveInfoMock.New(driveName, _fileSystem);

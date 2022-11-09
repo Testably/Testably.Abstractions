@@ -117,25 +117,6 @@ public abstract partial class Tests<TFileSystem>
 
 		fileSystemWatcher.InternalBufferSize.Should().Be(expectedBytes);
 	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void Path_SetToNotExistingPath_ShouldThrowArgumentException(string path)
-	{
-		IFileSystemWatcher fileSystemWatcher =
-			FileSystem.FileSystemWatcher.New();
-
-		Exception? exception = Record.Exception(() =>
-		{
-			fileSystemWatcher.Path = path;
-		});
-
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.Message.Should().Contain(path);
-	}
-
 	[SkippableFact]
 	public void Site_ShouldBeInitializedWithNull()
 	{

@@ -110,8 +110,10 @@ internal sealed class FileMock : IFile
 	{
 		try
 		{
-			_fileSystem.FileInfo.New(sourceFileName)
-			   .CopyTo(destFileName);
+			_fileSystem.FileInfo.New(sourceFileName
+				   .EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
+			   .CopyTo(destFileName
+				   .EnsureValidFormat(_fileSystem, nameof(destFileName)));
 		}
 		catch (UnauthorizedAccessException)
 		{
@@ -129,8 +131,11 @@ internal sealed class FileMock : IFile
 			{
 				try
 				{
-					_fileSystem.FileInfo.New(sourceFileName)
-					   .CopyTo(destFileName, overwrite);
+					_fileSystem.FileInfo.New(sourceFileName
+						   .EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
+					   .CopyTo(destFileName
+							   .EnsureValidFormat(_fileSystem, nameof(destFileName)),
+							overwrite);
 				}
 				catch (UnauthorizedAccessException)
 				{
@@ -139,8 +144,10 @@ internal sealed class FileMock : IFile
 			},
 			() =>
 			{
-				_fileSystem.FileInfo.New(sourceFileName)
-				   .CopyTo(destFileName, overwrite);
+				_fileSystem.FileInfo.New(sourceFileName
+					   .EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
+				   .CopyTo(destFileName
+					   .EnsureValidFormat(_fileSystem, nameof(destFileName)), overwrite);
 			});
 
 	/// <inheritdoc cref="IFile.Create(string)" />
@@ -299,14 +306,18 @@ internal sealed class FileMock : IFile
 
 	/// <inheritdoc cref="IFile.Move(string, string)" />
 	public void Move(string sourceFileName, string destFileName)
-		=> _fileSystem.FileInfo.New(sourceFileName)
-		   .MoveTo(destFileName);
+		=> _fileSystem.FileInfo.New(sourceFileName
+			   .EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
+		   .MoveTo(destFileName
+			   .EnsureValidFormat(_fileSystem, nameof(destFileName)));
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
 	/// <inheritdoc cref="IFile.Move(string, string, bool)" />
 	public void Move(string sourceFileName, string destFileName, bool overwrite)
-		=> _fileSystem.FileInfo.New(sourceFileName)
-		   .MoveTo(destFileName, overwrite);
+		=> _fileSystem.FileInfo.New(sourceFileName
+			   .EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
+		   .MoveTo(destFileName
+			   .EnsureValidFormat(_fileSystem, nameof(destFileName)), overwrite);
 #endif
 
 	/// <inheritdoc cref="IFile.Open(string, FileMode)" />
@@ -489,16 +500,22 @@ internal sealed class FileMock : IFile
 	public void Replace(string sourceFileName,
 	                    string destinationFileName,
 	                    string? destinationBackupFileName)
-		=> _fileSystem.FileInfo.New(sourceFileName)
-		   .Replace(destinationFileName, destinationBackupFileName);
+		=> _fileSystem.FileInfo.New(sourceFileName
+			   .EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
+		   .Replace(destinationFileName
+				   .EnsureValidFormat(_fileSystem, nameof(destinationFileName)),
+				destinationBackupFileName);
 
 	/// <inheritdoc cref="IFile.Replace(string, string, string, bool)" />
 	public void Replace(string sourceFileName,
 	                    string destinationFileName,
 	                    string? destinationBackupFileName,
 	                    bool ignoreMetadataErrors)
-		=> _fileSystem.FileInfo.New(sourceFileName)
-		   .Replace(destinationFileName, destinationBackupFileName,
+		=> _fileSystem.FileInfo.New(sourceFileName
+			   .EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
+		   .Replace(destinationFileName
+				   .EnsureValidFormat(_fileSystem, nameof(destinationFileName)),
+				destinationBackupFileName,
 				ignoreMetadataErrors);
 
 #if FEATURE_FILESYSTEM_LINK
@@ -510,7 +527,9 @@ internal sealed class FileMock : IFile
 		{
 			IStorageLocation? targetLocation =
 				_fileSystem.Storage.ResolveLinkTarget(
-					_fileSystem.Storage.GetLocation(linkPath), returnFinalTarget);
+					_fileSystem.Storage.GetLocation(linkPath
+					   .EnsureValidFormat(_fileSystem, nameof(linkPath))),
+					returnFinalTarget);
 			if (targetLocation != null)
 			{
 				return FileSystemInfoMock.New(targetLocation, _fileSystem);
@@ -518,7 +537,7 @@ internal sealed class FileMock : IFile
 
 			return null;
 		}
-		catch (IOException)
+		catch (IOException ex) when (ex.HResult != -2147024773)
 		{
 			throw ExceptionFactory.FileNameCannotBeResolved(linkPath,
 				Execute.IsWindows ? -2147022975 : -2146232800);

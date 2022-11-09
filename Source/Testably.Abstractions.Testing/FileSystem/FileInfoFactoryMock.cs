@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.FileSystem;
+using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
@@ -26,6 +27,11 @@ internal sealed class FileInfoFactoryMock : IFileInfoFactory
 		if (fileName == null)
 		{
 			throw new ArgumentNullException(nameof(fileName));
+		}
+
+		if (fileName.Trim() == "" && Execute.IsWindows)
+		{
+			throw ExceptionFactory.PathIsEmpty("path");
 		}
 
 		return FileInfoMock.New(

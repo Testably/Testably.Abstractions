@@ -54,8 +54,8 @@ internal static class ExceptionFactory
 	internal static IOException CannotCreateFileWhenAlreadyExists(int hResult)
 		=> new("Cannot create a file when that file already exists.", hResult);
 
-	internal static ArgumentException DirectoryNameDoesNotExist(string path)
-		=> new($"The directory name '{path}' does not exist.", nameof(path))
+	internal static ArgumentException DirectoryNameDoesNotExist(string path, string paramName = "path")
+		=> new($"The directory name '{path}' does not exist.", paramName)
 		{
 #if FEATURE_EXCEPTION_HRESULT
 			HResult = -2147024809

@@ -50,10 +50,11 @@ internal sealed class DirectoryInfoMock
 	/// <inheritdoc cref="IDirectoryInfo.CreateSubdirectory(string)" />
 	public IDirectoryInfo CreateSubdirectory(string path)
 	{
-		path.EnsureValidFormat(FileSystem);
-
 		DirectoryInfoMock directory = New(
-			FileSystem.Storage.GetLocation(FileSystem.Path.Combine(FullName, path)),
+			FileSystem.Storage.GetLocation(
+				FileSystem.Path.Combine(FullName, path
+			   .EnsureValidFormat(FileSystem, nameof(path),
+						Execute.IsWindows && !Execute.IsNetFramework))),
 			FileSystem);
 		directory.Create();
 		return directory;
@@ -231,7 +232,8 @@ internal sealed class DirectoryInfoMock
 	public void MoveTo(string destDirName)
 		=> Location = FileSystem.Storage.Move(
 			              FileSystem.Storage.GetLocation(FullName),
-			              FileSystem.Storage.GetLocation(destDirName),
+			              FileSystem.Storage.GetLocation(destDirName
+				             .EnsureValidFormat(FileSystem, nameof(destDirName))),
 			              recursive: true)
 		              ?? throw ExceptionFactory.DirectoryNotFound(FullName);
 

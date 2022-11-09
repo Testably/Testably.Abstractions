@@ -122,9 +122,10 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		get => _path;
 		set
 		{
-			if (!_fileSystem.Directory.Exists(value))
+			if (!string.IsNullOrEmpty(value) &&
+			    !_fileSystem.Directory.Exists(value))
 			{
-				throw ExceptionFactory.DirectoryNameDoesNotExist(value);
+				throw ExceptionFactory.DirectoryNameDoesNotExist(value, nameof(Path));
 			}
 
 			_path = value;

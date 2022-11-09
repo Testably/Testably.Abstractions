@@ -42,10 +42,20 @@ internal static class PathHelper
 	}
 
 	internal static string EnsureValidFormat(
-		[NotNull] this string? path, IFileSystem fileSystem)
+		[NotNull] this string? path,
+		IFileSystem fileSystem,
+		string? paramName = null,
+		bool? includeIsEmptyCheck = null)
 	{
-		CheckPathArgument(path, nameof(path), Execute.IsWindows);
-		CheckPathCharacters(path, fileSystem, nameof(path), null);
+		CheckPathArgument(path, paramName ?? nameof(path), includeIsEmptyCheck ?? Execute.IsWindows);
+		CheckPathCharacters(path, fileSystem, paramName ?? nameof(path), null);
+		return path;
+	}
+
+	internal static string EnsureValidArgument(
+		[NotNull] this string? path, IFileSystem fileSystem, string? paramName = null)
+	{
+		CheckPathArgument(path, paramName ?? nameof(path), Execute.IsWindows);
 		return path;
 	}
 

@@ -34,7 +34,9 @@ internal static class StorageExtensions
 					() => throw ExceptionFactory.SearchPatternCannotContainTwoDots());
 				parentDirectories.Push(Path.GetFileName(location.FullPath));
 				location = location.GetParent() ?? throw new Exception("foo");
+#pragma warning disable CA1846
 				givenPathPrefix.Append(searchPattern.Substring(0, 3));
+#pragma warning restore CA1846
 				searchPattern = searchPattern.Substring(3);
 			}
 

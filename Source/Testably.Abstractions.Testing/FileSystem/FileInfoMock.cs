@@ -76,7 +76,9 @@ internal sealed class FileInfoMock
 	{
 		IStorageLocation location = FileSystem.Storage.Copy(
 			                            Location,
-			                            FileSystem.Storage.GetLocation(destFileName))
+			                            FileSystem.Storage.GetLocation(destFileName
+				                           .EnsureValidArgument(FileSystem,
+					                            nameof(destFileName))))
 		                            ?? throw ExceptionFactory.FileNotFound(FullName);
 		return FileSystem.FileInfo.New(location.FullPath);
 	}
@@ -86,7 +88,9 @@ internal sealed class FileInfoMock
 	{
 		IStorageLocation location = FileSystem.Storage.Copy(
 			                            Location,
-			                            FileSystem.Storage.GetLocation(destFileName),
+			                            FileSystem.Storage.GetLocation(destFileName
+				                           .EnsureValidArgument(FileSystem,
+					                            nameof(destFileName))),
 			                            overwrite)
 		                            ?? throw ExceptionFactory.FileNotFound(FullName);
 		return FileSystem.FileInfo.New(location.FullPath);
@@ -115,7 +119,8 @@ internal sealed class FileInfoMock
 	{
 		Location = FileSystem.Storage.Move(
 			           Location,
-			           FileSystem.Storage.GetLocation(destFileName))
+			           FileSystem.Storage.GetLocation(destFileName
+				          .EnsureValidArgument(FileSystem, nameof(destFileName))))
 		           ?? throw ExceptionFactory.FileNotFound(FullName);
 	}
 
@@ -125,7 +130,8 @@ internal sealed class FileInfoMock
 	{
 		Location = FileSystem.Storage.Move(
 			           Location,
-			           FileSystem.Storage.GetLocation(destFileName),
+			           FileSystem.Storage.GetLocation(destFileName
+				          .EnsureValidArgument(FileSystem, nameof(destFileName))),
 			           overwrite)
 		           ?? throw ExceptionFactory.FileNotFound(FullName);
 	}
@@ -197,7 +203,9 @@ internal sealed class FileInfoMock
 		IStorageLocation location = FileSystem.Storage.Replace(
 			                            Location,
 			                            FileSystem.Storage.GetLocation(
-				                            destinationFileName),
+				                            destinationFileName
+					                           .EnsureValidFormat(FileSystem,
+						                            nameof(destinationFileName))),
 			                            FileSystem.Storage.GetLocation(
 				                            destinationBackupFileName))
 		                            ?? throw ExceptionFactory.FileNotFound(FullName);
@@ -212,7 +220,9 @@ internal sealed class FileInfoMock
 		IStorageLocation location = FileSystem.Storage.Replace(
 			                            Location,
 			                            FileSystem.Storage.GetLocation(
-				                            destinationFileName),
+				                            destinationFileName
+					                           .EnsureValidFormat(FileSystem,
+						                            nameof(destinationFileName))),
 			                            FileSystem.Storage.GetLocation(
 				                            destinationBackupFileName),
 			                            ignoreMetadataErrors)
