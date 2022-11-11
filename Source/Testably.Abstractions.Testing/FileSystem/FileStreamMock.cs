@@ -102,6 +102,12 @@ internal sealed class FileStreamMock : FileSystemStream
 				Execute.IsWindows ? -2147024816 : 17);
 		}
 
+		if (file.Attributes.HasFlag(FileAttributes.ReadOnly) &&
+		    access.HasFlag(FileAccess.Write))
+		{
+			throw ExceptionFactory.AccessToPathDenied(location.FullPath);
+		}
+
 		_accessLock = file.RequestAccess(access, share);
 
 		_container = file;

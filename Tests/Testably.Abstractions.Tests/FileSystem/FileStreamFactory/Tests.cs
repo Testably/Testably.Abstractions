@@ -170,6 +170,33 @@ public abstract partial class Tests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[InlineAutoData(FileAccess.Read)]
+	[InlineAutoData(FileAccess.ReadWrite)]
+	[InlineAutoData(FileAccess.Write)]
+	public void
+		New_ReadOnlyFlag_WhenAccessContainsWrite_ShouldThrowUnauthorizedAccessException(
+			FileAccess access,
+			string path)
+	{
+		FileSystem.File.WriteAllText(path, "some content");
+		FileSystem.File.SetAttributes(path, FileAttributes.ReadOnly);
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.FileStream.New(path, FileMode.Open, access);
+		});
+
+		if (access.HasFlag(FileAccess.Write))
+		{
+			exception.Should().BeOfType<UnauthorizedAccessException>()
+			   .Which.HResult.Should().Be(-2147024891);
+		}
+		else
+		{
+			exception.Should().BeNull();
+		}
+	}
+
+	[SkippableTheory]
 	[AutoData]
 	public void New_SamePathAsExistingDirectory_ShouldThrowException(
 		string path)

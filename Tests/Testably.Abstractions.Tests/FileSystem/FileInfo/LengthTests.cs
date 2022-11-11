@@ -32,6 +32,53 @@ public abstract partial class LengthTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void Length_MissingDirectory_ShouldThrowFileNotFoundException(
+		string missingDirectory, string fileName)
+	{
+		string path = FileSystem.Path.Combine(missingDirectory, fileName);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = sut.Length;
+		});
+
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
+#if NETFRAMEWORK
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.Message.Should().Contain($"'{path}'");
+#else
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+#endif
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Length_PathIsDirectory_ShouldThrowFileNotFoundException(string path)
+	{
+		FileSystem.Directory.CreateDirectory(path);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = sut.Length;
+		});
+
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
+#if NETFRAMEWORK
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.Message.Should().Contain($"'{path}'");
+#else
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+#endif
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Length_WhenFileExists_ShouldBeSetCorrectly(string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
