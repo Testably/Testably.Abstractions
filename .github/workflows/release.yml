@@ -77,6 +77,7 @@ jobs:
         with:
           dotnet-version: |
             6.0.x
+            7.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
@@ -100,6 +101,7 @@ jobs:
         with:
           dotnet-version: |
             6.0.x
+            7.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
@@ -123,6 +125,7 @@ jobs:
         with:
           dotnet-version: |
             6.0.x
+            7.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
@@ -174,6 +177,7 @@ jobs:
         with:
           dotnet-version: |
             6.0.x
+            7.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Build example solution
@@ -258,7 +262,9 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: |
+            6.0.x
+            7.0.x
       - name: Prepare README.md
         shell: bash
         run: |

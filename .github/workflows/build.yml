@@ -66,6 +66,7 @@ jobs:
         with:
           dotnet-version: |
             6.0.x
+            7.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
@@ -89,6 +90,7 @@ jobs:
         with:
           dotnet-version: |
             6.0.x
+            7.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
@@ -112,6 +114,7 @@ jobs:
         with:
           dotnet-version: |
             6.0.x
+            7.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
@@ -158,6 +161,7 @@ jobs:
         with:
           dotnet-version: |
             6.0.x
+            7.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Build example solution
