@@ -63,13 +63,28 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[InlineData("foo", "")]
-	[InlineData("foo.", "")]
 	[InlineData("foo.txt", ".txt")]
+	[InlineData("foo.bar.txt", ".txt")]
 	public void Extension_ShouldReturnExpectedValue(string fileName, string expectedValue)
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(fileName);
 
 		sut.Extension.Should().Be(expectedValue);
+	}
+
+	[SkippableFact]
+	public void Extension_WithTrailingDot_ShouldReturnExpectedValue()
+	{
+		IFileInfo sut = FileSystem.FileInfo.New("foo.");
+
+		if (Test.RunsOnWindows)
+		{
+			sut.Extension.Should().Be("");
+		}
+		else
+		{
+			sut.Extension.Should().Be(".");
+		}
 	}
 
 	[SkippableTheory]
