@@ -8,6 +8,24 @@ public abstract partial class Tests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
+#if FEATURE_FILESYSTEM_NET7
+	[SkippableFact]
+	public void CreateTempSubdirectory_ShouldCreateTheTemporaryDirectory()
+	{
+		IDirectoryInfo result = FileSystem.Directory.CreateTempSubdirectory();
+
+		result.Exists.Should().BeTrue();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void CreateTempSubdirectory_WithPrefix_ShouldStartWithPrefix(string prefix)
+	{
+		IDirectoryInfo result = FileSystem.Directory.CreateTempSubdirectory(prefix);
+
+		result.Name.Should().StartWith(prefix);
+	}
+#endif
 	[SkippableFact]
 	public void GetCurrentDirectory_ShouldNotBeRooted()
 	{

@@ -80,11 +80,15 @@ internal static class Execute
 	/// <summary>
 	///     The <paramref name="callback" /> is executed when the operating system is <see cref="OSPlatform.OSX" />.
 	/// </summary>
-	public static void OnMac(Action callback)
+	public static void OnMac(Action callback, Action? alternativeCallback = null)
 	{
 		if (IsMac)
 		{
 			callback();
+		}
+		else
+		{
+			alternativeCallback?.Invoke();
 		}
 	}
 

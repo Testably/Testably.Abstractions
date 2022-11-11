@@ -45,4 +45,18 @@ public interface IGuid : IRandomSystemExtensionPoint
 	                   ReadOnlySpan<char> format,
 	                   out Guid result);
 #endif
+
+#if FEATURE_GUID_FORMATPROVIDER
+	/// <inheritdoc cref="Guid.Parse(string, IFormatProvider?)" />
+	Guid Parse(string s, IFormatProvider? provider);
+
+	/// <inheritdoc cref="Guid.Parse(ReadOnlySpan{char}, IFormatProvider?)" />
+	Guid Parse(ReadOnlySpan<char> s, IFormatProvider? provider);
+
+	/// <inheritdoc cref="Guid.TryParse(string?, IFormatProvider?, out Guid)" />
+	bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out Guid result);
+
+	/// <inheritdoc cref="Guid.TryParse(ReadOnlySpan{char}, IFormatProvider?, out Guid)" />
+	bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Guid result);
+#endif
 }

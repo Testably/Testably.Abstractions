@@ -32,11 +32,10 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	private BlockingCollection<ChangeDescription> _changes;
 	private bool _enableRaisingEvents;
 	private readonly MockFileSystem _fileSystem;
-	private int _internalBufferSize = 8192;
-	private string _path = string.Empty;
-	private event EventHandler<ChangeDescription>? InternalEvent;
-	private bool _isInitializing;
 	private readonly Collection<string> _filters = new();
+	private int _internalBufferSize = 8192;
+	private bool _isInitializing;
+	private string _path = string.Empty;
 
 	private FileSystemWatcherMock(MockFileSystem fileSystem)
 	{
@@ -45,6 +44,8 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			new BlockingCollection<ChangeDescription>(InternalBufferSize /
 			                                          BytesPerMessage);
 	}
+
+	private event EventHandler<ChangeDescription>? InternalEvent;
 
 	#region IFileSystemWatcher Members
 
@@ -171,48 +172,15 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	/// <inheritdoc cref="IFileSystemWatcher.WaitForChanged(WatcherChangeTypes, int)" />
 	public IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
-		WatcherChangeTypes changeType,
-		int timeout)
-	{
-		TaskCompletionSource<IFileSystemWatcher.IWaitForChangedResult>
-			tcs = new();
+		WatcherChangeTypes changeType, int timeout)
+		=> WaitForChangedInternal(changeType, TimeSpan.FromMilliseconds(timeout));
 
-		void EventHandler(object? _, ChangeDescription c)
-		{
-			if ((c.ChangeType & changeType) != 0)
-			{
-				tcs.TrySetResult(new WaitForChangedResultMock(c.ChangeType, c.Name,
-					oldName: c.OldName, timedOut: false));
-			}
-		}
-
-		InternalEvent += EventHandler;
-		try
-		{
-			bool wasEnabled = EnableRaisingEvents;
-			if (!wasEnabled)
-			{
-				EnableRaisingEvents = true;
-			}
-
-			tcs.Task.Wait(timeout);
-			EnableRaisingEvents = wasEnabled;
-		}
-		finally
-		{
-			InternalEvent -= EventHandler;
-		}
-
-#if NETFRAMEWORK
-		return tcs.Task.IsCompleted
-			? tcs.Task.Result
-			: WaitForChangedResultMock.TimedOutResult;
-#else
-		return tcs.Task.IsCompletedSuccessfully
-			? tcs.Task.Result
-			: WaitForChangedResultMock.TimedOutResult;
+#if FEATURE_FILESYSTEM_NET7
+	/// <inheritdoc cref="IFileSystemWatcher.WaitForChanged(WatcherChangeTypes, TimeSpan)" />
+	public IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
+		WatcherChangeTypes changeType, TimeSpan timeout)
+		=> WaitForChangedInternal(changeType, timeout);
 #endif
-	}
 
 	#endregion
 
@@ -467,6 +435,49 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		return System.IO.Path.GetDirectoryName(changeDescription.Path)?
 		   .Equals(System.IO.Path.GetDirectoryName(changeDescription.OldPath),
 				InMemoryLocation.StringComparisonMode) ?? true;
+	}
+
+	private IFileSystemWatcher.IWaitForChangedResult WaitForChangedInternal(
+		WatcherChangeTypes changeType, TimeSpan timeout)
+	{
+		TaskCompletionSource<IFileSystemWatcher.IWaitForChangedResult>
+			tcs = new();
+
+		void EventHandler(object? _, ChangeDescription c)
+		{
+			if ((c.ChangeType & changeType) != 0)
+			{
+				tcs.TrySetResult(new WaitForChangedResultMock(c.ChangeType, c.Name,
+					oldName: c.OldName, timedOut: false));
+			}
+		}
+
+		InternalEvent += EventHandler;
+		try
+		{
+			bool wasEnabled = EnableRaisingEvents;
+			if (!wasEnabled)
+			{
+				EnableRaisingEvents = true;
+			}
+
+			tcs.Task.Wait(timeout);
+			EnableRaisingEvents = wasEnabled;
+		}
+		finally
+		{
+			InternalEvent -= EventHandler;
+		}
+
+#if NETFRAMEWORK
+		return tcs.Task.IsCompleted
+			? tcs.Task.Result
+			: WaitForChangedResultMock.TimedOutResult;
+#else
+		return tcs.Task.IsCompletedSuccessfully
+			? tcs.Task.Result
+			: WaitForChangedResultMock.TimedOutResult;
+#endif
 	}
 
 	private struct WaitForChangedResultMock

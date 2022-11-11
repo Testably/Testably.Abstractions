@@ -64,6 +64,11 @@ public abstract class PathSystemBase : IPath
 	public string Combine(params string[] paths)
 		=> Path.Combine(paths);
 
+#if FEATURE_FILESYSTEM_NET7
+	/// <inheritdoc cref="Path.Exists(string)" />
+	public abstract bool Exists([NotNullWhen(true)] string? path);
+#endif
+
 #if FEATURE_SPAN
 	/// <inheritdoc cref="Path.GetDirectoryName(ReadOnlySpan{char})" />
 	public ReadOnlySpan<char> GetDirectoryName(ReadOnlySpan<char> path)

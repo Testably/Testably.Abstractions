@@ -8,6 +8,11 @@ namespace Testably.Abstractions;
 /// <inheritdoc cref="ZipArchive" />
 public interface IZipArchive : IFileSystemExtensionPoint, IDisposable
 {
+#if FEATURE_ZIPFILE_NET7
+	/// <inheritdoc cref="ZipArchiveEntry.Comment" />
+	string Comment { get; set; }
+#endif
+
 	/// <inheritdoc cref="ZipArchive.Entries" />
 	ReadOnlyCollection<IZipArchiveEntry> Entries { get; }
 

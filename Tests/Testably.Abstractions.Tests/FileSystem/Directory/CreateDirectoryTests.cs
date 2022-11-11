@@ -171,17 +171,11 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 #if NETFRAMEWORK
 		exception.Should().BeOfType<ArgumentException>()
 		   .Which.HResult.Should().Be(-2147024809);
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.Message.Should()
-		   .Be("Path cannot be the empty string or all whitespace.");
 #else
 		exception.Should().BeOfType<ArgumentException>()
 		   .Which.HResult.Should().Be(-2147024809);
 		exception.Should().BeOfType<ArgumentException>()
 		   .Which.ParamName.Should().Be("path");
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.Message.Should()
-		   .Be("Path cannot be the empty string or all whitespace. (Parameter 'path')");
 #endif
 	}
 

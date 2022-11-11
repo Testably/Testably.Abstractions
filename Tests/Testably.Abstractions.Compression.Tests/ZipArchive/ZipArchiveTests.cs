@@ -1,4 +1,5 @@
 ﻿using System.IO.Compression;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchive;
 
@@ -16,6 +17,44 @@ public abstract partial class ZipArchiveTests<TFileSystem>
 		FileSystem = fileSystem;
 		TimeSystem = timeSystem;
 	}
+
+#if FEATURE_ZIPFILE_NET7
+	[SkippableTheory]
+	[AutoData]
+	public void Comment_ShouldBeSettable(string comment)
+	{
+		FileSystem.Initialize()
+		   .WithSubdirectory("foo");
+		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
+		FileSystem.ZipFile()
+		   .CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+				false);
+
+		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
+
+		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		archive.Comment = comment;
+
+		archive.Comment.Should().Be(comment);
+	}
+
+	[SkippableFact]
+	public void Comment_ShouldBeInitializedEmpty()
+	{
+		FileSystem.Initialize()
+		   .WithSubdirectory("foo");
+		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
+		FileSystem.ZipFile()
+		   .CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+				false);
+
+		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
+
+		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+
+		archive.Comment.Should().Be("");
+	}
+#endif
 
 	[SkippableTheory]
 	[AutoData]

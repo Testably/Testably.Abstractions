@@ -13,9 +13,19 @@ public interface IDirectory : IFileSystemExtensionPoint
 	/// <inheritdoc cref="Directory.CreateDirectory(string)" />
 	IDirectoryInfo CreateDirectory(string path);
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="Directory.CreateDirectory(string, UnixFileMode)" />
+	IDirectoryInfo CreateDirectory(string path, UnixFileMode unixCreateMode);
+#endif
+
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="Directory.CreateSymbolicLink(string, string)" />
 	IFileSystemInfo CreateSymbolicLink(string path, string pathToTarget);
+#endif
+
+#if FEATURE_FILESYSTEM_NET7
+	/// <inheritdoc cref="Directory.CreateTempSubdirectory(string)" />
+	IDirectoryInfo CreateTempSubdirectory(string? prefix = null);
 #endif
 
 	/// <inheritdoc cref="Directory.Delete(string)" />

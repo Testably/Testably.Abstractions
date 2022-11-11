@@ -54,7 +54,8 @@ internal static class ExceptionFactory
 	internal static IOException CannotCreateFileWhenAlreadyExists(int hResult)
 		=> new("Cannot create a file when that file already exists.", hResult);
 
-	internal static ArgumentException DirectoryNameDoesNotExist(string path, string paramName = "path")
+	internal static ArgumentException DirectoryNameDoesNotExist(
+		string path, string paramName = "path")
 		=> new($"The directory name '{path}' does not exist.", paramName)
 		{
 #if FEATURE_EXCEPTION_HRESULT
@@ -218,4 +219,12 @@ internal static class ExceptionFactory
 	internal static TimeoutException TimeoutExpired(int timeoutMilliseconds)
 		=> new(
 			$"The timeout of {timeoutMilliseconds}ms expired in the awaitable callback.");
+
+	internal static PlatformNotSupportedException UnixFileModeNotSupportedOnThisPlatform()
+		=> new("Unix file modes are not supported on this platform.")
+		{
+#if FEATURE_EXCEPTION_HRESULT
+			HResult = -2146233031
+#endif
+		};
 }

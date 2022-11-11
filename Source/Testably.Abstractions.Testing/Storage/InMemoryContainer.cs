@@ -84,6 +84,11 @@ internal class InMemoryContainer : IStorageContainer
 
 	/// <inheritdoc cref="IStorageContainer.Type" />
 	public FileSystemTypes Type { get; }
+	
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="IStorageContainer.UnixFileMode" />
+	public UnixFileMode UnixFileMode { get; set; } = (UnixFileMode)(-1);
+#endif
 
 	/// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
 	public void AppendBytes(byte[] bytes)

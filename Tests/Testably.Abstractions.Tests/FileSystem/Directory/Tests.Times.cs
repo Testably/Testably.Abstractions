@@ -168,7 +168,7 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.Directory.SetCreationTime(path, creationTime);
 		});
 
-		if (Test.RunsOnWindows)
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater && !Test.RunsOnMac)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
@@ -233,7 +233,7 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.Directory.SetCreationTimeUtc(path, creationTime);
 		});
 
-		if (Test.RunsOnWindows)
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater && !Test.RunsOnMac)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
@@ -298,7 +298,7 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.Directory.SetLastAccessTime(path, lastAccessTime);
 		});
 
-		if (Test.RunsOnWindows)
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
@@ -357,7 +357,7 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.Directory.SetLastAccessTimeUtc(path, lastAccessTime);
 		});
 
-		if (Test.RunsOnWindows)
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater )
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
@@ -416,7 +416,7 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.Directory.SetLastWriteTime(path, lastWriteTime);
 		});
 
-		if (Test.RunsOnWindows)
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
@@ -475,7 +475,7 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.Directory.SetLastWriteTimeUtc(path, lastWriteTime);
 		});
 
-		if (Test.RunsOnWindows)
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");

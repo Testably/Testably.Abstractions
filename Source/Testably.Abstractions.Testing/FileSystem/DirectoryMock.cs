@@ -37,6 +37,18 @@ internal sealed class DirectoryMock : IDirectory
 		return directory;
 	}
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="IDirectory.CreateDirectory(string, UnixFileMode)" />
+	public IDirectoryInfo CreateDirectory(string path, UnixFileMode unixCreateMode)
+	{
+		IDirectoryInfo directoryInfo = CreateDirectory(path);
+#pragma warning disable CA1416
+		directoryInfo.UnixFileMode = unixCreateMode;
+#pragma warning restore CA1416
+		return directoryInfo;
+	}
+#endif
+
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IDirectory.CreateSymbolicLink(string, string)" />
 	public IFileSystemInfo CreateSymbolicLink(
@@ -47,6 +59,27 @@ internal sealed class DirectoryMock : IDirectory
 			_fileSystem.DirectoryInfo.New(path);
 		fileSystemInfo.CreateAsSymbolicLink(pathToTarget);
 		return fileSystemInfo;
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_NET7
+	/// <inheritdoc cref="IDirectory.CreateTempSubdirectory(string)" />
+	public IDirectoryInfo CreateTempSubdirectory(string? prefix = null)
+	{
+		string basePath;
+
+		do
+		{
+			string localBasePath = _fileSystem.Path.Combine(
+				_fileSystem.Path.GetTempPath(),
+				(prefix ?? "") + _fileSystem.Path.GetFileNameWithoutExtension(
+					_fileSystem.Path.GetRandomFileName()));
+			Execute.OnMac(() => localBasePath = "/private" + localBasePath);
+			basePath = localBasePath;
+		} while (_fileSystem.Directory.Exists(basePath));
+
+		_fileSystem.Directory.CreateDirectory(basePath);
+		return _fileSystem.DirectoryInfo.New(basePath);
 	}
 #endif
 
@@ -320,12 +353,12 @@ internal sealed class DirectoryMock : IDirectory
 
 	/// <inheritdoc cref="IDirectory.SetCreationTime(string, DateTime)" />
 	public void SetCreationTime(string path, DateTime creationTime)
-		=> LoadDirectoryInfoOrThrowNotFoundException(path)
+		=> LoadDirectoryInfoOrThrowNotFoundException(path, ThrowMissingFileCreatedTimeException)
 		   .CreationTime = creationTime;
 
 	/// <inheritdoc cref="IDirectory.SetCreationTimeUtc(string, DateTime)" />
 	public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
-		=> LoadDirectoryInfoOrThrowNotFoundException(path)
+		=> LoadDirectoryInfoOrThrowNotFoundException(path, ThrowMissingFileCreatedTimeException)
 		   .CreationTimeUtc = creationTimeUtc;
 
 	/// <inheritdoc cref="IDirectory.SetCurrentDirectory(string)" />
@@ -344,43 +377,76 @@ internal sealed class DirectoryMock : IDirectory
 
 	/// <inheritdoc cref="IDirectory.SetLastAccessTime(string, DateTime)" />
 	public void SetLastAccessTime(string path, DateTime lastAccessTime)
-		=> LoadDirectoryInfoOrThrowNotFoundException(path)
+		=> LoadDirectoryInfoOrThrowNotFoundException(path, ThrowMissingFileLastAccessOrLastWriteTimeException)
 		   .LastAccessTime = lastAccessTime;
 
 	/// <inheritdoc cref="IDirectory.SetLastAccessTimeUtc(string, DateTime)" />
 	public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
-		=> LoadDirectoryInfoOrThrowNotFoundException(path)
+		=> LoadDirectoryInfoOrThrowNotFoundException(path, ThrowMissingFileLastAccessOrLastWriteTimeException)
 		   .LastAccessTimeUtc = lastAccessTimeUtc;
 
 	/// <inheritdoc cref="IDirectory.SetLastWriteTime(string, DateTime)" />
 	public void SetLastWriteTime(string path, DateTime lastWriteTime)
-		=> LoadDirectoryInfoOrThrowNotFoundException(path)
+		=> LoadDirectoryInfoOrThrowNotFoundException(path, ThrowMissingFileLastAccessOrLastWriteTimeException)
 		   .LastWriteTime = lastWriteTime;
 
 	/// <inheritdoc cref="IDirectory.SetLastWriteTimeUtc(string, DateTime)" />
 	public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
-		=> LoadDirectoryInfoOrThrowNotFoundException(path)
+		=> LoadDirectoryInfoOrThrowNotFoundException(path, ThrowMissingFileLastAccessOrLastWriteTimeException)
 		   .LastWriteTimeUtc = lastWriteTimeUtc;
 
 	#endregion
 
 	private IDirectoryInfo LoadDirectoryInfoOrThrowNotFoundException(
-		string path)
+		string path, Action<IFileSystem, string> onMissingCallback)
 	{
 		IDirectoryInfo directoryInfo =
 			_fileSystem.DirectoryInfo.New(path.EnsureValidFormat(FileSystem));
 		if (!directoryInfo.Exists)
 		{
-			Execute.OnWindows(
-				() =>
-					throw ExceptionFactory.FileNotFound(
-						FileSystem.Path.GetFullPath(path)),
-				() =>
-					throw ExceptionFactory.DirectoryNotFound(
-						FileSystem.Path.GetFullPath(path)));
+			onMissingCallback.Invoke(FileSystem, path);
 		}
 
 		return directoryInfo;
+	}
+
+	private static void ThrowMissingFileCreatedTimeException(IFileSystem fileSystem, string path)
+	{
+
+#if NET7_0_OR_GREATER
+			Execute.OnMac(
+				() =>
+					throw ExceptionFactory.DirectoryNotFound(
+						fileSystem.Path.GetFullPath(path)),
+				() =>
+					throw ExceptionFactory.FileNotFound(
+						fileSystem.Path.GetFullPath(path)));
+#else
+		Execute.OnWindows(
+			() =>
+				throw ExceptionFactory.FileNotFound(
+					fileSystem.Path.GetFullPath(path)),
+			() =>
+				throw ExceptionFactory.DirectoryNotFound(
+					fileSystem.Path.GetFullPath(path)));
+#endif
+	}
+
+	private static void ThrowMissingFileLastAccessOrLastWriteTimeException(IFileSystem fileSystem, string path)
+	{
+
+#if NET7_0_OR_GREATER
+		throw ExceptionFactory.FileNotFound(
+			fileSystem.Path.GetFullPath(path));
+#else
+		Execute.OnWindows(
+			() =>
+				throw ExceptionFactory.FileNotFound(
+					fileSystem.Path.GetFullPath(path)),
+			() =>
+				throw ExceptionFactory.DirectoryNotFound(
+					fileSystem.Path.GetFullPath(path)));
+#endif
 	}
 
 	private IEnumerable<string> EnumerateInternal(FileSystemTypes fileSystemTypes,

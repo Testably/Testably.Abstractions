@@ -11,7 +11,8 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 {
 	private readonly ZipArchiveEntry _instance;
 
-	public ZipArchiveEntryWrapper(IFileSystem fileSystem, IZipArchive archive,
+	public ZipArchiveEntryWrapper(IFileSystem fileSystem,
+	                              IZipArchive archive,
 	                              ZipArchiveEntry instance)
 	{
 		_instance = instance;
@@ -23,6 +24,15 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 
 	/// <inheritdoc cref="IZipArchiveEntry.Archive" />
 	public IZipArchive Archive { get; }
+
+#if FEATURE_ZIPFILE_NET7
+	/// <inheritdoc cref="IZipArchiveEntry.Comment" />
+	public string Comment
+	{
+		get => _instance.Comment;
+		set => _instance.Comment = value;
+	}
+#endif
 
 	/// <inheritdoc cref="IZipArchiveEntry.CompressedLength" />
 	public long CompressedLength
@@ -49,6 +59,12 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 	/// <inheritdoc cref="IZipArchiveEntry.FullName" />
 	public string FullName
 		=> _instance.FullName;
+
+#if FEATURE_ZIPFILE_NET7
+	/// <inheritdoc cref="IZipArchiveEntry.IsEncrypted" />
+	public bool IsEncrypted
+		=> _instance.IsEncrypted;
+#endif
 
 	/// <inheritdoc cref="IZipArchiveEntry.LastWriteTime" />
 	public DateTimeOffset LastWriteTime

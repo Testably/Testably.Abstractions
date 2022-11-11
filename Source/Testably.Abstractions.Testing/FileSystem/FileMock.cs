@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -313,6 +314,65 @@ internal sealed class FileMock : IFile
 					path.EnsureValidFormat(FileSystem)))
 		   .LastWriteTime.Get(DateTimeKind.Utc);
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="IFile.GetUnixFileMode(string)" />
+	[UnsupportedOSPlatform("windows")]
+	public UnixFileMode GetUnixFileMode(string path)
+		=> Execute.OnWindows(
+			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform(),
+			() => _fileSystem.Storage.GetContainer(
+					_fileSystem.Storage.GetLocation(
+						path.EnsureValidFormat(FileSystem)))
+			   .UnixFileMode);
+#endif
+
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="IFile.GetAttributes(SafeFileHandle)" />
+	public FileAttributes GetAttributes(SafeFileHandle fileHandle)
+	{
+		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		return container.Attributes;
+	}
+
+	/// <inheritdoc cref="IFile.GetCreationTime(SafeFileHandle)" />
+	public DateTime GetCreationTime(SafeFileHandle fileHandle)
+		=> GetContainerFromSafeFileHandle(fileHandle)
+		   .CreationTime.Get(DateTimeKind.Local);
+
+	/// <inheritdoc cref="IFile.GetCreationTimeUtc(SafeFileHandle)" />
+	public DateTime GetCreationTimeUtc(SafeFileHandle fileHandle)
+		=> GetContainerFromSafeFileHandle(fileHandle)
+		   .CreationTime.Get(DateTimeKind.Utc);
+
+	/// <inheritdoc cref="IFile.GetLastAccessTime(SafeFileHandle)" />
+	public DateTime GetLastAccessTime(SafeFileHandle fileHandle)
+		=> GetContainerFromSafeFileHandle(fileHandle)
+		   .LastAccessTime.Get(DateTimeKind.Local);
+
+	/// <inheritdoc cref="IFile.GetLastAccessTimeUtc(SafeFileHandle)" />
+	public DateTime GetLastAccessTimeUtc(SafeFileHandle fileHandle)
+		=> GetContainerFromSafeFileHandle(fileHandle)
+		   .LastAccessTime.Get(DateTimeKind.Utc);
+
+	/// <inheritdoc cref="IFile.GetLastWriteTime(SafeFileHandle)" />
+	public DateTime GetLastWriteTime(SafeFileHandle fileHandle)
+		=> GetContainerFromSafeFileHandle(fileHandle)
+		   .LastWriteTime.Get(DateTimeKind.Local);
+
+	/// <inheritdoc cref="IFile.GetLastWriteTimeUtc(SafeFileHandle)" />
+	public DateTime GetLastWriteTimeUtc(SafeFileHandle fileHandle)
+		=> GetContainerFromSafeFileHandle(fileHandle)
+		   .LastWriteTime.Get(DateTimeKind.Utc);
+
+	/// <inheritdoc cref="IFile.GetUnixFileMode(SafeFileHandle)" />
+	[UnsupportedOSPlatform("windows")]
+	public UnixFileMode GetUnixFileMode(SafeFileHandle fileHandle)
+		=> Execute.OnWindows(
+			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform(),
+			() => GetContainerFromSafeFileHandle(fileHandle)
+			   .UnixFileMode);
+#endif
+
 	/// <inheritdoc cref="IFile.Move(string, string)" />
 	public void Move(string sourceFileName, string destFileName)
 		=> _fileSystem.FileInfo.New(sourceFileName
@@ -454,6 +514,24 @@ internal sealed class FileMock : IFile
 	}
 #endif
 
+#if FEATURE_FILESYSTEM_NET7
+	/// <inheritdoc cref="IFile.ReadLinesAsync(string, CancellationToken)" />
+	public IAsyncEnumerable<string> ReadLinesAsync(string path,
+	                                               CancellationToken cancellationToken = default)
+	{
+		ThrowIfCancelled(cancellationToken);
+		return ReadAllLines(path).ToAsyncEnumerable();
+	}
+
+	/// <inheritdoc cref="IFile.ReadLinesAsync(string, Encoding, CancellationToken)" />
+	public IAsyncEnumerable<string> ReadLinesAsync(string path, Encoding encoding,
+	                                               CancellationToken cancellationToken = default)
+	{
+		ThrowIfCancelled(cancellationToken);
+		return ReadAllLines(path, encoding).ToAsyncEnumerable();
+	}
+#endif
+
 	/// <inheritdoc cref="IFile.ReadAllText(string)" />
 	public string ReadAllText(string path)
 		=> ReadAllText(path, Encoding.Default);
@@ -561,114 +639,199 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetAttributes(string, FileAttributes)" />
 	public void SetAttributes(string path, FileAttributes fileAttributes)
 	{
-		IStorageContainer fileInfo =
+		IStorageContainer container =
 			_fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)));
-		if (fileInfo is NullContainer)
+		if (container is NullContainer)
 		{
 			throw ExceptionFactory.FileNotFound(
 				FileSystem.Path.GetFullPath(path));
 		}
 
-		fileInfo.Attributes = fileAttributes;
+		container.Attributes = fileAttributes;
 	}
 
 	/// <inheritdoc cref="IFile.SetCreationTime(string, DateTime)" />
 	public void SetCreationTime(string path, DateTime creationTime)
 	{
-		IStorageContainer fileInfo =
+		IStorageContainer container =
 			_fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)));
-		if (fileInfo is NullContainer)
+		if (container is NullContainer)
 		{
 			throw ExceptionFactory.FileNotFound(
 				FileSystem.Path.GetFullPath(path));
 		}
 
-		fileInfo.CreationTime.Set(creationTime, DateTimeKind.Local);
+		container.CreationTime.Set(creationTime, DateTimeKind.Local);
 	}
 
 	/// <inheritdoc cref="IFile.SetCreationTimeUtc(string, DateTime)" />
 	public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
 	{
-		IStorageContainer fileInfo =
+		IStorageContainer container =
 			_fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)));
-		if (fileInfo is NullContainer)
+		if (container is NullContainer)
 		{
 			throw ExceptionFactory.FileNotFound(
 				FileSystem.Path.GetFullPath(path));
 		}
 
-		fileInfo.CreationTime.Set(creationTimeUtc, DateTimeKind.Utc);
+		container.CreationTime.Set(creationTimeUtc, DateTimeKind.Utc);
 	}
 
 	/// <inheritdoc cref="IFile.SetLastAccessTime(string, DateTime)" />
 	public void SetLastAccessTime(string path, DateTime lastAccessTime)
 	{
-		IStorageContainer fileInfo =
+		IStorageContainer container =
 			_fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)));
-		if (fileInfo is NullContainer)
+		if (container is NullContainer)
 		{
 			throw ExceptionFactory.FileNotFound(
 				FileSystem.Path.GetFullPath(path));
 		}
 
-		fileInfo.LastAccessTime.Set(lastAccessTime, DateTimeKind.Local);
+		container.LastAccessTime.Set(lastAccessTime, DateTimeKind.Local);
 	}
 
 	/// <inheritdoc cref="IFile.SetLastAccessTimeUtc(string, DateTime)" />
 	public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
 	{
-		IStorageContainer fileInfo =
+		IStorageContainer container =
 			_fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)));
-		if (fileInfo is NullContainer)
+		if (container is NullContainer)
 		{
 			throw ExceptionFactory.FileNotFound(
 				FileSystem.Path.GetFullPath(path));
 		}
 
-		fileInfo.LastAccessTime.Set(lastAccessTimeUtc, DateTimeKind.Utc);
+		container.LastAccessTime.Set(lastAccessTimeUtc, DateTimeKind.Utc);
 	}
 
 	/// <inheritdoc cref="IFile.SetLastWriteTime(string, DateTime)" />
 	public void SetLastWriteTime(string path, DateTime lastWriteTime)
 	{
-		IStorageContainer fileInfo =
+		IStorageContainer container =
 			_fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)));
-		if (fileInfo is NullContainer)
+		if (container is NullContainer)
 		{
 			throw ExceptionFactory.FileNotFound(
 				FileSystem.Path.GetFullPath(path));
 		}
 
-		fileInfo.LastWriteTime.Set(lastWriteTime, DateTimeKind.Local);
+		container.LastWriteTime.Set(lastWriteTime, DateTimeKind.Local);
 	}
 
 	/// <inheritdoc cref="IFile.SetLastWriteTimeUtc(string, DateTime)" />
 	public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
 	{
-		IStorageContainer fileInfo =
+		IStorageContainer container =
 			_fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)));
-		if (fileInfo is NullContainer)
+		if (container is NullContainer)
 		{
 			throw ExceptionFactory.FileNotFound(
 				FileSystem.Path.GetFullPath(path));
 		}
 
-		fileInfo.LastWriteTime.Set(lastWriteTimeUtc, DateTimeKind.Utc);
+		container.LastWriteTime.Set(lastWriteTimeUtc, DateTimeKind.Utc);
 	}
+
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="IFile.SetUnixFileMode(string, UnixFileMode)" />
+	[UnsupportedOSPlatform("windows")]
+	public void SetUnixFileMode(string path, UnixFileMode mode)
+	{
+		Execute.OnWindows(
+			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform());
+
+		IStorageContainer container =
+			_fileSystem.Storage.GetContainer(
+				_fileSystem.Storage.GetLocation(
+					path.EnsureValidFormat(FileSystem)));
+		if (container is NullContainer)
+		{
+			throw ExceptionFactory.FileNotFound(
+				FileSystem.Path.GetFullPath(path));
+		}
+
+		container.UnixFileMode = mode;
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="IFile.SetAttributes(SafeFileHandle, FileAttributes)" />
+	public void SetAttributes(SafeFileHandle fileHandle, FileAttributes fileAttributes)
+	{
+		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		container.Attributes = fileAttributes;
+	}
+
+	/// <inheritdoc cref="IFile.SetCreationTime(SafeFileHandle, DateTime)" />
+	public void SetCreationTime(SafeFileHandle fileHandle, DateTime creationTime)
+	{
+		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		container.CreationTime.Set(creationTime, DateTimeKind.Local);
+	}
+
+	/// <inheritdoc cref="IFile.SetCreationTimeUtc(SafeFileHandle, DateTime)" />
+	public void SetCreationTimeUtc(SafeFileHandle fileHandle, DateTime creationTimeUtc)
+	{
+		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		container.CreationTime.Set(creationTimeUtc, DateTimeKind.Utc);
+	}
+
+	/// <inheritdoc cref="IFile.SetLastAccessTime(SafeFileHandle, DateTime)" />
+	public void SetLastAccessTime(SafeFileHandle fileHandle, DateTime lastAccessTime)
+	{
+		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		container.LastAccessTime.Set(lastAccessTime, DateTimeKind.Local);
+	}
+
+	/// <inheritdoc cref="IFile.SetLastAccessTimeUtc(SafeFileHandle, DateTime)" />
+	public void SetLastAccessTimeUtc(SafeFileHandle fileHandle,
+	                                 DateTime lastAccessTimeUtc)
+	{
+		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		container.LastAccessTime.Set(lastAccessTimeUtc, DateTimeKind.Utc);
+	}
+
+	/// <inheritdoc cref="IFile.SetLastWriteTime(SafeFileHandle, DateTime)" />
+	public void SetLastWriteTime(SafeFileHandle fileHandle, DateTime lastWriteTime)
+	{
+		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		container.LastWriteTime.Set(lastWriteTime, DateTimeKind.Local);
+	}
+
+	/// <inheritdoc cref="IFile.SetLastWriteTimeUtc(SafeFileHandle, DateTime)" />
+	public void SetLastWriteTimeUtc(SafeFileHandle fileHandle, DateTime lastWriteTimeUtc)
+	{
+		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		container.LastWriteTime.Set(lastWriteTimeUtc, DateTimeKind.Utc);
+	}
+
+	/// <inheritdoc cref="IFile.SetUnixFileMode(SafeFileHandle, UnixFileMode)" />
+	[UnsupportedOSPlatform("windows")]
+	public void SetUnixFileMode(SafeFileHandle fileHandle, UnixFileMode mode)
+	{
+		Execute.OnWindows(
+			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform());
+
+		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		container.UnixFileMode = mode;
+	}
+#endif
 
 	/// <inheritdoc cref="IFile.WriteAllBytes(string, byte[])" />
 	public void WriteAllBytes(string path, byte[] bytes)
@@ -807,5 +970,20 @@ internal sealed class FileMock : IFile
 				yield return line;
 			}
 		}
+	}
+
+	private IStorageContainer GetContainerFromSafeFileHandle(SafeFileHandle fileHandle)
+	{
+		SafeFileHandleMock safeFileHandleMock = _fileSystem
+		   .SafeFileHandleMapper.Invoke(fileHandle);
+		IStorageContainer container = _fileSystem.Storage
+		   .GetContainer(_fileSystem.Storage.GetLocation(
+				safeFileHandleMock.Path));
+		if (container is NullContainer)
+		{
+			throw ExceptionFactory.FileNotFound("");
+		}
+
+		return container;
 	}
 }

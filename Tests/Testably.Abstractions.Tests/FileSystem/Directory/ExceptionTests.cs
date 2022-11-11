@@ -142,6 +142,13 @@ public abstract partial class ExceptionTests<TFileSystem>
 	{
 		yield return (ExceptionTestHelper.TestTypes.All, "path", directory
 			=> directory.CreateDirectory(value));
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+		if (!Test.RunsOnWindows)
+		{
+			yield return (ExceptionTestHelper.TestTypes.All, "path", directory
+				=> directory.CreateDirectory(value, UnixFileMode.None));
+		}
+#endif
 #if FEATURE_FILESYSTEM_LINK
 		yield return (ExceptionTestHelper.TestTypes.All, "path", directory
 			=> directory.CreateSymbolicLink(value, "foo"));

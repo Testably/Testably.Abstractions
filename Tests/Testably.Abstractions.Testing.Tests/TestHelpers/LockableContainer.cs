@@ -12,13 +12,13 @@ namespace Testably.Abstractions.Testing.Tests.TestHelpers;
 ///     A <see cref="IStorageContainer" /> for testing purposes.
 ///     <para />
 ///     Set <see cref="IsLocked" /> to <see langword="true" /> to simulate a locked file
-///     (<see cref="RequestAccess(FileAccess, FileShare, bool, bool)" /> throws an <see cref="IOException" />).
+///     (<see cref="RequestAccess(FileAccess, FileShare, bool, bool, int?)" /> throws an <see cref="IOException" />).
 /// </summary>
 internal sealed class LockableContainer : IStorageContainer
 {
 	/// <summary>
 	///     Simulate a locked file, if set to <see langword="true" />.<br />
-	///     In this case <see cref="RequestAccess(FileAccess, FileShare, bool, bool)" /> throws an <see cref="IOException" />,
+	///     In this case <see cref="RequestAccess(FileAccess, FileShare, bool, bool, int?)" /> throws an <see cref="IOException" />,
 	///     otherwise it will succeed.
 	/// </summary>
 	public bool IsLocked { get; set; }
@@ -69,6 +69,11 @@ internal sealed class LockableContainer : IStorageContainer
 
 	/// <inheritdoc cref="IStorageContainer.Type" />
 	public FileSystemTypes Type { get; }
+
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="IStorageContainer.UnixFileMode" />
+	public UnixFileMode UnixFileMode { get; set; }
+#endif
 
 	/// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
 	public void AppendBytes(byte[] bytes)

@@ -19,6 +19,15 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 
 	#region IZipArchive Members
 
+#if FEATURE_ZIPFILE_NET7
+	/// <inheritdoc cref="IZipArchiveEntry.Comment" />
+	public string Comment
+	{
+		get => _instance.Comment;
+		set => _instance.Comment = value;
+	}
+#endif
+
 	/// <inheritdoc cref="IZipArchive.Entries" />
 	public ReadOnlyCollection<IZipArchiveEntry> Entries
 		=> MapToZipArchiveEntries(_instance.Entries);

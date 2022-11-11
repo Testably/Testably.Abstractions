@@ -11,6 +11,11 @@ public interface IZipArchiveEntry : IFileSystemExtensionPoint
 	/// <inheritdoc cref="ZipArchiveEntry.Archive" />
 	IZipArchive Archive { get; }
 
+#if FEATURE_ZIPFILE_NET7
+	/// <inheritdoc cref="ZipArchiveEntry.Comment" />
+	string Comment { get; set; }
+#endif
+
 	/// <inheritdoc cref="ZipArchiveEntry.CompressedLength" />
 	long CompressedLength { get; }
 
@@ -26,6 +31,11 @@ public interface IZipArchiveEntry : IFileSystemExtensionPoint
 
 	/// <inheritdoc cref="ZipArchiveEntry.FullName" />
 	string FullName { get; }
+
+#if FEATURE_ZIPFILE_NET7
+	/// <inheritdoc cref="ZipArchiveEntry.IsEncrypted" />
+	bool IsEncrypted { get; }
+#endif
 
 	/// <inheritdoc cref="ZipArchiveEntry.LastWriteTime" />
 	DateTimeOffset LastWriteTime { get; set; }

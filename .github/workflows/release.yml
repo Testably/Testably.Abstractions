@@ -77,6 +77,7 @@ jobs:
         with:
           dotnet-version: |
             6.0.x
+            7.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
@@ -100,6 +101,7 @@ jobs:
         with:
           dotnet-version: |
             6.0.x
+            7.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
@@ -123,6 +125,7 @@ jobs:
         with:
           dotnet-version: |
             6.0.x
+            7.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Run tests
@@ -143,16 +146,12 @@ jobs:
           git tag "${version}"
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v1.0.5
       - name: Setup VSTest
         uses: darenm/Setup-VSTest@v1
       - name: Navigate to Workspace
         run: cd $GITHUB_WORKSPACE
-      - name: Restore Packages
-        run: nuget restore Testably.Abstractions.sln
       - name: Build solution
-        run: msbuild.exe Testably.Abstractions.sln /p:platform="Any CPU" /p:configuration="Release"
+        run: msbuild.exe Testably.Abstractions.sln /p:NetFrameworkOnly=True /p:platform="Any CPU" /p:configuration="Release" -t:restore,build -p:RestorePackagesConfig=true
       - name: Run tests
         run: vstest.console.exe .\Build\Tests\Testably.Abstractions.Tests\net472\Testably.Abstractions.Tests.dll .\Build\Tests\Testably.Abstractions.Parity.Tests\net472\Testably.Abstractions.Parity.Tests.dll .\Build\Tests\Testably.Abstractions.Testing.Tests\net472\Testably.Abstractions.Testing.Tests.dll
 
@@ -174,6 +173,7 @@ jobs:
         with:
           dotnet-version: |
             6.0.x
+            7.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Build example solution
@@ -258,7 +258,9 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: |
+            6.0.x
+            7.0.x
       - name: Prepare README.md
         shell: bash
         run: |

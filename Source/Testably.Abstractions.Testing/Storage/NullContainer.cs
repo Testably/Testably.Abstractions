@@ -25,7 +25,8 @@ internal sealed class NullContainer : IStorageContainer
 	}
 
 	/// <inheritdoc cref="IStorageContainer.CreationTime" />
-	public IStorageContainer.ITimeContainer CreationTime { get; } = new NullTime();
+	public IStorageContainer.ITimeContainer CreationTime { get; } =
+		new CreationNullTime();
 
 	/// <inheritdoc cref="IStorageContainer.ExtensionContainer" />
 	public IFileSystemExtensionContainer ExtensionContainer { get; }
@@ -52,6 +53,11 @@ internal sealed class NullContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.Type" />
 	public FileSystemTypes Type
 		=> FileSystemTypes.DirectoryOrFile;
+
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="IStorageContainer.UnixFileMode" />
+	public UnixFileMode UnixFileMode { get; set; } = (UnixFileMode)(-1);
+#endif
 
 	/// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
 	public void AppendBytes(byte[] bytes)
@@ -135,7 +141,7 @@ internal sealed class NullContainer : IStorageContainer
 	///     A file time is a 64-bit value that represents the number of 100-nanosecond intervals that have elapsed
 	///     since 12:00 A.M. January 1, 1601 Coordinated Universal Time (UTC).
 	/// </summary>
-	private sealed class NullTime : IStorageContainer.ITimeContainer
+	private class NullTime : IStorageContainer.ITimeContainer
 	{
 		private readonly DateTime _time =
 			new(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc);
@@ -152,14 +158,40 @@ internal sealed class NullContainer : IStorageContainer
 			};
 
 		/// <inheritdoc cref="IStorageContainer.ITimeContainer.Set(DateTime, DateTimeKind)" />
-		public void Set(DateTime time, DateTimeKind kind)
+		public virtual void Set(DateTime time, DateTimeKind kind)
 		{
+#if NET7_0_OR_GREATER
+			throw ExceptionFactory.FileNotFound(string.Empty);
+#else
 			Execute.OnWindows(()
 				=> throw ExceptionFactory.FileNotFound(string.Empty));
 
 			throw ExceptionFactory.DirectoryNotFound(string.Empty);
+#endif
 		}
 
 		#endregion
+	}
+
+	/// <summary>
+	///     Overrides the setter of <see cref="NullTime" /> as different exceptions are thrown for MacOS starting with .NET 7.
+	/// </summary>
+	private class CreationNullTime : NullTime
+	{
+		/// <inheritdoc />
+		public override void Set(DateTime time, DateTimeKind kind)
+		{
+#if NET7_0_OR_GREATER
+			Execute.OnMac(()
+				=> throw ExceptionFactory.DirectoryNotFound(string.Empty));
+
+			throw ExceptionFactory.FileNotFound(string.Empty);
+#else
+			Execute.OnWindows(()
+				=> throw ExceptionFactory.FileNotFound(string.Empty));
+
+			throw ExceptionFactory.DirectoryNotFound(string.Empty);
+#endif
+		}
 	}
 }
