@@ -47,7 +47,8 @@ internal static class PathHelper
 		string? paramName = null,
 		bool? includeIsEmptyCheck = null)
 	{
-		CheckPathArgument(path, paramName ?? nameof(path), includeIsEmptyCheck ?? Execute.IsWindows);
+		CheckPathArgument(path, paramName ?? nameof(path),
+			includeIsEmptyCheck ?? Execute.IsWindows);
 		CheckPathCharacters(path, fileSystem, paramName ?? nameof(path), null);
 		return path;
 	}
@@ -104,6 +105,11 @@ internal static class PathHelper
 			throw ExceptionFactory.PathHasIncorrectSyntax(
 				fileSystem.Path.GetFullPath(path), hResult);
 		}
+
+		Execute.OnWindowsIf(path.LastIndexOf(':') > 1 &&
+		                    path.LastIndexOf(':') < path.IndexOf(Path.DirectorySeparatorChar),
+			() => throw ExceptionFactory.PathHasIncorrectSyntax(
+				fileSystem.Path.GetFullPath(path), hResult));
 	}
 
 	internal static string TrimOnWindows(this string path)

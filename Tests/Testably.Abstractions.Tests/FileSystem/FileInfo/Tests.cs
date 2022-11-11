@@ -9,6 +9,32 @@ public abstract partial class Tests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
+	[SkippableTheory]
+	[AutoData]
+	public void Attributes_WhenFileIsMissing_ShouldReturnMinusOne(string path)
+	{
+		FileAttributes expected = (FileAttributes)(-1);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
+
+		sut.Attributes.Should().Be(expected);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Attributes_WhenFileIsMissing_SetterShouldThrowFileNotFoundException(
+		string path)
+	{
+		IFileInfo sut = FileSystem.FileInfo.New(path);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.Attributes = FileAttributes.ReadOnly;
+		});
+
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
+	}
+
 	[SkippableFact]
 	public void Directory_ShouldReturnParentDirectory()
 	{
@@ -33,6 +59,32 @@ public abstract partial class Tests<TFileSystem>
 
 		file?.Should().NotBeNull();
 		file!.DirectoryName.Should().Be(initialized[0].FullName);
+	}
+
+	[SkippableTheory]
+	[InlineData("foo", "")]
+	[InlineData("foo.txt", ".txt")]
+	[InlineData("foo.bar.txt", ".txt")]
+	public void Extension_ShouldReturnExpectedValue(string fileName, string expectedValue)
+	{
+		IFileInfo sut = FileSystem.FileInfo.New(fileName);
+
+		sut.Extension.Should().Be(expectedValue);
+	}
+
+	[SkippableFact]
+	public void Extension_WithTrailingDot_ShouldReturnExpectedValue()
+	{
+		IFileInfo sut = FileSystem.FileInfo.New("foo.");
+
+		if (Test.RunsOnWindows)
+		{
+			sut.Extension.Should().Be("");
+		}
+		else
+		{
+			sut.Extension.Should().Be(".");
+		}
 	}
 
 	[SkippableTheory]
@@ -94,5 +146,18 @@ public abstract partial class Tests<TFileSystem>
 
 		fileInfo.IsReadOnly.Should().BeFalse();
 		fileInfo.Attributes.Should().NotHaveFlag(FileAttributes.ReadOnly);
+	}
+
+	[SkippableTheory]
+	[InlineData("/foo")]
+	[InlineData("./foo")]
+	[InlineData("foo")]
+	public void ToString_ShouldReturnProvidedPath(string path)
+	{
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+
+		string? result = fileInfo.ToString();
+
+		result.Should().Be(path);
 	}
 }

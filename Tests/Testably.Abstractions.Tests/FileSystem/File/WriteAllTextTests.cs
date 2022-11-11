@@ -77,7 +77,7 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void WriteAllText_ShouldCreateFileWithBOM(
+	public void WriteAllText_ShouldCreateFileWithByteOrderMark(
 		string path)
 	{
 		byte[] expectedBytes = { 255, 254, 0, 0, 65, 0, 0, 0, 65, 0, 0, 0 };

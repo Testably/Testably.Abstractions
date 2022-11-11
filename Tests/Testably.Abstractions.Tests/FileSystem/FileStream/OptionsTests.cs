@@ -18,6 +18,7 @@ public abstract partial class OptionsTests<TFileSystem>
 
 		using FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
 			FileAccess.ReadWrite, FileShare.None, 10, FileOptions.DeleteOnClose);
+		FileSystem.File.Exists(path).Should().BeTrue();
 
 		stream.Close();
 

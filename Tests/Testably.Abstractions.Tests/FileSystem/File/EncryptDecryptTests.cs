@@ -1,7 +1,6 @@
 using System.IO;
-using Testably.Abstractions.FileSystem;
 
-namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
+namespace Testably.Abstractions.Tests.FileSystem.File;
 
 // ReSharper disable once PartialTypeWithSinglePart
 public abstract partial class EncryptDecryptTests<TFileSystem>
@@ -18,10 +17,9 @@ public abstract partial class EncryptDecryptTests<TFileSystem>
 			"Encryption depends on the underlying device, if it is supported or not.");
 
 		FileSystem.File.WriteAllText(path, contents);
-		IFileInfo sut = FileSystem.FileInfo.New(path);
 
-		sut.Encrypt();
-		sut.Decrypt();
+		FileSystem.File.Encrypt(path);
+		FileSystem.File.Decrypt(path);
 
 		string result = FileSystem.File.ReadAllText(path);
 		result.Should().Be(contents);
@@ -36,9 +34,8 @@ public abstract partial class EncryptDecryptTests<TFileSystem>
 		Skip.IfNot(Test.RunsOnWindows);
 
 		FileSystem.File.WriteAllText(path, contents);
-		IFileInfo sut = FileSystem.FileInfo.New(path);
 
-		sut.Decrypt();
+		FileSystem.File.Decrypt(path);
 
 		string result = FileSystem.File.ReadAllText(path);
 		result.Should().Be(contents);
@@ -54,12 +51,13 @@ public abstract partial class EncryptDecryptTests<TFileSystem>
 			"Encryption depends on the underlying device, if it is supported or not.");
 
 		FileSystem.File.WriteAllText(path, contents);
-		IFileInfo sut = FileSystem.FileInfo.New(path);
 
-		sut.Encrypt();
-		sut.Attributes.Should().HaveFlag(FileAttributes.Encrypted);
-		sut.Decrypt();
-		sut.Attributes.Should().NotHaveFlag(FileAttributes.Encrypted);
+		FileSystem.File.Encrypt(path);
+		FileSystem.File.GetAttributes(path)
+		   .Should().HaveFlag(FileAttributes.Encrypted);
+		FileSystem.File.Decrypt(path);
+		FileSystem.File.GetAttributes(path)
+		   .Should().NotHaveFlag(FileAttributes.Encrypted);
 	}
 
 	[SkippableTheory]
@@ -72,9 +70,8 @@ public abstract partial class EncryptDecryptTests<TFileSystem>
 			"Encryption depends on the underlying device, if it is supported or not.");
 
 		FileSystem.File.WriteAllBytes(path, bytes);
-		IFileInfo sut = FileSystem.FileInfo.New(path);
 
-		sut.Encrypt();
+		FileSystem.File.Encrypt(path);
 
 		byte[] result = FileSystem.File.ReadAllBytes(path);
 		result.Should().NotBeEquivalentTo(bytes);
@@ -90,12 +87,11 @@ public abstract partial class EncryptDecryptTests<TFileSystem>
 			"Encryption depends on the underlying device, if it is supported or not.");
 
 		FileSystem.File.WriteAllText(path, contents);
-		IFileInfo sut = FileSystem.FileInfo.New(path);
 
-		sut.Encrypt();
-		sut.Encrypt();
+		FileSystem.File.Encrypt(path);
+		FileSystem.File.Encrypt(path);
 
-		sut.Decrypt();
+		FileSystem.File.Decrypt(path);
 		string result = FileSystem.File.ReadAllText(path);
 		result.Should().Be(contents);
 	}
