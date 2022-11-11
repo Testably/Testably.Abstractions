@@ -1,5 +1,6 @@
 using AutoFixture;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -23,6 +24,21 @@ public abstract partial class AppendAllLinesTests<TFileSystem>
 		FileSystem.File.ReadAllLines(path).Should()
 		   .BeEquivalentTo(previousContents.Concat(contents),
 				o => o.WithStrictOrdering());
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void AppendAllLines_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+		string missingPath, string fileName, List<string> contents)
+	{
+		string filePath = FileSystem.Path.Combine(missingPath, fileName);
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.AppendAllLines(filePath, contents);
+		});
+
+		exception.Should().BeOfType<DirectoryNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024893);
 	}
 
 	[SkippableTheory]

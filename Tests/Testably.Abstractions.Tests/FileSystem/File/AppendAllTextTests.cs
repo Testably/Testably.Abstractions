@@ -1,4 +1,5 @@
 using AutoFixture;
+using System.IO;
 using System.Text;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
@@ -24,6 +25,21 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void AppendAllText_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+		string missingPath, string fileName, string contents)
+	{
+		string filePath = FileSystem.Path.Combine(missingPath, fileName);
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.AppendAllText(filePath, contents);
+		});
+
+		exception.Should().BeOfType<DirectoryNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024893);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void AppendAllText_MissingFile_ShouldCreateFile(
 		string path, string contents)
 	{
@@ -35,7 +51,7 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void AppendAllText_MissingFile_ShouldCreateFileWithBOM(
+	public void AppendAllText_MissingFile_ShouldCreateFileWithByteOrderMark(
 		string path)
 	{
 		byte[] expectedBytes = { 255, 254, 0, 0, 65, 0, 0, 0, 65, 0, 0, 0 };
