@@ -106,8 +106,6 @@ jobs:
           fetch-depth: 0
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
-        with:
-          vs-version: '[17.4,17.5)'
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1.0.5
       - name: Setup VSTest
@@ -117,7 +115,7 @@ jobs:
       - name: Restore Packages
         run: nuget restore Testably.Abstractions.sln
       - name: Build solution
-        run: msbuild.exe Testably.Abstractions.sln /p:platform="Any CPU" /p:configuration="Release"
+        run: msbuild.exe Testably.Abstractions.sln /p:NetFrameworkOnly=True /p:platform="Any CPU" /p:configuration="Release"
       - name: Run tests
         run: vstest.console.exe .\Build\Tests\Testably.Abstractions.Tests\net472\Testably.Abstractions.Tests.dll .\Build\Tests\Testably.Abstractions.Parity.Tests\net472\Testably.Abstractions.Parity.Tests.dll .\Build\Tests\Testably.Abstractions.Testing.Tests\net472\Testably.Abstractions.Testing.Tests.dll /Logger:trx /ResultsDirectory:TestResults
       - name: Upload test results (.NET Framework)
