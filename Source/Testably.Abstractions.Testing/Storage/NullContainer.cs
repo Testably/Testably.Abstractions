@@ -154,10 +154,15 @@ internal sealed class NullContainer : IStorageContainer
 		/// <inheritdoc cref="IStorageContainer.ITimeContainer.Set(DateTime, DateTimeKind)" />
 		public void Set(DateTime time, DateTimeKind kind)
 		{
+#if NET7_0_OR_GREATER
+			throw ExceptionFactory.FileNotFound(
+				FileSystem.Path.GetFullPath(path));
+#else
 			Execute.OnWindows(()
 				=> throw ExceptionFactory.FileNotFound(string.Empty));
 
 			throw ExceptionFactory.DirectoryNotFound(string.Empty);
+#endif
 		}
 
 		#endregion

@@ -106,7 +106,7 @@ public abstract partial class Tests<TFileSystem>
 			sut.CreationTime = creationTime;
 		});
 
-		if (Test.RunsOnWindows)
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.HResult.Should().Be(-2147024894);
@@ -132,7 +132,7 @@ public abstract partial class Tests<TFileSystem>
 			sut.CreationTimeUtc = creationTimeUtc;
 		});
 
-		if (Test.RunsOnWindows)
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.HResult.Should().Be(-2147024894);
@@ -157,7 +157,7 @@ public abstract partial class Tests<TFileSystem>
 			sut.LastAccessTime = lastAccessTime;
 		});
 
-		if (Test.RunsOnWindows)
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.HResult.Should().Be(-2147024894);
@@ -183,7 +183,7 @@ public abstract partial class Tests<TFileSystem>
 			sut.LastAccessTimeUtc = lastAccessTimeUtc;
 		});
 
-		if (Test.RunsOnWindows)
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.HResult.Should().Be(-2147024894);
@@ -208,7 +208,7 @@ public abstract partial class Tests<TFileSystem>
 			sut.LastWriteTime = lastWriteTime;
 		});
 
-		if (Test.RunsOnWindows)
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.HResult.Should().Be(-2147024894);
@@ -234,7 +234,7 @@ public abstract partial class Tests<TFileSystem>
 			sut.LastWriteTimeUtc = lastWriteTimeUtc;
 		});
 
-		if (Test.RunsOnWindows)
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.HResult.Should().Be(-2147024894);
