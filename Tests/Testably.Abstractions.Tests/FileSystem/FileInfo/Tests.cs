@@ -147,4 +147,17 @@ public abstract partial class Tests<TFileSystem>
 		fileInfo.IsReadOnly.Should().BeFalse();
 		fileInfo.Attributes.Should().NotHaveFlag(FileAttributes.ReadOnly);
 	}
+
+	[SkippableTheory]
+	[InlineData("/foo")]
+	[InlineData("./foo")]
+	[InlineData("foo")]
+	public void ToString_ShouldReturnProvidedPath(string path)
+	{
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+
+		string? result = fileInfo.ToString();
+
+		result.Should().Be(path);
+	}
 }

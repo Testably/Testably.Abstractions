@@ -358,4 +358,17 @@ public abstract partial class Tests<TFileSystem>
 		result.Root.Exists.Should().BeTrue();
 		result.Root.FullName.Should().Be(expectedRoot);
 	}
+
+	[SkippableTheory]
+	[InlineData("/foo")]
+	[InlineData("./foo")]
+	[InlineData("foo")]
+	public void ToString_ShouldReturnProvidedPath(string path)
+	{
+		IDirectoryInfo directoryInfo = FileSystem.DirectoryInfo.New(path);
+
+		string? result = directoryInfo.ToString();
+
+		result.Should().Be(path);
+	}
 }
