@@ -178,8 +178,13 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 			FileSystem.FileInfo.New(null!).CreateAsSymbolicLink(pathToTarget);
 		});
 
+#if NET7_0_OR_GREATER
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.ParamName.Should().Be("originalPath");
+#else
 		exception.Should().BeOfType<ArgumentNullException>()
 		   .Which.ParamName.Should().Be("fileName");
+#endif
 	}
 
 	[SkippableTheory]
