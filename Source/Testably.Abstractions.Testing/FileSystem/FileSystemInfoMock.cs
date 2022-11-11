@@ -87,7 +87,8 @@ internal class FileSystemInfoMock : IFileSystemInfo
 	/// <inheritdoc cref="IFileSystemInfo.Delete()" />
 	public void Delete()
 	{
-		if (!FileSystem.Storage.DeleteContainer(Location))
+		if (!FileSystem.Storage.DeleteContainer(Location) &&
+		    this is IDirectoryInfo)
 		{
 			throw ExceptionFactory.DirectoryNotFound(Location.FullPath);
 		}

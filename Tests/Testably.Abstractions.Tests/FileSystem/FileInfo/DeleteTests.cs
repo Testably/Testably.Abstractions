@@ -10,6 +10,35 @@ public abstract partial class DeleteTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
+	public void Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(
+		string missingDirectory, string fileName)
+	{
+		string filePath = FileSystem.Path.Combine(missingDirectory, fileName);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.FileInfo.New(filePath).Delete();
+		});
+
+		exception.Should().BeOfType<DirectoryNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024893);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Delete_MissingFile_ShouldDoNothing(
+		string fileName)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.FileInfo.New(fileName).Delete();
+		});
+
+		exception.Should().BeNull();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Delete_WithOpenFile_ShouldThrowIOException(string filename)
 	{
 		FileSystem.Initialize();
