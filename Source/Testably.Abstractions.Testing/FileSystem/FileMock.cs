@@ -319,7 +319,7 @@ internal sealed class FileMock : IFile
 	[UnsupportedOSPlatform("windows")]
 	public UnixFileMode GetUnixFileMode(string path)
 		=> Execute.OnWindows(
-			() => throw ExceptionFactory.OperationNotSupportedOnThisPlatform(),
+			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform(),
 			() => _fileSystem.Storage.GetContainer(
 					_fileSystem.Storage.GetLocation(
 						path.EnsureValidFormat(FileSystem)))
@@ -368,7 +368,7 @@ internal sealed class FileMock : IFile
 	[UnsupportedOSPlatform("windows")]
 	public UnixFileMode GetUnixFileMode(SafeFileHandle fileHandle)
 		=> Execute.OnWindows(
-			() => throw ExceptionFactory.OperationNotSupportedOnThisPlatform(),
+			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform(),
 			() => GetContainerFromSafeFileHandle(fileHandle)
 			   .UnixFileMode);
 #endif
@@ -754,7 +754,7 @@ internal sealed class FileMock : IFile
 	public void SetUnixFileMode(string path, UnixFileMode mode)
 	{
 		Execute.OnWindows(
-			() => throw ExceptionFactory.OperationNotSupportedOnThisPlatform());
+			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform());
 
 		IStorageContainer container =
 			_fileSystem.Storage.GetContainer(
@@ -826,7 +826,7 @@ internal sealed class FileMock : IFile
 	public void SetUnixFileMode(SafeFileHandle fileHandle, UnixFileMode mode)
 	{
 		Execute.OnWindows(
-			() => throw ExceptionFactory.OperationNotSupportedOnThisPlatform());
+			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform());
 
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
 		container.UnixFileMode = mode;

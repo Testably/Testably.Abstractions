@@ -405,8 +405,13 @@ internal sealed class DirectoryMock : IDirectory
 		if (!directoryInfo.Exists)
 		{
 #if NET7_0_OR_GREATER
-			throw ExceptionFactory.FileNotFound(
-				FileSystem.Path.GetFullPath(path));
+			Execute.OnMac(
+				() =>
+					throw ExceptionFactory.DirectoryNotFound(
+						FileSystem.Path.GetFullPath(path)),
+				() =>
+					throw ExceptionFactory.FileNotFound(
+						FileSystem.Path.GetFullPath(path)));
 #else
 			Execute.OnWindows(
 				() =>

@@ -176,7 +176,7 @@ internal class FileSystemInfoMock : IFileSystemInfo
 		set
 		{
 			Execute.OnWindows(
-				() => throw ExceptionFactory.OperationNotSupportedOnThisPlatform());
+				() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform());
 
 			Container.UnixFileMode = value;
 		}

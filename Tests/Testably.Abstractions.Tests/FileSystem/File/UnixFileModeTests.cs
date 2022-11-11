@@ -10,19 +10,6 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public void GetUnixFileMode_MissingFile_ShouldBeInitializedToMinusOneOnWindows(
-		string path)
-	{
-		Skip.IfNot(Test.RunsOnWindows);
-
-		UnixFileMode expected = (UnixFileMode)(-1);
-		UnixFileMode result = FileSystem.File.GetUnixFileMode(path);
-
-		result.Should().Be(expected);
-	}
-
-	[SkippableTheory]
-	[AutoData]
 	public void GetUnixFileMode_ShouldThrowNotSupportedExceptionOnWindows(
 		string path)
 	{
