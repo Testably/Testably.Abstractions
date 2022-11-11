@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Helpers;
+using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
@@ -13,6 +15,20 @@ internal sealed class PathMock : PathSystemBase
 	{
 		_fileSystem = fileSystem;
 	}
+
+#if FEATURE_FILESYSTEM_NET7
+	/// <inheritdoc cref="IPath.Exists(string)" />
+	public override bool Exists([NotNullWhen(true)] string? path)
+	{
+		if (string.IsNullOrEmpty(path))
+		{
+			return false;
+		}
+
+		return _fileSystem.Storage.GetContainer(_fileSystem.Storage.GetLocation(path))
+			is not NullContainer;
+	}
+#endif
 
 	/// <inheritdoc cref="IPath.GetFullPath(string)" />
 	public override string GetFullPath(string path)

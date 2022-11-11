@@ -60,6 +60,47 @@ public abstract partial class ZipArchiveEntryTests<TFileSystem>
 		archive.Entries.Single().CompressedLength.Should().Be(9);
 	}
 
+#if FEATURE_ZIPFILE_NET7
+	[SkippableTheory]
+	[AutoData]
+	public void Comment_ShouldBeSettable(string comment)
+	{
+		FileSystem.Initialize()
+		   .WithSubdirectory("foo");
+		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
+		FileSystem.ZipFile()
+		   .CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+				false);
+
+		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
+
+		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchiveEntry entry = archive.Entries.Single();
+
+		entry.Comment = comment;
+
+		entry.Comment.Should().Be(comment);
+	}
+
+	[SkippableFact]
+	public void Comment_ShouldBeInitializedEmpty()
+	{
+		FileSystem.Initialize()
+		   .WithSubdirectory("foo");
+		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
+		FileSystem.ZipFile()
+		   .CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+				false);
+
+		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
+
+		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchiveEntry entry = archive.Entries.Single();
+
+		entry.Comment.Should().Be("");
+	}
+#endif
+
 	[SkippableFact]
 	public void CompressedLength_WithOptimalCompressionLevel_ShouldBeLessThanFileLength()
 	{

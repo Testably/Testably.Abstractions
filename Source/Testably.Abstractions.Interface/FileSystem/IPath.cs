@@ -39,6 +39,11 @@ public interface IPath : IFileSystemExtensionPoint
 	/// <inheritdoc cref="Path.Combine(string[])" />
 	string Combine(params string[] paths);
 
+#if FEATURE_FILESYSTEM_NET7
+	/// <inheritdoc cref="Path.Exists(string)" />
+	bool Exists([NotNullWhen(true)] string? path);
+#endif
+
 #if FEATURE_SPAN
 	/// <inheritdoc cref="Path.GetDirectoryName(ReadOnlySpan{char})" />
 	ReadOnlySpan<char> GetDirectoryName(ReadOnlySpan<char> path);
