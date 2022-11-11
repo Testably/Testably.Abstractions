@@ -167,6 +167,22 @@ internal class FileSystemInfoMock : IFileSystemInfo
 				FileSystem.Path.DirectorySeparatorChar,
 				FileSystem.Path.AltDirectorySeparatorChar));
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="IFileSystemInfo.UnixFileMode" />
+	public UnixFileMode UnixFileMode
+	{
+		get => Container.UnixFileMode;
+		[UnsupportedOSPlatform("windows")]
+		set
+		{
+			Execute.OnWindows(
+				() => throw ExceptionFactory.OperationNotSupportedOnThisPlatform());
+
+			Container.UnixFileMode = value;
+		}
+	}
+#endif
+
 	/// <inheritdoc cref="IFileSystemInfo.Refresh()" />
 	public void Refresh()
 	{

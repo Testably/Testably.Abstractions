@@ -114,6 +114,12 @@ public interface IFile : IFileSystemExtensionPoint
 	/// <inheritdoc cref="File.GetLastWriteTimeUtc(string)" />
 	DateTime GetLastWriteTimeUtc(string path);
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="File.GetUnixFileMode(string)" />
+	[UnsupportedOSPlatform("windows")]
+	UnixFileMode GetUnixFileMode(string path);
+#endif
+
 	/// <inheritdoc cref="File.Move(string, string)" />
 	void Move(string sourceFileName, string destFileName);
 
@@ -231,6 +237,12 @@ public interface IFile : IFileSystemExtensionPoint
 
 	/// <inheritdoc cref="File.SetLastWriteTimeUtc(string, DateTime)" />
 	void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc);
+
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="File.SetUnixFileMode(string, UnixFileMode)" />
+	[UnsupportedOSPlatform("windows")]
+	void SetUnixFileMode(string path, UnixFileMode mode);
+#endif
 
 	/// <inheritdoc cref="File.WriteAllBytes(string, byte[])" />
 	void WriteAllBytes(string path, byte[] bytes);

@@ -313,6 +313,18 @@ internal sealed class FileMock : IFile
 					path.EnsureValidFormat(FileSystem)))
 		   .LastWriteTime.Get(DateTimeKind.Utc);
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="IFile.GetUnixFileMode(string)" />
+	[UnsupportedOSPlatform("windows")]
+	public UnixFileMode GetUnixFileMode(string path)
+		=> Execute.OnWindows(
+			() => throw ExceptionFactory.OperationNotSupportedOnThisPlatform(),
+			() => _fileSystem.Storage.GetContainer(
+					_fileSystem.Storage.GetLocation(
+						path.EnsureValidFormat(FileSystem)))
+			   .UnixFileMode);
+#endif
+
 	/// <inheritdoc cref="IFile.Move(string, string)" />
 	public void Move(string sourceFileName, string destFileName)
 		=> _fileSystem.FileInfo.New(sourceFileName
@@ -669,6 +681,28 @@ internal sealed class FileMock : IFile
 
 		fileInfo.LastWriteTime.Set(lastWriteTimeUtc, DateTimeKind.Utc);
 	}
+
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="IFile.SetUnixFileMode(string, UnixFileMode)" />
+	[UnsupportedOSPlatform("windows")]
+	public void SetUnixFileMode(string path, UnixFileMode mode)
+	{
+		Execute.OnWindows(
+			() => throw ExceptionFactory.OperationNotSupportedOnThisPlatform());
+
+		IStorageContainer fileInfo =
+			_fileSystem.Storage.GetContainer(
+				_fileSystem.Storage.GetLocation(
+					path.EnsureValidFormat(FileSystem)));
+		if (fileInfo is NullContainer)
+		{
+			throw ExceptionFactory.FileNotFound(
+				FileSystem.Path.GetFullPath(path));
+		}
+
+		fileInfo.UnixFileMode = mode;
+	}
+#endif
 
 	/// <inheritdoc cref="IFile.WriteAllBytes(string, byte[])" />
 	public void WriteAllBytes(string path, byte[] bytes)

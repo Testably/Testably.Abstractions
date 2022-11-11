@@ -51,6 +51,15 @@ public interface IFileSystemInfo
 	/// <inheritdoc cref="FileSystemInfo.Name" />
 	string Name { get; }
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="FileSystemInfo.UnixFileMode" />
+	UnixFileMode UnixFileMode
+	{
+		get;
+		[UnsupportedOSPlatform("windows")] set;
+	}
+#endif
+
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="FileSystemInfo.CreateAsSymbolicLink(string)" />
 	void CreateAsSymbolicLink(string pathToTarget);

@@ -92,6 +92,18 @@ internal class FileSystemInfoWrapper : IFileSystemInfo
 	public string Name
 		=> _instance.Name;
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="IFileSystemInfo.UnixFileMode" />
+	public UnixFileMode UnixFileMode
+	{
+		get => _instance.UnixFileMode;
+		[UnsupportedOSPlatform("windows")]
+#pragma warning disable CA1416
+		set => _instance.UnixFileMode = value;
+#pragma warning restore CA1416
+	}
+#endif
+
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IFileSystemInfo.CreateAsSymbolicLink(string)" />
 	public void CreateAsSymbolicLink(string pathToTarget)

@@ -53,6 +53,11 @@ internal sealed class NullContainer : IStorageContainer
 	public FileSystemTypes Type
 		=> FileSystemTypes.DirectoryOrFile;
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="IStorageContainer.UnixFileMode" />
+	public UnixFileMode UnixFileMode { get; set; } = (UnixFileMode)(-1);
+#endif
+
 	/// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
 	public void AppendBytes(byte[] bytes)
 	{

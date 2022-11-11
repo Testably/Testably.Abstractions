@@ -121,6 +121,13 @@ internal sealed class FileWrapper : IFile
 	public DateTime GetLastWriteTimeUtc(string path)
 		=> File.GetLastWriteTimeUtc(path);
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="IFile.GetUnixFileMode(string)" />
+	[UnsupportedOSPlatform("windows")]
+	public UnixFileMode GetUnixFileMode(string path)
+		=> File.GetUnixFileMode(path);
+#endif
+
 	/// <inheritdoc cref="IFile.Move(string, string)" />
 	public void Move(string sourceFileName, string destFileName)
 		=> File.Move(sourceFileName, destFileName);
@@ -246,6 +253,13 @@ internal sealed class FileWrapper : IFile
 	/// <inheritdoc cref="IFile.SetLastWriteTimeUtc(string, DateTime)" />
 	public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
 		=> File.SetLastWriteTimeUtc(path, lastWriteTimeUtc);
+
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="IFile.SetUnixFileMode(string, UnixFileMode)" />
+	[UnsupportedOSPlatform("windows")]
+	public void SetUnixFileMode(string path, UnixFileMode mode)
+		=> File.SetUnixFileMode(path, mode);
+#endif
 
 	/// <inheritdoc cref="IFile.WriteAllBytes(string, byte[])" />
 	public void WriteAllBytes(string path, byte[] bytes)

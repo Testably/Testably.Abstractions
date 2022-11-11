@@ -39,6 +39,14 @@ internal interface IStorageContainer : IFileSystemExtensionPoint,
 	/// </summary>
 	FileSystemTypes Type { get; }
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <summary>
+	///     Gets or sets the Unix file mode for the current file or directory.<br />
+	///     See also: <seealso cref="FileSystemInfo.UnixFileMode" />
+	/// </summary>
+	UnixFileMode UnixFileMode { get; set; }
+#endif
+
 	/// <summary>
 	///     Appends the <paramref name="bytes" /> to the <see cref="IFileInfo" />.
 	/// </summary>
