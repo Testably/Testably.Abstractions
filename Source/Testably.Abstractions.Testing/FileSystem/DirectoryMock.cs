@@ -371,6 +371,10 @@ internal sealed class DirectoryMock : IDirectory
 			_fileSystem.DirectoryInfo.New(path.EnsureValidFormat(FileSystem));
 		if (!directoryInfo.Exists)
 		{
+#if NET7_0_OR_GREATER
+			throw ExceptionFactory.FileNotFound(
+				FileSystem.Path.GetFullPath(path));
+#else
 			Execute.OnWindows(
 				() =>
 					throw ExceptionFactory.FileNotFound(
@@ -378,6 +382,7 @@ internal sealed class DirectoryMock : IDirectory
 				() =>
 					throw ExceptionFactory.DirectoryNotFound(
 						FileSystem.Path.GetFullPath(path)));
+#endif
 		}
 
 		return directoryInfo;
