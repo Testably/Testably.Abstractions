@@ -71,6 +71,11 @@ public interface IFileSystemWatcher : IFileSystemExtensionPoint, IDisposable
 	/// <inheritdoc cref="FileSystemWatcher.WaitForChanged(WatcherChangeTypes, int)" />
 	IWaitForChangedResult WaitForChanged(WatcherChangeTypes changeType, int timeout);
 
+#if FEATURE_FILESYSTEM_NET7
+	/// <inheritdoc cref="FileSystemWatcher.WaitForChanged(WatcherChangeTypes, TimeSpan)" />
+	IWaitForChangedResult WaitForChanged(WatcherChangeTypes changeType, TimeSpan timeout);
+#endif
+
 	/// <summary>
 	///     Abstractions for <see cref="WaitForChangedResult" />.
 	/// </summary>
