@@ -239,6 +239,13 @@ public abstract partial class ExceptionTests<TFileSystem>
 			=> file.GetLastWriteTime(value));
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.GetLastWriteTimeUtc(value));
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+		if (!Test.RunsOnWindows)
+		{
+			yield return (ExceptionTestHelper.TestTypes.All, "path", file
+				=> file.GetUnixFileMode(value));
+		}
+#endif
 		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "sourceFileName", file
 			=> file.Move(value, "foo"));
 		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "destFileName", file
@@ -316,6 +323,12 @@ public abstract partial class ExceptionTests<TFileSystem>
 			=> file.ReadLines(value));
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.ReadLines(value, Encoding.UTF8));
+#if FEATURE_FILESYSTEM_NET7
+		yield return (ExceptionTestHelper.TestTypes.All, "path", file
+			=> file.ReadLinesAsync(value, CancellationToken.None));
+		yield return (ExceptionTestHelper.TestTypes.All, "path", file
+			=> file.ReadLinesAsync(value, Encoding.UTF8, CancellationToken.None));
+#endif
 		yield return (
 			ExceptionTestHelper.TestTypes.AllExceptInvalidPath |
 			ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "sourceFileName", file
@@ -352,6 +365,13 @@ public abstract partial class ExceptionTests<TFileSystem>
 			=> file.SetLastWriteTime(value, DateTime.Now));
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.SetLastWriteTimeUtc(value, DateTime.Now));
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+		if (!Test.RunsOnWindows)
+		{
+			yield return (ExceptionTestHelper.TestTypes.All, "path", file
+				=> file.SetUnixFileMode(value, UnixFileMode.None));
+		}
+#endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.WriteAllBytes(value, new byte[] { 0, 1 }));
 #if FEATURE_FILESYSTEM_ASYNC
