@@ -28,42 +28,6 @@ public abstract partial class CopyTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[InlineData(@"C::\something\demo.txt", @"C:\elsewhere\demo.txt")]
-	public void
-		Copy_InvalidPath_ShouldThrowIOException(
-			string source, string destination)
-	{
-		Skip.IfNot(Test.RunsOnWindows);
-
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.File.Copy(source, destination);
-		});
-
-		exception.Should().BeOfType<IOException>()
-		   .Which.HResult.Should().Be(-2147024773);
-	}
-
-	[SkippableTheory]
-	[InlineData(@"0:\something\demo.txt", @"C:\elsewhere\demo.txt")]
-	[InlineData(@"C:\something\demo.txt", @"^:\elsewhere\demo.txt")]
-	[InlineData(@"C:\something\demo.txt", @"C:\elsewhere:\demo.txt")]
-	public void
-		Copy_InvalidDriveName_ShouldThrowDirectoryNotFoundException(
-			string source, string destination)
-	{
-		Skip.IfNot(Test.RunsOnWindows);
-
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.File.Copy(source, destination);
-		});
-
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
-	}
-
-	[SkippableTheory]
 	[AutoData]
 	public void Copy_DestinationExists_ShouldThrowIOExceptionAndNotCopyFile(
 		string sourceName,
@@ -116,6 +80,58 @@ public abstract partial class CopyTests<TFileSystem>
 		FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
 	}
 #endif
+
+	[SkippableTheory]
+	[InlineData(@"0:\something\demo.txt", @"C:\elsewhere\demo.txt")]
+	[InlineData(@"C:\something\demo.txt", @"^:\elsewhere\demo.txt")]
+	[InlineData(@"C:\something\demo.txt", @"C:\elsewhere:\demo.txt")]
+	public void
+		Copy_InvalidDriveName_ShouldThrowCorrectException(
+			string source, string destination)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.Copy(source, destination);
+		});
+
+		if (Test.IsNetFramework)
+		{
+			exception.Should().BeOfType<NotSupportedException>()
+			   .Which.HResult.Should().Be(-2146233067);
+		}
+		else
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147024773);
+		}
+	}
+
+	[SkippableTheory]
+	[InlineData(@"C::\something\demo.txt", @"C:\elsewhere\demo.txt")]
+	public void
+		Copy_InvalidPath_ShouldThrowCorrectException(
+			string source, string destination)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.Copy(source, destination);
+		});
+
+		if (Test.IsNetFramework)
+		{
+			exception.Should().BeOfType<NotSupportedException>()
+			   .Which.HResult.Should().Be(-2146233067);
+		}
+		else
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147024773);
+		}
+	}
 
 	[SkippableTheory]
 	[AutoData]
