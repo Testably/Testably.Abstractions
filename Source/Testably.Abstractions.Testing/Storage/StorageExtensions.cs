@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Testably.Abstractions.Testing.FileSystemInitializer;
 using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.Storage;
@@ -33,7 +34,9 @@ internal static class StorageExtensions
 				Execute.OnNetFramework(
 					() => throw ExceptionFactory.SearchPatternCannotContainTwoDots());
 				parentDirectories.Push(Path.GetFileName(location.FullPath));
-				location = location.GetParent() ?? throw new Exception("foo");
+				location = location.GetParent() ??
+				           throw new UnauthorizedAccessException(
+					           $"The searchPattern '{searchPattern}' has too many '../' for path '{path}'");
 #pragma warning disable CA1846
 				givenPathPrefix.Append(searchPattern.Substring(0, 3));
 #pragma warning restore CA1846
