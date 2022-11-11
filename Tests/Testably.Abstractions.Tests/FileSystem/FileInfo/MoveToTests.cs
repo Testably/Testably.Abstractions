@@ -69,6 +69,73 @@ public abstract partial class MoveToTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void MoveTo_Itself_ShouldDoNothing(
+		string sourceName,
+		string contents)
+	{
+		FileSystem.File.WriteAllText(sourceName, contents);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.MoveTo(sourceName);
+		});
+
+		exception.Should().BeNull();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void MoveTo_Itself_SourceMissing_ShouldThrowFileNotFoundException(
+		string sourceName)
+	{
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.MoveTo(sourceName);
+		});
+
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
+#if !NETFRAMEWORK
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.Message.Should()
+		   .Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
+#endif
+		FileSystem.File.Exists(sourceName).Should().BeFalse();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void
+		MoveTo_MissingDestinationDirectory_ShouldThrowDirectoryNotFoundExceptionAndNotMoveFile(
+			string sourceName,
+			string missingDirectory,
+			string destinationName,
+			string sourceContents)
+	{
+		string destinationPath =
+			FileSystem.Path.Combine(missingDirectory, destinationName);
+		FileSystem.File.WriteAllText(sourceName, sourceContents);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.MoveTo(destinationPath);
+		});
+
+		exception.Should().BeOfType<DirectoryNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024893);
+
+		sut.Exists.Should().BeTrue();
+		FileSystem.File.Exists(sourceName).Should().BeTrue();
+		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
+		FileSystem.File.Exists(destinationName).Should().BeFalse();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void MoveTo_ReadOnly_ShouldMoveFile(
 		string sourceName, string destinationName, string contents)
 	{
@@ -151,6 +218,33 @@ public abstract partial class MoveToTests<TFileSystem>
 		FileSystem.File.Exists(sourceName).Should().BeFalse();
 		FileSystem.File.Exists(destinationName).Should().BeTrue();
 		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void MoveTo_ShouldNotAdjustTimes(string source, string destination)
+	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
+		FileSystem.File.WriteAllText(source, "foo");
+		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+		IFileInfo sut = FileSystem.FileInfo.New(source);
+		DateTime expectedCreationTime = sut.CreationTime;
+		DateTime expectedLastAccessTime = sut.LastAccessTime;
+		DateTime expectedLastWriteTime = sut.LastWriteTime;
+
+		sut.MoveTo(destination);
+
+		DateTime creationTime = FileSystem.File.GetCreationTime(destination);
+		DateTime lastAccessTime = FileSystem.File.GetLastAccessTime(destination);
+		DateTime lastWriteTime = FileSystem.File.GetLastWriteTime(destination);
+
+		sut.CreationTime.Should().Be(expectedCreationTime);
+		sut.LastAccessTime.Should().Be(expectedLastAccessTime);
+		sut.LastWriteTime.Should().Be(expectedLastWriteTime);
+		creationTime.Should().Be(expectedCreationTime);
+		lastAccessTime.Should().Be(expectedLastAccessTime);
+		lastWriteTime.Should().Be(expectedLastWriteTime);
 	}
 
 	[SkippableTheory]
