@@ -155,8 +155,7 @@ internal sealed class NullContainer : IStorageContainer
 		public void Set(DateTime time, DateTimeKind kind)
 		{
 #if NET7_0_OR_GREATER
-			throw ExceptionFactory.FileNotFound(
-				FileSystem.Path.GetFullPath(path));
+			throw ExceptionFactory.FileNotFound(string.Empty);
 #else
 			Execute.OnWindows(()
 				=> throw ExceptionFactory.FileNotFound(string.Empty));
