@@ -41,6 +41,7 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 	{
 		Skip.If(Test.RunsOnWindows);
 
+		FileSystem.File.WriteAllText(path, "some content");
 		IFileInfo fileSystemInfo = FileSystem.FileInfo.New(path);
 
 		fileSystemInfo.UnixFileMode = unixFileMode;
