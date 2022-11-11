@@ -85,14 +85,9 @@ internal class FileSystemInfoMock : IFileSystemInfo
 	}
 
 	/// <inheritdoc cref="IFileSystemInfo.Delete()" />
-	public void Delete()
+	public virtual void Delete()
 	{
-		if (!FileSystem.Storage.DeleteContainer(Location) &&
-		    this is IDirectoryInfo)
-		{
-			throw ExceptionFactory.DirectoryNotFound(Location.FullPath);
-		}
-
+		FileSystem.Storage.DeleteContainer(Location);
 		ResetCache(!Execute.IsNetFramework);
 	}
 
@@ -110,7 +105,18 @@ internal class FileSystemInfoMock : IFileSystemInfo
 
 	/// <inheritdoc cref="IFileSystemInfo.Extension" />
 	public string Extension
-		=> FileSystem.Path.GetExtension(Location.FullPath);
+	{
+		get
+		{
+			if (Location.FullPath.EndsWith(".") &&
+			    !Execute.IsWindows)
+			{
+				return ".";
+			}
+
+			return FileSystem.Path.GetExtension(Location.FullPath);
+		}
+	}
 
 	/// <inheritdoc cref="IFileSystemInfo.ExtensionContainer" />
 	public IFileSystemExtensionContainer ExtensionContainer

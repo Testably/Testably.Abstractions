@@ -82,6 +82,50 @@ public abstract partial class CopyTests<TFileSystem>
 #endif
 
 	[SkippableTheory]
+	[InlineData(@"0:\something\demo.txt", @"C:\elsewhere\demo.txt")]
+	[InlineData(@"C:\something\demo.txt", @"^:\elsewhere\demo.txt")]
+	[InlineData(@"C:\something\demo.txt", @"C:\elsewhere:\demo.txt")]
+	public void
+		Copy_InvalidDriveName_ShouldThrowCorrectException(
+			string source, string destination)
+	{
+		Skip.IfNot(Test.IsNetFramework);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.Copy(source, destination);
+		});
+
+		exception.Should().BeOfType<NotSupportedException>()
+		   .Which.HResult.Should().Be(-2146233067);
+	}
+
+	[SkippableTheory]
+	[InlineData(@"C::\something\demo.txt", @"C:\elsewhere\demo.txt")]
+	public void
+		Copy_InvalidPath_ShouldThrowCorrectException(
+			string source, string destination)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.Copy(source, destination);
+		});
+
+		if (Test.IsNetFramework)
+		{
+			exception.Should().BeOfType<NotSupportedException>()
+			   .Which.HResult.Should().Be(-2146233067);
+		}
+		else
+		{
+			exception.Should().BeOfType<IOException>()
+			   .Which.HResult.Should().Be(-2147024773);
+		}
+	}
+
+	[SkippableTheory]
 	[AutoData]
 	public void Copy_ReadOnly_ShouldCopyFile(
 		string sourceName, string destinationName, string contents)
@@ -162,25 +206,31 @@ public abstract partial class CopyTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Copy_ShouldCopyFileWithContent(
-		string sourceName, string destinationName, string contents)
+	public void Copy_ShouldCloneBinaryContent(
+		string source, string destination, byte[] original)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		FileSystem.File.WriteAllBytes(source, original);
 
-		FileSystem.File.WriteAllText(sourceName, contents);
+		FileSystem.File.Copy(source, destination);
 
-		TimeSystem.Thread.Sleep(1000);
+		using (FileSystemStream stream =
+			FileSystem.File.Open(source, FileMode.Open, FileAccess.ReadWrite))
+		{
+			BinaryWriter binaryWriter = new(stream);
 
-		FileSystem.File.Copy(sourceName, destinationName);
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
-		FileSystem.File.ReadAllText(sourceName).Should().Be(contents);
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
+			binaryWriter.Seek(0, SeekOrigin.Begin);
+			binaryWriter.Write("Some text");
+		}
+
+		FileSystem.File.ReadAllBytes(destination).Should()
+		   .BeEquivalentTo(original);
+		FileSystem.File.ReadAllBytes(destination).Should()
+		   .NotBeEquivalentTo(FileSystem.File.ReadAllBytes(source));
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public void Copy_ShouldNotUseAReferenceToFileContent(
+	public void Copy_ShouldCloneTextContent(
 		string source, string destination, string contents)
 	{
 		FileSystem.File.WriteAllText(source, contents);
@@ -198,6 +248,24 @@ public abstract partial class CopyTests<TFileSystem>
 
 		FileSystem.File.ReadAllText(source).Should()
 		   .NotBe(FileSystem.File.ReadAllText(destination));
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Copy_ShouldCopyFileWithContent(
+		string sourceName, string destinationName, string contents)
+	{
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
+		FileSystem.File.WriteAllText(sourceName, contents);
+
+		TimeSystem.Thread.Sleep(1000);
+
+		FileSystem.File.Copy(sourceName, destinationName);
+		FileSystem.File.Exists(sourceName).Should().BeTrue();
+		FileSystem.File.ReadAllText(sourceName).Should().Be(contents);
+		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
 	}
 
 	[SkippableTheory]
