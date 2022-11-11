@@ -53,11 +53,22 @@ internal sealed class DirectoryInfoMock
 		DirectoryInfoMock directory = New(
 			FileSystem.Storage.GetLocation(
 				FileSystem.Path.Combine(FullName, path
-			   .EnsureValidFormat(FileSystem, nameof(path),
+				   .EnsureValidFormat(FileSystem, nameof(path),
 						Execute.IsWindows && !Execute.IsNetFramework))),
 			FileSystem);
 		directory.Create();
 		return directory;
+	}
+
+	/// <inheritdoc />
+	public override void Delete()
+	{
+		if (!FileSystem.Storage.DeleteContainer(Location))
+		{
+			throw ExceptionFactory.DirectoryNotFound(Location.FullPath);
+		}
+
+		ResetCache(!Execute.IsNetFramework);
 	}
 
 	/// <inheritdoc cref="IDirectoryInfo.Delete(bool)" />
@@ -251,19 +262,20 @@ internal sealed class DirectoryInfoMock
 		return new DirectoryInfoMock(location, fileSystem);
 	}
 
-	private IEnumerable<IStorageLocation> EnumerateInternal(FileSystemTypes fileSystemTypes,
-	                                              string path,
-	                                              string searchPattern,
-	                                              EnumerationOptions enumerationOptions)
+	private IEnumerable<IStorageLocation> EnumerateInternal(
+		FileSystemTypes fileSystemTypes,
+		string path,
+		string searchPattern,
+		EnumerationOptions enumerationOptions)
 	{
 		StorageExtensions.AdjustedLocation adjustedLocation = FileSystem.Storage
 		   .AdjustLocationFromSearchPattern(
 				path.EnsureValidFormat(FileSystem),
 				searchPattern);
 		return FileSystem.Storage.EnumerateLocations(
-				adjustedLocation.Location,
-				fileSystemTypes,
-				adjustedLocation.SearchPattern,
-				enumerationOptions);
+			adjustedLocation.Location,
+			fileSystemTypes,
+			adjustedLocation.SearchPattern,
+			enumerationOptions);
 	}
 }

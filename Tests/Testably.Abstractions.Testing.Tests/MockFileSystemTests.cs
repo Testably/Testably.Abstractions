@@ -203,7 +203,7 @@ public class MockFileSystemTests
 	[SkippableTheory]
 	[AutoData]
 	public void WithUncDrive_ShouldNotBeIncludedInGetDrives(
-		string server, string path, byte[] bytes)
+		string server)
 	{
 		MockFileSystem sut = new();
 		string uncPrefix = new(sut.Path.DirectorySeparatorChar, 2);

@@ -45,7 +45,7 @@ public abstract partial class CreateTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void Create_MissingDirectory_ShouldThrowDirectoryNotFoundException(
-		string missingDirectory, string fileName, string content)
+		string missingDirectory, string fileName)
 	{
 		string filePath = FileSystem.Path.Combine(missingDirectory, fileName);
 
