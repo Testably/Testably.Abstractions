@@ -55,7 +55,8 @@ internal sealed class FileInfoMock
 	{
 		get
 		{
-			if (Container is NullContainer)
+			if (Container is NullContainer ||
+			    Container.Type != FileSystemTypes.File)
 			{
 				throw ExceptionFactory.FileNotFound(
 					Execute.OnNetFramework(
