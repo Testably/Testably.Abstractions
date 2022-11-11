@@ -95,27 +95,15 @@ internal sealed class InMemoryLocation : IStorageLocation
 
 		return New(Drive,
 			parentPath,
-			GetFriendlyNameParent(FriendlyName));
+			GetFriendlyNameParent(parentPath));
 	}
 
-	private static string? GetFriendlyNameParent(string friendlyName)
-	{
-		if (friendlyName == ".")
-		{
-			return "./..";
-		}
+	private static string GetFriendlyNameParent(string parentPath)
+		=> Execute.OnNetFramework(
+			() => Path.GetFileName(parentPath),
+			() => parentPath);
 
-		if (friendlyName.StartsWith("./"))
-		{
-#pragma warning disable CA1845
-			return "./../" + friendlyName.Substring(2);
-#pragma warning restore CA1845
-		}
-
-		return Path.GetDirectoryName(friendlyName);
-	}
-
-#endregion
+	#endregion
 
 	/// <summary>
 	///     Creates a new <see cref="IStorageLocation" /> on the specified <paramref name="drive" /> with the given

@@ -286,6 +286,56 @@ public abstract partial class Tests<TFileSystem>
 		sut.Parent.Should().BeNull();
 	}
 
+	[SkippableTheory]
+	[InlineAutoData("./foo/bar", "foo")]
+	[InlineAutoData("./foo", ".")]
+	public void Parent_ToString_ShouldBeAbsolutePathOnNetCore(
+		string path, string expectedParent)
+	{
+		Skip.If(Test.IsNetFramework);
+
+		FileSystem.Initialize();
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+		sut.ToString().Should().Be(path);
+
+		IDirectoryInfo? parent = sut.Parent;
+
+		parent.Should().NotBeNull();
+		if (Test.IsNetFramework)
+		{
+			parent!.ToString().Should().Be(expectedParent);
+		}
+		else
+		{
+			parent!.ToString().Should().Be(FileSystem.Path.GetFullPath(expectedParent));
+		}
+	}
+
+	[SkippableTheory]
+	[InlineAutoData("./foo/bar", "foo")]
+	[InlineAutoData("./foo", "bar", "bar")]
+	public void Parent_ToString_ShouldBeDirectoryNameOnNetFramework(
+		string path, string expectedParent, string directory)
+	{
+		Skip.IfNot(Test.IsNetFramework);
+
+		FileSystem.InitializeIn(directory);
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+		sut.ToString().Should().Be(path);
+
+		IDirectoryInfo? parent = sut.Parent;
+
+		parent.Should().NotBeNull();
+		if (Test.IsNetFramework)
+		{
+			parent!.ToString().Should().Be(expectedParent);
+		}
+		else
+		{
+			parent!.ToString().Should().Be(FileSystem.Path.GetFullPath(expectedParent));
+		}
+	}
+
 	[SkippableFact]
 	[AutoData]
 	public void Root_Name_ShouldBeCorrect()
@@ -307,5 +357,18 @@ public abstract partial class Tests<TFileSystem>
 
 		result.Root.Exists.Should().BeTrue();
 		result.Root.FullName.Should().Be(expectedRoot);
+	}
+
+	[SkippableTheory]
+	[InlineData("/foo")]
+	[InlineData("./foo")]
+	[InlineData("foo")]
+	public void ToString_ShouldReturnProvidedPath(string path)
+	{
+		IDirectoryInfo directoryInfo = FileSystem.DirectoryInfo.New(path);
+
+		string? result = directoryInfo.ToString();
+
+		result.Should().Be(path);
 	}
 }

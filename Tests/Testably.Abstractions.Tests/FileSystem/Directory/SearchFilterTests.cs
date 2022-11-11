@@ -1,4 +1,5 @@
 using System.IO;
+using System.Text;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
@@ -125,6 +126,40 @@ public abstract partial class SearchFilterTests<TFileSystem>
 
 		result.Length.Should().Be(1);
 		result[0].Should().Be(System.IO.Path.Combine(".", "a-test"));
+	}
+
+	[SkippableFact]
+	public void
+		SearchPattern_ContainingTooManyInstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles()
+	{
+		Skip.If(Test.IsNetFramework);
+
+		FileSystem.Initialize()
+		   .WithFile("a.txt");
+
+		string currentDirectory = FileSystem.Directory.GetCurrentDirectory();
+		int directoryCount = currentDirectory.Length -
+		                     currentDirectory
+			                    .Replace($"{FileSystem.Path.DirectorySeparatorChar}", "")
+			                    .Length;
+
+		StringBuilder sb = new();
+		for (int i = 0; i <= directoryCount; i++)
+		{
+			sb.Append("../");
+		}
+
+		sb.Append("a*");
+		string searchPattern = sb.ToString();
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.Directory
+			   .GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
+		});
+
+		exception.Should().BeOfType<UnauthorizedAccessException>()
+		   .Which.HResult.Should().Be(-2147024891);
 	}
 
 	[SkippableTheory]
