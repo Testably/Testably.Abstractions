@@ -89,23 +89,15 @@ public abstract partial class CopyTests<TFileSystem>
 		Copy_InvalidDriveName_ShouldThrowCorrectException(
 			string source, string destination)
 	{
-		Skip.IfNot(Test.RunsOnWindows);
+		Skip.IfNot(Test.IsNetFramework);
 
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.File.Copy(source, destination);
 		});
 
-		if (Test.IsNetFramework)
-		{
-			exception.Should().BeOfType<NotSupportedException>()
-			   .Which.HResult.Should().Be(-2146233067);
-		}
-		else
-		{
-			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024773);
-		}
+		exception.Should().BeOfType<NotSupportedException>()
+		   .Which.HResult.Should().Be(-2146233067);
 	}
 
 	[SkippableTheory]
