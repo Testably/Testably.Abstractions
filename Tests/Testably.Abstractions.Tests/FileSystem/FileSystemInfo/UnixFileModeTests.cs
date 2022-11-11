@@ -25,6 +25,8 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 	public void UnixFileMode_ShouldBeInitializedToMinusOne(
 		string path)
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		UnixFileMode expected = (UnixFileMode)(-1);
 		FileSystem.File.WriteAllText(path, "some content");
 		IFileInfo fileSystemInfo = FileSystem.FileInfo.New(path);
