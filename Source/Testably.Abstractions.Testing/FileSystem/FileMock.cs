@@ -514,6 +514,24 @@ internal sealed class FileMock : IFile
 	}
 #endif
 
+#if FEATURE_FILESYSTEM_NET7
+	/// <inheritdoc cref="IFile.ReadLinesAsync(string, CancellationToken)" />
+	public IAsyncEnumerable<string> ReadLinesAsync(string path,
+	                                               CancellationToken cancellationToken = default)
+	{
+		ThrowIfCancelled(cancellationToken);
+		return ReadAllLines(path).ToAsyncEnumerable();
+	}
+
+	/// <inheritdoc cref="IFile.ReadLinesAsync(string, Encoding, CancellationToken)" />
+	public IAsyncEnumerable<string> ReadLinesAsync(string path, Encoding encoding,
+	                                               CancellationToken cancellationToken = default)
+	{
+		ThrowIfCancelled(cancellationToken);
+		return ReadAllLines(path, encoding).ToAsyncEnumerable();
+	}
+#endif
+
 	/// <inheritdoc cref="IFile.ReadAllText(string)" />
 	public string ReadAllText(string path)
 		=> ReadAllText(path, Encoding.Default);

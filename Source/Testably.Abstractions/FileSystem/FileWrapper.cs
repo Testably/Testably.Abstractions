@@ -249,6 +249,18 @@ internal sealed class FileWrapper : IFile
 	public string[] ReadAllLines(string path, Encoding encoding)
 		=> File.ReadAllLines(path, encoding);
 
+#if FEATURE_FILESYSTEM_NET7
+	/// <inheritdoc cref="IFile.ReadLinesAsync(string, CancellationToken)" />
+	public IAsyncEnumerable<string> ReadLinesAsync(string path,
+	                                               CancellationToken cancellationToken = default)
+		=> File.ReadLinesAsync(path, cancellationToken);
+
+	/// <inheritdoc cref="IFile.ReadLinesAsync(string, Encoding, CancellationToken)" />
+	public IAsyncEnumerable<string> ReadLinesAsync(string path, Encoding encoding,
+	                                        CancellationToken cancellationToken = default)
+		=> File.ReadLinesAsync(path, encoding, cancellationToken);
+#endif
+
 	/// <inheritdoc cref="IFile.ReadAllText(string)" />
 	public string ReadAllText(string path)
 		=> File.ReadAllText(path);

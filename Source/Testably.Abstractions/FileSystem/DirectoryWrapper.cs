@@ -22,12 +22,28 @@ internal sealed class DirectoryWrapper : IDirectory
 		=> DirectoryInfoWrapper.FromDirectoryInfo(
 			Directory.CreateDirectory(path), FileSystem);
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="IDirectory.CreateDirectory(string, UnixFileMode)" />
+	public IDirectoryInfo CreateDirectory(string path, UnixFileMode unixCreateMode)
+		=> DirectoryInfoWrapper.FromDirectoryInfo(
+#pragma warning disable CA1416
+			Directory.CreateDirectory(path, unixCreateMode), FileSystem);
+#pragma warning restore CA1416
+#endif
+
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IDirectory.CreateSymbolicLink(string, string)" />
 	public IFileSystemInfo CreateSymbolicLink(
 		string path, string pathToTarget)
 		=> FileSystemInfoWrapper.FromFileSystemInfo(
 			Directory.CreateSymbolicLink(path, pathToTarget), FileSystem);
+#endif
+
+#if FEATURE_FILESYSTEM_NET7
+	/// <inheritdoc cref="IDirectory.CreateTempSubdirectory(string)" />
+	public IDirectoryInfo CreateTempSubdirectory(string? prefix = null)
+		=> DirectoryInfoWrapper.FromDirectoryInfo(
+			Directory.CreateTempSubdirectory(prefix), FileSystem);
 #endif
 
 	/// <inheritdoc cref="IDirectory.Delete(string)" />

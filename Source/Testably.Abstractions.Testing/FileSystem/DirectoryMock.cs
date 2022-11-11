@@ -37,6 +37,18 @@ internal sealed class DirectoryMock : IDirectory
 		return directory;
 	}
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
+	/// <inheritdoc cref="IDirectory.CreateDirectory(string, UnixFileMode)" />
+	public IDirectoryInfo CreateDirectory(string path, UnixFileMode unixCreateMode)
+	{
+		IDirectoryInfo directoryInfo = CreateDirectory(path);
+#pragma warning disable CA1416
+		directoryInfo.UnixFileMode = unixCreateMode;
+#pragma warning restore CA1416
+		return directoryInfo;
+	}
+#endif
+
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IDirectory.CreateSymbolicLink(string, string)" />
 	public IFileSystemInfo CreateSymbolicLink(
@@ -47,6 +59,27 @@ internal sealed class DirectoryMock : IDirectory
 			_fileSystem.DirectoryInfo.New(path);
 		fileSystemInfo.CreateAsSymbolicLink(pathToTarget);
 		return fileSystemInfo;
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_NET7
+	/// <inheritdoc cref="IDirectory.CreateTempSubdirectory(string)" />
+	public IDirectoryInfo CreateTempSubdirectory(string? prefix = null)
+	{
+		string basePath;
+
+		do
+		{
+			string localBasePath = _fileSystem.Path.Combine(
+				_fileSystem.Path.GetTempPath(),
+				(prefix ?? "") + _fileSystem.Path.GetFileNameWithoutExtension(
+					_fileSystem.Path.GetRandomFileName()));
+			Execute.OnMac(() => localBasePath = "/private" + localBasePath);
+			basePath = localBasePath;
+		} while (_fileSystem.Directory.Exists(basePath));
+
+		_fileSystem.Directory.CreateDirectory(basePath);
+		return _fileSystem.DirectoryInfo.New(basePath);
 	}
 #endif
 

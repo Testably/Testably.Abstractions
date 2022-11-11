@@ -206,6 +206,16 @@ public interface IFile : IFileSystemExtensionPoint
 	                                 CancellationToken cancellationToken = default);
 #endif
 
+#if FEATURE_FILESYSTEM_NET7
+	/// <inheritdoc cref="File.ReadLinesAsync(string, CancellationToken)" />
+	IAsyncEnumerable<string> ReadLinesAsync(string path,
+	                                        CancellationToken cancellationToken = default);
+
+	/// <inheritdoc cref="File.ReadLinesAsync(string, Encoding, CancellationToken)" />
+	IAsyncEnumerable<string> ReadLinesAsync(string path, Encoding encoding,
+	                                        CancellationToken cancellationToken = default);
+#endif
+
 	/// <inheritdoc cref="File.ReadAllText(string)" />
 	string ReadAllText(string path);
 
