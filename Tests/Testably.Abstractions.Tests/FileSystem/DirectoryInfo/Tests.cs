@@ -106,7 +106,7 @@ public abstract partial class Tests<TFileSystem>
 			sut.CreationTime = creationTime;
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater && !Test.RunsOnMac)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.HResult.Should().Be(-2147024894);
@@ -132,7 +132,7 @@ public abstract partial class Tests<TFileSystem>
 			sut.CreationTimeUtc = creationTimeUtc;
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater && !Test.RunsOnMac)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.HResult.Should().Be(-2147024894);

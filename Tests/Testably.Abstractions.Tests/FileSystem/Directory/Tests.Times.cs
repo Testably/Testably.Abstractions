@@ -168,7 +168,7 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.Directory.SetCreationTime(path, creationTime);
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater && !Test.RunsOnMac)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
@@ -233,7 +233,7 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.Directory.SetCreationTimeUtc(path, creationTime);
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater && !Test.RunsOnMac)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
