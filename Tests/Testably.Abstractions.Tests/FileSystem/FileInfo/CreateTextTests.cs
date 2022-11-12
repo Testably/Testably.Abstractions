@@ -28,6 +28,23 @@ public abstract partial class CreateTextTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void CreateText_ShouldNotRefreshExistsCache(
+		string path, string appendText)
+	{
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+		fileInfo.Exists.Should().BeFalse();
+
+		using (StreamWriter stream = fileInfo.CreateText())
+		{
+			stream.Write(appendText);
+		}
+
+		fileInfo.Exists.Should().BeFalse();
+		FileSystem.File.Exists(path).Should().BeTrue();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void CreateText_ShouldReplaceTextInExistingFile(
 		string path, string contents, string appendText)
 	{

@@ -106,21 +106,13 @@ public sealed class MockFileSystem : IFileSystem
 	/// <summary>
 	///     Implements a custom access control (ACL) mechanism.
 	///     <para />
-	///     The callback enables granting or rejecting access to arbitrary containers and receives
-	///     the following input parameters:<br />
+	///     The <see cref="IAccessControlStrategy"/> defines a method that receives two values and allows or denies access:<br />
 	///     - The full path of the file or directory as first parameter<br />
 	///     - The <see cref="IFileSystemExtensionContainer" /> as second parameter
 	/// </summary>
-	/// <param name="grantRequestCallback">
-	///     A callback that receives the full path as first parameter and the
-	///     <see cref="IFileSystemExtensionContainer" /> as second parameter and returns <see langword="true" /> if
-	///     the request was granted and <see langword="false" /> if the request was rejected.
-	/// </param>
-	public MockFileSystem WithAccessControl(
-		Func<string, IFileSystemExtensionContainer, bool>?
-			grantRequestCallback)
+	public MockFileSystem WithAccessControl(IAccessControlStrategy accessControlStrategy)
 	{
-		_storage.WithAccessControl(grantRequestCallback);
+		_storage.WithAccessControl(accessControlStrategy);
 		return this;
 	}
 

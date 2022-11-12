@@ -10,6 +10,47 @@ public abstract partial class ReplaceTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
+	public void Replace_BackupDirectoryMissing_ShouldThrowCorrectException(
+		string sourceName,
+		string destinationName,
+		string missingDirectory,
+		string backupName)
+	{
+		FileSystem.File.WriteAllText(sourceName, "some content");
+		string backupPath = FileSystem.Path.Combine(missingDirectory, backupName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.Replace(destinationName, backupPath);
+		});
+
+		exception.Should().BeFileOrDirectoryNotFoundException();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Replace_DestinationDirectoryMissing_ShouldThrowDirectoryNotFoundException(
+		string sourceName,
+		string missingDirectory,
+		string destinationName,
+		string backupName)
+	{
+		FileSystem.File.WriteAllText(sourceName, "some content");
+		string destinationPath =
+			FileSystem.Path.Combine(missingDirectory, destinationName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.Replace(destinationPath, backupName);
+		});
+
+		exception.Should().BeFileOrDirectoryNotFoundException();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Replace_DestinationIsDirectory_ShouldThrowUnauthorizedAccessException(
 		string sourceName,
 		string destinationName,
@@ -222,6 +263,25 @@ public abstract partial class ReplaceTests<TFileSystem>
 		FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
 		FileSystem.File.Exists(backupName).Should().BeTrue();
 		FileSystem.File.ReadAllText(backupName).Should().Be(destinationContents);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Replace_SourceDirectoryMissing_ShouldThrowFileNotFoundException(
+		string missingDirectory,
+		string sourceName,
+		string destinationName,
+		string backupName)
+	{
+		string sourcePath = FileSystem.Path.Combine(missingDirectory, sourceName);
+		IFileInfo sut = FileSystem.FileInfo.New(sourcePath);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.Replace(destinationName, backupName);
+		});
+
+		exception.Should().BeFileOrDirectoryNotFoundException();
 	}
 
 	[SkippableTheory]

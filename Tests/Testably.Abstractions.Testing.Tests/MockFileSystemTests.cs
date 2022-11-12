@@ -99,7 +99,7 @@ public class MockFileSystemTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize();
-		sut.WithAccessControl((_, _) => false);
+		sut.WithAccessControl(new DefaultAccessControlStrategy((_, _) => false));
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -116,7 +116,8 @@ public class MockFileSystemTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize();
-		sut.WithAccessControl((p, _) => p == sut.Path.GetFullPath(allowedPath));
+		sut.WithAccessControl(new DefaultAccessControlStrategy((p, _)
+			=> p == sut.Path.GetFullPath(allowedPath)));
 
 		sut.Directory.CreateDirectory(allowedPath);
 		Exception? exception = Record.Exception(() =>
@@ -250,12 +251,14 @@ public class MockFileSystemTests
 #if NET6_0_OR_GREATER
 	[SkippableTheory]
 	[AutoData]
-	public void WithSafeFileHandleStrategy_DefaultStrategy_ShouldUseMappedSafeFileHandleMock(
-		string path, string contents)
+	public void
+		WithSafeFileHandleStrategy_DefaultStrategy_ShouldUseMappedSafeFileHandleMock(
+			string path, string contents)
 	{
 		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
-		sut.WithSafeFileHandleStrategy(new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
+		sut.WithSafeFileHandleStrategy(
+			new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
 
 		using FileSystemStream stream =
 			sut.FileStream.New(new SafeFileHandle(), FileAccess.Read);

@@ -23,6 +23,11 @@ internal static class ExceptionFactory
 		=> new(
 			"Search pattern cannot contain \"..\" to move up directories and can be contained only internally in file/directory names, as in \"a..b\".");
 
+	public static IOException SeekBackwardNotPossibleInAppendMode()
+		=> new(
+			"Unable seek backward to overwrite data that previously existed in a file opened in Append mode.",
+			-2146232800);
+
 	internal static UnauthorizedAccessException AccessToPathDenied(string path = "")
 		=> new(string.IsNullOrEmpty(path)
 			? "Access to the path is denied."
@@ -181,6 +186,14 @@ internal static class ExceptionFactory
 		=> new(
 			$"The process cannot access the file '{path}' because it is being used by another process.",
 			hResult);
+
+	public static NotSupportedException StreamDoesNotSupportReading()
+		=> new("Stream does not support reading.")
+		{
+#if FEATURE_EXCEPTION_HRESULT
+			HResult = -2146233067
+#endif
+		};
 
 	internal static NotSupportedException StreamDoesNotSupportWriting()
 		=> new("Stream does not support writing.")

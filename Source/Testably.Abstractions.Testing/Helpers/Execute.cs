@@ -36,10 +36,34 @@ internal static class Execute
 	}
 
 	/// <summary>
+	///     Flag indicating if the runtime is .NET 7.0 or greater.
+	/// </summary>
+	public static bool IsNet7OrGreater
+#if NET7_0_OR_GREATER
+		=> true;
+#else
+		=> false;
+#endif
+
+	/// <summary>
 	///     Flag indicating if the code runs on <see cref="OSPlatform.Windows" />.
 	/// </summary>
 	public static bool IsWindows
 		=> RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
+	/// <summary>
+	///     The <paramref name="callback" /> is executed when the code runs not in .NET Framework.
+	/// </summary>
+	/// <remarks>
+	///     See also: <seealso cref="IsNetFramework" />
+	/// </remarks>
+	public static void NotOnNetFramework(Action callback)
+	{
+		if (!IsNetFramework)
+		{
+			callback();
+		}
+	}
 
 	/// <summary>
 	///     The <paramref name="callback" /> is executed on all operating systems except <see cref="OSPlatform.Windows" />.

@@ -13,9 +13,30 @@ public abstract partial class CreateTests<TFileSystem>
 	public void Create_MissingFile_ShouldCreateFile(string path)
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(path);
+		FileSystem.File.Exists(path).Should().BeFalse();
+
+		using FileSystemStream stream = sut.Create();
+		
+		FileSystem.File.Exists(path).Should().BeTrue();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Create_ShouldRefreshExistsCache_ExceptOnNetFramework(string path)
+	{
+		IFileInfo sut = FileSystem.FileInfo.New(path);
+		sut.Exists.Should().BeFalse();
 
 		using FileSystemStream stream = sut.Create();
 
+		if (Test.IsNetFramework)
+		{
+			sut.Exists.Should().BeFalse();
+		}
+		else
+		{
+			sut.Exists.Should().BeTrue();
+		}
 		FileSystem.File.Exists(path).Should().BeTrue();
 	}
 

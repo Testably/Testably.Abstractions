@@ -39,6 +39,27 @@ public abstract partial class DeleteTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void Delete_ShouldRefreshExistsCache_ExceptOnNetFramework(string path)
+	{
+		FileSystem.File.WriteAllText(path, "some content");
+		IFileInfo sut = FileSystem.FileInfo.New(path);
+		sut.Exists.Should().BeTrue();
+
+		sut.Delete();
+
+		if (Test.IsNetFramework)
+		{
+			sut.Exists.Should().BeTrue();
+		}
+		else
+		{
+			sut.Exists.Should().BeFalse();
+		}
+		FileSystem.File.Exists(path).Should().BeFalse();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Delete_WithOpenFile_ShouldThrowIOException(string filename)
 	{
 		FileSystem.Initialize();

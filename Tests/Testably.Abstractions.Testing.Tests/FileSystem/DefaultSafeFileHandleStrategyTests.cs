@@ -15,7 +15,7 @@ public class DefaultSafeFileHandleStrategyTests
 	}
 
 	[SkippableFact]
-	public void MapSafeFileHandle_NullCallback_ShouldThrowArgumentNullException()
+	public void Constructor_NullCallback_ShouldThrowArgumentNullException()
 	{
 		Exception? exception = Record.Exception(() =>
 		{
