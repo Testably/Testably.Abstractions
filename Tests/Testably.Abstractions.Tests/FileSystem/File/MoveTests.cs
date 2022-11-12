@@ -177,6 +177,27 @@ public abstract partial class MoveTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void Move_SourceDirectoryMissing_ShouldThrowFileNotFoundException(
+		string missingDirectory,
+		string sourceName,
+		string destinationName)
+	{
+		string sourcePath = FileSystem.Path.Combine(missingDirectory, sourceName);
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.Move(sourcePath, destinationName);
+		});
+
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.Message.Should()
+		   .Contain($"'{FileSystem.Path.GetFullPath(sourcePath)}'");
+		FileSystem.File.Exists(destinationName).Should().BeFalse();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Move_SourceLocked_ShouldThrowIOException(
 		string sourceName,
 		string destinationName)
@@ -201,6 +222,23 @@ public abstract partial class MoveTests<TFileSystem>
 			FileSystem.File.Exists(sourceName).Should().BeFalse();
 			FileSystem.File.Exists(destinationName).Should().BeTrue();
 		}
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Move_SourceMissing_CopyToItself_ShouldThrowFileNotFoundException(
+		string sourceName)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.Move(sourceName, sourceName);
+		});
+
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.HResult.Should().Be(-2147024894);
+		exception.Should().BeOfType<FileNotFoundException>()
+		   .Which.Message.Should()
+		   .Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
 	}
 
 	[SkippableTheory]
