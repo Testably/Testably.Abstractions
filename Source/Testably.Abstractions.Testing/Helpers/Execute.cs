@@ -42,6 +42,20 @@ internal static class Execute
 		=> RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
 	/// <summary>
+	///     The <paramref name="callback" /> is executed when the code runs not in .NET Framework.
+	/// </summary>
+	/// <remarks>
+	///     See also: <seealso cref="IsNetFramework" />
+	/// </remarks>
+	public static void NotOnNetFramework(Action callback)
+	{
+		if (!IsNetFramework)
+		{
+			callback();
+		}
+	}
+
+	/// <summary>
 	///     The <paramref name="callback" /> is executed on all operating systems except <see cref="OSPlatform.Windows" />.
 	/// </summary>
 	public static void NotOnWindows(Action callback)

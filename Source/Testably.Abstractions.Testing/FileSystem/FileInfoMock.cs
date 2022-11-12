@@ -100,7 +100,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.Create()" />
 	public FileSystemStream Create()
 	{
-		Refresh();
+		Execute.NotOnNetFramework(Refresh);
 		return FileSystem.File.Create(FullName);
 	}
 

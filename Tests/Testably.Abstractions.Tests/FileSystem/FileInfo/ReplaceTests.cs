@@ -25,7 +25,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 			sut.Replace(destinationName, backupPath);
 		});
 
-		if (Test.RunsOnWindows)
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater && !Test.RunsOnMac)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.HResult.Should().Be(-2147024894);
@@ -299,8 +299,16 @@ public abstract partial class ReplaceTests<TFileSystem>
 			sut.Replace(destinationName, backupName);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+		if (Test.IsNet7OrGreater && Test.RunsOnMac)
+		{
+			exception.Should().BeOfType<DirectoryNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024893);
+		}
+		else
+		{
+			exception.Should().BeOfType<FileNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024894);
+		}
 	}
 
 	[SkippableTheory]

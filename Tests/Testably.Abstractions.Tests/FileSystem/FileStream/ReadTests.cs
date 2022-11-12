@@ -1,4 +1,3 @@
-using System.IO;
 using System.Threading;
 using Testably.Abstractions.FileSystem;
 #if FEATURE_FILESYSTEM_ASYNC
@@ -39,7 +38,7 @@ public abstract partial class ReadTests<TFileSystem>
 		string path, byte[] contents)
 	{
 		FileSystem.File.WriteAllBytes(path, contents);
-		FileSystemStream stream = FileSystem.FileInfo.New(path).Open(FileMode.Append);
+		FileSystemStream stream = FileSystem.FileInfo.New(path).OpenWrite();
 
 		byte[] buffer = new byte[contents.Length];
 		Exception? exception = Record.Exception(() =>
@@ -120,7 +119,7 @@ public abstract partial class ReadTests<TFileSystem>
 	{
 		byte[] buffer = new byte[contents.Length];
 		FileSystem.File.WriteAllBytes(path, contents);
-		using FileSystemStream stream = FileSystem.File.Open(path, FileMode.Append);
+		using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -155,7 +154,7 @@ public abstract partial class ReadTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllBytes(path, contents);
 
-		using FileSystemStream stream = FileSystem.File.Open(path, FileMode.Append);
+		using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -226,7 +225,7 @@ public abstract partial class ReadTests<TFileSystem>
 	{
 		byte[] buffer = new byte[contents.Length];
 		FileSystem.File.WriteAllBytes(path, contents);
-		using FileSystemStream stream = FileSystem.File.Open(path, FileMode.Append);
+		using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -267,7 +266,7 @@ public abstract partial class ReadTests<TFileSystem>
 		CancellationTokenSource cts = new(10000);
 		byte[] buffer = new byte[contents.Length];
 		await FileSystem.File.WriteAllBytesAsync(path, contents, cts.Token);
-		await using FileSystemStream stream = FileSystem.File.Open(path, FileMode.Append);
+		await using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
