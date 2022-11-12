@@ -31,9 +31,11 @@ public class DefaultSafeFileHandleStrategyTests
 	{
 		SafeFileHandle fooSafeFileHandle = new();
 		SafeFileHandle barSafeFileHandle = new();
-		Dictionary<SafeFileHandle, SafeFileHandleMock> mapping = new();
-		mapping.Add(fooSafeFileHandle, new SafeFileHandleMock("foo"));
-		mapping.Add(barSafeFileHandle, new SafeFileHandleMock("bar"));
+		Dictionary<SafeFileHandle, SafeFileHandleMock> mapping = new()
+		{
+			{ fooSafeFileHandle, new SafeFileHandleMock("foo") },
+			{ barSafeFileHandle, new SafeFileHandleMock("bar") }
+		};
 		FileSystem.File.WriteAllText("foo", "foo-content");
 		FileSystem.File.WriteAllText("bar", "bar-content");
 

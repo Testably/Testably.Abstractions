@@ -33,9 +33,9 @@ internal static class EncryptionHelper
 
 	private static Aes CreateDummyEncryptionAlgorithm()
 	{
+#pragma warning disable CA1850
 		byte[] bytes = Encoding.UTF8.GetBytes(
 			"THIS IS ONLY A DUMMY ENCRYPTION FOR TESTING HELPERS!");
-
 		using (SHA256 sha256Hash = SHA256.Create())
 		{
 			byte[] key = sha256Hash.ComputeHash(bytes);
@@ -45,6 +45,7 @@ internal static class EncryptionHelper
 			algorithm.IV = iv;
 			return algorithm;
 		}
+#pragma warning restore CA1850
 	}
 
 	/// <summary>
