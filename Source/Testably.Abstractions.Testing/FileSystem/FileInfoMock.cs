@@ -205,13 +205,44 @@ internal sealed class FileInfoMock
 	                         string? destinationBackupFileName)
 	{
 		IStorageLocation location = FileSystem.Storage.Replace(
-			                            Location,
-			                            FileSystem.Storage.GetLocation(
-				                            destinationFileName
+			                            Location.ThrowIfNotFound(FileSystem,
+				                            () => { },
+				                            () =>
+				                            {
+					                            if (Execute.IsNet7OrGreater &&
+					                                !Execute.IsWindows)
+					                            {
+						                            throw ExceptionFactory
+							                           .DirectoryNotFound(
+								                            FullName);
+					                            }
+
+					                            throw ExceptionFactory
+						                           .FileNotFound(
+							                            FullName);
+				                            }),
+			                            FileSystem.Storage
+				                           .GetLocation(destinationFileName
 					                           .EnsureValidFormat(FileSystem,
 						                            nameof(destinationFileName))),
-			                            FileSystem.Storage.GetLocation(
-				                            destinationBackupFileName))
+			                            FileSystem.Storage
+				                           .GetLocation(destinationBackupFileName)
+				                           .ThrowIfNotFound(FileSystem,
+					                            () => { },
+					                            () =>
+					                            {
+						                            if (Execute.IsWindows ||
+						                                Execute.IsNet7OrGreater)
+						                            {
+							                            throw ExceptionFactory
+								                           .FileNotFound(
+									                            FullName);
+						                            }
+
+						                            throw ExceptionFactory
+							                           .DirectoryNotFound(
+								                            FullName);
+					                            }))
 		                            ?? throw ExceptionFactory.FileNotFound(FullName);
 		return FileSystem.FileInfo.New(location.FullPath);
 	}

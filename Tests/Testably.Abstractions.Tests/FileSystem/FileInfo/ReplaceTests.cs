@@ -10,7 +10,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public void Replace_BackupDirectoryMissing_ShouldThrowFileNotFoundException(
+	public void Replace_BackupDirectoryMissing_ShouldThrowCorrectException(
 		string sourceName,
 		string destinationName,
 		string missingDirectory,
@@ -25,7 +25,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 			sut.Replace(destinationName, backupPath);
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater && !Test.RunsOnMac)
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
 			   .Which.HResult.Should().Be(-2147024894);
@@ -299,7 +299,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 			sut.Replace(destinationName, backupName);
 		});
 
-		if (Test.IsNet7OrGreater && Test.RunsOnMac)
+		if (Test.IsNet7OrGreater && !Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
 			   .Which.HResult.Should().Be(-2147024893);

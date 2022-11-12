@@ -357,9 +357,9 @@ internal sealed class InMemoryStorage : IStorage
 	                                 IStorageLocation? backup,
 	                                 bool ignoreMetadataErrors = false)
 	{
-		ThrowIfParentDoesNotExist(destination, p => Execute.OnWindows<IOException>(
-			() => ExceptionFactory.DirectoryNotFound(),
-			() => ExceptionFactory.FileNotFound(p.FullPath)));
+		ThrowIfParentDoesNotExist(destination, location => Execute.OnWindows<IOException>(
+			() => ExceptionFactory.DirectoryNotFound(location.FullPath),
+			() => ExceptionFactory.FileNotFound(location.FullPath)));
 
 		if (!_containers.TryGetValue(source,
 			out IStorageContainer? sourceContainer))
