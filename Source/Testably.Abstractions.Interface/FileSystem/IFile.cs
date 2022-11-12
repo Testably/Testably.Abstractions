@@ -37,24 +37,24 @@ public interface IFile : IFileSystemExtensionPoint
 							 CancellationToken cancellationToken = default);
 #endif
 
-#if FEATURE_FILESYSTEM_ASYNC
-	/// <inheritdoc cref="File.AppendAllTextAsync(string, string?, CancellationToken)" />
-	Task AppendAllTextAsync(string path,
-							string? contents,
-							CancellationToken cancellationToken = default);
-
-	/// <inheritdoc cref="File.AppendAllTextAsync(string, string?, Encoding, CancellationToken)" />
-	Task AppendAllTextAsync(string path,
-							string? contents,
-							Encoding encoding,
-							CancellationToken cancellationToken = default);
-#endif
-
 	/// <inheritdoc cref="File.AppendAllText(string, string?)" />
 	void AppendAllText(string path, string? contents);
 
 	/// <inheritdoc cref="File.AppendAllText(string, string?, Encoding)" />
 	void AppendAllText(string path, string? contents, Encoding encoding);
+
+#if FEATURE_FILESYSTEM_ASYNC
+	/// <inheritdoc cref="File.AppendAllTextAsync(string, string?, CancellationToken)" />
+	Task AppendAllTextAsync(string path,
+	                        string? contents,
+	                        CancellationToken cancellationToken = default);
+
+	/// <inheritdoc cref="File.AppendAllTextAsync(string, string?, Encoding, CancellationToken)" />
+	Task AppendAllTextAsync(string path,
+	                        string? contents,
+	                        Encoding encoding,
+	                        CancellationToken cancellationToken = default);
+#endif
 
 	/// <inheritdoc cref="File.AppendText(string)" />
 	StreamWriter AppendText(string path);
