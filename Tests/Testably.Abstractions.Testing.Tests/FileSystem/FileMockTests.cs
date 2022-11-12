@@ -43,7 +43,7 @@ public class FileMockTests
 		fileSystem.File.SetAttributes("foo", attributes);
 		FileAttributes expectedAttributes = fileSystem.File.GetAttributes("foo");
 		fileSystem.File.WriteAllText(path, "some content");
-		fileSystem.MapSafeFileHandle(_ => new SafeFileHandleMock(path));
+		fileSystem.WithSafeFileHandleStrategy(new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
 
 		fileSystem.File.SetAttributes(fileHandle, attributes);
 
@@ -59,7 +59,7 @@ public class FileMockTests
 		SafeFileHandle fileHandle = new();
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText(path, "some content");
-		fileSystem.MapSafeFileHandle(_ => new SafeFileHandleMock(path));
+		fileSystem.WithSafeFileHandleStrategy(new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
 
 		fileSystem.File.SetCreationTime(fileHandle, creationTime);
 
@@ -76,7 +76,7 @@ public class FileMockTests
 		SafeFileHandle fileHandle = new();
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText(path, "some content");
-		fileSystem.MapSafeFileHandle(_ => new SafeFileHandleMock(path));
+		fileSystem.WithSafeFileHandleStrategy(new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
 
 		fileSystem.File.SetCreationTimeUtc(fileHandle, creationTimeUtc);
 
@@ -93,7 +93,7 @@ public class FileMockTests
 		SafeFileHandle fileHandle = new();
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText(path, "some content");
-		fileSystem.MapSafeFileHandle(_ => new SafeFileHandleMock(path));
+		fileSystem.WithSafeFileHandleStrategy(new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
 
 		fileSystem.File.SetLastAccessTime(fileHandle, lastAccessTime);
 
@@ -110,7 +110,7 @@ public class FileMockTests
 		SafeFileHandle fileHandle = new();
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText(path, "some content");
-		fileSystem.MapSafeFileHandle(_ => new SafeFileHandleMock(path));
+		fileSystem.WithSafeFileHandleStrategy(new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
 
 		fileSystem.File.SetLastAccessTimeUtc(fileHandle, lastAccessTimeUtc);
 
@@ -127,7 +127,7 @@ public class FileMockTests
 		SafeFileHandle fileHandle = new();
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText(path, "some content");
-		fileSystem.MapSafeFileHandle(_ => new SafeFileHandleMock(path));
+		fileSystem.WithSafeFileHandleStrategy(new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
 
 		fileSystem.File.SetLastWriteTime(fileHandle, lastWriteTime);
 
@@ -144,7 +144,7 @@ public class FileMockTests
 		SafeFileHandle fileHandle = new();
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText(path, "some content");
-		fileSystem.MapSafeFileHandle(_ => new SafeFileHandleMock(path));
+		fileSystem.WithSafeFileHandleStrategy(new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
 
 		fileSystem.File.SetLastWriteTimeUtc(fileHandle, lastWriteTimeUtc);
 
@@ -163,7 +163,7 @@ public class FileMockTests
 		SafeFileHandle fileHandle = new();
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText(path, "some content");
-		fileSystem.MapSafeFileHandle(_ => new SafeFileHandleMock(path));
+		fileSystem.WithSafeFileHandleStrategy(new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
 
 		fileSystem.File.SetUnixFileMode(fileHandle, mode);
 

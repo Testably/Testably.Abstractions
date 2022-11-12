@@ -2,11 +2,7 @@
 using System;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.FileSystem;
-using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
-#if NET6_0_OR_GREATER
-using System.Diagnostics.CodeAnalysis;
-#endif
 
 namespace Testably.Abstractions.Testing;
 
@@ -50,7 +46,7 @@ public sealed class MockFileSystem : IFileSystem
 	private readonly PathMock _pathMock;
 	private readonly InMemoryStorage _storage;
 
-	internal Func<SafeFileHandle, SafeFileHandleMock> SafeFileHandleMapper
+	internal ISafeFileHandleStrategy SafeFileHandleStrategy
 	{
 		get;
 		private set;
@@ -73,7 +69,7 @@ public sealed class MockFileSystem : IFileSystem
 		FileInfo = new FileInfoFactoryMock(this);
 		FileStream = new FileStreamFactoryMock(this);
 		FileSystemWatcher = new FileSystemWatcherFactoryMock(this);
-		SafeFileHandleMapper = DefaultSafeFileHandleMapper;
+		SafeFileHandleStrategy = new NullSafeFileHandleStrategy();
 	}
 
 	#region IFileSystem Members
@@ -150,27 +146,10 @@ public sealed class MockFileSystem : IFileSystem
 	///     <para />
 	///     If set to <see langword="null" /> resets to the default mapper for <see cref="SafeFileHandle" />s.
 	/// </summary>
-	public MockFileSystem MapSafeFileHandle(
-		Func<SafeFileHandle, SafeFileHandleMock>? safeFileHandleMapper)
+	public MockFileSystem WithSafeFileHandleStrategy(
+		ISafeFileHandleStrategy safeFileHandleStrategy)
 	{
-		SafeFileHandleMapper = safeFileHandleMapper ?? DefaultSafeFileHandleMapper;
+		SafeFileHandleStrategy = safeFileHandleStrategy;
 		return this;
-	}
-
-	/// <summary>
-	///     Default mapper for handling <see cref="SafeFileHandle" />s in a mocked file system.
-	/// </summary>
-	/// <returns>A <see cref="SafeFileHandleMock" /> that maps the corresponding file in the file system.</returns>
-#if NET6_0_OR_GREATER
-	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
-#endif
-	private static SafeFileHandleMock DefaultSafeFileHandleMapper(SafeFileHandle handle)
-	{
-		if (handle.IsInvalid)
-		{
-			throw ExceptionFactory.HandleIsInvalid();
-		}
-
-		throw ExceptionFactory.NotSupportedSafeFileHandle();
 	}
 }

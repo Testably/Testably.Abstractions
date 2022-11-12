@@ -255,7 +255,7 @@ public class MockFileSystemTests
 	{
 		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
-		sut.MapSafeFileHandle(_ => new SafeFileHandleMock(path));
+		sut.WithSafeFileHandleStrategy(new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
 
 		using FileSystemStream stream =
 			sut.FileStream.New(new SafeFileHandle(), FileAccess.Read);
