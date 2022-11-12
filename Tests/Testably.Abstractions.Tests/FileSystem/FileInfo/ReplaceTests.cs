@@ -25,8 +25,16 @@ public abstract partial class ReplaceTests<TFileSystem>
 			sut.Replace(destinationName, backupPath);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeOfType<FileNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024894);
+		}
+		else
+		{
+			exception.Should().BeOfType<DirectoryNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024893);
+		}
 	}
 
 	[SkippableTheory]
@@ -47,8 +55,16 @@ public abstract partial class ReplaceTests<TFileSystem>
 			sut.Replace(destinationPath, backupName);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeOfType<DirectoryNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024893);
+		}
+		else
+		{
+			exception.Should().BeOfType<FileNotFoundException>()
+			   .Which.HResult.Should().Be(-2147024894);
+		}
 	}
 
 	[SkippableTheory]
