@@ -250,12 +250,12 @@ public class MockFileSystemTests
 #if NET6_0_OR_GREATER
 	[SkippableTheory]
 	[AutoData]
-	public void WithSafeFileHandle_WithCallback_ShouldUpdateDrive(
+	public void WithSafeFileHandleStrategy_DefaultStrategy_ShouldUseMappedSafeFileHandleMock(
 		string path, string contents)
 	{
 		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
-		sut.MapSafeFileHandle(_ => new SafeFileHandleMock(path));
+		sut.WithSafeFileHandleStrategy(new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
 
 		using FileSystemStream stream =
 			sut.FileStream.New(new SafeFileHandle(), FileAccess.Read);
@@ -267,7 +267,7 @@ public class MockFileSystemTests
 
 	[SkippableTheory]
 	[AutoData]
-	public void WithSafeFileHandle_WithoutMapping_ShouldThrowException(
+	public void WithSafeFileHandleStrategy_NullStrategy_ShouldThrowException(
 		string path, string contents)
 	{
 		MockFileSystem sut = new();

@@ -998,7 +998,7 @@ internal sealed class FileMock : IFile
 	private IStorageContainer GetContainerFromSafeFileHandle(SafeFileHandle fileHandle)
 	{
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
-		   .SafeFileHandleMapper.Invoke(fileHandle);
+		   .SafeFileHandleStrategy.MapSafeFileHandle(fileHandle);
 		IStorageContainer container = _fileSystem.Storage
 		   .GetContainer(_fileSystem.Storage.GetLocation(
 				safeFileHandleMock.Path));

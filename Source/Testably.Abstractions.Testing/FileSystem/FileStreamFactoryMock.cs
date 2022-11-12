@@ -90,7 +90,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access)
 	{
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
-		   .SafeFileHandleMapper.Invoke(handle);
+		   .SafeFileHandleStrategy.MapSafeFileHandle(handle);
 		return New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
@@ -105,7 +105,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize)
 	{
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
-		   .SafeFileHandleMapper.Invoke(handle);
+		   .SafeFileHandleStrategy.MapSafeFileHandle(handle);
 		return New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
@@ -122,7 +122,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	                            bool isAsync)
 	{
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
-		   .SafeFileHandleMapper.Invoke(handle);
+		   .SafeFileHandleStrategy.MapSafeFileHandle(handle);
 		return New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
