@@ -242,8 +242,10 @@ public abstract partial class ExceptionTests<TFileSystem>
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 		if (!Test.RunsOnWindows)
 		{
+#pragma warning disable CA1416
 			yield return (ExceptionTestHelper.TestTypes.All, "path", file
 				=> file.GetUnixFileMode(value));
+#pragma warning restore CA1416
 		}
 #endif
 		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "sourceFileName", file
@@ -368,8 +370,10 @@ public abstract partial class ExceptionTests<TFileSystem>
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 		if (!Test.RunsOnWindows)
 		{
+#pragma warning disable CA1416
 			yield return (ExceptionTestHelper.TestTypes.All, "path", file
 				=> file.SetUnixFileMode(value, UnixFileMode.None));
+#pragma warning restore CA1416
 		}
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file

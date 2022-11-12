@@ -165,9 +165,11 @@ public class FileMockTests
 		fileSystem.File.WriteAllText(path, "some content");
 		fileSystem.MapSafeFileHandle(_ => new SafeFileHandleMock(path));
 
+#pragma warning disable CA1416
 		fileSystem.File.SetUnixFileMode(fileHandle, mode);
 
 		UnixFileMode result = fileSystem.File.GetUnixFileMode(fileHandle);
+#pragma warning restore CA1416
 
 		result.Should().Be(mode);
 	}
