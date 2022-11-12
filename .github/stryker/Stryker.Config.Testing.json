@@ -19,13 +19,13 @@
     "mutation-level": "Advanced",
     "mutate": [
       // The enumeration options helper is a wrapper around Microsoft code
-      "!**/Testably.Abstractions.Testing/Internal/EnumerationOptionsHelper.cs",
+      "!**/Testably.Abstractions.Testing/Helpers/EnumerationOptionsHelper.cs",
       // The exception type is checked, but not the message, as this could be language dependent
-      "!**/Testably.Abstractions.Testing/Internal/ExceptionFactory.cs",
+      "!**/Testably.Abstractions.Testing/Helpers/ExceptionFactory.cs",
       // Indicates operating system specific code
-      "!**/Testably.Abstractions.Testing/Internal/Execute.cs",
+      "!**/Testably.Abstractions.Testing/Helpers/Execute.cs",
       // The directory cleaner should cleanup the real file system
-      "!**/Testably.Abstractions.Testing/FileSystemInitializer.DirectoryCleaner.cs"
+      "!**/Testably.Abstractions.Testing/FileSystemInitializer/DirectoryCleaner.cs"
     ],
     "ignore-methods": [
       // The exception type is checked, but not the message, as this could be language dependent
@@ -33,7 +33,7 @@
       // Some checks are redundant but there for performance improvements
       "InMemoryLocation.Equals",
       // Indicates operating system specific code
-      "Testably.Abstractions.Testing.Internal.Execute.*On*",
+      "Testably.Abstractions.Testing.Helpers.Execute.*On*",
       // Drives are not used in Linux
       "ValidateDriveLetter",
       // The encryption helper is only valid for testing purposes
