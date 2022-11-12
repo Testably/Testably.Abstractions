@@ -25,16 +25,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 			sut.Replace(destinationName, backupPath);
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
-		{
-			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024894);
-		}
-		else
-		{
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
-		}
+		exception.Should().BeFileOrDirectoryNotFoundException();
 	}
 
 	[SkippableTheory]
@@ -55,16 +46,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 			sut.Replace(destinationPath, backupName);
 		});
 
-		if (Test.RunsOnWindows)
-		{
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
-		}
-		else
-		{
-			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024894);
-		}
+		exception.Should().BeFileOrDirectoryNotFoundException();
 	}
 
 	[SkippableTheory]
@@ -299,16 +281,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 			sut.Replace(destinationName, backupName);
 		});
 
-		if (Test.IsNet7OrGreater && !Test.RunsOnWindows)
-		{
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
-		}
-		else
-		{
-			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024894);
-		}
+		exception.Should().BeFileOrDirectoryNotFoundException();
 	}
 
 	[SkippableTheory]

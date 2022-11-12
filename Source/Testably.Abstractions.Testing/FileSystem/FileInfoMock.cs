@@ -204,46 +204,49 @@ internal sealed class FileInfoMock
 	public IFileInfo Replace(string destinationFileName,
 	                         string? destinationBackupFileName)
 	{
-		IStorageLocation location = FileSystem.Storage.Replace(
-			                            Location.ThrowIfNotFound(FileSystem,
-				                            () => { },
-				                            () =>
-				                            {
-					                            if (Execute.IsNet7OrGreater &&
-					                                !Execute.IsWindows)
-					                            {
-						                            throw ExceptionFactory
-							                           .DirectoryNotFound(
-								                            FullName);
-					                            }
+		IStorageLocation location =
+			FileSystem
+			   .Storage
+			   .Replace(
+					Location.ThrowIfNotFound(FileSystem,
+						() => { },
+						() =>
+						{
+							if (Execute.IsWindows)
+							{
+								throw ExceptionFactory.FileNotFound(FullName);
+							}
 
-					                            throw ExceptionFactory
-						                           .FileNotFound(
-							                            FullName);
-				                            }),
-			                            FileSystem.Storage
-				                           .GetLocation(destinationFileName
-					                           .EnsureValidFormat(FileSystem,
-						                            nameof(destinationFileName))),
-			                            FileSystem.Storage
-				                           .GetLocation(destinationBackupFileName)
-				                           .ThrowIfNotFound(FileSystem,
-					                            () => { },
-					                            () =>
-					                            {
-						                            if (Execute.IsWindows ||
-						                                Execute.IsNet7OrGreater)
-						                            {
-							                            throw ExceptionFactory
-								                           .FileNotFound(
-									                            FullName);
-						                            }
+							throw ExceptionFactory.DirectoryNotFound(FullName);
+						}),
+					FileSystem.Storage
+					          .GetLocation(destinationFileName
+						          .EnsureValidFormat(FileSystem, nameof(destinationFileName)))
+					          .ThrowIfNotFound(FileSystem,
+						           () => { },
+						           () =>
+						           {
+							           if (Execute.IsWindows)
+									   {
+										   throw ExceptionFactory.DirectoryNotFound(FullName);
+							           }
 
-						                            throw ExceptionFactory
-							                           .DirectoryNotFound(
-								                            FullName);
-					                            }))
-		                            ?? throw ExceptionFactory.FileNotFound(FullName);
+							           throw ExceptionFactory.FileNotFound(FullName);
+								   }),
+					FileSystem.Storage
+					          .GetLocation(destinationBackupFileName)
+					          .ThrowIfNotFound(FileSystem,
+						           () => { },
+						           () =>
+						           {
+							           if (Execute.IsWindows)
+							           {
+								           throw ExceptionFactory.FileNotFound(FullName);
+							           }
+
+							           throw ExceptionFactory.DirectoryNotFound(FullName);
+						           }))
+			?? throw ExceptionFactory.FileNotFound(FullName);
 		return FileSystem.FileInfo.New(location.FullPath);
 	}
 
