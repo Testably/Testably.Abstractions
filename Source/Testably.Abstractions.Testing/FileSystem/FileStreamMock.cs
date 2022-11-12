@@ -21,10 +21,15 @@ internal sealed class FileStreamMock : FileSystemStream
 	public override bool CanWrite
 		=> _access.HasFlag(FileAccess.Write);
 
+	/// <inheritdoc cref="FileSystemStream.ExtensionContainer" />
+	public override IFileSystemExtensionContainer ExtensionContainer
+		=> _container.ExtensionContainer;
+
 	private readonly FileAccess _access;
 	private readonly IDisposable _accessLock;
 	private readonly IStorageContainer _container;
 	private readonly MockFileSystem _fileSystem;
+	private readonly long _initialPosition;
 	private bool _isContentChanged;
 	private bool _isDisposed;
 	private readonly FileMode _mode;
@@ -70,6 +75,7 @@ internal sealed class FileStreamMock : FileSystemStream
 		_access = access;
 		_ = bufferSize;
 		_options = options;
+		_initialPosition = Position;
 
 		IStorageLocation location = _fileSystem.Storage.GetLocation(Name);
 		IStorageContainer file = _fileSystem.Storage.GetContainer(location);
@@ -115,9 +121,35 @@ internal sealed class FileStreamMock : FileSystemStream
 		InitializeStream();
 	}
 
-	/// <inheritdoc cref="FileSystemStream.ExtensionContainer" />
-	public override IFileSystemExtensionContainer ExtensionContainer
-		=> _container.ExtensionContainer;
+	/// <inheritdoc cref="FileSystemStream.BeginRead(byte[], int, int, AsyncCallback?, object?)" />
+	public override IAsyncResult BeginRead(byte[] buffer,
+	                                       int offset,
+	                                       int count,
+	                                       AsyncCallback? callback,
+	                                       object? state)
+	{
+		if (!CanRead)
+		{
+			throw ExceptionFactory.StreamDoesNotSupportReading();
+		}
+
+		return base.BeginRead(buffer, offset, count, callback, state);
+	}
+
+	/// <inheritdoc cref="FileSystemStream.BeginWrite(byte[], int, int, AsyncCallback?, object?)" />
+	public override IAsyncResult BeginWrite(byte[] buffer,
+	                                        int offset,
+	                                        int count,
+	                                        AsyncCallback? callback,
+	                                        object? state)
+	{
+		if (!CanWrite)
+		{
+			throw ExceptionFactory.StreamDoesNotSupportWriting();
+		}
+
+		return base.BeginWrite(buffer, offset, count, callback, state);
+	}
 
 	/// <inheritdoc cref="FileSystemStream.CopyTo(Stream, int)" />
 	public override void CopyTo(Stream destination, int bufferSize)
@@ -144,11 +176,6 @@ internal sealed class FileStreamMock : FileSystemStream
 	/// <inheritdoc cref="FileSystemStream.EndWrite(IAsyncResult)" />
 	public override void EndWrite(IAsyncResult asyncResult)
 	{
-		if (!CanWrite)
-		{
-			throw ExceptionFactory.StreamDoesNotSupportWriting();
-		}
-
 		_isContentChanged = true;
 		base.EndWrite(asyncResult);
 	}
@@ -162,6 +189,11 @@ internal sealed class FileStreamMock : FileSystemStream
 	/// <inheritdoc cref="FileSystemStream.Read(byte[], int, int)" />
 	public override int Read(byte[] buffer, int offset, int count)
 	{
+		if (!CanRead)
+		{
+			throw ExceptionFactory.StreamDoesNotSupportReading();
+		}
+
 		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 		return base.Read(buffer, offset, count);
 	}
@@ -170,6 +202,11 @@ internal sealed class FileStreamMock : FileSystemStream
 	/// <inheritdoc cref="FileSystemStream.Read(Span{byte})" />
 	public override int Read(Span<byte> buffer)
 	{
+		if (!CanRead)
+		{
+			throw ExceptionFactory.StreamDoesNotSupportReading();
+		}
+
 		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 		return base.Read(buffer);
 	}
@@ -179,6 +216,11 @@ internal sealed class FileStreamMock : FileSystemStream
 	public override Task<int> ReadAsync(byte[] buffer, int offset, int count,
 	                                    CancellationToken cancellationToken)
 	{
+		if (!CanRead)
+		{
+			throw ExceptionFactory.StreamDoesNotSupportReading();
+		}
+
 		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 		return base.ReadAsync(buffer, offset, count, cancellationToken);
 	}
@@ -189,6 +231,11 @@ internal sealed class FileStreamMock : FileSystemStream
 	                                         CancellationToken cancellationToken =
 		                                         new())
 	{
+		if (!CanRead)
+		{
+			throw ExceptionFactory.StreamDoesNotSupportReading();
+		}
+
 		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 		return base.ReadAsync(buffer, cancellationToken);
 	}
@@ -197,8 +244,24 @@ internal sealed class FileStreamMock : FileSystemStream
 	/// <inheritdoc cref="FileSystemStream.ReadByte()" />
 	public override int ReadByte()
 	{
+		if (!CanRead)
+		{
+			throw ExceptionFactory.StreamDoesNotSupportReading();
+		}
+
 		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 		return base.ReadByte();
+	}
+
+	/// <inheritdoc cref="FileSystemStream.Seek(long, SeekOrigin)" />
+	public override long Seek(long offset, SeekOrigin origin)
+	{
+		if (_mode == FileMode.Append && offset <= _initialPosition)
+		{
+			throw ExceptionFactory.SeekBackwardNotPossibleInAppendMode();
+		}
+
+		return base.Seek(offset, origin);
 	}
 
 	/// <inheritdoc cref="FileSystemStream.SetLength(long)" />
