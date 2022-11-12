@@ -1,9 +1,11 @@
-﻿using Microsoft.Win32.SafeHandles;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+using Microsoft.Win32.SafeHandles;
+#endif
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,14 +27,14 @@ public interface IFile : IFileSystemExtensionPoint
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="File.AppendAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
 	Task AppendAllLinesAsync(string path,
-	                         IEnumerable<string> contents,
-	                         CancellationToken cancellationToken = default);
+							 IEnumerable<string> contents,
+							 CancellationToken cancellationToken = default);
 
 	/// <inheritdoc cref="File.AppendAllLinesAsync(string, IEnumerable{string}, Encoding, CancellationToken)" />
 	Task AppendAllLinesAsync(string path,
-	                         IEnumerable<string> contents,
-	                         Encoding encoding,
-	                         CancellationToken cancellationToken = default);
+							 IEnumerable<string> contents,
+							 Encoding encoding,
+							 CancellationToken cancellationToken = default);
 #endif
 
 	/// <inheritdoc cref="File.AppendAllText(string, string?)" />
@@ -97,23 +99,58 @@ public interface IFile : IFileSystemExtensionPoint
 	/// <inheritdoc cref="File.GetAttributes(string)" />
 	FileAttributes GetAttributes(string path);
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="File.GetAttributes(SafeFileHandle)" />
+	FileAttributes GetAttributes(SafeFileHandle fileHandle);
+#endif
+
 	/// <inheritdoc cref="File.GetCreationTime(string)" />
 	DateTime GetCreationTime(string path);
+
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="File.GetCreationTime(SafeFileHandle)" />
+	DateTime GetCreationTime(SafeFileHandle fileHandle);
+#endif
 
 	/// <inheritdoc cref="File.GetCreationTimeUtc(string)" />
 	DateTime GetCreationTimeUtc(string path);
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="File.GetCreationTimeUtc(SafeFileHandle)" />
+	DateTime GetCreationTimeUtc(SafeFileHandle fileHandle);
+#endif
+
 	/// <inheritdoc cref="File.GetLastAccessTime(string)" />
 	DateTime GetLastAccessTime(string path);
+
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="File.GetLastAccessTime(SafeFileHandle)" />
+	DateTime GetLastAccessTime(SafeFileHandle fileHandle);
+#endif
 
 	/// <inheritdoc cref="File.GetLastAccessTimeUtc(string)" />
 	DateTime GetLastAccessTimeUtc(string path);
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="File.GetLastAccessTimeUtc(SafeFileHandle)" />
+	DateTime GetLastAccessTimeUtc(SafeFileHandle fileHandle);
+#endif
+
 	/// <inheritdoc cref="File.GetLastWriteTime(string)" />
 	DateTime GetLastWriteTime(string path);
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="File.GetLastWriteTime(SafeFileHandle)" />
+	DateTime GetLastWriteTime(SafeFileHandle fileHandle);
+#endif
+
 	/// <inheritdoc cref="File.GetLastWriteTimeUtc(string)" />
 	DateTime GetLastWriteTimeUtc(string path);
+
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="File.GetLastWriteTimeUtc(SafeFileHandle)" />
+	DateTime GetLastWriteTimeUtc(SafeFileHandle fileHandle);
+#endif
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 	/// <inheritdoc cref="File.GetUnixFileMode(string)" />
@@ -122,27 +159,6 @@ public interface IFile : IFileSystemExtensionPoint
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	/// <inheritdoc cref="File.GetAttributes(SafeFileHandle)" />
-	FileAttributes GetAttributes(SafeFileHandle fileHandle);
-
-	/// <inheritdoc cref="File.GetCreationTime(SafeFileHandle)" />
-	DateTime GetCreationTime(SafeFileHandle fileHandle);
-
-	/// <inheritdoc cref="File.GetCreationTimeUtc(SafeFileHandle)" />
-	DateTime GetCreationTimeUtc(SafeFileHandle fileHandle);
-
-	/// <inheritdoc cref="File.GetLastAccessTime(SafeFileHandle)" />
-	DateTime GetLastAccessTime(SafeFileHandle fileHandle);
-
-	/// <inheritdoc cref="File.GetLastAccessTimeUtc(SafeFileHandle)" />
-	DateTime GetLastAccessTimeUtc(SafeFileHandle fileHandle);
-
-	/// <inheritdoc cref="File.GetLastWriteTime(SafeFileHandle)" />
-	DateTime GetLastWriteTime(SafeFileHandle fileHandle);
-
-	/// <inheritdoc cref="File.GetLastWriteTimeUtc(SafeFileHandle)" />
-	DateTime GetLastWriteTimeUtc(SafeFileHandle fileHandle);
-
 	/// <inheritdoc cref="File.GetUnixFileMode(SafeFileHandle)" />
 	[UnsupportedOSPlatform("windows")]
 	UnixFileMode GetUnixFileMode(SafeFileHandle fileHandle);
@@ -206,16 +222,6 @@ public interface IFile : IFileSystemExtensionPoint
 	                                 CancellationToken cancellationToken = default);
 #endif
 
-#if FEATURE_FILESYSTEM_NET7
-	/// <inheritdoc cref="File.ReadLinesAsync(string, CancellationToken)" />
-	IAsyncEnumerable<string> ReadLinesAsync(string path,
-	                                        CancellationToken cancellationToken = default);
-
-	/// <inheritdoc cref="File.ReadLinesAsync(string, Encoding, CancellationToken)" />
-	IAsyncEnumerable<string> ReadLinesAsync(string path, Encoding encoding,
-	                                        CancellationToken cancellationToken = default);
-#endif
-
 	/// <inheritdoc cref="File.ReadAllText(string)" />
 	string ReadAllText(string path);
 
@@ -239,6 +245,18 @@ public interface IFile : IFileSystemExtensionPoint
 	/// <inheritdoc cref="File.ReadLines(string, Encoding)" />
 	IEnumerable<string> ReadLines(string path, Encoding encoding);
 
+#if FEATURE_FILESYSTEM_NET7
+	/// <inheritdoc cref="File.ReadLinesAsync(string, CancellationToken)" />
+	IAsyncEnumerable<string> ReadLinesAsync(string path,
+	                                        CancellationToken cancellationToken =
+		                                        default);
+
+	/// <inheritdoc cref="File.ReadLinesAsync(string, Encoding, CancellationToken)" />
+	IAsyncEnumerable<string> ReadLinesAsync(string path, Encoding encoding,
+	                                        CancellationToken cancellationToken =
+		                                        default);
+#endif
+
 	/// <inheritdoc cref="File.Replace(string, string, string?)" />
 	void Replace(string sourceFileName,
 	             string destinationFileName,
@@ -258,23 +276,58 @@ public interface IFile : IFileSystemExtensionPoint
 	/// <inheritdoc cref="File.SetAttributes(string, FileAttributes)" />
 	void SetAttributes(string path, FileAttributes fileAttributes);
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="File.SetAttributes(SafeFileHandle, FileAttributes)" />
+	void SetAttributes(SafeFileHandle fileHandle, FileAttributes fileAttributes);
+#endif
+
 	/// <inheritdoc cref="File.SetCreationTime(string, DateTime)" />
 	void SetCreationTime(string path, DateTime creationTime);
+
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="File.SetCreationTime(SafeFileHandle, DateTime)" />
+	void SetCreationTime(SafeFileHandle fileHandle, DateTime creationTime);
+#endif
 
 	/// <inheritdoc cref="File.SetCreationTimeUtc(string, DateTime)" />
 	void SetCreationTimeUtc(string path, DateTime creationTimeUtc);
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="File.SetCreationTimeUtc(SafeFileHandle, DateTime)" />
+	void SetCreationTimeUtc(SafeFileHandle fileHandle, DateTime creationTimeUtc);
+#endif
+
 	/// <inheritdoc cref="File.SetLastAccessTime(string, DateTime)" />
 	void SetLastAccessTime(string path, DateTime lastAccessTime);
+
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="File.SetLastAccessTime(SafeFileHandle, DateTime)" />
+	void SetLastAccessTime(SafeFileHandle fileHandle, DateTime lastAccessTime);
+#endif
 
 	/// <inheritdoc cref="File.SetLastAccessTimeUtc(string, DateTime)" />
 	void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc);
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="File.SetLastAccessTimeUtc(SafeFileHandle, DateTime)" />
+	void SetLastAccessTimeUtc(SafeFileHandle fileHandle, DateTime lastAccessTimeUtc);
+#endif
+
 	/// <inheritdoc cref="File.SetLastWriteTime(string, DateTime)" />
 	void SetLastWriteTime(string path, DateTime lastWriteTime);
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="File.SetLastWriteTime(SafeFileHandle, DateTime)" />
+	void SetLastWriteTime(SafeFileHandle fileHandle, DateTime lastWriteTime);
+#endif
+
 	/// <inheritdoc cref="File.SetLastWriteTimeUtc(string, DateTime)" />
 	void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc);
+
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="File.SetLastWriteTimeUtc(SafeFileHandle, DateTime)" />
+	void SetLastWriteTimeUtc(SafeFileHandle fileHandle, DateTime lastWriteTimeUtc);
+#endif
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 	/// <inheritdoc cref="File.SetUnixFileMode(string, UnixFileMode)" />
@@ -283,27 +336,6 @@ public interface IFile : IFileSystemExtensionPoint
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	/// <inheritdoc cref="File.SetAttributes(SafeFileHandle, FileAttributes)" />
-	void SetAttributes(SafeFileHandle fileHandle, FileAttributes fileAttributes);
-
-	/// <inheritdoc cref="File.SetCreationTime(SafeFileHandle, DateTime)" />
-	void SetCreationTime(SafeFileHandle fileHandle, DateTime creationTime);
-
-	/// <inheritdoc cref="File.SetCreationTimeUtc(SafeFileHandle, DateTime)" />
-	void SetCreationTimeUtc(SafeFileHandle fileHandle, DateTime creationTimeUtc);
-
-	/// <inheritdoc cref="File.SetLastAccessTime(SafeFileHandle, DateTime)" />
-	void SetLastAccessTime(SafeFileHandle fileHandle, DateTime lastAccessTime);
-
-	/// <inheritdoc cref="File.SetLastAccessTimeUtc(SafeFileHandle, DateTime)" />
-	void SetLastAccessTimeUtc(SafeFileHandle fileHandle, DateTime lastAccessTimeUtc);
-
-	/// <inheritdoc cref="File.SetLastWriteTime(SafeFileHandle, DateTime)" />
-	void SetLastWriteTime(SafeFileHandle fileHandle, DateTime lastWriteTime);
-
-	/// <inheritdoc cref="File.SetLastWriteTimeUtc(SafeFileHandle, DateTime)" />
-	void SetLastWriteTimeUtc(SafeFileHandle fileHandle, DateTime lastWriteTimeUtc);
-
 	/// <inheritdoc cref="File.SetUnixFileMode(SafeFileHandle, UnixFileMode)" />
 	[UnsupportedOSPlatform("windows")]
 	void SetUnixFileMode(SafeFileHandle fileHandle, UnixFileMode mode);

@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32.SafeHandles;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -8,6 +7,9 @@ using System.Text;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+using Microsoft.Win32.SafeHandles;
+#endif
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
@@ -272,12 +274,28 @@ internal sealed class FileMock : IFile
 		return container.Attributes;
 	}
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="IFile.GetAttributes(SafeFileHandle)" />
+	public FileAttributes GetAttributes(SafeFileHandle fileHandle)
+	{
+		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		return container.Attributes;
+	}
+#endif
+
 	/// <inheritdoc cref="IFile.GetCreationTime(string)" />
 	public DateTime GetCreationTime(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)))
 		   .CreationTime.Get(DateTimeKind.Local);
+
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="IFile.GetCreationTime(SafeFileHandle)" />
+	public DateTime GetCreationTime(SafeFileHandle fileHandle)
+		=> GetContainerFromSafeFileHandle(fileHandle)
+		   .CreationTime.Get(DateTimeKind.Local);
+#endif
 
 	/// <inheritdoc cref="IFile.GetCreationTimeUtc(string)" />
 	public DateTime GetCreationTimeUtc(string path)
@@ -286,12 +304,26 @@ internal sealed class FileMock : IFile
 					path.EnsureValidFormat(FileSystem)))
 		   .CreationTime.Get(DateTimeKind.Utc);
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="IFile.GetCreationTimeUtc(SafeFileHandle)" />
+	public DateTime GetCreationTimeUtc(SafeFileHandle fileHandle)
+		=> GetContainerFromSafeFileHandle(fileHandle)
+		   .CreationTime.Get(DateTimeKind.Utc);
+#endif
+
 	/// <inheritdoc cref="IFile.GetLastAccessTime(string)" />
 	public DateTime GetLastAccessTime(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)))
 		   .LastAccessTime.Get(DateTimeKind.Local);
+
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="IFile.GetLastAccessTime(SafeFileHandle)" />
+	public DateTime GetLastAccessTime(SafeFileHandle fileHandle)
+		=> GetContainerFromSafeFileHandle(fileHandle)
+		   .LastAccessTime.Get(DateTimeKind.Local);
+#endif
 
 	/// <inheritdoc cref="IFile.GetLastAccessTimeUtc(string)" />
 	public DateTime GetLastAccessTimeUtc(string path)
@@ -300,6 +332,13 @@ internal sealed class FileMock : IFile
 					path.EnsureValidFormat(FileSystem)))
 		   .LastAccessTime.Get(DateTimeKind.Utc);
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="IFile.GetLastAccessTimeUtc(SafeFileHandle)" />
+	public DateTime GetLastAccessTimeUtc(SafeFileHandle fileHandle)
+		=> GetContainerFromSafeFileHandle(fileHandle)
+		   .LastAccessTime.Get(DateTimeKind.Utc);
+#endif
+
 	/// <inheritdoc cref="IFile.GetLastWriteTime(string)" />
 	public DateTime GetLastWriteTime(string path)
 		=> _fileSystem.Storage.GetContainer(
@@ -307,12 +346,26 @@ internal sealed class FileMock : IFile
 					path.EnsureValidFormat(FileSystem)))
 		   .LastWriteTime.Get(DateTimeKind.Local);
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="IFile.GetLastWriteTime(SafeFileHandle)" />
+	public DateTime GetLastWriteTime(SafeFileHandle fileHandle)
+		=> GetContainerFromSafeFileHandle(fileHandle)
+		   .LastWriteTime.Get(DateTimeKind.Local);
+#endif
+
 	/// <inheritdoc cref="IFile.GetLastWriteTimeUtc(string)" />
 	public DateTime GetLastWriteTimeUtc(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)))
 		   .LastWriteTime.Get(DateTimeKind.Utc);
+
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="IFile.GetLastWriteTimeUtc(SafeFileHandle)" />
+	public DateTime GetLastWriteTimeUtc(SafeFileHandle fileHandle)
+		=> GetContainerFromSafeFileHandle(fileHandle)
+		   .LastWriteTime.Get(DateTimeKind.Utc);
+#endif
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 	/// <inheritdoc cref="IFile.GetUnixFileMode(string)" />
@@ -327,43 +380,6 @@ internal sealed class FileMock : IFile
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	/// <inheritdoc cref="IFile.GetAttributes(SafeFileHandle)" />
-	public FileAttributes GetAttributes(SafeFileHandle fileHandle)
-	{
-		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
-		return container.Attributes;
-	}
-
-	/// <inheritdoc cref="IFile.GetCreationTime(SafeFileHandle)" />
-	public DateTime GetCreationTime(SafeFileHandle fileHandle)
-		=> GetContainerFromSafeFileHandle(fileHandle)
-		   .CreationTime.Get(DateTimeKind.Local);
-
-	/// <inheritdoc cref="IFile.GetCreationTimeUtc(SafeFileHandle)" />
-	public DateTime GetCreationTimeUtc(SafeFileHandle fileHandle)
-		=> GetContainerFromSafeFileHandle(fileHandle)
-		   .CreationTime.Get(DateTimeKind.Utc);
-
-	/// <inheritdoc cref="IFile.GetLastAccessTime(SafeFileHandle)" />
-	public DateTime GetLastAccessTime(SafeFileHandle fileHandle)
-		=> GetContainerFromSafeFileHandle(fileHandle)
-		   .LastAccessTime.Get(DateTimeKind.Local);
-
-	/// <inheritdoc cref="IFile.GetLastAccessTimeUtc(SafeFileHandle)" />
-	public DateTime GetLastAccessTimeUtc(SafeFileHandle fileHandle)
-		=> GetContainerFromSafeFileHandle(fileHandle)
-		   .LastAccessTime.Get(DateTimeKind.Utc);
-
-	/// <inheritdoc cref="IFile.GetLastWriteTime(SafeFileHandle)" />
-	public DateTime GetLastWriteTime(SafeFileHandle fileHandle)
-		=> GetContainerFromSafeFileHandle(fileHandle)
-		   .LastWriteTime.Get(DateTimeKind.Local);
-
-	/// <inheritdoc cref="IFile.GetLastWriteTimeUtc(SafeFileHandle)" />
-	public DateTime GetLastWriteTimeUtc(SafeFileHandle fileHandle)
-		=> GetContainerFromSafeFileHandle(fileHandle)
-		   .LastWriteTime.Get(DateTimeKind.Utc);
-
 	/// <inheritdoc cref="IFile.GetUnixFileMode(SafeFileHandle)" />
 	[UnsupportedOSPlatform("windows")]
 	public UnixFileMode GetUnixFileMode(SafeFileHandle fileHandle)
@@ -514,24 +530,6 @@ internal sealed class FileMock : IFile
 	}
 #endif
 
-#if FEATURE_FILESYSTEM_NET7
-	/// <inheritdoc cref="IFile.ReadLinesAsync(string, CancellationToken)" />
-	public IAsyncEnumerable<string> ReadLinesAsync(string path,
-	                                               CancellationToken cancellationToken = default)
-	{
-		ThrowIfCancelled(cancellationToken);
-		return ReadAllLines(path).ToAsyncEnumerable();
-	}
-
-	/// <inheritdoc cref="IFile.ReadLinesAsync(string, Encoding, CancellationToken)" />
-	public IAsyncEnumerable<string> ReadLinesAsync(string path, Encoding encoding,
-	                                               CancellationToken cancellationToken = default)
-	{
-		ThrowIfCancelled(cancellationToken);
-		return ReadAllLines(path, encoding).ToAsyncEnumerable();
-	}
-#endif
-
 	/// <inheritdoc cref="IFile.ReadAllText(string)" />
 	public string ReadAllText(string path)
 		=> ReadAllText(path, Encoding.Default);
@@ -586,6 +584,26 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.ReadLines(string, Encoding)" />
 	public IEnumerable<string> ReadLines(string path, Encoding encoding)
 		=> EnumerateLines(ReadAllText(path, encoding));
+
+#if FEATURE_FILESYSTEM_NET7
+	/// <inheritdoc cref="IFile.ReadLinesAsync(string, CancellationToken)" />
+	public IAsyncEnumerable<string> ReadLinesAsync(string path,
+	                                               CancellationToken cancellationToken =
+		                                               default)
+	{
+		ThrowIfCancelled(cancellationToken);
+		return ReadAllLines(path).ToAsyncEnumerable();
+	}
+
+	/// <inheritdoc cref="IFile.ReadLinesAsync(string, Encoding, CancellationToken)" />
+	public IAsyncEnumerable<string> ReadLinesAsync(string path, Encoding encoding,
+	                                               CancellationToken cancellationToken =
+		                                               default)
+	{
+		ThrowIfCancelled(cancellationToken);
+		return ReadAllLines(path, encoding).ToAsyncEnumerable();
+	}
+#endif
 
 	/// <inheritdoc cref="IFile.Replace(string, string, string)" />
 	public void Replace(string sourceFileName,
@@ -652,6 +670,15 @@ internal sealed class FileMock : IFile
 		container.Attributes = fileAttributes;
 	}
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="IFile.SetAttributes(SafeFileHandle, FileAttributes)" />
+	public void SetAttributes(SafeFileHandle fileHandle, FileAttributes fileAttributes)
+	{
+		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		container.Attributes = fileAttributes;
+	}
+#endif
+
 	/// <inheritdoc cref="IFile.SetCreationTime(string, DateTime)" />
 	public void SetCreationTime(string path, DateTime creationTime)
 	{
@@ -667,6 +694,15 @@ internal sealed class FileMock : IFile
 
 		container.CreationTime.Set(creationTime, DateTimeKind.Local);
 	}
+
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="IFile.SetCreationTime(SafeFileHandle, DateTime)" />
+	public void SetCreationTime(SafeFileHandle fileHandle, DateTime creationTime)
+	{
+		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		container.CreationTime.Set(creationTime, DateTimeKind.Local);
+	}
+#endif
 
 	/// <inheritdoc cref="IFile.SetCreationTimeUtc(string, DateTime)" />
 	public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
@@ -684,6 +720,15 @@ internal sealed class FileMock : IFile
 		container.CreationTime.Set(creationTimeUtc, DateTimeKind.Utc);
 	}
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="IFile.SetCreationTimeUtc(SafeFileHandle, DateTime)" />
+	public void SetCreationTimeUtc(SafeFileHandle fileHandle, DateTime creationTimeUtc)
+	{
+		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		container.CreationTime.Set(creationTimeUtc, DateTimeKind.Utc);
+	}
+#endif
+
 	/// <inheritdoc cref="IFile.SetLastAccessTime(string, DateTime)" />
 	public void SetLastAccessTime(string path, DateTime lastAccessTime)
 	{
@@ -699,6 +744,15 @@ internal sealed class FileMock : IFile
 
 		container.LastAccessTime.Set(lastAccessTime, DateTimeKind.Local);
 	}
+
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="IFile.SetLastAccessTime(SafeFileHandle, DateTime)" />
+	public void SetLastAccessTime(SafeFileHandle fileHandle, DateTime lastAccessTime)
+	{
+		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		container.LastAccessTime.Set(lastAccessTime, DateTimeKind.Local);
+	}
+#endif
 
 	/// <inheritdoc cref="IFile.SetLastAccessTimeUtc(string, DateTime)" />
 	public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
@@ -716,6 +770,16 @@ internal sealed class FileMock : IFile
 		container.LastAccessTime.Set(lastAccessTimeUtc, DateTimeKind.Utc);
 	}
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="IFile.SetLastAccessTimeUtc(SafeFileHandle, DateTime)" />
+	public void SetLastAccessTimeUtc(SafeFileHandle fileHandle,
+	                                 DateTime lastAccessTimeUtc)
+	{
+		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		container.LastAccessTime.Set(lastAccessTimeUtc, DateTimeKind.Utc);
+	}
+#endif
+
 	/// <inheritdoc cref="IFile.SetLastWriteTime(string, DateTime)" />
 	public void SetLastWriteTime(string path, DateTime lastWriteTime)
 	{
@@ -732,6 +796,15 @@ internal sealed class FileMock : IFile
 		container.LastWriteTime.Set(lastWriteTime, DateTimeKind.Local);
 	}
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="IFile.SetLastWriteTime(SafeFileHandle, DateTime)" />
+	public void SetLastWriteTime(SafeFileHandle fileHandle, DateTime lastWriteTime)
+	{
+		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		container.LastWriteTime.Set(lastWriteTime, DateTimeKind.Local);
+	}
+#endif
+
 	/// <inheritdoc cref="IFile.SetLastWriteTimeUtc(string, DateTime)" />
 	public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
 	{
@@ -747,6 +820,15 @@ internal sealed class FileMock : IFile
 
 		container.LastWriteTime.Set(lastWriteTimeUtc, DateTimeKind.Utc);
 	}
+
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	/// <inheritdoc cref="IFile.SetLastWriteTimeUtc(SafeFileHandle, DateTime)" />
+	public void SetLastWriteTimeUtc(SafeFileHandle fileHandle, DateTime lastWriteTimeUtc)
+	{
+		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
+		container.LastWriteTime.Set(lastWriteTimeUtc, DateTimeKind.Utc);
+	}
+#endif
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 	/// <inheritdoc cref="IFile.SetUnixFileMode(string, UnixFileMode)" />
@@ -771,56 +853,6 @@ internal sealed class FileMock : IFile
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	/// <inheritdoc cref="IFile.SetAttributes(SafeFileHandle, FileAttributes)" />
-	public void SetAttributes(SafeFileHandle fileHandle, FileAttributes fileAttributes)
-	{
-		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
-		container.Attributes = fileAttributes;
-	}
-
-	/// <inheritdoc cref="IFile.SetCreationTime(SafeFileHandle, DateTime)" />
-	public void SetCreationTime(SafeFileHandle fileHandle, DateTime creationTime)
-	{
-		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
-		container.CreationTime.Set(creationTime, DateTimeKind.Local);
-	}
-
-	/// <inheritdoc cref="IFile.SetCreationTimeUtc(SafeFileHandle, DateTime)" />
-	public void SetCreationTimeUtc(SafeFileHandle fileHandle, DateTime creationTimeUtc)
-	{
-		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
-		container.CreationTime.Set(creationTimeUtc, DateTimeKind.Utc);
-	}
-
-	/// <inheritdoc cref="IFile.SetLastAccessTime(SafeFileHandle, DateTime)" />
-	public void SetLastAccessTime(SafeFileHandle fileHandle, DateTime lastAccessTime)
-	{
-		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
-		container.LastAccessTime.Set(lastAccessTime, DateTimeKind.Local);
-	}
-
-	/// <inheritdoc cref="IFile.SetLastAccessTimeUtc(SafeFileHandle, DateTime)" />
-	public void SetLastAccessTimeUtc(SafeFileHandle fileHandle,
-	                                 DateTime lastAccessTimeUtc)
-	{
-		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
-		container.LastAccessTime.Set(lastAccessTimeUtc, DateTimeKind.Utc);
-	}
-
-	/// <inheritdoc cref="IFile.SetLastWriteTime(SafeFileHandle, DateTime)" />
-	public void SetLastWriteTime(SafeFileHandle fileHandle, DateTime lastWriteTime)
-	{
-		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
-		container.LastWriteTime.Set(lastWriteTime, DateTimeKind.Local);
-	}
-
-	/// <inheritdoc cref="IFile.SetLastWriteTimeUtc(SafeFileHandle, DateTime)" />
-	public void SetLastWriteTimeUtc(SafeFileHandle fileHandle, DateTime lastWriteTimeUtc)
-	{
-		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
-		container.LastWriteTime.Set(lastWriteTimeUtc, DateTimeKind.Utc);
-	}
-
 	/// <inheritdoc cref="IFile.SetUnixFileMode(SafeFileHandle, UnixFileMode)" />
 	[UnsupportedOSPlatform("windows")]
 	public void SetUnixFileMode(SafeFileHandle fileHandle, UnixFileMode mode)
@@ -951,16 +983,6 @@ internal sealed class FileMock : IFile
 
 	#endregion
 
-#if FEATURE_FILESYSTEM_ASYNC
-	private static void ThrowIfCancelled(CancellationToken cancellationToken)
-	{
-		if (cancellationToken.IsCancellationRequested)
-		{
-			throw ExceptionFactory.TaskWasCanceled();
-		}
-	}
-#endif
-
 	private static IEnumerable<string> EnumerateLines(string contents)
 	{
 		using (StringReader reader = new(contents))
@@ -972,6 +994,7 @@ internal sealed class FileMock : IFile
 		}
 	}
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	private IStorageContainer GetContainerFromSafeFileHandle(SafeFileHandle fileHandle)
 	{
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
@@ -986,4 +1009,15 @@ internal sealed class FileMock : IFile
 
 		return container;
 	}
+#endif
+
+#if FEATURE_FILESYSTEM_ASYNC
+	private static void ThrowIfCancelled(CancellationToken cancellationToken)
+	{
+		if (cancellationToken.IsCancellationRequested)
+		{
+			throw ExceptionFactory.TaskWasCanceled();
+		}
+	}
+#endif
 }
