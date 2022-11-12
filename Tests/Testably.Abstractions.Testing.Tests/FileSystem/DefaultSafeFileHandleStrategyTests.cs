@@ -16,6 +16,20 @@ public class DefaultSafeFileHandleStrategyTests
 
 	[SkippableTheory]
 	[AutoData]
+	public void MapSafeFileHandle_NullCallback_ShouldThrowArgumentNullException(
+		string path, Exception exceptionToThrow)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = new DefaultSafeFileHandleStrategy(null!);
+		});
+
+		exception.Should().BeOfType<ArgumentNullException>()
+		   .Which.ParamName.Should().Be("callback");
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void MapSafeFileHandle_ShouldReturnExpectedValue(
 		string path, Exception exceptionToThrow)
 	{

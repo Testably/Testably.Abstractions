@@ -15,7 +15,7 @@ public class DefaultSafeFileHandleStrategy : ISafeFileHandleStrategy
 	public DefaultSafeFileHandleStrategy(
 		Func<SafeFileHandle, SafeFileHandleMock> callback)
 	{
-		_callback = callback;
+		_callback = callback ?? throw new ArgumentNullException(nameof(callback));
 	}
 
 	/// <inheritdoc cref="ISafeFileHandleStrategy.MapSafeFileHandle(SafeFileHandle)" />

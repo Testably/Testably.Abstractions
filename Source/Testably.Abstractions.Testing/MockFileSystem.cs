@@ -141,10 +141,9 @@ public sealed class MockFileSystem : IFileSystem
 	}
 
 	/// <summary>
-	///     Registers a callback to map a <see cref="SafeFileHandle" />
-	///     to a <see cref="SafeFileHandleMock" />.
+	///     Registers the strategy how to deal with <see cref="SafeFileHandle" />s in the <see cref="MockFileSystem" />.
 	///     <para />
-	///     If set to <see langword="null" /> resets to the default mapper for <see cref="SafeFileHandle" />s.
+	///     Defaults to <see cref="NullSafeFileHandleStrategy" />, if nothing is provided.
 	/// </summary>
 	public MockFileSystem WithSafeFileHandleStrategy(
 		ISafeFileHandleStrategy safeFileHandleStrategy)

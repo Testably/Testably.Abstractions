@@ -11,7 +11,5 @@ public interface ISafeFileHandleStrategy
 	///     Maps the <paramref name="fileHandle" /> to a <see cref="SafeFileHandleMock" /> which contains information how this
 	///     <see cref="SafeFileHandle" /> should be treated in the <see cref="MockFileSystem" />.
 	/// </summary>
-	/// <param name="fileHandle"></param>
-	/// <returns></returns>
 	SafeFileHandleMock MapSafeFileHandle(SafeFileHandle fileHandle);
 }
