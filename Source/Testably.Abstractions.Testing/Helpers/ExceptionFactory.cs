@@ -17,7 +17,7 @@ internal static class ExceptionFactory
 
 	public static NotSupportedException NotSupportedSafeFileHandle()
 		=> new(
-			"You cannot mock a safe file handle in the mocked file system without registering it explicitly. Use `MockFileSystem.MapSafeFileHandle`!");
+			"You cannot mock a safe file handle in the mocked file system without registering a strategy explicitly. Use `MockFileSystem.WithSafeFileHandleStrategy`!");
 
 	public static ArgumentException SearchPatternCannotContainTwoDots()
 		=> new(
