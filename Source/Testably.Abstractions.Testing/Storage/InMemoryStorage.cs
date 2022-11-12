@@ -23,8 +23,8 @@ internal sealed class InMemoryStorage : IStorage
 
 	private readonly MockFileSystem _fileSystem;
 
-	private Func<string, IFileSystemExtensionContainer, bool>?
-		_grantRequestCallback;
+	private IAccessControlStrategy?
+		_accessControlStrategy;
 
 	public InMemoryStorage(MockFileSystem fileSystem)
 	{
@@ -496,10 +496,10 @@ internal sealed class InMemoryStorage : IStorage
 	#endregion
 
 	internal void WithAccessControl(
-		Func<string, IFileSystemExtensionContainer, bool>?
-			grantRequestCallback)
+		IAccessControlStrategy?
+			accessControlStrategy)
 	{
-		_grantRequestCallback = grantRequestCallback;
+		_accessControlStrategy = accessControlStrategy;
 	}
 
 	private void AdjustParentDirectoryTimes(IStorageLocation location)
@@ -516,12 +516,12 @@ internal sealed class InMemoryStorage : IStorage
 
 	private void CheckGrantAccess(IStorageLocation location, IStorageContainer container)
 	{
-		if (_grantRequestCallback == null)
+		if (_accessControlStrategy == null)
 		{
 			return;
 		}
 
-		if (!_grantRequestCallback.Invoke(location.FullPath,
+		if (!_accessControlStrategy.IsAccessGranted(location.FullPath,
 			container.ExtensionContainer))
 		{
 			throw ExceptionFactory.AclAccessToPathDenied(location.FullPath);

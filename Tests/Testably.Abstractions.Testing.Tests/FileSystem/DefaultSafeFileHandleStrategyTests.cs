@@ -14,10 +14,8 @@ public class DefaultSafeFileHandleStrategyTests
 		FileSystem = new MockFileSystem();
 	}
 
-	[SkippableTheory]
-	[AutoData]
-	public void MapSafeFileHandle_NullCallback_ShouldThrowArgumentNullException(
-		string path, Exception exceptionToThrow)
+	[SkippableFact]
+	public void Constructor_NullCallback_ShouldThrowArgumentNullException()
 	{
 		Exception? exception = Record.Exception(() =>
 		{
@@ -28,10 +26,8 @@ public class DefaultSafeFileHandleStrategyTests
 		   .Which.ParamName.Should().Be("callback");
 	}
 
-	[SkippableTheory]
-	[AutoData]
-	public void MapSafeFileHandle_ShouldReturnExpectedValue(
-		string path, Exception exceptionToThrow)
+	[SkippableFact]
+	public void MapSafeFileHandle_ShouldReturnExpectedValue()
 	{
 		SafeFileHandle fooSafeFileHandle = new();
 		SafeFileHandle barSafeFileHandle = new();
