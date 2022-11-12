@@ -92,12 +92,11 @@ internal static class FileSystemSecurityExtensions
 			KeyValuePair<IdentityReference, FileSystemRights> combinedChildAccessAllowRule
 			in combinedChildAccessAllowRules)
 		{
-			if (combinedParentAccessAllowRules.ContainsKey(combinedChildAccessAllowRule
-			   .Key))
+			if (combinedParentAccessAllowRules.TryGetValue(
+				combinedChildAccessAllowRule.Key, out FileSystemRights value))
 			{
 				FileSystemRights accessAllowRuleGainedByChild =
-					combinedChildAccessAllowRule.Value &
-					~combinedParentAccessAllowRules[combinedChildAccessAllowRule.Key];
+					combinedChildAccessAllowRule.Value & ~value;
 				if (accessAllowRuleGainedByChild != default)
 				{
 					accessAllowRulesGainedByChild.Add(combinedChildAccessAllowRule.Key,
@@ -117,12 +116,11 @@ internal static class FileSystemSecurityExtensions
 			KeyValuePair<IdentityReference, FileSystemRights> combinedChildAccessDenyRule
 			in combinedChildAccessDenyRules)
 		{
-			if (combinedParentAccessDenyRules.ContainsKey(combinedChildAccessDenyRule
-			   .Key))
+			if (combinedParentAccessDenyRules.TryGetValue(
+				combinedChildAccessDenyRule.Key, out FileSystemRights value))
 			{
 				FileSystemRights accessDenyRuleGainedByChild =
-					combinedChildAccessDenyRule.Value &
-					~combinedParentAccessDenyRules[combinedChildAccessDenyRule.Key];
+					combinedChildAccessDenyRule.Value & ~value;
 				if (accessDenyRuleGainedByChild != default)
 				{
 					accessDenyRulesGainedByChild.Add(combinedChildAccessDenyRule.Key,
@@ -142,12 +140,11 @@ internal static class FileSystemSecurityExtensions
 			KeyValuePair<IdentityReference, FileSystemRights>
 				combinedParentAccessAllowRule in combinedParentAccessAllowRules)
 		{
-			if (combinedChildAccessAllowRules.ContainsKey(combinedParentAccessAllowRule
-			   .Key))
+			if (combinedChildAccessAllowRules.TryGetValue(
+				combinedParentAccessAllowRule.Key, out FileSystemRights value))
 			{
 				FileSystemRights accessAllowRuleGainedByParent =
-					combinedParentAccessAllowRule.Value &
-					~combinedChildAccessAllowRules[combinedParentAccessAllowRule.Key];
+					combinedParentAccessAllowRule.Value & ~value;
 				if (accessAllowRuleGainedByParent != default)
 				{
 					accessAllowRulesGainedByParent.Add(combinedParentAccessAllowRule.Key,
@@ -167,12 +164,11 @@ internal static class FileSystemSecurityExtensions
 			KeyValuePair<IdentityReference, FileSystemRights> combinedParentAccessDenyRule
 			in combinedParentAccessDenyRules)
 		{
-			if (combinedChildAccessDenyRules.ContainsKey(combinedParentAccessDenyRule
-			   .Key))
+			if (combinedChildAccessDenyRules.TryGetValue(
+				combinedParentAccessDenyRule.Key, out FileSystemRights value))
 			{
 				FileSystemRights accessDenyRuleGainedByParent =
-					combinedParentAccessDenyRule.Value &
-					~combinedChildAccessDenyRules[combinedParentAccessDenyRule.Key];
+					combinedParentAccessDenyRule.Value & ~value;
 				if (accessDenyRuleGainedByParent != default)
 				{
 					accessDenyRulesGainedByParent.Add(combinedParentAccessDenyRule.Key,

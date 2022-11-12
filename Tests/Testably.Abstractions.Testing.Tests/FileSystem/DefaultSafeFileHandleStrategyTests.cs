@@ -14,10 +14,8 @@ public class DefaultSafeFileHandleStrategyTests
 		FileSystem = new MockFileSystem();
 	}
 
-	[SkippableTheory]
-	[AutoData]
-	public void MapSafeFileHandle_NullCallback_ShouldThrowArgumentNullException(
-		string path, Exception exceptionToThrow)
+	[SkippableFact]
+	public void MapSafeFileHandle_NullCallback_ShouldThrowArgumentNullException()
 	{
 		Exception? exception = Record.Exception(() =>
 		{
@@ -28,16 +26,16 @@ public class DefaultSafeFileHandleStrategyTests
 		   .Which.ParamName.Should().Be("callback");
 	}
 
-	[SkippableTheory]
-	[AutoData]
-	public void MapSafeFileHandle_ShouldReturnExpectedValue(
-		string path, Exception exceptionToThrow)
+	[SkippableFact]
+	public void MapSafeFileHandle_ShouldReturnExpectedValue()
 	{
 		SafeFileHandle fooSafeFileHandle = new();
 		SafeFileHandle barSafeFileHandle = new();
-		Dictionary<SafeFileHandle, SafeFileHandleMock> mapping = new();
-		mapping.Add(fooSafeFileHandle, new SafeFileHandleMock("foo"));
-		mapping.Add(barSafeFileHandle, new SafeFileHandleMock("bar"));
+		Dictionary<SafeFileHandle, SafeFileHandleMock> mapping = new()
+		{
+			{ fooSafeFileHandle, new SafeFileHandleMock("foo") },
+			{ barSafeFileHandle, new SafeFileHandleMock("bar") }
+		};
 		FileSystem.File.WriteAllText("foo", "foo-content");
 		FileSystem.File.WriteAllText("bar", "bar-content");
 
