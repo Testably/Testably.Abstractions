@@ -12,6 +12,11 @@ public class DefaultSafeFileHandleStrategy : ISafeFileHandleStrategy
 {
 	private readonly Func<SafeFileHandle, SafeFileHandleMock> _callback;
 
+	/// <summary>
+	///     Initializes a new instance of <see cref="DefaultSafeFileHandleStrategy" /> which takes a
+	///     <paramref name="callback" /> to perform the mapping from <see cref="SafeFileHandle" /> to
+	///     <see cref="SafeFileHandleMock" />.
+	/// </summary>
 	public DefaultSafeFileHandleStrategy(
 		Func<SafeFileHandle, SafeFileHandleMock> callback)
 	{
