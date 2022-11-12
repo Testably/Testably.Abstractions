@@ -9,7 +9,9 @@ namespace Testably.Abstractions.Testing.Helpers;
 /// </summary>
 internal static class FilePlatformIndependenceExtensions
 {
+#pragma warning disable SYSLIB1045
 	private static readonly Regex PathTransformRegex = new(@"^[a-zA-Z]:(?<path>.*)$");
+#pragma warning restore SYSLIB1045
 
 	/// <summary>
 	///     Normalizes the given path so that it works on all platforms.
