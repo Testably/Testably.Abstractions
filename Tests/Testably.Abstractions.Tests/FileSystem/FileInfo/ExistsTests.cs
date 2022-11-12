@@ -18,6 +18,22 @@ public abstract partial class ExistsTests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[AutoData]
+	public void Exists_ShouldReturnCachedValueUntilRefresh(string path)
+	{
+		IFileInfo sut = FileSystem.FileInfo.New(path);
+		sut.Exists.Should().BeFalse();
+
+		FileSystem.File.WriteAllText(path, "some content");
+
+		sut.Exists.Should().BeFalse();
+
+		sut.Refresh();
+
+		sut.Exists.Should().BeTrue();
+	}
+
+	[SkippableTheory]
 	[InlineData("foo", "foo.")]
 	[InlineData("foo.", "foo")]
 	public void Exists_ShouldIgnoreTrailingDotOnWindows(string path1, string path2)

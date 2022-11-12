@@ -99,11 +99,14 @@ internal sealed class FileInfoMock
 
 	/// <inheritdoc cref="IFileInfo.Create()" />
 	public FileSystemStream Create()
-		=> FileSystem.File.Create(FullName);
+	{
+		Refresh();
+		return FileSystem.File.Create(FullName);
+	}
 
 	/// <inheritdoc cref="IFileInfo.CreateText()" />
 	public StreamWriter CreateText()
-		=> new(Create());
+		=> new(FileSystem.File.Create(FullName));
 
 	/// <inheritdoc cref="IFileInfo.Decrypt()" />
 	[SupportedOSPlatform("windows")]
