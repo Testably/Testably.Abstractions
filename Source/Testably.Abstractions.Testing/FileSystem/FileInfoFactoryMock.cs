@@ -26,11 +26,7 @@ internal sealed class FileInfoFactoryMock : IFileInfoFactory
 	{
 		if (fileName == null)
 		{
-#if NET7_0_OR_GREATER
-			throw new ArgumentNullException("originalPath");
-#else
 			throw new ArgumentNullException(nameof(fileName));
-#endif
 		}
 
 		if (fileName.Trim() == "" && Execute.IsWindows)

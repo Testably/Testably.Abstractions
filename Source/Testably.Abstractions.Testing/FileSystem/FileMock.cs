@@ -1,4 +1,6 @@
-﻿using Microsoft.Win32.SafeHandles;
+﻿#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+using Microsoft.Win32.SafeHandles;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -24,7 +26,7 @@ internal sealed class FileMock : IFile
 		_fileSystem = fileSystem;
 	}
 
-	#region IFile Members
+#region IFile Members
 
 	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
 	public IFileSystem FileSystem
@@ -949,7 +951,7 @@ internal sealed class FileMock : IFile
 	}
 #endif
 
-	#endregion
+#endregion
 
 #if FEATURE_FILESYSTEM_ASYNC
 	private static void ThrowIfCancelled(CancellationToken cancellationToken)
@@ -972,6 +974,7 @@ internal sealed class FileMock : IFile
 		}
 	}
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	private IStorageContainer GetContainerFromSafeFileHandle(SafeFileHandle fileHandle)
 	{
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
@@ -986,4 +989,5 @@ internal sealed class FileMock : IFile
 
 		return container;
 	}
+#endif
 }

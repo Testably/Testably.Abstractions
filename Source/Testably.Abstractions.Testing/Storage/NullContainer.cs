@@ -176,7 +176,7 @@ internal sealed class NullContainer : IStorageContainer
 	/// <summary>
 	///     Overrides the setter of <see cref="NullTime" /> as different exceptions are thrown for MacOS starting with .NET 7.
 	/// </summary>
-	private class CreationNullTime : NullTime
+	private sealed class CreationNullTime : NullTime
 	{
 		/// <inheritdoc />
 		public override void Set(DateTime time, DateTimeKind kind)

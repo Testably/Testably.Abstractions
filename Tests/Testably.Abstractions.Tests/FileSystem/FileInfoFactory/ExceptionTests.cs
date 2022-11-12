@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -135,7 +134,8 @@ public abstract partial class ExceptionTests<TFileSystem>
 		yield return (ExceptionTestHelper.TestTypes.AllExceptNull, "path", fileInfoFactory
 			=> fileInfoFactory.New(value));
 #if NET7_0_OR_GREATER
-		yield return (ExceptionTestHelper.TestTypes.Null, "originalPath", fileInfoFactory
+		// https://github.com/dotnet/runtime/issues/78224
+		yield return (ExceptionTestHelper.TestTypes.Null | ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "fileName", fileInfoFactory
 			=> fileInfoFactory.New(value));
 #else
 		yield return (ExceptionTestHelper.TestTypes.Null, "fileName", fileInfoFactory
