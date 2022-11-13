@@ -1,10 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Linq;
-using System.Text;
-using Testably.Abstractions.Testing.FileSystemInitializer;
 using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.Storage;
@@ -43,7 +38,10 @@ internal static class LocationExtensions
 	}
 
 	public static IStorageLocation ThrowExceptionIfNotFound(
-		this IStorageLocation location, MockFileSystem fileSystem, bool allowMissingFile = false)
+		this IStorageLocation location, MockFileSystem fileSystem,
+		bool allowMissingFile = false,
+		Func<string, Exception>? onDirectoryNotFound = null,
+		Func<string, Exception>? onFileNotFound = null)
 	{
 		if (fileSystem.Storage.GetContainer(location) is NullContainer)
 		{
@@ -53,14 +51,17 @@ internal static class LocationExtensions
 			    parentLocation.FullPath &&
 			    fileSystem.Storage.GetContainer(parentLocation) is NullContainer)
 			{
-				throw ExceptionFactory.DirectoryNotFound(location.FullPath);
+				throw onDirectoryNotFound?.Invoke(location.FullPath)
+				      ?? ExceptionFactory.DirectoryNotFound(location.FullPath);
 			}
 
 			if (!allowMissingFile)
 			{
-				throw ExceptionFactory.FileNotFound(location.FullPath);
+				throw onFileNotFound?.Invoke(location.FullPath)
+				      ?? ExceptionFactory.FileNotFound(location.FullPath);
 			}
 		}
+
 		return location;
 	}
 }

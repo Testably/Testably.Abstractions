@@ -78,8 +78,8 @@ public class DriveInfoMockTests
 		int reduceLength, string path, string previousContent)
 	{
 		FileSystem.File.WriteAllText(path, previousContent);
-		IDriveInfo mainDrive = FileSystem.DriveInfo.New("C");
-		long previousFreeSpace = mainDrive.AvailableFreeSpace;
+		IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
+		long previousFreeSpace = drive.AvailableFreeSpace;
 
 		FileSystemStream stream = FileSystem.File.OpenWrite(path);
 		using (StreamWriter streamWriter = new(stream))
@@ -87,8 +87,8 @@ public class DriveInfoMockTests
 			streamWriter.Write("new-content");
 			stream.SetLength(stream.Length - reduceLength);
 		}
-		
-		mainDrive.AvailableFreeSpace.Should().Be(previousFreeSpace + reduceLength);
+
+		drive.AvailableFreeSpace.Should().Be(previousFreeSpace + reduceLength);
 	}
 
 	[SkippableTheory]

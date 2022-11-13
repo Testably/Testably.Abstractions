@@ -603,8 +603,11 @@ internal sealed class FileMock : IFile
 	{
 		IStorageLocation location =
 			_fileSystem.Storage.GetLocation(linkPath
-					.EnsureValidFormat(_fileSystem, nameof(linkPath)))
-				.ThrowExceptionIfNotFound(_fileSystem);
+					.EnsureValidFormat(_fileSystem, nameof(linkPath)));
+		Execute.OnWindows(
+				() => location.ThrowExceptionIfNotFound(_fileSystem),
+				() => location.ThrowExceptionIfNotFound(_fileSystem,
+					onDirectoryNotFound: ExceptionFactory.FileNotFound));
 		try
 		{
 			IStorageLocation? targetLocation =
@@ -644,7 +647,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetCreationTime(string, DateTime)" />
 	public void SetCreationTime(string path, DateTime creationTime)
 	{
-		IStorageContainer container = GetContainerFromPath(path);
+		IStorageContainer container = GetContainerFromPath(path, ExceptionMode.FileNotFoundExceptionOnLinuxAndMac);
 		container.CreationTime.Set(creationTime, DateTimeKind.Local);
 	}
 
@@ -660,7 +663,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetCreationTimeUtc(string, DateTime)" />
 	public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
 	{
-		IStorageContainer container = GetContainerFromPath(path);
+		IStorageContainer container = GetContainerFromPath(path, ExceptionMode.FileNotFoundExceptionOnLinuxAndMac);
 		container.CreationTime.Set(creationTimeUtc, DateTimeKind.Utc);
 	}
 
@@ -676,7 +679,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastAccessTime(string, DateTime)" />
 	public void SetLastAccessTime(string path, DateTime lastAccessTime)
 	{
-		IStorageContainer container = GetContainerFromPath(path);
+		IStorageContainer container = GetContainerFromPath(path, ExceptionMode.FileNotFoundExceptionOnLinuxAndMac);
 		container.LastAccessTime.Set(lastAccessTime, DateTimeKind.Local);
 	}
 
@@ -692,7 +695,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastAccessTimeUtc(string, DateTime)" />
 	public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
 	{
-		IStorageContainer container = GetContainerFromPath(path);
+		IStorageContainer container = GetContainerFromPath(path, ExceptionMode.FileNotFoundExceptionOnLinuxAndMac);
 		container.LastAccessTime.Set(lastAccessTimeUtc, DateTimeKind.Utc);
 	}
 
@@ -709,7 +712,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastWriteTime(string, DateTime)" />
 	public void SetLastWriteTime(string path, DateTime lastWriteTime)
 	{
-		IStorageContainer container = GetContainerFromPath(path);
+		IStorageContainer container = GetContainerFromPath(path, ExceptionMode.FileNotFoundExceptionOnLinuxAndMac);
 		container.LastWriteTime.Set(lastWriteTime, DateTimeKind.Local);
 	}
 
@@ -725,7 +728,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastWriteTimeUtc(string, DateTime)" />
 	public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
 	{
-		IStorageContainer container = GetContainerFromPath(path);
+		IStorageContainer container = GetContainerFromPath(path, ExceptionMode.FileNotFoundExceptionOnLinuxAndMac);
 		container.LastWriteTime.Set(lastWriteTimeUtc, DateTimeKind.Utc);
 	}
 
@@ -909,14 +912,32 @@ internal sealed class FileMock : IFile
 		}
 	}
 
-	private IStorageContainer GetContainerFromPath(string path)
+	private enum ExceptionMode
 	{
-		IStorageContainer container =
-			_fileSystem.Storage.GetContainer(
-				_fileSystem.Storage.GetLocation(
-						path.EnsureValidFormat(FileSystem))
-					.ThrowExceptionIfNotFound(_fileSystem));
-		return container;
+		Default,
+		FileNotFoundExceptionOnLinuxAndMac
+	}
+
+	private IStorageContainer GetContainerFromPath(string path,
+		ExceptionMode exceptionMode = ExceptionMode.Default)
+	{
+		path.EnsureValidFormat(FileSystem);
+		IStorageLocation location = _fileSystem.Storage.GetLocation(path);
+		switch (exceptionMode)
+		{
+			case ExceptionMode.FileNotFoundExceptionOnLinuxAndMac:
+				Execute.OnWindows(
+						() => location.ThrowExceptionIfNotFound(_fileSystem),
+						() => location.ThrowExceptionIfNotFound(_fileSystem,
+							onDirectoryNotFound: ExceptionFactory.FileNotFound));
+				break;
+			case ExceptionMode.Default:
+			default:
+				location.ThrowExceptionIfNotFound(_fileSystem);
+				break;
+		}
+
+		return _fileSystem.Storage.GetContainer(location);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
