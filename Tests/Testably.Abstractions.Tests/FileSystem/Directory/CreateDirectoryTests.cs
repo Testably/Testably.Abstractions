@@ -37,10 +37,19 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 			FileSystem.Directory.CreateDirectory(subdirectoryPath);
 		});
 
-		exception.Should().BeNull();
-		FileSystem.Directory.Exists(subdirectoryPath).Should().BeTrue();
-		FileSystem.DirectoryInfo.New(parent).Attributes
-			.Should().HaveFlag(FileAttributes.ReadOnly);
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeNull();
+			FileSystem.Directory.Exists(subdirectoryPath).Should().BeTrue();
+			FileSystem.DirectoryInfo.New(parent).Attributes
+				.Should().HaveFlag(FileAttributes.ReadOnly);
+		}
+		else
+		{
+			exception.Should().BeOfType<UnauthorizedAccessException>()
+				.Which.HResult.Should().Be(-2147024891);
+			FileSystem.Directory.Exists(subdirectoryPath).Should().BeFalse();
+		}
 	}
 
 	[SkippableFact]

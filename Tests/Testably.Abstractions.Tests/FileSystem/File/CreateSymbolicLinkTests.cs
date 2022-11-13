@@ -24,25 +24,6 @@ public abstract partial class CreateSymbolicLinkTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateSymbolicLink_SourceDirectoryMissing_ShouldThrowDirectoryNotFoundException(
-		string missingDirectory, string sourceFile, string pathToTarget)
-	{
-		string sourcePath = FileSystem.Path.Combine(missingDirectory, sourceFile);
-		FileSystem.File.WriteAllText(pathToTarget, null);
-
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.File.CreateSymbolicLink(sourcePath, pathToTarget);
-		});
-
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.HResult.Should().Be(-2147024893);
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.Message.Should().Contain($"{sourcePath}'");
-	}
-
-	[SkippableTheory]
-	[AutoData]
 	public void CreateSymbolicLink_SourceFileAlreadyExists_ShouldThrowIOException(
 		string path, string pathToTarget)
 	{

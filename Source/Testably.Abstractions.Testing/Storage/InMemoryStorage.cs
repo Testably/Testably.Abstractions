@@ -145,7 +145,7 @@ internal sealed class InMemoryStorage : IStorage
 			{
 				removed.ClearBytes();
 				_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
-				AdjustParentDirectoryTimes(location);
+				CheckAndAdjustParentDirectoryTimes(location);
 				return true;
 			}
 		}
@@ -309,7 +309,7 @@ internal sealed class InMemoryStorage : IStorage
 					}
 				}
 
-				AdjustParentDirectoryTimes(loc);
+				CheckAndAdjustParentDirectoryTimes(loc);
 
 				CheckGrantAccess(loc, container);
 				using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
@@ -486,7 +486,7 @@ internal sealed class InMemoryStorage : IStorage
 						NotifyFilters.DirectoryName, location);
 				}
 
-				AdjustParentDirectoryTimes(location);
+				CheckAndAdjustParentDirectoryTimes(location);
 				return container;
 			});
 
@@ -509,11 +509,13 @@ internal sealed class InMemoryStorage : IStorage
 		_accessControlStrategy = accessControlStrategy;
 	}
 
-	private void AdjustParentDirectoryTimes(IStorageLocation location)
+	private void CheckAndAdjustParentDirectoryTimes(IStorageLocation location)
 	{
 		IStorageContainer? parentContainer = GetContainer(location.GetParent());
 		if (parentContainer != null && parentContainer is not NullContainer)
 		{
+			Execute.NotOnWindowsIf(parentContainer.Attributes.HasFlag(FileAttributes.ReadOnly),
+				() => throw ExceptionFactory.AccessToPathDenied(location.FullPath));
 			TimeAdjustments timeAdjustment = TimeAdjustments.LastWriteTime;
 			Execute.OnWindows(()
 				=> timeAdjustment |= TimeAdjustments.LastAccessTime);
