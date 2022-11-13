@@ -25,21 +25,18 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 			callback.Compile().Invoke(FileSystem.File, path);
 		});
 
-		switch (expectedExceptionType)
+		if (Test.RunsOnWindows)
 		{
-			case ExpectedExceptionType.DirectoryNotFoundException:
-				exception.Should().BeOfType<DirectoryNotFoundException>(
-						$"\n{callback}\n was called with a missing file.")
-					.Which.HResult.Should().Be(-2147024893,
-						$"\n{callback}\n was called with a missing file.");
-				break;
-			case ExpectedExceptionType.FileNotFoundException:
-			case ExpectedExceptionType.Default:
-				exception.Should().BeOfType<FileNotFoundException>(
-						$"\n{callback}\n was called with a missing file.")
-					.Which.HResult.Should().Be(-2147024894,
-						$"\n{callback}\n was called with a missing file.");
-				break;
+			exception.Should().BeOfType<FileNotFoundException>(
+					$"\n{callback}\n was called with a missing file")
+				.Which.HResult.Should().Be(-2147024894,
+					$"\n{callback}\n was called with a missing file");
+		}
+		else
+		{
+			exception.Should()
+				.BeFileOrDirectoryNotFoundException(
+					$"\n{callback}\n was called with a missing file");
 		}
 	}
 
@@ -55,21 +52,18 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 			callback.Compile().Invoke(FileSystem.File, path);
 		});
 
-		switch (expectedExceptionType)
+		if (Test.RunsOnWindows)
 		{
-			case ExpectedExceptionType.FileNotFoundException:
-				exception.Should().BeOfType<FileNotFoundException>(
-						$"\n{callback}\n was called with a missing file.")
-					.Which.HResult.Should().Be(-2147024894,
-						$"\n{callback}\n was called with a missing file.");
-				break;
-			case ExpectedExceptionType.DirectoryNotFoundException:
-			case ExpectedExceptionType.Default:
-				exception.Should().BeOfType<DirectoryNotFoundException>(
-						$"\n{callback}\n was called with a missing file.")
-					.Which.HResult.Should().Be(-2147024893,
-						$"\n{callback}\n was called with a missing file.");
-				break;
+			exception.Should().BeOfType<DirectoryNotFoundException>(
+					$"\n{callback}\n was called with a missing directory")
+				.Which.HResult.Should().Be(-2147024893,
+					$"\n{callback}\n was called with a missing directory");
+		}
+		else
+		{
+			exception.Should()
+				.BeFileOrDirectoryNotFoundException(
+					$"\n{callback}\n was called with a missing directory");
 		}
 	}
 
@@ -85,9 +79,7 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 
 	public enum ExpectedExceptionType
 	{
-		FileNotFoundException,
-		DirectoryNotFoundException,
-		Default
+		Default,
 	}
 
 	public static IEnumerable<object?[]> GetFileCallbacks(int testCases)
@@ -191,9 +183,7 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			yield return (MissingFileTestCase.DirectoryMissing,
-				Test.RunsOnWindows
-					? ExpectedExceptionType.Default
-					: ExpectedExceptionType.FileNotFoundException,
+				ExpectedExceptionType.Default,
 				(file, path)
 					=> file.CreateSymbolicLink(path, "foo"));
 		}
@@ -217,16 +207,6 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.GetAttributes(path));
-#if FEATURE_FILESYSTEM_UNIXFILEMODE
-		if (!Test.RunsOnWindows)
-		{
-			#pragma warning disable CA1416
-			yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
-				(file, path)
-					=> file.GetUnixFileMode(path));
-			#pragma warning restore CA1416
-		}
-#endif
 		yield return (MissingFileTestCase.FileMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.Move(path, "foo"));
@@ -321,9 +301,7 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 #endif
 #if FEATURE_FILESYSTEM_LINK
 		yield return (MissingFileTestCase.All,
-			Test.RunsOnWindows
-				? ExpectedExceptionType.Default
-				: ExpectedExceptionType.FileNotFoundException,
+			ExpectedExceptionType.Default,
 			(file, path)
 				=> file.ResolveLinkTarget(path, false));
 #endif
@@ -331,51 +309,29 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 			(file, path)
 				=> file.SetAttributes(path, FileAttributes.ReadOnly));
 		yield return (MissingFileTestCase.All,
-			Test.RunsOnWindows
-				? ExpectedExceptionType.Default
-				: ExpectedExceptionType.FileNotFoundException,
+			ExpectedExceptionType.Default,
 			(file, path)
 				=> file.SetCreationTime(path, DateTime.Now));
 		yield return (MissingFileTestCase.All,
-			Test.RunsOnWindows
-				? ExpectedExceptionType.Default
-				: ExpectedExceptionType.FileNotFoundException,
+			ExpectedExceptionType.Default,
 			(file, path)
 				=> file.SetCreationTimeUtc(path, DateTime.Now));
 		yield return (MissingFileTestCase.All,
-			Test.RunsOnWindows
-				? ExpectedExceptionType.Default
-				: ExpectedExceptionType.FileNotFoundException,
+			ExpectedExceptionType.Default,
 			(file, path)
 				=> file.SetLastAccessTime(path, DateTime.Now));
 		yield return (MissingFileTestCase.All,
-			Test.RunsOnWindows
-				? ExpectedExceptionType.Default
-				: ExpectedExceptionType.FileNotFoundException,
+			ExpectedExceptionType.Default,
 			(file, path)
 				=> file.SetLastAccessTimeUtc(path, DateTime.Now));
 		yield return (MissingFileTestCase.All,
-			Test.RunsOnWindows
-				? ExpectedExceptionType.Default
-				: ExpectedExceptionType.FileNotFoundException,
+			ExpectedExceptionType.Default,
 			(file, path)
 				=> file.SetLastWriteTime(path, DateTime.Now));
 		yield return (MissingFileTestCase.All,
-			Test.RunsOnWindows
-				? ExpectedExceptionType.Default
-				: ExpectedExceptionType.FileNotFoundException,
+			ExpectedExceptionType.Default,
 			(file, path)
 				=> file.SetLastWriteTimeUtc(path, DateTime.Now));
-#if FEATURE_FILESYSTEM_UNIXFILEMODE
-		if (!Test.RunsOnWindows)
-		{
-			#pragma warning disable CA1416
-			yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
-				(file, path)
-					=> file.SetUnixFileMode(path, UnixFileMode.None));
-			#pragma warning restore CA1416
-		}
-#endif
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.WriteAllBytes(path, new byte[]
