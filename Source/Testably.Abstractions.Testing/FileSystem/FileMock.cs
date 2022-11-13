@@ -930,7 +930,6 @@ internal sealed class FileMock : IFile
 						onDirectoryNotFound: ExceptionFactory.FileNotFound));
 				break;
 			case ExceptionMode.Default:
-			default:
 				location.ThrowExceptionIfNotFound(_fileSystem);
 				break;
 		}
