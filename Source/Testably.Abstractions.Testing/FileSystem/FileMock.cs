@@ -776,6 +776,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.WriteAllBytes(string, byte[])" />
 	public void WriteAllBytes(string path, byte[] bytes)
 	{
+		_ = bytes ?? throw new ArgumentNullException(nameof(bytes));
 		IStorageContainer container =
 			_fileSystem.Storage.GetOrCreateContainer(
 				_fileSystem.Storage.GetLocation(

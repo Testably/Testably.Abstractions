@@ -29,14 +29,14 @@ public abstract partial class ReadAllBytesTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void ReadAllBytes_ShouldAdjustTimes(string path, byte[] contents)
+	public void ReadAllBytes_ShouldAdjustTimes(string path, byte[] bytes)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
 			"Works unreliable on .NET Framework");
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
-		FileSystem.File.WriteAllBytes(path, contents);
+		FileSystem.File.WriteAllBytes(path, bytes);
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
 		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
@@ -66,40 +66,40 @@ public abstract partial class ReadAllBytesTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void ReadAllBytes_ShouldNotGetAReferenceToFileContent(
-		string path, byte[] contents)
+		string path, byte[] bytes)
 	{
-		FileSystem.File.WriteAllBytes(path, contents.ToArray());
+		FileSystem.File.WriteAllBytes(path, bytes.ToArray());
 
 		byte[] results = FileSystem.File.ReadAllBytes(path);
 		results[0] = (byte)~results[0];
 
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(contents);
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
 	}
 
 	[SkippableTheory]
 	[AutoData]
 	public void ReadAllBytes_ShouldReturnWrittenBytes(
-		byte[] contents, string path)
+		byte[] bytes, string path)
 	{
-		FileSystem.File.WriteAllBytes(path, contents);
+		FileSystem.File.WriteAllBytes(path, bytes);
 
 		byte[] result = FileSystem.File.ReadAllBytes(path);
 
-		result.Should().BeEquivalentTo(contents);
+		result.Should().BeEquivalentTo(bytes);
 	}
 
 	[SkippableTheory]
 	[AutoData]
 	public void ReadAllBytes_ShouldTolerateAltDirectorySeparatorChar(
-		byte[] contents, string directory, string fileName)
+		byte[] bytes, string directory, string fileName)
 	{
 		FileSystem.Directory.CreateDirectory(directory);
 		string filePath = $"{directory}{FileSystem.Path.DirectorySeparatorChar}{fileName}";
 		string altFilePath = $"{directory}{FileSystem.Path.AltDirectorySeparatorChar}{fileName}";
-		FileSystem.File.WriteAllBytes(filePath, contents);
+		FileSystem.File.WriteAllBytes(filePath, bytes);
 
 		byte[] result = FileSystem.File.ReadAllBytes(altFilePath);
 
-		result.Should().BeEquivalentTo(contents);
+		result.Should().BeEquivalentTo(bytes);
 	}
 }

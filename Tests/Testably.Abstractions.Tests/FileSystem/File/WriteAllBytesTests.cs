@@ -11,39 +11,52 @@ public abstract partial class WriteAllBytesTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void WriteAllBytes_PreviousFile_ShouldOverwriteFileWithBytes(
-		string path, byte[] contents)
+		string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllBytes(path, Encoding.UTF8.GetBytes("foo"));
 
-		FileSystem.File.WriteAllBytes(path, contents);
+		FileSystem.File.WriteAllBytes(path, bytes);
 
 		byte[] result = FileSystem.File.ReadAllBytes(path);
-		result.Should().BeEquivalentTo(contents);
+		result.Should().BeEquivalentTo(bytes);
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public void WriteAllBytes_ShouldCreateFileWithBytes(string path, byte[] contents)
+	public void WriteAllBytes_WhenBytesAreNull_ShouldThrowArgumentNullException(string path)
 	{
-		FileSystem.File.WriteAllBytes(path, contents);
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.WriteAllBytes(path, null!);
+		});
+
+		exception.Should().BeOfType<ArgumentNullException>()
+			.Which.ParamName.Should().Be("bytes");
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void WriteAllBytes_ShouldCreateFileWithBytes(string path, byte[] bytes)
+	{
+		FileSystem.File.WriteAllBytes(path, bytes);
 
 		byte[] result = FileSystem.File.ReadAllBytes(path);
-		result.Should().BeEquivalentTo(contents);
+		result.Should().BeEquivalentTo(bytes);
 	}
 
 	[SkippableTheory]
 	[AutoData]
 	public void WriteAllBytes_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
-		string path, byte[] contents)
+		string path, byte[] bytes)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
-		
+
 		FileSystem.File.WriteAllBytes(path, Array.Empty<byte>());
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		var exception = Record.Exception(() =>
+		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.File.WriteAllBytes(path, contents);
+			FileSystem.File.WriteAllBytes(path, bytes);
 		});
 
 		exception.Should().BeOfType<UnauthorizedAccessException>()

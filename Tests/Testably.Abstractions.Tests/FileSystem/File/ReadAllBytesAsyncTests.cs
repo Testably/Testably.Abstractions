@@ -43,13 +43,13 @@ public abstract partial class ReadAllBytesAsyncTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public async Task ReadAllBytesAsync_ShouldReturnWrittenBytes(
-		byte[] contents, string path)
+		byte[] bytes, string path)
 	{
-		await FileSystem.File.WriteAllBytesAsync(path, contents);
+		await FileSystem.File.WriteAllBytesAsync(path, bytes);
 
 		byte[] result = await FileSystem.File.ReadAllBytesAsync(path);
 
-		result.Should().BeEquivalentTo(contents);
+		result.Should().BeEquivalentTo(bytes);
 	}
 }
 #endif
