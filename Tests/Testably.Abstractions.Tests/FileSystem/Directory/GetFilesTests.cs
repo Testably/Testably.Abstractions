@@ -145,7 +145,7 @@ public abstract partial class GetFilesTests<TFileSystem>
 			_ = FileSystem.Directory.GetFiles(path, searchPattern)
 				.FirstOrDefault();
 		});
-		
+
 		exception.Should().BeException<ArgumentException>(hResult: -2147024809,
 			// The searchPattern is not included in .NET Framework
 			messageContains: Test.IsNetFramework ? null : $"'{searchPattern}'");

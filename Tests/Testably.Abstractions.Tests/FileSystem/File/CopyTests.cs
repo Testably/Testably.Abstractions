@@ -270,7 +270,9 @@ public abstract partial class CopyTests<TFileSystem>
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891,
-			messageContains: Test.IsNetFramework ? $"'{sourceName}'" : $"'{FileSystem.Path.GetFullPath(sourceName)}'");
+			messageContains: Test.IsNetFramework
+				? $"'{sourceName}'"
+				: $"'{FileSystem.Path.GetFullPath(sourceName)}'");
 		FileSystem.Directory.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.Exists(destinationName).Should().BeFalse();
 	}
@@ -315,7 +317,9 @@ public abstract partial class CopyTests<TFileSystem>
 
 		exception.Should().BeException<FileNotFoundException>(
 			hResult: -2147024894,
-			messageContains: Test.IsNetFramework ? null : $"'{FileSystem.Path.GetFullPath(sourceName)}'");
+			messageContains: Test.IsNetFramework
+				? null
+				: $"'{FileSystem.Path.GetFullPath(sourceName)}'");
 		FileSystem.File.Exists(destinationName).Should().BeFalse();
 	}
 }

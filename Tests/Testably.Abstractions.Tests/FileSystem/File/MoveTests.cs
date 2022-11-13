@@ -223,7 +223,6 @@ public abstract partial class MoveTests<TFileSystem>
 			FileSystem.File.Move(sourceName, sourceName);
 		});
 
-
 		exception.Should().BeException<FileNotFoundException>(
 			$"'{FileSystem.Path.GetFullPath(sourceName)}'",
 			hResult: -2147024894);

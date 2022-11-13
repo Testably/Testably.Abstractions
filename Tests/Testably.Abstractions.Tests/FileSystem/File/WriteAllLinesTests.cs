@@ -88,7 +88,7 @@ public abstract partial class WriteAllLinesTests<TFileSystem>
 		FileSystem.File.WriteAllText(path, null);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		var exception = Record.Exception(() =>
+		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.File.WriteAllLines(path, contents);
 		});

@@ -227,7 +227,9 @@ public abstract partial class CopyToTests<TFileSystem>
 
 		exception.Should().BeException<FileNotFoundException>(
 			hResult: -2147024894,
-			messageContains: Test.IsNetFramework ? null : $"'{FileSystem.Path.GetFullPath(sourceName)}'");
+			messageContains: Test.IsNetFramework
+				? null
+				: $"'{FileSystem.Path.GetFullPath(sourceName)}'");
 		FileSystem.File.Exists(destinationName).Should().BeFalse();
 	}
 }

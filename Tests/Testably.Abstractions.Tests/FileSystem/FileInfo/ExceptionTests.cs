@@ -20,11 +20,12 @@ public abstract partial class ExceptionTests<TFileSystem>
 		{
 			callback.Compile().Invoke(FileSystem.FileInfo.New("foo"));
 		});
-		
+
 		exception.Should().BeException<ArgumentException>(
 			hResult: -2147024809,
 			paramName: ignoreParamCheck || Test.IsNetFramework ? null : paramName,
-			because: $"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+			because:
+			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[Theory]
@@ -39,7 +40,8 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		exception.Should().BeException<ArgumentNullException>(
 			paramName: ignoreParamCheck ? null : paramName,
-			because: $"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+			because:
+			$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[SkippableTheory]
@@ -68,13 +70,15 @@ public abstract partial class ExceptionTests<TFileSystem>
 			{
 				exception.Should().BeException<ArgumentException>(
 					hResult: -2147024809,
-					because: $"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
+					because:
+					$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 			}
 			else
 			{
 				exception.Should().BeException<IOException>(
 					hResult: -2147024773,
-					because: $"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
+					because:
+					$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 			}
 		}
 	}

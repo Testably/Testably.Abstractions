@@ -36,7 +36,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 		});
 
 		exception.Should().BeException<IOException>($"'{path}'",
-			hResult: Test.RunsOnWindows ? -2147024713:17);
+			hResult: Test.RunsOnWindows ? -2147024713 : 17);
 	}
 
 	[SkippableTheory]

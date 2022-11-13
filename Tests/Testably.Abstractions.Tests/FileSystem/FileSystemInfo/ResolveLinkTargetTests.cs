@@ -94,7 +94,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 		});
 
 		exception.Should().BeException<IOException>(
-			hResult: Test.RunsOnWindows  ? - 2147022975 : -2146232800,
+			hResult: Test.RunsOnWindows ? -2147022975 : -2146232800,
 			messageContains: $"'{fileInfo.FullName}'");
 	}
 

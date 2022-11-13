@@ -90,7 +90,9 @@ public abstract partial class MoveToTests<TFileSystem>
 
 		exception.Should().BeException<FileNotFoundException>(
 			hResult: -2147024894,
-			messageContains: Test.IsNetFramework ? null : $"'{FileSystem.Path.GetFullPath(sourceName)}'");
+			messageContains: Test.IsNetFramework
+				? null
+				: $"'{FileSystem.Path.GetFullPath(sourceName)}'");
 		FileSystem.File.Exists(sourceName).Should().BeFalse();
 	}
 
@@ -276,7 +278,9 @@ public abstract partial class MoveToTests<TFileSystem>
 		});
 
 		exception.Should().BeException<FileNotFoundException>(
-			messageContains: Test.IsNetFramework ? null : $"'{FileSystem.Path.GetFullPath(sourceName)}'",
+			messageContains: Test.IsNetFramework
+				? null
+				: $"'{FileSystem.Path.GetFullPath(sourceName)}'",
 			hResult: -2147024894);
 		FileSystem.File.Exists(destinationName).Should().BeFalse();
 	}

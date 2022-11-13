@@ -94,15 +94,16 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public async Task WriteAllTextAsync_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
-		string path, string contents)
+	public async Task
+		WriteAllTextAsync_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
+			string path, string contents)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
 		await FileSystem.File.WriteAllTextAsync(path, null);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		var exception = await Record.ExceptionAsync(async () =>
+		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
 			await FileSystem.File.WriteAllTextAsync(path, contents);
 		});

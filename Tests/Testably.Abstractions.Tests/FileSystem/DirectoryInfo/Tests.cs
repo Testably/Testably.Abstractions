@@ -81,8 +81,9 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void MissingFile_Attributes_ShouldAlwaysBeNegativeOne_AndSetterShouldThrowFileNotFoundException(
-		FileAttributes fileAttributes)
+	public void
+		MissingFile_Attributes_ShouldAlwaysBeNegativeOne_AndSetterShouldThrowFileNotFoundException(
+			FileAttributes fileAttributes)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		sut.Attributes.Should().Be((FileAttributes)(-1));
@@ -96,7 +97,9 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void MissingFile_CreationTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(DateTime creationTime)
+	public void
+		MissingFile_CreationTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
+			DateTime creationTime)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		sut.CreationTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
@@ -119,8 +122,9 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void MissingFile_CreationTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
-		DateTime creationTimeUtc)
+	public void
+		MissingFile_CreationTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
+			DateTime creationTimeUtc)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		sut.CreationTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
@@ -143,7 +147,9 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void MissingFile_LastAccessTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(DateTime lastAccessTime)
+	public void
+		MissingFile_LastAccessTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
+			DateTime lastAccessTime)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		sut.LastAccessTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
@@ -166,8 +172,9 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void MissingFile_LastAccessTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
-		DateTime lastAccessTimeUtc)
+	public void
+		MissingFile_LastAccessTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
+			DateTime lastAccessTimeUtc)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		sut.LastAccessTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
@@ -190,7 +197,9 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void MissingFile_LastWriteTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(DateTime lastWriteTime)
+	public void
+		MissingFile_LastWriteTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
+			DateTime lastWriteTime)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		sut.LastWriteTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
@@ -213,8 +222,9 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void MissingFile_LastWriteTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
-		DateTime lastWriteTimeUtc)
+	public void
+		MissingFile_LastWriteTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
+			DateTime lastWriteTimeUtc)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		sut.LastWriteTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());

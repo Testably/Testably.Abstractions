@@ -46,7 +46,7 @@ public abstract partial class Tests<TFileSystem>
 		{
 			FileSystem.FileStream.New(path, FileMode.CreateNew);
 		});
-		
+
 		exception.Should().BeException<IOException>(
 			$"'{FileSystem.Path.GetFullPath(path)}'",
 			hResult: Test.RunsOnWindows ? -2147024816 : 17);

@@ -411,8 +411,8 @@ public abstract partial class Tests<TFileSystem>
 		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeException<FileNotFoundException>(
-			$"'{FileSystem.Path.GetFullPath(path)}'",
-			hResult: -2147024894);
+				$"'{FileSystem.Path.GetFullPath(path)}'",
+				hResult: -2147024894);
 		}
 		else
 		{

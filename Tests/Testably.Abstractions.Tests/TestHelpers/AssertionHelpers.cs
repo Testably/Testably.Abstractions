@@ -90,6 +90,7 @@ internal static class AssertionHelpers
 							messageContains,
 							exception.Message);
 				}
+
 				if (hResult != null)
 				{
 					Execute.Assertion
@@ -101,6 +102,7 @@ internal static class AssertionHelpers
 							hResult,
 							exception.HResult);
 				}
+
 				if (paramName != null)
 				{
 					if (exception is ArgumentException argumentException)

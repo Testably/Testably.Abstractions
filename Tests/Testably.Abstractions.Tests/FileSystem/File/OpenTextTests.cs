@@ -16,7 +16,7 @@ public abstract partial class OpenTextTests<TFileSystem>
 		{
 			using StreamReader stream = FileSystem.File.OpenText(path);
 		});
-		
+
 		exception.Should().BeException<FileNotFoundException>(
 			$"'{FileSystem.Path.GetFullPath(path)}'",
 			hResult: -2147024894);

@@ -30,7 +30,8 @@ public abstract partial class ReadLinesTests<TFileSystem>
 			_ = FileSystem.File.ReadLines(path).FirstOrDefault();
 		});
 
-		exception.Should().BeException<FileNotFoundException>($"'{FileSystem.Path.GetFullPath(path)}'",
+		exception.Should().BeException<FileNotFoundException>(
+			$"'{FileSystem.Path.GetFullPath(path)}'",
 			hResult: -2147024894);
 	}
 

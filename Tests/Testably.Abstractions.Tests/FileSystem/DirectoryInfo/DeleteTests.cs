@@ -120,7 +120,9 @@ public abstract partial class DeleteTests<TFileSystem>
 		exception.Should().BeException<IOException>(
 			hResult: Test.RunsOnWindows ? -2147024751 : Test.RunsOnMac ? 66 : 39,
 			// Path information only included in exception message on Windows and not in .NET Framework
-			messageContains: Test.RunsOnWindows && !Test.IsNetFramework ? null : $"'{sut.FullName}'");
+			messageContains: Test.RunsOnWindows && !Test.IsNetFramework
+				? null
+				: $"'{sut.FullName}'");
 
 		sut.Exists.Should().BeTrue();
 		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();

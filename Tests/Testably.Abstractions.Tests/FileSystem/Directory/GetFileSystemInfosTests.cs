@@ -21,10 +21,8 @@ public abstract partial class GetFileSystemInfosTests<TFileSystem>
 			Record.Exception(()
 				=> FileSystem.Directory.GetFileSystemEntries(path).ToList());
 
-		exception.Should().BeException<DirectoryNotFoundException>()
-			.Which.Message.Should().Contain($"'{expectedPath}'.");
-		exception.Should().BeException<DirectoryNotFoundException>()
-			.Which.HResult.Should().Be(-2147024893);
+		exception.Should().BeException<DirectoryNotFoundException>($"'{expectedPath}'.",
+			hResult: -2147024893);
 		FileSystem.Directory.Exists(path).Should().BeFalse();
 	}
 
@@ -153,15 +151,9 @@ public abstract partial class GetFileSystemInfosTests<TFileSystem>
 				.FirstOrDefault();
 		});
 
-#if NETFRAMEWORK
-		// The searchPattern is not included in .NET Framework
-		exception.Should().BeException<ArgumentException>();
-#else
-		exception.Should().BeException<ArgumentException>()
-			.Which.Message.Should().Contain($"'{searchPattern}'");
-#endif
-		exception.Should().BeException<ArgumentException>()
-			.Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeException<ArgumentException>(hResult: -2147024809,
+			// The searchPattern is not included in .NET Framework
+			messageContains: Test.IsNetFramework ? null : $"'{searchPattern}'");
 	}
 
 	[SkippableTheory]

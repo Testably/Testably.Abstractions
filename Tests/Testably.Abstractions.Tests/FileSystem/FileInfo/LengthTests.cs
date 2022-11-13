@@ -21,7 +21,9 @@ public abstract partial class LengthTests<TFileSystem>
 
 		exception.Should().BeException<FileNotFoundException>(
 			hResult: -2147024894,
-			messageContains: Test.IsNetFramework ? $"'{path}'" : $"'{FileSystem.Path.GetFullPath(path)}'");
+			messageContains: Test.IsNetFramework
+				? $"'{path}'"
+				: $"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
 	[SkippableTheory]
@@ -39,7 +41,9 @@ public abstract partial class LengthTests<TFileSystem>
 
 		exception.Should().BeException<FileNotFoundException>(
 			hResult: -2147024894,
-			messageContains: Test.IsNetFramework ? $"'{path}'" : $"'{FileSystem.Path.GetFullPath(path)}'");
+			messageContains: Test.IsNetFramework
+				? $"'{path}'"
+				: $"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
 	[SkippableTheory]
@@ -56,7 +60,9 @@ public abstract partial class LengthTests<TFileSystem>
 
 		exception.Should().BeException<FileNotFoundException>(
 			hResult: -2147024894,
-			messageContains: Test.IsNetFramework ? $"'{path}'" : $"'{FileSystem.Path.GetFullPath(path)}'");
+			messageContains: Test.IsNetFramework
+				? $"'{path}'"
+				: $"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
 	[SkippableTheory]
@@ -123,12 +129,16 @@ public abstract partial class LengthTests<TFileSystem>
 		{
 			_ = sut.Length;
 		});
-		
+
 		exception.Should().BeException<FileNotFoundException>(
-			messageContains: Test.IsNetFramework ? $"'{path}'" : $"'{FileSystem.Path.GetFullPath(path)}'",
+			messageContains: Test.IsNetFramework
+				? $"'{path}'"
+				: $"'{FileSystem.Path.GetFullPath(path)}'",
 			hResult: -2147024894);
 		exception2.Should().BeException<FileNotFoundException>(
-			messageContains: Test.IsNetFramework ? $"'{path}'" : $"'{FileSystem.Path.GetFullPath(path)}'",
+			messageContains: Test.IsNetFramework
+				? $"'{path}'"
+				: $"'{FileSystem.Path.GetFullPath(path)}'",
 			hResult: -2147024894);
 	}
 }

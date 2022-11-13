@@ -51,7 +51,7 @@ public abstract partial class ReadAllLinesAsyncTests<TFileSystem>
 
 		exception.Should().BeException<FileNotFoundException>(
 			$"'{FileSystem.Path.GetFullPath(path)}'",
-			hResult:-2147024894);
+			hResult: -2147024894);
 	}
 
 	[SkippableTheory]

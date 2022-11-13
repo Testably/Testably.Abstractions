@@ -95,9 +95,7 @@ public abstract partial class Tests<TFileSystem>
 				FileSystem.Directory.SetCurrentDirectory(path);
 			});
 
-			exception.Should().BeException<DirectoryNotFoundException>();
-			exception.Should().BeException<DirectoryNotFoundException>()
-				.Which.HResult.Should().Be(-2147024893);
+			exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 			FileSystem.Directory.GetCurrentDirectory().Should()
 				.Be(previousCurrentDirectory);
 		}

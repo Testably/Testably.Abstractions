@@ -31,7 +31,7 @@ public abstract partial class ReadAllBytesAsyncTests<TFileSystem>
 	{
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.ReadAllBytesAsync(path));
-		
+
 		exception.Should().BeException<FileNotFoundException>(
 			$"'{FileSystem.Path.GetFullPath(path)}'",
 			hResult: -2147024894);

@@ -145,7 +145,7 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 		FileSystem.File.WriteAllText(path, "some content");
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		var exception = Record.Exception(() =>
+		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.File.AppendAllText(path, contents);
 		});
