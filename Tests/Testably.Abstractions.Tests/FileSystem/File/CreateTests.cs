@@ -38,8 +38,7 @@ public abstract partial class CreateTests<TFileSystem>
 			FileSystem.File.Create(path);
 		});
 
-		exception.Should().BeOfType<UnauthorizedAccessException>()
-		   .Which.HResult.Should().Be(-2147024891);
+		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 
 	[SkippableTheory]
@@ -54,8 +53,7 @@ public abstract partial class CreateTests<TFileSystem>
 			FileSystem.File.Create(filePath);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
+		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 	}
 
 	[SkippableTheory]

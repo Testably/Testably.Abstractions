@@ -98,9 +98,9 @@ internal class FileSystemInfoWrapper : IFileSystemInfo
 	{
 		get => _instance.UnixFileMode;
 		[UnsupportedOSPlatform("windows")]
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		set => _instance.UnixFileMode = value;
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 	}
 #endif
 

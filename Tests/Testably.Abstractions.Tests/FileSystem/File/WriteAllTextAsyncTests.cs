@@ -1,4 +1,5 @@
 #if FEATURE_FILESYSTEM_ASYNC
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,8 +22,7 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.WriteAllTextAsync(path, contents, cts.Token));
 
-		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
 	[SkippableTheory]
@@ -37,8 +37,7 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.WriteAllTextAsync(path, contents, Encoding.UTF8, cts.Token));
 
-		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
 	[SkippableTheory]
@@ -71,7 +70,16 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 	public async Task WriteAllTextAsync_SpecialCharacters_ShouldReturnSameText(
 		string path)
 	{
-		char[] specialCharacters = { 'Ä', 'Ö', 'Ü', 'ä', 'ö', 'ü', 'ß' };
+		char[] specialCharacters =
+		{
+			'Ä',
+			'Ö',
+			'Ü',
+			'ä',
+			'ö',
+			'ü',
+			'ß'
+		};
 		foreach (char specialCharacter in specialCharacters)
 		{
 			string contents = "_" + specialCharacter;
@@ -82,6 +90,38 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 			result.Should().Be(contents,
 				$"{contents} should be encoded and decoded identical.");
 		}
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public async Task WriteAllText_WhenContentIsNull_ShouldNotThrowException(
+		string path, string contents)
+	{
+		Exception? exception = await Record.ExceptionAsync(async () =>
+		{
+			await FileSystem.File.WriteAllTextAsync(path, null);
+		});
+
+		exception.Should().BeNull();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public async Task
+		WriteAllTextAsync_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
+			string path, string contents)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		await FileSystem.File.WriteAllTextAsync(path, null);
+		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
+
+		Exception? exception = await Record.ExceptionAsync(async () =>
+		{
+			await FileSystem.File.WriteAllTextAsync(path, contents);
+		});
+
+		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 }
 #endif

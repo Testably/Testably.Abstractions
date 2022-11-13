@@ -17,8 +17,8 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 		FileSystem.Directory.CreateDirectory("bar");
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateDirectories(BasePath)
-		   .ToList();
+			.EnumerateDirectories(BasePath)
+			.ToList();
 
 		result.Should().Contain(FileSystem.Path.Combine(BasePath, "foo"));
 		result.Should().Contain(FileSystem.Path.Combine(BasePath, "bar"));
@@ -35,11 +35,9 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 			Record.Exception(()
 				=> FileSystem.Directory.EnumerateDirectories(path).ToList());
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.Message.Should()
-		   .Be($"Could not find a part of the path '{expectedPath}'.");
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
+		exception.Should().BeException<DirectoryNotFoundException>(
+			$"'{expectedPath}'",
+			hResult: -2147024893);
 		FileSystem.Directory.Exists(path).Should().BeFalse();
 	}
 
@@ -51,8 +49,8 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 		FileSystem.Directory.CreateDirectory("bar");
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateDirectories(path)
-		   .ToList();
+			.EnumerateDirectories(path)
+			.ToList();
 
 		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
 		result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
@@ -67,8 +65,8 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 		FileSystem.Directory.CreateDirectory("bar");
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateDirectories(path)
-		   .ToList();
+			.EnumerateDirectories(path)
+			.ToList();
 
 		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
 		result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
@@ -86,13 +84,13 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 		baseDirectory.CreateSubdirectory("bar");
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateDirectories(baseDirectory.FullName, "*", SearchOption.AllDirectories)
-		   .ToList();
+			.EnumerateDirectories(baseDirectory.FullName, "*", SearchOption.AllDirectories)
+			.ToList();
 
 		result.Count.Should().Be(3);
 		result.Should().Contain(FileSystem.Path.Combine(baseDirectory.FullName, "foo"));
 		result.Should()
-		   .Contain(FileSystem.Path.Combine(baseDirectory.FullName, "foo", "xyz"));
+			.Contain(FileSystem.Path.Combine(baseDirectory.FullName, "foo", "xyz"));
 		result.Should().Contain(FileSystem.Path.Combine(baseDirectory.FullName, "bar"));
 	}
 
@@ -108,7 +106,7 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 		baseDirectory.CreateSubdirectory("bar");
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateDirectories(path, "*", SearchOption.AllDirectories).ToList();
+			.EnumerateDirectories(path, "*", SearchOption.AllDirectories).ToList();
 
 		result.Count.Should().Be(3);
 		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
@@ -138,7 +136,7 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 		baseDirectory.CreateSubdirectory(subdirectoryName);
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateDirectories("foo", searchPattern).ToList();
+			.EnumerateDirectories("foo", searchPattern).ToList();
 
 		if (expectToBeFound)
 		{
@@ -149,7 +147,7 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 		else
 		{
 			result.Should()
-			   .BeEmpty($"{subdirectoryName} should not match {searchPattern}");
+				.BeEmpty($"{subdirectoryName} should not match {searchPattern}");
 		}
 	}
 
@@ -166,7 +164,7 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 		baseDirectory.CreateSubdirectory("bar");
 
 		List<string> result = FileSystem.Directory
-		   .EnumerateDirectories(path, "XYZ",
+			.EnumerateDirectories(path, "XYZ",
 				new EnumerationOptions
 				{
 					MatchCasing = MatchCasing.CaseInsensitive,
@@ -192,11 +190,10 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 		Exception? exception = Record.Exception(() =>
 		{
 			_ = FileSystem.Directory.EnumerateDirectories(path, searchPattern)
-			   .FirstOrDefault();
+				.FirstOrDefault();
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
 	[SkippableTheory]
@@ -246,7 +243,7 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 		baseDirectory.CreateSubdirectory("bar/xyz");
 
 		IEnumerable<string> result = FileSystem.Directory
-		   .EnumerateDirectories(path, "xyz", SearchOption.AllDirectories);
+			.EnumerateDirectories(path, "xyz", SearchOption.AllDirectories);
 
 		result.Count().Should().Be(2);
 	}

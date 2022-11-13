@@ -6,7 +6,10 @@ namespace Testably.Abstractions.Testing.Helpers;
 
 internal static class PathHelper
 {
-	private static readonly char[] AdditionalInvalidPathChars = { '*', '?' };
+	private static readonly char[] AdditionalInvalidPathChars =
+	{
+		'*', '?'
+	};
 
 	internal static readonly string UncPrefix = new(Path.DirectorySeparatorChar, 2);
 
@@ -68,7 +71,7 @@ internal static class PathHelper
 	}
 
 	private static void CheckPathArgument([NotNull] string? path, string paramName,
-	                                      bool includeIsEmptyCheck)
+		bool includeIsEmptyCheck)
 	{
 		if (path == null)
 		{
@@ -87,11 +90,11 @@ internal static class PathHelper
 	}
 
 	private static void CheckPathCharacters(string path, IFileSystem fileSystem,
-	                                        string paramName, int? hResult)
+		string paramName, int? hResult)
 	{
-#pragma warning disable CA2249 // Consider using String.Contains with char instead of String.IndexOf not possible in .NETSTANDARD2.0
+		#pragma warning disable CA2249 // Consider using String.Contains with char instead of String.IndexOf not possible in .NETSTANDARD2.0
 		if (path.IndexOf('\0') >= 0)
-#pragma warning restore CA2249
+			#pragma warning restore CA2249
 		{
 			throw ExceptionFactory.PathHasIllegalCharacters(path, paramName, hResult);
 		}

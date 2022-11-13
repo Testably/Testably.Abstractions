@@ -16,5 +16,5 @@ public interface IAccessControlStrategy
 	///     <see langword="true" /> if the access should be granted, otherwise <see langword="false" />.
 	/// </returns>
 	bool IsAccessGranted(string fullPath,
-	                     IFileSystemExtensionContainer extensionContainer);
+		IFileSystemExtensionContainer extensionContainer);
 }

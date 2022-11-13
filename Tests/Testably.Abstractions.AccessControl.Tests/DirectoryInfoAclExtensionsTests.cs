@@ -17,14 +17,14 @@ public class DirectoryInfoAclExtensionsTests
 		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
 		{
 			fileSystem.Directory.CreateDirectory("foo");
-#pragma warning disable CA1416
+			#pragma warning disable CA1416
 			DirectorySecurity directorySecurity =
 				fileSystem.DirectoryInfo.New("foo").GetAccessControl();
 
 			fileSystem.DirectoryInfo.New("bar").Create(directorySecurity);
 			DirectorySecurity result =
 				fileSystem.DirectoryInfo.New("bar").GetAccessControl();
-#pragma warning restore CA1416
+			#pragma warning restore CA1416
 
 			result.HasSameAccessRightsAs(directorySecurity).Should().BeTrue();
 			result.Should().NotBe(directorySecurity);
@@ -39,12 +39,12 @@ public class DirectoryInfoAclExtensionsTests
 
 		MockFileSystem fileSystem = new();
 		IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		DirectorySecurity directorySecurity = new();
 
 		directoryInfo.Create(directorySecurity);
 		DirectorySecurity result = directoryInfo.GetAccessControl();
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		result.Should().Be(directorySecurity);
 	}
@@ -57,10 +57,10 @@ public class DirectoryInfoAclExtensionsTests
 		MockFileSystem fileSystem = new();
 		IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		DirectorySecurity result =
 			directoryInfo.GetAccessControl(AccessControlSections.Access);
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		result.Should().NotBeNull();
 	}
@@ -76,18 +76,18 @@ public class DirectoryInfoAclExtensionsTests
 		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
 		{
 			fileSystem.Directory.CreateDirectory("foo");
-#pragma warning disable CA1416
+			#pragma warning disable CA1416
 			DirectorySecurity originalAccessControl =
 				fileSystem.DirectoryInfo.New("foo").GetAccessControl();
 			fileSystem.DirectoryInfo.New("foo").SetAccessControl(originalAccessControl);
 
 			DirectorySecurity currentAccessControl =
 				fileSystem.DirectoryInfo.New("foo")
-				   .GetAccessControl(AccessControlSections.Access);
-#pragma warning restore CA1416
+					.GetAccessControl(AccessControlSections.Access);
+			#pragma warning restore CA1416
 
 			currentAccessControl.HasSameAccessRightsAs(originalAccessControl)
-			   .Should().BeTrue();
+				.Should().BeTrue();
 			currentAccessControl.Should().NotBe(originalAccessControl);
 		}
 	}
@@ -99,12 +99,12 @@ public class DirectoryInfoAclExtensionsTests
 
 		MockFileSystem fileSystem = new();
 		IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		DirectorySecurity directorySecurity = new();
 
 		directoryInfo.SetAccessControl(directorySecurity);
 		DirectorySecurity result = directoryInfo.GetAccessControl();
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		result.Should().Be(directorySecurity);
 	}

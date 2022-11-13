@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 // ReSharper disable once PartialTypeWithSinglePart
@@ -131,22 +129,6 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void SetCreationTime_PathNotFound_ShouldThrowCorrectException(
-		string path, DateTime creationTime)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.File.SetCreationTime(path, creationTime);
-		});
-
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-	}
-
-	[SkippableTheory]
-	[AutoData]
 	public void SetCreationTime_ShouldChangeCreationTime(
 		string path, DateTime creationTime)
 	{
@@ -160,23 +142,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.SetCreationTime(path, creationTime);
 
 		FileSystem.File.GetCreationTimeUtc(path)
-		   .Should().Be(expectedTime);
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void SetCreationTimeUtc_PathNotFound_ShouldThrowCorrectException(
-		string path, DateTime creationTime)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.File.SetCreationTimeUtc(path, creationTime);
-		});
-
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Should().Be(expectedTime);
 	}
 
 	[SkippableTheory]
@@ -194,23 +160,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.SetCreationTimeUtc(path, creationTime);
 
 		FileSystem.File.GetCreationTime(path)
-		   .Should().Be(expectedTime);
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void SetLastAccessTime_PathNotFound_ShouldThrowCorrectException(
-		string path, DateTime lastAccessTime)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.File.SetLastAccessTime(path, lastAccessTime);
-		});
-
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Should().Be(expectedTime);
 	}
 
 	[SkippableTheory]
@@ -225,23 +175,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.SetLastAccessTime(path, lastAccessTime);
 
 		FileSystem.File.GetLastAccessTimeUtc(path)
-		   .Should().Be(expectedTime);
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void SetLastAccessTimeUtc_PathNotFound_ShouldThrowCorrectException(
-		string path, DateTime lastAccessTime)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.File.SetLastAccessTimeUtc(path, lastAccessTime);
-		});
-
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Should().Be(expectedTime);
 	}
 
 	[SkippableTheory]
@@ -256,23 +190,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.SetLastAccessTimeUtc(path, lastAccessTime);
 
 		FileSystem.File.GetLastAccessTime(path)
-		   .Should().Be(expectedTime);
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void SetLastWriteTime_PathNotFound_ShouldThrowCorrectException(
-		string path, DateTime lastWriteTime)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.File.SetLastWriteTime(path, lastWriteTime);
-		});
-
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Should().Be(expectedTime);
 	}
 
 	[SkippableTheory]
@@ -287,23 +205,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.SetLastWriteTime(path, lastWriteTime);
 
 		FileSystem.File.GetLastWriteTimeUtc(path)
-		   .Should().Be(expectedTime);
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void SetLastWriteTimeUtc_PathNotFound_ShouldThrowCorrectException(
-		string path, DateTime lastWriteTime)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.File.SetLastWriteTimeUtc(path, lastWriteTime);
-		});
-
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Should().Be(expectedTime);
 	}
 
 	[SkippableTheory]
@@ -318,6 +220,6 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.SetLastWriteTimeUtc(path, lastWriteTime);
 
 		FileSystem.File.GetLastWriteTime(path)
-		   .Should().Be(expectedTime);
+			.Should().Be(expectedTime);
 	}
 }

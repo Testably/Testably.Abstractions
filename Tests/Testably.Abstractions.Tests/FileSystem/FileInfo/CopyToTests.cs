@@ -10,7 +10,7 @@ public abstract partial class CopyToTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public void CopyTo_DestinationExists_ShouldThrowIOExceptionAndNotCopyFile(
+	public void CopyTo_DestinationExists_ShouldThrowIOException_AndNotCopyFile(
 		string sourceName,
 		string destinationName,
 		string sourceContents,
@@ -25,17 +25,8 @@ public abstract partial class CopyToTests<TFileSystem>
 			sut.CopyTo(destinationName);
 		});
 
-		if (Test.RunsOnWindows)
-		{
-			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024816);
-		}
-		else
-		{
-			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(17);
-		}
-
+		exception.Should().BeException<IOException>(
+			hResult: Test.RunsOnWindows ? -2147024816 : 17);
 		sut.Exists.Should().BeTrue();
 		FileSystem.File.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
@@ -83,13 +74,13 @@ public abstract partial class CopyToTests<TFileSystem>
 		FileSystem.File.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.Exists(destinationName).Should().BeTrue();
 		FileSystem.File.GetAttributes(destinationName)
-		   .Should().HaveFlag(FileAttributes.ReadOnly);
+			.Should().HaveFlag(FileAttributes.ReadOnly);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public void CopyTo_ShouldAddArchiveAttributeOnWindows(
+	public void CopyTo_ShouldAddArchiveAttribute_OnWindows(
 		string sourceName,
 		string destinationName,
 		string contents,
@@ -109,7 +100,7 @@ public abstract partial class CopyToTests<TFileSystem>
 
 		result.Attributes.Should().Be(expectedAttributes);
 		FileSystem.File.GetAttributes(destinationName)
-		   .Should().Be(expectedAttributes);
+			.Should().Be(expectedAttributes);
 	}
 
 	[SkippableTheory]
@@ -158,23 +149,23 @@ public abstract partial class CopyToTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			FileSystem.File.GetCreationTime(destinationName)
-			   .Should().BeOnOrAfter(updatedTime.ApplySystemClockTolerance());
+				.Should().BeOnOrAfter(updatedTime.ApplySystemClockTolerance());
 		}
 		else
 		{
 			FileSystem.File.GetCreationTime(destinationName)
-			   .Should().Be(sourceCreationTime);
+				.Should().Be(sourceCreationTime);
 		}
 
 		FileSystem.File.GetLastAccessTime(destinationName)
-		   .Should().BeOnOrAfter(updatedTime.ApplySystemClockTolerance());
+			.Should().BeOnOrAfter(updatedTime.ApplySystemClockTolerance());
 		FileSystem.File.GetLastWriteTime(destinationName)
-		   .Should().Be(sourceLastWriteTime);
+			.Should().Be(sourceLastWriteTime);
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public void CopyTo_SourceIsDirectory_ShouldThrowIOExceptionAndNotCopyFile(
+	public void CopyTo_SourceIsDirectory_ShouldThrowUnauthorizedAccessException_AndNotCopyFile(
 		string sourceName,
 		string destinationName)
 	{
@@ -186,11 +177,9 @@ public abstract partial class CopyToTests<TFileSystem>
 			sut.CopyTo(destinationName);
 		});
 
-		exception.Should().BeOfType<UnauthorizedAccessException>()
-		   .Which.HResult.Should().Be(-2147024891);
-		exception.Should().BeOfType<UnauthorizedAccessException>()
-		   .Which.Message.Should()
-		   .Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
+		exception.Should().BeException<UnauthorizedAccessException>(
+			$"'{FileSystem.Path.GetFullPath(sourceName)}'",
+			hResult: -2147024891);
 		FileSystem.Directory.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.Exists(destinationName).Should().BeFalse();
 	}
@@ -213,8 +202,7 @@ public abstract partial class CopyToTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024864);
+			exception.Should().BeException<IOException>(hResult: -2147024864);
 			FileSystem.File.Exists(destinationName).Should().BeFalse();
 		}
 		else
@@ -237,13 +225,11 @@ public abstract partial class CopyToTests<TFileSystem>
 			sut.CopyTo(destinationName);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
-#if !NETFRAMEWORK
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should()
-		   .Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
-#endif
+		exception.Should().BeException<FileNotFoundException>(
+			hResult: -2147024894,
+			messageContains: Test.IsNetFramework
+				? null
+				: $"'{FileSystem.Path.GetFullPath(sourceName)}'");
 		FileSystem.File.Exists(destinationName).Should().BeFalse();
 	}
 }

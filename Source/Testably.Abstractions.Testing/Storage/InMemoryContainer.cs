@@ -22,8 +22,8 @@ internal class InMemoryContainer : IStorageContainer
 	private readonly FileSystemExtensionContainer _extensionContainer = new();
 
 	public InMemoryContainer(FileSystemTypes type,
-	                         IStorageLocation location,
-	                         MockFileSystem fileSystem)
+		IStorageLocation location,
+		MockFileSystem fileSystem)
 	{
 		_location = location;
 		_fileSystem = fileSystem;
@@ -84,7 +84,7 @@ internal class InMemoryContainer : IStorageContainer
 
 	/// <inheritdoc cref="IStorageContainer.Type" />
 	public FileSystemTypes Type { get; }
-	
+
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 	/// <inheritdoc cref="IStorageContainer.UnixFileMode" />
 	public UnixFileMode UnixFileMode { get; set; } = (UnixFileMode)(-1);
@@ -138,9 +138,9 @@ internal class InMemoryContainer : IStorageContainer
 
 	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool, int?)" />
 	public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share,
-	                                          bool deleteAccess = false,
-	                                          bool ignoreMetadataErrors = true,
-	                                          int? hResult = null)
+		bool deleteAccess = false,
+		bool ignoreMetadataErrors = true,
+		int? hResult = null)
 	{
 		if (_location.Drive == null)
 		{
@@ -200,7 +200,7 @@ internal class InMemoryContainer : IStorageContainer
 	///     Create a new directory on the <paramref name="location" />.
 	/// </summary>
 	public static IStorageContainer NewDirectory(IStorageLocation location,
-	                                             MockFileSystem fileSystem)
+		MockFileSystem fileSystem)
 	{
 		return new InMemoryContainer(FileSystemTypes.Directory, location,
 			fileSystem);
@@ -210,7 +210,7 @@ internal class InMemoryContainer : IStorageContainer
 	///     Create a new file on the <paramref name="location" />.
 	/// </summary>
 	public static IStorageContainer NewFile(IStorageLocation location,
-	                                        MockFileSystem fileSystem)
+		MockFileSystem fileSystem)
 	{
 		return new InMemoryContainer(FileSystemTypes.File, location,
 			fileSystem);
@@ -301,7 +301,7 @@ internal class InMemoryContainer : IStorageContainer
 		private readonly Action<Guid> _releaseCallback;
 
 		public FileHandle(Guid key, Action<Guid> releaseCallback, FileAccess access,
-		                  FileShare share, bool deleteAccess)
+			FileShare share, bool deleteAccess)
 		{
 			_releaseCallback = releaseCallback;
 			Access = access;
@@ -339,9 +339,9 @@ internal class InMemoryContainer : IStorageContainer
 			FileShare usedShare = share;
 			Execute.NotOnWindows(()
 				=> usedShare = FileShare.ReadWrite);
-			if (deleteAccess && !Execute.IsWindows)
+			if (deleteAccess)
 			{
-				return true;
+				return !Execute.IsWindows || Share == FileShare.Delete;
 			}
 
 			return CheckAccessWithShare(access, Share) &&

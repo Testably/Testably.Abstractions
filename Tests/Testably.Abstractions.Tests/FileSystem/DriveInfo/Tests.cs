@@ -8,7 +8,7 @@ public abstract partial class Tests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
-	public void VolumeLabel_ShouldBeWritableOnlyOnWindows()
+	public void VolumeLabel_ShouldBeWritable_OnWindows()
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
@@ -20,9 +20,9 @@ public abstract partial class Tests<TFileSystem>
 		{
 			Exception? exception = Record.Exception(() =>
 			{
-#pragma warning disable CA1416
+				#pragma warning disable CA1416
 				result.VolumeLabel = "TEST";
-#pragma warning restore CA1416
+				#pragma warning restore CA1416
 			});
 
 			if (Test.RunsOnWindows)
@@ -32,17 +32,16 @@ public abstract partial class Tests<TFileSystem>
 			}
 			else
 			{
-				exception.Should().BeOfType<PlatformNotSupportedException>()
-				   .Which.HResult.Should().Be(-2146233031);
+				exception.Should().BeException<PlatformNotSupportedException>(hResult: -2146233031);
 			}
 		}
 		finally
 		{
 			if (Test.RunsOnWindows)
 			{
-#pragma warning disable CA1416
+				#pragma warning disable CA1416
 				result.VolumeLabel = previousVolumeLabel;
-#pragma warning restore CA1416
+				#pragma warning restore CA1416
 			}
 		}
 	}

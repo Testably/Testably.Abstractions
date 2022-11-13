@@ -14,9 +14,9 @@ public class FileStreamAclExtensionsTests
 		MockFileSystem fileSystem = new();
 		FileSystemStream fileStream = fileSystem.File.Create("foo");
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		FileSecurity result = fileStream.GetAccessControl();
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		result.Should().NotBeNull();
 	}
@@ -32,15 +32,15 @@ public class FileStreamAclExtensionsTests
 		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
 		{
 			FileSystemStream fileStream = fileSystem.File.Create("foo");
-#pragma warning disable CA1416
+			#pragma warning disable CA1416
 			FileSecurity originalAccessControl = fileStream.GetAccessControl();
 			fileStream.SetAccessControl(originalAccessControl);
 
 			FileSecurity currentAccessControl = fileStream.GetAccessControl();
-#pragma warning restore CA1416
+			#pragma warning restore CA1416
 
 			currentAccessControl.HasSameAccessRightsAs(originalAccessControl)
-			   .Should().BeTrue();
+				.Should().BeTrue();
 			currentAccessControl.Should().NotBe(originalAccessControl);
 		}
 	}
@@ -52,12 +52,12 @@ public class FileStreamAclExtensionsTests
 
 		MockFileSystem fileSystem = new();
 		FileSystemStream fileStream = fileSystem.File.Create("foo");
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		FileSecurity fileSecurity = new();
 
 		fileStream.SetAccessControl(fileSecurity);
 		FileSecurity result = fileStream.GetAccessControl();
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		result.Should().Be(fileSecurity);
 	}

@@ -11,7 +11,7 @@ public abstract partial class DeleteTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		Delete_CaseDifferentPath_ShouldThrowDirectoryNotFoundExceptionOnLinux(
+		Delete_CaseDifferentPath_ShouldThrowDirectoryNotFoundException_OnLinux(
 			string directoryName)
 	{
 		directoryName = directoryName.ToLowerInvariant();
@@ -24,17 +24,14 @@ public abstract partial class DeleteTests<TFileSystem>
 
 		if (Test.RunsOnLinux)
 		{
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.Message.Should()
-			   .Be($"Could not find a part of the path '{expectedPath}'.");
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
+			exception.Should().BeException<DirectoryNotFoundException>($"'{expectedPath}'",
+				hResult: -2147024893);
 		}
 		else
 		{
 			exception.Should().BeNull();
 			FileSystem.Directory.Exists(directoryName.ToUpperInvariant())
-			   .Should().BeFalse();
+				.Should().BeFalse();
 		}
 	}
 
@@ -62,16 +59,13 @@ public abstract partial class DeleteTests<TFileSystem>
 			FileSystem.Directory.Delete(directoryName);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.Message.Should()
-		   .Be($"Could not find a part of the path '{expectedPath}'.");
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
+		exception.Should().BeException<DirectoryNotFoundException>($"'{expectedPath}'",
+			hResult: -2147024893);
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public void Delete_Recursive_MissingDirectory_ShouldDeleteDirectory(
+	public void Delete_Recursive_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string directoryName)
 	{
 		string expectedPath = System.IO.Path.Combine(BasePath, directoryName);
@@ -80,38 +74,38 @@ public abstract partial class DeleteTests<TFileSystem>
 			FileSystem.Directory.Delete(directoryName, true);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.Message.Should()
-		   .Be($"Could not find a part of the path '{expectedPath}'.");
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
+		exception.Should().BeException<DirectoryNotFoundException>($"'{expectedPath}'",
+			hResult: -2147024893);
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public void Delete_Recursive_WithOpenFile_ShouldThrowIOException(
+	public void Delete_Recursive_WithOpenFile_ShouldThrowIOException_OnWindows(
 		string path, string filename)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory(path);
+			.WithSubdirectory(path);
 		string filePath = FileSystem.Path.Combine(path, filename);
 		FileSystemStream openFile = FileSystem.File.OpenWrite(filePath);
-		openFile.Write(new byte[] { 0 }, 0, 1);
+		openFile.Write(new byte[]
+		{
+			0
+		}, 0, 1);
 		openFile.Flush();
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Directory.Delete(path, true);
-			openFile.Write(new byte[] { 0 }, 0, 1);
+			openFile.Write(new byte[]
+			{
+				0
+			}, 0, 1);
 			openFile.Flush();
 		});
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<IOException>()
-			   .Which.Message.Should()
-			   .Contain($"{filename}'");
-			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024864);
+			exception.Should().BeException<IOException>($"{filename}'",
+				hResult: -2147024864);
 			FileSystem.File.Exists(filePath).Should().BeTrue();
 		}
 		else
@@ -129,10 +123,10 @@ public abstract partial class DeleteTests<TFileSystem>
 	{
 		string fileName = $"{subdirectory}.txt";
 		FileSystem.Initialize()
-		   .WithSubdirectory(subdirectory).Initialized(s => s
-			   .WithAFile()
-			   .WithASubdirectory())
-		   .WithFile(fileName);
+			.WithSubdirectory(subdirectory).Initialized(s => s
+				.WithAFile()
+				.WithASubdirectory())
+			.WithFile(fileName);
 
 		FileSystem.Directory.Delete(subdirectory, true);
 
@@ -177,20 +171,20 @@ public abstract partial class DeleteTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 			lastAccessTime.Should()
-			   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
 			lastAccessTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastWriteTime.Should()
-		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[SkippableTheory]
@@ -215,8 +209,8 @@ public abstract partial class DeleteTests<TFileSystem>
 	{
 		string fileName = $"{subdirectory}.txt";
 		FileSystem.Initialize()
-		   .WithSubdirectory(subdirectory)
-		   .WithFile(fileName);
+			.WithSubdirectory(subdirectory)
+			.WithFile(fileName);
 
 		FileSystem.Directory.Delete(subdirectory);
 
@@ -226,7 +220,7 @@ public abstract partial class DeleteTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Delete_WithSubdirectory_ShouldNotDeleteDirectory(
+	public void Delete_WithSubdirectory_ShouldThrowIOException_AndNotDeleteDirectory(
 		string path, string subdirectory)
 	{
 		FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(path, subdirectory));
@@ -237,26 +231,11 @@ public abstract partial class DeleteTests<TFileSystem>
 			FileSystem.Directory.Delete(path);
 		});
 
-		if (Test.RunsOnWindows)
-		{
-			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024751);
-#if !NETFRAMEWORK
+		exception.Should().BeException<IOException>(
+			hResult: Test.RunsOnWindows ? -2147024751 : Test.RunsOnMac ? 66 : 39,
 			// Path information only included in exception message on Windows and not in .NET Framework
-			exception.Should().BeOfType<IOException>()
-			   .Which.Message.Should()
-			   .Contain($"'{System.IO.Path.Combine(BasePath, path)}'");
-#endif
-		}
-		else if (Test.RunsOnMac)
-		{
-			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(66);
-		}
-		else
-		{
-			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(39);
-		}
+			messageContains: !Test.RunsOnWindows || Test.IsNetFramework
+				? null
+				: $"'{System.IO.Path.Combine(BasePath, path)}'");
 	}
 }

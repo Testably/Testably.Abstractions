@@ -20,8 +20,8 @@ public static class MockFileSystemExtensions
 	///     Creates a new UNC (Universal Naming Convention) drive to the given <paramref name="server" />.
 	/// </summary>
 	public static MockFileSystem WithUncDrive(this MockFileSystem mockFileSystem,
-	                                          string server,
-	                                          Action<IStorageDrive>? driveCallback = null)
+		string server,
+		Action<IStorageDrive>? driveCallback = null)
 	{
 		string uncPrefix = new(mockFileSystem.Path.DirectorySeparatorChar, 2);
 		server = server.TrimStart(

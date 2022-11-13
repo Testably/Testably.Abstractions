@@ -1,5 +1,7 @@
 ﻿using System.IO.Compression;
+#if FEATURE_ZIPFILE_NET7
 using Testably.Abstractions.FileSystem;
+#endif
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchive;
 
@@ -62,10 +64,10 @@ public abstract partial class ZipArchiveTests<TFileSystem>
 		CompressionLevel compressionLevel)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("foo");
+			.WithSubdirectory("foo");
 
 		FileSystem.ZipFile()
-		   .CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
+			.CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
 
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
@@ -77,10 +79,10 @@ public abstract partial class ZipArchiveTests<TFileSystem>
 	public void GetEntry_WhenNameIsNotFound_ShouldReturnNull()
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("foo");
+			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
 		FileSystem.ZipFile()
-		   .CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				true);
 
 		using IZipArchive archive =

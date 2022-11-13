@@ -9,17 +9,14 @@ public abstract partial class GetAttributesTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public void GetAttributes_MissingFile_GetAttributesShouldReturnAttributes(
-		string path)
+	public void GetAttributes_ShouldReturnAttributes(
+		string path, FileAttributes attributes)
 	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.File.GetAttributes(path);
-		});
+		FileSystem.File.WriteAllText(path, null);
+		FileSystem.File.SetAttributes(path, attributes);
 
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+		FileAttributes result = FileSystem.File.GetAttributes(path);
+
+		result.Should().Be(attributes);
 	}
 }

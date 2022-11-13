@@ -39,8 +39,8 @@ public class DirectoryCleanerTests
 		receivedException.Should().BeNull();
 		exceptionCount.Should().BeGreaterThan(10);
 		foreach (string retryMessage in Enumerable
-		   .Range(1, 10)
-		   .Select(i => $"Retry again {i} times"))
+			.Range(1, 10)
+			.Select(i => $"Retry again {i} times"))
 		{
 			receivedLogs.Should().Contain(m => m.Contains(retryMessage));
 		}

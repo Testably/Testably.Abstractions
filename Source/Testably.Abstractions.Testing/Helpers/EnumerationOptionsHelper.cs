@@ -45,7 +45,7 @@ internal static class EnumerationOptionsHelper
 	///         href="https://github.com/dotnet/runtime/blob/v6.0.0/src/libraries/System.Private.CoreLib/src/System/IO/Enumeration/FileSystemEnumerableFactory.cs#L107" />
 	/// </summary>
 	public static bool MatchesPattern(EnumerationOptions enumerationOptions, string name,
-	                                  string searchString)
+		string searchString)
 	{
 		bool ignoreCase =
 			(enumerationOptions.MatchCasing == MatchCasing.PlatformDefault &&
@@ -80,9 +80,9 @@ internal static class EnumerationOptionsHelper
 	}
 
 	private static bool MatchPattern(string expression,
-	                                 string name,
-	                                 bool ignoreCase,
-	                                 bool useExtendedWildcards)
+		string name,
+		bool ignoreCase,
+		bool useExtendedWildcards)
 	{
 		if (Execute.IsNetFramework && expression == "")
 		{
@@ -108,7 +108,13 @@ internal static class EnumerationOptionsHelper
 	/// </summary>
 	private static string SimplifyExpression(string expression)
 	{
-		char[] unixEscapeChars = { '\\', '"', '<', '>' };
+		char[] unixEscapeChars =
+		{
+			'\\',
+			'"',
+			'<',
+			'>'
+		};
 		if (expression == DefaultSearchPattern)
 		{
 			return expression;

@@ -26,11 +26,11 @@ internal static class ChangeDescriptionExtensions
 	///     <paramref name="changeDescription" /> matches all filter criteria, otherwise <see langword="false" />.
 	/// </returns>
 	internal static bool Matches(this ChangeDescription changeDescription,
-	                             FileSystemTypes fileSystemType,
-	                             WatcherChangeTypes changeType,
-	                             string path,
-	                             string searchPattern,
-	                             Func<ChangeDescription, bool>? predicate = null)
+		FileSystemTypes fileSystemType,
+		WatcherChangeTypes changeType,
+		string path,
+		string searchPattern,
+		Func<ChangeDescription, bool>? predicate = null)
 	{
 		if (changeDescription.ChangeType != changeType ||
 		    !changeDescription.FileSystemType.HasFlag(fileSystemType))

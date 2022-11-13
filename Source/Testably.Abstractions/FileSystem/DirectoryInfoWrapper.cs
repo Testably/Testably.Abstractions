@@ -43,20 +43,20 @@ internal sealed class DirectoryInfoWrapper : FileSystemInfoWrapper,
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateDirectories()" />
 	public IEnumerable<IDirectoryInfo> EnumerateDirectories()
 		=> _instance.EnumerateDirectories()
-		   .Select(directoryInfo => FromDirectoryInfo(directoryInfo, _fileSystem));
+			.Select(directoryInfo => FromDirectoryInfo(directoryInfo, _fileSystem));
 
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateDirectories(string)" />
 	public IEnumerable<IDirectoryInfo> EnumerateDirectories(
 		string searchPattern)
 		=> _instance.EnumerateDirectories(searchPattern)
-		   .Select(directoryInfo =>
+			.Select(directoryInfo =>
 				FromDirectoryInfo(directoryInfo, _fileSystem));
 
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateDirectories(string, SearchOption)" />
 	public IEnumerable<IDirectoryInfo> EnumerateDirectories(
 		string searchPattern, SearchOption searchOption)
 		=> _instance.EnumerateDirectories(searchPattern, searchOption)
-		   .Select(directoryInfo =>
+			.Select(directoryInfo =>
 				FromDirectoryInfo(directoryInfo, _fileSystem));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
@@ -65,27 +65,27 @@ internal sealed class DirectoryInfoWrapper : FileSystemInfoWrapper,
 		string searchPattern,
 		EnumerationOptions enumerationOptions)
 		=> _instance.EnumerateDirectories(searchPattern, enumerationOptions)
-		   .Select(directoryInfo =>
+			.Select(directoryInfo =>
 				FromDirectoryInfo(directoryInfo, _fileSystem));
 #endif
 
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateFiles()" />
 	public IEnumerable<IFileInfo> EnumerateFiles()
 		=> _instance.EnumerateFiles()
-		   .Select(fileInfo =>
+			.Select(fileInfo =>
 				FileInfoWrapper.FromFileInfo(fileInfo, _fileSystem));
 
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateFiles(string)" />
 	public IEnumerable<IFileInfo> EnumerateFiles(string searchPattern)
 		=> _instance.EnumerateFiles(searchPattern)
-		   .Select(fileInfo =>
+			.Select(fileInfo =>
 				FileInfoWrapper.FromFileInfo(fileInfo, _fileSystem));
 
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateFiles(string, SearchOption)" />
 	public IEnumerable<IFileInfo> EnumerateFiles(
 		string searchPattern, SearchOption searchOption)
 		=> _instance.EnumerateFiles(searchPattern, searchOption)
-		   .Select(fileInfo =>
+			.Select(fileInfo =>
 				FileInfoWrapper.FromFileInfo(fileInfo, _fileSystem));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
@@ -93,28 +93,28 @@ internal sealed class DirectoryInfoWrapper : FileSystemInfoWrapper,
 	public IEnumerable<IFileInfo> EnumerateFiles(
 		string searchPattern, EnumerationOptions enumerationOptions)
 		=> _instance.EnumerateFiles(searchPattern, enumerationOptions)
-		   .Select(fileInfo =>
+			.Select(fileInfo =>
 				FileInfoWrapper.FromFileInfo(fileInfo, _fileSystem));
 #endif
 
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateFileSystemInfos()" />
 	public IEnumerable<IFileSystemInfo> EnumerateFileSystemInfos()
 		=> _instance.EnumerateFileSystemInfos()
-		   .Select(fileSystemInfo =>
+			.Select(fileSystemInfo =>
 				FromFileSystemInfo(fileSystemInfo, _fileSystem));
 
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateFileSystemInfos(string)" />
 	public IEnumerable<IFileSystemInfo> EnumerateFileSystemInfos(
 		string searchPattern)
 		=> _instance.EnumerateFileSystemInfos(searchPattern)
-		   .Select(fileSystemInfo =>
+			.Select(fileSystemInfo =>
 				FromFileSystemInfo(fileSystemInfo, _fileSystem));
 
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateFileSystemInfos(string, SearchOption)" />
 	public IEnumerable<IFileSystemInfo> EnumerateFileSystemInfos(
 		string searchPattern, SearchOption searchOption)
 		=> _instance.EnumerateFileSystemInfos(searchPattern, searchOption)
-		   .Select(fileSystemInfo =>
+			.Select(fileSystemInfo =>
 				FromFileSystemInfo(fileSystemInfo, _fileSystem));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
@@ -123,116 +123,116 @@ internal sealed class DirectoryInfoWrapper : FileSystemInfoWrapper,
 		string searchPattern,
 		EnumerationOptions enumerationOptions)
 		=> _instance.EnumerateFileSystemInfos(searchPattern, enumerationOptions)
-		   .Select(fileSystemInfo =>
+			.Select(fileSystemInfo =>
 				FromFileSystemInfo(fileSystemInfo, _fileSystem));
 #endif
 
 	/// <inheritdoc cref="IDirectoryInfo.GetDirectories()" />
 	public IDirectoryInfo[] GetDirectories()
 		=> _instance.GetDirectories()
-		   .Select(directoryInfo =>
+			.Select(directoryInfo =>
 				(IDirectoryInfo)FromDirectoryInfo(directoryInfo,
 					_fileSystem))
-		   .ToArray();
+			.ToArray();
 
 	/// <inheritdoc cref="IDirectoryInfo.GetDirectories(string)" />
 	public IDirectoryInfo[] GetDirectories(string searchPattern)
 		=> _instance.GetDirectories(searchPattern)
-		   .Select(directoryInfo =>
+			.Select(directoryInfo =>
 				(IDirectoryInfo)FromDirectoryInfo(directoryInfo,
 					_fileSystem))
-		   .ToArray();
+			.ToArray();
 
 	/// <inheritdoc cref="IDirectoryInfo.GetDirectories(string, SearchOption)" />
 	public IDirectoryInfo[] GetDirectories(
 		string searchPattern, SearchOption searchOption)
 		=> _instance.GetDirectories(searchPattern, searchOption)
-		   .Select(directoryInfo =>
+			.Select(directoryInfo =>
 				(IDirectoryInfo)FromDirectoryInfo(directoryInfo,
 					_fileSystem))
-		   .ToArray();
+			.ToArray();
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectoryInfo.GetDirectories(string, EnumerationOptions)" />
 	public IDirectoryInfo[] GetDirectories(
 		string searchPattern, EnumerationOptions enumerationOptions)
 		=> _instance.GetDirectories(searchPattern, enumerationOptions)
-		   .Select(directoryInfo =>
+			.Select(directoryInfo =>
 				(IDirectoryInfo)FromDirectoryInfo(directoryInfo,
 					_fileSystem))
-		   .ToArray();
+			.ToArray();
 #endif
 
 	/// <inheritdoc cref="IDirectoryInfo.GetFiles()" />
 	public IFileInfo[] GetFiles()
 		=> _instance.GetFiles()
-		   .Select(fileInfo =>
+			.Select(fileInfo =>
 				(IFileInfo)FileInfoWrapper.FromFileInfo(fileInfo,
 					_fileSystem))
-		   .ToArray();
+			.ToArray();
 
 	/// <inheritdoc cref="IDirectoryInfo.GetFiles(string)" />
 	public IFileInfo[] GetFiles(string searchPattern)
 		=> _instance.GetFiles(searchPattern)
-		   .Select(fileInfo =>
+			.Select(fileInfo =>
 				(IFileInfo)FileInfoWrapper.FromFileInfo(fileInfo,
 					_fileSystem))
-		   .ToArray();
+			.ToArray();
 
 	/// <inheritdoc cref="IDirectoryInfo.GetFiles(string, SearchOption)" />
 	public IFileInfo[] GetFiles(string searchPattern,
-	                            SearchOption searchOption)
+		SearchOption searchOption)
 		=> _instance.GetFiles(searchPattern, searchOption)
-		   .Select(fileInfo =>
+			.Select(fileInfo =>
 				(IFileInfo)FileInfoWrapper.FromFileInfo(fileInfo,
 					_fileSystem))
-		   .ToArray();
+			.ToArray();
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectoryInfo.GetFiles(string, EnumerationOptions)" />
 	public IFileInfo[] GetFiles(string searchPattern,
-	                            EnumerationOptions enumerationOptions)
+		EnumerationOptions enumerationOptions)
 		=> _instance.GetFiles(searchPattern, enumerationOptions)
-		   .Select(fileInfo =>
+			.Select(fileInfo =>
 				(IFileInfo)FileInfoWrapper.FromFileInfo(fileInfo,
 					_fileSystem))
-		   .ToArray();
+			.ToArray();
 #endif
 
 	/// <inheritdoc cref="IDirectoryInfo.GetFileSystemInfos()" />
 	public IFileSystemInfo[] GetFileSystemInfos()
 		=> _instance.GetFileSystemInfos()
-		   .Select(fileSystemInfo =>
+			.Select(fileSystemInfo =>
 				(IFileSystemInfo)FromFileSystemInfo(fileSystemInfo,
 					_fileSystem))
-		   .ToArray();
+			.ToArray();
 
 	/// <inheritdoc cref="IDirectoryInfo.GetFileSystemInfos(string)" />
 	public IFileSystemInfo[] GetFileSystemInfos(string searchPattern)
 		=> _instance.GetFileSystemInfos(searchPattern)
-		   .Select(fileSystemInfo =>
+			.Select(fileSystemInfo =>
 				(IFileSystemInfo)FromFileSystemInfo(fileSystemInfo,
 					_fileSystem))
-		   .ToArray();
+			.ToArray();
 
 	/// <inheritdoc cref="IDirectoryInfo.GetFileSystemInfos(string, SearchOption)" />
 	public IFileSystemInfo[] GetFileSystemInfos(
 		string searchPattern, SearchOption searchOption)
 		=> _instance.GetFileSystemInfos(searchPattern, searchOption)
-		   .Select(fileSystemInfo =>
+			.Select(fileSystemInfo =>
 				(IFileSystemInfo)FromFileSystemInfo(fileSystemInfo,
 					_fileSystem))
-		   .ToArray();
+			.ToArray();
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectoryInfo.GetFileSystemInfos(string, EnumerationOptions)" />
 	public IFileSystemInfo[] GetFileSystemInfos(string searchPattern,
-	                                            EnumerationOptions enumerationOptions)
+		EnumerationOptions enumerationOptions)
 		=> _instance.GetFileSystemInfos(searchPattern, enumerationOptions)
-		   .Select(fileSystemInfo =>
+			.Select(fileSystemInfo =>
 				(IFileSystemInfo)FromFileSystemInfo(fileSystemInfo,
 					_fileSystem))
-		   .ToArray();
+			.ToArray();
 #endif
 
 	/// <inheritdoc cref="IDirectoryInfo.MoveTo(string)" />

@@ -19,14 +19,14 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
-			   .WithSubdirectory(path).Initialized(s => s
-				   .WithSubdirectory("foo/xyz")
-				   .WithSubdirectory("bar"));
+				.WithSubdirectory(path).Initialized(s => s
+					.WithSubdirectory("foo/xyz")
+					.WithSubdirectory("bar"));
 		IDirectoryInfo baseDirectory =
 			(IDirectoryInfo)initialized[0];
 
 		IDirectoryInfo[] result = baseDirectory
-		   .GetDirectories("*", SearchOption.AllDirectories);
+			.GetDirectories("*", SearchOption.AllDirectories);
 
 		result.Length.Should().Be(3);
 		result.Should().Contain(d => d.Name == "foo");
@@ -56,7 +56,7 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 		baseDirectory.CreateSubdirectory(subdirectoryName);
 
 		IDirectoryInfo[] result = baseDirectory
-		   .GetDirectories(searchPattern);
+			.GetDirectories(searchPattern);
 
 		if (expectToBeFound)
 		{
@@ -66,7 +66,7 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 		else
 		{
 			result.Should()
-			   .BeEmpty($"{subdirectoryName} should not match '{searchPattern}'");
+				.BeEmpty($"{subdirectoryName} should not match '{searchPattern}'");
 		}
 	}
 
@@ -83,7 +83,7 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 		baseDirectory.CreateSubdirectory("bar");
 
 		IDirectoryInfo[] result = baseDirectory
-		   .GetDirectories("XYZ",
+			.GetDirectories("XYZ",
 				new EnumerationOptions
 				{
 					MatchCasing = MatchCasing.CaseInsensitive,
@@ -113,8 +113,7 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 			_ = baseDirectory.GetDirectories(searchPattern).FirstOrDefault();
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
 	[SkippableTheory]
@@ -129,7 +128,7 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 		baseDirectory.CreateSubdirectory("bar");
 
 		IDirectoryInfo[] result = baseDirectory
-		   .GetDirectories();
+			.GetDirectories();
 
 		result.Length.Should().Be(2);
 		result.Should().Contain(d => d.Name == "foo");
@@ -148,7 +147,7 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 		baseDirectory.CreateSubdirectory("bar");
 
 		IEnumerable<IDirectoryInfo> result = baseDirectory
-		   .GetDirectories("foo");
+			.GetDirectories("foo");
 
 		result.Should().ContainSingle(d => d.Name == "foo");
 	}
@@ -165,7 +164,7 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 		baseDirectory.CreateSubdirectory("bar/xyz");
 
 		IEnumerable<IDirectoryInfo> result = baseDirectory
-		   .GetDirectories("xyz", SearchOption.AllDirectories);
+			.GetDirectories("xyz", SearchOption.AllDirectories);
 
 		result.Count().Should().Be(2);
 	}

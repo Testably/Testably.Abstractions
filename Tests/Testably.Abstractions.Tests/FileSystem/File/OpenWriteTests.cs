@@ -19,6 +19,25 @@ public abstract partial class OpenWriteTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void OpenWrite_ShouldOverwriteExistingFile(string path, string previousContent)
+	{
+		FileSystem.File.WriteAllText(path, previousContent);
+
+		using FileSystemStream stream = FileSystem.File.OpenWrite(path);
+		using (StreamWriter streamWriter = new(stream))
+		{
+			streamWriter.Write("new-content");
+		}
+
+		stream.Dispose();
+		string result = FileSystem.File.ReadAllText(path);
+
+		result.Should().StartWith("new-content");
+		result.Length.Should().Be(previousContent.Length);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void OpenWrite_ShouldUseWriteAccessAndNoneShare(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -43,6 +62,7 @@ public abstract partial class OpenWriteTests<TFileSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			_ = stream.ReadByte();
 		});
 

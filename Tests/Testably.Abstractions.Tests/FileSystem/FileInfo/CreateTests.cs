@@ -16,7 +16,7 @@ public abstract partial class CreateTests<TFileSystem>
 		FileSystem.File.Exists(path).Should().BeFalse();
 
 		using FileSystemStream stream = sut.Create();
-		
+
 		FileSystem.File.Exists(path).Should().BeTrue();
 	}
 
@@ -37,6 +37,7 @@ public abstract partial class CreateTests<TFileSystem>
 		{
 			sut.Exists.Should().BeTrue();
 		}
+
 		FileSystem.File.Exists(path).Should().BeTrue();
 	}
 

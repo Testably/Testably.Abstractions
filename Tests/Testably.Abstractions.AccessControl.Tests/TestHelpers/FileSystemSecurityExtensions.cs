@@ -10,9 +10,9 @@ internal static class FileSystemSecurityExtensions
 	///     Compares to <see cref="FileSystemSecurity" /> objects.
 	///     https://stackoverflow.com/a/17047098
 	/// </summary>
-#pragma warning disable CA1416
+	#pragma warning disable CA1416
 	public static bool HasSameAccessRightsAs(this FileSystemSecurity sourceAccessControl,
-	                                         FileSystemSecurity destinationAccessControl)
+		FileSystemSecurity destinationAccessControl)
 	{
 		// combine parent access rules
 		Dictionary<IdentityReference, FileSystemRights> combinedParentAccessAllowRules =
@@ -20,12 +20,12 @@ internal static class FileSystemSecurityExtensions
 		Dictionary<IdentityReference, FileSystemRights> combinedParentAccessDenyRules =
 			new();
 		foreach (FileSystemAccessRule parentAccessRule in sourceAccessControl
-		   .GetAccessRules(true, true, typeof(NTAccount)))
+			.GetAccessRules(true, true, typeof(NTAccount)))
 		{
 			if (parentAccessRule.AccessControlType == AccessControlType.Allow)
 			{
 				if (combinedParentAccessAllowRules.ContainsKey(parentAccessRule
-				   .IdentityReference))
+					.IdentityReference))
 				{
 					combinedParentAccessAllowRules[parentAccessRule.IdentityReference] |=
 						parentAccessRule.FileSystemRights;
@@ -37,7 +37,7 @@ internal static class FileSystemSecurityExtensions
 				}
 			}
 			else if (combinedParentAccessDenyRules.ContainsKey(parentAccessRule
-			   .IdentityReference))
+				.IdentityReference))
 			{
 				combinedParentAccessDenyRules[parentAccessRule.IdentityReference] |=
 					parentAccessRule.FileSystemRights;
@@ -56,12 +56,12 @@ internal static class FileSystemSecurityExtensions
 		Dictionary<IdentityReference, FileSystemRights> combinedChildAccessDenyRules =
 			new();
 		foreach (FileSystemAccessRule childAccessRule in destinationAccessControl
-		   .GetAccessRules(true, true, typeof(NTAccount)))
+			.GetAccessRules(true, true, typeof(NTAccount)))
 		{
 			if (childAccessRule.AccessControlType == AccessControlType.Allow)
 			{
 				if (combinedChildAccessAllowRules.ContainsKey(childAccessRule
-				   .IdentityReference))
+					.IdentityReference))
 				{
 					combinedChildAccessAllowRules[childAccessRule.IdentityReference] |=
 						childAccessRule.FileSystemRights;
@@ -73,7 +73,7 @@ internal static class FileSystemSecurityExtensions
 				}
 			}
 			else if (combinedChildAccessDenyRules.ContainsKey(childAccessRule
-			   .IdentityReference))
+				.IdentityReference))
 			{
 				combinedChildAccessDenyRules[childAccessRule.IdentityReference] |=
 					childAccessRule.FileSystemRights;
@@ -192,5 +192,5 @@ internal static class FileSystemSecurityExtensions
 
 		return true;
 	}
-#pragma warning restore CA1416
+	#pragma warning restore CA1416
 }

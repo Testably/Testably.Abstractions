@@ -11,7 +11,7 @@ public static class Test
 		get
 		{
 			_isNetFramework ??= RuntimeInformation
-			   .FrameworkDescription.StartsWith(".NET Framework");
+				.FrameworkDescription.StartsWith(".NET Framework");
 			return _isNetFramework.Value;
 		}
 	}

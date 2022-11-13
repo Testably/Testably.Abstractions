@@ -15,12 +15,12 @@ internal sealed class InMemoryLocation : IStorageLocation
 	private readonly string _key;
 
 	private InMemoryLocation(IStorageDrive? drive,
-	                         string fullPath,
-	                         string friendlyName)
+		string fullPath,
+		string friendlyName)
 	{
 		FullPath = fullPath
-		   .NormalizePath()
-		   .TrimOnWindows();
+			.NormalizePath()
+			.TrimOnWindows();
 		_key = NormalizeKey(FullPath);
 		Execute.OnNetFramework(()
 			=> friendlyName = friendlyName.TrimOnWindows());
@@ -63,7 +63,7 @@ internal sealed class InMemoryLocation : IStorageLocation
 		}
 
 		return NormalizeKey(FullPath)
-		   .Equals(NormalizeKey(other.FullPath), StringComparisonMode);
+			.Equals(NormalizeKey(other.FullPath), StringComparisonMode);
 	}
 
 	/// <inheritdoc cref="object.Equals(object?)" />
@@ -113,8 +113,8 @@ internal sealed class InMemoryLocation : IStorageLocation
 	/// <param name="path">The full path on the <paramref name="drive" />.</param>
 	/// <param name="friendlyName">The friendly name is the provided name or the full path.</param>
 	internal static IStorageLocation New(IStorageDrive? drive,
-	                                     string path,
-	                                     string? friendlyName = null)
+		string path,
+		string? friendlyName = null)
 	{
 		if (path == string.Empty)
 		{

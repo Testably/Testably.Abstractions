@@ -11,11 +11,11 @@ public abstract partial class ReplaceTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		Replace_DestinationDirectoryDoesNotExist_ShouldThrowDirectoryNotFoundException(
+		Replace_DestinationDirectoryDoesNotExist_ShouldThrowCorrectException(
 			string source)
 	{
 		FileSystem.Initialize()
-		   .WithFile(source);
+			.WithFile(source);
 		string destination = FileTestHelper.RootDrive("not-existing/path/foo.txt");
 
 		Exception? exception = Record.Exception(() =>
@@ -25,13 +25,11 @@ public abstract partial class ReplaceTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
+			exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 		}
 		else
 		{
-			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024894);
+			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 		}
 	}
 
@@ -50,8 +48,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 			FileSystem.File.Replace(sourceName, destinationName, backupName);
 		});
 
-		exception.Should().BeOfType<UnauthorizedAccessException>()
-		   .Which.HResult.Should().Be(-2147024891);
+		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 
 	[SkippableTheory]
@@ -68,8 +65,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 			FileSystem.File.Replace(sourceName, destinationName, backupName);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+		exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 		FileSystem.File.Exists(backupName).Should().BeFalse();
 	}
 
@@ -92,7 +88,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 		FileSystem.File.Exists(destinationName).Should().BeTrue();
 		FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
 		FileSystem.File.GetAttributes(destinationName)
-		   .Should().HaveFlag(FileAttributes.ReadOnly);
+			.Should().HaveFlag(FileAttributes.ReadOnly);
 		FileSystem.File.Exists(backupName).Should().BeTrue();
 		FileSystem.File.ReadAllText(backupName).Should().Be(destinationContents);
 	}
@@ -100,7 +96,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		Replace_ReadOnly_WithoutIgnoreMetadataError_ShouldThrowUnauthorizedAccessException(
+		Replace_ReadOnly_WithoutIgnoreMetadataError_ShouldThrowUnauthorizedAccessException_OnWindows(
 			string sourceName,
 			string destinationName,
 			string backupName,
@@ -118,14 +114,13 @@ public abstract partial class ReplaceTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<UnauthorizedAccessException>()
-			   .Which.HResult.Should().Be(-2147024891);
+			exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 			FileSystem.File.Exists(sourceName).Should().BeTrue();
 			FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
 			FileSystem.File.Exists(destinationName).Should().BeTrue();
 			FileSystem.File.ReadAllText(destinationName).Should().Be(destinationContents);
 			FileSystem.File.GetAttributes(destinationName)
-			   .Should().NotHaveFlag(FileAttributes.ReadOnly);
+				.Should().NotHaveFlag(FileAttributes.ReadOnly);
 			FileSystem.File.Exists(backupName).Should().BeFalse();
 		}
 		else
@@ -177,13 +172,12 @@ public abstract partial class ReplaceTests<TFileSystem>
 			FileSystem.File.Replace(sourceName, destinationName, backupName);
 		});
 
-		exception.Should().BeOfType<UnauthorizedAccessException>()
-		   .Which.HResult.Should().Be(-2147024891);
+		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public void Replace_SourceLocked_ShouldThrowIOException(
+	public void Replace_SourceLocked_ShouldThrowIOException_OnWindows(
 		string sourceName,
 		string destinationName,
 		string backupName,
@@ -203,14 +197,13 @@ public abstract partial class ReplaceTests<TFileSystem>
 		stream.Dispose();
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024864);
+			exception.Should().BeException<IOException>(hResult: -2147024864);
 			FileSystem.File.Exists(sourceName).Should().BeTrue();
 			FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
 			FileSystem.File.Exists(destinationName).Should().BeTrue();
 			FileSystem.File.ReadAllText(destinationName).Should().Be(destinationContents);
 			FileSystem.File.GetAttributes(destinationName)
-			   .Should().NotHaveFlag(FileAttributes.ReadOnly);
+				.Should().NotHaveFlag(FileAttributes.ReadOnly);
 			FileSystem.File.Exists(backupName).Should().BeFalse();
 		}
 		else
@@ -237,8 +230,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 			FileSystem.File.Replace(sourceName, destinationName, backupName);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+		exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 		if (Test.RunsOnWindows)
 		{
 			// Behaviour on Linux/MacOS is uncertain

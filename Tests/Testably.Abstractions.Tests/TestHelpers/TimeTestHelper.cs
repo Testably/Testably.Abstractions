@@ -17,6 +17,6 @@ public static class TimeTestHelper
 	{
 		Random random = new();
 		return new DateTime(1970, 1, 1, 0, 0, 0, kind)
-		   .AddSeconds(random.Next());
+			.AddSeconds(random.Next());
 	}
 }

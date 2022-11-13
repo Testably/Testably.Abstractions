@@ -21,14 +21,13 @@ public class DefaultAccessControlStrategyTests
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.ParamName.Should().Be("callback");
+			.Which.ParamName.Should().Be("callback");
 	}
 
 	[SkippableFact]
 	public void IsAccessGranted_ShouldUseCallback()
 	{
-		DefaultAccessControlStrategy sut =
-			new DefaultAccessControlStrategy((p, _) => p.StartsWith("a"));
+		DefaultAccessControlStrategy sut = new((p, _) => p.StartsWith("a"));
 
 		sut.IsAccessGranted("abc", new FileSystemExtensionContainer()).Should().BeTrue();
 		sut.IsAccessGranted("xyz", new FileSystemExtensionContainer()).Should().BeFalse();

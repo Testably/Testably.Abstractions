@@ -117,6 +117,7 @@ public abstract partial class Tests<TFileSystem>
 
 		fileSystemWatcher.InternalBufferSize.Should().Be(expectedBytes);
 	}
+
 	[SkippableFact]
 	public void Site_ShouldBeInitializedWithNull()
 	{

@@ -25,7 +25,7 @@ internal sealed class SyntaxReceiver : ISyntaxReceiver
 		if (syntaxNode is ClassDeclarationSyntax classDeclarationSyntax)
 		{
 			string? marker = classDeclarationSyntax.BaseList?.Types.FirstOrDefault()
-			  ?.ToString();
+				?.ToString();
 
 			if (marker != null &&
 			    _classModels.TryGetValue(marker, out List<ClassModel>? models))

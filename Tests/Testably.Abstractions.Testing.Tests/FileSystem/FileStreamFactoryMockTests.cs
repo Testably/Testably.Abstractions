@@ -21,13 +21,13 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 		MockFileSystem.InitializeIn(_directoryCleaner.BasePath);
 	}
 
-#region IDisposable Members
+	#region IDisposable Members
 
 	/// <inheritdoc cref="IDisposable.Dispose()" />
 	public void Dispose()
 		=> _directoryCleaner.Dispose();
 
-#endregion
+	#endregion
 
 	[SkippableTheory]
 	[AutoData]
@@ -46,8 +46,8 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 		});
 
 		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.Message.Should().Contain(nameof(MockFileSystem) + "." +
-		                                   nameof(MockFileSystem.WithSafeFileHandleStrategy));
+			.Which.Message.Should().Contain(nameof(MockFileSystem) + "." +
+			                                nameof(MockFileSystem.WithSafeFileHandleStrategy));
 	}
 
 	[SkippableTheory]
@@ -67,8 +67,8 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 		});
 
 		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.Message.Should().Contain(nameof(MockFileSystem) + "." +
-		                                   nameof(MockFileSystem.WithSafeFileHandleStrategy));
+			.Which.Message.Should().Contain(nameof(MockFileSystem) + "." +
+			                                nameof(MockFileSystem.WithSafeFileHandleStrategy));
 	}
 
 	[SkippableTheory]
@@ -89,8 +89,8 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 		});
 
 		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.Message.Should().Contain(nameof(MockFileSystem) + "." +
-		                                   nameof(MockFileSystem.WithSafeFileHandleStrategy));
+			.Which.Message.Should().Contain(nameof(MockFileSystem) + "." +
+			                                nameof(MockFileSystem.WithSafeFileHandleStrategy));
 	}
 }
 #endif

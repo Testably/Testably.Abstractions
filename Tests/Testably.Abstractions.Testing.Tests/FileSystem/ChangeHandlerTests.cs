@@ -61,17 +61,17 @@ public class ChangeHandlerTests
 		string path = FileSystem.Path.Combine(path1, path2, path3);
 		int eventCount = 0;
 		FileSystem.Notify
-		   .OnEvent(c =>
+			.OnEvent(c =>
 				{
 					_testOutputHelper.WriteLine($"Received event {c}");
 					eventCount++;
 				},
 				c => c.ChangeType == WatcherChangeTypes.Created)
-		   .ExecuteWhileWaiting(() =>
+			.ExecuteWhileWaiting(() =>
 			{
 				FileSystem.Directory.CreateDirectory(path);
 			})
-		   .Wait(count: 3);
+			.Wait(count: 3);
 
 		eventCount.Should().Be(3);
 	}
@@ -90,14 +90,14 @@ public class ChangeHandlerTests
 		initialization?.Invoke(FileSystem, path);
 
 		FileSystem.Notify
-		   .OnEvent(c => receivedPath = c.Path,
+			.OnEvent(c => receivedPath = c.Path,
 				c => c.ChangeType == expectedChangeType &&
 				     c.FileSystemType == expectedFileSystemType)
-		   .ExecuteWhileWaiting(() =>
+			.ExecuteWhileWaiting(() =>
 			{
 				callback.Invoke(FileSystem, path);
 			})
-		   .Wait();
+			.Wait();
 
 		receivedPath.Should().Be(FileSystem.Path.GetFullPath(path));
 	}
@@ -108,27 +108,33 @@ public class ChangeHandlerTests
 		{
 			null,
 			new Action<IFileSystem, string>((f, p) => f.Directory.CreateDirectory(p)),
-			WatcherChangeTypes.Created, FileSystemTypes.Directory,
+			WatcherChangeTypes.Created,
+			FileSystemTypes.Directory,
 			$"path_{Guid.NewGuid()}"
 		};
 		yield return new object?[]
 		{
 			new Action<IFileSystem, string>((f, p) => f.Directory.CreateDirectory(p)),
 			new Action<IFileSystem, string>((f, p) => f.Directory.Delete(p)),
-			WatcherChangeTypes.Deleted, FileSystemTypes.Directory,
+			WatcherChangeTypes.Deleted,
+			FileSystemTypes.Directory,
 			$"path_{Guid.NewGuid()}"
 		};
 		yield return new object?[]
 		{
 			null,
 			new Action<IFileSystem, string>((f, p) => f.File.WriteAllText(p, null)),
-			WatcherChangeTypes.Created, FileSystemTypes.File, $"path_{Guid.NewGuid()}"
+			WatcherChangeTypes.Created,
+			FileSystemTypes.File,
+			$"path_{Guid.NewGuid()}"
 		};
 		yield return new object?[]
 		{
 			new Action<IFileSystem, string>((f, p) => f.File.WriteAllText(p, null)),
 			new Action<IFileSystem, string>((f, p) => f.File.Delete(p)),
-			WatcherChangeTypes.Deleted, FileSystemTypes.File, $"path_{Guid.NewGuid()}"
+			WatcherChangeTypes.Deleted,
+			FileSystemTypes.File,
+			$"path_{Guid.NewGuid()}"
 		};
 	}
 }

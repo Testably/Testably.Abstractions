@@ -85,13 +85,13 @@ public abstract class GuidSystemBase : IGuid
 
 	/// <inheritdoc cref="IGuid.TryParseExact(string?, string?, out Guid)" />
 	public bool TryParseExact([NotNullWhen(true)] string? input,
-	                          [NotNullWhen(true)] string? format,
-	                          out Guid result)
+		[NotNullWhen(true)] string? format,
+		out Guid result)
 		=> Guid.TryParseExact(input, format, out result);
 
 	/// <inheritdoc cref="IGuid.TryParseExact(ReadOnlySpan{char}, ReadOnlySpan{char}, out Guid)" />
 	public bool TryParseExact(ReadOnlySpan<char> input, ReadOnlySpan<char> format,
-	                          out Guid result)
+		out Guid result)
 		=> Guid.TryParseExact(input, format, out result);
 #endif
 }

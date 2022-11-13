@@ -24,7 +24,7 @@ public abstract partial class AttributesTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void Attributes_WhenFileIsMissing_SetterShouldThrowDirectoryNotFoundException()
+	public void Attributes_WhenFileIsMissing_SetterShouldThrowFileNotFoundException()
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("missing file");
 
@@ -33,8 +33,7 @@ public abstract partial class AttributesTests<TFileSystem>
 			sut.Attributes = FileAttributes.Normal;
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+		exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 	}
 
 	[SkippableFact]

@@ -39,15 +39,15 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastAccessTime.Should()
-		   .BeOnOrAfter(updateTime);
+			.BeOnOrAfter(updateTime);
 		lastWriteTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			.BeOnOrBefore(creationTimeEnd);
 	}
 
 #if FEATURE_SPAN
@@ -75,15 +75,15 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastAccessTime.Should()
-		   .BeOnOrAfter(updateTime);
+			.BeOnOrAfter(updateTime);
 		lastWriteTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			.BeOnOrBefore(creationTimeEnd);
 	}
 #endif
 
@@ -113,15 +113,15 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastAccessTime.Should()
-		   .BeOnOrAfter(updateTime);
+			.BeOnOrAfter(updateTime);
 		lastWriteTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			.BeOnOrBefore(creationTimeEnd);
 	}
 
 #if FEATURE_SPAN
@@ -149,15 +149,15 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastAccessTime.Should()
-		   .BeOnOrAfter(updateTime);
+			.BeOnOrAfter(updateTime);
 		lastWriteTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			.BeOnOrBefore(creationTimeEnd);
 	}
 #endif
 
@@ -178,9 +178,9 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
 		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-#pragma warning disable CA1835
+		#pragma warning disable CA1835
 		_ = await stream.ReadAsync(buffer, 0, 2);
-#pragma warning restore CA1835
+		#pragma warning restore CA1835
 
 		DateTime lastAccessTime = WaitToBeUpdatedToAfter(
 			() => FileSystem.File.GetLastAccessTimeUtc(path), updateTime);
@@ -190,15 +190,15 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastAccessTime.Should()
-		   .BeOnOrAfter(updateTime);
+			.BeOnOrAfter(updateTime);
 		lastWriteTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			.BeOnOrBefore(creationTimeEnd);
 	}
 #endif
 
@@ -227,15 +227,15 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastAccessTime.Should()
-		   .BeOnOrAfter(updateTime);
+			.BeOnOrAfter(updateTime);
 		lastWriteTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			.BeOnOrBefore(creationTimeEnd);
 	}
 
 	[SkippableTheory]
@@ -261,16 +261,16 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastAccessTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			.BeOnOrBefore(creationTimeEnd);
 		lastWriteTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			.BeOnOrBefore(creationTimeEnd);
 	}
 
 #if FEATURE_SPAN
@@ -298,20 +298,20 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 			lastAccessTime.Should()
-			   .BeOnOrAfter(updateTime);
+				.BeOnOrAfter(updateTime);
 		}
 		else
 		{
 			lastAccessTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastWriteTime.Should()
-		   .BeOnOrAfter(updateTime);
+			.BeOnOrAfter(updateTime);
 	}
 #endif
 
@@ -341,20 +341,20 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 			lastAccessTime.Should()
-			   .BeOnOrAfter(updateTime);
+				.BeOnOrAfter(updateTime);
 		}
 		else
 		{
 			lastAccessTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastWriteTime.Should()
-		   .BeOnOrAfter(updateTime);
+			.BeOnOrAfter(updateTime);
 	}
 
 #if FEATURE_SPAN
@@ -382,20 +382,20 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 			lastAccessTime.Should()
-			   .BeOnOrAfter(updateTime);
+				.BeOnOrAfter(updateTime);
 		}
 		else
 		{
 			lastAccessTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastWriteTime.Should()
-		   .BeOnOrAfter(updateTime);
+			.BeOnOrAfter(updateTime);
 	}
 #endif
 
@@ -415,9 +415,9 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
 		await using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
-#pragma warning disable CA1835
+		#pragma warning disable CA1835
 		await stream.WriteAsync(contents, 0, 2);
-#pragma warning restore CA1835
+		#pragma warning restore CA1835
 		await stream.DisposeAsync();
 
 		DateTime lastWriteTime = WaitToBeUpdatedToAfter(
@@ -428,20 +428,20 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 			lastAccessTime.Should()
-			   .BeOnOrAfter(updateTime);
+				.BeOnOrAfter(updateTime);
 		}
 		else
 		{
 			lastAccessTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastWriteTime.Should()
-		   .BeOnOrAfter(updateTime);
+			.BeOnOrAfter(updateTime);
 	}
 #endif
 
@@ -471,26 +471,26 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 			lastAccessTime.Should()
-			   .BeOnOrAfter(updateTime);
+				.BeOnOrAfter(updateTime);
 		}
 		else
 		{
 			lastAccessTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastWriteTime.Should()
-		   .BeOnOrAfter(updateTime);
+			.BeOnOrAfter(updateTime);
 	}
 
 	#region Helpers
 
 	private DateTime WaitToBeUpdatedToAfter(Func<DateTime> callback,
-	                                        DateTime expectedAfter)
+		DateTime expectedAfter)
 	{
 		for (int i = 0; i < 100; i++)
 		{

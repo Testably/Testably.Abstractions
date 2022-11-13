@@ -12,8 +12,8 @@ public static class DirectoryAclExtensions
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.CreateDirectory(DirectorySecurity, string)" />
 	[SupportedOSPlatform("windows")]
 	public static void CreateDirectory(this IDirectory directory,
-	                                   string path,
-	                                   DirectorySecurity directorySecurity)
+		string path,
+		DirectorySecurity directorySecurity)
 	{
 		IDirectoryInfo directoryInfo =
 			directory.FileSystem.DirectoryInfo.New(path);
@@ -66,8 +66,8 @@ public static class DirectoryAclExtensions
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.SetAccessControl(DirectoryInfo, DirectorySecurity)" />
 	[SupportedOSPlatform("windows")]
 	public static void SetAccessControl(this IDirectory directory,
-	                                    string path,
-	                                    DirectorySecurity directorySecurity)
+		string path,
+		DirectorySecurity directorySecurity)
 	{
 		IDirectoryInfo directoryInfo =
 			directory.FileSystem.DirectoryInfo.New(path);

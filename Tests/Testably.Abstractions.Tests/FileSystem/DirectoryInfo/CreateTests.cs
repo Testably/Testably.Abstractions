@@ -1,5 +1,3 @@
-using System.IO;
-using System.Linq;
 using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
@@ -9,57 +7,6 @@ public abstract partial class CreateTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	[SkippableFact]
-	public void Create_IllegalCharacters_ShouldThrowArgumentException()
-	{
-		foreach (char c in FileSystem.Path.GetInvalidPathChars().Where(c => c != '\0'))
-		{
-			string path = "foo" + c + "bar";
-			Exception? exception =
-				Record.Exception(() => FileSystem.DirectoryInfo.New(path).Create());
-
-#if NETFRAMEWORK
-			exception.Should().BeOfType<ArgumentException>()
-			   .Which.HResult.Should().Be(-2147024809);
-			exception.Should().BeOfType<ArgumentException>()
-			   .Which.Message.Should().Be("Illegal characters in path.");
-#else
-			string expectedMessage = $"'{FileSystem.Path.Combine(BasePath, path)}'";
-			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024773);
-			exception.Should().BeOfType<IOException>()
-			   .Which.Message.Should().Contain(expectedMessage);
-#endif
-		}
-	}
-
-	[SkippableFact]
-	public void Create_Null_ShouldThrowArgumentNullException()
-	{
-		Exception? exception =
-			Record.Exception(() => FileSystem.DirectoryInfo.New(null!));
-
-		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
-		exception.Should().BeOfType<ArgumentNullException>().Which.ParamName
-		   .Should().Be("path");
-	}
-
-	[SkippableTheory]
-	[InlineData("\0foo")]
-	[InlineData("foo\0bar")]
-	public void Create_NullCharacter_ShouldThrowArgumentException(string path)
-	{
-		string expectedMessage = "Illegal characters in path.";
-		Exception? exception =
-			Record.Exception(() => FileSystem.DirectoryInfo.New(path).Create());
-
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.Message.Should().Contain(expectedMessage);
-	}
-
 	[SkippableTheory]
 	[AutoData]
 	public void Create_ShouldCreateDirectory(string path)
@@ -137,7 +84,7 @@ public abstract partial class CreateTests<TFileSystem>
 			FileSystem.Path.DirectorySeparatorChar,
 			FileSystem.Path.AltDirectorySeparatorChar));
 		result.FullName.Should().Be(System.IO.Path.Combine(BasePath, expectedName
-		   .Replace(FileSystem.Path.AltDirectorySeparatorChar,
+			.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 				FileSystem.Path.DirectorySeparatorChar)));
 		FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
 	}

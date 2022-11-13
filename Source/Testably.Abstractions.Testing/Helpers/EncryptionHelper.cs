@@ -14,7 +14,7 @@ internal static class EncryptionHelper
 	{
 		using Aes algorithm = CreateDummyEncryptionAlgorithm();
 		using ICryptoTransform decryptor = algorithm
-		   .CreateDecryptor(algorithm.Key, algorithm.IV);
+			.CreateDecryptor(algorithm.Key, algorithm.IV);
 
 		return PerformCryptography(decryptor, cypherBytes);
 	}
@@ -26,14 +26,14 @@ internal static class EncryptionHelper
 	{
 		using Aes algorithm = CreateDummyEncryptionAlgorithm();
 		using ICryptoTransform encryptor = algorithm
-		   .CreateEncryptor(algorithm.Key, algorithm.IV);
+			.CreateEncryptor(algorithm.Key, algorithm.IV);
 
 		return PerformCryptography(encryptor, plainBytes);
 	}
 
 	private static Aes CreateDummyEncryptionAlgorithm()
 	{
-#pragma warning disable CA1850
+		#pragma warning disable CA1850
 		byte[] bytes = Encoding.UTF8.GetBytes(
 			"THIS IS ONLY A DUMMY ENCRYPTION FOR TESTING HELPERS!");
 		using (SHA256 sha256Hash = SHA256.Create())
@@ -45,14 +45,14 @@ internal static class EncryptionHelper
 			algorithm.IV = iv;
 			return algorithm;
 		}
-#pragma warning restore CA1850
+		#pragma warning restore CA1850
 	}
 
 	/// <summary>
 	///     <see href="https://stackoverflow.com/a/24903689" />
 	/// </summary>
 	private static byte[] PerformCryptography(ICryptoTransform cryptoTransform,
-	                                          byte[] data)
+		byte[] data)
 	{
 		using (MemoryStream memoryStream = new())
 		{

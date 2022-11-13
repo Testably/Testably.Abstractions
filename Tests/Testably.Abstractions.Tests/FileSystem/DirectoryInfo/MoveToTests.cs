@@ -17,11 +17,11 @@ public abstract partial class MoveToTests<TFileSystem>
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
-			   .WithSubdirectory(source).Initialized(s => s
-				   .WithAFile()
-				   .WithASubdirectory().Initialized(t => t
-					   .WithAFile()
-					   .WithASubdirectory()));
+				.WithSubdirectory(source).Initialized(s => s
+					.WithAFile()
+					.WithASubdirectory().Initialized(t => t
+						.WithAFile()
+						.WithASubdirectory()));
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(source);
 
 		sut.MoveTo(destination);
@@ -29,15 +29,15 @@ public abstract partial class MoveToTests<TFileSystem>
 		FileSystem.Directory.Exists(source).Should().BeFalse();
 		FileSystem.Directory.Exists(destination).Should().BeTrue();
 		FileSystem.Directory.GetFiles(destination, initialized[1].Name)
-		   .Should().ContainSingle();
+			.Should().ContainSingle();
 		FileSystem.Directory.GetDirectories(destination, initialized[2].Name)
-		   .Should().ContainSingle();
+			.Should().ContainSingle();
 		FileSystem.Directory.GetFiles(destination, initialized[3].Name,
 				SearchOption.AllDirectories)
-		   .Should().ContainSingle();
+			.Should().ContainSingle();
 		FileSystem.Directory.GetDirectories(destination, initialized[4].Name,
 				SearchOption.AllDirectories)
-		   .Should().ContainSingle();
+			.Should().ContainSingle();
 	}
 
 	[SkippableTheory]
@@ -46,31 +46,33 @@ public abstract partial class MoveToTests<TFileSystem>
 		string source, string destination)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory(source).Initialized(s => s
-			   .WithAFile()
-			   .WithASubdirectory().Initialized(t => t
-				   .WithAFile()
-				   .WithASubdirectory()));
+			.WithSubdirectory(source).Initialized(s => s
+				.WithAFile()
+				.WithASubdirectory().Initialized(t => t
+					.WithAFile()
+					.WithASubdirectory()));
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(source);
 
 		sut.MoveTo(destination);
 
 		sut.FullName.TrimEnd(FileSystem.Path.DirectorySeparatorChar)
-		   .Should().Be(FileSystem.Path.GetFullPath(destination));
+			.Should().Be(FileSystem.Path.GetFullPath(destination));
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public void MoveTo_WithLockedFile_ShouldNotMoveDirectoryAtAll(
+	public void MoveTo_WithLockedFile_ShouldThrowIOException_AndNotMoveDirectory_OnWindows(
 		string source, string destination)
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
-			   .WithSubdirectory(source).Initialized(s => s
-				   .WithAFile()
-				   .WithASubdirectory().Initialized(t => t
-					   .WithAFile()
-					   .WithASubdirectory()));
+				.WithSubdirectory(source).Initialized(s => s
+					.WithAFile()
+					.WithASubdirectory().Initialized(t => t
+						.WithAFile()
+						.WithASubdirectory()));
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(source);
 		using FileSystemStream stream = FileSystem.File.Open(initialized[3].FullName,
 			FileMode.Open,
@@ -82,52 +84,72 @@ public abstract partial class MoveToTests<TFileSystem>
 			sut.MoveTo(destination);
 		});
 
-		if (Test.RunsOnWindows)
+		if (Test.IsNetFramework)
 		{
-			if (Test.IsNetFramework)
-			{
-				// On .NET Framework the HResult is "-2146232800", but only in `DirectoryInfo.MoveTo` (not in `Directory.Move`)
-				// This peculiar deviation is not supported by the FileSystemMock.
-				exception.Should().BeOfType<IOException>();
-			}
-			else
-			{
-				exception.Should().BeOfType<IOException>()
-				   .Which.HResult.Should().Be(-2147024891);
-			}
-
-			FileSystem.Directory.Exists(source).Should().BeTrue();
-			FileSystem.Directory.Exists(destination).Should().BeFalse();
-			IDirectoryInfo sourceDirectory =
-				FileSystem.DirectoryInfo.New(source);
-			sourceDirectory.GetFiles(initialized[1].Name)
-			   .Should().ContainSingle();
-			sourceDirectory.GetDirectories(initialized[2].Name)
-			   .Should().ContainSingle();
-			sourceDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories)
-			   .Should().ContainSingle();
-			sourceDirectory
-			   .GetDirectories(initialized[4].Name, SearchOption.AllDirectories)
-			   .Should().ContainSingle();
+			// On .NET Framework the HResult is "-2146232800", but only in `DirectoryInfo.MoveTo` (not in `Directory.Move`)
+			// This peculiar deviation is not supported by the FileSystemMock.
+			exception.Should().BeException<IOException>();
 		}
 		else
 		{
-			exception.Should().BeNull();
-			FileSystem.Directory.Exists(source).Should().BeFalse();
-			FileSystem.Directory.Exists(destination).Should().BeTrue();
-			IDirectoryInfo destinationDirectory =
-				FileSystem.DirectoryInfo.New(destination);
-			destinationDirectory.GetFiles(initialized[1].Name)
-			   .Should().ContainSingle();
-			destinationDirectory.GetDirectories(initialized[2].Name)
-			   .Should().ContainSingle();
-			destinationDirectory
-			   .GetFiles(initialized[3].Name, SearchOption.AllDirectories)
-			   .Should().ContainSingle();
-			destinationDirectory
-			   .GetDirectories(initialized[4].Name, SearchOption.AllDirectories)
-			   .Should().ContainSingle();
+			exception.Should().BeException<IOException>(hResult: -2147024891);
 		}
+
+		FileSystem.Directory.Exists(source).Should().BeTrue();
+		FileSystem.Directory.Exists(destination).Should().BeFalse();
+		IDirectoryInfo sourceDirectory =
+			FileSystem.DirectoryInfo.New(source);
+		sourceDirectory.GetFiles(initialized[1].Name)
+			.Should().ContainSingle();
+		sourceDirectory.GetDirectories(initialized[2].Name)
+			.Should().ContainSingle();
+		sourceDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories)
+			.Should().ContainSingle();
+		sourceDirectory
+			.GetDirectories(initialized[4].Name, SearchOption.AllDirectories)
+			.Should().ContainSingle();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void MoveTo_WithLockedFile_ShouldMoveDirectory_NotOnWindows(
+		string source, string destination)
+	{
+		Skip.If(Test.RunsOnWindows);
+
+		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+			FileSystem.Initialize()
+				.WithSubdirectory(source).Initialized(s => s
+					.WithAFile()
+					.WithASubdirectory().Initialized(t => t
+						.WithAFile()
+						.WithASubdirectory()));
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(source);
+		using FileSystemStream stream = FileSystem.File.Open(initialized[3].FullName,
+			FileMode.Open,
+			FileAccess.Read,
+			FileShare.Read);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.MoveTo(destination);
+		});
+
+		exception.Should().BeNull();
+		FileSystem.Directory.Exists(source).Should().BeFalse();
+		FileSystem.Directory.Exists(destination).Should().BeTrue();
+		IDirectoryInfo destinationDirectory =
+			FileSystem.DirectoryInfo.New(destination);
+		destinationDirectory.GetFiles(initialized[1].Name)
+			.Should().ContainSingle();
+		destinationDirectory.GetDirectories(initialized[2].Name)
+			.Should().ContainSingle();
+		destinationDirectory
+			.GetFiles(initialized[3].Name, SearchOption.AllDirectories)
+			.Should().ContainSingle();
+		destinationDirectory
+			.GetDirectories(initialized[4].Name, SearchOption.AllDirectories)
+			.Should().ContainSingle();
 	}
 
 	[SkippableTheory]
@@ -137,11 +159,11 @@ public abstract partial class MoveToTests<TFileSystem>
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
-			   .WithSubdirectory(source).Initialized(s => s
-				   .WithAFile()
-				   .WithASubdirectory().Initialized(t => t
-					   .WithAFile()
-					   .WithASubdirectory()));
+				.WithSubdirectory(source).Initialized(s => s
+					.WithAFile()
+					.WithASubdirectory().Initialized(t => t
+						.WithAFile()
+						.WithASubdirectory()));
 		initialized[3].Attributes = FileAttributes.ReadOnly;
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(source);
 
@@ -152,14 +174,14 @@ public abstract partial class MoveToTests<TFileSystem>
 		IDirectoryInfo destinationDirectory =
 			FileSystem.DirectoryInfo.New(destination);
 		destinationDirectory.GetFiles(initialized[1].Name)
-		   .Should().ContainSingle();
+			.Should().ContainSingle();
 		destinationDirectory.GetDirectories(initialized[2].Name)
-		   .Should().ContainSingle();
+			.Should().ContainSingle();
 		destinationDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories)
-		   .Should().ContainSingle().Which.Attributes.Should()
-		   .HaveFlag(FileAttributes.ReadOnly);
+			.Should().ContainSingle().Which.Attributes.Should()
+			.HaveFlag(FileAttributes.ReadOnly);
 		destinationDirectory
-		   .GetDirectories(initialized[4].Name, SearchOption.AllDirectories)
-		   .Should().ContainSingle();
+			.GetDirectories(initialized[4].Name, SearchOption.AllDirectories)
+			.Should().ContainSingle();
 	}
 }

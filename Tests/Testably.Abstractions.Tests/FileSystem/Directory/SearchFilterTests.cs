@@ -20,12 +20,12 @@ public abstract partial class SearchFilterTests<TFileSystem>
 		string path = FileSystem.Path.Combine("foo", "bar", "xyz");
 
 		FileSystem.InitializeIn(path)
-		   .WithFile("test..test")
-		   .WithFile("a.test")
-		   .WithFile("a.test.again");
+			.WithFile("test..test")
+			.WithFile("a.test")
+			.WithFile("a.test.again");
 
 		string[] result = FileSystem.Directory
-		   .GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
+			.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
 
 		result.Length.Should().Be(expectedMatchingFiles);
 		result.Should().Contain(System.IO.Path.Combine(".", "..", "xyz", "a.test"));
@@ -43,12 +43,12 @@ public abstract partial class SearchFilterTests<TFileSystem>
 		string path = FileSystem.Path.Combine("foo", "bar", "xyz");
 
 		FileSystem.InitializeIn(path)
-		   .WithFile("test..test")
-		   .WithFile("a.test")
-		   .WithFile("a.test.again");
+			.WithFile("test..test")
+			.WithFile("a.test")
+			.WithFile("a.test.again");
 
 		string[] result = FileSystem.Directory
-		   .GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
+			.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
 
 		result.Length.Should().Be(expectedMatchingFiles);
 		if (!searchPattern.EndsWith("a*"))
@@ -58,7 +58,7 @@ public abstract partial class SearchFilterTests<TFileSystem>
 		}
 
 		result.Should()
-		   .Contain(System.IO.Path.Combine(".", "../..", "bar", "xyz", "a.test"));
+			.Contain(System.IO.Path.Combine(".", "../..", "bar", "xyz", "a.test"));
 	}
 
 	[SkippableTheory]
@@ -73,25 +73,25 @@ public abstract partial class SearchFilterTests<TFileSystem>
 		string path = FileSystem.Path.Combine("foo", "bar", "xyz");
 
 		FileSystem.InitializeIn(path)
-		   .WithFile("test..test")
-		   .WithFile("a.test")
-		   .WithFile("a.test.again");
+			.WithFile("test..test")
+			.WithFile("a.test")
+			.WithFile("a.test.again");
 
 		string[] result = FileSystem.Directory
-		   .GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
+			.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
 
 		result.Length.Should().Be(expectedMatchingFiles);
 		if (!searchPattern.EndsWith("a*"))
 		{
 			result.Should().Contain(System.IO.Path.Combine(".", "../../..", "foo"));
 			result.Should()
-			   .Contain(System.IO.Path.Combine(".", "../../..", "foo", "bar"));
+				.Contain(System.IO.Path.Combine(".", "../../..", "foo", "bar"));
 			result.Should()
-			   .Contain(System.IO.Path.Combine(".", "../../..", "foo", "bar", "xyz"));
+				.Contain(System.IO.Path.Combine(".", "../../..", "foo", "bar", "xyz"));
 		}
 
 		result.Should()
-		   .Contain(
+			.Contain(
 				System.IO.Path.Combine(".", "../../..", "foo", "bar", "xyz", "a.test"));
 	}
 
@@ -99,13 +99,13 @@ public abstract partial class SearchFilterTests<TFileSystem>
 	public void SearchPattern_ContainingAsterisk_ShouldReturnMatchingFiles()
 	{
 		FileSystem.Initialize()
-		   .WithFile("a.test")
-		   .WithFile("a.unmatchingtest")
-		   .WithFile("another.test")
-		   .WithFile("a.un-matching-test");
+			.WithFile("a.test")
+			.WithFile("a.unmatchingtest")
+			.WithFile("another.test")
+			.WithFile("a.un-matching-test");
 
 		string[] result = FileSystem.Directory
-		   .GetFileSystemEntries(".", "a*.t*.", SearchOption.AllDirectories);
+			.GetFileSystemEntries(".", "a*.t*.", SearchOption.AllDirectories);
 
 		result.Length.Should().Be(2);
 		result.Should().Contain(System.IO.Path.Combine(".", "a.test"));
@@ -116,13 +116,13 @@ public abstract partial class SearchFilterTests<TFileSystem>
 	public void SearchPattern_ContainingQuestionmark_ShouldReturnMatchingFiles()
 	{
 		FileSystem.Initialize()
-		   .WithFile("a-test")
-		   .WithFile("a-unmatchingtest")
-		   .WithFile("another-test")
-		   .WithFile("a-un-matching-test");
+			.WithFile("a-test")
+			.WithFile("a-unmatchingtest")
+			.WithFile("another-test")
+			.WithFile("a-un-matching-test");
 
 		string[] result = FileSystem.Directory
-		   .GetFileSystemEntries(".", "a-??s*", SearchOption.AllDirectories);
+			.GetFileSystemEntries(".", "a-??s*", SearchOption.AllDirectories);
 
 		result.Length.Should().Be(1);
 		result[0].Should().Be(System.IO.Path.Combine(".", "a-test"));
@@ -130,18 +130,18 @@ public abstract partial class SearchFilterTests<TFileSystem>
 
 	[SkippableFact]
 	public void
-		SearchPattern_ContainingTooManyInstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles()
+		SearchPattern_ContainingTooManyInstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldThrowUnauthorizedAccessException()
 	{
 		Skip.If(Test.IsNetFramework);
 
 		FileSystem.Initialize()
-		   .WithFile("a.txt");
+			.WithFile("a.txt");
 
 		string currentDirectory = FileSystem.Directory.GetCurrentDirectory();
 		int directoryCount = currentDirectory.Length -
 		                     currentDirectory
-			                    .Replace($"{FileSystem.Path.DirectorySeparatorChar}", "")
-			                    .Length;
+			                     .Replace($"{FileSystem.Path.DirectorySeparatorChar}", "")
+			                     .Length;
 
 		StringBuilder sb = new();
 		for (int i = 0; i <= directoryCount; i++)
@@ -155,11 +155,10 @@ public abstract partial class SearchFilterTests<TFileSystem>
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Directory
-			   .GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
+				.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
 		});
 
-		exception.Should().BeOfType<UnauthorizedAccessException>()
-		   .Which.HResult.Should().Be(-2147024891);
+		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 
 	[SkippableTheory]
@@ -173,12 +172,12 @@ public abstract partial class SearchFilterTests<TFileSystem>
 		Skip.If(Test.IsNetFramework);
 
 		FileSystem.InitializeIn(path)
-		   .WithFile("test..test")
-		   .WithFile("a.test")
-		   .WithFile("a.test.again");
+			.WithFile("test..test")
+			.WithFile("a.test")
+			.WithFile("a.test.again");
 
 		string[] result = FileSystem.Directory
-		   .GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
+			.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
 
 		result.Length.Should().Be(expectedMatchingFiles);
 		result.Should().Contain(System.IO.Path.Combine(".", "..", path, "a.test"));
@@ -190,7 +189,7 @@ public abstract partial class SearchFilterTests<TFileSystem>
 	[InlineAutoData("../a*")]
 	[InlineAutoData("*t..")]
 	public void
-		SearchPattern_ContainingTwoDotsAndDirectorySeparator_ShouldThrowArgumentExceptionOnNetFramework(
+		SearchPattern_ContainingTwoDotsAndDirectorySeparator_ShouldThrowArgumentException_OnNetFramework(
 			string searchPattern, string path)
 	{
 		Skip.IfNot(Test.IsNetFramework);
@@ -200,23 +199,22 @@ public abstract partial class SearchFilterTests<TFileSystem>
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Directory
-			   .GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
+				.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
 	[SkippableFact]
 	public void SearchPattern_ContainingWithTwoDots_ShouldContainMatchingFiles()
 	{
 		FileSystem.Initialize()
-		   .WithFile("test..x")
-		   .WithFile("a.test...x")
-		   .WithFile("a.test.again..x");
+			.WithFile("test..x")
+			.WithFile("a.test...x")
+			.WithFile("a.test.again..x");
 
 		string[] result = FileSystem.Directory
-		   .GetFileSystemEntries(".", "*t..x", SearchOption.AllDirectories);
+			.GetFileSystemEntries(".", "*t..x", SearchOption.AllDirectories);
 
 		result.Length.Should().Be(1);
 	}
@@ -227,12 +225,12 @@ public abstract partial class SearchFilterTests<TFileSystem>
 		Skip.If(Test.IsNetFramework);
 
 		FileSystem.Initialize()
-		   .WithFile("test..")
-		   .WithFile("a.test...")
-		   .WithFile("a.test.again..");
+			.WithFile("test..")
+			.WithFile("a.test...")
+			.WithFile("a.test.again..");
 
 		string[] result = FileSystem.Directory
-		   .GetFileSystemEntries(".", "*t..", SearchOption.AllDirectories);
+			.GetFileSystemEntries(".", "*t..", SearchOption.AllDirectories);
 
 		if (Test.RunsOnWindows)
 		{
@@ -249,16 +247,16 @@ public abstract partial class SearchFilterTests<TFileSystem>
 	public void SearchPattern_Extension_ShouldReturnAllFilesWithTheExtension()
 	{
 		FileSystem.Initialize()
-		   .WithAFile(".gif")
-		   .WithAFile(".jpg")
-		   .WithASubdirectory().Initialized(s => s
-			   .WithAFile(".gif")
-			   .WithASubdirectory().Initialized(t => t
-				   .WithAFile(".gif")
-				   .WithFile("a.gif.txt")));
+			.WithAFile(".gif")
+			.WithAFile(".jpg")
+			.WithASubdirectory().Initialized(s => s
+				.WithAFile(".gif")
+				.WithASubdirectory().Initialized(t => t
+					.WithAFile(".gif")
+					.WithFile("a.gif.txt")));
 
 		string[] result = FileSystem.Directory
-		   .GetFileSystemEntries(".", "*.gif", SearchOption.AllDirectories);
+			.GetFileSystemEntries(".", "*.gif", SearchOption.AllDirectories);
 
 		result.Length.Should().Be(3);
 	}
@@ -271,23 +269,22 @@ public abstract partial class SearchFilterTests<TFileSystem>
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Directory
-			   .GetFileSystemEntries(".", null!, SearchOption.AllDirectories);
+				.GetFileSystemEntries(".", null!, SearchOption.AllDirectories);
 		});
 
-		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.ParamName.Should().Be("searchPattern");
+		exception.Should().BeException<ArgumentNullException>(paramName: "searchPattern");
 	}
 
 	[SkippableFact]
 	public void SearchPattern_StarDot_ShouldReturnFilesWithoutExtension()
 	{
 		FileSystem.Initialize()
-		   .WithFile("test.")
-		   .WithFile("a.test.")
-		   .WithFile("a.test.again.");
+			.WithFile("test.")
+			.WithFile("a.test.")
+			.WithFile("a.test.again.");
 
 		string[] result = FileSystem.Directory
-		   .GetFileSystemEntries(".", "*.", SearchOption.AllDirectories);
+			.GetFileSystemEntries(".", "*.", SearchOption.AllDirectories);
 
 		if (Test.RunsOnWindows)
 		{
@@ -316,7 +313,7 @@ public abstract partial class SearchFilterTests<TFileSystem>
 		FileSystem.Initialize().WithFile(path);
 
 		string[] result = FileSystem.Directory
-		   .GetFileSystemEntries(".", searchPattern);
+			.GetFileSystemEntries(".", searchPattern);
 
 		if (expectToBeFound)
 		{
@@ -327,7 +324,7 @@ public abstract partial class SearchFilterTests<TFileSystem>
 		else
 		{
 			result.Should()
-			   .BeEmpty($"{searchPattern} should not match {path}");
+				.BeEmpty($"{searchPattern} should not match {path}");
 		}
 	}
 }

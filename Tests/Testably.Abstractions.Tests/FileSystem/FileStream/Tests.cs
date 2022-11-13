@@ -1,8 +1,6 @@
 using System.IO;
-using Testably.Abstractions.FileSystem;
-#if FEATURE_FILESYSTEM_ASYNC
 using System.Threading.Tasks;
-#endif
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
@@ -35,32 +33,22 @@ public abstract partial class Tests<TFileSystem>
 		stream.CanTimeout.Should().BeFalse();
 	}
 
-	[SkippableFact]
-	public void Constructor_EmptyPath_ShouldThrowArgumentException()
+	[SkippableTheory]
+	[AutoData]
+	public void Close_CalledMultipleTimes_ShouldNotThrow(
+		string path, string contents)
 	{
+		FileSystem.File.WriteAllText(path, contents);
+		using FileSystemStream stream = FileSystem.File.OpenRead(path);
+		stream.Close();
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.FileStream.New("", FileMode.Open);
+			// ReSharper disable once AccessToDisposedClosure
+			stream.Close();
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.Message.Should().NotBeNullOrWhiteSpace();
-	}
-
-	[SkippableFact]
-	public void Constructor_NullPath_ShouldThrowArgumentNullException()
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.FileStream.New(null!, FileMode.Open);
-		});
-
-		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
-		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.Message.Should().NotBeNullOrWhiteSpace();
+		exception.Should().BeNull();
 	}
 
 	[SkippableTheory]
@@ -79,6 +67,25 @@ public abstract partial class Tests<TFileSystem>
 		buffer.Should().BeEquivalentTo(contents);
 	}
 
+	[SkippableTheory]
+	[AutoData]
+	public void CopyTo_BufferSizeZero_ShouldThrowArgumentOutOfRangeException(
+		string path, byte[] contents)
+	{
+		byte[] buffer = new byte[contents.Length];
+		FileSystem.File.WriteAllBytes(path, contents);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			using FileSystemStream stream = FileSystem.File.OpenRead(path);
+			using MemoryStream destination = new(buffer);
+			stream.CopyTo(destination, 0);
+		});
+
+		exception.Should().BeException<ArgumentOutOfRangeException>(
+			paramName: "bufferSize");
+	}
+
 #if FEATURE_FILESYSTEM_ASYNC
 	[SkippableTheory]
 	[AutoData]
@@ -95,49 +102,26 @@ public abstract partial class Tests<TFileSystem>
 		await destination.FlushAsync();
 		buffer.Should().BeEquivalentTo(contents);
 	}
-#endif
 
 	[SkippableTheory]
 	[AutoData]
-	public void Dispose_CalledTwiceShouldDoNothing(
+	public async Task CopyToAsync_BufferSizeZero_ShouldThrowArgumentOutOfRangeException(
 		string path, byte[] contents)
 	{
-		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
+		byte[] buffer = new byte[contents.Length];
+		await FileSystem.File.WriteAllBytesAsync(path, contents);
 
-		FileSystem.File.WriteAllBytes(path, contents);
-
-		using FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
-			FileAccess.ReadWrite, FileShare.ReadWrite, 10, FileOptions.DeleteOnClose);
-
-		stream.Dispose();
-		FileSystem.File.Exists(path).Should().BeFalse();
-		FileSystem.File.WriteAllText(path, "foo");
-
-		stream.Dispose();
-
-		FileSystem.File.Exists(path).Should().BeTrue();
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void Dispose_ShouldDisposeStream(
-		string path, string contents)
-	{
-		FileSystem.File.WriteAllText(path, contents);
-
-		using Stream stream = FileSystem.File.OpenRead(path);
-		stream.Dispose();
-
-		Exception? exception = Record.Exception(() =>
+		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
-			// ReSharper disable once AccessToDisposedClosure
-			stream.ReadByte();
+			await using FileSystemStream stream = FileSystem.File.OpenRead(path);
+			using MemoryStream destination = new(buffer);
+			await stream.CopyToAsync(destination, 0);
 		});
 
-		exception.Should().BeOfType<ObjectDisposedException>()
-		   .Which.HResult.Should().Be(-2146232798);
-		exception.Should().BeOfType<ObjectDisposedException>();
+		exception.Should().BeException<ArgumentOutOfRangeException>(
+			paramName: "bufferSize");
 	}
+#endif
 
 	[SkippableTheory]
 	[AutoData]
@@ -147,7 +131,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.WriteAllText(path, null);
 		using FileSystemStream readStream = FileSystem.File.OpenRead(path);
 		bool result = readStream.ExtensionContainer
-		   .HasWrappedInstance(out System.IO.FileStream? fileStream);
+			.HasWrappedInstance(out System.IO.FileStream? fileStream);
 
 		if (FileSystem is RealFileSystem)
 		{
@@ -202,6 +186,21 @@ public abstract partial class Tests<TFileSystem>
 		stream2.Dispose();
 		stream1.Dispose();
 		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes2);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public async Task FlushAsync_ShouldNotChangePosition(
+		string path, byte[] bytes)
+	{
+		using FileSystemStream stream = FileSystem.File.Create(path);
+		stream.Write(bytes, 0, bytes.Length);
+		stream.Seek(2, SeekOrigin.Begin);
+		stream.Position.Should().Be(2);
+
+		await stream.FlushAsync();
+
+		stream.Position.Should().Be(2);
 	}
 
 	[SkippableTheory]
@@ -296,8 +295,6 @@ public abstract partial class Tests<TFileSystem>
 			stream.SetLength(length);
 		});
 
-		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
-		exception.Should().BeOfType<NotSupportedException>();
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 }

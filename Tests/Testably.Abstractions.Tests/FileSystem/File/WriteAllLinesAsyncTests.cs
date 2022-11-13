@@ -1,4 +1,5 @@
 #if FEATURE_FILESYSTEM_ASYNC
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -22,8 +23,7 @@ public abstract partial class WriteAllLinesAsyncTests<TFileSystem>
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.WriteAllLinesAsync(path, contents, cts.Token));
 
-		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
 	[SkippableTheory]
@@ -38,8 +38,7 @@ public abstract partial class WriteAllLinesAsyncTests<TFileSystem>
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.WriteAllLinesAsync(path, contents, Encoding.UTF8, cts.Token));
 
-		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
 	[SkippableTheory]
@@ -54,8 +53,7 @@ public abstract partial class WriteAllLinesAsyncTests<TFileSystem>
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(), cts.Token));
 
-		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
 	[SkippableTheory]
@@ -71,8 +69,7 @@ public abstract partial class WriteAllLinesAsyncTests<TFileSystem>
 			FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(),
 				Encoding.UTF8, cts.Token));
 
-		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
 	[SkippableTheory]
@@ -122,6 +119,25 @@ public abstract partial class WriteAllLinesAsyncTests<TFileSystem>
 
 		string[] result = await FileSystem.File.ReadAllLinesAsync(path);
 		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public async Task
+		WriteAllLinesAsync_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
+			string path, string[] contents)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		await FileSystem.File.WriteAllTextAsync(path, null);
+		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
+
+		Exception? exception = await Record.ExceptionAsync(async () =>
+		{
+			await FileSystem.File.WriteAllLinesAsync(path, contents);
+		});
+
+		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 }
 #endif

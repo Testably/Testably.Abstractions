@@ -15,7 +15,7 @@ internal sealed class DirectoryInfoMock
 	: FileSystemInfoMock, IDirectoryInfo
 {
 	private DirectoryInfoMock(IStorageLocation location,
-	                          MockFileSystem fileSystem)
+		MockFileSystem fileSystem)
 		: base(fileSystem, location, FileSystemTypes.Directory)
 	{
 	}
@@ -53,7 +53,7 @@ internal sealed class DirectoryInfoMock
 		DirectoryInfoMock directory = New(
 			FileSystem.Storage.GetLocation(
 				FileSystem.Path.Combine(FullName, path
-				   .EnsureValidFormat(FileSystem, nameof(path),
+					.EnsureValidFormat(FileSystem, nameof(path),
 						Execute.IsWindows && !Execute.IsNetFramework))),
 			FileSystem);
 		directory.Create();
@@ -101,7 +101,7 @@ internal sealed class DirectoryInfoMock
 				FullName,
 				searchPattern,
 				EnumerationOptionsHelper.FromSearchOption(searchOption))
-		   .Select(location => New(location, FileSystem));
+			.Select(location => New(location, FileSystem));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateDirectories(string, EnumerationOptions)" />
@@ -112,7 +112,7 @@ internal sealed class DirectoryInfoMock
 				FullName,
 				searchPattern,
 				enumerationOptions)
-		   .Select(location => New(location, FileSystem));
+			.Select(location => New(location, FileSystem));
 #endif
 
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateFiles()" />
@@ -132,7 +132,7 @@ internal sealed class DirectoryInfoMock
 				FullName,
 				searchPattern,
 				EnumerationOptionsHelper.FromSearchOption(searchOption))
-		   .Select(location => FileInfoMock.New(location, FileSystem));
+			.Select(location => FileInfoMock.New(location, FileSystem));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateFiles(string, EnumerationOptions)" />
@@ -142,7 +142,7 @@ internal sealed class DirectoryInfoMock
 				FullName,
 				searchPattern,
 				enumerationOptions)
-		   .Select(location => FileInfoMock.New(location, FileSystem));
+			.Select(location => FileInfoMock.New(location, FileSystem));
 #endif
 
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateFileSystemInfos()" />
@@ -163,7 +163,7 @@ internal sealed class DirectoryInfoMock
 				FullName,
 				searchPattern,
 				EnumerationOptionsHelper.FromSearchOption(searchOption))
-		   .Select(location => FileSystemInfoMock.New(location, FileSystem));
+			.Select(location => FileSystemInfoMock.New(location, FileSystem));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateFileSystemInfos(string, EnumerationOptions)" />
@@ -174,7 +174,7 @@ internal sealed class DirectoryInfoMock
 				FullName,
 				searchPattern,
 				enumerationOptions)
-		   .Select(location => FileSystemInfoMock.New(location, FileSystem));
+			.Select(location => FileSystemInfoMock.New(location, FileSystem));
 #endif
 
 	/// <inheritdoc cref="IDirectoryInfo.GetDirectories()" />
@@ -208,13 +208,13 @@ internal sealed class DirectoryInfoMock
 
 	/// <inheritdoc cref="IDirectoryInfo.GetFiles(string, SearchOption)" />
 	public IFileInfo[] GetFiles(string searchPattern,
-	                            SearchOption searchOption)
+		SearchOption searchOption)
 		=> EnumerateFiles(searchPattern, searchOption).ToArray();
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectoryInfo.GetFiles(string, EnumerationOptions)" />
 	public IFileInfo[] GetFiles(string searchPattern,
-	                            EnumerationOptions enumerationOptions)
+		EnumerationOptions enumerationOptions)
 		=> EnumerateFiles(searchPattern, enumerationOptions).ToArray();
 #endif
 
@@ -244,7 +244,7 @@ internal sealed class DirectoryInfoMock
 		=> Location = FileSystem.Storage.Move(
 			              FileSystem.Storage.GetLocation(FullName),
 			              FileSystem.Storage.GetLocation(destDirName
-				             .EnsureValidFormat(FileSystem, nameof(destDirName))),
+				              .EnsureValidFormat(FileSystem, nameof(destDirName))),
 			              recursive: true)
 		              ?? throw ExceptionFactory.DirectoryNotFound(FullName);
 
@@ -252,7 +252,7 @@ internal sealed class DirectoryInfoMock
 
 	[return: NotNullIfNotNull("location")]
 	internal static new DirectoryInfoMock? New(IStorageLocation? location,
-	                                           MockFileSystem fileSystem)
+		MockFileSystem fileSystem)
 	{
 		if (location == null)
 		{
@@ -269,7 +269,7 @@ internal sealed class DirectoryInfoMock
 		EnumerationOptions enumerationOptions)
 	{
 		StorageExtensions.AdjustedLocation adjustedLocation = FileSystem.Storage
-		   .AdjustLocationFromSearchPattern(
+			.AdjustLocationFromSearchPattern(
 				path.EnsureValidFormat(FileSystem),
 				searchPattern);
 		return FileSystem.Storage.EnumerateLocations(

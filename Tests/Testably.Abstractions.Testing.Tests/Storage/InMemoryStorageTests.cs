@@ -43,7 +43,7 @@ public class InMemoryStorageTests
 
 		long availableFreeSpaceAfter = mainDrive.AvailableFreeSpace;
 		availableFreeSpaceAfter.Should()
-		   .Be(availableFreeSpaceBefore + file2Size - file1Size);
+			.Be(availableFreeSpaceBefore + file2Size - file1Size);
 	}
 
 	[Theory]
@@ -67,7 +67,7 @@ public class InMemoryStorageTests
 
 		long availableFreeSpaceAfter = mainDrive.AvailableFreeSpace;
 		availableFreeSpaceAfter.Should()
-		   .Be(availableFreeSpaceBefore);
+			.Be(availableFreeSpaceBefore);
 	}
 
 	[Theory]
@@ -94,7 +94,7 @@ public class InMemoryStorageTests
 
 		long availableFreeSpaceAfter = mainDrive.AvailableFreeSpace;
 		availableFreeSpaceAfter.Should()
-		   .Be(availableFreeSpaceBefore + file2Size);
+			.Be(availableFreeSpaceBefore + file2Size);
 	}
 
 	[Fact]

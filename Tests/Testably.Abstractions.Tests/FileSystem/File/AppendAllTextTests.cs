@@ -20,7 +20,7 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 
 		FileSystem.File.Exists(path).Should().BeTrue();
 		FileSystem.File.ReadAllText(path).Should()
-		   .BeEquivalentTo(previousContents + contents);
+			.BeEquivalentTo(previousContents + contents);
 	}
 
 	[SkippableTheory]
@@ -34,8 +34,7 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 			FileSystem.File.AppendAllText(filePath, contents);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
+		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 	}
 
 	[SkippableTheory]
@@ -54,12 +53,26 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 	public void AppendAllText_MissingFile_ShouldCreateFileWithByteOrderMark(
 		string path)
 	{
-		byte[] expectedBytes = { 255, 254, 0, 0, 65, 0, 0, 0, 65, 0, 0, 0 };
+		byte[] expectedBytes =
+		{
+			255,
+			254,
+			0,
+			0,
+			65,
+			0,
+			0,
+			0,
+			65,
+			0,
+			0,
+			0
+		};
 
 		FileSystem.File.AppendAllText(path, "AA", Encoding.UTF32);
 
 		FileSystem.File.ReadAllBytes(path)
-		   .Should().BeEquivalentTo(expectedBytes);
+			.Should().BeEquivalentTo(expectedBytes);
 	}
 
 	[SkippableTheory]
@@ -83,20 +96,20 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 			lastAccessTime.Should()
-			   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
 			lastAccessTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastWriteTime.Should()
-		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[SkippableTheory]
@@ -122,5 +135,21 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 
 		result.Should().NotBeEquivalentTo(contents,
 			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void AppendAllText_WhenFileIsHidden_ShouldNotThrowException(
+		string path, string contents)
+	{
+		FileSystem.File.WriteAllText(path, "some content");
+		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.AppendAllText(path, contents);
+		});
+
+		exception.Should().BeNull();
 	}
 }

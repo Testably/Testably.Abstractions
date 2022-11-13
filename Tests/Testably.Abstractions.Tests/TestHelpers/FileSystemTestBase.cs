@@ -18,7 +18,7 @@ public abstract class FileSystemTestBase<TFileSystem>
 	public ITimeSystem TimeSystem { get; }
 
 	protected FileSystemTestBase(TFileSystem fileSystem,
-	                             ITimeSystem timeSystem)
+		ITimeSystem timeSystem)
 	{
 		FileSystem = fileSystem;
 		TimeSystem = timeSystem;

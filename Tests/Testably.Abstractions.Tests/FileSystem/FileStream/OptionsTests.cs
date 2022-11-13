@@ -79,7 +79,7 @@ public abstract partial class OptionsTests<TFileSystem>
 		stream.Dispose();
 
 		FileSystem.File.GetAttributes(path).Should()
-		   .NotHaveFlag(FileAttributes.Encrypted);
+			.NotHaveFlag(FileAttributes.Encrypted);
 		FileSystem.File.ReadAllText(path).Should().Be(contents2);
 	}
 

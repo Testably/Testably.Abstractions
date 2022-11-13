@@ -24,7 +24,7 @@ public static class FileStreamAclExtensions
 	/// <inheritdoc cref="FileSystemAclExtensions.SetAccessControl(FileStream, FileSecurity)" />
 	[SupportedOSPlatform("windows")]
 	public static void SetAccessControl(this FileSystemStream fileStream,
-	                                    FileSecurity fileSecurity)
+		FileSecurity fileSecurity)
 	{
 		IFileSystemExtensionContainer extensionContainer =
 			fileStream.ExtensionContainer;

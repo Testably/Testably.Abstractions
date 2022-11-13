@@ -45,7 +45,7 @@ public static class FileTestHelper
 					FileMode.Open,
 					FileAccess.Read,
 					FileShare.ReadWrite)
-			   .Dispose();
+				.Dispose();
 		});
 		if (exception == null)
 		{
@@ -59,7 +59,7 @@ public static class FileTestHelper
 					FileMode.Open,
 					FileAccess.Write,
 					FileShare.ReadWrite)
-			   .Dispose();
+				.Dispose();
 		});
 		if (exception == null)
 		{

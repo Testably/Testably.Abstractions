@@ -30,7 +30,7 @@ internal static class Execute
 		get
 		{
 			_isNetFramework ??= RuntimeInformation
-			   .FrameworkDescription.StartsWith(".NET Framework");
+				.FrameworkDescription.StartsWith(".NET Framework");
 			return _isNetFramework.Value;
 		}
 	}
@@ -71,6 +71,18 @@ internal static class Execute
 	public static void NotOnWindows(Action callback)
 	{
 		if (!IsWindows)
+		{
+			callback();
+		}
+	}
+
+	/// <summary>
+	///     The <paramref name="callback" /> is executed when the operating system is not <see cref="OSPlatform.Windows" />
+	///     and the <paramref name="predicate" /> is <see langword="true" />.
+	/// </summary>
+	public static void NotOnWindowsIf(bool predicate, Action callback)
+	{
+		if (predicate && !IsWindows)
 		{
 			callback();
 		}

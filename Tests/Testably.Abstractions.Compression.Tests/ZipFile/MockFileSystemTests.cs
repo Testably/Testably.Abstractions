@@ -20,7 +20,7 @@ public sealed class MockFileSystemTests
 		mockFileSystem.TimeSystem)
 	{
 		_directoryCleaner = FileSystem
-		   .SetCurrentDirectoryToEmptyTemporaryDirectory();
+			.SetCurrentDirectoryToEmptyTemporaryDirectory();
 	}
 
 	#region IDisposable Members

@@ -19,17 +19,17 @@ public static class UnmanagedFileLoader
 
 	[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 	private static extern SafeFileHandle CreateFile(string lpFileName,
-	                                                uint dwDesiredAccess,
-	                                                uint dwShareMode,
-	                                                IntPtr lpSecurityAttributes,
-	                                                uint dwCreationDisposition,
-	                                                uint dwFlagsAndAttributes,
-	                                                IntPtr hTemplateFile);
+		uint dwDesiredAccess,
+		uint dwShareMode,
+		IntPtr lpSecurityAttributes,
+		uint dwCreationDisposition,
+		uint dwFlagsAndAttributes,
+		IntPtr hTemplateFile);
 
 	public static SafeFileHandle CreateSafeFileHandle(string? path,
-	                                                  FileMode mode = FileMode.Open,
-	                                                  FileAccess access =
- FileAccess.Write)
+		FileMode mode = FileMode.Open,
+		FileAccess access =
+			FileAccess.Write)
 	{
 		if (string.IsNullOrEmpty(path))
 		{

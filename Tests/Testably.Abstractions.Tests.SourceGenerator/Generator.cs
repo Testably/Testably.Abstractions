@@ -37,7 +37,7 @@ public sealed class Generator : ISourceGenerator
 		foreach (ClassGeneratorBase classGenerator in _classGenerators)
 		{
 			foreach (ClassModel classModel in _syntaxReceiver
-			   .GetClassModels(classGenerator.Marker))
+				.GetClassModels(classGenerator.Marker))
 			{
 				classGenerator.GenerateClass(context, classModel);
 			}

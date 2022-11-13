@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
@@ -25,6 +23,34 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		FileSystem.Directory.Exists(path).Should().BeTrue();
 	}
 
+	[SkippableTheory]
+	[AutoData]
+	public void CreateDirectory_ReadOnlyParent_ShouldStillCreateDirectory(string parent,
+		string subdirectory)
+	{
+		string subdirectoryPath = FileSystem.Path.Combine(parent, subdirectory);
+		FileSystem.Directory.CreateDirectory(parent);
+		FileSystem.DirectoryInfo.New(parent).Attributes = FileAttributes.ReadOnly;
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.Directory.CreateDirectory(subdirectoryPath);
+		});
+
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeNull();
+			FileSystem.Directory.Exists(subdirectoryPath).Should().BeTrue();
+			FileSystem.DirectoryInfo.New(parent).Attributes
+				.Should().HaveFlag(FileAttributes.ReadOnly);
+		}
+		else
+		{
+			exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
+			FileSystem.Directory.Exists(subdirectoryPath).Should().BeFalse();
+		}
+	}
+
 	[SkippableFact]
 	public void CreateDirectory_Root_ShouldNotThrowException()
 	{
@@ -42,7 +68,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateDirectory_ShouldTrimTrailingSpacesOnlyOnWindows(string path)
+	public void CreateDirectory_ShouldTrimTrailingSpaces_OnWindows(string path)
 	{
 		string pathWithSpaces = path + "  ";
 
@@ -80,20 +106,20 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 			lastAccessTime.Should()
-			   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
 			lastAccessTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastWriteTime.Should()
-		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[SkippableTheory]
@@ -116,7 +142,10 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 
 		FileSystem.Directory.CreateDirectory(subdirectoryLevel3Path);
 
-		foreach (string path in new[] { rootPath, subdirectoryLevel1Path })
+		foreach (string path in new[]
+			{
+				rootPath, subdirectoryLevel1Path
+			})
 		{
 			DateTime lastAccessTime =
 				FileSystem.Directory.GetLastAccessTimeUtc(path);
@@ -124,11 +153,11 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 				FileSystem.Directory.GetLastWriteTimeUtc(path);
 
 			lastAccessTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 			lastWriteTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 	}
 
@@ -161,80 +190,13 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void CreateDirectory_Empty_ShouldThrowArgumentException()
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Directory.CreateDirectory(string.Empty);
-		});
-
-#if NETFRAMEWORK
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
-#else
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("path");
-#endif
-	}
-
-	[SkippableFact]
-	public void CreateDirectory_IllegalCharacters_ShouldThrowArgumentException()
-	{
-		IEnumerable<char> invalidChars = FileSystem.Path
-		   .GetInvalidPathChars().Where(c => c != '\0')
-		   .Concat(new[] { '*', '?' });
-		foreach (char invalidChar in invalidChars)
-		{
-			string path = $"{invalidChar}foo{invalidChar}bar";
-			Exception? exception = Record.Exception(() =>
-			{
-				FileSystem.Directory.CreateDirectory(path);
-			});
-
-			if (Test.RunsOnWindows)
-			{
-#if NETFRAMEWORK
-				exception.Should().BeOfType<ArgumentException>();
-#else
-				string expectedMessage = $"'{System.IO.Path.Combine(BasePath, path)}'";
-				exception.Should()
-				   .BeOfType<IOException>(
-						$"'{invalidChar}' is an invalid path character.")
-				   .Which.Message.Should().Contain(expectedMessage);
-				exception.Should().BeOfType<IOException>()
-				   .Which.HResult.Should().Be(-2147024773);
-#endif
-			}
-			else
-			{
-				exception.Should().BeNull();
-			}
-		}
-	}
-
-	[SkippableFact]
-	public void CreateDirectory_Null_ShouldThrowArgumentNullException()
-	{
-		Exception? exception =
-			Record.Exception(() => FileSystem.Directory.CreateDirectory(null!));
-
-		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
-		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.ParamName.Should().Be("path");
-	}
-
-	[SkippableFact]
 	public void CreateDirectory_NullCharacter_ShouldThrowArgumentException()
 	{
 		string path = "foo\0bar";
 		Exception? exception =
 			Record.Exception(() => FileSystem.Directory.CreateDirectory(path));
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
 	[SkippableFact]
@@ -337,7 +299,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 			FileSystem.Path.DirectorySeparatorChar,
 			FileSystem.Path.AltDirectorySeparatorChar));
 		result.FullName.Should().Be(System.IO.Path.Combine(BasePath, expectedName
-		   .Replace(FileSystem.Path.AltDirectorySeparatorChar,
+			.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 				FileSystem.Path.DirectorySeparatorChar)));
 		FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
 	}

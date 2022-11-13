@@ -18,7 +18,7 @@ public sealed class RealFileSystemTests : ZipArchiveEntryTests<RealFileSystem>,
 		: base(new RealFileSystem(), new RealTimeSystem())
 	{
 		_directoryCleaner = FileSystem
-		   .SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);
+			.SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);
 	}
 
 	#region IDisposable Members

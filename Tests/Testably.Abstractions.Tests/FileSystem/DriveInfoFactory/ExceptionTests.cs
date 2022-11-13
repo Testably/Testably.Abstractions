@@ -14,7 +14,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	[InlineData("?invalid-drive-name")]
 	[InlineData("invalid")]
 	[InlineData(" ")]
-	public void New_ShouldThrowArgumentExceptionIfDriveNameIsInvalid(
+	public void New_WhenDriveNameIsInvalid_ShouldThrowArgumentException(
 		string driveName)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -24,13 +24,12 @@ public abstract partial class ExceptionTests<TFileSystem>
 			FileSystem.DriveInfo.New(driveName);
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
 	[Theory]
 	[MemberData(nameof(GetDriveInfoFactoryCallbacks), parameters: "")]
-	public void Operations_ShouldThrowArgumentExceptionIfValueIsEmpty(
+	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IDriveInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -39,23 +38,16 @@ public abstract partial class ExceptionTests<TFileSystem>
 			callback.Compile().Invoke(FileSystem.DriveInfo);
 		});
 
-		if (!Test.IsNetFramework && !ignoreParamCheck)
-		{
-			exception.Should().BeOfType<ArgumentException>(
-					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
-			   .Which.ParamName.Should().Be(paramName,
-					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
-		}
-
-		exception.Should().BeOfType<ArgumentException>(
-				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
-		   .Which.HResult.Should().Be(-2147024809,
-				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		exception.Should().BeException<ArgumentException>(
+			hResult: -2147024809,
+			paramName: ignoreParamCheck || Test.IsNetFramework ? null : paramName,
+			because:
+			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[Theory]
 	[MemberData(nameof(GetDriveInfoFactoryCallbacks), parameters: (string?)null)]
-	public void Operations_ShouldThrowArgumentNullExceptionIfValueIsNull(
+	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IDriveInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -64,30 +56,23 @@ public abstract partial class ExceptionTests<TFileSystem>
 			callback.Compile().Invoke(FileSystem.DriveInfo);
 		});
 
-		if (ignoreParamCheck)
-		{
-			exception.Should().BeOfType<ArgumentNullException>(
-				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
-		}
-		else
-		{
-			exception.Should().BeOfType<ArgumentNullException>(
-					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})")
-			   .Which.ParamName.Should().Be(paramName,
-					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
-		}
+		exception.Should().BeException<ArgumentNullException>(
+			paramName: ignoreParamCheck ? null : paramName,
+			because:
+			$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	#region Helpers
 
 	public static IEnumerable<object?[]> GetDriveInfoFactoryCallbacks(string? path)
 		=> GetDriveInfoFactoryCallbackTestParameters(path!)
-		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
-		   .Select(item => new object?[]
+			.Where(item => item.TestType.HasFlag(path.ToTestType()))
+			.Select(item => new object?[]
 			{
-				item.Callback, item.ParamName,
+				item.Callback,
+				item.ParamName,
 				item.TestType.HasFlag(ExceptionTestHelper.TestTypes
-				   .IgnoreParamNameCheck)
+					.IgnoreParamNameCheck)
 			});
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,

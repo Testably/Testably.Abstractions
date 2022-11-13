@@ -18,13 +18,13 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 		FileSystem.FileInfo.New(path).CreateAsSymbolicLink(pathToTarget);
 
 		FileSystem.File.GetAttributes(path)
-		   .HasFlag(FileAttributes.ReparsePoint)
-		   .Should().BeTrue();
+			.HasFlag(FileAttributes.ReparsePoint)
+			.Should().BeTrue();
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateAsSymbolicLink_SourceFileAlreadyExists_ShouldCreateSymbolicLink(
+	public void CreateAsSymbolicLink_SourceFileAlreadyExists_ShouldThrowIOException(
 		string path, string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, null);
@@ -35,19 +35,8 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 			FileSystem.FileInfo.New(path).CreateAsSymbolicLink(pathToTarget);
 		});
 
-		if (Test.RunsOnWindows)
-		{
-			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024713);
-		}
-		else
-		{
-			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(17);
-		}
-
-		exception.Should().BeOfType<IOException>()
-		   .Which.Message.Should().Contain($"'{path}'");
+		exception.Should().BeException<IOException>($"'{path}'",
+			hResult: Test.RunsOnWindows ? -2147024713 : 17);
 	}
 
 	[SkippableTheory]
@@ -75,8 +64,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 			FileSystem.FileInfo.New(string.Empty).CreateAsSymbolicLink(pathToTarget);
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("path");
+		exception.Should().BeException<ArgumentException>(paramName: "path");
 	}
 
 	[SkippableTheory]
@@ -91,8 +79,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 			FileSystem.FileInfo.New(path).CreateAsSymbolicLink(string.Empty);
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("pathToTarget");
+		exception.Should().BeException<ArgumentException>(paramName: "pathToTarget");
 	}
 
 	[SkippableTheory]
@@ -109,8 +96,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 			FileSystem.FileInfo.New("bar_?_").CreateAsSymbolicLink(pathToTarget);
 		});
 
-		exception.Should().BeOfType<IOException>()
-		   .Which.HResult.Should().Be(-2147024773);
+		exception.Should().BeException<IOException>(hResult: -2147024773);
 	}
 
 	[SkippableTheory]
@@ -127,14 +113,13 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 			FileSystem.FileInfo.New(path).CreateAsSymbolicLink("bar_?_");
 		});
 
-		exception.Should().BeOfType<IOException>()
-		   .Which.HResult.Should().Be(-2147024713);
+		exception.Should().BeException<IOException>(hResult: -2147024713);
 	}
 
 	[SkippableTheory]
 	[AutoData]
 	public void
-		CreateAsSymbolicLink_WithIllegalPath_ShouldThrowArgumentExceptionOnWindows(
+		CreateAsSymbolicLink_WithIllegalPath_ShouldThrowArgumentException_OnWindows(
 			string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, "some content");
@@ -146,8 +131,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<ArgumentException>()
-			   .Which.ParamName.Should().Be("path");
+			exception.Should().BeException<ArgumentException>(paramName: "path");
 		}
 		else
 		{
@@ -182,10 +166,9 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 
 #if NET7_0
 		// https://github.com/dotnet/runtime/issues/78224
-		exception.Should().BeOfType<ArgumentNullException>();
+		exception.Should().BeException<ArgumentNullException>();
 #else
-		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.ParamName.Should().Be("fileName");
+		exception.Should().BeException<ArgumentNullException>(paramName: "fileName");
 #endif
 	}
 
@@ -201,8 +184,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 			FileSystem.FileInfo.New(path).CreateAsSymbolicLink(null!);
 		});
 
-		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.ParamName.Should().Be("pathToTarget");
+		exception.Should().BeException<ArgumentNullException>(paramName: "pathToTarget");
 	}
 }
 #endif

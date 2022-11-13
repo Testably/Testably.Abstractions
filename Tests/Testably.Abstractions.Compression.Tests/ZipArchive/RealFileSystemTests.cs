@@ -19,7 +19,7 @@ public sealed class RealFileSystemTests :
 		: base(new RealFileSystem(), new RealTimeSystem())
 	{
 		_directoryCleaner = FileSystem
-		   .SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);
+			.SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);
 	}
 
 	#region IDisposable Members

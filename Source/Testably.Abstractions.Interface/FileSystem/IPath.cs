@@ -160,16 +160,16 @@ public interface IPath : IFileSystemExtensionPoint
 
 	/// <inheritdoc cref="Path.Join(ReadOnlySpan{char}, ReadOnlySpan{char}, ReadOnlySpan{char})" />
 	string Join(ReadOnlySpan<char> path1,
-	            ReadOnlySpan<char> path2,
-	            ReadOnlySpan<char> path3);
+		ReadOnlySpan<char> path2,
+		ReadOnlySpan<char> path3);
 #endif
 
 #if FEATURE_PATH_ADVANCED
 	/// <inheritdoc cref="Path.Join(ReadOnlySpan{char}, ReadOnlySpan{char}, ReadOnlySpan{char}, ReadOnlySpan{char})" />
 	string Join(ReadOnlySpan<char> path1,
-	            ReadOnlySpan<char> path2,
-	            ReadOnlySpan<char> path3,
-	            ReadOnlySpan<char> path4);
+		ReadOnlySpan<char> path2,
+		ReadOnlySpan<char> path3,
+		ReadOnlySpan<char> path4);
 
 	/// <inheritdoc cref="Path.Join(string, string)" />
 	string Join(string? path1, string? path2);
@@ -195,15 +195,15 @@ public interface IPath : IFileSystemExtensionPoint
 #if FEATURE_PATH_JOIN
 	/// <inheritdoc cref="Path.TryJoin(ReadOnlySpan{char}, ReadOnlySpan{char}, Span{char}, out int)" />
 	bool TryJoin(ReadOnlySpan<char> path1,
-	             ReadOnlySpan<char> path2,
-	             Span<char> destination,
-	             out int charsWritten);
+		ReadOnlySpan<char> path2,
+		Span<char> destination,
+		out int charsWritten);
 
 	/// <inheritdoc cref="Path.TryJoin(ReadOnlySpan{char}, ReadOnlySpan{char}, ReadOnlySpan{char}, Span{char}, out int)" />
 	bool TryJoin(ReadOnlySpan<char> path1,
-	             ReadOnlySpan<char> path2,
-	             ReadOnlySpan<char> path3,
-	             Span<char> destination,
-	             out int charsWritten);
+		ReadOnlySpan<char> path2,
+		ReadOnlySpan<char> path3,
+		Span<char> destination,
+		out int charsWritten);
 #endif
 }

@@ -99,13 +99,13 @@ public abstract partial class FilterTests<TFileSystem>
 		foreach (string path in otherPaths)
 		{
 			results.Should()
-			   .NotContain(f => f.FullPath == FileSystem.Path.GetFullPath(path));
+				.NotContain(f => f.FullPath == FileSystem.Path.GetFullPath(path));
 		}
 
 		foreach (string path in filteredPaths)
 		{
 			results.Should()
-			   .Contain(f => f.FullPath == FileSystem.Path.GetFullPath(path));
+				.Contain(f => f.FullPath == FileSystem.Path.GetFullPath(path));
 		}
 	}
 #endif

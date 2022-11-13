@@ -12,8 +12,8 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 	private readonly ZipArchiveEntry _instance;
 
 	public ZipArchiveEntryWrapper(IFileSystem fileSystem,
-	                              IZipArchive archive,
-	                              ZipArchiveEntry instance)
+		IZipArchive archive,
+		ZipArchiveEntry instance)
 	{
 		_instance = instance;
 		FileSystem = fileSystem;
@@ -116,7 +116,7 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 
 	[return: NotNullIfNotNull("instance")]
 	internal static IZipArchiveEntry? New(IFileSystem fileSystem, IZipArchive archive,
-	                                      ZipArchiveEntry? instance)
+		ZipArchiveEntry? instance)
 	{
 		if (instance == null)
 		{

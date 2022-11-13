@@ -14,7 +14,7 @@ internal abstract class ClassGeneratorBase
 	public abstract string Marker { get; }
 
 	public void GenerateClass(GeneratorExecutionContext context,
-	                          ClassModel @class)
+		ClassModel @class)
 	{
 		StringBuilder sourceBuilder = GetSourceBuilder();
 		GenerateSource(sourceBuilder, @class);
@@ -36,7 +36,7 @@ internal abstract class ClassGeneratorBase
 		if (classToGenerate.Namespace.StartsWith(namespacePrefix))
 		{
 			string? @namespace = classToGenerate.Namespace
-			   .Substring(namespacePrefix.Length);
+				.Substring(namespacePrefix.Length);
 			return $"{fileNamePrefix}{@namespace}.{classToGenerate.Name}.cs";
 		}
 

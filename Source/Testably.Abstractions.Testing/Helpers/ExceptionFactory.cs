@@ -174,7 +174,7 @@ internal static class ExceptionFactory
 			hResult ?? -2147024773);
 
 	internal static ArgumentException PathIsEmpty(string paramName,
-	                                              int hResult = -2147024809)
+		int hResult = -2147024809)
 		=> new("The path is empty.", paramName)
 		{
 #if FEATURE_EXCEPTION_HRESULT

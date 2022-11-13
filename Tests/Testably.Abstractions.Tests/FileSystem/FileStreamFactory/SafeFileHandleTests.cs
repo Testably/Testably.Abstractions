@@ -14,7 +14,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public void New_SafeFileHandle_Invalid_ShouldThrowArgumentException(
+	public void New_SafeFileHandle_InvalidHandle_ShouldThrowArgumentException(
 		string filename, string contents)
 	{
 		string path = FileSystem.Path.GetFullPath(filename);
@@ -25,15 +25,14 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 			FileSystem.FileStream.New(handle, FileAccess.ReadWrite);
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("handle");
+		exception.Should().BeException<ArgumentException>(
+			hResult: -2147024809,
+			paramName: "handle");
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public void New_SafeFileHandle_Invalid_WithBufferSize_ShouldThrowArgumentException(
+	public void New_SafeFileHandle_InvalidHandle_WithBufferSize_ShouldThrowArgumentException(
 		string filename, string contents)
 	{
 		string path = FileSystem.Path.GetFullPath(filename);
@@ -44,16 +43,15 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 			FileSystem.FileStream.New(handle, FileAccess.ReadWrite, 1024);
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("handle");
+		exception.Should().BeException<ArgumentException>(
+			hResult: -2147024809,
+			paramName: "handle");
 	}
 
 	[SkippableTheory]
 	[AutoData]
 	public void
-		New_SafeFileHandle_Invalid_WithBufferSizeAndAsync_ShouldThrowArgumentException(
+		New_SafeFileHandle_InvalidHandle_WithBufferSizeAndAsync_ShouldThrowArgumentException(
 			string filename, string contents)
 	{
 		string path = FileSystem.Path.GetFullPath(filename);
@@ -64,10 +62,9 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 			FileSystem.FileStream.New(handle, FileAccess.ReadWrite, 1024, true);
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("handle");
+		exception.Should().BeException<ArgumentException>(
+			hResult: -2147024809,
+			paramName: "handle");
 	}
 
 	[SkippableTheory]
@@ -82,6 +79,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 			cleanup = realFileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory();
 			FileSystem.InitializeIn(realFileSystem.Directory.GetCurrentDirectory());
 		}
+
 		string path = realFileSystem.Path.GetFullPath(filename);
 		realFileSystem.File.WriteAllText(path, contents);
 		FileSystem.File.WriteAllText(path, contents);
@@ -109,6 +107,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 			cleanup = realFileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory();
 			FileSystem.InitializeIn(realFileSystem.Directory.GetCurrentDirectory());
 		}
+
 		string path = realFileSystem.Path.GetFullPath(filename);
 		realFileSystem.File.WriteAllText(path, contents);
 		FileSystem.File.WriteAllText(path, contents);
@@ -138,6 +137,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 			cleanup = realFileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory();
 			FileSystem.InitializeIn(realFileSystem.Directory.GetCurrentDirectory());
 		}
+
 		string path = realFileSystem.Path.GetFullPath(filename);
 		realFileSystem.File.WriteAllText(path, contents);
 		FileSystem.File.WriteAllText(path, contents);

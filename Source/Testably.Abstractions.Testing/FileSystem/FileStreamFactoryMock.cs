@@ -1,10 +1,10 @@
 ﻿using Microsoft.Win32.SafeHandles;
-#if NET6_0_OR_GREATER
-using System.Diagnostics.CodeAnalysis;
-#endif
 using System.IO;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
+#if NET6_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
@@ -41,26 +41,26 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 
 	/// <inheritdoc cref="IFileStreamFactory.New(string, FileMode, FileAccess, FileShare)" />
 	public FileSystemStream New(string path,
-	                            FileMode mode,
-	                            FileAccess access,
-	                            FileShare share)
+		FileMode mode,
+		FileAccess access,
+		FileShare share)
 		=> New(path, mode, access, share, DefaultBufferSize, DefaultUseAsync);
 
 	/// <inheritdoc cref="IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int)" />
 	public FileSystemStream New(string path,
-	                            FileMode mode,
-	                            FileAccess access,
-	                            FileShare share,
-	                            int bufferSize)
+		FileMode mode,
+		FileAccess access,
+		FileShare share,
+		int bufferSize)
 		=> New(path, mode, access, share, bufferSize, DefaultUseAsync);
 
 	/// <inheritdoc cref="IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int, bool)" />
 	public FileSystemStream New(string path,
-	                            FileMode mode,
-	                            FileAccess access,
-	                            FileShare share,
-	                            int bufferSize,
-	                            bool useAsync)
+		FileMode mode,
+		FileAccess access,
+		FileShare share,
+		int bufferSize,
+		bool useAsync)
 		=> New(path,
 			mode,
 			access,
@@ -70,11 +70,11 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 
 	/// <inheritdoc cref="IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int, FileOptions)" />
 	public FileSystemStream New(string path,
-	                            FileMode mode,
-	                            FileAccess access,
-	                            FileShare share,
-	                            int bufferSize,
-	                            FileOptions options)
+		FileMode mode,
+		FileAccess access,
+		FileShare share,
+		int bufferSize,
+		FileOptions options)
 		=> new FileStreamMock(_fileSystem,
 			path,
 			mode,
@@ -90,7 +90,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access)
 	{
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
-		   .SafeFileHandleStrategy.MapSafeFileHandle(handle);
+			.SafeFileHandleStrategy.MapSafeFileHandle(handle);
 		return New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
@@ -105,7 +105,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize)
 	{
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
-		   .SafeFileHandleStrategy.MapSafeFileHandle(handle);
+			.SafeFileHandleStrategy.MapSafeFileHandle(handle);
 		return New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,
@@ -119,10 +119,10 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
 #endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize,
-	                            bool isAsync)
+		bool isAsync)
 	{
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
-		   .SafeFileHandleStrategy.MapSafeFileHandle(handle);
+			.SafeFileHandleStrategy.MapSafeFileHandle(handle);
 		return New(
 			safeFileHandleMock.Path,
 			safeFileHandleMock.Mode,

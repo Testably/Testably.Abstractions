@@ -13,7 +13,7 @@ internal sealed class FileSystemWatcherWrapper : IFileSystemWatcher
 	private readonly FileSystemWatcher _instance;
 
 	private FileSystemWatcherWrapper(FileSystemWatcher fileSystemWatcher,
-	                                 IFileSystem fileSystem)
+		IFileSystem fileSystem)
 	{
 		_instance = fileSystemWatcher;
 		FileSystem = fileSystem;
@@ -147,13 +147,15 @@ internal sealed class FileSystemWatcherWrapper : IFileSystemWatcher
 		WatcherChangeTypes changeType, int timeout)
 		=> new WaitForChangedResultWrapper(
 			_instance.WaitForChanged(changeType, timeout));
-	
+
 #if FEATURE_FILESYSTEM_NET7
 	/// <inheritdoc cref="IFileSystemWatcher.WaitForChanged(WatcherChangeTypes, TimeSpan)" />
-	public IFileSystemWatcher.IWaitForChangedResult WaitForChanged(WatcherChangeTypes changeType, TimeSpan timeout)
+	public IFileSystemWatcher.IWaitForChangedResult WaitForChanged(WatcherChangeTypes changeType,
+		TimeSpan timeout)
 		=> new WaitForChangedResultWrapper(
 			_instance.WaitForChanged(changeType, timeout));
 #endif
+
 	#endregion
 
 	[return: NotNullIfNotNull("instance")]

@@ -18,31 +18,10 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.FileStream.New(path, FileMode.Append, FileAccess.ReadWrite);
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
-#if !NETFRAMEWORK
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("access");
-#endif
-		exception!.Message.Should()
-		   .Contain(FileMode.Append.ToString());
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void New_EmptyPath_ShouldThrowArgumentException(FileMode mode)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.FileStream.New(string.Empty, mode);
-		});
-
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
-#if !NETFRAMEWORK
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("path");
-#endif
+		exception.Should().BeException<ArgumentException>(
+			messageContains: FileMode.Append.ToString(),
+			hResult: -2147024809,
+			paramName: Test.IsNetFramework ? null : "access");
 	}
 
 	[SkippableTheory]
@@ -59,7 +38,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void New_ExistingFileWithCreateNewMode_ShouldThrowArgumentException(
+	public void New_ExistingFileWithCreateNewMode_ShouldThrowIOException(
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, "foo");
@@ -68,19 +47,9 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.FileStream.New(path, FileMode.CreateNew);
 		});
 
-		if (Test.RunsOnWindows)
-		{
-			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024816);
-		}
-		else
-		{
-			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(17);
-		}
-
-		exception.Should().BeOfType<IOException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+		exception.Should().BeException<IOException>(
+			$"'{FileSystem.Path.GetFullPath(path)}'",
+			hResult: Test.RunsOnWindows ? -2147024816 : 17);
 	}
 
 	[SkippableTheory]
@@ -110,21 +79,18 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.FileStream.New(path, mode, access);
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
-#if !NETFRAMEWORK
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("access");
-#endif
+		exception.Should().BeException<ArgumentException>(
+			hResult: -2147024809,
+			paramName: Test.IsNetFramework ? null : "access");
 		exception!.Message.Should()
-		   .Contain(mode.ToString()).And
-		   .Contain(access.ToString());
+			.Contain(mode.ToString()).And
+			.Contain(access.ToString());
 	}
 
 	[SkippableTheory]
 	[InlineAutoData(FileMode.Open)]
 	[InlineAutoData(FileMode.Truncate)]
-	public void New_MissingFileWithIncorrectMode_ShouldThrowArgumentException(
+	public void New_MissingFileWithIncorrectMode_ShouldThrowFileNotFoundException(
 		FileMode mode, string path)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -132,15 +98,14 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.FileStream.New(path, mode);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+		exception.Should().BeException<FileNotFoundException>(
+			$"'{FileSystem.Path.GetFullPath(path)}'",
+			hResult: -2147024894);
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public void New_MissingFileWithTruncateMode_ShouldIgnoreContent(
+	public void New_MissingFileWithTruncateMode_ShouldThrowFileNotFoundException(
 		string path)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -148,25 +113,9 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.FileStream.New(path, FileMode.Truncate);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void New_NullPath_ShouldThrowArgumentNullException(FileMode mode)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.FileStream.New(null!, mode);
-		});
-
-		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
-		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.ParamName.Should().Be("path");
+		exception.Should().BeException<FileNotFoundException>(
+			$"'{FileSystem.Path.GetFullPath(path)}'",
+			hResult: -2147024894);
 	}
 
 	[SkippableTheory]
@@ -174,7 +123,7 @@ public abstract partial class Tests<TFileSystem>
 	[InlineAutoData(FileAccess.ReadWrite)]
 	[InlineAutoData(FileAccess.Write)]
 	public void
-		New_ReadOnlyFlag_WhenAccessContainsWrite_ShouldThrowUnauthorizedAccessException(
+		New_ReadOnlyFlag_ShouldThrowUnauthorizedAccessException_WhenAccessContainsWrite(
 			FileAccess access,
 			string path)
 	{
@@ -187,8 +136,7 @@ public abstract partial class Tests<TFileSystem>
 
 		if (access.HasFlag(FileAccess.Write))
 		{
-			exception.Should().BeOfType<UnauthorizedAccessException>()
-			   .Which.HResult.Should().Be(-2147024891);
+			exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 		}
 		else
 		{
@@ -198,7 +146,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void New_SamePathAsExistingDirectory_ShouldThrowException(
+	public void New_SamePathAsExistingDirectory_ShouldThrowCorrectException(
 		string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -209,17 +157,15 @@ public abstract partial class Tests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<UnauthorizedAccessException>()
-			   .Which.HResult.Should().Be(-2147024891);
-			exception.Should().BeOfType<UnauthorizedAccessException>()
-			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			exception.Should().BeException<UnauthorizedAccessException>(
+				$"'{FileSystem.Path.GetFullPath(path)}'",
+				hResult: -2147024891);
 		}
 		else
 		{
-			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(17);
-			exception.Should().BeOfType<IOException>()
-			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			exception.Should().BeException<IOException>(
+				$"'{FileSystem.Path.GetFullPath(path)}'",
+				hResult: 17);
 		}
 	}
 

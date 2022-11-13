@@ -30,11 +30,9 @@ public abstract partial class ReadLinesTests<TFileSystem>
 			_ = FileSystem.File.ReadLines(path).FirstOrDefault();
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should()
-		   .Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+		exception.Should().BeException<FileNotFoundException>(
+			$"'{FileSystem.Path.GetFullPath(path)}'",
+			hResult: -2147024894);
 	}
 
 	[SkippableTheory]

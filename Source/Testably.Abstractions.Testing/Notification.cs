@@ -83,8 +83,8 @@ public static class Notification
 			private readonly ManualResetEventSlim _reset;
 
 			public CallbackWaiter(NotificationFactory<TValue> factory,
-			                      Guid key, Action<TValue>? callback,
-			                      Func<TValue, bool>? predicate)
+				Guid key, Action<TValue>? callback,
+				Func<TValue, bool>? predicate)
 			{
 				_factory = factory;
 				_key = key;
@@ -97,9 +97,9 @@ public static class Notification
 
 			/// <inheritdoc cref="IAwaitableCallback{TValue}.Wait(Func{TValue, bool}?, int, int, Action?)" />
 			public void Wait(Func<TValue, bool>? filter = null,
-			                 int timeout = 30000,
-			                 int count = 1,
-			                 Action? executeWhenWaiting = null)
+				int timeout = 30000,
+				int count = 1,
+				Action? executeWhenWaiting = null)
 			{
 				_count = count;
 				_filter = filter;
@@ -184,9 +184,9 @@ public static class Notification
 		///     (optional) A callback to execute when waiting started.
 		/// </param>
 		void Wait(Func<TValue, bool>? filter = null,
-		          int timeout = 30000,
-		          int count = 1,
-		          Action? executeWhenWaiting = null);
+			int timeout = 30000,
+			int count = 1,
+			Action? executeWhenWaiting = null);
 	}
 
 	/// <summary>
@@ -221,9 +221,9 @@ public static class Notification
 		///     (optional) A callback to execute when waiting started.
 		/// </param>
 		new TFunc Wait(Func<TValue, bool>? filter = null,
-		               int timeout = 30000,
-		               int count = 1,
-		               Action? executeWhenWaiting = null);
+			int timeout = 30000,
+			int count = 1,
+			Action? executeWhenWaiting = null);
 	}
 
 	private sealed class CallbackWaiterWithValue<TValue, TFunc>
@@ -233,7 +233,7 @@ public static class Notification
 		private readonly Func<TFunc> _valueProvider;
 
 		public CallbackWaiterWithValue(IAwaitableCallback<TValue> awaitableCallback,
-		                               Func<TFunc> valueProvider)
+			Func<TFunc> valueProvider)
 		{
 			_awaitableCallback = awaitableCallback;
 			_valueProvider = valueProvider;
@@ -243,9 +243,9 @@ public static class Notification
 
 		/// <inheritdoc cref="IAwaitableCallback{TValue, TFunc}.Wait(Func{TValue, bool}?,int,int, Action?)" />
 		public TFunc Wait(Func<TValue, bool>? filter = null,
-		                  int timeout = 30000,
-		                  int count = 1,
-		                  Action? executeWhenWaiting = null)
+			int timeout = 30000,
+			int count = 1,
+			Action? executeWhenWaiting = null)
 		{
 			TFunc value = default!;
 			_awaitableCallback.Wait(filter, timeout, count, () =>
@@ -258,9 +258,9 @@ public static class Notification
 
 		/// <inheritdoc cref="IAwaitableCallback{TValue}.Wait(Func{TValue, bool}?,int,int, Action?)" />
 		void IAwaitableCallback<TValue>.Wait(Func<TValue, bool>? filter,
-		                                     int timeout,
-		                                     int count,
-		                                     Action? executeWhenWaiting)
+			int timeout,
+			int count,
+			Action? executeWhenWaiting)
 		{
 			_awaitableCallback.Wait(filter, timeout, count, () =>
 			{

@@ -18,10 +18,9 @@ public abstract partial class OpenReadTests<TFileSystem>
 			_ = FileSystem.File.OpenRead(path);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+		exception.Should().BeException<FileNotFoundException>(
+			$"'{FileSystem.Path.GetFullPath(path)}'",
+			hResult: -2147024894);
 	}
 
 	[SkippableTheory]
@@ -43,7 +42,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void OpenRead_StreamShouldBeReadOnlyOnSetLength(string path)
+	public void OpenRead_SetLength_ShouldThrowNotSupportedException(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
@@ -53,13 +52,12 @@ public abstract partial class OpenReadTests<TFileSystem>
 			stream.SetLength(3);
 		});
 
-		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public void OpenRead_StreamShouldBeReadOnlyOnWrite(string path, byte[] bytes)
+	public void OpenRead_Write_ShouldThrowNotSupportedException(string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
@@ -69,13 +67,12 @@ public abstract partial class OpenReadTests<TFileSystem>
 			stream.Write(bytes, 0, bytes.Length);
 		});
 
-		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public async Task OpenRead_StreamShouldBeReadOnlyOnWriteAsync(
+	public async Task OpenRead_WriteAsync_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
 		// ReSharper disable once MethodHasAsyncOverload
@@ -85,19 +82,18 @@ public abstract partial class OpenReadTests<TFileSystem>
 		{
 			// ReSharper disable once UseAwaitUsing
 			using FileSystemStream stream = FileSystem.File.OpenRead(path);
-#pragma warning disable CA1835
+			#pragma warning disable CA1835
 			await stream.WriteAsync(bytes, 0, bytes.Length);
-#pragma warning restore CA1835
+			#pragma warning restore CA1835
 		});
 
-		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	public async Task OpenRead_StreamShouldBeReadOnlyOnWriteAsyncWithMemory(
+	public async Task OpenRead_WriteAsyncWithMemory_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
 		await FileSystem.File.WriteAllTextAsync(path, null);
@@ -108,14 +104,13 @@ public abstract partial class OpenReadTests<TFileSystem>
 			await stream.WriteAsync(bytes.AsMemory());
 		});
 
-		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 #endif
 
 	[SkippableTheory]
 	[AutoData]
-	public void OpenRead_StreamShouldBeReadOnlyOnWriteByte(string path)
+	public void OpenRead_WriteByte_ShouldThrowNotSupportedException(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
@@ -125,14 +120,13 @@ public abstract partial class OpenReadTests<TFileSystem>
 			stream.WriteByte(0);
 		});
 
-		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	public void OpenRead_StreamShouldBeReadOnlyOnWriteWithSpan(string path, byte[] bytes)
+	public void OpenRead_WriteWithSpan_ShouldThrowNotSupportedException(string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
@@ -142,8 +136,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 			stream.Write(bytes.AsSpan());
 		});
 
-		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 #endif
 }

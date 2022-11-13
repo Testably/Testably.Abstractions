@@ -27,11 +27,11 @@ public abstract class ZipFileTests<TFileSystem>
 			CompressionLevel compressionLevel)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("foo").Initialized(s => s
-			   .WithSubdirectory("bar"));
+			.WithSubdirectory("foo").Initialized(s => s
+				.WithSubdirectory("bar"));
 
 		FileSystem.ZipFile()
-		   .CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
+			.CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
 
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
@@ -46,10 +46,10 @@ public abstract class ZipFileTests<TFileSystem>
 		CompressionLevel compressionLevel)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("foo");
+			.WithSubdirectory("foo");
 
 		FileSystem.ZipFile()
-		   .CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
+			.CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
 
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
@@ -64,10 +64,10 @@ public abstract class ZipFileTests<TFileSystem>
 			CompressionLevel compressionLevel)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("foo");
+			.WithSubdirectory("foo");
 
 		FileSystem.ZipFile()
-		   .CreateFromDirectory("foo", "destination.zip", compressionLevel, true);
+			.CreateFromDirectory("foo", "destination.zip", compressionLevel, true);
 
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
@@ -82,11 +82,11 @@ public abstract class ZipFileTests<TFileSystem>
 		string entryName, Encoding encoding, bool encodedCorrectly)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("foo").Initialized(s => s
-			   .WithFile(entryName));
+			.WithSubdirectory("foo").Initialized(s => s
+				.WithFile(entryName));
 
 		FileSystem.ZipFile()
-		   .CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false, encoding);
 
 		using IZipArchive archive =
@@ -109,11 +109,11 @@ public abstract class ZipFileTests<TFileSystem>
 		CompressionLevel compressionLevel)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("foo").Initialized(s => s
-			   .WithFile("test.txt"));
+			.WithSubdirectory("foo").Initialized(s => s
+				.WithFile("test.txt"));
 
 		FileSystem.ZipFile()
-		   .CreateFromDirectory("foo", "destination.zip", compressionLevel, true);
+			.CreateFromDirectory("foo", "destination.zip", compressionLevel, true);
 
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
@@ -129,10 +129,10 @@ public abstract class ZipFileTests<TFileSystem>
 		string contents, Encoding encoding)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("bar").Initialized(s => s
-			   .WithFile("test.txt"))
-		   .WithSubdirectory("foo").Initialized(s => s
-			   .WithFile("test.txt"));
+			.WithSubdirectory("bar").Initialized(s => s
+				.WithFile("test.txt"))
+			.WithSubdirectory("foo").Initialized(s => s
+				.WithFile("test.txt"));
 		FileSystem.File.WriteAllText(FileSystem.Path.Combine("foo", "test.txt"),
 			contents);
 
@@ -140,7 +140,7 @@ public abstract class ZipFileTests<TFileSystem>
 			CompressionLevel.Optimal, false, encoding);
 
 		IZipArchive archive = FileSystem.ZipFile()
-		   .Open("destination.zip", ZipArchiveMode.Read, encoding);
+			.Open("destination.zip", ZipArchiveMode.Read, encoding);
 
 		archive.Entries.Count.Should().Be(1);
 		archive.Entries.Should().Contain(e => e.FullName.Equals("test.txt"));
@@ -151,27 +151,33 @@ public abstract class ZipFileTests<TFileSystem>
 	public void CreateFromDirectory_ShouldZipDirectoryContent()
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("destination")
-		   .WithSubdirectory("foo").Initialized(s => s
-			   .WithSubdirectory("bar").Initialized(t => t
-				   .WithFile("test.txt")));
+			.WithSubdirectory("destination")
+			.WithSubdirectory("foo").Initialized(s => s
+				.WithSubdirectory("bar").Initialized(t => t
+					.WithFile("test.txt")));
 
 		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip");
 
 		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "destination");
 
 		FileSystem.File.Exists("destination/bar/test.txt")
-		   .Should().BeTrue();
+			.Should().BeTrue();
 		FileSystem.File.ReadAllBytes("destination/bar/test.txt")
-		   .Should().BeEquivalentTo(
+			.Should().BeEquivalentTo(
 				FileSystem.File.ReadAllBytes("foo/bar/test.txt"));
 	}
 
 	public static IEnumerable<object[]> EntryNameEncoding()
 	{
 		// ReSharper disable StringLiteralTypo
-		yield return new object[] { "Dans mes rêves.mp3", Encoding.Default, true };
-		yield return new object[] { "Dans mes rêves.mp3", Encoding.ASCII, false };
+		yield return new object[]
+		{
+			"Dans mes rêves.mp3", Encoding.Default, true
+		};
+		yield return new object[]
+		{
+			"Dans mes rêves.mp3", Encoding.ASCII, false
+		};
 		// ReSharper restore StringLiteralTypo
 	}
 
@@ -179,17 +185,17 @@ public abstract class ZipFileTests<TFileSystem>
 	public void ExtractToDirectory_MissingDestinationDirectory_ShouldCreateDirectory()
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("foo").Initialized(s => s
-			   .WithFile("test.txt"));
+			.WithSubdirectory("foo").Initialized(s => s
+				.WithFile("test.txt"));
 
 		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip");
 
 		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "bar");
 
 		FileSystem.File.Exists("bar/test.txt")
-		   .Should().BeTrue();
+			.Should().BeTrue();
 		FileSystem.File.ReadAllBytes("bar/test.txt")
-		   .Should().BeEquivalentTo(
+			.Should().BeEquivalentTo(
 				FileSystem.File.ReadAllBytes("foo/test.txt"));
 	}
 
@@ -206,8 +212,8 @@ public abstract class ZipFileTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should()
-		   .Contain($"'{FileSystem.Path.GetFullPath(sourceArchiveFileName)}");
+			.Which.Message.Should()
+			.Contain($"'{FileSystem.Path.GetFullPath(sourceArchiveFileName)}");
 	}
 
 	[SkippableFact]
@@ -222,7 +228,7 @@ public abstract class ZipFileTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.ParamName.Should().Be("sourceArchiveFileName");
+			.Which.ParamName.Should().Be("sourceArchiveFileName");
 	}
 
 #if FEATURE_COMPRESSION_OVERWRITE
@@ -232,10 +238,10 @@ public abstract class ZipFileTests<TFileSystem>
 		string contents)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("bar").Initialized(s => s
-			   .WithFile("test.txt"))
-		   .WithSubdirectory("foo").Initialized(s => s
-			   .WithFile("test.txt"));
+			.WithSubdirectory("bar").Initialized(s => s
+				.WithFile("test.txt"))
+			.WithSubdirectory("foo").Initialized(s => s
+				.WithFile("test.txt"));
 		FileSystem.File.WriteAllText(FileSystem.Path.Combine("foo", "test.txt"),
 			contents);
 
@@ -244,9 +250,9 @@ public abstract class ZipFileTests<TFileSystem>
 		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "bar", true);
 
 		FileSystem.File.Exists(FileSystem.Path.Combine("bar", "test.txt"))
-		   .Should().BeTrue();
+			.Should().BeTrue();
 		FileSystem.File.ReadAllText(FileSystem.Path.Combine("bar", "test.txt"))
-		   .Should().Be(contents);
+			.Should().Be(contents);
 	}
 #endif
 
@@ -256,9 +262,9 @@ public abstract class ZipFileTests<TFileSystem>
 		Encoding encoding)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("bar")
-		   .WithSubdirectory("foo").Initialized(s => s
-			   .WithFile("test.txt"));
+			.WithSubdirectory("bar")
+			.WithSubdirectory("foo").Initialized(s => s
+				.WithFile("test.txt"));
 
 		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip",
 			CompressionLevel.Fastest, false, encoding);
@@ -266,9 +272,9 @@ public abstract class ZipFileTests<TFileSystem>
 		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "bar", encoding);
 
 		FileSystem.File.Exists(FileSystem.Path.Combine("bar", "test.txt"))
-		   .Should().BeTrue();
+			.Should().BeTrue();
 		FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("bar", "test.txt"))
-		   .Should().BeEquivalentTo(
+			.Should().BeEquivalentTo(
 				FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("foo", "test.txt")));
 	}
 
@@ -278,10 +284,10 @@ public abstract class ZipFileTests<TFileSystem>
 		string contents)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("bar").Initialized(s => s
-			   .WithFile("test.txt"))
-		   .WithSubdirectory("foo").Initialized(s => s
-			   .WithFile("test.txt"));
+			.WithSubdirectory("bar").Initialized(s => s
+				.WithFile("test.txt"))
+			.WithSubdirectory("foo").Initialized(s => s
+				.WithFile("test.txt"));
 		FileSystem.File.WriteAllText(FileSystem.Path.Combine("foo", "test.txt"),
 			contents);
 		string destinationPath =
@@ -295,9 +301,9 @@ public abstract class ZipFileTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<IOException>()
-		   .Which.Message.Should().Contain($"'{destinationPath}'");
+			.Which.Message.Should().Contain($"'{destinationPath}'");
 		FileSystem.File.ReadAllText(destinationPath)
-		   .Should().NotBe(contents);
+			.Should().NotBe(contents);
 	}
 
 	[SkippableFact]

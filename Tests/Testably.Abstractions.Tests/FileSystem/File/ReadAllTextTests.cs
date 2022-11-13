@@ -1,4 +1,5 @@
 using AutoFixture;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -49,11 +50,14 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 			FileSystem.File.ReadAllText(path);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should()
-		   .Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+		exception.Should()
+			.BeOfType<FileNotFoundException>()
+			.Which.HResult.Should()
+			.Be(-2147024894);
+		exception.Should()
+			.BeOfType<FileNotFoundException>()
+			.Which.Message.Should()
+			.Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
 	[SkippableTheory]
@@ -79,15 +83,32 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance())
+				.And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastAccessTime.Should()
-		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		lastWriteTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance())
+			.And
+			.BeOnOrBefore(creationTimeEnd);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void ReadAllText_ShouldTolerateAltDirectorySeparatorChar(
+		string contents, string directory, string fileName)
+	{
+		FileSystem.Directory.CreateDirectory(directory);
+		string filePath = $"{directory}{FileSystem.Path.DirectorySeparatorChar}{fileName}";
+		string altFilePath = $"{directory}{FileSystem.Path.AltDirectorySeparatorChar}{fileName}";
+		FileSystem.File.WriteAllText(filePath, contents);
+
+		string result = FileSystem.File.ReadAllText(altFilePath);
+
+		result.Should().Be(contents);
 	}
 
 	[SkippableTheory]
@@ -100,8 +121,24 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 
 		string result = FileSystem.File.ReadAllText(path, readEncoding);
 
-		result.Should().NotBe(contents,
-			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
+		result.Should()
+			.NotBe(contents,
+				$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
+	}
+
+	[SkippableTheory]
+	[MemberData(nameof(GetEncodingsForReadAllText))]
+	public void ReadAllText_WithoutReadEncoding_ShouldReturnWrittenText(
+		Encoding writeEncoding)
+	{
+		string contents = Guid.NewGuid().ToString();
+		string path = new Fixture().Create<string>();
+		FileSystem.File.WriteAllText(path, contents, writeEncoding);
+
+		string result = FileSystem.File.ReadAllText(path);
+
+		result.Should().Be(contents,
+			$"{contents} should not be different when no read encoding is used for write encoding: {writeEncoding}.");
 	}
 
 	[SkippableTheory]
@@ -118,4 +155,32 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 
 		exception.Should().NotBeNull();
 	}
+
+	#region Helpers
+
+	public static IEnumerable<object?[]> GetEncodingsForReadAllText()
+	{
+		// little endian
+		yield return new object?[]
+		{
+			new UTF32Encoding(false, true, true)
+		};
+
+		// big endian
+		yield return new object?[]
+		{
+			new UTF32Encoding(true, true, true)
+		};
+		yield return new object?[]
+		{
+			new UTF8Encoding(true, true)
+		};
+
+		yield return new object?[]
+		{
+			new ASCIIEncoding()
+		};
+	}
+
+	#endregion
 }

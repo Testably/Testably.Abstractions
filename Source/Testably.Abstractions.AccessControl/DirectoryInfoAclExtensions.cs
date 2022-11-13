@@ -12,7 +12,7 @@ public static class DirectoryInfoAclExtensions
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.Create(DirectoryInfo, DirectorySecurity)" />
 	[SupportedOSPlatform("windows")]
 	public static void Create(this IDirectoryInfo directoryInfo,
-	                          DirectorySecurity directorySecurity)
+		DirectorySecurity directorySecurity)
 	{
 		IFileSystemExtensionContainer extensionContainer =
 			directoryInfo.ExtensionContainer;
@@ -58,7 +58,7 @@ public static class DirectoryInfoAclExtensions
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.SetAccessControl(DirectoryInfo, DirectorySecurity)" />
 	[SupportedOSPlatform("windows")]
 	public static void SetAccessControl(this IDirectoryInfo directoryInfo,
-	                                    DirectorySecurity directorySecurity)
+		DirectorySecurity directorySecurity)
 	{
 		IFileSystemExtensionContainer extensionContainer =
 			directoryInfo.ExtensionContainer;

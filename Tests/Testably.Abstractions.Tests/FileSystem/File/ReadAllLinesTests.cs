@@ -29,11 +29,9 @@ public abstract partial class ReadAllLinesTests<TFileSystem>
 			_ = FileSystem.File.ReadAllLines(path);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should()
-		   .Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+		exception.Should().BeException<FileNotFoundException>(
+			$"'{FileSystem.Path.GetFullPath(path)}'",
+			hResult: -2147024894);
 	}
 
 	[SkippableTheory]
@@ -46,6 +44,24 @@ public abstract partial class ReadAllLinesTests<TFileSystem>
 		string[] results = FileSystem.File.ReadAllLines(path);
 
 		results.Should().BeEquivalentTo(lines, o => o.WithStrictOrdering());
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void ReadAllLines_ShouldNotReturnByteOrderMark(string path, string content)
+	{
+		FileSystem.File.WriteAllLines(path, new[]
+		{
+			content
+		}, Encoding.UTF32);
+
+		string[] result = FileSystem.File.ReadAllLines(path, Encoding.UTF32);
+
+		//Ensure that the file contains the BOM-Bytes
+		FileSystem.File.ReadAllBytes(path).Length
+			.Should().BeGreaterThan(content.Length);
+		result.Length.Should().Be(1);
+		result[0].Should().Be(content);
 	}
 
 	[SkippableTheory]

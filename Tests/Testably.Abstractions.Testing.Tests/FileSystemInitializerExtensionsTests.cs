@@ -48,7 +48,7 @@ public class FileSystemInitializerExtensionsTests
 		});
 
 		exception.Should().BeOfType<TestingException>()
-		   .Which.Message.Should().Contain(fileName);
+			.Which.Message.Should().Contain(fileName);
 	}
 
 	[Theory]
@@ -58,8 +58,8 @@ public class FileSystemInitializerExtensionsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize()
-		   .WithFile(fileName).Which(f => f
-			   .HasBytesContent(fileContent));
+			.WithFile(fileName).Which(f => f
+				.HasBytesContent(fileContent));
 
 		byte[] result = sut.File.ReadAllBytes(fileName);
 
@@ -73,8 +73,8 @@ public class FileSystemInitializerExtensionsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize()
-		   .WithFile(fileName).Which(f => f
-			   .HasStringContent(fileContent));
+			.WithFile(fileName).Which(f => f
+				.HasStringContent(fileContent));
 
 		string result = sut.File.ReadAllText(fileName);
 
@@ -96,12 +96,12 @@ public class FileSystemInitializerExtensionsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize()
-		   .WithSubdirectory("foo").Initialized(d => d
-			   .WithSubdirectory("bar").Initialized(s => s
-				   .WithSubdirectory("xyz")));
+			.WithSubdirectory("foo").Initialized(d => d
+				.WithSubdirectory("bar").Initialized(s => s
+					.WithSubdirectory("xyz")));
 
 		List<string> result = sut.Directory
-		   .EnumerateDirectories(".", "*", SearchOption.AllDirectories).ToList();
+			.EnumerateDirectories(".", "*", SearchOption.AllDirectories).ToList();
 
 		result.Count.Should().Be(3);
 		result.Should().Contain(sut.Path.Combine(".", "foo"));
@@ -122,7 +122,7 @@ public class FileSystemInitializerExtensionsTests
 		});
 
 		exception.Should().BeOfType<TestingException>()
-		   .Which.Message.Should().Contain(directoryName);
+			.Which.Message.Should().Contain(directoryName);
 	}
 
 	[Theory]

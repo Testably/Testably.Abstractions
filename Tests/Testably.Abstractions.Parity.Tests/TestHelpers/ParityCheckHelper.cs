@@ -6,14 +6,14 @@ namespace Testably.Abstractions.Parity.Tests.TestHelpers;
 internal static class ParityCheckHelper
 {
 	public static bool ContainsEquivalentExtensionMethod(this Type abstractionType,
-	                                                     MethodInfo systemMethod)
+		MethodInfo systemMethod)
 	{
 		foreach (MethodInfo abstractionMethod in abstractionType
-		   .GetMethods(
+			.GetMethods(
 				BindingFlags.Public |
 				BindingFlags.Instance |
 				BindingFlags.FlattenHierarchy)
-		   .Where(x => x.Name == systemMethod.Name))
+			.Where(x => x.Name == systemMethod.Name))
 		{
 			if (AreExtensionMethodsEqual(systemMethod, abstractionMethod))
 			{
@@ -33,14 +33,14 @@ internal static class ParityCheckHelper
 	}
 
 	public static bool ContainsEquivalentMethod(this Type abstractionType,
-	                                            MethodInfo systemMethod)
+		MethodInfo systemMethod)
 	{
 		foreach (MethodInfo abstractionMethod in abstractionType
-		   .GetMethods(
+			.GetMethods(
 				BindingFlags.Public |
 				BindingFlags.Instance |
 				BindingFlags.FlattenHierarchy)
-		   .Where(x => x.Name == systemMethod.Name))
+			.Where(x => x.Name == systemMethod.Name))
 		{
 			if (AreMethodsEqual(systemMethod, abstractionMethod))
 			{
@@ -60,14 +60,14 @@ internal static class ParityCheckHelper
 	}
 
 	public static bool ContainsEquivalentMethod(this Type abstractionType,
-	                                            ConstructorInfo systemConstructor)
+		ConstructorInfo systemConstructor)
 	{
 		foreach (MethodInfo abstractionMethod in abstractionType
-		   .GetMethods(
+			.GetMethods(
 				BindingFlags.Public |
 				BindingFlags.Instance |
 				BindingFlags.FlattenHierarchy)
-		   .Where(x => x.Name == "New"))
+			.Where(x => x.Name == "New"))
 		{
 			if (AreMethodsEqual(systemConstructor, abstractionMethod))
 			{
@@ -79,14 +79,14 @@ internal static class ParityCheckHelper
 	}
 
 	public static bool ContainsEquivalentProperty(this Type abstractionType,
-	                                              PropertyInfo systemProperty)
+		PropertyInfo systemProperty)
 	{
 		foreach (PropertyInfo abstractionProperty in abstractionType
-		   .GetProperties(
+			.GetProperties(
 				BindingFlags.Public |
 				BindingFlags.Instance |
 				BindingFlags.FlattenHierarchy)
-		   .Where(x => x.Name == systemProperty.Name))
+			.Where(x => x.Name == systemProperty.Name))
 		{
 			if (ArePropertiesEqual(systemProperty, abstractionProperty))
 			{
@@ -106,14 +106,14 @@ internal static class ParityCheckHelper
 	}
 
 	public static bool ContainsEquivalentProperty(this Type abstractionType,
-	                                              FieldInfo systemField)
+		FieldInfo systemField)
 	{
 		foreach (PropertyInfo abstractionProperty in abstractionType
-		   .GetProperties(
+			.GetProperties(
 				BindingFlags.Public |
 				BindingFlags.Instance |
 				BindingFlags.FlattenHierarchy)
-		   .Where(x => x.Name == systemField.Name))
+			.Where(x => x.Name == systemField.Name))
 		{
 			if (ArePropertiesEqual(systemField, abstractionProperty))
 			{
@@ -145,7 +145,7 @@ internal static class ParityCheckHelper
 	}
 
 	public static string PrintMethod(this MethodInfo method, string namePrefix = "",
-	                                 string firstParameterPrefix = "")
+		string firstParameterPrefix = "")
 	{
 		return
 			$"{method.ReturnType.PrintType()} {namePrefix}{method.Name}({firstParameterPrefix}{string.Join(", ", method.GetParameters().Select(x => x.ParameterType.PrintType() + " " + x.Name))})";
@@ -180,7 +180,7 @@ internal static class ParityCheckHelper
 	}
 
 	internal static bool IsTypeNameEqual(string? systemTypeName,
-	                                     string? abstractionTypeName)
+		string? abstractionTypeName)
 	{
 		if (abstractionTypeName == null)
 		{
@@ -196,7 +196,7 @@ internal static class ParityCheckHelper
 	}
 
 	private static bool AreExtensionMethodsEqual(MethodInfo systemMethod,
-	                                             MethodInfo abstractionMethod)
+		MethodInfo abstractionMethod)
 	{
 		ParameterInfo[] systemParameters = systemMethod.GetParameters();
 		ParameterInfo[] abstractionParameters = abstractionMethod.GetParameters();
@@ -236,7 +236,7 @@ internal static class ParityCheckHelper
 	}
 
 	private static bool AreMethodsEqual(MethodInfo systemMethod,
-	                                    MethodInfo abstractionMethod)
+		MethodInfo abstractionMethod)
 	{
 		ParameterInfo[] systemParameters = systemMethod.GetParameters();
 		ParameterInfo[] abstractionParameters = abstractionMethod.GetParameters();
@@ -275,7 +275,7 @@ internal static class ParityCheckHelper
 	}
 
 	private static bool AreMethodsEqual(ConstructorInfo systemConstructor,
-	                                    MethodInfo abstractionMethod)
+		MethodInfo abstractionMethod)
 	{
 		ParameterInfo[] systemParameters = systemConstructor.GetParameters();
 		ParameterInfo[] abstractionParameters = abstractionMethod.GetParameters();
@@ -315,7 +315,7 @@ internal static class ParityCheckHelper
 	}
 
 	private static bool ArePropertiesEqual(FieldInfo systemField,
-	                                       PropertyInfo abstractionProperty)
+		PropertyInfo abstractionProperty)
 	{
 		if (!IsTypeNameEqual(systemField.FieldType.Name,
 			abstractionProperty.PropertyType.Name))
@@ -337,7 +337,7 @@ internal static class ParityCheckHelper
 	}
 
 	private static bool ArePropertiesEqual(PropertyInfo systemProperty,
-	                                       PropertyInfo abstractionProperty)
+		PropertyInfo abstractionProperty)
 	{
 		if (!IsTypeNameEqual(systemProperty.PropertyType.Name,
 			abstractionProperty.PropertyType.Name))
@@ -347,7 +347,7 @@ internal static class ParityCheckHelper
 
 		bool canRead = systemProperty.CanRead &&
 		               systemProperty.GetMethod?.Attributes
-			              .HasFlag(MethodAttributes.Private) == false;
+			               .HasFlag(MethodAttributes.Private) == false;
 		if (canRead != abstractionProperty.CanRead)
 		{
 			return false;
@@ -355,7 +355,7 @@ internal static class ParityCheckHelper
 
 		bool canWrite = systemProperty.CanWrite &&
 		                systemProperty.SetMethod?.Attributes
-			               .HasFlag(MethodAttributes.Private) == false;
+			                .HasFlag(MethodAttributes.Private) == false;
 		if (canWrite != abstractionProperty.CanWrite)
 		{
 			return false;

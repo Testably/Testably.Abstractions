@@ -106,7 +106,8 @@ public sealed class MockFileSystem : IFileSystem
 	/// <summary>
 	///     Implements a custom access control (ACL) mechanism.
 	///     <para />
-	///     The <see cref="IAccessControlStrategy"/> defines a method that receives two values and allows or denies access:<br />
+	///     The <see cref="IAccessControlStrategy" /> defines a method that receives two values and allows or denies access:
+	///     <br />
 	///     - The full path of the file or directory as first parameter<br />
 	///     - The <see cref="IFileSystemExtensionContainer" /> as second parameter
 	/// </summary>
@@ -122,7 +123,7 @@ public sealed class MockFileSystem : IFileSystem
 	///     If the <paramref name="drive" /> does not exist, it will be created/mounted.
 	/// </summary>
 	public MockFileSystem WithDrive(string? drive,
-	                                Action<IStorageDrive>? driveCallback = null)
+		Action<IStorageDrive>? driveCallback = null)
 	{
 		IStorageDrive driveInfoMock =
 			drive == null

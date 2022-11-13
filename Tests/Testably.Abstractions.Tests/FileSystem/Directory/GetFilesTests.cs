@@ -21,10 +21,8 @@ public abstract partial class GetFilesTests<TFileSystem>
 			Record.Exception(()
 				=> FileSystem.Directory.GetFiles(path).ToList());
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.Message.Should().Contain($"'{expectedPath}'.");
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
+		exception.Should().BeException<DirectoryNotFoundException>($"'{expectedPath}'.",
+			hResult: -2147024893);
 		FileSystem.Directory.Exists(path).Should().BeFalse();
 	}
 
@@ -36,14 +34,14 @@ public abstract partial class GetFilesTests<TFileSystem>
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.InitializeIn(path)
-			   .WithAFile()
-			   .WithASubdirectory().Initialized(s => s
-				   .WithAFile());
+				.WithAFile()
+				.WithASubdirectory().Initialized(s => s
+					.WithAFile());
 
 		List<string> result = FileSystem.Directory
-		   .GetFiles(FileSystem.Directory.GetCurrentDirectory(),
+			.GetFiles(FileSystem.Directory.GetCurrentDirectory(),
 				"*", SearchOption.AllDirectories)
-		   .ToList();
+			.ToList();
 
 		result.Count.Should().Be(2);
 		result.Should().Contain(initialized[0].FullName);
@@ -57,13 +55,13 @@ public abstract partial class GetFilesTests<TFileSystem>
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.InitializeIn(path)
-			   .WithAFile()
-			   .WithASubdirectory().Initialized(s => s
-				   .WithAFile());
+				.WithAFile()
+				.WithASubdirectory().Initialized(s => s
+					.WithAFile());
 
 		List<string> result = FileSystem.Directory
-		   .GetFiles(".", "*", SearchOption.AllDirectories)
-		   .ToList();
+			.GetFiles(".", "*", SearchOption.AllDirectories)
+			.ToList();
 
 		result.Count.Should().Be(2);
 		result.Should().Contain(initialized[0].ToString());
@@ -90,7 +88,7 @@ public abstract partial class GetFilesTests<TFileSystem>
 		FileSystem.Initialize().WithFile(fileName);
 
 		List<string> result = FileSystem.Directory
-		   .GetFiles(".", searchPattern).ToList();
+			.GetFiles(".", searchPattern).ToList();
 
 		if (expectToBeFound)
 		{
@@ -101,7 +99,7 @@ public abstract partial class GetFilesTests<TFileSystem>
 		else
 		{
 			result.Should()
-			   .BeEmpty($"{fileName} should not match {searchPattern}");
+				.BeEmpty($"{fileName} should not match {searchPattern}");
 		}
 	}
 
@@ -114,12 +112,12 @@ public abstract partial class GetFilesTests<TFileSystem>
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.InitializeIn(path)
-			   .WithAFile()
-			   .WithASubdirectory().Initialized(s => s
-				   .WithAFile());
+				.WithAFile()
+				.WithASubdirectory().Initialized(s => s
+					.WithAFile());
 
 		List<string> result = FileSystem.Directory
-		   .GetFiles(".",
+			.GetFiles(".",
 				initialized[2].Name.ToUpper(),
 				new EnumerationOptions
 				{
@@ -145,18 +143,12 @@ public abstract partial class GetFilesTests<TFileSystem>
 		Exception? exception = Record.Exception(() =>
 		{
 			_ = FileSystem.Directory.GetFiles(path, searchPattern)
-			   .FirstOrDefault();
+				.FirstOrDefault();
 		});
 
-#if NETFRAMEWORK
-		// The searchPattern is not included in .NET Framework
-		exception.Should().BeOfType<ArgumentException>();
-#else
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.Message.Should().Contain($"'{searchPattern}'");
-#endif
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeException<ArgumentException>(hResult: -2147024809,
+			// The searchPattern is not included in .NET Framework
+			messageContains: Test.IsNetFramework ? null : $"'{searchPattern}'");
 	}
 
 	[SkippableTheory]
@@ -167,14 +159,14 @@ public abstract partial class GetFilesTests<TFileSystem>
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.InitializeIn(path)
-			   .WithAFile()
-			   .WithAFile()
-			   .WithASubdirectory().Initialized(s => s
-				   .WithAFile());
+				.WithAFile()
+				.WithAFile()
+				.WithASubdirectory().Initialized(s => s
+					.WithAFile());
 
 		List<string> result = FileSystem.Directory
-		   .GetFiles(".")
-		   .ToList();
+			.GetFiles(".")
+			.ToList();
 
 		result.Count.Should().Be(2);
 		result.Should().Contain(initialized[0].ToString());
@@ -189,14 +181,14 @@ public abstract partial class GetFilesTests<TFileSystem>
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.InitializeIn(path)
-			   .WithAFile()
-			   .WithAFile()
-			   .WithASubdirectory().Initialized(s => s
-				   .WithAFile());
+				.WithAFile()
+				.WithAFile()
+				.WithASubdirectory().Initialized(s => s
+					.WithAFile());
 
 		List<string> result = FileSystem.Directory
-		   .GetFiles(".", initialized[0].Name)
-		   .ToList();
+			.GetFiles(".", initialized[0].Name)
+			.ToList();
 
 		result.Count.Should().Be(1);
 		result.Should().Contain(initialized[0].ToString());
@@ -210,16 +202,16 @@ public abstract partial class GetFilesTests<TFileSystem>
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
-			   .WithASubdirectory().Initialized(s => s
-				   .WithAFile("foobar"))
-			   .WithASubdirectory().Initialized(s => s
-				   .WithAFile("foobar"))
-			   .WithASubdirectory().Initialized(s => s
-				   .WithAFile());
+				.WithASubdirectory().Initialized(s => s
+					.WithAFile("foobar"))
+				.WithASubdirectory().Initialized(s => s
+					.WithAFile("foobar"))
+				.WithASubdirectory().Initialized(s => s
+					.WithAFile());
 
 		IEnumerable<string> result = FileSystem.Directory
-		   .GetFiles(".", "*.foobar", SearchOption.AllDirectories)
-		   .ToArray();
+			.GetFiles(".", "*.foobar", SearchOption.AllDirectories)
+			.ToArray();
 
 		result.Count().Should().Be(2);
 		result.Should().Contain(initialized[1].ToString());

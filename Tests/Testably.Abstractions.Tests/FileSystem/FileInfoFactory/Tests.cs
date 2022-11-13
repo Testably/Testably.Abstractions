@@ -8,34 +8,10 @@ public abstract partial class Tests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	[SkippableFact]
-	public void New_EmptyString_ShouldThrowArgumentException()
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			_ = FileSystem.FileInfo.New(string.Empty);
-		});
-
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
-	}
-
-	[SkippableFact]
-	public void New_Null_ShouldThrowArgumentNullException()
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			_ = FileSystem.FileInfo.New(null!);
-		});
-
-		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
-	}
-
 	[SkippableTheory]
 	[InlineData(259)]
 	[InlineData(260)]
-	public void New_PathTooLong_ShouldThrowPathTooLongExceptionOnNetFramework(
+	public void New_PathTooLong_ShouldThrowPathTooLongException_OnNetFramework(
 		int maxLength)
 	{
 		string rootDrive = FileTestHelper.RootDrive();
@@ -47,8 +23,7 @@ public abstract partial class Tests<TFileSystem>
 
 		if (Test.IsNetFramework)
 		{
-			exception.Should().BeOfType<PathTooLongException>()
-			   .Which.HResult.Should().Be(-2147024690);
+			exception.Should().BeException<PathTooLongException>(hResult: -2147024690);
 		}
 		else
 		{
