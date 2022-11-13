@@ -921,17 +921,17 @@ internal sealed class FileMock : IFile
 	{
 		path.EnsureValidFormat(FileSystem);
 		IStorageLocation location = _fileSystem.Storage.GetLocation(path);
-		switch (exceptionMode)
+		if (exceptionMode == ExceptionMode.FileNotFoundExceptionOnLinuxAndMac)
 		{
-			case ExceptionMode.FileNotFoundExceptionOnLinuxAndMac:
-				Execute.OnWindows(
-					() => location.ThrowExceptionIfNotFound(_fileSystem),
-					() => location.ThrowExceptionIfNotFound(_fileSystem,
-						onDirectoryNotFound: ExceptionFactory.FileNotFound));
-				break;
-			case ExceptionMode.Default:
-				location.ThrowExceptionIfNotFound(_fileSystem);
-				break;
+			Execute.OnWindows(
+				() => location.ThrowExceptionIfNotFound(_fileSystem),
+				() => location.ThrowExceptionIfNotFound(_fileSystem,
+					onDirectoryNotFound: ExceptionFactory.FileNotFound));
+		}
+
+		if (exceptionMode == ExceptionMode.Default)
+		{
+			location.ThrowExceptionIfNotFound(_fileSystem);
 		}
 
 		return _fileSystem.Storage.GetContainer(location);

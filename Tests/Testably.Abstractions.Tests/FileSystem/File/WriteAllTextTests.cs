@@ -139,6 +139,19 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void WriteAllText_WhenContentIsNull_ShouldNotThrowException(
+		string path, string contents)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.WriteAllText(path, null);
+		});
+
+		exception.Should().BeNull();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void WriteAllText_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 		string path, string contents)
 	{

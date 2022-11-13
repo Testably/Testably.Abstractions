@@ -94,6 +94,19 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public async Task WriteAllText_WhenContentIsNull_ShouldNotThrowException(
+		string path, string contents)
+	{
+		Exception? exception = await Record.ExceptionAsync(async () =>
+		{
+			await FileSystem.File.WriteAllTextAsync(path, null);
+		});
+
+		exception.Should().BeNull();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public async Task
 		WriteAllTextAsync_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 			string path, string contents)
