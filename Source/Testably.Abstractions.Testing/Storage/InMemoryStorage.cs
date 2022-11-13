@@ -43,8 +43,8 @@ internal sealed class InMemoryStorage : IStorage
 
 	/// <inheritdoc cref="IStorage.Copy(IStorageLocation, IStorageLocation, bool)" />
 	public IStorageLocation? Copy(IStorageLocation source,
-	                              IStorageLocation destination,
-	                              bool overwrite = false)
+		IStorageLocation destination,
+		bool overwrite = false)
 	{
 		ThrowIfParentDoesNotExist(destination, _ => ExceptionFactory.DirectoryNotFound());
 
@@ -179,14 +179,14 @@ internal sealed class InMemoryStorage : IStorage
 		}
 
 		foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers
-		   .Where(x => x.Key.FullPath.StartsWith(fullPath,
-			               InMemoryLocation.StringComparisonMode) &&
-		               !x.Key.Equals(location)))
+			.Where(x => x.Key.FullPath.StartsWith(fullPath,
+				            InMemoryLocation.StringComparisonMode) &&
+			            !x.Key.Equals(location)))
 		{
 			string? parentPath =
 				_fileSystem.Path.GetDirectoryName(
 					item.Key.FullPath.TrimEnd(_fileSystem.Path
-					   .DirectorySeparatorChar));
+						.DirectorySeparatorChar));
 			if (!enumerationOptions.RecurseSubdirectories &&
 			    parentPath?.Equals(location.FullPath,
 				    InMemoryLocation.StringComparisonMode) != true)
@@ -294,7 +294,7 @@ internal sealed class InMemoryStorage : IStorage
 				IStorageContainer container =
 					containerGenerator.Invoke(loc, _fileSystem);
 				(fileSystemExtensionContainer as FileSystemExtensionContainer)?
-				   .CopyMetadataTo(container.ExtensionContainer);
+					.CopyMetadataTo(container.ExtensionContainer);
 				if (container.Type == FileSystemTypes.Directory)
 				{
 					CreateParents(_fileSystem, loc);
@@ -328,9 +328,9 @@ internal sealed class InMemoryStorage : IStorage
 
 	/// <inheritdoc cref="IStorage.Move(IStorageLocation, IStorageLocation, bool, bool)" />
 	public IStorageLocation? Move(IStorageLocation source,
-	                              IStorageLocation destination,
-	                              bool overwrite = false,
-	                              bool recursive = false)
+		IStorageLocation destination,
+		bool overwrite = false,
+		bool recursive = false)
 	{
 		ThrowIfParentDoesNotExist(destination, _ => ExceptionFactory.DirectoryNotFound());
 
@@ -353,9 +353,9 @@ internal sealed class InMemoryStorage : IStorage
 
 	/// <inheritdoc cref="IStorage.Replace(IStorageLocation, IStorageLocation, IStorageLocation?, bool)" />
 	public IStorageLocation? Replace(IStorageLocation source,
-	                                 IStorageLocation destination,
-	                                 IStorageLocation? backup,
-	                                 bool ignoreMetadataErrors = false)
+		IStorageLocation destination,
+		IStorageLocation? backup,
+		bool ignoreMetadataErrors = false)
 	{
 		ThrowIfParentDoesNotExist(destination, location => Execute.OnWindows<IOException>(
 			() => ExceptionFactory.DirectoryNotFound(location.FullPath),
@@ -428,7 +428,7 @@ internal sealed class InMemoryStorage : IStorage
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IStorage.ResolveLinkTarget(IStorageLocation, bool)" />
 	public IStorageLocation? ResolveLinkTarget(IStorageLocation location,
-	                                           bool returnFinalTarget = false)
+		bool returnFinalTarget = false)
 	{
 		if (_containers.TryGetValue(location,
 			    out IStorageContainer? initialContainer) &&
@@ -462,13 +462,14 @@ internal sealed class InMemoryStorage : IStorage
 		Func<IStorageLocation, MockFileSystem, IStorageContainer> containerGenerator,
 		[NotNullWhen(true)] out IStorageContainer? container)
 	{
-		var parentLocation = location.GetParent();
+		IStorageLocation? parentLocation = location.GetParent();
 		if (parentLocation != null &&
 		    !parentLocation.IsRooted &&
 		    !_containers.ContainsKey(parentLocation))
 		{
 			throw ExceptionFactory.DirectoryNotFound(location.FullPath);
 		}
+
 		ChangeDescription? fileSystemChange = null;
 
 		container = _containers.GetOrAdd(
@@ -590,11 +591,11 @@ internal sealed class InMemoryStorage : IStorage
 	}
 
 	private IStorageLocation? MoveInternal(IStorageLocation source,
-	                                       IStorageLocation destination,
-	                                       bool overwrite,
-	                                       bool recursive,
-	                                       FileSystemTypes? sourceType,
-	                                       List<Rollback>? rollbacks = null)
+		IStorageLocation destination,
+		bool overwrite,
+		bool recursive,
+		FileSystemTypes? sourceType,
+		List<Rollback>? rollbacks = null)
 	{
 		if (!_containers.TryGetValue(source,
 			out IStorageContainer? container))
@@ -628,7 +629,7 @@ internal sealed class InMemoryStorage : IStorage
 				foreach (IStorageLocation child in children)
 				{
 					IStorageLocation childDestination = _fileSystem
-					   .GetMoveLocation(child, source, destination);
+						.GetMoveLocation(child, source, destination);
 					MoveInternal(child, childDestination, overwrite, recursive,
 						sourceType,
 						rollbacks: rollbacks);
@@ -679,7 +680,7 @@ internal sealed class InMemoryStorage : IStorage
 
 #if FEATURE_FILESYSTEM_LINK
 	private IStorageLocation? ResolveFinalLinkTarget(IStorageContainer container,
-	                                                 IStorageLocation originalLocation)
+		IStorageLocation originalLocation)
 	{
 		int maxResolveLinks = Execute.IsWindows ? 63 : 40;
 		IStorageLocation? nextLocation = null;
@@ -711,8 +712,8 @@ internal sealed class InMemoryStorage : IStorage
 #endif
 
 	private void ThrowIfParentDoesNotExist(IStorageLocation location,
-	                                       Func<IStorageLocation, IOException>
-		                                       exceptionCallback)
+		Func<IStorageLocation, IOException>
+			exceptionCallback)
 	{
 		IStorageLocation? parentLocation = location.GetParent();
 		if (parentLocation != null &&

@@ -328,7 +328,7 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				token,
 				TaskCreationOptions.LongRunning,
 				TaskScheduler.Default)
-		   .ContinueWith(_ =>
+			.ContinueWith(_ =>
 			{
 				cancellationTokenSource.Dispose();
 			}, TaskScheduler.Default);
@@ -433,7 +433,7 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			name,
 			oldName);
 		return System.IO.Path.GetDirectoryName(changeDescription.Path)?
-		   .Equals(System.IO.Path.GetDirectoryName(changeDescription.OldPath),
+			.Equals(System.IO.Path.GetDirectoryName(changeDescription.OldPath),
 				InMemoryLocation.StringComparisonMode) ?? true;
 	}
 

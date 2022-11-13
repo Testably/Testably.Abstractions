@@ -119,7 +119,7 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 			string localBasePath = _fileSystem.Path.Combine(
 				_fileSystem.Path.GetTempPath(),
 				_fileSystem.Path.GetFileNameWithoutExtension(_fileSystem.Path
-				   .GetRandomFileName()));
+					.GetRandomFileName()));
 			Execute.OnMac(() => localBasePath = "/private" + localBasePath);
 			basePath = localBasePath;
 		} while (_fileSystem.Directory.Exists(basePath));

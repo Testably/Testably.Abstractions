@@ -27,13 +27,13 @@ public interface IZipArchive : IFileSystemExtensionPoint, IDisposable
 
 	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.CreateEntryFromFile(ZipArchive, string, string)" />
 	IZipArchiveEntry CreateEntryFromFile(string sourceFileName,
-	                                     string entryName);
+		string entryName);
 
 	/// <inheritdoc
 	///     cref="System.IO.Compression.ZipFileExtensions.CreateEntryFromFile(ZipArchive, string, string, CompressionLevel)" />
 	IZipArchiveEntry CreateEntryFromFile(string sourceFileName,
-	                                     string entryName,
-	                                     CompressionLevel compressionLevel);
+		string entryName,
+		CompressionLevel compressionLevel);
 
 	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToDirectory(ZipArchive, string)" />
 	void ExtractToDirectory(string destinationDirectoryName);
@@ -41,7 +41,7 @@ public interface IZipArchive : IFileSystemExtensionPoint, IDisposable
 #if FEATURE_COMPRESSION_ADVANCED
 	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToDirectory(ZipArchive, string, bool)" />
 	void ExtractToDirectory(string destinationDirectoryName,
-	                        bool overwriteFiles);
+		bool overwriteFiles);
 #endif
 
 	/// <inheritdoc cref="ZipArchive.GetEntry(string)" />

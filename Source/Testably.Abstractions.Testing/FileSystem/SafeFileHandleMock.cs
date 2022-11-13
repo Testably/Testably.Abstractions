@@ -28,8 +28,8 @@ public class SafeFileHandleMock
 	///     <see cref="SafeFileHandle" />.
 	/// </summary>
 	public SafeFileHandleMock(string path,
-	                          FileMode mode = FileMode.Open,
-	                          FileShare share = FileShare.None)
+		FileMode mode = FileMode.Open,
+		FileShare share = FileShare.None)
 	{
 		Path = path;
 		Mode = mode;

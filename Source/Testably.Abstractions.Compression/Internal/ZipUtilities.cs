@@ -53,11 +53,11 @@ internal static class ZipUtilities
 	///         href="https://github.com/dotnet/runtime/blob/v6.0.10/src/libraries/System.IO.Compression.ZipFile/src/System/IO/Compression/ZipFile.Create.cs#L354" />
 	/// </remarks>
 	internal static void CreateFromDirectory(IFileSystem fileSystem,
-	                                         string sourceDirectoryName,
-	                                         string destinationArchiveFileName,
-	                                         CompressionLevel? compressionLevel = null,
-	                                         bool includeBaseDirectory = false,
-	                                         Encoding? entryNameEncoding = null)
+		string sourceDirectoryName,
+		string destinationArchiveFileName,
+		CompressionLevel? compressionLevel = null,
+		bool includeBaseDirectory = false,
+		Encoding? entryNameEncoding = null)
 
 	{
 		sourceDirectoryName = fileSystem.Path.GetFullPath(sourceDirectoryName);
@@ -80,15 +80,15 @@ internal static class ZipUtilities
 			}
 
 			foreach (IFileSystemInfo file in di
-			   .EnumerateFileSystemInfos("*", SearchOption.AllDirectories))
+				.EnumerateFileSystemInfos("*", SearchOption.AllDirectories))
 			{
 				directoryIsEmpty = false;
 
 				if (file is IFileInfo fileInfo)
 				{
 					string entryName = file.FullName
-					   .Substring(basePath.Length + 1)
-					   .Replace("\\", "/");
+						.Substring(basePath.Length + 1)
+						.Replace("\\", "/");
 					ZipArchiveEntry entry = compressionLevel.HasValue
 						? archive.CreateEntry(entryName, compressionLevel.Value)
 						: archive.CreateEntry(entryName);
@@ -98,9 +98,9 @@ internal static class ZipUtilities
 				else if (file is IDirectoryInfo directoryInfo &&
 				         directoryInfo.GetFileSystemInfos().Length == 0)
 				{
-#pragma warning disable CA1845
+					#pragma warning disable CA1845
 					string entryName = file.FullName.Substring(basePath.Length + 1) + "/";
-#pragma warning restore CA1845
+					#pragma warning restore CA1845
 					archive.CreateEntry(entryName);
 				}
 			}
@@ -114,8 +114,8 @@ internal static class ZipUtilities
 	}
 
 	internal static void ExtractRelativeToDirectory(this IZipArchiveEntry source,
-	                                                string destinationDirectoryName,
-	                                                bool overwrite)
+		string destinationDirectoryName,
+		bool overwrite)
 	{
 		if (destinationDirectoryName == null)
 		{
@@ -156,10 +156,10 @@ internal static class ZipUtilities
 	///     <paramref name="destinationDirectoryName" />.
 	/// </summary>
 	internal static void ExtractToDirectory(IFileSystem fileSystem,
-	                                        string sourceArchiveFileName,
-	                                        string destinationDirectoryName,
-	                                        Encoding? entryNameEncoding = null,
-	                                        bool overwriteFiles = false)
+		string sourceArchiveFileName,
+		string destinationDirectoryName,
+		Encoding? entryNameEncoding = null,
+		bool overwriteFiles = false)
 	{
 		if (sourceArchiveFileName == null)
 		{
@@ -182,12 +182,12 @@ internal static class ZipUtilities
 	}
 
 	internal static void ExtractToFile(IZipArchiveEntry source,
-	                                   string destinationFileName, bool overwrite)
+		string destinationFileName, bool overwrite)
 	{
 		FileMode mode = overwrite ? FileMode.Create : FileMode.CreateNew;
 
 		using (FileSystemStream fileStream = source.FileSystem.FileStream
-		   .New(destinationFileName, mode, FileAccess.Write, FileShare.None))
+			.New(destinationFileName, mode, FileAccess.Write, FileShare.None))
 		{
 			using (Stream entryStream = source.Open())
 			{
@@ -216,9 +216,9 @@ internal static class ZipUtilities
 	///         href="https://github.com/dotnet/runtime/blob/v6.0.10/src/libraries/System.IO.Compression.ZipFile/src/System/IO/Compression/ZipFile.Create.cs#L146" />
 	/// </remarks>
 	internal static ZipArchive Open(IFileSystem fileSystem,
-	                                string archiveFileName,
-	                                ZipArchiveMode mode,
-	                                Encoding? entryNameEncoding = null)
+		string archiveFileName,
+		ZipArchiveMode mode,
+		Encoding? entryNameEncoding = null)
 	{
 		FileMode fileMode;
 		FileAccess access;

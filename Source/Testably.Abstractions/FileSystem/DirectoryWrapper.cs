@@ -26,9 +26,9 @@ internal sealed class DirectoryWrapper : IDirectory
 	/// <inheritdoc cref="IDirectory.CreateDirectory(string, UnixFileMode)" />
 	public IDirectoryInfo CreateDirectory(string path, UnixFileMode unixCreateMode)
 		=> DirectoryInfoWrapper.FromDirectoryInfo(
-#pragma warning disable CA1416
+			#pragma warning disable CA1416
 			Directory.CreateDirectory(path, unixCreateMode), FileSystem);
-#pragma warning restore CA1416
+	#pragma warning restore CA1416
 #endif
 
 #if FEATURE_FILESYSTEM_LINK
@@ -64,8 +64,8 @@ internal sealed class DirectoryWrapper : IDirectory
 
 	/// <inheritdoc cref="IDirectory.EnumerateDirectories(string, string, SearchOption)" />
 	public IEnumerable<string> EnumerateDirectories(string path,
-	                                                string searchPattern,
-	                                                SearchOption searchOption)
+		string searchPattern,
+		SearchOption searchOption)
 		=> Directory.EnumerateDirectories(
 			path,
 			searchPattern,
@@ -74,9 +74,9 @@ internal sealed class DirectoryWrapper : IDirectory
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.EnumerateDirectories(string, string, EnumerationOptions)" />
 	public IEnumerable<string> EnumerateDirectories(string path,
-	                                                string searchPattern,
-	                                                EnumerationOptions
-		                                                enumerationOptions)
+		string searchPattern,
+		EnumerationOptions
+			enumerationOptions)
 		=> Directory.EnumerateDirectories(path,
 			searchPattern,
 			enumerationOptions);
@@ -92,15 +92,15 @@ internal sealed class DirectoryWrapper : IDirectory
 
 	/// <inheritdoc cref="IDirectory.EnumerateFiles(string, string, SearchOption)" />
 	public IEnumerable<string> EnumerateFiles(string path,
-	                                          string searchPattern,
-	                                          SearchOption searchOption)
+		string searchPattern,
+		SearchOption searchOption)
 		=> Directory.EnumerateFiles(path, searchPattern, searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.EnumerateFiles(string, string, EnumerationOptions)" />
 	public IEnumerable<string> EnumerateFiles(string path,
-	                                          string searchPattern,
-	                                          EnumerationOptions enumerationOptions)
+		string searchPattern,
+		EnumerationOptions enumerationOptions)
 		=> Directory.EnumerateFiles(path, searchPattern,
 			enumerationOptions);
 #endif
@@ -116,8 +116,8 @@ internal sealed class DirectoryWrapper : IDirectory
 
 	/// <inheritdoc cref="IDirectory.EnumerateFileSystemEntries(string, string, SearchOption)" />
 	public IEnumerable<string> EnumerateFileSystemEntries(string path,
-	                                                      string searchPattern,
-	                                                      SearchOption searchOption)
+		string searchPattern,
+		SearchOption searchOption)
 		=> Directory.EnumerateFileSystemEntries(path,
 			searchPattern,
 			searchOption);
@@ -125,9 +125,9 @@ internal sealed class DirectoryWrapper : IDirectory
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.EnumerateFileSystemEntries(string, string, EnumerationOptions)" />
 	public IEnumerable<string> EnumerateFileSystemEntries(string path,
-	                                                      string searchPattern,
-	                                                      EnumerationOptions
-		                                                      enumerationOptions)
+		string searchPattern,
+		EnumerationOptions
+			enumerationOptions)
 		=> Directory.EnumerateFileSystemEntries(path, searchPattern,
 			enumerationOptions);
 #endif
@@ -158,15 +158,15 @@ internal sealed class DirectoryWrapper : IDirectory
 
 	/// <inheritdoc cref="IDirectory.GetDirectories(string, string, SearchOption)" />
 	public string[] GetDirectories(string path,
-	                               string searchPattern,
-	                               SearchOption searchOption)
+		string searchPattern,
+		SearchOption searchOption)
 		=> Directory.GetDirectories(path, searchPattern, searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.GetDirectories(string, string, EnumerationOptions)" />
 	public string[] GetDirectories(string path,
-	                               string searchPattern,
-	                               EnumerationOptions enumerationOptions)
+		string searchPattern,
+		EnumerationOptions enumerationOptions)
 		=> Directory.GetDirectories(path, searchPattern,
 			enumerationOptions);
 #endif
@@ -185,15 +185,15 @@ internal sealed class DirectoryWrapper : IDirectory
 
 	/// <inheritdoc cref="IDirectory.GetFiles(string, string, SearchOption)" />
 	public string[] GetFiles(string path,
-	                         string searchPattern,
-	                         SearchOption searchOption)
+		string searchPattern,
+		SearchOption searchOption)
 		=> Directory.GetFiles(path, searchPattern, searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.GetFiles(string, string, EnumerationOptions)" />
 	public string[] GetFiles(string path,
-	                         string searchPattern,
-	                         EnumerationOptions enumerationOptions)
+		string searchPattern,
+		EnumerationOptions enumerationOptions)
 		=> Directory.GetFiles(path, searchPattern, enumerationOptions);
 #endif
 
@@ -207,8 +207,8 @@ internal sealed class DirectoryWrapper : IDirectory
 
 	/// <inheritdoc cref="IDirectory.GetFileSystemEntries(string, string, SearchOption)" />
 	public string[] GetFileSystemEntries(string path,
-	                                     string searchPattern,
-	                                     SearchOption searchOption)
+		string searchPattern,
+		SearchOption searchOption)
 		=> Directory.GetFileSystemEntries(path,
 			searchPattern,
 			searchOption);
@@ -216,8 +216,8 @@ internal sealed class DirectoryWrapper : IDirectory
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.GetFileSystemEntries(string, string, EnumerationOptions)" />
 	public string[] GetFileSystemEntries(string path,
-	                                     string searchPattern,
-	                                     EnumerationOptions enumerationOptions)
+		string searchPattern,
+		EnumerationOptions enumerationOptions)
 		=> Directory.GetFileSystemEntries(path,
 			searchPattern,
 			enumerationOptions);

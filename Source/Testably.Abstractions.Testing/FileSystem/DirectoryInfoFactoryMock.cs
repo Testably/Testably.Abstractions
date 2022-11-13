@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
@@ -26,7 +25,7 @@ internal sealed class DirectoryInfoFactoryMock : IDirectoryInfoFactory
 	{
 		return DirectoryInfoMock.New(
 			_fileSystem.Storage.GetLocation(path
-			   .EnsureValidArgument(_fileSystem, nameof(path))),
+				.EnsureValidArgument(_fileSystem, nameof(path))),
 			_fileSystem);
 	}
 

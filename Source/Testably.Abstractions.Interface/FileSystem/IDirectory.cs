@@ -42,14 +42,14 @@ public interface IDirectory : IFileSystemExtensionPoint
 
 	/// <inheritdoc cref="Directory.EnumerateDirectories(string, string, SearchOption)" />
 	IEnumerable<string> EnumerateDirectories(string path,
-	                                         string searchPattern,
-	                                         SearchOption searchOption);
+		string searchPattern,
+		SearchOption searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="Directory.EnumerateDirectories(string, string, EnumerationOptions)" />
 	IEnumerable<string> EnumerateDirectories(string path,
-	                                         string searchPattern,
-	                                         EnumerationOptions enumerationOptions);
+		string searchPattern,
+		EnumerationOptions enumerationOptions);
 #endif
 
 	/// <inheritdoc cref="Directory.EnumerateFiles(string)" />
@@ -60,14 +60,14 @@ public interface IDirectory : IFileSystemExtensionPoint
 
 	/// <inheritdoc cref="Directory.EnumerateFiles(string, string, SearchOption)" />
 	IEnumerable<string> EnumerateFiles(string path,
-	                                   string searchPattern,
-	                                   SearchOption searchOption);
+		string searchPattern,
+		SearchOption searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="Directory.EnumerateFiles(string, string, EnumerationOptions)" />
 	IEnumerable<string> EnumerateFiles(string path,
-	                                   string searchPattern,
-	                                   EnumerationOptions enumerationOptions);
+		string searchPattern,
+		EnumerationOptions enumerationOptions);
 #endif
 
 	/// <inheritdoc cref="Directory.EnumerateFileSystemEntries(string)" />
@@ -78,15 +78,15 @@ public interface IDirectory : IFileSystemExtensionPoint
 
 	/// <inheritdoc cref="Directory.EnumerateFileSystemEntries(string, string, SearchOption)" />
 	IEnumerable<string> EnumerateFileSystemEntries(string path,
-	                                               string searchPattern,
-	                                               SearchOption searchOption);
+		string searchPattern,
+		SearchOption searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="Directory.EnumerateFileSystemEntries(string, string, EnumerationOptions)" />
 	IEnumerable<string> EnumerateFileSystemEntries(string path,
-	                                               string searchPattern,
-	                                               EnumerationOptions
-		                                               enumerationOptions);
+		string searchPattern,
+		EnumerationOptions
+			enumerationOptions);
 #endif
 
 	/// <inheritdoc cref="Directory.Exists(string)" />
@@ -109,14 +109,14 @@ public interface IDirectory : IFileSystemExtensionPoint
 
 	/// <inheritdoc cref="Directory.GetDirectories(string, string, SearchOption)" />
 	string[] GetDirectories(string path,
-	                        string searchPattern,
-	                        SearchOption searchOption);
+		string searchPattern,
+		SearchOption searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="Directory.GetDirectories(string, string, EnumerationOptions)" />
 	string[] GetDirectories(string path,
-	                        string searchPattern,
-	                        EnumerationOptions enumerationOptions);
+		string searchPattern,
+		EnumerationOptions enumerationOptions);
 #endif
 
 	/// <inheritdoc cref="Directory.GetDirectoryRoot(string)" />
@@ -130,14 +130,14 @@ public interface IDirectory : IFileSystemExtensionPoint
 
 	/// <inheritdoc cref="Directory.GetFiles(string, string, SearchOption)" />
 	string[] GetFiles(string path,
-	                  string searchPattern,
-	                  SearchOption searchOption);
+		string searchPattern,
+		SearchOption searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="Directory.GetFiles(string, string, EnumerationOptions)" />
 	string[] GetFiles(string path,
-	                  string searchPattern,
-	                  EnumerationOptions enumerationOptions);
+		string searchPattern,
+		EnumerationOptions enumerationOptions);
 #endif
 
 	/// <inheritdoc cref="Directory.GetFileSystemEntries(string)" />
@@ -148,14 +148,14 @@ public interface IDirectory : IFileSystemExtensionPoint
 
 	/// <inheritdoc cref="Directory.GetFileSystemEntries(string, string, SearchOption)" />
 	string[] GetFileSystemEntries(string path,
-	                              string searchPattern,
-	                              SearchOption searchOption);
+		string searchPattern,
+		SearchOption searchOption);
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="Directory.GetFileSystemEntries(string, string, EnumerationOptions)" />
 	string[] GetFileSystemEntries(string path,
-	                              string searchPattern,
-	                              EnumerationOptions enumerationOptions);
+		string searchPattern,
+		EnumerationOptions enumerationOptions);
 #endif
 
 	/// <inheritdoc cref="Directory.GetLastAccessTime(string)" />

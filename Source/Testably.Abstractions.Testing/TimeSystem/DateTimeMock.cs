@@ -9,7 +9,7 @@ internal sealed class DateTimeMock : IDateTime
 	private readonly MockTimeSystem _mockTimeSystem;
 
 	internal DateTimeMock(MockTimeSystem timeSystem,
-	                      NotificationHandler callbackHandler)
+		NotificationHandler callbackHandler)
 	{
 		_mockTimeSystem = timeSystem;
 		_callbackHandler = callbackHandler;

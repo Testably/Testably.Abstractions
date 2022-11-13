@@ -13,7 +13,7 @@ internal static class Execute
 	///     otherwise executes <paramref name="onMockFileSystem" />.
 	/// </summary>
 	public static void WhenRealFileSystem(IFileSystem fileSystem, Action onRealFileSystem,
-	                                      Action onMockFileSystem)
+		Action onMockFileSystem)
 	{
 		if (IsRealFileSystem(fileSystem))
 		{
@@ -30,8 +30,8 @@ internal static class Execute
 	///     otherwise returns the value from  <paramref name="onMockFileSystem" />.
 	/// </summary>
 	public static T WhenRealFileSystem<T>(IFileSystem fileSystem,
-	                                      Func<T> onRealFileSystem,
-	                                      Func<T> onMockFileSystem)
+		Func<T> onRealFileSystem,
+		Func<T> onMockFileSystem)
 		=> IsRealFileSystem(fileSystem)
 			? onRealFileSystem()
 			: onMockFileSystem();

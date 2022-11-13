@@ -54,7 +54,7 @@ public interface IZipArchiveEntry : IFileSystemExtensionPoint
 
 	/// <inheritdoc cref="System.IO.Compression.ZipFileExtensions.ExtractToFile(ZipArchiveEntry, string, bool)" />
 	void ExtractToFile(string destinationFileName,
-	                   bool overwrite);
+		bool overwrite);
 
 	/// <inheritdoc cref="ZipArchiveEntry.Open()" />
 	Stream Open();

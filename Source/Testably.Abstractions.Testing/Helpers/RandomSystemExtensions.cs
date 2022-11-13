@@ -9,14 +9,37 @@ internal static class RandomSystemExtensions
 {
 	private static readonly string[] FileExtensions =
 	{
-		".avi", ".bat", ".bin", ".bmp", ".csv", ".docx", ".exe", ".gif", ".html",
-		".ini", ".iso", ".jpeg", ".midi", ".mov", ".mpeg", ".png", ".rar", ".tmp",
-		".txt", ".xlsx", ".zip"
+		".avi",
+		".bat",
+		".bin",
+		".bmp",
+		".csv",
+		".docx",
+		".exe",
+		".gif",
+		".html",
+		".ini",
+		".iso",
+		".jpeg",
+		".midi",
+		".mov",
+		".mpeg",
+		".png",
+		".rar",
+		".tmp",
+		".txt",
+		".xlsx",
+		".zip"
 	};
 
 	private static readonly string[] FileNames =
 	{
-		"~WRL001", "foo", "bar", "_", "With whitespace", ".hidden"
+		"~WRL001",
+		"foo",
+		"bar",
+		"_",
+		"With whitespace",
+		".hidden"
 	};
 
 	/// <summary>
@@ -26,7 +49,7 @@ internal static class RandomSystemExtensions
 	///     but a leading dot is removed.
 	/// </summary>
 	public static string GenerateFileExtension(this IRandom random,
-	                                           string? fileExtension = null)
+		string? fileExtension = null)
 	{
 		fileExtension ??=
 			FileExtensions[
@@ -40,6 +63,6 @@ internal static class RandomSystemExtensions
 	///     If the <paramref name="fileName" /> is specified, it is used directly.
 	/// </summary>
 	public static string GenerateFileName(this IRandom random,
-	                                      string? fileName = null)
+		string? fileName = null)
 		=> FileNames[random.Next(FileNames.Length)];
 }

@@ -10,7 +10,7 @@ internal static class StorageContainerExtensions
 	/// <param name="container">The container on which to adjust the times.</param>
 	/// <param name="timeAdjustments">Flag indicating which times to adjust.</param>
 	public static void AdjustTimes(this IStorageContainer container,
-	                               TimeAdjustments timeAdjustments)
+		TimeAdjustments timeAdjustments)
 	{
 		DateTime now = container.TimeSystem.DateTime.UtcNow;
 		if (timeAdjustments.HasFlag(TimeAdjustments.CreationTime))

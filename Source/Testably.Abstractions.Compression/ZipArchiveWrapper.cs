@@ -49,7 +49,7 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 
 	/// <inheritdoc cref="IZipArchive.CreateEntry(string, CompressionLevel)" />
 	public IZipArchiveEntry CreateEntry(string entryName,
-	                                    CompressionLevel compressionLevel)
+		CompressionLevel compressionLevel)
 		=> ZipArchiveEntryWrapper.New(FileSystem, this,
 			_instance.CreateEntry(entryName, compressionLevel));
 
@@ -66,7 +66,7 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 
 	/// <inheritdoc cref="IZipArchive.CreateEntryFromFile(string, string, CompressionLevel)" />
 	public IZipArchiveEntry CreateEntryFromFile(string sourceFileName, string entryName,
-	                                            CompressionLevel compressionLevel)
+		CompressionLevel compressionLevel)
 		=> Execute.WhenRealFileSystem(FileSystem,
 			() => ZipArchiveEntryWrapper.New(FileSystem, this,
 				_instance.CreateEntryFromFile(
@@ -128,6 +128,6 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 	private ReadOnlyCollection<IZipArchiveEntry> MapToZipArchiveEntries(
 		ReadOnlyCollection<ZipArchiveEntry> zipArchiveEntries)
 		=> new(zipArchiveEntries
-		   .Select(e => ZipArchiveEntryWrapper.New(FileSystem, this, e))
-		   .ToList());
+			.Select(e => ZipArchiveEntryWrapper.New(FileSystem, this, e))
+			.ToList());
 }

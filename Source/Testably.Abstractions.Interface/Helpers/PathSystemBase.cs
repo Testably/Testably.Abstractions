@@ -213,17 +213,17 @@ public abstract class PathSystemBase : IPath
 
 	/// <inheritdoc cref="Path.Join(ReadOnlySpan{char}, ReadOnlySpan{char}, ReadOnlySpan{char})" />
 	public string Join(ReadOnlySpan<char> path1,
-	                   ReadOnlySpan<char> path2,
-	                   ReadOnlySpan<char> path3)
+		ReadOnlySpan<char> path2,
+		ReadOnlySpan<char> path3)
 		=> Path.Join(path1, path2, path3);
 #endif
 
 #if FEATURE_PATH_ADVANCED
 	/// <inheritdoc cref="Path.Join(ReadOnlySpan{char}, ReadOnlySpan{char}, ReadOnlySpan{char}, ReadOnlySpan{char})" />
 	public string Join(ReadOnlySpan<char> path1,
-	                   ReadOnlySpan<char> path2,
-	                   ReadOnlySpan<char> path3,
-	                   ReadOnlySpan<char> path4)
+		ReadOnlySpan<char> path2,
+		ReadOnlySpan<char> path3,
+		ReadOnlySpan<char> path4)
 		=> Path.Join(path1, path2, path3, path4);
 
 	/// <inheritdoc cref="Path.Join(string, string)" />
@@ -256,17 +256,17 @@ public abstract class PathSystemBase : IPath
 #if FEATURE_PATH_JOIN
 	/// <inheritdoc cref="Path.TryJoin(ReadOnlySpan{char}, ReadOnlySpan{char}, Span{char}, out int)" />
 	public bool TryJoin(ReadOnlySpan<char> path1,
-	                    ReadOnlySpan<char> path2,
-	                    Span<char> destination,
-	                    out int charsWritten)
+		ReadOnlySpan<char> path2,
+		Span<char> destination,
+		out int charsWritten)
 		=> Path.TryJoin(path1, path2, destination, out charsWritten);
 
 	/// <inheritdoc cref="Path.TryJoin(ReadOnlySpan{char}, ReadOnlySpan{char}, ReadOnlySpan{char}, Span{char}, out int)" />
 	public bool TryJoin(ReadOnlySpan<char> path1,
-	                    ReadOnlySpan<char> path2,
-	                    ReadOnlySpan<char> path3,
-	                    Span<char> destination,
-	                    out int charsWritten)
+		ReadOnlySpan<char> path2,
+		ReadOnlySpan<char> path3,
+		Span<char> destination,
+		out int charsWritten)
 		=> Path.TryJoin(path1, path2, path3, destination, out charsWritten);
 #endif
 }

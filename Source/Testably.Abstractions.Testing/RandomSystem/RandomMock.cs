@@ -102,7 +102,7 @@ internal sealed class RandomMock : IRandom
 		{
 			byte[] bytes = _byteGenerator.GetNext();
 			bytes.AsSpan().Slice(0, Math.Min(bytes.Length, buffer.Length))
-			   .CopyTo(buffer);
+				.CopyTo(buffer);
 		}
 		else
 		{

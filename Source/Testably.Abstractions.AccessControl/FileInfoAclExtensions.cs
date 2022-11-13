@@ -39,7 +39,7 @@ public static class FileInfoAclExtensions
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.SetAccessControl(FileInfo, FileSecurity)" />
 	[SupportedOSPlatform("windows")]
 	public static void SetAccessControl(this IFileInfo fileInfo,
-	                                    FileSecurity fileSecurity)
+		FileSecurity fileSecurity)
 	{
 		IFileSystemExtensionContainer extensionContainer =
 			fileInfo.ExtensionContainer;

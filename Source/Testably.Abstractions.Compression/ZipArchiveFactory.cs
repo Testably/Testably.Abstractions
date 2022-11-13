@@ -31,9 +31,9 @@ internal sealed class ZipArchiveFactory : IZipArchiveFactory
 
 	/// <inheritdoc cref="IZipArchiveFactory.New(Stream, ZipArchiveMode, bool, Encoding?)" />
 	public IZipArchive New(Stream stream,
-	                       ZipArchiveMode mode,
-	                       bool leaveOpen,
-	                       Encoding? entryNameEncoding)
+		ZipArchiveMode mode,
+		bool leaveOpen,
+		Encoding? entryNameEncoding)
 		=> new ZipArchiveWrapper(FileSystem,
 			new ZipArchive(stream, mode, leaveOpen, entryNameEncoding));
 

@@ -9,7 +9,7 @@ internal sealed class FileInitializer<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	public FileInitializer(Initializer<TFileSystem> initializer,
-	                       IFileInfo file)
+		IFileInfo file)
 		: base(initializer)
 	{
 		File = file;

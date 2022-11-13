@@ -38,8 +38,8 @@ internal interface IStorage
 	///     Returns <see langword="null" /> when the <paramref name="source" /> does not exist.
 	/// </returns>
 	IStorageLocation? Copy(IStorageLocation source,
-	                       IStorageLocation destination,
-	                       bool overwrite = false);
+		IStorageLocation destination,
+		bool overwrite = false);
 
 	/// <summary>
 	///     Deletes the container stored at <paramref name="location" />.
@@ -124,10 +124,10 @@ internal interface IStorage
 	/// <param name="fileSystemExtensionContainer"></param>
 	/// <returns>The container at <paramref name="location" />.</returns>
 	IStorageContainer GetOrCreateContainer(IStorageLocation location,
-	                                       Func<IStorageLocation, MockFileSystem,
-		                                       IStorageContainer> containerGenerator,
-	                                       IFileSystemExtensionContainer?
-		                                       fileSystemExtensionContainer = null);
+		Func<IStorageLocation, MockFileSystem,
+			IStorageContainer> containerGenerator,
+		IFileSystemExtensionContainer?
+			fileSystemExtensionContainer = null);
 
 	/// <summary>
 	///     Moves a specified file or directory to a new location and potentially a new file name.<br />
@@ -148,9 +148,9 @@ internal interface IStorage
 	///     Returns <see langword="null" /> when the <paramref name="source" /> does not exist.
 	/// </returns>
 	IStorageLocation? Move(IStorageLocation source,
-	                       IStorageLocation destination,
-	                       bool overwrite = false,
-	                       bool recursive = false);
+		IStorageLocation destination,
+		bool overwrite = false,
+		bool recursive = false);
 
 	/// <summary>
 	///     Replaces the <paramref name="destination" /> file with the <paramref name="source" /> and moving it to the
@@ -171,9 +171,9 @@ internal interface IStorage
 	///     not exist.
 	/// </returns>
 	IStorageLocation? Replace(IStorageLocation source,
-	                          IStorageLocation destination,
-	                          IStorageLocation? backup,
-	                          bool ignoreMetadataErrors = false);
+		IStorageLocation destination,
+		IStorageLocation? backup,
+		bool ignoreMetadataErrors = false);
 
 #if FEATURE_FILESYSTEM_LINK
 	/// <summary>
@@ -186,7 +186,7 @@ internal interface IStorage
 	/// </param>
 	/// <returns>The location of the link target.</returns>
 	IStorageLocation? ResolveLinkTarget(IStorageLocation location,
-	                                    bool returnFinalTarget = false);
+		bool returnFinalTarget = false);
 #endif
 
 	/// <summary>
@@ -200,7 +200,7 @@ internal interface IStorage
 	///     otherwise <see langword="false" />.
 	/// </returns>
 	bool TryAddContainer(IStorageLocation location,
-	                     Func<IStorageLocation, MockFileSystem, IStorageContainer>
-		                     containerGenerator,
-	                     [NotNullWhen(true)] out IStorageContainer? container);
+		Func<IStorageLocation, MockFileSystem, IStorageContainer>
+			containerGenerator,
+		[NotNullWhen(true)] out IStorageContainer? container);
 }

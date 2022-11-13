@@ -25,7 +25,7 @@ public static class TimeProvider
 	public static ITimeProvider Random()
 	{
 		DateTime randomTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-		   .AddSeconds(RandomFactory.Shared.Next());
+			.AddSeconds(RandomFactory.Shared.Next());
 		return new TimeProviderMock(randomTime);
 	}
 

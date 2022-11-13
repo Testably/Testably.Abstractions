@@ -62,9 +62,9 @@ internal sealed class DriveInfoWrapper : IDriveInfo
 	{
 		get => _instance.VolumeLabel;
 		[SupportedOSPlatform("windows")]
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		set => _instance.VolumeLabel = value;
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 	}
 
 	#endregion
@@ -75,7 +75,7 @@ internal sealed class DriveInfoWrapper : IDriveInfo
 
 	[return: NotNullIfNotNull("instance")]
 	internal static DriveInfoWrapper? FromDriveInfo(DriveInfo? instance,
-	                                                IFileSystem fileSystem)
+		IFileSystem fileSystem)
 	{
 		if (instance == null)
 		{

@@ -48,5 +48,5 @@ internal sealed class FileInfoFactoryMock : IFileInfoFactory
 				fileInfo?.ToString()),
 			_fileSystem);
 
-#endregion
+	#endregion
 }

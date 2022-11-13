@@ -31,7 +31,7 @@ internal class FileSystemInfoMock : IFileSystemInfo
 	private IStorageContainer _container;
 
 	protected FileSystemInfoMock(MockFileSystem fileSystem, IStorageLocation location,
-	                             FileSystemTypes fileSystemType)
+		FileSystemTypes fileSystemType)
 	{
 		FileSystem = fileSystem;
 		Location = location;
@@ -65,7 +65,7 @@ internal class FileSystemInfoMock : IFileSystemInfo
 		else
 		{
 			throw ExceptionFactory.CannotCreateFileAsAlreadyExists(Location
-			   .FriendlyName);
+				.FriendlyName);
 		}
 	}
 #endif
@@ -225,7 +225,7 @@ internal class FileSystemInfoMock : IFileSystemInfo
 		=> Location.FriendlyName;
 
 	internal static FileSystemInfoMock New(IStorageLocation location,
-	                                       MockFileSystem fileSystem)
+		MockFileSystem fileSystem)
 	{
 		IStorageContainer container = fileSystem.Storage.GetContainer(location);
 		if (container.Type == FileSystemTypes.File)

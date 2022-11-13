@@ -177,7 +177,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 	}
 
 	private static string ValidateDriveLetter(string driveName,
-	                                          IFileSystem fileSystem)
+		IFileSystem fileSystem)
 	{
 		if (driveName.Length == 1 &&
 		    char.IsLetter(driveName, 0))
@@ -195,7 +195,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 
 	[return: NotNullIfNotNull("driveName")]
 	internal static DriveInfoMock? New(string? driveName,
-	                                   MockFileSystem fileSystem)
+		MockFileSystem fileSystem)
 	{
 		if (driveName == null)
 		{

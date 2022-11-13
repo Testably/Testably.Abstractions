@@ -11,7 +11,7 @@ internal sealed class ThreadMock : IThread
 	private readonly MockTimeSystem _mockTimeSystem;
 
 	internal ThreadMock(MockTimeSystem timeSystem,
-	                    NotificationHandler callbackHandler)
+		NotificationHandler callbackHandler)
 	{
 		_mockTimeSystem = timeSystem;
 		_callbackHandler = callbackHandler;

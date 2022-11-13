@@ -28,7 +28,7 @@ internal class Initializer<TFileSystem>
 	}
 
 	internal Initializer(Initializer<TFileSystem> parent,
-	                     IDirectoryInfo subdirectory)
+		IDirectoryInfo subdirectory)
 	{
 		FileSystem = parent.FileSystem;
 		_initializedFileSystemInfos = parent._initializedFileSystemInfos;
@@ -52,7 +52,7 @@ internal class Initializer<TFileSystem>
 	public IFileSystemFileInitializer<TFileSystem> WithAFile(string? extension = null)
 	{
 		IRandom random = (FileSystem as MockFileSystem)?
-		   .RandomSystem.Random.Shared ?? RandomFactory.Shared;
+			.RandomSystem.Random.Shared ?? RandomFactory.Shared;
 		string fileName;
 		do
 		{
@@ -68,7 +68,7 @@ internal class Initializer<TFileSystem>
 	public IFileSystemDirectoryInitializer<TFileSystem> WithASubdirectory()
 	{
 		IRandom random = (FileSystem as MockFileSystem)?
-		   .RandomSystem.Random.Shared ?? RandomFactory.Shared;
+			.RandomSystem.Random.Shared ?? RandomFactory.Shared;
 		string directoryName;
 		do
 		{

@@ -23,6 +23,6 @@ public class DefaultAccessControlStrategy : IAccessControlStrategy
 
 	/// <inheritdoc cref="IAccessControlStrategy.IsAccessGranted(string, IFileSystemExtensionContainer)" />
 	public bool IsAccessGranted(string fullPath,
-	                            IFileSystemExtensionContainer extensionContainer)
+		IFileSystemExtensionContainer extensionContainer)
 		=> _callback(fullPath, extensionContainer);
 }

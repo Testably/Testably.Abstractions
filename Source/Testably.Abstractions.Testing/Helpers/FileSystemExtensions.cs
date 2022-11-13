@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.Helpers;
@@ -18,9 +16,9 @@ internal static class FileSystemExtensions
 	/// <param name="destination">The destination of the move request.</param>
 	/// <returns>The new <see cref="IStorageLocation" /> under <paramref name="destination" />.</returns>
 	internal static IStorageLocation GetMoveLocation(this MockFileSystem fileSystem,
-	                                                 IStorageLocation location,
-	                                                 IStorageLocation source,
-	                                                 IStorageLocation destination)
+		IStorageLocation location,
+		IStorageLocation source,
+		IStorageLocation destination)
 	{
 		if (!location.FullPath.StartsWith(source.FullPath))
 		{
@@ -39,8 +37,8 @@ internal static class FileSystemExtensions
 	///     Returns the relative subdirectory path from <paramref name="fullFilePath" /> to the <paramref name="givenPath" />.
 	/// </summary>
 	internal static string GetSubdirectoryPath(this IFileSystem fileSystem,
-	                                           string fullFilePath,
-	                                           string givenPath)
+		string fullFilePath,
+		string givenPath)
 	{
 		if (fileSystem.Path.IsPathRooted(givenPath))
 		{
@@ -63,7 +61,7 @@ internal static class FileSystemExtensions
 			       !fullFilePath.StartsWith(parentName + Path.DirectorySeparatorChar))
 			{
 				parentName = Path.GetDirectoryName(parentName);
-				var lastIndex = givenPath.LastIndexOf(Path.DirectorySeparatorChar);
+				int lastIndex = givenPath.LastIndexOf(Path.DirectorySeparatorChar);
 				if (lastIndex >= 0)
 				{
 					givenPath = givenPath.Substring(0, lastIndex);

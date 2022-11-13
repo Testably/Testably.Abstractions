@@ -9,7 +9,7 @@ internal sealed class DirectoryInitializer<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	public DirectoryInitializer(Initializer<TFileSystem> initializer,
-	                            IDirectoryInfo directory)
+		IDirectoryInfo directory)
 		: base(initializer)
 	{
 		Directory = directory;

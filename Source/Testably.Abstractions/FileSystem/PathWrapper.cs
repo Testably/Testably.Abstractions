@@ -10,7 +10,7 @@ internal sealed class PathWrapper : PathSystemBase
 		: base(fileSystem)
 	{
 	}
-	
+
 #if FEATURE_FILESYSTEM_NET7
 	/// <inheritdoc cref="IPath.Exists(string)" />
 	public override bool Exists([NotNullWhen(true)] string? path)

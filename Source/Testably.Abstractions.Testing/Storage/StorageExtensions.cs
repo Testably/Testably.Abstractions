@@ -36,9 +36,9 @@ internal static class StorageExtensions
 				location = location.GetParent() ??
 				           throw new UnauthorizedAccessException(
 					           $"The searchPattern '{searchPattern}' has too many '../' for path '{path}'");
-#pragma warning disable CA1846
+				#pragma warning disable CA1846
 				givenPathPrefix.Append(searchPattern.Substring(0, 3));
-#pragma warning restore CA1846
+				#pragma warning restore CA1846
 				searchPattern = searchPattern.Substring(3);
 			}
 
@@ -63,7 +63,7 @@ internal static class StorageExtensions
 		public string SearchPattern { get; }
 
 		public AdjustedLocation(IStorageLocation location, string searchPattern,
-		                        string givenPath)
+			string givenPath)
 		{
 			Location = location;
 			SearchPattern = searchPattern;
