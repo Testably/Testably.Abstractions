@@ -25,9 +25,11 @@ public abstract partial class DateTimeTests<TTimeSystem>
 		result.Should().Be(expectedResult);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void Now_ShouldBeSetToNow()
 	{
+		Skip.If(Test.RunsOnMac, "Brittle test on MacOS");
+
 		DateTime before = DateTime.Now;
 		DateTime result = TimeSystem.DateTime.Now;
 		DateTime after = DateTime.Now;
@@ -61,9 +63,11 @@ public abstract partial class DateTimeTests<TTimeSystem>
 		result.Should().Be(expectedResult);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void UtcNow_ShouldBeSetToUtcNow()
 	{
+		Skip.If(Test.RunsOnMac, "Brittle test on MacOS");
+
 		DateTime before = DateTime.UtcNow;
 		DateTime result = TimeSystem.DateTime.UtcNow;
 		DateTime after = DateTime.UtcNow;
