@@ -58,8 +58,8 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void GetParent_ArbitraryPaths_ShouldNotBeNull(string path1,
-	                                                     string path2,
-	                                                     string path3)
+		string path2,
+		string path3)
 	{
 		string path = FileSystem.Path.Combine(path1, path2, path3);
 		IDirectoryInfo expectedParent = FileSystem.DirectoryInfo.New(
@@ -97,9 +97,9 @@ public abstract partial class Tests<TFileSystem>
 
 			exception.Should().BeOfType<DirectoryNotFoundException>();
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
+				.Which.HResult.Should().Be(-2147024893);
 			FileSystem.Directory.GetCurrentDirectory().Should()
-			   .Be(previousCurrentDirectory);
+				.Be(previousCurrentDirectory);
 		}
 		finally
 		{

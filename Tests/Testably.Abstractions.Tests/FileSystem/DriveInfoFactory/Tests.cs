@@ -37,9 +37,9 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
+			.Which.HResult.Should().Be(-2147024893);
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.Message.Should().Contain($"'{path}'");
+			.Which.Message.Should().Contain($"'{path}'");
 	}
 
 	[SkippableTheory]
@@ -59,9 +59,9 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
+			.Which.HResult.Should().Be(-2147024893);
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.Message.Should().Contain($"'{path}'");
+			.Which.Message.Should().Contain($"'{path}'");
 	}
 
 	[SkippableFact]
@@ -93,7 +93,7 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+			.Which.HResult.Should().Be(-2147024809);
 	}
 
 	[SkippableFact]
@@ -105,7 +105,7 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 	}
 
 	[SkippableTheory]

@@ -23,7 +23,7 @@ public abstract partial class WriteAllBytesAsyncTests<TFileSystem>
 			FileSystem.File.WriteAllBytesAsync(path, contents, cts.Token));
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+			.Which.HResult.Should().Be(-2146233029);
 	}
 
 	[SkippableTheory]

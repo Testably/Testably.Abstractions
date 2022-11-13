@@ -18,8 +18,8 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 		FileSystem.DirectoryInfo.New(path).CreateAsSymbolicLink(pathToTarget);
 
 		FileSystem.DirectoryInfo.New(path).Attributes
-		   .HasFlag(FileAttributes.ReparsePoint)
-		   .Should().BeTrue();
+			.HasFlag(FileAttributes.ReparsePoint)
+			.Should().BeTrue();
 	}
 
 	[SkippableTheory]
@@ -38,16 +38,16 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024713);
+				.Which.HResult.Should().Be(-2147024713);
 		}
 		else
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(17);
+				.Which.HResult.Should().Be(17);
 		}
 
 		exception.Should().BeOfType<IOException>()
-		   .Which.Message.Should().Contain($"'{path}'");
+			.Which.Message.Should().Contain($"'{path}'");
 	}
 
 	[SkippableTheory]
@@ -76,7 +76,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("path");
+			.Which.ParamName.Should().Be("path");
 	}
 
 	[SkippableTheory]
@@ -92,7 +92,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("pathToTarget");
+			.Which.ParamName.Should().Be("pathToTarget");
 	}
 
 	[SkippableTheory]
@@ -110,7 +110,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<IOException>()
-		   .Which.HResult.Should().Be(-2147024773);
+			.Which.HResult.Should().Be(-2147024773);
 	}
 
 	[SkippableTheory]
@@ -128,7 +128,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<IOException>()
-		   .Which.HResult.Should().Be(-2147024713);
+			.Which.HResult.Should().Be(-2147024713);
 	}
 
 	[SkippableTheory]
@@ -146,7 +146,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<ArgumentException>()
-			   .Which.ParamName.Should().Be("path");
+				.Which.ParamName.Should().Be("path");
 		}
 		else
 		{
@@ -179,7 +179,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.ParamName.Should().Be("path");
+			.Which.ParamName.Should().Be("path");
 	}
 
 	[SkippableTheory]
@@ -195,7 +195,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.ParamName.Should().Be("pathToTarget");
+			.Which.ParamName.Should().Be("pathToTarget");
 	}
 }
 #endif

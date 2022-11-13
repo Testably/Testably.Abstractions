@@ -89,7 +89,7 @@ public abstract partial class Tests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			result.LastAccessTime.Should()
-			   .BeOnOrAfter(sleepTime.ApplySystemClockTolerance());
+				.BeOnOrAfter(sleepTime.ApplySystemClockTolerance());
 			result.LastAccessTime.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
 		}
 		else
@@ -168,19 +168,19 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.Directory.SetCreationTime(path, creationTime);
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater && !Test.RunsOnMac)
+		if (Test.RunsOnWindows || (Test.IsNet7OrGreater && !Test.RunsOnMac))
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024894);
+				.Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
+				.Which.HResult.Should().Be(-2147024893);
 		}
 	}
 
@@ -199,7 +199,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.Directory.SetCreationTime(path, creationTime);
 
 		FileSystem.Directory.GetCreationTimeUtc(path)
-		   .Should().Be(expectedTime);
+			.Should().Be(expectedTime);
 	}
 
 	[SkippableTheory]
@@ -216,11 +216,11 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.Directory.SetCreationTime(path, creationTime);
 
 		FileSystem.Directory.GetCreationTimeUtc(path)
-		   .Should().Be(creationTime.ToUniversalTime());
+			.Should().Be(creationTime.ToUniversalTime());
 		FileSystem.Directory.GetCreationTime(path)
-		   .Should().Be(creationTime);
+			.Should().Be(creationTime);
 		FileSystem.Directory.GetCreationTime(path).Kind
-		   .Should().NotBe(DateTimeKind.Unspecified);
+			.Should().NotBe(DateTimeKind.Unspecified);
 	}
 
 	[SkippableTheory]
@@ -233,19 +233,19 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.Directory.SetCreationTimeUtc(path, creationTime);
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater && !Test.RunsOnMac)
+		if (Test.RunsOnWindows || (Test.IsNet7OrGreater && !Test.RunsOnMac))
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024894);
+				.Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
+				.Which.HResult.Should().Be(-2147024893);
 		}
 	}
 
@@ -264,7 +264,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.Directory.SetCreationTimeUtc(path, creationTime);
 
 		FileSystem.Directory.GetCreationTime(path)
-		   .Should().Be(expectedTime);
+			.Should().Be(expectedTime);
 	}
 
 	[SkippableTheory]
@@ -281,11 +281,11 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.Directory.SetCreationTimeUtc(path, creationTime);
 
 		FileSystem.Directory.GetCreationTimeUtc(path)
-		   .Should().Be(creationTime);
+			.Should().Be(creationTime);
 		FileSystem.Directory.GetCreationTime(path)
-		   .Should().Be(creationTime.ToLocalTime());
+			.Should().Be(creationTime.ToLocalTime());
 		FileSystem.Directory.GetCreationTime(path).Kind
-		   .Should().NotBe(DateTimeKind.Unspecified);
+			.Should().NotBe(DateTimeKind.Unspecified);
 	}
 
 	[SkippableTheory]
@@ -301,16 +301,16 @@ public abstract partial class Tests<TFileSystem>
 		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024894);
+				.Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
+				.Which.HResult.Should().Be(-2147024893);
 		}
 	}
 
@@ -326,7 +326,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.Directory.SetLastAccessTime(path, lastAccessTime);
 
 		FileSystem.Directory.GetLastAccessTimeUtc(path)
-		   .Should().Be(expectedTime);
+			.Should().Be(expectedTime);
 	}
 
 	[SkippableTheory]
@@ -340,11 +340,11 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.Directory.SetLastAccessTime(path, lastAccessTime);
 
 		FileSystem.Directory.GetLastAccessTimeUtc(path)
-		   .Should().Be(lastAccessTime.ToUniversalTime());
+			.Should().Be(lastAccessTime.ToUniversalTime());
 		FileSystem.Directory.GetLastAccessTime(path)
-		   .Should().Be(lastAccessTime);
+			.Should().Be(lastAccessTime);
 		FileSystem.Directory.GetLastAccessTime(path).Kind
-		   .Should().NotBe(DateTimeKind.Unspecified);
+			.Should().NotBe(DateTimeKind.Unspecified);
 	}
 
 	[SkippableTheory]
@@ -357,19 +357,19 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.Directory.SetLastAccessTimeUtc(path, lastAccessTime);
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater )
+		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024894);
+				.Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
+				.Which.HResult.Should().Be(-2147024893);
 		}
 	}
 
@@ -385,7 +385,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.Directory.SetLastAccessTimeUtc(path, lastAccessTime);
 
 		FileSystem.Directory.GetLastAccessTime(path)
-		   .Should().Be(expectedTime);
+			.Should().Be(expectedTime);
 	}
 
 	[SkippableTheory]
@@ -399,11 +399,11 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.Directory.SetLastAccessTimeUtc(path, lastAccessTime);
 
 		FileSystem.Directory.GetLastAccessTimeUtc(path)
-		   .Should().Be(lastAccessTime);
+			.Should().Be(lastAccessTime);
 		FileSystem.Directory.GetLastAccessTime(path)
-		   .Should().Be(lastAccessTime.ToLocalTime());
+			.Should().Be(lastAccessTime.ToLocalTime());
 		FileSystem.Directory.GetLastAccessTime(path).Kind
-		   .Should().NotBe(DateTimeKind.Unspecified);
+			.Should().NotBe(DateTimeKind.Unspecified);
 	}
 
 	[SkippableTheory]
@@ -419,16 +419,16 @@ public abstract partial class Tests<TFileSystem>
 		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024894);
+				.Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
+				.Which.HResult.Should().Be(-2147024893);
 		}
 	}
 
@@ -444,7 +444,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.Directory.SetLastWriteTime(path, lastWriteTime);
 
 		FileSystem.Directory.GetLastWriteTimeUtc(path)
-		   .Should().Be(expectedTime);
+			.Should().Be(expectedTime);
 	}
 
 	[SkippableTheory]
@@ -458,11 +458,11 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.Directory.SetLastWriteTime(path, lastWriteTime);
 
 		FileSystem.Directory.GetLastWriteTimeUtc(path)
-		   .Should().Be(lastWriteTime.ToUniversalTime());
+			.Should().Be(lastWriteTime.ToUniversalTime());
 		FileSystem.Directory.GetLastWriteTime(path)
-		   .Should().Be(lastWriteTime);
+			.Should().Be(lastWriteTime);
 		FileSystem.Directory.GetLastWriteTime(path).Kind
-		   .Should().NotBe(DateTimeKind.Unspecified);
+			.Should().NotBe(DateTimeKind.Unspecified);
 	}
 
 	[SkippableTheory]
@@ -478,16 +478,16 @@ public abstract partial class Tests<TFileSystem>
 		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024894);
+				.Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
+				.Which.HResult.Should().Be(-2147024893);
 		}
 	}
 
@@ -503,7 +503,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.Directory.SetLastWriteTimeUtc(path, lastWriteTime);
 
 		FileSystem.Directory.GetLastWriteTime(path)
-		   .Should().Be(expectedTime);
+			.Should().Be(expectedTime);
 	}
 
 	[SkippableTheory]
@@ -517,10 +517,10 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.Directory.SetLastWriteTimeUtc(path, lastWriteTime);
 
 		FileSystem.Directory.GetLastWriteTimeUtc(path)
-		   .Should().Be(lastWriteTime);
+			.Should().Be(lastWriteTime);
 		FileSystem.Directory.GetLastWriteTime(path)
-		   .Should().Be(lastWriteTime.ToLocalTime());
+			.Should().Be(lastWriteTime.ToLocalTime());
 		FileSystem.Directory.GetLastWriteTime(path).Kind
-		   .Should().NotBe(DateTimeKind.Unspecified);
+			.Should().NotBe(DateTimeKind.Unspecified);
 	}
 }

@@ -50,13 +50,13 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 		});
 
 		exception.Should()
-		         .BeOfType<FileNotFoundException>()
-		         .Which.HResult.Should()
-		         .Be(-2147024894);
+			.BeOfType<FileNotFoundException>()
+			.Which.HResult.Should()
+			.Be(-2147024894);
 		exception.Should()
-		         .BeOfType<FileNotFoundException>()
-		         .Which.Message.Should()
-		         .Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.BeOfType<FileNotFoundException>()
+			.Which.Message.Should()
+			.Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
 	[SkippableTheory]
@@ -82,17 +82,17 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			            .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance())
-			            .And
-			            .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance())
+				.And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastAccessTime.Should()
-		              .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		lastWriteTime.Should()
-		             .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance())
-		             .And
-		             .BeOnOrBefore(creationTimeEnd);
+			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance())
+			.And
+			.BeOnOrBefore(creationTimeEnd);
 	}
 
 	[SkippableTheory]
@@ -121,8 +121,8 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 		string result = FileSystem.File.ReadAllText(path, readEncoding);
 
 		result.Should()
-		      .NotBe(contents,
-			       $"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
+			.NotBe(contents,
+				$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
 	}
 
 	[SkippableTheory]

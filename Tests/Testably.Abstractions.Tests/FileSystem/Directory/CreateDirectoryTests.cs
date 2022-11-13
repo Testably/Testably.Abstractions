@@ -27,7 +27,8 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateDirectory_ReadOnlyParent_ShouldStillCreateDirectory(string parent, string subdirectory)
+	public void CreateDirectory_ReadOnlyParent_ShouldStillCreateDirectory(string parent,
+		string subdirectory)
 	{
 		string subdirectoryPath = FileSystem.Path.Combine(parent, subdirectory);
 		FileSystem.Directory.CreateDirectory(parent);
@@ -41,7 +42,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		exception.Should().BeNull();
 		FileSystem.Directory.Exists(subdirectoryPath).Should().BeTrue();
 		FileSystem.DirectoryInfo.New(parent).Attributes
-		          .Should().HaveFlag(FileAttributes.ReadOnly);
+			.Should().HaveFlag(FileAttributes.ReadOnly);
 	}
 
 	[SkippableFact]
@@ -99,20 +100,20 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 			lastAccessTime.Should()
-			   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
 			lastAccessTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastWriteTime.Should()
-		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[SkippableTheory]
@@ -135,7 +136,10 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 
 		FileSystem.Directory.CreateDirectory(subdirectoryLevel3Path);
 
-		foreach (string path in new[] { rootPath, subdirectoryLevel1Path })
+		foreach (string path in new[]
+			{
+				rootPath, subdirectoryLevel1Path
+			})
 		{
 			DateTime lastAccessTime =
 				FileSystem.Directory.GetLastAccessTimeUtc(path);
@@ -143,11 +147,11 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 				FileSystem.Directory.GetLastWriteTimeUtc(path);
 
 			lastAccessTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 			lastWriteTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 	}
 
@@ -192,9 +196,9 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		   .Which.HResult.Should().Be(-2147024809);
 #else
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+			.Which.HResult.Should().Be(-2147024809);
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("path");
+			.Which.ParamName.Should().Be("path");
 #endif
 	}
 
@@ -202,8 +206,11 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 	public void CreateDirectory_IllegalCharacters_ShouldThrowArgumentException()
 	{
 		IEnumerable<char> invalidChars = FileSystem.Path
-		   .GetInvalidPathChars().Where(c => c != '\0')
-		   .Concat(new[] { '*', '?' });
+			.GetInvalidPathChars().Where(c => c != '\0')
+			.Concat(new[]
+			{
+				'*', '?'
+			});
 		foreach (char invalidChar in invalidChars)
 		{
 			string path = $"{invalidChar}foo{invalidChar}bar";
@@ -219,11 +226,11 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 #else
 				string expectedMessage = $"'{System.IO.Path.Combine(BasePath, path)}'";
 				exception.Should()
-				   .BeOfType<IOException>(
+					.BeOfType<IOException>(
 						$"'{invalidChar}' is an invalid path character.")
-				   .Which.Message.Should().Contain(expectedMessage);
+					.Which.Message.Should().Contain(expectedMessage);
 				exception.Should().BeOfType<IOException>()
-				   .Which.HResult.Should().Be(-2147024773);
+					.Which.HResult.Should().Be(-2147024773);
 #endif
 			}
 			else
@@ -240,9 +247,9 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 			Record.Exception(() => FileSystem.Directory.CreateDirectory(null!));
 
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.ParamName.Should().Be("path");
+			.Which.ParamName.Should().Be("path");
 	}
 
 	[SkippableFact]
@@ -253,7 +260,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 			Record.Exception(() => FileSystem.Directory.CreateDirectory(path));
 
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+			.Which.HResult.Should().Be(-2147024809);
 	}
 
 	[SkippableFact]
@@ -356,7 +363,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 			FileSystem.Path.DirectorySeparatorChar,
 			FileSystem.Path.AltDirectorySeparatorChar));
 		result.FullName.Should().Be(System.IO.Path.Combine(BasePath, expectedName
-		   .Replace(FileSystem.Path.AltDirectorySeparatorChar,
+			.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 				FileSystem.Path.DirectorySeparatorChar)));
 		FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
 	}

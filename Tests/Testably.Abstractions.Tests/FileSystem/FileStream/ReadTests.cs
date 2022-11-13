@@ -44,13 +44,13 @@ public abstract partial class ReadTests<TFileSystem>
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			stream.BeginRead(buffer, 0, buffer.Length, _ => {}, null);
+			stream.BeginRead(buffer, 0, buffer.Length, _ => { }, null);
 		});
 
 		stream.Dispose();
 
 		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
+			.Which.HResult.Should().Be(-2146233067);
 	}
 
 	[SkippableTheory]
@@ -68,7 +68,7 @@ public abstract partial class ReadTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 		exception.Should().BeOfType<ArgumentNullException>();
 	}
 
@@ -103,13 +103,13 @@ public abstract partial class ReadTests<TFileSystem>
 		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
 
 		creationTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			.BeOnOrBefore(creationTimeEnd);
 		lastAccessTime.Should()
-		   .BeOnOrAfter(updateTime);
+			.BeOnOrAfter(updateTime);
 		lastWriteTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			.BeOnOrBefore(creationTimeEnd);
 	}
 
 	[SkippableTheory]
@@ -130,7 +130,7 @@ public abstract partial class ReadTests<TFileSystem>
 		stream.Dispose();
 
 		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
+			.Which.HResult.Should().Be(-2146233067);
 	}
 
 	[SkippableTheory]
@@ -165,7 +165,7 @@ public abstract partial class ReadTests<TFileSystem>
 		stream.Dispose();
 
 		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
+			.Which.HResult.Should().Be(-2146233067);
 	}
 
 	[SkippableTheory]
@@ -199,7 +199,7 @@ public abstract partial class ReadTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<InvalidOperationException>()
-		   .Which.HResult.Should().Be(-2146233079);
+			.Which.HResult.Should().Be(-2146233079);
 		exception.Should().BeOfType<InvalidOperationException>();
 	}
 
@@ -236,7 +236,7 @@ public abstract partial class ReadTests<TFileSystem>
 		stream.Dispose();
 
 		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
+			.Which.HResult.Should().Be(-2146233067);
 	}
 #endif
 
@@ -250,9 +250,9 @@ public abstract partial class ReadTests<TFileSystem>
 		await FileSystem.File.WriteAllBytesAsync(path, contents, cts.Token);
 		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-#pragma warning disable CA1835
+		#pragma warning disable CA1835
 		int result = await stream.ReadAsync(buffer, 0, contents.Length, cts.Token);
-#pragma warning restore CA1835
+		#pragma warning restore CA1835
 
 		result.Should().Be(contents.Length);
 		buffer.Should().BeEquivalentTo(contents);
@@ -271,15 +271,15 @@ public abstract partial class ReadTests<TFileSystem>
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-#pragma warning disable CA1835
+			#pragma warning disable CA1835
 			_ = await stream.ReadAsync(buffer, 0, contents.Length, cts.Token);
-#pragma warning restore CA1835
+			#pragma warning restore CA1835
 		});
 
 		await stream.DisposeAsync();
 
 		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
+			.Which.HResult.Should().Be(-2146233067);
 	}
 #endif
 }

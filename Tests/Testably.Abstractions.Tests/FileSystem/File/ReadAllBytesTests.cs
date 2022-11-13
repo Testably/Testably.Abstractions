@@ -18,13 +18,13 @@ public abstract partial class ReadAllBytesTests<TFileSystem>
 		});
 
 		exception.Should()
-		         .BeOfType<FileNotFoundException>()
-		         .Which.HResult.Should()
-		         .Be(-2147024894);
+			.BeOfType<FileNotFoundException>()
+			.Which.HResult.Should()
+			.Be(-2147024894);
 		exception.Should()
-		         .BeOfType<FileNotFoundException>()
-		         .Which.Message.Should()
-		         .Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.BeOfType<FileNotFoundException>()
+			.Which.Message.Should()
+			.Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
 	[SkippableTheory]
@@ -50,17 +50,17 @@ public abstract partial class ReadAllBytesTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			            .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance())
-			            .And
-			            .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance())
+				.And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastAccessTime.Should()
-		              .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		lastWriteTime.Should()
-		             .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance())
-		             .And
-		             .BeOnOrBefore(creationTimeEnd);
+			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance())
+			.And
+			.BeOnOrBefore(creationTimeEnd);
 	}
 
 	[SkippableTheory]

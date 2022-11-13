@@ -128,11 +128,26 @@ public abstract partial class GuidTests<TRandomSystem>
 
 	public static IEnumerable<object[]> GuidFormats()
 	{
-		yield return new object[] { "N" };
-		yield return new object[] { "D" };
-		yield return new object[] { "B" };
-		yield return new object[] { "P" };
-		yield return new object[] { "X" };
+		yield return new object[]
+		{
+			"N"
+		};
+		yield return new object[]
+		{
+			"D"
+		};
+		yield return new object[]
+		{
+			"B"
+		};
+		yield return new object[]
+		{
+			"P"
+		};
+		yield return new object[]
+		{
+			"X"
+		};
 	}
 #endif
 }

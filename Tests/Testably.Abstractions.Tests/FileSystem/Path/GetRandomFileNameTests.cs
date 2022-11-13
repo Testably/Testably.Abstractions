@@ -15,12 +15,12 @@ public abstract partial class GetRandomFileNameTests<TFileSystem>
 
 #if FEATURE_PATH_RELATIVE
 		FileSystem.Path.IsPathFullyQualified(result)
-		   .Should().BeFalse();
+			.Should().BeFalse();
 #endif
 		FileSystem.Path.GetExtension(result)
-		   .Should().NotBeEmpty();
+			.Should().NotBeEmpty();
 		FileSystem.Path.GetFileNameWithoutExtension(result)
-		   .Should().NotBeEmpty();
+			.Should().NotBeEmpty();
 	}
 
 	[SkippableFact]

@@ -54,10 +54,10 @@ public abstract partial class EncryptDecryptTests<TFileSystem>
 
 		FileSystem.File.Encrypt(path);
 		FileSystem.File.GetAttributes(path)
-		   .Should().HaveFlag(FileAttributes.Encrypted);
+			.Should().HaveFlag(FileAttributes.Encrypted);
 		FileSystem.File.Decrypt(path);
 		FileSystem.File.GetAttributes(path)
-		   .Should().NotHaveFlag(FileAttributes.Encrypted);
+			.Should().NotHaveFlag(FileAttributes.Encrypted);
 	}
 
 	[SkippableTheory]

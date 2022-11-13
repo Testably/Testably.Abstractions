@@ -17,13 +17,13 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
-#pragma warning disable CA1416
+			#pragma warning disable CA1416
 			FileSystem.File.GetUnixFileMode(path);
-#pragma warning restore CA1416
+			#pragma warning restore CA1416
 		});
 
 		exception.Should().BeOfType<PlatformNotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233031);
+			.Which.HResult.Should().Be(-2146233031);
 	}
 
 	[SkippableTheory]
@@ -35,11 +35,11 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 
 		FileSystem.File.WriteAllText(path, "some content");
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		FileSystem.File.SetUnixFileMode(path, unixFileMode);
 
 		UnixFileMode result = FileSystem.File.GetUnixFileMode(path);
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 		result.Should().Be(unixFileMode);
 	}
 
@@ -52,13 +52,13 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
-#pragma warning disable CA1416
+			#pragma warning disable CA1416
 			FileSystem.File.SetUnixFileMode(path, unixFileMode);
-#pragma warning restore CA1416
+			#pragma warning restore CA1416
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 	}
 
 	[SkippableTheory]
@@ -70,13 +70,13 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
-#pragma warning disable CA1416
+			#pragma warning disable CA1416
 			FileSystem.File.SetUnixFileMode(path, mode);
-#pragma warning restore CA1416
+			#pragma warning restore CA1416
 		});
 
 		exception.Should().BeOfType<PlatformNotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233031);
+			.Which.HResult.Should().Be(-2146233031);
 	}
 }
 #endif

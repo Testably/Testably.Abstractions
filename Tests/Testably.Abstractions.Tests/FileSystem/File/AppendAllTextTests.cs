@@ -20,7 +20,7 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 
 		FileSystem.File.Exists(path).Should().BeTrue();
 		FileSystem.File.ReadAllText(path).Should()
-		   .BeEquivalentTo(previousContents + contents);
+			.BeEquivalentTo(previousContents + contents);
 	}
 
 	[SkippableTheory]
@@ -35,7 +35,7 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
+			.Which.HResult.Should().Be(-2147024893);
 	}
 
 	[SkippableTheory]
@@ -54,12 +54,26 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 	public void AppendAllText_MissingFile_ShouldCreateFileWithByteOrderMark(
 		string path)
 	{
-		byte[] expectedBytes = { 255, 254, 0, 0, 65, 0, 0, 0, 65, 0, 0, 0 };
+		byte[] expectedBytes =
+		{
+			255,
+			254,
+			0,
+			0,
+			65,
+			0,
+			0,
+			0,
+			65,
+			0,
+			0,
+			0
+		};
 
 		FileSystem.File.AppendAllText(path, "AA", Encoding.UTF32);
 
 		FileSystem.File.ReadAllBytes(path)
-		   .Should().BeEquivalentTo(expectedBytes);
+			.Should().BeEquivalentTo(expectedBytes);
 	}
 
 	[SkippableTheory]
@@ -83,20 +97,20 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 			lastAccessTime.Should()
-			   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
 			lastAccessTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastWriteTime.Should()
-		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[SkippableTheory]

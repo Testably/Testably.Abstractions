@@ -26,9 +26,9 @@ public abstract partial class CreateTests<TFileSystem>
 #else
 			string expectedMessage = $"'{FileSystem.Path.Combine(BasePath, path)}'";
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024773);
+				.Which.HResult.Should().Be(-2147024773);
 			exception.Should().BeOfType<IOException>()
-			   .Which.Message.Should().Contain(expectedMessage);
+				.Which.Message.Should().Contain(expectedMessage);
 #endif
 		}
 	}
@@ -40,9 +40,9 @@ public abstract partial class CreateTests<TFileSystem>
 			Record.Exception(() => FileSystem.DirectoryInfo.New(null!));
 
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 		exception.Should().BeOfType<ArgumentNullException>().Which.ParamName
-		   .Should().Be("path");
+			.Should().Be("path");
 	}
 
 	[SkippableTheory]
@@ -55,9 +55,9 @@ public abstract partial class CreateTests<TFileSystem>
 			Record.Exception(() => FileSystem.DirectoryInfo.New(path).Create());
 
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+			.Which.HResult.Should().Be(-2147024809);
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.Message.Should().Contain(expectedMessage);
+			.Which.Message.Should().Contain(expectedMessage);
 	}
 
 	[SkippableTheory]
@@ -137,7 +137,7 @@ public abstract partial class CreateTests<TFileSystem>
 			FileSystem.Path.DirectorySeparatorChar,
 			FileSystem.Path.AltDirectorySeparatorChar));
 		result.FullName.Should().Be(System.IO.Path.Combine(BasePath, expectedName
-		   .Replace(FileSystem.Path.AltDirectorySeparatorChar,
+			.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 				FileSystem.Path.DirectorySeparatorChar)));
 		FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
 	}

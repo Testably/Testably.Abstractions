@@ -27,9 +27,9 @@ public abstract partial class CombineTests<TFileSystem>
 			FileSystem.Path.Combine(null!, path));
 
 		exception1.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 		exception2.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 	}
 
 	[SkippableTheory]
@@ -86,11 +86,11 @@ public abstract partial class CombineTests<TFileSystem>
 			FileSystem.Path.Combine(null!, null!, path));
 
 		exception1.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 		exception2.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 		exception3.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 	}
 
 	[SkippableTheory]
@@ -153,13 +153,13 @@ public abstract partial class CombineTests<TFileSystem>
 			FileSystem.Path.Combine(null!, null!, null!, path));
 
 		exception1.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 		exception2.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 		exception3.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 		exception4.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 	}
 
 	[SkippableTheory]
@@ -199,7 +199,7 @@ public abstract partial class CombineTests<TFileSystem>
 			FileSystem.Path.Combine(null!));
 
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 	}
 
 	[SkippableTheory]
@@ -244,15 +244,15 @@ public abstract partial class CombineTests<TFileSystem>
 			FileSystem.Path.Combine(null!, null!, null!, null!, path));
 
 		exception1.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 		exception2.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 		exception3.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 		exception4.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 		exception5.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 	}
 
 	[SkippableTheory]

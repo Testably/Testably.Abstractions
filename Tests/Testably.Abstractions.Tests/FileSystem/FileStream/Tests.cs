@@ -1,6 +1,6 @@
 using System.IO;
-using Testably.Abstractions.FileSystem;
 using System.Threading.Tasks;
+using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
@@ -83,7 +83,7 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentOutOfRangeException>()
-		         .Which.ParamName.Should().Be("bufferSize");
+			.Which.ParamName.Should().Be("bufferSize");
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
@@ -119,7 +119,7 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentOutOfRangeException>()
-		         .Which.ParamName.Should().Be("bufferSize");
+			.Which.ParamName.Should().Be("bufferSize");
 	}
 #endif
 
@@ -131,7 +131,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.WriteAllText(path, null);
 		using FileSystemStream readStream = FileSystem.File.OpenRead(path);
 		bool result = readStream.ExtensionContainer
-		   .HasWrappedInstance(out System.IO.FileStream? fileStream);
+			.HasWrappedInstance(out System.IO.FileStream? fileStream);
 
 		if (FileSystem is RealFileSystem)
 		{
@@ -296,7 +296,7 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
+			.Which.HResult.Should().Be(-2146233067);
 		exception.Should().BeOfType<NotSupportedException>();
 	}
 }

@@ -25,7 +25,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+			.Which.HResult.Should().Be(-2147024809);
 	}
 
 	[Theory]
@@ -43,13 +43,13 @@ public abstract partial class ExceptionTests<TFileSystem>
 		{
 			exception.Should().BeOfType<ArgumentException>(
 					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
-			   .Which.ParamName.Should().Be(paramName,
+				.Which.ParamName.Should().Be(paramName,
 					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 
 		exception.Should().BeOfType<ArgumentException>(
 				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
-		   .Which.HResult.Should().Be(-2147024809,
+			.Which.HResult.Should().Be(-2147024809,
 				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
@@ -73,7 +73,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 		{
 			exception.Should().BeOfType<ArgumentNullException>(
 					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})")
-			   .Which.ParamName.Should().Be(paramName,
+				.Which.ParamName.Should().Be(paramName,
 					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 	}
@@ -82,12 +82,13 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	public static IEnumerable<object?[]> GetDriveInfoFactoryCallbacks(string? path)
 		=> GetDriveInfoFactoryCallbackTestParameters(path!)
-		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
-		   .Select(item => new object?[]
+			.Where(item => item.TestType.HasFlag(path.ToTestType()))
+			.Select(item => new object?[]
 			{
-				item.Callback, item.ParamName,
+				item.Callback,
+				item.ParamName,
 				item.TestType.HasFlag(ExceptionTestHelper.TestTypes
-				   .IgnoreParamNameCheck)
+					.IgnoreParamNameCheck)
 			});
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,

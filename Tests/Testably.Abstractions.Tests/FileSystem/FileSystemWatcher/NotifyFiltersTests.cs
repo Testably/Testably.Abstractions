@@ -305,9 +305,9 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 		Skip.If(Test.RunsOnWindows);
 
 		FileSystem.Initialize()
-		   .WithSubdirectory(sourcePath).Initialized(s => s
-			   .WithFile(sourceName))
-		   .WithSubdirectory(destinationPath);
+			.WithSubdirectory(sourcePath).Initialized(s => s
+				.WithFile(sourceName))
+			.WithSubdirectory(destinationPath);
 		RenamedEventArgs? result = null;
 		ManualResetEventSlim ms = new();
 		IFileSystemWatcher fileSystemWatcher =
@@ -329,11 +329,11 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 		result.Should().NotBeNull();
 		result!.ChangeType.Should().Be(WatcherChangeTypes.Renamed);
 		result.FullPath.Should()
-		   .Be(FileSystem.Path.Combine(BasePath, destinationPath, destinationName));
+			.Be(FileSystem.Path.Combine(BasePath, destinationPath, destinationName));
 		result.Name.Should()
-		   .Be(FileSystem.Path.Combine(destinationPath, destinationName));
+			.Be(FileSystem.Path.Combine(destinationPath, destinationName));
 		result.OldFullPath.Should()
-		   .Be(FileSystem.Path.Combine(BasePath, sourcePath, sourceName));
+			.Be(FileSystem.Path.Combine(BasePath, sourcePath, sourceName));
 		result.OldName.Should().Be(FileSystem.Path.Combine(sourcePath, sourceName));
 	}
 
@@ -348,9 +348,9 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 		Skip.IfNot(Test.RunsOnWindows);
 
 		FileSystem.Initialize()
-		   .WithSubdirectory(sourcePath).Initialized(s => s
-			   .WithFile(sourceName))
-		   .WithSubdirectory(destinationPath);
+			.WithSubdirectory(sourcePath).Initialized(s => s
+				.WithFile(sourceName))
+			.WithSubdirectory(destinationPath);
 		RenamedEventArgs? result = null;
 		ManualResetEventSlim ms = new();
 		IFileSystemWatcher fileSystemWatcher =

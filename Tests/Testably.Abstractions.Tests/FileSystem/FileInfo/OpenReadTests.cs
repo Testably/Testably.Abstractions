@@ -20,9 +20,9 @@ public abstract partial class OpenReadTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
 	[SkippableTheory]

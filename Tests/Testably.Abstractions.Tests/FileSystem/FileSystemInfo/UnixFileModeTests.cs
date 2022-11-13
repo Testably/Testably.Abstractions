@@ -44,9 +44,9 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 		FileSystem.File.WriteAllText(path, "some content");
 		IFileInfo fileSystemInfo = FileSystem.FileInfo.New(path);
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		fileSystemInfo.UnixFileMode = unixFileMode;
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		fileSystemInfo.UnixFileMode.Should().Be(unixFileMode);
 	}
@@ -62,13 +62,13 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
-#pragma warning disable CA1416
+			#pragma warning disable CA1416
 			fileSystemInfo.UnixFileMode = unixFileMode;
-#pragma warning restore CA1416
+			#pragma warning restore CA1416
 		});
 
 		exception.Should().BeOfType<PlatformNotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233031);
+			.Which.HResult.Should().Be(-2146233031);
 	}
 }
 #endif

@@ -27,7 +27,7 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 			FileSystem.File.AppendAllLinesAsync(path, contents, cts.Token));
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+			.Which.HResult.Should().Be(-2146233029);
 	}
 
 	[SkippableTheory]
@@ -44,7 +44,7 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 				cts.Token));
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+			.Which.HResult.Should().Be(-2146233029);
 	}
 
 	[SkippableTheory]
@@ -58,7 +58,7 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 
 		FileSystem.File.Exists(path).Should().BeTrue();
 		FileSystem.File.ReadAllLines(path).Should()
-		   .BeEquivalentTo(previousContents.Concat(contents),
+			.BeEquivalentTo(previousContents.Concat(contents),
 				o => o.WithStrictOrdering());
 	}
 
@@ -68,13 +68,13 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 		string missingPath, string fileName, List<string> contents)
 	{
 		string filePath = FileSystem.Path.Combine(missingPath, fileName);
-		Exception? exception = await Record.ExceptionAsync(async() =>
+		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
 			await FileSystem.File.AppendAllLinesAsync(filePath, contents);
 		});
 
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
+			.Which.HResult.Should().Be(-2147024893);
 	}
 
 	[SkippableTheory]
@@ -99,9 +99,9 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.ParamName.Should().Be("contents");
+			.Which.ParamName.Should().Be("contents");
 	}
 
 	[SkippableTheory]
@@ -115,16 +115,19 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.ParamName.Should().Be("encoding");
+			.Which.ParamName.Should().Be("encoding");
 	}
 
 	[SkippableTheory]
 	[AutoData]
 	public async Task AppendAllLinesAsync_ShouldEndWithNewline(string path)
 	{
-		string[] contents = { "foo", "bar" };
+		string[] contents =
+		{
+			"foo", "bar"
+		};
 		string expectedResult = "foo" + Environment.NewLine + "bar" + Environment.NewLine;
 
 		await FileSystem.File.AppendAllLinesAsync(path, contents);

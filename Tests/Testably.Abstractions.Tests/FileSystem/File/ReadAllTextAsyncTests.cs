@@ -24,7 +24,7 @@ public abstract partial class ReadAllTextAsyncTests<TFileSystem>
 			FileSystem.File.ReadAllTextAsync(path, cts.Token));
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+			.Which.HResult.Should().Be(-2146233029);
 	}
 
 	[SkippableTheory]
@@ -40,7 +40,7 @@ public abstract partial class ReadAllTextAsyncTests<TFileSystem>
 			FileSystem.File.ReadAllTextAsync(path, Encoding.UTF8, cts.Token));
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+			.Which.HResult.Should().Be(-2146233029);
 	}
 
 	[SkippableTheory]
@@ -52,10 +52,10 @@ public abstract partial class ReadAllTextAsyncTests<TFileSystem>
 			FileSystem.File.ReadAllTextAsync(path));
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should()
-		   .Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Which.Message.Should()
+			.Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
 	[SkippableTheory]

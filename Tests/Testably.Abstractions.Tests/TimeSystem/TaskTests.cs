@@ -20,11 +20,11 @@ public abstract partial class TaskTests<TTimeSystem>
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
 			await TimeSystem.Task.Delay(millisecondsTimeout, cts.Token)
-			   .ConfigureAwait(false);
+				.ConfigureAwait(false);
 		});
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+			.Which.HResult.Should().Be(-2146233029);
 	}
 
 	[Fact]
@@ -37,7 +37,7 @@ public abstract partial class TaskTests<TTimeSystem>
 		}).ConfigureAwait(false);
 
 		exception.Should().BeOfType<ArgumentOutOfRangeException>()
-		   .Which.HResult.Should().Be(-2146233086);
+			.Which.HResult.Should().Be(-2146233086);
 	}
 
 	[Fact]
@@ -51,7 +51,7 @@ public abstract partial class TaskTests<TTimeSystem>
 		DateTime after = TimeSystem.DateTime.UtcNow;
 
 		after.Should().BeOnOrAfter(before.AddMilliseconds(millisecondsTimeout)
-		   .ApplySystemClockTolerance());
+			.ApplySystemClockTolerance());
 	}
 
 	[Fact]
@@ -65,11 +65,11 @@ public abstract partial class TaskTests<TTimeSystem>
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
 			await TimeSystem.Task.Delay(timeout, cts.Token)
-			   .ConfigureAwait(false);
+				.ConfigureAwait(false);
 		});
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+			.Which.HResult.Should().Be(-2146233029);
 	}
 
 	[Fact]
@@ -79,12 +79,12 @@ public abstract partial class TaskTests<TTimeSystem>
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
 			await TimeSystem.Task
-			   .Delay(TimeSpan.FromMilliseconds(-2))
-			   .ConfigureAwait(false);
+				.Delay(TimeSpan.FromMilliseconds(-2))
+				.ConfigureAwait(false);
 		}).ConfigureAwait(false);
 
 		exception.Should().BeOfType<ArgumentOutOfRangeException>()
-		   .Which.HResult.Should().Be(-2146233086);
+			.Which.HResult.Should().Be(-2146233086);
 	}
 
 	[Fact]

@@ -16,10 +16,10 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+			.Which.HResult.Should().Be(-2147024809);
 #if !NETFRAMEWORK
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("path");
+			.Which.ParamName.Should().Be("path");
 #endif
 	}
 
@@ -32,7 +32,7 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 	}
 
 	[SkippableTheory]

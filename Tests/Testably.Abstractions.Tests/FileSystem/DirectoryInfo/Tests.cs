@@ -91,7 +91,7 @@ public abstract partial class Tests<TFileSystem>
 			sut.Attributes = fileAttributes;
 		});
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 		sut.Attributes.Should().Be((FileAttributes)(-1));
 	}
 
@@ -106,15 +106,15 @@ public abstract partial class Tests<TFileSystem>
 			sut.CreationTime = creationTime;
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater && !Test.RunsOnMac)
+		if (Test.RunsOnWindows || (Test.IsNet7OrGreater && !Test.RunsOnMac))
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024894);
+				.Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
+				.Which.HResult.Should().Be(-2147024893);
 		}
 
 		sut.CreationTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
@@ -132,15 +132,15 @@ public abstract partial class Tests<TFileSystem>
 			sut.CreationTimeUtc = creationTimeUtc;
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater && !Test.RunsOnMac)
+		if (Test.RunsOnWindows || (Test.IsNet7OrGreater && !Test.RunsOnMac))
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024894);
+				.Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
+				.Which.HResult.Should().Be(-2147024893);
 		}
 
 		sut.CreationTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
@@ -160,12 +160,12 @@ public abstract partial class Tests<TFileSystem>
 		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024894);
+				.Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
+				.Which.HResult.Should().Be(-2147024893);
 		}
 
 		sut.LastAccessTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
@@ -186,12 +186,12 @@ public abstract partial class Tests<TFileSystem>
 		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024894);
+				.Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
+				.Which.HResult.Should().Be(-2147024893);
 		}
 
 		sut.LastAccessTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
@@ -211,12 +211,12 @@ public abstract partial class Tests<TFileSystem>
 		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024894);
+				.Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
+				.Which.HResult.Should().Be(-2147024893);
 		}
 
 		sut.LastWriteTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
@@ -237,12 +237,12 @@ public abstract partial class Tests<TFileSystem>
 		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
 			exception.Should().BeOfType<FileNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024894);
+				.Which.HResult.Should().Be(-2147024894);
 		}
 		else
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
+				.Which.HResult.Should().Be(-2147024893);
 		}
 
 		sut.LastWriteTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
@@ -269,8 +269,8 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void Parent_ArbitraryPaths_ShouldNotBeNull(string path1,
-	                                                  string path2,
-	                                                  string path3)
+		string path2,
+		string path3)
 	{
 		string path = FileSystem.Path.Combine(path1, path2, path3);
 

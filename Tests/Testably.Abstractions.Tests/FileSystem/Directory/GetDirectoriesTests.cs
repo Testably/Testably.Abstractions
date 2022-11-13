@@ -22,10 +22,10 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 				=> FileSystem.Directory.GetDirectories(path).ToList());
 
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.Message.Should()
-		   .Be($"Could not find a part of the path '{expectedPath}'.");
+			.Which.Message.Should()
+			.Be($"Could not find a part of the path '{expectedPath}'.");
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
+			.Which.HResult.Should().Be(-2147024893);
 		FileSystem.Directory.Exists(path).Should().BeFalse();
 	}
 
@@ -41,13 +41,13 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 		baseDirectory.CreateSubdirectory("bar");
 
 		List<string> result = FileSystem.Directory
-		   .GetDirectories(baseDirectory.FullName, "*", SearchOption.AllDirectories)
-		   .ToList();
+			.GetDirectories(baseDirectory.FullName, "*", SearchOption.AllDirectories)
+			.ToList();
 
 		result.Count.Should().Be(3);
 		result.Should().Contain(FileSystem.Path.Combine(baseDirectory.FullName, "foo"));
 		result.Should()
-		   .Contain(FileSystem.Path.Combine(baseDirectory.FullName, "foo", "xyz"));
+			.Contain(FileSystem.Path.Combine(baseDirectory.FullName, "foo", "xyz"));
 		result.Should().Contain(FileSystem.Path.Combine(baseDirectory.FullName, "bar"));
 	}
 
@@ -63,7 +63,7 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 		baseDirectory.CreateSubdirectory("bar");
 
 		List<string> result = FileSystem.Directory
-		   .GetDirectories(path, "*", SearchOption.AllDirectories).ToList();
+			.GetDirectories(path, "*", SearchOption.AllDirectories).ToList();
 
 		result.Count.Should().Be(3);
 		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
@@ -93,7 +93,7 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 		baseDirectory.CreateSubdirectory(subdirectoryName);
 
 		List<string> result = FileSystem.Directory
-		   .GetDirectories("foo", searchPattern).ToList();
+			.GetDirectories("foo", searchPattern).ToList();
 
 		if (expectToBeFound)
 		{
@@ -104,7 +104,7 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 		else
 		{
 			result.Should()
-			   .BeEmpty($"{subdirectoryName} should not match {searchPattern}");
+				.BeEmpty($"{subdirectoryName} should not match {searchPattern}");
 		}
 	}
 
@@ -121,7 +121,7 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 		baseDirectory.CreateSubdirectory("bar");
 
 		List<string> result = FileSystem.Directory
-		   .GetDirectories(path, "XYZ",
+			.GetDirectories(path, "XYZ",
 				new EnumerationOptions
 				{
 					MatchCasing = MatchCasing.CaseInsensitive,
@@ -147,11 +147,11 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 		Exception? exception = Record.Exception(() =>
 		{
 			_ = FileSystem.Directory.GetDirectories(path, searchPattern)
-			   .FirstOrDefault();
+				.FirstOrDefault();
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+			.Which.HResult.Should().Be(-2147024809);
 	}
 
 	[SkippableTheory]
@@ -212,7 +212,7 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 		baseDirectory.CreateSubdirectory("bar/xyz");
 
 		IEnumerable<string> result = FileSystem.Directory
-		   .GetDirectories(path, "xyz", SearchOption.AllDirectories);
+			.GetDirectories(path, "xyz", SearchOption.AllDirectories);
 
 		result.Count().Should().Be(2);
 	}

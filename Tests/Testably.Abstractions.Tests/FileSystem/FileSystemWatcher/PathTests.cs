@@ -20,9 +20,9 @@ public abstract partial class PathTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+			.Which.HResult.Should().Be(-2147024809);
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.Message.Should().Contain(path);
+			.Which.Message.Should().Contain(path);
 	}
 
 	[SkippableFact]
@@ -65,11 +65,11 @@ public abstract partial class PathTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+			.Which.HResult.Should().Be(-2147024809);
 		if (!Test.IsNetFramework)
 		{
 			exception.Should().BeOfType<ArgumentException>()
-			   .Which.ParamName.Should().Be("Path");
+				.Which.ParamName.Should().Be("Path");
 		}
 	}
 }

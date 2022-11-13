@@ -21,10 +21,10 @@ public abstract partial class DeleteTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
+			.Which.HResult.Should().Be(-2147024893);
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.Message.Should()
-		   .Be($"Could not find a part of the path '{sut.FullName}'.");
+			.Which.Message.Should()
+			.Be($"Could not find a part of the path '{sut.FullName}'.");
 	}
 
 	[SkippableTheory]
@@ -33,26 +33,32 @@ public abstract partial class DeleteTests<TFileSystem>
 		string path, string filename)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory(path);
+			.WithSubdirectory(path);
 		string filePath = FileSystem.Path.Combine(path, filename);
 		FileSystemStream openFile = FileSystem.File.OpenWrite(filePath);
-		openFile.Write(new byte[] { 0 }, 0, 1);
+		openFile.Write(new byte[]
+		{
+			0
+		}, 0, 1);
 		openFile.Flush();
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 		Exception? exception = Record.Exception(() =>
 		{
 			sut.Delete(true);
-			openFile.Write(new byte[] { 0 }, 0, 1);
+			openFile.Write(new byte[]
+			{
+				0
+			}, 0, 1);
 			openFile.Flush();
 		});
 
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024864);
+				.Which.HResult.Should().Be(-2147024864);
 			exception.Should().BeOfType<IOException>()
-			   .Which.Message.Should()
-			   .Contain($"{filename}'");
+				.Which.Message.Should()
+				.Contain($"{filename}'");
 			FileSystem.File.Exists(filePath).Should().BeTrue();
 		}
 		else
@@ -120,17 +126,17 @@ public abstract partial class DeleteTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024751);
+				.Which.HResult.Should().Be(-2147024751);
 		}
 		else if (Test.RunsOnMac)
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(66);
+				.Which.HResult.Should().Be(66);
 		}
 		else
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(39);
+				.Which.HResult.Should().Be(39);
 		}
 
 		exception.Should().BeOfType<IOException>();
@@ -139,7 +145,7 @@ public abstract partial class DeleteTests<TFileSystem>
 		{
 			// Path information only included in exception message on Windows and not in .NET Framework
 			exception.Should().BeOfType<IOException>()
-			   .Which.Message.Should().Contain($"'{sut.FullName}'");
+				.Which.Message.Should().Contain($"'{sut.FullName}'");
 		}
 #endif
 

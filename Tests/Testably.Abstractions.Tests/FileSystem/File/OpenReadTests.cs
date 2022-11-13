@@ -19,9 +19,9 @@ public abstract partial class OpenReadTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
 	[SkippableTheory]
@@ -54,7 +54,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
+			.Which.HResult.Should().Be(-2146233067);
 	}
 
 	[SkippableTheory]
@@ -70,7 +70,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
+			.Which.HResult.Should().Be(-2146233067);
 	}
 
 	[SkippableTheory]
@@ -85,13 +85,13 @@ public abstract partial class OpenReadTests<TFileSystem>
 		{
 			// ReSharper disable once UseAwaitUsing
 			using FileSystemStream stream = FileSystem.File.OpenRead(path);
-#pragma warning disable CA1835
+			#pragma warning disable CA1835
 			await stream.WriteAsync(bytes, 0, bytes.Length);
-#pragma warning restore CA1835
+			#pragma warning restore CA1835
 		});
 
 		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
+			.Which.HResult.Should().Be(-2146233067);
 	}
 
 #if FEATURE_SPAN
@@ -109,7 +109,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
+			.Which.HResult.Should().Be(-2146233067);
 	}
 #endif
 
@@ -126,7 +126,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
+			.Which.HResult.Should().Be(-2146233067);
 	}
 
 #if FEATURE_SPAN
@@ -143,7 +143,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<NotSupportedException>()
-		   .Which.HResult.Should().Be(-2146233067);
+			.Which.HResult.Should().Be(-2146233067);
 	}
 #endif
 }

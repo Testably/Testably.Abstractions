@@ -20,9 +20,9 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
+			.Which.HResult.Should().Be(-2147024893);
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(fullPath)}'");
+			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(fullPath)}'");
 	}
 
 	[SkippableTheory]
@@ -59,20 +59,20 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 			lastAccessTime.Should()
-			   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
 			lastAccessTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastWriteTime.Should()
-		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[SkippableTheory]
@@ -80,12 +80,26 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 	public void WriteAllText_ShouldCreateFileWithByteOrderMark(
 		string path)
 	{
-		byte[] expectedBytes = { 255, 254, 0, 0, 65, 0, 0, 0, 65, 0, 0, 0 };
+		byte[] expectedBytes =
+		{
+			255,
+			254,
+			0,
+			0,
+			65,
+			0,
+			0,
+			0,
+			65,
+			0,
+			0,
+			0
+		};
 
 		FileSystem.File.WriteAllText(path, "AA", Encoding.UTF32);
 
 		FileSystem.File.ReadAllBytes(path)
-		   .Should().BeEquivalentTo(expectedBytes);
+			.Should().BeEquivalentTo(expectedBytes);
 	}
 
 	[SkippableTheory]
@@ -102,7 +116,16 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 	[AutoData]
 	public void WriteAllText_SpecialCharacters_ShouldReturnSameText(string path)
 	{
-		char[] specialCharacters = { 'Ä', 'Ö', 'Ü', 'ä', 'ö', 'ü', 'ß' };
+		char[] specialCharacters =
+		{
+			'Ä',
+			'Ö',
+			'Ü',
+			'ä',
+			'ö',
+			'ü',
+			'ß'
+		};
 		foreach (char specialCharacter in specialCharacters)
 		{
 			string contents = "_" + specialCharacter;

@@ -26,9 +26,9 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+			.Which.HResult.Should().Be(-2147024809);
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("handle");
+			.Which.ParamName.Should().Be("handle");
 	}
 
 	[SkippableTheory]
@@ -45,9 +45,9 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+			.Which.HResult.Should().Be(-2147024809);
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("handle");
+			.Which.ParamName.Should().Be("handle");
 	}
 
 	[SkippableTheory]
@@ -65,9 +65,9 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+			.Which.HResult.Should().Be(-2147024809);
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("handle");
+			.Which.ParamName.Should().Be("handle");
 	}
 
 	[SkippableTheory]
@@ -82,6 +82,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 			cleanup = realFileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory();
 			FileSystem.InitializeIn(realFileSystem.Directory.GetCurrentDirectory());
 		}
+
 		string path = realFileSystem.Path.GetFullPath(filename);
 		realFileSystem.File.WriteAllText(path, contents);
 		FileSystem.File.WriteAllText(path, contents);
@@ -109,6 +110,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 			cleanup = realFileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory();
 			FileSystem.InitializeIn(realFileSystem.Directory.GetCurrentDirectory());
 		}
+
 		string path = realFileSystem.Path.GetFullPath(filename);
 		realFileSystem.File.WriteAllText(path, contents);
 		FileSystem.File.WriteAllText(path, contents);
@@ -138,6 +140,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 			cleanup = realFileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory();
 			FileSystem.InitializeIn(realFileSystem.Directory.GetCurrentDirectory());
 		}
+
 		string path = realFileSystem.Path.GetFullPath(filename);
 		realFileSystem.File.WriteAllText(path, contents);
 		FileSystem.File.WriteAllText(path, contents);

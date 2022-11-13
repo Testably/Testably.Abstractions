@@ -50,7 +50,7 @@ public abstract partial class DisposeTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ObjectDisposedException>()
-		         .Which.HResult.Should().Be(-2146232798);
+			.Which.HResult.Should().Be(-2146232798);
 		exception.Should().BeOfType<ObjectDisposedException>();
 	}
 
@@ -83,22 +83,24 @@ public abstract partial class DisposeTests<TFileSystem>
 		FileSystem.File.WriteAllText("foo", "some content");
 		Exception? exception = Record.Exception(() =>
 		{
-			var stream =
+			FileSystemStream stream =
 				FileSystem.FileStream.New("foo", FileMode.Open, FileAccess.ReadWrite);
 			stream.Dispose();
 			callback.Compile().Invoke(stream);
 		});
 
-
-		exception.Should().BeOfType<ObjectDisposedException>($"\n{callback}\n executed after Dispose() was called.")
-		         .Which.ObjectName.Should().BeEmpty($"\n{callback}\n executed after Dispose() was called.");
+		exception.Should()
+			.BeOfType<ObjectDisposedException>(
+				$"\n{callback}\n executed after Dispose() was called.")
+			.Which.ObjectName.Should()
+			.BeEmpty($"\n{callback}\n executed after Dispose() was called.");
 	}
 
 	#region Helpers
 
 	public static IEnumerable<object?[]> GetFileStreamCallbacks()
 		=> GetFileStreamCallbackTestParameters()
-		   .Select(item => new object?[]
+			.Select(item => new object?[]
 			{
 				item
 			});
@@ -111,23 +113,23 @@ public abstract partial class DisposeTests<TFileSystem>
 		yield return fileStream => fileStream.CopyTo(new MemoryStream(), 1);
 		yield return fileStream
 			=> fileStream.CopyToAsync(new MemoryStream(), 1, CancellationToken.None)
-			             .GetAwaiter().GetResult();
+				.GetAwaiter().GetResult();
 		yield return fileStream => fileStream.Flush();
 		yield return fileStream => fileStream.FlushAsync(CancellationToken.None)
-		                                     .GetAwaiter().GetResult();
+			.GetAwaiter().GetResult();
 		// ReSharper disable once MustUseReturnValue
 		yield return fileStream => fileStream.Read(Array.Empty<byte>(), 0, 0);
 #if FEATURE_SPAN
 		//yield return fileStream => fileStream.Read(Array.Empty<byte>().AsSpan());
 #endif
 		yield return fileStream => fileStream.ReadAsync(Array.Empty<byte>(), 0, 0)
-		                                     .GetAwaiter().GetResult();
+			.GetAwaiter().GetResult();
 		yield return fileStream => fileStream.ReadByte();
 		yield return fileStream => fileStream.Seek(0, SeekOrigin.Begin);
 		yield return fileStream => fileStream.SetLength(0);
 		yield return fileStream => fileStream.Write(Array.Empty<byte>(), 0, 0);
 		yield return fileStream => fileStream.WriteAsync(Array.Empty<byte>(), 0, 0)
-		                                     .GetAwaiter().GetResult();
+			.GetAwaiter().GetResult();
 		yield return fileStream => fileStream.WriteByte(0x42);
 	}
 

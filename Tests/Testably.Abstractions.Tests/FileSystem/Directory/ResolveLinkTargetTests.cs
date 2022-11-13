@@ -112,9 +112,9 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<IOException>()
-		   .Which.Message.Should().Contain($"'{previousPath}'");
+			.Which.Message.Should().Contain($"'{previousPath}'");
 		exception.Should().BeOfType<IOException>()
-		   .Which.HResult.Should().Be(-2147022975);
+			.Which.HResult.Should().Be(-2147022975);
 	}
 
 	[SkippableTheory]

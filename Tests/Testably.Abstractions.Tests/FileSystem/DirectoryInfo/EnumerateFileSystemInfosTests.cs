@@ -19,17 +19,17 @@ public abstract partial class EnumerateFileSystemInfosTests<TFileSystem>
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
-			   .WithSubdirectory(path).Initialized(s => s
-				   .WithASubdirectory().Initialized(d => d
-					   .WithAFile()
-					   .WithAFile())
-				   .WithASubdirectory()
-				   .WithAFile());
+				.WithSubdirectory(path).Initialized(s => s
+					.WithASubdirectory().Initialized(d => d
+						.WithAFile()
+						.WithAFile())
+					.WithASubdirectory()
+					.WithAFile());
 		IDirectoryInfo baseDirectory =
 			(IDirectoryInfo)initialized[0];
 
 		IFileSystemInfo[] result = baseDirectory
-		   .EnumerateFileSystemInfos("*", SearchOption.AllDirectories).ToArray();
+			.EnumerateFileSystemInfos("*", SearchOption.AllDirectories).ToArray();
 
 		result.Length.Should().Be(5);
 		result.Should().Contain(d => d.Name == initialized[1].Name);
@@ -58,11 +58,11 @@ public abstract partial class EnumerateFileSystemInfosTests<TFileSystem>
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Initialize()
-			   .WithFile(fileName)
-			   .BaseDirectory;
+				.WithFile(fileName)
+				.BaseDirectory;
 
 		IFileSystemInfo[] result = baseDirectory
-		   .EnumerateFileSystemInfos(searchPattern).ToArray();
+			.EnumerateFileSystemInfos(searchPattern).ToArray();
 
 		if (expectToBeFound)
 		{
@@ -72,7 +72,7 @@ public abstract partial class EnumerateFileSystemInfosTests<TFileSystem>
 		else
 		{
 			result.Should()
-			   .BeEmpty($"{fileName} should not match '{searchPattern}'");
+				.BeEmpty($"{fileName} should not match '{searchPattern}'");
 		}
 	}
 
@@ -83,14 +83,14 @@ public abstract partial class EnumerateFileSystemInfosTests<TFileSystem>
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
-			   .WithSubdirectory(path).Initialized(s => s
-				   .WithASubdirectory()
-				   .WithAFile());
+				.WithSubdirectory(path).Initialized(s => s
+					.WithASubdirectory()
+					.WithAFile());
 		IDirectoryInfo baseDirectory =
 			(IDirectoryInfo)initialized[0];
 
 		IFileSystemInfo[] result = baseDirectory
-		   .EnumerateFileSystemInfos("*").ToArray();
+			.EnumerateFileSystemInfos("*").ToArray();
 
 		result.Length.Should().Be(2);
 		result.Should().Contain(d
@@ -106,13 +106,13 @@ public abstract partial class EnumerateFileSystemInfosTests<TFileSystem>
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Initialize()
-			   .WithASubdirectory().Initialized(s => s
-				   .WithFile("xyz"))
-			   .WithAFile()
-			   .BaseDirectory;
+				.WithASubdirectory().Initialized(s => s
+					.WithFile("xyz"))
+				.WithAFile()
+				.BaseDirectory;
 
 		IFileSystemInfo[] result = baseDirectory
-		   .EnumerateFileSystemInfos("XYZ",
+			.EnumerateFileSystemInfos("XYZ",
 				new EnumerationOptions
 				{
 					MatchCasing = MatchCasing.CaseInsensitive,
@@ -143,7 +143,7 @@ public abstract partial class EnumerateFileSystemInfosTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
+			.Which.HResult.Should().Be(-2147024809);
 	}
 
 	[SkippableFact]
@@ -152,14 +152,14 @@ public abstract partial class EnumerateFileSystemInfosTests<TFileSystem>
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Initialize()
-			   .WithFile("foo")
-			   .WithSubdirectory("muh").Initialized(s => s
-				   .WithFile("xyz"))
-			   .WithFile("bar")
-			   .BaseDirectory;
+				.WithFile("foo")
+				.WithSubdirectory("muh").Initialized(s => s
+					.WithFile("xyz"))
+				.WithFile("bar")
+				.BaseDirectory;
 
 		IFileSystemInfo[] result = baseDirectory
-		   .EnumerateFileSystemInfos().ToArray();
+			.EnumerateFileSystemInfos().ToArray();
 
 		result.Length.Should().Be(3);
 		result.Should().Contain(d => d.Name == "foo");
@@ -173,12 +173,12 @@ public abstract partial class EnumerateFileSystemInfosTests<TFileSystem>
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Initialize()
-			   .WithFile("foo")
-			   .WithFile("bar")
-			   .BaseDirectory;
+				.WithFile("foo")
+				.WithFile("bar")
+				.BaseDirectory;
 
 		IEnumerable<IFileSystemInfo> result = baseDirectory
-		   .EnumerateFileSystemInfos("foo").ToArray();
+			.EnumerateFileSystemInfos("foo").ToArray();
 
 		result.Should().ContainSingle(d => d.Name == "foo");
 		result.Count().Should().Be(1);
@@ -190,16 +190,16 @@ public abstract partial class EnumerateFileSystemInfosTests<TFileSystem>
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Initialize()
-			   .WithASubdirectory().Initialized(s => s
-				   .WithFile("xyz"))
-			   .WithASubdirectory().Initialized(s => s
-				   .WithFile("xyz"))
-			   .WithSubdirectory("xyz").Initialized(s => s
-				   .WithAFile())
-			   .BaseDirectory;
+				.WithASubdirectory().Initialized(s => s
+					.WithFile("xyz"))
+				.WithASubdirectory().Initialized(s => s
+					.WithFile("xyz"))
+				.WithSubdirectory("xyz").Initialized(s => s
+					.WithAFile())
+				.BaseDirectory;
 
 		IEnumerable<IFileSystemInfo> result = baseDirectory
-		   .EnumerateFileSystemInfos("xyz", SearchOption.AllDirectories);
+			.EnumerateFileSystemInfos("xyz", SearchOption.AllDirectories);
 
 		result.Count().Should().Be(3);
 	}

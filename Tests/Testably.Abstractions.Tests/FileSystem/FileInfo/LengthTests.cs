@@ -20,13 +20,13 @@ public abstract partial class LengthTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 #if NETFRAMEWORK
 		exception.Should().BeOfType<FileNotFoundException>()
 		   .Which.Message.Should().Contain($"'{path}'");
 #else
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 #endif
 	}
 
@@ -44,13 +44,13 @@ public abstract partial class LengthTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 #if NETFRAMEWORK
 		exception.Should().BeOfType<FileNotFoundException>()
 		   .Which.Message.Should().Contain($"'{path}'");
 #else
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 #endif
 	}
 
@@ -67,13 +67,13 @@ public abstract partial class LengthTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 #if NETFRAMEWORK
 		exception.Should().BeOfType<FileNotFoundException>()
 		   .Which.Message.Should().Contain($"'{path}'");
 #else
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 #endif
 	}
 
@@ -119,9 +119,9 @@ public abstract partial class LengthTests<TFileSystem>
 		long result = sut.Length;
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 		result.Should().Be(bytes.Length);
 	}
 
@@ -146,9 +146,9 @@ public abstract partial class LengthTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 		exception2.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 #if NETFRAMEWORK
 		exception.Should().BeOfType<FileNotFoundException>()
 		   .Which.Message.Should().Contain($"'{path}'");
@@ -156,9 +156,9 @@ public abstract partial class LengthTests<TFileSystem>
 		   .Which.Message.Should().Contain($"'{path}'");
 #else
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 		exception2.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 #endif
 	}
 }

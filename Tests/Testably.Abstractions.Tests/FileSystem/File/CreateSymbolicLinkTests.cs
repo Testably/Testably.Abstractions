@@ -18,8 +18,8 @@ public abstract partial class CreateSymbolicLinkTests<TFileSystem>
 		FileSystem.File.CreateSymbolicLink(path, pathToTarget);
 
 		FileSystem.File.GetAttributes(path)
-		   .HasFlag(FileAttributes.ReparsePoint)
-		   .Should().BeTrue();
+			.HasFlag(FileAttributes.ReparsePoint)
+			.Should().BeTrue();
 	}
 
 	[SkippableTheory]
@@ -36,9 +36,9 @@ public abstract partial class CreateSymbolicLinkTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		         .Which.HResult.Should().Be(-2147024893);
+			.Which.HResult.Should().Be(-2147024893);
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		         .Which.Message.Should().Contain($"{sourcePath}'");
+			.Which.Message.Should().Contain($"{sourcePath}'");
 	}
 
 	[SkippableTheory]
@@ -57,16 +57,16 @@ public abstract partial class CreateSymbolicLinkTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<IOException>()
-			         .Which.HResult.Should().Be(-2147024713);
+				.Which.HResult.Should().Be(-2147024713);
 		}
 		else
 		{
 			exception.Should().BeOfType<IOException>()
-			         .Which.HResult.Should().Be(17);
+				.Which.HResult.Should().Be(17);
 		}
 
 		exception.Should().BeOfType<IOException>()
-		         .Which.Message.Should().Contain($"'{path}'");
+			.Which.Message.Should().Contain($"'{path}'");
 	}
 
 	[SkippableTheory]

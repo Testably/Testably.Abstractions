@@ -25,16 +25,16 @@ public abstract partial class DeleteTests<TFileSystem>
 		if (Test.RunsOnLinux)
 		{
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.Message.Should()
-			   .Be($"Could not find a part of the path '{expectedPath}'.");
+				.Which.Message.Should()
+				.Be($"Could not find a part of the path '{expectedPath}'.");
 			exception.Should().BeOfType<DirectoryNotFoundException>()
-			   .Which.HResult.Should().Be(-2147024893);
+				.Which.HResult.Should().Be(-2147024893);
 		}
 		else
 		{
 			exception.Should().BeNull();
 			FileSystem.Directory.Exists(directoryName.ToUpperInvariant())
-			   .Should().BeFalse();
+				.Should().BeFalse();
 		}
 	}
 
@@ -63,10 +63,10 @@ public abstract partial class DeleteTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.Message.Should()
-		   .Be($"Could not find a part of the path '{expectedPath}'.");
+			.Which.Message.Should()
+			.Be($"Could not find a part of the path '{expectedPath}'.");
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
+			.Which.HResult.Should().Be(-2147024893);
 	}
 
 	[SkippableTheory]
@@ -81,10 +81,10 @@ public abstract partial class DeleteTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.Message.Should()
-		   .Be($"Could not find a part of the path '{expectedPath}'.");
+			.Which.Message.Should()
+			.Be($"Could not find a part of the path '{expectedPath}'.");
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
+			.Which.HResult.Should().Be(-2147024893);
 	}
 
 	[SkippableTheory]
@@ -93,25 +93,31 @@ public abstract partial class DeleteTests<TFileSystem>
 		string path, string filename)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory(path);
+			.WithSubdirectory(path);
 		string filePath = FileSystem.Path.Combine(path, filename);
 		FileSystemStream openFile = FileSystem.File.OpenWrite(filePath);
-		openFile.Write(new byte[] { 0 }, 0, 1);
+		openFile.Write(new byte[]
+		{
+			0
+		}, 0, 1);
 		openFile.Flush();
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Directory.Delete(path, true);
-			openFile.Write(new byte[] { 0 }, 0, 1);
+			openFile.Write(new byte[]
+			{
+				0
+			}, 0, 1);
 			openFile.Flush();
 		});
 
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.Message.Should()
-			   .Contain($"{filename}'");
+				.Which.Message.Should()
+				.Contain($"{filename}'");
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024864);
+				.Which.HResult.Should().Be(-2147024864);
 			FileSystem.File.Exists(filePath).Should().BeTrue();
 		}
 		else
@@ -129,10 +135,10 @@ public abstract partial class DeleteTests<TFileSystem>
 	{
 		string fileName = $"{subdirectory}.txt";
 		FileSystem.Initialize()
-		   .WithSubdirectory(subdirectory).Initialized(s => s
-			   .WithAFile()
-			   .WithASubdirectory())
-		   .WithFile(fileName);
+			.WithSubdirectory(subdirectory).Initialized(s => s
+				.WithAFile()
+				.WithASubdirectory())
+			.WithFile(fileName);
 
 		FileSystem.Directory.Delete(subdirectory, true);
 
@@ -177,20 +183,20 @@ public abstract partial class DeleteTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 			lastAccessTime.Should()
-			   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
 			lastAccessTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastWriteTime.Should()
-		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	[SkippableTheory]
@@ -215,8 +221,8 @@ public abstract partial class DeleteTests<TFileSystem>
 	{
 		string fileName = $"{subdirectory}.txt";
 		FileSystem.Initialize()
-		   .WithSubdirectory(subdirectory)
-		   .WithFile(fileName);
+			.WithSubdirectory(subdirectory)
+			.WithFile(fileName);
 
 		FileSystem.Directory.Delete(subdirectory);
 
@@ -240,23 +246,23 @@ public abstract partial class DeleteTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024751);
+				.Which.HResult.Should().Be(-2147024751);
 #if !NETFRAMEWORK
 			// Path information only included in exception message on Windows and not in .NET Framework
 			exception.Should().BeOfType<IOException>()
-			   .Which.Message.Should()
-			   .Contain($"'{System.IO.Path.Combine(BasePath, path)}'");
+				.Which.Message.Should()
+				.Contain($"'{System.IO.Path.Combine(BasePath, path)}'");
 #endif
 		}
 		else if (Test.RunsOnMac)
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(66);
+				.Which.HResult.Should().Be(66);
 		}
 		else
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(39);
+				.Which.HResult.Should().Be(39);
 		}
 	}
 }

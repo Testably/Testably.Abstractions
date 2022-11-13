@@ -16,7 +16,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.WriteAllText(path, null);
 		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 		bool result = fileInfo.ExtensionContainer
-		   .HasWrappedInstance(out System.IO.FileSystemInfo? fileSystemInfo);
+			.HasWrappedInstance(out System.IO.FileSystemInfo? fileSystemInfo);
 
 		if (FileSystem is RealFileSystem)
 		{
@@ -99,7 +99,7 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableTheory]
 	[InlineAutoData(FileAttributes.Hidden)]
 	public void SetAttributes_ShouldBeIgnoredOnLinux(FileAttributes attributes,
-	                                                 string path)
+		string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 		FileSystem.File.SetAttributes(path, attributes);
@@ -138,7 +138,7 @@ public abstract partial class Tests<TFileSystem>
 	[InlineAutoData(FileAttributes.System)]
 	[InlineAutoData(FileAttributes.Temporary)]
 	public void SetAttributes_ShouldOnlyWorkOnWindows(FileAttributes attributes,
-	                                                  string path)
+		string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 		FileSystem.File.SetAttributes(path, attributes);

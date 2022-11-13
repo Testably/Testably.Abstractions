@@ -20,8 +20,8 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 		fileInfo.CreateAsSymbolicLink(pathToTarget);
 
 		FileSystem.File.GetAttributes(path)
-		   .HasFlag(FileAttributes.ReparsePoint)
-		   .Should().BeTrue();
+			.HasFlag(FileAttributes.ReparsePoint)
+			.Should().BeTrue();
 	}
 
 	[SkippableTheory]
@@ -41,16 +41,16 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024713);
+				.Which.HResult.Should().Be(-2147024713);
 		}
 		else
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(17);
+				.Which.HResult.Should().Be(17);
 		}
 
 		exception.Should().BeOfType<IOException>()
-		   .Which.Message.Should().Contain($"'{path}'");
+			.Which.Message.Should().Contain($"'{path}'");
 	}
 }
 #endif

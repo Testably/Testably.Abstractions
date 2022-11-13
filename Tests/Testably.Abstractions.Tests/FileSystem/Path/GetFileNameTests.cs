@@ -16,7 +16,7 @@ public abstract partial class GetFileNameTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void GetFileName_ShouldReturnDirectory(string directory, string filename,
-	                                              string extension)
+		string extension)
 	{
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + filename +
 		              "." + extension;

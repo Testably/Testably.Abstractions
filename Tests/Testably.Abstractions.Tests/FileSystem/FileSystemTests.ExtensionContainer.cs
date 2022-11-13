@@ -12,7 +12,7 @@ public abstract partial class FileSystemTests<TFileSystem>
 			string name)
 	{
 		bool result = FileSystem.FileInfo.New(name).ExtensionContainer
-		   .HasWrappedInstance(out System.IO.FileInfo? fileInfo);
+			.HasWrappedInstance(out System.IO.FileInfo? fileInfo);
 
 		if (FileSystem is RealFileSystem)
 		{
@@ -32,7 +32,7 @@ public abstract partial class FileSystemTests<TFileSystem>
 			string name)
 	{
 		bool result = FileSystem.FileInfo.New(name).ExtensionContainer
-		   .HasWrappedInstance(out System.IO.DirectoryInfo? directoryInfo);
+			.HasWrappedInstance(out System.IO.DirectoryInfo? directoryInfo);
 
 		result.Should().BeFalse();
 		directoryInfo.Should().BeNull();
@@ -45,7 +45,7 @@ public abstract partial class FileSystemTests<TFileSystem>
 			string name, DateTime time)
 	{
 		IFileSystemExtensionContainer sut = FileSystem.FileInfo.New(name)
-		   .ExtensionContainer;
+			.ExtensionContainer;
 
 		sut.StoreMetadata("foo", time);
 		DateTime? result = sut.RetrieveMetadata<DateTime?>("foo");
@@ -59,7 +59,7 @@ public abstract partial class FileSystemTests<TFileSystem>
 		string name)
 	{
 		IFileSystemExtensionContainer sut = FileSystem.FileInfo.New(name)
-		   .ExtensionContainer;
+			.ExtensionContainer;
 
 		sut.StoreMetadata("foo", DateTime.Now);
 		DateTime? result = sut.RetrieveMetadata<DateTime?>("bar");
@@ -73,7 +73,7 @@ public abstract partial class FileSystemTests<TFileSystem>
 		string name)
 	{
 		IFileSystemExtensionContainer sut = FileSystem.FileInfo.New(name)
-		   .ExtensionContainer;
+			.ExtensionContainer;
 
 		sut.StoreMetadata("foo", DateTime.Now);
 		TimeSpan? result = sut.RetrieveMetadata<TimeSpan?>("foo");
@@ -87,7 +87,7 @@ public abstract partial class FileSystemTests<TFileSystem>
 		string name)
 	{
 		object? result = FileSystem.FileInfo.New(name).ExtensionContainer
-		   .RetrieveMetadata<object?>("foo");
+			.RetrieveMetadata<object?>("foo");
 
 		result.Should().BeNull();
 	}

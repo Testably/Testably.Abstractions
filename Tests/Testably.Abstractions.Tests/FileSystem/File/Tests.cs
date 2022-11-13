@@ -140,9 +140,9 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
 	[SkippableTheory]
@@ -160,7 +160,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.SetCreationTime(path, creationTime);
 
 		FileSystem.File.GetCreationTimeUtc(path)
-		   .Should().Be(expectedTime);
+			.Should().Be(expectedTime);
 	}
 
 	[SkippableTheory]
@@ -174,9 +174,9 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
 	[SkippableTheory]
@@ -194,7 +194,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.SetCreationTimeUtc(path, creationTime);
 
 		FileSystem.File.GetCreationTime(path)
-		   .Should().Be(expectedTime);
+			.Should().Be(expectedTime);
 	}
 
 	[SkippableTheory]
@@ -208,9 +208,9 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
 	[SkippableTheory]
@@ -225,7 +225,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.SetLastAccessTime(path, lastAccessTime);
 
 		FileSystem.File.GetLastAccessTimeUtc(path)
-		   .Should().Be(expectedTime);
+			.Should().Be(expectedTime);
 	}
 
 	[SkippableTheory]
@@ -239,9 +239,9 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
 	[SkippableTheory]
@@ -256,7 +256,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.SetLastAccessTimeUtc(path, lastAccessTime);
 
 		FileSystem.File.GetLastAccessTime(path)
-		   .Should().Be(expectedTime);
+			.Should().Be(expectedTime);
 	}
 
 	[SkippableTheory]
@@ -270,9 +270,9 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
 	[SkippableTheory]
@@ -287,7 +287,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.SetLastWriteTime(path, lastWriteTime);
 
 		FileSystem.File.GetLastWriteTimeUtc(path)
-		   .Should().Be(expectedTime);
+			.Should().Be(expectedTime);
 	}
 
 	[SkippableTheory]
@@ -301,9 +301,9 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
 	[SkippableTheory]
@@ -318,6 +318,6 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.SetLastWriteTimeUtc(path, lastWriteTime);
 
 		FileSystem.File.GetLastWriteTime(path)
-		   .Should().Be(expectedTime);
+			.Should().Be(expectedTime);
 	}
 }

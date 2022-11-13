@@ -27,13 +27,13 @@ public abstract partial class ExceptionTests<TFileSystem>
 		{
 			exception.Should().BeOfType<ArgumentException>(
 					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
-			   .Which.ParamName.Should().Be(paramName,
+				.Which.ParamName.Should().Be(paramName,
 					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 
 		exception.Should().BeOfType<ArgumentException>(
 				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
-		   .Which.HResult.Should().Be(-2147024809,
+			.Which.HResult.Should().Be(-2147024809,
 				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
@@ -53,13 +53,13 @@ public abstract partial class ExceptionTests<TFileSystem>
 		{
 			exception.Should().BeOfType<ArgumentException>(
 					$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})")
-			   .Which.ParamName.Should().Be(paramName,
+				.Which.ParamName.Should().Be(paramName,
 					$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 
 		exception.Should().BeOfType<ArgumentException>(
 				$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})")
-		   .Which.HResult.Should().Be(-2147024809,
+			.Which.HResult.Should().Be(-2147024809,
 				$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
@@ -82,7 +82,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 		{
 			exception.Should().BeOfType<ArgumentNullException>(
 					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})")
-			   .Which.ParamName.Should().Be(paramName,
+				.Which.ParamName.Should().Be(paramName,
 					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 	}
@@ -112,14 +112,14 @@ public abstract partial class ExceptionTests<TFileSystem>
 			{
 				exception.Should().BeOfType<ArgumentException>(
 						$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})")
-				   .Which.HResult.Should().Be(-2147024809,
+					.Which.HResult.Should().Be(-2147024809,
 						$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 			}
 			else
 			{
 				exception.Should().BeOfType<IOException>(
 						$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})")
-				   .Which.HResult.Should().Be(-2147024773,
+					.Which.HResult.Should().Be(-2147024773,
 						$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 			}
 		}
@@ -129,12 +129,13 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	public static IEnumerable<object?[]> GetFileCallbacks(string? path)
 		=> GetFileCallbackTestParameters(path!)
-		   .Where(item => item.TestType.HasFlag(path.ToTestType()))
-		   .Select(item => new object?[]
+			.Where(item => item.TestType.HasFlag(path.ToTestType()))
+			.Select(item => new object?[]
 			{
-				item.Callback, item.ParamName,
+				item.Callback,
+				item.ParamName,
 				item.TestType.HasFlag(ExceptionTestHelper.TestTypes
-				   .IgnoreParamNameCheck)
+					.IgnoreParamNameCheck)
 			});
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string? ParamName,
@@ -142,15 +143,27 @@ public abstract partial class ExceptionTests<TFileSystem>
 		GetFileCallbackTestParameters(string value)
 	{
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.AppendAllLines(value, new[] { "foo" }));
+			=> file.AppendAllLines(value, new[]
+			{
+				"foo"
+			}));
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.AppendAllLines(value, new[] { "foo" }, Encoding.UTF8));
+			=> file.AppendAllLines(value, new[]
+			{
+				"foo"
+			}, Encoding.UTF8));
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.AppendAllLinesAsync(value, new[] { "foo" }, CancellationToken.None)
-			   .GetAwaiter().GetResult());
+			=> file.AppendAllLinesAsync(value, new[]
+				{
+					"foo"
+				}, CancellationToken.None)
+				.GetAwaiter().GetResult());
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.AppendAllLinesAsync(value, new[] { "foo" }, Encoding.UTF8,
+			=> file.AppendAllLinesAsync(value, new[]
+				{
+					"foo"
+				}, Encoding.UTF8,
 				CancellationToken.None).GetAwaiter().GetResult());
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
@@ -160,7 +173,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.AppendAllTextAsync(value, "foo", CancellationToken.None).GetAwaiter()
-			   .GetResult());
+				.GetResult());
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.AppendAllTextAsync(value, "foo", Encoding.UTF8,
 				CancellationToken.None).GetAwaiter().GetResult());
@@ -208,20 +221,20 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-#pragma warning disable CA1416
+			#pragma warning disable CA1416
 			yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "path", file
 				=> file.Decrypt(value));
-#pragma warning restore CA1416
+			#pragma warning restore CA1416
 		}
 
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.Delete(value));
 		if (Test.RunsOnWindows)
 		{
-#pragma warning disable CA1416
+			#pragma warning disable CA1416
 			yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "path", file
 				=> file.Encrypt(value));
-#pragma warning restore CA1416
+			#pragma warning restore CA1416
 		}
 
 		// `File.Exists` doesn't throw an exception on `null`
@@ -242,10 +255,10 @@ public abstract partial class ExceptionTests<TFileSystem>
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 		if (!Test.RunsOnWindows)
 		{
-#pragma warning disable CA1416
+			#pragma warning disable CA1416
 			yield return (ExceptionTestHelper.TestTypes.All, "path", file
 				=> file.GetUnixFileMode(value));
-#pragma warning restore CA1416
+			#pragma warning restore CA1416
 		}
 #endif
 		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "sourceFileName", file
@@ -295,7 +308,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.ReadAllBytesAsync(value, CancellationToken.None).GetAwaiter()
-			   .GetResult());
+				.GetResult());
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.ReadAllLines(value));
@@ -304,10 +317,10 @@ public abstract partial class ExceptionTests<TFileSystem>
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.ReadAllLinesAsync(value, CancellationToken.None).GetAwaiter()
-			   .GetResult());
+				.GetResult());
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.ReadAllLinesAsync(value, Encoding.UTF8, CancellationToken.None)
-			   .GetAwaiter().GetResult());
+				.GetAwaiter().GetResult());
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.ReadAllText(value));
@@ -316,10 +329,10 @@ public abstract partial class ExceptionTests<TFileSystem>
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.ReadAllTextAsync(value, CancellationToken.None).GetAwaiter()
-			   .GetResult());
+				.GetResult());
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.ReadAllTextAsync(value, Encoding.UTF8, CancellationToken.None)
-			   .GetAwaiter().GetResult());
+				.GetAwaiter().GetResult());
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.ReadLines(value));
@@ -370,29 +383,47 @@ public abstract partial class ExceptionTests<TFileSystem>
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 		if (!Test.RunsOnWindows)
 		{
-#pragma warning disable CA1416
+			#pragma warning disable CA1416
 			yield return (ExceptionTestHelper.TestTypes.All, "path", file
 				=> file.SetUnixFileMode(value, UnixFileMode.None));
-#pragma warning restore CA1416
+			#pragma warning restore CA1416
 		}
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.WriteAllBytes(value, new byte[] { 0, 1 }));
+			=> file.WriteAllBytes(value, new byte[]
+			{
+				0, 1
+			}));
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.WriteAllBytesAsync(value, new byte[] { 0, 1 },
+			=> file.WriteAllBytesAsync(value, new byte[]
+				{
+					0, 1
+				},
 				CancellationToken.None).GetAwaiter().GetResult());
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.WriteAllLines(value, new[] { "foo" }));
+			=> file.WriteAllLines(value, new[]
+			{
+				"foo"
+			}));
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.WriteAllLines(value, new[] { "foo" }, Encoding.UTF8));
+			=> file.WriteAllLines(value, new[]
+			{
+				"foo"
+			}, Encoding.UTF8));
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.WriteAllLinesAsync(value, new[] { "foo" }, CancellationToken.None)
-			   .GetAwaiter().GetResult());
+			=> file.WriteAllLinesAsync(value, new[]
+				{
+					"foo"
+				}, CancellationToken.None)
+				.GetAwaiter().GetResult());
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
-			=> file.WriteAllLinesAsync(value, new[] { "foo" }, Encoding.UTF8,
+			=> file.WriteAllLinesAsync(value, new[]
+				{
+					"foo"
+				}, Encoding.UTF8,
 				CancellationToken.None).GetAwaiter().GetResult());
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
@@ -402,7 +433,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.WriteAllTextAsync(value, "foo", CancellationToken.None).GetAwaiter()
-			   .GetResult());
+				.GetResult());
 		yield return (ExceptionTestHelper.TestTypes.All, "path", file
 			=> file.WriteAllTextAsync(value, "foo", Encoding.UTF8,
 				CancellationToken.None).GetAwaiter().GetResult());

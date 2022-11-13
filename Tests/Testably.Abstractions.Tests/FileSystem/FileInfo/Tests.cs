@@ -32,7 +32,7 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 	}
 
 	[SkippableFact]
@@ -40,8 +40,8 @@ public abstract partial class Tests<TFileSystem>
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
-			   .WithASubdirectory().Initialized(s => s
-				   .WithAFile());
+				.WithASubdirectory().Initialized(s => s
+					.WithAFile());
 		IFileInfo? file = initialized[1] as IFileInfo;
 
 		file?.Directory.Should().NotBeNull();
@@ -53,8 +53,8 @@ public abstract partial class Tests<TFileSystem>
 	{
 		IFileSystemDirectoryInitializer<TFileSystem> initialized =
 			FileSystem.Initialize()
-			   .WithASubdirectory().Initialized(s => s
-				   .WithAFile());
+				.WithASubdirectory().Initialized(s => s
+					.WithAFile());
 		IFileInfo? file = initialized[1] as IFileInfo;
 
 		file?.Should().NotBeNull();

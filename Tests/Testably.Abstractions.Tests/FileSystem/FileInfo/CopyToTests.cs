@@ -28,12 +28,12 @@ public abstract partial class CopyToTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024816);
+				.Which.HResult.Should().Be(-2147024816);
 		}
 		else
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(17);
+				.Which.HResult.Should().Be(17);
 		}
 
 		sut.Exists.Should().BeTrue();
@@ -83,7 +83,7 @@ public abstract partial class CopyToTests<TFileSystem>
 		FileSystem.File.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.Exists(destinationName).Should().BeTrue();
 		FileSystem.File.GetAttributes(destinationName)
-		   .Should().HaveFlag(FileAttributes.ReadOnly);
+			.Should().HaveFlag(FileAttributes.ReadOnly);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
 	}
 
@@ -109,7 +109,7 @@ public abstract partial class CopyToTests<TFileSystem>
 
 		result.Attributes.Should().Be(expectedAttributes);
 		FileSystem.File.GetAttributes(destinationName)
-		   .Should().Be(expectedAttributes);
+			.Should().Be(expectedAttributes);
 	}
 
 	[SkippableTheory]
@@ -158,18 +158,18 @@ public abstract partial class CopyToTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			FileSystem.File.GetCreationTime(destinationName)
-			   .Should().BeOnOrAfter(updatedTime.ApplySystemClockTolerance());
+				.Should().BeOnOrAfter(updatedTime.ApplySystemClockTolerance());
 		}
 		else
 		{
 			FileSystem.File.GetCreationTime(destinationName)
-			   .Should().Be(sourceCreationTime);
+				.Should().Be(sourceCreationTime);
 		}
 
 		FileSystem.File.GetLastAccessTime(destinationName)
-		   .Should().BeOnOrAfter(updatedTime.ApplySystemClockTolerance());
+			.Should().BeOnOrAfter(updatedTime.ApplySystemClockTolerance());
 		FileSystem.File.GetLastWriteTime(destinationName)
-		   .Should().Be(sourceLastWriteTime);
+			.Should().Be(sourceLastWriteTime);
 	}
 
 	[SkippableTheory]
@@ -187,10 +187,10 @@ public abstract partial class CopyToTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<UnauthorizedAccessException>()
-		   .Which.HResult.Should().Be(-2147024891);
+			.Which.HResult.Should().Be(-2147024891);
 		exception.Should().BeOfType<UnauthorizedAccessException>()
-		   .Which.Message.Should()
-		   .Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
+			.Which.Message.Should()
+			.Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
 		FileSystem.Directory.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.Exists(destinationName).Should().BeFalse();
 	}
@@ -214,7 +214,7 @@ public abstract partial class CopyToTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024864);
+				.Which.HResult.Should().Be(-2147024864);
 			FileSystem.File.Exists(destinationName).Should().BeFalse();
 		}
 		else
@@ -238,11 +238,11 @@ public abstract partial class CopyToTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 #if !NETFRAMEWORK
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should()
-		   .Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
+			.Which.Message.Should()
+			.Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
 #endif
 		FileSystem.File.Exists(destinationName).Should().BeFalse();
 	}

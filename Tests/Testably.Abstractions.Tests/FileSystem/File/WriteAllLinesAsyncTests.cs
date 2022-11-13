@@ -23,7 +23,7 @@ public abstract partial class WriteAllLinesAsyncTests<TFileSystem>
 			FileSystem.File.WriteAllLinesAsync(path, contents, cts.Token));
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+			.Which.HResult.Should().Be(-2146233029);
 	}
 
 	[SkippableTheory]
@@ -39,7 +39,7 @@ public abstract partial class WriteAllLinesAsyncTests<TFileSystem>
 			FileSystem.File.WriteAllLinesAsync(path, contents, Encoding.UTF8, cts.Token));
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+			.Which.HResult.Should().Be(-2146233029);
 	}
 
 	[SkippableTheory]
@@ -55,7 +55,7 @@ public abstract partial class WriteAllLinesAsyncTests<TFileSystem>
 			FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(), cts.Token));
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+			.Which.HResult.Should().Be(-2146233029);
 	}
 
 	[SkippableTheory]
@@ -72,7 +72,7 @@ public abstract partial class WriteAllLinesAsyncTests<TFileSystem>
 				Encoding.UTF8, cts.Token));
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+			.Which.HResult.Should().Be(-2146233029);
 	}
 
 	[SkippableTheory]

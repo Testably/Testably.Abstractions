@@ -66,7 +66,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<UnauthorizedAccessException>()
-		   .Which.HResult.Should().Be(-2147024891);
+			.Which.HResult.Should().Be(-2147024891);
 	}
 
 	[SkippableTheory]
@@ -85,7 +85,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 		FileSystem.File.Exists(backupName).Should().BeFalse();
 	}
 
@@ -111,7 +111,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 		FileSystem.File.Exists(destinationName).Should().BeTrue();
 		FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
 		FileSystem.File.GetAttributes(destinationName)
-		   .Should().HaveFlag(FileAttributes.ReadOnly);
+			.Should().HaveFlag(FileAttributes.ReadOnly);
 		FileSystem.File.Exists(backupName).Should().BeTrue();
 		FileSystem.File.ReadAllText(backupName).Should().Be(destinationContents);
 	}
@@ -139,13 +139,13 @@ public abstract partial class ReplaceTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<UnauthorizedAccessException>()
-			   .Which.HResult.Should().Be(-2147024891);
+				.Which.HResult.Should().Be(-2147024891);
 			FileSystem.File.Exists(sourceName).Should().BeTrue();
 			FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
 			FileSystem.File.Exists(destinationName).Should().BeTrue();
 			FileSystem.File.ReadAllText(destinationName).Should().Be(destinationContents);
 			FileSystem.File.GetAttributes(destinationName)
-			   .Should().NotHaveFlag(FileAttributes.ReadOnly);
+				.Should().NotHaveFlag(FileAttributes.ReadOnly);
 			FileSystem.File.Exists(backupName).Should().BeFalse();
 		}
 		else
@@ -194,9 +194,9 @@ public abstract partial class ReplaceTests<TFileSystem>
 		sut.Replace(destinationName, backupName, true);
 
 		FileSystem.File.GetAttributes(destinationName)
-		   .Should().Be(expectedSourceAttributes);
+			.Should().Be(expectedSourceAttributes);
 		FileSystem.File.GetAttributes(backupName)
-		   .Should().Be(expectedDestinationAttributes);
+			.Should().Be(expectedDestinationAttributes);
 	}
 
 	[SkippableTheory]
@@ -228,17 +228,17 @@ public abstract partial class ReplaceTests<TFileSystem>
 		sut.Replace(destinationName, backupName);
 
 		FileSystem.File.GetCreationTime(destinationName)
-		   .Should().Be(destinationCreationTime);
+			.Should().Be(destinationCreationTime);
 		FileSystem.File.GetLastAccessTime(destinationName)
-		   .Should().Be(sourceLastAccessTime);
+			.Should().Be(sourceLastAccessTime);
 		FileSystem.File.GetLastWriteTime(destinationName)
-		   .Should().Be(sourceLastWriteTime);
+			.Should().Be(sourceLastWriteTime);
 		FileSystem.File.GetCreationTime(backupName)
-		   .Should().Be(destinationCreationTime);
+			.Should().Be(destinationCreationTime);
 		FileSystem.File.GetLastAccessTime(backupName)
-		   .Should().Be(destinationLastAccessTime);
+			.Should().Be(destinationLastAccessTime);
 		FileSystem.File.GetLastWriteTime(backupName)
-		   .Should().Be(destinationLastWriteTime);
+			.Should().Be(destinationLastWriteTime);
 	}
 
 	[SkippableTheory]
@@ -303,7 +303,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<UnauthorizedAccessException>()
-		   .Which.HResult.Should().Be(-2147024891);
+			.Which.HResult.Should().Be(-2147024891);
 	}
 
 	[SkippableTheory]
@@ -330,14 +330,14 @@ public abstract partial class ReplaceTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024864);
+				.Which.HResult.Should().Be(-2147024864);
 			sut.Exists.Should().BeTrue();
 			FileSystem.File.Exists(sourceName).Should().BeTrue();
 			FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
 			FileSystem.File.Exists(destinationName).Should().BeTrue();
 			FileSystem.File.ReadAllText(destinationName).Should().Be(destinationContents);
 			FileSystem.File.GetAttributes(destinationName)
-			   .Should().NotHaveFlag(FileAttributes.ReadOnly);
+				.Should().NotHaveFlag(FileAttributes.ReadOnly);
 			FileSystem.File.Exists(backupName).Should().BeFalse();
 		}
 		else
@@ -367,7 +367,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 		if (Test.RunsOnWindows)
 		{
 			// Behaviour on Linux/MacOS is uncertain

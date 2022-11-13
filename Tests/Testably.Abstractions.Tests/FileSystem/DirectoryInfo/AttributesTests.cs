@@ -34,7 +34,7 @@ public abstract partial class AttributesTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 	}
 
 	[SkippableFact]

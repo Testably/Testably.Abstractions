@@ -22,7 +22,7 @@ public abstract partial class AppendAllLinesTests<TFileSystem>
 
 		FileSystem.File.Exists(path).Should().BeTrue();
 		FileSystem.File.ReadAllLines(path).Should()
-		   .BeEquivalentTo(previousContents.Concat(contents),
+			.BeEquivalentTo(previousContents.Concat(contents),
 				o => o.WithStrictOrdering());
 	}
 
@@ -38,7 +38,7 @@ public abstract partial class AppendAllLinesTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
+			.Which.HResult.Should().Be(-2147024893);
 	}
 
 	[SkippableTheory]
@@ -50,7 +50,7 @@ public abstract partial class AppendAllLinesTests<TFileSystem>
 
 		FileSystem.File.Exists(path).Should().BeTrue();
 		FileSystem.File.ReadAllLines(path).Should()
-		   .BeEquivalentTo(contents, o => o.WithStrictOrdering());
+			.BeEquivalentTo(contents, o => o.WithStrictOrdering());
 	}
 
 	[SkippableTheory]
@@ -64,9 +64,9 @@ public abstract partial class AppendAllLinesTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.ParamName.Should().Be("contents");
+			.Which.ParamName.Should().Be("contents");
 	}
 
 	[SkippableTheory]
@@ -80,16 +80,19 @@ public abstract partial class AppendAllLinesTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
+			.Which.HResult.Should().Be(-2147467261);
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.ParamName.Should().Be("encoding");
+			.Which.ParamName.Should().Be("encoding");
 	}
 
 	[SkippableTheory]
 	[AutoData]
 	public void AppendAllLines_ShouldEndWithNewline(string path)
 	{
-		string[] contents = { "foo", "bar" };
+		string[] contents =
+		{
+			"foo", "bar"
+		};
 		string expectedResult = "foo" + Environment.NewLine + "bar" + Environment.NewLine;
 
 		FileSystem.File.AppendAllLines(path, contents);

@@ -30,10 +30,10 @@ public abstract partial class ReadAllLinesTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
-		         .Which.Message.Should()
-		         .Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			.Which.Message.Should()
+			.Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
 	[SkippableTheory]
@@ -52,13 +52,16 @@ public abstract partial class ReadAllLinesTests<TFileSystem>
 	[AutoData]
 	public void ReadAllLines_ShouldNotReturnByteOrderMark(string path, string content)
 	{
-		FileSystem.File.WriteAllLines(path, new[] { content }, Encoding.UTF32);
+		FileSystem.File.WriteAllLines(path, new[]
+		{
+			content
+		}, Encoding.UTF32);
 
 		string[] result = FileSystem.File.ReadAllLines(path, Encoding.UTF32);
 
 		//Ensure that the file contains the BOM-Bytes
 		FileSystem.File.ReadAllBytes(path).Length
-		          .Should().BeGreaterThan(content.Length);
+			.Should().BeGreaterThan(content.Length);
 		result.Length.Should().Be(1);
 		result[0].Should().Be(content);
 	}
@@ -77,7 +80,7 @@ public abstract partial class ReadAllLinesTests<TFileSystem>
 		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);
 
 		result.Should().NotBeEquivalentTo(lines,
-			       $"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
+			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
 		result[0].Should().Be(lines[0]);
 	}
 }

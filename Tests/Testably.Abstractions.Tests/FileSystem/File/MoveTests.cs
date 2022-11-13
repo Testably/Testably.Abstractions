@@ -36,7 +36,7 @@ public abstract partial class MoveTests<TFileSystem>
 			string source)
 	{
 		FileSystem.Initialize()
-		   .WithFile(source);
+			.WithFile(source);
 		string destination = FileTestHelper.RootDrive("not-existing/path");
 
 		Exception? exception = Record.Exception(() =>
@@ -45,7 +45,7 @@ public abstract partial class MoveTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<DirectoryNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024893);
+			.Which.HResult.Should().Be(-2147024893);
 	}
 
 	[SkippableTheory]
@@ -67,12 +67,12 @@ public abstract partial class MoveTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024713);
+				.Which.HResult.Should().Be(-2147024713);
 		}
 		else
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(17);
+				.Which.HResult.Should().Be(17);
 		}
 
 		FileSystem.File.Exists(sourceName).Should().BeTrue();
@@ -114,7 +114,7 @@ public abstract partial class MoveTests<TFileSystem>
 		FileSystem.File.Exists(sourceName).Should().BeFalse();
 		FileSystem.File.Exists(destinationName).Should().BeTrue();
 		FileSystem.File.GetAttributes(destinationName)
-		   .Should().HaveFlag(FileAttributes.ReadOnly);
+			.Should().HaveFlag(FileAttributes.ReadOnly);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
 	}
 
@@ -150,14 +150,14 @@ public abstract partial class MoveTests<TFileSystem>
 		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(destination);
 
 		creationTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			.BeOnOrBefore(creationTimeEnd);
 		lastAccessTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			.BeOnOrBefore(creationTimeEnd);
 		lastWriteTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			.BeOnOrBefore(creationTimeEnd);
 	}
 
 	[SkippableTheory]
@@ -165,7 +165,7 @@ public abstract partial class MoveTests<TFileSystem>
 	public void Move_SourceAndDestinationIdentical_ShouldNotThrowException(string path)
 	{
 		FileSystem.Initialize()
-		   .WithFile(path);
+			.WithFile(path);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -189,10 +189,10 @@ public abstract partial class MoveTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should()
-		   .Contain($"'{FileSystem.Path.GetFullPath(sourcePath)}'");
+			.Which.Message.Should()
+			.Contain($"'{FileSystem.Path.GetFullPath(sourcePath)}'");
 		FileSystem.File.Exists(destinationName).Should().BeFalse();
 	}
 
@@ -214,7 +214,7 @@ public abstract partial class MoveTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeOfType<IOException>()
-			   .Which.HResult.Should().Be(-2147024864);
+				.Which.HResult.Should().Be(-2147024864);
 			FileSystem.File.Exists(destinationName).Should().BeFalse();
 		}
 		else
@@ -235,10 +235,10 @@ public abstract partial class MoveTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should()
-		   .Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
+			.Which.Message.Should()
+			.Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
 	}
 
 	[SkippableTheory]
@@ -253,10 +253,10 @@ public abstract partial class MoveTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
+			.Which.HResult.Should().Be(-2147024894);
 		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should()
-		   .Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
+			.Which.Message.Should()
+			.Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
 		FileSystem.File.Exists(destinationName).Should().BeFalse();
 	}
 }

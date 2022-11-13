@@ -22,7 +22,7 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 			FileSystem.File.WriteAllTextAsync(path, contents, cts.Token));
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+			.Which.HResult.Should().Be(-2146233029);
 	}
 
 	[SkippableTheory]
@@ -38,7 +38,7 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 			FileSystem.File.WriteAllTextAsync(path, contents, Encoding.UTF8, cts.Token));
 
 		exception.Should().BeOfType<TaskCanceledException>()
-		   .Which.HResult.Should().Be(-2146233029);
+			.Which.HResult.Should().Be(-2146233029);
 	}
 
 	[SkippableTheory]
@@ -71,7 +71,16 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 	public async Task WriteAllTextAsync_SpecialCharacters_ShouldReturnSameText(
 		string path)
 	{
-		char[] specialCharacters = { 'Ä', 'Ö', 'Ü', 'ä', 'ö', 'ü', 'ß' };
+		char[] specialCharacters =
+		{
+			'Ä',
+			'Ö',
+			'Ü',
+			'ä',
+			'ö',
+			'ü',
+			'ß'
+		};
 		foreach (char specialCharacter in specialCharacters)
 		{
 			string contents = "_" + specialCharacter;
