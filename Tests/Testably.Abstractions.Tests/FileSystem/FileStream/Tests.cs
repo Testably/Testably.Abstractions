@@ -35,32 +35,22 @@ public abstract partial class Tests<TFileSystem>
 		stream.CanTimeout.Should().BeFalse();
 	}
 
-	[SkippableFact]
-	public void Constructor_EmptyPath_ShouldThrowArgumentException()
+	[SkippableTheory]
+	[AutoData]
+	public void Close_CalledMultipleTimes_ShouldNotThrow(
+		string path, string contents)
 	{
+		FileSystem.File.WriteAllText(path, contents);
+		using FileSystemStream stream = FileSystem.File.OpenRead(path);
+		stream.Close();
+
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.FileStream.New("", FileMode.Open);
+			// ReSharper disable once AccessToDisposedClosure
+			stream.Close();
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.Message.Should().NotBeNullOrWhiteSpace();
-	}
-
-	[SkippableFact]
-	public void Constructor_NullPath_ShouldThrowArgumentNullException()
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.FileStream.New(null!, FileMode.Open);
-		});
-
-		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.HResult.Should().Be(-2147467261);
-		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.Message.Should().NotBeNullOrWhiteSpace();
+		exception.Should().BeNull();
 	}
 
 	[SkippableTheory]
@@ -79,6 +69,25 @@ public abstract partial class Tests<TFileSystem>
 		buffer.Should().BeEquivalentTo(contents);
 	}
 
+	[SkippableTheory]
+	[AutoData]
+	public void CopyTo_BufferSizeZero_ShouldThrowArgumentOutOfRangeException(
+		string path, byte[] contents)
+	{
+		byte[] buffer = new byte[contents.Length];
+		FileSystem.File.WriteAllBytes(path, contents);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			using FileSystemStream stream = FileSystem.File.OpenRead(path);
+			using MemoryStream destination = new(buffer);
+			stream.CopyTo(destination, 0);
+		});
+
+		exception.Should().BeOfType<ArgumentOutOfRangeException>()
+		         .Which.ParamName.Should().Be("bufferSize");
+	}
+
 #if FEATURE_FILESYSTEM_ASYNC
 	[SkippableTheory]
 	[AutoData]
@@ -95,70 +104,26 @@ public abstract partial class Tests<TFileSystem>
 		await destination.FlushAsync();
 		buffer.Should().BeEquivalentTo(contents);
 	}
-#endif
 
 	[SkippableTheory]
 	[AutoData]
-	public void Dispose_CalledTwiceShouldDoNothing(
+	public async Task CopyToAsync_BufferSizeZero_ShouldThrowArgumentOutOfRangeException(
 		string path, byte[] contents)
 	{
-		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
+		byte[] buffer = new byte[contents.Length];
+		await FileSystem.File.WriteAllBytesAsync(path, contents);
 
-		FileSystem.File.WriteAllBytes(path, contents);
-
-		using FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
-			FileAccess.ReadWrite, FileShare.ReadWrite, 10, FileOptions.DeleteOnClose);
-
-		stream.Dispose();
-		FileSystem.File.Exists(path).Should().BeFalse();
-		FileSystem.File.WriteAllText(path, "foo");
-
-		stream.Dispose();
-
-		FileSystem.File.Exists(path).Should().BeTrue();
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void Dispose_ShouldDisposeStream(
-		string path, string contents)
-	{
-		FileSystem.File.WriteAllText(path, contents);
-
-		using Stream stream = FileSystem.File.OpenRead(path);
-		stream.Dispose();
-
-		Exception? exception = Record.Exception(() =>
+		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
-			// ReSharper disable once AccessToDisposedClosure
-			stream.ReadByte();
+			await using FileSystemStream stream = FileSystem.File.OpenRead(path);
+			using MemoryStream destination = new(buffer);
+			await stream.CopyToAsync(destination, 0);
 		});
 
-		exception.Should().BeOfType<ObjectDisposedException>()
-		   .Which.HResult.Should().Be(-2146232798);
-		exception.Should().BeOfType<ObjectDisposedException>();
+		exception.Should().BeOfType<ArgumentOutOfRangeException>()
+		         .Which.ParamName.Should().Be("bufferSize");
 	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void Dispose_ShouldNotResurrectFile(string path, string contents)
-	{
-		FileSystem.File.WriteAllText(path, contents);
-		FileSystemStream stream = FileSystem.File.Open(path,
-			FileMode.Open,
-			FileAccess.ReadWrite,
-			FileShare.Delete);
-
-		int fileCount1 = FileSystem.Directory.GetFiles(".", "*").Length;
-		FileSystem.File.Delete(path);
-		int fileCount2 = FileSystem.Directory.GetFiles(".", "*").Length;
-		stream.Dispose();
-		int fileCount3 = FileSystem.Directory.GetFiles(".", "*").Length;
-
-		fileCount1.Should().Be(1, "File should have existed");
-		fileCount2.Should().Be(0, "File should have been deleted");
-		fileCount3.Should().Be(0, "Dispose should not have resurrected the file");
-	}
+#endif
 
 	[SkippableTheory]
 	[AutoData]

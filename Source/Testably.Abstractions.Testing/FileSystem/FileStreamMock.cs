@@ -128,6 +128,7 @@ internal sealed class FileStreamMock : FileSystemStream
 	                                       AsyncCallback? callback,
 	                                       object? state)
 	{
+		ThrowIfDisposed();
 		if (!CanRead)
 		{
 			throw ExceptionFactory.StreamDoesNotSupportReading();
@@ -143,6 +144,7 @@ internal sealed class FileStreamMock : FileSystemStream
 	                                        AsyncCallback? callback,
 	                                        object? state)
 	{
+		ThrowIfDisposed();
 		if (!CanWrite)
 		{
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
@@ -183,7 +185,20 @@ internal sealed class FileStreamMock : FileSystemStream
 	/// <inheritdoc cref="FileSystemStream.Flush()" />
 	public override void Flush()
 	{
+		ThrowIfDisposed();
 		InternalFlush();
+	}
+
+	/// <inheritdoc cref="FileSystemStream.FlushAsync(CancellationToken)" />
+	public override Task FlushAsync(CancellationToken cancellationToken)
+	{
+		if (cancellationToken.IsCancellationRequested)
+		{
+			throw ExceptionFactory.TaskWasCanceled();
+		}
+
+		Flush();
+		return Task.CompletedTask;
 	}
 
 	/// <inheritdoc cref="FileSystemStream.Read(byte[], int, int)" />
@@ -267,6 +282,7 @@ internal sealed class FileStreamMock : FileSystemStream
 	/// <inheritdoc cref="FileSystemStream.SetLength(long)" />
 	public override void SetLength(long value)
 	{
+		ThrowIfDisposed();
 		if (!CanWrite)
 		{
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
@@ -370,6 +386,14 @@ internal sealed class FileStreamMock : FileSystemStream
 		else
 		{
 			_isContentChanged = true;
+		}
+	}
+
+	private void ThrowIfDisposed()
+	{
+		if (_isDisposed)
+		{
+			throw new ObjectDisposedException("", "Cannot access a closed file.");
 		}
 	}
 
