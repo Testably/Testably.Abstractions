@@ -9,7 +9,7 @@
       "./Testably.Abstractions.Testing.Tests/Testably.Abstractions.Testing.Tests.csproj"
     ],
     "project": "Testably.Abstractions.Testing.csproj",
-    "target-framework": "net6.0",
+    "target-framework": "net7.0",
     "since": {
       "ignore-changes-in": [
         "**/.github/**/*.*"
