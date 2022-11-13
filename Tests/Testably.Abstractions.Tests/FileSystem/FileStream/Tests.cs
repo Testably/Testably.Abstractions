@@ -141,6 +141,27 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void Dispose_ShouldNotResurrectFile(string path, string contents)
+	{
+		FileSystem.File.WriteAllText(path, contents);
+		FileSystemStream stream = FileSystem.File.Open(path,
+			FileMode.Open,
+			FileAccess.ReadWrite,
+			FileShare.Delete);
+
+		int fileCount1 = FileSystem.Directory.GetFiles(".", "*").Length;
+		FileSystem.File.Delete(path);
+		int fileCount2 = FileSystem.Directory.GetFiles(".", "*").Length;
+		stream.Dispose();
+		int fileCount3 = FileSystem.Directory.GetFiles(".", "*").Length;
+
+		fileCount1.Should().Be(1, "File should have existed");
+		fileCount2.Should().Be(0, "File should have been deleted");
+		fileCount3.Should().Be(0, "Dispose should not have resurrected the file");
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void ExtensionContainer_ShouldWrapFileStreamOnRealFileSystem(
 		string path)
 	{

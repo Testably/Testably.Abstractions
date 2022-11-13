@@ -49,11 +49,14 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 			FileSystem.File.ReadAllText(path);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should()
-		   .Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+		exception.Should()
+		         .BeOfType<FileNotFoundException>()
+		         .Which.HResult.Should()
+		         .Be(-2147024894);
+		exception.Should()
+		         .BeOfType<FileNotFoundException>()
+		         .Which.Message.Should()
+		         .Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
 	[SkippableTheory]
@@ -79,15 +82,32 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+			            .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance())
+			            .And
+			            .BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastAccessTime.Should()
-		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		              .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		lastWriteTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+		             .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance())
+		             .And
+		             .BeOnOrBefore(creationTimeEnd);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void ReadAllText_ShouldTolerateAltDirectorySeparatorChar(
+		string contents, string directory, string fileName)
+	{
+		FileSystem.Directory.CreateDirectory(directory);
+		string filePath = $"{directory}{FileSystem.Path.DirectorySeparatorChar}{fileName}";
+		string altFilePath = $"{directory}{FileSystem.Path.AltDirectorySeparatorChar}{fileName}";
+		FileSystem.File.WriteAllText(filePath, contents);
+
+		string result = FileSystem.File.ReadAllText(altFilePath);
+
+		result.Should().Be(contents);
 	}
 
 	[SkippableTheory]
@@ -100,8 +120,9 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 
 		string result = FileSystem.File.ReadAllText(path, readEncoding);
 
-		result.Should().NotBe(contents,
-			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
+		result.Should()
+		      .NotBe(contents,
+			       $"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
 	}
 
 	[SkippableTheory]

@@ -339,9 +339,9 @@ internal class InMemoryContainer : IStorageContainer
 			FileShare usedShare = share;
 			Execute.NotOnWindows(()
 				=> usedShare = FileShare.ReadWrite);
-			if (deleteAccess && !Execute.IsWindows)
+			if (deleteAccess)
 			{
-				return true;
+				return !Execute.IsWindows || Share == FileShare.Delete;
 			}
 
 			return CheckAccessWithShare(access, Share) &&

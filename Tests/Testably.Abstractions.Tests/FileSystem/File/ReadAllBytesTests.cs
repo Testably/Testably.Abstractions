@@ -17,11 +17,14 @@ public abstract partial class ReadAllBytesTests<TFileSystem>
 			FileSystem.File.ReadAllBytes(path);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-		   .Which.Message.Should()
-		   .Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+		exception.Should()
+		         .BeOfType<FileNotFoundException>()
+		         .Which.HResult.Should()
+		         .Be(-2147024894);
+		exception.Should()
+		         .BeOfType<FileNotFoundException>()
+		         .Which.Message.Should()
+		         .Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
 	[SkippableTheory]
@@ -47,15 +50,17 @@ public abstract partial class ReadAllBytesTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-			   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			   .BeOnOrBefore(creationTimeEnd);
+			            .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance())
+			            .And
+			            .BeOnOrBefore(creationTimeEnd);
 		}
 
 		lastAccessTime.Should()
-		   .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		              .BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		lastWriteTime.Should()
-		   .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-		   .BeOnOrBefore(creationTimeEnd);
+		             .BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance())
+		             .And
+		             .BeOnOrBefore(creationTimeEnd);
 	}
 
 	[SkippableTheory]
@@ -79,6 +84,21 @@ public abstract partial class ReadAllBytesTests<TFileSystem>
 		FileSystem.File.WriteAllBytes(path, contents);
 
 		byte[] result = FileSystem.File.ReadAllBytes(path);
+
+		result.Should().BeEquivalentTo(contents);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void ReadAllBytes_ShouldTolerateAltDirectorySeparatorChar(
+		byte[] contents, string directory, string fileName)
+	{
+		FileSystem.Directory.CreateDirectory(directory);
+		string filePath = $"{directory}{FileSystem.Path.DirectorySeparatorChar}{fileName}";
+		string altFilePath = $"{directory}{FileSystem.Path.AltDirectorySeparatorChar}{fileName}";
+		FileSystem.File.WriteAllBytes(filePath, contents);
+
+		byte[] result = FileSystem.File.ReadAllBytes(altFilePath);
 
 		result.Should().BeEquivalentTo(contents);
 	}

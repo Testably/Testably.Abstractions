@@ -30,23 +30,6 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void New_EmptyPath_ShouldThrowArgumentException(FileMode mode)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.FileStream.New(string.Empty, mode);
-		});
-
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
-#if !NETFRAMEWORK
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("path");
-#endif
-	}
-
-	[SkippableTheory]
-	[AutoData]
 	public void New_ExistingFileWithCreateMode_ShouldIgnoreContent(
 		string path)
 	{
@@ -59,7 +42,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void New_ExistingFileWithCreateNewMode_ShouldThrowArgumentException(
+	public void New_ExistingFileWithCreateNewMode_ShouldThrowIOException(
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, "foo");
