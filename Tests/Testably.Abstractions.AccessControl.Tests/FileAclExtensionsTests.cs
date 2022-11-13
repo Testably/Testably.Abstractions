@@ -13,10 +13,10 @@ public class FileAclExtensionsTests
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", null);
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		FileSecurity result =
 			fileSystem.File.GetAccessControl("foo", AccessControlSections.All);
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		result.Should().NotBeNull();
 	}
@@ -32,17 +32,17 @@ public class FileAclExtensionsTests
 		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
 		{
 			fileSystem.File.WriteAllText("foo", null);
-#pragma warning disable CA1416
+			#pragma warning disable CA1416
 			FileSecurity originalAccessControl =
 				fileSystem.File.GetAccessControl("foo");
 			fileSystem.File.SetAccessControl("foo", originalAccessControl);
 
 			FileSecurity currentAccessControl =
 				fileSystem.File.GetAccessControl("foo", AccessControlSections.Access);
-#pragma warning restore CA1416
+			#pragma warning restore CA1416
 
 			currentAccessControl.HasSameAccessRightsAs(originalAccessControl)
-			   .Should().BeTrue();
+				.Should().BeTrue();
 			currentAccessControl.Should().NotBe(originalAccessControl);
 		}
 	}
@@ -54,12 +54,12 @@ public class FileAclExtensionsTests
 
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", null);
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		FileSecurity fileSecurity = new();
 
 		fileSystem.File.SetAccessControl("foo", fileSecurity);
 		FileSecurity result = fileSystem.File.GetAccessControl("foo");
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		result.Should().Be(fileSecurity);
 	}

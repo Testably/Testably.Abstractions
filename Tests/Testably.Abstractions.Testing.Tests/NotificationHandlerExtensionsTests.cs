@@ -23,12 +23,12 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnCreated(FileSystemTypes.Directory, _ => isNotified = true)
-			   .ExecuteWhileWaiting(() =>
+				.OnCreated(FileSystemTypes.Directory, _ => isNotified = true)
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.Delete(path);
 				})
-			   .Wait(timeout: 50);
+				.Wait(timeout: 50);
 		});
 
 		exception.Should().BeOfType<TimeoutException>();
@@ -44,12 +44,12 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnCreated(FileSystemTypes.Directory, _ => isNotified = true, path2)
-			   .ExecuteWhileWaiting(() =>
+				.OnCreated(FileSystemTypes.Directory, _ => isNotified = true, path2)
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.CreateDirectory(path1);
 				})
-			   .Wait(timeout: 50);
+				.Wait(timeout: 50);
 		});
 
 		exception.Should().BeOfType<TimeoutException>();
@@ -67,13 +67,13 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnCreated(FileSystemTypes.Directory, _ => isNotified = true,
+				.OnCreated(FileSystemTypes.Directory, _ => isNotified = true,
 					searchPattern: searchPattern)
-			   .ExecuteWhileWaiting(() =>
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.CreateDirectory(path);
 				})
-			   .Wait(timeout: expectedResult ? 3000 : 50);
+				.Wait(timeout: expectedResult ? 3000 : 50);
 		});
 
 		if (expectedResult)
@@ -95,12 +95,12 @@ public class NotificationHandlerExtensionsTests
 		bool isNotified = false;
 
 		FileSystem.Notify
-		   .OnCreated(FileSystemTypes.Directory, _ => isNotified = true)
-		   .ExecuteWhileWaiting(() =>
+			.OnCreated(FileSystemTypes.Directory, _ => isNotified = true)
+			.ExecuteWhileWaiting(() =>
 			{
 				FileSystem.Directory.CreateDirectory(path);
 			})
-		   .Wait();
+			.Wait();
 
 		isNotified.Should().BeTrue();
 	}
@@ -115,13 +115,13 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnCreated(FileSystemTypes.Directory, _ => isNotified = true,
+				.OnCreated(FileSystemTypes.Directory, _ => isNotified = true,
 					predicate: _ => expectedResult)
-			   .ExecuteWhileWaiting(() =>
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.CreateDirectory(path);
 				})
-			   .Wait(timeout: expectedResult ? 3000 : 50);
+				.Wait(timeout: expectedResult ? 3000 : 50);
 		});
 
 		if (expectedResult)
@@ -146,12 +146,12 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnCreated(FileSystemTypes.File, _ => isNotified = true)
-			   .ExecuteWhileWaiting(() =>
+				.OnCreated(FileSystemTypes.File, _ => isNotified = true)
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.Delete(path);
 				})
-			   .Wait(timeout: 50);
+				.Wait(timeout: 50);
 		});
 
 		exception.Should().BeOfType<TimeoutException>();
@@ -167,12 +167,12 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnCreated(FileSystemTypes.File, _ => isNotified = true, path2)
-			   .ExecuteWhileWaiting(() =>
+				.OnCreated(FileSystemTypes.File, _ => isNotified = true, path2)
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.WriteAllText(path1, null);
 				})
-			   .Wait(timeout: 50);
+				.Wait(timeout: 50);
 		});
 
 		exception.Should().BeOfType<TimeoutException>();
@@ -190,13 +190,13 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnCreated(FileSystemTypes.File, _ => isNotified = true,
+				.OnCreated(FileSystemTypes.File, _ => isNotified = true,
 					searchPattern: searchPattern)
-			   .ExecuteWhileWaiting(() =>
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.WriteAllText(path, null);
 				})
-			   .Wait(timeout: expectedResult ? 3000 : 50);
+				.Wait(timeout: expectedResult ? 3000 : 50);
 		});
 
 		if (expectedResult)
@@ -218,12 +218,12 @@ public class NotificationHandlerExtensionsTests
 		bool isNotified = false;
 
 		FileSystem.Notify
-		   .OnCreated(FileSystemTypes.File, _ => isNotified = true)
-		   .ExecuteWhileWaiting(() =>
+			.OnCreated(FileSystemTypes.File, _ => isNotified = true)
+			.ExecuteWhileWaiting(() =>
 			{
 				FileSystem.File.WriteAllText(path, null);
 			})
-		   .Wait();
+			.Wait();
 
 		isNotified.Should().BeTrue();
 	}
@@ -238,13 +238,13 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnCreated(FileSystemTypes.File, _ => isNotified = true,
+				.OnCreated(FileSystemTypes.File, _ => isNotified = true,
 					predicate: _ => expectedResult)
-			   .ExecuteWhileWaiting(() =>
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.WriteAllText(path, null);
 				})
-			   .Wait(timeout: expectedResult ? 3000 : 50);
+				.Wait(timeout: expectedResult ? 3000 : 50);
 		});
 
 		if (expectedResult)
@@ -268,12 +268,12 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnDeleted(FileSystemTypes.Directory, _ => isNotified = true)
-			   .ExecuteWhileWaiting(() =>
+				.OnDeleted(FileSystemTypes.Directory, _ => isNotified = true)
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.CreateDirectory(path);
 				})
-			   .Wait(timeout: 50);
+				.Wait(timeout: 50);
 		});
 
 		exception.Should().BeOfType<TimeoutException>();
@@ -291,12 +291,12 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnDeleted(FileSystemTypes.Directory, _ => isNotified = true, path2)
-			   .ExecuteWhileWaiting(() =>
+				.OnDeleted(FileSystemTypes.Directory, _ => isNotified = true, path2)
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.Delete(path1);
 				})
-			   .Wait(timeout: 50);
+				.Wait(timeout: 50);
 		});
 
 		exception.Should().BeOfType<TimeoutException>();
@@ -315,13 +315,13 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnDeleted(FileSystemTypes.Directory, _ => isNotified = true,
+				.OnDeleted(FileSystemTypes.Directory, _ => isNotified = true,
 					searchPattern: searchPattern)
-			   .ExecuteWhileWaiting(() =>
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.Delete(path);
 				})
-			   .Wait(timeout: expectedResult ? 3000 : 50);
+				.Wait(timeout: expectedResult ? 3000 : 50);
 		});
 
 		if (expectedResult)
@@ -344,12 +344,12 @@ public class NotificationHandlerExtensionsTests
 		FileSystem.Directory.CreateDirectory(path);
 
 		FileSystem.Notify
-		   .OnDeleted(FileSystemTypes.Directory, _ => isNotified = true)
-		   .ExecuteWhileWaiting(() =>
+			.OnDeleted(FileSystemTypes.Directory, _ => isNotified = true)
+			.ExecuteWhileWaiting(() =>
 			{
 				FileSystem.Directory.Delete(path);
 			})
-		   .Wait();
+			.Wait();
 
 		isNotified.Should().BeTrue();
 	}
@@ -365,13 +365,13 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnDeleted(FileSystemTypes.Directory, _ => isNotified = true,
+				.OnDeleted(FileSystemTypes.Directory, _ => isNotified = true,
 					predicate: _ => expectedResult)
-			   .ExecuteWhileWaiting(() =>
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.Delete(path);
 				})
-			   .Wait(timeout: expectedResult ? 3000 : 50);
+				.Wait(timeout: expectedResult ? 3000 : 50);
 		});
 
 		if (expectedResult)
@@ -395,12 +395,12 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnDeleted(FileSystemTypes.File, _ => isNotified = true)
-			   .ExecuteWhileWaiting(() =>
+				.OnDeleted(FileSystemTypes.File, _ => isNotified = true)
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.WriteAllText(path, null);
 				})
-			   .Wait(timeout: 50);
+				.Wait(timeout: 50);
 		});
 
 		exception.Should().BeOfType<TimeoutException>();
@@ -418,12 +418,12 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnDeleted(FileSystemTypes.File, _ => isNotified = true, path2)
-			   .ExecuteWhileWaiting(() =>
+				.OnDeleted(FileSystemTypes.File, _ => isNotified = true, path2)
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.Delete(path1);
 				})
-			   .Wait(timeout: 50);
+				.Wait(timeout: 50);
 		});
 
 		exception.Should().BeOfType<TimeoutException>();
@@ -442,13 +442,13 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnDeleted(FileSystemTypes.File, _ => isNotified = true,
+				.OnDeleted(FileSystemTypes.File, _ => isNotified = true,
 					searchPattern: searchPattern)
-			   .ExecuteWhileWaiting(() =>
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.Delete(path);
 				})
-			   .Wait(timeout: expectedResult ? 3000 : 50);
+				.Wait(timeout: expectedResult ? 3000 : 50);
 		});
 
 		if (expectedResult)
@@ -471,12 +471,12 @@ public class NotificationHandlerExtensionsTests
 		FileSystem.File.WriteAllText(path, null);
 
 		FileSystem.Notify
-		   .OnDeleted(FileSystemTypes.File, _ => isNotified = true)
-		   .ExecuteWhileWaiting(() =>
+			.OnDeleted(FileSystemTypes.File, _ => isNotified = true)
+			.ExecuteWhileWaiting(() =>
 			{
 				FileSystem.File.Delete(path);
 			})
-		   .Wait();
+			.Wait();
 
 		isNotified.Should().BeTrue();
 	}
@@ -492,13 +492,13 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnDeleted(FileSystemTypes.File, _ => isNotified = true,
+				.OnDeleted(FileSystemTypes.File, _ => isNotified = true,
 					predicate: _ => expectedResult)
-			   .ExecuteWhileWaiting(() =>
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.Delete(path);
 				})
-			   .Wait(timeout: expectedResult ? expectedResult ? 3000 : 50 : 50);
+				.Wait(timeout: expectedResult ? expectedResult ? 3000 : 50 : 50);
 		});
 
 		if (expectedResult)
@@ -522,12 +522,12 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnChanged(FileSystemTypes.File, _ => isNotified = true)
-			   .ExecuteWhileWaiting(() =>
+				.OnChanged(FileSystemTypes.File, _ => isNotified = true)
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.WriteAllText(path, null);
 				})
-			   .Wait(timeout: 50);
+				.Wait(timeout: 50);
 		});
 
 		exception.Should().BeOfType<TimeoutException>();
@@ -545,12 +545,12 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnChanged(FileSystemTypes.File, _ => isNotified = true, path2)
-			   .ExecuteWhileWaiting(() =>
+				.OnChanged(FileSystemTypes.File, _ => isNotified = true, path2)
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.AppendAllText(path1, "foo");
 				})
-			   .Wait(timeout: 50);
+				.Wait(timeout: 50);
 		});
 
 		exception.Should().BeOfType<TimeoutException>();
@@ -569,13 +569,13 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnChanged(FileSystemTypes.File, _ => isNotified = true,
+				.OnChanged(FileSystemTypes.File, _ => isNotified = true,
 					searchPattern: searchPattern)
-			   .ExecuteWhileWaiting(() =>
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.AppendAllText(path, "foo");
 				})
-			   .Wait(timeout: expectedResult ? 3000 : 50);
+				.Wait(timeout: expectedResult ? 3000 : 50);
 		});
 
 		if (expectedResult)
@@ -598,12 +598,12 @@ public class NotificationHandlerExtensionsTests
 		FileSystem.File.WriteAllText(path, null);
 
 		FileSystem.Notify
-		   .OnChanged(FileSystemTypes.File, _ => isNotified = true)
-		   .ExecuteWhileWaiting(() =>
+			.OnChanged(FileSystemTypes.File, _ => isNotified = true)
+			.ExecuteWhileWaiting(() =>
 			{
 				FileSystem.File.AppendAllText(path, "foo");
 			})
-		   .Wait();
+			.Wait();
 
 		isNotified.Should().BeTrue();
 	}
@@ -619,13 +619,13 @@ public class NotificationHandlerExtensionsTests
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-			   .OnChanged(FileSystemTypes.File, _ => isNotified = true,
+				.OnChanged(FileSystemTypes.File, _ => isNotified = true,
 					predicate: _ => expectedResult)
-			   .ExecuteWhileWaiting(() =>
+				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.AppendAllText(path, "foo");
 				})
-			   .Wait(timeout: expectedResult ? 3000 : 50);
+				.Wait(timeout: expectedResult ? 3000 : 50);
 		});
 
 		if (expectedResult)

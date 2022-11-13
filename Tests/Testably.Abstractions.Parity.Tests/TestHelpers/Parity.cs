@@ -11,7 +11,9 @@ public class Parity
 	public static readonly ReadOnlyDictionary<string, string> AcceptedTypeMapping = new(
 		new Dictionary<string, string>
 		{
-			{ nameof(FileStream), nameof(FileSystemStream) }
+			{
+				nameof(FileStream), nameof(FileSystemStream)
+			}
 		});
 
 	public ParityCheck Directory { get; } = new();
@@ -19,7 +21,7 @@ public class Parity
 	public ParityCheck DirectoryInfo { get; } = new(excludeMethods: new[]
 	{
 		typeof(DirectoryInfo).GetMethod(nameof(System.IO.DirectoryInfo
-		   .GetObjectData)),
+			.GetObjectData)),
 		typeof(DirectoryInfo).GetMethod(nameof(System.IO.DirectoryInfo.ToString))
 	});
 
@@ -55,9 +57,9 @@ public class Parity
 
 	public ParityCheck Path { get; } = new(excludeFields: new[]
 	{
-#pragma warning disable CS0618
+		#pragma warning disable CS0618
 		typeof(Path).GetField(nameof(System.IO.Path.InvalidPathChars))
-#pragma warning restore CS0618
+		#pragma warning restore CS0618
 	});
 
 	public ParityCheck Random { get; } = new();

@@ -68,7 +68,7 @@ public class PathHelperTests
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.Message.Should().Contain($"'{path}'");
+			.Which.Message.Should().Contain($"'{path}'");
 	}
 
 	[Theory]
@@ -81,8 +81,8 @@ public class PathHelperTests
 		mockFileSystem.Setup(m => m.Path).Returns(pathSystemMock.Object);
 		pathSystemMock.Setup(m => m.GetInvalidPathChars()).Returns(invalidChars);
 		pathSystemMock
-		   .Setup(m => m.GetFullPath(It.IsAny<string>()))
-		   .Returns<string>(s => s);
+			.Setup(m => m.GetFullPath(It.IsAny<string>()))
+			.Returns<string>(s => s);
 		string path = invalidChars[0] + "foo";
 
 		Exception? exception = Record.Exception(() =>
@@ -95,7 +95,7 @@ public class PathHelperTests
 		   .Which.Message.Should().Contain($"'{path}'");
 #else
 		exception.Should().BeOfType<IOException>()
-		   .Which.Message.Should().Contain($"'{path}'");
+			.Which.Message.Should().Contain($"'{path}'");
 #endif
 	}
 }

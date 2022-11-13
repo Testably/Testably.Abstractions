@@ -18,7 +18,7 @@ public sealed class FileSystemWatcherFactoryMockTests : IDisposable
 		_directoryCleaner = RealFileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory();
 		FileSystem.InitializeIn(RealFileSystem.Directory.GetCurrentDirectory());
 		FileSystem.Directory.SetCurrentDirectory(RealFileSystem.Directory
-		   .GetCurrentDirectory());
+			.GetCurrentDirectory());
 	}
 
 	#region IDisposable Members

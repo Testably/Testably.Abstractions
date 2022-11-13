@@ -19,7 +19,7 @@ public class FileSystemExtensionsTests
 		});
 
 		exception.Should().BeOfType<NotSupportedException>().Which.Message
-		   .Should().Contain($"'{sut.Path.GetFullPath(location)}'")
-		   .And.Contain($"'{sut.Path.GetFullPath(source)}'");
+			.Should().Contain($"'{sut.Path.GetFullPath(location)}'")
+			.And.Contain($"'{sut.Path.GetFullPath(source)}'");
 	}
 }

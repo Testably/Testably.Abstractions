@@ -34,7 +34,7 @@ public class InterceptionHandlerExtensionsTests
 	[Theory]
 	[AutoData]
 	public void Changing_File_ShouldConsiderBasePath(string path1, string path2,
-	                                                 Exception exceptionToThrow)
+		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
 		FileSystem.File.WriteAllText(path1, null);
@@ -85,7 +85,7 @@ public class InterceptionHandlerExtensionsTests
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
 	public void Changing_File_ShouldUsePredicate(bool expectedResult, string path,
-	                                             Exception exceptionToThrow)
+		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
 		FileSystem.File.WriteAllText(path, null);
@@ -182,7 +182,7 @@ public class InterceptionHandlerExtensionsTests
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
 	public void Creating_Directory_ShouldUsePredicate(bool expectedResult, string path,
-	                                                  Exception exceptionToThrow)
+		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
 		FileSystem.Intercept.Creating(FileSystemTypes.Directory, _ =>
@@ -229,7 +229,7 @@ public class InterceptionHandlerExtensionsTests
 	[Theory]
 	[AutoData]
 	public void Creating_File_ShouldConsiderBasePath(string path1, string path2,
-	                                                 Exception exceptionToThrow)
+		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
 		FileSystem.Intercept.Creating(FileSystemTypes.File, _ =>
@@ -278,7 +278,7 @@ public class InterceptionHandlerExtensionsTests
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
 	public void Creating_File_ShouldUsePredicate(bool expectedResult, string path,
-	                                             Exception exceptionToThrow)
+		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
 		FileSystem.Intercept.Creating(FileSystemTypes.File, _ =>
@@ -375,7 +375,7 @@ public class InterceptionHandlerExtensionsTests
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
 	public void Deleting_Directory_ShouldUsePredicate(bool expectedResult, string path,
-	                                                  Exception exceptionToThrow)
+		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
 		FileSystem.Directory.CreateDirectory(path);
@@ -422,7 +422,7 @@ public class InterceptionHandlerExtensionsTests
 	[Theory]
 	[AutoData]
 	public void Deleting_File_ShouldConsiderBasePath(string path1, string path2,
-	                                                 Exception exceptionToThrow)
+		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
 		FileSystem.File.WriteAllText(path1, null);
@@ -473,7 +473,7 @@ public class InterceptionHandlerExtensionsTests
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
 	public void Deleting_File_ShouldUsePredicate(bool expectedResult, string path,
-	                                             Exception exceptionToThrow)
+		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
 		FileSystem.File.WriteAllText(path, null);

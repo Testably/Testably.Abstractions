@@ -18,13 +18,13 @@ public class MockFileSystemTests
 	{
 		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		sut.File.Encrypt(path);
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		sut.File.Decrypt(path);
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		sut.File.ReadAllText(path).Should().Be(contents);
 	}
@@ -36,9 +36,9 @@ public class MockFileSystemTests
 		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		sut.File.Encrypt(path);
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		sut.File.ReadAllText(path).Should().NotBe(contents);
 	}
@@ -49,13 +49,13 @@ public class MockFileSystemTests
 	{
 		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		sut.FileInfo.New(path).Encrypt();
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		sut.FileInfo.New(path).Decrypt();
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		sut.File.ReadAllText(path).Should().Be(contents);
 	}
@@ -67,9 +67,9 @@ public class MockFileSystemTests
 		MockFileSystem sut = new();
 		sut.File.WriteAllText(path, contents);
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		sut.FileInfo.New(path).Encrypt();
-#pragma warning restore CA1416
+		#pragma warning restore CA1416
 
 		sut.File.ReadAllText(path).Should().NotBe(contents);
 	}
@@ -86,9 +86,9 @@ public class MockFileSystemTests
 		drive.Name.Should().Be(expectedDriveName);
 		drive.AvailableFreeSpace.Should().BeGreaterThan(0);
 		drive.DriveFormat.Should()
-		   .Be(DriveInfoMock.DefaultDriveFormat);
+			.Be(DriveInfoMock.DefaultDriveFormat);
 		drive.DriveType.Should()
-		   .Be(DriveInfoMock.DefaultDriveType);
+			.Be(DriveInfoMock.DefaultDriveType);
 		drive.VolumeLabel.Should().NotBeNullOrEmpty();
 	}
 
@@ -282,7 +282,7 @@ public class MockFileSystemTests
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.ParamName.Should().Be("handle");
+			.Which.ParamName.Should().Be("handle");
 	}
 #endif
 }

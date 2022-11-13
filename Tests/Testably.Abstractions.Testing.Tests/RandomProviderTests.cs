@@ -239,7 +239,10 @@ public partial class RandomProviderTests
 			results.Add(buffer);
 		}
 
-		results.Should().AllBeEquivalentTo(value.Concat(new[] { (byte)0 }));
+		results.Should().AllBeEquivalentTo(value.Concat(new[]
+		{
+			(byte)0
+		}));
 	}
 
 	[Theory]
@@ -351,7 +354,10 @@ public partial class RandomProviderTests
 			results.Add(buffer);
 		}
 
-		results.Should().AllBeEquivalentTo(value.Concat(new[] { (byte)0 }));
+		results.Should().AllBeEquivalentTo(value.Concat(new[]
+		{
+			(byte)0
+		}));
 	}
 
 	[Theory]

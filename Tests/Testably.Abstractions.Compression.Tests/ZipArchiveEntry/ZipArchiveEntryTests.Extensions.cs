@@ -14,11 +14,11 @@ public abstract partial class ZipArchiveEntryTests<TFileSystem>
 		CompressionLevel compressionLevel)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("foo").Initialized(s => s
-			   .WithAFile());
+			.WithSubdirectory("foo").Initialized(s => s
+				.WithAFile());
 
 		FileSystem.ZipFile()
-		   .CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
+			.CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -29,7 +29,7 @@ public abstract partial class ZipArchiveEntryTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.ParamName.Should().Be("destinationFileName");
+			.Which.ParamName.Should().Be("destinationFileName");
 	}
 
 	[SkippableTheory]
@@ -39,11 +39,11 @@ public abstract partial class ZipArchiveEntryTests<TFileSystem>
 			CompressionLevel compressionLevel)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("foo").Initialized(s => s
-			   .WithAFile());
+			.WithSubdirectory("foo").Initialized(s => s
+				.WithAFile());
 
 		FileSystem.ZipFile()
-		   .CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
+			.CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -60,12 +60,12 @@ public abstract partial class ZipArchiveEntryTests<TFileSystem>
 	public void ExtractToFile_WithoutOverwrite_ShouldThrowIOException()
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("foo")
-		   .WithSubdirectory("bar").Initialized(s => s
-			   .WithFile("bar.txt"));
+			.WithSubdirectory("foo")
+			.WithSubdirectory("bar").Initialized(s => s
+				.WithFile("bar.txt"));
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
 		FileSystem.ZipFile()
-		   .CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
@@ -77,22 +77,22 @@ public abstract partial class ZipArchiveEntryTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<IOException>()
-		   .Which.Message.Should()
-		   .Contain($"'{FileSystem.Path.GetFullPath("bar/bar.txt")}'");
+			.Which.Message.Should()
+			.Contain($"'{FileSystem.Path.GetFullPath("bar/bar.txt")}'");
 		FileSystem.File.ReadAllText("bar/bar.txt")
-		   .Should().NotBe("FooFooFoo");
+			.Should().NotBe("FooFooFoo");
 	}
 
 	[SkippableFact]
 	public void ExtractToFile_WithOverwrite_ShouldOverwriteExistingFile()
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("foo")
-		   .WithSubdirectory("bar").Initialized(s => s
-			   .WithFile("bar.txt"));
+			.WithSubdirectory("foo")
+			.WithSubdirectory("bar").Initialized(s => s
+				.WithFile("bar.txt"));
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
 		FileSystem.ZipFile()
-		   .CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
@@ -101,17 +101,17 @@ public abstract partial class ZipArchiveEntryTests<TFileSystem>
 		entry.ExtractToFile("bar/bar.txt", true);
 
 		FileSystem.File.ReadAllText("bar/bar.txt")
-		   .Should().Be("FooFooFoo");
+			.Should().Be("FooFooFoo");
 	}
 
 	[SkippableFact]
 	public void ExtractToFile_IncorrectEntryType_ShouldThrowIOException()
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("foo");
+			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo.txt", "some content");
 		FileSystem.ZipFile()
-		   .CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 		using FileSystemStream stream = FileSystem.File.Open("destination.zip",
 			FileMode.Open, FileAccess.ReadWrite);
@@ -135,10 +135,10 @@ public abstract partial class ZipArchiveEntryTests<TFileSystem>
 		ExtractToFile_AccessLengthOnWritableStream_ShouldThrowInvalidOperationException()
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("foo");
+			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo.txt", "some content");
 		FileSystem.ZipFile()
-		   .CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 		using FileSystemStream stream = FileSystem.File.Open("destination.zip",
 			FileMode.Open, FileAccess.ReadWrite);

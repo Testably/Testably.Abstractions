@@ -9,7 +9,8 @@ public class ParityCheck
 {
 	public List<Type> ExcludedBaseTypes { get; } = new()
 	{
-		typeof(object), typeof(MarshalByRefObject)
+		typeof(object),
+		typeof(MarshalByRefObject)
 	};
 
 	public List<FieldInfo?> MissingFields { get; } = new();
@@ -18,9 +19,9 @@ public class ParityCheck
 	public List<PropertyInfo?> MissingProperties { get; } = new();
 
 	public ParityCheck(Type[]? excludeBaseTypes = null,
-	                   FieldInfo?[]? excludeFields = null,
-	                   MethodInfo?[]? excludeMethods = null,
-	                   PropertyInfo?[]? excludeProperties = null)
+		FieldInfo?[]? excludeFields = null,
+		MethodInfo?[]? excludeMethods = null,
+		PropertyInfo?[]? excludeProperties = null)
 	{
 		if (excludeBaseTypes != null)
 		{
@@ -92,13 +93,13 @@ public class ParityCheck
 		Type systemType, ITestOutputHelper testOutputHelper)
 	{
 		foreach (MethodInfo method in systemType
-		   .GetMethods(
+			.GetMethods(
 				BindingFlags.Public |
 				BindingFlags.Static)
-		   .Where(f => !MissingMethods.Contains(f))
-		   .Where(f => !f.IsSpecialName)
-		   .OrderBy(f => f.Name)
-		   .ThenBy(m => m.GetParameters().Length))
+			.Where(f => !MissingMethods.Contains(f))
+			.Where(f => !f.IsSpecialName)
+			.OrderBy(f => f.Name)
+			.ThenBy(m => m.GetParameters().Length))
 		{
 			ParameterInfo? firstParameter = method.GetParameters().FirstOrDefault();
 			if (firstParameter == null ||
@@ -111,7 +112,7 @@ public class ParityCheck
 			testOutputHelper.WriteLine(
 				$"Check parity for static method {method.PrintMethod($"{systemType.Name}.", "this ")}");
 			if (!typeof(TAbstraction)
-			   .ContainsEquivalentExtensionMethod(method))
+				.ContainsEquivalentExtensionMethod(method))
 			{
 				yield return method.PrintMethod();
 			}
@@ -123,14 +124,14 @@ public class ParityCheck
 		Type systemType, ITestOutputHelper testOutputHelper)
 	{
 		foreach (ConstructorInfo constructor in systemType
-		   .GetConstructors()
-		   .OrderBy(f => f.Name)
-		   .ThenBy(m => m.GetParameters().Length))
+			.GetConstructors()
+			.OrderBy(f => f.Name)
+			.ThenBy(m => m.GetParameters().Length))
 		{
 			testOutputHelper.WriteLine(
 				$"Check parity for constructor {constructor.PrintConstructor()}");
 			if (!typeof(TAbstractionFactory)
-			   .ContainsEquivalentMethod(constructor))
+				.ContainsEquivalentMethod(constructor))
 			{
 				yield return constructor.PrintConstructor();
 			}
@@ -141,20 +142,20 @@ public class ParityCheck
 		Type systemType, ITestOutputHelper testOutputHelper)
 	{
 		foreach (MethodInfo method in systemType
-		   .GetMethods(
+			.GetMethods(
 				BindingFlags.Public |
 				BindingFlags.Instance)
-		   .Where(p => p.DeclaringType == null ||
-		               !ExcludedBaseTypes.Contains(p.DeclaringType))
-		   .Where(m => !MissingMethods.Contains(m))
-		   .Where(m => !m.IsSpecialName)
-		   .OrderBy(m => m.Name)
-		   .ThenBy(m => m.GetParameters().Length))
+			.Where(p => p.DeclaringType == null ||
+			            !ExcludedBaseTypes.Contains(p.DeclaringType))
+			.Where(m => !MissingMethods.Contains(m))
+			.Where(m => !m.IsSpecialName)
+			.OrderBy(m => m.Name)
+			.ThenBy(m => m.GetParameters().Length))
 		{
 			testOutputHelper.WriteLine(
 				$"Check parity for method {method.PrintMethod($"{systemType.Name}.")}");
 			if (!typeof(TAbstraction)
-			   .ContainsEquivalentMethod(method))
+				.ContainsEquivalentMethod(method))
 			{
 				yield return method.PrintMethod();
 			}
@@ -165,19 +166,19 @@ public class ParityCheck
 		Type systemType, ITestOutputHelper testOutputHelper)
 	{
 		foreach (PropertyInfo property in systemType
-		   .GetProperties(
+			.GetProperties(
 				BindingFlags.Public |
 				BindingFlags.Instance)
-		   .Where(p => p.DeclaringType == null ||
-		               !ExcludedBaseTypes.Contains(p.DeclaringType))
-		   .Where(p => !MissingProperties.Contains(p))
-		   .Where(p => !p.IsSpecialName)
-		   .OrderBy(p => p.Name))
+			.Where(p => p.DeclaringType == null ||
+			            !ExcludedBaseTypes.Contains(p.DeclaringType))
+			.Where(p => !MissingProperties.Contains(p))
+			.Where(p => !p.IsSpecialName)
+			.OrderBy(p => p.Name))
 		{
 			testOutputHelper.WriteLine(
 				$"Check parity for property {property.PrintProperty($"{systemType.Name}.")}");
 			if (!typeof(TAbstraction)
-			   .ContainsEquivalentProperty(property))
+				.ContainsEquivalentProperty(property))
 			{
 				yield return property.PrintProperty();
 			}
@@ -188,17 +189,17 @@ public class ParityCheck
 		Type systemType, ITestOutputHelper testOutputHelper)
 	{
 		foreach (FieldInfo field in systemType
-		   .GetFields(
+			.GetFields(
 				BindingFlags.Public |
 				BindingFlags.Static)
-		   .Where(f => !MissingFields.Contains(f))
-		   .Where(f => !f.IsSpecialName)
-		   .OrderBy(f => f.Name))
+			.Where(f => !MissingFields.Contains(f))
+			.Where(f => !f.IsSpecialName)
+			.OrderBy(f => f.Name))
 		{
 			testOutputHelper.WriteLine(
 				$"Check parity for static field {field.PrintField($"{systemType.Name}.")}");
 			if (!typeof(TAbstraction)
-			   .ContainsEquivalentProperty(field))
+				.ContainsEquivalentProperty(field))
 			{
 				yield return field.PrintField();
 			}
@@ -209,18 +210,18 @@ public class ParityCheck
 		Type systemType, ITestOutputHelper testOutputHelper)
 	{
 		foreach (MethodInfo method in systemType
-		   .GetMethods(
+			.GetMethods(
 				BindingFlags.Public |
 				BindingFlags.Static)
-		   .Where(f => !MissingMethods.Contains(f))
-		   .Where(f => !f.IsSpecialName)
-		   .OrderBy(f => f.Name)
-		   .ThenBy(m => m.GetParameters().Length))
+			.Where(f => !MissingMethods.Contains(f))
+			.Where(f => !f.IsSpecialName)
+			.OrderBy(f => f.Name)
+			.ThenBy(m => m.GetParameters().Length))
 		{
 			testOutputHelper.WriteLine(
 				$"Check parity for static method {method.PrintMethod($"{systemType.Name}.")}");
 			if (!typeof(TAbstraction)
-			   .ContainsEquivalentMethod(method))
+				.ContainsEquivalentMethod(method))
 			{
 				yield return method.PrintMethod();
 			}

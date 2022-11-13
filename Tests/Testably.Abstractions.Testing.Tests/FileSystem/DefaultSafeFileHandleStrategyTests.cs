@@ -23,7 +23,7 @@ public class DefaultSafeFileHandleStrategyTests
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>()
-		   .Which.ParamName.Should().Be("callback");
+			.Which.ParamName.Should().Be("callback");
 	}
 
 	[SkippableFact]
@@ -33,8 +33,12 @@ public class DefaultSafeFileHandleStrategyTests
 		SafeFileHandle barSafeFileHandle = new();
 		Dictionary<SafeFileHandle, SafeFileHandleMock> mapping = new()
 		{
-			{ fooSafeFileHandle, new SafeFileHandleMock("foo") },
-			{ barSafeFileHandle, new SafeFileHandleMock("bar") }
+			{
+				fooSafeFileHandle, new SafeFileHandleMock("foo")
+			},
+			{
+				barSafeFileHandle, new SafeFileHandleMock("bar")
+			}
 		};
 		FileSystem.File.WriteAllText("foo", "foo-content");
 		FileSystem.File.WriteAllText("bar", "bar-content");

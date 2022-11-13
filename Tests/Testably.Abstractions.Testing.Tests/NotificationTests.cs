@@ -57,11 +57,11 @@ public class NotificationTests
 		bool isCalled = false;
 		Notification.IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On
-			   .ThreadSleep(_ =>
+				.ThreadSleep(_ =>
 				{
 					isCalled = true;
 				})
-			   .ExecuteWhileWaiting(() => { });
+				.ExecuteWhileWaiting(() => { });
 
 		wait.Dispose();
 
@@ -191,7 +191,7 @@ public class NotificationTests
 		ManualResetEventSlim listening = new();
 		Notification.IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On
-			   .ThreadSleep(t =>
+				.ThreadSleep(t =>
 				{
 					if (t.TotalMilliseconds.Equals(secondThreadMilliseconds))
 					{
@@ -230,15 +230,15 @@ public class NotificationTests
 		bool isExecuted = false;
 
 		timeSystem.On
-		   .ThreadSleep(t =>
+			.ThreadSleep(t =>
 			{
 				receivedMilliseconds = (int)t.TotalMilliseconds;
 			})
-		   .ExecuteWhileWaiting(() =>
+			.ExecuteWhileWaiting(() =>
 			{
 				timeSystem.Thread.Sleep(milliseconds);
 			})
-		   .Wait(executeWhenWaiting: () =>
+			.Wait(executeWhenWaiting: () =>
 			{
 				isExecuted = true;
 			});
@@ -257,16 +257,16 @@ public class NotificationTests
 		bool isExecuted = false;
 
 		string actualResult = timeSystem.On
-		   .ThreadSleep(t =>
+			.ThreadSleep(t =>
 			{
 				receivedMilliseconds = (int)t.TotalMilliseconds;
 			})
-		   .ExecuteWhileWaiting(() =>
+			.ExecuteWhileWaiting(() =>
 			{
 				timeSystem.Thread.Sleep(milliseconds);
 				return result;
 			})
-		   .Wait(executeWhenWaiting: () =>
+			.Wait(executeWhenWaiting: () =>
 			{
 				isExecuted = true;
 			});
