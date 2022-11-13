@@ -1,8 +1,6 @@
 using System.IO;
 using Testably.Abstractions.FileSystem;
-#if FEATURE_FILESYSTEM_ASYNC
 using System.Threading.Tasks;
-#endif
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
@@ -188,6 +186,21 @@ public abstract partial class Tests<TFileSystem>
 		stream2.Dispose();
 		stream1.Dispose();
 		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes2);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public async Task FlushAsync_ShouldNotChangePosition(
+		string path, byte[] bytes)
+	{
+		using FileSystemStream stream = FileSystem.File.Create(path);
+		stream.Write(bytes, 0, bytes.Length);
+		stream.Seek(2, SeekOrigin.Begin);
+		stream.Position.Should().Be(2);
+
+		await stream.FlushAsync();
+
+		stream.Position.Should().Be(2);
 	}
 
 	[SkippableTheory]

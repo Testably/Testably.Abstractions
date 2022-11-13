@@ -462,6 +462,13 @@ internal sealed class InMemoryStorage : IStorage
 		Func<IStorageLocation, MockFileSystem, IStorageContainer> containerGenerator,
 		[NotNullWhen(true)] out IStorageContainer? container)
 	{
+		var parentLocation = location.GetParent();
+		if (parentLocation != null &&
+		    !parentLocation.IsRooted &&
+		    !_containers.ContainsKey(parentLocation))
+		{
+			throw ExceptionFactory.DirectoryNotFound(location.FullPath);
+		}
 		ChangeDescription? fileSystemChange = null;
 
 		container = _containers.GetOrAdd(
