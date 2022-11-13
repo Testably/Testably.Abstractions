@@ -113,8 +113,7 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 			_ = baseDirectory.EnumerateDirectories(searchPattern).FirstOrDefault();
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
 	[SkippableTheory]

@@ -27,10 +27,9 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<FileNotFoundException>(
-					$"\n{callback}\n was called with a missing file")
-				.Which.HResult.Should().Be(-2147024894,
-					$"\n{callback}\n was called with a missing file");
+			exception.Should().BeException<FileNotFoundException>(
+				hResult: -2147024894,
+				because: $"\n{callback}\n was called with a missing file");
 		}
 		else
 		{
@@ -54,10 +53,9 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<DirectoryNotFoundException>(
-					$"\n{callback}\n was called with a missing directory")
-				.Which.HResult.Should().Be(-2147024893,
-					$"\n{callback}\n was called with a missing directory");
+			exception.Should().BeException<DirectoryNotFoundException>(
+				hResult: -2147024893,
+				because: $"\n{callback}\n was called with a missing directory");
 		}
 		else
 		{

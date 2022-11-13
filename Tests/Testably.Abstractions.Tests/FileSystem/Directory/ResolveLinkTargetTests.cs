@@ -111,9 +111,9 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 			_ = FileSystem.Directory.ResolveLinkTarget(previousPath, true);
 		});
 
-		exception.Should().BeOfType<IOException>()
+		exception.Should().BeException<IOException>()
 			.Which.Message.Should().Contain($"'{previousPath}'");
-		exception.Should().BeOfType<IOException>()
+		exception.Should().BeException<IOException>()
 			.Which.HResult.Should().Be(-2147022975);
 	}
 

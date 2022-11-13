@@ -21,19 +21,11 @@ public abstract partial class ExceptionTests<TFileSystem>
 		{
 			callback.Compile().Invoke(FileSystem.FileInfo.New("foo"));
 		});
-
-		if (!Test.IsNetFramework && !ignoreParamCheck)
-		{
-			exception.Should().BeOfType<ArgumentException>(
-					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
-				.Which.ParamName.Should().Be(paramName,
-					$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
-		}
-
-		exception.Should().BeOfType<ArgumentException>(
-				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})")
-			.Which.HResult.Should().Be(-2147024809,
-				$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+		
+		exception.Should().BeException<ArgumentException>(
+			hResult: -2147024809,
+			paramName: ignoreParamCheck || Test.IsNetFramework ? null : paramName,
+			because: $"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	[Theory]
@@ -46,19 +38,10 @@ public abstract partial class ExceptionTests<TFileSystem>
 		{
 			callback.Compile().Invoke(FileSystem.FileInfo.New("foo"));
 		});
-
-		if (ignoreParamCheck)
-		{
-			exception.Should().BeOfType<ArgumentNullException>(
-				$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
-		}
-		else
-		{
-			exception.Should().BeOfType<ArgumentNullException>(
-					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})")
-				.Which.ParamName.Should().Be(paramName,
-					$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
-		}
+		
+		exception.Should().BeException<ArgumentNullException>(
+			paramName: ignoreParamCheck ? null : paramName,
+			because: $"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	#region Helpers

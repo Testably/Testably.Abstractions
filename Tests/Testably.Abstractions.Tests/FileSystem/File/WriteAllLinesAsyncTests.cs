@@ -23,8 +23,7 @@ public abstract partial class WriteAllLinesAsyncTests<TFileSystem>
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.WriteAllLinesAsync(path, contents, cts.Token));
 
-		exception.Should().BeOfType<TaskCanceledException>()
-			.Which.HResult.Should().Be(-2146233029);
+		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
 	[SkippableTheory]
@@ -39,8 +38,7 @@ public abstract partial class WriteAllLinesAsyncTests<TFileSystem>
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.WriteAllLinesAsync(path, contents, Encoding.UTF8, cts.Token));
 
-		exception.Should().BeOfType<TaskCanceledException>()
-			.Which.HResult.Should().Be(-2146233029);
+		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
 	[SkippableTheory]
@@ -55,8 +53,7 @@ public abstract partial class WriteAllLinesAsyncTests<TFileSystem>
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(), cts.Token));
 
-		exception.Should().BeOfType<TaskCanceledException>()
-			.Which.HResult.Should().Be(-2146233029);
+		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
 	[SkippableTheory]
@@ -72,8 +69,7 @@ public abstract partial class WriteAllLinesAsyncTests<TFileSystem>
 			FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(),
 				Encoding.UTF8, cts.Token));
 
-		exception.Should().BeOfType<TaskCanceledException>()
-			.Which.HResult.Should().Be(-2146233029);
+		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
 	[SkippableTheory]
@@ -140,8 +136,7 @@ public abstract partial class WriteAllLinesAsyncTests<TFileSystem>
 			await FileSystem.File.WriteAllLinesAsync(path, contents);
 		});
 
-		exception.Should().BeOfType<UnauthorizedAccessException>()
-			.Which.HResult.Should().Be(-2147024891);
+		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 }
 #endif

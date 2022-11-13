@@ -22,8 +22,7 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.WriteAllTextAsync(path, contents, cts.Token));
 
-		exception.Should().BeOfType<TaskCanceledException>()
-			.Which.HResult.Should().Be(-2146233029);
+		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
 	[SkippableTheory]
@@ -38,8 +37,7 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.WriteAllTextAsync(path, contents, Encoding.UTF8, cts.Token));
 
-		exception.Should().BeOfType<TaskCanceledException>()
-			.Which.HResult.Should().Be(-2146233029);
+		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
 	[SkippableTheory]
@@ -109,8 +107,7 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 			await FileSystem.File.WriteAllTextAsync(path, contents);
 		});
 
-		exception.Should().BeOfType<UnauthorizedAccessException>()
-			.Which.HResult.Should().Be(-2147024891);
+		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 }
 #endif

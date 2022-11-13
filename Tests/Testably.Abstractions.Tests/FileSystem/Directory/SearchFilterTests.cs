@@ -158,7 +158,7 @@ public abstract partial class SearchFilterTests<TFileSystem>
 				.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
 		});
 
-		exception.Should().BeOfType<UnauthorizedAccessException>()
+		exception.Should().BeException<UnauthorizedAccessException>()
 			.Which.HResult.Should().Be(-2147024891);
 	}
 
@@ -203,7 +203,7 @@ public abstract partial class SearchFilterTests<TFileSystem>
 				.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
+		exception.Should().BeException<ArgumentException>()
 			.Which.HResult.Should().Be(-2147024809);
 	}
 
@@ -274,7 +274,7 @@ public abstract partial class SearchFilterTests<TFileSystem>
 				.GetFileSystemEntries(".", null!, SearchOption.AllDirectories);
 		});
 
-		exception.Should().BeOfType<ArgumentNullException>()
+		exception.Should().BeException<ArgumentNullException>()
 			.Which.ParamName.Should().Be("searchPattern");
 	}
 

@@ -23,8 +23,7 @@ public abstract partial class Tests<TFileSystem>
 
 		if (Test.IsNetFramework)
 		{
-			exception.Should().BeOfType<PathTooLongException>()
-				.Which.HResult.Should().Be(-2147024690);
+			exception.Should().BeException<PathTooLongException>(hResult: -2147024690);
 		}
 		else
 		{

@@ -25,17 +25,8 @@ public abstract partial class CopyToTests<TFileSystem>
 			sut.CopyTo(destinationName);
 		});
 
-		if (Test.RunsOnWindows)
-		{
-			exception.Should().BeOfType<IOException>()
-				.Which.HResult.Should().Be(-2147024816);
-		}
-		else
-		{
-			exception.Should().BeOfType<IOException>()
-				.Which.HResult.Should().Be(17);
-		}
-
+		exception.Should().BeException<IOException>(
+			hResult: Test.RunsOnWindows ? -2147024816 : 17);
 		sut.Exists.Should().BeTrue();
 		FileSystem.File.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
@@ -186,11 +177,9 @@ public abstract partial class CopyToTests<TFileSystem>
 			sut.CopyTo(destinationName);
 		});
 
-		exception.Should().BeOfType<UnauthorizedAccessException>()
-			.Which.HResult.Should().Be(-2147024891);
-		exception.Should().BeOfType<UnauthorizedAccessException>()
-			.Which.Message.Should()
-			.Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
+		exception.Should().BeException<UnauthorizedAccessException>(
+			$"'{FileSystem.Path.GetFullPath(sourceName)}'",
+			hResult: -2147024891);
 		FileSystem.Directory.Exists(sourceName).Should().BeTrue();
 		FileSystem.File.Exists(destinationName).Should().BeFalse();
 	}
@@ -213,8 +202,7 @@ public abstract partial class CopyToTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<IOException>()
-				.Which.HResult.Should().Be(-2147024864);
+			exception.Should().BeException<IOException>(hResult: -2147024864);
 			FileSystem.File.Exists(destinationName).Should().BeFalse();
 		}
 		else
@@ -237,13 +225,9 @@ public abstract partial class CopyToTests<TFileSystem>
 			sut.CopyTo(destinationName);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-			.Which.HResult.Should().Be(-2147024894);
-#if !NETFRAMEWORK
-		exception.Should().BeOfType<FileNotFoundException>()
-			.Which.Message.Should()
-			.Contain($"'{FileSystem.Path.GetFullPath(sourceName)}'");
-#endif
+		exception.Should().BeException<FileNotFoundException>(
+			hResult: -2147024894,
+			messageContains: Test.IsNetFramework ? null : $"'{FileSystem.Path.GetFullPath(sourceName)}'");
 		FileSystem.File.Exists(destinationName).Should().BeFalse();
 	}
 }

@@ -24,8 +24,7 @@ public abstract partial class AppendAllTextAsyncTests<TFileSystem>
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.AppendAllTextAsync(path, contents, cts.Token));
 
-		exception.Should().BeOfType<TaskCanceledException>()
-			.Which.HResult.Should().Be(-2146233029);
+		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
 	[SkippableTheory]
@@ -40,8 +39,7 @@ public abstract partial class AppendAllTextAsyncTests<TFileSystem>
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.AppendAllTextAsync(path, contents, Encoding.UTF8, cts.Token));
 
-		exception.Should().BeOfType<TaskCanceledException>()
-			.Which.HResult.Should().Be(-2146233029);
+		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
 	[SkippableTheory]
@@ -69,8 +67,7 @@ public abstract partial class AppendAllTextAsyncTests<TFileSystem>
 			await FileSystem.File.AppendAllTextAsync(filePath, contents);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.HResult.Should().Be(-2147024893);
+		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 	}
 
 	[SkippableTheory]

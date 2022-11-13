@@ -30,8 +30,7 @@ public abstract partial class WriteAllBytesTests<TFileSystem>
 			FileSystem.File.WriteAllBytes(path, null!);
 		});
 
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.ParamName.Should().Be("bytes");
+		exception.Should().BeException<ArgumentNullException>(paramName: "bytes");
 	}
 
 	[SkippableTheory]
@@ -59,7 +58,6 @@ public abstract partial class WriteAllBytesTests<TFileSystem>
 			FileSystem.File.WriteAllBytes(path, bytes);
 		});
 
-		exception.Should().BeOfType<UnauthorizedAccessException>()
-			.Which.HResult.Should().Be(-2147024891);
+		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 }

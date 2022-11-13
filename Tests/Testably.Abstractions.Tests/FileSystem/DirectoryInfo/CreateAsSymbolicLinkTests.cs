@@ -35,19 +35,8 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 			FileSystem.DirectoryInfo.New(path).CreateAsSymbolicLink(pathToTarget);
 		});
 
-		if (Test.RunsOnWindows)
-		{
-			exception.Should().BeOfType<IOException>()
-				.Which.HResult.Should().Be(-2147024713);
-		}
-		else
-		{
-			exception.Should().BeOfType<IOException>()
-				.Which.HResult.Should().Be(17);
-		}
-
-		exception.Should().BeOfType<IOException>()
-			.Which.Message.Should().Contain($"'{path}'");
+		exception.Should().BeException<IOException>($"'{path}'",
+			hResult: Test.RunsOnWindows ? -2147024713:17);
 	}
 
 	[SkippableTheory]
@@ -77,8 +66,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 			FileSystem.DirectoryInfo.New(path).CreateAsSymbolicLink("bar_?_");
 		});
 
-		exception.Should().BeOfType<IOException>()
-			.Which.HResult.Should().Be(-2147024713);
+		exception.Should().BeException<IOException>(hResult: -2147024713);
 	}
 
 	[SkippableTheory]

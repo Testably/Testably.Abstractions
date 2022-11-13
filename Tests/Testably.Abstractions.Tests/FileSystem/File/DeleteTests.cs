@@ -20,8 +20,7 @@ public abstract partial class DeleteTests<TFileSystem>
 			FileSystem.File.Delete(filePath);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.HResult.Should().Be(-2147024893);
+		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 	}
 
 	[SkippableTheory]
@@ -60,11 +59,8 @@ public abstract partial class DeleteTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<IOException>()
-				.Which.HResult.Should().Be(-2147024864);
-			exception.Should().BeOfType<IOException>()
-				.Which.Message.Should()
-				.Contain($"{filename}'");
+			exception.Should().BeException<IOException>($"{filename}'",
+				hResult: -2147024864);
 			FileSystem.File.Exists(filename).Should().BeTrue();
 		}
 		else

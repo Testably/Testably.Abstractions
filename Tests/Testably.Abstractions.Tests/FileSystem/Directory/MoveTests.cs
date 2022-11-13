@@ -61,7 +61,7 @@ public abstract partial class MoveTests<TFileSystem>
 			FileSystem.Directory.Move(source, destination);
 		});
 
-		exception.Should().BeOfType<IOException>()
+		exception.Should().BeException<IOException>()
 			.Which.HResult.Should().Be(-2146232800);
 	}
 
@@ -79,7 +79,7 @@ public abstract partial class MoveTests<TFileSystem>
 			FileSystem.Directory.Move(source, destination);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
+		exception.Should().BeException<DirectoryNotFoundException>()
 			.Which.HResult.Should().Be(-2147024893);
 	}
 
@@ -176,7 +176,7 @@ public abstract partial class MoveTests<TFileSystem>
 			FileSystem.Directory.Move(path, path);
 		});
 
-		exception.Should().BeOfType<IOException>()
+		exception.Should().BeException<IOException>()
 			.Which.HResult.Should().Be(-2146232800);
 	}
 
@@ -204,7 +204,7 @@ public abstract partial class MoveTests<TFileSystem>
 			FileSystem.Directory.Move(source, destination);
 		});
 		
-		exception.Should().BeOfType<IOException>()
+		exception.Should().BeException<IOException>()
 			.Which.HResult.Should().Be(-2147024891);
 		FileSystem.Directory.Exists(source).Should().BeTrue();
 		FileSystem.Directory.Exists(destination).Should().BeFalse();

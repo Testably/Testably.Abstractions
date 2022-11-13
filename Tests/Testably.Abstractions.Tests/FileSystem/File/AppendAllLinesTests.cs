@@ -48,10 +48,9 @@ public abstract partial class AppendAllLinesTests<TFileSystem>
 			FileSystem.File.AppendAllLines(path, null!);
 		});
 
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.HResult.Should().Be(-2147467261);
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.ParamName.Should().Be("contents");
+		exception.Should().BeException<ArgumentNullException>(
+			hResult: -2147467261,
+			paramName: "contents");
 	}
 
 	[SkippableTheory]
@@ -64,10 +63,9 @@ public abstract partial class AppendAllLinesTests<TFileSystem>
 			FileSystem.File.AppendAllLines(path, new List<string>(), null!);
 		});
 
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.HResult.Should().Be(-2147467261);
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.ParamName.Should().Be("encoding");
+		exception.Should().BeException<ArgumentNullException>(
+			hResult: -2147467261,
+			paramName: "encoding");
 	}
 
 	[SkippableTheory]

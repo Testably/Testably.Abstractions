@@ -34,8 +34,7 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 			FileSystem.File.AppendAllText(filePath, contents);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.HResult.Should().Be(-2147024893);
+		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 	}
 
 	[SkippableTheory]

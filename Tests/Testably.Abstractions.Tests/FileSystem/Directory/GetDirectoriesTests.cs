@@ -21,11 +21,8 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 			Record.Exception(()
 				=> FileSystem.Directory.GetDirectories(path).ToList());
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.Message.Should()
-			.Be($"Could not find a part of the path '{expectedPath}'.");
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.HResult.Should().Be(-2147024893);
+		exception.Should().BeException<DirectoryNotFoundException>($"'{expectedPath}'",
+			hResult: -2147024893);
 		FileSystem.Directory.Exists(path).Should().BeFalse();
 	}
 
@@ -150,8 +147,7 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 				.FirstOrDefault();
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
 	[SkippableTheory]

@@ -19,10 +19,9 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 			FileSystem.File.WriteAllText(fullPath, "foo");
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.HResult.Should().Be(-2147024893);
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(fullPath)}'");
+		exception.Should().BeException<DirectoryNotFoundException>(
+			hResult: -2147024893,
+			messageContains: $"'{FileSystem.Path.GetFullPath(fullPath)}'");
 	}
 
 	[SkippableTheory]
@@ -148,12 +147,11 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 		FileSystem.File.WriteAllText(path, null);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		var exception = Record.Exception(() =>
+		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.File.WriteAllText(path, contents);
 		});
 
-		exception.Should().BeOfType<UnauthorizedAccessException>()
-			.Which.HResult.Should().Be(-2147024891);
+		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 }

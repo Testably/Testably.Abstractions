@@ -26,8 +26,7 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.AppendAllLinesAsync(path, contents, cts.Token));
 
-		exception.Should().BeOfType<TaskCanceledException>()
-			.Which.HResult.Should().Be(-2146233029);
+		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
 	[SkippableTheory]
@@ -43,8 +42,7 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 			FileSystem.File.AppendAllLinesAsync(path, contents, Encoding.UTF8,
 				cts.Token));
 
-		exception.Should().BeOfType<TaskCanceledException>()
-			.Which.HResult.Should().Be(-2146233029);
+		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
 	[SkippableTheory]
@@ -73,8 +71,7 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 			await FileSystem.File.AppendAllLinesAsync(filePath, contents);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.HResult.Should().Be(-2147024893);
+		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 	}
 
 	[SkippableTheory]
@@ -98,10 +95,9 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 			await FileSystem.File.AppendAllLinesAsync(path, null!);
 		});
 
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.HResult.Should().Be(-2147467261);
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.ParamName.Should().Be("contents");
+		exception.Should().BeException<ArgumentNullException>(
+			hResult: -2147467261,
+			paramName: "contents");
 	}
 
 	[SkippableTheory]
@@ -114,10 +110,9 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 			await FileSystem.File.AppendAllLinesAsync(path, new List<string>(), null!);
 		});
 
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.HResult.Should().Be(-2147467261);
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.ParamName.Should().Be("encoding");
+		exception.Should().BeException<ArgumentNullException>(
+			hResult: -2147467261,
+			paramName: "encoding");
 	}
 
 	[SkippableTheory]

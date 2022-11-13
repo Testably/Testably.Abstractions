@@ -21,9 +21,9 @@ public abstract partial class GetFileSystemInfosTests<TFileSystem>
 			Record.Exception(()
 				=> FileSystem.Directory.GetFileSystemEntries(path).ToList());
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
+		exception.Should().BeException<DirectoryNotFoundException>()
 			.Which.Message.Should().Contain($"'{expectedPath}'.");
-		exception.Should().BeOfType<DirectoryNotFoundException>()
+		exception.Should().BeException<DirectoryNotFoundException>()
 			.Which.HResult.Should().Be(-2147024893);
 		FileSystem.Directory.Exists(path).Should().BeFalse();
 	}
@@ -155,12 +155,12 @@ public abstract partial class GetFileSystemInfosTests<TFileSystem>
 
 #if NETFRAMEWORK
 		// The searchPattern is not included in .NET Framework
-		exception.Should().BeOfType<ArgumentException>();
+		exception.Should().BeException<ArgumentException>();
 #else
-		exception.Should().BeOfType<ArgumentException>()
+		exception.Should().BeException<ArgumentException>()
 			.Which.Message.Should().Contain($"'{searchPattern}'");
 #endif
-		exception.Should().BeOfType<ArgumentException>()
+		exception.Should().BeException<ArgumentException>()
 			.Which.HResult.Should().Be(-2147024809);
 	}
 

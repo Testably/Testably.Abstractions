@@ -36,10 +36,8 @@ public abstract partial class Tests<TFileSystem>
 			_ = parent!.EnumerateDirectories().ToArray();
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.HResult.Should().Be(-2147024893);
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.Message.Should().Contain($"'{path}'");
+		exception.Should().BeException<DirectoryNotFoundException>($"'{path}'",
+			hResult: -2147024893);
 	}
 
 	[SkippableTheory]
@@ -58,10 +56,8 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.File.WriteAllBytes(path, contents);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.HResult.Should().Be(-2147024893);
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.Message.Should().Contain($"'{path}'");
+		exception.Should().BeException<DirectoryNotFoundException>($"'{path}'",
+			hResult: -2147024893);
 	}
 
 	[SkippableFact]
@@ -92,8 +88,7 @@ public abstract partial class Tests<TFileSystem>
 			_ = FileSystem.DriveInfo.New(invalidDriveName);
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
 	[SkippableTheory]

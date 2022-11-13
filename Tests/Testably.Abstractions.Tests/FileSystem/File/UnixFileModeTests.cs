@@ -22,8 +22,7 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 			#pragma warning restore CA1416
 		});
 
-		exception.Should().BeOfType<PlatformNotSupportedException>()
-			.Which.HResult.Should().Be(-2146233031);
+		exception.Should().BeException<PlatformNotSupportedException>(hResult: -2146233031);
 	}
 
 	[SkippableTheory]
@@ -57,8 +56,7 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 			#pragma warning restore CA1416
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-			.Which.HResult.Should().Be(-2147024894);
+		exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 	}
 
 	[SkippableTheory]
@@ -75,8 +73,7 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 			#pragma warning restore CA1416
 		});
 
-		exception.Should().BeOfType<PlatformNotSupportedException>()
-			.Which.HResult.Should().Be(-2146233031);
+		exception.Should().BeException<PlatformNotSupportedException>(hResult: -2146233031);
 	}
 }
 #endif

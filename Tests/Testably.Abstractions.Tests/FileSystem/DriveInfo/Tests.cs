@@ -32,8 +32,7 @@ public abstract partial class Tests<TFileSystem>
 			}
 			else
 			{
-				exception.Should().BeOfType<PlatformNotSupportedException>()
-					.Which.HResult.Should().Be(-2146233031);
+				exception.Should().BeException<PlatformNotSupportedException>(hResult: -2146233031);
 			}
 		}
 		finally

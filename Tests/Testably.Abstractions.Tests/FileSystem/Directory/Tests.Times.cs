@@ -170,17 +170,15 @@ public abstract partial class Tests<TFileSystem>
 
 		if (Test.RunsOnWindows || (Test.IsNet7OrGreater && !Test.RunsOnMac))
 		{
-			exception.Should().BeOfType<FileNotFoundException>()
-				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-			exception.Should().BeOfType<FileNotFoundException>()
-				.Which.HResult.Should().Be(-2147024894);
+			exception.Should().BeException<FileNotFoundException>(
+				$"'{FileSystem.Path.GetFullPath(path)}'",
+				hResult: -2147024894);
 		}
 		else
 		{
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-				.Which.HResult.Should().Be(-2147024893);
+			exception.Should().BeException<DirectoryNotFoundException>(
+				$"'{FileSystem.Path.GetFullPath(path)}'",
+				hResult: -2147024893);
 		}
 	}
 
@@ -235,17 +233,15 @@ public abstract partial class Tests<TFileSystem>
 
 		if (Test.RunsOnWindows || (Test.IsNet7OrGreater && !Test.RunsOnMac))
 		{
-			exception.Should().BeOfType<FileNotFoundException>()
-				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-			exception.Should().BeOfType<FileNotFoundException>()
-				.Which.HResult.Should().Be(-2147024894);
+			exception.Should().BeException<FileNotFoundException>(
+				$"'{FileSystem.Path.GetFullPath(path)}'",
+				hResult: -2147024894);
 		}
 		else
 		{
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-				.Which.HResult.Should().Be(-2147024893);
+			exception.Should().BeException<DirectoryNotFoundException>(
+				$"'{FileSystem.Path.GetFullPath(path)}'",
+				hResult: -2147024893);
 		}
 	}
 
@@ -300,17 +296,15 @@ public abstract partial class Tests<TFileSystem>
 
 		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
-			exception.Should().BeOfType<FileNotFoundException>()
-				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-			exception.Should().BeOfType<FileNotFoundException>()
-				.Which.HResult.Should().Be(-2147024894);
+			exception.Should().BeException<FileNotFoundException>(
+				$"'{FileSystem.Path.GetFullPath(path)}'",
+				hResult: -2147024894);
 		}
 		else
 		{
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-				.Which.HResult.Should().Be(-2147024893);
+			exception.Should().BeException<DirectoryNotFoundException>(
+				$"'{FileSystem.Path.GetFullPath(path)}'",
+				hResult: -2147024893);
 		}
 	}
 
@@ -359,17 +353,15 @@ public abstract partial class Tests<TFileSystem>
 
 		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
-			exception.Should().BeOfType<FileNotFoundException>()
-				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-			exception.Should().BeOfType<FileNotFoundException>()
-				.Which.HResult.Should().Be(-2147024894);
+			exception.Should().BeException<FileNotFoundException>(
+				$"'{FileSystem.Path.GetFullPath(path)}'",
+				hResult: -2147024894);
 		}
 		else
 		{
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-				.Which.HResult.Should().Be(-2147024893);
+			exception.Should().BeException<DirectoryNotFoundException>(
+				$"'{FileSystem.Path.GetFullPath(path)}'",
+				hResult: -2147024893);
 		}
 	}
 
@@ -418,17 +410,15 @@ public abstract partial class Tests<TFileSystem>
 
 		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
-			exception.Should().BeOfType<FileNotFoundException>()
-				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-			exception.Should().BeOfType<FileNotFoundException>()
-				.Which.HResult.Should().Be(-2147024894);
+			exception.Should().BeException<FileNotFoundException>(
+			$"'{FileSystem.Path.GetFullPath(path)}'",
+			hResult: -2147024894);
 		}
 		else
 		{
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-				.Which.HResult.Should().Be(-2147024893);
+			exception.Should().BeException<DirectoryNotFoundException>(
+				$"'{FileSystem.Path.GetFullPath(path)}'",
+				hResult: -2147024893);
 		}
 	}
 
@@ -477,17 +467,15 @@ public abstract partial class Tests<TFileSystem>
 
 		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
 		{
-			exception.Should().BeOfType<FileNotFoundException>()
-				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-			exception.Should().BeOfType<FileNotFoundException>()
-				.Which.HResult.Should().Be(-2147024894);
+			exception.Should().BeException<FileNotFoundException>(
+				$"'{FileSystem.Path.GetFullPath(path)}'",
+				hResult: -2147024894);
 		}
 		else
 		{
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-				.Which.HResult.Should().Be(-2147024893);
+			exception.Should().BeException<DirectoryNotFoundException>(
+				$"'{FileSystem.Path.GetFullPath(path)}'",
+				hResult: -2147024893);
 		}
 	}
 

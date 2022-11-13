@@ -142,8 +142,7 @@ public abstract partial class GetFileSystemInfosTests<TFileSystem>
 			_ = baseDirectory.GetFileSystemInfos(searchPattern).FirstOrDefault();
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
 	[SkippableFact]

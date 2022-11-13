@@ -67,8 +67,7 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 			#pragma warning restore CA1416
 		});
 
-		exception.Should().BeOfType<PlatformNotSupportedException>()
-			.Which.HResult.Should().Be(-2146233031);
+		exception.Should().BeException<PlatformNotSupportedException>(hResult: -2146233031);
 	}
 }
 #endif

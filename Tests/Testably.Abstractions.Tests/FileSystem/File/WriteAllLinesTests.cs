@@ -93,7 +93,6 @@ public abstract partial class WriteAllLinesTests<TFileSystem>
 			FileSystem.File.WriteAllLines(path, contents);
 		});
 
-		exception.Should().BeOfType<UnauthorizedAccessException>()
-			.Which.HResult.Should().Be(-2147024891);
+		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 }

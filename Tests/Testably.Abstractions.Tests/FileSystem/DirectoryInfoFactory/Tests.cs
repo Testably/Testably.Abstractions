@@ -16,10 +16,8 @@ public abstract partial class Tests<TFileSystem>
 		Exception? exception =
 			Record.Exception(() => FileSystem.DirectoryInfo.New(path));
 
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.HResult.Should().Be(-2147024809);
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.Message.Should().Contain(expectedMessage);
+		exception.Should().BeException<ArgumentException>(expectedMessage,
+			hResult: -2147024809);
 	}
 
 	[SkippableTheory]

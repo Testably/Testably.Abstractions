@@ -24,11 +24,8 @@ public abstract partial class DeleteTests<TFileSystem>
 
 		if (Test.RunsOnLinux)
 		{
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-				.Which.Message.Should()
-				.Be($"Could not find a part of the path '{expectedPath}'.");
-			exception.Should().BeOfType<DirectoryNotFoundException>()
-				.Which.HResult.Should().Be(-2147024893);
+			exception.Should().BeException<DirectoryNotFoundException>($"'{expectedPath}'",
+				hResult: -2147024893);
 		}
 		else
 		{
@@ -62,11 +59,8 @@ public abstract partial class DeleteTests<TFileSystem>
 			FileSystem.Directory.Delete(directoryName);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.Message.Should()
-			.Be($"Could not find a part of the path '{expectedPath}'.");
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.HResult.Should().Be(-2147024893);
+		exception.Should().BeException<DirectoryNotFoundException>($"'{expectedPath}'",
+			hResult: -2147024893);
 	}
 
 	[SkippableTheory]
@@ -80,11 +74,8 @@ public abstract partial class DeleteTests<TFileSystem>
 			FileSystem.Directory.Delete(directoryName, true);
 		});
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.Message.Should()
-			.Be($"Could not find a part of the path '{expectedPath}'.");
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.HResult.Should().Be(-2147024893);
+		exception.Should().BeException<DirectoryNotFoundException>($"'{expectedPath}'",
+			hResult: -2147024893);
 	}
 
 	[SkippableTheory]
@@ -113,11 +104,8 @@ public abstract partial class DeleteTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<IOException>()
-				.Which.Message.Should()
-				.Contain($"{filename}'");
-			exception.Should().BeOfType<IOException>()
-				.Which.HResult.Should().Be(-2147024864);
+			exception.Should().BeException<IOException>($"{filename}'",
+				hResult: -2147024864);
 			FileSystem.File.Exists(filePath).Should().BeTrue();
 		}
 		else
@@ -243,26 +231,9 @@ public abstract partial class DeleteTests<TFileSystem>
 			FileSystem.Directory.Delete(path);
 		});
 
-		if (Test.RunsOnWindows)
-		{
-			exception.Should().BeOfType<IOException>()
-				.Which.HResult.Should().Be(-2147024751);
-#if !NETFRAMEWORK
+		exception.Should().BeException<IOException>(
+			hResult: Test.RunsOnWindows ? -2147024751 : Test.RunsOnMac ? 66 : 39,
 			// Path information only included in exception message on Windows and not in .NET Framework
-			exception.Should().BeOfType<IOException>()
-				.Which.Message.Should()
-				.Contain($"'{System.IO.Path.Combine(BasePath, path)}'");
-#endif
-		}
-		else if (Test.RunsOnMac)
-		{
-			exception.Should().BeOfType<IOException>()
-				.Which.HResult.Should().Be(66);
-		}
-		else
-		{
-			exception.Should().BeOfType<IOException>()
-				.Which.HResult.Should().Be(39);
-		}
+			messageContains: !Test.RunsOnWindows || Test.IsNetFramework ? null : $"'{System.IO.Path.Combine(BasePath, path)}'");
 	}
 }

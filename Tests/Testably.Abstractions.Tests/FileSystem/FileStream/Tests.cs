@@ -82,8 +82,8 @@ public abstract partial class Tests<TFileSystem>
 			stream.CopyTo(destination, 0);
 		});
 
-		exception.Should().BeOfType<ArgumentOutOfRangeException>()
-			.Which.ParamName.Should().Be("bufferSize");
+		exception.Should().BeException<ArgumentOutOfRangeException>(
+			paramName: "bufferSize");
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
@@ -118,8 +118,8 @@ public abstract partial class Tests<TFileSystem>
 			await stream.CopyToAsync(destination, 0);
 		});
 
-		exception.Should().BeOfType<ArgumentOutOfRangeException>()
-			.Which.ParamName.Should().Be("bufferSize");
+		exception.Should().BeException<ArgumentOutOfRangeException>(
+			paramName: "bufferSize");
 	}
 #endif
 
@@ -295,8 +295,6 @@ public abstract partial class Tests<TFileSystem>
 			stream.SetLength(length);
 		});
 
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.HResult.Should().Be(-2146233067);
-		exception.Should().BeOfType<NotSupportedException>();
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 }

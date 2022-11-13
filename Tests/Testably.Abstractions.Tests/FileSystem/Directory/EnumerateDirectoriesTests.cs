@@ -35,10 +35,10 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 			Record.Exception(()
 				=> FileSystem.Directory.EnumerateDirectories(path).ToList());
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
+		exception.Should().BeException<DirectoryNotFoundException>()
 			.Which.Message.Should()
 			.Be($"Could not find a part of the path '{expectedPath}'.");
-		exception.Should().BeOfType<DirectoryNotFoundException>()
+		exception.Should().BeException<DirectoryNotFoundException>()
 			.Which.HResult.Should().Be(-2147024893);
 		FileSystem.Directory.Exists(path).Should().BeFalse();
 	}
@@ -195,7 +195,7 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 				.FirstOrDefault();
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
+		exception.Should().BeException<ArgumentException>()
 			.Which.HResult.Should().Be(-2147024809);
 	}
 

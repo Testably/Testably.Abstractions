@@ -18,10 +18,9 @@ public abstract partial class OpenReadTests<TFileSystem>
 			_ = FileSystem.File.OpenRead(path);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-			.Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+		exception.Should().BeException<FileNotFoundException>(
+			$"'{FileSystem.Path.GetFullPath(path)}'",
+			hResult: -2147024894);
 	}
 
 	[SkippableTheory]
@@ -53,8 +52,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 			stream.SetLength(3);
 		});
 
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.HResult.Should().Be(-2146233067);
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
 	[SkippableTheory]
@@ -69,8 +67,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 			stream.Write(bytes, 0, bytes.Length);
 		});
 
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.HResult.Should().Be(-2146233067);
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
 	[SkippableTheory]
@@ -90,8 +87,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 			#pragma warning restore CA1835
 		});
 
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.HResult.Should().Be(-2146233067);
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
 #if FEATURE_SPAN
@@ -108,8 +104,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 			await stream.WriteAsync(bytes.AsMemory());
 		});
 
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.HResult.Should().Be(-2146233067);
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 #endif
 
@@ -125,8 +120,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 			stream.WriteByte(0);
 		});
 
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.HResult.Should().Be(-2146233067);
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
 #if FEATURE_SPAN
@@ -142,8 +136,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 			stream.Write(bytes.AsSpan());
 		});
 
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.HResult.Should().Be(-2146233067);
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 #endif
 }

@@ -46,8 +46,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		}
 		else
 		{
-			exception.Should().BeOfType<UnauthorizedAccessException>()
-				.Which.HResult.Should().Be(-2147024891);
+			exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 			FileSystem.Directory.Exists(subdirectoryPath).Should().BeFalse();
 		}
 	}
@@ -197,8 +196,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		Exception? exception =
 			Record.Exception(() => FileSystem.Directory.CreateDirectory(path));
 
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.HResult.Should().Be(-2147024809);
+		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
 	[SkippableFact]

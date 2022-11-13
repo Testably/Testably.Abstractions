@@ -18,14 +18,10 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.FileStream.New(path, FileMode.Append, FileAccess.ReadWrite);
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.HResult.Should().Be(-2147024809);
-#if !NETFRAMEWORK
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.ParamName.Should().Be("access");
-#endif
-		exception!.Message.Should()
-			.Contain(FileMode.Append.ToString());
+		exception.Should().BeException<ArgumentException>(
+			messageContains: FileMode.Append.ToString(),
+			hResult: -2147024809,
+			paramName: Test.IsNetFramework ? null : "access");
 	}
 
 	[SkippableTheory]
@@ -50,20 +46,10 @@ public abstract partial class Tests<TFileSystem>
 		{
 			FileSystem.FileStream.New(path, FileMode.CreateNew);
 		});
-
-		if (Test.RunsOnWindows)
-		{
-			exception.Should().BeOfType<IOException>()
-				.Which.HResult.Should().Be(-2147024816);
-		}
-		else
-		{
-			exception.Should().BeOfType<IOException>()
-				.Which.HResult.Should().Be(17);
-		}
-
-		exception.Should().BeOfType<IOException>()
-			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+		
+		exception.Should().BeException<IOException>(
+			$"'{FileSystem.Path.GetFullPath(path)}'",
+			hResult: Test.RunsOnWindows ? -2147024816 : 17);
 	}
 
 	[SkippableTheory]
@@ -93,12 +79,9 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.FileStream.New(path, mode, access);
 		});
 
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.HResult.Should().Be(-2147024809);
-#if !NETFRAMEWORK
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.ParamName.Should().Be("access");
-#endif
+		exception.Should().BeException<ArgumentException>(
+			hResult: -2147024809,
+			paramName: Test.IsNetFramework ? null : "access");
 		exception!.Message.Should()
 			.Contain(mode.ToString()).And
 			.Contain(access.ToString());
@@ -115,10 +98,9 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.FileStream.New(path, mode);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-			.Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+		exception.Should().BeException<FileNotFoundException>(
+			$"'{FileSystem.Path.GetFullPath(path)}'",
+			hResult: -2147024894);
 	}
 
 	[SkippableTheory]
@@ -131,10 +113,9 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.FileStream.New(path, FileMode.Truncate);
 		});
 
-		exception.Should().BeOfType<FileNotFoundException>()
-			.Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+		exception.Should().BeException<FileNotFoundException>(
+			$"'{FileSystem.Path.GetFullPath(path)}'",
+			hResult: -2147024894);
 	}
 
 	[SkippableTheory]
@@ -155,8 +136,7 @@ public abstract partial class Tests<TFileSystem>
 
 		if (access.HasFlag(FileAccess.Write))
 		{
-			exception.Should().BeOfType<UnauthorizedAccessException>()
-				.Which.HResult.Should().Be(-2147024891);
+			exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 		}
 		else
 		{
@@ -177,17 +157,15 @@ public abstract partial class Tests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<UnauthorizedAccessException>()
-				.Which.HResult.Should().Be(-2147024891);
-			exception.Should().BeOfType<UnauthorizedAccessException>()
-				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			exception.Should().BeException<UnauthorizedAccessException>(
+				$"'{FileSystem.Path.GetFullPath(path)}'",
+				hResult: -2147024891);
 		}
 		else
 		{
-			exception.Should().BeOfType<IOException>()
-				.Which.HResult.Should().Be(17);
-			exception.Should().BeOfType<IOException>()
-				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			exception.Should().BeException<IOException>(
+				$"'{FileSystem.Path.GetFullPath(path)}'",
+				hResult: 17);
 		}
 	}
 

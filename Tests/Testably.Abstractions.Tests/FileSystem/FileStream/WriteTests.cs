@@ -29,8 +29,7 @@ public abstract partial class WriteTests<TFileSystem>
 
 		stream.Dispose();
 
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.HResult.Should().Be(-2146233067);
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
 	[SkippableTheory]
@@ -66,9 +65,7 @@ public abstract partial class WriteTests<TFileSystem>
 			stream.EndWrite(null!);
 		});
 
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.HResult.Should().Be(-2147467261);
-		exception.Should().BeOfType<ArgumentNullException>();
+		exception.Should().BeException<ArgumentNullException>(hResult: -2147467261);
 	}
 
 	[SkippableTheory]
@@ -136,8 +133,7 @@ public abstract partial class WriteTests<TFileSystem>
 
 		stream.Dispose();
 
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.HResult.Should().Be(-2146233067);
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
 	[SkippableTheory]
@@ -206,9 +202,8 @@ public abstract partial class WriteTests<TFileSystem>
 			_ = stream.WriteTimeout;
 		});
 
-		exception.Should().BeOfType<InvalidOperationException>()
-			.Which.HResult.Should().Be(-2146233079);
-		exception.Should().BeOfType<InvalidOperationException>();
+		exception.Should().BeException<InvalidOperationException>(
+			hResult: -2146233079);
 	}
 
 #if FEATURE_SPAN
@@ -242,8 +237,7 @@ public abstract partial class WriteTests<TFileSystem>
 
 		stream.Dispose();
 
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.HResult.Should().Be(-2146233067);
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 #endif
 
@@ -284,8 +278,8 @@ public abstract partial class WriteTests<TFileSystem>
 
 		await stream.DisposeAsync();
 
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.HResult.Should().Be(-2146233067);
+		exception.Should().BeException<NotSupportedException>(
+			hResult: -2146233067);
 	}
 #endif
 }

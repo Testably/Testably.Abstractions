@@ -42,11 +42,11 @@ public abstract partial class FileAccessTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<IOException>()
-				.Which.HResult.Should().Be(-2147024864);
-			exception.Should().BeOfType<IOException>(
-					$"Access {access1}, Share {share1} of file 1 is incompatible with Access {access2}, Share {share2} of file 2")
-				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			exception.Should().BeException<IOException>(
+				$"'{FileSystem.Path.GetFullPath(path)}'",
+				hResult: -2147024864,
+				because:
+				$"Access {access1}, Share {share1} of file 1 is incompatible with Access {access2}, Share {share2} of file 2");
 		}
 		else
 		{
@@ -179,10 +179,9 @@ public abstract partial class FileAccessTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<IOException>()
-				.Which.HResult.Should().Be(-2147024864);
-			exception.Should().BeOfType<IOException>()
-				.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
+			exception.Should().BeException<IOException>(
+				$"'{FileSystem.Path.GetFullPath(path)}'",
+				hResult: -2147024864);
 		}
 		else
 		{
