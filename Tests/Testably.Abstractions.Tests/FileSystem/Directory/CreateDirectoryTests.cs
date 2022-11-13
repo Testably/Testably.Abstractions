@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
@@ -62,7 +60,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateDirectory_ShouldTrimTrailingSpacesOnlyOnWindows(string path)
+	public void CreateDirectory_ShouldTrimTrailingSpaces_OnWindows(string path)
 	{
 		string pathWithSpaces = path + "  ";
 
@@ -181,75 +179,6 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		result.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
 		result.Should().BeOnOrBefore(TimeSystem.DateTime.UtcNow);
 		result.Kind.Should().Be(DateTimeKind.Utc);
-	}
-
-	[SkippableFact]
-	public void CreateDirectory_Empty_ShouldThrowArgumentException()
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Directory.CreateDirectory(string.Empty);
-		});
-
-#if NETFRAMEWORK
-		exception.Should().BeOfType<ArgumentException>()
-		   .Which.HResult.Should().Be(-2147024809);
-#else
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.HResult.Should().Be(-2147024809);
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.ParamName.Should().Be("path");
-#endif
-	}
-
-	[SkippableFact]
-	public void CreateDirectory_IllegalCharacters_ShouldThrowArgumentException()
-	{
-		IEnumerable<char> invalidChars = FileSystem.Path
-			.GetInvalidPathChars().Where(c => c != '\0')
-			.Concat(new[]
-			{
-				'*', '?'
-			});
-		foreach (char invalidChar in invalidChars)
-		{
-			string path = $"{invalidChar}foo{invalidChar}bar";
-			Exception? exception = Record.Exception(() =>
-			{
-				FileSystem.Directory.CreateDirectory(path);
-			});
-
-			if (Test.RunsOnWindows)
-			{
-#if NETFRAMEWORK
-				exception.Should().BeOfType<ArgumentException>();
-#else
-				string expectedMessage = $"'{System.IO.Path.Combine(BasePath, path)}'";
-				exception.Should()
-					.BeOfType<IOException>(
-						$"'{invalidChar}' is an invalid path character.")
-					.Which.Message.Should().Contain(expectedMessage);
-				exception.Should().BeOfType<IOException>()
-					.Which.HResult.Should().Be(-2147024773);
-#endif
-			}
-			else
-			{
-				exception.Should().BeNull();
-			}
-		}
-	}
-
-	[SkippableFact]
-	public void CreateDirectory_Null_ShouldThrowArgumentNullException()
-	{
-		Exception? exception =
-			Record.Exception(() => FileSystem.Directory.CreateDirectory(null!));
-
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.HResult.Should().Be(-2147467261);
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.ParamName.Should().Be("path");
 	}
 
 	[SkippableFact]

@@ -43,7 +43,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void OpenRead_StreamShouldBeReadOnlyOnSetLength(string path)
+	public void OpenRead_SetLength_ShouldThrowNotSupportedException(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
@@ -59,7 +59,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void OpenRead_StreamShouldBeReadOnlyOnWrite(string path, byte[] bytes)
+	public void OpenRead_Write_ShouldThrowNotSupportedException(string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
@@ -75,7 +75,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public async Task OpenRead_StreamShouldBeReadOnlyOnWriteAsync(
+	public async Task OpenRead_WriteAsync_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
 		// ReSharper disable once MethodHasAsyncOverload
@@ -97,7 +97,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	public async Task OpenRead_StreamShouldBeReadOnlyOnWriteAsyncWithMemory(
+	public async Task OpenRead_WriteAsyncWithMemory_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
 		await FileSystem.File.WriteAllTextAsync(path, null);
@@ -115,7 +115,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void OpenRead_StreamShouldBeReadOnlyOnWriteByte(string path)
+	public void OpenRead_WriteByte_ShouldThrowNotSupportedException(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 
@@ -132,7 +132,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	public void OpenRead_StreamShouldBeReadOnlyOnWriteWithSpan(string path, byte[] bytes)
+	public void OpenRead_WriteWithSpan_ShouldThrowNotSupportedException(string path, byte[] bytes)
 	{
 		FileSystem.File.WriteAllText(path, null);
 

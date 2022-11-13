@@ -11,7 +11,7 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableTheory]
 	[InlineData(259)]
 	[InlineData(260)]
-	public void New_PathTooLong_ShouldThrowPathTooLongExceptionOnNetFramework(
+	public void New_PathTooLong_ShouldThrowPathTooLongException_OnNetFramework(
 		int maxLength)
 	{
 		string rootDrive = FileTestHelper.RootDrive();

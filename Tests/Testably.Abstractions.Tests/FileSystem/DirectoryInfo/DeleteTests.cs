@@ -10,7 +10,7 @@ public abstract partial class DeleteTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public void Delete_MissingDirectory_ShouldDeleteDirectory(string path)
+	public void Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 		sut.Exists.Should().BeFalse();
@@ -111,7 +111,7 @@ public abstract partial class DeleteTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Delete_WithSubdirectory_ShouldNotDeleteDirectory(
+	public void Delete_WithSubdirectory_ShouldThrowIOException_AndNotDeleteDirectory(
 		string path, string subdirectory)
 	{
 		FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(path, subdirectory));
@@ -138,16 +138,13 @@ public abstract partial class DeleteTests<TFileSystem>
 			exception.Should().BeOfType<IOException>()
 				.Which.HResult.Should().Be(39);
 		}
-
-		exception.Should().BeOfType<IOException>();
-#if !NETFRAMEWORK
-		if (Test.RunsOnWindows)
+		
+		if (Test.RunsOnWindows && !Test.IsNetFramework)
 		{
 			// Path information only included in exception message on Windows and not in .NET Framework
 			exception.Should().BeOfType<IOException>()
 				.Which.Message.Should().Contain($"'{sut.FullName}'");
 		}
-#endif
 
 		sut.Exists.Should().BeTrue();
 		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();

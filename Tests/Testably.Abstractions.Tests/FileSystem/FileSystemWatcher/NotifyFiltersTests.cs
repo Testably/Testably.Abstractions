@@ -340,7 +340,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		NotifyFilter_MoveFile_DifferentDirectories_ShouldNotNotifyOnWindows(
+		NotifyFilter_MoveFile_DifferentDirectories_ShouldNotNotify_OnWindows(
 			string sourcePath, string sourceName,
 			string destinationPath, string destinationName)
 	{

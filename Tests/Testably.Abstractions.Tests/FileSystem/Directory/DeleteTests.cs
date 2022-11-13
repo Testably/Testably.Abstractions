@@ -11,7 +11,7 @@ public abstract partial class DeleteTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		Delete_CaseDifferentPath_ShouldThrowDirectoryNotFoundExceptionOnLinux(
+		Delete_CaseDifferentPath_ShouldThrowDirectoryNotFoundException_OnLinux(
 			string directoryName)
 	{
 		directoryName = directoryName.ToLowerInvariant();
@@ -71,7 +71,7 @@ public abstract partial class DeleteTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Delete_Recursive_MissingDirectory_ShouldDeleteDirectory(
+	public void Delete_Recursive_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string directoryName)
 	{
 		string expectedPath = System.IO.Path.Combine(BasePath, directoryName);
@@ -89,7 +89,7 @@ public abstract partial class DeleteTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Delete_Recursive_WithOpenFile_ShouldThrowIOException(
+	public void Delete_Recursive_WithOpenFile_ShouldThrowIOException_OnWindows(
 		string path, string filename)
 	{
 		FileSystem.Initialize()
@@ -232,7 +232,7 @@ public abstract partial class DeleteTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Delete_WithSubdirectory_ShouldNotDeleteDirectory(
+	public void Delete_WithSubdirectory_ShouldThrowIOException_AndNotDeleteDirectory(
 		string path, string subdirectory)
 	{
 		FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(path, subdirectory));

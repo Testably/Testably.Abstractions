@@ -13,7 +13,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 {
 	[Theory]
 	[MemberData(nameof(GetFileInfoCallbacks), parameters: "")]
-	public void Operations_ShouldThrowArgumentExceptionIfValueIsEmpty(
+	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileInfo>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -37,7 +37,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	[Theory]
 	[MemberData(nameof(GetFileInfoCallbacks), parameters: (string?)null)]
-	public void Operations_ShouldThrowArgumentNullExceptionIfValueIsNull(
+	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileInfo>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -62,7 +62,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	[SkippableTheory]
 	[MemberData(nameof(GetFileInfoCallbacks), parameters: "Illegal\tCharacter?InPath")]
 	public void
-		Operations_ShouldThrowCorrectExceptionIfValueContainsIllegalPathCharactersOnWindows(
+		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowCorrectException_OnWindows(
 			Expression<Action<IFileInfo>> callback, string paramName,
 			bool ignoreParamCheck)
 	{

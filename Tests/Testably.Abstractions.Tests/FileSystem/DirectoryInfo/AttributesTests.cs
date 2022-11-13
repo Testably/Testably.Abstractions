@@ -24,7 +24,7 @@ public abstract partial class AttributesTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void Attributes_WhenFileIsMissing_SetterShouldThrowDirectoryNotFoundException()
+	public void Attributes_WhenFileIsMissing_SetterShouldThrowFileNotFoundException()
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("missing file");
 

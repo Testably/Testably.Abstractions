@@ -11,7 +11,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		Replace_DestinationDirectoryDoesNotExist_ShouldThrowDirectoryNotFoundException(
+		Replace_DestinationDirectoryDoesNotExist_ShouldThrowCorrectException(
 			string source)
 	{
 		FileSystem.Initialize()
@@ -100,7 +100,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		Replace_ReadOnly_WithoutIgnoreMetadataError_ShouldThrowUnauthorizedAccessException(
+		Replace_ReadOnly_WithoutIgnoreMetadataError_ShouldThrowUnauthorizedAccessException_OnWindows(
 			string sourceName,
 			string destinationName,
 			string backupName,
@@ -183,7 +183,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Replace_SourceLocked_ShouldThrowIOException(
+	public void Replace_SourceLocked_ShouldThrowIOException_OnWindows(
 		string sourceName,
 		string destinationName,
 		string backupName,

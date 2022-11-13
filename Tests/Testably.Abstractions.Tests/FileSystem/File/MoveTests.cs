@@ -50,7 +50,7 @@ public abstract partial class MoveTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Move_DestinationExists_ShouldThrowIOExceptionAndNotMoveFile(
+	public void Move_DestinationExists_ShouldThrowIOException_AndNotMoveFile(
 		string sourceName,
 		string destinationName,
 		string sourceContents,
@@ -198,7 +198,7 @@ public abstract partial class MoveTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Move_SourceLocked_ShouldThrowIOException(
+	public void Move_SourceLocked_ShouldThrowIOException_OnWindows(
 		string sourceName,
 		string destinationName)
 	{

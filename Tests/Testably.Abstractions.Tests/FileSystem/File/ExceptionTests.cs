@@ -15,7 +15,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 {
 	[Theory]
 	[MemberData(nameof(GetFileCallbacks), parameters: "")]
-	public void Operations_ShouldThrowArgumentExceptionIfValueIsEmpty(
+	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -39,7 +39,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks), parameters: "  ")]
-	public void Operations_ShouldThrowArgumentExceptionIfValueIsWhitespace(
+	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -65,7 +65,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	[Theory]
 	[MemberData(nameof(GetFileCallbacks), parameters: (string?)null)]
-	public void Operations_ShouldThrowArgumentNullExceptionIfValueIsNull(
+	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -90,7 +90,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks), parameters: "Illegal\tCharacter?InPath")]
 	public void
-		Operations_ShouldThrowCorrectExceptionIfValueContainsIllegalPathCharactersOnWindows(
+		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowCorrectException_OnWindows(
 			Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck)
 	{
 		Exception? exception = Record.Exception(() =>

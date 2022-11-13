@@ -10,7 +10,7 @@ public abstract partial class MoveToTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public void MoveTo_DestinationExists_ShouldThrowIOExceptionAndNotMoveFile(
+	public void MoveTo_DestinationExists_ShouldThrowIOException_AndNotMoveFile(
 		string sourceName,
 		string destinationName,
 		string sourceContents,
@@ -109,7 +109,7 @@ public abstract partial class MoveToTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		MoveTo_MissingDestinationDirectory_ShouldThrowDirectoryNotFoundExceptionAndNotMoveFile(
+		MoveTo_MissingDestinationDirectory_ShouldThrowDirectoryNotFoundException_AndNotMoveFile(
 			string sourceName,
 			string missingDirectory,
 			string destinationName,
@@ -154,7 +154,7 @@ public abstract partial class MoveToTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void MoveTo_ShouldAddArchiveAttributeOnWindows(
+	public void MoveTo_ShouldAddArchiveAttribute_OnWindows(
 		string sourceName,
 		string destinationName,
 		string contents,

@@ -10,7 +10,7 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public void GetUnixFileMode_ShouldThrowNotSupportedExceptionOnWindows(
+	public void GetUnixFileMode_ShouldThrowPlatformNotSupportedException_OnWindows(
 		string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -63,7 +63,7 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void SetUnixFileMode_ShouldThrowNotSupportedExceptionOnWindows(
+	public void SetUnixFileMode_ShouldThrowPlatformNotSupportedException_OnWindows(
 		string path, UnixFileMode mode)
 	{
 		Skip.IfNot(Test.RunsOnWindows);

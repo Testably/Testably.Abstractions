@@ -130,7 +130,7 @@ public abstract partial class SearchFilterTests<TFileSystem>
 
 	[SkippableFact]
 	public void
-		SearchPattern_ContainingTooManyInstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldMatchExpectedFiles()
+		SearchPattern_ContainingTooManyInstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldThrowUnauthorizedAccessException()
 	{
 		Skip.If(Test.IsNetFramework);
 
@@ -190,7 +190,7 @@ public abstract partial class SearchFilterTests<TFileSystem>
 	[InlineAutoData("../a*")]
 	[InlineAutoData("*t..")]
 	public void
-		SearchPattern_ContainingTwoDotsAndDirectorySeparator_ShouldThrowArgumentExceptionOnNetFramework(
+		SearchPattern_ContainingTwoDotsAndDirectorySeparator_ShouldThrowArgumentException_OnNetFramework(
 			string searchPattern, string path)
 	{
 		Skip.IfNot(Test.IsNetFramework);

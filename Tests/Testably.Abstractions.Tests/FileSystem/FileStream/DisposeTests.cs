@@ -35,27 +35,6 @@ public abstract partial class DisposeTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Dispose_ShouldDisposeStream(
-		string path, string contents)
-	{
-		FileSystem.File.WriteAllText(path, contents);
-
-		using Stream stream = FileSystem.File.OpenRead(path);
-		stream.Dispose();
-
-		Exception? exception = Record.Exception(() =>
-		{
-			// ReSharper disable once AccessToDisposedClosure
-			stream.ReadByte();
-		});
-
-		exception.Should().BeOfType<ObjectDisposedException>()
-			.Which.HResult.Should().Be(-2146232798);
-		exception.Should().BeOfType<ObjectDisposedException>();
-	}
-
-	[SkippableTheory]
-	[AutoData]
 	public void Dispose_ShouldNotResurrectFile(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);

@@ -13,7 +13,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 {
 	[Theory]
 	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), parameters: "")]
-	public void Operations_ShouldThrowArgumentExceptionIfValueIsEmpty(
+	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileSystemWatcherFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -38,7 +38,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	[SkippableTheory]
 	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), parameters: "  ")]
-	public void Operations_ShouldThrowArgumentExceptionIfValueIsWhitespace(
+	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IFileSystemWatcherFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -65,7 +65,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	[Theory]
 	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), parameters: (string?)null)]
-	public void Operations_ShouldThrowArgumentNullExceptionIfValueIsNull(
+	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileSystemWatcherFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -92,7 +92,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks),
 		parameters: "Illegal\tCharacter?InPath")]
 	public void
-		Operations_ShouldThrowCorrectExceptionIfValueContainsIllegalPathCharactersOnWindows(
+		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowCorrectException_OnWindows(
 			Expression<Action<IFileSystemWatcherFactory>> callback, string paramName,
 			bool ignoreParamCheck)
 	{

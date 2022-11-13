@@ -13,7 +13,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 {
 	[Theory]
 	[MemberData(nameof(GetDirectoryInfoCallbacks), parameters: "")]
-	public void Operations_ShouldThrowArgumentExceptionIfValueIsEmpty(
+	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IDirectoryInfo>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -38,7 +38,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	[SkippableTheory]
 	[MemberData(nameof(GetDirectoryInfoCallbacks), parameters: "  ")]
-	public void Operations_ShouldThrowArgumentExceptionIfValueIsWhitespace(
+	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IDirectoryInfo>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -70,7 +70,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	[Theory]
 	[MemberData(nameof(GetDirectoryInfoCallbacks), parameters: (string?)null)]
-	public void Operations_ShouldThrowArgumentNullExceptionIfValueIsNull(
+	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IDirectoryInfo>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -97,7 +97,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	[MemberData(nameof(GetDirectoryInfoCallbacks),
 		parameters: "Illegal\tCharacter?InPath")]
 	public void
-		Operations_ShouldThrowCorrectExceptionIfValueContainsIllegalPathCharactersOnWindows(
+		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowCorrectException_OnWindows(
 			Expression<Action<IDirectoryInfo>> callback, string paramName,
 			bool ignoreParamCheck)
 	{
@@ -155,6 +155,11 @@ public abstract partial class ExceptionTests<TFileSystem>
 			ExceptionTestHelper.TestTypes.InvalidPath, "path",
 			directoryInfo
 				=> directoryInfo.CreateSubdirectory(value));
+#if FEATURE_FILESYSTEM_LINK
+		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "pathToTarget",
+			directoryInfo
+				=> directoryInfo.CreateAsSymbolicLink(value));
+#endif
 		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "destDirName",
 			directoryInfo
 				=> directoryInfo.MoveTo(value));

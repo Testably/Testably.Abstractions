@@ -29,7 +29,7 @@ public abstract partial class CopyTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Copy_DestinationExists_ShouldThrowIOExceptionAndNotCopyFile(
+	public void Copy_DestinationExists_ShouldThrowIOException_AndNotCopyFile(
 		string sourceName,
 		string destinationName,
 		string sourceContents,
@@ -86,7 +86,7 @@ public abstract partial class CopyTests<TFileSystem>
 	[InlineData(@"C:\something\demo.txt", @"^:\elsewhere\demo.txt")]
 	[InlineData(@"C:\something\demo.txt", @"C:\elsewhere:\demo.txt")]
 	public void
-		Copy_InvalidDriveName_ShouldThrowCorrectException(
+		Copy_InvalidDriveName_ShouldThrowNotSupportedException(
 			string source, string destination)
 	{
 		Skip.IfNot(Test.IsNetFramework);
@@ -270,7 +270,7 @@ public abstract partial class CopyTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Copy_SourceIsDirectory_ShouldThrowIOExceptionAndNotCopyFile(
+	public void Copy_SourceIsDirectory_ShouldThrowUnauthorizedAccessException_AndNotCopyFile(
 		string sourceName,
 		string destinationName)
 	{

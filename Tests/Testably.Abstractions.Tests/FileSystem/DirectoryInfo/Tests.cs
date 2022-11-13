@@ -50,7 +50,7 @@ public abstract partial class Tests<TFileSystem>
 	[InlineData(@"c:\temp\\folder", @"c:\temp\folder")]
 	[InlineData(@"c:\temp//folder", @"c:\temp\folder")]
 	[InlineData(@"c:\temp//\\///folder", @"c:\temp\folder")]
-	public void FullName_ShouldReturnNormalizedPathOnWindows(
+	public void FullName_ShouldReturnNormalizedPath_OnWindows(
 		string path, string expectedPath)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -62,7 +62,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void FullName_ShouldTrimTrailingSpacesOnlyOnWindows(string path)
+	public void FullName_ShouldTrimTrailingSpaces_OnWindows(string path)
 	{
 		path = FileSystem.Path.GetFullPath(path);
 		string pathWithSpaces = path + "  ";
@@ -81,7 +81,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void MissingFile_Attributes_ShouldAlwaysBeNegativeOne(
+	public void MissingFile_Attributes_ShouldAlwaysBeNegativeOne_AndSetterShouldThrowFileNotFoundException(
 		FileAttributes fileAttributes)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
@@ -97,7 +97,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void MissingFile_CreationTime_ShouldAlwaysBeNullTime(DateTime creationTime)
+	public void MissingFile_CreationTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(DateTime creationTime)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		sut.CreationTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
@@ -122,7 +122,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void MissingFile_CreationTimeUtc_ShouldAlwaysBeNullTime(
+	public void MissingFile_CreationTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 		DateTime creationTimeUtc)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
@@ -148,7 +148,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void MissingFile_LastAccessTime_ShouldAlwaysBeNullTime(DateTime lastAccessTime)
+	public void MissingFile_LastAccessTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(DateTime lastAccessTime)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		sut.LastAccessTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
@@ -173,7 +173,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void MissingFile_LastAccessTimeUtc_ShouldAlwaysBeNullTime(
+	public void MissingFile_LastAccessTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 		DateTime lastAccessTimeUtc)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
@@ -199,7 +199,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void MissingFile_LastWriteTime_ShouldAlwaysBeNullTime(DateTime lastWriteTime)
+	public void MissingFile_LastWriteTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(DateTime lastWriteTime)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
 		sut.LastWriteTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
@@ -224,7 +224,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void MissingFile_LastWriteTimeUtc_ShouldAlwaysBeNullTime(
+	public void MissingFile_LastWriteTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
 		DateTime lastWriteTimeUtc)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("Missing File");
@@ -250,7 +250,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Name_ShouldTrimTrailingSpacesOnlyOnWindows(string path)
+	public void Name_ShouldTrimTrailingSpaces_OnWindows(string path)
 	{
 		string pathWithSpaces = path + "  ";
 

@@ -82,7 +82,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void New_InvalidDriveName_ShouldThrowArgumentNullException(
+	public void New_InvalidDriveName_ShouldThrowArgumentException(
 		string invalidDriveName)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
@@ -94,18 +94,6 @@ public abstract partial class Tests<TFileSystem>
 
 		exception.Should().BeOfType<ArgumentException>()
 			.Which.HResult.Should().Be(-2147024809);
-	}
-
-	[SkippableFact]
-	public void New_Null_ShouldThrowArgumentNullException()
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			_ = FileSystem.DriveInfo.New(null!);
-		});
-
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.HResult.Should().Be(-2147467261);
 	}
 
 	[SkippableTheory]

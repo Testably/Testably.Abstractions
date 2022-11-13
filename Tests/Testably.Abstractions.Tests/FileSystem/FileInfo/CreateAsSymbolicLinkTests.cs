@@ -24,7 +24,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateAsSymbolicLink_SourceFileAlreadyExists_ShouldCreateSymbolicLink(
+	public void CreateAsSymbolicLink_SourceFileAlreadyExists_ShouldThrowIOException(
 		string path, string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, null);
@@ -134,7 +134,7 @@ public abstract partial class CreateAsSymbolicLinkTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		CreateAsSymbolicLink_WithIllegalPath_ShouldThrowArgumentExceptionOnWindows(
+		CreateAsSymbolicLink_WithIllegalPath_ShouldThrowArgumentException_OnWindows(
 			string pathToTarget)
 	{
 		FileSystem.File.WriteAllText(pathToTarget, "some content");

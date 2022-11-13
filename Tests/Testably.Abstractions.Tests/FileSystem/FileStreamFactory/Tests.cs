@@ -107,7 +107,7 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableTheory]
 	[InlineAutoData(FileMode.Open)]
 	[InlineAutoData(FileMode.Truncate)]
-	public void New_MissingFileWithIncorrectMode_ShouldThrowArgumentException(
+	public void New_MissingFileWithIncorrectMode_ShouldThrowFileNotFoundException(
 		FileMode mode, string path)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -123,7 +123,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void New_MissingFileWithTruncateMode_ShouldIgnoreContent(
+	public void New_MissingFileWithTruncateMode_ShouldThrowFileNotFoundException(
 		string path)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -138,26 +138,11 @@ public abstract partial class Tests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[AutoData]
-	public void New_NullPath_ShouldThrowArgumentNullException(FileMode mode)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.FileStream.New(null!, mode);
-		});
-
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.HResult.Should().Be(-2147467261);
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.ParamName.Should().Be("path");
-	}
-
-	[SkippableTheory]
 	[InlineAutoData(FileAccess.Read)]
 	[InlineAutoData(FileAccess.ReadWrite)]
 	[InlineAutoData(FileAccess.Write)]
 	public void
-		New_ReadOnlyFlag_WhenAccessContainsWrite_ShouldThrowUnauthorizedAccessException(
+		New_ReadOnlyFlag_ShouldThrowUnauthorizedAccessException_WhenAccessContainsWrite(
 			FileAccess access,
 			string path)
 	{
@@ -181,7 +166,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void New_SamePathAsExistingDirectory_ShouldThrowException(
+	public void New_SamePathAsExistingDirectory_ShouldThrowCorrectException(
 		string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);

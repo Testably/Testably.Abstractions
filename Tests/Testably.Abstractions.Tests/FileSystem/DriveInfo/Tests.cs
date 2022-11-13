@@ -8,7 +8,7 @@ public abstract partial class Tests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
-	public void VolumeLabel_ShouldBeWritableOnlyOnWindows()
+	public void VolumeLabel_ShouldBeWritable_OnWindows()
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 

@@ -61,7 +61,7 @@ public abstract partial class DeleteTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Delete_WithOpenFile_ShouldThrowIOException(string filename)
+	public void Delete_WithOpenFile_ShouldThrowIOException_OnWindows(string filename)
 	{
 		FileSystem.Initialize();
 		FileSystemStream openFile = FileSystem.File.OpenWrite(filename);

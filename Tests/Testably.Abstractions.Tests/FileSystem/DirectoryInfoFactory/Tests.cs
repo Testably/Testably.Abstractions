@@ -7,32 +7,19 @@ public abstract partial class Tests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	[SkippableFact]
-	public void New_EmptyPath_ShouldThrowArgumentException()
+	[SkippableTheory]
+	[InlineData("\0foo")]
+	[InlineData("foo\0bar")]
+	public void New_NullCharacter_ShouldThrowArgumentException(string path)
 	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.DirectoryInfo.New(string.Empty);
-		});
+		string expectedMessage = "Illegal characters in path.";
+		Exception? exception =
+			Record.Exception(() => FileSystem.DirectoryInfo.New(path));
 
 		exception.Should().BeOfType<ArgumentException>()
 			.Which.HResult.Should().Be(-2147024809);
-#if !NETFRAMEWORK
 		exception.Should().BeOfType<ArgumentException>()
-			.Which.ParamName.Should().Be("path");
-#endif
-	}
-
-	[SkippableFact]
-	public void New_Null_ShouldThrowArgumentNullException()
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			_ = FileSystem.DirectoryInfo.New(null!);
-		});
-
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.HResult.Should().Be(-2147467261);
+			.Which.Message.Should().Contain(expectedMessage);
 	}
 
 	[SkippableTheory]

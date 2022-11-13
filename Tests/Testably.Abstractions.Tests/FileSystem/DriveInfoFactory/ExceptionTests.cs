@@ -14,7 +14,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	[InlineData("?invalid-drive-name")]
 	[InlineData("invalid")]
 	[InlineData(" ")]
-	public void New_ShouldThrowArgumentExceptionIfDriveNameIsInvalid(
+	public void New_WhenDriveNameIsInvalid_ShouldThrowArgumentException(
 		string driveName)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -30,7 +30,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	[Theory]
 	[MemberData(nameof(GetDriveInfoFactoryCallbacks), parameters: "")]
-	public void Operations_ShouldThrowArgumentExceptionIfValueIsEmpty(
+	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IDriveInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -55,7 +55,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	[Theory]
 	[MemberData(nameof(GetDriveInfoFactoryCallbacks), parameters: (string?)null)]
-	public void Operations_ShouldThrowArgumentNullExceptionIfValueIsNull(
+	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IDriveInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{

@@ -30,7 +30,7 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void EnumerateFiles_Path_ShouldBeCaseInsensitiveOnWindows(string path)
+	public void EnumerateFiles_Path_ShouldBeCaseInsensitive_OnWindows(string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 

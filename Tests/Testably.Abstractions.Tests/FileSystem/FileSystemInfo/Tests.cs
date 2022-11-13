@@ -137,7 +137,7 @@ public abstract partial class Tests<TFileSystem>
 	[InlineAutoData(FileAttributes.Offline)]
 	[InlineAutoData(FileAttributes.System)]
 	[InlineAutoData(FileAttributes.Temporary)]
-	public void SetAttributes_ShouldOnlyWorkOnWindows(FileAttributes attributes,
+	public void SetAttributes_ShouldOnlyWork_OnWindows(FileAttributes attributes,
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, null);

@@ -12,7 +12,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 {
 	[Theory]
 	[MemberData(nameof(GetFileInfoFactoryCallbacks), parameters: "")]
-	public void Operations_ShouldThrowArgumentExceptionIfValueIsEmpty(
+	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -37,7 +37,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	[SkippableTheory]
 	[MemberData(nameof(GetFileInfoFactoryCallbacks), parameters: "  ")]
-	public void Operations_ShouldThrowArgumentExceptionIfValueIsWhitespace(
+	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IFileInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -64,7 +64,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	[Theory]
 	[MemberData(nameof(GetFileInfoFactoryCallbacks), parameters: (string?)null)]
-	public void Operations_ShouldThrowArgumentNullExceptionIfValueIsNull(
+	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
 	{
@@ -91,7 +91,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	[MemberData(nameof(GetFileInfoFactoryCallbacks),
 		parameters: "Illegal\tCharacter?InPath")]
 	public void
-		Operations_ShouldThrowCorrectExceptionIfValueContainsIllegalPathCharactersOnWindows(
+		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowArgumentException_OnNetFramework(
 			Expression<Action<IFileInfoFactory>> callback, string paramName,
 			bool ignoreParamCheck)
 	{

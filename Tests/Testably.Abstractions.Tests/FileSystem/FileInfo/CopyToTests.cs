@@ -10,7 +10,7 @@ public abstract partial class CopyToTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public void CopyTo_DestinationExists_ShouldThrowIOExceptionAndNotCopyFile(
+	public void CopyTo_DestinationExists_ShouldThrowIOException_AndNotCopyFile(
 		string sourceName,
 		string destinationName,
 		string sourceContents,
@@ -89,7 +89,7 @@ public abstract partial class CopyToTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CopyTo_ShouldAddArchiveAttributeOnWindows(
+	public void CopyTo_ShouldAddArchiveAttribute_OnWindows(
 		string sourceName,
 		string destinationName,
 		string contents,
@@ -174,7 +174,7 @@ public abstract partial class CopyToTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CopyTo_SourceIsDirectory_ShouldThrowIOExceptionAndNotCopyFile(
+	public void CopyTo_SourceIsDirectory_ShouldThrowUnauthorizedAccessException_AndNotCopyFile(
 		string sourceName,
 		string destinationName)
 	{
