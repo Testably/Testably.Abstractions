@@ -25,6 +25,25 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		FileSystem.Directory.Exists(path).Should().BeTrue();
 	}
 
+	[SkippableTheory]
+	[AutoData]
+	public void CreateDirectory_ReadOnlyParent_ShouldStillCreateDirectory(string parent, string subdirectory)
+	{
+		string subdirectoryPath = FileSystem.Path.Combine(parent, subdirectory);
+		FileSystem.Directory.CreateDirectory(parent);
+		FileSystem.DirectoryInfo.New(parent).Attributes = FileAttributes.ReadOnly;
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.Directory.CreateDirectory(subdirectoryPath);
+		});
+
+		exception.Should().BeNull();
+		FileSystem.Directory.Exists(subdirectoryPath).Should().BeTrue();
+		FileSystem.DirectoryInfo.New(parent).Attributes
+		          .Should().HaveFlag(FileAttributes.ReadOnly);
+	}
+
 	[SkippableFact]
 	public void CreateDirectory_Root_ShouldNotThrowException()
 	{
