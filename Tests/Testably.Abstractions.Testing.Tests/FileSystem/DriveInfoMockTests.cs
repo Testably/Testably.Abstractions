@@ -8,12 +8,16 @@ namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
 public class DriveInfoMockTests
 {
+	#region Test Setup
+
 	public MockFileSystem FileSystem { get; }
 
 	public DriveInfoMockTests()
 	{
 		FileSystem = new MockFileSystem();
 	}
+
+	#endregion
 
 	[SkippableTheory]
 	[AutoData]
@@ -43,7 +47,7 @@ public class DriveInfoMockTests
 
 		IDriveInfo drive = FileSystem.DriveInfo.GetDrives().Single();
 		exception.Should().BeOfType<IOException>()
-		   .Which.Message.Should().Contain($"'{drive.Name}'");
+			.Which.Message.Should().Contain($"'{drive.Name}'");
 		drive.AvailableFreeSpace.Should().Be(fileSize - 1);
 	}
 
@@ -64,6 +68,27 @@ public class DriveInfoMockTests
 		FileSystem.File.AppendAllText(path, fileContent2, encoding);
 
 		drive.AvailableFreeSpace.Should().Be(expectedRemainingBytes);
+	}
+
+	[SkippableTheory]
+	[InlineAutoData(0)]
+	[InlineAutoData(1)]
+	[InlineAutoData(10)]
+	public void AvailableFreeSpace_ShouldBeChangedWhenWorkingWithStreams(
+		int reduceLength, string path, string previousContent)
+	{
+		FileSystem.File.WriteAllText(path, previousContent);
+		IDriveInfo mainDrive = FileSystem.DriveInfo.New("C");
+		long previousFreeSpace = mainDrive.AvailableFreeSpace;
+
+		FileSystemStream stream = FileSystem.File.OpenWrite(path);
+		using (StreamWriter streamWriter = new(stream))
+		{
+			streamWriter.Write("new-content");
+			stream.SetLength(stream.Length - reduceLength);
+		}
+		
+		mainDrive.AvailableFreeSpace.Should().Be(previousFreeSpace + reduceLength);
 	}
 
 	[SkippableTheory]
@@ -118,7 +143,7 @@ public class DriveInfoMockTests
 		string driveName, string expectedName)
 	{
 		expectedName = expectedName
-		   .Replace('/', FileSystem.Path.DirectorySeparatorChar);
+			.Replace('/', FileSystem.Path.DirectorySeparatorChar);
 
 		IDriveInfo drive =
 			DriveInfoMock.New(driveName, FileSystem);

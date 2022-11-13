@@ -1,4 +1,5 @@
 #if FEATURE_FILESYSTEM_ASYNC
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -91,6 +92,25 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 			result.Should().Be(contents,
 				$"{contents} should be encoded and decoded identical.");
 		}
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public async Task WriteAllTextAsync_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
+		string path, string contents)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		await FileSystem.File.WriteAllTextAsync(path, null);
+		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
+
+		var exception = await Record.ExceptionAsync(async () =>
+		{
+			await FileSystem.File.WriteAllTextAsync(path, contents);
+		});
+
+		exception.Should().BeOfType<UnauthorizedAccessException>()
+			.Which.HResult.Should().Be(-2147024891);
 	}
 }
 #endif

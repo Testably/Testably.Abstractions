@@ -1,3 +1,4 @@
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -75,5 +76,24 @@ public abstract partial class WriteAllLinesTests<TFileSystem>
 
 		string[] result = FileSystem.File.ReadAllLines(path, encoding);
 		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void WriteAllLines_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
+		string path, string[] contents)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		FileSystem.File.WriteAllText(path, null);
+		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
+
+		var exception = Record.Exception(() =>
+		{
+			FileSystem.File.WriteAllLines(path, contents);
+		});
+
+		exception.Should().BeOfType<UnauthorizedAccessException>()
+			.Which.HResult.Should().Be(-2147024891);
 	}
 }

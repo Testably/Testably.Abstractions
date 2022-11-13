@@ -1,3 +1,4 @@
+using System.IO;
 using System.Text;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
@@ -28,5 +29,24 @@ public abstract partial class WriteAllBytesTests<TFileSystem>
 
 		byte[] result = FileSystem.File.ReadAllBytes(path);
 		result.Should().BeEquivalentTo(contents);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void WriteAllBytes_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
+		string path, byte[] contents)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+		
+		FileSystem.File.WriteAllBytes(path, Array.Empty<byte>());
+		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
+
+		var exception = Record.Exception(() =>
+		{
+			FileSystem.File.WriteAllBytes(path, contents);
+		});
+
+		exception.Should().BeOfType<UnauthorizedAccessException>()
+			.Which.HResult.Should().Be(-2147024891);
 	}
 }

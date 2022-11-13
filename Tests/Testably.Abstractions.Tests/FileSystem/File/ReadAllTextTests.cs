@@ -1,4 +1,5 @@
 using AutoFixture;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -126,6 +127,21 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[MemberData(nameof(GetEncodingsForReadAllText))]
+	public void ReadAllText_WithoutReadEncoding_ShouldReturnWrittenText(
+		Encoding writeEncoding)
+	{
+		string contents = Guid.NewGuid().ToString();
+		string path = new Fixture().Create<string>();
+		FileSystem.File.WriteAllText(path, contents, writeEncoding);
+
+		string result = FileSystem.File.ReadAllText(path);
+
+		result.Should().Be(contents,
+			$"{contents} should not be different when no read encoding is used for write encoding: {writeEncoding}.");
+	}
+
+	[SkippableTheory]
 	[AutoData]
 	public void ReadAllText_WithStarCharacter_ShouldThrowFileNotFoundException(
 		string path, string contents)
@@ -139,4 +155,32 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 
 		exception.Should().NotBeNull();
 	}
+
+	#region Helpers
+
+	public static IEnumerable<object?[]> GetEncodingsForReadAllText()
+	{
+		// little endian
+		yield return new object?[]
+		{
+			new UTF32Encoding(false, true, true)
+		};
+
+		// big endian
+		yield return new object?[]
+		{
+			new UTF32Encoding(true, true, true)
+		};
+		yield return new object?[]
+		{
+			new UTF8Encoding(true, true)
+		};
+
+		yield return new object?[]
+		{
+			new ASCIIEncoding()
+		};
+	}
+
+	#endregion
 }

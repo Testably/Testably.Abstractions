@@ -137,4 +137,20 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 		result.Should().NotBeEquivalentTo(contents,
 			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
 	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void AppendAllText_WhenFileIsHidden_ShouldNotThrowException(
+		string path, string contents)
+	{
+		FileSystem.File.WriteAllText(path, "some content");
+		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
+
+		var exception = Record.Exception(() =>
+		{
+			FileSystem.File.AppendAllText(path, contents);
+		});
+
+		exception.Should().BeNull();
+	}
 }

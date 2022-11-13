@@ -1,5 +1,6 @@
 using System.Threading;
 using Testably.Abstractions.FileSystem;
+using System.IO;
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading.Tasks;
 #endif
@@ -154,12 +155,13 @@ public abstract partial class WriteTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void WriteByte_CanWriteFalse_ShouldThrowNotSupportedException(
+	public void WriteByte_HiddenFile_ShouldNotThrow(
 		string path, byte[] contents)
 	{
 		FileSystem.File.WriteAllBytes(path, contents);
+		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		using FileSystemStream stream = FileSystem.File.OpenRead(path);
+		using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -169,8 +171,7 @@ public abstract partial class WriteTests<TFileSystem>
 
 		stream.Dispose();
 
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.HResult.Should().Be(-2146233067);
+		exception.Should().BeNull();
 	}
 
 	[SkippableTheory]

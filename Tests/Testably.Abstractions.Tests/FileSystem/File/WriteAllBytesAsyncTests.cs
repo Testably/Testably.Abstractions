@@ -1,4 +1,5 @@
 #if FEATURE_FILESYSTEM_ASYNC
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -48,6 +49,25 @@ public abstract partial class WriteAllBytesAsyncTests<TFileSystem>
 
 		byte[] result = FileSystem.File.ReadAllBytes(path);
 		result.Should().BeEquivalentTo(contents);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public async Task WriteAllTextAsync_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
+		string path, byte[] contents)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		await FileSystem.File.WriteAllTextAsync(path, null);
+		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
+
+		var exception = await Record.ExceptionAsync(async () =>
+		{
+			await FileSystem.File.WriteAllBytesAsync(path, contents);
+		});
+
+		exception.Should().BeOfType<UnauthorizedAccessException>()
+			.Which.HResult.Should().Be(-2147024891);
 	}
 }
 #endif

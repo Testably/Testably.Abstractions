@@ -137,4 +137,23 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 				$"{contents} should be encoded and decoded identical.");
 		}
 	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void WriteAllText_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
+		string path, string contents)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		FileSystem.File.WriteAllText(path, null);
+		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
+
+		var exception = Record.Exception(() =>
+		{
+			FileSystem.File.WriteAllText(path, contents);
+		});
+
+		exception.Should().BeOfType<UnauthorizedAccessException>()
+			.Which.HResult.Should().Be(-2147024891);
+	}
 }
