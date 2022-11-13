@@ -9,35 +9,6 @@ public abstract partial class SetAttributesTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public void SetAttributes_GetAttributesShouldReturnAttributes(
-		string path, FileAttributes attributes)
-	{
-		FileSystem.File.WriteAllText(path, null);
-
-		FileSystem.File.SetAttributes(path, attributes);
-
-		FileAttributes result = FileSystem.File.GetAttributes(path);
-		result.Should().Be(attributes);
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void SetAttributes_MissingFile_GetAttributesShouldReturnAttributes(
-		string path, FileAttributes attributes)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.File.SetAttributes(path, attributes);
-		});
-
-		exception.Should().BeOfType<FileNotFoundException>()
-			.Which.HResult.Should().Be(-2147024894);
-		exception.Should().BeOfType<FileNotFoundException>()
-			.Which.Message.Should().Contain($"'{FileSystem.Path.GetFullPath(path)}'");
-	}
-
-	[SkippableTheory]
-	[AutoData]
 	public void SetAttributes_ShouldNotAdjustTimes(string path, FileAttributes attributes)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);

@@ -53,13 +53,13 @@ internal sealed class FileMock : IFile
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.AppendAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
 	public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
-	                                CancellationToken cancellationToken = default)
+		CancellationToken cancellationToken = default)
 		=> AppendAllLinesAsync(path, contents, Encoding.Default, cancellationToken);
 
 	/// <inheritdoc cref="IFile.AppendAllLinesAsync(string, IEnumerable{string}, Encoding, CancellationToken)" />
 	public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
-	                                Encoding encoding,
-	                                CancellationToken cancellationToken = default)
+		Encoding encoding,
+		CancellationToken cancellationToken = default)
 	{
 		ThrowIfCancelled(cancellationToken);
 		AppendAllLines(path, contents, encoding);
@@ -98,12 +98,12 @@ internal sealed class FileMock : IFile
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.AppendAllTextAsync(string, string?, CancellationToken)" />
 	public Task AppendAllTextAsync(string path, string? contents,
-	                               CancellationToken cancellationToken = default)
+		CancellationToken cancellationToken = default)
 		=> AppendAllTextAsync(path, contents, Encoding.Default, cancellationToken);
 
 	/// <inheritdoc cref="IFile.AppendAllTextAsync(string, string?, Encoding, CancellationToken)" />
 	public Task AppendAllTextAsync(string path, string? contents, Encoding encoding,
-	                               CancellationToken cancellationToken = default)
+		CancellationToken cancellationToken = default)
 	{
 		ThrowIfCancelled(cancellationToken);
 		AppendAllText(path, contents, encoding);
@@ -114,18 +114,19 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.AppendText(string)" />
 	public StreamWriter AppendText(string path)
 		=> FileSystem.FileInfo
-		   .New(path.EnsureValidFormat(FileSystem))
-		   .AppendText();
+			.New(path.EnsureValidFormat(FileSystem))
+			.AppendText();
 
 	/// <inheritdoc cref="IFile.Copy(string, string)" />
 	public void Copy(string sourceFileName, string destFileName)
 	{
+		sourceFileName.EnsureValidFormat(_fileSystem, nameof(sourceFileName));
+		destFileName.EnsureValidFormat(_fileSystem, nameof(destFileName));
 		try
 		{
-			_fileSystem.FileInfo.New(sourceFileName
-				   .EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
-			   .CopyTo(destFileName
-				   .EnsureValidFormat(_fileSystem, nameof(destFileName)));
+			_fileSystem.FileInfo
+				.New(sourceFileName)
+				.CopyTo(destFileName);
 		}
 		catch (UnauthorizedAccessException)
 		{
@@ -144,9 +145,9 @@ internal sealed class FileMock : IFile
 				try
 				{
 					_fileSystem.FileInfo.New(sourceFileName
-						   .EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
-					   .CopyTo(destFileName
-							   .EnsureValidFormat(_fileSystem, nameof(destFileName)),
+							.EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
+						.CopyTo(destFileName
+								.EnsureValidFormat(_fileSystem, nameof(destFileName)),
 							overwrite);
 				}
 				catch (UnauthorizedAccessException)
@@ -157,9 +158,9 @@ internal sealed class FileMock : IFile
 			() =>
 			{
 				_fileSystem.FileInfo.New(sourceFileName
-					   .EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
-				   .CopyTo(destFileName
-					   .EnsureValidFormat(_fileSystem, nameof(destFileName)), overwrite);
+						.EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
+					.CopyTo(destFileName
+						.EnsureValidFormat(_fileSystem, nameof(destFileName)), overwrite);
 			});
 
 	/// <inheritdoc cref="IFile.Create(string)" />
@@ -208,21 +209,15 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.CreateText(string)" />
 	public StreamWriter CreateText(string path)
 		=> FileSystem.FileInfo
-		   .New(path.EnsureValidFormat(FileSystem))
-		   .CreateText();
+			.New(path.EnsureValidFormat(FileSystem))
+			.CreateText();
 
 	/// <inheritdoc cref="IFile.Decrypt(string)" />
 	[SupportedOSPlatform("windows")]
 	public void Decrypt(string path)
 	{
-		IStorageContainer fileInfo =
-			_fileSystem.Storage.GetContainer(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)));
-		if (fileInfo is not NullContainer)
-		{
-			fileInfo.Decrypt();
-		}
+		IStorageContainer container = GetContainerFromPath(path);
+		container.Decrypt();
 	}
 
 	/// <inheritdoc cref="IFile.Delete(string)" />
@@ -235,14 +230,8 @@ internal sealed class FileMock : IFile
 	[SupportedOSPlatform("windows")]
 	public void Encrypt(string path)
 	{
-		IStorageContainer fileInfo =
-			_fileSystem.Storage.GetContainer(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)));
-		if (fileInfo is not NullContainer)
-		{
-			fileInfo.Encrypt();
-		}
+		IStorageContainer container = GetContainerFromPath(path);
+		container.Encrypt();
 	}
 
 	/// <inheritdoc cref="IFile.Exists(string?)" />
@@ -256,20 +245,16 @@ internal sealed class FileMock : IFile
 		return FileInfoMock.New(
 				_fileSystem.Storage.GetLocation(path),
 				_fileSystem)
-		   .Exists;
+			.Exists;
 	}
 
 	/// <inheritdoc cref="IFile.GetAttributes(string)" />
 	public FileAttributes GetAttributes(string path)
 	{
 		IStorageContainer container = _fileSystem.Storage
-		   .GetContainer(_fileSystem.Storage.GetLocation(
-				path.EnsureValidFormat(FileSystem)));
-		if (container is NullContainer)
-		{
-			throw ExceptionFactory.FileNotFound(
-				FileSystem.Path.GetFullPath(path));
-		}
+			.GetContainer(_fileSystem.Storage.GetLocation(
+					path.EnsureValidFormat(FileSystem))
+				.ThrowExceptionIfNotFound(_fileSystem));
 
 		return container.Attributes;
 	}
@@ -288,13 +273,13 @@ internal sealed class FileMock : IFile
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)))
-		   .CreationTime.Get(DateTimeKind.Local);
+			.CreationTime.Get(DateTimeKind.Local);
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetCreationTime(SafeFileHandle)" />
 	public DateTime GetCreationTime(SafeFileHandle fileHandle)
 		=> GetContainerFromSafeFileHandle(fileHandle)
-		   .CreationTime.Get(DateTimeKind.Local);
+			.CreationTime.Get(DateTimeKind.Local);
 #endif
 
 	/// <inheritdoc cref="IFile.GetCreationTimeUtc(string)" />
@@ -302,13 +287,13 @@ internal sealed class FileMock : IFile
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)))
-		   .CreationTime.Get(DateTimeKind.Utc);
+			.CreationTime.Get(DateTimeKind.Utc);
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetCreationTimeUtc(SafeFileHandle)" />
 	public DateTime GetCreationTimeUtc(SafeFileHandle fileHandle)
 		=> GetContainerFromSafeFileHandle(fileHandle)
-		   .CreationTime.Get(DateTimeKind.Utc);
+			.CreationTime.Get(DateTimeKind.Utc);
 #endif
 
 	/// <inheritdoc cref="IFile.GetLastAccessTime(string)" />
@@ -316,13 +301,13 @@ internal sealed class FileMock : IFile
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)))
-		   .LastAccessTime.Get(DateTimeKind.Local);
+			.LastAccessTime.Get(DateTimeKind.Local);
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetLastAccessTime(SafeFileHandle)" />
 	public DateTime GetLastAccessTime(SafeFileHandle fileHandle)
 		=> GetContainerFromSafeFileHandle(fileHandle)
-		   .LastAccessTime.Get(DateTimeKind.Local);
+			.LastAccessTime.Get(DateTimeKind.Local);
 #endif
 
 	/// <inheritdoc cref="IFile.GetLastAccessTimeUtc(string)" />
@@ -330,13 +315,13 @@ internal sealed class FileMock : IFile
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)))
-		   .LastAccessTime.Get(DateTimeKind.Utc);
+			.LastAccessTime.Get(DateTimeKind.Utc);
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetLastAccessTimeUtc(SafeFileHandle)" />
 	public DateTime GetLastAccessTimeUtc(SafeFileHandle fileHandle)
 		=> GetContainerFromSafeFileHandle(fileHandle)
-		   .LastAccessTime.Get(DateTimeKind.Utc);
+			.LastAccessTime.Get(DateTimeKind.Utc);
 #endif
 
 	/// <inheritdoc cref="IFile.GetLastWriteTime(string)" />
@@ -344,13 +329,13 @@ internal sealed class FileMock : IFile
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)))
-		   .LastWriteTime.Get(DateTimeKind.Local);
+			.LastWriteTime.Get(DateTimeKind.Local);
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetLastWriteTime(SafeFileHandle)" />
 	public DateTime GetLastWriteTime(SafeFileHandle fileHandle)
 		=> GetContainerFromSafeFileHandle(fileHandle)
-		   .LastWriteTime.Get(DateTimeKind.Local);
+			.LastWriteTime.Get(DateTimeKind.Local);
 #endif
 
 	/// <inheritdoc cref="IFile.GetLastWriteTimeUtc(string)" />
@@ -358,13 +343,13 @@ internal sealed class FileMock : IFile
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)))
-		   .LastWriteTime.Get(DateTimeKind.Utc);
+			.LastWriteTime.Get(DateTimeKind.Utc);
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetLastWriteTimeUtc(SafeFileHandle)" />
 	public DateTime GetLastWriteTimeUtc(SafeFileHandle fileHandle)
 		=> GetContainerFromSafeFileHandle(fileHandle)
-		   .LastWriteTime.Get(DateTimeKind.Utc);
+			.LastWriteTime.Get(DateTimeKind.Utc);
 #endif
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
@@ -376,7 +361,7 @@ internal sealed class FileMock : IFile
 			() => _fileSystem.Storage.GetContainer(
 					_fileSystem.Storage.GetLocation(
 						path.EnsureValidFormat(FileSystem)))
-			   .UnixFileMode);
+				.UnixFileMode);
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
@@ -386,23 +371,23 @@ internal sealed class FileMock : IFile
 		=> Execute.OnWindows(
 			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform(),
 			() => GetContainerFromSafeFileHandle(fileHandle)
-			   .UnixFileMode);
+				.UnixFileMode);
 #endif
 
 	/// <inheritdoc cref="IFile.Move(string, string)" />
 	public void Move(string sourceFileName, string destFileName)
 		=> _fileSystem.FileInfo.New(sourceFileName
-			   .EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
-		   .MoveTo(destFileName
-			   .EnsureValidFormat(_fileSystem, nameof(destFileName)));
+				.EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
+			.MoveTo(destFileName
+				.EnsureValidFormat(_fileSystem, nameof(destFileName)));
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
 	/// <inheritdoc cref="IFile.Move(string, string, bool)" />
 	public void Move(string sourceFileName, string destFileName, bool overwrite)
 		=> _fileSystem.FileInfo.New(sourceFileName
-			   .EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
-		   .MoveTo(destFileName
-			   .EnsureValidFormat(_fileSystem, nameof(destFileName)), overwrite);
+				.EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
+			.MoveTo(destFileName
+				.EnsureValidFormat(_fileSystem, nameof(destFileName)), overwrite);
 #endif
 
 	/// <inheritdoc cref="IFile.Open(string, FileMode)" />
@@ -460,8 +445,8 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.OpenText(string)" />
 	public StreamReader OpenText(string path)
 		=> FileSystem.FileInfo
-		   .New(path.EnsureValidFormat(FileSystem))
-		   .OpenText();
+			.New(path.EnsureValidFormat(FileSystem))
+			.OpenText();
 
 	/// <inheritdoc cref="IFile.OpenWrite(string)" />
 	public FileSystemStream OpenWrite(string path)
@@ -475,29 +460,21 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.ReadAllBytes(string)" />
 	public byte[] ReadAllBytes(string path)
 	{
-		IStorageContainer fileInfo =
-			_fileSystem.Storage.GetContainer(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)));
-		if (fileInfo is not NullContainer)
+		IStorageContainer container = GetContainerFromPath(path);
+		using (container.RequestAccess(
+			FileAccess.Read,
+			FileStreamFactoryMock.DefaultShare))
 		{
-			using (fileInfo.RequestAccess(
-				FileAccess.Read,
-				FileStreamFactoryMock.DefaultShare))
-			{
-				fileInfo.AdjustTimes(TimeAdjustments.LastAccessTime);
-				return fileInfo.GetBytes().ToArray();
-			}
+			container.AdjustTimes(TimeAdjustments.LastAccessTime);
+			return container.GetBytes().ToArray();
 		}
-
-		throw ExceptionFactory.FileNotFound(_fileSystem.Path.GetFullPath(path));
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.ReadAllBytesAsync(string, CancellationToken)" />
 	public Task<byte[]> ReadAllBytesAsync(string path,
-	                                      CancellationToken cancellationToken =
-		                                      default)
+		CancellationToken cancellationToken =
+			default)
 	{
 		ThrowIfCancelled(cancellationToken);
 		return Task.FromResult(ReadAllBytes(path));
@@ -537,26 +514,18 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.ReadAllText(string, Encoding)" />
 	public string ReadAllText(string path, Encoding encoding)
 	{
-		IStorageContainer fileInfo =
-			_fileSystem.Storage.GetContainer(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)));
-		if (fileInfo is not NullContainer)
+		IStorageContainer container = GetContainerFromPath(path);
+		using (container.RequestAccess(
+			FileAccess.Read,
+			FileStreamFactoryMock.DefaultShare))
 		{
-			using (fileInfo.RequestAccess(
-				FileAccess.Read,
-				FileStreamFactoryMock.DefaultShare))
+			container.AdjustTimes(TimeAdjustments.LastAccessTime);
+			using (MemoryStream ms = new(container.GetBytes()))
+			using (StreamReader sr = new(ms, encoding))
 			{
-				fileInfo.AdjustTimes(TimeAdjustments.LastAccessTime);
-				using (MemoryStream ms = new(fileInfo.GetBytes()))
-				using (StreamReader sr = new(ms, encoding))
-				{
-					return sr.ReadToEnd();
-				}
+				return sr.ReadToEnd();
 			}
 		}
-
-		throw ExceptionFactory.FileNotFound(_fileSystem.Path.GetFullPath(path));
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
@@ -588,8 +557,8 @@ internal sealed class FileMock : IFile
 #if FEATURE_FILESYSTEM_NET7
 	/// <inheritdoc cref="IFile.ReadLinesAsync(string, CancellationToken)" />
 	public IAsyncEnumerable<string> ReadLinesAsync(string path,
-	                                               CancellationToken cancellationToken =
-		                                               default)
+		CancellationToken cancellationToken =
+			default)
 	{
 		ThrowIfCancelled(cancellationToken);
 		return ReadAllLines(path).ToAsyncEnumerable();
@@ -597,8 +566,8 @@ internal sealed class FileMock : IFile
 
 	/// <inheritdoc cref="IFile.ReadLinesAsync(string, Encoding, CancellationToken)" />
 	public IAsyncEnumerable<string> ReadLinesAsync(string path, Encoding encoding,
-	                                               CancellationToken cancellationToken =
-		                                               default)
+		CancellationToken cancellationToken =
+			default)
 	{
 		ThrowIfCancelled(cancellationToken);
 		return ReadAllLines(path, encoding).ToAsyncEnumerable();
@@ -607,23 +576,23 @@ internal sealed class FileMock : IFile
 
 	/// <inheritdoc cref="IFile.Replace(string, string, string)" />
 	public void Replace(string sourceFileName,
-	                    string destinationFileName,
-	                    string? destinationBackupFileName)
+		string destinationFileName,
+		string? destinationBackupFileName)
 		=> _fileSystem.FileInfo.New(sourceFileName
-			   .EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
-		   .Replace(destinationFileName
-				   .EnsureValidFormat(_fileSystem, nameof(destinationFileName)),
+				.EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
+			.Replace(destinationFileName
+					.EnsureValidFormat(_fileSystem, nameof(destinationFileName)),
 				destinationBackupFileName);
 
 	/// <inheritdoc cref="IFile.Replace(string, string, string, bool)" />
 	public void Replace(string sourceFileName,
-	                    string destinationFileName,
-	                    string? destinationBackupFileName,
-	                    bool ignoreMetadataErrors)
+		string destinationFileName,
+		string? destinationBackupFileName,
+		bool ignoreMetadataErrors)
 		=> _fileSystem.FileInfo.New(sourceFileName
-			   .EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
-		   .Replace(destinationFileName
-				   .EnsureValidFormat(_fileSystem, nameof(destinationFileName)),
+				.EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
+			.Replace(destinationFileName
+					.EnsureValidFormat(_fileSystem, nameof(destinationFileName)),
 				destinationBackupFileName,
 				ignoreMetadataErrors);
 
@@ -632,12 +601,14 @@ internal sealed class FileMock : IFile
 	public IFileSystemInfo? ResolveLinkTarget(
 		string linkPath, bool returnFinalTarget)
 	{
+		IStorageLocation location =
+			_fileSystem.Storage.GetLocation(linkPath
+					.EnsureValidFormat(_fileSystem, nameof(linkPath)))
+				.ThrowExceptionIfNotFound(_fileSystem);
 		try
 		{
 			IStorageLocation? targetLocation =
-				_fileSystem.Storage.ResolveLinkTarget(
-					_fileSystem.Storage.GetLocation(linkPath
-					   .EnsureValidFormat(_fileSystem, nameof(linkPath))),
+				_fileSystem.Storage.ResolveLinkTarget(location,
 					returnFinalTarget);
 			if (targetLocation != null)
 			{
@@ -646,7 +617,7 @@ internal sealed class FileMock : IFile
 
 			return null;
 		}
-		catch (IOException ex) when (ex.HResult != -2147024773)
+		catch (IOException)
 		{
 			throw ExceptionFactory.FileNameCannotBeResolved(linkPath,
 				Execute.IsWindows ? -2147022975 : -2146232800);
@@ -657,16 +628,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetAttributes(string, FileAttributes)" />
 	public void SetAttributes(string path, FileAttributes fileAttributes)
 	{
-		IStorageContainer container =
-			_fileSystem.Storage.GetContainer(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)));
-		if (container is NullContainer)
-		{
-			throw ExceptionFactory.FileNotFound(
-				FileSystem.Path.GetFullPath(path));
-		}
-
+		IStorageContainer container = GetContainerFromPath(path);
 		container.Attributes = fileAttributes;
 	}
 
@@ -682,16 +644,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetCreationTime(string, DateTime)" />
 	public void SetCreationTime(string path, DateTime creationTime)
 	{
-		IStorageContainer container =
-			_fileSystem.Storage.GetContainer(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)));
-		if (container is NullContainer)
-		{
-			throw ExceptionFactory.FileNotFound(
-				FileSystem.Path.GetFullPath(path));
-		}
-
+		IStorageContainer container = GetContainerFromPath(path);
 		container.CreationTime.Set(creationTime, DateTimeKind.Local);
 	}
 
@@ -707,16 +660,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetCreationTimeUtc(string, DateTime)" />
 	public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
 	{
-		IStorageContainer container =
-			_fileSystem.Storage.GetContainer(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)));
-		if (container is NullContainer)
-		{
-			throw ExceptionFactory.FileNotFound(
-				FileSystem.Path.GetFullPath(path));
-		}
-
+		IStorageContainer container = GetContainerFromPath(path);
 		container.CreationTime.Set(creationTimeUtc, DateTimeKind.Utc);
 	}
 
@@ -732,16 +676,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastAccessTime(string, DateTime)" />
 	public void SetLastAccessTime(string path, DateTime lastAccessTime)
 	{
-		IStorageContainer container =
-			_fileSystem.Storage.GetContainer(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)));
-		if (container is NullContainer)
-		{
-			throw ExceptionFactory.FileNotFound(
-				FileSystem.Path.GetFullPath(path));
-		}
-
+		IStorageContainer container = GetContainerFromPath(path);
 		container.LastAccessTime.Set(lastAccessTime, DateTimeKind.Local);
 	}
 
@@ -757,23 +692,14 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastAccessTimeUtc(string, DateTime)" />
 	public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
 	{
-		IStorageContainer container =
-			_fileSystem.Storage.GetContainer(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)));
-		if (container is NullContainer)
-		{
-			throw ExceptionFactory.FileNotFound(
-				FileSystem.Path.GetFullPath(path));
-		}
-
+		IStorageContainer container = GetContainerFromPath(path);
 		container.LastAccessTime.Set(lastAccessTimeUtc, DateTimeKind.Utc);
 	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.SetLastAccessTimeUtc(SafeFileHandle, DateTime)" />
 	public void SetLastAccessTimeUtc(SafeFileHandle fileHandle,
-	                                 DateTime lastAccessTimeUtc)
+		DateTime lastAccessTimeUtc)
 	{
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
 		container.LastAccessTime.Set(lastAccessTimeUtc, DateTimeKind.Utc);
@@ -783,16 +709,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastWriteTime(string, DateTime)" />
 	public void SetLastWriteTime(string path, DateTime lastWriteTime)
 	{
-		IStorageContainer container =
-			_fileSystem.Storage.GetContainer(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)));
-		if (container is NullContainer)
-		{
-			throw ExceptionFactory.FileNotFound(
-				FileSystem.Path.GetFullPath(path));
-		}
-
+		IStorageContainer container = GetContainerFromPath(path);
 		container.LastWriteTime.Set(lastWriteTime, DateTimeKind.Local);
 	}
 
@@ -808,16 +725,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastWriteTimeUtc(string, DateTime)" />
 	public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
 	{
-		IStorageContainer container =
-			_fileSystem.Storage.GetContainer(
-				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)));
-		if (container is NullContainer)
-		{
-			throw ExceptionFactory.FileNotFound(
-				FileSystem.Path.GetFullPath(path));
-		}
-
+		IStorageContainer container = GetContainerFromPath(path);
 		container.LastWriteTime.Set(lastWriteTimeUtc, DateTimeKind.Utc);
 	}
 
@@ -887,7 +795,7 @@ internal sealed class FileMock : IFile
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.WriteAllBytesAsync(string, byte[], CancellationToken)" />
 	public Task WriteAllBytesAsync(string path, byte[] bytes,
-	                               CancellationToken cancellationToken = default)
+		CancellationToken cancellationToken = default)
 	{
 		ThrowIfCancelled(cancellationToken);
 		WriteAllBytes(path, bytes);
@@ -968,12 +876,12 @@ internal sealed class FileMock : IFile
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.WriteAllTextAsync(string, string?, CancellationToken)" />
 	public Task WriteAllTextAsync(string path, string? contents,
-	                              CancellationToken cancellationToken = default)
+		CancellationToken cancellationToken = default)
 		=> WriteAllTextAsync(path, contents, Encoding.Default, cancellationToken);
 
 	/// <inheritdoc cref="IFile.WriteAllTextAsync(string, string?, Encoding, CancellationToken)" />
 	public Task WriteAllTextAsync(string path, string? contents, Encoding encoding,
-	                              CancellationToken cancellationToken = default)
+		CancellationToken cancellationToken = default)
 	{
 		ThrowIfCancelled(cancellationToken);
 		WriteAllText(path, contents, encoding);
@@ -994,14 +902,25 @@ internal sealed class FileMock : IFile
 		}
 	}
 
+	private IStorageContainer GetContainerFromPath(string path)
+	{
+		IStorageContainer container =
+			_fileSystem.Storage.GetContainer(
+				_fileSystem.Storage.GetLocation(
+						path.EnsureValidFormat(FileSystem))
+					.ThrowExceptionIfNotFound(_fileSystem));
+		return container;
+	}
+
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	private IStorageContainer GetContainerFromSafeFileHandle(SafeFileHandle fileHandle)
 	{
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
-		   .SafeFileHandleStrategy.MapSafeFileHandle(fileHandle);
+			.SafeFileHandleStrategy.MapSafeFileHandle(fileHandle);
 		IStorageContainer container = _fileSystem.Storage
-		   .GetContainer(_fileSystem.Storage.GetLocation(
-				safeFileHandleMock.Path));
+			.GetContainer(_fileSystem.Storage.GetLocation(
+					safeFileHandleMock.Path)
+				.ThrowExceptionIfNotFound(_fileSystem));
 		if (container is NullContainer)
 		{
 			throw ExceptionFactory.FileNotFound("");

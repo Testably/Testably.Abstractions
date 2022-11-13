@@ -78,6 +78,7 @@ internal sealed class FileStreamMock : FileSystemStream
 		_initialPosition = Position;
 
 		IStorageLocation location = _fileSystem.Storage.GetLocation(Name);
+		location.ThrowExceptionIfNotFound(_fileSystem, true);
 		IStorageContainer file = _fileSystem.Storage.GetContainer(location);
 		if (file is NullContainer)
 		{

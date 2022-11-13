@@ -41,4 +41,26 @@ internal static class LocationExtensions
 
 		return location;
 	}
+
+	public static IStorageLocation ThrowExceptionIfNotFound(
+		this IStorageLocation location, MockFileSystem fileSystem, bool allowMissingFile = false)
+	{
+		if (fileSystem.Storage.GetContainer(location) is NullContainer)
+		{
+			IStorageLocation? parentLocation = location.GetParent();
+			if (parentLocation != null &&
+			    fileSystem.Path.GetPathRoot(parentLocation.FullPath) !=
+			    parentLocation.FullPath &&
+			    fileSystem.Storage.GetContainer(parentLocation) is NullContainer)
+			{
+				throw ExceptionFactory.DirectoryNotFound(location.FullPath);
+			}
+
+			if (!allowMissingFile)
+			{
+				throw ExceptionFactory.FileNotFound(location.FullPath);
+			}
+		}
+		return location;
+	}
 }
