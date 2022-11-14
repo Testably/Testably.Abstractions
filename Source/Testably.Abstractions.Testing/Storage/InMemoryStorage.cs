@@ -23,9 +23,6 @@ internal sealed class InMemoryStorage : IStorage
 
 	private readonly MockFileSystem _fileSystem;
 
-	private IAccessControlStrategy?
-		_accessControlStrategy;
-
 	public InMemoryStorage(MockFileSystem fileSystem)
 	{
 		_fileSystem = fileSystem;
@@ -59,7 +56,6 @@ internal sealed class InMemoryStorage : IStorage
 			throw ExceptionFactory.AccessToPathDenied(source.FullPath);
 		}
 
-		CheckGrantAccess(source, sourceContainer);
 		using (_ = sourceContainer.RequestAccess(FileAccess.ReadWrite, FileShare.None))
 		{
 			if (overwrite &&
@@ -136,8 +132,7 @@ internal sealed class InMemoryStorage : IStorage
 			_fileSystem.ChangeHandler.NotifyPendingChange(WatcherChangeTypes.Deleted,
 				container.Type,
 				notifyFilters, location);
-
-		CheckGrantAccess(location, container);
+		
 		using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite,
 			deleteAccess: true))
 		{
@@ -310,8 +305,7 @@ internal sealed class InMemoryStorage : IStorage
 				}
 
 				CheckAndAdjustParentDirectoryTimes(loc);
-
-				CheckGrantAccess(loc, container);
+				
 				using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
 				{
 					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
@@ -378,9 +372,7 @@ internal sealed class InMemoryStorage : IStorage
 		{
 			throw ExceptionFactory.AccessToPathDenied(source.FullPath);
 		}
-
-		CheckGrantAccess(source, sourceContainer);
-		CheckGrantAccess(destination, destinationContainer);
+		
 		using (_ = sourceContainer.RequestAccess(FileAccess.ReadWrite, FileShare.None,
 			ignoreMetadataErrors: ignoreMetadataErrors))
 		{
@@ -478,7 +470,6 @@ internal sealed class InMemoryStorage : IStorage
 			{
 				IStorageContainer container =
 					containerGenerator(location, _fileSystem);
-				CheckGrantAccess(location, container);
 				using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
 				{
 					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
@@ -503,13 +494,6 @@ internal sealed class InMemoryStorage : IStorage
 
 	#endregion
 
-	internal void WithAccessControl(
-		IAccessControlStrategy?
-			accessControlStrategy)
-	{
-		_accessControlStrategy = accessControlStrategy;
-	}
-
 	private void CheckAndAdjustParentDirectoryTimes(IStorageLocation location)
 	{
 		IStorageContainer? parentContainer = GetContainer(location.GetParent());
@@ -521,20 +505,6 @@ internal sealed class InMemoryStorage : IStorage
 			Execute.OnWindows(()
 				=> timeAdjustment |= TimeAdjustments.LastAccessTime);
 			parentContainer.AdjustTimes(timeAdjustment);
-		}
-	}
-
-	private void CheckGrantAccess(IStorageLocation location, IStorageContainer container)
-	{
-		if (_accessControlStrategy == null)
-		{
-			return;
-		}
-
-		if (!_accessControlStrategy.IsAccessGranted(location.FullPath,
-			container.ExtensionContainer))
-		{
-			throw ExceptionFactory.AclAccessToPathDenied(location.FullPath);
 		}
 	}
 
@@ -566,8 +536,7 @@ internal sealed class InMemoryStorage : IStorage
 					{
 						IStorageContainer container =
 							InMemoryContainer.NewDirectory(loc, _fileSystem);
-
-						CheckGrantAccess(loc, container);
+						
 						accessHandles.Add(container.RequestAccess(FileAccess.Write,
 							FileShare.ReadWrite));
 						fileSystemChange =
@@ -619,8 +588,7 @@ internal sealed class InMemoryStorage : IStorage
 		{
 			throw ExceptionFactory.DirectoryNotEmpty(source.FullPath);
 		}
-
-		CheckGrantAccess(source, container);
+		
 		using (container.RequestAccess(FileAccess.Write, FileShare.None,
 			hResult: sourceType == FileSystemTypes.Directory ? -2147024891 : -2147024864))
 		{

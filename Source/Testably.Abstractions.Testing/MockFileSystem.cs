@@ -46,6 +46,12 @@ public sealed class MockFileSystem : IFileSystem
 	private readonly PathMock _pathMock;
 	private readonly InMemoryStorage _storage;
 
+	internal IAccessControlStrategy AccessControlStrategy
+	{
+		get;
+		private set;
+	}
+
 	internal ISafeFileHandleStrategy SafeFileHandleStrategy
 	{
 		get;
@@ -70,6 +76,7 @@ public sealed class MockFileSystem : IFileSystem
 		FileStream = new FileStreamFactoryMock(this);
 		FileSystemWatcher = new FileSystemWatcherFactoryMock(this);
 		SafeFileHandleStrategy = new NullSafeFileHandleStrategy();
+		AccessControlStrategy = new NullAccessControlStrategy();
 	}
 
 	#region IFileSystem Members
@@ -111,9 +118,9 @@ public sealed class MockFileSystem : IFileSystem
 	///     - The full path of the file or directory as first parameter<br />
 	///     - The <see cref="IFileSystemExtensionContainer" /> as second parameter
 	/// </summary>
-	public MockFileSystem WithAccessControl(IAccessControlStrategy accessControlStrategy)
+	public MockFileSystem WithAccessControlStrategy(IAccessControlStrategy accessControlStrategy)
 	{
-		_storage.WithAccessControl(accessControlStrategy);
+		AccessControlStrategy = accessControlStrategy;
 		return this;
 	}
 

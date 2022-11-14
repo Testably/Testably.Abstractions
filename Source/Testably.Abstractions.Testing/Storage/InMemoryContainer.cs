@@ -156,6 +156,12 @@ internal class InMemoryContainer : IStorageContainer
 			!ignoreMetadataErrors && Attributes.HasFlag(FileAttributes.ReadOnly),
 			() => throw ExceptionFactory.AccessToPathDenied());
 
+		if (!_fileSystem.AccessControlStrategy
+			.IsAccessGranted(_location.FullPath, ExtensionContainer))
+		{
+			throw ExceptionFactory.AclAccessToPathDenied(_location.FullPath);
+		}
+
 		if (CanGetAccess(access, share, deleteAccess))
 		{
 			Guid guid = Guid.NewGuid();
