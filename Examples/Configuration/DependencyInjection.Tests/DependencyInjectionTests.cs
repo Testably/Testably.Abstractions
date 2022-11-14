@@ -8,7 +8,8 @@ namespace DependencyInjection.Tests;
 public class DependencyInjectionTests
 {
 	[Fact]
-	public void DependencyInjection_Microsoft_ShouldAllowRegistrationAndCreationOfInstances()
+	public void
+		DependencyInjection_Microsoft_ShouldAllowRegistrationAndCreationOfInstances()
 	{
 		ServiceProvider services = new ServiceCollection()
 			.AddSingleton<IFileSystem, RealFileSystem>()

@@ -34,7 +34,10 @@ public class ThreadAwareTimeProviderTests
 					int diff = (int)(timeSystem.DateTime.UtcNow - start)
 						.TotalMilliseconds;
 					delaysPerTask.AddOrUpdate(taskId,
-						_ => new List<int> { diff },
+						_ => new List<int>
+						{
+							diff
+						},
 						(_, l) =>
 						{
 							l.Add(diff);
@@ -47,8 +50,10 @@ public class ThreadAwareTimeProviderTests
 		for (int i = 1; i <= parallelTasks; i++)
 		{
 			int delayPerTask = i * 1000;
-			delaysPerTask[i].Should().BeEquivalentTo(
-				Enumerable.Range(1, stepsPerTask).Select(x => x * delayPerTask));
+			delaysPerTask[i]
+				.Should()
+				.BeEquivalentTo(
+					Enumerable.Range(1, stepsPerTask).Select(x => x * delayPerTask));
 		}
 	}
 
@@ -75,7 +80,10 @@ public class ThreadAwareTimeProviderTests
 					int diff = (int)(timeSystem.DateTime.UtcNow - start)
 						.TotalMilliseconds;
 					delaysPerThread.AddOrUpdate(threadId,
-						_ => new List<int> { diff },
+						_ => new List<int>
+						{
+							diff
+						},
 						(_, l) =>
 						{
 							l.Add(diff);
@@ -91,8 +99,10 @@ public class ThreadAwareTimeProviderTests
 		for (int i = 1; i <= parallelThreads; i++)
 		{
 			int delayPerThread = i * 1000;
-			delaysPerThread[i].Should().BeEquivalentTo(
-				Enumerable.Range(1, stepsPerThread).Select(x => x * delayPerThread));
+			delaysPerThread[i]
+				.Should()
+				.BeEquivalentTo(
+					Enumerable.Range(1, stepsPerThread).Select(x => x * delayPerThread));
 		}
 	}
 

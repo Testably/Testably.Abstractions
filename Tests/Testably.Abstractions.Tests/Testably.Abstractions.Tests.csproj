@@ -1,32 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup Condition="'$(NCrunch)' == '1'">
-    <TargetFrameworks>net6.0</TargetFrameworks>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(NCrunch)' == '1'">
+		<TargetFrameworks>net6.0</TargetFrameworks>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj" />
+		<ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference
-      Include="..\Testably.Abstractions.Tests.SourceGenerator\Testably.Abstractions.Tests.SourceGenerator.csproj"
-      OutputItemType="Analyzer" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference
+			Include="..\Testably.Abstractions.Tests.SourceGenerator\Testably.Abstractions.Tests.SourceGenerator.csproj"
+			OutputItemType="Analyzer" />
+	</ItemGroup>
 
-  <PropertyGroup>
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-    <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
-  </PropertyGroup>
+	<PropertyGroup>
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+		<CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Generated\**" />
-    <Content Include="Generated\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Generated\**" />
+		<Content Include="Generated\**" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Generated\Testably.Abstractions.Tests.SourceGenerator\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Generated\Testably.Abstractions.Tests.SourceGenerator\" />
+	</ItemGroup>
 
 </Project>

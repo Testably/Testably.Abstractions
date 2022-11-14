@@ -1,6 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.IO;
+﻿using System.IO;
 using Testably.Abstractions.Helpers;
+#if FEATURE_FILESYSTEM_NET7
+using System.Diagnostics.CodeAnalysis;
+#endif
 
 namespace Testably.Abstractions.FileSystem;
 

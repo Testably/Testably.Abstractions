@@ -1,55 +1,55 @@
 <Project>
 
-  <Import Project="$(MSBuildThisFileDirectory)/../Directory.Build.props"
-          Condition="Exists('$(MSBuildThisFileDirectory)/../Directory.Build.props')" />
+	<Import Project="$(MSBuildThisFileDirectory)/../Directory.Build.props"
+	        Condition="Exists('$(MSBuildThisFileDirectory)/../Directory.Build.props')" />
 
-  <PropertyGroup>
-    <TestablyAbstractionsVersion>0.12.*</TestablyAbstractionsVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TestablyAbstractionsVersion>0.12.*</TestablyAbstractionsVersion>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <IsPackable>false</IsPackable>
-    <NoWarn>701;1702;CA1845;CS7022</NoWarn>
-    <OutputPath>$(SolutionDir)..\Build\Examples\$(MSBuildProjectName)</OutputPath>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+		<NoWarn>701;1702;CA1845;CS7022</NoWarn>
+		<OutputPath>$(SolutionDir)..\Build\Examples\$(MSBuildProjectName)</OutputPath>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+	</PropertyGroup>
 
-  <ItemGroup Condition="'$(UseFileReferenceToTestablyLibraries)' == 'True'">
-    <Reference Include="Testably.Abstractions">
-      <HintPath>..\..\..\Build\Binaries\net6.0\Testably.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Testably.Abstractions.Extensions">
-      <HintPath>..\..\..\Build\Binaries\net6.0\Testably.Abstractions.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="Testably.Abstractions.Interface">
-      <HintPath>..\..\..\Build\Binaries\net6.0\Testably.Abstractions.Interface.dll</HintPath>
-    </Reference>
-    <Reference Include="Testably.Abstractions.Testing">
-      <HintPath>..\..\..\Build\Binaries\net6.0\Testably.Abstractions.Testing.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+	<ItemGroup Condition="'$(UseFileReferenceToTestablyLibraries)' == 'True'">
+		<Reference Include="Testably.Abstractions">
+			<HintPath>..\..\..\Build\Binaries\net6.0\Testably.Abstractions.dll</HintPath>
+		</Reference>
+		<Reference Include="Testably.Abstractions.Extensions">
+			<HintPath>..\..\..\Build\Binaries\net6.0\Testably.Abstractions.Extensions.dll</HintPath>
+		</Reference>
+		<Reference Include="Testably.Abstractions.Interface">
+			<HintPath>..\..\..\Build\Binaries\net6.0\Testably.Abstractions.Interface.dll</HintPath>
+		</Reference>
+		<Reference Include="Testably.Abstractions.Testing">
+			<HintPath>..\..\..\Build\Binaries\net6.0\Testably.Abstractions.Testing.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
-  <ItemGroup Condition="'$(UseFileReferenceToTestablyLibraries)' != 'True'">
-    <PackageReference Include="Testably.Abstractions" Version="$(TestablyAbstractionsVersion)" />
-    <PackageReference Include="Testably.Abstractions.Extensions" Version="$(TestablyAbstractionsVersion)" />
-    <PackageReference Include="Testably.Abstractions.Testing" Version="$(TestablyAbstractionsVersion)" />
-  </ItemGroup>
+	<ItemGroup Condition="'$(UseFileReferenceToTestablyLibraries)' != 'True'">
+		<PackageReference Include="Testably.Abstractions" Version="$(TestablyAbstractionsVersion)" />
+		<PackageReference Include="Testably.Abstractions.Extensions" Version="$(TestablyAbstractionsVersion)" />
+		<PackageReference Include="Testably.Abstractions.Testing" Version="$(TestablyAbstractionsVersion)" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AutoFixture.Xunit2" Version="4.17.0" />
-    <PackageReference Include="FluentAssertions" Version="6.7.0" />
-    <PackageReference Include="Moq" Version="4.18.2" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.1" />
-    <PackageReference Include="Xunit.SkippableFact" Version="1.4.*" />
-    <PackageReference Include="xunit" Version="2.4.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AutoFixture.Xunit2" Version="4.17.0" />
+		<PackageReference Include="FluentAssertions" Version="6.7.0" />
+		<PackageReference Include="Moq" Version="4.18.2" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.1" />
+		<PackageReference Include="Xunit.SkippableFact" Version="1.4.*" />
+		<PackageReference Include="xunit" Version="2.4.2" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+	</ItemGroup>
 
 </Project>

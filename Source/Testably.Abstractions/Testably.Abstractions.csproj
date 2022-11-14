@@ -1,24 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <RootNamespace>Testably.Abstractions</RootNamespace>
-    <Description>Write testable code by abstracting away system dependencies.</Description>
-    <PackageReadmeFile>Docs/README.md</PackageReadmeFile>
-  </PropertyGroup>
+	<PropertyGroup>
+		<RootNamespace>Testably.Abstractions</RootNamespace>
+		<Description>Write testable code by abstracting away system dependencies.</Description>
+		<PackageReadmeFile>Docs/README.md</PackageReadmeFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="$(SolutionDir)README.md" Pack="true" PackagePath="/Docs/" Link="Docs\README.md" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="$(SolutionDir)README.md" Pack="true" PackagePath="/Docs/" Link="Docs\README.md" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <AssemblyAttribute Include="System.CLSCompliant">
-      <_Parameter1>true</_Parameter1>
-      <_Parameter1_TypeName>System.Boolean</_Parameter1_TypeName>
-    </AssemblyAttribute>
-  </ItemGroup>
+	<ItemGroup>
+		<AssemblyAttribute Include="System.CLSCompliant">
+			<_Parameter1>true</_Parameter1>
+			<_Parameter1_TypeName>System.Boolean</_Parameter1_TypeName>
+		</AssemblyAttribute>
+	</ItemGroup>
 
 </Project>

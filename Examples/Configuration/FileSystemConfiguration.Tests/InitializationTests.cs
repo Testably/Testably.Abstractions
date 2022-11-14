@@ -27,7 +27,8 @@ public class InitializationTests
 		fileSystem.InitializeIn(currentDirectory)
 			.WithASubdirectory();
 
-		fileSystem.Directory.GetCurrentDirectory().Should()
+		fileSystem.Directory.GetCurrentDirectory()
+			.Should()
 			.Be(expectedDirectory);
 	}
 
@@ -43,7 +44,8 @@ public class InitializationTests
 		MockFileSystem fileSystem = new();
 		fileSystem.Initialize()
 			.WithASubdirectory()
-			.WithSubdirectory("foo").Initialized(s => s
+			.WithSubdirectory("foo")
+			.Initialized(s => s
 				.WithAFile())
 			.WithFile("bar.txt");
 
@@ -101,7 +103,7 @@ public class InitializationTests
 		fileSystem.File.WriteAllBytes("foo", firstFileContent);
 		mainDrive.AvailableFreeSpace.Should().Be(1);
 
-		Exception? exception = Record.Exception(() =>
+		Exception exception = Record.Exception(() =>
 		{
 			fileSystem.File.WriteAllBytes("bar", secondFileContent);
 		});

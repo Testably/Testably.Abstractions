@@ -1,23 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <RootNamespace>Testably.Abstractions</RootNamespace>
-    <Description>Compression extension methods for creating and extracting zip files with `Testably.Abstractions`.</Description>
-    <PackageReadmeFile>Docs/Compression.md</PackageReadmeFile>
-  </PropertyGroup>
+	<PropertyGroup>
+		<RootNamespace>Testably.Abstractions</RootNamespace>
+		<Description>Compression extension methods for creating and extracting zip files with `Testably.Abstractions`.</Description>
+		<PackageReadmeFile>Docs/Compression.md</PackageReadmeFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="$(SolutionDir)Docs/Compression.md"
-          Pack="true" PackagePath="/Docs/"
-          Link="Docs\Compression.md" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="$(SolutionDir)Docs/Compression.md"
+		      Pack="true" PackagePath="/Docs/"
+		      Link="Docs\Compression.md" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.IO.Compression" Version="4.3.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="System.IO.Compression" Version="4.3.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
+	</ItemGroup>
 
 </Project>

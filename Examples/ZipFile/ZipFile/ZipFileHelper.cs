@@ -49,7 +49,7 @@ public sealed class ZipFileHelper
 		foreach (ZipArchiveEntry entry in archive.Entries)
 		{
 			string filePath = _fileSystem.Path.Combine(directory, entry.FullName);
-			string? directoryPath = _fileSystem.Path.GetDirectoryName(filePath);
+			string directoryPath = _fileSystem.Path.GetDirectoryName(filePath);
 			if (directoryPath != null &&
 			    !_fileSystem.Directory.Exists(directoryPath))
 			{
@@ -73,7 +73,8 @@ public sealed class ZipFileHelper
 	{
 		foreach (string file in _fileSystem.Directory.GetFiles(directory))
 		{
-			ZipArchiveEntry entry = archive.CreateEntry(directoryBase + Path.GetFileName(file));
+			ZipArchiveEntry entry =
+				archive.CreateEntry(directoryBase + Path.GetFileName(file));
 			using Stream stream = entry.Open();
 			byte[] bytes = _fileSystem.File.ReadAllBytes(file);
 			stream.Write(bytes, 0, bytes.Length);
@@ -89,7 +90,8 @@ public sealed class ZipFileHelper
 
 			archive.CreateEntry(directoryBase + subDirectoryName + "/");
 			AddDirectoryToArchive(directoryBase + subDirectoryName + "/",
-				subDirectory, archive);
+				subDirectory,
+				archive);
 		}
 	}
 }

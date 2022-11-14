@@ -1,60 +1,60 @@
 <Project>
 
-  <Import Project="$(MSBuildThisFileDirectory)/../Directory.Build.props"
-          Condition="Exists('$(MSBuildThisFileDirectory)/../Directory.Build.props')" />
-  <Import Project="$([MSBuild]::GetPathOfFileAbove('Feature.Flags.props', '$(MSBuildThisFileDirectory)/../'))" />
+	<Import Project="$(MSBuildThisFileDirectory)/../Directory.Build.props"
+	        Condition="Exists('$(MSBuildThisFileDirectory)/../Directory.Build.props')" />
+	<Import Project="$([MSBuild]::GetPathOfFileAbove('Feature.Flags.props', '$(MSBuildThisFileDirectory)/../'))" />
 
-  <PropertyGroup>
-    <Authors>Testably</Authors>
-    <Copyright>Copyright (c) 2022 Testably</Copyright>
-    <PackageTags>abstractions testing</PackageTags>
-    <PackageProjectUrl>https://github.com/Testably/Testably.Abstractions</PackageProjectUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageIcon>Docs/logo_256x256.png</PackageIcon>
-    <RepositoryUrl>https://github.com/Testably/Testably.Abstractions.git</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <MinVerTagPrefix>v</MinVerTagPrefix>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Authors>Testably</Authors>
+		<Copyright>Copyright (c) 2022 Testably</Copyright>
+		<PackageTags>abstractions testing</PackageTags>
+		<PackageProjectUrl>https://github.com/Testably/Testably.Abstractions</PackageProjectUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageIcon>Docs/logo_256x256.png</PackageIcon>
+		<RepositoryUrl>https://github.com/Testably/Testably.Abstractions.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<MinVerTagPrefix>v</MinVerTagPrefix>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0;netstandard2.1;netstandard2.0</TargetFrameworks>
-    <TargetFrameworks Condition="'$(NetFrameworkOnly)' == 'True'">netstandard2.0</TargetFrameworks>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net6.0;net7.0;netstandard2.1;netstandard2.0</TargetFrameworks>
+		<TargetFrameworks Condition="'$(NetFrameworkOnly)' == 'True'">netstandard2.0</TargetFrameworks>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <NoWarn>1701;1702</NoWarn>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <OutputPath>..\..\Build\Binaries</OutputPath>
-  </PropertyGroup>
+	<PropertyGroup>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<NoWarn>1701;1702</NoWarn>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<OutputPath>..\..\Build\Binaries</OutputPath>
+	</PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)' != 'Debug' ">
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-  </PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)' != 'Debug' ">
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <Nullable>annotations</Nullable>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+		<Nullable>annotations</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MinVer" Version="4.2.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Nullable" Version="1.3.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="MinVer" Version="4.2.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Nullable" Version="1.3.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="$([MSBuild]::GetPathOfFileAbove('logo_256x256.png', '$(MSBuildThisFileDirectory)../Docs/Images/'))"
-          Pack="true" PackagePath="/Docs/"
-          Link="\Docs\logo_256x256.png" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="$([MSBuild]::GetPathOfFileAbove('logo_256x256.png', '$(MSBuildThisFileDirectory)../Docs/Images/'))"
+		      Pack="true" PackagePath="/Docs/"
+		      Link="\Docs\logo_256x256.png" />
+	</ItemGroup>
 
 </Project>

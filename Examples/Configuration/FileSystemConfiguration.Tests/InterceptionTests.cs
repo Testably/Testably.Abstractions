@@ -21,7 +21,7 @@ public class InterceptionTests
 
 		fileSystem.Directory.CreateDirectory("foo");
 
-		Exception? exception = Record.Exception(() =>
+		Exception exception = Record.Exception(() =>
 		{
 			fileSystem.File.Create("foo/bar.txt");
 		});

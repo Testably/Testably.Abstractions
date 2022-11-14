@@ -40,10 +40,11 @@ public class NotificationTests
 		bool isNotified = false;
 		MockFileSystem fileSystem = new();
 		fileSystem.Notify
-			.OnCreated(FileSystemTypes.File, _ =>
-			{
-				isNotified = true;
-			})
+			.OnCreated(FileSystemTypes.File,
+				_ =>
+				{
+					isNotified = true;
+				})
 			.ExecuteWhileWaiting(() =>
 			{
 				fileSystem.Directory.CreateDirectory("foo");

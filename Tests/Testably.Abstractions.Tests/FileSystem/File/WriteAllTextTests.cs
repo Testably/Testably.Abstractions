@@ -139,8 +139,7 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void WriteAllText_WhenContentIsNull_ShouldNotThrowException(
-		string path, string contents)
+	public void WriteAllText_WhenContentIsNull_ShouldNotThrowException(string path)
 	{
 		Exception? exception = Record.Exception(() =>
 		{
