@@ -49,12 +49,12 @@ public sealed class ThreadAwareTimeProvider : ITimeProvider
 	#endregion
 
 	/// <summary>
-	///     Synchronizes the currently simulated system time across all async contexts.
+	///   Synchronizes the currently simulated system time across all async contexts.
 	/// </summary>
 	/// <remarks>
-	///     This means that in multi-thread or async environments after this call all clocks start with the value from the
-	///     calling async context.<br />
-	///     (see also <see href="https://learn.microsoft.com/en-us/dotnet/api/system.threading.asynclocal-1" />)
+	///   This means that in multi-thread or async environments after this call all clocks start with the value from the
+	///   calling async context.<br />
+	///   (see also <see href="https://learn.microsoft.com/en-us/dotnet/api/system.threading.asynclocal-1" />)
 	/// </remarks>
 	public void SynchronizeClock()
 	{

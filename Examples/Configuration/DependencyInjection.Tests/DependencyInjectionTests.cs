@@ -11,11 +11,11 @@ public class DependencyInjectionTests
 	public void
 		DependencyInjection_Microsoft_ShouldAllowRegistrationAndCreationOfInstances()
 	{
-		ServiceProvider services = new ServiceCollection()
-		                          .AddSingleton<IFileSystem, RealFileSystem>()
-		                          .AddSingleton<IRandomSystem, RealRandomSystem>()
-		                          .AddSingleton<ITimeSystem, RealTimeSystem>()
-		                          .BuildServiceProvider();
+		var services = new ServiceCollection()
+			.AddSingleton<IFileSystem, RealFileSystem>()
+			.AddSingleton<IRandomSystem, RealRandomSystem>()
+			.AddSingleton<ITimeSystem, RealTimeSystem>()
+			.BuildServiceProvider();
 
 		services.GetService<IFileSystem>().Should().BeOfType<RealFileSystem>();
 		services.GetService<IRandomSystem>().Should().BeOfType<RealRandomSystem>();

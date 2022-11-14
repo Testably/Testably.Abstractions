@@ -15,7 +15,7 @@ public sealed class ZipFileHelper
 	}
 
 	/// <summary>
-	///     Create a zip archive from all files and subdirectories in <paramref name="directory" />.
+	///   Create a zip archive from all files and subdirectories in <paramref name="directory" />.
 	/// </summary>
 	/// <param name="directory">The directory which should be packed in a zip archive.</param>
 	/// <returns>A stream containing the zip archive.</returns>
@@ -33,23 +33,23 @@ public sealed class ZipFileHelper
 	}
 
 	/// <summary>
-	///     Extracts the zip archive from <paramref name="stream" /> to the <paramref name="directory" />.
+	///   Extracts the zip archive from <paramref name="stream" /> to the <paramref name="directory" />.
 	/// </summary>
 	/// <param name="stream">
-	///     The stream containing the zip archive.<br />
-	///     E.g. with <see cref="IFile.OpenRead(string)" /> from the file system.
+	///   The stream containing the zip archive.<br />
+	///   E.g. with <see cref="IFile.OpenRead(string)" /> from the file system.
 	/// </param>
 	/// <param name="directory">
-	///     The destination directory in which to extract the <see cref="ZipArchiveEntry" />s from the zip
-	///     archive.
+	///   The destination directory in which to extract the <see cref="ZipArchiveEntry" />s from the zip
+	///   archive.
 	/// </param>
 	public void ExtractZipToDirectory(Stream stream, string directory)
 	{
 		using ZipArchive archive = new(stream, ZipArchiveMode.Read);
-		foreach (ZipArchiveEntry entry in archive.Entries)
+		foreach (var entry in archive.Entries)
 		{
-			string filePath = _fileSystem.Path.Combine(directory, entry.FullName);
-			string? directoryPath = _fileSystem.Path.GetDirectoryName(filePath);
+			var filePath = _fileSystem.Path.Combine(directory, entry.FullName);
+			var directoryPath = _fileSystem.Path.GetDirectoryName(filePath);
 			if (directoryPath != null &&
 			    !_fileSystem.Directory.Exists(directoryPath))
 			{
@@ -63,26 +63,26 @@ public sealed class ZipFileHelper
 	}
 
 	/// <summary>
-	///     Recursively adds all files and subdirectories from the <paramref name="directory" /> into the
-	///     <paramref name="archive" /> using <paramref name="directoryBase" /> as directory prefix in the zip archive.
+	///   Recursively adds all files and subdirectories from the <paramref name="directory" /> into the
+	///   <paramref name="archive" /> using <paramref name="directoryBase" /> as directory prefix in the zip archive.
 	/// </summary>
 	private void AddDirectoryToArchive(
 		string directoryBase,
 		string directory,
 		ZipArchive archive)
 	{
-		foreach (string file in _fileSystem.Directory.GetFiles(directory))
+		foreach (var file in _fileSystem.Directory.GetFiles(directory))
 		{
-			ZipArchiveEntry entry =
+			var entry =
 				archive.CreateEntry(directoryBase + Path.GetFileName(file));
-			using Stream stream = entry.Open();
-			byte[] bytes = _fileSystem.File.ReadAllBytes(file);
+			using var stream = entry.Open();
+			var bytes = _fileSystem.File.ReadAllBytes(file);
 			stream.Write(bytes, 0, bytes.Length);
 		}
 
-		foreach (string subDirectory in _fileSystem.Directory.GetDirectories(directory))
+		foreach (var subDirectory in _fileSystem.Directory.GetDirectories(directory))
 		{
-			string subDirectoryName = _fileSystem.Path.GetFileName(subDirectory);
+			var subDirectoryName = _fileSystem.Path.GetFileName(subDirectory);
 			if (subDirectoryName == "")
 			{
 				continue;
