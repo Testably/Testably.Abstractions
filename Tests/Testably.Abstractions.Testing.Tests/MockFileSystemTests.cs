@@ -99,7 +99,7 @@ public class MockFileSystemTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize();
-		sut.WithAccessControl(new DefaultAccessControlStrategy((_, _) => false));
+		sut.WithAccessControlStrategy(new DefaultAccessControlStrategy((_, _) => false));
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -116,7 +116,7 @@ public class MockFileSystemTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize();
-		sut.WithAccessControl(new DefaultAccessControlStrategy((p, _)
+		sut.WithAccessControlStrategy(new DefaultAccessControlStrategy((p, _)
 			=> p == sut.Path.GetFullPath(allowedPath)));
 
 		sut.Directory.CreateDirectory(allowedPath);
