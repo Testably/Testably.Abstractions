@@ -11,7 +11,7 @@ public class DependencyInjectionTests
 	public void
 		DependencyInjection_Microsoft_ShouldAllowRegistrationAndCreationOfInstances()
 	{
-		var services = new ServiceCollection()
+		ServiceProvider services = new ServiceCollection()
 			.AddSingleton<IFileSystem, RealFileSystem>()
 			.AddSingleton<IRandomSystem, RealRandomSystem>()
 			.AddSingleton<ITimeSystem, RealTimeSystem>()

@@ -1,9 +1,11 @@
-using System.IO;
-using System.IO.Compression;
 using AutoFixture.Xunit2;
 using FluentAssertions;
+using System.IO;
+using System.IO.Compression;
 using Testably.Abstractions;
+using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing;
+using Testably.Abstractions.Testing.FileSystemInitializer;
 using Xunit;
 
 namespace ZipFile.Tests;
@@ -28,7 +30,7 @@ public class ZipFileHelperTests
 	public void CreateZipFromDirectory_ShouldIncludeAllFilesAndSubdirectories(
 		string directory)
 	{
-		var initialized
+		IFileSystemDirectoryInitializer<IFileSystem> initialized
 			= FileSystem.Initialize()
 				.WithSubdirectory(directory)
 				.Initialized(s => s
@@ -37,9 +39,9 @@ public class ZipFileHelperTests
 					.WithASubdirectory()
 					.Initialized(t => t
 						.WithAFile()));
-		using (var zipStream = ZipFileHelper.CreateZipFromDirectory(directory))
+		using (Stream zipStream = ZipFileHelper.CreateZipFromDirectory(directory))
 		{
-			using var fileStream = FileSystem.File.Create("test.zip");
+			using FileSystemStream fileStream = FileSystem.File.Create("test.zip");
 			zipStream.CopyTo(fileStream);
 		}
 
@@ -63,7 +65,7 @@ public class ZipFileHelperTests
 	public void ExtractZipToDirectory_ShouldExtractAllFilesAndDirectories(
 		string directory)
 	{
-		var initialized
+		IFileSystemDirectoryInitializer<IFileSystem> initialized
 			= FileSystem.Initialize()
 				.WithSubdirectory("source")
 				.Initialized(s => s
@@ -73,9 +75,9 @@ public class ZipFileHelperTests
 					.Initialized(t => t
 						.WithAFile()))
 				.WithSubdirectory(directory);
-		using (var zipStream = ZipFileHelper.CreateZipFromDirectory("source"))
+		using (Stream zipStream = ZipFileHelper.CreateZipFromDirectory("source"))
 		{
-			using var fileStream = FileSystem.File.Create("test.zip");
+			using FileSystemStream fileStream = FileSystem.File.Create("test.zip");
 			zipStream.CopyTo(fileStream);
 		}
 

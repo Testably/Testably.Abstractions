@@ -1,5 +1,5 @@
-using System.Threading;
 using FluentAssertions;
+using System.Threading;
 using Testably.Abstractions.Testing;
 using Xunit;
 
@@ -8,13 +8,13 @@ namespace FileSystemConfiguration.Tests;
 public class NotificationTests
 {
 	/// <summary>
-	///   Notifications allow reacting to an event after it occurred.
+	///     Notifications allow reacting to an event after it occurred.
 	/// </summary>
 	[Fact]
 	public void Notify_ManualWait()
 	{
 		ManualResetEventSlim ms = new();
-		var isNotified = false;
+		bool isNotified = false;
 		MockFileSystem fileSystem = new();
 		fileSystem.Notify.OnCreated(FileSystemTypes.File,
 			_ =>
@@ -32,12 +32,12 @@ public class NotificationTests
 	}
 
 	/// <summary>
-	///   Notifications allow reacting to an event after it occurred.
+	///     Notifications allow reacting to an event after it occurred.
 	/// </summary>
 	[Fact]
 	public void Notify_UseAwaitableCallback()
 	{
-		var isNotified = false;
+		bool isNotified = false;
 		MockFileSystem fileSystem = new();
 		fileSystem.Notify
 			.OnCreated(FileSystemTypes.File,
