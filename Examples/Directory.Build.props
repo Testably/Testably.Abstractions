@@ -4,7 +4,7 @@
 	        Condition="Exists('$(MSBuildThisFileDirectory)/../Directory.Build.props')" />
 
 	<PropertyGroup>
-		<TestablyAbstractionsVersion>0.12.*</TestablyAbstractionsVersion>
+		<TestablyAbstractionsVersion>0.18.*</TestablyAbstractionsVersion>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -20,16 +20,13 @@
 
 	<ItemGroup Condition="'$(UseFileReferenceToTestablyLibraries)' == 'True'">
 		<Reference Include="Testably.Abstractions">
-			<HintPath>..\..\..\Build\Binaries\net6.0\Testably.Abstractions.dll</HintPath>
-		</Reference>
-		<Reference Include="Testably.Abstractions.Extensions">
-			<HintPath>..\..\..\Build\Binaries\net6.0\Testably.Abstractions.Extensions.dll</HintPath>
+			<HintPath>..\..\..\Build\Binaries\net7.0\Testably.Abstractions.dll</HintPath>
 		</Reference>
 		<Reference Include="Testably.Abstractions.Interface">
-			<HintPath>..\..\..\Build\Binaries\net6.0\Testably.Abstractions.Interface.dll</HintPath>
+			<HintPath>..\..\..\Build\Binaries\net7.0\Testably.Abstractions.Interface.dll</HintPath>
 		</Reference>
 		<Reference Include="Testably.Abstractions.Testing">
-			<HintPath>..\..\..\Build\Binaries\net6.0\Testably.Abstractions.Testing.dll</HintPath>
+			<HintPath>..\..\..\Build\Binaries\net7.0\Testably.Abstractions.Testing.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 
