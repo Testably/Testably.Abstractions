@@ -16,7 +16,7 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 	[Theory]
 	[MemberData(nameof(GetFileCallbacks), parameters: (int)MissingFileTestCase.FileMissing)]
 	public void Operations_WhenFileIsMissing_ShouldThrowFileNotFoundException(
-		Expression<Action<IFile, string>> callback, ExpectedExceptionType expectedExceptionType)
+		Expression<Action<IFile, string>> callback)
 	{
 		string path = "missing-file.txt";
 
@@ -42,7 +42,7 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 	[Theory]
 	[MemberData(nameof(GetFileCallbacks), parameters: (int)MissingFileTestCase.DirectoryMissing)]
 	public void Operations_WhenDirectoryIsMissing_ShouldThrowDirectoryNotFoundException(
-		Expression<Action<IFile, string>> callback, ExpectedExceptionType expectedExceptionType)
+		Expression<Action<IFile, string>> callback)
 	{
 		string path = FileSystem.Path.Combine("missing-directory", "file.txt");
 
@@ -85,7 +85,7 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 			.Where(item => (item.TestCase & (MissingFileTestCase)testCases) != 0)
 			.Select(item => new object?[]
 			{
-				item.Callback, item.ExceptionType
+				item.Callback
 			});
 
 	private static IEnumerable<(MissingFileTestCase TestCase, ExpectedExceptionType ExceptionType,

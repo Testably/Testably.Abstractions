@@ -94,8 +94,7 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public async Task WriteAllText_WhenContentIsNull_ShouldNotThrowException(
-		string path, string contents)
+	public async Task WriteAllTextAsync_WhenContentIsNull_ShouldNotThrowException(string path)
 	{
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
