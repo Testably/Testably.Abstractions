@@ -40,17 +40,18 @@ public class NotificationTests
 		bool isNotified = false;
 		MockFileSystem fileSystem = new();
 		fileSystem.Notify
-			.OnCreated(FileSystemTypes.File, _ =>
-			{
-				isNotified = true;
-			})
-			.ExecuteWhileWaiting(() =>
-			{
-				fileSystem.Directory.CreateDirectory("foo");
-				fileSystem.File.Create("foo/bar.txt");
-			})
-			// If a timeout is provided, this will throw a TimeoutException if no event was triggered within 1000ms
-			.Wait(timeout: 1000);
+		          .OnCreated(FileSystemTypes.File,
+			           _ =>
+			           {
+				           isNotified = true;
+			           })
+		          .ExecuteWhileWaiting(() =>
+		           {
+			           fileSystem.Directory.CreateDirectory("foo");
+			           fileSystem.File.Create("foo/bar.txt");
+		           })
+		           // If a timeout is provided, this will throw a TimeoutException if no event was triggered within 1000ms
+		          .Wait(timeout: 1000);
 
 		fileSystem.File.Exists("foo/bar.txt").Should().BeTrue();
 		isNotified.Should().BeTrue();

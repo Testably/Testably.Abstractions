@@ -25,10 +25,11 @@ public class InitializationTests
 		string expectedDirectory = fileSystem.Path.GetFullPath(currentDirectory);
 
 		fileSystem.InitializeIn(currentDirectory)
-			.WithASubdirectory();
+		          .WithASubdirectory();
 
-		fileSystem.Directory.GetCurrentDirectory().Should()
-			.Be(expectedDirectory);
+		fileSystem.Directory.GetCurrentDirectory()
+		          .Should()
+		          .Be(expectedDirectory);
 	}
 
 	/// <summary>
@@ -42,10 +43,11 @@ public class InitializationTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.Initialize()
-			.WithASubdirectory()
-			.WithSubdirectory("foo").Initialized(s => s
-				.WithAFile())
-			.WithFile("bar.txt");
+		          .WithASubdirectory()
+		          .WithSubdirectory("foo")
+		          .Initialized(s => s
+			          .WithAFile())
+		          .WithFile("bar.txt");
 
 		fileSystem.File.Exists("bar.txt").Should().BeTrue();
 		fileSystem.Directory.Exists("foo").Should().BeTrue();

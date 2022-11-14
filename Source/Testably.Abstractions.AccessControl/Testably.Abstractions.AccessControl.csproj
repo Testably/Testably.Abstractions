@@ -1,30 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <RootNamespace>Testably.Abstractions</RootNamespace>
-    <Description>ACL (access control list) extension methods for `Testably.Abstractions`.</Description>
-    <PackageReadmeFile>Docs/AccessControl.md</PackageReadmeFile>
-  </PropertyGroup>
+	<PropertyGroup>
+		<RootNamespace>Testably.Abstractions</RootNamespace>
+		<Description>ACL (access control list) extension methods for `Testably.Abstractions`.</Description>
+		<PackageReadmeFile>Docs/AccessControl.md</PackageReadmeFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="$(SolutionDir)Docs/AccessControl.md"
-          Pack="true" PackagePath="/Docs/"
-          Link="Docs\AccessControl.md" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="$(SolutionDir)Docs/AccessControl.md"
+		      Pack="true" PackagePath="/Docs/"
+		      Link="Docs\AccessControl.md" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <AssemblyAttribute Include="System.CLSCompliant">
-      <_Parameter1>true</_Parameter1>
-      <_Parameter1_TypeName>System.Boolean</_Parameter1_TypeName>
-    </AssemblyAttribute>
-  </ItemGroup>
+	<ItemGroup>
+		<AssemblyAttribute Include="System.CLSCompliant">
+			<_Parameter1>true</_Parameter1>
+			<_Parameter1_TypeName>System.Boolean</_Parameter1_TypeName>
+		</AssemblyAttribute>
+	</ItemGroup>
 
 </Project>

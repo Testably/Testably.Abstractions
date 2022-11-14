@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup Condition="'$(NCrunch)' == '1'">
-    <TargetFrameworks>net6.0</TargetFrameworks>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(NCrunch)' == '1'">
+		<TargetFrameworks>net6.0</TargetFrameworks>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Source\Testably.Abstractions.Compression\Testably.Abstractions.Compression.csproj" />
-    <ProjectReference Include="..\..\Source\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
-  </ItemGroup>
-  
+	<ItemGroup>
+		<ProjectReference Include="..\..\Source\Testably.Abstractions.Compression\Testably.Abstractions.Compression.csproj" />
+		<ProjectReference Include="..\..\Source\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
+	</ItemGroup>
+
 </Project>
