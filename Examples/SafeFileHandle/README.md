@@ -8,6 +8,7 @@ This object points to a location in the `MockFileSystem` instead.
 
 The included default implementation uses a callback to map `SafeFileHandle` to a `SafeFileHandleMock`.
 
+## Example
 The example illustrates how to create a custom implementation of the `ISafeFileHandleStrategy` which stores the
 mapping internally and synchronizes the attributes, creation time, last access time and last write time on access
 from the real file system to the mock file system.
