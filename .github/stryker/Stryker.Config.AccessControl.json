@@ -1,20 +1,24 @@
 {
-  "stryker-config": {
-    "project-info": {
-      "name": "github.com/Testably/Testably.Abstractions",
-      "module": "Testably.Abstractions.AccessControl"
-    },
-    "test-projects": [
-      "./Testably.Abstractions.AccessControl.Tests/Testably.Abstractions.AccessControl.Tests.csproj"
-    ],
-    "project": "Testably.Abstractions.AccessControl.csproj",
-    "target-framework": "net7.0",
-    "since": {
-      "ignore-changes-in": [
-        "**/.github/**/*.*"
-      ]
-    },
-    "reporters": [ "html", "progress", "cleartext" ],
-    "mutation-level": "Advanced"
-  }
+	"stryker-config": {
+		"project-info": {
+			"name": "github.com/Testably/Testably.Abstractions",
+			"module": "Testably.Abstractions.AccessControl"
+		},
+		"test-projects": [
+			"./Testably.Abstractions.AccessControl.Tests/Testably.Abstractions.AccessControl.Tests.csproj"
+		],
+		"project": "Testably.Abstractions.AccessControl.csproj",
+		"target-framework": "net7.0",
+		"since": {
+			"ignore-changes-in": [
+				"**/.github/**/*.*"
+			]
+		},
+		"reporters": [
+			"html",
+			"progress",
+			"cleartext"
+		],
+		"mutation-level": "Advanced"
+	}
 }
