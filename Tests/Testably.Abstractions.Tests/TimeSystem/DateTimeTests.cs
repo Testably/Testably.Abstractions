@@ -28,15 +28,16 @@ public abstract partial class DateTimeTests<TTimeSystem>
 	[SkippableFact]
 	public void Now_ShouldBeSetToNow()
 	{
-		Skip.If(Test.RunsOnMac, "Brittle test on MacOS");
+		// Tests are brittle on the build system
+		const int tolerance = 250;
 
 		DateTime before = DateTime.Now;
 		DateTime result = TimeSystem.DateTime.Now;
 		DateTime after = DateTime.Now;
 
 		result.Kind.Should().Be(DateTimeKind.Local);
-		result.Should().BeOnOrAfter(before.ApplySystemClockTolerance());
-		result.ApplySystemClockTolerance().Should().BeOnOrBefore(after);
+		result.Should().BeOnOrAfter(before.ApplySystemClockTolerance(tolerance));
+		result.ApplySystemClockTolerance(tolerance).Should().BeOnOrBefore(after);
 	}
 
 	[Fact]
@@ -66,14 +67,15 @@ public abstract partial class DateTimeTests<TTimeSystem>
 	[SkippableFact]
 	public void UtcNow_ShouldBeSetToUtcNow()
 	{
-		Skip.If(Test.RunsOnMac, "Brittle test on MacOS");
+		// Tests are brittle on the build system
+		const int tolerance = 250;
 
 		DateTime before = DateTime.UtcNow;
 		DateTime result = TimeSystem.DateTime.UtcNow;
 		DateTime after = DateTime.UtcNow;
 
 		result.Kind.Should().Be(DateTimeKind.Utc);
-		result.Should().BeOnOrAfter(before.ApplySystemClockTolerance());
-		result.ApplySystemClockTolerance().Should().BeOnOrBefore(after);
+		result.Should().BeOnOrAfter(before.ApplySystemClockTolerance(tolerance));
+		result.ApplySystemClockTolerance(tolerance).Should().BeOnOrBefore(after);
 	}
 }
