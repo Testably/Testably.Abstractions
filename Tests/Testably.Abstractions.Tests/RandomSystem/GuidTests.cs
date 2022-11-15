@@ -1,4 +1,7 @@
 using System.Collections.Concurrent;
+#if FEATURE_GUID_PARSE
+using System.Collections.Generic;
+#endif
 using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.RandomSystem;
