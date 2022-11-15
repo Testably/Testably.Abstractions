@@ -13,9 +13,9 @@ Use the `ZipFile()` extension method to get access to `CreateFromDirectory`, `Ex
 ```csharp
     IFileSystem _fileSystem; // Set using DI
 		
-    FileSystem.ZipFile()
+    _fileSystem.ZipFile()
         .CreateFromDirectory("your-directory", "your-file.zip");
 
-    FileSystem.ZipFile()
+    _fileSystem.ZipFile()
         .ExtractToDirectory("your-file.zip", "your-destination");
 ```
