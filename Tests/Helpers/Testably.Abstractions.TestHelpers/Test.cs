@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
+using Xunit;
 
-namespace Testably.Abstractions.Tests.TestHelpers;
+namespace Testably.Abstractions.TestHelpers;
 
 public static class Test
 {

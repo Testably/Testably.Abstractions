@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup Condition="'$(NCrunch)' == '1'">
+		<TargetFrameworks>net6.0</TargetFrameworks>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<OutputPath>..\..\..\Build\Tests\$(MSBuildProjectName)</OutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\Source\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
+		<ProjectReference Include="..\..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj" />
+	</ItemGroup>
+
+</Project>

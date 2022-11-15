@@ -3,24 +3,24 @@ using Testably.Abstractions.Tests.SourceGenerator.Model;
 
 namespace Testably.Abstractions.Tests.SourceGenerator.ClassGenerators;
 
-internal class RandomSystemClassGenerator : ClassGeneratorBase
+internal class TimeSystemClassGenerator : ClassGeneratorBase
 {
 	/// <inheritdoc cref="ClassGeneratorBase.Marker" />
 	public override string Marker
-		=> "RandomSystemTestBase<TRandomSystem>";
+		=> "TimeSystemTestBase<TTimeSystem>";
 
 	/// <inheritdoc cref="ClassGeneratorBase.GenerateSource(StringBuilder, ClassModel)" />
 	protected override void GenerateSource(StringBuilder sourceBuilder, ClassModel @class)
 		=> sourceBuilder.Append(@$"
-using Testably.Abstractions.Tests.TestHelpers;
+using Testably.Abstractions.TestHelpers;
 using Xunit.Abstractions;
 
 namespace {@class.Namespace}
 {{
-	public abstract partial class {@class.Name}<TRandomSystem>
+	public abstract partial class {@class.Name}<TTimeSystem>
 	{{
-		protected {@class.Name}(TRandomSystem randomSystem)
-			: base(randomSystem)
+		protected {@class.Name}(TTimeSystem timeSystem)
+			: base(timeSystem)
 		{{
 		}}
 	}}
@@ -29,17 +29,17 @@ namespace {@class.Namespace}
 namespace {@class.Namespace}.{@class.Name}
 {{
 	// ReSharper disable once UnusedMember.Global
-	public sealed class MockRandomSystemTests : {@class.Name}<MockRandomSystem>
+	public sealed class MockTimeSystemTests : {@class.Name}<MockTimeSystem>
 	{{
-		public MockRandomSystemTests() : base(new MockRandomSystem())
+		public MockTimeSystemTests() : base(new MockTimeSystem(TimeProvider.Now()))
 		{{
 		}}
 	}}
 
 	// ReSharper disable once UnusedMember.Global
-	public sealed class RealRandomSystemTests : {@class.Name}<RealRandomSystem>
+	public sealed class RealTimeSystemTests : {@class.Name}<RealTimeSystem>
 	{{
-		public RealRandomSystemTests() : base(new RealRandomSystem())
+		public RealTimeSystemTests() : base(new RealTimeSystem())
 		{{
 		}}
 	}}

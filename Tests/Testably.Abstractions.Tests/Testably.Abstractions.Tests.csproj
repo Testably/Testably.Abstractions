@@ -7,12 +7,11 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj" />
 		<ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj" />
+		<ProjectReference Include="..\Helpers\Testably.Abstractions.TestHelpers\Testably.Abstractions.TestHelpers.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference
-			Include="..\Testably.Abstractions.Tests.SourceGenerator\Testably.Abstractions.Tests.SourceGenerator.csproj"
-			OutputItemType="Analyzer" />
+		<ProjectReference Include="..\Helpers\Testably.Abstractions.Tests.SourceGenerator\Testably.Abstractions.Tests.SourceGenerator.csproj" OutputItemType="Analyzer" />
 	</ItemGroup>
 
 	<PropertyGroup>
@@ -26,7 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Generated\Testably.Abstractions.Tests.SourceGenerator\" />
+	  <Folder Include="Generated\" />
 	</ItemGroup>
 
 </Project>
