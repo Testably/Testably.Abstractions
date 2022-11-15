@@ -1,5 +1,5 @@
 ﻿using Microsoft.Win32.SafeHandles;
-using System;
+using System;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Storage;
 

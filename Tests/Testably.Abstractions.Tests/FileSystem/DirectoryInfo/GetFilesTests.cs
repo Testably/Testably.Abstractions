@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Linq;
 using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;

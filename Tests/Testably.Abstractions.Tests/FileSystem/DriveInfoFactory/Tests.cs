@@ -1,5 +1,5 @@
 using System.IO;
-using System.Linq;
+using System.Linq;
 
 namespace Testably.Abstractions.Tests.FileSystem.DriveInfoFactory;
 

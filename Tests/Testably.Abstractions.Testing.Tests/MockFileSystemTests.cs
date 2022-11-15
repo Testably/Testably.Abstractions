@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using System.Linq;
+using System.Linq;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Tests.TestHelpers;

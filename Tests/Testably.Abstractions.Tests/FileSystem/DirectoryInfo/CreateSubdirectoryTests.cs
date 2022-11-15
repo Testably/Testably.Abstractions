@@ -1,5 +1,3 @@
-using Testably.Abstractions.FileSystem;
-
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 // ReSharper disable once PartialTypeWithSinglePart

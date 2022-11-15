@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO.Compression;
-using System.Linq;
+using System.Linq;
 using Testably.Abstractions.Internal;
 
 namespace Testably.Abstractions;

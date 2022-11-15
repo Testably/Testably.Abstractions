@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System;
 
 namespace Testably.Abstractions.Testing.Storage;
 

@@ -1,5 +1,5 @@
 ﻿using System.IO.Compression;
-#if FEATURE_ZIPFILE_NET7
+#if FEATURE_ZIPFILE_NET7
 #endif
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchive;

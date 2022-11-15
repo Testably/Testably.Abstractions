@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
+using System.Linq;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
 
@@ -131,7 +131,7 @@ internal sealed class InMemoryStorage : IStorage
 			_fileSystem.ChangeHandler.NotifyPendingChange(WatcherChangeTypes.Deleted,
 				container.Type,
 				notifyFilters, location);
-		
+
 		using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite,
 			deleteAccess: true))
 		{
@@ -304,7 +304,7 @@ internal sealed class InMemoryStorage : IStorage
 				}
 
 				CheckAndAdjustParentDirectoryTimes(loc);
-				
+
 				using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite))
 				{
 					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
@@ -371,7 +371,7 @@ internal sealed class InMemoryStorage : IStorage
 		{
 			throw ExceptionFactory.AccessToPathDenied(source.FullPath);
 		}
-		
+
 		using (_ = sourceContainer.RequestAccess(FileAccess.ReadWrite, FileShare.None,
 			ignoreMetadataErrors: ignoreMetadataErrors))
 		{
@@ -535,7 +535,7 @@ internal sealed class InMemoryStorage : IStorage
 					{
 						IStorageContainer container =
 							InMemoryContainer.NewDirectory(loc, _fileSystem);
-						
+
 						accessHandles.Add(container.RequestAccess(FileAccess.Write,
 							FileShare.ReadWrite));
 						fileSystemChange =
@@ -587,7 +587,7 @@ internal sealed class InMemoryStorage : IStorage
 		{
 			throw ExceptionFactory.DirectoryNotEmpty(source.FullPath);
 		}
-		
+
 		using (container.RequestAccess(FileAccess.Write, FileShare.None,
 			hResult: sourceType == FileSystemTypes.Directory ? -2147024891 : -2147024864))
 		{

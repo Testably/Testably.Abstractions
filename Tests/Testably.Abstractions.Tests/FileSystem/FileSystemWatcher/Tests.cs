@@ -2,7 +2,7 @@ using Moq;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
+using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 

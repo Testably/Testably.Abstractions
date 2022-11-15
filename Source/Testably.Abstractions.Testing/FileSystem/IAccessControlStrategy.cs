@@ -1,6 +1,4 @@
-﻿using Testably.Abstractions.FileSystem;
-
-namespace Testably.Abstractions.Testing.FileSystem;
+﻿namespace Testably.Abstractions.Testing.FileSystem;
 
 /// <summary>
 ///     The strategy to simulate access control (ACL) in the <see cref="MockFileSystem" />.

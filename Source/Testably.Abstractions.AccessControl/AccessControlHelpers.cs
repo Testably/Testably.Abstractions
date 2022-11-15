@@ -1,5 +1,5 @@
 ﻿using System;
-using System.IO;
+using System.IO;
 
 namespace Testably.Abstractions;
 
@@ -37,6 +37,7 @@ internal static class AccessControlHelpers
 
 		return fileSystemInfo;
 	}
+
 	public static IDirectoryInfo ThrowIfParentMissing(
 		this IDirectoryInfo fileSystemInfo)
 	{

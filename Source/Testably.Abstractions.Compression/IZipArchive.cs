@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.IO.Compression;
+using System.IO.Compression;
 
 namespace Testably.Abstractions;
 

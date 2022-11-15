@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using System.Threading;
+using System.Threading;
 using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
