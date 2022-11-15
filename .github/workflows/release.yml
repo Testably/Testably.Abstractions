@@ -295,7 +295,7 @@ jobs:
             sed -i -e "s/Testably.Abstractions%2Fmain/Testably.Abstractions%2Frelease%2F${version}/g" "./$f"
             sed -i -e "s/Testably.Abstractions\/main)/Testably.Abstractions\/release\/${version})/g" "./$f"
             # Add absolute path to example section
-            sed -i -e 's/\(..\/README.md\)/https:\/\/github.com\/Testably\/Testably.Abstractions\/blob\/main\/README.md/g' "./$f"
+            sed -i -e 's/\(Examples\/README.md\)/https:\/\/github.com\/Testably\/Testably.Abstractions\/blob\/main\/Examples\/README.md/g' "./$f"
           done
       - name: Build
         run: dotnet build --configuration "Release"
