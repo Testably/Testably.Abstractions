@@ -16,11 +16,11 @@ public static class FileAclExtensions
 	{
 		IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
 		fileInfo.ThrowIfMissing();
-		IFileSystemExtensionContainer extensionContainer =
-			fileInfo.ExtensionContainer;
-		return extensionContainer.HasWrappedInstance(out FileInfo? fi)
+		IFileSystemExtensibility extensibility =
+			fileInfo.Extensibility;
+		return extensibility.TryGetWrappedInstance(out FileInfo? fi)
 			? fi.GetAccessControl()
-			: extensionContainer.RetrieveMetadata<FileSecurity>(
+			: extensibility.RetrieveMetadata<FileSecurity>(
 				AccessControlHelpers.AccessControl) ?? new FileSecurity();
 	}
 
@@ -33,11 +33,11 @@ public static class FileAclExtensions
 	{
 		IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
 		fileInfo.ThrowIfMissing();
-		IFileSystemExtensionContainer extensionContainer =
-			fileInfo.ExtensionContainer;
-		return extensionContainer.HasWrappedInstance(out FileInfo? fi)
+		IFileSystemExtensibility extensibility =
+			fileInfo.Extensibility;
+		return extensibility.TryGetWrappedInstance(out FileInfo? fi)
 			? fi.GetAccessControl(includeSections)
-			: extensionContainer.RetrieveMetadata<FileSecurity>(
+			: extensibility.RetrieveMetadata<FileSecurity>(
 				AccessControlHelpers.AccessControl) ?? new FileSecurity();
 	}
 
@@ -48,15 +48,15 @@ public static class FileAclExtensions
 		FileSecurity fileSecurity)
 	{
 		IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
-		IFileSystemExtensionContainer extensionContainer =
-			fileInfo.ExtensionContainer;
-		if (extensionContainer.HasWrappedInstance(out FileInfo? fi))
+		IFileSystemExtensibility extensibility =
+			fileInfo.Extensibility;
+		if (extensibility.TryGetWrappedInstance(out FileInfo? fi))
 		{
 			fi.SetAccessControl(fileSecurity);
 		}
 		else
 		{
-			extensionContainer.StoreMetadata(AccessControlHelpers.AccessControl,
+			extensibility.StoreMetadata(AccessControlHelpers.AccessControl,
 				fileSecurity);
 		}
 	}

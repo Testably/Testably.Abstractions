@@ -26,7 +26,7 @@ public interface IFileSystemInfo
 	/// <summary>
 	///     A container to support extensions on <see cref="IFileSystemInfo" />.
 	/// </summary>
-	IFileSystemExtensionContainer ExtensionContainer { get; }
+	IFileSystemExtensibility Extensibility { get; }
 
 	/// <inheritdoc cref="FileSystemInfo.FullName" />
 	string FullName { get; }

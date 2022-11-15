@@ -280,7 +280,7 @@ internal sealed class InMemoryStorage : IStorage
 	public IStorageContainer GetOrCreateContainer(
 		IStorageLocation location,
 		Func<IStorageLocation, MockFileSystem, IStorageContainer> containerGenerator,
-		IFileSystemExtensionContainer? fileSystemExtensionContainer = null)
+		IFileSystemExtensibility? fileSystemExtensibility = null)
 	{
 		ChangeDescription? fileSystemChange = null;
 		IStorageContainer container = _containers.GetOrAdd(location,
@@ -288,8 +288,8 @@ internal sealed class InMemoryStorage : IStorage
 			{
 				IStorageContainer container =
 					containerGenerator.Invoke(loc, _fileSystem);
-				(fileSystemExtensionContainer as FileSystemExtensionContainer)?
-					.CopyMetadataTo(container.ExtensionContainer);
+				(fileSystemExtensibility as FileSystemExtensibility)?
+					.CopyMetadataTo(container.Extensibility);
 				if (container.Type == FileSystemTypes.Directory)
 				{
 					CreateParents(_fileSystem, loc);

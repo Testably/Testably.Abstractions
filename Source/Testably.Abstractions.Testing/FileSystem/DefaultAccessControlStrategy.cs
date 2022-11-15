@@ -9,20 +9,20 @@ namespace Testably.Abstractions.Testing.FileSystem;
 /// </summary>
 public class DefaultAccessControlStrategy : IAccessControlStrategy
 {
-	private readonly Func<string, IFileSystemExtensionContainer, bool> _callback;
+	private readonly Func<string, IFileSystemExtensibility, bool> _callback;
 
 	/// <summary>
 	///     Initializes a new instance of <see cref="DefaultAccessControlStrategy" /> which takes a callback to determine if
 	///     access should be granted.
 	/// </summary>
 	public DefaultAccessControlStrategy(
-		Func<string, IFileSystemExtensionContainer, bool> callback)
+		Func<string, IFileSystemExtensibility, bool> callback)
 	{
 		_callback = callback ?? throw new ArgumentNullException(nameof(callback));
 	}
 
-	/// <inheritdoc cref="IAccessControlStrategy.IsAccessGranted(string, IFileSystemExtensionContainer)" />
+	/// <inheritdoc cref="IAccessControlStrategy.IsAccessGranted(string, IFileSystemExtensibility)" />
 	public bool IsAccessGranted(string fullPath,
-		IFileSystemExtensionContainer extensionContainer)
-		=> _callback(fullPath, extensionContainer);
+		IFileSystemExtensibility extensibility)
+		=> _callback(fullPath, extensibility);
 }

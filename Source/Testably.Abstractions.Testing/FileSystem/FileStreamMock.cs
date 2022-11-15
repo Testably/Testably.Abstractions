@@ -21,9 +21,9 @@ internal sealed class FileStreamMock : FileSystemStream
 	public override bool CanWrite
 		=> _access.HasFlag(FileAccess.Write);
 
-	/// <inheritdoc cref="FileSystemStream.ExtensionContainer" />
-	public override IFileSystemExtensionContainer ExtensionContainer
-		=> _container.ExtensionContainer;
+	/// <inheritdoc cref="FileSystemStream.Extensibility" />
+	public override IFileSystemExtensibility Extensibility
+		=> _container.Extensibility;
 
 	private readonly FileAccess _access;
 	private readonly IDisposable _accessLock;

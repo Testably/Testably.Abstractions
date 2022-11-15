@@ -18,9 +18,9 @@ public static class DirectoryAclExtensions
 	{
 		IDirectoryInfo directoryInfo =
 			directory.FileSystem.DirectoryInfo.New(path);
-		IFileSystemExtensionContainer extensionContainer =
-			directoryInfo.ExtensionContainer;
-		if (extensionContainer.HasWrappedInstance(out DirectoryInfo? di))
+		IFileSystemExtensibility extensibility =
+			directoryInfo.Extensibility;
+		if (extensibility.TryGetWrappedInstance(out DirectoryInfo? di))
 		{
 			di.Create(directorySecurity);
 		}
@@ -29,7 +29,7 @@ public static class DirectoryAclExtensions
 			_ = directorySecurity ?? throw new ArgumentNullException(nameof(directorySecurity));
 			directoryInfo.ThrowIfParentMissing();
 			directoryInfo.Create();
-			directoryInfo.ExtensionContainer.StoreMetadata(AccessControlHelpers.AccessControl,
+			directoryInfo.Extensibility.StoreMetadata(AccessControlHelpers.AccessControl,
 				directorySecurity);
 		}
 	}
@@ -42,11 +42,11 @@ public static class DirectoryAclExtensions
 		IDirectoryInfo directoryInfo =
 			directory.FileSystem.DirectoryInfo.New(path);
 		directoryInfo.ThrowIfMissing();
-		IFileSystemExtensionContainer extensionContainer =
-			directoryInfo.ExtensionContainer;
-		return extensionContainer.HasWrappedInstance(out DirectoryInfo? di)
+		IFileSystemExtensibility extensibility =
+			directoryInfo.Extensibility;
+		return extensibility.TryGetWrappedInstance(out DirectoryInfo? di)
 			? di.GetAccessControl()
-			: extensionContainer.RetrieveMetadata<DirectorySecurity>(
+			: extensibility.RetrieveMetadata<DirectorySecurity>(
 				AccessControlHelpers.AccessControl) ?? new DirectorySecurity();
 	}
 
@@ -60,11 +60,11 @@ public static class DirectoryAclExtensions
 		IDirectoryInfo directoryInfo =
 			directory.FileSystem.DirectoryInfo.New(path);
 		directoryInfo.ThrowIfMissing();
-		IFileSystemExtensionContainer extensionContainer =
-			directoryInfo.ExtensionContainer;
-		return extensionContainer.HasWrappedInstance(out DirectoryInfo? di)
+		IFileSystemExtensibility extensibility =
+			directoryInfo.Extensibility;
+		return extensibility.TryGetWrappedInstance(out DirectoryInfo? di)
 			? di.GetAccessControl(includeSections)
-			: extensionContainer.RetrieveMetadata<DirectorySecurity>(
+			: extensibility.RetrieveMetadata<DirectorySecurity>(
 				AccessControlHelpers.AccessControl) ?? new DirectorySecurity();
 	}
 
@@ -76,15 +76,15 @@ public static class DirectoryAclExtensions
 	{
 		IDirectoryInfo directoryInfo =
 			directory.FileSystem.DirectoryInfo.New(path);
-		IFileSystemExtensionContainer extensionContainer =
-			directoryInfo.ExtensionContainer;
-		if (extensionContainer.HasWrappedInstance(out DirectoryInfo? di))
+		IFileSystemExtensibility extensibility =
+			directoryInfo.Extensibility;
+		if (extensibility.TryGetWrappedInstance(out DirectoryInfo? di))
 		{
 			di.SetAccessControl(directorySecurity);
 		}
 		else
 		{
-			extensionContainer.StoreMetadata(AccessControlHelpers.AccessControl,
+			extensibility.StoreMetadata(AccessControlHelpers.AccessControl,
 				directorySecurity);
 		}
 	}

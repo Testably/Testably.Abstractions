@@ -3,18 +3,18 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Testably.Abstractions.FileSystem;
 
-internal class FileSystemExtensionContainer : IFileSystemExtensionContainer
+internal class FileSystemExtensibility : IFileSystemExtensibility
 {
 	private readonly object _wrappedInstance;
 	private readonly Dictionary<string, object?> _metadata = new();
 
-	public FileSystemExtensionContainer(object wrappedInstance)
+	public FileSystemExtensibility(object wrappedInstance)
 	{
 		_wrappedInstance = wrappedInstance;
 	}
 
-	/// <inheritdoc cref="IFileSystemExtensionContainer.HasWrappedInstance{T}(out T)" />
-	public bool HasWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance)
+	/// <inheritdoc cref="IFileSystemExtensibility.TryGetWrappedInstance{T}" />
+	public bool TryGetWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance)
 	{
 		// ReSharper disable once MergeCastWithTypeCheck -- Not possible due to nullable
 		wrappedInstance = _wrappedInstance is T?

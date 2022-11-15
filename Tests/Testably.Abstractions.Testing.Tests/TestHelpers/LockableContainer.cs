@@ -47,9 +47,9 @@ internal sealed class LockableContainer : IStorageContainer
 	public IStorageContainer.ITimeContainer CreationTime { get; }
 		= new InMemoryContainer.TimeContainer();
 
-	/// <inheritdoc cref="IStorageContainer.ExtensionContainer" />
-	public IFileSystemExtensionContainer ExtensionContainer { get; }
-		= new FileSystemExtensionContainer();
+	/// <inheritdoc cref="IStorageContainer.Extensibility" />
+	public IFileSystemExtensibility Extensibility { get; }
+		= new FileSystemExtensibility();
 
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }

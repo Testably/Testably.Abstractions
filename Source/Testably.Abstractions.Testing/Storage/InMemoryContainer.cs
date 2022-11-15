@@ -19,7 +19,7 @@ internal class InMemoryContainer : IStorageContainer
 	private readonly MockFileSystem _fileSystem;
 	private bool _isEncrypted;
 	private readonly IStorageLocation _location;
-	private readonly FileSystemExtensionContainer _extensionContainer = new();
+	private readonly FileSystemExtensibility _extensibility = new();
 
 	public InMemoryContainer(FileSystemTypes type,
 		IStorageLocation location,
@@ -63,9 +63,9 @@ internal class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.CreationTime" />
 	public ITimeContainer CreationTime { get; } = new TimeContainer();
 
-	/// <inheritdoc cref="IStorageContainer.ExtensionContainer" />
-	public IFileSystemExtensionContainer ExtensionContainer
-		=> _extensionContainer;
+	/// <inheritdoc cref="IStorageContainer.Extensibility" />
+	public IFileSystemExtensibility Extensibility
+		=> _extensibility;
 
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem => _fileSystem;
@@ -157,7 +157,7 @@ internal class InMemoryContainer : IStorageContainer
 			() => throw ExceptionFactory.AccessToPathDenied());
 
 		if (!_fileSystem.AccessControlStrategy
-			.IsAccessGranted(_location.FullPath, ExtensionContainer))
+			.IsAccessGranted(_location.FullPath, Extensibility))
 		{
 			throw ExceptionFactory.AclAccessToPathDenied(_location.FullPath);
 		}

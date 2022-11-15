@@ -20,7 +20,7 @@ internal interface IStorageContainer : IFileSystemEntity,
 	/// <summary>
 	///     A container to support extensions on <see cref="IStorageContainer" />.
 	/// </summary>
-	IFileSystemExtensionContainer ExtensionContainer { get; }
+	IFileSystemExtensibility Extensibility { get; }
 
 	/// <inheritdoc cref="System.IO.FileSystemInfo.LastAccessTime" />
 	ITimeContainer LastAccessTime { get; }

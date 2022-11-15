@@ -121,13 +121,11 @@ internal interface IStorage
 	/// </summary>
 	/// <param name="location">The location at which to get or create the container.</param>
 	/// <param name="containerGenerator">The callback used to create a new container at <paramref name="location" />.</param>
-	/// <param name="fileSystemExtensionContainer"></param>
+	/// <param name="fileSystemExtensibility"></param>
 	/// <returns>The container at <paramref name="location" />.</returns>
 	IStorageContainer GetOrCreateContainer(IStorageLocation location,
-		Func<IStorageLocation, MockFileSystem,
-			IStorageContainer> containerGenerator,
-		IFileSystemExtensionContainer?
-			fileSystemExtensionContainer = null);
+		Func<IStorageLocation, MockFileSystem, IStorageContainer> containerGenerator,
+		IFileSystemExtensibility? fileSystemExtensibility = null);
 
 	/// <summary>
 	///     Moves a specified file or directory to a new location and potentially a new file name.<br />

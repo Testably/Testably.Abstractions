@@ -29,7 +29,7 @@ public class DefaultAccessControlStrategyTests
 	{
 		DefaultAccessControlStrategy sut = new((p, _) => p.StartsWith("a"));
 
-		sut.IsAccessGranted("abc", new FileSystemExtensionContainer()).Should().BeTrue();
-		sut.IsAccessGranted("xyz", new FileSystemExtensionContainer()).Should().BeFalse();
+		sut.IsAccessGranted("abc", new FileSystemExtensibility()).Should().BeTrue();
+		sut.IsAccessGranted("xyz", new FileSystemExtensibility()).Should().BeFalse();
 	}
 }

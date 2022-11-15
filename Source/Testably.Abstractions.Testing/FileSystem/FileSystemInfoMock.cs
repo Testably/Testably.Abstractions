@@ -118,9 +118,9 @@ internal class FileSystemInfoMock : IFileSystemInfo
 		}
 	}
 
-	/// <inheritdoc cref="IFileSystemInfo.ExtensionContainer" />
-	public IFileSystemExtensionContainer ExtensionContainer
-		=> Container.ExtensionContainer;
+	/// <inheritdoc cref="IFileSystemInfo.Extensibility" />
+	public IFileSystemExtensibility Extensibility
+		=> Container.Extensibility;
 
 	/// <inheritdoc cref="IFileSystemInfo.FullName" />
 	public string FullName => Location.FullPath;
