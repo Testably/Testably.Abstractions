@@ -1,5 +1,3 @@
-using Testably.Abstractions.FileSystem;
-
 namespace Testably.Abstractions.Tests.FileSystem;
 
 public abstract partial class FileSystemTests<TFileSystem>
@@ -8,11 +6,11 @@ public abstract partial class FileSystemTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		ExtensionContainer_HasWrappedInstance_WithCorrectType_ShouldReturnTrueOnRealFileSystem(
+		Extensibility_HasWrappedInstance_WithCorrectType_ShouldReturnTrueOnRealFileSystem(
 			string name)
 	{
-		bool result = FileSystem.FileInfo.New(name).ExtensionContainer
-			.HasWrappedInstance(out System.IO.FileInfo? fileInfo);
+		bool result = FileSystem.FileInfo.New(name).Extensibility
+			.TryGetWrappedInstance(out System.IO.FileInfo? fileInfo);
 
 		if (FileSystem is RealFileSystem)
 		{
@@ -28,11 +26,11 @@ public abstract partial class FileSystemTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		ExtensionContainer_HasWrappedInstance_WithIncorrectType_ShouldReturnAlwaysFalse(
+		Extensibility_HasWrappedInstance_WithIncorrectType_ShouldReturnAlwaysFalse(
 			string name)
 	{
-		bool result = FileSystem.FileInfo.New(name).ExtensionContainer
-			.HasWrappedInstance(out System.IO.DirectoryInfo? directoryInfo);
+		bool result = FileSystem.FileInfo.New(name).Extensibility
+			.TryGetWrappedInstance(out System.IO.DirectoryInfo? directoryInfo);
 
 		result.Should().BeFalse();
 		directoryInfo.Should().BeNull();
@@ -41,11 +39,11 @@ public abstract partial class FileSystemTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		ExtensionContainer_RetrieveMetadata_CorrectKeyAndType_ShouldReturnStoredValue(
+		Extensibility_RetrieveMetadata_CorrectKeyAndType_ShouldReturnStoredValue(
 			string name, DateTime time)
 	{
-		IFileSystemExtensionContainer sut = FileSystem.FileInfo.New(name)
-			.ExtensionContainer;
+		IFileSystemExtensibility sut = FileSystem.FileInfo.New(name)
+			.Extensibility;
 
 		sut.StoreMetadata("foo", time);
 		DateTime? result = sut.RetrieveMetadata<DateTime?>("foo");
@@ -55,11 +53,11 @@ public abstract partial class FileSystemTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void ExtensionContainer_RetrieveMetadata_DifferentKey_ShouldReturnNull(
+	public void Extensibility_RetrieveMetadata_DifferentKey_ShouldReturnNull(
 		string name)
 	{
-		IFileSystemExtensionContainer sut = FileSystem.FileInfo.New(name)
-			.ExtensionContainer;
+		IFileSystemExtensibility sut = FileSystem.FileInfo.New(name)
+			.Extensibility;
 
 		sut.StoreMetadata("foo", DateTime.Now);
 		DateTime? result = sut.RetrieveMetadata<DateTime?>("bar");
@@ -69,11 +67,11 @@ public abstract partial class FileSystemTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void ExtensionContainer_RetrieveMetadata_DifferentType_ShouldReturnNull(
+	public void Extensibility_RetrieveMetadata_DifferentType_ShouldReturnNull(
 		string name)
 	{
-		IFileSystemExtensionContainer sut = FileSystem.FileInfo.New(name)
-			.ExtensionContainer;
+		IFileSystemExtensibility sut = FileSystem.FileInfo.New(name)
+			.Extensibility;
 
 		sut.StoreMetadata("foo", DateTime.Now);
 		TimeSpan? result = sut.RetrieveMetadata<TimeSpan?>("foo");
@@ -83,10 +81,10 @@ public abstract partial class FileSystemTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void ExtensionContainer_RetrieveMetadata_NotRegisteredKey_ShouldReturnNull(
+	public void Extensibility_RetrieveMetadata_NotRegisteredKey_ShouldReturnNull(
 		string name)
 	{
-		object? result = FileSystem.FileInfo.New(name).ExtensionContainer
+		object? result = FileSystem.FileInfo.New(name).Extensibility
 			.RetrieveMetadata<object?>("foo");
 
 		result.Should().BeNull();

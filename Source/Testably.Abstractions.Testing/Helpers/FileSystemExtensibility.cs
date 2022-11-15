@@ -1,27 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Testing.Helpers;
 
-internal class FileSystemExtensionContainer : IFileSystemExtensionContainer
+internal class FileSystemExtensibility : IFileSystemExtensibility
 {
 	private readonly Dictionary<string, object?> _metadata = new();
 
-	/// <inheritdoc cref="IFileSystemExtensionContainer.HasWrappedInstance{T}(out T)" />
-	public bool HasWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance)
+	/// <inheritdoc cref="IFileSystemExtensibility.TryGetWrappedInstance{T}" />
+	public bool TryGetWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance)
 	{
 		wrappedInstance = default;
 		return false;
 	}
 
-	/// <inheritdoc cref="IFileSystemExtensionContainer.StoreMetadata{T}(string, T)" />
+	/// <inheritdoc cref="IFileSystemExtensibility.StoreMetadata{T}(string, T)" />
 	public void StoreMetadata<T>(string key, T? value)
 	{
 		_metadata[key] = value;
 	}
 
-	/// <inheritdoc cref="IFileSystemExtensionContainer.RetrieveMetadata{T}(string)" />
+	/// <inheritdoc cref="IFileSystemExtensibility.RetrieveMetadata{T}(string)" />
 	public T? RetrieveMetadata<T>(string key)
 	{
 		if (_metadata.TryGetValue(key, out object? value) &&
@@ -34,9 +33,9 @@ internal class FileSystemExtensionContainer : IFileSystemExtensionContainer
 		return default;
 	}
 
-	internal void CopyMetadataTo(IFileSystemExtensionContainer target)
+	internal void CopyMetadataTo(IFileSystemExtensibility target)
 	{
-		if (target is FileSystemExtensionContainer targetContainer)
+		if (target is FileSystemExtensibility targetContainer)
 		{
 			foreach (KeyValuePair<string, object?> item in _metadata)
 			{

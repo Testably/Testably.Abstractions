@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.FileSystem;
@@ -16,7 +15,7 @@ internal sealed class DirectoryInfoFactoryMock : IDirectoryInfoFactory
 
 	#region IDirectoryInfoFactory Members
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem
 		=> _fileSystem;
 

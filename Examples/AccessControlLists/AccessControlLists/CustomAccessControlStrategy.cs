@@ -13,7 +13,7 @@ public sealed class CustomAccessControlStrategy : IAccessControlStrategy
 		_callback = callback;
 	}
 
-	/// <inheritdoc cref="CustomAccessControlStrategy.IsAccessGranted(string, IFileSystemExtensionContainer)" />
-	public bool IsAccessGranted(string fullPath, IFileSystemExtensionContainer extensionContainer)
+	/// <inheritdoc cref="CustomAccessControlStrategy.IsAccessGranted(string, IFileSystemExtensibility)" />
+	public bool IsAccessGranted(string fullPath, IFileSystemExtensibility extensibility)
 		=> _callback(fullPath);
 }

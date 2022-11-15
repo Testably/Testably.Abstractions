@@ -1,6 +1,5 @@
 ﻿using Microsoft.Win32.SafeHandles;
 using System.IO;
-using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
 #if NET6_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
@@ -22,7 +21,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 
 	#region IFileStreamFactory Members
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem
 		=> _fileSystem;
 

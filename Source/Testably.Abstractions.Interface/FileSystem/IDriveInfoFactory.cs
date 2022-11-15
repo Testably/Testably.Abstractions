@@ -6,7 +6,7 @@ namespace Testably.Abstractions.FileSystem;
 /// <summary>
 ///     Factory for abstracting the creation of <see cref="DriveInfo" />.
 /// </summary>
-public interface IDriveInfoFactory : IFileSystemExtensionPoint
+public interface IDriveInfoFactory : IFileSystemEntity
 {
 	/// <inheritdoc cref="DriveInfo.GetDrives()" />
 	IDriveInfo[] GetDrives();

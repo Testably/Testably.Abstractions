@@ -16,7 +16,7 @@ namespace Testably.Abstractions.FileSystem;
 /// <summary>
 ///     Abstractions for <see cref="File" />.
 /// </summary>
-public interface IFile : IFileSystemExtensionPoint
+public interface IFile : IFileSystemEntity
 {
 	/// <inheritdoc cref="File.AppendAllLines(string, IEnumerable{string})" />
 	void AppendAllLines(string path, IEnumerable<string> contents);

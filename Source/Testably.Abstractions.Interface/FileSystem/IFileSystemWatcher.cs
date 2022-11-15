@@ -10,7 +10,7 @@ namespace Testably.Abstractions.FileSystem;
 /// <summary>
 ///     Abstractions for <see cref="FileSystemWatcher" />.
 /// </summary>
-public interface IFileSystemWatcher : IFileSystemExtensionPoint, IDisposable
+public interface IFileSystemWatcher : IFileSystemEntity, IDisposable
 {
 	/// <inheritdoc cref="Component.Container" />
 	IContainer? Container { get; }
@@ -75,22 +75,4 @@ public interface IFileSystemWatcher : IFileSystemExtensionPoint, IDisposable
 	/// <inheritdoc cref="FileSystemWatcher.WaitForChanged(WatcherChangeTypes, TimeSpan)" />
 	IWaitForChangedResult WaitForChanged(WatcherChangeTypes changeType, TimeSpan timeout);
 #endif
-
-	/// <summary>
-	///     Abstractions for <see cref="WaitForChangedResult" />.
-	/// </summary>
-	public interface IWaitForChangedResult
-	{
-		/// <inheritdoc cref="WaitForChangedResult.ChangeType" />
-		WatcherChangeTypes ChangeType { get; }
-
-		/// <inheritdoc cref="WaitForChangedResult.Name" />
-		string? Name { get; }
-
-		/// <inheritdoc cref="WaitForChangedResult.OldName" />
-		string? OldName { get; }
-
-		/// <inheritdoc cref="WaitForChangedResult.TimedOut" />
-		bool TimedOut { get; }
-	}
 }

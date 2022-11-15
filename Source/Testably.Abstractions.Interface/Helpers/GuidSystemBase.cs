@@ -26,7 +26,7 @@ public abstract class GuidSystemBase : IGuid
 	/// <inheritdoc cref="IGuid.Empty" />
 	public Guid Empty => Guid.Empty;
 
-	/// <inheritdoc cref="IRandomSystemExtensionPoint.RandomSystem" />
+	/// <inheritdoc cref="IRandomSystemEntity.RandomSystem" />
 	public IRandomSystem RandomSystem { get; }
 
 	/// <inheritdoc cref="IGuid.NewGuid()" />

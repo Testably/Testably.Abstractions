@@ -1,5 +1,4 @@
 using System.IO;
-using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemInfo;
 
@@ -10,13 +9,13 @@ public abstract partial class Tests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public void ExtensionContainer_ShouldWrapFileSystemInfoOnRealFileSystem(
+	public void Extensibility_ShouldWrapFileSystemInfoOnRealFileSystem(
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
-		bool result = fileInfo.ExtensionContainer
-			.HasWrappedInstance(out System.IO.FileSystemInfo? fileSystemInfo);
+		bool result = fileInfo.Extensibility
+			.TryGetWrappedInstance(out System.IO.FileSystemInfo? fileSystemInfo);
 
 		if (FileSystem is RealFileSystem)
 		{

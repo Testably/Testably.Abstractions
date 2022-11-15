@@ -3,7 +3,7 @@
 /// <summary>
 ///     Factory for abstracting creation of <see cref="System.Random" />.
 /// </summary>
-public interface IRandomFactory : IRandomSystemExtensionPoint
+public interface IRandomFactory : IRandomSystemEntity
 {
 	/// <summary>
 	///     Provides a thread-safe <see cref="IRandom" /> instance that may be used concurrently from any thread.

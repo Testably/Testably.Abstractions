@@ -8,11 +8,11 @@ internal sealed class FileStreamWrapper : FileSystemStream
 		: base(fileStream, fileStream.Name, fileStream.IsAsync)
 
 	{
-		ExtensionContainer = new FileSystemExtensionContainer(fileStream);
+		Extensibility = new FileSystemExtensibility(fileStream);
 	}
 
-	/// <inheritdoc cref="FileSystemStream.ExtensionContainer" />
-	public override IFileSystemExtensionContainer ExtensionContainer
+	/// <inheritdoc cref="FileSystemStream.Extensibility" />
+	public override IFileSystemExtensibility Extensibility
 	{
 		get;
 	}

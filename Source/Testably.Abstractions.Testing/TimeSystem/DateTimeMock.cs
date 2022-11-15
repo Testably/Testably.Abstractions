@@ -36,7 +36,7 @@ internal sealed class DateTimeMock : IDateTime
 		}
 	}
 
-	/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
+	/// <inheritdoc cref="ITimeSystemEntity.TimeSystem" />
 	public ITimeSystem TimeSystem
 		=> _mockTimeSystem;
 

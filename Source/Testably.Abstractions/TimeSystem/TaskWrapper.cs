@@ -13,7 +13,7 @@ internal sealed class TaskWrapper : ITask
 
 	#region ITask Members
 
-	/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
+	/// <inheritdoc cref="ITimeSystemEntity.TimeSystem" />
 	public ITimeSystem TimeSystem { get; }
 
 	/// <inheritdoc cref="ITask.Delay(int)" />

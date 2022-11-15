@@ -14,7 +14,7 @@ internal sealed class DirectoryWrapper : IDirectory
 
 	#region IDirectory Members
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IDirectory.CreateDirectory(string)" />

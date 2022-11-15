@@ -6,7 +6,7 @@ namespace Testably.Abstractions.FileSystem;
 /// <summary>
 ///     Factory for abstracting creation of <see cref="FileStream" />.
 /// </summary>
-public interface IFileStreamFactory : IFileSystemExtensionPoint
+public interface IFileStreamFactory : IFileSystemEntity
 {
 	/// <inheritdoc cref="FileStream(SafeFileHandle, FileAccess)" />
 	FileSystemStream New(SafeFileHandle handle, FileAccess access);

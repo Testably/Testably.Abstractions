@@ -12,7 +12,7 @@ internal sealed class FileSystemWatcherFactory : IFileSystemWatcherFactory
 
 	#region IFileSystemWatcherFactory Members
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IFileSystemWatcherFactory.New()" />

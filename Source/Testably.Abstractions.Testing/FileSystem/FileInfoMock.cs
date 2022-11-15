@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
 
@@ -12,10 +11,13 @@ namespace Testably.Abstractions.Testing.FileSystem;
 internal sealed class FileInfoMock
 	: FileSystemInfoMock, IFileInfo
 {
+	private readonly MockFileSystem _fileSystem;
+
 	private FileInfoMock(IStorageLocation location,
 		MockFileSystem fileSystem)
 		: base(fileSystem, location, FileSystemTypes.File)
 	{
+		_fileSystem = fileSystem;
 	}
 
 	#region IFileInfo Members
@@ -23,7 +25,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.Directory" />
 	public IDirectoryInfo? Directory
 		=> DirectoryInfoMock.New(Location.GetParent(),
-			FileSystem);
+			_fileSystem);
 
 	/// <inheritdoc cref="IFileInfo.DirectoryName" />
 	public string? DirectoryName
@@ -75,37 +77,37 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.CopyTo(string)" />
 	public IFileInfo CopyTo(string destFileName)
 	{
-		destFileName.EnsureValidArgument(FileSystem, nameof(destFileName));
-		IStorageLocation destinationLocation = FileSystem.Storage.GetLocation(destFileName);
-		Location.ThrowExceptionIfNotFound(FileSystem);
-		IStorageLocation location = FileSystem.Storage
+		destFileName.EnsureValidArgument(_fileSystem, nameof(destFileName));
+		IStorageLocation destinationLocation = _fileSystem.Storage.GetLocation(destFileName);
+		Location.ThrowExceptionIfNotFound(_fileSystem);
+		IStorageLocation location = _fileSystem.Storage
 			                            .Copy(Location, destinationLocation)
 		                            ?? throw ExceptionFactory.FileNotFound(FullName);
-		return FileSystem.FileInfo.New(location.FullPath);
+		return _fileSystem.FileInfo.New(location.FullPath);
 	}
 
 	/// <inheritdoc cref="IFileInfo.CopyTo(string, bool)" />
 	public IFileInfo CopyTo(string destFileName, bool overwrite)
 	{
-		destFileName.EnsureValidArgument(FileSystem, nameof(destFileName));
-		IStorageLocation location = FileSystem.Storage.Copy(
+		destFileName.EnsureValidArgument(_fileSystem, nameof(destFileName));
+		IStorageLocation location = _fileSystem.Storage.Copy(
 			                            Location,
-			                            FileSystem.Storage.GetLocation(destFileName),
+			                            _fileSystem.Storage.GetLocation(destFileName),
 			                            overwrite)
 		                            ?? throw ExceptionFactory.FileNotFound(FullName);
-		return FileSystem.FileInfo.New(location.FullPath);
+		return _fileSystem.FileInfo.New(location.FullPath);
 	}
 
 	/// <inheritdoc cref="IFileInfo.Create()" />
 	public FileSystemStream Create()
 	{
 		Execute.NotOnNetFramework(Refresh);
-		return FileSystem.File.Create(FullName);
+		return _fileSystem.File.Create(FullName);
 	}
 
 	/// <inheritdoc cref="IFileInfo.CreateText()" />
 	public StreamWriter CreateText()
-		=> new(FileSystem.File.Create(FullName));
+		=> new(_fileSystem.File.Create(FullName));
 
 	/// <inheritdoc cref="IFileInfo.Decrypt()" />
 	[SupportedOSPlatform("windows")]
@@ -120,10 +122,10 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.MoveTo(string)" />
 	public void MoveTo(string destFileName)
 	{
-		Location = FileSystem.Storage.Move(
+		Location = _fileSystem.Storage.Move(
 			           Location,
-			           FileSystem.Storage.GetLocation(destFileName
-				           .EnsureValidArgument(FileSystem, nameof(destFileName))))
+			           _fileSystem.Storage.GetLocation(destFileName
+				           .EnsureValidArgument(_fileSystem, nameof(destFileName))))
 		           ?? throw ExceptionFactory.FileNotFound(FullName);
 	}
 
@@ -131,10 +133,10 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.MoveTo(string, bool)" />
 	public void MoveTo(string destFileName, bool overwrite)
 	{
-		Location = FileSystem.Storage.Move(
+		Location = _fileSystem.Storage.Move(
 			           Location,
-			           FileSystem.Storage.GetLocation(destFileName
-				           .EnsureValidArgument(FileSystem, nameof(destFileName))),
+			           _fileSystem.Storage.GetLocation(destFileName
+				           .EnsureValidArgument(_fileSystem, nameof(destFileName))),
 			           overwrite)
 		           ?? throw ExceptionFactory.FileNotFound(FullName);
 	}
@@ -147,7 +149,7 @@ internal sealed class FileInfoMock
 			() => throw ExceptionFactory.AppendAccessOnlyInWriteOnlyMode());
 
 		return new FileStreamMock(
-			FileSystem,
+			_fileSystem,
 			FullName,
 			mode,
 			mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite,
@@ -157,7 +159,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.Open(FileMode, FileAccess)" />
 	public FileSystemStream Open(FileMode mode, FileAccess access)
 		=> new FileStreamMock(
-			FileSystem,
+			_fileSystem,
 			FullName,
 			mode,
 			access,
@@ -166,7 +168,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.Open(FileMode, FileAccess, FileShare)" />
 	public FileSystemStream Open(FileMode mode, FileAccess access, FileShare share)
 		=> new FileStreamMock(
-			FileSystem,
+			_fileSystem,
 			FullName,
 			mode,
 			access,
@@ -175,13 +177,13 @@ internal sealed class FileInfoMock
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
 	/// <inheritdoc cref="IFileInfo.Open(FileStreamOptions)" />
 	public FileSystemStream Open(FileStreamOptions options)
-		=> FileSystem.File.Open(FullName, options);
+		=> _fileSystem.File.Open(FullName, options);
 #endif
 
 	/// <inheritdoc cref="IFileInfo.OpenRead()" />
 	public FileSystemStream OpenRead()
 		=> new FileStreamMock(
-			FileSystem,
+			_fileSystem,
 			FullName,
 			FileMode.Open,
 			FileAccess.Read);
@@ -193,7 +195,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.OpenWrite()" />
 	public FileSystemStream OpenWrite()
 		=> new FileStreamMock(
-			FileSystem,
+			_fileSystem,
 			FullName,
 			FileMode.OpenOrCreate,
 			FileAccess.Write,
@@ -204,10 +206,10 @@ internal sealed class FileInfoMock
 		string? destinationBackupFileName)
 	{
 		IStorageLocation location =
-			FileSystem
+			_fileSystem
 				.Storage
 				.Replace(
-					Location.ThrowIfNotFound(FileSystem,
+					Location.ThrowIfNotFound(_fileSystem,
 						() => { },
 						() =>
 						{
@@ -218,10 +220,10 @@ internal sealed class FileInfoMock
 
 							throw ExceptionFactory.DirectoryNotFound(FullName);
 						}),
-					FileSystem.Storage
+					_fileSystem.Storage
 						.GetLocation(destinationFileName
-							.EnsureValidFormat(FileSystem, nameof(destinationFileName)))
-						.ThrowIfNotFound(FileSystem,
+							.EnsureValidFormat(_fileSystem, nameof(destinationFileName)))
+						.ThrowIfNotFound(_fileSystem,
 							() => { },
 							() =>
 							{
@@ -232,9 +234,9 @@ internal sealed class FileInfoMock
 
 								throw ExceptionFactory.FileNotFound(FullName);
 							}),
-					FileSystem.Storage
+					_fileSystem.Storage
 						.GetLocation(destinationBackupFileName)
-						.ThrowIfNotFound(FileSystem,
+						.ThrowIfNotFound(_fileSystem,
 							() => { },
 							() =>
 							{
@@ -246,7 +248,7 @@ internal sealed class FileInfoMock
 								throw ExceptionFactory.DirectoryNotFound(FullName);
 							}))
 			?? throw ExceptionFactory.FileNotFound(FullName);
-		return FileSystem.FileInfo.New(location.FullPath);
+		return _fileSystem.FileInfo.New(location.FullPath);
 	}
 
 	/// <inheritdoc cref="IFileInfo.Replace(string, string?, bool)" />
@@ -254,17 +256,17 @@ internal sealed class FileInfoMock
 		string? destinationBackupFileName,
 		bool ignoreMetadataErrors)
 	{
-		IStorageLocation location = FileSystem.Storage.Replace(
+		IStorageLocation location = _fileSystem.Storage.Replace(
 			                            Location,
-			                            FileSystem.Storage.GetLocation(
+			                            _fileSystem.Storage.GetLocation(
 				                            destinationFileName
-					                            .EnsureValidFormat(FileSystem,
+					                            .EnsureValidFormat(_fileSystem,
 						                            nameof(destinationFileName))),
-			                            FileSystem.Storage.GetLocation(
+			                            _fileSystem.Storage.GetLocation(
 				                            destinationBackupFileName),
 			                            ignoreMetadataErrors)
 		                            ?? throw ExceptionFactory.FileNotFound(FullName);
-		return FileSystem.FileInfo.New(location.FullPath);
+		return _fileSystem.FileInfo.New(location.FullPath);
 	}
 
 	#endregion

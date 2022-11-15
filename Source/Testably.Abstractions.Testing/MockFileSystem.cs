@@ -1,6 +1,5 @@
 ﻿using Microsoft.Win32.SafeHandles;
 using System;
-using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Storage;
 
@@ -116,7 +115,7 @@ public sealed class MockFileSystem : IFileSystem
 	///     The <see cref="IAccessControlStrategy" /> defines a method that receives two values and allows or denies access:
 	///     <br />
 	///     - The full path of the file or directory as first parameter<br />
-	///     - The <see cref="IFileSystemExtensionContainer" /> as second parameter
+	///     - The <see cref="IFileSystemExtensibility" /> as second parameter
 	/// </summary>
 	public MockFileSystem WithAccessControlStrategy(IAccessControlStrategy accessControlStrategy)
 	{

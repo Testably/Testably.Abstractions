@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.TimeSystem;
@@ -19,7 +18,7 @@ internal class InMemoryContainer : IStorageContainer
 	private readonly MockFileSystem _fileSystem;
 	private bool _isEncrypted;
 	private readonly IStorageLocation _location;
-	private readonly FileSystemExtensionContainer _extensionContainer = new();
+	private readonly FileSystemExtensibility _extensibility = new();
 
 	public InMemoryContainer(FileSystemTypes type,
 		IStorageLocation location,
@@ -63,11 +62,11 @@ internal class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.CreationTime" />
 	public ITimeContainer CreationTime { get; } = new TimeContainer();
 
-	/// <inheritdoc cref="IStorageContainer.ExtensionContainer" />
-	public IFileSystemExtensionContainer ExtensionContainer
-		=> _extensionContainer;
+	/// <inheritdoc cref="IStorageContainer.Extensibility" />
+	public IFileSystemExtensibility Extensibility
+		=> _extensibility;
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem => _fileSystem;
 
 	/// <inheritdoc cref="IStorageContainer.LastAccessTime" />
@@ -79,7 +78,7 @@ internal class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.LinkTarget" />
 	public string? LinkTarget { get; set; }
 
-	/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
+	/// <inheritdoc cref="ITimeSystemEntity.TimeSystem" />
 	public ITimeSystem TimeSystem => _fileSystem.TimeSystem;
 
 	/// <inheritdoc cref="IStorageContainer.Type" />
@@ -157,7 +156,7 @@ internal class InMemoryContainer : IStorageContainer
 			() => throw ExceptionFactory.AccessToPathDenied());
 
 		if (!_fileSystem.AccessControlStrategy
-			.IsAccessGranted(_location.FullPath, ExtensionContainer))
+			.IsAccessGranted(_location.FullPath, Extensibility))
 		{
 			throw ExceptionFactory.AclAccessToPathDenied(_location.FullPath);
 		}

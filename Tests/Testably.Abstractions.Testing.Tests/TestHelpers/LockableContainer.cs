@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
-using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
 using Testably.Abstractions.TimeSystem;
@@ -47,11 +46,11 @@ internal sealed class LockableContainer : IStorageContainer
 	public IStorageContainer.ITimeContainer CreationTime { get; }
 		= new InMemoryContainer.TimeContainer();
 
-	/// <inheritdoc cref="IStorageContainer.ExtensionContainer" />
-	public IFileSystemExtensionContainer ExtensionContainer { get; }
-		= new FileSystemExtensionContainer();
+	/// <inheritdoc cref="IStorageContainer.Extensibility" />
+	public IFileSystemExtensibility Extensibility { get; }
+		= new FileSystemExtensibility();
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IStorageContainer.LastAccessTime" />
@@ -65,7 +64,7 @@ internal sealed class LockableContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.LinkTarget" />
 	public string? LinkTarget { get; set; }
 
-	/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
+	/// <inheritdoc cref="ITimeSystemEntity.TimeSystem" />
 	public ITimeSystem TimeSystem { get; }
 
 	/// <inheritdoc cref="IStorageContainer.Type" />

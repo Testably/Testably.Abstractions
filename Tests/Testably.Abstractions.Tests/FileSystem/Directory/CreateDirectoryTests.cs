@@ -1,5 +1,4 @@
 using System.IO;
-using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
@@ -245,7 +244,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 			FileSystem.Path.DirectorySeparatorChar,
 			FileSystem.Path.AltDirectorySeparatorChar));
 		result.FullName.Should().Be(System.IO.Path.Combine(BasePath, expectedName
-		   .Replace(FileSystem.Path.AltDirectorySeparatorChar,
+			.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 				FileSystem.Path.DirectorySeparatorChar)));
 		FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
 	}
@@ -267,7 +266,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 			FileSystem.Path.DirectorySeparatorChar,
 			FileSystem.Path.AltDirectorySeparatorChar));
 		result.FullName.Should().Be(System.IO.Path.Combine(BasePath, expectedName
-		   .Replace(FileSystem.Path.AltDirectorySeparatorChar,
+			.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 				FileSystem.Path.DirectorySeparatorChar)));
 		FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
 	}

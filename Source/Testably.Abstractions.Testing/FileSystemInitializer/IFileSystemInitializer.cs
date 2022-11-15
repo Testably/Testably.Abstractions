@@ -1,6 +1,4 @@
-﻿using Testably.Abstractions.FileSystem;
-
-namespace Testably.Abstractions.Testing.FileSystemInitializer;
+﻿namespace Testably.Abstractions.Testing.FileSystemInitializer;
 
 /// <summary>
 ///     Initializes the <see cref="IFileSystem" /> with test data.

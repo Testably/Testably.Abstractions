@@ -1,5 +1,3 @@
-using Testably.Abstractions.FileSystem;
-
 namespace Testably.Abstractions.Tests.FileSystem.DriveInfo;
 
 // ReSharper disable once PartialTypeWithSinglePart

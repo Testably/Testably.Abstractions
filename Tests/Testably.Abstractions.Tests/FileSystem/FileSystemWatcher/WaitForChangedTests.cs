@@ -1,7 +1,6 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
@@ -35,7 +34,7 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 			using (CancellationTokenSource cts = new(5000))
 			{
 				cts.Token.Register(() => throw new TimeoutException());
-				IFileSystemWatcher.IWaitForChangedResult result =
+				IWaitForChangedResult result =
 					fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created);
 				fileSystemWatcher.EnableRaisingEvents.Should().BeFalse();
 				result.TimedOut.Should().BeFalse();
@@ -72,7 +71,7 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 					FileSystem.Directory.Delete(path);
 				}
 			});
-			IFileSystemWatcher.IWaitForChangedResult result =
+			IWaitForChangedResult result =
 				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed, 100);
 
 			fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();

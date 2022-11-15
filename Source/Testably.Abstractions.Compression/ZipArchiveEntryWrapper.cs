@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
-using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Internal;
 
 namespace Testably.Abstractions;
@@ -53,7 +52,7 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 	}
 #endif
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IZipArchiveEntry.FullName" />

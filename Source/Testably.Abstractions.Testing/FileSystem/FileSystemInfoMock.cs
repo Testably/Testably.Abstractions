@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
 
@@ -10,7 +9,7 @@ internal class FileSystemInfoMock : IFileSystemInfo
 {
 	protected FileSystemTypes FileSystemType { get; }
 	protected IStorageLocation Location;
-	protected readonly MockFileSystem FileSystem;
+	private readonly MockFileSystem _fileSystem;
 
 	protected IStorageContainer Container
 	{
@@ -33,7 +32,7 @@ internal class FileSystemInfoMock : IFileSystemInfo
 	protected FileSystemInfoMock(MockFileSystem fileSystem, IStorageLocation location,
 		FileSystemTypes fileSystemType)
 	{
-		FileSystem = fileSystem;
+		_fileSystem = fileSystem;
 		Location = location;
 		_container = fileSystem.Storage.GetContainer(location);
 		FileSystemType = _container is not NullContainer
@@ -54,9 +53,9 @@ internal class FileSystemInfoMock : IFileSystemInfo
 	/// <inheritdoc cref="IFileSystemInfo.CreateAsSymbolicLink(string)" />
 	public void CreateAsSymbolicLink(string pathToTarget)
 	{
-		FullName.EnsureValidFormat(FileSystem);
-		pathToTarget.ThrowCommonExceptionsIfPathToTargetIsInvalid(FileSystem);
-		if (FileSystem.Storage.TryAddContainer(Location, InMemoryContainer.NewFile,
+		FullName.EnsureValidFormat(_fileSystem);
+		pathToTarget.ThrowCommonExceptionsIfPathToTargetIsInvalid(_fileSystem);
+		if (_fileSystem.Storage.TryAddContainer(Location, InMemoryContainer.NewFile,
 			out IStorageContainer? container))
 		{
 			Container = container;
@@ -87,7 +86,7 @@ internal class FileSystemInfoMock : IFileSystemInfo
 	/// <inheritdoc cref="IFileSystemInfo.Delete()" />
 	public virtual void Delete()
 	{
-		FileSystem.Storage.DeleteContainer(Location);
+		_fileSystem.Storage.DeleteContainer(Location);
 		ResetCache(!Execute.IsNetFramework);
 	}
 
@@ -114,13 +113,17 @@ internal class FileSystemInfoMock : IFileSystemInfo
 				return ".";
 			}
 
-			return FileSystem.Path.GetExtension(Location.FullPath);
+			return _fileSystem.Path.GetExtension(Location.FullPath);
 		}
 	}
 
-	/// <inheritdoc cref="IFileSystemInfo.ExtensionContainer" />
-	public IFileSystemExtensionContainer ExtensionContainer
-		=> Container.ExtensionContainer;
+	/// <inheritdoc cref="IFileSystemInfo.Extensibility" />
+	public IFileSystemExtensibility Extensibility
+		=> Container.Extensibility;
+
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
+	public IFileSystem FileSystem
+		=> _fileSystem;
 
 	/// <inheritdoc cref="IFileSystemInfo.FullName" />
 	public string FullName => Location.FullPath;
@@ -161,11 +164,11 @@ internal class FileSystemInfoMock : IFileSystemInfo
 
 	/// <inheritdoc cref="IFileSystemInfo.Name" />
 	public string Name
-		=> FileSystem.Path.GetPathRoot(Location.FullPath) == Location.FullPath
+		=> _fileSystem.Path.GetPathRoot(Location.FullPath) == Location.FullPath
 			? Location.FullPath
-			: FileSystem.Path.GetFileName(Location.FullPath.TrimEnd(
-				FileSystem.Path.DirectorySeparatorChar,
-				FileSystem.Path.AltDirectorySeparatorChar));
+			: _fileSystem.Path.GetFileName(Location.FullPath.TrimEnd(
+				_fileSystem.Path.DirectorySeparatorChar,
+				_fileSystem.Path.AltDirectorySeparatorChar));
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 	/// <inheritdoc cref="IFileSystemInfo.UnixFileMode" />
@@ -196,12 +199,12 @@ internal class FileSystemInfoMock : IFileSystemInfo
 		try
 		{
 			IStorageLocation? targetLocation =
-				FileSystem.Storage.ResolveLinkTarget(
+				_fileSystem.Storage.ResolveLinkTarget(
 					Location,
 					returnFinalTarget);
 			if (targetLocation != null)
 			{
-				return New(targetLocation, FileSystem);
+				return New(targetLocation, _fileSystem);
 			}
 
 			return null;
@@ -259,7 +262,7 @@ internal class FileSystemInfoMock : IFileSystemInfo
 			return;
 		}
 
-		Container = FileSystem.Storage.GetContainer(Location);
+		Container = _fileSystem.Storage.GetContainer(Location);
 		_isInitialized = true;
 	}
 }

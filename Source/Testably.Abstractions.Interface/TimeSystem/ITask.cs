@@ -7,7 +7,7 @@ namespace Testably.Abstractions.TimeSystem;
 /// <summary>
 ///     Abstractions for <see cref="Task" />.
 /// </summary>
-public interface ITask : ITimeSystemExtensionPoint
+public interface ITask : ITimeSystemEntity
 {
 	/// <inheritdoc cref="Task.Delay(int)" />
 	Task Delay(int millisecondsDelay);

@@ -1,5 +1,4 @@
 ﻿using System;
-using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Testing;

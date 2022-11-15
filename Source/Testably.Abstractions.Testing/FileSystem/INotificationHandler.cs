@@ -1,12 +1,11 @@
 ﻿using System;
-using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
 /// <summary>
 ///     The notification handler for the <see cref="MockFileSystem" />.
 /// </summary>
-public interface INotificationHandler : IFileSystemExtensionPoint
+public interface INotificationHandler : IFileSystemEntity
 {
 	/// <summary>
 	///     Callback executed when any change in the <see cref="MockFileSystem" /> matching the <paramref name="predicate" />

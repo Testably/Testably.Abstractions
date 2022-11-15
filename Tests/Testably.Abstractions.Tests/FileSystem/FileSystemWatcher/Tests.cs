@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
@@ -38,7 +37,7 @@ public abstract partial class Tests<TFileSystem>
 					FileSystem.Directory.Delete(path);
 				}
 			});
-			IFileSystemWatcher.IWaitForChangedResult result =
+			IWaitForChangedResult result =
 				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, 1000);
 
 			fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
@@ -90,7 +89,7 @@ public abstract partial class Tests<TFileSystem>
 					FileSystem.Directory.Delete(path);
 				}
 			});
-			IFileSystemWatcher.IWaitForChangedResult result =
+			IWaitForChangedResult result =
 				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, 100);
 
 			fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();

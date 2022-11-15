@@ -6,7 +6,7 @@ namespace Testably.Abstractions.FileSystem;
 /// <summary>
 ///     Abstractions for <see cref="DriveInfo" />.
 /// </summary>
-public interface IDriveInfo : IFileSystemExtensionPoint
+public interface IDriveInfo : IFileSystemEntity
 {
 	/// <inheritdoc cref="DriveInfo.AvailableFreeSpace" />
 	long AvailableFreeSpace { get; }

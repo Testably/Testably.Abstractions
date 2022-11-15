@@ -6,7 +6,7 @@ namespace Testably.Abstractions.FileSystem;
 /// <summary>
 ///     Factory for abstracting the creation of <see cref="FileSystemWatcher" />.
 /// </summary>
-public interface IFileSystemWatcherFactory : IFileSystemExtensionPoint
+public interface IFileSystemWatcherFactory : IFileSystemEntity
 {
 	/// <inheritdoc cref="FileSystemWatcher()" />
 	IFileSystemWatcher New();

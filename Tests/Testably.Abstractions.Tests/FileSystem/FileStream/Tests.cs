@@ -1,6 +1,5 @@
 using System.IO;
 using System.Threading.Tasks;
-using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
@@ -125,13 +124,13 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void ExtensionContainer_ShouldWrapFileStreamOnRealFileSystem(
+	public void Extensibility_ShouldWrapFileStreamOnRealFileSystem(
 		string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 		using FileSystemStream readStream = FileSystem.File.OpenRead(path);
-		bool result = readStream.ExtensionContainer
-			.HasWrappedInstance(out System.IO.FileStream? fileStream);
+		bool result = readStream.Extensibility
+			.TryGetWrappedInstance(out System.IO.FileStream? fileStream);
 
 		if (FileSystem is RealFileSystem)
 		{

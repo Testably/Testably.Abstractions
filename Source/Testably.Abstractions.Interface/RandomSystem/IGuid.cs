@@ -8,7 +8,7 @@ namespace Testably.Abstractions.RandomSystem;
 /// <summary>
 ///     Abstractions for <see cref="Guid" />.
 /// </summary>
-public interface IGuid : IRandomSystemExtensionPoint
+public interface IGuid : IRandomSystemEntity
 {
 	/// <inheritdoc cref="Guid.Empty" />
 	Guid Empty { get; }

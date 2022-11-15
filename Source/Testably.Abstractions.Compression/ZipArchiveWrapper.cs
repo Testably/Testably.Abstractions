@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.IO.Compression;
 using System.Linq;
-using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Internal;
 
 namespace Testably.Abstractions;
@@ -32,7 +31,7 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 	public ReadOnlyCollection<IZipArchiveEntry> Entries
 		=> MapToZipArchiveEntries(_instance.Entries);
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IZipArchive.Mode" />

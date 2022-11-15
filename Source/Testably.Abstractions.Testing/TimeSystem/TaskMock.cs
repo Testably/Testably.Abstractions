@@ -20,7 +20,7 @@ internal sealed class TaskMock : ITask
 
 	#region ITask Members
 
-	/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
+	/// <inheritdoc cref="ITimeSystemEntity.TimeSystem" />
 	public ITimeSystem TimeSystem
 		=> _mockTimeSystem;
 

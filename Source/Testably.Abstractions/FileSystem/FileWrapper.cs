@@ -1,11 +1,11 @@
-﻿#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-using Microsoft.Win32.SafeHandles;
-#endif
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+using Microsoft.Win32.SafeHandles;
+#endif
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,7 +22,7 @@ internal sealed class FileWrapper : IFile
 
 	#region IFile Members
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IFile.AppendAllLines(string, IEnumerable{string})" />

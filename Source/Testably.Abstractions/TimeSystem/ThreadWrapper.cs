@@ -12,7 +12,7 @@ internal sealed class ThreadWrapper : IThread
 
 	#region IThread Members
 
-	/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
+	/// <inheritdoc cref="ITimeSystemEntity.TimeSystem" />
 	public ITimeSystem TimeSystem { get; }
 
 	/// <inheritdoc cref="IThread.Sleep(int)" />

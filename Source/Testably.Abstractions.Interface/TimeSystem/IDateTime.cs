@@ -5,7 +5,7 @@ namespace Testably.Abstractions.TimeSystem;
 /// <summary>
 ///     Abstractions for <see cref="DateTime" />.
 /// </summary>
-public interface IDateTime : ITimeSystemExtensionPoint
+public interface IDateTime : ITimeSystemEntity
 {
 	/// <inheritdoc cref="DateTime.MaxValue" />
 	DateTime MaxValue { get; }

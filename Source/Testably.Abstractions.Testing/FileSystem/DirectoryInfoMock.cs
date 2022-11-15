@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
 
@@ -14,10 +13,13 @@ namespace Testably.Abstractions.Testing.FileSystem;
 internal sealed class DirectoryInfoMock
 	: FileSystemInfoMock, IDirectoryInfo
 {
+	private readonly MockFileSystem _fileSystem;
+
 	private DirectoryInfoMock(IStorageLocation location,
 		MockFileSystem fileSystem)
 		: base(fileSystem, location, FileSystemTypes.Directory)
 	{
+		_fileSystem = fileSystem;
 	}
 
 	#region IDirectoryInfo Members
@@ -28,21 +30,21 @@ internal sealed class DirectoryInfoMock
 
 	/// <inheritdoc cref="IDirectoryInfo.Parent" />
 	public IDirectoryInfo? Parent
-		=> New(Location.GetParent(), FileSystem);
+		=> New(Location.GetParent(), _fileSystem);
 
 	/// <inheritdoc cref="IDirectoryInfo.Root" />
 	public IDirectoryInfo Root
-		=> New(FileSystem.Storage.GetLocation(string.Empty.PrefixRoot()),
-			FileSystem);
+		=> New(_fileSystem.Storage.GetLocation(string.Empty.PrefixRoot()),
+			_fileSystem);
 
 	/// <inheritdoc cref="IDirectoryInfo.Create()" />
 	public void Create()
 	{
-		FullName.EnsureValidFormat(FileSystem);
+		FullName.EnsureValidFormat(_fileSystem);
 
-		Container = FileSystem.Storage.GetOrCreateContainer(Location,
+		Container = _fileSystem.Storage.GetOrCreateContainer(Location,
 			InMemoryContainer.NewDirectory,
-			ExtensionContainer);
+			Extensibility);
 
 		ResetCache(!Execute.IsNetFramework);
 	}
@@ -51,11 +53,11 @@ internal sealed class DirectoryInfoMock
 	public IDirectoryInfo CreateSubdirectory(string path)
 	{
 		DirectoryInfoMock directory = New(
-			FileSystem.Storage.GetLocation(
-				FileSystem.Path.Combine(FullName, path
-					.EnsureValidFormat(FileSystem, nameof(path),
+			_fileSystem.Storage.GetLocation(
+				_fileSystem.Path.Combine(FullName, path
+					.EnsureValidFormat(_fileSystem, nameof(path),
 						Execute.IsWindows && !Execute.IsNetFramework))),
-			FileSystem);
+			_fileSystem);
 		directory.Create();
 		return directory;
 	}
@@ -63,7 +65,7 @@ internal sealed class DirectoryInfoMock
 	/// <inheritdoc />
 	public override void Delete()
 	{
-		if (!FileSystem.Storage.DeleteContainer(Location))
+		if (!_fileSystem.Storage.DeleteContainer(Location))
 		{
 			throw ExceptionFactory.DirectoryNotFound(Location.FullPath);
 		}
@@ -74,8 +76,8 @@ internal sealed class DirectoryInfoMock
 	/// <inheritdoc cref="IDirectoryInfo.Delete(bool)" />
 	public void Delete(bool recursive)
 	{
-		if (!FileSystem.Storage.DeleteContainer(
-			FileSystem.Storage.GetLocation(FullName), recursive))
+		if (!_fileSystem.Storage.DeleteContainer(
+			_fileSystem.Storage.GetLocation(FullName), recursive))
 		{
 			throw ExceptionFactory.DirectoryNotFound(FullName);
 		}
@@ -101,7 +103,7 @@ internal sealed class DirectoryInfoMock
 				FullName,
 				searchPattern,
 				EnumerationOptionsHelper.FromSearchOption(searchOption))
-			.Select(location => New(location, FileSystem));
+			.Select(location => New(location, _fileSystem));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateDirectories(string, EnumerationOptions)" />
@@ -112,7 +114,7 @@ internal sealed class DirectoryInfoMock
 				FullName,
 				searchPattern,
 				enumerationOptions)
-			.Select(location => New(location, FileSystem));
+			.Select(location => New(location, _fileSystem));
 #endif
 
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateFiles()" />
@@ -132,7 +134,7 @@ internal sealed class DirectoryInfoMock
 				FullName,
 				searchPattern,
 				EnumerationOptionsHelper.FromSearchOption(searchOption))
-			.Select(location => FileInfoMock.New(location, FileSystem));
+			.Select(location => FileInfoMock.New(location, _fileSystem));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateFiles(string, EnumerationOptions)" />
@@ -142,7 +144,7 @@ internal sealed class DirectoryInfoMock
 				FullName,
 				searchPattern,
 				enumerationOptions)
-			.Select(location => FileInfoMock.New(location, FileSystem));
+			.Select(location => FileInfoMock.New(location, _fileSystem));
 #endif
 
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateFileSystemInfos()" />
@@ -163,7 +165,7 @@ internal sealed class DirectoryInfoMock
 				FullName,
 				searchPattern,
 				EnumerationOptionsHelper.FromSearchOption(searchOption))
-			.Select(location => FileSystemInfoMock.New(location, FileSystem));
+			.Select(location => FileSystemInfoMock.New(location, _fileSystem));
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateFileSystemInfos(string, EnumerationOptions)" />
@@ -174,7 +176,7 @@ internal sealed class DirectoryInfoMock
 				FullName,
 				searchPattern,
 				enumerationOptions)
-			.Select(location => FileSystemInfoMock.New(location, FileSystem));
+			.Select(location => FileSystemInfoMock.New(location, _fileSystem));
 #endif
 
 	/// <inheritdoc cref="IDirectoryInfo.GetDirectories()" />
@@ -241,10 +243,10 @@ internal sealed class DirectoryInfoMock
 
 	/// <inheritdoc cref="IDirectoryInfo.MoveTo(string)" />
 	public void MoveTo(string destDirName)
-		=> Location = FileSystem.Storage.Move(
-			              FileSystem.Storage.GetLocation(FullName),
-			              FileSystem.Storage.GetLocation(destDirName
-				              .EnsureValidFormat(FileSystem, nameof(destDirName))),
+		=> Location = _fileSystem.Storage.Move(
+			              _fileSystem.Storage.GetLocation(FullName),
+			              _fileSystem.Storage.GetLocation(destDirName
+				              .EnsureValidFormat(_fileSystem, nameof(destDirName))),
 			              recursive: true)
 		              ?? throw ExceptionFactory.DirectoryNotFound(FullName);
 
@@ -268,11 +270,11 @@ internal sealed class DirectoryInfoMock
 		string searchPattern,
 		EnumerationOptions enumerationOptions)
 	{
-		StorageExtensions.AdjustedLocation adjustedLocation = FileSystem.Storage
+		StorageExtensions.AdjustedLocation adjustedLocation = _fileSystem.Storage
 			.AdjustLocationFromSearchPattern(
-				path.EnsureValidFormat(FileSystem),
+				path.EnsureValidFormat(_fileSystem),
 				searchPattern);
-		return FileSystem.Storage.EnumerateLocations(
+		return _fileSystem.Storage.EnumerateLocations(
 			adjustedLocation.Location,
 			fileSystemTypes,
 			adjustedLocation.SearchPattern,

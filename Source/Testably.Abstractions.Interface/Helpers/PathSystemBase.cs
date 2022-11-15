@@ -32,7 +32,7 @@ public abstract class PathSystemBase : IPath
 	public char DirectorySeparatorChar
 		=> Path.DirectorySeparatorChar;
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="Path.PathSeparator" />

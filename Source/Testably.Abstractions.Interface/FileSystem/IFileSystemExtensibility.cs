@@ -5,7 +5,7 @@ namespace Testably.Abstractions.FileSystem;
 /// <summary>
 ///     A container to support extensions on <see cref="IFileSystem" /> entities.
 /// </summary>
-public interface IFileSystemExtensionContainer
+public interface IFileSystemExtensibility
 {
 	/// <summary>
 	///     The wrapped instance on a real file system.
@@ -14,7 +14,7 @@ public interface IFileSystemExtensionContainer
 	///     <see langword="null" /> when not on a real file system or if the requested type does not match,
 	///     otherwise the wrapped instance.
 	/// </returns>
-	bool HasWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance);
+	bool TryGetWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance);
 
 	/// <summary>
 	///     Stores additional metadata to the <see cref="IFileSystemInfo" />.

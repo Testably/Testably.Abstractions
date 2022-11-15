@@ -15,7 +15,7 @@ internal sealed class FileStreamFactory : IFileStreamFactory
 
 	#region IFileStreamFactory Members
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IFileStreamFactory.New(string, FileMode)" />

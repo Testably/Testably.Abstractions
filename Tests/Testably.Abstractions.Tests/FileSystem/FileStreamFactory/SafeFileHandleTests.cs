@@ -2,7 +2,6 @@
 using Microsoft.Win32.SafeHandles;
 using System.IO;
 using System.Text;
-using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStreamFactory;

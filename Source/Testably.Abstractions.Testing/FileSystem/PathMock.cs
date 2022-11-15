@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Helpers;
 #if FEATURE_FILESYSTEM_NET7
 using System.Diagnostics.CodeAnalysis;

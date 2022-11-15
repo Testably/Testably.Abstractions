@@ -1,5 +1,4 @@
 ﻿using System;
-using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Testing.FileSystemInitializer;
 
@@ -44,7 +43,7 @@ internal sealed class FileInitializer<TFileSystem>
 		/// <inheritdoc cref="IFileManipulator.File" />
 		public IFileInfo File { get; }
 
-		/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+		/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 		public IFileSystem FileSystem { get; }
 
 		/// <inheritdoc cref="IFileManipulator.HasBytesContent" />

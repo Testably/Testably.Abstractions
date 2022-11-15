@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;
@@ -23,7 +22,7 @@ internal sealed class ChangeHandler : IInterceptionHandler,
 
 	#region IInterceptionHandler Members
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem => _mockFileSystem;
 
 	/// <inheritdoc

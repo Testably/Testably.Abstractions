@@ -5,7 +5,7 @@ namespace Testably.Abstractions.TimeSystem;
 /// <summary>
 ///     Abstractions for <see cref="System.Threading.Thread" />.
 /// </summary>
-public interface IThread : ITimeSystemExtensionPoint
+public interface IThread : ITimeSystemEntity
 {
 	/// <inheritdoc cref="System.Threading.Thread.Sleep(int)" />
 	void Sleep(int millisecondsTimeout);

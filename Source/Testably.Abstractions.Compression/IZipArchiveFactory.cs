@@ -1,12 +1,11 @@
 ﻿using System.IO;
 using System.IO.Compression;
 using System.Text;
-using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions;
 
 /// <inheritdoc cref="ZipArchive" />
-public interface IZipArchiveFactory : IFileSystemExtensionPoint
+public interface IZipArchiveFactory : IFileSystemEntity
 {
 	/// <inheritdoc cref="ZipArchive(Stream)" />
 	IZipArchive New(Stream stream);

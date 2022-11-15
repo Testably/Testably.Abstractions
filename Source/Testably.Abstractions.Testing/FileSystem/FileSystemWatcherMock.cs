@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
 
@@ -67,7 +66,7 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		}
 	}
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem
 		=> _fileSystem;
 
@@ -166,18 +165,18 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	public event RenamedEventHandler? Renamed;
 
 	/// <inheritdoc cref="IFileSystemWatcher.WaitForChanged(WatcherChangeTypes)" />
-	public IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
+	public IWaitForChangedResult WaitForChanged(
 		WatcherChangeTypes changeType)
 		=> WaitForChanged(changeType, Timeout.Infinite);
 
 	/// <inheritdoc cref="IFileSystemWatcher.WaitForChanged(WatcherChangeTypes, int)" />
-	public IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
+	public IWaitForChangedResult WaitForChanged(
 		WatcherChangeTypes changeType, int timeout)
 		=> WaitForChangedInternal(changeType, TimeSpan.FromMilliseconds(timeout));
 
 #if FEATURE_FILESYSTEM_NET7
 	/// <inheritdoc cref="IFileSystemWatcher.WaitForChanged(WatcherChangeTypes, TimeSpan)" />
-	public IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
+	public IWaitForChangedResult WaitForChanged(
 		WatcherChangeTypes changeType, TimeSpan timeout)
 		=> WaitForChangedInternal(changeType, timeout);
 #endif
@@ -437,10 +436,10 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				InMemoryLocation.StringComparisonMode) ?? true;
 	}
 
-	private IFileSystemWatcher.IWaitForChangedResult WaitForChangedInternal(
+	private IWaitForChangedResult WaitForChangedInternal(
 		WatcherChangeTypes changeType, TimeSpan timeout)
 	{
-		TaskCompletionSource<IFileSystemWatcher.IWaitForChangedResult>
+		TaskCompletionSource<IWaitForChangedResult>
 			tcs = new();
 
 		void EventHandler(object? _, ChangeDescription c)
@@ -480,8 +479,7 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 #endif
 	}
 
-	private struct WaitForChangedResultMock
-		: IFileSystemWatcher.IWaitForChangedResult
+	private struct WaitForChangedResultMock : IWaitForChangedResult
 	{
 		public WaitForChangedResultMock(
 			WatcherChangeTypes changeType,
@@ -501,16 +499,16 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		public static readonly WaitForChangedResultMock TimedOutResult =
 			new(changeType: 0, name: null, oldName: null, timedOut: true);
 
-		/// <inheritdoc cref="IFileSystemWatcher.IWaitForChangedResult.ChangeType" />
+		/// <inheritdoc cref="IWaitForChangedResult.ChangeType" />
 		public WatcherChangeTypes ChangeType { get; }
 
-		/// <inheritdoc cref="IFileSystemWatcher.IWaitForChangedResult.Name" />
+		/// <inheritdoc cref="IWaitForChangedResult.Name" />
 		public string? Name { get; }
 
-		/// <inheritdoc cref="IFileSystemWatcher.IWaitForChangedResult.OldName" />
+		/// <inheritdoc cref="IWaitForChangedResult.OldName" />
 		public string? OldName { get; }
 
-		/// <inheritdoc cref="IFileSystemWatcher.IWaitForChangedResult.TimedOut" />
+		/// <inheritdoc cref="IWaitForChangedResult.TimedOut" />
 		public bool TimedOut { get; }
 	}
 }

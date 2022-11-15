@@ -27,7 +27,7 @@ internal sealed class DriveInfoWrapper : IDriveInfo
 	public DriveType DriveType
 		=> _instance.DriveType;
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IDriveInfo.IsReady" />

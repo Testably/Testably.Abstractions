@@ -1,11 +1,9 @@
-﻿using Testably.Abstractions.FileSystem;
-
-namespace Testably.Abstractions.Testing.FileSystemInitializer;
+﻿namespace Testably.Abstractions.Testing.FileSystemInitializer;
 
 /// <summary>
 ///     Manipulates the <see cref="File" /> in the <see cref="IFileSystem" /> with test data.
 /// </summary>
-public interface IFileManipulator : IFileSystemExtensionPoint
+public interface IFileManipulator : IFileSystemEntity
 {
 	/// <summary>
 	///     The file to initialize.

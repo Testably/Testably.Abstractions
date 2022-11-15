@@ -1,6 +1,5 @@
 using System.IO;
 using System.Threading;
-using Testably.Abstractions.FileSystem;
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading.Tasks;
 #endif

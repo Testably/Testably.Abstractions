@@ -3,8 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+#if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
-using Testably.Abstractions.FileSystem;
+#endif
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.Storage;
@@ -8,8 +7,8 @@ namespace Testably.Abstractions.Testing.Storage;
 /// <summary>
 ///     A container for a stored file or directory in the <see cref="IStorage" />.
 /// </summary>
-internal interface IStorageContainer : IFileSystemExtensionPoint,
-	ITimeSystemExtensionPoint
+internal interface IStorageContainer : IFileSystemEntity,
+	ITimeSystemEntity
 {
 	/// <inheritdoc cref="System.IO.FileSystemInfo.Attributes" />
 	FileAttributes Attributes { get; set; }
@@ -20,7 +19,7 @@ internal interface IStorageContainer : IFileSystemExtensionPoint,
 	/// <summary>
 	///     A container to support extensions on <see cref="IStorageContainer" />.
 	/// </summary>
-	IFileSystemExtensionContainer ExtensionContainer { get; }
+	IFileSystemExtensibility Extensibility { get; }
 
 	/// <inheritdoc cref="System.IO.FileSystemInfo.LastAccessTime" />
 	ITimeContainer LastAccessTime { get; }

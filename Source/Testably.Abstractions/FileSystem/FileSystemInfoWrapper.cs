@@ -13,7 +13,7 @@ internal class FileSystemInfoWrapper : IFileSystemInfo
 	{
 		_instance = instance;
 		_fileSystem = fileSystem;
-		ExtensionContainer = new FileSystemExtensionContainer(_instance);
+		Extensibility = new FileSystemExtensibility(_instance);
 	}
 
 	#region IFileSystemInfo Members
@@ -47,8 +47,12 @@ internal class FileSystemInfoWrapper : IFileSystemInfo
 	public string Extension
 		=> _instance.Extension;
 
-	/// <inheritdoc cref="IFileSystemInfo.ExtensionContainer" />
-	public IFileSystemExtensionContainer ExtensionContainer { get; }
+	/// <inheritdoc cref="IFileSystemInfo.Extensibility" />
+	public IFileSystemExtensibility Extensibility { get; }
+
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
+	public IFileSystem FileSystem
+		=> _fileSystem;
 
 	/// <inheritdoc cref="IFileSystemInfo.FullName" />
 	public string FullName
