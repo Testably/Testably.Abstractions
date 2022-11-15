@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
-using Testably.Abstractions.FileSystem;
+using System.Linq.Expressions;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 

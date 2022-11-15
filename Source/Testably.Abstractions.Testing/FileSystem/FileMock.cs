@@ -6,8 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Text;
-using Testably.Abstractions.FileSystem;
+using System.Text;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
 #if FEATURE_FILESYSTEM_ASYNC

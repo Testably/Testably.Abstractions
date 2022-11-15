@@ -1,5 +1,4 @@
-using System.Threading;
-using Testably.Abstractions.FileSystem;
+using System.Threading;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 

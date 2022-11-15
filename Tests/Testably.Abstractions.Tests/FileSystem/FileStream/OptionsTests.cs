@@ -1,6 +1,5 @@
 using System.IO;
-using System.Text;
-using Testably.Abstractions.FileSystem;
+using System.Text;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 

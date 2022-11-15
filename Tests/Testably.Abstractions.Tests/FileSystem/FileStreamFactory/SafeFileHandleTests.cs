@@ -1,8 +1,7 @@
 #if EXECUTE_SAFEFILEHANDLE_TESTS
 using Microsoft.Win32.SafeHandles;
 using System.IO;
-using System.Text;
-using Testably.Abstractions.FileSystem;
+using System.Text;
 using Testably.Abstractions.Testing.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStreamFactory;

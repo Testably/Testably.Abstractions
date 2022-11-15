@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using Testably.Abstractions.FileSystem;
+using System.Linq;
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchive;
 

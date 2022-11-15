@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
-using Testably.Abstractions.FileSystem;
+using System.Linq;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
 

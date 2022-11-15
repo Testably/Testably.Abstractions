@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.IO.Compression;
-using Testably.Abstractions.FileSystem;
+using System.IO.Compression;
 
 namespace Testably.Abstractions.Parity.Tests.TestHelpers;
 

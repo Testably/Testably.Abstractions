@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.IO.Compression;
-using Testably.Abstractions.FileSystem;
+using System.IO.Compression;
 using Testably.Abstractions.Internal;
 
 namespace Testably.Abstractions;

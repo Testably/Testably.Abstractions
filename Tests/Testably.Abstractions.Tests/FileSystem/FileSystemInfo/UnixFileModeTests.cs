@@ -1,6 +1,5 @@
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
-using System.IO;
-using Testably.Abstractions.FileSystem;
+using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemInfo;
 

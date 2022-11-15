@@ -2,8 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Threading;
-using Testably.Abstractions.FileSystem;
+using System.Threading;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
