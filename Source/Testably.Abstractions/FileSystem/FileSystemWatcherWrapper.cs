@@ -138,19 +138,19 @@ internal sealed class FileSystemWatcherWrapper : IFileSystemWatcher
 		=> _instance.EndInit();
 
 	/// <inheritdoc cref="IFileSystemWatcher.WaitForChanged(WatcherChangeTypes)" />
-	public IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
+	public IWaitForChangedResult WaitForChanged(
 		WatcherChangeTypes changeType)
 		=> new WaitForChangedResultWrapper(_instance.WaitForChanged(changeType));
 
 	/// <inheritdoc cref="IFileSystemWatcher.WaitForChanged(WatcherChangeTypes, int)" />
-	public IFileSystemWatcher.IWaitForChangedResult WaitForChanged(
+	public IWaitForChangedResult WaitForChanged(
 		WatcherChangeTypes changeType, int timeout)
 		=> new WaitForChangedResultWrapper(
 			_instance.WaitForChanged(changeType, timeout));
 
 #if FEATURE_FILESYSTEM_NET7
 	/// <inheritdoc cref="IFileSystemWatcher.WaitForChanged(WatcherChangeTypes, TimeSpan)" />
-	public IFileSystemWatcher.IWaitForChangedResult WaitForChanged(WatcherChangeTypes changeType,
+	public IWaitForChangedResult WaitForChanged(WatcherChangeTypes changeType,
 		TimeSpan timeout)
 		=> new WaitForChangedResultWrapper(
 			_instance.WaitForChanged(changeType, timeout));
@@ -171,7 +171,7 @@ internal sealed class FileSystemWatcherWrapper : IFileSystemWatcher
 	}
 
 	private readonly struct WaitForChangedResultWrapper
-		: IFileSystemWatcher.IWaitForChangedResult
+		: IWaitForChangedResult
 	{
 		private readonly WaitForChangedResult _instance;
 
@@ -180,19 +180,19 @@ internal sealed class FileSystemWatcherWrapper : IFileSystemWatcher
 			_instance = instance;
 		}
 
-		/// <inheritdoc cref="IFileSystemWatcher.IWaitForChangedResult.ChangeType" />
+		/// <inheritdoc cref="IWaitForChangedResult.ChangeType" />
 		public WatcherChangeTypes ChangeType
 			=> _instance.ChangeType;
 
-		/// <inheritdoc cref="IFileSystemWatcher.IWaitForChangedResult.Name" />
+		/// <inheritdoc cref="IWaitForChangedResult.Name" />
 		public string? Name
 			=> _instance.Name;
 
-		/// <inheritdoc cref="IFileSystemWatcher.IWaitForChangedResult.OldName" />
+		/// <inheritdoc cref="IWaitForChangedResult.OldName" />
 		public string? OldName
 			=> _instance.OldName;
 
-		/// <inheritdoc cref="IFileSystemWatcher.IWaitForChangedResult.TimedOut" />
+		/// <inheritdoc cref="IWaitForChangedResult.TimedOut" />
 		public bool TimedOut
 			=> _instance.TimedOut;
 	}
