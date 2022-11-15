@@ -68,7 +68,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 	/// <inheritdoc cref="IDriveInfo.DriveType" />
 	public DriveType DriveType { get; private set; }
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem
 		=> _fileSystem;
 

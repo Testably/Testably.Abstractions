@@ -12,7 +12,7 @@ internal sealed class FileInfoFactory : IFileInfoFactory
 
 	#region IFileInfoFactory Members
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IFileInfoFactory.New(string)" />

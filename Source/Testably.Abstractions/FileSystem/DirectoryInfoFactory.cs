@@ -12,7 +12,7 @@ internal sealed class DirectoryInfoFactory : IDirectoryInfoFactory
 
 	#region IDirectoryInfoFactory Members
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IDirectoryInfoFactory.New(string)" />

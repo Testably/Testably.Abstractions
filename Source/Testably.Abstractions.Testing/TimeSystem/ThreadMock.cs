@@ -19,7 +19,7 @@ internal sealed class ThreadMock : IThread
 
 	#region IThread Members
 
-	/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
+	/// <inheritdoc cref="ITimeSystemEntity.TimeSystem" />
 	public ITimeSystem TimeSystem
 		=> _mockTimeSystem;
 

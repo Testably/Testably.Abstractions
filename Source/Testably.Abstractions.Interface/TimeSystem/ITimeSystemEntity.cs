@@ -3,7 +3,7 @@
 /// <summary>
 ///     Interface to support implementing extension methods on top of nested <see cref="ITimeSystem" /> interfaces.
 /// </summary>
-public interface ITimeSystemExtensionPoint
+public interface ITimeSystemEntity
 {
 	/// <summary>
 	///     Exposes the underlying time system implementation.

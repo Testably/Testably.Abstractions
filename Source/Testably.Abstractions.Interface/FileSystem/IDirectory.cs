@@ -8,7 +8,7 @@ namespace Testably.Abstractions.FileSystem;
 /// <summary>
 ///     Abstractions for <see cref="Directory" />.
 /// </summary>
-public interface IDirectory : IFileSystemExtensionPoint
+public interface IDirectory : IFileSystemEntity
 {
 	/// <inheritdoc cref="Directory.CreateDirectory(string)" />
 	IDirectoryInfo CreateDirectory(string path);

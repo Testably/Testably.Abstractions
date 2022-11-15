@@ -18,7 +18,7 @@ internal sealed class DriveInfoFactoryMock : IDriveInfoFactory
 
 	#region IDriveInfoFactory Members
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem
 		=> _fileSystem;
 

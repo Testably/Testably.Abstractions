@@ -32,7 +32,7 @@ internal sealed class FileSystemWatcherWrapper : IFileSystemWatcher
 		set => _instance.EnableRaisingEvents = value;
 	}
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IFileSystemWatcher.Filter" />

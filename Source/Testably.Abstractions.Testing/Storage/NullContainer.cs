@@ -31,7 +31,7 @@ internal sealed class NullContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.ExtensionContainer" />
 	public IFileSystemExtensionContainer ExtensionContainer { get; }
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IStorageContainer.LastAccessTime" />
@@ -47,7 +47,7 @@ internal sealed class NullContainer : IStorageContainer
 		set => _ = value;
 	}
 
-	/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
+	/// <inheritdoc cref="ITimeSystemEntity.TimeSystem" />
 	public ITimeSystem TimeSystem { get; }
 
 	/// <inheritdoc cref="IStorageContainer.Type" />

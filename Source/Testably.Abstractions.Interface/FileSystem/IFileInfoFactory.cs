@@ -6,7 +6,7 @@ namespace Testably.Abstractions.FileSystem;
 /// <summary>
 ///     Factory for abstracting the creation of <see cref="FileInfo" />.
 /// </summary>
-public interface IFileInfoFactory : IFileSystemExtensionPoint
+public interface IFileInfoFactory : IFileSystemEntity
 {
 	/// <inheritdoc cref="FileInfo(string)" />
 	IFileInfo New(string fileName);

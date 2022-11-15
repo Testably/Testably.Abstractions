@@ -40,7 +40,7 @@ internal sealed class DateTimeWrapper : IDateTime
 	public DateTime Today
 		=> DateTime.Today;
 
-	/// <inheritdoc cref="ITimeSystemExtensionPoint.TimeSystem" />
+	/// <inheritdoc cref="ITimeSystemEntity.TimeSystem" />
 	public ITimeSystem TimeSystem { get; }
 
 	#endregion

@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing.FileSystem;
 /// <summary>
 ///     The interception handler for the <see cref="MockFileSystem" />.
 /// </summary>
-public interface IInterceptionHandler : IFileSystemExtensionPoint
+public interface IInterceptionHandler : IFileSystemEntity
 {
 	/// <summary>
 	///     Callback executed before any change in the <see cref="MockFileSystem" /> matching the <paramref name="predicate" />

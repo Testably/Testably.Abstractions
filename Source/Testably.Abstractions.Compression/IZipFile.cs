@@ -5,7 +5,7 @@ using Testably.Abstractions.FileSystem;
 namespace Testably.Abstractions;
 
 /// <inheritdoc cref="ZipFile" />
-public interface IZipFile : IFileSystemExtensionPoint
+public interface IZipFile : IFileSystemEntity
 {
 	/// <inheritdoc cref="ZipFile.CreateFromDirectory(string, string)" />
 	void CreateFromDirectory(string sourceDirectoryName,

@@ -22,7 +22,7 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 
 	#region IFileStreamFactory Members
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem
 		=> _fileSystem;
 

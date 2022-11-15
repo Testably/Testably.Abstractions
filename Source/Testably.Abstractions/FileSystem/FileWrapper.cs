@@ -22,7 +22,7 @@ internal sealed class FileWrapper : IFile
 
 	#region IFile Members
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IFile.AppendAllLines(string, IEnumerable{string})" />

@@ -8,8 +8,8 @@ namespace Testably.Abstractions.Testing.Storage;
 /// <summary>
 ///     A container for a stored file or directory in the <see cref="IStorage" />.
 /// </summary>
-internal interface IStorageContainer : IFileSystemExtensionPoint,
-	ITimeSystemExtensionPoint
+internal interface IStorageContainer : IFileSystemEntity,
+	ITimeSystemEntity
 {
 	/// <inheritdoc cref="System.IO.FileSystemInfo.Attributes" />
 	FileAttributes Attributes { get; set; }

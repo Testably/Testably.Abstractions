@@ -6,7 +6,7 @@ using Testably.Abstractions.FileSystem;
 namespace Testably.Abstractions;
 
 /// <inheritdoc cref="ZipArchive" />
-public interface IZipArchive : IFileSystemExtensionPoint, IDisposable
+public interface IZipArchive : IFileSystemEntity, IDisposable
 {
 #if FEATURE_ZIPFILE_NET7
 	/// <inheritdoc cref="ZipArchiveEntry.Comment" />

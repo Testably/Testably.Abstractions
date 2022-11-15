@@ -13,7 +13,7 @@ internal sealed class RandomFactoryMock : IRandomFactory
 
 	#region IRandomFactory Members
 
-	/// <inheritdoc cref="IRandomSystemExtensionPoint.RandomSystem" />
+	/// <inheritdoc cref="IRandomSystemEntity.RandomSystem" />
 	public IRandomSystem RandomSystem => _mockRandomSystem;
 
 	/// <inheritdoc cref="IRandomFactory.Shared" />

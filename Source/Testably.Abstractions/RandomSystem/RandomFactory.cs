@@ -15,7 +15,7 @@ internal sealed class RandomFactory : IRandomFactory
 
 	#region IRandomFactory Members
 
-	/// <inheritdoc cref="IRandomSystemExtensionPoint.RandomSystem" />
+	/// <inheritdoc cref="IRandomSystemEntity.RandomSystem" />
 	public IRandomSystem RandomSystem { get; }
 
 	/// <inheritdoc cref="IRandomFactory.Shared" />

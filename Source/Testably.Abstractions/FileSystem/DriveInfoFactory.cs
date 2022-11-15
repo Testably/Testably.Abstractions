@@ -13,7 +13,7 @@ internal sealed class DriveInfoFactory : IDriveInfoFactory
 
 	#region IDriveInfoFactory Members
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IDriveInfoFactory.GetDrives()" />

@@ -20,7 +20,7 @@ internal sealed class DirectoryMock : IDirectory
 
 	#region IDirectory Members
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem
 		=> _fileSystem;
 

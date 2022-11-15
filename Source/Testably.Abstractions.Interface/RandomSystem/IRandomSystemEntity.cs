@@ -3,7 +3,7 @@
 /// <summary>
 ///     Interface to support implementing extension methods on top of nested <see cref="IRandomSystem" /> interfaces.
 /// </summary>
-public interface IRandomSystemExtensionPoint
+public interface IRandomSystemEntity
 {
 	/// <summary>
 	///     Exposes the underlying random system implementation.

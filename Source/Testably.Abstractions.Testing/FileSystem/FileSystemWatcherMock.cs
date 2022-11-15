@@ -67,7 +67,7 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		}
 	}
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem
 		=> _fileSystem;
 

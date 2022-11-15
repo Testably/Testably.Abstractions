@@ -10,7 +10,7 @@ namespace Testably.Abstractions.FileSystem;
 /// <summary>
 ///     Abstractions for <see cref="FileSystemWatcher" />.
 /// </summary>
-public interface IFileSystemWatcher : IFileSystemExtensionPoint, IDisposable
+public interface IFileSystemWatcher : IFileSystemEntity, IDisposable
 {
 	/// <inheritdoc cref="Component.Container" />
 	IContainer? Container { get; }

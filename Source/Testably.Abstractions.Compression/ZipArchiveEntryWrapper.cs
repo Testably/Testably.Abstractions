@@ -53,7 +53,7 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 	}
 #endif
 
-	/// <inheritdoc cref="IFileSystemExtensionPoint.FileSystem" />
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IZipArchiveEntry.FullName" />

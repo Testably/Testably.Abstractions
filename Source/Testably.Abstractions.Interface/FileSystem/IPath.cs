@@ -9,7 +9,7 @@ namespace Testably.Abstractions.FileSystem;
 /// <summary>
 ///     Abstractions for <see cref="Path" />.
 /// </summary>
-public interface IPath : IFileSystemExtensionPoint
+public interface IPath : IFileSystemEntity
 {
 	/// <inheritdoc cref="Path.AltDirectorySeparatorChar" />
 	char AltDirectorySeparatorChar { get; }
