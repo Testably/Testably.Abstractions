@@ -109,7 +109,9 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 		DateTime previousCreationTimeUtc = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime previousLastAccessTimeUtc = FileSystem.File.GetLastAccessTimeUtc(path);
 		DateTime previousLastWriteTimeUtc = FileSystem.File.GetLastWriteTimeUtc(path);
+		#pragma warning disable CA1416
 		FileSystem.DirectoryInfo.New(path).SetAccessControl(new DirectorySecurity());
+		#pragma warning restore CA1416
 
 		DateTime creationTimeUtc = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime lastAccessTimeUtc = FileSystem.File.GetLastAccessTimeUtc(path);

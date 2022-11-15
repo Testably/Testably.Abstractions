@@ -10,12 +10,6 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	#region Test Setup
-
-	private const bool SkipBrittleTests = true;
-
-	#endregion
-
 	[Theory]
 	[MemberData(nameof(GetFileCallbacks),
 		parameters: (int)(BaseTypes.Directory | BaseTypes.DirectoryInfo))]
@@ -175,18 +169,13 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 			Action<IFileSystem, string> Callback
 			)> GetFileCallbackTestParameters()
 	{
+		#pragma warning disable CA1416
 		yield return (BaseTypes.Directory, MethodType.Create,
 			(fileSystem, path)
 				=> fileSystem.Directory.CreateDirectory(path, new DirectorySecurity()));
 		yield return (BaseTypes.Directory, MethodType.GetAccessControl,
 			(fileSystem, path)
 				=> fileSystem.Directory.GetAccessControl(path));
-		if (!SkipBrittleTests)
-		{
-			yield return (BaseTypes.Directory, MethodType.GetAccessControl,
-				(fileSystem, path)
-					=> fileSystem.Directory.GetAccessControl(path, AccessControlSections.None));
-		}
 
 		yield return (BaseTypes.Directory, MethodType.SetAccessControl,
 			(fileSystem, path)
@@ -198,13 +187,6 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		yield return (BaseTypes.DirectoryInfo, MethodType.GetAccessControl,
 			(fileSystem, path)
 				=> fileSystem.DirectoryInfo.New(path).GetAccessControl());
-		if (!SkipBrittleTests)
-		{
-			yield return (BaseTypes.DirectoryInfo, MethodType.GetAccessControl,
-				(fileSystem, path)
-					=> fileSystem.DirectoryInfo.New(path)
-						.GetAccessControl(AccessControlSections.None));
-		}
 
 		yield return (BaseTypes.DirectoryInfo, MethodType.SetAccessControl,
 			(fileSystem, path)
@@ -213,12 +195,6 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		yield return (BaseTypes.File, MethodType.GetAccessControl,
 			(fileSystem, path)
 				=> fileSystem.File.GetAccessControl(path));
-		if (!SkipBrittleTests)
-		{
-			yield return (BaseTypes.File, MethodType.GetAccessControl,
-				(fileSystem, path)
-					=> fileSystem.File.GetAccessControl(path, AccessControlSections.None));
-		}
 
 		yield return (BaseTypes.File, MethodType.SetAccessControl,
 			(fileSystem, path)
@@ -227,16 +203,11 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		yield return (BaseTypes.FileInfo, MethodType.GetAccessControl,
 			(fileSystem, path)
 				=> fileSystem.FileInfo.New(path).GetAccessControl());
-		if (!SkipBrittleTests)
-		{
-			yield return (BaseTypes.FileInfo, MethodType.GetAccessControl,
-				(fileSystem, path)
-					=> fileSystem.FileInfo.New(path).GetAccessControl(AccessControlSections.None));
-		}
 
 		yield return (BaseTypes.FileInfo, MethodType.SetAccessControl,
 			(fileSystem, path)
 				=> fileSystem.FileInfo.New(path).SetAccessControl(new FileSecurity()));
+		#pragma warning restore CA1416
 	}
 
 	#endregion

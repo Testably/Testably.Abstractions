@@ -73,6 +73,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 			Action<IFileSystem, string> Callback
 			)> GetFileCallbackTestParameters()
 	{
+		#pragma warning disable CA1416
 		yield return (BaseTypes.Directory, MethodType.Create,
 			(fileSystem, path)
 				=> fileSystem.Directory.CreateDirectory(path, new DirectorySecurity()));
@@ -126,6 +127,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 		yield return (BaseTypes.FileInfo, MethodType.SetAccessControl,
 			(fileSystem, path)
 				=> fileSystem.FileInfo.New(path).SetAccessControl(new FileSecurity()));
+		#pragma warning restore CA1416
 	}
 
 	#endregion

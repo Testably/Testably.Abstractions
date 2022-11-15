@@ -107,7 +107,9 @@ public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
 		DateTime previousCreationTimeUtc = FileSystem.File.GetCreationTimeUtc("foo.txt");
 		DateTime previousLastAccessTimeUtc = FileSystem.File.GetLastAccessTimeUtc("foo.txt");
 		DateTime previousLastWriteTimeUtc = FileSystem.File.GetLastWriteTimeUtc("foo.txt");
+		#pragma warning disable CA1416
 		FileSystem.File.SetAccessControl("foo.txt", new FileSecurity());
+		#pragma warning restore CA1416
 
 		DateTime creationTimeUtc = FileSystem.File.GetCreationTimeUtc("foo.txt");
 		DateTime lastAccessTimeUtc = FileSystem.File.GetLastAccessTimeUtc("foo.txt");
