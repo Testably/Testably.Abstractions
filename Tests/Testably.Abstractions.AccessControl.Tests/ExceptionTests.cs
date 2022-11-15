@@ -9,12 +9,14 @@ public abstract partial class ExceptionTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	[Theory]
+	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks),
 		parameters: (int)BaseTypes.All)]
-	public void DirectoryOperations_WhenPathIsNull_ShouldThrowArgumentNullException(
+	public void Operations_WhenPathIsNull_ShouldThrowArgumentNullException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
+		Skip.IfNot(Test.RunsOnWindows || exceptionType == MethodType.GetAccessControl);
+
 		Exception? exception = Record.Exception(() =>
 		{
 			callback.Invoke(FileSystem, null!);
@@ -24,12 +26,14 @@ public abstract partial class ExceptionTests<TFileSystem>
 			because: $"\n{exceptionType} on {baseType}\n was called with a null path");
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks),
 		parameters: (int)BaseTypes.All)]
-	public void DirectoryOperations_WhenPathIsEmpty_ShouldThrowArgumentException(
+	public void Operations_WhenPathIsEmpty_ShouldThrowArgumentException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
+		Skip.IfNot(Test.RunsOnWindows || exceptionType == MethodType.GetAccessControl);
+
 		Exception? exception = Record.Exception(() =>
 		{
 			callback.Invoke(FileSystem, "");
@@ -40,12 +44,14 @@ public abstract partial class ExceptionTests<TFileSystem>
 			because: $"\n{exceptionType} on {baseType}\n was called with an empty path");
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks),
 		parameters: (int)BaseTypes.All)]
-	public void DirectoryOperations_WhenPathIsWhiteSpace_ShouldThrowArgumentException(
+	public void Operations_WhenPathIsWhiteSpace_ShouldThrowArgumentException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		Exception? exception = Record.Exception(() =>
 		{
 			callback.Invoke(FileSystem, "  ");

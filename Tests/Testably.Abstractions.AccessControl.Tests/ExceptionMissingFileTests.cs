@@ -10,12 +10,14 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	[Theory]
+	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks),
 		parameters: (int)(BaseTypes.Directory | BaseTypes.DirectoryInfo))]
 	public void DirectoryOperations_WhenDirectoryIsMissing_ShouldThrowDirectoryNotFoundException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		string path = FileSystem.Path.Combine("missing-directory", "file.txt");
 
 		Exception? exception = Record.Exception(() =>
@@ -47,12 +49,14 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		}
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks),
 		parameters: (int)(BaseTypes.File | BaseTypes.FileInfo | BaseTypes.FileStream))]
 	public void FileOperations_WhenDirectoryIsMissing_ShouldThrowDirectoryNotFoundException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		string path = FileSystem.Path.Combine("missing-directory", "file.txt");
 
 		Exception? exception = Record.Exception(() =>
@@ -84,12 +88,14 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		}
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks),
 		parameters: (int)(BaseTypes.Directory | BaseTypes.DirectoryInfo))]
 	public void DirectoryOperations_WhenFileIsMissing_ShouldThrowFileNotFoundException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		string path = "missing-file.txt";
 
 		Exception? exception = Record.Exception(() =>
@@ -118,12 +124,14 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		}
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks),
 		parameters: (int)(BaseTypes.File | BaseTypes.FileInfo | BaseTypes.FileStream))]
 	public void FileOperations_WhenFileIsMissing_ShouldThrowFileNotFoundException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		string path = "missing-file.txt";
 
 		Exception? exception = Record.Exception(() =>
