@@ -5,6 +5,10 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
+		<TargetFrameworks>$(TargetFrameworks);netstandard2.0</TargetFrameworks>
+	</PropertyGroup>
+
+	<PropertyGroup>
 		<OutputPath>..\..\..\Build\Tests\$(MSBuildProjectName)</OutputPath>
 	</PropertyGroup>
 
