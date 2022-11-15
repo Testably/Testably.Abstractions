@@ -4,15 +4,35 @@ using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
-public class FileInfoAclExtensionsTests
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class FileInfoAclExtensionsTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
+	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
 	public void GetAccessControl_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		MockFileSystem fileSystem = new();
-		IFileInfo fileInfo = fileSystem.FileInfo.New("foo");
+		FileSystem.File.WriteAllText("foo", null);
+		IFileInfo fileInfo = FileSystem.FileInfo.New("foo");
+
+		#pragma warning disable CA1416
+		FileSecurity result = fileInfo.GetAccessControl();
+		#pragma warning restore CA1416
+
+		result.Should().NotBeNull();
+	}
+
+	[SkippableFact]
+	public void GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
+		FileSystem.File.WriteAllText("foo", null);
+		IFileInfo fileInfo = FileSystem.FileInfo.New("foo");
 
 		#pragma warning disable CA1416
 		FileSecurity result = fileInfo.GetAccessControl(AccessControlSections.All);
@@ -22,46 +42,22 @@ public class FileInfoAclExtensionsTests
 	}
 
 	[SkippableFact]
-	public void SetAccessControl_RealFileSystem_ShouldChangeAccessControl()
-	{
-		Skip.IfNot(Test.RunsOnWindows);
-
-		RealFileSystem fileSystem = new();
-		Test.SkipIfLongRunningTestsShouldBeSkipped(fileSystem);
-
-		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
-		{
-			fileSystem.File.WriteAllText("foo", null);
-			#pragma warning disable CA1416
-			FileSecurity originalAccessControl =
-				fileSystem.FileInfo.New("foo").GetAccessControl();
-			fileSystem.FileInfo.New("foo").SetAccessControl(originalAccessControl);
-
-			FileSecurity currentAccessControl =
-				fileSystem.FileInfo.New("foo")
-					.GetAccessControl(AccessControlSections.Access);
-			#pragma warning restore CA1416
-
-			currentAccessControl.HasSameAccessRightsAs(originalAccessControl)
-				.Should().BeTrue();
-			currentAccessControl.Should().NotBe(originalAccessControl);
-		}
-	}
-
-	[SkippableFact]
 	public void SetAccessControl_ShouldChangeAccessControl()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		MockFileSystem fileSystem = new();
-		IFileInfo fileInfo = fileSystem.FileInfo.New("foo");
+		FileSystem.File.WriteAllText("foo", null);
 		#pragma warning disable CA1416
-		FileSecurity fileSecurity = new();
+		FileSecurity originalAccessControl =
+			FileSystem.FileInfo.New("foo").GetAccessControl();
+		FileSystem.FileInfo.New("foo").SetAccessControl(originalAccessControl);
 
-		fileInfo.SetAccessControl(fileSecurity);
-		FileSecurity result = fileInfo.GetAccessControl();
+		FileSecurity currentAccessControl =
+			FileSystem.FileInfo.New("foo")
+				.GetAccessControl(AccessControlSections.Access);
 		#pragma warning restore CA1416
 
-		result.Should().Be(fileSecurity);
+		currentAccessControl.HasSameAccessRightsAs(originalAccessControl)
+			.Should().BeTrue();
 	}
 }

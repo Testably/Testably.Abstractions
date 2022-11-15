@@ -15,12 +15,13 @@ public static class FileAclExtensions
 		this IFile file, string path)
 	{
 		IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
+		fileInfo.ThrowIfMissing();
 		IFileSystemExtensionContainer extensionContainer =
 			fileInfo.ExtensionContainer;
 		return extensionContainer.HasWrappedInstance(out FileInfo? fi)
 			? fi.GetAccessControl()
 			: extensionContainer.RetrieveMetadata<FileSecurity>(
-				AccessControlConstants.AccessControl) ?? new FileSecurity();
+				AccessControlHelpers.AccessControl) ?? new FileSecurity();
 	}
 
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.GetAccessControl(FileInfo, AccessControlSections)" />
@@ -31,12 +32,13 @@ public static class FileAclExtensions
 		AccessControlSections includeSections)
 	{
 		IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
+		fileInfo.ThrowIfMissing();
 		IFileSystemExtensionContainer extensionContainer =
 			fileInfo.ExtensionContainer;
 		return extensionContainer.HasWrappedInstance(out FileInfo? fi)
 			? fi.GetAccessControl(includeSections)
 			: extensionContainer.RetrieveMetadata<FileSecurity>(
-				AccessControlConstants.AccessControl) ?? new FileSecurity();
+				AccessControlHelpers.AccessControl) ?? new FileSecurity();
 	}
 
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.SetAccessControl(FileInfo, FileSecurity)" />
@@ -54,7 +56,7 @@ public static class FileAclExtensions
 		}
 		else
 		{
-			extensionContainer.StoreMetadata(AccessControlConstants.AccessControl,
+			extensionContainer.StoreMetadata(AccessControlHelpers.AccessControl,
 				fileSecurity);
 		}
 	}

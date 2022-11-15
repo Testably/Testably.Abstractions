@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Security.AccessControl;
 using Testably.Abstractions.FileSystem;
 
@@ -22,9 +23,11 @@ public static class DirectoryInfoAclExtensions
 		}
 		else
 		{
-			extensionContainer.StoreMetadata(AccessControlConstants.AccessControl,
-				directorySecurity);
+			_ = directorySecurity ?? throw new ArgumentNullException(nameof(directorySecurity));
+			directoryInfo.ThrowIfParentMissing();
 			directoryInfo.Create();
+			directoryInfo.ExtensionContainer.StoreMetadata(AccessControlHelpers.AccessControl,
+				directorySecurity);
 		}
 	}
 
@@ -33,12 +36,13 @@ public static class DirectoryInfoAclExtensions
 	public static DirectorySecurity GetAccessControl(
 		this IDirectoryInfo directoryInfo)
 	{
+		directoryInfo.ThrowIfMissing();
 		IFileSystemExtensionContainer extensionContainer =
 			directoryInfo.ExtensionContainer;
 		return extensionContainer.HasWrappedInstance(out DirectoryInfo? di)
 			? di.GetAccessControl()
 			: extensionContainer.RetrieveMetadata<DirectorySecurity>(
-				AccessControlConstants.AccessControl) ?? new DirectorySecurity();
+				AccessControlHelpers.AccessControl) ?? new DirectorySecurity();
 	}
 
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.GetAccessControl(DirectoryInfo, AccessControlSections)" />
@@ -47,12 +51,13 @@ public static class DirectoryInfoAclExtensions
 		this IDirectoryInfo directoryInfo,
 		AccessControlSections includeSections)
 	{
+		directoryInfo.ThrowIfMissing();
 		IFileSystemExtensionContainer extensionContainer =
 			directoryInfo.ExtensionContainer;
 		return extensionContainer.HasWrappedInstance(out DirectoryInfo? di)
 			? di.GetAccessControl(includeSections)
 			: extensionContainer.RetrieveMetadata<DirectorySecurity>(
-				AccessControlConstants.AccessControl) ?? new DirectorySecurity();
+				AccessControlHelpers.AccessControl) ?? new DirectorySecurity();
 	}
 
 	/// <inheritdoc cref="System.IO.FileSystemAclExtensions.SetAccessControl(DirectoryInfo, DirectorySecurity)" />
@@ -68,7 +73,7 @@ public static class DirectoryInfoAclExtensions
 		}
 		else
 		{
-			extensionContainer.StoreMetadata(AccessControlConstants.AccessControl,
+			extensionContainer.StoreMetadata(AccessControlHelpers.AccessControl,
 				directorySecurity);
 		}
 	}

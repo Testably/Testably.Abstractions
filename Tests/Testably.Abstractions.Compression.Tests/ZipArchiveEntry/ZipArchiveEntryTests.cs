@@ -1,26 +1,15 @@
 ﻿using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using Testably.Abstractions.Compression.Tests.TestHelpers;
 using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchiveEntry;
 
+// ReSharper disable once PartialTypeWithSinglePart
 public abstract partial class ZipArchiveEntryTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	public abstract string BasePath { get; }
-	public TFileSystem FileSystem { get; }
-	public ITimeSystem TimeSystem { get; }
-
-	protected ZipArchiveEntryTests(
-		TFileSystem fileSystem,
-		ITimeSystem timeSystem)
-	{
-		FileSystem = fileSystem;
-		TimeSystem = timeSystem;
-	}
-
 	[SkippableFact]
 	public void Archive_ShouldBeSetToArchive()
 	{

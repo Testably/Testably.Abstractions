@@ -5,21 +5,11 @@ using System.Text;
 
 namespace Testably.Abstractions.Compression.Tests.ZipFile;
 
-public abstract class ZipFileTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class ZipFileTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	public abstract string BasePath { get; }
-	public TFileSystem FileSystem { get; }
-	public ITimeSystem TimeSystem { get; }
-
-	protected ZipFileTests(
-		TFileSystem fileSystem,
-		ITimeSystem timeSystem)
-	{
-		FileSystem = fileSystem;
-		TimeSystem = timeSystem;
-	}
-
 	[SkippableTheory]
 	[AutoData]
 	public void
