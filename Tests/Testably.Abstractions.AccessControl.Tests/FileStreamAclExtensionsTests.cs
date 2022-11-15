@@ -4,15 +4,17 @@ using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
-public class FileStreamAclExtensionsTests
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class FileStreamAclExtensionsTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
+	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
 	public void GetAccessControl_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		MockFileSystem fileSystem = new();
-		FileSystemStream fileStream = fileSystem.File.Create("foo");
+		FileSystemStream fileStream = FileSystem.File.Create("foo");
 
 		#pragma warning disable CA1416
 		FileSecurity result = fileStream.GetAccessControl();
@@ -22,43 +24,19 @@ public class FileStreamAclExtensionsTests
 	}
 
 	[SkippableFact]
-	public void SetAccessControl_RealFileSystem_ShouldChangeAccessControl()
-	{
-		Skip.IfNot(Test.RunsOnWindows);
-
-		RealFileSystem fileSystem = new();
-		Test.SkipIfLongRunningTestsShouldBeSkipped(fileSystem);
-
-		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
-		{
-			FileSystemStream fileStream = fileSystem.File.Create("foo");
-			#pragma warning disable CA1416
-			FileSecurity originalAccessControl = fileStream.GetAccessControl();
-			fileStream.SetAccessControl(originalAccessControl);
-
-			FileSecurity currentAccessControl = fileStream.GetAccessControl();
-			#pragma warning restore CA1416
-
-			currentAccessControl.HasSameAccessRightsAs(originalAccessControl)
-				.Should().BeTrue();
-			currentAccessControl.Should().NotBe(originalAccessControl);
-		}
-	}
-
-	[SkippableFact]
 	public void SetAccessControl_ShouldChangeAccessControl()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		MockFileSystem fileSystem = new();
-		FileSystemStream fileStream = fileSystem.File.Create("foo");
+		FileSystemStream fileStream = FileSystem.File.Create("foo");
 		#pragma warning disable CA1416
-		FileSecurity fileSecurity = new();
+		FileSecurity originalAccessControl = fileStream.GetAccessControl();
+		fileStream.SetAccessControl(originalAccessControl);
 
-		fileStream.SetAccessControl(fileSecurity);
-		FileSecurity result = fileStream.GetAccessControl();
+		FileSecurity currentAccessControl = fileStream.GetAccessControl();
 		#pragma warning restore CA1416
 
-		result.Should().Be(fileSecurity);
+		currentAccessControl.HasSameAccessRightsAs(originalAccessControl)
+			.Should().BeTrue();
 	}
 }

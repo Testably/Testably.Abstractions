@@ -15,7 +15,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void New_SafeFileHandle_InvalidHandle_ShouldThrowArgumentException(
-		string filename, string contents)
+		string filename)
 	{
 		string path = FileSystem.Path.GetFullPath(filename);
 		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
@@ -33,7 +33,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void New_SafeFileHandle_InvalidHandle_WithBufferSize_ShouldThrowArgumentException(
-		string filename, string contents)
+		string filename)
 	{
 		string path = FileSystem.Path.GetFullPath(filename);
 		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
@@ -52,7 +52,7 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 	[AutoData]
 	public void
 		New_SafeFileHandle_InvalidHandle_WithBufferSizeAndAsync_ShouldThrowArgumentException(
-			string filename, string contents)
+			string filename)
 	{
 		string path = FileSystem.Path.GetFullPath(filename);
 		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);

@@ -5,10 +5,26 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference
-			Include="..\..\Source\Testably.Abstractions.AccessControl\Testably.Abstractions.AccessControl.csproj" />
+		<ProjectReference Include="..\..\Source\Testably.Abstractions.AccessControl\Testably.Abstractions.AccessControl.csproj" />
 		<ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj" />
 		<ProjectReference Include="..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj" />
+		<ProjectReference Include="..\Helpers\Testably.Abstractions.TestHelpers\Testably.Abstractions.TestHelpers.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference
+			Include="..\Helpers\Testably.Abstractions.Tests.SourceGenerator\Testably.Abstractions.Tests.SourceGenerator.csproj"
+			OutputItemType="Analyzer" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+		<CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="Generated\**" />
+		<Content Include="Generated\**" />
 	</ItemGroup>
 
 </Project>

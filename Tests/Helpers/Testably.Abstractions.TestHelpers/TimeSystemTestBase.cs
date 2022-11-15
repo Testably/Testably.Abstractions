@@ -1,26 +1,28 @@
-﻿namespace Testably.Abstractions.Tests.TestHelpers;
+﻿using System;
+
+namespace Testably.Abstractions.TestHelpers;
 
 /// <summary>
 ///     If referencing this base class, the source generator will automatically create two classes implementing your class:
 ///     <br />
-///     - one will provide a `RealRandomSystem`<br />
-///     - one will provide a `MockRandomSystem`<br />
+///     - one will provide a `RealTimeSystem`<br />
+///     - one will provide a `MockTimeSystem`<br />
 ///     Thus your tests run on both systems identically.
 /// </summary>
 /// <remarks>
 ///     Important: You have to mark your class as ´partial`!
 /// </remarks>
-public abstract class RandomSystemTestBase<TRandomSystem>
-	where TRandomSystem : IRandomSystem
+public abstract class TimeSystemTestBase<TTimeSystem>
+	where TTimeSystem : ITimeSystem
 {
-	public TRandomSystem RandomSystem { get; }
+	public TTimeSystem TimeSystem { get; }
 
-	protected RandomSystemTestBase(TRandomSystem randomSystem)
+	protected TimeSystemTestBase(TTimeSystem timeSystem)
 	{
-		RandomSystem = randomSystem;
+		TimeSystem = timeSystem;
 	}
 
-	protected RandomSystemTestBase()
+	protected TimeSystemTestBase()
 	{
 		throw new NotSupportedException(
 			"The SourceGenerator didn't create the corresponding files!");

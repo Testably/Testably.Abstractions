@@ -1,10 +1,12 @@
-﻿using FluentAssertions.Execution;
+﻿using FluentAssertions;
+using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
+using System;
 using System.IO;
 
-namespace Testably.Abstractions.Tests.TestHelpers;
+namespace Testably.Abstractions.TestHelpers;
 
-internal static class AssertionHelpers
+public static class AssertionHelpers
 {
 	public static AndWhichConstraint<ObjectAssertions, IOException?>
 		BeFileOrDirectoryNotFoundException(this ObjectAssertions objectAssertions,

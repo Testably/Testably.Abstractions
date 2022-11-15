@@ -1,52 +1,46 @@
-﻿using System.Security.AccessControl;
+using System.Security.AccessControl;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
-using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
-public class DirectoryAclExtensionsTests
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
+	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
-	public void Create_RealFileSystem_ShouldChangeAccessControl()
+	public void CreateDirectory_NullDirectorySecurity_ShouldThrowArgumentNullException()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		RealFileSystem fileSystem = new();
-		Test.SkipIfLongRunningTestsShouldBeSkipped(fileSystem);
-
-		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
+		FileSystem.Directory.CreateDirectory("foo");
+		#pragma warning disable CA1416
+		Exception? exception = Record.Exception(() =>
 		{
-			fileSystem.Directory.CreateDirectory("foo");
-			#pragma warning disable CA1416
-			DirectorySecurity directorySecurity =
-				fileSystem.Directory.GetAccessControl("foo");
+			FileSystem.Directory.CreateDirectory("foo", null!);
+		});
+		#pragma warning restore CA1416
 
-			fileSystem.Directory.CreateDirectory("bar", directorySecurity);
-			DirectorySecurity result = fileSystem.Directory.GetAccessControl("bar");
-			#pragma warning restore CA1416
-
-			result.HasSameAccessRightsAs(directorySecurity).Should().BeTrue();
-			result.Should().NotBe(directorySecurity);
-			fileSystem.Directory.Exists("bar").Should().BeTrue();
-		}
+		exception.Should().BeOfType<ArgumentNullException>()
+			.Which.ParamName.Should().Be("directorySecurity");
 	}
 
 	[SkippableFact]
-	public void Create_ShouldChangeAccessControl()
+	public void CreateDirectory_ShouldChangeAccessControl()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		MockFileSystem fileSystem = new();
-		IDirectoryInfo directoryInfo = fileSystem.DirectoryInfo.New("foo");
+		FileSystem.Directory.CreateDirectory("foo");
 		#pragma warning disable CA1416
-		DirectorySecurity directorySecurity = new();
+		DirectorySecurity directorySecurity =
+			FileSystem.Directory.GetAccessControl("foo");
 
-		fileSystem.Directory.CreateDirectory("foo", directorySecurity);
-		DirectorySecurity result = directoryInfo.GetAccessControl();
+		FileSystem.Directory.CreateDirectory("bar", directorySecurity);
+		DirectorySecurity result = FileSystem.Directory.GetAccessControl("bar");
 		#pragma warning restore CA1416
 
-		result.Should().Be(directorySecurity);
-		fileSystem.Directory.Exists("foo").Should().BeTrue();
+		result.HasSameAccessRightsAs(directorySecurity).Should().BeTrue();
+		FileSystem.Directory.Exists("bar").Should().BeTrue();
 	}
 
 	[SkippableFact]
@@ -54,42 +48,31 @@ public class DirectoryAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		MockFileSystem fileSystem = new();
-		fileSystem.Directory.CreateDirectory("foo");
+		FileSystem.Directory.CreateDirectory("foo");
 
 		#pragma warning disable CA1416
 		DirectorySecurity result =
-			fileSystem.Directory.GetAccessControl("foo", AccessControlSections.All);
+			FileSystem.Directory.GetAccessControl("foo");
 		#pragma warning restore CA1416
 
 		result.Should().NotBeNull();
 	}
 
 	[SkippableFact]
-	public void SetAccessControl_RealFileSystem_ShouldChangeAccessControl()
+	public void GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		RealFileSystem fileSystem = new();
-		Test.SkipIfLongRunningTestsShouldBeSkipped(fileSystem);
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
-		using (fileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory())
-		{
-			fileSystem.Directory.CreateDirectory("foo");
-			#pragma warning disable CA1416
-			DirectorySecurity originalAccessControl =
-				fileSystem.Directory.GetAccessControl("foo");
-			fileSystem.Directory.SetAccessControl("foo", originalAccessControl);
+		FileSystem.Directory.CreateDirectory("foo");
 
-			DirectorySecurity currentAccessControl =
-				fileSystem.Directory.GetAccessControl("foo",
-					AccessControlSections.Access);
-			#pragma warning restore CA1416
+		#pragma warning disable CA1416
+		DirectorySecurity result =
+			FileSystem.Directory.GetAccessControl("foo", AccessControlSections.All);
+		#pragma warning restore CA1416
 
-			currentAccessControl.HasSameAccessRightsAs(originalAccessControl)
-				.Should().BeTrue();
-			currentAccessControl.Should().NotBe(originalAccessControl);
-		}
+		result.Should().NotBeNull();
 	}
 
 	[SkippableFact]
@@ -97,15 +80,43 @@ public class DirectoryAclExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		MockFileSystem fileSystem = new();
-		fileSystem.Directory.CreateDirectory("foo");
+		FileSystem.Directory.CreateDirectory("foo");
 		#pragma warning disable CA1416
-		DirectorySecurity directorySecurity = new();
+		DirectorySecurity originalAccessControl =
+			FileSystem.Directory.GetAccessControl("foo");
+		FileSystem.Directory.SetAccessControl("foo", originalAccessControl);
 
-		fileSystem.Directory.SetAccessControl("foo", directorySecurity);
-		DirectorySecurity result = fileSystem.Directory.GetAccessControl("foo");
+		DirectorySecurity currentAccessControl =
+			FileSystem.Directory.GetAccessControl("foo",
+				AccessControlSections.Access);
 		#pragma warning restore CA1416
 
-		result.Should().Be(directorySecurity);
+		currentAccessControl.HasSameAccessRightsAs(originalAccessControl)
+			.Should().BeTrue();
+	}
+
+	[SkippableFact]
+	public void SetAccessControl_ShouldNotUpdateTimes()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+
+		FileSystem.File.WriteAllText("foo.txt", "abc");
+		TimeSystem.Thread.Sleep(3000);
+		DateTime previousCreationTimeUtc = FileSystem.File.GetCreationTimeUtc("foo.txt");
+		DateTime previousLastAccessTimeUtc = FileSystem.File.GetLastAccessTimeUtc("foo.txt");
+		DateTime previousLastWriteTimeUtc = FileSystem.File.GetLastWriteTimeUtc("foo.txt");
+		#pragma warning disable CA1416
+		FileSystem.File.SetAccessControl("foo.txt", new FileSecurity());
+		#pragma warning restore CA1416
+
+		DateTime creationTimeUtc = FileSystem.File.GetCreationTimeUtc("foo.txt");
+		DateTime lastAccessTimeUtc = FileSystem.File.GetLastAccessTimeUtc("foo.txt");
+		DateTime lastWriteTimeUtc = FileSystem.File.GetLastWriteTimeUtc("foo.txt");
+
+		creationTimeUtc.Should().Be(previousCreationTimeUtc);
+		lastAccessTimeUtc.Should().Be(previousLastAccessTimeUtc);
+		lastWriteTimeUtc.Should().Be(previousLastWriteTimeUtc);
 	}
 }

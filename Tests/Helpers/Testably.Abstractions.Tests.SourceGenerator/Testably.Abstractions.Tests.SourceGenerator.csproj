@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0</TargetFrameworks>
 		<LangVersion>latest</LangVersion>
+		<OutputPath>..\..\..\Build\Tests\$(MSBuildProjectName)</OutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -27,6 +28,10 @@
 		<PackageReference Remove="xunit" />
 		<PackageReference Remove="xunit.runner.visualstudio" />
 		<PackageReference Remove="coverlet.collector" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Testably.Abstractions.TestHelpers\Testably.Abstractions.TestHelpers.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -17,7 +17,7 @@
 /Build
 
 # Generated files
-/Tests/Testably.Abstractions.Tests/Generated
+/Tests/*/Generated
 
 ############################################################
 ################## VISUAL STUDIO TEMPLATE ##################

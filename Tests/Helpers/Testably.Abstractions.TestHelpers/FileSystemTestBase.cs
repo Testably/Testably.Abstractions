@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions.Tests.TestHelpers;
+﻿using System;
+
+namespace Testably.Abstractions.TestHelpers;
 
 /// <summary>
 ///     If referencing this base class, the source generator will automatically create two classes implementing your class:

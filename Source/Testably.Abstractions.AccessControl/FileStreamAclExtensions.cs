@@ -18,7 +18,7 @@ public static class FileStreamAclExtensions
 		return extensionContainer.HasWrappedInstance(out FileStream? fs)
 			? fs.GetAccessControl()
 			: extensionContainer.RetrieveMetadata<FileSecurity>(
-				AccessControlConstants.AccessControl) ?? new FileSecurity();
+				AccessControlHelpers.AccessControl) ?? new FileSecurity();
 	}
 
 	/// <inheritdoc cref="FileSystemAclExtensions.SetAccessControl(FileStream, FileSecurity)" />
@@ -34,7 +34,7 @@ public static class FileStreamAclExtensions
 		}
 		else
 		{
-			extensionContainer.StoreMetadata(AccessControlConstants.AccessControl,
+			extensionContainer.StoreMetadata(AccessControlHelpers.AccessControl,
 				fileSecurity);
 		}
 	}

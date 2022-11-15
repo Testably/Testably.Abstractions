@@ -2,6 +2,7 @@
 global using FluentAssertions;
 global using System;
 global using Testably.Abstractions.Testing;
+global using Testably.Abstractions.TestHelpers;
 global using Testably.Abstractions.Tests.TestHelpers;
 global using Xunit;
 #if NET472

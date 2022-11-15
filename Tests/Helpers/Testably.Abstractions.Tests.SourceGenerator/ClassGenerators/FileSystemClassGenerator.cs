@@ -13,7 +13,7 @@ internal class FileSystemClassGenerator : ClassGeneratorBase
 	protected override void GenerateSource(StringBuilder sourceBuilder, ClassModel @class)
 		=> sourceBuilder.Append(@$"
 using Testably.Abstractions.Testing.FileSystemInitializer;
-using Testably.Abstractions.Tests.TestHelpers;
+using Testably.Abstractions.TestHelpers;
 using Xunit.Abstractions;
 
 namespace {@class.Namespace}
