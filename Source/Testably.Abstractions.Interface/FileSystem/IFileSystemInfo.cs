@@ -6,7 +6,7 @@ namespace Testably.Abstractions.FileSystem;
 /// <summary>
 ///     Abstractions for <see cref="FileSystemInfo" />.
 /// </summary>
-public interface IFileSystemInfo
+public interface IFileSystemInfo : IFileSystemEntity
 {
 	/// <inheritdoc cref="FileSystemInfo.Attributes" />
 	FileAttributes Attributes { get; set; }

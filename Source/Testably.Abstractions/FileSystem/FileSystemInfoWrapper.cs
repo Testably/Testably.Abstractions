@@ -50,6 +50,10 @@ internal class FileSystemInfoWrapper : IFileSystemInfo
 	/// <inheritdoc cref="IFileSystemInfo.Extensibility" />
 	public IFileSystemExtensibility Extensibility { get; }
 
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
+	public IFileSystem FileSystem
+		=> _fileSystem;
+
 	/// <inheritdoc cref="IFileSystemInfo.FullName" />
 	public string FullName
 		=> _instance.FullName;
