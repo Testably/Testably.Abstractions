@@ -5,11 +5,12 @@ Example implementation of a timer on top of `ITimeSystem`. It uses the `ITask.De
 Included is a simple example implementation and corresponding unit tests to verify the behaviour.
 
 ```csharp
-        ITimer timer = timeSystem.CreateTimer(
-            interval,
-            _ =>
-            {
-                // Do something
-            });
-        timer.Start();
+    TimeSpan interval = TimeSpan.FromMinutes(5);
+    ITimer timer = timeSystem.CreateTimer(
+        interval,
+        _ =>
+        {
+            // This callback is executed every 5 minutes until `timer.Stop()` is called.
+        });
+    timer.Start();
 ```
