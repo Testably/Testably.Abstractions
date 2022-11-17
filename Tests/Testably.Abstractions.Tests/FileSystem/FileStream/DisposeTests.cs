@@ -53,7 +53,7 @@ public abstract partial class DisposeTests<TFileSystem>
 		fileCount3.Should().Be(0, "Dispose should not have resurrected the file");
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[MemberData(nameof(GetFileStreamCallbacks))]
 	public void Operations_ShouldThrowAfterStreamIsDisposed(
 		Expression<Action<FileSystemStream>> callback)

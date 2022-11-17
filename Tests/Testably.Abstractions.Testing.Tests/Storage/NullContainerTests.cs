@@ -96,15 +96,35 @@ public class NullContainerTests
 
 	[Theory]
 	[AutoData]
-	public void RequestAccess_ShouldReturnEmptyArray(FileAccess access, FileShare share)
+	public void RequestAccess_Dispose_Twice_ShouldDoNothing(FileAccess access, FileShare share)
 	{
 		MockFileSystem fileSystem = new();
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
 		IStorageAccessHandle result = sut.RequestAccess(access, share);
+		result.Dispose();
+
+		Exception? exception = Record.Exception(() =>
+		{
+			result.Dispose();
+		});
+
+		exception.Should().BeNull();
+	}
+
+	[Theory]
+	[AutoData]
+	public void RequestAccess_ShouldReturnNullObject(FileAccess access, FileShare share,
+		bool deleteAccess)
+	{
+		MockFileSystem fileSystem = new();
+		IStorageContainer sut = NullContainer.New(fileSystem);
+
+		IStorageAccessHandle result = sut.RequestAccess(access, share, deleteAccess);
 
 		result.Access.Should().Be(access);
 		result.Share.Should().Be(share);
+		result.DeleteAccess.Should().Be(deleteAccess);
 	}
 
 	[Fact]

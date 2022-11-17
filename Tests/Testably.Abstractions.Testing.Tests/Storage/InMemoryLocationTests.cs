@@ -119,6 +119,27 @@ public class InMemoryLocationTests
 		result.Should().BeNull();
 	}
 
+	[Fact]
+	public void New_EmptyPath_ShouldThrowArgumentException()
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			InMemoryLocation.New(null, "");
+		});
+
+		exception.Should().BeOfType<ArgumentException>()
+			.Which.HResult.Should().Be(-2147024809);
+	}
+
+	[Theory]
+	[AutoData]
+	public void ToString_ShouldReturnPath(string path)
+	{
+		IStorageLocation location = InMemoryLocation.New(null, path);
+
+		location.ToString().Should().Be(path);
+	}
+
 	private class DummyLocation : IStorageLocation
 	{
 		public DummyLocation(string fullPath)

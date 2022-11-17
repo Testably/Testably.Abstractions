@@ -21,7 +21,7 @@ internal sealed class DateTimeWrapper : IDateTime
 
 #if NETSTANDARD2_0
 	/// <inheritdoc cref="IDateTime.UnixEpoch" />
-	public DateTime UnixEpoch => new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+	public DateTime UnixEpoch => new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 #else
 	/// <inheritdoc cref="IDateTime.UnixEpoch" />
 	public DateTime UnixEpoch

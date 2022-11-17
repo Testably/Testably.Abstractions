@@ -25,6 +25,8 @@ public abstract partial class Tests<TFileSystem>
 
 		fileSystemWatcher.BeginInit();
 
+		fileSystemWatcher.InternalBufferSize = 5000;
+
 		fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
 		try
 		{
@@ -38,7 +40,7 @@ public abstract partial class Tests<TFileSystem>
 				}
 			});
 			IWaitForChangedResult result =
-				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, 1000);
+				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, 250);
 
 			fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
 			result.TimedOut.Should().BeTrue();

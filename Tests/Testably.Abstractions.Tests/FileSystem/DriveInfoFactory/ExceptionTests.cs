@@ -26,7 +26,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[MemberData(nameof(GetDriveInfoFactoryCallbacks), parameters: "")]
 	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IDriveInfoFactory>> callback, string paramName,
@@ -44,7 +44,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[MemberData(nameof(GetDriveInfoFactoryCallbacks), parameters: (string?)null)]
 	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IDriveInfoFactory>> callback, string paramName,

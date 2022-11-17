@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text;
+// ReSharper disable StringLiteralTypo
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
@@ -113,7 +114,7 @@ public abstract partial class SearchFilterTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void SearchPattern_ContainingQuestionmark_ShouldReturnMatchingFiles()
+	public void SearchPattern_ContainingQuestionMark_ShouldReturnMatchingFiles()
 	{
 		FileSystem.Initialize()
 			.WithFile("a-test")

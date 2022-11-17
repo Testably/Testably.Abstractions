@@ -355,7 +355,7 @@ internal class InMemoryContainer : IStorageContainer
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
-			=> $"{Access} | {Share}";
+			=> $"{(DeleteAccess ? "Delete" : Access)} | {Share}";
 
 		private static bool CheckAccessWithShare(FileAccess access, FileShare share)
 		{

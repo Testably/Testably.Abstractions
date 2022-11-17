@@ -5,7 +5,7 @@ public abstract partial class ThreadTests<TTimeSystem>
 	: TimeSystemTestBase<TTimeSystem>
 	where TTimeSystem : ITimeSystem
 {
-	[Fact]
+	[SkippableFact]
 	public void Sleep_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
 		Exception? exception = Record.Exception(() => TimeSystem.Thread.Sleep(-2));
@@ -13,7 +13,7 @@ public abstract partial class ThreadTests<TTimeSystem>
 		exception.Should().BeException<ArgumentOutOfRangeException>(hResult: -2146233086);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void Sleep_Milliseconds_ShouldSleepForSpecifiedMilliseconds()
 	{
 		int millisecondsTimeout = 10;
@@ -25,7 +25,7 @@ public abstract partial class ThreadTests<TTimeSystem>
 		after.Should().BeOnOrAfter(before.AddMilliseconds(millisecondsTimeout));
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void
 		Sleep_Timespan_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
@@ -35,7 +35,7 @@ public abstract partial class ThreadTests<TTimeSystem>
 		exception.Should().BeException<ArgumentOutOfRangeException>(hResult: -2146233086);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void Sleep_Timespan_ShouldSleepForSpecifiedMilliseconds()
 	{
 		TimeSpan timeout = TimeSpan.FromMilliseconds(10);

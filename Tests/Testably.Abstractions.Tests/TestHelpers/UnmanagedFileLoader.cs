@@ -62,7 +62,7 @@ public static class UnmanagedFileLoader
 				throw new NotSupportedException($"File mode '{mode}' is not supported!");
 		}
 
-		return CreateFile(path!, desiredAccess, 0, IntPtr.Zero, creationDisposition, 0,
+		return CreateFile(path, desiredAccess, 0, IntPtr.Zero, creationDisposition, 0,
 			IntPtr.Zero);
 	}
 }

@@ -7,12 +7,11 @@ namespace Testably.Abstractions.FileSystem;
 internal class FileSystemInfoWrapper : IFileSystemInfo
 {
 	private readonly FileSystemInfo _instance;
-	private readonly IFileSystem _fileSystem;
 
 	internal FileSystemInfoWrapper(FileSystemInfo instance, IFileSystem fileSystem)
 	{
 		_instance = instance;
-		_fileSystem = fileSystem;
+		FileSystem = fileSystem;
 		Extensibility = new FileSystemExtensibility(_instance);
 	}
 
@@ -51,8 +50,7 @@ internal class FileSystemInfoWrapper : IFileSystemInfo
 	public IFileSystemExtensibility Extensibility { get; }
 
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
-	public IFileSystem FileSystem
-		=> _fileSystem;
+	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IFileSystemInfo.FullName" />
 	public string FullName
@@ -126,7 +124,7 @@ internal class FileSystemInfoWrapper : IFileSystemInfo
 	/// <inheritdoc cref="IFileSystemInfo.ResolveLinkTarget(bool)" />
 	public IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget)
 		=> FromFileSystemInfo(_instance.ResolveLinkTarget(returnFinalTarget),
-			_fileSystem);
+			FileSystem);
 #endif
 
 	#endregion

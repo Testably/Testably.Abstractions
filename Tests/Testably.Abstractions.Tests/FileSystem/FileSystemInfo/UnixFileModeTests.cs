@@ -1,7 +1,6 @@
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 using System.IO;
 
-
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemInfo;
 
 // ReSharper disable once PartialTypeWithSinglePart

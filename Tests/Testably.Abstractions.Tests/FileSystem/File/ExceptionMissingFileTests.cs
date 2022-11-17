@@ -14,7 +14,7 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	[Theory]
+	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks), parameters: (int)MissingFileTestCase.FileMissing)]
 	public void Operations_WhenFileIsMissing_ShouldThrowFileNotFoundException(
 		Expression<Action<IFile, string>> callback)
@@ -40,7 +40,7 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		}
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks), parameters: (int)MissingFileTestCase.DirectoryMissing)]
 	public void Operations_WhenDirectoryIsMissing_ShouldThrowDirectoryNotFoundException(
 		Expression<Action<IFile, string>> callback)

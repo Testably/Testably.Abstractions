@@ -52,6 +52,14 @@ public abstract partial class FileSystemTests<TFileSystem>
 	}
 
 	[SkippableFact]
+	public void FileSystemInfo_ShouldSetExtensionPoint()
+	{
+		IFileSystem result = FileSystem.FileInfo.New("foo").FileSystem;
+
+		result.Should().Be(FileSystem);
+	}
+
+	[SkippableFact]
 	public void FileSystemWatcher_ShouldSetExtensionPoint()
 	{
 		IFileSystem result = FileSystem.FileSystemWatcher.New().FileSystem;

@@ -271,5 +271,28 @@ public abstract partial class ReadTests<TFileSystem>
 
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
+
+	[SkippableTheory]
+	[AutoData]
+	public async Task ReadAsync_Memory_CanReadFalse_ShouldThrowNotSupportedException(
+		string path, byte[] contents)
+	{
+		CancellationTokenSource cts = new(10000);
+		byte[] buffer = new byte[contents.Length];
+		await FileSystem.File.WriteAllBytesAsync(path, contents, cts.Token);
+		await using FileSystemStream stream = FileSystem.File.OpenWrite(path);
+
+		Exception? exception = await Record.ExceptionAsync(async () =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			#pragma warning disable CA1835
+			_ = await stream.ReadAsync(buffer.AsMemory(), cts.Token);
+			#pragma warning restore CA1835
+		});
+
+		await stream.DisposeAsync();
+
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
+	}
 #endif
 }

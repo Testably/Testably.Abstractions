@@ -17,6 +17,7 @@ public abstract class TimeSystemTestBase<TTimeSystem>
 {
 	public TTimeSystem TimeSystem { get; }
 
+	// ReSharper disable once UnusedMember.Global
 	protected TimeSystemTestBase(TTimeSystem timeSystem)
 	{
 		TimeSystem = timeSystem;

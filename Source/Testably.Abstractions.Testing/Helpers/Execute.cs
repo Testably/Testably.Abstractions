@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Testing.Helpers;
 
+[ExcludeFromCodeCoverage]
 internal static class Execute
 {
 	private static bool? _isNetFramework;
@@ -34,16 +36,6 @@ internal static class Execute
 			return _isNetFramework.Value;
 		}
 	}
-
-	/// <summary>
-	///     Flag indicating if the runtime is .NET 7.0 or greater.
-	/// </summary>
-	public static bool IsNet7OrGreater
-#if NET7_0_OR_GREATER
-		=> true;
-#else
-		=> false;
-#endif
 
 	/// <summary>
 	///     Flag indicating if the code runs on <see cref="OSPlatform.Windows" />.
