@@ -1,13 +1,10 @@
 ﻿using System.IO;
 using System.IO.Compression;
-using System.Linq;
-#if FEATURE_ZIPFILE_NET7
-#endif
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchive;
 
 // ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class ZipArchiveTests<TFileSystem>
+public abstract partial class Tests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {

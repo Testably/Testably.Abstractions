@@ -4,7 +4,9 @@ using System.Linq;
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchive;
 
-public abstract partial class ZipArchiveTests<TFileSystem>
+// ReSharper disable once PartialTypeWithSinglePart
+public abstract partial class ExtensionTests<TFileSystem>
+	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]

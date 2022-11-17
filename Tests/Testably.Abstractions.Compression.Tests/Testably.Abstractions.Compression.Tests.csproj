@@ -12,9 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference
-			Include="..\Helpers\Testably.Abstractions.Tests.SourceGenerator\Testably.Abstractions.Tests.SourceGenerator.csproj"
-			OutputItemType="Analyzer" />
+		<ProjectReference Include="..\Helpers\Testably.Abstractions.Tests.SourceGenerator\Testably.Abstractions.Tests.SourceGenerator.csproj" OutputItemType="Analyzer" />
 	</ItemGroup>
 
 	<PropertyGroup>
@@ -25,6 +23,10 @@
 	<ItemGroup>
 		<Compile Remove="Generated\**" />
 		<Content Include="Generated\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Generated\" />
 	</ItemGroup>
 
 </Project>
