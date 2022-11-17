@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<ProjectReference Include="..\Timer\Timer.csproj" />
+	</ItemGroup>
+
+</Project>
