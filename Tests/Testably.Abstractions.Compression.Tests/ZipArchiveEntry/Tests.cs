@@ -28,6 +28,47 @@ public abstract partial class Tests<TFileSystem>
 		entry.Archive.Should().Be(archive);
 	}
 
+#if FEATURE_ZIPFILE_NET7
+	[SkippableTheory]
+	[AutoData]
+	public void Comment_ShouldBeSettable(string comment)
+	{
+		FileSystem.Initialize()
+			.WithSubdirectory("foo");
+		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
+		FileSystem.ZipFile()
+			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+				false);
+
+		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
+
+		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchiveEntry entry = archive.Entries.Single();
+
+		entry.Comment = comment;
+
+		entry.Comment.Should().Be(comment);
+	}
+
+	[SkippableFact]
+	public void Comment_ShouldBeInitializedEmpty()
+	{
+		FileSystem.Initialize()
+			.WithSubdirectory("foo");
+		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
+		FileSystem.ZipFile()
+			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+				false);
+
+		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
+
+		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchiveEntry entry = archive.Entries.Single();
+
+		entry.Comment.Should().Be("");
+	}
+#endif
+
 	[SkippableFact]
 	public void CompressedLength_WithNoCompression_ShouldBeFileLength()
 	{
@@ -90,27 +131,6 @@ public abstract partial class Tests<TFileSystem>
 #endif
 
 	[SkippableFact]
-	public void Delete_ShouldRemoveEntryFromArchive()
-	{
-		FileSystem.Initialize()
-			.WithSubdirectory("foo");
-		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
-			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
-				false);
-
-		using FileSystemStream stream =
-			FileSystem.File.Open("destination.zip", FileMode.Open, FileAccess.ReadWrite);
-
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
-		IZipArchiveEntry entry = archive.Entries.Single();
-
-		entry.Delete();
-
-		archive.Entries.Should().HaveCount(0);
-	}
-
-	[SkippableFact]
 	public void Delete_ReadMode_ShouldThrowNotSupportedException()
 	{
 		FileSystem.Initialize()
@@ -129,6 +149,27 @@ public abstract partial class Tests<TFileSystem>
 		Exception? exception = Record.Exception(() => entry.Delete());
 
 		exception.Should().BeOfType<NotSupportedException>();
+	}
+
+	[SkippableFact]
+	public void Delete_ShouldRemoveEntryFromArchive()
+	{
+		FileSystem.Initialize()
+			.WithSubdirectory("foo");
+		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
+		FileSystem.ZipFile()
+			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+				false);
+
+		using FileSystemStream stream =
+			FileSystem.File.Open("destination.zip", FileMode.Open, FileAccess.ReadWrite);
+
+		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
+		IZipArchiveEntry entry = archive.Entries.Single();
+
+		entry.Delete();
+
+		archive.Entries.Should().HaveCount(0);
 	}
 
 #if FEATURE_COMPRESSION_ADVANCED
@@ -247,30 +288,8 @@ public abstract partial class Tests<TFileSystem>
 		entry2.LastWriteTime.Should().NotBe(lastWriteTime);
 	}
 
-#if FEATURE_ZIPFILE_NET7
-	[SkippableTheory]
-	[AutoData]
-	public void Comment_ShouldBeSettable(string comment)
-	{
-		FileSystem.Initialize()
-			.WithSubdirectory("foo");
-		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
-			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
-				false);
-
-		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
-
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
-		IZipArchiveEntry entry = archive.Entries.Single();
-
-		entry.Comment = comment;
-
-		entry.Comment.Should().Be(comment);
-	}
-
 	[SkippableFact]
-	public void Comment_ShouldBeInitializedEmpty()
+	public void ToString_ShouldBeSetToFileName()
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
@@ -279,12 +298,14 @@ public abstract partial class Tests<TFileSystem>
 			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
-		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
+		using FileSystemStream stream =
+			FileSystem.File.Open("destination.zip", FileMode.Open, FileAccess.ReadWrite);
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
 		IZipArchiveEntry entry = archive.Entries.Single();
 
-		entry.Comment.Should().Be("");
+		string? result = entry.ToString();
+
+		result.Should().Be("foo.txt");
 	}
-#endif
 }
