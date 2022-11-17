@@ -116,11 +116,6 @@ internal static class ZipUtilities
 		string destinationDirectoryName,
 		bool overwrite)
 	{
-		if (destinationDirectoryName == null)
-		{
-			throw new ArgumentNullException(nameof(destinationDirectoryName));
-		}
-
 		string fileDestinationPath =
 			source.FileSystem.Path.Combine(destinationDirectoryName,
 				source.FullName.TrimStart(

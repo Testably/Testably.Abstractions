@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Testing.Helpers;
 
+[ExcludeFromCodeCoverage]
 internal static class Execute
 {
 	private static bool? _isNetFramework;

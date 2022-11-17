@@ -79,24 +79,24 @@ internal static class EnumerationOptionsHelper
 			: Compatible;
 	}
 
-	private static bool MatchPattern(string expression,
+	private static bool MatchPattern(string searchString,
 		string name,
 		bool ignoreCase,
 		bool useExtendedWildcards)
 	{
-		if (Execute.IsNetFramework && expression == "")
+		if (Execute.IsNetFramework && searchString == "")
 		{
 			return false;
 		}
 
 		if (useExtendedWildcards)
 		{
-			expression = SimplifyExpression(expression);
-			return FileSystemName.MatchesWin32Expression(expression,
+			searchString = SimplifyExpression(searchString);
+			return FileSystemName.MatchesWin32Expression(searchString,
 				name, ignoreCase);
 		}
 
-		return FileSystemName.MatchesSimpleExpression(expression,
+		return FileSystemName.MatchesSimpleExpression(searchString,
 			name, ignoreCase);
 	}
 
@@ -106,7 +106,7 @@ internal static class EnumerationOptionsHelper
 	///     <seealso
 	///         href="https://github.com/dotnet/runtime/blob/v6.0.0/src/libraries/System.Private.CoreLib/src/System/IO/Enumeration/FileSystemEnumerableFactory.cs#L37" />
 	/// </summary>
-	private static string SimplifyExpression(string expression)
+	private static string SimplifyExpression(string searchString)
 	{
 		char[] unixEscapeChars =
 		{
@@ -115,34 +115,34 @@ internal static class EnumerationOptionsHelper
 			'<',
 			'>'
 		};
-		if (expression == DefaultSearchPattern)
+		if (searchString == DefaultSearchPattern)
 		{
-			return expression;
+			return searchString;
 		}
 
-		if (expression == "." || expression == "*.*")
+		if (searchString == "." || searchString == "*.*")
 		{
 			return DefaultSearchPattern;
 		}
 
-		if (!Execute.IsNetFramework && string.IsNullOrEmpty(expression))
+		if (!Execute.IsNetFramework && string.IsNullOrEmpty(searchString))
 		{
 			return "*";
 		}
 
-		if (Path.DirectorySeparatorChar != '\\' &&
-		    expression.IndexOfAny(unixEscapeChars) != -1)
-		{
-			// Backslash isn't the default separator, need to escape (e.g. Unix)
-			expression = expression.Replace("\\", "\\\\");
+		Execute.NotOnWindowsIf(searchString.IndexOfAny(unixEscapeChars) != -1,
+			() =>
+			{
+				// Backslash isn't the default separator, need to escape (e.g. Unix)
+				searchString = searchString.Replace("\\", "\\\\");
 
-			// Also need to escape the other special wild characters ('"', '<', and '>')
-			expression = expression.Replace("\"", "\\\"");
-			expression = expression.Replace(">", "\\>");
-			expression = expression.Replace("<", "\\<");
-		}
+				// Also need to escape the other special wild characters ('"', '<', and '>')
+				searchString = searchString.Replace("\"", "\\\"");
+				searchString = searchString.Replace(">", "\\>");
+				searchString = searchString.Replace("<", "\\<");
+			});
 
 		// Need to convert the expression to match Win32 behavior
-		return FileSystemName.TranslateWin32Expression(expression);
+		return FileSystemName.TranslateWin32Expression(searchString);
 	}
 }
