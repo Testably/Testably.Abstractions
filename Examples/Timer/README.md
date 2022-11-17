@@ -5,6 +5,7 @@ Example implementation of a timer on top of `ITimeSystem`. It uses the `ITask.De
 Included is a simple example implementation and corresponding unit tests to verify the behaviour.
 
 ```csharp
+    ITimeSystem timeSystem = new MockTimeSystem();
     TimeSpan interval = TimeSpan.FromMinutes(5);
     ITimer timer = timeSystem.CreateTimer(
         interval,
