@@ -79,19 +79,25 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 			FileSystem.InitializeIn(realFileSystem.Directory.GetCurrentDirectory());
 		}
 
-		string path = realFileSystem.Path.GetFullPath(filename);
-		realFileSystem.File.WriteAllText(path, contents);
-		FileSystem.File.WriteAllText(path, contents);
-		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
-		(FileSystem as MockFileSystem)?.WithSafeFileHandleStrategy(
-			new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
+		try
+		{
+			string path = realFileSystem.Path.GetFullPath(filename);
+			realFileSystem.File.WriteAllText(path, contents);
+			FileSystem.File.WriteAllText(path, contents);
+			using SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
+			(FileSystem as MockFileSystem)?.WithSafeFileHandleStrategy(
+				new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
 
-		FileSystemStream stream = FileSystem.FileStream.New(handle, FileAccess.ReadWrite);
-		stream.Write(Encoding.UTF8.GetBytes("foo"), 0, 3);
-		stream.Dispose();
+			FileSystemStream stream = FileSystem.FileStream.New(handle, FileAccess.ReadWrite);
+			stream.Write(Encoding.UTF8.GetBytes("foo"), 0, 3);
+			stream.Dispose();
 
-		FileSystem.File.ReadAllText(path).Should().StartWith("foo");
-		cleanup?.Dispose();
+			FileSystem.File.ReadAllText(path).Should().StartWith("foo");
+		}
+		finally
+		{
+			cleanup?.Dispose();
+		}
 	}
 
 	[SkippableTheory]
@@ -107,20 +113,26 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 			FileSystem.InitializeIn(realFileSystem.Directory.GetCurrentDirectory());
 		}
 
-		string path = realFileSystem.Path.GetFullPath(filename);
-		realFileSystem.File.WriteAllText(path, contents);
-		FileSystem.File.WriteAllText(path, contents);
-		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
-		(FileSystem as MockFileSystem)?.WithSafeFileHandleStrategy(
-			new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
+		try
+		{
+			string path = realFileSystem.Path.GetFullPath(filename);
+			realFileSystem.File.WriteAllText(path, contents);
+			FileSystem.File.WriteAllText(path, contents);
+			using SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
+			(FileSystem as MockFileSystem)?.WithSafeFileHandleStrategy(
+				new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
 
-		FileSystemStream stream =
-			FileSystem.FileStream.New(handle, FileAccess.ReadWrite, 1024);
-		stream.Write(Encoding.UTF8.GetBytes("foo"), 0, 3);
-		stream.Dispose();
+			FileSystemStream stream =
+				FileSystem.FileStream.New(handle, FileAccess.ReadWrite, 1024);
+			stream.Write(Encoding.UTF8.GetBytes("foo"), 0, 3);
+			stream.Dispose();
 
-		FileSystem.File.ReadAllText(path).Should().StartWith("foo");
-		cleanup?.Dispose();
+			FileSystem.File.ReadAllText(path).Should().StartWith("foo");
+		}
+		finally
+		{
+			cleanup?.Dispose();
+		}
 	}
 
 	[SkippableTheory]
@@ -137,20 +149,26 @@ public abstract partial class SafeFileHandleTests<TFileSystem>
 			FileSystem.InitializeIn(realFileSystem.Directory.GetCurrentDirectory());
 		}
 
-		string path = realFileSystem.Path.GetFullPath(filename);
-		realFileSystem.File.WriteAllText(path, contents);
-		FileSystem.File.WriteAllText(path, contents);
-		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
-		(FileSystem as MockFileSystem)?.WithSafeFileHandleStrategy(
-			new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
+		try
+		{
+			string path = realFileSystem.Path.GetFullPath(filename);
+			realFileSystem.File.WriteAllText(path, contents);
+			FileSystem.File.WriteAllText(path, contents);
+			using SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
+			(FileSystem as MockFileSystem)?.WithSafeFileHandleStrategy(
+				new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
 
-		FileSystemStream stream =
-			FileSystem.FileStream.New(handle, FileAccess.ReadWrite, 1024, false);
-		stream.Write(Encoding.UTF8.GetBytes("foo"), 0, 3);
-		stream.Dispose();
+			FileSystemStream stream =
+				FileSystem.FileStream.New(handle, FileAccess.ReadWrite, 1024, false);
+			stream.Write(Encoding.UTF8.GetBytes("foo"), 0, 3);
+			stream.Dispose();
 
-		FileSystem.File.ReadAllText(path).Should().StartWith("foo");
-		cleanup?.Dispose();
+			FileSystem.File.ReadAllText(path).Should().StartWith("foo");
+		}
+		finally
+		{
+			cleanup?.Dispose();
+		}
 	}
 }
 #endif

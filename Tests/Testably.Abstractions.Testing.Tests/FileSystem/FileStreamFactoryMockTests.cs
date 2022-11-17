@@ -37,11 +37,12 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 		path = RealFileSystem.Path.GetFullPath(path);
 		RealFileSystem.File.WriteAllText(path, contents);
 
-		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
+		using SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
 		handle.IsInvalid.Should().BeFalse();
 
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			MockFileSystem.FileStream.New(handle, FileAccess.Read);
 		});
 
@@ -58,11 +59,12 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 		path = RealFileSystem.Path.GetFullPath(path);
 		RealFileSystem.File.WriteAllText(path, contents);
 
-		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
+		using SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
 		handle.IsInvalid.Should().BeFalse();
 
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			MockFileSystem.FileStream.New(handle, FileAccess.Read, bufferSize);
 		});
 
@@ -80,11 +82,12 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 		path = RealFileSystem.Path.GetFullPath(path);
 		RealFileSystem.File.WriteAllText(path, contents);
 
-		SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
+		using SafeFileHandle handle = UnmanagedFileLoader.CreateSafeFileHandle(path);
 		handle.IsInvalid.Should().BeFalse();
 
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			MockFileSystem.FileStream.New(handle, FileAccess.Read, bufferSize, isAsync);
 		});
 
