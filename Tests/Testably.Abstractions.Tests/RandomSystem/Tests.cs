@@ -5,7 +5,7 @@ public abstract partial class Tests<TRandomSystem>
 	: RandomSystemTestBase<TRandomSystem>
 	where TRandomSystem : IRandomSystem
 {
-	[Fact]
+	[SkippableFact]
 	public void Guid_ShouldSetExtensionPoint()
 	{
 		IRandomSystem result = RandomSystem.Guid.RandomSystem;
@@ -13,7 +13,7 @@ public abstract partial class Tests<TRandomSystem>
 		result.Should().Be(RandomSystem);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void Random_ShouldSetExtensionPoint()
 	{
 		IRandomSystem result = RandomSystem.Random.RandomSystem;

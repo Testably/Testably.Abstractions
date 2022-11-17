@@ -9,7 +9,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	[Theory]
+	[SkippableTheory]
 	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks), parameters: "")]
 	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IDirectoryInfoFactory>> callback, string paramName,
@@ -47,7 +47,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 			$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks), parameters: (string?)null)]
 	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IDirectoryInfoFactory>> callback, string paramName,

@@ -11,7 +11,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	[Theory]
+	[SkippableTheory]
 	[MemberData(nameof(GetFileSystemInfoCallbacks), parameters: "")]
 	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileSystemInfo>> callback, string paramName,
@@ -29,7 +29,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[MemberData(nameof(GetFileSystemInfoCallbacks), parameters: (string?)null)]
 	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileSystemInfo>> callback, string paramName,

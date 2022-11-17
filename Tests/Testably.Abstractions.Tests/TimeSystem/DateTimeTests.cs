@@ -5,7 +5,7 @@ public abstract partial class DateTimeTests<TTimeSystem>
 	: TimeSystemTestBase<TTimeSystem>
 	where TTimeSystem : ITimeSystem
 {
-	[Fact]
+	[SkippableFact]
 	public void MaxValue_ShouldReturnDefaultValue()
 	{
 		DateTime expectedResult = DateTime.MaxValue;
@@ -15,7 +15,7 @@ public abstract partial class DateTimeTests<TTimeSystem>
 		result.Should().Be(expectedResult);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void MinValue_ShouldReturnDefaultValue()
 	{
 		DateTime expectedResult = DateTime.MinValue;
@@ -40,7 +40,7 @@ public abstract partial class DateTimeTests<TTimeSystem>
 		result.ApplySystemClockTolerance(tolerance).Should().BeOnOrBefore(after);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void Today_ShouldBeSetToToday()
 	{
 		DateTime before = DateTime.Today;
@@ -54,7 +54,7 @@ public abstract partial class DateTimeTests<TTimeSystem>
 		result.ApplySystemClockTolerance().Should().BeOnOrBefore(after);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void UnixEpoch_ShouldReturnDefaultValue()
 	{
 		DateTime expectedResult = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);

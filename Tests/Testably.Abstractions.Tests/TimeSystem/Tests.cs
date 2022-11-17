@@ -5,7 +5,7 @@ public abstract partial class Tests<TTimeSystem>
 	: TimeSystemTestBase<TTimeSystem>
 	where TTimeSystem : ITimeSystem
 {
-	[Fact]
+	[SkippableFact]
 	public void DateTime_ShouldSetExtensionPoint()
 	{
 		ITimeSystem result = TimeSystem.DateTime.TimeSystem;
@@ -13,7 +13,7 @@ public abstract partial class Tests<TTimeSystem>
 		result.Should().Be(TimeSystem);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void Task_ShouldSetExtensionPoint()
 	{
 		ITimeSystem result = TimeSystem.Task.TimeSystem;
@@ -21,7 +21,7 @@ public abstract partial class Tests<TTimeSystem>
 		result.Should().Be(TimeSystem);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void Thread_ShouldSetExtensionPoint()
 	{
 		ITimeSystem result = TimeSystem.Thread.TimeSystem;

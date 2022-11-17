@@ -8,7 +8,7 @@ public abstract partial class RandomFactoryTests<TRandomSystem>
 	: RandomSystemTestBase<TRandomSystem>
 	where TRandomSystem : IRandomSystem
 {
-	[Fact]
+	[SkippableFact]
 	public void New_Next_ShouldReturnDifferentValues()
 	{
 		List<int> results = new();
@@ -21,7 +21,7 @@ public abstract partial class RandomFactoryTests<TRandomSystem>
 		results.Should().OnlyHaveUniqueItems();
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[AutoData]
 	public void New_Next_WithSeed_ShouldReturnSameValue(int seed)
 	{
@@ -35,7 +35,7 @@ public abstract partial class RandomFactoryTests<TRandomSystem>
 		results.Should().AllBeEquivalentTo(results.First());
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void New_Shared_ShouldReturnDifferentValues()
 	{
 		List<int> results = new();

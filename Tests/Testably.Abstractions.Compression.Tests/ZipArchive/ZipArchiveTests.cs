@@ -15,10 +15,10 @@ public abstract partial class ZipArchiveTests<TFileSystem>
 	public void Comment_ShouldBeSettable(string comment)
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("foo");
+			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
 		FileSystem.ZipFile()
-		   .CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
@@ -33,10 +33,10 @@ public abstract partial class ZipArchiveTests<TFileSystem>
 	public void Comment_ShouldBeInitializedEmpty()
 	{
 		FileSystem.Initialize()
-		   .WithSubdirectory("foo");
+			.WithSubdirectory("foo");
 		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
 		FileSystem.ZipFile()
-		   .CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
 				false);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
@@ -49,7 +49,7 @@ public abstract partial class ZipArchiveTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void FileSystemExtension_ShouldBeSet(
+	public void FileSystem_ShouldBeSet(
 		CompressionLevel compressionLevel)
 	{
 		FileSystem.Initialize()
@@ -62,6 +62,22 @@ public abstract partial class ZipArchiveTests<TFileSystem>
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
 		archive.FileSystem.Should().Be(FileSystem);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Mode_ShouldBeSetCorrectly(ZipArchiveMode mode)
+	{
+		FileSystem.Initialize()
+			.WithSubdirectory("foo");
+
+		FileSystem.ZipFile()
+			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.Fastest, false);
+
+		using IZipArchive archive =
+			FileSystem.ZipFile().Open("destination.zip", mode);
+
+		archive.Mode.Should().Be(mode);
 	}
 
 	[SkippableFact]

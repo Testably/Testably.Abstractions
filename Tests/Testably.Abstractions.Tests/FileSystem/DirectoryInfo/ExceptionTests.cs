@@ -10,7 +10,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	[Theory]
+	[SkippableTheory]
 	[MemberData(nameof(GetDirectoryInfoCallbacks), parameters: "")]
 	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IDirectoryInfo>> callback, string paramName,
@@ -57,7 +57,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 		}
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[MemberData(nameof(GetDirectoryInfoCallbacks), parameters: (string?)null)]
 	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IDirectoryInfo>> callback, string paramName,

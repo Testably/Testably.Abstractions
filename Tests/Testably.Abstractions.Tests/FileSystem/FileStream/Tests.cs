@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
@@ -189,9 +190,28 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public async Task FlushAsync_Cancelled_ShouldThrowTaskCanceledException(
+		string path)
+	{
+		CancellationTokenSource cts = new();
+		cts.Cancel();
+
+		Exception? exception = await Record.ExceptionAsync(async () =>
+		{
+			// ReSharper disable once UseAwaitUsing
+			using FileSystemStream stream = FileSystem.File.Create(path);
+			await stream.FlushAsync(cts.Token);
+		});
+
+		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public async Task FlushAsync_ShouldNotChangePosition(
 		string path, byte[] bytes)
 	{
+		// ReSharper disable once UseAwaitUsing
 		using FileSystemStream stream = FileSystem.File.Create(path);
 		stream.Write(bytes, 0, bytes.Length);
 		stream.Seek(2, SeekOrigin.Begin);

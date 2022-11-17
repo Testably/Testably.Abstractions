@@ -11,13 +11,13 @@ public abstract partial class GuidTests<TRandomSystem>
 	: RandomSystemTestBase<TRandomSystem>
 	where TRandomSystem : IRandomSystem
 {
-	[Fact]
+	[SkippableFact]
 	public void Empty_ShouldReturnEmptyGuid()
 	{
 		RandomSystem.Guid.Empty.Should().Be(Guid.Empty);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void NewGuid_ShouldBeThreadSafeAndReturnUniqueItems()
 	{
 		ConcurrentBag<Guid> results = new();
@@ -31,7 +31,7 @@ public abstract partial class GuidTests<TRandomSystem>
 	}
 
 #if FEATURE_GUID_PARSE
-	[Theory]
+	[SkippableTheory]
 	[AutoData]
 	public void Parse_String_ShouldReturnCorrectGuid(Guid guid)
 	{
@@ -42,7 +42,7 @@ public abstract partial class GuidTests<TRandomSystem>
 		result.Should().Be(guid);
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[AutoData]
 	public void Parse_SpanArray_ShouldReturnCorrectGuid(Guid guid)
 	{
@@ -53,7 +53,7 @@ public abstract partial class GuidTests<TRandomSystem>
 		result.Should().Be(guid);
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[AutoData]
 	public void TryParse_String_ShouldReturnTrue(Guid guid)
 	{
@@ -65,7 +65,7 @@ public abstract partial class GuidTests<TRandomSystem>
 		value.Should().Be(guid);
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[AutoData]
 	public void TryParse_SpanArray_ShouldReturnTrue(Guid guid)
 	{
@@ -77,7 +77,7 @@ public abstract partial class GuidTests<TRandomSystem>
 		value.Should().Be(guid);
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[MemberAutoData(nameof(GuidFormats))]
 	public void ParseExact_String_ShouldReturnCorrectGuid(string format, Guid guid)
 	{
@@ -88,7 +88,7 @@ public abstract partial class GuidTests<TRandomSystem>
 		result.Should().Be(guid);
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[MemberAutoData(nameof(GuidFormats))]
 	public void ParseExact_SpanArray_ShouldReturnCorrectGuid(
 		string format, Guid guid)
@@ -100,7 +100,7 @@ public abstract partial class GuidTests<TRandomSystem>
 		result.Should().Be(guid);
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[MemberAutoData(nameof(GuidFormats))]
 	public void TryParseExact_String_ShouldReturnTrue(string format, Guid guid)
 	{
@@ -114,7 +114,7 @@ public abstract partial class GuidTests<TRandomSystem>
 		value.Should().Be(guid);
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[MemberAutoData(nameof(GuidFormats))]
 	public void TryParseExact_SpanArray_ShouldReturnTrue(string format, Guid guid)
 	{

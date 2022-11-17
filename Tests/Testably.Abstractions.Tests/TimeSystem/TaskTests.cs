@@ -8,7 +8,7 @@ public abstract partial class TaskTests<TTimeSystem>
 	: TimeSystemTestBase<TTimeSystem>
 	where TTimeSystem : ITimeSystem
 {
-	[Fact]
+	[SkippableFact]
 	public async Task
 		Delay_Milliseconds_Cancelled_ShouldThrowTaskCanceledException()
 	{
@@ -26,7 +26,7 @@ public abstract partial class TaskTests<TTimeSystem>
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public async Task
 		Delay_Milliseconds_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
@@ -38,7 +38,7 @@ public abstract partial class TaskTests<TTimeSystem>
 		exception.Should().BeException<ArgumentOutOfRangeException>(hResult: -2146233086);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public async Task
 		Delay_Milliseconds_ShouldDelayForSpecifiedMilliseconds()
 	{
@@ -52,7 +52,7 @@ public abstract partial class TaskTests<TTimeSystem>
 			.ApplySystemClockTolerance());
 	}
 
-	[Fact]
+	[SkippableFact]
 	public async Task
 		Delay_Timespan_Cancelled_ShouldThrowTaskCanceledException()
 	{
@@ -69,7 +69,7 @@ public abstract partial class TaskTests<TTimeSystem>
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public async Task
 		Delay_Timespan_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
@@ -83,7 +83,7 @@ public abstract partial class TaskTests<TTimeSystem>
 		exception.Should().BeException<ArgumentOutOfRangeException>(hResult: -2146233086);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public async Task
 		Delay_Timespan_ShouldDelayForSpecifiedMilliseconds()
 	{
