@@ -46,7 +46,6 @@ public abstract partial class Tests<TFileSystem>
 	}
 #endif
 
-
 	[SkippableFact]
 	public void Entries_CreateMode_ShouldThrowNotSupportedException()
 	{

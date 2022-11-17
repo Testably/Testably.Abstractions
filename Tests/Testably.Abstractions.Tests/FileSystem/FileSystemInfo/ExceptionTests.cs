@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemInfo;
 
 // ReSharper disable once PartialTypeWithSinglePart

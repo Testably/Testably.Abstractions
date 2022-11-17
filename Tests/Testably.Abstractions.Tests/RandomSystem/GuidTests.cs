@@ -1,9 +1,9 @@
 using System.Collections.Concurrent;
 using System.Globalization;
+using System.Threading.Tasks;
 #if FEATURE_GUID_PARSE
 using System.Collections.Generic;
 #endif
-using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.RandomSystem;
 
@@ -137,7 +137,8 @@ public abstract partial class GuidTests<TRandomSystem>
 	{
 		string serializedGuid = guid.ToString();
 
-		bool result = RandomSystem.Guid.TryParse(serializedGuid, CultureInfo.InvariantCulture, out Guid value);
+		bool result = RandomSystem.Guid.TryParse(serializedGuid, CultureInfo.InvariantCulture,
+			out Guid value);
 
 		result.Should().BeTrue();
 		value.Should().Be(guid);
@@ -149,7 +150,8 @@ public abstract partial class GuidTests<TRandomSystem>
 	{
 		ReadOnlySpan<char> serializedGuid = guid.ToString().AsSpan();
 
-		bool result = RandomSystem.Guid.TryParse(serializedGuid, CultureInfo.InvariantCulture, out Guid value);
+		bool result = RandomSystem.Guid.TryParse(serializedGuid, CultureInfo.InvariantCulture,
+			out Guid value);
 
 		result.Should().BeTrue();
 		value.Should().Be(guid);

@@ -1,11 +1,11 @@
-﻿using System;
+﻿#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+using Microsoft.Win32.SafeHandles;
+#endif
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
-#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-using Microsoft.Win32.SafeHandles;
-#endif
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
