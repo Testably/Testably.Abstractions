@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Timer;
+namespace Testably.Abstractions.Examples.Timer;
 
 /// <summary>
 ///     A timer.

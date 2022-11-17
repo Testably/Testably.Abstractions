@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using Testably.Abstractions;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing;
 using Testably.Abstractions.Testing.FileSystem;
 
-namespace SafeFileHandle;
+namespace Testably.Abstractions.Examples.SafeFileHandle;
 
 /// <summary>
 ///     A custom <see cref="ISafeFileHandleStrategy" />, that keeps a dictionary of all mappings and on each access,

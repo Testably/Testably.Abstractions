@@ -6,7 +6,7 @@ using System.Threading;
 using Testably.Abstractions.Testing;
 using Xunit;
 
-namespace Timer.Tests;
+namespace Testably.Abstractions.Examples.Timer.Tests;
 
 public class TimerTests
 {

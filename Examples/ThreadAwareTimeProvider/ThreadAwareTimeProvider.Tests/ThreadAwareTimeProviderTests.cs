@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Testably.Abstractions.Testing;
 using Xunit;
 
-namespace ThreadAwareTimeProvider.Tests;
+namespace Testably.Abstractions.Examples.ThreadAwareTimeProvider.Tests;
 
 public class ThreadAwareTimeProviderTests
 {

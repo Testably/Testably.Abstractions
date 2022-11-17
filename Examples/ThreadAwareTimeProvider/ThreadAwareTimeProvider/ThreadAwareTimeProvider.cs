@@ -2,7 +2,7 @@
 using System.Threading;
 using Testably.Abstractions.Testing.TimeSystem;
 
-namespace ThreadAwareTimeProvider;
+namespace Testably.Abstractions.Examples.ThreadAwareTimeProvider;
 
 public sealed class ThreadAwareTimeProvider : ITimeProvider
 {

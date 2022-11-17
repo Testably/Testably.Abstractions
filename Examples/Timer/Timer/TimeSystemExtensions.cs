@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading;
-using Testably.Abstractions;
 using Testably.Abstractions.TimeSystem;
 
-namespace Timer;
+namespace Testably.Abstractions.Examples.Timer;
 
 /// <summary>
 ///     Extension methods for the time system.

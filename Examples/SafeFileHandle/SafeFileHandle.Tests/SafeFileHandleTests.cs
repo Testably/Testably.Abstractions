@@ -1,12 +1,11 @@
 using AutoFixture.Xunit2;
 using FluentAssertions;
 using System;
-using Testably.Abstractions;
 using Testably.Abstractions.Testing;
 using Testably.Abstractions.Testing.FileSystem;
 using Xunit;
 
-namespace SafeFileHandle.Tests;
+namespace Testably.Abstractions.Examples.SafeFileHandle.Tests;
 
 public class SafeFileHandleTests
 {

@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+	<PropertyGroup>
+		<RootNamespace>Testably.Abstractions.Examples.ThreadAwareTimeProvider.Tests</RootNamespace>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\ThreadAwareTimeProvider\ThreadAwareTimeProvider.csproj" />
 	</ItemGroup>

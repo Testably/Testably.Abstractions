@@ -2,7 +2,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace SafeFileHandle;
+namespace Testably.Abstractions.Examples.SafeFileHandle;
 
 /// <summary>
 ///     <see

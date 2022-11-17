@@ -2,13 +2,12 @@ using AutoFixture.Xunit2;
 using FluentAssertions;
 using System.IO;
 using System.IO.Compression;
-using Testably.Abstractions;
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing;
 using Testably.Abstractions.Testing.FileSystemInitializer;
 using Xunit;
 
-namespace ZipFile.Tests;
+namespace Testably.Abstractions.Examples.ZipFile.Tests;
 
 public class ZipFileHelperTests
 {

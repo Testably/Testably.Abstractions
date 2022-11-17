@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Testably.Abstractions;
 
-namespace Timer;
+namespace Testably.Abstractions.Examples.Timer;
 
 internal sealed class Timer : ITimer
 {

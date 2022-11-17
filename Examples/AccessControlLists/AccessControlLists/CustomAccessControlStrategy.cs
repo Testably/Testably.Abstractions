@@ -2,7 +2,7 @@
 using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing.FileSystem;
 
-namespace AccessControlLists;
+namespace Testably.Abstractions.Examples.AccessControlLists;
 
 public sealed class CustomAccessControlStrategy : IAccessControlStrategy
 {
