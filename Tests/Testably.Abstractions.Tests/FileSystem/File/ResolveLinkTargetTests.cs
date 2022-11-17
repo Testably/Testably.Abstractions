@@ -88,6 +88,29 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void ResolveLinkTarget_FinalTarget_MultipleSteps_ShouldFollowSymbolicLinkToFinalTarget(
+		string path, string pathToFinalTarget)
+	{
+		int maxLinks = new Random().Next(1, MaxResolveLinks);
+
+		FileSystem.File.WriteAllText(pathToFinalTarget, null);
+		string previousPath = pathToFinalTarget;
+		for (int i = 0; i < maxLinks; i++)
+		{
+			string newPath = $"{path}-{i}";
+			FileSystem.File.CreateSymbolicLink(newPath,
+				System.IO.Path.Combine(BasePath, previousPath));
+			previousPath = newPath;
+		}
+
+		IFileSystemInfo? target =
+			FileSystem.File.ResolveLinkTarget(previousPath, true);
+
+		target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToFinalTarget));
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
 		string path, string pathToFinalTarget)
 	{
@@ -113,7 +136,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void ResolveLinkTarget_MissingFileInLinkChain_ShouldReturnPathToMissingFile(
+	public void ResolveLinkTarget_MissingFileAtBeginningOfLinkChain_ShouldReturnPathToMissingFile(
 		string path, string pathToFinalTarget, string pathToMissingFile)
 	{
 		FileSystem.File.WriteAllText(pathToFinalTarget, null);
@@ -121,6 +144,29 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 			System.IO.Path.Combine(BasePath, pathToFinalTarget));
 		FileSystem.File.CreateSymbolicLink(path,
 			System.IO.Path.Combine(BasePath, pathToMissingFile));
+		FileSystem.File.Delete(pathToMissingFile);
+
+		IFileSystemInfo? target =
+			FileSystem.File.ResolveLinkTarget(path, true);
+
+		target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToMissingFile));
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void ResolveLinkTarget_MissingFileInLinkChain_ShouldReturnPathToMissingFile(
+		string path,
+		string pathToIntermediateTarget,
+		string pathToFinalTarget,
+		string pathToMissingFile)
+	{
+		FileSystem.File.WriteAllText(pathToFinalTarget, null);
+		FileSystem.File.CreateSymbolicLink(pathToMissingFile,
+			System.IO.Path.Combine(BasePath, pathToFinalTarget));
+		FileSystem.File.CreateSymbolicLink(pathToIntermediateTarget,
+			System.IO.Path.Combine(BasePath, pathToMissingFile));
+		FileSystem.File.CreateSymbolicLink(path,
+			System.IO.Path.Combine(BasePath, pathToIntermediateTarget));
 		FileSystem.File.Delete(pathToMissingFile);
 
 		IFileSystemInfo? target =
