@@ -1,4 +1,6 @@
-﻿using System.IO.Compression;
+﻿using System.IO;
+using System.IO.Compression;
+using System.Linq;
 #if FEATURE_ZIPFILE_NET7
 #endif
 
@@ -46,6 +48,20 @@ public abstract partial class ZipArchiveTests<TFileSystem>
 		archive.Comment.Should().Be("");
 	}
 #endif
+
+
+	[SkippableFact]
+	public void Entries_CreateMode_ShouldThrowNotSupportedException()
+	{
+		using FileSystemStream stream =
+			FileSystem.File.Open("destination.zip", FileMode.Create, FileAccess.ReadWrite);
+
+		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Create);
+
+		Exception? exception = Record.Exception(() => archive.Entries);
+
+		exception.Should().BeOfType<NotSupportedException>();
+	}
 
 	[SkippableTheory]
 	[AutoData]

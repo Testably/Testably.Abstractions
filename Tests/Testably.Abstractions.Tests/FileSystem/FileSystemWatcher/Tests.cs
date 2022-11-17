@@ -25,6 +25,8 @@ public abstract partial class Tests<TFileSystem>
 
 		fileSystemWatcher.BeginInit();
 
+		fileSystemWatcher.InternalBufferSize = 5000;
+
 		fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
 		try
 		{
