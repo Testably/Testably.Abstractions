@@ -19,6 +19,7 @@ public abstract class FileSystemTestBase<TFileSystem>
 	public TFileSystem FileSystem { get; }
 	public ITimeSystem TimeSystem { get; }
 
+	// ReSharper disable once UnusedMember.Global
 	protected FileSystemTestBase(TFileSystem fileSystem,
 		ITimeSystem timeSystem)
 	{

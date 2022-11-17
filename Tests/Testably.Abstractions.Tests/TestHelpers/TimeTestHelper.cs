@@ -16,11 +16,4 @@ public static class TimeTestHelper
 	{
 		return time.AddMilliseconds(-1 * tolerance);
 	}
-
-	public static DateTime GetRandomTime(DateTimeKind kind = DateTimeKind.Unspecified)
-	{
-		Random random = new();
-		return new DateTime(1970, 1, 1, 0, 0, 0, kind)
-			.AddSeconds(random.Next());
-	}
 }

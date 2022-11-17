@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Testably.Abstractions.Tests.SourceGenerator.Model;
+// ReSharper disable StringLiteralTypo
 
 namespace Testably.Abstractions.Tests.SourceGenerator.ClassGenerators;
 

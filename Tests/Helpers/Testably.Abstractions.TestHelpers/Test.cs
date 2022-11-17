@@ -46,6 +46,7 @@ public static class Test
 		Skip.If(fileSystem is RealFileSystem,
 			"Long-Running tests are skipped in DEBUG mode unless the build constant 'INCLUDE_LONG_RUNNING_TESTS_ALSO_IN_DEBUG_MODE' is set.");
 #endif
+		// ReSharper disable once CommentTypo
 		// Do nothing when in release mode or `INCLUDE_LONGRUNNING_TESTS_ALSO_IN_DEBUG_MODE` is set
 	}
 

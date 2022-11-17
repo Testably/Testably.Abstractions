@@ -1,9 +1,4 @@
-﻿using Microsoft.Win32.SafeHandles;
-using System.IO;
-using Testably.Abstractions.Testing.FileSystem;
-using Testably.Abstractions.Testing.Tests.TestHelpers;
-
-namespace Testably.Abstractions.Testing.Tests.FileSystem;
+﻿namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
 public class FileMockTests
 {

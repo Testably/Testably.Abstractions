@@ -17,6 +17,7 @@ public abstract class RandomSystemTestBase<TRandomSystem>
 {
 	public TRandomSystem RandomSystem { get; }
 
+	// ReSharper disable once UnusedMember.Global
 	protected RandomSystemTestBase(TRandomSystem randomSystem)
 	{
 		RandomSystem = randomSystem;
