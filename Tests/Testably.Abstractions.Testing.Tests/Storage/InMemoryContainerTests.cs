@@ -212,4 +212,51 @@ public class InMemoryContainerTests
 		result.Should().Be(time);
 		result.Kind.Should().Be(kind);
 	}
+
+	[Theory]
+	[AutoData]
+	public void Container_ShouldProvideCorrectTimeAndFileSystem(string path)
+	{
+		MockFileSystem fileSystem = new();
+		IStorageLocation location = InMemoryLocation.New(null, path);
+		IStorageContainer sut = InMemoryContainer.NewFile(location, fileSystem);
+
+		sut.FileSystem.Should().Be(fileSystem);
+		sut.TimeSystem.Should().Be(fileSystem.TimeSystem);
+	}
+
+	[Theory]
+	[AutoData]
+	public void RequestAccess_ToString_ShouldContainAccessAndShare(string path, FileAccess access,
+		FileShare share)
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.Initialize()
+			.WithFile(path);
+		IStorageLocation location = fileSystem.Storage.GetLocation(path);
+		IStorageContainer sut = InMemoryContainer.NewFile(location, fileSystem);
+
+		IStorageAccessHandle result = sut.RequestAccess(access, share);
+
+		result.ToString().Should().Contain(access.ToString());
+		result.ToString().Should().Contain(share.ToString());
+	}
+
+	[Theory]
+	[AutoData]
+	public void RequestAccess_ToString_DeleteAccess_ShouldContainAccessAndShare(string path,
+		FileAccess access, FileShare share)
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.Initialize()
+			.WithFile(path);
+		IStorageLocation location = fileSystem.Storage.GetLocation(path);
+		IStorageContainer sut = InMemoryContainer.NewFile(location, fileSystem);
+
+		IStorageAccessHandle result = sut.RequestAccess(access, share, true);
+
+		result.ToString().Should().NotContain(access.ToString());
+		result.ToString().Should().Contain("Delete");
+		result.ToString().Should().Contain(share.ToString());
+	}
 }
