@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+	<PropertyGroup>
+		<RootNamespace>Testably.Abstractions.Examples.SafeFileHandle.Tests</RootNamespace>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\SafeFileHandle\SafeFileHandle.csproj" />
 	</ItemGroup>

@@ -1,9 +1,8 @@
 ﻿using System.IO;
 using System.IO.Compression;
-using Testably.Abstractions;
 using Testably.Abstractions.FileSystem;
 
-namespace ZipFile;
+namespace Testably.Abstractions.Examples.ZipFile;
 
 public sealed class ZipFileHelper
 {
@@ -49,7 +48,7 @@ public sealed class ZipFileHelper
 		foreach (ZipArchiveEntry entry in archive.Entries)
 		{
 			string filePath = _fileSystem.Path.Combine(directory, entry.FullName);
-			string directoryPath = _fileSystem.Path.GetDirectoryName(filePath);
+			string? directoryPath = _fileSystem.Path.GetDirectoryName(filePath);
 			if (directoryPath != null &&
 			    !_fileSystem.Directory.Exists(directoryPath))
 			{

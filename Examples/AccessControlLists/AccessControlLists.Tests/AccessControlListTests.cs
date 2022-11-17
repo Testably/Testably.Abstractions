@@ -5,7 +5,7 @@ using System.IO;
 using Testably.Abstractions.Testing;
 using Xunit;
 
-namespace AccessControlLists.Tests;
+namespace Testably.Abstractions.Examples.AccessControlLists.Tests;
 
 public class AccessControlListTests
 {

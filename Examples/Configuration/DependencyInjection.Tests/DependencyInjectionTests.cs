@@ -1,9 +1,8 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Testably.Abstractions;
 using Xunit;
 
-namespace DependencyInjection.Tests;
+namespace Testably.Abstractions.Examples.Configuration.DependencyInjection.Tests;
 
 public class DependencyInjectionTests
 {

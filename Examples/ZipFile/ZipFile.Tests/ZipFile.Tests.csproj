@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+	<PropertyGroup>
+		<RootNamespace>Testably.Abstractions.Examples.ZipFile.Tests</RootNamespace>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\ZipFile\ZipFile.csproj" />
 	</ItemGroup>

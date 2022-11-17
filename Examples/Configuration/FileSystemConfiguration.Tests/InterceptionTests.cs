@@ -4,7 +4,7 @@ using System;
 using Testably.Abstractions.Testing;
 using Xunit;
 
-namespace FileSystemConfiguration.Tests;
+namespace Testably.Abstractions.Examples.Configuration.FileSystemConfiguration.Tests;
 
 public class InterceptionTests
 {
