@@ -7,7 +7,7 @@ Included is a simple example implementation and corresponding unit tests to veri
 ```csharp
     ITimeSystem timeSystem = new MockTimeSystem();
     TimeSpan interval = TimeSpan.FromMinutes(5);
-    ITimer timer = timeSystem.CreateTimer(
+    Timer timer = timeSystem.CreateTimer(
         interval,
         _ =>
         {

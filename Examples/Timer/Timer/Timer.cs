@@ -4,8 +4,31 @@ using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Examples.Timer;
 
-internal sealed class Timer : ITimer
+/// <summary>
+///     A timer.
+/// </summary>
+public sealed class Timer : IDisposable
 {
+	/// <summary>
+	///     The action to execute in each iteration.
+	/// </summary>
+	public Action<CancellationToken> Callback { get; }
+
+	/// <summary>
+	///     The interval in which to execute the <see cref="Callback" />.
+	/// </summary>
+	public TimeSpan Interval { get; }
+
+	/// <summary>
+	///     Flag indicating, if the timer is running or not.
+	/// </summary>
+	public bool IsRunning { get; private set; }
+
+	/// <summary>
+	///     (optional) A callback for handling errors thrown by the <see cref="Callback" />.
+	/// </summary>
+	public Action<Exception>? OnError { get; }
+
 	private CancellationTokenSource? _linkedCancellationTokenSource;
 	private CancellationTokenSource? _runningCancellationTokenSource;
 	private readonly ITimeSystem _timeSystem;
@@ -22,19 +45,7 @@ internal sealed class Timer : ITimer
 		OnError = onError;
 	}
 
-	#region ITimer Members
-
-	/// <inheritdoc cref="ITimer.Callback" />
-	public Action<CancellationToken> Callback { get; }
-
-	/// <inheritdoc cref="ITimer.Interval" />
-	public TimeSpan Interval { get; }
-
-	/// <inheritdoc cref="ITimer.IsRunning" />
-	public bool IsRunning { get; private set; }
-
-	/// <inheritdoc cref="ITimer.OnError" />
-	public Action<Exception>? OnError { get; }
+	#region IDisposable Members
 
 	/// <inheritdoc cref="IDisposable.Dispose()" />
 	public void Dispose()
@@ -44,8 +55,12 @@ internal sealed class Timer : ITimer
 		_linkedCancellationTokenSource?.Dispose();
 	}
 
-	/// <inheritdoc cref="ITimer.Start(CancellationToken)" />
-	public ITimer Start(CancellationToken cancellationToken = default)
+	#endregion
+
+	/// <summary>
+	///     Starts the timer.
+	/// </summary>
+	public Timer Start(CancellationToken cancellationToken = default)
 	{
 		Stop();
 		IsRunning = true;
@@ -88,8 +103,10 @@ internal sealed class Timer : ITimer
 		return this;
 	}
 
-	/// <inheritdoc cref="ITimer.Stop()" />
-	public ITimer Stop()
+	/// <summary>
+	///     Stops the current timer.
+	/// </summary>
+	public Timer Stop()
 	{
 		IsRunning = false;
 		if (_runningCancellationTokenSource is { IsCancellationRequested: false })
@@ -99,6 +116,4 @@ internal sealed class Timer : ITimer
 
 		return this;
 	}
-
-	#endregion
 }

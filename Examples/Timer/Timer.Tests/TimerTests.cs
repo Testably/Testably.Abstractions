@@ -24,7 +24,7 @@ public class TimerTests
 		ManualResetEventSlim ms = new();
 		int expectedIterations = 10;
 
-		ITimer timer = timeSystem.CreateTimer(
+		Timer timer = timeSystem.CreateTimer(
 			interval,
 			_ =>
 			{
@@ -57,7 +57,7 @@ public class TimerTests
 		ManualResetEventSlim ms = new();
 		int expectedIterations = 10;
 
-		ITimer timer = timeSystem.CreateTimer(
+		Timer timer = timeSystem.CreateTimer(
 			interval,
 			_ =>
 			{
@@ -86,10 +86,10 @@ public class TimerTests
 			out TimeSpan[] receivedIntervals);
 		timeSystem.On.TaskDelay(d =>
 			receivedIntervals[Math.Max(0, expectedIterations)] = d);
-		ITimer? runningTimer = null;
+		Timer? runningTimer = null;
 		ManualResetEventSlim ms = new();
 
-		ITimer timer = timeSystem.CreateTimer(interval, _ =>
+		Timer timer = timeSystem.CreateTimer(interval, _ =>
 		{
 			expectedIterations--;
 			if (expectedIterations < 0)
@@ -116,10 +116,10 @@ public class TimerTests
 			out TimeSpan[] receivedIntervals);
 		timeSystem.On.TaskDelay(d =>
 			receivedIntervals[Math.Max(0, expectedIterations)] = d);
-		ITimer? runningTimer = null;
+		Timer? runningTimer = null;
 		ManualResetEventSlim ms = new();
 
-		ITimer timer = timeSystem.CreateTimer(interval, _ =>
+		Timer timer = timeSystem.CreateTimer(interval, _ =>
 		{
 			expectedIterations--;
 			if (expectedIterations % 3 == 0)
@@ -155,7 +155,7 @@ public class TimerTests
 		CancellationTokenSource cancellationTokenSource = new();
 		ManualResetEventSlim ms = new();
 
-		ITimer timer = timeSystem.CreateTimer(Timeout.InfiniteTimeSpan, _ =>
+		Timer timer = timeSystem.CreateTimer(Timeout.InfiniteTimeSpan, _ =>
 		{
 			expectedIterations--;
 			if (expectedIterations < 0)
@@ -182,7 +182,7 @@ public class TimerTests
 		CancellationTokenSource cancellationTokenSource = new();
 		ManualResetEventSlim ms = new();
 
-		ITimer timer = timeSystem.CreateTimer(interval, _ =>
+		Timer timer = timeSystem.CreateTimer(interval, _ =>
 		{
 			expectedIterations--;
 			if (expectedIterations < 0)
@@ -206,10 +206,10 @@ public class TimerTests
 			out TimeSpan[] receivedIntervals);
 		timeSystem.On.TaskDelay(d =>
 			receivedIntervals[Math.Max(0, expectedIterations)] = d);
-		ITimer? runningTimer = null;
+		Timer? runningTimer = null;
 		ManualResetEventSlim ms = new();
 
-		ITimer timer = timeSystem.CreateTimer(interval, _ =>
+		Timer timer = timeSystem.CreateTimer(interval, _ =>
 		{
 			expectedIterations--;
 			if (expectedIterations < 0)
@@ -241,7 +241,7 @@ public class TimerTests
 		ManualResetEventSlim ms = new();
 		int expectedIterations = 10;
 
-		ITimer timer = timeSystem.CreateTimer(
+		Timer timer = timeSystem.CreateTimer(
 			interval,
 			token =>
 			{

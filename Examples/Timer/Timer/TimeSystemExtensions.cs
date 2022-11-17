@@ -18,7 +18,7 @@ public static class TimeSystemExtensions
 	/// <param name="onError">
 	///     (optional) a callback for handling errors thrown by the <paramref name="callback" />.
 	/// </param>
-	public static ITimer CreateTimer(
+	public static Timer CreateTimer(
 		this ITimeSystem timeSystem,
 		TimeSpan interval,
 		Action<CancellationToken> callback,
