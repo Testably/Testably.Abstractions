@@ -69,7 +69,7 @@ public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
 
 		#pragma warning disable CA1416
 		DirectorySecurity result =
-			FileSystem.Directory.GetAccessControl("foo", AccessControlSections.All);
+			FileSystem.Directory.GetAccessControl("foo", AccessControlSections.None);
 		#pragma warning restore CA1416
 
 		result.Should().NotBeNull();

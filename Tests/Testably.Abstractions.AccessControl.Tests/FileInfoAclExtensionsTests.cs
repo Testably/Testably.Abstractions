@@ -34,7 +34,7 @@ public abstract partial class FileInfoAclExtensionsTests<TFileSystem>
 		IFileInfo fileInfo = FileSystem.FileInfo.New("foo");
 
 		#pragma warning disable CA1416
-		FileSecurity result = fileInfo.GetAccessControl(AccessControlSections.All);
+		FileSecurity result = fileInfo.GetAccessControl(AccessControlSections.None);
 		#pragma warning restore CA1416
 
 		result.Should().NotBeNull();
