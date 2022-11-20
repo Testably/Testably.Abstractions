@@ -4,7 +4,7 @@
 	        Condition="Exists('$(MSBuildThisFileDirectory)/../Directory.Build.props')" />
 
 	<PropertyGroup>
-		<TestablyAbstractionsVersion>0.18.*</TestablyAbstractionsVersion>
+		<TestablyAbstractionsVersion>1.*</TestablyAbstractionsVersion>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -32,7 +32,6 @@
 
 	<ItemGroup Condition="'$(UseFileReferenceToTestablyLibraries)' != 'True'">
 		<PackageReference Include="Testably.Abstractions" Version="$(TestablyAbstractionsVersion)" />
-		<PackageReference Include="Testably.Abstractions.Extensions" Version="$(TestablyAbstractionsVersion)" />
 		<PackageReference Include="Testably.Abstractions.Testing" Version="$(TestablyAbstractionsVersion)" />
 	</ItemGroup>
 
