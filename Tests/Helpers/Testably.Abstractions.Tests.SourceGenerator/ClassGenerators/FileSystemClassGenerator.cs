@@ -56,7 +56,7 @@ namespace {@class.Namespace}.{@class.Name}
 	}}
 }}
 
-#if !DEBUG || !DISABLE_TESTS_REALFILESYSTEM
+#if !DEBUG || ENABLE_REALFILESYSTEMTESTS_IN_DEBUG
 
 namespace {@class.Namespace}.{@class.Name}
 {{
@@ -73,7 +73,7 @@ namespace {@class.Namespace}.{@class.Name}
 			: base(new RealFileSystem(), new RealTimeSystem())
 		{{
 			_directoryCleaner = FileSystem
-			   .SetCurrentDirectoryToEmptyTemporaryDirectory(testOutputHelper.WriteLine);
+			   .SetCurrentDirectoryToEmptyTemporaryDirectory($""{@class.Namespace}{{FileSystem.Path.DirectorySeparatorChar}}{@class.Name}-"", testOutputHelper.WriteLine);
 		}}
 
 		/// <inheritdoc cref=""IDisposable.Dispose()"" />

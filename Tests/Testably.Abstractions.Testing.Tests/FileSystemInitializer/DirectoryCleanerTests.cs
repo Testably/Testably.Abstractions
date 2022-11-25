@@ -21,7 +21,7 @@ public class DirectoryCleanerTests
 		MockFileSystem sut = new();
 		List<string> receivedLogs = new();
 		IDirectoryCleaner directoryCleaner =
-			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(m => receivedLogs.Add(m));
+			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(logger: m => receivedLogs.Add(m));
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 		int exceptionCount = 0;
 		sut.Intercept.Event(_ =>
@@ -57,7 +57,7 @@ public class DirectoryCleanerTests
 		MockFileSystem sut = new();
 		List<string> receivedLogs = new();
 		IDirectoryCleaner directoryCleaner =
-			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(m => receivedLogs.Add(m));
+			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(logger: m => receivedLogs.Add(m));
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 
 		directoryCleaner.Dispose();
@@ -105,7 +105,7 @@ public class DirectoryCleanerTests
 		List<string> receivedLogs = new();
 
 		using IDirectoryCleaner directoryCleaner =
-			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(t => receivedLogs.Add(t));
+			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(logger: t => receivedLogs.Add(t));
 
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 		sut.Directory.Exists(currentDirectory).Should().BeTrue();

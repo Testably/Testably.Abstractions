@@ -34,14 +34,18 @@ public static class FileSystemInitializerExtensions
 	///     <see cref="IDirectory.GetCurrentDirectory()" /> and all relative paths will use this directory.
 	/// </summary>
 	/// <param name="fileSystem">The file system.</param>
+	/// <param name="prefix">
+	///     A prefix to use for the temporary directory.<br />
+	///     This simplifies matching directories to tests.
+	/// </param>
 	/// <param name="logger">(optional) A callback to log the cleanup process.</param>
 	/// <returns>
 	///     A <see cref="IDirectoryCleaner" /> that will
 	///     force delete all content in the temporary directory on dispose.
 	/// </returns>
 	public static IDirectoryCleaner SetCurrentDirectoryToEmptyTemporaryDirectory(
-		this IFileSystem fileSystem, Action<string>? logger = null)
+		this IFileSystem fileSystem, string? prefix = null, Action<string>? logger = null)
 	{
-		return new DirectoryCleaner(fileSystem, logger);
+		return new DirectoryCleaner(fileSystem, prefix, logger);
 	}
 }
