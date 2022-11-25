@@ -6,7 +6,7 @@ global using Testably.Abstractions.Testing;
 global using Testably.Abstractions.TestHelpers;
 global using Testably.Abstractions.Tests.TestHelpers;
 global using Xunit;
-#if NET472
+#if NET48
 global using Testably.Abstractions.Polyfills;
 #else
 global using System.Runtime.Versioning;
