@@ -1,20 +1,22 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.FileSystemInitializer;
 
+[ExcludeFromCodeCoverage]
 internal sealed class DirectoryCleaner : IDirectoryCleaner
 {
 	private readonly IFileSystem _fileSystem;
 	private readonly Action<string>? _logger;
 
-	public DirectoryCleaner(IFileSystem fileSystem, Action<string>? logger)
+	public DirectoryCleaner(IFileSystem fileSystem, string? prefix, Action<string>? logger)
 	{
 		_fileSystem = fileSystem;
 		_logger = logger;
-		BasePath = InitializeBasePath();
+		BasePath = InitializeBasePath(prefix ?? "");
 	}
 
 	#region IDirectoryCleaner Members
@@ -30,7 +32,10 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 		{
 			// It is important to reset the current directory, as otherwise deleting the BasePath
 			// results in a IOException, because the process cannot access the file.
-			_fileSystem.Directory.SetCurrentDirectory(_fileSystem.Path.GetTempPath());
+			if (_fileSystem.Directory.GetCurrentDirectory() == BasePath)
+			{
+				_fileSystem.Directory.SetCurrentDirectory(_fileSystem.Path.GetTempPath());
+			}
 
 			_logger?.Invoke($"Cleaning up '{BasePath}'...");
 			for (int i = 10; i >= 0; i--)
@@ -109,7 +114,7 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 		_fileSystem.Directory.Delete(path);
 	}
 
-	private string InitializeBasePath()
+	private string InitializeBasePath(string prefix)
 	{
 		string basePath;
 
@@ -117,16 +122,43 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 		{
 			string localBasePath = _fileSystem.Path.Combine(
 				_fileSystem.Path.GetTempPath(),
-				_fileSystem.Path.GetFileNameWithoutExtension(_fileSystem.Path
-					.GetRandomFileName()));
+				prefix + _fileSystem.Path.GetFileNameWithoutExtension(
+					_fileSystem.Path.GetRandomFileName()));
 			Execute.OnMac(() => localBasePath = "/private" + localBasePath);
 			basePath = localBasePath;
 		} while (_fileSystem.Directory.Exists(basePath));
 
-		_fileSystem.Directory.CreateDirectory(basePath);
+		for (int i = 0; i <= 2; i++)
+		{
+			try
+			{
+				_fileSystem.Directory.CreateDirectory(basePath);
+				break;
+			}
+			catch (Exception)
+			{
+				// Give a transient condition like antivirus/indexing a chance to go away
+				Thread.Sleep(10);
+			}
+		}
+
+		if (!_fileSystem.Directory.Exists(basePath))
+		{
+			throw new TestingException($"Could not create current directory '{basePath}' for tests");
+		}
 
 		_logger?.Invoke($"Use '{basePath}' as current directory.");
 		_fileSystem.Directory.SetCurrentDirectory(basePath);
+		for (int i = 0; i <= 10 && _fileSystem.Directory.GetCurrentDirectory() != basePath; i++)
+		{
+			Thread.Sleep(5);
+		}
+
+		if (_fileSystem.Directory.GetCurrentDirectory() != basePath)
+		{
+			throw new TestingException($"Could not set current directory to '{basePath}' for tests");
+		}
+
 		return basePath;
 	}
 }

@@ -208,11 +208,12 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		result.FullName.Should().StartWith(BasePath);
 	}
 
-	[SkippableTheory]
-	[AutoData]
-	public void CreateDirectory_ShouldCreateParentDirectories(
-		string directoryLevel1, string directoryLevel2, string directoryLevel3)
+	[SkippableFact]
+	public void CreateDirectory_ShouldCreateParentDirectories()
 	{
+		string directoryLevel1 = "lvl1";
+		string directoryLevel2 = "lvl2";
+		string directoryLevel3 = "lvl3";
 		string path =
 			FileSystem.Path.Combine(directoryLevel1, directoryLevel2, directoryLevel3);
 
