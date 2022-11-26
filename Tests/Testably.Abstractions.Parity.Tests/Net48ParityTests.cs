@@ -1,4 +1,4 @@
-﻿#if NET472
+﻿#if NET48
 using System.IO;
 using System.IO.Compression;
 using System.Security.AccessControl;
@@ -6,14 +6,14 @@ using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Parity.Tests;
 
-public class Net472ParityTests : ParityTests
+public class Net48ParityTests : ParityTests
 {
 	/// <summary>
-	///     Specifies which methods, properties and fields are defined in .NET Framework 4.7.2, but not in .NET Standard 2.0.
+	///     Specifies which methods, properties and fields are defined in .NET Framework 4.8, but not in .NET Standard 2.0.
 	///     <para />
 	///     As we only support .NET Standard 2.0 these are blacklisted.
 	/// </summary>
-	public Net472ParityTests(ITestOutputHelper testOutputHelper)
+	public Net48ParityTests(ITestOutputHelper testOutputHelper)
 		: base(new TestHelpers.Parity(), testOutputHelper)
 	{
 		#region Directory
