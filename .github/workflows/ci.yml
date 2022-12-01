@@ -21,7 +21,7 @@ jobs:
             6.0.x
             7.0.x
       - name: Build solution
-        run: dotnet build /p:NetCoreOnly=True
+        run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
         run: dotnet test --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory "TestResults"
       - name: Upload test results (MacOS)
@@ -51,7 +51,7 @@ jobs:
             6.0.x
             7.0.x
       - name: Build solution
-        run: dotnet build /p:NetCoreOnly=True
+        run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
         run: dotnet test --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory "TestResults"
       - name: Upload test results (Ubuntu)
@@ -81,7 +81,7 @@ jobs:
             6.0.x
             7.0.x
       - name: Build solution
-        run: dotnet build /p:NetCoreOnly=True
+        run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
         run: dotnet test --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory "TestResults"
       - name: Upload test results (Windows)
@@ -143,7 +143,7 @@ jobs:
             6.0.x
             7.0.x
       - name: Build solution
-        run: dotnet build /p:NetCoreOnly=True
+        run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Build example solution
         run: dotnet build Examples /p:UseFileReferenceToTestablyLibraries=True
       - name: Run example tests
