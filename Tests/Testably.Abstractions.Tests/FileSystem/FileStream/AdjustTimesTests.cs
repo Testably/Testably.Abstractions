@@ -40,10 +40,15 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 			creationTime.Should()
 				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 				.BeOnOrBefore(creationTimeEnd);
+			lastAccessTime.Should()
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
-
-		lastAccessTime.Should()
-			.BeOnOrAfter(updateTime);
+		else
+		{
+			lastAccessTime.Should()
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		}
 		lastWriteTime.Should()
 			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			.BeOnOrBefore(creationTimeEnd);
@@ -79,7 +84,8 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		}
 
 		lastAccessTime.Should()
-			.BeOnOrAfter(updateTime);
+			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			.BeOnOrBefore(creationTimeEnd);
 		lastWriteTime.Should()
 			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			.BeOnOrBefore(creationTimeEnd);
@@ -117,7 +123,8 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		}
 
 		lastAccessTime.Should()
-			.BeOnOrAfter(updateTime);
+			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+			.BeOnOrBefore(creationTimeEnd);
 		lastWriteTime.Should()
 			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			.BeOnOrBefore(creationTimeEnd);
@@ -150,10 +157,16 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 			creationTime.Should()
 				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 				.BeOnOrBefore(creationTimeEnd);
+			lastAccessTime.Should()
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
+		}
+		else
+		{
+			lastAccessTime.Should()
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
-		lastAccessTime.Should()
-			.BeOnOrAfter(updateTime);
 		lastWriteTime.Should()
 			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			.BeOnOrBefore(creationTimeEnd);
@@ -191,10 +204,16 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 			creationTime.Should()
 				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 				.BeOnOrBefore(creationTimeEnd);
+			lastAccessTime.Should()
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
+		}
+		else
+		{
+			lastAccessTime.Should()
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
-		lastAccessTime.Should()
-			.BeOnOrAfter(updateTime);
 		lastWriteTime.Should()
 			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			.BeOnOrBefore(creationTimeEnd);
@@ -231,7 +250,7 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		}
 
 		lastAccessTime.Should()
-			.BeOnOrAfter(updateTime);
+			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		lastWriteTime.Should()
 			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			.BeOnOrBefore(creationTimeEnd);
@@ -300,7 +319,7 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 				.BeOnOrBefore(creationTimeEnd);
 			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime);
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -310,7 +329,7 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		}
 
 		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime);
+			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 #endif
 
@@ -343,7 +362,7 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 				.BeOnOrBefore(creationTimeEnd);
 			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime);
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -353,7 +372,7 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		}
 
 		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime);
+			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 #if FEATURE_SPAN
@@ -384,7 +403,7 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 				.BeOnOrBefore(creationTimeEnd);
 			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime);
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -394,7 +413,7 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		}
 
 		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime);
+			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 #endif
 
@@ -430,7 +449,7 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 				.BeOnOrBefore(creationTimeEnd);
 			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime);
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -440,7 +459,7 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		}
 
 		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime);
+			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 #endif
 
@@ -473,7 +492,7 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 				.BeOnOrBefore(creationTimeEnd);
 			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime);
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
@@ -483,7 +502,7 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		}
 
 		lastWriteTime.Should()
-			.BeOnOrAfter(updateTime);
+			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
 	#region Helpers
@@ -491,10 +510,10 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 	private DateTime WaitToBeUpdatedToAfter(Func<DateTime> callback,
 		DateTime expectedAfter)
 	{
-		for (int i = 0; i < 100; i++)
+		for (int i = 0; i < 20; i++)
 		{
 			DateTime time = callback();
-			if (time >= expectedAfter)
+			if (time >= expectedAfter.ApplySystemClockTolerance())
 			{
 				return time;
 			}
