@@ -145,15 +145,15 @@ public abstract partial class CopyToTests<TFileSystem>
 		DateTime updatedTime = TimeSystem.DateTime.Now;
 		sut.CopyTo(destinationName);
 
-		if (Test.RunsOnLinux)
+		if (Test.RunsOnWindows)
 		{
 			FileSystem.File.GetCreationTime(destinationName)
-				.Should().Be(sourceCreationTime);
+				.Should().BeOnOrAfter(updatedTime.ApplySystemClockTolerance());
 		}
 		else
 		{
 			FileSystem.File.GetCreationTime(destinationName)
-				.Should().BeOnOrAfter(updatedTime.ApplySystemClockTolerance());
+				.Should().Be(sourceCreationTime);
 		}
 
 		FileSystem.File.GetLastAccessTime(destinationName)

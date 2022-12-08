@@ -81,11 +81,16 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 			creationTime.Should()
 				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 				.BeOnOrBefore(creationTimeEnd);
+			lastAccessTime.Should()
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
+		}
+		else
+		{
+			lastAccessTime.Should()
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
-		lastAccessTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
 		lastWriteTime.Should()
 			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			.BeOnOrBefore(creationTimeEnd);
@@ -120,11 +125,16 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 			creationTime.Should()
 				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 				.BeOnOrBefore(creationTimeEnd);
+			lastAccessTime.Should()
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
 		}
-
-		lastAccessTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+		else
+		{
+			lastAccessTime.Should()
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		}
+		
 		lastWriteTime.Should()
 			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			.BeOnOrBefore(creationTimeEnd);
@@ -247,10 +257,16 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 			creationTime.Should()
 				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 				.BeOnOrBefore(creationTimeEnd);
+			lastAccessTime.Should()
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
+		}
+		else
+		{
+			lastAccessTime.Should()
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 
-		lastAccessTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		lastWriteTime.Should()
 			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			.BeOnOrBefore(creationTimeEnd);

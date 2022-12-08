@@ -400,12 +400,15 @@ internal sealed class InMemoryStorage : IStorage
 						source.Drive?.ChangeUsedBytes(-1 * sourceBytesLength);
 						destination.Drive?.ChangeUsedBytes(sourceBytesLength);
 						Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
-							() => existingSourceContainer.Attributes |=
-								FileAttributes.Archive);
-						existingSourceContainer.CreationTime.Set(
-							existingDestinationContainer.CreationTime.Get(
-								DateTimeKind.Utc),
-							DateTimeKind.Utc);
+							() =>
+							{
+								existingSourceContainer.Attributes |=
+									FileAttributes.Archive;
+								existingSourceContainer.CreationTime.Set(
+									existingDestinationContainer.CreationTime.Get(
+										DateTimeKind.Utc),
+									DateTimeKind.Utc);
+							});
 						_containers.TryAdd(destination, existingSourceContainer);
 						return destination;
 					}
