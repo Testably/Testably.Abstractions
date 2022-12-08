@@ -153,7 +153,8 @@ public abstract partial class CopyToTests<TFileSystem>
 		else
 		{
 			FileSystem.File.GetCreationTime(destinationName)
-				.Should().Be(sourceCreationTime);
+				.Should().BeOnOrAfter(sourceCreationTime.ApplySystemClockTolerance())
+				.And.BeBefore(updatedTime);
 		}
 
 		FileSystem.File.GetLastAccessTime(destinationName)

@@ -196,6 +196,12 @@ internal class InMemoryContainer : IStorageContainer
 		_location.Drive?.ChangeUsedBytes(bytes.Length - _bytes.Length);
 		_bytes = bytes;
 		this.AdjustTimes(timeAdjustment);
+		Execute.OnWindows(() =>
+		{
+			IStorageContainer? directoryContainer =
+				_fileSystem.Storage.GetContainer(_location.GetParent());
+			directoryContainer?.AdjustTimes(TimeAdjustments.LastAccessTime);
+		});
 		_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
 	}
 

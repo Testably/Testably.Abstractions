@@ -181,7 +181,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void AdjustTimes_WhenUpdatingAFile_ShouldAdjustTimesOnlyOnNetFramework(
+	public void AdjustTimes_WhenUpdatingAFile_ShouldAdjustTimesOnlyOnWindows(
 		string path1, string path2, string fileName)
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
@@ -195,6 +195,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.WriteAllText(filePath, "");
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
 		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+		DateTime updateTimeStart = TimeSystem.DateTime.UtcNow;
 
 		FileSystem.File.AppendAllText(filePath, "foo");
 
@@ -208,9 +209,18 @@ public abstract partial class Tests<TFileSystem>
 		parentCreationTime.Should()
 			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			.BeOnOrBefore(creationTimeEnd);
-		parentLastAccessTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+		if (Test.RunsOnWindows)
+		{
+			parentLastAccessTime.Should()
+				.BeOnOrAfter(updateTimeStart.ApplySystemClockTolerance());
+		}
+		else
+		{
+			parentLastAccessTime.Should()
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
+		}
+
 		parentLastWriteTime.Should()
 			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			.BeOnOrBefore(creationTimeEnd);
