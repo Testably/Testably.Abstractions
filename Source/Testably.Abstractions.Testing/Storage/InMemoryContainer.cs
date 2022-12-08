@@ -200,7 +200,11 @@ internal class InMemoryContainer : IStorageContainer
 		{
 			IStorageContainer? directoryContainer =
 				_fileSystem.Storage.GetContainer(_location.GetParent());
-			directoryContainer?.AdjustTimes(TimeAdjustments.LastAccessTime);
+			if (directoryContainer != null &&
+			    directoryContainer is not NullContainer)
+			{
+				directoryContainer.AdjustTimes(TimeAdjustments.LastAccessTime);
+			}
 		});
 		_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
 	}
