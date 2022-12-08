@@ -157,8 +157,17 @@ public abstract partial class CopyToTests<TFileSystem>
 				.And.BeBefore(updatedTime);
 		}
 
-		FileSystem.File.GetLastAccessTime(destinationName)
-			.Should().BeOnOrAfter(updatedTime.ApplySystemClockTolerance());
+		if (Test.RunsOnMac)
+		{
+			FileSystem.File.GetLastAccessTime(destinationName)
+				.Should().BeOnOrAfter(sourceCreationTime.ApplySystemClockTolerance())
+				.And.BeBefore(updatedTime);
+		}
+		else
+		{
+			FileSystem.File.GetLastAccessTime(destinationName)
+				.Should().BeOnOrAfter(updatedTime.ApplySystemClockTolerance());
+		}
 		FileSystem.File.GetLastWriteTime(destinationName)
 			.Should().Be(sourceLastWriteTime);
 	}

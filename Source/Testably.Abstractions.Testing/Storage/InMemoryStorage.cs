@@ -69,6 +69,10 @@ internal sealed class InMemoryStorage : IStorage
 			if (_containers.TryAdd(destination, copiedContainer))
 			{
 				copiedContainer.WriteBytes(sourceContainer.GetBytes().ToArray());
+				Execute.OnMac(
+					() => copiedContainer.LastAccessTime.Set(
+						sourceContainer.LastAccessTime.Get(DateTimeKind.Local),
+						DateTimeKind.Local));
 				Execute.NotOnWindows(()
 					=> sourceContainer.AdjustTimes(TimeAdjustments.LastAccessTime));
 
