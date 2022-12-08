@@ -61,7 +61,7 @@ jobs:
           .\.sonar\scanner\dotnet-sonarscanner begin /k:"Testably_Testably.Abstractions" /o:"testably" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /v:"$productVersion" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
           dotnet tool install --global dotnet-coverage
           dotnet restore -s 'nuget.config'
-          dotnet build --no-incremental /p:NetCoreOnly=True
+          dotnet build --no-incremental /p:NetCoreOnly=True --configuration "Release"
           dotnet-coverage collect 'dotnet test --no-build' -f xml  -o 'coverage.xml'
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
@@ -85,7 +85,7 @@ jobs:
             6.0.x
             7.0.x
       - name: Build solution
-        run: dotnet build /p:NetCoreOnly=True
+        run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
         run: dotnet test --no-build
 
@@ -109,7 +109,7 @@ jobs:
             6.0.x
             7.0.x
       - name: Build solution
-        run: dotnet build /p:NetCoreOnly=True
+        run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
         run: dotnet test --no-build
 
@@ -133,7 +133,7 @@ jobs:
             6.0.x
             7.0.x
       - name: Build solution
-        run: dotnet build /p:NetCoreOnly=True
+        run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
         run: dotnet test --no-build
 
@@ -183,7 +183,7 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True
       - name: Build example solution
-        run: dotnet build Examples /p:UseFileReferenceToTestablyLibraries=True
+        run: dotnet build Examples /p:UseFileReferenceToTestablyLibraries=True --configuration "Release"
       - name: Run example tests
         run: dotnet test Examples --no-build
 

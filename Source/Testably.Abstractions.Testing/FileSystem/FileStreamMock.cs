@@ -156,7 +156,8 @@ internal sealed class FileStreamMock : FileSystemStream
 	/// <inheritdoc cref="FileSystemStream.CopyTo(Stream, int)" />
 	public override void CopyTo(Stream destination, int bufferSize)
 	{
-		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
+		Execute.NotOnWindows(() =>
+			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
 		base.CopyTo(destination, bufferSize);
 	}
 
@@ -209,7 +210,8 @@ internal sealed class FileStreamMock : FileSystemStream
 			throw ExceptionFactory.StreamDoesNotSupportReading();
 		}
 
-		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
+		Execute.NotOnWindows(() =>
+			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
 		return base.Read(buffer, offset, count);
 	}
 
@@ -222,7 +224,8 @@ internal sealed class FileStreamMock : FileSystemStream
 			throw ExceptionFactory.StreamDoesNotSupportReading();
 		}
 
-		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
+		Execute.NotOnWindows(() =>
+			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
 		return base.Read(buffer);
 	}
 #endif
@@ -236,7 +239,8 @@ internal sealed class FileStreamMock : FileSystemStream
 			throw ExceptionFactory.StreamDoesNotSupportReading();
 		}
 
-		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
+		Execute.NotOnWindows(() =>
+			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
 		return base.ReadAsync(buffer, offset, count, cancellationToken);
 	}
 
@@ -251,7 +255,8 @@ internal sealed class FileStreamMock : FileSystemStream
 			throw ExceptionFactory.StreamDoesNotSupportReading();
 		}
 
-		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
+		Execute.NotOnWindows(() =>
+			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
 		return base.ReadAsync(buffer, cancellationToken);
 	}
 #endif
@@ -264,7 +269,8 @@ internal sealed class FileStreamMock : FileSystemStream
 			throw ExceptionFactory.StreamDoesNotSupportReading();
 		}
 
-		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
+		Execute.NotOnWindows(() =>
+			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
 		return base.ReadByte();
 	}
 

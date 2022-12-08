@@ -207,6 +207,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		FileSystem.File.WriteAllText(sourceName, sourceContents);
+		DateTime sourceCreationTime = FileSystem.File.GetCreationTime(sourceName);
 		DateTime sourceLastAccessTime = FileSystem.File.GetLastAccessTime(sourceName);
 		DateTime sourceLastWriteTime = FileSystem.File.GetLastWriteTime(sourceName);
 		TimeSystem.Thread.Sleep(1000);
@@ -223,8 +224,16 @@ public abstract partial class ReplaceTests<TFileSystem>
 
 		sut.Replace(destinationName, backupName);
 
-		FileSystem.File.GetCreationTime(destinationName)
-			.Should().Be(destinationCreationTime);
+		if (Test.RunsOnWindows)
+		{
+			FileSystem.File.GetCreationTime(destinationName)
+				.Should().Be(destinationCreationTime);
+		}
+		else
+		{
+			FileSystem.File.GetCreationTime(destinationName)
+				.Should().Be(sourceCreationTime);
+		}
 		FileSystem.File.GetLastAccessTime(destinationName)
 			.Should().Be(sourceLastAccessTime);
 		FileSystem.File.GetLastWriteTime(destinationName)

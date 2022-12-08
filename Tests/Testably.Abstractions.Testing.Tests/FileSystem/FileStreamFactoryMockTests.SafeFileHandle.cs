@@ -13,6 +13,8 @@ public sealed partial class FileStreamFactoryMockTests
 	public void MissingFile_ShouldThrowFileNotFoundException(
 		string path, string contents)
 	{
+		Skip.If(Test.IsNetFramework);
+
 		path = RealFileSystem.Path.GetFullPath(path);
 		RealFileSystem.File.WriteAllText(path, contents);
 

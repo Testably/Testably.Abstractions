@@ -111,7 +111,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 		});
 
 		exception.Should().BeException<IOException>($"'{previousPath}'",
-			hResult: -2147022975);
+			hResult: Test.RunsOnWindows ? -2147022975 : -2146232800);
 	}
 
 	[SkippableTheory]

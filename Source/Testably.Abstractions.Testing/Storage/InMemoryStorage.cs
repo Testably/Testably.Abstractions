@@ -69,6 +69,10 @@ internal sealed class InMemoryStorage : IStorage
 			if (_containers.TryAdd(destination, copiedContainer))
 			{
 				copiedContainer.WriteBytes(sourceContainer.GetBytes().ToArray());
+				Execute.OnMac(
+					() => copiedContainer.LastAccessTime.Set(
+						sourceContainer.LastAccessTime.Get(DateTimeKind.Local),
+						DateTimeKind.Local));
 				Execute.NotOnWindows(()
 					=> sourceContainer.AdjustTimes(TimeAdjustments.LastAccessTime));
 
@@ -400,12 +404,15 @@ internal sealed class InMemoryStorage : IStorage
 						source.Drive?.ChangeUsedBytes(-1 * sourceBytesLength);
 						destination.Drive?.ChangeUsedBytes(sourceBytesLength);
 						Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
-							() => existingSourceContainer.Attributes |=
-								FileAttributes.Archive);
-						existingSourceContainer.CreationTime.Set(
-							existingDestinationContainer.CreationTime.Get(
-								DateTimeKind.Utc),
-							DateTimeKind.Utc);
+							() =>
+							{
+								existingSourceContainer.Attributes |=
+									FileAttributes.Archive;
+								existingSourceContainer.CreationTime.Set(
+									existingDestinationContainer.CreationTime.Get(
+										DateTimeKind.Utc),
+									DateTimeKind.Utc);
+							});
 						_containers.TryAdd(destination, existingSourceContainer);
 						return destination;
 					}

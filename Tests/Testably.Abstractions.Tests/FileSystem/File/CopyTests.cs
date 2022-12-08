@@ -183,8 +183,11 @@ public abstract partial class CopyTests<TFileSystem>
 				.BeOnOrBefore(creationTimeEnd);
 		}
 
-		destinationLastAccessTime.Should()
-			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		if (!Test.RunsOnMac)
+		{
+			destinationLastAccessTime.Should()
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+		}
 		destinationLastWriteTime.Should()
 			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			.BeOnOrBefore(creationTimeEnd);
