@@ -5,11 +5,9 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&branch=main&metric=coverage)](https://sonarcloud.io/summary/overall?id=Testably_Testably.Abstractions&branch=main)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FTestably%2FTestably.Abstractions%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/Testably/Testably.Abstractions/main)
 
-At the core of this library are the abstraction interfaces, which allow replacing system dependencies:
-
-- The `IFileSystem` interface abstracts away all I/O-related functionality from the `System.IO` namespace:  
-  Static methods are directly implemented on the `IFileSystem` interface.
-  Constructors are implemented as factory methods, e.g. `IFileSystem.FileInfo.New(string)` instead of `new FileInfo(string)`.
+This library is an alternative testing helper for the [IFileSystem interfaces from System.IO.Abstractions](https://github.com/TestableIO/System.IO.Abstractions).
+These interfaces allow abstracting away all I/O-related functionality from the `System.IO` namespace.  
+In addition, the following interfaces are defined:
 - The `ITimeSystem` interface abstracts away time-related functionality:  
   `DateTime` methods give access to the current time, `Thread` allows replacing `Thread.Sleep` and `Task` allows replacing `Task.Delay`.
 - The `IRandomSystem` interface abstracts away functionality related to randomness:  
