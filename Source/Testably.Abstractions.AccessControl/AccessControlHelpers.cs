@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions;
 
@@ -48,4 +49,20 @@ internal static class AccessControlHelpers
 
 		return fileSystemInfo;
 	}
+
+	public static IFileSystemExtensibility GetExtensibilityOrThrow(
+		this IDirectoryInfo directoryInfo)
+		=> directoryInfo as IFileSystemExtensibility
+		   ?? throw new NotSupportedException(
+			   $"{directoryInfo.GetType()} does not support IFileSystemExtensibility.");
+
+	public static IFileSystemExtensibility GetExtensibilityOrThrow(this IFileInfo fileInfo)
+		=> fileInfo as IFileSystemExtensibility
+		   ?? throw new NotSupportedException(
+			   $"{fileInfo.GetType()} does not support IFileSystemExtensibility.");
+
+	public static IFileSystemExtensibility GetExtensibilityOrThrow(this FileSystemStream fileStream)
+		=> fileStream as IFileSystemExtensibility
+		   ?? throw new NotSupportedException(
+			   $"{fileStream.GetType()} does not support IFileSystemExtensibility.");
 }

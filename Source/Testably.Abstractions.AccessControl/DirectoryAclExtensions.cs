@@ -18,9 +18,7 @@ public static class DirectoryAclExtensions
 	{
 		IDirectoryInfo directoryInfo =
 			directory.FileSystem.DirectoryInfo.New(path);
-		IFileSystemExtensibility extensibility = directoryInfo as IFileSystemExtensibility
-		                                         ?? throw new NotSupportedException(
-			                                         $"{directoryInfo.GetType()} does not support IFileSystemExtensibility.");
+		IFileSystemExtensibility extensibility = directoryInfo.GetExtensibilityOrThrow();
 		if (extensibility.TryGetWrappedInstance(out DirectoryInfo? di))
 		{
 			di.Create(directorySecurity);
@@ -43,9 +41,7 @@ public static class DirectoryAclExtensions
 		IDirectoryInfo directoryInfo =
 			directory.FileSystem.DirectoryInfo.New(path);
 		directoryInfo.ThrowIfMissing();
-		IFileSystemExtensibility extensibility = directoryInfo as IFileSystemExtensibility
-		                                         ?? throw new NotSupportedException(
-			                                         $"{directoryInfo.GetType()} does not support IFileSystemExtensibility.");
+		IFileSystemExtensibility extensibility = directoryInfo.GetExtensibilityOrThrow();
 		return extensibility.TryGetWrappedInstance(out DirectoryInfo? di)
 			? di.GetAccessControl()
 			: extensibility.RetrieveMetadata<DirectorySecurity>(
@@ -62,9 +58,7 @@ public static class DirectoryAclExtensions
 		IDirectoryInfo directoryInfo =
 			directory.FileSystem.DirectoryInfo.New(path);
 		directoryInfo.ThrowIfMissing();
-		IFileSystemExtensibility extensibility = directoryInfo as IFileSystemExtensibility
-		                                         ?? throw new NotSupportedException(
-			                                         $"{directoryInfo.GetType()} does not support IFileSystemExtensibility.");
+		IFileSystemExtensibility extensibility = directoryInfo.GetExtensibilityOrThrow();
 		return extensibility.TryGetWrappedInstance(out DirectoryInfo? di)
 			? di.GetAccessControl(includeSections)
 			: extensibility.RetrieveMetadata<DirectorySecurity>(
@@ -79,9 +73,7 @@ public static class DirectoryAclExtensions
 	{
 		IDirectoryInfo directoryInfo =
 			directory.FileSystem.DirectoryInfo.New(path);
-		IFileSystemExtensibility extensibility = directoryInfo as IFileSystemExtensibility
-		                                         ?? throw new NotSupportedException(
-			                                         $"{directoryInfo.GetType()} does not support IFileSystemExtensibility.");
+		IFileSystemExtensibility extensibility = directoryInfo.GetExtensibilityOrThrow();
 		if (extensibility.TryGetWrappedInstance(out DirectoryInfo? di))
 		{
 			di.SetAccessControl(directorySecurity);
