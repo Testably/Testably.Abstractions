@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Security.AccessControl;
+using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions;
 
@@ -12,8 +13,7 @@ public static class FileStreamAclExtensions
 	[SupportedOSPlatform("windows")]
 	public static FileSecurity GetAccessControl(this FileSystemStream fileStream)
 	{
-		IFileSystemExtensibility extensibility =
-			fileStream.Extensibility;
+		IFileSystemExtensibility extensibility = fileStream.GetExtensibilityOrThrow();
 		return extensibility.TryGetWrappedInstance(out FileStream? fs)
 			? fs.GetAccessControl()
 			: extensibility.RetrieveMetadata<FileSecurity>(
@@ -25,8 +25,7 @@ public static class FileStreamAclExtensions
 	public static void SetAccessControl(this FileSystemStream fileStream,
 		FileSecurity fileSecurity)
 	{
-		IFileSystemExtensibility extensibility =
-			fileStream.Extensibility;
+		IFileSystemExtensibility extensibility = fileStream.GetExtensibilityOrThrow();
 		if (extensibility.TryGetWrappedInstance(out FileStream? fs))
 		{
 			fs.SetAccessControl(fileSecurity);

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Testably.Abstractions.FileSystem;
+using System.IO.Abstractions;
 #if !NETSTANDARD2_0
 using System;
 #endif

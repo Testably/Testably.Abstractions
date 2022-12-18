@@ -44,7 +44,7 @@ internal sealed class DirectoryInfoMock
 
 		Container = _fileSystem.Storage.GetOrCreateContainer(Location,
 			InMemoryContainer.NewDirectory,
-			Extensibility);
+			this);
 
 		ResetCache(!Execute.IsNetFramework);
 	}

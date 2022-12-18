@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions.FileSystem;
 
-internal class FileSystemInfoWrapper : IFileSystemInfo
+internal class FileSystemInfoWrapper : IFileSystemInfo, IFileSystemExtensibility
 {
 	private readonly FileSystemInfo _instance;
+	private readonly FileSystemExtensibility _extensibility;
 
 	internal FileSystemInfoWrapper(FileSystemInfo instance, IFileSystem fileSystem)
 	{
 		_instance = instance;
 		FileSystem = fileSystem;
-		Extensibility = new FileSystemExtensibility(_instance);
+		_extensibility = new FileSystemExtensibility(_instance);
 	}
 
 	#region IFileSystemInfo Members
@@ -45,9 +47,6 @@ internal class FileSystemInfoWrapper : IFileSystemInfo
 	/// <inheritdoc cref="IFileSystemInfo.Extension" />
 	public string Extension
 		=> _instance.Extension;
-
-	/// <inheritdoc cref="IFileSystemInfo.Extensibility" />
-	public IFileSystemExtensibility Extensibility { get; }
 
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
@@ -154,4 +153,16 @@ internal class FileSystemInfoWrapper : IFileSystemInfo
 
 		return null;
 	}
+
+	/// <inheritdoc cref="IFileSystemExtensibility.TryGetWrappedInstance{T}" />
+	public bool TryGetWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance)
+		=> _extensibility.TryGetWrappedInstance(out wrappedInstance);
+
+	/// <inheritdoc cref="StoreMetadata{T}(string, T)" />
+	public void StoreMetadata<T>(string key, T? value)
+		=> _extensibility.StoreMetadata(key, value);
+
+	/// <inheritdoc cref="RetrieveMetadata{T}(string)" />
+	public T? RetrieveMetadata<T>(string key)
+		=> _extensibility.RetrieveMetadata<T>(key);
 }

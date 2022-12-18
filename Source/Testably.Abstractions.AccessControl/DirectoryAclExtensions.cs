@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Security.AccessControl;
+using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions;
 
@@ -17,8 +18,7 @@ public static class DirectoryAclExtensions
 	{
 		IDirectoryInfo directoryInfo =
 			directory.FileSystem.DirectoryInfo.New(path);
-		IFileSystemExtensibility extensibility =
-			directoryInfo.Extensibility;
+		IFileSystemExtensibility extensibility = directoryInfo.GetExtensibilityOrThrow();
 		if (extensibility.TryGetWrappedInstance(out DirectoryInfo? di))
 		{
 			di.Create(directorySecurity);
@@ -28,7 +28,7 @@ public static class DirectoryAclExtensions
 			_ = directorySecurity ?? throw new ArgumentNullException(nameof(directorySecurity));
 			directoryInfo.ThrowIfParentMissing();
 			directoryInfo.Create();
-			directoryInfo.Extensibility.StoreMetadata(AccessControlHelpers.AccessControl,
+			extensibility.StoreMetadata(AccessControlHelpers.AccessControl,
 				directorySecurity);
 		}
 	}
@@ -41,8 +41,7 @@ public static class DirectoryAclExtensions
 		IDirectoryInfo directoryInfo =
 			directory.FileSystem.DirectoryInfo.New(path);
 		directoryInfo.ThrowIfMissing();
-		IFileSystemExtensibility extensibility =
-			directoryInfo.Extensibility;
+		IFileSystemExtensibility extensibility = directoryInfo.GetExtensibilityOrThrow();
 		return extensibility.TryGetWrappedInstance(out DirectoryInfo? di)
 			? di.GetAccessControl()
 			: extensibility.RetrieveMetadata<DirectorySecurity>(
@@ -59,8 +58,7 @@ public static class DirectoryAclExtensions
 		IDirectoryInfo directoryInfo =
 			directory.FileSystem.DirectoryInfo.New(path);
 		directoryInfo.ThrowIfMissing();
-		IFileSystemExtensibility extensibility =
-			directoryInfo.Extensibility;
+		IFileSystemExtensibility extensibility = directoryInfo.GetExtensibilityOrThrow();
 		return extensibility.TryGetWrappedInstance(out DirectoryInfo? di)
 			? di.GetAccessControl(includeSections)
 			: extensibility.RetrieveMetadata<DirectorySecurity>(
@@ -75,8 +73,7 @@ public static class DirectoryAclExtensions
 	{
 		IDirectoryInfo directoryInfo =
 			directory.FileSystem.DirectoryInfo.New(path);
-		IFileSystemExtensibility extensibility =
-			directoryInfo.Extensibility;
+		IFileSystemExtensibility extensibility = directoryInfo.GetExtensibilityOrThrow();
 		if (extensibility.TryGetWrappedInstance(out DirectoryInfo? di))
 		{
 			di.SetAccessControl(directorySecurity);

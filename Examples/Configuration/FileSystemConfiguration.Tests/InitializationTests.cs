@@ -2,9 +2,9 @@ using AutoFixture.Xunit2;
 using FluentAssertions;
 using System;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.RandomSystem;
 using Testably.Abstractions.Testing;
 using Xunit;
@@ -103,7 +103,7 @@ public class InitializationTests
 		fileSystem.File.WriteAllBytes("foo", firstFileContent);
 		mainDrive.AvailableFreeSpace.Should().Be(1);
 
-		Exception exception = Record.Exception(() =>
+		Exception? exception = Record.Exception(() =>
 		{
 			fileSystem.File.WriteAllBytes("bar", secondFileContent);
 		});

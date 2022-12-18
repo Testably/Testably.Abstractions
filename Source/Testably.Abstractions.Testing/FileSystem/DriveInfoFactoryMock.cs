@@ -21,6 +21,11 @@ internal sealed class DriveInfoFactoryMock : IDriveInfoFactory
 	public IFileSystem FileSystem
 		=> _fileSystem;
 
+	/// <inheritdoc cref="IDriveInfoFactory.FromDriveName(string)" />
+	[Obsolete("Use `IDriveInfoFactory.New(string)` instead")]
+	public IDriveInfo FromDriveName(string driveName)
+		=> New(driveName);
+
 	/// <inheritdoc cref="IDriveInfoFactory.GetDrives()" />
 	public IDriveInfo[] GetDrives()
 		=> _fileSystem.Storage.GetDrives()

@@ -1,1 +1,1 @@
-﻿global using Testably.Abstractions.FileSystem;
+﻿global using System.IO.Abstractions;

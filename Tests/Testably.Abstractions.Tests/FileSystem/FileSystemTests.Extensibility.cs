@@ -1,3 +1,5 @@
+using Testably.Abstractions.Helpers;
+
 namespace Testably.Abstractions.Tests.FileSystem;
 
 public abstract partial class FileSystemTests<TFileSystem>
@@ -9,8 +11,11 @@ public abstract partial class FileSystemTests<TFileSystem>
 		Extensibility_HasWrappedInstance_WithCorrectType_ShouldReturnTrueOnRealFileSystem(
 			string name)
 	{
-		bool result = FileSystem.FileInfo.New(name).Extensibility
-			.TryGetWrappedInstance(out System.IO.FileInfo? fileInfo);
+		IFileInfo entity = FileSystem.FileInfo.New(name);
+		IFileSystemExtensibility? extensibility = entity as IFileSystemExtensibility;
+		bool result = extensibility?.TryGetWrappedInstance(out System.IO.FileInfo? fileInfo)
+		              ?? throw new NotSupportedException(
+			              $"{entity.GetType()} does not implement IFileSystemExtensibility");
 
 		if (FileSystem is RealFileSystem)
 		{
@@ -29,8 +34,11 @@ public abstract partial class FileSystemTests<TFileSystem>
 		Extensibility_HasWrappedInstance_WithIncorrectType_ShouldReturnAlwaysFalse(
 			string name)
 	{
-		bool result = FileSystem.FileInfo.New(name).Extensibility
-			.TryGetWrappedInstance(out System.IO.DirectoryInfo? directoryInfo);
+		IFileInfo entity = FileSystem.FileInfo.New(name);
+		IFileSystemExtensibility? extensibility = entity as IFileSystemExtensibility;
+		bool result = extensibility?.TryGetWrappedInstance(out System.IO.DirectoryInfo? directoryInfo)
+		              ?? throw new NotSupportedException(
+			              $"{entity.GetType()} does not implement IFileSystemExtensibility");
 
 		result.Should().BeFalse();
 		directoryInfo.Should().BeNull();
@@ -42,8 +50,10 @@ public abstract partial class FileSystemTests<TFileSystem>
 		Extensibility_RetrieveMetadata_CorrectKeyAndType_ShouldReturnStoredValue(
 			string name, DateTime time)
 	{
-		IFileSystemExtensibility sut = FileSystem.FileInfo.New(name)
-			.Extensibility;
+		IFileInfo entity = FileSystem.FileInfo.New(name);
+		IFileSystemExtensibility sut = entity as IFileSystemExtensibility
+		                                          ?? throw new NotSupportedException(
+			                                          $"{entity.GetType()} does not implement IFileSystemExtensibility");
 
 		sut.StoreMetadata("foo", time);
 		DateTime? result = sut.RetrieveMetadata<DateTime?>("foo");
@@ -56,8 +66,10 @@ public abstract partial class FileSystemTests<TFileSystem>
 	public void Extensibility_RetrieveMetadata_DifferentKey_ShouldReturnNull(
 		string name)
 	{
-		IFileSystemExtensibility sut = FileSystem.FileInfo.New(name)
-			.Extensibility;
+		IFileInfo entity = FileSystem.FileInfo.New(name);
+		IFileSystemExtensibility sut = entity as IFileSystemExtensibility
+		                               ?? throw new NotSupportedException(
+			                               $"{entity.GetType()} does not implement IFileSystemExtensibility");
 
 		sut.StoreMetadata("foo", DateTime.Now);
 		DateTime? result = sut.RetrieveMetadata<DateTime?>("bar");
@@ -70,8 +82,10 @@ public abstract partial class FileSystemTests<TFileSystem>
 	public void Extensibility_RetrieveMetadata_DifferentType_ShouldReturnNull(
 		string name)
 	{
-		IFileSystemExtensibility sut = FileSystem.FileInfo.New(name)
-			.Extensibility;
+		IFileInfo entity = FileSystem.FileInfo.New(name);
+		IFileSystemExtensibility sut = entity as IFileSystemExtensibility
+		                               ?? throw new NotSupportedException(
+			                               $"{entity.GetType()} does not implement IFileSystemExtensibility");
 
 		sut.StoreMetadata("foo", DateTime.Now);
 		TimeSpan? result = sut.RetrieveMetadata<TimeSpan?>("foo");
@@ -84,8 +98,12 @@ public abstract partial class FileSystemTests<TFileSystem>
 	public void Extensibility_RetrieveMetadata_NotRegisteredKey_ShouldReturnNull(
 		string name)
 	{
-		object? result = FileSystem.FileInfo.New(name).Extensibility
-			.RetrieveMetadata<object?>("foo");
+		IFileInfo entity = FileSystem.FileInfo.New(name);
+		IFileSystemExtensibility extensibility = entity as IFileSystemExtensibility
+		                                          ?? throw new NotSupportedException(
+			                                          $"{entity.GetType()} does not implement IFileSystemExtensibility");
+		
+		object? result = extensibility.RetrieveMetadata<object?>("foo");
 
 		result.Should().BeNull();
 	}

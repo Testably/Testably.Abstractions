@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Security.AccessControl;
+using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions;
 
@@ -15,8 +16,7 @@ public static class FileAclExtensions
 	{
 		IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
 		fileInfo.ThrowIfMissing();
-		IFileSystemExtensibility extensibility =
-			fileInfo.Extensibility;
+		IFileSystemExtensibility extensibility = fileInfo.GetExtensibilityOrThrow();
 		return extensibility.TryGetWrappedInstance(out FileInfo? fi)
 			? fi.GetAccessControl()
 			: extensibility.RetrieveMetadata<FileSecurity>(
@@ -32,8 +32,7 @@ public static class FileAclExtensions
 	{
 		IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
 		fileInfo.ThrowIfMissing();
-		IFileSystemExtensibility extensibility =
-			fileInfo.Extensibility;
+		IFileSystemExtensibility extensibility = fileInfo.GetExtensibilityOrThrow();
 		return extensibility.TryGetWrappedInstance(out FileInfo? fi)
 			? fi.GetAccessControl(includeSections)
 			: extensibility.RetrieveMetadata<FileSecurity>(
@@ -47,8 +46,7 @@ public static class FileAclExtensions
 		FileSecurity fileSecurity)
 	{
 		IFileInfo fileInfo = file.FileSystem.FileInfo.New(path);
-		IFileSystemExtensibility extensibility =
-			fileInfo.Extensibility;
+		IFileSystemExtensibility extensibility = fileInfo.GetExtensibilityOrThrow();
 		if (extensibility.TryGetWrappedInstance(out FileInfo? fi))
 		{
 			fi.SetAccessControl(fileSecurity);
