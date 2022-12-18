@@ -87,7 +87,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			}
 
 			file = _fileSystem.Storage.GetOrCreateContainer(location,
-				InMemoryContainer.NewFile);
+				InMemoryContainer.NewFile,
+				this);
 		}
 		else if (file.Type == FileSystemTypes.Directory)
 		{

@@ -119,11 +119,6 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		}
 	}
 
-	//TODO
-	///// <inheritdoc cref="IFileSystemInfo.Extensibility" />
-	//public IFileSystemExtensibility Extensibility
-	//	=> Container.Extensibility;
-
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem
 		=> _fileSystem;
