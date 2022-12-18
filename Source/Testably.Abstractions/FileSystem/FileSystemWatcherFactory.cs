@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Testably.Abstractions.FileSystem;
@@ -14,6 +15,21 @@ internal sealed class FileSystemWatcherFactory : IFileSystemWatcherFactory
 
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
+
+	/// <inheritdoc cref="IFileSystemWatcherFactory.CreateNew()" />
+	[Obsolete("Use `IFileSystemWatcherFactory.New()` instead")]
+	public IFileSystemWatcher CreateNew()
+		=> New();
+
+	/// <inheritdoc cref="IFileSystemWatcherFactory.CreateNew(string)" />
+	[Obsolete("Use `IFileSystemWatcherFactory.New(string)` instead")]
+	public IFileSystemWatcher CreateNew(string path)
+		=> New(path);
+
+	/// <inheritdoc cref="IFileSystemWatcherFactory.CreateNew(string, string)" />
+	[Obsolete("Use `IFileSystemWatcherFactory.New(string, string)` instead")]
+	public IFileSystemWatcher CreateNew(string path, string filter)
+		=> New(path, filter);
 
 	/// <inheritdoc cref="IFileSystemWatcherFactory.New()" />
 	public IFileSystemWatcher New()

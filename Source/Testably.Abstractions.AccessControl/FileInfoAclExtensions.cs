@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Security.AccessControl;
+using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions;
 
@@ -14,8 +16,9 @@ public static class FileInfoAclExtensions
 		this IFileInfo fileInfo)
 	{
 		fileInfo.ThrowIfMissing();
-		IFileSystemExtensibility extensibility =
-			fileInfo.Extensibility;
+		IFileSystemExtensibility extensibility = fileInfo as IFileSystemExtensibility
+		                                         ?? throw new NotSupportedException(
+			                                         $"{fileInfo.GetType()} does not support IFileSystemExtensibility.");
 		return extensibility.TryGetWrappedInstance(out FileInfo? fi)
 			? fi.GetAccessControl()
 			: extensibility.RetrieveMetadata<FileSecurity>(
@@ -29,8 +32,9 @@ public static class FileInfoAclExtensions
 		AccessControlSections includeSections)
 	{
 		fileInfo.ThrowIfMissing();
-		IFileSystemExtensibility extensibility =
-			fileInfo.Extensibility;
+		IFileSystemExtensibility extensibility = fileInfo as IFileSystemExtensibility
+		                                         ?? throw new NotSupportedException(
+			                                         $"{fileInfo.GetType()} does not support IFileSystemExtensibility.");
 		return extensibility.TryGetWrappedInstance(out FileInfo? fi)
 			? fi.GetAccessControl(includeSections)
 			: extensibility.RetrieveMetadata<FileSecurity>(
@@ -42,8 +46,9 @@ public static class FileInfoAclExtensions
 	public static void SetAccessControl(this IFileInfo fileInfo,
 		FileSecurity fileSecurity)
 	{
-		IFileSystemExtensibility extensibility =
-			fileInfo.Extensibility;
+		IFileSystemExtensibility extensibility = fileInfo as IFileSystemExtensibility
+		                                         ?? throw new NotSupportedException(
+			                                         $"{fileInfo.GetType()} does not support IFileSystemExtensibility.");
 		if (extensibility.TryGetWrappedInstance(out FileInfo? fi))
 		{
 			fi.SetAccessControl(fileSecurity);

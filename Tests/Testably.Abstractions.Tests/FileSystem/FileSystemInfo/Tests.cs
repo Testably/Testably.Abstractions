@@ -1,4 +1,5 @@
 using System.IO;
+using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemInfo;
 
@@ -14,7 +15,11 @@ public abstract partial class Tests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(path, null);
 		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
-		bool result = fileInfo.Extensibility
+		IFileSystemExtensibility extensibility = fileInfo as IFileSystemExtensibility
+		                                         ?? throw new NotSupportedException(
+			                                         $"{fileInfo.GetType()} does not implement IFileSystemExtensibility");
+
+		bool result = extensibility
 			.TryGetWrappedInstance(out System.IO.FileSystemInfo? fileSystemInfo);
 
 		if (FileSystem is RealFileSystem)

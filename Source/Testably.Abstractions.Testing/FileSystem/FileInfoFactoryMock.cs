@@ -20,6 +20,11 @@ internal sealed class FileInfoFactoryMock : IFileInfoFactory
 	public IFileSystem FileSystem
 		=> _fileSystem;
 
+	/// <inheritdoc cref="IFileInfoFactory.FromFileName(string)" />
+	[Obsolete("Use `IFileInfoFactory.New(string)` instead")]
+	public IFileInfo FromFileName(string fileName)
+		=> New(fileName);
+
 	/// <inheritdoc cref="IFileInfoFactory.New(string)" />
 	public IFileInfo New(string fileName)
 	{

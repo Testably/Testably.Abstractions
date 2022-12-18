@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using Testably.Abstractions.Helpers;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
-internal class FileSystemInfoMock : IFileSystemInfo
+internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 {
 	protected FileSystemTypes FileSystemType { get; }
 	protected IStorageLocation Location;
@@ -117,9 +119,10 @@ internal class FileSystemInfoMock : IFileSystemInfo
 		}
 	}
 
-	/// <inheritdoc cref="IFileSystemInfo.Extensibility" />
-	public IFileSystemExtensibility Extensibility
-		=> Container.Extensibility;
+	//TODO
+	///// <inheritdoc cref="IFileSystemInfo.Extensibility" />
+	//public IFileSystemExtensibility Extensibility
+	//	=> Container.Extensibility;
 
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem
@@ -218,6 +221,18 @@ internal class FileSystemInfoMock : IFileSystemInfo
 #endif
 
 	#endregion
+
+	/// <inheritdoc cref="IFileSystemExtensibility.TryGetWrappedInstance{T}" />
+	public bool TryGetWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance)
+		=> Container.Extensibility.TryGetWrappedInstance(out wrappedInstance);
+
+	/// <inheritdoc cref="StoreMetadata{T}(string, T)" />
+	public void StoreMetadata<T>(string key, T? value)
+		=> Container.Extensibility.StoreMetadata(key, value);
+
+	/// <inheritdoc cref="RetrieveMetadata{T}(string)" />
+	public T? RetrieveMetadata<T>(string key)
+		=> Container.Extensibility.RetrieveMetadata<T>(key);
 
 #if NETSTANDARD2_0
 	/// <inheritdoc cref="object.ToString()" />

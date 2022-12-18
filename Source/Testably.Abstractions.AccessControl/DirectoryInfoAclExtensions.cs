@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Security.AccessControl;
+using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions;
 
@@ -14,8 +15,9 @@ public static class DirectoryInfoAclExtensions
 	public static void Create(this IDirectoryInfo directoryInfo,
 		DirectorySecurity directorySecurity)
 	{
-		IFileSystemExtensibility extensibility =
-			directoryInfo.Extensibility;
+		IFileSystemExtensibility extensibility = directoryInfo as IFileSystemExtensibility
+		                                         ?? throw new NotSupportedException(
+			                                         $"{directoryInfo.GetType()} does not support IFileSystemExtensibility.");
 		if (extensibility.TryGetWrappedInstance(out DirectoryInfo? di))
 		{
 			di.Create(directorySecurity);
@@ -25,7 +27,7 @@ public static class DirectoryInfoAclExtensions
 			_ = directorySecurity ?? throw new ArgumentNullException(nameof(directorySecurity));
 			directoryInfo.ThrowIfParentMissing();
 			directoryInfo.Create();
-			directoryInfo.Extensibility.StoreMetadata(AccessControlHelpers.AccessControl,
+			extensibility.StoreMetadata(AccessControlHelpers.AccessControl,
 				directorySecurity);
 		}
 	}
@@ -36,8 +38,9 @@ public static class DirectoryInfoAclExtensions
 		this IDirectoryInfo directoryInfo)
 	{
 		directoryInfo.ThrowIfMissing();
-		IFileSystemExtensibility extensibility =
-			directoryInfo.Extensibility;
+		IFileSystemExtensibility extensibility = directoryInfo as IFileSystemExtensibility
+		                                         ?? throw new NotSupportedException(
+			                                         $"{directoryInfo.GetType()} does not support IFileSystemExtensibility.");
 		return extensibility.TryGetWrappedInstance(out DirectoryInfo? di)
 			? di.GetAccessControl()
 			: extensibility.RetrieveMetadata<DirectorySecurity>(
@@ -51,8 +54,9 @@ public static class DirectoryInfoAclExtensions
 		AccessControlSections includeSections)
 	{
 		directoryInfo.ThrowIfMissing();
-		IFileSystemExtensibility extensibility =
-			directoryInfo.Extensibility;
+		IFileSystemExtensibility extensibility = directoryInfo as IFileSystemExtensibility
+		                                         ?? throw new NotSupportedException(
+			                                         $"{directoryInfo.GetType()} does not support IFileSystemExtensibility.");
 		return extensibility.TryGetWrappedInstance(out DirectoryInfo? di)
 			? di.GetAccessControl(includeSections)
 			: extensibility.RetrieveMetadata<DirectorySecurity>(
@@ -64,8 +68,9 @@ public static class DirectoryInfoAclExtensions
 	public static void SetAccessControl(this IDirectoryInfo directoryInfo,
 		DirectorySecurity directorySecurity)
 	{
-		IFileSystemExtensibility extensibility =
-			directoryInfo.Extensibility;
+		IFileSystemExtensibility extensibility = directoryInfo as IFileSystemExtensibility
+		                                         ?? throw new NotSupportedException(
+			                                         $"{directoryInfo.GetType()} does not support IFileSystemExtensibility.");
 		if (extensibility.TryGetWrappedInstance(out DirectoryInfo? di))
 		{
 			di.SetAccessControl(directorySecurity);

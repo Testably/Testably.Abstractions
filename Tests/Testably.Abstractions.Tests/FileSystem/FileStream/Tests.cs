@@ -1,6 +1,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
@@ -130,8 +131,10 @@ public abstract partial class Tests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(path, null);
 		using FileSystemStream readStream = FileSystem.File.OpenRead(path);
-		bool result = readStream.Extensibility
-			.TryGetWrappedInstance(out System.IO.FileStream? fileStream);
+		IFileSystemExtensibility? extensibility = readStream as IFileSystemExtensibility;
+		bool result = extensibility?.TryGetWrappedInstance(out System.IO.FileStream? fileStream)
+		              ?? throw new NotSupportedException(
+			              $"{readStream.GetType()} does not implement IFileSystemExtensibility");
 
 		if (FileSystem is RealFileSystem)
 		{

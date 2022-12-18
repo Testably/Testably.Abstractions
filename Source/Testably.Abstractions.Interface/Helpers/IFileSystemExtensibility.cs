@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.IO.Abstractions;
 
-namespace Testably.Abstractions.FileSystem;
+namespace Testably.Abstractions.Helpers;
 
 /// <summary>
 ///     A container to support extensions on <see cref="IFileSystem" /> entities.

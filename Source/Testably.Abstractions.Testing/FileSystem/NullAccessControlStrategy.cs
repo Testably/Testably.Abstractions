@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions.Testing.FileSystem;
+﻿using Testably.Abstractions.Helpers;
+
+namespace Testably.Abstractions.Testing.FileSystem;
 
 /// <summary>
 ///     Null object of an <see cref="IAccessControlStrategy" /> which does not restrict access in any way.

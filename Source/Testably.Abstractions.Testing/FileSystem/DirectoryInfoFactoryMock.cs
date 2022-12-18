@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.Testing.Helpers;
 
@@ -18,6 +19,11 @@ internal sealed class DirectoryInfoFactoryMock : IDirectoryInfoFactory
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem
 		=> _fileSystem;
+
+	/// <inheritdoc cref="IDirectoryInfoFactory.FromDirectoryName(string)" />
+	[Obsolete("Use `IDirectoryInfoFactory.New(string)` instead")]
+	public IDirectoryInfo FromDirectoryName(string directoryName)
+		=> New(directoryName);
 
 	/// <inheritdoc cref="IDirectoryInfoFactory.New(string)" />
 	public IDirectoryInfo New(string path)

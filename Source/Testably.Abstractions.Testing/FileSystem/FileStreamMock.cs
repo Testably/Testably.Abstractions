@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Testably.Abstractions.Helpers;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
 
@@ -10,7 +12,7 @@ namespace Testably.Abstractions.Testing.FileSystem;
 /// <summary>
 ///     A mocked file stream in the <see cref="InMemoryStorage" />.
 /// </summary>
-internal sealed class FileStreamMock : FileSystemStream
+internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibility
 {
 	/// <inheritdoc cref="FileSystemStream.CanRead" />
 	public override bool CanRead
@@ -19,10 +21,6 @@ internal sealed class FileStreamMock : FileSystemStream
 	/// <inheritdoc cref="FileSystemStream.CanWrite" />
 	public override bool CanWrite
 		=> _access.HasFlag(FileAccess.Write);
-
-	/// <inheritdoc cref="FileSystemStream.Extensibility" />
-	public override IFileSystemExtensibility Extensibility
-		=> _container.Extensibility;
 
 	private readonly FileAccess _access;
 	private readonly IDisposable _accessLock;
@@ -450,4 +448,16 @@ internal sealed class FileStreamMock : FileSystemStream
 			throw ExceptionFactory.InvalidAccessCombination(mode, access);
 		}
 	}
+
+	/// <inheritdoc cref="IFileSystemExtensibility.TryGetWrappedInstance{T}" />
+	public bool TryGetWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance)
+		=> _container.Extensibility.TryGetWrappedInstance(out wrappedInstance);
+
+	/// <inheritdoc cref="StoreMetadata{T}(string, T)" />
+	public void StoreMetadata<T>(string key, T? value)
+		=> _container.Extensibility.StoreMetadata(key, value);
+
+	/// <inheritdoc cref="RetrieveMetadata{T}(string)" />
+	public T? RetrieveMetadata<T>(string key)
+		=> _container.Extensibility.RetrieveMetadata<T>(key);
 }
