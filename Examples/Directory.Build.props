@@ -4,7 +4,7 @@
 	        Condition="Exists('$(MSBuildThisFileDirectory)/../Directory.Build.props')" />
 
 	<PropertyGroup>
-		<TestablyAbstractionsVersion>1.*</TestablyAbstractionsVersion>
+		<TestablyAbstractionsVersion>2.*</TestablyAbstractionsVersion>
 	</PropertyGroup>
 
 	<PropertyGroup>
