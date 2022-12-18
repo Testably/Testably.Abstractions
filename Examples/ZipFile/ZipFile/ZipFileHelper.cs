@@ -1,6 +1,6 @@
 ﻿using System.IO;
+using System.IO.Abstractions;
 using System.IO.Compression;
-using Testably.Abstractions.FileSystem;
 
 namespace Testably.Abstractions.Examples.ZipFile;
 

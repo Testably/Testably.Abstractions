@@ -1,8 +1,8 @@
 using AutoFixture.Xunit2;
 using FluentAssertions;
 using System.IO;
+using System.IO.Abstractions;
 using System.IO.Compression;
-using Testably.Abstractions.FileSystem;
 using Testably.Abstractions.Testing;
 using Testably.Abstractions.Testing.FileSystemInitializer;
 using Xunit;
