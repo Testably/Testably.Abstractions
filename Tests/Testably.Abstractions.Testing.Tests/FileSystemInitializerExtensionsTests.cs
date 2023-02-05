@@ -150,6 +150,17 @@ public class FileSystemInitializerExtensionsTests
 
 	[Theory]
 	[AutoData]
+	public void InitializeIn_MissingDrive_ShouldCreateDrive(string directoryName)
+	{
+		directoryName = Path.Combine("D:\\", directoryName);
+		MockFileSystem sut = new();
+		sut.InitializeIn(directoryName);
+
+		sut.Directory.Exists(directoryName).Should().BeTrue();
+	}
+
+	[Theory]
+	[AutoData]
 	public void InitializeIn_ShouldSetCurrentDirectory(string path)
 	{
 		MockFileSystem sut = new();
