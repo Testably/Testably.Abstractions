@@ -53,10 +53,8 @@ internal static class FilePlatformIndependenceExtensions
 			return path;
 		}
 
-		driveLetter ??= DefaultDrive;
-
 		return Execute.OnWindows(
-			() => driveLetter + ":\\" + path,
+			() => (driveLetter ?? DefaultDrive) + ":\\" + path,
 			() => "/" + path);
 	}
 }
