@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.FileSystemInitializer;
+using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests;
 
@@ -148,10 +149,12 @@ public class FileSystemInitializerExtensionsTests
 		result.Directory.Exists.Should().BeTrue();
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[AutoData]
 	public void InitializeIn_MissingDrive_ShouldCreateDrive(string directoryName)
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		directoryName = Path.Combine("D:\\", directoryName);
 		MockFileSystem sut = new();
 		sut.InitializeIn(directoryName);
