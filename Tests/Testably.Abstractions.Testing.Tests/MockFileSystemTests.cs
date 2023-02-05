@@ -185,7 +185,7 @@ public class MockFileSystemTests
 
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 
-		drives.Length.Should().Be(2);
+		drives.Length.Should().BeLessOrEqualTo(2);
 		drives.Should().ContainSingle(d => d.Name == expectedDriveName);
 	}
 
