@@ -186,7 +186,8 @@ internal sealed class DriveInfoMock : IStorageDrive
 
 		if (fileSystem.Path.IsPathRooted(driveName))
 		{
-			return fileSystem.Path.GetPathRoot(driveName)!;
+			var rootedPath = fileSystem.Path.GetPathRoot(driveName)!;
+			return $"{rootedPath.TrimEnd('\\')}\\";
 		}
 
 		throw ExceptionFactory.InvalidDriveName();

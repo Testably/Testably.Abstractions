@@ -173,6 +173,23 @@ public class MockFileSystemTests
 	}
 
 	[SkippableTheory]
+	[InlineData("D")]
+	[InlineData("D:")]
+	public void WithDrive_ShouldHavePathSeparatorSuffix(string driveName)
+	{
+		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
+
+		string expectedDriveName = $"D:{Path.DirectorySeparatorChar}";
+		MockFileSystem sut = new();
+		sut.WithDrive(driveName);
+
+		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
+
+		drives.Length.Should().Be(2);
+		drives.Should().ContainSingle(d => d.Name == expectedDriveName);
+	}
+
+	[SkippableTheory]
 	[AutoData]
 	public void WithDrive_WithCallback_ShouldUpdateDrive(long totalSize)
 	{
