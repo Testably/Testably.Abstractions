@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Testing;
@@ -24,6 +25,13 @@ public static class FileSystemInitializerExtensions
 		string basePath)
 		where TFileSystem : IFileSystem
 	{
+		if (Path.IsPathRooted(basePath) &&
+		    fileSystem is MockFileSystem mockFileSystem)
+		{
+			string? drive = Path.GetPathRoot(basePath);
+			mockFileSystem.WithDrive(drive);
+		}
+
 		fileSystem.Directory.CreateDirectory(basePath);
 		fileSystem.Directory.SetCurrentDirectory(basePath);
 		return new Initializer<TFileSystem>(fileSystem, ".");

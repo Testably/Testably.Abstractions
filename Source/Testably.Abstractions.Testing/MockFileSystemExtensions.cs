@@ -9,7 +9,7 @@ namespace Testably.Abstractions.Testing;
 public static class MockFileSystemExtensions
 {
 	/// <summary>
-	///     Changes the parameters of the default drive ('C:\' on Windows, '/' on Linux)
+	///     Changes the parameters of the default drive (e.g. 'C:\' on Windows or '/' on Linux)
 	/// </summary>
 	public static MockFileSystem WithDrive(
 		this MockFileSystem mockFileSystem,
