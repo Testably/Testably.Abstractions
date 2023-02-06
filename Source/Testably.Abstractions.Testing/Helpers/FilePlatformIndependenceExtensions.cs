@@ -13,11 +13,6 @@ internal static class FilePlatformIndependenceExtensions
 	private static readonly Regex PathTransformRegex = new(@"^[a-zA-Z]:(?<path>.*)$");
 	#pragma warning restore SYSLIB1045
 
-	private static readonly char DefaultDrive = GetDefaultDrive();
-
-	private static char GetDefaultDrive()
-		=> (Path.GetPathRoot(Directory.GetCurrentDirectory()) ?? "C:")[0];
-
 	/// <summary>
 	///     Normalizes the given path so that it works on all platforms.
 	/// </summary>
@@ -41,7 +36,7 @@ internal static class FilePlatformIndependenceExtensions
 	///     Normalizes the given path so that it works on all platforms.
 	/// </summary>
 	[return: NotNullIfNotNull("path")]
-	public static string? PrefixRoot(this string? path, char? driveLetter = null)
+	public static string? PrefixRoot(this string? path, char driveLetter = 'C')
 	{
 		if (path == null)
 		{
@@ -54,7 +49,7 @@ internal static class FilePlatformIndependenceExtensions
 		}
 
 		return Execute.OnWindows(
-			() => (driveLetter ?? DefaultDrive) + ":\\" + path,
+			() => driveLetter + ":\\" + path,
 			() => "/" + path);
 	}
 }

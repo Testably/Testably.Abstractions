@@ -76,6 +76,7 @@ public sealed class MockFileSystem : IFileSystem
 		FileSystemWatcher = new FileSystemWatcherFactoryMock(this);
 		SafeFileHandleStrategy = new NullSafeFileHandleStrategy();
 		AccessControlStrategy = new NullAccessControlStrategy();
+		AddDriveFromCurrentDirectory();
 	}
 
 	#region IFileSystem Members
@@ -149,5 +150,15 @@ public sealed class MockFileSystem : IFileSystem
 	{
 		SafeFileHandleStrategy = safeFileHandleStrategy;
 		return this;
+	}
+
+	private void AddDriveFromCurrentDirectory()
+	{
+		string? root = Path.GetPathRoot(Directory.GetCurrentDirectory());
+		if (root != null &&
+		    root[0] != _storage.MainDrive.Name[0])
+		{
+			Storage.GetOrAddDrive(root);
+		}
 	}
 }
