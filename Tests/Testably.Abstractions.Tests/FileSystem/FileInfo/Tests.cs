@@ -87,6 +87,15 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void IsReadOnly_MissingFile_ShouldBeTrue(string path)
+	{
+		IFileInfo fileInfo = new RealFileSystem().FileInfo.New(path);
+
+		fileInfo.IsReadOnly.Should().BeTrue();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void IsReadOnly_SetToFalse_ShouldRemoveReadOnlyAttribute(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
