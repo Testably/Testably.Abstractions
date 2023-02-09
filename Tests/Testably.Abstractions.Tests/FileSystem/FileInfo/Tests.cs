@@ -89,7 +89,7 @@ public abstract partial class Tests<TFileSystem>
 	[AutoData]
 	public void IsReadOnly_MissingFile_ShouldBeTrue(string path)
 	{
-		IFileInfo fileInfo = new RealFileSystem().FileInfo.New(path);
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
 
 		fileInfo.IsReadOnly.Should().BeTrue();
 	}
