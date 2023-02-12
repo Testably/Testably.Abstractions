@@ -33,4 +33,5 @@ jobs:
             time
             access-control
             compression
+            deps
           requireScope: false
