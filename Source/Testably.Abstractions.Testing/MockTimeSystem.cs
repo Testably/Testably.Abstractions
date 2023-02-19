@@ -26,6 +26,7 @@ public sealed class MockTimeSystem : ITimeSystem
 	private readonly DateTimeMock _dateTimeMock;
 	private readonly TaskMock _taskMock;
 	private readonly ThreadMock _threadMock;
+	private readonly ITimerFactory _timerMock;
 
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem" /> with a random time.
@@ -51,6 +52,7 @@ public sealed class MockTimeSystem : ITimeSystem
 		_dateTimeMock = new DateTimeMock(this, _callbackHandler);
 		_threadMock = new ThreadMock(this, _callbackHandler);
 		_taskMock = new TaskMock(this, _callbackHandler);
+		_timerMock = new TimerFactoryMock(this, _callbackHandler);
 	}
 
 	#region ITimeSystem Members
@@ -66,6 +68,10 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// <inheritdoc cref="ITimeSystem.Thread" />
 	public IThread Thread
 		=> _threadMock;
+
+	/// <inheritdoc />
+	public ITimerFactory Timer
+		=> _timerMock;
 
 	#endregion
 }

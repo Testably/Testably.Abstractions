@@ -15,6 +15,9 @@ internal static class ExceptionFactory
 	public static NotSupportedException NotSupportedFileStreamWrapping()
 		=> new("You cannot wrap an existing FileStream in the MockFileSystem instance!");
 
+	public static Exception NotSupportedTimerWrapping()
+		=> new("You cannot wrap an existing Timer in the MockTimeSystem instance!");
+
 	public static NotSupportedException NotSupportedSafeFileHandle()
 		=> new(
 			"You cannot mock a safe file handle in the mocked file system without registering a strategy explicitly. Use `MockFileSystem.WithSafeFileHandleStrategy`!");
