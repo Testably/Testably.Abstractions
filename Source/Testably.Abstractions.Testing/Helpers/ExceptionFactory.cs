@@ -243,4 +243,13 @@ internal static class ExceptionFactory
 			HResult = -2146233031
 #endif
 		};
+
+	public static ArgumentOutOfRangeException TimerArgumentOutOfRange(string propertyName)
+		=> new(propertyName,
+			"Number must be either non-negative and less than or equal to Int32.MaxValue or -1")
+		{
+#if FEATURE_EXCEPTION_HRESULT
+			HResult = -2146233086
+#endif
+		};
 }

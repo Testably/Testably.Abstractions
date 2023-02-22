@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Threading;
 using Testably.Abstractions.Testing.Helpers;
@@ -6,17 +7,20 @@ using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.TimeSystem;
 
-internal sealed class TimerFactoryMock : ITimerFactory
+internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 {
 	private readonly NotificationHandler _callbackHandler;
 	private readonly MockTimeSystem _mockTimeSystem;
-	private int _activeCount;
+	private ITimerStrategy _timerStrategy;
+	private readonly ConcurrentDictionary<int, TimerMock> _timers = new();
+
 
 	internal TimerFactoryMock(MockTimeSystem timeSystem,
 		NotificationHandler callbackHandler)
 	{
 		_mockTimeSystem = timeSystem;
 		_callbackHandler = callbackHandler;
+		_timerStrategy = TimerStrategy.Default;
 	}
 
 	#region ITimerFactory Members
@@ -29,43 +33,62 @@ internal sealed class TimerFactoryMock : ITimerFactory
 
 #if FEATURE_TIMER_COUNT
 	/// <inheritdoc cref="ITimerFactory.ActiveCount" />
-	public long ActiveCount => _activeCount;
+	public long ActiveCount => _timers.Count;
 #endif
 
 	/// <inheritdoc cref="ITimerFactory.New(TimerCallback)" />
 	public ITimer New(TimerCallback callback)
 	{
-		Interlocked.Increment(ref _activeCount);
-		return new TimerMock(_mockTimeSystem, _callbackHandler, callback, null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan, DecrementActiveCount);
+		var timerMock = new TimerMock(_mockTimeSystem, _callbackHandler, _timerStrategy, callback, null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+		return RegisterTimerMock(timerMock);
 	}
 
 	/// <inheritdoc cref="ITimerFactory.New(TimerCallback, object?, int, int)" />
 	public ITimer New(TimerCallback callback, object? state, int dueTime, int period)
 	{
-		Interlocked.Increment(ref _activeCount);
-		return new TimerMock(_mockTimeSystem, _callbackHandler, callback, state, TimeSpan.FromMilliseconds(dueTime), TimeSpan.FromMilliseconds(period), DecrementActiveCount);
+		var timerMock = new TimerMock(_mockTimeSystem, _callbackHandler, _timerStrategy, callback, state, TimeSpan.FromMilliseconds(dueTime), TimeSpan.FromMilliseconds(period));
+		return RegisterTimerMock(timerMock);
 	}
 
 	/// <inheritdoc cref="ITimerFactory.New(TimerCallback, object?, long, long)" />
 	public ITimer New(TimerCallback callback, object? state, long dueTime, long period)
 	{
-		Interlocked.Increment(ref _activeCount);
-		return new TimerMock(_mockTimeSystem, _callbackHandler, callback, state, TimeSpan.FromMilliseconds(dueTime), TimeSpan.FromMilliseconds(period), DecrementActiveCount);
+		var timerMock = new TimerMock(_mockTimeSystem, _callbackHandler, _timerStrategy, callback, state, TimeSpan.FromMilliseconds(dueTime), TimeSpan.FromMilliseconds(period));
+		return RegisterTimerMock(timerMock);
 	}
 
 	/// <inheritdoc cref="ITimerFactory.New(TimerCallback, object?, TimeSpan, TimeSpan)" />
 	public ITimer New(TimerCallback callback, object? state, TimeSpan dueTime, TimeSpan period)
 	{
-		Interlocked.Increment(ref _activeCount);
-		return new TimerMock(_mockTimeSystem, _callbackHandler, callback, state, dueTime, period, DecrementActiveCount);
+		var timerMock = new TimerMock(_mockTimeSystem, _callbackHandler, _timerStrategy, callback, state, dueTime, period);
+		return RegisterTimerMock(timerMock);
 	}
 
 	/// <inheritdoc cref="IFileStreamFactory.Wrap(FileStream)" />
 	public ITimer Wrap(Timer timer)
 		=> throw ExceptionFactory.NotSupportedTimerWrapping();
-
-	private void DecrementActiveCount()
+	
+	private TimerMock RegisterTimerMock(TimerMock timerMock)
 	{
-		Interlocked.Decrement(ref _activeCount);
+		for (int i = 0; ; i++)
+		{
+			if (_timers.TryAdd(i, timerMock))
+			{
+				timerMock.OnDispose(() => _timers.TryRemove(i, out _));
+				break;
+			}
+		}
+
+		return timerMock;
 	}
+
+	public ITimerHandler SetTimerStrategy(ITimerStrategy timerStrategy)
+	{
+		_timerStrategy = timerStrategy;
+		return this;
+	}
+
+	/// <inheritdoc />
+	public ITimerMock this[int index]
+		=> _timers[index];
 }

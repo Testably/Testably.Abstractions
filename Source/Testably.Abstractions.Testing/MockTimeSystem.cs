@@ -26,7 +26,7 @@ public sealed class MockTimeSystem : ITimeSystem
 	private readonly DateTimeMock _dateTimeMock;
 	private readonly TaskMock _taskMock;
 	private readonly ThreadMock _threadMock;
-	private readonly ITimerFactory _timerMock;
+	private readonly TimerFactoryMock _timerMock;
 
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem" /> with a random time.
@@ -74,4 +74,9 @@ public sealed class MockTimeSystem : ITimeSystem
 		=> _timerMock;
 
 	#endregion
+
+	public ITimerHandler WithTimerStrategy(ITimerStrategy timerStrategy)
+	{
+		return _timerMock.SetTimerStrategy(timerStrategy);
+	}
 }

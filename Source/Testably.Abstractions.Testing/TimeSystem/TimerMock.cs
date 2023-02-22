@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.TimeSystem;
 
-internal sealed class TimerMock : ITimer
+internal sealed class TimerMock : ITimer, ITimerMock
 {
 	private readonly NotificationHandler _callbackHandler;
+	private readonly ITimerStrategy _timerStrategy;
 	private readonly TimerCallback _callback;
 	private readonly object? _state;
-	private readonly TimeSpan _dueTime;
-	private readonly TimeSpan _period;
-	private readonly Action _onDispose;
+	private TimeSpan _dueTime;
+	private TimeSpan _period;
+	private Action? _onDispose;
 	private readonly MockTimeSystem _mockTimeSystem;
 	private bool _isDisposed;
 	private readonly object _lock = new();
@@ -20,23 +22,36 @@ internal sealed class TimerMock : ITimer
 
 	internal TimerMock(MockTimeSystem timeSystem,
 		NotificationHandler callbackHandler,
+		ITimerStrategy timerStrategy,
 		TimerCallback callback,
 		object? state,
 		TimeSpan dueTime,
-		TimeSpan period,
-		Action onDispose)
+		TimeSpan period)
 	{
+		if (dueTime.TotalMilliseconds < -1)
+		{
+			throw ExceptionFactory.TimerArgumentOutOfRange(nameof(dueTime));
+		}
+
+		if (period.TotalMilliseconds < -1)
+		{
+			throw new ArgumentOutOfRangeException(nameof(period));
+		}
+
 		_mockTimeSystem = timeSystem;
 		_callbackHandler = callbackHandler;
+		_timerStrategy = timerStrategy;
 		_callback = callback;
 		_state = state;
 		_dueTime = dueTime;
 		_period = period;
-		_onDispose = onDispose;
-		Start();
+		if (_timerStrategy.Mode == TimerMode.StartImmediately)
+		{
+			Start();
+		}
 	}
 
-	public void Stop()
+	private void Stop()
 	{
 		lock (_lock)
 		{
@@ -76,6 +91,11 @@ internal sealed class TimerMock : ITimer
 			}, TaskScheduler.Default);
 	}
 
+	internal void OnDispose(Action? onDispose)
+	{
+		_onDispose = onDispose;
+	}
+
 	private void RunTimer(CancellationToken cancellationToken = default)
 	{
 		TryDelay(_mockTimeSystem.Task, _dueTime, cancellationToken);
@@ -111,7 +131,7 @@ internal sealed class TimerMock : ITimer
 	///     <c>False</c> if the delay
 	///     was aborted via the <paramref name="cancellationToken" />.
 	/// </returns>
-	private static bool TryDelay(ITask taskSystem, TimeSpan delay,
+	private static void TryDelay(ITask taskSystem, TimeSpan delay,
 		CancellationToken cancellationToken = default)
 	{
 		try
@@ -121,16 +141,14 @@ internal sealed class TimerMock : ITimer
 				Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken)
 					.Wait(cancellationToken);
 			}
+
 			taskSystem.Delay(delay, cancellationToken).Wait(cancellationToken);
-			return true;
 		}
 		catch (Exception)
 		{
 			// Ignore all exceptions:
 			// https://stackoverflow.com/a/39885850
 		}
-
-		return false;
 	}
 
 	#region ITimer Members
@@ -148,7 +166,7 @@ internal sealed class TimerMock : ITimer
 		{
 			_isDisposed = true;
 			Stop();
-			_onDispose();
+			_onDispose?.Invoke();
 			lock (_lock)
 			{
 				_cancellationTokenSource?.Dispose();
@@ -172,13 +190,50 @@ internal sealed class TimerMock : ITimer
 
 	/// <inheritdoc cref="ITimer.Change(int, int)" />
 	public bool Change(int dueTime, int period)
-		=> throw new NotImplementedException();
+		=> Change(TimeSpan.FromMilliseconds(dueTime), TimeSpan.FromMilliseconds(period));
 
 	/// <inheritdoc cref="ITimer.Change(long, long)" />
 	public bool Change(long dueTime, long period)
-		=> throw new NotImplementedException();
+		=> Change(TimeSpan.FromMilliseconds(dueTime), TimeSpan.FromMilliseconds(period));
 
 	/// <inheritdoc cref="ITimer.Change(TimeSpan, TimeSpan)" />
 	public bool Change(TimeSpan dueTime, TimeSpan period)
-		=> throw new NotImplementedException();
+	{
+		if (_isDisposed)
+		{
+			throw new ObjectDisposedException("Cannot access a disposed object.");
+		}
+
+		if (dueTime.TotalMilliseconds < -1)
+		{
+			throw ExceptionFactory.TimerArgumentOutOfRange(nameof(dueTime));
+		}
+
+		if (period.TotalMilliseconds < -1)
+		{
+			throw new ArgumentOutOfRangeException(nameof(period));
+		}
+
+		try
+		{
+			Stop();
+			_dueTime = dueTime;
+			_period = period;
+			Start();
+			return true;
+		}
+		catch (Exception)
+		{
+			return false;
+		}
+	}
+
+	/// <inheritdoc cref="ITimerMock.Wait(int, int)" />
+	public void Wait(int executionCount = 1, int timeout = 10000)
+	{
+		if (_timerStrategy.Mode != TimerMode.StartImmediately)
+		{
+			Start();
+		}
+	}
 }

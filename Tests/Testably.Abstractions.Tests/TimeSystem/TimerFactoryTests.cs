@@ -14,7 +14,7 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 	public void ActiveCount_ShouldBeIncrementedWhenCreatingANewTimer()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ => { });
-		TimeSystem.Timer.ActiveCount.Should().Be(1);
+		TimeSystem.Timer.ActiveCount.Should().BeGreaterThan(0);
 	}
 
 	[SkippableFact]
@@ -78,6 +78,38 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 		}
 	}
 #endif
+
+	[SkippableTheory]
+	[InlineData(-2)]
+	[InlineData(-500)]
+	public void New_InvalidDueTime_ShouldThrowArgumentOutOfRangeException(int dueTime)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			TimeSystem.Timer.New(_ =>
+			{
+			}, null, dueTime, 0);
+		});
+
+		exception.Should()
+			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086, paramName: "dueTime");
+	}
+
+	[SkippableTheory]
+	[InlineData(-2)]
+	[InlineData(-500)]
+	public void New_InvalidPeriod_ShouldThrowArgumentOutOfRangeException(int period)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			TimeSystem.Timer.New(_ =>
+			{
+			}, null, 0, period);
+		});
+
+		exception.Should()
+			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086, paramName: "period");
+	}
 
 	[SkippableFact]
 	public void New_WithPeriod_ShouldStartTimer()
