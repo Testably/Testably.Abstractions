@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Threading;
 using Testably.Abstractions.RandomSystem;
+using Testably.Abstractions.TimeSystem;
 using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Parity.Tests;
@@ -134,6 +136,19 @@ public abstract class ParityTests
 			.GetErrorsToInstanceType<IRandom,
 				IRandomFactory>(
 				typeof(Random),
+				_testOutputHelper);
+
+		parityErrors.Should().BeEmpty();
+	}
+
+	[Fact]
+	public void
+		ITimerAndITimerFactory_EnsureParityWith_Timer()
+	{
+		List<string> parityErrors = Parity.Timer
+			.GetErrorsToInstanceType<ITimer,
+				ITimerFactory>(
+				typeof(Timer),
 				_testOutputHelper);
 
 		parityErrors.Should().BeEmpty();

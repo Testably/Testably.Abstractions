@@ -62,6 +62,7 @@ public class Parity
 	});
 
 	public ParityCheck Random { get; } = new();
+	public ParityCheck Timer { get; } = new();
 	public ParityCheck ZipArchive { get; } = new();
 
 	public ParityCheck ZipArchiveEntry { get; } = new(excludeMethods: new[]
