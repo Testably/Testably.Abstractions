@@ -75,6 +75,15 @@ public sealed class MockTimeSystem : ITimeSystem
 
 	#endregion
 
+	/// <summary>
+	///     Specifies the <see cref="ITimerStrategy" /> to use when dealing with timers.
+	/// </summary>
+	/// <param name="timerStrategy">
+	///     The timer strategy.
+	///     <para />
+	///     Defaults to <see langword="null" /> which uses <see cref="TimerStrategy.Default" />.
+	/// </param>
+	/// <returns>A <see cref="ITimerHandler" /> to get access to the created <see cref="ITimerMock" />s.</returns>
 	public ITimerHandler WithTimerStrategy(ITimerStrategy? timerStrategy = null)
 	{
 		return _timerMock.SetTimerStrategy(timerStrategy ?? TimerStrategy.Default);

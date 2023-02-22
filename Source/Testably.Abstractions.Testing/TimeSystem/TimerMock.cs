@@ -93,7 +93,7 @@ internal sealed class TimerMock : ITimerMock
 			}, TaskScheduler.Default);
 	}
 
-	internal void OnDispose(Action? onDispose)
+	internal void RegisterOnDispose(Action? onDispose)
 	{
 		_onDispose = onDispose;
 	}

@@ -70,13 +70,15 @@ internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 	
 	private TimerMock RegisterTimerMock(TimerMock timerMock)
 	{
-		for (int i = 0; ; i++)
+		int i = 0;
+		while (true)
 		{
 			if (_timers.TryAdd(i, timerMock))
 			{
-				timerMock.OnDispose(() => _timers.TryRemove(i, out _));
+				timerMock.RegisterOnDispose(() => _timers.TryRemove(i, out _));
 				break;
 			}
+			i++;
 		}
 
 		return timerMock;

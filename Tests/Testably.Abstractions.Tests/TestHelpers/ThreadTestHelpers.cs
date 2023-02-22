@@ -1,29 +1,18 @@
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.TestHelpers;
 
 public static class ThreadTestHelpers
 {
-	public const int ExpectedTimeoutMilliseconds = 50;
-	public const int UnexpectedTimeoutMilliseconds = 1000 * 60;
-
-	// Wait longer for a thread to time out, so that an unexpected timeout in the thread is more likely to expire first and
-	// provide a better stack trace for the failure
-	public const int UnexpectedThreadTimeoutMilliseconds =
-		UnexpectedTimeoutMilliseconds + 30000;
-
+	/// <summary>
+	///     <see
+	///         href="https://github.com/dotnet/runtime/blob/v7.0.0/src/libraries/Common/tests/System/Threading/ThreadTestHelpers.cs#L27" />
+	/// </summary>
 	public static Thread CreateGuardedThread(out Action waitForThread, Action start)
 	{
-		Action checkForThreadErrors;
-		return CreateGuardedThread(out checkForThreadErrors, out waitForThread, start);
-	}
-
-	public static Thread CreateGuardedThread(out Action checkForThreadErrors, out Action waitForThread, Action start)
-	{
-		Exception backgroundEx = null;
-		var t =
-			new Thread(() =>
+		Exception? backgroundEx = null;
+		Thread t =
+			new(() =>
 			{
 				try
 				{
@@ -35,126 +24,22 @@ public static class ThreadTestHelpers
 					Interlocked.MemoryBarrier();
 				}
 			});
-		Action localCheckForThreadErrors = checkForThreadErrors = // cannot use ref or out parameters in lambda
-			() =>
-			{
-				Interlocked.MemoryBarrier();
-				if (backgroundEx != null)
-				{
-					throw new AggregateException(backgroundEx);
-				}
-			};
-		waitForThread =
-			() =>
-			{
-				Assert.True(t.Join(UnexpectedThreadTimeoutMilliseconds));
-				localCheckForThreadErrors();
-			};
-		return t;
-	}
 
-	public static Thread CreateGuardedThread(out Action waitForThread, Action<object> start)
-	{
-		Action checkForThreadErrors;
-		return CreateGuardedThread(out checkForThreadErrors, out waitForThread, start);
-	}
-
-	public static Thread CreateGuardedThread(out Action checkForThreadErrors, out Action waitForThread, Action<object> start)
-	{
-		Exception backgroundEx = null;
-		var t =
-			new Thread(parameter =>
-			{
-				try
-				{
-					start(parameter);
-				}
-				catch (Exception ex)
-				{
-					backgroundEx = ex;
-					Interlocked.MemoryBarrier();
-				}
-			});
-		Action localCheckForThreadErrors = checkForThreadErrors = // cannot use ref or out parameters in lambda
-			() =>
-			{
-				Interlocked.MemoryBarrier();
-				if (backgroundEx != null)
-				{
-					throw new AggregateException(backgroundEx);
-				}
-			};
-		waitForThread =
-			() =>
-			{
-				Assert.True(t.Join(UnexpectedThreadTimeoutMilliseconds));
-				localCheckForThreadErrors();
-			};
-		return t;
-	}
-
-	public static void RunTestInBackgroundThread(Action test)
-	{
-		Action waitForThread;
-		var t = CreateGuardedThread(out waitForThread, test);
-		t.IsBackground = true;
-		t.Start();
-		waitForThread();
-	}
-
-	public static void RunTestInBackgroundThread(Func<Task> test)
-	{
-		RunTestInBackgroundThread(() => test().Wait());
-	}
-
-	public static void WaitForCondition(Func<bool> condition)
-	{
-		WaitForConditionWithCustomDelay(condition, () => Thread.Sleep(1));
-	}
-
-	public static void WaitForConditionWithoutBlocking(Func<bool> condition)
-	{
-		WaitForConditionWithCustomDelay(condition, () => Thread.Yield());
-	}
-
-	public static void WaitForConditionWithoutRelinquishingTimeSlice(Func<bool> condition)
-	{
-		WaitForConditionWithCustomDelay(condition, () => Thread.SpinWait(1));
-	}
-
-	public static void WaitForConditionWithCustomDelay(Func<bool> condition, Action delay)
-	{
-		if (condition())
+		void LocalCheckForThreadErrors()
 		{
-			return;
-		}
-
-		int startTimeMs = Environment.TickCount;
-		while (true)
-		{
-			delay();
-
-			if (condition())
+			Interlocked.MemoryBarrier();
+			if (backgroundEx != null)
 			{
-				return;
+				throw new AggregateException(backgroundEx);
 			}
-
-			Assert.InRange(Environment.TickCount - startTimeMs, 0, UnexpectedTimeoutMilliseconds);
 		}
-	}
 
-	public static void CheckedWait(this WaitHandle wh)
-	{
-		Assert.True(wh.WaitOne(UnexpectedTimeoutMilliseconds));
-	}
-
-	public static void CheckedWait(this ManualResetEventSlim e)
-	{
-		Assert.True(e.Wait(UnexpectedTimeoutMilliseconds));
-	}
-
-	public static void CheckedWait(this Task t)
-	{
-		Assert.True(t.Wait(UnexpectedTimeoutMilliseconds));
+		waitForThread =
+			() =>
+			{
+				Assert.True(t.Join(60000));
+				LocalCheckForThreadErrors();
+			};
+		return t;
 	}
 }
