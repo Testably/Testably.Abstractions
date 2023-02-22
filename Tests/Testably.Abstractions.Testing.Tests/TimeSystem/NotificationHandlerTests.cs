@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
+using Testably.Abstractions.Testing.TimeSystem;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
@@ -296,5 +297,106 @@ public class NotificationHandlerTests
 		}
 
 		receivedTimeout.Should().Be(expectedTimeout);
+	}
+
+	[Fact]
+	public void
+		OnTimerExecuted_DisposedCallback_ShouldNotBeCalled()
+	{
+		MockTimeSystem timeSystem = new();
+		ITimerHandler timerHandler = timeSystem.WithTimerStrategy();
+		TimerExecution? receivedValue = null;
+		IDisposable disposable = timeSystem.On.TimerExecuted(d => receivedValue = d);
+
+		disposable.Dispose();
+		timeSystem.Timer.New(_ => { }, null, TimeTestHelper.GetRandomInterval(),
+			TimeTestHelper.GetRandomInterval());
+
+		timerHandler[0].Wait();
+		receivedValue.Should().BeNull();
+	}
+
+	[Fact]
+	public void
+		OnTimerExecuted_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
+	{
+		MockTimeSystem timeSystem = new();
+		ITimerHandler timerHandler = timeSystem.WithTimerStrategy();
+		TimerExecution? receivedTimeout1 = null;
+		TimerExecution? receivedTimeout2 = null;
+
+		using (timeSystem.On.TimerExecuted(d => receivedTimeout1 = d))
+		{
+			timeSystem.On.TimerExecuted(d => receivedTimeout2 = d).Dispose();
+			timeSystem.Timer.New(_ => { }, null, TimeTestHelper.GetRandomInterval(),
+				TimeTestHelper.GetRandomInterval());
+			timerHandler[0].Wait();
+		}
+
+		receivedTimeout1.Should().NotBeNull();
+		receivedTimeout2.Should().BeNull();
+	}
+
+	[Fact]
+	public void
+		OnTimerExecuted_MultipleCallbacks_ShouldAllBeCalled()
+	{
+		MockTimeSystem timeSystem = new();
+		ITimerHandler timerHandler = timeSystem.WithTimerStrategy();
+		TimerExecution? receivedTimeout1 = null;
+		TimerExecution? receivedTimeout2 = null;
+
+		using (timeSystem.On.TimerExecuted(d => receivedTimeout1 = d))
+		{
+			using (timeSystem.On.TimerExecuted(d => receivedTimeout2 = d))
+			{
+				timeSystem.Timer.New(_ => { }, null, TimeTestHelper.GetRandomInterval(),
+					TimeTestHelper.GetRandomInterval());
+				timerHandler[0].Wait();
+			}
+		}
+
+		receivedTimeout1.Should().NotBeNull();
+		receivedTimeout2.Should().NotBeNull();
+	}
+
+	[Fact]
+	public void
+		OnTimerExecuted_WithMilliseconds_ShouldExecuteCallbackWithCorrectParameter()
+	{
+		int millisecondsTimeout = new Random().Next();
+		MockTimeSystem timeSystem = new();
+		ITimerHandler timerHandler = timeSystem.WithTimerStrategy();
+		TimerExecution? receivedValue = null;
+		DateTime now = timeSystem.DateTime.UtcNow;
+
+		using (timeSystem.On.TimerExecuted(d => receivedValue = d))
+		{
+			timeSystem.Timer.New(_ => { }, null, millisecondsTimeout, 0);
+			timerHandler[0].Wait();
+		}
+
+		TimeSpan difference = receivedValue!.Time - now;
+		difference.Should().Be(TimeSpan.FromMilliseconds(millisecondsTimeout));
+	}
+
+	[Fact]
+	public void
+		OnTimerExecuted_WithTimeSpan_ShouldExecuteCallbackWithCorrectParameter()
+	{
+		TimeSpan expectedTimeout = TimeTestHelper.GetRandomInterval();
+		MockTimeSystem timeSystem = new();
+		ITimerHandler timerHandler = timeSystem.WithTimerStrategy();
+		TimerExecution? receivedValue = null;
+		DateTime now = timeSystem.DateTime.UtcNow;
+
+		using (timeSystem.On.TimerExecuted(d => receivedValue = d))
+		{
+			timeSystem.Timer.New(_ => { }, null, expectedTimeout, TimeSpan.Zero);
+			timerHandler[0].Wait();
+		}
+
+		TimeSpan difference = receivedValue!.Time - now;
+		difference.Should().Be(expectedTimeout);
 	}
 }

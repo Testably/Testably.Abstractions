@@ -6,7 +6,7 @@ using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.TimeSystem;
 
-internal sealed class TimerMock : ITimer, ITimerMock
+internal sealed class TimerMock : ITimerMock
 {
 	private readonly NotificationHandler _callbackHandler;
 	private readonly ITimerStrategy _timerStrategy;
@@ -19,6 +19,8 @@ internal sealed class TimerMock : ITimer, ITimerMock
 	private bool _isDisposed;
 	private readonly object _lock = new();
 	private CancellationTokenSource? _cancellationTokenSource;
+	private CountdownEvent? _countdownEvent;
+	private readonly ManualResetEventSlim _continueEvent = new();
 
 	internal TimerMock(MockTimeSystem timeSystem,
 		NotificationHandler callbackHandler,
@@ -104,6 +106,13 @@ internal sealed class TimerMock : ITimer, ITimerMock
 		{
 			nextPlannedExecution += _period;
 			_callback(_state);
+			_callbackHandler.InvokeTimerExecutedCallbacks(
+				new TimerExecution(_mockTimeSystem.DateTime.UtcNow, this));
+			if (_countdownEvent?.Signal() == true)
+			{
+				_continueEvent.Wait(cancellationToken);
+				_continueEvent.Reset();
+			}
 
 			if (_period.TotalMilliseconds <= 0)
 			{
@@ -228,12 +237,24 @@ internal sealed class TimerMock : ITimer, ITimerMock
 		}
 	}
 
-	/// <inheritdoc cref="ITimerMock.Wait(int, int)" />
-	public void Wait(int executionCount = 1, int timeout = 10000)
+	/// <inheritdoc cref="ITimerMock.Wait(int, int, Action{ITimerMock})" />
+	public ITimerMock Wait(int executionCount = 1, int timeout = 10000, Action<ITimerMock>? callback = null)
 	{
 		if (_timerStrategy.Mode != TimerMode.StartImmediately)
 		{
 			Start();
 		}
+
+		_countdownEvent = new CountdownEvent(executionCount);
+		if (!_countdownEvent.Wait(timeout))
+		{
+			throw new TimeoutException(
+				$"The execution count {executionCount} was not reached in {timeout}ms.");
+		}
+
+		callback?.Invoke(this);
+		_continueEvent.Set();
+
+		return this;
 	}
 }

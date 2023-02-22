@@ -75,8 +75,8 @@ public sealed class MockTimeSystem : ITimeSystem
 
 	#endregion
 
-	public ITimerHandler WithTimerStrategy(ITimerStrategy timerStrategy)
+	public ITimerHandler WithTimerStrategy(ITimerStrategy? timerStrategy = null)
 	{
-		return _timerMock.SetTimerStrategy(timerStrategy);
+		return _timerMock.SetTimerStrategy(timerStrategy ?? TimerStrategy.Default);
 	}
 }

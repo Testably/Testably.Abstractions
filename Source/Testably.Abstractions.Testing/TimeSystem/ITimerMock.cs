@@ -1,6 +1,9 @@
-﻿namespace Testably.Abstractions.Testing.TimeSystem;
+﻿using System;
+using Testably.Abstractions.TimeSystem;
 
-public interface ITimerMock
+namespace Testably.Abstractions.Testing.TimeSystem;
+
+public interface ITimerMock : ITimer
 {
-	void Wait(int executionCount = 1, int timeout = 10000);
+	ITimerMock Wait(int executionCount = 1, int timeout = 10000, Action<ITimerMock>? callback = null);
 }
