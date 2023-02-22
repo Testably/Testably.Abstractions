@@ -160,13 +160,11 @@ internal sealed class TimerMock : ITimerMock
 		}
 	}
 
-	#region ITimer Members
+	#region ITimerMock Members
 
 	/// <inheritdoc cref="ITimeSystemEntity.TimeSystem" />
 	public ITimeSystem TimeSystem
 		=> _mockTimeSystem;
-
-	#endregion
 
 	/// <inheritdoc cref="IDisposable.Dispose()" />
 	public void Dispose()
@@ -257,4 +255,6 @@ internal sealed class TimerMock : ITimerMock
 
 		return this;
 	}
+
+	#endregion
 }
