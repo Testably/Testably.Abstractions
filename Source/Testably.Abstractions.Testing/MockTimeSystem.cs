@@ -69,7 +69,7 @@ public sealed class MockTimeSystem : ITimeSystem
 	public IThread Thread
 		=> _threadMock;
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="ITimeSystem.Timer" />
 	public ITimerFactory Timer
 		=> _timerMock;
 

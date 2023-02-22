@@ -21,7 +21,7 @@ public interface ITimerMock : ITimer
 	/// <param name="callback">
 	///     A callback to execute after the execution count, before the next execution is triggered.
 	///     <para />
-	///     The method parameter allows stopping the timer by calling <see cref="ITimerMock.Dispose()" />.
+	///     The method parameter allows stopping the timer by calling <see cref="IDisposable.Dispose()" />.
 	/// </param>
 	/// <returns></returns>
 	/// <exception cref="TimeoutException">
