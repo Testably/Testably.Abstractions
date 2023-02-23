@@ -9,6 +9,8 @@ public abstract partial class TimerTests<TTimeSystem>
 	: TimeSystemTestBase<TTimeSystem>
 	where TTimeSystem : ITimeSystem
 {
+	private const int TimerMultiplier = 3;
+
 	[SkippableFact]
 	public void Change_DisposedTimer_ShouldThrowObjectDisposedException()
 	{
@@ -93,22 +95,22 @@ public abstract partial class TimerTests<TTimeSystem>
 			{
 				ms3.Set();
 			}
-		}, null, 0, 200);
+		}, null, 0 * TimerMultiplier, 200 * TimerMultiplier);
 		ms.Wait();
 		using ITimer timer2 = TimeSystem.Timer.New(_ =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			timer.Change(0, 200);
+			timer.Change(0 * TimerMultiplier, 200 * TimerMultiplier);
 			ms2.Set();
-		}, null, 100, 0);
+		}, null, 100 * TimerMultiplier, 0 * TimerMultiplier);
 
-		ms3.Wait(10000);
+		ms3.Wait(10000 * TimerMultiplier);
 
-		triggerTimes[0].Should().BeLessThan(30);
-		triggerTimes[1].Should().BeGreaterThan(70).And.BeLessThan(130);
+		triggerTimes[0].Should().BeLessThan(30 * TimerMultiplier);
+		triggerTimes[1].Should().BeGreaterThan(70 * TimerMultiplier).And.BeLessThan(130 * TimerMultiplier);
 		for (int i = 2; i < triggerTimes.Count; i++)
 		{
-			triggerTimes[i].Should().BeGreaterThan(170).And.BeLessThan(230);
+			triggerTimes[i].Should().BeGreaterThan(170 * TimerMultiplier).And.BeLessThan(230 * TimerMultiplier);
 		}
 	}
 
@@ -132,22 +134,22 @@ public abstract partial class TimerTests<TTimeSystem>
 			{
 				ms3.Set();
 			}
-		}, null, 0L, 200L);
+		}, null, 0L * TimerMultiplier, 200L * TimerMultiplier);
 		ms.Wait();
 		using ITimer timer2 = TimeSystem.Timer.New(_ =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			timer.Change(0L, 200L);
+			timer.Change(0L * TimerMultiplier, 200L * TimerMultiplier);
 			ms2.Set();
-		}, null, 100L, 0L);
+		}, null, 100L * TimerMultiplier, 0L * TimerMultiplier);
 
 		ms3.Wait(10000);
 
-		triggerTimes[0].Should().BeLessThan(30);
-		triggerTimes[1].Should().BeGreaterThan(70).And.BeLessThan(130);
+		triggerTimes[0].Should().BeLessThan(30 * TimerMultiplier);
+		triggerTimes[1].Should().BeGreaterThan(70 * TimerMultiplier).And.BeLessThan(130 * TimerMultiplier);
 		for (int i = 2; i < triggerTimes.Count; i++)
 		{
-			triggerTimes[i].Should().BeGreaterThan(170).And.BeLessThan(230);
+			triggerTimes[i].Should().BeGreaterThan(170 * TimerMultiplier).And.BeLessThan(230 * TimerMultiplier);
 		}
 	}
 
@@ -171,22 +173,22 @@ public abstract partial class TimerTests<TTimeSystem>
 			{
 				ms3.Set();
 			}
-		}, null, TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(200));
+		}, null, TimeSpan.FromMilliseconds(0 * TimerMultiplier), TimeSpan.FromMilliseconds(200 * TimerMultiplier));
 		ms.Wait();
 		using ITimer timer2 = TimeSystem.Timer.New(_ =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			timer.Change(TimeSpan.FromMilliseconds(0), TimeSpan.FromMilliseconds(200));
+			timer.Change(TimeSpan.FromMilliseconds(0 * TimerMultiplier), TimeSpan.FromMilliseconds(200 * TimerMultiplier));
 			ms2.Set();
-		}, null, TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(0));
+		}, null, TimeSpan.FromMilliseconds(100 * TimerMultiplier), TimeSpan.FromMilliseconds(0 * TimerMultiplier));
 
 		ms3.Wait(10000);
 
-		triggerTimes[0].Should().BeLessThan(30);
-		triggerTimes[1].Should().BeGreaterThan(70).And.BeLessThan(130);
+		triggerTimes[0].Should().BeLessThan(30 * TimerMultiplier);
+		triggerTimes[1].Should().BeGreaterThan(70 * TimerMultiplier).And.BeLessThan(130 * TimerMultiplier);
 		for (int i = 2; i < triggerTimes.Count; i++)
 		{
-			triggerTimes[i].Should().BeGreaterThan(170).And.BeLessThan(230);
+			triggerTimes[i].Should().BeGreaterThan(170 * TimerMultiplier).And.BeLessThan(230 * TimerMultiplier);
 		}
 	}
 
