@@ -31,6 +31,10 @@ internal sealed class TimerWrapper : ITimer
 	public bool Change(TimeSpan dueTime, TimeSpan period)
 		=> _timer.Change(dueTime, period);
 
+	/// <inheritdoc cref="ITimer.Dispose(WaitHandle)" />
+	public bool Dispose(WaitHandle notifyObject)
+		=> _timer.Dispose(notifyObject);
+
 	/// <inheritdoc cref="IDisposable.Dispose()" />
 	public void Dispose()
 		=> _timer.Dispose();

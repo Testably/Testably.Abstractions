@@ -62,6 +62,18 @@ public abstract partial class TimerTests<TTimeSystem>
 	}
 
 	[SkippableFact]
+	public void Change_SameValues_ShouldReturnTrue()
+	{
+		ITimer timer = TimeSystem.Timer.New(_ =>
+		{
+		}, null, 100, 200);
+
+		bool result = timer.Change(100, 200);
+
+		result.Should().BeTrue();
+	}
+
+	[SkippableFact]
 	public void Change_WithInt_ShouldResetTimer()
 	{
 		List<int> triggerTimes = new();
@@ -179,14 +191,52 @@ public abstract partial class TimerTests<TTimeSystem>
 	}
 
 	[SkippableFact]
-	public void Change_SameValues_ShouldReturnTrue()
+	public void Dispose_WithManualResetEventWaitHandle_ShouldBeSet()
 	{
 		ITimer timer = TimeSystem.Timer.New(_ =>
 		{
 		}, null, 100, 200);
+		using ManualResetEvent waitHandle = new(false);
+		timer.Dispose(waitHandle);
 
-		bool result = timer.Change(100, 200);
+		waitHandle.WaitOne(1000).Should().BeTrue();
+	}
 
-		result.Should().BeTrue();
+	[SkippableFact]
+	public void Dispose_WithMutexWaitHandle_ShouldBeSet()
+	{
+		ITimer timer = TimeSystem.Timer.New(_ =>
+		{
+		}, null, 100, 200);
+		using Mutex waitHandle = new(false);
+		timer.Dispose(waitHandle);
+
+		waitHandle.WaitOne(1000).Should().BeTrue();
+	}
+
+	[SkippableFact]
+	public void Dispose_WithSemaphoreWaitHandle_ShouldBeSet()
+	{
+		ITimer timer = TimeSystem.Timer.New(_ =>
+		{
+		}, null, 100, 200);
+		using Semaphore waitHandle = new(1, 1);
+		timer.Dispose(waitHandle);
+
+		waitHandle.WaitOne(1000).Should().BeTrue();
+	}
+
+	[SkippableFact]
+	public void Dispose_WithWaitHandleCalledTwice_ShouldReturnFalse()
+	{
+		ITimer timer = TimeSystem.Timer.New(_ =>
+		{
+		}, null, 100, 200);
+		using ManualResetEvent waitHandle = new(false);
+		timer.Dispose(waitHandle);
+
+		bool result = timer.Dispose(waitHandle);
+
+		result.Should().BeFalse();
 	}
 }

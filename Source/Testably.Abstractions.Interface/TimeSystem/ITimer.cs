@@ -19,4 +19,7 @@ public interface ITimer : ITimeSystemEntity, IDisposable
 
 	/// <inheritdoc cref="Timer.Change(TimeSpan, TimeSpan)" />
 	bool Change(TimeSpan dueTime, TimeSpan period);
+
+	/// <inheritdoc cref="Timer.Dispose(WaitHandle)" />
+	bool Dispose(WaitHandle notifyObject);
 }

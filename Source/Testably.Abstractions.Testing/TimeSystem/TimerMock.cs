@@ -235,6 +235,36 @@ internal sealed class TimerMock : ITimerMock
 		}
 	}
 
+	/// <inheritdoc cref="ITimer.Dispose(WaitHandle)" />
+	public bool Dispose(WaitHandle notifyObject)
+	{
+		if (_isDisposed)
+		{
+			return false;
+		}
+
+		switch (notifyObject)
+		{
+			case Mutex m:
+				m.WaitOne();
+				Dispose();
+				m.ReleaseMutex();
+				break;
+			case Semaphore s:
+				s.WaitOne();
+				Dispose();
+				s.Release();
+				break;
+			case EventWaitHandle e:
+				Dispose();
+				e.Set();
+				break;
+			default:
+				throw new NotSupportedException("The wait handle is not of any supported type!");
+		}
+		return true;
+	}
+
 	/// <inheritdoc cref="ITimerMock.Wait(int, int, Action{ITimerMock})" />
 	public ITimerMock Wait(int executionCount = 1, int timeout = 10000, Action<ITimerMock>? callback = null)
 	{
