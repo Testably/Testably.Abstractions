@@ -5,25 +5,8 @@ using Testably.Abstractions.Testing.TimeSystem;
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
 [Collection(nameof(Timer))]
-public class NotificationHandlerTests : IDisposable
+public class NotificationHandlerTests
 {
-	private readonly int _minThreads;
-	private readonly int _completionPortThreads;
-
-	public NotificationHandlerTests()
-	{
-		ThreadPool.GetMinThreads(out int minThreads, out int completionPortThreads);
-		_minThreads = minThreads;
-		_completionPortThreads = completionPortThreads;
-		ThreadPool.SetMinThreads(100, 100);
-	}
-
-	/// <inheritdoc cref="IDisposable.Dispose()" />
-	public void Dispose()
-	{
-		ThreadPool.SetMinThreads(_minThreads, _completionPortThreads);
-	}
-
 	[Fact]
 	public void
 		OnDateTimeRead_DisposedCallback_ShouldNotBeCalled()
