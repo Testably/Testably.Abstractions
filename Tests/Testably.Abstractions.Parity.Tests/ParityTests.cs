@@ -40,8 +40,7 @@ public abstract class ParityTests
 	public void IDirectoryInfoAndIDirectoryInfoFactory_EnsureParityWith_DirectoryInfo()
 	{
 		List<string> parityErrors = Parity.DirectoryInfo
-			.GetErrorsToInstanceType<IDirectoryInfo,
-				IDirectoryInfoFactory>(
+			.GetErrorsToInstanceType<IDirectoryInfo, IDirectoryInfoFactory>(
 				typeof(DirectoryInfo),
 				_testOutputHelper);
 
@@ -52,8 +51,7 @@ public abstract class ParityTests
 	public void IDriveInfoAndIDriveInfoFactory_EnsureParityWith_DriveInfo()
 	{
 		List<string> parityErrors = Parity.Drive
-			.GetErrorsToInstanceType<IDriveInfo,
-				IDriveInfoFactory>(
+			.GetErrorsToInstanceType<IDriveInfo, IDriveInfoFactory>(
 				typeof(DriveInfo),
 				_testOutputHelper);
 
@@ -75,8 +73,7 @@ public abstract class ParityTests
 	public void IFileInfoAndIFileInfoFactory_EnsureParityWith_FileInfo()
 	{
 		List<string> parityErrors = Parity.FileInfo
-			.GetErrorsToInstanceType<IFileInfo,
-				IFileInfoFactory>(
+			.GetErrorsToInstanceType<IFileInfo, IFileInfoFactory>(
 				typeof(FileInfo),
 				_testOutputHelper);
 
@@ -99,8 +96,7 @@ public abstract class ParityTests
 		IFileSystemWatcherAndIFileSystemWatcherFactory_EnsureParityWith_FileSystemWatcher()
 	{
 		List<string> parityErrors = Parity.FileSystemWatcher
-			.GetErrorsToInstanceType<IFileSystemWatcher,
-				IFileSystemWatcherFactory>(
+			.GetErrorsToInstanceType<IFileSystemWatcher, IFileSystemWatcherFactory>(
 				typeof(FileSystemWatcher),
 				_testOutputHelper);
 
@@ -133,8 +129,7 @@ public abstract class ParityTests
 	public void IRandomAndIRandomFactory_EnsureParityWith_Random()
 	{
 		List<string> parityErrors = Parity.Random
-			.GetErrorsToInstanceType<IRandom,
-				IRandomFactory>(
+			.GetErrorsToInstanceType<IRandom, IRandomFactory>(
 				typeof(Random),
 				_testOutputHelper);
 
@@ -146,8 +141,7 @@ public abstract class ParityTests
 		ITimerAndITimerFactory_EnsureParityWith_Timer()
 	{
 		List<string> parityErrors = Parity.Timer
-			.GetErrorsToInstanceType<ITimer,
-				ITimerFactory>(
+			.GetErrorsToInstanceType<ITimer, ITimerFactory>(
 				typeof(Timer),
 				_testOutputHelper);
 
