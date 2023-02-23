@@ -9,7 +9,7 @@ public abstract partial class TimerTests<TTimeSystem>
 	: TimeSystemTestBase<TTimeSystem>
 	where TTimeSystem : ITimeSystem
 {
-	private const int TimerMultiplier = 3;
+	private const int TimerMultiplier = 10;
 
 	[SkippableFact]
 	public void Change_DisposedTimer_ShouldThrowObjectDisposedException()
