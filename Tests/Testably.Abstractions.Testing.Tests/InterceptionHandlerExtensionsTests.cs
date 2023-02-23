@@ -1,5 +1,8 @@
+using System.Threading;
+
 namespace Testably.Abstractions.Testing.Tests;
 
+[Collection(nameof(ThreadPool))]
 public class InterceptionHandlerExtensionsTests
 {
 	#region Test Setup

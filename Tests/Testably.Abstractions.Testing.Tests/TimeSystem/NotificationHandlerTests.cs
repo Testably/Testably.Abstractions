@@ -4,7 +4,7 @@ using Testably.Abstractions.Testing.TimeSystem;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
-[Collection(nameof(Timer))]
+[Collection(nameof(ThreadPool))]
 public class NotificationHandlerTests
 {
 	[Fact]

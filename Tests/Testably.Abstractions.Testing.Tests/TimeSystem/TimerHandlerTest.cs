@@ -5,7 +5,7 @@ using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
-[Collection(nameof(Timer))]
+[Collection(nameof(ThreadPool))]
 public class TimerHandlerTest
 {
 	[Fact]
