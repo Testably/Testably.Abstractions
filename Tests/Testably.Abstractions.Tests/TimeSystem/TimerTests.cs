@@ -78,6 +78,8 @@ public abstract partial class TimerTests<TTimeSystem>
 	[SkippableFact]
 	public void Change_WithInt_ShouldResetTimer()
 	{
+		Test.SkipBrittleTestsOnRealTimeSystem(TimeSystem);
+
 		List<int> triggerTimes = new();
 		DateTime previousTime = TimeSystem.DateTime.Now;
 		ManualResetEventSlim ms = new();
@@ -117,6 +119,8 @@ public abstract partial class TimerTests<TTimeSystem>
 	[SkippableFact]
 	public void Change_WithLong_ShouldResetTimer()
 	{
+		Test.SkipBrittleTestsOnRealTimeSystem(TimeSystem);
+
 		List<int> triggerTimes = new();
 		DateTime previousTime = TimeSystem.DateTime.Now;
 		ManualResetEventSlim ms = new();
@@ -156,6 +160,8 @@ public abstract partial class TimerTests<TTimeSystem>
 	[SkippableFact]
 	public void Change_WithTimeSpan_ShouldResetTimer()
 	{
+		Test.SkipBrittleTestsOnRealTimeSystem(TimeSystem);
+
 		List<int> triggerTimes = new();
 		DateTime previousTime = TimeSystem.DateTime.Now;
 		ManualResetEventSlim ms = new();

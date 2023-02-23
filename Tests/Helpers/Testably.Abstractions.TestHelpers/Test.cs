@@ -41,6 +41,13 @@ public static class Test
 			"Brittle tests are skipped on the real file system.");
 	}
 
+	public static void SkipBrittleTestsOnRealTimeSystem(
+		ITimeSystem timeSystem, bool condition = true)
+	{
+		Skip.If(timeSystem is RealTimeSystem && condition,
+			"Brittle tests are skipped on the real time system.");
+	}
+
 	public static void SkipIfLongRunningTestsShouldBeSkipped(IFileSystem fileSystem)
 	{
 #if DEBUG && !INCLUDE_LONGRUNNING_TESTS_ALSO_IN_DEBUG_MODE
