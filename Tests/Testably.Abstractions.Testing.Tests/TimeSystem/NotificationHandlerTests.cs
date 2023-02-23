@@ -304,7 +304,7 @@ public class NotificationHandlerTests
 		OnTimerExecuted_DisposedCallback_ShouldNotBeCalled()
 	{
 		MockTimeSystem timeSystem = new();
-		ITimerHandler timerHandler = timeSystem.WithTimerStrategy();
+		ITimerHandler timerHandler = timeSystem.TimerHandler;
 		TimerExecution? receivedValue = null;
 		IDisposable disposable = timeSystem.On.TimerExecuted(d => receivedValue = d);
 
@@ -321,7 +321,7 @@ public class NotificationHandlerTests
 		OnTimerExecuted_MultipleCallbacks_DisposeOne_ShouldCallOtherCallbacks()
 	{
 		MockTimeSystem timeSystem = new();
-		ITimerHandler timerHandler = timeSystem.WithTimerStrategy();
+		ITimerHandler timerHandler = timeSystem.TimerHandler;
 		TimerExecution? receivedTimeout1 = null;
 		TimerExecution? receivedTimeout2 = null;
 
@@ -342,7 +342,7 @@ public class NotificationHandlerTests
 		OnTimerExecuted_MultipleCallbacks_ShouldAllBeCalled()
 	{
 		MockTimeSystem timeSystem = new();
-		ITimerHandler timerHandler = timeSystem.WithTimerStrategy();
+		ITimerHandler timerHandler = timeSystem.TimerHandler;
 		TimerExecution? receivedTimeout1 = null;
 		TimerExecution? receivedTimeout2 = null;
 
@@ -366,7 +366,7 @@ public class NotificationHandlerTests
 	{
 		int millisecondsTimeout = new Random().Next();
 		MockTimeSystem timeSystem = new();
-		ITimerHandler timerHandler = timeSystem.WithTimerStrategy();
+		ITimerHandler timerHandler = timeSystem.TimerHandler;
 		TimerExecution? receivedValue = null;
 		DateTime now = timeSystem.DateTime.UtcNow;
 
@@ -386,7 +386,7 @@ public class NotificationHandlerTests
 	{
 		TimeSpan expectedTimeout = TimeTestHelper.GetRandomInterval();
 		MockTimeSystem timeSystem = new();
-		ITimerHandler timerHandler = timeSystem.WithTimerStrategy();
+		ITimerHandler timerHandler = timeSystem.TimerHandler;
 		TimerExecution? receivedValue = null;
 		DateTime now = timeSystem.DateTime.UtcNow;
 

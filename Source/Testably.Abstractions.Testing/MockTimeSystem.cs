@@ -22,6 +22,11 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// </summary>
 	public ITimeProvider TimeProvider { get; }
 
+	/// <summary>
+	/// The handler for mocked timers.
+	/// </summary>
+	public ITimerHandler TimerHandler => _timerMock;
+
 	private readonly NotificationHandler _callbackHandler;
 	private readonly DateTimeMock _dateTimeMock;
 	private readonly TaskMock _taskMock;
@@ -78,14 +83,10 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// <summary>
 	///     Specifies the <see cref="ITimerStrategy" /> to use when dealing with timers.
 	/// </summary>
-	/// <param name="timerStrategy">
-	///     The timer strategy.
-	///     <para />
-	///     Defaults to <see langword="null" /> which uses <see cref="TimerStrategy.Default" />.
-	/// </param>
-	/// <returns>A <see cref="ITimerHandler" /> to get access to the created <see cref="ITimerMock" />s.</returns>
-	public ITimerHandler WithTimerStrategy(ITimerStrategy? timerStrategy = null)
+	/// <param name="timerStrategy">The timer strategy. </param>
+	public MockTimeSystem WithTimerStrategy(ITimerStrategy timerStrategy)
 	{
-		return _timerMock.SetTimerStrategy(timerStrategy ?? TimerStrategy.Default);
+		_timerMock.SetTimerStrategy(timerStrategy);
+		return this;
 	}
 }

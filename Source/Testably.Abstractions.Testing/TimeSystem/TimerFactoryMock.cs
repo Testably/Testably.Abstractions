@@ -13,6 +13,7 @@ internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 	private readonly MockTimeSystem _mockTimeSystem;
 	private ITimerStrategy _timerStrategy;
 	private readonly ConcurrentDictionary<int, TimerMock> _timers = new();
+	private int _nextIndex = -1;
 
 
 	internal TimerFactoryMock(MockTimeSystem timeSystem,
@@ -70,15 +71,10 @@ internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 	
 	private TimerMock RegisterTimerMock(TimerMock timerMock)
 	{
-		int i = 0;
-		while (true)
+		var index = Interlocked.Increment(ref _nextIndex);
+		if (_timers.TryAdd(index, timerMock))
 		{
-			if (_timers.TryAdd(i, timerMock))
-			{
-				timerMock.RegisterOnDispose(() => _timers.TryRemove(i, out _));
-				break;
-			}
-			i++;
+			timerMock.RegisterOnDispose(() => _timers.TryRemove(index, out _));
 		}
 
 		return timerMock;

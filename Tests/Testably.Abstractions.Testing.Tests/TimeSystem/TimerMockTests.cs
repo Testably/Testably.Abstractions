@@ -27,9 +27,9 @@ public class TimerMockTests
 	[Fact]
 	public void New_WithStartOnMockWaitMode_ShouldOnlyStartWhenCallingWait()
 	{
-		MockTimeSystem timeSystem = new();
-		ITimerHandler timerHandler =
-			timeSystem.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
+		MockTimeSystem timeSystem = new MockTimeSystem()
+			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
+		ITimerHandler timerHandler = timeSystem.TimerHandler;
 
 		int count = 0;
 		using ITimer timer = timeSystem.Timer.New(_ => count++, null, 0, 100);
@@ -44,7 +44,7 @@ public class TimerMockTests
 	public void Wait_TimeoutExpired_ShouldThrowTimeoutException()
 	{
 		MockTimeSystem timeSystem = new();
-		ITimerHandler timerHandler = timeSystem.WithTimerStrategy(TimerStrategy.Default);
+		ITimerHandler timerHandler = timeSystem.TimerHandler;
 
 		int count = 0;
 		using ITimer timer = timeSystem.Timer.New(_ =>
@@ -66,19 +66,22 @@ public class TimerMockTests
 	[AutoData]
 	public void Wait_WithExecutionCount_ShouldWaitForSpecifiedNumberOfExecutions(int executionCount)
 	{
-		MockTimeSystem timeSystem = new();
-		ITimerHandler timerHandler =
-			timeSystem.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
+		MockTimeSystem timeSystem = new MockTimeSystem()
+			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
+		ITimerHandler timerHandler = timeSystem.TimerHandler;
 
 		int count = 0;
 		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 			count++;
 		}, null, 0, 100);
-
-		Thread.Sleep(10);
+		
 		count.Should().Be(0);
-		timerHandler[0].Wait(executionCount, callback: t => t.Dispose());
+		timerHandler[0].Wait(executionCount, callback: t =>
+		{
+			t.Dispose();
+		});
+		Thread.Sleep(100);
 		count.Should().Be(executionCount);
 	}
 

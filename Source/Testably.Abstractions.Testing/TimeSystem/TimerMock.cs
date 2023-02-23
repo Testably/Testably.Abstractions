@@ -75,10 +75,9 @@ internal sealed class TimerMock : ITimerMock
 		}
 
 		CancellationToken token = runningCancellationTokenSource.Token;
-		Task.Factory.StartNew(
+		Task.Run(
 				() => RunTimer(token),
-				cancellationToken: token,
-				TaskCreationOptions.LongRunning, TaskScheduler.Default)
+				cancellationToken: token)
 			.ContinueWith(_ =>
 			{
 				runningCancellationTokenSource.Dispose();
@@ -98,9 +97,9 @@ internal sealed class TimerMock : ITimerMock
 		_onDispose = onDispose;
 	}
 
-	private void RunTimer(CancellationToken cancellationToken = default)
+	private async Task RunTimer(CancellationToken cancellationToken = default)
 	{
-		TryDelay(_mockTimeSystem.Task, _dueTime, cancellationToken);
+		await TryDelay(_mockTimeSystem.Task, _dueTime, cancellationToken);
 		DateTime nextPlannedExecution = _mockTimeSystem.DateTime.UtcNow;
 		while (!cancellationToken.IsCancellationRequested)
 		{
@@ -125,7 +124,7 @@ internal sealed class TimerMock : ITimerMock
 				delay = TimeSpan.Zero;
 			}
 
-			TryDelay(_mockTimeSystem.Task, delay, cancellationToken);
+			await TryDelay(_mockTimeSystem.Task, delay, cancellationToken);
 		}
 	}
 
@@ -140,18 +139,17 @@ internal sealed class TimerMock : ITimerMock
 	///     <c>False</c> if the delay
 	///     was aborted via the <paramref name="cancellationToken" />.
 	/// </returns>
-	private static void TryDelay(ITask taskSystem, TimeSpan delay,
+	private static async Task TryDelay(ITask taskSystem, TimeSpan delay,
 		CancellationToken cancellationToken = default)
 	{
 		try
 		{
 			if (delay.TotalMilliseconds < 0)
 			{
-				Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken)
-					.Wait(cancellationToken);
+				await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken);
 			}
 
-			taskSystem.Delay(delay, cancellationToken).Wait(cancellationToken);
+			await taskSystem.Delay(delay, cancellationToken);
 		}
 		catch (Exception)
 		{
