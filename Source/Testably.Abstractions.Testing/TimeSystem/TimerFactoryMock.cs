@@ -83,13 +83,13 @@ internal sealed class TimerFactoryMock : ITimerFactory, ITimerHandler
 		return timerMock;
 	}
 
-	public ITimerHandler SetTimerStrategy(ITimerStrategy timerStrategy)
+	internal ITimerHandler SetTimerStrategy(ITimerStrategy timerStrategy)
 	{
 		_timerStrategy = timerStrategy;
 		return this;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="ITimerHandler.this[int]" />
 	public ITimerMock this[int index]
 		=> _timers[index];
 }
