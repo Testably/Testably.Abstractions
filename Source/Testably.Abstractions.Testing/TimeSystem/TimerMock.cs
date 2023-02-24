@@ -271,11 +271,15 @@ internal sealed class TimerMock : ITimerMock
 			default:
 				throw new NotSupportedException("The wait handle is not of any supported type!");
 		}
+
 		return true;
 	}
 
 	/// <inheritdoc cref="ITimerMock.Wait(int, int, Action{ITimerMock})" />
-	public ITimerMock Wait(int executionCount = 1, int timeout = 10000, Action<ITimerMock>? callback = null)
+	public ITimerMock Wait(
+		int executionCount = 1,
+		int timeout = 10000,
+		Action<ITimerMock>? callback = null)
 	{
 		if (executionCount <= 0)
 		{

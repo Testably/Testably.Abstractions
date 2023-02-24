@@ -68,13 +68,17 @@ public class Parity
 	{
 		typeof(Timer).GetMethod(nameof(System.Threading.Timer.Change), new[]
 		{
-			typeof(uint), typeof(uint)
+			typeof(uint),
+			typeof(uint)
 		})
 	}, excludeConstructors: new[]
 	{
 		typeof(Timer).GetConstructor(new[]
 		{
-			typeof(TimerCallback), typeof(object), typeof(uint), typeof(uint)
+			typeof(TimerCallback),
+			typeof(object),
+			typeof(uint),
+			typeof(uint)
 		})
 	});
 

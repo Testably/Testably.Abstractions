@@ -386,7 +386,7 @@ public class NotificationHandlerTests
 		OnTimerExecuted_WithTimeSpan_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		TimeSpan expectedTimeout = TimeTestHelper.GetRandomInterval();
-		MockTimeSystem timeSystem = new MockTimeSystem();
+		MockTimeSystem timeSystem = new();
 		ITimerHandler timerHandler = timeSystem.TimerHandler;
 		TimerExecution? receivedValue = null;
 		DateTime now = timeSystem.DateTime.UtcNow;

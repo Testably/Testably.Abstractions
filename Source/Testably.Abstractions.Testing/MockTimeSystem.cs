@@ -23,7 +23,7 @@ public sealed class MockTimeSystem : ITimeSystem
 	public ITimeProvider TimeProvider { get; }
 
 	/// <summary>
-	/// The handler for mocked timers.
+	///     The handler for mocked timers.
 	/// </summary>
 	public ITimerHandler TimerHandler => _timerMock;
 

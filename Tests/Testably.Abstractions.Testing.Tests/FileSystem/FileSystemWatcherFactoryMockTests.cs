@@ -14,7 +14,7 @@ public sealed class FileSystemWatcherFactoryMockTests : IDisposable
 	{
 		FileSystem = new MockFileSystem();
 		RealFileSystem = new RealFileSystem();
-		var currentDirectory = RealFileSystem.Directory.GetCurrentDirectory();
+		string currentDirectory = RealFileSystem.Directory.GetCurrentDirectory();
 		_directoryCleaner = RealFileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory();
 		FileSystem.InitializeIn(currentDirectory);
 		FileSystem.Directory.SetCurrentDirectory(currentDirectory);

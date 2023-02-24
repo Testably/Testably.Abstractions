@@ -8,7 +8,7 @@ namespace Testably.Abstractions.TimeSystem;
 /// </summary>
 public interface ITimer : ITimeSystemEntity, IDisposable
 #if FEATURE_ASYNC_DISPOSABLE
-, IAsyncDisposable
+	, IAsyncDisposable
 #endif
 {
 	/// <inheritdoc cref="Timer.Change(int, int)" />

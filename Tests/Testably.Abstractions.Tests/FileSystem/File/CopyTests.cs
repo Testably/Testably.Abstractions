@@ -188,6 +188,7 @@ public abstract partial class CopyTests<TFileSystem>
 			destinationLastAccessTime.Should()
 				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
+
 		destinationLastWriteTime.Should()
 			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			.BeOnOrBefore(creationTimeEnd);

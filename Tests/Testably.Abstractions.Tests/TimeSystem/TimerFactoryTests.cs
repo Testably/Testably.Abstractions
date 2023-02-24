@@ -115,7 +115,7 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 	public void New_WithPeriod_ShouldStartTimer()
 	{
 		int count = 0;
-		ManualResetEventSlim ms = new ManualResetEventSlim();
+		ManualResetEventSlim ms = new();
 		using ITimer timer = TimeSystem.Timer.New(_ =>
 		{
 			count++;

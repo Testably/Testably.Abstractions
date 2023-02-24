@@ -108,11 +108,16 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		ms3.Wait(10000 * TimerMultiplier);
 
-		triggerTimes[0].Should().BeLessThan(30 * TimerMultiplier);
-		triggerTimes[1].Should().BeGreaterThan(70 * TimerMultiplier).And.BeLessThan(130 * TimerMultiplier);
+		triggerTimes[0].Should()
+			.BeLessThan(30 * TimerMultiplier);
+		triggerTimes[1].Should()
+			.BeGreaterThan(70 * TimerMultiplier).And
+			.BeLessThan(130 * TimerMultiplier);
 		for (int i = 2; i < triggerTimes.Count; i++)
 		{
-			triggerTimes[i].Should().BeGreaterThan(170 * TimerMultiplier).And.BeLessThan(230 * TimerMultiplier);
+			triggerTimes[i].Should()
+				.BeGreaterThan(170 * TimerMultiplier).And
+				.BeLessThan(230 * TimerMultiplier);
 		}
 	}
 
@@ -149,11 +154,16 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		ms3.Wait(10000);
 
-		triggerTimes[0].Should().BeLessThan(30 * TimerMultiplier);
-		triggerTimes[1].Should().BeGreaterThan(70 * TimerMultiplier).And.BeLessThan(130 * TimerMultiplier);
+		triggerTimes[0].Should()
+			.BeLessThan(30 * TimerMultiplier);
+		triggerTimes[1].Should()
+			.BeGreaterThan(70 * TimerMultiplier).And
+			.BeLessThan(130 * TimerMultiplier);
 		for (int i = 2; i < triggerTimes.Count; i++)
 		{
-			triggerTimes[i].Should().BeGreaterThan(170 * TimerMultiplier).And.BeLessThan(230 * TimerMultiplier);
+			triggerTimes[i].Should()
+				.BeGreaterThan(170 * TimerMultiplier).And
+				.BeLessThan(230 * TimerMultiplier);
 		}
 	}
 
@@ -168,33 +178,41 @@ public abstract partial class TimerTests<TTimeSystem>
 		ManualResetEventSlim ms2 = new();
 		ManualResetEventSlim ms3 = new();
 		using ITimer timer = TimeSystem.Timer.New(_ =>
-		{
-			DateTime now = TimeSystem.DateTime.Now;
-			double diff = (now - previousTime).TotalMilliseconds;
-			previousTime = now;
-			ms.Set();
-			triggerTimes.Add((int)diff);
-			ms2.Wait();
-			if (triggerTimes.Count > 3)
 			{
-				ms3.Set();
-			}
-		}, null, TimeSpan.FromMilliseconds(0 * TimerMultiplier), TimeSpan.FromMilliseconds(200 * TimerMultiplier));
+				DateTime now = TimeSystem.DateTime.Now;
+				double diff = (now - previousTime).TotalMilliseconds;
+				previousTime = now;
+				ms.Set();
+				triggerTimes.Add((int)diff);
+				ms2.Wait();
+				if (triggerTimes.Count > 3)
+				{
+					ms3.Set();
+				}
+			}, null, TimeSpan.FromMilliseconds(0 * TimerMultiplier),
+			TimeSpan.FromMilliseconds(200 * TimerMultiplier));
 		ms.Wait();
 		using ITimer timer2 = TimeSystem.Timer.New(_ =>
-		{
-			// ReSharper disable once AccessToDisposedClosure
-			timer.Change(TimeSpan.FromMilliseconds(0 * TimerMultiplier), TimeSpan.FromMilliseconds(200 * TimerMultiplier));
-			ms2.Set();
-		}, null, TimeSpan.FromMilliseconds(100 * TimerMultiplier), TimeSpan.FromMilliseconds(0 * TimerMultiplier));
+			{
+				// ReSharper disable once AccessToDisposedClosure
+				timer.Change(TimeSpan.FromMilliseconds(0 * TimerMultiplier),
+					TimeSpan.FromMilliseconds(200 * TimerMultiplier));
+				ms2.Set();
+			}, null, TimeSpan.FromMilliseconds(100 * TimerMultiplier),
+			TimeSpan.FromMilliseconds(0 * TimerMultiplier));
 
 		ms3.Wait(10000);
 
-		triggerTimes[0].Should().BeLessThan(30 * TimerMultiplier);
-		triggerTimes[1].Should().BeGreaterThan(70 * TimerMultiplier).And.BeLessThan(130 * TimerMultiplier);
+		triggerTimes[0].Should()
+			.BeLessThan(30 * TimerMultiplier);
+		triggerTimes[1].Should()
+			.BeGreaterThan(70 * TimerMultiplier).And
+			.BeLessThan(130 * TimerMultiplier);
 		for (int i = 2; i < triggerTimes.Count; i++)
 		{
-			triggerTimes[i].Should().BeGreaterThan(170 * TimerMultiplier).And.BeLessThan(230 * TimerMultiplier);
+			triggerTimes[i].Should()
+				.BeGreaterThan(170 * TimerMultiplier).And
+				.BeLessThan(230 * TimerMultiplier);
 		}
 	}
 

@@ -234,6 +234,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 			FileSystem.File.GetCreationTime(destinationName)
 				.Should().Be(sourceCreationTime);
 		}
+
 		FileSystem.File.GetLastAccessTime(destinationName)
 			.Should().Be(sourceLastAccessTime);
 		FileSystem.File.GetLastWriteTime(destinationName)
