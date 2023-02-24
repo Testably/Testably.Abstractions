@@ -309,7 +309,8 @@ public class NotificationHandlerTests
 		IDisposable disposable = timeSystem.On.TimerExecuted(d => receivedValue = d);
 
 		disposable.Dispose();
-		timeSystem.Timer.New(_ => { }, null, TimeTestHelper.GetRandomInterval(),
+		timeSystem.Timer.New(_ => { }, null,
+			TimeTestHelper.GetRandomInterval(),
 			TimeTestHelper.GetRandomInterval());
 
 		timerHandler[0].Wait();
@@ -328,7 +329,8 @@ public class NotificationHandlerTests
 		using (timeSystem.On.TimerExecuted(d => receivedTimeout1 = d))
 		{
 			timeSystem.On.TimerExecuted(d => receivedTimeout2 = d).Dispose();
-			timeSystem.Timer.New(_ => { }, null, TimeTestHelper.GetRandomInterval(),
+			timeSystem.Timer.New(_ => { }, null,
+				TimeTestHelper.GetRandomInterval(),
 				TimeTestHelper.GetRandomInterval());
 			timerHandler[0].Wait();
 		}
@@ -350,7 +352,8 @@ public class NotificationHandlerTests
 		{
 			using (timeSystem.On.TimerExecuted(d => receivedTimeout2 = d))
 			{
-				timeSystem.Timer.New(_ => { }, null, TimeTestHelper.GetRandomInterval(),
+				timeSystem.Timer.New(_ => { }, null,
+					TimeTestHelper.GetRandomInterval(),
 					TimeTestHelper.GetRandomInterval());
 				timerHandler[0].Wait();
 			}
