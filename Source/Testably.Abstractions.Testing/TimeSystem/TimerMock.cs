@@ -21,6 +21,7 @@ internal sealed class TimerMock : ITimerMock
 	private CancellationTokenSource? _cancellationTokenSource;
 	private CountdownEvent? _countdownEvent;
 	private readonly ManualResetEventSlim _continueEvent = new();
+	private int _executionCount;
 
 	internal TimerMock(MockTimeSystem timeSystem,
 		NotificationHandler callbackHandler,
@@ -75,10 +76,21 @@ internal sealed class TimerMock : ITimerMock
 		}
 
 		CancellationToken token = runningCancellationTokenSource.Token;
-		Task.Run(
-				() => RunTimer(token),
-				cancellationToken: token)
-			.ContinueWith(_ =>
+		Exception? backgroundEx = null;
+		ManualResetEventSlim startCreateTimerThreads = new();
+		Thread t = new(() =>
+		{
+			try
+			{
+				startCreateTimerThreads.Set();
+				RunTimer(token);
+			}
+			catch (Exception ex)
+			{
+				backgroundEx = ex;
+				Interlocked.MemoryBarrier();
+			}
+			finally
 			{
 				runningCancellationTokenSource.Dispose();
 				lock (_lock)
@@ -89,7 +101,17 @@ internal sealed class TimerMock : ITimerMock
 						_cancellationTokenSource = null;
 					}
 				}
-			}, TaskScheduler.Default);
+			}
+		})
+		{
+			IsBackground = true
+		};
+		t.Start();
+		startCreateTimerThreads.Wait(token);
+		if (backgroundEx != null)
+		{
+			throw new AggregateException(backgroundEx);
+		}
 	}
 
 	internal void RegisterOnDispose(Action? onDispose)
@@ -97,14 +119,16 @@ internal sealed class TimerMock : ITimerMock
 		_onDispose = onDispose;
 	}
 
-	private async Task RunTimer(CancellationToken cancellationToken = default)
+	private void RunTimer(CancellationToken cancellationToken = default)
 	{
-		await TryDelay(_mockTimeSystem.Task, _dueTime, cancellationToken);
+		TryDelay(_dueTime, cancellationToken);
+		//await TryDelay(_mockTimeSystem.Task, _dueTime, cancellationToken);
 		DateTime nextPlannedExecution = _mockTimeSystem.DateTime.UtcNow;
 		while (!cancellationToken.IsCancellationRequested)
 		{
 			nextPlannedExecution += _period;
 			_callback(_state);
+			Interlocked.Increment(ref _executionCount);
 			_callbackHandler.InvokeTimerExecutedCallbacks(
 				new TimerExecution(_mockTimeSystem.DateTime.UtcNow, this));
 			if (_countdownEvent?.Signal() == true)
@@ -124,37 +148,26 @@ internal sealed class TimerMock : ITimerMock
 				delay = TimeSpan.Zero;
 			}
 
-			await TryDelay(_mockTimeSystem.Task, delay, cancellationToken);
+			TryDelay(delay, cancellationToken);
+			//await TryDelay(_mockTimeSystem.Task, delay, cancellationToken);
 		}
 	}
 
-	/// <summary>
-	///     Tries to delay executing by the specified <paramref name="delay" />.
-	/// </summary>
-	/// <param name="taskSystem">The time system.</param>
-	/// <param name="delay">The delay interval.</param>
-	/// <param name="cancellationToken">The cancellation token.</param>
-	/// <returns>
-	///     <c>True</c> if the Task delayed for the complete <paramref name="delay" />,
-	///     <c>False</c> if the delay
-	///     was aborted via the <paramref name="cancellationToken" />.
-	/// </returns>
-	private static async Task TryDelay(ITask taskSystem, TimeSpan delay,
-		CancellationToken cancellationToken = default)
+	private void TryDelay(TimeSpan delay, CancellationToken cancellationToken)
 	{
-		try
+		if (cancellationToken.IsCancellationRequested)
 		{
-			if (delay.TotalMilliseconds < 0)
-			{
-				await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken);
-			}
-
-			await taskSystem.Delay(delay, cancellationToken);
+			return;
 		}
-		catch (Exception)
+
+		_mockTimeSystem.Thread.Sleep(delay);
+		if (delay.TotalMilliseconds < 0)
 		{
-			// Ignore all exceptions:
-			// https://stackoverflow.com/a/39885850
+			cancellationToken.WaitHandle.WaitOne(delay);
+		}
+		else
+		{
+			Thread.Sleep(0);
 		}
 	}
 
@@ -271,7 +284,7 @@ internal sealed class TimerMock : ITimerMock
 			Start();
 		}
 
-		_countdownEvent = new CountdownEvent(executionCount);
+		_countdownEvent = new CountdownEvent(executionCount - _executionCount);
 		if (!_countdownEvent.Wait(timeout))
 		{
 			throw new TimeoutException(

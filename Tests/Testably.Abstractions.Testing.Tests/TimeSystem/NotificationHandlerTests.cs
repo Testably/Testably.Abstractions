@@ -4,7 +4,6 @@ using Testably.Abstractions.Testing.TimeSystem;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
-[Collection(nameof(ThreadPool))]
 public class NotificationHandlerTests
 {
 	[Fact]
@@ -366,7 +365,8 @@ public class NotificationHandlerTests
 		OnTimerExecuted_WithMilliseconds_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		int millisecondsTimeout = new Random().Next();
-		MockTimeSystem timeSystem = new();
+		MockTimeSystem timeSystem = new MockTimeSystem()
+			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
 		ITimerHandler timerHandler = timeSystem.TimerHandler;
 		TimerExecution? receivedValue = null;
 		DateTime now = timeSystem.DateTime.UtcNow;
@@ -386,7 +386,7 @@ public class NotificationHandlerTests
 		OnTimerExecuted_WithTimeSpan_ShouldExecuteCallbackWithCorrectParameter()
 	{
 		TimeSpan expectedTimeout = TimeTestHelper.GetRandomInterval();
-		MockTimeSystem timeSystem = new();
+		MockTimeSystem timeSystem = new MockTimeSystem();
 		ITimerHandler timerHandler = timeSystem.TimerHandler;
 		TimerExecution? receivedValue = null;
 		DateTime now = timeSystem.DateTime.UtcNow;

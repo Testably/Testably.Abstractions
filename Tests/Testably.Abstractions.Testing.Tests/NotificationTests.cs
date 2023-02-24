@@ -2,7 +2,6 @@
 
 namespace Testably.Abstractions.Testing.Tests;
 
-[Collection(nameof(ThreadPool))]
 public class NotificationTests
 {
 	[Fact]
