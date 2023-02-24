@@ -13,6 +13,9 @@ internal sealed class NotificationHandler : INotificationHandler
 	private readonly Notification.INotificationFactory<TimeSpan>
 		_threadSleepCallbacks = Notification.CreateFactory<TimeSpan>();
 
+	private readonly Notification.INotificationFactory<TimerExecution>
+		_timerExecutedCallbacks = Notification.CreateFactory<TimerExecution>();
+
 	#region INotificationHandler Members
 
 	/// <inheritdoc cref="INotificationHandler.DateTimeRead(Action{DateTime}?, Func{DateTime, bool}?)" />
@@ -33,6 +36,12 @@ internal sealed class NotificationHandler : INotificationHandler
 		Func<TimeSpan, bool>? predicate = null)
 		=> _threadSleepCallbacks.RegisterCallback(callback, predicate);
 
+	/// <inheritdoc cref="INotificationHandler.TimerExecuted(Action{TimerExecution}?, Func{TimerExecution, bool}?)" />
+	public Notification.IAwaitableCallback<TimerExecution> TimerExecuted(
+		Action<TimerExecution>? callback = null,
+		Func<TimerExecution, bool>? predicate = null)
+		=> _timerExecutedCallbacks.RegisterCallback(callback, predicate);
+
 	#endregion
 
 	public void InvokeDateTimeReadCallbacks(DateTime now)
@@ -43,4 +52,7 @@ internal sealed class NotificationHandler : INotificationHandler
 
 	public void InvokeThreadSleepCallbacks(TimeSpan timeout)
 		=> _threadSleepCallbacks.InvokeCallbacks(timeout);
+
+	public void InvokeTimerExecutedCallbacks(TimerExecution timerExecution)
+		=> _timerExecutedCallbacks.InvokeCallbacks(timerExecution);
 }

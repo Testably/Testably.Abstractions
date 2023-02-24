@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Compression;
+using System.Threading;
 
 namespace Testably.Abstractions.Parity.Tests.TestHelpers;
 
@@ -62,6 +63,25 @@ public class Parity
 	});
 
 	public ParityCheck Random { get; } = new();
+
+	public ParityCheck Timer { get; } = new(excludeMethods: new[]
+	{
+		typeof(Timer).GetMethod(nameof(System.Threading.Timer.Change), new[]
+		{
+			typeof(uint),
+			typeof(uint)
+		})
+	}, excludeConstructors: new[]
+	{
+		typeof(Timer).GetConstructor(new[]
+		{
+			typeof(TimerCallback),
+			typeof(object),
+			typeof(uint),
+			typeof(uint)
+		})
+	});
+
 	public ParityCheck ZipArchive { get; } = new();
 
 	public ParityCheck ZipArchiveEntry { get; } = new(excludeMethods: new[]
