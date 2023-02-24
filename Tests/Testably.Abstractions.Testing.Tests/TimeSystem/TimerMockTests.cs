@@ -41,6 +41,40 @@ public class TimerMockTests
 	}
 
 	[Fact]
+	public void Wait_InvalidExecutionCount_ShouldThrowArgumentOutOfRangeException()
+	{
+		MockTimeSystem timeSystem = new();
+		ITimerHandler timerHandler = timeSystem.TimerHandler;
+
+		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 0, 100);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			timerHandler[0].Wait(0);
+		});
+
+		exception.Should().BeOfType<ArgumentOutOfRangeException>()
+			.Which.ParamName.Should().Be("executionCount");
+	}
+
+	[Fact]
+	public void Wait_InvalidTimeout_ShouldThrowArgumentOutOfRangeException()
+	{
+		MockTimeSystem timeSystem = new();
+		ITimerHandler timerHandler = timeSystem.TimerHandler;
+
+		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 0, 100);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			timerHandler[0].Wait(timeout: -2);
+		});
+
+		exception.Should().BeOfType<ArgumentOutOfRangeException>()
+			.Which.ParamName.Should().Be("timeout");
+	}
+
+	[Fact]
 	public void Wait_TimeoutExpired_ShouldThrowTimeoutException()
 	{
 		MockTimeSystem timeSystem = new();
@@ -75,7 +109,7 @@ public class TimerMockTests
 		{
 			count++;
 		}, null, 0, 100);
-		
+
 		count.Should().Be(0);
 		timerHandler[0].Wait(executionCount, callback: t =>
 		{

@@ -122,7 +122,6 @@ internal sealed class TimerMock : ITimerMock
 	private void RunTimer(CancellationToken cancellationToken = default)
 	{
 		TryDelay(_dueTime, cancellationToken);
-		//await TryDelay(_mockTimeSystem.Task, _dueTime, cancellationToken);
 		DateTime nextPlannedExecution = _mockTimeSystem.DateTime.UtcNow;
 		while (!cancellationToken.IsCancellationRequested)
 		{
@@ -149,7 +148,6 @@ internal sealed class TimerMock : ITimerMock
 			}
 
 			TryDelay(delay, cancellationToken);
-			//await TryDelay(_mockTimeSystem.Task, delay, cancellationToken);
 		}
 	}
 
@@ -279,16 +277,33 @@ internal sealed class TimerMock : ITimerMock
 	/// <inheritdoc cref="ITimerMock.Wait(int, int, Action{ITimerMock})" />
 	public ITimerMock Wait(int executionCount = 1, int timeout = 10000, Action<ITimerMock>? callback = null)
 	{
+		if (executionCount <= 0)
+		{
+			throw new ArgumentOutOfRangeException(nameof(executionCount));
+		}
+
+		if (timeout < -1)
+		{
+			throw new ArgumentOutOfRangeException(nameof(timeout));
+		}
+
 		if (_timerStrategy.Mode != TimerMode.StartImmediately)
 		{
 			Start();
 		}
 
-		_countdownEvent = new CountdownEvent(executionCount - _executionCount);
-		if (!_countdownEvent.Wait(timeout))
+		try
 		{
-			throw new TimeoutException(
-				$"The execution count {executionCount} was not reached in {timeout}ms.");
+			_countdownEvent = new CountdownEvent(executionCount - _executionCount);
+			if (!_countdownEvent.Wait(timeout))
+			{
+				throw new TimeoutException(
+					$"The execution count {executionCount} was not reached in {timeout}ms.");
+			}
+		}
+		catch (ArgumentOutOfRangeException)
+		{
+			// In case of an ArgumentOutOfRangeException, the executionCount is already reached.
 		}
 
 		callback?.Invoke(this);
