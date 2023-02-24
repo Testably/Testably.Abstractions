@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
 public class TimerFactoryMockTests
 {
-	[SkippableFact]
+	[Fact]
 	public void Wrap_ShouldThrowNotSupportedException()
 	{
 		MockTimeSystem timeSystem = new();

@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
 public class TimerMockTests
 {
-	[SkippableFact]
+	[Fact]
 	public void Dispose_WithUnknownWaitHandle_ShouldThrowNotSupportedException()
 	{
 		MockTimeSystem timeSystem = new();
