@@ -17,9 +17,15 @@ public class TimerExecution
 	/// </summary>
 	public ITimerMock Timer { get; }
 
-	internal TimerExecution(DateTime time, ITimerMock timer)
+	/// <summary>
+	///     The exception thrown during this timer execution.
+	/// </summary>
+	public Exception? Exception { get; }
+
+	internal TimerExecution(DateTime time, ITimerMock timer, Exception? exception)
 	{
 		Time = time;
 		Timer = timer;
+		Exception = exception;
 	}
 }

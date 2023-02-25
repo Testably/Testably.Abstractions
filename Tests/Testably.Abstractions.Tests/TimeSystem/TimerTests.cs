@@ -265,4 +265,28 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		result.Should().BeFalse();
 	}
+
+	[SkippableFact]
+	public void Exception_ShouldBeSwallowedAndContinueTimerExecution()
+	{
+		Exception exception = new("foo");
+		int count = 0;
+		ManualResetEventSlim ms = new();
+		using ITimer timer = TimeSystem.Timer.New(_ =>
+		{
+			if (count++ == 1)
+			{
+				throw exception;
+			}
+
+			if (count == 3)
+			{
+				ms.Set();
+			}
+		}, null, 0, 20);
+
+		ms.Wait(10000).Should().BeTrue();
+
+		count.Should().BeGreaterThanOrEqualTo(3);
+	}
 }

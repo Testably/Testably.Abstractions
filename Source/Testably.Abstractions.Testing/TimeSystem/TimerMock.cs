@@ -76,7 +76,6 @@ internal sealed class TimerMock : ITimerMock
 		}
 
 		CancellationToken token = runningCancellationTokenSource.Token;
-		Exception? backgroundEx = null;
 		ManualResetEventSlim startCreateTimerThreads = new();
 		Thread t = new(() =>
 		{
@@ -84,11 +83,6 @@ internal sealed class TimerMock : ITimerMock
 			{
 				startCreateTimerThreads.Set();
 				RunTimer(token);
-			}
-			catch (Exception ex)
-			{
-				backgroundEx = ex;
-				Interlocked.MemoryBarrier();
 			}
 			finally
 			{
@@ -108,10 +102,6 @@ internal sealed class TimerMock : ITimerMock
 		};
 		t.Start();
 		startCreateTimerThreads.Wait(token);
-		if (backgroundEx != null)
-		{
-			throw new AggregateException(backgroundEx);
-		}
 	}
 
 	internal void RegisterOnDispose(Action? onDispose)
@@ -126,10 +116,19 @@ internal sealed class TimerMock : ITimerMock
 		while (!cancellationToken.IsCancellationRequested)
 		{
 			nextPlannedExecution += _period;
-			_callback(_state);
+			Exception? exception = null;
+			try
+			{
+				_callback(_state);
+			}
+			catch (Exception ex)
+			{
+				// timer swallow exceptions
+				exception = ex;
+			}
 			Interlocked.Increment(ref _executionCount);
 			_callbackHandler.InvokeTimerExecutedCallbacks(
-				new TimerExecution(_mockTimeSystem.DateTime.UtcNow, this));
+				new TimerExecution(_mockTimeSystem.DateTime.UtcNow, this, exception));
 			if (_countdownEvent?.Signal() == true)
 			{
 				_continueEvent.Wait(cancellationToken);
