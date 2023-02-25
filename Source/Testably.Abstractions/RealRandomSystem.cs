@@ -13,11 +13,14 @@ public sealed class RealRandomSystem : IRandomSystem
 
 	/// <inheritdoc cref="IRandomSystem.Guid" />
 	public IGuid Guid
-		=> new GuidWrapper(this);
+		=> _guid ??= new GuidWrapper(this);
 
 	/// <inheritdoc cref="IRandomSystem.Random" />
 	public IRandomFactory Random
-		=> new RandomFactory(this);
+		=> _random ??= new RandomFactory(this);
 
 	#endregion
+
+	private IRandomFactory? _random;
+	private IGuid? _guid;
 }

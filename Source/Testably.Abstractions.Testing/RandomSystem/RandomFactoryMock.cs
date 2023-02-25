@@ -5,6 +5,7 @@ namespace Testably.Abstractions.Testing.RandomSystem;
 internal sealed class RandomFactoryMock : IRandomFactory
 {
 	private readonly MockRandomSystem _mockRandomSystem;
+	private IRandom? _shared;
 
 	internal RandomFactoryMock(MockRandomSystem randomSystem)
 	{
@@ -18,7 +19,7 @@ internal sealed class RandomFactoryMock : IRandomFactory
 
 	/// <inheritdoc cref="IRandomFactory.Shared" />
 	public IRandom Shared
-		=> _mockRandomSystem.RandomProvider.GetRandom();
+		=> _shared ??= _mockRandomSystem.RandomProvider.GetRandom();
 
 	/// <inheritdoc cref="IRandomFactory.New()" />
 	public IRandom New()
