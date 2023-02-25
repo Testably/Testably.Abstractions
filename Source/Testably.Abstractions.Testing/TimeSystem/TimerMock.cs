@@ -121,14 +121,16 @@ internal sealed class TimerMock : ITimerMock
 			{
 				_callback(_state);
 			}
-			catch (Exception ex)
+			catch (Exception swallowedException)
 			{
-				// timer swallow exceptions
-				exception = ex;
+				exception = swallowedException;
 			}
 			Interlocked.Increment(ref _executionCount);
 			_callbackHandler.InvokeTimerExecutedCallbacks(
-				new TimerExecution(_mockTimeSystem.DateTime.UtcNow, this, exception));
+				new TimerExecution(
+					_mockTimeSystem.DateTime.UtcNow,
+					this,
+					exception));
 			if (_countdownEvent?.Signal() == true)
 			{
 				_continueEvent.Wait(cancellationToken);
