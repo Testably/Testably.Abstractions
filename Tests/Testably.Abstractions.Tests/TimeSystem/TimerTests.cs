@@ -42,7 +42,8 @@ public abstract partial class TimerTests<TTimeSystem>
 		});
 
 		exception.Should()
-			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086, paramName: nameof(dueTime));
+			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086,
+				paramName: nameof(dueTime));
 	}
 
 	[SkippableTheory]
@@ -60,7 +61,8 @@ public abstract partial class TimerTests<TTimeSystem>
 		});
 
 		exception.Should()
-			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086, paramName: nameof(period));
+			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086,
+				paramName: nameof(period));
 	}
 
 	[SkippableFact]
@@ -264,29 +266,5 @@ public abstract partial class TimerTests<TTimeSystem>
 		bool result = timer.Dispose(waitHandle);
 
 		result.Should().BeFalse();
-	}
-
-	[SkippableFact]
-	public void Exception_ShouldBeSwallowedAndContinueTimerExecution()
-	{
-		Exception exception = new("foo");
-		int count = 0;
-		ManualResetEventSlim ms = new();
-		using ITimer timer = TimeSystem.Timer.New(_ =>
-		{
-			if (count++ == 1)
-			{
-				throw exception;
-			}
-
-			if (count == 3)
-			{
-				ms.Set();
-			}
-		}, null, 0, 20);
-
-		ms.Wait(10000).Should().BeTrue();
-
-		count.Should().BeGreaterThanOrEqualTo(3);
 	}
 }

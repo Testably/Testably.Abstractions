@@ -28,7 +28,7 @@ public class TimerMockTests
 	[Fact]
 	public void Exception_ShouldBeIncludedInTimerExecutedNotification()
 	{
-		Exception exception = new Exception("foo");
+		Exception exception = new("foo");
 		MockTimeSystem timeSystem = new();
 		ITimerHandler timerHandler = timeSystem.TimerHandler;
 		TimerExecution? receivedTimeout = null;
@@ -42,6 +42,50 @@ public class TimerMockTests
 		}
 
 		receivedTimeout!.Exception.Should().Be(exception);
+	}
+
+	[Fact]
+	public void Exception_WhenSwallowExceptionsIsSet_ShouldContinueTimerExecution()
+	{
+		MockTimeSystem timeSystem = new();
+		timeSystem.WithTimerStrategy(
+			new TimerStrategy(swallowExceptions: true));
+		Exception exception = new("foo");
+		int count = 0;
+		ManualResetEventSlim ms = new();
+		using ITimer timer = timeSystem.Timer.New(_ =>
+		{
+			if (count++ == 1)
+			{
+				throw exception;
+			}
+
+			if (count == 3)
+			{
+				ms.Set();
+			}
+		}, null, 0, 20);
+
+		ms.Wait(10000).Should().BeTrue();
+
+		count.Should().BeGreaterThanOrEqualTo(3);
+	}
+
+	[Fact]
+	public void Exception_WhenSwallowExceptionsIsNotSet_ShouldThrowExceptionOnWait()
+	{
+		MockTimeSystem timeSystem = new MockTimeSystem()
+			.WithTimerStrategy(new TimerStrategy(swallowExceptions: false));
+		Exception expectedException = new("foo");
+		using ITimer timer = timeSystem.Timer.New(
+			_ => throw expectedException, null, 0, 20);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			timeSystem.TimerHandler[0].Wait();
+		});
+
+		exception.Should().Be(expectedException);
 	}
 
 	[Fact]
