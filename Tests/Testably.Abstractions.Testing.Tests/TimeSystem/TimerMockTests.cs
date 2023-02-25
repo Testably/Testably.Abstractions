@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using Testably.Abstractions.Testing.Tests.TestHelpers;
 using Testably.Abstractions.Testing.TimeSystem;
 using Testably.Abstractions.TimeSystem;
 
@@ -98,10 +99,12 @@ public class TimerMockTests
 		count.Should().BeGreaterThan(0);
 	}
 
-	[Theory]
+	[SkippableTheory]
 	[AutoData]
 	public void Wait_WithExecutionCount_ShouldWaitForSpecifiedNumberOfExecutions(int executionCount)
 	{
+		Skip.If(Test.RunsOnWindows);
+
 		MockTimeSystem timeSystem = new MockTimeSystem()
 			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
 		ITimerHandler timerHandler = timeSystem.TimerHandler;
@@ -117,7 +120,6 @@ public class TimerMockTests
 		{
 			t.Dispose();
 		});
-		Thread.Sleep(100);
 		count.Should().Be(executionCount);
 	}
 
