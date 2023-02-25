@@ -42,7 +42,8 @@ public abstract partial class TimerTests<TTimeSystem>
 		});
 
 		exception.Should()
-			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086, paramName: nameof(dueTime));
+			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086,
+				paramName: nameof(dueTime));
 	}
 
 	[SkippableTheory]
@@ -60,7 +61,8 @@ public abstract partial class TimerTests<TTimeSystem>
 		});
 
 		exception.Should()
-			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086, paramName: nameof(period));
+			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086,
+				paramName: nameof(period));
 	}
 
 	[SkippableFact]

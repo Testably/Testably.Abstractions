@@ -1,4 +1,6 @@
 ﻿using System.Threading;
+using Testably.Abstractions.Testing.FileSystemInitializer;
+using Testably.Abstractions.Testing.Tests.TestHelpers;
 using Testably.Abstractions.Testing.TimeSystem;
 using Testably.Abstractions.TimeSystem;
 
@@ -22,6 +24,77 @@ public class TimerMockTests
 		});
 
 		exception.Should().BeOfType<NotSupportedException>();
+	}
+
+	[Fact]
+	public void Exception_ShouldBeIncludedInTimerExecutedNotification()
+	{
+		TestingException exception = new("foo");
+		MockTimeSystem timeSystem = new MockTimeSystem()
+			.WithTimerStrategy(new TimerStrategy(swallowExceptions: true));
+		ITimerHandler timerHandler = timeSystem.TimerHandler;
+		TimerExecution? receivedTimeout = null;
+
+		using (timeSystem.On.TimerExecuted(d => receivedTimeout = d))
+		{
+			timeSystem.Timer.New(_ => throw exception, null,
+				TimeTestHelper.GetRandomInterval(),
+				TimeTestHelper.GetRandomInterval());
+			try
+			{
+				timerHandler[0].Wait();
+			}
+			catch (TestingException)
+			{
+				// Expect a TestingException to be thrown
+			}
+		}
+
+		receivedTimeout!.Exception.Should().Be(exception);
+	}
+
+	[Fact]
+	public void Exception_WhenSwallowExceptionsIsSet_ShouldContinueTimerExecution()
+	{
+		MockTimeSystem timeSystem = new();
+		timeSystem.WithTimerStrategy(
+			new TimerStrategy(swallowExceptions: true));
+		Exception exception = new("foo");
+		int count = 0;
+		ManualResetEventSlim ms = new();
+		using ITimer timer = timeSystem.Timer.New(_ =>
+		{
+			if (count++ == 1)
+			{
+				throw exception;
+			}
+
+			if (count == 3)
+			{
+				ms.Set();
+			}
+		}, null, 0, 20);
+
+		ms.Wait(10000).Should().BeTrue();
+
+		count.Should().BeGreaterThanOrEqualTo(3);
+	}
+
+	[Fact]
+	public void Exception_WhenSwallowExceptionsIsNotSet_ShouldThrowExceptionOnWait()
+	{
+		MockTimeSystem timeSystem = new MockTimeSystem()
+			.WithTimerStrategy(new TimerStrategy(swallowExceptions: false));
+		Exception expectedException = new("foo");
+		using ITimer timer = timeSystem.Timer.New(
+			_ => throw expectedException, null, 0, 20);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			timeSystem.TimerHandler[0].Wait();
+		});
+
+		exception.Should().Be(expectedException);
 	}
 
 	[Fact]
