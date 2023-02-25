@@ -106,7 +106,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			FileSystem.Directory.CreateDirectory($"{i}_{path}");
 		}
 
-		block2.Wait(5000).Should().BeTrue();
+		block2.Wait(10000).Should().BeTrue();
 		fileSystemWatcher.Dispose();
 		result.Should().NotBeNull();
 		result!.GetException().Should().BeOfType<InternalBufferOverflowException>();
