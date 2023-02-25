@@ -159,6 +159,7 @@ public class NotificationTests
 	{
 		MockTimeSystem timeSystem = new();
 		bool isCalled = false;
+		ManualResetEventSlim ms = new();
 		Notification.IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On.ThreadSleep(_ =>
 			{
@@ -167,7 +168,7 @@ public class NotificationTests
 		new Thread(() =>
 		{
 			// Delay larger than timeout of 10ms
-			Thread.Sleep(10000);
+			ms.Wait();
 			timeSystem.Thread.Sleep(1);
 		}).Start();
 
@@ -178,6 +179,7 @@ public class NotificationTests
 
 		exception.Should().BeOfType<TimeoutException>();
 		isCalled.Should().BeFalse();
+		ms.Set();
 	}
 
 	[Fact]

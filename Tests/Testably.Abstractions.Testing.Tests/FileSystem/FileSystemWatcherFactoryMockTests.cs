@@ -14,10 +14,10 @@ public sealed class FileSystemWatcherFactoryMockTests : IDisposable
 	{
 		FileSystem = new MockFileSystem();
 		RealFileSystem = new RealFileSystem();
+		string currentDirectory = RealFileSystem.Directory.GetCurrentDirectory();
 		_directoryCleaner = RealFileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory();
-		FileSystem.InitializeIn(RealFileSystem.Directory.GetCurrentDirectory());
-		FileSystem.Directory.SetCurrentDirectory(RealFileSystem.Directory
-			.GetCurrentDirectory());
+		FileSystem.InitializeIn(currentDirectory);
+		FileSystem.Directory.SetCurrentDirectory(currentDirectory);
 	}
 
 	#region IDisposable Members

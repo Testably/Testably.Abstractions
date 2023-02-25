@@ -17,11 +17,13 @@ public class ParityCheck
 
 	public List<MethodInfo?> MissingMethods { get; } = new();
 	public List<PropertyInfo?> MissingProperties { get; } = new();
+	public List<ConstructorInfo?> MissingConstructors { get; } = new();
 
 	public ParityCheck(Type[]? excludeBaseTypes = null,
 		FieldInfo?[]? excludeFields = null,
 		MethodInfo?[]? excludeMethods = null,
-		PropertyInfo?[]? excludeProperties = null)
+		PropertyInfo?[]? excludeProperties = null,
+		ConstructorInfo?[]? excludeConstructors = null)
 	{
 		if (excludeBaseTypes != null)
 		{
@@ -41,6 +43,11 @@ public class ParityCheck
 		if (excludeProperties != null)
 		{
 			MissingProperties.AddRange(excludeProperties);
+		}
+
+		if (excludeConstructors != null)
+		{
+			MissingConstructors.AddRange(excludeConstructors);
 		}
 	}
 
@@ -119,12 +126,13 @@ public class ParityCheck
 		}
 	}
 
-	private static IEnumerable<string> GetParityErrorsBetweenInstanceConstructors<
+	private IEnumerable<string> GetParityErrorsBetweenInstanceConstructors<
 		TAbstractionFactory>(
 		Type systemType, ITestOutputHelper testOutputHelper)
 	{
 		foreach (ConstructorInfo constructor in systemType
 			.GetConstructors()
+			.Where(c => !MissingConstructors.Contains(c))
 			.OrderBy(f => f.Name)
 			.ThenBy(m => m.GetParameters().Length))
 		{

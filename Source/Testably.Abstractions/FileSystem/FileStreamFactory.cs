@@ -36,18 +36,35 @@ internal sealed class FileStreamFactory : IFileStreamFactory
 
 	/// <inheritdoc cref="IFileStreamFactory.Create(string, FileMode, FileAccess, FileShare, int)" />
 	[Obsolete("Use `IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int)` instead")]
-	public Stream Create(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize)
+	public Stream Create(
+		string path,
+		FileMode mode,
+		FileAccess access,
+		FileShare share,
+		int bufferSize)
 		=> New(path, mode, access, share, bufferSize);
 
 	/// <inheritdoc cref="IFileStreamFactory.Create(string, FileMode, FileAccess, FileShare, int, FileOptions)" />
-	[Obsolete("Use `IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int, FileOptions)` instead")]
-	public Stream Create(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize,
+	[Obsolete(
+		"Use `IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int, FileOptions)` instead")]
+	public Stream Create(
+		string path,
+		FileMode mode,
+		FileAccess access,
+		FileShare share,
+		int bufferSize,
 		FileOptions options)
 		=> New(path, mode, access, share, bufferSize, options);
 
 	/// <inheritdoc cref="IFileStreamFactory.Create(string, FileMode, FileAccess, FileShare, int, bool)" />
-	[Obsolete("Use `IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int, bool)` instead")]
-	public Stream Create(string path, FileMode mode, FileAccess access, FileShare share, int bufferSize,
+	[Obsolete(
+		"Use `IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int, bool)` instead")]
+	public Stream Create(
+		string path,
+		FileMode mode,
+		FileAccess access,
+		FileShare share,
+		int bufferSize,
 		bool useAsync)
 		=> New(path, mode, access, share, bufferSize, useAsync);
 
@@ -67,23 +84,32 @@ internal sealed class FileStreamFactory : IFileStreamFactory
 		=> New(handle, access, bufferSize, isAsync);
 
 	/// <inheritdoc cref="IFileStreamFactory.Create(IntPtr, FileAccess)" />
-	[Obsolete("This method has been deprecated. Please use New(SafeFileHandle, FileAccess) instead. http://go.microsoft.com/fwlink/?linkid=14202")]
+	[Obsolete(
+		"This method has been deprecated. Please use New(SafeFileHandle, FileAccess) instead. http://go.microsoft.com/fwlink/?linkid=14202")]
 	public Stream Create(IntPtr handle, FileAccess access)
 		=> throw new NotImplementedException();
 
 	/// <inheritdoc cref="IFileStreamFactory.Create(IntPtr, FileAccess, bool)" />
-	[Obsolete("This method has been deprecated. Please use New(SafeFileHandle, FileAccess) instead. http://go.microsoft.com/fwlink/?linkid=14202")]
+	[Obsolete(
+		"This method has been deprecated. Please use New(SafeFileHandle, FileAccess) instead. http://go.microsoft.com/fwlink/?linkid=14202")]
 	public Stream Create(IntPtr handle, FileAccess access, bool ownsHandle)
 		=> throw new NotImplementedException();
 
 	/// <inheritdoc cref="IFileStreamFactory.Create(IntPtr, FileAccess, bool, int)" />
-	[Obsolete("This method has been deprecated. Please use New(SafeFileHandle, FileAccess, int) instead. http://go.microsoft.com/fwlink/?linkid=14202")]
+	[Obsolete(
+		"This method has been deprecated. Please use New(SafeFileHandle, FileAccess, int) instead. http://go.microsoft.com/fwlink/?linkid=14202")]
 	public Stream Create(IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize)
 		=> throw new NotImplementedException();
 
 	/// <inheritdoc cref="IFileStreamFactory.Create(IntPtr, FileAccess, bool, int, bool)" />
-	[Obsolete("This method has been deprecated. Please use New(SafeFileHandle, FileAccess, int, bool) instead. http://go.microsoft.com/fwlink/?linkid=14202")]
-	public Stream Create(IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync)
+	[Obsolete(
+		"This method has been deprecated. Please use New(SafeFileHandle, FileAccess, int, bool) instead. http://go.microsoft.com/fwlink/?linkid=14202")]
+	public Stream Create(
+		IntPtr handle,
+		FileAccess access,
+		bool ownsHandle,
+		int bufferSize,
+		bool isAsync)
 		=> throw new NotImplementedException();
 
 	/// <inheritdoc cref="IFileStreamFactory.New(string, FileMode)" />

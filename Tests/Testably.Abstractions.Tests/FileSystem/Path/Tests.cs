@@ -33,7 +33,7 @@ public abstract partial class Tests<TFileSystem>
 	[InlineData("D:")]
 	public void GetPathRoot_WithoutTrailingSeparatorChar_ShouldReturnDefaultValue(string path)
 	{
-		var expectedResult = System.IO.Path.GetPathRoot(path);
+		string? expectedResult = System.IO.Path.GetPathRoot(path);
 		string? result = FileSystem.Path.GetPathRoot(path);
 
 		result.Should().Be(expectedResult);
