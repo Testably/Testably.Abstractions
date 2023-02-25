@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using Testably.Abstractions.Testing.FileSystemInitializer;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 using Testably.Abstractions.Testing.TimeSystem;
 using Testably.Abstractions.TimeSystem;
@@ -28,8 +29,9 @@ public class TimerMockTests
 	[Fact]
 	public void Exception_ShouldBeIncludedInTimerExecutedNotification()
 	{
-		Exception exception = new("foo");
-		MockTimeSystem timeSystem = new();
+		TestingException exception = new("foo");
+		MockTimeSystem timeSystem = new MockTimeSystem()
+			.WithTimerStrategy(new TimerStrategy(swallowExceptions: true));
 		ITimerHandler timerHandler = timeSystem.TimerHandler;
 		TimerExecution? receivedTimeout = null;
 
@@ -38,7 +40,14 @@ public class TimerMockTests
 			timeSystem.Timer.New(_ => throw exception, null,
 				TimeTestHelper.GetRandomInterval(),
 				TimeTestHelper.GetRandomInterval());
-			timerHandler[0].Wait();
+			try
+			{
+				timerHandler[0].Wait();
+			}
+			catch (TestingException)
+			{
+				// Expect a TestingException to be thrown
+			}
 		}
 
 		receivedTimeout!.Exception.Should().Be(exception);

@@ -121,20 +121,21 @@ internal sealed class TimerMock : ITimerMock
 		while (!cancellationToken.IsCancellationRequested)
 		{
 			nextPlannedExecution += _period;
+			Exception? exception = null;
 			try
 			{
 				_callback(_state);
 			}
 			catch (Exception swallowedException)
 			{
-				_exception = swallowedException;
+				_exception = exception = swallowedException;
 			}
 			Interlocked.Increment(ref _executionCount);
 			_callbackHandler.InvokeTimerExecutedCallbacks(
 				new TimerExecution(
 					_mockTimeSystem.DateTime.UtcNow,
 					this,
-					_exception));
+					exception));
 			if (_countdownEvent?.Signal() == true)
 			{
 				_continueEvent.Wait(cancellationToken);
