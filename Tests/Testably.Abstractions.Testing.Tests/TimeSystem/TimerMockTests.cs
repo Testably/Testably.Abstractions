@@ -79,21 +79,23 @@ public class TimerMockTests
 	{
 		MockTimeSystem timeSystem = new();
 		ITimerHandler timerHandler = timeSystem.TimerHandler;
+		ManualResetEventSlim ms = new();
 
 		int count = 0;
 		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 			count++;
-			Thread.Sleep(100);
+			ms.Wait();
 		}, null, 0, 100);
 
 		Exception? exception = Record.Exception(() =>
 		{
 			timerHandler[0].Wait(10, 300);
 		});
+		ms.Set();
 
 		exception.Should().BeOfType<TimeoutException>();
-		count.Should().BeGreaterThan(1);
+		count.Should().BeGreaterThan(0);
 	}
 
 	[Theory]
