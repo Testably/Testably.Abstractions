@@ -37,7 +37,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 	public void Error_DefaultTo64Messages_ShouldBeTriggeredWhenBufferOverflows(
 		string path)
 	{
-		Skip.If(Test.RunsOnWindows);
+		Skip.If(Test.RunsOnWindows, "Brittle test under Windows on GitHub");
 
 		FileSystem.Directory.CreateDirectory(path);
 		IFileSystemWatcher fileSystemWatcher =
@@ -79,7 +79,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 	public void Error_ShouldBeTriggeredWhenBufferOverflows(
 		int internalBufferSize, string path)
 	{
-		Skip.If(Test.RunsOnWindows);
+		Skip.If(Test.RunsOnWindows, "Brittle test under Windows on GitHub");
 
 		int maxMessages = internalBufferSize / 128;
 		FileSystem.Directory.CreateDirectory(path);
