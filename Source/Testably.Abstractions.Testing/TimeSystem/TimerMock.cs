@@ -1,28 +1,30 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.TimeSystem;
+#if FEATURE_ASYNC_DISPOSABLE
+using System.Threading.Tasks;
+#endif
 
 namespace Testably.Abstractions.Testing.TimeSystem;
 
 internal sealed class TimerMock : ITimerMock
 {
-	private readonly NotificationHandler _callbackHandler;
-	private readonly ITimerStrategy _timerStrategy;
 	private readonly TimerCallback _callback;
-	private readonly object? _state;
+	private readonly NotificationHandler _callbackHandler;
+	private CancellationTokenSource? _cancellationTokenSource;
+	private readonly ManualResetEventSlim _continueEvent = new();
+	private CountdownEvent? _countdownEvent;
 	private TimeSpan _dueTime;
-	private TimeSpan _period;
-	private Action? _onDispose;
-	private readonly MockTimeSystem _mockTimeSystem;
+	private Exception? _exception;
+	private int _executionCount;
 	private bool _isDisposed;
 	private readonly object _lock = new();
-	private CancellationTokenSource? _cancellationTokenSource;
-	private CountdownEvent? _countdownEvent;
-	private readonly ManualResetEventSlim _continueEvent = new();
-	private int _executionCount;
-	private Exception? _exception;
+	private readonly MockTimeSystem _mockTimeSystem;
+	private Action? _onDispose;
+	private TimeSpan _period;
+	private readonly object? _state;
+	private readonly ITimerStrategy _timerStrategy;
 
 	internal TimerMock(MockTimeSystem timeSystem,
 		NotificationHandler callbackHandler,
@@ -55,136 +57,24 @@ internal sealed class TimerMock : ITimerMock
 		}
 	}
 
-	private void Stop()
-	{
-		lock (_lock)
-		{
-			if (_cancellationTokenSource is { IsCancellationRequested: false })
-			{
-				_cancellationTokenSource?.Cancel();
-			}
-		}
-	}
-
-	private void Start()
-	{
-		Stop();
-		CancellationTokenSource runningCancellationTokenSource;
-		lock (_lock)
-		{
-			_cancellationTokenSource = new CancellationTokenSource();
-			runningCancellationTokenSource = _cancellationTokenSource;
-		}
-
-		CancellationToken token = runningCancellationTokenSource.Token;
-		ManualResetEventSlim startCreateTimerThreads = new();
-		Thread t = new(() =>
-		{
-			try
-			{
-				startCreateTimerThreads.Set();
-				RunTimer(token);
-			}
-			catch (Exception ex)
-			{
-				_exception = ex;
-			}
-			finally
-			{
-				runningCancellationTokenSource.Dispose();
-				lock (_lock)
-				{
-					if (_cancellationTokenSource == runningCancellationTokenSource)
-					{
-						_cancellationTokenSource.Dispose();
-						_cancellationTokenSource = null;
-					}
-				}
-			}
-		})
-		{
-			IsBackground = true
-		};
-		t.Start();
-		startCreateTimerThreads.Wait(token);
-	}
-
-	internal void RegisterOnDispose(Action? onDispose)
-	{
-		_onDispose = onDispose;
-	}
-
-	private void RunTimer(CancellationToken cancellationToken = default)
-	{
-		TryDelay(_dueTime, cancellationToken);
-		DateTime nextPlannedExecution = _mockTimeSystem.DateTime.UtcNow;
-		while (!cancellationToken.IsCancellationRequested)
-		{
-			nextPlannedExecution += _period;
-			Exception? exception = null;
-			try
-			{
-				_callback(_state);
-			}
-			catch (Exception swallowedException)
-			{
-				_exception = exception = swallowedException;
-			}
-			Interlocked.Increment(ref _executionCount);
-			_callbackHandler.InvokeTimerExecutedCallbacks(
-				new TimerExecution(
-					_mockTimeSystem.DateTime.UtcNow,
-					this,
-					exception));
-			if (_countdownEvent?.Signal() == true)
-			{
-				_continueEvent.Wait(cancellationToken);
-				_continueEvent.Reset();
-			}
-
-			if (_exception != null && !_timerStrategy.SwallowExceptions)
-			{
-				break;
-			}
-
-			if (_period.TotalMilliseconds <= 0)
-			{
-				return;
-			}
-
-			TimeSpan delay = nextPlannedExecution - _mockTimeSystem.DateTime.UtcNow;
-			if (delay < TimeSpan.Zero)
-			{
-				delay = TimeSpan.Zero;
-			}
-
-			TryDelay(delay, cancellationToken);
-		}
-	}
-
-	private void TryDelay(TimeSpan delay, CancellationToken cancellationToken)
-	{
-		if (cancellationToken.IsCancellationRequested)
-		{
-			return;
-		}
-
-		_mockTimeSystem.Thread.Sleep(delay);
-		if (delay.TotalMilliseconds < 0)
-		{
-			cancellationToken.WaitHandle.WaitOne(delay);
-		}
-		else
-		{
-			Thread.Sleep(0);
-		}
-	}
-
 	#region ITimerMock Members
 
 	/// <inheritdoc cref="ITimeSystemEntity.TimeSystem" />
 	public ITimeSystem TimeSystem
 		=> _mockTimeSystem;
+
+#if FEATURE_ASYNC_DISPOSABLE
+	/// <inheritdoc cref="IAsyncDisposable.DisposeAsync()" />
+	public ValueTask DisposeAsync()
+	{
+		Dispose();
+#if NETSTANDARD2_1
+		return new ValueTask();
+#else
+		return ValueTask.CompletedTask;
+#endif
+	}
+#endif
 
 	/// <inheritdoc cref="IDisposable.Dispose()" />
 	public void Dispose()
@@ -201,19 +91,6 @@ internal sealed class TimerMock : ITimerMock
 			}
 		}
 	}
-
-#if FEATURE_ASYNC_DISPOSABLE
-	/// <inheritdoc cref="IAsyncDisposable.DisposeAsync()" />
-	public ValueTask DisposeAsync()
-	{
-		Dispose();
-#if NETSTANDARD2_1
-		return new ValueTask();
-#else
-		return ValueTask.CompletedTask;
-#endif
-	}
-#endif
 
 	/// <inheritdoc cref="ITimer.Change(int, int)" />
 	public bool Change(int dueTime, int period)
@@ -325,6 +202,7 @@ internal sealed class TimerMock : ITimerMock
 		{
 			throw _exception;
 		}
+
 		callback?.Invoke(this);
 		_continueEvent.Set();
 
@@ -332,4 +210,119 @@ internal sealed class TimerMock : ITimerMock
 	}
 
 	#endregion
+
+	internal void RegisterOnDispose(Action? onDispose)
+	{
+		_onDispose = onDispose;
+	}
+
+	private void RunTimer(CancellationToken cancellationToken = default)
+	{
+		_mockTimeSystem.Thread.Sleep(_dueTime);
+		if (_dueTime.TotalMilliseconds < 0)
+		{
+			cancellationToken.WaitHandle.WaitOne(_dueTime);
+		}
+
+		Thread.Yield();
+		DateTime nextPlannedExecution = _mockTimeSystem.DateTime.UtcNow;
+		while (!cancellationToken.IsCancellationRequested)
+		{
+			nextPlannedExecution += _period;
+			Exception? exception = null;
+			try
+			{
+				_callback(_state);
+			}
+			catch (Exception swallowedException)
+			{
+				_exception = exception = swallowedException;
+			}
+
+			Interlocked.Increment(ref _executionCount);
+			_callbackHandler.InvokeTimerExecutedCallbacks(
+				new TimerExecution(
+					_mockTimeSystem.DateTime.UtcNow,
+					this,
+					exception));
+			if (_countdownEvent?.Signal() == true)
+			{
+				_continueEvent.Wait(cancellationToken);
+				_continueEvent.Reset();
+			}
+
+			if (_exception != null && !_timerStrategy.SwallowExceptions)
+			{
+				break;
+			}
+
+			if (_period.TotalMilliseconds <= 0 ||
+			    cancellationToken.IsCancellationRequested)
+			{
+				return;
+			}
+
+			TimeSpan delay = nextPlannedExecution - _mockTimeSystem.DateTime.UtcNow;
+			if (delay > TimeSpan.Zero)
+			{
+				_mockTimeSystem.Thread.Sleep(delay);
+			}
+
+			Thread.Yield();
+		}
+	}
+
+	private void Start()
+	{
+		Stop();
+		CancellationTokenSource runningCancellationTokenSource;
+		lock (_lock)
+		{
+			_cancellationTokenSource = new CancellationTokenSource();
+			runningCancellationTokenSource = _cancellationTokenSource;
+		}
+
+		CancellationToken token = runningCancellationTokenSource.Token;
+		ManualResetEventSlim startCreateTimerThreads = new();
+		Thread t = new(() =>
+		{
+			try
+			{
+				startCreateTimerThreads.Set();
+				RunTimer(token);
+			}
+			catch (Exception ex)
+			{
+				_exception = ex;
+			}
+			finally
+			{
+				runningCancellationTokenSource.Dispose();
+				lock (_lock)
+				{
+					if (_cancellationTokenSource == runningCancellationTokenSource)
+					{
+						_cancellationTokenSource.Dispose();
+						_cancellationTokenSource = null;
+					}
+				}
+			}
+		})
+		{
+			IsBackground = true
+		};
+		t.Start();
+		startCreateTimerThreads.Wait(token);
+	}
+
+	private void Stop()
+	{
+		lock (_lock)
+		{
+			if (_cancellationTokenSource is { IsCancellationRequested: false })
+			{
+				_cancellationTokenSource?.Cancel();
+			}
+		}
+	}
 }
