@@ -137,18 +137,6 @@ public abstract class ParityTests
 	}
 
 	[Fact]
-	public void
-		ITimerAndITimerFactory_EnsureParityWith_Timer()
-	{
-		List<string> parityErrors = Parity.Timer
-			.GetErrorsToInstanceType<ITimer, ITimerFactory>(
-				typeof(Timer),
-				_testOutputHelper);
-
-		parityErrors.Should().BeEmpty();
-	}
-
-	[Fact]
 	public void IZipArchive_EnsureParityWith_ZipArchive()
 	{
 		List<string> parityErrors = Parity.ZipArchive

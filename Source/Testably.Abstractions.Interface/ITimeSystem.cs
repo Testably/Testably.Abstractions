@@ -21,9 +21,4 @@ public interface ITimeSystem
 	///     Abstractions for <see cref="System.Threading.Thread" />.
 	/// </summary>
 	IThread Thread { get; }
-
-	/// <summary>
-	///     Abstractions for <see cref="System.Threading.Timer" />.
-	/// </summary>
-	ITimerFactory Timer { get; }
 }

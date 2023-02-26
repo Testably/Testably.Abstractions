@@ -68,8 +68,6 @@ public abstract partial class FilterTests<TFileSystem>
 	public void Filters_ShouldMatchAnyOfTheSpecifiedFilters(
 		string[] filteredPaths, string[] otherPaths)
 	{
-		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
-
 		foreach (string path in otherPaths.Concat(filteredPaths))
 		{
 			FileSystem.Directory.CreateDirectory(path);
