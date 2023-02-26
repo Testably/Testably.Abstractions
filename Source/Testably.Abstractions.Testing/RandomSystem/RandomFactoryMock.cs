@@ -1,11 +1,13 @@
-﻿using Testably.Abstractions.RandomSystem;
+﻿using System;
+using Testably.Abstractions.RandomSystem;
 
 namespace Testably.Abstractions.Testing.RandomSystem;
 
 internal sealed class RandomFactoryMock : IRandomFactory
 {
 	private readonly MockRandomSystem _mockRandomSystem;
-	private IRandom? _shared;
+	[ThreadStatic]
+	private static IRandom? _shared;
 
 	internal RandomFactoryMock(MockRandomSystem randomSystem)
 	{
