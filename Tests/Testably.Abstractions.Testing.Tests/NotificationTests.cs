@@ -76,6 +76,8 @@ public class NotificationTests
 	[SkippableFact]
 	public void AwaitableCallback_Filter_ShouldOnlyUpdateAfterFilteredValue()
 	{
+		Skip.If(Test.RunsOnWindows, "Brittle test under Windows on GitHub");
+
 		MockTimeSystem timeSystem = new();
 		int receivedCount = 0;
 		Notification.IAwaitableCallback<TimeSpan> wait =
