@@ -225,9 +225,12 @@ public abstract partial class TimerTests<TTimeSystem>
 		{
 		}, null, 100, 200);
 		using ManualResetEvent waitHandle = new(false);
-		timer.Dispose(waitHandle);
+		bool result = timer.Dispose(waitHandle);
 
 		waitHandle.WaitOne(1000).Should().BeTrue();
+		result.Should().BeTrue();
+		Record.Exception(() => timer.Change(0, 0))
+			.Should().BeOfType<ObjectDisposedException>();
 	}
 
 	[SkippableFact]
@@ -237,9 +240,12 @@ public abstract partial class TimerTests<TTimeSystem>
 		{
 		}, null, 100, 200);
 		using Mutex waitHandle = new(false);
-		timer.Dispose(waitHandle);
+		bool result = timer.Dispose(waitHandle);
 
 		waitHandle.WaitOne(1000).Should().BeTrue();
+		result.Should().BeTrue();
+		Record.Exception(() => timer.Change(0,0))
+			.Should().BeOfType<ObjectDisposedException>();
 	}
 
 	[SkippableFact]
@@ -249,9 +255,12 @@ public abstract partial class TimerTests<TTimeSystem>
 		{
 		}, null, 100, 200);
 		using Semaphore waitHandle = new(1, 1);
-		timer.Dispose(waitHandle);
+		bool result = timer.Dispose(waitHandle);
 
 		waitHandle.WaitOne(1000).Should().BeTrue();
+		result.Should().BeTrue();
+		Record.Exception(() => timer.Change(0, 0))
+			.Should().BeOfType<ObjectDisposedException>();
 	}
 
 	[SkippableFact]
