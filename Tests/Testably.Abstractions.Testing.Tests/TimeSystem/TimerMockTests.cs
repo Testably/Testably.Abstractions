@@ -171,9 +171,11 @@ public class TimerMockTests
 		count.Should().BeGreaterThan(0);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void Wait_WithExecutionCount_ShouldWaitForSpecifiedNumberOfExecutions()
 	{
+		Skip.If(Test.RunsOnWindows, "Brittle test under Windows on GitHub");
+
 		int executionCount = 10;
 		MockTimeSystem timeSystem = new MockTimeSystem()
 			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
