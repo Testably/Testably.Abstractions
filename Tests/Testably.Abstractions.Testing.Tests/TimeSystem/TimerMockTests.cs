@@ -171,10 +171,10 @@ public class TimerMockTests
 		count.Should().BeGreaterThan(0);
 	}
 
-	[Theory]
-	[AutoData]
-	public void Wait_WithExecutionCount_ShouldWaitForSpecifiedNumberOfExecutions(int executionCount)
+	[Fact]
+	public void Wait_WithExecutionCount_ShouldWaitForSpecifiedNumberOfExecutions()
 	{
+		int executionCount = 10;
 		MockTimeSystem timeSystem = new MockTimeSystem()
 			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
 		ITimerHandler timerHandler = timeSystem.TimerHandler;

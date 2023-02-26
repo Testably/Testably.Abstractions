@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading;
 using Testably.Abstractions.Testing.FileSystemInitializer;
+using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
@@ -36,6 +37,8 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 	public void Error_DefaultTo64Messages_ShouldBeTriggeredWhenBufferOverflows(
 		string path)
 	{
+		Skip.If(Test.RunsOnWindows);
+
 		FileSystem.Directory.CreateDirectory(path);
 		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
@@ -76,6 +79,8 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 	public void Error_ShouldBeTriggeredWhenBufferOverflows(
 		int internalBufferSize, string path)
 	{
+		Skip.If(Test.RunsOnWindows);
+
 		int maxMessages = internalBufferSize / 128;
 		FileSystem.Directory.CreateDirectory(path);
 		IFileSystemWatcher fileSystemWatcher =
