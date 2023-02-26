@@ -177,6 +177,58 @@ public class TimerMockTests
 	}
 
 	[Fact]
+	public void Exception_WhenSwallowExceptionsIsNotSet_ShouldStopTimer()
+	{
+		MockTimeSystem timeSystem = new MockTimeSystem()
+			.WithTimerStrategy(new TimerStrategy(swallowExceptions: false));
+		Exception expectedException = new("foo");
+		int count = 0;
+		using ITimer timer = timeSystem.Timer.New(
+			_ =>
+			{
+				if (++count == 1)
+				{
+					throw expectedException;
+				}
+			}, null, 0, 20);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			Thread.Sleep(10);
+			timeSystem.TimerHandler[0].Wait();
+		});
+
+		exception.Should().Be(expectedException);
+		count.Should().Be(1);
+	}
+
+	[Fact]
+	public void Exception_WhenSwallowExceptionsIsSet_ShouldContinueTimer()
+	{
+		MockTimeSystem timeSystem = new MockTimeSystem()
+			.WithTimerStrategy(new TimerStrategy(swallowExceptions: true));
+		Exception expectedException = new("foo");
+		int count = 0;
+		using ITimer timer = timeSystem.Timer.New(
+			_ =>
+			{
+				if (++count == 1)
+				{
+					throw expectedException;
+				}
+			}, null, 0, 20);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			Thread.Sleep(10);
+			timeSystem.TimerHandler[0].Wait();
+		});
+
+		exception.Should().Be(expectedException);
+		count.Should().BeGreaterThan(1);
+	}
+
+	[Fact]
 	public void New_WithStartOnMockWaitMode_ShouldOnlyStartWhenCallingWait()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()
