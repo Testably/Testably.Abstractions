@@ -239,12 +239,13 @@ internal sealed class TimerMock : ITimerMock
 				_exception = exception = swallowedException;
 			}
 
-			Interlocked.Increment(ref _executionCount);
 			_callbackHandler.InvokeTimerExecutedCallbacks(
 				new TimerExecution(
 					_mockTimeSystem.DateTime.UtcNow,
+					_executionCount,
 					this,
 					exception));
+			_executionCount++;
 			if (_countdownEvent?.Signal() == true)
 			{
 				_continueEvent.Wait(cancellationToken);

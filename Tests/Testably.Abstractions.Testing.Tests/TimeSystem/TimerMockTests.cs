@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System.Collections.Concurrent;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.FileSystemInitializer;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
@@ -226,6 +228,26 @@ public class TimerMockTests
 
 		exception.Should().Be(expectedException);
 		count.Should().BeGreaterThan(1);
+	}
+
+	[Fact]
+	public void ExecutionCount_ShouldBeIncrementedAndZeroBased()
+	{
+		MockTimeSystem timeSystem = new();
+		ITimerHandler timerHandler = timeSystem.TimerHandler;
+		ConcurrentBag<int> executionCounter = new();
+
+		using (timeSystem.On.TimerExecuted(d => executionCounter.Add(d.ExecutionCount)))
+		{
+			timeSystem.Timer.New(_ => { }, null,
+				TimeTestHelper.GetRandomInterval(),
+				TimeTestHelper.GetRandomInterval());
+
+			timerHandler[0].Wait(10);
+		}
+		
+		executionCounter.OrderBy(x => x).Should()
+			.BeEquivalentTo(Enumerable.Range(0, executionCounter.Count));
 	}
 
 	[Fact]
