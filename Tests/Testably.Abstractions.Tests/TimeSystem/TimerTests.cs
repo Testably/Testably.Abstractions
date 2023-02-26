@@ -27,6 +27,38 @@ public abstract partial class TimerTests<TTimeSystem>
 		exception.Should().BeOfType<ObjectDisposedException>();
 	}
 
+	[SkippableFact]
+	public void Change_Infinite_ShouldBeValidDueTime()
+	{
+		using ITimer timer = TimeSystem.Timer.New(_ =>
+		{
+		}, null, 100, 200);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			timer.Change(Timeout.Infinite, 0);
+		});
+
+		exception.Should().BeNull();
+	}
+
+	[SkippableFact]
+	public void Change_Infinite_ShouldBeValidPeriod()
+	{
+		using ITimer timer = TimeSystem.Timer.New(_ =>
+		{
+		}, null, 100, 200);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			timer.Change(0, Timeout.Infinite);
+		});
+
+		exception.Should().BeNull();
+	}
+
 	[SkippableTheory]
 	[InlineData(-2)]
 	[InlineData(-500)]
@@ -42,7 +74,8 @@ public abstract partial class TimerTests<TTimeSystem>
 		});
 
 		exception.Should()
-			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086, paramName: nameof(dueTime));
+			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086,
+				paramName: nameof(dueTime));
 	}
 
 	[SkippableTheory]
@@ -60,7 +93,8 @@ public abstract partial class TimerTests<TTimeSystem>
 		});
 
 		exception.Should()
-			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086, paramName: nameof(period));
+			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086,
+				paramName: nameof(period));
 	}
 
 	[SkippableFact]
@@ -223,9 +257,12 @@ public abstract partial class TimerTests<TTimeSystem>
 		{
 		}, null, 100, 200);
 		using ManualResetEvent waitHandle = new(false);
-		timer.Dispose(waitHandle);
+		bool result = timer.Dispose(waitHandle);
 
 		waitHandle.WaitOne(1000).Should().BeTrue();
+		result.Should().BeTrue();
+		Record.Exception(() => timer.Change(0, 0))
+			.Should().BeOfType<ObjectDisposedException>();
 	}
 
 	[SkippableFact]
@@ -235,9 +272,12 @@ public abstract partial class TimerTests<TTimeSystem>
 		{
 		}, null, 100, 200);
 		using Mutex waitHandle = new(false);
-		timer.Dispose(waitHandle);
+		bool result = timer.Dispose(waitHandle);
 
 		waitHandle.WaitOne(1000).Should().BeTrue();
+		result.Should().BeTrue();
+		Record.Exception(() => timer.Change(0,0))
+			.Should().BeOfType<ObjectDisposedException>();
 	}
 
 	[SkippableFact]
@@ -247,9 +287,12 @@ public abstract partial class TimerTests<TTimeSystem>
 		{
 		}, null, 100, 200);
 		using Semaphore waitHandle = new(1, 1);
-		timer.Dispose(waitHandle);
+		bool result = timer.Dispose(waitHandle);
 
 		waitHandle.WaitOne(1000).Should().BeTrue();
+		result.Should().BeTrue();
+		Record.Exception(() => timer.Change(0, 0))
+			.Should().BeOfType<ObjectDisposedException>();
 	}
 
 	[SkippableFact]

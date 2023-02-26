@@ -3,6 +3,7 @@ using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
+[Collection(nameof(IDirectoryCleaner))]
 public sealed class FileStreamFactoryMockTests : IDisposable
 {
 	public string BasePath => _directoryCleaner.BasePath;

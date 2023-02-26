@@ -6,6 +6,7 @@ using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
 
+[Collection(nameof(IDirectoryCleaner))]
 public class DirectoryCleanerTests
 {
 	public DirectoryCleanerTests()

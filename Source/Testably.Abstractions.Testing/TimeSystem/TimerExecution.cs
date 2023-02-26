@@ -13,13 +13,26 @@ public class TimerExecution
 	public DateTime Time { get; }
 
 	/// <summary>
+	///     The (zero-based) execution counter.
+	/// </summary>
+	public int ExecutionCount { get; }
+
+	/// <summary>
 	///     The mocked timer.
 	/// </summary>
 	public ITimerMock Timer { get; }
 
-	internal TimerExecution(DateTime time, ITimerMock timer)
+	/// <summary>
+	///     The exception thrown during this timer execution.
+	/// </summary>
+	public Exception? Exception { get; }
+
+	internal TimerExecution(DateTime time, int executionCount, ITimerMock timer,
+		Exception? exception)
 	{
 		Time = time;
+		ExecutionCount = executionCount;
 		Timer = timer;
+		Exception = exception;
 	}
 }

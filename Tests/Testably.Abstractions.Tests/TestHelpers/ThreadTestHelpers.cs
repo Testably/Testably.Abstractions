@@ -21,13 +21,11 @@ public static class ThreadTestHelpers
 				catch (Exception ex)
 				{
 					backgroundEx = ex;
-					Interlocked.MemoryBarrier();
 				}
 			});
 
 		void LocalCheckForThreadErrors()
 		{
-			Interlocked.MemoryBarrier();
 			if (backgroundEx != null)
 			{
 				throw new AggregateException(backgroundEx);
