@@ -27,6 +27,38 @@ public abstract partial class TimerTests<TTimeSystem>
 		exception.Should().BeOfType<ObjectDisposedException>();
 	}
 
+	[SkippableFact]
+	public void Change_Infinite_ShouldBeValidDueTime()
+	{
+		using ITimer timer = TimeSystem.Timer.New(_ =>
+		{
+		}, null, 100, 200);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			timer.Change(Timeout.Infinite, 0);
+		});
+
+		exception.Should().BeNull();
+	}
+
+	[SkippableFact]
+	public void Change_Infinite_ShouldBeValidPeriod()
+	{
+		using ITimer timer = TimeSystem.Timer.New(_ =>
+		{
+		}, null, 100, 200);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			timer.Change(0, Timeout.Infinite);
+		});
+
+		exception.Should().BeNull();
+	}
+
 	[SkippableTheory]
 	[InlineData(-2)]
 	[InlineData(-500)]

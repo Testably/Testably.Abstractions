@@ -67,6 +67,7 @@ public class TimerMockTests
 		exception.Should().BeOfType<ObjectDisposedException>();
 	}
 
+#if FEATURE_ASYNC_DISPOSABLE
 	[Fact]
 	public async Task DisposeAsync_ShouldDisposeTimer()
 	{
@@ -84,6 +85,7 @@ public class TimerMockTests
 
 		exception.Should().BeOfType<ObjectDisposedException>();
 	}
+#endif
 
 	[Fact]
 	public void Dispose_WithUnknownWaitHandle_ShouldThrowNotSupportedException()
