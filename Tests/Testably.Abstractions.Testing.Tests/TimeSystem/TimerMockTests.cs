@@ -364,6 +364,7 @@ public class TimerMockTests
 		{
 			t.Dispose();
 		});
+		Thread.Sleep(100);
 		count.Should().Be(executionCount);
 	}
 
