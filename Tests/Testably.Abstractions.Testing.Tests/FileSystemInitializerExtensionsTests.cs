@@ -187,7 +187,7 @@ public class FileSystemInitializerExtensionsTests
 			path,
 			Assembly.GetExecutingAssembly(),
 			"TestResources",
-			searchPattern: "*.TXT",
+			searchPattern: "*.txt",
 			SearchOption.TopDirectoryOnly);
 
 		string[] result = fileSystem.Directory.GetFiles(path);
