@@ -23,9 +23,5 @@ public sealed class RealTimeSystem : ITimeSystem
 	public IThread Thread
 		=> new ThreadWrapper(this);
 
-	/// <inheritdoc cref="ITimeSystem.Timer" />
-	public ITimerFactory Timer
-		=> new TimerFactory(this);
-
 	#endregion
 }

@@ -56,17 +56,4 @@ public interface INotificationHandler
 	Notification.IAwaitableCallback<TimeSpan> ThreadSleep(
 		Action<TimeSpan>? callback = null,
 		Func<TimeSpan, bool>? predicate = null);
-
-	/// <summary>
-	///     Callback executed when a timer callback was executed.
-	/// </summary>
-	/// <param name="callback">The callback to execute after the <c>Thread.Sleep</c> was called.</param>
-	/// <param name="predicate">
-	///     (optional) A predicate used to filter which callbacks should be notified.<br />
-	///     If set to <see langword="null" /> (default value) all callbacks are notified.
-	/// </param>
-	/// <returns>An <see cref="Notification.IAwaitableCallback{TimeSpan}" /> to un-register the callback on dispose.</returns>
-	Notification.IAwaitableCallback<TimerExecution> TimerExecuted(
-		Action<TimerExecution>? callback = null,
-		Func<TimerExecution, bool>? predicate = null);
 }

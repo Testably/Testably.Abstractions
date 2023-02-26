@@ -23,7 +23,6 @@
 		<DefineConstants Condition="'$(IS_NET6_OR_7)' == '1'">$(DefineConstants);FEATURE_RANDOM_ADVANCED</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET6_OR_7)' == '1'">$(DefineConstants);FEATURE_FILESYSTEMWATCHER_ADVANCED</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET6_OR_7)' == '1'">$(DefineConstants);FEATURE_EXCEPTION_HRESULT</DefineConstants>
-		<DefineConstants Condition="'$(IS_NET6_OR_7)' == '1'">$(DefineConstants);FEATURE_TIMER_COUNT</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET7)' == '1'">$(DefineConstants);FEATURE_ZIPFILE_NET7</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET7)' == '1'">$(DefineConstants);FEATURE_FILESYSTEM_NET7</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET7)' == '1'">$(DefineConstants);FEATURE_FILESYSTEM_SAFEFILEHANDLE</DefineConstants>
