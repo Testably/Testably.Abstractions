@@ -22,10 +22,16 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// </summary>
 	public ITimeProvider TimeProvider { get; }
 
+	/// <summary>
+	///     The handler for mocked timers.
+	/// </summary>
+	public ITimerHandler TimerHandler => _timerMock;
+
 	private readonly NotificationHandler _callbackHandler;
 	private readonly DateTimeMock _dateTimeMock;
 	private readonly TaskMock _taskMock;
 	private readonly ThreadMock _threadMock;
+	private readonly TimerFactoryMock _timerMock;
 
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem" /> with a random time.
@@ -51,6 +57,7 @@ public sealed class MockTimeSystem : ITimeSystem
 		_dateTimeMock = new DateTimeMock(this, _callbackHandler);
 		_threadMock = new ThreadMock(this, _callbackHandler);
 		_taskMock = new TaskMock(this, _callbackHandler);
+		_timerMock = new TimerFactoryMock(this);
 	}
 
 	#region ITimeSystem Members
@@ -67,5 +74,19 @@ public sealed class MockTimeSystem : ITimeSystem
 	public IThread Thread
 		=> _threadMock;
 
+	/// <inheritdoc cref="ITimeSystem.Timer" />
+	public ITimerFactory Timer
+		=> _timerMock;
+
 	#endregion
+
+	/// <summary>
+	///     Specifies the <see cref="ITimerStrategy" /> to use when dealing with timers.
+	/// </summary>
+	/// <param name="timerStrategy">The timer strategy. </param>
+	public MockTimeSystem WithTimerStrategy(ITimerStrategy timerStrategy)
+	{
+		_timerMock.SetTimerStrategy(timerStrategy);
+		return this;
+	}
 }

@@ -19,6 +19,9 @@ internal static class ExceptionFactory
 		=> new(
 			"You cannot mock a safe file handle in the mocked file system without registering a strategy explicitly. Use `MockFileSystem.WithSafeFileHandleStrategy`!");
 
+	public static NotSupportedException NotSupportedTimerWrapping()
+		=> new("You cannot wrap an existing Timer in the MockTimeSystem instance!");
+
 	public static ArgumentException SearchPatternCannotContainTwoDots()
 		=> new(
 			"Search pattern cannot contain \"..\" to move up directories and can be contained only internally in file/directory names, as in \"a..b\".");
@@ -232,6 +235,15 @@ internal static class ExceptionFactory
 	internal static TimeoutException TimeoutExpired(int timeoutMilliseconds)
 		=> new(
 			$"The timeout of {timeoutMilliseconds}ms expired in the awaitable callback.");
+
+	public static ArgumentOutOfRangeException TimerArgumentOutOfRange(string propertyName)
+		=> new(propertyName,
+			"Number must be either non-negative and less than or equal to Int32.MaxValue or -1")
+		{
+#if FEATURE_EXCEPTION_HRESULT
+			HResult = -2146233086
+#endif
+		};
 
 	internal static PlatformNotSupportedException UnixFileModeNotSupportedOnThisPlatform()
 		=> new("Unix file modes are not supported on this platform.")
