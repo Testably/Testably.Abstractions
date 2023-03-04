@@ -9,39 +9,47 @@ namespace Testably.Abstractions;
 /// </summary>
 public sealed class RealFileSystem : IFileSystem
 {
+	/// <summary>
+	///     Initializes a new instance of <see cref="RealFileSystem" />
+	///     which wraps the file-related system dependencies from <see cref="IFileSystem" />.
+	/// </summary>
+	public RealFileSystem()
+	{
+		Directory = new DirectoryWrapper(this);
+		DirectoryInfo = new DirectoryInfoFactory(this);
+		DriveInfo = new DriveInfoFactory(this);
+		File = new FileWrapper(this);
+		FileInfo = new FileInfoFactory(this);
+		FileStream = new FileStreamFactory(this);
+		FileSystemWatcher = new FileSystemWatcherFactory(this);
+		Path = new PathWrapper(this);
+	}
+
 	#region IFileSystem Members
 
 	/// <inheritdoc cref="IFileSystem.Directory" />
-	public IDirectory Directory
-		=> new DirectoryWrapper(this);
+	public IDirectory Directory { get; }
 
 	/// <inheritdoc cref="IFileSystem.DirectoryInfo" />
-	public IDirectoryInfoFactory DirectoryInfo
-		=> new DirectoryInfoFactory(this);
+	public IDirectoryInfoFactory DirectoryInfo { get; }
 
 	/// <inheritdoc cref="IFileSystem.DriveInfo" />
-	public IDriveInfoFactory DriveInfo
-		=> new DriveInfoFactory(this);
+	public IDriveInfoFactory DriveInfo { get; }
 
 	/// <inheritdoc cref="IFileSystem.File" />
-	public IFile File
-		=> new FileWrapper(this);
+	public IFile File { get; }
 
 	/// <inheritdoc cref="IFileSystem.FileInfo" />
-	public IFileInfoFactory FileInfo
-		=> new FileInfoFactory(this);
+	public IFileInfoFactory FileInfo { get; }
 
 	/// <inheritdoc cref="IFileSystem.FileStream" />
-	public IFileStreamFactory FileStream
-		=> new FileStreamFactory(this);
+	public IFileStreamFactory FileStream { get; }
 
 	/// <inheritdoc cref="IFileSystem.FileSystemWatcher" />
-	public IFileSystemWatcherFactory FileSystemWatcher
-		=> new FileSystemWatcherFactory(this);
+	public IFileSystemWatcherFactory FileSystemWatcher { get; }
 
 	/// <inheritdoc cref="IFileSystem.Path" />
-	public IPath Path
-		=> new PathWrapper(this);
+	public IPath Path { get; }
 
 	#endregion
 }
