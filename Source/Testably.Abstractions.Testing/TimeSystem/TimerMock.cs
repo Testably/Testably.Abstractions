@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.TimeSystem;
-#if FEATURE_ASYNC_DISPOSABLE
-using System.Threading.Tasks;
-#endif
 
 namespace Testably.Abstractions.Testing.TimeSystem;
 
@@ -176,23 +174,24 @@ internal sealed class TimerMock : ITimerMock
 			throw new ArgumentOutOfRangeException(nameof(timeout));
 		}
 
+		try
+		{
+			_countdownEvent = new CountdownEvent(executionCount - _executionCount);
+		}
+		catch (ArgumentOutOfRangeException)
+		{
+			// In case of an ArgumentOutOfRangeException, the executionCount is already reached.
+		}
+
 		if (_timerStrategy.Mode != TimerMode.StartImmediately)
 		{
 			Start();
 		}
 
-		try
+		if (_countdownEvent?.Wait(timeout) == false)
 		{
-			_countdownEvent = new CountdownEvent(executionCount - _executionCount);
-			if (!_countdownEvent.Wait(timeout))
-			{
-				throw new TimeoutException(
-					$"The execution count {executionCount} was not reached in {timeout}ms.");
-			}
-		}
-		catch (ArgumentOutOfRangeException)
-		{
-			// In case of an ArgumentOutOfRangeException, the executionCount is already reached.
+			throw new TimeoutException(
+				$"The execution count {executionCount} was not reached in {timeout}ms.");
 		}
 
 		if (_exception != null)
@@ -213,15 +212,14 @@ internal sealed class TimerMock : ITimerMock
 		_onDispose = onDispose;
 	}
 
-	private void RunTimer(CancellationToken cancellationToken = default)
+	private async Task RunTimer(CancellationToken cancellationToken = default)
 	{
-		_mockTimeSystem.Thread.Sleep(_dueTime);
+		await _mockTimeSystem.Task.Delay(_dueTime, cancellationToken);
 		if (_dueTime.TotalMilliseconds < 0)
 		{
 			cancellationToken.WaitHandle.WaitOne(_dueTime);
 		}
-
-		Thread.Yield();
+		
 		DateTime nextPlannedExecution = _mockTimeSystem.DateTime.UtcNow;
 		while (!cancellationToken.IsCancellationRequested)
 		{
@@ -234,7 +232,7 @@ internal sealed class TimerMock : ITimerMock
 			{
 				_exception = swallowedException;
 			}
-			
+
 			_executionCount++;
 			if (_countdownEvent?.Signal() == true)
 			{
@@ -248,7 +246,7 @@ internal sealed class TimerMock : ITimerMock
 			}
 
 			if (_period.TotalMilliseconds <= 0 ||
-				cancellationToken.IsCancellationRequested)
+			    cancellationToken.IsCancellationRequested)
 			{
 				return;
 			}
@@ -256,10 +254,8 @@ internal sealed class TimerMock : ITimerMock
 			TimeSpan delay = nextPlannedExecution - _mockTimeSystem.DateTime.UtcNow;
 			if (delay > TimeSpan.Zero)
 			{
-				_mockTimeSystem.Thread.Sleep(delay);
+				await _mockTimeSystem.Task.Delay(delay, cancellationToken);
 			}
-
-			Thread.Yield();
 		}
 	}
 
@@ -275,18 +271,14 @@ internal sealed class TimerMock : ITimerMock
 
 		CancellationToken token = runningCancellationTokenSource.Token;
 		ManualResetEventSlim startCreateTimerThreads = new();
-		Thread t = new(() =>
-		{
-			try
-			{
-				startCreateTimerThreads.Set();
-				RunTimer(token);
-			}
-			catch (Exception ex)
-			{
-				_exception = ex;
-			}
-			finally
+		Task.Run(
+				async () =>
+				{
+					startCreateTimerThreads.Set();
+					await RunTimer(token);
+				},
+				cancellationToken: token)
+			.ContinueWith(_ =>
 			{
 				runningCancellationTokenSource.Dispose();
 				lock (_lock)
@@ -297,12 +289,7 @@ internal sealed class TimerMock : ITimerMock
 						_cancellationTokenSource = null;
 					}
 				}
-			}
-		})
-		{
-			IsBackground = true
-		};
-		t.Start();
+			}, TaskScheduler.Default);
 		startCreateTimerThreads.Wait(token);
 	}
 
