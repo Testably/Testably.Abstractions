@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Testably.Abstractions.RandomSystem;
 
 namespace Testably.Abstractions.Testing.Tests.RandomSystem;
 
@@ -8,16 +9,20 @@ public class RandomSystemExtensibilityTests
 	[MemberData(nameof(GetRandomSystems))]
 	public void Guid_ShouldSetExtensionPoint(IRandomSystem randomSystem)
 	{
-		IRandomSystem result = randomSystem.Guid.RandomSystem;
+		IGuid sut = randomSystem.Guid;
+
+		IRandomSystem result = sut.RandomSystem;
 
 		result.Should().Be(randomSystem);
 	}
 
 	[SkippableTheory]
 	[MemberData(nameof(GetRandomSystems))]
-	public void Random_ShouldSetExtensionPoint(IRandomSystem randomSystem)
+	public void RandomFactory_ShouldSetExtensionPoint(IRandomSystem randomSystem)
 	{
-		IRandomSystem result = randomSystem.Random.RandomSystem;
+		IRandomFactory sut = randomSystem.Random;
+
+		IRandomSystem result = sut.RandomSystem;
 
 		result.Should().Be(randomSystem);
 	}

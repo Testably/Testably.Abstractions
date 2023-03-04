@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
@@ -8,7 +9,9 @@ public class TimeSystemExtensibilityTests
 	[MemberData(nameof(GetTimeSystems))]
 	public void DateTime_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
-		ITimeSystem result = timeSystem.DateTime.TimeSystem;
+		IDateTime sut = timeSystem.DateTime;
+
+		ITimeSystem result = sut.TimeSystem;
 
 		result.Should().Be(timeSystem);
 	}
@@ -17,7 +20,9 @@ public class TimeSystemExtensibilityTests
 	[MemberData(nameof(GetTimeSystems))]
 	public void Task_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
-		ITimeSystem result = timeSystem.Task.TimeSystem;
+		ITask sut = timeSystem.Task;
+
+		ITimeSystem result = sut.TimeSystem;
 
 		result.Should().Be(timeSystem);
 	}
@@ -26,7 +31,9 @@ public class TimeSystemExtensibilityTests
 	[MemberData(nameof(GetTimeSystems))]
 	public void Thread_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
-		ITimeSystem result = timeSystem.Thread.TimeSystem;
+		IThread sut = timeSystem.Thread;
+
+		ITimeSystem result = sut.TimeSystem;
 
 		result.Should().Be(timeSystem);
 	}
@@ -35,7 +42,20 @@ public class TimeSystemExtensibilityTests
 	[MemberData(nameof(GetTimeSystems))]
 	public void Timer_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
-		ITimeSystem result = timeSystem.Timer.TimeSystem;
+		using ITimer sut = timeSystem.Timer.New(_ => { });
+
+		ITimeSystem result = sut.TimeSystem;
+
+		result.Should().Be(timeSystem);
+	}
+
+	[SkippableTheory]
+	[MemberData(nameof(GetTimeSystems))]
+	public void TimerFactory_ShouldSetExtensionPoint(ITimeSystem timeSystem)
+	{
+		ITimerFactory sut = timeSystem.Timer;
+
+		ITimeSystem result = sut.TimeSystem;
 
 		result.Should().Be(timeSystem);
 	}
