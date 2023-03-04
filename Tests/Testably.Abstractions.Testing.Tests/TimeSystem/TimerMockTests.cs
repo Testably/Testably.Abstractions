@@ -2,18 +2,26 @@
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.TimeSystem;
 using Testably.Abstractions.TimeSystem;
+using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
 public class TimerMockTests
 {
+	private readonly ITestOutputHelper _testOutputHelper;
+
+	public TimerMockTests(ITestOutputHelper testOutputHelper)
+	{
+		_testOutputHelper = testOutputHelper;
+	}
+
 	[SkippableTheory]
 	[InlineData(-1)]
 	[InlineData(0)]
 	[InlineData(2000)]
 	public void Change_ValidDueTimeValue_ShouldNotThrowException(int dueTime)
 	{
-		MockTimeSystem timeSystem = new MockTimeSystem();
+		MockTimeSystem timeSystem = new();
 		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 		}, null, 100, 200);
@@ -33,7 +41,7 @@ public class TimerMockTests
 	[InlineData(2000)]
 	public void Change_ValidPeriodValue_ShouldNotThrowException(int period)
 	{
-		MockTimeSystem timeSystem = new MockTimeSystem();
+		MockTimeSystem timeSystem = new();
 		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 		}, null, 100, 200);
@@ -278,14 +286,19 @@ public class TimerMockTests
 		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 			count++;
+			_testOutputHelper.WriteLine($"Execute: {count}");
 		}, null, 0, 100);
 
 		count.Should().Be(0);
 		timerHandler[0].Wait(executionCount, callback: t =>
 		{
+			_testOutputHelper.WriteLine("Disposing...");
 			t.Dispose();
-		});
-		Thread.Sleep(100);
+			_testOutputHelper.WriteLine("Disposed.");
+		}, timeout: 1000000);
+		_testOutputHelper.WriteLine("Waiting 100ms...");
+		Thread.Sleep(1000);
+		_testOutputHelper.WriteLine("Waiting completed.");
 		count.Should().Be(executionCount);
 	}
 
