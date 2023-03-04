@@ -126,13 +126,13 @@ public abstract partial class TimerTests<TTimeSystem>
 			previousTime = now;
 			ms.Set();
 			triggerTimes.Add((int)diff);
-			ms2.Wait();
+			ms2.Wait(30000);
 			if (triggerTimes.Count > 3)
 			{
 				ms3.Set();
 			}
 		}, null, 0 * TimerMultiplier, 200 * TimerMultiplier);
-		ms.Wait();
+		ms.Wait(30000).Should().BeTrue();
 		using ITimer timer2 = TimeSystem.Timer.New(_ =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
@@ -172,13 +172,13 @@ public abstract partial class TimerTests<TTimeSystem>
 			previousTime = now;
 			ms.Set();
 			triggerTimes.Add((int)diff);
-			ms2.Wait();
+			ms2.Wait(30000);
 			if (triggerTimes.Count > 3)
 			{
 				ms3.Set();
 			}
 		}, null, 0L * TimerMultiplier, 200L * TimerMultiplier);
-		ms.Wait();
+		ms.Wait(30000).Should().BeTrue();
 		using ITimer timer2 = TimeSystem.Timer.New(_ =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
@@ -218,14 +218,14 @@ public abstract partial class TimerTests<TTimeSystem>
 			previousTime = now;
 			ms.Set();
 			triggerTimes.Add((int)diff);
-			ms2.Wait();
+			ms2.Wait(30000);
 			if (triggerTimes.Count > 3)
 			{
 				ms3.Set();
 			}
 		}, null, TimeSpan.FromMilliseconds(0 * TimerMultiplier),
 			TimeSpan.FromMilliseconds(200 * TimerMultiplier));
-		ms.Wait();
+		ms.Wait(30000).Should().BeTrue();
 		using ITimer timer2 = TimeSystem.Timer.New(_ =>
 		{
 			// ReSharper disable once AccessToDisposedClosure

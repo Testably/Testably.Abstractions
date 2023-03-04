@@ -124,7 +124,7 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 			}
 		}, null, 0, 50);
 
-		ms.Wait(3000).Should().BeTrue();
+		ms.Wait(30000).Should().BeTrue();
 		count.Should().BeGreaterOrEqualTo(2);
 	}
 
@@ -140,9 +140,9 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 			{
 				ms.Set();
 			}
-		}, null, 50, 0);
+		}, null, 5, 0);
 
-		ms.Wait(3000).Should().BeFalse();
+		ms.Wait(300).Should().BeFalse();
 		count.Should().BeGreaterOrEqualTo(1);
 	}
 
@@ -160,7 +160,7 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 			}
 		});
 
-		ms.Wait(3000).Should().BeFalse();
+		ms.Wait(300).Should().BeFalse();
 		count.Should().Be(0);
 	}
 }

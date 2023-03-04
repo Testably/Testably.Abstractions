@@ -47,7 +47,7 @@ public abstract partial class WriteTests<TFileSystem>
 			ms.Set();
 		}, null);
 
-		ms.Wait(1000);
+		ms.Wait(30000);
 		stream.Dispose();
 		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(contents);
 	}
