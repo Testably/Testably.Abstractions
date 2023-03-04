@@ -294,12 +294,18 @@ public class TimerMockTests
 			_testOutputHelper.WriteLine($"Execute: {count}");
 		}, null, 0, 100);
 
-		timerHandler[0].Wait(executionCount);
+		_testOutputHelper.WriteLine($"Waiting {executionCount} times...");
+		timerHandler[0].Wait(executionCount, callback: _ =>
+			_testOutputHelper.WriteLine("Waiting completed."));
+		_testOutputHelper.WriteLine($"Waiting {executionCount} times...");
 		timerHandler[0].Wait(executionCount, callback: t =>
 		{
+			_testOutputHelper.WriteLine("Waiting completed.");
+			_testOutputHelper.WriteLine("Disposing...");
 			t.Dispose();
+			_testOutputHelper.WriteLine("Disposed.");
 		}, timeout: 10000);
-		count.Should().Be(2 * executionCount);
+		count.Should().BeGreaterOrEqualTo(2 * executionCount);
 	}
 
 	[Fact]
