@@ -219,7 +219,7 @@ internal sealed class TimerMock : ITimerMock
 		{
 			cancellationToken.WaitHandle.WaitOne(_dueTime);
 		}
-		
+
 		DateTime nextPlannedExecution = _mockTimeSystem.DateTime.UtcNow;
 		while (!cancellationToken.IsCancellationRequested)
 		{
