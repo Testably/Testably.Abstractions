@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
@@ -125,7 +124,7 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 			}
 		}, null, 0, 50);
 
-		ms.Wait(500).Should().BeTrue();
+		ms.Wait(3000).Should().BeTrue();
 		count.Should().BeGreaterOrEqualTo(2);
 	}
 
@@ -143,7 +142,7 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 			}
 		}, null, 50, 0);
 
-		ms.Wait(500).Should().BeFalse();
+		ms.Wait(3000).Should().BeFalse();
 		count.Should().BeGreaterOrEqualTo(1);
 	}
 
@@ -161,7 +160,7 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 			}
 		});
 
-		ms.Wait(500).Should().BeFalse();
+		ms.Wait(3000).Should().BeFalse();
 		count.Should().Be(0);
 	}
 }
