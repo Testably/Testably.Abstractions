@@ -6,56 +6,66 @@ using System.Text;
 namespace System.IO.Enumeration;
 
 /// <summary>
-///	 Provides methods for matching file system names.
+///     Provides methods for matching file system names.
 /// </summary>
 [ExcludeFromCodeCoverage]
 public static class FileSystemName
 {
-	private static readonly char[] s_simpleWildcardChars = { '*', '?' };
+	private static readonly char[] s_simpleWildcardChars =
+	{
+		'*', '?'
+	};
 
 	// [MS - FSA] 2.1.4.4 Algorithm for Determining if a FileName Is in an Expression
 	// https://msdn.microsoft.com/en-us/library/ff469270.aspx
-	private static readonly char[] s_wildcardChars = { '\"', '<', '>', '*', '?' };
+	private static readonly char[] s_wildcardChars =
+	{
+		'\"',
+		'<',
+		'>',
+		'*',
+		'?'
+	};
 
 	/// <summary>
-	///	 Verifies whether the given expression matches the given name. Supports the following wildcards: '*' and '?'.
-	///	 The backslash character '\\' escapes.
+	///     Verifies whether the given expression matches the given name. Supports the following wildcards: '*' and '?'.
+	///     The backslash character '\\' escapes.
 	/// </summary>
 	/// <param name="expression">The expression to match with.</param>
 	/// <param name="name">The name to check against the expression.</param>
 	/// <param name="ignoreCase">
-	///	 <see langword="true" /> to ignore case (default); <see langword="false" /> if the match should
-	///	 be case-sensitive.
+	///     <see langword="true" /> to ignore case (default); <see langword="false" /> if the match should
+	///     be case-sensitive.
 	/// </param>
 	/// <returns><see langword="true" /> if the given expression matches the given name; otherwise, <see langword="false" />.</returns>
 	public static bool MatchesSimpleExpression(string expression, string name,
-											   bool ignoreCase
-												   = true)
+		bool ignoreCase
+			= true)
 	{
 		return MatchPattern(expression, name, ignoreCase, useExtendedWildcards: false);
 	}
 
 	/// <summary>
-	///	 Verifies whether the given Win32 expression matches the given name. Supports the following wildcards: '*',
-	///	 '?', '&lt;', '&gt;', '"'. The backslash character '\' escapes.
+	///     Verifies whether the given Win32 expression matches the given name. Supports the following wildcards: '*',
+	///     '?', '&lt;', '&gt;', '"'. The backslash character '\' escapes.
 	/// </summary>
 	/// <param name="expression">The expression to match with, such as "*.foo".</param>
 	/// <param name="name">The name to check against the expression.</param>
 	/// <param name="ignoreCase">
-	///	 <see langword="true" /> to ignore case (default), <see langword="false" /> if the match should
-	///	 be case-sensitive.
+	///     <see langword="true" /> to ignore case (default), <see langword="false" /> if the match should
+	///     be case-sensitive.
 	/// </param>
 	/// <returns><see langword="true" /> if the given expression matches the given name; otherwise, <see langword="false" />.</returns>
 	/// <remarks>
-	///	 The syntax of the <paramref name="expression" /> parameter is based on the syntax used by FileSystemWatcher, which
-	///	 is based on [RtlIsNameInExpression](/windows/win32/devnotes/rtlisnameinexpression), which defines the rules for
-	///	 matching DOS wildcards (`'*'`, `'?'`, `'&lt;'`, `'&gt;'`, `'"'`).
-	///	 Matching will not correspond to Win32 behavior unless you transform the expression using
-	///	 <see cref="FileSystemName.TranslateWin32Expression(string)" />.
+	///     The syntax of the <paramref name="expression" /> parameter is based on the syntax used by FileSystemWatcher, which
+	///     is based on [RtlIsNameInExpression](/windows/win32/devnotes/rtlisnameinexpression), which defines the rules for
+	///     matching DOS wildcards (`'*'`, `'?'`, `'&lt;'`, `'&gt;'`, `'"'`).
+	///     Matching will not correspond to Win32 behavior unless you transform the expression using
+	///     <see cref="FileSystemName.TranslateWin32Expression(string)" />.
 	/// </remarks>
 	public static bool MatchesWin32Expression(string expression, string name,
-											  bool ignoreCase
-												  = true)
+		bool ignoreCase
+			= true)
 	{
 		return MatchPattern(expression, name, ignoreCase, useExtendedWildcards: true);
 	}
@@ -64,8 +74,8 @@ public static class FileSystemName
 	/// <param name="expression">The expression to translate.</param>
 	/// <returns>A string with the translated Win32 expression.</returns>
 	/// <remarks>
-	///	 For compatibility, Windows changes some wildcards to provide a closer match to historical DOS 8.3 filename
-	///	 matching.
+	///     For compatibility, Windows changes some wildcards to provide a closer match to historical DOS 8.3 filename
+	///     matching.
 	/// </remarks>
 	public static string TranslateWin32Expression(string? expression)
 	{
@@ -89,7 +99,7 @@ public static class FileSystemName
 						sb[sb.Length - 1] = '<'; // DOS_STAR (ends in *.)
 					}
 					else if (i < length - 1 &&
-							 (expression[i + 1] == '?' || expression[i + 1] == '*'))
+					         (expression[i + 1] == '?' || expression[i + 1] == '*'))
 					{
 						sb.Append('\"'); // DOS_DOT
 					}
@@ -169,7 +179,7 @@ public static class FileSystemName
 	//	   DOS_DOT matches either a . or zero characters beyond name string.
 
 	private static bool MatchPattern(string expression, string name, bool ignoreCase,
-									 bool useExtendedWildcards)
+		bool useExtendedWildcards)
 	{
 		if (expression.Length == 0 || name.Length == 0)
 		{

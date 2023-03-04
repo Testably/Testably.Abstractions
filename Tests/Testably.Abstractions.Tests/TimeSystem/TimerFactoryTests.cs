@@ -85,13 +85,14 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 	{
 		Exception? exception = Record.Exception(() =>
 		{
-			TimeSystem.Timer.New(_ =>
+			using ITimer timer = TimeSystem.Timer.New(_ =>
 			{
 			}, null, dueTime, 0);
 		});
 
 		exception.Should()
-			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086, paramName: nameof(dueTime));
+			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086,
+				paramName: nameof(dueTime));
 	}
 
 	[SkippableTheory]
@@ -101,13 +102,14 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 	{
 		Exception? exception = Record.Exception(() =>
 		{
-			TimeSystem.Timer.New(_ =>
+			using ITimer timer = TimeSystem.Timer.New(_ =>
 			{
 			}, null, 0, period);
 		});
 
 		exception.Should()
-			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086, paramName: nameof(period));
+			.BeException<ArgumentOutOfRangeException>(hResult: -2146233086,
+				paramName: nameof(period));
 	}
 
 	[SkippableFact]

@@ -11,10 +11,10 @@ public class TimerStrategy : ITimerStrategy
 	public static ITimerStrategy Default { get; }
 		= new TimerStrategy();
 
-	/// <inheritdoc cref="ITimerStrategy.Mode"/>
+	/// <inheritdoc cref="ITimerStrategy.Mode" />
 	public TimerMode Mode { get; }
 
-	/// <inheritdoc cref="ITimerStrategy.SwallowExceptions"/>
+	/// <inheritdoc cref="ITimerStrategy.SwallowExceptions" />
 	public bool SwallowExceptions { get; }
 
 	/// <summary>

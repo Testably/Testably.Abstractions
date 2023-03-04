@@ -1,11 +1,14 @@
 ﻿using System.Threading;
-using System.Threading.Tasks;
 using Testably.Abstractions.Testing.TimeSystem;
 using Testably.Abstractions.TimeSystem;
 using Xunit.Abstractions;
+#if FEATURE_ASYNC_DISPOSABLE
+using System.Threading.Tasks;
+#endif
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
+// ReSharper disable AccessToDisposedClosure
 public class TimerMockTests
 {
 	private readonly ITestOutputHelper _testOutputHelper;
@@ -28,7 +31,6 @@ public class TimerMockTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(dueTime, 0);
 		});
 
@@ -48,7 +50,6 @@ public class TimerMockTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, period);
 		});
 
@@ -59,14 +60,13 @@ public class TimerMockTests
 	public void Dispose_ShouldDisposeTimer()
 	{
 		MockTimeSystem timeSystem = new();
-		ITimer timer = timeSystem.Timer.New(_ =>
+		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 		}, null, 100, 200);
 		timer.Dispose();
 
 		Exception? exception = Record.Exception(() =>
 		{
-			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, 0);
 		});
 
@@ -78,14 +78,13 @@ public class TimerMockTests
 	public async Task DisposeAsync_ShouldDisposeTimer()
 	{
 		MockTimeSystem timeSystem = new();
-		ITimer timer = timeSystem.Timer.New(_ =>
+		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 		}, null, 100, 200);
 		await timer.DisposeAsync();
 
 		Exception? exception = Record.Exception(() =>
 		{
-			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, 0);
 		});
 
@@ -97,14 +96,13 @@ public class TimerMockTests
 	public void Dispose_WithUnknownWaitHandle_ShouldThrowNotSupportedException()
 	{
 		MockTimeSystem timeSystem = new();
-		ITimer timer = timeSystem.Timer.New(_ =>
+		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 		}, null, 100, 200);
 		using DummyWaitHandle waitHandle = new();
 
 		Exception? exception = Record.Exception(() =>
 		{
-			// ReSharper disable once AccessToDisposedClosure
 			timer.Dispose(waitHandle);
 		});
 

@@ -85,7 +85,7 @@ public static class FileSystemInitializerExtensions
 	{
 		EnumerationOptions enumerationOptions =
 			EnumerationOptionsHelper.FromSearchOption(searchOption);
-		
+
 		string[] resourcePaths = assembly.GetManifestResourceNames();
 		string assemblyNamePrefix = $"{assembly.GetName().Name ?? ""}.";
 

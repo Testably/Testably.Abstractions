@@ -27,7 +27,7 @@ public class TimerHandlerTests
 			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
 		ITimerHandler sut = timeSystem.TimerHandler;
 
-		ITimer timer0 = timeSystem.Timer.New(_ => { }, null, 0, 100);
+		using ITimer timer0 = timeSystem.Timer.New(_ => { }, null, 0, 100);
 		using ITimer timer1 = timeSystem.Timer.New(_ => { }, null, 0, 100);
 		timer0.Dispose();
 		using ITimer timer2 = timeSystem.Timer.New(_ => { }, null, 0, 100);
@@ -43,7 +43,7 @@ public class TimerHandlerTests
 			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
 		ITimerHandler sut = timeSystem.TimerHandler;
 
-		ITimer timer0 = timeSystem.Timer.New(_ => { }, null, 0, 100);
+		using ITimer timer0 = timeSystem.Timer.New(_ => { }, null, 0, 100);
 		timer0.Dispose();
 
 		Exception? exception = Record.Exception(() =>
