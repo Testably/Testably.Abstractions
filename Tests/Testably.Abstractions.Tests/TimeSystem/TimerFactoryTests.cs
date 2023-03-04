@@ -136,14 +136,12 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 		using ITimer timer = TimeSystem.Timer.New(_ =>
 		{
 			count++;
-			if (count > 1)
-			{
-				ms.Set();
-			}
+			ms.Set();
 		}, null, 5, 0);
 
-		ms.Wait(300).Should().BeFalse();
-		count.Should().BeGreaterOrEqualTo(1);
+		ms.Wait(30000).Should().BeTrue();
+		Thread.Sleep(100);
+		count.Should().Be(1);
 	}
 
 	[SkippableFact]
