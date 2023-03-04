@@ -1,9 +1,25 @@
 ﻿using System.Threading;
+using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
 public class TimerFactoryMockTests
 {
+	[Fact]
+	public void New_WithoutPeriod_ShouldStillBeRegistered()
+	{
+		MockTimeSystem timeSystem = new();
+
+		ManualResetEventSlim ms = new();
+		using ITimer timer = timeSystem.Timer.New(_ =>
+		{
+			ms.Set();
+		});
+
+		ms.Wait(300).Should().BeFalse();
+		timeSystem.TimerHandler[0].Should().Be(timer);
+	}
+
 	[Fact]
 	public void Wrap_ShouldThrowNotSupportedException()
 	{
