@@ -15,7 +15,7 @@ public interface ITimerMock : ITimer
 	/// </summary>
 	/// <param name="executionCount">The number of execution cycles the thread is blocked.</param>
 	/// <param name="timeout">
-	///     The timeout for blocking the current thread.<br />
+	///     The timeout in milliseconds for blocking the current thread.<br />
 	///     Throws an <see cref="TimeoutException" /> when the timeout is expired.
 	/// </param>
 	/// <param name="callback">
@@ -28,6 +28,7 @@ public interface ITimerMock : ITimer
 	///     When the <paramref name="timeout" /> expires before the timer is executed
 	///     <paramref name="executionCount" /> times.
 	/// </exception>
-	ITimerMock Wait(int executionCount = 1, int timeout = 10000,
+	ITimerMock Wait(int executionCount = 1,
+		int timeout = 10000,
 		Action<ITimerMock>? callback = null);
 }
