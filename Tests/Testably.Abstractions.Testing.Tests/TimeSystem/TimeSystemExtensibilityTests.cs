@@ -31,6 +31,15 @@ public class TimeSystemExtensibilityTests
 		result.Should().Be(timeSystem);
 	}
 
+	[SkippableTheory]
+	[MemberData(nameof(GetTimeSystems))]
+	public void Timer_ShouldSetExtensionPoint(ITimeSystem timeSystem)
+	{
+		ITimeSystem result = timeSystem.Timer.TimeSystem;
+
+		result.Should().Be(timeSystem);
+	}
+
 	public static IEnumerable<object[]> GetTimeSystems =>
 		new List<object[]>
 		{

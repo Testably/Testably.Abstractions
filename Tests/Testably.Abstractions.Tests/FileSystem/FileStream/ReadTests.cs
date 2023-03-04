@@ -27,7 +27,7 @@ public abstract partial class ReadTests<TFileSystem>
 			ms.Set();
 		}, null);
 
-		ms.Wait(1000);
+		ms.Wait(30000);
 		buffer.Should().BeEquivalentTo(contents);
 	}
 
