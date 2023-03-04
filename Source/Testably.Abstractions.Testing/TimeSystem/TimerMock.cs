@@ -152,7 +152,7 @@ internal sealed class TimerMock : ITimerMock
 				e.Set();
 				break;
 			default:
-				throw new NotSupportedException("The wait handle is not of any supported type!");
+				throw new NotSupportedException($"The wait handle '{nameof(notifyObject)}' is of type '{notifyObject.GetType()}' which is not supported!");
 		}
 
 		return true;
@@ -166,7 +166,7 @@ internal sealed class TimerMock : ITimerMock
 	{
 		if (executionCount <= 0)
 		{
-			throw new ArgumentOutOfRangeException(nameof(executionCount));
+			throw new ArgumentOutOfRangeException(nameof(executionCount), "Execution count must be greater than zero.");
 		}
 
 		if (timeout < -1)

@@ -6,7 +6,8 @@
 public class TimerStrategy : ITimerStrategy
 {
 	/// <summary>
-	///     The default time strategy uses <see cref="TimerMode.StartImmediately" />.
+	///     The default timer strategy uses <see cref="TimerMode.StartImmediately" /> and
+	///     does not swallow exceptions.
 	/// </summary>
 	public static ITimerStrategy Default { get; }
 		= new TimerStrategy();
