@@ -22,21 +22,7 @@ public class FileSystemExtensibilityTests
 
 	[Theory]
 	[AutoData]
-	public void RetrieveMetadata_ShouldReturnStoredValue(string path, string key, object value)
-	{
-		RealFileSystem fileSystem = new();
-		IFileInfo sut = fileSystem.FileInfo.New(path);
-		IFileSystemExtensibility? extensibility = sut as IFileSystemExtensibility;
-		extensibility!.StoreMetadata(key, value);
-
-		object? result = extensibility.RetrieveMetadata<object>(key);
-
-		result.Should().Be(value);
-	}
-
-	[Theory]
-	[AutoData]
-	public void RetrieveMetadata_WithoutStoring_ShouldReturnDefault(string path, string key)
+	public void RetrieveMetadata_WithoutStoringBefore_ShouldReturnDefault(string path, string key)
 	{
 		RealFileSystem fileSystem = new();
 		IFileInfo sut = fileSystem.FileInfo.New(path);
@@ -45,6 +31,20 @@ public class FileSystemExtensibilityTests
 		object? result = extensibility!.RetrieveMetadata<object?>(key);
 
 		result.Should().BeNull();
+	}
+
+	[Theory]
+	[AutoData]
+	public void StoreMetadata_ShouldMakeValueRetrievable(string path, string key, object value)
+	{
+		RealFileSystem fileSystem = new();
+		IFileInfo sut = fileSystem.FileInfo.New(path);
+		IFileSystemExtensibility? extensibility = sut as IFileSystemExtensibility;
+
+		extensibility!.StoreMetadata(key, value);
+
+		object? result = extensibility.RetrieveMetadata<object>(key);
+		result.Should().Be(value);
 	}
 
 	[Theory]

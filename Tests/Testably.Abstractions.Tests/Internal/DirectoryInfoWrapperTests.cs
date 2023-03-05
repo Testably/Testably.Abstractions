@@ -17,7 +17,7 @@ public class DirectoryInfoWrapperTests
 
 	[Theory]
 	[AutoData]
-	public void FromDirectoryInfo_ShouldUseFileSystem(string path)
+	public void FromDirectoryInfo_ShouldBePartOfFileSystem(string path)
 	{
 		RealFileSystem fileSystem = new();
 
