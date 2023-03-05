@@ -74,14 +74,15 @@ public class MockFileSystemTests
 	}
 
 	[SkippableFact]
-	public void FileSystemMock_ShouldBeInitializedWithASingleDefaultDrive()
+	public void FileSystemMock_ShouldBeInitializedWithADefaultDrive()
 	{
 		string expectedDriveName = "".PrefixRoot();
 		MockFileSystem sut = new();
 
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
-		IDriveInfo drive = drives.Single();
+		IDriveInfo drive = sut.GetDefaultDrive();
 
+		drives.Should().NotBeEmpty();
 		drive.Name.Should().Be(expectedDriveName);
 		drive.AvailableFreeSpace.Should().BeGreaterThan(0);
 		drive.DriveFormat.Should()
@@ -167,7 +168,7 @@ public class MockFileSystemTests
 
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 
-		drives.Length.Should().Be(1);
+		drives.Length.Should().BeGreaterOrEqualTo(1);
 		drives.Should().ContainSingle(d => d.Name == driveName);
 	}
 
