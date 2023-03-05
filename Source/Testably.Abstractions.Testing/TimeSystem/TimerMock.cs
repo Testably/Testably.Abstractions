@@ -14,7 +14,6 @@ internal sealed class TimerMock : ITimerMock
 	private CountdownEvent? _countdownEvent;
 	private TimeSpan _dueTime;
 	private Exception? _exception;
-	private int _executionCount;
 	private bool _isDisposed;
 	private readonly object _lock = new();
 	private readonly MockTimeSystem _mockTimeSystem;
@@ -100,7 +99,7 @@ internal sealed class TimerMock : ITimerMock
 	{
 		if (_isDisposed)
 		{
-			throw new ObjectDisposedException("Cannot access a disposed object.");
+			throw new ObjectDisposedException(nameof(Change), "Cannot access a disposed object.");
 		}
 
 		if (dueTime.TotalMilliseconds < -1)
@@ -176,7 +175,7 @@ internal sealed class TimerMock : ITimerMock
 
 		try
 		{
-			_countdownEvent = new CountdownEvent(executionCount - _executionCount);
+			_countdownEvent = new CountdownEvent(executionCount);
 		}
 		catch (ArgumentOutOfRangeException)
 		{
@@ -190,8 +189,7 @@ internal sealed class TimerMock : ITimerMock
 
 		if (_countdownEvent?.Wait(timeout) == false)
 		{
-			throw new TimeoutException(
-				$"The execution count {executionCount} was not reached in {timeout}ms.");
+			throw ExceptionFactory.TimerWaitTimeoutException(executionCount, timeout);
 		}
 
 		if (_exception != null)
@@ -232,8 +230,7 @@ internal sealed class TimerMock : ITimerMock
 			{
 				_exception = swallowedException;
 			}
-
-			_executionCount++;
+			
 			if (_countdownEvent?.Signal() == true)
 			{
 				_continueEvent.Wait(cancellationToken);

@@ -70,7 +70,10 @@ public class TimerMockTests
 			timer.Change(0, 0);
 		});
 
-		exception.Should().BeOfType<ObjectDisposedException>();
+		exception.Should().BeOfType<ObjectDisposedException>()
+			.Which.Message.Should().ContainAll(
+				"Cannot access a disposed object.",
+				nameof(ITimer.Change));
 	}
 
 #if FEATURE_ASYNC_DISPOSABLE
@@ -78,7 +81,7 @@ public class TimerMockTests
 	public async Task DisposeAsync_ShouldDisposeTimer()
 	{
 		MockTimeSystem timeSystem = new();
-		using ITimer timer = timeSystem.Timer.New(_ =>
+		await using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 		}, null, 100, 200);
 		await timer.DisposeAsync();
@@ -140,7 +143,9 @@ public class TimerMockTests
 	public void Exception_WhenSwallowExceptionsIsNotSet_ShouldThrowExceptionOnWait()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()
-			.WithTimerStrategy(new TimerStrategy(swallowExceptions: false));
+			.WithTimerStrategy(new TimerStrategy(
+				TimerMode.StartOnMockWait,
+				swallowExceptions: false));
 		Exception expectedException = new("foo");
 		using ITimer timer = timeSystem.Timer.New(
 			_ => throw expectedException, null, 0, 20);
@@ -157,7 +162,9 @@ public class TimerMockTests
 	public void Exception_WhenSwallowExceptionsIsNotSet_ShouldStopTimer()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()
-			.WithTimerStrategy(new TimerStrategy(swallowExceptions: false));
+			.WithTimerStrategy(new TimerStrategy(
+				TimerMode.StartOnMockWait,
+				swallowExceptions: false));
 		Exception expectedException = new("foo");
 		int count = 0;
 		using ITimer timer = timeSystem.Timer.New(
@@ -171,10 +178,10 @@ public class TimerMockTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			Thread.Sleep(10);
 			timeSystem.TimerHandler[0].Wait();
 		});
 
+		Thread.Sleep(10);
 		exception.Should().Be(expectedException);
 		count.Should().Be(1);
 	}
@@ -273,6 +280,35 @@ public class TimerMockTests
 	}
 
 	[Fact]
+	public void Wait_Twice_ShouldContinueExecutionsAfterFirstWait()
+	{
+		int executionCount = 10;
+		MockTimeSystem timeSystem = new MockTimeSystem()
+			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
+		ITimerHandler timerHandler = timeSystem.TimerHandler;
+
+		int count = 0;
+		using ITimer timer = timeSystem.Timer.New(_ =>
+		{
+			count++;
+			_testOutputHelper.WriteLine($"Execute: {count}");
+		}, null, 0, 100);
+
+		_testOutputHelper.WriteLine($"Waiting {executionCount} times...");
+		timerHandler[0].Wait(executionCount, callback: _ =>
+			_testOutputHelper.WriteLine("Waiting completed."));
+		_testOutputHelper.WriteLine($"Waiting {executionCount} times...");
+		timerHandler[0].Wait(executionCount, callback: t =>
+		{
+			_testOutputHelper.WriteLine("Waiting completed.");
+			_testOutputHelper.WriteLine("Disposing...");
+			t.Dispose();
+			_testOutputHelper.WriteLine("Disposed.");
+		}, timeout: 10000);
+		count.Should().BeGreaterOrEqualTo(2 * executionCount);
+	}
+
+	[Fact]
 	public void Wait_WithExecutionCount_ShouldWaitForSpecifiedNumberOfExecutions()
 	{
 		int executionCount = 10;
@@ -293,7 +329,7 @@ public class TimerMockTests
 			_testOutputHelper.WriteLine("Disposing...");
 			t.Dispose();
 			_testOutputHelper.WriteLine("Disposed.");
-		}, timeout: 1000000);
+		}, timeout: 10000);
 		_testOutputHelper.WriteLine("Waiting 100ms...");
 		Thread.Sleep(1000);
 		_testOutputHelper.WriteLine("Waiting completed.");

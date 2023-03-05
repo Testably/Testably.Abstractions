@@ -149,18 +149,12 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 	[SkippableFact]
 	public void New_WithoutPeriod_ShouldNotStartTimer()
 	{
-		int count = 0;
 		ManualResetEventSlim ms = new();
 		using ITimer timer = TimeSystem.Timer.New(_ =>
 		{
-			count++;
-			if (count > 1)
-			{
-				ms.Set();
-			}
+			ms.Set();
 		});
 
 		ms.Wait(300).Should().BeFalse();
-		count.Should().Be(0);
 	}
 }

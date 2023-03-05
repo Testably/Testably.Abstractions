@@ -245,6 +245,9 @@ internal static class ExceptionFactory
 #endif
 		};
 
+	internal static TimeoutException TimerWaitTimeoutException(int executionCount, int timeout)
+		=> new($"The execution count {executionCount} was not reached in {timeout}ms.");
+
 	internal static PlatformNotSupportedException UnixFileModeNotSupportedOnThisPlatform()
 		=> new("Unix file modes are not supported on this platform.")
 		{
