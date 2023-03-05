@@ -19,6 +19,11 @@
 # Generated files
 /Tests/*/Generated
 
+# NCrunch
+*.ncrunchproject
+*.ncrunchsolution
+/.NCrunch_*/StoredText/
+
 ############################################################
 ################## VISUAL STUDIO TEMPLATE ##################
 ############################################################

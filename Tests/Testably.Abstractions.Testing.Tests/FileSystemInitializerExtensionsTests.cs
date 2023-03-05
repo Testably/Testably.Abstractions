@@ -223,11 +223,23 @@ public class FileSystemInitializerExtensionsTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		directoryName = Path.Combine("D:\\", directoryName);
 		MockFileSystem sut = new();
+		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
+		for (char c = 'D'; c <= 'Z'; c++)
+		{
+			if (drives.Any(d => d.Name.StartsWith($"{c}")))
+			{
+				continue;
+			}
+
+			directoryName = Path.Combine($"{c}:\\", directoryName);
+			break;
+		}
+
 		sut.InitializeIn(directoryName);
 
 		sut.Directory.Exists(directoryName).Should().BeTrue();
+		sut.DriveInfo.GetDrives().Length.Should().Be(drives.Length + 1);
 	}
 
 	[Theory]
