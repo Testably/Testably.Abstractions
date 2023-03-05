@@ -210,7 +210,7 @@ public class MockFileSystemTests
 		MockFileSystem sut = new();
 		sut.WithDrive(d => d.SetTotalSize(totalSize));
 
-		IDriveInfo drive = sut.DriveInfo.GetDrives().Single();
+		IDriveInfo drive = sut.GetDefaultDrive();
 
 		drive.TotalSize.Should().Be(totalSize);
 		drive.TotalFreeSpace.Should().Be(totalSize);
@@ -239,11 +239,13 @@ public class MockFileSystemTests
 		MockFileSystem sut = new();
 		string uncPrefix = new(sut.Path.DirectorySeparatorChar, 2);
 		string uncDrive = $"{uncPrefix}{server}";
+		int expectedLogicalDrives = sut.Directory.GetLogicalDrives().Length;
+		int expectedDrives = sut.DriveInfo.GetDrives().Length;
 
 		sut.WithUncDrive(uncDrive);
 
-		sut.Directory.GetLogicalDrives().Length.Should().Be(1);
-		sut.DriveInfo.GetDrives().Length.Should().Be(1);
+		sut.Directory.GetLogicalDrives().Length.Should().Be(expectedLogicalDrives);
+		sut.DriveInfo.GetDrives().Length.Should().Be(expectedDrives);
 	}
 
 	[SkippableTheory]
