@@ -17,7 +17,7 @@ public class FileInfoWrapperTests
 
 	[Theory]
 	[AutoData]
-	public void FromFileInfo_ShouldBeLinkedToFileSystem(string path)
+	public void FromFileInfo_ShouldBePartOfFileSystem(string path)
 	{
 		RealFileSystem fileSystem = new();
 
