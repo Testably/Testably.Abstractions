@@ -91,6 +91,33 @@ public class MockFileSystemTests
 		drive.VolumeLabel.Should().NotBeNullOrEmpty();
 	}
 
+	[SkippableFact]
+	public void FileSystemMock_ShouldInitializeDriveFromCurrentDirectory()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		string driveName = "D:\\";
+
+		Skip.IfNot(Directory.Exists(driveName),
+			$"Skip test, as no alternative drive '{driveName}' is mapped on this computer.");
+
+		string currentDirectory = Directory.GetCurrentDirectory();
+		MockFileSystem sut;
+		try
+		{
+			Directory.SetCurrentDirectory(driveName);
+			sut = new MockFileSystem();
+		}
+		finally
+		{
+			Directory.SetCurrentDirectory(currentDirectory);
+		}
+
+		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
+		drives.Length.Should().Be(2);
+		drives.Should().Contain(d => d.Name == driveName);
+	}
+
 	[SkippableTheory]
 	[AutoData]
 	public void WithAccessControl_Denied_CreateDirectoryShouldThrowIOException(
