@@ -94,24 +94,11 @@ public class MockFileSystemTests
 	[SkippableFact]
 	public void FileSystemMock_ShouldInitializeDriveFromCurrentDirectory()
 	{
-		Skip.IfNot(Test.RunsOnWindows);
+		string? driveName = Path.GetPathRoot(Directory.GetCurrentDirectory());
 
-		string driveName = "D:\\";
+		Skip.If(!Test.RunsOnWindows || driveName?.StartsWith("C") != false);
 
-		Skip.IfNot(Directory.Exists(driveName),
-			$"Skip test, as no alternative drive '{driveName}' is mapped on this computer.");
-
-		string currentDirectory = Directory.GetCurrentDirectory();
-		MockFileSystem sut;
-		try
-		{
-			Directory.SetCurrentDirectory(driveName);
-			sut = new MockFileSystem();
-		}
-		finally
-		{
-			Directory.SetCurrentDirectory(currentDirectory);
-		}
+		MockFileSystem sut = new();
 
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 		drives.Length.Should().Be(2);
