@@ -110,8 +110,10 @@ public static class FileSystemInitializerExtensions
 			int lastSeparator = fileName.LastIndexOf(Path.DirectorySeparatorChar);
 			if (lastSeparator > 0)
 			{
+				#pragma warning disable CA1845
 				fileName = fileName.Substring(0, lastSeparator) + "." +
 				           fileName.Substring(lastSeparator + 1);
+				#pragma warning restore CA1845
 			}
 
 			if (relativePath != null)
@@ -124,11 +126,13 @@ public static class FileSystemInitializerExtensions
 				fileName = fileName.Substring(relativePath.Length);
 			}
 
+			#pragma warning disable CA2249 // string.Contains with char is not supported on netstandard2.0
 			if (!enumerationOptions.RecurseSubdirectories &&
 			    fileName.IndexOf(Path.DirectorySeparatorChar) >= 0)
 			{
 				continue;
 			}
+			#pragma warning restore CA2249
 
 			if (EnumerationOptionsHelper.MatchesPattern(enumerationOptions,
 				fileName, searchPattern))
