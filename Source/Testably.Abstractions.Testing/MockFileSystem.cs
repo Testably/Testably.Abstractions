@@ -154,7 +154,7 @@ public sealed class MockFileSystem : IFileSystem
 
 	private void AddDriveFromCurrentDirectory()
 	{
-		string? root = Path.GetPathRoot(Directory.GetCurrentDirectory());
+		string? root = Path.GetPathRoot(System.IO.Directory.GetCurrentDirectory());
 		if (root != null &&
 		    root[0] != _storage.MainDrive.Name[0])
 		{

@@ -49,6 +49,7 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 			lastAccessTime.Should()
 				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
+
 		lastWriteTime.Should()
 			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			.BeOnOrBefore(creationTimeEnd);
@@ -134,7 +135,7 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 			lastAccessTime.Should()
 				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
-		
+
 		lastWriteTime.Should()
 			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			.BeOnOrBefore(creationTimeEnd);

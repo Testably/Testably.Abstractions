@@ -4,6 +4,7 @@ using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
+[Collection(nameof(IDirectoryCleaner))]
 public sealed class FileSystemWatcherMockTests : IDisposable
 {
 	/// <summary>

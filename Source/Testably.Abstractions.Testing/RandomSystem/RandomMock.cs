@@ -26,12 +26,12 @@ internal sealed class RandomMock : IRandom
 	///     - <paramref name="byteGenerator" />: The generator for <c>byte[]</c> values.
 	/// </summary>
 #else
-		/// <summary>
-		///	 Initializes a new instance of <see cref="RandomMock" /> which allows specifying explicit generators:<br />
-		///	 - <paramref name="intGenerator" />: The generator for <c>int</c> values.
-		///	 - <paramref name="doubleGenerator" />: The generator for <c>double</c> values.
-		///	 - <paramref name="byteGenerator" />: The generator for <c>byte[]</c> values.
-		/// </summary>
+	/// <summary>
+	///     Initializes a new instance of <see cref="RandomMock" /> which allows specifying explicit generators:<br />
+	///     - <paramref name="intGenerator" />: The generator for <c>int</c> values.
+	///     - <paramref name="doubleGenerator" />: The generator for <c>double</c> values.
+	///     - <paramref name="byteGenerator" />: The generator for <c>byte[]</c> values.
+	/// </summary>
 #endif
 	public RandomMock(
 		int seed = SharedSeed,

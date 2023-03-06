@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
@@ -8,6 +10,17 @@ namespace Testably.Abstractions.Testing;
 /// </summary>
 public static class MockFileSystemExtensions
 {
+	/// <summary>
+	///     Returns the default drive in the <paramref name="mockFileSystem" />.
+	/// </summary>
+	public static IDriveInfo GetDefaultDrive(this MockFileSystem mockFileSystem)
+	{
+		string driveName = "".PrefixRoot();
+		return mockFileSystem.DriveInfo
+			.GetDrives()
+			.First(d => d.Name.StartsWith(driveName));
+	}
+
 	/// <summary>
 	///     Changes the parameters of the default drive (e.g. 'C:\' on Windows or '/' on Linux)
 	/// </summary>

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Win32.SafeHandles;
-using System.Diagnostics.CodeAnalysis;
 using Testably.Abstractions.Testing.Helpers;
+#if NET6_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 
 namespace Testably.Abstractions.Testing.FileSystem;
 

@@ -36,7 +36,8 @@ public abstract partial class FileSystemTests<TFileSystem>
 	{
 		IFileInfo entity = FileSystem.FileInfo.New(name);
 		IFileSystemExtensibility? extensibility = entity as IFileSystemExtensibility;
-		bool result = extensibility?.TryGetWrappedInstance(out System.IO.DirectoryInfo? directoryInfo)
+		bool result = extensibility?.TryGetWrappedInstance(
+			              out System.IO.DirectoryInfo? directoryInfo)
 		              ?? throw new NotSupportedException(
 			              $"{entity.GetType()} does not implement IFileSystemExtensibility");
 
@@ -52,8 +53,8 @@ public abstract partial class FileSystemTests<TFileSystem>
 	{
 		IFileInfo entity = FileSystem.FileInfo.New(name);
 		IFileSystemExtensibility sut = entity as IFileSystemExtensibility
-		                                          ?? throw new NotSupportedException(
-			                                          $"{entity.GetType()} does not implement IFileSystemExtensibility");
+		                               ?? throw new NotSupportedException(
+			                               $"{entity.GetType()} does not implement IFileSystemExtensibility");
 
 		sut.StoreMetadata("foo", time);
 		DateTime? result = sut.RetrieveMetadata<DateTime?>("foo");
@@ -100,9 +101,9 @@ public abstract partial class FileSystemTests<TFileSystem>
 	{
 		IFileInfo entity = FileSystem.FileInfo.New(name);
 		IFileSystemExtensibility extensibility = entity as IFileSystemExtensibility
-		                                          ?? throw new NotSupportedException(
-			                                          $"{entity.GetType()} does not implement IFileSystemExtensibility");
-		
+		                                         ?? throw new NotSupportedException(
+			                                         $"{entity.GetType()} does not implement IFileSystemExtensibility");
+
 		object? result = extensibility.RetrieveMetadata<object?>("foo");
 
 		result.Should().BeNull();

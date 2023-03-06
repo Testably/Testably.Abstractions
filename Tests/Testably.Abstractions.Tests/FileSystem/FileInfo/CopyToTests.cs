@@ -168,6 +168,7 @@ public abstract partial class CopyToTests<TFileSystem>
 			FileSystem.File.GetLastAccessTime(destinationName)
 				.Should().BeOnOrAfter(updatedTime.ApplySystemClockTolerance());
 		}
+
 		FileSystem.File.GetLastWriteTime(destinationName)
 			.Should().Be(sourceLastWriteTime);
 	}
