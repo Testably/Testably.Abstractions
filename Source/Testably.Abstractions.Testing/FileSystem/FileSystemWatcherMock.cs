@@ -305,7 +305,7 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			}
 		});
 		CancellationToken token = cancellationTokenSource.Token;
-		Task.Factory.StartNew(() =>
+		Task.Run(() =>
 				{
 					try
 					{
@@ -324,9 +324,7 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 						//Ignore any exception
 					}
 				},
-				token,
-				TaskCreationOptions.LongRunning,
-				TaskScheduler.Default)
+				token)
 			.ContinueWith(_ =>
 			{
 				cancellationTokenSource.Dispose();
