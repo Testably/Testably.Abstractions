@@ -284,16 +284,17 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			Channel.CreateBounded<ChangeDescription>(channelCapacity);
 		ChannelWriter<ChangeDescription> writer = channel.Writer;
 		ChannelReader<ChangeDescription> reader = channel.Reader;
+		CancellationToken token = cancellationTokenSource.Token;
 		_changeHandler = _fileSystem.Notify.OnEvent(c =>
 		{
-			if (!writer.TryWrite(c))
+			if (!writer.TryWrite(c) &&
+			    !token.IsCancellationRequested)
 			{
 				Error?.Invoke(this, new ErrorEventArgs(
 					ExceptionFactory.InternalBufferOverflowException(
 						InternalBufferSize, channelCapacity)));
 			}
 		});
-		CancellationToken token = cancellationTokenSource.Token;
 		Task.Factory.StartNew(() =>
 				{
 					try

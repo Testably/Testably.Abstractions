@@ -140,8 +140,6 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 	[AutoData]
 	public void InternalBufferSize_ShouldResetQueue(string path1, string path2)
 	{
-		Skip.If(true, "Brittle test fails on build system");
-
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		ManualResetEventSlim block1 = new();
