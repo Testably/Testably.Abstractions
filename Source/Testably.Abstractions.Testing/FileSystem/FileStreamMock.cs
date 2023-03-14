@@ -61,7 +61,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		FileOptions options)
 		: base(
 			stream,
-			path == null ? null : fileSystem.Path.GetFullPath(path),
+			path == null ? "" : fileSystem.Path.GetFullPath(path),
 			(options & FileOptions.Asynchronous) != 0)
 	{
 		ThrowIfInvalidModeAccess(mode, access);
