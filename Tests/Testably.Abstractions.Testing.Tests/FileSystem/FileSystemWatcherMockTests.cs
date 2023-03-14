@@ -140,7 +140,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 	[AutoData]
 	public void InternalBufferSize_ShouldResetQueue(string path1, string path2)
 	{
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		ManualResetEventSlim block1 = new();
 		ManualResetEventSlim block2 = new();
@@ -181,7 +181,6 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		}
 
 		block2.Wait(100).Should().BeFalse();
-		fileSystemWatcher.Dispose();
 		result.Should().BeNull();
 	}
 }

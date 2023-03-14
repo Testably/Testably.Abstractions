@@ -11,7 +11,7 @@ public class NotificationTests
 		MockTimeSystem timeSystem = new();
 		int receivedCount = 0;
 		Notification.IAwaitableCallback<TimeSpan> wait =
-			timeSystem.On.ThreadSleep(t =>
+			timeSystem.On.TaskDelay(t =>
 			{
 				if (t.TotalMilliseconds > 0)
 				{
@@ -21,11 +21,11 @@ public class NotificationTests
 
 		Task.Run(async () =>
 		{
-			await Task.Delay(10);
+			await Task.Delay(10).ConfigureAwait(false);
 			for (int i = 1; i <= 10; i++)
 			{
-				await timeSystem.Task.Delay(i);
-				await Task.Delay(1);
+				await timeSystem.Task.Delay(i).ConfigureAwait(false);
+				await Task.Delay(1).ConfigureAwait(false);
 			}
 		});
 
