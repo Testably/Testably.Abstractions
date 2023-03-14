@@ -36,7 +36,7 @@ public static class FileSystemInitializerExtensions
 
 		fileSystem.Directory.CreateDirectory(basePath);
 		fileSystem.Directory.SetCurrentDirectory(basePath);
-		return new Initializer<TFileSystem>(fileSystem, ".");
+		return new FileSystemInitializer<TFileSystem>(fileSystem, ".");
 	}
 
 	/// <summary>
