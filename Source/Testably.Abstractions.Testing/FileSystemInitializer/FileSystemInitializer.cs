@@ -4,7 +4,7 @@ using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.FileSystemInitializer;
 
-internal class Initializer<TFileSystem>
+internal class FileSystemInitializer<TFileSystem>
 	: IFileSystemInitializer<TFileSystem>
 	where TFileSystem : IFileSystem
 {
@@ -13,20 +13,20 @@ internal class Initializer<TFileSystem>
 	private readonly Dictionary<int, IFileSystemInfo>
 		_initializedFileSystemInfos = new();
 
-	public Initializer(TFileSystem fileSystem, string basePath)
+	public FileSystemInitializer(TFileSystem fileSystem, string basePath)
 	{
 		_basePath = basePath;
 		FileSystem = fileSystem;
 	}
 
-	protected Initializer(Initializer<TFileSystem> parent)
+	protected FileSystemInitializer(FileSystemInitializer<TFileSystem> parent)
 	{
 		FileSystem = parent.FileSystem;
 		_initializedFileSystemInfos = parent._initializedFileSystemInfos;
 		_basePath = parent._basePath;
 	}
 
-	internal Initializer(Initializer<TFileSystem> parent,
+	internal FileSystemInitializer(FileSystemInitializer<TFileSystem> parent,
 		IDirectoryInfo subdirectory)
 	{
 		FileSystem = parent.FileSystem;
@@ -90,6 +90,17 @@ internal class Initializer<TFileSystem>
 				$"The file '{fileInfo.FullName}' already exists!");
 		}
 
+		if (FileSystem.Directory.Exists(fileInfo.FullName))
+		{
+			throw new TestingException(
+				$"A directory '{fileInfo.FullName}' already exists!");
+		}
+
+		if (fileInfo.Directory != null)
+		{
+			FileSystem.Directory.CreateDirectory(fileInfo.Directory.FullName);
+		}
+
 		FileSystem.File.WriteAllText(fileInfo.FullName, null);
 		_initializedFileSystemInfos.Add(
 			_initializedFileSystemInfos.Count,
@@ -111,6 +122,12 @@ internal class Initializer<TFileSystem>
 				$"The directory '{directoryInfo.FullName}' already exists!");
 		}
 
+		if (FileSystem.File.Exists(directoryInfo.FullName))
+		{
+			throw new TestingException(
+				$"A file '{directoryInfo.FullName}' already exists!");
+		}
+
 		FileSystem.Directory.CreateDirectory(directoryInfo.FullName);
 		_initializedFileSystemInfos.Add(
 			_initializedFileSystemInfos.Count,
@@ -118,6 +135,17 @@ internal class Initializer<TFileSystem>
 
 		directoryInfo.Refresh();
 		return new DirectoryInitializer<TFileSystem>(this, directoryInfo);
+	}
+
+	/// <inheritdoc cref="IFileSystemInitializer{TFileSystem}.WithSubdirectories(string[])" />
+	public IFileSystemInitializer<TFileSystem> WithSubdirectories(params string[] paths)
+	{
+		foreach (string directory in paths)
+		{
+			WithSubdirectory(directory);
+		}
+
+		return this;
 	}
 
 	#endregion
