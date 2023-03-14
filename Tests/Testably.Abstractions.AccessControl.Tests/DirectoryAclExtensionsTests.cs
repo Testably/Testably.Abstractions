@@ -1,4 +1,5 @@
 using System.Security.AccessControl;
+using System.Threading.Tasks;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
 
 namespace Testably.Abstractions.AccessControl.Tests;
@@ -96,14 +97,14 @@ public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void SetAccessControl_ShouldNotUpdateTimes()
+	public async Task SetAccessControl_ShouldNotUpdateTimes()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		FileSystem.File.WriteAllText("foo.txt", "abc");
-		TimeSystem.Thread.Sleep(3000);
+		await TimeSystem.Task.Delay(3000);
 		DateTime previousCreationTimeUtc = FileSystem.File.GetCreationTimeUtc("foo.txt");
 		DateTime previousLastAccessTimeUtc = FileSystem.File.GetLastAccessTimeUtc("foo.txt");
 		DateTime previousLastWriteTimeUtc = FileSystem.File.GetLastWriteTimeUtc("foo.txt");

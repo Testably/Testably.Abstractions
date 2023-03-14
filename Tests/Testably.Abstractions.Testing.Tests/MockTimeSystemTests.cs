@@ -70,7 +70,7 @@ public class MockTimeSystemTests
 	}
 
 	[Fact]
-	public void Sleep_LessThanInfinite_ShouldNotThrowException()
+	public void Sleep_LessThanInfinite_ShouldThrowArgumentOutOfRangeException()
 	{
 		MockTimeSystem timeSystem = new();
 		Exception? exception =
@@ -80,7 +80,7 @@ public class MockTimeSystemTests
 	}
 
 	[Fact]
-	public void Sleep_LessThanInfiniteTimeSpan_ShouldNotThrowException()
+	public void Sleep_LessThanInfiniteTimeSpan_ShouldThrowArgumentOutOfRangeException()
 	{
 		MockTimeSystem timeSystem = new();
 		Exception? exception =
