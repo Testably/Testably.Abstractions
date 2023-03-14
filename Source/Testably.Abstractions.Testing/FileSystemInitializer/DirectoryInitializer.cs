@@ -3,11 +3,11 @@
 namespace Testably.Abstractions.Testing.FileSystemInitializer;
 
 internal sealed class DirectoryInitializer<TFileSystem>
-	: Initializer<TFileSystem>,
+	: FileSystemInitializer<TFileSystem>,
 		IFileSystemDirectoryInitializer<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	public DirectoryInitializer(Initializer<TFileSystem> initializer,
+	public DirectoryInitializer(FileSystemInitializer<TFileSystem> initializer,
 		IDirectoryInfo directory)
 		: base(initializer)
 	{
@@ -24,7 +24,7 @@ internal sealed class DirectoryInitializer<TFileSystem>
 	public IFileSystemDirectoryInitializer<TFileSystem> Initialized(
 		Action<IFileSystemInitializer<TFileSystem>> subdirectoryInitializer)
 	{
-		Initializer<TFileSystem> initializer = new(this, Directory);
+		FileSystemInitializer<TFileSystem> initializer = new(this, Directory);
 		subdirectoryInitializer.Invoke(initializer);
 		return this;
 	}
