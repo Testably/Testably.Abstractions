@@ -254,6 +254,15 @@ internal class InMemoryContainer : IStorageContainer
 			attributes |= FileAttributes.Encrypted;
 		}
 
+		if (Type == FileSystemTypes.Directory)
+		{
+			attributes |= FileAttributes.Directory;
+		}
+		else if (Type == FileSystemTypes.File)
+		{
+			attributes &= ~FileAttributes.Directory;
+		}
+
 		if (attributes == 0)
 		{
 			return FileAttributes.Normal;

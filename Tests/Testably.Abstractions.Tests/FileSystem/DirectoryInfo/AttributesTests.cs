@@ -9,6 +9,20 @@ public abstract partial class AttributesTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
+	public void Attributes_ClearAllAttributes_ShouldRemainDirectory(string path)
+	{
+		FileSystem.Directory.CreateDirectory(path);
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+
+		sut.Attributes = 0;
+
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
+		sut.Attributes.Should().HaveFlag(FileAttributes.Directory);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Attributes_WhenFileIsExisting_SetterShouldChangeAttributesOnFileSystem(
 		string path, FileAttributes attributes)
 	{

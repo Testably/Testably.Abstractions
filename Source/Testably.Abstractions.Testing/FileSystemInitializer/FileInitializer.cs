@@ -3,11 +3,11 @@
 namespace Testably.Abstractions.Testing.FileSystemInitializer;
 
 internal sealed class FileInitializer<TFileSystem>
-	: Initializer<TFileSystem>,
+	: FileSystemInitializer<TFileSystem>,
 		IFileSystemFileInitializer<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	public FileInitializer(Initializer<TFileSystem> initializer,
+	public FileInitializer(FileSystemInitializer<TFileSystem> initializer,
 		IFileInfo file)
 		: base(initializer)
 	{
