@@ -49,4 +49,10 @@ public interface IFileSystemInitializer<out TFileSystem>
 	/// </summary>
 	IFileSystemDirectoryInitializer<TFileSystem> WithSubdirectory(
 		string directoryName);
+
+	/// <summary>
+	///     Initializes the <see cref="IFileSystem" /> with all given subdirectory <paramref name="paths" />.
+	/// </summary>
+	IFileSystemInitializer<TFileSystem> WithSubdirectories(
+		params string[] paths);
 }
