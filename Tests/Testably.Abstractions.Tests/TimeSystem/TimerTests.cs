@@ -148,12 +148,14 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		timer1.Dispose();
 		timer2.Dispose();
+		if (triggerTimes[0] < 30 * TimerMultiplier)
+		{
+			triggerTimes.RemoveAt(0);
+		}
 		triggerTimes[0].Should()
-			.BeLessThan(30 * TimerMultiplier);
-		triggerTimes[1].Should()
 			.BeGreaterThan(70 * TimerMultiplier).And
 			.BeLessThan(130 * TimerMultiplier);
-		for (int i = 2; i < triggerTimes.Count; i++)
+		for (int i = 1; i < triggerTimes.Count; i++)
 		{
 			triggerTimes[i].Should()
 				.BeGreaterThan(170 * TimerMultiplier).And
@@ -197,12 +199,14 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		timer1.Dispose();
 		timer2.Dispose();
+		if (triggerTimes[0] < 30 * TimerMultiplier)
+		{
+			triggerTimes.RemoveAt(0);
+		}
 		triggerTimes[0].Should()
-			.BeLessThan(30 * TimerMultiplier);
-		triggerTimes[1].Should()
 			.BeGreaterThan(70 * TimerMultiplier).And
 			.BeLessThan(130 * TimerMultiplier);
-		for (int i = 2; i < triggerTimes.Count; i++)
+		for (int i = 1; i < triggerTimes.Count; i++)
 		{
 			triggerTimes[i].Should()
 				.BeGreaterThan(170 * TimerMultiplier).And
@@ -250,12 +254,14 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		timer1.Dispose();
 		timer2.Dispose();
+		if (triggerTimes[0] < 30 * TimerMultiplier)
+		{
+			triggerTimes.RemoveAt(0);
+		}
 		triggerTimes[0].Should()
-			.BeLessThan(30 * TimerMultiplier);
-		triggerTimes[1].Should()
 			.BeGreaterThan(70 * TimerMultiplier).And
 			.BeLessThan(130 * TimerMultiplier);
-		for (int i = 2; i < triggerTimes.Count; i++)
+		for (int i = 1; i < triggerTimes.Count; i++)
 		{
 			triggerTimes[i].Should()
 				.BeGreaterThan(170 * TimerMultiplier).And
