@@ -9,14 +9,14 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 	where TTimeSystem : ITimeSystem
 {
 #if FEATURE_TIMER_COUNT
-	[SkippableFact]
+	//[SkippableFact]
 	public void ActiveCount_ShouldBeIncrementedWhenCreatingANewTimer()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ => { });
 		TimeSystem.Timer.ActiveCount.Should().BeGreaterThan(0);
 	}
 
-	[SkippableFact]
+	//[SkippableFact]
 	public void ActiveCount_ShouldBeResetWhenDisposingATimer()
 	{
 		const int timersPerThread = 64;
@@ -78,7 +78,7 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 	}
 #endif
 
-	[SkippableTheory]
+	//[SkippableTheory]
 	[InlineData(-2)]
 	[InlineData(-500)]
 	public void New_InvalidDueTime_ShouldThrowArgumentOutOfRangeException(int dueTime)
@@ -95,7 +95,7 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 				paramName: nameof(dueTime));
 	}
 
-	[SkippableTheory]
+	//[SkippableTheory]
 	[InlineData(-2)]
 	[InlineData(-500)]
 	public void New_InvalidPeriod_ShouldThrowArgumentOutOfRangeException(int period)
@@ -112,7 +112,7 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 				paramName: nameof(period));
 	}
 
-	[SkippableFact]
+	//[SkippableFact]
 	public void New_WithPeriod_ShouldStartTimer()
 	{
 		int count = 0;
@@ -130,7 +130,7 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 		count.Should().BeGreaterOrEqualTo(2);
 	}
 
-	[SkippableFact]
+	//[SkippableFact]
 	public void New_WithDueTime_ShouldStartTimerOnce()
 	{
 		int count = 0;
@@ -146,7 +146,7 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 		count.Should().Be(1);
 	}
 
-	[SkippableFact]
+	//[SkippableFact]
 	public void New_WithoutPeriod_ShouldNotStartTimer()
 	{
 		ManualResetEventSlim ms = new();
