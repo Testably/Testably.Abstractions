@@ -122,7 +122,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		ManualResetEventSlim ms = new();
 		ManualResetEventSlim ms2 = new();
 		ManualResetEventSlim ms3 = new();
-		using ITimer timer = TimeSystem.Timer.New(_ =>
+		using ITimer timer1 = TimeSystem.Timer.New(_ =>
 		{
 			DateTime now = TimeSystem.DateTime.Now;
 			double diff = (now - previousTime).TotalMilliseconds;
@@ -134,17 +134,20 @@ public abstract partial class TimerTests<TTimeSystem>
 			{
 				ms3.Set();
 			}
+			Thread.Sleep(10);
 		}, null, 0 * TimerMultiplier, 200 * TimerMultiplier);
 		ms.Wait(30000).Should().BeTrue();
 		using ITimer timer2 = TimeSystem.Timer.New(_ =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			timer.Change(0 * TimerMultiplier, 200 * TimerMultiplier);
+			timer1.Change(0 * TimerMultiplier, 200 * TimerMultiplier);
 			ms2.Set();
 		}, null, 100 * TimerMultiplier, 0 * TimerMultiplier);
 
 		ms3.Wait(10000 * TimerMultiplier);
 
+		timer1.Dispose();
+		timer2.Dispose();
 		triggerTimes[0].Should()
 			.BeLessThan(30 * TimerMultiplier);
 		triggerTimes[1].Should()
@@ -168,7 +171,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		ManualResetEventSlim ms = new();
 		ManualResetEventSlim ms2 = new();
 		ManualResetEventSlim ms3 = new();
-		using ITimer timer = TimeSystem.Timer.New(_ =>
+		using ITimer timer1 = TimeSystem.Timer.New(_ =>
 		{
 			DateTime now = TimeSystem.DateTime.Now;
 			double diff = (now - previousTime).TotalMilliseconds;
@@ -180,17 +183,20 @@ public abstract partial class TimerTests<TTimeSystem>
 			{
 				ms3.Set();
 			}
+			Thread.Sleep(10);
 		}, null, 0L * TimerMultiplier, 200L * TimerMultiplier);
 		ms.Wait(30000).Should().BeTrue();
 		using ITimer timer2 = TimeSystem.Timer.New(_ =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			timer.Change(0L * TimerMultiplier, 200L * TimerMultiplier);
+			timer1.Change(0L * TimerMultiplier, 200L * TimerMultiplier);
 			ms2.Set();
 		}, null, 100L * TimerMultiplier, 0L * TimerMultiplier);
 
 		ms3.Wait(10000);
 
+		timer1.Dispose();
+		timer2.Dispose();
 		triggerTimes[0].Should()
 			.BeLessThan(30 * TimerMultiplier);
 		triggerTimes[1].Should()
@@ -214,7 +220,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		ManualResetEventSlim ms = new();
 		ManualResetEventSlim ms2 = new();
 		ManualResetEventSlim ms3 = new();
-		using ITimer timer = TimeSystem.Timer.New(_ =>
+		using ITimer timer1 = TimeSystem.Timer.New(_ =>
 			{
 				DateTime now = TimeSystem.DateTime.Now;
 				double diff = (now - previousTime).TotalMilliseconds;
@@ -226,13 +232,15 @@ public abstract partial class TimerTests<TTimeSystem>
 				{
 					ms3.Set();
 				}
+
+				Thread.Sleep(10);
 			}, null, TimeSpan.FromMilliseconds(0 * TimerMultiplier),
 			TimeSpan.FromMilliseconds(200 * TimerMultiplier));
 		ms.Wait(30000).Should().BeTrue();
 		using ITimer timer2 = TimeSystem.Timer.New(_ =>
 			{
 				// ReSharper disable once AccessToDisposedClosure
-				timer.Change(TimeSpan.FromMilliseconds(0 * TimerMultiplier),
+				timer1.Change(TimeSpan.FromMilliseconds(0 * TimerMultiplier),
 					TimeSpan.FromMilliseconds(200 * TimerMultiplier));
 				ms2.Set();
 			}, null, TimeSpan.FromMilliseconds(100 * TimerMultiplier),
@@ -240,6 +248,8 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		ms3.Wait(10000);
 
+		timer1.Dispose();
+		timer2.Dispose();
 		triggerTimes[0].Should()
 			.BeLessThan(30 * TimerMultiplier);
 		triggerTimes[1].Should()
