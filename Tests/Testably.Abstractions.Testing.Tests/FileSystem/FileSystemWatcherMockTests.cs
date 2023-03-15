@@ -135,4 +135,51 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		fileSystemWatcher.Filter.Should().Be(expectedFilter);
 	}
 #endif
+
+	[SkippableTheory]
+	[AutoData]
+	public void InternalBufferSize_ShouldResetQueue(string path1, string path2)
+	{
+		Skip.If(true, "Brittle test fails on build system (disabled in #284)");
+
+		using IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+		ManualResetEventSlim block1 = new();
+		ManualResetEventSlim block2 = new();
+		ErrorEventArgs? result = null;
+		fileSystemWatcher.Error += (_, eventArgs) =>
+		{
+			result = eventArgs;
+			block1.Set();
+			block2.Set();
+		};
+		fileSystemWatcher.Created += (_, _) =>
+		{
+			block1.Wait(100);
+		};
+		fileSystemWatcher.EnableRaisingEvents = true;
+		FileSystem.Directory.CreateDirectory(path1);
+		for (int i = 0; i < DefaultMaxMessages; i++)
+		{
+			if (block1.IsSet)
+			{
+				break;
+			}
+			FileSystem.Directory.CreateDirectory($"{i}_{path1}");
+		}
+		fileSystemWatcher.InternalBufferSize = 4196;
+		FileSystem.Directory.CreateDirectory(path2);
+		for (int i = 0; i < 4196 / 128; i++)
+		{
+			if (block1.IsSet)
+			{
+				break;
+			}
+			FileSystem.Directory.CreateDirectory($"{i}_{path2}");
+		}
+
+		block2.Wait(100).Should().BeFalse();
+		fileSystemWatcher.Dispose();
+		result.Should().BeNull();
+	}
 }
