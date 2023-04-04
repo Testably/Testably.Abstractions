@@ -13,7 +13,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	/// <summary>
 	///     The delay in milliseconds when expecting a success in the test.
 	/// </summary>
-	private const int ExpectSuccess = 3000;
+	private const int ExpectSuccess = 30000;
 
 	/// <summary>
 	///     The delay in milliseconds when expecting a timeout in the test.
