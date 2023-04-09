@@ -11,7 +11,7 @@ public abstract partial class TimerTests<TTimeSystem>
 {
 	private const int TimerMultiplier = 10;
 
-	//[SkippableFact]
+	[SkippableFact]
 	public void Change_DisposedTimer_ShouldThrowObjectDisposedException()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -28,7 +28,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		exception.Should().BeOfType<ObjectDisposedException>();
 	}
 
-	//[SkippableFact]
+	[SkippableFact]
 	public void Change_Infinite_ShouldBeValidDueTime()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -44,7 +44,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		exception.Should().BeNull();
 	}
 
-	//[SkippableFact]
+	[SkippableFact]
 	public void Change_Infinite_ShouldBeValidPeriod()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -60,7 +60,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		exception.Should().BeNull();
 	}
 
-	//[SkippableTheory]
+	[SkippableTheory]
 	[InlineData(-2)]
 	[InlineData(-500)]
 	public void Change_InvalidDueTime_ShouldThrowArgumentOutOfRangeException(int dueTime)
@@ -80,7 +80,7 @@ public abstract partial class TimerTests<TTimeSystem>
 				paramName: nameof(dueTime));
 	}
 
-	//[SkippableTheory]
+	[SkippableTheory]
 	[InlineData(-2)]
 	[InlineData(-500)]
 	public void Change_InvalidPeriod_ShouldThrowArgumentOutOfRangeException(int period)
@@ -100,7 +100,7 @@ public abstract partial class TimerTests<TTimeSystem>
 				paramName: nameof(period));
 	}
 
-	//[SkippableFact]
+	[SkippableFact]
 	public void Change_SameValues_ShouldReturnTrue()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -112,7 +112,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		result.Should().BeTrue();
 	}
 
-	//[SkippableFact]
+	[SkippableFact]
 	public void Change_WithInt_ShouldResetTimer()
 	{
 		Test.SkipBrittleTestsOnRealTimeSystem(TimeSystem);
@@ -163,7 +163,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		}
 	}
 
-	//[SkippableFact]
+	[SkippableFact]
 	public void Change_WithLong_ShouldResetTimer()
 	{
 		Test.SkipBrittleTestsOnRealTimeSystem(TimeSystem);
@@ -214,7 +214,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		}
 	}
 
-	//[SkippableFact]
+	[SkippableFact]
 	public void Change_WithTimeSpan_ShouldResetTimer()
 	{
 		Test.SkipBrittleTestsOnRealTimeSystem(TimeSystem);
@@ -269,7 +269,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		}
 	}
 
-	//[SkippableFact]
+	[SkippableFact]
 	public void Dispose_WithManualResetEventWaitHandle_ShouldBeSet()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -285,7 +285,7 @@ public abstract partial class TimerTests<TTimeSystem>
 			.Should().BeOfType<ObjectDisposedException>();
 	}
 
-	//[SkippableFact]
+	[SkippableFact]
 	public void Dispose_WithMutexWaitHandle_ShouldBeSet()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -301,7 +301,7 @@ public abstract partial class TimerTests<TTimeSystem>
 			.Should().BeOfType<ObjectDisposedException>();
 	}
 
-	//[SkippableFact]
+	[SkippableFact]
 	public void Dispose_WithSemaphoreWaitHandle_ShouldBeSet()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
@@ -317,7 +317,7 @@ public abstract partial class TimerTests<TTimeSystem>
 			.Should().BeOfType<ObjectDisposedException>();
 	}
 
-	//[SkippableFact]
+	[SkippableFact]
 	public void Dispose_WithWaitHandleCalledTwice_ShouldReturnFalse()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>

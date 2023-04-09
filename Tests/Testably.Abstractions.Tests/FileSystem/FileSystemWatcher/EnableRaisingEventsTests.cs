@@ -13,7 +13,7 @@ public abstract partial class EnableRaisingEventsTests<TFileSystem>
 	{
 		FileSystem.Initialize().WithSubdirectory(path1).WithSubdirectory(path2);
 		ManualResetEventSlim ms = new();
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, _) =>
 		{
@@ -36,7 +36,7 @@ public abstract partial class EnableRaisingEventsTests<TFileSystem>
 	{
 		FileSystem.Initialize().WithSubdirectory(path);
 		ManualResetEventSlim ms = new();
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, _) =>
 		{

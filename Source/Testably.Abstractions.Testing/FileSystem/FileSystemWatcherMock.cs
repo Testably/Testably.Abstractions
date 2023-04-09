@@ -317,7 +317,13 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				TaskScheduler.Default)
 			.ContinueWith(_ =>
 			{
-				cancellationTokenSource.Dispose();
+				if (channel.Writer.TryComplete())
+				{
+					channel.Reader.Completion.ContinueWith(_ =>
+					{
+						cancellationTokenSource.Dispose();
+					}, CancellationToken.None);
+				}
 			}, TaskScheduler.Default);
 	}
 
