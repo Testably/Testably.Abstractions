@@ -17,7 +17,7 @@ public abstract partial class ReadAllTextAsyncTests<TFileSystem>
 	public async Task ReadAllTextAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path)
 	{
-		CancellationTokenSource cts = new();
+		using CancellationTokenSource cts = new();
 		cts.Cancel();
 
 		Exception? exception = await Record.ExceptionAsync(() =>
@@ -32,7 +32,7 @@ public abstract partial class ReadAllTextAsyncTests<TFileSystem>
 		ReadAllTextAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
 			string path)
 	{
-		CancellationTokenSource cts = new();
+		using CancellationTokenSource cts = new();
 		cts.Cancel();
 
 		Exception? exception = await Record.ExceptionAsync(() =>

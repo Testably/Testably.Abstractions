@@ -16,7 +16,7 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 	public async Task WriteAllTextAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path, string? contents)
 	{
-		CancellationTokenSource cts = new();
+		using CancellationTokenSource cts = new();
 		cts.Cancel();
 
 		Exception? exception = await Record.ExceptionAsync(() =>
@@ -31,7 +31,7 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 		WriteAllTextAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
 			string path, string? contents)
 	{
-		CancellationTokenSource cts = new();
+		using CancellationTokenSource cts = new();
 		cts.Cancel();
 
 		Exception? exception = await Record.ExceptionAsync(() =>

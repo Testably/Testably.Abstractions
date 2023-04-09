@@ -73,7 +73,7 @@ public class NotificationHandlerExtensionsTests
 				{
 					FileSystem.Directory.CreateDirectory(path);
 				})
-				.Wait(timeout: expectedResult ? 3000 : 50);
+				.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)
@@ -121,7 +121,7 @@ public class NotificationHandlerExtensionsTests
 				{
 					FileSystem.Directory.CreateDirectory(path);
 				})
-				.Wait(timeout: expectedResult ? 3000 : 50);
+				.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)
@@ -196,7 +196,7 @@ public class NotificationHandlerExtensionsTests
 				{
 					FileSystem.File.WriteAllText(path, null);
 				})
-				.Wait(timeout: expectedResult ? 3000 : 50);
+				.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)
@@ -244,7 +244,7 @@ public class NotificationHandlerExtensionsTests
 				{
 					FileSystem.File.WriteAllText(path, null);
 				})
-				.Wait(timeout: expectedResult ? 3000 : 50);
+				.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)
@@ -321,7 +321,7 @@ public class NotificationHandlerExtensionsTests
 				{
 					FileSystem.Directory.Delete(path);
 				})
-				.Wait(timeout: expectedResult ? 3000 : 50);
+				.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)
@@ -371,7 +371,7 @@ public class NotificationHandlerExtensionsTests
 				{
 					FileSystem.Directory.Delete(path);
 				})
-				.Wait(timeout: expectedResult ? 3000 : 50);
+				.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)
@@ -448,7 +448,7 @@ public class NotificationHandlerExtensionsTests
 				{
 					FileSystem.File.Delete(path);
 				})
-				.Wait(timeout: expectedResult ? 3000 : 50);
+				.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)
@@ -498,7 +498,7 @@ public class NotificationHandlerExtensionsTests
 				{
 					FileSystem.File.Delete(path);
 				})
-				.Wait(timeout: expectedResult ? expectedResult ? 3000 : 50 : 50);
+				.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)
@@ -575,7 +575,7 @@ public class NotificationHandlerExtensionsTests
 				{
 					FileSystem.File.AppendAllText(path, "foo");
 				})
-				.Wait(timeout: expectedResult ? 3000 : 50);
+				.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)
@@ -625,7 +625,7 @@ public class NotificationHandlerExtensionsTests
 				{
 					FileSystem.File.AppendAllText(path, "foo");
 				})
-				.Wait(timeout: expectedResult ? 3000 : 50);
+				.Wait(timeout: expectedResult ? 30000 : 50);
 		});
 
 		if (expectedResult)

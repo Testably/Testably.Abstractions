@@ -10,7 +10,7 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableFact]
 	public void New_ShouldInitializeWithDefaultValues()
 	{
-		IFileSystemWatcher result =
+		using IFileSystemWatcher result =
 			FileSystem.FileSystemWatcher.New();
 
 		result.Path.Should().Be("");
@@ -32,7 +32,7 @@ public abstract partial class Tests<TFileSystem>
 	public void New_WithPath_ShouldInitializeWithDefaultValues(string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
-		IFileSystemWatcher result =
+		using IFileSystemWatcher result =
 			FileSystem.FileSystemWatcher.New(path);
 
 		result.Path.Should().Be(path);
@@ -55,7 +55,7 @@ public abstract partial class Tests<TFileSystem>
 		string path, string filter)
 	{
 		FileSystem.Directory.CreateDirectory(path);
-		IFileSystemWatcher result =
+		using IFileSystemWatcher result =
 			FileSystem.FileSystemWatcher.New(path, filter);
 
 		result.Path.Should().Be(path);
@@ -71,7 +71,7 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableFact]
 	public void Wrap_Null_ShouldReturnNull()
 	{
-		IFileSystemWatcher? result = FileSystem.FileSystemWatcher.Wrap(null);
+		using IFileSystemWatcher? result = FileSystem.FileSystemWatcher.Wrap(null);
 
 		result.Should().BeNull();
 	}
