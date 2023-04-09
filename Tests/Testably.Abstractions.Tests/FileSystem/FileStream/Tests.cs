@@ -196,7 +196,7 @@ public abstract partial class Tests<TFileSystem>
 	public async Task FlushAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path)
 	{
-		CancellationTokenSource cts = new();
+		using CancellationTokenSource cts = new();
 		cts.Cancel();
 
 		Exception? exception = await Record.ExceptionAsync(async () =>

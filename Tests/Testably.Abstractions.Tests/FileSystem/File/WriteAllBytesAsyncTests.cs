@@ -17,7 +17,7 @@ public abstract partial class WriteAllBytesAsyncTests<TFileSystem>
 	public async Task WriteAllBytesAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path, byte[] bytes)
 	{
-		CancellationTokenSource cts = new();
+		using CancellationTokenSource cts = new();
 		cts.Cancel();
 
 		Exception? exception = await Record.ExceptionAsync(() =>

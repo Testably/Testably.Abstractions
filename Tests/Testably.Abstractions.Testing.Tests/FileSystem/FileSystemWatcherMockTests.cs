@@ -163,12 +163,9 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			{
 				break;
 			}
-
 			FileSystem.Directory.CreateDirectory($"{i}_{path1}");
 		}
-
 		fileSystemWatcher.InternalBufferSize = 4196;
-
 		FileSystem.Directory.CreateDirectory(path2);
 		for (int i = 0; i < 4196 / 128; i++)
 		{
@@ -176,7 +173,6 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			{
 				break;
 			}
-
 			FileSystem.Directory.CreateDirectory($"{i}_{path2}");
 		}
 
