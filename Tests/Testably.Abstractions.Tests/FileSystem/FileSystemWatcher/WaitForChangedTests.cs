@@ -44,7 +44,7 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 
 		FileSystem.Initialize();
 		ManualResetEventSlim ms = new();
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		try
 		{
@@ -85,7 +85,7 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 
 		FileSystem.Initialize();
 		ManualResetEventSlim ms = new();
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		try
 		{

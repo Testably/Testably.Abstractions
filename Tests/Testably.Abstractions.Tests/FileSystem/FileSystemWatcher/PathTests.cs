@@ -9,11 +9,12 @@ public abstract partial class PathTests<TFileSystem>
 	[AutoData]
 	public void Path_SetToNotExistingPath_ShouldThrowArgumentException(string path)
 	{
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();
 
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			fileSystemWatcher.Path = path;
 		});
 
@@ -25,11 +26,12 @@ public abstract partial class PathTests<TFileSystem>
 	[SkippableFact]
 	public void Path_Null_ShouldNotThrowException()
 	{
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();
 
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			fileSystemWatcher.Path = null!;
 		});
 
@@ -39,11 +41,12 @@ public abstract partial class PathTests<TFileSystem>
 	[SkippableFact]
 	public void Path_Empty_ShouldNotThrowException()
 	{
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();
 
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			fileSystemWatcher.Path = "";
 		});
 
@@ -53,11 +56,12 @@ public abstract partial class PathTests<TFileSystem>
 	[SkippableFact]
 	public void Path_Whitespace_ShouldThrowArgumentException()
 	{
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();
 
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			fileSystemWatcher.Path = "  ";
 		});
 

@@ -292,12 +292,19 @@ internal sealed class TimerMock : ITimerMock
 
 	private void Stop()
 	{
-		lock (_lock)
+		try
 		{
-			if (_cancellationTokenSource is { IsCancellationRequested: false })
+			lock (_lock)
 			{
-				_cancellationTokenSource?.Cancel();
+				if (_cancellationTokenSource is { IsCancellationRequested: false })
+				{
+					_cancellationTokenSource?.Cancel();
+				}
 			}
+		}
+		catch (ObjectDisposedException)
+		{
+			// Ignore if the cancellationTokenSource is already disposed.
 		}
 	}
 }

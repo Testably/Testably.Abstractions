@@ -15,7 +15,7 @@ public abstract partial class ReadAllBytesAsyncTests<TFileSystem>
 	public async Task ReadAllBytesAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path)
 	{
-		CancellationTokenSource cts = new();
+		using CancellationTokenSource cts = new();
 		cts.Cancel();
 
 		Exception? exception = await Record.ExceptionAsync(() =>
