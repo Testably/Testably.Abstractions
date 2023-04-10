@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Testably.Abstractions.RandomSystem;
 
 namespace Testably.Abstractions.Tests.RandomSystem;
 
@@ -46,5 +47,14 @@ public abstract partial class RandomFactoryTests<TRandomSystem>
 		}
 
 		results.Should().OnlyHaveUniqueItems();
+	}
+
+	[SkippableFact]
+	public void Shared_ShouldReturnSameReference()
+	{
+		IRandom shared1 = RandomSystem.Random.Shared;
+		IRandom shared2 = RandomSystem.Random.Shared;
+
+		shared1.Should().Be(shared2);
 	}
 }
