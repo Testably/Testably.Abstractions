@@ -165,6 +165,16 @@ public class InMemoryStorageTests
 	}
 
 	[Theory]
+	[InlineData((string?)null)]
+	[InlineData("")]
+	public void GetDrive_NullOrEmpty_ShouldReturnNull(string? driveName)
+	{
+		IStorageDrive? result = Storage.GetDrive(driveName);
+
+		result.Should().BeNull();
+	}
+
+	[Theory]
 	[AutoData]
 	public void TryAddContainer_ShouldNotifyWhenAdded(string path)
 	{
