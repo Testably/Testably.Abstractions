@@ -179,7 +179,6 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		}
 
 		block2.Wait(100).Should().BeFalse();
-		fileSystemWatcher.Dispose();
 		result.Should().BeNull();
 	}
 }
