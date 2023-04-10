@@ -45,57 +45,6 @@ public class InMemoryStorageTests
 			.Be(availableFreeSpaceBefore + file2Size - file1Size);
 	}
 
-	[Theory]
-	[AutoData]
-	public void Replace_WithoutBackup_ShouldNotChangeAvailableFreeSpace(
-		int file1Size, int file2Size)
-	{
-		MockFileSystem fileSystem = new();
-		IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot());
-		IRandom random = RandomFactory.Shared;
-		byte[] file1Content = new byte[file1Size];
-		byte[] file2Content = new byte[file2Size];
-		random.NextBytes(file1Content);
-		random.NextBytes(file2Content);
-
-		fileSystem.File.WriteAllBytes("foo", file1Content);
-		fileSystem.File.WriteAllBytes("bar", file2Content);
-		long availableFreeSpaceBefore = mainDrive.AvailableFreeSpace;
-
-		fileSystem.File.Replace("foo", "bar", "backup");
-
-		long availableFreeSpaceAfter = mainDrive.AvailableFreeSpace;
-		availableFreeSpaceAfter.Should()
-			.Be(availableFreeSpaceBefore);
-	}
-
-	[Theory]
-	[AutoData]
-	public void Replace_WithBackup_ShouldChangeAvailableFreeSpace(
-		int file1Size, int file2Size, int file3Size)
-	{
-		MockFileSystem fileSystem = new();
-		IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot());
-		IRandom random = RandomFactory.Shared;
-		byte[] file1Content = new byte[file1Size];
-		byte[] file2Content = new byte[file2Size];
-		byte[] file3Content = new byte[file3Size];
-		random.NextBytes(file1Content);
-		random.NextBytes(file2Content);
-		random.NextBytes(file3Content);
-
-		fileSystem.File.WriteAllBytes("foo", file1Content);
-		fileSystem.File.WriteAllBytes("bar", file2Content);
-		fileSystem.File.WriteAllBytes("backup", file3Content);
-		long availableFreeSpaceBefore = mainDrive.AvailableFreeSpace;
-
-		fileSystem.File.Replace("foo", "bar", "backup", true);
-
-		long availableFreeSpaceAfter = mainDrive.AvailableFreeSpace;
-		availableFreeSpaceAfter.Should()
-			.Be(availableFreeSpaceBefore + file2Size);
-	}
-
 	[Fact]
 	public void CurrentDirectory_ShouldBeInitializedToDefaultRoot()
 	{
@@ -127,6 +76,16 @@ public class InMemoryStorageTests
 	}
 
 	[Theory]
+	[InlineData((string?)null)]
+	[InlineData("")]
+	public void GetDrive_NullOrEmpty_ShouldReturnNull(string? driveName)
+	{
+		IStorageDrive? result = Storage.GetDrive(driveName);
+
+		result.Should().BeNull();
+	}
+
+	[Theory]
 	[AutoData]
 	public void Move_RequestDeniedForChild_ShouldRollback(
 		string locationPath, string destinationPath)
@@ -134,9 +93,9 @@ public class InMemoryStorageTests
 		IStorageLocation location = Storage.GetLocation(locationPath);
 		IStorageLocation destination = Storage.GetLocation(destinationPath);
 		IStorageLocation child1Location =
-			Storage.GetLocation(Path.Combine(locationPath, "foo"));
+			Storage.GetLocation(Path.Combine(locationPath, "foo1"));
 		IStorageLocation child2Location =
-			Storage.GetLocation(Path.Combine(locationPath, "bar"));
+			Storage.GetLocation(Path.Combine(locationPath, "foo2"));
 		LockableContainer lockedContainer = new(FileSystem);
 		Storage.TryAddContainer(
 			location,
@@ -165,13 +124,54 @@ public class InMemoryStorageTests
 	}
 
 	[Theory]
-	[InlineData((string?)null)]
-	[InlineData("")]
-	public void GetDrive_NullOrEmpty_ShouldReturnNull(string? driveName)
+	[AutoData]
+	public void Replace_WithBackup_ShouldChangeAvailableFreeSpace(
+		int file1Size, int file2Size, int file3Size)
 	{
-		IStorageDrive? result = Storage.GetDrive(driveName);
+		MockFileSystem fileSystem = new();
+		IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot());
+		IRandom random = RandomFactory.Shared;
+		byte[] file1Content = new byte[file1Size];
+		byte[] file2Content = new byte[file2Size];
+		byte[] file3Content = new byte[file3Size];
+		random.NextBytes(file1Content);
+		random.NextBytes(file2Content);
+		random.NextBytes(file3Content);
 
-		result.Should().BeNull();
+		fileSystem.File.WriteAllBytes("foo", file1Content);
+		fileSystem.File.WriteAllBytes("bar", file2Content);
+		fileSystem.File.WriteAllBytes("backup", file3Content);
+		long availableFreeSpaceBefore = mainDrive.AvailableFreeSpace;
+
+		fileSystem.File.Replace("foo", "bar", "backup", true);
+
+		long availableFreeSpaceAfter = mainDrive.AvailableFreeSpace;
+		availableFreeSpaceAfter.Should()
+			.Be(availableFreeSpaceBefore + file2Size);
+	}
+
+	[Theory]
+	[AutoData]
+	public void Replace_WithoutBackup_ShouldNotChangeAvailableFreeSpace(
+		int file1Size, int file2Size)
+	{
+		MockFileSystem fileSystem = new();
+		IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot());
+		IRandom random = RandomFactory.Shared;
+		byte[] file1Content = new byte[file1Size];
+		byte[] file2Content = new byte[file2Size];
+		random.NextBytes(file1Content);
+		random.NextBytes(file2Content);
+
+		fileSystem.File.WriteAllBytes("foo", file1Content);
+		fileSystem.File.WriteAllBytes("bar", file2Content);
+		long availableFreeSpaceBefore = mainDrive.AvailableFreeSpace;
+
+		fileSystem.File.Replace("foo", "bar", "backup");
+
+		long availableFreeSpaceAfter = mainDrive.AvailableFreeSpace;
+		availableFreeSpaceAfter.Should()
+			.Be(availableFreeSpaceBefore);
 	}
 
 	[Theory]
