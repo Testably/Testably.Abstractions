@@ -78,7 +78,9 @@ public class InMemoryStorageTests
 	[Theory]
 	[InlineData((string?)null)]
 	[InlineData("")]
-	public void GetDrive_NullOrEmpty_ShouldReturnNull(string? driveName)
+	[InlineData(" ")]
+	[InlineData("\t")]
+	public void GetDrive_NullOrWhitespace_ShouldReturnNull(string? driveName)
 	{
 		IStorageDrive? result = Storage.GetDrive(driveName);
 
