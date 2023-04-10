@@ -34,7 +34,7 @@ internal sealed class RandomProviderMock : IRandomProvider
 
 	#endregion
 
-	private IRandom DefaultRandomGenerator(int seed)
+	private static IRandom DefaultRandomGenerator(int seed)
 	{
 		if (seed == SharedSeed)
 		{
