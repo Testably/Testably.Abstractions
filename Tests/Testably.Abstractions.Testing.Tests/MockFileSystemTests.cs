@@ -74,14 +74,15 @@ public class MockFileSystemTests
 	}
 
 	[SkippableFact]
-	public void FileSystemMock_ShouldBeInitializedWithASingleDefaultDrive()
+	public void FileSystemMock_ShouldBeInitializedWithADefaultDrive()
 	{
 		string expectedDriveName = "".PrefixRoot();
 		MockFileSystem sut = new();
 
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
-		IDriveInfo drive = drives.Single();
+		IDriveInfo drive = sut.GetDefaultDrive();
 
+		drives.Should().NotBeEmpty();
 		drive.Name.Should().Be(expectedDriveName);
 		drive.AvailableFreeSpace.Should().BeGreaterThan(0);
 		drive.DriveFormat.Should()
@@ -89,6 +90,20 @@ public class MockFileSystemTests
 		drive.DriveType.Should()
 			.Be(DriveInfoMock.DefaultDriveType);
 		drive.VolumeLabel.Should().NotBeNullOrEmpty();
+	}
+
+	[SkippableFact]
+	public void FileSystemMock_ShouldInitializeDriveFromCurrentDirectory()
+	{
+		string? driveName = Path.GetPathRoot(Directory.GetCurrentDirectory());
+
+		Skip.If(!Test.RunsOnWindows || driveName?.StartsWith("C") != false);
+
+		MockFileSystem sut = new();
+
+		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
+		drives.Length.Should().Be(2);
+		drives.Should().Contain(d => d.Name == driveName);
 	}
 
 	[SkippableTheory]
@@ -153,7 +168,7 @@ public class MockFileSystemTests
 
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 
-		drives.Length.Should().Be(1);
+		drives.Length.Should().BeGreaterOrEqualTo(1);
 		drives.Should().ContainSingle(d => d.Name == driveName);
 	}
 
@@ -173,13 +188,30 @@ public class MockFileSystemTests
 	}
 
 	[SkippableTheory]
+	[InlineData("D")]
+	[InlineData("D:")]
+	public void WithDrive_ShouldHavePathSeparatorSuffix(string driveName)
+	{
+		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
+
+		string expectedDriveName = $"D:{Path.DirectorySeparatorChar}";
+		MockFileSystem sut = new();
+		sut.WithDrive(driveName);
+
+		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
+
+		drives.Length.Should().BeLessOrEqualTo(2);
+		drives.Should().ContainSingle(d => d.Name == expectedDriveName);
+	}
+
+	[SkippableTheory]
 	[AutoData]
 	public void WithDrive_WithCallback_ShouldUpdateDrive(long totalSize)
 	{
 		MockFileSystem sut = new();
 		sut.WithDrive(d => d.SetTotalSize(totalSize));
 
-		IDriveInfo drive = sut.DriveInfo.GetDrives().Single();
+		IDriveInfo drive = sut.GetDefaultDrive();
 
 		drive.TotalSize.Should().Be(totalSize);
 		drive.TotalFreeSpace.Should().Be(totalSize);
@@ -208,11 +240,13 @@ public class MockFileSystemTests
 		MockFileSystem sut = new();
 		string uncPrefix = new(sut.Path.DirectorySeparatorChar, 2);
 		string uncDrive = $"{uncPrefix}{server}";
+		int expectedLogicalDrives = sut.Directory.GetLogicalDrives().Length;
+		int expectedDrives = sut.DriveInfo.GetDrives().Length;
 
 		sut.WithUncDrive(uncDrive);
 
-		sut.Directory.GetLogicalDrives().Length.Should().Be(1);
-		sut.DriveInfo.GetDrives().Length.Should().Be(1);
+		sut.Directory.GetLogicalDrives().Length.Should().Be(expectedLogicalDrives);
+		sut.DriveInfo.GetDrives().Length.Should().Be(expectedDrives);
 	}
 
 	[SkippableTheory]

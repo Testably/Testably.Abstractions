@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
@@ -28,7 +28,6 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private CancellationTokenSource? _cancellationTokenSource;
 	private IDisposable? _changeHandler;
-	private BlockingCollection<ChangeDescription> _changes;
 	private bool _enableRaisingEvents;
 	private readonly MockFileSystem _fileSystem;
 	private readonly Collection<string> _filters = new();
@@ -39,9 +38,6 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	private FileSystemWatcherMock(MockFileSystem fileSystem)
 	{
 		_fileSystem = fileSystem;
-		_changes =
-			new BlockingCollection<ChangeDescription>(InternalBufferSize /
-			                                          BytesPerMessage);
 	}
 
 	private event EventHandler<ChangeDescription>? InternalEvent;
@@ -268,20 +264,7 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		if (EnableRaisingEvents)
 		{
 			Stop();
-			BlockingCollection<ChangeDescription> changes = _changes;
-			_changes =
-				new BlockingCollection<ChangeDescription>(InternalBufferSize /
-				                                          BytesPerMessage);
-			changes.Dispose();
 			Start();
-		}
-		else
-		{
-			BlockingCollection<ChangeDescription> changes = _changes;
-			_changes =
-				new BlockingCollection<ChangeDescription>(InternalBufferSize /
-				                                          BytesPerMessage);
-			changes.Dispose();
 		}
 	}
 
@@ -295,25 +278,30 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		Stop();
 		CancellationTokenSource cancellationTokenSource = new();
 		_cancellationTokenSource = cancellationTokenSource;
+
+		int channelCapacity = InternalBufferSize / BytesPerMessage;
+		Channel<ChangeDescription> channel =
+			Channel.CreateBounded<ChangeDescription>(channelCapacity);
+		ChannelWriter<ChangeDescription> writer = channel.Writer;
+		ChannelReader<ChangeDescription> reader = channel.Reader;
+		CancellationToken token = cancellationTokenSource.Token;
 		_changeHandler = _fileSystem.Notify.OnEvent(c =>
 		{
-			if (!_changes.TryAdd(c, 100))
+			if (!writer.TryWrite(c) &&
+			    !token.IsCancellationRequested)
 			{
 				Error?.Invoke(this, new ErrorEventArgs(
 					ExceptionFactory.InternalBufferOverflowException(
-						InternalBufferSize, _changes.BoundedCapacity)));
+						InternalBufferSize, channelCapacity)));
 			}
 		});
-		CancellationToken token = cancellationTokenSource.Token;
-		Task.Factory.StartNew(() =>
+		Task.Run(() =>
 				{
 					try
 					{
 						while (!token.IsCancellationRequested)
 						{
-							if (_changes.TryTake(out ChangeDescription? c,
-								Timeout.Infinite,
-								token))
+							if (reader.TryRead(out ChangeDescription? c))
 							{
 								NotifyChange(c);
 							}
@@ -324,12 +312,16 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 						//Ignore any exception
 					}
 				},
-				token,
-				TaskCreationOptions.LongRunning,
-				TaskScheduler.Default)
+				token)
 			.ContinueWith(_ =>
 			{
-				cancellationTokenSource.Dispose();
+				if (channel.Writer.TryComplete())
+				{
+					channel.Reader.Completion.ContinueWith(_ =>
+					{
+						cancellationTokenSource.Dispose();
+					}, CancellationToken.None);
+				}
 			}, TaskScheduler.Default);
 	}
 

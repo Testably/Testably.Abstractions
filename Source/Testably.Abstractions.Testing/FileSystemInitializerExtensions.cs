@@ -1,5 +1,8 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using Testably.Abstractions.Testing.FileSystemInitializer;
+using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing;
 
@@ -24,9 +27,16 @@ public static class FileSystemInitializerExtensions
 		string basePath)
 		where TFileSystem : IFileSystem
 	{
+		if (Path.IsPathRooted(basePath) &&
+		    fileSystem is MockFileSystem mockFileSystem)
+		{
+			string? drive = Path.GetPathRoot(basePath);
+			mockFileSystem.WithDrive(drive);
+		}
+
 		fileSystem.Directory.CreateDirectory(basePath);
 		fileSystem.Directory.SetCurrentDirectory(basePath);
-		return new Initializer<TFileSystem>(fileSystem, ".");
+		return new FileSystemInitializer<TFileSystem>(fileSystem, ".");
 	}
 
 	/// <summary>
@@ -47,5 +57,118 @@ public static class FileSystemInitializerExtensions
 		this IFileSystem fileSystem, string? prefix = null, Action<string>? logger = null)
 	{
 		return new DirectoryCleaner(fileSystem, prefix, logger);
+	}
+
+	/// <summary>
+	/// </summary>
+	/// <param name="fileSystem">The file system.</param>
+	/// <param name="assembly">The assembly in which the embedded resource files are located.</param>
+	/// <param name="directoryPath">The directory path in which the found resource files are created.</param>
+	/// <param name="relativePath">The relative path of the embedded resources in the <paramref name="assembly" />.</param>
+	/// <param name="searchPattern">
+	///     The search string to match against the names of embedded resources in the <paramref name="assembly" /> under
+	///     <paramref name="relativePath" />.<br />
+	///     This parameter can contain a combination of valid literal path and wildcard (* and ?) characters, but it doesn't
+	///     support regular expressions.
+	/// </param>
+	/// <param name="searchOption">
+	///     One of the enumeration values that specifies whether the search operation should include only the
+	///     <paramref name="relativePath" /> or should include all subdirectories.<br />
+	///     The default value is <see cref="SearchOption.AllDirectories" />.
+	/// </param>
+	public static void InitializeEmbeddedResourcesFromAssembly(this IFileSystem fileSystem,
+		string directoryPath,
+		Assembly assembly,
+		string? relativePath = null,
+		string searchPattern = "*",
+		SearchOption searchOption = SearchOption.AllDirectories)
+	{
+		EnumerationOptions enumerationOptions =
+			EnumerationOptionsHelper.FromSearchOption(searchOption);
+
+		string[] resourcePaths = assembly.GetManifestResourceNames();
+		string assemblyNamePrefix = $"{assembly.GetName().Name ?? ""}.";
+
+		if (relativePath != null)
+		{
+			relativePath = relativePath.Replace(
+				Path.AltDirectorySeparatorChar,
+				Path.DirectorySeparatorChar);
+			relativePath = relativePath.TrimEnd(Path.DirectorySeparatorChar);
+			relativePath += Path.DirectorySeparatorChar;
+		}
+
+		foreach (string resourcePath in resourcePaths)
+		{
+			string fileName = resourcePath;
+			if (fileName.StartsWith(assemblyNamePrefix))
+			{
+				fileName = fileName.Substring(assemblyNamePrefix.Length);
+			}
+
+			fileName = fileName.Replace('.', Path.DirectorySeparatorChar);
+			int lastSeparator = fileName.LastIndexOf(Path.DirectorySeparatorChar);
+			if (lastSeparator > 0)
+			{
+				#pragma warning disable CA1845
+				fileName = fileName.Substring(0, lastSeparator) + "." +
+				           fileName.Substring(lastSeparator + 1);
+				#pragma warning restore CA1845
+			}
+
+			if (relativePath != null)
+			{
+				if (!fileName.StartsWith(relativePath))
+				{
+					continue;
+				}
+
+				fileName = fileName.Substring(relativePath.Length);
+			}
+
+			#pragma warning disable CA2249 // string.Contains with char is not supported on netstandard2.0
+			if (!enumerationOptions.RecurseSubdirectories &&
+			    fileName.IndexOf(Path.DirectorySeparatorChar) >= 0)
+			{
+				continue;
+			}
+			#pragma warning restore CA2249
+
+			if (EnumerationOptionsHelper.MatchesPattern(enumerationOptions,
+				fileName, searchPattern))
+			{
+				string filePath = fileSystem.Path.Combine(directoryPath, fileName);
+				fileSystem.InitializeFileFromEmbeddedResource(filePath, assembly, resourcePath);
+			}
+		}
+	}
+
+	private static void InitializeFileFromEmbeddedResource(this IFileSystem fileSystem,
+		string path,
+		Assembly assembly,
+		string embeddedResourcePath)
+	{
+		using (Stream? embeddedResourceStream = assembly
+			.GetManifestResourceStream(embeddedResourcePath))
+		{
+			if (embeddedResourceStream == null)
+			{
+				throw new ArgumentException(
+					$"Resource '{embeddedResourcePath}' not found in assembly '{assembly.FullName}'",
+					nameof(embeddedResourcePath));
+			}
+
+			using (BinaryReader streamReader = new(embeddedResourceStream))
+			{
+				byte[] fileData = streamReader.ReadBytes((int)embeddedResourceStream.Length);
+				string? directoryPath = fileSystem.Path.GetDirectoryName(path);
+				if (!string.IsNullOrEmpty(directoryPath))
+				{
+					fileSystem.Directory.CreateDirectory(directoryPath);
+				}
+
+				fileSystem.File.WriteAllBytes(path, fileData);
+			}
+		}
 	}
 }

@@ -32,7 +32,7 @@ namespace {@class.Namespace}
 namespace {@class.Namespace}.{@class.Name}
 {{
 	// ReSharper disable once UnusedMember.Global
-	public sealed class MockFileSystemTests : {@class.Name}<Testably.Abstractions.Testing.MockFileSystem>
+	public sealed class MockFileSystemTests : {@class.Name}<Testably.Abstractions.Testing.MockFileSystem>, IDisposable
 	{{
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
 		public override string BasePath => _directoryCleaner.BasePath;
@@ -57,7 +57,7 @@ namespace {@class.Namespace}.{@class.Name}
 	}}
 
 	// ReSharper disable once UnusedMember.Global
-	public sealed class TestableIoMockFileSystemTests : {@class.Name}<System.IO.Abstractions.TestingHelpers.MockFileSystem>
+	public sealed class TestableIoMockFileSystemTests : {@class.Name}<System.IO.Abstractions.TestingHelpers.MockFileSystem>, IDisposable
 	{{
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
 		public override string BasePath => _directoryCleaner.BasePath;
@@ -88,7 +88,7 @@ namespace {@class.Namespace}.{@class.Name}
 {{
 	// ReSharper disable once UnusedMember.Global
 	[Collection(nameof(RealFileSystemTests))]
-	public sealed class RealFileSystemTests : {@class.Name}<RealFileSystem>
+	public sealed class RealFileSystemTests : {@class.Name}<RealFileSystem>, IDisposable
 	{{
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
 		public override string BasePath => _directoryCleaner.BasePath;

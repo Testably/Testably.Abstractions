@@ -19,6 +19,9 @@
 			<_Parameter1>true</_Parameter1>
 			<_Parameter1_TypeName>System.Boolean</_Parameter1_TypeName>
 		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>Testably.Abstractions.Tests</_Parameter1>
+		</AssemblyAttribute>
 	</ItemGroup>
 
 </Project>

@@ -144,7 +144,8 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 
 		if (!_fileSystem.Directory.Exists(basePath))
 		{
-			throw new TestingException($"Could not create current directory '{basePath}' for tests");
+			throw new TestingException(
+				$"Could not create current directory '{basePath}' for tests");
 		}
 
 		_logger?.Invoke($"Use '{basePath}' as current directory.");
@@ -156,7 +157,8 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 
 		if (_fileSystem.Directory.GetCurrentDirectory() != basePath)
 		{
-			throw new TestingException($"Could not set current directory to '{basePath}' for tests");
+			throw new TestingException(
+				$"Could not set current directory to '{basePath}' for tests");
 		}
 
 		return basePath;

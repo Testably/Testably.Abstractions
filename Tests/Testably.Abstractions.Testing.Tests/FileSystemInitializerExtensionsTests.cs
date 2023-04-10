@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Testably.Abstractions.Testing.FileSystemInitializer;
+using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests;
 
@@ -146,6 +148,98 @@ public class FileSystemInitializerExtensionsTests
 			sut.Initialize().WithSubdirectory(directoryName);
 
 		result.Directory.Exists.Should().BeTrue();
+	}
+
+	[Theory]
+	[AutoData]
+	public void
+		InitializeEmbeddedResourcesFromAssembly_ShouldCopyAllMatchingResourceFilesInDirectory(
+			string path)
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.InitializeIn("foo");
+
+		fileSystem.InitializeEmbeddedResourcesFromAssembly(
+			path,
+			Assembly.GetExecutingAssembly(),
+			searchPattern: "*.txt");
+
+		string[] result = fileSystem.Directory.GetFiles(Path.Combine(path, "TestResources"));
+		string[] result2 =
+			fileSystem.Directory.GetFiles(Path.Combine(path, "TestResources", "SubResource"));
+		result.Length.Should().Be(2);
+		result.Should().Contain(x => x.EndsWith("TestFile1.txt"));
+		result.Should().Contain(x => x.EndsWith("TestFile2.txt"));
+		result2.Length.Should().Be(1);
+		result2.Should().Contain(x => x.EndsWith("SubResourceFile1.txt"));
+	}
+
+	[Theory]
+	[AutoData]
+	public void
+		InitializeEmbeddedResourcesFromAssembly_WithoutRecurseSubdirectories_ShouldOnlyCopyTopmostFilesInRelativePath(
+			string path)
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.InitializeIn("foo");
+
+		fileSystem.InitializeEmbeddedResourcesFromAssembly(
+			path,
+			Assembly.GetExecutingAssembly(),
+			"TestResources",
+			searchPattern: "*.txt",
+			SearchOption.TopDirectoryOnly);
+
+		string[] result = fileSystem.Directory.GetFiles(path);
+		result.Length.Should().Be(2);
+		result.Should().Contain(x => x.EndsWith("TestFile1.txt"));
+		result.Should().Contain(x => x.EndsWith("TestFile2.txt"));
+		fileSystem.Directory.Exists(Path.Combine(path, "SubResource")).Should().BeFalse();
+	}
+
+	[Theory]
+	[AutoData]
+	public void
+		InitializeEmbeddedResourcesFromAssembly_WithRelativePath_ShouldCopyAllResourceInMatchingPathInDirectory(
+			string path)
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.InitializeIn("foo");
+
+		fileSystem.InitializeEmbeddedResourcesFromAssembly(
+			path,
+			Assembly.GetExecutingAssembly(),
+			"TestResources/SubResource",
+			searchPattern: "*.txt");
+
+		string[] result = fileSystem.Directory.GetFiles(path);
+		result.Length.Should().Be(1);
+		result.Should().Contain(x => x.EndsWith("SubResourceFile1.txt"));
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void InitializeIn_MissingDrive_ShouldCreateDrive(string directoryName)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		MockFileSystem sut = new();
+		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
+		for (char c = 'D'; c <= 'Z'; c++)
+		{
+			if (drives.Any(d => d.Name.StartsWith($"{c}")))
+			{
+				continue;
+			}
+
+			directoryName = Path.Combine($"{c}:\\", directoryName);
+			break;
+		}
+
+		sut.InitializeIn(directoryName);
+
+		sut.Directory.Exists(directoryName).Should().BeTrue();
+		sut.DriveInfo.GetDrives().Length.Should().Be(drives.Length + 1);
 	}
 
 	[Theory]

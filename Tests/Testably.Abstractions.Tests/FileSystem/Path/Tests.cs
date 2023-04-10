@@ -30,6 +30,16 @@ public abstract partial class Tests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[InlineData("D:")]
+	public void GetPathRoot_WithoutTrailingSeparatorChar_ShouldReturnDefaultValue(string path)
+	{
+		string? expectedResult = System.IO.Path.GetPathRoot(path);
+		string? result = FileSystem.Path.GetPathRoot(path);
+
+		result.Should().Be(expectedResult);
+	}
+
+	[SkippableTheory]
 	[AutoData]
 	public void GetPathRoot_ShouldReturnDefaultValue(string path)
 	{

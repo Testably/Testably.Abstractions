@@ -34,7 +34,7 @@ internal sealed class ThreadMock : IThread
 		}
 
 		_mockTimeSystem.TimeProvider.AdvanceBy(timeout);
-		Thread.Sleep(0);
+		Thread.Yield();
 		_callbackHandler.InvokeThreadSleepCallbacks(timeout);
 	}
 

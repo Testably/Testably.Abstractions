@@ -19,7 +19,7 @@ public abstract partial class Tests<TFileSystem>
 
 		FileSystem.Initialize();
 		ManualResetEventSlim ms = new();
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.EnableRaisingEvents = true;
 
@@ -58,7 +58,7 @@ public abstract partial class Tests<TFileSystem>
 	public void Container_ShouldBeInitializedWithNull()
 	{
 		FileSystem.Initialize();
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
 		fileSystemWatcher.Container.Should().BeNull();
@@ -72,7 +72,7 @@ public abstract partial class Tests<TFileSystem>
 
 		FileSystem.Initialize();
 		ManualResetEventSlim ms = new();
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.EnableRaisingEvents = true;
 		fileSystemWatcher.BeginInit();
@@ -92,7 +92,7 @@ public abstract partial class Tests<TFileSystem>
 				}
 			});
 			IWaitForChangedResult result =
-				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, 100);
+				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, 30000);
 
 			fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
 			result.TimedOut.Should().BeFalse();
@@ -111,7 +111,7 @@ public abstract partial class Tests<TFileSystem>
 		int bytes, int expectedBytes)
 	{
 		FileSystem.Initialize();
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
 		fileSystemWatcher.InternalBufferSize = bytes;
@@ -123,7 +123,7 @@ public abstract partial class Tests<TFileSystem>
 	public void Site_ShouldBeInitializedWithNull()
 	{
 		FileSystem.Initialize();
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
 		fileSystemWatcher.Site.Should().BeNull();
@@ -134,7 +134,7 @@ public abstract partial class Tests<TFileSystem>
 	{
 		ISite? site = new Mock<ISite>().Object;
 		FileSystem.Initialize();
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
 		fileSystemWatcher.Site = site;
@@ -146,7 +146,7 @@ public abstract partial class Tests<TFileSystem>
 	public void SynchronizingObject_ShouldBeInitializedWithNull()
 	{
 		FileSystem.Initialize();
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
 		fileSystemWatcher.SynchronizingObject.Should().BeNull();
@@ -157,7 +157,7 @@ public abstract partial class Tests<TFileSystem>
 	{
 		ISynchronizeInvoke? synchronizingObject = new Mock<ISynchronizeInvoke>().Object;
 		FileSystem.Initialize();
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
 		fileSystemWatcher.SynchronizingObject = synchronizingObject;

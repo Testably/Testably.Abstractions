@@ -1,7 +1,6 @@
 ﻿#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 using Microsoft.Win32.SafeHandles;
 #endif
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -466,7 +465,7 @@ internal sealed class FileMock : IFile
 			FileAccess.Read,
 			FileStreamFactoryMock.DefaultShare))
 		{
-			Execute.NotOnWindows(() => 
+			Execute.NotOnWindows(() =>
 				container.AdjustTimes(TimeAdjustments.LastAccessTime));
 
 			return container.GetBytes().ToArray();

@@ -38,4 +38,16 @@ public abstract partial class SetAttributesTests<TFileSystem>
 			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			.BeOnOrBefore(creationTimeEnd);
 	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void SetAttributes_Directory_ShouldRemainFile(string path)
+	{
+		FileSystem.File.WriteAllText(path, null);
+
+		FileSystem.File.SetAttributes(path, FileAttributes.Directory);
+
+		FileSystem.Directory.Exists(path).Should().BeFalse();
+		FileSystem.File.Exists(path).Should().BeTrue();
+	}
 }

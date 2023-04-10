@@ -1,5 +1,6 @@
 ﻿using AutoFixture.Xunit2;
 using System.Security.AccessControl;
+using System.Threading.Tasks;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
 
 namespace Testably.Abstractions.AccessControl.Tests;
@@ -98,14 +99,14 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void SetAccessControl_ShouldNotUpdateTimes(string path)
+	public async Task SetAccessControl_ShouldNotUpdateTimes(string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		FileSystem.Directory.CreateDirectory(path);
-		TimeSystem.Thread.Sleep(3000);
+		await TimeSystem.Task.Delay(3000);
 		DateTime previousCreationTimeUtc = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime previousLastAccessTimeUtc = FileSystem.File.GetLastAccessTimeUtc(path);
 		DateTime previousLastWriteTimeUtc = FileSystem.File.GetLastWriteTimeUtc(path);

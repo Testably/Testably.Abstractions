@@ -19,7 +19,7 @@ public abstract partial class FilterTests<TFileSystem>
 		FileSystem.Initialize().WithSubdirectory(path);
 		ManualResetEventSlim ms = new();
 		FileSystemEventArgs? result = null;
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{
@@ -47,7 +47,7 @@ public abstract partial class FilterTests<TFileSystem>
 		FileSystem.Initialize().WithSubdirectory(path);
 		ManualResetEventSlim ms = new();
 		FileSystemEventArgs? result = null;
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{
@@ -75,7 +75,7 @@ public abstract partial class FilterTests<TFileSystem>
 
 		CountdownEvent ms = new(filteredPaths.Length);
 		List<FileSystemEventArgs> results = new();
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{

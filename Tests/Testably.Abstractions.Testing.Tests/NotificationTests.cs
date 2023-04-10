@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Testing.Tests;
 
 public class NotificationTests
 {
-	[Fact]
+	[SkippableFact]
 	public void AwaitableCallback_Amount_ShouldOnlyReturnAfterNumberOfCallbacks()
 	{
 		MockTimeSystem timeSystem = new();
@@ -32,7 +32,7 @@ public class NotificationTests
 		receivedCount.Should().BeGreaterOrEqualTo(7);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void AwaitableCallback_Dispose_ShouldStopListening()
 	{
 		MockTimeSystem timeSystem = new();
@@ -50,7 +50,7 @@ public class NotificationTests
 		isCalled.Should().BeFalse();
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void AwaitableCallback_DisposeFromExecuteWhileWaiting_ShouldStopListening()
 	{
 		MockTimeSystem timeSystem = new();
@@ -70,7 +70,7 @@ public class NotificationTests
 		isCalled.Should().BeFalse();
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void AwaitableCallback_Filter_ShouldOnlyUpdateAfterFilteredValue()
 	{
 		MockTimeSystem timeSystem = new();
@@ -95,7 +95,7 @@ public class NotificationTests
 		receivedCount.Should().BeGreaterOrEqualTo(6);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void AwaitableCallback_Predicate_ShouldOnlyUpdateAfterFilteredValue()
 	{
 		MockTimeSystem timeSystem = new();
@@ -122,7 +122,7 @@ public class NotificationTests
 		receivedCount.Should().BeLessOrEqualTo(4);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void AwaitableCallback_ShouldWaitForCallbackExecution()
 	{
 		ManualResetEventSlim ms = new();
@@ -154,11 +154,12 @@ public class NotificationTests
 		}
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void AwaitableCallback_TimeoutExpired_ShouldThrowTimeoutException()
 	{
 		MockTimeSystem timeSystem = new();
 		bool isCalled = false;
+		ManualResetEventSlim ms = new();
 		Notification.IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On.ThreadSleep(_ =>
 			{
@@ -167,7 +168,7 @@ public class NotificationTests
 		new Thread(() =>
 		{
 			// Delay larger than timeout of 10ms
-			Thread.Sleep(10000);
+			ms.Wait();
 			timeSystem.Thread.Sleep(1);
 		}).Start();
 
@@ -178,9 +179,10 @@ public class NotificationTests
 
 		exception.Should().BeOfType<TimeoutException>();
 		isCalled.Should().BeFalse();
+		ms.Set();
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void AwaitableCallback_WaitedPreviously_ShouldWaitAgainForCallbackExecution()
 	{
 		int secondThreadMilliseconds = 42;
