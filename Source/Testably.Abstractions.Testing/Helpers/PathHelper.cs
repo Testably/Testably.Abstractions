@@ -32,7 +32,7 @@ internal static class PathHelper
 			() => false);
 	}
 
-	internal static bool IsUncPath(this string? path)
+	internal static bool IsUncPath([NotNullWhen(true)]this string? path)
 	{
 		if (path == null)
 		{
