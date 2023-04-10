@@ -295,7 +295,7 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 						InternalBufferSize, channelCapacity)));
 			}
 		});
-		Task.Factory.StartNew(() =>
+		Task.Run(() =>
 				{
 					try
 					{
@@ -312,9 +312,7 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 						//Ignore any exception
 					}
 				},
-				token,
-				TaskCreationOptions.LongRunning,
-				TaskScheduler.Default)
+				token)
 			.ContinueWith(_ =>
 			{
 				if (channel.Writer.TryComplete())
