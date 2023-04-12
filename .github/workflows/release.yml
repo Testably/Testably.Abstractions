@@ -273,7 +273,7 @@ jobs:
           git tag "${version}"
           git push origin "${version}"
       - name: Setup NuGet
-        uses: NuGet/setup-nuget@v1.1.1
+        uses: NuGet/setup-nuget@v1.2.0
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
