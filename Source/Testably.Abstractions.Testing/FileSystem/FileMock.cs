@@ -12,6 +12,7 @@ using Testably.Abstractions.Testing.Storage;
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
+
 #endif
 
 namespace Testably.Abstractions.Testing.FileSystem;
@@ -73,23 +74,29 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.AppendAllText(string, string?, Encoding)" />
 	public void AppendAllText(string path, string? contents, Encoding encoding)
 	{
-		IStorageContainer fileInfo =
+		IStorageContainer container =
 			_fileSystem.Storage.GetOrCreateContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)),
 				InMemoryContainer.NewFile);
+
+		if (container.Type != FileSystemTypes.File)
+		{
+			throw ExceptionFactory.AccessToPathDenied(path);
+		}
+
 		if (contents != null)
 		{
-			using (fileInfo.RequestAccess(
+			using (container.RequestAccess(
 				FileAccess.ReadWrite,
 				FileStreamFactoryMock.DefaultShare))
 			{
-				if (fileInfo.GetBytes().Length == 0)
+				if (container.GetBytes().Length == 0)
 				{
-					fileInfo.WriteBytes(encoding.GetPreamble());
+					container.WriteBytes(encoding.GetPreamble());
 				}
 
-				fileInfo.AppendBytes(encoding.GetBytes(contents));
+				container.AppendBytes(encoding.GetBytes(contents));
 			}
 		}
 	}
@@ -786,17 +793,25 @@ internal sealed class FileMock : IFile
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)),
 				InMemoryContainer.NewFile);
-		if (container is not NullContainer)
+
+		if (container is NullContainer)
 		{
-			Execute.OnWindowsIf(
-				container.Attributes.HasFlag(FileAttributes.Hidden),
-				() => throw ExceptionFactory.AccessToPathDenied());
-			using (container.RequestAccess(
-				FileAccess.Write,
-				FileStreamFactoryMock.DefaultShare))
-			{
-				container.WriteBytes(bytes);
-			}
+			return;
+		}
+
+		if (container.Type != FileSystemTypes.File)
+		{
+			throw ExceptionFactory.AccessToPathDenied(path);
+		}
+
+		Execute.OnWindowsIf(
+			container.Attributes.HasFlag(FileAttributes.Hidden),
+			() => throw ExceptionFactory.AccessToPathDenied());
+		using (container.RequestAccess(
+			FileAccess.Write,
+			FileStreamFactoryMock.DefaultShare))
+		{
+			container.WriteBytes(bytes);
 		}
 	}
 
@@ -869,7 +884,17 @@ internal sealed class FileMock : IFile
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(FileSystem)),
 				InMemoryContainer.NewFile);
-		if (container is not NullContainer && contents != null)
+		if (container is NullContainer)
+		{
+			return;
+		}
+
+		if (container.Type != FileSystemTypes.File)
+		{
+			throw ExceptionFactory.AccessToPathDenied(path);
+		}
+
+		if (contents != null)
 		{
 			Execute.OnWindowsIf(
 				container.Attributes.HasFlag(FileAttributes.Hidden),

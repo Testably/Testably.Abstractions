@@ -23,6 +23,16 @@ public abstract partial class WriteAllBytesTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void WriteAllBytes_ShouldCreateFileWithBytes(string path, byte[] bytes)
+	{
+		FileSystem.File.WriteAllBytes(path, bytes);
+
+		byte[] result = FileSystem.File.ReadAllBytes(path);
+		result.Should().BeEquivalentTo(bytes);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void WriteAllBytes_WhenBytesAreNull_ShouldThrowArgumentNullException(string path)
 	{
 		Exception? exception = Record.Exception(() =>
@@ -35,12 +45,21 @@ public abstract partial class WriteAllBytesTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void WriteAllBytes_ShouldCreateFileWithBytes(string path, byte[] bytes)
+	public void
+		WriteAllBytes_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
+			string path, byte[] bytes)
 	{
-		FileSystem.File.WriteAllBytes(path, bytes);
+		FileSystem.Directory.CreateDirectory(path);
 
-		byte[] result = FileSystem.File.ReadAllBytes(path);
-		result.Should().BeEquivalentTo(bytes);
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.WriteAllBytes(path, bytes);
+		});
+
+		exception.Should().BeException<UnauthorizedAccessException>(
+			hResult: -2147024891);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
 	}
 
 	[SkippableTheory]
