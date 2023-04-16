@@ -106,7 +106,7 @@ public abstract partial class AppendAllTextAsyncTests<TFileSystem>
 		});
 
 		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: Test.RunsOnWindows ? -2147024891 : 17);
+			hResult: -2147024891);
 		FileSystem.Directory.Exists(path).Should().BeTrue();
 		FileSystem.File.Exists(path).Should().BeFalse();
 	}
