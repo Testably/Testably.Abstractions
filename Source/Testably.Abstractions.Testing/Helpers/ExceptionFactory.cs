@@ -31,13 +31,13 @@ internal static class ExceptionFactory
 			"Unable seek backward to overwrite data that previously existed in a file opened in Append mode.",
 			-2146232800);
 
-	internal static UnauthorizedAccessException AccessToPathDenied(string path = "", int hResult = -2147024891)
+	internal static UnauthorizedAccessException AccessToPathDenied(string path = "")
 		=> new(string.IsNullOrEmpty(path)
 			? "Access to the path is denied."
 			: $"Access to the path '{path}' is denied.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = hResult
+			HResult = -2147024891
 #endif
 		};
 

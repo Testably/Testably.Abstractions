@@ -799,10 +799,9 @@ internal sealed class FileMock : IFile
 			return;
 		}
 
-		if (container.Type == FileSystemTypes.Directory)
+		if (container.Type != FileSystemTypes.File)
 		{
-			throw ExceptionFactory.AccessToPathDenied(path,
-				hResult: Execute.IsWindows ? -2147024891 : 17);
+			throw ExceptionFactory.AccessToPathDenied(path);
 		}
 
 		Execute.OnWindowsIf(
@@ -890,10 +889,9 @@ internal sealed class FileMock : IFile
 			return;
 		}
 
-		if (container.Type == FileSystemTypes.Directory)
+		if (container.Type != FileSystemTypes.File)
 		{
-			throw ExceptionFactory.AccessToPathDenied(path,
-				hResult: Execute.IsWindows ? - 2147024891 : 17);
+			throw ExceptionFactory.AccessToPathDenied(path);
 		}
 
 		if (contents != null)
