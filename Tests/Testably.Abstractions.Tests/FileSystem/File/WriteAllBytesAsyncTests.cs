@@ -66,6 +66,25 @@ public abstract partial class WriteAllBytesAsyncTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public async Task
+		WriteAllBytesAsync_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
+			string path, byte[] bytes)
+	{
+		FileSystem.Directory.CreateDirectory(path);
+
+		Exception? exception = await Record.ExceptionAsync(async () =>
+		{
+			await FileSystem.File.WriteAllBytesAsync(path, bytes);
+		});
+
+		exception.Should().BeException<UnauthorizedAccessException>(
+			hResult: Test.RunsOnWindows ? -2147024891 : 17);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public async Task
 		WriteAllTextAsync_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 			string path, byte[] bytes)
 	{

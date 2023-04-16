@@ -131,6 +131,25 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[AutoData]
+	public async Task
+		AppendAllLinesAsync_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
+			string path, string[] contents)
+	{
+		FileSystem.Directory.CreateDirectory(path);
+
+		Exception? exception = await Record.ExceptionAsync(async () =>
+		{
+			await FileSystem.File.AppendAllLinesAsync(path, contents);
+		});
+
+		exception.Should().BeException<UnauthorizedAccessException>(
+			hResult: Test.RunsOnWindows ? -2147024891 : 17);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
+	}
+
+	[SkippableTheory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
 	public async Task
 		AppendAllLinesAsync_WithDifferentEncoding_ShouldNotReturnWrittenText(

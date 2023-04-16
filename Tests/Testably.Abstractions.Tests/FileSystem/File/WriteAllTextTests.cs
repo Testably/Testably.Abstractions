@@ -151,6 +151,24 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void WriteAllText_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
+		string path)
+	{
+		FileSystem.Directory.CreateDirectory(path);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.WriteAllText(path, null);
+		});
+
+		exception.Should().BeException<UnauthorizedAccessException>(
+			hResult: Test.RunsOnWindows ? -2147024891 : 17);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void WriteAllText_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 		string path, string contents)
 	{
