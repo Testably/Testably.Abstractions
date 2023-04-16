@@ -20,7 +20,8 @@ public abstract partial class CreateSubdirectoryTests<TFileSystem>
 			sut.CreateSubdirectory(name);
 		});
 
-		exception.Should().BeException<IOException>(hResult: -2147024713);
+		exception.Should().BeException<IOException>(
+			hResult: Test.RunsOnWindows ? -2147024713 : 17);
 		FileSystem.Directory.Exists(name).Should().BeFalse();
 	}
 
