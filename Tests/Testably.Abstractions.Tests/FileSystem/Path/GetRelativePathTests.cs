@@ -55,6 +55,8 @@ public abstract partial class GetRelativePathTests<TFileSystem>
 	[SkippableFact]
 	public void GetRelativePath_RootedPath_ShouldWorkOnAnyDrive()
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+		
 		string rootedPath = "/dir/subDirectory";
 		FileSystem.Directory.CreateDirectory(rootedPath);
 		string directory = FileSystem.Directory.GetDirectories("/dir").Single();
