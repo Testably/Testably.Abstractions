@@ -1,3 +1,4 @@
+using System.Linq;
 #if FEATURE_PATH_RELATIVE
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
@@ -49,6 +50,18 @@ public abstract partial class GetRelativePathTests<TFileSystem>
 		string result = FileSystem.Path.GetRelativePath(path1, path2);
 
 		result.Should().Be(expectedRelativePath);
+	}
+
+	[SkippableFact]
+	public void GetRelativePath_RootedPath_ShouldWorkOnAnyDrive()
+	{
+		string rootedPath = "/dir/subDirectory";
+		FileSystem.Directory.CreateDirectory(rootedPath);
+		string directory = FileSystem.Directory.GetDirectories("/dir").Single();
+
+		string result = FileSystem.Path.GetRelativePath("/dir", directory);
+
+		result.Should().Be("subDirectory");
 	}
 
 	[SkippableTheory]
