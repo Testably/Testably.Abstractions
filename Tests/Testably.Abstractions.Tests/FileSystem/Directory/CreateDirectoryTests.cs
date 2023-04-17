@@ -50,6 +50,22 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		}
 	}
 
+	[SkippableTheory]
+	[AutoData]
+	public void CreateDirectory_FileWithSameNameAlreadyExists_ShouldThrowIOException(string name)
+	{
+		FileSystem.File.WriteAllText(name, "");
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.Directory.CreateDirectory(name);
+		});
+
+		exception.Should().BeException<IOException>(
+			hResult: Test.RunsOnWindows ? -2147024713 : 17);
+		FileSystem.Directory.Exists(name).Should().BeFalse();
+	}
+
 	[SkippableFact]
 	public void CreateDirectory_Root_ShouldNotThrowException()
 	{

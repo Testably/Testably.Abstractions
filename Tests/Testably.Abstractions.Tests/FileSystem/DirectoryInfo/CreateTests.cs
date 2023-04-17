@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 // ReSharper disable once PartialTypeWithSinglePart
@@ -5,6 +7,23 @@ public abstract partial class CreateTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
+	[SkippableTheory]
+	[AutoData]
+	public void Create_FileWithSameNameAlreadyExists_ShouldThrowIOException(string name)
+	{
+		FileSystem.File.WriteAllText(name, "");
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(name);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.Create();
+		});
+
+		exception.Should().BeException<IOException>(
+			hResult: Test.RunsOnWindows ? -2147024713 : 17);
+		FileSystem.Directory.Exists(name).Should().BeFalse();
+	}
+
 	[SkippableTheory]
 	[AutoData]
 	public void Create_ShouldCreateDirectory(string path)

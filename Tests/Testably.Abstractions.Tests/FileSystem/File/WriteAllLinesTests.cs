@@ -69,13 +69,21 @@ public abstract partial class WriteAllLinesTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void WriteAllLines_WithEncoding_ShouldCreateFileWithText(
-		Encoding encoding, string path, string[] contents)
+	public void
+		WriteAllLines_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
+			string path, string[] contents)
 	{
-		FileSystem.File.WriteAllLines(path, contents, encoding);
+		FileSystem.Directory.CreateDirectory(path);
 
-		string[] result = FileSystem.File.ReadAllLines(path, encoding);
-		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.WriteAllLines(path, contents);
+		});
+
+		exception.Should().BeException<UnauthorizedAccessException>(
+			hResult: -2147024891);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
 	}
 
 	[SkippableTheory]
@@ -94,5 +102,16 @@ public abstract partial class WriteAllLinesTests<TFileSystem>
 		});
 
 		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void WriteAllLines_WithEncoding_ShouldCreateFileWithText(
+		Encoding encoding, string path, string[] contents)
+	{
+		FileSystem.File.WriteAllLines(path, contents, encoding);
+
+		string[] result = FileSystem.File.ReadAllLines(path, encoding);
+		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
 	}
 }
