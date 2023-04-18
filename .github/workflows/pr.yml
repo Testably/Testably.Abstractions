@@ -23,7 +23,7 @@ jobs:
           types: |
             chore
             coverage
-            doc
+            docs
             feat
             fix
             refactor
