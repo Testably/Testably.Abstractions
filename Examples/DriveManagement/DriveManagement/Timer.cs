@@ -2,12 +2,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Testably.Abstractions.Examples.Timer;
+namespace Testably.Abstractions.Examples.DriveManagement;
 
 /// <summary>
 ///     A timer.
 /// </summary>
-public sealed class Timer : IDisposable
+public sealed class DriveManagement : IDisposable
 {
 	/// <summary>
 	///     The action to execute in each iteration.
@@ -33,7 +33,7 @@ public sealed class Timer : IDisposable
 	private CancellationTokenSource? _runningCancellationTokenSource;
 	private readonly ITimeSystem _timeSystem;
 
-	public Timer(
+	public DriveManagement(
 		ITimeSystem timeSystem,
 		TimeSpan interval,
 		Action<CancellationToken> callback,
@@ -60,7 +60,7 @@ public sealed class Timer : IDisposable
 	/// <summary>
 	///     Starts the timer.
 	/// </summary>
-	public Timer Start(CancellationToken cancellationToken = default)
+	public DriveManagement Start(CancellationToken cancellationToken = default)
 	{
 		Stop();
 		IsRunning = true;
@@ -106,7 +106,7 @@ public sealed class Timer : IDisposable
 	/// <summary>
 	///     Stops the current timer.
 	/// </summary>
-	public Timer Stop()
+	public DriveManagement Stop()
 	{
 		IsRunning = false;
 		if (_runningCancellationTokenSource is { IsCancellationRequested: false })

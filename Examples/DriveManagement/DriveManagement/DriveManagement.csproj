@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<RootNamespace>Testably.Abstractions.Examples.Timer</RootNamespace>
+		<RootNamespace>Testably.Abstractions.Examples.DriveManagement</RootNamespace>
 	</PropertyGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 using System.Threading;
 using Testably.Abstractions.TimeSystem;
 
-namespace Testably.Abstractions.Examples.Timer;
+namespace Testably.Abstractions.Examples.DriveManagement;
 
 /// <summary>
 ///     Extension methods for the time system.
@@ -18,13 +18,13 @@ public static class TimeSystemExtensions
 	/// <param name="onError">
 	///     (optional) a callback for handling errors thrown by the <paramref name="callback" />.
 	/// </param>
-	public static Timer CreateTimer(
+	public static DriveManagement CreateDriveManagement(
 		this ITimeSystem timeSystem,
 		TimeSpan interval,
 		Action<CancellationToken> callback,
 		Action<Exception>? onError = null)
 	{
-		return new Timer(timeSystem, interval, callback, onError);
+		return new DriveManagement(timeSystem, interval, callback, onError);
 	}
 
 	/// <summary>
