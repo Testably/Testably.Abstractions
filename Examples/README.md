@@ -7,7 +7,7 @@ This is an overview of the provided examples for "Testably.Abstractions".
 - **[Configuration](Configuration/README.md)**  
   This example illustrates how the testing libraries can be configured in unit tests.
 
-- **[Driver Management](DriverManagement/README.md)**  
+- **[Drive Management](DriveManagement/README.md)**  
   This example illustrates how to define multiple drives and use space management on individual drives.
 
 - **[File-System Watcher](FileSystemWatcher/README.md)**  
