@@ -105,6 +105,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 		IFileSystemInfo? target =
 			FileSystem.File.ResolveLinkTarget(previousPath, true);
 
+		target.Should().NotBeNull();
 		target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToFinalTarget));
 	}
 
