@@ -159,7 +159,7 @@ jobs:
         
   test-examples:
     name: Test (Examples)
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
