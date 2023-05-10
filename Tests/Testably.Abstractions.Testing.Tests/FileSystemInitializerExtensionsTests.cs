@@ -33,7 +33,7 @@ public class FileSystemInitializerExtensionsTests
 	public void Initialize_WithASubdirectory_ShouldCreateDirectory()
 	{
 		MockFileSystem sut = new();
-		sut.Initialize().WithASubdirectory();
+		sut.InitializeIn("base-directory").WithASubdirectory();
 
 		sut.Directory.EnumerateDirectories(".").Should().ContainSingle();
 	}
@@ -97,7 +97,7 @@ public class FileSystemInitializerExtensionsTests
 	public void Initialize_WithNestedSubdirectories_ShouldCreateAllNestedDirectories()
 	{
 		MockFileSystem sut = new();
-		sut.Initialize()
+		sut.InitializeIn("base-directory")
 			.WithSubdirectory("foo").Initialized(d => d
 				.WithSubdirectory("bar").Initialized(s => s
 					.WithSubdirectory("xyz")));
@@ -109,6 +109,19 @@ public class FileSystemInitializerExtensionsTests
 		result.Should().Contain(sut.Path.Combine(".", "foo"));
 		result.Should().Contain(sut.Path.Combine(".", "foo", "bar"));
 		result.Should().Contain(sut.Path.Combine(".", "foo", "bar", "xyz"));
+	}
+
+	[Theory]
+	[InlineData(false)]
+	[InlineData(true)]
+	public void Initialize_WithOptions_ShouldConsiderValueOfInitializeTempDirectory(
+		bool initializeTempDirectory)
+	{
+		MockFileSystem sut = new();
+
+		sut.Initialize(options => options.InitializeTempDirectory = initializeTempDirectory);
+
+		sut.Directory.Exists(sut.Path.GetTempPath()).Should().Be(initializeTempDirectory);
 	}
 
 	[Theory]
