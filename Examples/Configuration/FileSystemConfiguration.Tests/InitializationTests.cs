@@ -63,11 +63,11 @@ public class InitializationTests
 	public void InitializeFileSystemWithUncDrive()
 	{
 		MockFileSystem fileSystem = new();
-		fileSystem.DriveInfo.GetDrives().Should().HaveCount(1);
+		var initialDriveCount = fileSystem.DriveInfo.GetDrives().Length;
 
 		fileSystem.WithUncDrive(@"//unc-server");
 
-		fileSystem.DriveInfo.GetDrives().Should().HaveCount(1);
+		fileSystem.DriveInfo.GetDrives().Should().HaveCount(initialDriveCount);
 		IDriveInfo drive = fileSystem.DriveInfo.New(@"//unc-server");
 		drive.IsReady.Should().BeTrue();
 
@@ -75,7 +75,7 @@ public class InitializationTests
 		{
 			fileSystem.WithDrive(@"D:");
 
-			fileSystem.DriveInfo.GetDrives().Should().HaveCount(2);
+			fileSystem.DriveInfo.GetDrives().Should().HaveCount(initialDriveCount + 1);
 		}
 	}
 

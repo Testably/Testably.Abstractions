@@ -1,6 +1,7 @@
 using FluentAssertions;
 using System;
 using System.IO;
+using System.IO.Abstractions;
 using Testably.Abstractions.Testing;
 using Xunit;
 
@@ -11,7 +12,7 @@ public class DriveManagementTests
 	[Fact]
 	public void DefineAdditionalDrive()
 	{
-		var fileSystem = new MockFileSystem()
+		MockFileSystem fileSystem = new MockFileSystem()
 			.WithDrive("T:\\");
 
 		fileSystem.File.WriteAllText("T:\\foo.txt", "bar");
@@ -24,7 +25,7 @@ public class DriveManagementTests
 	[Fact]
 	public void ChangeDefaultDrive()
 	{
-		var fileSystem = new MockFileSystem()
+		MockFileSystem fileSystem = new MockFileSystem()
 			.InitializeIn("U:\\sub\\directory")
 			.FileSystem;
 
@@ -39,10 +40,10 @@ public class DriveManagementTests
 	[Fact]
 	public void LimitAvailableDriveSize()
 	{
-		var fileSystem = new MockFileSystem()
+		MockFileSystem fileSystem = new MockFileSystem()
 			.WithDrive("C:\\", d => d.SetTotalSize(100));
-		var drive = fileSystem.GetDefaultDrive();
-		var largeFileContent = new byte[90];
+		IDriveInfo drive = fileSystem.GetDefaultDrive();
+		byte[] largeFileContent = new byte[90];
 		Random.Shared.NextBytes(largeFileContent);
 
 		drive.AvailableFreeSpace.Should().Be(100);
@@ -51,7 +52,7 @@ public class DriveManagementTests
 		fileSystem.File.AppendAllText("foo.txt", "Another 17 bytes.");
 		drive.AvailableFreeSpace.Should().Be(54);
 
-		var exception = Record.Exception(() =>
+		Exception? exception = Record.Exception(() =>
 		{
 			fileSystem.File.WriteAllBytes("bar.bin", largeFileContent);
 		});
@@ -64,4 +65,3 @@ public class DriveManagementTests
 		drive.AvailableFreeSpace.Should().Be(10);
 	}
 }
-
