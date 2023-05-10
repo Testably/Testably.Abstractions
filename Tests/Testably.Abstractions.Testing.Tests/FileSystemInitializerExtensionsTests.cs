@@ -33,7 +33,7 @@ public class FileSystemInitializerExtensionsTests
 	public void Initialize_WithASubdirectory_ShouldCreateDirectory()
 	{
 		MockFileSystem sut = new();
-		sut.Initialize().WithASubdirectory();
+		sut.InitializeIn("base-directory").WithASubdirectory();
 
 		sut.Directory.EnumerateDirectories(".").Should().ContainSingle();
 	}
@@ -97,7 +97,7 @@ public class FileSystemInitializerExtensionsTests
 	public void Initialize_WithNestedSubdirectories_ShouldCreateAllNestedDirectories()
 	{
 		MockFileSystem sut = new();
-		sut.Initialize()
+		sut.InitializeIn("base-directory")
 			.WithSubdirectory("foo").Initialized(d => d
 				.WithSubdirectory("bar").Initialized(s => s
 					.WithSubdirectory("xyz")));
