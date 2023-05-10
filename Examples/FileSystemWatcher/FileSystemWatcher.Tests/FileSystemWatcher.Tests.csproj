@@ -4,8 +4,4 @@
 		<RootNamespace>Testably.Abstractions.Examples.FileSystemWatcher.Tests</RootNamespace>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\FileSystemWatcher\FileSystemWatcher.csproj" />
-	</ItemGroup>
-
 </Project>
