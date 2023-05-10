@@ -112,6 +112,19 @@ public class FileSystemInitializerExtensionsTests
 	}
 
 	[Theory]
+	[InlineData(false)]
+	[InlineData(true)]
+	public void Initialize_WithOptions_ShouldConsiderValueOfInitializeTempDirectory(
+		bool initializeTempDirectory)
+	{
+		MockFileSystem sut = new();
+
+		sut.Initialize(options => options.InitializeTempDirectory = initializeTempDirectory);
+
+		sut.Directory.Exists(sut.Path.GetTempPath()).Should().Be(initializeTempDirectory);
+	}
+
+	[Theory]
 	[AutoData]
 	public void Initialize_WithSubdirectory_Existing_ShouldThrowTestingException(
 		string directoryName)
