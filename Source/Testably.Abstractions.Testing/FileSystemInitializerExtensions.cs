@@ -38,9 +38,9 @@ public static class FileSystemInitializerExtensions
 
 		fileSystem.Directory.CreateDirectory(basePath);
 		fileSystem.Directory.SetCurrentDirectory(basePath);
-		FileSystemInitializerOptions value = new();
-		options?.Invoke(value);
-		if (value.InitializeTempDirectory)
+		FileSystemInitializerOptions optionsValue = new();
+		options?.Invoke(optionsValue);
+		if (optionsValue.InitializeTempDirectory)
 		{
 			fileSystem.Directory.CreateDirectory(Path.GetTempPath());
 		}
