@@ -15,16 +15,18 @@ public static class FileSystemInitializerExtensions
 	///     Initializes the <see cref="IFileSystem" /> in the working directory with test data.
 	/// </summary>
 	public static IFileSystemInitializer<TFileSystem> Initialize<TFileSystem>(
-		this TFileSystem fileSystem)
+		this TFileSystem fileSystem,
+		Action<FileSystemInitializerOptions>? options = null)
 		where TFileSystem : IFileSystem
-		=> fileSystem.InitializeIn(".");
+		=> fileSystem.InitializeIn(".", options);
 
 	/// <summary>
 	///     Initializes the <see cref="IFileSystem" /> in the <paramref name="basePath" /> with test data.
 	/// </summary>
 	public static IFileSystemInitializer<TFileSystem> InitializeIn<TFileSystem>(
 		this TFileSystem fileSystem,
-		string basePath)
+		string basePath,
+		Action<FileSystemInitializerOptions>? options = null)
 		where TFileSystem : IFileSystem
 	{
 		if (Path.IsPathRooted(basePath) &&
@@ -36,6 +38,13 @@ public static class FileSystemInitializerExtensions
 
 		fileSystem.Directory.CreateDirectory(basePath);
 		fileSystem.Directory.SetCurrentDirectory(basePath);
+		FileSystemInitializerOptions optionsValue = new();
+		options?.Invoke(optionsValue);
+		if (optionsValue.InitializeTempDirectory)
+		{
+			fileSystem.Directory.CreateDirectory(Path.GetTempPath());
+		}
+
 		return new FileSystemInitializer<TFileSystem>(fileSystem, ".");
 	}
 

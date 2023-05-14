@@ -189,6 +189,10 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		InternalFlush();
 	}
 
+	/// <inheritdoc cref="FileSystemStream.Flush(bool)" />
+	public override void Flush(bool flushToDisk)
+		=> Flush();
+
 	/// <inheritdoc cref="FileSystemStream.FlushAsync(CancellationToken)" />
 	public override Task FlushAsync(CancellationToken cancellationToken)
 	{

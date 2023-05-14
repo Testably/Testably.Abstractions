@@ -90,7 +90,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 	public void ResolveLinkTarget_FinalTarget_MultipleSteps_ShouldFollowSymbolicLinkToFinalTarget(
 		string path, string pathToFinalTarget)
 	{
-		int maxLinks = new Random().Next(1, MaxResolveLinks);
+		int maxLinks = 10;
 
 		FileSystem.File.WriteAllText(pathToFinalTarget, null);
 		string previousPath = pathToFinalTarget;
@@ -98,13 +98,14 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 		{
 			string newPath = $"{path}-{i}";
 			FileSystem.File.CreateSymbolicLink(newPath,
-				System.IO.Path.Combine(BasePath, previousPath));
+				FileSystem.Path.Combine(BasePath, previousPath));
 			previousPath = newPath;
 		}
 
 		IFileSystemInfo? target =
 			FileSystem.File.ResolveLinkTarget(previousPath, true);
 
+		target.Should().NotBeNull();
 		target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToFinalTarget));
 	}
 

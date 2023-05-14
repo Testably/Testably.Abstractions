@@ -1,4 +1,4 @@
-![Testably.Abstractions](https://raw.githubusercontent.com/Testably/Testably.Abstractions/main/Docs/Images/social-preview.png)
+![Testably.Abstractions](https://raw.githubusercontent.com/Testably/Testably.Abstractions/main/Docs/Images/social-preview.png)  
 [![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions)](https://www.nuget.org/packages/Testably.Abstractions)
 [![Build](https://github.com/Testably/Testably.Abstractions/actions/workflows/build.yml/badge.svg)](https://github.com/Testably/Testably.Abstractions/actions/workflows/build.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/5b9b2f79950447a69d69037b43acd590)](https://www.codacy.com/gh/Testably/Testably.Abstractions/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Testably/Testably.Abstractions&amp;utm_campaign=Badge_Grade)
@@ -9,7 +9,10 @@ This library is an alternative testing helper for the [IFileSystem interfaces fr
 These interfaces allow abstracting away all I/O-related functionality from the `System.IO` namespace.  
 In addition, the following interfaces are defined:
 - The `ITimeSystem` interface abstracts away time-related functionality:  
-  `DateTime` methods give access to the current time, `Thread` allows replacing `Thread.Sleep` and `Task` allows replacing `Task.Delay`.
+  - `DateTime` methods give access to the current time
+  - `Task` allows replacing [`Task.Delay`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task.delay)
+  - `Thread` allows replacing [`Thread.Sleep`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.thread.sleep)
+  - `Timer` is a wrapper around [`System.Threading.Timer`](https://learn.microsoft.com/en-us/dotnet/api/system.threading.timer)
 - The `IRandomSystem` interface abstracts away functionality related to randomness:  
   `Random` methods implement a thread-safe Shared instance also under .NET Framework and `Guid` methods allow creating new GUIDs.
 
@@ -71,16 +74,17 @@ public void StoreData_ShouldWriteValidFile()
 **You can now use the interfaces in your services!**
 
 ## Testing
-In order to simplify testing, the `Testably.Abstractions.Testing` projects provides mocked instances for the abstraction interfaces:
+In order to simplify testing, the `Testably.Abstractions.Testing` project provides mocked instances for the abstraction interfaces:
 
 These mocks are configured using fluent syntax:
 ```csharp
 new MockFileSystem()
     .WithDrive("D:", d => d
-        .SetTotalSize(1024*1024))
-    .Initialize()
-        .WithAFile()
-        .WithASubdirectory().Initialized(s => s
-            .WithAFile(".txt"));
+        .SetTotalSize(1024 * 1024))
+    .InitializeIn("D:")
+    .WithFile("foo.txt")
+    .WithSubdirectory("sub-dir").Initialized(s => s
+        .WithAFile(".json").Which(
+            f => f.HasStringContent("{\"count\":1}")));
 ```
-Initializes the mocked file system with a second drive `D:` with 1MB total available space and creates on the default drive `C:` a random file and a random sub-directory containing a ".txt" file.
+Initializes the mocked file system with a second drive `D:` with 1MB total available space and creates on it an empty text file `foo.txt` and a directory `sub-dir` which contains randomly named json file with `{"count":1}` as file content.
