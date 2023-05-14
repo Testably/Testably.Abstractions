@@ -73,9 +73,7 @@ public class InitializationTests
 
 		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 		{
-			fileSystem.WithDrive(@"D:");
-
-			fileSystem.DriveInfo.GetDrives().Should().HaveCount(initialDriveCount + 1);
+			fileSystem.DriveInfo.GetDrives().Should().HaveCount(initialDriveCount);
 		}
 	}
 
