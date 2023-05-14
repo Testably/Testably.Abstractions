@@ -12,13 +12,13 @@ public class FileSystemWatcherTests
 	[Fact]
 	public void EnableRaisingEvents_ShouldTriggerWhenFileSystemChanges()
 	{
-		var fileSystem = new MockFileSystem();
-		fileSystem.Initialize();
+		MockFileSystem fileSystem = new();
+		fileSystem.Initialize().WithSubdirectory("foo");
 		FileSystemEventArgs? result = null;
 		ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			fileSystem.FileSystemWatcher.New(".");
-		fileSystemWatcher.Created += (_, eventArgs) =>
+		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{
 			result = eventArgs;
 			ms.Set();
@@ -26,7 +26,7 @@ public class FileSystemWatcherTests
 		fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
 		fileSystemWatcher.EnableRaisingEvents = true;
 
-		fileSystem.Directory.CreateDirectory("foo");
+		fileSystem.Directory.Delete("foo");
 
 		ms.Wait(1000).Should().BeTrue();
 

@@ -42,7 +42,7 @@ public class InitializationTests
 	public void InitializeFileSystemInTheRootDirectory()
 	{
 		MockFileSystem fileSystem = new();
-		fileSystem.Initialize()
+		fileSystem.InitializeIn("base-directory")
 			.WithASubdirectory()
 			.WithSubdirectory("foo")
 			.Initialized(s => s
