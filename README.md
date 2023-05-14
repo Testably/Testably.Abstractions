@@ -6,7 +6,7 @@
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FTestably%2FTestably.Abstractions%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/Testably/Testably.Abstractions/main)
 
 This library is an alternative testing helper for the [IFileSystem interfaces from System.IO.Abstractions](https://github.com/TestableIO/System.IO.Abstractions).
-These interfaces allow abstracting away all I/O-related functionality from the `System.IO` namespace.
+These interfaces allow abstracting away all I/O-related functionality from the `System.IO` namespace.  
 The testing helper also supports advanced scenarios like
 - [Multiple drives with limited size](Examples/DriveManagement/README.md)
 - [`FileSystemWatcher`](Examples/FileSystemWatcher/README.md) and
