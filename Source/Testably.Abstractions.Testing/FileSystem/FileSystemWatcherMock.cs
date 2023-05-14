@@ -195,14 +195,15 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private bool MatchesFilter(ChangeDescription changeDescription)
 	{
+		string fullPath = _fileSystem.Path.GetFullPath(Path);
 		if (IncludeSubdirectories)
 		{
-			if (!changeDescription.Path.StartsWith(Path))
+			if (!changeDescription.Path.StartsWith(fullPath))
 			{
 				return false;
 			}
 		}
-		else if (FileSystem.Path.GetDirectoryName(changeDescription.Path) != Path)
+		else if (FileSystem.Path.GetDirectoryName(changeDescription.Path) != fullPath)
 		{
 			return false;
 		}
