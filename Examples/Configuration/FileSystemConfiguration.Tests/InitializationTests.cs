@@ -95,7 +95,7 @@ public class InitializationTests
 
 		// Limit the main drive to 200 bytes
 		fileSystem.WithDrive(drive => drive.SetTotalSize(200));
-		IDriveInfo mainDrive = fileSystem.DriveInfo.GetDrives().Single();
+		IDriveInfo mainDrive = fileSystem.GetDefaultDrive();
 		mainDrive.AvailableFreeSpace.Should().Be(200);
 
 		fileSystem.File.WriteAllBytes("foo", firstFileContent);
