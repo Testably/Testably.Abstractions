@@ -7,6 +7,15 @@
 
 This library is an alternative testing helper for the [IFileSystem interfaces from System.IO.Abstractions](https://github.com/TestableIO/System.IO.Abstractions).
 These interfaces allow abstracting away all I/O-related functionality from the `System.IO` namespace.  
+The testing helper also supports advanced scenarios like
+- [Multiple drives with limited size](Examples/DriveManagement/README.md)
+- [`FileSystemWatcher`](Examples/FileSystemWatcher/README.md) and
+- a way to work with [SafeFileHandles](Examples/SafeFileHandle/README.md)
+
+The companion projects [Testably.Abstractions.Compression](https://www.nuget.org/packages/Testably.Abstractions.Compression) and [Testably.Abstractions.AccessControl](https://www.nuget.org/packages/Testably.Abstractions.AccessControl) allow working with [Zip-Files](Examples/ZipFile/README.md) and [Access Control Lists](Examples/AccessControlLists/README.md) respectively.
+
+As the test suite runs both against the mocked and the real file system, the behaviour between the two is identical.
+
 In addition, the following interfaces are defined:
 - The `ITimeSystem` interface abstracts away time-related functionality:  
   - `DateTime` methods give access to the current time
