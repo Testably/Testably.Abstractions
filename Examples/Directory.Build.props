@@ -28,7 +28,7 @@
 		<Reference Include="Testably.Abstractions.Testing">
 			<HintPath>..\..\..\Build\Binaries\net7.0\Testably.Abstractions.Testing.dll</HintPath>
 		</Reference>
-		<PackageReference Include="TestableIO.System.IO.Abstractions" Version="19.2.26" />
+		<PackageReference Include="TestableIO.System.IO.Abstractions" Version="19.2.29" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(UseFileReferenceToTestablyLibraries)' != 'True'">
