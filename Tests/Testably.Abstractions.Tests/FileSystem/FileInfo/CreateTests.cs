@@ -24,17 +24,21 @@ public abstract partial class CreateTests<TFileSystem>
 	public void Create_ShouldRefreshExistsCache_ExceptOnNetFramework(string path)
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut2 = FileSystem.FileInfo.New(path);
 		sut.Exists.Should().BeFalse();
+		sut2.Exists.Should().BeFalse();
 
 		using FileSystemStream stream = sut.Create();
 
 		if (Test.IsNetFramework)
 		{
 			sut.Exists.Should().BeFalse();
+			sut2.Exists.Should().BeFalse();
 		}
 		else
 		{
 			sut.Exists.Should().BeTrue();
+			sut2.Exists.Should().BeTrue();
 		}
 
 		FileSystem.File.Exists(path).Should().BeTrue();

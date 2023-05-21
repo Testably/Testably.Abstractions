@@ -75,6 +75,31 @@ public abstract partial class CreateTests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[AutoData]
+	public void Create_ShouldRefreshExistsCache_ExceptOnNetFramework(string path)
+	{
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
+		IDirectoryInfo sut2 = FileSystem.DirectoryInfo.New(path);
+		sut.Exists.Should().BeFalse();
+		sut2.Exists.Should().BeFalse();
+
+		sut.Create();
+
+		if (Test.IsNetFramework)
+		{
+			sut.Exists.Should().BeFalse();
+			sut2.Exists.Should().BeFalse();
+		}
+		else
+		{
+			sut.Exists.Should().BeTrue();
+			sut2.Exists.Should().BeTrue();
+		}
+
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+	}
+
+	[SkippableTheory]
 	[InlineData("")]
 	[InlineData("/")]
 	[InlineData("\\")]
