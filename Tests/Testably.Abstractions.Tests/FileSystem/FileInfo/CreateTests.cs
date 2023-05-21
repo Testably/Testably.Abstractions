@@ -21,24 +21,28 @@ public abstract partial class CreateTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Create_ShouldRefreshExistsCache_ExceptOnNetFramework(string path)
+	public void Create_ShouldRefreshExistsCacheForCurrentItem_ExceptOnNetFramework(string path)
 	{
-		IFileInfo sut = FileSystem.FileInfo.New(path);
+		IFileInfo sut1 = FileSystem.FileInfo.New(path);
 		IFileInfo sut2 = FileSystem.FileInfo.New(path);
-		sut.Exists.Should().BeFalse();
+		IFileInfo sut3 = FileSystem.FileInfo.New(path);
+		sut1.Exists.Should().BeFalse();
 		sut2.Exists.Should().BeFalse();
+		// Do not call Exists for `sut3`
 
-		using FileSystemStream stream = sut.Create();
+		using FileSystemStream stream = sut1.Create();
 
 		if (Test.IsNetFramework)
 		{
-			sut.Exists.Should().BeFalse();
+			sut1.Exists.Should().BeFalse();
 			sut2.Exists.Should().BeFalse();
+			sut3.Exists.Should().BeFalse();
 		}
 		else
 		{
-			sut.Exists.Should().BeTrue();
+			sut1.Exists.Should().BeTrue();
 			sut2.Exists.Should().BeFalse();
+			sut3.Exists.Should().BeTrue();
 		}
 
 		FileSystem.File.Exists(path).Should().BeTrue();
