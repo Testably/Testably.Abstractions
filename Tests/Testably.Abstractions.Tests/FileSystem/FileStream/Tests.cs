@@ -163,6 +163,22 @@ public abstract partial class Tests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[InlineAutoData(false)]
+	[InlineAutoData(true)]
+	public void Flush_WriteToDisk_ShouldNotChangePosition(
+		bool flushToDisk, string path, byte[] bytes)
+	{
+		using FileSystemStream stream = FileSystem.File.Create(path);
+		stream.Write(bytes, 0, bytes.Length);
+		stream.Seek(2, SeekOrigin.Begin);
+		stream.Position.Should().Be(2);
+
+		stream.Flush(flushToDisk);
+
+		stream.Position.Should().Be(2);
+	}
+
+	[SkippableTheory]
 	[AutoData]
 	public void Flush_ShouldNotUpdateFileContentWhenAlreadyFlushed(
 		string path, byte[] bytes1, byte[] bytes2)

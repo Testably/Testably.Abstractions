@@ -42,7 +42,7 @@ public class InitializationTests
 	public void InitializeFileSystemInTheRootDirectory()
 	{
 		MockFileSystem fileSystem = new();
-		fileSystem.Initialize()
+		fileSystem.InitializeIn("base-directory")
 			.WithASubdirectory()
 			.WithSubdirectory("foo")
 			.Initialized(s => s
@@ -63,19 +63,17 @@ public class InitializationTests
 	public void InitializeFileSystemWithUncDrive()
 	{
 		MockFileSystem fileSystem = new();
-		fileSystem.DriveInfo.GetDrives().Should().HaveCount(1);
+		var initialDriveCount = fileSystem.DriveInfo.GetDrives().Length;
 
 		fileSystem.WithUncDrive(@"//unc-server");
 
-		fileSystem.DriveInfo.GetDrives().Should().HaveCount(1);
+		fileSystem.DriveInfo.GetDrives().Should().HaveCount(initialDriveCount);
 		IDriveInfo drive = fileSystem.DriveInfo.New(@"//unc-server");
 		drive.IsReady.Should().BeTrue();
 
 		if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 		{
-			fileSystem.WithDrive(@"D:");
-
-			fileSystem.DriveInfo.GetDrives().Should().HaveCount(2);
+			fileSystem.DriveInfo.GetDrives().Should().HaveCount(initialDriveCount);
 		}
 	}
 
@@ -97,7 +95,7 @@ public class InitializationTests
 
 		// Limit the main drive to 200 bytes
 		fileSystem.WithDrive(drive => drive.SetTotalSize(200));
-		IDriveInfo mainDrive = fileSystem.DriveInfo.GetDrives().Single();
+		IDriveInfo mainDrive = fileSystem.GetDefaultDrive();
 		mainDrive.AvailableFreeSpace.Should().Be(200);
 
 		fileSystem.File.WriteAllBytes("foo", firstFileContent);

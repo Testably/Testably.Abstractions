@@ -1,7 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<RootNamespace>Testably.Abstractions.Examples.Timer</RootNamespace>
-	</PropertyGroup>
-
-</Project>

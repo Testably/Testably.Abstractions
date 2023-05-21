@@ -124,17 +124,22 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[ClassData(typeof(TestDataGetEncodingDifference))]
-	public void AppendAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(
-		string contents, Encoding writeEncoding, Encoding readEncoding)
+	[AutoData]
+	public void
+		AppendAllText_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
+			string path)
 	{
-		string path = new Fixture().Create<string>();
-		FileSystem.File.AppendAllText(path, contents, writeEncoding);
+		FileSystem.Directory.CreateDirectory(path);
 
-		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.AppendAllText(path, null);
+		});
 
-		result.Should().NotBeEquivalentTo(contents,
-			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
+		exception.Should().BeException<UnauthorizedAccessException>(
+			hResult: -2147024891);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
 	}
 
 	[SkippableTheory]
@@ -151,5 +156,19 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 		});
 
 		exception.Should().BeNull();
+	}
+
+	[SkippableTheory]
+	[ClassData(typeof(TestDataGetEncodingDifference))]
+	public void AppendAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(
+		string contents, Encoding writeEncoding, Encoding readEncoding)
+	{
+		string path = new Fixture().Create<string>();
+		FileSystem.File.AppendAllText(path, contents, writeEncoding);
+
+		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);
+
+		result.Should().NotBeEquivalentTo(contents,
+			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
 	}
 }

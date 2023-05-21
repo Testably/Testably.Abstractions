@@ -265,7 +265,7 @@ internal sealed class InMemoryStorage : IStorage
 
 		IStorageDrive? drive = _fileSystem.Storage.GetDrive(path);
 		if (drive == null &&
-		    !_fileSystem.Path.IsPathRooted(path))
+		    !path.IsUncPath())
 		{
 			drive = _fileSystem.Storage.MainDrive;
 		}

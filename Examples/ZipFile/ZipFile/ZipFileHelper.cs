@@ -54,10 +54,13 @@ public sealed class ZipFileHelper
 			{
 				_fileSystem.Directory.CreateDirectory(directoryPath);
 			}
-
-			using MemoryStream ms = new();
-			entry.Open().CopyTo(ms);
-			_fileSystem.File.WriteAllBytes(filePath, ms.ToArray());
+			
+			if (!entry.FullName.EndsWith("/"))
+			{
+				using MemoryStream ms = new();
+				entry.Open().CopyTo(ms);
+				_fileSystem.File.WriteAllBytes(filePath, ms.ToArray());
+			}
 		}
 	}
 

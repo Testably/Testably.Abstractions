@@ -83,6 +83,25 @@ public abstract partial class AppendAllLinesTests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[AutoData]
+	public void
+		AppendAllLines_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
+			string path, string[] contents)
+	{
+		FileSystem.Directory.CreateDirectory(path);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.AppendAllLines(path, contents);
+		});
+
+		exception.Should().BeException<UnauthorizedAccessException>(
+			hResult: -2147024891);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
+	}
+
+	[SkippableTheory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
 	public void AppendAllLines_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string specialLine, Encoding writeEncoding, Encoding readEncoding)

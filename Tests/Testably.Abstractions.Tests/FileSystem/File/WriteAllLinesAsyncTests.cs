@@ -124,6 +124,25 @@ public abstract partial class WriteAllLinesAsyncTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public async Task
+		WriteAllLinesAsync_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
+			string path, string[] contents)
+	{
+		FileSystem.Directory.CreateDirectory(path);
+
+		Exception? exception = await Record.ExceptionAsync(async () =>
+		{
+			await FileSystem.File.WriteAllLinesAsync(path, contents);
+		});
+
+		exception.Should().BeException<UnauthorizedAccessException>(
+			hResult: -2147024891);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public async Task
 		WriteAllLinesAsync_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 			string path, string[] contents)
 	{

@@ -46,6 +46,11 @@ internal sealed class DirectoryInfoMock
 			InMemoryContainer.NewDirectory,
 			this);
 
+		if (Container.Type != FileSystemTypes.Directory)
+		{
+			throw ExceptionFactory.CannotCreateFileAsAlreadyExists(FullName);
+		}
+
 		ResetCache(!Execute.IsNetFramework);
 	}
 

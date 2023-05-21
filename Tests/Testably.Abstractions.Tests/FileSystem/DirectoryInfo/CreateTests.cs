@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
 // ReSharper disable once PartialTypeWithSinglePart
@@ -5,6 +7,23 @@ public abstract partial class CreateTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
+	[SkippableTheory]
+	[AutoData]
+	public void Create_FileWithSameNameAlreadyExists_ShouldThrowIOException(string name)
+	{
+		FileSystem.File.WriteAllText(name, "");
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(name);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.Create();
+		});
+
+		exception.Should().BeException<IOException>(
+			hResult: Test.RunsOnWindows ? -2147024713 : 17);
+		FileSystem.Directory.Exists(name).Should().BeFalse();
+	}
+
 	[SkippableTheory]
 	[AutoData]
 	public void Create_ShouldCreateDirectory(string path)
@@ -53,6 +72,35 @@ public abstract partial class CreateTests<TFileSystem>
 		result.Parent.Exists.Should().BeTrue();
 		result.Parent.Parent.Exists.Should().BeTrue();
 		result.ToString().Should().Be(path);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Create_ShouldRefreshExistsCacheForCurrentItem_ExceptOnNetFramework(string path)
+	{
+		IDirectoryInfo sut1 = FileSystem.DirectoryInfo.New(path);
+		IDirectoryInfo sut2 = FileSystem.DirectoryInfo.New(path);
+		IDirectoryInfo sut3 = FileSystem.DirectoryInfo.New(path);
+		sut1.Exists.Should().BeFalse();
+		sut2.Exists.Should().BeFalse();
+		// Do not call Exists for `sut3`
+
+		sut1.Create();
+
+		if (Test.IsNetFramework)
+		{
+			sut1.Exists.Should().BeFalse();
+			sut2.Exists.Should().BeFalse();
+			sut3.Exists.Should().BeFalse();
+		}
+		else
+		{
+			sut1.Exists.Should().BeTrue();
+			sut2.Exists.Should().BeFalse();
+			sut3.Exists.Should().BeTrue();
+		}
+
+		FileSystem.Directory.Exists(path).Should().BeTrue();
 	}
 
 	[SkippableTheory]

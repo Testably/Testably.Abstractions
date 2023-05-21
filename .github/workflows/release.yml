@@ -164,7 +164,7 @@ jobs:
 
   test-examples:
     name: Test (Examples)
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -273,7 +273,7 @@ jobs:
           git tag "${version}"
           git push origin "${version}"
       - name: Setup NuGet
-        uses: NuGet/setup-nuget@v1.1.1
+        uses: NuGet/setup-nuget@v1.2.0
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
@@ -283,11 +283,13 @@ jobs:
       - name: Prepare README.md
         shell: bash
         run: |
+          version="${GITHUB_REF#refs/heads/release/}"
+          # Add changelog badge to README.md
+          sed -i -e "2 a\[!\[Changelog](https:\/\/img\.shields\.io\/badge\/Changelog-${version}-blue)](https:\/\/github\.com\/Testably\/Testably\.Abstractions\/releases\/tag\/${version})" "./README.md"
           for f in "README.md" "Docs/AccessControl.md" "Docs/Compression.md" "Docs/Interface.md" "Docs/Testing.md"
           do
             echo "Processing $f" # always double quote "$f" filename
             # do something on $f
-            version="${GITHUB_REF#refs/heads/release/}"
             # Remove the codacy badge as it is not aligned to the release
             grep -v "Codacy Badge" "./$f" > "./$f.backup" && mv "./$f.backup" "./$f"
             # Change status badges to display explicit version

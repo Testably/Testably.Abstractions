@@ -18,7 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="TestableIO.System.IO.Abstractions" Version="19.2.4" />
+	  <PackageReference Include="TestableIO.System.IO.Abstractions" Version="19.2.29" />
 	</ItemGroup>
 
 </Project>
