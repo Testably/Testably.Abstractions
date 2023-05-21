@@ -93,7 +93,7 @@ public abstract partial class CreateTests<TFileSystem>
 		else
 		{
 			sut.Exists.Should().BeTrue();
-			sut2.Exists.Should().BeTrue();
+			sut2.Exists.Should().BeFalse();
 		}
 
 		FileSystem.Directory.Exists(path).Should().BeTrue();
