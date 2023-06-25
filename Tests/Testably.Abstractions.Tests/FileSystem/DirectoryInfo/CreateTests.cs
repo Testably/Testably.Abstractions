@@ -91,7 +91,7 @@ public abstract partial class CreateTests<TFileSystem>
 		{
 			sut1.Exists.Should().BeFalse();
 			sut2.Exists.Should().BeFalse();
-			sut3.Exists.Should().BeFalse();
+			sut3.Exists.Should().BeTrue();
 		}
 		else
 		{
