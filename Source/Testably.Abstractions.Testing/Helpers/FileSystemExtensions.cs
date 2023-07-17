@@ -45,7 +45,7 @@ internal static class FileSystemExtensions
 			return fullFilePath;
 		}
 
-		string currentDirectory = fileSystem.Directory.GetCurrentDirectory();
+		string currentDirectory = fileSystem.Path.GetFullPath(givenPath);
 		if (currentDirectory == string.Empty.PrefixRoot())
 		{
 			fullFilePath = fullFilePath.Substring(currentDirectory.Length);
