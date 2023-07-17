@@ -24,8 +24,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Linq.Async" Version="6.0.1" />
-		<PackageReference Include="System.Threading.Channels" Version="7.0.0" />
+		<PackageReference Include="System.Linq.Async" />
+		<PackageReference Include="System.Threading.Channels" />
 	</ItemGroup>
 
 </Project>

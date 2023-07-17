@@ -5,6 +5,11 @@ VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{641A4EEA-484D-4332-B410-45DE0E95A4C6}"
 	ProjectSection(SolutionItems) = preProject
+		..\Directory.Packages.props = ..\Directory.Packages.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{3D1F1BF2-0605-4EAA-AE14-7D06B02B9830}"
+	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
 		README.md = README.md
 	EndProjectSection
@@ -139,6 +144,7 @@ Global
 		{63F48EEB-F2A8-4A26-BEFF-A766EE2793DA} = {E116185F-52D4-48B4-BF55-D3BE0905805D}
 		{C58E47F9-84D6-4D1C-8348-D72159597996} = {B19433E1-9187-4A98-A2F9-4A84366CD2DC}
 		{BD564722-10AE-481F-B13C-A1C319731E7D} = {F05DF273-2CC0-4E23-81BF-AA48E8142144}
+		{3D1F1BF2-0605-4EAA-AE14-7D06B02B9830} = {641A4EEA-484D-4332-B410-45DE0E95A4C6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D439CFB9-E2DD-4DF9-AA90-F321B50EAD16}
