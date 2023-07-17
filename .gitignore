@@ -1,12 +1,7 @@
 # Ignore the Directory.Build.props in the root directory so that
 # the setting of specific constants can improve the developer experience
-# without affecting the origin GIT repository:
-# - `SKIP_TESTS_ON_REAL_FILESYSTEM`
-#   By setting this flag, all tests against the real file system are skipped when in DEBUG mode.
-# - `INCLUDE_LONGRUNNING_TESTS_ALSO_IN_DEBUG_MODE`
-#   Per default, long-running tests against the real file system are skipped when in DEBUG mode. By setting this flag, these tests are run also in this mode.
-# - `EXECUTE_EXAMPLE_TESTS`
-#   Tests in the example projects are only executed when this flag is set.
+# without affecting the origin GIT repository.
+# > https://github.com/Testably/Testably.Abstractions/blob/main/CONTRIBUTING.md#tests
 /Directory.Build.props
 
 # Set up Visual Studio to use WSL to execute unit tests in Ubuntu:
