@@ -12,24 +12,6 @@ public abstract partial class GetFilesTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public void GetFiles_WithRelativePathAndSubfolders_ShouldReturnRelativeFilePath(string subfolder1, string subfolder2, string[] files)
-	{
-		string workingDirectory = System.IO.Path.Combine(BasePath, subfolder1, subfolder2);
-		FileSystem.Directory.CreateDirectory(workingDirectory);
-		foreach (string file in files)
-		{
-			FileSystem.File.Create(System.IO.Path.Combine(workingDirectory, file));
-		}
-		
-		FileSystem.Directory.SetCurrentDirectory($@".\{subfolder1}");
-		var result = FileSystem.Directory.GetFiles($@"..\{subfolder1}\{subfolder2}").ToList();
-
-		IEnumerable<string> expectation = files.Select(f => System.IO.Path.Combine("..", subfolder1, subfolder2, f));
-		result.Should().BeEquivalentTo(expectation);
-	}
-
-	[SkippableTheory]
-	[AutoData]
 	public void
 		GetFiles_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
@@ -190,6 +172,27 @@ public abstract partial class GetFilesTests<TFileSystem>
 		result.Should().Contain(initialized[0].ToString());
 		result.Should().Contain(initialized[1].ToString());
 		result.Should().NotContain(initialized[3].ToString());
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void GetFiles_WithRelativePathAndSubfolders_ShouldReturnRelativeFilePath(
+		string subfolder1, string subfolder2, string[] files)
+	{
+		string workingDirectory = System.IO.Path.Combine(BasePath, subfolder1, subfolder2);
+		FileSystem.Directory.CreateDirectory(workingDirectory);
+		foreach (string file in files)
+		{
+			FileSystem.File.Create(System.IO.Path.Combine(workingDirectory, file));
+		}
+		FileSystem.Directory.SetCurrentDirectory(subfolder1);
+		IEnumerable<string> expectation =
+			files.Select(f => System.IO.Path.Combine("..", subfolder1, subfolder2, f));
+		var path = System.IO.Path.Combine("..", subfolder1, subfolder2);
+
+		List<string> result = FileSystem.Directory.GetFiles(path).ToList();
+
+		result.Should().BeEquivalentTo(expectation);
 	}
 
 	[SkippableTheory]
