@@ -39,7 +39,7 @@ public abstract partial class GetFilesTests<TFileSystem>
 			Record.Exception(()
 				=> FileSystem.Directory.GetFiles(path).ToList());
 
-		exception.Should().BeException<DirectoryNotFoundException>($"'{expectedPath}'.",
+		exception.Should().BeException<DirectoryNotFoundException>(expectedPath,
 			hResult: -2147024893);
 		FileSystem.Directory.Exists(path).Should().BeFalse();
 	}

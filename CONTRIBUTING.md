@@ -15,7 +15,7 @@ Additionally each push to the `main` branch checks the quality of the unit tests
 
 ## Tests
 On the build system, unit tests are executed both against the `MockFileSystem` and the `RealFileSystem`. This ensures that the tests verify correct assumptions.
-In order to simplify and speedup the development process, per default some tests are disabled in DEBUG mode. These can be enabled by adding a `Directory.Build.props` file in the root directory and set the corresponding constants:
+In order to simplify and speedup the development process, per default some tests are disabled in DEBUG mode. These can be enabled by editing the sample [`Directory.Build.props`](https://github.com/Testably/Testably.Abstractions/blob/main/Directory.Build.props) file in the root directory and set the corresponding constants:
 - [`ENABLE_REALFILESYSTEMTESTS_IN_DEBUG`](https://github.com/Testably/Testably.Abstractions/blob/main/Tests/Helpers/Testably.Abstractions.Tests.SourceGenerator/ClassGenerators/FileSystemClassGenerator.cs#L59)  
   If set, the classes for executing tests against the real file system are created also in DEBUG mode.
 - [`INCLUDE_LONGRUNNING_TESTS_ALSO_IN_DEBUG_MODE`](https://github.com/Testably/Testably.Abstractions/blob/main/Tests/Helpers/Testably.Abstractions.TestHelpers/Test.cs#L51)  
