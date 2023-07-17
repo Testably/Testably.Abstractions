@@ -1,0 +1,9 @@
+<Project>
+	<PropertyGroup>
+		<!-- Uncomment a line to enable the desired behavior. See https://github.com/Testably/Testably.Abstractions/blob/main/CONTRIBUTING.md#tests for more information! -->
+
+		<!--<DefineConstants>$(DefineConstants);ENABLE_REALFILESYSTEMTESTS_IN_DEBUG</DefineConstants>-->
+		<!--<DefineConstants>$(DefineConstants);INCLUDE_LONGRUNNING_TESTS_ALSO_IN_DEBUG_MODE</DefineConstants>-->
+		<!--<DefineConstants>$(DefineConstants);SKIP_TESTS_ON_REAL_FILESYSTEM</DefineConstants>-->
+	</PropertyGroup>
+</Project>
