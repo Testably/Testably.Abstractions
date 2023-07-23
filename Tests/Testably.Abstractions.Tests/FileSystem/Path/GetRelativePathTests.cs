@@ -34,6 +34,18 @@ public abstract partial class GetRelativePathTests<TFileSystem>
 		result.Should().Be(path2);
 	}
 
+	[Fact]
+	public void GetRelativePath_FromAbsolutePathInCurrentDirectory_ShouldReturnRelativePath()
+	{
+		string rootedPath = FileSystem.Path.Combine(BasePath, "input");
+		FileSystem.Directory.CreateDirectory(rootedPath);
+		FileSystem.Directory.SetCurrentDirectory(rootedPath);
+
+		string result = FileSystem.Path.GetRelativePath(rootedPath, "a.txt");
+
+		Assert.Equal("a.txt", result);
+	}
+
 	[SkippableTheory]
 	[AutoData]
 	public void GetRelativePath_RootedPath_ShouldReturnAbsolutePath(
@@ -52,7 +64,7 @@ public abstract partial class GetRelativePathTests<TFileSystem>
 	public void GetRelativePath_RootedPath_ShouldWorkOnAnyDrive()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
-		
+
 		string rootedPath = "/dir/subDirectory";
 		FileSystem.Directory.CreateDirectory(rootedPath);
 		string directory = FileSystem.Directory.GetDirectories("/dir").Single();
