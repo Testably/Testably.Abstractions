@@ -258,7 +258,7 @@ internal sealed class InMemoryStorage : IStorage
 	[return: NotNullIfNotNull("path")]
 	public IStorageLocation? GetLocation(string? path, string? friendlyName = null)
 	{
-		if (path == null)
+		if (string.IsNullOrWhiteSpace(path))
 		{
 			return null;
 		}
