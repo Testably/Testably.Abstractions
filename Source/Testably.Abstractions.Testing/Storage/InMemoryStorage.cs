@@ -270,7 +270,7 @@ internal sealed class InMemoryStorage : IStorage
 			drive = _fileSystem.Storage.MainDrive;
 		}
 
-		return InMemoryLocation.New(drive, _fileSystem.Path.GetFullPath(path), path);
+		return InMemoryLocation.New(drive, path.GetFullPathOrWhiteSpace(_fileSystem), path);
 	}
 
 	/// <inheritdoc cref="IStorage.GetOrAddDrive(string)" />

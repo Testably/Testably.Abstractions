@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Testably.Abstractions.Helpers;
+using Testably.Abstractions.Testing.Helpers;
 #if FEATURE_FILESYSTEM_NET7
 using System.Diagnostics.CodeAnalysis;
 using Testably.Abstractions.Testing.Storage;
@@ -34,10 +35,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.GetFullPath(string)" />
 	public override string GetFullPath(string path)
 	{
-		if (string.IsNullOrEmpty(path))
-		{
-			return string.Empty;
-		}
+		path.EnsureValidArgument(FileSystem, nameof(path));
 
 		return Path.GetFullPath(Path.Combine(
 			_fileSystem.Storage.CurrentDirectory,
