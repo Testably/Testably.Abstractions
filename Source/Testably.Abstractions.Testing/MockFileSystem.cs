@@ -46,7 +46,10 @@ public sealed class MockFileSystem : IFileSystem
 	///     The registered containers in the in-Memory <see cref="Storage" />.
 	/// </summary>
 	internal IReadOnlyList<IStorageContainer> Containers
-		=> _storage.Containers.OrderBy(x => x.Key.FullPath).Select(x => x.Value).ToList();
+		=> _storage.Containers
+			.OrderBy(x => x.Key.FullPath)
+			.Select(x => x.Value)
+			.ToList();
 
 	private readonly DirectoryMock _directoryMock;
 	private readonly FileMock _fileMock;
