@@ -258,7 +258,7 @@ internal sealed class InMemoryStorage : IStorage
 	[return: NotNullIfNotNull("path")]
 	public IStorageLocation? GetLocation(string? path, string? friendlyName = null)
 	{
-		if (string.IsNullOrWhiteSpace(path))
+		if (path == null)
 		{
 			return null;
 		}
@@ -270,7 +270,7 @@ internal sealed class InMemoryStorage : IStorage
 			drive = _fileSystem.Storage.MainDrive;
 		}
 
-		return InMemoryLocation.New(drive, _fileSystem.Path.GetFullPath(path), path);
+		return InMemoryLocation.New(drive, path.GetFullPathOrEmpty(_fileSystem), path);
 	}
 
 	/// <inheritdoc cref="IStorage.GetOrAddDrive(string)" />
