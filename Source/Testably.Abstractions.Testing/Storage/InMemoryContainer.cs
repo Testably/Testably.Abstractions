@@ -212,6 +212,22 @@ internal class InMemoryContainer : IStorageContainer
 
 	#endregion
 
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		if (Type == FileSystemTypes.Directory)
+		{
+			return $"{_location.FullPath}: Directory";
+		}
+
+		if (Type == FileSystemTypes.File)
+		{
+			return $"{_location.FullPath}: File ({_bytes.Length} bytes)";
+		}
+
+		return $"{_location.FullPath}: Unknown Container";
+	}
+
 	/// <summary>
 	///     Create a new directory on the <paramref name="location" />.
 	/// </summary>
@@ -318,6 +334,10 @@ internal class InMemoryContainer : IStorageContainer
 		}
 
 		#endregion
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> _time.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ssZ");
 	}
 
 	private sealed class FileHandle : IStorageAccessHandle

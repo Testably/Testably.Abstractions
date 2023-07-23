@@ -15,8 +15,8 @@ namespace Testably.Abstractions.Testing.Storage;
 /// </summary>
 internal sealed class InMemoryStorage : IStorage
 {
-	private readonly ConcurrentDictionary<IStorageLocation, IStorageContainer>
-		_containers = new();
+	internal readonly ConcurrentDictionary<IStorageLocation, IStorageContainer>
+		Containers = new();
 
 	private readonly ConcurrentDictionary<string, IStorageDrive> _drives =
 		new(StringComparer.OrdinalIgnoreCase);
@@ -45,7 +45,7 @@ internal sealed class InMemoryStorage : IStorage
 	{
 		ThrowIfParentDoesNotExist(destination, _ => ExceptionFactory.DirectoryNotFound());
 
-		if (!_containers.TryGetValue(source,
+		if (!Containers.TryGetValue(source,
 			out IStorageContainer? sourceContainer))
 		{
 			return null;
@@ -59,7 +59,7 @@ internal sealed class InMemoryStorage : IStorage
 		using (_ = sourceContainer.RequestAccess(FileAccess.ReadWrite, FileShare.None))
 		{
 			if (overwrite &&
-			    _containers.TryRemove(destination,
+			    Containers.TryRemove(destination,
 				    out IStorageContainer? existingContainer))
 			{
 				existingContainer.ClearBytes();
@@ -67,7 +67,7 @@ internal sealed class InMemoryStorage : IStorage
 
 			IStorageContainer copiedContainer =
 				InMemoryContainer.NewFile(destination, _fileSystem);
-			if (_containers.TryAdd(destination, copiedContainer))
+			if (Containers.TryAdd(destination, copiedContainer))
 			{
 				copiedContainer.WriteBytes(sourceContainer.GetBytes().ToArray());
 				Execute.OnMac(
@@ -99,11 +99,11 @@ internal sealed class InMemoryStorage : IStorage
 	/// <inheritdoc cref="IStorage.DeleteContainer(IStorageLocation, bool)" />
 	public bool DeleteContainer(IStorageLocation location, bool recursive = false)
 	{
-		if (!_containers.TryGetValue(location, out IStorageContainer? container))
+		if (!Containers.TryGetValue(location, out IStorageContainer? container))
 		{
 			IStorageLocation? parentLocation = location.GetParent();
 			if (parentLocation != null &&
-			    !_containers.TryGetValue(parentLocation, out _))
+			    !Containers.TryGetValue(parentLocation, out _))
 			{
 				throw ExceptionFactory.DirectoryNotFound(parentLocation.FullPath);
 			}
@@ -140,7 +140,7 @@ internal sealed class InMemoryStorage : IStorage
 		using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite,
 			deleteAccess: true))
 		{
-			if (_containers.TryRemove(location, out IStorageContainer? removed))
+			if (Containers.TryRemove(location, out IStorageContainer? removed))
 			{
 				removed.ClearBytes();
 				_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
@@ -160,7 +160,7 @@ internal sealed class InMemoryStorage : IStorage
 		EnumerationOptions? enumerationOptions = null)
 	{
 		ValidateExpression(searchPattern);
-		if (!_containers.ContainsKey(location))
+		if (!Containers.ContainsKey(location))
 		{
 			throw ExceptionFactory.DirectoryNotFound(location.FullPath);
 		}
@@ -177,7 +177,7 @@ internal sealed class InMemoryStorage : IStorage
 			fullPath += _fileSystem.Path.DirectorySeparatorChar;
 		}
 
-		foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers
+		foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in Containers
 			.Where(x => x.Key.FullPath.StartsWith(fullPath,
 				            InMemoryLocation.StringComparisonMode) &&
 			            !x.Key.Equals(location)))
@@ -215,7 +215,7 @@ internal sealed class InMemoryStorage : IStorage
 			return null;
 		}
 
-		if (_containers.TryGetValue(location, out IStorageContainer? container))
+		if (Containers.TryGetValue(location, out IStorageContainer? container))
 		{
 			return container;
 		}
@@ -287,7 +287,7 @@ internal sealed class InMemoryStorage : IStorage
 		IFileSystemExtensibility? fileSystemExtensibility = null)
 	{
 		ChangeDescription? fileSystemChange = null;
-		IStorageContainer container = _containers.GetOrAdd(location,
+		IStorageContainer container = Containers.GetOrAdd(location,
 			loc =>
 			{
 				IStorageContainer container =
@@ -302,7 +302,7 @@ internal sealed class InMemoryStorage : IStorage
 				{
 					IStorageLocation? parentLocation = loc.GetParent();
 					if (parentLocation is { IsRooted: false } &&
-					    !_containers.ContainsKey(parentLocation))
+					    !Containers.ContainsKey(parentLocation))
 					{
 						throw ExceptionFactory.DirectoryNotFound(loc.FullPath);
 					}
@@ -359,13 +359,13 @@ internal sealed class InMemoryStorage : IStorage
 			() => ExceptionFactory.DirectoryNotFound(location.FullPath),
 			() => ExceptionFactory.FileNotFound(location.FullPath)));
 
-		if (!_containers.TryGetValue(source,
+		if (!Containers.TryGetValue(source,
 			out IStorageContainer? sourceContainer))
 		{
 			return null;
 		}
 
-		if (!_containers.TryGetValue(destination,
+		if (!Containers.TryGetValue(destination,
 			out IStorageContainer? destinationContainer))
 		{
 			return null;
@@ -383,14 +383,14 @@ internal sealed class InMemoryStorage : IStorage
 			using (_ = destinationContainer.RequestAccess(FileAccess.ReadWrite,
 				FileShare.None, ignoreMetadataErrors: ignoreMetadataErrors))
 			{
-				if (_containers.TryRemove(destination,
+				if (Containers.TryRemove(destination,
 					out IStorageContainer? existingDestinationContainer))
 				{
 					int destinationBytesLength =
 						existingDestinationContainer.GetBytes().Length;
 					destination.Drive?.ChangeUsedBytes(-1 * destinationBytesLength);
 					if (backup != null &&
-					    _containers.TryAdd(backup, existingDestinationContainer))
+					    Containers.TryAdd(backup, existingDestinationContainer))
 					{
 						Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
 							() => existingDestinationContainer.Attributes |=
@@ -398,7 +398,7 @@ internal sealed class InMemoryStorage : IStorage
 						backup.Drive?.ChangeUsedBytes(destinationBytesLength);
 					}
 
-					if (_containers.TryRemove(source,
+					if (Containers.TryRemove(source,
 						out IStorageContainer? existingSourceContainer))
 					{
 						int sourceBytesLength = existingSourceContainer.GetBytes().Length;
@@ -414,7 +414,7 @@ internal sealed class InMemoryStorage : IStorage
 										DateTimeKind.Utc),
 									DateTimeKind.Utc);
 							});
-						_containers.TryAdd(destination, existingSourceContainer);
+						Containers.TryAdd(destination, existingSourceContainer);
 						return destination;
 					}
 				}
@@ -429,13 +429,13 @@ internal sealed class InMemoryStorage : IStorage
 	public IStorageLocation? ResolveLinkTarget(IStorageLocation location,
 		bool returnFinalTarget = false)
 	{
-		if (_containers.TryGetValue(location,
+		if (Containers.TryGetValue(location,
 			    out IStorageContainer? initialContainer) &&
 		    initialContainer.LinkTarget != null)
 		{
 			IStorageLocation? nextLocation =
 				_fileSystem.Storage.GetLocation(initialContainer.LinkTarget);
-			if (_containers.TryGetValue(nextLocation,
+			if (Containers.TryGetValue(nextLocation,
 				out IStorageContainer? container))
 			{
 				if (returnFinalTarget)
@@ -462,14 +462,14 @@ internal sealed class InMemoryStorage : IStorage
 	{
 		IStorageLocation? parentLocation = location.GetParent();
 		if (parentLocation is { IsRooted: false } &&
-		    !_containers.ContainsKey(parentLocation))
+		    !Containers.ContainsKey(parentLocation))
 		{
 			throw ExceptionFactory.DirectoryNotFound(location.FullPath);
 		}
 
 		ChangeDescription? fileSystemChange = null;
 
-		container = _containers.GetOrAdd(
+		container = Containers.GetOrAdd(
 			location,
 			_ =>
 			{
@@ -535,7 +535,7 @@ internal sealed class InMemoryStorage : IStorage
 				ChangeDescription? fileSystemChange = null;
 				IStorageLocation parentLocation =
 					_fileSystem.Storage.GetLocation(parentPath);
-				_ = _containers.AddOrUpdate(
+				_ = Containers.AddOrUpdate(
 					parentLocation,
 					loc =>
 					{
@@ -571,7 +571,7 @@ internal sealed class InMemoryStorage : IStorage
 		FileSystemTypes? sourceType,
 		List<Rollback>? rollbacks = null)
 	{
-		if (!_containers.TryGetValue(source,
+		if (!Containers.TryGetValue(source,
 			out IStorageContainer? container))
 		{
 			return null;
@@ -615,16 +615,16 @@ internal sealed class InMemoryStorage : IStorage
 					NotifyFilters.FileName,
 					destination,
 					source);
-			if (_containers.TryRemove(source, out IStorageContainer? sourceContainer))
+			if (Containers.TryRemove(source, out IStorageContainer? sourceContainer))
 			{
 				if (overwrite &&
-				    _containers.TryRemove(destination,
+				    Containers.TryRemove(destination,
 					    out IStorageContainer? existingContainer))
 				{
 					existingContainer.ClearBytes();
 				}
 
-				if (_containers.TryAdd(destination, sourceContainer))
+				if (Containers.TryAdd(destination, sourceContainer))
 				{
 					int bytesLength = sourceContainer.GetBytes().Length;
 					source.Drive?.ChangeUsedBytes(-1 * bytesLength);
@@ -638,7 +638,7 @@ internal sealed class InMemoryStorage : IStorage
 					return destination;
 				}
 
-				_containers.TryAdd(source, sourceContainer);
+				Containers.TryAdd(source, sourceContainer);
 				throw ExceptionFactory.CannotCreateFileWhenAlreadyExists(
 					sourceType == FileSystemTypes.Directory
 						? -2147024891
@@ -665,7 +665,7 @@ internal sealed class InMemoryStorage : IStorage
 			}
 
 			nextLocation = _fileSystem.Storage.GetLocation(container.LinkTarget);
-			if (!_containers.TryGetValue(nextLocation,
+			if (!Containers.TryGetValue(nextLocation,
 				out IStorageContainer? nextContainer))
 			{
 				return nextLocation;
@@ -692,7 +692,7 @@ internal sealed class InMemoryStorage : IStorage
 		if (parentLocation != null &&
 		    _fileSystem.Path.GetPathRoot(parentLocation.FullPath) !=
 		    parentLocation.FullPath &&
-		    !_containers.TryGetValue(parentLocation, out _))
+		    !Containers.TryGetValue(parentLocation, out _))
 		{
 			throw exceptionCallback(parentLocation);
 		}

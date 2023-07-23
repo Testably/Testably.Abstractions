@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions.Testing.Helpers;
@@ -43,5 +44,17 @@ internal class FileSystemExtensibility : IFileSystemExtensibility
 				targetContainer._metadata[item.Key] = item.Value;
 			}
 		}
+	}
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		if (_metadata.Count == 0)
+		{
+			return "[]";
+		}
+
+		return
+			$"[{string.Join(", ", _metadata.Select(x => $"{x.Key}: {x.Value}"))}]";
 	}
 }
