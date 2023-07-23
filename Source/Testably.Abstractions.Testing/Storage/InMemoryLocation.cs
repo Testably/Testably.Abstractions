@@ -85,13 +85,10 @@ internal sealed class InMemoryLocation : IStorageLocation
 	public IStorageLocation? GetParent()
 	{
 		string? parentPath = Path.GetDirectoryName(FullPath);
-		if (Path.GetPathRoot(FullPath) == FullPath)
+		if (Path.GetPathRoot(FullPath) == FullPath || parentPath == null)
 		{
 			return null;
 		}
-
-		Debug.Assert(parentPath != null,
-			"When parentPath is null, FullPath must be null or a root path!");
 
 		return New(Drive,
 			parentPath,
