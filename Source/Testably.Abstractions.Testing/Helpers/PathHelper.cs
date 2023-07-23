@@ -72,16 +72,15 @@ internal static class PathHelper
 
 	/// <summary>
 	///     Get the <see cref="IPath.GetFullPath(string)" /> of the <paramref name="path" />
-	///     or an empty string, if <paramref name="path" /> is <see langword="null" /> or empty.
+	///     if the <paramref name="path" /> is not <see langword="null" /> or white space.<br />
+	///     Otherwise an empty string if the <paramref name="path" /> is <see langword="null" />
+	///     or the <paramref name="path" /> itself.
 	/// </summary>
-	/// <param name="path"></param>
-	/// <param name="fileSystem"></param>
-	/// <returns></returns>
-	internal static string GetFullPathOrEmpty(this string? path, IFileSystem fileSystem)
+	internal static string GetFullPathOrWhiteSpace(this string? path, IFileSystem fileSystem)
 	{
-		if (string.IsNullOrEmpty(path))
+		if (string.IsNullOrWhiteSpace(path))
 		{
-			return string.Empty;
+			return path ?? string.Empty;
 		}
 
 		return fileSystem.Path.GetFullPath(path);

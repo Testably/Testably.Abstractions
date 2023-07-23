@@ -42,7 +42,7 @@ public static class InterceptionHandlerExtensions
 			changeDescription => changeDescription.Matches(
 				fileSystemType,
 				WatcherChangeTypes.Changed,
-				path.GetFullPathOrEmpty(handler.FileSystem),
+				path.GetFullPathOrWhiteSpace(handler.FileSystem),
 				searchPattern,
 				predicate));
 
@@ -78,7 +78,7 @@ public static class InterceptionHandlerExtensions
 			changeDescription => changeDescription.Matches(
 				fileSystemType,
 				WatcherChangeTypes.Created,
-				path.GetFullPathOrEmpty(handler.FileSystem),
+				path.GetFullPathOrWhiteSpace(handler.FileSystem),
 				searchPattern,
 				predicate));
 
@@ -114,7 +114,7 @@ public static class InterceptionHandlerExtensions
 			changeDescription => changeDescription.Matches(
 				fileSystemType,
 				WatcherChangeTypes.Deleted,
-				path.GetFullPathOrEmpty(handler.FileSystem),
+				path.GetFullPathOrWhiteSpace(handler.FileSystem),
 				searchPattern,
 				predicate));
 }
