@@ -25,11 +25,7 @@ public abstract partial class GetRelativePathTests<TFileSystem>
 	public void GetRelativePath_DifferentDrives_ShouldReturnAbsolutePath(
 		string path1, string path2)
 	{
-		if (!Test.RunsOnWindows)
-		{
-			// Different drives are only supported on Windows
-			return;
-		}
+		Skip.IfNot(Test.RunsOnWindows, "Different drives are only supported on Windows");
 
 		path1 = FileTestHelper.RootDrive(path1, 'A');
 		path2 = FileTestHelper.RootDrive(path2, 'B');
