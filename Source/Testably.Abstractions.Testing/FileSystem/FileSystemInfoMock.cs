@@ -55,6 +55,11 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.CreateAsSymbolicLink(string)" />
 	public void CreateAsSymbolicLink(string pathToTarget)
 	{
+		if (!Execute.IsWindows && string.IsNullOrWhiteSpace(FullName))
+		{
+			return;
+		}
+
 		FullName.EnsureValidFormat(_fileSystem);
 		pathToTarget.ThrowCommonExceptionsIfPathToTargetIsInvalid(_fileSystem);
 		if (_fileSystem.Storage.TryAddContainer(Location, InMemoryContainer.NewFile,
