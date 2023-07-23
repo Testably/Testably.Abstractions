@@ -34,10 +34,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.GetFullPath(string)" />
 	public override string GetFullPath(string path)
 	{
-		if (string.IsNullOrEmpty(path))
-		{
-			return string.Empty;
-		}
+		path.EnsureValidArgument(FileSystem, nameof(path));
 
 		return Path.GetFullPath(Path.Combine(
 			_fileSystem.Storage.CurrentDirectory,
