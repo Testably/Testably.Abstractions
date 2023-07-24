@@ -206,7 +206,7 @@ jobs:
       - name: Install .NET Stryker
         shell: bash
         run: |
-          dotnet tool install dotnet-stryker --tool-path ../tools
+          dotnet tool install dotnet-stryker --tool-path ../tools --version 3.7.1
       - name: Analyze Testably.Abstractions.Testing
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
@@ -233,7 +233,7 @@ jobs:
       - name: Install .NET Stryker
         shell: bash
         run: |
-          dotnet tool install dotnet-stryker --tool-path ../tools
+          dotnet tool install dotnet-stryker --tool-path ../tools --version 3.7.1
       - name: Analyze Testably.Abstractions
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
