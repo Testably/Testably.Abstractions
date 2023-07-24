@@ -41,4 +41,18 @@ internal sealed class PathMock : PathSystemBase
 			_fileSystem.Storage.CurrentDirectory,
 			path));
 	}
+
+#if FEATURE_PATH_RELATIVE
+	/// <inheritdoc cref="IPath.GetRelativePath(string, string)" />
+	public override string GetRelativePath(string relativeTo, string path)
+	{
+		relativeTo.EnsureValidArgument(FileSystem, nameof(relativeTo));
+		path.EnsureValidArgument(FileSystem, nameof(path));
+
+		relativeTo = FileSystem.Path.GetFullPath(relativeTo);
+		path = FileSystem.Path.GetFullPath(path);
+
+		return Path.GetRelativePath(relativeTo, path);
+	}
+#endif
 }
