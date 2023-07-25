@@ -35,7 +35,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageVersion Include="Testably.Abstractions" Version="2.3.3" />
 		<PackageVersion Include="Testably.Abstractions.Testing" Version="2.3.3" />
 	</ItemGroup>
 
