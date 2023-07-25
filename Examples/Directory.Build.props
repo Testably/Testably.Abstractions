@@ -28,7 +28,6 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(UseFileReferenceToTestablyLibraries)' != 'True'">
-		<PackageReference Include="Testably.Abstractions" />
 		<PackageReference Include="Testably.Abstractions.Testing" />
 	</ItemGroup>
 
