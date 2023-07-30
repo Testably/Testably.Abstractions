@@ -82,7 +82,7 @@ public sealed class MockTimeSystem : ITimeSystem
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"MockTimeSystem (now: {DateTime.UtcNow}Z)";
+		=> $"MockTimeSystem (provider: {TimeProvider}, now: {DateTime.UtcNow}Z)";
 
 	/// <summary>
 	///     Specifies the <see cref="ITimerStrategy" /> to use when dealing with timers.

@@ -8,11 +8,13 @@ namespace Testably.Abstractions.Testing.TimeSystem;
 internal sealed class TimeProviderMock : ITimeProvider
 {
 	private DateTime _now;
+	private readonly string _description;
 	private readonly object _lock = new();
 
-	public TimeProviderMock(DateTime now)
+	public TimeProviderMock(DateTime now, string description)
 	{
 		_now = now;
+		_description = description;
 	}
 
 	#region ITimeProvider Members
@@ -57,4 +59,8 @@ internal sealed class TimeProviderMock : ITimeProvider
 	}
 
 	#endregion
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> _description;
 }
