@@ -1,4 +1,5 @@
-﻿using Testably.Abstractions.RandomSystem;
+﻿using System;
+using Testably.Abstractions.RandomSystem;
 using Testably.Abstractions.Testing.RandomSystem;
 
 namespace Testably.Abstractions.Testing;
@@ -46,4 +47,8 @@ public sealed class MockRandomSystem : IRandomSystem
 		=> _randomFactoryMock;
 
 	#endregion
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> "MockRandomSystem";
 }

@@ -146,7 +146,7 @@ public abstract class PathSystemBase : IPath
 
 #if FEATURE_PATH_RELATIVE
 	/// <inheritdoc cref="Path.GetRelativePath(string, string)" />
-	public string GetRelativePath(string relativeTo, string path)
+	public virtual string GetRelativePath(string relativeTo, string path)
 		=> Path.GetRelativePath(relativeTo, path);
 #endif
 

@@ -4,10 +4,6 @@
 	        Condition="Exists('$(MSBuildThisFileDirectory)/../Directory.Build.props')" />
 
 	<PropertyGroup>
-		<TestablyAbstractionsVersion>2.*</TestablyAbstractionsVersion>
-	</PropertyGroup>
-
-	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>disable</ImplicitUsings>
@@ -28,22 +24,21 @@
 		<Reference Include="Testably.Abstractions.Testing">
 			<HintPath>..\..\..\Build\Binaries\net7.0\Testably.Abstractions.Testing.dll</HintPath>
 		</Reference>
-		<PackageReference Include="TestableIO.System.IO.Abstractions" Version="19.2.29" />
+		<PackageReference Include="TestableIO.System.IO.Abstractions" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(UseFileReferenceToTestablyLibraries)' != 'True'">
-		<PackageReference Include="Testably.Abstractions" Version="$(TestablyAbstractionsVersion)" />
-		<PackageReference Include="Testably.Abstractions.Testing" Version="$(TestablyAbstractionsVersion)" />
+		<PackageReference Include="Testably.Abstractions.Testing" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AutoFixture.Xunit2" Version="4.18.0" />
-		<PackageReference Include="FluentAssertions" Version="6.11.0" />
-		<PackageReference Include="Moq" Version="4.18.4" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
-		<PackageReference Include="Xunit.SkippableFact" Version="1.4.*" />
-		<PackageReference Include="xunit" Version="2.4.2" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+		<PackageReference Include="AutoFixture.Xunit2" />
+		<PackageReference Include="FluentAssertions" />
+		<PackageReference Include="Moq" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="Xunit.SkippableFact" />
+		<PackageReference Include="xunit" />
+		<PackageReference Include="xunit.runner.visualstudio">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>

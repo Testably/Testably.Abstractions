@@ -32,7 +32,7 @@ internal static class PathHelper
 			() => false);
 	}
 
-	internal static bool IsUncPath([NotNullWhen(true)]this string? path)
+	internal static bool IsUncPath([NotNullWhen(true)] this string? path)
 	{
 		if (path == null)
 		{
@@ -68,6 +68,22 @@ internal static class PathHelper
 	{
 		CheckPathArgument(pathToTarget, nameof(pathToTarget), false);
 		CheckPathCharacters(pathToTarget, fileSystem, nameof(pathToTarget), -2147024713);
+	}
+
+	/// <summary>
+	///     Get the <see cref="IPath.GetFullPath(string)" /> of the <paramref name="path" />
+	///     if the <paramref name="path" /> is not <see langword="null" /> or white space.<br />
+	///     Otherwise an empty string if the <paramref name="path" /> is <see langword="null" />
+	///     or the <paramref name="path" /> itself.
+	/// </summary>
+	internal static string GetFullPathOrWhiteSpace(this string? path, IFileSystem fileSystem)
+	{
+		if (string.IsNullOrWhiteSpace(path))
+		{
+			return path ?? string.Empty;
+		}
+
+		return fileSystem.Path.GetFullPath(path);
 	}
 
 	private static void CheckPathArgument([NotNull] string? path, string paramName,

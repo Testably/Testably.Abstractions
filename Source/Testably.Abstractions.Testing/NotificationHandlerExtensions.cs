@@ -43,7 +43,7 @@ public static class NotificationHandlerExtensions
 			changeDescription => changeDescription.Matches(
 				fileSystemType,
 				WatcherChangeTypes.Changed,
-				handler.FileSystem.Path.GetFullPath(path),
+				path.GetFullPathOrWhiteSpace(handler.FileSystem),
 				searchPattern,
 				predicate));
 
@@ -80,7 +80,7 @@ public static class NotificationHandlerExtensions
 			changeDescription => changeDescription.Matches(
 				fileSystemType,
 				WatcherChangeTypes.Created,
-				handler.FileSystem.Path.GetFullPath(path),
+				path.GetFullPathOrWhiteSpace(handler.FileSystem),
 				searchPattern,
 				predicate));
 
@@ -117,7 +117,7 @@ public static class NotificationHandlerExtensions
 			changeDescription => changeDescription.Matches(
 				fileSystemType,
 				WatcherChangeTypes.Deleted,
-				handler.FileSystem.Path.GetFullPath(path),
+				path.GetFullPathOrWhiteSpace(handler.FileSystem),
 				searchPattern,
 				predicate));
 }

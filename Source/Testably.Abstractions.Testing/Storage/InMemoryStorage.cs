@@ -270,7 +270,7 @@ internal sealed class InMemoryStorage : IStorage
 			drive = _fileSystem.Storage.MainDrive;
 		}
 
-		return InMemoryLocation.New(drive, _fileSystem.Path.GetFullPath(path), path);
+		return InMemoryLocation.New(drive, path.GetFullPathOrWhiteSpace(_fileSystem), path);
 	}
 
 	/// <inheritdoc cref="IStorage.GetOrAddDrive(string)" />
@@ -498,6 +498,19 @@ internal sealed class InMemoryStorage : IStorage
 	}
 
 	#endregion
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> $"directories: {_containers.Count(x => x.Value.Type == FileSystemTypes.Directory)}, files: {_containers.Count(x => x.Value.Type == FileSystemTypes.File)}";
+
+	/// <summary>
+	///     Returns an ordered list of all stored containers.
+	/// </summary>
+	internal IReadOnlyList<IStorageContainer> GetContainers()
+		=> _containers
+			.OrderBy(x => x.Key.FullPath)
+			.Select(x => x.Value)
+			.ToList();
 
 	private void CheckAndAdjustParentDirectoryTimes(IStorageLocation location)
 	{
