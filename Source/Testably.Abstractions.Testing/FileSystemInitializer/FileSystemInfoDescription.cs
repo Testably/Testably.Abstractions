@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-
-namespace Testably.Abstractions.Testing.FileSystemInitializer;
+﻿namespace Testably.Abstractions.Testing.FileSystemInitializer;
 
 /// <summary>
 ///     Abstract class for defining directories or files.
@@ -28,11 +25,6 @@ public abstract class FileSystemInfoDescription
 	/// </summary>
 	protected FileSystemInfoDescription(string name)
 	{
-		if (name.IndexOf(Path.AltDirectorySeparatorChar) >= 0)
-		{
-			throw new NotSupportedException("Name must not contain path separators.");
-		}
-
 		Name = name;
 	}
 }
