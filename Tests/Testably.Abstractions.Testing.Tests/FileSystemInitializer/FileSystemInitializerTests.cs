@@ -94,7 +94,7 @@ public class FileSystemInitializerTests
 
 		sut.With(file);
 
-		fileSystem.Directory.Exists(Path.GetDirectoryName(path))
+		fileSystem.Directory.Exists(Path.Combine("foo", "bar"))
 			.Should().BeTrue();
 		fileSystem.File.Exists(path)
 			.Should().BeTrue();

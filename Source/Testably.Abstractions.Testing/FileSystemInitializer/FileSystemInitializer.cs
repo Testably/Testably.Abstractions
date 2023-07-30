@@ -145,8 +145,7 @@ internal class FileSystemInitializer<TFileSystem>
 
 		if (directory.Children.Length > 0)
 		{
-			DirectoryInitializer<TFileSystem> subdirectoryInitializer =
-				new DirectoryInitializer<TFileSystem>(this, directoryInfo);
+			DirectoryInitializer<TFileSystem> subdirectoryInitializer = new(this, directoryInfo);
 			foreach (FileSystemInfoDescription children in directory.Children)
 			{
 				subdirectoryInitializer.WithFileOrDirectory(children);
