@@ -9,10 +9,14 @@ namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
 [Collection(nameof(IDirectoryCleaner))]
 public class DirectoryCleanerTests
 {
+	#region Test Setup
+
 	public DirectoryCleanerTests()
 	{
 		Skip.If(Test.RunsOnMac, "No access to temporary directories under `/private`");
 	}
+
+	#endregion
 
 	[SkippableTheory]
 	[AutoData]
