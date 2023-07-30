@@ -32,7 +32,7 @@ public static class TimeProvider
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem.TimeProvider" /> with the specified <paramref name="time" />.
 	/// </summary>
-	public static ITimeProvider Fixed(DateTime time)
+	public static ITimeProvider Use(DateTime time)
 	{
 		return new TimeProviderMock(time, "Fixed");
 	}
