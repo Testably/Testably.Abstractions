@@ -43,7 +43,7 @@ public sealed class MockTimeSystem : ITimeSystem
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem" /> with the specified <paramref name="time" />.
 	/// </summary>
-	public MockTimeSystem(DateTime time) : this(Testing.TimeProvider.Use(time))
+	public MockTimeSystem(DateTime time) : this(Testing.TimeProvider.Fixed(time))
 	{
 	}
 
@@ -82,7 +82,7 @@ public sealed class MockTimeSystem : ITimeSystem
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"MockTimeSystem (now: {DateTime.UtcNow}Z)";
+		=> $"MockTimeSystem (provider: {TimeProvider}, now: {DateTime.UtcNow}Z)";
 
 	/// <summary>
 	///     Specifies the <see cref="ITimerStrategy" /> to use when dealing with timers.

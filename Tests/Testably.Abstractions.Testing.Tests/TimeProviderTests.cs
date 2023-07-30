@@ -38,7 +38,7 @@ public class TimeProviderTests
 	[AutoData]
 	public void SetTo_ShouldChangeTimeForRead(DateTime time1, DateTime time2)
 	{
-		ITimeProvider timeProvider = TimeProvider.Use(time1);
+		ITimeProvider timeProvider = TimeProvider.Fixed(time1);
 
 		DateTime result1 = timeProvider.Read();
 		timeProvider.SetTo(time2);
@@ -52,7 +52,7 @@ public class TimeProviderTests
 	public void Use_ShouldReturnFixedDateTime()
 	{
 		DateTime now = TimeTestHelper.GetRandomTime();
-		ITimeProvider timeProvider = TimeProvider.Use(now);
+		ITimeProvider timeProvider = TimeProvider.Fixed(now);
 
 		DateTime result1 = timeProvider.Read();
 		DateTime result2 = timeProvider.Read();

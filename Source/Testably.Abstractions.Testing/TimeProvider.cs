@@ -14,7 +14,7 @@ public static class TimeProvider
 	/// </summary>
 	public static ITimeProvider Now()
 	{
-		return new TimeProviderMock(DateTime.UtcNow);
+		return new TimeProviderMock(DateTime.UtcNow, "Now");
 	}
 
 	/// <summary>
@@ -26,14 +26,14 @@ public static class TimeProvider
 	{
 		DateTime randomTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
 			.AddSeconds(RandomFactory.Shared.Next());
-		return new TimeProviderMock(randomTime);
+		return new TimeProviderMock(randomTime, "Random");
 	}
 
 	/// <summary>
 	///     Initializes the <see cref="MockTimeSystem.TimeProvider" /> with the specified <paramref name="time" />.
 	/// </summary>
-	public static ITimeProvider Use(DateTime time)
+	public static ITimeProvider Fixed(DateTime time)
 	{
-		return new TimeProviderMock(time);
+		return new TimeProviderMock(time, "Fixed");
 	}
 }
