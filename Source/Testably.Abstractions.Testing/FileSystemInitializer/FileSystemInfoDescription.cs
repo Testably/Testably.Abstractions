@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions.Testing.FileSystemInitializer;
+﻿using System.IO;
+
+namespace Testably.Abstractions.Testing.FileSystemInitializer;
 
 /// <summary>
 ///     Abstract class for defining directories or files.
@@ -25,6 +27,6 @@ public abstract class FileSystemInfoDescription
 	/// </summary>
 	protected FileSystemInfoDescription(string name)
 	{
-		Name = name;
+		Name = name.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 	}
 }
