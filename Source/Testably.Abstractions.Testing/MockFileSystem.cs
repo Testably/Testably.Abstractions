@@ -1,7 +1,6 @@
 ﻿using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Storage;
 
@@ -45,11 +44,8 @@ public sealed class MockFileSystem : IFileSystem
 	/// <summary>
 	///     The registered containers in the in-Memory <see cref="Storage" />.
 	/// </summary>
-	internal IReadOnlyList<IStorageContainer> Containers
-		=> _storage.Containers
-			.OrderBy(x => x.Key.FullPath)
-			.Select(x => x.Value)
-			.ToList();
+	internal IReadOnlyList<IStorageContainer> StorageContainers
+		=> _storage.GetContainers();
 
 	private readonly DirectoryMock _directoryMock;
 	private readonly FileMock _fileMock;
@@ -123,7 +119,7 @@ public sealed class MockFileSystem : IFileSystem
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"MockFileSystem (directories: {_storage.Containers.Count(x => x.Value.Type == FileSystemTypes.Directory)}, files: {_storage.Containers.Count(x => x.Value.Type == FileSystemTypes.File)})";
+		=> $"MockFileSystem ({_storage})";
 
 	/// <summary>
 	///     Implements a custom access control (ACL) mechanism.
