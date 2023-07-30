@@ -15,4 +15,18 @@ public class FileSystemVerifierExtensionsTests
 		result.Should().NotBeNull();
 		result.Exists.Should().BeFalse();
 	}
+
+	[Theory]
+	[InlineData("foo/bar/file.txt")]
+	[InlineData(@"foo\bar\file.txt")]
+	public void Verify_ShouldSupportPathWithSeparators(string path)
+	{
+		MockFileSystem sut = new MockFileSystem();
+		sut.Directory.CreateDirectory(sut.Path.Combine("foo", "bar"));
+		sut.File.WriteAllText(sut.Path.Combine("foo", "bar", "file.txt"), "some content");
+
+		IFileSystemVerifier result = sut.Verify(path);
+
+		result.Exists.Should().BeTrue();
+	}
 }
