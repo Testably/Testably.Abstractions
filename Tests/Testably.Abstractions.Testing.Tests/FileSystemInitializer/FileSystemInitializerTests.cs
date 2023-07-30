@@ -7,63 +7,97 @@ public class FileSystemInitializerTests
 {
 	[Theory]
 	[AutoData]
-	public void WithSubdirectories_ShouldCreateAllDirectories(string[] paths)
+	public void With_DirectoryDescriptions_ShouldCreateDirectories(
+		DirectoryDescription[] directories)
 	{
 		MockFileSystem fileSystem = new();
 		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
 
-		IFileSystemInitializer<MockFileSystem> result = sut
-			.WithSubdirectories(paths);
+		sut.With(directories);
 
-		foreach (string path in paths)
+		foreach (DirectoryDescription directory in directories)
 		{
-			fileSystem.Directory.Exists(path).Should().BeTrue();
+			fileSystem.Directory.Exists(directory.Name).Should().BeTrue();
 		}
-
-		result.Should().Be(sut);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithSubdirectory_MultipleDirectoryLevels(string level1, string level2)
+	public void With_FileDescriptions_ShouldCreateFileContent(string name, string content)
 	{
-		string path = Path.Combine(level1, level2);
+		FileDescription description = new(name, content);
 		MockFileSystem fileSystem = new();
 		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
 
-		IFileSystemDirectoryInitializer<MockFileSystem> result = sut
-			.WithSubdirectory(path);
+		sut.With(description);
 
-		fileSystem.Directory.Exists(path).Should().BeTrue();
-		result.FileSystem.Should().Be(fileSystem);
+		fileSystem.File.Exists(name).Should().BeTrue();
+		fileSystem.File.ReadAllText(name).Should().Be(content);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithSubdirectory_ExistingFile_ShouldThrowTestingException(string path)
+	public void With_FileDescriptions_ShouldCreateFiles(FileDescription[] files)
 	{
 		MockFileSystem fileSystem = new();
 		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
-		fileSystem.File.WriteAllBytes(path, Array.Empty<byte>());
 
-		Exception? exception = Record.Exception(() =>
-			sut.WithSubdirectory(path));
+		sut.With(files);
 
-		exception.Should().BeOfType<TestingException>();
+		foreach (FileDescription file in files)
+		{
+			fileSystem.File.Exists(file.Name).Should().BeTrue();
+		}
+	}
+
+	[Theory]
+	[InlineAutoData(true)]
+	[InlineAutoData(false)]
+	public void With_FileDescriptions_ShouldSetIsReadOnlyFlag(bool isReadOnly, string name)
+	{
+		FileDescription description = new(name)
+		{
+			IsReadOnly = isReadOnly
+		};
+		MockFileSystem fileSystem = new();
+		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
+
+		sut.With(description);
+
+		fileSystem.File.Exists(name).Should().BeTrue();
+		fileSystem.FileInfo.New(name).IsReadOnly.Should().Be(isReadOnly);
 	}
 
 	[Theory]
 	[AutoData]
-	public void WithSubdirectory_ExistingDirectory_ShouldThrowTestingException(string path)
+	public void With_FilesAndDirectories_ShouldBothBeCreated(string fileName, string directoryName)
 	{
+		FileDescription fileDescription = new(fileName);
+		DirectoryDescription directoryDescription = new(directoryName);
 		MockFileSystem fileSystem = new();
 		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
-		fileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = Record.Exception(() =>
-			sut.WithSubdirectory(path));
+		sut.With(fileDescription, directoryDescription);
 
-		exception.Should().BeOfType<TestingException>();
+		fileSystem.File.Exists(fileName).Should().BeTrue();
+		fileSystem.Directory.Exists(directoryName).Should().BeTrue();
+	}
+
+	[Theory]
+	[InlineAutoData("foo/bar/file.txt")]
+	[InlineAutoData("foo\\bar\\file.txt")]
+	public void With_Path_ShouldSupportAlternatePathSeparator(string path)
+	{
+		FileDescription file = new(path);
+		MockFileSystem fileSystem = new();
+		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
+
+		sut.With(file);
+
+		fileSystem.Directory.Exists(Path.GetDirectoryName(path))
+			.Should().BeTrue();
+		fileSystem.File.Exists(path)
+			.Should().BeTrue();
 	}
 
 	[Theory]
@@ -96,6 +130,19 @@ public class FileSystemInitializerTests
 
 	[Theory]
 	[AutoData]
+	public void WithFile_HasStringContent_ShouldWriteFileContent(string path)
+	{
+		MockFileSystem fileSystem = new();
+		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
+
+		sut.WithFile(path).Which(f => f.HasStringContent("foo"));
+
+		fileSystem.File.Exists(path).Should().BeTrue();
+		fileSystem.File.ReadAllText(path).Should().Be("foo");
+	}
+
+	[Theory]
+	[AutoData]
 	public void WithFile_MissingDirectory_ShouldCreateDirectory(string directoryPath,
 		string fileName)
 	{
@@ -111,14 +158,62 @@ public class FileSystemInitializerTests
 
 	[Theory]
 	[AutoData]
-	public void WithFile_HasStringContent_ShouldWriteFileContent(string path)
+	public void WithSubdirectories_ShouldCreateAllDirectories(string[] paths)
 	{
 		MockFileSystem fileSystem = new();
 		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
 
-		sut.WithFile(path).Which(f => f.HasStringContent("foo"));
+		IFileSystemInitializer<MockFileSystem> result = sut
+			.WithSubdirectories(paths);
 
-		fileSystem.File.Exists(path).Should().BeTrue();
-		fileSystem.File.ReadAllText(path).Should().Be("foo");
+		foreach (string path in paths)
+		{
+			fileSystem.Directory.Exists(path).Should().BeTrue();
+		}
+
+		result.Should().Be(sut);
+	}
+
+	[Theory]
+	[AutoData]
+	public void WithSubdirectory_ExistingDirectory_ShouldThrowTestingException(string path)
+	{
+		MockFileSystem fileSystem = new();
+		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
+		fileSystem.Directory.CreateDirectory(path);
+
+		Exception? exception = Record.Exception(() =>
+			sut.WithSubdirectory(path));
+
+		exception.Should().BeOfType<TestingException>();
+	}
+
+	[Theory]
+	[AutoData]
+	public void WithSubdirectory_ExistingFile_ShouldThrowTestingException(string path)
+	{
+		MockFileSystem fileSystem = new();
+		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
+		fileSystem.File.WriteAllBytes(path, Array.Empty<byte>());
+
+		Exception? exception = Record.Exception(() =>
+			sut.WithSubdirectory(path));
+
+		exception.Should().BeOfType<TestingException>();
+	}
+
+	[Theory]
+	[AutoData]
+	public void WithSubdirectory_MultipleDirectoryLevels(string level1, string level2)
+	{
+		string path = Path.Combine(level1, level2);
+		MockFileSystem fileSystem = new();
+		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
+
+		IFileSystemDirectoryInitializer<MockFileSystem> result = sut
+			.WithSubdirectory(path);
+
+		fileSystem.Directory.Exists(path).Should().BeTrue();
+		result.FileSystem.Should().Be(fileSystem);
 	}
 }

@@ -28,6 +28,17 @@ public interface IFileSystemInitializer<out TFileSystem>
 	}
 
 	/// <summary>
+	///     Initializes the <see cref="FileSystem" /> with the provided <paramref name="descriptions" />.
+	/// </summary>
+	IFileSystemInitializer<TFileSystem> With<TDescription>( TDescription[] descriptions)
+		where TDescription : FileSystemInfoDescription;
+
+	/// <summary>
+	///     Initializes the <see cref="FileSystem" /> with the provided <paramref name="descriptions" />.
+	/// </summary>
+	IFileSystemInitializer<TFileSystem> With(params FileSystemInfoDescription[] descriptions);
+
+	/// <summary>
 	///     Initializes the <see cref="IFileSystem" /> with a randomly named file.
 	/// </summary>
 	/// <param name="extension">(optional) If specified, uses the given extension for the file.</param>
@@ -45,14 +56,14 @@ public interface IFileSystemInitializer<out TFileSystem>
 	IFileSystemFileInitializer<TFileSystem> WithFile(string fileName);
 
 	/// <summary>
-	///     Initializes the <see cref="IFileSystem" /> with a subdirectory with the given <paramref name="directoryName" />.
-	/// </summary>
-	IFileSystemDirectoryInitializer<TFileSystem> WithSubdirectory(
-		string directoryName);
-
-	/// <summary>
 	///     Initializes the <see cref="IFileSystem" /> with all given subdirectory <paramref name="paths" />.
 	/// </summary>
 	IFileSystemInitializer<TFileSystem> WithSubdirectories(
 		params string[] paths);
+
+	/// <summary>
+	///     Initializes the <see cref="IFileSystem" /> with a subdirectory with the given <paramref name="directoryName" />.
+	/// </summary>
+	IFileSystemDirectoryInitializer<TFileSystem> WithSubdirectory(
+		string directoryName);
 }
