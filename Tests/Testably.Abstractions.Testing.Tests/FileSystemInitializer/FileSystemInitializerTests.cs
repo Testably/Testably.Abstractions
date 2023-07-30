@@ -84,23 +84,6 @@ public class FileSystemInitializerTests
 	}
 
 	[Theory]
-	[InlineAutoData("foo/bar/file.txt")]
-	[InlineAutoData("foo\\bar\\file.txt")]
-	public void With_Path_ShouldSupportAlternatePathSeparator(string path)
-	{
-		FileDescription file = new(path);
-		MockFileSystem fileSystem = new();
-		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
-
-		sut.With(file);
-
-		fileSystem.Directory.Exists(Path.Combine("foo", "bar"))
-			.Should().BeTrue();
-		fileSystem.File.Exists(path)
-			.Should().BeTrue();
-	}
-
-	[Theory]
 	[AutoData]
 	public void WithFile_ExistingDirectory_ShouldThrowTestingException(string path)
 	{
