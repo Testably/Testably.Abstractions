@@ -33,16 +33,20 @@ public class FileSystemAssertionsTests
 
 	[Theory]
 	[AutoData]
-	public void HaveDirectory_WithoutDirectory_ShouldThrow(string path)
+	public void HaveDirectory_WithoutDirectory_ShouldThrow(
+		string path,
+		string because)
 	{
 		MockFileSystem fileSystem = new();
 
 		Exception? exception = Record.Exception(() =>
 		{
-			fileSystem.Should().HaveDirectory(path);
+			fileSystem.Should().HaveDirectory(path, because);
 		});
 
 		exception.Should().NotBeNull();
+		exception!.Message.Should().Contain(path);
+		exception.Message.Should().Contain(because);
 	}
 
 	[Theory]
@@ -70,15 +74,17 @@ public class FileSystemAssertionsTests
 
 	[Theory]
 	[AutoData]
-	public void HaveFile_WithoutFile_ShouldThrow(string path)
+	public void HaveFile_WithoutFile_ShouldThrow(string path, string because)
 	{
 		MockFileSystem fileSystem = new();
 
 		Exception? exception = Record.Exception(() =>
 		{
-			fileSystem.Should().HaveFile(path);
+			fileSystem.Should().HaveFile(path, because);
 		});
 
 		exception.Should().NotBeNull();
+		exception!.Message.Should().Contain(path);
+		exception.Message.Should().Contain(because);
 	}
 }

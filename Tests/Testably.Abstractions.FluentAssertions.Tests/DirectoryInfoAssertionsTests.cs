@@ -10,7 +10,8 @@ public class DirectoryInfoAssertionsTests
 {
 	[Theory]
 	[AutoData]
-	public void HaveFile_WithFile_ShouldNotThrow(string directoryName,
+	public void HasFile_WithFile_ShouldNotThrow(
+		string directoryName,
 		string fileName)
 	{
 		MockFileSystem fileSystem = new();
@@ -19,13 +20,15 @@ public class DirectoryInfoAssertionsTests
 				.WithFile(fileName));
 		DirectoryInfoAssertions? sut = fileSystem.Should().HaveDirectory(directoryName).Which;
 
-		sut.HaveFile(fileName);
+		sut.HasFile(fileName);
 	}
 
 	[Theory]
 	[AutoData]
-	public void HaveFile_WithoutFile_ShouldThrow(string directoryName,
-		string fileName)
+	public void HasFile_WithoutFile_ShouldThrow(
+		string directoryName,
+		string fileName,
+		string because)
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.Initialize()
@@ -34,9 +37,11 @@ public class DirectoryInfoAssertionsTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			sut.HaveFile(fileName);
+			sut.HasFile(fileName, because);
 		});
 
 		exception.Should().NotBeNull();
+		exception!.Message.Should().Contain(fileName);
+		exception.Message.Should().Contain(because);
 	}
 }

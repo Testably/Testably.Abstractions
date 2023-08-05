@@ -11,7 +11,9 @@ public class FileInfoAssertionsTests
 {
 	[Theory]
 	[AutoData]
-	public void IsNotReadOnly_WithReadOnlyFile_ShouldThrow(FileDescription fileDescription)
+	public void IsNotReadOnly_WithReadOnlyFile_ShouldThrow(
+		FileDescription fileDescription,
+		string because)
 	{
 		fileDescription.IsReadOnly = true;
 		MockFileSystem fileSystem = new();
@@ -21,10 +23,12 @@ public class FileInfoAssertionsTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			sut.IsNotReadOnly();
+			sut.IsNotReadOnly(because);
 		});
 
 		exception.Should().NotBeNull();
+		exception!.Message.Should().Contain(fileDescription.Name);
+		exception.Message.Should().Contain(because);
 	}
 
 	[Theory]
@@ -55,7 +59,9 @@ public class FileInfoAssertionsTests
 
 	[Theory]
 	[AutoData]
-	public void IsReadOnly_WithWritableFile_ShouldThrow(FileDescription fileDescription)
+	public void IsReadOnly_WithWritableFile_ShouldThrow(
+		FileDescription fileDescription,
+		string because)
 	{
 		fileDescription.IsReadOnly = false;
 		MockFileSystem fileSystem = new();
@@ -65,9 +71,11 @@ public class FileInfoAssertionsTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			sut.IsReadOnly();
+			sut.IsReadOnly(because);
 		});
 
 		exception.Should().NotBeNull();
+		exception!.Message.Should().Contain(fileDescription.Name);
+		exception.Message.Should().Contain(because);
 	}
 }

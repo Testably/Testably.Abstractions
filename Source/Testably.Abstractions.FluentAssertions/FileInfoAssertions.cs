@@ -7,7 +7,7 @@ public class FileInfoAssertions :
 	ReferenceTypeAssertions<IFileInfo, FileInfoAssertions>
 {
 	/// <inheritdoc cref="ReferenceTypeAssertions{TSubject,TAssertions}.Identifier" />
-	protected override string Identifier => "fileinfo";
+	protected override string Identifier => "file";
 
 	internal FileInfoAssertions(IFileInfo instance)
 		: base(instance)
@@ -25,7 +25,8 @@ public class FileInfoAssertions :
 			.Given(() => Subject)
 			.ForCondition(fileInfo => !fileInfo.IsReadOnly)
 			.FailWith(
-				"Expected {context:fileinfo} not to be read-only {reason}, but it was.");
+				"Expected {context:file} '{0}' not to be read-only {reason}, but it was.",
+				_ => Subject.Name);
 
 		return new AndConstraint<FileInfoAssertions>(this);
 	}
@@ -41,7 +42,8 @@ public class FileInfoAssertions :
 			.Given(() => Subject)
 			.ForCondition(fileInfo => fileInfo.IsReadOnly)
 			.FailWith(
-				"Expected {context:fileinfo} to be read-only {reason}, but it was not.");
+				"Expected {context:file} '{0}' to be read-only {reason}, but it was not.",
+				_ => Subject.Name);
 
 		return new AndConstraint<FileInfoAssertions>(this);
 	}
