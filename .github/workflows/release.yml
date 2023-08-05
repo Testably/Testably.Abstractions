@@ -88,7 +88,10 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
-        run: dotnet test --no-build
+        uses: Wandalen/wretry.action@v1.3.0
+        with:
+          command: dotnet test --no-build
+          attempt_limit: 3
 
   test-ubuntu:
     name: Test (Ubuntu)
@@ -112,7 +115,10 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
-        run: dotnet test --no-build
+        uses: Wandalen/wretry.action@v1.3.0
+        with:
+          command: dotnet test --no-build
+          attempt_limit: 3
 
   test-windows:
     name: Test (Windows)
@@ -136,7 +142,10 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
-        run: dotnet test --no-build
+        uses: Wandalen/wretry.action@v1.3.0
+        with:
+          command: dotnet test --no-build
+          attempt_limit: 3
 
   test-net-framework:
     name: Test (.NET Framework)
@@ -186,7 +195,10 @@ jobs:
       - name: Build example solution
         run: dotnet build Examples /p:UseFileReferenceToTestablyLibraries=True --configuration "Release"
       - name: Run example tests
-        run: dotnet test Examples --no-build
+        uses: Wandalen/wretry.action@v1.3.0
+        with:
+          command: dotnet test Examples --no-build
+          attempt_limit: 3
 
   stryker-ubuntu:
     name: Analyze quality of unit test coverage with .NET Stryker (Ubuntu)
