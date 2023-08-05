@@ -46,6 +46,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stryker", "stryker", "{4D8D
 	ProjectSection(SolutionItems) = preProject
 		.github\stryker\Stryker.Config.AccessControl.json = .github\stryker\Stryker.Config.AccessControl.json
 		.github\stryker\Stryker.Config.Compression.json = .github\stryker\Stryker.Config.Compression.json
+		.github\stryker\Stryker.Config.FluentAssertions.json = .github\stryker\Stryker.Config.FluentAssertions.json
 		.github\stryker\Stryker.Config.json = .github\stryker\Stryker.Config.json
 		.github\stryker\Stryker.Config.Testing.json = .github\stryker\Stryker.Config.Testing.json
 	EndProjectSection

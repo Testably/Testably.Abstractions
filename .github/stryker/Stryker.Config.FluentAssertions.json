@@ -1,0 +1,24 @@
+{
+	"stryker-config": {
+		"project-info": {
+			"name": "github.com/Testably/Testably.Abstractions",
+			"module": "Testably.Abstractions.FluentAssertions"
+		},
+		"test-projects": [
+			"./Testably.Abstractions.FluentAssertions.Tests/Testably.Abstractions.FluentAssertions.Tests.csproj"
+		],
+		"project": "Testably.Abstractions.FluentAssertions.csproj",
+		"target-framework": "net7.0",
+		"since": {
+			"ignore-changes-in": [
+				"**/.github/**/*.*"
+			]
+		},
+		"reporters": [
+			"html",
+			"progress",
+			"cleartext"
+		],
+		"mutation-level": "Advanced"
+	}
+}

@@ -255,6 +255,13 @@ jobs:
         run: |
           cd Tests
           ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.Compression.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
+      - name: Analyze Testably.Abstractions.FluentAssertions
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        shell: bash
+        run: |
+          cd Tests
+          ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.FluentAssertions.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
 
   deploy:
     name: Deploy
@@ -286,7 +293,7 @@ jobs:
           version="${GITHUB_REF#refs/heads/release/}"
           # Add changelog badge to README.md
           sed -i -e "2 a\[!\[Changelog](https:\/\/img\.shields\.io\/badge\/Changelog-${version}-blue)](https:\/\/github\.com\/Testably\/Testably\.Abstractions\/releases\/tag\/${version})" "./README.md"
-          for f in "README.md" "Docs/AccessControl.md" "Docs/Compression.md" "Docs/Interface.md" "Docs/Testing.md"
+          for f in "README.md" "Docs/AccessControl.md" "Docs/Compression.md" "Docs/FluentAssertions.md" "Docs/Interface.md" "Docs/Testing.md"
           do
             echo "Processing $f" # always double quote "$f" filename
             # do something on $f

@@ -73,3 +73,10 @@ jobs:
         run: |
           cd Tests
           ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.Compression.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
+      - name: Analyze Testably.Abstractions.FluentAssertions
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        shell: bash
+        run: |
+          cd Tests
+          ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.FluentAssertions.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
