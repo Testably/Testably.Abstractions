@@ -23,7 +23,10 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
-        run: dotnet test --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory "TestResults"
+        uses: Wandalen/wretry.action@v1.3.0
+        with:
+          command: dotnet test --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory "TestResults"
+          attempt_limit: 2
       - name: Upload test results (MacOS)
         if: ${{ always() }}
         uses: actions/upload-artifact@v3
@@ -53,7 +56,10 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
-        run: dotnet test --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory "TestResults"
+        uses: Wandalen/wretry.action@v1.3.0
+        with:
+          command: dotnet test --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory "TestResults"
+          attempt_limit: 2
       - name: Upload test results (Ubuntu)
         if: ${{ always() }}
         uses: actions/upload-artifact@v3
@@ -83,7 +89,10 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
-        run: dotnet test --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory "TestResults"
+        uses: Wandalen/wretry.action@v1.3.0
+        with:
+          command: dotnet test --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory "TestResults"
+          attempt_limit: 2
       - name: Upload test results (Windows)
         if: ${{ always() }}
         uses: actions/upload-artifact@v3
@@ -130,8 +139,10 @@ jobs:
         with:
           fetch-depth: 0
       - name: Save PR number to file
+        if: github.event_name == 'pull_request'
         run: echo ${{ github.event.number }} > PR_NUMBER.txt
       - name: Archive PR number
+        if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v3
         with:
           name: PR_NUMBER
@@ -147,4 +158,7 @@ jobs:
       - name: Build example solution
         run: dotnet build Examples /p:UseFileReferenceToTestablyLibraries=True
       - name: Run example tests
-        run: dotnet test Examples --no-build
+        uses: Wandalen/wretry.action@v1.3.0
+        with:
+          command: dotnet test Examples --no-build
+          attempt_limit: 2

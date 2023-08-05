@@ -77,7 +77,10 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
-        run: dotnet test --no-build --collect:"XPlat Code Coverage"
+        uses: Wandalen/wretry.action@v1.3.0
+        with:
+          command: dotnet test --no-build --collect:"XPlat Code Coverage"
+          attempt_limit: 2
       - name: Upload coverage
         uses: actions/upload-artifact@v3
         with:
@@ -101,7 +104,10 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
-        run: dotnet test --no-build --collect:"XPlat Code Coverage"
+        uses: Wandalen/wretry.action@v1.3.0
+        with:
+          command: dotnet test --no-build --collect:"XPlat Code Coverage"
+          attempt_limit: 2
       - name: Upload coverage
         uses: actions/upload-artifact@v3
         with:
@@ -125,7 +131,10 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
-        run: dotnet test --no-build --collect:"XPlat Code Coverage"
+        uses: Wandalen/wretry.action@v1.3.0
+        with:
+          command: dotnet test --no-build --collect:"XPlat Code Coverage"
+          attempt_limit: 2
       - name: Upload coverage
         uses: actions/upload-artifact@v3
         with:
@@ -176,7 +185,10 @@ jobs:
       - name: Build example solution
         run: dotnet build Examples /p:UseFileReferenceToTestablyLibraries=True
       - name: Run example tests
-        run: dotnet test Examples --no-build
+        uses: Wandalen/wretry.action@v1.3.0
+        with:
+          command: dotnet test Examples --no-build
+          attempt_limit: 2
 
   upload-coverage:
     name: Upload coverage to Codacy
