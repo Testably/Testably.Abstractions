@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>Testably.Abstractions.FluentAssertions</RootNamespace>
+		<Description>FluentAssertions extension methods for `Testably.Abstractions`.</Description>
+		<PackageReadmeFile>Docs/FluentAssertions.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="$(SolutionDir)Docs/FluentAssertions.md"
+		      Pack="true" PackagePath="/Docs/"
+		      Link="Docs\FluentAssertions.md" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FluentAssertions" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
+	</ItemGroup>
+
+</Project>
