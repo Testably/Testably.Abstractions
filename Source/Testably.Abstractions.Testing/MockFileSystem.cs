@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Storage;
 
@@ -165,11 +166,19 @@ public sealed class MockFileSystem : IFileSystem
 
 	private void AddDriveFromCurrentDirectory()
 	{
-		string? root = Path.GetPathRoot(System.IO.Directory.GetCurrentDirectory());
-		if (root != null &&
-		    root[0] != _storage.MainDrive.Name[0])
+		try
 		{
-			Storage.GetOrAddDrive(root);
+			string? root = Path.GetPathRoot(System.IO.Directory.GetCurrentDirectory());
+			if (root != null &&
+			    root[0] != _storage.MainDrive.Name[0])
+			{
+				Storage.GetOrAddDrive(root);
+			}
+		}
+		catch (IOException)
+		{
+			// Ignore any IOException, when trying to read the current directory
+			// due to brittle tests on MacOS
 		}
 	}
 }
