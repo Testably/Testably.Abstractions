@@ -80,7 +80,7 @@ jobs:
         uses: Wandalen/wretry.action@v1.3.0
         with:
           command: dotnet test --no-build --collect:"XPlat Code Coverage"
-          attempt_limit: 3
+          attempt_limit: 2
       - name: Upload coverage
         uses: actions/upload-artifact@v3
         with:
@@ -107,7 +107,7 @@ jobs:
         uses: Wandalen/wretry.action@v1.3.0
         with:
           command: dotnet test --no-build --collect:"XPlat Code Coverage"
-          attempt_limit: 3
+          attempt_limit: 2
       - name: Upload coverage
         uses: actions/upload-artifact@v3
         with:
@@ -134,7 +134,7 @@ jobs:
         uses: Wandalen/wretry.action@v1.3.0
         with:
           command: dotnet test --no-build --collect:"XPlat Code Coverage"
-          attempt_limit: 3
+          attempt_limit: 2
       - name: Upload coverage
         uses: actions/upload-artifact@v3
         with:
@@ -188,7 +188,7 @@ jobs:
         uses: Wandalen/wretry.action@v1.3.0
         with:
           command: dotnet test Examples --no-build
-          attempt_limit: 3
+          attempt_limit: 2
 
   upload-coverage:
     name: Upload coverage to Codacy

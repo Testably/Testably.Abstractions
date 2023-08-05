@@ -91,7 +91,7 @@ jobs:
         uses: Wandalen/wretry.action@v1.3.0
         with:
           command: dotnet test --no-build
-          attempt_limit: 3
+          attempt_limit: 2
 
   test-ubuntu:
     name: Test (Ubuntu)
@@ -118,7 +118,7 @@ jobs:
         uses: Wandalen/wretry.action@v1.3.0
         with:
           command: dotnet test --no-build
-          attempt_limit: 3
+          attempt_limit: 2
 
   test-windows:
     name: Test (Windows)
@@ -145,7 +145,7 @@ jobs:
         uses: Wandalen/wretry.action@v1.3.0
         with:
           command: dotnet test --no-build
-          attempt_limit: 3
+          attempt_limit: 2
 
   test-net-framework:
     name: Test (.NET Framework)
@@ -198,7 +198,7 @@ jobs:
         uses: Wandalen/wretry.action@v1.3.0
         with:
           command: dotnet test Examples --no-build
-          attempt_limit: 3
+          attempt_limit: 2
 
   stryker-ubuntu:
     name: Analyze quality of unit test coverage with .NET Stryker (Ubuntu)

@@ -26,7 +26,7 @@ jobs:
         uses: Wandalen/wretry.action@v1.3.0
         with:
           command: dotnet test --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory "TestResults"
-          attempt_limit: 3
+          attempt_limit: 2
       - name: Upload test results (MacOS)
         if: ${{ always() }}
         uses: actions/upload-artifact@v3
@@ -59,7 +59,7 @@ jobs:
         uses: Wandalen/wretry.action@v1.3.0
         with:
           command: dotnet test --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory "TestResults"
-          attempt_limit: 3
+          attempt_limit: 2
       - name: Upload test results (Ubuntu)
         if: ${{ always() }}
         uses: actions/upload-artifact@v3
@@ -92,7 +92,7 @@ jobs:
         uses: Wandalen/wretry.action@v1.3.0
         with:
           command: dotnet test --no-build --collect:"XPlat Code Coverage" --logger trx --results-directory "TestResults"
-          attempt_limit: 3
+          attempt_limit: 2
       - name: Upload test results (Windows)
         if: ${{ always() }}
         uses: actions/upload-artifact@v3
@@ -161,4 +161,4 @@ jobs:
         uses: Wandalen/wretry.action@v1.3.0
         with:
           command: dotnet test Examples --no-build
-          attempt_limit: 3
+          attempt_limit: 2
