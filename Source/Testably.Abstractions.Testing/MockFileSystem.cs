@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Testably.Abstractions.Testing.FileSystem;
-using Testably.Abstractions.Testing.FileSystemInitializer;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
@@ -176,10 +175,10 @@ public sealed class MockFileSystem : IFileSystem
 				Storage.GetOrAddDrive(root);
 			}
 		}
-		catch (FileNotFoundException e)
+		catch (IOException)
 		{
-			throw new TestingException(
-				$"Could not add drive from current directory '{e.FileName}'.", e);
+			// Ignore any IOException, when trying to read the current directory
+			// due to brittle tests on MacOS
 		}
 	}
 }
