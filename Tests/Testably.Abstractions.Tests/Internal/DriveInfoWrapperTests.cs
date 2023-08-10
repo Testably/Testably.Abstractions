@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions.Tests.Internal;
+﻿using DriveInfoWrapper = Testably.Abstractions.FileSystem.DriveInfoWrapper;
+
+namespace Testably.Abstractions.Tests.Internal;
 
 public class DriveInfoWrapperTests
 {

@@ -1,4 +1,6 @@
 ﻿using System.IO;
+using DirectoryInfoWrapper = Testably.Abstractions.FileSystem.DirectoryInfoWrapper;
+using FileInfoWrapper = Testably.Abstractions.FileSystem.FileInfoWrapper;
 
 namespace Testably.Abstractions.Tests.Internal;
 

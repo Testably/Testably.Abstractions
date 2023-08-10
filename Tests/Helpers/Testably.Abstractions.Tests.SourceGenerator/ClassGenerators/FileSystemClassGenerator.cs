@@ -15,6 +15,7 @@ internal class FileSystemClassGenerator : ClassGeneratorBase
 		=> sourceBuilder.Append(@$"
 using Testably.Abstractions.Testing.FileSystemInitializer;
 using Testably.Abstractions.TestHelpers;
+using System.IO.Abstractions.TestingHelpers;
 using Xunit.Abstractions;
 
 namespace {@class.Namespace}
@@ -31,20 +32,45 @@ namespace {@class.Namespace}
 namespace {@class.Namespace}.{@class.Name}
 {{
 	// ReSharper disable once UnusedMember.Global
-	public sealed class MockFileSystemTests : {@class.Name}<MockFileSystem>, IDisposable
+	public sealed class MockFileSystemTests : {@class.Name}<Testably.Abstractions.Testing.MockFileSystem>, IDisposable
 	{{
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
 		public override string BasePath => _directoryCleaner.BasePath;
 
 		private readonly IDirectoryCleaner _directoryCleaner;
 
-		public MockFileSystemTests() : this(new MockFileSystem())
+		public MockFileSystemTests() : this(new Testably.Abstractions.Testing.MockFileSystem())
 		{{
 		}}
 
-		private MockFileSystemTests(MockFileSystem mockFileSystem) : base(
+		private MockFileSystemTests(Testably.Abstractions.Testing.MockFileSystem mockFileSystem) : base(
 			mockFileSystem,
 			mockFileSystem.TimeSystem)
+		{{
+			_directoryCleaner = FileSystem
+			   .SetCurrentDirectoryToEmptyTemporaryDirectory();
+		}}
+
+		/// <inheritdoc cref=""IDisposable.Dispose()"" />
+		public void Dispose()
+			=> _directoryCleaner.Dispose();
+	}}
+
+	// ReSharper disable once UnusedMember.Global
+	public sealed class TestableIoMockFileSystemTests : {@class.Name}<System.IO.Abstractions.TestingHelpers.MockFileSystem>, IDisposable
+	{{
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
+		public override string BasePath => _directoryCleaner.BasePath;
+
+		private readonly IDirectoryCleaner _directoryCleaner;
+
+		public TestableIoMockFileSystemTests() : this(new System.IO.Abstractions.TestingHelpers.MockFileSystem())
+		{{
+		}}
+
+		private TestableIoMockFileSystemTests(System.IO.Abstractions.TestingHelpers.MockFileSystem mockFileSystem) : base(
+			mockFileSystem,
+			new RealTimeSystem())
 		{{
 			_directoryCleaner = FileSystem
 			   .SetCurrentDirectoryToEmptyTemporaryDirectory();

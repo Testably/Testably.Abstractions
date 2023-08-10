@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using FileInfoWrapper = Testably.Abstractions.FileSystem.FileInfoWrapper;
 
 namespace Testably.Abstractions.Tests.Internal;
 
