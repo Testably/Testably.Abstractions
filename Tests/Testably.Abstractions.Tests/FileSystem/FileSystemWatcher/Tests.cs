@@ -233,6 +233,7 @@ public abstract partial class Tests<TFileSystem>
 			/// <inheritdoc cref="IDisposable.Dispose()" />
 			public void Dispose()
 			{
+				// Ignore any call in tests
 			}
 
 			/// <inheritdoc cref="IComponent.Site" />

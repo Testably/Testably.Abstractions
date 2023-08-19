@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Testably.Abstractions.FileSystem;
+using System.IO.Abstractions;
 using Testably.Abstractions.Testing;
 using Testably.Abstractions.Testing.FileSystem;
 
