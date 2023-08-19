@@ -1,4 +1,4 @@
-﻿using Moq;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -82,15 +82,13 @@ public partial class RandomProviderTests
 		[Fact]
 		public void FromEnumerable_Dispose_ShouldDisposeEnumerator()
 		{
-			Mock<IEnumerable<int>> mock = new();
-			Mock<IEnumerator<int>> enumeratorMock = new();
-			mock.Setup(m => m.GetEnumerator()).Returns(enumeratorMock.Object);
+			EnumerableMock enumerable = new();
 			RandomProvider.Generator<int> sut =
-				RandomProvider.Generator<int>.FromEnumerable(mock.Object);
+				RandomProvider.Generator<int>.FromEnumerable(enumerable);
 
 			sut.Dispose();
 
-			enumeratorMock.Verify(m => m.Dispose());
+			enumerable.Enumerator.IsDisposed.Should().BeTrue();
 		}
 
 		[Fact]
@@ -215,6 +213,52 @@ public partial class RandomProviderTests
 			}
 
 			results.Should().AllBeEquivalentTo(value);
+		}
+
+		private sealed class EnumerableMock : IEnumerable<int>
+		{
+			public EnumeratorMock Enumerator { get; } = new();
+
+			#region IEnumerable<int> Members
+
+			/// <inheritdoc cref="IEnumerable.GetEnumerator()" />
+			IEnumerator IEnumerable.GetEnumerator()
+				=> GetEnumerator();
+
+			/// <inheritdoc cref="IEnumerable{T}.GetEnumerator()" />
+			public IEnumerator<int> GetEnumerator()
+				=> Enumerator;
+
+			#endregion
+		}
+
+		private sealed class EnumeratorMock : IEnumerator<int>
+		{
+			public bool IsDisposed { get; private set; }
+
+			#region IEnumerator<int> Members
+
+			/// <inheritdoc cref="IEnumerator{T}.Current" />
+			public int Current
+				=> 0;
+
+			/// <inheritdoc cref="IEnumerator.Current" />
+			object IEnumerator.Current
+				=> Current;
+
+			/// <inheritdoc cref="IDisposable.Dispose()" />
+			public void Dispose()
+				=> IsDisposed = true;
+
+			/// <inheritdoc cref="IEnumerator{T}.MoveNext()" />
+			public bool MoveNext()
+				=> throw new NotSupportedException();
+
+			/// <inheritdoc cref="IEnumerator{T}.Reset()" />
+			public void Reset()
+				=> throw new NotSupportedException();
+
+			#endregion
 		}
 	}
 }

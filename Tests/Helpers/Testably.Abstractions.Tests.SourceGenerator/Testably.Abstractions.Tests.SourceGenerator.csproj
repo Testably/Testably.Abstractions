@@ -23,7 +23,6 @@
 	<ItemGroup>
 		<PackageReference Remove="AutoFixture.Xunit2" />
 		<PackageReference Remove="FluentAssertions" />
-		<PackageReference Remove="Moq" />
 		<PackageReference Remove="Microsoft.NET.Test.Sdk" />
 		<PackageReference Remove="Xunit.SkippableFact" />
 		<PackageReference Remove="xunit" />

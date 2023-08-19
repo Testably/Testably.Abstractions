@@ -1,4 +1,3 @@
-using Moq;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
@@ -132,7 +131,7 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableFact]
 	public void Site_ShouldBeWritable()
 	{
-		ISite? site = new Mock<ISite>().Object;
+		ISite site = new MockSite();
 		FileSystem.Initialize();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
@@ -155,7 +154,7 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableFact]
 	public void SynchronizingObject_ShouldBeWritable()
 	{
-		ISynchronizeInvoke? synchronizingObject = new Mock<ISynchronizeInvoke>().Object;
+		ISynchronizeInvoke synchronizingObject = new MockSynchronizeInvoke();
 		FileSystem.Initialize();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
@@ -163,5 +162,102 @@ public abstract partial class Tests<TFileSystem>
 		fileSystemWatcher.SynchronizingObject = synchronizingObject;
 
 		fileSystemWatcher.SynchronizingObject.Should().Be(synchronizingObject);
+	}
+
+	private sealed class MockSite : ISite
+	{
+		public MockSite()
+		{
+			Component = new ComponentMock(this);
+			Container = new ContainerMock();
+		}
+
+		#region ISite Members
+
+		/// <inheritdoc cref="ISite.Component" />
+		public IComponent Component { get; }
+
+		/// <inheritdoc cref="ISite.Container" />
+		public IContainer Container { get; }
+
+		/// <inheritdoc cref="ISite.DesignMode" />
+		public bool DesignMode => throw new NotSupportedException();
+
+		/// <inheritdoc cref="ISite.Name" />
+		public string Name { get; set; } = "";
+
+		/// <inheritdoc cref="ISite.GetService(Type)" />
+		public object GetService(Type serviceType)
+			=> throw new NotSupportedException();
+
+		#endregion
+
+		private sealed class ContainerMock : IContainer
+		{
+			/// <inheritdoc />
+			public void Dispose()
+			{
+			}
+
+			/// <inheritdoc />
+			public void Add(IComponent component)
+			{
+			}
+
+			/// <inheritdoc />
+			public void Add(IComponent component, string name)
+			{
+			}
+
+			/// <inheritdoc />
+			public void Remove(IComponent component)
+			{
+			}
+
+			/// <inheritdoc />
+			public ComponentCollection Components
+				=> throw new NotSupportedException();
+		}
+
+		private sealed class ComponentMock : IComponent
+		{
+			public ComponentMock(ISite site)
+			{
+				Site = site;
+			}
+
+			/// <inheritdoc cref="IDisposable.Dispose()" />
+			public void Dispose()
+			{
+			}
+
+			/// <inheritdoc cref="IComponent.Site" />
+			public ISite Site { get; set; }
+
+			/// <inheritdoc cref="IComponent.Disposed" />
+			public event EventHandler? Disposed;
+		}
+	}
+
+	private sealed class MockSynchronizeInvoke : ISynchronizeInvoke
+	{
+		#region ISynchronizeInvoke Members
+
+		/// <inheritdoc cref="ISynchronizeInvoke.InvokeRequired" />
+		public bool InvokeRequired { get; } = false;
+
+		/// <inheritdoc cref="ISynchronizeInvoke.BeginInvoke(Delegate, object[])" />
+		public IAsyncResult BeginInvoke(Delegate method, object[] args)
+			=> throw new NotSupportedException();
+
+		/// <inheritdoc cref="ISynchronizeInvoke.EndInvoke(IAsyncResult)" />
+		public object EndInvoke(IAsyncResult result)
+			=> throw new NotSupportedException();
+
+		/// <inheritdoc cref="ISynchronizeInvoke.Invoke(Delegate, object[])" />
+		public object Invoke(Delegate method, object[] args)
+			=> throw new NotSupportedException();
+
+		#endregion
 	}
 }
