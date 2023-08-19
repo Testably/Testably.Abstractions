@@ -181,10 +181,10 @@ public abstract partial class Tests<TFileSystem>
 		public IContainer Container { get; }
 
 		/// <inheritdoc cref="ISite.DesignMode" />
-		public bool DesignMode => throw new NotSupportedException();
+		public bool DesignMode => true;
 
 		/// <inheritdoc cref="ISite.Name" />
-		public string Name { get; set; } = "";
+		public string? Name { get; set; } = "";
 
 		/// <inheritdoc cref="ISite.GetService(Type)" />
 		public object GetService(Type serviceType)
@@ -197,21 +197,25 @@ public abstract partial class Tests<TFileSystem>
 			/// <inheritdoc />
 			public void Dispose()
 			{
+				// Ignore any call in tests
 			}
 
 			/// <inheritdoc />
-			public void Add(IComponent component)
+			public void Add(IComponent? component)
 			{
+				// Ignore any call in tests
 			}
 
 			/// <inheritdoc />
-			public void Add(IComponent component, string name)
+			public void Add(IComponent? component, string? name)
 			{
+				// Ignore any call in tests
 			}
 
 			/// <inheritdoc />
-			public void Remove(IComponent component)
+			public void Remove(IComponent? component)
 			{
+				// Ignore any call in tests
 			}
 
 			/// <inheritdoc />
@@ -232,7 +236,7 @@ public abstract partial class Tests<TFileSystem>
 			}
 
 			/// <inheritdoc cref="IComponent.Site" />
-			public ISite Site { get; set; }
+			public ISite? Site { get; set; }
 
 			/// <inheritdoc cref="IComponent.Disposed" />
 			public event EventHandler? Disposed;
@@ -244,10 +248,11 @@ public abstract partial class Tests<TFileSystem>
 		#region ISynchronizeInvoke Members
 
 		/// <inheritdoc cref="ISynchronizeInvoke.InvokeRequired" />
-		public bool InvokeRequired { get; } = false;
+		public bool InvokeRequired
+			=> true;
 
 		/// <inheritdoc cref="ISynchronizeInvoke.BeginInvoke(Delegate, object[])" />
-		public IAsyncResult BeginInvoke(Delegate method, object[] args)
+		public IAsyncResult BeginInvoke(Delegate method, object?[]? args)
 			=> throw new NotSupportedException();
 
 		/// <inheritdoc cref="ISynchronizeInvoke.EndInvoke(IAsyncResult)" />
@@ -255,7 +260,8 @@ public abstract partial class Tests<TFileSystem>
 			=> throw new NotSupportedException();
 
 		/// <inheritdoc cref="ISynchronizeInvoke.Invoke(Delegate, object[])" />
-		public object Invoke(Delegate method, object[] args)
+		// ReSharper disable once ReturnTypeCanBeNotNullable
+		public object? Invoke(Delegate method, object?[]? args)
 			=> throw new NotSupportedException();
 
 		#endregion
