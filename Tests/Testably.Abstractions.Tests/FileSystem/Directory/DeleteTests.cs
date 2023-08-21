@@ -144,7 +144,7 @@ public abstract partial class DeleteTests<TFileSystem>
 		FileSystem.Directory.Delete(path, true);
 
 		FileSystem.Should().NotHaveDirectory(path);
-		FileSystem.Should().NotHaveDirectory(subdirectory);
+		FileSystem.Should().NotHaveDirectory(subdirectoryPath);
 	}
 
 	[SkippableTheory]
