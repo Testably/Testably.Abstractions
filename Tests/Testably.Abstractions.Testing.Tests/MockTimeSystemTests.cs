@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests;
 
@@ -88,5 +89,39 @@ public class MockTimeSystemTests
 				=> timeSystem.Thread.Sleep(TimeSpan.FromMilliseconds(-2)));
 
 		exception.Should().BeOfType<ArgumentOutOfRangeException>();
+	}
+
+	[Fact]
+	public void ToString_WithFixedContainer_ShouldContainTimeProvider()
+	{
+		DateTime now = TimeTestHelper.GetRandomTime();
+		MockTimeSystem timeSystem = new(TimeProvider.Use(now));
+
+		string result = timeSystem.ToString();
+
+		result.Should().Contain("Fixed");
+		result.Should().Contain($"{now.ToUniversalTime()}Z");
+	}
+
+	[Fact]
+	public void ToString_WithNowContainer_ShouldContainTimeProvider()
+	{
+		MockTimeSystem timeSystem = new(TimeProvider.Now());
+
+		string result = timeSystem.ToString();
+
+		result.Should().Contain("Now");
+		result.Should().Contain($"{timeSystem.DateTime.UtcNow}Z");
+	}
+
+	[Fact]
+	public void ToString_WithRandomContainer_ShouldContainTimeProvider()
+	{
+		MockTimeSystem timeSystem = new(TimeProvider.Random());
+
+		string result = timeSystem.ToString();
+
+		result.Should().Contain("Random");
+		result.Should().Contain($"{timeSystem.DateTime.UtcNow}Z");
 	}
 }

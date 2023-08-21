@@ -8,7 +8,8 @@ internal static class LocationExtensions
 {
 	[return: NotNullIfNotNull("location")]
 	public static IStorageLocation? ThrowIfNotFound(
-		this IStorageLocation? location, MockFileSystem fileSystem,
+		this IStorageLocation? location,
+		MockFileSystem fileSystem,
 		Action fileNotFoundException,
 		Action? directoryNotFoundException = null)
 	{
@@ -38,7 +39,8 @@ internal static class LocationExtensions
 	}
 
 	public static IStorageLocation ThrowExceptionIfNotFound(
-		this IStorageLocation location, MockFileSystem fileSystem,
+		this IStorageLocation location,
+		MockFileSystem fileSystem,
 		bool allowMissingFile = false,
 		Func<string, Exception>? onDirectoryNotFound = null,
 		Func<string, Exception>? onFileNotFound = null)

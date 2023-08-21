@@ -512,6 +512,15 @@ internal sealed class InMemoryStorage : IStorage
 			.Select(x => x.Value)
 			.ToList();
 
+	/// <summary>
+	///     Removes the drive with the given <paramref name="driveName" />.
+	/// </summary>
+	internal IStorageDrive? RemoveDrive(string driveName)
+	{
+		_drives.TryRemove(driveName, out IStorageDrive? drive);
+		return drive;
+	}
+
 	private void CheckAndAdjustParentDirectoryTimes(IStorageLocation location)
 	{
 		IStorageContainer? parentContainer = GetContainer(location.GetParent());

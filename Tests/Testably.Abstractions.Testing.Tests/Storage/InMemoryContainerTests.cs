@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Storage;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
@@ -102,6 +103,18 @@ public class InMemoryContainerTests
 
 	[Theory]
 	[AutoData]
+	public void Container_ShouldProvideCorrectTimeAndFileSystem(string path)
+	{
+		MockFileSystem fileSystem = new();
+		IStorageLocation location = InMemoryLocation.New(null, path);
+		IStorageContainer sut = InMemoryContainer.NewFile(location, fileSystem);
+
+		sut.FileSystem.Should().BeSameAs(fileSystem);
+		sut.TimeSystem.Should().BeSameAs(fileSystem.TimeSystem);
+	}
+
+	[Theory]
+	[AutoData]
 	public void Decrypt_Encrypted_ShouldDecryptBytes(
 		string path, byte[] bytes)
 	{
@@ -179,6 +192,41 @@ public class InMemoryContainerTests
 
 	[Theory]
 	[AutoData]
+	public void RequestAccess_ToString_DeleteAccess_ShouldContainAccessAndShare(string path,
+		FileAccess access, FileShare share)
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.Initialize()
+			.WithFile(path);
+		IStorageLocation location = fileSystem.Storage.GetLocation(path);
+		IStorageContainer sut = InMemoryContainer.NewFile(location, fileSystem);
+
+		IStorageAccessHandle result = sut.RequestAccess(access, share, true);
+
+		result.ToString().Should().NotContain(access.ToString());
+		result.ToString().Should().Contain("Delete");
+		result.ToString().Should().Contain(share.ToString());
+	}
+
+	[Theory]
+	[AutoData]
+	public void RequestAccess_ToString_ShouldContainAccessAndShare(string path, FileAccess access,
+		FileShare share)
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.Initialize()
+			.WithFile(path);
+		IStorageLocation location = fileSystem.Storage.GetLocation(path);
+		IStorageContainer sut = InMemoryContainer.NewFile(location, fileSystem);
+
+		IStorageAccessHandle result = sut.RequestAccess(access, share);
+
+		result.ToString().Should().Contain(access.ToString());
+		result.ToString().Should().Contain(share.ToString());
+	}
+
+	[Theory]
+	[AutoData]
 	public void RequestAccess_WithoutDrive_ShouldThrowDirectoryNotFoundException(
 		string path)
 	{
@@ -215,48 +263,60 @@ public class InMemoryContainerTests
 
 	[Theory]
 	[AutoData]
-	public void Container_ShouldProvideCorrectTimeAndFileSystem(string path)
+	public void TimeContainer_ToString_ShouldReturnUtcTime(
+		string path, DateTime time)
 	{
+		time = DateTime.SpecifyKind(time, DateTimeKind.Local);
+		string expectedString = time.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ssZ");
 		MockFileSystem fileSystem = new();
 		IStorageLocation location = InMemoryLocation.New(null, path);
-		IStorageContainer sut = InMemoryContainer.NewFile(location, fileSystem);
+		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);
 
-		sut.FileSystem.Should().BeSameAs(fileSystem);
-		sut.TimeSystem.Should().BeSameAs(fileSystem.TimeSystem);
+		fileContainer.CreationTime.Set(time, DateTimeKind.Unspecified);
+
+		string? result = fileContainer.CreationTime.ToString();
+
+		result.Should().Be(expectedString);
+	}
+
+	[Fact]
+	public void ToString_Directory_ShouldIncludePath()
+	{
+		MockFileSystem fileSystem = new();
+		string expectedPath = fileSystem.Path.GetFullPath("foo");
+		fileSystem.Directory.CreateDirectory(expectedPath);
+		IStorageContainer sut = fileSystem.StorageContainers.Last();
+
+		string? result = sut.ToString();
+
+		result.Should().Be($"{expectedPath}: Directory");
 	}
 
 	[Theory]
 	[AutoData]
-	public void RequestAccess_ToString_ShouldContainAccessAndShare(string path, FileAccess access,
-		FileShare share)
+	public void ToString_File_ShouldIncludePathAndFileSize(byte[] bytes)
 	{
 		MockFileSystem fileSystem = new();
-		fileSystem.Initialize()
-			.WithFile(path);
-		IStorageLocation location = fileSystem.Storage.GetLocation(path);
-		IStorageContainer sut = InMemoryContainer.NewFile(location, fileSystem);
+		string expectedPath = fileSystem.Path.GetFullPath("foo.txt");
+		fileSystem.File.WriteAllBytes(expectedPath, bytes);
+		IStorageContainer sut = fileSystem.StorageContainers.Single();
 
-		IStorageAccessHandle result = sut.RequestAccess(access, share);
+		string? result = sut.ToString();
 
-		result.ToString().Should().Contain(access.ToString());
-		result.ToString().Should().Contain(share.ToString());
+		result.Should().Be($"{expectedPath}: File ({bytes.Length} bytes)");
 	}
 
-	[Theory]
-	[AutoData]
-	public void RequestAccess_ToString_DeleteAccess_ShouldContainAccessAndShare(string path,
-		FileAccess access, FileShare share)
+	[Fact]
+	public void ToString_UnknownContainer_ShouldIncludePath()
 	{
 		MockFileSystem fileSystem = new();
-		fileSystem.Initialize()
-			.WithFile(path);
-		IStorageLocation location = fileSystem.Storage.GetLocation(path);
-		IStorageContainer sut = InMemoryContainer.NewFile(location, fileSystem);
+		string expectedPath = fileSystem.Path.GetFullPath("foo");
+		IStorageLocation location = InMemoryLocation.New(null, expectedPath);
+		IStorageContainer sut = new InMemoryContainer(FileSystemTypes.DirectoryOrFile, location,
+			fileSystem);
 
-		IStorageAccessHandle result = sut.RequestAccess(access, share, true);
+		string? result = sut.ToString();
 
-		result.ToString().Should().NotContain(access.ToString());
-		result.ToString().Should().Contain("Delete");
-		result.ToString().Should().Contain(share.ToString());
+		result.Should().Be($"{expectedPath}: Unknown Container");
 	}
 }
