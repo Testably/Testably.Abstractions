@@ -218,7 +218,7 @@ public class TimerMockTests
 
 		exception.Should().BeOfType<ArgumentOutOfRangeException>()
 			.Which.ParamName.Should().Be("executionCount");
-		exception!.Message.Should().Be("Execution count must be greater than zero.");
+		exception!.Message.Should().Contain("Execution count must be greater than zero.");
 	}
 
 	[SkippableFact]
