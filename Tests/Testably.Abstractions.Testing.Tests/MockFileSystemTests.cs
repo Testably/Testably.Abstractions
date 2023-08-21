@@ -106,6 +106,17 @@ public class MockFileSystemTests
 		drives.Should().Contain(d => d.Name == driveName);
 	}
 
+	[SkippableFact]
+	public void ToString_ShouldContainStorageInformation()
+	{
+		MockFileSystem sut = new();
+		sut.File.WriteAllText("foo", "bar");
+
+		string result = sut.ToString();
+
+		result.Should().Contain("directories: 0, files: 1");
+	}
+
 	[SkippableTheory]
 	[AutoData]
 	public void WithAccessControl_Denied_CreateDirectoryShouldThrowIOException(
