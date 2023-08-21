@@ -28,10 +28,10 @@ public abstract partial class MoveToTests<TFileSystem>
 			hResult: Test.RunsOnWindows ? -2147024713 : 17);
 
 		sut.Exists.Should().BeTrue();
-		FileSystem.Should().HaveFile(sourceName);
-		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
-		FileSystem.Should().HaveFile(destinationName);
-		FileSystem.File.ReadAllText(destinationName).Should().Be(destinationContents);
+		FileSystem.Should().HaveFile(sourceName)
+			.Which.HasContent(sourceContents);
+		FileSystem.Should().HaveFile(destinationName)
+			.Which.HasContent(destinationContents);
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
@@ -53,8 +53,8 @@ public abstract partial class MoveToTests<TFileSystem>
 		sut.ToString().Should().Be(destinationName);
 		sut.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
 		FileSystem.Should().NotHaveFile(sourceName);
-		FileSystem.Should().HaveFile(destinationName);
-		FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
+		FileSystem.Should().HaveFile(destinationName)
+			.Which.HasContent(sourceContents);
 	}
 #endif
 
@@ -117,8 +117,8 @@ public abstract partial class MoveToTests<TFileSystem>
 		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 
 		sut.Exists.Should().BeTrue();
-		FileSystem.Should().HaveFile(sourceName);
-		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
+		FileSystem.Should().HaveFile(sourceName)
+			.Which.HasContent(sourceContents);
 		FileSystem.Should().NotHaveFile(destinationName);
 	}
 
@@ -134,10 +134,10 @@ public abstract partial class MoveToTests<TFileSystem>
 		sut.MoveTo(destinationName);
 
 		FileSystem.Should().NotHaveFile(sourceName);
-		FileSystem.Should().HaveFile(destinationName);
+		FileSystem.Should().HaveFile(destinationName)
+			.Which.HasContent(contents);
 		FileSystem.File.GetAttributes(destinationName)
 			.Should().HaveFlag(FileAttributes.ReadOnly);
-		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
 	}
 
 	[SkippableTheory]
@@ -204,8 +204,8 @@ public abstract partial class MoveToTests<TFileSystem>
 		sut.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
 		sut.Exists.Should().BeTrue();
 		FileSystem.Should().NotHaveFile(sourceName);
-		FileSystem.Should().HaveFile(destinationName);
-		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
+		FileSystem.Should().HaveFile(destinationName)
+			.Which.HasContent(contents);
 	}
 
 	[SkippableTheory]

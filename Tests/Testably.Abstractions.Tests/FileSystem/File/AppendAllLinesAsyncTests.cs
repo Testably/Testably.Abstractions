@@ -50,14 +50,14 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 	public async Task AppendAllLinesAsync_ExistingFile_ShouldAppendLinesToFile(
 		string path, List<string> previousContents, List<string> contents)
 	{
+		string expectedContent = string.Join(Environment.NewLine, previousContents.Concat(contents))
+		                         + Environment.NewLine;
 		await FileSystem.File.AppendAllLinesAsync(path, previousContents);
 
 		await FileSystem.File.AppendAllLinesAsync(path, contents);
 
-		FileSystem.Should().HaveFile(path);
-		FileSystem.File.ReadAllLines(path).Should()
-			.BeEquivalentTo(previousContents.Concat(contents),
-				o => o.WithStrictOrdering());
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(expectedContent);
 	}
 
 	[SkippableTheory]
@@ -79,10 +79,13 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 	public async Task AppendAllLinesAsync_MissingFile_ShouldCreateFile(
 		string path, List<string> contents)
 	{
+		string expectedContent = string.Join(Environment.NewLine, contents)
+		                         + Environment.NewLine;
+
 		await FileSystem.File.AppendAllLinesAsync(path, contents);
 
-		FileSystem.Should().HaveFile(path);
-		FileSystem.File.ReadAllLines(path).Should().BeEquivalentTo(contents);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(expectedContent);
 	}
 
 	[SkippableTheory]
@@ -127,7 +130,8 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 
 		await FileSystem.File.AppendAllLinesAsync(path, contents);
 
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedResult);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(expectedResult);
 	}
 
 	[SkippableTheory]

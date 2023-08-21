@@ -42,7 +42,7 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void MissingDrive_WriteAllBytes_ShouldThrowDirectoryNotFoundException(
-		string path, byte[] contents)
+		string path, byte[] bytes)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -52,7 +52,7 @@ public abstract partial class Tests<TFileSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.File.WriteAllBytes(path, contents);
+			FileSystem.File.WriteAllBytes(path, bytes);
 		});
 
 		exception.Should().BeException<DirectoryNotFoundException>($"'{path}'",

@@ -18,9 +18,8 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 
 		FileSystem.File.AppendAllText(path, contents);
 
-		FileSystem.Should().HaveFile(path);
-		FileSystem.File.ReadAllText(path).Should()
-			.BeEquivalentTo(previousContents + contents);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(previousContents + contents);
 	}
 
 	[SkippableTheory]
@@ -44,8 +43,8 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 	{
 		FileSystem.File.AppendAllText(path, contents);
 
-		FileSystem.Should().HaveFile(path);
-		FileSystem.File.ReadAllText(path).Should().Be(contents);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(contents);
 	}
 
 	[SkippableTheory]
@@ -71,8 +70,8 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 
 		FileSystem.File.AppendAllText(path, "AA", Encoding.UTF32);
 
-		FileSystem.File.ReadAllBytes(path)
-			.Should().BeEquivalentTo(expectedBytes);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(expectedBytes);
 	}
 
 	[SkippableTheory]
@@ -120,7 +119,8 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 
 		FileSystem.File.AppendAllText(path, contents);
 
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(contents);
 	}
 
 	[SkippableTheory]

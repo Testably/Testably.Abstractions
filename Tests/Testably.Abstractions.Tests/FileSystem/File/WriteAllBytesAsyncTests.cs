@@ -35,8 +35,8 @@ public abstract partial class WriteAllBytesAsyncTests<TFileSystem>
 
 		await FileSystem.File.WriteAllBytesAsync(path, bytes);
 
-		byte[] result = FileSystem.File.ReadAllBytes(path);
-		result.Should().BeEquivalentTo(bytes);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(bytes);
 	}
 
 	[SkippableTheory]
@@ -46,8 +46,8 @@ public abstract partial class WriteAllBytesAsyncTests<TFileSystem>
 	{
 		await FileSystem.File.WriteAllBytesAsync(path, bytes);
 
-		byte[] result = FileSystem.File.ReadAllBytes(path);
-		result.Should().BeEquivalentTo(bytes);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(bytes);
 	}
 
 	[SkippableTheory]

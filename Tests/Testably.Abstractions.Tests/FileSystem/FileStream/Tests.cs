@@ -55,26 +55,26 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void CopyTo_ShouldCopyBytes(
-		string path, byte[] contents)
+		string path, byte[] bytes)
 	{
-		byte[] buffer = new byte[contents.Length];
-		FileSystem.File.WriteAllBytes(path, contents);
+		byte[] buffer = new byte[bytes.Length];
+		FileSystem.File.WriteAllBytes(path, bytes);
 		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 		using MemoryStream destination = new(buffer);
 
 		stream.CopyTo(destination);
 
 		destination.Flush();
-		buffer.Should().BeEquivalentTo(contents);
+		buffer.Should().BeEquivalentTo(bytes);
 	}
 
 	[SkippableTheory]
 	[AutoData]
 	public void CopyTo_BufferSizeZero_ShouldThrowArgumentOutOfRangeException(
-		string path, byte[] contents)
+		string path, byte[] bytes)
 	{
-		byte[] buffer = new byte[contents.Length];
-		FileSystem.File.WriteAllBytes(path, contents);
+		byte[] buffer = new byte[bytes.Length];
+		FileSystem.File.WriteAllBytes(path, bytes);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -91,26 +91,26 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public async Task CopyToAsync_ShouldCopyBytes(
-		string path, byte[] contents)
+		string path, byte[] bytes)
 	{
-		byte[] buffer = new byte[contents.Length];
-		await FileSystem.File.WriteAllBytesAsync(path, contents);
+		byte[] buffer = new byte[bytes.Length];
+		await FileSystem.File.WriteAllBytesAsync(path, bytes);
 		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
 		using MemoryStream destination = new(buffer);
 
 		await stream.CopyToAsync(destination);
 
 		await destination.FlushAsync();
-		buffer.Should().BeEquivalentTo(contents);
+		buffer.Should().BeEquivalentTo(bytes);
 	}
 
 	[SkippableTheory]
 	[AutoData]
 	public async Task CopyToAsync_BufferSizeZero_ShouldThrowArgumentOutOfRangeException(
-		string path, byte[] contents)
+		string path, byte[] bytes)
 	{
-		byte[] buffer = new byte[contents.Length];
-		await FileSystem.File.WriteAllBytesAsync(path, contents);
+		byte[] buffer = new byte[bytes.Length];
+		await FileSystem.File.WriteAllBytesAsync(path, bytes);
 
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
@@ -204,7 +204,8 @@ public abstract partial class Tests<TFileSystem>
 
 		stream2.Dispose();
 		stream1.Dispose();
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes2);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(bytes2);
 	}
 
 	[SkippableTheory]

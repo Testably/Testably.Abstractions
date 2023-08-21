@@ -97,8 +97,8 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 
 		FileSystem.File.WriteAllText(path, "AA", Encoding.UTF32);
 
-		FileSystem.File.ReadAllBytes(path)
-			.Should().BeEquivalentTo(expectedBytes);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(expectedBytes);
 	}
 
 	[SkippableTheory]

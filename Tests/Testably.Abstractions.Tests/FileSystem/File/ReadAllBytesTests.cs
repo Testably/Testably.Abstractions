@@ -80,7 +80,9 @@ public abstract partial class ReadAllBytesTests<TFileSystem>
 		byte[] results = FileSystem.File.ReadAllBytes(path);
 		results[0] = (byte)~results[0];
 
-		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
+		byte[] result = FileSystem.File.ReadAllBytes(path);
+
+		result.Should().BeEquivalentTo(bytes);
 	}
 
 	[SkippableTheory]

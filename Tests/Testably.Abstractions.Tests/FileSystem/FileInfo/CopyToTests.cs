@@ -27,10 +27,10 @@ public abstract partial class CopyToTests<TFileSystem>
 		exception.Should().BeException<IOException>(
 			hResult: Test.RunsOnWindows ? -2147024816 : 17);
 		sut.Exists.Should().BeTrue();
-		FileSystem.Should().HaveFile(sourceName);
-		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
-		FileSystem.Should().HaveFile(destinationName);
-		FileSystem.File.ReadAllText(destinationName).Should().Be(destinationContents);
+		FileSystem.Should().HaveFile(sourceName)
+			.Which.HasContent(sourceContents);
+		FileSystem.Should().HaveFile(destinationName)
+			.Which.HasContent(destinationContents);
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
@@ -52,10 +52,10 @@ public abstract partial class CopyToTests<TFileSystem>
 		sut.FullName.Should().Be(FileSystem.Path.GetFullPath(sourceName));
 		result.Exists.Should().BeTrue();
 		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
-		FileSystem.Should().HaveFile(sourceName);
-		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
-		FileSystem.Should().HaveFile(destinationName);
-		FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
+		FileSystem.Should().HaveFile(sourceName)
+			.Which.HasContent(sourceContents);
+		FileSystem.Should().HaveFile(destinationName)
+			.Which.HasContent(sourceContents);
 	}
 #endif
 
@@ -71,10 +71,10 @@ public abstract partial class CopyToTests<TFileSystem>
 		sut.CopyTo(destinationName);
 
 		FileSystem.Should().HaveFile(sourceName);
-		FileSystem.Should().HaveFile(destinationName);
+		FileSystem.Should().HaveFile(destinationName)
+			.Which.HasContent(contents);
 		FileSystem.File.GetAttributes(destinationName)
 			.Should().HaveFlag(FileAttributes.ReadOnly);
-		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
 	}
 
 	[SkippableTheory]
@@ -120,10 +120,10 @@ public abstract partial class CopyToTests<TFileSystem>
 		sut.Exists.Should().BeTrue();
 		result.Exists.Should().BeTrue();
 		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
-		FileSystem.Should().HaveFile(sourceName);
-		FileSystem.File.ReadAllText(sourceName).Should().Be(contents);
-		FileSystem.Should().HaveFile(destinationName);
-		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
+		FileSystem.Should().HaveFile(sourceName)
+			.Which.HasContent(contents);
+		FileSystem.Should().HaveFile(destinationName)
+			.Which.HasContent(contents);
 	}
 
 	[SkippableTheory]

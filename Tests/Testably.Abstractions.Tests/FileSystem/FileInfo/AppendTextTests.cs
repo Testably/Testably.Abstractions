@@ -19,10 +19,8 @@ public abstract partial class AppendTextTests<TFileSystem>
 			stream.Write(appendText);
 		}
 
-		string result = FileSystem.File.ReadAllText(path);
-
-		result.Should().Be(appendText);
-		FileSystem.Should().HaveFile(path);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(appendText);
 	}
 
 	[SkippableTheory]
@@ -38,8 +36,7 @@ public abstract partial class AppendTextTests<TFileSystem>
 			stream.Write(appendText);
 		}
 
-		string result = FileSystem.File.ReadAllText(path);
-
-		result.Should().Be(contents + appendText);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(contents + appendText);
 	}
 }

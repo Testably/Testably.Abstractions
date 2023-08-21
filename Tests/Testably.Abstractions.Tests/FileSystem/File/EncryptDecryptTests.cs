@@ -72,7 +72,7 @@ public abstract partial class EncryptDecryptTests<TFileSystem>
 		FileSystem.File.WriteAllBytes(path, bytes);
 
 		FileSystem.File.Encrypt(path);
-
+		
 		byte[] result = FileSystem.File.ReadAllBytes(path);
 		result.Should().NotBeEquivalentTo(bytes);
 	}
