@@ -21,7 +21,7 @@ public abstract partial class CreateTests<TFileSystem>
 
 		exception.Should().BeException<IOException>(
 			hResult: Test.RunsOnWindows ? -2147024713 : 17);
-		FileSystem.Directory.Exists(name).Should().BeFalse();
+		FileSystem.Should().NotHaveDirectory(name);
 	}
 
 	[SkippableTheory]
@@ -39,17 +39,17 @@ public abstract partial class CreateTests<TFileSystem>
 #else
 		sut.Exists.Should().BeTrue();
 #endif
-		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
+		FileSystem.Should().HaveDirectory(sut.FullName);
 	}
 
 	[SkippableFact]
 	public void Create_ShouldCreateInBasePath()
 	{
 		IDirectoryInfo result = FileSystem.DirectoryInfo.New("foo");
-		result.Create();
-		bool exists = FileSystem.Directory.Exists("foo");
 
-		exists.Should().BeTrue();
+		result.Create();
+
+		FileSystem.Should().HaveDirectory("foo");
 		result.FullName.Should().StartWith(BasePath);
 	}
 
@@ -100,7 +100,7 @@ public abstract partial class CreateTests<TFileSystem>
 			sut3.Exists.Should().BeTrue();
 		}
 
-		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveDirectory(path);
 	}
 
 	[SkippableTheory]
@@ -133,6 +133,6 @@ public abstract partial class CreateTests<TFileSystem>
 		result.FullName.Should().Be(System.IO.Path.Combine(BasePath, expectedName
 			.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 				FileSystem.Path.DirectorySeparatorChar)));
-		FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
+		FileSystem.Should().HaveDirectory(nameWithSuffix);
 	}
 }

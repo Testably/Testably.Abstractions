@@ -14,22 +14,22 @@ public abstract partial class DisposeTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void Dispose_CalledTwiceShouldDoNothing(
-		string path, byte[] contents)
+		string path, byte[] bytes)
 	{
 		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
 
-		FileSystem.File.WriteAllBytes(path, contents);
+		FileSystem.File.WriteAllBytes(path, bytes);
 
 		using FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
 			FileAccess.ReadWrite, FileShare.ReadWrite, 10, FileOptions.DeleteOnClose);
 
 		stream.Dispose();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		FileSystem.Should().NotHaveFile(path);
 		FileSystem.File.WriteAllText(path, "foo");
 
 		stream.Dispose();
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveFile(path);
 	}
 
 	[SkippableTheory]

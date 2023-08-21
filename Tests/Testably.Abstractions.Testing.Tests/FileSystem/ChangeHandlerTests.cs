@@ -22,7 +22,7 @@ public class ChangeHandlerTests
 	{
 		FileSystem.Intercept.Event(_ =>
 		{
-			FileSystem.Directory.Exists(path).Should().BeFalse();
+			FileSystem.Should().NotHaveDirectory(path);
 			throw exceptionToThrow;
 		});
 		Exception? exception = Record.Exception(() =>
@@ -30,7 +30,7 @@ public class ChangeHandlerTests
 			FileSystem.Directory.CreateDirectory(path);
 		});
 
-		FileSystem.Directory.Exists(path).Should().BeFalse();
+		FileSystem.Should().NotHaveDirectory(path);
 		exception.Should().Be(exceptionToThrow);
 	}
 

@@ -52,12 +52,12 @@ public abstract partial class DeleteTests<TFileSystem>
 		{
 			exception.Should().BeException<IOException>($"{filename}'",
 				hResult: -2147024864);
-			FileSystem.File.Exists(filePath).Should().BeTrue();
+			FileSystem.Should().HaveFile(filePath);
 		}
 		else
 		{
 			exception.Should().BeNull();
-			FileSystem.File.Exists(filePath).Should().BeFalse();
+			FileSystem.Should().NotHaveFile(filePath);
 		}
 	}
 
@@ -79,8 +79,8 @@ public abstract partial class DeleteTests<TFileSystem>
 #else
 		sut.Exists.Should().BeFalse();
 #endif
-		FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
-		FileSystem.Directory.Exists(subdirectoryPath).Should().BeFalse();
+		FileSystem.Should().NotHaveDirectory(sut.FullName);
+		FileSystem.Should().NotHaveDirectory(subdirectoryPath);
 	}
 
 	[SkippableTheory]
@@ -99,7 +99,7 @@ public abstract partial class DeleteTests<TFileSystem>
 #else
 		sut.Exists.Should().BeFalse();
 #endif
-		FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
+		FileSystem.Should().NotHaveDirectory(sut.FullName);
 	}
 
 	[SkippableTheory]
@@ -124,6 +124,6 @@ public abstract partial class DeleteTests<TFileSystem>
 				: $"'{sut.FullName}'");
 
 		sut.Exists.Should().BeTrue();
-		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
+		FileSystem.Should().HaveDirectory(sut.FullName);
 	}
 }

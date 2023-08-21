@@ -12,11 +12,11 @@ public abstract partial class CreateTests<TFileSystem>
 	public void Create_MissingFile_ShouldCreateFile(string path)
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(path);
-		FileSystem.File.Exists(path).Should().BeFalse();
+		FileSystem.Should().NotHaveFile(path);
 
 		using FileSystemStream stream = sut.Create();
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveFile(path);
 	}
 
 	[SkippableTheory]
@@ -45,7 +45,7 @@ public abstract partial class CreateTests<TFileSystem>
 			sut3.Exists.Should().BeTrue();
 		}
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveFile(path);
 	}
 
 	[SkippableTheory]

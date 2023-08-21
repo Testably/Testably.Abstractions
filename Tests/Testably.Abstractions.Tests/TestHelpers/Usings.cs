@@ -3,6 +3,7 @@ global using FluentAssertions;
 global using System;
 global using System.IO.Abstractions;
 global using Testably.Abstractions.FileSystem;
+global using Testably.Abstractions.FluentAssertions;
 global using Testably.Abstractions.Testing;
 global using Testably.Abstractions.TestHelpers;
 global using Testably.Abstractions.Tests.TestHelpers;

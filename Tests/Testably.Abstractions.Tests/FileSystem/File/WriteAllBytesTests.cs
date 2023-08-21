@@ -17,8 +17,8 @@ public abstract partial class WriteAllBytesTests<TFileSystem>
 
 		FileSystem.File.WriteAllBytes(path, bytes);
 
-		byte[] result = FileSystem.File.ReadAllBytes(path);
-		result.Should().BeEquivalentTo(bytes);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(bytes);
 	}
 
 	[SkippableTheory]
@@ -27,8 +27,8 @@ public abstract partial class WriteAllBytesTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
 
-		byte[] result = FileSystem.File.ReadAllBytes(path);
-		result.Should().BeEquivalentTo(bytes);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(bytes);
 	}
 
 	[SkippableTheory]
@@ -58,8 +58,8 @@ public abstract partial class WriteAllBytesTests<TFileSystem>
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		FileSystem.Should().HaveDirectory(path);
+		FileSystem.Should().NotHaveFile(path);
 	}
 
 	[SkippableTheory]

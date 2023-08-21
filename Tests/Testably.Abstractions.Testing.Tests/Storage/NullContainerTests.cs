@@ -35,8 +35,8 @@ public class NullContainerTests
 
 		IStorageContainer sut = NullContainer.New(fileSystem);
 
-		sut.FileSystem.Should().Be(fileSystem);
-		sut.TimeSystem.Should().Be(fileSystem.TimeSystem);
+		sut.FileSystem.Should().BeSameAs(fileSystem);
+		sut.TimeSystem.Should().BeSameAs(fileSystem.TimeSystem);
 	}
 
 	[Fact]

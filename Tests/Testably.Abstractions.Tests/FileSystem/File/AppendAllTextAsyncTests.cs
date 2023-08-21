@@ -51,9 +51,8 @@ public abstract partial class AppendAllTextAsyncTests<TFileSystem>
 
 		await FileSystem.File.AppendAllTextAsync(path, contents);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllText(path).Should()
-			.BeEquivalentTo(previousContents + contents);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(previousContents + contents);
 	}
 
 	[SkippableTheory]
@@ -77,8 +76,8 @@ public abstract partial class AppendAllTextAsyncTests<TFileSystem>
 	{
 		await FileSystem.File.AppendAllTextAsync(path, contents);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
-		FileSystem.File.ReadAllLines(path).Should().BeEquivalentTo(contents);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(contents);
 	}
 
 	[SkippableTheory]
@@ -89,7 +88,8 @@ public abstract partial class AppendAllTextAsyncTests<TFileSystem>
 
 		await FileSystem.File.AppendAllTextAsync(path, contents);
 
-		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(contents);
 	}
 
 	[SkippableTheory]
@@ -107,8 +107,8 @@ public abstract partial class AppendAllTextAsyncTests<TFileSystem>
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		FileSystem.Should().HaveDirectory(path);
+		FileSystem.Should().NotHaveFile(path);
 	}
 
 	[SkippableTheory]

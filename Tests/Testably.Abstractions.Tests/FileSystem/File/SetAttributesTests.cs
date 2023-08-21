@@ -47,7 +47,7 @@ public abstract partial class SetAttributesTests<TFileSystem>
 
 		FileSystem.File.SetAttributes(path, FileAttributes.Directory);
 
-		FileSystem.Directory.Exists(path).Should().BeFalse();
-		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.Should().NotHaveDirectory(path);
+		FileSystem.Should().HaveFile(path);
 	}
 }

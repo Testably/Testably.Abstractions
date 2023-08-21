@@ -23,7 +23,7 @@ public abstract partial class GetFilesTests<TFileSystem>
 
 		exception.Should().BeException<DirectoryNotFoundException>(expectedPath,
 			hResult: -2147024893);
-		FileSystem.Directory.Exists(path).Should().BeFalse();
+		FileSystem.Should().NotHaveDirectory(path);
 	}
 
 	[SkippableTheory]
@@ -185,10 +185,11 @@ public abstract partial class GetFilesTests<TFileSystem>
 		{
 			FileSystem.File.Create(System.IO.Path.Combine(workingDirectory, file));
 		}
+
 		FileSystem.Directory.SetCurrentDirectory(subfolder1);
 		IEnumerable<string> expectation =
 			files.Select(f => System.IO.Path.Combine("..", subfolder1, subfolder2, f));
-		var path = System.IO.Path.Combine("..", subfolder1, subfolder2);
+		string path = System.IO.Path.Combine("..", subfolder1, subfolder2);
 
 		List<string> result = FileSystem.Directory.GetFiles(path).ToList();
 

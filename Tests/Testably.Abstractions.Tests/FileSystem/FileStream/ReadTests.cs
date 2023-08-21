@@ -13,13 +13,13 @@ public abstract partial class ReadTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void BeginRead_ShouldCopyContentsToBuffer(
-		string path, byte[] contents)
+		string path, byte[] bytes)
 	{
 		ManualResetEventSlim ms = new();
-		FileSystem.File.WriteAllBytes(path, contents);
+		FileSystem.File.WriteAllBytes(path, bytes);
 		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-		byte[] buffer = new byte[contents.Length];
+		byte[] buffer = new byte[bytes.Length];
 		stream.BeginRead(buffer, 0, buffer.Length, ar =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
@@ -28,18 +28,18 @@ public abstract partial class ReadTests<TFileSystem>
 		}, null);
 
 		ms.Wait(30000);
-		buffer.Should().BeEquivalentTo(contents);
+		buffer.Should().BeEquivalentTo(bytes);
 	}
 
 	[SkippableTheory]
 	[AutoData]
 	public void BeginRead_CanReadFalse_ShouldThrowNotSupportedException(
-		string path, byte[] contents)
+		string path, byte[] bytes)
 	{
-		FileSystem.File.WriteAllBytes(path, contents);
+		FileSystem.File.WriteAllBytes(path, bytes);
 		FileSystemStream stream = FileSystem.FileInfo.New(path).OpenWrite();
 
-		byte[] buffer = new byte[contents.Length];
+		byte[] buffer = new byte[bytes.Length];
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
@@ -54,9 +54,9 @@ public abstract partial class ReadTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void EndRead_Null_ShouldThrowArgumentNullException(
-		string path, byte[] contents)
+		string path, byte[] bytes)
 	{
-		FileSystem.File.WriteAllBytes(path, contents);
+		FileSystem.File.WriteAllBytes(path, bytes);
 		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
 		Exception? exception = Record.Exception(() =>
@@ -70,18 +70,18 @@ public abstract partial class ReadTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void EndRead_ShouldNotAdjustTimes(string path, byte[] contents)
+	public void EndRead_ShouldNotAdjustTimes(string path, byte[] bytes)
 	{
 		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
 
 		ManualResetEventSlim ms = new();
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
-		FileSystem.File.WriteAllBytes(path, contents);
+		FileSystem.File.WriteAllBytes(path, bytes);
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
 		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 		DateTime updateTime = DateTime.MinValue;
 
-		byte[] buffer = new byte[contents.Length];
+		byte[] buffer = new byte[bytes.Length];
 		stream.BeginRead(buffer, 0, buffer.Length, ar =>
 		{
 			TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
@@ -111,16 +111,16 @@ public abstract partial class ReadTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void Read_CanReadFalse_ShouldThrowNotSupportedException(
-		string path, byte[] contents)
+		string path, byte[] bytes)
 	{
-		byte[] buffer = new byte[contents.Length];
-		FileSystem.File.WriteAllBytes(path, contents);
+		byte[] buffer = new byte[bytes.Length];
+		FileSystem.File.WriteAllBytes(path, bytes);
 		using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			_ = stream.Read(buffer, 0, contents.Length);
+			_ = stream.Read(buffer, 0, bytes.Length);
 		});
 
 		stream.Dispose();
@@ -130,24 +130,24 @@ public abstract partial class ReadTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Read_ShouldFillBuffer(string path, byte[] contents)
+	public void Read_ShouldFillBuffer(string path, byte[] bytes)
 	{
-		byte[] buffer = new byte[contents.Length];
-		FileSystem.File.WriteAllBytes(path, contents);
+		byte[] buffer = new byte[bytes.Length];
+		FileSystem.File.WriteAllBytes(path, bytes);
 		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-		int result = stream.Read(buffer, 0, contents.Length);
+		int result = stream.Read(buffer, 0, bytes.Length);
 
-		result.Should().Be(contents.Length);
-		buffer.Should().BeEquivalentTo(contents);
+		result.Should().Be(bytes.Length);
+		buffer.Should().BeEquivalentTo(bytes);
 	}
 
 	[SkippableTheory]
 	[AutoData]
 	public void ReadByte_CanReadFalse_ShouldThrowNotSupportedException(
-		string path, byte[] contents)
+		string path, byte[] bytes)
 	{
-		FileSystem.File.WriteAllBytes(path, contents);
+		FileSystem.File.WriteAllBytes(path, bytes);
 
 		using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
@@ -165,9 +165,9 @@ public abstract partial class ReadTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void ReadByte_ShouldReadSingleByteAndAdvancePosition(
-		string path, byte[] contents)
+		string path, byte[] bytes)
 	{
-		FileSystem.File.WriteAllBytes(path, contents);
+		FileSystem.File.WriteAllBytes(path, bytes);
 
 		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
@@ -175,8 +175,8 @@ public abstract partial class ReadTests<TFileSystem>
 		int result2 = stream.ReadByte();
 
 		stream.Position.Should().Be(2);
-		result1.Should().Be(contents[0]);
-		result2.Should().Be(contents[1]);
+		result1.Should().Be(bytes[0]);
+		result2.Should().Be(bytes[1]);
 	}
 
 	[SkippableTheory]
@@ -198,25 +198,25 @@ public abstract partial class ReadTests<TFileSystem>
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	public void Read_AsSpan_ShouldFillBuffer(string path, byte[] contents)
+	public void Read_AsSpan_ShouldFillBuffer(string path, byte[] bytes)
 	{
-		byte[] buffer = new byte[contents.Length];
-		FileSystem.File.WriteAllBytes(path, contents);
+		byte[] buffer = new byte[bytes.Length];
+		FileSystem.File.WriteAllBytes(path, bytes);
 		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
 		int result = stream.Read(buffer.AsSpan());
 
-		result.Should().Be(contents.Length);
-		buffer.Should().BeEquivalentTo(contents);
+		result.Should().Be(bytes.Length);
+		buffer.Should().BeEquivalentTo(bytes);
 	}
 
 	[SkippableTheory]
 	[AutoData]
 	public void Read_AsSpan_CanReadFalse_ShouldThrowNotSupportedException(
-		string path, byte[] contents)
+		string path, byte[] bytes)
 	{
-		byte[] buffer = new byte[contents.Length];
-		FileSystem.File.WriteAllBytes(path, contents);
+		byte[] buffer = new byte[bytes.Length];
+		FileSystem.File.WriteAllBytes(path, bytes);
 		using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
 		Exception? exception = Record.Exception(() =>
@@ -234,36 +234,36 @@ public abstract partial class ReadTests<TFileSystem>
 #if FEATURE_FILESYSTEM_ASYNC
 	[SkippableTheory]
 	[AutoData]
-	public async Task ReadAsync_ShouldFillBuffer(string path, byte[] contents)
+	public async Task ReadAsync_ShouldFillBuffer(string path, byte[] bytes)
 	{
 		using CancellationTokenSource cts = new(30000);
-		byte[] buffer = new byte[contents.Length];
-		await FileSystem.File.WriteAllBytesAsync(path, contents, cts.Token);
+		byte[] buffer = new byte[bytes.Length];
+		await FileSystem.File.WriteAllBytesAsync(path, bytes, cts.Token);
 		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
 		#pragma warning disable CA1835
-		int result = await stream.ReadAsync(buffer, 0, contents.Length, cts.Token);
+		int result = await stream.ReadAsync(buffer, 0, bytes.Length, cts.Token);
 		#pragma warning restore CA1835
 
-		result.Should().Be(contents.Length);
-		buffer.Should().BeEquivalentTo(contents);
+		result.Should().Be(bytes.Length);
+		buffer.Should().BeEquivalentTo(bytes);
 	}
 
 	[SkippableTheory]
 	[AutoData]
 	public async Task ReadAsync_CanReadFalse_ShouldThrowNotSupportedException(
-		string path, byte[] contents)
+		string path, byte[] bytes)
 	{
 		using CancellationTokenSource cts = new(30000);
-		byte[] buffer = new byte[contents.Length];
-		await FileSystem.File.WriteAllBytesAsync(path, contents, cts.Token);
+		byte[] buffer = new byte[bytes.Length];
+		await FileSystem.File.WriteAllBytesAsync(path, bytes, cts.Token);
 		await using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			#pragma warning disable CA1835
-			_ = await stream.ReadAsync(buffer, 0, contents.Length, cts.Token);
+			_ = await stream.ReadAsync(buffer, 0, bytes.Length, cts.Token);
 			#pragma warning restore CA1835
 		});
 
@@ -275,11 +275,11 @@ public abstract partial class ReadTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public async Task ReadAsync_Memory_CanReadFalse_ShouldThrowNotSupportedException(
-		string path, byte[] contents)
+		string path, byte[] bytes)
 	{
 		using CancellationTokenSource cts = new(30000);
-		byte[] buffer = new byte[contents.Length];
-		await FileSystem.File.WriteAllBytesAsync(path, contents, cts.Token);
+		byte[] buffer = new byte[bytes.Length];
+		await FileSystem.File.WriteAllBytesAsync(path, bytes, cts.Token);
 		await using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
 		Exception? exception = await Record.ExceptionAsync(async () =>

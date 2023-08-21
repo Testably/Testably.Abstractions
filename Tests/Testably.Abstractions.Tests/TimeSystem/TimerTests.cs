@@ -134,6 +134,7 @@ public abstract partial class TimerTests<TTimeSystem>
 			{
 				ms3.Set();
 			}
+
 			Thread.Sleep(10);
 		}, null, 0 * TimerMultiplier, 200 * TimerMultiplier);
 		ms.Wait(30000).Should().BeTrue();
@@ -152,6 +153,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		{
 			triggerTimes.RemoveAt(0);
 		}
+
 		triggerTimes[0].Should()
 			.BeGreaterThan(70 * TimerMultiplier).And
 			.BeLessThan(130 * TimerMultiplier);
@@ -185,6 +187,7 @@ public abstract partial class TimerTests<TTimeSystem>
 			{
 				ms3.Set();
 			}
+
 			Thread.Sleep(10);
 		}, null, 0L * TimerMultiplier, 200L * TimerMultiplier);
 		ms.Wait(30000).Should().BeTrue();
@@ -203,6 +206,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		{
 			triggerTimes.RemoveAt(0);
 		}
+
 		triggerTimes[0].Should()
 			.BeGreaterThan(70 * TimerMultiplier).And
 			.BeLessThan(130 * TimerMultiplier);
@@ -258,6 +262,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		{
 			triggerTimes.RemoveAt(0);
 		}
+
 		triggerTimes[0].Should()
 			.BeGreaterThan(70 * TimerMultiplier).And
 			.BeLessThan(130 * TimerMultiplier);

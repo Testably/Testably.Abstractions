@@ -13,7 +13,7 @@ public abstract partial class OpenWriteTests<TFileSystem>
 	{
 		using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveFile(path);
 	}
 
 	[SkippableTheory]

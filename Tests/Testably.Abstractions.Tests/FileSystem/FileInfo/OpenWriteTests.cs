@@ -15,7 +15,7 @@ public abstract partial class OpenWriteTests<TFileSystem>
 
 		using FileSystemStream stream = sut.OpenWrite();
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveFile(path);
 	}
 
 	[SkippableTheory]

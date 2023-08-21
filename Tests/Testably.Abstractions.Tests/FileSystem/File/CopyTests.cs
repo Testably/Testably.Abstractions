@@ -43,10 +43,10 @@ public abstract partial class CopyTests<TFileSystem>
 
 		exception.Should().BeException<IOException>(hResult: Test.RunsOnWindows ? -2147024816 : 17);
 
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
-		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().Be(destinationContents);
+		FileSystem.Should().HaveFile(sourceName)
+			.Which.HasContent(sourceContents);
+		FileSystem.Should().HaveFile(destinationName)
+			.Which.HasContent(destinationContents);
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
@@ -63,10 +63,10 @@ public abstract partial class CopyTests<TFileSystem>
 
 		FileSystem.File.Copy(sourceName, destinationName, true);
 
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
-		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
+		FileSystem.Should().HaveFile(sourceName)
+			.Which.HasContent(sourceContents);
+		FileSystem.Should().HaveFile(destinationName)
+			.Which.HasContent(sourceContents);
 	}
 #endif
 
@@ -121,11 +121,12 @@ public abstract partial class CopyTests<TFileSystem>
 
 		FileSystem.File.Copy(sourceName, destinationName);
 
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.Should().HaveFile(sourceName)
+			.Which.HasContent(contents);
+		FileSystem.Should().HaveFile(destinationName)
+			.Which.HasContent(contents);
 		FileSystem.File.GetAttributes(destinationName)
 			.Should().HaveFlag(FileAttributes.ReadOnly);
-		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
 	}
 
 	[SkippableTheory]
@@ -212,8 +213,8 @@ public abstract partial class CopyTests<TFileSystem>
 			binaryWriter.Write("Some text");
 		}
 
-		FileSystem.File.ReadAllBytes(destination).Should()
-			.BeEquivalentTo(original);
+		FileSystem.Should().HaveFile(destination)
+			.Which.HasContent(original);
 		FileSystem.File.ReadAllBytes(destination).Should()
 			.NotBeEquivalentTo(FileSystem.File.ReadAllBytes(source));
 	}
@@ -252,10 +253,10 @@ public abstract partial class CopyTests<TFileSystem>
 		TimeSystem.Thread.Sleep(1000);
 
 		FileSystem.File.Copy(sourceName, destinationName);
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
-		FileSystem.File.ReadAllText(sourceName).Should().Be(contents);
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
-		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
+		FileSystem.Should().HaveFile(sourceName)
+			.Which.HasContent(contents);
+		FileSystem.Should().HaveFile(destinationName)
+			.Which.HasContent(contents);
 	}
 
 	[SkippableTheory]
@@ -276,8 +277,8 @@ public abstract partial class CopyTests<TFileSystem>
 			messageContains: Test.IsNetFramework
 				? $"'{sourceName}'"
 				: $"'{FileSystem.Path.GetFullPath(sourceName)}'");
-		FileSystem.Directory.Exists(sourceName).Should().BeTrue();
-		FileSystem.File.Exists(destinationName).Should().BeFalse();
+		FileSystem.Should().HaveDirectory(sourceName);
+		FileSystem.Should().NotHaveFile(destinationName);
 	}
 
 	[SkippableTheory]
@@ -298,12 +299,12 @@ public abstract partial class CopyTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeException<IOException>(hResult: -2147024864);
-			FileSystem.File.Exists(destinationName).Should().BeFalse();
+			FileSystem.Should().NotHaveFile(destinationName);
 		}
 		else
 		{
-			FileSystem.File.Exists(sourceName).Should().BeTrue();
-			FileSystem.File.Exists(destinationName).Should().BeFalse();
+			FileSystem.Should().HaveFile(sourceName);
+			FileSystem.Should().NotHaveFile(destinationName);
 		}
 	}
 
@@ -323,6 +324,6 @@ public abstract partial class CopyTests<TFileSystem>
 			messageContains: Test.IsNetFramework
 				? null
 				: $"'{FileSystem.Path.GetFullPath(sourceName)}'");
-		FileSystem.File.Exists(destinationName).Should().BeFalse();
+		FileSystem.Should().NotHaveFile(destinationName);
 	}
 }

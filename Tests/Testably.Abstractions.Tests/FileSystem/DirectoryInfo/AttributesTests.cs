@@ -16,8 +16,8 @@ public abstract partial class AttributesTests<TFileSystem>
 
 		sut.Attributes = 0;
 
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		FileSystem.Should().HaveDirectory(path);
+		FileSystem.Should().NotHaveFile(path);
 		sut.Attributes.Should().HaveFlag(FileAttributes.Directory);
 	}
 

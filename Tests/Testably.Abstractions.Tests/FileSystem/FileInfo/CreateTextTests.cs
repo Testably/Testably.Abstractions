@@ -19,10 +19,8 @@ public abstract partial class CreateTextTests<TFileSystem>
 			stream.Write(appendText);
 		}
 
-		string result = FileSystem.File.ReadAllText(path);
-
-		result.Should().Be(appendText);
-		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(appendText);
 	}
 
 	[SkippableTheory]
@@ -39,7 +37,7 @@ public abstract partial class CreateTextTests<TFileSystem>
 		}
 
 		fileInfo.Exists.Should().BeFalse();
-		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveFile(path);
 	}
 
 	[SkippableTheory]
@@ -55,8 +53,7 @@ public abstract partial class CreateTextTests<TFileSystem>
 			stream.Write(appendText);
 		}
 
-		string result = FileSystem.File.ReadAllText(path);
-
-		result.Should().Be(appendText);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(appendText);
 	}
 }

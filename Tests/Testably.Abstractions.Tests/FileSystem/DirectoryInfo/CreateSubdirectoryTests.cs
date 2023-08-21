@@ -22,7 +22,7 @@ public abstract partial class CreateSubdirectoryTests<TFileSystem>
 
 		exception.Should().BeException<IOException>(
 			hResult: Test.RunsOnWindows ? -2147024713 : 17);
-		FileSystem.Directory.Exists(name).Should().BeFalse();
+		FileSystem.Should().NotHaveDirectory(name);
 	}
 
 	[SkippableTheory]
@@ -35,9 +35,9 @@ public abstract partial class CreateSubdirectoryTests<TFileSystem>
 		IDirectoryInfo result = sut.CreateSubdirectory(subdirectory);
 
 		sut.Exists.Should().BeFalse();
-		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
+		FileSystem.Should().HaveDirectory(sut.FullName);
 		result.Exists.Should().BeTrue();
-		FileSystem.Directory.Exists(result.FullName).Should().BeTrue();
+		FileSystem.Should().HaveDirectory(result.FullName);
 	}
 
 	[SkippableTheory]
@@ -49,8 +49,8 @@ public abstract partial class CreateSubdirectoryTests<TFileSystem>
 		IDirectoryInfo result = sut.CreateSubdirectory(subdirectory);
 
 		sut.Exists.Should().BeTrue();
-		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
+		FileSystem.Should().HaveDirectory(sut.FullName);
 		result.Exists.Should().BeTrue();
-		FileSystem.Directory.Exists(result.FullName).Should().BeTrue();
+		FileSystem.Should().HaveDirectory(result.FullName);
 	}
 }

@@ -19,7 +19,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		});
 
 		exception.Should().BeNull();
-		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveDirectory(path);
 	}
 
 	[SkippableTheory]
@@ -39,14 +39,14 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeNull();
-			FileSystem.Directory.Exists(subdirectoryPath).Should().BeTrue();
+			FileSystem.Should().HaveDirectory(subdirectoryPath);
 			FileSystem.DirectoryInfo.New(parent).Attributes
 				.Should().HaveFlag(FileAttributes.ReadOnly);
 		}
 		else
 		{
 			exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
-			FileSystem.Directory.Exists(subdirectoryPath).Should().BeFalse();
+			FileSystem.Should().NotHaveDirectory(subdirectoryPath);
 		}
 	}
 
@@ -63,7 +63,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 
 		exception.Should().BeException<IOException>(
 			hResult: Test.RunsOnWindows ? -2147024713 : 17);
-		FileSystem.Directory.Exists(name).Should().BeFalse();
+		FileSystem.Should().NotHaveDirectory(name);
 	}
 
 	[SkippableFact]
@@ -78,7 +78,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		});
 
 		exception.Should().BeNull();
-		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveDirectory(path);
 	}
 
 	[SkippableTheory]
@@ -218,9 +218,8 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 	public void CreateDirectory_ShouldCreateDirectoryInBasePath()
 	{
 		IDirectoryInfo result = FileSystem.Directory.CreateDirectory("foo");
-		bool exists = FileSystem.Directory.Exists("foo");
 
-		exists.Should().BeTrue();
+		FileSystem.Should().HaveDirectory("foo");
 		result.FullName.Should().StartWith(BasePath);
 	}
 
@@ -263,7 +262,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		result.FullName.Should().Be(System.IO.Path.Combine(BasePath, expectedName
 			.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 				FileSystem.Path.DirectorySeparatorChar)));
-		FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
+		FileSystem.Should().HaveDirectory(nameWithSuffix);
 	}
 
 	[SkippableTheory]
@@ -285,7 +284,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		result.FullName.Should().Be(System.IO.Path.Combine(BasePath, expectedName
 			.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 				FileSystem.Path.DirectorySeparatorChar)));
-		FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
+		FileSystem.Should().HaveDirectory(nameWithSuffix);
 	}
 #else
 	[SkippableTheory]
@@ -317,7 +316,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		result.FullName.Should().Be(System.IO.Path.Combine(BasePath, expectedName
 			.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 				FileSystem.Path.DirectorySeparatorChar)));
-		FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
+		FileSystem.Should().HaveDirectory(nameWithSuffix);
 	}
 #endif
 }

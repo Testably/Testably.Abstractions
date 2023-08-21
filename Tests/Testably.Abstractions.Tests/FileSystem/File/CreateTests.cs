@@ -21,7 +21,8 @@ public abstract partial class CreateTests<TFileSystem>
 
 		streamWriter.Dispose();
 		stream.Dispose();
-		FileSystem.File.ReadAllText(path).Should().Be(newContent);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(newContent);
 	}
 
 	[SkippableTheory]
@@ -61,7 +62,7 @@ public abstract partial class CreateTests<TFileSystem>
 	{
 		using FileSystemStream stream = FileSystem.File.Create(path);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveFile(path);
 	}
 
 	[SkippableTheory]

@@ -13,7 +13,7 @@ public class FileSystemExtensibilityTests
 
 		IFileSystem result = sut.FileSystem;
 
-		result.Should().Be(fileSystem);
+		result.Should().BeSameAs(fileSystem);
 	}
 
 	[SkippableTheory]
@@ -24,7 +24,7 @@ public class FileSystemExtensibilityTests
 
 		IFileSystem result = sut.FileSystem;
 
-		result.Should().Be(fileSystem);
+		result.Should().BeSameAs(fileSystem);
 	}
 
 	[SkippableTheory]
@@ -35,7 +35,7 @@ public class FileSystemExtensibilityTests
 
 		IFileSystem result = sut.FileSystem;
 
-		result.Should().Be(fileSystem);
+		result.Should().BeSameAs(fileSystem);
 	}
 
 	[SkippableTheory]
@@ -46,7 +46,7 @@ public class FileSystemExtensibilityTests
 
 		IFileSystem result = sut.FileSystem;
 
-		result.Should().Be(fileSystem);
+		result.Should().BeSameAs(fileSystem);
 	}
 
 	[SkippableTheory]
@@ -57,7 +57,7 @@ public class FileSystemExtensibilityTests
 
 		IFileSystem result = sut.FileSystem;
 
-		result.Should().Be(fileSystem);
+		result.Should().BeSameAs(fileSystem);
 	}
 
 	[SkippableTheory]
@@ -68,7 +68,7 @@ public class FileSystemExtensibilityTests
 
 		IFileSystem result = sut.FileSystem;
 
-		result.Should().Be(fileSystem);
+		result.Should().BeSameAs(fileSystem);
 	}
 
 	[SkippableTheory]
@@ -79,7 +79,7 @@ public class FileSystemExtensibilityTests
 
 		IFileSystem result = sut.FileSystem;
 
-		result.Should().Be(fileSystem);
+		result.Should().BeSameAs(fileSystem);
 	}
 
 	[SkippableTheory]
@@ -90,7 +90,7 @@ public class FileSystemExtensibilityTests
 
 		IFileSystem result = sut.FileSystem;
 
-		result.Should().Be(fileSystem);
+		result.Should().BeSameAs(fileSystem);
 	}
 
 	[SkippableTheory]
@@ -101,7 +101,7 @@ public class FileSystemExtensibilityTests
 
 		IFileSystem result = sut.FileSystem;
 
-		result.Should().Be(fileSystem);
+		result.Should().BeSameAs(fileSystem);
 	}
 
 	[SkippableTheory]
@@ -112,7 +112,7 @@ public class FileSystemExtensibilityTests
 
 		IFileSystem result = sut.FileSystem;
 
-		result.Should().Be(fileSystem);
+		result.Should().BeSameAs(fileSystem);
 	}
 
 	[SkippableTheory]
@@ -123,7 +123,7 @@ public class FileSystemExtensibilityTests
 
 		IFileSystem result = sut.FileSystem;
 
-		result.Should().Be(fileSystem);
+		result.Should().BeSameAs(fileSystem);
 	}
 
 	[SkippableTheory]
@@ -134,7 +134,7 @@ public class FileSystemExtensibilityTests
 
 		IFileSystem result = sut.FileSystem;
 
-		result.Should().Be(fileSystem);
+		result.Should().BeSameAs(fileSystem);
 	}
 
 	[SkippableTheory]
@@ -145,7 +145,7 @@ public class FileSystemExtensibilityTests
 
 		IFileSystem result = sut.FileSystem;
 
-		result.Should().Be(fileSystem);
+		result.Should().BeSameAs(fileSystem);
 	}
 
 	public static IEnumerable<object[]> GetFileSystems =>
