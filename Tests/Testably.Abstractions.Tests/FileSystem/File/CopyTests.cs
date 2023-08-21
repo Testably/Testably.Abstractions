@@ -124,9 +124,8 @@ public abstract partial class CopyTests<TFileSystem>
 		FileSystem.Should().HaveFile(sourceName)
 			.Which.HasContent(contents);
 		FileSystem.Should().HaveFile(destinationName)
-			.Which.HasContent(contents);
-		FileSystem.File.GetAttributes(destinationName)
-			.Should().HaveFlag(FileAttributes.ReadOnly);
+			.Which.HasContent(contents)
+			.And.HasAttribute(FileAttributes.ReadOnly);
 	}
 
 	[SkippableTheory]

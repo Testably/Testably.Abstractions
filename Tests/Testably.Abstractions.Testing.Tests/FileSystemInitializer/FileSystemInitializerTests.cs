@@ -31,8 +31,8 @@ public class FileSystemInitializerTests
 
 		sut.With(description);
 
-		fileSystem.Should().HaveFile(name);
-		fileSystem.File.ReadAllText(name).Should().Be(content);
+		fileSystem.Should().HaveFile(name)
+			.Which.HasContent(content);
 	}
 
 	[Theory]
@@ -120,8 +120,8 @@ public class FileSystemInitializerTests
 
 		sut.WithFile(path).Which(f => f.HasStringContent("foo"));
 
-		fileSystem.Should().HaveFile(path);
-		fileSystem.File.ReadAllText(path).Should().Be("foo");
+		fileSystem.Should().HaveFile(path)
+			.Which.HasContent("foo");
 	}
 
 	[Theory]
