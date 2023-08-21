@@ -8,10 +8,11 @@
 		<ProjectReference Include="..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj" />
 		<ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj" />
 		<ProjectReference Include="..\Helpers\Testably.Abstractions.TestHelpers\Testably.Abstractions.TestHelpers.csproj" />
+		<ProjectReference Include="..\Helpers\Testably.Abstractions.Tests.SourceGenerator\Testably.Abstractions.Tests.SourceGenerator.csproj" OutputItemType="Analyzer" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Helpers\Testably.Abstractions.Tests.SourceGenerator\Testably.Abstractions.Tests.SourceGenerator.csproj" OutputItemType="Analyzer" />
+		<PackageReference Include="Testably.Abstractions.FluentAssertions" />
 	</ItemGroup>
 
 	<PropertyGroup>
