@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.IO.Abstractions;
 using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
@@ -17,7 +18,7 @@ public class FileSystemInitializerTests
 
 		foreach (DirectoryDescription directory in directories)
 		{
-			fileSystem.Directory.Exists(directory.Name).Should().BeTrue();
+			fileSystem.Should().HaveDirectory(directory.Name);
 		}
 	}
 
@@ -31,7 +32,7 @@ public class FileSystemInitializerTests
 
 		sut.With(description);
 
-		fileSystem.File.Exists(name).Should().BeTrue();
+		fileSystem.Should().HaveFile(name);
 		fileSystem.File.ReadAllText(name).Should().Be(content);
 	}
 
@@ -46,7 +47,7 @@ public class FileSystemInitializerTests
 
 		foreach (FileDescription file in files)
 		{
-			fileSystem.File.Exists(file.Name).Should().BeTrue();
+			fileSystem.Should().HaveFile(file.Name);
 		}
 	}
 
@@ -64,7 +65,7 @@ public class FileSystemInitializerTests
 
 		sut.With(description);
 
-		fileSystem.File.Exists(name).Should().BeTrue();
+		fileSystem.Should().HaveFile(name);
 		fileSystem.FileInfo.New(name).IsReadOnly.Should().Be(isReadOnly);
 	}
 
@@ -79,8 +80,8 @@ public class FileSystemInitializerTests
 
 		sut.With(fileDescription, directoryDescription);
 
-		fileSystem.File.Exists(fileName).Should().BeTrue();
-		fileSystem.Directory.Exists(directoryName).Should().BeTrue();
+		fileSystem.Should().HaveFile(fileName);
+		fileSystem.Should().HaveDirectory(directoryName);
 	}
 
 	[Theory]
@@ -120,7 +121,7 @@ public class FileSystemInitializerTests
 
 		sut.WithFile(path).Which(f => f.HasStringContent("foo"));
 
-		fileSystem.File.Exists(path).Should().BeTrue();
+		fileSystem.Should().HaveFile(path);
 		fileSystem.File.ReadAllText(path).Should().Be("foo");
 	}
 
@@ -135,8 +136,8 @@ public class FileSystemInitializerTests
 
 		sut.WithFile(path);
 
-		fileSystem.File.Exists(path).Should().BeTrue();
-		fileSystem.Directory.Exists(directoryPath).Should().BeTrue();
+		fileSystem.Should().HaveFile(path);
+		fileSystem.Should().HaveDirectory(directoryPath);
 	}
 
 	[Theory]
@@ -151,7 +152,7 @@ public class FileSystemInitializerTests
 
 		foreach (string path in paths)
 		{
-			fileSystem.Directory.Exists(path).Should().BeTrue();
+			fileSystem.Should().HaveDirectory(path);
 		}
 
 		result.Should().Be(sut);
@@ -196,7 +197,7 @@ public class FileSystemInitializerTests
 		IFileSystemDirectoryInitializer<MockFileSystem> result = sut
 			.WithSubdirectory(path);
 
-		fileSystem.Directory.Exists(path).Should().BeTrue();
-		result.FileSystem.Should().Be(fileSystem);
+		fileSystem.Should().HaveDirectory(path);
+		result.FileSystem.Should().BeSameAs(fileSystem);
 	}
 }

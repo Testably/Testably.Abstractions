@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
 using Testably.Abstractions.Testing.FileSystemInitializer;
@@ -207,7 +208,7 @@ public class FileSystemInitializerExtensionsTests
 		result.Length.Should().Be(2);
 		result.Should().Contain(x => x.EndsWith("TestFile1.txt"));
 		result.Should().Contain(x => x.EndsWith("TestFile2.txt"));
-		fileSystem.Directory.Exists(Path.Combine(path, "SubResource")).Should().BeFalse();
+		fileSystem.Should().NotHaveDirectory(Path.Combine(path, "SubResource"));
 	}
 
 	[Theory]
