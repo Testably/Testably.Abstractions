@@ -37,7 +37,7 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 		exception.Should().BeException<DirectoryNotFoundException>(
 			$"'{expectedPath}'",
 			hResult: -2147024893);
-		FileSystem.Directory.Exists(path).Should().BeFalse();
+		FileSystem.Should().NotHaveDirectory(path);
 	}
 
 	[SkippableFact]

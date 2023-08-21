@@ -22,7 +22,7 @@ public abstract partial class GetDirectoriesTests<TFileSystem>
 
 		exception.Should().BeException<DirectoryNotFoundException>($"'{expectedPath}'",
 			hResult: -2147024893);
-		FileSystem.Directory.Exists(path).Should().BeFalse();
+		FileSystem.Should().NotHaveDirectory(path);
 	}
 
 	[SkippableTheory]
