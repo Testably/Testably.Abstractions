@@ -59,8 +59,9 @@ public abstract partial class OptionsTests<TFileSystem>
 		stream.SetLength(bytes.Length);
 		stream.Dispose();
 
-		FileSystem.File.GetAttributes(path).Should().HaveFlag(FileAttributes.Encrypted);
-		FileSystem.File.ReadAllText(path).Should().Be(contents2);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(contents2)
+			.And.HasAttribute(FileAttributes.Encrypted);
 	}
 
 	[SkippableTheory]
@@ -102,7 +103,8 @@ public abstract partial class OptionsTests<TFileSystem>
 		stream.SetLength(bytes.Length);
 		stream.Dispose();
 
-		FileSystem.File.GetAttributes(path).Should().HaveFlag(FileAttributes.Encrypted);
-		FileSystem.File.ReadAllText(path).Should().Be(contents2);
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(contents2)
+			.And.HasAttribute(FileAttributes.Encrypted);
 	}
 }

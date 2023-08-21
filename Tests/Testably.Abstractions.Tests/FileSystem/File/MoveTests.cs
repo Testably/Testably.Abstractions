@@ -103,9 +103,8 @@ public abstract partial class MoveTests<TFileSystem>
 
 		FileSystem.Should().NotHaveFile(sourceName);
 		FileSystem.Should().HaveFile(destinationName)
-			.Which.HasContent(contents);
-		FileSystem.File.GetAttributes(destinationName)
-			.Should().HaveFlag(FileAttributes.ReadOnly);
+			.Which.HasContent(contents)
+			.And.HasAttribute(FileAttributes.ReadOnly);
 	}
 
 	[SkippableTheory]
