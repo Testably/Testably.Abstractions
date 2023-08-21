@@ -181,7 +181,7 @@ public abstract partial class MoveTests<TFileSystem>
 		exception.Should().BeException<FileNotFoundException>(
 			$"'{FileSystem.Path.GetFullPath(sourcePath)}'",
 			hResult: -2147024894);
-		FileSystem.Should().NotHaveFile(destinationName);	
+		FileSystem.Should().NotHaveFile(destinationName);
 	}
 
 	[SkippableTheory]

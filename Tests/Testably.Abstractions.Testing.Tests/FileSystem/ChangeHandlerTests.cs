@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Xml.Linq;
 using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
