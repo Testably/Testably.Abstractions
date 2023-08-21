@@ -85,9 +85,8 @@ public abstract partial class ReplaceTests<TFileSystem>
 
 		FileSystem.Should().NotHaveFile(sourceName);
 		FileSystem.Should().HaveFile(destinationName)
-			.Which.HasContent(sourceContents);
-		FileSystem.File.GetAttributes(destinationName)
-			.Should().HaveFlag(FileAttributes.ReadOnly);
+			.Which.HasContent(sourceContents)
+			.And.HasAttribute(FileAttributes.ReadOnly);
 		FileSystem.Should().HaveFile(backupName)
 			.Which.HasContent(destinationContents);
 	}

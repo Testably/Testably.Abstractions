@@ -25,7 +25,7 @@ public class DirectoryDescriptionTests
 
 		FileSystemInfoDescription result = sut["bar"];
 
-		result.Should().Be(child);
+		result.Should().BeSameAs(child);
 	}
 
 	[Fact]
@@ -38,6 +38,6 @@ public class DirectoryDescriptionTests
 
 		FileSystemInfoDescription result = sut["child1"]["child2"]["child3"];
 
-		result.Should().Be(child3);
+		result.Should().BeSameAs(child3);
 	}
 }
