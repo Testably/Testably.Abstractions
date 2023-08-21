@@ -109,7 +109,8 @@ public class TimerMockTests
 			timer.Dispose(waitHandle);
 		});
 
-		exception.Should().BeOfType<NotSupportedException>();
+		exception.Should().BeOfType<NotSupportedException>()
+			.Which.Message.Should().Contain(typeof(DummyWaitHandle).ToString());
 	}
 
 	[Fact]
@@ -217,6 +218,7 @@ public class TimerMockTests
 
 		exception.Should().BeOfType<ArgumentOutOfRangeException>()
 			.Which.ParamName.Should().Be("executionCount");
+		exception!.Message.Should().Be("Execution count must be greater than zero.");
 	}
 
 	[SkippableFact]
