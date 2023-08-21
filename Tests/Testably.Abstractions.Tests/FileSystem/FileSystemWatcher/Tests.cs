@@ -239,8 +239,10 @@ public abstract partial class Tests<TFileSystem>
 			/// <inheritdoc cref="IComponent.Site" />
 			public ISite? Site { get; set; }
 
+			#pragma warning disable CS0067 // Event is required by the interface
 			/// <inheritdoc cref="IComponent.Disposed" />
 			public event EventHandler? Disposed;
+			#pragma warning restore CS0067
 		}
 	}
 
