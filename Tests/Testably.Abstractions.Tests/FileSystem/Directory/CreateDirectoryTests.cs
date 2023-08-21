@@ -24,7 +24,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateDirectory_ReadOnlyParent_ShouldStillCreateDirectory(string parent,
+	public void CreateDirectory_ReadOnlyParent_ShouldStillCreateDirectoryUnderWindows(string parent,
 		string subdirectory)
 	{
 		string subdirectoryPath = FileSystem.Path.Combine(parent, subdirectory);

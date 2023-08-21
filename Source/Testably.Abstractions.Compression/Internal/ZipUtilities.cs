@@ -7,6 +7,8 @@ namespace Testably.Abstractions.Internal;
 
 internal static class ZipUtilities
 {
+	private const string SearchPattern = "*";
+
 	internal static IZipArchiveEntry CreateEntryFromFile(
 		IZipArchive destination,
 		string sourceFileName,
@@ -28,7 +30,7 @@ internal static class ZipUtilities
 			DateTime lastWrite =
 				destination.FileSystem.File.GetLastWriteTime(sourceFileName);
 
-			if (lastWrite.Year < 1980 || lastWrite.Year > 2107)
+			if (lastWrite.Year is < 1980 or > 2107)
 			{
 				lastWrite = new DateTime(1980, 1, 1, 0, 0, 0);
 			}
@@ -79,7 +81,7 @@ internal static class ZipUtilities
 			}
 
 			foreach (IFileSystemInfo file in di
-				.EnumerateFileSystemInfos("*", SearchOption.AllDirectories))
+				.EnumerateFileSystemInfos(SearchPattern, SearchOption.AllDirectories))
 			{
 				directoryIsEmpty = false;
 

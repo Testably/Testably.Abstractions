@@ -105,6 +105,37 @@ public abstract partial class ExtensionTests<TFileSystem>
 			.Should().Be("FooFooFoo");
 	}
 
+
+	[SkippableTheory]
+	[InlineData("2000-01-01T12:14:15")]
+	[InlineData("1980-01-01T00:00:00")]
+	[InlineData("2107-12-31T23:59:59")]
+	public void ExtractToFile_LastWriteTime_ShouldBeCopiedFromFile(string lastWriteTimeString)
+	{
+		DateTime lastWriteTime = DateTime.Parse(lastWriteTimeString);
+		FileSystem.Initialize()
+			.WithSubdirectory("foo")
+			.WithSubdirectory("bar").Initialized(s => s
+				.WithFile("bar.txt"));
+		FileSystem.File.WriteAllText("bar/foo.txt", "FooFooFoo");
+		FileSystem.File.SetLastWriteTime("bar/foo.txt", lastWriteTime);
+		FileSystem.ZipFile()
+			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+				false);
+		using FileSystemStream stream = FileSystem.File.Open("destination.zip",
+			FileMode.Open, FileAccess.ReadWrite);
+		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
+		archive.CreateEntryFromFile("bar/foo.txt", "foo/bar.txt",
+			CompressionLevel.NoCompression);
+		IZipArchiveEntry entry = archive.Entries.Single();
+
+		entry.ExtractToFile("bar/bar.txt", true);
+
+		FileSystem.File.ReadAllText("bar/bar.txt")
+			.Should().Be("FooFooFoo");
+		FileSystem.FileInfo.New("bar/bar.txt").LastWriteTime.Should().Be(lastWriteTime);
+	}
+
 	[SkippableFact]
 	public void ExtractToFile_IncorrectEntryType_ShouldThrowIOException()
 	{
