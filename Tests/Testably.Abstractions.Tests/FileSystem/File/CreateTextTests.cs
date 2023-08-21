@@ -20,7 +20,7 @@ public abstract partial class CreateTextTests<TFileSystem>
 		string result = FileSystem.File.ReadAllText(path);
 
 		result.Should().Be(appendText);
-		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveFile(path);
 	}
 
 	[SkippableTheory]

@@ -21,10 +21,10 @@ public abstract partial class MoveTests<TFileSystem>
 		if (Test.RunsOnLinux)
 		{
 			// sourceName and destinationName are considered different only on Linux
-			FileSystem.File.Exists(sourceName).Should().BeFalse();
+			FileSystem.Should().NotHaveFile(sourceName);
 		}
 
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.Should().HaveFile(destinationName);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
 	}
 
@@ -65,9 +65,9 @@ public abstract partial class MoveTests<TFileSystem>
 		exception.Should().BeException<IOException>(
 			hResult: Test.RunsOnWindows ? -2147024713 : 17);
 
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
+		FileSystem.Should().HaveFile(sourceName);
 		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.Should().HaveFile(destinationName);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(destinationContents);
 	}
 
@@ -85,8 +85,8 @@ public abstract partial class MoveTests<TFileSystem>
 
 		FileSystem.File.Move(sourceName, destinationName, true);
 
-		FileSystem.File.Exists(sourceName).Should().BeFalse();
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.Should().NotHaveFile(sourceName);
+		FileSystem.Should().HaveFile(destinationName);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
 	}
 #endif
@@ -101,8 +101,8 @@ public abstract partial class MoveTests<TFileSystem>
 
 		FileSystem.File.Move(sourceName, destinationName);
 
-		FileSystem.File.Exists(sourceName).Should().BeFalse();
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.Should().NotHaveFile(sourceName);
+		FileSystem.Should().HaveFile(destinationName);
 		FileSystem.File.GetAttributes(destinationName)
 			.Should().HaveFlag(FileAttributes.ReadOnly);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
@@ -117,8 +117,8 @@ public abstract partial class MoveTests<TFileSystem>
 
 		FileSystem.File.Move(sourceName, destinationName);
 
-		FileSystem.File.Exists(sourceName).Should().BeFalse();
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.Should().NotHaveFile(sourceName);
+		FileSystem.Should().HaveFile(destinationName);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
 	}
 
@@ -181,7 +181,7 @@ public abstract partial class MoveTests<TFileSystem>
 		exception.Should().BeException<FileNotFoundException>(
 			$"'{FileSystem.Path.GetFullPath(sourcePath)}'",
 			hResult: -2147024894);
-		FileSystem.File.Exists(destinationName).Should().BeFalse();
+		FileSystem.Should().NotHaveFile(destinationName);	
 	}
 
 	[SkippableTheory]
@@ -203,12 +203,12 @@ public abstract partial class MoveTests<TFileSystem>
 		{
 			exception.Should().BeException<IOException>(
 				hResult: -2147024864);
-			FileSystem.File.Exists(destinationName).Should().BeFalse();
+			FileSystem.Should().NotHaveFile(destinationName);
 		}
 		else
 		{
-			FileSystem.File.Exists(sourceName).Should().BeFalse();
-			FileSystem.File.Exists(destinationName).Should().BeTrue();
+			FileSystem.Should().NotHaveFile(sourceName);
+			FileSystem.Should().HaveFile(destinationName);
 		}
 	}
 
@@ -241,6 +241,6 @@ public abstract partial class MoveTests<TFileSystem>
 		exception.Should().BeException<FileNotFoundException>(
 			$"'{FileSystem.Path.GetFullPath(sourceName)}'",
 			hResult: -2147024894);
-		FileSystem.File.Exists(destinationName).Should().BeFalse();
+		FileSystem.Should().NotHaveFile(destinationName);
 	}
 }

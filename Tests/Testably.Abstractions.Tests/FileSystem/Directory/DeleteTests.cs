@@ -139,7 +139,7 @@ public abstract partial class DeleteTests<TFileSystem>
 	{
 		string subdirectoryPath = FileSystem.Path.Combine(path, subdirectory);
 		FileSystem.Directory.CreateDirectory(subdirectoryPath);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveDirectory(path);
 
 		FileSystem.Directory.Delete(path, true);
 
@@ -211,7 +211,7 @@ public abstract partial class DeleteTests<TFileSystem>
 		FileSystem.Directory.Delete(subdirectory);
 
 		FileSystem.Should().NotHaveDirectory(subdirectory);
-		FileSystem.File.Exists(fileName).Should().BeTrue();
+		FileSystem.Should().HaveFile(fileName);
 	}
 
 	[SkippableTheory]
@@ -220,7 +220,7 @@ public abstract partial class DeleteTests<TFileSystem>
 		string path, string subdirectory)
 	{
 		FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(path, subdirectory));
-		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveDirectory(path);
 
 		Exception? exception = Record.Exception(() =>
 		{

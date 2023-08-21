@@ -78,8 +78,8 @@ public abstract partial class WriteAllBytesAsyncTests<TFileSystem>
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		FileSystem.Should().HaveDirectory(path);
+		FileSystem.Should().NotHaveFile(path);
 	}
 
 	[SkippableTheory]

@@ -12,7 +12,7 @@ public abstract partial class ExistsTests<TFileSystem>
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 
 		sut.Exists.Should().BeFalse();
-		FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
+		FileSystem.Should().NotHaveDirectory(sut.FullName);
 	}
 
 	[SkippableTheory]
@@ -25,7 +25,7 @@ public abstract partial class ExistsTests<TFileSystem>
 		FileSystem.Directory.Delete(path);
 
 		sut.Exists.Should().BeTrue();
-		FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
+		FileSystem.Should().NotHaveDirectory(sut.FullName);
 	}
 
 	[SkippableTheory]
@@ -47,7 +47,7 @@ public abstract partial class ExistsTests<TFileSystem>
 		FileSystem.Directory.CreateDirectory(path);
 
 		sut.Exists.Should().BeFalse();
-		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
+		FileSystem.Should().HaveDirectory(sut.FullName);
 	}
 
 	[SkippableTheory]

@@ -54,7 +54,7 @@ public abstract partial class DeleteTests<TFileSystem>
 			sut.Exists.Should().BeFalse();
 		}
 
-		FileSystem.File.Exists(path).Should().BeFalse();
+		FileSystem.Should().NotHaveFile(path);
 	}
 
 	[SkippableTheory]
@@ -84,12 +84,12 @@ public abstract partial class DeleteTests<TFileSystem>
 			exception.Should().BeException<IOException>(
 				messageContains: $"{filename}'",
 				hResult: -2147024864);
-			FileSystem.File.Exists(filename).Should().BeTrue();
+			FileSystem.Should().HaveFile(filename);
 		}
 		else
 		{
 			exception.Should().BeNull();
-			FileSystem.File.Exists(filename).Should().BeFalse();
+			FileSystem.Should().NotHaveFile(filename);
 		}
 	}
 }

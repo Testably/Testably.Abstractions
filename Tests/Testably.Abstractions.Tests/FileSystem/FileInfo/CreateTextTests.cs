@@ -22,7 +22,7 @@ public abstract partial class CreateTextTests<TFileSystem>
 		string result = FileSystem.File.ReadAllText(path);
 
 		result.Should().Be(appendText);
-		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveFile(path);
 	}
 
 	[SkippableTheory]
@@ -39,7 +39,7 @@ public abstract partial class CreateTextTests<TFileSystem>
 		}
 
 		fileInfo.Exists.Should().BeFalse();
-		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveFile(path);
 	}
 
 	[SkippableTheory]

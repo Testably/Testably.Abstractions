@@ -18,7 +18,7 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 
 		FileSystem.File.AppendAllText(path, contents);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveFile(path);
 		FileSystem.File.ReadAllText(path).Should()
 			.BeEquivalentTo(previousContents + contents);
 	}
@@ -44,7 +44,7 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 	{
 		FileSystem.File.AppendAllText(path, contents);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveFile(path);
 		FileSystem.File.ReadAllText(path).Should().Be(contents);
 	}
 
@@ -138,8 +138,8 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		FileSystem.Should().HaveDirectory(path);
+		FileSystem.Should().NotHaveFile(path);
 	}
 
 	[SkippableTheory]

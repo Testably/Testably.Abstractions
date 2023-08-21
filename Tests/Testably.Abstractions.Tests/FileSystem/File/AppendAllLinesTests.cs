@@ -19,7 +19,7 @@ public abstract partial class AppendAllLinesTests<TFileSystem>
 
 		FileSystem.File.AppendAllLines(path, contents);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveFile(path);
 		FileSystem.File.ReadAllLines(path).Should()
 			.BeEquivalentTo(previousContents.Concat(contents),
 				o => o.WithStrictOrdering());
@@ -32,7 +32,7 @@ public abstract partial class AppendAllLinesTests<TFileSystem>
 	{
 		FileSystem.File.AppendAllLines(path, contents);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveFile(path);
 		FileSystem.File.ReadAllLines(path).Should()
 			.BeEquivalentTo(contents, o => o.WithStrictOrdering());
 	}
@@ -97,8 +97,8 @@ public abstract partial class AppendAllLinesTests<TFileSystem>
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Directory.Exists(path).Should().BeTrue();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		FileSystem.Should().HaveDirectory(path);
+		FileSystem.Should().NotHaveFile(path);
 	}
 
 	[SkippableTheory]

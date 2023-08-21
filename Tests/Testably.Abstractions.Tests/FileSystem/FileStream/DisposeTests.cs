@@ -24,12 +24,12 @@ public abstract partial class DisposeTests<TFileSystem>
 			FileAccess.ReadWrite, FileShare.ReadWrite, 10, FileOptions.DeleteOnClose);
 
 		stream.Dispose();
-		FileSystem.File.Exists(path).Should().BeFalse();
+		FileSystem.Should().NotHaveFile(path);
 		FileSystem.File.WriteAllText(path, "foo");
 
 		stream.Dispose();
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveFile(path);
 	}
 
 	[SkippableTheory]

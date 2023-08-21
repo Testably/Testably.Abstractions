@@ -83,7 +83,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 		});
 
 		exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
-		FileSystem.File.Exists(backupName).Should().BeFalse();
+		FileSystem.Should().NotHaveFile(backupName);
 	}
 
 	[SkippableTheory]
@@ -103,13 +103,13 @@ public abstract partial class ReplaceTests<TFileSystem>
 		IFileInfo result = sut.Replace(destinationName, backupName, true);
 
 		sut.Exists.Should().BeFalse();
-		FileSystem.File.Exists(sourceName).Should().BeFalse();
+		FileSystem.Should().NotHaveFile(sourceName);
 		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.Should().HaveFile(destinationName);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
 		FileSystem.File.GetAttributes(destinationName)
 			.Should().HaveFlag(FileAttributes.ReadOnly);
-		FileSystem.File.Exists(backupName).Should().BeTrue();
+		FileSystem.Should().HaveFile(backupName);
 		FileSystem.File.ReadAllText(backupName).Should().Be(destinationContents);
 	}
 
@@ -136,22 +136,22 @@ public abstract partial class ReplaceTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
-			FileSystem.File.Exists(sourceName).Should().BeTrue();
+			FileSystem.Should().HaveFile(sourceName);
 			FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
-			FileSystem.File.Exists(destinationName).Should().BeTrue();
+			FileSystem.Should().HaveFile(destinationName);
 			FileSystem.File.ReadAllText(destinationName).Should().Be(destinationContents);
 			FileSystem.File.GetAttributes(destinationName)
 				.Should().NotHaveFlag(FileAttributes.ReadOnly);
-			FileSystem.File.Exists(backupName).Should().BeFalse();
+			FileSystem.Should().NotHaveFile(backupName);
 		}
 		else
 		{
 			exception.Should().BeNull();
 			sut.Exists.Should().BeFalse();
-			FileSystem.File.Exists(sourceName).Should().BeFalse();
-			FileSystem.File.Exists(destinationName).Should().BeTrue();
+			FileSystem.Should().NotHaveFile(sourceName);
+			FileSystem.Should().HaveFile(destinationName);
 			FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
-			FileSystem.File.Exists(backupName).Should().BeTrue();
+			FileSystem.Should().HaveFile(backupName);
 			FileSystem.File.ReadAllText(backupName).Should().Be(destinationContents);
 		}
 	}
@@ -263,11 +263,11 @@ public abstract partial class ReplaceTests<TFileSystem>
 		IFileInfo result = sut.Replace(destinationName, backupName);
 
 		sut.Exists.Should().BeFalse();
-		FileSystem.File.Exists(sourceName).Should().BeFalse();
+		FileSystem.Should().NotHaveFile(sourceName);
 		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.Should().HaveFile(destinationName);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
-		FileSystem.File.Exists(backupName).Should().BeTrue();
+		FileSystem.Should().HaveFile(backupName);
 		FileSystem.File.ReadAllText(backupName).Should().Be(destinationContents);
 	}
 
@@ -336,21 +336,21 @@ public abstract partial class ReplaceTests<TFileSystem>
 		{
 			exception.Should().BeException<IOException>(hResult: -2147024864);
 			sut.Exists.Should().BeTrue();
-			FileSystem.File.Exists(sourceName).Should().BeTrue();
+			FileSystem.Should().HaveFile(sourceName);
 			FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
-			FileSystem.File.Exists(destinationName).Should().BeTrue();
+			FileSystem.Should().HaveFile(destinationName);
 			FileSystem.File.ReadAllText(destinationName).Should().Be(destinationContents);
 			FileSystem.File.GetAttributes(destinationName)
 				.Should().NotHaveFlag(FileAttributes.ReadOnly);
-			FileSystem.File.Exists(backupName).Should().BeFalse();
+			FileSystem.Should().NotHaveFile(backupName);
 		}
 		else
 		{
 			sut.Exists.Should().BeFalse();
-			FileSystem.File.Exists(sourceName).Should().BeFalse();
-			FileSystem.File.Exists(destinationName).Should().BeTrue();
+			FileSystem.Should().NotHaveFile(sourceName);
+			FileSystem.Should().HaveFile(destinationName);
 			FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
-			FileSystem.File.Exists(backupName).Should().BeTrue();
+			FileSystem.Should().HaveFile(backupName);
 			FileSystem.File.ReadAllText(backupName).Should().Be(destinationContents);
 		}
 	}
@@ -374,7 +374,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			// Behaviour on Linux/MacOS is uncertain
-			FileSystem.File.Exists(backupName).Should().BeFalse();
+			FileSystem.Should().NotHaveFile(backupName);
 		}
 	}
 
@@ -396,11 +396,11 @@ public abstract partial class ReplaceTests<TFileSystem>
 		IFileInfo result = sut.Replace(destinationName, null);
 
 		sut.Exists.Should().BeFalse();
-		FileSystem.File.Exists(sourceName).Should().BeFalse();
+		FileSystem.Should().NotHaveFile(sourceName);
 		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.Should().HaveFile(destinationName);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
-		FileSystem.File.Exists(backupName).Should().BeTrue();
+		FileSystem.Should().HaveFile(backupName);
 		FileSystem.File.ReadAllText(backupName).Should().Be(backupContents);
 	}
 
@@ -419,9 +419,9 @@ public abstract partial class ReplaceTests<TFileSystem>
 		IFileInfo result = sut.Replace(destinationName, null);
 
 		sut.Exists.Should().BeFalse();
-		FileSystem.File.Exists(sourceName).Should().BeFalse();
+		FileSystem.Should().NotHaveFile(sourceName);
 		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.Should().HaveFile(destinationName);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
 	}
 }

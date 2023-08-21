@@ -28,9 +28,9 @@ public abstract partial class MoveToTests<TFileSystem>
 			hResult: Test.RunsOnWindows ? -2147024713 : 17);
 
 		sut.Exists.Should().BeTrue();
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
+		FileSystem.Should().HaveFile(sourceName);
 		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.Should().HaveFile(destinationName);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(destinationContents);
 	}
 
@@ -52,8 +52,8 @@ public abstract partial class MoveToTests<TFileSystem>
 		sut.Exists.Should().BeTrue();
 		sut.ToString().Should().Be(destinationName);
 		sut.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
-		FileSystem.File.Exists(sourceName).Should().BeFalse();
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.Should().NotHaveFile(sourceName);
+		FileSystem.Should().HaveFile(destinationName);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
 	}
 #endif
@@ -92,7 +92,7 @@ public abstract partial class MoveToTests<TFileSystem>
 			messageContains: Test.IsNetFramework
 				? null
 				: $"'{FileSystem.Path.GetFullPath(sourceName)}'");
-		FileSystem.File.Exists(sourceName).Should().BeFalse();
+		FileSystem.Should().NotHaveFile(sourceName);
 	}
 
 	[SkippableTheory]
@@ -117,9 +117,9 @@ public abstract partial class MoveToTests<TFileSystem>
 		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 
 		sut.Exists.Should().BeTrue();
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
+		FileSystem.Should().HaveFile(sourceName);
 		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
-		FileSystem.File.Exists(destinationName).Should().BeFalse();
+		FileSystem.Should().NotHaveFile(destinationName);
 	}
 
 	[SkippableTheory]
@@ -133,8 +133,8 @@ public abstract partial class MoveToTests<TFileSystem>
 
 		sut.MoveTo(destinationName);
 
-		FileSystem.File.Exists(sourceName).Should().BeFalse();
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.Should().NotHaveFile(sourceName);
+		FileSystem.Should().HaveFile(destinationName);
 		FileSystem.File.GetAttributes(destinationName)
 			.Should().HaveFlag(FileAttributes.ReadOnly);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
@@ -203,8 +203,8 @@ public abstract partial class MoveToTests<TFileSystem>
 
 		sut.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
 		sut.Exists.Should().BeTrue();
-		FileSystem.File.Exists(sourceName).Should().BeFalse();
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.Should().NotHaveFile(sourceName);
+		FileSystem.Should().HaveFile(destinationName);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
 	}
 
@@ -254,12 +254,12 @@ public abstract partial class MoveToTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeException<IOException>(hResult: -2147024864);
-			FileSystem.File.Exists(destinationName).Should().BeFalse();
+			FileSystem.Should().NotHaveFile(destinationName);
 		}
 		else
 		{
-			FileSystem.File.Exists(sourceName).Should().BeFalse();
-			FileSystem.File.Exists(destinationName).Should().BeTrue();
+			FileSystem.Should().NotHaveFile(sourceName);
+			FileSystem.Should().HaveFile(destinationName);
 		}
 	}
 
@@ -281,6 +281,6 @@ public abstract partial class MoveToTests<TFileSystem>
 				? null
 				: $"'{FileSystem.Path.GetFullPath(sourceName)}'",
 			hResult: -2147024894);
-		FileSystem.File.Exists(destinationName).Should().BeFalse();
+		FileSystem.Should().NotHaveFile(destinationName);
 	}
 }

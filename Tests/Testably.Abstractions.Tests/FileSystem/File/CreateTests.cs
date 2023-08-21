@@ -61,7 +61,7 @@ public abstract partial class CreateTests<TFileSystem>
 	{
 		using FileSystemStream stream = FileSystem.File.Create(path);
 
-		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.Should().HaveFile(path);
 	}
 
 	[SkippableTheory]

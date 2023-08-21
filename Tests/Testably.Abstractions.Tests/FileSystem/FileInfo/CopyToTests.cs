@@ -27,9 +27,9 @@ public abstract partial class CopyToTests<TFileSystem>
 		exception.Should().BeException<IOException>(
 			hResult: Test.RunsOnWindows ? -2147024816 : 17);
 		sut.Exists.Should().BeTrue();
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
+		FileSystem.Should().HaveFile(sourceName);
 		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.Should().HaveFile(destinationName);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(destinationContents);
 	}
 
@@ -52,9 +52,9 @@ public abstract partial class CopyToTests<TFileSystem>
 		sut.FullName.Should().Be(FileSystem.Path.GetFullPath(sourceName));
 		result.Exists.Should().BeTrue();
 		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
+		FileSystem.Should().HaveFile(sourceName);
 		FileSystem.File.ReadAllText(sourceName).Should().Be(sourceContents);
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.Should().HaveFile(destinationName);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(sourceContents);
 	}
 #endif
@@ -70,8 +70,8 @@ public abstract partial class CopyToTests<TFileSystem>
 
 		sut.CopyTo(destinationName);
 
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.Should().HaveFile(sourceName);
+		FileSystem.Should().HaveFile(destinationName);
 		FileSystem.File.GetAttributes(destinationName)
 			.Should().HaveFlag(FileAttributes.ReadOnly);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
@@ -120,9 +120,9 @@ public abstract partial class CopyToTests<TFileSystem>
 		sut.Exists.Should().BeTrue();
 		result.Exists.Should().BeTrue();
 		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
-		FileSystem.File.Exists(sourceName).Should().BeTrue();
+		FileSystem.Should().HaveFile(sourceName);
 		FileSystem.File.ReadAllText(sourceName).Should().Be(contents);
-		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.Should().HaveFile(destinationName);
 		FileSystem.File.ReadAllText(destinationName).Should().Be(contents);
 	}
 
@@ -190,8 +190,8 @@ public abstract partial class CopyToTests<TFileSystem>
 		exception.Should().BeException<UnauthorizedAccessException>(
 			$"'{FileSystem.Path.GetFullPath(sourceName)}'",
 			hResult: -2147024891);
-		FileSystem.Directory.Exists(sourceName).Should().BeTrue();
-		FileSystem.File.Exists(destinationName).Should().BeFalse();
+		FileSystem.Should().HaveDirectory(sourceName);
+		FileSystem.Should().NotHaveFile(destinationName);
 	}
 
 	[SkippableTheory]
@@ -213,12 +213,12 @@ public abstract partial class CopyToTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeException<IOException>(hResult: -2147024864);
-			FileSystem.File.Exists(destinationName).Should().BeFalse();
+			FileSystem.Should().NotHaveFile(destinationName);
 		}
 		else
 		{
-			FileSystem.File.Exists(sourceName).Should().BeTrue();
-			FileSystem.File.Exists(destinationName).Should().BeFalse();
+			FileSystem.Should().HaveFile(sourceName);
+			FileSystem.Should().NotHaveFile(destinationName);
 		}
 	}
 
@@ -240,6 +240,6 @@ public abstract partial class CopyToTests<TFileSystem>
 			messageContains: Test.IsNetFramework
 				? null
 				: $"'{FileSystem.Path.GetFullPath(sourceName)}'");
-		FileSystem.File.Exists(destinationName).Should().BeFalse();
+		FileSystem.Should().NotHaveFile(destinationName);
 	}
 }

@@ -218,9 +218,8 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 	public void CreateDirectory_ShouldCreateDirectoryInBasePath()
 	{
 		IDirectoryInfo result = FileSystem.Directory.CreateDirectory("foo");
-		bool exists = FileSystem.Directory.Exists("foo");
 
-		exists.Should().BeTrue();
+		FileSystem.Should().HaveDirectory("foo");
 		result.FullName.Should().StartWith(BasePath);
 	}
 
