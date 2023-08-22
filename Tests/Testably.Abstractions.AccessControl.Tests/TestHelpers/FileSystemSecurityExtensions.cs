@@ -7,6 +7,28 @@ namespace Testably.Abstractions.AccessControl.Tests.TestHelpers;
 internal static class FileSystemSecurityExtensions
 {
 	/// <summary>
+	///     Create a not-empty <see cref="DirectorySecurity" /> for testing purposes.
+	/// </summary>
+	public static DirectorySecurity CreateDirectorySecurity()
+	{
+		DirectorySecurity directorySecurity = new DirectorySecurity();
+		directorySecurity.AddAccessRule(new FileSystemAccessRule(Environment.UserName,
+			FileSystemRights.FullControl, AccessControlType.Deny));
+		return directorySecurity;
+	}
+
+	/// <summary>
+	///     Create a not-empty <see cref="FileSecurity" /> for testing purposes.
+	/// </summary>
+	public static FileSecurity CreateFileSecurity()
+	{
+		FileSecurity fileSecurity = new FileSecurity();
+		fileSecurity.AddAccessRule(new FileSystemAccessRule(Environment.UserName,
+			FileSystemRights.FullControl, AccessControlType.Deny));
+		return fileSecurity;
+	}
+
+	/// <summary>
 	///     Compares to <see cref="FileSystemSecurity" /> objects.
 	///     https://stackoverflow.com/a/17047098
 	/// </summary>
