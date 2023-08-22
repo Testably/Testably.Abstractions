@@ -385,8 +385,6 @@ public class PathHelperTests
 			public bool IsPathRooted(string? path)
 				=> throw new NotSupportedException();
 
-			#endregion
-
 #if FEATURE_PATH_JOIN
 			/// <inheritdoc />
 			public string Join(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2)
@@ -443,6 +441,8 @@ public class PathHelperTests
 				out int charsWritten)
 				=> throw new NotSupportedException();
 #endif
+
+			#endregion
 		}
 	}
 }
