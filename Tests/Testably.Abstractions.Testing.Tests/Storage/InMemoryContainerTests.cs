@@ -285,7 +285,9 @@ public class InMemoryContainerTests
 		MockFileSystem fileSystem = new();
 		string expectedPath = fileSystem.Path.GetFullPath("foo");
 		fileSystem.Directory.CreateDirectory(expectedPath);
+		#pragma warning disable CA1826
 		IStorageContainer sut = fileSystem.StorageContainers.Last();
+		#pragma warning restore CA1826
 
 		string? result = sut.ToString();
 
