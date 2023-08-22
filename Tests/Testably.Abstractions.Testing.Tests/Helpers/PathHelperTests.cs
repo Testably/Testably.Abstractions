@@ -251,6 +251,22 @@ public class PathHelperTests
 			public string Combine(params string[] paths)
 				=> throw new NotSupportedException();
 
+#if FEATURE_PATH_ADVANCED
+			/// <inheritdoc />
+			public bool EndsInDirectorySeparator(ReadOnlySpan<char> path)
+				=> throw new NotSupportedException();
+
+			/// <inheritdoc />
+			public bool EndsInDirectorySeparator(string path)
+				=> throw new NotSupportedException();
+#endif
+
+#if FEATURE_FILESYSTEM_NET7
+			/// <inheritdoc />
+			public bool Exists(string? path)
+				=> throw new NotSupportedException();
+#endif
+
 #if FEATURE_SPAN
 			/// <inheritdoc />
 			public ReadOnlySpan<char> GetDirectoryName(ReadOnlySpan<char> path)
@@ -370,22 +386,6 @@ public class PathHelperTests
 				=> throw new NotSupportedException();
 
 			#endregion
-
-#if FEATURE_PATH_ADVANCED
-			/// <inheritdoc />
-			public bool EndsInDirectorySeparator(ReadOnlySpan<char> path)
-				=> throw new NotSupportedException();
-
-			/// <inheritdoc />
-			public bool EndsInDirectorySeparator(string path)
-				=> throw new NotSupportedException();
-#endif
-
-#if FEATURE_FILESYSTEM_NET7
-			/// <inheritdoc />
-			public bool Exists(string? path)
-				=> throw new NotSupportedException();
-#endif
 
 #if FEATURE_PATH_JOIN
 			/// <inheritdoc />
