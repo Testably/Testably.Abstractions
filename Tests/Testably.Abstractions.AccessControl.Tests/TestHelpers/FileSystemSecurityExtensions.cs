@@ -11,6 +11,7 @@ internal static class FileSystemSecurityExtensions
 	/// </summary>
 	public static DirectorySecurity CreateDirectorySecurity(this IFileSystem fileSystem)
 	{
+		#pragma warning disable CA1416
 		if (fileSystem is RealFileSystem)
 		{
 			string directoryPath = Guid.NewGuid().ToString();
@@ -24,6 +25,7 @@ internal static class FileSystemSecurityExtensions
 				FileSystemRights.FullControl,
 				AccessControlType.Deny));
 		return directorySecurity;
+		#pragma warning restore CA1416
 	}
 
 	/// <summary>
@@ -31,6 +33,7 @@ internal static class FileSystemSecurityExtensions
 	/// </summary>
 	public static FileSecurity CreateFileSecurity(this IFileSystem fileSystem)
 	{
+		#pragma warning disable CA1416
 		if (fileSystem is RealFileSystem)
 		{
 			string filePath = Guid.NewGuid().ToString();
@@ -46,6 +49,7 @@ internal static class FileSystemSecurityExtensions
 				AccessControlType.Deny));
 
 		return fileSecurity;
+		#pragma warning restore CA1416
 	}
 
 	/// <summary>
