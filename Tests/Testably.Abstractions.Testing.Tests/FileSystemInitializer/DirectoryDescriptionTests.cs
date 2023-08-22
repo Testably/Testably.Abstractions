@@ -1,9 +1,23 @@
-﻿using Testably.Abstractions.Testing.FileSystemInitializer;
+﻿using System.Linq;
+using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
 
 public class DirectoryDescriptionTests
 {
+	[Theory]
+	[AutoData]
+	public void Children_ShouldBeSortedAlphabetically(string[] childNames)
+	{
+		DirectoryDescription sut = new("foo",
+			childNames
+				.Select(n => new DirectoryDescription(n))
+				.Cast<FileSystemInfoDescription>()
+				.ToArray());
+
+		sut.Children.Select(c => c.Name).Should().BeInAscendingOrder();
+	}
+
 	[Fact]
 	public void Index_AccessToMissingChildShouldThrowTestingException()
 	{
@@ -14,7 +28,8 @@ public class DirectoryDescriptionTests
 			_ = sut["bar"];
 		});
 
-		exception.Should().BeOfType<TestingException>();
+		exception.Should().BeOfType<TestingException>()
+			.Which.Message.Should().Contain("'bar'");
 	}
 
 	[Fact]
