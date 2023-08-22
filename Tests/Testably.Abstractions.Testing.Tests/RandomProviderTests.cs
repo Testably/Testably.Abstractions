@@ -281,6 +281,41 @@ public partial class RandomProviderTests
 		results.Should().OnlyHaveUniqueItems();
 	}
 
+	[Fact]
+	public void GetRandom_DefaultValue_ShouldReturnSharedRandom()
+	{
+		RandomProviderMock randomProvider = new();
+		IRandom random1 = randomProvider.GetRandom();
+		IRandom random2 = randomProvider.GetRandom();
+
+		int[] result1 = Enumerable.Range(0, 100)
+			.Select(_ => random1.Next())
+			.ToArray();
+		int[] result2 = Enumerable.Range(0, 100)
+			.Select(_ => random2.Next())
+			.ToArray();
+
+		result1.Should().NotBeEquivalentTo(result2);
+	}
+
+	[Theory]
+	[AutoData]
+	public void GetRandom_FixedSeed_ShouldReturnSeparateRandomInstances(int seed)
+	{
+		RandomProviderMock randomProvider = new();
+		IRandom random1 = randomProvider.GetRandom(seed);
+		IRandom random2 = randomProvider.GetRandom(seed);
+
+		int[] result1 = Enumerable.Range(0, 100)
+			.Select(_ => random1.Next())
+			.ToArray();
+		int[] result2 = Enumerable.Range(0, 100)
+			.Select(_ => random2.Next())
+			.ToArray();
+
+		result1.Should().BeEquivalentTo(result2);
+	}
+
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
