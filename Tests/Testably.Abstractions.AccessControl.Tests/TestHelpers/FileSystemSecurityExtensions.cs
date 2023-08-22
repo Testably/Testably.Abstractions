@@ -9,22 +9,30 @@ internal static class FileSystemSecurityExtensions
 	/// <summary>
 	///     Create a not-empty <see cref="DirectorySecurity" /> for testing purposes.
 	/// </summary>
-	public static DirectorySecurity CreateDirectorySecurity()
+	public static DirectorySecurity CreateDirectorySecurity(this IFileSystem fileSystem)
 	{
-		DirectorySecurity directorySecurity = new DirectorySecurity();
-		directorySecurity.AddAccessRule(new FileSystemAccessRule(Environment.UserName,
-			FileSystemRights.FullControl, AccessControlType.Deny));
+		DirectorySecurity directorySecurity = new();
+		if (fileSystem is MockFileSystem)
+		{
+			directorySecurity.AddAccessRule(new FileSystemAccessRule(Environment.UserName,
+				FileSystemRights.FullControl, AccessControlType.Deny));
+		}
+
 		return directorySecurity;
 	}
 
 	/// <summary>
 	///     Create a not-empty <see cref="FileSecurity" /> for testing purposes.
 	/// </summary>
-	public static FileSecurity CreateFileSecurity()
+	public static FileSecurity CreateFileSecurity(this IFileSystem fileSystem)
 	{
-		FileSecurity fileSecurity = new FileSecurity();
-		fileSecurity.AddAccessRule(new FileSystemAccessRule(Environment.UserName,
-			FileSystemRights.FullControl, AccessControlType.Deny));
+		FileSecurity fileSecurity = new();
+		if (fileSystem is MockFileSystem)
+		{
+			fileSecurity.AddAccessRule(new FileSystemAccessRule(Environment.UserName,
+				FileSystemRights.FullControl, AccessControlType.Deny));
+		}
+
 		return fileSecurity;
 	}
 
