@@ -65,7 +65,7 @@ jobs:
           dotnet tool install --global dotnet-coverage
           dotnet restore -s 'nuget.config'
           dotnet build --no-incremental /p:NetCoreOnly=True --configuration "Release"
-          dotnet-coverage collect 'dotnet test --no-build' -f xml  -o 'coverage.xml'
+          dotnet-coverage collect 'dotnet test --no-build' -f xml  -o 'coverage.xml' -s '.github\coverage-settings.xml'
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
   test-macos:
