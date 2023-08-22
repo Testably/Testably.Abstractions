@@ -8,6 +8,57 @@ public class PathHelperTests
 {
 	[Theory]
 	[AutoData]
+	public void GetFullPathOrWhiteSpace_NormalPath_ShouldReturnFullPath(string path)
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.Initialize();
+		string expectedPath = fileSystem.Path.GetFullPath(path);
+
+		string result = path.GetFullPathOrWhiteSpace(fileSystem);
+
+		result.Should().Be(expectedPath);
+	}
+
+	[Fact]
+	public void GetFullPathOrWhiteSpace_Null_ShouldReturnEmptyString()
+	{
+		MockFileSystem fileSystem = new();
+		string? sut = null;
+
+		string result = sut.GetFullPathOrWhiteSpace(fileSystem);
+
+		result.Should().Be("");
+	}
+
+	[Fact]
+	public void
+		EnsureValidFormat_WithWhiteSpaceAndIncludeIsEmptyCheck_ShouldThrowArgumentException()
+	{
+		string whiteSpace = " ";
+		MockFileSystem fileSystem = new();
+		Exception? exception = Record.Exception(() =>
+		{
+			whiteSpace.EnsureValidFormat(fileSystem, "foo", true);
+		});
+
+		exception.Should().BeOfType<ArgumentException>()
+			.Which.HResult.Should().Be(-2147024809);
+	}
+
+	[Theory]
+	[InlineData("  ")]
+	[InlineData("\t")]
+	public void GetFullPathOrWhiteSpace_WhiteSpace_ShouldReturnPath(string path)
+	{
+		MockFileSystem fileSystem = new();
+
+		string result = path.GetFullPathOrWhiteSpace(fileSystem);
+
+		result.Should().Be(path);
+	}
+
+	[Theory]
+	[AutoData]
 	public void IsUncPath_AltDirectorySeparatorChar_ShouldReturnTrue(string path)
 	{
 		string prefix = new(Path.AltDirectorySeparatorChar, 2);
@@ -84,11 +135,27 @@ public class PathHelperTests
 
 #if NETFRAMEWORK
 		exception.Should().BeOfType<ArgumentException>()
-		   .Which.Message.Should().Contain($"'{path}'");
+			.Which.Message.Should().Contain($"'{path}'");
 #else
 		exception.Should().BeOfType<IOException>()
 			.Which.Message.Should().Contain($"'{path}'");
 #endif
+	}
+
+	[Fact]
+	public void
+		ThrowCommonExceptionsIfPathToTargetIsInvalid_NullCharacter_ShouldThrowArgumentException()
+	{
+		MockFileSystem fileSystem = new();
+		string sut = "path-with\0 invalid character";
+
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.ThrowCommonExceptionsIfPathToTargetIsInvalid(fileSystem);
+		});
+
+		exception.Should().BeOfType<ArgumentException>()
+			.Which.HResult.Should().Be(-2147024713);
 	}
 
 	private sealed class FileSystemMockForPath : IFileSystem
@@ -182,20 +249,6 @@ public class PathHelperTests
 
 			/// <inheritdoc />
 			public string Combine(params string[] paths)
-				=> throw new NotSupportedException();
-
-#if FEATURE_PATH_ADVANCED
-			/// <inheritdoc />
-			public bool EndsInDirectorySeparator(ReadOnlySpan<char> path)
-				=> throw new NotSupportedException();
-
-			/// <inheritdoc />
-			public bool EndsInDirectorySeparator(string path)
-				=> throw new NotSupportedException();
-#endif
-
-			/// <inheritdoc />
-			public bool Exists(string? path)
 				=> throw new NotSupportedException();
 
 #if FEATURE_SPAN
@@ -294,15 +347,17 @@ public class PathHelperTests
 			public bool HasExtension(string? path)
 				=> throw new NotSupportedException();
 
-#if FEATURE_PATH_RELATIVE
+#if FEATURE_SPAN
 			/// <inheritdoc />
 			public bool IsPathFullyQualified(ReadOnlySpan<char> path)
 				=> throw new NotSupportedException();
 #endif
 
+#if FEATURE_PATH_RELATIVE
 			/// <inheritdoc />
 			public bool IsPathFullyQualified(string path)
 				=> throw new NotSupportedException();
+#endif
 
 #if FEATURE_SPAN
 			/// <inheritdoc />
@@ -313,6 +368,24 @@ public class PathHelperTests
 			/// <inheritdoc />
 			public bool IsPathRooted(string? path)
 				=> throw new NotSupportedException();
+
+			#endregion
+
+#if FEATURE_PATH_ADVANCED
+			/// <inheritdoc />
+			public bool EndsInDirectorySeparator(ReadOnlySpan<char> path)
+				=> throw new NotSupportedException();
+
+			/// <inheritdoc />
+			public bool EndsInDirectorySeparator(string path)
+				=> throw new NotSupportedException();
+#endif
+
+#if FEATURE_FILESYSTEM_NET7
+			/// <inheritdoc />
+			public bool Exists(string? path)
+				=> throw new NotSupportedException();
+#endif
 
 #if FEATURE_PATH_JOIN
 			/// <inheritdoc />
@@ -370,8 +443,6 @@ public class PathHelperTests
 				out int charsWritten)
 				=> throw new NotSupportedException();
 #endif
-
-			#endregion
 		}
 	}
 }
