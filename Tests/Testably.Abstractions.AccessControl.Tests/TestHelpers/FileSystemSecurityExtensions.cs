@@ -11,13 +11,18 @@ internal static class FileSystemSecurityExtensions
 	/// </summary>
 	public static DirectorySecurity CreateDirectorySecurity(this IFileSystem fileSystem)
 	{
-		DirectorySecurity directorySecurity = new();
-		if (fileSystem is MockFileSystem)
+		if (fileSystem is RealFileSystem)
 		{
-			directorySecurity.AddAccessRule(new FileSystemAccessRule(Environment.UserName,
-				FileSystemRights.FullControl, AccessControlType.Deny));
+			string directoryPath = Guid.NewGuid().ToString();
+			return fileSystem.Directory.CreateDirectory(directoryPath).GetAccessControl();
 		}
 
+		DirectorySecurity directorySecurity = new();
+		directorySecurity.AddAccessRule(
+			new FileSystemAccessRule(
+				Environment.UserName,
+				FileSystemRights.FullControl,
+				AccessControlType.Deny));
 		return directorySecurity;
 	}
 
@@ -26,12 +31,19 @@ internal static class FileSystemSecurityExtensions
 	/// </summary>
 	public static FileSecurity CreateFileSecurity(this IFileSystem fileSystem)
 	{
-		FileSecurity fileSecurity = new();
-		if (fileSystem is MockFileSystem)
+		if (fileSystem is RealFileSystem)
 		{
-			fileSecurity.AddAccessRule(new FileSystemAccessRule(Environment.UserName,
-				FileSystemRights.FullControl, AccessControlType.Deny));
+			string filePath = Guid.NewGuid().ToString();
+			fileSystem.File.WriteAllText(filePath, "");
+			return fileSystem.FileInfo.New(filePath).GetAccessControl();
 		}
+
+		FileSecurity fileSecurity = new();
+		fileSecurity.AddAccessRule(
+			new FileSystemAccessRule(
+				Environment.UserName,
+				FileSystemRights.FullControl,
+				AccessControlType.Deny));
 
 		return fileSecurity;
 	}
