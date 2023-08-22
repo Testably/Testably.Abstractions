@@ -147,15 +147,15 @@ public class PathHelperTests
 		ThrowCommonExceptionsIfPathToTargetIsInvalid_NullCharacter_ShouldThrowArgumentException()
 	{
 		MockFileSystem fileSystem = new();
-		string sut = "path-with\0 invalid character";
+		string path = "path-with\0 invalid character";
 
 		Exception? exception = Record.Exception(() =>
 		{
-			sut.ThrowCommonExceptionsIfPathToTargetIsInvalid(fileSystem);
+			path.ThrowCommonExceptionsIfPathToTargetIsInvalid(fileSystem);
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
-			.Which.HResult.Should().Be(-2147024713);
+			.Which.Message.Should().Contain($"'{path}'");
 	}
 
 	private sealed class FileSystemMockForPath : IFileSystem
