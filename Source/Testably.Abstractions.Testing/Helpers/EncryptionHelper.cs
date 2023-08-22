@@ -7,6 +7,9 @@ namespace Testably.Abstractions.Testing.Helpers;
 
 internal static class EncryptionHelper
 {
+	private const string DummyEncryptionKey =
+		"THIS IS ONLY A DUMMY ENCRYPTION FOR TESTING HELPERS!";
+
 	/// <summary>
 	///     Encrypts the <paramref name="cypherBytes" /> with a fixed encryption algorithm.
 	/// </summary>
@@ -34,12 +37,12 @@ internal static class EncryptionHelper
 	private static Aes CreateDummyEncryptionAlgorithm()
 	{
 		#pragma warning disable CA1850
-		byte[] bytes = Encoding.UTF8.GetBytes(
-			"THIS IS ONLY A DUMMY ENCRYPTION FOR TESTING HELPERS!");
+		byte[] bytes = Encoding.UTF8.GetBytes(DummyEncryptionKey);
 		using (SHA256 sha256Hash = SHA256.Create())
 		{
 			byte[] key = sha256Hash.ComputeHash(bytes);
-			byte[] iv = sha256Hash.ComputeHash(key).Take(16).ToArray();
+			byte[] iv = sha256Hash.ComputeHash(key)
+				.Skip(8).Take(16).ToArray();
 			Aes algorithm = Aes.Create();
 			algorithm.Key = key;
 			algorithm.IV = iv;

@@ -7,6 +7,52 @@ namespace Testably.Abstractions.AccessControl.Tests.TestHelpers;
 internal static class FileSystemSecurityExtensions
 {
 	/// <summary>
+	///     Create a not-empty <see cref="DirectorySecurity" /> for testing purposes.
+	/// </summary>
+	public static DirectorySecurity CreateDirectorySecurity(this IFileSystem fileSystem)
+	{
+		#pragma warning disable CA1416
+		if (fileSystem is RealFileSystem)
+		{
+			string directoryPath = Guid.NewGuid().ToString();
+			return fileSystem.Directory.CreateDirectory(directoryPath).GetAccessControl();
+		}
+
+		DirectorySecurity directorySecurity = new();
+		directorySecurity.AddAccessRule(
+			new FileSystemAccessRule(
+				Environment.UserName,
+				FileSystemRights.FullControl,
+				AccessControlType.Deny));
+		return directorySecurity;
+		#pragma warning restore CA1416
+	}
+
+	/// <summary>
+	///     Create a not-empty <see cref="FileSecurity" /> for testing purposes.
+	/// </summary>
+	public static FileSecurity CreateFileSecurity(this IFileSystem fileSystem)
+	{
+		#pragma warning disable CA1416
+		if (fileSystem is RealFileSystem)
+		{
+			string filePath = Guid.NewGuid().ToString();
+			fileSystem.File.WriteAllText(filePath, "");
+			return fileSystem.FileInfo.New(filePath).GetAccessControl();
+		}
+
+		FileSecurity fileSecurity = new();
+		fileSecurity.AddAccessRule(
+			new FileSystemAccessRule(
+				Environment.UserName,
+				FileSystemRights.FullControl,
+				AccessControlType.Deny));
+
+		return fileSecurity;
+		#pragma warning restore CA1416
+	}
+
+	/// <summary>
 	///     Compares to <see cref="FileSystemSecurity" /> objects.
 	///     https://stackoverflow.com/a/17047098
 	/// </summary>

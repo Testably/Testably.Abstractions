@@ -31,11 +31,9 @@ public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystem.Directory.CreateDirectory("foo");
 		#pragma warning disable CA1416
-		DirectorySecurity directorySecurity =
-			FileSystem.Directory.GetAccessControl("foo");
-
+		DirectorySecurity directorySecurity = FileSystem.CreateDirectorySecurity();
+		
 		FileSystem.Directory.CreateDirectory("bar", directorySecurity);
 		DirectorySecurity result = FileSystem.Directory.GetAccessControl("bar");
 		#pragma warning restore CA1416
@@ -83,8 +81,7 @@ public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
 
 		FileSystem.Directory.CreateDirectory("foo");
 		#pragma warning disable CA1416
-		DirectorySecurity originalAccessControl =
-			FileSystem.Directory.GetAccessControl("foo");
+		DirectorySecurity originalAccessControl = FileSystem.CreateDirectorySecurity();
 		FileSystem.Directory.SetAccessControl("foo", originalAccessControl);
 
 		DirectorySecurity currentAccessControl =

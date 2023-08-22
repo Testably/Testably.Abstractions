@@ -29,7 +29,7 @@ public abstract partial class FileStreamAclExtensionsTests<TFileSystem>
 
 		FileSystemStream fileStream = FileSystem.File.Create("foo");
 		#pragma warning disable CA1416
-		FileSecurity originalAccessControl = fileStream.GetAccessControl();
+		FileSecurity originalAccessControl = FileSystem.CreateFileSecurity();
 		fileStream.SetAccessControl(originalAccessControl);
 
 		FileSecurity currentAccessControl = fileStream.GetAccessControl();

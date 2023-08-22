@@ -1,4 +1,5 @@
 ﻿using AutoFixture.Xunit2;
+using System.IO;
 using System.Security.AccessControl;
 using System.Threading.Tasks;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
@@ -34,8 +35,7 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 
 		FileSystem.Directory.CreateDirectory("foo");
 		#pragma warning disable CA1416
-		DirectorySecurity directorySecurity =
-			FileSystem.Directory.GetAccessControl("foo");
+		DirectorySecurity directorySecurity = FileSystem.CreateDirectorySecurity();
 
 		FileSystem.DirectoryInfo.New("foo").Create(directorySecurity);
 		DirectorySecurity result = FileSystem.Directory.GetAccessControl("foo");
@@ -43,6 +43,23 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 
 		result.HasSameAccessRightsAs(directorySecurity).Should().BeTrue();
 		FileSystem.Directory.Exists("foo").Should().BeTrue();
+	}
+
+	[SkippableFact]
+	public void GetAccessControl_MissingDirectory_ShouldThrowDirectoryNotFoundException()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("foo");
+
+		Exception? exception = Record.Exception(() =>
+		{
+			#pragma warning disable CA1416
+			sut.GetAccessControl();
+			#pragma warning restore CA1416
+		});
+
+		exception.Should().BeOfType<DirectoryNotFoundException>()
+			.Which.HResult.Should().Be(-2147024893);
 	}
 
 	[SkippableFact]
@@ -84,8 +101,7 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 
 		FileSystem.Directory.CreateDirectory("foo");
 		#pragma warning disable CA1416
-		DirectorySecurity originalAccessControl =
-			FileSystem.DirectoryInfo.New("foo").GetAccessControl();
+		DirectorySecurity originalAccessControl = FileSystem.CreateDirectorySecurity();
 		FileSystem.DirectoryInfo.New("foo").SetAccessControl(originalAccessControl);
 
 		DirectorySecurity currentAccessControl =

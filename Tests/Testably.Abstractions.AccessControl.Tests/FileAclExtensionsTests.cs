@@ -45,8 +45,7 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 
 		FileSystem.File.WriteAllText("foo", null);
 		#pragma warning disable CA1416
-		FileSecurity originalAccessControl =
-			FileSystem.File.GetAccessControl("foo");
+		FileSecurity originalAccessControl = FileSystem.CreateFileSecurity();
 		FileSystem.File.SetAccessControl("foo", originalAccessControl);
 
 		FileSecurity currentAccessControl =
