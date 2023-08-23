@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using Testably.Abstractions.Testing.FileSystemInitializer;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
@@ -18,6 +19,24 @@ public class FileSystemInitializerTests
 		foreach (DirectoryDescription directory in directories)
 		{
 			fileSystem.Should().HaveDirectory(directory.Name);
+		}
+	}
+
+	[Theory]
+	[AutoData]
+	public void With_DirectoryDescriptions_WithSubdirectories_ShouldCreateDirectories(
+		string parent, DirectoryDescription[] directories)
+	{
+		DirectoryDescription directoryDescription = new(parent,
+			directories.Cast<FileSystemInfoDescription>().ToArray());
+		MockFileSystem fileSystem = new();
+		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();
+
+		sut.With(directoryDescription);
+
+		foreach (DirectoryDescription directory in directories)
+		{
+			fileSystem.Should().HaveDirectory(Path.Combine(parent, directory.Name));
 		}
 	}
 
