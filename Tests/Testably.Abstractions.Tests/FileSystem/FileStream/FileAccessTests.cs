@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
@@ -190,7 +189,7 @@ public abstract partial class FileAccessTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void MultipleParallelReads_ShouldBeAllowed(string path, string contents)
+	public async Task MultipleParallelReads_ShouldBeAllowed(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
 		ConcurrentBag<string> results = new();
@@ -205,7 +204,7 @@ public abstract partial class FileAccessTests<TFileSystem>
 
 		while (!wait.IsCompleted)
 		{
-			Thread.Sleep(10);
+			await Task.Delay(10);
 		}
 
 		results.Should().HaveCount(100);

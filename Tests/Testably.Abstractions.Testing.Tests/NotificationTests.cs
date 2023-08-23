@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Testing.Tests;
 
@@ -18,22 +19,22 @@ public class NotificationTests
 				}
 			});
 
-		new Thread(() =>
+		_ = Task.Run(async () =>
 		{
-			Thread.Sleep(10);
+			await Task.Delay(10);
 			for (int i = 1; i <= 10; i++)
 			{
 				timeSystem.Thread.Sleep(i);
-				Thread.Sleep(1);
+				await Task.Delay(1);
 			}
-		}).Start();
+		});
 
 		wait.Wait(count: 7);
 		receivedCount.Should().BeGreaterOrEqualTo(7);
 	}
 
 	[SkippableFact]
-	public void AwaitableCallback_Dispose_ShouldStopListening()
+	public async Task AwaitableCallback_Dispose_ShouldStopListening()
 	{
 		MockTimeSystem timeSystem = new();
 		bool isCalled = false;
@@ -46,12 +47,12 @@ public class NotificationTests
 		wait.Dispose();
 
 		timeSystem.Thread.Sleep(1);
-		Thread.Sleep(10);
+		await Task.Delay(10);
 		isCalled.Should().BeFalse();
 	}
 
 	[SkippableFact]
-	public void AwaitableCallback_DisposeFromExecuteWhileWaiting_ShouldStopListening()
+	public async Task AwaitableCallback_DisposeFromExecuteWhileWaiting_ShouldStopListening()
 	{
 		MockTimeSystem timeSystem = new();
 		bool isCalled = false;
@@ -66,7 +67,7 @@ public class NotificationTests
 		wait.Dispose();
 
 		timeSystem.Thread.Sleep(1);
-		Thread.Sleep(10);
+		await Task.Delay(10);
 		isCalled.Should().BeFalse();
 	}
 
@@ -81,15 +82,15 @@ public class NotificationTests
 				receivedCount++;
 			});
 
-		new Thread(() =>
+		_ = Task.Run(async () =>
 		{
-			Thread.Sleep(10);
+			await Task.Delay(10);
 			for (int i = 1; i <= 10; i++)
 			{
 				timeSystem.Thread.Sleep(i);
-				Thread.Sleep(1);
+				await Task.Delay(1);
 			}
-		}).Start();
+		});
 
 		wait.Wait(t => t.TotalMilliseconds > 6);
 		receivedCount.Should().BeGreaterOrEqualTo(6);
@@ -105,18 +106,18 @@ public class NotificationTests
 		{
 			receivedCount++;
 		}, t => t.TotalMilliseconds > 6);
-
-		new Thread(() =>
+		
+		_ = Task.Run(async () =>
 		{
-			Thread.Sleep(10);
+			await Task.Delay(10);
 			for (int i = 1; i <= 10; i++)
 			{
 				timeSystem.Thread.Sleep(i);
-				Thread.Sleep(1);
+				await Task.Delay(1);
 			}
 
 			ms.Set();
-		}).Start();
+		});
 
 		ms.Wait(30000);
 		receivedCount.Should().BeLessOrEqualTo(4);
@@ -136,14 +137,15 @@ public class NotificationTests
 					isCalled = true;
 				});
 
-			new Thread(() =>
+
+			_ = Task.Run(async () =>
 			{
 				while (!ms.IsSet)
 				{
 					timeSystem.Thread.Sleep(1);
-					Thread.Sleep(1);
+					await Task.Delay(1);
 				}
-			}).Start();
+			});
 
 			wait.Wait();
 			isCalled.Should().BeTrue();
