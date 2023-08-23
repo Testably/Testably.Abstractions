@@ -10,7 +10,11 @@ public abstract partial class TimerTests<TTimeSystem>
 	: TimeSystemTestBase<TTimeSystem>
 	where TTimeSystem : ITimeSystem
 {
+	#region Test Setup
+
 	private const int TimerMultiplier = 10;
+
+	#endregion
 
 	[SkippableFact]
 	public void Change_DisposedTimer_ShouldThrowObjectDisposedException()
@@ -102,13 +106,37 @@ public abstract partial class TimerTests<TTimeSystem>
 	}
 
 	[SkippableFact]
-	public void Change_SameValues_ShouldReturnTrue()
+	public void Change_SameValues_WithInt_ShouldReturnTrue()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ =>
 		{
 		}, null, 100, 200);
 
 		bool result = timer.Change(100, 200);
+
+		result.Should().BeTrue();
+	}
+
+	[SkippableFact]
+	public void Change_SameValues_WithLong_ShouldReturnTrue()
+	{
+		using ITimer timer = TimeSystem.Timer.New(_ =>
+		{
+		}, null, 100L, 200L);
+
+		bool result = timer.Change(100L, 200L);
+
+		result.Should().BeTrue();
+	}
+
+	[SkippableFact]
+	public void Change_SameValues_WithTimeSpan_ShouldReturnTrue()
+	{
+		using ITimer timer = TimeSystem.Timer.New(_ =>
+		{
+		}, null, TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(200));
+
+		bool result = timer.Change(TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(200));
 
 		result.Should().BeTrue();
 	}
@@ -341,4 +369,19 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		result.Should().BeFalse();
 	}
+
+#if FEATURE_ASYNC_DISPOSABLE
+	[SkippableFact]
+	public async Task DisposeAsync_ShouldDisposeTimer()
+	{
+		using ITimer timer = TimeSystem.Timer.New(_ =>
+		{
+		}, null, 100, 200);
+		await timer.DisposeAsync();
+
+		// ReSharper disable once AccessToDisposedClosure
+		Record.Exception(() => timer.Change(0, 0))
+			.Should().BeOfType<ObjectDisposedException>();
+	}
+#endif
 }

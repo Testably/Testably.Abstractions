@@ -87,6 +87,25 @@ public class InMemoryStorageTests
 		result.Should().BeNull();
 	}
 
+	[Fact]
+	public void GetOrCreateContainer_WithMetadata_ShouldBeKept()
+	{
+		FileSystemExtensibility extensibility = new();
+		extensibility.StoreMetadata("foo1", "bar1");
+		extensibility.StoreMetadata("foo2", 42);
+
+		IStorageContainer container = Storage.GetOrCreateContainer(
+			Storage.GetLocation("foo"),
+			(location, fileSystem) => new InMemoryContainer(
+				FileSystemTypes.File, location, fileSystem),
+			extensibility);
+
+		string? result1 = container.Extensibility.RetrieveMetadata<string>("foo1");
+		result1.Should().Be("bar1");
+		int result2 = container.Extensibility.RetrieveMetadata<int>("foo2");
+		result2.Should().Be(42);
+	}
+
 	[Theory]
 	[AutoData]
 	public void Move_RequestDeniedForChild_ShouldRollback(

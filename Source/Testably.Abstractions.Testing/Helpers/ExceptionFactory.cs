@@ -6,31 +6,6 @@ namespace Testably.Abstractions.Testing.Helpers;
 
 internal static class ExceptionFactory
 {
-	public static ArgumentException HandleIsInvalid(string? paramName = "handle")
-		=> new("Invalid handle.", paramName);
-
-	public static IOException MoveSourceMustBeDifferentThanDestination()
-		=> new("Source and destination path must be different.", -2146232800);
-
-	public static NotSupportedException NotSupportedFileStreamWrapping()
-		=> new("You cannot wrap an existing FileStream in the MockFileSystem instance!");
-
-	public static NotSupportedException NotSupportedSafeFileHandle()
-		=> new(
-			"You cannot mock a safe file handle in the mocked file system without registering a strategy explicitly. Use `MockFileSystem.WithSafeFileHandleStrategy`!");
-
-	public static NotSupportedException NotSupportedTimerWrapping()
-		=> new("You cannot wrap an existing Timer in the MockTimeSystem instance!");
-
-	public static ArgumentException SearchPatternCannotContainTwoDots()
-		=> new(
-			"Search pattern cannot contain \"..\" to move up directories and can be contained only internally in file/directory names, as in \"a..b\".");
-
-	public static IOException SeekBackwardNotPossibleInAppendMode()
-		=> new(
-			"Unable seek backward to overwrite data that previously existed in a file opened in Append mode.",
-			-2146232800);
-
 	internal static UnauthorizedAccessException AccessToPathDenied(string path = "")
 		=> new(string.IsNullOrEmpty(path)
 			? "Access to the path is denied."
@@ -105,6 +80,9 @@ internal static class ExceptionFactory
 #endif
 		};
 
+	internal static ArgumentException HandleIsInvalid(string? paramName = "handle")
+		=> new("Invalid handle.", paramName);
+
 	internal static InternalBufferOverflowException InternalBufferOverflowException(
 		int internalBufferSize, int messages)
 		=> new(
@@ -130,11 +108,24 @@ internal static class ExceptionFactory
 #endif
 		};
 
+	internal static IOException MoveSourceMustBeDifferentThanDestination()
+		=> new("Source and destination path must be different.", -2146232800);
+
 	internal static IOException NetworkPathNotFound(string path)
 		=> new($"The network path was not found. : '{path}'");
 
 	internal static IOException NotEnoughDiskSpace(string name)
 		=> new($"There is not enough space on the disk: '{name}'");
+
+	internal static NotSupportedException NotSupportedFileStreamWrapping()
+		=> new("You cannot wrap an existing FileStream in the MockFileSystem instance!");
+
+	internal static NotSupportedException NotSupportedSafeFileHandle()
+		=> new(
+			"You cannot mock a safe file handle in the mocked file system without registering a strategy explicitly. Use `MockFileSystem.WithSafeFileHandleStrategy`!");
+
+	internal static NotSupportedException NotSupportedTimerWrapping()
+		=> new("You cannot wrap an existing Timer in the MockTimeSystem instance!");
 
 	internal static PlatformNotSupportedException OperationNotSupportedOnThisPlatform()
 		=> new("Operation is not supported on this platform.")
@@ -190,7 +181,16 @@ internal static class ExceptionFactory
 			$"The process cannot access the file '{path}' because it is being used by another process.",
 			hResult);
 
-	public static NotSupportedException StreamDoesNotSupportReading()
+	internal static ArgumentException SearchPatternCannotContainTwoDots()
+		=> new(
+			"Search pattern cannot contain \"..\" to move up directories and can be contained only internally in file/directory names, as in \"a..b\".");
+
+	internal static IOException SeekBackwardNotPossibleInAppendMode()
+		=> new(
+			"Unable seek backward to overwrite data that previously existed in a file opened in Append mode.",
+			-2146232800);
+
+	internal static NotSupportedException StreamDoesNotSupportReading()
 		=> new("Stream does not support reading.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
@@ -236,7 +236,7 @@ internal static class ExceptionFactory
 		=> new(
 			$"The timeout of {timeoutMilliseconds}ms expired in the awaitable callback.");
 
-	public static ArgumentOutOfRangeException TimerArgumentOutOfRange(string propertyName)
+	internal static ArgumentOutOfRangeException TimerArgumentOutOfRange(string propertyName)
 		=> new(propertyName,
 			"Number must be either non-negative and less than or equal to Int32.MaxValue or -1")
 		{
