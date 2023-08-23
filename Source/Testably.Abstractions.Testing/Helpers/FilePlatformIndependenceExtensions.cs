@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -10,7 +11,9 @@ namespace Testably.Abstractions.Testing.Helpers;
 internal static class FilePlatformIndependenceExtensions
 {
 	#pragma warning disable SYSLIB1045
-	private static readonly Regex PathTransformRegex = new(@"^[a-zA-Z]:(?<path>.*)$");
+	private static readonly Regex PathTransformRegex = new(@"^[a-zA-Z]:(?<path>.*)$",
+		RegexOptions.None,
+		TimeSpan.FromMilliseconds(1000));
 	#pragma warning restore SYSLIB1045
 
 	/// <summary>

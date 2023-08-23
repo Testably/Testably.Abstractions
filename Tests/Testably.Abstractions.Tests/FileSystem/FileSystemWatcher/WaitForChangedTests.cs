@@ -48,11 +48,11 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		try
 		{
-			Task.Run(() =>
+			_ = Task.Run(async () =>
 			{
 				while (!ms.IsSet)
 				{
-					Thread.Sleep(10);
+					await Task.Delay(10);
 					FileSystem.Directory.CreateDirectory(path);
 					FileSystem.Directory.Delete(path);
 				}
@@ -90,11 +90,11 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 		try
 		{
 			fileSystemWatcher.EnableRaisingEvents = true;
-			Task.Run(() =>
+			_ = Task.Run(async () =>
 			{
 				while (!ms.IsSet)
 				{
-					Thread.Sleep(10);
+					await Task.Delay(10);
 					FileSystem.Directory.CreateDirectory(path);
 					FileSystem.Directory.Delete(path);
 				}

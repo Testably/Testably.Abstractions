@@ -1,10 +1,8 @@
 ﻿using System.Threading;
+using System.Threading.Tasks;
 using Testably.Abstractions.Testing.TimeSystem;
 using Testably.Abstractions.TimeSystem;
 using Xunit.Abstractions;
-#if FEATURE_ASYNC_DISPOSABLE
-using System.Threading.Tasks;
-#endif
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
@@ -160,7 +158,7 @@ public class TimerMockTests
 	}
 
 	[Fact]
-	public void Exception_WhenSwallowExceptionsIsNotSet_ShouldStopTimer()
+	public async Task Exception_WhenSwallowExceptionsIsNotSet_ShouldStopTimer()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()
 			.WithTimerStrategy(new TimerStrategy(
@@ -182,13 +180,13 @@ public class TimerMockTests
 			timeSystem.TimerHandler[0].Wait();
 		});
 
-		Thread.Sleep(10);
+		await Task.Delay(10);
 		exception.Should().Be(expectedException);
 		count.Should().Be(1);
 	}
 
 	[Fact]
-	public void New_WithStartOnMockWaitMode_ShouldOnlyStartWhenCallingWait()
+	public async Task New_WithStartOnMockWaitMode_ShouldOnlyStartWhenCallingWait()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()
 			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
@@ -197,7 +195,7 @@ public class TimerMockTests
 		int count = 0;
 		using ITimer timer = timeSystem.Timer.New(_ => count++, null, 0, 100);
 
-		Thread.Sleep(10);
+		await Task.Delay(10);
 		count.Should().Be(0);
 		timerHandler[0].Wait();
 		count.Should().BeGreaterThan(0);
@@ -311,7 +309,7 @@ public class TimerMockTests
 	}
 
 	[Fact]
-	public void Wait_WithExecutionCount_ShouldWaitForSpecifiedNumberOfExecutions()
+	public async Task Wait_WithExecutionCount_ShouldWaitForSpecifiedNumberOfExecutions()
 	{
 		int executionCount = 10;
 		MockTimeSystem timeSystem = new MockTimeSystem()
@@ -333,7 +331,7 @@ public class TimerMockTests
 			_testOutputHelper.WriteLine("Disposed.");
 		}, timeout: 10000);
 		_testOutputHelper.WriteLine("Waiting 100ms...");
-		Thread.Sleep(1000);
+		await Task.Delay(1000);
 		_testOutputHelper.WriteLine("Waiting completed.");
 		count.Should().Be(executionCount);
 	}
