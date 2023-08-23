@@ -21,6 +21,20 @@ public sealed class RandomWrapper : IRandom
 
 	#region IRandom Members
 
+#if FEATURE_RANDOM_ITEMS
+	/// <inheritdoc cref="IRandom.GetItems{T}(ReadOnlySpan{T}, Span{T})" />
+	public void GetItems<T>(ReadOnlySpan<T> choices, Span<T> destination)
+		=> _instance.GetItems(choices, destination);
+
+	/// <inheritdoc cref="IRandom.GetItems{T}(T[], Int32{T})" />
+	public T[] GetItems<T>(T[] choices, Int32 length)
+		=> _instance.GetItems(choices, length);
+
+	/// <inheritdoc cref="IRandom.GetItems{T}(ReadOnlySpan{T}, Int32)" />
+	public T[] GetItems<T>(ReadOnlySpan<T> choices, Int32 length)
+		=> _instance.GetItems(choices, length);
+#endif
+
 	/// <inheritdoc cref="IRandom.Next()" />
 	public int Next()
 		=> _instance.Next();
@@ -63,6 +77,16 @@ public sealed class RandomWrapper : IRandom
 	/// <inheritdoc cref="IRandom.NextSingle()" />
 	public float NextSingle()
 		=> _instance.NextSingle();
+#endif
+
+#if FEATURE_RANDOM_ITEMS
+	/// <inheritdoc cref="IRandom.Shuffle{T}(T[])" />
+	public void Shuffle<T>(T[] values)
+		=> _instance.Shuffle(values);
+
+	/// <inheritdoc cref="IRandom.Shuffle{T}(Span{T})" />
+	public void Shuffle<T>(Span<T> values)
+		=> _instance.Shuffle(values);
 #endif
 
 	#endregion

@@ -7,6 +7,17 @@ namespace Testably.Abstractions.RandomSystem;
 /// </summary>
 public interface IRandom
 {
+#if FEATURE_RANDOM_ITEMS
+	/// <inheritdoc cref="Random.GetItems{T}(ReadOnlySpan{T}, Span{T})" />
+	void GetItems<T>(ReadOnlySpan<T> choices, Span<T> destination);
+
+	/// <inheritdoc cref="Random.GetItems{T}(T[], Int32)" />
+	T[] GetItems<T>(T[] choices, Int32 length);
+
+	/// <inheritdoc cref="Random.GetItems{T}(ReadOnlySpan{T}, Int32)" />
+	T[] GetItems<T>(ReadOnlySpan<T> choices, Int32 length);
+#endif
+
 	/// <inheritdoc cref="Random.Next()" />
 	int Next();
 
@@ -39,5 +50,13 @@ public interface IRandom
 
 	/// <inheritdoc cref="Random.NextSingle()" />
 	float NextSingle();
+#endif
+
+#if FEATURE_RANDOM_ITEMS
+	/// <inheritdoc cref="Random.Shuffle{T}(T[])" />
+	void Shuffle<T>(T[] values);
+
+	/// <inheritdoc cref="Random.Shuffle{T}(Span{T})" />
+	void Shuffle<T>(Span<T> values);
 #endif
 }

@@ -62,6 +62,39 @@ internal sealed class RandomMock : IRandom
 
 	#region IRandom Members
 
+#if FEATURE_RANDOM_ITEMS
+	/// <inheritdoc cref="IRandom.GetItems{T}(ReadOnlySpan{T}, Span{T})" />
+	public void GetItems<T>(ReadOnlySpan<T> choices, Span<T> destination)
+	{
+		if (choices.IsEmpty)
+		{
+			throw ExceptionFactory.SpanMayNotBeEmpty(nameof(choices));
+		}
+
+		for (int i = 0; i < destination.Length; i++)
+		{
+			destination[i] = choices[Next(choices.Length)];
+		}
+	}
+
+	/// <inheritdoc cref="IRandom.GetItems{T}(T[], Int32)" />
+	public T[] GetItems<T>(T[] choices, Int32 length)
+	{
+		ArgumentNullException.ThrowIfNull(choices);
+		return GetItems(new ReadOnlySpan<T>(choices), length);
+	}
+
+	/// <inheritdoc cref="IRandom.GetItems{T}(ReadOnlySpan{T}, Int32)" />
+	public T[] GetItems<T>(ReadOnlySpan<T> choices, Int32 length)
+	{
+		ArgumentOutOfRangeException.ThrowIfNegative(length);
+
+		T[] items = new T[length];
+		GetItems(choices, items.AsSpan());
+		return items;
+	}
+#endif
+
 	/// <inheritdoc cref="IRandom.Next()" />
 	public int Next()
 		=> _intGenerator?.GetNext() ?? _random.Next();
@@ -115,8 +148,6 @@ internal sealed class RandomMock : IRandom
 	public double NextDouble()
 		=> _doubleGenerator?.GetNext() ?? _random.NextDouble();
 
-	#endregion
-
 #if FEATURE_RANDOM_ADVANCED
 	private readonly Generator<long>? _longGenerator;
 	private readonly Generator<float>? _singleGenerator;
@@ -145,4 +176,33 @@ internal sealed class RandomMock : IRandom
 	public float NextSingle()
 		=> _singleGenerator?.GetNext() ?? _random.NextSingle();
 #endif
+
+#if FEATURE_RANDOM_ITEMS
+	/// <inheritdoc cref="IRandom.Shuffle{T}(T[])" />
+	public void Shuffle<T>(T[] values)
+	{
+		ArgumentNullException.ThrowIfNull(values);
+		Shuffle(values.AsSpan());
+	}
+
+	/// <inheritdoc cref="IRandom.Shuffle{T}(Span{T})" />
+	public void Shuffle<T>(Span<T> values)
+	{
+		int n = values.Length;
+
+		for (int i = 0; i < n - 1; i++)
+		{
+			int j = Next(i, n);
+
+			if (j != i)
+			{
+				T temp = values[i];
+				values[i] = values[j];
+				values[j] = temp;
+			}
+		}
+	}
+#endif
+
+	#endregion
 }

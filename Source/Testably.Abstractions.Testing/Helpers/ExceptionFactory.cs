@@ -190,6 +190,15 @@ internal static class ExceptionFactory
 			"Unable seek backward to overwrite data that previously existed in a file opened in Append mode.",
 			-2146232800);
 
+	internal static ArgumentException SpanMayNotBeEmpty(string paramName)
+		=> new ArgumentException("Span may not be empty.", paramName)
+		{
+#if FEATURE_EXCEPTION_HRESULT
+			HResult = -2147024809
+#endif
+		};
+
+
 	internal static NotSupportedException StreamDoesNotSupportReading()
 		=> new("Stream does not support reading.")
 		{
