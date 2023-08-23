@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
@@ -122,7 +123,8 @@ public abstract partial class TimerTests<TTimeSystem>
 		ManualResetEventSlim ms = new();
 		ManualResetEventSlim ms2 = new();
 		ManualResetEventSlim ms3 = new();
-		using ITimer timer1 = TimeSystem.Timer.New(_ =>
+		// ReSharper disable once AsyncVoidLambda
+		using ITimer timer1 = TimeSystem.Timer.New(async _ =>
 			{
 				DateTime now = TimeSystem.DateTime.Now;
 				double diff = (now - previousTime).TotalMilliseconds;
@@ -135,7 +137,7 @@ public abstract partial class TimerTests<TTimeSystem>
 					ms3.Set();
 				}
 
-				Thread.Sleep(10);
+				await Task.Delay(10);
 			},
 			null, 0 * TimerMultiplier, 200 * TimerMultiplier);
 		ms.Wait(30000).Should().BeTrue();
@@ -176,7 +178,8 @@ public abstract partial class TimerTests<TTimeSystem>
 		ManualResetEventSlim ms = new();
 		ManualResetEventSlim ms2 = new();
 		ManualResetEventSlim ms3 = new();
-		using ITimer timer1 = TimeSystem.Timer.New(_ =>
+		// ReSharper disable once AsyncVoidLambda
+		using ITimer timer1 = TimeSystem.Timer.New(async _ =>
 			{
 				DateTime now = TimeSystem.DateTime.Now;
 				double diff = (now - previousTime).TotalMilliseconds;
@@ -189,7 +192,7 @@ public abstract partial class TimerTests<TTimeSystem>
 					ms3.Set();
 				}
 
-				Thread.Sleep(10);
+				await Task.Delay(10);
 			},
 			null, 0L * TimerMultiplier, 200L * TimerMultiplier);
 		ms.Wait(30000).Should().BeTrue();
@@ -230,7 +233,8 @@ public abstract partial class TimerTests<TTimeSystem>
 		ManualResetEventSlim ms = new();
 		ManualResetEventSlim ms2 = new();
 		ManualResetEventSlim ms3 = new();
-		using ITimer timer1 = TimeSystem.Timer.New(_ =>
+		// ReSharper disable once AsyncVoidLambda
+		using ITimer timer1 = TimeSystem.Timer.New(async _ =>
 			{
 				DateTime now = TimeSystem.DateTime.Now;
 				double diff = (now - previousTime).TotalMilliseconds;
@@ -243,7 +247,7 @@ public abstract partial class TimerTests<TTimeSystem>
 					ms3.Set();
 				}
 
-				Thread.Sleep(10);
+				await Task.Delay(10);
 			}, null, TimeSpan.FromMilliseconds(0 * TimerMultiplier),
 			TimeSpan.FromMilliseconds(200 * TimerMultiplier));
 		ms.Wait(30000).Should().BeTrue();
