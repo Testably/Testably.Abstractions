@@ -141,7 +141,7 @@ public abstract class ParityTests
 		ITimerAndITimerFactory_EnsureParityWith_Timer()
 	{
 		List<string> parityErrors = Parity.Timer
-			.GetErrorsToInstanceType<ITimer, ITimerFactory>(
+			.GetErrorsToInstanceType<TimeSystem.ITimer, ITimerFactory>(
 				typeof(Timer),
 				_testOutputHelper);
 

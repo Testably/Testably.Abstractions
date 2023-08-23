@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Testably.Abstractions.Testing.TimeSystem;
 using Testably.Abstractions.TimeSystem;
 using Xunit.Abstractions;
+using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 

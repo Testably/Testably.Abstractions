@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.TimeSystem;
+using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
 
@@ -23,7 +24,6 @@ public abstract partial class TimerTests<TTimeSystem>
 		{
 		}, null, 0, 200);
 		timer.Dispose();
-
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
