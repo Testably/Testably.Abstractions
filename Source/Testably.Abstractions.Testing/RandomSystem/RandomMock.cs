@@ -77,15 +77,15 @@ internal sealed class RandomMock : IRandom
 		}
 	}
 
-	/// <inheritdoc cref="IRandom.GetItems{T}(T[], Int32)" />
-	public T[] GetItems<T>(T[] choices, Int32 length)
+	/// <inheritdoc cref="IRandom.GetItems{T}(T[], int)" />
+	public T[] GetItems<T>(T[] choices, int length)
 	{
 		ArgumentNullException.ThrowIfNull(choices);
 		return GetItems(new ReadOnlySpan<T>(choices), length);
 	}
 
-	/// <inheritdoc cref="IRandom.GetItems{T}(ReadOnlySpan{T}, Int32)" />
-	public T[] GetItems<T>(ReadOnlySpan<T> choices, Int32 length)
+	/// <inheritdoc cref="IRandom.GetItems{T}(ReadOnlySpan{T}, int)" />
+	public T[] GetItems<T>(ReadOnlySpan<T> choices, int length)
 	{
 		ArgumentOutOfRangeException.ThrowIfNegative(length);
 

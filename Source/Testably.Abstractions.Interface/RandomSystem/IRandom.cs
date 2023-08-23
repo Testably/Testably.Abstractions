@@ -11,11 +11,11 @@ public interface IRandom
 	/// <inheritdoc cref="Random.GetItems{T}(ReadOnlySpan{T}, Span{T})" />
 	void GetItems<T>(ReadOnlySpan<T> choices, Span<T> destination);
 
-	/// <inheritdoc cref="Random.GetItems{T}(T[], Int32)" />
-	T[] GetItems<T>(T[] choices, Int32 length);
+	/// <inheritdoc cref="Random.GetItems{T}(T[], int)" />
+	T[] GetItems<T>(T[] choices, int length);
 
-	/// <inheritdoc cref="Random.GetItems{T}(ReadOnlySpan{T}, Int32)" />
-	T[] GetItems<T>(ReadOnlySpan<T> choices, Int32 length);
+	/// <inheritdoc cref="Random.GetItems{T}(ReadOnlySpan{T}, int)" />
+	T[] GetItems<T>(ReadOnlySpan<T> choices, int length);
 #endif
 
 	/// <inheritdoc cref="Random.Next()" />

@@ -26,12 +26,12 @@ public sealed class RandomWrapper : IRandom
 	public void GetItems<T>(ReadOnlySpan<T> choices, Span<T> destination)
 		=> _instance.GetItems(choices, destination);
 
-	/// <inheritdoc cref="IRandom.GetItems{T}(T[], Int32{T})" />
-	public T[] GetItems<T>(T[] choices, Int32 length)
+	/// <inheritdoc cref="IRandom.GetItems{T}(T[], int{T})" />
+	public T[] GetItems<T>(T[] choices, int length)
 		=> _instance.GetItems(choices, length);
 
-	/// <inheritdoc cref="IRandom.GetItems{T}(ReadOnlySpan{T}, Int32)" />
-	public T[] GetItems<T>(ReadOnlySpan<T> choices, Int32 length)
+	/// <inheritdoc cref="IRandom.GetItems{T}(ReadOnlySpan{T}, int)" />
+	public T[] GetItems<T>(ReadOnlySpan<T> choices, int length)
 		=> _instance.GetItems(choices, length);
 #endif
 
