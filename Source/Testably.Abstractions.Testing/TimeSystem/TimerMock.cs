@@ -99,7 +99,11 @@ internal sealed class TimerMock : ITimerMock
 	{
 		if (_isDisposed)
 		{
+#if NET8_0_OR_GREATER
+			return false;
+#else
 			throw new ObjectDisposedException(nameof(Change), "Cannot access a disposed object.");
+#endif
 		}
 
 		if (dueTime.TotalMilliseconds < -1)
