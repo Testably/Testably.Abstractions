@@ -29,11 +29,11 @@ public abstract partial class Tests<TFileSystem>
 		fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
 		try
 		{
-			Task.Run(() =>
+			_ = Task.Run(async () =>
 			{
 				while (!ms.IsSet)
 				{
-					Thread.Sleep(10);
+					await Task.Delay(10);
 					FileSystem.Directory.CreateDirectory(path);
 					FileSystem.Directory.Delete(path);
 				}
@@ -81,11 +81,11 @@ public abstract partial class Tests<TFileSystem>
 		fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
 		try
 		{
-			Task.Run(() =>
+			_ = Task.Run(async () =>
 			{
 				while (!ms.IsSet)
 				{
-					Thread.Sleep(10);
+					await Task.Delay(10);
 					FileSystem.Directory.CreateDirectory(path);
 					FileSystem.Directory.Delete(path);
 				}

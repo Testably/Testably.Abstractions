@@ -123,20 +123,21 @@ public abstract partial class TimerTests<TTimeSystem>
 		ManualResetEventSlim ms2 = new();
 		ManualResetEventSlim ms3 = new();
 		using ITimer timer1 = TimeSystem.Timer.New(_ =>
-		{
-			DateTime now = TimeSystem.DateTime.Now;
-			double diff = (now - previousTime).TotalMilliseconds;
-			previousTime = now;
-			ms.Set();
-			triggerTimes.Add((int)diff);
-			ms2.Wait(30000);
-			if (triggerTimes.Count > 3)
 			{
-				ms3.Set();
-			}
+				DateTime now = TimeSystem.DateTime.Now;
+				double diff = (now - previousTime).TotalMilliseconds;
+				previousTime = now;
+				ms.Set();
+				triggerTimes.Add((int)diff);
+				ms2.Wait(30000);
+				if (triggerTimes.Count > 3)
+				{
+					ms3.Set();
+				}
 
-			Thread.Sleep(10);
-		}, null, 0 * TimerMultiplier, 200 * TimerMultiplier);
+				Thread.Sleep(10);
+			},
+			null, 0 * TimerMultiplier, 200 * TimerMultiplier);
 		ms.Wait(30000).Should().BeTrue();
 		using ITimer timer2 = TimeSystem.Timer.New(_ =>
 		{
@@ -176,20 +177,21 @@ public abstract partial class TimerTests<TTimeSystem>
 		ManualResetEventSlim ms2 = new();
 		ManualResetEventSlim ms3 = new();
 		using ITimer timer1 = TimeSystem.Timer.New(_ =>
-		{
-			DateTime now = TimeSystem.DateTime.Now;
-			double diff = (now - previousTime).TotalMilliseconds;
-			previousTime = now;
-			ms.Set();
-			triggerTimes.Add((int)diff);
-			ms2.Wait(30000);
-			if (triggerTimes.Count > 3)
 			{
-				ms3.Set();
-			}
+				DateTime now = TimeSystem.DateTime.Now;
+				double diff = (now - previousTime).TotalMilliseconds;
+				previousTime = now;
+				ms.Set();
+				triggerTimes.Add((int)diff);
+				ms2.Wait(30000);
+				if (triggerTimes.Count > 3)
+				{
+					ms3.Set();
+				}
 
-			Thread.Sleep(10);
-		}, null, 0L * TimerMultiplier, 200L * TimerMultiplier);
+				Thread.Sleep(10);
+			},
+			null, 0L * TimerMultiplier, 200L * TimerMultiplier);
 		ms.Wait(30000).Should().BeTrue();
 		using ITimer timer2 = TimeSystem.Timer.New(_ =>
 		{
