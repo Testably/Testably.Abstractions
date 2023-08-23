@@ -69,10 +69,14 @@ public class TimerMockTests
 			timer.Change(0, 0);
 		});
 
+#if NET8_0_OR_GREATER
+		exception.Should().BeNull();
+#else
 		exception.Should().BeOfType<ObjectDisposedException>()
 			.Which.Message.Should().ContainAll(
 				"Cannot access a disposed object.",
 				nameof(ITimer.Change));
+#endif
 	}
 
 #if FEATURE_ASYNC_DISPOSABLE
@@ -90,7 +94,11 @@ public class TimerMockTests
 			timer.Change(0, 0);
 		});
 
+#if NET8_0_OR_GREATER
+		exception.Should().BeNull();
+#else
 		exception.Should().BeOfType<ObjectDisposedException>();
+#endif
 	}
 #endif
 
