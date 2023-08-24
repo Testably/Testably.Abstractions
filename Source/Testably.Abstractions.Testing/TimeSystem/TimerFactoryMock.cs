@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.TimeSystem;
+using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
 namespace Testably.Abstractions.Testing.TimeSystem;
 
