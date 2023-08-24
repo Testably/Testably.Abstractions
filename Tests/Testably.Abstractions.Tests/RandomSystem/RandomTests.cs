@@ -65,7 +65,7 @@ public abstract partial class RandomTests<TRandomSystem>
 		exception.Should().BeOfType<ArgumentOutOfRangeException>()
 			.Which.Message.Should()
 			.Be(
-				$"length ('{length}') must be a non-negative value. (Parameter 'length')\r\nActual value was {length}.");
+				$"length ('{length}') must be a non-negative value. (Parameter 'length'){Environment.NewLine}Actual value was {length}.");
 	}
 
 	[Fact]
