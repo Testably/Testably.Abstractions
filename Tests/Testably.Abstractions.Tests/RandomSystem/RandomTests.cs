@@ -1,6 +1,8 @@
 using System.Collections.Concurrent;
-using System.Linq;
 using System.Threading.Tasks;
+#if FEATURE_RANDOM_ITEMS
+using System.Linq;
+#endif
 
 namespace Testably.Abstractions.Tests.RandomSystem;
 
@@ -61,7 +63,9 @@ public abstract partial class RandomTests<TRandomSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentOutOfRangeException>()
-			.Which.Message.Should().Be($"length ('{length}') must be a non-negative value. (Parameter 'length')\r\nActual value was {length}.");
+			.Which.Message.Should()
+			.Be(
+				$"length ('{length}') must be a non-negative value. (Parameter 'length')\r\nActual value was {length}.");
 	}
 
 	[Fact]

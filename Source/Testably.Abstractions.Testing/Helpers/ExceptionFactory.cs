@@ -191,13 +191,12 @@ internal static class ExceptionFactory
 			-2146232800);
 
 	internal static ArgumentException SpanMayNotBeEmpty(string paramName)
-		=> new ArgumentException("Span may not be empty.", paramName)
+		=> new("Span may not be empty.", paramName)
 		{
 #if FEATURE_EXCEPTION_HRESULT
 			HResult = -2147024809
 #endif
 		};
-
 
 	internal static NotSupportedException StreamDoesNotSupportReading()
 		=> new("Stream does not support reading.")

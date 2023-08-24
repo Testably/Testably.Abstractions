@@ -96,11 +96,11 @@ internal static class ZipUtilities
 					fileInfo.OpenRead().CopyTo(stream);
 				}
 				else if (file is IDirectoryInfo directoryInfo &&
-						 directoryInfo.GetFileSystemInfos().Length == 0)
+				         directoryInfo.GetFileSystemInfos().Length == 0)
 				{
-#pragma warning disable CA1845
+					#pragma warning disable CA1845
 					string entryName = file.FullName.Substring(basePath.Length + 1) + "/";
-#pragma warning restore CA1845
+					#pragma warning restore CA1845
 					archive.CreateEntry(entryName);
 				}
 			}
@@ -137,9 +137,11 @@ internal static class ZipUtilities
 				HResult = -2147024809
 			};
 		}
+
 		sourceDirectoryName = fileSystem.Path.GetFullPath(sourceDirectoryName);
 
-		using (ZipArchive archive = new ZipArchive(destination, ZipArchiveMode.Create, leaveOpen: true,
+		using (ZipArchive archive = new(destination, ZipArchiveMode.Create,
+			leaveOpen: true,
 			entryNameEncoding: entryNameEncoding))
 		{
 			bool directoryIsEmpty = true;
@@ -171,11 +173,11 @@ internal static class ZipUtilities
 					fileInfo.OpenRead().CopyTo(stream);
 				}
 				else if (file is IDirectoryInfo directoryInfo &&
-						 directoryInfo.GetFileSystemInfos().Length == 0)
+				         directoryInfo.GetFileSystemInfos().Length == 0)
 				{
-#pragma warning disable CA1845
+					#pragma warning disable CA1845
 					string entryName = file.FullName.Substring(basePath.Length + 1) + "/";
-#pragma warning restore CA1845
+					#pragma warning restore CA1845
 					archive.CreateEntry(entryName);
 				}
 			}
@@ -254,7 +256,7 @@ internal static class ZipUtilities
 
 #if FEATURE_COMPRESSION_STREAM
 	/// <summary>
-	///     Extract the archive at <paramref name="sourceArchiveFileName" /> to the
+	///     Extract the archive at <paramref name="source" /> to the
 	///     <paramref name="destinationDirectoryName" />.
 	/// </summary>
 	internal static void ExtractToDirectory(IFileSystem fileSystem,
@@ -272,7 +274,7 @@ internal static class ZipUtilities
 			};
 		}
 
-		using (ZipArchive archive = new ZipArchive(source, ZipArchiveMode.Read, leaveOpen: true, entryNameEncoding))
+		using (ZipArchive archive = new(source, ZipArchiveMode.Read, true, entryNameEncoding))
 		{
 			ZipArchiveWrapper wrappedArchive = new(fileSystem, archive);
 			foreach (ZipArchiveEntry entry in archive.Entries)

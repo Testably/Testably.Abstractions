@@ -1,7 +1,9 @@
 ﻿using System.IO;
 using System.IO.Compression;
 using System.Text;
+#if FEATURE_COMPRESSION_STREAM
 using Testably.Abstractions.Compression.Tests.TestHelpers;
+#endif
 
 namespace Testably.Abstractions.Compression.Tests.ZipFile;
 

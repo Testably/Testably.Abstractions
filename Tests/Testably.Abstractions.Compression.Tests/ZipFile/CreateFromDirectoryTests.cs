@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.IO.Compression;
 using System.Text;
+#if FEATURE_COMPRESSION_STREAM
+using System.IO;
 using Testably.Abstractions.Compression.Tests.TestHelpers;
+#endif
 
 namespace Testably.Abstractions.Compression.Tests.ZipFile;
 
@@ -287,7 +289,8 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 			FileSystem.ZipFile().CreateFromDirectory("foo", stream);
 		});
 
-		exception.Should().BeException<ArgumentException>("The stream is unwritable", paramName: "destination", hResult: -2147024809);
+		exception.Should().BeException<ArgumentException>("The stream is unwritable",
+			paramName: "destination", hResult: -2147024809);
 	}
 
 	[SkippableTheory]
@@ -307,7 +310,8 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 		FileSystem.ZipFile().CreateFromDirectory("foo", stream,
 			CompressionLevel.Optimal, false, encoding);
 
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read, true, encoding);
+		IZipArchive archive =
+			FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read, true, encoding);
 
 		archive.Entries.Count.Should().Be(1);
 		archive.Entries.Should().Contain(e => e.FullName.Equals("test.txt"));
@@ -335,6 +339,8 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 	}
 #endif
 
+	#region Helpers
+
 	public static IEnumerable<object[]> EntryNameEncoding()
 	{
 		// ReSharper disable StringLiteralTypo
@@ -348,4 +354,6 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 		};
 		// ReSharper restore StringLiteralTypo
 	}
+
+	#endregion
 }

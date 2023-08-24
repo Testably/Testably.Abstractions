@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
 using System.Text;
 using Testably.Abstractions.Internal;
@@ -20,7 +19,9 @@ internal sealed class ZipFileWrapper : IZipFile
 
 #if FEATURE_COMPRESSION_STREAM
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, Stream)" />
-	public void CreateFromDirectory(string sourceDirectoryName, Stream destination)
+	public void CreateFromDirectory(
+		string sourceDirectoryName,
+		Stream destination)
 		=> Execute.WhenRealFileSystem(FileSystem,
 			() => ZipFile.CreateFromDirectory(
 				sourceDirectoryName,
@@ -31,7 +32,11 @@ internal sealed class ZipFileWrapper : IZipFile
 				destination));
 
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, Stream, CompressionLevel, bool)" />
-	public void CreateFromDirectory(string sourceDirectoryName, Stream destination, CompressionLevel compressionLevel, bool includeBaseDirectory)
+	public void CreateFromDirectory(
+		string sourceDirectoryName,
+		Stream destination,
+		CompressionLevel compressionLevel,
+		bool includeBaseDirectory)
 		=> Execute.WhenRealFileSystem(FileSystem,
 			() => ZipFile.CreateFromDirectory(
 				sourceDirectoryName,
@@ -46,7 +51,12 @@ internal sealed class ZipFileWrapper : IZipFile
 				includeBaseDirectory));
 
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, Stream, CompressionLevel, bool, Encoding)" />
-	public void CreateFromDirectory(string sourceDirectoryName, Stream destination, CompressionLevel compressionLevel, bool includeBaseDirectory, Encoding entryNameEncoding)
+	public void CreateFromDirectory(
+		string sourceDirectoryName,
+		Stream destination,
+		CompressionLevel compressionLevel,
+		bool includeBaseDirectory,
+		Encoding entryNameEncoding)
 		=> Execute.WhenRealFileSystem(FileSystem,
 			() => ZipFile.CreateFromDirectory(
 				sourceDirectoryName,
@@ -64,7 +74,8 @@ internal sealed class ZipFileWrapper : IZipFile
 #endif
 
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, string)" />
-	public void CreateFromDirectory(string sourceDirectoryName,
+	public void CreateFromDirectory(
+		string sourceDirectoryName,
 		string destinationArchiveFileName)
 		=> Execute.WhenRealFileSystem(FileSystem,
 			() => ZipFile.CreateFromDirectory(
@@ -76,7 +87,8 @@ internal sealed class ZipFileWrapper : IZipFile
 				destinationArchiveFileName));
 
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, string, CompressionLevel, bool)" />
-	public void CreateFromDirectory(string sourceDirectoryName,
+	public void CreateFromDirectory(
+		string sourceDirectoryName,
 		string destinationArchiveFileName,
 		CompressionLevel compressionLevel,
 		bool includeBaseDirectory)
@@ -94,7 +106,8 @@ internal sealed class ZipFileWrapper : IZipFile
 				includeBaseDirectory));
 
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, string, CompressionLevel, bool, Encoding)" />
-	public void CreateFromDirectory(string sourceDirectoryName,
+	public void CreateFromDirectory(
+		string sourceDirectoryName,
 		string destinationArchiveFileName,
 		CompressionLevel compressionLevel,
 		bool includeBaseDirectory,
@@ -114,10 +127,11 @@ internal sealed class ZipFileWrapper : IZipFile
 				includeBaseDirectory,
 				entryNameEncoding));
 
-
 #if FEATURE_COMPRESSION_STREAM
 	/// <inheritdoc cref="ZipFile.ExtractToDirectory(Stream, string)" />
-	public void ExtractToDirectory(Stream source, string destinationDirectoryName)
+	public void ExtractToDirectory(
+		Stream source,
+		string destinationDirectoryName)
 		=> Execute.WhenRealFileSystem(FileSystem,
 			() => ZipFile.ExtractToDirectory(
 				source,
@@ -128,7 +142,10 @@ internal sealed class ZipFileWrapper : IZipFile
 				destinationDirectoryName));
 
 	/// <inheritdoc cref="ZipFile.ExtractToDirectory(Stream, string, bool)" />
-	public void ExtractToDirectory(Stream source, string destinationDirectoryName, bool overwriteFiles)
+	public void ExtractToDirectory(
+		Stream source,
+		string destinationDirectoryName,
+		bool overwriteFiles)
 		=> Execute.WhenRealFileSystem(FileSystem,
 			() => ZipFile.ExtractToDirectory(
 				source,
@@ -141,7 +158,10 @@ internal sealed class ZipFileWrapper : IZipFile
 				overwriteFiles: overwriteFiles));
 
 	/// <inheritdoc cref="ZipFile.ExtractToDirectory(Stream, string, Encoding)" />
-	public void ExtractToDirectory(Stream source, string destinationDirectoryName, Encoding entryNameEncoding)
+	public void ExtractToDirectory(
+		Stream source,
+		string destinationDirectoryName,
+		Encoding entryNameEncoding)
 		=> Execute.WhenRealFileSystem(FileSystem,
 			() => ZipFile.ExtractToDirectory(
 				source,
@@ -154,7 +174,11 @@ internal sealed class ZipFileWrapper : IZipFile
 				entryNameEncoding));
 
 	/// <inheritdoc cref="ZipFile.ExtractToDirectory(Stream, string, Encoding, bool)" />
-	public void ExtractToDirectory(Stream source, string destinationDirectoryName, Encoding entryNameEncoding, bool overwriteFiles)
+	public void ExtractToDirectory(
+		Stream source,
+		string destinationDirectoryName,
+		Encoding entryNameEncoding,
+		bool overwriteFiles)
 		=> Execute.WhenRealFileSystem(FileSystem,
 			() => ZipFile.ExtractToDirectory(
 				source,
@@ -170,7 +194,8 @@ internal sealed class ZipFileWrapper : IZipFile
 #endif
 
 	/// <inheritdoc cref="IZipFile.ExtractToDirectory(string, string)" />
-	public void ExtractToDirectory(string sourceArchiveFileName,
+	public void ExtractToDirectory(
+		string sourceArchiveFileName,
 		string destinationDirectoryName)
 		=> Execute.WhenRealFileSystem(FileSystem,
 			() => ZipFile.ExtractToDirectory(
@@ -183,7 +208,8 @@ internal sealed class ZipFileWrapper : IZipFile
 
 #if FEATURE_COMPRESSION_OVERWRITE
 	/// <inheritdoc cref="IZipFile.ExtractToDirectory(string, string, bool)" />
-	public void ExtractToDirectory(string sourceArchiveFileName,
+	public void ExtractToDirectory(
+		string sourceArchiveFileName,
 		string destinationDirectoryName,
 		bool overwriteFiles)
 		=> Execute.WhenRealFileSystem(FileSystem,
@@ -199,7 +225,8 @@ internal sealed class ZipFileWrapper : IZipFile
 #endif
 
 	/// <inheritdoc cref="IZipFile.ExtractToDirectory(string, string, Encoding?)" />
-	public void ExtractToDirectory(string sourceArchiveFileName,
+	public void ExtractToDirectory(
+		string sourceArchiveFileName,
 		string destinationDirectoryName,
 		Encoding? entryNameEncoding)
 		=> Execute.WhenRealFileSystem(FileSystem,
@@ -215,7 +242,8 @@ internal sealed class ZipFileWrapper : IZipFile
 
 #if FEATURE_COMPRESSION_OVERWRITE
 	/// <inheritdoc cref="IZipFile.ExtractToDirectory(string, string, Encoding?, bool)" />
-	public void ExtractToDirectory(string sourceArchiveFileName,
+	public void ExtractToDirectory(
+		string sourceArchiveFileName,
 		string destinationDirectoryName,
 		Encoding? entryNameEncoding,
 		bool overwriteFiles)
@@ -234,7 +262,9 @@ internal sealed class ZipFileWrapper : IZipFile
 #endif
 
 	/// <inheritdoc cref="IZipFile.Open(string, ZipArchiveMode)" />
-	public IZipArchive Open(string archiveFileName, ZipArchiveMode mode)
+	public IZipArchive Open(
+		string archiveFileName,
+		ZipArchiveMode mode)
 		=> new ZipArchiveWrapper(FileSystem,
 			Execute.WhenRealFileSystem(FileSystem,
 				() => ZipFile.Open(archiveFileName, mode),
@@ -243,7 +273,8 @@ internal sealed class ZipFileWrapper : IZipFile
 					mode)));
 
 	/// <inheritdoc cref="IZipFile.Open(string, ZipArchiveMode, Encoding?)" />
-	public IZipArchive Open(string archiveFileName,
+	public IZipArchive Open(
+		string archiveFileName,
 		ZipArchiveMode mode,
 		Encoding? entryNameEncoding)
 		=> new ZipArchiveWrapper(FileSystem,
@@ -255,7 +286,8 @@ internal sealed class ZipFileWrapper : IZipFile
 					entryNameEncoding)));
 
 	/// <inheritdoc cref="IZipFile.OpenRead(string)" />
-	public IZipArchive OpenRead(string archiveFileName)
+	public IZipArchive OpenRead(
+		string archiveFileName)
 		=> new ZipArchiveWrapper(FileSystem,
 			Execute.WhenRealFileSystem(FileSystem,
 				() => ZipFile.OpenRead(archiveFileName),
