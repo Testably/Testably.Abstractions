@@ -261,11 +261,9 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 		archive.Entries.Should().Contain(e => e.FullName.Equals("foo/test.txt"));
 	}
 
-	[SkippableTheory]
-	[AutoData]
+	[SkippableFact]
 	public void
-		CreateFromDirectory_WithStream_Null_ShouldThrowArgumentNullException(
-			CompressionLevel compressionLevel)
+		CreateFromDirectory_WithStream_Null_ShouldThrowArgumentNullException()
 	{
 		Stream stream = null!;
 
@@ -278,11 +276,9 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 			.Which.ParamName.Should().Be("destination");
 	}
 
-	[SkippableTheory]
-	[AutoData]
+	[SkippableFact]
 	public void
-		CreateFromDirectory_WithStream_NotWritable_ShouldThrowArgumentException(
-			CompressionLevel compressionLevel)
+		CreateFromDirectory_WithStream_NotWritable_ShouldThrowArgumentException()
 	{
 		Stream stream = new MemoryStreamMock(canWrite: false);
 

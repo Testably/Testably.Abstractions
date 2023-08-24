@@ -27,7 +27,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[Fact]
 	public void GetItems_Array_NullChoices_ShouldThrowArgumentNullException()
 	{
-		int[]? choices = null;
+		int[] choices = null!;
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -285,7 +285,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[Fact]
 	public void Shuffle_Array_Null_ShouldThrowArgumentNullException()
 	{
-		int[]? values = null;
+		int[] values = null!;
 
 		Exception? exception = Record.Exception(() =>
 		{
