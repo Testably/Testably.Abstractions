@@ -23,6 +23,24 @@ public abstract partial class CreateTextTests<TFileSystem>
 			.Which.HasContent(appendText);
 	}
 
+#if NET8_0_OR_GREATER
+	[SkippableTheory]
+	[AutoData]
+	public void CreateText_ShouldRefreshExistsCache(
+		string path, string appendText)
+	{
+		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
+		fileInfo.Exists.Should().BeFalse();
+
+		using (StreamWriter stream = fileInfo.CreateText())
+		{
+			stream.Write(appendText);
+		}
+
+		fileInfo.Exists.Should().BeTrue();
+		FileSystem.Should().HaveFile(path);
+	}
+#else
 	[SkippableTheory]
 	[AutoData]
 	public void CreateText_ShouldNotRefreshExistsCache(
@@ -39,6 +57,7 @@ public abstract partial class CreateTextTests<TFileSystem>
 		fileInfo.Exists.Should().BeFalse();
 		FileSystem.Should().HaveFile(path);
 	}
+#endif
 
 	[SkippableTheory]
 	[AutoData]
