@@ -75,10 +75,10 @@ internal sealed class InMemoryStorage : IStorage
 						sourceContainer.LastAccessTime.Get(DateTimeKind.Local),
 						DateTimeKind.Local));
 #if NET8_0_OR_GREATER
-				Execute.NotOnWindows(()
+				Execute.OnLinux(()
 					=> sourceContainer.AdjustTimes(TimeAdjustments.LastAccessTime));
 #else
-				Execute.OnLinux(()
+				Execute.NotOnWindows(()
 					=> sourceContainer.AdjustTimes(TimeAdjustments.LastAccessTime));
 #endif
 
