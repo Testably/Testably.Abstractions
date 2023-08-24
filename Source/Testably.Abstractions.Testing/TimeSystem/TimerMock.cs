@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.TimeSystem;
+using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
 namespace Testably.Abstractions.Testing.TimeSystem;
 
@@ -99,7 +100,11 @@ internal sealed class TimerMock : ITimerMock
 	{
 		if (_isDisposed)
 		{
+#if NET8_0_OR_GREATER
+			return false;
+#else
 			throw new ObjectDisposedException(nameof(Change), "Cannot access a disposed object.");
+#endif
 		}
 
 		if (dueTime.TotalMilliseconds < -1)
