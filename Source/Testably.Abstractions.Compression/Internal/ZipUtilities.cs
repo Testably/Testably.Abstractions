@@ -59,7 +59,6 @@ internal static class ZipUtilities
 		CompressionLevel? compressionLevel = null,
 		bool includeBaseDirectory = false,
 		Encoding? entryNameEncoding = null)
-
 	{
 		sourceDirectoryName = fileSystem.Path.GetFullPath(sourceDirectoryName);
 		destinationArchiveFileName =
@@ -97,11 +96,11 @@ internal static class ZipUtilities
 					fileInfo.OpenRead().CopyTo(stream);
 				}
 				else if (file is IDirectoryInfo directoryInfo &&
-				         directoryInfo.GetFileSystemInfos().Length == 0)
+						 directoryInfo.GetFileSystemInfos().Length == 0)
 				{
-					#pragma warning disable CA1845
+#pragma warning disable CA1845
 					string entryName = file.FullName.Substring(basePath.Length + 1) + "/";
-					#pragma warning restore CA1845
+#pragma warning restore CA1845
 					archive.CreateEntry(entryName);
 				}
 			}
@@ -113,6 +112,82 @@ internal static class ZipUtilities
 			}
 		}
 	}
+
+#if FEATURE_COMPRESSION_STREAM
+	/// <summary>
+	///     Create a <c>ZipArchive</c> from the files and directories in <paramref name="sourceDirectoryName" />.
+	/// </summary>
+	/// <remarks>
+	///     <see
+	///         href="https://github.com/dotnet/runtime/blob/v6.0.10/src/libraries/System.IO.Compression.ZipFile/src/System/IO/Compression/ZipFile.Create.cs#L354" />
+	/// </remarks>
+	internal static void CreateFromDirectory(
+		IFileSystem fileSystem,
+		string sourceDirectoryName,
+		Stream destination,
+		CompressionLevel? compressionLevel = null,
+		bool includeBaseDirectory = false,
+		Encoding? entryNameEncoding = null)
+	{
+		ArgumentNullException.ThrowIfNull(destination);
+		if (!destination.CanWrite)
+		{
+			throw new ArgumentException("The stream is unwritable.", nameof(destination))
+			{
+				HResult = -2147024809
+			};
+		}
+		sourceDirectoryName = fileSystem.Path.GetFullPath(sourceDirectoryName);
+
+		using (ZipArchive archive = new ZipArchive(destination, ZipArchiveMode.Create, leaveOpen: true,
+			entryNameEncoding: entryNameEncoding))
+		{
+			bool directoryIsEmpty = true;
+
+			IDirectoryInfo di =
+				fileSystem.DirectoryInfo.New(sourceDirectoryName);
+
+			string basePath = di.FullName;
+
+			if (includeBaseDirectory && di.Parent != null)
+			{
+				basePath = di.Parent.FullName;
+			}
+
+			foreach (IFileSystemInfo file in di
+				.EnumerateFileSystemInfos(SearchPattern, SearchOption.AllDirectories))
+			{
+				directoryIsEmpty = false;
+
+				if (file is IFileInfo fileInfo)
+				{
+					string entryName = file.FullName
+						.Substring(basePath.Length + 1)
+						.Replace("\\", "/");
+					ZipArchiveEntry entry = compressionLevel.HasValue
+						? archive.CreateEntry(entryName, compressionLevel.Value)
+						: archive.CreateEntry(entryName);
+					using Stream stream = entry.Open();
+					fileInfo.OpenRead().CopyTo(stream);
+				}
+				else if (file is IDirectoryInfo directoryInfo &&
+						 directoryInfo.GetFileSystemInfos().Length == 0)
+				{
+#pragma warning disable CA1845
+					string entryName = file.FullName.Substring(basePath.Length + 1) + "/";
+#pragma warning restore CA1845
+					archive.CreateEntry(entryName);
+				}
+			}
+
+			if (includeBaseDirectory && directoryIsEmpty)
+			{
+				string entryName = di.Name + "/";
+				archive.CreateEntry(entryName);
+			}
+		}
+	}
+#endif
 
 	internal static void ExtractRelativeToDirectory(this IZipArchiveEntry source,
 		string destinationDirectoryName,
@@ -176,6 +251,40 @@ internal static class ZipUtilities
 			}
 		}
 	}
+
+#if FEATURE_COMPRESSION_STREAM
+	/// <summary>
+	///     Extract the archive at <paramref name="sourceArchiveFileName" /> to the
+	///     <paramref name="destinationDirectoryName" />.
+	/// </summary>
+	internal static void ExtractToDirectory(IFileSystem fileSystem,
+		Stream source,
+		string destinationDirectoryName,
+		Encoding? entryNameEncoding = null,
+		bool overwriteFiles = false)
+	{
+		ArgumentNullException.ThrowIfNull(source);
+		if (!source.CanRead)
+		{
+			throw new ArgumentException("The stream is unreadable.", nameof(source))
+			{
+				HResult = -2147024809
+			};
+		}
+
+		using (ZipArchive archive = new ZipArchive(source, ZipArchiveMode.Read, leaveOpen: true, entryNameEncoding))
+		{
+			ZipArchiveWrapper wrappedArchive = new(fileSystem, archive);
+			foreach (ZipArchiveEntry entry in archive.Entries)
+			{
+				IZipArchiveEntry wrappedEntry = ZipArchiveEntryWrapper.New(
+					fileSystem, wrappedArchive, entry);
+				ExtractRelativeToDirectory(wrappedEntry, destinationDirectoryName,
+					overwriteFiles);
+			}
+		}
+	}
+#endif
 
 	internal static void ExtractToFile(IZipArchiveEntry source,
 		string destinationFileName, bool overwrite)

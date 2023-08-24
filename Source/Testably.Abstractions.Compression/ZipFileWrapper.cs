@@ -21,15 +21,46 @@ internal sealed class ZipFileWrapper : IZipFile
 #if FEATURE_COMPRESSION_STREAM
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, Stream)" />
 	public void CreateFromDirectory(string sourceDirectoryName, Stream destination)
-		=> throw new NotImplementedException("Missing for .NET8.0");
+		=> Execute.WhenRealFileSystem(FileSystem,
+			() => ZipFile.CreateFromDirectory(
+				sourceDirectoryName,
+				destination),
+			() => ZipUtilities.CreateFromDirectory(
+				FileSystem,
+				sourceDirectoryName,
+				destination));
 
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, Stream, CompressionLevel, bool)" />
 	public void CreateFromDirectory(string sourceDirectoryName, Stream destination, CompressionLevel compressionLevel, bool includeBaseDirectory)
-		=> throw new NotImplementedException("Missing for .NET8.0");
+		=> Execute.WhenRealFileSystem(FileSystem,
+			() => ZipFile.CreateFromDirectory(
+				sourceDirectoryName,
+				destination,
+				compressionLevel,
+				includeBaseDirectory),
+			() => ZipUtilities.CreateFromDirectory(
+				FileSystem,
+				sourceDirectoryName,
+				destination,
+				compressionLevel,
+				includeBaseDirectory));
 
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, Stream, CompressionLevel, bool, Encoding)" />
 	public void CreateFromDirectory(string sourceDirectoryName, Stream destination, CompressionLevel compressionLevel, bool includeBaseDirectory, Encoding entryNameEncoding)
-		=> throw new NotImplementedException("Missing for .NET8.0");
+		=> Execute.WhenRealFileSystem(FileSystem,
+			() => ZipFile.CreateFromDirectory(
+				sourceDirectoryName,
+				destination,
+				compressionLevel,
+				includeBaseDirectory,
+				entryNameEncoding),
+			() => ZipUtilities.CreateFromDirectory(
+				FileSystem,
+				sourceDirectoryName,
+				destination,
+				compressionLevel,
+				includeBaseDirectory,
+				entryNameEncoding));
 #endif
 
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, string)" />
@@ -87,19 +118,55 @@ internal sealed class ZipFileWrapper : IZipFile
 #if FEATURE_COMPRESSION_STREAM
 	/// <inheritdoc cref="ZipFile.ExtractToDirectory(Stream, string)" />
 	public void ExtractToDirectory(Stream source, string destinationDirectoryName)
-		=> throw new NotImplementedException("Missing for .NET8.0");
+		=> Execute.WhenRealFileSystem(FileSystem,
+			() => ZipFile.ExtractToDirectory(
+				source,
+				destinationDirectoryName),
+			() => ZipUtilities.ExtractToDirectory(
+				FileSystem,
+				source,
+				destinationDirectoryName));
 
 	/// <inheritdoc cref="ZipFile.ExtractToDirectory(Stream, string, bool)" />
 	public void ExtractToDirectory(Stream source, string destinationDirectoryName, bool overwriteFiles)
-		=> throw new NotImplementedException("Missing for .NET8.0");
+		=> Execute.WhenRealFileSystem(FileSystem,
+			() => ZipFile.ExtractToDirectory(
+				source,
+				destinationDirectoryName,
+				overwriteFiles),
+			() => ZipUtilities.ExtractToDirectory(
+				FileSystem,
+				source,
+				destinationDirectoryName,
+				overwriteFiles: overwriteFiles));
 
 	/// <inheritdoc cref="ZipFile.ExtractToDirectory(Stream, string, Encoding)" />
 	public void ExtractToDirectory(Stream source, string destinationDirectoryName, Encoding entryNameEncoding)
-		=> throw new NotImplementedException("Missing for .NET8.0");
+		=> Execute.WhenRealFileSystem(FileSystem,
+			() => ZipFile.ExtractToDirectory(
+				source,
+				destinationDirectoryName,
+				entryNameEncoding),
+			() => ZipUtilities.ExtractToDirectory(
+				FileSystem,
+				source,
+				destinationDirectoryName,
+				entryNameEncoding));
 
 	/// <inheritdoc cref="ZipFile.ExtractToDirectory(Stream, string, Encoding, bool)" />
 	public void ExtractToDirectory(Stream source, string destinationDirectoryName, Encoding entryNameEncoding, bool overwriteFiles)
-		=> throw new NotImplementedException("Missing for .NET8.0");
+		=> Execute.WhenRealFileSystem(FileSystem,
+			() => ZipFile.ExtractToDirectory(
+				source,
+				destinationDirectoryName,
+				entryNameEncoding,
+				overwriteFiles),
+			() => ZipUtilities.ExtractToDirectory(
+				FileSystem,
+				source,
+				destinationDirectoryName,
+				entryNameEncoding,
+				overwriteFiles));
 #endif
 
 	/// <inheritdoc cref="IZipFile.ExtractToDirectory(string, string)" />
