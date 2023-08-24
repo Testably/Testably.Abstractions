@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.TimeSystem;
+using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
 
@@ -23,14 +24,17 @@ public abstract partial class TimerTests<TTimeSystem>
 		{
 		}, null, 0, 200);
 		timer.Dispose();
-
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(100, 200);
 		});
 
+#if NET8_0_OR_GREATER
+		exception.Should().BeNull();
+#else
 		exception.Should().BeOfType<ObjectDisposedException>();
+#endif
 	}
 
 	[SkippableFact]
@@ -320,8 +324,16 @@ public abstract partial class TimerTests<TTimeSystem>
 		waitHandle.WaitOne(1000).Should().BeTrue();
 		result.Should().BeTrue();
 		// ReSharper disable once AccessToDisposedClosure
-		Record.Exception(() => timer.Change(0, 0))
-			.Should().BeOfType<ObjectDisposedException>();
+		Exception? exception = Record.Exception(() =>
+		{
+			timer.Change(0, 0);
+		});
+
+#if NET8_0_OR_GREATER
+		exception.Should().BeNull();
+#else
+		exception.Should().BeOfType<ObjectDisposedException>();
+#endif
 	}
 
 	[SkippableFact]
@@ -336,8 +348,16 @@ public abstract partial class TimerTests<TTimeSystem>
 		waitHandle.WaitOne(1000).Should().BeTrue();
 		result.Should().BeTrue();
 		// ReSharper disable once AccessToDisposedClosure
-		Record.Exception(() => timer.Change(0, 0))
-			.Should().BeOfType<ObjectDisposedException>();
+		Exception? exception = Record.Exception(() =>
+		{
+			timer.Change(0, 0);
+		});
+
+#if NET8_0_OR_GREATER
+		exception.Should().BeNull();
+#else
+		exception.Should().BeOfType<ObjectDisposedException>();
+#endif
 	}
 
 	[SkippableFact]
@@ -352,8 +372,16 @@ public abstract partial class TimerTests<TTimeSystem>
 		waitHandle.WaitOne(1000).Should().BeTrue();
 		result.Should().BeTrue();
 		// ReSharper disable once AccessToDisposedClosure
-		Record.Exception(() => timer.Change(0, 0))
-			.Should().BeOfType<ObjectDisposedException>();
+		Exception? exception = Record.Exception(() =>
+		{
+			timer.Change(0, 0);
+		});
+
+#if NET8_0_OR_GREATER
+		exception.Should().BeNull();
+#else
+		exception.Should().BeOfType<ObjectDisposedException>();
+#endif
 	}
 
 	[SkippableFact]
@@ -380,8 +408,16 @@ public abstract partial class TimerTests<TTimeSystem>
 		await timer.DisposeAsync();
 
 		// ReSharper disable once AccessToDisposedClosure
-		Record.Exception(() => timer.Change(0, 0))
-			.Should().BeOfType<ObjectDisposedException>();
+		Exception? exception = Record.Exception(() =>
+		{
+			timer.Change(0, 0);
+		});
+
+#if NET8_0_OR_GREATER
+		exception.Should().BeNull();
+#else
+		exception.Should().BeOfType<ObjectDisposedException>();
+#endif
 	}
 #endif
 }

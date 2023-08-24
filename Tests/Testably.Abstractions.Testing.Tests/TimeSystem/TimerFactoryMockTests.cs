@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using Testably.Abstractions.TimeSystem;
+using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
