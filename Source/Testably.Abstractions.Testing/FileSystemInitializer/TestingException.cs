@@ -26,6 +26,7 @@ public class TestingException : Exception
 	{
 	}
 
+#if !NET8_0_OR_GREATER
 	/// <summary>
 	///     Initializes a new instance of <see cref="TestingException" /> for serialization.
 	///     <para />
@@ -35,4 +36,5 @@ public class TestingException : Exception
 		: base(info, context)
 	{
 	}
+#endif
 }
