@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿#if !NET8_0_OR_GREATER
+using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Testably.Abstractions.Testing.FileSystemInitializer;
 
@@ -18,15 +19,16 @@ public class TestingExceptionTests
 		byte[] buffer = new byte[4096];
 		using MemoryStream ms = new(buffer);
 		using MemoryStream ms2 = new(buffer);
+#pragma warning disable SYSLIB0011 //BinaryFormatter serialization is obsolete - only used in unit test
 		BinaryFormatter formatter = new();
-		#pragma warning disable SYSLIB0011 //BinaryFormatter serialization is obsolete - only used in unit test
 		formatter.Serialize(ms, originalException);
 		TestingException deserializedException =
 			(TestingException)formatter.Deserialize(ms2);
-		#pragma warning restore SYSLIB0011
+#pragma warning restore SYSLIB0011
 
 		Assert.Equal(originalException.InnerException?.Message,
 			deserializedException.InnerException?.Message);
 		Assert.Equal(originalException.Message, deserializedException.Message);
 	}
 }
+#endif

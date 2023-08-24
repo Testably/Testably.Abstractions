@@ -74,8 +74,13 @@ internal sealed class InMemoryStorage : IStorage
 					() => copiedContainer.LastAccessTime.Set(
 						sourceContainer.LastAccessTime.Get(DateTimeKind.Local),
 						DateTimeKind.Local));
+#if NET8_0_OR_GREATER
+				Execute.OnLinux(()
+					=> sourceContainer.AdjustTimes(TimeAdjustments.LastAccessTime));
+#else
 				Execute.NotOnWindows(()
 					=> sourceContainer.AdjustTimes(TimeAdjustments.LastAccessTime));
+#endif
 
 				copiedContainer.Attributes = sourceContainer.Attributes;
 				Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
@@ -497,7 +502,7 @@ internal sealed class InMemoryStorage : IStorage
 		return false;
 	}
 
-	#endregion
+#endregion
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
