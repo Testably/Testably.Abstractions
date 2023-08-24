@@ -10,7 +10,11 @@ public abstract partial class Tests<TFileSystem>
 	[InlineData("foo\0bar")]
 	public void New_NullCharacter_ShouldThrowArgumentException(string path)
 	{
+#if NET8_0_OR_GREATER
+		string expectedMessage = "Null character in path.";
+#else
 		string expectedMessage = "Illegal characters in path.";
+#endif
 		Exception? exception =
 			Record.Exception(() => FileSystem.DirectoryInfo.New(path));
 
