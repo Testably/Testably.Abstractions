@@ -107,7 +107,13 @@ internal sealed class FileInfoMock
 
 	/// <inheritdoc cref="IFileInfo.CreateText()" />
 	public StreamWriter CreateText()
-		=> new(_fileSystem.File.Create(FullName));
+	{
+		StreamWriter streamWriter = new(_fileSystem.File.Create(FullName));
+#if NET8_0_OR_GREATER
+		Refresh();
+#endif
+		return streamWriter;
+	}
 
 	/// <inheritdoc cref="IFileInfo.Decrypt()" />
 	[SupportedOSPlatform("windows")]

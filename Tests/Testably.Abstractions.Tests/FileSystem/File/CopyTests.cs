@@ -156,7 +156,18 @@ public abstract partial class CopyTests<TFileSystem>
 		sourceCreationTime.Should()
 			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			.BeOnOrBefore(creationTimeEnd);
-		if (Test.RunsOnWindows)
+		if (Test.RunsOnMac)
+		{
+#if NET8_0_OR_GREATER
+			sourceLastAccessTime.Should()
+				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
+				.BeOnOrBefore(creationTimeEnd);
+#else
+			sourceLastAccessTime.Should()
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
+#endif
+		}
+		else if (Test.RunsOnWindows)
 		{
 			sourceLastAccessTime.Should()
 				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
