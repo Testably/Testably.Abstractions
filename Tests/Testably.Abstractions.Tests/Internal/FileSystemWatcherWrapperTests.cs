@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions.Tests.Internal;
+﻿using FileSystemWatcherWrapper = Testably.Abstractions.FileSystem.FileSystemWatcherWrapper;
+
+namespace Testably.Abstractions.Tests.Internal;
 
 public class FileSystemWatcherWrapperTests
 {

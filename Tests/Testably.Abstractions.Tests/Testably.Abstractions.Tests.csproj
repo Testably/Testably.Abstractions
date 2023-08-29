@@ -5,6 +5,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="TestableIO.System.IO.Abstractions.TestingHelpers" />
 		<ProjectReference Include="..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj" />
 		<ProjectReference Include="..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj" />
 		<ProjectReference Include="..\Helpers\Testably.Abstractions.TestHelpers\Testably.Abstractions.TestHelpers.csproj" />
