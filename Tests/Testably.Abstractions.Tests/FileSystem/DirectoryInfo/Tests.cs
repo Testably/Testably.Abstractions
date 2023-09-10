@@ -273,9 +273,9 @@ public abstract partial class Tests<TFileSystem>
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 
 		sut.Parent.Should().NotBeNull();
-		sut.Parent!.Should().NotExist();
-		sut.Parent.Parent.Should().NotBeNull();
-		sut.Parent.Parent!.Should().NotExist();
+		sut.Parent.Should().NotExist();
+		sut.Parent?.Parent.Should().NotBeNull();
+		sut.Parent?.Parent.Should().NotExist();
 	}
 
 	[SkippableFact]
