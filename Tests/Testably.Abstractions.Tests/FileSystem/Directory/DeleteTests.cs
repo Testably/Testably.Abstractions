@@ -43,7 +43,7 @@ public abstract partial class DeleteTests<TFileSystem>
 		FileSystem.Directory.Delete(result.FullName);
 
 		FileSystem.Should().NotHaveDirectory(directoryName);
-		result.Exists.Should().BeFalse();
+		result.Should().NotExist();
 	}
 
 	[SkippableTheory]
@@ -195,7 +195,7 @@ public abstract partial class DeleteTests<TFileSystem>
 		FileSystem.Directory.Delete(directoryName);
 
 		FileSystem.Should().NotHaveDirectory(directoryName);
-		result.Exists.Should().BeFalse();
+		result.Should().NotExist();
 	}
 
 	[SkippableTheory]

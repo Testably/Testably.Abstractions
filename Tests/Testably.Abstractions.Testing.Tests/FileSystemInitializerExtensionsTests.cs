@@ -160,7 +160,7 @@ public class FileSystemInitializerExtensionsTests
 			MockFileSystem> result =
 			sut.Initialize().WithSubdirectory(directoryName);
 
-		result.Directory.Exists.Should().BeTrue();
+		result.Directory.Should().Exist();
 	}
 
 	[Theory]

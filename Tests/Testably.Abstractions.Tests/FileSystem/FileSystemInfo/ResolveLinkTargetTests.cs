@@ -36,12 +36,12 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 		target!.FullName.Should().Be(targetFullPath);
 		if (!Test.RunsOnLinux)
 		{
-			target.Exists.Should().BeTrue();
+			target.Should().Exist();
 			FileSystem.File.ReadAllText(target.FullName).Should().Be(contents);
 		}
 		else
 		{
-			target.Exists.Should().BeFalse();
+			target.Should().NotExist();
 		}
 	}
 
@@ -153,7 +153,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 		IFileSystemInfo? target = fileInfo.ResolveLinkTarget(false);
 
 		target!.FullName.Should().Be(targetFullPath);
-		target.Exists.Should().BeTrue();
+		target.Should().Exist();
 	}
 
 	[SkippableTheory]
@@ -170,7 +170,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 		IFileSystemInfo? target = fileInfo.ResolveLinkTarget(false);
 
 		target!.FullName.Should().Be(targetFullPath);
-		target.Exists.Should().BeFalse();
+		target.Should().NotExist();
 	}
 }
 #endif
