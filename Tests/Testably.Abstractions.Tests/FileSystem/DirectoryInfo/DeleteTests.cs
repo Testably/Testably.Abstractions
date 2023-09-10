@@ -12,7 +12,7 @@ public abstract partial class DeleteTests<TFileSystem>
 	public void Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeFalse();
+		sut.Should().NotExist();
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -69,15 +69,15 @@ public abstract partial class DeleteTests<TFileSystem>
 		string subdirectoryPath = FileSystem.Path.Combine(path, subdirectory);
 		FileSystem.Directory.CreateDirectory(subdirectoryPath);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeTrue();
+		sut.Should().Exist();
 
 		sut.Delete(true);
 
 #if NETFRAMEWORK
 		// The DirectoryInfo is not updated in .NET Framework!
-		sut.Exists.Should().BeTrue();
+		sut.Should().Exist();
 #else
-		sut.Exists.Should().BeFalse();
+		sut.Should().NotExist();
 #endif
 		FileSystem.Should().NotHaveDirectory(sut.FullName);
 		FileSystem.Should().NotHaveDirectory(subdirectoryPath);
@@ -89,15 +89,15 @@ public abstract partial class DeleteTests<TFileSystem>
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeTrue();
+		sut.Should().Exist();
 
 		sut.Delete();
 
 #if NETFRAMEWORK
 		// The DirectoryInfo is not updated in .NET Framework!
-		sut.Exists.Should().BeTrue();
+		sut.Should().Exist();
 #else
-		sut.Exists.Should().BeFalse();
+		sut.Should().NotExist();
 #endif
 		FileSystem.Should().NotHaveDirectory(sut.FullName);
 	}
@@ -109,7 +109,7 @@ public abstract partial class DeleteTests<TFileSystem>
 	{
 		FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(path, subdirectory));
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeTrue();
+		sut.Should().Exist();
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -123,7 +123,7 @@ public abstract partial class DeleteTests<TFileSystem>
 				? null
 				: $"'{sut.FullName}'");
 
-		sut.Exists.Should().BeTrue();
+		sut.Should().Exist();
 		FileSystem.Should().HaveDirectory(sut.FullName);
 	}
 }

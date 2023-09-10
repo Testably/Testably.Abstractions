@@ -30,14 +30,14 @@ public abstract partial class CreateTextTests<TFileSystem>
 		string path, string appendText)
 	{
 		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
-		fileInfo.Exists.Should().BeFalse();
+		fileInfo.Should().NotExist();
 
 		using (StreamWriter stream = fileInfo.CreateText())
 		{
 			stream.Write(appendText);
 		}
 
-		fileInfo.Exists.Should().BeTrue();
+		fileInfo.Should().Exist();
 		FileSystem.Should().HaveFile(path);
 	}
 #else
@@ -47,14 +47,14 @@ public abstract partial class CreateTextTests<TFileSystem>
 		string path, string appendText)
 	{
 		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
-		fileInfo.Exists.Should().BeFalse();
+		fileInfo.Should().NotExist();
 
 		using (StreamWriter stream = fileInfo.CreateText())
 		{
 			stream.Write(appendText);
 		}
 
-		fileInfo.Exists.Should().BeFalse();
+		fileInfo.Should().NotExist();
 		FileSystem.Should().HaveFile(path);
 	}
 #endif

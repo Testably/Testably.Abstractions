@@ -26,7 +26,7 @@ public abstract partial class CopyToTests<TFileSystem>
 
 		exception.Should().BeException<IOException>(
 			hResult: Test.RunsOnWindows ? -2147024816 : 17);
-		sut.Exists.Should().BeTrue();
+		sut.Should().Exist();
 		FileSystem.Should().HaveFile(sourceName)
 			.Which.HasContent(sourceContents);
 		FileSystem.Should().HaveFile(destinationName)
@@ -48,9 +48,9 @@ public abstract partial class CopyToTests<TFileSystem>
 
 		IFileInfo result = sut.CopyTo(destinationName, true);
 
-		sut.Exists.Should().BeTrue();
+		sut.Should().Exist();
 		sut.FullName.Should().Be(FileSystem.Path.GetFullPath(sourceName));
-		result.Exists.Should().BeTrue();
+		result.Should().Exist();
 		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
 		FileSystem.Should().HaveFile(sourceName)
 			.Which.HasContent(sourceContents);
@@ -116,8 +116,8 @@ public abstract partial class CopyToTests<TFileSystem>
 		IFileInfo result = sut.CopyTo(destinationName);
 
 		sut.FullName.Should().Be(FileSystem.Path.GetFullPath(sourceName));
-		sut.Exists.Should().BeTrue();
-		result.Exists.Should().BeTrue();
+		sut.Should().Exist();
+		result.Should().Exist();
 		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
 		FileSystem.Should().HaveFile(sourceName)
 			.Which.HasContent(contents);

@@ -29,15 +29,15 @@ public abstract partial class CreateTests<TFileSystem>
 	public void Create_ShouldCreateDirectory(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeFalse();
+		sut.Should().NotExist();
 
 		sut.Create();
 
 #if NETFRAMEWORK
 		// The DirectoryInfo is not updated in .NET Framework!
-		sut.Exists.Should().BeFalse();
+		sut.Should().NotExist();
 #else
-		sut.Exists.Should().BeTrue();
+		sut.Should().Exist();
 #endif
 		FileSystem.Should().HaveDirectory(sut.FullName);
 	}
@@ -68,9 +68,9 @@ public abstract partial class CreateTests<TFileSystem>
 		result.Name.Should().Be(directoryLevel3);
 		result.Parent!.Name.Should().Be(directoryLevel2);
 		result.Parent.Parent!.Name.Should().Be(directoryLevel1);
-		result.Exists.Should().BeTrue();
-		result.Parent.Exists.Should().BeTrue();
-		result.Parent.Parent.Exists.Should().BeTrue();
+		result.Should().Exist();
+		result.Parent.Should().Exist();
+		result.Parent.Parent.Should().Exist();
 		result.ToString().Should().Be(path);
 	}
 
@@ -81,23 +81,23 @@ public abstract partial class CreateTests<TFileSystem>
 		IDirectoryInfo sut1 = FileSystem.DirectoryInfo.New(path);
 		IDirectoryInfo sut2 = FileSystem.DirectoryInfo.New(path);
 		IDirectoryInfo sut3 = FileSystem.DirectoryInfo.New(path);
-		sut1.Exists.Should().BeFalse();
-		sut2.Exists.Should().BeFalse();
+		sut1.Should().NotExist();
+		sut2.Should().NotExist();
 		// Do not call Exists for `sut3`
 
 		sut1.Create();
 
 		if (Test.IsNetFramework)
 		{
-			sut1.Exists.Should().BeFalse();
-			sut2.Exists.Should().BeFalse();
-			sut3.Exists.Should().BeTrue();
+			sut1.Should().NotExist();
+			sut2.Should().NotExist();
+			sut3.Should().Exist();
 		}
 		else
 		{
-			sut1.Exists.Should().BeTrue();
-			sut2.Exists.Should().BeFalse();
-			sut3.Exists.Should().BeTrue();
+			sut1.Should().Exist();
+			sut2.Should().NotExist();
+			sut3.Should().Exist();
 		}
 
 		FileSystem.Should().HaveDirectory(path);

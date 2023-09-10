@@ -237,9 +237,9 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		result.Name.Should().Be(directoryLevel3);
 		result.Parent!.Name.Should().Be(directoryLevel2);
 		result.Parent.Parent!.Name.Should().Be(directoryLevel1);
-		result.Exists.Should().BeTrue();
-		result.Parent.Exists.Should().BeTrue();
-		result.Parent.Parent.Exists.Should().BeTrue();
+		result.Should().Exist();
+		result.Parent.Should().Exist();
+		result.Parent.Parent.Should().Exist();
 	}
 
 #if NETFRAMEWORK

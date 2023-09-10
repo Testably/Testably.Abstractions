@@ -29,7 +29,7 @@ public abstract partial class Tests<TFileSystem>
 		IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
 
 		result.ToString().Should().Be(path);
-		result.Exists.Should().BeFalse();
+		result.Should().NotExist();
 	}
 
 	[SkippableFact]
