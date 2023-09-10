@@ -274,8 +274,8 @@ public abstract partial class Tests<TFileSystem>
 
 		sut.Parent.Should().NotBeNull();
 		sut.Parent!.Should().NotExist();
-		sut.Parent.Parent.Should().NotBeNull();
-		sut.Parent.Parent!.Should().NotExist();
+		sut.Parent!.Parent.Should().NotBeNull();
+		sut.Parent!.Parent!.Should().NotExist();
 	}
 
 	[SkippableFact]
