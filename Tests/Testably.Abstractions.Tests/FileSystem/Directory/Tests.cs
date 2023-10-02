@@ -13,7 +13,7 @@ public abstract partial class Tests<TFileSystem>
 	{
 		IDirectoryInfo result = FileSystem.Directory.CreateTempSubdirectory();
 
-		result.Exists.Should().BeTrue();
+		result.Should().Exist();
 	}
 
 	[SkippableTheory]

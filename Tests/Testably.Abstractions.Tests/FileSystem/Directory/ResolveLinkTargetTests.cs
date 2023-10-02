@@ -1,5 +1,6 @@
 #if FEATURE_FILESYSTEM_LINK
 using System.IO;
+using Testably.Abstractions.FluentAssertions;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
@@ -32,7 +33,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 			FileSystem.Directory.ResolveLinkTarget(path, false);
 
 		target!.FullName.Should().Be(targetFullPath);
-		target.Exists.Should().BeTrue();
+		target.Should().Exist();
 	}
 
 	[SkippableTheory]
@@ -53,12 +54,12 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 		if (!Test.RunsOnLinux)
 		{
 			target!.FullName.Should().Be(targetFullPath);
-			target.Exists.Should().BeTrue();
+			target.Should().Exist();
 		}
 		else
 		{
 			target!.FullName.Should().Be(targetFullPath);
-			target.Exists.Should().BeFalse();
+			target.Should().NotExist();
 		}
 	}
 
@@ -174,7 +175,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 			FileSystem.Directory.ResolveLinkTarget(path, false);
 
 		target!.FullName.Should().Be(targetFullPath);
-		target.Exists.Should().BeTrue();
+		target.Should().Exist();
 	}
 
 	[SkippableTheory]
@@ -194,7 +195,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 
 		target!.FullName.Should().Be(targetFullPath);
 
-		target.Exists.Should().BeFalse();
+		target.Should().NotExist();
 	}
 }
 #endif

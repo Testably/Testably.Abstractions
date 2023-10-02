@@ -27,7 +27,7 @@ public abstract partial class MoveToTests<TFileSystem>
 		exception.Should().BeException<IOException>(
 			hResult: Test.RunsOnWindows ? -2147024713 : 17);
 
-		sut.Exists.Should().BeTrue();
+		sut.Should().Exist();
 		FileSystem.Should().HaveFile(sourceName)
 			.Which.HasContent(sourceContents);
 		FileSystem.Should().HaveFile(destinationName)
@@ -49,7 +49,7 @@ public abstract partial class MoveToTests<TFileSystem>
 
 		sut.MoveTo(destinationName, true);
 
-		sut.Exists.Should().BeTrue();
+		sut.Should().Exist();
 		sut.ToString().Should().Be(destinationName);
 		sut.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
 		FileSystem.Should().NotHaveFile(sourceName);
@@ -116,7 +116,7 @@ public abstract partial class MoveToTests<TFileSystem>
 
 		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 
-		sut.Exists.Should().BeTrue();
+		sut.Should().Exist();
 		FileSystem.Should().HaveFile(sourceName)
 			.Which.HasContent(sourceContents);
 		FileSystem.Should().NotHaveFile(destinationName);
@@ -201,7 +201,7 @@ public abstract partial class MoveToTests<TFileSystem>
 		sut.MoveTo(destinationName);
 
 		sut.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
-		sut.Exists.Should().BeTrue();
+		sut.Should().Exist();
 		FileSystem.Should().NotHaveFile(sourceName);
 		FileSystem.Should().HaveFile(destinationName)
 			.Which.HasContent(contents);

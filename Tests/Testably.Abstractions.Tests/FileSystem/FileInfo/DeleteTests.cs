@@ -41,17 +41,17 @@ public abstract partial class DeleteTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(path, "some content");
 		IFileInfo sut = FileSystem.FileInfo.New(path);
-		sut.Exists.Should().BeTrue();
+		sut.Should().Exist();
 
 		sut.Delete();
 
 		if (Test.IsNetFramework)
 		{
-			sut.Exists.Should().BeTrue();
+			sut.Should().Exist();
 		}
 		else
 		{
-			sut.Exists.Should().BeFalse();
+			sut.Should().NotExist();
 		}
 
 		FileSystem.Should().NotHaveFile(path);

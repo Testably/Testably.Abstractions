@@ -31,12 +31,12 @@ public abstract partial class CreateSubdirectoryTests<TFileSystem>
 		string path, string subdirectory)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Exists.Should().BeFalse();
+		sut.Should().NotExist();
 		IDirectoryInfo result = sut.CreateSubdirectory(subdirectory);
 
-		sut.Exists.Should().BeFalse();
+		sut.Should().NotExist();
 		FileSystem.Should().HaveDirectory(sut.FullName);
-		result.Exists.Should().BeTrue();
+		result.Should().Exist();
 		FileSystem.Should().HaveDirectory(result.FullName);
 	}
 
@@ -48,9 +48,9 @@ public abstract partial class CreateSubdirectoryTests<TFileSystem>
 		sut.Create();
 		IDirectoryInfo result = sut.CreateSubdirectory(subdirectory);
 
-		sut.Exists.Should().BeTrue();
+		sut.Should().Exist();
 		FileSystem.Should().HaveDirectory(sut.FullName);
-		result.Exists.Should().BeTrue();
+		result.Should().Exist();
 		FileSystem.Should().HaveDirectory(result.FullName);
 	}
 }

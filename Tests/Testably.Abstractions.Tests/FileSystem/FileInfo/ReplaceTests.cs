@@ -102,7 +102,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 
 		IFileInfo result = sut.Replace(destinationName, backupName, true);
 
-		sut.Exists.Should().BeFalse();
+		sut.Should().NotExist();
 		FileSystem.Should().NotHaveFile(sourceName);
 		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
 		FileSystem.Should().HaveFile(destinationName)
@@ -146,7 +146,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 		else
 		{
 			exception.Should().BeNull();
-			sut.Exists.Should().BeFalse();
+			sut.Should().NotExist();
 			FileSystem.Should().NotHaveFile(sourceName);
 			FileSystem.Should().HaveFile(destinationName)
 				.Which.HasContent(sourceContents);
@@ -261,7 +261,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 
 		IFileInfo result = sut.Replace(destinationName, backupName);
 
-		sut.Exists.Should().BeFalse();
+		sut.Should().NotExist();
 		FileSystem.Should().NotHaveFile(sourceName);
 		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
 		FileSystem.Should().HaveFile(destinationName)
@@ -334,7 +334,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeException<IOException>(hResult: -2147024864);
-			sut.Exists.Should().BeTrue();
+			sut.Should().Exist();
 			FileSystem.Should().HaveFile(sourceName)
 				.Which.HasContent(sourceContents);
 			FileSystem.Should().HaveFile(destinationName)
@@ -345,7 +345,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 		}
 		else
 		{
-			sut.Exists.Should().BeFalse();
+			sut.Should().NotExist();
 			FileSystem.Should().NotHaveFile(sourceName);
 			FileSystem.Should().HaveFile(destinationName)
 				.Which.HasContent(sourceContents);
@@ -394,7 +394,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 
 		IFileInfo result = sut.Replace(destinationName, null);
 
-		sut.Exists.Should().BeFalse();
+		sut.Should().NotExist();
 		FileSystem.Should().NotHaveFile(sourceName);
 		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
 		FileSystem.Should().HaveFile(destinationName)
@@ -417,7 +417,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 
 		IFileInfo result = sut.Replace(destinationName, null);
 
-		sut.Exists.Should().BeFalse();
+		sut.Should().NotExist();
 		FileSystem.Should().NotHaveFile(sourceName);
 		result.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
 		FileSystem.Should().HaveFile(destinationName)

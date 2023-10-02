@@ -37,7 +37,7 @@ public abstract partial class Tests<TFileSystem>
 		IFileInfo result = FileSystem.FileInfo.New(path);
 
 		result.ToString().Should().Be(path);
-		result.Exists.Should().BeFalse();
+		result.Should().NotExist();
 	}
 
 	[SkippableTheory]

@@ -12,7 +12,7 @@ public abstract partial class ExistsTests<TFileSystem>
 		FileSystem.Directory.CreateDirectory(path);
 		IFileInfo sut = FileSystem.FileInfo.New(path);
 
-		sut.Exists.Should().BeFalse();
+		sut.Should().NotExist();
 	}
 
 	[SkippableTheory]
@@ -20,15 +20,15 @@ public abstract partial class ExistsTests<TFileSystem>
 	public void Exists_ShouldReturnCachedValueUntilRefresh(string path)
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(path);
-		sut.Exists.Should().BeFalse();
+		sut.Should().NotExist();
 
 		FileSystem.File.WriteAllText(path, "some content");
 
-		sut.Exists.Should().BeFalse();
+		sut.Should().NotExist();
 
 		sut.Refresh();
 
-		sut.Exists.Should().BeTrue();
+		sut.Should().Exist();
 	}
 
 	[SkippableTheory]
