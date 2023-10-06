@@ -156,8 +156,8 @@ public abstract partial class ReplaceTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[InlineAutoData(FileAttributes.Hidden, FileAttributes.Hidden)]
-	[InlineAutoData(FileAttributes.System, FileAttributes.System)]
+	[InlineAutoData(FileAttributes.Hidden, FileAttributes.System)]
+	[InlineAutoData(FileAttributes.System, FileAttributes.Hidden)]
 	public void Replace_ShouldAddArchiveAttribute_OnWindows(
 		FileAttributes sourceFileAttributes,
 		FileAttributes destinationFileAttributes,
@@ -169,12 +169,6 @@ public abstract partial class ReplaceTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(sourceName, sourceContents);
 		FileSystem.File.SetAttributes(sourceName, sourceFileAttributes);
-		FileAttributes expectedSourceAttributes =
-			FileSystem.File.GetAttributes(sourceName);
-		if (Test.RunsOnWindows)
-		{
-			expectedSourceAttributes |= FileAttributes.Archive;
-		}
 
 		FileSystem.File.WriteAllText(destinationName, destinationContents);
 		FileSystem.File.SetAttributes(destinationName, destinationFileAttributes);
@@ -187,12 +181,38 @@ public abstract partial class ReplaceTests<TFileSystem>
 
 		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
-		sut.Replace(destinationName, backupName, true);
+		sut.Replace(destinationName, backupName);
 
 		FileSystem.File.GetAttributes(destinationName)
-			.Should().Be(expectedSourceAttributes);
+			.Should().Be(expectedDestinationAttributes);
 		FileSystem.File.GetAttributes(backupName)
 			.Should().Be(expectedDestinationAttributes);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Replace_WhenFileIsReadOnly_ShouldThrowUnauthorizedAccessException_OnWindows(
+		string sourceName,
+		string destinationName,
+		string backupName,
+		string sourceContents,
+		string destinationContents)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		FileSystem.File.WriteAllText(sourceName, sourceContents);
+
+		FileSystem.File.WriteAllText(destinationName, destinationContents);
+		FileSystem.File.SetAttributes(destinationName, FileAttributes.ReadOnly);
+
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.Replace(destinationName, backupName);
+		});
+
+		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 
 	[SkippableTheory]

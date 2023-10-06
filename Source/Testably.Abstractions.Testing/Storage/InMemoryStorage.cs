@@ -382,11 +382,15 @@ internal sealed class InMemoryStorage : IStorage
 			throw ExceptionFactory.AccessToPathDenied(source.FullPath);
 		}
 
-		using (_ = sourceContainer.RequestAccess(FileAccess.ReadWrite, FileShare.None,
+		using (_ = sourceContainer.RequestAccess(
+			FileAccess.ReadWrite,
+			FileShare.None,
 			ignoreMetadataErrors: ignoreMetadataErrors))
 		{
-			using (_ = destinationContainer.RequestAccess(FileAccess.ReadWrite,
-				FileShare.None, ignoreMetadataErrors: ignoreMetadataErrors))
+			using (_ = destinationContainer.RequestAccess(
+				FileAccess.ReadWrite,
+				FileShare.None,
+				ignoreMetadataErrors: ignoreMetadataErrors))
 			{
 				if (_containers.TryRemove(destination,
 					out IStorageContainer? existingDestinationContainer))
@@ -412,8 +416,17 @@ internal sealed class InMemoryStorage : IStorage
 						Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
 							() =>
 							{
-								existingSourceContainer.Attributes |=
+								FileAttributes targetAttributes =
+									existingDestinationContainer.Attributes |
 									FileAttributes.Archive;
+								if (existingSourceContainer.Attributes.HasFlag(FileAttributes
+									.ReadOnly))
+								{
+									targetAttributes |= FileAttributes.ReadOnly;
+								}
+
+								existingSourceContainer.Attributes = targetAttributes;
+
 								existingSourceContainer.CreationTime.Set(
 									existingDestinationContainer.CreationTime.Get(
 										DateTimeKind.Utc),
@@ -502,7 +515,7 @@ internal sealed class InMemoryStorage : IStorage
 		return false;
 	}
 
-#endregion
+	#endregion
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
