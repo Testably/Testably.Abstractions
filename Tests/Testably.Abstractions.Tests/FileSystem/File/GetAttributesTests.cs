@@ -8,9 +8,10 @@ public abstract partial class GetAttributesTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
-	[AutoData]
+	[InlineAutoData(FileAttributes.ReadOnly)]
+	[InlineAutoData(FileAttributes.Normal)]
 	public void GetAttributes_ShouldReturnAttributes(
-		string path, FileAttributes attributes)
+		FileAttributes attributes, string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
 		FileSystem.File.SetAttributes(path, attributes);
