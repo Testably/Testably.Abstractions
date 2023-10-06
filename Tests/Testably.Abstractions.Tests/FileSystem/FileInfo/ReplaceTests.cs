@@ -156,8 +156,8 @@ public abstract partial class ReplaceTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[InlineAutoData(FileAttributes.Hidden, FileAttributes.System)]
-	[InlineAutoData(FileAttributes.System, FileAttributes.Hidden)]
+	[InlineAutoData(FileAttributes.Hidden, FileAttributes.Hidden)]
+	[InlineAutoData(FileAttributes.System, FileAttributes.System)]
 	public void Replace_ShouldAddArchiveAttribute_OnWindows(
 		FileAttributes sourceFileAttributes,
 		FileAttributes destinationFileAttributes,
@@ -193,6 +193,30 @@ public abstract partial class ReplaceTests<TFileSystem>
 			.Should().Be(expectedSourceAttributes);
 		FileSystem.File.GetAttributes(backupName)
 			.Should().Be(expectedDestinationAttributes);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Replace_WhenFileIsReadOnly_ShouldThrowUnauthorizedAccessException(
+		string sourceName,
+		string destinationName,
+		string backupName,
+		string sourceContents,
+		string destinationContents)
+	{
+		FileSystem.File.WriteAllText(sourceName, sourceContents);
+
+		FileSystem.File.WriteAllText(destinationName, destinationContents);
+		FileSystem.File.SetAttributes(destinationName, FileAttributes.ReadOnly);
+
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.Replace(destinationName, backupName, true);
+		});
+
+		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 
 	[SkippableTheory]
