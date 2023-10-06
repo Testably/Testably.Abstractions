@@ -156,15 +156,16 @@ public abstract partial class ReplaceTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[AutoData]
+	[InlineAutoData(FileAttributes.ReadOnly, FileAttributes.System)]
+	[InlineAutoData(FileAttributes.System, FileAttributes.ReadOnly)]
 	public void Replace_ShouldAddArchiveAttribute_OnWindows(
+		FileAttributes sourceFileAttributes,
+		FileAttributes destinationFileAttributes,
 		string sourceName,
 		string destinationName,
 		string backupName,
 		string sourceContents,
-		string destinationContents,
-		FileAttributes sourceFileAttributes,
-		FileAttributes destinationFileAttributes)
+		string destinationContents)
 	{
 		FileSystem.File.WriteAllText(sourceName, sourceContents);
 		FileSystem.File.SetAttributes(sourceName, sourceFileAttributes);

@@ -8,8 +8,9 @@ public abstract partial class SetAttributesTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
-	[AutoData]
-	public void SetAttributes_ShouldNotAdjustTimes(string path, FileAttributes attributes)
+	[InlineAutoData(FileAttributes.ReadOnly)]
+	[InlineAutoData(FileAttributes.Normal)]
+	public void SetAttributes_ShouldNotAdjustTimes(FileAttributes attributes, string path)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 

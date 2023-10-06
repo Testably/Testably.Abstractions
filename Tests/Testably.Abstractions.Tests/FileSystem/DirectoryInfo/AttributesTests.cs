@@ -22,9 +22,10 @@ public abstract partial class AttributesTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[AutoData]
+	[InlineAutoData(FileAttributes.ReadOnly)]
+	[InlineAutoData(FileAttributes.Normal)]
 	public void Attributes_WhenFileIsExisting_SetterShouldChangeAttributesOnFileSystem(
-		string path, FileAttributes attributes)
+		FileAttributes attributes, string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IDirectoryInfo sut1 = FileSystem.DirectoryInfo.New(path);
