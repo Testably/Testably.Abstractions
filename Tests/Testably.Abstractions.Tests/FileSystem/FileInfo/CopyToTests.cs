@@ -77,12 +77,13 @@ public abstract partial class CopyToTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[AutoData]
+	[InlineAutoData(FileAttributes.ReadOnly)]
+	[InlineAutoData(FileAttributes.System)]
 	public void CopyTo_ShouldAddArchiveAttribute_OnWindows(
+		FileAttributes fileAttributes,
 		string sourceName,
 		string destinationName,
-		string contents,
-		FileAttributes fileAttributes)
+		string contents)
 	{
 		FileSystem.File.WriteAllText(sourceName, contents);
 		FileSystem.File.SetAttributes(sourceName, fileAttributes);
