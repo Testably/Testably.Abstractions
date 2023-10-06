@@ -169,6 +169,12 @@ public abstract partial class ReplaceTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(sourceName, sourceContents);
 		FileSystem.File.SetAttributes(sourceName, sourceFileAttributes);
+		FileAttributes expectedSourceAttributes =
+			FileSystem.File.GetAttributes(sourceName);
+		if (Test.RunsOnWindows)
+		{
+			expectedSourceAttributes |= FileAttributes.Archive;
+		}
 
 		FileSystem.File.WriteAllText(destinationName, destinationContents);
 		FileSystem.File.SetAttributes(destinationName, destinationFileAttributes);
@@ -183,8 +189,16 @@ public abstract partial class ReplaceTests<TFileSystem>
 
 		sut.Replace(destinationName, backupName);
 
-		FileSystem.File.GetAttributes(destinationName)
-			.Should().Be(expectedDestinationAttributes);
+		if (Test.RunsOnMac)
+		{
+			FileSystem.File.GetAttributes(destinationName)
+				.Should().Be(expectedSourceAttributes);
+		}
+		else
+		{
+			FileSystem.File.GetAttributes(destinationName)
+				.Should().Be(expectedDestinationAttributes);
+		}
 		FileSystem.File.GetAttributes(backupName)
 			.Should().Be(expectedDestinationAttributes);
 	}
