@@ -39,7 +39,7 @@ internal sealed class PathMock : PathSystemBase
 
 		string? pathRoot = Path.GetPathRoot(path);
 		string? directoryRoot = Path.GetPathRoot(_fileSystem.Storage.CurrentDirectory);
-		if (pathRoot != null && directoryRoot != null)
+		if (!string.IsNullOrEmpty(pathRoot) && !string.IsNullOrEmpty(directoryRoot))
 		{
 			if (pathRoot[0] != directoryRoot[0])
 			{

@@ -35,6 +35,16 @@ public abstract partial class GetFullPathTests<TFileSystem>
 	}
 
 	[SkippableFact]
+	public void GetFullPath_Dot_ShouldReturnToCurrentDirectory()
+	{
+		string expectedFullPath = FileSystem.Directory.GetCurrentDirectory();
+
+		string result = FileSystem.Path.GetFullPath(".");
+
+		result.Should().Be(expectedFullPath);
+	}
+
+	[SkippableFact]
 	public void
 		GetFullPath_RelativePathWithDrive_WhenCurrentDirectoryIsDifferent_ShouldReturnExpectedValue()
 	{
