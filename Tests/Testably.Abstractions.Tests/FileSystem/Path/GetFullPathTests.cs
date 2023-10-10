@@ -37,7 +37,9 @@ public abstract partial class GetFullPathTests<TFileSystem>
 		Skip.IfNot(Test.RunsOnWindows);
 
 		string currentDirectory = FileSystem.Directory.GetCurrentDirectory();
-		string otherDrive = currentDirectory.Substring(0, 1) == "C" ? "D" : "C";
+		string otherDrive = currentDirectory
+			.Substring(0,1)
+			.Equals("c", StringComparison.OrdinalIgnoreCase) ? "D" : "C";
 		string input = $"{otherDrive}:test.txt";
 		string expectedFullPath = $@"{otherDrive}:\test.txt";
 
