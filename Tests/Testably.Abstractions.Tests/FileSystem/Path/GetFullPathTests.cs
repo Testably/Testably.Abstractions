@@ -5,18 +5,14 @@ public abstract partial class GetFullPathTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	[SkippableTheory]
-	[InlineData(@"top/../most/file", @"most/file")]
-	[InlineData(@"top/../most/../dir/file", @"dir/file")]
-	[InlineData(@"top/../../most/file", @"most/file")]
-	public void GetFullPath_ShouldNormalizeProvidedPath(string input, string expected)
+	[SkippableFact]
+	public void GetFullPath_Dot_ShouldReturnToCurrentDirectory()
 	{
-		string expectedRootedPath = FileTestHelper.RootDrive(
-			expected.Replace('/', FileSystem.Path.DirectorySeparatorChar));
+		string expectedFullPath = FileSystem.Directory.GetCurrentDirectory();
 
-		string result = FileSystem.Path.GetFullPath(FileTestHelper.RootDrive(input));
+		string result = FileSystem.Path.GetFullPath(".");
 
-		result.Should().Be(expectedRootedPath);
+		result.Should().Be(expectedFullPath);
 	}
 
 	[SkippableFact]
@@ -35,16 +31,6 @@ public abstract partial class GetFullPathTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void GetFullPath_Dot_ShouldReturnToCurrentDirectory()
-	{
-		string expectedFullPath = FileSystem.Directory.GetCurrentDirectory();
-
-		string result = FileSystem.Path.GetFullPath(".");
-
-		result.Should().Be(expectedFullPath);
-	}
-
-	[SkippableFact]
 	public void
 		GetFullPath_RelativePathWithDrive_WhenCurrentDirectoryIsDifferent_ShouldReturnExpectedValue()
 	{
@@ -58,6 +44,20 @@ public abstract partial class GetFullPathTests<TFileSystem>
 		string result = FileSystem.Path.GetFullPath(input);
 
 		result.Should().Be(expectedFullPath);
+	}
+
+	[SkippableTheory]
+	[InlineData(@"top/../most/file", @"most/file")]
+	[InlineData(@"top/../most/../dir/file", @"dir/file")]
+	[InlineData(@"top/../../most/file", @"most/file")]
+	public void GetFullPath_ShouldNormalizeProvidedPath(string input, string expected)
+	{
+		string expectedRootedPath = FileTestHelper.RootDrive(
+			expected.Replace('/', FileSystem.Path.DirectorySeparatorChar));
+
+		string result = FileSystem.Path.GetFullPath(FileTestHelper.RootDrive(input));
+
+		result.Should().Be(expectedRootedPath);
 	}
 
 #if FEATURE_PATH_RELATIVE
