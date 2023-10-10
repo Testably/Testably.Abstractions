@@ -37,6 +37,21 @@ internal sealed class PathMock : PathSystemBase
 	{
 		path.EnsureValidArgument(FileSystem, nameof(path));
 
+		string? pathRoot = Path.GetPathRoot(path);
+		string? directoryRoot = Path.GetPathRoot(_fileSystem.Storage.CurrentDirectory);
+		if (pathRoot != null && directoryRoot != null)
+		{
+			if (pathRoot[0] != directoryRoot[0])
+			{
+				return Path.GetFullPath(path);
+			}
+
+			if (pathRoot.Length < directoryRoot.Length)
+			{
+				path = path.Substring(pathRoot.Length);
+			}
+		}
+
 		return Path.GetFullPath(Path.Combine(
 			_fileSystem.Storage.CurrentDirectory,
 			path));
