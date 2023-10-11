@@ -252,7 +252,8 @@ internal sealed class FileInfoMock
 								}
 
 								throw ExceptionFactory.DirectoryNotFound(FullName);
-							}))
+							}),
+					!Execute.IsWindows)
 			?? throw ExceptionFactory.FileNotFound(FullName);
 		return _fileSystem.FileInfo.New(location.FullPath);
 	}
