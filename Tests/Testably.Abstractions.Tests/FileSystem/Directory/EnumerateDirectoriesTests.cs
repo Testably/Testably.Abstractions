@@ -250,9 +250,9 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 	[SkippableFact]
 	public void EnumerateDirectories_WithTrailingSlash_ShouldEnumerateSubdirectories()
 	{
-		string queryPath = @"Folder\";
-		string expectedPath = @"Folder\SubFolder";
-		FileSystem.Directory.CreateDirectory("Folder/SubFolder");
+		string queryPath = @"foo" + FileSystem.Path.DirectorySeparatorChar;
+		string expectedPath = FileSystem.Path.Combine("foo", "bar");
+		FileSystem.Directory.CreateDirectory(expectedPath);
 
 		IEnumerable<string> actualResult = FileSystem.Directory.EnumerateDirectories(queryPath);
 
