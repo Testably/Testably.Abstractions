@@ -9,6 +9,21 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
+	[SkippableTheory]
+	[InlineData("Folder", @"Folder\SubFolder")]
+	[InlineData(@"Folder\", @"Folder\SubFolder")]
+	[InlineData(@"Folder\..\.\Folder", @"Folder\..\.\Folder\SubFolder")]
+	public void MockDirectory_EnumerateDirectories_ShouldReturnPathsPrefixedWithQueryPath(
+		string queryPath, string expectedPath)
+	{
+		var fileSystem = new MockFileSystem();
+		fileSystem.Directory.CreateDirectory("Folder/SubFolder");
+
+		var actualResult = fileSystem.Directory.EnumerateDirectories(queryPath);
+
+		actualResult.Should().BeEquivalentTo(new[] { expectedPath });
+	}
+
 	[SkippableFact]
 	public void EnumerateDirectories_AbsolutePath_ShouldNotIncludeTrailingSlash()
 	{
