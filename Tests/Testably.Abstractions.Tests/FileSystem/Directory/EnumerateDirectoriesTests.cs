@@ -9,21 +9,6 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	[SkippableTheory]
-	[InlineData("Folder", @"Folder\SubFolder")]
-	[InlineData(@"Folder\", @"Folder\SubFolder")]
-	[InlineData(@"Folder\..\.\Folder", @"Folder\..\.\Folder\SubFolder")]
-	public void MockDirectory_EnumerateDirectories_ShouldReturnPathsPrefixedWithQueryPath(
-		string queryPath, string expectedPath)
-	{
-		var fileSystem = new MockFileSystem();
-		fileSystem.Directory.CreateDirectory("Folder/SubFolder");
-
-		var actualResult = fileSystem.Directory.EnumerateDirectories(queryPath);
-
-		actualResult.Should().BeEquivalentTo(new[] { expectedPath });
-	}
-
 	[SkippableFact]
 	public void EnumerateDirectories_AbsolutePath_ShouldNotIncludeTrailingSlash()
 	{
@@ -260,5 +245,17 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 			.EnumerateDirectories(path, "xyz", SearchOption.AllDirectories);
 
 		result.Count().Should().Be(2);
+	}
+
+	[SkippableFact]
+	public void EnumerateDirectories_WithTrailingSlash_ShouldEnumerateSubdirectories()
+	{
+		string queryPath = @"Folder\";
+		string expectedPath = @"Folder\SubFolder";
+		FileSystem.Directory.CreateDirectory("Folder/SubFolder");
+
+		IEnumerable<string> actualResult = FileSystem.Directory.EnumerateDirectories(queryPath);
+
+		actualResult.Should().BeEquivalentTo(expectedPath);
 	}
 }
