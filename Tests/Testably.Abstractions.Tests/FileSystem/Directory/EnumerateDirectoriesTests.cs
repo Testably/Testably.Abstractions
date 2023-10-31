@@ -246,4 +246,16 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 
 		result.Count().Should().Be(2);
 	}
+
+	[SkippableFact]
+	public void EnumerateDirectories_WithTrailingSlash_ShouldEnumerateSubdirectories()
+	{
+		string queryPath = @"foo" + FileSystem.Path.DirectorySeparatorChar;
+		string expectedPath = FileSystem.Path.Combine("foo", "bar");
+		FileSystem.Directory.CreateDirectory(expectedPath);
+
+		IEnumerable<string> actualResult = FileSystem.Directory.EnumerateDirectories(queryPath);
+
+		actualResult.Should().BeEquivalentTo(expectedPath);
+	}
 }

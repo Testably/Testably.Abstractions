@@ -173,6 +173,7 @@ internal sealed class InMemoryStorage : IStorage
 		enumerationOptions ??= EnumerationOptionsHelper.Compatible;
 
 		string fullPath = location.FullPath;
+		string fullPathWithoutTrailingSlash = fullPath;
 #if NETSTANDARD2_0
 		if (!fullPath.EndsWith($"{_fileSystem.Path.DirectorySeparatorChar}"))
 #else
@@ -180,6 +181,10 @@ internal sealed class InMemoryStorage : IStorage
 #endif
 		{
 			fullPath += _fileSystem.Path.DirectorySeparatorChar;
+		}
+		else if (_fileSystem.Path.GetPathRoot(fullPath) != fullPath)
+		{
+			fullPathWithoutTrailingSlash = fullPathWithoutTrailingSlash.TrimEnd(_fileSystem.Path.DirectorySeparatorChar);
 		}
 
 		foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers
@@ -192,7 +197,7 @@ internal sealed class InMemoryStorage : IStorage
 					item.Key.FullPath.TrimEnd(_fileSystem.Path
 						.DirectorySeparatorChar));
 			if (!enumerationOptions.RecurseSubdirectories &&
-			    parentPath?.Equals(location.FullPath,
+			    parentPath?.Equals(fullPathWithoutTrailingSlash,
 				    InMemoryLocation.StringComparisonMode) != true)
 			{
 				continue;

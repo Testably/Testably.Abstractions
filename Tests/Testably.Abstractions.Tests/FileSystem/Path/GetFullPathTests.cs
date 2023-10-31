@@ -5,6 +5,49 @@ public abstract partial class GetFullPathTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
+	[SkippableFact]
+	public void GetFullPath_Dot_ShouldReturnToCurrentDirectory()
+	{
+		string expectedFullPath = FileSystem.Directory.GetCurrentDirectory();
+
+		string result = FileSystem.Path.GetFullPath(".");
+
+		result.Should().Be(expectedFullPath);
+	}
+
+	[SkippableFact]
+	public void GetFullPath_RelativePathWithDrive_ShouldReturnExpectedValue()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		string currentDirectory = FileSystem.Directory.GetCurrentDirectory();
+		string drive = currentDirectory.Substring(0, 1);
+		string input = $"{drive}:test.txt";
+		string expectedFullPath = FileSystem.Path.Combine(currentDirectory, "test.txt");
+
+		string result = FileSystem.Path.GetFullPath(input);
+
+		result.Should().Be(expectedFullPath);
+	}
+
+	[SkippableFact]
+	public void
+		GetFullPath_RelativePathWithDrive_WhenCurrentDirectoryIsDifferent_ShouldReturnExpectedValue()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		string currentDirectory = FileSystem.Directory.GetCurrentDirectory();
+		string otherDrive = currentDirectory
+			.Substring(0,1)
+			.Equals("x", StringComparison.OrdinalIgnoreCase) ? "Y" : "X";
+		string input = $"{otherDrive}:test.txt";
+		string expectedFullPath = $@"{otherDrive}:\test.txt";
+
+		string result = FileSystem.Path.GetFullPath(input);
+
+		result.Should().Be(expectedFullPath);
+	}
+
 	[SkippableTheory]
 	[InlineData(@"top/../most/file", @"most/file")]
 	[InlineData(@"top/../most/../dir/file", @"dir/file")]
