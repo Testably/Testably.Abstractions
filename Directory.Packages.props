@@ -6,7 +6,7 @@
 
 	<ItemGroup>
 		<PackageVersion Include="System.Linq.Async" Version="6.0.1" />
-		<PackageVersion Include="System.Threading.Channels" Version="7.0.0" />
+		<PackageVersion Include="System.Threading.Channels" Version="8.0.0" />
 		<PackageVersion Include="TestableIO.System.IO.Abstractions" Version="19.2.69" />
 		<PackageVersion Include="System.IO.Compression" Version="4.3.0" />
 		<PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
@@ -20,7 +20,7 @@
 	<ItemGroup>
 		<PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
 		<PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" />
-		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
