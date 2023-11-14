@@ -15,6 +15,7 @@ jobs:
           dotnet-version: |
             6.0.x
             7.0.x
+            8.0.x
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
@@ -74,6 +75,7 @@ jobs:
           dotnet-version: |
             6.0.x
             7.0.x
+            8.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
@@ -101,6 +103,7 @@ jobs:
           dotnet-version: |
             6.0.x
             7.0.x
+            8.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
@@ -128,6 +131,7 @@ jobs:
           dotnet-version: |
             6.0.x
             7.0.x
+            8.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
@@ -155,6 +159,7 @@ jobs:
           dotnet-version: |
             6.0.x
             7.0.x
+            8.0.x
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
       - name: Setup VSTest
@@ -180,6 +185,7 @@ jobs:
           dotnet-version: |
             6.0.x
             7.0.x
+            8.0.x
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Build example solution
