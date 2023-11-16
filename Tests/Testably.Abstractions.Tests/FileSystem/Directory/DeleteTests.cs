@@ -135,6 +135,21 @@ public abstract partial class DeleteTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void Delete_Recursive_WithSubdirectory_ShouldDeleteDirectoryWithContent(
+		string path, string subdirectory)
+	{
+		string subdirectoryPath = FileSystem.Path.Combine(path, subdirectory);
+		FileSystem.Directory.CreateDirectory(subdirectoryPath);
+		FileSystem.Should().HaveDirectory(path);
+
+		FileSystem.Directory.Delete(path, true);
+
+		FileSystem.Should().NotHaveDirectory(path);
+		FileSystem.Should().NotHaveDirectory(subdirectoryPath);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Delete_Recursive_WithFileInSubdirectory_ShouldDeleteDirectoryWithContent(
 		string path, string subdirectory, string fileName, string fileContent)
 	{
 		FileSystem.Directory.CreateDirectory(path);
@@ -145,7 +160,7 @@ public abstract partial class DeleteTests<TFileSystem>
 		FileSystem.Directory.CreateDirectory(subdirectoryPath);
 		string subdirectoryFilePath = FileSystem.Path.Combine(path, subdirectory, fileName);
 		FileSystem.File.WriteAllText(subdirectoryFilePath, fileContent);
-		
+
 		FileSystem.Should().HaveDirectory(path);
 
 		FileSystem.Directory.Delete(path, true);
