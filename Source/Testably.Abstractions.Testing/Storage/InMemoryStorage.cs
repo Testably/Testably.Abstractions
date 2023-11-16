@@ -124,7 +124,7 @@ internal sealed class InMemoryStorage : IStorage
 			{
 				foreach (IStorageLocation key in children)
 				{
-					DeleteContainer(key);
+					DeleteContainer(key, recursive);
 				}
 			}
 			else if (children.Any())

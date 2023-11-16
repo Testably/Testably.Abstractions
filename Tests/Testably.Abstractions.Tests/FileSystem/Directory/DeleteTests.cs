@@ -149,6 +149,30 @@ public abstract partial class DeleteTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void Delete_Recursive_WithFileInSubdirectory_ShouldDeleteDirectoryWithContent(
+		string path, string subdirectory, string fileName, string fileContent)
+	{
+		FileSystem.Directory.CreateDirectory(path);
+		string filePath = FileSystem.Path.Combine(path, fileName);
+		FileSystem.File.WriteAllText(filePath, fileContent);
+
+		string subdirectoryPath = FileSystem.Path.Combine(path, subdirectory);
+		FileSystem.Directory.CreateDirectory(subdirectoryPath);
+		string subdirectoryFilePath = FileSystem.Path.Combine(path, subdirectory, fileName);
+		FileSystem.File.WriteAllText(subdirectoryFilePath, fileContent);
+
+		FileSystem.Should().HaveDirectory(path);
+
+		FileSystem.Directory.Delete(path, true);
+
+		FileSystem.Should().NotHaveDirectory(path);
+		FileSystem.Should().NotHaveFile(filePath);
+		FileSystem.Should().NotHaveDirectory(subdirectoryPath);
+		FileSystem.Should().NotHaveFile(subdirectoryFilePath);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Delete_ShouldAdjustTimes(string path, string subdirectoryName)
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
