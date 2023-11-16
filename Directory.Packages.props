@@ -35,8 +35,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageVersion Include="Testably.Abstractions" Version="2.5.0" />
-		<PackageVersion Include="Testably.Abstractions.Testing" Version="2.5.0" />
+		<PackageVersion Include="Testably.Abstractions" Version="2.5.1" />
+		<PackageVersion Include="Testably.Abstractions.Testing" Version="2.5.1" />
 		<PackageVersion Include="Testably.Abstractions.FluentAssertions" Version="1.0.0" />
 	</ItemGroup>
 
