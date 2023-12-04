@@ -11,7 +11,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
             6.0.x
@@ -81,7 +81,7 @@ jobs:
           version="${GITHUB_REF#refs/heads/release/}"
           git tag "${version}"
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
             6.0.x
@@ -109,7 +109,7 @@ jobs:
           version="${GITHUB_REF#refs/heads/release/}"
           git tag "${version}"
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
             6.0.x
@@ -137,7 +137,7 @@ jobs:
           version="${GITHUB_REF#refs/heads/release/}"
           git tag "${version}"
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
             6.0.x
@@ -189,7 +189,7 @@ jobs:
           version="${GITHUB_REF#refs/heads/release/}"
           git tag "${version}"
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
             6.0.x
@@ -215,7 +215,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
             6.0.x
@@ -243,7 +243,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
             6.0.x
@@ -296,7 +296,7 @@ jobs:
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v1.2.0
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
             6.0.x
