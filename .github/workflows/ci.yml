@@ -30,12 +30,12 @@ jobs:
           attempt_limit: 2
       - name: Upload test results (MacOS)
         if: ${{ always() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Test results (MacOS)
           path: TestResults
       - name: Upload coverage
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Code coverage (MacOS)
           path: "**/coverage.cobertura.xml"
@@ -64,12 +64,12 @@ jobs:
           attempt_limit: 2
       - name: Upload test results (Ubuntu)
         if: ${{ always() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Test results (Ubuntu)
           path: TestResults
       - name: Upload coverage
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Code coverage (Ubuntu)
           path: "**/coverage.cobertura.xml"
@@ -98,12 +98,12 @@ jobs:
           attempt_limit: 2
       - name: Upload test results (Windows)
         if: ${{ always() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Test results (Windows)
           path: TestResults
       - name: Upload coverage
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Code coverage (Windows)
           path: "**/coverage.cobertura.xml"
@@ -128,7 +128,7 @@ jobs:
         run: vstest.console.exe .\Build\Tests\Testably.Abstractions.Tests\net48\Testably.Abstractions.Tests.dll .\Build\Tests\Testably.Abstractions.Parity.Tests\net48\Testably.Abstractions.Parity.Tests.dll .\Build\Tests\Testably.Abstractions.Testing.Tests\net48\Testably.Abstractions.Testing.Tests.dll /Logger:trx /ResultsDirectory:TestResults
       - name: Upload test results (.NET Framework)
         if: ${{ always() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Test results (.NET Framework)
           path: TestResults
@@ -146,7 +146,7 @@ jobs:
         run: echo ${{ github.event.number }} > PR_NUMBER.txt
       - name: Archive PR number
         if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: PR_NUMBER
           path: PR_NUMBER.txt
