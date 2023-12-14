@@ -206,17 +206,17 @@ jobs:
         with:
           fetch-depth: 0
       - name: Download code coverage files (MacOS)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: Code coverage (MacOS)
           path: Coverage/MacOS
       - name: Download code coverage files (Ubuntu)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: Code coverage (Ubuntu)
           path: Coverage/Ubuntu
       - name: Download code coverage files (Windows)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: Code coverage (Windows)
           path: Coverage/Windows
