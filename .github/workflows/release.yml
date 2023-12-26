@@ -340,7 +340,7 @@ jobs:
     needs: [deploy, stryker-windows, stryker-ubuntu]
     steps:
       - name: Comment relevant issues and pull requests
-        uses: apexskier/github-release-commenter@v1.3.2
+        uses: apexskier/github-release-commenter@v1.3.6
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           comment-template: |
