@@ -34,7 +34,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void New_WithTrailingDirectorySeparatorChar_ShouldHaveEmptyName(string path)
+	public void New_WithTrailingDirectorySeparatorChar_ShouldHavePathAsName(string path)
 	{
 		IDirectoryInfo result = FileSystem.DirectoryInfo.New($"{path}{FileSystem.Path.DirectorySeparatorChar}");
 
