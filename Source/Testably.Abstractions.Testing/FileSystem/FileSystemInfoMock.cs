@@ -166,7 +166,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 #endif
 
 	/// <inheritdoc cref="IFileSystemInfo.Name" />
-	public string Name
+	public virtual string Name
 		=> _fileSystem.Path.GetPathRoot(Location.FullPath) == Location.FullPath
 			? Location.FullPath
 			: _fileSystem.Path.GetFileName(Location.FullPath.TrimEnd(

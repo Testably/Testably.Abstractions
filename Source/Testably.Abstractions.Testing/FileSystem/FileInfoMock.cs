@@ -70,6 +70,20 @@ internal sealed class FileInfoMock
 		}
 	}
 
+	/// <inheritdoc cref="IFileInfo.Name" />
+	public override string Name
+	{
+		get
+		{
+			if (Location.FullPath.EndsWith(FileSystem.Path.DirectorySeparatorChar))
+			{
+				return string.Empty;
+			}
+
+			return base.Name;
+		}
+	}
+
 	/// <inheritdoc cref="IFileInfo.AppendText()" />
 	public StreamWriter AppendText()
 		=> new(Open(FileMode.Append, FileAccess.Write));
