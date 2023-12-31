@@ -78,7 +78,14 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.FileInfo.New("\u00A0"); // Unicode char that's treated as whitespace
 		});
 
-		exception.Should().BeNull();
+		if (Test.IsNetFramework)
+		{
+			exception.Should().BeOfType<ArgumentException>();
+		}
+		else
+		{
+			exception.Should().BeNull();
+		}
 	}
 
 	[SkippableFact]

@@ -45,18 +45,20 @@ internal static class PathHelper
 		}
 
 		return Execute.OnWindows(
-			() =>
-			{
-				foreach (char c in path)
+			() => Execute.OnNetFramework(
+				() => string.IsNullOrWhiteSpace(path),
+				() =>
 				{
-					if (c != ' ')
+					foreach (char c in path)
 					{
-						return false;
+						if (c != ' ')
+						{
+							return false;
+						}
 					}
-				}
 
-				return true;
-			},
+					return true;
+				}),
 			() => false);
 	}
 
