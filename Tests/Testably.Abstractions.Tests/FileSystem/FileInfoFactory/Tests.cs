@@ -70,6 +70,15 @@ public abstract partial class Tests<TFileSystem>
 		result.Should().Be(bytes.Length);
 	}
 
+	[SkippableTheory]
+	[AutoData]
+	public void New_WithTrailingDirectorySeparatorChar_ShouldHaveEmptyName(string path)
+	{
+		IFileInfo result = FileSystem.FileInfo.New($"{path}{FileSystem.Path.DirectorySeparatorChar}");
+
+		result.Name.Should().Be(string.Empty);
+	}
+
 	[SkippableFact]
 	public void New_WithUnicodeWhitespace_ShouldNotThrow()
 	{
