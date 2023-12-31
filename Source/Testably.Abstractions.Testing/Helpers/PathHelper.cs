@@ -40,7 +40,9 @@ internal static class PathHelper
 	internal static bool IsEffectivelyEmpty(this string path)
 	{
 		if (string.IsNullOrEmpty(path))
+		{
 			return true;
+		}
 
 		return Execute.OnWindows(
 			() =>

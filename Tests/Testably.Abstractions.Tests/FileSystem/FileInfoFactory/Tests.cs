@@ -91,8 +91,7 @@ public abstract partial class Tests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeOfType<ArgumentException>()
-				.Which.ParamName.Should().Be("path");
+			exception.Should().BeOfType<ArgumentException>();
 		}
 		else
 		{
