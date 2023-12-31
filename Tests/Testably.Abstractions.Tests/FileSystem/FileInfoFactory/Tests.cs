@@ -71,6 +71,36 @@ public abstract partial class Tests<TFileSystem>
 	}
 
 	[SkippableFact]
+	public void New_WithUnicodeWhitespace_ShouldNotThrow()
+	{
+		var exception = Record.Exception(() =>
+		{
+			FileSystem.FileInfo.New("\u00A0"); // Unicode char that's treated as whitespace
+		});
+
+		exception.Should().BeNull();
+	}
+
+	[SkippableFact]
+	public void New_WithWhitespace_ShouldThrowOnlyOnWindows()
+	{
+		var exception = Record.Exception(() =>
+		{
+			FileSystem.FileInfo.New("   ");
+		});
+
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeOfType<ArgumentException>()
+				.Which.ParamName.Should().Be("path");
+		}
+		else
+		{
+			exception.Should().BeNull();
+		}
+	}
+
+	[SkippableFact]
 	public void Wrap_Null_ShouldReturnNull()
 	{
 		IFileInfo? result = FileSystem.FileInfo.Wrap(null);
