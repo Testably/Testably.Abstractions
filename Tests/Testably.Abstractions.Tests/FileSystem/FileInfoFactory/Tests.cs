@@ -74,9 +74,9 @@ public abstract partial class Tests<TFileSystem>
 	[AutoData]
 	public void New_WithTrailingDirectorySeparatorChar_ShouldHaveEmptyName(string path)
 	{
-		var fi = FileSystem.FileInfo.New($"{path}{FileSystem.Path.DirectorySeparatorChar}");
+		IFileInfo result = FileSystem.FileInfo.New($"{path}{FileSystem.Path.DirectorySeparatorChar}");
 
-		fi.Name.Should().Be(string.Empty);
+		result.Name.Should().Be(string.Empty);
 	}
 
 	[SkippableFact]

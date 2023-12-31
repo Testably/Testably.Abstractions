@@ -32,21 +32,21 @@ public abstract partial class Tests<TFileSystem>
 		result.Should().NotExist();
 	}
 
+	[SkippableTheory]
+	[AutoData]
+	public void New_WithTrailingDirectorySeparatorChar_ShouldHaveEmptyName(string path)
+	{
+		IDirectoryInfo result = FileSystem.DirectoryInfo.New($"{path}{FileSystem.Path.DirectorySeparatorChar}");
+
+		result.Name.Should().Be(path);
+	}
+
 	[SkippableFact]
 	public void Wrap_Null_ShouldReturnNull()
 	{
 		IDirectoryInfo? result = FileSystem.DirectoryInfo.Wrap(null);
 
 		result.Should().BeNull();
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void New_WithTrailingDirectorySeparatorChar_ShouldHaveEmptyName(string path)
-	{
-		var fi = FileSystem.DirectoryInfo.New($"{path}{FileSystem.Path.DirectorySeparatorChar}");
-
-		fi.Name.Should().Be(path);
 	}
 
 	[SkippableTheory]
