@@ -32,6 +32,32 @@ internal static class PathHelper
 			() => false);
 	}
 
+	/// <summary>
+	///     Returns true if the path is effectively empty for the current OS.
+	///     For unix, this is empty or null. For Windows, this is empty, null, or
+	///     just spaces ((char)32).
+	/// </summary>
+	internal static bool IsEffectivelyEmpty(this string path)
+	{
+		if (string.IsNullOrEmpty(path))
+			return true;
+
+		return Execute.OnWindows(
+			() =>
+			{
+				foreach (char c in path)
+				{
+					if (c != ' ')
+					{
+						return false;
+					}
+				}
+
+				return true;
+			},
+			() => false);
+	}
+
 	internal static bool IsUncPath([NotNullWhen(true)] this string? path)
 	{
 		if (path == null)

@@ -33,7 +33,7 @@ internal sealed class FileInfoFactoryMock : IFileInfoFactory
 			throw new ArgumentNullException(nameof(fileName));
 		}
 
-		if (fileName.Trim() == "" && Execute.IsWindows)
+		if (fileName.IsEffectivelyEmpty())
 		{
 			throw ExceptionFactory.PathIsEmpty("path");
 		}
