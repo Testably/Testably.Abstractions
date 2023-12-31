@@ -42,6 +42,15 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void New_WithTrailingDirectorySeparatorChar_ShouldHaveEmptyName(string path)
+	{
+		var fi = FileSystem.DirectoryInfo.New($"{path}{FileSystem.Path.DirectorySeparatorChar}");
+
+		fi.Name.Should().Be(path);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Wrap_ShouldWrapFromDirectoryInfo(string path)
 	{
 		System.IO.DirectoryInfo directoryInfo = new("S:\\" + path);
