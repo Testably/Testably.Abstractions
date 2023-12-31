@@ -70,7 +70,7 @@ internal sealed class FileInfoMock
 		}
 	}
 
-	/// <inheritdoc cref="IFileInfo.Name" />
+	/// <inheritdoc cref="IFileSystemInfo.Name" />
 	public override string Name
 	{
 		get
