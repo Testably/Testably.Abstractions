@@ -167,7 +167,7 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 
 	public static TheoryData<Encoding> GetEncodingsForReadAllText()
 	{
-		return new TheoryData<Encoding>()
+		return new TheoryData<Encoding>
 		{
 			// little endian
 			new UTF32Encoding(false, true, true),

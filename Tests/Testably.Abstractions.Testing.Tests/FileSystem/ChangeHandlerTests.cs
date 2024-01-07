@@ -106,7 +106,7 @@ public class ChangeHandlerTests
 
 	public static TheoryData<Action<IFileSystem, string>?, Action<IFileSystem, string>, WatcherChangeTypes, FileSystemTypes, string> NotificationTriggeringMethods()
 	{
-		return new TheoryData<Action<IFileSystem, string>?, Action<IFileSystem, string>, WatcherChangeTypes, FileSystemTypes, string>()
+		return new TheoryData<Action<IFileSystem, string>?, Action<IFileSystem, string>, WatcherChangeTypes, FileSystemTypes, string>
 		{
 			{
 				null,
