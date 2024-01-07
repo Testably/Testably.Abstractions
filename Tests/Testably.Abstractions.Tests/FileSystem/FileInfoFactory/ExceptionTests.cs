@@ -94,9 +94,9 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	#region Helpers
 
-	public static TheoryData<Expression<Action<IFileInfoFactory>>, string?, bool> GetFileInfoFactoryCallbacks(string? path)
+	public static TheoryData<Expression<Action<IFileInfoFactory>>, string, bool> GetFileInfoFactoryCallbacks(string? path)
 	{
-		TheoryData<Expression<Action<IFileInfoFactory>>, string?, bool> theoryData = new();
+		TheoryData<Expression<Action<IFileInfoFactory>>, string, bool> theoryData = new();
 		foreach (var item in GetFileInfoFactoryCallbackTestParameters(path!)
 			.Where(item => item.TestType.HasFlag(path.ToTestType())))
 		{
@@ -108,7 +108,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 		return theoryData;
 	}
 
-	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string? ParamName,
+	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
 			Expression<Action<IFileInfoFactory>> Callback)>
 		GetFileInfoFactoryCallbackTestParameters(string value)
 	{

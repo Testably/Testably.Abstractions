@@ -94,9 +94,9 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	#region Helpers
 
-	public static TheoryData<Expression<Action<IDirectoryInfoFactory>>, string?, bool> GetDirectoryInfoFactoryCallbacks(string? path)
+	public static TheoryData<Expression<Action<IDirectoryInfoFactory>>, string, bool> GetDirectoryInfoFactoryCallbacks(string? path)
 	{
-		TheoryData<Expression<Action<IDirectoryInfoFactory>>, string?, bool> theoryData = new();
+		TheoryData<Expression<Action<IDirectoryInfoFactory>>, string, bool> theoryData = new();
 		foreach (var item in GetDirectoryInfoFactoryCallbackTestParameters(path!)
 			.Where(item => item.TestType.HasFlag(path.ToTestType())))
 		{
@@ -108,7 +108,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 		return theoryData;
 	}
 
-	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string? ParamName,
+	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
 			Expression<Action<IDirectoryInfoFactory>> Callback)>
 		GetDirectoryInfoFactoryCallbackTestParameters(string value)
 	{
