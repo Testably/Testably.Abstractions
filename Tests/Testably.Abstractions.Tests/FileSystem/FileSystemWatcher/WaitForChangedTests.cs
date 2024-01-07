@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,32 +9,6 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	#region Test Setup
-
-	public static IEnumerable<object?[]> WaitForChangedTimeoutParameters
-	{
-		get
-		{
-			yield return new object?[]
-			{
-				"foo.dll",
-				new Func<IFileSystemWatcher, IWaitForChangedResult>(fileSystemWatcher
-					=> fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed, 100))
-			};
-#if FEATURE_FILESYSTEM_NET7
-			yield return new object?[]
-			{
-				"bar.txt",
-				new Func<IFileSystemWatcher, IWaitForChangedResult>(fileSystemWatcher
-					=> fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed,
-						TimeSpan.FromMilliseconds(100)))
-			};
-#endif
-		}
-	}
-
-	#endregion
-
 	[SkippableTheory]
 	[AutoData]
 	public void WaitForChanged_ShouldBlockUntilEventHappens(string path)
@@ -77,7 +50,7 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[MemberData(nameof(WaitForChangedTimeoutParameters))]
+	[MemberData(nameof(GetWaitForChangedTimeoutParameters))]
 	public void WaitForChanged_Timeout_ShouldReturnTimedOut(string path,
 		Func<IFileSystemWatcher, IWaitForChangedResult> callback)
 	{
@@ -112,4 +85,29 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 			ms.Set();
 		}
 	}
+
+	#region Helpers
+
+	public static TheoryData<string, Func<IFileSystemWatcher, IWaitForChangedResult>> GetWaitForChangedTimeoutParameters()
+	{
+		TheoryData<string, Func<IFileSystemWatcher, IWaitForChangedResult>> theoryData = new()
+			{
+				{
+					"foo.dll",
+					new Func<IFileSystemWatcher, IWaitForChangedResult>(fileSystemWatcher
+						=> fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed, 100))
+				}
+			};
+#if FEATURE_FILESYSTEM_NET7
+		theoryData.Add(
+			"bar.txt",
+			new Func<IFileSystemWatcher, IWaitForChangedResult>(fileSystemWatcher
+				=> fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed,
+					TimeSpan.FromMilliseconds(100)))
+		);
+#endif
+		return theoryData;
+	}
+
+	#endregion
 }

@@ -106,16 +106,19 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	#region Helpers
 
-	public static IEnumerable<object?[]> GetFileCallbacks(string? path)
-		=> GetFileCallbackTestParameters(path!)
-			.Where(item => item.TestType.HasFlag(path.ToTestType()))
-			.Select(item => new object?[]
-			{
+	public static TheoryData<Expression<Action<IFile>>, string?, bool> GetFileCallbacks(string? path)
+	{
+		TheoryData<Expression<Action<IFile>>, string?, bool> theoryData = new();
+		foreach (var item in GetFileCallbackTestParameters(path!)
+			.Where(item => item.TestType.HasFlag(path.ToTestType())))
+		{
+			theoryData.Add(
 				item.Callback,
 				item.ParamName,
-				item.TestType.HasFlag(ExceptionTestHelper.TestTypes
-					.IgnoreParamNameCheck)
-			});
+				item.TestType.HasFlag(ExceptionTestHelper.TestTypes.IgnoreParamNameCheck));
+		}
+		return theoryData;
+	}
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string? ParamName,
 			Expression<Action<IFile>> Callback)>

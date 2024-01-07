@@ -126,17 +126,19 @@ public abstract partial class Tests<TFileSystem>
 		}
 	}
 
-	public static IEnumerable<object[]> EntryNameEncoding()
+	#region Helpers
+
+	public static TheoryData<string, Encoding, bool> EntryNameEncoding()
 	{
 		// ReSharper disable StringLiteralTypo
-		yield return new object[]
+		TheoryData<string, Encoding, bool> theoryData = new()
 		{
-			"Dans mes rêves.mp3", Encoding.Default, true
-		};
-		yield return new object[]
-		{
-			"Dans mes rêves.mp3", Encoding.ASCII, false
+			{ "Dans mes rêves.mp3", Encoding.Default, true },
+			{ "Dans mes rêves.mp3", Encoding.ASCII, false }
 		};
 		// ReSharper restore StringLiteralTypo
+		return theoryData;
 	}
+
+	#endregion
 }

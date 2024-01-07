@@ -27,7 +27,7 @@ public class DefaultAccessControlStrategyTests
 	[SkippableFact]
 	public void IsAccessGranted_ShouldUseCallback()
 	{
-		DefaultAccessControlStrategy sut = new((p, _) => p.StartsWith("a"));
+		DefaultAccessControlStrategy sut = new((p, _) => p.StartsWith('a'));
 
 		sut.IsAccessGranted("abc", new FileSystemExtensibility()).Should().BeTrue();
 		sut.IsAccessGranted("xyz", new FileSystemExtensibility()).Should().BeFalse();

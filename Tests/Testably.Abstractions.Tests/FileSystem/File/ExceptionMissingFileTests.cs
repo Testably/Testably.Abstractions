@@ -81,13 +81,11 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		Default,
 	}
 
-	public static IEnumerable<object?[]> GetFileCallbacks(int testCases)
-		=> GetFileCallbackTestParameters()
-			.Where(item => (item.TestCase & (MissingFileTestCase)testCases) != 0)
-			.Select(item => new object?[]
-			{
-				item.Callback
-			});
+	public static TheoryData<Expression<Action<IFile, string>>> GetFileCallbacks(int testCases)
+		=> new TheoryData<Expression<Action<IFile, string>>>(
+			GetFileCallbackTestParameters()
+				.Where(item => (item.TestCase & (MissingFileTestCase)testCases) != 0)
+				.Select(item => item.Callback));
 
 	private static IEnumerable<(MissingFileTestCase TestCase, ExpectedExceptionType ExceptionType,
 			Expression<Action<IFile, string>> Callback)>

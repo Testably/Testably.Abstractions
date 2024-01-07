@@ -162,13 +162,16 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 
 	#region Helpers
 
-	public static IEnumerable<object?[]> GetFileCallbacks(int baseType)
-		=> GetFileCallbackTestParameters()
-			.Where(item => (item.BaseType & (BaseTypes)baseType) > 0)
-			.Select(item => new object?[]
-			{
-				item.Callback, item.BaseType, item.MethodType
-			});
+	public static TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> GetFileCallbacks(int baseType)
+	{
+		TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> theoryData = new();
+		foreach (var item in GetFileCallbackTestParameters()
+			.Where(item => (item.BaseType & (BaseTypes)baseType) > 0))
+		{
+			theoryData.Add(item.Callback, item.BaseType, item.MethodType);
+		}
+		return theoryData;
+	}
 
 	private static
 		IEnumerable<(

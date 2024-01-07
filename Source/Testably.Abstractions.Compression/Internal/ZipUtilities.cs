@@ -208,7 +208,7 @@ internal static class ZipUtilities
 			source.FileSystem.Directory.CreateDirectory(directoryPath);
 		}
 
-		if (source.FullName.EndsWith("/"))
+		if (source.FullName.EndsWith('/'))
 		{
 			if (source.Length != 0)
 			{

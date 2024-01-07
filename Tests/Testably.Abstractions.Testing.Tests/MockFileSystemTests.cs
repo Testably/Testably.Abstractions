@@ -97,7 +97,7 @@ public class MockFileSystemTests
 	{
 		string? driveName = Path.GetPathRoot(Directory.GetCurrentDirectory());
 
-		Skip.If(!Test.RunsOnWindows || driveName?.StartsWith("C") != false);
+		Skip.If(!Test.RunsOnWindows || driveName?.StartsWith('C') != false);
 
 		MockFileSystem sut = new();
 

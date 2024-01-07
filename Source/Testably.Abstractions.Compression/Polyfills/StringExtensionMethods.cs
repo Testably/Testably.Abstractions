@@ -18,15 +18,5 @@ internal static class StringExtensionMethods
 	{
 		return @this.EndsWith($"{value}");
 	}
-	
-	/// <summary>
-	///     Determines whether this string instance starts with the specified character.
-	/// </summary>
-	internal static bool StartsWith(
-		this string @this,
-		char value)
-	{
-		return @this.StartsWith($"{value}");
-	}
 }
 #endif

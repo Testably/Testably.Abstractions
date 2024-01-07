@@ -27,16 +27,14 @@ public class RandomSystemExtensibilityTests
 		result.Should().Be(randomSystem);
 	}
 
-	public static IEnumerable<object[]> GetRandomSystems =>
-		new List<object[]>
+	#region Helpers
+
+	public static TheoryData<IRandomSystem> GetRandomSystems
+		=> new()
 		{
-			new object[]
-			{
-				new RealRandomSystem()
-			},
-			new object[]
-			{
-				new MockRandomSystem()
-			},
+			new RealRandomSystem(),
+			new MockRandomSystem()
 		};
+
+	#endregion
 }

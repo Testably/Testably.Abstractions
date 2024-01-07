@@ -62,6 +62,6 @@ public class RandomSystemExtensionsTests
 		// Check edge cases for directories
 		fileNames.Should().Contain(d => d.Contains(' '));
 		fileNames.Should().Contain(d => d.Length == 1);
-		fileNames.Should().Contain(d => d.StartsWith("."));
+		fileNames.Should().Contain(d => d.StartsWith('.'));
 	}
 }
