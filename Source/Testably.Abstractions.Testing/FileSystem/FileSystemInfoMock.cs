@@ -114,7 +114,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	{
 		get
 		{
-			if (Location.FullPath.EndsWith(".") &&
+			if (Location.FullPath.EndsWith('.') &&
 			    !Execute.IsWindows)
 			{
 				return ".";

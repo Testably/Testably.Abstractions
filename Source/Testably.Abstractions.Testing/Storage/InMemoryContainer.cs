@@ -250,7 +250,7 @@ internal class InMemoryContainer : IStorageContainer
 
 	internal FileAttributes AdjustAttributes(FileAttributes attributes)
 	{
-		if (Path.GetFileName(_location.FullPath).StartsWith("."))
+		if (Path.GetFileName(_location.FullPath).StartsWith('.'))
 		{
 			FileAttributes attr = attributes;
 			attributes = Execute.OnLinux(
