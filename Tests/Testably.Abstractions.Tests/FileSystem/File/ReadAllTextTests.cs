@@ -165,26 +165,15 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 
 	#region Helpers
 
-	public static IEnumerable<object?[]> GetEncodingsForReadAllText()
+	public static TheoryData<Encoding> GetEncodingsForReadAllText()
 	{
-		// little endian
-		yield return new object?[]
+		return new TheoryData<Encoding>()
 		{
-			new UTF32Encoding(false, true, true)
-		};
-
-		// big endian
-		yield return new object?[]
-		{
-			new UTF32Encoding(true, true, true)
-		};
-		yield return new object?[]
-		{
-			new UTF8Encoding(true, true)
-		};
-
-		yield return new object?[]
-		{
+			// little endian
+			new UTF32Encoding(false, true, true),
+			// big endian
+			new UTF32Encoding(true, true, true),
+			new UTF8Encoding(true, true),
 			new ASCIIEncoding()
 		};
 	}

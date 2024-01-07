@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,25 +13,27 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 {
 	#region Test Setup
 
-	public static IEnumerable<object?[]> WaitForChangedTimeoutParameters
+	public static TheoryData<string, Func<IFileSystemWatcher, IWaitForChangedResult>> WaitForChangedTimeoutParameters
 	{
 		get
 		{
-			yield return new object?[]
+			TheoryData<string, Func<IFileSystemWatcher, IWaitForChangedResult>> theoryData = new()
 			{
-				"foo.dll",
-				new Func<IFileSystemWatcher, IWaitForChangedResult>(fileSystemWatcher
-					=> fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed, 100))
+				{
+					"foo.dll",
+					new Func<IFileSystemWatcher, IWaitForChangedResult>(fileSystemWatcher
+						=> fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed, 100))
+				}
 			};
 #if FEATURE_FILESYSTEM_NET7
-			yield return new object?[]
-			{
+			theoryData.Add(
 				"bar.txt",
 				new Func<IFileSystemWatcher, IWaitForChangedResult>(fileSystemWatcher
 					=> fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed,
 						TimeSpan.FromMilliseconds(100)))
-			};
+			);
 #endif
+			return theoryData;
 		}
 	}
 

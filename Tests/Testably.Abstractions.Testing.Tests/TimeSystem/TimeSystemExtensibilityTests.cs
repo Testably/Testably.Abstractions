@@ -60,16 +60,14 @@ public class TimeSystemExtensibilityTests
 		result.Should().Be(timeSystem);
 	}
 
-	public static IEnumerable<object[]> GetTimeSystems =>
-		new List<object[]>
+	#region Helpers
+
+	public static TheoryData<ITimeSystem> GetTimeSystems
+		=> new()
 		{
-			new object[]
-			{
-				new RealTimeSystem()
-			},
-			new object[]
-			{
-				new MockTimeSystem()
-			},
+			new RealTimeSystem(),
+			new MockTimeSystem()
 		};
+
+	#endregion
 }

@@ -76,12 +76,9 @@ public abstract partial class DisposeTests<TFileSystem>
 
 	#region Helpers
 
-	public static IEnumerable<object?[]> GetFileStreamCallbacks()
-		=> GetFileStreamCallbackTestParameters()
-			.Select(item => new object?[]
-			{
-				item
-			});
+	public static TheoryData<Expression<Action<FileSystemStream>>> GetFileStreamCallbacks()
+		=> new TheoryData<Expression<Action<FileSystemStream>>>(
+			GetFileStreamCallbackTestParameters());
 
 	private static IEnumerable<Expression<Action<FileSystemStream>>>
 		GetFileStreamCallbackTestParameters()

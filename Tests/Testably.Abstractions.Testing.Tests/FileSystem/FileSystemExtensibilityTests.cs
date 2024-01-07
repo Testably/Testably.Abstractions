@@ -148,16 +148,14 @@ public class FileSystemExtensibilityTests
 		result.Should().BeSameAs(fileSystem);
 	}
 
-	public static IEnumerable<object[]> GetFileSystems =>
-		new List<object[]>
+	#region Helpers
+
+	public static TheoryData<IFileSystem> GetFileSystems
+		=> new()
 		{
-			new object[]
-			{
-				new RealFileSystem()
-			},
-			new object[]
-			{
-				new MockFileSystem()
-			},
+			new RealFileSystem(),
+			new MockFileSystem()
 		};
+
+	#endregion
 }
