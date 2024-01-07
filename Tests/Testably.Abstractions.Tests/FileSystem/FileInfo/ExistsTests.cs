@@ -5,6 +5,17 @@ public abstract partial class ExistsTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
+	[SkippableFact]
+	public void Reproduce_Issue1072()
+	{
+		FileSystem.File.WriteAllText("file", ""); // This file exists to distract the mocking file system.
+
+		var fi = FileSystem.FileInfo.New("file/"); // fi created from a directory path.
+
+		fi.Name.Should().Be(string.Empty);
+		fi.Exists.Should().BeTrue();
+	}
+
 	[SkippableTheory]
 	[AutoData]
 	public void Exists_Directory_ShouldReturnFalse(string path)
