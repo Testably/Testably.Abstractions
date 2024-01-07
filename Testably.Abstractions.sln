@@ -16,6 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{94F99274-3518-45
 		LICENSE = LICENSE
 		nuget.config = nuget.config
 		README.md = README.md
+		renovate.json = renovate.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{61F335A6-9CE0-4040-A34F-E70B1A55077D}"
@@ -43,6 +44,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{5E35E265-7110-47A0-9E3E-B5180BBB5AA6}"
 	ProjectSection(SolutionItems) = preProject
 		coverage-settings.xml = coverage-settings.xml
+		.github\mergify.yml = .github\mergify.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stryker", "stryker", "{4D8D7391-1E7B-4051-AD7E-4086AFD4E024}"
@@ -61,6 +63,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\pr.yml = .github\workflows\pr.yml
 		.github\workflows\release.yml = .github\workflows\release.yml
 		.github\workflows\stryker.yml = .github\workflows\stryker.yml
+		.github\workflows\test-report.yml = .github\workflows\test-report.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.Parity.Tests", "Tests\Testably.Abstractions.Parity.Tests\Testably.Abstractions.Parity.Tests.csproj", "{E9A42D82-0609-4D6B-B270-A30176B4FCF2}"

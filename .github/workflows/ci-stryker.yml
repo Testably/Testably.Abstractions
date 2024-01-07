@@ -61,7 +61,7 @@ jobs:
           ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.Testing.json -v "${GITHUB_HEAD_REF}" -r "html" -r "cleartext" --since:main
           mv ./StrykerOutput/**/reports/*.html ./StrykerOutput/Reports/Testably.Abstractions.Testing-report.html
       - name: Upload Stryker reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: Stryker
           path: Tests/StrykerOutput/Reports/*

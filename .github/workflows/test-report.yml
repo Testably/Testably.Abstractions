@@ -1,0 +1,42 @@
+name: 'Test Report'
+on:
+  workflow_run:
+    workflows: ['CI']
+    types:
+      - completed
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: dorny/test-reporter@v1
+      if: success() || failure()
+      with:
+        artifact: Test results (MacOS)
+        name: MacOS Tests
+        path: '*.trx'
+        reporter: dotnet-trx
+        fail-on-error: 'false'
+    - uses: dorny/test-reporter@v1
+      if: success() || failure()
+      with:
+        artifact: Test results (Ubuntu)
+        name: Ubuntu Tests
+        path: '*.trx'
+        reporter: dotnet-trx
+        fail-on-error: 'false'
+    - uses: dorny/test-reporter@v1
+      if: success() || failure()
+      with:
+        artifact: Test results (Windows)
+        name: Windows Tests
+        path: '*.trx'
+        reporter: dotnet-trx
+        fail-on-error: 'false'
+    - uses: dorny/test-reporter@v1
+      if: success() || failure()
+      with:
+        artifact: Test results (.NET Framework)
+        name: .NET Framework Tests
+        path: '*.trx'
+        reporter: dotnet-trx
+        fail-on-error: 'false'

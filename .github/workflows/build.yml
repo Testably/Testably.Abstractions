@@ -84,7 +84,7 @@ jobs:
           command: dotnet test --no-build --collect:"XPlat Code Coverage"
           attempt_limit: 2
       - name: Upload coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: Code coverage (MacOS)
           path: "**/coverage.cobertura.xml"
@@ -112,7 +112,7 @@ jobs:
           command: dotnet test --no-build --collect:"XPlat Code Coverage"
           attempt_limit: 2
       - name: Upload coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: Code coverage (Ubuntu)
           path: "**/coverage.cobertura.xml"
@@ -140,7 +140,7 @@ jobs:
           command: dotnet test --no-build --collect:"XPlat Code Coverage"
           attempt_limit: 2
       - name: Upload coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: Code coverage (Windows)
           path: "**/coverage.cobertura.xml"
@@ -206,17 +206,17 @@ jobs:
         with:
           fetch-depth: 0
       - name: Download code coverage files (MacOS)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: Code coverage (MacOS)
           path: Coverage/MacOS
       - name: Download code coverage files (Ubuntu)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: Code coverage (Ubuntu)
           path: Coverage/Ubuntu
       - name: Download code coverage files (Windows)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: Code coverage (Windows)
           path: Coverage/Windows

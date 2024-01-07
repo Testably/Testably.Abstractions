@@ -6,7 +6,8 @@
 	"packageRules": [
 		{
 			"matchPackagePatterns": "^Testably.Abstractions",
-			"groupName": ["Testably.Abstractions packages"]
+			"groupName": [ "Testably.Abstractions packages" ]
 		}
-	]
+	],
+	"ignoreDeps": [ "actions/download-artifact", "actions/upload-artifact" ]
 }
