@@ -314,7 +314,7 @@ public class InMemoryContainerTests
 		MockFileSystem fileSystem = new();
 		string expectedPath = fileSystem.Path.GetFullPath("foo");
 		IStorageLocation location = InMemoryLocation.New(null, expectedPath);
-		IStorageContainer sut = new InMemoryContainer(FileSystemTypes.DirectoryOrFile, location,
+		InMemoryContainer sut = new InMemoryContainer(FileSystemTypes.DirectoryOrFile, location,
 			fileSystem);
 
 		string? result = sut.ToString();

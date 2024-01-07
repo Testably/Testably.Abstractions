@@ -35,7 +35,7 @@ internal sealed class RandomFactory : IRandomFactory
 	/// <summary>
 	///     <see href="https://andrewlock.net/building-a-thread-safe-random-implementation-for-dotnet-framework/" />
 	/// </summary>
-	private static IRandom CreateThreadSafeRandomWrapper()
+	private static RandomWrapper CreateThreadSafeRandomWrapper()
 	{
 		int seed;
 		lock (Global)

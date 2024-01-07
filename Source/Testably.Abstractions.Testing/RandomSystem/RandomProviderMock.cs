@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing.RandomSystem;
 
 internal sealed class RandomProviderMock : IRandomProvider
 {
-	[ThreadStatic] private static IRandom? _shared;
+	[ThreadStatic] private static RandomMock? _shared;
 
 	private static Generator<Guid> DefaultGuidGenerator
 		=> Generator<Guid>.FromCallback(Guid.NewGuid);
@@ -34,7 +34,7 @@ internal sealed class RandomProviderMock : IRandomProvider
 
 	#endregion
 
-	private static IRandom DefaultRandomGenerator(int seed)
+	private static RandomMock DefaultRandomGenerator(int seed)
 	{
 		if (seed == SharedSeed)
 		{
