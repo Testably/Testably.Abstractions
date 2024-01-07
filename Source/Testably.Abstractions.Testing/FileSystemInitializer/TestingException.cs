@@ -6,7 +6,9 @@ namespace Testably.Abstractions.Testing.FileSystemInitializer;
 /// <summary>
 ///     Custom <see cref="TestingException" /> when using the test system incorrectly.
 /// </summary>
+#if !NET8_0_OR_GREATER
 [Serializable]
+#endif
 public class TestingException : Exception
 {
 	/// <summary>
