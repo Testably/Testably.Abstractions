@@ -16,6 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{94F99274-3518-45
 		LICENSE = LICENSE
 		nuget.config = nuget.config
 		README.md = README.md
+		renovate.json = renovate.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{61F335A6-9CE0-4040-A34F-E70B1A55077D}"
