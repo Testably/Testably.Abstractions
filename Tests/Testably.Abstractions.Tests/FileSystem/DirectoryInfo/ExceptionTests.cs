@@ -116,9 +116,9 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	#region Helpers
 
-	public static TheoryData<Expression<Action<IDirectoryInfo>>, string?, bool> GetDirectoryInfoCallbacks(string? path)
+	public static TheoryData<Expression<Action<IDirectoryInfo>>, string, bool> GetDirectoryInfoCallbacks(string? path)
 	{
-		TheoryData<Expression<Action<IDirectoryInfo>>, string?, bool> theoryData = new();
+		TheoryData<Expression<Action<IDirectoryInfo>>, string, bool> theoryData = new();
 		foreach (var item in GetDirectoryInfoCallbackTestParameters(path!)
 			.Where(item => item.TestType.HasFlag(path.ToTestType())))
 		{
@@ -130,7 +130,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 		return theoryData;
 	}
 
-	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string? ParamName,
+	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
 			Expression<Action<IDirectoryInfo>> Callback)>
 		GetDirectoryInfoCallbackTestParameters(string value)
 	{
