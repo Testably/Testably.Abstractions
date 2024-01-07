@@ -24,6 +24,7 @@ dotnet_diagnostic.CA1510.severity = none
 dotnet_diagnostic.CA1513.severity = none
 dotnet_diagnostic.CA1512.severity = none
 dotnet_diagnostic.CA1860.severity = none
+dotnet_diagnostic.CA1861.severity = none
 
 # C# files
 [*.cs]
