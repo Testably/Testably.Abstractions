@@ -165,7 +165,7 @@ jobs:
           version="${GITHUB_REF#refs/heads/release/}"
           git tag "${version}"
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1
+        uses: microsoft/setup-msbuild@v2
       - name: Setup VSTest
         uses: darenm/Setup-VSTest@v1
       - name: Navigate to Workspace
