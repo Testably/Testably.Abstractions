@@ -15,7 +15,7 @@ public class InMemoryContainerTests
 		MockFileSystem fileSystem = new();
 		DriveInfoMock drive =
 			DriveInfoMock.New("C", fileSystem);
-		IStorageLocation location = InMemoryLocation.New(drive,
+		IStorageLocation location = InMemoryLocation.New(fileSystem, drive,
 			fileSystem.Path.GetFullPath(path));
 
 		InMemoryContainer container = new(FileSystemTypes.File, location, fileSystem);
@@ -34,7 +34,7 @@ public class InMemoryContainerTests
 		MockFileSystem fileSystem = new();
 		DriveInfoMock drive =
 			DriveInfoMock.New("C", fileSystem);
-		IStorageLocation location = InMemoryLocation.New(drive,
+		IStorageLocation location = InMemoryLocation.New(fileSystem, drive,
 			fileSystem.Path.GetFullPath(path));
 
 		InMemoryContainer container = new(FileSystemTypes.File, location, fileSystem);
@@ -53,7 +53,7 @@ public class InMemoryContainerTests
 		MockFileSystem fileSystem = new();
 		DriveInfoMock drive =
 			DriveInfoMock.New("C", fileSystem);
-		IStorageLocation location = InMemoryLocation.New(drive,
+		IStorageLocation location = InMemoryLocation.New(fileSystem, drive,
 			fileSystem.Path.GetFullPath(path));
 
 		InMemoryContainer container = new(FileSystemTypes.File, location, fileSystem);
@@ -80,7 +80,7 @@ public class InMemoryContainerTests
 		MockFileSystem fileSystem = new();
 		DriveInfoMock drive =
 			DriveInfoMock.New("C", fileSystem);
-		IStorageLocation location = InMemoryLocation.New(drive,
+		IStorageLocation location = InMemoryLocation.New(fileSystem, drive,
 			fileSystem.Path.GetFullPath(path));
 
 		InMemoryContainer container = new(FileSystemTypes.File, location, fileSystem)
@@ -106,7 +106,7 @@ public class InMemoryContainerTests
 	public void Container_ShouldProvideCorrectTimeAndFileSystem(string path)
 	{
 		MockFileSystem fileSystem = new();
-		IStorageLocation location = InMemoryLocation.New(null, path);
+		IStorageLocation location = InMemoryLocation.New(fileSystem, null, path);
 		IStorageContainer sut = InMemoryContainer.NewFile(location, fileSystem);
 
 		sut.FileSystem.Should().BeSameAs(fileSystem);
@@ -121,7 +121,7 @@ public class InMemoryContainerTests
 		MockFileSystem fileSystem = new();
 		DriveInfoMock drive =
 			DriveInfoMock.New("C", fileSystem);
-		IStorageLocation location = InMemoryLocation.New(drive,
+		IStorageLocation location = InMemoryLocation.New(fileSystem, drive,
 			fileSystem.Path.GetFullPath(path));
 		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);
 		fileContainer.WriteBytes(bytes);
@@ -141,7 +141,7 @@ public class InMemoryContainerTests
 		MockFileSystem fileSystem = new();
 		DriveInfoMock drive =
 			DriveInfoMock.New("C", fileSystem);
-		IStorageLocation location = InMemoryLocation.New(drive,
+		IStorageLocation location = InMemoryLocation.New(fileSystem, drive,
 			fileSystem.Path.GetFullPath(path));
 		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);
 		fileContainer.WriteBytes(bytes);
@@ -159,7 +159,7 @@ public class InMemoryContainerTests
 		MockFileSystem fileSystem = new();
 		DriveInfoMock drive =
 			DriveInfoMock.New("C", fileSystem);
-		IStorageLocation location = InMemoryLocation.New(drive,
+		IStorageLocation location = InMemoryLocation.New(fileSystem, drive,
 			fileSystem.Path.GetFullPath(path));
 		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);
 		fileContainer.WriteBytes(bytes);
@@ -179,7 +179,7 @@ public class InMemoryContainerTests
 		MockFileSystem fileSystem = new();
 		DriveInfoMock drive =
 			DriveInfoMock.New("C", fileSystem);
-		IStorageLocation location = InMemoryLocation.New(drive,
+		IStorageLocation location = InMemoryLocation.New(fileSystem, drive,
 			fileSystem.Path.GetFullPath(path));
 		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);
 		fileContainer.WriteBytes(bytes);
@@ -231,7 +231,7 @@ public class InMemoryContainerTests
 		string path)
 	{
 		MockFileSystem fileSystem = new();
-		IStorageLocation location = InMemoryLocation.New(null, path);
+		IStorageLocation location = InMemoryLocation.New(fileSystem, null, path);
 		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);
 
 		Exception? exception = Record.Exception(() =>
@@ -250,7 +250,7 @@ public class InMemoryContainerTests
 	{
 		time = DateTime.SpecifyKind(time, DateTimeKind.Unspecified);
 		MockFileSystem fileSystem = new();
-		IStorageLocation location = InMemoryLocation.New(null, path);
+		IStorageLocation location = InMemoryLocation.New(fileSystem, null, path);
 		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);
 
 		fileContainer.CreationTime.Set(time, kind);
@@ -269,7 +269,7 @@ public class InMemoryContainerTests
 		time = DateTime.SpecifyKind(time, DateTimeKind.Local);
 		string expectedString = time.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ssZ");
 		MockFileSystem fileSystem = new();
-		IStorageLocation location = InMemoryLocation.New(null, path);
+		IStorageLocation location = InMemoryLocation.New(fileSystem, null, path);
 		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);
 
 		fileContainer.CreationTime.Set(time, DateTimeKind.Unspecified);
@@ -313,7 +313,7 @@ public class InMemoryContainerTests
 	{
 		MockFileSystem fileSystem = new();
 		string expectedPath = fileSystem.Path.GetFullPath("foo");
-		IStorageLocation location = InMemoryLocation.New(null, expectedPath);
+		IStorageLocation location = InMemoryLocation.New(fileSystem, null, expectedPath);
 		InMemoryContainer sut = new InMemoryContainer(FileSystemTypes.DirectoryOrFile, location,
 			fileSystem);
 

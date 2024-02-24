@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Helpers;
-using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
@@ -22,9 +21,6 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	///     <see cref="InternalBufferSize" />.
 	/// </summary>
 	private const int BytesPerMessage = 128;
-
-	private static string DefaultFilter
-		=> Execute.IsNetFramework ? "*.*" : "*";
 
 	private CancellationTokenSource? _cancellationTokenSource;
 	private IDisposable? _changeHandler;
@@ -70,8 +66,8 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	public string Filter
 	{
 		get => _filters.Count == 0
-			? DefaultFilter
-			: _filters[0];
+			? _fileSystem.Execute.IsNetFramework ? "*.*" : "*"
+			: _filters [0];
 		set
 		{
 			_filters.Clear();
@@ -220,6 +216,7 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 		return _filters.Any(filter =>
 			EnumerationOptionsHelper.MatchesPattern(
+				_fileSystem.Execute,
 				EnumerationOptionsHelper.Compatible,
 				_fileSystem.Path.GetFileName(changeDescription.Path),
 				filter));
@@ -373,7 +370,7 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	}
 
 	private void TriggerRenameNotification(ChangeDescription item)
-		=> Execute.OnWindows(
+		=> _fileSystem.Execute.OnWindows(
 			() =>
 			{
 				if (TryMakeRenamedEventArgs(item,
@@ -426,7 +423,7 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			oldName);
 		return System.IO.Path.GetDirectoryName(changeDescription.Path)?
 			.Equals(System.IO.Path.GetDirectoryName(changeDescription.OldPath),
-				InMemoryLocation.StringComparisonMode) ?? true;
+				_fileSystem.Execute.StringComparisonMode) ?? true;
 	}
 
 	private IWaitForChangedResult WaitForChangedInternal(

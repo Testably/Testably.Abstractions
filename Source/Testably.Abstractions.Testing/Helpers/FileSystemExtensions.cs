@@ -36,7 +36,7 @@ internal static class FileSystemExtensions
 	/// <summary>
 	///     Returns the relative subdirectory path from <paramref name="fullFilePath" /> to the <paramref name="givenPath" />.
 	/// </summary>
-	internal static string GetSubdirectoryPath(this IFileSystem fileSystem,
+	internal static string GetSubdirectoryPath(this MockFileSystem fileSystem,
 		string fullFilePath,
 		string givenPath)
 	{
@@ -46,7 +46,7 @@ internal static class FileSystemExtensions
 		}
 
 		string currentDirectory = fileSystem.Path.GetFullPath(givenPath);
-		if (currentDirectory == string.Empty.PrefixRoot())
+		if (currentDirectory == string.Empty.PrefixRoot(fileSystem))
 		{
 			fullFilePath = fullFilePath.Substring(currentDirectory.Length);
 		}

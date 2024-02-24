@@ -76,8 +76,8 @@ public class MockFileSystemTests
 	[SkippableFact]
 	public void FileSystemMock_ShouldBeInitializedWithADefaultDrive()
 	{
-		string expectedDriveName = "".PrefixRoot();
 		MockFileSystem sut = new();
+		string expectedDriveName = "".PrefixRoot(sut);
 
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 		IDriveInfo drive = sut.GetDefaultDrive();
@@ -173,8 +173,8 @@ public class MockFileSystemTests
 	[SkippableFact]
 	public void WithDrive_ExistingName_ShouldUpdateDrive()
 	{
-		string driveName = "".PrefixRoot();
 		MockFileSystem sut = new();
+		string driveName = "".PrefixRoot(sut);
 		sut.WithDrive(driveName);
 
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();

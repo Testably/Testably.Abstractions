@@ -35,7 +35,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.GetFullPath(string)" />
 	public override string GetFullPath(string path)
 	{
-		path.EnsureValidArgument(FileSystem, nameof(path));
+		path.EnsureValidArgument(_fileSystem, nameof(path));
 
 		string? pathRoot = Path.GetPathRoot(path);
 		string? directoryRoot = Path.GetPathRoot(_fileSystem.Storage.CurrentDirectory);
@@ -61,8 +61,8 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.GetRelativePath(string, string)" />
 	public override string GetRelativePath(string relativeTo, string path)
 	{
-		relativeTo.EnsureValidArgument(FileSystem, nameof(relativeTo));
-		path.EnsureValidArgument(FileSystem, nameof(path));
+		relativeTo.EnsureValidArgument(_fileSystem, nameof(relativeTo));
+		path.EnsureValidArgument(_fileSystem, nameof(path));
 
 		relativeTo = FileSystem.Path.GetFullPath(relativeTo);
 		path = FileSystem.Path.GetFullPath(path);

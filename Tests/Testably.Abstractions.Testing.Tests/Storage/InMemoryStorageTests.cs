@@ -27,7 +27,7 @@ public class InMemoryStorageTests
 		int file1Size, int file2Size)
 	{
 		MockFileSystem fileSystem = new();
-		IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot());
+		IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot(fileSystem));
 		IRandom random = RandomFactory.Shared;
 		byte[] file1Content = new byte[file1Size];
 		byte[] file2Content = new byte[file2Size];
@@ -48,7 +48,7 @@ public class InMemoryStorageTests
 	[Fact]
 	public void CurrentDirectory_ShouldBeInitializedToDefaultRoot()
 	{
-		string expectedRoot = string.Empty.PrefixRoot();
+		string expectedRoot = string.Empty.PrefixRoot(new MockFileSystem());
 		Storage.CurrentDirectory.Should().Be(expectedRoot);
 	}
 
@@ -150,7 +150,7 @@ public class InMemoryStorageTests
 		int file1Size, int file2Size, int file3Size)
 	{
 		MockFileSystem fileSystem = new();
-		IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot());
+		IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot(fileSystem));
 		IRandom random = RandomFactory.Shared;
 		byte[] file1Content = new byte[file1Size];
 		byte[] file2Content = new byte[file2Size];
@@ -177,7 +177,7 @@ public class InMemoryStorageTests
 		int file1Size, int file2Size)
 	{
 		MockFileSystem fileSystem = new();
-		IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot());
+		IDriveInfo mainDrive = fileSystem.DriveInfo.New("".PrefixRoot(fileSystem));
 		IRandom random = RandomFactory.Shared;
 		byte[] file1Content = new byte[file1Size];
 		byte[] file2Content = new byte[file2Size];

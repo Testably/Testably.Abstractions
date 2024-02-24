@@ -26,6 +26,7 @@ internal sealed class InMemoryStorage : IStorage
 	public InMemoryStorage(MockFileSystem fileSystem)
 	{
 		_fileSystem = fileSystem;
+		CurrentDirectory = string.Empty.PrefixRoot(_fileSystem);
 		MainDrive = DriveInfoMock.New(CurrentDirectory, _fileSystem);
 		_drives.TryAdd(MainDrive.Name, MainDrive);
 	}
@@ -33,7 +34,7 @@ internal sealed class InMemoryStorage : IStorage
 	#region IStorage Members
 
 	/// <inheritdoc cref="IStorage.CurrentDirectory" />
-	public string CurrentDirectory { get; set; } = string.Empty.PrefixRoot();
+	public string CurrentDirectory { get; set; }
 
 	/// <inheritdoc cref="IStorage.MainDrive" />
 	public IStorageDrive MainDrive { get; }
@@ -70,22 +71,22 @@ internal sealed class InMemoryStorage : IStorage
 			if (_containers.TryAdd(destination, copiedContainer))
 			{
 				copiedContainer.WriteBytes(sourceContainer.GetBytes().ToArray());
-				Execute.OnMac(
+				_fileSystem.Execute.OnMac(
 					() => copiedContainer.LastAccessTime.Set(
 						sourceContainer.LastAccessTime.Get(DateTimeKind.Local),
 						DateTimeKind.Local));
 #if NET8_0_OR_GREATER
-				Execute.OnLinux(()
+				_fileSystem.Execute.OnLinux(()
 					=> sourceContainer.AdjustTimes(TimeAdjustments.LastAccessTime));
 #else
-				Execute.NotOnWindows(()
+				_fileSystem.Execute.NotOnWindows(()
 					=> sourceContainer.AdjustTimes(TimeAdjustments.LastAccessTime));
 #endif
 
 				copiedContainer.Attributes = sourceContainer.Attributes;
-				Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
+				_fileSystem.Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
 					() => copiedContainer.Attributes |= FileAttributes.Archive);
-				Execute.NotOnWindows(
+				_fileSystem.Execute.NotOnWindows(
 					() => copiedContainer.CreationTime.Set(
 						sourceContainer.CreationTime.Get(DateTimeKind.Local),
 						DateTimeKind.Local));
@@ -95,7 +96,7 @@ internal sealed class InMemoryStorage : IStorage
 				return destination;
 			}
 
-			throw ExceptionFactory.CannotCreateFileWhenAlreadyExists(Execute.IsWindows
+			throw ExceptionFactory.CannotCreateFileWhenAlreadyExists(_fileSystem.Execute.IsWindows
 				? -2147024816
 				: 17);
 		}
@@ -129,7 +130,7 @@ internal sealed class InMemoryStorage : IStorage
 			}
 			else if (children.Any())
 			{
-				throw ExceptionFactory.DirectoryNotEmpty(location.FullPath);
+				throw ExceptionFactory.DirectoryNotEmpty(_fileSystem.Execute, location.FullPath);
 			}
 		}
 
@@ -189,7 +190,7 @@ internal sealed class InMemoryStorage : IStorage
 
 		foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers
 			.Where(x => x.Key.FullPath.StartsWith(fullPath,
-				            InMemoryLocation.StringComparisonMode) &&
+				            _fileSystem.Execute.StringComparisonMode) &&
 			            !x.Key.Equals(location)))
 		{
 			string? parentPath =
@@ -198,13 +199,16 @@ internal sealed class InMemoryStorage : IStorage
 						.DirectorySeparatorChar));
 			if (!enumerationOptions.RecurseSubdirectories &&
 			    parentPath?.Equals(fullPathWithoutTrailingSlash,
-				    InMemoryLocation.StringComparisonMode) != true)
+				    _fileSystem.Execute.StringComparisonMode) != true)
 			{
 				continue;
 			}
 
-			if (!EnumerationOptionsHelper.MatchesPattern(enumerationOptions,
-				_fileSystem.Path.GetFileName(item.Key.FullPath), searchPattern))
+			if (!EnumerationOptionsHelper.MatchesPattern(
+				_fileSystem.Execute, 
+				enumerationOptions,
+				_fileSystem.Path.GetFileName(item.Key.FullPath),
+				searchPattern))
 			{
 				continue;
 			}
@@ -241,7 +245,7 @@ internal sealed class InMemoryStorage : IStorage
 			return null;
 		}
 
-		if (!driveName.IsUncPath())
+		if (!driveName.IsUncPath(_fileSystem))
 		{
 			driveName = _fileSystem.Path.GetPathRoot(driveName);
 
@@ -275,12 +279,12 @@ internal sealed class InMemoryStorage : IStorage
 
 		IStorageDrive? drive = _fileSystem.Storage.GetDrive(path);
 		if (drive == null &&
-		    !path.IsUncPath())
+		    !path.IsUncPath(_fileSystem))
 		{
 			drive = _fileSystem.Storage.MainDrive;
 		}
 
-		return InMemoryLocation.New(drive, path.GetFullPathOrWhiteSpace(_fileSystem), path);
+		return InMemoryLocation.New(_fileSystem, drive, path.GetFullPathOrWhiteSpace(_fileSystem), path);
 	}
 
 	/// <inheritdoc cref="IStorage.GetOrAddDrive(string)" />
@@ -365,7 +369,7 @@ internal sealed class InMemoryStorage : IStorage
 		IStorageLocation? backup,
 		bool ignoreMetadataErrors = false)
 	{
-		ThrowIfParentDoesNotExist(destination, location => Execute.OnWindows<IOException>(
+		ThrowIfParentDoesNotExist(destination, location => _fileSystem.Execute.OnWindows<IOException>(
 			() => ExceptionFactory.DirectoryNotFound(location.FullPath),
 			() => ExceptionFactory.FileNotFound(location.FullPath)));
 
@@ -406,7 +410,7 @@ internal sealed class InMemoryStorage : IStorage
 					if (backup != null &&
 					    _containers.TryAdd(backup, existingDestinationContainer))
 					{
-						Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
+						_fileSystem.Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
 							() => existingDestinationContainer.Attributes |=
 								FileAttributes.Archive);
 						backup.Drive?.ChangeUsedBytes(destinationBytesLength);
@@ -418,7 +422,7 @@ internal sealed class InMemoryStorage : IStorage
 						int sourceBytesLength = existingSourceContainer.GetBytes().Length;
 						source.Drive?.ChangeUsedBytes(-1 * sourceBytesLength);
 						destination.Drive?.ChangeUsedBytes(sourceBytesLength);
-						Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
+						_fileSystem.Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
 							() =>
 							{
 								FileAttributes targetAttributes =
@@ -549,10 +553,10 @@ internal sealed class InMemoryStorage : IStorage
 		IStorageContainer? parentContainer = GetContainer(location.GetParent());
 		if (parentContainer != null && parentContainer is not NullContainer)
 		{
-			Execute.NotOnWindowsIf(parentContainer.Attributes.HasFlag(FileAttributes.ReadOnly),
+			_fileSystem.Execute.NotOnWindowsIf(parentContainer.Attributes.HasFlag(FileAttributes.ReadOnly),
 				() => throw ExceptionFactory.AccessToPathDenied(location.FullPath));
 			TimeAdjustments timeAdjustment = TimeAdjustments.LastWriteTime;
-			Execute.OnWindows(()
+			_fileSystem.Execute.OnWindows(()
 				=> timeAdjustment |= TimeAdjustments.LastAccessTime);
 			parentContainer.AdjustTimes(timeAdjustment);
 		}
@@ -623,7 +627,7 @@ internal sealed class InMemoryStorage : IStorage
 		}
 
 		if (container.Type == FileSystemTypes.Directory &&
-		    source.FullPath.Equals(destination.FullPath, Execute.IsNetFramework
+		    source.FullPath.Equals(destination.FullPath, _fileSystem.Execute.IsNetFramework
 			    ? StringComparison.OrdinalIgnoreCase
 			    : StringComparison.Ordinal))
 		{
@@ -636,7 +640,7 @@ internal sealed class InMemoryStorage : IStorage
 			EnumerateLocations(source, FileSystemTypes.DirectoryOrFile).ToList();
 		if (children.Any() && !recursive)
 		{
-			throw ExceptionFactory.DirectoryNotEmpty(source.FullPath);
+			throw ExceptionFactory.DirectoryNotEmpty(_fileSystem.Execute, source.FullPath);
 		}
 
 		using (container.RequestAccess(FileAccess.Write, FileShare.None,
@@ -674,7 +678,7 @@ internal sealed class InMemoryStorage : IStorage
 					int bytesLength = sourceContainer.GetBytes().Length;
 					source.Drive?.ChangeUsedBytes(-1 * bytesLength);
 					destination.Drive?.ChangeUsedBytes(bytesLength);
-					Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
+					_fileSystem.Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
 						() => sourceContainer.Attributes |= FileAttributes.Archive);
 					rollbacks?.Add(new Rollback(
 						() => MoveInternal(destination, source, true, false,
@@ -687,7 +691,7 @@ internal sealed class InMemoryStorage : IStorage
 				throw ExceptionFactory.CannotCreateFileWhenAlreadyExists(
 					sourceType == FileSystemTypes.Directory
 						? -2147024891
-						: Execute.IsWindows
+						: _fileSystem.Execute.IsWindows
 							? -2147024713
 							: 17);
 			}
@@ -700,7 +704,7 @@ internal sealed class InMemoryStorage : IStorage
 	private IStorageLocation? ResolveFinalLinkTarget(IStorageContainer container,
 		IStorageLocation originalLocation)
 	{
-		int maxResolveLinks = Execute.IsWindows ? 63 : 40;
+		int maxResolveLinks = _fileSystem.Execute.IsWindows ? 63 : 40;
 		IStorageLocation? nextLocation = null;
 		for (int i = 1; i < maxResolveLinks; i++)
 		{

@@ -143,8 +143,11 @@ public static class FileSystemInitializerExtensions
 			}
 			#pragma warning restore CA2249
 
-			if (EnumerationOptionsHelper.MatchesPattern(enumerationOptions,
-				fileName, searchPattern))
+			if (EnumerationOptionsHelper.MatchesPattern(
+				(fileSystem as MockFileSystem)?.Execute ?? new Execute(),
+				enumerationOptions,
+				fileName,
+				searchPattern))
 			{
 				string filePath = fileSystem.Path.Combine(directoryPath, fileName);
 				fileSystem.InitializeFileFromEmbeddedResource(filePath, assembly, resourcePath);

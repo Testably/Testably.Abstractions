@@ -37,7 +37,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		_fileSystem = fileSystem;
 
-		if (driveName.IsUncPath())
+		if (driveName.IsUncPath(_fileSystem))
 		{
 			IsUncPath = true;
 			driveName = PathHelper.UncPrefix +
@@ -102,7 +102,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 		set
 		{
 			_volumeLabel = value ?? _volumeLabel;
-			Execute.NotOnWindows(
+			_fileSystem.Execute.NotOnWindows(
 				() => throw ExceptionFactory.OperationNotSupportedOnThisPlatform());
 		}
 	}
@@ -176,7 +176,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 	}
 
 	private static string ValidateDriveLetter(string driveName,
-		IFileSystem fileSystem)
+		MockFileSystem fileSystem)
 	{
 		if (driveName.Length == 1 &&
 		    char.IsLetter(driveName, 0))
@@ -186,7 +186,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 
 		if (fileSystem.Path.IsPathRooted(driveName))
 		{
-			return Execute.OnWindows(() =>
+			return fileSystem.Execute.OnWindows(() =>
 				{
 					string rootedPath = fileSystem.Path.GetPathRoot(driveName)!;
 					return $"{rootedPath.TrimEnd('\\')}\\";

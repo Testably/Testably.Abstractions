@@ -73,7 +73,7 @@ internal sealed class DirectoryMock : IDirectory
 				_fileSystem.Path.GetTempPath(),
 				(prefix ?? "") + _fileSystem.Path.GetFileNameWithoutExtension(
 					_fileSystem.Path.GetRandomFileName()));
-			Execute.OnMac(() => localBasePath = "/private" + localBasePath);
+			_fileSystem.Execute.OnMac(() => localBasePath = "/private" + localBasePath);
 			basePath = localBasePath;
 		} while (_fileSystem.Directory.Exists(basePath));
 
@@ -85,13 +85,13 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.Delete(string)" />
 	public void Delete(string path)
 		=> _fileSystem.DirectoryInfo
-			.New(path.EnsureValidFormat(FileSystem))
+			.New(path.EnsureValidFormat(_fileSystem))
 			.Delete();
 
 	/// <inheritdoc cref="IDirectory.Delete(string, bool)" />
 	public void Delete(string path, bool recursive)
 		=> _fileSystem.DirectoryInfo
-			.New(path.EnsureValidFormat(FileSystem))
+			.New(path.EnsureValidFormat(_fileSystem))
 			.Delete(recursive);
 
 	/// <inheritdoc cref="IDirectory.EnumerateDirectories(string)" />
@@ -199,14 +199,14 @@ internal sealed class DirectoryMock : IDirectory
 	public DateTime GetCreationTime(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)))
+					path.EnsureValidFormat(_fileSystem)))
 			.CreationTime.Get(DateTimeKind.Local);
 
 	/// <inheritdoc cref="IDirectory.GetCreationTimeUtc(string)" />
 	public DateTime GetCreationTimeUtc(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)))
+					path.EnsureValidFormat(_fileSystem)))
 			.CreationTime.Get(DateTimeKind.Utc);
 
 	/// <inheritdoc cref="IDirectory.GetCurrentDirectory()" />
@@ -290,28 +290,28 @@ internal sealed class DirectoryMock : IDirectory
 	public DateTime GetLastAccessTime(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)))
+					path.EnsureValidFormat(_fileSystem)))
 			.LastAccessTime.Get(DateTimeKind.Local);
 
 	/// <inheritdoc cref="IDirectory.GetLastAccessTimeUtc(string)" />
 	public DateTime GetLastAccessTimeUtc(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)))
+					path.EnsureValidFormat(_fileSystem)))
 			.LastAccessTime.Get(DateTimeKind.Utc);
 
 	/// <inheritdoc cref="IDirectory.GetLastWriteTime(string)" />
 	public DateTime GetLastWriteTime(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)))
+					path.EnsureValidFormat(_fileSystem)))
 			.LastWriteTime.Get(DateTimeKind.Local);
 
 	/// <inheritdoc cref="IDirectory.GetLastWriteTimeUtc(string)" />
 	public DateTime GetLastWriteTimeUtc(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)))
+					path.EnsureValidFormat(_fileSystem)))
 			.LastWriteTime.Get(DateTimeKind.Utc);
 
 	/// <inheritdoc cref="IDirectory.GetLogicalDrives()" />
@@ -346,7 +346,7 @@ internal sealed class DirectoryMock : IDirectory
 			when (ex.HResult != -2147024773)
 		{
 			throw ExceptionFactory.FileNameCannotBeResolved(linkPath,
-				Execute.IsWindows ? -2147022975 : -2146232800);
+				_fileSystem.Execute.IsWindows ? -2147022975 : -2146232800);
 		}
 	}
 #endif
@@ -402,22 +402,22 @@ internal sealed class DirectoryMock : IDirectory
 	#endregion
 
 	private IDirectoryInfo LoadDirectoryInfoOrThrowNotFoundException(
-		string path, Action<IFileSystem, string> onMissingCallback)
+		string path, Action<MockFileSystem, string> onMissingCallback)
 	{
 		IDirectoryInfo directoryInfo =
-			_fileSystem.DirectoryInfo.New(path.EnsureValidFormat(FileSystem));
+			_fileSystem.DirectoryInfo.New(path.EnsureValidFormat(_fileSystem));
 		if (!directoryInfo.Exists)
 		{
-			onMissingCallback.Invoke(FileSystem, path);
+			onMissingCallback.Invoke(_fileSystem, path);
 		}
 
 		return directoryInfo;
 	}
 
-	private static void ThrowMissingFileCreatedTimeException(IFileSystem fileSystem, string path)
+	private static void ThrowMissingFileCreatedTimeException(MockFileSystem fileSystem, string path)
 	{
 #if NET7_0_OR_GREATER
-		Execute.OnMac(
+		fileSystem.Execute.OnMac(
 			() =>
 				throw ExceptionFactory.DirectoryNotFound(
 					fileSystem.Path.GetFullPath(path)),
@@ -425,7 +425,7 @@ internal sealed class DirectoryMock : IDirectory
 				throw ExceptionFactory.FileNotFound(
 					fileSystem.Path.GetFullPath(path)));
 #else
-		Execute.OnWindows(
+		fileSystem.Execute.OnWindows(
 			() =>
 				throw ExceptionFactory.FileNotFound(
 					fileSystem.Path.GetFullPath(path)),
@@ -435,14 +435,14 @@ internal sealed class DirectoryMock : IDirectory
 #endif
 	}
 
-	private static void ThrowMissingFileLastAccessOrLastWriteTimeException(IFileSystem fileSystem,
+	private static void ThrowMissingFileLastAccessOrLastWriteTimeException(MockFileSystem fileSystem,
 		string path)
 	{
 #if NET7_0_OR_GREATER
 		throw ExceptionFactory.FileNotFound(
 			fileSystem.Path.GetFullPath(path));
 #else
-		Execute.OnWindows(
+		fileSystem.Execute.OnWindows(
 			() =>
 				throw ExceptionFactory.FileNotFound(
 					fileSystem.Path.GetFullPath(path)),
@@ -458,8 +458,8 @@ internal sealed class DirectoryMock : IDirectory
 		EnumerationOptions enumerationOptions)
 	{
 		StorageExtensions.AdjustedLocation adjustedLocation = _fileSystem.Storage
-			.AdjustLocationFromSearchPattern(
-				path.EnsureValidFormat(FileSystem),
+			.AdjustLocationFromSearchPattern(_fileSystem,
+				path.EnsureValidFormat(_fileSystem),
 				searchPattern);
 		return _fileSystem.Storage.EnumerateLocations(
 				adjustedLocation.Location,

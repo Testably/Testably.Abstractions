@@ -6,23 +6,23 @@ namespace Testably.Abstractions.Testing.Storage;
 
 internal sealed class InMemoryLocation : IStorageLocation
 {
-	internal static readonly StringComparison StringComparisonMode =
-		Execute.IsLinux
-			? StringComparison.Ordinal
-			: StringComparison.OrdinalIgnoreCase;
+	private readonly MockFileSystem _fileSystem;
 
 	private readonly string _key;
 
-	private InMemoryLocation(IStorageDrive? drive,
+	private InMemoryLocation(
+		MockFileSystem fileSystem,
+		IStorageDrive? drive,
 		string fullPath,
 		string friendlyName)
 	{
+		_fileSystem = fileSystem;
 		FullPath = fullPath
-			.NormalizePath()
-			.TrimOnWindows();
-		_key = NormalizeKey(FullPath);
-		Execute.OnNetFramework(()
-			=> friendlyName = friendlyName.TrimOnWindows());
+			.NormalizePath(_fileSystem)
+			.TrimOnWindows(_fileSystem);
+		_key = NormalizeKey(_fileSystem, FullPath);
+		_fileSystem.Execute.OnNetFramework(()
+			=> friendlyName = friendlyName.TrimOnWindows(_fileSystem));
 
 		IsRooted = drive?.Name == fullPath || drive?.Name.Substring(1) == fullPath;
 		FriendlyName = friendlyName;
@@ -58,11 +58,11 @@ internal sealed class InMemoryLocation : IStorageLocation
 
 		if (other is InMemoryLocation location)
 		{
-			return _key.Equals(location._key, StringComparisonMode);
+			return _key.Equals(location._key, _fileSystem.Execute.StringComparisonMode);
 		}
 
-		return NormalizeKey(FullPath)
-			.Equals(NormalizeKey(other.FullPath), StringComparisonMode);
+		return NormalizeKey(_fileSystem, FullPath)
+			.Equals(NormalizeKey(_fileSystem, other.FullPath), _fileSystem.Execute.StringComparisonMode);
 	}
 
 	/// <inheritdoc cref="object.Equals(object?)" />
@@ -77,7 +77,7 @@ internal sealed class InMemoryLocation : IStorageLocation
 #else
 	/// <inheritdoc cref="object.GetHashCode()" />
 	public override int GetHashCode()
-		=> _key.GetHashCode(StringComparisonMode);
+		=> _key.GetHashCode(_fileSystem.Execute.StringComparisonMode);
 #endif
 
 	/// <inheritdoc cref="IStorageLocation.GetParent()" />
@@ -89,13 +89,15 @@ internal sealed class InMemoryLocation : IStorageLocation
 			return null;
 		}
 
-		return New(Drive,
+		return New(
+			_fileSystem,
+			Drive,
 			parentPath,
 			GetFriendlyNameParent(parentPath));
 	}
 
-	private static string GetFriendlyNameParent(string parentPath)
-		=> Execute.OnNetFramework(
+	private string GetFriendlyNameParent(string parentPath)
+		=> _fileSystem.Execute.OnNetFramework(
 			() => Path.GetFileName(parentPath),
 			() => parentPath);
 
@@ -105,10 +107,13 @@ internal sealed class InMemoryLocation : IStorageLocation
 	///     Creates a new <see cref="IStorageLocation" /> on the specified <paramref name="drive" /> with the given
 	///     <paramref name="path" />
 	/// </summary>
+	/// <param name="fileSystem">The file system.</param>
 	/// <param name="drive">The drive on which the path is located.</param>
 	/// <param name="path">The full path on the <paramref name="drive" />.</param>
 	/// <param name="friendlyName">The friendly name is the provided name or the full path.</param>
-	internal static IStorageLocation New(IStorageDrive? drive,
+	internal static IStorageLocation New(
+		MockFileSystem fileSystem,
+		IStorageDrive? drive,
 		string path,
 		string? friendlyName = null)
 	{
@@ -118,19 +123,20 @@ internal sealed class InMemoryLocation : IStorageLocation
 		}
 
 		friendlyName ??= path;
-		return new InMemoryLocation(drive, path, friendlyName);
+		return new InMemoryLocation(fileSystem, drive, path, friendlyName);
 	}
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> FullPath;
 
-	private static string NormalizeKey(string fullPath)
+	private static string NormalizeKey(MockFileSystem fileSystem, string fullPath)
 	{
 #if FEATURE_PATH_ADVANCED
 		return Path.TrimEndingDirectorySeparator(fullPath);
 #else
 		return FileFeatureExtensionMethods.TrimEndingDirectorySeparator(
+			fileSystem,
 			fullPath,
 			Path.DirectorySeparatorChar,
 			Path.AltDirectorySeparatorChar);

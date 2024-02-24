@@ -8,11 +8,17 @@ namespace Testably.Abstractions.Testing.Storage;
 
 internal sealed class NullContainer : IStorageContainer
 {
-	private NullContainer(IFileSystem fileSystem, ITimeSystem timeSystem)
+	private readonly MockFileSystem _fileSystem;
+
+	private NullContainer(MockFileSystem fileSystem, ITimeSystem timeSystem)
 	{
-		FileSystem = fileSystem;
+		_fileSystem = fileSystem;
 		TimeSystem = timeSystem;
 		Extensibility = new FileSystemExtensibility();
+		CreationTime = new CreationNullTime(_fileSystem);
+		LastAccessTime = new NullTime(_fileSystem);
+		LastWriteTime = new NullTime(_fileSystem);
+
 	}
 
 	#region IStorageContainer Members
@@ -25,20 +31,19 @@ internal sealed class NullContainer : IStorageContainer
 	}
 
 	/// <inheritdoc cref="IStorageContainer.CreationTime" />
-	public IStorageContainer.ITimeContainer CreationTime { get; } =
-		new CreationNullTime();
+	public IStorageContainer.ITimeContainer CreationTime { get; }
 
 	/// <inheritdoc cref="IStorageContainer.Extensibility" />
 	public IFileSystemExtensibility Extensibility { get; }
 
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
-	public IFileSystem FileSystem { get; }
+	public IFileSystem FileSystem => _fileSystem;
 
 	/// <inheritdoc cref="IStorageContainer.LastAccessTime" />
-	public IStorageContainer.ITimeContainer LastAccessTime { get; } = new NullTime();
+	public IStorageContainer.ITimeContainer LastAccessTime { get; }
 
 	/// <inheritdoc cref="IStorageContainer.LastWriteTime" />
-	public IStorageContainer.ITimeContainer LastWriteTime { get; } = new NullTime();
+	public IStorageContainer.ITimeContainer LastWriteTime { get; }
 
 	/// <inheritdoc cref="IStorageContainer.LinkTarget" />
 	public string? LinkTarget
@@ -143,8 +148,15 @@ internal sealed class NullContainer : IStorageContainer
 	/// </summary>
 	private class NullTime : IStorageContainer.ITimeContainer
 	{
+		protected readonly MockFileSystem FileSystem;
+
 		private readonly DateTime _time =
 			new(1601, 01, 01, 00, 00, 00, DateTimeKind.Utc);
+
+		public NullTime(MockFileSystem fileSystem)
+		{
+			FileSystem = fileSystem;
+		}
 
 		#region ITimeContainer Members
 
@@ -163,7 +175,7 @@ internal sealed class NullContainer : IStorageContainer
 #if NET7_0_OR_GREATER
 			throw ExceptionFactory.FileNotFound(string.Empty);
 #else
-			Execute.OnWindows(()
+			FileSystem.Execute.OnWindows(()
 				=> throw ExceptionFactory.FileNotFound(string.Empty));
 
 			throw ExceptionFactory.DirectoryNotFound(string.Empty);
@@ -178,16 +190,18 @@ internal sealed class NullContainer : IStorageContainer
 	/// </summary>
 	private sealed class CreationNullTime : NullTime
 	{
+		public CreationNullTime(MockFileSystem fileSystem) : base(fileSystem) { }
+
 		/// <inheritdoc />
 		public override void Set(DateTime time, DateTimeKind kind)
 		{
 #if NET7_0_OR_GREATER
-			Execute.OnMac(()
+			FileSystem.Execute.OnMac(()
 				=> throw ExceptionFactory.DirectoryNotFound(string.Empty));
 
 			throw ExceptionFactory.FileNotFound(string.Empty);
 #else
-			Execute.OnWindows(()
+			FileSystem.Execute.OnWindows(()
 				=> throw ExceptionFactory.FileNotFound(string.Empty));
 
 			throw ExceptionFactory.DirectoryNotFound(string.Empty);

@@ -34,7 +34,7 @@ internal sealed class DirectoryInfoMock
 
 	/// <inheritdoc cref="IDirectoryInfo.Root" />
 	public IDirectoryInfo Root
-		=> New(_fileSystem.Storage.GetLocation(string.Empty.PrefixRoot()),
+		=> New(_fileSystem.Storage.GetLocation(string.Empty.PrefixRoot(_fileSystem)),
 			_fileSystem);
 
 	/// <inheritdoc cref="IDirectoryInfo.Create()" />
@@ -48,10 +48,10 @@ internal sealed class DirectoryInfoMock
 
 		if (Container.Type != FileSystemTypes.Directory)
 		{
-			throw ExceptionFactory.CannotCreateFileAsAlreadyExists(FullName);
+			throw ExceptionFactory.CannotCreateFileAsAlreadyExists(_fileSystem.Execute, FullName);
 		}
 
-		ResetCache(!Execute.IsNetFramework);
+		ResetCache(!_fileSystem.Execute.IsNetFramework);
 	}
 
 	/// <inheritdoc cref="IDirectoryInfo.CreateSubdirectory(string)" />
@@ -61,7 +61,7 @@ internal sealed class DirectoryInfoMock
 			_fileSystem.Storage.GetLocation(
 				_fileSystem.Path.Combine(FullName, path
 					.EnsureValidFormat(_fileSystem, nameof(path),
-						Execute.IsWindows && !Execute.IsNetFramework))),
+						_fileSystem.Execute.IsWindows && !_fileSystem.Execute.IsNetFramework))),
 			_fileSystem);
 		directory.Create();
 		return directory;
@@ -75,7 +75,7 @@ internal sealed class DirectoryInfoMock
 			throw ExceptionFactory.DirectoryNotFound(Location.FullPath);
 		}
 
-		ResetCache(!Execute.IsNetFramework);
+		ResetCache(!_fileSystem.Execute.IsNetFramework);
 	}
 
 	/// <inheritdoc cref="IDirectoryInfo.Delete(bool)" />
@@ -87,7 +87,7 @@ internal sealed class DirectoryInfoMock
 			throw ExceptionFactory.DirectoryNotFound(FullName);
 		}
 
-		ResetCache(!Execute.IsNetFramework);
+		ResetCache(!_fileSystem.Execute.IsNetFramework);
 	}
 
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateDirectories()" />
@@ -276,7 +276,7 @@ internal sealed class DirectoryInfoMock
 		EnumerationOptions enumerationOptions)
 	{
 		StorageExtensions.AdjustedLocation adjustedLocation = _fileSystem.Storage
-			.AdjustLocationFromSearchPattern(
+			.AdjustLocationFromSearchPattern(_fileSystem,
 				path.EnsureValidFormat(_fileSystem),
 				searchPattern);
 		return _fileSystem.Storage.EnumerateLocations(

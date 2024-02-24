@@ -15,7 +15,7 @@ public static class MockFileSystemExtensions
 	/// </summary>
 	public static IDriveInfo GetDefaultDrive(this MockFileSystem mockFileSystem)
 	{
-		string driveName = "".PrefixRoot();
+		string driveName = "".PrefixRoot(mockFileSystem);
 		return mockFileSystem.DriveInfo
 			.GetDrives()
 			.First(d => d.Name.StartsWith(driveName));

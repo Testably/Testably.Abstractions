@@ -18,7 +18,7 @@ internal static class PathHelper
 	/// <summary>
 	///     Determines whether the given path contains illegal characters.
 	/// </summary>
-	internal static bool HasIllegalCharacters(this string path, IFileSystem fileSystem)
+	internal static bool HasIllegalCharacters(this string path, MockFileSystem fileSystem)
 	{
 		char[] invalidPathChars = fileSystem.Path.GetInvalidPathChars();
 
@@ -27,7 +27,7 @@ internal static class PathHelper
 			return true;
 		}
 
-		return Execute.OnWindows(
+		return fileSystem.Execute.OnWindows(
 			() => path.IndexOfAny(AdditionalInvalidPathChars) >= 0,
 			() => false);
 	}
@@ -37,15 +37,15 @@ internal static class PathHelper
 	///     For unix, this is empty or null. For Windows, this is empty, null, or
 	///     just spaces ((char)32).
 	/// </summary>
-	internal static bool IsEffectivelyEmpty(this string path)
+	internal static bool IsEffectivelyEmpty(this string path, MockFileSystem fileSystem)
 	{
 		if (string.IsNullOrEmpty(path))
 		{
 			return true;
 		}
 
-		return Execute.OnWindows(
-			() => Execute.OnNetFramework(
+		return fileSystem.Execute.OnWindows(
+			() => fileSystem.Execute.OnNetFramework(
 				() => string.IsNullOrWhiteSpace(path),
 				() =>
 				{
@@ -62,41 +62,41 @@ internal static class PathHelper
 			() => false);
 	}
 
-	internal static bool IsUncPath([NotNullWhen(true)] this string? path)
+	internal static bool IsUncPath([NotNullWhen(true)] this string? path, MockFileSystem fileSystem)
 	{
 		if (path == null)
 		{
 			return false;
 		}
 
-		return Execute.OnWindows(
+		return fileSystem.Execute.OnWindows(
 			() => path.StartsWith(UncPrefix) || path.StartsWith(UncAltPrefix),
 			() => path.StartsWith(UncPrefix));
 	}
 
 	internal static string EnsureValidFormat(
 		[NotNull] this string? path,
-		IFileSystem fileSystem,
+		MockFileSystem fileSystem,
 		string? paramName = null,
 		bool? includeIsEmptyCheck = null)
 	{
-		CheckPathArgument(path, paramName ?? nameof(path),
-			includeIsEmptyCheck ?? Execute.IsWindows);
+		CheckPathArgument(fileSystem.Execute, path, paramName ?? nameof(path),
+			includeIsEmptyCheck ?? fileSystem.Execute.IsWindows);
 		CheckPathCharacters(path, fileSystem, paramName ?? nameof(path), null);
 		return path;
 	}
 
 	internal static string EnsureValidArgument(
-		[NotNull] this string? path, IFileSystem fileSystem, string? paramName = null)
+		[NotNull] this string? path, MockFileSystem fileSystem, string? paramName = null)
 	{
-		CheckPathArgument(path, paramName ?? nameof(path), Execute.IsWindows);
+		CheckPathArgument(fileSystem.Execute, path, paramName ?? nameof(path), fileSystem.Execute.IsWindows);
 		return path;
 	}
 
 	internal static void ThrowCommonExceptionsIfPathToTargetIsInvalid(
-		[NotNull] this string? pathToTarget, IFileSystem fileSystem)
+		[NotNull] this string? pathToTarget, MockFileSystem fileSystem)
 	{
-		CheckPathArgument(pathToTarget, nameof(pathToTarget), false);
+		CheckPathArgument(fileSystem.Execute, pathToTarget, nameof(pathToTarget), false);
 		CheckPathCharacters(pathToTarget, fileSystem, nameof(pathToTarget), -2147024713);
 	}
 
@@ -116,7 +116,7 @@ internal static class PathHelper
 		return fileSystem.Path.GetFullPath(path);
 	}
 
-	private static void CheckPathArgument([NotNull] string? path, string paramName,
+	private static void CheckPathArgument(Execute execute, [NotNull] string? path, string paramName,
 		bool includeIsEmptyCheck)
 	{
 		if (path == null)
@@ -126,7 +126,7 @@ internal static class PathHelper
 
 		if (path.Length == 0)
 		{
-			throw ExceptionFactory.PathCannotBeEmpty(paramName);
+			throw ExceptionFactory.PathCannotBeEmpty(execute, paramName);
 		}
 
 		if (includeIsEmptyCheck && path.Trim() == string.Empty)
@@ -135,7 +135,7 @@ internal static class PathHelper
 		}
 	}
 
-	private static void CheckPathCharacters(string path, IFileSystem fileSystem,
+	private static void CheckPathCharacters(string path, MockFileSystem fileSystem,
 		string paramName, int? hResult)
 	{
 		#pragma warning disable CA2249 // Consider using String.Contains with char instead of String.IndexOf not possible in .NETSTANDARD2.0
@@ -147,7 +147,7 @@ internal static class PathHelper
 
 		if (path.HasIllegalCharacters(fileSystem))
 		{
-			Execute.OnNetFramework(()
+			fileSystem.Execute.OnNetFramework(()
 				=> throw ExceptionFactory.PathHasIllegalCharacters(path, paramName,
 					hResult));
 
@@ -155,14 +155,14 @@ internal static class PathHelper
 				fileSystem.Path.GetFullPath(path), hResult);
 		}
 
-		Execute.OnWindowsIf(path.LastIndexOf(':') > 1 &&
+		fileSystem.Execute.OnWindowsIf(path.LastIndexOf(':') > 1 &&
 		                    path.LastIndexOf(':') < path.IndexOf(Path.DirectorySeparatorChar),
 			() => throw ExceptionFactory.PathHasIncorrectSyntax(
 				fileSystem.Path.GetFullPath(path), hResult));
 	}
 
-	internal static string TrimOnWindows(this string path)
-		=> Execute.OnWindows(
+	internal static string TrimOnWindows(this string path, MockFileSystem fileSystem)
+		=> fileSystem.Execute.OnWindows(
 			() => path.TrimEnd(' '),
 			() => path);
 }

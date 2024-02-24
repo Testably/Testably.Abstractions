@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Testably.Abstractions.Testing.FileSystem;
+using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
@@ -48,6 +49,8 @@ public sealed class MockFileSystem : IFileSystem
 	internal IReadOnlyList<IStorageContainer> StorageContainers
 		=> _storage.GetContainers();
 
+	internal Execute Execute { get; }
+
 	private readonly DirectoryMock _directoryMock;
 	private readonly FileMock _fileMock;
 	private readonly PathMock _pathMock;
@@ -70,6 +73,7 @@ public sealed class MockFileSystem : IFileSystem
 	/// </summary>
 	public MockFileSystem()
 	{
+		Execute = new Execute();
 		RandomSystem = new MockRandomSystem();
 		TimeSystem = new MockTimeSystem(TimeProvider.Now());
 		_pathMock = new PathMock(this);

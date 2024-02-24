@@ -9,7 +9,7 @@ public class MockFileSystemExtensionsTests
 	public void GetDefaultDrive_WithoutDrives_ShouldThrowInvalidOperationException()
 	{
 		MockFileSystem fileSystem = new();
-		(fileSystem.Storage as InMemoryStorage)?.RemoveDrive(string.Empty.PrefixRoot());
+		(fileSystem.Storage as InMemoryStorage)?.RemoveDrive(string.Empty.PrefixRoot(fileSystem));
 
 		Exception? exception = Record.Exception(() =>
 		{

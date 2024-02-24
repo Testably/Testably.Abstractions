@@ -11,7 +11,7 @@ public class FilePlatformIndependenceExtensionsTests
 	{
 		string? path = null;
 
-		path = path!.NormalizePath();
+		path = path!.NormalizePath(new MockFileSystem());
 
 		path.Should().BeNull();
 	}
@@ -23,8 +23,8 @@ public class FilePlatformIndependenceExtensionsTests
 		Skip.If(Test.RunsOnWindows);
 
 		string path = "C:/" + part1;
-		string expectedPath = part1.PrefixRoot();
-		path = path.NormalizePath();
+		string expectedPath = part1.PrefixRoot(new MockFileSystem());
+		path = path.NormalizePath(new MockFileSystem());
 
 		path.Should().Be(expectedPath);
 	}
@@ -44,7 +44,7 @@ public class FilePlatformIndependenceExtensionsTests
 		{
 			string path = part1 + separatorChar + part2;
 			string expectedPath = part1 + Path.DirectorySeparatorChar + part2;
-			path = path.NormalizePath();
+			path = path.NormalizePath(new MockFileSystem());
 
 			path.Should().Be(expectedPath);
 		}
@@ -64,7 +64,7 @@ public class FilePlatformIndependenceExtensionsTests
 		foreach (char separatorChar in separatorChars)
 		{
 			string path = part1 + separatorChar + part2;
-			path = path.NormalizePath();
+			path = path.NormalizePath(new MockFileSystem());
 
 			path.Should().Be(path);
 		}
@@ -75,7 +75,7 @@ public class FilePlatformIndependenceExtensionsTests
 	{
 		string? path = null;
 
-		string result = path!.PrefixRoot();
+		string result = path!.PrefixRoot(new MockFileSystem());
 
 		result.Should().BeNull();
 	}
@@ -84,9 +84,9 @@ public class FilePlatformIndependenceExtensionsTests
 	[AutoData]
 	public void PrefixRoot_RootedPath_ShouldReturnPath(string path)
 	{
-		path = path.PrefixRoot();
+		path = path.PrefixRoot(new MockFileSystem());
 
-		string result = path.PrefixRoot();
+		string result = path.PrefixRoot(new MockFileSystem());
 
 		result.Should().Be(path);
 	}
@@ -95,7 +95,7 @@ public class FilePlatformIndependenceExtensionsTests
 	[AutoData]
 	public void PrefixRoot_UnRootedPath_ShouldPrefixRoot(string path)
 	{
-		string result = path.PrefixRoot();
+		string result = path.PrefixRoot(new MockFileSystem());
 
 		result.Should().NotBe(path);
 		result.Should().EndWith(path);

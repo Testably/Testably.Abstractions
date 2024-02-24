@@ -20,14 +20,14 @@ internal static class FilePlatformIndependenceExtensions
 	///     Normalizes the given path so that it works on all platforms.
 	/// </summary>
 	[return: NotNullIfNotNull("path")]
-	public static string? NormalizePath(this string? path)
+	public static string? NormalizePath(this string? path, MockFileSystem fileSystem)
 	{
 		if (path == null)
 		{
 			return null;
 		}
 
-		return Execute.OnWindows(
+		return fileSystem.Execute.OnWindows(
 			() => path
 				.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar),
 			() => PathTransformRegex
@@ -39,7 +39,7 @@ internal static class FilePlatformIndependenceExtensions
 	///     Normalizes the given path so that it works on all platforms.
 	/// </summary>
 	[return: NotNullIfNotNull("path")]
-	public static string? PrefixRoot(this string? path, char driveLetter = 'C')
+	public static string? PrefixRoot(this string? path, MockFileSystem fileSystem, char driveLetter = 'C')
 	{
 		if (path == null)
 		{
@@ -51,7 +51,7 @@ internal static class FilePlatformIndependenceExtensions
 			return path;
 		}
 
-		return Execute.OnWindows(
+		return fileSystem.Execute.OnWindows(
 			() => driveLetter + ":\\" + path,
 			() => "/" + path);
 	}
