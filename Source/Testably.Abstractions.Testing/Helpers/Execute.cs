@@ -12,7 +12,13 @@ internal class Execute
 	/// </summary>
 	public static Execute Default { get; } = new();
 
-	private bool? _isNetFramework;
+	public Execute()
+	{
+		IsLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+		IsMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+		IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+		IsNetFramework = RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework");
+	}
 
 	/// <summary>
 	///     The default <see cref="StringComparison" /> used for comparing paths.
@@ -24,14 +30,12 @@ internal class Execute
 	/// <summary>
 	///     Flag indicating if the code runs on <see cref="OSPlatform.Linux" />.
 	/// </summary>
-	public bool IsLinux
-		=> RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+	public bool IsLinux { get; }
 
 	/// <summary>
 	///     Flag indicating if the code runs on <see cref="OSPlatform.OSX" />.
 	/// </summary>
-	public bool IsMac
-		=> RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+	public bool IsMac { get; }
 
 	/// <summary>
 	///     Flag indicating if the code runs in .NET Framework.
@@ -39,21 +43,12 @@ internal class Execute
 	/// <remarks>
 	///     <see href="https://stackoverflow.com/a/53675231" />
 	/// </remarks>
-	public bool IsNetFramework
-	{
-		get
-		{
-			_isNetFramework ??= RuntimeInformation
-				.FrameworkDescription.StartsWith(".NET Framework");
-			return _isNetFramework.Value;
-		}
-	}
+	public bool IsNetFramework { get; }
 
 	/// <summary>
 	///     Flag indicating if the code runs on <see cref="OSPlatform.Windows" />.
 	/// </summary>
-	public bool IsWindows
-		=> RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+	public bool IsWindows { get; }
 
 	/// <summary>
 	///     The <paramref name="callback" /> is executed when the code runs not in .NET Framework.

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.Storage;
@@ -138,8 +137,8 @@ internal sealed class InMemoryLocation : IStorageLocation
 		return FileFeatureExtensionMethods.TrimEndingDirectorySeparator(
 			fileSystem,
 			fullPath,
-			Path.DirectorySeparatorChar,
-			Path.AltDirectorySeparatorChar);
+			fileSystem.Path.DirectorySeparatorChar,
+			fileSystem.Path.AltDirectorySeparatorChar);
 #endif
 	}
 }

@@ -65,9 +65,14 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	/// <inheritdoc cref="IFileSystemWatcher.Filter" />
 	public string Filter
 	{
-		get => _filters.Count == 0
-			? _fileSystem.Execute.IsNetFramework ? "*.*" : "*"
-			: _filters [0];
+		get
+		{
+			if (_filters.Count == 0)
+			{
+				return _fileSystem.Execute.IsNetFramework ? "*.*" : "*";
+			}
+			return _filters[0];
+		}
 		set
 		{
 			_filters.Clear();
