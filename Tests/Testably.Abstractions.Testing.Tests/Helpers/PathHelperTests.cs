@@ -125,6 +125,7 @@ public class PathHelperTests
 	public void ThrowCommonExceptionsIfPathIsInvalid_WithInvalidCharacters(
 		char[] invalidChars)
 	{
+		// TODO: Enable this test again when the Execute method in MockFileSystem is writable
 		Skip.If(true, "Check how to update this test");
 
 		FileSystemMockForPath mockFileSystem = new(invalidChars);
@@ -132,7 +133,7 @@ public class PathHelperTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			path.EnsureValidFormat(new MockFileSystem());
+			path.EnsureValidFormat(null!);
 		});
 
 #if NETFRAMEWORK

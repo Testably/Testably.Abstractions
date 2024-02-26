@@ -49,6 +49,9 @@ public sealed class MockFileSystem : IFileSystem
 	internal IReadOnlyList<IStorageContainer> StorageContainers
 		=> _storage.GetContainers();
 
+	/// <summary>
+	///     The execution engine for the underlying operating system.
+	/// </summary>
 	internal Execute Execute { get; }
 
 	private readonly DirectoryMock _directoryMock;
@@ -73,7 +76,7 @@ public sealed class MockFileSystem : IFileSystem
 	/// </summary>
 	public MockFileSystem()
 	{
-		Execute = new Execute();
+		Execute = Execute.Default;
 		RandomSystem = new MockRandomSystem();
 		TimeSystem = new MockTimeSystem(TimeProvider.Now());
 		_pathMock = new PathMock(this);
