@@ -688,12 +688,12 @@ internal sealed class InMemoryStorage : IStorage
 				}
 
 				_containers.TryAdd(source, sourceContainer);
-				throw ExceptionFactory.CannotCreateFileWhenAlreadyExists(
-					sourceType == FileSystemTypes.Directory
-						? -2147024891
-						: _fileSystem.Execute.IsWindows
-							? -2147024713
-							: 17);
+				int hResult = -2147024891;
+				if (sourceType != FileSystemTypes.Directory)
+				{
+					hResult = _fileSystem.Execute.IsWindows ? -2147024713 : 17;
+				}
+				throw ExceptionFactory.CannotCreateFileWhenAlreadyExists(hResult);
 			}
 		}
 

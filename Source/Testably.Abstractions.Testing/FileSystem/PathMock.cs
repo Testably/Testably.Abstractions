@@ -64,8 +64,8 @@ internal sealed class PathMock : PathSystemBase
 		relativeTo.EnsureValidArgument(_fileSystem, nameof(relativeTo));
 		path.EnsureValidArgument(_fileSystem, nameof(path));
 
-		relativeTo = FileSystem.Path.GetFullPath(relativeTo);
-		path = FileSystem.Path.GetFullPath(path);
+		relativeTo = _fileSystem.Path.GetFullPath(relativeTo);
+		path = _fileSystem.Path.GetFullPath(path);
 
 		return Path.GetRelativePath(relativeTo, path);
 	}

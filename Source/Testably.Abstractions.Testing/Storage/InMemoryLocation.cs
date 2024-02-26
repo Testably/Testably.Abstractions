@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.Storage;
@@ -83,8 +82,8 @@ internal sealed class InMemoryLocation : IStorageLocation
 	/// <inheritdoc cref="IStorageLocation.GetParent()" />
 	public IStorageLocation? GetParent()
 	{
-		string? parentPath = Path.GetDirectoryName(FullPath);
-		if (Path.GetPathRoot(FullPath) == FullPath || parentPath == null)
+		string? parentPath = _fileSystem.Path.GetDirectoryName(FullPath);
+		if (_fileSystem.Path.GetPathRoot(FullPath) == FullPath || parentPath == null)
 		{
 			return null;
 		}
@@ -98,7 +97,7 @@ internal sealed class InMemoryLocation : IStorageLocation
 
 	private string GetFriendlyNameParent(string parentPath)
 		=> _fileSystem.Execute.OnNetFramework(
-			() => Path.GetFileName(parentPath),
+			() => _fileSystem.Path.GetFileName(parentPath),
 			() => parentPath);
 
 	#endregion
@@ -133,13 +132,13 @@ internal sealed class InMemoryLocation : IStorageLocation
 	private static string NormalizeKey(MockFileSystem fileSystem, string fullPath)
 	{
 #if FEATURE_PATH_ADVANCED
-		return Path.TrimEndingDirectorySeparator(fullPath);
+		return fileSystem.Path.TrimEndingDirectorySeparator(fullPath);
 #else
 		return FileFeatureExtensionMethods.TrimEndingDirectorySeparator(
 			fileSystem,
 			fullPath,
-			Path.DirectorySeparatorChar,
-			Path.AltDirectorySeparatorChar);
+			fileSystem.Path.DirectorySeparatorChar,
+			fileSystem.Path.AltDirectorySeparatorChar);
 #endif
 	}
 }
