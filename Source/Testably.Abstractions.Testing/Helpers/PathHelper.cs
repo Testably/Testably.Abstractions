@@ -11,10 +11,6 @@ internal static class PathHelper
 		'*', '?'
 	};
 
-	internal static readonly string UncPrefix = new(Path.DirectorySeparatorChar, 2);
-
-	internal static readonly string UncAltPrefix = new(Path.AltDirectorySeparatorChar, 2);
-
 	/// <summary>
 	///     Determines whether the given path contains illegal characters.
 	/// </summary>
@@ -37,7 +33,7 @@ internal static class PathHelper
 	///     For unix, this is empty or null. For Windows, this is empty, null, or
 	///     just spaces ((char)32).
 	/// </summary>
-	internal static bool IsEffectivelyEmpty(this string path, MockFileSystem fileSystem)
+	internal static bool IsEffectivelyEmpty(this string? path, MockFileSystem fileSystem)
 	{
 		if (string.IsNullOrEmpty(path))
 		{
@@ -70,8 +66,8 @@ internal static class PathHelper
 		}
 
 		return fileSystem.Execute.OnWindows(
-			() => path.StartsWith(UncPrefix) || path.StartsWith(UncAltPrefix),
-			() => path.StartsWith(UncPrefix));
+			() => path.StartsWith(new string(fileSystem.Path.DirectorySeparatorChar, 2)) || path.StartsWith(new string(fileSystem.Path.AltDirectorySeparatorChar, 2)),
+			() => path.StartsWith(new string(fileSystem.Path.DirectorySeparatorChar, 2)));
 	}
 
 	internal static string EnsureValidFormat(

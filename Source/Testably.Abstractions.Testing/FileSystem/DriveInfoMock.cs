@@ -40,7 +40,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 		if (driveName.IsUncPath(_fileSystem))
 		{
 			IsUncPath = true;
-			driveName = PathHelper.UncPrefix +
+			driveName = new string(fileSystem.Path.DirectorySeparatorChar, 2) +
 			            GetTopmostParentDirectory(driveName.Substring(2));
 		}
 		else
