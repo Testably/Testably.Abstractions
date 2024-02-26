@@ -55,7 +55,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.CreateAsSymbolicLink(string)" />
 	public void CreateAsSymbolicLink(string pathToTarget)
 	{
-		if (!Execute.IsWindows && string.IsNullOrWhiteSpace(FullName))
+		if (!_fileSystem.Execute.IsWindows && string.IsNullOrWhiteSpace(FullName))
 		{
 			return;
 		}
@@ -70,8 +70,9 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		}
 		else
 		{
-			throw ExceptionFactory.CannotCreateFileAsAlreadyExists(Location
-				.FriendlyName);
+			throw ExceptionFactory.CannotCreateFileAsAlreadyExists(
+				_fileSystem.Execute, 
+				Location.FriendlyName);
 		}
 	}
 #endif
@@ -94,7 +95,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	public virtual void Delete()
 	{
 		_fileSystem.Storage.DeleteContainer(Location);
-		ResetCache(!Execute.IsNetFramework);
+		ResetCache(!_fileSystem.Execute.IsNetFramework);
 	}
 
 	/// <inheritdoc cref="IFileSystemInfo.Exists" />
@@ -115,7 +116,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		get
 		{
 			if (Location.FullPath.EndsWith('.') &&
-			    !Execute.IsWindows)
+			    !_fileSystem.Execute.IsWindows)
 			{
 				return ".";
 			}
@@ -181,7 +182,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		[UnsupportedOSPlatform("windows")]
 		set
 		{
-			Execute.OnWindows(
+			_fileSystem.Execute.OnWindows(
 				() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform());
 
 			Container.UnixFileMode = value;
@@ -215,7 +216,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		catch (IOException ex) when (ex.HResult != -2147024773)
 		{
 			throw ExceptionFactory.FileNameCannotBeResolved(Location.FullPath,
-				Execute.IsWindows ? -2147022975 : -2146232800);
+				_fileSystem.Execute.IsWindows ? -2147022975 : -2146232800);
 		}
 	}
 #endif

@@ -77,7 +77,7 @@ internal sealed class FileMock : IFile
 		IStorageContainer container =
 			_fileSystem.Storage.GetOrCreateContainer(
 				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)),
+					path.EnsureValidFormat(_fileSystem)),
 				InMemoryContainer.NewFile);
 
 		if (container.Type != FileSystemTypes.File)
@@ -120,7 +120,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.AppendText(string)" />
 	public StreamWriter AppendText(string path)
 		=> FileSystem.FileInfo
-			.New(path.EnsureValidFormat(FileSystem))
+			.New(path.EnsureValidFormat(_fileSystem))
 			.AppendText();
 
 	/// <inheritdoc cref="IFile.Copy(string, string)" />
@@ -136,7 +136,7 @@ internal sealed class FileMock : IFile
 		}
 		catch (UnauthorizedAccessException)
 		{
-			Execute.OnNetFramework(()
+			_fileSystem.Execute.OnNetFramework(()
 				=> throw ExceptionFactory.AccessToPathDenied(sourceFileName));
 
 			throw;
@@ -145,7 +145,7 @@ internal sealed class FileMock : IFile
 
 	/// <inheritdoc cref="IFile.Copy(string, string, bool)" />
 	public void Copy(string sourceFileName, string destFileName, bool overwrite)
-		=> Execute.OnNetFramework(
+		=> _fileSystem.Execute.OnNetFramework(
 			() =>
 			{
 				try
@@ -215,7 +215,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.CreateText(string)" />
 	public StreamWriter CreateText(string path)
 		=> FileSystem.FileInfo
-			.New(path.EnsureValidFormat(FileSystem))
+			.New(path.EnsureValidFormat(_fileSystem))
 			.CreateText();
 
 	/// <inheritdoc cref="IFile.Decrypt(string)" />
@@ -230,7 +230,7 @@ internal sealed class FileMock : IFile
 	public void Delete(string path)
 		=> _fileSystem.Storage.DeleteContainer(
 			_fileSystem.Storage.GetLocation(
-				path.EnsureValidFormat(FileSystem)));
+				path.EnsureValidFormat(_fileSystem)));
 
 	/// <inheritdoc cref="IFile.Encrypt(string)" />
 	[SupportedOSPlatform("windows")]
@@ -259,7 +259,7 @@ internal sealed class FileMock : IFile
 	{
 		IStorageContainer container = _fileSystem.Storage
 			.GetContainer(_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem))
+					path.EnsureValidFormat(_fileSystem))
 				.ThrowExceptionIfNotFound(_fileSystem));
 
 		return container.Attributes;
@@ -278,7 +278,7 @@ internal sealed class FileMock : IFile
 	public DateTime GetCreationTime(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)))
+					path.EnsureValidFormat(_fileSystem)))
 			.CreationTime.Get(DateTimeKind.Local);
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
@@ -292,7 +292,7 @@ internal sealed class FileMock : IFile
 	public DateTime GetCreationTimeUtc(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)))
+					path.EnsureValidFormat(_fileSystem)))
 			.CreationTime.Get(DateTimeKind.Utc);
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
@@ -306,7 +306,7 @@ internal sealed class FileMock : IFile
 	public DateTime GetLastAccessTime(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)))
+					path.EnsureValidFormat(_fileSystem)))
 			.LastAccessTime.Get(DateTimeKind.Local);
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
@@ -320,7 +320,7 @@ internal sealed class FileMock : IFile
 	public DateTime GetLastAccessTimeUtc(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)))
+					path.EnsureValidFormat(_fileSystem)))
 			.LastAccessTime.Get(DateTimeKind.Utc);
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
@@ -334,7 +334,7 @@ internal sealed class FileMock : IFile
 	public DateTime GetLastWriteTime(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)))
+					path.EnsureValidFormat(_fileSystem)))
 			.LastWriteTime.Get(DateTimeKind.Local);
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
@@ -348,7 +348,7 @@ internal sealed class FileMock : IFile
 	public DateTime GetLastWriteTimeUtc(string path)
 		=> _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)))
+					path.EnsureValidFormat(_fileSystem)))
 			.LastWriteTime.Get(DateTimeKind.Utc);
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
@@ -362,11 +362,11 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetUnixFileMode(string)" />
 	[UnsupportedOSPlatform("windows")]
 	public UnixFileMode GetUnixFileMode(string path)
-		=> Execute.OnWindows(
+		=> _fileSystem.Execute.OnWindows(
 			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform(),
 			() => _fileSystem.Storage.GetContainer(
 					_fileSystem.Storage.GetLocation(
-							path.EnsureValidFormat(FileSystem))
+							path.EnsureValidFormat(_fileSystem))
 						.ThrowExceptionIfNotFound(_fileSystem))
 				.UnixFileMode);
 #endif
@@ -375,7 +375,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetUnixFileMode(SafeFileHandle)" />
 	[UnsupportedOSPlatform("windows")]
 	public UnixFileMode GetUnixFileMode(SafeFileHandle fileHandle)
-		=> Execute.OnWindows(
+		=> _fileSystem.Execute.OnWindows(
 			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform(),
 			() => GetContainerFromSafeFileHandle(fileHandle)
 				.UnixFileMode);
@@ -452,7 +452,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.OpenText(string)" />
 	public StreamReader OpenText(string path)
 		=> FileSystem.FileInfo
-			.New(path.EnsureValidFormat(FileSystem))
+			.New(path.EnsureValidFormat(_fileSystem))
 			.OpenText();
 
 	/// <inheritdoc cref="IFile.OpenWrite(string)" />
@@ -472,7 +472,7 @@ internal sealed class FileMock : IFile
 			FileAccess.Read,
 			FileStreamFactoryMock.DefaultShare))
 		{
-			Execute.NotOnWindows(() =>
+			_fileSystem.Execute.NotOnWindows(() =>
 				container.AdjustTimes(TimeAdjustments.LastAccessTime));
 
 			return container.GetBytes().ToArray();
@@ -528,7 +528,7 @@ internal sealed class FileMock : IFile
 			FileAccess.Read,
 			FileStreamFactoryMock.DefaultShare))
 		{
-			Execute.NotOnWindows(() =>
+			_fileSystem.Execute.NotOnWindows(() =>
 				container.AdjustTimes(TimeAdjustments.LastAccessTime));
 
 			using (MemoryStream ms = new(container.GetBytes()))
@@ -615,7 +615,7 @@ internal sealed class FileMock : IFile
 		IStorageLocation location =
 			_fileSystem.Storage.GetLocation(linkPath
 				.EnsureValidFormat(_fileSystem, nameof(linkPath)));
-		Execute.OnWindows(
+		_fileSystem.Execute.OnWindows(
 			() => location.ThrowExceptionIfNotFound(_fileSystem),
 			() => location.ThrowExceptionIfNotFound(_fileSystem,
 				onDirectoryNotFound: ExceptionFactory.FileNotFound));
@@ -634,7 +634,7 @@ internal sealed class FileMock : IFile
 		catch (IOException)
 		{
 			throw ExceptionFactory.FileNameCannotBeResolved(linkPath,
-				Execute.IsWindows ? -2147022975 : -2146232800);
+				_fileSystem.Execute.IsWindows ? -2147022975 : -2146232800);
 		}
 	}
 #endif
@@ -763,7 +763,7 @@ internal sealed class FileMock : IFile
 	[UnsupportedOSPlatform("windows")]
 	public void SetUnixFileMode(string path, UnixFileMode mode)
 	{
-		Execute.OnWindows(
+		_fileSystem.Execute.OnWindows(
 			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform());
 
 		IStorageContainer container = GetContainerFromPath(path);
@@ -776,7 +776,7 @@ internal sealed class FileMock : IFile
 	[UnsupportedOSPlatform("windows")]
 	public void SetUnixFileMode(SafeFileHandle fileHandle, UnixFileMode mode)
 	{
-		Execute.OnWindows(
+		_fileSystem.Execute.OnWindows(
 			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform());
 
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
@@ -791,7 +791,7 @@ internal sealed class FileMock : IFile
 		IStorageContainer container =
 			_fileSystem.Storage.GetOrCreateContainer(
 				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)),
+					path.EnsureValidFormat(_fileSystem)),
 				InMemoryContainer.NewFile);
 
 		if (container is NullContainer)
@@ -804,7 +804,7 @@ internal sealed class FileMock : IFile
 			throw ExceptionFactory.AccessToPathDenied(path);
 		}
 
-		Execute.OnWindowsIf(
+		_fileSystem.Execute.OnWindowsIf(
 			container.Attributes.HasFlag(FileAttributes.Hidden),
 			() => throw ExceptionFactory.AccessToPathDenied());
 		using (container.RequestAccess(
@@ -882,7 +882,7 @@ internal sealed class FileMock : IFile
 		IStorageContainer container =
 			_fileSystem.Storage.GetOrCreateContainer(
 				_fileSystem.Storage.GetLocation(
-					path.EnsureValidFormat(FileSystem)),
+					path.EnsureValidFormat(_fileSystem)),
 				InMemoryContainer.NewFile);
 		if (container is NullContainer)
 		{
@@ -896,7 +896,7 @@ internal sealed class FileMock : IFile
 
 		if (contents != null)
 		{
-			Execute.OnWindowsIf(
+			_fileSystem.Execute.OnWindowsIf(
 				container.Attributes.HasFlag(FileAttributes.Hidden),
 				() => throw ExceptionFactory.AccessToPathDenied());
 			using (container.RequestAccess(
@@ -947,11 +947,11 @@ internal sealed class FileMock : IFile
 	private IStorageContainer GetContainerFromPath(string path,
 		ExceptionMode exceptionMode = ExceptionMode.Default)
 	{
-		path.EnsureValidFormat(FileSystem);
+		path.EnsureValidFormat(_fileSystem);
 		IStorageLocation location = _fileSystem.Storage.GetLocation(path);
 		if (exceptionMode == ExceptionMode.FileNotFoundExceptionOnLinuxAndMac)
 		{
-			Execute.OnWindows(
+			_fileSystem.Execute.OnWindows(
 				() => location.ThrowExceptionIfNotFound(_fileSystem),
 				() => location.ThrowExceptionIfNotFound(_fileSystem,
 					onDirectoryNotFound: ExceptionFactory.FileNotFound));

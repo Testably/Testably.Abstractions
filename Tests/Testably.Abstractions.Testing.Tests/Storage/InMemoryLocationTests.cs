@@ -12,8 +12,9 @@ public class InMemoryLocationTests
 		Equals_AsObject_ForInMemoryLocation_ShouldIgnoreTrailingDirectorySeparator(
 			string path1, string path2)
 	{
-		object location1 = InMemoryLocation.New(null, Path.GetFullPath(path1));
-		object location2 = InMemoryLocation.New(null, Path.GetFullPath(path2));
+		MockFileSystem fileSystem = new();
+		object location1 = InMemoryLocation.New(fileSystem, null, Path.GetFullPath(path1));
+		object location2 = InMemoryLocation.New(fileSystem, null, Path.GetFullPath(path2));
 
 		bool result = location1.Equals(location2);
 
@@ -26,7 +27,7 @@ public class InMemoryLocationTests
 		string path)
 	{
 		string fullPath = Path.GetFullPath(path);
-		IStorageLocation location1 = InMemoryLocation.New(null, fullPath);
+		IStorageLocation location1 = InMemoryLocation.New(new MockFileSystem(), null, fullPath);
 		IStorageLocation location2 = new DummyLocation(fullPath);
 
 		bool result = location1.Equals(location2);
@@ -39,10 +40,12 @@ public class InMemoryLocationTests
 	public void Equals_ForInMemoryLocation_ShouldIgnoreTrailingDirectorySeparator(
 		string path)
 	{
+		MockFileSystem fileSystem = new();
 		string fullPath = Path.GetFullPath(path);
-		IStorageLocation location1 = InMemoryLocation.New(null, fullPath);
-		IStorageLocation location2 =
-			InMemoryLocation.New(null, fullPath + Path.DirectorySeparatorChar);
+		IStorageLocation location1 = InMemoryLocation.New(fileSystem, null,
+			fullPath);
+		IStorageLocation location2 = InMemoryLocation.New(fileSystem, null,
+			fullPath + Path.DirectorySeparatorChar);
 
 		bool result = location1.Equals(location2);
 
@@ -53,7 +56,7 @@ public class InMemoryLocationTests
 	[AutoData]
 	public void Equals_Null_ShouldReturnFalse(string path)
 	{
-		IStorageLocation location = InMemoryLocation.New(null, path);
+		IStorageLocation location = InMemoryLocation.New(new MockFileSystem(), null, path);
 
 		bool result = location.Equals(null!);
 
@@ -65,10 +68,12 @@ public class InMemoryLocationTests
 	public void Equals_Object_ForInMemoryLocation_ShouldIgnoreTrailingDirectorySeparator(
 		string path)
 	{
+		MockFileSystem fileSystem = new();
 		string fullPath = Path.GetFullPath(path);
-		object location1 = InMemoryLocation.New(null, fullPath);
-		object location2 =
-			InMemoryLocation.New(null, fullPath + Path.DirectorySeparatorChar);
+		object location1 = InMemoryLocation.New(fileSystem, null,
+			fullPath);
+		object location2 = InMemoryLocation.New(fileSystem, null,
+			fullPath + Path.DirectorySeparatorChar);
 
 		bool result = location1.Equals(location2);
 
@@ -79,7 +84,7 @@ public class InMemoryLocationTests
 	[AutoData]
 	public void Equals_Object_Null_ShouldReturnFalse(string path)
 	{
-		object location = InMemoryLocation.New(null, path);
+		object location = InMemoryLocation.New(new MockFileSystem(), null, path);
 
 		bool result = location.Equals(null);
 
@@ -90,7 +95,7 @@ public class InMemoryLocationTests
 	[AutoData]
 	public void Equals_Object_SameInstance_ShouldReturnTrue(string path)
 	{
-		object location = InMemoryLocation.New(null, path);
+		object location = InMemoryLocation.New(new MockFileSystem(), null, path);
 
 		// ReSharper disable once EqualExpressionComparison
 		bool result = location.Equals(location);
@@ -102,7 +107,7 @@ public class InMemoryLocationTests
 	[AutoData]
 	public void Equals_SameInstance_ShouldReturnTrue(string path)
 	{
-		IStorageLocation location = InMemoryLocation.New(null, path);
+		IStorageLocation location = InMemoryLocation.New(new MockFileSystem(), null, path);
 
 		bool result = location.Equals(location);
 
@@ -112,7 +117,8 @@ public class InMemoryLocationTests
 	[Fact]
 	public void GetParent_Root_ShouldReturnNull()
 	{
-		IStorageLocation location = InMemoryLocation.New(null, "".PrefixRoot());
+		MockFileSystem fileSystem = new();
+		IStorageLocation location = InMemoryLocation.New(fileSystem, null, "".PrefixRoot(fileSystem));
 
 		IStorageLocation? result = location.GetParent();
 
@@ -124,7 +130,7 @@ public class InMemoryLocationTests
 	{
 		Exception? exception = Record.Exception(() =>
 		{
-			InMemoryLocation.New(null, "");
+			InMemoryLocation.New(new MockFileSystem(), null, "");
 		});
 
 		exception.Should().BeOfType<ArgumentException>()
@@ -135,7 +141,7 @@ public class InMemoryLocationTests
 	[AutoData]
 	public void ToString_ShouldReturnPath(string path)
 	{
-		IStorageLocation location = InMemoryLocation.New(null, path);
+		IStorageLocation location = InMemoryLocation.New(new MockFileSystem(), null, path);
 
 		location.ToString().Should().Be(path);
 	}

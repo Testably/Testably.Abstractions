@@ -10,14 +10,14 @@ namespace Testably.Abstractions.Testing.Storage;
 internal static class StorageExtensions
 {
 	public static AdjustedLocation AdjustLocationFromSearchPattern(
-		this IStorage storage, string path, string searchPattern)
+		this IStorage storage, MockFileSystem fileSystem, string path, string searchPattern)
 	{
 		if (searchPattern == null)
 		{
 			throw new ArgumentNullException(nameof(searchPattern));
 		}
 
-		Execute.OnNetFrameworkIf(searchPattern.EndsWith(".."),
+		fileSystem.Execute.OnNetFrameworkIf(searchPattern.EndsWith(".."),
 			() => throw ExceptionFactory.SearchPatternCannotContainTwoDots());
 
 		IStorageLocation location = storage.GetLocation(path);
@@ -30,7 +30,7 @@ internal static class StorageExtensions
 			while (searchPattern.StartsWith(".." + Path.DirectorySeparatorChar) ||
 			       searchPattern.StartsWith(".." + Path.AltDirectorySeparatorChar))
 			{
-				Execute.OnNetFramework(
+				fileSystem.Execute.OnNetFramework(
 					() => throw ExceptionFactory.SearchPatternCannotContainTwoDots());
 				parentDirectories.Push(Path.GetFileName(location.FullPath));
 				location = location.GetParent() ??

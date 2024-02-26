@@ -92,7 +92,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		}
 		else if (file.Type == FileSystemTypes.Directory)
 		{
-			Execute.OnWindows(
+			_fileSystem.Execute.OnWindows(
 				() =>
 					throw ExceptionFactory.AccessToPathDenied(
 						_fileSystem.Path.GetFullPath(Name)),
@@ -104,7 +104,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		{
 			throw ExceptionFactory.FileAlreadyExists(
 				_fileSystem.Path.GetFullPath(Name),
-				Execute.IsWindows ? -2147024816 : 17);
+				_fileSystem.Execute.IsWindows ? -2147024816 : 17);
 		}
 
 		if (file.Attributes.HasFlag(FileAttributes.ReadOnly) &&
@@ -155,7 +155,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.CopyTo(Stream, int)" />
 	public override void CopyTo(Stream destination, int bufferSize)
 	{
-		Execute.NotOnWindows(() =>
+		_fileSystem.Execute.NotOnWindows(() =>
 			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
 		base.CopyTo(destination, bufferSize);
 	}
@@ -213,7 +213,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportReading();
 		}
 
-		Execute.NotOnWindows(() =>
+		_fileSystem.Execute.NotOnWindows(() =>
 			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
 		return base.Read(buffer, offset, count);
 	}
@@ -227,7 +227,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportReading();
 		}
 
-		Execute.NotOnWindows(() =>
+		_fileSystem.Execute.NotOnWindows(() =>
 			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
 		return base.Read(buffer);
 	}
@@ -242,7 +242,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportReading();
 		}
 
-		Execute.NotOnWindows(() =>
+		_fileSystem.Execute.NotOnWindows(() =>
 			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
 		return base.ReadAsync(buffer, offset, count, cancellationToken);
 	}
@@ -258,7 +258,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportReading();
 		}
 
-		Execute.NotOnWindows(() =>
+		_fileSystem.Execute.NotOnWindows(() =>
 			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
 		return base.ReadAsync(buffer, cancellationToken);
 	}
@@ -272,7 +272,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportReading();
 		}
 
-		Execute.NotOnWindows(() =>
+		_fileSystem.Execute.NotOnWindows(() =>
 			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
 		return base.ReadByte();
 	}

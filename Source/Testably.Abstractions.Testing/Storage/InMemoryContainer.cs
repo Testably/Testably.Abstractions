@@ -39,7 +39,7 @@ internal class InMemoryContainer : IStorageContainer
 		get => AdjustAttributes(_attributes);
 		set
 		{
-			value &= Execute.OnWindows(
+			value &= _fileSystem.Execute.OnWindows(
 				() => FileAttributes.Directory |
 				      FileAttributes.ReadOnly |
 				      FileAttributes.Archive |
@@ -49,7 +49,7 @@ internal class InMemoryContainer : IStorageContainer
 				      FileAttributes.Offline |
 				      FileAttributes.System |
 				      FileAttributes.Temporary,
-				() => Execute.OnLinux(
+				() => _fileSystem.Execute.OnLinux(
 					() => FileAttributes.Directory |
 					      FileAttributes.ReadOnly,
 					() => FileAttributes.Hidden |
@@ -152,7 +152,7 @@ internal class InMemoryContainer : IStorageContainer
 			throw ExceptionFactory.NetworkPathNotFound(_location.FullPath);
 		}
 
-		Execute.OnWindowsIf(
+		_fileSystem.Execute.OnWindowsIf(
 			!ignoreMetadataErrors && Attributes.HasFlag(FileAttributes.ReadOnly),
 			() => throw ExceptionFactory.AccessToPathDenied());
 
@@ -165,7 +165,7 @@ internal class InMemoryContainer : IStorageContainer
 		if (CanGetAccess(access, share, deleteAccess))
 		{
 			Guid guid = Guid.NewGuid();
-			FileHandle fileHandle = new(guid, ReleaseAccess, access, share, deleteAccess);
+			FileHandle fileHandle = new(_fileSystem, guid, ReleaseAccess, access, share, deleteAccess);
 			_fileHandles.TryAdd(guid, fileHandle);
 			return fileHandle;
 		}
@@ -180,13 +180,13 @@ internal class InMemoryContainer : IStorageContainer
 		NotifyFilters notifyFilters = NotifyFilters.LastAccess |
 		                              NotifyFilters.LastWrite |
 		                              NotifyFilters.Size;
-		Execute.OnLinux(()
+		_fileSystem.Execute.OnLinux(()
 			=> notifyFilters |= NotifyFilters.Security);
-		Execute.OnMac(()
+		_fileSystem.Execute.OnMac(()
 			=> notifyFilters |= NotifyFilters.CreationTime);
 
 		TimeAdjustments timeAdjustment = TimeAdjustments.LastWriteTime;
-		Execute.OnWindows(()
+		_fileSystem.Execute.OnWindows(()
 			=> timeAdjustment |= TimeAdjustments.LastAccessTime);
 
 		ChangeDescription fileSystemChange =
@@ -197,7 +197,7 @@ internal class InMemoryContainer : IStorageContainer
 		_location.Drive?.ChangeUsedBytes(bytes.Length - _bytes.Length);
 		_bytes = bytes;
 		this.AdjustTimes(timeAdjustment);
-		Execute.OnWindows(() =>
+		_fileSystem.Execute.OnWindows(() =>
 		{
 			IStorageContainer? directoryContainer =
 				_fileSystem.Storage.GetContainer(_location.GetParent());
@@ -253,7 +253,7 @@ internal class InMemoryContainer : IStorageContainer
 		if (Path.GetFileName(_location.FullPath).StartsWith('.'))
 		{
 			FileAttributes attr = attributes;
-			attributes = Execute.OnLinux(
+			attributes = _fileSystem.Execute.OnLinux(
 				() => attr | FileAttributes.Hidden,
 				() => attr);
 		}
@@ -343,15 +343,17 @@ internal class InMemoryContainer : IStorageContainer
 	private sealed class FileHandle : IStorageAccessHandle
 	{
 		private readonly Guid _key;
+		private readonly MockFileSystem _fileSystem;
 		private readonly Action<Guid> _releaseCallback;
 
-		public FileHandle(Guid key, Action<Guid> releaseCallback, FileAccess access,
+		public FileHandle(MockFileSystem fileSystem, Guid key, Action<Guid> releaseCallback, FileAccess access,
 			FileShare share, bool deleteAccess)
 		{
+			_fileSystem = fileSystem;
 			_releaseCallback = releaseCallback;
 			Access = access;
 			DeleteAccess = deleteAccess;
-			Share = Execute.OnWindows(
+			Share = _fileSystem.Execute.OnWindows(
 				() => share,
 				() => share == FileShare.None
 					? FileShare.None
@@ -382,11 +384,11 @@ internal class InMemoryContainer : IStorageContainer
 		public bool GrantAccess(FileAccess access, FileShare share, bool deleteAccess)
 		{
 			FileShare usedShare = share;
-			Execute.NotOnWindows(()
+			_fileSystem.Execute.NotOnWindows(()
 				=> usedShare = FileShare.ReadWrite);
 			if (deleteAccess)
 			{
-				return !Execute.IsWindows || Share == FileShare.Delete;
+				return !_fileSystem.Execute.IsWindows || Share == FileShare.Delete;
 			}
 
 			return CheckAccessWithShare(access, Share) &&

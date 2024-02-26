@@ -16,7 +16,9 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 	{
 		_fileSystem = fileSystem;
 		_logger = logger;
-		BasePath = InitializeBasePath(prefix ?? "");
+		BasePath = InitializeBasePath(
+			(fileSystem as MockFileSystem)?.Execute ?? Execute.Default,
+			prefix ?? "");
 	}
 
 	#region IDirectoryCleaner Members
@@ -114,7 +116,7 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 		_fileSystem.Directory.Delete(path);
 	}
 
-	private string InitializeBasePath(string prefix)
+	private string InitializeBasePath(Execute execute, string prefix)
 	{
 		string basePath;
 
@@ -124,7 +126,7 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 				_fileSystem.Path.GetTempPath(),
 				prefix + _fileSystem.Path.GetFileNameWithoutExtension(
 					_fileSystem.Path.GetRandomFileName()));
-			Execute.OnMac(() => localBasePath = "/private" + localBasePath);
+			execute.OnMac(() => localBasePath = "/private" + localBasePath);
 			basePath = localBasePath;
 		} while (_fileSystem.Directory.Exists(basePath));
 

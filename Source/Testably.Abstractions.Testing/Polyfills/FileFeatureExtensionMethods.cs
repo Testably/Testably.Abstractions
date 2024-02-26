@@ -11,18 +11,8 @@ namespace Testably.Abstractions.Testing;
 [ExcludeFromCodeCoverage]
 internal static class FileFeatureExtensionMethods
 {
-	/// <summary>
-	///     Trims one trailing directory separator beyond the root of the path.
-	/// </summary>
 	internal static string TrimEndingDirectorySeparator(
-		this IPath pathSystem,
-		string path)
-	{
-		return TrimEndingDirectorySeparator(path, pathSystem.DirectorySeparatorChar,
-			pathSystem.AltDirectorySeparatorChar);
-	}
-
-	internal static string TrimEndingDirectorySeparator(
+		MockFileSystem fileSystem,
 		string path, char directorySeparatorChar, char altDirectorySeparatorChar)
 	{
 		if (string.IsNullOrEmpty(path))
@@ -33,7 +23,7 @@ internal static class FileFeatureExtensionMethods
 		string trimmed = path.TrimEnd(directorySeparatorChar,
 			altDirectorySeparatorChar);
 
-		return Execute.OnWindows(
+		return fileSystem.Execute.OnWindows(
 			       () =>
 			       {
 				       if (trimmed.Length == 2

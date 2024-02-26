@@ -29,10 +29,10 @@ internal static class ExceptionFactory
 #endif
 		};
 
-	internal static IOException CannotCreateFileAsAlreadyExists(string path)
+	internal static IOException CannotCreateFileAsAlreadyExists(Execute execute, string path)
 		=> new(
 			$"Cannot create '{path}' because a file or directory with the same name already exists.",
-			Execute.IsWindows ? -2147024713 : 17);
+			execute.IsWindows ? -2147024713 : 17);
 
 	internal static IOException CannotCreateFileWhenAlreadyExists(int hResult)
 		=> new("Cannot create a file when that file already exists.", hResult);
@@ -46,11 +46,11 @@ internal static class ExceptionFactory
 #endif
 		};
 
-	internal static IOException DirectoryNotEmpty(string path)
+	internal static IOException DirectoryNotEmpty(Execute execute, string path)
 		=> new($"Directory not empty : '{path}'",
-			Execute.IsWindows
+			execute.IsWindows
 				? -2147024751
-				: Execute.IsMac
+				: execute.IsMac
 					? 66
 					: 39);
 
@@ -135,8 +135,8 @@ internal static class ExceptionFactory
 #endif
 		};
 
-	internal static ArgumentException PathCannotBeEmpty(string paramName = "path")
-		=> Execute.OnNetFramework(
+	internal static ArgumentException PathCannotBeEmpty(Execute execute, string paramName = "path")
+		=> execute.OnNetFramework(
 			() => new ArgumentException(
 				"Path cannot be the empty string or all whitespace.")
 			{

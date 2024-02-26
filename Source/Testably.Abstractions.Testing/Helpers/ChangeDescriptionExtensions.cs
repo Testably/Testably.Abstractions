@@ -15,7 +15,8 @@ internal static class ChangeDescriptionExtensions
 	///     - <paramref name="searchPattern" /><br />
 	///     - custom <paramref name="predicate" />
 	/// </summary>
-	/// <param name="changeDescription">The change description</param>
+	/// <param name="changeDescription">The change description.</param>
+	/// <param name="execute">The execution engine simulation the underlying operating system.</param>
 	/// <param name="fileSystemType">The <see cref="ChangeDescription.FileSystemType" /> must have any of the provided flags.</param>
 	/// <param name="changeType">The <see cref="ChangeDescription.ChangeType" /> must match this type.</param>
 	/// <param name="path">The <see cref="ChangeDescription.Path" /> must match this path.</param>
@@ -26,6 +27,7 @@ internal static class ChangeDescriptionExtensions
 	///     <paramref name="changeDescription" /> matches all filter criteria, otherwise <see langword="false" />.
 	/// </returns>
 	internal static bool Matches(this ChangeDescription changeDescription,
+		Execute execute,
 		FileSystemTypes fileSystemType,
 		WatcherChangeTypes changeType,
 		string path,
@@ -40,15 +42,18 @@ internal static class ChangeDescriptionExtensions
 
 		if (!string.IsNullOrEmpty(path) &&
 		    !changeDescription.Path.StartsWith(path,
-			    InMemoryLocation.StringComparisonMode))
+			    execute.StringComparisonMode))
 		{
 			return false;
 		}
 
 		if (searchPattern != EnumerationOptionsHelper.DefaultSearchPattern &&
 		    (changeDescription.Name == null ||
-		     !EnumerationOptionsHelper.MatchesPattern(EnumerationOptionsHelper.Compatible,
-			     changeDescription.Name, searchPattern)))
+		     !EnumerationOptionsHelper.MatchesPattern(
+			     execute,
+			     EnumerationOptionsHelper.Compatible,
+			     changeDescription.Name,
+			     searchPattern)))
 		{
 			return false;
 		}

@@ -5,20 +5,32 @@ using System.Runtime.InteropServices;
 namespace Testably.Abstractions.Testing.Helpers;
 
 [ExcludeFromCodeCoverage]
-internal static class Execute
+internal class Execute
 {
-	private static bool? _isNetFramework;
+	/// <summary>
+	///     The default execution engine, which uses the current operating system.
+	/// </summary>
+	public static Execute Default { get; } = new();
+
+	private bool? _isNetFramework;
+
+	/// <summary>
+	///     The default <see cref="StringComparison" /> used for comparing paths.
+	/// </summary>
+	public StringComparison StringComparisonMode => IsLinux
+		? StringComparison.Ordinal
+		: StringComparison.OrdinalIgnoreCase;
 
 	/// <summary>
 	///     Flag indicating if the code runs on <see cref="OSPlatform.Linux" />.
 	/// </summary>
-	public static bool IsLinux
+	public bool IsLinux
 		=> RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
 	/// <summary>
 	///     Flag indicating if the code runs on <see cref="OSPlatform.OSX" />.
 	/// </summary>
-	public static bool IsMac
+	public bool IsMac
 		=> RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
 
 	/// <summary>
@@ -27,7 +39,7 @@ internal static class Execute
 	/// <remarks>
 	///     <see href="https://stackoverflow.com/a/53675231" />
 	/// </remarks>
-	public static bool IsNetFramework
+	public bool IsNetFramework
 	{
 		get
 		{
@@ -40,7 +52,7 @@ internal static class Execute
 	/// <summary>
 	///     Flag indicating if the code runs on <see cref="OSPlatform.Windows" />.
 	/// </summary>
-	public static bool IsWindows
+	public bool IsWindows
 		=> RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
 	/// <summary>
@@ -49,7 +61,7 @@ internal static class Execute
 	/// <remarks>
 	///     See also: <seealso cref="IsNetFramework" />
 	/// </remarks>
-	public static void NotOnNetFramework(Action callback)
+	public void NotOnNetFramework(Action callback)
 	{
 		if (!IsNetFramework)
 		{
@@ -60,7 +72,7 @@ internal static class Execute
 	/// <summary>
 	///     The <paramref name="callback" /> is executed on all operating systems except <see cref="OSPlatform.Windows" />.
 	/// </summary>
-	public static void NotOnWindows(Action callback)
+	public void NotOnWindows(Action callback)
 	{
 		if (!IsWindows)
 		{
@@ -72,7 +84,7 @@ internal static class Execute
 	///     The <paramref name="callback" /> is executed when the operating system is not <see cref="OSPlatform.Windows" />
 	///     and the <paramref name="predicate" /> is <see langword="true" />.
 	/// </summary>
-	public static void NotOnWindowsIf(bool predicate, Action callback)
+	public void NotOnWindowsIf(bool predicate, Action callback)
 	{
 		if (predicate && !IsWindows)
 		{
@@ -84,7 +96,7 @@ internal static class Execute
 	///     Returns the value from <paramref name="callback" />, when the operating system is <see cref="OSPlatform.Linux" />,
 	///     otherwise the value from <paramref name="alternativeCallback" />.
 	/// </summary>
-	public static T OnLinux<T>(Func<T> callback, Func<T> alternativeCallback)
+	public T OnLinux<T>(Func<T> callback, Func<T> alternativeCallback)
 	{
 		if (IsLinux)
 		{
@@ -97,7 +109,7 @@ internal static class Execute
 	/// <summary>
 	///     The <paramref name="callback" /> is executed when the operating system is <see cref="OSPlatform.Linux" />.
 	/// </summary>
-	public static void OnLinux(Action callback)
+	public void OnLinux(Action callback)
 	{
 		if (IsLinux)
 		{
@@ -108,7 +120,7 @@ internal static class Execute
 	/// <summary>
 	///     The <paramref name="callback" /> is executed when the operating system is <see cref="OSPlatform.OSX" />.
 	/// </summary>
-	public static void OnMac(Action callback, Action? alternativeCallback = null)
+	public void OnMac(Action callback, Action? alternativeCallback = null)
 	{
 		if (IsMac)
 		{
@@ -127,7 +139,7 @@ internal static class Execute
 	/// <remarks>
 	///     See also: <seealso cref="IsNetFramework" />
 	/// </remarks>
-	public static T OnNetFramework<T>(Func<T> callback, Func<T> alternativeCallback)
+	public T OnNetFramework<T>(Func<T> callback, Func<T> alternativeCallback)
 	{
 		if (IsNetFramework)
 		{
@@ -143,7 +155,7 @@ internal static class Execute
 	/// <remarks>
 	///     See also: <seealso cref="IsNetFramework" />
 	/// </remarks>
-	public static void OnNetFramework(Action callback, Action? alternativeCallback = null)
+	public void OnNetFramework(Action callback, Action? alternativeCallback = null)
 	{
 		if (IsNetFramework)
 		{
@@ -162,7 +174,7 @@ internal static class Execute
 	/// <remarks>
 	///     See also: <seealso cref="IsNetFramework" />
 	/// </remarks>
-	public static void OnNetFrameworkIf(bool predicate, Action callback)
+	public void OnNetFrameworkIf(bool predicate, Action callback)
 	{
 		if (IsNetFramework && predicate)
 		{
@@ -173,7 +185,7 @@ internal static class Execute
 	/// <summary>
 	///     The <paramref name="callback" /> is executed when the operating system is <see cref="OSPlatform.Windows" />.
 	/// </summary>
-	public static void OnWindows(Action callback, Action? alternativeCallback = null)
+	public void OnWindows(Action callback, Action? alternativeCallback = null)
 	{
 		if (IsWindows)
 		{
@@ -190,7 +202,7 @@ internal static class Execute
 	///     ,
 	///     otherwise the value from <paramref name="alternativeCallback" />.
 	/// </summary>
-	public static T OnWindows<T>(Func<T> callback, Func<T> alternativeCallback)
+	public T OnWindows<T>(Func<T> callback, Func<T> alternativeCallback)
 	{
 		if (IsWindows)
 		{
@@ -204,7 +216,7 @@ internal static class Execute
 	///     The <paramref name="callback" /> is executed when the operating system is <see cref="OSPlatform.Windows" />
 	///     and the <paramref name="predicate" /> is <see langword="true" />.
 	/// </summary>
-	public static void OnWindowsIf(bool predicate, Action callback)
+	public void OnWindowsIf(bool predicate, Action callback)
 	{
 		if (predicate && IsWindows)
 		{

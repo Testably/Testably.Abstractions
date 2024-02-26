@@ -61,7 +61,7 @@ internal sealed class FileInfoMock
 			    Container.Type != FileSystemTypes.File)
 			{
 				throw ExceptionFactory.FileNotFound(
-					Execute.OnNetFramework(
+					_fileSystem.Execute.OnNetFramework(
 						() => Location.FriendlyName,
 						() => Location.FullPath));
 			}
@@ -115,7 +115,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.Create()" />
 	public FileSystemStream Create()
 	{
-		Execute.NotOnNetFramework(Refresh);
+		_fileSystem.Execute.NotOnNetFramework(Refresh);
 		return _fileSystem.File.Create(FullName);
 	}
 
@@ -165,7 +165,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.Open(FileMode)" />
 	public FileSystemStream Open(FileMode mode)
 	{
-		Execute.OnNetFrameworkIf(mode == FileMode.Append,
+		_fileSystem.Execute.OnNetFrameworkIf(mode == FileMode.Append,
 			() => throw ExceptionFactory.AppendAccessOnlyInWriteOnlyMode());
 
 		return new FileStreamMock(
@@ -233,7 +233,7 @@ internal sealed class FileInfoMock
 						() => { },
 						() =>
 						{
-							if (Execute.IsWindows)
+							if (_fileSystem.Execute.IsWindows)
 							{
 								throw ExceptionFactory.FileNotFound(FullName);
 							}
@@ -247,7 +247,7 @@ internal sealed class FileInfoMock
 							() => { },
 							() =>
 							{
-								if (Execute.IsWindows)
+								if (_fileSystem.Execute.IsWindows)
 								{
 									throw ExceptionFactory.DirectoryNotFound(FullName);
 								}
@@ -260,14 +260,14 @@ internal sealed class FileInfoMock
 							() => { },
 							() =>
 							{
-								if (Execute.IsWindows)
+								if (_fileSystem.Execute.IsWindows)
 								{
 									throw ExceptionFactory.FileNotFound(FullName);
 								}
 
 								throw ExceptionFactory.DirectoryNotFound(FullName);
 							}),
-					!Execute.IsWindows)
+					!_fileSystem.Execute.IsWindows)
 			?? throw ExceptionFactory.FileNotFound(FullName);
 		return _fileSystem.FileInfo.New(location.FullPath);
 	}

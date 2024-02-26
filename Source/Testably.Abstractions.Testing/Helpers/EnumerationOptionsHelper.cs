@@ -44,18 +44,18 @@ internal static class EnumerationOptionsHelper
 	///     <see
 	///         href="https://github.com/dotnet/runtime/blob/v6.0.0/src/libraries/System.Private.CoreLib/src/System/IO/Enumeration/FileSystemEnumerableFactory.cs#L107" />
 	/// </summary>
-	public static bool MatchesPattern(EnumerationOptions enumerationOptions, string name,
+	public static bool MatchesPattern(Execute execute, EnumerationOptions enumerationOptions, string name,
 		string searchString)
 	{
 		bool ignoreCase =
 			(enumerationOptions.MatchCasing == MatchCasing.PlatformDefault &&
-			 Execute.IsWindows)
+			 execute.IsWindows)
 			|| enumerationOptions.MatchCasing == MatchCasing.CaseInsensitive;
 
 		return enumerationOptions.MatchType switch
 		{
-			MatchType.Simple => MatchPattern(searchString, name, ignoreCase, false),
-			MatchType.Win32 => MatchPattern(searchString, name, ignoreCase, true),
+			MatchType.Simple => MatchPattern(execute, searchString, name, ignoreCase, false),
+			MatchType.Win32 => MatchPattern(execute, searchString, name, ignoreCase, true),
 			_ => throw new ArgumentOutOfRangeException(nameof(enumerationOptions)),
 		};
 	}
@@ -79,19 +79,20 @@ internal static class EnumerationOptionsHelper
 			: Compatible;
 	}
 
-	private static bool MatchPattern(string searchString,
+	private static bool MatchPattern(Execute execute, 
+		string searchString,
 		string name,
 		bool ignoreCase,
 		bool useExtendedWildcards)
 	{
-		if (Execute.IsNetFramework && searchString == "")
+		if (execute.IsNetFramework && searchString == "")
 		{
 			return false;
 		}
 
 		if (useExtendedWildcards)
 		{
-			searchString = SimplifyExpression(searchString);
+			searchString = SimplifyExpression(execute, searchString);
 			return FileSystemName.MatchesWin32Expression(searchString,
 				name, ignoreCase);
 		}
@@ -106,7 +107,7 @@ internal static class EnumerationOptionsHelper
 	///     <seealso
 	///         href="https://github.com/dotnet/runtime/blob/v6.0.0/src/libraries/System.Private.CoreLib/src/System/IO/Enumeration/FileSystemEnumerableFactory.cs#L37" />
 	/// </summary>
-	private static string SimplifyExpression(string searchString)
+	private static string SimplifyExpression(Execute execute, string searchString)
 	{
 		char[] unixEscapeChars =
 		{
@@ -125,12 +126,12 @@ internal static class EnumerationOptionsHelper
 			return DefaultSearchPattern;
 		}
 
-		if (!Execute.IsNetFramework && string.IsNullOrEmpty(searchString))
+		if (!execute.IsNetFramework && string.IsNullOrEmpty(searchString))
 		{
 			return "*";
 		}
 
-		Execute.NotOnWindowsIf(searchString.IndexOfAny(unixEscapeChars) != -1,
+		execute.NotOnWindowsIf(searchString.IndexOfAny(unixEscapeChars) != -1,
 			() =>
 			{
 				// Backslash isn't the default separator, need to escape (e.g. Unix)
