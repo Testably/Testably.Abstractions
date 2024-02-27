@@ -21,8 +21,8 @@ namespace {@class.Namespace}
 {{
 	public abstract partial class {@class.Name}<TFileSystem>
 	{{
-		protected {@class.Name}(TFileSystem fileSystem, ITimeSystem timeSystem)
-			: base(fileSystem, timeSystem)
+		protected {@class.Name}(Test test, TFileSystem fileSystem, ITimeSystem timeSystem)
+			: base(test, fileSystem, timeSystem)
 		{{
 		}}
 	}}
@@ -43,6 +43,7 @@ namespace {@class.Namespace}.{@class.Name}
 		}}
 
 		private MockFileSystemTests(MockFileSystem mockFileSystem) : base(
+			new Test(),
 			mockFileSystem,
 			mockFileSystem.TimeSystem)
 		{{
@@ -70,7 +71,7 @@ namespace {@class.Namespace}.{@class.Name}
 		private readonly IDirectoryCleaner _directoryCleaner;
 
 		public RealFileSystemTests(ITestOutputHelper testOutputHelper)
-			: base(new RealFileSystem(), new RealTimeSystem())
+			: base(new Test(), new RealFileSystem(), new RealTimeSystem())
 		{{
 			_directoryCleaner = FileSystem
 			   .SetCurrentDirectoryToEmptyTemporaryDirectory($""{@class.Namespace}{{FileSystem.Path.DirectorySeparatorChar}}{@class.Name}-"", testOutputHelper.WriteLine);

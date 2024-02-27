@@ -63,13 +63,13 @@ public abstract partial class Tests<TFileSystem>
 	public void New_DefaultDrive_ShouldBeFixed()
 	{
 		IDriveInfo result =
-			FileSystem.DriveInfo.New(FileTestHelper.RootDrive());
+			FileSystem.DriveInfo.New(FileTestHelper.RootDrive(Test));
 
 		result.AvailableFreeSpace.Should().BeGreaterThan(0);
 		result.DriveFormat.Should().NotBeNull();
 		result.DriveType.Should().Be(DriveType.Fixed);
 		result.IsReady.Should().BeTrue();
-		result.RootDirectory.FullName.Should().Be(FileTestHelper.RootDrive());
+		result.RootDirectory.FullName.Should().Be(FileTestHelper.RootDrive(Test));
 		result.TotalFreeSpace.Should().BeGreaterThan(0);
 		result.TotalSize.Should().BeGreaterThan(0);
 		result.VolumeLabel.Should().NotBeEmpty();
@@ -111,7 +111,7 @@ public abstract partial class Tests<TFileSystem>
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
 
-		string rootedPath = FileTestHelper.RootDrive(path, driveLetter);
+		string rootedPath = FileTestHelper.RootDrive(Test, path, driveLetter);
 
 		IDriveInfo result = FileSystem.DriveInfo.New(rootedPath);
 

@@ -14,7 +14,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 	///     The maximum number of symbolic links that are followed.<br />
 	///     <see href="https://learn.microsoft.com/en-us/dotnet/api/system.io.directory.resolvelinktarget?view=net-6.0#remarks" />
 	/// </summary>
-	private static int MaxResolveLinks =>
+	private int MaxResolveLinks =>
 		Test.RunsOnWindows ? 63 : 40;
 
 	#endregion

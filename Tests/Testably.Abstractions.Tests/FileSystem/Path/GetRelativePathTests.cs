@@ -27,8 +27,8 @@ public abstract partial class GetRelativePathTests<TFileSystem>
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Different drives are only supported on Windows");
 
-		path1 = FileTestHelper.RootDrive(path1, 'A');
-		path2 = FileTestHelper.RootDrive(path2, 'B');
+		path1 = FileTestHelper.RootDrive(Test, path1, 'A');
+		path2 = FileTestHelper.RootDrive(Test, path2, 'B');
 		string result = FileSystem.Path.GetRelativePath(path1, path2);
 
 		result.Should().Be(path2);
@@ -51,7 +51,7 @@ public abstract partial class GetRelativePathTests<TFileSystem>
 	public void GetRelativePath_RootedPath_ShouldReturnAbsolutePath(
 		string baseDirectory, string directory1, string directory2)
 	{
-		baseDirectory = FileTestHelper.RootDrive(baseDirectory);
+		baseDirectory = FileTestHelper.RootDrive(Test, baseDirectory);
 		string path1 = FileSystem.Path.Combine(baseDirectory, directory1);
 		string path2 = FileSystem.Path.Combine(baseDirectory, directory2);
 		string expectedRelativePath = FileSystem.Path.Combine("..", directory2);

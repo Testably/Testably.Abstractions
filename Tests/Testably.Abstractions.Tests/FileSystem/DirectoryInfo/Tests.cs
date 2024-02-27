@@ -283,7 +283,7 @@ public abstract partial class Tests<TFileSystem>
 	public void Parent_Root_ShouldBeNull()
 	{
 		IDirectoryInfo sut =
-			FileSystem.DirectoryInfo.New(FileTestHelper.RootDrive());
+			FileSystem.DirectoryInfo.New(FileTestHelper.RootDrive(Test));
 
 		sut.Parent.Should().BeNull();
 	}
@@ -342,7 +342,7 @@ public abstract partial class Tests<TFileSystem>
 	[AutoData]
 	public void Root_Name_ShouldBeCorrect()
 	{
-		string rootName = FileTestHelper.RootDrive();
+		string rootName = FileTestHelper.RootDrive(Test);
 		IDirectoryInfo sut =
 			FileSystem.DirectoryInfo.New(rootName);
 
@@ -354,7 +354,7 @@ public abstract partial class Tests<TFileSystem>
 	[AutoData]
 	public void Root_ShouldExist(string path)
 	{
-		string expectedRoot = FileTestHelper.RootDrive();
+		string expectedRoot = FileTestHelper.RootDrive(Test);
 		IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
 
 		result.Root.Should().Exist();

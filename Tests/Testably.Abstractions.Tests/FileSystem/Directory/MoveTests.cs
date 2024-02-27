@@ -70,7 +70,7 @@ public abstract partial class MoveTests<TFileSystem>
 	{
 		FileSystem.InitializeIn(source)
 			.WithAFile();
-		string destination = FileTestHelper.RootDrive("not-existing/path");
+		string destination = FileTestHelper.RootDrive(Test, "not-existing/path");
 
 		Exception? exception = Record.Exception(() =>
 		{

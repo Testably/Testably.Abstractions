@@ -11,7 +11,7 @@ public abstract partial class Tests<TFileSystem>
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
 
 		IDriveInfo result =
-			FileSystem.DriveInfo.New(FileTestHelper.RootDrive());
+			FileSystem.DriveInfo.New(FileTestHelper.RootDrive(Test));
 		string previousVolumeLabel = result.VolumeLabel;
 
 		try
@@ -50,7 +50,7 @@ public abstract partial class Tests<TFileSystem>
 		Skip.IfNot(Test.RunsOnWindows);
 
 		IDriveInfo result =
-			FileSystem.DriveInfo.New(FileTestHelper.RootDrive());
+			FileSystem.DriveInfo.New(FileTestHelper.RootDrive(Test));
 
 		result.ToString().Should().Be("C:\\");
 	}
