@@ -15,7 +15,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 	{
 		FileSystem.Initialize()
 			.WithFile(source);
-		string destination = FileTestHelper.RootDrive("not-existing/path/foo.txt");
+		string destination = FileTestHelper.RootDrive(Test, "not-existing/path/foo.txt");
 
 		Exception? exception = Record.Exception(() =>
 		{

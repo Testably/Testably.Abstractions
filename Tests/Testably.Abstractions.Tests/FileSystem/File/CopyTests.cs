@@ -15,7 +15,7 @@ public abstract partial class CopyTests<TFileSystem>
 	{
 		FileSystem.Initialize()
 			.WithFile(source);
-		string destination = FileTestHelper.RootDrive("not-existing/path/foo.txt");
+		string destination = FileTestHelper.RootDrive(Test, "not-existing/path/foo.txt");
 
 		Exception? exception = Record.Exception(() =>
 		{

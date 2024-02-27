@@ -13,7 +13,7 @@ public abstract partial class Tests<TFileSystem>
 	public void New_PathTooLong_ShouldThrowPathTooLongException_OnNetFramework(
 		int maxLength)
 	{
-		string rootDrive = FileTestHelper.RootDrive();
+		string rootDrive = FileTestHelper.RootDrive(Test);
 		string path = new('a', maxLength - rootDrive.Length);
 		Exception? exception = Record.Exception(() =>
 		{

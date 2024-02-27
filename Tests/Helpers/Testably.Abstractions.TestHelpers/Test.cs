@@ -1,31 +1,26 @@
 using System.IO.Abstractions;
 using System.Runtime.InteropServices;
+using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace Testably.Abstractions.TestHelpers;
 
-public static class Test
+public class Test
 {
-	private static bool? _isNetFramework;
-
-	public static bool IsNetFramework
+	public Test()
 	{
-		get
-		{
-			_isNetFramework ??= RuntimeInformation
-				.FrameworkDescription.StartsWith(".NET Framework");
-			return _isNetFramework.Value;
-		}
+		RunsOnLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+		RunsOnMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+		RunsOnWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+		IsNetFramework = RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework");
 	}
+	public bool IsNetFramework { get; }
 
-	public static bool RunsOnLinux
-		=> RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+	public bool RunsOnLinux { get; }
 
-	public static bool RunsOnMac
-		=> RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+	public bool RunsOnMac { get; }
 
-	public static bool RunsOnWindows
-		=> RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+	public bool RunsOnWindows { get; }
 
 	public static bool IsNet7OrGreater
 #if NET7_0_OR_GREATER

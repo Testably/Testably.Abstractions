@@ -68,9 +68,9 @@ public static class FileTestHelper
 		return fileShare;
 	}
 
-	public static string RootDrive(string path = "", char driveLetter = 'C')
+	public static string RootDrive(Test test, string path = "", char driveLetter = 'C')
 	{
-		if (Test.RunsOnWindows)
+		if (test.RunsOnWindows)
 		{
 			return $"{driveLetter}:\\{path}";
 		}

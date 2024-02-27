@@ -54,10 +54,10 @@ public abstract partial class GetFullPathTests<TFileSystem>
 	[InlineData(@"top/../../most/file", @"most/file")]
 	public void GetFullPath_ShouldNormalizeProvidedPath(string input, string expected)
 	{
-		string expectedRootedPath = FileTestHelper.RootDrive(
+		string expectedRootedPath = FileTestHelper.RootDrive(Test, 
 			expected.Replace('/', FileSystem.Path.DirectorySeparatorChar));
 
-		string result = FileSystem.Path.GetFullPath(FileTestHelper.RootDrive(input));
+		string result = FileSystem.Path.GetFullPath(FileTestHelper.RootDrive(Test, input));
 
 		result.Should().Be(expectedRootedPath);
 	}
@@ -70,10 +70,10 @@ public abstract partial class GetFullPathTests<TFileSystem>
 	public void GetFullPath_Relative_ShouldNormalizeProvidedPath(string input, string basePath,
 		string expected)
 	{
-		string expectedRootedPath = FileTestHelper.RootDrive(
+		string expectedRootedPath = FileTestHelper.RootDrive(Test, 
 			expected.Replace('/', FileSystem.Path.DirectorySeparatorChar));
 
-		string result = FileSystem.Path.GetFullPath(input, FileTestHelper.RootDrive(basePath));
+		string result = FileSystem.Path.GetFullPath(input, FileTestHelper.RootDrive(Test, basePath));
 
 		result.Should().Be(expectedRootedPath);
 	}

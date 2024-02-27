@@ -21,8 +21,8 @@ namespace {@class.Namespace}
 {{
 	public abstract partial class {@class.Name}<TFileSystem>
 	{{
-		protected {@class.Name}(TFileSystem fileSystem, ITimeSystem timeSystem)
-			: base(fileSystem, timeSystem)
+		protected {@class.Name}(Test test, TFileSystem fileSystem, ITimeSystem timeSystem)
+			: base(test, fileSystem, timeSystem)
 		{{
 		}}
 	}}
@@ -33,26 +33,27 @@ namespace {@class.Namespace}.{@class.Name}
 	// ReSharper disable once UnusedMember.Global
 	public sealed class MockFileSystemTests : {@class.Name}<MockFileSystem>, IDisposable
 	{{
-		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
-		public override string BasePath => _directoryCleaner.BasePath;
+	    /// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
+	    public override string BasePath => _directoryCleaner.BasePath;
 
-		private readonly IDirectoryCleaner _directoryCleaner;
+	    private readonly IDirectoryCleaner _directoryCleaner;
 
-		public MockFileSystemTests() : this(new MockFileSystem())
-		{{
-		}}
+	    public MockFileSystemTests() : this(new MockFileSystem())
+	    {{
+	    }}
 
-		private MockFileSystemTests(MockFileSystem mockFileSystem) : base(
-			mockFileSystem,
-			mockFileSystem.TimeSystem)
-		{{
-			_directoryCleaner = FileSystem
-			   .SetCurrentDirectoryToEmptyTemporaryDirectory();
-		}}
+	    private MockFileSystemTests(MockFileSystem mockFileSystem) : base(
+		    new Test(),
+		    mockFileSystem,
+		    mockFileSystem.TimeSystem)
+	    {{
+		    _directoryCleaner = FileSystem
+		       .SetCurrentDirectoryToEmptyTemporaryDirectory();
+	    }}
 
-		/// <inheritdoc cref=""IDisposable.Dispose()"" />
-		public void Dispose()
-			=> _directoryCleaner.Dispose();
+	    /// <inheritdoc cref=""IDisposable.Dispose()"" />
+	    public void Dispose()
+		    => _directoryCleaner.Dispose();
 	}}
 }}
 
@@ -70,7 +71,7 @@ namespace {@class.Namespace}.{@class.Name}
 		private readonly IDirectoryCleaner _directoryCleaner;
 
 		public RealFileSystemTests(ITestOutputHelper testOutputHelper)
-			: base(new RealFileSystem(), new RealTimeSystem())
+			: base(new Test(), new RealFileSystem(), new RealTimeSystem())
 		{{
 			_directoryCleaner = FileSystem
 			   .SetCurrentDirectoryToEmptyTemporaryDirectory($""{@class.Namespace}{{FileSystem.Path.DirectorySeparatorChar}}{@class.Name}-"", testOutputHelper.WriteLine);

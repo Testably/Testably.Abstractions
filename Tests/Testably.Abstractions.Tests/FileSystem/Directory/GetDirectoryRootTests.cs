@@ -19,7 +19,7 @@ public abstract partial class GetDirectoryRootTests<TFileSystem>
 	[SkippableFact]
 	public void GetDirectoryRoot_ShouldReturnDefaultRoot()
 	{
-		string expectedRoot = FileTestHelper.RootDrive();
+		string expectedRoot = FileTestHelper.RootDrive(Test);
 
 		string result = FileSystem.Directory.GetDirectoryRoot("foo");
 
@@ -34,7 +34,7 @@ public abstract partial class GetDirectoryRootTests<TFileSystem>
 		char drive)
 	{
 		Skip.IfNot(Test.RunsOnWindows, "Linux does not support different drives.");
-		string expectedRoot = FileTestHelper.RootDrive("", drive);
+		string expectedRoot = FileTestHelper.RootDrive(Test, "", drive);
 		string path = System.IO.Path.Combine($"{drive}:\\foo", "bar");
 
 		string result = FileSystem.Directory.GetDirectoryRoot(path);

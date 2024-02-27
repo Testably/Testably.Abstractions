@@ -30,14 +30,14 @@ public abstract partial class Tests<TFileSystem>
 	{
 		string result = FileSystem.Directory.GetCurrentDirectory();
 
-		result.Should().NotBe(FileTestHelper.RootDrive());
+		result.Should().NotBe(FileTestHelper.RootDrive(Test));
 	}
 
 	[SkippableTheory]
 	[AutoData]
 	public void GetDirectoryRoot_ShouldReturnRoot(string path)
 	{
-		string root = FileTestHelper.RootDrive();
+		string root = FileTestHelper.RootDrive(Test);
 		string rootedPath = root + path;
 
 		string result = FileSystem.Directory.GetDirectoryRoot(rootedPath);
@@ -51,7 +51,7 @@ public abstract partial class Tests<TFileSystem>
 		string[] result = FileSystem.Directory.GetLogicalDrives();
 
 		result.Should().NotBeEmpty();
-		result.Should().Contain(FileTestHelper.RootDrive());
+		result.Should().Contain(FileTestHelper.RootDrive(Test));
 	}
 
 	[SkippableTheory]
@@ -73,7 +73,7 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableFact]
 	public void GetParent_Root_ShouldReturnNull()
 	{
-		string path = FileTestHelper.RootDrive();
+		string path = FileTestHelper.RootDrive(Test);
 
 		IDirectoryInfo? result = FileSystem.Directory.GetParent(path);
 

@@ -69,7 +69,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 	[SkippableFact]
 	public void CreateDirectory_Root_ShouldNotThrowException()
 	{
-		string path = FileTestHelper.RootDrive();
+		string path = FileTestHelper.RootDrive(Test);
 		FileSystem.Directory.CreateDirectory(path);
 
 		Exception? exception = Record.Exception(() =>
@@ -313,9 +313,8 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		result.Name.Should().Be(expectedName.TrimEnd(
 			FileSystem.Path.DirectorySeparatorChar,
 			FileSystem.Path.AltDirectorySeparatorChar));
-		result.FullName.Should().Be(System.IO.Path.Combine(BasePath, expectedName
-			.Replace(FileSystem.Path.AltDirectorySeparatorChar,
-				FileSystem.Path.DirectorySeparatorChar)));
+		result.FullName.Should().Be($"{BasePath}{FileSystem.Path.DirectorySeparatorChar}{expectedName}"
+			.Replace(FileSystem.Path.AltDirectorySeparatorChar, FileSystem.Path.DirectorySeparatorChar));
 		FileSystem.Should().HaveDirectory(nameWithSuffix);
 	}
 #endif
