@@ -15,36 +15,12 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
-	[MemberData(nameof(GetFileCallbacks), parameters: (int)MissingFileTestCase.FileMissing)]
-	public void Operations_WhenFileIsMissing_ShouldThrowFileNotFoundException(
-		Expression<Action<IFile, string>> callback)
-	{
-		string path = "missing-file.txt";
-
-		Exception? exception = Record.Exception(() =>
-		{
-			callback.Compile().Invoke(FileSystem.File, path);
-		});
-
-		if (Test.RunsOnWindows)
-		{
-			exception.Should().BeException<FileNotFoundException>(
-				hResult: -2147024894,
-				because: $"\n{callback}\n was called with a missing file");
-		}
-		else
-		{
-			exception.Should()
-				.BeFileOrDirectoryNotFoundException(
-					$"\n{callback}\n was called with a missing file");
-		}
-	}
-
-	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks), parameters: (int)MissingFileTestCase.DirectoryMissing)]
 	public void Operations_WhenDirectoryIsMissing_ShouldThrowDirectoryNotFoundException(
-		Expression<Action<IFile, string>> callback)
+		Expression<Action<IFile, string>> callback, Func<Test, bool> skipTest)
 	{
+		Skip.If(skipTest(Test));
+
 		string path = FileSystem.Path.Combine("missing-directory", "file.txt");
 
 		Exception? exception = Record.Exception(() =>
@@ -66,58 +42,88 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		}
 	}
 
+	[SkippableTheory]
+	[MemberData(nameof(GetFileCallbacks), parameters: (int)MissingFileTestCase.FileMissing)]
+	public void Operations_WhenFileIsMissing_ShouldThrowFileNotFoundException(
+		Expression<Action<IFile, string>> callback, Func<Test, bool> skipTest)
+	{
+		Skip.If(skipTest(Test));
+
+		string path = "missing-file.txt";
+
+		Exception? exception = Record.Exception(() =>
+		{
+			callback.Compile().Invoke(FileSystem.File, path);
+		});
+
+		if (Test.RunsOnWindows)
+		{
+			exception.Should().BeException<FileNotFoundException>(
+				hResult: -2147024894,
+				because: $"\n{callback}\n was called with a missing file");
+		}
+		else
+		{
+			exception.Should()
+				.BeFileOrDirectoryNotFoundException(
+					$"\n{callback}\n was called with a missing file");
+		}
+	}
+
 	#region Helpers
 
-	[Flags]
-	public enum MissingFileTestCase
+	public static TheoryData<Expression<Action<IFile, string>>, Func<Test, bool>> GetFileCallbacks(
+		int testCases)
 	{
-		FileMissing = 1,
-		DirectoryMissing = 2,
-		All = FileMissing | DirectoryMissing
-	}
-
-	public enum ExpectedExceptionType
-	{
-		Default,
-	}
-
-	public static TheoryData<Expression<Action<IFile, string>>> GetFileCallbacks(int testCases)
-		=> new TheoryData<Expression<Action<IFile, string>>>(
+		TheoryData<Expression<Action<IFile, string>>, Func<Test, bool>> theoryData = new();
+		foreach ((MissingFileTestCase TestCase, ExpectedExceptionType ExceptionType,
+			Expression<Action<IFile, string>> Callback, Func<Test, bool>? SkipTest) item in
 			GetFileCallbackTestParameters()
-				.Where(item => (item.TestCase & (MissingFileTestCase)testCases) != 0)
-				.Select(item => item.Callback));
+				.Where(item => (item.TestCase & (MissingFileTestCase)testCases) != 0))
+		{
+			theoryData.Add(item.Callback, item.SkipTest ?? (_ => false));
+		}
+
+		return theoryData;
+	}
 
 	private static IEnumerable<(MissingFileTestCase TestCase, ExpectedExceptionType ExceptionType,
-			Expression<Action<IFile, string>> Callback)>
+			Expression<Action<IFile, string>> Callback, Func<Test, bool>? SkipTest)>
 		GetFileCallbackTestParameters()
 	{
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.GetAttributes(path));
+				=> file.GetAttributes(path),
+			null);
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.SetAttributes(path, FileAttributes.ReadOnly));
+				=> file.SetAttributes(path, FileAttributes.ReadOnly),
+			null);
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.Copy(path, "destination.txt"));
+				=> file.Copy(path, "destination.txt"),
+			null);
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.AppendAllLines(path, new[]
 				{
 					"foo"
-				}));
+				}),
+			null);
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.AppendAllLines(path, new[]
 				{
 					"foo"
-				}));
+				}),
+			null);
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.AppendAllLines(path, new[]
 				{
 					"foo"
-				}, Encoding.UTF8));
+				}, Encoding.UTF8),
+			null);
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
@@ -125,7 +131,8 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 					{
 						"foo"
 					}, CancellationToken.None)
-					.GetAwaiter().GetResult());
+					.GetAwaiter().GetResult(),
+			null);
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.AppendAllLinesAsync(path, new[]
@@ -133,208 +140,253 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 							"foo"
 						}, Encoding.UTF8,
 						CancellationToken.None)
-					.GetAwaiter().GetResult());
+					.GetAwaiter().GetResult(),
+			null);
 #endif
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.AppendAllText(path, "foo"));
+				=> file.AppendAllText(path, "foo"),
+			null);
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.AppendAllText(path, "foo", Encoding.UTF8));
+				=> file.AppendAllText(path, "foo", Encoding.UTF8),
+			null);
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.AppendAllTextAsync(path, "foo", CancellationToken.None)
-					.GetAwaiter().GetResult());
+					.GetAwaiter().GetResult(),
+			null);
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.AppendAllTextAsync(path, "foo", Encoding.UTF8,
 						CancellationToken.None)
-					.GetAwaiter().GetResult());
+					.GetAwaiter().GetResult(),
+			null);
 #endif
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.AppendText(path));
+				=> file.AppendText(path),
+			null);
 		yield return (MissingFileTestCase.FileMissing, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.Copy(path, "foo"));
+				=> file.Copy(path, "foo"),
+			null);
 		yield return (MissingFileTestCase.FileMissing, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.Copy("foo", path));
+				=> file.Copy("foo", path),
+			null);
 		yield return (MissingFileTestCase.FileMissing, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.Copy(path, "foo", false));
+				=> file.Copy(path, "foo", false),
+			null);
 		yield return (MissingFileTestCase.FileMissing, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.Copy("foo", path, false));
+				=> file.Copy("foo", path, false),
+			null);
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.Create(path));
+				=> file.Create(path),
+			null);
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.Create(path, 1023));
+				=> file.Create(path, 1023),
+			null);
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.Create(path, 1023, FileOptions.None));
+				=> file.Create(path, 1023, FileOptions.None),
+			null);
 #if FEATURE_FILESYSTEM_LINK
-		if (Test.RunsOnWindows)
-		{
-			yield return (MissingFileTestCase.DirectoryMissing,
-				ExpectedExceptionType.Default,
-				(file, path)
-					=> file.CreateSymbolicLink(path, "foo"));
-		}
+		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
+			(file, path)
+				=> file.CreateSymbolicLink(path, "foo"),
+			test => !test.RunsOnWindows);
 #endif
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.CreateText(path));
+				=> file.CreateText(path),
+			null);
 
-		if (Test.RunsOnWindows)
-		{
-			#pragma warning disable CA1416
-			yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
-				(file, path)
-					=> file.Decrypt(path));
-			#pragma warning restore CA1416
-		}
-
-		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
-			(file, path)
-				=> file.Delete(path));
+		#pragma warning disable CA1416
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.GetAttributes(path));
+				=> file.Decrypt(path),
+			test => !test.RunsOnWindows);
+		#pragma warning restore CA1416
+
+		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
+			(file, path)
+				=> file.Delete(path),
+			null);
+		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
+			(file, path)
+				=> file.GetAttributes(path),
+			null);
 		yield return (MissingFileTestCase.FileMissing, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.Move(path, "foo"));
+				=> file.Move(path, "foo"),
+			null);
 		yield return (MissingFileTestCase.FileMissing, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.Move("foo", path));
+				=> file.Move("foo", path),
+			null);
 #if FEATURE_FILE_MOVETO_OVERWRITE
 		yield return (MissingFileTestCase.FileMissing, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.Move(path, "foo", false));
+				=> file.Move(path, "foo", false),
+			null);
 		yield return (MissingFileTestCase.FileMissing, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.Move("foo", path, false));
+				=> file.Move("foo", path, false),
+			null);
 #endif
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.Open(path, FileMode.Open));
+				=> file.Open(path, FileMode.Open),
+			null);
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.Open(path, FileMode.Open, FileAccess.ReadWrite));
+				=> file.Open(path, FileMode.Open, FileAccess.ReadWrite),
+			null);
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.Open(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None));
+				=> file.Open(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None),
+			null);
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.Open(path, new FileStreamOptions()));
+				=> file.Open(path, new FileStreamOptions()),
+			null);
 #endif
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.OpenRead(path));
+				=> file.OpenRead(path),
+			null);
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.OpenText(path));
+				=> file.OpenText(path),
+			null);
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.OpenWrite(path));
+				=> file.OpenWrite(path),
+			null);
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.ReadAllBytes(path));
+				=> file.ReadAllBytes(path),
+			null);
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.ReadAllBytesAsync(path, CancellationToken.None)
-					.GetAwaiter().GetResult());
+					.GetAwaiter().GetResult(),
+			null);
 #endif
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.ReadAllLines(path));
+				=> file.ReadAllLines(path),
+			null);
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.ReadAllLines(path, Encoding.UTF8));
+				=> file.ReadAllLines(path, Encoding.UTF8),
+			null);
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.ReadAllLinesAsync(path, CancellationToken.None)
-					.GetAwaiter().GetResult());
+					.GetAwaiter().GetResult(),
+			null);
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.ReadAllLinesAsync(path, Encoding.UTF8, CancellationToken.None)
-					.GetAwaiter().GetResult());
+					.GetAwaiter().GetResult(),
+			null);
 #endif
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.ReadAllText(path));
+				=> file.ReadAllText(path),
+			null);
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.ReadAllText(path, Encoding.UTF8));
+				=> file.ReadAllText(path, Encoding.UTF8),
+			null);
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.ReadAllTextAsync(path, CancellationToken.None)
-					.GetAwaiter().GetResult());
+					.GetAwaiter().GetResult(),
+			null);
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.ReadAllTextAsync(path, Encoding.UTF8, CancellationToken.None)
-					.GetAwaiter().GetResult());
+					.GetAwaiter().GetResult(),
+			null);
 #endif
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.ReadLines(path));
+				=> file.ReadLines(path),
+			null);
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.ReadLines(path, Encoding.UTF8));
+				=> file.ReadLines(path, Encoding.UTF8),
+			null);
 #if FEATURE_FILESYSTEM_NET7
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.ReadLinesAsync(path, CancellationToken.None));
+				=> file.ReadLinesAsync(path, CancellationToken.None),
+			null);
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.ReadLinesAsync(path, Encoding.UTF8, CancellationToken.None));
+				=> file.ReadLinesAsync(path, Encoding.UTF8, CancellationToken.None),
+			null);
 #endif
 #if FEATURE_FILESYSTEM_LINK
 		yield return (MissingFileTestCase.All,
 			ExpectedExceptionType.Default,
 			(file, path)
-				=> file.ResolveLinkTarget(path, false));
+				=> file.ResolveLinkTarget(path, false),
+			null);
 #endif
 		yield return (MissingFileTestCase.All, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.SetAttributes(path, FileAttributes.ReadOnly));
+				=> file.SetAttributes(path, FileAttributes.ReadOnly),
+			null);
 		yield return (MissingFileTestCase.All,
 			ExpectedExceptionType.Default,
 			(file, path)
-				=> file.SetCreationTime(path, DateTime.Now));
+				=> file.SetCreationTime(path, DateTime.Now),
+			null);
 		yield return (MissingFileTestCase.All,
 			ExpectedExceptionType.Default,
 			(file, path)
-				=> file.SetCreationTimeUtc(path, DateTime.Now));
+				=> file.SetCreationTimeUtc(path, DateTime.Now),
+			null);
 		yield return (MissingFileTestCase.All,
 			ExpectedExceptionType.Default,
 			(file, path)
-				=> file.SetLastAccessTime(path, DateTime.Now));
+				=> file.SetLastAccessTime(path, DateTime.Now),
+			null);
 		yield return (MissingFileTestCase.All,
 			ExpectedExceptionType.Default,
 			(file, path)
-				=> file.SetLastAccessTimeUtc(path, DateTime.Now));
+				=> file.SetLastAccessTimeUtc(path, DateTime.Now),
+			null);
 		yield return (MissingFileTestCase.All,
 			ExpectedExceptionType.Default,
 			(file, path)
-				=> file.SetLastWriteTime(path, DateTime.Now));
+				=> file.SetLastWriteTime(path, DateTime.Now),
+			null);
 		yield return (MissingFileTestCase.All,
 			ExpectedExceptionType.Default,
 			(file, path)
-				=> file.SetLastWriteTimeUtc(path, DateTime.Now));
+				=> file.SetLastWriteTimeUtc(path, DateTime.Now),
+			null);
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.WriteAllBytes(path, new byte[]
 				{
 					0, 1
-				}));
+				}),
+			null);
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
@@ -343,20 +395,23 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 							0, 1
 						},
 						CancellationToken.None)
-					.GetAwaiter().GetResult());
+					.GetAwaiter().GetResult(),
+			null);
 #endif
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.WriteAllLines(path, new[]
 				{
 					"foo"
-				}));
+				}),
+			null);
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.WriteAllLines(path, new[]
 				{
 					"foo"
-				}, Encoding.UTF8));
+				}, Encoding.UTF8),
+			null);
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
@@ -364,7 +419,8 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 					{
 						"foo"
 					}, CancellationToken.None)
-					.GetAwaiter().GetResult());
+					.GetAwaiter().GetResult(),
+			null);
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.WriteAllLinesAsync(path, new[]
@@ -372,26 +428,44 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 							"foo"
 						}, Encoding.UTF8,
 						CancellationToken.None)
-					.GetAwaiter().GetResult());
+					.GetAwaiter().GetResult(),
+			null);
 #endif
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.WriteAllText(path, "foo"));
+				=> file.WriteAllText(path, "foo"),
+			null);
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
-				=> file.WriteAllText(path, "foo", Encoding.UTF8));
+				=> file.WriteAllText(path, "foo", Encoding.UTF8),
+			null);
 #if FEATURE_FILESYSTEM_ASYNC
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.WriteAllTextAsync(path, "foo", CancellationToken.None)
-					.GetAwaiter().GetResult());
+					.GetAwaiter().GetResult(),
+			null);
 		yield return (MissingFileTestCase.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.WriteAllTextAsync(path, "foo", Encoding.UTF8,
 						CancellationToken.None)
-					.GetAwaiter().GetResult());
+					.GetAwaiter().GetResult(),
+			null);
 #endif
 	}
 
 	#endregion
+
+	public enum ExpectedExceptionType
+	{
+		Default,
+	}
+
+	[Flags]
+	public enum MissingFileTestCase
+	{
+		FileMissing = 1,
+		DirectoryMissing = 2,
+		All = FileMissing | DirectoryMissing
+	}
 }

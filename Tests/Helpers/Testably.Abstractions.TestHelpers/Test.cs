@@ -1,19 +1,17 @@
 using System.IO.Abstractions;
 using System.Runtime.InteropServices;
-using Testably.Abstractions.Testing;
 using Xunit;
 
 namespace Testably.Abstractions.TestHelpers;
 
 public class Test
 {
-	public Test()
-	{
-		RunsOnLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-		RunsOnMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-		RunsOnWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-		IsNetFramework = RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework");
-	}
+	public static bool IsNet7OrGreater
+#if NET7_0_OR_GREATER
+		=> true;
+#else
+		=> false;
+#endif
 	public bool IsNetFramework { get; }
 
 	public bool RunsOnLinux { get; }
@@ -22,12 +20,13 @@ public class Test
 
 	public bool RunsOnWindows { get; }
 
-	public static bool IsNet7OrGreater
-#if NET7_0_OR_GREATER
-		=> true;
-#else
-		=> false;
-#endif
+	public Test()
+	{
+		RunsOnLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+		RunsOnMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+		RunsOnWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+		IsNetFramework = RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework");
+	}
 
 	public static void SkipBrittleTestsOnRealFileSystem(
 		IFileSystem fileSystem, bool condition = true)
