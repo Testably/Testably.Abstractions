@@ -33,27 +33,27 @@ namespace {@class.Namespace}.{@class.Name}
 	// ReSharper disable once UnusedMember.Global
 	public sealed class MockFileSystemTests : {@class.Name}<MockFileSystem>, IDisposable
 	{{
-	    /// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
-	    public override string BasePath => _directoryCleaner.BasePath;
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
+		public override string BasePath => _directoryCleaner.BasePath;
 
-	    private readonly IDirectoryCleaner _directoryCleaner;
+		private readonly IDirectoryCleaner _directoryCleaner;
 
-	    public MockFileSystemTests() : this(new MockFileSystem())
-	    {{
-	    }}
+		public MockFileSystemTests() : this(new MockFileSystem())
+		{{
+		}}
 
-	    private MockFileSystemTests(MockFileSystem mockFileSystem) : base(
-		    new Test(),
-		    mockFileSystem,
-		    mockFileSystem.TimeSystem)
-	    {{
-		    _directoryCleaner = FileSystem
-		       .SetCurrentDirectoryToEmptyTemporaryDirectory();
-	    }}
+		private MockFileSystemTests(MockFileSystem mockFileSystem) : base(
+			new Test(),
+			mockFileSystem,
+			mockFileSystem.TimeSystem)
+		{{
+			_directoryCleaner = FileSystem
+			   .SetCurrentDirectoryToEmptyTemporaryDirectory();
+		}}
 
-	    /// <inheritdoc cref=""IDisposable.Dispose()"" />
-	    public void Dispose()
-		    => _directoryCleaner.Dispose();
+		/// <inheritdoc cref=""IDisposable.Dispose()"" />
+		public void Dispose()
+			=> _directoryCleaner.Dispose();
 	}}
 }}
 
