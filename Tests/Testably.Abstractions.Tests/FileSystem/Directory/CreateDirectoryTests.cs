@@ -313,8 +313,10 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		result.Name.Should().Be(expectedName.TrimEnd(
 			FileSystem.Path.DirectorySeparatorChar,
 			FileSystem.Path.AltDirectorySeparatorChar));
-		result.FullName.Should().Be($"{BasePath}{FileSystem.Path.DirectorySeparatorChar}{expectedName}"
-			.Replace(FileSystem.Path.AltDirectorySeparatorChar, FileSystem.Path.DirectorySeparatorChar));
+		result.FullName.Should().Be(
+			$"{BasePath}{FileSystem.Path.DirectorySeparatorChar}{expectedName}"
+				.Replace(FileSystem.Path.AltDirectorySeparatorChar,
+					FileSystem.Path.DirectorySeparatorChar));
 		FileSystem.Should().HaveDirectory(nameWithSuffix);
 	}
 #endif

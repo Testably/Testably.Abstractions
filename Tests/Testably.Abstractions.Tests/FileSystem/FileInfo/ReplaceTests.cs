@@ -199,6 +199,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 			FileSystem.File.GetAttributes(destinationName)
 				.Should().Be(expectedDestinationAttributes);
 		}
+
 		FileSystem.File.GetAttributes(backupName)
 			.Should().Be(expectedDestinationAttributes);
 	}

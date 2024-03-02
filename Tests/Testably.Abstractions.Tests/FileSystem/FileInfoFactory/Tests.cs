@@ -74,7 +74,8 @@ public abstract partial class Tests<TFileSystem>
 	[AutoData]
 	public void New_WithTrailingDirectorySeparatorChar_ShouldHaveEmptyName(string path)
 	{
-		IFileInfo result = FileSystem.FileInfo.New($"{path}{FileSystem.Path.DirectorySeparatorChar}");
+		IFileInfo result =
+			FileSystem.FileInfo.New($"{path}{FileSystem.Path.DirectorySeparatorChar}");
 
 		result.Name.Should().Be(string.Empty);
 	}
@@ -82,7 +83,7 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableFact]
 	public void New_WithUnicodeWhitespace_ShouldNotThrow()
 	{
-		var exception = Record.Exception(() =>
+		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.FileInfo.New("\u00A0"); // Unicode char that's treated as whitespace
 		});
@@ -100,7 +101,7 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableFact]
 	public void New_WithWhitespace_ShouldThrowOnlyOnWindows()
 	{
-		var exception = Record.Exception(() =>
+		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.FileInfo.New("   ");
 		});

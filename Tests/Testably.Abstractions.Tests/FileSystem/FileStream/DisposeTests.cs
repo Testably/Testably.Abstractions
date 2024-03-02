@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 
@@ -77,8 +76,7 @@ public abstract partial class DisposeTests<TFileSystem>
 	#region Helpers
 
 	public static TheoryData<Expression<Action<FileSystemStream>>> GetFileStreamCallbacks()
-		=> new TheoryData<Expression<Action<FileSystemStream>>>(
-			GetFileStreamCallbackTestParameters());
+		=> new(GetFileStreamCallbackTestParameters());
 
 	private static IEnumerable<Expression<Action<FileSystemStream>>>
 		GetFileStreamCallbackTestParameters()

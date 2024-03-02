@@ -69,14 +69,17 @@ public abstract partial class ExceptionTests<TFileSystem>
 	public static TheoryData<Expression<Action<IPath>>, string, bool> GetPathCallbacks(string? path)
 	{
 		TheoryData<Expression<Action<IPath>>, string, bool> theoryData = new();
-		foreach (var item in GetPathCallbackTestParameters(path!)
-			.Where(item => item.TestType.HasFlag(path.ToTestType())))
+		foreach ((ExceptionTestHelper.TestTypes TestType,
+			string ParamName,
+			Expression<Action<IPath>> Callback) item in GetPathCallbackTestParameters(path!)
+				.Where(item => item.TestType.HasFlag(path.ToTestType())))
 		{
 			theoryData.Add(
 				item.Callback,
 				item.ParamName,
 				item.TestType.HasFlag(ExceptionTestHelper.TestTypes.IgnoreParamNameCheck));
 		}
+
 		return theoryData;
 	}
 

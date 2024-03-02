@@ -1,6 +1,5 @@
 #if FEATURE_FILESYSTEM_LINK
 using System.IO;
-using Testably.Abstractions.FluentAssertions;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 

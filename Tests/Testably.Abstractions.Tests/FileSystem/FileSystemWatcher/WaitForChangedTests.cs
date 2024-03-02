@@ -88,22 +88,22 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 
 	#region Helpers
 
-	public static TheoryData<string, Func<IFileSystemWatcher, IWaitForChangedResult>> GetWaitForChangedTimeoutParameters()
+	public static TheoryData<string, Func<IFileSystemWatcher, IWaitForChangedResult>>
+		GetWaitForChangedTimeoutParameters()
 	{
 		TheoryData<string, Func<IFileSystemWatcher, IWaitForChangedResult>> theoryData = new()
+		{
 			{
-				{
-					"foo.dll",
-					new Func<IFileSystemWatcher, IWaitForChangedResult>(fileSystemWatcher
-						=> fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed, 100))
-				}
-			};
+				"foo.dll", fileSystemWatcher
+					=> fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed, 100)
+			}
+		};
 #if FEATURE_FILESYSTEM_NET7
 		theoryData.Add(
 			"bar.txt",
-			new Func<IFileSystemWatcher, IWaitForChangedResult>(fileSystemWatcher
+			fileSystemWatcher
 				=> fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed,
-					TimeSpan.FromMilliseconds(100)))
+					TimeSpan.FromMilliseconds(100))
 		);
 #endif
 		return theoryData;
