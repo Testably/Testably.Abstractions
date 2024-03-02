@@ -36,7 +36,8 @@ public abstract partial class Tests<TFileSystem>
 	[AutoData]
 	public void New_WithTrailingDirectorySeparatorChar_ShouldHavePathAsName(string path)
 	{
-		IDirectoryInfo result = FileSystem.DirectoryInfo.New($"{path}{FileSystem.Path.DirectorySeparatorChar}");
+		IDirectoryInfo result = FileSystem.DirectoryInfo
+			.New($"{path}{FileSystem.Path.DirectorySeparatorChar}");
 
 		result.Name.Should().Be(path);
 	}

@@ -139,206 +139,206 @@ public abstract partial class ExceptionTests<TFileSystem>
 		GetDirectoryCallbackTestParameters(string value)
 	{
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.CreateDirectory(value),
 			null);
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.CreateDirectory(value, UnixFileMode.None),
 			test => test.RunsOnWindows);
 #endif
 #if FEATURE_FILESYSTEM_LINK
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.CreateSymbolicLink(value, "foo"),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "pathToTarget",
-		directory
+			directory
 				=> directory.CreateSymbolicLink("foo", value),
 			null);
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.Delete(value),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.Delete(value, true),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.EnumerateDirectories(value),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.EnumerateDirectories(value, "foo"),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.EnumerateDirectories(value, "foo", SearchOption.AllDirectories),
 			null);
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.EnumerateDirectories(value, "foo", new EnumerationOptions()),
 			null);
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.EnumerateFiles(value),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.EnumerateFiles(value, "foo"),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.EnumerateFiles(value, "foo", SearchOption.AllDirectories),
 			null);
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.EnumerateFiles(value, "foo", new EnumerationOptions()),
 			null);
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.EnumerateFileSystemEntries(value),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.EnumerateFileSystemEntries(value, "foo"),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.EnumerateFileSystemEntries(value, "foo", SearchOption.AllDirectories),
 			null);
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.EnumerateFileSystemEntries(value, "foo", new EnumerationOptions()),
 			null);
 #endif
 		// `Directory.Exists` doesn't throw an exception on `null`
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.GetCreationTime(value),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.GetCreationTimeUtc(value),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.GetDirectories(value),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.GetDirectories(value, "foo"),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.GetDirectories(value, "foo", SearchOption.AllDirectories),
 			null);
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.GetDirectories(value, "foo", new EnumerationOptions()),
 			null);
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.GetFiles(value),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.GetFiles(value, "foo"),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.GetFiles(value, "foo", SearchOption.AllDirectories),
 			null);
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.GetFiles(value, "foo", new EnumerationOptions()),
 			null);
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.GetFileSystemEntries(value),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.GetFileSystemEntries(value, "foo"),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.GetFileSystemEntries(value, "foo", SearchOption.AllDirectories),
 			null);
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.GetFileSystemEntries(value, "foo", new EnumerationOptions()),
 			null);
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.GetLastAccessTime(value),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.GetLastAccessTimeUtc(value),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.GetLastWriteTime(value),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.GetLastWriteTimeUtc(value),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "path",
-		directory
+			directory
 				=> directory.GetParent(value),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "sourceDirName",
-		directory
+			directory
 				=> directory.Move(value, "foo"),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "destDirName",
-		directory
+			directory
 				=> directory.Move("foo", value),
 			null);
 #if FEATURE_FILESYSTEM_LINK
 		yield return (ExceptionTestHelper.TestTypes.AllExceptWhitespace, "linkPath",
-		directory
+			directory
 				=> directory.ResolveLinkTarget(value, false),
 			null);
 #endif
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.SetCreationTime(value, DateTime.Now),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.SetCreationTimeUtc(value, DateTime.Now),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.SetLastAccessTime(value, DateTime.Now),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.SetLastAccessTimeUtc(value, DateTime.Now),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.SetLastWriteTime(value, DateTime.Now),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
-		directory
+			directory
 				=> directory.SetLastWriteTimeUtc(value, DateTime.Now),
 			null);
 	}
