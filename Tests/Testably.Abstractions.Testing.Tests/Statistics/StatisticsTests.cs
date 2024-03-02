@@ -10,100 +10,101 @@ namespace Testably.Abstractions.Testing.Tests.Statistics;
 
 public sealed partial class StatisticsTests
 {
-	[Fact]
-	public void MockFileSystem_ShouldInitializeWithEmptyStatistics()
-	{
-		MockFileSystem sut = new();
-
-		sut.Statistics.Calls.Should().BeEmpty();
-	}
+	public const string DummyPath = "foo";
 
 	#region Helpers
 
-	private static IEnumerable<(string Expectation,
-			Action<T> Action,
-			string Name,
-			object?[]Parameters)>
-		EnumerateSynchronousMethods<T>(Fixture fixture)
+	public abstract class GetMethods<T>
+		: TheoryData<string, T, string, object?[]>
 	{
-		foreach (MethodInfo methodInfo in typeof(T).GetMethods()
-			.Where(m => m.IsPublic && !typeof(Task).IsAssignableFrom(m.ReturnType)))
-		{
-			object?[] parameters = CreateMethodParameters(
-				fixture, methodInfo.GetParameters()).ToArray();
-			yield return (
-				$"{methodInfo.Name}({string.Join(",", methodInfo.GetParameters().Select(x => GetName(x.ParameterType)))})",
-				x => methodInfo.Invoke(x, parameters),
-				methodInfo.Name, parameters);
-		}
-	}
+		protected Fixture Fixture { get; }
 
-	private static IEnumerable<(string Expectation,
-		Func<T, Task> Action,
-		string Name,
-		object?[] Parameters)> EnumerateAsynchronousMethods<T>(Fixture fixture)
-	{
-		foreach (MethodInfo methodInfo in typeof(T).GetMethods()
-			.Where(m => m.IsPublic && typeof(Task).IsAssignableFrom(m.ReturnType)))
+		protected GetMethods()
 		{
-			object?[] parameters = CreateMethodParameters(
-				fixture, methodInfo.GetParameters()).ToArray();
-			yield return (
-				$"{methodInfo.Name}({string.Join(",", methodInfo.GetParameters().Select(x => GetName(x.ParameterType)))})",
-				x => (Task)methodInfo.Invoke(x, parameters)!,
-				methodInfo.Name, parameters);
-		}
-	}
-
-	private static Fixture CreateFixture()
-	{
-		Fixture fixture = new();
+			Fixture = new Fixture();
+			Fixture.Register(() => new DirectoryInfo(DummyPath));
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
-		fixture.Register(() => new FileStreamOptions());
+			Fixture.Register(() => new FileStreamOptions());
 #endif
-		return fixture;
-	}
-
-	private static IEnumerable<object?> CreateMethodParameters(
-		Fixture fixture,
-		ParameterInfo[] parameterInfos)
-	{
-		foreach (ParameterInfo parameterInfo in parameterInfos)
-		{
-			yield return fixture.Create(parameterInfo.ParameterType, new SpecimenContext(fixture));
-		}
-	}
-
-	private static string GetName(Type type)
-	{
-		if (type == typeof(int))
-		{
-			return "int";
 		}
 
-		if (type == typeof(bool))
+		protected IEnumerable<(string Expectation,
+				Action<TProperty> Action,
+				string Name,
+				object?[] Parameters)>
+			EnumerateSynchronousMethods<TProperty>(Fixture fixture)
 		{
-			return "bool";
-		}
-
-		if (type == typeof(string))
-		{
-			return "string";
-		}
-
-		if (type.IsGenericType)
-		{
-			int idx = type.Name.IndexOf("`", StringComparison.Ordinal);
-			if (idx > 0)
+			foreach (MethodInfo methodInfo in typeof(TProperty).GetMethods()
+				.Where(m => m is { IsPublic: true, IsSpecialName: false } && !typeof(Task).IsAssignableFrom(m.ReturnType)))
 			{
-				return
-					$"{type.Name.Substring(0, idx)}<{string.Join(",", type.GenericTypeArguments.Select(GetName))}>";
+				object?[] parameters = CreateMethodParameters(
+					fixture, methodInfo.GetParameters()).ToArray();
+				yield return (
+					$"{methodInfo.Name}({string.Join(",", methodInfo.GetParameters().Select(x => GetName(x.ParameterType)))})",
+					x => methodInfo.Invoke(x, parameters),
+					methodInfo.Name, parameters);
+			}
+		}
+
+		protected IEnumerable<(string Expectation,
+			Func<TProperty, Task> Action,
+			string Name,
+			object?[] Parameters)> EnumerateAsynchronousMethods<TProperty>(Fixture fixture)
+		{
+			foreach (MethodInfo methodInfo in typeof(TProperty).GetMethods()
+				.Where(m => m is { IsPublic: true, IsSpecialName: false } && typeof(Task).IsAssignableFrom(m.ReturnType)))
+			{
+				object?[] parameters = CreateMethodParameters(
+					fixture, methodInfo.GetParameters()).ToArray();
+				yield return (
+					$"{methodInfo.Name}({string.Join(",", methodInfo.GetParameters().Select(x => GetName(x.ParameterType)))})",
+					x => (Task)methodInfo.Invoke(x, parameters)!,
+					methodInfo.Name, parameters);
+			}
+		}
+
+		private static IEnumerable<object?> CreateMethodParameters(
+			Fixture fixture,
+			ParameterInfo[] parameterInfos)
+		{
+			foreach (ParameterInfo parameterInfo in parameterInfos)
+			{
+				yield return fixture.Create(parameterInfo.ParameterType,
+					new SpecimenContext(fixture));
+			}
+		}
+
+		private static string GetName(Type type)
+		{
+			if (type == typeof(int))
+			{
+				return "int";
 			}
 
-			return type.ToString();
-		}
+			if (type == typeof(bool))
+			{
+				return "bool";
+			}
 
-		return type.Name;
+			if (type == typeof(string))
+			{
+				return "string";
+			}
+
+			if (type.IsGenericType)
+			{
+				int idx = type.Name.IndexOf("`", StringComparison.Ordinal);
+				if (idx > 0)
+				{
+					return
+						$"{type.Name.Substring(0, idx)}<{string.Join(",", type.GenericTypeArguments.Select(GetName))}>";
+				}
+
+				return type.ToString();
+			}
+
+			return type.Name;
+		}
 	}
 
 	#endregion

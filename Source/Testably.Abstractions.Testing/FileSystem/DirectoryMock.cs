@@ -26,6 +26,9 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.CreateDirectory(string)" />
 	public IDirectoryInfo CreateDirectory(string path)
 	{
+		using IDisposable registration = Register(nameof(CreateDirectory),
+			path);
+
 		path.EnsureValidFormat(_fileSystem);
 
 		DirectoryInfoMock directory = DirectoryInfoMock.New(
@@ -40,6 +43,9 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.CreateDirectory(string, UnixFileMode)" />
 	public IDirectoryInfo CreateDirectory(string path, UnixFileMode unixCreateMode)
 	{
+		using IDisposable registration = Register(nameof(CreateDirectory),
+			path, unixCreateMode);
+
 		IDirectoryInfo directoryInfo = CreateDirectory(path);
 		#pragma warning disable CA1416
 		directoryInfo.UnixFileMode = unixCreateMode;
@@ -53,6 +59,9 @@ internal sealed class DirectoryMock : IDirectory
 	public IFileSystemInfo CreateSymbolicLink(
 		string path, string pathToTarget)
 	{
+		using IDisposable registration = Register(nameof(CreateSymbolicLink),
+			path, pathToTarget);
+
 		path.EnsureValidFormat(_fileSystem);
 		IDirectoryInfo fileSystemInfo =
 			_fileSystem.DirectoryInfo.New(path);
@@ -65,6 +74,9 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.CreateTempSubdirectory(string)" />
 	public IDirectoryInfo CreateTempSubdirectory(string? prefix = null)
 	{
+		using IDisposable registration = Register(nameof(CreateTempSubdirectory),
+			prefix);
+
 		string basePath;
 
 		do
@@ -84,258 +96,447 @@ internal sealed class DirectoryMock : IDirectory
 
 	/// <inheritdoc cref="IDirectory.Delete(string)" />
 	public void Delete(string path)
-		=> _fileSystem.DirectoryInfo
+	{
+		using IDisposable registration = Register(nameof(Delete),
+			path);
+
+		_fileSystem.DirectoryInfo
 			.New(path.EnsureValidFormat(_fileSystem))
 			.Delete();
+	}
 
 	/// <inheritdoc cref="IDirectory.Delete(string, bool)" />
 	public void Delete(string path, bool recursive)
-		=> _fileSystem.DirectoryInfo
+	{
+		using IDisposable registration = Register(nameof(Delete),
+			path, recursive);
+
+		_fileSystem.DirectoryInfo
 			.New(path.EnsureValidFormat(_fileSystem))
 			.Delete(recursive);
+	}
 
 	/// <inheritdoc cref="IDirectory.EnumerateDirectories(string)" />
 	public IEnumerable<string> EnumerateDirectories(string path)
-		=> EnumerateDirectories(path,
+	{
+		using IDisposable registration = Register(nameof(EnumerateDirectories),
+			path);
+
+		return EnumerateDirectories(path,
 			EnumerationOptionsHelper.DefaultSearchPattern,
 			SearchOption.TopDirectoryOnly);
+	}
 
 	/// <inheritdoc cref="IDirectory.EnumerateDirectories(string, string)" />
 	public IEnumerable<string> EnumerateDirectories(string path, string searchPattern)
-		=> EnumerateDirectories(path, searchPattern, SearchOption.TopDirectoryOnly);
+	{
+		using IDisposable registration = Register(nameof(EnumerateDirectories),
+			path, searchPattern);
+
+		return EnumerateDirectories(path, searchPattern, SearchOption.TopDirectoryOnly);
+	}
 
 	/// <inheritdoc cref="IDirectory.EnumerateDirectories(string, string, SearchOption)" />
 	public IEnumerable<string> EnumerateDirectories(string path,
 		string searchPattern,
 		SearchOption searchOption)
-		=> EnumerateInternal(FileSystemTypes.Directory,
+	{
+		using IDisposable registration = Register(nameof(EnumerateDirectories),
+			path, searchPattern, searchOption);
+
+		return EnumerateInternal(FileSystemTypes.Directory,
 			path,
 			searchPattern,
 			EnumerationOptionsHelper.FromSearchOption(searchOption));
+	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.EnumerateDirectories(string, string, EnumerationOptions)" />
 	public IEnumerable<string> EnumerateDirectories(string path,
 		string searchPattern,
-		EnumerationOptions
-			enumerationOptions)
-		=> EnumerateInternal(FileSystemTypes.Directory,
+		EnumerationOptions enumerationOptions)
+	{
+		using IDisposable registration = Register(nameof(EnumerateDirectories),
+			path, searchPattern, enumerationOptions);
+
+		return EnumerateInternal(FileSystemTypes.Directory,
 			path,
 			searchPattern,
 			enumerationOptions);
+	}
 #endif
 
 	/// <inheritdoc cref="IDirectory.EnumerateFiles(string)" />
 	public IEnumerable<string> EnumerateFiles(string path)
-		=> EnumerateFiles(path,
+	{
+		using IDisposable registration = Register(nameof(EnumerateFiles),
+			path);
+
+		return EnumerateFiles(path,
 			EnumerationOptionsHelper.DefaultSearchPattern,
 			SearchOption.TopDirectoryOnly);
+	}
 
 	/// <inheritdoc cref="IDirectory.EnumerateFiles(string, string)" />
 	public IEnumerable<string> EnumerateFiles(string path, string searchPattern)
-		=> EnumerateFiles(path, searchPattern, SearchOption.TopDirectoryOnly);
+	{
+		using IDisposable registration = Register(nameof(EnumerateFiles),
+			path, searchPattern);
+
+		return EnumerateFiles(path, searchPattern, SearchOption.TopDirectoryOnly);
+	}
 
 	/// <inheritdoc cref="IDirectory.EnumerateFiles(string, string, SearchOption)" />
 	public IEnumerable<string> EnumerateFiles(string path,
 		string searchPattern,
 		SearchOption searchOption)
-		=> EnumerateInternal(FileSystemTypes.File,
+	{
+		using IDisposable registration = Register(nameof(EnumerateFiles),
+			path, searchPattern, searchOption);
+
+		return EnumerateInternal(FileSystemTypes.File,
 			path,
 			searchPattern,
 			EnumerationOptionsHelper.FromSearchOption(searchOption));
+	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.EnumerateFiles(string, string, EnumerationOptions)" />
 	public IEnumerable<string> EnumerateFiles(string path,
 		string searchPattern,
 		EnumerationOptions enumerationOptions)
-		=> EnumerateInternal(FileSystemTypes.File,
+	{
+		using IDisposable registration = Register(nameof(EnumerateFiles),
+			path, searchPattern, enumerationOptions);
+
+		return EnumerateInternal(FileSystemTypes.File,
 			path,
 			searchPattern,
 			enumerationOptions);
+	}
 #endif
 
 	/// <inheritdoc cref="IDirectory.EnumerateFileSystemEntries(string)" />
 	public IEnumerable<string> EnumerateFileSystemEntries(string path)
-		=> EnumerateFileSystemEntries(path,
+	{
+		using IDisposable registration = Register(nameof(EnumerateFileSystemEntries),
+			path);
+
+		return EnumerateFileSystemEntries(path,
 			EnumerationOptionsHelper.DefaultSearchPattern,
 			SearchOption.TopDirectoryOnly);
+	}
 
 	/// <inheritdoc cref="IDirectory.EnumerateFileSystemEntries(string, string)" />
 	public IEnumerable<string> EnumerateFileSystemEntries(
 		string path, string searchPattern)
-		=> EnumerateFileSystemEntries(path,
+	{
+		using IDisposable registration = Register(nameof(EnumerateFileSystemEntries),
+			path, searchPattern);
+
+		return EnumerateFileSystemEntries(path,
 			searchPattern,
 			SearchOption.TopDirectoryOnly);
+	}
 
 	/// <inheritdoc cref="IDirectory.EnumerateFileSystemEntries(string, string, SearchOption)" />
 	public IEnumerable<string> EnumerateFileSystemEntries(string path,
 		string searchPattern,
 		SearchOption searchOption)
-		=> EnumerateInternal(FileSystemTypes.DirectoryOrFile,
+	{
+		using IDisposable registration = Register(nameof(EnumerateFileSystemEntries),
+			path, searchPattern, searchOption);
+
+		return EnumerateInternal(FileSystemTypes.DirectoryOrFile,
 			path,
 			searchPattern,
 			EnumerationOptionsHelper.FromSearchOption(searchOption));
+	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.EnumerateFileSystemEntries(string, string, EnumerationOptions)" />
 	public IEnumerable<string> EnumerateFileSystemEntries(string path,
 		string searchPattern,
-		EnumerationOptions
-			enumerationOptions)
-		=> EnumerateInternal(FileSystemTypes.DirectoryOrFile,
+		EnumerationOptions enumerationOptions)
+	{
+		using IDisposable registration = Register(nameof(EnumerateFileSystemEntries),
+			path, searchPattern, enumerationOptions);
+
+		return EnumerateInternal(FileSystemTypes.DirectoryOrFile,
 			path,
 			searchPattern,
 			enumerationOptions);
+	}
 #endif
 
 	/// <inheritdoc cref="IDirectory.Exists(string)" />
 	public bool Exists([NotNullWhen(true)] string? path)
-		=> DirectoryInfoMock.New(
+	{
+		using IDisposable registration = Register(nameof(Exists),
+			path);
+
+		return DirectoryInfoMock.New(
 			_fileSystem.Storage.GetLocation(path),
 			_fileSystem)?.Exists ?? false;
+	}
 
 	/// <inheritdoc cref="IDirectory.GetCreationTime(string)" />
 	public DateTime GetCreationTime(string path)
-		=> _fileSystem.Storage.GetContainer(
+	{
+		using IDisposable registration = Register(nameof(GetCreationTime),
+			path);
+
+		return _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(_fileSystem)))
 			.CreationTime.Get(DateTimeKind.Local);
+	}
 
 	/// <inheritdoc cref="IDirectory.GetCreationTimeUtc(string)" />
 	public DateTime GetCreationTimeUtc(string path)
-		=> _fileSystem.Storage.GetContainer(
+	{
+		using IDisposable registration = Register(nameof(GetCreationTimeUtc),
+			path);
+
+		return _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(_fileSystem)))
 			.CreationTime.Get(DateTimeKind.Utc);
+	}
 
 	/// <inheritdoc cref="IDirectory.GetCurrentDirectory()" />
 	public string GetCurrentDirectory()
-		=> _fileSystem.Storage.CurrentDirectory;
+	{
+		using IDisposable registration = Register(nameof(GetCurrentDirectory));
+
+		return _fileSystem.Storage.CurrentDirectory;
+	}
 
 	/// <inheritdoc cref="IDirectory.GetDirectories(string)" />
 	public string[] GetDirectories(string path)
-		=> EnumerateDirectories(path).ToArray();
+	{
+		using IDisposable registration = Register(nameof(GetDirectories),
+			path);
+
+		return EnumerateDirectories(path).ToArray();
+	}
 
 	/// <inheritdoc cref="IDirectory.GetDirectories(string, string)" />
 	public string[] GetDirectories(string path, string searchPattern)
-		=> EnumerateDirectories(path, searchPattern).ToArray();
+	{
+		using IDisposable registration = Register(nameof(GetDirectories),
+			path, searchPattern);
+
+		return EnumerateDirectories(path, searchPattern).ToArray();
+	}
 
 	/// <inheritdoc cref="IDirectory.GetDirectories(string, string, SearchOption)" />
 	public string[] GetDirectories(string path,
 		string searchPattern,
 		SearchOption searchOption)
-		=> EnumerateDirectories(path, searchPattern, searchOption).ToArray();
+	{
+		using IDisposable registration = Register(nameof(GetDirectories),
+			path, searchPattern, searchOption);
+
+		return EnumerateDirectories(path, searchPattern, searchOption).ToArray();
+	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.GetDirectories(string, string, EnumerationOptions)" />
 	public string[] GetDirectories(string path,
 		string searchPattern,
 		EnumerationOptions enumerationOptions)
-		=> EnumerateDirectories(path, searchPattern, enumerationOptions).ToArray();
+	{
+		using IDisposable registration = Register(nameof(GetDirectories),
+			path, searchPattern, enumerationOptions);
+
+		return EnumerateDirectories(path, searchPattern, enumerationOptions).ToArray();
+	}
 #endif
 
 	/// <inheritdoc cref="IDirectory.GetDirectoryRoot(string)" />
 	public string GetDirectoryRoot(string path)
-		=> _fileSystem.Path.GetPathRoot(
-			   _fileSystem.Path.GetFullPath(path)) ??
-		   throw ExceptionFactory.PathIsEmpty(nameof(path));
+	{
+		using IDisposable registration = Register(nameof(GetDirectoryRoot),
+			path);
+
+		return _fileSystem.Path.GetPathRoot(
+			       _fileSystem.Path.GetFullPath(path)) ??
+		       throw ExceptionFactory.PathIsEmpty(nameof(path));
+	}
 
 	/// <inheritdoc cref="IDirectory.GetFiles(string)" />
 	public string[] GetFiles(string path)
-		=> EnumerateFiles(path).ToArray();
+	{
+		using IDisposable registration = Register(nameof(GetFiles),
+			path);
+
+		return EnumerateFiles(path).ToArray();
+	}
 
 	/// <inheritdoc cref="IDirectory.GetFiles(string, string)" />
 	public string[] GetFiles(string path, string searchPattern)
-		=> EnumerateFiles(path, searchPattern).ToArray();
+	{
+		using IDisposable registration = Register(nameof(GetFiles),
+			path, searchPattern);
+
+		return EnumerateFiles(path, searchPattern).ToArray();
+	}
 
 	/// <inheritdoc cref="IDirectory.GetFiles(string, string, SearchOption)" />
 	public string[] GetFiles(string path,
 		string searchPattern,
 		SearchOption searchOption)
-		=> EnumerateFiles(path, searchPattern, searchOption).ToArray();
+	{
+		using IDisposable registration = Register(nameof(GetFiles),
+			path, searchPattern, searchOption);
+
+		return EnumerateFiles(path, searchPattern, searchOption).ToArray();
+	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.GetFiles(string, string, EnumerationOptions)" />
 	public string[] GetFiles(string path,
 		string searchPattern,
 		EnumerationOptions enumerationOptions)
-		=> EnumerateFiles(path, searchPattern, enumerationOptions).ToArray();
+	{
+		using IDisposable registration = Register(nameof(GetFiles),
+			path, searchPattern, enumerationOptions);
+
+		return EnumerateFiles(path, searchPattern, enumerationOptions).ToArray();
+	}
 #endif
 
 	/// <inheritdoc cref="IDirectory.GetFileSystemEntries(string)" />
 	public string[] GetFileSystemEntries(string path)
-		=> EnumerateFileSystemEntries(path).ToArray();
+	{
+		using IDisposable registration = Register(nameof(GetFileSystemEntries),
+			path);
+
+		return EnumerateFileSystemEntries(path).ToArray();
+	}
 
 	/// <inheritdoc cref="IDirectory.GetFileSystemEntries(string, string)" />
 	public string[] GetFileSystemEntries(string path, string searchPattern)
-		=> EnumerateFileSystemEntries(path, searchPattern).ToArray();
+	{
+		using IDisposable registration = Register(nameof(GetFileSystemEntries),
+			path, searchPattern);
+
+		return EnumerateFileSystemEntries(path, searchPattern).ToArray();
+	}
 
 	/// <inheritdoc cref="IDirectory.GetFileSystemEntries(string, string, SearchOption)" />
 	public string[] GetFileSystemEntries(string path,
 		string searchPattern,
 		SearchOption searchOption)
-		=> EnumerateFileSystemEntries(path, searchPattern, searchOption).ToArray();
+	{
+		using IDisposable registration = Register(nameof(GetFileSystemEntries),
+			path, searchPattern, searchOption);
+
+		return EnumerateFileSystemEntries(path, searchPattern, searchOption).ToArray();
+	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	/// <inheritdoc cref="IDirectory.GetFileSystemEntries(string, string, EnumerationOptions)" />
 	public string[] GetFileSystemEntries(string path,
 		string searchPattern,
 		EnumerationOptions enumerationOptions)
-		=> EnumerateFileSystemEntries(path, searchPattern, enumerationOptions)
+	{
+		using IDisposable registration = Register(nameof(GetFileSystemEntries),
+			path, searchPattern, enumerationOptions);
+
+		return EnumerateFileSystemEntries(path, searchPattern, enumerationOptions)
 			.ToArray();
+	}
 #endif
 
 	/// <inheritdoc cref="IDirectory.GetLastAccessTime(string)" />
 	public DateTime GetLastAccessTime(string path)
-		=> _fileSystem.Storage.GetContainer(
+	{
+		using IDisposable registration = Register(nameof(GetLastAccessTime),
+			path);
+
+		return _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(_fileSystem)))
 			.LastAccessTime.Get(DateTimeKind.Local);
+	}
 
 	/// <inheritdoc cref="IDirectory.GetLastAccessTimeUtc(string)" />
 	public DateTime GetLastAccessTimeUtc(string path)
-		=> _fileSystem.Storage.GetContainer(
+	{
+		using IDisposable registration = Register(nameof(GetLastAccessTimeUtc),
+			path);
+
+		return _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(_fileSystem)))
 			.LastAccessTime.Get(DateTimeKind.Utc);
+	}
 
 	/// <inheritdoc cref="IDirectory.GetLastWriteTime(string)" />
 	public DateTime GetLastWriteTime(string path)
-		=> _fileSystem.Storage.GetContainer(
+	{
+		using IDisposable registration = Register(nameof(GetLastWriteTime),
+			path);
+
+		return _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(_fileSystem)))
 			.LastWriteTime.Get(DateTimeKind.Local);
+	}
 
 	/// <inheritdoc cref="IDirectory.GetLastWriteTimeUtc(string)" />
 	public DateTime GetLastWriteTimeUtc(string path)
-		=> _fileSystem.Storage.GetContainer(
+	{
+		using IDisposable registration = Register(nameof(GetLastWriteTimeUtc),
+			path);
+
+		return _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(_fileSystem)))
 			.LastWriteTime.Get(DateTimeKind.Utc);
+	}
 
 	/// <inheritdoc cref="IDirectory.GetLogicalDrives()" />
 	public string[] GetLogicalDrives()
-		=> _fileSystem.DriveInfo.GetDrives().Select(x => x.Name).ToArray();
+	{
+		using IDisposable registration = Register(nameof(GetLogicalDrives));
+
+		return _fileSystem.DriveInfo.GetDrives().Select(x => x.Name).ToArray();
+	}
 
 	/// <inheritdoc cref="IDirectory.GetParent(string)" />
 	public IDirectoryInfo? GetParent(string path)
-		=> _fileSystem.DirectoryInfo
+	{
+		using IDisposable registration = Register(nameof(GetParent),
+			path);
+
+		return _fileSystem.DirectoryInfo
 			.New(path.EnsureValidArgument(_fileSystem, nameof(path)))
 			.Parent;
+	}
 
 	/// <inheritdoc cref="IDirectory.Move(string, string)" />
 	public void Move(string sourceDirName, string destDirName)
-		=> _fileSystem.DirectoryInfo.New(sourceDirName
+	{
+		using IDisposable registration = Register(nameof(Move),
+			sourceDirName, destDirName);
+
+		_fileSystem.DirectoryInfo.New(sourceDirName
 				.EnsureValidFormat(_fileSystem, nameof(sourceDirName)))
 			.MoveTo(destDirName
 				.EnsureValidFormat(_fileSystem, nameof(destDirName)));
+	}
 
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IDirectory.ResolveLinkTarget(string, bool)" />
 	public IFileSystemInfo? ResolveLinkTarget(
 		string linkPath, bool returnFinalTarget)
 	{
+		using IDisposable registration = Register(nameof(ResolveLinkTarget),
+			linkPath, returnFinalTarget);
+
 		try
 		{
 			return _fileSystem.DirectoryInfo.New(linkPath
@@ -353,17 +554,31 @@ internal sealed class DirectoryMock : IDirectory
 
 	/// <inheritdoc cref="IDirectory.SetCreationTime(string, DateTime)" />
 	public void SetCreationTime(string path, DateTime creationTime)
-		=> LoadDirectoryInfoOrThrowNotFoundException(path, ThrowMissingFileCreatedTimeException)
+	{
+		using IDisposable registration = Register(nameof(SetCreationTime),
+			path, creationTime);
+
+		LoadDirectoryInfoOrThrowNotFoundException(path, ThrowMissingFileCreatedTimeException)
 			.CreationTime = creationTime;
+	}
 
 	/// <inheritdoc cref="IDirectory.SetCreationTimeUtc(string, DateTime)" />
 	public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
-		=> LoadDirectoryInfoOrThrowNotFoundException(path, ThrowMissingFileCreatedTimeException)
+	{
+		using IDisposable registration = Register(nameof(SetCreationTimeUtc),
+			path, creationTimeUtc);
+
+		LoadDirectoryInfoOrThrowNotFoundException(path, ThrowMissingFileCreatedTimeException)
 			.CreationTimeUtc = creationTimeUtc;
+	}
 
 	/// <inheritdoc cref="IDirectory.SetCurrentDirectory(string)" />
 	public void SetCurrentDirectory(string path)
 	{
+		using IDisposable registration = Register(nameof(SetCurrentDirectory),
+			path);
+
+
 		IDirectoryInfo directoryInfo =
 			_fileSystem.DirectoryInfo.New(path);
 		if (!directoryInfo.Exists)
@@ -377,27 +592,47 @@ internal sealed class DirectoryMock : IDirectory
 
 	/// <inheritdoc cref="IDirectory.SetLastAccessTime(string, DateTime)" />
 	public void SetLastAccessTime(string path, DateTime lastAccessTime)
-		=> LoadDirectoryInfoOrThrowNotFoundException(path,
+	{
+		using IDisposable registration = Register(nameof(SetLastAccessTime),
+			path, lastAccessTime);
+
+		LoadDirectoryInfoOrThrowNotFoundException(path,
 				ThrowMissingFileLastAccessOrLastWriteTimeException)
 			.LastAccessTime = lastAccessTime;
+	}
 
 	/// <inheritdoc cref="IDirectory.SetLastAccessTimeUtc(string, DateTime)" />
 	public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
-		=> LoadDirectoryInfoOrThrowNotFoundException(path,
+	{
+		using IDisposable registration = Register(nameof(SetLastAccessTimeUtc),
+			path, lastAccessTimeUtc);
+
+		LoadDirectoryInfoOrThrowNotFoundException(path,
 				ThrowMissingFileLastAccessOrLastWriteTimeException)
 			.LastAccessTimeUtc = lastAccessTimeUtc;
+	}
 
 	/// <inheritdoc cref="IDirectory.SetLastWriteTime(string, DateTime)" />
 	public void SetLastWriteTime(string path, DateTime lastWriteTime)
-		=> LoadDirectoryInfoOrThrowNotFoundException(path,
+	{
+		using IDisposable registration = Register(nameof(SetLastWriteTime),
+			path, lastWriteTime);
+
+		LoadDirectoryInfoOrThrowNotFoundException(path,
 				ThrowMissingFileLastAccessOrLastWriteTimeException)
 			.LastWriteTime = lastWriteTime;
+	}
 
 	/// <inheritdoc cref="IDirectory.SetLastWriteTimeUtc(string, DateTime)" />
 	public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
-		=> LoadDirectoryInfoOrThrowNotFoundException(path,
+	{
+		using IDisposable registration = Register(nameof(SetLastWriteTimeUtc),
+			path, lastWriteTimeUtc);
+
+		LoadDirectoryInfoOrThrowNotFoundException(path,
 				ThrowMissingFileLastAccessOrLastWriteTimeException)
 			.LastWriteTimeUtc = lastWriteTimeUtc;
+	}
 
 	#endregion
 
@@ -469,4 +704,7 @@ internal sealed class DirectoryMock : IDirectory
 			.Select(x => _fileSystem
 				.GetSubdirectoryPath(x.FullPath, adjustedLocation.GivenPath));
 	}
+
+	private IDisposable Register(string name, params object?[] parameters)
+		=> _fileSystem.FileSystemStatistics.DirectoryStatistic.Register(name, parameters);
 }

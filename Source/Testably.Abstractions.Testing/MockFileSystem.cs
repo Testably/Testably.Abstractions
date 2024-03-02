@@ -55,19 +55,16 @@ public sealed class MockFileSystem : IFileSystem
 	/// </summary>
 	internal Execute Execute { get; }
 
-	internal IDisposable RegisterCall(string name, params object?[] parameters)
-		=> _statistics.Register(name, parameters);
-
 	/// <summary>
 	///     Contains statistical information about the mock usage.
 	/// </summary>
-	public IStatistics Statistics => _statistics;
+	public IFileSystemStatistics Statistics => FileSystemStatistics;
 
 	private readonly DirectoryMock _directoryMock;
 	private readonly FileMock _fileMock;
 	private readonly PathMock _pathMock;
 	private readonly InMemoryStorage _storage;
-	private readonly MockStatistics _statistics = new();
+	internal readonly FileSystemStatistics FileSystemStatistics;
 
 	internal IAccessControlStrategy AccessControlStrategy
 	{
@@ -102,6 +99,7 @@ public sealed class MockFileSystem : IFileSystem
 		SafeFileHandleStrategy = new NullSafeFileHandleStrategy();
 		AccessControlStrategy = new NullAccessControlStrategy();
 		AddDriveFromCurrentDirectory();
+		FileSystemStatistics = new FileSystemStatistics(this);
 	}
 
 	#region IFileSystem Members

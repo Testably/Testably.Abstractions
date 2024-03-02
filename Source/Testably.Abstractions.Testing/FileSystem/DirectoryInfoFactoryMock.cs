@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.IO.Abstractions;
 using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.FileSystem;
@@ -23,11 +24,19 @@ internal sealed class DirectoryInfoFactoryMock : IDirectoryInfoFactory
 	/// <inheritdoc cref="IDirectoryInfoFactory.FromDirectoryName(string)" />
 	[Obsolete("Use `IDirectoryInfoFactory.New(string)` instead")]
 	public IDirectoryInfo FromDirectoryName(string directoryName)
-		=> New(directoryName);
+	{
+		using IDisposable registration = Register(nameof(FromDirectoryName),
+			directoryName);
+
+		return New(directoryName);
+	}
 
 	/// <inheritdoc cref="IDirectoryInfoFactory.New(string)" />
 	public IDirectoryInfo New(string path)
 	{
+		using IDisposable registration = Register(nameof(New),
+			path);
+
 		return DirectoryInfoMock.New(
 			_fileSystem.Storage.GetLocation(path
 				.EnsureValidArgument(_fileSystem, nameof(path))),
@@ -37,11 +46,19 @@ internal sealed class DirectoryInfoFactoryMock : IDirectoryInfoFactory
 	/// <inheritdoc cref="IDirectoryInfoFactory.Wrap(DirectoryInfo)" />
 	[return: NotNullIfNotNull("directoryInfo")]
 	public IDirectoryInfo? Wrap(DirectoryInfo? directoryInfo)
-		=> DirectoryInfoMock.New(
+	{
+		using IDisposable registration = Register(nameof(Wrap),
+			directoryInfo);
+
+		return DirectoryInfoMock.New(
 			_fileSystem.Storage.GetLocation(
 				directoryInfo?.FullName,
 				directoryInfo?.ToString()),
 			_fileSystem);
+	}
 
 	#endregion
+
+	private IDisposable Register(string name, params object?[] parameters)
+		=> _fileSystem.FileSystemStatistics.DirectoryInfoStatistic.Register(name, parameters);
 }

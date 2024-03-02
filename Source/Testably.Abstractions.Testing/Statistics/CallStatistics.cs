@@ -1,24 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Testably.Abstractions.Testing.Statistics;
 
-internal sealed class MockStatistics : IStatistics
+internal class CallStatistics : IStatistics
 {
 	private readonly List<CallStatistic> _calls = new();
 	public IReadOnlyList<CallStatistic> Calls => _calls.AsReadOnly();
+	public static CallStatistics Empty { get; } = new();
 
-	private bool _isDisabled;
+	private static readonly AsyncLocal<bool> IsDisabled = new();
 
 	internal IDisposable Register(string name, params object?[] parameters)
 	{
-		if (_isDisabled)
+		if (IsDisabled.Value)
 		{
 			return TemporaryDisable.None;
 		}
-		_isDisabled = true;
+		IsDisabled.Value = true;
 		_calls.Add(new CallStatistic(name, parameters));
-		return new TemporaryDisable(() => _isDisabled = false);
+		return new TemporaryDisable(() => IsDisabled.Value = false);
 	}
 
 	private class TemporaryDisable : IDisposable
