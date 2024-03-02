@@ -12,7 +12,6 @@ using Testably.Abstractions.Testing.Storage;
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
-
 #endif
 
 namespace Testably.Abstractions.Testing.FileSystem;
@@ -34,7 +33,12 @@ internal sealed class FileMock : IFile
 
 	/// <inheritdoc cref="IFile.AppendAllLines(string, IEnumerable{string})" />
 	public void AppendAllLines(string path, IEnumerable<string> contents)
-		=> AppendAllLines(path, contents, Encoding.Default);
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(AppendAllLines),
+			path, contents);
+
+		AppendAllLines(path, contents, Encoding.Default);
+	}
 
 	/// <inheritdoc cref="IFile.AppendAllLines(string, IEnumerable{string}, Encoding)" />
 	public void AppendAllLines(
@@ -42,6 +46,9 @@ internal sealed class FileMock : IFile
 		IEnumerable<string> contents,
 		Encoding encoding)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(AppendAllLines),
+			path, contents, encoding);
+
 		_ = contents ?? throw new ArgumentNullException(nameof(contents));
 		_ = encoding ?? throw new ArgumentNullException(nameof(encoding));
 		AppendAllText(
@@ -54,13 +61,21 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.AppendAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
 	public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
 		CancellationToken cancellationToken = default)
-		=> AppendAllLinesAsync(path, contents, Encoding.Default, cancellationToken);
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(AppendAllLinesAsync),
+			path, contents, cancellationToken);
+
+		return AppendAllLinesAsync(path, contents, Encoding.Default, cancellationToken);
+	}
 
 	/// <inheritdoc cref="IFile.AppendAllLinesAsync(string, IEnumerable{string}, Encoding, CancellationToken)" />
 	public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
 		Encoding encoding,
 		CancellationToken cancellationToken = default)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(AppendAllLinesAsync),
+			path, contents, encoding, cancellationToken);
+
 		ThrowIfCancelled(cancellationToken);
 		AppendAllLines(path, contents, encoding);
 		return Task.CompletedTask;
@@ -69,11 +84,19 @@ internal sealed class FileMock : IFile
 
 	/// <inheritdoc cref="IFile.AppendAllText(string, string?)" />
 	public void AppendAllText(string path, string? contents)
-		=> AppendAllText(path, contents, Encoding.Default);
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(AppendAllText),
+			path, contents);
+
+		AppendAllText(path, contents, Encoding.Default);
+	}
 
 	/// <inheritdoc cref="IFile.AppendAllText(string, string?, Encoding)" />
 	public void AppendAllText(string path, string? contents, Encoding encoding)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(AppendAllText),
+			path, contents, encoding);
+
 		IStorageContainer container =
 			_fileSystem.Storage.GetOrCreateContainer(
 				_fileSystem.Storage.GetLocation(
@@ -105,12 +128,20 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.AppendAllTextAsync(string, string?, CancellationToken)" />
 	public Task AppendAllTextAsync(string path, string? contents,
 		CancellationToken cancellationToken = default)
-		=> AppendAllTextAsync(path, contents, Encoding.Default, cancellationToken);
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(AppendAllTextAsync),
+			path, contents, cancellationToken);
+
+		return AppendAllTextAsync(path, contents, Encoding.Default, cancellationToken);
+	}
 
 	/// <inheritdoc cref="IFile.AppendAllTextAsync(string, string?, Encoding, CancellationToken)" />
 	public Task AppendAllTextAsync(string path, string? contents, Encoding encoding,
 		CancellationToken cancellationToken = default)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(AppendAllTextAsync),
+			path, contents, encoding, cancellationToken);
+
 		ThrowIfCancelled(cancellationToken);
 		AppendAllText(path, contents, encoding);
 		return Task.CompletedTask;
@@ -119,13 +150,21 @@ internal sealed class FileMock : IFile
 
 	/// <inheritdoc cref="IFile.AppendText(string)" />
 	public StreamWriter AppendText(string path)
-		=> FileSystem.FileInfo
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(AppendText),
+			path);
+
+		return FileSystem.FileInfo
 			.New(path.EnsureValidFormat(_fileSystem))
 			.AppendText();
+	}
 
 	/// <inheritdoc cref="IFile.Copy(string, string)" />
 	public void Copy(string sourceFileName, string destFileName)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(Copy),
+			sourceFileName, destFileName);
+
 		sourceFileName.EnsureValidFormat(_fileSystem, nameof(sourceFileName));
 		destFileName.EnsureValidFormat(_fileSystem, nameof(destFileName));
 		try
@@ -145,7 +184,11 @@ internal sealed class FileMock : IFile
 
 	/// <inheritdoc cref="IFile.Copy(string, string, bool)" />
 	public void Copy(string sourceFileName, string destFileName, bool overwrite)
-		=> _fileSystem.Execute.OnNetFramework(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(Copy),
+			sourceFileName, destFileName, overwrite);
+
+		_fileSystem.Execute.OnNetFramework(
 			() =>
 			{
 				try
@@ -168,29 +211,44 @@ internal sealed class FileMock : IFile
 					.CopyTo(destFileName
 						.EnsureValidFormat(_fileSystem, nameof(destFileName)), overwrite);
 			});
+	}
 
 	/// <inheritdoc cref="IFile.Create(string)" />
 	public FileSystemStream Create(string path)
-		=> new FileStreamMock(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(Create),
+			path);
+
+		return new FileStreamMock(
 			_fileSystem,
 			path,
 			FileMode.Create,
 			FileAccess.ReadWrite,
 			FileShare.None);
+	}
 
 	/// <inheritdoc cref="IFile.Create(string, int)" />
 	public FileSystemStream Create(string path, int bufferSize)
-		=> new FileStreamMock(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(Create),
+			path, bufferSize);
+
+		return new FileStreamMock(
 			_fileSystem,
 			path,
 			FileMode.Create,
 			FileAccess.ReadWrite,
 			FileShare.None,
 			bufferSize);
+	}
 
 	/// <inheritdoc cref="IFile.Create(string, int, FileOptions)" />
 	public FileSystemStream Create(string path, int bufferSize, FileOptions options)
-		=> new FileStreamMock(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(Create),
+			path, bufferSize, options);
+
+		return new FileStreamMock(
 			_fileSystem,
 			path,
 			FileMode.Create,
@@ -198,12 +256,16 @@ internal sealed class FileMock : IFile
 			FileShare.None,
 			bufferSize,
 			options);
+	}
 
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IFile.CreateSymbolicLink(string, string)" />
 	public IFileSystemInfo CreateSymbolicLink(
 		string path, string pathToTarget)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(CreateSymbolicLink),
+			path, pathToTarget);
+
 		path.EnsureValidFormat(_fileSystem);
 		IFileInfo fileSystemInfo =
 			_fileSystem.FileInfo.New(path);
@@ -214,28 +276,44 @@ internal sealed class FileMock : IFile
 
 	/// <inheritdoc cref="IFile.CreateText(string)" />
 	public StreamWriter CreateText(string path)
-		=> FileSystem.FileInfo
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(CreateText),
+			path);
+
+		return FileSystem.FileInfo
 			.New(path.EnsureValidFormat(_fileSystem))
 			.CreateText();
+	}
 
 	/// <inheritdoc cref="IFile.Decrypt(string)" />
 	[SupportedOSPlatform("windows")]
 	public void Decrypt(string path)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(Decrypt),
+			path);
+
 		IStorageContainer container = GetContainerFromPath(path);
 		container.Decrypt();
 	}
 
 	/// <inheritdoc cref="IFile.Delete(string)" />
 	public void Delete(string path)
-		=> _fileSystem.Storage.DeleteContainer(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(Delete),
+			path);
+
+		_fileSystem.Storage.DeleteContainer(
 			_fileSystem.Storage.GetLocation(
 				path.EnsureValidFormat(_fileSystem)));
+	}
 
 	/// <inheritdoc cref="IFile.Encrypt(string)" />
 	[SupportedOSPlatform("windows")]
 	public void Encrypt(string path)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(Encrypt),
+			path);
+
 		IStorageContainer container = GetContainerFromPath(path);
 		container.Encrypt();
 	}
@@ -243,6 +321,9 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.Exists(string?)" />
 	public bool Exists([NotNullWhen(true)] string? path)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(Exists),
+			path);
+
 		if (string.IsNullOrEmpty(path))
 		{
 			return false;
@@ -257,6 +338,9 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetAttributes(string)" />
 	public FileAttributes GetAttributes(string path)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(GetAttributes),
+			path);
+
 		IStorageContainer container = _fileSystem.Storage
 			.GetContainer(_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(_fileSystem))
@@ -269,6 +353,9 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetAttributes(SafeFileHandle)" />
 	public FileAttributes GetAttributes(SafeFileHandle fileHandle)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(GetAttributes),
+			fileHandle);
+
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
 		return container.Attributes;
 	}
@@ -276,144 +363,234 @@ internal sealed class FileMock : IFile
 
 	/// <inheritdoc cref="IFile.GetCreationTime(string)" />
 	public DateTime GetCreationTime(string path)
-		=> _fileSystem.Storage.GetContainer(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(GetCreationTime),
+			path);
+
+		return _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(_fileSystem)))
 			.CreationTime.Get(DateTimeKind.Local);
+	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetCreationTime(SafeFileHandle)" />
 	public DateTime GetCreationTime(SafeFileHandle fileHandle)
-		=> GetContainerFromSafeFileHandle(fileHandle)
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(GetCreationTime),
+			fileHandle);
+
+		return GetContainerFromSafeFileHandle(fileHandle)
 			.CreationTime.Get(DateTimeKind.Local);
+	}
 #endif
 
 	/// <inheritdoc cref="IFile.GetCreationTimeUtc(string)" />
 	public DateTime GetCreationTimeUtc(string path)
-		=> _fileSystem.Storage.GetContainer(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(GetCreationTimeUtc),
+			path);
+
+		return _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(_fileSystem)))
 			.CreationTime.Get(DateTimeKind.Utc);
+	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetCreationTimeUtc(SafeFileHandle)" />
 	public DateTime GetCreationTimeUtc(SafeFileHandle fileHandle)
-		=> GetContainerFromSafeFileHandle(fileHandle)
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(GetCreationTimeUtc),
+			fileHandle);
+
+		return GetContainerFromSafeFileHandle(fileHandle)
 			.CreationTime.Get(DateTimeKind.Utc);
+	}
 #endif
 
 	/// <inheritdoc cref="IFile.GetLastAccessTime(string)" />
 	public DateTime GetLastAccessTime(string path)
-		=> _fileSystem.Storage.GetContainer(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(GetLastAccessTime),
+			path);
+
+		return _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(_fileSystem)))
 			.LastAccessTime.Get(DateTimeKind.Local);
+	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetLastAccessTime(SafeFileHandle)" />
 	public DateTime GetLastAccessTime(SafeFileHandle fileHandle)
-		=> GetContainerFromSafeFileHandle(fileHandle)
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(GetLastAccessTime),
+			fileHandle);
+
+		return GetContainerFromSafeFileHandle(fileHandle)
 			.LastAccessTime.Get(DateTimeKind.Local);
+	}
 #endif
 
 	/// <inheritdoc cref="IFile.GetLastAccessTimeUtc(string)" />
 	public DateTime GetLastAccessTimeUtc(string path)
-		=> _fileSystem.Storage.GetContainer(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(GetLastAccessTimeUtc),
+			path);
+
+		return _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(_fileSystem)))
 			.LastAccessTime.Get(DateTimeKind.Utc);
+	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetLastAccessTimeUtc(SafeFileHandle)" />
 	public DateTime GetLastAccessTimeUtc(SafeFileHandle fileHandle)
-		=> GetContainerFromSafeFileHandle(fileHandle)
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(GetLastAccessTimeUtc),
+			fileHandle);
+
+		return GetContainerFromSafeFileHandle(fileHandle)
 			.LastAccessTime.Get(DateTimeKind.Utc);
+	}
 #endif
 
 	/// <inheritdoc cref="IFile.GetLastWriteTime(string)" />
 	public DateTime GetLastWriteTime(string path)
-		=> _fileSystem.Storage.GetContainer(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(GetLastWriteTime),
+			path);
+
+		return _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(_fileSystem)))
 			.LastWriteTime.Get(DateTimeKind.Local);
+	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetLastWriteTime(SafeFileHandle)" />
 	public DateTime GetLastWriteTime(SafeFileHandle fileHandle)
-		=> GetContainerFromSafeFileHandle(fileHandle)
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(GetLastWriteTime),
+			fileHandle);
+
+		return GetContainerFromSafeFileHandle(fileHandle)
 			.LastWriteTime.Get(DateTimeKind.Local);
+	}
 #endif
 
 	/// <inheritdoc cref="IFile.GetLastWriteTimeUtc(string)" />
 	public DateTime GetLastWriteTimeUtc(string path)
-		=> _fileSystem.Storage.GetContainer(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(GetLastWriteTimeUtc),
+			path);
+
+		return _fileSystem.Storage.GetContainer(
 				_fileSystem.Storage.GetLocation(
 					path.EnsureValidFormat(_fileSystem)))
 			.LastWriteTime.Get(DateTimeKind.Utc);
+	}
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetLastWriteTimeUtc(SafeFileHandle)" />
 	public DateTime GetLastWriteTimeUtc(SafeFileHandle fileHandle)
-		=> GetContainerFromSafeFileHandle(fileHandle)
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(GetLastWriteTimeUtc),
+			fileHandle);
+
+		return GetContainerFromSafeFileHandle(fileHandle)
 			.LastWriteTime.Get(DateTimeKind.Utc);
+	}
 #endif
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 	/// <inheritdoc cref="IFile.GetUnixFileMode(string)" />
 	[UnsupportedOSPlatform("windows")]
 	public UnixFileMode GetUnixFileMode(string path)
-		=> _fileSystem.Execute.OnWindows(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(GetUnixFileMode),
+			path);
+
+		return _fileSystem.Execute.OnWindows(
 			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform(),
 			() => _fileSystem.Storage.GetContainer(
 					_fileSystem.Storage.GetLocation(
 							path.EnsureValidFormat(_fileSystem))
 						.ThrowExceptionIfNotFound(_fileSystem))
 				.UnixFileMode);
+	}
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.GetUnixFileMode(SafeFileHandle)" />
 	[UnsupportedOSPlatform("windows")]
 	public UnixFileMode GetUnixFileMode(SafeFileHandle fileHandle)
-		=> _fileSystem.Execute.OnWindows(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(GetUnixFileMode),
+			fileHandle);
+
+		return _fileSystem.Execute.OnWindows(
 			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform(),
 			() => GetContainerFromSafeFileHandle(fileHandle)
 				.UnixFileMode);
+	}
 #endif
 
 	/// <inheritdoc cref="IFile.Move(string, string)" />
 	public void Move(string sourceFileName, string destFileName)
-		=> _fileSystem.FileInfo.New(sourceFileName
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(Move),
+			sourceFileName, destFileName);
+
+		_fileSystem.FileInfo.New(sourceFileName
 				.EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
 			.MoveTo(destFileName
 				.EnsureValidFormat(_fileSystem, nameof(destFileName)));
+	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
 	/// <inheritdoc cref="IFile.Move(string, string, bool)" />
 	public void Move(string sourceFileName, string destFileName, bool overwrite)
-		=> _fileSystem.FileInfo.New(sourceFileName
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(Move),
+			sourceFileName, destFileName, overwrite);
+
+		_fileSystem.FileInfo.New(sourceFileName
 				.EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
 			.MoveTo(destFileName
 				.EnsureValidFormat(_fileSystem, nameof(destFileName)), overwrite);
+	}
 #endif
 
 	/// <inheritdoc cref="IFile.Open(string, FileMode)" />
 	public FileSystemStream Open(string path, FileMode mode)
-		=> new FileStreamMock(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(Open),
+			path, mode);
+
+		return new FileStreamMock(
 			_fileSystem,
 			path,
 			mode,
 			mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite,
 			FileShare.None);
+	}
 
 	/// <inheritdoc cref="IFile.Open(string, FileMode, FileAccess)" />
 	public FileSystemStream Open(string path, FileMode mode, FileAccess access)
-		=> new FileStreamMock(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(Open),
+			path, mode, access);
+
+		return new FileStreamMock(
 			_fileSystem,
 			path,
 			mode,
 			access,
 			FileShare.None);
+	}
 
 	/// <inheritdoc cref="IFile.Open(string, FileMode, FileAccess, FileShare)" />
 	public FileSystemStream Open(
@@ -421,17 +598,26 @@ internal sealed class FileMock : IFile
 		FileMode mode,
 		FileAccess access,
 		FileShare share)
-		=> new FileStreamMock(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(Open),
+			path, mode, access, share);
+
+		return new FileStreamMock(
 			_fileSystem,
 			path,
 			mode,
 			access,
 			share);
+	}
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
 	/// <inheritdoc cref="IFile.Open(string, FileStreamOptions)" />
 	public FileSystemStream Open(string path, FileStreamOptions options)
-		=> new FileStreamMock(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(Open),
+			path, options);
+
+		return new FileStreamMock(
 			_fileSystem,
 			path,
 			options.Mode,
@@ -439,34 +625,53 @@ internal sealed class FileMock : IFile
 			options.Share,
 			options.BufferSize,
 			options.Options);
+	}
 #endif
 
 	/// <inheritdoc cref="IFile.OpenRead(string)" />
 	public FileSystemStream OpenRead(string path)
-		=> new FileStreamMock(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(OpenRead),
+			path);
+
+		return new FileStreamMock(
 			_fileSystem,
 			path,
 			FileMode.Open,
 			FileAccess.Read);
+	}
 
 	/// <inheritdoc cref="IFile.OpenText(string)" />
 	public StreamReader OpenText(string path)
-		=> FileSystem.FileInfo
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(OpenText),
+			path);
+
+		return FileSystem.FileInfo
 			.New(path.EnsureValidFormat(_fileSystem))
 			.OpenText();
+	}
 
 	/// <inheritdoc cref="IFile.OpenWrite(string)" />
 	public FileSystemStream OpenWrite(string path)
-		=> new FileStreamMock(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(OpenWrite),
+			path);
+
+		return new FileStreamMock(
 			_fileSystem,
 			path,
 			FileMode.OpenOrCreate,
 			FileAccess.Write,
 			FileShare.None);
+	}
 
 	/// <inheritdoc cref="IFile.ReadAllBytes(string)" />
 	public byte[] ReadAllBytes(string path)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(ReadAllBytes),
+			path);
+
 		IStorageContainer container = GetContainerFromPath(path);
 		using (container.RequestAccess(
 			FileAccess.Read,
@@ -482,9 +687,11 @@ internal sealed class FileMock : IFile
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.ReadAllBytesAsync(string, CancellationToken)" />
 	public Task<byte[]> ReadAllBytesAsync(string path,
-		CancellationToken cancellationToken =
-			default)
+		CancellationToken cancellationToken = default)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(ReadAllBytesAsync),
+			path, cancellationToken);
+
 		ThrowIfCancelled(cancellationToken);
 		return Task.FromResult(ReadAllBytes(path));
 	}
@@ -492,18 +699,33 @@ internal sealed class FileMock : IFile
 
 	/// <inheritdoc cref="IFile.ReadAllLines(string)" />
 	public string[] ReadAllLines(string path)
-		=> ReadAllLines(path, Encoding.Default);
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(ReadAllLines),
+			path);
+
+		return ReadAllLines(path, Encoding.Default);
+	}
 
 	/// <inheritdoc cref="IFile.ReadAllLines(string, Encoding)" />
 	public string[] ReadAllLines(string path, Encoding encoding)
-		=> ReadLines(path, encoding).ToArray();
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(ReadAllLines),
+			path, encoding);
+
+		return ReadLines(path, encoding).ToArray();
+	}
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.ReadAllLinesAsync(string, CancellationToken)" />
 	public Task<string[]> ReadAllLinesAsync(
 		string path,
 		CancellationToken cancellationToken = default)
-		=> ReadAllLinesAsync(path, Encoding.Default, cancellationToken);
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(ReadAllLinesAsync),
+			path, cancellationToken);
+
+		return ReadAllLinesAsync(path, Encoding.Default, cancellationToken);
+	}
 
 	/// <inheritdoc cref="IFile.ReadAllLinesAsync(string, Encoding, CancellationToken)" />
 	public Task<string[]> ReadAllLinesAsync(
@@ -511,6 +733,9 @@ internal sealed class FileMock : IFile
 		Encoding encoding,
 		CancellationToken cancellationToken = default)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(ReadAllLinesAsync),
+			path, encoding, cancellationToken);
+
 		ThrowIfCancelled(cancellationToken);
 		return Task.FromResult(ReadAllLines(path, encoding));
 	}
@@ -518,11 +743,19 @@ internal sealed class FileMock : IFile
 
 	/// <inheritdoc cref="IFile.ReadAllText(string)" />
 	public string ReadAllText(string path)
-		=> ReadAllText(path, Encoding.Default);
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(ReadAllText),
+			path);
+
+		return ReadAllText(path, Encoding.Default);
+	}
 
 	/// <inheritdoc cref="IFile.ReadAllText(string, Encoding)" />
 	public string ReadAllText(string path, Encoding encoding)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(ReadAllText),
+			path, encoding);
+
 		IStorageContainer container = GetContainerFromPath(path);
 		using (container.RequestAccess(
 			FileAccess.Read,
@@ -544,7 +777,12 @@ internal sealed class FileMock : IFile
 	public Task<string> ReadAllTextAsync(
 		string path,
 		CancellationToken cancellationToken = default)
-		=> ReadAllTextAsync(path, Encoding.Default, cancellationToken);
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(ReadAllTextAsync),
+			path, cancellationToken);
+
+		return ReadAllTextAsync(path, Encoding.Default, cancellationToken);
+	}
 
 	/// <inheritdoc cref="IFile.ReadAllTextAsync(string, Encoding, CancellationToken)" />
 	public Task<string> ReadAllTextAsync(
@@ -552,6 +790,9 @@ internal sealed class FileMock : IFile
 		Encoding encoding,
 		CancellationToken cancellationToken = default)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(ReadAllTextAsync),
+			path, encoding, cancellationToken);
+
 		ThrowIfCancelled(cancellationToken);
 		return Task.FromResult(ReadAllText(path, encoding));
 	}
@@ -559,27 +800,41 @@ internal sealed class FileMock : IFile
 
 	/// <inheritdoc cref="IFile.ReadLines(string)" />
 	public IEnumerable<string> ReadLines(string path)
-		=> ReadLines(path, Encoding.Default);
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(ReadLines),
+			path);
+
+		return ReadLines(path, Encoding.Default);
+	}
 
 	/// <inheritdoc cref="IFile.ReadLines(string, Encoding)" />
 	public IEnumerable<string> ReadLines(string path, Encoding encoding)
-		=> EnumerateLines(ReadAllText(path, encoding));
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(ReadLines),
+			path, encoding);
+
+		return EnumerateLines(ReadAllText(path, encoding));
+	}
 
 #if FEATURE_FILESYSTEM_NET7
 	/// <inheritdoc cref="IFile.ReadLinesAsync(string, CancellationToken)" />
 	public IAsyncEnumerable<string> ReadLinesAsync(string path,
-		CancellationToken cancellationToken =
-			default)
+		CancellationToken cancellationToken = default)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(ReadLinesAsync),
+			path, cancellationToken);
+
 		ThrowIfCancelled(cancellationToken);
 		return ReadAllLines(path).ToAsyncEnumerable();
 	}
 
 	/// <inheritdoc cref="IFile.ReadLinesAsync(string, Encoding, CancellationToken)" />
 	public IAsyncEnumerable<string> ReadLinesAsync(string path, Encoding encoding,
-		CancellationToken cancellationToken =
-			default)
+		CancellationToken cancellationToken = default)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(ReadLinesAsync),
+			path, encoding, cancellationToken);
+
 		ThrowIfCancelled(cancellationToken);
 		return ReadAllLines(path, encoding).ToAsyncEnumerable();
 	}
@@ -589,29 +844,42 @@ internal sealed class FileMock : IFile
 	public void Replace(string sourceFileName,
 		string destinationFileName,
 		string? destinationBackupFileName)
-		=> _fileSystem.FileInfo.New(sourceFileName
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(Replace),
+			sourceFileName, destinationFileName, destinationBackupFileName);
+
+		_fileSystem.FileInfo.New(sourceFileName
 				.EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
 			.Replace(destinationFileName
 					.EnsureValidFormat(_fileSystem, nameof(destinationFileName)),
 				destinationBackupFileName);
+	}
 
 	/// <inheritdoc cref="IFile.Replace(string, string, string, bool)" />
 	public void Replace(string sourceFileName,
 		string destinationFileName,
 		string? destinationBackupFileName,
 		bool ignoreMetadataErrors)
-		=> _fileSystem.FileInfo.New(sourceFileName
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(Replace),
+			sourceFileName, destinationFileName, destinationBackupFileName, ignoreMetadataErrors);
+
+		_fileSystem.FileInfo.New(sourceFileName
 				.EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
 			.Replace(destinationFileName
 					.EnsureValidFormat(_fileSystem, nameof(destinationFileName)),
 				destinationBackupFileName,
 				ignoreMetadataErrors);
+	}
 
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IFile.ResolveLinkTarget(string, bool)" />
 	public IFileSystemInfo? ResolveLinkTarget(
 		string linkPath, bool returnFinalTarget)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(ResolveLinkTarget),
+			linkPath, returnFinalTarget);
+
 		IStorageLocation location =
 			_fileSystem.Storage.GetLocation(linkPath
 				.EnsureValidFormat(_fileSystem, nameof(linkPath)));
@@ -642,6 +910,9 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetAttributes(string, FileAttributes)" />
 	public void SetAttributes(string path, FileAttributes fileAttributes)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(SetAttributes),
+			path, fileAttributes);
+
 		IStorageContainer container = GetContainerFromPath(path);
 		container.Attributes = fileAttributes;
 	}
@@ -650,6 +921,9 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetAttributes(SafeFileHandle, FileAttributes)" />
 	public void SetAttributes(SafeFileHandle fileHandle, FileAttributes fileAttributes)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(SetAttributes),
+			fileHandle, fileAttributes);
+
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
 		container.Attributes = fileAttributes;
 	}
@@ -658,6 +932,9 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetCreationTime(string, DateTime)" />
 	public void SetCreationTime(string path, DateTime creationTime)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(SetCreationTime),
+			path, creationTime);
+
 		IStorageContainer container =
 			GetContainerFromPath(path, ExceptionMode.FileNotFoundExceptionOnLinuxAndMac);
 		container.CreationTime.Set(creationTime, DateTimeKind.Local);
@@ -667,6 +944,9 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetCreationTime(SafeFileHandle, DateTime)" />
 	public void SetCreationTime(SafeFileHandle fileHandle, DateTime creationTime)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(SetCreationTime),
+			fileHandle, creationTime);
+
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
 		container.CreationTime.Set(creationTime, DateTimeKind.Local);
 	}
@@ -675,6 +955,9 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetCreationTimeUtc(string, DateTime)" />
 	public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(SetCreationTimeUtc),
+			path, creationTimeUtc);
+
 		IStorageContainer container =
 			GetContainerFromPath(path, ExceptionMode.FileNotFoundExceptionOnLinuxAndMac);
 		container.CreationTime.Set(creationTimeUtc, DateTimeKind.Utc);
@@ -684,6 +967,9 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetCreationTimeUtc(SafeFileHandle, DateTime)" />
 	public void SetCreationTimeUtc(SafeFileHandle fileHandle, DateTime creationTimeUtc)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(SetCreationTimeUtc),
+			fileHandle, creationTimeUtc);
+
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
 		container.CreationTime.Set(creationTimeUtc, DateTimeKind.Utc);
 	}
@@ -692,6 +978,9 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastAccessTime(string, DateTime)" />
 	public void SetLastAccessTime(string path, DateTime lastAccessTime)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(SetLastAccessTime),
+			path, lastAccessTime);
+
 		IStorageContainer container =
 			GetContainerFromPath(path, ExceptionMode.FileNotFoundExceptionOnLinuxAndMac);
 		container.LastAccessTime.Set(lastAccessTime, DateTimeKind.Local);
@@ -701,6 +990,9 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastAccessTime(SafeFileHandle, DateTime)" />
 	public void SetLastAccessTime(SafeFileHandle fileHandle, DateTime lastAccessTime)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(SetLastAccessTime),
+			fileHandle, lastAccessTime);
+
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
 		container.LastAccessTime.Set(lastAccessTime, DateTimeKind.Local);
 	}
@@ -709,6 +1001,9 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastAccessTimeUtc(string, DateTime)" />
 	public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(SetLastAccessTimeUtc),
+			path, lastAccessTimeUtc);
+
 		IStorageContainer container =
 			GetContainerFromPath(path, ExceptionMode.FileNotFoundExceptionOnLinuxAndMac);
 		container.LastAccessTime.Set(lastAccessTimeUtc, DateTimeKind.Utc);
@@ -716,9 +1011,11 @@ internal sealed class FileMock : IFile
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	/// <inheritdoc cref="IFile.SetLastAccessTimeUtc(SafeFileHandle, DateTime)" />
-	public void SetLastAccessTimeUtc(SafeFileHandle fileHandle,
-		DateTime lastAccessTimeUtc)
+	public void SetLastAccessTimeUtc(SafeFileHandle fileHandle, DateTime lastAccessTimeUtc)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(SetLastAccessTimeUtc),
+			fileHandle, lastAccessTimeUtc);
+
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
 		container.LastAccessTime.Set(lastAccessTimeUtc, DateTimeKind.Utc);
 	}
@@ -727,6 +1024,9 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastWriteTime(string, DateTime)" />
 	public void SetLastWriteTime(string path, DateTime lastWriteTime)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(SetLastWriteTime),
+			path, lastWriteTime);
+
 		IStorageContainer container =
 			GetContainerFromPath(path, ExceptionMode.FileNotFoundExceptionOnLinuxAndMac);
 		container.LastWriteTime.Set(lastWriteTime, DateTimeKind.Local);
@@ -736,6 +1036,9 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastWriteTime(SafeFileHandle, DateTime)" />
 	public void SetLastWriteTime(SafeFileHandle fileHandle, DateTime lastWriteTime)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(SetLastWriteTime),
+			fileHandle, lastWriteTime);
+
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
 		container.LastWriteTime.Set(lastWriteTime, DateTimeKind.Local);
 	}
@@ -744,6 +1047,9 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastWriteTimeUtc(string, DateTime)" />
 	public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(SetLastWriteTimeUtc),
+			path, lastWriteTimeUtc);
+
 		IStorageContainer container =
 			GetContainerFromPath(path, ExceptionMode.FileNotFoundExceptionOnLinuxAndMac);
 		container.LastWriteTime.Set(lastWriteTimeUtc, DateTimeKind.Utc);
@@ -753,6 +1059,9 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastWriteTimeUtc(SafeFileHandle, DateTime)" />
 	public void SetLastWriteTimeUtc(SafeFileHandle fileHandle, DateTime lastWriteTimeUtc)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(SetLastWriteTimeUtc),
+			fileHandle, lastWriteTimeUtc);
+
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
 		container.LastWriteTime.Set(lastWriteTimeUtc, DateTimeKind.Utc);
 	}
@@ -763,6 +1072,9 @@ internal sealed class FileMock : IFile
 	[UnsupportedOSPlatform("windows")]
 	public void SetUnixFileMode(string path, UnixFileMode mode)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(SetUnixFileMode),
+			path, mode);
+
 		_fileSystem.Execute.OnWindows(
 			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform());
 
@@ -776,6 +1088,9 @@ internal sealed class FileMock : IFile
 	[UnsupportedOSPlatform("windows")]
 	public void SetUnixFileMode(SafeFileHandle fileHandle, UnixFileMode mode)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(SetUnixFileMode),
+			fileHandle, mode);
+
 		_fileSystem.Execute.OnWindows(
 			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform());
 
@@ -787,6 +1102,9 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.WriteAllBytes(string, byte[])" />
 	public void WriteAllBytes(string path, byte[] bytes)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(WriteAllBytes),
+			path, bytes);
+
 		_ = bytes ?? throw new ArgumentNullException(nameof(bytes));
 		IStorageContainer container =
 			_fileSystem.Storage.GetOrCreateContainer(
@@ -820,6 +1138,9 @@ internal sealed class FileMock : IFile
 	public Task WriteAllBytesAsync(string path, byte[] bytes,
 		CancellationToken cancellationToken = default)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(WriteAllBytesAsync),
+			path, bytes, cancellationToken);
+
 		ThrowIfCancelled(cancellationToken);
 		WriteAllBytes(path, bytes);
 		return Task.CompletedTask;
@@ -828,28 +1149,48 @@ internal sealed class FileMock : IFile
 
 	/// <inheritdoc cref="IFile.WriteAllLines(string, string[])" />
 	public void WriteAllLines(string path, string[] contents)
-		=> WriteAllLines(path, contents, Encoding.Default);
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(WriteAllLines),
+			path, contents);
+
+		WriteAllLines(path, contents, Encoding.Default);
+	}
 
 	/// <inheritdoc cref="IFile.WriteAllLines(string, IEnumerable{string})" />
 	public void WriteAllLines(string path, IEnumerable<string> contents)
-		=> WriteAllLines(path, contents, Encoding.Default);
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(WriteAllLines),
+			path, contents);
+
+		WriteAllLines(path, contents, Encoding.Default);
+	}
 
 	/// <inheritdoc cref="IFile.WriteAllLines(string, string[], Encoding)" />
 	public void WriteAllLines(
 		string path,
 		string[] contents,
 		Encoding encoding)
-		=> WriteAllLines(path, contents.AsEnumerable(), encoding);
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(WriteAllLines),
+			path, contents, encoding);
+
+		WriteAllLines(path, contents.AsEnumerable(), encoding);
+	}
 
 	/// <inheritdoc cref="IFile.WriteAllLines(string, IEnumerable{string}, Encoding)" />
 	public void WriteAllLines(
 		string path,
 		IEnumerable<string> contents,
 		Encoding encoding)
-		=> WriteAllText(
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(WriteAllLines),
+			path, contents, encoding);
+
+		WriteAllText(
 			path,
 			contents.Aggregate(string.Empty, (a, b) => a + b + Environment.NewLine),
 			encoding);
+	}
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.WriteAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
@@ -857,7 +1198,12 @@ internal sealed class FileMock : IFile
 		string path,
 		IEnumerable<string> contents,
 		CancellationToken cancellationToken = default)
-		=> WriteAllLinesAsync(path, contents, Encoding.Default, cancellationToken);
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(WriteAllLinesAsync),
+			path, contents, cancellationToken);
+
+		return WriteAllLinesAsync(path, contents, Encoding.Default, cancellationToken);
+	}
 
 	/// <inheritdoc cref="IFile.WriteAllLinesAsync(string, IEnumerable{string}, Encoding, CancellationToken)" />
 	public Task WriteAllLinesAsync(
@@ -866,6 +1212,9 @@ internal sealed class FileMock : IFile
 		Encoding encoding,
 		CancellationToken cancellationToken = default)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(WriteAllLinesAsync),
+			path, contents, encoding, cancellationToken);
+
 		ThrowIfCancelled(cancellationToken);
 		WriteAllLines(path, contents, encoding);
 		return Task.CompletedTask;
@@ -874,11 +1223,19 @@ internal sealed class FileMock : IFile
 
 	/// <inheritdoc cref="IFile.WriteAllText(string, string?)" />
 	public void WriteAllText(string path, string? contents)
-		=> WriteAllText(path, contents, Encoding.Default);
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(WriteAllText),
+			path, contents);
+
+		WriteAllText(path, contents, Encoding.Default);
+	}
 
 	/// <inheritdoc cref="IFile.WriteAllText(string, string?, Encoding)" />
 	public void WriteAllText(string path, string? contents, Encoding encoding)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(WriteAllText),
+			path, contents, encoding);
+
 		IStorageContainer container =
 			_fileSystem.Storage.GetOrCreateContainer(
 				_fileSystem.Storage.GetLocation(
@@ -913,12 +1270,20 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.WriteAllTextAsync(string, string?, CancellationToken)" />
 	public Task WriteAllTextAsync(string path, string? contents,
 		CancellationToken cancellationToken = default)
-		=> WriteAllTextAsync(path, contents, Encoding.Default, cancellationToken);
+	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(WriteAllTextAsync),
+			path, contents, cancellationToken);
+
+		return WriteAllTextAsync(path, contents, Encoding.Default, cancellationToken);
+	}
 
 	/// <inheritdoc cref="IFile.WriteAllTextAsync(string, string?, Encoding, CancellationToken)" />
 	public Task WriteAllTextAsync(string path, string? contents, Encoding encoding,
 		CancellationToken cancellationToken = default)
 	{
+		using IDisposable registration = _fileSystem.RegisterCall(nameof(WriteAllTextAsync),
+			path, contents, encoding, cancellationToken);
+
 		ThrowIfCancelled(cancellationToken);
 		WriteAllText(path, contents, encoding);
 		return Task.CompletedTask;

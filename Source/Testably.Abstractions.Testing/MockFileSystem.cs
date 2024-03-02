@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
+using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing;
@@ -54,10 +55,19 @@ public sealed class MockFileSystem : IFileSystem
 	/// </summary>
 	internal Execute Execute { get; }
 
+	internal IDisposable RegisterCall(string name, params object?[] parameters)
+		=> _statistics.Register(name, parameters);
+
+	/// <summary>
+	///     Contains statistical information about the mock usage.
+	/// </summary>
+	public IStatistics Statistics => _statistics;
+
 	private readonly DirectoryMock _directoryMock;
 	private readonly FileMock _fileMock;
 	private readonly PathMock _pathMock;
 	private readonly InMemoryStorage _storage;
+	private readonly MockStatistics _statistics = new();
 
 	internal IAccessControlStrategy AccessControlStrategy
 	{
