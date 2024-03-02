@@ -42,6 +42,30 @@ public sealed partial class StatisticsTests
 	}
 
 	[Theory]
+	[ClassData(typeof(SynchronousFileSystemMethods<IDriveInfoFactory>))]
+	public void FileSystem_DriveInfoFactory_SynchronousMethods_ShouldRegisterCall(string expectation,
+		Action<MockFileSystem> synchronousCall, string name, object?[] parameters)
+	{
+		MockFileSystem sut = new();
+
+		synchronousCall(sut);
+
+		sut.Statistics.DriveInfo.ShouldOnlyContain(name, parameters, expectation);
+	}
+
+	[Theory(Skip = "DriveInfo contains no methods")]
+	[ClassData(typeof(SynchronousFileSystemMethods<IDriveInfo>))]
+	public void FileSystem_DriveInfo_SynchronousMethods_ShouldRegisterCall(string expectation,
+		Action<MockFileSystem> synchronousCall, string name, object?[] parameters)
+	{
+		MockFileSystem sut = new();
+
+		synchronousCall(sut);
+
+		sut.Statistics.DriveInfo[DummyPath].ShouldOnlyContain(name, parameters, expectation);
+	}
+
+	[Theory]
 	[ClassData(typeof(SynchronousFileSystemMethods<IFile>))]
 	public void FileSystem_File_SynchronousMethods_ShouldRegisterCall(string expectation,
 		Action<MockFileSystem> synchronousCall, string name, object?[] parameters)
@@ -51,6 +75,30 @@ public sealed partial class StatisticsTests
 		synchronousCall(sut);
 
 		sut.Statistics.File.ShouldOnlyContain(name, parameters, expectation);
+	}
+
+	[Theory]
+	[ClassData(typeof(SynchronousFileSystemMethods<IFileInfoFactory>))]
+	public void FileSystem_FileInfoFactory_SynchronousMethods_ShouldRegisterCall(string expectation,
+		Action<MockFileSystem> synchronousCall, string name, object?[] parameters)
+	{
+		MockFileSystem sut = new();
+
+		synchronousCall(sut);
+
+		sut.Statistics.FileInfo.ShouldOnlyContain(name, parameters, expectation);
+	}
+
+	[Theory]
+	[ClassData(typeof(SynchronousFileSystemMethods<IFileInfo>))]
+	public void FileSystem_FileInfo_SynchronousMethods_ShouldRegisterCall(string expectation,
+		Action<MockFileSystem> synchronousCall, string name, object?[] parameters)
+	{
+		MockFileSystem sut = new();
+
+		synchronousCall(sut);
+
+		sut.Statistics.FileInfo[DummyPath].ShouldOnlyContain(name, parameters, expectation);
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
@@ -150,11 +198,31 @@ public sealed partial class StatisticsTests
 			return m => (TProperty)m.DirectoryInfo.New(DummyPath);
 		}
 
+		if (typeof(TProperty) == typeof(IDriveInfoFactory))
+		{
+			return m => (TProperty)m.DriveInfo;
+		}
+
+		if (typeof(TProperty) == typeof(IDriveInfo))
+		{
+			return m => (TProperty)m.DriveInfo.New(DummyPath);
+		}
+
 		if (typeof(TProperty) == typeof(IFile))
 		{
 			return m => (TProperty)m.File;
 		}
 
-        throw new NotSupportedException($"The type {typeof(TProperty)} is not supported!");
+		if (typeof(TProperty) == typeof(IFileInfoFactory))
+		{
+			return m => (TProperty)m.FileInfo;
+		}
+
+		if (typeof(TProperty) == typeof(IFileInfo))
+		{
+			return m => (TProperty)m.FileInfo.New(DummyPath);
+		}
+
+		throw new NotSupportedException($"The type {typeof(TProperty)} is not supported!");
 	}
 }

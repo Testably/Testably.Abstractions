@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
@@ -86,11 +87,18 @@ internal sealed class FileInfoMock
 
 	/// <inheritdoc cref="IFileInfo.AppendText()" />
 	public StreamWriter AppendText()
-		=> new(Open(FileMode.Append, FileAccess.Write));
+	{
+		using IDisposable registration = Register(nameof(AppendText));
+
+		return new StreamWriter(Open(FileMode.Append, FileAccess.Write));
+	}
 
 	/// <inheritdoc cref="IFileInfo.CopyTo(string)" />
 	public IFileInfo CopyTo(string destFileName)
 	{
+		using IDisposable registration = Register(nameof(CopyTo),
+			destFileName);
+
 		destFileName.EnsureValidArgument(_fileSystem, nameof(destFileName));
 		IStorageLocation destinationLocation = _fileSystem.Storage.GetLocation(destFileName);
 		Location.ThrowExceptionIfNotFound(_fileSystem);
@@ -103,6 +111,9 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.CopyTo(string, bool)" />
 	public IFileInfo CopyTo(string destFileName, bool overwrite)
 	{
+		using IDisposable registration = Register(nameof(CopyTo),
+			destFileName, overwrite);
+
 		destFileName.EnsureValidArgument(_fileSystem, nameof(destFileName));
 		IStorageLocation location = _fileSystem.Storage.Copy(
 			                            Location,
@@ -115,6 +126,8 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.Create()" />
 	public FileSystemStream Create()
 	{
+		using IDisposable registration = Register(nameof(Create));
+
 		_fileSystem.Execute.NotOnNetFramework(Refresh);
 		return _fileSystem.File.Create(FullName);
 	}
@@ -122,6 +135,8 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.CreateText()" />
 	public StreamWriter CreateText()
 	{
+		using IDisposable registration = Register(nameof(CreateText));
+
 		StreamWriter streamWriter = new(_fileSystem.File.Create(FullName));
 #if NET8_0_OR_GREATER
 		Refresh();
@@ -132,16 +147,27 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.Decrypt()" />
 	[SupportedOSPlatform("windows")]
 	public void Decrypt()
-		=> Container.Decrypt();
+	{
+		using IDisposable registration = Register(nameof(Decrypt));
+
+		Container.Decrypt();
+	}
 
 	/// <inheritdoc cref="IFileInfo.Encrypt()" />
 	[SupportedOSPlatform("windows")]
 	public void Encrypt()
-		=> Container.Encrypt();
+	{
+		using IDisposable registration = Register(nameof(Encrypt));
+
+		Container.Encrypt();
+	}
 
 	/// <inheritdoc cref="IFileInfo.MoveTo(string)" />
 	public void MoveTo(string destFileName)
 	{
+		using IDisposable registration = Register(nameof(MoveTo),
+			destFileName);
+
 		Location = _fileSystem.Storage.Move(
 			           Location,
 			           _fileSystem.Storage.GetLocation(destFileName
@@ -153,6 +179,9 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.MoveTo(string, bool)" />
 	public void MoveTo(string destFileName, bool overwrite)
 	{
+		using IDisposable registration = Register(nameof(MoveTo),
+			destFileName, overwrite);
+
 		Location = _fileSystem.Storage.Move(
 			           Location,
 			           _fileSystem.Storage.GetLocation(destFileName
@@ -165,6 +194,9 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.Open(FileMode)" />
 	public FileSystemStream Open(FileMode mode)
 	{
+		using IDisposable registration = Register(nameof(Open),
+			mode);
+
 		_fileSystem.Execute.OnNetFrameworkIf(mode == FileMode.Append,
 			() => throw ExceptionFactory.AppendAccessOnlyInWriteOnlyMode());
 
@@ -178,53 +210,83 @@ internal sealed class FileInfoMock
 
 	/// <inheritdoc cref="IFileInfo.Open(FileMode, FileAccess)" />
 	public FileSystemStream Open(FileMode mode, FileAccess access)
-		=> new FileStreamMock(
+	{
+		using IDisposable registration = Register(nameof(Open),
+			mode, access);
+
+		return new FileStreamMock(
 			_fileSystem,
 			FullName,
 			mode,
 			access,
 			FileShare.None);
+	}
 
 	/// <inheritdoc cref="IFileInfo.Open(FileMode, FileAccess, FileShare)" />
 	public FileSystemStream Open(FileMode mode, FileAccess access, FileShare share)
-		=> new FileStreamMock(
+	{
+		using IDisposable registration = Register(nameof(Open),
+			mode, access, share);
+
+		return new FileStreamMock(
 			_fileSystem,
 			FullName,
 			mode,
 			access,
 			share);
+	}
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
 	/// <inheritdoc cref="IFileInfo.Open(FileStreamOptions)" />
 	public FileSystemStream Open(FileStreamOptions options)
-		=> _fileSystem.File.Open(FullName, options);
+	{
+		using IDisposable registration = Register(nameof(Open),
+			options);
+
+		return _fileSystem.File.Open(FullName, options);
+	}
 #endif
 
 	/// <inheritdoc cref="IFileInfo.OpenRead()" />
 	public FileSystemStream OpenRead()
-		=> new FileStreamMock(
+	{
+		using IDisposable registration = Register(nameof(OpenRead));
+
+		return new FileStreamMock(
 			_fileSystem,
 			FullName,
 			FileMode.Open,
 			FileAccess.Read);
+	}
 
 	/// <inheritdoc cref="IFileInfo.OpenText()" />
 	public StreamReader OpenText()
-		=> new(OpenRead());
+	{
+		using IDisposable registration = Register(nameof(OpenText));
+
+		return new StreamReader(OpenRead());
+	}
 
 	/// <inheritdoc cref="IFileInfo.OpenWrite()" />
 	public FileSystemStream OpenWrite()
-		=> new FileStreamMock(
+	{
+		using IDisposable registration = Register(nameof(OpenWrite));
+
+		return new FileStreamMock(
 			_fileSystem,
 			FullName,
 			FileMode.OpenOrCreate,
 			FileAccess.Write,
 			FileShare.None);
+	}
 
 	/// <inheritdoc cref="IFileInfo.Replace(string, string?)" />
 	public IFileInfo Replace(string destinationFileName,
 		string? destinationBackupFileName)
 	{
+		using IDisposable registration = Register(nameof(Replace),
+			destinationFileName, destinationBackupFileName);
+
 		IStorageLocation location =
 			_fileSystem
 				.Storage
@@ -277,6 +339,9 @@ internal sealed class FileInfoMock
 		string? destinationBackupFileName,
 		bool ignoreMetadataErrors)
 	{
+		using IDisposable registration = Register(nameof(Replace),
+			destinationFileName, destinationBackupFileName, ignoreMetadataErrors);
+
 		IStorageLocation location = _fileSystem.Storage.Replace(
 			                            Location,
 			                            _fileSystem.Storage.GetLocation(
@@ -303,4 +368,7 @@ internal sealed class FileInfoMock
 
 		return new FileInfoMock(location, fileSystem);
 	}
+
+	protected override IDisposable Register(string name, params object?[] parameters)
+		=> _fileSystem.FileSystemStatistics.FileInfoStatistics.Register(Location.FullPath, name, parameters);
 }

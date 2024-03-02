@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.IO.Abstractions;
+using System.Reflection;
 using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.FileSystem;
@@ -23,11 +25,19 @@ internal sealed class FileInfoFactoryMock : IFileInfoFactory
 	/// <inheritdoc cref="IFileInfoFactory.FromFileName(string)" />
 	[Obsolete("Use `IFileInfoFactory.New(string)` instead")]
 	public IFileInfo FromFileName(string fileName)
-		=> New(fileName);
+	{
+		using IDisposable registration = Register(nameof(FromFileName),
+			fileName);
+
+		return New(fileName);
+	}
 
 	/// <inheritdoc cref="IFileInfoFactory.New(string)" />
 	public IFileInfo New(string fileName)
 	{
+		using IDisposable registration = Register(nameof(New),
+			fileName);
+
 		if (fileName == null)
 		{
 			throw new ArgumentNullException(nameof(fileName));
@@ -46,11 +56,19 @@ internal sealed class FileInfoFactoryMock : IFileInfoFactory
 	/// <inheritdoc cref="IFileInfoFactory.Wrap(FileInfo)" />
 	[return: NotNullIfNotNull("fileInfo")]
 	public IFileInfo? Wrap(FileInfo? fileInfo)
-		=> FileInfoMock.New(
+	{
+		using IDisposable registration = Register(nameof(Wrap),
+			fileInfo);
+
+		return FileInfoMock.New(
 			_fileSystem.Storage.GetLocation(
 				fileInfo?.FullName,
 				fileInfo?.ToString()),
 			_fileSystem);
+	}
 
 	#endregion
+
+	private IDisposable Register(string name, params object?[] parameters)
+		=> _fileSystem.FileSystemStatistics.FileInfoStatistics.Register(name, parameters);
 }

@@ -16,7 +16,17 @@ public interface IFileSystemStatistics
 	IFileSystemEntryStatistics DirectoryInfo { get; }
 
 	/// <summary>
+	///     Statistical information about calls to <see cref="IFileSystem.DriveInfo" />.
+	/// </summary>
+	IFileSystemEntryStatistics DriveInfo { get; }
+
+	/// <summary>
 	///     Statistical information about calls to <see cref="IFileSystem.File" />.
 	/// </summary>
 	IStatistics File { get; }
+
+	/// <summary>
+	///     Statistical information about calls to <see cref="IFileSystem.FileInfo" />.
+	/// </summary>
+	IFileSystemEntryStatistics FileInfo { get; }
 }

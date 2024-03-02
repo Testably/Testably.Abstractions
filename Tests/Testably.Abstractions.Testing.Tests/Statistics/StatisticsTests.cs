@@ -23,6 +23,8 @@ public sealed partial class StatisticsTests
 		{
 			Fixture = new Fixture();
 			Fixture.Register(() => new DirectoryInfo(DummyPath));
+			Fixture.Register(() => new FileInfo(DummyPath));
+			Fixture.Register(() => DriveInfo.GetDrives().First());
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
 			Fixture.Register(() => new FileStreamOptions());
 #endif
@@ -34,7 +36,19 @@ public sealed partial class StatisticsTests
 				object?[] Parameters)>
 			EnumerateSynchronousMethods<TProperty>(Fixture fixture)
 		{
-			foreach (MethodInfo methodInfo in typeof(TProperty).GetMethods()
+			foreach (MethodInfo methodInfo in typeof(TProperty)
+				.GetMethods()
+				.Where(m => m is { IsPublic: true, IsSpecialName: false } && !typeof(Task).IsAssignableFrom(m.ReturnType)))
+			{
+				object?[] parameters = CreateMethodParameters(
+					fixture, methodInfo.GetParameters()).ToArray();
+				yield return (
+					$"{methodInfo.Name}({string.Join(",", methodInfo.GetParameters().Select(x => GetName(x.ParameterType)))})",
+					x => methodInfo.Invoke(x, parameters),
+					methodInfo.Name, parameters);
+			}
+			foreach (MethodInfo methodInfo in typeof(TProperty)
+				.GetInterfaces().SelectMany(i => i.GetMethods())
 				.Where(m => m is { IsPublic: true, IsSpecialName: false } && !typeof(Task).IsAssignableFrom(m.ReturnType)))
 			{
 				object?[] parameters = CreateMethodParameters(
@@ -51,7 +65,19 @@ public sealed partial class StatisticsTests
 			string Name,
 			object?[] Parameters)> EnumerateAsynchronousMethods<TProperty>(Fixture fixture)
 		{
-			foreach (MethodInfo methodInfo in typeof(TProperty).GetMethods()
+			foreach (MethodInfo methodInfo in typeof(TProperty)
+				.GetMethods()
+				.Where(m => m is { IsPublic: true, IsSpecialName: false } && typeof(Task).IsAssignableFrom(m.ReturnType)))
+			{
+				object?[] parameters = CreateMethodParameters(
+					fixture, methodInfo.GetParameters()).ToArray();
+				yield return (
+					$"{methodInfo.Name}({string.Join(",", methodInfo.GetParameters().Select(x => GetName(x.ParameterType)))})",
+					x => (Task)methodInfo.Invoke(x, parameters)!,
+					methodInfo.Name, parameters);
+			}
+			foreach (MethodInfo methodInfo in typeof(TProperty)
+				.GetInterfaces().SelectMany(i => i.GetMethods())
 				.Where(m => m is { IsPublic: true, IsSpecialName: false } && typeof(Task).IsAssignableFrom(m.ReturnType)))
 			{
 				object?[] parameters = CreateMethodParameters(

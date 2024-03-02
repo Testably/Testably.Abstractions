@@ -55,6 +55,9 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.CreateAsSymbolicLink(string)" />
 	public void CreateAsSymbolicLink(string pathToTarget)
 	{
+		using IDisposable registration = Register(nameof(CreateAsSymbolicLink),
+			pathToTarget);
+
 		if (!_fileSystem.Execute.IsWindows && string.IsNullOrWhiteSpace(FullName))
 		{
 			return;
@@ -71,7 +74,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		else
 		{
 			throw ExceptionFactory.CannotCreateFileAsAlreadyExists(
-				_fileSystem.Execute, 
+				_fileSystem.Execute,
 				Location.FriendlyName);
 		}
 	}
@@ -94,6 +97,8 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.Delete()" />
 	public virtual void Delete()
 	{
+		using IDisposable registration = Register(nameof(Delete));
+
 		_fileSystem.Storage.DeleteContainer(Location);
 		ResetCache(!_fileSystem.Execute.IsNetFramework);
 	}
@@ -193,6 +198,8 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.Refresh()" />
 	public void Refresh()
 	{
+		using IDisposable registration = Register(nameof(Refresh));
+
 		ResetCache(true);
 	}
 
@@ -200,6 +207,9 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.ResolveLinkTarget(bool)" />
 	public IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget)
 	{
+		using IDisposable registration = Register(nameof(ResolveLinkTarget),
+			returnFinalTarget);
+
 		try
 		{
 			IStorageLocation? targetLocation =
@@ -280,5 +290,17 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 
 		Container = _fileSystem.Storage.GetContainer(Location);
 		_isInitialized = true;
+	}
+
+	protected virtual IDisposable Register(string name, params object?[] parameters)
+		=> new NoRegistration();
+
+	private sealed class NoRegistration : IDisposable
+	{
+		/// <inheritdoc />
+		public void Dispose()
+		{
+			// Do nothing
+		}
 	}
 }

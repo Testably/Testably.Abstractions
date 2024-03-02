@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Storage;
@@ -417,6 +416,6 @@ internal sealed class DirectoryInfoMock
 			enumerationOptions);
 	}
 
-	private IDisposable Register(string name, params object?[] parameters)
+	protected override IDisposable Register(string name, params object?[] parameters)
 		=> _fileSystem.FileSystemStatistics.DirectoryInfoStatistic.Register(Location.FullPath, name, parameters);
 }
