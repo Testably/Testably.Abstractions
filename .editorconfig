@@ -1,5 +1,5 @@
-# Remove the line below if you want to inherit .editorconfig settings from higher directories
 root = true
+# Remove the line below if you want to inherit .editorconfig settings from higher directories
 
 # All files
 [*]
@@ -14,6 +14,9 @@ tab_width = 4
 # New line preferences
 end_of_line = crlf
 insert_final_newline = true
+
+# Microsoft .NET properties
+csharp_new_line_before_members_in_object_initializers = false
 
 # C# files
 [*.cs]
@@ -231,8 +234,8 @@ dotnet_naming_style.begins_with_i.capitalization = pascal_case
 resharper_arrange_method_or_operator_body_highlighting = hint
 
 # Diagnostics
-dotnet_diagnostic.CA1510.severity = none
-dotnet_diagnostic.CA1512.severity = none
-dotnet_diagnostic.CA1513.severity = none
-dotnet_diagnostic.CA1860.severity = none
-dotnet_diagnostic.CA1861.severity = none
+dotnet_diagnostic.ca1510.severity = none
+dotnet_diagnostic.ca1512.severity = none
+dotnet_diagnostic.ca1513.severity = none
+dotnet_diagnostic.ca1860.severity = none
+dotnet_diagnostic.ca1861.severity = none

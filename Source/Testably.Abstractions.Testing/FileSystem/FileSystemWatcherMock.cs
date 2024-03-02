@@ -71,6 +71,7 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			{
 				return _fileSystem.Execute.IsNetFramework ? "*.*" : "*";
 			}
+
 			return _filters[0];
 		}
 		set

@@ -64,14 +64,17 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	#region Helpers
 
-	public static TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> GetFileCallbacks(int baseType)
+	public static TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> GetFileCallbacks(
+		int baseType)
 	{
 		TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> theoryData = new();
-		foreach (var item in GetFileCallbackTestParameters()
-			.Where(item => (item.BaseType & (BaseTypes)baseType) > 0))
+		foreach ((BaseTypes BaseType, MethodType MethodType, Action<IFileSystem, string> Callback)
+			item in GetFileCallbackTestParameters()
+				.Where(item => (item.BaseType & (BaseTypes)baseType) > 0))
 		{
 			theoryData.Add(item.Callback, item.BaseType, item.MethodType);
 		}
+
 		return theoryData;
 	}
 

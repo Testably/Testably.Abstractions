@@ -435,7 +435,8 @@ internal sealed class DirectoryMock : IDirectory
 #endif
 	}
 
-	private static void ThrowMissingFileLastAccessOrLastWriteTimeException(MockFileSystem fileSystem,
+	private static void ThrowMissingFileLastAccessOrLastWriteTimeException(
+		MockFileSystem fileSystem,
 		string path)
 	{
 #if NET7_0_OR_GREATER

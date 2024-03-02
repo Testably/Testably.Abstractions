@@ -18,7 +18,6 @@ internal sealed class NullContainer : IStorageContainer
 		CreationTime = new CreationNullTime(_fileSystem);
 		LastAccessTime = new NullTime(_fileSystem);
 		LastWriteTime = new NullTime(_fileSystem);
-
 	}
 
 	#region IStorageContainer Members

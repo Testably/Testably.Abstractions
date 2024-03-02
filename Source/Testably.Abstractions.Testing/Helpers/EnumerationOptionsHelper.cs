@@ -44,7 +44,9 @@ internal static class EnumerationOptionsHelper
 	///     <see
 	///         href="https://github.com/dotnet/runtime/blob/v6.0.0/src/libraries/System.Private.CoreLib/src/System/IO/Enumeration/FileSystemEnumerableFactory.cs#L107" />
 	/// </summary>
-	public static bool MatchesPattern(Execute execute, EnumerationOptions enumerationOptions, string name,
+	public static bool MatchesPattern(Execute execute,
+		EnumerationOptions enumerationOptions,
+		string name,
 		string searchString)
 	{
 		bool ignoreCase =
@@ -79,7 +81,7 @@ internal static class EnumerationOptionsHelper
 			: Compatible;
 	}
 
-	private static bool MatchPattern(Execute execute, 
+	private static bool MatchPattern(Execute execute,
 		string searchString,
 		string name,
 		bool ignoreCase,

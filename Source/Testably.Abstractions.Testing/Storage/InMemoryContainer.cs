@@ -165,7 +165,8 @@ internal class InMemoryContainer : IStorageContainer
 		if (CanGetAccess(access, share, deleteAccess))
 		{
 			Guid guid = Guid.NewGuid();
-			FileHandle fileHandle = new(_fileSystem, guid, ReleaseAccess, access, share, deleteAccess);
+			FileHandle fileHandle = new(
+				_fileSystem, guid, ReleaseAccess, access, share, deleteAccess);
 			_fileHandles.TryAdd(guid, fileHandle);
 			return fileHandle;
 		}
@@ -346,8 +347,12 @@ internal class InMemoryContainer : IStorageContainer
 		private readonly MockFileSystem _fileSystem;
 		private readonly Action<Guid> _releaseCallback;
 
-		public FileHandle(MockFileSystem fileSystem, Guid key, Action<Guid> releaseCallback, FileAccess access,
-			FileShare share, bool deleteAccess)
+		public FileHandle(MockFileSystem fileSystem,
+			Guid key,
+			Action<Guid> releaseCallback,
+			FileAccess access,
+			FileShare share,
+			bool deleteAccess)
 		{
 			_fileSystem = fileSystem;
 			_releaseCallback = releaseCallback;

@@ -105,7 +105,6 @@ public abstract partial class ExtensionTests<TFileSystem>
 			.Should().Be("FooFooFoo");
 	}
 
-
 	[SkippableTheory]
 	[InlineData("2000-01-01T12:14:15")]
 	[InlineData("1980-01-01T00:00:00")]

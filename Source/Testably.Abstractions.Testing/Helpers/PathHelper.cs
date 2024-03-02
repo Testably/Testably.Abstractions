@@ -6,10 +6,7 @@ namespace Testably.Abstractions.Testing.Helpers;
 
 internal static class PathHelper
 {
-	private static readonly char[] AdditionalInvalidPathChars =
-	{
-		'*', '?'
-	};
+	private static readonly char[] AdditionalInvalidPathChars = ['*', '?'];
 
 	/// <summary>
 	///     Determines whether the given path contains illegal characters.
@@ -66,7 +63,8 @@ internal static class PathHelper
 		}
 
 		return fileSystem.Execute.OnWindows(
-			() => path.StartsWith(new string(fileSystem.Path.DirectorySeparatorChar, 2)) || path.StartsWith(new string(fileSystem.Path.AltDirectorySeparatorChar, 2)),
+			() => path.StartsWith(new string(fileSystem.Path.DirectorySeparatorChar, 2)) ||
+			      path.StartsWith(new string(fileSystem.Path.AltDirectorySeparatorChar, 2)),
 			() => path.StartsWith(new string(fileSystem.Path.DirectorySeparatorChar, 2)));
 	}
 
@@ -85,7 +83,10 @@ internal static class PathHelper
 	internal static string EnsureValidArgument(
 		[NotNull] this string? path, MockFileSystem fileSystem, string? paramName = null)
 	{
-		CheckPathArgument(fileSystem.Execute, path, paramName ?? nameof(path), fileSystem.Execute.IsWindows);
+		CheckPathArgument(fileSystem.Execute,
+			path,
+			paramName ?? nameof(path),
+			fileSystem.Execute.IsWindows);
 		return path;
 	}
 
@@ -151,8 +152,9 @@ internal static class PathHelper
 				fileSystem.Path.GetFullPath(path), hResult);
 		}
 
-		fileSystem.Execute.OnWindowsIf(path.LastIndexOf(':') > 1 &&
-		                    path.LastIndexOf(':') < path.IndexOf(Path.DirectorySeparatorChar),
+		fileSystem.Execute.OnWindowsIf(
+			path.LastIndexOf(':') > 1 &&
+			path.LastIndexOf(':') < path.IndexOf(Path.DirectorySeparatorChar),
 			() => throw ExceptionFactory.PathHasIncorrectSyntax(
 				fileSystem.Path.GetFullPath(path), hResult));
 	}

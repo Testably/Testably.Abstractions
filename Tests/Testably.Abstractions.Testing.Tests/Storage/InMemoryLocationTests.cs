@@ -118,7 +118,8 @@ public class InMemoryLocationTests
 	public void GetParent_Root_ShouldReturnNull()
 	{
 		MockFileSystem fileSystem = new();
-		IStorageLocation location = InMemoryLocation.New(fileSystem, null, "".PrefixRoot(fileSystem));
+		IStorageLocation location = InMemoryLocation.New(
+			fileSystem, null, "".PrefixRoot(fileSystem));
 
 		IStorageLocation? result = location.GetParent();
 

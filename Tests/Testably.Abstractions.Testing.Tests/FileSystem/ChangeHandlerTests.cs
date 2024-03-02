@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 using Xunit.Abstractions;
 
@@ -104,40 +103,43 @@ public class ChangeHandlerTests
 
 	#region Helpers
 
-	public static TheoryData<Action<IFileSystem, string>?, Action<IFileSystem, string>, WatcherChangeTypes, FileSystemTypes, string> NotificationTriggeringMethods()
-	{
-		return new TheoryData<Action<IFileSystem, string>?, Action<IFileSystem, string>, WatcherChangeTypes, FileSystemTypes, string>
+	public static TheoryData<
+		Action<IFileSystem, string>?,
+		Action<IFileSystem, string>,
+		WatcherChangeTypes,
+		FileSystemTypes,
+		string> NotificationTriggeringMethods()
+		=> new()
 		{
 			{
 				null,
-				new Action<IFileSystem, string>((f, p) => f.Directory.CreateDirectory(p)),
+				(f, p) => f.Directory.CreateDirectory(p),
 				WatcherChangeTypes.Created,
 				FileSystemTypes.Directory,
 				$"path_{Guid.NewGuid()}"
 			},
 			{
-				new Action<IFileSystem, string>((f, p) => f.Directory.CreateDirectory(p)),
-				new Action<IFileSystem, string>((f, p) => f.Directory.Delete(p)),
+				(f, p) => f.Directory.CreateDirectory(p),
+				(f, p) => f.Directory.Delete(p),
 				WatcherChangeTypes.Deleted,
 				FileSystemTypes.Directory,
 				$"path_{Guid.NewGuid()}"
 			},
 			{
 				null,
-				new Action<IFileSystem, string>((f, p) => f.File.WriteAllText(p, null)),
+				(f, p) => f.File.WriteAllText(p, null),
 				WatcherChangeTypes.Created,
 				FileSystemTypes.File,
 				$"path_{Guid.NewGuid()}"
 			},
 			{
-				new Action<IFileSystem, string>((f, p) => f.File.WriteAllText(p, null)),
-				new Action<IFileSystem, string>((f, p) => f.File.Delete(p)),
+				(f, p) => f.File.WriteAllText(p, null),
+				(f, p) => f.File.Delete(p),
 				WatcherChangeTypes.Deleted,
 				FileSystemTypes.File,
 				$"path_{Guid.NewGuid()}"
 			}
 		};
-	}
 
 	#endregion
 }

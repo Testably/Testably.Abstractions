@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;

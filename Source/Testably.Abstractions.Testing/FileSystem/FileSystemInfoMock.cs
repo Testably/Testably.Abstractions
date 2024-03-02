@@ -71,7 +71,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		else
 		{
 			throw ExceptionFactory.CannotCreateFileAsAlreadyExists(
-				_fileSystem.Execute, 
+				_fileSystem.Execute,
 				Location.FriendlyName);
 		}
 	}
