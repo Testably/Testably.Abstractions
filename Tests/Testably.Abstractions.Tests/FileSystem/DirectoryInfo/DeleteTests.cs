@@ -25,7 +25,7 @@ public abstract partial class DeleteTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Delete_Recursive_WithOpenFile_ShouldThrowIOException(
+	public void Delete_Recursive_WithOpenFile_ShouldThrowIOException_OnWindows(
 		string path, string filename)
 	{
 		FileSystem.Initialize()
