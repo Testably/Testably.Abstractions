@@ -29,4 +29,19 @@ public interface IFileSystemStatistics
 	///     Statistical information about calls to <see cref="IFileSystem.FileInfo" />.
 	/// </summary>
 	IFileSystemEntryStatistics FileInfo { get; }
+
+	/// <summary>
+	///     Statistical information about calls to <see cref="IFileSystem.FileStream" />.
+	/// </summary>
+	IFileSystemEntryStatistics FileStream { get; }
+
+	/// <summary>
+	///     Statistical information about calls to <see cref="IFileSystem.FileSystemWatcher" />.
+	/// </summary>
+	IFileSystemEntryStatistics FileSystemWatcher { get; }
+
+	/// <summary>
+	///     Statistical information about calls to <see cref="IFileSystem.Path" />.
+	/// </summary>
+	IStatistics Path { get; }
 }

@@ -706,5 +706,5 @@ internal sealed class DirectoryMock : IDirectory
 	}
 
 	private IDisposable Register(string name, params object?[] parameters)
-		=> _fileSystem.FileSystemStatistics.DirectoryStatistic.Register(name, parameters);
+		=> _fileSystem.FileSystemStatistics.DirectoryStatistics.Register(name, parameters);
 }

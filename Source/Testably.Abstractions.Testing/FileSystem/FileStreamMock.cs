@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Helpers;
 using Testably.Abstractions.Testing.Helpers;
+using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;
@@ -32,6 +33,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	private readonly FileMode _mode;
 	private readonly FileOptions _options;
 	private readonly MemoryStream _stream;
+	private readonly IStorageLocation _location;
 
 	internal FileStreamMock(MockFileSystem fileSystem,
 		string? path,
@@ -74,9 +76,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		_options = options;
 		_initialPosition = Position;
 
-		IStorageLocation location = _fileSystem.Storage.GetLocation(Name);
-		location.ThrowExceptionIfNotFound(_fileSystem, true);
-		IStorageContainer file = _fileSystem.Storage.GetContainer(location);
+		_location = _fileSystem.Storage.GetLocation(Name);
+		_location.ThrowExceptionIfNotFound(_fileSystem, true);
+		IStorageContainer file = _fileSystem.Storage.GetContainer(_location);
 		if (file is NullContainer)
 		{
 			if (_mode.Equals(FileMode.Open) ||
@@ -86,7 +88,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 					_fileSystem.Path.GetFullPath(Name));
 			}
 
-			file = _fileSystem.Storage.GetOrCreateContainer(location,
+			file = _fileSystem.Storage.GetOrCreateContainer(_location,
 				InMemoryContainer.NewFile,
 				this);
 		}
@@ -110,7 +112,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		if (file.Attributes.HasFlag(FileAttributes.ReadOnly) &&
 		    access.HasFlag(FileAccess.Write))
 		{
-			throw ExceptionFactory.AccessToPathDenied(location.FullPath);
+			throw ExceptionFactory.AccessToPathDenied(_location.FullPath);
 		}
 
 		_accessLock = file.RequestAccess(access, share);
@@ -127,6 +129,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		AsyncCallback? callback,
 		object? state)
 	{
+		using IDisposable registration = Register(nameof(BeginRead),
+			buffer, offset, count, callback, state);
+
 		ThrowIfDisposed();
 		if (!CanRead)
 		{
@@ -143,6 +148,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		AsyncCallback? callback,
 		object? state)
 	{
+		using IDisposable registration = Register(nameof(BeginWrite),
+			buffer, offset, count, callback, state);
+
 		ThrowIfDisposed();
 		if (!CanWrite)
 		{
@@ -155,6 +163,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.CopyTo(Stream, int)" />
 	public override void CopyTo(Stream destination, int bufferSize)
 	{
+		using IDisposable registration = Register(nameof(CopyTo),
+			destination, bufferSize);
+
 		_fileSystem.Execute.NotOnWindows(() =>
 			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
 		base.CopyTo(destination, bufferSize);
@@ -164,6 +175,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	public override Task CopyToAsync(Stream destination, int bufferSize,
 		CancellationToken cancellationToken)
 	{
+		using IDisposable registration = Register(nameof(CopyToAsync),
+			destination, bufferSize, cancellationToken);
+
 		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 		return base.CopyToAsync(destination, bufferSize, cancellationToken);
 	}
@@ -171,6 +185,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.EndRead(IAsyncResult)" />
 	public override int EndRead(IAsyncResult asyncResult)
 	{
+		using IDisposable registration = Register(nameof(EndRead),
+			asyncResult);
+
 		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 		return base.EndRead(asyncResult);
 	}
@@ -178,6 +195,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.EndWrite(IAsyncResult)" />
 	public override void EndWrite(IAsyncResult asyncResult)
 	{
+		using IDisposable registration = Register(nameof(EndWrite),
+			asyncResult);
+
 		_isContentChanged = true;
 		base.EndWrite(asyncResult);
 	}
@@ -185,17 +205,27 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.Flush()" />
 	public override void Flush()
 	{
+		using IDisposable registration = Register(nameof(Flush));
+
 		ThrowIfDisposed();
 		InternalFlush();
 	}
 
 	/// <inheritdoc cref="FileSystemStream.Flush(bool)" />
 	public override void Flush(bool flushToDisk)
-		=> Flush();
+	{
+		using IDisposable registration = Register(nameof(Flush),
+			flushToDisk);
+
+		Flush();
+	}
 
 	/// <inheritdoc cref="FileSystemStream.FlushAsync(CancellationToken)" />
 	public override Task FlushAsync(CancellationToken cancellationToken)
 	{
+		using IDisposable registration = Register(nameof(FlushAsync),
+			cancellationToken);
+
 		if (cancellationToken.IsCancellationRequested)
 		{
 			throw ExceptionFactory.TaskWasCanceled();
@@ -208,6 +238,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.Read(byte[], int, int)" />
 	public override int Read(byte[] buffer, int offset, int count)
 	{
+		using IDisposable registration = Register(nameof(Read),
+			buffer, offset, count);
+
 		if (!CanRead)
 		{
 			throw ExceptionFactory.StreamDoesNotSupportReading();
@@ -222,6 +255,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.Read(Span{byte})" />
 	public override int Read(Span<byte> buffer)
 	{
+		using IDisposable registration = Register(nameof(Read),
+			new SpanProvider<byte>(buffer));
+
 		if (!CanRead)
 		{
 			throw ExceptionFactory.StreamDoesNotSupportReading();
@@ -237,6 +273,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	public override Task<int> ReadAsync(byte[] buffer, int offset, int count,
 		CancellationToken cancellationToken)
 	{
+		using IDisposable registration = Register(nameof(ReadAsync),
+			buffer, offset, count, cancellationToken);
+
 		if (!CanRead)
 		{
 			throw ExceptionFactory.StreamDoesNotSupportReading();
@@ -250,9 +289,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 #if FEATURE_SPAN
 	/// <inheritdoc cref="FileSystemStream.ReadAsync(Memory{byte}, CancellationToken)" />
 	public override ValueTask<int> ReadAsync(Memory<byte> buffer,
-		CancellationToken cancellationToken =
-			new())
+		CancellationToken cancellationToken = new())
 	{
+		using IDisposable registration = Register(nameof(ReadAsync),
+			buffer, cancellationToken);
+
 		if (!CanRead)
 		{
 			throw ExceptionFactory.StreamDoesNotSupportReading();
@@ -267,6 +308,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.ReadByte()" />
 	public override int ReadByte()
 	{
+		using IDisposable registration = Register(nameof(ReadByte));
+
 		if (!CanRead)
 		{
 			throw ExceptionFactory.StreamDoesNotSupportReading();
@@ -280,6 +323,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.Seek(long, SeekOrigin)" />
 	public override long Seek(long offset, SeekOrigin origin)
 	{
+		using IDisposable registration = Register(nameof(Seek),
+			offset, origin);
+
 		if (_mode == FileMode.Append && offset <= _initialPosition)
 		{
 			throw ExceptionFactory.SeekBackwardNotPossibleInAppendMode();
@@ -291,6 +337,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.SetLength(long)" />
 	public override void SetLength(long value)
 	{
+		using IDisposable registration = Register(nameof(SetLength),
+			value);
+
 		ThrowIfDisposed();
 		if (!CanWrite)
 		{
@@ -303,6 +352,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.Write(byte[], int, int)" />
 	public override void Write(byte[] buffer, int offset, int count)
 	{
+		using IDisposable registration = Register(nameof(Write),
+			buffer, offset, count);
+
 		if (!CanWrite)
 		{
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
@@ -316,6 +368,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.Write(ReadOnlySpan{byte})" />
 	public override void Write(ReadOnlySpan<byte> buffer)
 	{
+		using IDisposable registration = Register(nameof(Write),
+			new SpanProvider<byte>(buffer));
+
 		if (!CanWrite)
 		{
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
@@ -330,6 +385,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	public override Task WriteAsync(byte[] buffer, int offset, int count,
 		CancellationToken cancellationToken)
 	{
+		using IDisposable registration = Register(nameof(WriteAsync),
+			buffer, offset, count, cancellationToken);
+
 		if (!CanWrite)
 		{
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
@@ -344,6 +402,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer,
 		CancellationToken cancellationToken = new())
 	{
+		using IDisposable registration = Register(nameof(WriteAsync),
+			buffer, cancellationToken);
+
 		if (!CanWrite)
 		{
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
@@ -357,6 +418,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.WriteByte(byte)" />
 	public override void WriteByte(byte value)
 	{
+		using IDisposable registration = Register(nameof(WriteByte),
+			value);
+
 		if (!CanWrite)
 		{
 			throw ExceptionFactory.StreamDoesNotSupportWriting();
@@ -364,6 +428,14 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 
 		_isContentChanged = true;
 		base.WriteByte(value);
+	}
+
+	/// <inheritdoc cref="FileSystemStream.ToString()" />
+	public override string? ToString()
+	{
+		using IDisposable registration = Register(nameof(ToString));
+
+		return base.ToString();
 	}
 
 	/// <inheritdoc cref="FileSystemStream.Dispose(bool)" />
@@ -465,4 +537,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="RetrieveMetadata{T}(string)" />
 	public T? RetrieveMetadata<T>(string key)
 		=> _container.Extensibility.RetrieveMetadata<T>(key);
+
+	private IDisposable Register(string name, params object?[] parameters)
+		=> _fileSystem.FileSystemStatistics.FileStreamStatistics.Register(_location.FullPath, name, parameters);
 }

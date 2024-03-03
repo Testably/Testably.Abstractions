@@ -12,8 +12,6 @@ public sealed partial class StatisticsTests
 {
 	public const string DummyPath = "foo";
 
-	#region Helpers
-
 	public abstract class GetMethods<T>
 		: TheoryData<string, T, string, object?[]>
 	{
@@ -22,12 +20,56 @@ public sealed partial class StatisticsTests
 		protected GetMethods()
 		{
 			Fixture = new Fixture();
+			Fixture.Register(() => WatcherChangeTypes.Created);
+			Fixture.Register(() => 100);
+			Fixture.Register(() => TimeSpan.FromMilliseconds(100));
+			Fixture.Register(() => DriveInfo.GetDrives().First());
 			Fixture.Register(() => new DirectoryInfo(DummyPath));
 			Fixture.Register(() => new FileInfo(DummyPath));
-			Fixture.Register(() => DriveInfo.GetDrives().First());
+			Fixture.Register(() => new FileStream(DummyPath, FileMode.OpenOrCreate));
+			Fixture.Register(() => new FileSystemWatcher("."));
+			Fixture.Register(() => (IntPtr)null!);
+			Fixture.Register<Stream>(() => new MemoryStream());
+			Fixture.Register(() => new MockFileSystem().FileStream
+				.New("foo", FileMode.OpenOrCreate)
+				.BeginRead(Array.Empty<byte>(), 0, 0, null, null));
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
 			Fixture.Register(() => new FileStreamOptions());
 #endif
+		}
+
+		protected IEnumerable<(string Expectation,
+			Func<TProperty, Task> Action,
+			string Name,
+			object?[] Parameters)> EnumerateAsynchronousMethods<TProperty>(Fixture fixture)
+		{
+			foreach (MethodInfo methodInfo in
+				typeof(TProperty).GetInterfaces().Where(i => i != typeof(IDisposable)).SelectMany(i => i.GetMethods())
+					.Concat(typeof(TProperty).GetMethods(BindingFlags.DeclaredOnly |
+					                                     BindingFlags.Public |
+					                                     BindingFlags.Instance))
+					.Where(m => m is { IsPublic: true, IsSpecialName: false } &&
+					            typeof(Task).IsAssignableFrom(m.ReturnType)))
+			{
+				if (methodInfo.GetCustomAttribute<ObsoleteAttribute>() != null)
+				{
+					continue;
+				}
+
+				if (methodInfo.GetParameters().Any(p
+					=> p.ParameterType.Name.StartsWith("Span") ||
+					   p.ParameterType.Name.StartsWith("ReadOnlySpan")))
+				{
+					continue;
+				}
+
+				object?[] parameters = CreateMethodParameters(
+					fixture, methodInfo.GetParameters()).ToArray();
+				yield return (
+					$"{methodInfo.Name}({string.Join(",", methodInfo.GetParameters().Select(x => GetName(x.ParameterType)))})",
+					x => (Task)methodInfo.Invoke(x, parameters)!,
+					methodInfo.Name, parameters);
+			}
 		}
 
 		protected IEnumerable<(string Expectation,
@@ -36,55 +78,32 @@ public sealed partial class StatisticsTests
 				object?[] Parameters)>
 			EnumerateSynchronousMethods<TProperty>(Fixture fixture)
 		{
-			foreach (MethodInfo methodInfo in typeof(TProperty)
-				.GetMethods()
-				.Where(m => m is { IsPublic: true, IsSpecialName: false } && !typeof(Task).IsAssignableFrom(m.ReturnType)))
+			foreach (MethodInfo methodInfo in
+				typeof(TProperty).GetInterfaces().Where(i => i != typeof(IDisposable)).SelectMany(i => i.GetMethods())
+					.Concat(typeof(TProperty).GetMethods(BindingFlags.DeclaredOnly |
+					                                     BindingFlags.Public |
+					                                     BindingFlags.Instance))
+					.Where(m => m is { IsPublic: true, IsSpecialName: false } &&
+					            !typeof(Task).IsAssignableFrom(m.ReturnType) &&
+					            !typeof(ValueTask).IsAssignableFrom(m.ReturnType)))
 			{
-				object?[] parameters = CreateMethodParameters(
-					fixture, methodInfo.GetParameters()).ToArray();
-				yield return (
-					$"{methodInfo.Name}({string.Join(",", methodInfo.GetParameters().Select(x => GetName(x.ParameterType)))})",
-					x => methodInfo.Invoke(x, parameters),
-					methodInfo.Name, parameters);
-			}
-			foreach (MethodInfo methodInfo in typeof(TProperty)
-				.GetInterfaces().SelectMany(i => i.GetMethods())
-				.Where(m => m is { IsPublic: true, IsSpecialName: false } && !typeof(Task).IsAssignableFrom(m.ReturnType)))
-			{
-				object?[] parameters = CreateMethodParameters(
-					fixture, methodInfo.GetParameters()).ToArray();
-				yield return (
-					$"{methodInfo.Name}({string.Join(",", methodInfo.GetParameters().Select(x => GetName(x.ParameterType)))})",
-					x => methodInfo.Invoke(x, parameters),
-					methodInfo.Name, parameters);
-			}
-		}
+				if (methodInfo.GetCustomAttribute<ObsoleteAttribute>() != null)
+				{
+					continue;
+				}
 
-		protected IEnumerable<(string Expectation,
-			Func<TProperty, Task> Action,
-			string Name,
-			object?[] Parameters)> EnumerateAsynchronousMethods<TProperty>(Fixture fixture)
-		{
-			foreach (MethodInfo methodInfo in typeof(TProperty)
-				.GetMethods()
-				.Where(m => m is { IsPublic: true, IsSpecialName: false } && typeof(Task).IsAssignableFrom(m.ReturnType)))
-			{
+				if (methodInfo.GetParameters().Any(p
+					=> p.ParameterType.Name.StartsWith("Span") ||
+					   p.ParameterType.Name.StartsWith("ReadOnlySpan")))
+				{
+					continue;
+				}
+
 				object?[] parameters = CreateMethodParameters(
 					fixture, methodInfo.GetParameters()).ToArray();
 				yield return (
 					$"{methodInfo.Name}({string.Join(",", methodInfo.GetParameters().Select(x => GetName(x.ParameterType)))})",
-					x => (Task)methodInfo.Invoke(x, parameters)!,
-					methodInfo.Name, parameters);
-			}
-			foreach (MethodInfo methodInfo in typeof(TProperty)
-				.GetInterfaces().SelectMany(i => i.GetMethods())
-				.Where(m => m is { IsPublic: true, IsSpecialName: false } && typeof(Task).IsAssignableFrom(m.ReturnType)))
-			{
-				object?[] parameters = CreateMethodParameters(
-					fixture, methodInfo.GetParameters()).ToArray();
-				yield return (
-					$"{methodInfo.Name}({string.Join(",", methodInfo.GetParameters().Select(x => GetName(x.ParameterType)))})",
-					x => (Task)methodInfo.Invoke(x, parameters)!,
+					x => methodInfo.Invoke(x, parameters),
 					methodInfo.Name, parameters);
 			}
 		}
@@ -132,6 +151,4 @@ public sealed partial class StatisticsTests
 			return type.Name;
 		}
 	}
-
-	#endregion
 }

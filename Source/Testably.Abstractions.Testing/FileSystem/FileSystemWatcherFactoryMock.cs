@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.IO.Abstractions;
 using Testably.Abstractions.Testing.Helpers;
+using static System.Net.WebRequestMethods;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
@@ -38,11 +40,18 @@ internal sealed class FileSystemWatcherFactoryMock
 
 	/// <inheritdoc cref="IFileSystemWatcherFactory.New()" />
 	public IFileSystemWatcher New()
-		=> FileSystemWatcherMock.New(_fileSystem);
+	{
+		using IDisposable registration = Register(nameof(New));
+
+		return FileSystemWatcherMock.New(_fileSystem);
+	}
 
 	/// <inheritdoc cref="IFileSystemWatcherFactory.New(string)" />
 	public IFileSystemWatcher New(string path)
 	{
+		using IDisposable registration = Register(nameof(New),
+			path);
+
 		FileSystemWatcherMock fileSystemWatcherMock =
 			FileSystemWatcherMock.New(_fileSystem);
 		fileSystemWatcherMock.Path = path.EnsureValidArgument(_fileSystem);
@@ -52,6 +61,9 @@ internal sealed class FileSystemWatcherFactoryMock
 	/// <inheritdoc cref="IFileSystemWatcherFactory.New(string, string)" />
 	public IFileSystemWatcher New(string path, string filter)
 	{
+		using IDisposable registration = Register(nameof(New),
+			path, filter);
+
 		FileSystemWatcherMock fileSystemWatcherMock =
 			FileSystemWatcherMock.New(_fileSystem);
 		fileSystemWatcherMock.Path = path.EnsureValidArgument(_fileSystem);
@@ -64,6 +76,9 @@ internal sealed class FileSystemWatcherFactoryMock
 	// ReSharper disable once ReturnTypeCanBeNotNullable
 	public IFileSystemWatcher? Wrap(FileSystemWatcher? fileSystemWatcher)
 	{
+		using IDisposable registration = Register(nameof(Wrap),
+			fileSystemWatcher);
+
 		if (fileSystemWatcher == null)
 		{
 			return null;
@@ -91,4 +106,7 @@ internal sealed class FileSystemWatcherFactoryMock
 	}
 
 	#endregion
+
+	private IDisposable Register(string name, params object?[] parameters)
+		=> _fileSystem.FileSystemStatistics.FileSystemWatcherStatistics.Register(name, parameters);
 }
