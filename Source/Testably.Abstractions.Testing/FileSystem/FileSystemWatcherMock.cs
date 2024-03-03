@@ -527,5 +527,5 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	}
 
 	private IDisposable Register(string name, params object?[] parameters)
-		=> _fileSystem.FileSystemStatistics.FileSystemWatcherStatistics.Register(_path, name, parameters);
+		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.Register(_path, name, parameters);
 }

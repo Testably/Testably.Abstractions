@@ -370,5 +370,5 @@ internal sealed class FileInfoMock
 	}
 
 	protected override IDisposable Register(string name, params object?[] parameters)
-		=> _fileSystem.FileSystemStatistics.FileInfoStatistics.Register(Location.FullPath, name, parameters);
+		=> _fileSystem.StatisticsRegistration.FileInfo.Register(Location.FullPath, name, parameters);
 }

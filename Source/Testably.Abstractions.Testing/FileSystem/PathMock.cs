@@ -504,5 +504,5 @@ internal sealed class PathMock : PathSystemBase
 
 
 	private IDisposable Register(string name, params object?[] parameters)
-		=> _fileSystem.FileSystemStatistics.PathStatistics.Register(name, parameters);
+		=> _fileSystem.StatisticsRegistration.Path.Register(name, parameters);
 }

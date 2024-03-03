@@ -3,6 +3,9 @@ using System;
 
 namespace Testably.Abstractions.Testing.Statistics;
 
+/// <summary>
+///     A span provider wraps a <see cref="Span{T}" /> for statistical purposes.
+/// </summary>
 public class SpanProvider<T>
 {
 	public T[] Values { get; }

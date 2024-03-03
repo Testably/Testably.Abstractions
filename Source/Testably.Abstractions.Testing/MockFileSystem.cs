@@ -56,15 +56,15 @@ public sealed class MockFileSystem : IFileSystem
 	internal Execute Execute { get; }
 
 	/// <summary>
-	///     Contains statistical information about the mock usage.
+	///     Contains statistical information about the file system usage.
 	/// </summary>
-	public IFileSystemStatistics Statistics => FileSystemStatistics;
+	public IFileSystemStatistics Statistics => StatisticsRegistration;
 
 	private readonly DirectoryMock _directoryMock;
 	private readonly FileMock _fileMock;
 	private readonly PathMock _pathMock;
 	private readonly InMemoryStorage _storage;
-	internal readonly FileSystemStatistics FileSystemStatistics;
+	internal readonly FileSystemStatistics StatisticsRegistration;
 
 	internal IAccessControlStrategy AccessControlStrategy
 	{
@@ -83,8 +83,8 @@ public sealed class MockFileSystem : IFileSystem
 	/// </summary>
 	public MockFileSystem()
 	{
-		FileSystemStatistics = new FileSystemStatistics(this);
-		FileSystemStatistics.TryGetLock(out IDisposable release);
+		StatisticsRegistration = new FileSystemStatistics(this);
+		StatisticsRegistration.TryGetLock(out IDisposable release);
 		Execute = Execute.Default;
 		RandomSystem = new MockRandomSystem();
 		TimeSystem = new MockTimeSystem(TimeProvider.Now());

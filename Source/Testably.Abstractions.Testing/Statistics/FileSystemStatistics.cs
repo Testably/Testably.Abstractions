@@ -5,54 +5,54 @@ namespace Testably.Abstractions.Testing.Statistics;
 
 internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsGate
 {
-	internal readonly FileSystemEntryStatistics DirectoryInfoStatistic;
-	internal readonly CallStatistics DirectoryStatistics;
-	internal readonly FileSystemEntryStatistics DriveInfoStatistics;
-	internal readonly FileSystemEntryStatistics FileInfoStatistics;
-	internal readonly CallStatistics FileStatistics;
-	internal readonly FileSystemEntryStatistics FileStreamStatistics;
-	internal readonly FileSystemEntryStatistics FileSystemWatcherStatistics;
-	internal readonly CallStatistics PathStatistics;
+	internal readonly FileSystemEntryStatistics DirectoryInfo;
+	internal readonly CallStatistics Directory;
+	internal readonly FileSystemEntryStatistics DriveInfo;
+	internal readonly FileSystemEntryStatistics FileInfo;
+	internal readonly CallStatistics File;
+	internal readonly FileSystemEntryStatistics FileStream;
+	internal readonly FileSystemEntryStatistics FileSystemWatcher;
+	internal readonly CallStatistics Path;
 
 	private static readonly AsyncLocal<bool> IsDisabled = new();
 
 	public FileSystemStatistics(MockFileSystem fileSystem)
 	{
-		DirectoryInfoStatistic = new FileSystemEntryStatistics(this, fileSystem);
-		DriveInfoStatistics = new FileSystemEntryStatistics(this, fileSystem);
-		FileInfoStatistics = new FileSystemEntryStatistics(this, fileSystem);
-		FileStreamStatistics = new FileSystemEntryStatistics(this, fileSystem);
-		FileSystemWatcherStatistics = new FileSystemEntryStatistics(this, fileSystem);
-		FileStatistics = new CallStatistics(this);
-		DirectoryStatistics = new CallStatistics(this);
-		PathStatistics = new CallStatistics(this);
+		DirectoryInfo = new FileSystemEntryStatistics(this, fileSystem);
+		DriveInfo = new FileSystemEntryStatistics(this, fileSystem);
+		FileInfo = new FileSystemEntryStatistics(this, fileSystem);
+		FileStream = new FileSystemEntryStatistics(this, fileSystem);
+		FileSystemWatcher = new FileSystemEntryStatistics(this, fileSystem);
+		File = new CallStatistics(this);
+		Directory = new CallStatistics(this);
+		Path = new CallStatistics(this);
 	}
 
 	#region IFileSystemStatistics Members
 
 	/// <inheritdoc />
-	public IStatistics Directory => DirectoryStatistics;
+	IStatistics IFileSystemStatistics.Directory => Directory;
 
 	/// <inheritdoc />
-	public IFileSystemEntryStatistics DirectoryInfo => DirectoryInfoStatistic;
+	IPathStatistics IFileSystemStatistics.DirectoryInfo => DirectoryInfo;
 
 	/// <inheritdoc />
-	public IFileSystemEntryStatistics DriveInfo => DriveInfoStatistics;
+	IPathStatistics IFileSystemStatistics.DriveInfo => DriveInfo;
 
 	/// <inheritdoc />
-	public IStatistics File => FileStatistics;
+	IStatistics IFileSystemStatistics.File => File;
 
 	/// <inheritdoc />
-	public IFileSystemEntryStatistics FileInfo => FileInfoStatistics;
+	IPathStatistics IFileSystemStatistics.FileInfo => FileInfo;
 
 	/// <inheritdoc />
-	public IFileSystemEntryStatistics FileStream => FileStreamStatistics;
+	IPathStatistics IFileSystemStatistics.FileStream => FileStream;
 
 	/// <inheritdoc />
-	public IFileSystemEntryStatistics FileSystemWatcher => FileSystemWatcherStatistics;
+	IPathStatistics IFileSystemStatistics.FileSystemWatcher => FileSystemWatcher;
 
 	/// <inheritdoc />
-	public IStatistics Path => PathStatistics;
+	IStatistics IFileSystemStatistics.Path => Path;
 
 	#endregion
 

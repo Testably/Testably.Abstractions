@@ -16,9 +16,13 @@ internal class CallStatistics : IStatistics
 		_statisticsGate = statisticsGate;
 	}
 
+	/// <summary>
+	///     Registers the <paramref name="name" /> callback with <paramref name="parameters" />.
+	/// </summary>
+	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
 	internal IDisposable Register(string name, params object?[] parameters)
 	{
-		if (_statisticsGate.TryGetLock(out var release))
+		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			_calls.Enqueue(new CallStatistic(name, parameters));
 		}

@@ -108,5 +108,5 @@ internal sealed class FileSystemWatcherFactoryMock
 	#endregion
 
 	private IDisposable Register(string name, params object?[] parameters)
-		=> _fileSystem.FileSystemStatistics.FileSystemWatcherStatistics.Register(name, parameters);
+		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.Register(name, parameters);
 }

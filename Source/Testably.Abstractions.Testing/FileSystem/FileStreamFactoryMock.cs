@@ -280,5 +280,5 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	#endregion
 
 	private IDisposable Register(string name, params object?[] parameters)
-		=> _fileSystem.FileSystemStatistics.FileStreamStatistics.Register(name, parameters);
+		=> _fileSystem.StatisticsRegistration.FileStream.Register(name, parameters);
 }

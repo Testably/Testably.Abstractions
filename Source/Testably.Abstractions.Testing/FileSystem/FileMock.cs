@@ -1359,5 +1359,5 @@ internal sealed class FileMock : IFile
 #endif
 
 	private IDisposable Register(string name, params object?[] parameters)
-		=> _fileSystem.FileSystemStatistics.FileStatistics.Register(name, parameters);
+		=> _fileSystem.StatisticsRegistration.File.Register(name, parameters);
 }

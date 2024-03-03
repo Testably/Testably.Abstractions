@@ -13,12 +13,12 @@ public interface IFileSystemStatistics
 	/// <summary>
 	///     Statistical information about calls to <see cref="IFileSystem.DirectoryInfo" />.
 	/// </summary>
-	IFileSystemEntryStatistics DirectoryInfo { get; }
+	IPathStatistics DirectoryInfo { get; }
 
 	/// <summary>
 	///     Statistical information about calls to <see cref="IFileSystem.DriveInfo" />.
 	/// </summary>
-	IFileSystemEntryStatistics DriveInfo { get; }
+	IPathStatistics DriveInfo { get; }
 
 	/// <summary>
 	///     Statistical information about calls to <see cref="IFileSystem.File" />.
@@ -28,17 +28,17 @@ public interface IFileSystemStatistics
 	/// <summary>
 	///     Statistical information about calls to <see cref="IFileSystem.FileInfo" />.
 	/// </summary>
-	IFileSystemEntryStatistics FileInfo { get; }
+	IPathStatistics FileInfo { get; }
 
 	/// <summary>
 	///     Statistical information about calls to <see cref="IFileSystem.FileStream" />.
 	/// </summary>
-	IFileSystemEntryStatistics FileStream { get; }
+	IPathStatistics FileStream { get; }
 
 	/// <summary>
 	///     Statistical information about calls to <see cref="IFileSystem.FileSystemWatcher" />.
 	/// </summary>
-	IFileSystemEntryStatistics FileSystemWatcher { get; }
+	IPathStatistics FileSystemWatcher { get; }
 
 	/// <summary>
 	///     Statistical information about calls to <see cref="IFileSystem.Path" />.

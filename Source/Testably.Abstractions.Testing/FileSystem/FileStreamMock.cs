@@ -539,5 +539,5 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		=> _container.Extensibility.RetrieveMetadata<T>(key);
 
 	private IDisposable Register(string name, params object?[] parameters)
-		=> _fileSystem.FileSystemStatistics.FileStreamStatistics.Register(_location.FullPath, name, parameters);
+		=> _fileSystem.StatisticsRegistration.FileStream.Register(_location.FullPath, name, parameters);
 }
