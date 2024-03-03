@@ -20,4 +20,8 @@ public sealed class CallStatistic
 		Name = name;
 		Parameters = parameters;
 	}
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> $"{Name}({string.Join(",", Parameters)})";
 }

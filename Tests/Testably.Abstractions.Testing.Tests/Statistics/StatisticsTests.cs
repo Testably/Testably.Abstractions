@@ -12,6 +12,59 @@ public sealed partial class StatisticsTests
 {
 	public const string DummyPath = "foo";
 
+	[Fact]
+	public async Task Statistics_ShouldSupportParallelCalls()
+	{
+		int parallelTasks = 100;
+		MockFileSystem sut = new();
+		string[] directories = Enumerable.Range(1, parallelTasks)
+			.Select(i => $"foo-{i}")
+			.ToArray();
+		Task[] tasks = new Task[parallelTasks];
+
+		for (int i = 0; i < directories.Length; i++)
+		{
+			int taskId = i;
+			tasks[taskId] = Task.Run(() =>
+			{
+				sut.Directory.CreateDirectory(directories[taskId]);
+			});
+		}
+
+		await Task.WhenAll(tasks);
+
+		foreach (string directory in directories)
+		{
+			sut.Statistics.Directory.Calls
+				.Should().ContainSingle(x =>
+					x.Name == nameof(Directory.CreateDirectory) &&
+					x.Parameters.Length == 1 &&
+					directory.Equals(x.Parameters[0]));
+		}
+	}
+
+	[Fact]
+	public void Statistics_ShouldKeepCallOrder()
+	{
+		MockFileSystem sut = new();
+		string[] directories = Enumerable.Range(1, 20)
+			.Select(i => $"foo-{i}")
+			.ToArray();
+
+		foreach (string directory in directories)
+		{
+			sut.Directory.CreateDirectory(directory);
+		}
+
+		for (int i = 0; i < directories.Length; i++)
+		{
+			sut.Statistics.Directory.Calls
+				.Skip(i)
+				.First()
+				.Parameters[0].Should().Be(directories[i]);
+		}
+	}
+
 	public abstract class GetMethods<T>
 		: TheoryData<string, T, string, object?[]>
 	{
@@ -44,7 +97,8 @@ public sealed partial class StatisticsTests
 			object?[] Parameters)> EnumerateAsynchronousMethods<TProperty>(Fixture fixture)
 		{
 			foreach (MethodInfo methodInfo in
-				typeof(TProperty).GetInterfaces().Where(i => i != typeof(IDisposable)).SelectMany(i => i.GetMethods())
+				typeof(TProperty).GetInterfaces().Where(i => i != typeof(IDisposable))
+					.SelectMany(i => i.GetMethods())
 					.Concat(typeof(TProperty).GetMethods(BindingFlags.DeclaredOnly |
 					                                     BindingFlags.Public |
 					                                     BindingFlags.Instance))
@@ -79,7 +133,8 @@ public sealed partial class StatisticsTests
 			EnumerateSynchronousMethods<TProperty>(Fixture fixture)
 		{
 			foreach (MethodInfo methodInfo in
-				typeof(TProperty).GetInterfaces().Where(i => i != typeof(IDisposable)).SelectMany(i => i.GetMethods())
+				typeof(TProperty).GetInterfaces().Where(i => i != typeof(IDisposable))
+					.SelectMany(i => i.GetMethods())
 					.Concat(typeof(TProperty).GetMethods(BindingFlags.DeclaredOnly |
 					                                     BindingFlags.Public |
 					                                     BindingFlags.Instance))
