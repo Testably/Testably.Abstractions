@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Helpers;
+using Testably.Abstractions.Testing.Statistics;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
@@ -526,6 +527,15 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		public bool TimedOut { get; }
 	}
 
-	private IDisposable Register(string name, params object?[] parameters)
-		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.Register(_path, name, parameters);
+	private IDisposable Register(string name)
+		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.Register(_path, name);
+
+	private IDisposable Register<T1>(string name, T1 parameter1)
+		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.Register(_path, name,
+			ParameterDescription.FromParameter(parameter1));
+
+	private IDisposable Register<T1, T2>(string name, T1 parameter1, T2 parameter2)
+		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.Register(_path, name,
+			ParameterDescription.FromParameter(parameter1),
+			ParameterDescription.FromParameter(parameter2));
 }

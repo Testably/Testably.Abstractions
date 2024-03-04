@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.Testing.Helpers;
+using Testably.Abstractions.Testing.Statistics;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
@@ -58,6 +59,6 @@ internal sealed class DirectoryInfoFactoryMock : IDirectoryInfoFactory
 
 	#endregion
 
-	private IDisposable Register(string name, params object?[] parameters)
-		=> _fileSystem.StatisticsRegistration.DirectoryInfo.Register(name, parameters);
+	private IDisposable Register<T1>(string name, T1 parameter1)
+		=> _fileSystem.StatisticsRegistration.DirectoryInfo.Register(name, ParameterDescription.FromParameter(parameter1));
 }

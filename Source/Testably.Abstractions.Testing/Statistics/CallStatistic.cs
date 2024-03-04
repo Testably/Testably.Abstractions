@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions.Testing.Statistics;
+﻿using System.Linq;
+
+namespace Testably.Abstractions.Testing.Statistics;
 
 /// <summary>
 ///     Describes a call to a mocked method.
@@ -13,9 +15,9 @@ public sealed class CallStatistic
 	/// <summary>
 	///     The parameters of the called method.
 	/// </summary>
-	public object?[] Parameters { get; }
+	public ParameterDescription[] Parameters { get; }
 
-	internal CallStatistic(string name, object?[] parameters)
+	internal CallStatistic(string name, ParameterDescription[] parameters)
 	{
 		Name = name;
 		Parameters = parameters;
@@ -23,5 +25,5 @@ public sealed class CallStatistic
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"{Name}({string.Join(",", Parameters)})";
+		=> $"{Name}({string.Join(",", Parameters.Select(p => p.ToString()))})";
 }

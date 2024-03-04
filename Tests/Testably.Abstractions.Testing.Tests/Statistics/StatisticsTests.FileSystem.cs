@@ -1,4 +1,9 @@
-﻿using System.IO;
+﻿using AutoFixture.Kernel;
+using AutoFixture;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Statistics;
@@ -9,15 +14,15 @@ namespace Testably.Abstractions.Testing.Tests.Statistics;
 public sealed partial class StatisticsTests
 {
 	[Theory]
-	[ClassData(typeof(SynchronousFileSystemMethods<IDirectory>))]
+	[ClassData(typeof(NewSynchronousFileSystemMethods<IDirectory>))]
 	public void FileSystem_Directory_SynchronousMethods_ShouldRegisterCall(string expectation,
-		Action<MockFileSystem> synchronousCall, string name, object?[] parameters)
+		Action<MockFileSystem> act, Func<IStatistics, bool> assert)
 	{
 		MockFileSystem sut = new();
 
-		synchronousCall(sut);
+		act(sut);
 
-		sut.Statistics.Directory.ShouldOnlyContain(name, parameters, expectation);
+		assert(sut.Statistics.Directory).Should().BeTrue(expectation);
 	}
 
 	[Theory]
@@ -240,9 +245,8 @@ public sealed partial class StatisticsTests
 		sut.Statistics.Path.Calls
 			.Should().ContainSingle(c =>
 				c.Name == nameof(Path.EndsInDirectorySeparator) &&
-				c.Parameters.Length == 1)
-			.Which.Parameters[0].Should().BeOfType<SpanProvider<char>>()
-			.Which.Values.Should().BeEquivalentTo(buffer, o => o.WithStrictOrdering());
+				c.Parameters.Length == 1 &&
+				c.Parameters[0].Is<SpanProvider<char>>(v => v.Values.SequenceEqual(buffer)));
 	}
 #endif
 
@@ -259,9 +263,8 @@ public sealed partial class StatisticsTests
 		sut.Statistics.Path.Calls
 			.Should().ContainSingle(c =>
 				c.Name == nameof(Path.GetDirectoryName) &&
-				c.Parameters.Length == 1)
-			.Which.Parameters[0].Should().BeOfType<SpanProvider<char>>()
-			.Which.Values.Should().BeEquivalentTo(buffer, o => o.WithStrictOrdering());
+				c.Parameters.Length == 1 &&
+				c.Parameters[0].Is<SpanProvider<char>>(v => v.Values.SequenceEqual(buffer)));
 	}
 #endif
 
@@ -278,9 +281,8 @@ public sealed partial class StatisticsTests
 		sut.Statistics.Path.Calls
 			.Should().ContainSingle(c =>
 				c.Name == nameof(Path.GetExtension) &&
-				c.Parameters.Length == 1)
-			.Which.Parameters[0].Should().BeOfType<SpanProvider<char>>()
-			.Which.Values.Should().BeEquivalentTo(buffer, o => o.WithStrictOrdering());
+				c.Parameters.Length == 1 &&
+				c.Parameters[0].Is<SpanProvider<char>>(v => v.Values.SequenceEqual(buffer)));
 	}
 #endif
 
@@ -297,9 +299,8 @@ public sealed partial class StatisticsTests
 		sut.Statistics.Path.Calls
 			.Should().ContainSingle(c =>
 				c.Name == nameof(Path.GetFileName) &&
-				c.Parameters.Length == 1)
-			.Which.Parameters[0].Should().BeOfType<SpanProvider<char>>()
-			.Which.Values.Should().BeEquivalentTo(buffer, o => o.WithStrictOrdering());
+				c.Parameters.Length == 1 &&
+				c.Parameters[0].Is<SpanProvider<char>>(v => v.Values.SequenceEqual(buffer)));
 	}
 #endif
 
@@ -316,9 +317,8 @@ public sealed partial class StatisticsTests
 		sut.Statistics.Path.Calls
 			.Should().ContainSingle(c =>
 				c.Name == nameof(Path.GetFileNameWithoutExtension) &&
-				c.Parameters.Length == 1)
-			.Which.Parameters[0].Should().BeOfType<SpanProvider<char>>()
-			.Which.Values.Should().BeEquivalentTo(buffer, o => o.WithStrictOrdering());
+				c.Parameters.Length == 1 &&
+				c.Parameters[0].Is<SpanProvider<char>>(v => v.Values.SequenceEqual(buffer)));
 	}
 #endif
 
@@ -335,9 +335,8 @@ public sealed partial class StatisticsTests
 		sut.Statistics.Path.Calls
 			.Should().ContainSingle(c =>
 				c.Name == nameof(Path.GetPathRoot) &&
-				c.Parameters.Length == 1)
-			.Which.Parameters[0].Should().BeOfType<SpanProvider<char>>()
-			.Which.Values.Should().BeEquivalentTo(buffer, o => o.WithStrictOrdering());
+				c.Parameters.Length == 1 &&
+				c.Parameters[0].Is<SpanProvider<char>>(v => v.Values.SequenceEqual(buffer)));
 	}
 #endif
 
@@ -354,9 +353,8 @@ public sealed partial class StatisticsTests
 		sut.Statistics.Path.Calls
 			.Should().ContainSingle(c =>
 				c.Name == nameof(Path.HasExtension) &&
-				c.Parameters.Length == 1)
-			.Which.Parameters[0].Should().BeOfType<SpanProvider<char>>()
-			.Which.Values.Should().BeEquivalentTo(buffer, o => o.WithStrictOrdering());
+				c.Parameters.Length == 1 &&
+				c.Parameters[0].Is<SpanProvider<char>>(v => v.Values.SequenceEqual(buffer)));
 	}
 #endif
 
@@ -373,9 +371,8 @@ public sealed partial class StatisticsTests
 		sut.Statistics.Path.Calls
 			.Should().ContainSingle(c =>
 				c.Name == nameof(Path.IsPathFullyQualified) &&
-				c.Parameters.Length == 1)
-			.Which.Parameters[0].Should().BeOfType<SpanProvider<char>>()
-			.Which.Values.Should().BeEquivalentTo(buffer, o => o.WithStrictOrdering());
+				c.Parameters.Length == 1 &&
+				c.Parameters[0].Is<SpanProvider<char>>(v => v.Values.SequenceEqual(buffer)));
 	}
 #endif
 
@@ -392,9 +389,8 @@ public sealed partial class StatisticsTests
 		sut.Statistics.Path.Calls
 			.Should().ContainSingle(c =>
 				c.Name == nameof(Path.IsPathRooted) &&
-				c.Parameters.Length == 1)
-			.Which.Parameters[0].Should().BeOfType<SpanProvider<char>>()
-			.Which.Values.Should().BeEquivalentTo(buffer, o => o.WithStrictOrdering());
+				c.Parameters.Length == 1 &&
+				c.Parameters[0].Is<SpanProvider<char>>(v => v.Values.SequenceEqual(buffer)));
 	}
 #endif
 
@@ -417,30 +413,26 @@ public sealed partial class StatisticsTests
 		sut.Statistics.Path.Calls
 			.Should().ContainSingle(c =>
 				c.Name == nameof(Path.Join) &&
-				c.Parameters.Length >= 1)
-			.Which.Parameters[0].Should().BeOfType<SpanProvider<char>>()
-			.Which.Values.Should().BeEquivalentTo(buffer1, o => o.WithStrictOrdering());
+				c.Parameters.Length >= 1 &&
+				c.Parameters[0].Is<SpanProvider<char>>(v => v.Values.SequenceEqual(buffer1)));
 
 		sut.Statistics.Path.Calls
 			.Should().ContainSingle(c =>
 				c.Name == nameof(Path.Join) &&
-				c.Parameters.Length >= 2)
-			.Which.Parameters[1].Should().BeOfType<SpanProvider<char>>()
-			.Which.Values.Should().BeEquivalentTo(buffer2, o => o.WithStrictOrdering());
+				c.Parameters.Length >= 2 &&
+				c.Parameters[1].Is<SpanProvider<char>>(v => v.Values.SequenceEqual(buffer2)));
 
 		sut.Statistics.Path.Calls
 			.Should().ContainSingle(c =>
 				c.Name == nameof(Path.Join) &&
-				c.Parameters.Length >= 3)
-			.Which.Parameters[2].Should().BeOfType<SpanProvider<char>>()
-			.Which.Values.Should().BeEquivalentTo(buffer3, o => o.WithStrictOrdering());
+				c.Parameters.Length >= 3 &&
+				c.Parameters[2].Is<SpanProvider<char>>(v => v.Values.SequenceEqual(buffer3)));
 
 		sut.Statistics.Path.Calls
 			.Should().ContainSingle(c =>
 				c.Name == nameof(Path.Join) &&
-				c.Parameters.Length == 4)
-			.Which.Parameters[3].Should().BeOfType<SpanProvider<char>>()
-			.Which.Values.Should().BeEquivalentTo(buffer4, o => o.WithStrictOrdering());
+				c.Parameters.Length == 4 &&
+				c.Parameters[3].Is<SpanProvider<char>>(v => v.Values.SequenceEqual(buffer4)));
 	}
 #endif
 
@@ -461,23 +453,20 @@ public sealed partial class StatisticsTests
 		sut.Statistics.Path.Calls
 			.Should().ContainSingle(c =>
 				c.Name == nameof(Path.Join) &&
-				c.Parameters.Length >= 1)
-			.Which.Parameters[0].Should().BeOfType<SpanProvider<char>>()
-			.Which.Values.Should().BeEquivalentTo(buffer1, o => o.WithStrictOrdering());
+				c.Parameters.Length >= 1 &&
+				c.Parameters[0].Is<SpanProvider<char>>(v => v.Values.SequenceEqual(buffer1)));
 
 		sut.Statistics.Path.Calls
 			.Should().ContainSingle(c =>
 				c.Name == nameof(Path.Join) &&
-				c.Parameters.Length >= 2)
-			.Which.Parameters[1].Should().BeOfType<SpanProvider<char>>()
-			.Which.Values.Should().BeEquivalentTo(buffer2, o => o.WithStrictOrdering());
+				c.Parameters.Length >= 2 &&
+				c.Parameters[1].Is<SpanProvider<char>>(v => v.Values.SequenceEqual(buffer2)));
 
 		sut.Statistics.Path.Calls
 			.Should().ContainSingle(c =>
 				c.Name == nameof(Path.Join) &&
-				c.Parameters.Length == 3)
-			.Which.Parameters[2].Should().BeOfType<SpanProvider<char>>()
-			.Which.Values.Should().BeEquivalentTo(buffer3, o => o.WithStrictOrdering());
+				c.Parameters.Length == 3 &&
+				c.Parameters[2].Is<SpanProvider<char>>(v => v.Values.SequenceEqual(buffer3)));
 	}
 #endif
 
@@ -496,16 +485,14 @@ public sealed partial class StatisticsTests
 		sut.Statistics.Path.Calls
 			.Should().ContainSingle(c =>
 				c.Name == nameof(Path.Join) &&
-				c.Parameters.Length >= 1)
-			.Which.Parameters[0].Should().BeOfType<SpanProvider<char>>()
-			.Which.Values.Should().BeEquivalentTo(buffer1, o => o.WithStrictOrdering());
+				c.Parameters.Length >= 1 &&
+				c.Parameters[0].Is<SpanProvider<char>>(v => v.Values.SequenceEqual(buffer1)));
 
 		sut.Statistics.Path.Calls
 			.Should().ContainSingle(c =>
 				c.Name == nameof(Path.Join) &&
-				c.Parameters.Length == 2)
-			.Which.Parameters[1].Should().BeOfType<SpanProvider<char>>()
-			.Which.Values.Should().BeEquivalentTo(buffer2, o => o.WithStrictOrdering());
+				c.Parameters.Length == 2 &&
+				c.Parameters[1].Is<SpanProvider<char>>(v => v.Values.SequenceEqual(buffer2)));
 	}
 #endif
 
@@ -650,6 +637,180 @@ public sealed partial class StatisticsTests
 					item.Name,
 					item.Parameters);
 			}
+		}
+	}
+
+	public class NewSynchronousFileSystemMethods<T>
+		: TheoryData<string, Action<MockFileSystem>, Func<IStatistics, bool>>
+	{
+		public NewSynchronousFileSystemMethods()
+		{
+			Fixture = new Fixture();
+			Fixture.Register(() => WatcherChangeTypes.Created);
+			Fixture.Register(() => 100);
+			Fixture.Register(() => TimeSpan.FromMilliseconds(100));
+			Fixture.Register(() => DriveInfo.GetDrives().First());
+			Fixture.Register(() => new DirectoryInfo(DummyPath));
+			Fixture.Register(() => new FileInfo(DummyPath));
+			Fixture.Register(() => new FileStream(DummyPath, FileMode.OpenOrCreate));
+			Fixture.Register(() => new FileSystemWatcher("."));
+			Fixture.Register(() => (IntPtr)null!);
+			Fixture.Register<Stream>(() => new MemoryStream());
+			Fixture.Register(() => new MockFileSystem().FileStream
+				.New("foo", FileMode.OpenOrCreate)
+				.BeginRead(Array.Empty<byte>(), 0, 0, null, null));
+#if FEATURE_FILESYSTEM_STREAM_OPTIONS
+			Fixture.Register(() => new FileStreamOptions());
+#endif
+
+			Func<MockFileSystem, T> accessor = GetFileSystemAccessor<T>();
+
+			foreach ((string Expectation,
+				Action<T> Action,
+				string Name,
+				object?[] Parameters) item in EnumerateSynchronousMethods<T>(Fixture))
+			{
+				Add(item.Expectation,
+					m =>
+					{
+						T element = accessor(m);
+						try
+						{
+							item.Action.Invoke(element);
+						}
+						catch (Exception)
+						{
+							// Ignore any exception called here, as we only care about the statistics call registration.
+						}
+						finally
+						{
+							if (element is IDisposable disposable)
+							{
+								disposable.Dispose();
+							}
+						}
+					},
+					s =>
+					{
+						return true;
+					});
+			}
+		}
+		protected Fixture Fixture { get; }
+		
+		protected IEnumerable<(string Expectation,
+			Func<TProperty, Task> Action,
+			string Name,
+			object?[] Parameters)> EnumerateAsynchronousMethods<TProperty>(Fixture fixture)
+		{
+			foreach (MethodInfo methodInfo in
+				typeof(TProperty).GetInterfaces().Where(i => i != typeof(IDisposable))
+					.SelectMany(i => i.GetMethods())
+					.Concat(typeof(TProperty).GetMethods(BindingFlags.DeclaredOnly |
+														 BindingFlags.Public |
+														 BindingFlags.Instance))
+					.Where(m => m is { IsPublic: true, IsSpecialName: false } &&
+								typeof(Task).IsAssignableFrom(m.ReturnType)))
+			{
+				if (methodInfo.GetCustomAttribute<ObsoleteAttribute>() != null)
+				{
+					continue;
+				}
+
+				if (methodInfo.GetParameters().Any(p
+					=> p.ParameterType.Name.StartsWith("Span") ||
+					   p.ParameterType.Name.StartsWith("ReadOnlySpan")))
+				{
+					continue;
+				}
+
+				object?[] parameters = CreateMethodParameters(
+					fixture, methodInfo.GetParameters()).ToArray();
+				yield return (
+					$"{methodInfo.Name}({string.Join(",", methodInfo.GetParameters().Select(x => GetName(x.ParameterType)))})",
+					x => (Task)methodInfo.Invoke(x, parameters)!,
+					methodInfo.Name, parameters);
+			}
+		}
+
+		protected IEnumerable<(string Expectation,
+				Action<TProperty> Action,
+				string Name,
+				object?[] Parameters)>
+			EnumerateSynchronousMethods<TProperty>(Fixture fixture)
+		{
+			foreach (MethodInfo methodInfo in
+				typeof(TProperty).GetInterfaces().Where(i => i != typeof(IDisposable))
+					.SelectMany(i => i.GetMethods())
+					.Concat(typeof(TProperty).GetMethods(BindingFlags.DeclaredOnly |
+														 BindingFlags.Public |
+														 BindingFlags.Instance))
+					.Where(m => m is { IsPublic: true, IsSpecialName: false } &&
+								!typeof(Task).IsAssignableFrom(m.ReturnType) &&
+								!typeof(ValueTask).IsAssignableFrom(m.ReturnType)))
+			{
+				if (methodInfo.GetCustomAttribute<ObsoleteAttribute>() != null)
+				{
+					continue;
+				}
+
+				if (methodInfo.GetParameters().Any(p
+					=> p.ParameterType.Name.StartsWith("Span") ||
+					   p.ParameterType.Name.StartsWith("ReadOnlySpan")))
+				{
+					continue;
+				}
+
+				object?[] parameters = CreateMethodParameters(
+					fixture, methodInfo.GetParameters()).ToArray();
+				yield return (
+					$"{methodInfo.Name}({string.Join(",", methodInfo.GetParameters().Select(x => GetName(x.ParameterType)))})",
+					x => methodInfo.Invoke(x, parameters),
+					methodInfo.Name, parameters);
+			}
+		}
+
+		private static IEnumerable<object?> CreateMethodParameters(
+			Fixture fixture,
+			ParameterInfo[] parameterInfos)
+		{
+			foreach (ParameterInfo parameterInfo in parameterInfos)
+			{
+				yield return fixture.Create(parameterInfo.ParameterType,
+					new SpecimenContext(fixture));
+			}
+		}
+
+		private static string GetName(Type type)
+		{
+			if (type == typeof(int))
+			{
+				return "int";
+			}
+
+			if (type == typeof(bool))
+			{
+				return "bool";
+			}
+
+			if (type == typeof(string))
+			{
+				return "string";
+			}
+
+			if (type.IsGenericType)
+			{
+				int idx = type.Name.IndexOf("`", StringComparison.Ordinal);
+				if (idx > 0)
+				{
+					return
+						$"{type.Name.Substring(0, idx)}<{string.Join(",", type.GenericTypeArguments.Select(GetName))}>";
+				}
+
+				return type.ToString();
+			}
+
+			return type.Name;
 		}
 	}
 

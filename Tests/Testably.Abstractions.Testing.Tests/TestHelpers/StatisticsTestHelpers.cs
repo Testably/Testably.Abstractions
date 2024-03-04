@@ -12,5 +12,32 @@ public static class StatisticsTestHelpers
 			.ContainSingle(c => c.Name == name &&
 			                    c.Parameters.SequenceEqual(parameters),
 				because);
-    }
+	}
+
+	public static void ShouldOnlyContain(this IStatistics statistics, string name)
+	{
+		statistics.Calls.Count.Should().Be(1);
+		statistics.Calls.Should()
+			.ContainSingle(c => c.Name == name &&
+			                    c.Parameters.Length == 0);
+	}
+
+	public static void ShouldOnlyContain<T1>(this IStatistics statistics, string name, T1 parameter1)
+	{
+		statistics.Calls.Count.Should().Be(1);
+		statistics.Calls.Should()
+			.ContainSingle(c => c.Name == name &&
+			                    c.Parameters.Length == 1 &&
+			                    c.Parameters[0].Is(parameter1));
+	}
+
+	public static void ShouldOnlyContain<T1, T2>(this IStatistics statistics, string name, T1 parameter1, T2 parameter2)
+	{
+		statistics.Calls.Count.Should().Be(1);
+		statistics.Calls.Should()
+			.ContainSingle(c => c.Name == name &&
+			                    c.Parameters.Length == 2 &&
+			                    c.Parameters[0].Is(parameter1) &&
+			                    c.Parameters[1].Is(parameter2));
+	}
 }

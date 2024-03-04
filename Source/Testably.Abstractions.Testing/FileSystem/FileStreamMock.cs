@@ -538,6 +538,36 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	public T? RetrieveMetadata<T>(string key)
 		=> _container.Extensibility.RetrieveMetadata<T>(key);
 
-	private IDisposable Register(string name, params object?[] parameters)
-		=> _fileSystem.StatisticsRegistration.FileStream.Register(_location.FullPath, name, parameters);
+	private IDisposable Register(string name)
+		=> _fileSystem.StatisticsRegistration.FileStream.Register(_location.FullPath, name);
+
+	private IDisposable Register<T1>(string name, T1 parameter1)
+		=> _fileSystem.StatisticsRegistration.FileStream.Register(_location.FullPath, name,
+			ParameterDescription.FromParameter(parameter1));
+
+	private IDisposable Register<T1, T2>(string name, T1 parameter1, T2 parameter2)
+		=> _fileSystem.StatisticsRegistration.FileStream.Register(_location.FullPath, name,
+			ParameterDescription.FromParameter(parameter1),
+			ParameterDescription.FromParameter(parameter2));
+
+	private IDisposable Register<T1, T2, T3>(string name, T1 parameter1, T2 parameter2, T3 parameter3)
+		=> _fileSystem.StatisticsRegistration.FileStream.Register(_location.FullPath, name,
+			ParameterDescription.FromParameter(parameter1),
+			ParameterDescription.FromParameter(parameter2),
+			ParameterDescription.FromParameter(parameter3));
+
+	private IDisposable Register<T1, T2, T3, T4>(string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4)
+		=> _fileSystem.StatisticsRegistration.FileStream.Register(_location.FullPath, name,
+			ParameterDescription.FromParameter(parameter1),
+			ParameterDescription.FromParameter(parameter2),
+			ParameterDescription.FromParameter(parameter3),
+			ParameterDescription.FromParameter(parameter4));
+
+	private IDisposable Register<T1, T2, T3, T4, T5>(string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5)
+		=> _fileSystem.StatisticsRegistration.FileStream.Register(_location.FullPath, name,
+			ParameterDescription.FromParameter(parameter1),
+			ParameterDescription.FromParameter(parameter2),
+			ParameterDescription.FromParameter(parameter3),
+			ParameterDescription.FromParameter(parameter4),
+			ParameterDescription.FromParameter(parameter5));
 }

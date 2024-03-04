@@ -20,7 +20,7 @@ internal class CallStatistics : IStatistics
 	///     Registers the <paramref name="name" /> callback with <paramref name="parameters" />.
 	/// </summary>
 	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
-	internal IDisposable Register(string name, params object?[] parameters)
+	internal IDisposable Register(string name, params ParameterDescription[] parameters)
 	{
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{

@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.Testing.Helpers;
+using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;
@@ -369,6 +370,21 @@ internal sealed class FileInfoMock
 		return new FileInfoMock(location, fileSystem);
 	}
 
-	protected override IDisposable Register(string name, params object?[] parameters)
-		=> _fileSystem.StatisticsRegistration.FileInfo.Register(Location.FullPath, name, parameters);
+	protected override IDisposable Register(string name)
+		=> _fileSystem.StatisticsRegistration.FileInfo.Register(Location.FullPath, name);
+
+	protected override IDisposable Register<T1>(string name, T1 parameter1)
+		=> _fileSystem.StatisticsRegistration.FileInfo.Register(Location.FullPath, name,
+			ParameterDescription.FromParameter(parameter1));
+
+	private IDisposable Register<T1, T2>(string name, T1 parameter1, T2 parameter2)
+		=> _fileSystem.StatisticsRegistration.FileInfo.Register(Location.FullPath, name,
+			ParameterDescription.FromParameter(parameter1),
+			ParameterDescription.FromParameter(parameter2));
+
+	private IDisposable Register<T1, T2, T3>(string name, T1 parameter1, T2 parameter2, T3 parameter3)
+		=> _fileSystem.StatisticsRegistration.FileInfo.Register(Location.FullPath, name,
+			ParameterDescription.FromParameter(parameter1),
+			ParameterDescription.FromParameter(parameter2),
+			ParameterDescription.FromParameter(parameter3));
 }

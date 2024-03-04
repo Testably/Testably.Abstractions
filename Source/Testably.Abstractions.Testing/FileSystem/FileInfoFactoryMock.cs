@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.Testing.Helpers;
+using Testably.Abstractions.Testing.Statistics;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
@@ -67,6 +68,7 @@ internal sealed class FileInfoFactoryMock : IFileInfoFactory
 
 	#endregion
 
-	private IDisposable Register(string name, params object?[] parameters)
-		=> _fileSystem.StatisticsRegistration.FileInfo.Register(name, parameters);
+	private IDisposable Register<T1>(string name, T1 parameter1)
+		=> _fileSystem.StatisticsRegistration.FileInfo.Register(name,
+			ParameterDescription.FromParameter(parameter1));
 }

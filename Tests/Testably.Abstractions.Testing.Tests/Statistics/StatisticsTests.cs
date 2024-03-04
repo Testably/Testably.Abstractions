@@ -39,7 +39,7 @@ public sealed partial class StatisticsTests
 				.Should().ContainSingle(x =>
 					x.Name == nameof(Directory.CreateDirectory) &&
 					x.Parameters.Length == 1 &&
-					directory.Equals(x.Parameters[0]));
+					x.Parameters[0].Is(directory));
 		}
 	}
 
@@ -61,7 +61,7 @@ public sealed partial class StatisticsTests
 			sut.Statistics.Directory.Calls
 				.Skip(i)
 				.First()
-				.Parameters[0].Should().Be(directories[i]);
+				.Parameters[0].Is(directories[i]).Should().BeTrue();
 		}
 	}
 
