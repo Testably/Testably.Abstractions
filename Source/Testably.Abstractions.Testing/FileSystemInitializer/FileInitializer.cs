@@ -23,6 +23,7 @@ internal sealed class FileInitializer<TFileSystem>
 	public IFileSystemFileInitializer<TFileSystem> Which(
 		Action<IFileManipulator> fileManipulation)
 	{
+		using IDisposable release = IgnoreStatistics(FileSystem);
 		FileManipulator fileManipulator = new(FileSystem, File);
 		fileManipulation.Invoke(fileManipulator);
 		return this;

@@ -256,7 +256,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	public override int Read(Span<byte> buffer)
 	{
 		using IDisposable registration = Register(nameof(Read),
-			new SpanProvider<byte>(buffer));
+			buffer);
 
 		if (!CanRead)
 		{
@@ -544,6 +544,12 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	private IDisposable Register<T1>(string name, T1 parameter1)
 		=> _fileSystem.StatisticsRegistration.FileStream.Register(_location.FullPath, name,
 			ParameterDescription.FromParameter(parameter1));
+
+#if FEATURE_SPAN
+	private IDisposable Register<T1>(string name, Span<T1> parameter1)
+		=> _fileSystem.StatisticsRegistration.FileStream.Register(_location.FullPath, name,
+			ParameterDescription.FromParameter<T1>(parameter1));
+#endif
 
 	private IDisposable Register<T1, T2>(string name, T1 parameter1, T2 parameter2)
 		=> _fileSystem.StatisticsRegistration.FileStream.Register(_location.FullPath, name,

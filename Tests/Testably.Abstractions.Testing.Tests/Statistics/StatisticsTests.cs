@@ -1,17 +1,16 @@
-﻿using AutoFixture;
-using AutoFixture.Kernel;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics;
 
-public sealed partial class StatisticsTests
+public sealed class StatisticsTests
 {
-	public const string DummyPath = "foo";
-
 	[Fact]
 	public async Task Statistics_ShouldSupportParallelCalls()
 	{
@@ -65,145 +64,257 @@ public sealed partial class StatisticsTests
 		}
 	}
 
-	public abstract class GetMethods<T>
-		: TheoryData<string, T, string, object?[]>
+	[Fact]
+	public void FileSystem_Initialize_ShouldNotRegisterStatistics()
 	{
-		protected Fixture Fixture { get; }
+		MockFileSystem sut = new();
+		sut.Initialize()
+			.WithSubdirectory("d0").Initialized(d => d.WithASubdirectory())
+			.WithSubdirectories("d1", "d2")
+			.WithASubdirectory()
+			.WithFile("f0").Which(f => f.HasBytesContent(Encoding.UTF8.GetBytes("bar")))
+			.WithAFile().Which(f => f.HasStringContent("foo"));
 
-		protected GetMethods()
+		sut.Statistics.Directory.Calls.Should().BeEmpty();
+		sut.Statistics.File.Calls.Should().BeEmpty();
+	}
+
+	[Theory]
+	[InlineData(nameof(MockFileSystem.Directory), false,
+		typeof(IDirectory), typeof(DirectoryStatisticsTests))]
+	[InlineData(nameof(MockFileSystem.DirectoryInfo), false,
+		typeof(IDirectoryInfoFactory), typeof(DirectoryInfoFactoryStatisticsTests))]
+	[InlineData(nameof(MockFileSystem.DirectoryInfo), true,
+		typeof(IDirectoryInfo), typeof(DirectoryInfoStatisticsTests))]
+	[InlineData(nameof(MockFileSystem.DriveInfo), false,
+		typeof(IDriveInfoFactory), typeof(DriveInfoFactoryStatisticsTests))]
+	[InlineData(nameof(MockFileSystem.DriveInfo), true,
+		typeof(IDriveInfo), typeof(DriveInfoStatisticsTests))]
+	[InlineData(nameof(MockFileSystem.File), false,
+		typeof(IFile), typeof(FileStatisticsTests))]
+	[InlineData(nameof(MockFileSystem.FileInfo), false,
+		typeof(IFileInfoFactory), typeof(FileInfoFactoryStatisticsTests))]
+	[InlineData(nameof(MockFileSystem.FileInfo), true,
+		typeof(IFileInfo), typeof(FileInfoStatisticsTests))]
+	[InlineData(nameof(MockFileSystem.FileStream), false,
+		typeof(IFileStreamFactory), typeof(FileStreamFactoryStatisticsTests))]
+	[InlineData(nameof(MockFileSystem.FileStream), true,
+		typeof(FileSystemStream), typeof(FileStreamStatisticsTests))]
+	[InlineData(nameof(MockFileSystem.FileSystemWatcher), false,
+		typeof(IFileSystemWatcherFactory), typeof(FileSystemWatcherFactoryStatisticsTests))]
+	[InlineData(nameof(MockFileSystem.FileSystemWatcher), true,
+		typeof(IFileSystemWatcher), typeof(FileSystemWatcherStatisticsTests))]
+	[InlineData(nameof(MockFileSystem.Path), false,
+		typeof(IPath), typeof(PathStatisticsTests))]
+	public void ShouldHaveTestedAllFileSystemMethods(string className, bool requireInstance,
+		Type mockType, Type testType)
+	{
+		string result = CheckMethods(className, requireInstance, mockType, testType);
+
+		result.Should().BeEmpty();
+	}
+
+	private static string CheckMethods(string className, bool requireInstance,
+		Type mockType, Type testType)
+	{
+		StringBuilder builder = new();
+
+		string FirstCharToUpperAsSpan(string input)
 		{
-			Fixture = new Fixture();
-			Fixture.Register(() => WatcherChangeTypes.Created);
-			Fixture.Register(() => 100);
-			Fixture.Register(() => TimeSpan.FromMilliseconds(100));
-			Fixture.Register(() => DriveInfo.GetDrives().First());
-			Fixture.Register(() => new DirectoryInfo(DummyPath));
-			Fixture.Register(() => new FileInfo(DummyPath));
-			Fixture.Register(() => new FileStream(DummyPath, FileMode.OpenOrCreate));
-			Fixture.Register(() => new FileSystemWatcher("."));
-			Fixture.Register(() => (IntPtr)null!);
-			Fixture.Register<Stream>(() => new MemoryStream());
-			Fixture.Register(() => new MockFileSystem().FileStream
-				.New("foo", FileMode.OpenOrCreate)
-				.BeginRead(Array.Empty<byte>(), 0, 0, null, null));
-#if FEATURE_FILESYSTEM_STREAM_OPTIONS
-			Fixture.Register(() => new FileStreamOptions());
-#endif
+			if (string.IsNullOrEmpty(input))
+			{
+				return string.Empty;
+			}
+
+			return $"{input[0].ToString().ToUpper()}{input.Substring(1)}";
 		}
 
-		protected IEnumerable<(string Expectation,
-			Func<TProperty, Task> Action,
-			string Name,
-			object?[] Parameters)> EnumerateAsynchronousMethods<TProperty>(Fixture fixture)
+		string GetName(Type type, bool firstCharUpperCase)
 		{
-			foreach (MethodInfo methodInfo in
-				typeof(TProperty).GetInterfaces().Where(i => i != typeof(IDisposable))
-					.SelectMany(i => i.GetMethods())
-					.Concat(typeof(TProperty).GetMethods(BindingFlags.DeclaredOnly |
-					                                     BindingFlags.Public |
-					                                     BindingFlags.Instance))
-					.Where(m => m is { IsPublic: true, IsSpecialName: false } &&
-					            typeof(Task).IsAssignableFrom(m.ReturnType)))
-			{
-				if (methodInfo.GetCustomAttribute<ObsoleteAttribute>() != null)
-				{
-					continue;
-				}
-
-				if (methodInfo.GetParameters().Any(p
-					=> p.ParameterType.Name.StartsWith("Span") ||
-					   p.ParameterType.Name.StartsWith("ReadOnlySpan")))
-				{
-					continue;
-				}
-
-				object?[] parameters = CreateMethodParameters(
-					fixture, methodInfo.GetParameters()).ToArray();
-				yield return (
-					$"{methodInfo.Name}({string.Join(",", methodInfo.GetParameters().Select(x => GetName(x.ParameterType)))})",
-					x => (Task)methodInfo.Invoke(x, parameters)!,
-					methodInfo.Name, parameters);
-			}
-		}
-
-		protected IEnumerable<(string Expectation,
-				Action<TProperty> Action,
-				string Name,
-				object?[] Parameters)>
-			EnumerateSynchronousMethods<TProperty>(Fixture fixture)
-		{
-			foreach (MethodInfo methodInfo in
-				typeof(TProperty).GetInterfaces().Where(i => i != typeof(IDisposable))
-					.SelectMany(i => i.GetMethods())
-					.Concat(typeof(TProperty).GetMethods(BindingFlags.DeclaredOnly |
-					                                     BindingFlags.Public |
-					                                     BindingFlags.Instance))
-					.Where(m => m is { IsPublic: true, IsSpecialName: false } &&
-					            !typeof(Task).IsAssignableFrom(m.ReturnType) &&
-					            !typeof(ValueTask).IsAssignableFrom(m.ReturnType)))
-			{
-				if (methodInfo.GetCustomAttribute<ObsoleteAttribute>() != null)
-				{
-					continue;
-				}
-
-				if (methodInfo.GetParameters().Any(p
-					=> p.ParameterType.Name.StartsWith("Span") ||
-					   p.ParameterType.Name.StartsWith("ReadOnlySpan")))
-				{
-					continue;
-				}
-
-				object?[] parameters = CreateMethodParameters(
-					fixture, methodInfo.GetParameters()).ToArray();
-				yield return (
-					$"{methodInfo.Name}({string.Join(",", methodInfo.GetParameters().Select(x => GetName(x.ParameterType)))})",
-					x => methodInfo.Invoke(x, parameters),
-					methodInfo.Name, parameters);
-			}
-		}
-
-		private static IEnumerable<object?> CreateMethodParameters(
-			Fixture fixture,
-			ParameterInfo[] parameterInfos)
-		{
-			foreach (ParameterInfo parameterInfo in parameterInfos)
-			{
-				yield return fixture.Create(parameterInfo.ParameterType,
-					new SpecimenContext(fixture));
-			}
-		}
-
-		private static string GetName(Type type)
-		{
-			if (type == typeof(int))
-			{
-				return "int";
-			}
-
-			if (type == typeof(bool))
-			{
-				return "bool";
-			}
-
-			if (type == typeof(string))
-			{
-				return "string";
-			}
-
 			if (type.IsGenericType)
 			{
 				int idx = type.Name.IndexOf("`", StringComparison.Ordinal);
 				if (idx > 0)
 				{
 					return
-						$"{type.Name.Substring(0, idx)}<{string.Join(",", type.GenericTypeArguments.Select(GetName))}>";
+						$"{type.Name.Substring(0, idx)}<{string.Join(",", type.GenericTypeArguments.Select(x => GetName(x, firstCharUpperCase)))}>";
 				}
 
 				return type.ToString();
 			}
 
+			if (firstCharUpperCase)
+			{
+				if (type == typeof(int))
+				{
+					return "Int";
+				}
+
+				if (type == typeof(bool))
+				{
+					return "Bool";
+				}
+			}
+			else
+			{
+				if (type == typeof(int))
+				{
+					return "int";
+				}
+
+				if (type == typeof(bool))
+				{
+					return "bool";
+				}
+
+				if (type == typeof(byte))
+				{
+					return "byte";
+				}
+
+				if (type == typeof(string))
+				{
+					return "string";
+				}
+
+				if (type == typeof(byte[]))
+				{
+					return "byte[]";
+				}
+
+				if (type == typeof(string[]))
+				{
+					return "string[]";
+				}
+			}
+
 			return type.Name;
 		}
+
+		string GetDefaultValue(Type type)
+		{
+			if (type == typeof(string))
+			{
+				return "\"foo\"";
+			}
+
+			if (type == typeof(int))
+			{
+				return "42";
+			}
+
+			if (type == typeof(bool))
+			{
+				return "true";
+			}
+
+			if (type == typeof(SearchOption))
+			{
+				return "SearchOption.AllDirectories";
+			}
+
+			if (type == typeof(FileMode))
+			{
+				return "FileMode.OpenOrCreate";
+			}
+
+			if (type == typeof(FileAccess))
+			{
+				return "FileAccess.ReadWrite";
+			}
+
+			if (type == typeof(FileShare))
+			{
+				return "FileShare.ReadWrite";
+			}
+
+			if (type == typeof(SearchOption))
+			{
+				return "SearchOption.AllDirectories";
+			}
+
+			if (type == typeof(IEnumerable<string>) ||
+			    type == typeof(string[]))
+			{
+				return "[\"foo\", \"bar\"]";
+			}
+
+			if (type == typeof(byte[]))
+			{
+				return "\"foo\"u8.ToArray()";
+			}
+
+			if (type == typeof(Encoding))
+			{
+				return "Encoding.UTF8";
+			}
+
+			if (type == typeof(Stream))
+			{
+				return "new MemoryStream()";
+			}
+
+			if (type == typeof(CancellationToken))
+			{
+				return "CancellationToken.None";
+			}
+
+			return "new()";
+		}
+
+		foreach (MethodInfo methodInfo in
+			mockType.GetInterfaces()
+				.Where(i => i != typeof(IDisposable) && i != typeof(IAsyncDisposable))
+				.SelectMany(i => i.GetMethods())
+				.Concat(mockType.GetMethods(BindingFlags.DeclaredOnly |
+				                            BindingFlags.Public |
+				                            BindingFlags.Instance))
+				.Where(m => m is { IsPublic: true, IsSpecialName: false })
+				.OrderBy(m => m.Name)
+				.ThenBy(m => m.GetParameters().Length))
+		{
+			if (methodInfo.GetCustomAttribute<ObsoleteAttribute>() != null)
+			{
+				continue;
+			}
+
+			ParameterInfo[] parameters = methodInfo.GetParameters();
+
+			string expectedName = $"{methodInfo.Name}_{string.Join("_", methodInfo
+				.GetParameters()
+				.Select(x => FirstCharToUpperAsSpan(GetName(x.ParameterType, true)
+					.Replace("<", "")
+					.Replace(">", "")
+					.Replace("IEnumerablestring", "IEnumerableString")
+					.Replace("[]", "Array"))))}{(parameters.Length > 0 ? "_" : "")}ShouldRegisterCall";
+			if (testType.GetMethod(expectedName) != null)
+			{
+				continue;
+			}
+
+			bool isAsync = typeof(Task).IsAssignableFrom(methodInfo.ReturnType);
+			builder.AppendLine("\t[SkippableFact]");
+			builder.Append(isAsync ? "\tpublic async Task " : "\tpublic void ");
+			builder.Append(expectedName);
+			builder.AppendLine("()");
+			builder.AppendLine("\t{");
+			builder.AppendLine("\t\tMockFileSystem sut = new();");
+			foreach (ParameterInfo parameterInfo in methodInfo.GetParameters())
+			{
+				builder.AppendLine(
+					$"\t\t{GetName(parameterInfo.ParameterType, false)} {parameterInfo.Name} = {GetDefaultValue(parameterInfo.ParameterType)};");
+			}
+
+			builder.AppendLine();
+			builder.AppendLine(
+				$"\t\t{(isAsync ? "await " : "")}sut.{className}{(requireInstance ? ".New(\"foo\")" : "")}.{methodInfo.Name}({string.Join(", ", methodInfo.GetParameters().Select(p => p.Name))});");
+			builder.AppendLine();
+			builder.AppendLine(
+				$"\t\tsut.Statistics.{className}{(requireInstance ? "[\"foo\"]" : "")}.ShouldOnlyContain(nameof({mockType.Name}.{methodInfo.Name}){(parameters.Length > 0 ? ",\n\t\t" : "")}{string.Join(", ", methodInfo.GetParameters().Select(p => p.Name))});");
+			builder.AppendLine("\t}");
+			builder.AppendLine();
+		}
+
+		return builder.ToString();
 	}
 }

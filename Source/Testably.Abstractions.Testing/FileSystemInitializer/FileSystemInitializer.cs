@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Testably.Abstractions.RandomSystem;
 using Testably.Abstractions.Testing.Helpers;
@@ -68,6 +69,7 @@ internal class FileSystemInitializer<TFileSystem>
 	/// <inheritdoc cref="IFileSystemInitializer{TFileSystem}.WithAFile(string?)" />
 	public IFileSystemFileInitializer<TFileSystem> WithAFile(string? extension = null)
 	{
+		using IDisposable release = IgnoreStatistics(FileSystem);
 		IRandom random = (FileSystem as MockFileSystem)?
 			.RandomSystem.Random.Shared ?? RandomFactory.Shared;
 		string fileName;
@@ -84,6 +86,7 @@ internal class FileSystemInitializer<TFileSystem>
 	/// <inheritdoc cref="IFileSystemInitializer{TFileSystem}.WithASubdirectory()" />
 	public IFileSystemDirectoryInitializer<TFileSystem> WithASubdirectory()
 	{
+		using IDisposable release = IgnoreStatistics(FileSystem);
 		IRandom random = (FileSystem as MockFileSystem)?
 			.RandomSystem.Random.Shared ?? RandomFactory.Shared;
 		string directoryName;
@@ -127,6 +130,7 @@ internal class FileSystemInitializer<TFileSystem>
 
 	private IDirectoryInfo WithDirectory(DirectoryDescription directory)
 	{
+		using IDisposable release = IgnoreStatistics(FileSystem);
 		IDirectoryInfo directoryInfo = FileSystem.DirectoryInfo.New(
 			FileSystem.Path.Combine(_basePath, directory.Name));
 		if (directoryInfo.Exists)
@@ -162,6 +166,7 @@ internal class FileSystemInitializer<TFileSystem>
 
 	private IFileInfo WithFile(FileDescription file)
 	{
+		using IDisposable release = IgnoreStatistics(FileSystem);
 		IFileInfo fileInfo = FileSystem.FileInfo.New(
 			FileSystem.Path.Combine(_basePath, file.Name));
 		if (fileInfo.Exists)
@@ -211,5 +216,16 @@ internal class FileSystemInitializer<TFileSystem>
 		{
 			WithDirectory(directory);
 		}
+	}
+
+	protected IDisposable IgnoreStatistics(IFileSystem fileSystem)
+	{
+		if (fileSystem is MockFileSystem mockFileSystem)
+		{
+			mockFileSystem.StatisticsRegistration.TryGetLock(out IDisposable? release);
+			return release;
+		}
+
+		return new NoRegistration();
 	}
 }

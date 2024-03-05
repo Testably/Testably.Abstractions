@@ -40,4 +40,54 @@ public static class StatisticsTestHelpers
 			                    c.Parameters[0].Is(parameter1) &&
 			                    c.Parameters[1].Is(parameter2));
 	}
+
+	public static void ShouldOnlyContain<T1, T2, T3>(this IStatistics statistics, string name, T1 parameter1, T2 parameter2, T3 parameter3)
+	{
+		statistics.Calls.Count.Should().Be(1);
+		statistics.Calls.Should()
+			.ContainSingle(c => c.Name == name &&
+			                    c.Parameters.Length == 3 &&
+			                    c.Parameters[0].Is(parameter1) &&
+			                    c.Parameters[1].Is(parameter2) &&
+			                    c.Parameters[2].Is(parameter3));
+	}
+
+	public static void ShouldOnlyContain<T1, T2, T3, T4>(this IStatistics statistics, string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4)
+	{
+		statistics.Calls.Count.Should().Be(1);
+		statistics.Calls.Should()
+			.ContainSingle(c => c.Name == name &&
+			                    c.Parameters.Length == 4 &&
+			                    c.Parameters[0].Is(parameter1) &&
+			                    c.Parameters[1].Is(parameter2) &&
+			                    c.Parameters[2].Is(parameter3) &&
+			                    c.Parameters[3].Is(parameter4));
+	}
+
+	public static void ShouldOnlyContain<T1, T2, T3, T4, T5>(this IStatistics statistics, string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5)
+	{
+		statistics.Calls.Count.Should().Be(1);
+		statistics.Calls.Should()
+			.ContainSingle(c => c.Name == name &&
+			                    c.Parameters.Length == 5 &&
+			                    c.Parameters[0].Is(parameter1) &&
+			                    c.Parameters[1].Is(parameter2) &&
+			                    c.Parameters[2].Is(parameter3) &&
+			                    c.Parameters[3].Is(parameter4) &&
+			                    c.Parameters[4].Is(parameter5));
+	}
+
+	public static void ShouldOnlyContain<T1, T2, T3, T4, T5, T6>(this IStatistics statistics, string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5, T6 parameter6)
+	{
+		statistics.Calls.Count.Should().Be(1);
+		statistics.Calls.Should()
+			.ContainSingle(c => c.Name == name &&
+			                    c.Parameters.Length == 6 &&
+			                    c.Parameters[0].Is(parameter1) &&
+			                    c.Parameters[1].Is(parameter2) &&
+			                    c.Parameters[2].Is(parameter3) &&
+			                    c.Parameters[3].Is(parameter4) &&
+			                    c.Parameters[4].Is(parameter5) &&
+			                    c.Parameters[5].Is(parameter6));
+	}
 }

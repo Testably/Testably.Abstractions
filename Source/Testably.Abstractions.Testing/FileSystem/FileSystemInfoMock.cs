@@ -297,13 +297,4 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 
 	protected virtual IDisposable Register<T1>(string name, T1 parameter1)
 		=> new NoRegistration();
-
-	private sealed class NoRegistration : IDisposable
-	{
-		/// <inheritdoc />
-		public void Dispose()
-		{
-			// Do nothing
-		}
-	}
 }
