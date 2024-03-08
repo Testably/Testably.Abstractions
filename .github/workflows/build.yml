@@ -79,7 +79,7 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
-        uses: Wandalen/wretry.action@v1.4.7
+        uses: Wandalen/wretry.action@v1.4.8
         with:
           command: dotnet test --no-build --collect:"XPlat Code Coverage"
           attempt_limit: 2
@@ -107,7 +107,7 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
-        uses: Wandalen/wretry.action@v1.4.7
+        uses: Wandalen/wretry.action@v1.4.8
         with:
           command: dotnet test --no-build --collect:"XPlat Code Coverage"
           attempt_limit: 2
@@ -135,7 +135,7 @@ jobs:
       - name: Build solution
         run: dotnet build /p:NetCoreOnly=True --configuration "Release"
       - name: Run tests
-        uses: Wandalen/wretry.action@v1.4.7
+        uses: Wandalen/wretry.action@v1.4.8
         with:
           command: dotnet test --no-build --collect:"XPlat Code Coverage"
           attempt_limit: 2
@@ -191,7 +191,7 @@ jobs:
       - name: Build example solution
         run: dotnet build Examples /p:UseFileReferenceToTestablyLibraries=True
       - name: Run example tests
-        uses: Wandalen/wretry.action@v1.4.7
+        uses: Wandalen/wretry.action@v1.4.8
         with:
           command: dotnet test Examples --no-build
           attempt_limit: 2
