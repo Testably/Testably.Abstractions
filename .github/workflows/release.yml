@@ -327,7 +327,7 @@ jobs:
       - name: Publish
         run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
       - name: Create GitHub release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           name: ${{ steps.tag.outputs.release_version }}
           tag_name: ${{ steps.tag.outputs.release_version }}
