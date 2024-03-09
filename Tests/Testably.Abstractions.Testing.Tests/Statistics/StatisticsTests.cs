@@ -131,6 +131,10 @@ public sealed class StatisticsTests
 
 		string GetName(Type type, bool firstCharUpperCase)
 		{
+			if (type.Name == "Int32&")
+			{
+				return "OutInt";
+			}
 			if (type.IsGenericType)
 			{
 				int idx = type.Name.IndexOf("`", StringComparison.Ordinal);

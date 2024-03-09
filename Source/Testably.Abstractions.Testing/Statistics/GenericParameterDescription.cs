@@ -14,10 +14,22 @@ public abstract class ParameterDescription
 
 	public bool Is<T>(T value)
 		=> this is GenericParameterDescription<T> d &&
-		   (value == null
-			   ? d.Value == null
-			   : value.Equals(d.Value));
+		   IsEqual(value, d.Value);
 
+	public bool Is<T>(T[] value)
+	{
+		return this is GenericParameterDescription<T[]> d &&
+		       value.SequenceEqual(d.Value);
+	}
+
+	private static bool IsEqual<T>(T value1, T value2)
+	{
+		if (value1 == null)
+		{
+			return value2 == null;
+		}
+		return value1.Equals(value2);
+	}
 #if FEATURE_SPAN
 	public bool Is<T>(Span<T> value)
 		=> this is SpanParameterDescription<T> { IsReadOnly: false } d &&

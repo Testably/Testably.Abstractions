@@ -148,11 +148,8 @@ public class FileStreamStatisticsTests
 
 		_ = sut.FileStream.New("foo", FileMode.OpenOrCreate).Read(buffer);
 
-		sut.Statistics.FileStream["foo"].Calls.Count.Should().Be(1);
-		ParameterDescription parameter = sut.Statistics.FileStream["foo"].Calls.Should()
-			.ContainSingle(c => c.Name == nameof(FileSystemStream.Read) &&
-			                    c.Parameters.Length == 1).Which.Parameters[0];
-		parameter.Is(buffer).Should().BeTrue();
+		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.Read),
+			buffer);
 	}
 #endif
 
@@ -255,11 +252,8 @@ public class FileStreamStatisticsTests
 
 		sut.FileStream.New("foo", FileMode.OpenOrCreate).Write(buffer);
 
-		sut.Statistics.FileStream["foo"].Calls.Count.Should().Be(1);
-		ParameterDescription parameter = sut.Statistics.FileStream["foo"].Calls.Should()
-			.ContainSingle(c => c.Name == nameof(FileSystemStream.Write) &&
-			                    c.Parameters.Length == 1).Which.Parameters[0];
-		parameter.Is(buffer).Should().BeTrue();
+		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.Write),
+			buffer);
 	}
 #endif
 
