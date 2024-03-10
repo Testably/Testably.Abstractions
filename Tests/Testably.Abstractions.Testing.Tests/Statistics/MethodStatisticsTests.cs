@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions.Testing.Tests.Statistics;
+﻿using System.Linq;
+
+namespace Testably.Abstractions.Testing.Tests.Statistics;
 
 public sealed class MethodStatisticsTests
 {
@@ -8,7 +10,7 @@ public sealed class MethodStatisticsTests
 		MockFileSystem sut = new();
 		sut.Directory.CreateDirectory("foo");
 
-		string result = sut.Statistics.Directory.Methods[1].ToString();
+		string result = sut.Statistics.Directory.Methods.First().ToString();
 
 		result.Should()
 			.Contain(nameof(IDirectory.CreateDirectory)).And
@@ -22,7 +24,7 @@ public sealed class MethodStatisticsTests
 		MockFileSystem sut = new();
 		sut.File.WriteAllText("foo", "bar");
 
-		string result = sut.Statistics.File.Methods[1].ToString();
+		string result = sut.Statistics.File.Methods.First().ToString();
 
 		result.Should()
 			.Contain(nameof(IFile.WriteAllText)).And

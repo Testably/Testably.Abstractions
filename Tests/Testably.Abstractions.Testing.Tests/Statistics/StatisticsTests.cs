@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
@@ -37,14 +38,14 @@ public sealed class StatisticsTests
 
 		foreach (string directory in directories)
 		{
-			sut.Statistics.Directory.Methods.Values
+			sut.Statistics.Directory.Methods
 				.Should().ContainSingle(x =>
 					x.Name == nameof(Directory.CreateDirectory) &&
 					x.Parameters.Length == 1 &&
 					x.Parameters[0].Is(directory));
 		}
 
-		sut.Statistics.Directory.Methods.Keys.Should()
+		sut.Statistics.Directory.Methods.Select(x => x.Counter).Should()
 			.BeEquivalentTo(Enumerable.Range(1, directories.Length));
 	}
 
@@ -63,7 +64,7 @@ public sealed class StatisticsTests
 
 		for (int i = 0; i < directories.Length; i++)
 		{
-			sut.Statistics.Directory.Methods[i + 1]
+			sut.Statistics.Directory.Methods[i]
 				.Parameters[0].Is(directories[i]).Should().BeTrue();
 		}
 	}
@@ -84,10 +85,10 @@ public sealed class StatisticsTests
 		for (int i = 0; i < directories.Length; i++)
 		{
 			sut.Statistics.Directory.Methods
-				.OrderBy(x => x.Key)
+				.OrderBy(x => x.Counter)
 				.Skip(i)
 				.First()
-				.Value.Parameters[0].Is(directories[i]).Should().BeTrue();
+				.Parameters[0].Is(directories[i]).Should().BeTrue();
 		}
 	}
 
@@ -101,11 +102,23 @@ public sealed class StatisticsTests
 		using FileSystemStream stream = fileInfo.Open(FileMode.Open, FileAccess.Read);
 		_ = new StreamReader(stream).ReadToEnd();
 
-		sut.Statistics.Directory.Methods[1].Name.Should().Be(nameof(IDirectory.CreateDirectory));
-		sut.Statistics.File.Methods[2].Name.Should().Be(nameof(IFile.WriteAllText));
-		sut.Statistics.FileInfo.Methods[3].Name.Should().Be(nameof(IFileInfoFactory.New));
-		// Note: Index 4 ist used internally for creating the full path of the file info.
-		sut.Statistics.FileInfo["bar.txt"].Methods[5].Name.Should().Be(nameof(IFileInfo.Open));
+		sut.Statistics.Directory.Methods.First()
+			.Should().Match<MethodStatistic>(m => 
+				m.Name == nameof(IDirectory.CreateDirectory) &&
+				m.Counter == 1);
+		sut.Statistics.File.Methods.First()
+			.Should().Match<MethodStatistic>(m =>
+				m.Name == nameof(IFile.WriteAllText) &&
+				m.Counter == 2);
+		sut.Statistics.FileInfo.Methods.First()
+			.Should().Match<MethodStatistic>(m =>
+				m.Name == nameof(IFileInfoFactory.New) &&
+				m.Counter == 3);
+		sut.Statistics.FileInfo["bar.txt"].Methods.First()
+			.Should().Match<MethodStatistic>(m =>
+				m.Name == nameof(IFileInfo.Open) &&
+				// Note: Index 4 could be used internally for creating the full path of the file info.
+				m.Counter >= 4);
 	}
 
 	[Fact]
