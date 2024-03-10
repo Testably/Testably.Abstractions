@@ -8,6 +8,11 @@ namespace Testably.Abstractions.Testing.Statistics;
 public sealed class MethodStatistic
 {
 	/// <summary>
+	///     The global counter value to determine the order of calls.
+	/// </summary>
+	public int Counter { get; }
+
+	/// <summary>
 	///     The name of the called method.
 	/// </summary>
 	public string Name { get; }
@@ -17,8 +22,9 @@ public sealed class MethodStatistic
 	/// </summary>
 	public ParameterDescription[] Parameters { get; }
 
-	internal MethodStatistic(string name, ParameterDescription[] parameters)
+	internal MethodStatistic(int counter, string name, ParameterDescription[] parameters)
 	{
+		Counter = counter;
 		Name = name;
 		Parameters = parameters;
 	}
