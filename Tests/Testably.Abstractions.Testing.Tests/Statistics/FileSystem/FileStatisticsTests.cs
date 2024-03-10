@@ -539,6 +539,7 @@ public sealed class FileStatisticsTests
 		Skip.If(!Test.RunsOnLinux);
 
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 		string path = "foo";
 
 		#pragma warning disable CA1416
