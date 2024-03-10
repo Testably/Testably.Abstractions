@@ -74,7 +74,7 @@ internal sealed class DirectoryInfoMock
 		return directory;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="IDirectoryInfo.Delete()" />
 	public override void Delete()
 	{
 		using IDisposable registration = Register(nameof(Delete));

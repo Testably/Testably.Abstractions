@@ -32,33 +32,35 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsG
 
 	#region IFileSystemStatistics Members
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="IFileSystemStatistics.Directory" />
 	IStatistics IFileSystemStatistics.Directory => Directory;
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="IFileSystemStatistics.DirectoryInfo" />
 	IPathStatistics IFileSystemStatistics.DirectoryInfo => DirectoryInfo;
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="IFileSystemStatistics.DriveInfo" />
 	IPathStatistics IFileSystemStatistics.DriveInfo => DriveInfo;
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="IFileSystemStatistics.File" />
 	IStatistics IFileSystemStatistics.File => File;
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="IFileSystemStatistics.FileInfo" />
 	IPathStatistics IFileSystemStatistics.FileInfo => FileInfo;
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="IFileSystemStatistics.FileStream" />
 	IPathStatistics IFileSystemStatistics.FileStream => FileStream;
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="IFileSystemStatistics.FileSystemWatcher" />
 	IPathStatistics IFileSystemStatistics.FileSystemWatcher => FileSystemWatcher;
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="IFileSystemStatistics.Path" />
 	IStatistics IFileSystemStatistics.Path => Path;
 
 	#endregion
 
-	/// <inheritdoc />
+	#region IStatisticsGate Members
+
+	/// <inheritdoc cref="IStatisticsGate.TryGetLock(out IDisposable)" />
 	public bool TryGetLock(out IDisposable release)
 	{
 		if (IsDisabled.Value)
@@ -72,11 +74,13 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsG
 		return true;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc cref="IStatisticsGate.GetCounter()" />
 	public int GetCounter()
 	{
 		return Interlocked.Increment(ref _counter);
 	}
+
+	#endregion
 
 	private class TemporaryDisable : IDisposable
 	{
@@ -89,7 +93,7 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsG
 			_onDispose = onDispose;
 		}
 
-		/// <inheritdoc />
+		/// <inheritdoc cref="IDisposable.Dispose()" />
 		public void Dispose() => _onDispose();
 	}
 }

@@ -192,7 +192,7 @@ internal sealed class NullContainer : IStorageContainer
 	{
 		public CreationNullTime(MockFileSystem fileSystem) : base(fileSystem) { }
 
-		/// <inheritdoc />
+		/// <inheritdoc cref="NullTime.Set(DateTime, DateTimeKind)" />
 		public override void Set(DateTime time, DateTimeKind kind)
 		{
 #if NET7_0_OR_GREATER
