@@ -8,6 +8,9 @@
 /// </remarks>
 public interface IPathStatistics : IStatistics
 {
+	/// <summary>
+	///     Returns the underlying <see cref="IStatistics" /> under <paramref name="path" />.
+	/// </summary>
 	IStatistics this[string path]
 	{
 		get;

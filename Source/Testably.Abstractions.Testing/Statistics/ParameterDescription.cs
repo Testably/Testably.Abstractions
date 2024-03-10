@@ -3,19 +3,42 @@ using System.Linq;
 
 namespace Testably.Abstractions.Testing.Statistics;
 
+/// <summary>
+///     The description of a parameter in the statistic.
+/// </summary>
 public abstract class ParameterDescription
 {
+	/// <summary>
+	///     Initializes a new instance of <see cref="ParameterDescription" />.
+	/// </summary>
+	/// <param name="isOutParameter"></param>
 	protected ParameterDescription(bool isOutParameter)
 	{
 		IsOutParameter = isOutParameter;
 	}
 
+	/// <summary>
+	///     Specifies, if the parameter was used as an <c>out</c> parameter.
+	/// </summary>
 	public bool IsOutParameter { get; }
 
+	/// <summary>
+	///     Checks, if the value of the parameter equals <paramref name="value" />.
+	/// </summary>
+	/// <remarks>When the types match, uses <see cref="object.Equals(object)" />.</remarks>
 	public bool Is<T>(T value)
 		=> this is GenericParameterDescription<T> d &&
 		   IsEqual(value, d.Value);
 
+	/// <summary>
+	///     Checks, if the sequence of values of the parameter equals <paramref name="value" />.
+	/// </summary>
+	/// <remarks>
+	///     When the types match, uses
+	///     <see
+	///         cref="Enumerable.SequenceEqual{T}(System.Collections.Generic.IEnumerable{T},System.Collections.Generic.IEnumerable{T})" />
+	///     .
+	/// </remarks>
 	public bool Is<T>(T[] value)
 	{
 		return this is GenericParameterDescription<T[]> d &&
@@ -28,38 +51,61 @@ public abstract class ParameterDescription
 		{
 			return value2 == null;
 		}
+
 		return value1.Equals(value2);
 	}
 #if FEATURE_SPAN
+	/// <summary>
+	///     Checks, if the span value of the parameter equals <paramref name="value" />.
+	/// </summary>
 	public bool Is<T>(Span<T> value)
 		=> this is SpanParameterDescription<T> { IsReadOnly: false } d &&
 		   d.Value.SequenceEqual(value.ToArray());
 
+	/// <summary>
+	///     Checks, if the read-only span value of the parameter equals <paramref name="value" />.
+	/// </summary>
 	public bool Is<T>(ReadOnlySpan<T> value)
 		=> this is SpanParameterDescription<T> { IsReadOnly: true } d &&
 		   d.Value.SequenceEqual(value.ToArray());
 #endif
 
+	/// <summary>
+	///     Checks, if the span value of the parameter matches the <paramref name="comparer" />.
+	/// </summary>
 	public bool Is<T>(Func<T, bool> comparer)
 		=> this is GenericParameterDescription<T> d &&
 		   comparer(d.Value);
 
+	/// <summary>
+	///     Creates a <see cref="ParameterDescription" /> from the <paramref name="value" />.
+	/// </summary>
 	public static ParameterDescription FromParameter<T>(T value)
 	{
 		return new GenericParameterDescription<T>(value, false);
 	}
 
 #if FEATURE_SPAN
+	/// <summary>
+	///     Creates a <see cref="ParameterDescription" /> from the span <paramref name="value" />.
+	/// </summary>
 	public static ParameterDescription FromParameter<T>(Span<T> value)
 	{
 		return new SpanParameterDescription<T>(value);
 	}
 
+	/// <summary>
+	///     Creates a <see cref="ParameterDescription" /> from the read-only span <paramref name="value" />.
+	/// </summary>
 	public static ParameterDescription FromParameter<T>(ReadOnlySpan<T> value)
 	{
 		return new SpanParameterDescription<T>(value);
 	}
 #endif
+
+	/// <summary>
+	///     Creates a <see cref="ParameterDescription" /> from the <paramref name="value" /> used as an <c>out</c> parameter.
+	/// </summary>
 	public static ParameterDescription FromOutParameter<T>(T value)
 	{
 		return new GenericParameterDescription<T>(value, true);
@@ -74,7 +120,7 @@ public abstract class ParameterDescription
 			Value = value;
 		}
 
-		/// <inheritdoc />
+		/// <inheritdoc cref="object.ToString()" />
 		public override string? ToString()
 		{
 			if (Value is string)
@@ -105,9 +151,9 @@ public abstract class ParameterDescription
 			IsReadOnly = true;
 		}
 
-		/// <inheritdoc />
-		public override string? ToString()
-			=> Value?.ToString();
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"[{string.Join(",", Value)}]";
 	}
 #endif
 }
