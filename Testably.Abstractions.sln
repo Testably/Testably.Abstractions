@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{94F99274-3518-45
 		Directory.Build.props = Directory.Build.props
 		Directory.Packages.props = Directory.Packages.props
 		Feature.Flags.props = Feature.Flags.props
+		global.json = global.json
 		LICENSE = LICENSE
 		nuget.config = nuget.config
 		README.md = README.md
