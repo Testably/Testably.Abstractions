@@ -81,8 +81,8 @@ public class FileStreamStatisticsTests
 
 		fileStream.EndRead(asyncResult);
 
-		sut.Statistics.FileStream["foo"].Methods.Count.Should().Be(2);
-		sut.Statistics.FileStream["foo"].Methods.Values.Should()
+		sut.Statistics.FileStream["foo"].Methods.Length.Should().Be(2);
+		sut.Statistics.FileStream["foo"].Methods.Should()
 			.ContainSingle(c => c.Name == nameof(FileSystemStream.EndRead) &&
 			                    c.Parameters.Length == 1 &&
 			                    c.Parameters[0].Is(asyncResult));
@@ -98,8 +98,8 @@ public class FileStreamStatisticsTests
 
 		fileStream.EndWrite(asyncResult);
 
-		sut.Statistics.FileStream["foo"].Methods.Count.Should().Be(2);
-		sut.Statistics.FileStream["foo"].Methods.Values.Should()
+		sut.Statistics.FileStream["foo"].Methods.Length.Should().Be(2);
+		sut.Statistics.FileStream["foo"].Methods.Should()
 			.ContainSingle(c => c.Name == nameof(FileSystemStream.EndWrite) &&
 			                    c.Parameters.Length == 1 &&
 			                    c.Parameters[0].Is(asyncResult));
