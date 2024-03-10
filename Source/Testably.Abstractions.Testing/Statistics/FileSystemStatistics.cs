@@ -82,7 +82,7 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsG
 
 	#endregion
 
-	private class TemporaryDisable : IDisposable
+	private sealed class TemporaryDisable : IDisposable
 	{
 		public static IDisposable None { get; } = new NoOpDisposable();
 

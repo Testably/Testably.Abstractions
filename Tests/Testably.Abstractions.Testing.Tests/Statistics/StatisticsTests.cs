@@ -183,7 +183,7 @@ public sealed class StatisticsTests
 
 			if (type.IsGenericType)
 			{
-				int idx = type.Name.IndexOf("`", StringComparison.Ordinal);
+				int idx = type.Name.IndexOf('`', StringComparison.Ordinal);
 				if (idx > 0)
 				{
 					return

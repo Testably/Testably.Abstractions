@@ -45,15 +45,6 @@ public abstract class ParameterDescription
 		       value.SequenceEqual(d.Value);
 	}
 
-	private static bool IsEqual<T>(T value1, T value2)
-	{
-		if (value1 is null)
-		{
-			return value2 is null;
-		}
-
-		return value1.Equals(value2);
-	}
 #if FEATURE_SPAN
 	/// <summary>
 	///     Checks, if the span value of the parameter equals <paramref name="value" />.
@@ -111,7 +102,17 @@ public abstract class ParameterDescription
 		return new GenericParameterDescription<T>(value, true);
 	}
 
-	private class GenericParameterDescription<T> : ParameterDescription
+	private static bool IsEqual<T>(T value1, T value2)
+	{
+		if (value1 is null)
+		{
+			return value2 is null;
+		}
+
+		return value1.Equals(value2);
+	}
+
+	private sealed class GenericParameterDescription<T> : ParameterDescription
 	{
 		public T Value { get; }
 
@@ -133,7 +134,7 @@ public abstract class ParameterDescription
 	}
 
 #if FEATURE_SPAN
-	private class SpanParameterDescription<T> : ParameterDescription
+	private sealed class SpanParameterDescription<T> : ParameterDescription
 	{
 		public T[] Value { get; }
 

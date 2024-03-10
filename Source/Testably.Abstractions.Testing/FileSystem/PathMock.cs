@@ -524,7 +524,9 @@ internal sealed class PathMock : PathSystemBase
 	private IDisposable Register<T1>(string name, ReadOnlySpan<T1> parameter1)
 		=> _fileSystem.StatisticsRegistration.Path.Register(name,
 			ParameterDescription.FromParameter(parameter1));
+#endif
 
+#if FEATURE_PATH_ADVANCED
 	private IDisposable Register<T1, T2>(string name, ReadOnlySpan<T1> parameter1,
 		ReadOnlySpan<T2> parameter2)
 		=> _fileSystem.StatisticsRegistration.Path.Register(name,
