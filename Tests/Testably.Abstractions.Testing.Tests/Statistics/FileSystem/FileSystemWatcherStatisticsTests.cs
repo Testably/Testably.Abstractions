@@ -54,9 +54,8 @@ public class FileSystemWatcherStatisticsTests
 
 		fileSystemWatcher.WaitForChanged(changeType);
 
-		sut.Statistics.FileSystemWatcher["foo"].ShouldOnlyContain(
-			nameof(IFileSystemWatcher.WaitForChanged),
-			changeType);
+		sut.Statistics.FileSystemWatcher["foo"]
+			.ShouldOnlyContain(nameof(IFileSystemWatcher.WaitForChanged), changeType);
 	}
 
 	[SkippableFact]
@@ -81,9 +80,8 @@ public class FileSystemWatcherStatisticsTests
 
 		fileSystemWatcher.WaitForChanged(changeType, timeout);
 
-		sut.Statistics.FileSystemWatcher["foo"].ShouldOnlyContain(
-			nameof(IFileSystemWatcher.WaitForChanged),
-			changeType, timeout);
+		sut.Statistics.FileSystemWatcher["foo"]
+			.ShouldOnlyContain(nameof(IFileSystemWatcher.WaitForChanged), changeType, timeout);
 	}
 
 #if FEATURE_FILESYSTEM_NET7
@@ -109,8 +107,8 @@ public class FileSystemWatcherStatisticsTests
 
 		fileSystemWatcher.WaitForChanged(changeType, timeout);
 
-		sut.Statistics.FileSystemWatcher["foo"].ShouldOnlyContain(nameof(IFileSystemWatcher.WaitForChanged),
-			changeType, timeout);
+		sut.Statistics.FileSystemWatcher["foo"]
+			.ShouldOnlyContain(nameof(IFileSystemWatcher.WaitForChanged), changeType, timeout);
 	}
 #endif
 }

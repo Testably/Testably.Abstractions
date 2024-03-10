@@ -1360,24 +1360,26 @@ internal sealed class FileMock : IFile
 	}
 #endif
 
-	private IDisposable Register<T1>(string name, T1 parameter1)
+	private IDisposable Register<T1>(string name,
+		T1 parameter1)
 		=> _fileSystem.StatisticsRegistration.File.Register(name,
 			ParameterDescription.FromParameter(parameter1));
 
-	private IDisposable Register<T1, T2>(string name, T1 parameter1, T2 parameter2)
+	private IDisposable Register<T1, T2>(string name,
+		T1 parameter1, T2 parameter2)
 		=> _fileSystem.StatisticsRegistration.File.Register(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2));
 
-	private IDisposable Register<T1, T2, T3>(string name, T1 parameter1, T2 parameter2,
-		T3 parameter3)
+	private IDisposable Register<T1, T2, T3>(string name,
+		T1 parameter1, T2 parameter2, T3 parameter3)
 		=> _fileSystem.StatisticsRegistration.File.Register(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2),
 			ParameterDescription.FromParameter(parameter3));
 
-	private IDisposable Register<T1, T2, T3, T4>(string name, T1 parameter1, T2 parameter2,
-		T3 parameter3, T4 parameter4)
+	private IDisposable Register<T1, T2, T3, T4>(string name,
+		T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4)
 		=> _fileSystem.StatisticsRegistration.File.Register(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2),
