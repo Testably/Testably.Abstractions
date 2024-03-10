@@ -194,31 +194,31 @@ public abstract partial class Tests<TFileSystem>
 
 		private sealed class ContainerMock : IContainer
 		{
-			/// <inheritdoc />
+			/// <inheritdoc cref="IDisposable.Dispose()" />
 			public void Dispose()
 			{
 				// Ignore any call in tests
 			}
 
-			/// <inheritdoc />
+			/// <inheritdoc cref="IContainer.Add(IComponent?)" />
 			public void Add(IComponent? component)
 			{
 				// Ignore any call in tests
 			}
 
-			/// <inheritdoc />
+			/// <inheritdoc cref="IContainer.Add(IComponent?, string?)" />
 			public void Add(IComponent? component, string? name)
 			{
 				// Ignore any call in tests
 			}
 
-			/// <inheritdoc />
+			/// <inheritdoc cref="IContainer.Remove(IComponent?)" />
 			public void Remove(IComponent? component)
 			{
 				// Ignore any call in tests
 			}
 
-			/// <inheritdoc />
+			/// <inheritdoc cref="IContainer.Components" />
 			public ComponentCollection Components
 				=> throw new NotSupportedException();
 		}

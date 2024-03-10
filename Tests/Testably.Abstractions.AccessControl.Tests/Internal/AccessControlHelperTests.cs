@@ -118,7 +118,6 @@ public sealed class AccessControlHelperTests
 
 	private class CustomFileSystemStream : FileSystemStream
 	{
-		/// <inheritdoc />
 		public CustomFileSystemStream() : base(Null, ".", false)
 		{
 		}

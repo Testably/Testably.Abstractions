@@ -2,6 +2,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
+using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;
@@ -24,18 +26,30 @@ internal sealed class DriveInfoFactoryMock : IDriveInfoFactory
 	/// <inheritdoc cref="IDriveInfoFactory.FromDriveName(string)" />
 	[Obsolete("Use `IDriveInfoFactory.New(string)` instead")]
 	public IDriveInfo FromDriveName(string driveName)
-		=> New(driveName);
+	{
+		using IDisposable registration = Register(nameof(FromDriveName),
+			driveName);
+
+		return New(driveName);
+	}
 
 	/// <inheritdoc cref="IDriveInfoFactory.GetDrives()" />
 	public IDriveInfo[] GetDrives()
-		=> _fileSystem.Storage.GetDrives()
+	{
+		using IDisposable registration = Register(nameof(GetDrives));
+
+		return _fileSystem.Storage.GetDrives()
 			.Where(x => !x.IsUncPath)
 			.Cast<IDriveInfo>()
 			.ToArray();
+	}
 
 	/// <inheritdoc cref="IDriveInfoFactory.New(string)" />
 	public IDriveInfo New(string driveName)
 	{
+		using IDisposable registration = Register(nameof(New),
+			driveName);
+
 		if (driveName == null)
 		{
 			throw new ArgumentNullException(nameof(driveName));
@@ -50,6 +64,9 @@ internal sealed class DriveInfoFactoryMock : IDriveInfoFactory
 	[return: NotNullIfNotNull("driveInfo")]
 	public IDriveInfo? Wrap(DriveInfo? driveInfo)
 	{
+		using IDisposable registration = Register(nameof(Wrap),
+			driveInfo);
+
 		if (driveInfo?.Name == null)
 		{
 			return null;
@@ -59,4 +76,11 @@ internal sealed class DriveInfoFactoryMock : IDriveInfoFactory
 	}
 
 	#endregion
+
+	private IDisposable Register(string name)
+		=> _fileSystem.StatisticsRegistration.DriveInfo.Register(name);
+
+	private IDisposable Register<T1>(string name, T1 parameter1)
+		=> _fileSystem.StatisticsRegistration.DriveInfo.Register(name,
+			ParameterDescription.FromParameter(parameter1));
 }

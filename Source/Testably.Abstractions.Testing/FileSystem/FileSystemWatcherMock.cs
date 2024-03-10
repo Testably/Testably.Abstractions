@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Helpers;
+using Testably.Abstractions.Testing.Statistics;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
@@ -135,6 +136,8 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	/// <inheritdoc cref="IFileSystemWatcher.BeginInit()" />
 	public void BeginInit()
 	{
+		using IDisposable registration = Register(nameof(BeginInit));
+
 		_isInitializing = true;
 		Stop();
 	}
@@ -151,6 +154,8 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	/// <inheritdoc cref="IFileSystemWatcher.EndInit()" />
 	public void EndInit()
 	{
+		using IDisposable registration = Register(nameof(EndInit));
+
 		_isInitializing = false;
 		Restart();
 	}
@@ -164,18 +169,33 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	/// <inheritdoc cref="IFileSystemWatcher.WaitForChanged(WatcherChangeTypes)" />
 	public IWaitForChangedResult WaitForChanged(
 		WatcherChangeTypes changeType)
-		=> WaitForChanged(changeType, Timeout.Infinite);
+	{
+		using IDisposable registration = Register(nameof(WaitForChanged),
+			changeType);
+
+		return WaitForChanged(changeType, Timeout.Infinite);
+	}
 
 	/// <inheritdoc cref="IFileSystemWatcher.WaitForChanged(WatcherChangeTypes, int)" />
 	public IWaitForChangedResult WaitForChanged(
 		WatcherChangeTypes changeType, int timeout)
-		=> WaitForChangedInternal(changeType, TimeSpan.FromMilliseconds(timeout));
+	{
+		using IDisposable registration = Register(nameof(WaitForChanged),
+			changeType, timeout);
+
+		return WaitForChangedInternal(changeType, TimeSpan.FromMilliseconds(timeout));
+	}
 
 #if FEATURE_FILESYSTEM_NET7
 	/// <inheritdoc cref="IFileSystemWatcher.WaitForChanged(WatcherChangeTypes, TimeSpan)" />
 	public IWaitForChangedResult WaitForChanged(
 		WatcherChangeTypes changeType, TimeSpan timeout)
-		=> WaitForChangedInternal(changeType, timeout);
+	{
+		using IDisposable registration = Register(nameof(WaitForChanged),
+			changeType, timeout);
+
+		return WaitForChangedInternal(changeType, timeout);
+	}
 #endif
 
 	#endregion
@@ -506,4 +526,16 @@ public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		/// <inheritdoc cref="IWaitForChangedResult.TimedOut" />
 		public bool TimedOut { get; }
 	}
+
+	private IDisposable Register(string name)
+		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.Register(_path, name);
+
+	private IDisposable Register<T1>(string name, T1 parameter1)
+		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.Register(_path, name,
+			ParameterDescription.FromParameter(parameter1));
+
+	private IDisposable Register<T1, T2>(string name, T1 parameter1, T2 parameter2)
+		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.Register(_path, name,
+			ParameterDescription.FromParameter(parameter1),
+			ParameterDescription.FromParameter(parameter2));
 }

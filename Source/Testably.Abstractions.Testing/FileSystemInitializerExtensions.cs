@@ -29,10 +29,11 @@ public static class FileSystemInitializerExtensions
 		Action<FileSystemInitializerOptions>? options = null)
 		where TFileSystem : IFileSystem
 	{
-		if (Path.IsPathRooted(basePath) &&
+		using IDisposable release = fileSystem.IgnoreStatistics();
+		if (fileSystem.Path.IsPathRooted(basePath) &&
 		    fileSystem is MockFileSystem mockFileSystem)
 		{
-			string? drive = Path.GetPathRoot(basePath);
+			string? drive = fileSystem.Path.GetPathRoot(basePath);
 			mockFileSystem.WithDrive(drive);
 		}
 
