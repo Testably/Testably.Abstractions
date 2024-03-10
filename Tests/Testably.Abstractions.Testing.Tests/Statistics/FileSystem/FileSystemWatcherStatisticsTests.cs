@@ -1,6 +1,6 @@
 ﻿using System.IO;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
@@ -12,10 +12,12 @@ public class FileSystemWatcherStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithSubdirectory("foo");
+		using IFileSystemWatcher fileSystemWatcher = sut.FileSystemWatcher.New("foo");
 
-		sut.FileSystemWatcher.New("foo").BeginInit();
+		fileSystemWatcher.BeginInit();
 
-		sut.Statistics.FileSystemWatcher["foo"].ShouldOnlyContain(nameof(IFileSystemWatcher.BeginInit));
+		sut.Statistics.FileSystemWatcher["foo"]
+			.ShouldOnlyContain(nameof(IFileSystemWatcher.BeginInit));
 	}
 
 	[SkippableFact]
@@ -23,10 +25,12 @@ public class FileSystemWatcherStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithSubdirectory("foo");
+		using IFileSystemWatcher fileSystemWatcher = sut.FileSystemWatcher.New("foo");
 
-		sut.FileSystemWatcher.New("foo").EndInit();
+		fileSystemWatcher.EndInit();
 
-		sut.Statistics.FileSystemWatcher["foo"].ShouldOnlyContain(nameof(IFileSystemWatcher.EndInit));
+		sut.Statistics.FileSystemWatcher["foo"]
+			.ShouldOnlyContain(nameof(IFileSystemWatcher.EndInit));
 	}
 
 	[SkippableFact]
@@ -34,6 +38,7 @@ public class FileSystemWatcherStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithSubdirectory("foo");
+		using IFileSystemWatcher fileSystemWatcher = sut.FileSystemWatcher.New("foo");
 		// Changes in the background are necessary, so that FileSystemWatcher.WaitForChanged returns.
 		CancellationTokenSource cts = new(TimeSpan.FromSeconds(1));
 		_ = Task.Run(async () =>
@@ -47,9 +52,10 @@ public class FileSystemWatcherStatisticsTests
 		}, cts.Token);
 		WatcherChangeTypes changeType = WatcherChangeTypes.Created;
 
-		sut.FileSystemWatcher.New("foo").WaitForChanged(changeType);
+		fileSystemWatcher.WaitForChanged(changeType);
 
-		sut.Statistics.FileSystemWatcher["foo"].ShouldOnlyContain(nameof(IFileSystemWatcher.WaitForChanged),
+		sut.Statistics.FileSystemWatcher["foo"].ShouldOnlyContain(
+			nameof(IFileSystemWatcher.WaitForChanged),
 			changeType);
 	}
 
@@ -58,6 +64,7 @@ public class FileSystemWatcherStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithSubdirectory("foo");
+		using IFileSystemWatcher fileSystemWatcher = sut.FileSystemWatcher.New("foo");
 		// Changes in the background are necessary, so that FileSystemWatcher.WaitForChanged returns.
 		CancellationTokenSource cts = new(TimeSpan.FromSeconds(1));
 		_ = Task.Run(async () =>
@@ -72,9 +79,10 @@ public class FileSystemWatcherStatisticsTests
 		WatcherChangeTypes changeType = WatcherChangeTypes.Created;
 		int timeout = 42;
 
-		sut.FileSystemWatcher.New("foo").WaitForChanged(changeType, timeout);
+		fileSystemWatcher.WaitForChanged(changeType, timeout);
 
-		sut.Statistics.FileSystemWatcher["foo"].ShouldOnlyContain(nameof(IFileSystemWatcher.WaitForChanged),
+		sut.Statistics.FileSystemWatcher["foo"].ShouldOnlyContain(
+			nameof(IFileSystemWatcher.WaitForChanged),
 			changeType, timeout);
 	}
 
@@ -84,6 +92,7 @@ public class FileSystemWatcherStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithSubdirectory("foo");
+		using IFileSystemWatcher fileSystemWatcher = sut.FileSystemWatcher.New("foo");
 		// Changes in the background are necessary, so that FileSystemWatcher.WaitForChanged returns.
 		CancellationTokenSource cts = new(TimeSpan.FromSeconds(1));
 		_ = Task.Run(async () =>
@@ -98,7 +107,7 @@ public class FileSystemWatcherStatisticsTests
 		WatcherChangeTypes changeType = WatcherChangeTypes.Created;
 		TimeSpan timeout = TimeSpan.FromSeconds(2);
 
-		sut.FileSystemWatcher.New("foo").WaitForChanged(changeType, timeout);
+		fileSystemWatcher.WaitForChanged(changeType, timeout);
 
 		sut.Statistics.FileSystemWatcher["foo"].ShouldOnlyContain(nameof(IFileSystemWatcher.WaitForChanged),
 			changeType, timeout);

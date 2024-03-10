@@ -20,7 +20,7 @@ public class FileStreamFactoryStatisticsTests
 		SafeFileHandle handle = new();
 		FileAccess access = FileAccess.ReadWrite;
 
-		sut.FileStream.New(handle, access);
+		using FileSystemStream result = sut.FileStream.New(handle, access);
 
 		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
 			handle, access);
@@ -34,7 +34,7 @@ public class FileStreamFactoryStatisticsTests
 		string path = "foo";
 		FileMode mode = FileMode.OpenOrCreate;
 
-		sut.FileStream.New(path, mode);
+		using FileSystemStream result = sut.FileStream.New(path, mode);
 
 		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
 			path, mode);
@@ -49,7 +49,7 @@ public class FileStreamFactoryStatisticsTests
 		string path = "foo";
 		FileStreamOptions options = new();
 
-		sut.FileStream.New(path, options);
+		using FileSystemStream result = sut.FileStream.New(path, options);
 
 		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
 			path, options);
@@ -68,7 +68,7 @@ public class FileStreamFactoryStatisticsTests
 		FileAccess access = FileAccess.ReadWrite;
 		int bufferSize = 42;
 
-		sut.FileStream.New(handle, access, bufferSize);
+		using FileSystemStream result = sut.FileStream.New(handle, access, bufferSize);
 
 		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
 			handle, access, bufferSize);
@@ -83,7 +83,7 @@ public class FileStreamFactoryStatisticsTests
 		FileMode mode = FileMode.OpenOrCreate;
 		FileAccess access = FileAccess.ReadWrite;
 
-		sut.FileStream.New(path, mode, access);
+		using FileSystemStream result = sut.FileStream.New(path, mode, access);
 
 		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
 			path, mode, access);
@@ -102,7 +102,7 @@ public class FileStreamFactoryStatisticsTests
 		int bufferSize = 42;
 		bool isAsync = true;
 
-		sut.FileStream.New(handle, access, bufferSize, isAsync);
+		using FileSystemStream result = sut.FileStream.New(handle, access, bufferSize, isAsync);
 
 		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
 			handle, access, bufferSize, isAsync);
@@ -118,7 +118,7 @@ public class FileStreamFactoryStatisticsTests
 		FileAccess access = FileAccess.ReadWrite;
 		FileShare share = FileShare.ReadWrite;
 
-		sut.FileStream.New(path, mode, access, share);
+		using FileSystemStream result = sut.FileStream.New(path, mode, access, share);
 
 		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
 			path, mode, access, share);
@@ -134,7 +134,7 @@ public class FileStreamFactoryStatisticsTests
 		FileShare share = FileShare.ReadWrite;
 		int bufferSize = 42;
 
-		sut.FileStream.New(path, mode, access, share, bufferSize);
+		using FileSystemStream result = sut.FileStream.New(path, mode, access, share, bufferSize);
 
 		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
 			path, mode, access, share, bufferSize);
@@ -151,7 +151,7 @@ public class FileStreamFactoryStatisticsTests
 		int bufferSize = 42;
 		bool useAsync = true;
 
-		sut.FileStream.New(path, mode, access, share, bufferSize, useAsync);
+		using FileSystemStream result = sut.FileStream.New(path, mode, access, share, bufferSize, useAsync);
 
 		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
 			path, mode, access, share, bufferSize, useAsync);
@@ -168,7 +168,7 @@ public class FileStreamFactoryStatisticsTests
 		int bufferSize = 42;
 		FileOptions options = new();
 
-		sut.FileStream.New(path, mode, access, share, bufferSize, options);
+		using FileSystemStream result = sut.FileStream.New(path, mode, access, share, bufferSize, options);
 
 		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
 			path, mode, access, share, bufferSize, options);
@@ -182,7 +182,7 @@ public class FileStreamFactoryStatisticsTests
 
 		try
 		{
-			sut.FileStream.Wrap(fileStream);
+			using FileSystemStream result = sut.FileStream.Wrap(fileStream);
 		}
 		catch (NotSupportedException)
 		{

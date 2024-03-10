@@ -10,7 +10,7 @@ public class FileSystemWatcherFactoryStatisticsTests
 	{
 		MockFileSystem sut = new();
 
-		sut.FileSystemWatcher.New();
+		using IFileSystemWatcher result = sut.FileSystemWatcher.New();
 
 		sut.Statistics.FileSystemWatcher.ShouldOnlyContain(nameof(IFileSystemWatcherFactory.New));
 	}
@@ -22,7 +22,7 @@ public class FileSystemWatcherFactoryStatisticsTests
 		sut.Initialize().WithSubdirectory("foo");
 		string path = "foo";
 
-		sut.FileSystemWatcher.New(path);
+		using IFileSystemWatcher result = sut.FileSystemWatcher.New(path);
 
 		sut.Statistics.FileSystemWatcher.ShouldOnlyContain(nameof(IFileSystemWatcherFactory.New),
 			path);
@@ -36,7 +36,7 @@ public class FileSystemWatcherFactoryStatisticsTests
 		string path = "foo";
 		string filter = "bar";
 
-		sut.FileSystemWatcher.New(path, filter);
+		using IFileSystemWatcher result = sut.FileSystemWatcher.New(path, filter);
 
 		sut.Statistics.FileSystemWatcher.ShouldOnlyContain(nameof(IFileSystemWatcherFactory.New),
 			path, filter);
@@ -48,10 +48,9 @@ public class FileSystemWatcherFactoryStatisticsTests
 		MockFileSystem sut = new();
 		FileSystemWatcher fileSystemWatcher = new();
 
-		sut.FileSystemWatcher.Wrap(fileSystemWatcher);
+		using IFileSystemWatcher result = sut.FileSystemWatcher.Wrap(fileSystemWatcher);
 
 		sut.Statistics.FileSystemWatcher.ShouldOnlyContain(nameof(IFileSystemWatcherFactory.Wrap),
 			fileSystemWatcher);
 	}
-
 }

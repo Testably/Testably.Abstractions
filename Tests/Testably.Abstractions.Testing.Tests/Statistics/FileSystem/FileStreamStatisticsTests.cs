@@ -12,14 +12,14 @@ public class FileStreamStatisticsTests
 	public void BeginRead_ByteArray_Int_Int_AsyncCallback_Object_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		byte[] buffer = Encoding.UTF8.GetBytes("foo");
 		int offset = 0;
 		int count = 2;
 		AsyncCallback? callback = null;
-		object? state = new();
+		object? state = null;
 
-		sut.FileStream.New("foo", FileMode.OpenOrCreate)
-			.BeginRead(buffer, offset, count, callback, state);
+		fileStream.BeginRead(buffer, offset, count, callback, state);
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.BeginRead),
 			buffer, offset, count, callback, state);
@@ -29,14 +29,14 @@ public class FileStreamStatisticsTests
 	public void BeginWrite_ByteArray_Int_Int_AsyncCallback_Object_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		byte[] buffer = Encoding.UTF8.GetBytes("foo");
 		int offset = 0;
 		int count = 2;
 		AsyncCallback? callback = null;
 		object? state = null;
 
-		sut.FileStream.New("foo", FileMode.OpenOrCreate)
-			.BeginWrite(buffer, offset, count, callback, state);
+		fileStream.BeginWrite(buffer, offset, count, callback, state);
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.BeginWrite),
 			buffer, offset, count, callback, state);
@@ -46,10 +46,11 @@ public class FileStreamStatisticsTests
 	public void CopyTo_Stream_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		Stream destination = new MemoryStream();
 		int bufferSize = 42;
 
-		sut.FileStream.New("foo", FileMode.OpenOrCreate).CopyTo(destination, bufferSize);
+		fileStream.CopyTo(destination, bufferSize);
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.CopyTo),
 			destination, bufferSize);
@@ -59,12 +60,12 @@ public class FileStreamStatisticsTests
 	public async Task CopyToAsync_Stream_Int_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		Stream destination = new MemoryStream();
 		int bufferSize = 42;
 		CancellationToken cancellationToken = CancellationToken.None;
 
-		await sut.FileStream.New("foo", FileMode.OpenOrCreate)
-			.CopyToAsync(destination, bufferSize, cancellationToken);
+		await fileStream.CopyToAsync(destination, bufferSize, cancellationToken);
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.CopyToAsync),
 			destination, bufferSize, cancellationToken);
@@ -75,10 +76,10 @@ public class FileStreamStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
-		FileSystemStream stream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
-		IAsyncResult asyncResult = stream.BeginRead(new byte[10], 0, 10, null, null);
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
+		IAsyncResult asyncResult = fileStream.BeginRead(new byte[10], 0, 10, null, null);
 
-		stream.EndRead(asyncResult);
+		fileStream.EndRead(asyncResult);
 
 		sut.Statistics.FileStream["foo"].Methods.Count.Should().Be(2);
 		sut.Statistics.FileStream["foo"].Methods.Values.Should()
@@ -92,10 +93,10 @@ public class FileStreamStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
-		FileSystemStream stream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
-		IAsyncResult asyncResult = stream.BeginWrite(new byte[10], 0, 10, null, null);
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
+		IAsyncResult asyncResult = fileStream.BeginWrite(new byte[10], 0, 10, null, null);
 
-		stream.EndWrite(asyncResult);
+		fileStream.EndWrite(asyncResult);
 
 		sut.Statistics.FileStream["foo"].Methods.Count.Should().Be(2);
 		sut.Statistics.FileStream["foo"].Methods.Values.Should()
@@ -108,8 +109,9 @@ public class FileStreamStatisticsTests
 	public void Flush_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 
-		sut.FileStream.New("foo", FileMode.OpenOrCreate).Flush();
+		fileStream.Flush();
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.Flush));
 	}
@@ -118,9 +120,10 @@ public class FileStreamStatisticsTests
 	public void Flush_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		bool flushToDisk = true;
 
-		sut.FileStream.New("foo", FileMode.OpenOrCreate).Flush(flushToDisk);
+		fileStream.Flush(flushToDisk);
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.Flush),
 			flushToDisk);
@@ -130,9 +133,10 @@ public class FileStreamStatisticsTests
 	public async Task FlushAsync_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		CancellationToken cancellationToken = CancellationToken.None;
 
-		await sut.FileStream.New("foo", FileMode.OpenOrCreate).FlushAsync(cancellationToken);
+		await fileStream.FlushAsync(cancellationToken);
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.FlushAsync),
 			cancellationToken);
@@ -143,9 +147,10 @@ public class FileStreamStatisticsTests
 	public void Read_SpanByte_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		Span<byte> buffer = new();
 
-		_ = sut.FileStream.New("foo", FileMode.OpenOrCreate).Read(buffer);
+		_ = fileStream.Read(buffer);
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.Read),
 			buffer);
@@ -156,11 +161,12 @@ public class FileStreamStatisticsTests
 	public void Read_ByteArray_Int_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		byte[] buffer = Encoding.UTF8.GetBytes("foo");
 		int offset = 0;
 		int count = 2;
 
-		sut.FileStream.New("foo", FileMode.OpenOrCreate).Read(buffer, offset, count);
+		_ = fileStream.Read(buffer, offset, count);
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.Read),
 			buffer, offset, count);
@@ -168,13 +174,14 @@ public class FileStreamStatisticsTests
 
 #if FEATURE_SPAN
 	[SkippableFact]
-	public void ReadAsync_MemoryByte_CancellationToken_ShouldRegisterCall()
+	public async Task ReadAsync_MemoryByte_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		await using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		Memory<byte> buffer = new();
 		CancellationToken cancellationToken = CancellationToken.None;
 
-		sut.FileStream.New("foo", FileMode.OpenOrCreate).ReadAsync(buffer, cancellationToken);
+		_ = await fileStream.ReadAsync(buffer, cancellationToken);
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.ReadAsync),
 			buffer, cancellationToken);
@@ -185,13 +192,13 @@ public class FileStreamStatisticsTests
 	public async Task ReadAsync_ByteArray_Int_Int_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		byte[] buffer = Encoding.UTF8.GetBytes("foo");
 		int offset = 0;
 		int count = 2;
 		CancellationToken cancellationToken = CancellationToken.None;
 
-		await sut.FileStream.New("foo", FileMode.OpenOrCreate)
-			.ReadAsync(buffer, offset, count, cancellationToken);
+		_ = await fileStream.ReadAsync(buffer, offset, count, cancellationToken);
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.ReadAsync),
 			buffer, offset, count, cancellationToken);
@@ -201,8 +208,9 @@ public class FileStreamStatisticsTests
 	public void ReadByte_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 
-		sut.FileStream.New("foo", FileMode.OpenOrCreate).ReadByte();
+		fileStream.ReadByte();
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.ReadByte));
 	}
@@ -211,10 +219,11 @@ public class FileStreamStatisticsTests
 	public void Seek_Int64_SeekOrigin_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		long offset = new();
 		SeekOrigin origin = new();
 
-		sut.FileStream.New("foo", FileMode.OpenOrCreate).Seek(offset, origin);
+		fileStream.Seek(offset, origin);
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.Seek),
 			offset, origin);
@@ -224,9 +233,10 @@ public class FileStreamStatisticsTests
 	public void SetLength_Int64_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		long value = new();
 
-		sut.FileStream.New("foo", FileMode.OpenOrCreate).SetLength(value);
+		fileStream.SetLength(value);
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.SetLength),
 			value);
@@ -236,8 +246,9 @@ public class FileStreamStatisticsTests
 	public void ToString_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 
-		sut.FileStream.New("foo", FileMode.OpenOrCreate).ToString();
+		_ = fileStream.ToString();
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.ToString));
 	}
@@ -247,9 +258,10 @@ public class FileStreamStatisticsTests
 	public void Write_ReadOnlySpanByte_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		ReadOnlySpan<byte> buffer = new();
 
-		sut.FileStream.New("foo", FileMode.OpenOrCreate).Write(buffer);
+		fileStream.Write(buffer);
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.Write),
 			buffer);
@@ -260,11 +272,12 @@ public class FileStreamStatisticsTests
 	public void Write_ByteArray_Int_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		byte[] buffer = Encoding.UTF8.GetBytes("foo");
 		int offset = 0;
 		int count = 2;
 
-		sut.FileStream.New("foo", FileMode.OpenOrCreate).Write(buffer, offset, count);
+		fileStream.Write(buffer, offset, count);
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.Write),
 			buffer, offset, count);
@@ -272,13 +285,14 @@ public class FileStreamStatisticsTests
 
 #if FEATURE_SPAN
 	[SkippableFact]
-	public void WriteAsync_ReadOnlyMemoryByte_CancellationToken_ShouldRegisterCall()
+	public async Task WriteAsync_ReadOnlyMemoryByte_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		await using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		ReadOnlyMemory<byte> buffer = new();
 		CancellationToken cancellationToken = CancellationToken.None;
 
-		sut.FileStream.New("foo", FileMode.OpenOrCreate).WriteAsync(buffer, cancellationToken);
+		await fileStream.WriteAsync(buffer, cancellationToken);
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.WriteAsync),
 			buffer, cancellationToken);
@@ -289,13 +303,13 @@ public class FileStreamStatisticsTests
 	public async Task WriteAsync_ByteArray_Int_Int_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		byte[] buffer = Encoding.UTF8.GetBytes("foo");
 		int offset = 0;
 		int count = 2;
 		CancellationToken cancellationToken = CancellationToken.None;
 
-		await sut.FileStream.New("foo", FileMode.OpenOrCreate)
-			.WriteAsync(buffer, offset, count, cancellationToken);
+		await fileStream.WriteAsync(buffer, offset, count, cancellationToken);
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.WriteAsync),
 			buffer, offset, count, cancellationToken);
@@ -305,9 +319,10 @@ public class FileStreamStatisticsTests
 	public void WriteByte_Byte_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		byte value = new();
 
-		sut.FileStream.New("foo", FileMode.OpenOrCreate).WriteByte(value);
+		fileStream.WriteByte(value);
 
 		sut.Statistics.FileStream["foo"].ShouldOnlyContain(nameof(FileSystemStream.WriteByte),
 			value);
