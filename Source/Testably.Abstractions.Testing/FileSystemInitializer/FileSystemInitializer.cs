@@ -226,6 +226,6 @@ internal class FileSystemInitializer<TFileSystem>
 			return release;
 		}
 
-		return new NoRegistration();
+		return new NoOpDisposable();
 	}
 }

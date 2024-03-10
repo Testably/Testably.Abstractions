@@ -2,7 +2,7 @@
 
 namespace Testably.Abstractions.Testing.Helpers;
 
-internal sealed class NoRegistration : IDisposable
+internal sealed class NoOpDisposable : IDisposable
 {
 	/// <inheritdoc />
 	public void Dispose()

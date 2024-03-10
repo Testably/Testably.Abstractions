@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.Statistics;
 
@@ -71,7 +72,7 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsG
 
 	private class TemporaryDisable : IDisposable
 	{
-		public static IDisposable None { get; } = new TemporaryDisable(() => { });
+		public static IDisposable None { get; } = new NoOpDisposable();
 
 		private readonly Action _onDispose;
 
