@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Testably.Abstractions.Testing.Statistics;
 
 internal class CallStatistics : IStatistics
 {
 	private readonly IStatisticsGate _statisticsGate;
-	private readonly ConcurrentQueue<MethodStatistic> _calls = new();
-	public IReadOnlyList<MethodStatistic> Methods => _calls.ToList().AsReadOnly();
+	private readonly ConcurrentDictionary<int, MethodStatistic> _calls = new();
+	public IReadOnlyDictionary<int, MethodStatistic> Methods
+#if NET7_0_OR_GREATER
+		=> _calls.AsReadOnly();
+#else
+		=> _calls;
+#endif
 
 	public CallStatistics(IStatisticsGate statisticsGate)
 	{
@@ -24,7 +28,8 @@ internal class CallStatistics : IStatistics
 	{
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
-			_calls.Enqueue(new MethodStatistic(name, parameters));
+			int counter = _statisticsGate.GetCounter();
+			_calls[counter] = new MethodStatistic(name, parameters);
 		}
 
 		return release;

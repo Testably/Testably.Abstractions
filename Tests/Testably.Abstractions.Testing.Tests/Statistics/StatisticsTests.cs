@@ -37,11 +37,34 @@ public sealed class StatisticsTests
 
 		foreach (string directory in directories)
 		{
-			sut.Statistics.Directory.Methods
+			sut.Statistics.Directory.Methods.Values
 				.Should().ContainSingle(x =>
 					x.Name == nameof(Directory.CreateDirectory) &&
 					x.Parameters.Length == 1 &&
 					x.Parameters[0].Is(directory));
+		}
+
+		sut.Statistics.Directory.Methods.Keys.Should()
+			.BeEquivalentTo(Enumerable.Range(1, directories.Length));
+	}
+
+	[Fact]
+	public void Statistics_ShouldIncrementCallOrder()
+	{
+		MockFileSystem sut = new();
+		string[] directories = Enumerable.Range(1, 20)
+			.Select(i => $"foo-{i}")
+			.ToArray();
+
+		foreach (string directory in directories)
+		{
+			sut.Directory.CreateDirectory(directory);
+		}
+
+		for (int i = 0; i < directories.Length; i++)
+		{
+			sut.Statistics.Directory.Methods[i + 1]
+				.Parameters[0].Is(directories[i]).Should().BeTrue();
 		}
 	}
 
@@ -61,10 +84,28 @@ public sealed class StatisticsTests
 		for (int i = 0; i < directories.Length; i++)
 		{
 			sut.Statistics.Directory.Methods
+				.OrderBy(x => x.Key)
 				.Skip(i)
 				.First()
-				.Parameters[0].Is(directories[i]).Should().BeTrue();
+				.Value.Parameters[0].Is(directories[i]).Should().BeTrue();
 		}
+	}
+
+	[Fact]
+	public void Statistics_ShouldUseGlobalIncrement()
+	{
+		MockFileSystem sut = new();
+		sut.Directory.CreateDirectory("foo");
+		sut.File.WriteAllText("bar.txt", null);
+		IFileInfo fileInfo = sut.FileInfo.New("bar.txt");
+		using FileSystemStream stream = fileInfo.Open(FileMode.Open, FileAccess.Read);
+		_ = new StreamReader(stream).ReadToEnd();
+
+		sut.Statistics.Directory.Methods[1].Name.Should().Be(nameof(IDirectory.CreateDirectory));
+		sut.Statistics.File.Methods[2].Name.Should().Be(nameof(IFile.WriteAllText));
+		sut.Statistics.FileInfo.Methods[3].Name.Should().Be(nameof(IFileInfoFactory.New));
+		// Note: Index 4 ist used internally for creating the full path of the file info.
+		sut.Statistics.FileInfo["bar.txt"].Methods[5].Name.Should().Be(nameof(IFileInfo.Open));
 	}
 
 	[Fact]

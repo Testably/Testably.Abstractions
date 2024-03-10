@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.Helpers;
@@ -80,5 +81,11 @@ internal static class FileSystemExtensions
 		}
 
 		return fullFilePath;
+	}
+
+	internal static IDisposable Ignore(this IStatisticsGate statisticsGate)
+	{
+		statisticsGate.TryGetLock(out IDisposable? release);
+		return release;
 	}
 }

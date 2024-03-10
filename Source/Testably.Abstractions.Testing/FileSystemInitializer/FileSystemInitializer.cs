@@ -222,8 +222,7 @@ internal class FileSystemInitializer<TFileSystem>
 	{
 		if (fileSystem is MockFileSystem mockFileSystem)
 		{
-			mockFileSystem.StatisticsRegistration.TryGetLock(out IDisposable? release);
-			return release;
+			return mockFileSystem.StatisticsRegistration.Ignore();
 		}
 
 		return new NoOpDisposable();

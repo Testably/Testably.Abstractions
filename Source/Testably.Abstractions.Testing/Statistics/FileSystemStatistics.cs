@@ -14,6 +14,7 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsG
 	internal readonly FileSystemEntryStatistics FileStream;
 	internal readonly FileSystemEntryStatistics FileSystemWatcher;
 	internal readonly CallStatistics Path;
+	private int _counter;
 
 	private static readonly AsyncLocal<bool> IsDisabled = new();
 
@@ -65,9 +66,16 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsG
 			release = TemporaryDisable.None;
 			return false;
 		}
+
 		IsDisabled.Value = true;
 		release = new TemporaryDisable(() => IsDisabled.Value = false);
 		return true;
+	}
+
+	/// <inheritdoc />
+	public int GetCounter()
+	{
+		return Interlocked.Increment(ref _counter);
 	}
 
 	private class TemporaryDisable : IDisposable
