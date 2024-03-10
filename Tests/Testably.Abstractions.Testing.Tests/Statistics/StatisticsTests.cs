@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Win32.SafeHandles;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
+using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics;
 
@@ -127,7 +129,8 @@ public sealed class StatisticsTests
 				return string.Empty;
 			}
 
-			return $"{input[0].ToString().ToUpper(CultureInfo.InvariantCulture)}{input.Substring(1)}";
+			return
+				$"{input[0].ToString().ToUpper(CultureInfo.InvariantCulture)}{input.Substring(1)}";
 		}
 
 		string GetName(Type type, bool firstCharUpperCase)
@@ -136,6 +139,7 @@ public sealed class StatisticsTests
 			{
 				return "OutInt";
 			}
+
 			if (type.IsGenericType)
 			{
 				int idx = type.Name.IndexOf("`", StringComparison.Ordinal);
@@ -284,6 +288,13 @@ public sealed class StatisticsTests
 			}
 
 			ParameterInfo[] parameters = methodInfo.GetParameters();
+
+			if (Test.IsNetFramework &&
+			    parameters.Any(p => p.ParameterType == typeof(SafeFileHandle)))
+			{
+				// SafeFileHandle cannot be instantiated on .NET Framework
+				continue;
+			}
 
 			string expectedName = $"{methodInfo.Name}_{string.Join("_", methodInfo
 				.GetParameters()
