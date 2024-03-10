@@ -83,9 +83,25 @@ internal static class FileSystemExtensions
 		return fullFilePath;
 	}
 
+	/// <summary>
+	///     Ignores all registrations on the <paramref name="statisticsGate"/> until the return value is disposed.
+	/// </summary>
 	internal static IDisposable Ignore(this IStatisticsGate statisticsGate)
 	{
 		statisticsGate.TryGetLock(out IDisposable? release);
 		return release;
+	}
+
+	/// <summary>
+	///     Ignores all registrations on the <see cref="MockFileSystem.Statistics" /> until the return value is disposed.
+	/// </summary>
+	internal static IDisposable IgnoreStatistics(this IFileSystem fileSystem)
+	{
+		if (fileSystem is MockFileSystem mockFileSystem)
+		{
+			return mockFileSystem.StatisticsRegistration.Ignore();
+		}
+
+		return new NoOpDisposable();
 	}
 }

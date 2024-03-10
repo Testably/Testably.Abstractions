@@ -29,15 +29,12 @@ public static class FileSystemInitializerExtensions
 		Action<FileSystemInitializerOptions>? options = null)
 		where TFileSystem : IFileSystem
 	{
-		IDisposable? release = null;
-		if (fileSystem is MockFileSystem mockFileSystem)
+		using IDisposable release = fileSystem.IgnoreStatistics();
+		if (fileSystem.Path.IsPathRooted(basePath) &&
+		    fileSystem is MockFileSystem mockFileSystem)
 		{
-			mockFileSystem.StatisticsRegistration.TryGetLock(out release);
-			if (Path.IsPathRooted(basePath))
-			{
-				string? drive = Path.GetPathRoot(basePath);
-				mockFileSystem.WithDrive(drive);
-			}
+			string? drive = fileSystem.Path.GetPathRoot(basePath);
+			mockFileSystem.WithDrive(drive);
 		}
 
 		fileSystem.Directory.CreateDirectory(basePath);
@@ -49,7 +46,6 @@ public static class FileSystemInitializerExtensions
 			fileSystem.Directory.CreateDirectory(Path.GetTempPath());
 		}
 
-		release?.Dispose();
 		return new FileSystemInitializer<TFileSystem>(fileSystem, ".");
 	}
 

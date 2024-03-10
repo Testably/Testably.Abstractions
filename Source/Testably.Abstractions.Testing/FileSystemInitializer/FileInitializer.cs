@@ -1,4 +1,5 @@
 ﻿using System;
+using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.FileSystemInitializer;
 
@@ -23,7 +24,7 @@ internal sealed class FileInitializer<TFileSystem>
 	public IFileSystemFileInitializer<TFileSystem> Which(
 		Action<IFileManipulator> fileManipulation)
 	{
-		using IDisposable release = IgnoreStatistics(FileSystem);
+		using IDisposable release = FileSystem.IgnoreStatistics();
 		FileManipulator fileManipulator = new(FileSystem, File);
 		fileManipulation.Invoke(fileManipulator);
 		return this;

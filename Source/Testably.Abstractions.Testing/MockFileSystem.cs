@@ -84,7 +84,7 @@ public sealed class MockFileSystem : IFileSystem
 	public MockFileSystem()
 	{
 		StatisticsRegistration = new FileSystemStatistics(this);
-		StatisticsRegistration.TryGetLock(out IDisposable release);
+		using IDisposable release = StatisticsRegistration.Ignore();
 		Execute = Execute.Default;
 		RandomSystem = new MockRandomSystem();
 		TimeSystem = new MockTimeSystem(TimeProvider.Now());
@@ -101,7 +101,6 @@ public sealed class MockFileSystem : IFileSystem
 		SafeFileHandleStrategy = new NullSafeFileHandleStrategy();
 		AccessControlStrategy = new NullAccessControlStrategy();
 		AddDriveFromCurrentDirectory();
-		release.Dispose();
 	}
 
 	#region IFileSystem Members
