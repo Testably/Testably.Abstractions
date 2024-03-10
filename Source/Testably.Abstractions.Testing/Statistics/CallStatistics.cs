@@ -8,8 +8,8 @@ namespace Testably.Abstractions.Testing.Statistics;
 internal class CallStatistics : IStatistics
 {
 	private readonly IStatisticsGate _statisticsGate;
-	private readonly ConcurrentQueue<CallStatistic> _calls = new();
-	public IReadOnlyList<CallStatistic> Calls => _calls.ToList().AsReadOnly();
+	private readonly ConcurrentQueue<MethodStatistic> _calls = new();
+	public IReadOnlyList<MethodStatistic> Methods => _calls.ToList().AsReadOnly();
 
 	public CallStatistics(IStatisticsGate statisticsGate)
 	{
@@ -24,7 +24,7 @@ internal class CallStatistics : IStatistics
 	{
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
-			_calls.Enqueue(new CallStatistic(name, parameters));
+			_calls.Enqueue(new MethodStatistic(name, parameters));
 		}
 
 		return release;

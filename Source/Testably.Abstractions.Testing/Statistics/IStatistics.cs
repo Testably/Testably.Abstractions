@@ -10,5 +10,5 @@ public interface IStatistics
 	/// <summary>
 	///     Lists all called mocked methods.
 	/// </summary>
-	IReadOnlyList<CallStatistic> Calls { get; }
+	IReadOnlyList<MethodStatistic> Methods { get; }
 }

@@ -2,7 +2,6 @@
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
@@ -81,8 +80,8 @@ public class FileStreamStatisticsTests
 
 		stream.EndRead(asyncResult);
 
-		sut.Statistics.FileStream["foo"].Calls.Count.Should().Be(2);
-		sut.Statistics.FileStream["foo"].Calls.Should()
+		sut.Statistics.FileStream["foo"].Methods.Count.Should().Be(2);
+		sut.Statistics.FileStream["foo"].Methods.Should()
 			.ContainSingle(c => c.Name == nameof(FileSystemStream.EndRead) &&
 			                    c.Parameters.Length == 1 &&
 			                    c.Parameters[0].Is(asyncResult));
@@ -98,8 +97,8 @@ public class FileStreamStatisticsTests
 
 		stream.EndWrite(asyncResult);
 
-		sut.Statistics.FileStream["foo"].Calls.Count.Should().Be(2);
-		sut.Statistics.FileStream["foo"].Calls.Should()
+		sut.Statistics.FileStream["foo"].Methods.Count.Should().Be(2);
+		sut.Statistics.FileStream["foo"].Methods.Should()
 			.ContainSingle(c => c.Name == nameof(FileSystemStream.EndWrite) &&
 			                    c.Parameters.Length == 1 &&
 			                    c.Parameters[0].Is(asyncResult));

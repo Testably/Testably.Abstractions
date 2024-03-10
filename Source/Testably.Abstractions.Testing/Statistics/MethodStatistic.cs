@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Testing.Statistics;
 /// <summary>
 ///     Describes a call to a mocked method.
 /// </summary>
-public sealed class CallStatistic
+public sealed class MethodStatistic
 {
 	/// <summary>
 	///     The name of the called method.
@@ -17,7 +17,7 @@ public sealed class CallStatistic
 	/// </summary>
 	public ParameterDescription[] Parameters { get; }
 
-	internal CallStatistic(string name, ParameterDescription[] parameters)
+	internal MethodStatistic(string name, ParameterDescription[] parameters)
 	{
 		Name = name;
 		Parameters = parameters;

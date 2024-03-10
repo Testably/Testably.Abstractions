@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Threading;
-using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+using Testably.Abstractions.Testing.FileSystem;
 using Microsoft.Win32.SafeHandles;
 #endif
 #if FEATURE_FILESYSTEM_ASYNC
+using System.Threading;
 using System.Threading.Tasks;
 #endif
 // ReSharper disable PossibleMultipleEnumeration

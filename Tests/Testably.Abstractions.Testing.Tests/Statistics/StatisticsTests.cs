@@ -34,7 +34,7 @@ public sealed class StatisticsTests
 
 		foreach (string directory in directories)
 		{
-			sut.Statistics.Directory.Calls
+			sut.Statistics.Directory.Methods
 				.Should().ContainSingle(x =>
 					x.Name == nameof(Directory.CreateDirectory) &&
 					x.Parameters.Length == 1 &&
@@ -57,7 +57,7 @@ public sealed class StatisticsTests
 
 		for (int i = 0; i < directories.Length; i++)
 		{
-			sut.Statistics.Directory.Calls
+			sut.Statistics.Directory.Methods
 				.Skip(i)
 				.First()
 				.Parameters[0].Is(directories[i]).Should().BeTrue();
@@ -75,8 +75,8 @@ public sealed class StatisticsTests
 			.WithFile("f0").Which(f => f.HasBytesContent(Encoding.UTF8.GetBytes("bar")))
 			.WithAFile().Which(f => f.HasStringContent("foo"));
 
-		sut.Statistics.Directory.Calls.Should().BeEmpty();
-		sut.Statistics.File.Calls.Should().BeEmpty();
+		sut.Statistics.Directory.Methods.Should().BeEmpty();
+		sut.Statistics.File.Methods.Should().BeEmpty();
 	}
 
 	[Theory]
