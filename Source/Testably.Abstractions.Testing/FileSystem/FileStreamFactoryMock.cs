@@ -268,15 +268,13 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	/// <inheritdoc cref="IFileStreamFactory.Wrap(FileStream)" />
 	public FileSystemStream Wrap(FileStream fileStream)
 	{
-		using IDisposable registration = Register(nameof(Wrap),
-			fileStream);
-
+		Register(nameof(Wrap), fileStream);
 		throw ExceptionFactory.NotSupportedFileStreamWrapping();
 	}
 
 	#endregion
 
-	private IDisposable Register<T1>(string name, T1 parameter1)
+	private void Register<T1>(string name, T1 parameter1)
 		=> _fileSystem.StatisticsRegistration.FileStream.Register(name,
 			ParameterDescription.FromParameter(parameter1));
 

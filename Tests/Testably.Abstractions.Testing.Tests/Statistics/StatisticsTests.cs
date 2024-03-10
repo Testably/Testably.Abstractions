@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -126,7 +127,7 @@ public sealed class StatisticsTests
 				return string.Empty;
 			}
 
-			return $"{input[0].ToString().ToUpper()}{input.Substring(1)}";
+			return $"{input[0].ToString().ToUpper(CultureInfo.InvariantCulture)}{input.Substring(1)}";
 		}
 
 		string GetName(Type type, bool firstCharUpperCase)

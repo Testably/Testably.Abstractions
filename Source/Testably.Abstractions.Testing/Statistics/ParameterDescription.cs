@@ -47,9 +47,9 @@ public abstract class ParameterDescription
 
 	private static bool IsEqual<T>(T value1, T value2)
 	{
-		if (value1 == null)
+		if (value1 is null)
 		{
-			return value2 == null;
+			return value2 is null;
 		}
 
 		return value1.Equals(value2);
