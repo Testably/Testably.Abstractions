@@ -1,0 +1,382 @@
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/Testably/Testably.Abstractions.git")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Testably.Abstractions.Testing.Tests")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v8.0", FrameworkDisplayName=".NET 8.0")]
+namespace Testably.Abstractions.Testing.FileSystem
+{
+    public class ChangeDescription
+    {
+        public System.IO.WatcherChangeTypes ChangeType { get; }
+        public Testably.Abstractions.Testing.FileSystemTypes FileSystemType { get; }
+        public string? Name { get; }
+        public System.IO.NotifyFilters NotifyFilters { get; }
+        public string? OldName { get; }
+        public string? OldPath { get; }
+        public string Path { get; }
+        public override string ToString() { }
+    }
+    public class DefaultAccessControlStrategy : Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy
+    {
+        public DefaultAccessControlStrategy(System.Func<string, Testably.Abstractions.Helpers.IFileSystemExtensibility, bool> callback) { }
+        public bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility) { }
+    }
+    public class DefaultSafeFileHandleStrategy : Testably.Abstractions.Testing.FileSystem.ISafeFileHandleStrategy
+    {
+        public DefaultSafeFileHandleStrategy(System.Func<Microsoft.Win32.SafeHandles.SafeFileHandle, Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock> callback) { }
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification="SafeFileHandle cannot be unit tested.")]
+        public Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock MapSafeFileHandle(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle) { }
+    }
+    public sealed class FileSystemWatcherMock : System.ComponentModel.Component, System.IDisposable, System.IO.Abstractions.IFileSystemEntity, System.IO.Abstractions.IFileSystemWatcher
+    {
+        public bool EnableRaisingEvents { get; set; }
+        public System.IO.Abstractions.IFileSystem FileSystem { get; }
+        public string Filter { get; set; }
+        public System.Collections.ObjectModel.Collection<string> Filters { get; }
+        public bool IncludeSubdirectories { get; set; }
+        public int InternalBufferSize { get; set; }
+        public System.IO.NotifyFilters NotifyFilter { get; set; }
+        public string Path { get; set; }
+        public System.ComponentModel.ISynchronizeInvoke? SynchronizingObject { get; set; }
+        public event System.IO.FileSystemEventHandler? Changed;
+        public event System.IO.FileSystemEventHandler? Created;
+        public event System.IO.FileSystemEventHandler? Deleted;
+        public event System.IO.ErrorEventHandler? Error;
+        public event System.IO.RenamedEventHandler? Renamed;
+        public void BeginInit() { }
+        protected override void Dispose(bool disposing) { }
+        public void EndInit() { }
+        public System.IO.Abstractions.IWaitForChangedResult WaitForChanged(System.IO.WatcherChangeTypes changeType) { }
+        public System.IO.Abstractions.IWaitForChangedResult WaitForChanged(System.IO.WatcherChangeTypes changeType, int timeout) { }
+        public System.IO.Abstractions.IWaitForChangedResult WaitForChanged(System.IO.WatcherChangeTypes changeType, System.TimeSpan timeout) { }
+    }
+    public interface IAccessControlStrategy
+    {
+        bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility);
+    }
+    public interface IInterceptionHandler : System.IO.Abstractions.IFileSystemEntity
+    {
+        Testably.Abstractions.Testing.MockFileSystem Event(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription> interceptionCallback, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
+    }
+    public interface INotificationHandler : System.IO.Abstractions.IFileSystemEntity
+    {
+        Testably.Abstractions.Testing.Notification.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnEvent(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
+    }
+    public interface ISafeFileHandleStrategy
+    {
+        Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock MapSafeFileHandle(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
+    }
+    public class NullAccessControlStrategy : Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy
+    {
+        public NullAccessControlStrategy() { }
+        public bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility) { }
+    }
+    public class NullSafeFileHandleStrategy : Testably.Abstractions.Testing.FileSystem.ISafeFileHandleStrategy
+    {
+        public NullSafeFileHandleStrategy() { }
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification="SafeFileHandle cannot be unit tested.")]
+        public Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock MapSafeFileHandle(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle) { }
+    }
+    public class SafeFileHandleMock
+    {
+        public SafeFileHandleMock(string path, System.IO.FileMode mode = 3, System.IO.FileShare share = 0) { }
+        public System.IO.FileMode Mode { get; }
+        public string Path { get; }
+        public System.IO.FileShare Share { get; }
+    }
+}
+namespace Testably.Abstractions.Testing.FileSystemInitializer
+{
+    public class DirectoryDescription : Testably.Abstractions.Testing.FileSystemInitializer.FileSystemInfoDescription
+    {
+        public DirectoryDescription(string name) { }
+        public DirectoryDescription(string name, params Testably.Abstractions.Testing.FileSystemInitializer.FileSystemInfoDescription[] children) { }
+        public Testably.Abstractions.Testing.FileSystemInitializer.FileSystemInfoDescription[] Children { get; }
+        public override Testably.Abstractions.Testing.FileSystemInitializer.FileSystemInfoDescription this[string path] { get; }
+    }
+    public class FileDescription : Testably.Abstractions.Testing.FileSystemInitializer.FileSystemInfoDescription
+    {
+        public FileDescription(string name, byte[] bytes) { }
+        public FileDescription(string name, string? content = null) { }
+        public byte[]? Bytes { get; }
+        public string? Content { get; }
+        public bool IsReadOnly { get; set; }
+        public override Testably.Abstractions.Testing.FileSystemInitializer.FileSystemInfoDescription this[string? path] { get; }
+    }
+    public abstract class FileSystemInfoDescription
+    {
+        protected FileSystemInfoDescription(string name) { }
+        public abstract Testably.Abstractions.Testing.FileSystemInitializer.FileSystemInfoDescription this[string path] { get; }
+        public string Name { get; }
+    }
+    public interface IDirectoryCleaner : System.IDisposable
+    {
+        string BasePath { get; }
+    }
+    public interface IFileManipulator : System.IO.Abstractions.IFileSystemEntity
+    {
+        System.IO.Abstractions.IFileInfo File { get; }
+        Testably.Abstractions.Testing.FileSystemInitializer.IFileManipulator HasBytesContent(byte[] bytes);
+        Testably.Abstractions.Testing.FileSystemInitializer.IFileManipulator HasStringContent(string contents);
+    }
+    public interface IFileSystemDirectoryInitializer<out TFileSystem> : Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemInitializer<TFileSystem>
+        where out TFileSystem : System.IO.Abstractions.IFileSystem
+    {
+        System.IO.Abstractions.IDirectoryInfo Directory { get; }
+        Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> Initialized(System.Action<Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemInitializer<TFileSystem>> subdirectoryInitializer);
+    }
+    public interface IFileSystemFileInitializer<out TFileSystem> : Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemInitializer<TFileSystem>
+        where out TFileSystem : System.IO.Abstractions.IFileSystem
+    {
+        System.IO.Abstractions.IFileInfo File { get; }
+        Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemFileInitializer<TFileSystem> Which(System.Action<Testably.Abstractions.Testing.FileSystemInitializer.IFileManipulator> fileManipulation);
+    }
+    public interface IFileSystemInitializer<out TFileSystem>
+        where out TFileSystem : System.IO.Abstractions.IFileSystem
+    {
+        System.IO.Abstractions.IDirectoryInfo BaseDirectory { get; }
+        TFileSystem FileSystem { get; }
+        System.IO.Abstractions.IFileSystemInfo this[int index] { get; }
+        Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemInitializer<TFileSystem> With(params Testably.Abstractions.Testing.FileSystemInitializer.FileSystemInfoDescription[] descriptions);
+        Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemInitializer<TFileSystem> With<TDescription>(TDescription[] descriptions)
+            where TDescription : Testably.Abstractions.Testing.FileSystemInitializer.FileSystemInfoDescription;
+        Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemFileInitializer<TFileSystem> WithAFile(string? extension = null);
+        Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> WithASubdirectory();
+        Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemFileInitializer<TFileSystem> WithFile(string fileName);
+        Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemInitializer<TFileSystem> WithSubdirectories(params string[] paths);
+        Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> WithSubdirectory(string directoryName);
+    }
+    public class TestingException : System.Exception
+    {
+        public TestingException(string message) { }
+        public TestingException(string message, System.Exception inner) { }
+    }
+}
+namespace Testably.Abstractions.Testing
+{
+    public static class FileSystemInitializerExtensions
+    {
+        public static Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemInitializer<TFileSystem> Initialize<TFileSystem>(this TFileSystem fileSystem, System.Action<Testably.Abstractions.Testing.FileSystemInitializerOptions>? options = null)
+            where TFileSystem : System.IO.Abstractions.IFileSystem { }
+        public static void InitializeEmbeddedResourcesFromAssembly(this System.IO.Abstractions.IFileSystem fileSystem, string directoryPath, System.Reflection.Assembly assembly, string? relativePath = null, string searchPattern = "*", System.IO.SearchOption searchOption = 1) { }
+        public static Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemInitializer<TFileSystem> InitializeIn<TFileSystem>(this TFileSystem fileSystem, string basePath, System.Action<Testably.Abstractions.Testing.FileSystemInitializerOptions>? options = null)
+            where TFileSystem : System.IO.Abstractions.IFileSystem { }
+        public static Testably.Abstractions.Testing.FileSystemInitializer.IDirectoryCleaner SetCurrentDirectoryToEmptyTemporaryDirectory(this System.IO.Abstractions.IFileSystem fileSystem, string? prefix = null, System.Action<string>? logger = null) { }
+    }
+    public class FileSystemInitializerOptions
+    {
+        public FileSystemInitializerOptions() { }
+        public bool InitializeTempDirectory { get; set; }
+    }
+    [System.Flags]
+    public enum FileSystemTypes
+    {
+        Directory = 1,
+        File = 2,
+        DirectoryOrFile = 3,
+    }
+    public static class InterceptionHandlerExtensions
+    {
+        public static Testably.Abstractions.Testing.MockFileSystem Changing(this Testably.Abstractions.Testing.FileSystem.IInterceptionHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription> interceptionCallback, string path = "", string searchPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
+        public static Testably.Abstractions.Testing.MockFileSystem Creating(this Testably.Abstractions.Testing.FileSystem.IInterceptionHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription> interceptionCallback, string path = "", string searchPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
+        public static Testably.Abstractions.Testing.MockFileSystem Deleting(this Testably.Abstractions.Testing.FileSystem.IInterceptionHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription> interceptionCallback, string path = "", string searchPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
+    }
+    public sealed class MockFileSystem : System.IO.Abstractions.IFileSystem
+    {
+        public MockFileSystem() { }
+        public System.IO.Abstractions.IDirectory Directory { get; }
+        public System.IO.Abstractions.IDirectoryInfoFactory DirectoryInfo { get; }
+        public System.IO.Abstractions.IDriveInfoFactory DriveInfo { get; }
+        public System.IO.Abstractions.IFile File { get; }
+        public System.IO.Abstractions.IFileInfoFactory FileInfo { get; }
+        public System.IO.Abstractions.IFileStreamFactory FileStream { get; }
+        public System.IO.Abstractions.IFileSystemWatcherFactory FileSystemWatcher { get; }
+        public Testably.Abstractions.Testing.FileSystem.IInterceptionHandler Intercept { get; }
+        public Testably.Abstractions.Testing.FileSystem.INotificationHandler Notify { get; }
+        public System.IO.Abstractions.IPath Path { get; }
+        public Testably.Abstractions.IRandomSystem RandomSystem { get; }
+        public Testably.Abstractions.Testing.Statistics.IFileSystemStatistics Statistics { get; }
+        public Testably.Abstractions.ITimeSystem TimeSystem { get; }
+        public override string ToString() { }
+        public Testably.Abstractions.Testing.MockFileSystem WithAccessControlStrategy(Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy accessControlStrategy) { }
+        public Testably.Abstractions.Testing.MockFileSystem WithDrive(string? drive, System.Action<Testably.Abstractions.Testing.Storage.IStorageDrive>? driveCallback = null) { }
+        public Testably.Abstractions.Testing.MockFileSystem WithSafeFileHandleStrategy(Testably.Abstractions.Testing.FileSystem.ISafeFileHandleStrategy safeFileHandleStrategy) { }
+    }
+    public static class MockFileSystemExtensions
+    {
+        public static System.IO.Abstractions.IDriveInfo GetDefaultDrive(this Testably.Abstractions.Testing.MockFileSystem mockFileSystem) { }
+        public static Testably.Abstractions.Testing.MockFileSystem WithDrive(this Testably.Abstractions.Testing.MockFileSystem mockFileSystem, System.Action<Testably.Abstractions.Testing.Storage.IStorageDrive> driveCallback) { }
+        public static Testably.Abstractions.Testing.MockFileSystem WithUncDrive(this Testably.Abstractions.Testing.MockFileSystem mockFileSystem, string server, System.Action<Testably.Abstractions.Testing.Storage.IStorageDrive>? driveCallback = null) { }
+    }
+    public sealed class MockRandomSystem : Testably.Abstractions.IRandomSystem
+    {
+        public MockRandomSystem() { }
+        public MockRandomSystem(Testably.Abstractions.Testing.RandomSystem.IRandomProvider randomProviderProvider) { }
+        public Testably.Abstractions.RandomSystem.IGuid Guid { get; }
+        public Testably.Abstractions.RandomSystem.IRandomFactory Random { get; }
+        public Testably.Abstractions.Testing.RandomSystem.IRandomProvider RandomProvider { get; }
+        public override string ToString() { }
+    }
+    public sealed class MockTimeSystem : Testably.Abstractions.ITimeSystem
+    {
+        public MockTimeSystem() { }
+        public MockTimeSystem(System.DateTime time) { }
+        public MockTimeSystem(Testably.Abstractions.Testing.TimeSystem.ITimeProvider timeProvider) { }
+        public Testably.Abstractions.TimeSystem.IDateTime DateTime { get; }
+        public Testably.Abstractions.Testing.TimeSystem.INotificationHandler On { get; }
+        public Testably.Abstractions.TimeSystem.ITask Task { get; }
+        public Testably.Abstractions.TimeSystem.IThread Thread { get; }
+        public Testably.Abstractions.Testing.TimeSystem.ITimeProvider TimeProvider { get; }
+        public Testably.Abstractions.TimeSystem.ITimerFactory Timer { get; }
+        public Testably.Abstractions.Testing.TimeSystem.ITimerHandler TimerHandler { get; }
+        public override string ToString() { }
+        public Testably.Abstractions.Testing.MockTimeSystem WithTimerStrategy(Testably.Abstractions.Testing.TimeSystem.ITimerStrategy timerStrategy) { }
+    }
+    public static class Notification
+    {
+        public static Testably.Abstractions.Testing.Notification.IAwaitableCallback<TValue> ExecuteWhileWaiting<TValue>(this Testably.Abstractions.Testing.Notification.IAwaitableCallback<TValue> awaitable, System.Action callback) { }
+        public static Testably.Abstractions.Testing.Notification.IAwaitableCallback<TValue, TFunc> ExecuteWhileWaiting<TValue, TFunc>(this Testably.Abstractions.Testing.Notification.IAwaitableCallback<TValue> awaitable, System.Func<TFunc> callback) { }
+        public interface IAwaitableCallback<out TValue> : System.IDisposable
+        {
+            void Wait(System.Func<TValue, bool>? filter = null, int timeout = 30000, int count = 1, System.Action? executeWhenWaiting = null);
+        }
+        public interface IAwaitableCallback<out TValue, out TFunc> : System.IDisposable, Testably.Abstractions.Testing.Notification.IAwaitableCallback<TValue>
+        {
+            TFunc Wait(System.Func<TValue, bool>? filter = null, int timeout = 30000, int count = 1, System.Action? executeWhenWaiting = null);
+        }
+    }
+    public static class NotificationHandlerExtensions
+    {
+        public static Testably.Abstractions.Testing.Notification.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnChanged(this Testably.Abstractions.Testing.FileSystem.INotificationHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, string path = "", string searchPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
+        public static Testably.Abstractions.Testing.Notification.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnCreated(this Testably.Abstractions.Testing.FileSystem.INotificationHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, string path = "", string searchPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
+        public static Testably.Abstractions.Testing.Notification.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnDeleted(this Testably.Abstractions.Testing.FileSystem.INotificationHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, string path = "", string searchPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
+    }
+    public static class RandomProvider
+    {
+        public static Testably.Abstractions.Testing.RandomSystem.IRandomProvider Default() { }
+        public static Testably.Abstractions.Testing.RandomSystem.IRandomProvider Generate(int seed = -1, Testably.Abstractions.Testing.RandomProvider.Generator<System.Guid>? guidGenerator = null, Testably.Abstractions.Testing.RandomProvider.Generator<int>? intGenerator = null, Testably.Abstractions.Testing.RandomProvider.Generator<long>? longGenerator = null, Testably.Abstractions.Testing.RandomProvider.Generator<float>? singleGenerator = null, Testably.Abstractions.Testing.RandomProvider.Generator<double>? doubleGenerator = null, Testably.Abstractions.Testing.RandomProvider.Generator<byte[]>? byteGenerator = null) { }
+        public sealed class Generator<T> : System.IDisposable
+        {
+            public void Dispose() { }
+            public T GetNext() { }
+            public static Testably.Abstractions.Testing.RandomProvider.Generator<T> FromArray(T[] values) { }
+            public static Testably.Abstractions.Testing.RandomProvider.Generator<T> FromCallback(System.Func<T> callback) { }
+            public static Testably.Abstractions.Testing.RandomProvider.Generator<T> FromEnumerable(System.Collections.Generic.IEnumerable<T> enumerable) { }
+            public static Testably.Abstractions.Testing.RandomProvider.Generator<T> FromValue(T value) { }
+            public static Testably.Abstractions.Testing.RandomProvider.Generator<T> op_Implicit(System.Func<T> callback) { }
+            public static Testably.Abstractions.Testing.RandomProvider.Generator<T> op_Implicit(T value) { }
+            public static Testably.Abstractions.Testing.RandomProvider.Generator<T> op_Implicit(T[] values) { }
+        }
+    }
+    public static class TimeProvider
+    {
+        public static Testably.Abstractions.Testing.TimeSystem.ITimeProvider Now() { }
+        public static Testably.Abstractions.Testing.TimeSystem.ITimeProvider Random() { }
+        public static Testably.Abstractions.Testing.TimeSystem.ITimeProvider Use(System.DateTime time) { }
+    }
+}
+namespace Testably.Abstractions.Testing.RandomSystem
+{
+    public interface IRandomProvider
+    {
+        System.Guid GetGuid();
+        Testably.Abstractions.RandomSystem.IRandom GetRandom(int seed = -1);
+    }
+}
+namespace Testably.Abstractions.Testing.Statistics
+{
+    public interface IFileSystemStatistics
+    {
+        Testably.Abstractions.Testing.Statistics.IStatistics Directory { get; }
+        Testably.Abstractions.Testing.Statistics.IPathStatistics DirectoryInfo { get; }
+        Testably.Abstractions.Testing.Statistics.IPathStatistics DriveInfo { get; }
+        Testably.Abstractions.Testing.Statistics.IStatistics File { get; }
+        Testably.Abstractions.Testing.Statistics.IPathStatistics FileInfo { get; }
+        Testably.Abstractions.Testing.Statistics.IPathStatistics FileStream { get; }
+        Testably.Abstractions.Testing.Statistics.IPathStatistics FileSystemWatcher { get; }
+        Testably.Abstractions.Testing.Statistics.IStatistics Path { get; }
+    }
+    public interface IPathStatistics : Testably.Abstractions.Testing.Statistics.IStatistics
+    {
+        Testably.Abstractions.Testing.Statistics.IStatistics this[string path] { get; }
+    }
+    public interface IStatistics
+    {
+        Testably.Abstractions.Testing.Statistics.MethodStatistic[] Methods { get; }
+    }
+    public sealed class MethodStatistic
+    {
+        public int Counter { get; }
+        public string Name { get; }
+        public Testably.Abstractions.Testing.Statistics.ParameterDescription[] Parameters { get; }
+        public override string ToString() { }
+    }
+    public abstract class ParameterDescription
+    {
+        protected ParameterDescription(bool isOutParameter) { }
+        public bool IsOutParameter { get; }
+        public bool Is<T>(System.Func<T, bool> comparer) { }
+        public bool Is<T>(System.ReadOnlySpan<T> value) { }
+        public bool Is<T>(System.Span<T> value) { }
+        public bool Is<T>(T value) { }
+        public bool Is<T>(T[] value) { }
+        public static Testably.Abstractions.Testing.Statistics.ParameterDescription FromOutParameter<T>(T value) { }
+        public static Testably.Abstractions.Testing.Statistics.ParameterDescription FromParameter<T>(System.ReadOnlySpan<T> value) { }
+        public static Testably.Abstractions.Testing.Statistics.ParameterDescription FromParameter<T>(System.Span<T> value) { }
+        public static Testably.Abstractions.Testing.Statistics.ParameterDescription FromParameter<T>(T value) { }
+    }
+}
+namespace Testably.Abstractions.Testing.Storage
+{
+    public interface IStorageDrive : System.IO.Abstractions.IDriveInfo, System.IO.Abstractions.IFileSystemEntity
+    {
+        bool IsUncPath { get; }
+        Testably.Abstractions.Testing.Storage.IStorageDrive ChangeUsedBytes(long usedBytesDelta);
+        Testably.Abstractions.Testing.Storage.IStorageDrive SetDriveFormat(string driveFormat = "NTFS");
+        Testably.Abstractions.Testing.Storage.IStorageDrive SetDriveType(System.IO.DriveType driveType = 3);
+        Testably.Abstractions.Testing.Storage.IStorageDrive SetIsReady(bool isReady = true);
+        Testably.Abstractions.Testing.Storage.IStorageDrive SetTotalSize(long totalSize = 1073741824);
+    }
+}
+namespace Testably.Abstractions.Testing.TimeSystem
+{
+    public interface INotificationHandler
+    {
+        Testably.Abstractions.Testing.Notification.IAwaitableCallback<System.DateTime> DateTimeRead(System.Action<System.DateTime>? callback = null, System.Func<System.DateTime, bool>? predicate = null);
+        Testably.Abstractions.Testing.Notification.IAwaitableCallback<System.TimeSpan> TaskDelay(System.Action<System.TimeSpan>? callback = null, System.Func<System.TimeSpan, bool>? predicate = null);
+        Testably.Abstractions.Testing.Notification.IAwaitableCallback<System.TimeSpan> ThreadSleep(System.Action<System.TimeSpan>? callback = null, System.Func<System.TimeSpan, bool>? predicate = null);
+    }
+    public interface ITimeProvider
+    {
+        System.DateTime MaxValue { get; set; }
+        System.DateTime MinValue { get; set; }
+        System.DateTime UnixEpoch { get; set; }
+        void AdvanceBy(System.TimeSpan interval);
+        System.DateTime Read();
+        void SetTo(System.DateTime value);
+    }
+    public interface ITimerHandler
+    {
+        Testably.Abstractions.Testing.TimeSystem.ITimerMock this[int index] { get; }
+    }
+    public interface ITimerMock : System.IAsyncDisposable, System.IDisposable, Testably.Abstractions.TimeSystem.ITimeSystemEntity, Testably.Abstractions.TimeSystem.ITimer
+    {
+        Testably.Abstractions.Testing.TimeSystem.ITimerMock Wait(int executionCount = 1, int timeout = 10000, System.Action<Testably.Abstractions.Testing.TimeSystem.ITimerMock>? callback = null);
+    }
+    public interface ITimerStrategy
+    {
+        Testably.Abstractions.Testing.TimeSystem.TimerMode Mode { get; }
+        bool SwallowExceptions { get; }
+    }
+    public enum TimerMode
+    {
+        StartImmediately = 1,
+        StartOnMockWait = 2,
+    }
+    public class TimerStrategy : Testably.Abstractions.Testing.TimeSystem.ITimerStrategy
+    {
+        public TimerStrategy(Testably.Abstractions.Testing.TimeSystem.TimerMode mode = 1, bool swallowExceptions = false) { }
+        public Testably.Abstractions.Testing.TimeSystem.TimerMode Mode { get; }
+        public bool SwallowExceptions { get; }
+        public static Testably.Abstractions.Testing.TimeSystem.ITimerStrategy Default { get; }
+    }
+}
