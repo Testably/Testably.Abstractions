@@ -65,7 +65,7 @@ public void StoreData_ShouldWriteValidFile()
 
 ## Getting Started
 
-- Install `Testably.Abstractions` as nuget package in your productive projects and `Testably.Abstractions.Testing` as nuget package in your test projects.
+- Install `Testably.Abstractions` as nuget package in your production projects and `Testably.Abstractions.Testing` as nuget package in your test projects.
   ```ps
   dotnet add package Testably.Abstractions
   dotnet add package Testably.Abstractions.Testing
@@ -82,11 +82,38 @@ public void StoreData_ShouldWriteValidFile()
 **You can now use the interfaces in your services!**
 
 ## Testing
-In order to simplify testing, the `Testably.Abstractions.Testing` project provides mocked instances for the abstraction interfaces:
+In order to simplify testing, the `Testably.Abstractions.Testing` project provides mocked instances for the abstraction interfaces, which are configured using fluent syntax:
 
-These mocks are configured using fluent syntax:
+### Initialization
+
+The following two code snippets initialize the mocked `fileSystem` with a structure like the following:
+- Directory "foo"
+  - Directory "bar"
+  - Empty file "bar.txt"
+- File "foo.txt" with "some file content" as content
+
 ```csharp
-new MockFileSystem()
+var fileSystem = new MockFileSystem();
+fileSystem.Initialize().With(
+    new DirectoryDescription("foo",
+        new DirectoryDescription("bar"),
+        new FileDescription("bar.txt")),
+    new FileDescription("foo.txt", "some file content"));
+```
+
+```csharp
+var fileSystem = new MockFileSystem();
+fileSystem.Initialize()
+	.WithSubdirectory("foo").Initialized(d => d
+		.WithSubdirectory("bar")
+		.WithFile("bar.txt"))
+	.WithFile("foo.txt").Which(f => f.HasStringContent("some file content"));
+```
+
+### Drive management
+```csharp
+var fileSystem = new MockFileSystem();
+fileSystem
     .WithDrive("D:", d => d
         .SetTotalSize(1024 * 1024))
     .InitializeIn("D:")
@@ -96,3 +123,12 @@ new MockFileSystem()
             f => f.HasStringContent("{\"count\":1}")));
 ```
 Initializes the mocked file system with a second drive `D:` with 1MB total available space and creates on it an empty text file `foo.txt` and a directory `sub-dir` which contains randomly named json file with `{"count":1}` as file content.
+
+On non-Windows systems, the main drive can still be configured, e.g.
+```csharp
+var fileSystem = new MockFileSystem();
+fileSystem.WithDrive(d => d.SetTotalSize(20));
+
+// this will throw an IOException that there is not enough space on the disk.
+fileSystem.File.WriteAllText("foo", "some text longer than 20 bytes");
+```
