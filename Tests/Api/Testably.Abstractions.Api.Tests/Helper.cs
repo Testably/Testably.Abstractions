@@ -25,7 +25,8 @@ public static class Helper
 			"Expected", $"{assemblyName}_{framework}.txt");
 		try
 		{
-			return File.ReadAllText(expectedPath);
+			return File.ReadAllText(expectedPath)
+				.Replace("\r\n", "\n");
 		}
 		catch
 		{
