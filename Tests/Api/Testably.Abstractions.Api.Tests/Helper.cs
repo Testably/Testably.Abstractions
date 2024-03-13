@@ -33,14 +33,6 @@ public static class Helper
 		}
 	}
 
-	public static void SetExpectedApi(string framework, string assemblyName, string publicApi)
-	{
-		string expectedPath = CombinedPaths("Tests", "Api", "Testably.Abstractions.Api.Tests",
-			"Expected", $"{assemblyName}_{framework}.txt");
-		Directory.CreateDirectory(Path.GetDirectoryName(expectedPath)!);
-		File.WriteAllText(expectedPath, publicApi);
-	}
-
 	public static IEnumerable<string> GetTargetFrameworks()
 	{
 		string csproj = CombinedPaths("Source", "Directory.Build.props");
@@ -53,9 +45,17 @@ public static class Helper
 		}
 	}
 
+	public static void SetExpectedApi(string framework, string assemblyName, string publicApi)
+	{
+		string expectedPath = CombinedPaths("Tests", "Api", "Testably.Abstractions.Api.Tests",
+			"Expected", $"{assemblyName}_{framework}.txt");
+		Directory.CreateDirectory(Path.GetDirectoryName(expectedPath)!);
+		File.WriteAllText(expectedPath, publicApi);
+	}
+
+	private static string CombinedPaths(params string[] paths) =>
+		Path.GetFullPath(Path.Combine(paths.Prepend(GetSolutionDirectory()).ToArray()));
+
 	private static string GetSolutionDirectory([CallerFilePath] string path = "") =>
 		Path.Combine(Path.GetDirectoryName(path)!, "..", "..", "..");
-
-	internal static string CombinedPaths(params string[] paths) =>
-		Path.GetFullPath(Path.Combine(paths.Prepend(GetSolutionDirectory()).ToArray()));
 }
