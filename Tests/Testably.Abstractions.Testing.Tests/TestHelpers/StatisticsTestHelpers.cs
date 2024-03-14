@@ -5,6 +5,20 @@ namespace Testably.Abstractions.Testing.Tests.TestHelpers;
 
 public static class StatisticsTestHelpers
 {
+	public static void ShouldOnlyContainPropertyGetAccess(this IStatistics statistics, string name)
+	{
+		statistics.Properties.Length.Should().Be(1);
+		statistics.Properties.Should()
+			.ContainSingle(c => c.Name == name && c.Mode == PropertyStatistic.AccessMode.Get);
+	}
+
+	public static void ShouldOnlyContainPropertySetAccess(this IStatistics statistics, string name)
+	{
+		statistics.Properties.Length.Should().Be(1);
+		statistics.Properties.Should()
+			.ContainSingle(c => c.Name == name && c.Mode == PropertyStatistic.AccessMode.Set);
+	}
+
 	public static void ShouldOnlyContain(this IStatistics statistics, string name,
 		object?[] parameters, string because = "")
 	{

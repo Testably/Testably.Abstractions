@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.Testing.Helpers;
+using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;
@@ -32,6 +33,8 @@ internal sealed class DriveInfoMock : IStorageDrive
 
 	private long _usedBytes;
 	private string _volumeLabel = nameof(MockFileSystem);
+	private readonly string _name;
+	private long _totalSize;
 
 	private DriveInfoMock(string driveName, MockFileSystem fileSystem)
 	{
@@ -48,8 +51,8 @@ internal sealed class DriveInfoMock : IStorageDrive
 			driveName = ValidateDriveLetter(driveName, fileSystem);
 		}
 
-		Name = driveName;
-		TotalSize = DefaultTotalSize;
+		_name = driveName;
+		_totalSize = DefaultTotalSize;
 		DriveFormat = DefaultDriveFormat;
 		DriveType = DefaultDriveType;
 		IsReady = true;
@@ -59,7 +62,14 @@ internal sealed class DriveInfoMock : IStorageDrive
 
 	/// <inheritdoc cref="IDriveInfo.AvailableFreeSpace" />
 	public long AvailableFreeSpace
-		=> TotalFreeSpace;
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(AvailableFreeSpace), PropertyStatistic.AccessMode.Get);
+
+			return TotalFreeSpace;
+		}
+	}
 
 	/// <inheritdoc cref="IDriveInfo.DriveFormat" />
 	public string DriveFormat { get; private set; }
@@ -80,7 +90,15 @@ internal sealed class DriveInfoMock : IStorageDrive
 	public bool IsUncPath { get; }
 
 	/// <inheritdoc cref="IDriveInfo.Name" />
-	public string Name { get; }
+	public string Name
+	{
+		get
+		{
+			//using IDisposable registration = RegisterProperty(nameof(Name), PropertyStatistic.AccessMode.Get);
+
+			return _name;
+		}
+	}
 
 	/// <inheritdoc cref="IDriveInfo.RootDirectory" />
 	public IDirectoryInfo RootDirectory
@@ -88,19 +106,41 @@ internal sealed class DriveInfoMock : IStorageDrive
 
 	/// <inheritdoc cref="IDriveInfo.TotalFreeSpace" />
 	public long TotalFreeSpace
-		=> TotalSize - _usedBytes;
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(TotalFreeSpace), PropertyStatistic.AccessMode.Get);
+
+			return _totalSize - _usedBytes;
+		}
+	}
 
 	/// <inheritdoc cref="IDriveInfo.TotalSize" />
-	public long TotalSize { get; private set; }
+	public long TotalSize
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(TotalSize), PropertyStatistic.AccessMode.Get);
+
+			return _totalSize;
+		}
+	}
 
 	/// <inheritdoc cref="IDriveInfo.VolumeLabel" />
 	[AllowNull]
 	public string VolumeLabel
 	{
-		get => _volumeLabel;
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(VolumeLabel), PropertyStatistic.AccessMode.Get);
+
+			return _volumeLabel;
+		}
 		[SupportedOSPlatform("windows")]
 		set
 		{
+			using IDisposable registration = RegisterProperty(nameof(VolumeLabel), PropertyStatistic.AccessMode.Set);
+
 			_volumeLabel = value ?? _volumeLabel;
 			_fileSystem.Execute.NotOnWindows(
 				() => throw ExceptionFactory.OperationNotSupportedOnThisPlatform());
@@ -112,7 +152,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		long newUsedBytes = Math.Max(0, _usedBytes + usedBytesDelta);
 
-		if (newUsedBytes > TotalSize)
+		if (newUsedBytes > _totalSize)
 		{
 			throw ExceptionFactory.NotEnoughDiskSpace(Name);
 		}
@@ -149,7 +189,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 	public IStorageDrive SetTotalSize(
 		long totalSize = DefaultTotalSize)
 	{
-		TotalSize = totalSize;
+		_totalSize = totalSize;
 		return this;
 	}
 
@@ -208,4 +248,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 
 		return new DriveInfoMock(driveName, fileSystem);
 	}
+
+	private IDisposable RegisterProperty(string name, PropertyStatistic.AccessMode mode)
+		=> _fileSystem.StatisticsRegistration.DriveInfo.RegisterProperty(_name, name, mode);
 }

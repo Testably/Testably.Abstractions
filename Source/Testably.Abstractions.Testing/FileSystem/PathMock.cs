@@ -479,7 +479,7 @@ internal sealed class PathMock : PathSystemBase
 		}
 		finally
 		{
-			_fileSystem.StatisticsRegistration.Path.Register(nameof(TryJoin),
+			_fileSystem.StatisticsRegistration.Path.RegisterMethod(nameof(TryJoin),
 				ParameterDescription.FromParameter(path1),
 				ParameterDescription.FromParameter(path2),
 				ParameterDescription.FromParameter(destination),
@@ -503,7 +503,7 @@ internal sealed class PathMock : PathSystemBase
 		}
 		finally
 		{
-			_fileSystem.StatisticsRegistration.Path.Register(nameof(TryJoin),
+			_fileSystem.StatisticsRegistration.Path.RegisterMethod(nameof(TryJoin),
 				ParameterDescription.FromParameter(path1),
 				ParameterDescription.FromParameter(path2),
 				ParameterDescription.FromParameter(path3),
@@ -514,35 +514,35 @@ internal sealed class PathMock : PathSystemBase
 #endif
 
 	private IDisposable Register(string name)
-		=> _fileSystem.StatisticsRegistration.Path.Register(name);
+		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name);
 
 	private IDisposable Register<T1>(string name, T1 parameter1)
-		=> _fileSystem.StatisticsRegistration.Path.Register(name,
+		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1));
 
 #if FEATURE_SPAN
 	private IDisposable Register<T1>(string name, ReadOnlySpan<T1> parameter1)
-		=> _fileSystem.StatisticsRegistration.Path.Register(name,
+		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1));
 #endif
 
 #if FEATURE_PATH_ADVANCED
 	private IDisposable Register<T1, T2>(string name, ReadOnlySpan<T1> parameter1,
 		ReadOnlySpan<T2> parameter2)
-		=> _fileSystem.StatisticsRegistration.Path.Register(name,
+		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2));
 
 	private IDisposable Register<T1, T2, T3>(string name, ReadOnlySpan<T1> parameter1,
 		ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3)
-		=> _fileSystem.StatisticsRegistration.Path.Register(name,
+		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2),
 			ParameterDescription.FromParameter(parameter3));
 
 	private IDisposable Register<T1, T2, T3, T4>(string name, ReadOnlySpan<T1> parameter1,
 		ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3, ReadOnlySpan<T4> parameter4)
-		=> _fileSystem.StatisticsRegistration.Path.Register(name,
+		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2),
 			ParameterDescription.FromParameter(parameter3),
@@ -550,20 +550,20 @@ internal sealed class PathMock : PathSystemBase
 #endif
 
 	private IDisposable Register<T1, T2>(string name, T1 parameter1, T2 parameter2)
-		=> _fileSystem.StatisticsRegistration.Path.Register(name,
+		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2));
 
 	private IDisposable Register<T1, T2, T3>(string name, T1 parameter1, T2 parameter2,
 		T3 parameter3)
-		=> _fileSystem.StatisticsRegistration.Path.Register(name,
+		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2),
 			ParameterDescription.FromParameter(parameter3));
 
 	private IDisposable Register<T1, T2, T3, T4>(string name, T1 parameter1, T2 parameter2,
 		T3 parameter3, T4 parameter4)
-		=> _fileSystem.StatisticsRegistration.Path.Register(name,
+		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2),
 			ParameterDescription.FromParameter(parameter3),

@@ -528,14 +528,14 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	}
 
 	private IDisposable Register(string name)
-		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.Register(_path, name);
+		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.RegisterMethod(_path, name);
 
 	private IDisposable Register<T1>(string name, T1 parameter1)
-		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.Register(_path, name,
+		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.RegisterMethod(_path, name,
 			ParameterDescription.FromParameter(parameter1));
 
 	private IDisposable Register<T1, T2>(string name, T1 parameter1, T2 parameter2)
-		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.Register(_path, name,
+		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.RegisterMethod(_path, name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2));
 }

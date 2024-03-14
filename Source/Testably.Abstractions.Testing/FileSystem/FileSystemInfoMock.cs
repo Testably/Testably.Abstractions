@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.Helpers;
 using Testably.Abstractions.Testing.Helpers;
+using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;
@@ -55,7 +56,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.CreateAsSymbolicLink(string)" />
 	public void CreateAsSymbolicLink(string pathToTarget)
 	{
-		using IDisposable registration = Register(nameof(CreateAsSymbolicLink),
+		using IDisposable registration = RegisterMethod(nameof(CreateAsSymbolicLink),
 			pathToTarget);
 
 		if (!_fileSystem.Execute.IsWindows && string.IsNullOrWhiteSpace(FullName))
@@ -97,7 +98,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.Delete()" />
 	public virtual void Delete()
 	{
-		using IDisposable registration = Register(nameof(Delete));
+		using IDisposable registration = RegisterMethod(nameof(Delete));
 
 		_fileSystem.Storage.DeleteContainer(Location);
 		ResetCache(!_fileSystem.Execute.IsNetFramework);
@@ -198,7 +199,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.Refresh()" />
 	public void Refresh()
 	{
-		using IDisposable registration = Register(nameof(Refresh));
+		using IDisposable registration = RegisterMethod(nameof(Refresh));
 
 		ResetCache(true);
 	}
@@ -207,7 +208,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.ResolveLinkTarget(bool)" />
 	public IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget)
 	{
-		using IDisposable registration = Register(nameof(ResolveLinkTarget),
+		using IDisposable registration = RegisterMethod(nameof(ResolveLinkTarget),
 			returnFinalTarget);
 
 		try
@@ -292,9 +293,12 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		_isInitialized = true;
 	}
 
-	protected virtual IDisposable Register(string name)
+	protected virtual IDisposable RegisterProperty(string name, PropertyStatistic.AccessMode mode)
 		=> new NoOpDisposable();
 
-	protected virtual IDisposable Register<T1>(string name, T1 parameter1)
+	protected virtual IDisposable RegisterMethod(string name)
+		=> new NoOpDisposable();
+
+	protected virtual IDisposable RegisterMethod<T1>(string name, T1 parameter1)
 		=> new NoOpDisposable();
 }

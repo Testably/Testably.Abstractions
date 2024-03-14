@@ -28,10 +28,21 @@ internal class FileSystemEntryStatistics : CallStatistics, IPathStatistics
 	///     Registers the <paramref name="name" /> callback with <paramref name="parameters" /> under <paramref name="path" />.
 	/// </summary>
 	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
-	internal IDisposable Register(string path, string name, params ParameterDescription[] parameters)
+	internal IDisposable RegisterMethod(string path, string name, params ParameterDescription[] parameters)
 	{
 		CallStatistics callStatistics = _statistics.GetOrAdd(_fileSystem.Path.GetFullPath(path),
 			_ => new CallStatistics(_statisticsGate));
-		return callStatistics.Register(name, parameters);
+		return callStatistics.RegisterMethod(name, parameters);
+	}
+
+	/// <summary>
+	///     Registers the property <paramref name="name" /> callback with <paramref name="mode" /> access under <paramref name="path" />.
+	/// </summary>
+	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
+	internal IDisposable RegisterProperty(string path, string name, PropertyStatistic.AccessMode mode)
+	{
+		CallStatistics callStatistics = _statistics.GetOrAdd(_fileSystem.Path.GetFullPath(path),
+			_ => new CallStatistics(_statisticsGate));
+		return callStatistics.RegisterProperty(name, mode);
 	}
 }

@@ -78,9 +78,9 @@ internal sealed class DriveInfoFactoryMock : IDriveInfoFactory
 	#endregion
 
 	private IDisposable Register(string name)
-		=> _fileSystem.StatisticsRegistration.DriveInfo.Register(name);
+		=> _fileSystem.StatisticsRegistration.DriveInfo.RegisterMethod(name);
 
 	private IDisposable Register<T1>(string name, T1 parameter1)
-		=> _fileSystem.StatisticsRegistration.DriveInfo.Register(name,
+		=> _fileSystem.StatisticsRegistration.DriveInfo.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1));
 }

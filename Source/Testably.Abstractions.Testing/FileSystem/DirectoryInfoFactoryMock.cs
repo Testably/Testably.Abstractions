@@ -60,5 +60,5 @@ internal sealed class DirectoryInfoFactoryMock : IDirectoryInfoFactory
 	#endregion
 
 	private IDisposable Register<T1>(string name, T1 parameter1)
-		=> _fileSystem.StatisticsRegistration.DirectoryInfo.Register(name, ParameterDescription.FromParameter(parameter1));
+		=> _fileSystem.StatisticsRegistration.DirectoryInfo.RegisterMethod(name, ParameterDescription.FromParameter(parameter1));
 }

@@ -69,6 +69,6 @@ internal sealed class FileInfoFactoryMock : IFileInfoFactory
 	#endregion
 
 	private IDisposable Register<T1>(string name, T1 parameter1)
-		=> _fileSystem.StatisticsRegistration.FileInfo.Register(name,
+		=> _fileSystem.StatisticsRegistration.FileInfo.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1));
 }

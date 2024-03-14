@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Testably.Abstractions.Testing.Statistics;
+﻿namespace Testably.Abstractions.Testing.Statistics;
 
 /// <summary>
 ///     Contains statistical information about the mock usage.
@@ -11,4 +9,9 @@ public interface IStatistics
 	///     Lists all called mocked methods.
 	/// </summary>
 	MethodStatistic[] Methods { get; }
+
+	/// <summary>
+	///     Lists all accessed mocked properties.
+	/// </summary>
+	PropertyStatistic[] Properties { get; }
 }

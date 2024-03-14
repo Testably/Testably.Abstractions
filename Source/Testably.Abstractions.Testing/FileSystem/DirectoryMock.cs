@@ -27,7 +27,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.CreateDirectory(string)" />
 	public IDirectoryInfo CreateDirectory(string path)
 	{
-		using IDisposable registration = Register(nameof(CreateDirectory),
+		using IDisposable registration = RegisterMethod(nameof(CreateDirectory),
 			path);
 
 		path.EnsureValidFormat(_fileSystem);
@@ -44,7 +44,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.CreateDirectory(string, UnixFileMode)" />
 	public IDirectoryInfo CreateDirectory(string path, UnixFileMode unixCreateMode)
 	{
-		using IDisposable registration = Register(nameof(CreateDirectory),
+		using IDisposable registration = RegisterMethod(nameof(CreateDirectory),
 			path, unixCreateMode);
 
 		IDirectoryInfo directoryInfo = CreateDirectory(path);
@@ -60,7 +60,7 @@ internal sealed class DirectoryMock : IDirectory
 	public IFileSystemInfo CreateSymbolicLink(
 		string path, string pathToTarget)
 	{
-		using IDisposable registration = Register(nameof(CreateSymbolicLink),
+		using IDisposable registration = RegisterMethod(nameof(CreateSymbolicLink),
 			path, pathToTarget);
 
 		path.EnsureValidFormat(_fileSystem);
@@ -75,7 +75,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.CreateTempSubdirectory(string)" />
 	public IDirectoryInfo CreateTempSubdirectory(string? prefix = null)
 	{
-		using IDisposable registration = Register(nameof(CreateTempSubdirectory),
+		using IDisposable registration = RegisterMethod(nameof(CreateTempSubdirectory),
 			prefix);
 
 		string basePath;
@@ -98,7 +98,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.Delete(string)" />
 	public void Delete(string path)
 	{
-		using IDisposable registration = Register(nameof(Delete),
+		using IDisposable registration = RegisterMethod(nameof(Delete),
 			path);
 
 		_fileSystem.DirectoryInfo
@@ -109,7 +109,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.Delete(string, bool)" />
 	public void Delete(string path, bool recursive)
 	{
-		using IDisposable registration = Register(nameof(Delete),
+		using IDisposable registration = RegisterMethod(nameof(Delete),
 			path, recursive);
 
 		_fileSystem.DirectoryInfo
@@ -120,7 +120,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.EnumerateDirectories(string)" />
 	public IEnumerable<string> EnumerateDirectories(string path)
 	{
-		using IDisposable registration = Register(nameof(EnumerateDirectories),
+		using IDisposable registration = RegisterMethod(nameof(EnumerateDirectories),
 			path);
 
 		return EnumerateDirectories(path,
@@ -131,7 +131,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.EnumerateDirectories(string, string)" />
 	public IEnumerable<string> EnumerateDirectories(string path, string searchPattern)
 	{
-		using IDisposable registration = Register(nameof(EnumerateDirectories),
+		using IDisposable registration = RegisterMethod(nameof(EnumerateDirectories),
 			path, searchPattern);
 
 		return EnumerateDirectories(path, searchPattern, SearchOption.TopDirectoryOnly);
@@ -142,7 +142,7 @@ internal sealed class DirectoryMock : IDirectory
 		string searchPattern,
 		SearchOption searchOption)
 	{
-		using IDisposable registration = Register(nameof(EnumerateDirectories),
+		using IDisposable registration = RegisterMethod(nameof(EnumerateDirectories),
 			path, searchPattern, searchOption);
 
 		return EnumerateInternal(FileSystemTypes.Directory,
@@ -157,7 +157,7 @@ internal sealed class DirectoryMock : IDirectory
 		string searchPattern,
 		EnumerationOptions enumerationOptions)
 	{
-		using IDisposable registration = Register(nameof(EnumerateDirectories),
+		using IDisposable registration = RegisterMethod(nameof(EnumerateDirectories),
 			path, searchPattern, enumerationOptions);
 
 		return EnumerateInternal(FileSystemTypes.Directory,
@@ -170,7 +170,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.EnumerateFiles(string)" />
 	public IEnumerable<string> EnumerateFiles(string path)
 	{
-		using IDisposable registration = Register(nameof(EnumerateFiles),
+		using IDisposable registration = RegisterMethod(nameof(EnumerateFiles),
 			path);
 
 		return EnumerateFiles(path,
@@ -181,7 +181,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.EnumerateFiles(string, string)" />
 	public IEnumerable<string> EnumerateFiles(string path, string searchPattern)
 	{
-		using IDisposable registration = Register(nameof(EnumerateFiles),
+		using IDisposable registration = RegisterMethod(nameof(EnumerateFiles),
 			path, searchPattern);
 
 		return EnumerateFiles(path, searchPattern, SearchOption.TopDirectoryOnly);
@@ -192,7 +192,7 @@ internal sealed class DirectoryMock : IDirectory
 		string searchPattern,
 		SearchOption searchOption)
 	{
-		using IDisposable registration = Register(nameof(EnumerateFiles),
+		using IDisposable registration = RegisterMethod(nameof(EnumerateFiles),
 			path, searchPattern, searchOption);
 
 		return EnumerateInternal(FileSystemTypes.File,
@@ -207,7 +207,7 @@ internal sealed class DirectoryMock : IDirectory
 		string searchPattern,
 		EnumerationOptions enumerationOptions)
 	{
-		using IDisposable registration = Register(nameof(EnumerateFiles),
+		using IDisposable registration = RegisterMethod(nameof(EnumerateFiles),
 			path, searchPattern, enumerationOptions);
 
 		return EnumerateInternal(FileSystemTypes.File,
@@ -220,7 +220,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.EnumerateFileSystemEntries(string)" />
 	public IEnumerable<string> EnumerateFileSystemEntries(string path)
 	{
-		using IDisposable registration = Register(nameof(EnumerateFileSystemEntries),
+		using IDisposable registration = RegisterMethod(nameof(EnumerateFileSystemEntries),
 			path);
 
 		return EnumerateFileSystemEntries(path,
@@ -232,7 +232,7 @@ internal sealed class DirectoryMock : IDirectory
 	public IEnumerable<string> EnumerateFileSystemEntries(
 		string path, string searchPattern)
 	{
-		using IDisposable registration = Register(nameof(EnumerateFileSystemEntries),
+		using IDisposable registration = RegisterMethod(nameof(EnumerateFileSystemEntries),
 			path, searchPattern);
 
 		return EnumerateFileSystemEntries(path,
@@ -245,7 +245,7 @@ internal sealed class DirectoryMock : IDirectory
 		string searchPattern,
 		SearchOption searchOption)
 	{
-		using IDisposable registration = Register(nameof(EnumerateFileSystemEntries),
+		using IDisposable registration = RegisterMethod(nameof(EnumerateFileSystemEntries),
 			path, searchPattern, searchOption);
 
 		return EnumerateInternal(FileSystemTypes.DirectoryOrFile,
@@ -260,7 +260,7 @@ internal sealed class DirectoryMock : IDirectory
 		string searchPattern,
 		EnumerationOptions enumerationOptions)
 	{
-		using IDisposable registration = Register(nameof(EnumerateFileSystemEntries),
+		using IDisposable registration = RegisterMethod(nameof(EnumerateFileSystemEntries),
 			path, searchPattern, enumerationOptions);
 
 		return EnumerateInternal(FileSystemTypes.DirectoryOrFile,
@@ -273,7 +273,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.Exists(string)" />
 	public bool Exists([NotNullWhen(true)] string? path)
 	{
-		using IDisposable registration = Register(nameof(Exists),
+		using IDisposable registration = RegisterMethod(nameof(Exists),
 			path);
 
 		return DirectoryInfoMock.New(
@@ -284,7 +284,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.GetCreationTime(string)" />
 	public DateTime GetCreationTime(string path)
 	{
-		using IDisposable registration = Register(nameof(GetCreationTime),
+		using IDisposable registration = RegisterMethod(nameof(GetCreationTime),
 			path);
 
 		return _fileSystem.Storage.GetContainer(
@@ -296,7 +296,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.GetCreationTimeUtc(string)" />
 	public DateTime GetCreationTimeUtc(string path)
 	{
-		using IDisposable registration = Register(nameof(GetCreationTimeUtc),
+		using IDisposable registration = RegisterMethod(nameof(GetCreationTimeUtc),
 			path);
 
 		return _fileSystem.Storage.GetContainer(
@@ -308,7 +308,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.GetCurrentDirectory()" />
 	public string GetCurrentDirectory()
 	{
-		using IDisposable registration = Register(nameof(GetCurrentDirectory));
+		using IDisposable registration = RegisterMethod(nameof(GetCurrentDirectory));
 
 		return _fileSystem.Storage.CurrentDirectory;
 	}
@@ -316,7 +316,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.GetDirectories(string)" />
 	public string[] GetDirectories(string path)
 	{
-		using IDisposable registration = Register(nameof(GetDirectories),
+		using IDisposable registration = RegisterMethod(nameof(GetDirectories),
 			path);
 
 		return EnumerateDirectories(path).ToArray();
@@ -325,7 +325,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.GetDirectories(string, string)" />
 	public string[] GetDirectories(string path, string searchPattern)
 	{
-		using IDisposable registration = Register(nameof(GetDirectories),
+		using IDisposable registration = RegisterMethod(nameof(GetDirectories),
 			path, searchPattern);
 
 		return EnumerateDirectories(path, searchPattern).ToArray();
@@ -336,7 +336,7 @@ internal sealed class DirectoryMock : IDirectory
 		string searchPattern,
 		SearchOption searchOption)
 	{
-		using IDisposable registration = Register(nameof(GetDirectories),
+		using IDisposable registration = RegisterMethod(nameof(GetDirectories),
 			path, searchPattern, searchOption);
 
 		return EnumerateDirectories(path, searchPattern, searchOption).ToArray();
@@ -348,7 +348,7 @@ internal sealed class DirectoryMock : IDirectory
 		string searchPattern,
 		EnumerationOptions enumerationOptions)
 	{
-		using IDisposable registration = Register(nameof(GetDirectories),
+		using IDisposable registration = RegisterMethod(nameof(GetDirectories),
 			path, searchPattern, enumerationOptions);
 
 		return EnumerateDirectories(path, searchPattern, enumerationOptions).ToArray();
@@ -358,7 +358,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.GetDirectoryRoot(string)" />
 	public string GetDirectoryRoot(string path)
 	{
-		using IDisposable registration = Register(nameof(GetDirectoryRoot),
+		using IDisposable registration = RegisterMethod(nameof(GetDirectoryRoot),
 			path);
 
 		return _fileSystem.Path.GetPathRoot(
@@ -369,7 +369,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.GetFiles(string)" />
 	public string[] GetFiles(string path)
 	{
-		using IDisposable registration = Register(nameof(GetFiles),
+		using IDisposable registration = RegisterMethod(nameof(GetFiles),
 			path);
 
 		return EnumerateFiles(path).ToArray();
@@ -378,7 +378,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.GetFiles(string, string)" />
 	public string[] GetFiles(string path, string searchPattern)
 	{
-		using IDisposable registration = Register(nameof(GetFiles),
+		using IDisposable registration = RegisterMethod(nameof(GetFiles),
 			path, searchPattern);
 
 		return EnumerateFiles(path, searchPattern).ToArray();
@@ -389,7 +389,7 @@ internal sealed class DirectoryMock : IDirectory
 		string searchPattern,
 		SearchOption searchOption)
 	{
-		using IDisposable registration = Register(nameof(GetFiles),
+		using IDisposable registration = RegisterMethod(nameof(GetFiles),
 			path, searchPattern, searchOption);
 
 		return EnumerateFiles(path, searchPattern, searchOption).ToArray();
@@ -401,7 +401,7 @@ internal sealed class DirectoryMock : IDirectory
 		string searchPattern,
 		EnumerationOptions enumerationOptions)
 	{
-		using IDisposable registration = Register(nameof(GetFiles),
+		using IDisposable registration = RegisterMethod(nameof(GetFiles),
 			path, searchPattern, enumerationOptions);
 
 		return EnumerateFiles(path, searchPattern, enumerationOptions).ToArray();
@@ -411,7 +411,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.GetFileSystemEntries(string)" />
 	public string[] GetFileSystemEntries(string path)
 	{
-		using IDisposable registration = Register(nameof(GetFileSystemEntries),
+		using IDisposable registration = RegisterMethod(nameof(GetFileSystemEntries),
 			path);
 
 		return EnumerateFileSystemEntries(path).ToArray();
@@ -420,7 +420,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.GetFileSystemEntries(string, string)" />
 	public string[] GetFileSystemEntries(string path, string searchPattern)
 	{
-		using IDisposable registration = Register(nameof(GetFileSystemEntries),
+		using IDisposable registration = RegisterMethod(nameof(GetFileSystemEntries),
 			path, searchPattern);
 
 		return EnumerateFileSystemEntries(path, searchPattern).ToArray();
@@ -431,7 +431,7 @@ internal sealed class DirectoryMock : IDirectory
 		string searchPattern,
 		SearchOption searchOption)
 	{
-		using IDisposable registration = Register(nameof(GetFileSystemEntries),
+		using IDisposable registration = RegisterMethod(nameof(GetFileSystemEntries),
 			path, searchPattern, searchOption);
 
 		return EnumerateFileSystemEntries(path, searchPattern, searchOption).ToArray();
@@ -443,7 +443,7 @@ internal sealed class DirectoryMock : IDirectory
 		string searchPattern,
 		EnumerationOptions enumerationOptions)
 	{
-		using IDisposable registration = Register(nameof(GetFileSystemEntries),
+		using IDisposable registration = RegisterMethod(nameof(GetFileSystemEntries),
 			path, searchPattern, enumerationOptions);
 
 		return EnumerateFileSystemEntries(path, searchPattern, enumerationOptions)
@@ -454,7 +454,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.GetLastAccessTime(string)" />
 	public DateTime GetLastAccessTime(string path)
 	{
-		using IDisposable registration = Register(nameof(GetLastAccessTime),
+		using IDisposable registration = RegisterMethod(nameof(GetLastAccessTime),
 			path);
 
 		return _fileSystem.Storage.GetContainer(
@@ -466,7 +466,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.GetLastAccessTimeUtc(string)" />
 	public DateTime GetLastAccessTimeUtc(string path)
 	{
-		using IDisposable registration = Register(nameof(GetLastAccessTimeUtc),
+		using IDisposable registration = RegisterMethod(nameof(GetLastAccessTimeUtc),
 			path);
 
 		return _fileSystem.Storage.GetContainer(
@@ -478,7 +478,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.GetLastWriteTime(string)" />
 	public DateTime GetLastWriteTime(string path)
 	{
-		using IDisposable registration = Register(nameof(GetLastWriteTime),
+		using IDisposable registration = RegisterMethod(nameof(GetLastWriteTime),
 			path);
 
 		return _fileSystem.Storage.GetContainer(
@@ -490,7 +490,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.GetLastWriteTimeUtc(string)" />
 	public DateTime GetLastWriteTimeUtc(string path)
 	{
-		using IDisposable registration = Register(nameof(GetLastWriteTimeUtc),
+		using IDisposable registration = RegisterMethod(nameof(GetLastWriteTimeUtc),
 			path);
 
 		return _fileSystem.Storage.GetContainer(
@@ -502,7 +502,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.GetLogicalDrives()" />
 	public string[] GetLogicalDrives()
 	{
-		using IDisposable registration = Register(nameof(GetLogicalDrives));
+		using IDisposable registration = RegisterMethod(nameof(GetLogicalDrives));
 
 		return _fileSystem.DriveInfo.GetDrives().Select(x => x.Name).ToArray();
 	}
@@ -510,7 +510,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.GetParent(string)" />
 	public IDirectoryInfo? GetParent(string path)
 	{
-		using IDisposable registration = Register(nameof(GetParent),
+		using IDisposable registration = RegisterMethod(nameof(GetParent),
 			path);
 
 		return _fileSystem.DirectoryInfo
@@ -521,7 +521,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.Move(string, string)" />
 	public void Move(string sourceDirName, string destDirName)
 	{
-		using IDisposable registration = Register(nameof(Move),
+		using IDisposable registration = RegisterMethod(nameof(Move),
 			sourceDirName, destDirName);
 
 		_fileSystem.DirectoryInfo.New(sourceDirName
@@ -535,7 +535,7 @@ internal sealed class DirectoryMock : IDirectory
 	public IFileSystemInfo? ResolveLinkTarget(
 		string linkPath, bool returnFinalTarget)
 	{
-		using IDisposable registration = Register(nameof(ResolveLinkTarget),
+		using IDisposable registration = RegisterMethod(nameof(ResolveLinkTarget),
 			linkPath, returnFinalTarget);
 
 		try
@@ -556,7 +556,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.SetCreationTime(string, DateTime)" />
 	public void SetCreationTime(string path, DateTime creationTime)
 	{
-		using IDisposable registration = Register(nameof(SetCreationTime),
+		using IDisposable registration = RegisterMethod(nameof(SetCreationTime),
 			path, creationTime);
 
 		LoadDirectoryInfoOrThrowNotFoundException(path, ThrowMissingFileCreatedTimeException)
@@ -566,7 +566,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.SetCreationTimeUtc(string, DateTime)" />
 	public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
 	{
-		using IDisposable registration = Register(nameof(SetCreationTimeUtc),
+		using IDisposable registration = RegisterMethod(nameof(SetCreationTimeUtc),
 			path, creationTimeUtc);
 
 		LoadDirectoryInfoOrThrowNotFoundException(path, ThrowMissingFileCreatedTimeException)
@@ -576,7 +576,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.SetCurrentDirectory(string)" />
 	public void SetCurrentDirectory(string path)
 	{
-		using IDisposable registration = Register(nameof(SetCurrentDirectory),
+		using IDisposable registration = RegisterMethod(nameof(SetCurrentDirectory),
 			path);
 
 
@@ -594,7 +594,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.SetLastAccessTime(string, DateTime)" />
 	public void SetLastAccessTime(string path, DateTime lastAccessTime)
 	{
-		using IDisposable registration = Register(nameof(SetLastAccessTime),
+		using IDisposable registration = RegisterMethod(nameof(SetLastAccessTime),
 			path, lastAccessTime);
 
 		LoadDirectoryInfoOrThrowNotFoundException(path,
@@ -605,7 +605,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.SetLastAccessTimeUtc(string, DateTime)" />
 	public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
 	{
-		using IDisposable registration = Register(nameof(SetLastAccessTimeUtc),
+		using IDisposable registration = RegisterMethod(nameof(SetLastAccessTimeUtc),
 			path, lastAccessTimeUtc);
 
 		LoadDirectoryInfoOrThrowNotFoundException(path,
@@ -616,7 +616,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.SetLastWriteTime(string, DateTime)" />
 	public void SetLastWriteTime(string path, DateTime lastWriteTime)
 	{
-		using IDisposable registration = Register(nameof(SetLastWriteTime),
+		using IDisposable registration = RegisterMethod(nameof(SetLastWriteTime),
 			path, lastWriteTime);
 
 		LoadDirectoryInfoOrThrowNotFoundException(path,
@@ -627,7 +627,7 @@ internal sealed class DirectoryMock : IDirectory
 	/// <inheritdoc cref="IDirectory.SetLastWriteTimeUtc(string, DateTime)" />
 	public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
 	{
-		using IDisposable registration = Register(nameof(SetLastWriteTimeUtc),
+		using IDisposable registration = RegisterMethod(nameof(SetLastWriteTimeUtc),
 			path, lastWriteTimeUtc);
 
 		LoadDirectoryInfoOrThrowNotFoundException(path,
@@ -706,20 +706,20 @@ internal sealed class DirectoryMock : IDirectory
 				.GetSubdirectoryPath(x.FullPath, adjustedLocation.GivenPath));
 	}
 
-	private IDisposable Register(string name)
-		=> _fileSystem.StatisticsRegistration.Directory.Register(name);
+	private IDisposable RegisterMethod(string name)
+		=> _fileSystem.StatisticsRegistration.Directory.RegisterMethod(name);
 
-	private IDisposable Register<T1>(string name, T1 parameter1)
-		=> _fileSystem.StatisticsRegistration.Directory.Register(name,
+	private IDisposable RegisterMethod<T1>(string name, T1 parameter1)
+		=> _fileSystem.StatisticsRegistration.Directory.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1));
 
-	private IDisposable Register<T1, T2>(string name, T1 parameter1, T2 parameter2)
-		=> _fileSystem.StatisticsRegistration.Directory.Register(name,
+	private IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, T2 parameter2)
+		=> _fileSystem.StatisticsRegistration.Directory.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2));
 
-	private IDisposable Register<T1, T2, T3>(string name, T1 parameter1, T2 parameter2, T3 parameter3)
-		=> _fileSystem.StatisticsRegistration.Directory.Register(name,
+	private IDisposable RegisterMethod<T1, T2, T3>(string name, T1 parameter1, T2 parameter2, T3 parameter3)
+		=> _fileSystem.StatisticsRegistration.Directory.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2),
 			ParameterDescription.FromParameter(parameter3));

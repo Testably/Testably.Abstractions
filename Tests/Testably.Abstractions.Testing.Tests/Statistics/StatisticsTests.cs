@@ -166,12 +166,12 @@ public sealed class StatisticsTests
 	public void ShouldHaveTestedAllFileSystemMethods(string className, bool requireInstance,
 		Type mockType, Type testType)
 	{
-		string result = CheckMethods(className, requireInstance, mockType, testType);
+		string result = CheckPropertiesAndMethods(className, requireInstance, mockType, testType);
 
 		result.Should().BeEmpty();
 	}
 
-	private static string CheckMethods(string className, bool requireInstance,
+	private static string CheckPropertiesAndMethods(string className, bool requireInstance,
 		Type mockType, Type testType)
 	{
 		StringBuilder builder = new();
@@ -323,6 +323,85 @@ public sealed class StatisticsTests
 			}
 
 			return "new()";
+		}
+
+		void CheckPropertyGetAccess(string className, bool requireInstance, Type mockType,
+			Type testType, PropertyInfo propertyInfo, StringBuilder builder)
+		{
+			string expectedName = $"{propertyInfo.Name}_Get_ShouldRegisterPropertyAccess";
+			if (testType.GetMethod(expectedName) != null)
+			{
+				return;
+			}
+
+			builder.AppendLine("\t[SkippableFact]");
+			builder.Append("\tpublic void ");
+			builder.Append(expectedName);
+			builder.AppendLine("()");
+			builder.AppendLine("\t{");
+			builder.AppendLine("\t\tMockFileSystem sut = new();");
+			builder.AppendLine();
+			builder.AppendLine(
+				$"\t\t_ = sut.{className}{(requireInstance ? ".New(\"foo\")" : "")}.{propertyInfo.Name};");
+			builder.AppendLine();
+			builder.AppendLine(
+				$"\t\tsut.Statistics.{className}{(requireInstance ? "[\"foo\"]" : "")}.ShouldOnlyContainPropertyGetAccess(nameof({mockType.Name}.{propertyInfo.Name}));");
+			builder.AppendLine("\t}");
+			builder.AppendLine();
+		}
+
+		void CheckPropertySetAccess(string className, bool requireInstance, Type mockType,
+			Type testType, PropertyInfo propertyInfo, StringBuilder builder)
+		{
+			string expectedName = $"{propertyInfo.Name}_Set_ShouldRegisterPropertyAccess";
+			if (testType.GetMethod(expectedName) != null)
+			{
+				return;
+			}
+
+			builder.AppendLine("\t[SkippableFact]");
+			builder.Append("\tpublic void ");
+			builder.Append(expectedName);
+			builder.AppendLine("()");
+			builder.AppendLine("\t{");
+			builder.AppendLine("\t\tMockFileSystem sut = new();");
+			builder.AppendLine(
+				$"\t\t{GetName(propertyInfo.PropertyType, false)} value = {GetDefaultValue(propertyInfo.PropertyType)};");
+			builder.AppendLine();
+			builder.AppendLine(
+				$"\t\tsut.{className}{(requireInstance ? ".New(\"foo\")" : "")}.{propertyInfo.Name} = value;");
+			builder.AppendLine();
+			builder.AppendLine(
+				$"\t\tsut.Statistics.{className}{(requireInstance ? "[\"foo\"]" : "")}.ShouldOnlyContainPropertySetAccess(nameof({mockType.Name}.{propertyInfo.Name}));");
+			builder.AppendLine("\t}");
+			builder.AppendLine();
+		}
+
+		foreach (PropertyInfo propertyInfo in
+			mockType.GetInterfaces()
+				.Where(i => i != typeof(IDisposable) && i != typeof(IAsyncDisposable))
+				.SelectMany(i => i.GetProperties())
+				.Concat(mockType.GetProperties(BindingFlags.DeclaredOnly |
+				                               BindingFlags.Public |
+				                               BindingFlags.Instance))
+				.Where(p => p.IsSpecialName == false && (p.CanRead || p.CanWrite))
+				.OrderBy(m => m.Name))
+		{
+			if (propertyInfo.GetCustomAttribute<ObsoleteAttribute>() != null ||
+			    propertyInfo.Name == nameof(IFileSystemEntity.FileSystem))
+			{
+				continue;
+			}
+
+			if (propertyInfo.CanRead)
+			{
+				CheckPropertyGetAccess(className, requireInstance, mockType, testType, propertyInfo, builder);
+			}
+
+			if (propertyInfo.CanWrite)
+			{
+				CheckPropertySetAccess(className, requireInstance, mockType, testType, propertyInfo, builder);
+			}
 		}
 
 		foreach (MethodInfo methodInfo in
