@@ -1,0 +1,54 @@
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/Testably/Testably.Abstractions.git")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Testably.Abstractions.AccessControl.Tests")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v6.0", FrameworkDisplayName=".NET 6.0")]
+namespace Testably.Abstractions
+{
+    public static class DirectoryAclExtensions
+    {
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        public static void CreateDirectory(this System.IO.Abstractions.IDirectory directory, string path, System.Security.AccessControl.DirectorySecurity directorySecurity) { }
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        public static System.Security.AccessControl.DirectorySecurity GetAccessControl(this System.IO.Abstractions.IDirectory directory, string path) { }
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        public static System.Security.AccessControl.DirectorySecurity GetAccessControl(this System.IO.Abstractions.IDirectory directory, string path, System.Security.AccessControl.AccessControlSections includeSections) { }
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        public static void SetAccessControl(this System.IO.Abstractions.IDirectory directory, string path, System.Security.AccessControl.DirectorySecurity directorySecurity) { }
+    }
+    public static class DirectoryInfoAclExtensions
+    {
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        public static void Create(this System.IO.Abstractions.IDirectoryInfo directoryInfo, System.Security.AccessControl.DirectorySecurity directorySecurity) { }
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        public static System.Security.AccessControl.DirectorySecurity GetAccessControl(this System.IO.Abstractions.IDirectoryInfo directoryInfo) { }
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        public static System.Security.AccessControl.DirectorySecurity GetAccessControl(this System.IO.Abstractions.IDirectoryInfo directoryInfo, System.Security.AccessControl.AccessControlSections includeSections) { }
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        public static void SetAccessControl(this System.IO.Abstractions.IDirectoryInfo directoryInfo, System.Security.AccessControl.DirectorySecurity directorySecurity) { }
+    }
+    public static class FileAclExtensions
+    {
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        public static System.Security.AccessControl.FileSecurity GetAccessControl(this System.IO.Abstractions.IFile file, string path) { }
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        public static System.Security.AccessControl.FileSecurity GetAccessControl(this System.IO.Abstractions.IFile file, string path, System.Security.AccessControl.AccessControlSections includeSections) { }
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        public static void SetAccessControl(this System.IO.Abstractions.IFile file, string path, System.Security.AccessControl.FileSecurity fileSecurity) { }
+    }
+    public static class FileInfoAclExtensions
+    {
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        public static System.Security.AccessControl.FileSecurity GetAccessControl(this System.IO.Abstractions.IFileInfo fileInfo) { }
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        public static System.Security.AccessControl.FileSecurity GetAccessControl(this System.IO.Abstractions.IFileInfo fileInfo, System.Security.AccessControl.AccessControlSections includeSections) { }
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        public static void SetAccessControl(this System.IO.Abstractions.IFileInfo fileInfo, System.Security.AccessControl.FileSecurity fileSecurity) { }
+    }
+    public static class FileStreamAclExtensions
+    {
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        public static System.Security.AccessControl.FileSecurity GetAccessControl(this System.IO.Abstractions.FileSystemStream fileStream) { }
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        public static void SetAccessControl(this System.IO.Abstractions.FileSystemStream fileStream, System.Security.AccessControl.FileSecurity fileSecurity) { }
+    }
+}

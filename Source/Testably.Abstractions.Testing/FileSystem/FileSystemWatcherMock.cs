@@ -15,7 +15,7 @@ namespace Testably.Abstractions.Testing.FileSystem;
 /// <summary>
 ///     Mocked instance of a <see cref="IFileSystemWatcher" />
 /// </summary>
-public sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
+internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 {
 	/// <summary>
 	///     Simulated bytes pre message to calculate the size of the blocking collection relative to the
