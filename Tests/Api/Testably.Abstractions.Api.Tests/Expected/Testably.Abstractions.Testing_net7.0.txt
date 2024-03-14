@@ -26,29 +26,6 @@ namespace Testably.Abstractions.Testing.FileSystem
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification="SafeFileHandle cannot be unit tested.")]
         public Testably.Abstractions.Testing.FileSystem.SafeFileHandleMock MapSafeFileHandle(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle) { }
     }
-    public sealed class FileSystemWatcherMock : System.ComponentModel.Component, System.IDisposable, System.IO.Abstractions.IFileSystemEntity, System.IO.Abstractions.IFileSystemWatcher
-    {
-        public bool EnableRaisingEvents { get; set; }
-        public System.IO.Abstractions.IFileSystem FileSystem { get; }
-        public string Filter { get; set; }
-        public System.Collections.ObjectModel.Collection<string> Filters { get; }
-        public bool IncludeSubdirectories { get; set; }
-        public int InternalBufferSize { get; set; }
-        public System.IO.NotifyFilters NotifyFilter { get; set; }
-        public string Path { get; set; }
-        public System.ComponentModel.ISynchronizeInvoke? SynchronizingObject { get; set; }
-        public event System.IO.FileSystemEventHandler? Changed;
-        public event System.IO.FileSystemEventHandler? Created;
-        public event System.IO.FileSystemEventHandler? Deleted;
-        public event System.IO.ErrorEventHandler? Error;
-        public event System.IO.RenamedEventHandler? Renamed;
-        public void BeginInit() { }
-        protected override void Dispose(bool disposing) { }
-        public void EndInit() { }
-        public System.IO.Abstractions.IWaitForChangedResult WaitForChanged(System.IO.WatcherChangeTypes changeType) { }
-        public System.IO.Abstractions.IWaitForChangedResult WaitForChanged(System.IO.WatcherChangeTypes changeType, int timeout) { }
-        public System.IO.Abstractions.IWaitForChangedResult WaitForChanged(System.IO.WatcherChangeTypes changeType, System.TimeSpan timeout) { }
-    }
     public interface IAccessControlStrategy
     {
         bool IsAccessGranted(string fullPath, Testably.Abstractions.Helpers.IFileSystemExtensibility extensibility);
