@@ -1,0 +1,214 @@
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/Testably/Testably.Abstractions.git")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v8.0", FrameworkDisplayName=".NET 8.0")]
+namespace Testably.Abstractions.Helpers
+{
+    public abstract class GuidSystemBase : Testably.Abstractions.RandomSystem.IGuid, Testably.Abstractions.RandomSystem.IRandomSystemEntity
+    {
+        protected GuidSystemBase(Testably.Abstractions.IRandomSystem randomSystem) { }
+        public System.Guid Empty { get; }
+        public Testably.Abstractions.IRandomSystem RandomSystem { get; }
+        public abstract System.Guid NewGuid();
+        public System.Guid Parse(System.ReadOnlySpan<char> input) { }
+        public System.Guid Parse(string input) { }
+        public System.Guid Parse(System.ReadOnlySpan<char> s, System.IFormatProvider? provider) { }
+        public System.Guid Parse(string s, System.IFormatProvider? provider) { }
+        public System.Guid ParseExact(System.ReadOnlySpan<char> input, System.ReadOnlySpan<char> format) { }
+        public System.Guid ParseExact(string input, string format) { }
+        public bool TryParse(System.ReadOnlySpan<char> input, out System.Guid result) { }
+        public bool TryParse(string? input, out System.Guid result) { }
+        public bool TryParse(System.ReadOnlySpan<char> s, System.IFormatProvider? provider, out System.Guid result) { }
+        public bool TryParse(string? s, System.IFormatProvider? provider, out System.Guid result) { }
+        public bool TryParseExact(System.ReadOnlySpan<char> input, System.ReadOnlySpan<char> format, out System.Guid result) { }
+        public bool TryParseExact([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? input, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? format, out System.Guid result) { }
+    }
+    public interface IFileSystemExtensibility
+    {
+        T? RetrieveMetadata<T>(string key);
+        void StoreMetadata<T>(string key, T? value);
+        bool TryGetWrappedInstance<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T? wrappedInstance);
+    }
+    public abstract class PathSystemBase : System.IO.Abstractions.IFileSystemEntity, System.IO.Abstractions.IPath
+    {
+        protected PathSystemBase(System.IO.Abstractions.IFileSystem fileSystem) { }
+        public virtual char AltDirectorySeparatorChar { get; }
+        public virtual char DirectorySeparatorChar { get; }
+        public System.IO.Abstractions.IFileSystem FileSystem { get; }
+        public virtual char PathSeparator { get; }
+        public virtual char VolumeSeparatorChar { get; }
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("path")]
+        public virtual string? ChangeExtension(string? path, string? extension) { }
+        public virtual string Combine(params string[] paths) { }
+        public virtual string Combine(string path1, string path2) { }
+        public virtual string Combine(string path1, string path2, string path3) { }
+        public virtual string Combine(string path1, string path2, string path3, string path4) { }
+        public virtual bool EndsInDirectorySeparator(System.ReadOnlySpan<char> path) { }
+        public virtual bool EndsInDirectorySeparator(string path) { }
+        public abstract bool Exists([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path);
+        public virtual System.ReadOnlySpan<char> GetDirectoryName(System.ReadOnlySpan<char> path) { }
+        public virtual string? GetDirectoryName(string? path) { }
+        public virtual System.ReadOnlySpan<char> GetExtension(System.ReadOnlySpan<char> path) { }
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("path")]
+        public virtual string? GetExtension(string? path) { }
+        public virtual System.ReadOnlySpan<char> GetFileName(System.ReadOnlySpan<char> path) { }
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("path")]
+        public virtual string? GetFileName(string? path) { }
+        public virtual System.ReadOnlySpan<char> GetFileNameWithoutExtension(System.ReadOnlySpan<char> path) { }
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("path")]
+        public virtual string? GetFileNameWithoutExtension(string? path) { }
+        public virtual string GetFullPath(string path) { }
+        public virtual string GetFullPath(string path, string basePath) { }
+        public virtual char[] GetInvalidFileNameChars() { }
+        public virtual char[] GetInvalidPathChars() { }
+        public virtual System.ReadOnlySpan<char> GetPathRoot(System.ReadOnlySpan<char> path) { }
+        public virtual string? GetPathRoot(string? path) { }
+        public virtual string GetRandomFileName() { }
+        public virtual string GetRelativePath(string relativeTo, string path) { }
+        [System.Obsolete("Insecure temporary file creation methods should not be used. Use `Path.Combine(Pa" +
+            "th.GetTempPath(), Path.GetRandomFileName())` instead.")]
+        public virtual string GetTempFileName() { }
+        public virtual string GetTempPath() { }
+        public virtual bool HasExtension(System.ReadOnlySpan<char> path) { }
+        public virtual bool HasExtension([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) { }
+        public virtual bool IsPathFullyQualified(System.ReadOnlySpan<char> path) { }
+        public virtual bool IsPathFullyQualified(string path) { }
+        public virtual bool IsPathRooted(System.ReadOnlySpan<char> path) { }
+        public virtual bool IsPathRooted(string? path) { }
+        public virtual string Join(params string?[] paths) { }
+        public virtual string Join(System.ReadOnlySpan<char> path1, System.ReadOnlySpan<char> path2) { }
+        public virtual string Join(string? path1, string? path2) { }
+        public virtual string Join(System.ReadOnlySpan<char> path1, System.ReadOnlySpan<char> path2, System.ReadOnlySpan<char> path3) { }
+        public virtual string Join(string? path1, string? path2, string? path3) { }
+        public virtual string Join(System.ReadOnlySpan<char> path1, System.ReadOnlySpan<char> path2, System.ReadOnlySpan<char> path3, System.ReadOnlySpan<char> path4) { }
+        public virtual string Join(string? path1, string? path2, string? path3, string? path4) { }
+        public virtual System.ReadOnlySpan<char> TrimEndingDirectorySeparator(System.ReadOnlySpan<char> path) { }
+        public virtual string TrimEndingDirectorySeparator(string path) { }
+        public virtual bool TryJoin(System.ReadOnlySpan<char> path1, System.ReadOnlySpan<char> path2, System.Span<char> destination, out int charsWritten) { }
+        public virtual bool TryJoin(System.ReadOnlySpan<char> path1, System.ReadOnlySpan<char> path2, System.ReadOnlySpan<char> path3, System.Span<char> destination, out int charsWritten) { }
+    }
+    public sealed class RandomWrapper : Testably.Abstractions.RandomSystem.IRandom
+    {
+        public RandomWrapper(System.Random instance) { }
+        public T[] GetItems<T>(System.ReadOnlySpan<T> choices, int length) { }
+        public void GetItems<T>(System.ReadOnlySpan<T> choices, System.Span<T> destination) { }
+        public T[] GetItems<T>(T[] choices, int length) { }
+        public int Next() { }
+        public int Next(int maxValue) { }
+        public int Next(int minValue, int maxValue) { }
+        public void NextBytes(byte[] buffer) { }
+        public void NextBytes(System.Span<byte> buffer) { }
+        public double NextDouble() { }
+        public long NextInt64() { }
+        public long NextInt64(long maxValue) { }
+        public long NextInt64(long minValue, long maxValue) { }
+        public float NextSingle() { }
+        public void Shuffle<T>(System.Span<T> values) { }
+        public void Shuffle<T>(T[] values) { }
+    }
+}
+namespace Testably.Abstractions
+{
+    public interface IRandomSystem
+    {
+        Testably.Abstractions.RandomSystem.IGuid Guid { get; }
+        Testably.Abstractions.RandomSystem.IRandomFactory Random { get; }
+    }
+    public interface ITimeSystem
+    {
+        Testably.Abstractions.TimeSystem.IDateTime DateTime { get; }
+        Testably.Abstractions.TimeSystem.ITask Task { get; }
+        Testably.Abstractions.TimeSystem.IThread Thread { get; }
+        Testably.Abstractions.TimeSystem.ITimerFactory Timer { get; }
+    }
+}
+namespace Testably.Abstractions.RandomSystem
+{
+    public interface IGuid : Testably.Abstractions.RandomSystem.IRandomSystemEntity
+    {
+        System.Guid Empty { get; }
+        System.Guid NewGuid();
+        System.Guid Parse(System.ReadOnlySpan<char> input);
+        System.Guid Parse(string input);
+        System.Guid Parse(System.ReadOnlySpan<char> s, System.IFormatProvider? provider);
+        System.Guid Parse(string s, System.IFormatProvider? provider);
+        System.Guid ParseExact(System.ReadOnlySpan<char> input, System.ReadOnlySpan<char> format);
+        System.Guid ParseExact(string input, string format);
+        bool TryParse(System.ReadOnlySpan<char> input, out System.Guid result);
+        bool TryParse([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? input, out System.Guid result);
+        bool TryParse(System.ReadOnlySpan<char> s, System.IFormatProvider? provider, out System.Guid result);
+        bool TryParse([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? s, System.IFormatProvider? provider, out System.Guid result);
+        bool TryParseExact(System.ReadOnlySpan<char> input, System.ReadOnlySpan<char> format, out System.Guid result);
+        bool TryParseExact([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? input, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? format, out System.Guid result);
+    }
+    public interface IRandom
+    {
+        T[] GetItems<T>(System.ReadOnlySpan<T> choices, int length);
+        void GetItems<T>(System.ReadOnlySpan<T> choices, System.Span<T> destination);
+        T[] GetItems<T>(T[] choices, int length);
+        int Next();
+        int Next(int maxValue);
+        int Next(int minValue, int maxValue);
+        void NextBytes(byte[] buffer);
+        void NextBytes(System.Span<byte> buffer);
+        double NextDouble();
+        long NextInt64();
+        long NextInt64(long maxValue);
+        long NextInt64(long minValue, long maxValue);
+        float NextSingle();
+        void Shuffle<T>(System.Span<T> values);
+        void Shuffle<T>(T[] values);
+    }
+    public interface IRandomFactory : Testably.Abstractions.RandomSystem.IRandomSystemEntity
+    {
+        Testably.Abstractions.RandomSystem.IRandom Shared { get; }
+        Testably.Abstractions.RandomSystem.IRandom New();
+        Testably.Abstractions.RandomSystem.IRandom New(int seed);
+    }
+    public interface IRandomSystemEntity
+    {
+        Testably.Abstractions.IRandomSystem RandomSystem { get; }
+    }
+}
+namespace Testably.Abstractions.TimeSystem
+{
+    public interface IDateTime : Testably.Abstractions.TimeSystem.ITimeSystemEntity
+    {
+        System.DateTime MaxValue { get; }
+        System.DateTime MinValue { get; }
+        System.DateTime Now { get; }
+        System.DateTime Today { get; }
+        System.DateTime UnixEpoch { get; }
+        System.DateTime UtcNow { get; }
+    }
+    public interface ITask : Testably.Abstractions.TimeSystem.ITimeSystemEntity
+    {
+        System.Threading.Tasks.Task Delay(int millisecondsDelay);
+        System.Threading.Tasks.Task Delay(System.TimeSpan delay);
+        System.Threading.Tasks.Task Delay(int millisecondsDelay, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task Delay(System.TimeSpan delay, System.Threading.CancellationToken cancellationToken);
+    }
+    public interface IThread : Testably.Abstractions.TimeSystem.ITimeSystemEntity
+    {
+        void Sleep(int millisecondsTimeout);
+        void Sleep(System.TimeSpan timeout);
+    }
+    public interface ITimeSystemEntity
+    {
+        Testably.Abstractions.ITimeSystem TimeSystem { get; }
+    }
+    public interface ITimer : System.IAsyncDisposable, System.IDisposable, Testably.Abstractions.TimeSystem.ITimeSystemEntity
+    {
+        bool Change(int dueTime, int period);
+        bool Change(long dueTime, long period);
+        bool Change(System.TimeSpan dueTime, System.TimeSpan period);
+        bool Dispose(System.Threading.WaitHandle notifyObject);
+    }
+    public interface ITimerFactory : Testably.Abstractions.TimeSystem.ITimeSystemEntity
+    {
+        Testably.Abstractions.TimeSystem.ITimer New(System.Threading.TimerCallback callback);
+        Testably.Abstractions.TimeSystem.ITimer New(System.Threading.TimerCallback callback, object? state, int dueTime, int period);
+        Testably.Abstractions.TimeSystem.ITimer New(System.Threading.TimerCallback callback, object? state, long dueTime, long period);
+        Testably.Abstractions.TimeSystem.ITimer New(System.Threading.TimerCallback callback, object? state, System.TimeSpan dueTime, System.TimeSpan period);
+        Testably.Abstractions.TimeSystem.ITimer Wrap(System.Threading.Timer timer);
+    }
+}

@@ -1,0 +1,33 @@
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/Testably/Testably.Abstractions.git")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Testably.Abstractions.Tests")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETStandard,Version=v2.0", FrameworkDisplayName=".NET Standard 2.0")]
+namespace Testably.Abstractions
+{
+    public sealed class RealFileSystem : System.IO.Abstractions.IFileSystem
+    {
+        public RealFileSystem() { }
+        public System.IO.Abstractions.IDirectory Directory { get; }
+        public System.IO.Abstractions.IDirectoryInfoFactory DirectoryInfo { get; }
+        public System.IO.Abstractions.IDriveInfoFactory DriveInfo { get; }
+        public System.IO.Abstractions.IFile File { get; }
+        public System.IO.Abstractions.IFileInfoFactory FileInfo { get; }
+        public System.IO.Abstractions.IFileStreamFactory FileStream { get; }
+        public System.IO.Abstractions.IFileSystemWatcherFactory FileSystemWatcher { get; }
+        public System.IO.Abstractions.IPath Path { get; }
+    }
+    public sealed class RealRandomSystem : Testably.Abstractions.IRandomSystem
+    {
+        public RealRandomSystem() { }
+        public Testably.Abstractions.RandomSystem.IGuid Guid { get; }
+        public Testably.Abstractions.RandomSystem.IRandomFactory Random { get; }
+    }
+    public sealed class RealTimeSystem : Testably.Abstractions.ITimeSystem
+    {
+        public RealTimeSystem() { }
+        public Testably.Abstractions.TimeSystem.IDateTime DateTime { get; }
+        public Testably.Abstractions.TimeSystem.ITask Task { get; }
+        public Testably.Abstractions.TimeSystem.IThread Thread { get; }
+        public Testably.Abstractions.TimeSystem.ITimerFactory Timer { get; }
+    }
+}
