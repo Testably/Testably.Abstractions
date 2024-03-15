@@ -281,6 +281,7 @@ namespace Testably.Abstractions.Testing.Statistics
     public interface IStatistics
     {
         Testably.Abstractions.Testing.Statistics.MethodStatistic[] Methods { get; }
+        Testably.Abstractions.Testing.Statistics.PropertyStatistic[] Properties { get; }
     }
     public sealed class MethodStatistic
     {
@@ -302,6 +303,18 @@ namespace Testably.Abstractions.Testing.Statistics
         public static Testably.Abstractions.Testing.Statistics.ParameterDescription FromParameter<T>(System.ReadOnlySpan<T> value) { }
         public static Testably.Abstractions.Testing.Statistics.ParameterDescription FromParameter<T>(System.Span<T> value) { }
         public static Testably.Abstractions.Testing.Statistics.ParameterDescription FromParameter<T>(T value) { }
+    }
+    public enum PropertyAccess
+    {
+        Get = 0,
+        Set = 1,
+    }
+    public sealed class PropertyStatistic
+    {
+        public Testably.Abstractions.Testing.Statistics.PropertyAccess Access { get; }
+        public int Counter { get; }
+        public string Name { get; }
+        public override string ToString() { }
     }
 }
 namespace Testably.Abstractions.Testing.Storage

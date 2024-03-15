@@ -11,87 +11,7 @@ public class FileStreamFactoryStatisticsTests
 {
 #if NET6_0_OR_GREATER
 	[SkippableFact]
-	public void New_SafeFileHandle_FileAccess_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		sut.WithSafeFileHandleStrategy(
-				new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock("foo")))
-			.Initialize().WithFile("foo");
-		SafeFileHandle handle = new();
-		FileAccess access = FileAccess.ReadWrite;
-
-		using FileSystemStream result = sut.FileStream.New(handle, access);
-
-		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
-			handle, access);
-	}
-#endif
-
-	[SkippableFact]
-	public void New_String_FileMode_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		string path = "foo";
-		FileMode mode = FileMode.OpenOrCreate;
-
-		using FileSystemStream result = sut.FileStream.New(path, mode);
-
-		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
-			path, mode);
-	}
-
-#if FEATURE_FILESYSTEM_STREAM_OPTIONS
-	[SkippableFact]
-	public void New_String_FileStreamOptions_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		sut.Initialize().WithFile("foo");
-		string path = "foo";
-		FileStreamOptions options = new();
-
-		using FileSystemStream result = sut.FileStream.New(path, options);
-
-		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
-			path, options);
-	}
-#endif
-
-#if NET6_0_OR_GREATER
-	[SkippableFact]
-	public void New_SafeFileHandle_FileAccess_Int_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		sut.WithSafeFileHandleStrategy(
-				new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock("foo")))
-			.Initialize().WithFile("foo");
-		SafeFileHandle handle = new();
-		FileAccess access = FileAccess.ReadWrite;
-		int bufferSize = 42;
-
-		using FileSystemStream result = sut.FileStream.New(handle, access, bufferSize);
-
-		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
-			handle, access, bufferSize);
-	}
-#endif
-
-	[SkippableFact]
-	public void New_String_FileMode_FileAccess_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		string path = "foo";
-		FileMode mode = FileMode.OpenOrCreate;
-		FileAccess access = FileAccess.ReadWrite;
-
-		using FileSystemStream result = sut.FileStream.New(path, mode, access);
-
-		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
-			path, mode, access);
-	}
-
-#if NET6_0_OR_GREATER
-	[SkippableFact]
-	public void New_SafeFileHandle_FileAccess_Int_Bool_ShouldRegisterCall()
+	public void Method_New_SafeFileHandle_FileAccess_Int_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.WithSafeFileHandleStrategy(
@@ -104,28 +24,85 @@ public class FileStreamFactoryStatisticsTests
 
 		using FileSystemStream result = sut.FileStream.New(handle, access, bufferSize, isAsync);
 
-		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
+		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
 			handle, access, bufferSize, isAsync);
 	}
 #endif
 
+#if NET6_0_OR_GREATER
 	[SkippableFact]
-	public void New_String_FileMode_FileAccess_FileShare_ShouldRegisterCall()
+	public void Method_New_SafeFileHandle_FileAccess_Int_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		sut.WithSafeFileHandleStrategy(
+				new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock("foo")))
+			.Initialize().WithFile("foo");
+		SafeFileHandle handle = new();
+		FileAccess access = FileAccess.ReadWrite;
+		int bufferSize = 42;
+
+		using FileSystemStream result = sut.FileStream.New(handle, access, bufferSize);
+
+		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
+			handle, access, bufferSize);
+	}
+#endif
+#if NET6_0_OR_GREATER
+	[SkippableFact]
+	public void Method_New_SafeFileHandle_FileAccess_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		sut.WithSafeFileHandleStrategy(
+				new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock("foo")))
+			.Initialize().WithFile("foo");
+		SafeFileHandle handle = new();
+		FileAccess access = FileAccess.ReadWrite;
+
+		using FileSystemStream result = sut.FileStream.New(handle, access);
+
+		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
+			handle, access);
+	}
+#endif
+
+	[SkippableFact]
+	public void Method_New_String_FileMode_FileAccess_FileShare_Int_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
 		FileMode mode = FileMode.OpenOrCreate;
 		FileAccess access = FileAccess.ReadWrite;
 		FileShare share = FileShare.ReadWrite;
+		int bufferSize = 42;
+		bool useAsync = true;
 
-		using FileSystemStream result = sut.FileStream.New(path, mode, access, share);
+		using FileSystemStream result =
+			sut.FileStream.New(path, mode, access, share, bufferSize, useAsync);
 
-		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
-			path, mode, access, share);
+		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
+			path, mode, access, share, bufferSize, useAsync);
 	}
 
 	[SkippableFact]
-	public void New_String_FileMode_FileAccess_FileShare_Int_ShouldRegisterCall()
+	public void Method_New_String_FileMode_FileAccess_FileShare_Int_FileOptions_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		FileMode mode = FileMode.OpenOrCreate;
+		FileAccess access = FileAccess.ReadWrite;
+		FileShare share = FileShare.ReadWrite;
+		int bufferSize = 42;
+		FileOptions options = new();
+
+		using FileSystemStream result =
+			sut.FileStream.New(path, mode, access, share, bufferSize, options);
+
+		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
+			path, mode, access, share, bufferSize, options);
+	}
+
+	[SkippableFact]
+	public void Method_New_String_FileMode_FileAccess_FileShare_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
@@ -136,46 +113,70 @@ public class FileStreamFactoryStatisticsTests
 
 		using FileSystemStream result = sut.FileStream.New(path, mode, access, share, bufferSize);
 
-		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
+		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
 			path, mode, access, share, bufferSize);
 	}
 
 	[SkippableFact]
-	public void New_String_FileMode_FileAccess_FileShare_Int_Bool_ShouldRegisterCall()
+	public void Method_New_String_FileMode_FileAccess_FileShare_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
 		FileMode mode = FileMode.OpenOrCreate;
 		FileAccess access = FileAccess.ReadWrite;
 		FileShare share = FileShare.ReadWrite;
-		int bufferSize = 42;
-		bool useAsync = true;
 
-		using FileSystemStream result = sut.FileStream.New(path, mode, access, share, bufferSize, useAsync);
+		using FileSystemStream result = sut.FileStream.New(path, mode, access, share);
 
-		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
-			path, mode, access, share, bufferSize, useAsync);
+		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
+			path, mode, access, share);
 	}
 
 	[SkippableFact]
-	public void New_String_FileMode_FileAccess_FileShare_Int_FileOptions_ShouldRegisterCall()
+	public void Method_New_String_FileMode_FileAccess_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
 		FileMode mode = FileMode.OpenOrCreate;
 		FileAccess access = FileAccess.ReadWrite;
-		FileShare share = FileShare.ReadWrite;
-		int bufferSize = 42;
-		FileOptions options = new();
 
-		using FileSystemStream result = sut.FileStream.New(path, mode, access, share, bufferSize, options);
+		using FileSystemStream result = sut.FileStream.New(path, mode, access);
 
-		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.New),
-			path, mode, access, share, bufferSize, options);
+		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
+			path, mode, access);
 	}
 
 	[SkippableFact]
-	public void Wrap_FileStream_ShouldRegisterCall()
+	public void Method_New_String_FileMode_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		FileMode mode = FileMode.OpenOrCreate;
+
+		using FileSystemStream result = sut.FileStream.New(path, mode);
+
+		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
+			path, mode);
+	}
+
+#if FEATURE_FILESYSTEM_STREAM_OPTIONS
+	[SkippableFact]
+	public void Method_New_String_FileStreamOptions_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
+		string path = "foo";
+		FileStreamOptions options = new();
+
+		using FileSystemStream result = sut.FileStream.New(path, options);
+
+		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
+			path, options);
+	}
+#endif
+
+	[SkippableFact]
+	public void Method_Wrap_FileStream_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		FileStream fileStream = new("foo", FileMode.OpenOrCreate);
@@ -189,7 +190,7 @@ public class FileStreamFactoryStatisticsTests
 			// Wrap is not possible on the MockFileSystem, but should still be registered!
 		}
 
-		sut.Statistics.FileStream.ShouldOnlyContain(nameof(IFileStreamFactory.Wrap),
+		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.Wrap),
 			fileStream);
 	}
 }

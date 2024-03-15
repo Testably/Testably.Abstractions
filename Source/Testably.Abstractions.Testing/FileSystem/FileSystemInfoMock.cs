@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.Helpers;
 using Testably.Abstractions.Testing.Helpers;
+using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;
@@ -47,15 +48,25 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.Attributes" />
 	public FileAttributes Attributes
 	{
-		get => Container.Attributes;
-		set => Container.Attributes = value;
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(Attributes), PropertyAccess.Get);
+
+			return Container.Attributes;
+		}
+		set
+		{
+			using IDisposable registration = RegisterProperty(nameof(Attributes), PropertyAccess.Set);
+
+			Container.Attributes = value;
+		}
 	}
 
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IFileSystemInfo.CreateAsSymbolicLink(string)" />
 	public void CreateAsSymbolicLink(string pathToTarget)
 	{
-		using IDisposable registration = Register(nameof(CreateAsSymbolicLink),
+		using IDisposable registration = RegisterMethod(nameof(CreateAsSymbolicLink),
 			pathToTarget);
 
 		if (!_fileSystem.Execute.IsWindows && string.IsNullOrWhiteSpace(FullName))
@@ -83,21 +94,41 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.CreationTime" />
 	public DateTime CreationTime
 	{
-		get => Container.CreationTime.Get(DateTimeKind.Local);
-		set => Container.CreationTime.Set(value, DateTimeKind.Local);
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(CreationTime), PropertyAccess.Get);
+
+			return Container.CreationTime.Get(DateTimeKind.Local);
+		}
+		set
+		{
+			using IDisposable registration = RegisterProperty(nameof(CreationTime), PropertyAccess.Set);
+
+			Container.CreationTime.Set(value, DateTimeKind.Local);
+		}
 	}
 
 	/// <inheritdoc cref="IFileSystemInfo.CreationTimeUtc" />
 	public DateTime CreationTimeUtc
 	{
-		get => Container.CreationTime.Get(DateTimeKind.Utc);
-		set => Container.CreationTime.Set(value, DateTimeKind.Utc);
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(CreationTimeUtc), PropertyAccess.Get);
+
+			return Container.CreationTime.Get(DateTimeKind.Utc);
+		}
+		set
+		{
+			using IDisposable registration = RegisterProperty(nameof(CreationTimeUtc), PropertyAccess.Set);
+
+			Container.CreationTime.Set(value, DateTimeKind.Utc);
+		}
 	}
 
 	/// <inheritdoc cref="IFileSystemInfo.Delete()" />
 	public virtual void Delete()
 	{
-		using IDisposable registration = Register(nameof(Delete));
+		using IDisposable registration = RegisterMethod(nameof(Delete));
 
 		_fileSystem.Storage.DeleteContainer(Location);
 		ResetCache(!_fileSystem.Execute.IsNetFramework);
@@ -120,6 +151,8 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	{
 		get
 		{
+			using IDisposable registration = RegisterProperty(nameof(Extension), PropertyAccess.Get);
+
 			if (Location.FullPath.EndsWith('.') &&
 			    !_fileSystem.Execute.IsWindows)
 			{
@@ -135,58 +168,127 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		=> _fileSystem;
 
 	/// <inheritdoc cref="IFileSystemInfo.FullName" />
-	public string FullName => Location.FullPath;
+	public string FullName
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(FullName), PropertyAccess.Get);
+
+			return Location.FullPath;
+		}
+	}
 
 	/// <inheritdoc cref="IFileSystemInfo.LastAccessTime" />
 	public DateTime LastAccessTime
 	{
-		get => Container.LastAccessTime.Get(DateTimeKind.Local);
-		set => Container.LastAccessTime.Set(value, DateTimeKind.Local);
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(LastAccessTime), PropertyAccess.Get);
+
+			return Container.LastAccessTime.Get(DateTimeKind.Local);
+		}
+		set
+		{
+			using IDisposable registration = RegisterProperty(nameof(LastAccessTime), PropertyAccess.Set);
+
+			Container.LastAccessTime.Set(value, DateTimeKind.Local);
+		}
 	}
 
 	/// <inheritdoc cref="IFileSystemInfo.LastAccessTimeUtc" />
 	public DateTime LastAccessTimeUtc
 	{
-		get => Container.LastAccessTime.Get(DateTimeKind.Utc);
-		set => Container.LastAccessTime.Set(value, DateTimeKind.Utc);
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(LastAccessTimeUtc), PropertyAccess.Get);
+
+			return Container.LastAccessTime.Get(DateTimeKind.Utc);
+		}
+		set
+		{
+			using IDisposable registration = RegisterProperty(nameof(LastAccessTimeUtc), PropertyAccess.Set);
+
+			Container.LastAccessTime.Set(value, DateTimeKind.Utc);
+		}
 	}
 
 	/// <inheritdoc cref="IFileSystemInfo.LastWriteTime" />
 	public DateTime LastWriteTime
 	{
-		get => Container.LastWriteTime.Get(DateTimeKind.Local);
-		set => Container.LastWriteTime.Set(value, DateTimeKind.Local);
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(LastWriteTime), PropertyAccess.Get);
+
+			return Container.LastWriteTime.Get(DateTimeKind.Local);
+		}
+		set
+		{
+			using IDisposable registration = RegisterProperty(nameof(LastWriteTime), PropertyAccess.Set);
+
+			Container.LastWriteTime.Set(value, DateTimeKind.Local);
+		}
 	}
 
 	/// <inheritdoc cref="IFileSystemInfo.LastWriteTimeUtc" />
 	public DateTime LastWriteTimeUtc
 	{
-		get => Container.LastWriteTime.Get(DateTimeKind.Utc);
-		set => Container.LastWriteTime.Set(value, DateTimeKind.Utc);
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(LastWriteTimeUtc), PropertyAccess.Get);
+
+			return Container.LastWriteTime.Get(DateTimeKind.Utc);
+		}
+		set
+		{
+			using IDisposable registration = RegisterProperty(nameof(LastWriteTimeUtc), PropertyAccess.Set);
+
+			Container.LastWriteTime.Set(value, DateTimeKind.Utc);
+		}
 	}
 
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IFileSystemInfo.LinkTarget" />
 	public string? LinkTarget
-		=> Container.LinkTarget;
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(LinkTarget), PropertyAccess.Get);
+
+			return Container.LinkTarget;
+		}
+	}
 #endif
 
 	/// <inheritdoc cref="IFileSystemInfo.Name" />
 	public virtual string Name
-		=> _fileSystem.Path.GetPathRoot(Location.FullPath) == Location.FullPath
-			? Location.FullPath
-			: _fileSystem.Path.GetFileName(Location.FullPath.TrimEnd(
-				_fileSystem.Path.DirectorySeparatorChar,
-				_fileSystem.Path.AltDirectorySeparatorChar));
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(Name), PropertyAccess.Get);
+
+			return _fileSystem.Path.GetPathRoot(Location.FullPath) == Location.FullPath
+				? Location.FullPath
+				: _fileSystem.Path.GetFileName(Location.FullPath.TrimEnd(
+					_fileSystem.Path.DirectorySeparatorChar,
+					_fileSystem.Path.AltDirectorySeparatorChar));
+		}
+	}
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 	/// <inheritdoc cref="IFileSystemInfo.UnixFileMode" />
 	public UnixFileMode UnixFileMode
 	{
-		get => Container.UnixFileMode;
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(UnixFileMode), PropertyAccess.Get);
+
+			return Container.UnixFileMode;
+		}
 		[UnsupportedOSPlatform("windows")]
 		set
 		{
+			using IDisposable registration = RegisterProperty(nameof(UnixFileMode), PropertyAccess.Set);
+
 			_fileSystem.Execute.OnWindows(
 				() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform());
 
@@ -198,7 +300,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.Refresh()" />
 	public void Refresh()
 	{
-		using IDisposable registration = Register(nameof(Refresh));
+		using IDisposable registration = RegisterMethod(nameof(Refresh));
 
 		ResetCache(true);
 	}
@@ -207,7 +309,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.ResolveLinkTarget(bool)" />
 	public IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget)
 	{
-		using IDisposable registration = Register(nameof(ResolveLinkTarget),
+		using IDisposable registration = RegisterMethod(nameof(ResolveLinkTarget),
 			returnFinalTarget);
 
 		try
@@ -292,9 +394,12 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		_isInitialized = true;
 	}
 
-	protected virtual IDisposable Register(string name)
+	protected virtual IDisposable RegisterProperty(string name, PropertyAccess access)
 		=> new NoOpDisposable();
 
-	protected virtual IDisposable Register<T1>(string name, T1 parameter1)
+	protected virtual IDisposable RegisterMethod(string name)
+		=> new NoOpDisposable();
+
+	protected virtual IDisposable RegisterMethod<T1>(string name, T1 parameter1)
 		=> new NoOpDisposable();
 }

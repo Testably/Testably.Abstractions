@@ -26,23 +26,51 @@ internal sealed class FileInfoMock
 
 	/// <inheritdoc cref="IFileInfo.Directory" />
 	public IDirectoryInfo? Directory
-		=> DirectoryInfoMock.New(Location.GetParent(),
-			_fileSystem);
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(Directory), PropertyAccess.Get);
+
+			return DirectoryInfoMock.New(Location.GetParent(),
+				_fileSystem);
+		}
+	}
 
 	/// <inheritdoc cref="IFileInfo.DirectoryName" />
 	public string? DirectoryName
-		=> Directory?.FullName;
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(DirectoryName), PropertyAccess.Get);
+
+			return Directory?.FullName;
+		}
+	}
 
 	/// <inheritdoc cref="IFileSystemInfo.Exists" />
 	public override bool Exists
-		=> base.Exists && FileSystemType == FileSystemTypes.File;
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(Exists), PropertyAccess.Get);
+
+			return base.Exists && FileSystemType == FileSystemTypes.File;
+		}
+	}
 
 	/// <inheritdoc cref="IFileInfo.IsReadOnly" />
 	public bool IsReadOnly
 	{
-		get => (Attributes & FileAttributes.ReadOnly) != 0;
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(IsReadOnly), PropertyAccess.Get);
+
+			return (Attributes & FileAttributes.ReadOnly) != 0;
+		}
 		set
 		{
+			using IDisposable registration = RegisterProperty(nameof(IsReadOnly), PropertyAccess.Set);
+
 			if (value)
 			{
 				Attributes |= FileAttributes.ReadOnly;
@@ -59,6 +87,8 @@ internal sealed class FileInfoMock
 	{
 		get
 		{
+			using IDisposable registration = RegisterProperty(nameof(Length), PropertyAccess.Get);
+
 			if (Container is NullContainer ||
 			    Container.Type != FileSystemTypes.File)
 			{
@@ -77,6 +107,8 @@ internal sealed class FileInfoMock
 	{
 		get
 		{
+			using IDisposable registration = RegisterProperty(nameof(Name), PropertyAccess.Get);
+
 			if (Location.FullPath.EndsWith(FileSystem.Path.DirectorySeparatorChar))
 			{
 				return string.Empty;
@@ -89,7 +121,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.AppendText()" />
 	public StreamWriter AppendText()
 	{
-		using IDisposable registration = Register(nameof(AppendText));
+		using IDisposable registration = RegisterMethod(nameof(AppendText));
 
 		return new StreamWriter(Open(FileMode.Append, FileAccess.Write));
 	}
@@ -97,7 +129,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.CopyTo(string)" />
 	public IFileInfo CopyTo(string destFileName)
 	{
-		using IDisposable registration = Register(nameof(CopyTo),
+		using IDisposable registration = RegisterMethod(nameof(CopyTo),
 			destFileName);
 
 		destFileName.EnsureValidArgument(_fileSystem, nameof(destFileName));
@@ -112,7 +144,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.CopyTo(string, bool)" />
 	public IFileInfo CopyTo(string destFileName, bool overwrite)
 	{
-		using IDisposable registration = Register(nameof(CopyTo),
+		using IDisposable registration = RegisterMethod(nameof(CopyTo),
 			destFileName, overwrite);
 
 		destFileName.EnsureValidArgument(_fileSystem, nameof(destFileName));
@@ -127,7 +159,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.Create()" />
 	public FileSystemStream Create()
 	{
-		using IDisposable registration = Register(nameof(Create));
+		using IDisposable registration = RegisterMethod(nameof(Create));
 
 		_fileSystem.Execute.NotOnNetFramework(Refresh);
 		return _fileSystem.File.Create(FullName);
@@ -136,7 +168,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.CreateText()" />
 	public StreamWriter CreateText()
 	{
-		using IDisposable registration = Register(nameof(CreateText));
+		using IDisposable registration = RegisterMethod(nameof(CreateText));
 
 		StreamWriter streamWriter = new(_fileSystem.File.Create(FullName));
 #if NET8_0_OR_GREATER
@@ -149,7 +181,7 @@ internal sealed class FileInfoMock
 	[SupportedOSPlatform("windows")]
 	public void Decrypt()
 	{
-		using IDisposable registration = Register(nameof(Decrypt));
+		using IDisposable registration = RegisterMethod(nameof(Decrypt));
 
 		Container.Decrypt();
 	}
@@ -158,7 +190,7 @@ internal sealed class FileInfoMock
 	[SupportedOSPlatform("windows")]
 	public void Encrypt()
 	{
-		using IDisposable registration = Register(nameof(Encrypt));
+		using IDisposable registration = RegisterMethod(nameof(Encrypt));
 
 		Container.Encrypt();
 	}
@@ -166,7 +198,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.MoveTo(string)" />
 	public void MoveTo(string destFileName)
 	{
-		using IDisposable registration = Register(nameof(MoveTo),
+		using IDisposable registration = RegisterMethod(nameof(MoveTo),
 			destFileName);
 
 		Location = _fileSystem.Storage.Move(
@@ -180,7 +212,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.MoveTo(string, bool)" />
 	public void MoveTo(string destFileName, bool overwrite)
 	{
-		using IDisposable registration = Register(nameof(MoveTo),
+		using IDisposable registration = RegisterMethod(nameof(MoveTo),
 			destFileName, overwrite);
 
 		Location = _fileSystem.Storage.Move(
@@ -195,7 +227,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.Open(FileMode)" />
 	public FileSystemStream Open(FileMode mode)
 	{
-		using IDisposable registration = Register(nameof(Open),
+		using IDisposable registration = RegisterMethod(nameof(Open),
 			mode);
 
 		_fileSystem.Execute.OnNetFrameworkIf(mode == FileMode.Append,
@@ -212,7 +244,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.Open(FileMode, FileAccess)" />
 	public FileSystemStream Open(FileMode mode, FileAccess access)
 	{
-		using IDisposable registration = Register(nameof(Open),
+		using IDisposable registration = RegisterMethod(nameof(Open),
 			mode, access);
 
 		return new FileStreamMock(
@@ -226,7 +258,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.Open(FileMode, FileAccess, FileShare)" />
 	public FileSystemStream Open(FileMode mode, FileAccess access, FileShare share)
 	{
-		using IDisposable registration = Register(nameof(Open),
+		using IDisposable registration = RegisterMethod(nameof(Open),
 			mode, access, share);
 
 		return new FileStreamMock(
@@ -241,7 +273,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.Open(FileStreamOptions)" />
 	public FileSystemStream Open(FileStreamOptions options)
 	{
-		using IDisposable registration = Register(nameof(Open),
+		using IDisposable registration = RegisterMethod(nameof(Open),
 			options);
 
 		return _fileSystem.File.Open(FullName, options);
@@ -251,7 +283,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.OpenRead()" />
 	public FileSystemStream OpenRead()
 	{
-		using IDisposable registration = Register(nameof(OpenRead));
+		using IDisposable registration = RegisterMethod(nameof(OpenRead));
 
 		return new FileStreamMock(
 			_fileSystem,
@@ -263,7 +295,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.OpenText()" />
 	public StreamReader OpenText()
 	{
-		using IDisposable registration = Register(nameof(OpenText));
+		using IDisposable registration = RegisterMethod(nameof(OpenText));
 
 		return new StreamReader(OpenRead());
 	}
@@ -271,7 +303,7 @@ internal sealed class FileInfoMock
 	/// <inheritdoc cref="IFileInfo.OpenWrite()" />
 	public FileSystemStream OpenWrite()
 	{
-		using IDisposable registration = Register(nameof(OpenWrite));
+		using IDisposable registration = RegisterMethod(nameof(OpenWrite));
 
 		return new FileStreamMock(
 			_fileSystem,
@@ -285,7 +317,7 @@ internal sealed class FileInfoMock
 	public IFileInfo Replace(string destinationFileName,
 		string? destinationBackupFileName)
 	{
-		using IDisposable registration = Register(nameof(Replace),
+		using IDisposable registration = RegisterMethod(nameof(Replace),
 			destinationFileName, destinationBackupFileName);
 
 		IStorageLocation location =
@@ -340,7 +372,7 @@ internal sealed class FileInfoMock
 		string? destinationBackupFileName,
 		bool ignoreMetadataErrors)
 	{
-		using IDisposable registration = Register(nameof(Replace),
+		using IDisposable registration = RegisterMethod(nameof(Replace),
 			destinationFileName, destinationBackupFileName, ignoreMetadataErrors);
 
 		IStorageLocation location = _fileSystem.Storage.Replace(
@@ -370,20 +402,23 @@ internal sealed class FileInfoMock
 		return new FileInfoMock(location, fileSystem);
 	}
 
-	protected override IDisposable Register(string name)
-		=> _fileSystem.StatisticsRegistration.FileInfo.Register(Location.FullPath, name);
+	protected override IDisposable RegisterProperty(string name, PropertyAccess access)
+		=> _fileSystem.StatisticsRegistration.FileInfo.RegisterProperty(Location.FullPath, name, access);
 
-	protected override IDisposable Register<T1>(string name, T1 parameter1)
-		=> _fileSystem.StatisticsRegistration.FileInfo.Register(Location.FullPath, name,
+	protected override IDisposable RegisterMethod(string name)
+		=> _fileSystem.StatisticsRegistration.FileInfo.RegisterMethod(Location.FullPath, name);
+
+	protected override IDisposable RegisterMethod<T1>(string name, T1 parameter1)
+		=> _fileSystem.StatisticsRegistration.FileInfo.RegisterMethod(Location.FullPath, name,
 			ParameterDescription.FromParameter(parameter1));
 
-	private IDisposable Register<T1, T2>(string name, T1 parameter1, T2 parameter2)
-		=> _fileSystem.StatisticsRegistration.FileInfo.Register(Location.FullPath, name,
+	private IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, T2 parameter2)
+		=> _fileSystem.StatisticsRegistration.FileInfo.RegisterMethod(Location.FullPath, name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2));
 
-	private IDisposable Register<T1, T2, T3>(string name, T1 parameter1, T2 parameter2, T3 parameter3)
-		=> _fileSystem.StatisticsRegistration.FileInfo.Register(Location.FullPath, name,
+	private IDisposable RegisterMethod<T1, T2, T3>(string name, T1 parameter1, T2 parameter2, T3 parameter3)
+		=> _fileSystem.StatisticsRegistration.FileInfo.RegisterMethod(Location.FullPath, name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2),
 			ParameterDescription.FromParameter(parameter3));

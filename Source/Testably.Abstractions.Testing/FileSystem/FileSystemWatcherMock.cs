@@ -31,6 +31,12 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	private int _internalBufferSize = 8192;
 	private bool _isInitializing;
 	private string _path = string.Empty;
+	private bool _includeSubdirectories;
+	private NotifyFilters _notifyFilter = NotifyFilters.FileName |
+	                              NotifyFilters.DirectoryName |
+	                              NotifyFilters.LastWrite;
+
+	private ISynchronizeInvoke? _synchronizingObject;
 
 	private FileSystemWatcherMock(MockFileSystem fileSystem)
 	{
@@ -44,9 +50,16 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	/// <inheritdoc cref="IFileSystemWatcher.EnableRaisingEvents" />
 	public bool EnableRaisingEvents
 	{
-		get => _enableRaisingEvents;
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(EnableRaisingEvents), PropertyAccess.Get);
+
+			return _enableRaisingEvents;
+		}
 		set
 		{
+			using IDisposable registration = RegisterProperty(nameof(EnableRaisingEvents), PropertyAccess.Set);
+
 			_enableRaisingEvents = value;
 			if (_enableRaisingEvents)
 			{
@@ -68,6 +81,8 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	{
 		get
 		{
+			using IDisposable registration = RegisterProperty(nameof(Filter), PropertyAccess.Get);
+
 			if (_filters.Count == 0)
 			{
 				return _fileSystem.Execute.IsNetFramework ? "*.*" : "*";
@@ -76,6 +91,8 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		}
 		set
 		{
+			using IDisposable registration = RegisterProperty(nameof(Filter), PropertyAccess.Set);
+
 			_filters.Clear();
 			_filters.Add(value);
 		}
@@ -84,22 +101,46 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
 	/// <inheritdoc cref="IFileSystemWatcher.Filters" />
 	public Collection<string> Filters
-		=> _filters;
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(Filters), PropertyAccess.Get);
+
+			return _filters;
+		}
+	}
 #endif
 
 	/// <inheritdoc cref="IFileSystemWatcher.IncludeSubdirectories" />
 	public bool IncludeSubdirectories
 	{
-		get;
-		set;
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(IncludeSubdirectories), PropertyAccess.Get);
+
+			return _includeSubdirectories;
+		}
+		set
+		{
+			using IDisposable registration = RegisterProperty(nameof(IncludeSubdirectories), PropertyAccess.Set);
+
+			_includeSubdirectories = value;
+		}
 	}
 
 	/// <inheritdoc cref="IFileSystemWatcher.InternalBufferSize" />
 	public int InternalBufferSize
 	{
-		get => _internalBufferSize;
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(InternalBufferSize), PropertyAccess.Get);
+
+			return _internalBufferSize;
+		}
 		set
 		{
+			using IDisposable registration = RegisterProperty(nameof(InternalBufferSize), PropertyAccess.Set);
+
 			_internalBufferSize = Math.Max(value, 4096);
 			Restart();
 		}
@@ -108,18 +149,33 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	/// <inheritdoc cref="IFileSystemWatcher.NotifyFilter" />
 	public NotifyFilters NotifyFilter
 	{
-		get;
-		set;
-	} = NotifyFilters.FileName |
-	    NotifyFilters.DirectoryName |
-	    NotifyFilters.LastWrite;
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(NotifyFilter), PropertyAccess.Get);
+
+			return _notifyFilter;
+		}
+		set
+		{
+			using IDisposable registration = RegisterProperty(nameof(NotifyFilter), PropertyAccess.Set);
+
+			_notifyFilter = value;
+		}
+	}
 
 	/// <inheritdoc cref="IFileSystemWatcher.Path" />
 	public string Path
 	{
-		get => _path;
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(Path), PropertyAccess.Get);
+
+			return _path;
+		}
 		set
 		{
+			using IDisposable registration = RegisterProperty(value, nameof(Path), PropertyAccess.Set);
+
 			if (!string.IsNullOrEmpty(value) &&
 			    !_fileSystem.Directory.Exists(value))
 			{
@@ -130,13 +186,44 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		}
 	}
 
+	/// <inheritdoc cref="Component.Site" />
+	public override ISite? Site
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(Site), PropertyAccess.Get);
+
+			return base.Site;
+		}
+		set
+		{
+			using IDisposable registration = RegisterProperty(nameof(Site), PropertyAccess.Set);
+
+			base.Site = value;
+		}
+	}
+
 	/// <inheritdoc cref="IFileSystemWatcher.SynchronizingObject" />
-	public ISynchronizeInvoke? SynchronizingObject { get; set; }
+	public ISynchronizeInvoke? SynchronizingObject
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(SynchronizingObject), PropertyAccess.Get);
+
+			return _synchronizingObject;
+		}
+		set
+		{
+			using IDisposable registration = RegisterProperty(nameof(SynchronizingObject), PropertyAccess.Set);
+
+			_synchronizingObject = value;
+		}
+	}
 
 	/// <inheritdoc cref="IFileSystemWatcher.BeginInit()" />
 	public void BeginInit()
 	{
-		using IDisposable registration = Register(nameof(BeginInit));
+		using IDisposable registration = RegisterMethod(nameof(BeginInit));
 
 		_isInitializing = true;
 		Stop();
@@ -154,7 +241,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	/// <inheritdoc cref="IFileSystemWatcher.EndInit()" />
 	public void EndInit()
 	{
-		using IDisposable registration = Register(nameof(EndInit));
+		using IDisposable registration = RegisterMethod(nameof(EndInit));
 
 		_isInitializing = false;
 		Restart();
@@ -170,7 +257,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	public IWaitForChangedResult WaitForChanged(
 		WatcherChangeTypes changeType)
 	{
-		using IDisposable registration = Register(nameof(WaitForChanged),
+		using IDisposable registration = RegisterMethod(nameof(WaitForChanged),
 			changeType);
 
 		return WaitForChanged(changeType, Timeout.Infinite);
@@ -180,7 +267,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	public IWaitForChangedResult WaitForChanged(
 		WatcherChangeTypes changeType, int timeout)
 	{
-		using IDisposable registration = Register(nameof(WaitForChanged),
+		using IDisposable registration = RegisterMethod(nameof(WaitForChanged),
 			changeType, timeout);
 
 		return WaitForChangedInternal(changeType, TimeSpan.FromMilliseconds(timeout));
@@ -191,7 +278,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	public IWaitForChangedResult WaitForChanged(
 		WatcherChangeTypes changeType, TimeSpan timeout)
 	{
-		using IDisposable registration = Register(nameof(WaitForChanged),
+		using IDisposable registration = RegisterMethod(nameof(WaitForChanged),
 			changeType, timeout);
 
 		return WaitForChangedInternal(changeType, timeout);
@@ -527,15 +614,21 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		public bool TimedOut { get; }
 	}
 
-	private IDisposable Register(string name)
-		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.Register(_path, name);
+	private IDisposable RegisterProperty(string name, PropertyAccess access)
+		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.RegisterProperty(_path, name, access);
 
-	private IDisposable Register<T1>(string name, T1 parameter1)
-		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.Register(_path, name,
+	private IDisposable RegisterProperty(string path, string name, PropertyAccess access)
+		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.RegisterProperty(path, name, access);
+
+	private IDisposable RegisterMethod(string name)
+		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.RegisterMethod(_path, name);
+
+	private IDisposable RegisterMethod<T1>(string name, T1 parameter1)
+		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.RegisterMethod(_path, name,
 			ParameterDescription.FromParameter(parameter1));
 
-	private IDisposable Register<T1, T2>(string name, T1 parameter1, T2 parameter2)
-		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.Register(_path, name,
+	private IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, T2 parameter2)
+		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.RegisterMethod(_path, name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2));
 }

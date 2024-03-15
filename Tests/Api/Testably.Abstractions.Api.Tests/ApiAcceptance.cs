@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System;
 
 namespace Testably.Abstractions.Api.Tests;
 
@@ -23,7 +24,8 @@ public sealed class ApiAcceptance
 		{
 			foreach (string framework in Helper.GetTargetFrameworks())
 			{
-				string publicApi = Helper.CreatePublicApi(framework, assemblyName);
+				string publicApi = Helper.CreatePublicApi(framework, assemblyName)
+					.Replace("\n", Environment.NewLine);
 				Helper.SetExpectedApi(framework, assemblyName, publicApi);
 			}
 		}

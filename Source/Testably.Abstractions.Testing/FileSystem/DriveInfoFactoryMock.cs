@@ -27,7 +27,7 @@ internal sealed class DriveInfoFactoryMock : IDriveInfoFactory
 	[Obsolete("Use `IDriveInfoFactory.New(string)` instead")]
 	public IDriveInfo FromDriveName(string driveName)
 	{
-		using IDisposable registration = Register(nameof(FromDriveName),
+		using IDisposable registration = RegisterMethod(nameof(FromDriveName),
 			driveName);
 
 		return New(driveName);
@@ -36,7 +36,7 @@ internal sealed class DriveInfoFactoryMock : IDriveInfoFactory
 	/// <inheritdoc cref="IDriveInfoFactory.GetDrives()" />
 	public IDriveInfo[] GetDrives()
 	{
-		using IDisposable registration = Register(nameof(GetDrives));
+		using IDisposable registration = RegisterMethod(nameof(GetDrives));
 
 		return _fileSystem.Storage.GetDrives()
 			.Where(x => !x.IsUncPath)
@@ -47,7 +47,7 @@ internal sealed class DriveInfoFactoryMock : IDriveInfoFactory
 	/// <inheritdoc cref="IDriveInfoFactory.New(string)" />
 	public IDriveInfo New(string driveName)
 	{
-		using IDisposable registration = Register(nameof(New),
+		using IDisposable registration = RegisterMethod(nameof(New),
 			driveName);
 
 		if (driveName == null)
@@ -64,7 +64,7 @@ internal sealed class DriveInfoFactoryMock : IDriveInfoFactory
 	[return: NotNullIfNotNull("driveInfo")]
 	public IDriveInfo? Wrap(DriveInfo? driveInfo)
 	{
-		using IDisposable registration = Register(nameof(Wrap),
+		using IDisposable registration = RegisterMethod(nameof(Wrap),
 			driveInfo);
 
 		if (driveInfo?.Name == null)
@@ -77,10 +77,10 @@ internal sealed class DriveInfoFactoryMock : IDriveInfoFactory
 
 	#endregion
 
-	private IDisposable Register(string name)
-		=> _fileSystem.StatisticsRegistration.DriveInfo.Register(name);
+	private IDisposable RegisterMethod(string name)
+		=> _fileSystem.StatisticsRegistration.DriveInfo.RegisterMethod(name);
 
-	private IDisposable Register<T1>(string name, T1 parameter1)
-		=> _fileSystem.StatisticsRegistration.DriveInfo.Register(name,
+	private IDisposable RegisterMethod<T1>(string name, T1 parameter1)
+		=> _fileSystem.StatisticsRegistration.DriveInfo.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1));
 }

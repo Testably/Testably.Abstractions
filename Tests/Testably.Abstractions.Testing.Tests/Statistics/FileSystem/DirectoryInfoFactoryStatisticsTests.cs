@@ -6,26 +6,26 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 public sealed class DirectoryInfoFactoryStatisticsTests
 {
 	[SkippableFact]
-	public void New_String_ShouldRegisterCall()
+	public void Method_New_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string path = "foo";
 
 		sut.DirectoryInfo.New(path);
 
-		sut.Statistics.DirectoryInfo.ShouldOnlyContain(nameof(IDirectoryInfoFactory.New),
+		sut.Statistics.DirectoryInfo.ShouldOnlyContainMethodCall(nameof(IDirectoryInfoFactory.New),
 			path);
 	}
 
 	[SkippableFact]
-	public void Wrap_DirectoryInfo_ShouldRegisterCall()
+	public void Method_Wrap_DirectoryInfo_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		DirectoryInfo directoryInfo = new(".");
 
 		sut.DirectoryInfo.Wrap(directoryInfo);
 
-		sut.Statistics.DirectoryInfo.ShouldOnlyContain(nameof(IDirectoryInfoFactory.Wrap),
+		sut.Statistics.DirectoryInfo.ShouldOnlyContainMethodCall(nameof(IDirectoryInfoFactory.Wrap),
 			directoryInfo);
 	}
 }

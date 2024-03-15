@@ -27,8 +27,9 @@ internal sealed class InMemoryStorage : IStorage
 	{
 		_fileSystem = fileSystem;
 		CurrentDirectory = string.Empty.PrefixRoot(_fileSystem);
-		MainDrive = DriveInfoMock.New(CurrentDirectory, _fileSystem);
-		_drives.TryAdd(MainDrive.Name, MainDrive);
+		DriveInfoMock mainDrive = DriveInfoMock.New(CurrentDirectory, _fileSystem);
+		_drives.TryAdd(mainDrive.GetName(), mainDrive);
+		MainDrive = mainDrive;
 	}
 
 	#region IStorage Members
@@ -256,7 +257,7 @@ internal sealed class InMemoryStorage : IStorage
 		}
 
 		DriveInfoMock drive = DriveInfoMock.New(driveName, _fileSystem);
-		if (_drives.TryGetValue(drive.Name, out IStorageDrive? d))
+		if (_drives.TryGetValue(drive.GetName(), out IStorageDrive? d))
 		{
 			return d;
 		}
@@ -291,7 +292,7 @@ internal sealed class InMemoryStorage : IStorage
 	public IStorageDrive GetOrAddDrive(string driveName)
 	{
 		DriveInfoMock drive = DriveInfoMock.New(driveName, _fileSystem);
-		return _drives.GetOrAdd(drive.Name, _ => drive);
+		return _drives.GetOrAdd(drive.GetName(), _ => drive);
 	}
 
 	/// <inheritdoc cref="IStorage.GetOrCreateContainer" />

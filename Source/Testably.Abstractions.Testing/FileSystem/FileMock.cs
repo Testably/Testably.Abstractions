@@ -36,7 +36,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.AppendAllLines(string, IEnumerable{string})" />
 	public void AppendAllLines(string path, IEnumerable<string> contents)
 	{
-		using IDisposable registration = Register(nameof(AppendAllLines),
+		using IDisposable registration = RegisterMethod(nameof(AppendAllLines),
 			path, contents);
 
 		AppendAllLines(path, contents, Encoding.Default);
@@ -48,7 +48,7 @@ internal sealed class FileMock : IFile
 		IEnumerable<string> contents,
 		Encoding encoding)
 	{
-		using IDisposable registration = Register(nameof(AppendAllLines),
+		using IDisposable registration = RegisterMethod(nameof(AppendAllLines),
 			path, contents, encoding);
 
 		_ = contents ?? throw new ArgumentNullException(nameof(contents));
@@ -64,7 +64,7 @@ internal sealed class FileMock : IFile
 	public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
 		CancellationToken cancellationToken = default)
 	{
-		using IDisposable registration = Register(nameof(AppendAllLinesAsync),
+		using IDisposable registration = RegisterMethod(nameof(AppendAllLinesAsync),
 			path, contents, cancellationToken);
 
 		return AppendAllLinesAsync(path, contents, Encoding.Default, cancellationToken);
@@ -75,7 +75,7 @@ internal sealed class FileMock : IFile
 		Encoding encoding,
 		CancellationToken cancellationToken = default)
 	{
-		using IDisposable registration = Register(nameof(AppendAllLinesAsync),
+		using IDisposable registration = RegisterMethod(nameof(AppendAllLinesAsync),
 			path, contents, encoding, cancellationToken);
 
 		ThrowIfCancelled(cancellationToken);
@@ -87,7 +87,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.AppendAllText(string, string?)" />
 	public void AppendAllText(string path, string? contents)
 	{
-		using IDisposable registration = Register(nameof(AppendAllText),
+		using IDisposable registration = RegisterMethod(nameof(AppendAllText),
 			path, contents);
 
 		AppendAllText(path, contents, Encoding.Default);
@@ -96,7 +96,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.AppendAllText(string, string?, Encoding)" />
 	public void AppendAllText(string path, string? contents, Encoding encoding)
 	{
-		using IDisposable registration = Register(nameof(AppendAllText),
+		using IDisposable registration = RegisterMethod(nameof(AppendAllText),
 			path, contents, encoding);
 
 		IStorageContainer container =
@@ -131,7 +131,7 @@ internal sealed class FileMock : IFile
 	public Task AppendAllTextAsync(string path, string? contents,
 		CancellationToken cancellationToken = default)
 	{
-		using IDisposable registration = Register(nameof(AppendAllTextAsync),
+		using IDisposable registration = RegisterMethod(nameof(AppendAllTextAsync),
 			path, contents, cancellationToken);
 
 		return AppendAllTextAsync(path, contents, Encoding.Default, cancellationToken);
@@ -141,7 +141,7 @@ internal sealed class FileMock : IFile
 	public Task AppendAllTextAsync(string path, string? contents, Encoding encoding,
 		CancellationToken cancellationToken = default)
 	{
-		using IDisposable registration = Register(nameof(AppendAllTextAsync),
+		using IDisposable registration = RegisterMethod(nameof(AppendAllTextAsync),
 			path, contents, encoding, cancellationToken);
 
 		ThrowIfCancelled(cancellationToken);
@@ -153,7 +153,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.AppendText(string)" />
 	public StreamWriter AppendText(string path)
 	{
-		using IDisposable registration = Register(nameof(AppendText),
+		using IDisposable registration = RegisterMethod(nameof(AppendText),
 			path);
 
 		return FileSystem.FileInfo
@@ -164,7 +164,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.Copy(string, string)" />
 	public void Copy(string sourceFileName, string destFileName)
 	{
-		using IDisposable registration = Register(nameof(Copy),
+		using IDisposable registration = RegisterMethod(nameof(Copy),
 			sourceFileName, destFileName);
 
 		sourceFileName.EnsureValidFormat(_fileSystem, nameof(sourceFileName));
@@ -187,7 +187,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.Copy(string, string, bool)" />
 	public void Copy(string sourceFileName, string destFileName, bool overwrite)
 	{
-		using IDisposable registration = Register(nameof(Copy),
+		using IDisposable registration = RegisterMethod(nameof(Copy),
 			sourceFileName, destFileName, overwrite);
 
 		_fileSystem.Execute.OnNetFramework(
@@ -218,7 +218,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.Create(string)" />
 	public FileSystemStream Create(string path)
 	{
-		using IDisposable registration = Register(nameof(Create),
+		using IDisposable registration = RegisterMethod(nameof(Create),
 			path);
 
 		return new FileStreamMock(
@@ -232,7 +232,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.Create(string, int)" />
 	public FileSystemStream Create(string path, int bufferSize)
 	{
-		using IDisposable registration = Register(nameof(Create),
+		using IDisposable registration = RegisterMethod(nameof(Create),
 			path, bufferSize);
 
 		return new FileStreamMock(
@@ -247,7 +247,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.Create(string, int, FileOptions)" />
 	public FileSystemStream Create(string path, int bufferSize, FileOptions options)
 	{
-		using IDisposable registration = Register(nameof(Create),
+		using IDisposable registration = RegisterMethod(nameof(Create),
 			path, bufferSize, options);
 
 		return new FileStreamMock(
@@ -265,7 +265,7 @@ internal sealed class FileMock : IFile
 	public IFileSystemInfo CreateSymbolicLink(
 		string path, string pathToTarget)
 	{
-		using IDisposable registration = Register(nameof(CreateSymbolicLink),
+		using IDisposable registration = RegisterMethod(nameof(CreateSymbolicLink),
 			path, pathToTarget);
 
 		path.EnsureValidFormat(_fileSystem);
@@ -279,7 +279,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.CreateText(string)" />
 	public StreamWriter CreateText(string path)
 	{
-		using IDisposable registration = Register(nameof(CreateText),
+		using IDisposable registration = RegisterMethod(nameof(CreateText),
 			path);
 
 		return FileSystem.FileInfo
@@ -291,7 +291,7 @@ internal sealed class FileMock : IFile
 	[SupportedOSPlatform("windows")]
 	public void Decrypt(string path)
 	{
-		using IDisposable registration = Register(nameof(Decrypt),
+		using IDisposable registration = RegisterMethod(nameof(Decrypt),
 			path);
 
 		IStorageContainer container = GetContainerFromPath(path);
@@ -301,7 +301,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.Delete(string)" />
 	public void Delete(string path)
 	{
-		using IDisposable registration = Register(nameof(Delete),
+		using IDisposable registration = RegisterMethod(nameof(Delete),
 			path);
 
 		_fileSystem.Storage.DeleteContainer(
@@ -313,7 +313,7 @@ internal sealed class FileMock : IFile
 	[SupportedOSPlatform("windows")]
 	public void Encrypt(string path)
 	{
-		using IDisposable registration = Register(nameof(Encrypt),
+		using IDisposable registration = RegisterMethod(nameof(Encrypt),
 			path);
 
 		IStorageContainer container = GetContainerFromPath(path);
@@ -323,7 +323,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.Exists(string?)" />
 	public bool Exists([NotNullWhen(true)] string? path)
 	{
-		using IDisposable registration = Register(nameof(Exists),
+		using IDisposable registration = RegisterMethod(nameof(Exists),
 			path);
 
 		if (string.IsNullOrEmpty(path))
@@ -340,7 +340,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetAttributes(string)" />
 	public FileAttributes GetAttributes(string path)
 	{
-		using IDisposable registration = Register(nameof(GetAttributes),
+		using IDisposable registration = RegisterMethod(nameof(GetAttributes),
 			path);
 
 		IStorageContainer container = _fileSystem.Storage
@@ -355,7 +355,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetAttributes(SafeFileHandle)" />
 	public FileAttributes GetAttributes(SafeFileHandle fileHandle)
 	{
-		using IDisposable registration = Register(nameof(GetAttributes),
+		using IDisposable registration = RegisterMethod(nameof(GetAttributes),
 			fileHandle);
 
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
@@ -366,7 +366,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetCreationTime(string)" />
 	public DateTime GetCreationTime(string path)
 	{
-		using IDisposable registration = Register(nameof(GetCreationTime),
+		using IDisposable registration = RegisterMethod(nameof(GetCreationTime),
 			path);
 
 		return _fileSystem.Storage.GetContainer(
@@ -379,7 +379,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetCreationTime(SafeFileHandle)" />
 	public DateTime GetCreationTime(SafeFileHandle fileHandle)
 	{
-		using IDisposable registration = Register(nameof(GetCreationTime),
+		using IDisposable registration = RegisterMethod(nameof(GetCreationTime),
 			fileHandle);
 
 		return GetContainerFromSafeFileHandle(fileHandle)
@@ -390,7 +390,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetCreationTimeUtc(string)" />
 	public DateTime GetCreationTimeUtc(string path)
 	{
-		using IDisposable registration = Register(nameof(GetCreationTimeUtc),
+		using IDisposable registration = RegisterMethod(nameof(GetCreationTimeUtc),
 			path);
 
 		return _fileSystem.Storage.GetContainer(
@@ -403,7 +403,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetCreationTimeUtc(SafeFileHandle)" />
 	public DateTime GetCreationTimeUtc(SafeFileHandle fileHandle)
 	{
-		using IDisposable registration = Register(nameof(GetCreationTimeUtc),
+		using IDisposable registration = RegisterMethod(nameof(GetCreationTimeUtc),
 			fileHandle);
 
 		return GetContainerFromSafeFileHandle(fileHandle)
@@ -414,7 +414,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetLastAccessTime(string)" />
 	public DateTime GetLastAccessTime(string path)
 	{
-		using IDisposable registration = Register(nameof(GetLastAccessTime),
+		using IDisposable registration = RegisterMethod(nameof(GetLastAccessTime),
 			path);
 
 		return _fileSystem.Storage.GetContainer(
@@ -427,7 +427,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetLastAccessTime(SafeFileHandle)" />
 	public DateTime GetLastAccessTime(SafeFileHandle fileHandle)
 	{
-		using IDisposable registration = Register(nameof(GetLastAccessTime),
+		using IDisposable registration = RegisterMethod(nameof(GetLastAccessTime),
 			fileHandle);
 
 		return GetContainerFromSafeFileHandle(fileHandle)
@@ -438,7 +438,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetLastAccessTimeUtc(string)" />
 	public DateTime GetLastAccessTimeUtc(string path)
 	{
-		using IDisposable registration = Register(nameof(GetLastAccessTimeUtc),
+		using IDisposable registration = RegisterMethod(nameof(GetLastAccessTimeUtc),
 			path);
 
 		return _fileSystem.Storage.GetContainer(
@@ -451,7 +451,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetLastAccessTimeUtc(SafeFileHandle)" />
 	public DateTime GetLastAccessTimeUtc(SafeFileHandle fileHandle)
 	{
-		using IDisposable registration = Register(nameof(GetLastAccessTimeUtc),
+		using IDisposable registration = RegisterMethod(nameof(GetLastAccessTimeUtc),
 			fileHandle);
 
 		return GetContainerFromSafeFileHandle(fileHandle)
@@ -462,7 +462,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetLastWriteTime(string)" />
 	public DateTime GetLastWriteTime(string path)
 	{
-		using IDisposable registration = Register(nameof(GetLastWriteTime),
+		using IDisposable registration = RegisterMethod(nameof(GetLastWriteTime),
 			path);
 
 		return _fileSystem.Storage.GetContainer(
@@ -475,7 +475,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetLastWriteTime(SafeFileHandle)" />
 	public DateTime GetLastWriteTime(SafeFileHandle fileHandle)
 	{
-		using IDisposable registration = Register(nameof(GetLastWriteTime),
+		using IDisposable registration = RegisterMethod(nameof(GetLastWriteTime),
 			fileHandle);
 
 		return GetContainerFromSafeFileHandle(fileHandle)
@@ -486,7 +486,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetLastWriteTimeUtc(string)" />
 	public DateTime GetLastWriteTimeUtc(string path)
 	{
-		using IDisposable registration = Register(nameof(GetLastWriteTimeUtc),
+		using IDisposable registration = RegisterMethod(nameof(GetLastWriteTimeUtc),
 			path);
 
 		return _fileSystem.Storage.GetContainer(
@@ -499,7 +499,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.GetLastWriteTimeUtc(SafeFileHandle)" />
 	public DateTime GetLastWriteTimeUtc(SafeFileHandle fileHandle)
 	{
-		using IDisposable registration = Register(nameof(GetLastWriteTimeUtc),
+		using IDisposable registration = RegisterMethod(nameof(GetLastWriteTimeUtc),
 			fileHandle);
 
 		return GetContainerFromSafeFileHandle(fileHandle)
@@ -512,7 +512,7 @@ internal sealed class FileMock : IFile
 	[UnsupportedOSPlatform("windows")]
 	public UnixFileMode GetUnixFileMode(string path)
 	{
-		using IDisposable registration = Register(nameof(GetUnixFileMode),
+		using IDisposable registration = RegisterMethod(nameof(GetUnixFileMode),
 			path);
 
 		return _fileSystem.Execute.OnWindows(
@@ -530,7 +530,7 @@ internal sealed class FileMock : IFile
 	[UnsupportedOSPlatform("windows")]
 	public UnixFileMode GetUnixFileMode(SafeFileHandle fileHandle)
 	{
-		using IDisposable registration = Register(nameof(GetUnixFileMode),
+		using IDisposable registration = RegisterMethod(nameof(GetUnixFileMode),
 			fileHandle);
 
 		return _fileSystem.Execute.OnWindows(
@@ -543,7 +543,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.Move(string, string)" />
 	public void Move(string sourceFileName, string destFileName)
 	{
-		using IDisposable registration = Register(nameof(Move),
+		using IDisposable registration = RegisterMethod(nameof(Move),
 			sourceFileName, destFileName);
 
 		_fileSystem.FileInfo.New(sourceFileName
@@ -556,7 +556,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.Move(string, string, bool)" />
 	public void Move(string sourceFileName, string destFileName, bool overwrite)
 	{
-		using IDisposable registration = Register(nameof(Move),
+		using IDisposable registration = RegisterMethod(nameof(Move),
 			sourceFileName, destFileName, overwrite);
 
 		_fileSystem.FileInfo.New(sourceFileName
@@ -569,7 +569,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.Open(string, FileMode)" />
 	public FileSystemStream Open(string path, FileMode mode)
 	{
-		using IDisposable registration = Register(nameof(Open),
+		using IDisposable registration = RegisterMethod(nameof(Open),
 			path, mode);
 
 		return new FileStreamMock(
@@ -583,7 +583,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.Open(string, FileMode, FileAccess)" />
 	public FileSystemStream Open(string path, FileMode mode, FileAccess access)
 	{
-		using IDisposable registration = Register(nameof(Open),
+		using IDisposable registration = RegisterMethod(nameof(Open),
 			path, mode, access);
 
 		return new FileStreamMock(
@@ -601,7 +601,7 @@ internal sealed class FileMock : IFile
 		FileAccess access,
 		FileShare share)
 	{
-		using IDisposable registration = Register(nameof(Open),
+		using IDisposable registration = RegisterMethod(nameof(Open),
 			path, mode, access, share);
 
 		return new FileStreamMock(
@@ -616,7 +616,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.Open(string, FileStreamOptions)" />
 	public FileSystemStream Open(string path, FileStreamOptions options)
 	{
-		using IDisposable registration = Register(nameof(Open),
+		using IDisposable registration = RegisterMethod(nameof(Open),
 			path, options);
 
 		return new FileStreamMock(
@@ -633,7 +633,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.OpenRead(string)" />
 	public FileSystemStream OpenRead(string path)
 	{
-		using IDisposable registration = Register(nameof(OpenRead),
+		using IDisposable registration = RegisterMethod(nameof(OpenRead),
 			path);
 
 		return new FileStreamMock(
@@ -646,7 +646,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.OpenText(string)" />
 	public StreamReader OpenText(string path)
 	{
-		using IDisposable registration = Register(nameof(OpenText),
+		using IDisposable registration = RegisterMethod(nameof(OpenText),
 			path);
 
 		return FileSystem.FileInfo
@@ -657,7 +657,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.OpenWrite(string)" />
 	public FileSystemStream OpenWrite(string path)
 	{
-		using IDisposable registration = Register(nameof(OpenWrite),
+		using IDisposable registration = RegisterMethod(nameof(OpenWrite),
 			path);
 
 		return new FileStreamMock(
@@ -671,7 +671,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.ReadAllBytes(string)" />
 	public byte[] ReadAllBytes(string path)
 	{
-		using IDisposable registration = Register(nameof(ReadAllBytes),
+		using IDisposable registration = RegisterMethod(nameof(ReadAllBytes),
 			path);
 
 		IStorageContainer container = GetContainerFromPath(path);
@@ -691,7 +691,7 @@ internal sealed class FileMock : IFile
 	public Task<byte[]> ReadAllBytesAsync(string path,
 		CancellationToken cancellationToken = default)
 	{
-		using IDisposable registration = Register(nameof(ReadAllBytesAsync),
+		using IDisposable registration = RegisterMethod(nameof(ReadAllBytesAsync),
 			path, cancellationToken);
 
 		ThrowIfCancelled(cancellationToken);
@@ -702,7 +702,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.ReadAllLines(string)" />
 	public string[] ReadAllLines(string path)
 	{
-		using IDisposable registration = Register(nameof(ReadAllLines),
+		using IDisposable registration = RegisterMethod(nameof(ReadAllLines),
 			path);
 
 		return ReadAllLines(path, Encoding.Default);
@@ -711,7 +711,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.ReadAllLines(string, Encoding)" />
 	public string[] ReadAllLines(string path, Encoding encoding)
 	{
-		using IDisposable registration = Register(nameof(ReadAllLines),
+		using IDisposable registration = RegisterMethod(nameof(ReadAllLines),
 			path, encoding);
 
 		return ReadLines(path, encoding).ToArray();
@@ -723,7 +723,7 @@ internal sealed class FileMock : IFile
 		string path,
 		CancellationToken cancellationToken = default)
 	{
-		using IDisposable registration = Register(nameof(ReadAllLinesAsync),
+		using IDisposable registration = RegisterMethod(nameof(ReadAllLinesAsync),
 			path, cancellationToken);
 
 		return ReadAllLinesAsync(path, Encoding.Default, cancellationToken);
@@ -735,7 +735,7 @@ internal sealed class FileMock : IFile
 		Encoding encoding,
 		CancellationToken cancellationToken = default)
 	{
-		using IDisposable registration = Register(nameof(ReadAllLinesAsync),
+		using IDisposable registration = RegisterMethod(nameof(ReadAllLinesAsync),
 			path, encoding, cancellationToken);
 
 		ThrowIfCancelled(cancellationToken);
@@ -746,7 +746,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.ReadAllText(string)" />
 	public string ReadAllText(string path)
 	{
-		using IDisposable registration = Register(nameof(ReadAllText),
+		using IDisposable registration = RegisterMethod(nameof(ReadAllText),
 			path);
 
 		return ReadAllText(path, Encoding.Default);
@@ -755,7 +755,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.ReadAllText(string, Encoding)" />
 	public string ReadAllText(string path, Encoding encoding)
 	{
-		using IDisposable registration = Register(nameof(ReadAllText),
+		using IDisposable registration = RegisterMethod(nameof(ReadAllText),
 			path, encoding);
 
 		IStorageContainer container = GetContainerFromPath(path);
@@ -780,7 +780,7 @@ internal sealed class FileMock : IFile
 		string path,
 		CancellationToken cancellationToken = default)
 	{
-		using IDisposable registration = Register(nameof(ReadAllTextAsync),
+		using IDisposable registration = RegisterMethod(nameof(ReadAllTextAsync),
 			path, cancellationToken);
 
 		return ReadAllTextAsync(path, Encoding.Default, cancellationToken);
@@ -792,7 +792,7 @@ internal sealed class FileMock : IFile
 		Encoding encoding,
 		CancellationToken cancellationToken = default)
 	{
-		using IDisposable registration = Register(nameof(ReadAllTextAsync),
+		using IDisposable registration = RegisterMethod(nameof(ReadAllTextAsync),
 			path, encoding, cancellationToken);
 
 		ThrowIfCancelled(cancellationToken);
@@ -803,7 +803,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.ReadLines(string)" />
 	public IEnumerable<string> ReadLines(string path)
 	{
-		using IDisposable registration = Register(nameof(ReadLines),
+		using IDisposable registration = RegisterMethod(nameof(ReadLines),
 			path);
 
 		return ReadLines(path, Encoding.Default);
@@ -812,7 +812,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.ReadLines(string, Encoding)" />
 	public IEnumerable<string> ReadLines(string path, Encoding encoding)
 	{
-		using IDisposable registration = Register(nameof(ReadLines),
+		using IDisposable registration = RegisterMethod(nameof(ReadLines),
 			path, encoding);
 
 		return EnumerateLines(ReadAllText(path, encoding));
@@ -823,7 +823,7 @@ internal sealed class FileMock : IFile
 	public IAsyncEnumerable<string> ReadLinesAsync(string path,
 		CancellationToken cancellationToken = default)
 	{
-		using IDisposable registration = Register(nameof(ReadLinesAsync),
+		using IDisposable registration = RegisterMethod(nameof(ReadLinesAsync),
 			path, cancellationToken);
 
 		ThrowIfCancelled(cancellationToken);
@@ -834,7 +834,7 @@ internal sealed class FileMock : IFile
 	public IAsyncEnumerable<string> ReadLinesAsync(string path, Encoding encoding,
 		CancellationToken cancellationToken = default)
 	{
-		using IDisposable registration = Register(nameof(ReadLinesAsync),
+		using IDisposable registration = RegisterMethod(nameof(ReadLinesAsync),
 			path, encoding, cancellationToken);
 
 		ThrowIfCancelled(cancellationToken);
@@ -847,7 +847,7 @@ internal sealed class FileMock : IFile
 		string destinationFileName,
 		string? destinationBackupFileName)
 	{
-		using IDisposable registration = Register(nameof(Replace),
+		using IDisposable registration = RegisterMethod(nameof(Replace),
 			sourceFileName, destinationFileName, destinationBackupFileName);
 
 		_fileSystem.FileInfo.New(sourceFileName
@@ -863,7 +863,7 @@ internal sealed class FileMock : IFile
 		string? destinationBackupFileName,
 		bool ignoreMetadataErrors)
 	{
-		using IDisposable registration = Register(nameof(Replace),
+		using IDisposable registration = RegisterMethod(nameof(Replace),
 			sourceFileName, destinationFileName, destinationBackupFileName, ignoreMetadataErrors);
 
 		_fileSystem.FileInfo.New(sourceFileName
@@ -879,7 +879,7 @@ internal sealed class FileMock : IFile
 	public IFileSystemInfo? ResolveLinkTarget(
 		string linkPath, bool returnFinalTarget)
 	{
-		using IDisposable registration = Register(nameof(ResolveLinkTarget),
+		using IDisposable registration = RegisterMethod(nameof(ResolveLinkTarget),
 			linkPath, returnFinalTarget);
 
 		IStorageLocation location =
@@ -912,7 +912,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetAttributes(string, FileAttributes)" />
 	public void SetAttributes(string path, FileAttributes fileAttributes)
 	{
-		using IDisposable registration = Register(nameof(SetAttributes),
+		using IDisposable registration = RegisterMethod(nameof(SetAttributes),
 			path, fileAttributes);
 
 		IStorageContainer container = GetContainerFromPath(path);
@@ -923,7 +923,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetAttributes(SafeFileHandle, FileAttributes)" />
 	public void SetAttributes(SafeFileHandle fileHandle, FileAttributes fileAttributes)
 	{
-		using IDisposable registration = Register(nameof(SetAttributes),
+		using IDisposable registration = RegisterMethod(nameof(SetAttributes),
 			fileHandle, fileAttributes);
 
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
@@ -934,7 +934,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetCreationTime(string, DateTime)" />
 	public void SetCreationTime(string path, DateTime creationTime)
 	{
-		using IDisposable registration = Register(nameof(SetCreationTime),
+		using IDisposable registration = RegisterMethod(nameof(SetCreationTime),
 			path, creationTime);
 
 		IStorageContainer container =
@@ -946,7 +946,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetCreationTime(SafeFileHandle, DateTime)" />
 	public void SetCreationTime(SafeFileHandle fileHandle, DateTime creationTime)
 	{
-		using IDisposable registration = Register(nameof(SetCreationTime),
+		using IDisposable registration = RegisterMethod(nameof(SetCreationTime),
 			fileHandle, creationTime);
 
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
@@ -957,7 +957,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetCreationTimeUtc(string, DateTime)" />
 	public void SetCreationTimeUtc(string path, DateTime creationTimeUtc)
 	{
-		using IDisposable registration = Register(nameof(SetCreationTimeUtc),
+		using IDisposable registration = RegisterMethod(nameof(SetCreationTimeUtc),
 			path, creationTimeUtc);
 
 		IStorageContainer container =
@@ -969,7 +969,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetCreationTimeUtc(SafeFileHandle, DateTime)" />
 	public void SetCreationTimeUtc(SafeFileHandle fileHandle, DateTime creationTimeUtc)
 	{
-		using IDisposable registration = Register(nameof(SetCreationTimeUtc),
+		using IDisposable registration = RegisterMethod(nameof(SetCreationTimeUtc),
 			fileHandle, creationTimeUtc);
 
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
@@ -980,7 +980,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastAccessTime(string, DateTime)" />
 	public void SetLastAccessTime(string path, DateTime lastAccessTime)
 	{
-		using IDisposable registration = Register(nameof(SetLastAccessTime),
+		using IDisposable registration = RegisterMethod(nameof(SetLastAccessTime),
 			path, lastAccessTime);
 
 		IStorageContainer container =
@@ -992,7 +992,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastAccessTime(SafeFileHandle, DateTime)" />
 	public void SetLastAccessTime(SafeFileHandle fileHandle, DateTime lastAccessTime)
 	{
-		using IDisposable registration = Register(nameof(SetLastAccessTime),
+		using IDisposable registration = RegisterMethod(nameof(SetLastAccessTime),
 			fileHandle, lastAccessTime);
 
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
@@ -1003,7 +1003,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastAccessTimeUtc(string, DateTime)" />
 	public void SetLastAccessTimeUtc(string path, DateTime lastAccessTimeUtc)
 	{
-		using IDisposable registration = Register(nameof(SetLastAccessTimeUtc),
+		using IDisposable registration = RegisterMethod(nameof(SetLastAccessTimeUtc),
 			path, lastAccessTimeUtc);
 
 		IStorageContainer container =
@@ -1015,7 +1015,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastAccessTimeUtc(SafeFileHandle, DateTime)" />
 	public void SetLastAccessTimeUtc(SafeFileHandle fileHandle, DateTime lastAccessTimeUtc)
 	{
-		using IDisposable registration = Register(nameof(SetLastAccessTimeUtc),
+		using IDisposable registration = RegisterMethod(nameof(SetLastAccessTimeUtc),
 			fileHandle, lastAccessTimeUtc);
 
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
@@ -1026,7 +1026,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastWriteTime(string, DateTime)" />
 	public void SetLastWriteTime(string path, DateTime lastWriteTime)
 	{
-		using IDisposable registration = Register(nameof(SetLastWriteTime),
+		using IDisposable registration = RegisterMethod(nameof(SetLastWriteTime),
 			path, lastWriteTime);
 
 		IStorageContainer container =
@@ -1038,7 +1038,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastWriteTime(SafeFileHandle, DateTime)" />
 	public void SetLastWriteTime(SafeFileHandle fileHandle, DateTime lastWriteTime)
 	{
-		using IDisposable registration = Register(nameof(SetLastWriteTime),
+		using IDisposable registration = RegisterMethod(nameof(SetLastWriteTime),
 			fileHandle, lastWriteTime);
 
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
@@ -1049,7 +1049,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastWriteTimeUtc(string, DateTime)" />
 	public void SetLastWriteTimeUtc(string path, DateTime lastWriteTimeUtc)
 	{
-		using IDisposable registration = Register(nameof(SetLastWriteTimeUtc),
+		using IDisposable registration = RegisterMethod(nameof(SetLastWriteTimeUtc),
 			path, lastWriteTimeUtc);
 
 		IStorageContainer container =
@@ -1061,7 +1061,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.SetLastWriteTimeUtc(SafeFileHandle, DateTime)" />
 	public void SetLastWriteTimeUtc(SafeFileHandle fileHandle, DateTime lastWriteTimeUtc)
 	{
-		using IDisposable registration = Register(nameof(SetLastWriteTimeUtc),
+		using IDisposable registration = RegisterMethod(nameof(SetLastWriteTimeUtc),
 			fileHandle, lastWriteTimeUtc);
 
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
@@ -1074,7 +1074,7 @@ internal sealed class FileMock : IFile
 	[UnsupportedOSPlatform("windows")]
 	public void SetUnixFileMode(string path, UnixFileMode mode)
 	{
-		using IDisposable registration = Register(nameof(SetUnixFileMode),
+		using IDisposable registration = RegisterMethod(nameof(SetUnixFileMode),
 			path, mode);
 
 		_fileSystem.Execute.OnWindows(
@@ -1090,7 +1090,7 @@ internal sealed class FileMock : IFile
 	[UnsupportedOSPlatform("windows")]
 	public void SetUnixFileMode(SafeFileHandle fileHandle, UnixFileMode mode)
 	{
-		using IDisposable registration = Register(nameof(SetUnixFileMode),
+		using IDisposable registration = RegisterMethod(nameof(SetUnixFileMode),
 			fileHandle, mode);
 
 		_fileSystem.Execute.OnWindows(
@@ -1104,7 +1104,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.WriteAllBytes(string, byte[])" />
 	public void WriteAllBytes(string path, byte[] bytes)
 	{
-		using IDisposable registration = Register(nameof(WriteAllBytes),
+		using IDisposable registration = RegisterMethod(nameof(WriteAllBytes),
 			path, bytes);
 
 		_ = bytes ?? throw new ArgumentNullException(nameof(bytes));
@@ -1140,7 +1140,7 @@ internal sealed class FileMock : IFile
 	public Task WriteAllBytesAsync(string path, byte[] bytes,
 		CancellationToken cancellationToken = default)
 	{
-		using IDisposable registration = Register(nameof(WriteAllBytesAsync),
+		using IDisposable registration = RegisterMethod(nameof(WriteAllBytesAsync),
 			path, bytes, cancellationToken);
 
 		ThrowIfCancelled(cancellationToken);
@@ -1152,7 +1152,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.WriteAllLines(string, string[])" />
 	public void WriteAllLines(string path, string[] contents)
 	{
-		using IDisposable registration = Register(nameof(WriteAllLines),
+		using IDisposable registration = RegisterMethod(nameof(WriteAllLines),
 			path, contents);
 
 		WriteAllLines(path, contents, Encoding.Default);
@@ -1161,7 +1161,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.WriteAllLines(string, IEnumerable{string})" />
 	public void WriteAllLines(string path, IEnumerable<string> contents)
 	{
-		using IDisposable registration = Register(nameof(WriteAllLines),
+		using IDisposable registration = RegisterMethod(nameof(WriteAllLines),
 			path, contents);
 
 		WriteAllLines(path, contents, Encoding.Default);
@@ -1173,7 +1173,7 @@ internal sealed class FileMock : IFile
 		string[] contents,
 		Encoding encoding)
 	{
-		using IDisposable registration = Register(nameof(WriteAllLines),
+		using IDisposable registration = RegisterMethod(nameof(WriteAllLines),
 			path, contents, encoding);
 
 		WriteAllLines(path, contents.AsEnumerable(), encoding);
@@ -1185,7 +1185,7 @@ internal sealed class FileMock : IFile
 		IEnumerable<string> contents,
 		Encoding encoding)
 	{
-		using IDisposable registration = Register(nameof(WriteAllLines),
+		using IDisposable registration = RegisterMethod(nameof(WriteAllLines),
 			path, contents, encoding);
 
 		WriteAllText(
@@ -1201,7 +1201,7 @@ internal sealed class FileMock : IFile
 		IEnumerable<string> contents,
 		CancellationToken cancellationToken = default)
 	{
-		using IDisposable registration = Register(nameof(WriteAllLinesAsync),
+		using IDisposable registration = RegisterMethod(nameof(WriteAllLinesAsync),
 			path, contents, cancellationToken);
 
 		return WriteAllLinesAsync(path, contents, Encoding.Default, cancellationToken);
@@ -1214,7 +1214,7 @@ internal sealed class FileMock : IFile
 		Encoding encoding,
 		CancellationToken cancellationToken = default)
 	{
-		using IDisposable registration = Register(nameof(WriteAllLinesAsync),
+		using IDisposable registration = RegisterMethod(nameof(WriteAllLinesAsync),
 			path, contents, encoding, cancellationToken);
 
 		ThrowIfCancelled(cancellationToken);
@@ -1226,7 +1226,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.WriteAllText(string, string?)" />
 	public void WriteAllText(string path, string? contents)
 	{
-		using IDisposable registration = Register(nameof(WriteAllText),
+		using IDisposable registration = RegisterMethod(nameof(WriteAllText),
 			path, contents);
 
 		WriteAllText(path, contents, Encoding.Default);
@@ -1235,7 +1235,7 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFile.WriteAllText(string, string?, Encoding)" />
 	public void WriteAllText(string path, string? contents, Encoding encoding)
 	{
-		using IDisposable registration = Register(nameof(WriteAllText),
+		using IDisposable registration = RegisterMethod(nameof(WriteAllText),
 			path, contents, encoding);
 
 		IStorageContainer container =
@@ -1273,7 +1273,7 @@ internal sealed class FileMock : IFile
 	public Task WriteAllTextAsync(string path, string? contents,
 		CancellationToken cancellationToken = default)
 	{
-		using IDisposable registration = Register(nameof(WriteAllTextAsync),
+		using IDisposable registration = RegisterMethod(nameof(WriteAllTextAsync),
 			path, contents, cancellationToken);
 
 		return WriteAllTextAsync(path, contents, Encoding.Default, cancellationToken);
@@ -1283,7 +1283,7 @@ internal sealed class FileMock : IFile
 	public Task WriteAllTextAsync(string path, string? contents, Encoding encoding,
 		CancellationToken cancellationToken = default)
 	{
-		using IDisposable registration = Register(nameof(WriteAllTextAsync),
+		using IDisposable registration = RegisterMethod(nameof(WriteAllTextAsync),
 			path, contents, encoding, cancellationToken);
 
 		ThrowIfCancelled(cancellationToken);
@@ -1360,27 +1360,27 @@ internal sealed class FileMock : IFile
 	}
 #endif
 
-	private IDisposable Register<T1>(string name,
+	private IDisposable RegisterMethod<T1>(string name,
 		T1 parameter1)
-		=> _fileSystem.StatisticsRegistration.File.Register(name,
+		=> _fileSystem.StatisticsRegistration.File.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1));
 
-	private IDisposable Register<T1, T2>(string name,
+	private IDisposable RegisterMethod<T1, T2>(string name,
 		T1 parameter1, T2 parameter2)
-		=> _fileSystem.StatisticsRegistration.File.Register(name,
+		=> _fileSystem.StatisticsRegistration.File.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2));
 
-	private IDisposable Register<T1, T2, T3>(string name,
+	private IDisposable RegisterMethod<T1, T2, T3>(string name,
 		T1 parameter1, T2 parameter2, T3 parameter3)
-		=> _fileSystem.StatisticsRegistration.File.Register(name,
+		=> _fileSystem.StatisticsRegistration.File.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2),
 			ParameterDescription.FromParameter(parameter3));
 
-	private IDisposable Register<T1, T2, T3, T4>(string name,
+	private IDisposable RegisterMethod<T1, T2, T3, T4>(string name,
 		T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4)
-		=> _fileSystem.StatisticsRegistration.File.Register(name,
+		=> _fileSystem.StatisticsRegistration.File.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2),
 			ParameterDescription.FromParameter(parameter3),
