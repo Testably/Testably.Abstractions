@@ -116,6 +116,8 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
           fetch-depth: 0
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
       - name: Setup VSTest
