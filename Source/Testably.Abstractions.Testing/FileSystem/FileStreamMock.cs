@@ -15,14 +15,6 @@ namespace Testably.Abstractions.Testing.FileSystem;
 /// </summary>
 internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibility
 {
-	/// <inheritdoc cref="FileSystemStream.CanRead" />
-	public override bool CanRead
-		=> _access.HasFlag(FileAccess.Read);
-
-	/// <inheritdoc cref="FileSystemStream.CanWrite" />
-	public override bool CanWrite
-		=> _access.HasFlag(FileAccess.Write);
-
 	private readonly FileAccess _access;
 	private readonly IDisposable _accessLock;
 	private readonly IStorageContainer _container;
@@ -74,9 +66,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		_access = access;
 		_ = bufferSize;
 		_options = options;
-		_initialPosition = Position;
+		_initialPosition = base.Position;
 
-		_location = _fileSystem.Storage.GetLocation(Name);
+		_location = _fileSystem.Storage.GetLocation(base.Name);
 		_location.ThrowExceptionIfNotFound(_fileSystem, true);
 		IStorageContainer file = _fileSystem.Storage.GetContainer(_location);
 		if (file is NullContainer)
@@ -85,7 +77,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			    _mode.Equals(FileMode.Truncate))
 			{
 				throw ExceptionFactory.FileNotFound(
-					_fileSystem.Path.GetFullPath(Name));
+					_fileSystem.Path.GetFullPath(base.Name));
 			}
 
 			file = _fileSystem.Storage.GetOrCreateContainer(_location,
@@ -97,10 +89,10 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			_fileSystem.Execute.OnWindows(
 				() =>
 					throw ExceptionFactory.AccessToPathDenied(
-						_fileSystem.Path.GetFullPath(Name)),
+						_fileSystem.Path.GetFullPath(base.Name)),
 				() =>
 					throw ExceptionFactory.FileAlreadyExists(
-						_fileSystem.Path.GetFullPath(Name), 17));
+						_fileSystem.Path.GetFullPath(base.Name), 17));
 		}
 		else if (_mode.Equals(FileMode.CreateNew))
 		{
@@ -120,6 +112,134 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		_container = file;
 
 		InitializeStream();
+	}
+
+	/// <inheritdoc cref="FileSystemStream.CanRead" />
+	public override bool CanRead
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(CanRead), PropertyAccess.Get);
+
+			return _access.HasFlag(FileAccess.Read);
+		}
+	}
+
+	/// <inheritdoc cref="FileSystemStream.CanSeek" />
+	public override bool CanSeek
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(CanSeek), PropertyAccess.Get);
+
+			return base.CanSeek;
+		}
+	}
+
+	/// <inheritdoc cref="FileSystemStream.CanTimeout" />
+	public override bool CanTimeout
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(CanTimeout), PropertyAccess.Get);
+
+			return base.CanTimeout;
+		}
+	}
+
+	/// <inheritdoc cref="FileSystemStream.CanWrite" />
+	public override bool CanWrite
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(CanWrite), PropertyAccess.Get);
+
+			return _access.HasFlag(FileAccess.Write);
+		}
+	}
+
+	/// <inheritdoc cref="FileSystemStream.IsAsync" />
+	public override bool IsAsync
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(IsAsync), PropertyAccess.Get);
+
+			return base.IsAsync;
+		}
+	}
+
+	/// <inheritdoc cref="FileSystemStream.Length" />
+	public override long Length
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(Length), PropertyAccess.Get);
+
+			return base.Length;
+		}
+	}
+
+	/// <inheritdoc cref="FileSystemStream.Name" />
+	public override string Name
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(Name), PropertyAccess.Get);
+
+			return base.Name;
+		}
+	}
+
+	/// <inheritdoc cref="FileSystemStream.Position" />
+	public override long Position
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(Position), PropertyAccess.Get);
+
+			return base.Position;
+		}
+		set
+		{
+			using IDisposable registration = RegisterProperty(nameof(Position), PropertyAccess.Set);
+
+			base.Position = value;
+		}
+	}
+
+	/// <inheritdoc cref="FileSystemStream.ReadTimeout" />
+	public override int ReadTimeout
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(ReadTimeout), PropertyAccess.Get);
+
+			return base.ReadTimeout;
+		}
+		set
+		{
+			using IDisposable registration = RegisterProperty(nameof(ReadTimeout), PropertyAccess.Set);
+
+			base.ReadTimeout = value;
+		}
+	}
+
+	/// <inheritdoc cref="FileSystemStream.WriteTimeout" />
+	public override int WriteTimeout
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(WriteTimeout), PropertyAccess.Get);
+
+			return base.WriteTimeout;
+		}
+		set
+		{
+			using IDisposable registration = RegisterProperty(nameof(WriteTimeout), PropertyAccess.Set);
+
+			base.WriteTimeout = value;
+		}
 	}
 
 	/// <inheritdoc cref="FileSystemStream.BeginRead(byte[], int, int, AsyncCallback?, object?)" />
@@ -537,6 +657,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="RetrieveMetadata{T}(string)" />
 	public T? RetrieveMetadata<T>(string key)
 		=> _container.Extensibility.RetrieveMetadata<T>(key);
+
+	private IDisposable RegisterProperty(string name, PropertyAccess access)
+		=> _fileSystem.StatisticsRegistration.FileStream.RegisterProperty(_location.FullPath, name, access);
 
 	private IDisposable RegisterMethod(string name)
 		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(_location.FullPath, name);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Xml.Linq;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Storage;
@@ -26,23 +27,51 @@ internal sealed class FileInfoMock
 
 	/// <inheritdoc cref="IFileInfo.Directory" />
 	public IDirectoryInfo? Directory
-		=> DirectoryInfoMock.New(Location.GetParent(),
-			_fileSystem);
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(Directory), PropertyAccess.Get);
+
+			return DirectoryInfoMock.New(Location.GetParent(),
+				_fileSystem);
+		}
+	}
 
 	/// <inheritdoc cref="IFileInfo.DirectoryName" />
 	public string? DirectoryName
-		=> Directory?.FullName;
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(DirectoryName), PropertyAccess.Get);
+
+			return Directory?.FullName;
+		}
+	}
 
 	/// <inheritdoc cref="IFileSystemInfo.Exists" />
 	public override bool Exists
-		=> base.Exists && FileSystemType == FileSystemTypes.File;
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(Exists), PropertyAccess.Get);
+
+			return base.Exists && FileSystemType == FileSystemTypes.File;
+		}
+	}
 
 	/// <inheritdoc cref="IFileInfo.IsReadOnly" />
 	public bool IsReadOnly
 	{
-		get => (Attributes & FileAttributes.ReadOnly) != 0;
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(IsReadOnly), PropertyAccess.Get);
+
+			return (Attributes & FileAttributes.ReadOnly) != 0;
+		}
 		set
 		{
+			using IDisposable registration = RegisterProperty(nameof(IsReadOnly), PropertyAccess.Set);
+
 			if (value)
 			{
 				Attributes |= FileAttributes.ReadOnly;
@@ -59,6 +88,8 @@ internal sealed class FileInfoMock
 	{
 		get
 		{
+			using IDisposable registration = RegisterProperty(nameof(Length), PropertyAccess.Get);
+
 			if (Container is NullContainer ||
 			    Container.Type != FileSystemTypes.File)
 			{
@@ -77,6 +108,8 @@ internal sealed class FileInfoMock
 	{
 		get
 		{
+			using IDisposable registration = RegisterProperty(nameof(Name), PropertyAccess.Get);
+
 			if (Location.FullPath.EndsWith(FileSystem.Path.DirectorySeparatorChar))
 			{
 				return string.Empty;
@@ -369,6 +402,9 @@ internal sealed class FileInfoMock
 
 		return new FileInfoMock(location, fileSystem);
 	}
+
+	protected override IDisposable RegisterProperty(string name, PropertyAccess access)
+		=> _fileSystem.StatisticsRegistration.FileInfo.RegisterProperty(Location.FullPath, name, access);
 
 	protected override IDisposable RegisterMethod(string name)
 		=> _fileSystem.StatisticsRegistration.FileInfo.RegisterMethod(Location.FullPath, name);

@@ -39,12 +39,26 @@ internal sealed class DirectoryInfoMock
 
 	/// <inheritdoc cref="IDirectoryInfo.Parent" />
 	public IDirectoryInfo? Parent
-		=> New(Location.GetParent(), _fileSystem);
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(Parent), PropertyAccess.Get);
+
+			return New(Location.GetParent(), _fileSystem);
+		}
+	}
 
 	/// <inheritdoc cref="IDirectoryInfo.Root" />
 	public IDirectoryInfo Root
-		=> New(_fileSystem.Storage.GetLocation(string.Empty.PrefixRoot(_fileSystem)),
-			_fileSystem);
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(Root), PropertyAccess.Get);
+
+			return New(_fileSystem.Storage.GetLocation(string.Empty.PrefixRoot(_fileSystem)),
+				_fileSystem);
+		}
+	}
 
 	/// <inheritdoc cref="IDirectoryInfo.Create()" />
 	public void Create()

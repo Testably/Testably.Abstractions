@@ -290,6 +290,7 @@ public class FileInfoStatisticsTests
 	public void Property_Attributes_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").Attributes;
 
@@ -301,6 +302,7 @@ public class FileInfoStatisticsTests
 	public void Property_Attributes_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 		FileAttributes value = new();
 
 		sut.FileInfo.New("foo").Attributes = value;
@@ -313,6 +315,7 @@ public class FileInfoStatisticsTests
 	public void Property_CreationTime_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").CreationTime;
 
@@ -324,6 +327,7 @@ public class FileInfoStatisticsTests
 	public void Property_CreationTime_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 		DateTime value = new();
 
 		sut.FileInfo.New("foo").CreationTime = value;
@@ -336,6 +340,7 @@ public class FileInfoStatisticsTests
 	public void Property_CreationTimeUtc_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").CreationTimeUtc;
 
@@ -347,6 +352,7 @@ public class FileInfoStatisticsTests
 	public void Property_CreationTimeUtc_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 		DateTime value = new();
 
 		sut.FileInfo.New("foo").CreationTimeUtc = value;
@@ -359,6 +365,7 @@ public class FileInfoStatisticsTests
 	public void Property_Directory_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").Directory;
 
@@ -370,6 +377,7 @@ public class FileInfoStatisticsTests
 	public void Property_DirectoryName_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").DirectoryName;
 
@@ -381,6 +389,7 @@ public class FileInfoStatisticsTests
 	public void Property_Exists_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").Exists;
 
@@ -391,6 +400,7 @@ public class FileInfoStatisticsTests
 	public void Property_Extension_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").Extension;
 
@@ -402,6 +412,7 @@ public class FileInfoStatisticsTests
 	public void Property_FullName_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").FullName;
 
@@ -413,6 +424,7 @@ public class FileInfoStatisticsTests
 	public void Property_IsReadOnly_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").IsReadOnly;
 
@@ -424,6 +436,7 @@ public class FileInfoStatisticsTests
 	public void Property_IsReadOnly_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 		bool value = true;
 
 		sut.FileInfo.New("foo").IsReadOnly = value;
@@ -436,6 +449,7 @@ public class FileInfoStatisticsTests
 	public void Property_LastAccessTime_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").LastAccessTime;
 
@@ -447,6 +461,7 @@ public class FileInfoStatisticsTests
 	public void Property_LastAccessTime_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 		DateTime value = new();
 
 		sut.FileInfo.New("foo").LastAccessTime = value;
@@ -459,6 +474,7 @@ public class FileInfoStatisticsTests
 	public void Property_LastAccessTimeUtc_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").LastAccessTimeUtc;
 
@@ -470,6 +486,7 @@ public class FileInfoStatisticsTests
 	public void Property_LastAccessTimeUtc_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 		DateTime value = new();
 
 		sut.FileInfo.New("foo").LastAccessTimeUtc = value;
@@ -482,6 +499,7 @@ public class FileInfoStatisticsTests
 	public void Property_LastWriteTime_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").LastWriteTime;
 
@@ -493,6 +511,7 @@ public class FileInfoStatisticsTests
 	public void Property_LastWriteTime_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 		DateTime value = new();
 
 		sut.FileInfo.New("foo").LastWriteTime = value;
@@ -505,6 +524,7 @@ public class FileInfoStatisticsTests
 	public void Property_LastWriteTimeUtc_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").LastWriteTimeUtc;
 
@@ -516,6 +536,7 @@ public class FileInfoStatisticsTests
 	public void Property_LastWriteTimeUtc_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 		DateTime value = new();
 
 		sut.FileInfo.New("foo").LastWriteTimeUtc = value;
@@ -528,6 +549,7 @@ public class FileInfoStatisticsTests
 	public void Property_Length_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").Length;
 
@@ -539,6 +561,7 @@ public class FileInfoStatisticsTests
 	public void Property_LinkTarget_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").LinkTarget;
 
@@ -551,6 +574,7 @@ public class FileInfoStatisticsTests
 	public void Property_Name_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").Name;
 
@@ -562,6 +586,7 @@ public class FileInfoStatisticsTests
 	public void Property_UnixFileMode_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileInfo.New("foo").UnixFileMode;
 
@@ -575,6 +600,7 @@ public class FileInfoStatisticsTests
 		Skip.If(Test.RunsOnWindows);
 
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 		UnixFileMode value = new();
 
 		#pragma warning disable CA1416

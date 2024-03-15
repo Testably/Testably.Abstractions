@@ -457,7 +457,14 @@ public class FileStreamStatisticsTests
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 
-		_ = fileStream.ReadTimeout;
+		try
+		{
+			_ = fileStream.ReadTimeout;
+		}
+		catch (InvalidOperationException)
+		{
+			// Timeouts are not supported on this stream.
+		}
 
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.ReadTimeout));
@@ -470,7 +477,14 @@ public class FileStreamStatisticsTests
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		int value = 42;
 
-		fileStream.ReadTimeout = value;
+		try
+		{
+			fileStream.ReadTimeout = value;
+		}
+		catch (InvalidOperationException)
+		{
+			// Timeouts are not supported on this stream.
+		}
 
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(FileSystemStream.ReadTimeout));
@@ -482,7 +496,14 @@ public class FileStreamStatisticsTests
 		MockFileSystem sut = new();
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 
-		_ = fileStream.WriteTimeout;
+		try
+		{
+			_ = fileStream.WriteTimeout;
+		}
+		catch (InvalidOperationException)
+		{
+			// Timeouts are not supported on this stream.
+		}
 
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.WriteTimeout));
@@ -495,7 +516,14 @@ public class FileStreamStatisticsTests
 		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
 		int value = 42;
 
-		fileStream.WriteTimeout = value;
+		try
+		{
+			fileStream.WriteTimeout = value;
+		}
+		catch (InvalidOperationException)
+		{
+			// Timeouts are not supported on this stream.
+		}
 
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(FileSystemStream.WriteTimeout));

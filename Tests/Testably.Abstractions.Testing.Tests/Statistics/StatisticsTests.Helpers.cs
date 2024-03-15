@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32.SafeHandles;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -33,6 +34,12 @@ public sealed partial class StatisticsTests
 				if (propertyInfo.GetCustomAttribute<ObsoleteAttribute>() != null ||
 				    propertyInfo.Name == nameof(IFileSystemEntity.FileSystem))
 				{
+					continue;
+				}
+
+				if (propertyInfo.PropertyType == typeof(IContainer))
+				{
+					// Container cannot be overridden
 					continue;
 				}
 

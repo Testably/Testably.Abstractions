@@ -114,21 +114,12 @@ public class FileSystemWatcherStatisticsTests
 				timeout);
 	}
 #endif
-	[SkippableFact]
-	public void Property_Container_Get_ShouldRegisterPropertyAccess()
-	{
-		MockFileSystem sut = new();
-
-		_ = sut.FileSystemWatcher.New("foo").Container;
-
-		sut.Statistics.FileSystemWatcher["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IFileSystemWatcher.Container));
-	}
 
 	[SkippableFact]
 	public void Property_EnableRaisingEvents_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.FileSystemWatcher.New("foo").EnableRaisingEvents;
 
@@ -140,7 +131,8 @@ public class FileSystemWatcherStatisticsTests
 	public void Property_EnableRaisingEvents_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
-		bool value = true;
+		sut.Initialize().WithSubdirectory("foo");
+		bool value = false;
 
 		sut.FileSystemWatcher.New("foo").EnableRaisingEvents = value;
 
@@ -152,6 +144,7 @@ public class FileSystemWatcherStatisticsTests
 	public void Property_Filter_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.FileSystemWatcher.New("foo").Filter;
 
@@ -163,6 +156,7 @@ public class FileSystemWatcherStatisticsTests
 	public void Property_Filter_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		string value = "foo";
 
 		sut.FileSystemWatcher.New("foo").Filter = value;
@@ -176,6 +170,7 @@ public class FileSystemWatcherStatisticsTests
 	public void Property_Filters_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.FileSystemWatcher.New("foo").Filters;
 
@@ -188,6 +183,7 @@ public class FileSystemWatcherStatisticsTests
 	public void Property_IncludeSubdirectories_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.FileSystemWatcher.New("foo").IncludeSubdirectories;
 
@@ -199,6 +195,7 @@ public class FileSystemWatcherStatisticsTests
 	public void Property_IncludeSubdirectories_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		bool value = true;
 
 		sut.FileSystemWatcher.New("foo").IncludeSubdirectories = value;
@@ -211,6 +208,7 @@ public class FileSystemWatcherStatisticsTests
 	public void Property_InternalBufferSize_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.FileSystemWatcher.New("foo").InternalBufferSize;
 
@@ -222,6 +220,7 @@ public class FileSystemWatcherStatisticsTests
 	public void Property_InternalBufferSize_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		int value = 42;
 
 		sut.FileSystemWatcher.New("foo").InternalBufferSize = value;
@@ -234,6 +233,7 @@ public class FileSystemWatcherStatisticsTests
 	public void Property_NotifyFilter_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.FileSystemWatcher.New("foo").NotifyFilter;
 
@@ -245,6 +245,7 @@ public class FileSystemWatcherStatisticsTests
 	public void Property_NotifyFilter_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		NotifyFilters value = new();
 
 		sut.FileSystemWatcher.New("foo").NotifyFilter = value;
@@ -257,6 +258,7 @@ public class FileSystemWatcherStatisticsTests
 	public void Property_Path_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.FileSystemWatcher.New("foo").Path;
 
@@ -268,6 +270,7 @@ public class FileSystemWatcherStatisticsTests
 	public void Property_Path_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		string value = "foo";
 
 		sut.FileSystemWatcher.New("foo").Path = value;
@@ -280,6 +283,7 @@ public class FileSystemWatcherStatisticsTests
 	public void Property_Site_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.FileSystemWatcher.New("foo").Site;
 
@@ -291,6 +295,7 @@ public class FileSystemWatcherStatisticsTests
 	public void Property_Site_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		ISite value = null!;
 
 		sut.FileSystemWatcher.New("foo").Site = value;
@@ -303,6 +308,7 @@ public class FileSystemWatcherStatisticsTests
 	public void Property_SynchronizingObject_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.FileSystemWatcher.New("foo").SynchronizingObject;
 
@@ -314,6 +320,7 @@ public class FileSystemWatcherStatisticsTests
 	public void Property_SynchronizingObject_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		ISynchronizeInvoke value = null!;
 
 		sut.FileSystemWatcher.New("foo").SynchronizingObject = value;

@@ -449,6 +449,7 @@ public sealed class DirectoryInfoStatisticsTests
 	public void Property_Attributes_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.DirectoryInfo.New("foo").Attributes;
 
@@ -460,18 +461,20 @@ public sealed class DirectoryInfoStatisticsTests
 	public void Property_Attributes_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		FileAttributes value = new();
 
 		sut.DirectoryInfo.New("foo").Attributes = value;
 
 		sut.Statistics.DirectoryInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.Attributes));
+			.ShouldOnlyContainPropertySetAccess(nameof(IDirectoryInfo.Attributes));
 	}
 
 	[SkippableFact]
 	public void Property_CreationTime_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.DirectoryInfo.New("foo").CreationTime;
 
@@ -483,18 +486,20 @@ public sealed class DirectoryInfoStatisticsTests
 	public void Property_CreationTime_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		DateTime value = new();
 
 		sut.DirectoryInfo.New("foo").CreationTime = value;
 
 		sut.Statistics.DirectoryInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.CreationTime));
+			.ShouldOnlyContainPropertySetAccess(nameof(IDirectoryInfo.CreationTime));
 	}
 
 	[SkippableFact]
 	public void Property_CreationTimeUtc_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.DirectoryInfo.New("foo").CreationTimeUtc;
 
@@ -506,18 +511,20 @@ public sealed class DirectoryInfoStatisticsTests
 	public void Property_CreationTimeUtc_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		DateTime value = new();
 
 		sut.DirectoryInfo.New("foo").CreationTimeUtc = value;
 
 		sut.Statistics.DirectoryInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.CreationTimeUtc));
+			.ShouldOnlyContainPropertySetAccess(nameof(IDirectoryInfo.CreationTimeUtc));
 	}
 
 	[SkippableFact]
 	public void Property_Exists_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.DirectoryInfo.New("foo").Exists;
 
@@ -529,6 +536,7 @@ public sealed class DirectoryInfoStatisticsTests
 	public void Property_Extension_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.DirectoryInfo.New("foo").Extension;
 
@@ -540,6 +548,7 @@ public sealed class DirectoryInfoStatisticsTests
 	public void Property_FullName_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.DirectoryInfo.New("foo").FullName;
 
@@ -551,6 +560,7 @@ public sealed class DirectoryInfoStatisticsTests
 	public void Property_LastAccessTime_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.DirectoryInfo.New("foo").LastAccessTime;
 
@@ -562,18 +572,20 @@ public sealed class DirectoryInfoStatisticsTests
 	public void Property_LastAccessTime_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		DateTime value = new();
 
 		sut.DirectoryInfo.New("foo").LastAccessTime = value;
 
 		sut.Statistics.DirectoryInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.LastAccessTime));
+			.ShouldOnlyContainPropertySetAccess(nameof(IDirectoryInfo.LastAccessTime));
 	}
 
 	[SkippableFact]
 	public void Property_LastAccessTimeUtc_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.DirectoryInfo.New("foo").LastAccessTimeUtc;
 
@@ -585,18 +597,20 @@ public sealed class DirectoryInfoStatisticsTests
 	public void Property_LastAccessTimeUtc_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		DateTime value = new();
 
 		sut.DirectoryInfo.New("foo").LastAccessTimeUtc = value;
 
 		sut.Statistics.DirectoryInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.LastAccessTimeUtc));
+			.ShouldOnlyContainPropertySetAccess(nameof(IDirectoryInfo.LastAccessTimeUtc));
 	}
 
 	[SkippableFact]
 	public void Property_LastWriteTime_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.DirectoryInfo.New("foo").LastWriteTime;
 
@@ -608,18 +622,20 @@ public sealed class DirectoryInfoStatisticsTests
 	public void Property_LastWriteTime_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		DateTime value = new();
 
 		sut.DirectoryInfo.New("foo").LastWriteTime = value;
 
 		sut.Statistics.DirectoryInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.LastWriteTime));
+			.ShouldOnlyContainPropertySetAccess(nameof(IDirectoryInfo.LastWriteTime));
 	}
 
 	[SkippableFact]
 	public void Property_LastWriteTimeUtc_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.DirectoryInfo.New("foo").LastWriteTimeUtc;
 
@@ -631,12 +647,13 @@ public sealed class DirectoryInfoStatisticsTests
 	public void Property_LastWriteTimeUtc_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		DateTime value = new();
 
 		sut.DirectoryInfo.New("foo").LastWriteTimeUtc = value;
 
 		sut.Statistics.DirectoryInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.LastWriteTimeUtc));
+			.ShouldOnlyContainPropertySetAccess(nameof(IDirectoryInfo.LastWriteTimeUtc));
 	}
 
 #if FEATURE_FILESYSTEM_LINK
@@ -644,6 +661,7 @@ public sealed class DirectoryInfoStatisticsTests
 	public void Property_LinkTarget_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.DirectoryInfo.New("foo").LinkTarget;
 
@@ -656,6 +674,7 @@ public sealed class DirectoryInfoStatisticsTests
 	public void Property_Name_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.DirectoryInfo.New("foo").Name;
 
@@ -667,6 +686,7 @@ public sealed class DirectoryInfoStatisticsTests
 	public void Property_Parent_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.DirectoryInfo.New("foo").Parent;
 
@@ -678,6 +698,7 @@ public sealed class DirectoryInfoStatisticsTests
 	public void Property_Root_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.DirectoryInfo.New("foo").Root;
 
@@ -690,6 +711,7 @@ public sealed class DirectoryInfoStatisticsTests
 	public void Property_UnixFileMode_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 
 		_ = sut.DirectoryInfo.New("foo").UnixFileMode;
 
@@ -703,6 +725,7 @@ public sealed class DirectoryInfoStatisticsTests
 		Skip.If(Test.RunsOnWindows);
 
 		MockFileSystem sut = new();
+		sut.Initialize().WithSubdirectory("foo");
 		UnixFileMode value = new();
 
 		#pragma warning disable CA1416
@@ -710,7 +733,7 @@ public sealed class DirectoryInfoStatisticsTests
 		#pragma warning restore CA1416
 
 		sut.Statistics.DirectoryInfo["foo"]
-			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.UnixFileMode));
+			.ShouldOnlyContainPropertySetAccess(nameof(IDirectoryInfo.UnixFileMode));
 	}
 #endif
 }
