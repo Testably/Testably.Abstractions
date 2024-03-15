@@ -20,32 +20,16 @@ public sealed class PropertyStatistic
 	/// <summary>
 	///     The mode of the accessed property (getter or setter).
 	/// </summary>
-	public AccessMode Mode { get; }
+	public PropertyAccess Access { get; }
 
-	internal PropertyStatistic(int counter, string name, AccessMode mode)
+	internal PropertyStatistic(int counter, string name, PropertyAccess access)
 	{
 		Counter = counter;
 		Name = name;
-		Mode = mode;
+		Access = access;
 	}
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"{Name}{{{Mode.ToString().ToLower(CultureInfo.InvariantCulture)};}}";
-
-	/// <summary>
-	///     The mode of accessing a property (getter or setter).
-	/// </summary>
-	public enum AccessMode
-	{
-		/// <summary>
-		///     The property was read.
-		/// </summary>
-		Get,
-
-		/// <summary>
-		///     The property was written to.
-		/// </summary>
-		Set
-	}
+		=> $"{Name}{{{Access.ToString().ToLower(CultureInfo.InvariantCulture)};}}";
 }

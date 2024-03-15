@@ -9,14 +9,14 @@ public static class StatisticsTestHelpers
 	{
 		statistics.Properties.Length.Should().Be(1);
 		statistics.Properties.Should()
-			.ContainSingle(c => c.Name == name && c.Mode == PropertyStatistic.AccessMode.Get);
+			.ContainSingle(c => c.Name == name && c.Access == PropertyAccess.Get);
 	}
 
 	public static void ShouldOnlyContainPropertySetAccess(this IStatistics statistics, string name)
 	{
 		statistics.Properties.Length.Should().Be(1);
 		statistics.Properties.Should()
-			.ContainSingle(c => c.Name == name && c.Mode == PropertyStatistic.AccessMode.Set);
+			.ContainSingle(c => c.Name == name && c.Access == PropertyAccess.Set);
 	}
 
 	public static void ShouldOnlyContainMethodCall(this IStatistics statistics, string name,

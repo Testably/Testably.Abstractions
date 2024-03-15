@@ -31,7 +31,7 @@ internal sealed class DirectoryInfoMock
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(Exists), PropertyStatistic.AccessMode.Get);
+			using IDisposable registration = RegisterProperty(nameof(Exists), PropertyAccess.Get);
 
 			return base.Exists && FileSystemType == FileSystemTypes.Directory;
 		}
@@ -424,8 +424,8 @@ internal sealed class DirectoryInfoMock
 			enumerationOptions);
 	}
 
-	protected override IDisposable RegisterProperty(string name, PropertyStatistic.AccessMode mode)
-		=> _fileSystem.StatisticsRegistration.DirectoryInfo.RegisterProperty(Location.FullPath, name, mode);
+	protected override IDisposable RegisterProperty(string name, PropertyAccess access)
+		=> _fileSystem.StatisticsRegistration.DirectoryInfo.RegisterProperty(Location.FullPath, name, access);
 
 	protected override IDisposable RegisterMethod(string name)
 		=> _fileSystem.StatisticsRegistration.DirectoryInfo.RegisterMethod(Location.FullPath, name);

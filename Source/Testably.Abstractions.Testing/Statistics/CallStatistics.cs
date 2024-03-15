@@ -36,15 +36,15 @@ internal class CallStatistics : IStatistics
 	}
 
 	/// <summary>
-	///     Registers the property <paramref name="name" /> callback with <paramref name="mode" /> access.
+	///     Registers the property <paramref name="name" /> callback with <paramref name="access" /> access.
 	/// </summary>
 	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
-	internal IDisposable RegisterProperty(string name, PropertyStatistic.AccessMode mode)
+	internal IDisposable RegisterProperty(string name, PropertyAccess access)
 	{
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_properties.Enqueue(new PropertyStatistic(counter, name, mode));
+			_properties.Enqueue(new PropertyStatistic(counter, name, access));
 		}
 
 		return release;

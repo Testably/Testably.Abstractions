@@ -293,7 +293,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		_isInitialized = true;
 	}
 
-	protected virtual IDisposable RegisterProperty(string name, PropertyStatistic.AccessMode mode)
+	protected virtual IDisposable RegisterProperty(string name, PropertyAccess access)
 		=> new NoOpDisposable();
 
 	protected virtual IDisposable RegisterMethod(string name)

@@ -557,8 +557,8 @@ internal sealed class PathMock : PathSystemBase
 	}
 #endif
 
-	private IDisposable RegisterProperty(string name, PropertyStatistic.AccessMode mode = PropertyStatistic.AccessMode.Get)
-		=> _fileSystem.StatisticsRegistration.Path.RegisterProperty(name, mode);
+	private IDisposable RegisterProperty(string name, PropertyAccess access = PropertyAccess.Get)
+		=> _fileSystem.StatisticsRegistration.Path.RegisterProperty(name, access);
 
 	private IDisposable RegisterMethod(string name)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name);
