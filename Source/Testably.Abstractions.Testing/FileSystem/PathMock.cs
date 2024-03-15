@@ -24,7 +24,7 @@ internal sealed class PathMock : PathSystemBase
 	[return: NotNullIfNotNull("path")]
 	public override string? ChangeExtension(string? path, string? extension)
 	{
-		using IDisposable register = Register(nameof(ChangeExtension),
+		using IDisposable register = RegisterMethod(nameof(ChangeExtension),
 			path, extension);
 
 		return base.ChangeExtension(path, extension);
@@ -33,7 +33,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.Combine(string, string)" />
 	public override string Combine(string path1, string path2)
 	{
-		using IDisposable register = Register(nameof(Combine),
+		using IDisposable register = RegisterMethod(nameof(Combine),
 			path1, path2);
 
 		return base.Combine(path1, path2);
@@ -42,7 +42,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.Combine(string, string, string)" />
 	public override string Combine(string path1, string path2, string path3)
 	{
-		using IDisposable register = Register(nameof(Combine),
+		using IDisposable register = RegisterMethod(nameof(Combine),
 			path1, path2, path3);
 
 		return base.Combine(path1, path2, path3);
@@ -51,7 +51,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.Combine(string, string, string, string)" />
 	public override string Combine(string path1, string path2, string path3, string path4)
 	{
-		using IDisposable register = Register(nameof(Combine),
+		using IDisposable register = RegisterMethod(nameof(Combine),
 			path1, path2, path3, path4);
 
 		return base.Combine(path1, path2, path3, path4);
@@ -60,7 +60,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.Combine(string[])" />
 	public override string Combine(params string[] paths)
 	{
-		using IDisposable register = Register(nameof(Combine),
+		using IDisposable register = RegisterMethod(nameof(Combine),
 			paths);
 
 		return base.Combine(paths);
@@ -70,7 +70,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.EndsInDirectorySeparator(ReadOnlySpan{char})" />
 	public override bool EndsInDirectorySeparator(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = Register(nameof(EndsInDirectorySeparator),
+		using IDisposable register = RegisterMethod(nameof(EndsInDirectorySeparator),
 			path);
 
 		return base.EndsInDirectorySeparator(path);
@@ -79,7 +79,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.EndsInDirectorySeparator(string)" />
 	public override bool EndsInDirectorySeparator(string path)
 	{
-		using IDisposable register = Register(nameof(EndsInDirectorySeparator),
+		using IDisposable register = RegisterMethod(nameof(EndsInDirectorySeparator),
 			path);
 
 		return base.EndsInDirectorySeparator(path);
@@ -90,7 +90,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.Exists(string)" />
 	public override bool Exists([NotNullWhen(true)] string? path)
 	{
-		using IDisposable register = Register(nameof(Exists),
+		using IDisposable register = RegisterMethod(nameof(Exists),
 			path);
 
 		if (string.IsNullOrEmpty(path))
@@ -107,7 +107,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.GetDirectoryName(ReadOnlySpan{char})" />
 	public override ReadOnlySpan<char> GetDirectoryName(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = Register(nameof(GetDirectoryName),
+		using IDisposable register = RegisterMethod(nameof(GetDirectoryName),
 			path);
 
 		return base.GetDirectoryName(path);
@@ -117,7 +117,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.GetDirectoryName(string)" />
 	public override string? GetDirectoryName(string? path)
 	{
-		using IDisposable register = Register(nameof(GetDirectoryName),
+		using IDisposable register = RegisterMethod(nameof(GetDirectoryName),
 			path);
 
 		return base.GetDirectoryName(path);
@@ -127,7 +127,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.GetExtension(ReadOnlySpan{char})" />
 	public override ReadOnlySpan<char> GetExtension(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = Register(nameof(GetExtension),
+		using IDisposable register = RegisterMethod(nameof(GetExtension),
 			path);
 
 		return base.GetExtension(path);
@@ -138,7 +138,7 @@ internal sealed class PathMock : PathSystemBase
 	[return: NotNullIfNotNull("path")]
 	public override string? GetExtension(string? path)
 	{
-		using IDisposable register = Register(nameof(GetExtension),
+		using IDisposable register = RegisterMethod(nameof(GetExtension),
 			path);
 
 		return base.GetExtension(path);
@@ -148,7 +148,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.GetFileName(ReadOnlySpan{char})" />
 	public override ReadOnlySpan<char> GetFileName(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = Register(nameof(GetFileName),
+		using IDisposable register = RegisterMethod(nameof(GetFileName),
 			path);
 
 		return base.GetFileName(path);
@@ -159,7 +159,7 @@ internal sealed class PathMock : PathSystemBase
 	[return: NotNullIfNotNull("path")]
 	public override string? GetFileName(string? path)
 	{
-		using IDisposable register = Register(nameof(GetFileName),
+		using IDisposable register = RegisterMethod(nameof(GetFileName),
 			path);
 
 		return base.GetFileName(path);
@@ -169,7 +169,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.GetFileNameWithoutExtension(ReadOnlySpan{char})" />
 	public override ReadOnlySpan<char> GetFileNameWithoutExtension(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = Register(nameof(GetFileNameWithoutExtension),
+		using IDisposable register = RegisterMethod(nameof(GetFileNameWithoutExtension),
 			path);
 
 		return base.GetFileNameWithoutExtension(path);
@@ -180,7 +180,7 @@ internal sealed class PathMock : PathSystemBase
 	[return: NotNullIfNotNull("path")]
 	public override string? GetFileNameWithoutExtension(string? path)
 	{
-		using IDisposable register = Register(nameof(GetFileNameWithoutExtension),
+		using IDisposable register = RegisterMethod(nameof(GetFileNameWithoutExtension),
 			path);
 
 		return base.GetFileNameWithoutExtension(path);
@@ -189,7 +189,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.GetFullPath(string)" />
 	public override string GetFullPath(string path)
 	{
-		using IDisposable register = Register(nameof(GetFullPath),
+		using IDisposable register = RegisterMethod(nameof(GetFullPath),
 			path);
 
 		path.EnsureValidArgument(_fileSystem, nameof(path));
@@ -218,7 +218,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.GetFullPath(string, string)" />
 	public override string GetFullPath(string path, string basePath)
 	{
-		using IDisposable register = Register(nameof(GetFullPath),
+		using IDisposable register = RegisterMethod(nameof(GetFullPath),
 			path, basePath);
 
 		return base.GetFullPath(path, basePath);
@@ -228,7 +228,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.GetInvalidFileNameChars()" />
 	public override char[] GetInvalidFileNameChars()
 	{
-		using IDisposable register = Register(nameof(GetInvalidFileNameChars));
+		using IDisposable register = RegisterMethod(nameof(GetInvalidFileNameChars));
 
 		return base.GetInvalidFileNameChars();
 	}
@@ -236,7 +236,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.GetInvalidPathChars()" />
 	public override char[] GetInvalidPathChars()
 	{
-		using IDisposable register = Register(nameof(GetInvalidPathChars));
+		using IDisposable register = RegisterMethod(nameof(GetInvalidPathChars));
 
 		return base.GetInvalidPathChars();
 	}
@@ -245,7 +245,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.GetPathRoot(ReadOnlySpan{char})" />
 	public override ReadOnlySpan<char> GetPathRoot(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = Register(nameof(GetPathRoot),
+		using IDisposable register = RegisterMethod(nameof(GetPathRoot),
 			path);
 
 		return base.GetPathRoot(path);
@@ -255,7 +255,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.GetPathRoot(string?)" />
 	public override string? GetPathRoot(string? path)
 	{
-		using IDisposable register = Register(nameof(GetPathRoot),
+		using IDisposable register = RegisterMethod(nameof(GetPathRoot),
 			path);
 
 		return base.GetPathRoot(path);
@@ -264,7 +264,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.GetRandomFileName()" />
 	public override string GetRandomFileName()
 	{
-		using IDisposable register = Register(nameof(GetRandomFileName));
+		using IDisposable register = RegisterMethod(nameof(GetRandomFileName));
 
 		return base.GetRandomFileName();
 	}
@@ -273,7 +273,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.GetRelativePath(string, string)" />
 	public override string GetRelativePath(string relativeTo, string path)
 	{
-		using IDisposable register = Register(nameof(GetRelativePath),
+		using IDisposable register = RegisterMethod(nameof(GetRelativePath),
 			relativeTo, path);
 
 		relativeTo.EnsureValidArgument(_fileSystem, nameof(relativeTo));
@@ -293,7 +293,7 @@ internal sealed class PathMock : PathSystemBase
 #endif
 	public override string GetTempFileName()
 	{
-		using IDisposable register = Register(nameof(GetTempFileName));
+		using IDisposable register = RegisterMethod(nameof(GetTempFileName));
 
 		return base.GetTempFileName();
 	}
@@ -301,7 +301,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.GetTempPath()" />
 	public override string GetTempPath()
 	{
-		using IDisposable register = Register(nameof(GetTempPath));
+		using IDisposable register = RegisterMethod(nameof(GetTempPath));
 
 		return base.GetTempPath();
 	}
@@ -310,7 +310,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.HasExtension(ReadOnlySpan{char})" />
 	public override bool HasExtension(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = Register(nameof(HasExtension),
+		using IDisposable register = RegisterMethod(nameof(HasExtension),
 			path);
 
 		return base.HasExtension(path);
@@ -320,7 +320,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.HasExtension(string)" />
 	public override bool HasExtension([NotNullWhen(true)] string? path)
 	{
-		using IDisposable register = Register(nameof(HasExtension),
+		using IDisposable register = RegisterMethod(nameof(HasExtension),
 			path);
 
 		return base.HasExtension(path);
@@ -330,7 +330,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.IsPathFullyQualified(ReadOnlySpan{char})" />
 	public override bool IsPathFullyQualified(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = Register(nameof(IsPathFullyQualified),
+		using IDisposable register = RegisterMethod(nameof(IsPathFullyQualified),
 			path);
 
 		return base.IsPathFullyQualified(path);
@@ -341,7 +341,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.IsPathFullyQualified(string)" />
 	public override bool IsPathFullyQualified(string path)
 	{
-		using IDisposable register = Register(nameof(IsPathFullyQualified),
+		using IDisposable register = RegisterMethod(nameof(IsPathFullyQualified),
 			path);
 
 		return base.IsPathFullyQualified(path);
@@ -352,7 +352,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.IsPathRooted(ReadOnlySpan{char})" />
 	public override bool IsPathRooted(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = Register(nameof(IsPathRooted),
+		using IDisposable register = RegisterMethod(nameof(IsPathRooted),
 			path);
 
 		return base.IsPathRooted(path);
@@ -362,7 +362,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.IsPathRooted(string)" />
 	public override bool IsPathRooted(string? path)
 	{
-		using IDisposable register = Register(nameof(IsPathRooted),
+		using IDisposable register = RegisterMethod(nameof(IsPathRooted),
 			path);
 
 		return base.IsPathRooted(path);
@@ -372,7 +372,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.Join(ReadOnlySpan{char}, ReadOnlySpan{char})" />
 	public override string Join(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2)
 	{
-		using IDisposable register = Register(nameof(Join),
+		using IDisposable register = RegisterMethod(nameof(Join),
 			path1, path2);
 
 		return base.Join(path1, path2);
@@ -383,7 +383,7 @@ internal sealed class PathMock : PathSystemBase
 		ReadOnlySpan<char> path2,
 		ReadOnlySpan<char> path3)
 	{
-		using IDisposable register = Register(nameof(Join),
+		using IDisposable register = RegisterMethod(nameof(Join),
 			path1,
 			path2,
 			path3);
@@ -397,7 +397,7 @@ internal sealed class PathMock : PathSystemBase
 		ReadOnlySpan<char> path3,
 		ReadOnlySpan<char> path4)
 	{
-		using IDisposable register = Register(nameof(Join),
+		using IDisposable register = RegisterMethod(nameof(Join),
 			path1,
 			path2,
 			path3,
@@ -409,7 +409,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.Join(string, string)" />
 	public override string Join(string? path1, string? path2)
 	{
-		using IDisposable register = Register(nameof(Join),
+		using IDisposable register = RegisterMethod(nameof(Join),
 			path1, path2);
 
 		return base.Join(path1, path2);
@@ -418,7 +418,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.Join(string, string, string)" />
 	public override string Join(string? path1, string? path2, string? path3)
 	{
-		using IDisposable register = Register(nameof(Join),
+		using IDisposable register = RegisterMethod(nameof(Join),
 			path1, path2, path3);
 
 		return base.Join(path1, path2, path3);
@@ -427,7 +427,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.Join(string, string, string, string)" />
 	public override string Join(string? path1, string? path2, string? path3, string? path4)
 	{
-		using IDisposable register = Register(nameof(Join),
+		using IDisposable register = RegisterMethod(nameof(Join),
 			path1, path2, path3, path4);
 
 		return base.Join(path1, path2, path3, path4);
@@ -436,7 +436,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.Join(string[])" />
 	public override string Join(params string?[] paths)
 	{
-		using IDisposable register = Register(nameof(Join),
+		using IDisposable register = RegisterMethod(nameof(Join),
 			paths);
 
 		return base.Join(paths);
@@ -447,7 +447,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.TrimEndingDirectorySeparator(ReadOnlySpan{char})" />
 	public override ReadOnlySpan<char> TrimEndingDirectorySeparator(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = Register(nameof(TrimEndingDirectorySeparator),
+		using IDisposable register = RegisterMethod(nameof(TrimEndingDirectorySeparator),
 			path);
 
 		return base.TrimEndingDirectorySeparator(path);
@@ -456,7 +456,7 @@ internal sealed class PathMock : PathSystemBase
 	/// <inheritdoc cref="IPath.TrimEndingDirectorySeparator(string)" />
 	public override string TrimEndingDirectorySeparator(string path)
 	{
-		using IDisposable register = Register(nameof(TrimEndingDirectorySeparator),
+		using IDisposable register = RegisterMethod(nameof(TrimEndingDirectorySeparator),
 			path);
 
 		return base.TrimEndingDirectorySeparator(path);
@@ -513,34 +513,34 @@ internal sealed class PathMock : PathSystemBase
 	}
 #endif
 
-	private IDisposable Register(string name)
+	private IDisposable RegisterMethod(string name)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name);
 
-	private IDisposable Register<T1>(string name, T1 parameter1)
+	private IDisposable RegisterMethod<T1>(string name, T1 parameter1)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1));
 
 #if FEATURE_SPAN
-	private IDisposable Register<T1>(string name, ReadOnlySpan<T1> parameter1)
+	private IDisposable RegisterMethod<T1>(string name, ReadOnlySpan<T1> parameter1)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1));
 #endif
 
 #if FEATURE_PATH_ADVANCED
-	private IDisposable Register<T1, T2>(string name, ReadOnlySpan<T1> parameter1,
+	private IDisposable RegisterMethod<T1, T2>(string name, ReadOnlySpan<T1> parameter1,
 		ReadOnlySpan<T2> parameter2)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2));
 
-	private IDisposable Register<T1, T2, T3>(string name, ReadOnlySpan<T1> parameter1,
+	private IDisposable RegisterMethod<T1, T2, T3>(string name, ReadOnlySpan<T1> parameter1,
 		ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2),
 			ParameterDescription.FromParameter(parameter3));
 
-	private IDisposable Register<T1, T2, T3, T4>(string name, ReadOnlySpan<T1> parameter1,
+	private IDisposable RegisterMethod<T1, T2, T3, T4>(string name, ReadOnlySpan<T1> parameter1,
 		ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3, ReadOnlySpan<T4> parameter4)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),
@@ -549,19 +549,19 @@ internal sealed class PathMock : PathSystemBase
 			ParameterDescription.FromParameter(parameter4));
 #endif
 
-	private IDisposable Register<T1, T2>(string name, T1 parameter1, T2 parameter2)
+	private IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, T2 parameter2)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2));
 
-	private IDisposable Register<T1, T2, T3>(string name, T1 parameter1, T2 parameter2,
+	private IDisposable RegisterMethod<T1, T2, T3>(string name, T1 parameter1, T2 parameter2,
 		T3 parameter3)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2),
 			ParameterDescription.FromParameter(parameter3));
 
-	private IDisposable Register<T1, T2, T3, T4>(string name, T1 parameter1, T2 parameter2,
+	private IDisposable RegisterMethod<T1, T2, T3, T4>(string name, T1 parameter1, T2 parameter2,
 		T3 parameter3, T4 parameter4)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),

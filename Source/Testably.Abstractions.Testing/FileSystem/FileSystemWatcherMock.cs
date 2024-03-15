@@ -136,7 +136,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	/// <inheritdoc cref="IFileSystemWatcher.BeginInit()" />
 	public void BeginInit()
 	{
-		using IDisposable registration = Register(nameof(BeginInit));
+		using IDisposable registration = RegisterMethod(nameof(BeginInit));
 
 		_isInitializing = true;
 		Stop();
@@ -154,7 +154,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	/// <inheritdoc cref="IFileSystemWatcher.EndInit()" />
 	public void EndInit()
 	{
-		using IDisposable registration = Register(nameof(EndInit));
+		using IDisposable registration = RegisterMethod(nameof(EndInit));
 
 		_isInitializing = false;
 		Restart();
@@ -170,7 +170,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	public IWaitForChangedResult WaitForChanged(
 		WatcherChangeTypes changeType)
 	{
-		using IDisposable registration = Register(nameof(WaitForChanged),
+		using IDisposable registration = RegisterMethod(nameof(WaitForChanged),
 			changeType);
 
 		return WaitForChanged(changeType, Timeout.Infinite);
@@ -180,7 +180,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	public IWaitForChangedResult WaitForChanged(
 		WatcherChangeTypes changeType, int timeout)
 	{
-		using IDisposable registration = Register(nameof(WaitForChanged),
+		using IDisposable registration = RegisterMethod(nameof(WaitForChanged),
 			changeType, timeout);
 
 		return WaitForChangedInternal(changeType, TimeSpan.FromMilliseconds(timeout));
@@ -191,7 +191,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	public IWaitForChangedResult WaitForChanged(
 		WatcherChangeTypes changeType, TimeSpan timeout)
 	{
-		using IDisposable registration = Register(nameof(WaitForChanged),
+		using IDisposable registration = RegisterMethod(nameof(WaitForChanged),
 			changeType, timeout);
 
 		return WaitForChangedInternal(changeType, timeout);
@@ -527,14 +527,14 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		public bool TimedOut { get; }
 	}
 
-	private IDisposable Register(string name)
+	private IDisposable RegisterMethod(string name)
 		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.RegisterMethod(_path, name);
 
-	private IDisposable Register<T1>(string name, T1 parameter1)
+	private IDisposable RegisterMethod<T1>(string name, T1 parameter1)
 		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.RegisterMethod(_path, name,
 			ParameterDescription.FromParameter(parameter1));
 
-	private IDisposable Register<T1, T2>(string name, T1 parameter1, T2 parameter2)
+	private IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, T2 parameter2)
 		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.RegisterMethod(_path, name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2));

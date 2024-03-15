@@ -6,17 +6,18 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 public class FileSystemWatcherFactoryStatisticsTests
 {
 	[SkippableFact]
-	public void New_ShouldRegisterCall()
+	public void Method_New_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 
 		using IFileSystemWatcher result = sut.FileSystemWatcher.New();
 
-		sut.Statistics.FileSystemWatcher.ShouldOnlyContain(nameof(IFileSystemWatcherFactory.New));
+		sut.Statistics.FileSystemWatcher.ShouldOnlyContainMethodCall(
+			nameof(IFileSystemWatcherFactory.New));
 	}
 
 	[SkippableFact]
-	public void New_String_ShouldRegisterCall()
+	public void Method_New_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithSubdirectory("foo");
@@ -24,12 +25,13 @@ public class FileSystemWatcherFactoryStatisticsTests
 
 		using IFileSystemWatcher result = sut.FileSystemWatcher.New(path);
 
-		sut.Statistics.FileSystemWatcher.ShouldOnlyContain(nameof(IFileSystemWatcherFactory.New),
+		sut.Statistics.FileSystemWatcher.ShouldOnlyContainMethodCall(
+			nameof(IFileSystemWatcherFactory.New),
 			path);
 	}
 
 	[SkippableFact]
-	public void New_String_String_ShouldRegisterCall()
+	public void Method_New_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithSubdirectory("foo");
@@ -38,19 +40,21 @@ public class FileSystemWatcherFactoryStatisticsTests
 
 		using IFileSystemWatcher result = sut.FileSystemWatcher.New(path, filter);
 
-		sut.Statistics.FileSystemWatcher.ShouldOnlyContain(nameof(IFileSystemWatcherFactory.New),
+		sut.Statistics.FileSystemWatcher.ShouldOnlyContainMethodCall(
+			nameof(IFileSystemWatcherFactory.New),
 			path, filter);
 	}
 
 	[SkippableFact]
-	public void Wrap_FileSystemWatcher_ShouldRegisterCall()
+	public void Method_Wrap_FileSystemWatcher_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		FileSystemWatcher fileSystemWatcher = new();
 
 		using IFileSystemWatcher result = sut.FileSystemWatcher.Wrap(fileSystemWatcher);
 
-		sut.Statistics.FileSystemWatcher.ShouldOnlyContain(nameof(IFileSystemWatcherFactory.Wrap),
+		sut.Statistics.FileSystemWatcher.ShouldOnlyContainMethodCall(
+			nameof(IFileSystemWatcherFactory.Wrap),
 			fileSystemWatcher);
 	}
 }

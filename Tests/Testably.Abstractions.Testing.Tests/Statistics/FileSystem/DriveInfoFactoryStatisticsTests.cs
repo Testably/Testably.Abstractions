@@ -7,36 +7,36 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 public sealed class DriveInfoFactoryStatisticsTests
 {
 	[SkippableFact]
-	public void GetDrives_ShouldRegisterCall()
+	public void Method_GetDrives_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 
 		sut.DriveInfo.GetDrives();
 
-		sut.Statistics.DriveInfo.ShouldOnlyContain(nameof(IDriveInfoFactory.GetDrives));
+		sut.Statistics.DriveInfo.ShouldOnlyContainMethodCall(nameof(IDriveInfoFactory.GetDrives));
 	}
 
 	[SkippableFact]
-	public void New_String_ShouldRegisterCall()
+	public void Method_New_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		string driveName = "X";
 
 		sut.DriveInfo.New(driveName);
 
-		sut.Statistics.DriveInfo.ShouldOnlyContain(nameof(IDriveInfoFactory.New),
+		sut.Statistics.DriveInfo.ShouldOnlyContainMethodCall(nameof(IDriveInfoFactory.New),
 			driveName);
 	}
 
 	[SkippableFact]
-	public void Wrap_DriveInfo_ShouldRegisterCall()
+	public void Method_Wrap_DriveInfo_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
 		DriveInfo driveInfo = DriveInfo.GetDrives().First();
 
 		sut.DriveInfo.Wrap(driveInfo);
 
-		sut.Statistics.DriveInfo.ShouldOnlyContain(nameof(IDriveInfoFactory.Wrap),
+		sut.Statistics.DriveInfo.ShouldOnlyContainMethodCall(nameof(IDriveInfoFactory.Wrap),
 			driveInfo);
 	}
 }
