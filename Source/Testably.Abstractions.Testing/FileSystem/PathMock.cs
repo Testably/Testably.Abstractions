@@ -20,6 +20,50 @@ internal sealed class PathMock : PathSystemBase
 		_fileSystem = fileSystem;
 	}
 
+	/// <inheritdoc cref="IPath.AltDirectorySeparatorChar" />
+	public override char AltDirectorySeparatorChar
+	{
+		get
+		{
+			using IDisposable register = RegisterProperty(nameof(AltDirectorySeparatorChar));
+
+			return base.AltDirectorySeparatorChar;
+		}
+	}
+
+	/// <inheritdoc cref="IPath.DirectorySeparatorChar" />
+	public override char DirectorySeparatorChar
+	{
+		get
+		{
+			using IDisposable register = RegisterProperty(nameof(DirectorySeparatorChar));
+
+			return base.DirectorySeparatorChar;
+		}
+	}
+
+	/// <inheritdoc cref="IPath.PathSeparator" />
+	public override char PathSeparator
+	{
+		get
+		{
+			using IDisposable register = RegisterProperty(nameof(PathSeparator));
+
+			return base.PathSeparator;
+		}
+	}
+
+	/// <inheritdoc cref="IPath.VolumeSeparatorChar" />
+	public override char VolumeSeparatorChar
+	{
+		get
+		{
+			using IDisposable register = RegisterProperty(nameof(VolumeSeparatorChar));
+
+			return base.VolumeSeparatorChar;
+		}
+	}
+
 	/// <inheritdoc cref="IPath.ChangeExtension(string, string)" />
 	[return: NotNullIfNotNull("path")]
 	public override string? ChangeExtension(string? path, string? extension)
@@ -512,6 +556,9 @@ internal sealed class PathMock : PathSystemBase
 		}
 	}
 #endif
+
+	private IDisposable RegisterProperty(string name, PropertyStatistic.AccessMode mode = PropertyStatistic.AccessMode.Get)
+		=> _fileSystem.StatisticsRegistration.Path.RegisterProperty(name, mode);
 
 	private IDisposable RegisterMethod(string name)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name);
