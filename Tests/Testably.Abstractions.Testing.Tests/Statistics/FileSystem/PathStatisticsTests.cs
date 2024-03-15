@@ -72,6 +72,34 @@ public class PathStatisticsTests
 			paths);
 	}
 
+#if FEATURE_PATH_ADVANCED
+	[SkippableFact]
+	public void Method_EndsInDirectorySeparator_ReadOnlySpanChar_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		ReadOnlySpan<char> path = new();
+
+		sut.Path.EndsInDirectorySeparator(path);
+
+		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.EndsInDirectorySeparator),
+			path);
+	}
+#endif
+
+#if FEATURE_PATH_ADVANCED
+	[SkippableFact]
+	public void Method_EndsInDirectorySeparator_String_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+
+		sut.Path.EndsInDirectorySeparator(path);
+
+		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.EndsInDirectorySeparator),
+			path);
+	}
+#endif
+
 #if FEATURE_FILESYSTEM_NET7
 	[SkippableFact]
 	public void Method_Exists_String_ShouldRegisterCall()
@@ -388,6 +416,180 @@ public class PathStatisticsTests
 			path);
 	}
 
+#if FEATURE_PATH_JOIN
+	[SkippableFact]
+	public void
+		Method_Join_ReadOnlySpanChar_ReadOnlySpanChar_ReadOnlySpanChar_ReadOnlySpanChar_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		ReadOnlySpan<char> path1 = new();
+		ReadOnlySpan<char> path2 = new();
+		ReadOnlySpan<char> path3 = new();
+		ReadOnlySpan<char> path4 = new();
+
+		sut.Path.Join(path1, path2, path3, path4);
+
+		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
+			path1, path2, path3, path4);
+	}
+#endif
+
+#if FEATURE_PATH_JOIN
+	[SkippableFact]
+	public void Method_Join_ReadOnlySpanChar_ReadOnlySpanChar_ReadOnlySpanChar_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		ReadOnlySpan<char> path1 = new();
+		ReadOnlySpan<char> path2 = new();
+		ReadOnlySpan<char> path3 = new();
+
+		sut.Path.Join(path1, path2, path3);
+
+		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
+			path1, path2, path3);
+	}
+#endif
+
+#if FEATURE_PATH_JOIN
+	[SkippableFact]
+	public void Method_Join_ReadOnlySpanChar_ReadOnlySpanChar_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		ReadOnlySpan<char> path1 = new();
+		ReadOnlySpan<char> path2 = new();
+
+		sut.Path.Join(path1, path2);
+
+		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
+			path1, path2);
+	}
+#endif
+
+#if FEATURE_PATH_JOIN
+	[SkippableFact]
+	public void Method_Join_String_String_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path1 = "foo";
+		string path2 = "foo";
+
+		sut.Path.Join(path1, path2);
+
+		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
+			path1, path2);
+	}
+#endif
+
+#if FEATURE_PATH_JOIN
+	[SkippableFact]
+	public void Method_Join_String_String_String_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path1 = "foo";
+		string path2 = "foo";
+		string path3 = "foo";
+
+		sut.Path.Join(path1, path2, path3);
+
+		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
+			path1, path2, path3);
+	}
+#endif
+
+#if FEATURE_PATH_JOIN
+	[SkippableFact]
+	public void Method_Join_String_String_String_String_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path1 = "foo";
+		string path2 = "foo";
+		string path3 = "foo";
+		string path4 = "foo";
+
+		sut.Path.Join(path1, path2, path3, path4);
+
+		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
+			path1, path2, path3, path4);
+	}
+#endif
+
+#if FEATURE_PATH_JOIN
+	[SkippableFact]
+	public void Method_Join_StringArray_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string[] paths = ["foo", "bar"];
+
+		sut.Path.Join(paths);
+
+		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
+			paths);
+	}
+#endif
+
+#if FEATURE_PATH_ADVANCED
+	[SkippableFact]
+	public void Method_TrimEndingDirectorySeparator_ReadOnlySpanChar_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		ReadOnlySpan<char> path = new();
+
+		sut.Path.TrimEndingDirectorySeparator(path);
+
+		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.TrimEndingDirectorySeparator),
+			path);
+	}
+#endif
+
+#if FEATURE_PATH_ADVANCED
+	[SkippableFact]
+	public void Method_TrimEndingDirectorySeparator_String_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+
+		sut.Path.TrimEndingDirectorySeparator(path);
+
+		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.TrimEndingDirectorySeparator),
+			path);
+	}
+#endif
+
+#if FEATURE_PATH_JOIN
+	[SkippableFact]
+	public void
+		Method_TryJoin_ReadOnlySpanChar_ReadOnlySpanChar_ReadOnlySpanChar_SpanChar_OutInt_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		ReadOnlySpan<char> path1 = new();
+		ReadOnlySpan<char> path2 = new();
+		ReadOnlySpan<char> path3 = new();
+		Span<char> destination = new();
+
+		sut.Path.TryJoin(path1, path2, path3, destination, out int charsWritten);
+
+		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.TryJoin),
+			path1, path2, path3, destination, charsWritten);
+	}
+#endif
+
+#if FEATURE_PATH_JOIN
+	[SkippableFact]
+	public void
+		Method_TryJoin_ReadOnlySpanChar_ReadOnlySpanChar_SpanChar_OutInt_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		ReadOnlySpan<char> path1 = new();
+		ReadOnlySpan<char> path2 = new();
+		Span<char> destination = new();
+
+		sut.Path.TryJoin(path1, path2, destination, out int charsWritten);
+
+		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.TryJoin),
+			path1, path2, destination, charsWritten);
+	}
+#endif
+
 	[SkippableFact]
 	public void Property_AltDirectorySeparatorChar_Get_ShouldRegisterPropertyAccess()
 	{
@@ -429,188 +631,4 @@ public class PathStatisticsTests
 
 		sut.Statistics.Path.ShouldOnlyContainPropertyGetAccess(nameof(IPath.VolumeSeparatorChar));
 	}
-
-#if FEATURE_PATH_ADVANCED
-	[SkippableFact]
-	public void Method_EndsInDirectorySeparator_ReadOnlySpanChar_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		ReadOnlySpan<char> path = new();
-
-		sut.Path.EndsInDirectorySeparator(path);
-
-		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.EndsInDirectorySeparator),
-			path);
-	}
-
-	[SkippableFact]
-	public void Method_EndsInDirectorySeparator_String_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		string path = "foo";
-
-		sut.Path.EndsInDirectorySeparator(path);
-
-		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.EndsInDirectorySeparator),
-			path);
-	}
-#endif
-
-#if FEATURE_PATH_JOIN
-	[SkippableFact]
-	public void Method_Join_StringArray_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		string[] paths = ["foo", "bar"];
-
-		sut.Path.Join(paths);
-
-		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
-			paths);
-	}
-
-	[SkippableFact]
-	public void Method_Join_ReadOnlySpanChar_ReadOnlySpanChar_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		ReadOnlySpan<char> path1 = new();
-		ReadOnlySpan<char> path2 = new();
-
-		sut.Path.Join(path1, path2);
-
-		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
-			path1, path2);
-	}
-
-	[SkippableFact]
-	public void Method_Join_String_String_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		string path1 = "foo";
-		string path2 = "foo";
-
-		sut.Path.Join(path1, path2);
-
-		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
-			path1, path2);
-	}
-
-	[SkippableFact]
-	public void Method_Join_ReadOnlySpanChar_ReadOnlySpanChar_ReadOnlySpanChar_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		ReadOnlySpan<char> path1 = new();
-		ReadOnlySpan<char> path2 = new();
-		ReadOnlySpan<char> path3 = new();
-
-		sut.Path.Join(path1, path2, path3);
-
-		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
-			path1, path2, path3);
-	}
-
-	[SkippableFact]
-	public void Method_Join_String_String_String_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		string path1 = "foo";
-		string path2 = "foo";
-		string path3 = "foo";
-
-		sut.Path.Join(path1, path2, path3);
-
-		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
-			path1, path2, path3);
-	}
-
-	[SkippableFact]
-	public void
-		Method_Join_ReadOnlySpanChar_ReadOnlySpanChar_ReadOnlySpanChar_ReadOnlySpanChar_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		ReadOnlySpan<char> path1 = new();
-		ReadOnlySpan<char> path2 = new();
-		ReadOnlySpan<char> path3 = new();
-		ReadOnlySpan<char> path4 = new();
-
-		sut.Path.Join(path1, path2, path3, path4);
-
-		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
-			path1, path2, path3, path4);
-	}
-
-	[SkippableFact]
-	public void Method_Join_String_String_String_String_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		string path1 = "foo";
-		string path2 = "foo";
-		string path3 = "foo";
-		string path4 = "foo";
-
-		sut.Path.Join(path1, path2, path3, path4);
-
-		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
-			path1, path2, path3, path4);
-	}
-#endif
-
-#if FEATURE_PATH_ADVANCED
-	[SkippableFact]
-	public void Method_TrimEndingDirectorySeparator_ReadOnlySpanChar_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		ReadOnlySpan<char> path = new();
-
-		sut.Path.TrimEndingDirectorySeparator(path);
-
-		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.TrimEndingDirectorySeparator),
-			path);
-	}
-
-	[SkippableFact]
-	public void Method_TrimEndingDirectorySeparator_String_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		string path = "foo";
-
-		sut.Path.TrimEndingDirectorySeparator(path);
-
-		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.TrimEndingDirectorySeparator),
-			path);
-	}
-#endif
-
-#if FEATURE_PATH_JOIN
-	[SkippableFact]
-	public void
-		Method_TryJoin_ReadOnlySpanChar_ReadOnlySpanChar_SpanChar_OutInt_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		ReadOnlySpan<char> path1 = new();
-		ReadOnlySpan<char> path2 = new();
-		Span<char> destination = new();
-
-		sut.Path.TryJoin(path1, path2, destination, out int charsWritten);
-
-		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.TryJoin),
-			path1, path2, destination, charsWritten);
-	}
-
-	[SkippableFact]
-	public void
-		Method_TryJoin_ReadOnlySpanChar_ReadOnlySpanChar_ReadOnlySpanChar_SpanChar_OutInt_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		ReadOnlySpan<char> path1 = new();
-		ReadOnlySpan<char> path2 = new();
-		ReadOnlySpan<char> path3 = new();
-		Span<char> destination = new();
-
-		sut.Path.TryJoin(path1, path2, path3, destination, out int charsWritten);
-
-		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.TryJoin),
-			path1, path2, path3, destination, charsWritten);
-	}
-#endif
 }

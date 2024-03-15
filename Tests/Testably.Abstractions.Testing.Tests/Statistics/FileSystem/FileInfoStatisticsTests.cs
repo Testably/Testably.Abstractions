@@ -12,7 +12,8 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").AppendText();
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.AppendText));
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.AppendText));
 	}
 
 	[SkippableFact]
@@ -25,8 +26,9 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").CopyTo(destFileName, overwrite);
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.CopyTo),
-			destFileName, overwrite);
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.CopyTo),
+				destFileName, overwrite);
 	}
 
 	[SkippableFact]
@@ -38,8 +40,9 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").CopyTo(destFileName);
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.CopyTo),
-			destFileName);
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.CopyTo),
+				destFileName);
 	}
 
 	[SkippableFact]
@@ -49,7 +52,8 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Create();
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.Create));
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Create));
 	}
 
 #if FEATURE_FILESYSTEM_LINK
@@ -61,9 +65,9 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").CreateAsSymbolicLink(pathToTarget);
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IFileInfo.CreateAsSymbolicLink),
-			pathToTarget);
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.CreateAsSymbolicLink),
+				pathToTarget);
 	}
 #endif
 
@@ -74,7 +78,8 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").CreateText();
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.CreateText));
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.CreateText));
 	}
 
 	[SkippableFact]
@@ -88,7 +93,8 @@ public class FileInfoStatisticsTests
 		sut.FileInfo.New("foo").Decrypt();
 		#pragma warning restore CA1416
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.Decrypt));
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Decrypt));
 	}
 
 	[SkippableFact]
@@ -99,7 +105,8 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Delete();
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.Delete));
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Delete));
 	}
 
 	[SkippableFact]
@@ -113,7 +120,8 @@ public class FileInfoStatisticsTests
 		sut.FileInfo.New("foo").Encrypt();
 		#pragma warning restore CA1416
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.Encrypt));
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Encrypt));
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
@@ -127,8 +135,9 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").MoveTo(destFileName, overwrite);
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.MoveTo),
-			destFileName, overwrite);
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.MoveTo),
+				destFileName, overwrite);
 	}
 #endif
 
@@ -141,8 +150,9 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").MoveTo(destFileName);
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.MoveTo),
-			destFileName);
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.MoveTo),
+				destFileName);
 	}
 
 	[SkippableFact]
@@ -155,8 +165,9 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Open(mode, access, share);
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.Open),
-			mode, access, share);
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Open),
+				mode, access, share);
 	}
 
 	[SkippableFact]
@@ -168,8 +179,9 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Open(mode, access);
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.Open),
-			mode, access);
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Open),
+				mode, access);
 	}
 
 	[SkippableFact]
@@ -180,8 +192,9 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Open(mode);
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.Open),
-			mode);
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Open),
+				mode);
 	}
 
 #if FEATURE_FILESYSTEM_STREAM_OPTIONS
@@ -194,8 +207,9 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Open(options);
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.Open),
-			options);
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Open),
+				options);
 	}
 #endif
 
@@ -207,7 +221,8 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").OpenRead();
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.OpenRead));
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.OpenRead));
 	}
 
 	[SkippableFact]
@@ -218,7 +233,8 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").OpenText();
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.OpenText));
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.OpenText));
 	}
 
 	[SkippableFact]
@@ -228,7 +244,8 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").OpenWrite();
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.OpenWrite));
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.OpenWrite));
 	}
 
 	[SkippableFact]
@@ -238,7 +255,8 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Refresh();
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.Refresh));
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Refresh));
 	}
 
 	[SkippableFact]
@@ -253,8 +271,9 @@ public class FileInfoStatisticsTests
 		sut.FileInfo.New("foo").Replace(destinationFileName, destinationBackupFileName,
 			ignoreMetadataErrors);
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.Replace),
-			destinationFileName, destinationBackupFileName, ignoreMetadataErrors);
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Replace),
+				destinationFileName, destinationBackupFileName, ignoreMetadataErrors);
 	}
 
 	[SkippableFact]
@@ -267,8 +286,9 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Replace(destinationFileName, destinationBackupFileName);
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(nameof(IFileInfo.Replace),
-			destinationFileName, destinationBackupFileName);
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Replace),
+				destinationFileName, destinationBackupFileName);
 	}
 
 #if FEATURE_FILESYSTEM_LINK
@@ -280,9 +300,10 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").ResolveLinkTarget(returnFinalTarget);
 
-		sut.Statistics.FileInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IFileInfo.ResolveLinkTarget),
-			returnFinalTarget);
+		sut.Statistics.FileInfo["foo"]
+			.ShouldOnlyContainMethodCall(
+				nameof(IFileInfo.ResolveLinkTarget),
+				returnFinalTarget);
 	}
 #endif
 
@@ -328,7 +349,7 @@ public class FileInfoStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
-		DateTime value = new();
+		DateTime value = DateTime.Now;
 
 		sut.FileInfo.New("foo").CreationTime = value;
 
@@ -353,7 +374,7 @@ public class FileInfoStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
-		DateTime value = new();
+		DateTime value = DateTime.UtcNow;
 
 		sut.FileInfo.New("foo").CreationTimeUtc = value;
 
@@ -462,7 +483,7 @@ public class FileInfoStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
-		DateTime value = new();
+		DateTime value = DateTime.Now;
 
 		sut.FileInfo.New("foo").LastAccessTime = value;
 
@@ -487,7 +508,7 @@ public class FileInfoStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
-		DateTime value = new();
+		DateTime value = DateTime.UtcNow;
 
 		sut.FileInfo.New("foo").LastAccessTimeUtc = value;
 
@@ -512,7 +533,7 @@ public class FileInfoStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
-		DateTime value = new();
+		DateTime value = DateTime.Now;
 
 		sut.FileInfo.New("foo").LastWriteTime = value;
 
@@ -537,7 +558,7 @@ public class FileInfoStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile("foo");
-		DateTime value = new();
+		DateTime value = DateTime.UtcNow;
 
 		sut.FileInfo.New("foo").LastWriteTimeUtc = value;
 

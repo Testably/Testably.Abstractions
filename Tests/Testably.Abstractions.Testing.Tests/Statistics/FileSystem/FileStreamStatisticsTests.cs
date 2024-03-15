@@ -21,9 +21,9 @@ public class FileStreamStatisticsTests
 
 		fileStream.BeginRead(buffer, offset, count, callback, state);
 
-		sut.Statistics.FileStream["foo"].ShouldOnlyContainMethodCall(
-			nameof(FileSystemStream.BeginRead),
-			buffer, offset, count, callback, state);
+		sut.Statistics.FileStream["foo"]
+			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.BeginRead),
+				buffer, offset, count, callback, state);
 	}
 
 	[SkippableFact]
@@ -39,9 +39,9 @@ public class FileStreamStatisticsTests
 
 		fileStream.BeginWrite(buffer, offset, count, callback, state);
 
-		sut.Statistics.FileStream["foo"].ShouldOnlyContainMethodCall(
-			nameof(FileSystemStream.BeginWrite),
-			buffer, offset, count, callback, state);
+		sut.Statistics.FileStream["foo"]
+			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.BeginWrite),
+				buffer, offset, count, callback, state);
 	}
 
 	[SkippableFact]
@@ -54,9 +54,9 @@ public class FileStreamStatisticsTests
 
 		fileStream.CopyTo(destination, bufferSize);
 
-		sut.Statistics.FileStream["foo"].ShouldOnlyContainMethodCall(
-			nameof(FileSystemStream.CopyTo),
-			destination, bufferSize);
+		sut.Statistics.FileStream["foo"]
+			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.CopyTo),
+				destination, bufferSize);
 	}
 
 	[SkippableFact]
@@ -70,9 +70,9 @@ public class FileStreamStatisticsTests
 
 		await fileStream.CopyToAsync(destination, bufferSize, cancellationToken);
 
-		sut.Statistics.FileStream["foo"].ShouldOnlyContainMethodCall(
-			nameof(FileSystemStream.CopyToAsync),
-			destination, bufferSize, cancellationToken);
+		sut.Statistics.FileStream["foo"]
+			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.CopyToAsync),
+				destination, bufferSize, cancellationToken);
 	}
 
 	[SkippableFact]
@@ -118,8 +118,9 @@ public class FileStreamStatisticsTests
 
 		fileStream.Flush(flushToDisk);
 
-		sut.Statistics.FileStream["foo"].ShouldOnlyContainMethodCall(nameof(FileSystemStream.Flush),
-			flushToDisk);
+		sut.Statistics.FileStream["foo"]
+			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Flush),
+				flushToDisk);
 	}
 
 	[SkippableFact]
@@ -143,9 +144,9 @@ public class FileStreamStatisticsTests
 
 		await fileStream.FlushAsync(cancellationToken);
 
-		sut.Statistics.FileStream["foo"].ShouldOnlyContainMethodCall(
-			nameof(FileSystemStream.FlushAsync),
-			cancellationToken);
+		sut.Statistics.FileStream["foo"]
+			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.FlushAsync),
+				cancellationToken);
 	}
 
 	[SkippableFact]
@@ -159,8 +160,9 @@ public class FileStreamStatisticsTests
 
 		_ = fileStream.Read(buffer, offset, count);
 
-		sut.Statistics.FileStream["foo"].ShouldOnlyContainMethodCall(nameof(FileSystemStream.Read),
-			buffer, offset, count);
+		sut.Statistics.FileStream["foo"]
+			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Read),
+				buffer, offset, count);
 	}
 
 #if FEATURE_SPAN
@@ -173,8 +175,9 @@ public class FileStreamStatisticsTests
 
 		_ = fileStream.Read(buffer);
 
-		sut.Statistics.FileStream["foo"].ShouldOnlyContainMethodCall(nameof(FileSystemStream.Read),
-			buffer);
+		sut.Statistics.FileStream["foo"]
+			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Read),
+				buffer);
 	}
 #endif
 
@@ -190,9 +193,9 @@ public class FileStreamStatisticsTests
 
 		_ = await fileStream.ReadAsync(buffer, offset, count, cancellationToken);
 
-		sut.Statistics.FileStream["foo"].ShouldOnlyContainMethodCall(
-			nameof(FileSystemStream.ReadAsync),
-			buffer, offset, count, cancellationToken);
+		sut.Statistics.FileStream["foo"]
+			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.ReadAsync),
+				buffer, offset, count, cancellationToken);
 	}
 
 #if FEATURE_SPAN
@@ -206,9 +209,9 @@ public class FileStreamStatisticsTests
 
 		_ = await fileStream.ReadAsync(buffer, cancellationToken);
 
-		sut.Statistics.FileStream["foo"].ShouldOnlyContainMethodCall(
-			nameof(FileSystemStream.ReadAsync),
-			buffer, cancellationToken);
+		sut.Statistics.FileStream["foo"]
+			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.ReadAsync),
+				buffer, cancellationToken);
 	}
 #endif
 
@@ -234,8 +237,9 @@ public class FileStreamStatisticsTests
 
 		fileStream.Seek(offset, origin);
 
-		sut.Statistics.FileStream["foo"].ShouldOnlyContainMethodCall(nameof(FileSystemStream.Seek),
-			offset, origin);
+		sut.Statistics.FileStream["foo"]
+			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Seek),
+				offset, origin);
 	}
 
 	[SkippableFact]
@@ -247,9 +251,9 @@ public class FileStreamStatisticsTests
 
 		fileStream.SetLength(value);
 
-		sut.Statistics.FileStream["foo"].ShouldOnlyContainMethodCall(
-			nameof(FileSystemStream.SetLength),
-			value);
+		sut.Statistics.FileStream["foo"]
+			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.SetLength),
+				value);
 	}
 
 	[SkippableFact]
@@ -275,8 +279,9 @@ public class FileStreamStatisticsTests
 
 		fileStream.Write(buffer, offset, count);
 
-		sut.Statistics.FileStream["foo"].ShouldOnlyContainMethodCall(nameof(FileSystemStream.Write),
-			buffer, offset, count);
+		sut.Statistics.FileStream["foo"]
+			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Write),
+				buffer, offset, count);
 	}
 
 #if FEATURE_SPAN
@@ -289,8 +294,9 @@ public class FileStreamStatisticsTests
 
 		fileStream.Write(buffer);
 
-		sut.Statistics.FileStream["foo"].ShouldOnlyContainMethodCall(nameof(FileSystemStream.Write),
-			buffer);
+		sut.Statistics.FileStream["foo"]
+			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Write),
+				buffer);
 	}
 #endif
 
@@ -306,9 +312,9 @@ public class FileStreamStatisticsTests
 
 		await fileStream.WriteAsync(buffer, offset, count, cancellationToken);
 
-		sut.Statistics.FileStream["foo"].ShouldOnlyContainMethodCall(
-			nameof(FileSystemStream.WriteAsync),
-			buffer, offset, count, cancellationToken);
+		sut.Statistics.FileStream["foo"]
+			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.WriteAsync),
+				buffer, offset, count, cancellationToken);
 	}
 
 #if FEATURE_SPAN
@@ -322,9 +328,9 @@ public class FileStreamStatisticsTests
 
 		await fileStream.WriteAsync(buffer, cancellationToken);
 
-		sut.Statistics.FileStream["foo"].ShouldOnlyContainMethodCall(
-			nameof(FileSystemStream.WriteAsync),
-			buffer, cancellationToken);
+		sut.Statistics.FileStream["foo"]
+			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.WriteAsync),
+				buffer, cancellationToken);
 	}
 #endif
 
@@ -337,9 +343,9 @@ public class FileStreamStatisticsTests
 
 		fileStream.WriteByte(value);
 
-		sut.Statistics.FileStream["foo"].ShouldOnlyContainMethodCall(
-			nameof(FileSystemStream.WriteByte),
-			value);
+		sut.Statistics.FileStream["foo"]
+			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.WriteByte),
+				value);
 	}
 
 	[SkippableFact]

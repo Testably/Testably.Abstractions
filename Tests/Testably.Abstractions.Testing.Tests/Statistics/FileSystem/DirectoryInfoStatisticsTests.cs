@@ -25,9 +25,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").CreateAsSymbolicLink(pathToTarget);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.CreateAsSymbolicLink),
-			pathToTarget);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.CreateAsSymbolicLink),
+				pathToTarget);
 	}
 #endif
 
@@ -39,9 +39,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").CreateSubdirectory(path);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.CreateSubdirectory),
-			path);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.CreateSubdirectory),
+				path);
 	}
 
 	[SkippableFact]
@@ -53,9 +53,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").Delete(recursive);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.Delete),
-			recursive);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.Delete),
+				recursive);
 	}
 
 	[SkippableFact]
@@ -91,9 +91,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").EnumerateDirectories(searchPattern, enumerationOptions);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.EnumerateDirectories),
-			searchPattern, enumerationOptions);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.EnumerateDirectories),
+				searchPattern, enumerationOptions);
 	}
 #endif
 
@@ -106,9 +106,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").EnumerateDirectories(searchPattern, searchOption);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.EnumerateDirectories),
-			searchPattern, searchOption);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.EnumerateDirectories),
+				searchPattern, searchOption);
 	}
 
 	[SkippableFact]
@@ -119,9 +119,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").EnumerateDirectories(searchPattern);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.EnumerateDirectories),
-			searchPattern);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.EnumerateDirectories),
+				searchPattern);
 	}
 
 	[SkippableFact]
@@ -145,9 +145,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").EnumerateFiles(searchPattern, enumerationOptions);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.EnumerateFiles),
-			searchPattern, enumerationOptions);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.EnumerateFiles),
+				searchPattern, enumerationOptions);
 	}
 #endif
 
@@ -160,9 +160,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").EnumerateFiles(searchPattern, searchOption);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.EnumerateFiles),
-			searchPattern, searchOption);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.EnumerateFiles),
+				searchPattern, searchOption);
 	}
 
 	[SkippableFact]
@@ -173,9 +173,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").EnumerateFiles(searchPattern);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.EnumerateFiles),
-			searchPattern);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.EnumerateFiles),
+				searchPattern);
 	}
 
 	[SkippableFact]
@@ -199,9 +199,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").EnumerateFileSystemInfos(searchPattern, enumerationOptions);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.EnumerateFileSystemInfos),
-			searchPattern, enumerationOptions);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.EnumerateFileSystemInfos),
+				searchPattern, enumerationOptions);
 	}
 #endif
 
@@ -214,9 +214,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").EnumerateFileSystemInfos(searchPattern, searchOption);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.EnumerateFileSystemInfos),
-			searchPattern, searchOption);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.EnumerateFileSystemInfos),
+				searchPattern, searchOption);
 	}
 
 	[SkippableFact]
@@ -227,9 +227,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").EnumerateFileSystemInfos(searchPattern);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.EnumerateFileSystemInfos),
-			searchPattern);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.EnumerateFileSystemInfos),
+				searchPattern);
 	}
 
 	[SkippableFact]
@@ -255,9 +255,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").GetDirectories(searchPattern, enumerationOptions);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.GetDirectories),
-			searchPattern, enumerationOptions);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.GetDirectories),
+				searchPattern, enumerationOptions);
 	}
 #endif
 
@@ -271,9 +271,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").GetDirectories(searchPattern, searchOption);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.GetDirectories),
-			searchPattern, searchOption);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.GetDirectories),
+				searchPattern, searchOption);
 	}
 
 	[SkippableFact]
@@ -285,9 +285,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").GetDirectories(searchPattern);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.GetDirectories),
-			searchPattern);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.GetDirectories),
+				searchPattern);
 	}
 
 	[SkippableFact]
@@ -313,9 +313,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").GetFiles(searchPattern, enumerationOptions);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.GetFiles),
-			searchPattern, enumerationOptions);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.GetFiles),
+				searchPattern, enumerationOptions);
 	}
 #endif
 
@@ -329,9 +329,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").GetFiles(searchPattern, searchOption);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.GetFiles),
-			searchPattern, searchOption);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.GetFiles),
+				searchPattern, searchOption);
 	}
 
 	[SkippableFact]
@@ -343,9 +343,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").GetFiles(searchPattern);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.GetFiles),
-			searchPattern);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.GetFiles),
+				searchPattern);
 	}
 
 	[SkippableFact]
@@ -371,9 +371,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").GetFileSystemInfos(searchPattern, enumerationOptions);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.GetFileSystemInfos),
-			searchPattern, enumerationOptions);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.GetFileSystemInfos),
+				searchPattern, enumerationOptions);
 	}
 #endif
 
@@ -387,9 +387,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").GetFileSystemInfos(searchPattern, searchOption);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.GetFileSystemInfos),
-			searchPattern, searchOption);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.GetFileSystemInfos),
+				searchPattern, searchOption);
 	}
 
 	[SkippableFact]
@@ -401,9 +401,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").GetFileSystemInfos(searchPattern);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.GetFileSystemInfos),
-			searchPattern);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.GetFileSystemInfos),
+				searchPattern);
 	}
 
 	[SkippableFact]
@@ -415,9 +415,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").MoveTo(destDirName);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.MoveTo),
-			destDirName);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.MoveTo),
+				destDirName);
 	}
 
 	[SkippableFact]
@@ -440,9 +440,9 @@ public sealed class DirectoryInfoStatisticsTests
 
 		sut.DirectoryInfo.New("foo").ResolveLinkTarget(returnFinalTarget);
 
-		sut.Statistics.DirectoryInfo["foo"].ShouldOnlyContainMethodCall(
-			nameof(IDirectoryInfo.ResolveLinkTarget),
-			returnFinalTarget);
+		sut.Statistics.DirectoryInfo["foo"]
+			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.ResolveLinkTarget),
+				returnFinalTarget);
 	}
 #endif
 	[SkippableFact]
@@ -487,7 +487,7 @@ public sealed class DirectoryInfoStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithSubdirectory("foo");
-		DateTime value = new();
+		DateTime value = DateTime.Now;
 
 		sut.DirectoryInfo.New("foo").CreationTime = value;
 
@@ -512,7 +512,7 @@ public sealed class DirectoryInfoStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithSubdirectory("foo");
-		DateTime value = new();
+		DateTime value = DateTime.UtcNow;
 
 		sut.DirectoryInfo.New("foo").CreationTimeUtc = value;
 
@@ -573,7 +573,7 @@ public sealed class DirectoryInfoStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithSubdirectory("foo");
-		DateTime value = new();
+		DateTime value = DateTime.Now;
 
 		sut.DirectoryInfo.New("foo").LastAccessTime = value;
 
@@ -598,7 +598,7 @@ public sealed class DirectoryInfoStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithSubdirectory("foo");
-		DateTime value = new();
+		DateTime value = DateTime.UtcNow;
 
 		sut.DirectoryInfo.New("foo").LastAccessTimeUtc = value;
 
@@ -623,7 +623,7 @@ public sealed class DirectoryInfoStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithSubdirectory("foo");
-		DateTime value = new();
+		DateTime value = DateTime.Now;
 
 		sut.DirectoryInfo.New("foo").LastWriteTime = value;
 
@@ -648,7 +648,7 @@ public sealed class DirectoryInfoStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithSubdirectory("foo");
-		DateTime value = new();
+		DateTime value = DateTime.UtcNow;
 
 		sut.DirectoryInfo.New("foo").LastWriteTimeUtc = value;
 

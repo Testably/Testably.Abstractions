@@ -43,6 +43,41 @@ public sealed class FileStatisticsTests
 			path, contents);
 	}
 
+#if FEATURE_FILESYSTEM_ASYNC
+	[SkippableFact]
+	public async Task
+		Method_AppendAllLinesAsync_String_IEnumerableString_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		IEnumerable<string> contents = ["foo", "bar"];
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		await sut.File.AppendAllLinesAsync(path, contents, cancellationToken);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllLinesAsync),
+			path, contents, cancellationToken);
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_ASYNC
+	[SkippableFact]
+	public async Task
+		Method_AppendAllLinesAsync_String_IEnumerableString_Encoding_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		IEnumerable<string> contents = ["foo", "bar"];
+		Encoding encoding = Encoding.UTF8;
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		await sut.File.AppendAllLinesAsync(path, contents, encoding, cancellationToken);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllLinesAsync),
+			path, contents, encoding, cancellationToken);
+	}
+#endif
+
 	[SkippableFact]
 	public void Method_AppendAllText_String_String_Encoding_ShouldRegisterCall()
 	{
@@ -69,6 +104,40 @@ public sealed class FileStatisticsTests
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllText),
 			path, contents);
 	}
+
+#if FEATURE_FILESYSTEM_ASYNC
+	[SkippableFact]
+	public async Task Method_AppendAllTextAsync_String_String_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		string contents = "foo";
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		await sut.File.AppendAllTextAsync(path, contents, cancellationToken);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllTextAsync),
+			path, contents, cancellationToken);
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_ASYNC
+	[SkippableFact]
+	public async Task
+		Method_AppendAllTextAsync_String_String_Encoding_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		string contents = "foo";
+		Encoding encoding = Encoding.UTF8;
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		await sut.File.AppendAllTextAsync(path, contents, encoding, cancellationToken);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllTextAsync),
+			path, contents, encoding, cancellationToken);
+	}
+#endif
 
 	[SkippableFact]
 	public void Method_AppendText_String_ShouldRegisterCall()
@@ -669,6 +738,40 @@ public sealed class FileStatisticsTests
 			path);
 	}
 
+#if FEATURE_FILESYSTEM_ASYNC
+	[SkippableFact]
+	public async Task Method_ReadAllLinesAsync_String_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
+		string path = "foo";
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		await sut.File.ReadAllLinesAsync(path, cancellationToken);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllLinesAsync),
+			path, cancellationToken);
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_ASYNC
+	[SkippableFact]
+	public async Task
+		Method_ReadAllLinesAsync_String_Encoding_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
+		string path = "foo";
+		Encoding encoding = Encoding.UTF8;
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		await sut.File.ReadAllLinesAsync(path, encoding, cancellationToken);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllLinesAsync),
+			path, encoding, cancellationToken);
+	}
+#endif
+
 	[SkippableFact]
 	public void Method_ReadAllText_String_Encoding_ShouldRegisterCall()
 	{
@@ -696,6 +799,39 @@ public sealed class FileStatisticsTests
 			path);
 	}
 
+#if FEATURE_FILESYSTEM_ASYNC
+	[SkippableFact]
+	public async Task Method_ReadAllTextAsync_String_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
+		string path = "foo";
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		await sut.File.ReadAllTextAsync(path, cancellationToken);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllTextAsync),
+			path, cancellationToken);
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_ASYNC
+	[SkippableFact]
+	public async Task Method_ReadAllTextAsync_String_Encoding_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
+		string path = "foo";
+		Encoding encoding = Encoding.UTF8;
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		await sut.File.ReadAllTextAsync(path, encoding, cancellationToken);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllTextAsync),
+			path, encoding, cancellationToken);
+	}
+#endif
+
 	[SkippableFact]
 	public void Method_ReadLines_String_Encoding_ShouldRegisterCall()
 	{
@@ -722,6 +858,39 @@ public sealed class FileStatisticsTests
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadLines),
 			path);
 	}
+
+#if FEATURE_FILESYSTEM_NET7
+	[SkippableFact]
+	public void Method_ReadLinesAsync_String_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
+		string path = "foo";
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		sut.File.ReadLinesAsync(path, cancellationToken);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadLinesAsync),
+			path, cancellationToken);
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_NET7
+	[SkippableFact]
+	public void Method_ReadLinesAsync_String_Encoding_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
+		string path = "foo";
+		Encoding encoding = Encoding.UTF8;
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		sut.File.ReadLinesAsync(path, encoding, cancellationToken);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadLinesAsync),
+			path, encoding, cancellationToken);
+	}
+#endif
 
 	[SkippableFact]
 	public void Method_Replace_String_String_String_Bool_ShouldRegisterCall()
@@ -1121,6 +1290,41 @@ public sealed class FileStatisticsTests
 			path, contents);
 	}
 
+#if FEATURE_FILESYSTEM_ASYNC
+	[SkippableFact]
+	public async Task
+		Method_WriteAllLinesAsync_String_IEnumerableString_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		IEnumerable<string> contents = ["foo", "bar"];
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		await sut.File.WriteAllLinesAsync(path, contents, cancellationToken);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllLinesAsync),
+			path, contents, cancellationToken);
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_ASYNC
+	[SkippableFact]
+	public async Task
+		Method_WriteAllLinesAsync_String_IEnumerableString_Encoding_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		IEnumerable<string> contents = ["foo", "bar"];
+		Encoding encoding = Encoding.UTF8;
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		await sut.File.WriteAllLinesAsync(path, contents, encoding, cancellationToken);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllLinesAsync),
+			path, contents, encoding, cancellationToken);
+	}
+#endif
+
 	[SkippableFact]
 	public void Method_WriteAllText_String_String_Encoding_ShouldRegisterCall()
 	{
@@ -1150,198 +1354,6 @@ public sealed class FileStatisticsTests
 
 #if FEATURE_FILESYSTEM_ASYNC
 	[SkippableFact]
-	public async Task
-		Method_AppendAllLinesAsync_String_IEnumerableString_CancellationToken_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		string path = "foo";
-		IEnumerable<string> contents = ["foo", "bar"];
-		CancellationToken cancellationToken = CancellationToken.None;
-
-		await sut.File.AppendAllLinesAsync(path, contents, cancellationToken);
-
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllLinesAsync),
-			path, contents, cancellationToken);
-	}
-
-	[SkippableFact]
-	public async Task
-		Method_AppendAllLinesAsync_String_IEnumerableString_Encoding_CancellationToken_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		string path = "foo";
-		IEnumerable<string> contents = ["foo", "bar"];
-		Encoding encoding = Encoding.UTF8;
-		CancellationToken cancellationToken = CancellationToken.None;
-
-		await sut.File.AppendAllLinesAsync(path, contents, encoding, cancellationToken);
-
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllLinesAsync),
-			path, contents, encoding, cancellationToken);
-	}
-#endif
-
-#if FEATURE_FILESYSTEM_ASYNC
-	[SkippableFact]
-	public async Task Method_AppendAllTextAsync_String_String_CancellationToken_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		string path = "foo";
-		string contents = "foo";
-		CancellationToken cancellationToken = CancellationToken.None;
-
-		await sut.File.AppendAllTextAsync(path, contents, cancellationToken);
-
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllTextAsync),
-			path, contents, cancellationToken);
-	}
-
-	[SkippableFact]
-	public async Task
-		Method_AppendAllTextAsync_String_String_Encoding_CancellationToken_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		string path = "foo";
-		string contents = "foo";
-		Encoding encoding = Encoding.UTF8;
-		CancellationToken cancellationToken = CancellationToken.None;
-
-		await sut.File.AppendAllTextAsync(path, contents, encoding, cancellationToken);
-
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllTextAsync),
-			path, contents, encoding, cancellationToken);
-	}
-#endif
-
-#if FEATURE_FILESYSTEM_ASYNC
-	[SkippableFact]
-	public async Task Method_ReadAllLinesAsync_String_CancellationToken_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		sut.Initialize().WithFile("foo");
-		string path = "foo";
-		CancellationToken cancellationToken = CancellationToken.None;
-
-		await sut.File.ReadAllLinesAsync(path, cancellationToken);
-
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllLinesAsync),
-			path, cancellationToken);
-	}
-
-	[SkippableFact]
-	public async Task
-		Method_ReadAllLinesAsync_String_Encoding_CancellationToken_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		sut.Initialize().WithFile("foo");
-		string path = "foo";
-		Encoding encoding = Encoding.UTF8;
-		CancellationToken cancellationToken = CancellationToken.None;
-
-		await sut.File.ReadAllLinesAsync(path, encoding, cancellationToken);
-
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllLinesAsync),
-			path, encoding, cancellationToken);
-	}
-#endif
-
-#if FEATURE_FILESYSTEM_ASYNC
-	[SkippableFact]
-	public async Task Method_ReadAllTextAsync_String_CancellationToken_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		sut.Initialize().WithFile("foo");
-		string path = "foo";
-		CancellationToken cancellationToken = CancellationToken.None;
-
-		await sut.File.ReadAllTextAsync(path, cancellationToken);
-
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllTextAsync),
-			path, cancellationToken);
-	}
-
-	[SkippableFact]
-	public async Task Method_ReadAllTextAsync_String_Encoding_CancellationToken_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		sut.Initialize().WithFile("foo");
-		string path = "foo";
-		Encoding encoding = Encoding.UTF8;
-		CancellationToken cancellationToken = CancellationToken.None;
-
-		await sut.File.ReadAllTextAsync(path, encoding, cancellationToken);
-
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllTextAsync),
-			path, encoding, cancellationToken);
-	}
-#endif
-
-#if FEATURE_FILESYSTEM_NET7
-	[SkippableFact]
-	public void Method_ReadLinesAsync_String_CancellationToken_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		sut.Initialize().WithFile("foo");
-		string path = "foo";
-		CancellationToken cancellationToken = CancellationToken.None;
-
-		sut.File.ReadLinesAsync(path, cancellationToken);
-
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadLinesAsync),
-			path, cancellationToken);
-	}
-
-	[SkippableFact]
-	public void Method_ReadLinesAsync_String_Encoding_CancellationToken_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		sut.Initialize().WithFile("foo");
-		string path = "foo";
-		Encoding encoding = Encoding.UTF8;
-		CancellationToken cancellationToken = CancellationToken.None;
-
-		sut.File.ReadLinesAsync(path, encoding, cancellationToken);
-
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadLinesAsync),
-			path, encoding, cancellationToken);
-	}
-#endif
-
-#if FEATURE_FILESYSTEM_ASYNC
-	[SkippableFact]
-	public async Task
-		Method_WriteAllLinesAsync_String_IEnumerableString_CancellationToken_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		string path = "foo";
-		IEnumerable<string> contents = ["foo", "bar"];
-		CancellationToken cancellationToken = CancellationToken.None;
-
-		await sut.File.WriteAllLinesAsync(path, contents, cancellationToken);
-
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllLinesAsync),
-			path, contents, cancellationToken);
-	}
-
-	[SkippableFact]
-	public async Task
-		Method_WriteAllLinesAsync_String_IEnumerableString_Encoding_CancellationToken_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		string path = "foo";
-		IEnumerable<string> contents = ["foo", "bar"];
-		Encoding encoding = Encoding.UTF8;
-		CancellationToken cancellationToken = CancellationToken.None;
-
-		await sut.File.WriteAllLinesAsync(path, contents, encoding, cancellationToken);
-
-		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllLinesAsync),
-			path, contents, encoding, cancellationToken);
-	}
-#endif
-
-#if FEATURE_FILESYSTEM_ASYNC
-	[SkippableFact]
 	public async Task Method_WriteAllTextAsync_String_String_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -1354,7 +1366,9 @@ public sealed class FileStatisticsTests
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllTextAsync),
 			path, contents, cancellationToken);
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_ASYNC
 	[SkippableFact]
 	public async Task
 		Method_WriteAllTextAsync_String_String_Encoding_CancellationToken_ShouldRegisterCall()
