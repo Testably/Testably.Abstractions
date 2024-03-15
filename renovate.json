@@ -9,5 +9,6 @@
 			"groupName": [ "Testably.Abstractions packages" ]
 		}
 	],
-	"ignoreDeps": [ "actions/download-artifact", "actions/upload-artifact" ]
+	"ignoreDeps": [ "actions/download-artifact", "actions/upload-artifact" ],
+	"schedule": ["before 4am on monday"]
 }
