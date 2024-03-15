@@ -164,6 +164,13 @@ jobs:
         run: |
           version="${GITHUB_REF#refs/heads/release/}"
           git tag "${version}"
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            7.0.x
+            8.0.x
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
       - name: Setup VSTest
