@@ -61,8 +61,7 @@ internal class FileSystemEntryStatistics : CallStatistics, IPathStatistics
 
 		if (Path.IsPathRooted(path))
 		{
-			return path
-				.TrimEnd([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar]);
+			return path.TrimEnd([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar]);
 		}
 
 		return Path.GetFullPath(Path.Combine(currentDirectory, path))

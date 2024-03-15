@@ -7,6 +7,8 @@ public sealed class DriveInfoStatisticsTests
 	[SkippableFact]
 	public void Property_AvailableFreeSpace_Get_ShouldRegisterPropertyAccess()
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		MockFileSystem sut = new();
 
 		_ = sut.DriveInfo.New("F:").AvailableFreeSpace;
@@ -18,6 +20,8 @@ public sealed class DriveInfoStatisticsTests
 	[SkippableFact]
 	public void Property_DriveFormat_Get_ShouldRegisterPropertyAccess()
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		MockFileSystem sut = new();
 
 		_ = sut.DriveInfo.New("F:").DriveFormat;
@@ -29,6 +33,8 @@ public sealed class DriveInfoStatisticsTests
 	[SkippableFact]
 	public void Property_DriveType_Get_ShouldRegisterPropertyAccess()
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		MockFileSystem sut = new();
 
 		_ = sut.DriveInfo.New("F:").DriveType;
@@ -40,6 +46,8 @@ public sealed class DriveInfoStatisticsTests
 	[SkippableFact]
 	public void Property_IsReady_Get_ShouldRegisterPropertyAccess()
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		MockFileSystem sut = new();
 
 		_ = sut.DriveInfo.New("F:").IsReady;
@@ -51,6 +59,8 @@ public sealed class DriveInfoStatisticsTests
 	[SkippableFact]
 	public void Property_Name_Get_ShouldRegisterPropertyAccess()
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		MockFileSystem sut = new();
 
 		_ = sut.DriveInfo.New("F:").Name;
@@ -61,6 +71,8 @@ public sealed class DriveInfoStatisticsTests
 	[SkippableFact]
 	public void Property_RootDirectory_Get_ShouldRegisterPropertyAccess()
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		MockFileSystem sut = new();
 
 		_ = sut.DriveInfo.New("F:").RootDirectory;
@@ -72,6 +84,8 @@ public sealed class DriveInfoStatisticsTests
 	[SkippableFact]
 	public void Property_TotalFreeSpace_Get_ShouldRegisterPropertyAccess()
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		MockFileSystem sut = new();
 
 		_ = sut.DriveInfo.New("F:").TotalFreeSpace;
@@ -83,6 +97,8 @@ public sealed class DriveInfoStatisticsTests
 	[SkippableFact]
 	public void Property_TotalSize_Get_ShouldRegisterPropertyAccess()
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		MockFileSystem sut = new();
 
 		_ = sut.DriveInfo.New("F:").TotalSize;
@@ -94,6 +110,8 @@ public sealed class DriveInfoStatisticsTests
 	[SkippableFact]
 	public void Property_VolumeLabel_Get_ShouldRegisterPropertyAccess()
 	{
+		Skip.IfNot(Test.RunsOnWindows);
+
 		MockFileSystem sut = new();
 
 		_ = sut.DriveInfo.New("F:").VolumeLabel;
