@@ -35,6 +35,9 @@ internal sealed class DriveInfoMock : IStorageDrive
 	private string _volumeLabel = nameof(MockFileSystem);
 	private readonly string _name;
 	private long _totalSize;
+	private string _driveFormat;
+	private DriveType _driveType;
+	private bool _isReady;
 
 	private DriveInfoMock(string driveName, MockFileSystem fileSystem)
 	{
@@ -53,9 +56,9 @@ internal sealed class DriveInfoMock : IStorageDrive
 
 		_name = driveName;
 		_totalSize = DefaultTotalSize;
-		DriveFormat = DefaultDriveFormat;
-		DriveType = DefaultDriveType;
-		IsReady = true;
+		_driveFormat = DefaultDriveFormat;
+		_driveType = DefaultDriveType;
+		_isReady = true;
 	}
 
 	#region IStorageDrive Members
@@ -72,17 +75,41 @@ internal sealed class DriveInfoMock : IStorageDrive
 	}
 
 	/// <inheritdoc cref="IDriveInfo.DriveFormat" />
-	public string DriveFormat { get; private set; }
+	public string DriveFormat
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(DriveFormat), PropertyStatistic.AccessMode.Get);
+
+			return _driveFormat;
+		}
+	}
 
 	/// <inheritdoc cref="IDriveInfo.DriveType" />
-	public DriveType DriveType { get; private set; }
+	public DriveType DriveType
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(DriveType), PropertyStatistic.AccessMode.Get);
+
+			return _driveType;
+		}
+	}
 
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem
 		=> _fileSystem;
 
 	/// <inheritdoc cref="IDriveInfo.IsReady" />
-	public bool IsReady { get; private set; }
+	public bool IsReady
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(IsReady), PropertyStatistic.AccessMode.Get);
+
+			return _isReady;
+		}
+	}
 
 	/// <summary>
 	///     Flag indicating if the drive is a UNC drive
@@ -94,7 +121,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		get
 		{
-			//using IDisposable registration = RegisterProperty(nameof(Name), PropertyStatistic.AccessMode.Get);
+			using IDisposable registration = RegisterProperty(nameof(Name), PropertyStatistic.AccessMode.Get);
 
 			return _name;
 		}
@@ -102,7 +129,14 @@ internal sealed class DriveInfoMock : IStorageDrive
 
 	/// <inheritdoc cref="IDriveInfo.RootDirectory" />
 	public IDirectoryInfo RootDirectory
-		=> DirectoryInfoMock.New(_fileSystem.Storage.GetLocation(Name), _fileSystem);
+	{
+		get
+		{
+			using IDisposable registration = RegisterProperty(nameof(RootDirectory), PropertyStatistic.AccessMode.Get);
+
+			return DirectoryInfoMock.New(_fileSystem.Storage.GetLocation(Name), _fileSystem);
+		}
+	}
 
 	/// <inheritdoc cref="IDriveInfo.TotalFreeSpace" />
 	public long TotalFreeSpace
@@ -166,7 +200,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 	public IStorageDrive SetDriveFormat(
 		string driveFormat = DefaultDriveFormat)
 	{
-		DriveFormat = driveFormat;
+		_driveFormat = driveFormat;
 		return this;
 	}
 
@@ -174,14 +208,14 @@ internal sealed class DriveInfoMock : IStorageDrive
 	public IStorageDrive SetDriveType(
 		DriveType driveType = DefaultDriveType)
 	{
-		DriveType = driveType;
+		_driveType = driveType;
 		return this;
 	}
 
 	/// <inheritdoc cref="IStorageDrive.SetIsReady(bool)" />
 	public IStorageDrive SetIsReady(bool isReady = true)
 	{
-		IsReady = isReady;
+		_isReady = isReady;
 		return this;
 	}
 
@@ -197,7 +231,9 @@ internal sealed class DriveInfoMock : IStorageDrive
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> Name;
+		=> _name;
+
+	internal string GetName() => _name;
 
 	private string GetTopmostParentDirectory(string path)
 	{
