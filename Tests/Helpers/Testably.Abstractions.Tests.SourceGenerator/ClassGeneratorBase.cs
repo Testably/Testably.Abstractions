@@ -39,8 +39,10 @@ internal abstract class ClassGeneratorBase
 			"Testably.Abstractions.Tests.FileSystem.",
 			"Testably.Abstractions."
 		];
-		foreach (string? namespacePrefix in namespacePrefixes
-			.Where(classToGenerate.Namespace.StartsWith))
+
+		string? namespacePrefix = namespacePrefixes
+			.FirstOrDefault(classToGenerate.Namespace.StartsWith);
+		if (namespacePrefix != null)
 		{
 			string? @namespace = classToGenerate.Namespace
 				.Substring(namespacePrefix.Length);
