@@ -1,5 +1,7 @@
-﻿using System.IO;
-using Testably.Abstractions.Testing.Tests.TestHelpers;
+﻿using Testably.Abstractions.Testing.Tests.TestHelpers;
+#if FEATURE_PATH_RELATIVE
+using System.IO;
+#endif
 
 namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 

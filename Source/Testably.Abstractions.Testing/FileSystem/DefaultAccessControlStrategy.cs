@@ -21,8 +21,12 @@ public class DefaultAccessControlStrategy : IAccessControlStrategy
 		_callback = callback ?? throw new ArgumentNullException(nameof(callback));
 	}
 
+	#region IAccessControlStrategy Members
+
 	/// <inheritdoc cref="IAccessControlStrategy.IsAccessGranted(string, IFileSystemExtensibility)" />
 	public bool IsAccessGranted(string fullPath,
 		IFileSystemExtensibility extensibility)
 		=> _callback(fullPath, extensibility);
+
+	#endregion
 }

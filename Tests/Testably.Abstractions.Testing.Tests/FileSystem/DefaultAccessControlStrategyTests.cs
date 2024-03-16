@@ -5,12 +5,16 @@ namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
 public class DefaultAccessControlStrategyTests
 {
+	#region Test Setup
+
 	public MockFileSystem FileSystem { get; }
 
 	public DefaultAccessControlStrategyTests()
 	{
 		FileSystem = new MockFileSystem();
 	}
+
+	#endregion
 
 	[SkippableFact]
 	public void Constructor_NullCallback_ShouldThrowArgumentNullException()

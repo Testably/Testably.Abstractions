@@ -7,12 +7,16 @@ namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
 public class DefaultSafeFileHandleStrategyTests
 {
+	#region Test Setup
+
 	public MockFileSystem FileSystem { get; }
 
 	public DefaultSafeFileHandleStrategyTests()
 	{
 		FileSystem = new MockFileSystem();
 	}
+
+	#endregion
 
 	[SkippableFact]
 	public void Constructor_NullCallback_ShouldThrowArgumentNullException()

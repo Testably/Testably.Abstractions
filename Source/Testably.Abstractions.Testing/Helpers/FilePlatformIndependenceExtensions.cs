@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Text.RegularExpressions;
 
 namespace Testably.Abstractions.Testing.Helpers;
@@ -29,17 +28,20 @@ internal static class FilePlatformIndependenceExtensions
 
 		return fileSystem.Execute.OnWindows(
 			() => path
-				.Replace(fileSystem.Path.AltDirectorySeparatorChar, fileSystem.Path.DirectorySeparatorChar),
+				.Replace(fileSystem.Path.AltDirectorySeparatorChar,
+					fileSystem.Path.DirectorySeparatorChar),
 			() => PathTransformRegex
 				.Replace(path, "${path}")
-				.Replace(fileSystem.Path.AltDirectorySeparatorChar, fileSystem.Path.DirectorySeparatorChar));
+				.Replace(fileSystem.Path.AltDirectorySeparatorChar,
+					fileSystem.Path.DirectorySeparatorChar));
 	}
 
 	/// <summary>
 	///     Normalizes the given path so that it works on all platforms.
 	/// </summary>
 	[return: NotNullIfNotNull("path")]
-	public static string? PrefixRoot(this string? path, MockFileSystem fileSystem, char driveLetter = 'C')
+	public static string? PrefixRoot(this string? path, MockFileSystem fileSystem,
+		char driveLetter = 'C')
 	{
 		if (path == null)
 		{

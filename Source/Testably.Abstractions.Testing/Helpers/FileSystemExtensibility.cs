@@ -9,18 +9,7 @@ internal class FileSystemExtensibility : IFileSystemExtensibility
 {
 	private readonly Dictionary<string, object?> _metadata = new();
 
-	/// <inheritdoc cref="IFileSystemExtensibility.TryGetWrappedInstance{T}" />
-	public bool TryGetWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance)
-	{
-		wrappedInstance = default;
-		return false;
-	}
-
-	/// <inheritdoc cref="IFileSystemExtensibility.StoreMetadata{T}(string, T)" />
-	public void StoreMetadata<T>(string key, T? value)
-	{
-		_metadata[key] = value;
-	}
+	#region IFileSystemExtensibility Members
 
 	/// <inheritdoc cref="IFileSystemExtensibility.RetrieveMetadata{T}(string)" />
 	public T? RetrieveMetadata<T>(string key)
@@ -35,16 +24,20 @@ internal class FileSystemExtensibility : IFileSystemExtensibility
 		return default;
 	}
 
-	internal void CopyMetadataTo(IFileSystemExtensibility target)
+	/// <inheritdoc cref="IFileSystemExtensibility.StoreMetadata{T}(string, T)" />
+	public void StoreMetadata<T>(string key, T? value)
 	{
-		if (target is FileSystemExtensibility targetContainer)
-		{
-			foreach (KeyValuePair<string, object?> item in _metadata)
-			{
-				targetContainer._metadata[item.Key] = item.Value;
-			}
-		}
+		_metadata[key] = value;
 	}
+
+	/// <inheritdoc cref="IFileSystemExtensibility.TryGetWrappedInstance{T}" />
+	public bool TryGetWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance)
+	{
+		wrappedInstance = default;
+		return false;
+	}
+
+	#endregion
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
@@ -56,5 +49,16 @@ internal class FileSystemExtensibility : IFileSystemExtensibility
 
 		return
 			$"[{string.Join(", ", _metadata.Select(x => $"{x.Key}: {x.Value}"))}]";
+	}
+
+	internal void CopyMetadataTo(IFileSystemExtensibility target)
+	{
+		if (target is FileSystemExtensibility targetContainer)
+		{
+			foreach (KeyValuePair<string, object?> item in _metadata)
+			{
+				targetContainer._metadata[item.Key] = item.Value;
+			}
+		}
 	}
 }

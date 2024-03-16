@@ -11,61 +11,6 @@ public abstract partial class ExceptionTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
-	[MemberData(nameof(GetFileStreamFactoryCallbacks), parameters: "")]
-	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
-		Expression<Action<IFileStreamFactory>> callback, string paramName,
-		bool ignoreParamCheck)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			callback.Compile().Invoke(FileSystem.FileStream);
-		});
-
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			paramName: ignoreParamCheck || Test.IsNetFramework ? null : paramName,
-			because:
-			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
-	}
-
-	[SkippableTheory]
-	[MemberData(nameof(GetFileStreamFactoryCallbacks), parameters: "  ")]
-	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
-		Expression<Action<IFileStreamFactory>> callback, string paramName,
-		bool ignoreParamCheck)
-	{
-		Skip.IfNot(Test.RunsOnWindows);
-
-		Exception? exception = Record.Exception(() =>
-		{
-			callback.Compile().Invoke(FileSystem.FileStream);
-		});
-
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			paramName: ignoreParamCheck || Test.IsNetFramework ? null : paramName,
-			because:
-			$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
-	}
-
-	[SkippableTheory]
-	[MemberData(nameof(GetFileStreamFactoryCallbacks), parameters: (string?)null)]
-	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
-		Expression<Action<IFileStreamFactory>> callback, string paramName,
-		bool ignoreParamCheck)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			callback.Compile().Invoke(FileSystem.FileStream);
-		});
-
-		exception.Should().BeException<ArgumentNullException>(
-			paramName: ignoreParamCheck ? null : paramName,
-			because:
-			$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
-	}
-
-	[SkippableTheory]
 	[MemberData(nameof(GetFileStreamFactoryCallbacks),
 		parameters: "Illegal\tCharacter?InPath")]
 	public void
@@ -103,6 +48,61 @@ public abstract partial class ExceptionTests<TFileSystem>
 					$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 			}
 		}
+	}
+
+	[SkippableTheory]
+	[MemberData(nameof(GetFileStreamFactoryCallbacks), parameters: "")]
+	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
+		Expression<Action<IFileStreamFactory>> callback, string paramName,
+		bool ignoreParamCheck)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			callback.Compile().Invoke(FileSystem.FileStream);
+		});
+
+		exception.Should().BeException<ArgumentException>(
+			hResult: -2147024809,
+			paramName: ignoreParamCheck || Test.IsNetFramework ? null : paramName,
+			because:
+			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+	}
+
+	[SkippableTheory]
+	[MemberData(nameof(GetFileStreamFactoryCallbacks), parameters: (string?)null)]
+	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
+		Expression<Action<IFileStreamFactory>> callback, string paramName,
+		bool ignoreParamCheck)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			callback.Compile().Invoke(FileSystem.FileStream);
+		});
+
+		exception.Should().BeException<ArgumentNullException>(
+			paramName: ignoreParamCheck ? null : paramName,
+			because:
+			$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+	}
+
+	[SkippableTheory]
+	[MemberData(nameof(GetFileStreamFactoryCallbacks), parameters: "  ")]
+	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
+		Expression<Action<IFileStreamFactory>> callback, string paramName,
+		bool ignoreParamCheck)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			callback.Compile().Invoke(FileSystem.FileStream);
+		});
+
+		exception.Should().BeException<ArgumentException>(
+			hResult: -2147024809,
+			paramName: ignoreParamCheck || Test.IsNetFramework ? null : paramName,
+			because:
+			$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	#region Helpers

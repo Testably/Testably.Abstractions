@@ -9,12 +9,16 @@ namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 // ReSharper disable AccessToDisposedClosure
 public class TimerMockTests
 {
+	#region Test Setup
+
 	private readonly ITestOutputHelper _testOutputHelper;
 
 	public TimerMockTests(ITestOutputHelper testOutputHelper)
 	{
 		_testOutputHelper = testOutputHelper;
 	}
+
+	#endregion
 
 	[SkippableTheory]
 	[InlineData(-1)]
@@ -79,6 +83,24 @@ public class TimerMockTests
 #endif
 	}
 
+	[Fact]
+	public void Dispose_WithUnknownWaitHandle_ShouldThrowNotSupportedException()
+	{
+		MockTimeSystem timeSystem = new();
+		using ITimer timer = timeSystem.Timer.New(_ =>
+		{
+		}, null, 100, 200);
+		using DummyWaitHandle waitHandle = new();
+
+		Exception? exception = Record.Exception(() =>
+		{
+			timer.Dispose(waitHandle);
+		});
+
+		exception.Should().BeOfType<NotSupportedException>()
+			.Which.Message.Should().Contain(typeof(DummyWaitHandle).ToString());
+	}
+
 #if FEATURE_ASYNC_DISPOSABLE
 	[Fact]
 	public async Task DisposeAsync_ShouldDisposeTimer()
@@ -102,70 +124,6 @@ public class TimerMockTests
 #endif
 	}
 #endif
-
-	[Fact]
-	public void Dispose_WithUnknownWaitHandle_ShouldThrowNotSupportedException()
-	{
-		MockTimeSystem timeSystem = new();
-		using ITimer timer = timeSystem.Timer.New(_ =>
-		{
-		}, null, 100, 200);
-		using DummyWaitHandle waitHandle = new();
-
-		Exception? exception = Record.Exception(() =>
-		{
-			timer.Dispose(waitHandle);
-		});
-
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.Message.Should().Contain(typeof(DummyWaitHandle).ToString());
-	}
-
-	[Fact]
-	public void Exception_WhenSwallowExceptionsIsSet_ShouldContinueTimerExecution()
-	{
-		MockTimeSystem timeSystem = new();
-		timeSystem.WithTimerStrategy(
-			new TimerStrategy(swallowExceptions: true));
-		Exception exception = new("foo");
-		int count = 0;
-		ManualResetEventSlim ms = new();
-		using ITimer timer = timeSystem.Timer.New(_ =>
-		{
-			if (count++ == 1)
-			{
-				throw exception;
-			}
-
-			if (count == 3)
-			{
-				ms.Set();
-			}
-		}, null, 0, 20);
-
-		ms.Wait(10000).Should().BeTrue();
-
-		count.Should().BeGreaterThanOrEqualTo(3);
-	}
-
-	[Fact]
-	public void Exception_WhenSwallowExceptionsIsNotSet_ShouldThrowExceptionOnWait()
-	{
-		MockTimeSystem timeSystem = new MockTimeSystem()
-			.WithTimerStrategy(new TimerStrategy(
-				TimerMode.StartOnMockWait,
-				swallowExceptions: false));
-		Exception expectedException = new("foo");
-		using ITimer timer = timeSystem.Timer.New(
-			_ => throw expectedException, null, 0, 20);
-
-		Exception? exception = Record.Exception(() =>
-		{
-			timeSystem.TimerHandler[0].Wait();
-		});
-
-		exception.Should().Be(expectedException);
-	}
 
 	[Fact]
 	public async Task Exception_WhenSwallowExceptionsIsNotSet_ShouldStopTimer()
@@ -196,6 +154,52 @@ public class TimerMockTests
 	}
 
 	[Fact]
+	public void Exception_WhenSwallowExceptionsIsNotSet_ShouldThrowExceptionOnWait()
+	{
+		MockTimeSystem timeSystem = new MockTimeSystem()
+			.WithTimerStrategy(new TimerStrategy(
+				TimerMode.StartOnMockWait,
+				swallowExceptions: false));
+		Exception expectedException = new("foo");
+		using ITimer timer = timeSystem.Timer.New(
+			_ => throw expectedException, null, 0, 20);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			timeSystem.TimerHandler[0].Wait();
+		});
+
+		exception.Should().Be(expectedException);
+	}
+
+	[Fact]
+	public void Exception_WhenSwallowExceptionsIsSet_ShouldContinueTimerExecution()
+	{
+		MockTimeSystem timeSystem = new();
+		timeSystem.WithTimerStrategy(
+			new TimerStrategy(swallowExceptions: true));
+		Exception exception = new("foo");
+		int count = 0;
+		ManualResetEventSlim ms = new();
+		using ITimer timer = timeSystem.Timer.New(_ =>
+		{
+			if (count++ == 1)
+			{
+				throw exception;
+			}
+
+			if (count == 3)
+			{
+				ms.Set();
+			}
+		}, null, 0, 20);
+
+		ms.Wait(10000).Should().BeTrue();
+
+		count.Should().BeGreaterThanOrEqualTo(3);
+	}
+
+	[Fact]
 	public async Task New_WithStartOnMockWaitMode_ShouldOnlyStartWhenCallingWait()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()
@@ -209,24 +213,6 @@ public class TimerMockTests
 		count.Should().Be(0);
 		timerHandler[0].Wait();
 		count.Should().BeGreaterThan(0);
-	}
-
-	[Fact]
-	public void Wait_InvalidExecutionCount_ShouldThrowArgumentOutOfRangeException()
-	{
-		MockTimeSystem timeSystem = new();
-		ITimerHandler timerHandler = timeSystem.TimerHandler;
-
-		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 0, 100);
-
-		Exception? exception = Record.Exception(() =>
-		{
-			timerHandler[0].Wait(0);
-		});
-
-		exception.Should().BeOfType<ArgumentOutOfRangeException>()
-			.Which.ParamName.Should().Be("executionCount");
-		exception!.Message.Should().Contain("Execution count must be greater than zero.");
 	}
 
 	[SkippableFact]
@@ -246,6 +232,24 @@ public class TimerMockTests
 		});
 
 		exception.Should().BeNull();
+	}
+
+	[Fact]
+	public void Wait_InvalidExecutionCount_ShouldThrowArgumentOutOfRangeException()
+	{
+		MockTimeSystem timeSystem = new();
+		ITimerHandler timerHandler = timeSystem.TimerHandler;
+
+		using ITimer timer = timeSystem.Timer.New(_ => { }, null, 0, 100);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			timerHandler[0].Wait(0);
+		});
+
+		exception.Should().BeOfType<ArgumentOutOfRangeException>()
+			.Which.ParamName.Should().Be("executionCount");
+		exception!.Message.Should().Contain("Execution count must be greater than zero.");
 	}
 
 	[Fact]

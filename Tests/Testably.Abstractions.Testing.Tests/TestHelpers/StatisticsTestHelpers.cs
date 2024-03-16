@@ -5,20 +5,6 @@ namespace Testably.Abstractions.Testing.Tests.TestHelpers;
 
 public static class StatisticsTestHelpers
 {
-	public static void ShouldOnlyContainPropertyGetAccess(this IStatistics statistics, string name)
-	{
-		statistics.Properties.Length.Should().Be(1);
-		statistics.Properties.Should()
-			.ContainSingle(c => c.Name == name && c.Access == PropertyAccess.Get);
-	}
-
-	public static void ShouldOnlyContainPropertySetAccess(this IStatistics statistics, string name)
-	{
-		statistics.Properties.Length.Should().Be(1);
-		statistics.Properties.Should()
-			.ContainSingle(c => c.Name == name && c.Access == PropertyAccess.Set);
-	}
-
 	public static void ShouldOnlyContainMethodCall(this IStatistics statistics, string name,
 		object?[] parameters, string because = "")
 	{
@@ -67,7 +53,9 @@ public static class StatisticsTestHelpers
 			                    c.Parameters.Length == 1).Which.Parameters[0];
 		parameter.Is(parameter1).Should().BeTrue();
 	}
+#endif
 
+#if FEATURE_SPAN
 	public static void ShouldOnlyContainMethodCall<T1, T2>(this IStatistics statistics, string name,
 		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2)
 	{
@@ -78,8 +66,11 @@ public static class StatisticsTestHelpers
 		statistic.Parameters[0].Is(parameter1).Should().BeTrue();
 		statistic.Parameters[1].Is(parameter2).Should().BeTrue();
 	}
+#endif
 
-	public static void ShouldOnlyContainMethodCall<T1, T2, T3>(this IStatistics statistics, string name,
+#if FEATURE_SPAN
+	public static void ShouldOnlyContainMethodCall<T1, T2, T3>(this IStatistics statistics,
+		string name,
 		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3)
 	{
 		statistics.Methods.Length.Should().Be(1);
@@ -90,9 +81,13 @@ public static class StatisticsTestHelpers
 		statistic.Parameters[1].Is(parameter2).Should().BeTrue();
 		statistic.Parameters[2].Is(parameter3).Should().BeTrue();
 	}
+#endif
 
-	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4>(this IStatistics statistics, string name,
-		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3, ReadOnlySpan<T4> parameter4)
+#if FEATURE_SPAN
+	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4>(this IStatistics statistics,
+		string name,
+		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3,
+		ReadOnlySpan<T4> parameter4)
 	{
 		statistics.Methods.Length.Should().Be(1);
 		MethodStatistic? statistic = statistics.Methods.Should()
@@ -103,8 +98,11 @@ public static class StatisticsTestHelpers
 		statistic.Parameters[2].Is(parameter3).Should().BeTrue();
 		statistic.Parameters[3].Is(parameter4).Should().BeTrue();
 	}
+#endif
 
-	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4>(this IStatistics statistics, string name,
+#if FEATURE_SPAN
+	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4>(this IStatistics statistics,
+		string name,
 		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2, T3 parameter3, T4 parameter4)
 	{
 		statistics.Methods.Length.Should().Be(1);
@@ -116,9 +114,13 @@ public static class StatisticsTestHelpers
 		statistic.Parameters[2].Is(parameter3).Should().BeTrue();
 		statistic.Parameters[3].Is(parameter4).Should().BeTrue();
 	}
+#endif
 
-	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4>(this IStatistics statistics, string name,
-		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2, Span<T3> parameter3, T4 parameter4)
+#if FEATURE_SPAN
+	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4>(this IStatistics statistics,
+		string name,
+		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2, Span<T3> parameter3,
+		T4 parameter4)
 	{
 		statistics.Methods.Length.Should().Be(1);
 		MethodStatistic? statistic = statistics.Methods.Should()
@@ -129,9 +131,13 @@ public static class StatisticsTestHelpers
 		statistic.Parameters[2].Is(parameter3).Should().BeTrue();
 		statistic.Parameters[3].Is(parameter4).Should().BeTrue();
 	}
+#endif
 
-	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4, T5>(this IStatistics statistics, string name,
-		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3, Span<T4> parameter4, T5 parameter5)
+#if FEATURE_SPAN
+	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4, T5>(this IStatistics statistics,
+		string name,
+		ReadOnlySpan<T1> parameter1, ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3,
+		Span<T4> parameter4, T5 parameter5)
 	{
 		statistics.Methods.Length.Should().Be(1);
 		MethodStatistic? statistic = statistics.Methods.Should()
@@ -143,7 +149,9 @@ public static class StatisticsTestHelpers
 		statistic.Parameters[3].Is(parameter4).Should().BeTrue();
 		statistic.Parameters[4].Is(parameter5).Should().BeTrue();
 	}
+#endif
 
+#if FEATURE_SPAN
 	public static void ShouldOnlyContainMethodCall<T1>(this IStatistics statistics, string name,
 		Span<T1> parameter1)
 	{
@@ -166,7 +174,8 @@ public static class StatisticsTestHelpers
 			                    c.Parameters[1].Is(parameter2));
 	}
 
-	public static void ShouldOnlyContainMethodCall<T1, T2, T3>(this IStatistics statistics, string name,
+	public static void ShouldOnlyContainMethodCall<T1, T2, T3>(
+		this IStatistics statistics, string name,
 		T1 parameter1, T2 parameter2, T3 parameter3)
 	{
 		statistics.Methods.Length.Should().Be(1);
@@ -178,7 +187,8 @@ public static class StatisticsTestHelpers
 			                    c.Parameters[2].Is(parameter3));
 	}
 
-	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4>(this IStatistics statistics, string name,
+	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4>(
+		this IStatistics statistics, string name,
 		T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4)
 	{
 		statistics.Methods.Length.Should().Be(1);
@@ -205,9 +215,9 @@ public static class StatisticsTestHelpers
 			                    c.Parameters[4].Is(parameter5));
 	}
 
-	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4, T5, T6>(this IStatistics statistics,
-		string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5,
-		T6 parameter6)
+	public static void ShouldOnlyContainMethodCall<T1, T2, T3, T4, T5, T6>(
+		this IStatistics statistics, string name,
+		T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5, T6 parameter6)
 	{
 		statistics.Methods.Length.Should().Be(1);
 		statistics.Methods.Should()
@@ -219,5 +229,19 @@ public static class StatisticsTestHelpers
 			                    c.Parameters[3].Is(parameter4) &&
 			                    c.Parameters[4].Is(parameter5) &&
 			                    c.Parameters[5].Is(parameter6));
+	}
+
+	public static void ShouldOnlyContainPropertyGetAccess(this IStatistics statistics, string name)
+	{
+		statistics.Properties.Length.Should().Be(1);
+		statistics.Properties.Should()
+			.ContainSingle(c => c.Name == name && c.Access == PropertyAccess.Get);
+	}
+
+	public static void ShouldOnlyContainPropertySetAccess(this IStatistics statistics, string name)
+	{
+		statistics.Properties.Length.Should().Be(1);
+		statistics.Properties.Should()
+			.ContainSingle(c => c.Name == name && c.Access == PropertyAccess.Set);
 	}
 }

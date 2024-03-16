@@ -61,7 +61,8 @@ internal sealed class InMemoryLocation : IStorageLocation
 		}
 
 		return NormalizeKey(_fileSystem, FullPath)
-			.Equals(NormalizeKey(_fileSystem, other.FullPath), _fileSystem.Execute.StringComparisonMode);
+			.Equals(NormalizeKey(_fileSystem, other.FullPath),
+				_fileSystem.Execute.StringComparisonMode);
 	}
 
 	/// <inheritdoc cref="object.Equals(object?)" />

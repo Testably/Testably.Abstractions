@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
 using System.Text;
 
@@ -133,8 +132,12 @@ public abstract partial class Tests<TFileSystem>
 		// ReSharper disable StringLiteralTypo
 		TheoryData<string, Encoding, bool> theoryData = new()
 		{
-			{ "Dans mes rêves.mp3", Encoding.Default, true },
-			{ "Dans mes rêves.mp3", Encoding.ASCII, false }
+			{
+				"Dans mes rêves.mp3", Encoding.Default, true
+			},
+			{
+				"Dans mes rêves.mp3", Encoding.ASCII, false
+			}
 		};
 		// ReSharper restore StringLiteralTypo
 		return theoryData;

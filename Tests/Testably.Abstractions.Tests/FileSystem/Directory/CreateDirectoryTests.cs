@@ -264,7 +264,9 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 				FileSystem.Path.DirectorySeparatorChar)));
 		FileSystem.Should().HaveDirectory(nameWithSuffix);
 	}
+#endif
 
+#if NETFRAMEWORK
 	[SkippableTheory]
 	[InlineData("")]
 	[InlineData(" ")]

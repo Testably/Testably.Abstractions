@@ -12,14 +12,6 @@ namespace Testably.Abstractions.Testing.FileSystem;
 
 internal sealed class PathMock : PathSystemBase
 {
-	private readonly MockFileSystem _fileSystem;
-
-	internal PathMock(MockFileSystem fileSystem)
-		: base(fileSystem)
-	{
-		_fileSystem = fileSystem;
-	}
-
 	/// <inheritdoc cref="IPath.AltDirectorySeparatorChar" />
 	public override char AltDirectorySeparatorChar
 	{
@@ -62,6 +54,14 @@ internal sealed class PathMock : PathSystemBase
 
 			return base.VolumeSeparatorChar;
 		}
+	}
+
+	private readonly MockFileSystem _fileSystem;
+
+	internal PathMock(MockFileSystem fileSystem)
+		: base(fileSystem)
+	{
+		_fileSystem = fileSystem;
 	}
 
 	/// <inheritdoc cref="IPath.ChangeExtension(string, string)" />
@@ -119,7 +119,9 @@ internal sealed class PathMock : PathSystemBase
 
 		return base.EndsInDirectorySeparator(path);
 	}
+#endif
 
+#if FEATURE_PATH_ADVANCED
 	/// <inheritdoc cref="IPath.EndsInDirectorySeparator(string)" />
 	public override bool EndsInDirectorySeparator(string path)
 	{
@@ -421,7 +423,9 @@ internal sealed class PathMock : PathSystemBase
 
 		return base.Join(path1, path2);
 	}
+#endif
 
+#if FEATURE_PATH_ADVANCED
 	/// <inheritdoc cref="IPath.Join(ReadOnlySpan{char}, ReadOnlySpan{char}, ReadOnlySpan{char})" />
 	public override string Join(ReadOnlySpan<char> path1,
 		ReadOnlySpan<char> path2,
@@ -434,7 +438,9 @@ internal sealed class PathMock : PathSystemBase
 
 		return base.Join(path1, path2, path3);
 	}
+#endif
 
+#if FEATURE_PATH_ADVANCED
 	/// <inheritdoc cref="IPath.Join(ReadOnlySpan{char}, ReadOnlySpan{char}, ReadOnlySpan{char}, ReadOnlySpan{char})" />
 	public override string Join(ReadOnlySpan<char> path1,
 		ReadOnlySpan<char> path2,
@@ -449,7 +455,9 @@ internal sealed class PathMock : PathSystemBase
 
 		return base.Join(path1, path2, path3, path4);
 	}
+#endif
 
+#if FEATURE_PATH_ADVANCED
 	/// <inheritdoc cref="IPath.Join(string, string)" />
 	public override string Join(string? path1, string? path2)
 	{
@@ -458,7 +466,9 @@ internal sealed class PathMock : PathSystemBase
 
 		return base.Join(path1, path2);
 	}
+#endif
 
+#if FEATURE_PATH_ADVANCED
 	/// <inheritdoc cref="IPath.Join(string, string, string)" />
 	public override string Join(string? path1, string? path2, string? path3)
 	{
@@ -467,7 +477,9 @@ internal sealed class PathMock : PathSystemBase
 
 		return base.Join(path1, path2, path3);
 	}
+#endif
 
+#if FEATURE_PATH_ADVANCED
 	/// <inheritdoc cref="IPath.Join(string, string, string, string)" />
 	public override string Join(string? path1, string? path2, string? path3, string? path4)
 	{
@@ -476,7 +488,9 @@ internal sealed class PathMock : PathSystemBase
 
 		return base.Join(path1, path2, path3, path4);
 	}
+#endif
 
+#if FEATURE_PATH_ADVANCED
 	/// <inheritdoc cref="IPath.Join(string[])" />
 	public override string Join(params string?[] paths)
 	{
@@ -496,7 +510,9 @@ internal sealed class PathMock : PathSystemBase
 
 		return base.TrimEndingDirectorySeparator(path);
 	}
+#endif
 
+#if FEATURE_PATH_ADVANCED
 	/// <inheritdoc cref="IPath.TrimEndingDirectorySeparator(string)" />
 	public override string TrimEndingDirectorySeparator(string path)
 	{
@@ -530,7 +546,9 @@ internal sealed class PathMock : PathSystemBase
 				ParameterDescription.FromOutParameter(registerCharsWritten));
 		}
 	}
+#endif
 
+#if FEATURE_PATH_JOIN
 	/// <inheritdoc cref="IPath.TryJoin(ReadOnlySpan{char}, ReadOnlySpan{char}, ReadOnlySpan{char}, Span{char}, out int)" />
 	public override bool TryJoin(ReadOnlySpan<char> path1,
 		ReadOnlySpan<char> path2,
@@ -557,9 +575,6 @@ internal sealed class PathMock : PathSystemBase
 	}
 #endif
 
-	private IDisposable RegisterProperty(string name, PropertyAccess access = PropertyAccess.Get)
-		=> _fileSystem.StatisticsRegistration.Path.RegisterProperty(name, access);
-
 	private IDisposable RegisterMethod(string name)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name);
 
@@ -579,14 +594,18 @@ internal sealed class PathMock : PathSystemBase
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2));
+#endif
 
+#if FEATURE_PATH_ADVANCED
 	private IDisposable RegisterMethod<T1, T2, T3>(string name, ReadOnlySpan<T1> parameter1,
 		ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2),
 			ParameterDescription.FromParameter(parameter3));
+#endif
 
+#if FEATURE_PATH_ADVANCED
 	private IDisposable RegisterMethod<T1, T2, T3, T4>(string name, ReadOnlySpan<T1> parameter1,
 		ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3, ReadOnlySpan<T4> parameter4)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
@@ -615,4 +634,7 @@ internal sealed class PathMock : PathSystemBase
 			ParameterDescription.FromParameter(parameter2),
 			ParameterDescription.FromParameter(parameter3),
 			ParameterDescription.FromParameter(parameter4));
+
+	private IDisposable RegisterProperty(string name, PropertyAccess access = PropertyAccess.Get)
+		=> _fileSystem.StatisticsRegistration.Path.RegisterProperty(name, access);
 }

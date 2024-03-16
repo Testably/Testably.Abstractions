@@ -5,6 +5,7 @@ using System.Threading;
 using Testably.Abstractions.RandomSystem;
 using Testably.Abstractions.TimeSystem;
 using Xunit.Abstractions;
+using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
 namespace Testably.Abstractions.Parity.Tests;
 
@@ -141,7 +142,7 @@ public abstract class ParityTests
 		ITimerAndITimerFactory_EnsureParityWith_Timer()
 	{
 		List<string> parityErrors = Parity.Timer
-			.GetErrorsToInstanceType<TimeSystem.ITimer, ITimerFactory>(
+			.GetErrorsToInstanceType<ITimer, ITimerFactory>(
 				typeof(Timer),
 				_testOutputHelper);
 

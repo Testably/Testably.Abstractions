@@ -17,16 +17,6 @@ public abstract partial class IsPathFullyQualifiedTests<TFileSystem>
 		result.Should().BeTrue();
 	}
 
-	[SkippableTheory]
-	[AutoData]
-	public void IsPathFullyQualified_WithoutPrefixedRoot_ShouldReturnFalse(
-		string path)
-	{
-		bool result = FileSystem.Path.IsPathFullyQualified(path);
-
-		result.Should().BeFalse();
-	}
-
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
@@ -38,7 +28,9 @@ public abstract partial class IsPathFullyQualifiedTests<TFileSystem>
 
 		result.Should().BeTrue();
 	}
+#endif
 
+#if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
 	public void IsPathFullyQualified_Span_WithoutPrefixedRoot_ShouldReturnFalse(
@@ -49,5 +41,15 @@ public abstract partial class IsPathFullyQualifiedTests<TFileSystem>
 		result.Should().BeFalse();
 	}
 #endif
+
+	[SkippableTheory]
+	[AutoData]
+	public void IsPathFullyQualified_WithoutPrefixedRoot_ShouldReturnFalse(
+		string path)
+	{
+		bool result = FileSystem.Path.IsPathFullyQualified(path);
+
+		result.Should().BeFalse();
+	}
 }
 #endif

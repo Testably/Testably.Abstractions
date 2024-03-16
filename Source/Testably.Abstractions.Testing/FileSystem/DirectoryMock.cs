@@ -579,7 +579,6 @@ internal sealed class DirectoryMock : IDirectory
 		using IDisposable registration = RegisterMethod(nameof(SetCurrentDirectory),
 			path);
 
-
 		IDirectoryInfo directoryInfo =
 			_fileSystem.DirectoryInfo.New(path);
 		if (!directoryInfo.Exists)
@@ -637,6 +636,24 @@ internal sealed class DirectoryMock : IDirectory
 
 	#endregion
 
+	private IEnumerable<string> EnumerateInternal(FileSystemTypes fileSystemTypes,
+		string path,
+		string searchPattern,
+		EnumerationOptions enumerationOptions)
+	{
+		StorageExtensions.AdjustedLocation adjustedLocation = _fileSystem.Storage
+			.AdjustLocationFromSearchPattern(_fileSystem,
+				path.EnsureValidFormat(_fileSystem),
+				searchPattern);
+		return _fileSystem.Storage.EnumerateLocations(
+				adjustedLocation.Location,
+				fileSystemTypes,
+				adjustedLocation.SearchPattern,
+				enumerationOptions)
+			.Select(x => _fileSystem
+				.GetSubdirectoryPath(x.FullPath, adjustedLocation.GivenPath));
+	}
+
 	private IDirectoryInfo LoadDirectoryInfoOrThrowNotFoundException(
 		string path, Action<MockFileSystem, string> onMissingCallback)
 	{
@@ -649,6 +666,25 @@ internal sealed class DirectoryMock : IDirectory
 
 		return directoryInfo;
 	}
+
+	private IDisposable RegisterMethod(string name)
+		=> _fileSystem.StatisticsRegistration.Directory.RegisterMethod(name);
+
+	private IDisposable RegisterMethod<T1>(string name, T1 parameter1)
+		=> _fileSystem.StatisticsRegistration.Directory.RegisterMethod(name,
+			ParameterDescription.FromParameter(parameter1));
+
+	private IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, T2 parameter2)
+		=> _fileSystem.StatisticsRegistration.Directory.RegisterMethod(name,
+			ParameterDescription.FromParameter(parameter1),
+			ParameterDescription.FromParameter(parameter2));
+
+	private IDisposable RegisterMethod<T1, T2, T3>(string name, T1 parameter1, T2 parameter2,
+		T3 parameter3)
+		=> _fileSystem.StatisticsRegistration.Directory.RegisterMethod(name,
+			ParameterDescription.FromParameter(parameter1),
+			ParameterDescription.FromParameter(parameter2),
+			ParameterDescription.FromParameter(parameter3));
 
 	private static void ThrowMissingFileCreatedTimeException(MockFileSystem fileSystem, string path)
 	{
@@ -671,7 +707,8 @@ internal sealed class DirectoryMock : IDirectory
 #endif
 	}
 
-	private static void ThrowMissingFileLastAccessOrLastWriteTimeException(MockFileSystem fileSystem,
+	private static void ThrowMissingFileLastAccessOrLastWriteTimeException(
+		MockFileSystem fileSystem,
 		string path)
 	{
 #if NET7_0_OR_GREATER
@@ -687,40 +724,4 @@ internal sealed class DirectoryMock : IDirectory
 					fileSystem.Path.GetFullPath(path)));
 #endif
 	}
-
-	private IEnumerable<string> EnumerateInternal(FileSystemTypes fileSystemTypes,
-		string path,
-		string searchPattern,
-		EnumerationOptions enumerationOptions)
-	{
-		StorageExtensions.AdjustedLocation adjustedLocation = _fileSystem.Storage
-			.AdjustLocationFromSearchPattern(_fileSystem,
-				path.EnsureValidFormat(_fileSystem),
-				searchPattern);
-		return _fileSystem.Storage.EnumerateLocations(
-				adjustedLocation.Location,
-				fileSystemTypes,
-				adjustedLocation.SearchPattern,
-				enumerationOptions)
-			.Select(x => _fileSystem
-				.GetSubdirectoryPath(x.FullPath, adjustedLocation.GivenPath));
-	}
-
-	private IDisposable RegisterMethod(string name)
-		=> _fileSystem.StatisticsRegistration.Directory.RegisterMethod(name);
-
-	private IDisposable RegisterMethod<T1>(string name, T1 parameter1)
-		=> _fileSystem.StatisticsRegistration.Directory.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1));
-
-	private IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, T2 parameter2)
-		=> _fileSystem.StatisticsRegistration.Directory.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2));
-
-	private IDisposable RegisterMethod<T1, T2, T3>(string name, T1 parameter1, T2 parameter2, T3 parameter3)
-		=> _fileSystem.StatisticsRegistration.Directory.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2),
-			ParameterDescription.FromParameter(parameter3));
 }

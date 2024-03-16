@@ -15,7 +15,9 @@ public abstract partial class Tests<TFileSystem>
 
 		result.Should().Exist();
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_NET7
 	[SkippableTheory]
 	[AutoData]
 	public void CreateTempSubdirectory_WithPrefix_ShouldStartWithPrefix(string prefix)

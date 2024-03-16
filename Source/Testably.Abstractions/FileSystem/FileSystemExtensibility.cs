@@ -6,29 +6,15 @@ namespace Testably.Abstractions.FileSystem;
 
 internal class FileSystemExtensibility : IFileSystemExtensibility
 {
-	private readonly object _wrappedInstance;
 	private readonly Dictionary<string, object?> _metadata = new();
+	private readonly object _wrappedInstance;
 
 	public FileSystemExtensibility(object wrappedInstance)
 	{
 		_wrappedInstance = wrappedInstance;
 	}
 
-	/// <inheritdoc cref="IFileSystemExtensibility.TryGetWrappedInstance{T}" />
-	public bool TryGetWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance)
-	{
-		// ReSharper disable once MergeCastWithTypeCheck -- Not possible due to nullable
-		wrappedInstance = _wrappedInstance is T?
-			? (T?)_wrappedInstance
-			: default;
-		return !Equals(wrappedInstance, default(T));
-	}
-
-	/// <inheritdoc cref="StoreMetadata{T}(string, T)" />
-	public void StoreMetadata<T>(string key, T? value)
-	{
-		_metadata[key] = value;
-	}
+	#region IFileSystemExtensibility Members
 
 	/// <inheritdoc cref="RetrieveMetadata{T}(string)" />
 	public T? RetrieveMetadata<T>(string key)
@@ -42,4 +28,22 @@ internal class FileSystemExtensibility : IFileSystemExtensibility
 
 		return default;
 	}
+
+	/// <inheritdoc cref="StoreMetadata{T}(string, T)" />
+	public void StoreMetadata<T>(string key, T? value)
+	{
+		_metadata[key] = value;
+	}
+
+	/// <inheritdoc cref="IFileSystemExtensibility.TryGetWrappedInstance{T}" />
+	public bool TryGetWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance)
+	{
+		// ReSharper disable once MergeCastWithTypeCheck -- Not possible due to nullable
+		wrappedInstance = _wrappedInstance is T?
+			? (T?)_wrappedInstance
+			: default;
+		return !Equals(wrappedInstance, default(T));
+	}
+
+	#endregion
 }

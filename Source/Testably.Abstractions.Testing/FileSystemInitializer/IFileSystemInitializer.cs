@@ -30,7 +30,7 @@ public interface IFileSystemInitializer<out TFileSystem>
 	/// <summary>
 	///     Initializes the <see cref="FileSystem" /> with the provided <paramref name="descriptions" />.
 	/// </summary>
-	IFileSystemInitializer<TFileSystem> With<TDescription>( TDescription[] descriptions)
+	IFileSystemInitializer<TFileSystem> With<TDescription>(TDescription[] descriptions)
 		where TDescription : FileSystemInfoDescription;
 
 	/// <summary>

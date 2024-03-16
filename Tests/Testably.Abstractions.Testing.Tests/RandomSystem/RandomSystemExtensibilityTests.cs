@@ -1,10 +1,20 @@
-using System.Collections.Generic;
 using Testably.Abstractions.RandomSystem;
 
 namespace Testably.Abstractions.Testing.Tests.RandomSystem;
 
 public class RandomSystemExtensibilityTests
 {
+	#region Test Setup
+
+	public static TheoryData<IRandomSystem> GetRandomSystems
+		=> new()
+		{
+			new RealRandomSystem(),
+			new MockRandomSystem()
+		};
+
+	#endregion
+
 	[SkippableTheory]
 	[MemberData(nameof(GetRandomSystems))]
 	public void Guid_ShouldSetExtensionPoint(IRandomSystem randomSystem)
@@ -26,15 +36,4 @@ public class RandomSystemExtensibilityTests
 
 		result.Should().Be(randomSystem);
 	}
-
-	#region Helpers
-
-	public static TheoryData<IRandomSystem> GetRandomSystems
-		=> new()
-		{
-			new RealRandomSystem(),
-			new MockRandomSystem()
-		};
-
-	#endregion
 }

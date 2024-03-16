@@ -9,14 +9,14 @@ namespace Testably.Abstractions.Testing.FileSystem;
 public class SafeFileHandleMock
 {
 	/// <summary>
-	///     The path used to open the <see cref="SafeFileHandle" />.
-	/// </summary>
-	public string Path { get; }
-
-	/// <summary>
 	///     The mode used to open the <see cref="SafeFileHandle" />.
 	/// </summary>
 	public FileMode Mode { get; }
+
+	/// <summary>
+	///     The path used to open the <see cref="SafeFileHandle" />.
+	/// </summary>
+	public string Path { get; }
 
 	/// <summary>
 	///     The file share used to open the <see cref="SafeFileHandle" />.

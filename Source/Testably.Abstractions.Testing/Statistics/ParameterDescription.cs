@@ -9,6 +9,11 @@ namespace Testably.Abstractions.Testing.Statistics;
 public abstract class ParameterDescription
 {
 	/// <summary>
+	///     Specifies, if the parameter was used as an <c>out</c> parameter.
+	/// </summary>
+	public bool IsOutParameter { get; }
+
+	/// <summary>
 	///     Initializes a new instance of <see cref="ParameterDescription" />.
 	/// </summary>
 	/// <param name="isOutParameter"></param>
@@ -18,9 +23,40 @@ public abstract class ParameterDescription
 	}
 
 	/// <summary>
-	///     Specifies, if the parameter was used as an <c>out</c> parameter.
+	///     Creates a <see cref="ParameterDescription" /> from the <paramref name="value" /> used as an <c>out</c> parameter.
 	/// </summary>
-	public bool IsOutParameter { get; }
+	public static ParameterDescription FromOutParameter<T>(T value)
+	{
+		return new GenericParameterDescription<T>(value, true);
+	}
+
+	/// <summary>
+	///     Creates a <see cref="ParameterDescription" /> from the <paramref name="value" />.
+	/// </summary>
+	public static ParameterDescription FromParameter<T>(T value)
+	{
+		return new GenericParameterDescription<T>(value, false);
+	}
+
+#if FEATURE_SPAN
+	/// <summary>
+	///     Creates a <see cref="ParameterDescription" /> from the span <paramref name="value" />.
+	/// </summary>
+	public static ParameterDescription FromParameter<T>(Span<T> value)
+	{
+		return new SpanParameterDescription<T>(value);
+	}
+#endif
+
+#if FEATURE_SPAN
+	/// <summary>
+	///     Creates a <see cref="ParameterDescription" /> from the read-only span <paramref name="value" />.
+	/// </summary>
+	public static ParameterDescription FromParameter<T>(ReadOnlySpan<T> value)
+	{
+		return new SpanParameterDescription<T>(value);
+	}
+#endif
 
 	/// <summary>
 	///     Checks, if the value of the parameter equals <paramref name="value" />.
@@ -52,7 +88,9 @@ public abstract class ParameterDescription
 	public bool Is<T>(Span<T> value)
 		=> this is SpanParameterDescription<T> { IsReadOnly: false } d &&
 		   d.Value.SequenceEqual(value.ToArray());
+#endif
 
+#if FEATURE_SPAN
 	/// <summary>
 	///     Checks, if the read-only span value of the parameter equals <paramref name="value" />.
 	/// </summary>
@@ -67,40 +105,6 @@ public abstract class ParameterDescription
 	public bool Is<T>(Func<T, bool> comparer)
 		=> this is GenericParameterDescription<T> d &&
 		   comparer(d.Value);
-
-	/// <summary>
-	///     Creates a <see cref="ParameterDescription" /> from the <paramref name="value" />.
-	/// </summary>
-	public static ParameterDescription FromParameter<T>(T value)
-	{
-		return new GenericParameterDescription<T>(value, false);
-	}
-
-#if FEATURE_SPAN
-	/// <summary>
-	///     Creates a <see cref="ParameterDescription" /> from the span <paramref name="value" />.
-	/// </summary>
-	public static ParameterDescription FromParameter<T>(Span<T> value)
-	{
-		return new SpanParameterDescription<T>(value);
-	}
-
-	/// <summary>
-	///     Creates a <see cref="ParameterDescription" /> from the read-only span <paramref name="value" />.
-	/// </summary>
-	public static ParameterDescription FromParameter<T>(ReadOnlySpan<T> value)
-	{
-		return new SpanParameterDescription<T>(value);
-	}
-#endif
-
-	/// <summary>
-	///     Creates a <see cref="ParameterDescription" /> from the <paramref name="value" /> used as an <c>out</c> parameter.
-	/// </summary>
-	public static ParameterDescription FromOutParameter<T>(T value)
-	{
-		return new GenericParameterDescription<T>(value, true);
-	}
 
 	private static bool IsEqual<T>(T value1, T value2)
 	{
@@ -136,9 +140,8 @@ public abstract class ParameterDescription
 #if FEATURE_SPAN
 	private sealed class SpanParameterDescription<T> : ParameterDescription
 	{
-		public T[] Value { get; }
-
 		public bool IsReadOnly { get; }
+		public T[] Value { get; }
 
 		public SpanParameterDescription(Span<T> value) : base(false)
 		{

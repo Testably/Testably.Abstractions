@@ -11,6 +11,42 @@ internal static class PathHelper
 		'*', '?'
 	};
 
+	internal static string EnsureValidArgument(
+		[NotNull] this string? path, MockFileSystem fileSystem, string? paramName = null)
+	{
+		CheckPathArgument(fileSystem.Execute, path, paramName ?? nameof(path),
+			fileSystem.Execute.IsWindows);
+		return path;
+	}
+
+	internal static string EnsureValidFormat(
+		[NotNull] this string? path,
+		MockFileSystem fileSystem,
+		string? paramName = null,
+		bool? includeIsEmptyCheck = null)
+	{
+		CheckPathArgument(fileSystem.Execute, path, paramName ?? nameof(path),
+			includeIsEmptyCheck ?? fileSystem.Execute.IsWindows);
+		CheckPathCharacters(path, fileSystem, paramName ?? nameof(path), null);
+		return path;
+	}
+
+	/// <summary>
+	///     Get the <see cref="IPath.GetFullPath(string)" /> of the <paramref name="path" />
+	///     if the <paramref name="path" /> is not <see langword="null" /> or white space.<br />
+	///     Otherwise, an empty string if the <paramref name="path" /> is <see langword="null" />
+	///     or the <paramref name="path" /> itself.
+	/// </summary>
+	internal static string GetFullPathOrWhiteSpace(this string? path, IFileSystem fileSystem)
+	{
+		if (string.IsNullOrWhiteSpace(path))
+		{
+			return path ?? string.Empty;
+		}
+
+		return fileSystem.Path.GetFullPath(path);
+	}
+
 	/// <summary>
 	///     Determines whether the given path contains illegal characters.
 	/// </summary>
@@ -66,27 +102,9 @@ internal static class PathHelper
 		}
 
 		return fileSystem.Execute.OnWindows(
-			() => path.StartsWith(new string(fileSystem.Path.DirectorySeparatorChar, 2)) || path.StartsWith(new string(fileSystem.Path.AltDirectorySeparatorChar, 2)),
+			() => path.StartsWith(new string(fileSystem.Path.DirectorySeparatorChar, 2)) ||
+			      path.StartsWith(new string(fileSystem.Path.AltDirectorySeparatorChar, 2)),
 			() => path.StartsWith(new string(fileSystem.Path.DirectorySeparatorChar, 2)));
-	}
-
-	internal static string EnsureValidFormat(
-		[NotNull] this string? path,
-		MockFileSystem fileSystem,
-		string? paramName = null,
-		bool? includeIsEmptyCheck = null)
-	{
-		CheckPathArgument(fileSystem.Execute, path, paramName ?? nameof(path),
-			includeIsEmptyCheck ?? fileSystem.Execute.IsWindows);
-		CheckPathCharacters(path, fileSystem, paramName ?? nameof(path), null);
-		return path;
-	}
-
-	internal static string EnsureValidArgument(
-		[NotNull] this string? path, MockFileSystem fileSystem, string? paramName = null)
-	{
-		CheckPathArgument(fileSystem.Execute, path, paramName ?? nameof(path), fileSystem.Execute.IsWindows);
-		return path;
 	}
 
 	internal static void ThrowCommonExceptionsIfPathToTargetIsInvalid(
@@ -96,21 +114,10 @@ internal static class PathHelper
 		CheckPathCharacters(pathToTarget, fileSystem, nameof(pathToTarget), -2147024713);
 	}
 
-	/// <summary>
-	///     Get the <see cref="IPath.GetFullPath(string)" /> of the <paramref name="path" />
-	///     if the <paramref name="path" /> is not <see langword="null" /> or white space.<br />
-	///     Otherwise an empty string if the <paramref name="path" /> is <see langword="null" />
-	///     or the <paramref name="path" /> itself.
-	/// </summary>
-	internal static string GetFullPathOrWhiteSpace(this string? path, IFileSystem fileSystem)
-	{
-		if (string.IsNullOrWhiteSpace(path))
-		{
-			return path ?? string.Empty;
-		}
-
-		return fileSystem.Path.GetFullPath(path);
-	}
+	internal static string TrimOnWindows(this string path, MockFileSystem fileSystem)
+		=> fileSystem.Execute.OnWindows(
+			() => path.TrimEnd(' '),
+			() => path);
 
 	private static void CheckPathArgument(Execute execute, [NotNull] string? path, string paramName,
 		bool includeIsEmptyCheck)
@@ -152,13 +159,9 @@ internal static class PathHelper
 		}
 
 		fileSystem.Execute.OnWindowsIf(path.LastIndexOf(':') > 1 &&
-		                    path.LastIndexOf(':') < path.IndexOf(Path.DirectorySeparatorChar),
+		                               path.LastIndexOf(':') <
+		                               path.IndexOf(Path.DirectorySeparatorChar),
 			() => throw ExceptionFactory.PathHasIncorrectSyntax(
 				fileSystem.Path.GetFullPath(path), hResult));
 	}
-
-	internal static string TrimOnWindows(this string path, MockFileSystem fileSystem)
-		=> fileSystem.Execute.OnWindows(
-			() => path.TrimEnd(' '),
-			() => path);
 }

@@ -70,11 +70,9 @@ public abstract partial class ExceptionTests<TFileSystem>
 			Expression<Action<IFileSystemInfo>> Callback)>
 		GetFileSystemInfoCallbackTestParameters(string value)
 	{
-#if FEATURE_FILESYSTEM_LINK
 		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "pathToTarget",
 			fileSystemInfo
 				=> fileSystemInfo.CreateAsSymbolicLink(value));
-#endif
 	}
 
 	#endregion

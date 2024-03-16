@@ -9,13 +9,12 @@ namespace Testably.Abstractions.Helpers;
 public interface IFileSystemExtensibility
 {
 	/// <summary>
-	///     The wrapped instance on a real file system.
+	///     Retrieves a previously stored metadata on the <see cref="IFileSystemInfo" />.
 	/// </summary>
-	/// <returns>
-	///     <see langword="null" /> when not on a real file system or if the requested type does not match,
-	///     otherwise the wrapped instance.
-	/// </returns>
-	bool TryGetWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance);
+	/// <typeparam name="T">The type of the value to retrieve.</typeparam>
+	/// <param name="key">The key under which the metadata was stored.</param>
+	/// <returns>The value of the previously stored metadata, or <see langword="default" />.</returns>
+	T? RetrieveMetadata<T>(string key);
 
 	/// <summary>
 	///     Stores additional metadata to the <see cref="IFileSystemInfo" />.
@@ -26,10 +25,11 @@ public interface IFileSystemExtensibility
 	void StoreMetadata<T>(string key, T? value);
 
 	/// <summary>
-	///     Retrieves a previously stored metadata on the <see cref="IFileSystemInfo" />.
+	///     The wrapped instance on a real file system.
 	/// </summary>
-	/// <typeparam name="T">The type of the value to retrieve.</typeparam>
-	/// <param name="key">The key under which the metadata was stored.</param>
-	/// <returns>The value of the previously stored metadata, or <see langword="default" />.</returns>
-	T? RetrieveMetadata<T>(string key);
+	/// <returns>
+	///     <see langword="null" /> when not on a real file system or if the requested type does not match,
+	///     otherwise the wrapped instance.
+	/// </returns>
+	bool TryGetWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance);
 }

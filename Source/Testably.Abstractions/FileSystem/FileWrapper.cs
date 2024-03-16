@@ -1,11 +1,11 @@
-﻿#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-using Microsoft.Win32.SafeHandles;
-#endif
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+using Microsoft.Win32.SafeHandles;
+#endif
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,7 +40,9 @@ internal sealed class FileWrapper : IFile
 		CancellationToken cancellationToken =
 			default)
 		=> File.AppendAllLinesAsync(path, contents, cancellationToken);
+#endif
 
+#if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.AppendAllLinesAsync(string, IEnumerable{string}, Encoding, CancellationToken)" />
 	public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
 		Encoding encoding,
@@ -64,7 +66,9 @@ internal sealed class FileWrapper : IFile
 		CancellationToken cancellationToken =
 			default)
 		=> File.AppendAllTextAsync(path, contents, cancellationToken);
+#endif
 
+#if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.AppendAllTextAsync(string, string?, Encoding, CancellationToken)" />
 	public Task AppendAllTextAsync(string path, string? contents, Encoding encoding,
 		CancellationToken cancellationToken =
@@ -302,7 +306,9 @@ internal sealed class FileWrapper : IFile
 		CancellationToken cancellationToken =
 			default)
 		=> File.ReadAllLinesAsync(path, cancellationToken);
+#endif
 
+#if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.ReadAllLinesAsync(string, Encoding, CancellationToken)" />
 	public Task<string[]> ReadAllLinesAsync(string path, Encoding encoding,
 		CancellationToken cancellationToken =
@@ -324,7 +330,9 @@ internal sealed class FileWrapper : IFile
 		CancellationToken cancellationToken =
 			default)
 		=> File.ReadAllTextAsync(path, cancellationToken);
+#endif
 
+#if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.ReadAllTextAsync(string, Encoding, CancellationToken)" />
 	public Task<string> ReadAllTextAsync(string path, Encoding encoding,
 		CancellationToken cancellationToken =
@@ -346,7 +354,9 @@ internal sealed class FileWrapper : IFile
 		CancellationToken cancellationToken =
 			default)
 		=> File.ReadLinesAsync(path, cancellationToken);
+#endif
 
+#if FEATURE_FILESYSTEM_NET7
 	/// <inheritdoc cref="IFile.ReadLinesAsync(string, Encoding, CancellationToken)" />
 	public IAsyncEnumerable<string> ReadLinesAsync(string path, Encoding encoding,
 		CancellationToken cancellationToken =
@@ -519,7 +529,9 @@ internal sealed class FileWrapper : IFile
 		CancellationToken cancellationToken =
 			default)
 		=> File.WriteAllLinesAsync(path, contents, cancellationToken);
+#endif
 
+#if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.WriteAllLinesAsync(string, IEnumerable{string}, Encoding, CancellationToken)" />
 	public Task WriteAllLinesAsync(string path, IEnumerable<string> contents,
 		Encoding encoding,
@@ -543,7 +555,9 @@ internal sealed class FileWrapper : IFile
 		CancellationToken cancellationToken =
 			default)
 		=> File.WriteAllTextAsync(path, contents, cancellationToken);
+#endif
 
+#if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.WriteAllTextAsync(string, string?, Encoding, CancellationToken)" />
 	public Task WriteAllTextAsync(string path, string? contents, Encoding encoding,
 		CancellationToken cancellationToken =

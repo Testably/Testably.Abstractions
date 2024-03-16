@@ -1,10 +1,20 @@
-using System.Collections.Generic;
 using Testably.Abstractions.TimeSystem;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
 public class TimeSystemExtensibilityTests
 {
+	#region Test Setup
+
+	public static TheoryData<ITimeSystem> GetTimeSystems
+		=> new()
+		{
+			new RealTimeSystem(),
+			new MockTimeSystem()
+		};
+
+	#endregion
+
 	[SkippableTheory]
 	[MemberData(nameof(GetTimeSystems))]
 	public void DateTime_ShouldSetExtensionPoint(ITimeSystem timeSystem)
@@ -59,15 +69,4 @@ public class TimeSystemExtensibilityTests
 
 		result.Should().Be(timeSystem);
 	}
-
-	#region Helpers
-
-	public static TheoryData<ITimeSystem> GetTimeSystems
-		=> new()
-		{
-			new RealTimeSystem(),
-			new MockTimeSystem()
-		};
-
-	#endregion
 }

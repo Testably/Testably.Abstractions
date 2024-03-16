@@ -27,23 +27,6 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void SetUnixFileMode_ShouldBeSettableOnLinux(
-		string path, UnixFileMode unixFileMode)
-	{
-		Skip.If(Test.RunsOnWindows);
-
-		FileSystem.File.WriteAllText(path, "some content");
-
-		#pragma warning disable CA1416
-		FileSystem.File.SetUnixFileMode(path, unixFileMode);
-
-		UnixFileMode result = FileSystem.File.GetUnixFileMode(path);
-		#pragma warning restore CA1416
-		result.Should().Be(unixFileMode);
-	}
-
-	[SkippableTheory]
-	[AutoData]
 	public void SetUnixFileMode_MissingFile_ShouldThrowFileNotFoundException(
 		string path, UnixFileMode unixFileMode)
 	{
@@ -57,6 +40,23 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 		});
 
 		exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void SetUnixFileMode_ShouldBeSettableOnLinux(
+		string path, UnixFileMode unixFileMode)
+	{
+		Skip.If(Test.RunsOnWindows);
+
+		FileSystem.File.WriteAllText(path, "some content");
+
+		#pragma warning disable CA1416
+		FileSystem.File.SetUnixFileMode(path, unixFileMode);
+
+		UnixFileMode result = FileSystem.File.GetUnixFileMode(path);
+		#pragma warning restore CA1416
+		result.Should().Be(unixFileMode);
 	}
 
 	[SkippableTheory]

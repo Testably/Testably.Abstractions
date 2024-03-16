@@ -10,16 +10,6 @@ public abstract partial class Tests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public void Attributes_WhenFileIsMissing_ShouldReturnMinusOne(string path)
-	{
-		FileAttributes expected = (FileAttributes)(-1);
-		IFileInfo sut = FileSystem.FileInfo.New(path);
-
-		sut.Attributes.Should().Be(expected);
-	}
-
-	[SkippableTheory]
-	[AutoData]
 	public void Attributes_WhenFileIsMissing_SetterShouldThrowFileNotFoundException(
 		string path)
 	{
@@ -31,6 +21,16 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Attributes_WhenFileIsMissing_ShouldReturnMinusOne(string path)
+	{
+		FileAttributes expected = (FileAttributes)(-1);
+		IFileInfo sut = FileSystem.FileInfo.New(path);
+
+		sut.Attributes.Should().Be(expected);
 	}
 
 	[SkippableFact]

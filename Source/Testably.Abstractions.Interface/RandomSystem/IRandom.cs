@@ -10,10 +10,14 @@ public interface IRandom
 #if FEATURE_RANDOM_ITEMS
 	/// <inheritdoc cref="Random.GetItems{T}(ReadOnlySpan{T}, Span{T})" />
 	void GetItems<T>(ReadOnlySpan<T> choices, Span<T> destination);
+#endif
 
+#if FEATURE_RANDOM_ITEMS
 	/// <inheritdoc cref="Random.GetItems{T}(T[], int)" />
 	T[] GetItems<T>(T[] choices, int length);
+#endif
 
+#if FEATURE_RANDOM_ITEMS
 	/// <inheritdoc cref="Random.GetItems{T}(ReadOnlySpan{T}, int)" />
 	T[] GetItems<T>(ReadOnlySpan<T> choices, int length);
 #endif
@@ -41,13 +45,19 @@ public interface IRandom
 #if FEATURE_RANDOM_ADVANCED
 	/// <inheritdoc cref="Random.NextInt64()" />
 	long NextInt64();
+#endif
 
+#if FEATURE_RANDOM_ADVANCED
 	/// <inheritdoc cref="Random.NextInt64(long)" />
 	long NextInt64(long maxValue);
+#endif
 
+#if FEATURE_RANDOM_ADVANCED
 	/// <inheritdoc cref="Random.NextInt64(long, long)" />
 	long NextInt64(long minValue, long maxValue);
+#endif
 
+#if FEATURE_RANDOM_ADVANCED
 	/// <inheritdoc cref="Random.NextSingle()" />
 	float NextSingle();
 #endif
@@ -55,7 +65,9 @@ public interface IRandom
 #if FEATURE_RANDOM_ITEMS
 	/// <inheritdoc cref="Random.Shuffle{T}(T[])" />
 	void Shuffle<T>(T[] values);
+#endif
 
+#if FEATURE_RANDOM_ITEMS
 	/// <inheritdoc cref="Random.Shuffle{T}(Span{T})" />
 	void Shuffle<T>(Span<T> values);
 #endif
