@@ -42,7 +42,9 @@ public abstract partial class GuidTests<TRandomSystem>
 
 		result.Should().Be(guid);
 	}
+#endif
 
+#if FEATURE_GUID_PARSE
 	[SkippableTheory]
 	[AutoData]
 	public void Parse_SpanArray_ShouldReturnCorrectGuid(Guid guid)
@@ -66,7 +68,9 @@ public abstract partial class GuidTests<TRandomSystem>
 
 		result.Should().Be(guid);
 	}
+#endif
 
+#if FEATURE_GUID_FORMATPROVIDER
 	[SkippableTheory]
 	[AutoData]
 	public void Parse_WithFormatProvider_SpanArray_ShouldReturnCorrectGuid(Guid guid)
@@ -90,7 +94,9 @@ public abstract partial class GuidTests<TRandomSystem>
 
 		result.Should().Be(guid);
 	}
+#endif
 
+#if FEATURE_GUID_PARSE
 	[SkippableTheory]
 	[MemberAutoData(nameof(GuidFormats))]
 	public void ParseExact_SpanArray_ShouldReturnCorrectGuid(
@@ -116,7 +122,9 @@ public abstract partial class GuidTests<TRandomSystem>
 		result.Should().BeTrue();
 		value.Should().Be(guid);
 	}
+#endif
 
+#if FEATURE_GUID_PARSE
 	[SkippableTheory]
 	[AutoData]
 	public void TryParse_SpanArray_ShouldReturnTrue(Guid guid)
@@ -143,7 +151,9 @@ public abstract partial class GuidTests<TRandomSystem>
 		result.Should().BeTrue();
 		value.Should().Be(guid);
 	}
+#endif
 
+#if FEATURE_GUID_FORMATPROVIDER
 	[SkippableTheory]
 	[AutoData]
 	public void TryParse_WithFormatProvider_SpanArray_ShouldReturnTrue(Guid guid)
@@ -172,7 +182,9 @@ public abstract partial class GuidTests<TRandomSystem>
 		result.Should().BeTrue();
 		value.Should().Be(guid);
 	}
+#endif
 
+#if FEATURE_GUID_PARSE
 	[SkippableTheory]
 	[MemberAutoData(nameof(GuidFormats))]
 	public void TryParseExact_SpanArray_ShouldReturnTrue(string format, Guid guid)
@@ -186,7 +198,9 @@ public abstract partial class GuidTests<TRandomSystem>
 		result.Should().BeTrue();
 		value.Should().Be(guid);
 	}
+#endif
 
+#if FEATURE_GUID_PARSE
 	public static IEnumerable<object[]> GuidFormats()
 	{
 		yield return new object[]

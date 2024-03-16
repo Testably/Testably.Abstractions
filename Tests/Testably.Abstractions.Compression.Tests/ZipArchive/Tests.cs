@@ -27,7 +27,9 @@ public abstract partial class Tests<TFileSystem>
 
 		archive.Comment.Should().Be(comment);
 	}
+#endif
 
+#if FEATURE_ZIPFILE_NET7
 	[SkippableFact]
 	public void Comment_ShouldBeInitializedEmpty()
 	{

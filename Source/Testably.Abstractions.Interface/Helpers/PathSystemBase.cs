@@ -200,7 +200,9 @@ public abstract class PathSystemBase : IPath
 	/// <inheritdoc cref="Path.EndsInDirectorySeparator(ReadOnlySpan{char})" />
 	public virtual bool EndsInDirectorySeparator(ReadOnlySpan<char> path)
 		=> Path.EndsInDirectorySeparator(path);
+#endif
 
+#if FEATURE_PATH_ADVANCED
 	/// <inheritdoc cref="Path.EndsInDirectorySeparator(string)" />
 	public virtual bool EndsInDirectorySeparator(string path)
 		=> Path.EndsInDirectorySeparator(path);
@@ -210,7 +212,9 @@ public abstract class PathSystemBase : IPath
 	/// <inheritdoc cref="Path.Join(ReadOnlySpan{char}, ReadOnlySpan{char})" />
 	public virtual string Join(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2)
 		=> Path.Join(path1, path2);
+#endif
 
+#if FEATURE_PATH_JOIN
 	/// <inheritdoc cref="Path.Join(ReadOnlySpan{char}, ReadOnlySpan{char}, ReadOnlySpan{char})" />
 	public virtual string Join(ReadOnlySpan<char> path1,
 		ReadOnlySpan<char> path2,
@@ -225,19 +229,27 @@ public abstract class PathSystemBase : IPath
 		ReadOnlySpan<char> path3,
 		ReadOnlySpan<char> path4)
 		=> Path.Join(path1, path2, path3, path4);
+#endif
 
+#if FEATURE_PATH_ADVANCED
 	/// <inheritdoc cref="Path.Join(string, string)" />
 	public virtual string Join(string? path1, string? path2)
 		=> Path.Join(path1, path2);
+#endif
 
+#if FEATURE_PATH_ADVANCED
 	/// <inheritdoc cref="Path.Join(string, string, string)" />
 	public virtual string Join(string? path1, string? path2, string? path3)
 		=> Path.Join(path1, path2, path3);
+#endif
 
+#if FEATURE_PATH_ADVANCED
 	/// <inheritdoc cref="Path.Join(string, string, string, string)" />
 	public virtual string Join(string? path1, string? path2, string? path3, string? path4)
 		=> Path.Join(path1, path2, path3, path4);
+#endif
 
+#if FEATURE_PATH_ADVANCED
 	/// <inheritdoc cref="Path.Join(string[])" />
 	public virtual string Join(params string?[] paths)
 		=> Path.Join(paths);
@@ -247,7 +259,9 @@ public abstract class PathSystemBase : IPath
 	/// <inheritdoc cref="Path.TrimEndingDirectorySeparator(ReadOnlySpan{char})" />
 	public virtual ReadOnlySpan<char> TrimEndingDirectorySeparator(ReadOnlySpan<char> path)
 		=> Path.TrimEndingDirectorySeparator(path);
+#endif
 
+#if FEATURE_PATH_ADVANCED
 	/// <inheritdoc cref="Path.TrimEndingDirectorySeparator(string)" />
 	public virtual string TrimEndingDirectorySeparator(string path)
 		=> Path.TrimEndingDirectorySeparator(path);
@@ -260,7 +274,9 @@ public abstract class PathSystemBase : IPath
 		Span<char> destination,
 		out int charsWritten)
 		=> Path.TryJoin(path1, path2, destination, out charsWritten);
+#endif
 
+#if FEATURE_PATH_JOIN
 	/// <inheritdoc cref="Path.TryJoin(ReadOnlySpan{char}, ReadOnlySpan{char}, ReadOnlySpan{char}, Span{char}, out int)" />
 	public virtual bool TryJoin(ReadOnlySpan<char> path1,
 		ReadOnlySpan<char> path2,

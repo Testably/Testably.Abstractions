@@ -92,8 +92,12 @@ public abstract partial class ExceptionTests<TFileSystem>
 #if FEATURE_PATH_RELATIVE
 		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "relativeTo", path
 			=> path.GetRelativePath(value, "foo"));
+#endif
+#if FEATURE_PATH_RELATIVE
 		yield return (ExceptionTestHelper.TestTypes.AllExceptInvalidPath, "path", path
 			=> path.GetRelativePath("foo", value));
+#endif
+#if FEATURE_PATH_RELATIVE
 		yield return (ExceptionTestHelper.TestTypes.Null, "path", path
 			=> path.IsPathFullyQualified(value));
 #endif

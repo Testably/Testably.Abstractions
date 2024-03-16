@@ -16,7 +16,9 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 		using ITimer timer = TimeSystem.Timer.New(_ => { });
 		TimeSystem.Timer.ActiveCount.Should().BeGreaterThan(0);
 	}
+#endif
 
+#if FEATURE_TIMER_COUNT
 	[SkippableFact]
 	public void ActiveCount_ShouldBeResetWhenDisposingATimer()
 	{

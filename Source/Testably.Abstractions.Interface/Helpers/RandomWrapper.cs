@@ -25,11 +25,15 @@ public sealed class RandomWrapper : IRandom
 	/// <inheritdoc cref="IRandom.GetItems{T}(ReadOnlySpan{T}, Span{T})" />
 	public void GetItems<T>(ReadOnlySpan<T> choices, Span<T> destination)
 		=> _instance.GetItems(choices, destination);
+#endif
 
+#if FEATURE_RANDOM_ITEMS
 	/// <inheritdoc cref="IRandom.GetItems{T}(T[], int)" />
 	public T[] GetItems<T>(T[] choices, int length)
 		=> _instance.GetItems(choices, length);
+#endif
 
+#if FEATURE_RANDOM_ITEMS
 	/// <inheritdoc cref="IRandom.GetItems{T}(ReadOnlySpan{T}, int)" />
 	public T[] GetItems<T>(ReadOnlySpan<T> choices, int length)
 		=> _instance.GetItems(choices, length);
@@ -65,15 +69,21 @@ public sealed class RandomWrapper : IRandom
 	/// <inheritdoc cref="IRandom.NextInt64()" />
 	public long NextInt64()
 		=> _instance.NextInt64();
+#endif
 
+#if FEATURE_RANDOM_ADVANCED
 	/// <inheritdoc cref="IRandom.NextInt64(long)" />
 	public long NextInt64(long maxValue)
 		=> _instance.NextInt64(maxValue);
+#endif
 
+#if FEATURE_RANDOM_ADVANCED
 	/// <inheritdoc cref="IRandom.NextInt64(long, long)" />
 	public long NextInt64(long minValue, long maxValue)
 		=> _instance.NextInt64(minValue, maxValue);
+#endif
 
+#if FEATURE_RANDOM_ADVANCED
 	/// <inheritdoc cref="IRandom.NextSingle()" />
 	public float NextSingle()
 		=> _instance.NextSingle();
@@ -83,7 +93,9 @@ public sealed class RandomWrapper : IRandom
 	/// <inheritdoc cref="IRandom.Shuffle{T}(T[])" />
 	public void Shuffle<T>(T[] values)
 		=> _instance.Shuffle(values);
+#endif
 
+#if FEATURE_RANDOM_ITEMS
 	/// <inheritdoc cref="IRandom.Shuffle{T}(Span{T})" />
 	public void Shuffle<T>(Span<T> values)
 		=> _instance.Shuffle(values);

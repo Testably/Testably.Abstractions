@@ -30,7 +30,9 @@ internal sealed class ZipFileWrapper : IZipFile
 				FileSystem,
 				sourceDirectoryName,
 				destination));
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, Stream, CompressionLevel, bool)" />
 	public void CreateFromDirectory(
 		string sourceDirectoryName,
@@ -49,7 +51,9 @@ internal sealed class ZipFileWrapper : IZipFile
 				destination,
 				compressionLevel,
 				includeBaseDirectory));
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
 	/// <inheritdoc cref="IZipFile.CreateFromDirectory(string, Stream, CompressionLevel, bool, Encoding)" />
 	public void CreateFromDirectory(
 		string sourceDirectoryName,
@@ -140,7 +144,9 @@ internal sealed class ZipFileWrapper : IZipFile
 				FileSystem,
 				source,
 				destinationDirectoryName));
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
 	/// <inheritdoc cref="ZipFile.ExtractToDirectory(Stream, string, bool)" />
 	public void ExtractToDirectory(
 		Stream source,
@@ -156,7 +162,9 @@ internal sealed class ZipFileWrapper : IZipFile
 				source,
 				destinationDirectoryName,
 				overwriteFiles: overwriteFiles));
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
 	/// <inheritdoc cref="ZipFile.ExtractToDirectory(Stream, string, Encoding)" />
 	public void ExtractToDirectory(
 		Stream source,
@@ -172,7 +180,9 @@ internal sealed class ZipFileWrapper : IZipFile
 				source,
 				destinationDirectoryName,
 				entryNameEncoding));
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
 	/// <inheritdoc cref="ZipFile.ExtractToDirectory(Stream, string, Encoding, bool)" />
 	public void ExtractToDirectory(
 		Stream source,

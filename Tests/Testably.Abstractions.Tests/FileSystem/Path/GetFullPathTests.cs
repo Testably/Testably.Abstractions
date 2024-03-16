@@ -80,7 +80,9 @@ public abstract partial class GetFullPathTests<TFileSystem>
 
 		result.Should().Be(expectedRootedPath);
 	}
+#endif
 
+#if FEATURE_PATH_RELATIVE
 	[SkippableFact]
 	public void GetFullPath_Relative_NullBasePath_ShouldThrowArgumentNullException()
 	{

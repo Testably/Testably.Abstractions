@@ -69,7 +69,9 @@ internal sealed class FileMock : IFile
 
 		return AppendAllLinesAsync(path, contents, Encoding.Default, cancellationToken);
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.AppendAllLinesAsync(string, IEnumerable{string}, Encoding, CancellationToken)" />
 	public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
 		Encoding encoding,
@@ -136,7 +138,9 @@ internal sealed class FileMock : IFile
 
 		return AppendAllTextAsync(path, contents, Encoding.Default, cancellationToken);
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.AppendAllTextAsync(string, string?, Encoding, CancellationToken)" />
 	public Task AppendAllTextAsync(string path, string? contents, Encoding encoding,
 		CancellationToken cancellationToken = default)
@@ -728,7 +732,9 @@ internal sealed class FileMock : IFile
 
 		return ReadAllLinesAsync(path, Encoding.Default, cancellationToken);
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.ReadAllLinesAsync(string, Encoding, CancellationToken)" />
 	public Task<string[]> ReadAllLinesAsync(
 		string path,
@@ -785,7 +791,9 @@ internal sealed class FileMock : IFile
 
 		return ReadAllTextAsync(path, Encoding.Default, cancellationToken);
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.ReadAllTextAsync(string, Encoding, CancellationToken)" />
 	public Task<string> ReadAllTextAsync(
 		string path,
@@ -829,7 +837,9 @@ internal sealed class FileMock : IFile
 		ThrowIfCancelled(cancellationToken);
 		return ReadAllLines(path).ToAsyncEnumerable();
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_NET7
 	/// <inheritdoc cref="IFile.ReadLinesAsync(string, Encoding, CancellationToken)" />
 	public IAsyncEnumerable<string> ReadLinesAsync(string path, Encoding encoding,
 		CancellationToken cancellationToken = default)
@@ -1206,7 +1216,9 @@ internal sealed class FileMock : IFile
 
 		return WriteAllLinesAsync(path, contents, Encoding.Default, cancellationToken);
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.WriteAllLinesAsync(string, IEnumerable{string}, Encoding, CancellationToken)" />
 	public Task WriteAllLinesAsync(
 		string path,
@@ -1278,7 +1290,9 @@ internal sealed class FileMock : IFile
 
 		return WriteAllTextAsync(path, contents, Encoding.Default, cancellationToken);
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.WriteAllTextAsync(string, string?, Encoding, CancellationToken)" />
 	public Task WriteAllTextAsync(string path, string? contents, Encoding encoding,
 		CancellationToken cancellationToken = default)

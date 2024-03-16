@@ -33,7 +33,9 @@ public sealed class ParameterDescriptionTests
 
 		sut.IsOutParameter.Should().BeFalse();
 	}
+#endif
 
+#if FEATURE_SPAN
 	[Theory]
 	[AutoData]
 	public void FromParameter_WithReadOnlySpan_ShouldSetIsOutParameterToFalse(string buffer)
@@ -103,7 +105,9 @@ public sealed class ParameterDescriptionTests
 
 		result.Should().Be(expectedString);
 	}
+#endif
 
+#if FEATURE_SPAN
 	[Theory]
 	[AutoData]
 	public void ToString_WithReadOnlySpan_ShouldSetIsOutParameterToFalse(string buffer)

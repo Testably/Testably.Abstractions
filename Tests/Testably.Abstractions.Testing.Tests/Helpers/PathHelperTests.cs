@@ -239,7 +239,9 @@ public class PathHelperTests
 #if FEATURE_PATH_ADVANCED
 			public bool EndsInDirectorySeparator(ReadOnlySpan<char> path)
 				=> throw new NotSupportedException();
+#endif
 
+#if FEATURE_PATH_ADVANCED
 			public bool EndsInDirectorySeparator(string path)
 				=> throw new NotSupportedException();
 #endif
@@ -346,7 +348,9 @@ public class PathHelperTests
 #if FEATURE_PATH_JOIN
 			public string Join(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2)
 				=> throw new NotSupportedException();
+#endif
 
+#if FEATURE_PATH_JOIN
 			public string Join(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2,
 				ReadOnlySpan<char> path3)
 				=> throw new NotSupportedException();
@@ -355,17 +359,25 @@ public class PathHelperTests
 #if FEATURE_PATH_ADVANCED
 			public string Join(string? path1, string? path2)
 				=> throw new NotSupportedException();
+#endif
 
+#if FEATURE_PATH_ADVANCED
 			public string Join(string? path1, string? path2, string? path3)
 				=> throw new NotSupportedException();
+#endif
 
+#if FEATURE_PATH_ADVANCED
 			public string Join(params string?[] paths)
 				=> throw new NotSupportedException();
+#endif
 
+#if FEATURE_PATH_ADVANCED
 			public string Join(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2,
 				ReadOnlySpan<char> path3, ReadOnlySpan<char> path4)
 				=> throw new NotSupportedException();
+#endif
 
+#if FEATURE_PATH_ADVANCED
 			public string Join(string? path1, string? path2, string? path3, string? path4)
 				=> throw new NotSupportedException();
 #endif
@@ -373,7 +385,9 @@ public class PathHelperTests
 #if FEATURE_PATH_ADVANCED
 			public ReadOnlySpan<char> TrimEndingDirectorySeparator(ReadOnlySpan<char> path)
 				=> throw new NotSupportedException();
+#endif
 
+#if FEATURE_PATH_ADVANCED
 			public string TrimEndingDirectorySeparator(string path)
 				=> throw new NotSupportedException();
 #endif
@@ -382,7 +396,9 @@ public class PathHelperTests
 			public bool TryJoin(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2,
 				Span<char> destination, out int charsWritten)
 				=> throw new NotSupportedException();
+#endif
 
+#if FEATURE_PATH_JOIN
 			public bool TryJoin(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2,
 				ReadOnlySpan<char> path3, Span<char> destination,
 				out int charsWritten)

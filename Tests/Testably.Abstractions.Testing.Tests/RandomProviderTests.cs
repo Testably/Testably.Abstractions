@@ -370,7 +370,9 @@ public partial class RandomProviderTests
 
 		results.Should().AllBeEquivalentTo(value);
 	}
+#endif
 
+#if FEATURE_SPAN
 	[Theory]
 	[AutoData]
 	public void
@@ -394,7 +396,9 @@ public partial class RandomProviderTests
 			(byte)0
 		}));
 	}
+#endif
 
+#if FEATURE_SPAN
 	[Theory]
 	[AutoData]
 	public void GenerateRandom_NextBytes_Span_WithoutGenerator_ShouldReturnRandomValues(
@@ -434,7 +438,9 @@ public partial class RandomProviderTests
 
 		results.Should().AllBeEquivalentTo(value);
 	}
+#endif
 
+#if FEATURE_RANDOM_ADVANCED
 	[Theory]
 	[AutoData]
 	public void GenerateRandom_NextSingle_WithoutGenerator_ShouldReturnRandomValues(
@@ -471,7 +477,9 @@ public partial class RandomProviderTests
 
 		results.Should().AllBeEquivalentTo(value);
 	}
+#endif
 
+#if FEATURE_RANDOM_ADVANCED
 	[Theory]
 	[AutoData]
 	public void GenerateRandom_NextInt64_WithMaxValue_ShouldReturnSpecifiedValue(
@@ -491,7 +499,9 @@ public partial class RandomProviderTests
 
 		results.Should().AllBeEquivalentTo(expectedValue);
 	}
+#endif
 
+#if FEATURE_RANDOM_ADVANCED
 	[Theory]
 	[AutoData]
 	public void
@@ -513,7 +523,9 @@ public partial class RandomProviderTests
 
 		results.Should().AllBeEquivalentTo(expectedValue);
 	}
+#endif
 
+#if FEATURE_RANDOM_ADVANCED
 	[Theory]
 	[AutoData]
 	public void
@@ -535,7 +547,9 @@ public partial class RandomProviderTests
 
 		results.Should().AllBeEquivalentTo(expectedValue);
 	}
+#endif
 
+#if FEATURE_RANDOM_ADVANCED
 	[Theory]
 	[AutoData]
 	public void GenerateRandom_NextInt64_WithoutGenerator_ShouldReturnRandomValues(

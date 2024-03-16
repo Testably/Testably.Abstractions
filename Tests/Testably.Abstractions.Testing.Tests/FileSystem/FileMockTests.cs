@@ -53,7 +53,9 @@ public class FileMockTests
 		FileAttributes result = fileSystem.File.GetAttributes(fileHandle);
 		result.Should().Be(expectedAttributes);
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Theory]
 	[AutoData]
 	public void SetCreationTime_SafeFileHandle_ShouldUpdateValue(
@@ -71,7 +73,9 @@ public class FileMockTests
 
 		result.Should().Be(creationTime);
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Theory]
 	[AutoData]
 	public void SetCreationTimeUtc_SafeFileHandle_ShouldUpdateValue(
@@ -89,7 +93,9 @@ public class FileMockTests
 
 		result.Should().Be(creationTimeUtc);
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Theory]
 	[AutoData]
 	public void SetLastAccessTime_SafeFileHandle_ShouldUpdateValue(
@@ -107,7 +113,9 @@ public class FileMockTests
 
 		result.Should().Be(lastAccessTime);
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Theory]
 	[AutoData]
 	public void SetLastAccessTimeUtc_SafeFileHandle_ShouldUpdateValue(
@@ -125,7 +133,9 @@ public class FileMockTests
 
 		result.Should().Be(lastAccessTimeUtc);
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Theory]
 	[AutoData]
 	public void SetLastWriteTime_SafeFileHandle_ShouldUpdateValue(
@@ -143,7 +153,9 @@ public class FileMockTests
 
 		result.Should().Be(lastWriteTime);
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Theory]
 	[AutoData]
 	public void SetLastWriteTimeUtc_SafeFileHandle_ShouldUpdateValue(
@@ -161,7 +173,9 @@ public class FileMockTests
 
 		result.Should().Be(lastWriteTimeUtc);
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[SkippableTheory]
 	[AutoData]
 	public void SetUnixFileMode_SafeFileHandle_ShouldUpdateValue(

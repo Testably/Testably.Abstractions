@@ -1,7 +1,5 @@
 using System.IO;
 using Testably.Abstractions.Testing.FileSystemInitializer;
-#if !NETFRAMEWORK
-#endif
 
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 

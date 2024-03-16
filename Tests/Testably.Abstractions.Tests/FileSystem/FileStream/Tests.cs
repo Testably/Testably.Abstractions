@@ -316,7 +316,9 @@ public abstract partial class Tests<TFileSystem>
 		await destination.FlushAsync();
 		buffer.Should().BeEquivalentTo(bytes);
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_ASYNC
 	[SkippableTheory]
 	[AutoData]
 	public async Task CopyToAsync_BufferSizeZero_ShouldThrowArgumentOutOfRangeException(

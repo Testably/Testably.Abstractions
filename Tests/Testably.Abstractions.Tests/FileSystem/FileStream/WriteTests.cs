@@ -221,7 +221,9 @@ public abstract partial class WriteTests<TFileSystem>
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(bytes);
 	}
+#endif
 
+#if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
 	public void Write_AsSpan_CanWriteFalse_ShouldThrowNotSupportedException(
@@ -261,7 +263,9 @@ public abstract partial class WriteTests<TFileSystem>
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(bytes);
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_ASYNC
 	[SkippableTheory]
 	[AutoData]
 	public async Task WriteAsync_CanWriteFalse_ShouldThrowNotSupportedException(

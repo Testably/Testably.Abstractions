@@ -209,7 +209,9 @@ public abstract partial class ReadTests<TFileSystem>
 		result.Should().Be(bytes.Length);
 		buffer.Should().BeEquivalentTo(bytes);
 	}
+#endif
 
+#if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
 	public void Read_AsSpan_CanReadFalse_ShouldThrowNotSupportedException(
@@ -248,7 +250,9 @@ public abstract partial class ReadTests<TFileSystem>
 		result.Should().Be(bytes.Length);
 		buffer.Should().BeEquivalentTo(bytes);
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_ASYNC
 	[SkippableTheory]
 	[AutoData]
 	public async Task ReadAsync_CanReadFalse_ShouldThrowNotSupportedException(
@@ -271,7 +275,9 @@ public abstract partial class ReadTests<TFileSystem>
 
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_ASYNC
 	[SkippableTheory]
 	[AutoData]
 	public async Task ReadAsync_Memory_CanReadFalse_ShouldThrowNotSupportedException(

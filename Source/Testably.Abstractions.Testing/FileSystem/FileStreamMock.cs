@@ -672,6 +672,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	private IDisposable RegisterMethod<T1>(string name, Span<T1> parameter1)
 		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(_location.FullPath, name,
 			ParameterDescription.FromParameter(parameter1));
+#endif
+
+#if FEATURE_SPAN
 	private IDisposable RegisterMethod<T1>(string name, ReadOnlySpan<T1> parameter1)
 		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(_location.FullPath, name,
 			ParameterDescription.FromParameter(parameter1));

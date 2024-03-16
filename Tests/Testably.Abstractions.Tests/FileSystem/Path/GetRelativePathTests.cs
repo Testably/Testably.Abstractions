@@ -1,5 +1,6 @@
-using System.Linq;
 #if FEATURE_PATH_RELATIVE
+using System.Linq;
+
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 // ReSharper disable once PartialTypeWithSinglePart

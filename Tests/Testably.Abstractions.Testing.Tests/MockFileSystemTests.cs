@@ -311,7 +311,9 @@ public class MockFileSystemTests
 
 		result.Should().Be(contents);
 	}
+#endif
 
+#if NET6_0_OR_GREATER
 	[SkippableTheory]
 	[AutoData]
 	public void WithSafeFileHandleStrategy_NullStrategy_ShouldThrowException(

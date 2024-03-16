@@ -614,7 +614,9 @@ public class FileInfoStatisticsTests
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.UnixFileMode));
 	}
+#endif
 
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
 	[SkippableFact]
 	public void Property_UnixFileMode_Set_ShouldRegisterPropertyAccess()
 	{

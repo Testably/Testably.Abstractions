@@ -76,14 +76,18 @@ internal sealed class RandomMock : IRandom
 			destination[i] = choices[Next(choices.Length)];
 		}
 	}
+#endif
 
+#if FEATURE_RANDOM_ITEMS
 	/// <inheritdoc cref="IRandom.GetItems{T}(T[], int)" />
 	public T[] GetItems<T>(T[] choices, int length)
 	{
 		ArgumentNullException.ThrowIfNull(choices);
 		return GetItems(new ReadOnlySpan<T>(choices), length);
 	}
+#endif
 
+#if FEATURE_RANDOM_ITEMS
 	/// <inheritdoc cref="IRandom.GetItems{T}(ReadOnlySpan{T}, int)" />
 	public T[] GetItems<T>(ReadOnlySpan<T> choices, int length)
 	{
@@ -157,13 +161,17 @@ internal sealed class RandomMock : IRandom
 	/// <inheritdoc cref="IRandom.NextInt64()" />
 	public long NextInt64()
 		=> _longGenerator?.GetNext() ?? _random.NextInt64();
+#endif
 
+#if FEATURE_RANDOM_ADVANCED
 	/// <inheritdoc cref="IRandom.NextInt64(long)" />
 	public long NextInt64(long maxValue)
 		=> Math.Min(
 			_longGenerator?.GetNext() ?? _random.NextInt64(maxValue),
 			maxValue - 1);
+#endif
 
+#if FEATURE_RANDOM_ADVANCED
 	/// <inheritdoc cref="IRandom.NextInt64(long, long)" />
 	public long NextInt64(long minValue, long maxValue)
 		=> Math.Min(
@@ -171,7 +179,9 @@ internal sealed class RandomMock : IRandom
 				_longGenerator?.GetNext() ?? _random.NextInt64(minValue, maxValue),
 				minValue),
 			maxValue - 1);
+#endif
 
+#if FEATURE_RANDOM_ADVANCED
 	/// <inheritdoc cref="IRandom.NextSingle()" />
 	public float NextSingle()
 		=> _singleGenerator?.GetNext() ?? _random.NextSingle();
@@ -184,7 +194,9 @@ internal sealed class RandomMock : IRandom
 		ArgumentNullException.ThrowIfNull(values);
 		Shuffle(values.AsSpan());
 	}
+#endif
 
+#if FEATURE_RANDOM_ITEMS
 	/// <inheritdoc cref="IRandom.Shuffle{T}(Span{T})" />
 	public void Shuffle<T>(Span<T> values)
 	{

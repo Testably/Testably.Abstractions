@@ -153,6 +153,8 @@ public abstract partial class ExceptionTests<TFileSystem>
 			directory
 				=> directory.CreateSymbolicLink(value, "foo"),
 			null);
+#endif
+#if FEATURE_FILESYSTEM_LINK
 		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "pathToTarget",
 			directory
 				=> directory.CreateSymbolicLink("foo", value),

@@ -19,7 +19,9 @@ public interface IGuid : IRandomSystemEntity
 #if FEATURE_GUID_PARSE
 	/// <inheritdoc cref="Guid.Parse(string)" />
 	Guid Parse(string input);
+#endif
 
+#if FEATURE_GUID_PARSE
 	/// <inheritdoc cref="Guid.Parse(ReadOnlySpan{char})" />
 	Guid Parse(ReadOnlySpan<char> input);
 #endif
@@ -27,7 +29,9 @@ public interface IGuid : IRandomSystemEntity
 #if FEATURE_GUID_FORMATPROVIDER
 	/// <inheritdoc cref="Guid.Parse(string, IFormatProvider?)" />
 	Guid Parse(string s, IFormatProvider? provider);
+#endif
 
+#if FEATURE_GUID_FORMATPROVIDER
 	/// <inheritdoc cref="Guid.Parse(ReadOnlySpan{char}, IFormatProvider?)" />
 	Guid Parse(ReadOnlySpan<char> s, IFormatProvider? provider);
 #endif
@@ -35,7 +39,9 @@ public interface IGuid : IRandomSystemEntity
 #if FEATURE_GUID_PARSE
 	/// <inheritdoc cref="Guid.TryParse(string?, out Guid)" />
 	bool TryParse([NotNullWhen(true)] string? input, out Guid result);
+#endif
 
+#if FEATURE_GUID_PARSE
 	/// <inheritdoc cref="Guid.TryParse(ReadOnlySpan{char}, out Guid)" />
 	bool TryParse(ReadOnlySpan<char> input, out Guid result);
 #endif
@@ -43,7 +49,9 @@ public interface IGuid : IRandomSystemEntity
 #if FEATURE_GUID_FORMATPROVIDER
 	/// <inheritdoc cref="Guid.TryParse(string?, IFormatProvider?, out Guid)" />
 	bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, out Guid result);
+#endif
 
+#if FEATURE_GUID_FORMATPROVIDER
 	/// <inheritdoc cref="Guid.TryParse(ReadOnlySpan{char}, IFormatProvider?, out Guid)" />
 	bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Guid result);
 #endif
@@ -51,15 +59,21 @@ public interface IGuid : IRandomSystemEntity
 #if FEATURE_GUID_PARSE
 	/// <inheritdoc cref="Guid.ParseExact(string, string)" />
 	Guid ParseExact(string input, string format);
+#endif
 
+#if FEATURE_GUID_PARSE
 	/// <inheritdoc cref="Guid.ParseExact(ReadOnlySpan{char}, ReadOnlySpan{char})" />
 	Guid ParseExact(ReadOnlySpan<char> input, ReadOnlySpan<char> format);
+#endif
 
+#if FEATURE_GUID_PARSE
 	/// <inheritdoc cref="Guid.TryParseExact(string?, string?, out Guid)" />
 	bool TryParseExact([NotNullWhen(true)] string? input,
 		[NotNullWhen(true)] string? format,
 		out Guid result);
+#endif
 
+#if FEATURE_GUID_PARSE
 	/// <inheritdoc cref="Guid.TryParseExact(ReadOnlySpan{char}, ReadOnlySpan{char}, out Guid)" />
 	bool TryParseExact(ReadOnlySpan<char> input,
 		ReadOnlySpan<char> format,

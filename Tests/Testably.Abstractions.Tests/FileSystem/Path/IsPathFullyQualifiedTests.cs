@@ -38,7 +38,9 @@ public abstract partial class IsPathFullyQualifiedTests<TFileSystem>
 
 		result.Should().BeTrue();
 	}
+#endif
 
+#if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
 	public void IsPathFullyQualified_Span_WithoutPrefixedRoot_ShouldReturnFalse(

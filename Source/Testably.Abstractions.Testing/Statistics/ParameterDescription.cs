@@ -52,7 +52,9 @@ public abstract class ParameterDescription
 	public bool Is<T>(Span<T> value)
 		=> this is SpanParameterDescription<T> { IsReadOnly: false } d &&
 		   d.Value.SequenceEqual(value.ToArray());
+#endif
 
+#if FEATURE_SPAN
 	/// <summary>
 	///     Checks, if the read-only span value of the parameter equals <paramref name="value" />.
 	/// </summary>
@@ -84,7 +86,9 @@ public abstract class ParameterDescription
 	{
 		return new SpanParameterDescription<T>(value);
 	}
+#endif
 
+#if FEATURE_SPAN
 	/// <summary>
 	///     Creates a <see cref="ParameterDescription" /> from the read-only span <paramref name="value" />.
 	/// </summary>
