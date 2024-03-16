@@ -52,7 +52,7 @@ internal class FileSystemEntryStatistics : CallStatistics, IPathStatistics
 		return callStatistics.RegisterProperty(name, access);
 	}
 
-	private string CreateKey(string currentDirectory, string path)
+	private static string CreateKey(string currentDirectory, string path)
 	{
 		if (string.IsNullOrEmpty(path))
 		{
@@ -61,10 +61,10 @@ internal class FileSystemEntryStatistics : CallStatistics, IPathStatistics
 
 		if (Path.IsPathRooted(path))
 		{
-			return path.TrimEnd([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar]);
+			return path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 		}
 
 		return Path.GetFullPath(Path.Combine(currentDirectory, path))
-			.TrimEnd([Path.DirectorySeparatorChar , Path.AltDirectorySeparatorChar]);
+			.TrimEnd(Path.DirectorySeparatorChar , Path.AltDirectorySeparatorChar);
 	}
 }
