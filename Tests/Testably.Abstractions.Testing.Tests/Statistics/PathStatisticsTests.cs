@@ -66,38 +66,47 @@ public sealed class PathStatisticsTests
 		absolutPath.Should().Be(relativePath);
 	}
 
-	[Fact]
-	public void Key_WithDrives_ShouldIgnoreTrailingSlash()
+	[Theory]
+	[InlineData("/")]
+	[InlineData("\\")]
+	public void Key_WithDrives_ShouldIgnoreTrailingSeparator(string separator)
 	{
+		const string key = @"C:";
 		MockFileSystem fileSystem = new();
 		IPathStatistics sut = fileSystem.Statistics.FileInfo;
 
-		IStatistics result1 = sut[@"C:"];
-		IStatistics result2 = sut[@"C:\"];
+		IStatistics result1 = sut[key];
+		IStatistics result2 = sut[key + separator];
 
 		result1.Should().Be(result2);
 	}
 
-	[Fact]
-	public void Key_WithFolderInDrives_ShouldIgnoreTrailingSlash()
+	[Theory]
+	[InlineData("/")]
+	[InlineData("\\")]
+	public void Key_WithFolderInDrives_ShouldIgnoreTrailingSeparator(string separator)
 	{
+		const string key = @"C:\foo";
 		MockFileSystem fileSystem = new();
 		IPathStatistics sut = fileSystem.Statistics.FileInfo;
 
-		IStatistics result1 = sut[@"C:\foo"];
-		IStatistics result2 = sut[@"C:\foo\"];
+		IStatistics result1 = sut[key];
+		IStatistics result2 = sut[key + separator];
 
 		result1.Should().Be(result2);
 	}
 
-	[Fact]
-	public void Key_WithFolderInUncRootPaths_ShouldIgnoreTrailingSlash()
+	[Theory]
+	[InlineData("/")]
+	[InlineData("\\")]
+	public void Key_WithFolderInUncRootPaths_ShouldIgnoreTrailingSeparator(string separator)
 	{
+		const string key = @"\\server1\foo";
 		MockFileSystem fileSystem = new();
 		IPathStatistics sut = fileSystem.Statistics.FileInfo;
 
-		IStatistics result1 = sut[@"\\server1\foo"];
-		IStatistics result2 = sut[@"\\server1\foo\"];
+		IStatistics result1 = sut[key];
+		IStatistics result2 = sut[key + separator];
 
 		result1.Should().Be(result2);
 	}

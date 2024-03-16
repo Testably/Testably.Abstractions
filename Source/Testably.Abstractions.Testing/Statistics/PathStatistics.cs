@@ -67,9 +67,9 @@ internal class PathStatistics : CallStatistics, IPathStatistics
 			return string.Empty;
 		}
 
-		if (path.StartsWith("//") || path.StartsWith("\\"))
+		if (path.StartsWith("//") || path.StartsWith(@"\\"))
 		{
-			return path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			return path.TrimEnd('/', '\\');
 		}
 
 		if (path.Length == 2 && path.EndsWith(":"))
@@ -77,7 +77,6 @@ internal class PathStatistics : CallStatistics, IPathStatistics
 			return path;
 		}
 
-		return Path.GetFullPath(Path.Combine(currentDirectory, path))
-			.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+		return Path.GetFullPath(Path.Combine(currentDirectory, path)).TrimEnd('/', '\\');
 	}
 }
