@@ -30,14 +30,36 @@ public sealed class MockFileSystem : IFileSystem
 	public IRandomSystem RandomSystem { get; }
 
 	/// <summary>
+	///     Contains statistical information about the file system usage.
+	/// </summary>
+	public IFileSystemStatistics Statistics => StatisticsRegistration;
+
+	/// <summary>
 	///     The used time system.
 	/// </summary>
 	public ITimeSystem TimeSystem { get; }
+
+	internal IAccessControlStrategy AccessControlStrategy
+	{
+		get;
+		private set;
+	}
 
 	/// <summary>
 	///     The change handler used to notify about events occurring in the <see cref="MockFileSystem" />.
 	/// </summary>
 	internal ChangeHandler ChangeHandler { get; }
+
+	/// <summary>
+	///     The execution engine for the underlying operating system.
+	/// </summary>
+	internal Execute Execute { get; }
+
+	internal ISafeFileHandleStrategy SafeFileHandleStrategy
+	{
+		get;
+		private set;
+	}
 
 	/// <summary>
 	///     The underlying storage of directories and files.
@@ -50,33 +72,12 @@ public sealed class MockFileSystem : IFileSystem
 	internal IReadOnlyList<IStorageContainer> StorageContainers
 		=> _storage.GetContainers();
 
-	/// <summary>
-	///     The execution engine for the underlying operating system.
-	/// </summary>
-	internal Execute Execute { get; }
-
-	/// <summary>
-	///     Contains statistical information about the file system usage.
-	/// </summary>
-	public IFileSystemStatistics Statistics => StatisticsRegistration;
+	internal readonly FileSystemStatistics StatisticsRegistration;
 
 	private readonly DirectoryMock _directoryMock;
 	private readonly FileMock _fileMock;
 	private readonly PathMock _pathMock;
 	private readonly InMemoryStorage _storage;
-	internal readonly FileSystemStatistics StatisticsRegistration;
-
-	internal IAccessControlStrategy AccessControlStrategy
-	{
-		get;
-		private set;
-	}
-
-	internal ISafeFileHandleStrategy SafeFileHandleStrategy
-	{
-		get;
-		private set;
-	}
 
 	/// <summary>
 	///     Initializes the <see cref="MockFileSystem" />.

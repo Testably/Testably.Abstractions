@@ -274,23 +274,6 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableFact]
 	public void
-		CreateFromDirectory_WithStream_Null_ShouldThrowArgumentNullException()
-	{
-		Stream stream = null!;
-
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.ZipFile().CreateFromDirectory("foo", stream);
-		});
-
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.ParamName.Should().Be("destination");
-	}
-#endif
-
-#if FEATURE_COMPRESSION_STREAM
-	[SkippableFact]
-	public void
 		CreateFromDirectory_WithStream_NotWritable_ShouldThrowArgumentException()
 	{
 		Stream stream = new MemoryStreamMock(canWrite: false);
@@ -302,6 +285,23 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 
 		exception.Should().BeException<ArgumentException>("The stream is unwritable",
 			paramName: "destination", hResult: -2147024809);
+	}
+#endif
+
+#if FEATURE_COMPRESSION_STREAM
+	[SkippableFact]
+	public void
+		CreateFromDirectory_WithStream_Null_ShouldThrowArgumentNullException()
+	{
+		Stream stream = null!;
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+		});
+
+		exception.Should().BeOfType<ArgumentNullException>()
+			.Which.ParamName.Should().Be("destination");
 	}
 #endif
 

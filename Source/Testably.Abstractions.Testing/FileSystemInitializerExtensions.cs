@@ -21,55 +21,6 @@ public static class FileSystemInitializerExtensions
 		=> fileSystem.InitializeIn(".", options);
 
 	/// <summary>
-	///     Initializes the <see cref="IFileSystem" /> in the <paramref name="basePath" /> with test data.
-	/// </summary>
-	public static IFileSystemInitializer<TFileSystem> InitializeIn<TFileSystem>(
-		this TFileSystem fileSystem,
-		string basePath,
-		Action<FileSystemInitializerOptions>? options = null)
-		where TFileSystem : IFileSystem
-	{
-		using IDisposable release = fileSystem.IgnoreStatistics();
-		if (fileSystem.Path.IsPathRooted(basePath) &&
-		    fileSystem is MockFileSystem mockFileSystem)
-		{
-			string? drive = fileSystem.Path.GetPathRoot(basePath);
-			mockFileSystem.WithDrive(drive);
-		}
-
-		fileSystem.Directory.CreateDirectory(basePath);
-		fileSystem.Directory.SetCurrentDirectory(basePath);
-		FileSystemInitializerOptions optionsValue = new();
-		options?.Invoke(optionsValue);
-		if (optionsValue.InitializeTempDirectory)
-		{
-			fileSystem.Directory.CreateDirectory(Path.GetTempPath());
-		}
-
-		return new FileSystemInitializer<TFileSystem>(fileSystem, ".");
-	}
-
-	/// <summary>
-	///     Sets the current directory to a new temporary directory.<br />
-	///     <see cref="IDirectory.GetCurrentDirectory()" /> and all relative paths will use this directory.
-	/// </summary>
-	/// <param name="fileSystem">The file system.</param>
-	/// <param name="prefix">
-	///     A prefix to use for the temporary directory.<br />
-	///     This simplifies matching directories to tests.
-	/// </param>
-	/// <param name="logger">(optional) A callback to log the cleanup process.</param>
-	/// <returns>
-	///     A <see cref="IDirectoryCleaner" /> that will
-	///     force delete all content in the temporary directory on dispose.
-	/// </returns>
-	public static IDirectoryCleaner SetCurrentDirectoryToEmptyTemporaryDirectory(
-		this IFileSystem fileSystem, string? prefix = null, Action<string>? logger = null)
-	{
-		return new DirectoryCleaner(fileSystem, prefix, logger);
-	}
-
-	/// <summary>
 	/// </summary>
 	/// <param name="fileSystem">The file system.</param>
 	/// <param name="assembly">The assembly in which the embedded resource files are located.</param>
@@ -154,6 +105,55 @@ public static class FileSystemInitializerExtensions
 				fileSystem.InitializeFileFromEmbeddedResource(filePath, assembly, resourcePath);
 			}
 		}
+	}
+
+	/// <summary>
+	///     Initializes the <see cref="IFileSystem" /> in the <paramref name="basePath" /> with test data.
+	/// </summary>
+	public static IFileSystemInitializer<TFileSystem> InitializeIn<TFileSystem>(
+		this TFileSystem fileSystem,
+		string basePath,
+		Action<FileSystemInitializerOptions>? options = null)
+		where TFileSystem : IFileSystem
+	{
+		using IDisposable release = fileSystem.IgnoreStatistics();
+		if (fileSystem.Path.IsPathRooted(basePath) &&
+		    fileSystem is MockFileSystem mockFileSystem)
+		{
+			string? drive = fileSystem.Path.GetPathRoot(basePath);
+			mockFileSystem.WithDrive(drive);
+		}
+
+		fileSystem.Directory.CreateDirectory(basePath);
+		fileSystem.Directory.SetCurrentDirectory(basePath);
+		FileSystemInitializerOptions optionsValue = new();
+		options?.Invoke(optionsValue);
+		if (optionsValue.InitializeTempDirectory)
+		{
+			fileSystem.Directory.CreateDirectory(Path.GetTempPath());
+		}
+
+		return new FileSystemInitializer<TFileSystem>(fileSystem, ".");
+	}
+
+	/// <summary>
+	///     Sets the current directory to a new temporary directory.<br />
+	///     <see cref="IDirectory.GetCurrentDirectory()" /> and all relative paths will use this directory.
+	/// </summary>
+	/// <param name="fileSystem">The file system.</param>
+	/// <param name="prefix">
+	///     A prefix to use for the temporary directory.<br />
+	///     This simplifies matching directories to tests.
+	/// </param>
+	/// <param name="logger">(optional) A callback to log the cleanup process.</param>
+	/// <returns>
+	///     A <see cref="IDirectoryCleaner" /> that will
+	///     force delete all content in the temporary directory on dispose.
+	/// </returns>
+	public static IDirectoryCleaner SetCurrentDirectoryToEmptyTemporaryDirectory(
+		this IFileSystem fileSystem, string? prefix = null, Action<string>? logger = null)
+	{
+		return new DirectoryCleaner(fileSystem, prefix, logger);
 	}
 
 	private static void InitializeFileFromEmbeddedResource(this IFileSystem fileSystem,

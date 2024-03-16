@@ -5,9 +5,16 @@ namespace Testably.Abstractions.Testing.Statistics;
 
 internal class CallStatistics : IStatistics
 {
-	private readonly IStatisticsGate _statisticsGate;
 	private readonly ConcurrentQueue<MethodStatistic> _methods = new();
 	private readonly ConcurrentQueue<PropertyStatistic> _properties = new();
+	private readonly IStatisticsGate _statisticsGate;
+
+	public CallStatistics(IStatisticsGate statisticsGate)
+	{
+		_statisticsGate = statisticsGate;
+	}
+
+	#region IStatistics Members
 
 	/// <inheritdoc cref="IStatistics.Methods" />
 	public MethodStatistic[] Methods => _methods.ToArray();
@@ -15,10 +22,7 @@ internal class CallStatistics : IStatistics
 	/// <inheritdoc cref="IStatistics.Properties" />
 	public PropertyStatistic[] Properties => _properties.ToArray();
 
-	public CallStatistics(IStatisticsGate statisticsGate)
-	{
-		_statisticsGate = statisticsGate;
-	}
+	#endregion
 
 	/// <summary>
 	///     Registers the method <paramref name="name" /> with <paramref name="parameters" />.

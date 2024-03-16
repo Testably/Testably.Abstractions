@@ -6,6 +6,35 @@ namespace Testably.Abstractions.Testing.Storage;
 
 internal static class LocationExtensions
 {
+	public static IStorageLocation ThrowExceptionIfNotFound(
+		this IStorageLocation location,
+		MockFileSystem fileSystem,
+		bool allowMissingFile = false,
+		Func<string, Exception>? onDirectoryNotFound = null,
+		Func<string, Exception>? onFileNotFound = null)
+	{
+		if (fileSystem.Storage.GetContainer(location) is NullContainer)
+		{
+			IStorageLocation? parentLocation = location.GetParent();
+			if (parentLocation != null &&
+			    fileSystem.Path.GetPathRoot(parentLocation.FullPath) !=
+			    parentLocation.FullPath &&
+			    fileSystem.Storage.GetContainer(parentLocation) is NullContainer)
+			{
+				throw onDirectoryNotFound?.Invoke(location.FullPath)
+				      ?? ExceptionFactory.DirectoryNotFound(location.FullPath);
+			}
+
+			if (!allowMissingFile)
+			{
+				throw onFileNotFound?.Invoke(location.FullPath)
+				      ?? ExceptionFactory.FileNotFound(location.FullPath);
+			}
+		}
+
+		return location;
+	}
+
 	[return: NotNullIfNotNull("location")]
 	public static IStorageLocation? ThrowIfNotFound(
 		this IStorageLocation? location,
@@ -32,35 +61,6 @@ internal static class LocationExtensions
 			else
 			{
 				fileNotFoundException();
-			}
-		}
-
-		return location;
-	}
-
-	public static IStorageLocation ThrowExceptionIfNotFound(
-		this IStorageLocation location,
-		MockFileSystem fileSystem,
-		bool allowMissingFile = false,
-		Func<string, Exception>? onDirectoryNotFound = null,
-		Func<string, Exception>? onFileNotFound = null)
-	{
-		if (fileSystem.Storage.GetContainer(location) is NullContainer)
-		{
-			IStorageLocation? parentLocation = location.GetParent();
-			if (parentLocation != null &&
-			    fileSystem.Path.GetPathRoot(parentLocation.FullPath) !=
-			    parentLocation.FullPath &&
-			    fileSystem.Storage.GetContainer(parentLocation) is NullContainer)
-			{
-				throw onDirectoryNotFound?.Invoke(location.FullPath)
-				      ?? ExceptionFactory.DirectoryNotFound(location.FullPath);
-			}
-
-			if (!allowMissingFile)
-			{
-				throw onFileNotFound?.Invoke(location.FullPath)
-				      ?? ExceptionFactory.FileNotFound(location.FullPath);
 			}
 		}
 

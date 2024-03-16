@@ -153,11 +153,6 @@ internal sealed class RandomMock : IRandom
 		=> _doubleGenerator?.GetNext() ?? _random.NextDouble();
 
 #if FEATURE_RANDOM_ADVANCED
-	private readonly Generator<long>? _longGenerator;
-	private readonly Generator<float>? _singleGenerator;
-#endif
-
-#if FEATURE_RANDOM_ADVANCED
 	/// <inheritdoc cref="IRandom.NextInt64()" />
 	public long NextInt64()
 		=> _longGenerator?.GetNext() ?? _random.NextInt64();
@@ -217,4 +212,9 @@ internal sealed class RandomMock : IRandom
 #endif
 
 	#endregion
+
+#if FEATURE_RANDOM_ADVANCED
+	private readonly Generator<long>? _longGenerator;
+	private readonly Generator<float>? _singleGenerator;
+#endif
 }

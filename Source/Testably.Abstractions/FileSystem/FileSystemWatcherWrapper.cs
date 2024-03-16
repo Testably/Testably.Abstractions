@@ -94,6 +94,10 @@ internal sealed class FileSystemWatcherWrapper : IFileSystemWatcher
 	public void Dispose()
 		=> _instance.Dispose();
 
+	/// <inheritdoc cref="IFileSystemWatcher.BeginInit()" />
+	public void BeginInit()
+		=> _instance.BeginInit();
+
 	/// <inheritdoc cref="IFileSystemWatcher.Changed" />
 	public event FileSystemEventHandler? Changed
 	{
@@ -115,6 +119,10 @@ internal sealed class FileSystemWatcherWrapper : IFileSystemWatcher
 		remove => _instance.Deleted -= value;
 	}
 
+	/// <inheritdoc cref="IFileSystemWatcher.EndInit()" />
+	public void EndInit()
+		=> _instance.EndInit();
+
 	/// <inheritdoc cref="IFileSystemWatcher.Error" />
 	public event ErrorEventHandler? Error
 	{
@@ -128,14 +136,6 @@ internal sealed class FileSystemWatcherWrapper : IFileSystemWatcher
 		add => _instance.Renamed += value;
 		remove => _instance.Renamed -= value;
 	}
-
-	/// <inheritdoc cref="IFileSystemWatcher.BeginInit()" />
-	public void BeginInit()
-		=> _instance.BeginInit();
-
-	/// <inheritdoc cref="IFileSystemWatcher.EndInit()" />
-	public void EndInit()
-		=> _instance.EndInit();
 
 	/// <inheritdoc cref="IFileSystemWatcher.WaitForChanged(WatcherChangeTypes)" />
 	public IWaitForChangedResult WaitForChanged(

@@ -6,17 +6,16 @@ namespace Testably.Abstractions.Testing.Statistics;
 
 internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsGate
 {
-	internal readonly FileSystemEntryStatistics DirectoryInfo;
+	private static readonly AsyncLocal<bool> IsDisabled = new();
 	internal readonly CallStatistics Directory;
+	internal readonly FileSystemEntryStatistics DirectoryInfo;
 	internal readonly FileSystemEntryStatistics DriveInfo;
-	internal readonly FileSystemEntryStatistics FileInfo;
 	internal readonly CallStatistics File;
+	internal readonly FileSystemEntryStatistics FileInfo;
 	internal readonly FileSystemEntryStatistics FileStream;
 	internal readonly FileSystemEntryStatistics FileSystemWatcher;
 	internal readonly CallStatistics Path;
 	private int _counter;
-
-	private static readonly AsyncLocal<bool> IsDisabled = new();
 
 	public FileSystemStatistics(MockFileSystem fileSystem)
 	{
@@ -60,6 +59,12 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsG
 
 	#region IStatisticsGate Members
 
+	/// <inheritdoc cref="IStatisticsGate.GetCounter()" />
+	public int GetCounter()
+	{
+		return Interlocked.Increment(ref _counter);
+	}
+
 	/// <inheritdoc cref="IStatisticsGate.TryGetLock(out IDisposable)" />
 	public bool TryGetLock(out IDisposable release)
 	{
@@ -72,12 +77,6 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsG
 		IsDisabled.Value = true;
 		release = new TemporaryDisable(() => IsDisabled.Value = false);
 		return true;
-	}
-
-	/// <inheritdoc cref="IStatisticsGate.GetCounter()" />
-	public int GetCounter()
-	{
-		return Interlocked.Increment(ref _counter);
 	}
 
 	#endregion
@@ -93,7 +92,11 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsG
 			_onDispose = onDispose;
 		}
 
+		#region IDisposable Members
+
 		/// <inheritdoc cref="IDisposable.Dispose()" />
 		public void Dispose() => _onDispose();
+
+		#endregion
 	}
 }

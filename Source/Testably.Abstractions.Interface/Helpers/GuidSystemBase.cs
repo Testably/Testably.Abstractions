@@ -32,8 +32,6 @@ public abstract class GuidSystemBase : IGuid
 	/// <inheritdoc cref="IGuid.NewGuid()" />
 	public abstract Guid NewGuid();
 
-	#endregion
-
 #if FEATURE_GUID_PARSE
 	/// <inheritdoc cref="IGuid.Parse(string)" />
 	public Guid Parse(string input)
@@ -56,6 +54,18 @@ public abstract class GuidSystemBase : IGuid
 	/// <inheritdoc cref="IGuid.Parse(ReadOnlySpan{char}, IFormatProvider?)" />
 	public Guid Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
 		=> Guid.Parse(s, provider);
+#endif
+
+#if FEATURE_GUID_PARSE
+	/// <inheritdoc cref="IGuid.ParseExact(string, string)" />
+	public Guid ParseExact(string input, string format)
+		=> Guid.ParseExact(input, format);
+#endif
+
+#if FEATURE_GUID_PARSE
+	/// <inheritdoc cref="IGuid.ParseExact(ReadOnlySpan{char}, ReadOnlySpan{char})" />
+	public Guid ParseExact(ReadOnlySpan<char> input, ReadOnlySpan<char> format)
+		=> Guid.ParseExact(input, format);
 #endif
 
 #if FEATURE_GUID_PARSE
@@ -83,18 +93,6 @@ public abstract class GuidSystemBase : IGuid
 #endif
 
 #if FEATURE_GUID_PARSE
-	/// <inheritdoc cref="IGuid.ParseExact(string, string)" />
-	public Guid ParseExact(string input, string format)
-		=> Guid.ParseExact(input, format);
-#endif
-
-#if FEATURE_GUID_PARSE
-	/// <inheritdoc cref="IGuid.ParseExact(ReadOnlySpan{char}, ReadOnlySpan{char})" />
-	public Guid ParseExact(ReadOnlySpan<char> input, ReadOnlySpan<char> format)
-		=> Guid.ParseExact(input, format);
-#endif
-
-#if FEATURE_GUID_PARSE
 	/// <inheritdoc cref="IGuid.TryParseExact(string?, string?, out Guid)" />
 	public bool TryParseExact([NotNullWhen(true)] string? input,
 		[NotNullWhen(true)] string? format,
@@ -108,4 +106,6 @@ public abstract class GuidSystemBase : IGuid
 		out Guid result)
 		=> Guid.TryParseExact(input, format, out result);
 #endif
+
+	#endregion
 }

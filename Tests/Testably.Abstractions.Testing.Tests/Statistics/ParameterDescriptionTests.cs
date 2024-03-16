@@ -25,9 +25,9 @@ public sealed class ParameterDescriptionTests
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void FromParameter_WithSpan_ShouldSetIsOutParameterToFalse(int[] buffer)
+	public void FromParameter_WithReadOnlySpan_ShouldSetIsOutParameterToFalse(string buffer)
 	{
-		Span<int> value = buffer.AsSpan();
+		ReadOnlySpan<char> value = buffer.AsSpan();
 
 		ParameterDescription sut = ParameterDescription.FromParameter(value);
 
@@ -38,9 +38,9 @@ public sealed class ParameterDescriptionTests
 #if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void FromParameter_WithReadOnlySpan_ShouldSetIsOutParameterToFalse(string buffer)
+	public void FromParameter_WithSpan_ShouldSetIsOutParameterToFalse(int[] buffer)
 	{
-		ReadOnlySpan<char> value = buffer.AsSpan();
+		Span<int> value = buffer.AsSpan();
 
 		ParameterDescription sut = ParameterDescription.FromParameter(value);
 
@@ -81,16 +81,20 @@ public sealed class ParameterDescriptionTests
 		result.Should().Be(value.ToString());
 	}
 
+#if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void ToString_WithStringValue_ShouldReturnValueEnclosedInQuotationMarks(string value)
+	public void ToString_WithReadOnlySpan_ShouldSetIsOutParameterToFalse(string buffer)
 	{
-		ParameterDescription sut = ParameterDescription.FromOutParameter(value);
+		ReadOnlySpan<char> value = buffer.AsSpan();
+		ParameterDescription sut = ParameterDescription.FromParameter(value);
+		string expectedString = $"[{string.Join(",", buffer.ToCharArray())}]";
 
 		string? result = sut.ToString();
 
-		result.Should().Be($"\"{value}\"");
+		result.Should().Be(expectedString);
 	}
+#endif
 
 #if FEATURE_SPAN
 	[Theory]
@@ -107,18 +111,14 @@ public sealed class ParameterDescriptionTests
 	}
 #endif
 
-#if FEATURE_SPAN
 	[Theory]
 	[AutoData]
-	public void ToString_WithReadOnlySpan_ShouldSetIsOutParameterToFalse(string buffer)
+	public void ToString_WithStringValue_ShouldReturnValueEnclosedInQuotationMarks(string value)
 	{
-		ReadOnlySpan<char> value = buffer.AsSpan();
-		ParameterDescription sut = ParameterDescription.FromParameter(value);
-		string expectedString = $"[{string.Join(",", buffer.ToCharArray())}]";
+		ParameterDescription sut = ParameterDescription.FromOutParameter(value);
 
 		string? result = sut.ToString();
 
-		result.Should().Be(expectedString);
+		result.Should().Be($"\"{value}\"");
 	}
-#endif
 }

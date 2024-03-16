@@ -29,15 +29,15 @@ internal sealed class DriveInfoMock : IStorageDrive
 	/// </summary>
 	public const long DefaultTotalSize = 1024 * 1024 * 1024;
 
+	private string _driveFormat;
+	private DriveType _driveType;
 	private readonly MockFileSystem _fileSystem;
+	private bool _isReady;
+	private readonly string _name;
+	private long _totalSize;
 
 	private long _usedBytes;
 	private string _volumeLabel = nameof(MockFileSystem);
-	private readonly string _name;
-	private long _totalSize;
-	private string _driveFormat;
-	private DriveType _driveType;
-	private bool _isReady;
 
 	private DriveInfoMock(string driveName, MockFileSystem fileSystem)
 	{
@@ -68,7 +68,8 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(AvailableFreeSpace), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(AvailableFreeSpace), PropertyAccess.Get);
 
 			return TotalFreeSpace;
 		}
@@ -79,7 +80,8 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(DriveFormat), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(DriveFormat), PropertyAccess.Get);
 
 			return _driveFormat;
 		}
@@ -90,7 +92,8 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(DriveType), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(DriveType), PropertyAccess.Get);
 
 			return _driveType;
 		}
@@ -132,7 +135,8 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(RootDirectory), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(RootDirectory), PropertyAccess.Get);
 
 			return DirectoryInfoMock.New(_fileSystem.Storage.GetLocation(Name), _fileSystem);
 		}
@@ -143,7 +147,8 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(TotalFreeSpace), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(TotalFreeSpace), PropertyAccess.Get);
 
 			return _totalSize - _usedBytes;
 		}
@@ -154,7 +159,8 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(TotalSize), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(TotalSize), PropertyAccess.Get);
 
 			return _totalSize;
 		}
@@ -166,14 +172,16 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(VolumeLabel), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(VolumeLabel), PropertyAccess.Get);
 
 			return _volumeLabel;
 		}
 		[SupportedOSPlatform("windows")]
 		set
 		{
-			using IDisposable registration = RegisterProperty(nameof(VolumeLabel), PropertyAccess.Set);
+			using IDisposable registration =
+				RegisterProperty(nameof(VolumeLabel), PropertyAccess.Set);
 
 			_volumeLabel = value ?? _volumeLabel;
 			_fileSystem.Execute.NotOnWindows(
@@ -235,6 +243,18 @@ internal sealed class DriveInfoMock : IStorageDrive
 
 	internal string GetName() => _name;
 
+	[return: NotNullIfNotNull("driveName")]
+	internal static DriveInfoMock? New(string? driveName,
+		MockFileSystem fileSystem)
+	{
+		if (driveName == null)
+		{
+			return null;
+		}
+
+		return new DriveInfoMock(driveName, fileSystem);
+	}
+
 	private string GetTopmostParentDirectory(string path)
 	{
 		while (true)
@@ -250,6 +270,9 @@ internal sealed class DriveInfoMock : IStorageDrive
 
 		return path;
 	}
+
+	private IDisposable RegisterProperty(string name, PropertyAccess access)
+		=> _fileSystem.StatisticsRegistration.DriveInfo.RegisterProperty(_name, name, access);
 
 	private static string ValidateDriveLetter(string driveName,
 		MockFileSystem fileSystem)
@@ -272,19 +295,4 @@ internal sealed class DriveInfoMock : IStorageDrive
 
 		throw ExceptionFactory.InvalidDriveName();
 	}
-
-	[return: NotNullIfNotNull("driveName")]
-	internal static DriveInfoMock? New(string? driveName,
-		MockFileSystem fileSystem)
-	{
-		if (driveName == null)
-		{
-			return null;
-		}
-
-		return new DriveInfoMock(driveName, fileSystem);
-	}
-
-	private IDisposable RegisterProperty(string name, PropertyAccess access)
-		=> _fileSystem.StatisticsRegistration.DriveInfo.RegisterProperty(_name, name, access);
 }

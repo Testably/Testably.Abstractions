@@ -119,6 +119,44 @@ public abstract partial class WriteTests<TFileSystem>
 			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
+#if FEATURE_SPAN
+	[SkippableTheory]
+	[AutoData]
+	public void Write_AsSpan_CanWriteFalse_ShouldThrowNotSupportedException(
+		string path, byte[] bytes)
+	{
+		byte[] buffer = new byte[bytes.Length];
+		FileSystem.File.WriteAllBytes(path, bytes);
+		Exception? exception;
+
+		using (FileSystemStream stream = FileSystem.File.OpenRead(path))
+		{
+			exception = Record.Exception(() =>
+			{
+				// ReSharper disable once AccessToDisposedClosure
+				stream.Write(buffer.AsSpan());
+			});
+		}
+
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
+	}
+#endif
+
+#if FEATURE_SPAN
+	[SkippableTheory]
+	[AutoData]
+	public void Write_AsSpan_ShouldFillBuffer(string path, byte[] bytes)
+	{
+		using (FileSystemStream stream = FileSystem.File.Create(path))
+		{
+			stream.Write(bytes.AsSpan());
+		}
+
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(bytes);
+	}
+#endif
+
 	[SkippableTheory]
 	[AutoData]
 	public void Write_CanWriteFalse_ShouldThrowNotSupportedException(
@@ -152,6 +190,52 @@ public abstract partial class WriteTests<TFileSystem>
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(bytes);
 	}
+
+#if FEATURE_FILESYSTEM_ASYNC
+	[SkippableTheory]
+	[AutoData]
+	public async Task WriteAsync_CanWriteFalse_ShouldThrowNotSupportedException(
+		string path, byte[] bytes)
+	{
+		using CancellationTokenSource cts = new(30000);
+		byte[] buffer = new byte[bytes.Length];
+		await FileSystem.File.WriteAllBytesAsync(path, bytes, cts.Token);
+		Exception? exception;
+
+		await using (FileSystemStream stream = FileSystem.File.OpenRead(path))
+		{
+			exception = await Record.ExceptionAsync(async () =>
+			{
+				// ReSharper disable once AccessToDisposedClosure
+				#pragma warning disable CA1835
+				await stream.WriteAsync(buffer, 0, bytes.Length, cts.Token);
+				#pragma warning restore CA1835
+			});
+		}
+
+		exception.Should().BeException<NotSupportedException>(
+			hResult: -2146233067);
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_ASYNC
+	[SkippableTheory]
+	[AutoData]
+	public async Task WriteAsync_ShouldFillBuffer(string path, byte[] bytes)
+	{
+		using CancellationTokenSource cts = new(30000);
+
+		await using (FileSystemStream stream = FileSystem.File.Create(path))
+		{
+			#pragma warning disable CA1835
+			await stream.WriteAsync(bytes, 0, bytes.Length, cts.Token);
+			#pragma warning restore CA1835
+		}
+
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(bytes);
+	}
+#endif
 
 	[SkippableTheory]
 	[AutoData]
@@ -207,88 +291,4 @@ public abstract partial class WriteTests<TFileSystem>
 		exception.Should().BeException<InvalidOperationException>(
 			hResult: -2146233079);
 	}
-
-#if FEATURE_SPAN
-	[SkippableTheory]
-	[AutoData]
-	public void Write_AsSpan_ShouldFillBuffer(string path, byte[] bytes)
-	{
-		using (FileSystemStream stream = FileSystem.File.Create(path))
-		{
-			stream.Write(bytes.AsSpan());
-		}
-
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(bytes);
-	}
-#endif
-
-#if FEATURE_SPAN
-	[SkippableTheory]
-	[AutoData]
-	public void Write_AsSpan_CanWriteFalse_ShouldThrowNotSupportedException(
-		string path, byte[] bytes)
-	{
-		byte[] buffer = new byte[bytes.Length];
-		FileSystem.File.WriteAllBytes(path, bytes);
-		Exception? exception;
-
-		using (FileSystemStream stream = FileSystem.File.OpenRead(path))
-		{
-			exception = Record.Exception(() =>
-			{
-				// ReSharper disable once AccessToDisposedClosure
-				stream.Write(buffer.AsSpan());
-			});
-		}
-
-		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
-	}
-#endif
-
-#if FEATURE_FILESYSTEM_ASYNC
-	[SkippableTheory]
-	[AutoData]
-	public async Task WriteAsync_ShouldFillBuffer(string path, byte[] bytes)
-	{
-		using CancellationTokenSource cts = new(30000);
-
-		await using (FileSystemStream stream = FileSystem.File.Create(path))
-		{
-			#pragma warning disable CA1835
-			await stream.WriteAsync(bytes, 0, bytes.Length, cts.Token);
-			#pragma warning restore CA1835
-		}
-
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(bytes);
-	}
-#endif
-
-#if FEATURE_FILESYSTEM_ASYNC
-	[SkippableTheory]
-	[AutoData]
-	public async Task WriteAsync_CanWriteFalse_ShouldThrowNotSupportedException(
-		string path, byte[] bytes)
-	{
-		using CancellationTokenSource cts = new(30000);
-		byte[] buffer = new byte[bytes.Length];
-		await FileSystem.File.WriteAllBytesAsync(path, bytes, cts.Token);
-		Exception? exception;
-
-		await using (FileSystemStream stream = FileSystem.File.OpenRead(path))
-		{
-			exception = await Record.ExceptionAsync(async () =>
-			{
-				// ReSharper disable once AccessToDisposedClosure
-				#pragma warning disable CA1835
-				await stream.WriteAsync(buffer, 0, bytes.Length, cts.Token);
-				#pragma warning restore CA1835
-			});
-		}
-
-		exception.Should().BeException<NotSupportedException>(
-			hResult: -2146233067);
-	}
-#endif
 }

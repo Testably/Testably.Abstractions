@@ -162,24 +162,6 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableFact]
 	public void
-		ExtractToDirectory_WithStream_Null_ShouldThrowArgumentNullException()
-	{
-		FileSystem.Initialize();
-		Stream source = null!;
-
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.ZipFile().ExtractToDirectory(source, "bar");
-		});
-
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.ParamName.Should().Be("source");
-	}
-#endif
-
-#if FEATURE_COMPRESSION_STREAM
-	[SkippableFact]
-	public void
 		ExtractToDirectory_WithStream_NotReadable_ShouldThrowArgumentNullException()
 	{
 		FileSystem.Initialize();
@@ -192,6 +174,24 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 
 		exception.Should().BeException<ArgumentException>(
 			"The stream is unreadable", paramName: "source", hResult: -2147024809);
+	}
+#endif
+
+#if FEATURE_COMPRESSION_STREAM
+	[SkippableFact]
+	public void
+		ExtractToDirectory_WithStream_Null_ShouldThrowArgumentNullException()
+	{
+		FileSystem.Initialize();
+		Stream source = null!;
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.ZipFile().ExtractToDirectory(source, "bar");
+		});
+
+		exception.Should().BeOfType<ArgumentNullException>()
+			.Which.ParamName.Should().Be("source");
 	}
 #endif
 

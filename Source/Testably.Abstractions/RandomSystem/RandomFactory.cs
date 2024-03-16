@@ -5,8 +5,8 @@ namespace Testably.Abstractions.RandomSystem;
 
 internal sealed class RandomFactory : IRandomFactory
 {
-	private static readonly Random Global = new();
 	[ThreadStatic] private static IRandom? _shared;
+	private static readonly Random Global = new();
 
 	internal RandomFactory(RealRandomSystem timeSystem)
 	{

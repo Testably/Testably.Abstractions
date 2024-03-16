@@ -87,6 +87,45 @@ public abstract partial class Tests<TFileSystem>
 		buffer.Should().BeEquivalentTo(bytes);
 	}
 
+#if FEATURE_FILESYSTEM_ASYNC
+	[SkippableTheory]
+	[AutoData]
+	public async Task CopyToAsync_BufferSizeZero_ShouldThrowArgumentOutOfRangeException(
+		string path, byte[] bytes)
+	{
+		byte[] buffer = new byte[bytes.Length];
+		await FileSystem.File.WriteAllBytesAsync(path, bytes);
+
+		Exception? exception = await Record.ExceptionAsync(async () =>
+		{
+			await using FileSystemStream stream = FileSystem.File.OpenRead(path);
+			using MemoryStream destination = new(buffer);
+			await stream.CopyToAsync(destination, 0);
+		});
+
+		exception.Should().BeException<ArgumentOutOfRangeException>(
+			paramName: "bufferSize");
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_ASYNC
+	[SkippableTheory]
+	[AutoData]
+	public async Task CopyToAsync_ShouldCopyBytes(
+		string path, byte[] bytes)
+	{
+		byte[] buffer = new byte[bytes.Length];
+		await FileSystem.File.WriteAllBytesAsync(path, bytes);
+		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
+		using MemoryStream destination = new(buffer);
+
+		await stream.CopyToAsync(destination);
+
+		await destination.FlushAsync();
+		buffer.Should().BeEquivalentTo(bytes);
+	}
+#endif
+
 	[SkippableTheory]
 	[AutoData]
 	public void Extensibility_ShouldWrapFileStreamOnRealFileSystem(
@@ -299,43 +338,4 @@ public abstract partial class Tests<TFileSystem>
 
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
-
-#if FEATURE_FILESYSTEM_ASYNC
-	[SkippableTheory]
-	[AutoData]
-	public async Task CopyToAsync_ShouldCopyBytes(
-		string path, byte[] bytes)
-	{
-		byte[] buffer = new byte[bytes.Length];
-		await FileSystem.File.WriteAllBytesAsync(path, bytes);
-		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
-		using MemoryStream destination = new(buffer);
-
-		await stream.CopyToAsync(destination);
-
-		await destination.FlushAsync();
-		buffer.Should().BeEquivalentTo(bytes);
-	}
-#endif
-
-#if FEATURE_FILESYSTEM_ASYNC
-	[SkippableTheory]
-	[AutoData]
-	public async Task CopyToAsync_BufferSizeZero_ShouldThrowArgumentOutOfRangeException(
-		string path, byte[] bytes)
-	{
-		byte[] buffer = new byte[bytes.Length];
-		await FileSystem.File.WriteAllBytesAsync(path, bytes);
-
-		Exception? exception = await Record.ExceptionAsync(async () =>
-		{
-			await using FileSystemStream stream = FileSystem.File.OpenRead(path);
-			using MemoryStream destination = new(buffer);
-			await stream.CopyToAsync(destination, 0);
-		});
-
-		exception.Should().BeException<ArgumentOutOfRangeException>(
-			paramName: "bufferSize");
-	}
-#endif
 }

@@ -12,14 +12,6 @@ namespace Testably.Abstractions.Testing.FileSystem;
 
 internal sealed class PathMock : PathSystemBase
 {
-	private readonly MockFileSystem _fileSystem;
-
-	internal PathMock(MockFileSystem fileSystem)
-		: base(fileSystem)
-	{
-		_fileSystem = fileSystem;
-	}
-
 	/// <inheritdoc cref="IPath.AltDirectorySeparatorChar" />
 	public override char AltDirectorySeparatorChar
 	{
@@ -62,6 +54,14 @@ internal sealed class PathMock : PathSystemBase
 
 			return base.VolumeSeparatorChar;
 		}
+	}
+
+	private readonly MockFileSystem _fileSystem;
+
+	internal PathMock(MockFileSystem fileSystem)
+		: base(fileSystem)
+	{
+		_fileSystem = fileSystem;
 	}
 
 	/// <inheritdoc cref="IPath.ChangeExtension(string, string)" />
@@ -575,9 +575,6 @@ internal sealed class PathMock : PathSystemBase
 	}
 #endif
 
-	private IDisposable RegisterProperty(string name, PropertyAccess access = PropertyAccess.Get)
-		=> _fileSystem.StatisticsRegistration.Path.RegisterProperty(name, access);
-
 	private IDisposable RegisterMethod(string name)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name);
 
@@ -637,4 +634,7 @@ internal sealed class PathMock : PathSystemBase
 			ParameterDescription.FromParameter(parameter2),
 			ParameterDescription.FromParameter(parameter3),
 			ParameterDescription.FromParameter(parameter4));
+
+	private IDisposable RegisterProperty(string name, PropertyAccess access = PropertyAccess.Get)
+		=> _fileSystem.StatisticsRegistration.Path.RegisterProperty(name, access);
 }

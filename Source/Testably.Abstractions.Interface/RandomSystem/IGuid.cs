@@ -37,6 +37,16 @@ public interface IGuid : IRandomSystemEntity
 #endif
 
 #if FEATURE_GUID_PARSE
+	/// <inheritdoc cref="Guid.ParseExact(string, string)" />
+	Guid ParseExact(string input, string format);
+#endif
+
+#if FEATURE_GUID_PARSE
+	/// <inheritdoc cref="Guid.ParseExact(ReadOnlySpan{char}, ReadOnlySpan{char})" />
+	Guid ParseExact(ReadOnlySpan<char> input, ReadOnlySpan<char> format);
+#endif
+
+#if FEATURE_GUID_PARSE
 	/// <inheritdoc cref="Guid.TryParse(string?, out Guid)" />
 	bool TryParse([NotNullWhen(true)] string? input, out Guid result);
 #endif
@@ -54,16 +64,6 @@ public interface IGuid : IRandomSystemEntity
 #if FEATURE_GUID_FORMATPROVIDER
 	/// <inheritdoc cref="Guid.TryParse(ReadOnlySpan{char}, IFormatProvider?, out Guid)" />
 	bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Guid result);
-#endif
-
-#if FEATURE_GUID_PARSE
-	/// <inheritdoc cref="Guid.ParseExact(string, string)" />
-	Guid ParseExact(string input, string format);
-#endif
-
-#if FEATURE_GUID_PARSE
-	/// <inheritdoc cref="Guid.ParseExact(ReadOnlySpan{char}, ReadOnlySpan{char})" />
-	Guid ParseExact(ReadOnlySpan<char> input, ReadOnlySpan<char> format);
 #endif
 
 #if FEATURE_GUID_PARSE

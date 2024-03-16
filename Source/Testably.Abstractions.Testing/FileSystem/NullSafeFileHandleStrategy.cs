@@ -11,6 +11,8 @@ namespace Testably.Abstractions.Testing.FileSystem;
 /// </summary>
 public class NullSafeFileHandleStrategy : ISafeFileHandleStrategy
 {
+	#region ISafeFileHandleStrategy Members
+
 	/// <inheritdoc cref="ISafeFileHandleStrategy.MapSafeFileHandle(SafeFileHandle)" />
 #if NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
@@ -24,4 +26,6 @@ public class NullSafeFileHandleStrategy : ISafeFileHandleStrategy
 
 		throw ExceptionFactory.NotSupportedSafeFileHandle();
 	}
+
+	#endregion
 }

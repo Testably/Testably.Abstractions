@@ -229,6 +229,46 @@ public class MockFileSystemTests
 		drive.AvailableFreeSpace.Should().Be(totalSize);
 	}
 
+#if NET6_0_OR_GREATER
+	[SkippableTheory]
+	[AutoData]
+	public void
+		WithSafeFileHandleStrategy_DefaultStrategy_ShouldUseMappedSafeFileHandleMock(
+			string path, string contents)
+	{
+		MockFileSystem sut = new();
+		sut.File.WriteAllText(path, contents);
+		sut.WithSafeFileHandleStrategy(
+			new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
+
+		using FileSystemStream stream =
+			sut.FileStream.New(new SafeFileHandle(), FileAccess.Read);
+		using StreamReader streamReader = new(stream);
+		string result = streamReader.ReadToEnd();
+
+		result.Should().Be(contents);
+	}
+#endif
+
+#if NET6_0_OR_GREATER
+	[SkippableTheory]
+	[AutoData]
+	public void WithSafeFileHandleStrategy_NullStrategy_ShouldThrowException(
+		string path, string contents)
+	{
+		MockFileSystem sut = new();
+		sut.File.WriteAllText(path, contents);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.FileStream.New(new SafeFileHandle(), FileAccess.Read);
+		});
+
+		exception.Should().BeOfType<ArgumentException>()
+			.Which.ParamName.Should().Be("handle");
+	}
+#endif
+
 	[SkippableTheory]
 	[AutoData]
 	public void WithUncDrive_ShouldCreateUncDrive(
@@ -291,44 +331,4 @@ public class MockFileSystemTests
 
 		exception.Should().BeOfType<DirectoryNotFoundException>();
 	}
-
-#if NET6_0_OR_GREATER
-	[SkippableTheory]
-	[AutoData]
-	public void
-		WithSafeFileHandleStrategy_DefaultStrategy_ShouldUseMappedSafeFileHandleMock(
-			string path, string contents)
-	{
-		MockFileSystem sut = new();
-		sut.File.WriteAllText(path, contents);
-		sut.WithSafeFileHandleStrategy(
-			new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
-
-		using FileSystemStream stream =
-			sut.FileStream.New(new SafeFileHandle(), FileAccess.Read);
-		using StreamReader streamReader = new(stream);
-		string result = streamReader.ReadToEnd();
-
-		result.Should().Be(contents);
-	}
-#endif
-
-#if NET6_0_OR_GREATER
-	[SkippableTheory]
-	[AutoData]
-	public void WithSafeFileHandleStrategy_NullStrategy_ShouldThrowException(
-		string path, string contents)
-	{
-		MockFileSystem sut = new();
-		sut.File.WriteAllText(path, contents);
-
-		Exception? exception = Record.Exception(() =>
-		{
-			sut.FileStream.New(new SafeFileHandle(), FileAccess.Read);
-		});
-
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.ParamName.Should().Be("handle");
-	}
-#endif
 }

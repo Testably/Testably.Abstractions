@@ -1,7 +1,4 @@
-﻿#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-using Microsoft.Win32.SafeHandles;
-#endif
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -10,12 +7,15 @@ using System.Text;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Storage;
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+using Microsoft.Win32.SafeHandles;
+#endif
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
-// ReSharper disable PossibleMultipleEnumeration
 #endif
 
+// ReSharper disable PossibleMultipleEnumeration
 namespace Testably.Abstractions.Testing.FileSystem;
 
 internal sealed class FileMock : IFile
@@ -1319,12 +1319,6 @@ internal sealed class FileMock : IFile
 		}
 	}
 
-	private enum ExceptionMode
-	{
-		Default,
-		FileNotFoundExceptionOnLinuxAndMac
-	}
-
 	private IStorageContainer GetContainerFromPath(string path,
 		ExceptionMode exceptionMode = ExceptionMode.Default)
 	{
@@ -1364,16 +1358,6 @@ internal sealed class FileMock : IFile
 	}
 #endif
 
-#if FEATURE_FILESYSTEM_ASYNC
-	private static void ThrowIfCancelled(CancellationToken cancellationToken)
-	{
-		if (cancellationToken.IsCancellationRequested)
-		{
-			throw ExceptionFactory.TaskWasCanceled();
-		}
-	}
-#endif
-
 	private IDisposable RegisterMethod<T1>(string name,
 		T1 parameter1)
 		=> _fileSystem.StatisticsRegistration.File.RegisterMethod(name,
@@ -1399,4 +1383,20 @@ internal sealed class FileMock : IFile
 			ParameterDescription.FromParameter(parameter2),
 			ParameterDescription.FromParameter(parameter3),
 			ParameterDescription.FromParameter(parameter4));
+
+#if FEATURE_FILESYSTEM_ASYNC
+	private static void ThrowIfCancelled(CancellationToken cancellationToken)
+	{
+		if (cancellationToken.IsCancellationRequested)
+		{
+			throw ExceptionFactory.TaskWasCanceled();
+		}
+	}
+#endif
+
+	private enum ExceptionMode
+	{
+		Default,
+		FileNotFoundExceptionOnLinuxAndMac
+	}
 }

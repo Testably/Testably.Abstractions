@@ -5,20 +5,6 @@ namespace Testably.Abstractions.Testing.Tests.TestHelpers;
 
 public static class StatisticsTestHelpers
 {
-	public static void ShouldOnlyContainPropertyGetAccess(this IStatistics statistics, string name)
-	{
-		statistics.Properties.Length.Should().Be(1);
-		statistics.Properties.Should()
-			.ContainSingle(c => c.Name == name && c.Access == PropertyAccess.Get);
-	}
-
-	public static void ShouldOnlyContainPropertySetAccess(this IStatistics statistics, string name)
-	{
-		statistics.Properties.Length.Should().Be(1);
-		statistics.Properties.Should()
-			.ContainSingle(c => c.Name == name && c.Access == PropertyAccess.Set);
-	}
-
 	public static void ShouldOnlyContainMethodCall(this IStatistics statistics, string name,
 		object?[] parameters, string because = "")
 	{
@@ -243,5 +229,19 @@ public static class StatisticsTestHelpers
 			                    c.Parameters[3].Is(parameter4) &&
 			                    c.Parameters[4].Is(parameter5) &&
 			                    c.Parameters[5].Is(parameter6));
+	}
+
+	public static void ShouldOnlyContainPropertyGetAccess(this IStatistics statistics, string name)
+	{
+		statistics.Properties.Length.Should().Be(1);
+		statistics.Properties.Should()
+			.ContainSingle(c => c.Name == name && c.Access == PropertyAccess.Get);
+	}
+
+	public static void ShouldOnlyContainPropertySetAccess(this IStatistics statistics, string name)
+	{
+		statistics.Properties.Length.Should().Be(1);
+		statistics.Properties.Should()
+			.ContainSingle(c => c.Name == name && c.Access == PropertyAccess.Set);
 	}
 }

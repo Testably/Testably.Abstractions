@@ -84,7 +84,7 @@ internal static class FileSystemExtensions
 	}
 
 	/// <summary>
-	///     Ignores all registrations on the <paramref name="statisticsGate"/> until the return value is disposed.
+	///     Ignores all registrations on the <paramref name="statisticsGate" /> until the return value is disposed.
 	/// </summary>
 	internal static IDisposable Ignore(this IStatisticsGate statisticsGate)
 	{

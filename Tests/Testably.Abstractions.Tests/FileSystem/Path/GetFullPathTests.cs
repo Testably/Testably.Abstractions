@@ -15,6 +15,38 @@ public abstract partial class GetFullPathTests<TFileSystem>
 		result.Should().Be(expectedFullPath);
 	}
 
+#if FEATURE_PATH_RELATIVE
+	[SkippableFact]
+	public void GetFullPath_Relative_NullBasePath_ShouldThrowArgumentNullException()
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.Path.GetFullPath("foo", null!);
+		});
+
+		exception.Should().BeOfType<ArgumentNullException>()
+			.Which.ParamName.Should().Be("basePath");
+	}
+#endif
+
+#if FEATURE_PATH_RELATIVE
+	[SkippableTheory]
+	[InlineData(@"top/../most/file", "foo/bar", @"foo/bar/most/file")]
+	[InlineData(@"top/../most/../dir/file", "foo", @"foo/dir/file")]
+	[InlineData(@"top/../../most/file", "foo/bar", @"foo/most/file")]
+	public void GetFullPath_Relative_ShouldNormalizeProvidedPath(string input, string basePath,
+		string expected)
+	{
+		string expectedRootedPath = FileTestHelper.RootDrive(Test,
+			expected.Replace('/', FileSystem.Path.DirectorySeparatorChar));
+
+		string result = FileSystem.Path
+			.GetFullPath(input, FileTestHelper.RootDrive(Test, basePath));
+
+		result.Should().Be(expectedRootedPath);
+	}
+#endif
+
 	[SkippableFact]
 	public void GetFullPath_RelativePathWithDrive_ShouldReturnExpectedValue()
 	{
@@ -63,36 +95,4 @@ public abstract partial class GetFullPathTests<TFileSystem>
 
 		result.Should().Be(expectedRootedPath);
 	}
-
-#if FEATURE_PATH_RELATIVE
-	[SkippableTheory]
-	[InlineData(@"top/../most/file", "foo/bar", @"foo/bar/most/file")]
-	[InlineData(@"top/../most/../dir/file", "foo", @"foo/dir/file")]
-	[InlineData(@"top/../../most/file", "foo/bar", @"foo/most/file")]
-	public void GetFullPath_Relative_ShouldNormalizeProvidedPath(string input, string basePath,
-		string expected)
-	{
-		string expectedRootedPath = FileTestHelper.RootDrive(Test,
-			expected.Replace('/', FileSystem.Path.DirectorySeparatorChar));
-
-		string result = FileSystem.Path
-			.GetFullPath(input, FileTestHelper.RootDrive(Test, basePath));
-
-		result.Should().Be(expectedRootedPath);
-	}
-#endif
-
-#if FEATURE_PATH_RELATIVE
-	[SkippableFact]
-	public void GetFullPath_Relative_NullBasePath_ShouldThrowArgumentNullException()
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Path.GetFullPath("foo", null!);
-		});
-
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.ParamName.Should().Be("basePath");
-	}
-#endif
 }
