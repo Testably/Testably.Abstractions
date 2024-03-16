@@ -40,7 +40,7 @@ public partial class RandomProviderTests
 				results[i] = sut.GetNext();
 			}
 
-			results.Should().BeEquivalentTo(values.Concat(values));
+			results.Should().BeEquivalentTo([..values, ..values]);
 		}
 
 		[Theory]
@@ -107,7 +107,7 @@ public partial class RandomProviderTests
 				results[i] = sut.GetNext();
 			}
 
-			results.Should().BeEquivalentTo(values.Concat(values));
+			results.Should().BeEquivalentTo([.. values, .. values]);
 		}
 
 		[Fact]

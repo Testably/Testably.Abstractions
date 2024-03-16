@@ -185,25 +185,25 @@ public abstract partial class Tests<TFileSystem>
 	{
 		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
 
-		using FileSystemStream stream1 = FileSystem.File.Open(
+		using (FileSystemStream stream1 = FileSystem.File.Open(
 			path,
 			FileMode.OpenOrCreate,
 			FileAccess.ReadWrite,
-			FileShare.ReadWrite);
-		using FileSystemStream stream2 = FileSystem.File.Open(
-			path,
-			FileMode.OpenOrCreate,
-			FileAccess.ReadWrite,
-			FileShare.ReadWrite);
-		stream1.Write(bytes1, 0, bytes1.Length);
-		stream1.Flush();
-		stream2.Write(bytes2, 0, bytes2.Length);
-		stream2.Flush();
+			FileShare.ReadWrite))
+		{
+			using FileSystemStream stream2 = FileSystem.File.Open(
+				path,
+				FileMode.OpenOrCreate,
+				FileAccess.ReadWrite,
+				FileShare.ReadWrite);
+			stream1.Write(bytes1, 0, bytes1.Length);
+			stream1.Flush();
+			stream2.Write(bytes2, 0, bytes2.Length);
+			stream2.Flush();
 
-		stream1.Flush();
+			stream1.Flush();
+		}
 
-		stream2.Dispose();
-		stream1.Dispose();
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(bytes2);
 	}

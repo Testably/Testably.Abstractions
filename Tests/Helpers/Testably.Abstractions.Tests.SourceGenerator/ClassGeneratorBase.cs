@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Testably.Abstractions.Tests.SourceGenerator.Model;
 
@@ -33,19 +34,17 @@ internal abstract class ClassGeneratorBase
 	private string CreateFileName(ClassModel classToGenerate)
 	{
 		string? fileNamePrefix = ExtractFileNamePrefixFromMarker(Marker);
-		List<string> namespacePrefixes = new()
-		{
+		List<string> namespacePrefixes =
+		[
 			"Testably.Abstractions.Tests.FileSystem.",
 			"Testably.Abstractions."
-		};
-		foreach (string? namespacePrefix in namespacePrefixes)
+		];
+		foreach (string? namespacePrefix in namespacePrefixes
+			.Where(classToGenerate.Namespace.StartsWith))
 		{
-			if (classToGenerate.Namespace.StartsWith(namespacePrefix))
-			{
-				string? @namespace = classToGenerate.Namespace
-					.Substring(namespacePrefix.Length);
-				return $"{fileNamePrefix}{@namespace}.{classToGenerate.Name}.cs";
-			}
+			string? @namespace = classToGenerate.Namespace
+				.Substring(namespacePrefix.Length);
+			return $"{fileNamePrefix}{@namespace}.{classToGenerate.Name}.cs";
 		}
 
 		return $"{fileNamePrefix}{classToGenerate.Name}.cs";

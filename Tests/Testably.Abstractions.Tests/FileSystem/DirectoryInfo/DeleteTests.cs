@@ -117,7 +117,7 @@ public abstract partial class DeleteTests<TFileSystem>
 		});
 
 		exception.Should().BeException<IOException>(
-			hResult: Test.RunsOnWindows ? -2147024751 : Test.RunsOnMac ? 66 : 39,
+			hResult: Test.DependsOnOS(windows: -2147024751, macOS: 66, linux: 39),
 			// Path information only included in exception message on Windows and not in .NET Framework
 			messageContains: !Test.RunsOnWindows || Test.IsNetFramework
 				? null

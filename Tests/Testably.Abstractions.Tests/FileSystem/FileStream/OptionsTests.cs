@@ -31,10 +31,11 @@ public abstract partial class OptionsTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(path, contents);
 
-		using FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
-			FileAccess.ReadWrite, FileShare.None, 10, FileOptions.DeleteOnClose);
-
-		stream.Dispose();
+		using (FileSystemStream _ = FileSystem.FileStream.New(path, FileMode.Open,
+			FileAccess.ReadWrite, FileShare.None, 10, FileOptions.DeleteOnClose))
+		{
+			// Delete on close
+		}
 
 		FileSystem.Should().NotHaveFile(path);
 	}
@@ -50,14 +51,14 @@ public abstract partial class OptionsTests<TFileSystem>
 
 		FileSystem.File.WriteAllText(path, contents1);
 		FileSystem.File.Encrypt(path);
-
-		using FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
-			FileAccess.ReadWrite, FileShare.None, 10, FileOptions.Encrypted);
 		byte[] bytes = Encoding.Default.GetBytes(contents2);
 
-		stream.Write(bytes, 0, bytes.Length);
-		stream.SetLength(bytes.Length);
-		stream.Dispose();
+		using (FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
+			FileAccess.ReadWrite, FileShare.None, 10, FileOptions.Encrypted))
+		{
+			stream.Write(bytes, 0, bytes.Length);
+			stream.SetLength(bytes.Length);
+		}
 
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(contents2)
@@ -70,13 +71,13 @@ public abstract partial class OptionsTests<TFileSystem>
 		string path, string contents1, string contents2)
 	{
 		FileSystem.File.WriteAllText(path, contents1);
-
-		using FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
-			FileAccess.ReadWrite, FileShare.None, 10, FileOptions.Encrypted);
 		byte[] bytes = Encoding.Default.GetBytes(contents2);
 
-		stream.Write(bytes, 0, bytes.Length);
-		stream.Dispose();
+		using (FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
+			FileAccess.ReadWrite, FileShare.None, 10, FileOptions.Encrypted))
+		{
+			stream.Write(bytes, 0, bytes.Length);
+		}
 
 		FileSystem.File.GetAttributes(path).Should()
 			.NotHaveFlag(FileAttributes.Encrypted);
@@ -94,15 +95,15 @@ public abstract partial class OptionsTests<TFileSystem>
 
 		FileSystem.File.WriteAllText(path, contents1);
 		FileSystem.File.Encrypt(path);
-
-		using FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
-			FileAccess.ReadWrite, FileShare.None, 10);
 		byte[] bytes = Encoding.Default.GetBytes(contents2);
 
-		stream.Write(bytes, 0, bytes.Length);
-		stream.SetLength(bytes.Length);
-		stream.Dispose();
-
+		using (FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
+			FileAccess.ReadWrite, FileShare.None, 10))
+		{
+			stream.Write(bytes, 0, bytes.Length);
+			stream.SetLength(bytes.Length);
+		}
+		
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(contents2)
 			.And.HasAttribute(FileAttributes.Encrypted);

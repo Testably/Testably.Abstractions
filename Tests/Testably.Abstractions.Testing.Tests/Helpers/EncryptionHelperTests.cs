@@ -8,9 +8,11 @@ public class EncryptionHelperTests
 	[AutoData]
 	public void Decrypt_ShouldBeDifferentThanBefore(byte[] bytes)
 	{
-		byte[] result = EncryptionHelper.Encrypt(bytes);
+		byte[] encryptedBytes = EncryptionHelper.Encrypt(bytes);
 
-		result.Should().NotBeEquivalentTo(bytes);
+		byte[] result = EncryptionHelper.Decrypt(encryptedBytes);
+
+		result.Should().NotBeEquivalentTo(encryptedBytes);
 	}
 
 	[Theory]

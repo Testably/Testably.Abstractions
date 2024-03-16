@@ -184,15 +184,17 @@ public abstract partial class ReplaceTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(sourceName, sourceContents);
 		FileSystem.File.WriteAllText(destinationName, destinationContents);
-		using FileSystemStream stream = FileSystem.File.Open(sourceName, FileMode.Open,
-			FileAccess.Read, FileShare.Read);
 
-		Exception? exception = Record.Exception(() =>
+		Exception? exception;
+		using (FileSystemStream _ = FileSystem.File.Open(sourceName,
+			FileMode.Open, FileAccess.Read, FileShare.Read))
 		{
-			FileSystem.File.Replace(sourceName, destinationName, backupName);
-		});
+			exception = Record.Exception(() =>
+			{
+				FileSystem.File.Replace(sourceName, destinationName, backupName);
+			});
+		}
 
-		stream.Dispose();
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeException<IOException>(hResult: -2147024864);

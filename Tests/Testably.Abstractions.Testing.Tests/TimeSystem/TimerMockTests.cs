@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.TimeSystem;
-using Testably.Abstractions.TimeSystem;
 using Xunit.Abstractions;
 using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
@@ -62,6 +61,7 @@ public class TimerMockTests
 		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 		}, null, 100, 200);
+		// ReSharper disable once DisposeOnUsingVariable
 		timer.Dispose();
 
 		Exception? exception = Record.Exception(() =>
@@ -87,6 +87,7 @@ public class TimerMockTests
 		await using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 		}, null, 100, 200);
+		// ReSharper disable once DisposeOnUsingVariable
 		await timer.DisposeAsync();
 
 		Exception? exception = Record.Exception(() =>
@@ -345,7 +346,5 @@ public class TimerMockTests
 		count.Should().Be(executionCount);
 	}
 
-	private class DummyWaitHandle : WaitHandle
-	{
-	}
+	private sealed class DummyWaitHandle : WaitHandle;
 }

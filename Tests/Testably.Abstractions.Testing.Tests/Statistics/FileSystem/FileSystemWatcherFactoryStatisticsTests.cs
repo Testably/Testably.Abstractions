@@ -50,7 +50,7 @@ public class FileSystemWatcherFactoryStatisticsTests
 	{
 		MockFileSystem sut = new();
 		sut.Initialize();
-		FileSystemWatcher fileSystemWatcher = new("."); //TODO: Check how empty path is treated!
+		FileSystemWatcher fileSystemWatcher = new();
 
 		using IFileSystemWatcher result = sut.FileSystemWatcher.Wrap(fileSystemWatcher);
 

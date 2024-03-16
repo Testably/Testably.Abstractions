@@ -14,13 +14,12 @@ public abstract partial class CreateTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(path, originalContent);
 
-		using FileSystemStream stream = FileSystem.File.Create(path);
+		using (FileSystemStream stream = FileSystem.File.Create(path))
+		{
+			using StreamWriter streamWriter = new(stream);
+			streamWriter.Write(newContent);
+		}
 
-		using StreamWriter streamWriter = new(stream);
-		streamWriter.Write(newContent);
-
-		streamWriter.Dispose();
-		stream.Dispose();
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(newContent);
 	}

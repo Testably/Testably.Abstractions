@@ -22,9 +22,11 @@ public class FilePlatformIndependenceExtensionsTests
 	{
 		Skip.If(Test.RunsOnWindows);
 
-		string path = "C:/" + part1;
-		string expectedPath = part1.PrefixRoot(new MockFileSystem());
-		path = path.NormalizePath(new MockFileSystem());
+		MockFileSystem fileSystem = new();
+
+		string path = fileSystem.GetDefaultDrive().Name.Replace("\\", "/") + part1;
+		string expectedPath = part1.PrefixRoot(fileSystem);
+		path = path.NormalizePath(fileSystem);
 
 		path.Should().Be(expectedPath);
 	}
@@ -37,9 +39,10 @@ public class FilePlatformIndependenceExtensionsTests
 		Skip.If(Test.RunsOnWindows);
 
 		char[] separatorChars =
-		{
-			Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar
-		};
+		[
+			Path.DirectorySeparatorChar,
+			Path.AltDirectorySeparatorChar
+		];
 		foreach (char separatorChar in separatorChars)
 		{
 			string path = part1 + separatorChar + part2;
@@ -58,9 +61,10 @@ public class FilePlatformIndependenceExtensionsTests
 		Skip.IfNot(Test.RunsOnWindows);
 
 		char[] separatorChars =
-		{
-			Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar
-		};
+		[
+			Path.DirectorySeparatorChar,
+			Path.AltDirectorySeparatorChar
+		];
 		foreach (char separatorChar in separatorChars)
 		{
 			string path = part1 + separatorChar + part2;

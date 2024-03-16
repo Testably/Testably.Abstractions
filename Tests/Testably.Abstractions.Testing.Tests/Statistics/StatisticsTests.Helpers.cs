@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32.SafeHandles;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -21,39 +22,16 @@ public sealed partial class StatisticsTests
 		{
 			StringBuilder builder = new();
 
-			foreach (PropertyInfo propertyInfo in
-				mockType.GetInterfaces()
-					.Where(i => i != typeof(IDisposable) && i != typeof(IAsyncDisposable))
-					.SelectMany(i => i.GetProperties())
-					.Concat(mockType.GetProperties(BindingFlags.DeclaredOnly |
-					                               BindingFlags.Public |
-					                               BindingFlags.Instance))
-					.Where(p => p.IsSpecialName == false && (p.CanRead || p.CanWrite))
-					.OrderBy(m => m.Name))
-			{
-				if (propertyInfo.GetCustomAttribute<ObsoleteAttribute>() != null ||
-				    propertyInfo.Name == nameof(IFileSystemEntity.FileSystem))
-				{
-					continue;
-				}
+			CheckProperties(builder, className, requireInstance, mockType, testType);
+			CheckMethods(builder, className, requireInstance, mockType, testType);
 
-				if (propertyInfo.PropertyType == typeof(IContainer))
-				{
-					// Container cannot be overridden
-					continue;
-				}
+			return builder.ToString();
+		}
 
-				if (propertyInfo.CanRead)
-				{
-					CheckPropertyGetAccess(builder, propertyInfo, className, requireInstance, mockType, testType);
-				}
-
-				if (propertyInfo.CanWrite)
-				{
-					CheckPropertySetAccess(builder, propertyInfo, className, requireInstance, mockType, testType);
-				}
-			}
-
+		private static void CheckMethods(StringBuilder builder,
+			string className, bool requireInstance,
+			Type mockType, Type testType)
+		{
 			foreach (MethodInfo methodInfo in
 				mockType.GetInterfaces()
 					.Where(i => i != typeof(IDisposable) && i != typeof(IAsyncDisposable))
@@ -79,10 +57,49 @@ public sealed partial class StatisticsTests
 					continue;
 				}
 
-				CheckMethodCall(builder, methodInfo, parameters, className, requireInstance, mockType, testType);
+				CheckMethodCall(builder, methodInfo, parameters, className, requireInstance,
+					mockType, testType);
 			}
+		}
 
-			return builder.ToString();
+		private static void CheckProperties(StringBuilder builder,
+			string className, bool requireInstance,
+			Type mockType, Type testType)
+		{
+			foreach (PropertyInfo propertyInfo in
+				mockType.GetInterfaces()
+					.Where(i => i != typeof(IDisposable) && i != typeof(IAsyncDisposable))
+					.SelectMany(i => i.GetProperties())
+					.Concat(mockType.GetProperties(BindingFlags.DeclaredOnly |
+					                               BindingFlags.Public |
+					                               BindingFlags.Instance))
+					.Where(p => !p.IsSpecialName && (p.CanRead || p.CanWrite))
+					.OrderBy(m => m.Name))
+			{
+				if (propertyInfo.GetCustomAttribute<ObsoleteAttribute>() != null ||
+				    propertyInfo.Name == nameof(IFileSystemEntity.FileSystem))
+				{
+					continue;
+				}
+
+				if (propertyInfo.PropertyType == typeof(IContainer))
+				{
+					// Container cannot be overridden
+					continue;
+				}
+
+				if (propertyInfo.CanRead)
+				{
+					CheckPropertyGetAccess(builder, propertyInfo, className, requireInstance,
+						mockType, testType);
+				}
+
+				if (propertyInfo.CanWrite)
+				{
+					CheckPropertySetAccess(builder, propertyInfo, className, requireInstance,
+						mockType, testType);
+				}
+			}
 		}
 
 		private static void CheckMethodCall(StringBuilder builder,
@@ -188,7 +205,6 @@ public sealed partial class StatisticsTests
 			builder.AppendLine();
 		}
 
-
 		private static string FirstCharToUpperAsSpan(string input)
 		{
 			if (string.IsNullOrEmpty(input))
@@ -292,50 +308,82 @@ public sealed partial class StatisticsTests
 
 			if (firstCharUpperCase)
 			{
-				if (type == typeof(int))
+				if (HasSpecialNameInUpperCase(type, out string? name))
 				{
-					return "Int";
-				}
-
-				if (type == typeof(bool))
-				{
-					return "Bool";
+					return name;
 				}
 			}
 			else
 			{
-				if (type == typeof(int))
+				if (HasSpecialNameInLowerCase(type, out string? name))
 				{
-					return "int";
-				}
-
-				if (type == typeof(bool))
-				{
-					return "bool";
-				}
-
-				if (type == typeof(byte))
-				{
-					return "byte";
-				}
-
-				if (type == typeof(string))
-				{
-					return "string";
-				}
-
-				if (type == typeof(byte[]))
-				{
-					return "byte[]";
-				}
-
-				if (type == typeof(string[]))
-				{
-					return "string[]";
+					return name;
 				}
 			}
 
 			return type.Name;
+		}
+
+		private static bool HasSpecialNameInUpperCase(Type type,
+			[NotNullWhen(true)] out string? name)
+		{
+			if (type == typeof(int))
+			{
+				name = "Int";
+				return true;
+			}
+
+			if (type == typeof(bool))
+			{
+				name = "Bool";
+				return true;
+			}
+
+			name = null;
+			return false;
+		}
+
+		private static bool HasSpecialNameInLowerCase(Type type,
+			[NotNullWhen(true)] out string? name)
+		{
+			if (type == typeof(int))
+			{
+				name = "int";
+				return true;
+			}
+
+			if (type == typeof(bool))
+			{
+				name = "bool";
+				return true;
+			}
+
+			if (type == typeof(byte))
+			{
+				name = "byte";
+				return true;
+			}
+
+			if (type == typeof(string))
+			{
+				name = "string";
+				return true;
+			}
+
+			if (type == typeof(byte[]))
+			{
+				name = "byte[]";
+				return true;
+			}
+
+			if (type == typeof(string[]))
+			{
+				name = "string[]";
+				return true;
+			}
+
+			name = null;
+			return false;
 		}
 	}
 }

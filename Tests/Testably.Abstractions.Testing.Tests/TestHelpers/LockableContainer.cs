@@ -116,7 +116,7 @@ internal sealed class LockableContainer : IStorageContainer
 
 	#endregion
 
-	private class AccessHandle : IStorageAccessHandle
+	private sealed class AccessHandle : IStorageAccessHandle
 	{
 		public AccessHandle(FileAccess access, FileShare share, bool deleteAccess)
 		{

@@ -41,20 +41,22 @@ public class FileSystemWatcherStatisticsTests
 		sut.Initialize().WithSubdirectory("foo");
 		using IFileSystemWatcher fileSystemWatcher = sut.FileSystemWatcher.New("foo");
 		// Changes in the background are necessary, so that FileSystemWatcher.WaitForChanged returns.
-		CancellationTokenSource cts = new(TimeSpan.FromSeconds(1));
+		using CancellationTokenSource cts = new(TimeSpan.FromSeconds(1));
+		CancellationToken token = cts.Token;
 		_ = Task.Run(async () =>
 		{
-			while (!cts.Token.IsCancellationRequested)
+			while (!token.IsCancellationRequested)
 			{
-				await Task.Delay(10, cts.Token);
+				await Task.Delay(10, token);
 				sut.Directory.CreateDirectory(sut.Path.Combine("foo", "some-directory"));
 				sut.Directory.Delete(sut.Path.Combine("foo", "some-directory"));
 			}
-		}, cts.Token);
+		}, token);
 		WatcherChangeTypes changeType = WatcherChangeTypes.Created;
 		int timeout = 42;
 
 		fileSystemWatcher.WaitForChanged(changeType, timeout);
+		cts.Cancel();
 
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileSystemWatcher.WaitForChanged), changeType,
@@ -68,19 +70,21 @@ public class FileSystemWatcherStatisticsTests
 		sut.Initialize().WithSubdirectory("foo");
 		using IFileSystemWatcher fileSystemWatcher = sut.FileSystemWatcher.New("foo");
 		// Changes in the background are necessary, so that FileSystemWatcher.WaitForChanged returns.
-		CancellationTokenSource cts = new(TimeSpan.FromSeconds(1));
+		using CancellationTokenSource cts = new(TimeSpan.FromSeconds(1));
+		CancellationToken token = cts.Token;
 		_ = Task.Run(async () =>
 		{
-			while (!cts.Token.IsCancellationRequested)
+			while (!token.IsCancellationRequested)
 			{
-				await Task.Delay(10, cts.Token);
+				await Task.Delay(10, token);
 				sut.Directory.CreateDirectory(sut.Path.Combine("foo", "some-directory"));
 				sut.Directory.Delete(sut.Path.Combine("foo", "some-directory"));
 			}
-		}, cts.Token);
+		}, token);
 		WatcherChangeTypes changeType = WatcherChangeTypes.Created;
 
 		fileSystemWatcher.WaitForChanged(changeType);
+		cts.Cancel();
 
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileSystemWatcher.WaitForChanged), changeType);
@@ -94,20 +98,22 @@ public class FileSystemWatcherStatisticsTests
 		sut.Initialize().WithSubdirectory("foo");
 		using IFileSystemWatcher fileSystemWatcher = sut.FileSystemWatcher.New("foo");
 		// Changes in the background are necessary, so that FileSystemWatcher.WaitForChanged returns.
-		CancellationTokenSource cts = new(TimeSpan.FromSeconds(1));
+		using CancellationTokenSource cts = new(TimeSpan.FromSeconds(1));
+		CancellationToken token = cts.Token;
 		_ = Task.Run(async () =>
 		{
-			while (!cts.Token.IsCancellationRequested)
+			while (!token.IsCancellationRequested)
 			{
-				await Task.Delay(10, cts.Token);
+				await Task.Delay(10, token);
 				sut.Directory.CreateDirectory(sut.Path.Combine("foo", "some-directory"));
 				sut.Directory.Delete(sut.Path.Combine("foo", "some-directory"));
 			}
-		}, cts.Token);
+		}, token);
 		WatcherChangeTypes changeType = WatcherChangeTypes.Created;
 		TimeSpan timeout = TimeSpan.FromSeconds(2);
 
 		fileSystemWatcher.WaitForChanged(changeType, timeout);
+		cts.Cancel();
 
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileSystemWatcher.WaitForChanged), changeType,

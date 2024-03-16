@@ -96,9 +96,9 @@ public class InMemoryLocationTests
 	public void Equals_Object_SameInstance_ShouldReturnTrue(string path)
 	{
 		object location = InMemoryLocation.New(new MockFileSystem(), null, path);
+		object other = location;
 
-		// ReSharper disable once EqualExpressionComparison
-		bool result = location.Equals(location);
+		bool result = location.Equals(other);
 
 		result.Should().BeTrue();
 	}
@@ -146,7 +146,7 @@ public class InMemoryLocationTests
 		location.ToString().Should().Be(path);
 	}
 
-	private class DummyLocation : IStorageLocation
+	private sealed class DummyLocation : IStorageLocation
 	{
 		public DummyLocation(string fullPath)
 		{
@@ -173,7 +173,7 @@ public class InMemoryLocationTests
 		public bool Equals(IStorageLocation? other)
 		{
 			_ = other;
-			throw new NotSupportedException();
+			return false;
 		}
 
 		/// <inheritdoc cref="IStorageLocation.GetParent()" />
