@@ -12,6 +12,26 @@ public abstract partial class ReadTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
+	public void BeginRead_CanReadFalse_ShouldThrowNotSupportedException(
+		string path, byte[] bytes)
+	{
+		FileSystem.File.WriteAllBytes(path, bytes);
+		FileSystemStream stream = FileSystem.FileInfo.New(path).OpenWrite();
+
+		byte[] buffer = new byte[bytes.Length];
+		Exception? exception = Record.Exception(() =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			stream.BeginRead(buffer, 0, buffer.Length, _ => { }, null);
+		});
+
+		stream.Dispose();
+
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void BeginRead_ShouldCopyContentsToBuffer(
 		string path, byte[] bytes)
 	{
@@ -29,26 +49,6 @@ public abstract partial class ReadTests<TFileSystem>
 
 		ms.Wait(30000);
 		buffer.Should().BeEquivalentTo(bytes);
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void BeginRead_CanReadFalse_ShouldThrowNotSupportedException(
-		string path, byte[] bytes)
-	{
-		FileSystem.File.WriteAllBytes(path, bytes);
-		FileSystemStream stream = FileSystem.FileInfo.New(path).OpenWrite();
-
-		byte[] buffer = new byte[bytes.Length];
-		Exception? exception = Record.Exception(() =>
-		{
-			// ReSharper disable once AccessToDisposedClosure
-			stream.BeginRead(buffer, 0, buffer.Length, _ => { }, null);
-		});
-
-		stream.Dispose();
-
-		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
 	[SkippableTheory]

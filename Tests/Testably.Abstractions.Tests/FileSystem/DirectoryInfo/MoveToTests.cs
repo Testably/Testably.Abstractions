@@ -60,6 +60,48 @@ public abstract partial class MoveToTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void MoveTo_WithLockedFile_ShouldMoveDirectory_NotOnWindows(
+		string source, string destination)
+	{
+		Skip.If(Test.RunsOnWindows);
+
+		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+			FileSystem.Initialize()
+				.WithSubdirectory(source).Initialized(s => s
+					.WithAFile()
+					.WithASubdirectory().Initialized(t => t
+						.WithAFile()
+						.WithASubdirectory()));
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(source);
+		using FileSystemStream stream = FileSystem.File.Open(initialized[3].FullName,
+			FileMode.Open,
+			FileAccess.Read,
+			FileShare.Read);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.MoveTo(destination);
+		});
+
+		exception.Should().BeNull();
+		FileSystem.Should().NotHaveDirectory(source);
+		FileSystem.Should().HaveDirectory(destination);
+		IDirectoryInfo destinationDirectory =
+			FileSystem.DirectoryInfo.New(destination);
+		destinationDirectory.GetFiles(initialized[1].Name)
+			.Should().ContainSingle();
+		destinationDirectory.GetDirectories(initialized[2].Name)
+			.Should().ContainSingle();
+		destinationDirectory
+			.GetFiles(initialized[3].Name, SearchOption.AllDirectories)
+			.Should().ContainSingle();
+		destinationDirectory
+			.GetDirectories(initialized[4].Name, SearchOption.AllDirectories)
+			.Should().ContainSingle();
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void MoveTo_WithLockedFile_ShouldThrowIOException_AndNotMoveDirectory_OnWindows(
 		string source, string destination)
 	{
@@ -105,48 +147,6 @@ public abstract partial class MoveToTests<TFileSystem>
 		sourceDirectory.GetFiles(initialized[3].Name, SearchOption.AllDirectories)
 			.Should().ContainSingle();
 		sourceDirectory
-			.GetDirectories(initialized[4].Name, SearchOption.AllDirectories)
-			.Should().ContainSingle();
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void MoveTo_WithLockedFile_ShouldMoveDirectory_NotOnWindows(
-		string source, string destination)
-	{
-		Skip.If(Test.RunsOnWindows);
-
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
-			FileSystem.Initialize()
-				.WithSubdirectory(source).Initialized(s => s
-					.WithAFile()
-					.WithASubdirectory().Initialized(t => t
-						.WithAFile()
-						.WithASubdirectory()));
-		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(source);
-		using FileSystemStream stream = FileSystem.File.Open(initialized[3].FullName,
-			FileMode.Open,
-			FileAccess.Read,
-			FileShare.Read);
-
-		Exception? exception = Record.Exception(() =>
-		{
-			sut.MoveTo(destination);
-		});
-
-		exception.Should().BeNull();
-		FileSystem.Should().NotHaveDirectory(source);
-		FileSystem.Should().HaveDirectory(destination);
-		IDirectoryInfo destinationDirectory =
-			FileSystem.DirectoryInfo.New(destination);
-		destinationDirectory.GetFiles(initialized[1].Name)
-			.Should().ContainSingle();
-		destinationDirectory.GetDirectories(initialized[2].Name)
-			.Should().ContainSingle();
-		destinationDirectory
-			.GetFiles(initialized[3].Name, SearchOption.AllDirectories)
-			.Should().ContainSingle();
-		destinationDirectory
 			.GetDirectories(initialized[4].Name, SearchOption.AllDirectories)
 			.Should().ContainSingle();
 	}

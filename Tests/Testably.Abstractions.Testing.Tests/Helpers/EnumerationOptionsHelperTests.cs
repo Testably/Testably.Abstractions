@@ -29,7 +29,9 @@ public class EnumerationOptionsHelperTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			EnumerationOptionsHelper.MatchesPattern(Execute.Default, invalidEnumerationOptions, "foo", "*");
+			EnumerationOptionsHelper.MatchesPattern(Execute.Default,
+				invalidEnumerationOptions,
+				"foo", "*");
 		});
 
 		exception.Should().BeOfType<ArgumentOutOfRangeException>()

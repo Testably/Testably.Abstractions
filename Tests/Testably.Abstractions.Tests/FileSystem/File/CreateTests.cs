@@ -26,22 +26,6 @@ public abstract partial class CreateTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Create_ReadOnlyFile_ShouldThrowUnauthorizedAccessException(
-		string path, string content)
-	{
-		FileSystem.File.WriteAllText(path, content);
-		FileSystem.File.SetAttributes(path, FileAttributes.ReadOnly);
-
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.File.Create(path);
-		});
-
-		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
-	}
-
-	[SkippableTheory]
-	[AutoData]
 	public void Create_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingDirectory, string fileName)
 	{
@@ -62,6 +46,22 @@ public abstract partial class CreateTests<TFileSystem>
 		using FileSystemStream stream = FileSystem.File.Create(path);
 
 		FileSystem.Should().HaveFile(path);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Create_ReadOnlyFile_ShouldThrowUnauthorizedAccessException(
+		string path, string content)
+	{
+		FileSystem.File.WriteAllText(path, content);
+		FileSystem.File.SetAttributes(path, FileAttributes.ReadOnly);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.Create(path);
+		});
+
+		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 
 	[SkippableTheory]

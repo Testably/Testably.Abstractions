@@ -33,7 +33,7 @@ public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
 
 		#pragma warning disable CA1416
 		DirectorySecurity directorySecurity = FileSystem.CreateDirectorySecurity();
-		
+
 		FileSystem.Directory.CreateDirectory("bar", directorySecurity);
 		DirectorySecurity result = FileSystem.Directory.GetAccessControl("bar");
 		#pragma warning restore CA1416

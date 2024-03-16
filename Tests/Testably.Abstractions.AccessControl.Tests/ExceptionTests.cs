@@ -12,23 +12,6 @@ public abstract partial class ExceptionTests<TFileSystem>
 	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks),
 		parameters: (int)BaseTypes.All)]
-	public void Operations_WhenPathIsNull_ShouldThrowArgumentNullException(
-		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
-	{
-		Skip.IfNot(Test.RunsOnWindows || exceptionType == MethodType.GetAccessControl);
-
-		Exception? exception = Record.Exception(() =>
-		{
-			callback.Invoke(FileSystem, null!);
-		});
-
-		exception.Should().BeException<ArgumentNullException>(
-			because: $"\n{exceptionType} on {baseType}\n was called with a null path");
-	}
-
-	[SkippableTheory]
-	[MemberData(nameof(GetFileCallbacks),
-		parameters: (int)BaseTypes.All)]
 	public void Operations_WhenPathIsEmpty_ShouldThrowArgumentException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
@@ -42,6 +25,23 @@ public abstract partial class ExceptionTests<TFileSystem>
 		exception.Should().BeException<ArgumentException>(
 			hResult: -2147024809,
 			because: $"\n{exceptionType} on {baseType}\n was called with an empty path");
+	}
+
+	[SkippableTheory]
+	[MemberData(nameof(GetFileCallbacks),
+		parameters: (int)BaseTypes.All)]
+	public void Operations_WhenPathIsNull_ShouldThrowArgumentNullException(
+		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
+	{
+		Skip.IfNot(Test.RunsOnWindows || exceptionType == MethodType.GetAccessControl);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			callback.Invoke(FileSystem, null!);
+		});
+
+		exception.Should().BeException<ArgumentNullException>(
+			because: $"\n{exceptionType} on {baseType}\n was called with a null path");
 	}
 
 	[SkippableTheory]
@@ -64,14 +64,17 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	#region Helpers
 
-	public static TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> GetFileCallbacks(int baseType)
+	public static TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> GetFileCallbacks(
+		int baseType)
 	{
 		TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> theoryData = new();
-		foreach (var item in GetFileCallbackTestParameters()
-			.Where(item => (item.BaseType & (BaseTypes)baseType) > 0))
+		foreach ((BaseTypes BaseType, MethodType MethodType, Action<IFileSystem, string> Callback)
+			item in GetFileCallbackTestParameters()
+				.Where(item => (item.BaseType & (BaseTypes)baseType) > 0))
 		{
 			theoryData.Add(item.Callback, item.BaseType, item.MethodType);
 		}
+
 		return theoryData;
 	}
 

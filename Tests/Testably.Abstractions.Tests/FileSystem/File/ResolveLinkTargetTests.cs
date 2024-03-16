@@ -64,29 +64,6 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void ResolveLinkTarget_FinalTarget_ShouldFollowSymbolicLinkToFinalTarget(
-		string path, string pathToFinalTarget)
-	{
-		int maxLinks = MaxResolveLinks;
-
-		FileSystem.File.WriteAllText(pathToFinalTarget, null);
-		string previousPath = pathToFinalTarget;
-		for (int i = 0; i < maxLinks; i++)
-		{
-			string newPath = $"{path}-{i}";
-			FileSystem.File.CreateSymbolicLink(newPath,
-				System.IO.Path.Combine(BasePath, previousPath));
-			previousPath = newPath;
-		}
-
-		IFileSystemInfo? target =
-			FileSystem.File.ResolveLinkTarget(previousPath, true);
-
-		target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToFinalTarget));
-	}
-
-	[SkippableTheory]
-	[AutoData]
 	public void ResolveLinkTarget_FinalTarget_MultipleSteps_ShouldFollowSymbolicLinkToFinalTarget(
 		string path, string pathToFinalTarget)
 	{
@@ -106,6 +83,29 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 			FileSystem.File.ResolveLinkTarget(previousPath, true);
 
 		target.Should().NotBeNull();
+		target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToFinalTarget));
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void ResolveLinkTarget_FinalTarget_ShouldFollowSymbolicLinkToFinalTarget(
+		string path, string pathToFinalTarget)
+	{
+		int maxLinks = MaxResolveLinks;
+
+		FileSystem.File.WriteAllText(pathToFinalTarget, null);
+		string previousPath = pathToFinalTarget;
+		for (int i = 0; i < maxLinks; i++)
+		{
+			string newPath = $"{path}-{i}";
+			FileSystem.File.CreateSymbolicLink(newPath,
+				System.IO.Path.Combine(BasePath, previousPath));
+			previousPath = newPath;
+		}
+
+		IFileSystemInfo? target =
+			FileSystem.File.ResolveLinkTarget(previousPath, true);
+
 		target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToFinalTarget));
 	}
 

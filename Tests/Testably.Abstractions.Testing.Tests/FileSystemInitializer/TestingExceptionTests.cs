@@ -19,12 +19,12 @@ public class TestingExceptionTests
 		byte[] buffer = new byte[4096];
 		using MemoryStream ms = new(buffer);
 		using MemoryStream ms2 = new(buffer);
-#pragma warning disable SYSLIB0011 //BinaryFormatter serialization is obsolete - only used in unit test
+		#pragma warning disable SYSLIB0011 //BinaryFormatter serialization is obsolete - only used in unit test
 		BinaryFormatter formatter = new();
 		formatter.Serialize(ms, originalException);
 		TestingException deserializedException =
 			(TestingException)formatter.Deserialize(ms2);
-#pragma warning restore SYSLIB0011
+		#pragma warning restore SYSLIB0011
 
 		Assert.Equal(originalException.InnerException?.Message,
 			deserializedException.InnerException?.Message);

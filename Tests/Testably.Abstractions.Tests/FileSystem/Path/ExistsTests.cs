@@ -6,6 +6,37 @@ public abstract partial class ExistsTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
+	[SkippableTheory]
+	[AutoData]
+	public void Exists_ExistingDirectory_ShouldReturnTrue(string path)
+	{
+		FileSystem.Directory.CreateDirectory(path);
+
+		bool result = FileSystem.Path.Exists(path);
+
+		result.Should().BeTrue();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Exists_ExistingFile_ShouldReturnTrue(string path)
+	{
+		FileSystem.File.WriteAllText(path, "some content");
+
+		bool result = FileSystem.Path.Exists(path);
+
+		result.Should().BeTrue();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Exists_ExistingFileOrDirectory_ShouldReturnTrue(string path)
+	{
+		bool result = FileSystem.Path.Exists(path);
+
+		result.Should().BeFalse();
+	}
+
 	[SkippableFact]
 	public void Exists_Null_ShouldReturnFalse()
 	{
@@ -24,37 +55,6 @@ public abstract partial class ExistsTests<TFileSystem>
 		bool result = FileSystem.Path.Exists(absolutePath);
 
 		result.Should().BeTrue();
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void Exists_ExistingFile_ShouldReturnTrue(string path)
-	{
-		FileSystem.File.WriteAllText(path, "some content");
-
-		bool result = FileSystem.Path.Exists(path);
-
-		result.Should().BeTrue();
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void Exists_ExistingDirectory_ShouldReturnTrue(string path)
-	{
-		FileSystem.Directory.CreateDirectory(path);
-
-		bool result = FileSystem.Path.Exists(path);
-
-		result.Should().BeTrue();
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void Exists_ExistingFileOrDirectory_ShouldReturnTrue(string path)
-	{
-		bool result = FileSystem.Path.Exists(path);
-
-		result.Should().BeFalse();
 	}
 }
 #endif

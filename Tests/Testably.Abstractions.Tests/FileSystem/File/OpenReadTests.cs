@@ -24,6 +24,21 @@ public abstract partial class OpenReadTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void OpenRead_SetLength_ShouldThrowNotSupportedException(string path)
+	{
+		FileSystem.File.WriteAllText(path, null);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			using FileSystemStream stream = FileSystem.File.OpenRead(path);
+			stream.SetLength(3);
+		});
+
+		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void OpenRead_ShouldUseReadAccessAndReadShare(string path)
 	{
 		FileSystem.File.WriteAllText(path, null);
@@ -37,21 +52,6 @@ public abstract partial class OpenReadTests<TFileSystem>
 		stream.CanWrite.Should().BeFalse();
 		stream.CanSeek.Should().BeTrue();
 		stream.CanTimeout.Should().BeFalse();
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void OpenRead_SetLength_ShouldThrowNotSupportedException(string path)
-	{
-		FileSystem.File.WriteAllText(path, null);
-
-		Exception? exception = Record.Exception(() =>
-		{
-			using FileSystemStream stream = FileSystem.File.OpenRead(path);
-			stream.SetLength(3);
-		});
-
-		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
 	[SkippableTheory]

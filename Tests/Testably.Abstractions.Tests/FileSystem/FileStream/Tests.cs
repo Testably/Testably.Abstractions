@@ -54,22 +54,6 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CopyTo_ShouldCopyBytes(
-		string path, byte[] bytes)
-	{
-		byte[] buffer = new byte[bytes.Length];
-		FileSystem.File.WriteAllBytes(path, bytes);
-		using FileSystemStream stream = FileSystem.File.OpenRead(path);
-		using MemoryStream destination = new(buffer);
-
-		stream.CopyTo(destination);
-
-		destination.Flush();
-		buffer.Should().BeEquivalentTo(bytes);
-	}
-
-	[SkippableTheory]
-	[AutoData]
 	public void CopyTo_BufferSizeZero_ShouldThrowArgumentOutOfRangeException(
 		string path, byte[] bytes)
 	{
@@ -87,42 +71,21 @@ public abstract partial class Tests<TFileSystem>
 			paramName: "bufferSize");
 	}
 
-#if FEATURE_FILESYSTEM_ASYNC
 	[SkippableTheory]
 	[AutoData]
-	public async Task CopyToAsync_ShouldCopyBytes(
+	public void CopyTo_ShouldCopyBytes(
 		string path, byte[] bytes)
 	{
 		byte[] buffer = new byte[bytes.Length];
-		await FileSystem.File.WriteAllBytesAsync(path, bytes);
-		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
+		FileSystem.File.WriteAllBytes(path, bytes);
+		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 		using MemoryStream destination = new(buffer);
 
-		await stream.CopyToAsync(destination);
+		stream.CopyTo(destination);
 
-		await destination.FlushAsync();
+		destination.Flush();
 		buffer.Should().BeEquivalentTo(bytes);
 	}
-
-	[SkippableTheory]
-	[AutoData]
-	public async Task CopyToAsync_BufferSizeZero_ShouldThrowArgumentOutOfRangeException(
-		string path, byte[] bytes)
-	{
-		byte[] buffer = new byte[bytes.Length];
-		await FileSystem.File.WriteAllBytesAsync(path, bytes);
-
-		Exception? exception = await Record.ExceptionAsync(async () =>
-		{
-			await using FileSystemStream stream = FileSystem.File.OpenRead(path);
-			using MemoryStream destination = new(buffer);
-			await stream.CopyToAsync(destination, 0);
-		});
-
-		exception.Should().BeException<ArgumentOutOfRangeException>(
-			paramName: "bufferSize");
-	}
-#endif
 
 	[SkippableTheory]
 	[AutoData]
@@ -163,22 +126,6 @@ public abstract partial class Tests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[InlineAutoData(false)]
-	[InlineAutoData(true)]
-	public void Flush_WriteToDisk_ShouldNotChangePosition(
-		bool flushToDisk, string path, byte[] bytes)
-	{
-		using FileSystemStream stream = FileSystem.File.Create(path);
-		stream.Write(bytes, 0, bytes.Length);
-		stream.Seek(2, SeekOrigin.Begin);
-		stream.Position.Should().Be(2);
-
-		stream.Flush(flushToDisk);
-
-		stream.Position.Should().Be(2);
-	}
-
-	[SkippableTheory]
 	[AutoData]
 	public void Flush_ShouldNotUpdateFileContentWhenAlreadyFlushed(
 		string path, byte[] bytes1, byte[] bytes2)
@@ -206,6 +153,22 @@ public abstract partial class Tests<TFileSystem>
 
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(bytes2);
+	}
+
+	[SkippableTheory]
+	[InlineAutoData(false)]
+	[InlineAutoData(true)]
+	public void Flush_WriteToDisk_ShouldNotChangePosition(
+		bool flushToDisk, string path, byte[] bytes)
+	{
+		using FileSystemStream stream = FileSystem.File.Create(path);
+		stream.Write(bytes, 0, bytes.Length);
+		stream.Seek(2, SeekOrigin.Begin);
+		stream.Position.Should().Be(2);
+
+		stream.Flush(flushToDisk);
+
+		stream.Position.Should().Be(2);
 	}
 
 	[SkippableTheory]
@@ -336,4 +299,41 @@ public abstract partial class Tests<TFileSystem>
 
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
+
+#if FEATURE_FILESYSTEM_ASYNC
+	[SkippableTheory]
+	[AutoData]
+	public async Task CopyToAsync_ShouldCopyBytes(
+		string path, byte[] bytes)
+	{
+		byte[] buffer = new byte[bytes.Length];
+		await FileSystem.File.WriteAllBytesAsync(path, bytes);
+		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
+		using MemoryStream destination = new(buffer);
+
+		await stream.CopyToAsync(destination);
+
+		await destination.FlushAsync();
+		buffer.Should().BeEquivalentTo(bytes);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public async Task CopyToAsync_BufferSizeZero_ShouldThrowArgumentOutOfRangeException(
+		string path, byte[] bytes)
+	{
+		byte[] buffer = new byte[bytes.Length];
+		await FileSystem.File.WriteAllBytesAsync(path, bytes);
+
+		Exception? exception = await Record.ExceptionAsync(async () =>
+		{
+			await using FileSystemStream stream = FileSystem.File.OpenRead(path);
+			using MemoryStream destination = new(buffer);
+			await stream.CopyToAsync(destination, 0);
+		});
+
+		exception.Should().BeException<ArgumentOutOfRangeException>(
+			paramName: "bufferSize");
+	}
+#endif
 }

@@ -8,6 +8,18 @@ public abstract partial class SetAttributesTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
+	[AutoData]
+	public void SetAttributes_Directory_ShouldRemainFile(string path)
+	{
+		FileSystem.File.WriteAllText(path, null);
+
+		FileSystem.File.SetAttributes(path, FileAttributes.Directory);
+
+		FileSystem.Should().NotHaveDirectory(path);
+		FileSystem.Should().HaveFile(path);
+	}
+
+	[SkippableTheory]
 	[InlineAutoData(FileAttributes.ReadOnly)]
 	[InlineAutoData(FileAttributes.Normal)]
 	public void SetAttributes_ShouldNotAdjustTimes(FileAttributes attributes, string path)
@@ -38,17 +50,5 @@ public abstract partial class SetAttributesTests<TFileSystem>
 		lastWriteTime.Should()
 			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
 			.BeOnOrBefore(creationTimeEnd);
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void SetAttributes_Directory_ShouldRemainFile(string path)
-	{
-		FileSystem.File.WriteAllText(path, null);
-
-		FileSystem.File.SetAttributes(path, FileAttributes.Directory);
-
-		FileSystem.Should().NotHaveDirectory(path);
-		FileSystem.Should().HaveFile(path);
 	}
 }

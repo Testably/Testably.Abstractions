@@ -13,11 +13,12 @@ public class ParityCheck
 		typeof(MarshalByRefObject)
 	};
 
+	public List<ConstructorInfo?> MissingConstructors { get; } = new();
+
 	public List<FieldInfo?> MissingFields { get; } = new();
 
 	public List<MethodInfo?> MissingMethods { get; } = new();
 	public List<PropertyInfo?> MissingProperties { get; } = new();
-	public List<ConstructorInfo?> MissingConstructors { get; } = new();
 
 	public ParityCheck(Type[]? excludeBaseTypes = null,
 		FieldInfo?[]? excludeFields = null,

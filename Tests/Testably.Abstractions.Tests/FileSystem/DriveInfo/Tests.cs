@@ -6,6 +6,17 @@ public abstract partial class Tests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
+	public void ToString_ShouldReturnDriveName()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		IDriveInfo result =
+			FileSystem.DriveInfo.New(FileTestHelper.RootDrive(Test));
+
+		result.ToString().Should().Be("C:\\");
+	}
+
+	[SkippableFact]
 	public void VolumeLabel_ShouldBeWritable_OnWindows()
 	{
 		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
@@ -42,16 +53,5 @@ public abstract partial class Tests<TFileSystem>
 				#pragma warning restore CA1416
 			}
 		}
-	}
-
-	[SkippableFact]
-	public void ToString_ShouldReturnDriveName()
-	{
-		Skip.IfNot(Test.RunsOnWindows);
-
-		IDriveInfo result =
-			FileSystem.DriveInfo.New(FileTestHelper.RootDrive(Test));
-
-		result.ToString().Should().Be("C:\\");
 	}
 }

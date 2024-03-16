@@ -15,6 +15,133 @@ public class NotificationHandlerExtensionsTests
 
 	[Theory]
 	[AutoData]
+	public void OnChanged_File_OtherEvent_ShouldNotTrigger(string path)
+	{
+		bool isNotified = false;
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.Notify
+				.OnChanged(FileSystemTypes.File, _ => isNotified = true)
+				.ExecuteWhileWaiting(() =>
+				{
+					FileSystem.File.WriteAllText(path, null);
+				})
+				.Wait(timeout: 50);
+		});
+
+		exception.Should().BeOfType<TimeoutException>();
+		isNotified.Should().BeFalse();
+	}
+
+	[Theory]
+	[AutoData]
+	public void OnChanged_File_ShouldConsiderBasePath(string path1, string path2)
+	{
+		bool isNotified = false;
+		FileSystem.File.WriteAllText(path1, null);
+		FileSystem.File.WriteAllText(path2, null);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.Notify
+				.OnChanged(FileSystemTypes.File, _ => isNotified = true, path2)
+				.ExecuteWhileWaiting(() =>
+				{
+					FileSystem.File.AppendAllText(path1, "foo");
+				})
+				.Wait(timeout: 50);
+		});
+
+		exception.Should().BeOfType<TimeoutException>();
+		isNotified.Should().BeFalse();
+	}
+
+	[Theory]
+	[InlineData("foo", "f*o", true)]
+	[InlineData("foo", "*fo", false)]
+	public void OnChanged_File_ShouldConsiderSearchPattern(
+		string path, string searchPattern, bool expectedResult)
+	{
+		bool isNotified = false;
+		FileSystem.File.WriteAllText(path, null);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.Notify
+				.OnChanged(FileSystemTypes.File, _ => isNotified = true,
+					searchPattern: searchPattern)
+				.ExecuteWhileWaiting(() =>
+				{
+					FileSystem.File.AppendAllText(path, "foo");
+				})
+				.Wait(timeout: expectedResult ? 30000 : 50);
+		});
+
+		if (expectedResult)
+		{
+			exception.Should().BeNull();
+		}
+		else
+		{
+			exception.Should().BeOfType<TimeoutException>();
+		}
+
+		isNotified.Should().Be(expectedResult);
+	}
+
+	[Theory]
+	[AutoData]
+	public void OnChanged_File_ShouldNotifyWhenFileIsChanged(string path)
+	{
+		bool isNotified = false;
+		FileSystem.File.WriteAllText(path, null);
+
+		FileSystem.Notify
+			.OnChanged(FileSystemTypes.File, _ => isNotified = true)
+			.ExecuteWhileWaiting(() =>
+			{
+				FileSystem.File.AppendAllText(path, "foo");
+			})
+			.Wait();
+
+		isNotified.Should().BeTrue();
+	}
+
+	[Theory]
+	[InlineAutoData(false)]
+	[InlineAutoData(true)]
+	public void OnChanged_File_ShouldUsePredicate(bool expectedResult, string path)
+	{
+		bool isNotified = false;
+		FileSystem.File.WriteAllText(path, null);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.Notify
+				.OnChanged(FileSystemTypes.File, _ => isNotified = true,
+					predicate: _ => expectedResult)
+				.ExecuteWhileWaiting(() =>
+				{
+					FileSystem.File.AppendAllText(path, "foo");
+				})
+				.Wait(timeout: expectedResult ? 30000 : 50);
+		});
+
+		if (expectedResult)
+		{
+			exception.Should().BeNull();
+		}
+		else
+		{
+			exception.Should().BeOfType<TimeoutException>();
+		}
+
+		isNotified.Should().Be(expectedResult);
+	}
+
+	[Theory]
+	[AutoData]
 	public void OnCreated_Directory_OtherEvent_ShouldNotTrigger(string path)
 	{
 		bool isNotified = false;
@@ -497,133 +624,6 @@ public class NotificationHandlerExtensionsTests
 				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.Delete(path);
-				})
-				.Wait(timeout: expectedResult ? 30000 : 50);
-		});
-
-		if (expectedResult)
-		{
-			exception.Should().BeNull();
-		}
-		else
-		{
-			exception.Should().BeOfType<TimeoutException>();
-		}
-
-		isNotified.Should().Be(expectedResult);
-	}
-
-	[Theory]
-	[AutoData]
-	public void OnChanged_File_OtherEvent_ShouldNotTrigger(string path)
-	{
-		bool isNotified = false;
-
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Notify
-				.OnChanged(FileSystemTypes.File, _ => isNotified = true)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.WriteAllText(path, null);
-				})
-				.Wait(timeout: 50);
-		});
-
-		exception.Should().BeOfType<TimeoutException>();
-		isNotified.Should().BeFalse();
-	}
-
-	[Theory]
-	[AutoData]
-	public void OnChanged_File_ShouldConsiderBasePath(string path1, string path2)
-	{
-		bool isNotified = false;
-		FileSystem.File.WriteAllText(path1, null);
-		FileSystem.File.WriteAllText(path2, null);
-
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Notify
-				.OnChanged(FileSystemTypes.File, _ => isNotified = true, path2)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.AppendAllText(path1, "foo");
-				})
-				.Wait(timeout: 50);
-		});
-
-		exception.Should().BeOfType<TimeoutException>();
-		isNotified.Should().BeFalse();
-	}
-
-	[Theory]
-	[InlineData("foo", "f*o", true)]
-	[InlineData("foo", "*fo", false)]
-	public void OnChanged_File_ShouldConsiderSearchPattern(
-		string path, string searchPattern, bool expectedResult)
-	{
-		bool isNotified = false;
-		FileSystem.File.WriteAllText(path, null);
-
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Notify
-				.OnChanged(FileSystemTypes.File, _ => isNotified = true,
-					searchPattern: searchPattern)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.AppendAllText(path, "foo");
-				})
-				.Wait(timeout: expectedResult ? 30000 : 50);
-		});
-
-		if (expectedResult)
-		{
-			exception.Should().BeNull();
-		}
-		else
-		{
-			exception.Should().BeOfType<TimeoutException>();
-		}
-
-		isNotified.Should().Be(expectedResult);
-	}
-
-	[Theory]
-	[AutoData]
-	public void OnChanged_File_ShouldNotifyWhenFileIsChanged(string path)
-	{
-		bool isNotified = false;
-		FileSystem.File.WriteAllText(path, null);
-
-		FileSystem.Notify
-			.OnChanged(FileSystemTypes.File, _ => isNotified = true)
-			.ExecuteWhileWaiting(() =>
-			{
-				FileSystem.File.AppendAllText(path, "foo");
-			})
-			.Wait();
-
-		isNotified.Should().BeTrue();
-	}
-
-	[Theory]
-	[InlineAutoData(false)]
-	[InlineAutoData(true)]
-	public void OnChanged_File_ShouldUsePredicate(bool expectedResult, string path)
-	{
-		bool isNotified = false;
-		FileSystem.File.WriteAllText(path, null);
-
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Notify
-				.OnChanged(FileSystemTypes.File, _ => isNotified = true,
-					predicate: _ => expectedResult)
-				.ExecuteWhileWaiting(() =>
-				{
-					FileSystem.File.AppendAllText(path, "foo");
 				})
 				.Wait(timeout: expectedResult ? 30000 : 50);
 		});

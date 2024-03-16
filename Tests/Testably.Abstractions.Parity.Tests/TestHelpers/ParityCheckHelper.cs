@@ -56,7 +56,7 @@ internal static class ParityCheckHelper
 				BindingFlags.Public |
 				BindingFlags.Instance |
 				BindingFlags.FlattenHierarchy)
-				.Where(x => x.Name == "New")
+			.Where(x => x.Name == "New")
 			.Any(abstractionMethod => AreMethodsEqual(systemConstructor, abstractionMethod)))
 		{
 			return true;

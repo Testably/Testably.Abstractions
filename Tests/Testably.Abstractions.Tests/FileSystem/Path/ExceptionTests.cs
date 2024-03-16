@@ -28,6 +28,23 @@ public abstract partial class ExceptionTests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[MemberData(nameof(GetPathCallbacks), parameters: (string?)null)]
+	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
+		Expression<Action<IPath>> callback, string paramName,
+		bool ignoreParamCheck)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			callback.Compile().Invoke(FileSystem.Path);
+		});
+
+		exception.Should().BeException<ArgumentNullException>(
+			paramName: ignoreParamCheck ? null : paramName,
+			because:
+			$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
+	}
+
+	[SkippableTheory]
 	[MemberData(nameof(GetPathCallbacks), parameters: "  ")]
 	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IPath>> callback, string paramName,
@@ -45,23 +62,6 @@ public abstract partial class ExceptionTests<TFileSystem>
 			paramName: ignoreParamCheck || Test.IsNetFramework ? null : paramName,
 			because:
 			$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
-	}
-
-	[SkippableTheory]
-	[MemberData(nameof(GetPathCallbacks), parameters: (string?)null)]
-	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
-		Expression<Action<IPath>> callback, string paramName,
-		bool ignoreParamCheck)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			callback.Compile().Invoke(FileSystem.Path);
-		});
-
-		exception.Should().BeException<ArgumentNullException>(
-			paramName: ignoreParamCheck ? null : paramName,
-			because:
-			$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
 	#region Helpers

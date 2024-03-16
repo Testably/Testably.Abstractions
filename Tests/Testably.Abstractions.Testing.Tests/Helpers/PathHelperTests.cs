@@ -6,6 +6,21 @@ namespace Testably.Abstractions.Testing.Tests.Helpers;
 
 public class PathHelperTests
 {
+	[Fact]
+	public void
+		EnsureValidFormat_WithWhiteSpaceAndIncludeIsEmptyCheck_ShouldThrowArgumentException()
+	{
+		string whiteSpace = " ";
+		MockFileSystem fileSystem = new();
+		Exception? exception = Record.Exception(() =>
+		{
+			whiteSpace.EnsureValidFormat(fileSystem, "foo", true);
+		});
+
+		exception.Should().BeOfType<ArgumentException>()
+			.Which.HResult.Should().Be(-2147024809);
+	}
+
 	[Theory]
 	[AutoData]
 	public void GetFullPathOrWhiteSpace_NormalPath_ShouldReturnFullPath(string path)
@@ -28,21 +43,6 @@ public class PathHelperTests
 		string result = sut.GetFullPathOrWhiteSpace(fileSystem);
 
 		result.Should().Be("");
-	}
-
-	[Fact]
-	public void
-		EnsureValidFormat_WithWhiteSpaceAndIncludeIsEmptyCheck_ShouldThrowArgumentException()
-	{
-		string whiteSpace = " ";
-		MockFileSystem fileSystem = new();
-		Exception? exception = Record.Exception(() =>
-		{
-			whiteSpace.EnsureValidFormat(fileSystem, "foo", true);
-		});
-
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.HResult.Should().Be(-2147024809);
 	}
 
 	[Theory]
@@ -237,7 +237,6 @@ public class PathHelperTests
 				=> throw new NotSupportedException();
 
 #if FEATURE_PATH_ADVANCED
-
 			public bool EndsInDirectorySeparator(ReadOnlySpan<char> path)
 				=> throw new NotSupportedException();
 
@@ -246,13 +245,11 @@ public class PathHelperTests
 #endif
 
 #if FEATURE_FILESYSTEM_NET7
-
 			public bool Exists(string? path)
 				=> throw new NotSupportedException();
 #endif
 
 #if FEATURE_SPAN
-
 			public ReadOnlySpan<char> GetDirectoryName(ReadOnlySpan<char> path)
 				=> throw new NotSupportedException();
 #endif
@@ -261,7 +258,6 @@ public class PathHelperTests
 				=> throw new NotSupportedException();
 
 #if FEATURE_SPAN
-
 			public ReadOnlySpan<char> GetExtension(ReadOnlySpan<char> path)
 				=> throw new NotSupportedException();
 #endif
@@ -270,7 +266,6 @@ public class PathHelperTests
 				=> throw new NotSupportedException();
 
 #if FEATURE_SPAN
-
 			public ReadOnlySpan<char> GetFileName(ReadOnlySpan<char> path)
 				=> throw new NotSupportedException();
 #endif
@@ -279,7 +274,6 @@ public class PathHelperTests
 				=> throw new NotSupportedException();
 
 #if FEATURE_SPAN
-
 			public ReadOnlySpan<char> GetFileNameWithoutExtension(ReadOnlySpan<char> path)
 				=> throw new NotSupportedException();
 #endif
@@ -291,7 +285,6 @@ public class PathHelperTests
 				=> path;
 
 #if FEATURE_PATH_RELATIVE
-
 			public string GetFullPath(string path, string basePath)
 				=> throw new NotSupportedException();
 #endif
@@ -303,7 +296,6 @@ public class PathHelperTests
 				=> _invalidChars;
 
 #if FEATURE_SPAN
-
 			public ReadOnlySpan<char> GetPathRoot(ReadOnlySpan<char> path)
 				=> throw new NotSupportedException();
 #endif
@@ -315,7 +307,6 @@ public class PathHelperTests
 				=> throw new NotSupportedException();
 
 #if FEATURE_PATH_RELATIVE
-
 			public string GetRelativePath(string relativeTo, string path)
 				=> throw new NotSupportedException();
 #endif
@@ -327,7 +318,6 @@ public class PathHelperTests
 				=> throw new NotSupportedException();
 
 #if FEATURE_SPAN
-
 			public bool HasExtension(ReadOnlySpan<char> path)
 				=> throw new NotSupportedException();
 #endif
@@ -336,19 +326,16 @@ public class PathHelperTests
 				=> throw new NotSupportedException();
 
 #if FEATURE_SPAN
-
 			public bool IsPathFullyQualified(ReadOnlySpan<char> path)
 				=> throw new NotSupportedException();
 #endif
 
 #if FEATURE_PATH_RELATIVE
-
 			public bool IsPathFullyQualified(string path)
 				=> throw new NotSupportedException();
 #endif
 
 #if FEATURE_SPAN
-
 			public bool IsPathRooted(ReadOnlySpan<char> path)
 				=> throw new NotSupportedException();
 #endif
@@ -357,7 +344,6 @@ public class PathHelperTests
 				=> throw new NotSupportedException();
 
 #if FEATURE_PATH_JOIN
-
 			public string Join(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2)
 				=> throw new NotSupportedException();
 
@@ -367,7 +353,6 @@ public class PathHelperTests
 #endif
 
 #if FEATURE_PATH_ADVANCED
-
 			public string Join(string? path1, string? path2)
 				=> throw new NotSupportedException();
 
@@ -386,7 +371,6 @@ public class PathHelperTests
 #endif
 
 #if FEATURE_PATH_ADVANCED
-
 			public ReadOnlySpan<char> TrimEndingDirectorySeparator(ReadOnlySpan<char> path)
 				=> throw new NotSupportedException();
 
@@ -395,7 +379,6 @@ public class PathHelperTests
 #endif
 
 #if FEATURE_PATH_JOIN
-
 			public bool TryJoin(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2,
 				Span<char> destination, out int charsWritten)
 				=> throw new NotSupportedException();
