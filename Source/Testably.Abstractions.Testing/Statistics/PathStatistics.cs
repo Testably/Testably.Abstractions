@@ -67,6 +67,16 @@ internal class PathStatistics : CallStatistics, IPathStatistics
 			return string.Empty;
 		}
 
+		if (path.StartsWith("//") || path.StartsWith("\\"))
+		{
+			return path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+		}
+
+		if (path.Length == 2 && path.EndsWith(":"))
+		{
+			return path;
+		}
+
 		return Path.GetFullPath(Path.Combine(currentDirectory, path))
 			.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 	}

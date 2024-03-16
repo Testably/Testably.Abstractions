@@ -18,6 +18,30 @@ public sealed class PathStatisticsTests
 	}
 
 	[Fact]
+	public void Key_DifferentDrives_ShouldBeConsideredDifferent()
+	{
+		MockFileSystem fileSystem = new();
+		IPathStatistics sut = fileSystem.Statistics.FileInfo;
+
+		IStatistics result1 = sut[@"C:\"];
+		IStatistics result2 = sut[@"D:\"];
+
+		result1.Should().NotBe(result2);
+	}
+
+	[Fact]
+	public void Key_DifferentUncRootPaths_ShouldBeConsideredDifferent()
+	{
+		MockFileSystem fileSystem = new();
+		IPathStatistics sut = fileSystem.Statistics.FileInfo;
+
+		IStatistics result1 = sut[@"\\foo1"];
+		IStatistics result2 = sut[@"\\foo2"];
+
+		result1.Should().NotBe(result2);
+	}
+
+	[Fact]
 	public void Key_NullShouldBeSameAsEmptyKey()
 	{
 		MockFileSystem fileSystem = new();
@@ -40,6 +64,42 @@ public sealed class PathStatisticsTests
 		IStatistics relativePath = sut[".."];
 
 		absolutPath.Should().Be(relativePath);
+	}
+
+	[Fact]
+	public void Key_WithDrives_ShouldIgnoreTrailingSlash()
+	{
+		MockFileSystem fileSystem = new();
+		IPathStatistics sut = fileSystem.Statistics.FileInfo;
+
+		IStatistics result1 = sut[@"C:"];
+		IStatistics result2 = sut[@"C:\"];
+
+		result1.Should().Be(result2);
+	}
+
+	[Fact]
+	public void Key_WithFolderInDrives_ShouldIgnoreTrailingSlash()
+	{
+		MockFileSystem fileSystem = new();
+		IPathStatistics sut = fileSystem.Statistics.FileInfo;
+
+		IStatistics result1 = sut[@"C:\foo"];
+		IStatistics result2 = sut[@"C:\foo\"];
+
+		result1.Should().Be(result2);
+	}
+
+	[Fact]
+	public void Key_WithFolderInUncRootPaths_ShouldIgnoreTrailingSlash()
+	{
+		MockFileSystem fileSystem = new();
+		IPathStatistics sut = fileSystem.Statistics.FileInfo;
+
+		IStatistics result1 = sut[@"\\server1\foo"];
+		IStatistics result2 = sut[@"\\server1\foo\"];
+
+		result1.Should().Be(result2);
 	}
 
 	[Fact]
