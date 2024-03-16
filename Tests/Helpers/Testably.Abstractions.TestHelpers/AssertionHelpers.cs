@@ -81,54 +81,10 @@ public static class AssertionHelpers
 			if (objectAssertions.Subject is TException exception)
 			{
 				typedSubject = exception;
-				if (messageContains != null)
-				{
-					Execute.Assertion
-						.ForCondition(exception.Message.Contains(messageContains))
-						.BecauseOf(because, becauseArgs)
-						.WithDefaultIdentifier("type")
-						.FailWith(
-							"Expected {context} to have a message containing {0}{reason}, but found {1}.",
-							messageContains,
-							exception.Message);
-				}
 
-				if (hResult != null)
-				{
-					Execute.Assertion
-						.ForCondition(exception.HResult == hResult)
-						.BecauseOf(because, becauseArgs)
-						.WithDefaultIdentifier("type")
-						.FailWith(
-							"Expected {context} to have HResult set to {0}{reason}, but found {1}.",
-							hResult,
-							exception.HResult);
-				}
-
-				if (paramName != null)
-				{
-					if (exception is ArgumentException argumentException)
-					{
-						Execute.Assertion
-							.ForCondition(argumentException.ParamName == paramName)
-							.BecauseOf(because, becauseArgs)
-							.WithDefaultIdentifier("type")
-							.FailWith(
-								"Expected {context} to have ParamName set to {0}{reason}, but found {1}.",
-								paramName,
-								argumentException.ParamName);
-					}
-					else
-					{
-						Execute.Assertion
-							.BecauseOf(because, becauseArgs)
-							.WithDefaultIdentifier("type")
-							.FailWith(
-								"Expected {context} to be {0} with ParamName set to {0}{reason}, but it is no ArgumentException.",
-								typeof(TException),
-								paramName);
-					}
-				}
+				AssertExceptionMessage(exception, messageContains, because, becauseArgs);
+				AssertExceptionHResult(exception, hResult, because, becauseArgs);
+				AssertExceptionParamName(exception, paramName, because, becauseArgs);
 			}
 			else
 			{
@@ -143,5 +99,69 @@ public static class AssertionHelpers
 
 		return new AndWhichConstraint<ObjectAssertions, TException>(objectAssertions,
 			typedSubject!);
+	}
+
+	private static void AssertExceptionHResult<TException>(TException exception,
+		int? hResult,
+		string because, object[] becauseArgs) where TException : Exception
+	{
+		if (hResult != null)
+		{
+			Execute.Assertion
+				.ForCondition(exception.HResult == hResult)
+				.BecauseOf(because, becauseArgs)
+				.WithDefaultIdentifier("type")
+				.FailWith(
+					"Expected {context} to have HResult set to {0}{reason}, but found {1}.",
+					hResult,
+					exception.HResult);
+		}
+	}
+
+	private static void AssertExceptionMessage<TException>(TException exception,
+		string? messageContains,
+		string because, object[] becauseArgs) where TException : Exception
+	{
+		if (messageContains != null)
+		{
+			Execute.Assertion
+				.ForCondition(exception.Message.Contains(messageContains))
+				.BecauseOf(because, becauseArgs)
+				.WithDefaultIdentifier("type")
+				.FailWith(
+					"Expected {context} to have a message containing {0}{reason}, but found {1}.",
+					messageContains,
+					exception.Message);
+		}
+	}
+
+	private static void AssertExceptionParamName<TException>(TException exception,
+		string? paramName,
+		string because, object[] becauseArgs) where TException : Exception
+	{
+		if (paramName != null)
+		{
+			if (exception is ArgumentException argumentException)
+			{
+				Execute.Assertion
+					.ForCondition(argumentException.ParamName == paramName)
+					.BecauseOf(because, becauseArgs)
+					.WithDefaultIdentifier("type")
+					.FailWith(
+						"Expected {context} to have ParamName set to {0}{reason}, but found {1}.",
+						paramName,
+						argumentException.ParamName);
+			}
+			else
+			{
+				Execute.Assertion
+					.BecauseOf(because, becauseArgs)
+					.WithDefaultIdentifier("type")
+					.FailWith(
+						"Expected {context} to be {0} with ParamName set to {0}{reason}, but it is no ArgumentException.",
+						typeof(TException),
+						paramName);
+			}
+		}
 	}
 }

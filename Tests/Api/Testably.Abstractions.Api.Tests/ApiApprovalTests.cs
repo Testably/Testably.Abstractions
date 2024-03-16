@@ -65,7 +65,7 @@ public sealed class ApiApprovalTests
 		Assert.That(publicApi, Is.EqualTo(expectedApi));
 	}
 
-	private class TargetFrameworksTheoryData : IEnumerable
+	private sealed class TargetFrameworksTheoryData : IEnumerable
 	{
 		#region IEnumerable Members
 

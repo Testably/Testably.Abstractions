@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
 using System.IO.Compression;
 using System.Linq;
 
@@ -16,7 +17,7 @@ public abstract partial class ExtensionTests<TFileSystem>
 	public void CreateEntryFromFile_LastWriteTime_ShouldBeCopiedFromFile(
 		string lastWriteTimeString)
 	{
-		DateTime lastWriteTime = DateTime.Parse(lastWriteTimeString);
+		DateTime lastWriteTime = DateTime.Parse(lastWriteTimeString, CultureInfo.InvariantCulture);
 		FileSystem.Initialize()
 			.WithSubdirectory("foo")
 			.WithSubdirectory("bar");
@@ -46,7 +47,8 @@ public abstract partial class ExtensionTests<TFileSystem>
 		string lastWriteTimeString)
 	{
 		DateTime expectedTime = new(1980, 1, 1, 0, 0, 0);
-		DateTime lastWriteTime = DateTime.Parse(lastWriteTimeString).ToUniversalTime();
+		DateTime lastWriteTime = DateTime.Parse(lastWriteTimeString, CultureInfo.InvariantCulture)
+			.ToUniversalTime();
 		FileSystem.Initialize()
 			.WithSubdirectory("foo")
 			.WithSubdirectory("bar");

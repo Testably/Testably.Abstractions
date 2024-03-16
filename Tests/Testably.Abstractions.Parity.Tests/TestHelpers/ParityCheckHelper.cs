@@ -8,25 +8,20 @@ internal static class ParityCheckHelper
 	public static bool ContainsEquivalentExtensionMethod(this Type abstractionType,
 		MethodInfo systemMethod)
 	{
-		foreach (MethodInfo abstractionMethod in abstractionType
-			.GetMethods(
+		if (abstractionType.GetMethods(
 				BindingFlags.Public |
 				BindingFlags.Instance |
 				BindingFlags.FlattenHierarchy)
-			.Where(x => x.Name == systemMethod.Name))
+			.Where(x => x.Name == systemMethod.Name)
+			.Any(abstractionMethod => AreExtensionMethodsEqual(systemMethod, abstractionMethod)))
 		{
-			if (AreExtensionMethodsEqual(systemMethod, abstractionMethod))
-			{
-				return true;
-			}
+			return true;
 		}
 
-		foreach (Type @interface in abstractionType.GetInterfaces())
+		if (abstractionType.GetInterfaces()
+			.Any(@interface => @interface.ContainsEquivalentMethod(systemMethod)))
 		{
-			if (@interface.ContainsEquivalentMethod(systemMethod))
-			{
-				return true;
-			}
+			return true;
 		}
 
 		return false;
@@ -35,25 +30,20 @@ internal static class ParityCheckHelper
 	public static bool ContainsEquivalentMethod(this Type abstractionType,
 		MethodInfo systemMethod)
 	{
-		foreach (MethodInfo abstractionMethod in abstractionType
-			.GetMethods(
+		if (abstractionType.GetMethods(
 				BindingFlags.Public |
 				BindingFlags.Instance |
 				BindingFlags.FlattenHierarchy)
-			.Where(x => x.Name == systemMethod.Name))
+			.Where(x => x.Name == systemMethod.Name)
+			.Any(abstractionMethod => AreMethodsEqual(systemMethod, abstractionMethod)))
 		{
-			if (AreMethodsEqual(systemMethod, abstractionMethod))
-			{
-				return true;
-			}
+			return true;
 		}
 
-		foreach (Type @interface in abstractionType.GetInterfaces())
+		if (abstractionType.GetInterfaces()
+			.Any(@interface => @interface.ContainsEquivalentMethod(systemMethod)))
 		{
-			if (@interface.ContainsEquivalentMethod(systemMethod))
-			{
-				return true;
-			}
+			return true;
 		}
 
 		return false;
@@ -62,17 +52,14 @@ internal static class ParityCheckHelper
 	public static bool ContainsEquivalentMethod(this Type abstractionType,
 		ConstructorInfo systemConstructor)
 	{
-		foreach (MethodInfo abstractionMethod in abstractionType
-			.GetMethods(
+		if (abstractionType.GetMethods(
 				BindingFlags.Public |
 				BindingFlags.Instance |
 				BindingFlags.FlattenHierarchy)
-			.Where(x => x.Name == "New"))
+				.Where(x => x.Name == "New")
+			.Any(abstractionMethod => AreMethodsEqual(systemConstructor, abstractionMethod)))
 		{
-			if (AreMethodsEqual(systemConstructor, abstractionMethod))
-			{
-				return true;
-			}
+			return true;
 		}
 
 		return false;
@@ -81,25 +68,20 @@ internal static class ParityCheckHelper
 	public static bool ContainsEquivalentProperty(this Type abstractionType,
 		PropertyInfo systemProperty)
 	{
-		foreach (PropertyInfo abstractionProperty in abstractionType
-			.GetProperties(
+		if (abstractionType.GetProperties(
 				BindingFlags.Public |
 				BindingFlags.Instance |
 				BindingFlags.FlattenHierarchy)
-			.Where(x => x.Name == systemProperty.Name))
+			.Where(x => x.Name == systemProperty.Name)
+			.Any(abstractionProperty => ArePropertiesEqual(systemProperty, abstractionProperty)))
 		{
-			if (ArePropertiesEqual(systemProperty, abstractionProperty))
-			{
-				return true;
-			}
+			return true;
 		}
 
-		foreach (Type @interface in abstractionType.GetInterfaces())
+		if (abstractionType.GetInterfaces()
+			.Any(@interface => @interface.ContainsEquivalentProperty(systemProperty)))
 		{
-			if (@interface.ContainsEquivalentProperty(systemProperty))
-			{
-				return true;
-			}
+			return true;
 		}
 
 		return false;
@@ -108,25 +90,20 @@ internal static class ParityCheckHelper
 	public static bool ContainsEquivalentProperty(this Type abstractionType,
 		FieldInfo systemField)
 	{
-		foreach (PropertyInfo abstractionProperty in abstractionType
-			.GetProperties(
+		if (abstractionType.GetProperties(
 				BindingFlags.Public |
 				BindingFlags.Instance |
 				BindingFlags.FlattenHierarchy)
-			.Where(x => x.Name == systemField.Name))
+			.Where(x => x.Name == systemField.Name)
+			.Any(abstractionProperty => ArePropertiesEqual(systemField, abstractionProperty)))
 		{
-			if (ArePropertiesEqual(systemField, abstractionProperty))
-			{
-				return true;
-			}
+			return true;
 		}
 
-		foreach (Type @interface in abstractionType.GetInterfaces())
+		if (abstractionType.GetInterfaces()
+			.Any(@interface => @interface.ContainsEquivalentProperty(systemField)))
 		{
-			if (@interface.ContainsEquivalentProperty(systemField))
-			{
-				return true;
-			}
+			return true;
 		}
 
 		return false;

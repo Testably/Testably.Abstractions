@@ -13,13 +13,14 @@ public sealed class ApiAcceptance
 	public void AcceptApiChanges()
 	{
 		string[] assemblyNames =
-		{
+		[
 			"Testably.Abstractions",
 			"Testably.Abstractions.AccessControl",
 			"Testably.Abstractions.Compression",
 			"Testably.Abstractions.Interface",
 			"Testably.Abstractions.Testing"
-		};
+		];
+
 		foreach (string assemblyName in assemblyNames)
 		{
 			foreach (string framework in Helper.GetTargetFrameworks())
@@ -29,5 +30,7 @@ public sealed class ApiAcceptance
 				Helper.SetExpectedApi(framework, assemblyName, publicApi);
 			}
 		}
+
+		Assert.That(assemblyNames, Is.Not.Empty);
 	}
 }

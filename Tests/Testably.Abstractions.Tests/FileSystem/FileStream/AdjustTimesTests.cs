@@ -320,10 +320,11 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
 		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
-		using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
-		stream.Write(bytes.AsSpan());
-		stream.Dispose();
+		using (FileSystemStream stream = FileSystem.File.OpenWrite(path))
+		{
+			stream.Write(bytes.AsSpan());
+		}
 
 		DateTime lastWriteTime = WaitToBeUpdatedToAfter(
 			() => FileSystem.File.GetLastWriteTimeUtc(path), updateTime);
@@ -363,10 +364,11 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
 		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
-		using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
-		stream.Write(bytes, 0, 2);
-		stream.Dispose();
+		using (FileSystemStream stream = FileSystem.File.OpenWrite(path))
+		{
+			stream.Write(bytes, 0, 2);
+		}
 
 		DateTime lastWriteTime = WaitToBeUpdatedToAfter(
 			() => FileSystem.File.GetLastWriteTimeUtc(path), updateTime);
@@ -404,10 +406,11 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
 		await TimeSystem.Task.Delay(FileTestHelper.AdjustTimesDelay);
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
-		await using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
-		await stream.WriteAsync(bytes.AsMemory());
-		await stream.DisposeAsync();
+		await using (FileSystemStream stream = FileSystem.File.OpenWrite(path))
+		{
+			await stream.WriteAsync(bytes.AsMemory());
+		}
 
 		DateTime lastWriteTime = WaitToBeUpdatedToAfter(
 			() => FileSystem.File.GetLastWriteTimeUtc(path), updateTime);
@@ -448,12 +451,13 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
 		await TimeSystem.Task.Delay(FileTestHelper.AdjustTimesDelay);
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
-		await using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
-		#pragma warning disable CA1835
-		await stream.WriteAsync(bytes, 0, 2);
-		#pragma warning restore CA1835
-		await stream.DisposeAsync();
+		await using (FileSystemStream stream = FileSystem.File.OpenWrite(path))
+		{
+			#pragma warning disable CA1835
+			await stream.WriteAsync(bytes, 0, 2);
+			#pragma warning restore CA1835
+		}
 
 		DateTime lastWriteTime = WaitToBeUpdatedToAfter(
 			() => FileSystem.File.GetLastWriteTimeUtc(path), updateTime);
@@ -493,10 +497,11 @@ public abstract partial class AdjustTimesTests<TFileSystem>
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
 		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
-		using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
-		stream.WriteByte(singleByte);
-		stream.Dispose();
+		using (FileSystemStream stream = FileSystem.File.OpenWrite(path))
+		{
+			stream.WriteByte(singleByte);
+		}
 
 		DateTime lastWriteTime = WaitToBeUpdatedToAfter(
 			() => FileSystem.File.GetLastWriteTimeUtc(path), updateTime);

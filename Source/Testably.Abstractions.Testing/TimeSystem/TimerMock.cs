@@ -58,35 +58,6 @@ internal sealed class TimerMock : ITimerMock
 	public ITimeSystem TimeSystem
 		=> _mockTimeSystem;
 
-#if FEATURE_ASYNC_DISPOSABLE
-	/// <inheritdoc cref="IAsyncDisposable.DisposeAsync()" />
-	public ValueTask DisposeAsync()
-	{
-		Dispose();
-#if NETSTANDARD2_1
-		return new ValueTask();
-#else
-		return ValueTask.CompletedTask;
-#endif
-	}
-#endif
-
-	/// <inheritdoc cref="IDisposable.Dispose()" />
-	public void Dispose()
-	{
-		if (!_isDisposed)
-		{
-			_isDisposed = true;
-			Stop();
-			_onDispose?.Invoke();
-			lock (_lock)
-			{
-				_cancellationTokenSource?.Dispose();
-				_cancellationTokenSource = null;
-			}
-		}
-	}
-
 	/// <inheritdoc cref="ITimer.Change(int, int)" />
 	public bool Change(int dueTime, int period)
 		=> Change(TimeSpan.FromMilliseconds(dueTime), TimeSpan.FromMilliseconds(period));
@@ -131,6 +102,22 @@ internal sealed class TimerMock : ITimerMock
 		}
 	}
 
+	/// <inheritdoc cref="IDisposable.Dispose()" />
+	public void Dispose()
+	{
+		if (!_isDisposed)
+		{
+			_isDisposed = true;
+			Stop();
+			_onDispose?.Invoke();
+			lock (_lock)
+			{
+				_cancellationTokenSource?.Dispose();
+				_cancellationTokenSource = null;
+			}
+		}
+	}
+
 	/// <inheritdoc cref="ITimer.Dispose(WaitHandle)" />
 	public bool Dispose(WaitHandle notifyObject)
 	{
@@ -161,6 +148,19 @@ internal sealed class TimerMock : ITimerMock
 
 		return true;
 	}
+
+#if FEATURE_ASYNC_DISPOSABLE
+	/// <inheritdoc cref="IAsyncDisposable.DisposeAsync()" />
+	public ValueTask DisposeAsync()
+	{
+		Dispose();
+#if NETSTANDARD2_1
+		return new ValueTask();
+#else
+		return ValueTask.CompletedTask;
+#endif
+	}
+#endif
 
 	/// <inheritdoc cref="ITimerMock.Wait(int, int, Action{ITimerMock})" />
 	public ITimerMock Wait(

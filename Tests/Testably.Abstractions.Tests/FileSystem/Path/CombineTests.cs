@@ -59,13 +59,13 @@ public abstract partial class CombineTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void Combine_3Paths_OneEmpty_ShouldReturnCombinationOfOtherParts(
-		string path1, string path2)
+		string pathA, string pathB)
 	{
-		string expectedPath = System.IO.Path.Combine(path1, path2);
+		string expectedPath = System.IO.Path.Combine(pathA, pathB);
 
-		string result1 = FileSystem.Path.Combine(string.Empty, path1, path2);
-		string result2 = FileSystem.Path.Combine(path1, string.Empty, path2);
-		string result3 = FileSystem.Path.Combine(path1, path2, string.Empty);
+		string result1 = FileSystem.Path.Combine(string.Empty, pathA, pathB);
+		string result2 = FileSystem.Path.Combine(pathA, string.Empty, pathB);
+		string result3 = FileSystem.Path.Combine(pathA, pathB, string.Empty);
 
 		result1.Should().Be(expectedPath);
 		result2.Should().Be(expectedPath);
@@ -119,14 +119,14 @@ public abstract partial class CombineTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void Combine_4Paths_OneEmpty_ShouldReturnCombinationOfOtherParts(
-		string path1, string path2, string path3)
+		string pathA, string pathB, string pathC)
 	{
-		string expectedPath = System.IO.Path.Combine(path1, path2, path3);
+		string expectedPath = System.IO.Path.Combine(pathA, pathB, pathC);
 
-		string result1 = FileSystem.Path.Combine(string.Empty, path1, path2, path3);
-		string result2 = FileSystem.Path.Combine(path1, string.Empty, path2, path3);
-		string result3 = FileSystem.Path.Combine(path1, path2, string.Empty, path3);
-		string result4 = FileSystem.Path.Combine(path1, path2, path3, string.Empty);
+		string result1 = FileSystem.Path.Combine(string.Empty, pathA, pathB, pathC);
+		string result2 = FileSystem.Path.Combine(pathA, string.Empty, pathB, pathC);
+		string result3 = FileSystem.Path.Combine(pathA, pathB, string.Empty, pathC);
+		string result4 = FileSystem.Path.Combine(pathA, pathB, pathC, string.Empty);
 
 		result1.Should().Be(expectedPath);
 		result2.Should().Be(expectedPath);

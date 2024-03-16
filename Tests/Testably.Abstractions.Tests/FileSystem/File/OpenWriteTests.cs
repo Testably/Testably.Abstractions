@@ -28,7 +28,6 @@ public abstract partial class OpenWriteTests<TFileSystem>
 			streamWriter.Write("new-content");
 		}
 
-		stream.Dispose();
 		string result = FileSystem.File.ReadAllText(path);
 
 		result.Should().StartWith("new-content");

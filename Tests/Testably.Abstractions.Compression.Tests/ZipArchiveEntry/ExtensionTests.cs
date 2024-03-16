@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
 using System.IO.Compression;
 using System.Linq;
 
@@ -112,7 +113,7 @@ public abstract partial class ExtensionTests<TFileSystem>
 	[InlineData("2107-12-31T23:59:59")]
 	public void ExtractToFile_LastWriteTime_ShouldBeCopiedFromFile(string lastWriteTimeString)
 	{
-		DateTime lastWriteTime = DateTime.Parse(lastWriteTimeString);
+		DateTime lastWriteTime = DateTime.Parse(lastWriteTimeString, CultureInfo.InvariantCulture);
 		FileSystem.Initialize()
 			.WithSubdirectory("foo")
 			.WithSubdirectory("bar").Initialized(s => s

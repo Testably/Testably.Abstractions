@@ -22,10 +22,12 @@ public abstract partial class DisposeTests<TFileSystem>
 		using FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
 			FileAccess.ReadWrite, FileShare.ReadWrite, 10, FileOptions.DeleteOnClose);
 
+		// ReSharper disable once DisposeOnUsingVariable
 		stream.Dispose();
 		FileSystem.Should().NotHaveFile(path);
 		FileSystem.File.WriteAllText(path, "foo");
 
+		// ReSharper disable once DisposeOnUsingVariable
 		stream.Dispose();
 
 		FileSystem.Should().HaveFile(path);

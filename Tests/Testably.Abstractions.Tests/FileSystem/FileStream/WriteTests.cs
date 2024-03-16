@@ -37,18 +37,20 @@ public abstract partial class WriteTests<TFileSystem>
 		string path, byte[] bytes)
 	{
 		ManualResetEventSlim ms = new();
-		using FileSystemStream stream = FileSystem.File.Create(path);
-		stream.Flush();
-
-		stream.BeginWrite(bytes, 0, bytes.Length, ar =>
+		using (FileSystemStream stream = FileSystem.File.Create(path))
 		{
-			// ReSharper disable once AccessToDisposedClosure
-			stream.EndWrite(ar);
-			ms.Set();
-		}, null);
+			stream.Flush();
 
-		ms.Wait(30000);
-		stream.Dispose();
+			stream.BeginWrite(bytes, 0, bytes.Length, ar =>
+			{
+				// ReSharper disable once AccessToDisposedClosure
+				stream.EndWrite(ar);
+				ms.Set();
+			}, null);
+
+			ms.Wait(30000);
+		}
+
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(bytes);
 	}
@@ -78,20 +80,21 @@ public abstract partial class WriteTests<TFileSystem>
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
 		FileSystem.File.WriteAllBytes(path, bytes);
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
-		using FileSystemStream stream = FileSystem.File.Create(path);
 		DateTime updateTime = DateTime.MinValue;
 
-		stream.BeginWrite(bytes, 0, bytes.Length, ar =>
+		using (FileSystemStream stream = FileSystem.File.Create(path))
 		{
-			TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
-			updateTime = TimeSystem.DateTime.UtcNow;
-			// ReSharper disable once AccessToDisposedClosure
-			stream.EndWrite(ar);
-			ms.Set();
-		}, null);
+			stream.BeginWrite(bytes, 0, bytes.Length, ar =>
+			{
+				TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+				updateTime = TimeSystem.DateTime.UtcNow;
+				// ReSharper disable once AccessToDisposedClosure
+				stream.EndWrite(ar);
+				ms.Set();
+			}, null);
 
-		ms.Wait(10000);
-		stream.Dispose();
+			ms.Wait(10000);
+		}
 
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime lastAccessTime = FileSystem.File.GetLastAccessTimeUtc(path);
@@ -123,15 +126,16 @@ public abstract partial class WriteTests<TFileSystem>
 	{
 		byte[] buffer = new byte[bytes.Length];
 		FileSystem.File.WriteAllBytes(path, bytes);
-		using FileSystemStream stream = FileSystem.File.OpenRead(path);
+		Exception? exception;
 
-		Exception? exception = Record.Exception(() =>
+		using (FileSystemStream stream = FileSystem.File.OpenRead(path))
 		{
-			// ReSharper disable once AccessToDisposedClosure
-			stream.Write(buffer, 0, bytes.Length);
-		});
-
-		stream.Dispose();
+			exception = Record.Exception(() =>
+			{
+				// ReSharper disable once AccessToDisposedClosure
+				stream.Write(buffer, 0, bytes.Length);
+			});
+		}
 
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
@@ -140,11 +144,11 @@ public abstract partial class WriteTests<TFileSystem>
 	[AutoData]
 	public void Write_ShouldFillBuffer(string path, byte[] bytes)
 	{
-		using FileSystemStream stream = FileSystem.File.Create(path);
+		using (FileSystemStream stream = FileSystem.File.Create(path))
+		{
+			stream.Write(bytes, 0, bytes.Length);
+		}
 
-		stream.Write(bytes, 0, bytes.Length);
-
-		stream.Dispose();
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(bytes);
 	}
@@ -156,16 +160,16 @@ public abstract partial class WriteTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllBytes(path, bytes);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
+		Exception? exception;
 
-		using FileSystemStream stream = FileSystem.File.OpenWrite(path);
-
-		Exception? exception = Record.Exception(() =>
+		using (FileSystemStream stream = FileSystem.File.OpenWrite(path))
 		{
-			// ReSharper disable once AccessToDisposedClosure
-			stream.WriteByte(0);
-		});
-
-		stream.Dispose();
+			exception = Record.Exception(() =>
+			{
+				// ReSharper disable once AccessToDisposedClosure
+				stream.WriteByte(0);
+			});
+		}
 
 		exception.Should().BeNull();
 	}
@@ -175,18 +179,16 @@ public abstract partial class WriteTests<TFileSystem>
 	public void WriteByte_ShouldWriteSingleByteAndAdvancePosition(
 		string path, byte byte1, byte byte2)
 	{
-		using FileSystemStream stream = FileSystem.File.Create(path);
+		using (FileSystemStream stream = FileSystem.File.Create(path))
+		{
+			stream.WriteByte(byte1);
+			stream.WriteByte(byte2);
 
-		stream.WriteByte(byte1);
-		stream.WriteByte(byte2);
+			stream.Position.Should().Be(2);
+		}
 
-		stream.Position.Should().Be(2);
-		stream.Dispose();
 		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(new[]
-			{
-				byte1, byte2
-			});
+			.Which.HasContent([byte1, byte2]);
 	}
 
 	[SkippableTheory]
@@ -211,11 +213,11 @@ public abstract partial class WriteTests<TFileSystem>
 	[AutoData]
 	public void Write_AsSpan_ShouldFillBuffer(string path, byte[] bytes)
 	{
-		using FileSystemStream stream = FileSystem.File.Create(path);
+		using (FileSystemStream stream = FileSystem.File.Create(path))
+		{
+			stream.Write(bytes.AsSpan());
+		}
 
-		stream.Write(bytes.AsSpan());
-
-		stream.Dispose();
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(bytes);
 	}
@@ -227,15 +229,16 @@ public abstract partial class WriteTests<TFileSystem>
 	{
 		byte[] buffer = new byte[bytes.Length];
 		FileSystem.File.WriteAllBytes(path, bytes);
-		using FileSystemStream stream = FileSystem.File.OpenRead(path);
+		Exception? exception;
 
-		Exception? exception = Record.Exception(() =>
+		using (FileSystemStream stream = FileSystem.File.OpenRead(path))
 		{
-			// ReSharper disable once AccessToDisposedClosure
-			stream.Write(buffer.AsSpan());
-		});
-
-		stream.Dispose();
+			exception = Record.Exception(() =>
+			{
+				// ReSharper disable once AccessToDisposedClosure
+				stream.Write(buffer.AsSpan());
+			});
+		}
 
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
@@ -247,13 +250,14 @@ public abstract partial class WriteTests<TFileSystem>
 	public async Task WriteAsync_ShouldFillBuffer(string path, byte[] bytes)
 	{
 		using CancellationTokenSource cts = new(30000);
-		await using FileSystemStream stream = FileSystem.File.Create(path);
 
-		#pragma warning disable CA1835
-		await stream.WriteAsync(bytes, 0, bytes.Length, cts.Token);
-		#pragma warning restore CA1835
+		await using (FileSystemStream stream = FileSystem.File.Create(path))
+		{
+			#pragma warning disable CA1835
+			await stream.WriteAsync(bytes, 0, bytes.Length, cts.Token);
+			#pragma warning restore CA1835
+		}
 
-		await stream.DisposeAsync();
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(bytes);
 	}
@@ -266,17 +270,18 @@ public abstract partial class WriteTests<TFileSystem>
 		using CancellationTokenSource cts = new(30000);
 		byte[] buffer = new byte[bytes.Length];
 		await FileSystem.File.WriteAllBytesAsync(path, bytes, cts.Token);
-		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
+		Exception? exception;
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		await using (FileSystemStream stream = FileSystem.File.OpenRead(path))
 		{
-			// ReSharper disable once AccessToDisposedClosure
-			#pragma warning disable CA1835
-			await stream.WriteAsync(buffer, 0, bytes.Length, cts.Token);
-			#pragma warning restore CA1835
-		});
-
-		await stream.DisposeAsync();
+			exception = await Record.ExceptionAsync(async () =>
+			{
+				// ReSharper disable once AccessToDisposedClosure
+				#pragma warning disable CA1835
+				await stream.WriteAsync(buffer, 0, bytes.Length, cts.Token);
+				#pragma warning restore CA1835
+			});
+		}
 
 		exception.Should().BeException<NotSupportedException>(
 			hResult: -2146233067);
