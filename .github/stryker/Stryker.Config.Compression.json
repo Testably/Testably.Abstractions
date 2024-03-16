@@ -8,12 +8,7 @@
 			"./Testably.Abstractions.Compression.Tests/Testably.Abstractions.Compression.Tests.csproj"
 		],
 		"project": "Testably.Abstractions.Compression.csproj",
-		"target-framework": "net7.0",
-		"since": {
-			"ignore-changes-in": [
-				"**/.github/**/*.*"
-			]
-		},
+		"target-framework": "net8.0",
 		"reporters": [
 			"html",
 			"progress",
