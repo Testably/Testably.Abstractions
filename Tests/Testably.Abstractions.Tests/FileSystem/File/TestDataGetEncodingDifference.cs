@@ -10,8 +10,6 @@ public class TestDataGetEncodingDifference : IEnumerable<object[]>
 
 	#region IEnumerable<object[]> Members
 
-	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
 	public IEnumerator<object[]> GetEnumerator()
 	{
 		yield return new object[]
@@ -19,6 +17,8 @@ public class TestDataGetEncodingDifference : IEnumerable<object[]>
 			SpecialCharactersContent, Encoding.ASCII, Encoding.UTF8
 		};
 	}
+
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 	#endregion
 }

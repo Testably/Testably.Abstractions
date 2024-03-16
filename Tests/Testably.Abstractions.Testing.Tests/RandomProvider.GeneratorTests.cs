@@ -217,13 +217,13 @@ public partial class RandomProviderTests
 
 			#region IEnumerable<int> Members
 
-			/// <inheritdoc cref="IEnumerable.GetEnumerator()" />
-			IEnumerator IEnumerable.GetEnumerator()
-				=> GetEnumerator();
-
 			/// <inheritdoc cref="IEnumerable{T}.GetEnumerator()" />
 			public IEnumerator<int> GetEnumerator()
 				=> Enumerator;
+
+			/// <inheritdoc cref="IEnumerable.GetEnumerator()" />
+			IEnumerator IEnumerable.GetEnumerator()
+				=> GetEnumerator();
 
 			#endregion
 		}

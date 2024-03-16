@@ -38,10 +38,6 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 	public ZipArchiveMode Mode
 		=> _instance.Mode;
 
-	/// <inheritdoc cref="IDisposable.Dispose()" />
-	public void Dispose()
-		=> _instance.Dispose();
-
 	/// <inheritdoc cref="IZipArchive.CreateEntry(string)" />
 	public IZipArchiveEntry CreateEntry(string entryName)
 		=> ZipArchiveEntryWrapper.New(FileSystem, this, _instance.CreateEntry(entryName));
@@ -76,6 +72,10 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 				sourceFileName,
 				entryName,
 				compressionLevel));
+
+	/// <inheritdoc cref="IDisposable.Dispose()" />
+	public void Dispose()
+		=> _instance.Dispose();
 
 	/// <inheritdoc cref="IZipArchive.ExtractToDirectory(string)" />
 	public void ExtractToDirectory(string destinationDirectoryName)

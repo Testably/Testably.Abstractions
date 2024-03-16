@@ -212,14 +212,14 @@ public abstract partial class Tests<TFileSystem>
 				// Ignore any call in tests
 			}
 
-			/// <inheritdoc cref="IContainer.Remove(IComponent?)" />
-			public void Remove(IComponent? component)
+			/// <inheritdoc cref="IDisposable.Dispose()" />
+			public void Dispose()
 			{
 				// Ignore any call in tests
 			}
 
-			/// <inheritdoc cref="IDisposable.Dispose()" />
-			public void Dispose()
+			/// <inheritdoc cref="IContainer.Remove(IComponent?)" />
+			public void Remove(IComponent? component)
 			{
 				// Ignore any call in tests
 			}
@@ -239,16 +239,16 @@ public abstract partial class Tests<TFileSystem>
 			/// <inheritdoc cref="IComponent.Site" />
 			public ISite? Site { get; set; }
 
-			#pragma warning disable CS0067 // Event is required by the interface
-			/// <inheritdoc cref="IComponent.Disposed" />
-			public event EventHandler? Disposed;
-			#pragma warning restore CS0067
-
 			/// <inheritdoc cref="IDisposable.Dispose()" />
 			public void Dispose()
 			{
 				// Ignore any call in tests
 			}
+
+			#pragma warning disable CS0067 // Event is required by the interface
+			/// <inheritdoc cref="IComponent.Disposed" />
+			public event EventHandler? Disposed;
+			#pragma warning restore CS0067
 
 			#endregion
 		}

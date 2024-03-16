@@ -25,12 +25,6 @@ internal abstract class ClassGeneratorBase
 			SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
 	}
 
-	/// <summary>
-	///     Append the source necessary for the <paramref name="class" /> to the <paramref name="sourceBuilder" />.
-	/// </summary>
-	protected abstract void GenerateSource(
-		StringBuilder sourceBuilder, ClassModel @class);
-
 	private string CreateFileName(ClassModel classToGenerate)
 	{
 		string? fileNamePrefix = ExtractFileNamePrefixFromMarker(Marker);
@@ -70,6 +64,12 @@ internal abstract class ClassGeneratorBase
 
 		return $"{marker}.";
 	}
+
+	/// <summary>
+	///     Append the source necessary for the <paramref name="class" /> to the <paramref name="sourceBuilder" />.
+	/// </summary>
+	protected abstract void GenerateSource(
+		StringBuilder sourceBuilder, ClassModel @class);
 
 	private StringBuilder GetSourceBuilder()
 		=> new(

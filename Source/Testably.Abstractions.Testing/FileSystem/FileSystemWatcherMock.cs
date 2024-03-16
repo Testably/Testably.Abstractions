@@ -301,6 +301,9 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	#endregion
 
+	internal static FileSystemWatcherMock New(MockFileSystem fileSystem)
+		=> new(fileSystem);
+
 	/// <inheritdoc cref="Component.Dispose(bool)" />
 	protected override void Dispose(bool disposing)
 	{
@@ -311,9 +314,6 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 		base.Dispose(disposing);
 	}
-
-	internal static FileSystemWatcherMock New(MockFileSystem fileSystem)
-		=> new(fileSystem);
 
 	private bool MatchesFilter(ChangeDescription changeDescription)
 	{
