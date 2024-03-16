@@ -123,32 +123,20 @@ public class ChangeHandlerTests
 			string>
 		{
 			{
-				null,
-				(f, p) => f.Directory.CreateDirectory(p),
-				WatcherChangeTypes.Created,
-				FileSystemTypes.Directory,
-				$"path_{Guid.NewGuid()}"
+				null, (f, p) => f.Directory.CreateDirectory(p), WatcherChangeTypes.Created,
+				FileSystemTypes.Directory, $"path_{Guid.NewGuid()}"
 			},
 			{
-				(f, p) => f.Directory.CreateDirectory(p),
-				(f, p) => f.Directory.Delete(p),
-				WatcherChangeTypes.Deleted,
-				FileSystemTypes.Directory,
-				$"path_{Guid.NewGuid()}"
+				(f, p) => f.Directory.CreateDirectory(p), (f, p) => f.Directory.Delete(p),
+				WatcherChangeTypes.Deleted, FileSystemTypes.Directory, $"path_{Guid.NewGuid()}"
 			},
 			{
-				null,
-				(f, p) => f.File.WriteAllText(p, null),
-				WatcherChangeTypes.Created,
-				FileSystemTypes.File,
-				$"path_{Guid.NewGuid()}"
+				null, (f, p) => f.File.WriteAllText(p, null), WatcherChangeTypes.Created,
+				FileSystemTypes.File, $"path_{Guid.NewGuid()}"
 			},
 			{
-				(f, p) => f.File.WriteAllText(p, null),
-				(f, p) => f.File.Delete(p),
-				WatcherChangeTypes.Deleted,
-				FileSystemTypes.File,
-				$"path_{Guid.NewGuid()}"
+				(f, p) => f.File.WriteAllText(p, null), (f, p) => f.File.Delete(p),
+				WatcherChangeTypes.Deleted, FileSystemTypes.File, $"path_{Guid.NewGuid()}"
 			}
 		};
 	}

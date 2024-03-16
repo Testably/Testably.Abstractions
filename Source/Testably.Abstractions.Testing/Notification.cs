@@ -95,6 +95,12 @@ public static class Notification
 
 			#region IAwaitableCallback<TValue> Members
 
+			/// <inheritdoc cref="IDisposable.Dispose()" />
+			public void Dispose()
+			{
+				_factory.UnRegisterCallback(_key);
+			}
+
 			/// <inheritdoc cref="IAwaitableCallback{TValue}.Wait(Func{TValue, bool}?, int, int, Action?)" />
 			public void Wait(Func<TValue, bool>? filter = null,
 				int timeout = 30000,
@@ -115,12 +121,6 @@ public static class Notification
 				{
 					throw ExceptionFactory.TimeoutExpired(timeout);
 				}
-			}
-
-			/// <inheritdoc cref="IDisposable.Dispose()" />
-			public void Dispose()
-			{
-				_factory.UnRegisterCallback(_key);
 			}
 
 			#endregion
@@ -241,6 +241,10 @@ public static class Notification
 
 		#region IAwaitableCallback<TValue,TFunc> Members
 
+		/// <inheritdoc cref="IDisposable.Dispose()" />
+		public void Dispose()
+			=> _awaitableCallback.Dispose();
+
 		/// <inheritdoc cref="IAwaitableCallback{TValue, TFunc}.Wait(Func{TValue, bool}?,int,int, Action?)" />
 		public TFunc Wait(Func<TValue, bool>? filter = null,
 			int timeout = 30000,
@@ -268,10 +272,6 @@ public static class Notification
 				_ = _valueProvider();
 			});
 		}
-
-		/// <inheritdoc cref="IDisposable.Dispose()" />
-		public void Dispose()
-			=> _awaitableCallback.Dispose();
 
 		#endregion
 	}

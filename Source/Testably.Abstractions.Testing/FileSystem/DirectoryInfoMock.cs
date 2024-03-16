@@ -110,6 +110,19 @@ internal sealed class DirectoryInfoMock
 		ResetCache(!_fileSystem.Execute.IsNetFramework);
 	}
 
+	/// <inheritdoc cref="IFileSystemInfo.Delete()" />
+	public override void Delete()
+	{
+		using IDisposable registration = RegisterMethod(nameof(Delete));
+
+		if (!_fileSystem.Storage.DeleteContainer(Location))
+		{
+			throw ExceptionFactory.DirectoryNotFound(Location.FullPath);
+		}
+
+		ResetCache(!_fileSystem.Execute.IsNetFramework);
+	}
+
 	/// <inheritdoc cref="IDirectoryInfo.EnumerateDirectories()" />
 	public IEnumerable<IDirectoryInfo> EnumerateDirectories()
 	{
@@ -392,19 +405,6 @@ internal sealed class DirectoryInfoMock
 				           .EnsureValidFormat(_fileSystem, nameof(destDirName))),
 			           recursive: true)
 		           ?? throw ExceptionFactory.DirectoryNotFound(FullName);
-	}
-
-	/// <inheritdoc cref="IFileSystemInfo.Delete()" />
-	public override void Delete()
-	{
-		using IDisposable registration = RegisterMethod(nameof(Delete));
-
-		if (!_fileSystem.Storage.DeleteContainer(Location))
-		{
-			throw ExceptionFactory.DirectoryNotFound(Location.FullPath);
-		}
-
-		ResetCache(!_fileSystem.Execute.IsNetFramework);
 	}
 
 	#endregion

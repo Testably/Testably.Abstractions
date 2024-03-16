@@ -90,10 +90,6 @@ internal sealed class FileSystemWatcherWrapper : IFileSystemWatcher
 		set => _instance.SynchronizingObject = value;
 	}
 
-	/// <inheritdoc cref="IDisposable.Dispose()" />
-	public void Dispose()
-		=> _instance.Dispose();
-
 	/// <inheritdoc cref="IFileSystemWatcher.BeginInit()" />
 	public void BeginInit()
 		=> _instance.BeginInit();
@@ -118,6 +114,10 @@ internal sealed class FileSystemWatcherWrapper : IFileSystemWatcher
 		add => _instance.Deleted += value;
 		remove => _instance.Deleted -= value;
 	}
+
+	/// <inheritdoc cref="IDisposable.Dispose()" />
+	public void Dispose()
+		=> _instance.Dispose();
 
 	/// <inheritdoc cref="IFileSystemWatcher.EndInit()" />
 	public void EndInit()
