@@ -12,14 +12,18 @@ public interface IZipFile : IFileSystemEntity
 	void CreateFromDirectory(
 		string sourceDirectoryName,
 		Stream destination);
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
 	/// <inheritdoc cref="ZipFile.CreateFromDirectory(string, Stream, CompressionLevel, bool)" />
 	void CreateFromDirectory(
 		string sourceDirectoryName,
 		Stream destination,
 		CompressionLevel compressionLevel,
 		bool includeBaseDirectory);
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
 	/// <inheritdoc cref="ZipFile.CreateFromDirectory(string, Stream, CompressionLevel, bool, Encoding)" />
 	void CreateFromDirectory(
 		string sourceDirectoryName,
@@ -54,19 +58,25 @@ public interface IZipFile : IFileSystemEntity
 	void ExtractToDirectory(
 		Stream source,
 		string destinationDirectoryName);
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
 	/// <inheritdoc cref="ZipFile.ExtractToDirectory(Stream, string, bool)" />
 	void ExtractToDirectory(
 		Stream source,
 		string destinationDirectoryName,
 		bool overwriteFiles);
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
 	/// <inheritdoc cref="ZipFile.ExtractToDirectory(Stream, string, Encoding)" />
 	void ExtractToDirectory(
 		Stream source,
 		string destinationDirectoryName,
 		Encoding entryNameEncoding);
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
 	/// <inheritdoc cref="ZipFile.ExtractToDirectory(Stream, string, Encoding, bool)" />
 	void ExtractToDirectory(
 		Stream source,

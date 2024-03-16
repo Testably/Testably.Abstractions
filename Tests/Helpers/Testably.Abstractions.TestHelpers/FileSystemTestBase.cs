@@ -17,8 +17,8 @@ public abstract class FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	public abstract string BasePath { get; }
-	public Test Test { get; }
 	public TFileSystem FileSystem { get; }
+	public Test Test { get; }
 	public ITimeSystem TimeSystem { get; }
 
 	// ReSharper disable once UnusedMember.Global

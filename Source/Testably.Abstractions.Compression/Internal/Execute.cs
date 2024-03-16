@@ -4,9 +4,6 @@ namespace Testably.Abstractions.Internal;
 
 internal static class Execute
 {
-	private static bool IsRealFileSystem(IFileSystem fileSystem)
-		=> fileSystem.GetType().Name == "RealFileSystem";
-
 	/// <summary>
 	///     Executes <paramref name="onRealFileSystem" /> when
 	///     the <paramref name="fileSystem" /> is a real file system,
@@ -35,4 +32,7 @@ internal static class Execute
 		=> IsRealFileSystem(fileSystem)
 			? onRealFileSystem()
 			: onMockFileSystem();
+
+	private static bool IsRealFileSystem(IFileSystem fileSystem)
+		=> fileSystem.GetType().Name == "RealFileSystem";
 }

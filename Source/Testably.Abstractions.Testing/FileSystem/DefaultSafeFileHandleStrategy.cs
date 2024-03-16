@@ -25,10 +25,14 @@ public class DefaultSafeFileHandleStrategy : ISafeFileHandleStrategy
 		_callback = callback ?? throw new ArgumentNullException(nameof(callback));
 	}
 
+	#region ISafeFileHandleStrategy Members
+
 	/// <inheritdoc cref="ISafeFileHandleStrategy.MapSafeFileHandle(SafeFileHandle)" />
 #if NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage(Justification = "SafeFileHandle cannot be unit tested.")]
 #endif
 	public SafeFileHandleMock MapSafeFileHandle(SafeFileHandle fileHandle)
 		=> _callback.Invoke(fileHandle);
+
+	#endregion
 }

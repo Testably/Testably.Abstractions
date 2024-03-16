@@ -215,6 +215,30 @@ public abstract partial class ExtensionTests<TFileSystem>
 #endif
 
 	[SkippableFact]
+	public void ExtractToDirectory_ShouldExtractFilesAndDirectories()
+	{
+		FileSystem.Initialize()
+			.WithSubdirectory("foo").Initialized(s => s
+				.WithSubdirectory("bar")
+				.WithFile("bar.txt"));
+		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
+		FileSystem.ZipFile()
+			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
+				false);
+		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
+		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
+
+		archive.ExtractToDirectory("bar");
+
+		FileSystem.File.ReadAllText("bar/foo.txt")
+			.Should().Be("FooFooFoo");
+		FileSystem.Directory.Exists("bar/bar")
+			.Should().BeTrue();
+		FileSystem.File.Exists("bar/bar.txt")
+			.Should().BeTrue();
+	}
+
+	[SkippableFact]
 	public void ExtractToDirectory_WithoutOverwrite_ShouldThrowIOException()
 	{
 		FileSystem.Initialize()
@@ -238,30 +262,6 @@ public abstract partial class ExtensionTests<TFileSystem>
 			.Contain($"'{FileSystem.Path.GetFullPath("bar/foo.txt")}'");
 		FileSystem.File.ReadAllText("bar/foo.txt")
 			.Should().NotBe("FooFooFoo");
-	}
-
-	[SkippableFact]
-	public void ExtractToDirectory_ShouldExtractFilesAndDirectories()
-	{
-		FileSystem.Initialize()
-			.WithSubdirectory("foo").Initialized(s => s
-				.WithSubdirectory("bar")
-				.WithFile("bar.txt"));
-		FileSystem.File.WriteAllText("foo/foo.txt", "FooFooFoo");
-		FileSystem.ZipFile()
-			.CreateFromDirectory("foo", "destination.zip", CompressionLevel.NoCompression,
-				false);
-		using FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
-		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
-
-		archive.ExtractToDirectory("bar");
-
-		FileSystem.File.ReadAllText("bar/foo.txt")
-			.Should().Be("FooFooFoo");
-		FileSystem.Directory.Exists("bar/bar")
-			.Should().BeTrue();
-		FileSystem.File.Exists("bar/bar.txt")
-			.Should().BeTrue();
 	}
 
 #if FEATURE_COMPRESSION_ADVANCED

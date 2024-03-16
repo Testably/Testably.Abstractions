@@ -103,7 +103,7 @@ public abstract partial class OptionsTests<TFileSystem>
 			stream.Write(bytes, 0, bytes.Length);
 			stream.SetLength(bytes.Length);
 		}
-		
+
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(contents2)
 			.And.HasAttribute(FileAttributes.Encrypted);

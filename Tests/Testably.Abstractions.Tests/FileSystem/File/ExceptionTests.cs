@@ -163,6 +163,8 @@ public abstract partial class ExceptionTests<TFileSystem>
 					}, CancellationToken.None)
 					.GetAwaiter().GetResult(),
 			null);
+#endif
+#if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
 			file
 				=> file.AppendAllLinesAsync(value, new[]
@@ -186,6 +188,8 @@ public abstract partial class ExceptionTests<TFileSystem>
 				=> file.AppendAllTextAsync(value, "foo", CancellationToken.None)
 					.GetAwaiter().GetResult(),
 			null);
+#endif
+#if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
 			file
 				=> file.AppendAllTextAsync(value, "foo", Encoding.UTF8, CancellationToken.None)
@@ -335,16 +339,22 @@ public abstract partial class ExceptionTests<TFileSystem>
 			file
 				=> file.Move(value, "foo", false),
 			null);
+#endif
+#if FEATURE_FILE_MOVETO_OVERWRITE
 		yield return (ExceptionTestHelper.TestTypes.NullOrEmpty, "destFileName",
 			file
 				=> file.Move("foo", value, false),
 			null);
+#endif
+#if FEATURE_FILE_MOVETO_OVERWRITE
 		yield return (
 			ExceptionTestHelper.TestTypes.Whitespace |
 			ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "sourceFileName",
 			file
 				=> file.Move(value, "foo", false),
 			null);
+#endif
+#if FEATURE_FILE_MOVETO_OVERWRITE
 		yield return (
 			ExceptionTestHelper.TestTypes.Whitespace |
 			ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "destFileName",
@@ -407,6 +417,8 @@ public abstract partial class ExceptionTests<TFileSystem>
 				=> file.ReadAllLinesAsync(value, CancellationToken.None)
 					.GetAwaiter().GetResult(),
 			null);
+#endif
+#if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
 			file
 				=> file.ReadAllLinesAsync(value, Encoding.UTF8, CancellationToken.None)
@@ -427,6 +439,8 @@ public abstract partial class ExceptionTests<TFileSystem>
 				=> file.ReadAllTextAsync(value, CancellationToken.None)
 					.GetAwaiter().GetResult(),
 			null);
+#endif
+#if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
 			file
 				=> file.ReadAllTextAsync(value, Encoding.UTF8, CancellationToken.None)
@@ -446,6 +460,8 @@ public abstract partial class ExceptionTests<TFileSystem>
 			file
 				=> file.ReadLinesAsync(value, CancellationToken.None),
 			null);
+#endif
+#if FEATURE_FILESYSTEM_NET7
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
 			file
 				=> file.ReadLinesAsync(value, Encoding.UTF8, CancellationToken.None),
@@ -557,6 +573,8 @@ public abstract partial class ExceptionTests<TFileSystem>
 					}, CancellationToken.None)
 					.GetAwaiter().GetResult(),
 			null);
+#endif
+#if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
 			file
 				=> file.WriteAllLinesAsync(value, new[]
@@ -580,6 +598,8 @@ public abstract partial class ExceptionTests<TFileSystem>
 				=> file.WriteAllTextAsync(value, "foo", CancellationToken.None)
 					.GetAwaiter().GetResult(),
 			null);
+#endif
+#if FEATURE_FILESYSTEM_ASYNC
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
 			file
 				=> file.WriteAllTextAsync(value, "foo", Encoding.UTF8, CancellationToken.None)

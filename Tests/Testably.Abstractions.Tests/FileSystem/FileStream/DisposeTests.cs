@@ -94,9 +94,6 @@ public abstract partial class DisposeTests<TFileSystem>
 			.GetAwaiter().GetResult();
 		// ReSharper disable once MustUseReturnValue
 		yield return fileStream => fileStream.Read(Array.Empty<byte>(), 0, 0);
-#if FEATURE_SPAN
-		//yield return fileStream => fileStream.Read(Array.Empty<byte>().AsSpan());
-#endif
 		yield return fileStream => fileStream.ReadAsync(Array.Empty<byte>(), 0, 0)
 			.GetAwaiter().GetResult();
 		yield return fileStream => fileStream.ReadByte();

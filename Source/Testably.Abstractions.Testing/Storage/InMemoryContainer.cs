@@ -15,11 +15,11 @@ internal class InMemoryContainer : IStorageContainer
 {
 	private FileAttributes _attributes;
 	private byte[] _bytes = Array.Empty<byte>();
+	private readonly FileSystemExtensibility _extensibility = new();
 	private readonly ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
 	private readonly MockFileSystem _fileSystem;
 	private bool _isEncrypted;
 	private readonly IStorageLocation _location;
-	private readonly FileSystemExtensibility _extensibility = new();
 
 	public InMemoryContainer(FileSystemTypes type,
 		IStorageLocation location,
@@ -165,7 +165,8 @@ internal class InMemoryContainer : IStorageContainer
 		if (CanGetAccess(access, share, deleteAccess))
 		{
 			Guid guid = Guid.NewGuid();
-			FileHandle fileHandle = new(_fileSystem, guid, ReleaseAccess, access, share, deleteAccess);
+			FileHandle fileHandle =
+				new(_fileSystem, guid, ReleaseAccess, access, share, deleteAccess);
 			_fileHandles.TryAdd(guid, fileHandle);
 			return fileHandle;
 		}
@@ -212,22 +213,6 @@ internal class InMemoryContainer : IStorageContainer
 
 	#endregion
 
-	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-	{
-		if (Type == FileSystemTypes.Directory)
-		{
-			return $"{_location.FullPath}: Directory";
-		}
-
-		if (Type == FileSystemTypes.File)
-		{
-			return $"{_location.FullPath}: File ({_bytes.Length} bytes)";
-		}
-
-		return $"{_location.FullPath}: Unknown Container";
-	}
-
 	/// <summary>
 	///     Create a new directory on the <paramref name="location" />.
 	/// </summary>
@@ -246,6 +231,22 @@ internal class InMemoryContainer : IStorageContainer
 	{
 		return new InMemoryContainer(FileSystemTypes.File, location,
 			fileSystem);
+	}
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		if (Type == FileSystemTypes.Directory)
+		{
+			return $"{_location.FullPath}: Directory";
+		}
+
+		if (Type == FileSystemTypes.File)
+		{
+			return $"{_location.FullPath}: File ({_bytes.Length} bytes)";
+		}
+
+		return $"{_location.FullPath}: Unknown Container";
 	}
 
 	internal FileAttributes AdjustAttributes(FileAttributes attributes)
@@ -342,11 +343,12 @@ internal class InMemoryContainer : IStorageContainer
 
 	private sealed class FileHandle : IStorageAccessHandle
 	{
-		private readonly Guid _key;
 		private readonly MockFileSystem _fileSystem;
+		private readonly Guid _key;
 		private readonly Action<Guid> _releaseCallback;
 
-		public FileHandle(MockFileSystem fileSystem, Guid key, Action<Guid> releaseCallback, FileAccess access,
+		public FileHandle(MockFileSystem fileSystem, Guid key, Action<Guid> releaseCallback,
+			FileAccess access,
 			FileShare share, bool deleteAccess)
 		{
 			_fileSystem = fileSystem;

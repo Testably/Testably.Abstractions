@@ -5,9 +5,8 @@ public abstract partial class PathTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	[SkippableTheory]
-	[AutoData]
-	public void Path_SetToNotExistingPath_ShouldThrowArgumentException(string path)
+	[SkippableFact]
+	public void Path_Empty_ShouldNotThrowException()
 	{
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();
@@ -15,12 +14,10 @@ public abstract partial class PathTests<TFileSystem>
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			fileSystemWatcher.Path = path;
+			fileSystemWatcher.Path = "";
 		});
 
-		exception.Should().BeException<ArgumentException>(
-			hResult: -2147024809,
-			messageContains: path);
+		exception.Should().BeNull();
 	}
 
 	[SkippableFact]
@@ -38,8 +35,9 @@ public abstract partial class PathTests<TFileSystem>
 		exception.Should().BeNull();
 	}
 
-	[SkippableFact]
-	public void Path_Empty_ShouldNotThrowException()
+	[SkippableTheory]
+	[AutoData]
+	public void Path_SetToNotExistingPath_ShouldThrowArgumentException(string path)
 	{
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New();
@@ -47,10 +45,12 @@ public abstract partial class PathTests<TFileSystem>
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			fileSystemWatcher.Path = "";
+			fileSystemWatcher.Path = path;
 		});
 
-		exception.Should().BeNull();
+		exception.Should().BeException<ArgumentException>(
+			hResult: -2147024809,
+			messageContains: path);
 	}
 
 	[SkippableFact]

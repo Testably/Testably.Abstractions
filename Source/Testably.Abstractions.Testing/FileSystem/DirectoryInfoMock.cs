@@ -95,19 +95,6 @@ internal sealed class DirectoryInfoMock
 		return directory;
 	}
 
-	/// <inheritdoc cref="IFileSystemInfo.Delete()" />
-	public override void Delete()
-	{
-		using IDisposable registration = RegisterMethod(nameof(Delete));
-
-		if (!_fileSystem.Storage.DeleteContainer(Location))
-		{
-			throw ExceptionFactory.DirectoryNotFound(Location.FullPath);
-		}
-
-		ResetCache(!_fileSystem.Execute.IsNetFramework);
-	}
-
 	/// <inheritdoc cref="IDirectoryInfo.Delete(bool)" />
 	public void Delete(bool recursive)
 	{
@@ -407,6 +394,19 @@ internal sealed class DirectoryInfoMock
 		           ?? throw ExceptionFactory.DirectoryNotFound(FullName);
 	}
 
+	/// <inheritdoc cref="IFileSystemInfo.Delete()" />
+	public override void Delete()
+	{
+		using IDisposable registration = RegisterMethod(nameof(Delete));
+
+		if (!_fileSystem.Storage.DeleteContainer(Location))
+		{
+			throw ExceptionFactory.DirectoryNotFound(Location.FullPath);
+		}
+
+		ResetCache(!_fileSystem.Execute.IsNetFramework);
+	}
+
 	#endregion
 
 	[return: NotNullIfNotNull("location")]
@@ -438,9 +438,6 @@ internal sealed class DirectoryInfoMock
 			enumerationOptions);
 	}
 
-	protected override IDisposable RegisterProperty(string name, PropertyAccess access)
-		=> _fileSystem.StatisticsRegistration.DirectoryInfo.RegisterProperty(Location.FullPath, name, access);
-
 	protected override IDisposable RegisterMethod(string name)
 		=> _fileSystem.StatisticsRegistration.DirectoryInfo.RegisterMethod(Location.FullPath, name);
 
@@ -452,4 +449,8 @@ internal sealed class DirectoryInfoMock
 		=> _fileSystem.StatisticsRegistration.DirectoryInfo.RegisterMethod(Location.FullPath, name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2));
+
+	protected override IDisposable RegisterProperty(string name, PropertyAccess access)
+		=> _fileSystem.StatisticsRegistration.DirectoryInfo.RegisterProperty(Location.FullPath,
+			name, access);
 }

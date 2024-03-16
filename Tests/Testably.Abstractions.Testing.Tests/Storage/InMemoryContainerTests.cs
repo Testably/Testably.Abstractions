@@ -314,10 +314,10 @@ public class InMemoryContainerTests
 		MockFileSystem fileSystem = new();
 		string expectedPath = fileSystem.Path.GetFullPath("foo");
 		IStorageLocation location = InMemoryLocation.New(fileSystem, null, expectedPath);
-		InMemoryContainer sut = new InMemoryContainer(FileSystemTypes.DirectoryOrFile, location,
+		InMemoryContainer sut = new(FileSystemTypes.DirectoryOrFile, location,
 			fileSystem);
 
-		string? result = sut.ToString();
+		string result = sut.ToString();
 
 		result.Should().Be($"{expectedPath}: Unknown Container");
 	}

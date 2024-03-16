@@ -12,12 +12,6 @@ public class TimerStrategy : ITimerStrategy
 	public static ITimerStrategy Default { get; }
 		= new TimerStrategy();
 
-	/// <inheritdoc cref="ITimerStrategy.Mode" />
-	public TimerMode Mode { get; }
-
-	/// <inheritdoc cref="ITimerStrategy.SwallowExceptions" />
-	public bool SwallowExceptions { get; }
-
 	/// <summary>
 	///     Initializes a new instance of <see cref="TimerStrategy" />.
 	/// </summary>
@@ -30,4 +24,14 @@ public class TimerStrategy : ITimerStrategy
 		Mode = mode;
 		SwallowExceptions = swallowExceptions;
 	}
+
+	#region ITimerStrategy Members
+
+	/// <inheritdoc cref="ITimerStrategy.Mode" />
+	public TimerMode Mode { get; }
+
+	/// <inheritdoc cref="ITimerStrategy.SwallowExceptions" />
+	public bool SwallowExceptions { get; }
+
+	#endregion
 }

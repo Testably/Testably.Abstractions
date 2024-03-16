@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO.Compression;
+﻿using System.IO.Compression;
 using System.Text;
 #if FEATURE_COMPRESSION_STREAM
 using System.IO;
@@ -180,7 +179,9 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 		archive.Entries.Count.Should().Be(1);
 		archive.Entries.Should().Contain(e => e.FullName.Equals("bar/"));
 	}
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[AutoData]
 	public void CreateFromDirectory_WithStream_EmptySource_DoNotIncludeBaseDirectory_ShouldBeEmpty(
@@ -197,7 +198,9 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 
 		archive.Entries.Count.Should().Be(0);
 	}
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[AutoData]
 	public void
@@ -216,7 +219,9 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 		archive.Entries.Count.Should().Be(1);
 		archive.Entries.Should().Contain(e => e.FullName.Equals("foo/"));
 	}
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[MemberData(nameof(EntryNameEncoding))]
 	public void CreateFromDirectory_WithStream_EntryNameEncoding_ShouldUseEncoding(
@@ -243,7 +248,9 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 			archive.Entries.Should().NotContain(e => e.Name == entryName);
 		}
 	}
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[AutoData]
 	public void CreateFromDirectory_WithStream_IncludeBaseDirectory_ShouldPrependDirectoryName(
@@ -262,22 +269,9 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 		archive.Entries.Count.Should().Be(1);
 		archive.Entries.Should().Contain(e => e.FullName.Equals("foo/test.txt"));
 	}
+#endif
 
-	[SkippableFact]
-	public void
-		CreateFromDirectory_WithStream_Null_ShouldThrowArgumentNullException()
-	{
-		Stream stream = null!;
-
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.ZipFile().CreateFromDirectory("foo", stream);
-		});
-
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.ParamName.Should().Be("destination");
-	}
-
+#if FEATURE_COMPRESSION_STREAM
 	[SkippableFact]
 	public void
 		CreateFromDirectory_WithStream_NotWritable_ShouldThrowArgumentException()
@@ -292,7 +286,26 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 		exception.Should().BeException<ArgumentException>("The stream is unwritable",
 			paramName: "destination", hResult: -2147024809);
 	}
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
+	[SkippableFact]
+	public void
+		CreateFromDirectory_WithStream_Null_ShouldThrowArgumentNullException()
+	{
+		Stream stream = null!;
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+		});
+
+		exception.Should().BeOfType<ArgumentNullException>()
+			.Which.ParamName.Should().Be("destination");
+	}
+#endif
+
+#if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[AutoData]
 	public void CreateFromDirectory_WithStream_Overwrite_WithEncoding_ShouldOverwriteFile(
@@ -316,7 +329,9 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 		archive.Entries.Count.Should().Be(1);
 		archive.Entries.Should().Contain(e => e.FullName.Equals("test.txt"));
 	}
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
 	[SkippableFact]
 	public void CreateFromDirectory_WithStream_ShouldZipDirectoryContent()
 	{
@@ -346,8 +361,12 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 		// ReSharper disable StringLiteralTypo
 		TheoryData<string, Encoding, bool> theoryData = new()
 		{
-			{ "Dans mes rêves.mp3", Encoding.Default, true },
-			{ "Dans mes rêves.mp3", Encoding.ASCII, false }
+			{
+				"Dans mes rêves.mp3", Encoding.Default, true
+			},
+			{
+				"Dans mes rêves.mp3", Encoding.ASCII, false
+			}
 		};
 		// ReSharper restore StringLiteralTypo
 		return theoryData;

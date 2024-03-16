@@ -157,23 +157,9 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 			.Should().BeEquivalentTo(
 				FileSystem.File.ReadAllBytes("foo/test.txt"));
 	}
+#endif
 
-	[SkippableFact]
-	public void
-		ExtractToDirectory_WithStream_Null_ShouldThrowArgumentNullException()
-	{
-		FileSystem.Initialize();
-		Stream source = null!;
-
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.ZipFile().ExtractToDirectory(source, "bar");
-		});
-
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.ParamName.Should().Be("source");
-	}
-
+#if FEATURE_COMPRESSION_STREAM
 	[SkippableFact]
 	public void
 		ExtractToDirectory_WithStream_NotReadable_ShouldThrowArgumentNullException()
@@ -189,7 +175,27 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 		exception.Should().BeException<ArgumentException>(
 			"The stream is unreadable", paramName: "source", hResult: -2147024809);
 	}
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
+	[SkippableFact]
+	public void
+		ExtractToDirectory_WithStream_Null_ShouldThrowArgumentNullException()
+	{
+		FileSystem.Initialize();
+		Stream source = null!;
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.ZipFile().ExtractToDirectory(source, "bar");
+		});
+
+		exception.Should().BeOfType<ArgumentNullException>()
+			.Which.ParamName.Should().Be("source");
+	}
+#endif
+
+#if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[AutoData]
 	public void ExtractToDirectory_WithStream_Overwrite_ShouldOverwriteFile(
@@ -213,7 +219,9 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 		FileSystem.File.ReadAllText(FileSystem.Path.Combine("bar", "test.txt"))
 			.Should().Be(contents);
 	}
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[AutoData]
 	public void ExtractToDirectory_WithStream_WithEncoding_ShouldZipDirectoryContent(
@@ -236,7 +244,9 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 			.Should().BeEquivalentTo(
 				FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("foo", "test.txt")));
 	}
+#endif
 
+#if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[AutoData]
 	public void ExtractToDirectory_WithStream_WithoutOverwriteAndExistingFile_ShouldOverwriteFile(

@@ -133,6 +133,8 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 					}, CancellationToken.None)
 					.GetAwaiter().GetResult(),
 			null);
+#endif
+#if FEATURE_FILESYSTEM_ASYNC
 		yield return (MissingFileTestCases.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.AppendAllLinesAsync(path, new[]
@@ -157,6 +159,8 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 				=> file.AppendAllTextAsync(path, "foo", CancellationToken.None)
 					.GetAwaiter().GetResult(),
 			null);
+#endif
+#if FEATURE_FILESYSTEM_ASYNC
 		yield return (MissingFileTestCases.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.AppendAllTextAsync(path, "foo", Encoding.UTF8,
@@ -235,6 +239,8 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 			(file, path)
 				=> file.Move(path, "foo", false),
 			null);
+#endif
+#if FEATURE_FILE_MOVETO_OVERWRITE
 		yield return (MissingFileTestCases.FileMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.Move("foo", path, false),
@@ -295,6 +301,8 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 				=> file.ReadAllLinesAsync(path, CancellationToken.None)
 					.GetAwaiter().GetResult(),
 			null);
+#endif
+#if FEATURE_FILESYSTEM_ASYNC
 		yield return (MissingFileTestCases.All, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.ReadAllLinesAsync(path, Encoding.UTF8, CancellationToken.None)
@@ -315,6 +323,8 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 				=> file.ReadAllTextAsync(path, CancellationToken.None)
 					.GetAwaiter().GetResult(),
 			null);
+#endif
+#if FEATURE_FILESYSTEM_ASYNC
 		yield return (MissingFileTestCases.All, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.ReadAllTextAsync(path, Encoding.UTF8, CancellationToken.None)
@@ -334,6 +344,8 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 			(file, path)
 				=> file.ReadLinesAsync(path, CancellationToken.None),
 			null);
+#endif
+#if FEATURE_FILESYSTEM_NET7
 		yield return (MissingFileTestCases.All, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.ReadLinesAsync(path, Encoding.UTF8, CancellationToken.None),
@@ -421,6 +433,8 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 					}, CancellationToken.None)
 					.GetAwaiter().GetResult(),
 			null);
+#endif
+#if FEATURE_FILESYSTEM_ASYNC
 		yield return (MissingFileTestCases.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.WriteAllLinesAsync(path, new[]
@@ -445,6 +459,8 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 				=> file.WriteAllTextAsync(path, "foo", CancellationToken.None)
 					.GetAwaiter().GetResult(),
 			null);
+#endif
+#if FEATURE_FILESYSTEM_ASYNC
 		yield return (MissingFileTestCases.DirectoryMissing, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.WriteAllTextAsync(path, "foo", Encoding.UTF8,

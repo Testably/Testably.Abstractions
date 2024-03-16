@@ -8,6 +8,46 @@ namespace Testably.Abstractions.TestHelpers;
 
 public static class AssertionHelpers
 {
+	public static AndWhichConstraint<ObjectAssertions, TException>
+		BeException<TException>(this ObjectAssertions objectAssertions,
+			string? messageContains = null,
+			int? hResult = null,
+			string? paramName = null,
+			string because = "", params object[] becauseArgs)
+		where TException : Exception
+	{
+		bool success = Execute.Assertion
+			.ForCondition(objectAssertions.Subject is not null)
+			.BecauseOf(because, becauseArgs)
+			.WithDefaultIdentifier("type")
+			.FailWith("Expected {context} to be {0}{reason}, but found <null>.",
+				"FileNotFoundException or DirectoryNotFoundException");
+		TException? typedSubject = null;
+		if (success)
+		{
+			if (objectAssertions.Subject is TException exception)
+			{
+				typedSubject = exception;
+
+				AssertExceptionMessage(exception, messageContains, because, becauseArgs);
+				AssertExceptionHResult(exception, hResult, because, becauseArgs);
+				AssertExceptionParamName(exception, paramName, because, becauseArgs);
+			}
+			else
+			{
+				Execute.Assertion
+					.BecauseOf(because, becauseArgs)
+					.WithDefaultIdentifier("type")
+					.FailWith("Expected {context} to be {0}{reason}, but found {1}.",
+						typeof(TException),
+						objectAssertions.Subject!.GetType());
+			}
+		}
+
+		return new AndWhichConstraint<ObjectAssertions, TException>(objectAssertions,
+			typedSubject!);
+	}
+
 	public static AndWhichConstraint<ObjectAssertions, IOException?>
 		BeFileOrDirectoryNotFoundException(this ObjectAssertions objectAssertions,
 			string because = "", params object[] becauseArgs)
@@ -59,46 +99,6 @@ public static class AssertionHelpers
 
 		return new AndWhichConstraint<ObjectAssertions, IOException?>(objectAssertions,
 			typedSubject);
-	}
-
-	public static AndWhichConstraint<ObjectAssertions, TException>
-		BeException<TException>(this ObjectAssertions objectAssertions,
-			string? messageContains = null,
-			int? hResult = null,
-			string? paramName = null,
-			string because = "", params object[] becauseArgs)
-		where TException : Exception
-	{
-		bool success = Execute.Assertion
-			.ForCondition(objectAssertions.Subject is not null)
-			.BecauseOf(because, becauseArgs)
-			.WithDefaultIdentifier("type")
-			.FailWith("Expected {context} to be {0}{reason}, but found <null>.",
-				"FileNotFoundException or DirectoryNotFoundException");
-		TException? typedSubject = null;
-		if (success)
-		{
-			if (objectAssertions.Subject is TException exception)
-			{
-				typedSubject = exception;
-
-				AssertExceptionMessage(exception, messageContains, because, becauseArgs);
-				AssertExceptionHResult(exception, hResult, because, becauseArgs);
-				AssertExceptionParamName(exception, paramName, because, becauseArgs);
-			}
-			else
-			{
-				Execute.Assertion
-					.BecauseOf(because, becauseArgs)
-					.WithDefaultIdentifier("type")
-					.FailWith("Expected {context} to be {0}{reason}, but found {1}.",
-						typeof(TException),
-						objectAssertions.Subject!.GetType());
-			}
-		}
-
-		return new AndWhichConstraint<ObjectAssertions, TException>(objectAssertions,
-			typedSubject!);
 	}
 
 	private static void AssertExceptionHResult<TException>(TException exception,

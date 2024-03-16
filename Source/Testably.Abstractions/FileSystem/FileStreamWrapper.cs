@@ -15,15 +15,19 @@ internal sealed class FileStreamWrapper : FileSystemStream, IFileSystemExtensibi
 		_extensibility = new FileSystemExtensibility(fileStream);
 	}
 
-	/// <inheritdoc cref="IFileSystemExtensibility.TryGetWrappedInstance{T}" />
-	public bool TryGetWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance)
-		=> _extensibility.TryGetWrappedInstance(out wrappedInstance);
+	#region IFileSystemExtensibility Members
+
+	/// <inheritdoc cref="RetrieveMetadata{T}(string)" />
+	public T? RetrieveMetadata<T>(string key)
+		=> _extensibility.RetrieveMetadata<T>(key);
 
 	/// <inheritdoc cref="StoreMetadata{T}(string, T)" />
 	public void StoreMetadata<T>(string key, T? value)
 		=> _extensibility.StoreMetadata(key, value);
 
-	/// <inheritdoc cref="RetrieveMetadata{T}(string)" />
-	public T? RetrieveMetadata<T>(string key)
-		=> _extensibility.RetrieveMetadata<T>(key);
+	/// <inheritdoc cref="IFileSystemExtensibility.TryGetWrappedInstance{T}" />
+	public bool TryGetWrappedInstance<T>([NotNullWhen(true)] out T? wrappedInstance)
+		=> _extensibility.TryGetWrappedInstance(out wrappedInstance);
+
+	#endregion
 }

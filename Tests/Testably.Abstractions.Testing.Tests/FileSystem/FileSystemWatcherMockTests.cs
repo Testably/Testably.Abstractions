@@ -7,6 +7,8 @@ namespace Testably.Abstractions.Testing.Tests.FileSystem;
 [Collection(nameof(IDirectoryCleaner))]
 public sealed class FileSystemWatcherMockTests : IDisposable
 {
+	#region Test Setup
+
 	/// <summary>
 	///     Default number of messages before the buffer overflows is 64:<br />
 	///     <c>internal buffer size / bytes per message = 8192 / 128 = 64</c>
@@ -23,8 +25,6 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		_directoryCleaner = FileSystem.SetCurrentDirectoryToEmptyTemporaryDirectory();
 		FileSystem.Initialize();
 	}
-
-	#region IDisposable Members
 
 	/// <inheritdoc cref="IDisposable.Dispose()" />
 	public void Dispose()

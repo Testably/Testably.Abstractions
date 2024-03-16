@@ -206,32 +206,6 @@ public abstract partial class ReplaceTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Replace_WhenFileIsReadOnly_ShouldThrowUnauthorizedAccessException_OnWindows(
-		string sourceName,
-		string destinationName,
-		string backupName,
-		string sourceContents,
-		string destinationContents)
-	{
-		Skip.IfNot(Test.RunsOnWindows);
-
-		FileSystem.File.WriteAllText(sourceName, sourceContents);
-
-		FileSystem.File.WriteAllText(destinationName, destinationContents);
-		FileSystem.File.SetAttributes(destinationName, FileAttributes.ReadOnly);
-
-		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
-
-		Exception? exception = Record.Exception(() =>
-		{
-			sut.Replace(destinationName, backupName);
-		});
-
-		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
-	}
-
-	[SkippableTheory]
-	[AutoData]
 	public void Replace_ShouldKeepMetadata(
 		string sourceName,
 		string destinationName,
@@ -413,6 +387,32 @@ public abstract partial class ReplaceTests<TFileSystem>
 			// Behaviour on Linux/MacOS is uncertain
 			FileSystem.Should().NotHaveFile(backupName);
 		}
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Replace_WhenFileIsReadOnly_ShouldThrowUnauthorizedAccessException_OnWindows(
+		string sourceName,
+		string destinationName,
+		string backupName,
+		string sourceContents,
+		string destinationContents)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		FileSystem.File.WriteAllText(sourceName, sourceContents);
+
+		FileSystem.File.WriteAllText(destinationName, destinationContents);
+		FileSystem.File.SetAttributes(destinationName, FileAttributes.ReadOnly);
+
+		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			sut.Replace(destinationName, backupName);
+		});
+
+		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 
 	[SkippableTheory]

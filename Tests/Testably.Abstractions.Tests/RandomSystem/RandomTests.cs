@@ -25,20 +25,9 @@ public abstract partial class RandomTests<TRandomSystem>
 		exception.Should().BeException<ArgumentException>("Span may not be empty",
 			hResult: -2147024809, paramName: nameof(choices));
 	}
+#endif
 
-	[Fact]
-	public void GetItems_Array_NullChoices_ShouldThrowArgumentNullException()
-	{
-		int[] choices = null!;
-
-		Exception? exception = Record.Exception(() =>
-		{
-			RandomSystem.Random.Shared.GetItems(choices, -1);
-		});
-
-		exception.Should().BeOfType<ArgumentNullException>();
-	}
-
+#if FEATURE_RANDOM_ITEMS
 	[Fact]
 	public void GetItems_Array_LengthLargerThanChoices_ShouldIncludeDuplicateValues()
 	{
@@ -49,7 +38,9 @@ public abstract partial class RandomTests<TRandomSystem>
 		result.Length.Should().Be(100);
 		result.Should().OnlyContain(r => choices.Contains(r));
 	}
+#endif
 
+#if FEATURE_RANDOM_ITEMS
 	[Theory]
 	[InlineData(-1)]
 	[InlineData(-200)]
@@ -67,7 +58,24 @@ public abstract partial class RandomTests<TRandomSystem>
 			.Be(
 				$"length ('{length}') must be a non-negative value. (Parameter 'length'){Environment.NewLine}Actual value was {length}.");
 	}
+#endif
 
+#if FEATURE_RANDOM_ITEMS
+	[Fact]
+	public void GetItems_Array_NullChoices_ShouldThrowArgumentNullException()
+	{
+		int[] choices = null!;
+
+		Exception? exception = Record.Exception(() =>
+		{
+			RandomSystem.Random.Shared.GetItems(choices, -1);
+		});
+
+		exception.Should().BeOfType<ArgumentNullException>();
+	}
+#endif
+
+#if FEATURE_RANDOM_ITEMS
 	[Fact]
 	public void GetItems_Array_ShouldSelectRandomElements()
 	{
@@ -78,7 +86,9 @@ public abstract partial class RandomTests<TRandomSystem>
 		result.Length.Should().Be(10);
 		result.Should().OnlyContain(r => choices.Contains(r));
 	}
+#endif
 
+#if FEATURE_RANDOM_ITEMS
 	[Fact]
 	public void GetItems_ReadOnlySpan_LengthLargerThanChoices_ShouldIncludeDuplicateValues()
 	{
@@ -89,7 +99,9 @@ public abstract partial class RandomTests<TRandomSystem>
 		result.Length.Should().Be(100);
 		result.Should().OnlyContain(r => r >= 0 && r < 10);
 	}
+#endif
 
+#if FEATURE_RANDOM_ITEMS
 	[Fact]
 	public void GetItems_ReadOnlySpan_ShouldSelectRandomElements()
 	{
@@ -100,7 +112,9 @@ public abstract partial class RandomTests<TRandomSystem>
 		result.Length.Should().Be(10);
 		result.Should().OnlyContain(r => r >= 0 && r < 100);
 	}
+#endif
 
+#if FEATURE_RANDOM_ITEMS
 	[Fact]
 	public void GetItems_SpanDestination_LengthLargerThanChoices_ShouldIncludeDuplicateValues()
 	{
@@ -113,7 +127,9 @@ public abstract partial class RandomTests<TRandomSystem>
 		destination.Length.Should().Be(100);
 		destination.ToArray().Should().OnlyContain(r => r >= 0 && r < 10);
 	}
+#endif
 
+#if FEATURE_RANDOM_ITEMS
 	[Fact]
 	public void GetItems_SpanDestination_ShouldSelectRandomElements()
 	{
@@ -127,7 +143,6 @@ public abstract partial class RandomTests<TRandomSystem>
 		destination.ToArray().Should().OnlyContain(r => r >= 0 && r < 100);
 	}
 #endif
-
 	[SkippableFact]
 	public void Next_MaxValue_ShouldOnlyReturnValidValues()
 	{
@@ -229,7 +244,9 @@ public abstract partial class RandomTests<TRandomSystem>
 
 		results.Should().OnlyContain(r => r < maxValue);
 	}
+#endif
 
+#if FEATURE_RANDOM_ADVANCED
 	[SkippableFact]
 	public void NextInt64_MinAndMaxValue_ShouldOnlyReturnValidValues()
 	{
@@ -244,7 +261,9 @@ public abstract partial class RandomTests<TRandomSystem>
 
 		results.Should().OnlyContain(r => r >= minValue && r < maxValue);
 	}
+#endif
 
+#if FEATURE_RANDOM_ADVANCED
 	[SkippableFact]
 	public void NextInt64_ShouldBeThreadSafe()
 	{
@@ -257,7 +276,9 @@ public abstract partial class RandomTests<TRandomSystem>
 
 		results.Should().OnlyHaveUniqueItems();
 	}
+#endif
 
+#if FEATURE_RANDOM_ADVANCED
 	[SkippableFact]
 	public void NextSingle_ShouldBeThreadSafe()
 	{
@@ -274,19 +295,6 @@ public abstract partial class RandomTests<TRandomSystem>
 
 #if FEATURE_RANDOM_ITEMS
 	[Fact]
-	public void Shuffle_Array_ShouldShuffleItemsInPlace()
-	{
-		int[] originalValues = Enumerable.Range(0, 100).ToArray();
-		int[] values = originalValues.ToArray();
-
-		RandomSystem.Random.Shared.Shuffle(values);
-
-		values.Should().OnlyHaveUniqueItems();
-		values.Should().NotContainInOrder(originalValues);
-		values.OrderBy(x => x).Should().ContainInOrder(originalValues);
-	}
-
-	[Fact]
 	public void Shuffle_Array_Null_ShouldThrowArgumentNullException()
 	{
 		int[] values = null!;
@@ -299,7 +307,24 @@ public abstract partial class RandomTests<TRandomSystem>
 		exception.Should().BeOfType<ArgumentNullException>()
 			.Which.ParamName.Should().Be(nameof(values));
 	}
+#endif
 
+#if FEATURE_RANDOM_ITEMS
+	[Fact]
+	public void Shuffle_Array_ShouldShuffleItemsInPlace()
+	{
+		int[] originalValues = Enumerable.Range(0, 100).ToArray();
+		int[] values = originalValues.ToArray();
+
+		RandomSystem.Random.Shared.Shuffle(values);
+
+		values.Should().OnlyHaveUniqueItems();
+		values.Should().NotContainInOrder(originalValues);
+		values.OrderBy(x => x).Should().ContainInOrder(originalValues);
+	}
+#endif
+
+#if FEATURE_RANDOM_ITEMS
 	[Fact]
 	public void Shuffle_Span_ShouldShuffleItemsInPlace()
 	{

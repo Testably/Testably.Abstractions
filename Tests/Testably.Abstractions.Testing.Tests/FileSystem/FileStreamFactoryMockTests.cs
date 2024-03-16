@@ -6,6 +6,8 @@ namespace Testably.Abstractions.Testing.Tests.FileSystem;
 [Collection(nameof(IDirectoryCleaner))]
 public sealed class FileStreamFactoryMockTests : IDisposable
 {
+	#region Test Setup
+
 	public string BasePath => _directoryCleaner.BasePath;
 	public MockFileSystem MockFileSystem { get; }
 	public RealFileSystem RealFileSystem { get; }
@@ -18,8 +20,6 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 		MockFileSystem = new MockFileSystem();
 		MockFileSystem.InitializeIn(_directoryCleaner.BasePath);
 	}
-
-	#region IDisposable Members
 
 	/// <inheritdoc cref="IDisposable.Dispose()" />
 	public void Dispose()

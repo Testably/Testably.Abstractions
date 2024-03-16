@@ -16,6 +16,9 @@ namespace Testably.Abstractions.Testing.Tests.TestHelpers;
 /// </summary>
 internal sealed class LockableContainer : IStorageContainer
 {
+	/// <inheritdoc cref="FileSystemSecurity" />
+	public FileSystemSecurity? AccessControl { get; set; }
+
 	/// <summary>
 	///     Simulate a locked file, if set to <see langword="true" />.<br />
 	///     In this case <see cref="RequestAccess(FileAccess, FileShare, bool, bool, int?)" /> throws an
@@ -36,9 +39,6 @@ internal sealed class LockableContainer : IStorageContainer
 	}
 
 	#region IStorageContainer Members
-
-	/// <inheritdoc cref="FileSystemSecurity" />
-	public FileSystemSecurity? AccessControl { get; set; }
 
 	/// <inheritdoc cref="IStorageContainer.Attributes" />
 	public FileAttributes Attributes { get; set; }

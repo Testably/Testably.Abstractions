@@ -29,7 +29,8 @@ internal sealed class FileInfoMock
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(Directory), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(Directory), PropertyAccess.Get);
 
 			return DirectoryInfoMock.New(Location.GetParent(),
 				_fileSystem);
@@ -41,7 +42,8 @@ internal sealed class FileInfoMock
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(DirectoryName), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(DirectoryName), PropertyAccess.Get);
 
 			return Directory?.FullName;
 		}
@@ -63,13 +65,15 @@ internal sealed class FileInfoMock
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(IsReadOnly), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(IsReadOnly), PropertyAccess.Get);
 
 			return (Attributes & FileAttributes.ReadOnly) != 0;
 		}
 		set
 		{
-			using IDisposable registration = RegisterProperty(nameof(IsReadOnly), PropertyAccess.Set);
+			using IDisposable registration =
+				RegisterProperty(nameof(IsReadOnly), PropertyAccess.Set);
 
 			if (value)
 			{
@@ -402,9 +406,6 @@ internal sealed class FileInfoMock
 		return new FileInfoMock(location, fileSystem);
 	}
 
-	protected override IDisposable RegisterProperty(string name, PropertyAccess access)
-		=> _fileSystem.StatisticsRegistration.FileInfo.RegisterProperty(Location.FullPath, name, access);
-
 	protected override IDisposable RegisterMethod(string name)
 		=> _fileSystem.StatisticsRegistration.FileInfo.RegisterMethod(Location.FullPath, name);
 
@@ -417,9 +418,14 @@ internal sealed class FileInfoMock
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2));
 
-	private IDisposable RegisterMethod<T1, T2, T3>(string name, T1 parameter1, T2 parameter2, T3 parameter3)
+	private IDisposable RegisterMethod<T1, T2, T3>(string name, T1 parameter1, T2 parameter2,
+		T3 parameter3)
 		=> _fileSystem.StatisticsRegistration.FileInfo.RegisterMethod(Location.FullPath, name,
 			ParameterDescription.FromParameter(parameter1),
 			ParameterDescription.FromParameter(parameter2),
 			ParameterDescription.FromParameter(parameter3));
+
+	protected override IDisposable RegisterProperty(string name, PropertyAccess access)
+		=> _fileSystem.StatisticsRegistration.FileInfo.RegisterProperty(Location.FullPath, name,
+			access);
 }

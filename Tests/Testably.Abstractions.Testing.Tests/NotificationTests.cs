@@ -106,7 +106,7 @@ public class NotificationTests
 		{
 			receivedCount++;
 		}, t => t.TotalMilliseconds > 6);
-		
+
 		_ = Task.Run(async () =>
 		{
 			await Task.Delay(10);
@@ -136,7 +136,6 @@ public class NotificationTests
 				{
 					isCalled = true;
 				});
-
 
 			_ = Task.Run(async () =>
 			{

@@ -1,7 +1,4 @@
-﻿#if NET6_0_OR_GREATER
-#endif
-
-namespace Testably.Abstractions.Testing.Tests;
+﻿namespace Testably.Abstractions.Testing.Tests;
 
 public sealed class FileSystemInitializerOptionsTests
 {

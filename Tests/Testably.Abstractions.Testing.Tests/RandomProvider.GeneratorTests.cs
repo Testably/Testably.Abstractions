@@ -31,8 +31,7 @@ public partial class RandomProviderTests
 		[AutoData]
 		public void FromArray_Overflow_ShouldStartAgain(Guid[] values)
 		{
-			RandomProvider.Generator<Guid> sut =
-				RandomProvider.Generator<Guid>.FromArray(values);
+			RandomProvider.Generator<Guid> sut = RandomProvider.Generator<Guid>.FromArray(values);
 
 			Guid[] results = new Guid[values.Length * 2];
 			for (int i = 0; i < values.Length * 2; i++)
@@ -47,8 +46,7 @@ public partial class RandomProviderTests
 		[AutoData]
 		public void FromArray_ShouldIterateThroughArrayValue(Guid[] values)
 		{
-			RandomProvider.Generator<Guid> sut =
-				RandomProvider.Generator<Guid>.FromArray(values);
+			RandomProvider.Generator<Guid> sut = RandomProvider.Generator<Guid>.FromArray(values);
 
 			Guid[] results = new Guid[values.Length];
 			for (int i = 0; i < values.Length; i++)
@@ -65,9 +63,8 @@ public partial class RandomProviderTests
 			int iterations = 30;
 			int startValue = 10;
 			int executionCount = 0;
-			RandomProvider.Generator<int> sut =
-				RandomProvider.Generator<int>.FromCallback(
-					() => startValue + executionCount++);
+			RandomProvider.Generator<int> sut = RandomProvider.Generator<int>.FromCallback(
+				() => startValue + executionCount++);
 
 			int[] results = new int[iterations];
 			for (int i = 0; i < iterations; i++)
@@ -154,8 +151,7 @@ public partial class RandomProviderTests
 		public void FromValue_ShouldReturnFixedValue(Guid value)
 		{
 			int maxRange = 100;
-			RandomProvider.Generator<Guid> sut =
-				RandomProvider.Generator<Guid>.FromValue(value);
+			RandomProvider.Generator<Guid> sut = RandomProvider.Generator<Guid>.FromValue(value);
 
 			Guid[] results = new Guid[maxRange];
 			for (int i = 0; i < maxRange; i++)

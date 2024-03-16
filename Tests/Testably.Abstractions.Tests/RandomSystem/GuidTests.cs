@@ -34,6 +34,19 @@ public abstract partial class GuidTests<TRandomSystem>
 #if FEATURE_GUID_PARSE
 	[SkippableTheory]
 	[AutoData]
+	public void Parse_SpanArray_ShouldReturnCorrectGuid(Guid guid)
+	{
+		ReadOnlySpan<char> serializedGuid = guid.ToString().AsSpan();
+
+		Guid result = RandomSystem.Guid.Parse(serializedGuid);
+
+		result.Should().Be(guid);
+	}
+#endif
+
+#if FEATURE_GUID_PARSE
+	[SkippableTheory]
+	[AutoData]
 	public void Parse_String_ShouldReturnCorrectGuid(Guid guid)
 	{
 		string serializedGuid = guid.ToString();
@@ -42,14 +55,16 @@ public abstract partial class GuidTests<TRandomSystem>
 
 		result.Should().Be(guid);
 	}
+#endif
 
+#if FEATURE_GUID_FORMATPROVIDER
 	[SkippableTheory]
 	[AutoData]
-	public void Parse_SpanArray_ShouldReturnCorrectGuid(Guid guid)
+	public void Parse_WithFormatProvider_SpanArray_ShouldReturnCorrectGuid(Guid guid)
 	{
 		ReadOnlySpan<char> serializedGuid = guid.ToString().AsSpan();
 
-		Guid result = RandomSystem.Guid.Parse(serializedGuid);
+		Guid result = RandomSystem.Guid.Parse(serializedGuid, CultureInfo.InvariantCulture);
 
 		result.Should().Be(guid);
 	}
@@ -66,14 +81,17 @@ public abstract partial class GuidTests<TRandomSystem>
 
 		result.Should().Be(guid);
 	}
+#endif
 
+#if FEATURE_GUID_PARSE
 	[SkippableTheory]
-	[AutoData]
-	public void Parse_WithFormatProvider_SpanArray_ShouldReturnCorrectGuid(Guid guid)
+	[MemberAutoData(nameof(GuidFormats))]
+	public void ParseExact_SpanArray_ShouldReturnCorrectGuid(
+		string format, Guid guid)
 	{
-		ReadOnlySpan<char> serializedGuid = guid.ToString().AsSpan();
+		ReadOnlySpan<char> serializedGuid = guid.ToString(format).AsSpan();
 
-		Guid result = RandomSystem.Guid.Parse(serializedGuid, CultureInfo.InvariantCulture);
+		Guid result = RandomSystem.Guid.ParseExact(serializedGuid, format);
 
 		result.Should().Be(guid);
 	}
@@ -90,17 +108,19 @@ public abstract partial class GuidTests<TRandomSystem>
 
 		result.Should().Be(guid);
 	}
+#endif
 
+#if FEATURE_GUID_PARSE
 	[SkippableTheory]
-	[MemberAutoData(nameof(GuidFormats))]
-	public void ParseExact_SpanArray_ShouldReturnCorrectGuid(
-		string format, Guid guid)
+	[AutoData]
+	public void TryParse_SpanArray_ShouldReturnTrue(Guid guid)
 	{
-		ReadOnlySpan<char> serializedGuid = guid.ToString(format).AsSpan();
+		ReadOnlySpan<char> serializedGuid = guid.ToString().AsSpan();
 
-		Guid result = RandomSystem.Guid.ParseExact(serializedGuid, format);
+		bool result = RandomSystem.Guid.TryParse(serializedGuid, out Guid value);
 
-		result.Should().Be(guid);
+		result.Should().BeTrue();
+		value.Should().Be(guid);
 	}
 #endif
 
@@ -116,14 +136,17 @@ public abstract partial class GuidTests<TRandomSystem>
 		result.Should().BeTrue();
 		value.Should().Be(guid);
 	}
+#endif
 
+#if FEATURE_GUID_FORMATPROVIDER
 	[SkippableTheory]
 	[AutoData]
-	public void TryParse_SpanArray_ShouldReturnTrue(Guid guid)
+	public void TryParse_WithFormatProvider_SpanArray_ShouldReturnTrue(Guid guid)
 	{
 		ReadOnlySpan<char> serializedGuid = guid.ToString().AsSpan();
 
-		bool result = RandomSystem.Guid.TryParse(serializedGuid, out Guid value);
+		bool result = RandomSystem.Guid.TryParse(serializedGuid, CultureInfo.InvariantCulture,
+			out Guid value);
 
 		result.Should().BeTrue();
 		value.Should().Be(guid);
@@ -143,15 +166,18 @@ public abstract partial class GuidTests<TRandomSystem>
 		result.Should().BeTrue();
 		value.Should().Be(guid);
 	}
+#endif
 
+#if FEATURE_GUID_PARSE
 	[SkippableTheory]
-	[AutoData]
-	public void TryParse_WithFormatProvider_SpanArray_ShouldReturnTrue(Guid guid)
+	[MemberAutoData(nameof(GuidFormats))]
+	public void TryParseExact_SpanArray_ShouldReturnTrue(string format, Guid guid)
 	{
-		ReadOnlySpan<char> serializedGuid = guid.ToString().AsSpan();
+		ReadOnlySpan<char> serializedGuid = guid.ToString(format).AsSpan();
 
-		bool result = RandomSystem.Guid.TryParse(serializedGuid, CultureInfo.InvariantCulture,
-			out Guid value);
+		bool result =
+			RandomSystem.Guid.TryParseExact(serializedGuid, format,
+				out Guid value);
 
 		result.Should().BeTrue();
 		value.Should().Be(guid);
@@ -172,21 +198,11 @@ public abstract partial class GuidTests<TRandomSystem>
 		result.Should().BeTrue();
 		value.Should().Be(guid);
 	}
+#endif
 
-	[SkippableTheory]
-	[MemberAutoData(nameof(GuidFormats))]
-	public void TryParseExact_SpanArray_ShouldReturnTrue(string format, Guid guid)
-	{
-		ReadOnlySpan<char> serializedGuid = guid.ToString(format).AsSpan();
+	#region Helpers
 
-		bool result =
-			RandomSystem.Guid.TryParseExact(serializedGuid, format,
-				out Guid value);
-
-		result.Should().BeTrue();
-		value.Should().Be(guid);
-	}
-
+#if FEATURE_GUID_PARSE
 	public static IEnumerable<object[]> GuidFormats()
 	{
 		yield return new object[]
@@ -211,4 +227,6 @@ public abstract partial class GuidTests<TRandomSystem>
 		};
 	}
 #endif
+
+	#endregion
 }

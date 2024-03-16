@@ -9,31 +9,6 @@ namespace Testably.Abstractions.Testing.FileSystem;
 public class ChangeDescription
 {
 	/// <summary>
-	///     The name of the file or directory that changed.
-	/// </summary>
-	public string? Name { get; }
-
-	/// <summary>
-	///     The old name of the file or directory that changed on a <see cref="WatcherChangeTypes.Renamed" /> change.
-	/// </summary>
-	public string? OldName { get; }
-
-	/// <summary>
-	///     The property changes affected by the change.
-	/// </summary>
-	public NotifyFilters NotifyFilters { get; }
-
-	/// <summary>
-	///     The path of the file or directory that changed.
-	/// </summary>
-	public string Path { get; }
-
-	/// <summary>
-	///     The old path of the file or directory that changed on a <see cref="WatcherChangeTypes.Renamed" /> change.
-	/// </summary>
-	public string? OldPath { get; }
-
-	/// <summary>
 	///     Changes that might occur to a file or directory.
 	/// </summary>
 	public WatcherChangeTypes ChangeType { get; }
@@ -42,6 +17,31 @@ public class ChangeDescription
 	///     The type of the file system entry where the change originated.
 	/// </summary>
 	public FileSystemTypes FileSystemType { get; }
+
+	/// <summary>
+	///     The name of the file or directory that changed.
+	/// </summary>
+	public string? Name { get; }
+
+	/// <summary>
+	///     The property changes affected by the change.
+	/// </summary>
+	public NotifyFilters NotifyFilters { get; }
+
+	/// <summary>
+	///     The old name of the file or directory that changed on a <see cref="WatcherChangeTypes.Renamed" /> change.
+	/// </summary>
+	public string? OldName { get; }
+
+	/// <summary>
+	///     The old path of the file or directory that changed on a <see cref="WatcherChangeTypes.Renamed" /> change.
+	/// </summary>
+	public string? OldPath { get; }
+
+	/// <summary>
+	///     The path of the file or directory that changed.
+	/// </summary>
+	public string Path { get; }
 
 	internal ChangeDescription(WatcherChangeTypes changeType,
 		FileSystemTypes fileSystemType,

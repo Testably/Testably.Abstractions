@@ -12,21 +12,6 @@ internal class Execute
 	/// </summary>
 	public static Execute Default { get; } = new();
 
-	public Execute()
-	{
-		IsLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-		IsMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-		IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-		IsNetFramework = RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework");
-	}
-
-	/// <summary>
-	///     The default <see cref="StringComparison" /> used for comparing paths.
-	/// </summary>
-	public StringComparison StringComparisonMode => IsLinux
-		? StringComparison.Ordinal
-		: StringComparison.OrdinalIgnoreCase;
-
 	/// <summary>
 	///     Flag indicating if the code runs on <see cref="OSPlatform.Linux" />.
 	/// </summary>
@@ -49,6 +34,21 @@ internal class Execute
 	///     Flag indicating if the code runs on <see cref="OSPlatform.Windows" />.
 	/// </summary>
 	public bool IsWindows { get; }
+
+	/// <summary>
+	///     The default <see cref="StringComparison" /> used for comparing paths.
+	/// </summary>
+	public StringComparison StringComparisonMode => IsLinux
+		? StringComparison.Ordinal
+		: StringComparison.OrdinalIgnoreCase;
+
+	public Execute()
+	{
+		IsLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+		IsMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+		IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+		IsNetFramework = RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework");
+	}
 
 	/// <summary>
 	///     The <paramref name="callback" /> is executed when the code runs not in .NET Framework.

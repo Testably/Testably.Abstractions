@@ -194,11 +194,11 @@ public abstract partial class Tests<TFileSystem>
 
 		private sealed class ContainerMock : IContainer
 		{
-			/// <inheritdoc cref="IDisposable.Dispose()" />
-			public void Dispose()
-			{
-				// Ignore any call in tests
-			}
+			#region IContainer Members
+
+			/// <inheritdoc cref="IContainer.Components" />
+			public ComponentCollection Components
+				=> throw new NotSupportedException();
 
 			/// <inheritdoc cref="IContainer.Add(IComponent?)" />
 			public void Add(IComponent? component)
@@ -218,9 +218,13 @@ public abstract partial class Tests<TFileSystem>
 				// Ignore any call in tests
 			}
 
-			/// <inheritdoc cref="IContainer.Components" />
-			public ComponentCollection Components
-				=> throw new NotSupportedException();
+			/// <inheritdoc cref="IDisposable.Dispose()" />
+			public void Dispose()
+			{
+				// Ignore any call in tests
+			}
+
+			#endregion
 		}
 
 		private sealed class ComponentMock : IComponent
@@ -230,11 +234,7 @@ public abstract partial class Tests<TFileSystem>
 				Site = site;
 			}
 
-			/// <inheritdoc cref="IDisposable.Dispose()" />
-			public void Dispose()
-			{
-				// Ignore any call in tests
-			}
+			#region IComponent Members
 
 			/// <inheritdoc cref="IComponent.Site" />
 			public ISite? Site { get; set; }
@@ -243,6 +243,14 @@ public abstract partial class Tests<TFileSystem>
 			/// <inheritdoc cref="IComponent.Disposed" />
 			public event EventHandler? Disposed;
 			#pragma warning restore CS0067
+
+			/// <inheritdoc cref="IDisposable.Dispose()" />
+			public void Dispose()
+			{
+				// Ignore any call in tests
+			}
+
+			#endregion
 		}
 	}
 

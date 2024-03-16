@@ -28,6 +28,49 @@ public sealed partial class StatisticsTests
 			return builder.ToString();
 		}
 
+		private static void CheckMethodCall(StringBuilder builder,
+			MethodInfo methodInfo,
+			ParameterInfo[] parameters,
+			string className,
+			bool requireInstance,
+			Type mockType,
+			Type testType)
+		{
+			string expectedName = $"Method_{methodInfo.Name}_{string.Join("_", methodInfo
+				.GetParameters()
+				.Select(x => FirstCharToUpperAsSpan(GetName(x.ParameterType, true)
+					.Replace("<", "")
+					.Replace(">", "")
+					.Replace("IEnumerablestring", "IEnumerableString")
+					.Replace("[]", "Array"))))}{(parameters.Length > 0 ? "_" : "")}ShouldRegisterCall";
+			if (testType.GetMethod(expectedName) != null)
+			{
+				return;
+			}
+
+			bool isAsync = typeof(Task).IsAssignableFrom(methodInfo.ReturnType);
+			builder.AppendLine("\t[SkippableFact]");
+			builder.Append(isAsync ? "\tpublic async Task " : "\tpublic void ");
+			builder.Append(expectedName);
+			builder.AppendLine("()");
+			builder.AppendLine("\t{");
+			builder.AppendLine("\t\tMockFileSystem sut = new();");
+			foreach (ParameterInfo parameterInfo in methodInfo.GetParameters())
+			{
+				builder.AppendLine(
+					$"\t\t{GetName(parameterInfo.ParameterType, false)} {parameterInfo.Name} = {GetDefaultValue(parameterInfo.ParameterType)};");
+			}
+
+			builder.AppendLine();
+			builder.AppendLine(
+				$"\t\t{(isAsync ? "await " : "")}sut.{className}{(requireInstance ? ".New(\"foo\")" : "")}.{methodInfo.Name}({string.Join(", ", methodInfo.GetParameters().Select(p => p.Name))});");
+			builder.AppendLine();
+			builder.AppendLine(
+				$"\t\tsut.Statistics.{className}{(requireInstance ? "[\"foo\"]" : "")}.ShouldOnlyContainMethodCall(nameof({mockType.Name}.{methodInfo.Name}){(parameters.Length > 0 ? ",\n\t\t\t" : "")}{string.Join(", ", methodInfo.GetParameters().Select(p => p.Name))});");
+			builder.AppendLine("\t}");
+			builder.AppendLine();
+		}
+
 		private static void CheckMethods(StringBuilder builder,
 			string className, bool requireInstance,
 			Type mockType, Type testType)
@@ -100,49 +143,6 @@ public sealed partial class StatisticsTests
 						mockType, testType);
 				}
 			}
-		}
-
-		private static void CheckMethodCall(StringBuilder builder,
-			MethodInfo methodInfo,
-			ParameterInfo[] parameters,
-			string className,
-			bool requireInstance,
-			Type mockType,
-			Type testType)
-		{
-			string expectedName = $"Method_{methodInfo.Name}_{string.Join("_", methodInfo
-				.GetParameters()
-				.Select(x => FirstCharToUpperAsSpan(GetName(x.ParameterType, true)
-					.Replace("<", "")
-					.Replace(">", "")
-					.Replace("IEnumerablestring", "IEnumerableString")
-					.Replace("[]", "Array"))))}{(parameters.Length > 0 ? "_" : "")}ShouldRegisterCall";
-			if (testType.GetMethod(expectedName) != null)
-			{
-				return;
-			}
-
-			bool isAsync = typeof(Task).IsAssignableFrom(methodInfo.ReturnType);
-			builder.AppendLine("\t[SkippableFact]");
-			builder.Append(isAsync ? "\tpublic async Task " : "\tpublic void ");
-			builder.Append(expectedName);
-			builder.AppendLine("()");
-			builder.AppendLine("\t{");
-			builder.AppendLine("\t\tMockFileSystem sut = new();");
-			foreach (ParameterInfo parameterInfo in methodInfo.GetParameters())
-			{
-				builder.AppendLine(
-					$"\t\t{GetName(parameterInfo.ParameterType, false)} {parameterInfo.Name} = {GetDefaultValue(parameterInfo.ParameterType)};");
-			}
-
-			builder.AppendLine();
-			builder.AppendLine(
-				$"\t\t{(isAsync ? "await " : "")}sut.{className}{(requireInstance ? ".New(\"foo\")" : "")}.{methodInfo.Name}({string.Join(", ", methodInfo.GetParameters().Select(p => p.Name))});");
-			builder.AppendLine();
-			builder.AppendLine(
-				$"\t\tsut.Statistics.{className}{(requireInstance ? "[\"foo\"]" : "")}.ShouldOnlyContainMethodCall(nameof({mockType.Name}.{methodInfo.Name}){(parameters.Length > 0 ? ",\n\t\t\t" : "")}{string.Join(", ", methodInfo.GetParameters().Select(p => p.Name))});");
-			builder.AppendLine("\t}");
-			builder.AppendLine();
 		}
 
 		private static void CheckPropertyGetAccess(StringBuilder builder,
@@ -324,25 +324,6 @@ public sealed partial class StatisticsTests
 			return type.Name;
 		}
 
-		private static bool HasSpecialNameInUpperCase(Type type,
-			[NotNullWhen(true)] out string? name)
-		{
-			if (type == typeof(int))
-			{
-				name = "Int";
-				return true;
-			}
-
-			if (type == typeof(bool))
-			{
-				name = "Bool";
-				return true;
-			}
-
-			name = null;
-			return false;
-		}
-
 		private static bool HasSpecialNameInLowerCase(Type type,
 			[NotNullWhen(true)] out string? name)
 		{
@@ -379,6 +360,25 @@ public sealed partial class StatisticsTests
 			if (type == typeof(string[]))
 			{
 				name = "string[]";
+				return true;
+			}
+
+			name = null;
+			return false;
+		}
+
+		private static bool HasSpecialNameInUpperCase(Type type,
+			[NotNullWhen(true)] out string? name)
+		{
+			if (type == typeof(int))
+			{
+				name = "Int";
+				return true;
+			}
+
+			if (type == typeof(bool))
+			{
+				name = "Bool";
 				return true;
 			}
 

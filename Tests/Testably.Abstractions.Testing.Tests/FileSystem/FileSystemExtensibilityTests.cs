@@ -1,10 +1,20 @@
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
 public class FileSystemExtensibilityTests
 {
+	#region Test Setup
+
+	public static TheoryData<IFileSystem> GetFileSystems
+		=> new()
+		{
+			new RealFileSystem(),
+			new MockFileSystem()
+		};
+
+	#endregion
+
 	[SkippableTheory]
 	[MemberData(nameof(GetFileSystems))]
 	public void Directory_ShouldSetExtensionPoint(IFileSystem fileSystem)
@@ -147,15 +157,4 @@ public class FileSystemExtensibilityTests
 
 		result.Should().BeSameAs(fileSystem);
 	}
-
-	#region Helpers
-
-	public static TheoryData<IFileSystem> GetFileSystems
-		=> new()
-		{
-			new RealFileSystem(),
-			new MockFileSystem()
-		};
-
-	#endregion
 }

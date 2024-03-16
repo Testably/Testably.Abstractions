@@ -9,8 +9,10 @@ public abstract partial class LengthTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public void Length_MissingFile_ShouldThrowFileNotFoundException(string path)
+	public void Length_MissingDirectory_ShouldThrowFileNotFoundException(
+		string missingDirectory, string fileName)
 	{
+		string path = FileSystem.Path.Combine(missingDirectory, fileName);
 		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		Exception? exception = Record.Exception(() =>
@@ -27,10 +29,8 @@ public abstract partial class LengthTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Length_MissingDirectory_ShouldThrowFileNotFoundException(
-		string missingDirectory, string fileName)
+	public void Length_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
-		string path = FileSystem.Path.Combine(missingDirectory, fileName);
 		IFileInfo sut = FileSystem.FileInfo.New(path);
 
 		Exception? exception = Record.Exception(() =>

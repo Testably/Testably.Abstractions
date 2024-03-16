@@ -50,13 +50,15 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(Attributes), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(Attributes), PropertyAccess.Get);
 
 			return Container.Attributes;
 		}
 		set
 		{
-			using IDisposable registration = RegisterProperty(nameof(Attributes), PropertyAccess.Set);
+			using IDisposable registration =
+				RegisterProperty(nameof(Attributes), PropertyAccess.Set);
 
 			Container.Attributes = value;
 		}
@@ -96,13 +98,15 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(CreationTime), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(CreationTime), PropertyAccess.Get);
 
 			return Container.CreationTime.Get(DateTimeKind.Local);
 		}
 		set
 		{
-			using IDisposable registration = RegisterProperty(nameof(CreationTime), PropertyAccess.Set);
+			using IDisposable registration =
+				RegisterProperty(nameof(CreationTime), PropertyAccess.Set);
 
 			Container.CreationTime.Set(value, DateTimeKind.Local);
 		}
@@ -113,13 +117,15 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(CreationTimeUtc), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(CreationTimeUtc), PropertyAccess.Get);
 
 			return Container.CreationTime.Get(DateTimeKind.Utc);
 		}
 		set
 		{
-			using IDisposable registration = RegisterProperty(nameof(CreationTimeUtc), PropertyAccess.Set);
+			using IDisposable registration =
+				RegisterProperty(nameof(CreationTimeUtc), PropertyAccess.Set);
 
 			Container.CreationTime.Set(value, DateTimeKind.Utc);
 		}
@@ -151,7 +157,8 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(Extension), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(Extension), PropertyAccess.Get);
 
 			if (Location.FullPath.EndsWith('.') &&
 			    !_fileSystem.Execute.IsWindows)
@@ -183,13 +190,15 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(LastAccessTime), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(LastAccessTime), PropertyAccess.Get);
 
 			return Container.LastAccessTime.Get(DateTimeKind.Local);
 		}
 		set
 		{
-			using IDisposable registration = RegisterProperty(nameof(LastAccessTime), PropertyAccess.Set);
+			using IDisposable registration =
+				RegisterProperty(nameof(LastAccessTime), PropertyAccess.Set);
 
 			Container.LastAccessTime.Set(value, DateTimeKind.Local);
 		}
@@ -200,13 +209,15 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(LastAccessTimeUtc), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(LastAccessTimeUtc), PropertyAccess.Get);
 
 			return Container.LastAccessTime.Get(DateTimeKind.Utc);
 		}
 		set
 		{
-			using IDisposable registration = RegisterProperty(nameof(LastAccessTimeUtc), PropertyAccess.Set);
+			using IDisposable registration =
+				RegisterProperty(nameof(LastAccessTimeUtc), PropertyAccess.Set);
 
 			Container.LastAccessTime.Set(value, DateTimeKind.Utc);
 		}
@@ -217,13 +228,15 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(LastWriteTime), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(LastWriteTime), PropertyAccess.Get);
 
 			return Container.LastWriteTime.Get(DateTimeKind.Local);
 		}
 		set
 		{
-			using IDisposable registration = RegisterProperty(nameof(LastWriteTime), PropertyAccess.Set);
+			using IDisposable registration =
+				RegisterProperty(nameof(LastWriteTime), PropertyAccess.Set);
 
 			Container.LastWriteTime.Set(value, DateTimeKind.Local);
 		}
@@ -234,13 +247,15 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(LastWriteTimeUtc), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(LastWriteTimeUtc), PropertyAccess.Get);
 
 			return Container.LastWriteTime.Get(DateTimeKind.Utc);
 		}
 		set
 		{
-			using IDisposable registration = RegisterProperty(nameof(LastWriteTimeUtc), PropertyAccess.Set);
+			using IDisposable registration =
+				RegisterProperty(nameof(LastWriteTimeUtc), PropertyAccess.Set);
 
 			Container.LastWriteTime.Set(value, DateTimeKind.Utc);
 		}
@@ -252,7 +267,8 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(LinkTarget), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(LinkTarget), PropertyAccess.Get);
 
 			return Container.LinkTarget;
 		}
@@ -280,14 +296,16 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(UnixFileMode), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterProperty(nameof(UnixFileMode), PropertyAccess.Get);
 
 			return Container.UnixFileMode;
 		}
 		[UnsupportedOSPlatform("windows")]
 		set
 		{
-			using IDisposable registration = RegisterProperty(nameof(UnixFileMode), PropertyAccess.Set);
+			using IDisposable registration =
+				RegisterProperty(nameof(UnixFileMode), PropertyAccess.Set);
 
 			_fileSystem.Execute.OnWindows(
 				() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform());

@@ -21,9 +21,9 @@ public abstract partial class AccessControlHelperTests<TFileSystem>
 	}
 
 	[Fact]
-	public void GetExtensibilityOrThrow_FileSystemStream_ShouldNotThrow()
+	public void GetExtensibilityOrThrow_FileInfo_ShouldNotThrow()
 	{
-		FileSystemStream sut = FileSystem.FileStream.New("foo", FileMode.Create);
+		IFileInfo sut = FileSystem.FileInfo.New("foo");
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -34,9 +34,9 @@ public abstract partial class AccessControlHelperTests<TFileSystem>
 	}
 
 	[Fact]
-	public void GetExtensibilityOrThrow_FileInfo_ShouldNotThrow()
+	public void GetExtensibilityOrThrow_FileSystemStream_ShouldNotThrow()
 	{
-		IFileInfo sut = FileSystem.FileInfo.New("foo");
+		FileSystemStream sut = FileSystem.FileStream.New("foo", FileMode.Create);
 
 		Exception? exception = Record.Exception(() =>
 		{

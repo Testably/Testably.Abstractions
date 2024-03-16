@@ -51,6 +51,42 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 
 	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks),
+		parameters: (int)(BaseTypes.Directory | BaseTypes.DirectoryInfo))]
+	public void DirectoryOperations_WhenFileIsMissing_ShouldThrowFileNotFoundException(
+		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		string path = "missing-file.txt";
+
+		Exception? exception = Record.Exception(() =>
+		{
+			callback.Invoke(FileSystem, path);
+		});
+
+		switch (exceptionType)
+		{
+			case MethodType.Create:
+				exception.Should()
+					.BeNull($"\n{exceptionType} on {baseType}\n was called with a missing file");
+				break;
+			case MethodType.GetAccessControl:
+				exception.Should()
+					.BeOfType<DirectoryNotFoundException>(
+						$"\n{exceptionType} on {baseType}\n was called with a missing file")
+					.Which.HResult.Should().Be(-2147024893);
+				break;
+			case MethodType.SetAccessControl:
+				exception.Should()
+					.BeNull($"\n{exceptionType} on {baseType}\n was called with a missing file");
+				break;
+			default:
+				throw new NotSupportedException();
+		}
+	}
+
+	[SkippableTheory]
+	[MemberData(nameof(GetFileCallbacks),
 		parameters: (int)(BaseTypes.File | BaseTypes.FileInfo | BaseTypes.FileStream))]
 	public void FileOperations_WhenDirectoryIsMissing_ShouldThrowDirectoryNotFoundException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
@@ -82,42 +118,6 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 				exception.Should()
 					.BeNull(
 						$"\n{exceptionType} on {baseType}\n was called with a missing directory");
-				break;
-			default:
-				throw new NotSupportedException();
-		}
-	}
-
-	[SkippableTheory]
-	[MemberData(nameof(GetFileCallbacks),
-		parameters: (int)(BaseTypes.Directory | BaseTypes.DirectoryInfo))]
-	public void DirectoryOperations_WhenFileIsMissing_ShouldThrowFileNotFoundException(
-		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
-	{
-		Skip.IfNot(Test.RunsOnWindows);
-
-		string path = "missing-file.txt";
-
-		Exception? exception = Record.Exception(() =>
-		{
-			callback.Invoke(FileSystem, path);
-		});
-
-		switch (exceptionType)
-		{
-			case MethodType.Create:
-				exception.Should()
-					.BeNull($"\n{exceptionType} on {baseType}\n was called with a missing file");
-				break;
-			case MethodType.GetAccessControl:
-				exception.Should()
-					.BeOfType<DirectoryNotFoundException>(
-						$"\n{exceptionType} on {baseType}\n was called with a missing file")
-					.Which.HResult.Should().Be(-2147024893);
-				break;
-			case MethodType.SetAccessControl:
-				exception.Should()
-					.BeNull($"\n{exceptionType} on {baseType}\n was called with a missing file");
 				break;
 			default:
 				throw new NotSupportedException();
@@ -162,14 +162,17 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 
 	#region Helpers
 
-	public static TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> GetFileCallbacks(int baseType)
+	public static TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> GetFileCallbacks(
+		int baseType)
 	{
 		TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> theoryData = new();
-		foreach (var item in GetFileCallbackTestParameters()
-			.Where(item => (item.BaseType & (BaseTypes)baseType) > 0))
+		foreach ((BaseTypes BaseType, MethodType MethodType, Action<IFileSystem, string> Callback)
+			item in GetFileCallbackTestParameters()
+				.Where(item => (item.BaseType & (BaseTypes)baseType) > 0))
 		{
 			theoryData.Add(item.Callback, item.BaseType, item.MethodType);
 		}
+
 		return theoryData;
 	}
 
