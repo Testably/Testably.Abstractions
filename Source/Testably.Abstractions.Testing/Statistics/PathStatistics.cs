@@ -4,14 +4,14 @@ using System.IO;
 
 namespace Testably.Abstractions.Testing.Statistics;
 
-internal class FileSystemEntryStatistics : CallStatistics, IPathStatistics
+internal class PathStatistics : CallStatistics, IPathStatistics
 {
 	private readonly MockFileSystem _fileSystem;
 
 	private readonly ConcurrentDictionary<string, CallStatistics> _statistics = new();
 	private readonly IStatisticsGate _statisticsGate;
 
-	public FileSystemEntryStatistics(
+	public PathStatistics(
 		IStatisticsGate statisticsGate,
 		MockFileSystem fileSystem)
 		: base(statisticsGate)
@@ -64,12 +64,7 @@ internal class FileSystemEntryStatistics : CallStatistics, IPathStatistics
 	{
 		if (string.IsNullOrEmpty(path))
 		{
-			return "(empty)";
-		}
-
-		if (Path.IsPathRooted(path))
-		{
-			return path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			return string.Empty;
 		}
 
 		return Path.GetFullPath(Path.Combine(currentDirectory, path))

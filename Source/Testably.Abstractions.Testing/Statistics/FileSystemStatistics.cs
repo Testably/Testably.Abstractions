@@ -8,22 +8,22 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsG
 {
 	private static readonly AsyncLocal<bool> IsDisabled = new();
 	internal readonly CallStatistics Directory;
-	internal readonly FileSystemEntryStatistics DirectoryInfo;
-	internal readonly FileSystemEntryStatistics DriveInfo;
+	internal readonly PathStatistics DirectoryInfo;
+	internal readonly PathStatistics DriveInfo;
 	internal readonly CallStatistics File;
-	internal readonly FileSystemEntryStatistics FileInfo;
-	internal readonly FileSystemEntryStatistics FileStream;
-	internal readonly FileSystemEntryStatistics FileSystemWatcher;
+	internal readonly PathStatistics FileInfo;
+	internal readonly PathStatistics FileStream;
+	internal readonly PathStatistics FileSystemWatcher;
 	internal readonly CallStatistics Path;
 	private int _counter;
 
 	public FileSystemStatistics(MockFileSystem fileSystem)
 	{
-		DirectoryInfo = new FileSystemEntryStatistics(this, fileSystem);
-		DriveInfo = new FileSystemEntryStatistics(this, fileSystem);
-		FileInfo = new FileSystemEntryStatistics(this, fileSystem);
-		FileStream = new FileSystemEntryStatistics(this, fileSystem);
-		FileSystemWatcher = new FileSystemEntryStatistics(this, fileSystem);
+		DirectoryInfo = new PathStatistics(this, fileSystem);
+		DriveInfo = new PathStatistics(this, fileSystem);
+		FileInfo = new PathStatistics(this, fileSystem);
+		FileStream = new PathStatistics(this, fileSystem);
+		FileSystemWatcher = new PathStatistics(this, fileSystem);
 		File = new CallStatistics(this);
 		Directory = new CallStatistics(this);
 		Path = new CallStatistics(this);

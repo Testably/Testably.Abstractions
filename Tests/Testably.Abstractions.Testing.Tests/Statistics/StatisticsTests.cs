@@ -50,7 +50,7 @@ public sealed partial class StatisticsTests
 	[InlineData(nameof(MockFileSystem.FileSystemWatcher), true,
 		typeof(IFileSystemWatcher), typeof(FileSystemWatcherStatisticsTests))]
 	[InlineData(nameof(MockFileSystem.Path), false,
-		typeof(IPath), typeof(PathStatisticsTests))]
+		typeof(IPath), typeof(FileSystem.PathStatisticsTests))]
 	public void ShouldHaveTestedAllFileSystemMethods(string className, bool requireInstance,
 		Type mockType, Type testType)
 	{
