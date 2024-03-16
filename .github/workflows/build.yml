@@ -155,11 +155,6 @@ jobs:
           fetch-depth: 0
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: |
-            6.0.x
-            7.0.x
-            8.0.x
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
       - name: Setup VSTest
@@ -205,6 +200,8 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
           fetch-depth: 0
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
       - name: Download code coverage files (MacOS)
         uses: actions/download-artifact@v3
         with:
