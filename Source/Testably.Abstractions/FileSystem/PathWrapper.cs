@@ -160,6 +160,7 @@ internal sealed class PathWrapper : IPath
 #if !NETSTANDARD2_0
 	[Obsolete(
 		"Insecure temporary file creation methods should not be used. Use `Path.Combine(Path.GetTempPath(), Path.GetRandomFileName())` instead.")]
+	[ExcludeFromCodeCoverage]
 #endif
 	public string GetTempFileName()
 		=> Path.GetTempFileName();

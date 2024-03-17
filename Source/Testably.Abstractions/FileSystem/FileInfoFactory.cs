@@ -18,6 +18,7 @@ internal sealed class FileInfoFactory : IFileInfoFactory
 
 	/// <inheritdoc cref="IFileInfoFactory.FromFileName(string)" />
 	[Obsolete("Use `IFileInfoFactory.New(string)` instead")]
+	[ExcludeFromCodeCoverage]
 	public IFileInfo FromFileName(string fileName)
 		=> New(fileName);
 

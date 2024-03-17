@@ -1,9 +1,7 @@
 ﻿using Microsoft.Win32.SafeHandles;
 using System;
-using System.IO;
-#if NET6_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
-#endif
+using System.IO;
 
 namespace Testably.Abstractions.FileSystem;
 
@@ -21,21 +19,25 @@ internal sealed class FileStreamFactory : IFileStreamFactory
 
 	/// <inheritdoc cref="IFileStreamFactory.Create(string, FileMode)" />
 	[Obsolete("Use `IFileStreamFactory.New(string, FileMode)` instead")]
+	[ExcludeFromCodeCoverage]
 	public Stream Create(string path, FileMode mode)
 		=> New(path, mode);
 
 	/// <inheritdoc cref="IFileStreamFactory.Create(string, FileMode, FileAccess)" />
 	[Obsolete("Use `IFileStreamFactory.New(string, FileMode, FileAccess)` instead")]
+	[ExcludeFromCodeCoverage]
 	public Stream Create(string path, FileMode mode, FileAccess access)
 		=> New(path, mode, access);
 
 	/// <inheritdoc cref="IFileStreamFactory.Create(string, FileMode, FileAccess, FileShare)" />
 	[Obsolete("Use `IFileStreamFactory.New(string, FileMode, FileAccess, FileShare)` instead")]
+	[ExcludeFromCodeCoverage]
 	public Stream Create(string path, FileMode mode, FileAccess access, FileShare share)
 		=> New(path, mode, access, share);
 
 	/// <inheritdoc cref="IFileStreamFactory.Create(string, FileMode, FileAccess, FileShare, int)" />
 	[Obsolete("Use `IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int)` instead")]
+	[ExcludeFromCodeCoverage]
 	public Stream Create(
 		string path,
 		FileMode mode,
@@ -47,6 +49,7 @@ internal sealed class FileStreamFactory : IFileStreamFactory
 	/// <inheritdoc cref="IFileStreamFactory.Create(string, FileMode, FileAccess, FileShare, int, FileOptions)" />
 	[Obsolete(
 		"Use `IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int, FileOptions)` instead")]
+	[ExcludeFromCodeCoverage]
 	public Stream Create(
 		string path,
 		FileMode mode,
@@ -59,6 +62,7 @@ internal sealed class FileStreamFactory : IFileStreamFactory
 	/// <inheritdoc cref="IFileStreamFactory.Create(string, FileMode, FileAccess, FileShare, int, bool)" />
 	[Obsolete(
 		"Use `IFileStreamFactory.New(string, FileMode, FileAccess, FileShare, int, bool)` instead")]
+	[ExcludeFromCodeCoverage]
 	public Stream Create(
 		string path,
 		FileMode mode,
@@ -70,40 +74,47 @@ internal sealed class FileStreamFactory : IFileStreamFactory
 
 	/// <inheritdoc cref="IFileStreamFactory.Create(SafeFileHandle, FileAccess)" />
 	[Obsolete("Use `IFileStreamFactory.New(SafeFileHandle, FileAccess)` instead")]
+	[ExcludeFromCodeCoverage]
 	public Stream Create(SafeFileHandle handle, FileAccess access)
 		=> New(handle, access);
 
 	/// <inheritdoc cref="IFileStreamFactory.Create(SafeFileHandle, FileAccess, int)" />
 	[Obsolete("Use `IFileStreamFactory.New(SafeFileHandle, FileAccess, int)` instead")]
+	[ExcludeFromCodeCoverage]
 	public Stream Create(SafeFileHandle handle, FileAccess access, int bufferSize)
 		=> New(handle, access, bufferSize);
 
 	/// <inheritdoc cref="IFileStreamFactory.Create(SafeFileHandle, FileAccess, int, bool)" />
 	[Obsolete("Use `IFileStreamFactory.New(SafeFileHandle, FileAccess, int, bool)` instead")]
+	[ExcludeFromCodeCoverage]
 	public Stream Create(SafeFileHandle handle, FileAccess access, int bufferSize, bool isAsync)
 		=> New(handle, access, bufferSize, isAsync);
 
 	/// <inheritdoc cref="IFileStreamFactory.Create(IntPtr, FileAccess)" />
 	[Obsolete(
 		"This method has been deprecated. Please use New(SafeFileHandle, FileAccess) instead. http://go.microsoft.com/fwlink/?linkid=14202")]
+	[ExcludeFromCodeCoverage]
 	public Stream Create(IntPtr handle, FileAccess access)
 		=> throw new NotImplementedException();
 
 	/// <inheritdoc cref="IFileStreamFactory.Create(IntPtr, FileAccess, bool)" />
 	[Obsolete(
 		"This method has been deprecated. Please use New(SafeFileHandle, FileAccess) instead. http://go.microsoft.com/fwlink/?linkid=14202")]
+	[ExcludeFromCodeCoverage]
 	public Stream Create(IntPtr handle, FileAccess access, bool ownsHandle)
 		=> throw new NotImplementedException();
 
 	/// <inheritdoc cref="IFileStreamFactory.Create(IntPtr, FileAccess, bool, int)" />
 	[Obsolete(
 		"This method has been deprecated. Please use New(SafeFileHandle, FileAccess, int) instead. http://go.microsoft.com/fwlink/?linkid=14202")]
+	[ExcludeFromCodeCoverage]
 	public Stream Create(IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize)
 		=> throw new NotImplementedException();
 
 	/// <inheritdoc cref="IFileStreamFactory.Create(IntPtr, FileAccess, bool, int, bool)" />
 	[Obsolete(
 		"This method has been deprecated. Please use New(SafeFileHandle, FileAccess, int, bool) instead. http://go.microsoft.com/fwlink/?linkid=14202")]
+	[ExcludeFromCodeCoverage]
 	public Stream Create(
 		IntPtr handle,
 		FileAccess access,

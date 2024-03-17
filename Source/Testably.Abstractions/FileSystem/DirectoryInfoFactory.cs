@@ -18,6 +18,7 @@ internal sealed class DirectoryInfoFactory : IDirectoryInfoFactory
 
 	/// <inheritdoc cref="IDirectoryInfoFactory.FromDirectoryName(string)" />
 	[Obsolete("Use `IDirectoryInfoFactory.New(string)` instead")]
+	[ExcludeFromCodeCoverage]
 	public IDirectoryInfo FromDirectoryName(string directoryName)
 		=> New(directoryName);
 

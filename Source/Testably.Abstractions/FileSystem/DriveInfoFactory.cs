@@ -19,6 +19,7 @@ internal sealed class DriveInfoFactory : IDriveInfoFactory
 
 	/// <inheritdoc cref="IDriveInfoFactory.FromDriveName(string)" />
 	[Obsolete("Use `IDriveInfoFactory.New(string)` instead")]
+	[ExcludeFromCodeCoverage]
 	public IDriveInfo FromDriveName(string driveName)
 		=> New(driveName);
 
