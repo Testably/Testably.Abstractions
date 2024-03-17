@@ -42,7 +42,7 @@ public sealed class DriveInfoFactoryStatisticsTests
 	}
 
 	[SkippableFact]
-	public void ToString_ShouldBeDirectoryInfo()
+	public void ToString_ShouldBeDriveInfo()
 	{
 		IPathStatistics sut = new MockFileSystem().Statistics.DriveInfo;
 

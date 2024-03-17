@@ -1388,7 +1388,7 @@ public sealed class FileStatisticsTests
 #endif
 
 	[SkippableFact]
-	public void ToString_ShouldBeDirectoryInfo()
+	public void ToString_ShouldBeFile()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.File;
 

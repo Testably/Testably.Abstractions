@@ -636,7 +636,7 @@ public class PathStatisticsTests
 	}
 
 	[SkippableFact]
-	public void ToString_ShouldBeDirectoryInfo()
+	public void ToString_ShouldBePath()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.Path;
 

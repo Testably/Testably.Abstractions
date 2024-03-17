@@ -637,7 +637,7 @@ public class FileInfoStatisticsTests
 #endif
 
 	[SkippableFact]
-	public void ToString_ShouldBeDirectoryInfoWithPath()
+	public void ToString_ShouldBeFileInfoWithPath()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.FileInfo[@"\\some\path"];
 

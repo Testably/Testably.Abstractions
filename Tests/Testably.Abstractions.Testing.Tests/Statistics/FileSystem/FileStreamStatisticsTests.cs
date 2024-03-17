@@ -537,7 +537,7 @@ public class FileStreamStatisticsTests
 	}
 
 	[SkippableFact]
-	public void ToString_ShouldBeDirectoryInfoWithPath()
+	public void ToString_ShouldBeFileStreamWithPath()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.FileStream[@"\\some\path"];
 

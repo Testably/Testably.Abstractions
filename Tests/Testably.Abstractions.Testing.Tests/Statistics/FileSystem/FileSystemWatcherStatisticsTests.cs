@@ -337,7 +337,7 @@ public class FileSystemWatcherStatisticsTests
 	}
 
 	[SkippableFact]
-	public void ToString_ShouldBeDirectoryInfoWithPath()
+	public void ToString_ShouldBeFileSystemWatcherWithPath()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.FileSystemWatcher[@"\\some\path"];
 

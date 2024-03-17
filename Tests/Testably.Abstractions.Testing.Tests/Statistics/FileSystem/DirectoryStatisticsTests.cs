@@ -705,7 +705,7 @@ public sealed class DirectoryStatisticsTests
 	}
 
 	[SkippableFact]
-	public void ToString_ShouldBeDirectoryInfo()
+	public void ToString_ShouldBeDirectory()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.Directory;
 

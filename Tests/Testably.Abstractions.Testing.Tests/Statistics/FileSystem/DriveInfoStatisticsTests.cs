@@ -138,7 +138,7 @@ public sealed class DriveInfoStatisticsTests
 	}
 
 	[SkippableFact]
-	public void ToString_ShouldBeDirectoryInfoWithPath()
+	public void ToString_ShouldBeDriveInfoWithPath()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.DriveInfo[@"x:"];
 

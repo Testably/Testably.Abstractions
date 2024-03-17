@@ -61,7 +61,7 @@ public class FileSystemWatcherFactoryStatisticsTests
 	}
 
 	[SkippableFact]
-	public void ToString_ShouldBeDirectoryInfo()
+	public void ToString_ShouldBeFileSystemWatcher()
 	{
 		IPathStatistics sut = new MockFileSystem().Statistics.FileSystemWatcher;
 
