@@ -24,56 +24,6 @@ namespace Testably.Abstractions.Helpers
         void StoreMetadata<T>(string key, T? value);
         bool TryGetWrappedInstance<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T? wrappedInstance);
     }
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    [System.Obsolete("Will be removed in a future version!")]
-    public abstract class PathSystemBase : System.IO.Abstractions.IFileSystemEntity, System.IO.Abstractions.IPath
-    {
-        protected PathSystemBase(System.IO.Abstractions.IFileSystem fileSystem) { }
-        public virtual char AltDirectorySeparatorChar { get; }
-        public virtual char DirectorySeparatorChar { get; }
-        public System.IO.Abstractions.IFileSystem FileSystem { get; }
-        public virtual char PathSeparator { get; }
-        public virtual char VolumeSeparatorChar { get; }
-        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("path")]
-        public virtual string? ChangeExtension(string? path, string? extension) { }
-        public virtual string Combine(params string[] paths) { }
-        public virtual string Combine(string path1, string path2) { }
-        public virtual string Combine(string path1, string path2, string path3) { }
-        public virtual string Combine(string path1, string path2, string path3, string path4) { }
-        public virtual System.ReadOnlySpan<char> GetDirectoryName(System.ReadOnlySpan<char> path) { }
-        public virtual string? GetDirectoryName(string? path) { }
-        public virtual System.ReadOnlySpan<char> GetExtension(System.ReadOnlySpan<char> path) { }
-        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("path")]
-        public virtual string? GetExtension(string? path) { }
-        public virtual System.ReadOnlySpan<char> GetFileName(System.ReadOnlySpan<char> path) { }
-        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("path")]
-        public virtual string? GetFileName(string? path) { }
-        public virtual System.ReadOnlySpan<char> GetFileNameWithoutExtension(System.ReadOnlySpan<char> path) { }
-        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("path")]
-        public virtual string? GetFileNameWithoutExtension(string? path) { }
-        public virtual string GetFullPath(string path) { }
-        public virtual string GetFullPath(string path, string basePath) { }
-        public virtual char[] GetInvalidFileNameChars() { }
-        public virtual char[] GetInvalidPathChars() { }
-        public virtual System.ReadOnlySpan<char> GetPathRoot(System.ReadOnlySpan<char> path) { }
-        public virtual string? GetPathRoot(string? path) { }
-        public virtual string GetRandomFileName() { }
-        public virtual string GetRelativePath(string relativeTo, string path) { }
-        [System.Obsolete("Insecure temporary file creation methods should not be used. Use `Path.Combine(Pa" +
-            "th.GetTempPath(), Path.GetRandomFileName())` instead.")]
-        public virtual string GetTempFileName() { }
-        public virtual string GetTempPath() { }
-        public virtual bool HasExtension(System.ReadOnlySpan<char> path) { }
-        public virtual bool HasExtension([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) { }
-        public virtual bool IsPathFullyQualified(System.ReadOnlySpan<char> path) { }
-        public virtual bool IsPathFullyQualified(string path) { }
-        public virtual bool IsPathRooted(System.ReadOnlySpan<char> path) { }
-        public virtual bool IsPathRooted(string? path) { }
-        public virtual string Join(System.ReadOnlySpan<char> path1, System.ReadOnlySpan<char> path2) { }
-        public virtual string Join(System.ReadOnlySpan<char> path1, System.ReadOnlySpan<char> path2, System.ReadOnlySpan<char> path3) { }
-        public virtual bool TryJoin(System.ReadOnlySpan<char> path1, System.ReadOnlySpan<char> path2, System.Span<char> destination, out int charsWritten) { }
-        public virtual bool TryJoin(System.ReadOnlySpan<char> path1, System.ReadOnlySpan<char> path2, System.ReadOnlySpan<char> path3, System.Span<char> destination, out int charsWritten) { }
-    }
     public sealed class RandomWrapper : Testably.Abstractions.RandomSystem.IRandom
     {
         public RandomWrapper(System.Random instance) { }
