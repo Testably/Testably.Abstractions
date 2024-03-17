@@ -187,7 +187,8 @@ internal sealed class InMemoryStorage : IStorage
 		else if (_fileSystem.Execute.Path.GetPathRoot(fullPath) != fullPath)
 		{
 			fullPathWithoutTrailingSlash =
-				fullPathWithoutTrailingSlash.TrimEnd(_fileSystem.Execute.Path.DirectorySeparatorChar);
+				fullPathWithoutTrailingSlash.TrimEnd(
+					_fileSystem.Execute.Path.DirectorySeparatorChar);
 		}
 
 		foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers

@@ -8,6 +8,19 @@ namespace Testably.Abstractions.Testing.Helpers;
 internal static class FileSystemExtensions
 {
 	/// <summary>
+	///     Ignores all registrations on the <see cref="MockFileSystem.Statistics" /> until the return value is disposed.
+	/// </summary>
+	internal static Execute ExecuteOrDefault(this IFileSystem fileSystem)
+	{
+		if (fileSystem is MockFileSystem mockFileSystem)
+		{
+			return mockFileSystem.Execute;
+		}
+
+		return new Execute(new MockFileSystem());
+	}
+
+	/// <summary>
 	///     Determines the new <see cref="IStorageLocation" /> when the <paramref name="location" /> is moved
 	///     from <paramref name="source" /> to <paramref name="destination" />.
 	/// </summary>
@@ -103,18 +116,5 @@ internal static class FileSystemExtensions
 		}
 
 		return new NoOpDisposable();
-	}
-
-	/// <summary>
-	///     Ignores all registrations on the <see cref="MockFileSystem.Statistics" /> until the return value is disposed.
-	/// </summary>
-	internal static Execute ExecuteOrDefault(this IFileSystem fileSystem)
-	{
-		if (fileSystem is MockFileSystem mockFileSystem)
-		{
-			return mockFileSystem.Execute;
-		}
-
-		return new Execute(new MockFileSystem());
 	}
 }
