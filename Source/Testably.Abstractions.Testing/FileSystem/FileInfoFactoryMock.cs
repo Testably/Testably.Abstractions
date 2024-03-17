@@ -23,6 +23,7 @@ internal sealed class FileInfoFactoryMock : IFileInfoFactory
 
 	/// <inheritdoc cref="IFileInfoFactory.FromFileName(string)" />
 	[Obsolete("Use `IFileInfoFactory.New(string)` instead")]
+	[ExcludeFromCodeCoverage]
 	public IFileInfo FromFileName(string fileName)
 	{
 		using IDisposable registration = RegisterMethod(nameof(FromFileName),

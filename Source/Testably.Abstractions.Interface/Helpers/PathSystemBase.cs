@@ -15,6 +15,7 @@ namespace Testably.Abstractions.Helpers;
 #else
 [Obsolete("Will be removed in a future version!")]
 #endif
+[ExcludeFromCodeCoverage]
 public abstract class PathSystemBase : IPath
 {
 	/// <summary>

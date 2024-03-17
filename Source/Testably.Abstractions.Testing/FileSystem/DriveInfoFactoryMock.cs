@@ -24,6 +24,7 @@ internal sealed class DriveInfoFactoryMock : IDriveInfoFactory
 
 	/// <inheritdoc cref="IDriveInfoFactory.FromDriveName(string)" />
 	[Obsolete("Use `IDriveInfoFactory.New(string)` instead")]
+	[ExcludeFromCodeCoverage]
 	public IDriveInfo FromDriveName(string driveName)
 	{
 		using IDisposable registration = RegisterMethod(nameof(FromDriveName),

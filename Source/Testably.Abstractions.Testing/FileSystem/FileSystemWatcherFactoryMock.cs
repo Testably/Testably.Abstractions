@@ -24,16 +24,19 @@ internal sealed class FileSystemWatcherFactoryMock
 
 	/// <inheritdoc cref="IFileSystemWatcherFactory.CreateNew()" />
 	[Obsolete("Use `IFileSystemWatcherFactory.New()` instead")]
+	[ExcludeFromCodeCoverage]
 	public IFileSystemWatcher CreateNew()
 		=> New();
 
 	/// <inheritdoc cref="IFileSystemWatcherFactory.CreateNew(string)" />
 	[Obsolete("Use `IFileSystemWatcherFactory.New(string)` instead")]
+	[ExcludeFromCodeCoverage]
 	public IFileSystemWatcher CreateNew(string path)
 		=> New(path);
 
 	/// <inheritdoc cref="IFileSystemWatcherFactory.CreateNew(string, string)" />
 	[Obsolete("Use `IFileSystemWatcherFactory.New(string, string)` instead")]
+	[ExcludeFromCodeCoverage]
 	public IFileSystemWatcher CreateNew(string path, string filter)
 		=> New(path, filter);
 

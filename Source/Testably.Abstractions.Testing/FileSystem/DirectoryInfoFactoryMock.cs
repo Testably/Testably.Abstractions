@@ -23,6 +23,7 @@ internal sealed class DirectoryInfoFactoryMock : IDirectoryInfoFactory
 
 	/// <inheritdoc cref="IDirectoryInfoFactory.FromDirectoryName(string)" />
 	[Obsolete("Use `IDirectoryInfoFactory.New(string)` instead")]
+	[ExcludeFromCodeCoverage]
 	public IDirectoryInfo FromDirectoryName(string directoryName)
 	{
 		using IDisposable registration = RegisterMethod(nameof(FromDirectoryName),
