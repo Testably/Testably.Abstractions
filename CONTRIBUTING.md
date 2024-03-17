@@ -22,7 +22,7 @@ These can be enabled by explicitely running the [`Testably.Abstractions.TestSett
 - `RealFileSystemTestsInDebugMode` (`Enable`/`Disable`)
   If enabled, the classes for executing tests against the real file system also run in DEBUG mode.
 
-*Note: This settings are stored locally in `test.settings.json` which is excluded in [`.gitignore`](https://github.com/Testably/Testably.Abstractions/blob/main/.gitignore) so that it only affects the individual developer!*
+*Note: These settings are stored locally in `test.settings.json` which is excluded in [`.gitignore`](https://github.com/Testably/Testably.Abstractions/blob/main/.gitignore) so that it only affects the individual developer!*
 
 ## Versioning
 This project uses [MinVer](https://github.com/adamralph/minver) for versioning.  
