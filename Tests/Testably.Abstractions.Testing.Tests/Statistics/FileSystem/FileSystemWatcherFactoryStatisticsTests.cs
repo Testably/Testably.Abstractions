@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
@@ -57,5 +58,15 @@ public class FileSystemWatcherFactoryStatisticsTests
 		sut.Statistics.FileSystemWatcher.ShouldOnlyContainMethodCall(
 			nameof(IFileSystemWatcherFactory.Wrap),
 			fileSystemWatcher);
+	}
+
+	[SkippableFact]
+	public void ToString_ShouldBeDirectoryInfo()
+	{
+		IPathStatistics sut = new MockFileSystem().Statistics.FileSystemWatcher;
+
+		string? result = sut.ToString();
+
+		result.Should().Be("FileSystemWatcher");
 	}
 }

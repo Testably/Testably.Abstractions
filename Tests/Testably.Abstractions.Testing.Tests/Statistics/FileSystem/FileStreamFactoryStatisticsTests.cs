@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 #if NET6_0_OR_GREATER
 using Microsoft.Win32.SafeHandles;
@@ -192,5 +193,15 @@ public class FileStreamFactoryStatisticsTests
 
 		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.Wrap),
 			fileStream);
+	}
+
+	[SkippableFact]
+	public void ToString_ShouldBeDirectoryInfo()
+	{
+		IPathStatistics sut = new MockFileSystem().Statistics.FileStream;
+
+		string? result = sut.ToString();
+
+		result.Should().Be("FileStream");
 	}
 }

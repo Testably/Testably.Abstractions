@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
@@ -701,5 +702,15 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.SetLastWriteTimeUtc),
 			path, lastWriteTimeUtc);
+	}
+
+	[SkippableFact]
+	public void ToString_ShouldBeDirectoryInfo()
+	{
+		IStatistics sut = new MockFileSystem().Statistics.Directory;
+
+		string? result = sut.ToString();
+
+		result.Should().Be("Directory");
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
@@ -634,4 +635,14 @@ public class FileInfoStatisticsTests
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.UnixFileMode));
 	}
 #endif
+
+	[SkippableFact]
+	public void ToString_ShouldBeDirectoryInfoWithPath()
+	{
+		IStatistics sut = new MockFileSystem().Statistics.FileInfo[@"\\some\path"];
+
+		string? result = sut.ToString();
+
+		result.Should().Be(@"FileInfo[\\some\path]");
+	}
 }

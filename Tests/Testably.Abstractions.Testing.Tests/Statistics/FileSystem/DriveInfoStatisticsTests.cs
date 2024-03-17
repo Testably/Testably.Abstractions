@@ -1,4 +1,5 @@
-﻿using Testably.Abstractions.Testing.Tests.TestHelpers;
+﻿using Testably.Abstractions.Testing.Statistics;
+using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
@@ -134,5 +135,15 @@ public sealed class DriveInfoStatisticsTests
 
 		sut.Statistics.DriveInfo["F:"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IDriveInfo.VolumeLabel));
+	}
+
+	[SkippableFact]
+	public void ToString_ShouldBeDirectoryInfoWithPath()
+	{
+		IStatistics sut = new MockFileSystem().Statistics.DriveInfo[@"x:"];
+
+		string? result = sut.ToString();
+
+		result.Should().Be(@"DriveInfo[x:]");
 	}
 }

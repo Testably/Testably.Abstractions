@@ -1,4 +1,5 @@
-﻿using Testably.Abstractions.Testing.Tests.TestHelpers;
+﻿using Testably.Abstractions.Testing.Statistics;
+using Testably.Abstractions.Testing.Tests.TestHelpers;
 #if FEATURE_PATH_RELATIVE
 using System.IO;
 #endif
@@ -632,5 +633,15 @@ public class PathStatisticsTests
 		_ = sut.Path.VolumeSeparatorChar;
 
 		sut.Statistics.Path.ShouldOnlyContainPropertyGetAccess(nameof(IPath.VolumeSeparatorChar));
+	}
+
+	[SkippableFact]
+	public void ToString_ShouldBeDirectoryInfo()
+	{
+		IStatistics sut = new MockFileSystem().Statistics.Path;
+
+		string? result = sut.ToString();
+
+		result.Should().Be("Path");
 	}
 }
