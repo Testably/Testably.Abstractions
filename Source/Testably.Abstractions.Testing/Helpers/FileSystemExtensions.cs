@@ -104,4 +104,17 @@ internal static class FileSystemExtensions
 
 		return new NoOpDisposable();
 	}
+
+	/// <summary>
+	///     Ignores all registrations on the <see cref="MockFileSystem.Statistics" /> until the return value is disposed.
+	/// </summary>
+	internal static Execute ExecuteOrDefault(this IFileSystem fileSystem)
+	{
+		if (fileSystem is MockFileSystem mockFileSystem)
+		{
+			return mockFileSystem.Execute;
+		}
+
+		return new Execute(new MockFileSystem());
+	}
 }

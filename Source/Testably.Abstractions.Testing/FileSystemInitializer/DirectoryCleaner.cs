@@ -17,7 +17,7 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 		_fileSystem = fileSystem;
 		_logger = logger;
 		BasePath = InitializeBasePath(
-			(fileSystem as MockFileSystem)?.Execute ?? Execute.Default,
+			fileSystem.ExecuteOrDefault(),
 			prefix ?? "");
 	}
 

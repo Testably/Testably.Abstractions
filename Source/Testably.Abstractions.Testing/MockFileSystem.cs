@@ -86,7 +86,7 @@ public sealed class MockFileSystem : IFileSystem
 	{
 		StatisticsRegistration = new FileSystemStatistics(this);
 		using IDisposable release = StatisticsRegistration.Ignore();
-		Execute = Execute.Default;
+		Execute = new Execute(this);
 		RandomSystem = new MockRandomSystem();
 		TimeSystem = new MockTimeSystem(TimeProvider.Now());
 		_pathMock = new PathMock(this);

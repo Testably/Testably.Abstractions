@@ -211,10 +211,10 @@ public sealed class ExecuteExtensionsTests
 	private static Execute FromType(ExecuteType type)
 		=> type switch
 		{
-			ExecuteType.Windows => new Execute(OSPlatform.Windows),
-			ExecuteType.Linux => new Execute(OSPlatform.Linux),
-			ExecuteType.Mac => new Execute(OSPlatform.OSX),
-			ExecuteType.NetFramework => new Execute(OSPlatform.Windows, true),
+			ExecuteType.Windows => new Execute(new MockFileSystem(), OSPlatform.Windows),
+			ExecuteType.Linux => new Execute(new MockFileSystem(), OSPlatform.Linux),
+			ExecuteType.Mac => new Execute(new MockFileSystem(), OSPlatform.OSX),
+			ExecuteType.NetFramework => new Execute(new MockFileSystem(), OSPlatform.Windows, true),
 			_ => throw new NotSupportedException()
 		};
 
