@@ -1,9 +1,7 @@
 ﻿using Microsoft.Win32.SafeHandles;
 using System;
-using System.IO;
-#if NET6_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
-#endif
+using System.IO;
 
 namespace Testably.Abstractions.FileSystem;
 
