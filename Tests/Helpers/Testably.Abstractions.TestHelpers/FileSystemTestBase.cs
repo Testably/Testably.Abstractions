@@ -30,8 +30,6 @@ public abstract class FileSystemTestBase<TFileSystem>
 		Test = test;
 		FileSystem = fileSystem;
 		TimeSystem = timeSystem;
-
-		Test.SkipIfTestsOnRealFileSystemShouldBeSkipped(FileSystem);
 	}
 
 	protected FileSystemTestBase()

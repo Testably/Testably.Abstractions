@@ -5,14 +5,10 @@
 	<Import Project="$([MSBuild]::GetPathOfFileAbove('Feature.Flags.props', '$(MSBuildThisFileDirectory)/../'))" />
 
 	<PropertyGroup>
-		<Authors>Testably</Authors>
-		<Copyright>Copyright (c) 2022 Testably</Copyright>
 		<PackageTags>abstractions testing</PackageTags>
 		<PackageProjectUrl>https://github.com/Testably/Testably.Abstractions</PackageProjectUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageIcon>Docs/logo_256x256.png</PackageIcon>
-		<RepositoryUrl>https://github.com/Testably/Testably.Abstractions.git</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
 		<MinVerTagPrefix>v</MinVerTagPrefix>
 	</PropertyGroup>
 

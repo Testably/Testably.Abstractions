@@ -1,8 +1,5 @@
-# Ignore the Directory.Build.props in the root directory so that
-# the setting of specific constants can improve the developer experience
-# without affecting the origin GIT repository.
+# Ignore the test.settings.json as it should reflect the individual developer experience.
 # > https://github.com/Testably/Testably.Abstractions/blob/main/CONTRIBUTING.md#tests
-/Directory.Build.props
 /test.settings.json
 
 # Set up Visual Studio to use WSL to execute unit tests in Ubuntu:
