@@ -67,7 +67,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 	public void ResolveLinkTarget_FinalTarget_ShouldFollowSymbolicLinkToFinalTarget(
 		string path, string pathToFinalTarget)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		int maxLinks = MaxResolveLinks;
 
@@ -92,7 +92,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 	public void ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
 		string path, string pathToFinalTarget)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		int maxLinks = MaxResolveLinks + 1;
 		FileSystem.Directory.CreateDirectory(pathToFinalTarget);
@@ -120,7 +120,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 		ResolveLinkTarget_MissingDirectoryInLinkChain_ShouldReturnPathToMissingDirectory(
 			string path, string pathToFinalTarget, string pathToMissingDirectory)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		FileSystem.Directory.CreateDirectory(pathToFinalTarget);
 		FileSystem.Directory.CreateSymbolicLink(pathToMissingDirectory,
@@ -182,7 +182,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 	public void ResolveLinkTarget_TargetDeletedAfterLinkCreation_ShouldReturnNull(
 		string path, string pathToTarget)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		string targetFullPath = FileSystem.Path.GetFullPath(pathToTarget);
 		FileSystem.Directory.CreateDirectory(pathToTarget);

@@ -15,6 +15,7 @@ internal class FileSystemClassGenerator : ClassGeneratorBase
 		=> sourceBuilder.Append(@$"
 using Testably.Abstractions.Testing.FileSystemInitializer;
 using Testably.Abstractions.TestHelpers;
+using Testably.Abstractions.TestHelpers.Settings;
 using Xunit.Abstractions;
 
 namespace {@class.Namespace}
@@ -54,10 +55,11 @@ namespace {@class.Namespace}.{@class.Name}
 		/// <inheritdoc cref=""IDisposable.Dispose()"" />
 		public void Dispose()
 			=> _directoryCleaner.Dispose();
+
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
+		public override bool LongRunningTestsShouldBeSkipped() => false;
 	}}
 }}
-
-#if !DEBUG || ENABLE_REALFILESYSTEMTESTS_IN_DEBUG
 
 namespace {@class.Namespace}.{@class.Name}
 {{
@@ -69,10 +71,18 @@ namespace {@class.Namespace}.{@class.Name}
 		public override string BasePath => _directoryCleaner.BasePath;
 
 		private readonly IDirectoryCleaner _directoryCleaner;
+		private readonly RealFileSystemFixture _fixture;
 
-		public RealFileSystemTests(ITestOutputHelper testOutputHelper)
+		public RealFileSystemTests(ITestOutputHelper testOutputHelper, RealFileSystemFixture fixture)
 			: base(new Test(), new RealFileSystem(), new RealTimeSystem())
 		{{
+#if DEBUG
+			if (!fixture.EnableRealFileSystemTestsInDebugMode)
+			{{
+				throw new SkipException(""EnableRealFileSystemTestsInDebugMode is not set in test.settings.json"");
+			}}
+#endif
+			_fixture = fixture;
 			_directoryCleaner = FileSystem
 			   .SetCurrentDirectoryToEmptyTemporaryDirectory($""{@class.Namespace}{{FileSystem.Path.DirectorySeparatorChar}}{@class.Name}-"", testOutputHelper.WriteLine);
 		}}
@@ -80,7 +90,9 @@ namespace {@class.Namespace}.{@class.Name}
 		/// <inheritdoc cref=""IDisposable.Dispose()"" />
 		public void Dispose()
 			=> _directoryCleaner.Dispose();
+
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
+		public override bool LongRunningTestsShouldBeSkipped() => !_fixture.IncludeLongRunningTestsAlsoInDebugMode;
 	}}
-}}
-#endif");
+}}");
 }

@@ -26,7 +26,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	[AutoData]
 	public void NotifyFilter_AppendFile_ShouldNotNotifyOnOtherFilters(string fileName)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		FileSystem.Initialize();
 		FileSystemEventArgs? result = null;
@@ -71,7 +71,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	public void NotifyFilter_AppendFile_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string fileName)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 		if (!Test.RunsOnLinux)
 		{
 			Skip.If(notifyFilter == NotifyFilters.Security,
@@ -117,7 +117,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	[AutoData]
 	public void NotifyFilter_CreateDirectory_ShouldNotNotifyOnOtherFilters(string path)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		FileSystem.Initialize();
 		FileSystemEventArgs? result = null;
@@ -149,7 +149,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	public void NotifyFilter_CreateDirectory_ShouldTriggerCreatedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		FileSystem.Initialize();
 		FileSystemEventArgs? result = null;
@@ -177,7 +177,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	[AutoData]
 	public void NotifyFilter_DeleteDirectory_ShouldNotNotifyOnOtherFilters(string path)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		FileSystem.Initialize().WithSubdirectory(path);
 		FileSystemEventArgs? result = null;
@@ -209,7 +209,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	public void NotifyFilter_DeleteDirectory_ShouldTriggerDeletedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		FileSystem.Initialize().WithSubdirectory(path);
 		FileSystemEventArgs? result = null;
@@ -237,7 +237,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	[AutoData]
 	public void NotifyFilter_DeleteFile_ShouldNotNotifyOnOtherFilters(string path)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		FileSystem.Initialize().WithFile(path);
 		FileSystemEventArgs? result = null;
@@ -269,7 +269,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	public void NotifyFilter_DeleteFile_ShouldTriggerDeletedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		FileSystem.Initialize().WithFile(path);
 		FileSystemEventArgs? result = null;
@@ -300,7 +300,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 			string sourcePath, string sourceName,
 			string destinationPath, string destinationName)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 		Skip.If(Test.RunsOnWindows);
 
 		FileSystem.Initialize()
@@ -343,7 +343,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 			string sourcePath, string sourceName,
 			string destinationPath, string destinationName)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 		Skip.IfNot(Test.RunsOnWindows);
 
 		FileSystem.Initialize()
@@ -376,7 +376,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	public void NotifyFilter_MoveFile_ShouldNotNotifyOnOtherFilters(
 		string sourceName, string destinationName)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		FileSystem.Initialize();
 		FileSystem.File.WriteAllText(sourceName, null);
@@ -410,7 +410,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	public void NotifyFilter_MoveFile_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string sourceName, string destinationName)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		FileSystem.Initialize();
 		FileSystem.File.WriteAllText(sourceName, "foo");
@@ -443,7 +443,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	[AutoData]
 	public void NotifyFilter_WriteFile_ShouldNotNotifyOnOtherFilters(string fileName)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		FileSystem.Initialize();
 		FileSystem.File.WriteAllText(fileName, null);
@@ -489,7 +489,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	public void NotifyFilter_WriteFile_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string fileName)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		if (!Test.RunsOnLinux)
 		{

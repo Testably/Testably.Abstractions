@@ -175,7 +175,7 @@ public abstract partial class DeleteTests<TFileSystem>
 	[AutoData]
 	public void Delete_ShouldAdjustTimes(string path, string subdirectoryName)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		string subdirectoryPath = FileSystem.Path.Combine(path, subdirectoryName);
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;

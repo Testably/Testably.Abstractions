@@ -78,7 +78,7 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 	[AutoData]
 	public void AppendAllText_ShouldAdjustTimes(string path, string contents)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
 		FileSystem.File.WriteAllText(path, "foo");

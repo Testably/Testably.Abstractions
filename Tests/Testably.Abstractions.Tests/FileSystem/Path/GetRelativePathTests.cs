@@ -35,7 +35,7 @@ public abstract partial class GetRelativePathTests<TFileSystem>
 		result.Should().Be(path2);
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void GetRelativePath_FromAbsolutePathInCurrentDirectory_ShouldReturnRelativePath()
 	{
 		string rootedPath = FileSystem.Path.Combine(BasePath, "input");

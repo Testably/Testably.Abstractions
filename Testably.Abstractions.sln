@@ -100,6 +100,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{0AEBB1A6-07D
 		Tests\Api\Directory.Build.props = Tests\Api\Directory.Build.props
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.TestSettings", "Tests\Settings\Testably.Abstractions.TestSettings\Testably.Abstractions.TestSettings.csproj", "{241E6413-819C-4B06-A739-4D10C2A81365}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Settings", "Settings", "{D32170F4-1455-4839-8EF4-9530F3AA642A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -158,6 +162,10 @@ Global
 		{2A729DA1-0C27-4C68-AB39-7D7BCB00D49F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A729DA1-0C27-4C68-AB39-7D7BCB00D49F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A729DA1-0C27-4C68-AB39-7D7BCB00D49F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{241E6413-819C-4B06-A739-4D10C2A81365}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{241E6413-819C-4B06-A739-4D10C2A81365}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{241E6413-819C-4B06-A739-4D10C2A81365}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{241E6413-819C-4B06-A739-4D10C2A81365}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -180,6 +188,8 @@ Global
 		{8A44FA00-968E-4CEC-90E6-94A878B9DEB2} = {61F335A6-9CE0-4040-A34F-E70B1A55077D}
 		{2A729DA1-0C27-4C68-AB39-7D7BCB00D49F} = {8A44FA00-968E-4CEC-90E6-94A878B9DEB2}
 		{0AEBB1A6-07D6-46DC-BC78-9771D380EBC0} = {2FDB2AAE-E5CE-483E-A1A6-EC0B0A4AD67B}
+		{241E6413-819C-4B06-A739-4D10C2A81365} = {D32170F4-1455-4839-8EF4-9530F3AA642A}
+		{D32170F4-1455-4839-8EF4-9530F3AA642A} = {61F335A6-9CE0-4040-A34F-E70B1A55077D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EC4D8481-B9FD-41B5-832A-369210993DF4}

@@ -34,6 +34,7 @@ public sealed class Generator : ISourceGenerator
 			return;
 		}
 
+		new GlobalGenerator().GenerateClass(context);
 		foreach (ClassGeneratorBase classGenerator in _classGenerators)
 		{
 			foreach (ClassModel classModel in _syntaxReceiver
