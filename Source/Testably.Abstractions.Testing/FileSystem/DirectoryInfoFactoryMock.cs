@@ -21,17 +21,6 @@ internal sealed class DirectoryInfoFactoryMock : IDirectoryInfoFactory
 	public IFileSystem FileSystem
 		=> _fileSystem;
 
-	/// <inheritdoc cref="IDirectoryInfoFactory.FromDirectoryName(string)" />
-	[Obsolete("Use `IDirectoryInfoFactory.New(string)` instead")]
-	[ExcludeFromCodeCoverage]
-	public IDirectoryInfo FromDirectoryName(string directoryName)
-	{
-		using IDisposable registration = RegisterMethod(nameof(FromDirectoryName),
-			directoryName);
-
-		return New(directoryName);
-	}
-
 	/// <inheritdoc cref="IDirectoryInfoFactory.New(string)" />
 	public IDirectoryInfo New(string path)
 	{
