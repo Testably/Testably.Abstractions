@@ -14,8 +14,9 @@ internal class PathStatistics : CallStatistics, IPathStatistics
 
 	public PathStatistics(
 		IStatisticsGate statisticsGate,
-		MockFileSystem fileSystem)
-		: base(statisticsGate)
+		MockFileSystem fileSystem,
+		string name)
+		: base(statisticsGate, name)
 	{
 		_statisticsGate = statisticsGate;
 		_fileSystem = fileSystem;
@@ -29,7 +30,8 @@ internal class PathStatistics : CallStatistics, IPathStatistics
 		get
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
-			return _statistics.GetOrAdd(key, _ => new CallStatistics(_statisticsGate));
+			return _statistics.GetOrAdd(key, 
+				k => new CallStatistics(_statisticsGate, $"{ToString()}[{k}]"));
 		}
 	}
 
@@ -44,7 +46,8 @@ internal class PathStatistics : CallStatistics, IPathStatistics
 	{
 		string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
 		CallStatistics callStatistics =
-			_statistics.GetOrAdd(key, _ => new CallStatistics(_statisticsGate));
+			_statistics.GetOrAdd(key,
+				k => new CallStatistics(_statisticsGate, $"{ToString()}[{k}]"));
 		return callStatistics.RegisterMethod(name, parameters);
 	}
 
@@ -57,7 +60,8 @@ internal class PathStatistics : CallStatistics, IPathStatistics
 	{
 		string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
 		CallStatistics callStatistics =
-			_statistics.GetOrAdd(key, _ => new CallStatistics(_statisticsGate));
+			_statistics.GetOrAdd(key,
+				k => new CallStatistics(_statisticsGate, $"{ToString()}[{k}]"));
 		return callStatistics.RegisterProperty(name, access);
 	}
 

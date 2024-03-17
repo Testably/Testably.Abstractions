@@ -57,7 +57,7 @@ public sealed class PathStatisticsTests
 	public void Key_ShouldSimplifyRelativePaths()
 	{
 		MockFileSystem fileSystem = new();
-		fileSystem.InitializeIn("foo/bar");
+		fileSystem.InitializeIn("/foo/bar");
 		IPathStatistics sut = fileSystem.Statistics.FileInfo;
 
 		IStatistics absolutPath = sut["/foo"];

@@ -19,14 +19,14 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsG
 
 	public FileSystemStatistics(MockFileSystem fileSystem)
 	{
-		DirectoryInfo = new PathStatistics(this, fileSystem);
-		DriveInfo = new PathStatistics(this, fileSystem);
-		FileInfo = new PathStatistics(this, fileSystem);
-		FileStream = new PathStatistics(this, fileSystem);
-		FileSystemWatcher = new PathStatistics(this, fileSystem);
-		File = new CallStatistics(this);
-		Directory = new CallStatistics(this);
-		Path = new CallStatistics(this);
+		DirectoryInfo = new PathStatistics(this, fileSystem, nameof(IFileSystem.DirectoryInfo));
+		DriveInfo = new PathStatistics(this, fileSystem, nameof(IFileSystem.DriveInfo));
+		FileInfo = new PathStatistics(this, fileSystem, nameof(IFileSystem.FileInfo));
+		FileStream = new PathStatistics(this, fileSystem, nameof(IFileSystem.FileStream));
+		FileSystemWatcher = new PathStatistics(this, fileSystem, nameof(IFileSystem.FileSystemWatcher));
+		File = new CallStatistics(this, nameof(IFileSystem.File));
+		Directory = new CallStatistics(this, nameof(IFileSystem.Directory));
+		Path = new CallStatistics(this, nameof(IFileSystem.Path));
 	}
 
 	#region IFileSystemStatistics Members
