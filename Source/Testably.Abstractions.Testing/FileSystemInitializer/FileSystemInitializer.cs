@@ -32,6 +32,7 @@ internal class FileSystemInitializer<TFileSystem>
 		IDirectoryInfo subdirectory)
 	{
 		FileSystem = parent.FileSystem;
+		using IDisposable release = FileSystem.IgnoreStatistics();
 		_initializedFileSystemInfos = parent._initializedFileSystemInfos;
 		_basePath = FileSystem.Path.Combine(parent._basePath, subdirectory.Name);
 	}
