@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.IO;
+using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.Statistics;
 
@@ -62,21 +63,23 @@ internal class PathStatistics : CallStatistics, IPathStatistics
 
 	private static string CreateKey(string currentDirectory, string path)
 	{
+		string key = string.Empty;
 		if (string.IsNullOrEmpty(path))
 		{
-			return string.Empty;
+			return key;
 		}
 
-		if (path.StartsWith("//") || path.StartsWith(@"\\"))
+		if (path.StartsWith("//") ||
+		    path.StartsWith(@"\\") ||
+		    (path.Length >= 2 && path[1] == ':' && path[0].IsAsciiLetter()))
 		{
-			return path.TrimEnd('/', '\\');
+			key = path;
 		}
-
-		if (path.Length == 2 && path.EndsWith(":"))
+		else
 		{
-			return path;
+			key = Path.GetFullPath(Path.Combine(currentDirectory, path));
 		}
 
-		return Path.GetFullPath(Path.Combine(currentDirectory, path)).TrimEnd('/', '\\');
+		return key.TrimEnd('/', '\\');
 	}
 }
