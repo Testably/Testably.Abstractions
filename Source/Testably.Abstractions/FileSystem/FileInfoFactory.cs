@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Testably.Abstractions.FileSystem;
@@ -15,12 +14,6 @@ internal sealed class FileInfoFactory : IFileInfoFactory
 
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
-
-	/// <inheritdoc cref="IFileInfoFactory.FromFileName(string)" />
-	[Obsolete("Use `IFileInfoFactory.New(string)` instead")]
-	[ExcludeFromCodeCoverage]
-	public IFileInfo FromFileName(string fileName)
-		=> New(fileName);
 
 	/// <inheritdoc cref="IFileInfoFactory.New(string)" />
 	public IFileInfo New(string fileName)
