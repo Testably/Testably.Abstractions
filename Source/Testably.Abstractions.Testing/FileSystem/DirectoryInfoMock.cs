@@ -87,7 +87,7 @@ internal sealed class DirectoryInfoMock
 
 		DirectoryInfoMock directory = New(
 			_fileSystem.Storage.GetLocation(
-				_fileSystem.Path.Combine(FullName, path
+				_fileSystem.Execute.Path.Combine(FullName, path
 					.EnsureValidFormat(_fileSystem, nameof(path),
 						_fileSystem.Execute.IsWindows && !_fileSystem.Execute.IsNetFramework))),
 			_fileSystem);

@@ -40,7 +40,7 @@ public static class InterceptionHandlerExtensions
 		Func<ChangeDescription, bool>? predicate = null)
 		=> handler.Event(interceptionCallback,
 			changeDescription => changeDescription.Matches(
-				(handler.FileSystem as MockFileSystem)?.Execute ?? Execute.Default,
+				handler.FileSystem.ExecuteOrDefault(),
 				fileSystemType,
 				WatcherChangeTypes.Changed,
 				path.GetFullPathOrWhiteSpace(handler.FileSystem),
@@ -77,7 +77,7 @@ public static class InterceptionHandlerExtensions
 		Func<ChangeDescription, bool>? predicate = null)
 		=> handler.Event(interceptionCallback,
 			changeDescription => changeDescription.Matches(
-				(handler.FileSystem as MockFileSystem)?.Execute ?? Execute.Default,
+				handler.FileSystem.ExecuteOrDefault(),
 				fileSystemType,
 				WatcherChangeTypes.Created,
 				path.GetFullPathOrWhiteSpace(handler.FileSystem),
@@ -114,7 +114,7 @@ public static class InterceptionHandlerExtensions
 		Func<ChangeDescription, bool>? predicate = null)
 		=> handler.Event(interceptionCallback,
 			changeDescription => changeDescription.Matches(
-				(handler.FileSystem as MockFileSystem)?.Execute ?? Execute.Default,
+				handler.FileSystem.ExecuteOrDefault(),
 				fileSystemType,
 				WatcherChangeTypes.Deleted,
 				path.GetFullPathOrWhiteSpace(handler.FileSystem),

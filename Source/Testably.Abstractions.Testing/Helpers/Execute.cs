@@ -3,13 +3,8 @@ using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Testing.Helpers;
 
-internal class Execute
+internal partial class Execute
 {
-	/// <summary>
-	///     The default execution engine, which uses the current operating system.
-	/// </summary>
-	public static Execute Default { get; } = new();
-
 	/// <summary>
 	///     Flag indicating if the code runs on <see cref="OSPlatform.Linux" />.
 	/// </summary>
@@ -34,11 +29,16 @@ internal class Execute
 	public bool IsWindows { get; }
 
 	/// <summary>
+	///     The internal implementation of the <see cref="IPath" /> functionality.
+	/// </summary>
+	public IPath Path { get; }
+
+	/// <summary>
 	///     The default <see cref="StringComparison" /> used for comparing paths.
 	/// </summary>
 	public StringComparison StringComparisonMode { get; }
 
-	internal Execute(OSPlatform osPlatform, bool isNetFramework = false)
+	internal Execute(MockFileSystem fileSystem, OSPlatform osPlatform, bool isNetFramework = false)
 	{
 		IsLinux = osPlatform == OSPlatform.Linux;
 		IsMac = osPlatform == OSPlatform.OSX;
@@ -47,9 +47,10 @@ internal class Execute
 		StringComparisonMode = IsLinux
 			? StringComparison.Ordinal
 			: StringComparison.OrdinalIgnoreCase;
+		Path = new NativePath(fileSystem);
 	}
 
-	private Execute()
+	internal Execute(MockFileSystem fileSystem)
 	{
 		IsLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 		IsMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
@@ -58,5 +59,6 @@ internal class Execute
 		StringComparisonMode = IsLinux
 			? StringComparison.Ordinal
 			: StringComparison.OrdinalIgnoreCase;
+		Path = new NativePath(fileSystem);
 	}
 }

@@ -52,7 +52,7 @@ internal static class PathHelper
 	/// </summary>
 	internal static bool HasIllegalCharacters(this string path, MockFileSystem fileSystem)
 	{
-		char[] invalidPathChars = fileSystem.Path.GetInvalidPathChars();
+		char[] invalidPathChars = fileSystem.Execute.Path.GetInvalidPathChars();
 
 		if (path.IndexOfAny(invalidPathChars) >= 0)
 		{
@@ -102,9 +102,9 @@ internal static class PathHelper
 		}
 
 		return fileSystem.Execute.OnWindows(
-			() => path.StartsWith(new string(fileSystem.Path.DirectorySeparatorChar, 2)) ||
-			      path.StartsWith(new string(fileSystem.Path.AltDirectorySeparatorChar, 2)),
-			() => path.StartsWith(new string(fileSystem.Path.DirectorySeparatorChar, 2)));
+			() => path.StartsWith(new string(fileSystem.Execute.Path.DirectorySeparatorChar, 2)) ||
+			      path.StartsWith(new string(fileSystem.Execute.Path.AltDirectorySeparatorChar, 2)),
+			() => path.StartsWith(new string(fileSystem.Execute.Path.DirectorySeparatorChar, 2)));
 	}
 
 	internal static void ThrowCommonExceptionsIfPathToTargetIsInvalid(
@@ -155,13 +155,13 @@ internal static class PathHelper
 					hResult));
 
 			throw ExceptionFactory.PathHasIncorrectSyntax(
-				fileSystem.Path.GetFullPath(path), hResult);
+				fileSystem.Execute.Path.GetFullPath(path), hResult);
 		}
 
 		fileSystem.Execute.OnWindowsIf(path.LastIndexOf(':') > 1 &&
 		                               path.LastIndexOf(':') <
 		                               path.IndexOf(Path.DirectorySeparatorChar),
 			() => throw ExceptionFactory.PathHasIncorrectSyntax(
-				fileSystem.Path.GetFullPath(path), hResult));
+				fileSystem.Execute.Path.GetFullPath(path), hResult));
 	}
 }

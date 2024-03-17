@@ -29,7 +29,7 @@ public class EnumerationOptionsHelperTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			EnumerationOptionsHelper.MatchesPattern(Execute.Default,
+			EnumerationOptionsHelper.MatchesPattern(new Execute(new MockFileSystem()),
 				invalidEnumerationOptions,
 				"foo", "*");
 		});

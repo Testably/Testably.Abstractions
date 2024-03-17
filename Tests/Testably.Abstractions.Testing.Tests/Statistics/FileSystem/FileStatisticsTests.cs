@@ -27,6 +27,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.AppendAllLines(path, contents, encoding);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllLines),
 			path, contents, encoding);
 	}
@@ -40,6 +41,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.AppendAllLines(path, contents);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllLines),
 			path, contents);
 	}
@@ -56,6 +58,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.AppendAllLinesAsync(path, contents, cancellationToken);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllLinesAsync),
 			path, contents, cancellationToken);
 	}
@@ -74,6 +77,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.AppendAllLinesAsync(path, contents, encoding, cancellationToken);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllLinesAsync),
 			path, contents, encoding, cancellationToken);
 	}
@@ -89,6 +93,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.AppendAllText(path, contents, encoding);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllText),
 			path, contents, encoding);
 	}
@@ -102,6 +107,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.AppendAllText(path, contents);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllText),
 			path, contents);
 	}
@@ -117,6 +123,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.AppendAllTextAsync(path, contents, cancellationToken);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllTextAsync),
 			path, contents, cancellationToken);
 	}
@@ -135,6 +142,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.AppendAllTextAsync(path, contents, encoding, cancellationToken);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllTextAsync),
 			path, contents, encoding, cancellationToken);
 	}
@@ -148,6 +156,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.AppendText(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendText),
 			path);
 	}
@@ -163,6 +172,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.Copy(sourceFileName, destFileName, overwrite);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Copy),
 			sourceFileName, destFileName, overwrite);
 	}
@@ -177,6 +187,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.Copy(sourceFileName, destFileName);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Copy),
 			sourceFileName, destFileName);
 	}
@@ -191,6 +202,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.Create(path, bufferSize, options);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Create),
 			path, bufferSize, options);
 	}
@@ -204,6 +216,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.Create(path, bufferSize);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Create),
 			path, bufferSize);
 	}
@@ -216,6 +229,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.Create(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Create),
 			path);
 	}
@@ -230,6 +244,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.CreateSymbolicLink(path, pathToTarget);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.CreateSymbolicLink),
 			path, pathToTarget);
 	}
@@ -243,6 +258,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.CreateText(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.CreateText),
 			path);
 	}
@@ -260,6 +276,7 @@ public sealed class FileStatisticsTests
 		sut.File.Decrypt(path);
 		#pragma warning restore CA1416
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Decrypt),
 			path);
 	}
@@ -273,6 +290,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.Delete(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Delete),
 			path);
 	}
@@ -290,6 +308,7 @@ public sealed class FileStatisticsTests
 		sut.File.Encrypt(path);
 		#pragma warning restore CA1416
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Encrypt),
 			path);
 	}
@@ -302,6 +321,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.Exists(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Exists),
 			path);
 	}
@@ -318,6 +338,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetAttributes(fileHandle);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetAttributes),
 			fileHandle);
 	}
@@ -332,6 +353,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetAttributes(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetAttributes),
 			path);
 	}
@@ -348,6 +370,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetCreationTime(fileHandle);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetCreationTime),
 			fileHandle);
 	}
@@ -362,6 +385,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetCreationTime(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetCreationTime),
 			path);
 	}
@@ -378,6 +402,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetCreationTimeUtc(fileHandle);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetCreationTimeUtc),
 			fileHandle);
 	}
@@ -392,6 +417,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetCreationTimeUtc(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetCreationTimeUtc),
 			path);
 	}
@@ -408,6 +434,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetLastAccessTime(fileHandle);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetLastAccessTime),
 			fileHandle);
 	}
@@ -422,6 +449,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetLastAccessTime(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetLastAccessTime),
 			path);
 	}
@@ -438,6 +466,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetLastAccessTimeUtc(fileHandle);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetLastAccessTimeUtc),
 			fileHandle);
 	}
@@ -452,6 +481,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetLastAccessTimeUtc(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetLastAccessTimeUtc),
 			path);
 	}
@@ -468,6 +498,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetLastWriteTime(fileHandle);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetLastWriteTime),
 			fileHandle);
 	}
@@ -482,6 +513,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetLastWriteTime(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetLastWriteTime),
 			path);
 	}
@@ -498,6 +530,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetLastWriteTimeUtc(fileHandle);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetLastWriteTimeUtc),
 			fileHandle);
 	}
@@ -512,6 +545,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.GetLastWriteTimeUtc(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetLastWriteTimeUtc),
 			path);
 	}
@@ -532,6 +566,7 @@ public sealed class FileStatisticsTests
 		sut.File.GetUnixFileMode(fileHandle);
 		#pragma warning restore CA1416
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetUnixFileMode),
 			fileHandle);
 	}
@@ -551,6 +586,7 @@ public sealed class FileStatisticsTests
 		sut.File.GetUnixFileMode(path);
 		#pragma warning restore CA1416
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.GetUnixFileMode),
 			path);
 	}
@@ -568,6 +604,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.Move(sourceFileName, destFileName, overwrite);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Move),
 			sourceFileName, destFileName, overwrite);
 	}
@@ -583,6 +620,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.Move(sourceFileName, destFileName);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Move),
 			sourceFileName, destFileName);
 	}
@@ -598,6 +636,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.Open(path, mode, access, share);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Open),
 			path, mode, access, share);
 	}
@@ -612,6 +651,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.Open(path, mode, access);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Open),
 			path, mode, access);
 	}
@@ -625,6 +665,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.Open(path, mode);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Open),
 			path, mode);
 	}
@@ -640,6 +681,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.Open(path, options);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Open),
 			path, options);
 	}
@@ -654,6 +696,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.OpenRead(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.OpenRead),
 			path);
 	}
@@ -667,6 +710,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.OpenText(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.OpenText),
 			path);
 	}
@@ -679,6 +723,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.OpenWrite(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.OpenWrite),
 			path);
 	}
@@ -692,6 +737,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.ReadAllBytes(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllBytes),
 			path);
 	}
@@ -707,6 +753,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.ReadAllBytesAsync(path, cancellationToken);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllBytesAsync),
 			path, cancellationToken);
 	}
@@ -722,6 +769,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.ReadAllLines(path, encoding);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllLines),
 			path, encoding);
 	}
@@ -735,6 +783,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.ReadAllLines(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllLines),
 			path);
 	}
@@ -750,6 +799,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.ReadAllLinesAsync(path, cancellationToken);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllLinesAsync),
 			path, cancellationToken);
 	}
@@ -768,6 +818,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.ReadAllLinesAsync(path, encoding, cancellationToken);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllLinesAsync),
 			path, encoding, cancellationToken);
 	}
@@ -783,6 +834,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.ReadAllText(path, encoding);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllText),
 			path, encoding);
 	}
@@ -796,6 +848,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.ReadAllText(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllText),
 			path);
 	}
@@ -811,6 +864,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.ReadAllTextAsync(path, cancellationToken);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllTextAsync),
 			path, cancellationToken);
 	}
@@ -828,6 +882,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.ReadAllTextAsync(path, encoding, cancellationToken);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadAllTextAsync),
 			path, encoding, cancellationToken);
 	}
@@ -843,6 +898,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.ReadLines(path, encoding);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadLines),
 			path, encoding);
 	}
@@ -856,6 +912,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.ReadLines(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadLines),
 			path);
 	}
@@ -871,6 +928,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.ReadLinesAsync(path, cancellationToken);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadLinesAsync),
 			path, cancellationToken);
 	}
@@ -888,6 +946,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.ReadLinesAsync(path, encoding, cancellationToken);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ReadLinesAsync),
 			path, encoding, cancellationToken);
 	}
@@ -906,6 +965,7 @@ public sealed class FileStatisticsTests
 		sut.File.Replace(sourceFileName, destinationFileName, destinationBackupFileName,
 			ignoreMetadataErrors);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Replace),
 			sourceFileName, destinationFileName, destinationBackupFileName, ignoreMetadataErrors);
 	}
@@ -921,6 +981,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.Replace(sourceFileName, destinationFileName, destinationBackupFileName);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.Replace),
 			sourceFileName, destinationFileName, destinationBackupFileName);
 	}
@@ -936,6 +997,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.ResolveLinkTarget(linkPath, returnFinalTarget);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.ResolveLinkTarget),
 			linkPath, returnFinalTarget);
 	}
@@ -954,6 +1016,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetAttributes(fileHandle, fileAttributes);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetAttributes),
 			fileHandle, fileAttributes);
 	}
@@ -969,6 +1032,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetAttributes(path, fileAttributes);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetAttributes),
 			path, fileAttributes);
 	}
@@ -986,6 +1050,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetCreationTime(fileHandle, creationTime);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetCreationTime),
 			fileHandle, creationTime);
 	}
@@ -1001,6 +1066,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetCreationTime(path, creationTime);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetCreationTime),
 			path, creationTime);
 	}
@@ -1018,6 +1084,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetCreationTimeUtc(fileHandle, creationTimeUtc);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetCreationTimeUtc),
 			fileHandle, creationTimeUtc);
 	}
@@ -1033,6 +1100,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetCreationTimeUtc(path, creationTimeUtc);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetCreationTimeUtc),
 			path, creationTimeUtc);
 	}
@@ -1050,6 +1118,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetLastAccessTime(fileHandle, lastAccessTime);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetLastAccessTime),
 			fileHandle, lastAccessTime);
 	}
@@ -1065,6 +1134,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetLastAccessTime(path, lastAccessTime);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetLastAccessTime),
 			path, lastAccessTime);
 	}
@@ -1082,6 +1152,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetLastAccessTimeUtc(fileHandle, lastAccessTimeUtc);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetLastAccessTimeUtc),
 			fileHandle, lastAccessTimeUtc);
 	}
@@ -1097,6 +1168,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetLastAccessTimeUtc(path, lastAccessTimeUtc);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetLastAccessTimeUtc),
 			path, lastAccessTimeUtc);
 	}
@@ -1114,6 +1186,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetLastWriteTime(fileHandle, lastWriteTime);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetLastWriteTime),
 			fileHandle, lastWriteTime);
 	}
@@ -1129,6 +1202,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetLastWriteTime(path, lastWriteTime);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetLastWriteTime),
 			path, lastWriteTime);
 	}
@@ -1146,6 +1220,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetLastWriteTimeUtc(fileHandle, lastWriteTimeUtc);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetLastWriteTimeUtc),
 			fileHandle, lastWriteTimeUtc);
 	}
@@ -1161,6 +1236,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.SetLastWriteTimeUtc(path, lastWriteTimeUtc);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetLastWriteTimeUtc),
 			path, lastWriteTimeUtc);
 	}
@@ -1182,6 +1258,7 @@ public sealed class FileStatisticsTests
 		sut.File.SetUnixFileMode(fileHandle, mode);
 		#pragma warning restore CA1416
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetUnixFileMode),
 			fileHandle, mode);
 	}
@@ -1202,6 +1279,7 @@ public sealed class FileStatisticsTests
 		sut.File.SetUnixFileMode(path, mode);
 		#pragma warning restore CA1416
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.SetUnixFileMode),
 			path, mode);
 	}
@@ -1216,6 +1294,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.WriteAllBytes(path, bytes);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllBytes),
 			path, bytes);
 	}
@@ -1232,6 +1311,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.WriteAllBytesAsync(path, bytes, cancellationToken);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllBytesAsync),
 			path, bytes, cancellationToken);
 	}
@@ -1247,6 +1327,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.WriteAllLines(path, contents, encoding);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllLines),
 			path, contents, encoding);
 	}
@@ -1260,6 +1341,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.WriteAllLines(path, contents);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllLines),
 			path, contents);
 	}
@@ -1274,6 +1356,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.WriteAllLines(path, contents, encoding);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllLines),
 			path, contents, encoding);
 	}
@@ -1287,6 +1370,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.WriteAllLines(path, contents);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllLines),
 			path, contents);
 	}
@@ -1303,6 +1387,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.WriteAllLinesAsync(path, contents, cancellationToken);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllLinesAsync),
 			path, contents, cancellationToken);
 	}
@@ -1321,6 +1406,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.WriteAllLinesAsync(path, contents, encoding, cancellationToken);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllLinesAsync),
 			path, contents, encoding, cancellationToken);
 	}
@@ -1336,6 +1422,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.WriteAllText(path, contents, encoding);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllText),
 			path, contents, encoding);
 	}
@@ -1349,6 +1436,7 @@ public sealed class FileStatisticsTests
 
 		sut.File.WriteAllText(path, contents);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllText),
 			path, contents);
 	}
@@ -1364,6 +1452,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.WriteAllTextAsync(path, contents, cancellationToken);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllTextAsync),
 			path, contents, cancellationToken);
 	}
@@ -1382,6 +1471,7 @@ public sealed class FileStatisticsTests
 
 		await sut.File.WriteAllTextAsync(path, contents, encoding, cancellationToken);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(1);
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllTextAsync),
 			path, contents, encoding, cancellationToken);
 	}

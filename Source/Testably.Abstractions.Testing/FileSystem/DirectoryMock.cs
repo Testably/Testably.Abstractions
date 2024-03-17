@@ -82,10 +82,10 @@ internal sealed class DirectoryMock : IDirectory
 
 		do
 		{
-			string localBasePath = _fileSystem.Path.Combine(
-				_fileSystem.Path.GetTempPath(),
-				(prefix ?? "") + _fileSystem.Path.GetFileNameWithoutExtension(
-					_fileSystem.Path.GetRandomFileName()));
+			string localBasePath = _fileSystem.Execute.Path.Combine(
+				_fileSystem.Execute.Path.GetTempPath(),
+				(prefix ?? "") + _fileSystem.Execute.Path.GetFileNameWithoutExtension(
+					_fileSystem.Execute.Path.GetRandomFileName()));
 			_fileSystem.Execute.OnMac(() => localBasePath = "/private" + localBasePath);
 			basePath = localBasePath;
 		} while (_fileSystem.Directory.Exists(basePath));
@@ -361,8 +361,8 @@ internal sealed class DirectoryMock : IDirectory
 		using IDisposable registration = RegisterMethod(nameof(GetDirectoryRoot),
 			path);
 
-		return _fileSystem.Path.GetPathRoot(
-			       _fileSystem.Path.GetFullPath(path)) ??
+		return _fileSystem.Execute.Path.GetPathRoot(
+			       _fileSystem.Execute.Path.GetFullPath(path)) ??
 		       throw ExceptionFactory.PathIsEmpty(nameof(path));
 	}
 
@@ -584,7 +584,7 @@ internal sealed class DirectoryMock : IDirectory
 		if (!directoryInfo.Exists)
 		{
 			throw ExceptionFactory.DirectoryNotFound(
-				FileSystem.Path.GetFullPath(path));
+				_fileSystem.Execute.Path.GetFullPath(path));
 		}
 
 		_fileSystem.Storage.CurrentDirectory = directoryInfo.FullName;
@@ -692,18 +692,18 @@ internal sealed class DirectoryMock : IDirectory
 		fileSystem.Execute.OnMac(
 			() =>
 				throw ExceptionFactory.DirectoryNotFound(
-					fileSystem.Path.GetFullPath(path)),
+					fileSystem.Execute.Path.GetFullPath(path)),
 			() =>
 				throw ExceptionFactory.FileNotFound(
-					fileSystem.Path.GetFullPath(path)));
+					fileSystem.Execute.Path.GetFullPath(path)));
 #else
 		fileSystem.Execute.OnWindows(
 			() =>
 				throw ExceptionFactory.FileNotFound(
-					fileSystem.Path.GetFullPath(path)),
+					fileSystem.Execute.Path.GetFullPath(path)),
 			() =>
 				throw ExceptionFactory.DirectoryNotFound(
-					fileSystem.Path.GetFullPath(path)));
+					fileSystem.Execute.Path.GetFullPath(path)));
 #endif
 	}
 
@@ -713,15 +713,15 @@ internal sealed class DirectoryMock : IDirectory
 	{
 #if NET7_0_OR_GREATER
 		throw ExceptionFactory.FileNotFound(
-			fileSystem.Path.GetFullPath(path));
+			fileSystem.Execute.Path.GetFullPath(path));
 #else
 		fileSystem.Execute.OnWindows(
 			() =>
 				throw ExceptionFactory.FileNotFound(
-					fileSystem.Path.GetFullPath(path)),
+					fileSystem.Execute.Path.GetFullPath(path)),
 			() =>
 				throw ExceptionFactory.DirectoryNotFound(
-					fileSystem.Path.GetFullPath(path)));
+					fileSystem.Execute.Path.GetFullPath(path)));
 #endif
 	}
 }

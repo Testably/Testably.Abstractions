@@ -317,7 +317,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private bool MatchesFilter(ChangeDescription changeDescription)
 	{
-		string fullPath = _fileSystem.Path.GetFullPath(Path);
+		string fullPath = _fileSystem.Execute.Path.GetFullPath(Path);
 		if (IncludeSubdirectories)
 		{
 			if (!changeDescription.Path.StartsWith(fullPath))
@@ -325,7 +325,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				return false;
 			}
 		}
-		else if (FileSystem.Path.GetDirectoryName(changeDescription.Path) != fullPath)
+		else if (_fileSystem.Execute.Path.GetDirectoryName(changeDescription.Path) != fullPath)
 		{
 			return false;
 		}
@@ -344,7 +344,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			EnumerationOptionsHelper.MatchesPattern(
 				_fileSystem.Execute,
 				EnumerationOptionsHelper.Compatible,
-				_fileSystem.Path.GetFileName(changeDescription.Path),
+				_fileSystem.Execute.Path.GetFileName(changeDescription.Path),
 				filter));
 	}
 
@@ -501,10 +501,10 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		string? transformedName = changeDescriptionName;
 		string? path = changeDescriptionPath;
 		if (transformedName == null ||
-		    _fileSystem.Path.IsPathRooted(changeDescriptionName))
+		    _fileSystem.Execute.Path.IsPathRooted(changeDescriptionName))
 		{
-			transformedName = _fileSystem.Path.GetFileName(changeDescriptionPath);
-			path = _fileSystem.Path.GetDirectoryName(path);
+			transformedName = _fileSystem.Execute.Path.GetFileName(changeDescriptionPath);
+			path = _fileSystem.Execute.Path.GetDirectoryName(path);
 		}
 		else if (path.EndsWith(transformedName))
 		{

@@ -7,6 +7,12 @@ namespace Testably.Abstractions.Testing.Statistics;
 internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsGate
 {
 	private static readonly AsyncLocal<bool> IsDisabled = new();
+
+	/// <summary>
+	///     The total count of registered statistic calls.
+	/// </summary>
+	public int TotalCount => _counter;
+
 	internal readonly CallStatistics Directory;
 	internal readonly PathStatistics DirectoryInfo;
 	internal readonly PathStatistics DriveInfo;
@@ -23,7 +29,8 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsG
 		DriveInfo = new PathStatistics(this, fileSystem, nameof(IFileSystem.DriveInfo));
 		FileInfo = new PathStatistics(this, fileSystem, nameof(IFileSystem.FileInfo));
 		FileStream = new PathStatistics(this, fileSystem, nameof(IFileSystem.FileStream));
-		FileSystemWatcher = new PathStatistics(this, fileSystem, nameof(IFileSystem.FileSystemWatcher));
+		FileSystemWatcher =
+			new PathStatistics(this, fileSystem, nameof(IFileSystem.FileSystemWatcher));
 		File = new CallStatistics(this, nameof(IFileSystem.File));
 		Directory = new CallStatistics(this, nameof(IFileSystem.Directory));
 		Path = new CallStatistics(this, nameof(IFileSystem.Path));

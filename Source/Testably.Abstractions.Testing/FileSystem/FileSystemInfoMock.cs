@@ -166,7 +166,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 				return ".";
 			}
 
-			return _fileSystem.Path.GetExtension(Location.FullPath);
+			return _fileSystem.Execute.Path.GetExtension(Location.FullPath);
 		}
 	}
 
@@ -282,11 +282,11 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		{
 			using IDisposable registration = RegisterProperty(nameof(Name), PropertyAccess.Get);
 
-			return _fileSystem.Path.GetPathRoot(Location.FullPath) == Location.FullPath
+			return _fileSystem.Execute.Path.GetPathRoot(Location.FullPath) == Location.FullPath
 				? Location.FullPath
-				: _fileSystem.Path.GetFileName(Location.FullPath.TrimEnd(
-					_fileSystem.Path.DirectorySeparatorChar,
-					_fileSystem.Path.AltDirectorySeparatorChar));
+				: _fileSystem.Execute.Path.GetFileName(Location.FullPath.TrimEnd(
+					_fileSystem.Execute.Path.DirectorySeparatorChar,
+					_fileSystem.Execute.Path.AltDirectorySeparatorChar));
 		}
 	}
 

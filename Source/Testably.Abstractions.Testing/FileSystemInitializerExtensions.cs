@@ -96,7 +96,7 @@ public static class FileSystemInitializerExtensions
 			#pragma warning restore CA2249
 
 			if (EnumerationOptionsHelper.MatchesPattern(
-				(fileSystem as MockFileSystem)?.Execute ?? Execute.Default,
+				fileSystem.ExecuteOrDefault(),
 				enumerationOptions,
 				fileName,
 				searchPattern))

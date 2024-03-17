@@ -46,7 +46,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 		if (driveName.IsUncPath(_fileSystem))
 		{
 			IsUncPath = true;
-			driveName = new string(fileSystem.Path.DirectorySeparatorChar, 2) +
+			driveName = new string(fileSystem.Execute.Path.DirectorySeparatorChar, 2) +
 			            GetTopmostParentDirectory(driveName.Substring(2));
 		}
 		else
@@ -259,7 +259,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		while (true)
 		{
-			string? child = FileSystem.Path.GetDirectoryName(path);
+			string? child = _fileSystem.Execute.Path.GetDirectoryName(path);
 			if (string.IsNullOrEmpty(child))
 			{
 				break;
@@ -283,14 +283,14 @@ internal sealed class DriveInfoMock : IStorageDrive
 			return $"{driveName.ToUpperInvariant()}:\\";
 		}
 
-		if (fileSystem.Path.IsPathRooted(driveName))
+		if (fileSystem.Execute.Path.IsPathRooted(driveName))
 		{
 			return fileSystem.Execute.OnWindows(() =>
 				{
-					string rootedPath = fileSystem.Path.GetPathRoot(driveName)!;
+					string rootedPath = fileSystem.Execute.Path.GetPathRoot(driveName)!;
 					return $"{rootedPath.TrimEnd('\\')}\\";
 				},
-				() => fileSystem.Path.GetPathRoot(driveName)!);
+				() => fileSystem.Execute.Path.GetPathRoot(driveName)!);
 		}
 
 		throw ExceptionFactory.InvalidDriveName();

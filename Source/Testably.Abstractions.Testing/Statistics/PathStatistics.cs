@@ -30,7 +30,7 @@ internal class PathStatistics : CallStatistics, IPathStatistics
 		get
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
-			return _statistics.GetOrAdd(key, 
+			return _statistics.GetOrAdd(key,
 				k => new CallStatistics(_statisticsGate, $"{ToString()}[{k}]"));
 		}
 	}

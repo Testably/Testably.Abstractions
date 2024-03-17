@@ -188,7 +188,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		FileOptions options)
 		: base(
 			stream,
-			path == null ? "" : fileSystem.Path.GetFullPath(path),
+			path == null ? "" : fileSystem.Execute.Path.GetFullPath(path),
 			(options & FileOptions.Asynchronous) != 0)
 	{
 		ThrowIfInvalidModeAccess(mode, access);
@@ -210,7 +210,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			    _mode.Equals(FileMode.Truncate))
 			{
 				throw ExceptionFactory.FileNotFound(
-					_fileSystem.Path.GetFullPath(base.Name));
+					_fileSystem.Execute.Path.GetFullPath(base.Name));
 			}
 
 			file = _fileSystem.Storage.GetOrCreateContainer(_location,
@@ -222,15 +222,15 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			_fileSystem.Execute.OnWindows(
 				() =>
 					throw ExceptionFactory.AccessToPathDenied(
-						_fileSystem.Path.GetFullPath(base.Name)),
+						_fileSystem.Execute.Path.GetFullPath(base.Name)),
 				() =>
 					throw ExceptionFactory.FileAlreadyExists(
-						_fileSystem.Path.GetFullPath(base.Name), 17));
+						_fileSystem.Execute.Path.GetFullPath(base.Name), 17));
 		}
 		else if (_mode.Equals(FileMode.CreateNew))
 		{
 			throw ExceptionFactory.FileAlreadyExists(
-				_fileSystem.Path.GetFullPath(Name),
+				_fileSystem.Execute.Path.GetFullPath(Name),
 				_fileSystem.Execute.IsWindows ? -2147024816 : 17);
 		}
 

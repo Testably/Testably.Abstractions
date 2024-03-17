@@ -36,10 +36,10 @@ public static class MockFileSystemExtensions
 		string server,
 		Action<IStorageDrive>? driveCallback = null)
 	{
-		string uncPrefix = new(mockFileSystem.Path.DirectorySeparatorChar, 2);
+		string uncPrefix = new(mockFileSystem.Execute.Path.DirectorySeparatorChar, 2);
 		server = server.TrimStart(
-			mockFileSystem.Path.DirectorySeparatorChar,
-			mockFileSystem.Path.AltDirectorySeparatorChar);
+			mockFileSystem.Execute.Path.DirectorySeparatorChar,
+			mockFileSystem.Execute.Path.AltDirectorySeparatorChar);
 		string drive = $"{uncPrefix}{server}";
 		return mockFileSystem.WithDrive(drive, driveCallback);
 	}

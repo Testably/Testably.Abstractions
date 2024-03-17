@@ -113,7 +113,7 @@ internal sealed class FileInfoMock
 		{
 			using IDisposable registration = RegisterProperty(nameof(Name), PropertyAccess.Get);
 
-			if (Location.FullPath.EndsWith(FileSystem.Path.DirectorySeparatorChar))
+			if (Location.FullPath.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar))
 			{
 				return string.Empty;
 			}

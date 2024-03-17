@@ -8,6 +8,19 @@ namespace Testably.Abstractions.Testing.Helpers;
 internal static class FileSystemExtensions
 {
 	/// <summary>
+	///     Ignores all registrations on the <see cref="MockFileSystem.Statistics" /> until the return value is disposed.
+	/// </summary>
+	internal static Execute ExecuteOrDefault(this IFileSystem fileSystem)
+	{
+		if (fileSystem is MockFileSystem mockFileSystem)
+		{
+			return mockFileSystem.Execute;
+		}
+
+		return new Execute(new MockFileSystem());
+	}
+
+	/// <summary>
 	///     Determines the new <see cref="IStorageLocation" /> when the <paramref name="location" /> is moved
 	///     from <paramref name="source" /> to <paramref name="destination" />.
 	/// </summary>
@@ -41,12 +54,12 @@ internal static class FileSystemExtensions
 		string fullFilePath,
 		string givenPath)
 	{
-		if (fileSystem.Path.IsPathRooted(givenPath))
+		if (fileSystem.Execute.Path.IsPathRooted(givenPath))
 		{
 			return fullFilePath;
 		}
 
-		string currentDirectory = fileSystem.Path.GetFullPath(givenPath);
+		string currentDirectory = fileSystem.Execute.Path.GetFullPath(givenPath);
 		if (currentDirectory == string.Empty.PrefixRoot(fileSystem))
 		{
 			fullFilePath = fullFilePath.Substring(currentDirectory.Length);
@@ -75,9 +88,9 @@ internal static class FileSystemExtensions
 			}
 		}
 
-		if (!fullFilePath.StartsWith(givenPath + fileSystem.Path.DirectorySeparatorChar))
+		if (!fullFilePath.StartsWith(givenPath + fileSystem.Execute.Path.DirectorySeparatorChar))
 		{
-			return fileSystem.Path.Combine(givenPath, fullFilePath);
+			return fileSystem.Execute.Path.Combine(givenPath, fullFilePath);
 		}
 
 		return fullFilePath;

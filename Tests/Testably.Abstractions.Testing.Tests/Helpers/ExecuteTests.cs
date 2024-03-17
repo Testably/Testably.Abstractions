@@ -8,7 +8,7 @@ public sealed class ExecuteTests
 	[Fact]
 	public void Constructor_ForLinux_ShouldInitializeAccordingly()
 	{
-		Execute sut = new(OSPlatform.Linux);
+		Execute sut = new(new MockFileSystem(), OSPlatform.Linux);
 
 		sut.IsLinux.Should().BeTrue();
 		sut.IsMac.Should().BeFalse();
@@ -20,7 +20,7 @@ public sealed class ExecuteTests
 	[Fact]
 	public void Constructor_ForNetFramework_ShouldInitializeAccordingly()
 	{
-		Execute sut = new(OSPlatform.Windows, true);
+		Execute sut = new(new MockFileSystem(), OSPlatform.Windows, true);
 
 		sut.IsLinux.Should().BeFalse();
 		sut.IsMac.Should().BeFalse();
@@ -32,7 +32,7 @@ public sealed class ExecuteTests
 	[Fact]
 	public void Constructor_ForNetFramework_WithLinux_ShouldInitializeLinux()
 	{
-		Execute sut = new(OSPlatform.Linux, true);
+		Execute sut = new(new MockFileSystem(), OSPlatform.Linux, true);
 
 		sut.IsLinux.Should().BeTrue();
 		sut.IsMac.Should().BeFalse();
@@ -44,7 +44,7 @@ public sealed class ExecuteTests
 	[Fact]
 	public void Constructor_ForNetFramework_WithOSX_ShouldInitializeMac()
 	{
-		Execute sut = new(OSPlatform.OSX, true);
+		Execute sut = new(new MockFileSystem(), OSPlatform.OSX, true);
 
 		sut.IsLinux.Should().BeFalse();
 		sut.IsMac.Should().BeTrue();
@@ -56,7 +56,7 @@ public sealed class ExecuteTests
 	[Fact]
 	public void Constructor_ForOSX_ShouldInitializeAccordingly()
 	{
-		Execute sut = new(OSPlatform.OSX);
+		Execute sut = new(new MockFileSystem(), OSPlatform.OSX);
 
 		sut.IsLinux.Should().BeFalse();
 		sut.IsMac.Should().BeTrue();
@@ -68,7 +68,7 @@ public sealed class ExecuteTests
 	[Fact]
 	public void Constructor_ForWindows_ShouldInitializeAccordingly()
 	{
-		Execute sut = new(OSPlatform.Windows);
+		Execute sut = new(new MockFileSystem(), OSPlatform.Windows);
 
 		sut.IsLinux.Should().BeFalse();
 		sut.IsMac.Should().BeFalse();
