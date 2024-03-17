@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Testing.Helpers;
 
 internal partial class Execute
 {
-	private class NativePath : IPath
+	private sealed class NativePath : IPath
 	{
 		private readonly MockFileSystem _fileSystem;
 
