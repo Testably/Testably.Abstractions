@@ -6,15 +6,17 @@ namespace Testably.Abstractions.TestHelpers.Settings;
 
 public class RealFileSystemFixture
 {
+	public bool EnableRealFileSystemTestsInDebugMode { get; }
+	public bool IncludeLongRunningTestsAlsoInDebugMode { get; }
+
 	public RealFileSystemFixture()
 	{
-		var path = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "test.settings.json"));
+		string path = Path.GetFullPath(Path.Combine("..", "..", "..", "..", "test.settings.json"));
 		string content = File.ReadAllText(path);
-		var settings = JsonConvert.DeserializeObject<TestSettings>(content)
-		               ?? throw new NotSupportedException("The file has an invalid syntax!");
+		TestSettings settings = JsonConvert.DeserializeObject<TestSettings>(content)
+		                        ?? throw new NotSupportedException(
+			                        "The file has an invalid syntax!");
 		EnableRealFileSystemTestsInDebugMode = settings.EnableRealFileSystemTestsInDebugMode;
 		IncludeLongRunningTestsAlsoInDebugMode = settings.IncludeLongRunningTestsAlsoInDebugMode;
 	}
-	public bool EnableRealFileSystemTestsInDebugMode { get; }
-	public bool IncludeLongRunningTestsAlsoInDebugMode { get; }
 }

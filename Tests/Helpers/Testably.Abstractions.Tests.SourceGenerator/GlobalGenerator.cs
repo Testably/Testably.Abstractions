@@ -15,24 +15,26 @@ public class GlobalGenerator
 			SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
 	}
 
+	private string CreateFileName()
+	{
+		return "DatabaseCollection.cs";
+	}
+
 	/// <inheritdoc cref="ClassGeneratorBase.GenerateSource" />
 	private void GenerateSource(StringBuilder sourceBuilder)
-		=> sourceBuilder.Append(@$"
+		=> sourceBuilder.Append(@"
 using Xunit;
 
 namespace Testably.Abstractions.TestHelpers.Settings;
 
 [CollectionDefinition(""RealFileSystemTests"")]
 public class DatabaseCollection : ICollectionFixture<RealFileSystemFixture>
-{{
+{
 	// This class has no code, and is never created. Its purpose is simply
 	// to be the place to apply [CollectionDefinition] and all the
 	// ICollectionFixture<> interfaces.
-}}");
-	private string CreateFileName()
-	{
-		return "DatabaseCollection.cs";
-	}
+}");
+
 	private StringBuilder GetSourceBuilder()
 		=> new(
 			@"//------------------------------------------------------------------------------
