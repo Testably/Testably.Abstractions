@@ -20,6 +20,7 @@ public sealed partial class StatisticsTests
 			.WithFile("f0").Which(f => f.HasBytesContent(Encoding.UTF8.GetBytes("bar")))
 			.WithAFile().Which(f => f.HasStringContent("foo"));
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(0);
 		sut.Statistics.Directory.Methods.Should().BeEmpty();
 		sut.Statistics.File.Methods.Should().BeEmpty();
 	}

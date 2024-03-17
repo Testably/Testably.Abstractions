@@ -15,6 +15,7 @@ public class FileSystemInitializerExtensionsTests
 		MockFileSystem sut = new();
 		sut.Initialize().WithAFile();
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(0);
 		sut.Directory.EnumerateFiles(".").Should().ContainSingle();
 	}
 
@@ -26,6 +27,7 @@ public class FileSystemInitializerExtensionsTests
 		MockFileSystem sut = new();
 		sut.Initialize().WithAFile(extension);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(0);
 		sut.Directory.EnumerateFiles(".", $"*.{extension}").Should().ContainSingle();
 	}
 
@@ -35,6 +37,7 @@ public class FileSystemInitializerExtensionsTests
 		MockFileSystem sut = new();
 		sut.InitializeIn("base-directory").WithASubdirectory();
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(0);
 		sut.Directory.EnumerateDirectories(".").Should().ContainSingle();
 	}
 
@@ -63,6 +66,7 @@ public class FileSystemInitializerExtensionsTests
 			.WithFile(fileName).Which(f => f
 				.HasBytesContent(fileContent));
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(0);
 		byte[] result = sut.File.ReadAllBytes(fileName);
 
 		result.Should().BeEquivalentTo(fileContent);
@@ -78,6 +82,7 @@ public class FileSystemInitializerExtensionsTests
 			.WithFile(fileName).Which(f => f
 				.HasStringContent(fileContent));
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(0);
 		string result = sut.File.ReadAllText(fileName);
 
 		result.Should().Be(fileContent);
@@ -90,6 +95,7 @@ public class FileSystemInitializerExtensionsTests
 		MockFileSystem sut = new();
 		sut.Initialize().WithFile(fileName);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(0);
 		sut.Directory.EnumerateFiles(".", fileName).Should().ContainSingle();
 	}
 
@@ -102,6 +108,7 @@ public class FileSystemInitializerExtensionsTests
 				.WithSubdirectory("bar").Initialized(s => s
 					.WithSubdirectory("xyz")));
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(0);
 		List<string> result = sut.Directory
 			.EnumerateDirectories(".", "*", SearchOption.AllDirectories).ToList();
 
@@ -121,6 +128,7 @@ public class FileSystemInitializerExtensionsTests
 
 		sut.Initialize(options => options.InitializeTempDirectory = initializeTempDirectory);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(0);
 		sut.Directory.Exists(sut.Path.GetTempPath()).Should().Be(initializeTempDirectory);
 	}
 
@@ -148,6 +156,7 @@ public class FileSystemInitializerExtensionsTests
 		MockFileSystem sut = new();
 		sut.Initialize().WithSubdirectory(directoryName);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(0);
 		sut.Directory.EnumerateDirectories(".", directoryName).Should().ContainSingle();
 	}
 
@@ -160,6 +169,7 @@ public class FileSystemInitializerExtensionsTests
 			MockFileSystem> result =
 			sut.Initialize().WithSubdirectory(directoryName);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(0);
 		result.Directory.Should().Exist();
 	}
 
@@ -177,6 +187,7 @@ public class FileSystemInitializerExtensionsTests
 			Assembly.GetExecutingAssembly(),
 			searchPattern: "*.txt");
 
+		fileSystem.StatisticsRegistration.TotalCount.Should().Be(0);
 		string[] result = fileSystem.Directory.GetFiles(Path.Combine(path, "TestResources"));
 		string[] result2 =
 			fileSystem.Directory.GetFiles(Path.Combine(path, "TestResources", "SubResource"));
@@ -203,6 +214,7 @@ public class FileSystemInitializerExtensionsTests
 			searchPattern: "*.txt",
 			SearchOption.TopDirectoryOnly);
 
+		fileSystem.StatisticsRegistration.TotalCount.Should().Be(0);
 		string[] result = fileSystem.Directory.GetFiles(path);
 		result.Length.Should().Be(2);
 		result.Should().Contain(x => x.EndsWith("TestFile1.txt"));
@@ -225,6 +237,7 @@ public class FileSystemInitializerExtensionsTests
 			"TestResources/SubResource",
 			searchPattern: "*.txt");
 
+		fileSystem.StatisticsRegistration.TotalCount.Should().Be(0);
 		string[] result = fileSystem.Directory.GetFiles(path);
 		result.Length.Should().Be(1);
 		result.Should().Contain(x => x.EndsWith("SubResourceFile1.txt"));
@@ -260,10 +273,11 @@ public class FileSystemInitializerExtensionsTests
 	public void InitializeIn_ShouldSetCurrentDirectory(string path)
 	{
 		MockFileSystem sut = new();
-		string expectedPath = sut.Path.GetFullPath(path);
+		string expectedPath = sut.Execute.Path.GetFullPath(path);
 
 		sut.InitializeIn(path);
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(0);
 		sut.Directory.GetCurrentDirectory().Should().Be(expectedPath);
 	}
 }

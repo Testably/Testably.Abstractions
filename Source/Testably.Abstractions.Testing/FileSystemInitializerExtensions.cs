@@ -44,6 +44,7 @@ public static class FileSystemInitializerExtensions
 		string searchPattern = "*",
 		SearchOption searchOption = SearchOption.AllDirectories)
 	{
+		using IDisposable release = fileSystem.IgnoreStatistics();
 		EnumerationOptions enumerationOptions =
 			EnumerationOptionsHelper.FromSearchOption(searchOption);
 
@@ -153,6 +154,7 @@ public static class FileSystemInitializerExtensions
 	public static IDirectoryCleaner SetCurrentDirectoryToEmptyTemporaryDirectory(
 		this IFileSystem fileSystem, string? prefix = null, Action<string>? logger = null)
 	{
+		using IDisposable release = fileSystem.IgnoreStatistics();
 		return new DirectoryCleaner(fileSystem, prefix, logger);
 	}
 
@@ -161,6 +163,7 @@ public static class FileSystemInitializerExtensions
 		Assembly assembly,
 		string embeddedResourcePath)
 	{
+		using IDisposable release = fileSystem.IgnoreStatistics();
 		using (Stream? embeddedResourceStream = assembly
 			.GetManifestResourceStream(embeddedResourcePath))
 		{
