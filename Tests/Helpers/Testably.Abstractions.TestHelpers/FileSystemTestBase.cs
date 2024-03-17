@@ -39,4 +39,9 @@ public abstract class FileSystemTestBase<TFileSystem>
 		throw new NotSupportedException(
 			"The SourceGenerator didn't create the corresponding files!");
 	}
+
+	/// <summary>
+	///     Specifies, if long-running tests should be skipped on the real file system.
+	/// </summary>
+	public abstract bool LongRunningTestsShouldBeSkipped();
 }

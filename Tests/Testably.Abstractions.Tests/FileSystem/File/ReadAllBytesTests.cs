@@ -33,7 +33,7 @@ public abstract partial class ReadAllBytesTests<TFileSystem>
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
 			"Works unreliable on .NET Framework");
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
 		FileSystem.File.WriteAllBytes(path, bytes);

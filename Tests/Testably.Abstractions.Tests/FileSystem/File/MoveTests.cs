@@ -125,7 +125,7 @@ public abstract partial class MoveTests<TFileSystem>
 	[AutoData]
 	public void Move_ShouldNotAdjustTimes(string source, string destination)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
 		FileSystem.File.WriteAllText(source, "foo");

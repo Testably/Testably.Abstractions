@@ -171,7 +171,7 @@ public abstract partial class MoveToTests<TFileSystem>
 		string destinationName,
 		string contents)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		FileSystem.File.WriteAllText(sourceName, contents);
 		DateTime sourceCreationTime = FileSystem.File.GetCreationTime(sourceName);
@@ -212,7 +212,7 @@ public abstract partial class MoveToTests<TFileSystem>
 	[AutoData]
 	public void MoveTo_ShouldNotAdjustTimes(string source, string destination)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		FileSystem.File.WriteAllText(source, "foo");
 		TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);

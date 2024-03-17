@@ -8,7 +8,7 @@ public abstract partial class Tests<TFileSystem>
 	public void AdjustTimes_WhenCreatingAFile_ShouldAdjustTimes(
 		string path1, string path2, string fileName)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		string subdirectoryPath = FileSystem.Path.Combine(path1, path2);
 		string filePath = FileSystem.Path.Combine(subdirectoryPath, fileName);
@@ -66,7 +66,7 @@ public abstract partial class Tests<TFileSystem>
 	public void AdjustTimes_WhenCreatingASymbolicLink_ShouldAdjustTimes(
 		string path1, string path2, string fileName, string pathToTarget)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		string subdirectoryPath = FileSystem.Path.Combine(path1, path2);
 		string filePath = FileSystem.Path.Combine(subdirectoryPath, fileName);
@@ -126,7 +126,7 @@ public abstract partial class Tests<TFileSystem>
 	public void AdjustTimes_WhenDeletingAFile_ShouldAdjustTimes(
 		string path1, string path2, string fileName)
 	{
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		string subdirectoryPath = FileSystem.Path.Combine(path1, path2);
 		string filePath = FileSystem.Path.Combine(subdirectoryPath, fileName);
@@ -186,7 +186,7 @@ public abstract partial class Tests<TFileSystem>
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
 			"Works unreliable on .NET Framework");
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		string subdirectoryPath = FileSystem.Path.Combine(path1, path2);
 		string filePath = FileSystem.Path.Combine(subdirectoryPath, fileName);

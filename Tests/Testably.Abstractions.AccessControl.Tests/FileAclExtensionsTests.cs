@@ -26,8 +26,7 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 	public void GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
-
-		Test.SkipIfLongRunningTestsShouldBeSkipped(FileSystem);
+		Skip.If(LongRunningTestsShouldBeSkipped());
 
 		FileSystem.File.WriteAllText("foo", null);
 
