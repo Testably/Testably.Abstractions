@@ -41,12 +41,12 @@ internal static class FileSystemExtensions
 		string fullFilePath,
 		string givenPath)
 	{
-		if (fileSystem.Path.IsPathRooted(givenPath))
+		if (fileSystem.Execute.Path.IsPathRooted(givenPath))
 		{
 			return fullFilePath;
 		}
 
-		string currentDirectory = fileSystem.Path.GetFullPath(givenPath);
+		string currentDirectory = fileSystem.Execute.Path.GetFullPath(givenPath);
 		if (currentDirectory == string.Empty.PrefixRoot(fileSystem))
 		{
 			fullFilePath = fullFilePath.Substring(currentDirectory.Length);
@@ -75,9 +75,9 @@ internal static class FileSystemExtensions
 			}
 		}
 
-		if (!fullFilePath.StartsWith(givenPath + fileSystem.Path.DirectorySeparatorChar))
+		if (!fullFilePath.StartsWith(givenPath + fileSystem.Execute.Path.DirectorySeparatorChar))
 		{
-			return fileSystem.Path.Combine(givenPath, fullFilePath);
+			return fileSystem.Execute.Path.Combine(givenPath, fullFilePath);
 		}
 
 		return fullFilePath;

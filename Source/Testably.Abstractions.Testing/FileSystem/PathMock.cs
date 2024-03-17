@@ -143,13 +143,7 @@ internal sealed class PathMock : IPath
 		using IDisposable register = RegisterMethod(nameof(Exists),
 			path);
 
-		if (string.IsNullOrEmpty(path))
-		{
-			return false;
-		}
-
-		return _fileSystem.Storage.GetContainer(_fileSystem.Storage.GetLocation(path))
-			is not NullContainer;
+		return _fileSystem.Execute.Path.Exists(path);
 	}
 #endif
 
@@ -242,26 +236,7 @@ internal sealed class PathMock : IPath
 		using IDisposable register = RegisterMethod(nameof(GetFullPath),
 			path);
 
-		path.EnsureValidArgument(_fileSystem, nameof(path));
-
-		string? pathRoot = Path.GetPathRoot(path);
-		string? directoryRoot = Path.GetPathRoot(_fileSystem.Storage.CurrentDirectory);
-		if (!string.IsNullOrEmpty(pathRoot) && !string.IsNullOrEmpty(directoryRoot))
-		{
-			if (char.ToUpperInvariant(pathRoot[0]) != char.ToUpperInvariant(directoryRoot[0]))
-			{
-				return Path.GetFullPath(path);
-			}
-
-			if (pathRoot.Length < directoryRoot.Length)
-			{
-				path = path.Substring(pathRoot.Length);
-			}
-		}
-
-		return Path.GetFullPath(Path.Combine(
-			_fileSystem.Storage.CurrentDirectory,
-			path));
+		return _fileSystem.Execute.Path.GetFullPath(path);
 	}
 
 #if FEATURE_PATH_RELATIVE
@@ -326,13 +301,7 @@ internal sealed class PathMock : IPath
 		using IDisposable register = RegisterMethod(nameof(GetRelativePath),
 			relativeTo, path);
 
-		relativeTo.EnsureValidArgument(_fileSystem, nameof(relativeTo));
-		path.EnsureValidArgument(_fileSystem, nameof(path));
-
-		relativeTo = _fileSystem.Path.GetFullPath(relativeTo);
-		path = _fileSystem.Path.GetFullPath(path);
-
-		return Path.GetRelativePath(relativeTo, path);
+		return _fileSystem.Execute.Path.GetRelativePath(relativeTo, path);
 	}
 #endif
 

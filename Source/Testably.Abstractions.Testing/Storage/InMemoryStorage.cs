@@ -177,17 +177,17 @@ internal sealed class InMemoryStorage : IStorage
 		string fullPath = location.FullPath;
 		string fullPathWithoutTrailingSlash = fullPath;
 #if NETSTANDARD2_0
-		if (!fullPath.EndsWith($"{_fileSystem.Path.DirectorySeparatorChar}"))
+		if (!fullPath.EndsWith($"{_fileSystem.Execute.Path.DirectorySeparatorChar}"))
 #else
-		if (!fullPath.EndsWith(_fileSystem.Path.DirectorySeparatorChar))
+		if (!fullPath.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar))
 #endif
 		{
-			fullPath += _fileSystem.Path.DirectorySeparatorChar;
+			fullPath += _fileSystem.Execute.Path.DirectorySeparatorChar;
 		}
-		else if (_fileSystem.Path.GetPathRoot(fullPath) != fullPath)
+		else if (_fileSystem.Execute.Path.GetPathRoot(fullPath) != fullPath)
 		{
 			fullPathWithoutTrailingSlash =
-				fullPathWithoutTrailingSlash.TrimEnd(_fileSystem.Path.DirectorySeparatorChar);
+				fullPathWithoutTrailingSlash.TrimEnd(_fileSystem.Execute.Path.DirectorySeparatorChar);
 		}
 
 		foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers
@@ -196,8 +196,8 @@ internal sealed class InMemoryStorage : IStorage
 			            !x.Key.Equals(location)))
 		{
 			string? parentPath =
-				_fileSystem.Path.GetDirectoryName(
-					item.Key.FullPath.TrimEnd(_fileSystem.Path
+				_fileSystem.Execute.Path.GetDirectoryName(
+					item.Key.FullPath.TrimEnd(_fileSystem.Execute.Path
 						.DirectorySeparatorChar));
 			if (!enumerationOptions.RecurseSubdirectories &&
 			    parentPath?.Equals(fullPathWithoutTrailingSlash,
@@ -209,7 +209,7 @@ internal sealed class InMemoryStorage : IStorage
 			if (!EnumerationOptionsHelper.MatchesPattern(
 				_fileSystem.Execute,
 				enumerationOptions,
-				_fileSystem.Path.GetFileName(item.Key.FullPath),
+				_fileSystem.Execute.Path.GetFileName(item.Key.FullPath),
 				searchPattern))
 			{
 				continue;
@@ -249,7 +249,7 @@ internal sealed class InMemoryStorage : IStorage
 
 		if (!driveName.IsUncPath(_fileSystem))
 		{
-			driveName = _fileSystem.Path.GetPathRoot(driveName);
+			driveName = _fileSystem.Execute.Path.GetPathRoot(driveName);
 
 			if (string.IsNullOrEmpty(driveName))
 			{
@@ -572,13 +572,13 @@ internal sealed class InMemoryStorage : IStorage
 	private void CreateParents(MockFileSystem fileSystem, IStorageLocation location)
 	{
 		List<string> parents = new();
-		string? parent = fileSystem.Path.GetDirectoryName(
-			location.FullPath.TrimEnd(fileSystem.Path.DirectorySeparatorChar,
-				fileSystem.Path.AltDirectorySeparatorChar));
+		string? parent = fileSystem.Execute.Path.GetDirectoryName(
+			location.FullPath.TrimEnd(fileSystem.Execute.Path.DirectorySeparatorChar,
+				fileSystem.Execute.Path.AltDirectorySeparatorChar));
 		while (!string.IsNullOrEmpty(parent))
 		{
 			parents.Add(parent);
-			parent = fileSystem.Path.GetDirectoryName(parent);
+			parent = fileSystem.Execute.Path.GetDirectoryName(parent);
 		}
 
 		parents.Reverse();
@@ -747,7 +747,7 @@ internal sealed class InMemoryStorage : IStorage
 	{
 		IStorageLocation? parentLocation = location.GetParent();
 		if (parentLocation != null &&
-		    _fileSystem.Path.GetPathRoot(parentLocation.FullPath) !=
+		    _fileSystem.Execute.Path.GetPathRoot(parentLocation.FullPath) !=
 		    parentLocation.FullPath &&
 		    !_containers.TryGetValue(parentLocation, out _))
 		{
