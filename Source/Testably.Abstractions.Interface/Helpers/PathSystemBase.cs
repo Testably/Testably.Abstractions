@@ -1,9 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Abstractions;
-#if !NETSTANDARD2_0
-using System;
-#endif
 
 namespace Testably.Abstractions.Helpers;
 
@@ -12,6 +10,11 @@ namespace Testably.Abstractions.Helpers;
 ///     <para />
 ///     Implements <seealso cref="IPath" />
 /// </summary>
+#if NETSTANDARD2_0
+[Obsolete]
+#else
+[Obsolete("Will be removed in a future version!")]
+#endif
 public abstract class PathSystemBase : IPath
 {
 	/// <summary>
