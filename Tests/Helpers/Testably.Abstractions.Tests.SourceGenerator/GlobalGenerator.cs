@@ -10,17 +10,11 @@ public class GlobalGenerator
 	{
 		StringBuilder sourceBuilder = GetSourceBuilder();
 		GenerateSource(sourceBuilder);
-		string fileName = CreateFileName();
+		string fileName = "DatabaseCollection.cs";
 		context.AddSource(fileName,
 			SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
 	}
 
-	private string CreateFileName()
-	{
-		return "DatabaseCollection.cs";
-	}
-
-	/// <inheritdoc cref="ClassGeneratorBase.GenerateSource" />
 	private void GenerateSource(StringBuilder sourceBuilder)
 		=> sourceBuilder.Append(@"
 using Xunit;
