@@ -13,7 +13,7 @@ public sealed class LongRunningTestsAlsoInDebugMode
 	[Explicit]
 	public void Exclude()
 	{
-		TestHelpers.Settings.TestSettings result = Helper.ChangeTestSettings(s =>
+		_ = Helper.ChangeTestSettings(s =>
 			s.IncludeLongRunningTestsAlsoInDebugMode = false);
 
 		Assert.Pass("Long-running tests are excluded in DEBUG mode.");

@@ -11,7 +11,7 @@ public sealed class RealFileSystemTestsInDebugMode
 	[Explicit]
 	public void Disable()
 	{
-		TestHelpers.Settings.TestSettings result = Helper.ChangeTestSettings(s =>
+		_ = Helper.ChangeTestSettings(s =>
 			s.EnableRealFileSystemTestsInDebugMode = false);
 
 		Assert.Pass("Tests against the real file system are disabled in DEBUG mode.");
@@ -24,7 +24,7 @@ public sealed class RealFileSystemTestsInDebugMode
 	[Explicit]
 	public void Enable()
 	{
-		TestHelpers.Settings.TestSettings result = Helper.ChangeTestSettings(s =>
+		_ = Helper.ChangeTestSettings(s =>
 			s.EnableRealFileSystemTestsInDebugMode = true);
 
 		Assert.Pass("Tests against the real file system are enabled in DEBUG mode.");
