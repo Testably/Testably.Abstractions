@@ -21,17 +21,6 @@ internal sealed class FileInfoFactoryMock : IFileInfoFactory
 	public IFileSystem FileSystem
 		=> _fileSystem;
 
-	/// <inheritdoc cref="IFileInfoFactory.FromFileName(string)" />
-	[Obsolete("Use `IFileInfoFactory.New(string)` instead")]
-	[ExcludeFromCodeCoverage]
-	public IFileInfo FromFileName(string fileName)
-	{
-		using IDisposable registration = RegisterMethod(nameof(FromFileName),
-			fileName);
-
-		return New(fileName);
-	}
-
 	/// <inheritdoc cref="IFileInfoFactory.New(string)" />
 	public IFileInfo New(string fileName)
 	{
