@@ -124,6 +124,7 @@ internal sealed class FileSystemWatcherWrapper : IFileSystemWatcher
 		=> _instance.EndInit();
 
 	/// <inheritdoc cref="IFileSystemWatcher.Error" />
+	[ExcludeFromCodeCoverage]
 	public event ErrorEventHandler? Error
 	{
 		add => _instance.Error += value;

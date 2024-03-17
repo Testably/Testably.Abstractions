@@ -262,6 +262,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	}
 
 	/// <inheritdoc cref="IFileSystemWatcher.Error" />
+	[ExcludeFromCodeCoverage]
 	public event ErrorEventHandler? Error;
 
 	/// <inheritdoc cref="IFileSystemWatcher.Renamed" />
