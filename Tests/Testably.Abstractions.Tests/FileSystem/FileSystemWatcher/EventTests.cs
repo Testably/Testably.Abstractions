@@ -43,7 +43,7 @@ public abstract partial class EventTests<TFileSystem>
 		}
 		finally
 		{
-			ms.Wait(50000);
+			ms.Wait(10000);
 			fileSystemWatcher.Changed -= FileSystemWatcherOnChanged;
 		}
 
@@ -88,7 +88,7 @@ public abstract partial class EventTests<TFileSystem>
 		}
 		finally
 		{
-			ms.Wait(50000);
+			ms.Wait(10000);
 			fileSystemWatcher.Created -= FileSystemWatcherOnCreated;
 		}
 
@@ -182,7 +182,7 @@ public abstract partial class EventTests<TFileSystem>
 		}
 		finally
 		{
-			ms.Wait(50000);
+			ms.Wait(10000);
 			fileSystemWatcher.Renamed -= FileSystemWatcherOnRenamed;
 		}
 
