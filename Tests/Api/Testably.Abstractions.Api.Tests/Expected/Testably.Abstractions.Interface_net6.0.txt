@@ -24,6 +24,7 @@ namespace Testably.Abstractions.Helpers
         void StoreMetadata<T>(string key, T? value);
         bool TryGetWrappedInstance<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T? wrappedInstance);
     }
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [System.Obsolete("Will be removed in a future version!")]
     public abstract class PathSystemBase : System.IO.Abstractions.IFileSystemEntity, System.IO.Abstractions.IPath
     {
