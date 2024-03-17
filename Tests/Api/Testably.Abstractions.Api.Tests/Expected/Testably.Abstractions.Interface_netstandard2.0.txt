@@ -16,39 +16,6 @@ namespace Testably.Abstractions.Helpers
         void StoreMetadata<T>(string key, T? value);
         bool TryGetWrappedInstance<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T? wrappedInstance);
     }
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    [System.Obsolete]
-    public abstract class PathSystemBase : System.IO.Abstractions.IFileSystemEntity, System.IO.Abstractions.IPath
-    {
-        protected PathSystemBase(System.IO.Abstractions.IFileSystem fileSystem) { }
-        public virtual char AltDirectorySeparatorChar { get; }
-        public virtual char DirectorySeparatorChar { get; }
-        public System.IO.Abstractions.IFileSystem FileSystem { get; }
-        public virtual char PathSeparator { get; }
-        public virtual char VolumeSeparatorChar { get; }
-        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("path")]
-        public virtual string? ChangeExtension(string? path, string? extension) { }
-        public virtual string Combine(params string[] paths) { }
-        public virtual string Combine(string path1, string path2) { }
-        public virtual string Combine(string path1, string path2, string path3) { }
-        public virtual string Combine(string path1, string path2, string path3, string path4) { }
-        public virtual string? GetDirectoryName(string? path) { }
-        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("path")]
-        public virtual string? GetExtension(string? path) { }
-        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("path")]
-        public virtual string? GetFileName(string? path) { }
-        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("path")]
-        public virtual string? GetFileNameWithoutExtension(string? path) { }
-        public virtual string GetFullPath(string path) { }
-        public virtual char[] GetInvalidFileNameChars() { }
-        public virtual char[] GetInvalidPathChars() { }
-        public virtual string? GetPathRoot(string? path) { }
-        public virtual string GetRandomFileName() { }
-        public virtual string GetTempFileName() { }
-        public virtual string GetTempPath() { }
-        public virtual bool HasExtension([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path) { }
-        public virtual bool IsPathRooted(string? path) { }
-    }
     public sealed class RandomWrapper : Testably.Abstractions.RandomSystem.IRandom
     {
         public RandomWrapper(System.Random instance) { }
