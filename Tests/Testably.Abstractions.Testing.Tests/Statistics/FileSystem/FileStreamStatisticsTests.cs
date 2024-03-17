@@ -2,6 +2,7 @@
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
@@ -533,5 +534,15 @@ public class FileStreamStatisticsTests
 
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(FileSystemStream.WriteTimeout));
+	}
+
+	[SkippableFact]
+	public void ToString_ShouldBeFileStreamWithPath()
+	{
+		IStatistics sut = new MockFileSystem().Statistics.FileStream[@"\\some\path"];
+
+		string? result = sut.ToString();
+
+		result.Should().Be(@"FileStream[\\some\path]");
 	}
 }

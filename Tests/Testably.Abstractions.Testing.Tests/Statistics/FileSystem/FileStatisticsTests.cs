@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 using Testably.Abstractions.Testing.FileSystem;
@@ -1385,4 +1386,14 @@ public sealed class FileStatisticsTests
 			path, contents, encoding, cancellationToken);
 	}
 #endif
+
+	[SkippableFact]
+	public void ToString_ShouldBeFile()
+	{
+		IStatistics sut = new MockFileSystem().Statistics.File;
+
+		string? result = sut.ToString();
+
+		result.Should().Be("File");
+	}
 }

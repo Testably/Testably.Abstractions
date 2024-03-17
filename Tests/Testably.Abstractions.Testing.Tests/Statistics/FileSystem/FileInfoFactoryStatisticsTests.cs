@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
@@ -27,5 +28,15 @@ public class FileInfoFactoryStatisticsTests
 
 		sut.Statistics.FileInfo.ShouldOnlyContainMethodCall(nameof(IFileInfoFactory.Wrap),
 			fileInfo);
+	}
+
+	[SkippableFact]
+	public void ToString_ShouldBeFileInfo()
+	{
+		IPathStatistics sut = new MockFileSystem().Statistics.FileInfo;
+
+		string? result = sut.ToString();
+
+		result.Should().Be("FileInfo");
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Testably.Abstractions.Testing.Statistics;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics;
 
@@ -7,10 +8,11 @@ public sealed class MethodStatisticsTests
 	[Fact]
 	public void ToString_ShouldContainName()
 	{
-		MockFileSystem sut = new();
-		sut.Directory.CreateDirectory("foo");
+		MockFileSystem fileSystem = new();
+		fileSystem.Directory.CreateDirectory("foo");
+		MethodStatistic sut = fileSystem.Statistics.Directory.Methods.First();
 
-		string result = sut.Statistics.Directory.Methods.First().ToString();
+		string result = sut.ToString();
 
 		result.Should()
 			.Contain(nameof(IDirectory.CreateDirectory)).And
@@ -21,10 +23,11 @@ public sealed class MethodStatisticsTests
 	[Fact]
 	public void ToString_ShouldContainParameters()
 	{
-		MockFileSystem sut = new();
-		sut.File.WriteAllText("foo", "bar");
+		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "bar");
+		MethodStatistic sut = fileSystem.Statistics.File.Methods.First();
 
-		string result = sut.Statistics.File.Methods.First().ToString();
+		string result = sut.ToString();
 
 		result.Should()
 			.Contain(nameof(IFile.WriteAllText)).And

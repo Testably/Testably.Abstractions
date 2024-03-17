@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.IO;
+using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.Statistics;
 
-internal class FileSystemEntryStatistics : CallStatistics, IPathStatistics
+internal class PathStatistics : CallStatistics, IPathStatistics
 {
 	private readonly MockFileSystem _fileSystem;
 
 	private readonly ConcurrentDictionary<string, CallStatistics> _statistics = new();
 	private readonly IStatisticsGate _statisticsGate;
 
-	public FileSystemEntryStatistics(
+	public PathStatistics(
 		IStatisticsGate statisticsGate,
-		MockFileSystem fileSystem)
-		: base(statisticsGate)
+		MockFileSystem fileSystem,
+		string name)
+		: base(statisticsGate, name)
 	{
 		_statisticsGate = statisticsGate;
 		_fileSystem = fileSystem;
@@ -28,7 +30,8 @@ internal class FileSystemEntryStatistics : CallStatistics, IPathStatistics
 		get
 		{
 			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
-			return _statistics.GetOrAdd(key, _ => new CallStatistics(_statisticsGate));
+			return _statistics.GetOrAdd(key, 
+				k => new CallStatistics(_statisticsGate, $"{ToString()}[{k}]"));
 		}
 	}
 
@@ -43,7 +46,8 @@ internal class FileSystemEntryStatistics : CallStatistics, IPathStatistics
 	{
 		string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
 		CallStatistics callStatistics =
-			_statistics.GetOrAdd(key, _ => new CallStatistics(_statisticsGate));
+			_statistics.GetOrAdd(key,
+				k => new CallStatistics(_statisticsGate, $"{ToString()}[{k}]"));
 		return callStatistics.RegisterMethod(name, parameters);
 	}
 
@@ -56,23 +60,30 @@ internal class FileSystemEntryStatistics : CallStatistics, IPathStatistics
 	{
 		string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
 		CallStatistics callStatistics =
-			_statistics.GetOrAdd(key, _ => new CallStatistics(_statisticsGate));
+			_statistics.GetOrAdd(key,
+				k => new CallStatistics(_statisticsGate, $"{ToString()}[{k}]"));
 		return callStatistics.RegisterProperty(name, access);
 	}
 
 	private static string CreateKey(string currentDirectory, string path)
 	{
+		string key = string.Empty;
 		if (string.IsNullOrEmpty(path))
 		{
-			return "(empty)";
+			return key;
 		}
 
-		if (Path.IsPathRooted(path))
+		if (path.StartsWith("//") ||
+		    path.StartsWith(@"\\") ||
+		    (path.Length >= 2 && path[1] == ':' && path[0].IsAsciiLetter()))
 		{
-			return path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			key = path;
+		}
+		else
+		{
+			key = Path.GetFullPath(Path.Combine(currentDirectory, path));
 		}
 
-		return Path.GetFullPath(Path.Combine(currentDirectory, path))
-			.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+		return key.TrimEnd('/', '\\');
 	}
 }

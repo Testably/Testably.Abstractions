@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
@@ -333,5 +334,15 @@ public class FileSystemWatcherStatisticsTests
 
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileSystemWatcher.SynchronizingObject));
+	}
+
+	[SkippableFact]
+	public void ToString_ShouldBeFileSystemWatcherWithPath()
+	{
+		IStatistics sut = new MockFileSystem().Statistics.FileSystemWatcher[@"\\some\path"];
+
+		string? result = sut.ToString();
+
+		result.Should().Be(@"FileSystemWatcher[\\some\path]");
 	}
 }

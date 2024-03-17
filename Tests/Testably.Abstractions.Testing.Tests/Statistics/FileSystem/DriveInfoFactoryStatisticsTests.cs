@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
@@ -38,5 +39,15 @@ public sealed class DriveInfoFactoryStatisticsTests
 
 		sut.Statistics.DriveInfo.ShouldOnlyContainMethodCall(nameof(IDriveInfoFactory.Wrap),
 			driveInfo);
+	}
+
+	[SkippableFact]
+	public void ToString_ShouldBeDriveInfo()
+	{
+		IPathStatistics sut = new MockFileSystem().Statistics.DriveInfo;
+
+		string? result = sut.ToString();
+
+		result.Should().Be("DriveInfo");
 	}
 }
