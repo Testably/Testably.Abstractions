@@ -112,6 +112,7 @@ public class DirectoryCleanerTests
 		using IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(logger: t => receivedLogs.Add(t));
 
+		sut.StatisticsRegistration.TotalCount.Should().Be(0);
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 		sut.Should().HaveDirectory(currentDirectory);
 		receivedLogs.Should().Contain(m => m.Contains($"'{currentDirectory}'"));
