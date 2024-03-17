@@ -7,7 +7,7 @@ public abstract partial class AccessControlHelperTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	[Fact]
+	[SkippableFact]
 	public void GetExtensibilityOrThrow_DirectoryInfo_ShouldNotThrow()
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("foo");
@@ -20,7 +20,7 @@ public abstract partial class AccessControlHelperTests<TFileSystem>
 		exception.Should().BeNull();
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void GetExtensibilityOrThrow_FileInfo_ShouldNotThrow()
 	{
 		IFileInfo sut = FileSystem.FileInfo.New("foo");
@@ -33,7 +33,7 @@ public abstract partial class AccessControlHelperTests<TFileSystem>
 		exception.Should().BeNull();
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void GetExtensibilityOrThrow_FileSystemStream_ShouldNotThrow()
 	{
 		FileSystemStream sut = FileSystem.FileStream.New("foo", FileMode.Create);

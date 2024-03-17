@@ -15,6 +15,7 @@ internal class FileSystemClassGenerator : ClassGeneratorBase
 		=> sourceBuilder.Append(@$"
 using Testably.Abstractions.Testing.FileSystemInitializer;
 using Testably.Abstractions.TestHelpers;
+using Testably.Abstractions.TestHelpers.Settings;
 using Xunit.Abstractions;
 
 namespace {@class.Namespace}
@@ -57,8 +58,6 @@ namespace {@class.Namespace}.{@class.Name}
 	}}
 }}
 
-#if !DEBUG || ENABLE_REALFILESYSTEMTESTS_IN_DEBUG
-
 namespace {@class.Namespace}.{@class.Name}
 {{
 	// ReSharper disable once UnusedMember.Global
@@ -70,9 +69,15 @@ namespace {@class.Namespace}.{@class.Name}
 
 		private readonly IDirectoryCleaner _directoryCleaner;
 
-		public RealFileSystemTests(ITestOutputHelper testOutputHelper)
+		public RealFileSystemTests(ITestOutputHelper testOutputHelper, RealFileSystemFixture fixture)
 			: base(new Test(), new RealFileSystem(), new RealTimeSystem())
 		{{
+#if DEBUG
+			if (!fixture.EnableRealFileSystemTestsInDebugMode)
+			{{
+				throw new SkipException(""EnableRealFileSystemTestsInDebugMode is not set in test.settings.json"");
+			}}
+#endif
 			_directoryCleaner = FileSystem
 			   .SetCurrentDirectoryToEmptyTemporaryDirectory($""{@class.Namespace}{{FileSystem.Path.DirectorySeparatorChar}}{@class.Name}-"", testOutputHelper.WriteLine);
 		}}
@@ -81,6 +86,5 @@ namespace {@class.Namespace}.{@class.Name}
 		public void Dispose()
 			=> _directoryCleaner.Dispose();
 	}}
-}}
-#endif");
+}}");
 }
