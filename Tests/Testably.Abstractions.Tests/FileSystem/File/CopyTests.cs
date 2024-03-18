@@ -133,7 +133,7 @@ public abstract partial class CopyTests<TFileSystem>
 	public void Copy_ShouldAdjustTimes(
 		string source, string destination)
 	{
-		Skip.If(LongRunningTestsShouldBeSkipped());
+		SkipIfLongRunningTestsShouldBeSkipped();
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
 		FileSystem.File.WriteAllText(source, "foo");
@@ -256,7 +256,7 @@ public abstract partial class CopyTests<TFileSystem>
 	public void Copy_ShouldCopyFileWithContent(
 		string sourceName, string destinationName, string contents)
 	{
-		Skip.If(LongRunningTestsShouldBeSkipped());
+		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.File.WriteAllText(sourceName, contents);
 

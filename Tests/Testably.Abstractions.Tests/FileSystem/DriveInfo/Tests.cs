@@ -19,7 +19,7 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableFact]
 	public void VolumeLabel_ShouldBeWritable_OnWindows()
 	{
-		Skip.If(LongRunningTestsShouldBeSkipped());
+		SkipIfLongRunningTestsShouldBeSkipped();
 
 		IDriveInfo result =
 			FileSystem.DriveInfo.New(FileTestHelper.RootDrive(Test));

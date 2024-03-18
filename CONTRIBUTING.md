@@ -15,12 +15,12 @@ Additionally each push to the `main` branch checks the quality of the unit tests
 
 ## Tests
 On the build system, unit tests are executed both against the `MockFileSystem` and the `RealFileSystem`. This ensures that the tests verify correct assumptions.
-In order to simplify and speedup the development process, per default some tests are disabled in DEBUG mode.
+In order to simplify and speedup the development process, per default, some tests are disabled in DEBUG mode.
 These can be enabled by explicitely running the [`Testably.Abstractions.TestSettings`](https://github.com/Testably/Testably.Abstractions/tree/main/Tests/Settings/Testably.Abstractions.TestSettings) tests:
-- `LongRunningTestsAlsoInDebugMode` (`Include`/`Exclude`)
-  In order to increase the test execution speed during development, long-running tests are disabled per default in DEBUG mode. With this setting, the corresponding tests can be included.
-- `RealFileSystemTestsInDebugMode` (`Enable`/`Disable`)
-  If enabled, the classes for executing tests against the real file system also run in DEBUG mode.
+- `LongRunningTests` (`AlwaysEnabled` / `DisabledInDebugMode` (default) / `AlwaysDisabled`)
+  Some tests take a long time to run against the real file system (e.g. timeout). Per default, they are disabled in DEBUG mode.
+- `RealFileSystemTests` (`AlwaysEnabled` / `DisabledInDebugMode` (default) / `AlwaysDisabled`)
+  All tests against the real file system. Per default, they are disabled in DEBUG mode.
 
 *Note: These settings are stored locally in `test.settings.json` which is excluded in [`.gitignore`](https://github.com/Testably/Testably.Abstractions/blob/main/.gitignore) so that it only affects the individual developer!*
 

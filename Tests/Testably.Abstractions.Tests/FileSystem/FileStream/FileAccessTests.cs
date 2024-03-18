@@ -26,7 +26,7 @@ public abstract partial class FileAccessTests<TFileSystem>
 		FileAccess access2, FileShare share2,
 		string path, string contents)
 	{
-		Skip.If(LongRunningTestsShouldBeSkipped());
+		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.File.WriteAllText(path, contents);
 

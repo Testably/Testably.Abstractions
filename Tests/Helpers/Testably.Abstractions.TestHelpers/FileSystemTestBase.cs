@@ -41,5 +41,5 @@ public abstract class FileSystemTestBase<TFileSystem>
 	/// <summary>
 	///     Specifies, if long-running tests should be skipped on the real file system.
 	/// </summary>
-	public abstract bool LongRunningTestsShouldBeSkipped();
+	public abstract void SkipIfLongRunningTestsShouldBeSkipped();
 }

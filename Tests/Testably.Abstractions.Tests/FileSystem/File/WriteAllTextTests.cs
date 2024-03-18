@@ -41,7 +41,7 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 	[AutoData]
 	public void WriteAllText_ShouldAdjustTimes(string path, string contents)
 	{
-		Skip.If(LongRunningTestsShouldBeSkipped());
+		SkipIfLongRunningTestsShouldBeSkipped();
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
 		FileSystem.File.WriteAllText(path, "foo");

@@ -57,7 +57,10 @@ namespace {@class.Namespace}.{@class.Name}
 			=> _directoryCleaner.Dispose();
 
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
-		public override bool LongRunningTestsShouldBeSkipped() => false;
+		public override void SkipIfLongRunningTestsShouldBeSkipped()
+		{{
+			// Long-running tests are never skipped against the mock file system!
+		}}
 	}}
 }}
 
@@ -77,9 +80,14 @@ namespace {@class.Namespace}.{@class.Name}
 			: base(new Test(), new RealFileSystem(), new RealTimeSystem())
 		{{
 #if DEBUG
-			if (!fixture.EnableRealFileSystemTestsInDebugMode)
+			if (fixture.RealFileSystemTests != TestSettingStatus.AlwaysEnabled)
 			{{
-				throw new SkipException(""EnableRealFileSystemTestsInDebugMode is not set in test.settings.json"");
+				throw new SkipException($""RealFileSystemTests are {{fixture.RealFileSystemTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests."");
+			}}
+#else
+			if (fixture.RealFileSystemTests == TestSettingStatus.AlwaysDisabled)
+			{{
+				throw new SkipException($""RealFileSystemTests are {{fixture.RealFileSystemTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests."");
 			}}
 #endif
 			_fixture = fixture;
@@ -91,8 +99,17 @@ namespace {@class.Namespace}.{@class.Name}
 		public void Dispose()
 			=> _directoryCleaner.Dispose();
 
+#if DEBUG
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
-		public override bool LongRunningTestsShouldBeSkipped() => !_fixture.IncludeLongRunningTestsAlsoInDebugMode;
+		public override void SkipIfLongRunningTestsShouldBeSkipped()
+			=> Skip.If(_fixture.LongRunningTests != TestSettingStatus.AlwaysEnabled,
+				$""LongRunningTests are {{_fixture.LongRunningTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.LongRunningTests."");
+#else
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
+		public override void SkipIfLongRunningTestsShouldBeSkipped()
+			=> Skip.If(_fixture.LongRunningTests == TestSettingStatus.AlwaysDisabled,
+				$""LongRunningTests are {{_fixture.LongRunningTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.LongRunningTests."");
+#endif
 	}}
 }}");
 }

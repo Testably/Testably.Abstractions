@@ -81,7 +81,7 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 	public void GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
-		Skip.If(LongRunningTestsShouldBeSkipped());
+		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Directory.CreateDirectory("foo");
 
@@ -117,7 +117,7 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 	public async Task SetAccessControl_ShouldNotUpdateTimes(string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
-		Skip.If(LongRunningTestsShouldBeSkipped());
+		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Directory.CreateDirectory(path);
 		await TimeSystem.Task.Delay(3000);

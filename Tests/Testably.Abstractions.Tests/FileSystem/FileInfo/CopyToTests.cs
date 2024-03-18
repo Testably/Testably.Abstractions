@@ -107,7 +107,7 @@ public abstract partial class CopyToTests<TFileSystem>
 	public void CopyTo_ShouldCopyFileWithContent(
 		string sourceName, string destinationName, string contents)
 	{
-		Skip.If(LongRunningTestsShouldBeSkipped());
+		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.File.WriteAllText(sourceName, contents);
 		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
@@ -133,7 +133,7 @@ public abstract partial class CopyToTests<TFileSystem>
 		string destinationName,
 		string contents)
 	{
-		Skip.If(LongRunningTestsShouldBeSkipped());
+		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.File.WriteAllText(sourceName, contents);
 		DateTime sourceCreationTime = FileSystem.File.GetCreationTime(sourceName);

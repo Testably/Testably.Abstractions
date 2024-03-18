@@ -24,7 +24,7 @@ public abstract partial class SetAttributesTests<TFileSystem>
 	[InlineAutoData(FileAttributes.Normal)]
 	public void SetAttributes_ShouldNotAdjustTimes(FileAttributes attributes, string path)
 	{
-		Skip.If(LongRunningTestsShouldBeSkipped());
+		SkipIfLongRunningTestsShouldBeSkipped();
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
 		FileSystem.File.WriteAllText(path, null);
