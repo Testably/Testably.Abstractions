@@ -1,4 +1,5 @@
-![Testably.Abstractions](https://raw.githubusercontent.com/Testably/Testably.Abstractions/main/Docs/Images/social-preview.png)  
+![Testably.Abstractions](https://raw.githubusercontent.com/Testably/Testably.Abstractions/main/Docs/Images/social-preview.png) [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FTestably%2FTestably.Abstractions.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FTestably%2FTestably.Abstractions?ref=badge_shield)
+ 
 [![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions)](https://www.nuget.org/packages/Testably.Abstractions)
 [![Build](https://github.com/Testably/Testably.Abstractions/actions/workflows/build.yml/badge.svg)](https://github.com/Testably/Testably.Abstractions/actions/workflows/build.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/5b9b2f79950447a69d69037b43acd590)](https://app.codacy.com/gh/Testably/Testably.Abstractions/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
@@ -132,3 +133,7 @@ fileSystem.WithDrive(d => d.SetTotalSize(20));
 // this will throw an IOException that there is not enough space on the disk.
 fileSystem.File.WriteAllText("foo", "some text longer than 20 bytes");
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FTestably%2FTestably.Abstractions.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FTestably%2FTestably.Abstractions?ref=badge_large)
