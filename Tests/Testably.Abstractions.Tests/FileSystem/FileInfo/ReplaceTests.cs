@@ -213,7 +213,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 		string sourceContents,
 		string destinationContents)
 	{
-		Skip.If(LongRunningTestsShouldBeSkipped());
+		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.File.WriteAllText(sourceName, sourceContents);
 		DateTime sourceCreationTime = FileSystem.File.GetCreationTime(sourceName);

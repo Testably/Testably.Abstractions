@@ -45,7 +45,7 @@ public abstract partial class FileInfoAclExtensionsTests<TFileSystem>
 	public void GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
-		Skip.If(LongRunningTestsShouldBeSkipped());
+		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.File.WriteAllText("foo", null);
 		IFileInfo fileInfo = FileSystem.FileInfo.New("foo");

@@ -42,7 +42,7 @@ public abstract partial class FilterTests<TFileSystem>
 	public void Filter_NotMatching_ShouldNotTriggerNotification(
 		string path, string filter)
 	{
-		Skip.If(LongRunningTestsShouldBeSkipped());
+		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Initialize().WithSubdirectory(path);
 		ManualResetEventSlim ms = new();

@@ -103,7 +103,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 	[AutoData]
 	public void CreateDirectory_ShouldAdjustTimes(string path, string subdirectoryName)
 	{
-		Skip.If(LongRunningTestsShouldBeSkipped());
+		SkipIfLongRunningTestsShouldBeSkipped();
 
 		string subdirectoryPath = FileSystem.Path.Combine(path, subdirectoryName);
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
@@ -142,7 +142,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 	public void CreateDirectory_ShouldAdjustTimesOnlyForDirectParentDirectory(
 		string rootPath)
 	{
-		Skip.If(LongRunningTestsShouldBeSkipped());
+		SkipIfLongRunningTestsShouldBeSkipped();
 
 		string subdirectoryLevel1Path =
 			FileSystem.Path.Combine(rootPath, "lvl1");

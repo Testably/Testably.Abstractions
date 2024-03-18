@@ -65,7 +65,7 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 	{
 		Skip.If(Test.IsNetFramework && FileSystem is RealFileSystem,
 			"Works unreliable on .NET Framework");
-		Skip.If(LongRunningTestsShouldBeSkipped());
+		SkipIfLongRunningTestsShouldBeSkipped();
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
 		FileSystem.File.WriteAllText(path, contents);
