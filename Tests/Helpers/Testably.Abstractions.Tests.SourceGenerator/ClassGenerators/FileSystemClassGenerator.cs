@@ -77,9 +77,14 @@ namespace {@class.Namespace}.{@class.Name}
 			: base(new Test(), new RealFileSystem(), new RealTimeSystem())
 		{{
 #if DEBUG
-			if (!fixture.EnableRealFileSystemTestsInDebugMode)
+			if (fixture.RealFileSystemTests != TestSettingStatus.AlwaysEnabled)
 			{{
-				throw new SkipException(""EnableRealFileSystemTestsInDebugMode is not set in test.settings.json"");
+				throw new SkipException($""RealFileSystemTests are {{fixture.RealFileSystemTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests."");
+			}}
+#else
+			if (fixture.RealFileSystemTests == TestSettingStatus.AlwaysDisabled)
+			{{
+				throw new SkipException($""RealFileSystemTests are {{fixture.RealFileSystemTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests."");
 			}}
 #endif
 			_fixture = fixture;
@@ -91,8 +96,13 @@ namespace {@class.Namespace}.{@class.Name}
 		public void Dispose()
 			=> _directoryCleaner.Dispose();
 
+#if DEBUG
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
-		public override bool LongRunningTestsShouldBeSkipped() => !_fixture.IncludeLongRunningTestsAlsoInDebugMode;
+		public override bool LongRunningTestsShouldBeSkipped() => _fixture.LongRunningTests != TestSettingStatus.AlwaysEnabled;
+#else
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
+		public override bool LongRunningTestsShouldBeSkipped() => _fixture.LongRunningTests == TestSettingStatus.AlwaysDisabled;
+#endif
 	}}
 }}");
 }

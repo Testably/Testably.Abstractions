@@ -6,8 +6,8 @@ namespace Testably.Abstractions.TestHelpers.Settings;
 
 public class RealFileSystemFixture
 {
-	public bool EnableRealFileSystemTestsInDebugMode { get; }
-	public bool IncludeLongRunningTestsAlsoInDebugMode { get; }
+	public TestSettingStatus LongRunningTests { get; }
+	public TestSettingStatus RealFileSystemTests { get; }
 
 	public RealFileSystemFixture()
 	{
@@ -16,15 +16,15 @@ public class RealFileSystemFixture
 			string path = Path.GetFullPath(
 				Path.Combine("..", "..", "..", "..", "test.settings.json"));
 			string content = File.ReadAllText(path);
-			TestSettings settings = JsonConvert.DeserializeObject<TestSettings>(content)!;
-			EnableRealFileSystemTestsInDebugMode = settings.EnableRealFileSystemTestsInDebugMode;
-			IncludeLongRunningTestsAlsoInDebugMode =
-				settings.IncludeLongRunningTestsAlsoInDebugMode;
+			TestEnvironment environment = JsonConvert.DeserializeObject<TestEnvironment>(content)!;
+			RealFileSystemTests = environment.RealFileSystemTests;
+			LongRunningTests =
+				environment.LongRunningTests;
 		}
 		catch (Exception)
 		{
-			EnableRealFileSystemTestsInDebugMode = false;
-			IncludeLongRunningTestsAlsoInDebugMode = false;
+			RealFileSystemTests = TestSettingStatus.DisabledInDebugMode;
+			LongRunningTests = TestSettingStatus.DisabledInDebugMode;
 		}
 	}
 }
