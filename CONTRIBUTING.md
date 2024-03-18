@@ -20,7 +20,7 @@ These can be enabled by explicitely running the [`Testably.Abstractions.TestSett
 - `LongRunningTests` (`AlwaysEnabled` / `DisabledInDebugMode` (default) / `AlwaysDisabled`)
   Some tests take a long time to run against the real file system (e.g. timeout). Per default, they are disabled in DEBUG mode.
 - `RealFileSystemTests` (`AlwaysEnabled` / `DisabledInDebugMode` (default) / `AlwaysDisabled`)
-  All tests against the real file system are per default disabled in DEBUG mode.
+  All tests against the real file system. Per default, they are disabled in DEBUG mode.
 
 *Note: These settings are stored locally in `test.settings.json` which is excluded in [`.gitignore`](https://github.com/Testably/Testably.Abstractions/blob/main/.gitignore) so that it only affects the individual developer!*
 

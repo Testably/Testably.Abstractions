@@ -6,7 +6,9 @@ namespace Testably.Abstractions.TestSettings;
 public sealed class RealFileSystemTests
 {
 	/// <summary>
-	///     If enabled, the classes for executing tests against the real file system also run in DEBUG mode.
+	///     All tests against the real file system.
+	///     <para />
+	///     Always disable these tests!
 	/// </summary>
 	[TestCase]
 	[Explicit]
@@ -19,7 +21,9 @@ public sealed class RealFileSystemTests
 	}
 
 	/// <summary>
-	///     If disabled, the classes for executing tests against the real file system no longer run in DEBUG mode.
+	///     All tests against the real file system.
+	///     <para />
+	///     Disable these tests in DEBUG mode!
 	/// </summary>
 	[TestCase]
 	[Explicit]
@@ -32,7 +36,9 @@ public sealed class RealFileSystemTests
 	}
 
 	/// <summary>
-	///     If enabled, the classes for executing tests against the real file system also run in DEBUG mode.
+	///     All tests against the real file system.
+	///     <para />
+	///     Always enable these tests!
 	/// </summary>
 	[TestCase]
 	[Explicit]

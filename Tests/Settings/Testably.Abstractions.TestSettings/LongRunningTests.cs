@@ -6,9 +6,9 @@ namespace Testably.Abstractions.TestSettings;
 public sealed class LongRunningTests
 {
 	/// <summary>
-	///     In order to increase the test execution speed during development, long-running tests are disabled per default in
-	///     DEBUG mode.
-	///     With this setting, the corresponding tests are again skipped.
+	///     Some tests take a long time to run against the real file system (e.g. timeout).
+	///     <para />
+	///     Always disable these tests!
 	/// </summary>
 	[TestCase]
 	[Explicit]
@@ -21,9 +21,9 @@ public sealed class LongRunningTests
 	}
 
 	/// <summary>
-	///     In order to increase the test execution speed during development, long-running tests are disabled per default in
-	///     DEBUG mode.
-	///     With this setting, the corresponding tests are again skipped.
+	///     Some tests take a long time to run against the real file system (e.g. timeout).
+	///     <para />
+	///     Disable these tests in DEBUG mode!
 	/// </summary>
 	[TestCase]
 	[Explicit]
@@ -46,9 +46,9 @@ public sealed class LongRunningTests
 	}
 
 	/// <summary>
-	///     In order to increase the test execution speed during development, long-running tests are disabled per default in
-	///     DEBUG mode.
-	///     With this setting, the corresponding tests are no longer skipped.
+	///     Some tests take a long time to run against the real file system (e.g. timeout).
+	///     <para />
+	///     Always enable these tests!
 	/// </summary>
 	[TestCase]
 	[Explicit]
