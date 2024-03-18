@@ -17,9 +17,9 @@ public class RealFileSystemFixture
 				Path.Combine("..", "..", "..", "..", "test.settings.json"));
 			string content = File.ReadAllText(path);
 			TestEnvironment environment = JsonConvert.DeserializeObject<TestEnvironment>(content)!;
+
 			RealFileSystemTests = environment.RealFileSystemTests;
-			LongRunningTests =
-				environment.LongRunningTests;
+			LongRunningTests = environment.LongRunningTests;
 		}
 		catch (Exception)
 		{
