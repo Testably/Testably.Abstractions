@@ -52,7 +52,7 @@ public class DirectoryCleanerTests
 
 		receivedLogs.Should().Contain(m =>
 			m.Contains(exception.Message) &&
-			m.Contains($"'{currentDirectory}'"));
+			m.Contains($"'{sut.Path.GetDirectoryName(currentDirectory)}'"));
 		receivedLogs.Should().NotContain("Cleanup was successful :-)");
 	}
 

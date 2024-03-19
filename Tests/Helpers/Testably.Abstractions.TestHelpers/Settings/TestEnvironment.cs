@@ -5,9 +5,9 @@ public class TestEnvironment
 	/// <summary>
 	///     Affects some tests, that are brittle on the real file system.
 	/// </summary>
-	/// <remarks>Per default, they are <see cref="TestSettingStatus.DisabledInDebugMode" />.</remarks>
+	/// <remarks>Per default, they are <see cref="TestSettingStatus.AlwaysDisabled" />.</remarks>
 	public TestSettingStatus BrittleTests { get; set; }
-		= TestSettingStatus.DisabledInDebugMode;
+		= TestSettingStatus.AlwaysDisabled;
 
 	/// <summary>
 	///     Affects some tests, that take a long time to run against the real file system (e.g. timeout).
