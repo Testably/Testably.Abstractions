@@ -10,7 +10,7 @@ public class GlobalGenerator
 	{
 		StringBuilder sourceBuilder = GetSourceBuilder();
 		GenerateSource(sourceBuilder);
-		string fileName = "DatabaseCollection.cs";
+		string fileName = "XunitCollectionFixtures.cs";
 		context.AddSource(fileName,
 			SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
 	}
@@ -22,7 +22,15 @@ using Xunit;
 namespace Testably.Abstractions.TestHelpers.Settings;
 
 [CollectionDefinition(""RealFileSystemTests"")]
-public class DatabaseCollection : ICollectionFixture<RealFileSystemFixture>
+public class FileSystemTestSettingsFixture : ICollectionFixture<TestSettingsFixture>
+{
+	// This class has no code, and is never created. Its purpose is simply
+	// to be the place to apply [CollectionDefinition] and all the
+	// ICollectionFixture<> interfaces.
+}
+
+[CollectionDefinition(""RealTimeSystemTests"")]
+public class TimeSystemTestSettingsFixture : ICollectionFixture<TestSettingsFixture>
 {
 	// This class has no code, and is never created. Its purpose is simply
 	// to be the place to apply [CollectionDefinition] and all the

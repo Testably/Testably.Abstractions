@@ -15,7 +15,7 @@ public abstract partial class DisposeTests<TFileSystem>
 	public void Dispose_CalledTwiceShouldDoNothing(
 		string path, byte[] bytes)
 	{
-		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
+		SkipIfBrittleTestsShouldBeSkipped();
 
 		FileSystem.File.WriteAllBytes(path, bytes);
 

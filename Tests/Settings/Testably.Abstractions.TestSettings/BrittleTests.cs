@@ -3,10 +3,10 @@ using Testably.Abstractions.TestHelpers.Settings;
 
 namespace Testably.Abstractions.TestSettings;
 
-public sealed class LongRunningTests
+public sealed class BrittleTests
 {
 	/// <summary>
-	///     Some tests take a long time to run against the real file system (e.g. timeout).
+	///     Some tests are brittle on the real file system.
 	///     <para />
 	///     Always disable these tests!
 	/// </summary>
@@ -15,13 +15,13 @@ public sealed class LongRunningTests
 	public void DisableAlways()
 	{
 		_ = Helper.ChangeTestSettings(s =>
-			s.LongRunningTests = TestSettingStatus.AlwaysDisabled);
+			s.BrittleTests = TestSettingStatus.AlwaysDisabled);
 
-		Assert.Pass("Long-running tests are always disabled.");
+		Assert.Pass("Brittle tests are always disabled.");
 	}
 
 	/// <summary>
-	///     Some tests take a long time to run against the real file system (e.g. timeout).
+	///     Some tests are brittle on the real file system.
 	///     <para />
 	///     Disable these tests in DEBUG mode!
 	/// </summary>
@@ -30,23 +30,23 @@ public sealed class LongRunningTests
 	public void DisableInDebugMode()
 	{
 		TestEnvironment result = Helper.ChangeTestSettings(s =>
-			s.LongRunningTests = TestSettingStatus.DisabledInDebugMode);
+			s.BrittleTests = TestSettingStatus.DisabledInDebugMode);
 
 		if (result.RealFileSystemTests == TestSettingStatus.AlwaysDisabled)
 		{
 			Assert.Warn("""
-			            Long-running tests are disabled in DEBUG mode.
+			            Brittle tests are disabled in DEBUG mode.
 			            But the tests against the real file system are always disabled.
 			            """);
 		}
 		else
 		{
-			Assert.Pass("Long-running tests are disabled in DEBUG mode.");
+			Assert.Pass("Brittle tests are disabled in DEBUG mode.");
 		}
 	}
 
 	/// <summary>
-	///     Some tests take a long time to run against the real file system (e.g. timeout).
+	///     Some tests are brittle on the real file system.
 	///     <para />
 	///     Always enable these tests!
 	/// </summary>
@@ -55,18 +55,18 @@ public sealed class LongRunningTests
 	public void EnableAlways()
 	{
 		TestEnvironment result = Helper.ChangeTestSettings(s =>
-			s.LongRunningTests = TestSettingStatus.AlwaysEnabled);
+			s.BrittleTests = TestSettingStatus.AlwaysEnabled);
 
 		if (result.RealFileSystemTests != TestSettingStatus.AlwaysEnabled)
 		{
 			Assert.Warn("""
-			            Long-running tests are always enabled.
+			            Brittle tests are always enabled.
 			            But the tests against the real file system are not always enabled.
 			            """);
 		}
 		else
 		{
-			Assert.Pass("Long-running tests are always enabled.");
+			Assert.Pass("Brittle tests are always enabled.");
 		}
 	}
 
