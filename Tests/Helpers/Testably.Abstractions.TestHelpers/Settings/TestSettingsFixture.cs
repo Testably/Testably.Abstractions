@@ -6,28 +6,41 @@ namespace Testably.Abstractions.TestHelpers.Settings;
 
 public class TestSettingsFixture
 {
-	public TestSettingStatus LongRunningTests { get; }
 	public TestSettingStatus BrittleTests { get; }
+	public TestSettingStatus LongRunningTests { get; }
 	public TestSettingStatus RealFileSystemTests { get; }
 
 	public TestSettingsFixture()
+	{
+		TestEnvironment environment = LoadTestEnvironment();
+
+		RealFileSystemTests = environment.RealFileSystemTests;
+		LongRunningTests = environment.LongRunningTests;
+		BrittleTests = environment.BrittleTests;
+	}
+
+	private static TestEnvironment LoadTestEnvironment()
 	{
 		try
 		{
 			string path = Path.GetFullPath(
 				Path.Combine("..", "..", "..", "..", "test.settings.json"));
-			string content = File.ReadAllText(path);
-			TestEnvironment environment = JsonConvert.DeserializeObject<TestEnvironment>(content)!;
-
-			RealFileSystemTests = environment.RealFileSystemTests;
-			LongRunningTests = environment.LongRunningTests;
-			BrittleTests = environment.BrittleTests;
+			if (File.Exists(path))
+			{
+				string content = File.ReadAllText(path);
+				TestEnvironment? testEnvironment =
+					JsonConvert.DeserializeObject<TestEnvironment>(content);
+				if (testEnvironment != null)
+				{
+					return testEnvironment;
+				}
+			}
 		}
 		catch (Exception)
 		{
-			RealFileSystemTests = TestSettingStatus.DisabledInDebugMode;
-			LongRunningTests = TestSettingStatus.DisabledInDebugMode;
-			BrittleTests = TestSettingStatus.DisabledInDebugMode;
+			// Ignore all exceptions while reading the test.settings.json file and use the default settings as fallback.
 		}
+
+		return new TestEnvironment();
 	}
 }
