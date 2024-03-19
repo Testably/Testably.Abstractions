@@ -150,6 +150,9 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 				try
 				{
 					_fileSystem.File.WriteAllText(_fileSystem.Path.Combine(basePath, ".lock"), "");
+					string b = _fileSystem.Path.Combine(basePath, "d");
+					_fileSystem.Directory.CreateDirectory(basePath);
+					basePath = b;
 				}
 				catch (Exception)
 				{

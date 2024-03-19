@@ -92,7 +92,7 @@ namespace {@class.Namespace}.{@class.Name}
 #endif
 			_fixture = fixture;
 			_directoryCleaner = FileSystem
-			   .SetCurrentDirectoryToEmptyTemporaryDirectory($""{@class.Namespace}{{FileSystem.Path.DirectorySeparatorChar}}{@class.Name}-"", testOutputHelper.WriteLine);
+			   .SetCurrentDirectoryToEmptyTemporaryDirectory($""Testably.Abstractions.Tests{{FileSystem.Path.DirectorySeparatorChar}}{@class.Name}-"", testOutputHelper.WriteLine);
 		}}
 
 		/// <inheritdoc cref=""IDisposable.Dispose()"" />
