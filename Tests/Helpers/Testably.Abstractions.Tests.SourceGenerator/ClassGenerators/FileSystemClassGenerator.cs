@@ -80,9 +80,9 @@ namespace {@class.Namespace}.{@class.Name}
 		public override string BasePath => _directoryCleaner.BasePath;
 
 		private readonly IDirectoryCleaner _directoryCleaner;
-		private readonly RealFileSystemFixture _fixture;
+		private readonly TestSettingsFixture _fixture;
 
-		public RealFileSystemTests(ITestOutputHelper testOutputHelper, RealFileSystemFixture fixture)
+		public RealFileSystemTests(ITestOutputHelper testOutputHelper, TestSettingsFixture fixture)
 			: base(new Test(), new RealFileSystem(), new RealTimeSystem())
 		{{
 #if DEBUG

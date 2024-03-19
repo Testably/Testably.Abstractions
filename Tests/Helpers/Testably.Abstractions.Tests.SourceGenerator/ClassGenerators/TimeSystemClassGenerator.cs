@@ -14,6 +14,7 @@ internal class TimeSystemClassGenerator : ClassGeneratorBase
 	protected override void GenerateSource(StringBuilder sourceBuilder, ClassModel @class)
 		=> sourceBuilder.Append(@$"
 using Testably.Abstractions.TestHelpers;
+using Testably.Abstractions.TestHelpers.Settings;
 using Xunit.Abstractions;
 
 namespace {@class.Namespace}
@@ -35,14 +36,36 @@ namespace {@class.Namespace}.{@class.Name}
 		public MockTimeSystemTests() : base(new MockTimeSystem(Testing.TimeProvider.Now()))
 		{{
 		}}
+
+		/// <inheritdoc cref=""{@class.Name}{{TTimeSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
+		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+		{{
+			// Brittle tests are never skipped against the mock time system!
+		}}
 	}}
 
 	// ReSharper disable once UnusedMember.Global
+	[Collection(nameof(RealTimeSystemTests))]
 	public sealed class RealTimeSystemTests : {@class.Name}<RealTimeSystem>
 	{{
-		public RealTimeSystemTests() : base(new RealTimeSystem())
+		private readonly TestSettingsFixture _fixture;
+
+		public RealTimeSystemTests(TestSettingsFixture fixture) : base(new RealTimeSystem())
 		{{
+			_fixture = fixture;
 		}}
+
+#if DEBUG
+		/// <inheritdoc cref=""{@class.Name}{{TTimeSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
+		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+			=> Skip.If(condition && _fixture.BrittleTests != TestSettingStatus.AlwaysEnabled,
+				$""Brittle tests are {{_fixture.BrittleTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests."");
+#else
+		/// <inheritdoc cref=""{@class.Name}{{TTimeSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
+		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+			=> Skip.If(condition && _fixture.BrittleTests == TestSettingStatus.AlwaysDisabled,
+				$""Brittle tests are {{_fixture.BrittleTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests."");
+#endif
 	}}
 }}");
 }

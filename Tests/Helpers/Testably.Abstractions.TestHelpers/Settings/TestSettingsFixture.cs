@@ -4,13 +4,13 @@ using System.IO;
 
 namespace Testably.Abstractions.TestHelpers.Settings;
 
-public class RealFileSystemFixture
+public class TestSettingsFixture
 {
 	public TestSettingStatus LongRunningTests { get; }
 	public TestSettingStatus BrittleTests { get; }
 	public TestSettingStatus RealFileSystemTests { get; }
 
-	public RealFileSystemFixture()
+	public TestSettingsFixture()
 	{
 		try
 		{

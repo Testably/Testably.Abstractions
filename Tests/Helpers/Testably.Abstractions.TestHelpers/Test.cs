@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-using Xunit;
 
 namespace Testably.Abstractions.TestHelpers;
 
@@ -25,12 +24,5 @@ public class Test
 		RunsOnMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
 		RunsOnWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 		IsNetFramework = RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework");
-	}
-
-	public static void SkipBrittleTestsOnRealTimeSystem(
-		ITimeSystem timeSystem, bool condition = true)
-	{
-		Skip.If(timeSystem is RealTimeSystem && condition,
-			"Brittle tests are skipped on the real time system.");
 	}
 }

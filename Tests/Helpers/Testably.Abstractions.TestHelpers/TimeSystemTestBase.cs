@@ -28,4 +28,13 @@ public abstract class TimeSystemTestBase<TTimeSystem>
 		throw new NotSupportedException(
 			"The SourceGenerator didn't create the corresponding files!");
 	}
+
+	/// <summary>
+	///     Specifies, if brittle tests should be skipped on the real time system.
+	/// </summary>
+	/// <param name="condition">
+	///     (optional) A condition that must be <see langword="true" /> for the test to be skipped on the
+	///     real time system.
+	/// </param>
+	public abstract void SkipIfBrittleTestsShouldBeSkipped(bool condition = true);
 }
