@@ -7,6 +7,7 @@ namespace Testably.Abstractions.TestHelpers.Settings;
 public class RealFileSystemFixture
 {
 	public TestSettingStatus LongRunningTests { get; }
+	public TestSettingStatus BrittleTests { get; }
 	public TestSettingStatus RealFileSystemTests { get; }
 
 	public RealFileSystemFixture()
@@ -20,11 +21,13 @@ public class RealFileSystemFixture
 
 			RealFileSystemTests = environment.RealFileSystemTests;
 			LongRunningTests = environment.LongRunningTests;
+			BrittleTests = environment.BrittleTests;
 		}
 		catch (Exception)
 		{
 			RealFileSystemTests = TestSettingStatus.DisabledInDebugMode;
 			LongRunningTests = TestSettingStatus.DisabledInDebugMode;
+			BrittleTests = TestSettingStatus.DisabledInDebugMode;
 		}
 	}
 }

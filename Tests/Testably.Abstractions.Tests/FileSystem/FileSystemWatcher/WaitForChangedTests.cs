@@ -13,7 +13,7 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 	[AutoData]
 	public void WaitForChanged_ShouldBlockUntilEventHappens(string path)
 	{
-		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
+		SkipIfBrittleTestsShouldBeSkipped();
 
 		FileSystem.Initialize();
 		ManualResetEventSlim ms = new();
@@ -54,7 +54,7 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 	public void WaitForChanged_Timeout_ShouldReturnTimedOut(string path,
 		Func<IFileSystemWatcher, IWaitForChangedResult> callback)
 	{
-		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
+		SkipIfBrittleTestsShouldBeSkipped();
 
 		FileSystem.Initialize();
 		ManualResetEventSlim ms = new();

@@ -44,7 +44,7 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 			{
 				try
 				{
-					ForceDeleteDirectory(BasePath);
+					ForceDeleteDirectory(BasePath, true);
 					break;
 				}
 				catch (Exception)
@@ -81,10 +81,10 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 	///     Force deletes the directory at the given <paramref name="path" />.<br />
 	///     Removes the <see cref="FileAttributes.ReadOnly" /> flag, if necessary.
 	///     <para />
-	///     If <paramref name="recursive" /> is set (default <see langword="true" />), the sub directories are force deleted as
+	///     If <paramref name="recursive" /> is set, the subdirectories are force deleted as
 	///     well.
 	/// </summary>
-	private void ForceDeleteDirectory(string path, bool recursive = true)
+	private void ForceDeleteDirectory(string path, bool recursive)
 	{
 		if (!_fileSystem.Directory.Exists(path))
 		{
@@ -109,7 +109,7 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 					EnumerationOptionsHelper.DefaultSearchPattern,
 					SearchOption.TopDirectoryOnly))
 			{
-				ForceDeleteDirectory(info.FullName, recursive);
+				ForceDeleteDirectory(info.FullName, true);
 			}
 		}
 
@@ -118,27 +118,29 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 
 	private string InitializeBasePath(Execute execute, string prefix)
 	{
-		string basePath;
+		string basePath = "";
 
-		do
+		for (int j = 0; j <= 5; j++)
 		{
-			string localBasePath = _fileSystem.Path.Combine(
-				_fileSystem.Path.GetTempPath(),
-				prefix + _fileSystem.Path.GetFileNameWithoutExtension(
-					_fileSystem.Path.GetRandomFileName()));
-			execute.OnMac(() => localBasePath = "/private" + localBasePath);
-			basePath = localBasePath;
-		} while (_fileSystem.Directory.Exists(basePath));
+			basePath = CreatePossiblePath(execute, prefix);
 
-		for (int i = 0; i <= 2; i++)
-		{
 			try
 			{
 				_fileSystem.Directory.CreateDirectory(basePath);
+				try
+				{
+					_fileSystem.File.WriteAllText(_fileSystem.Path.Combine(basePath, ".lock"), "");
+				}
+				catch (Exception)
+				{
+					// Give a transient condition like antivirus/indexing a chance to go away
+					Thread.Sleep(10);
+				}
 				break;
 			}
 			catch (Exception)
 			{
+				_fileSystem.Directory.Delete(basePath);
 				// Give a transient condition like antivirus/indexing a chance to go away
 				Thread.Sleep(10);
 			}
@@ -162,6 +164,22 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 			throw new TestingException(
 				$"Could not set current directory to '{basePath}' for tests");
 		}
+
+		return basePath;
+	}
+
+	private string CreatePossiblePath(Execute execute, string prefix)
+	{
+		string basePath;
+		do
+		{
+			string localBasePath = _fileSystem.Path.Combine(
+				_fileSystem.Path.GetTempPath(),
+				prefix.Replace("/","_").Replace("\\","_") + _fileSystem.Path.GetFileNameWithoutExtension(
+					_fileSystem.Path.GetRandomFileName()));
+			execute.OnMac(() => localBasePath = "/private" + localBasePath);
+			basePath = localBasePath;
+		} while (_fileSystem.Directory.Exists(basePath));
 
 		return basePath;
 	}
