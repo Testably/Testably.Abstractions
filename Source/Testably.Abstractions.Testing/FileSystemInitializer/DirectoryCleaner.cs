@@ -116,13 +116,33 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 		_fileSystem.Directory.Delete(path);
 	}
 
+	/// <summary>
+	///     Returns a candidate for a test-directory within the temporary directory that does not yet exist.
+	/// </summary>
+	private string GetPossiblePath(Execute execute, string prefix)
+	{
+		string basePath;
+		do
+		{
+			string localBasePath = _fileSystem.Path.Combine(
+				_fileSystem.Path.GetTempPath(),
+				prefix.Replace("/", "_").Replace("\\", "_") +
+				_fileSystem.Path.GetFileNameWithoutExtension(
+					_fileSystem.Path.GetRandomFileName()));
+			execute.OnMac(() => localBasePath = "/private" + localBasePath);
+			basePath = localBasePath;
+		} while (_fileSystem.Directory.Exists(basePath));
+
+		return basePath;
+	}
+
 	private string InitializeBasePath(Execute execute, string prefix)
 	{
 		string basePath = "";
 
 		for (int j = 0; j <= 5; j++)
 		{
-			basePath = CreatePossiblePath(execute, prefix);
+			basePath = GetPossiblePath(execute, prefix);
 
 			try
 			{
@@ -136,6 +156,7 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 					// Give a transient condition like antivirus/indexing a chance to go away
 					Thread.Sleep(10);
 				}
+
 				break;
 			}
 			catch (Exception)
@@ -164,22 +185,6 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 			throw new TestingException(
 				$"Could not set current directory to '{basePath}' for tests");
 		}
-
-		return basePath;
-	}
-
-	private string CreatePossiblePath(Execute execute, string prefix)
-	{
-		string basePath;
-		do
-		{
-			string localBasePath = _fileSystem.Path.Combine(
-				_fileSystem.Path.GetTempPath(),
-				prefix.Replace("/","_").Replace("\\","_") + _fileSystem.Path.GetFileNameWithoutExtension(
-					_fileSystem.Path.GetRandomFileName()));
-			execute.OnMac(() => localBasePath = "/private" + localBasePath);
-			basePath = localBasePath;
-		} while (_fileSystem.Directory.Exists(basePath));
 
 		return basePath;
 	}
