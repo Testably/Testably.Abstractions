@@ -14,7 +14,7 @@ public class TestEnvironment
 	/// </summary>
 	/// <remarks>Per default, they are <see cref="TestSettingStatus.DisabledInDebugMode" />.</remarks>
 	public TestSettingStatus BrittleTests { get; set; }
-		= TestSettingStatus.DisabledInDebugMode;
+		= TestSettingStatus.AlwaysDisabled;
 
 	/// <summary>
 	///     Affects all tests against the real file system.
