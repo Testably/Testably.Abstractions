@@ -11,6 +11,7 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 {
 	private readonly IFileSystem _fileSystem;
 	private readonly Action<string>? _logger;
+	private readonly string _pathToDelete;
 
 	public DirectoryCleaner(IFileSystem fileSystem, string? prefix, Action<string>? logger)
 	{
@@ -19,6 +20,7 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 		BasePath = InitializeBasePath(
 			fileSystem.ExecuteOrDefault(),
 			prefix ?? "");
+		_pathToDelete = fileSystem.Path.GetDirectoryName(BasePath) ?? BasePath;
 	}
 
 	#region IDirectoryCleaner Members
@@ -39,12 +41,12 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 				_fileSystem.Directory.SetCurrentDirectory(_fileSystem.Path.GetTempPath());
 			}
 
-			_logger?.Invoke($"Cleaning up '{BasePath}'...");
+			_logger?.Invoke($"Cleaning up '{_pathToDelete}'...");
 			for (int i = 10; i >= 0; i--)
 			{
 				try
 				{
-					ForceDeleteDirectory(BasePath, true);
+					ForceDeleteDirectory(_pathToDelete, true);
 					break;
 				}
 				catch (Exception)
@@ -71,7 +73,7 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 		}
 		catch (Exception ex)
 		{
-			_logger?.Invoke($"Could not clean up '{BasePath}' because: {ex}");
+			_logger?.Invoke($"Could not clean up '{_pathToDelete}' because: {ex}");
 		}
 	}
 
@@ -126,8 +128,7 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 		{
 			string localBasePath = _fileSystem.Path.Combine(
 				_fileSystem.Path.GetTempPath(),
-				prefix.Replace("/", "_").Replace("\\", "_") +
-				_fileSystem.Path.GetFileNameWithoutExtension(
+				prefix + _fileSystem.Path.GetFileNameWithoutExtension(
 					_fileSystem.Path.GetRandomFileName()));
 			execute.OnMac(() => localBasePath = "/private" + localBasePath);
 			basePath = localBasePath;
@@ -151,7 +152,7 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 				{
 					_fileSystem.File.WriteAllText(_fileSystem.Path.Combine(basePath, ".lock"), "");
 					string b = _fileSystem.Path.Combine(basePath, "d");
-					_fileSystem.Directory.CreateDirectory(basePath);
+					_fileSystem.Directory.CreateDirectory(b);
 					basePath = b;
 				}
 				catch (Exception)
