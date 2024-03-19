@@ -17,7 +17,7 @@ public sealed class RealFileSystemTests
 		_ = Helper.ChangeTestSettings(s =>
 			s.RealFileSystemTests = TestSettingStatus.AlwaysDisabled);
 
-		Assert.Pass("Tests against the real file system are enabled in DEBUG mode.");
+		Assert.Pass("Tests against the real file system are always disabled.");
 	}
 
 	/// <summary>
@@ -47,7 +47,7 @@ public sealed class RealFileSystemTests
 		_ = Helper.ChangeTestSettings(s =>
 			s.RealFileSystemTests = TestSettingStatus.AlwaysEnabled);
 
-		Assert.Pass("Tests against the real file system are enabled in DEBUG mode.");
+		Assert.Pass("Tests against the real file system are always enabled.");
 	}
 
 	[TestCase]

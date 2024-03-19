@@ -72,7 +72,7 @@ public abstract partial class ReadTests<TFileSystem>
 	[AutoData]
 	public void EndRead_ShouldNotAdjustTimes(string path, byte[] bytes)
 	{
-		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
+		SkipIfBrittleTestsShouldBeSkipped();
 
 		ManualResetEventSlim ms = new();
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;

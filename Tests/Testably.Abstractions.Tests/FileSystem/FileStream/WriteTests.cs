@@ -74,7 +74,7 @@ public abstract partial class WriteTests<TFileSystem>
 	[AutoData]
 	public void EndWrite_ShouldAdjustTimes(string path, byte[] bytes)
 	{
-		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
+		SkipIfBrittleTestsShouldBeSkipped();
 
 		ManualResetEventSlim ms = new();
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;

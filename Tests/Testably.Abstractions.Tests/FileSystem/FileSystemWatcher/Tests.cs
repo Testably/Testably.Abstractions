@@ -14,7 +14,7 @@ public abstract partial class Tests<TFileSystem>
 	[AutoData]
 	public void BeginInit_ShouldStopListening(string path)
 	{
-		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
+		SkipIfBrittleTestsShouldBeSkipped();
 
 		FileSystem.Initialize();
 		ManualResetEventSlim ms = new();
@@ -67,7 +67,7 @@ public abstract partial class Tests<TFileSystem>
 	[AutoData]
 	public void EndInit_ShouldRestartListening(string path)
 	{
-		Test.SkipBrittleTestsOnRealFileSystem(FileSystem);
+		SkipIfBrittleTestsShouldBeSkipped();
 
 		FileSystem.Initialize();
 		ManualResetEventSlim ms = new();

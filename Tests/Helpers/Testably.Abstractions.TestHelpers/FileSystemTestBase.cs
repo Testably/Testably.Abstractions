@@ -39,6 +39,15 @@ public abstract class FileSystemTestBase<TFileSystem>
 	}
 
 	/// <summary>
+	///     Specifies, if brittle tests should be skipped on the real file system.
+	/// </summary>
+	/// <param name="condition">
+	///     (optional) A condition that must be <see langword="true" /> for the test to be skipped on the
+	///     real file system.
+	/// </param>
+	public abstract void SkipIfBrittleTestsShouldBeSkipped(bool condition = true);
+
+	/// <summary>
 	///     Specifies, if long-running tests should be skipped on the real file system.
 	/// </summary>
 	public abstract void SkipIfLongRunningTestsShouldBeSkipped();
