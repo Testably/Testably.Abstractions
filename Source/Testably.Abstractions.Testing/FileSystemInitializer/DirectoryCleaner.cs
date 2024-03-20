@@ -9,16 +9,20 @@ namespace Testably.Abstractions.Testing.FileSystemInitializer;
 [ExcludeFromCodeCoverage]
 internal sealed class DirectoryCleaner : IDirectoryCleaner
 {
+	private const string EmptyDirectoryName = "d";
+	private const string LockFileName = ".lock";
 	private readonly IFileSystem _fileSystem;
 	private readonly Action<string>? _logger;
+	private readonly string _pathToDelete;
 
 	public DirectoryCleaner(IFileSystem fileSystem, string? prefix, Action<string>? logger)
 	{
 		_fileSystem = fileSystem;
 		_logger = logger;
-		BasePath = InitializeBasePath(
+		_pathToDelete = InitializeTestDirectory(
 			fileSystem.ExecuteOrDefault(),
 			prefix ?? "");
+		BasePath = _fileSystem.Path.Combine(_pathToDelete, EmptyDirectoryName);
 	}
 
 	#region IDirectoryCleaner Members
@@ -39,12 +43,12 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 				_fileSystem.Directory.SetCurrentDirectory(_fileSystem.Path.GetTempPath());
 			}
 
-			_logger?.Invoke($"Cleaning up '{BasePath}'...");
+			_logger?.Invoke($"Cleaning up '{_pathToDelete}'...");
 			for (int i = 10; i >= 0; i--)
 			{
 				try
 				{
-					ForceDeleteDirectory(BasePath);
+					ForceDeleteDirectory(_pathToDelete, true);
 					break;
 				}
 				catch (Exception)
@@ -71,7 +75,7 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 		}
 		catch (Exception ex)
 		{
-			_logger?.Invoke($"Could not clean up '{BasePath}' because: {ex}");
+			_logger?.Invoke($"Could not clean up '{_pathToDelete}' because: {ex}");
 		}
 	}
 
@@ -81,10 +85,10 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 	///     Force deletes the directory at the given <paramref name="path" />.<br />
 	///     Removes the <see cref="FileAttributes.ReadOnly" /> flag, if necessary.
 	///     <para />
-	///     If <paramref name="recursive" /> is set (default <see langword="true" />), the sub directories are force deleted as
+	///     If <paramref name="recursive" /> is set, the subdirectories are force deleted as
 	///     well.
 	/// </summary>
-	private void ForceDeleteDirectory(string path, bool recursive = true)
+	private void ForceDeleteDirectory(string path, bool recursive)
 	{
 		if (!_fileSystem.Directory.Exists(path))
 		{
@@ -109,17 +113,19 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 					EnumerationOptionsHelper.DefaultSearchPattern,
 					SearchOption.TopDirectoryOnly))
 			{
-				ForceDeleteDirectory(info.FullName, recursive);
+				ForceDeleteDirectory(info.FullName, true);
 			}
 		}
 
 		_fileSystem.Directory.Delete(path);
 	}
 
-	private string InitializeBasePath(Execute execute, string prefix)
+	/// <summary>
+	///     Returns a candidate for a test-directory within the temporary directory that does not yet exist.
+	/// </summary>
+	private string GetPathCandidate(Execute execute, string prefix)
 	{
 		string basePath;
-
 		do
 		{
 			string localBasePath = _fileSystem.Path.Combine(
@@ -130,10 +136,25 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 			basePath = localBasePath;
 		} while (_fileSystem.Directory.Exists(basePath));
 
-		for (int i = 0; i <= 2; i++)
+		return basePath;
+	}
+
+	private string InitializeTestDirectory(Execute execute, string prefix)
+	{
+		string pathToDelete = EmptyDirectoryName;
+		string basePath = pathToDelete;
+
+		for (int j = 0; j <= 2; j++)
 		{
+			pathToDelete = GetPathCandidate(execute, prefix);
+
 			try
 			{
+				_fileSystem.Directory.CreateDirectory(pathToDelete);
+				_fileSystem.File.WriteAllText(
+					_fileSystem.Path.Combine(pathToDelete, LockFileName),
+					string.Empty);
+				basePath = _fileSystem.Path.Combine(pathToDelete, EmptyDirectoryName);
 				_fileSystem.Directory.CreateDirectory(basePath);
 				break;
 			}
@@ -163,6 +184,6 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 				$"Could not set current directory to '{basePath}' for tests");
 		}
 
-		return basePath;
+		return pathToDelete;
 	}
 }
