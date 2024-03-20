@@ -28,6 +28,7 @@ public class DirectoryCleanerTests
 		IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(logger: m => receivedLogs.Add(m));
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
+		string parentOfCurrentDirectory = sut.Path.GetDirectoryName(currentDirectory)!;
 		int exceptionCount = 0;
 		sut.Intercept.Event(_ =>
 			{
@@ -52,7 +53,7 @@ public class DirectoryCleanerTests
 
 		receivedLogs.Should().Contain(m =>
 			m.Contains(exception.Message) &&
-			m.Contains($"'{currentDirectory}'"));
+			m.Contains($"'{parentOfCurrentDirectory}'"));
 		receivedLogs.Should().NotContain("Cleanup was successful :-)");
 	}
 
