@@ -9,6 +9,8 @@ namespace Testably.Abstractions.Testing.FileSystemInitializer;
 [ExcludeFromCodeCoverage]
 internal sealed class DirectoryCleaner : IDirectoryCleaner
 {
+	private const string LockFileName = ".lock";
+	private const string SubDirectory = "d";
 	private readonly IFileSystem _fileSystem;
 	private readonly Action<string>? _logger;
 	private readonly string _pathToDelete;
@@ -17,10 +19,10 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 	{
 		_fileSystem = fileSystem;
 		_logger = logger;
-		BasePath = InitializeBasePath(
+		_pathToDelete = InitializeTestDirectory(
 			fileSystem.ExecuteOrDefault(),
 			prefix ?? "");
-		_pathToDelete = fileSystem.Path.GetDirectoryName(BasePath) ?? BasePath;
+		BasePath = _fileSystem.Path.Combine(_pathToDelete, SubDirectory);
 	}
 
 	#region IDirectoryCleaner Members
@@ -121,7 +123,7 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 	/// <summary>
 	///     Returns a candidate for a test-directory within the temporary directory that does not yet exist.
 	/// </summary>
-	private string GetPossiblePath(Execute execute, string prefix)
+	private string GetPathCandidate(Execute execute, string prefix)
 	{
 		string basePath;
 		do
@@ -137,23 +139,25 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 		return basePath;
 	}
 
-	private string InitializeBasePath(Execute execute, string prefix)
+	private string InitializeTestDirectory(Execute execute, string prefix)
 	{
+		string pathToDelete = SubDirectory;
 		string basePath = "";
 
 		for (int j = 0; j <= 5; j++)
 		{
-			basePath = GetPossiblePath(execute, prefix);
+			pathToDelete = GetPathCandidate(execute, prefix);
 
 			try
 			{
-				_fileSystem.Directory.CreateDirectory(basePath);
+				_fileSystem.Directory.CreateDirectory(pathToDelete);
 				try
 				{
-					_fileSystem.File.WriteAllText(_fileSystem.Path.Combine(basePath, ".lock"), "");
-					string b = _fileSystem.Path.Combine(basePath, "d");
-					_fileSystem.Directory.CreateDirectory(b);
-					basePath = b;
+					_fileSystem.File.WriteAllText(
+						_fileSystem.Path.Combine(pathToDelete, LockFileName),
+						string.Empty);
+					basePath = _fileSystem.Path.Combine(pathToDelete, SubDirectory);
+					_fileSystem.Directory.CreateDirectory(basePath);
 				}
 				catch (Exception)
 				{
@@ -165,7 +169,7 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 			}
 			catch (Exception)
 			{
-				_fileSystem.Directory.Delete(basePath);
+				_fileSystem.Directory.Delete(pathToDelete);
 				// Give a transient condition like antivirus/indexing a chance to go away
 				Thread.Sleep(10);
 			}
@@ -190,6 +194,6 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 				$"Could not set current directory to '{basePath}' for tests");
 		}
 
-		return basePath;
+		return pathToDelete;
 	}
 }
