@@ -1,6 +1,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+// ReSharper disable AccessToDisposedClosure
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
@@ -54,6 +55,8 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
+		string fullPath = FileSystem.Path.GetFullPath(path);
+
 		try
 		{
 			fileSystemWatcher.EnableRaisingEvents = true;
@@ -62,8 +65,8 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 				while (!ms.IsSet)
 				{
 					await Task.Delay(10);
-					FileSystem.Directory.CreateDirectory(path);
-					FileSystem.Directory.Delete(path);
+					FileSystem.Directory.CreateDirectory(fullPath);
+					FileSystem.Directory.Delete(fullPath);
 				}
 			});
 			IWaitForChangedResult result = callback(fileSystemWatcher);
