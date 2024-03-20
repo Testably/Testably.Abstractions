@@ -324,6 +324,7 @@ public sealed partial class StatisticsTests
 			return type.Name;
 		}
 
+		#pragma warning disable CS0436 // Nullable is also declared in Testable.Abstractions.Testing which internals are visible to this project
 		private static bool HasSpecialNameInLowerCase(Type type,
 			[NotNullWhen(true)] out string? name)
 		{
@@ -385,5 +386,6 @@ public sealed partial class StatisticsTests
 			name = null;
 			return false;
 		}
+		#pragma warning restore CS0436
 	}
 }
