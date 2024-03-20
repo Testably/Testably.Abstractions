@@ -16,7 +16,7 @@ public abstract partial class IncludeSubdirectoriesTests<TFileSystem>
 		FileSystem.Initialize()
 			.WithSubdirectory(baseDirectory).Initialized(s => s
 				.WithSubdirectory(path));
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		FileSystemEventArgs? result = null;
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
@@ -43,7 +43,7 @@ public abstract partial class IncludeSubdirectoriesTests<TFileSystem>
 			.WithSubdirectory(baseDirectory).Initialized(s => s
 				.WithSubdirectory(subdirectoryName))
 			.WithSubdirectory(otherDirectory);
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		FileSystemEventArgs? result = null;
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(baseDirectory);
@@ -72,7 +72,7 @@ public abstract partial class IncludeSubdirectoriesTests<TFileSystem>
 				.WithSubdirectory(subdirectoryName));
 		string subdirectoryPath =
 			FileSystem.Path.Combine(baseDirectory, subdirectoryName);
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		FileSystemEventArgs? result = null;
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);

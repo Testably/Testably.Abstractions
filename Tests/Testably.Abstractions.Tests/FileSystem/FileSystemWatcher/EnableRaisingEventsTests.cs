@@ -12,7 +12,7 @@ public abstract partial class EnableRaisingEventsTests<TFileSystem>
 	public void EnableRaisingEvents_SetToFalse_ShouldStop(string path1, string path2)
 	{
 		FileSystem.Initialize().WithSubdirectory(path1).WithSubdirectory(path2);
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, _) =>
@@ -35,7 +35,7 @@ public abstract partial class EnableRaisingEventsTests<TFileSystem>
 	public void EnableRaisingEvents_ShouldBeInitializedAsFalse(string path)
 	{
 		FileSystem.Initialize().WithSubdirectory(path);
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, _) =>

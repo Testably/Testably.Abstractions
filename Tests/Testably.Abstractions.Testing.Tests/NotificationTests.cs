@@ -101,7 +101,7 @@ public class NotificationTests
 	{
 		MockTimeSystem timeSystem = new();
 		int receivedCount = 0;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		timeSystem.On.ThreadSleep(_ =>
 		{
 			receivedCount++;
@@ -126,7 +126,7 @@ public class NotificationTests
 	[SkippableFact]
 	public void AwaitableCallback_ShouldWaitForCallbackExecution()
 	{
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		try
 		{
 			MockTimeSystem timeSystem = new();
@@ -160,7 +160,7 @@ public class NotificationTests
 	{
 		MockTimeSystem timeSystem = new();
 		bool isCalled = false;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		Notification.IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On.ThreadSleep(_ =>
 			{
@@ -188,10 +188,10 @@ public class NotificationTests
 	{
 		int secondThreadMilliseconds = 42;
 		int firstThreadMilliseconds = secondThreadMilliseconds + 1;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		MockTimeSystem timeSystem = new();
 		bool isCalledFromSecondThread = false;
-		ManualResetEventSlim listening = new();
+		using ManualResetEventSlim listening = new();
 		Notification.IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On
 				.ThreadSleep(t =>

@@ -30,7 +30,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 		FileSystem.Initialize();
 		FileSystemEventArgs? result = null;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Changed += (_, eventArgs) =>
@@ -93,7 +93,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 		FileSystem.Initialize();
 		FileSystem.File.WriteAllText(fileName, null);
 		FileSystemEventArgs? result = null;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Changed += (_, eventArgs) =>
@@ -121,7 +121,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 		FileSystem.Initialize();
 		FileSystemEventArgs? result = null;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Created += (_, eventArgs) =>
@@ -153,7 +153,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 		FileSystem.Initialize();
 		FileSystemEventArgs? result = null;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Created += (_, eventArgs) =>
@@ -181,7 +181,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 		FileSystem.Initialize().WithSubdirectory(path);
 		FileSystemEventArgs? result = null;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
@@ -213,7 +213,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 		FileSystem.Initialize().WithSubdirectory(path);
 		FileSystemEventArgs? result = null;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
@@ -241,7 +241,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 		FileSystem.Initialize().WithFile(path);
 		FileSystemEventArgs? result = null;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
@@ -273,7 +273,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 		FileSystem.Initialize().WithFile(path);
 		FileSystemEventArgs? result = null;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
@@ -308,7 +308,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 				.WithFile(sourceName))
 			.WithSubdirectory(destinationPath);
 		RenamedEventArgs? result = null;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Renamed += (_, eventArgs) =>
@@ -351,7 +351,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 				.WithFile(sourceName))
 			.WithSubdirectory(destinationPath);
 		RenamedEventArgs? result = null;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Renamed += (_, eventArgs) =>
@@ -381,7 +381,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 		FileSystem.Initialize();
 		FileSystem.File.WriteAllText(sourceName, null);
 		RenamedEventArgs? result = null;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Renamed += (_, eventArgs) =>
@@ -415,7 +415,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 		FileSystem.Initialize();
 		FileSystem.File.WriteAllText(sourceName, "foo");
 		RenamedEventArgs? result = null;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Renamed += (_, eventArgs) =>
@@ -448,7 +448,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 		FileSystem.Initialize();
 		FileSystem.File.WriteAllText(fileName, null);
 		FileSystemEventArgs? result = null;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Changed += (_, eventArgs) =>
@@ -511,7 +511,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 		FileSystem.Initialize();
 		FileSystemEventArgs? result = null;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Changed += (_, eventArgs) =>

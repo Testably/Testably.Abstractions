@@ -16,7 +16,7 @@ public abstract partial class EventTests<TFileSystem>
 		int callCount = 0;
 		FileSystem.InitializeIn(BasePath);
 		FileSystem.File.WriteAllText(path, "");
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
@@ -61,7 +61,7 @@ public abstract partial class EventTests<TFileSystem>
 	{
 		int callCount = 0;
 		FileSystem.Initialize();
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
@@ -107,7 +107,7 @@ public abstract partial class EventTests<TFileSystem>
 	{
 		int callCount = 0;
 		FileSystem.Initialize();
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
@@ -154,7 +154,7 @@ public abstract partial class EventTests<TFileSystem>
 		int callCount = 0;
 		FileSystem.InitializeIn(BasePath);
 		FileSystem.File.WriteAllText(path, "");
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 

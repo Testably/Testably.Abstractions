@@ -17,7 +17,7 @@ public abstract partial class Tests<TFileSystem>
 		SkipIfBrittleTestsShouldBeSkipped();
 
 		FileSystem.Initialize();
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.EnableRaisingEvents = true;
@@ -70,7 +70,7 @@ public abstract partial class Tests<TFileSystem>
 		SkipIfBrittleTestsShouldBeSkipped();
 
 		FileSystem.Initialize();
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.EnableRaisingEvents = true;

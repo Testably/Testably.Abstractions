@@ -10,7 +10,7 @@ public class TimerFactoryMockTests
 	{
 		MockTimeSystem timeSystem = new();
 
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 			ms.Set();
