@@ -9,8 +9,8 @@ namespace Testably.Abstractions.Testing.FileSystemInitializer;
 [ExcludeFromCodeCoverage]
 internal sealed class DirectoryCleaner : IDirectoryCleaner
 {
+	private const string EmptyDirectoryName = "d";
 	private const string LockFileName = ".lock";
-	private const string SubDirectory = "d";
 	private readonly IFileSystem _fileSystem;
 	private readonly Action<string>? _logger;
 	private readonly string _pathToDelete;
@@ -22,7 +22,7 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 		_pathToDelete = InitializeTestDirectory(
 			fileSystem.ExecuteOrDefault(),
 			prefix ?? "");
-		BasePath = _fileSystem.Path.Combine(_pathToDelete, SubDirectory);
+		BasePath = _fileSystem.Path.Combine(_pathToDelete, EmptyDirectoryName);
 	}
 
 	#region IDirectoryCleaner Members
@@ -141,35 +141,25 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 
 	private string InitializeTestDirectory(Execute execute, string prefix)
 	{
-		string pathToDelete = SubDirectory;
-		string basePath = "";
+		string pathToDelete = EmptyDirectoryName;
+		string basePath = pathToDelete;
 
-		for (int j = 0; j <= 5; j++)
+		for (int j = 0; j <= 2; j++)
 		{
 			pathToDelete = GetPathCandidate(execute, prefix);
 
 			try
 			{
 				_fileSystem.Directory.CreateDirectory(pathToDelete);
-				try
-				{
-					_fileSystem.File.WriteAllText(
-						_fileSystem.Path.Combine(pathToDelete, LockFileName),
-						string.Empty);
-					basePath = _fileSystem.Path.Combine(pathToDelete, SubDirectory);
-					_fileSystem.Directory.CreateDirectory(basePath);
-				}
-				catch (Exception)
-				{
-					// Give a transient condition like antivirus/indexing a chance to go away
-					Thread.Sleep(10);
-				}
-
+				_fileSystem.File.WriteAllText(
+					_fileSystem.Path.Combine(pathToDelete, LockFileName),
+					string.Empty);
+				basePath = _fileSystem.Path.Combine(pathToDelete, EmptyDirectoryName);
+				_fileSystem.Directory.CreateDirectory(basePath);
 				break;
 			}
 			catch (Exception)
 			{
-				_fileSystem.Directory.Delete(pathToDelete);
 				// Give a transient condition like antivirus/indexing a chance to go away
 				Thread.Sleep(10);
 			}
