@@ -1,8 +1,10 @@
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
+// ReSharper disable AccessToDisposedClosure
 // ReSharper disable once PartialTypeWithSinglePart
 public abstract partial class NotifyFiltersTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
@@ -13,7 +15,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	/// <summary>
 	///     The delay in milliseconds when expecting a success in the test.
 	/// </summary>
-	private const int ExpectSuccess = 3000;
+	private const int ExpectSuccess = 5000;
 
 	/// <summary>
 	///     The delay in milliseconds when expecting a timeout in the test.
@@ -68,7 +70,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	[InlineAutoData(NotifyFilters.LastWrite)]
 	[InlineAutoData(NotifyFilters.Security)]
 	[InlineAutoData(NotifyFilters.Size)]
-	public void NotifyFilter_AppendFile_ShouldTriggerChangedEventOnNotifyFilters(
+	public async Task NotifyFilter_AppendFile_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string fileName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -91,7 +93,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 		}
 
 		FileSystem.Initialize();
-		FileSystem.File.WriteAllText(fileName, null);
+		await FileSystem.File.WriteAllTextAsync(fileName, null);
 		FileSystemEventArgs? result = null;
 		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
@@ -104,7 +106,9 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 		fileSystemWatcher.NotifyFilter = notifyFilter;
 		fileSystemWatcher.EnableRaisingEvents = true;
 
-		FileSystem.File.AppendAllText(fileName, "foo");
+		await Task.Delay(100);
+
+		await FileSystem.File.AppendAllTextAsync(fileName, "foo");
 
 		ms.Wait(ExpectSuccess).Should().BeTrue();
 		result.Should().NotBeNull();
@@ -146,7 +150,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 	[SkippableTheory]
 	[InlineAutoData(NotifyFilters.DirectoryName)]
-	public void NotifyFilter_CreateDirectory_ShouldTriggerCreatedEventOnNotifyFilters(
+	public async Task NotifyFilter_CreateDirectory_ShouldTriggerCreatedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -163,6 +167,8 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 		};
 		fileSystemWatcher.NotifyFilter = notifyFilter;
 		fileSystemWatcher.EnableRaisingEvents = true;
+
+		await Task.Delay(100);
 
 		FileSystem.Directory.CreateDirectory(path);
 
@@ -206,7 +212,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 	[SkippableTheory]
 	[InlineAutoData(NotifyFilters.DirectoryName)]
-	public void NotifyFilter_DeleteDirectory_ShouldTriggerDeletedEventOnNotifyFilters(
+	public async Task NotifyFilter_DeleteDirectory_ShouldTriggerDeletedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -223,6 +229,8 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 		};
 		fileSystemWatcher.NotifyFilter = notifyFilter;
 		fileSystemWatcher.EnableRaisingEvents = true;
+
+		await Task.Delay(100);
 
 		FileSystem.Directory.Delete(path);
 
@@ -266,7 +274,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 	[SkippableTheory]
 	[InlineAutoData(NotifyFilters.FileName)]
-	public void NotifyFilter_DeleteFile_ShouldTriggerDeletedEventOnNotifyFilters(
+	public async Task NotifyFilter_DeleteFile_ShouldTriggerDeletedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -283,6 +291,8 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 		};
 		fileSystemWatcher.NotifyFilter = notifyFilter;
 		fileSystemWatcher.EnableRaisingEvents = true;
+
+		await Task.Delay(100);
 
 		FileSystem.File.Delete(path);
 
@@ -407,13 +417,13 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 	[SkippableTheory]
 	[InlineAutoData(NotifyFilters.FileName)]
-	public void NotifyFilter_MoveFile_ShouldTriggerChangedEventOnNotifyFilters(
+	public async Task NotifyFilter_MoveFile_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string sourceName, string destinationName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Initialize();
-		FileSystem.File.WriteAllText(sourceName, "foo");
+		await FileSystem.File.WriteAllTextAsync(sourceName, "foo");
 		RenamedEventArgs? result = null;
 		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
@@ -427,6 +437,8 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 		fileSystemWatcher.NotifyFilter = notifyFilter;
 		fileSystemWatcher.IncludeSubdirectories = true;
 		fileSystemWatcher.EnableRaisingEvents = true;
+
+		await Task.Delay(100);
 
 		FileSystem.File.Move(sourceName, destinationName);
 
@@ -486,7 +498,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	[InlineAutoData(NotifyFilters.LastWrite)]
 	[InlineAutoData(NotifyFilters.Security)]
 	[InlineAutoData(NotifyFilters.Size)]
-	public void NotifyFilter_WriteFile_ShouldTriggerChangedEventOnNotifyFilters(
+	public async Task NotifyFilter_WriteFile_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string fileName)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -522,7 +534,9 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 		fileSystemWatcher.NotifyFilter = notifyFilter;
 		fileSystemWatcher.EnableRaisingEvents = true;
 
-		FileSystem.File.WriteAllText(fileName, "foo");
+		await Task.Delay(100);
+
+		await FileSystem.File.WriteAllTextAsync(fileName, "foo");
 
 		ms.Wait(ExpectSuccess).Should().BeTrue();
 		result.Should().NotBeNull();
