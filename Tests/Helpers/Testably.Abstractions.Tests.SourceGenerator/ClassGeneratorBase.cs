@@ -57,7 +57,7 @@ internal abstract class ClassGeneratorBase
 			marker = marker.Substring(0, genericIndex);
 		}
 
-		if (marker.EndsWith("TestBase"))
+		if (marker.EndsWith("TestBase", StringComparison.Ordinal))
 		{
 			marker = marker.Substring(0, marker.Length - "TestBase".Length);
 		}

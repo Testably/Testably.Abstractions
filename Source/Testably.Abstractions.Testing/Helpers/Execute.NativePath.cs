@@ -1,7 +1,11 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
+#if FEATURE_SPAN
+using System;
+#endif
+#if FEATURE_FILESYSTEM_NET7
 using Testably.Abstractions.Testing.Storage;
+#endif
 
 namespace Testably.Abstractions.Testing.Helpers;
 

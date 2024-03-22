@@ -117,12 +117,13 @@ internal static class EnumerationOptionsHelper
 			'<',
 			'>'
 		};
-		if (searchString == DefaultSearchPattern)
+		if (string.Equals(searchString, DefaultSearchPattern, StringComparison.Ordinal))
 		{
 			return searchString;
 		}
 
-		if (searchString == "." || searchString == "*.*")
+		if (string.Equals(searchString, ".", StringComparison.Ordinal) ||
+		    string.Equals(searchString, "*.*", StringComparison.Ordinal))
 		{
 			return DefaultSearchPattern;
 		}
@@ -136,12 +137,12 @@ internal static class EnumerationOptionsHelper
 			() =>
 			{
 				// Backslash isn't the default separator, need to escape (e.g. Unix)
-				searchString = searchString.Replace("\\", "\\\\");
+				searchString = searchString.Replace("\\", "\\\\", StringComparison.Ordinal);
 
 				// Also need to escape the other special wild characters ('"', '<', and '>')
-				searchString = searchString.Replace("\"", "\\\"");
-				searchString = searchString.Replace(">", "\\>");
-				searchString = searchString.Replace("<", "\\<");
+				searchString = searchString.Replace("\"", "\\\"", StringComparison.Ordinal);
+				searchString = searchString.Replace(">", "\\>", StringComparison.Ordinal);
+				searchString = searchString.Replace("<", "\\<", StringComparison.Ordinal);
 			});
 
 		// Need to convert the expression to match Win32 behavior

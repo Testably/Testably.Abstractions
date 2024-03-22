@@ -9,7 +9,7 @@ namespace Testably.Abstractions.Parity.Tests.TestHelpers;
 public class Parity
 {
 	public static readonly ReadOnlyDictionary<string, string> AcceptedTypeMapping = new(
-		new Dictionary<string, string>
+		new Dictionary<string, string>(StringComparer.Ordinal)
 		{
 			{
 				nameof(FileStream), nameof(FileSystemStream)

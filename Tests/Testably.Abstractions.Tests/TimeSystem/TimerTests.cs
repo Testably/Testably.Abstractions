@@ -22,6 +22,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		using ITimer timer = TimeSystem.Timer.New(_ =>
 		{
 		}, null, 0, 200);
+		// ReSharper disable once DisposeOnUsingVariable
 		timer.Dispose();
 		Exception? exception = Record.Exception(() =>
 		{
@@ -168,7 +169,7 @@ public abstract partial class TimerTests<TTimeSystem>
 					ms3.Set();
 				}
 
-				await Task.Delay(10);
+				await Task.Delay(10).ConfigureAwait(false);
 			},
 			null, 0 * TimerMultiplier, 200 * TimerMultiplier);
 		ms.Wait(30000).Should().BeTrue();
@@ -223,7 +224,7 @@ public abstract partial class TimerTests<TTimeSystem>
 					ms3.Set();
 				}
 
-				await Task.Delay(10);
+				await Task.Delay(10).ConfigureAwait(false);
 			},
 			null, 0L * TimerMultiplier, 200L * TimerMultiplier);
 		ms.Wait(30000).Should().BeTrue();
@@ -278,7 +279,7 @@ public abstract partial class TimerTests<TTimeSystem>
 					ms3.Set();
 				}
 
-				await Task.Delay(10);
+				await Task.Delay(10).ConfigureAwait(false);
 			}, null, TimeSpan.FromMilliseconds(0 * TimerMultiplier),
 			TimeSpan.FromMilliseconds(200 * TimerMultiplier));
 		ms.Wait(30000).Should().BeTrue();

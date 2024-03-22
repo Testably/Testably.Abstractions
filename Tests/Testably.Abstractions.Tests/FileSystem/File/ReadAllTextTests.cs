@@ -164,6 +164,7 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 
 	#region Helpers
 
+	#pragma warning disable MA0018
 	public static TheoryData<Encoding> GetEncodingsForReadAllText()
 	{
 		return new TheoryData<Encoding>
@@ -176,6 +177,7 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 			new ASCIIEncoding()
 		};
 	}
+	#pragma warning restore MA0018
 
 	#endregion
 }

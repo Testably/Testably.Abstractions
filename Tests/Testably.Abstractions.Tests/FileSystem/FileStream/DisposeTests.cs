@@ -77,8 +77,10 @@ public abstract partial class DisposeTests<TFileSystem>
 
 	#region Helpers
 
+	#pragma warning disable MA0018
 	public static TheoryData<Expression<Action<FileSystemStream>>> GetFileStreamCallbacks()
 		=> new(GetFileStreamCallbackTestParameters());
+	#pragma warning restore MA0018
 
 	private static IEnumerable<Expression<Action<FileSystemStream>>>
 		GetFileStreamCallbackTestParameters()
@@ -92,8 +94,10 @@ public abstract partial class DisposeTests<TFileSystem>
 		yield return fileStream => fileStream.Flush();
 		yield return fileStream => fileStream.FlushAsync(CancellationToken.None)
 			.GetAwaiter().GetResult();
+		#pragma warning disable MA0060
 		// ReSharper disable once MustUseReturnValue
 		yield return fileStream => fileStream.Read(Array.Empty<byte>(), 0, 0);
+		#pragma warning restore MA0060
 		yield return fileStream => fileStream.ReadAsync(Array.Empty<byte>(), 0, 0)
 			.GetAwaiter().GetResult();
 		yield return fileStream => fileStream.ReadByte();

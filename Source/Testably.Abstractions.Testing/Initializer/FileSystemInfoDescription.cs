@@ -1,4 +1,4 @@
-﻿namespace Testably.Abstractions.Testing.FileSystemInitializer;
+﻿namespace Testably.Abstractions.Testing.Initializer;
 
 /// <summary>
 ///     Abstract class for defining directories or files.

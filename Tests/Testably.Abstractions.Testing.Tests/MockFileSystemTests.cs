@@ -142,7 +142,7 @@ public class MockFileSystemTests
 		MockFileSystem sut = new();
 		sut.Initialize();
 		sut.WithAccessControlStrategy(new DefaultAccessControlStrategy((p, _)
-			=> p == sut.Path.GetFullPath(allowedPath)));
+			=> string.Equals(p, sut.Path.GetFullPath(allowedPath), StringComparison.Ordinal)));
 
 		sut.Directory.CreateDirectory(allowedPath);
 		Exception? exception = Record.Exception(() =>
@@ -162,7 +162,8 @@ public class MockFileSystemTests
 		MockFileSystem sut = new();
 		sut.WithDrive(driveName, d => d.SetTotalSize(100));
 		sut.DriveInfo.GetDrives().Length.Should().Be(2);
-		IDriveInfo drive = sut.DriveInfo.GetDrives().Single(x => x.Name == driveName);
+		IDriveInfo drive = sut.DriveInfo.GetDrives()
+			.Single(x => string.Equals(x.Name, driveName, StringComparison.Ordinal));
 		drive.TotalSize.Should().Be(100);
 
 		sut.WithDrive(driveName, d => d.SetTotalSize(200));

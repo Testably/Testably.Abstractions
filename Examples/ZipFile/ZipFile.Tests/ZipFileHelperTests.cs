@@ -4,7 +4,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.IO.Compression;
 using Testably.Abstractions.Testing;
-using Testably.Abstractions.Testing.FileSystemInitializer;
+using Testably.Abstractions.Testing.Initializer;
 using Xunit;
 
 namespace Testably.Abstractions.Examples.ZipFile.Tests;

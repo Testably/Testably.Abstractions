@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
+#if FEATURE_ASYNC_DISPOSABLE
 using System.Threading.Tasks;
+#endif
 
 namespace Testably.Abstractions.TimeSystem;
 

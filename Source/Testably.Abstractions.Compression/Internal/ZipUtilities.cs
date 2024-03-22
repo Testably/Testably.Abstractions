@@ -86,9 +86,11 @@ internal static class ZipUtilities
 
 				if (file is IFileInfo fileInfo)
 				{
+					#pragma warning disable MA0074
 					string entryName = file.FullName
 						.Substring(basePath.Length + 1)
 						.Replace("\\", "/");
+					#pragma warning restore MA0074
 					ZipArchiveEntry entry = compressionLevel.HasValue
 						? archive.CreateEntry(entryName, compressionLevel.Value)
 						: archive.CreateEntry(entryName);
@@ -121,6 +123,7 @@ internal static class ZipUtilities
 	///     <see
 	///         href="https://github.com/dotnet/runtime/blob/v6.0.10/src/libraries/System.IO.Compression.ZipFile/src/System/IO/Compression/ZipFile.Create.cs#L354" />
 	/// </remarks>
+	#pragma warning disable MA0051 // Method is too long
 	internal static void CreateFromDirectory(
 		IFileSystem fileSystem,
 		string sourceDirectoryName,
@@ -163,9 +166,11 @@ internal static class ZipUtilities
 
 				if (file is IFileInfo fileInfo)
 				{
+					#pragma warning disable MA0074
 					string entryName = file.FullName
 						.Substring(basePath.Length + 1)
 						.Replace("\\", "/");
+					#pragma warning restore MA0074
 					ZipArchiveEntry entry = compressionLevel.HasValue
 						? archive.CreateEntry(entryName, compressionLevel.Value)
 						: archive.CreateEntry(entryName);
@@ -175,9 +180,9 @@ internal static class ZipUtilities
 				else if (file is IDirectoryInfo directoryInfo &&
 				         directoryInfo.GetFileSystemInfos().Length == 0)
 				{
-					#pragma warning disable CA1845
+#pragma warning disable CA1845
 					string entryName = file.FullName.Substring(basePath.Length + 1) + "/";
-					#pragma warning restore CA1845
+#pragma warning restore CA1845
 					archive.CreateEntry(entryName);
 				}
 			}
@@ -189,6 +194,7 @@ internal static class ZipUtilities
 			}
 		}
 	}
+	#pragma warning restore MA0051 // Method is too long
 #endif
 
 	internal static void ExtractRelativeToDirectory(this IZipArchiveEntry source,

@@ -1,4 +1,4 @@
-﻿namespace Testably.Abstractions.Testing.FileSystemInitializer;
+﻿namespace Testably.Abstractions.Testing.Initializer;
 
 /// <summary>
 ///     Manipulates the <see cref="File" /> in the <see cref="IFileSystem" /> with test data.

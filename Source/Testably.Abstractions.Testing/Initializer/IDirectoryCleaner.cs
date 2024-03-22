@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Testably.Abstractions.Testing.FileSystemInitializer;
+namespace Testably.Abstractions.Testing.Initializer;
 
 /// <summary>
 ///     Cleans the directory in <see cref="BasePath" /> on dispose.

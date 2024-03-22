@@ -9,7 +9,7 @@ internal sealed class RandomProviderMock : IRandomProvider
 	[ThreadStatic] private static RandomMock? _shared;
 
 	private static Generator<Guid> DefaultGuidGenerator
-		=> Generator<Guid>.FromCallback(Guid.NewGuid);
+		=> Generator.FromCallback(Guid.NewGuid);
 
 	private readonly Generator<Guid> _guidGenerator;
 	private readonly Func<int, IRandom> _randomGenerator;

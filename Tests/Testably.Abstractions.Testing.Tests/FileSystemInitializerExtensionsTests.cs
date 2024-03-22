@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Testably.Abstractions.Testing.FileSystemInitializer;
+using Testably.Abstractions.Testing.Initializer;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests;
@@ -253,7 +253,7 @@ public class FileSystemInitializerExtensionsTests
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 		for (char c = 'D'; c <= 'Z'; c++)
 		{
-			if (drives.Any(d => d.Name.StartsWith($"{c}")))
+			if (drives.Any(d => d.Name.StartsWith($"{c}", StringComparison.Ordinal)))
 			{
 				continue;
 			}

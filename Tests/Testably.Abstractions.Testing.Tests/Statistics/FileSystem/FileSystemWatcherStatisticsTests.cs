@@ -50,7 +50,7 @@ public class FileSystemWatcherStatisticsTests
 		{
 			while (!token.IsCancellationRequested)
 			{
-				await Task.Delay(10, token);
+				await Task.Delay(10, token).ConfigureAwait(false);
 				sut.Directory.CreateDirectory(sut.Path.Combine("foo", "some-directory"));
 				sut.Directory.Delete(sut.Path.Combine("foo", "some-directory"));
 			}
@@ -79,7 +79,7 @@ public class FileSystemWatcherStatisticsTests
 		{
 			while (!token.IsCancellationRequested)
 			{
-				await Task.Delay(10, token);
+				await Task.Delay(10, token).ConfigureAwait(false);
 				sut.Directory.CreateDirectory(sut.Path.Combine("foo", "some-directory"));
 				sut.Directory.Delete(sut.Path.Combine("foo", "some-directory"));
 			}
@@ -107,7 +107,7 @@ public class FileSystemWatcherStatisticsTests
 		{
 			while (!token.IsCancellationRequested)
 			{
-				await Task.Delay(10, token);
+				await Task.Delay(10, token).ConfigureAwait(false);
 				sut.Directory.CreateDirectory(sut.Path.Combine("foo", "some-directory"));
 				sut.Directory.Delete(sut.Path.Combine("foo", "some-directory"));
 			}

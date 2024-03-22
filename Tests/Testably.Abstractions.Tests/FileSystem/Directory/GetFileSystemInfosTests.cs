@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Testably.Abstractions.Testing.FileSystemInitializer;
+using Testably.Abstractions.Testing.Initializer;
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
+using System.Globalization;
+#endif
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
@@ -123,7 +126,7 @@ public abstract partial class GetFileSystemInfosTests<TFileSystem>
 
 		List<string> result = FileSystem.Directory
 			.GetFileSystemEntries(".",
-				initialized[2].Name.ToUpper(),
+				initialized[2].Name.ToUpper(CultureInfo.InvariantCulture),
 				new EnumerationOptions
 				{
 					MatchCasing = MatchCasing.CaseInsensitive,

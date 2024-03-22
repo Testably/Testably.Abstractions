@@ -18,7 +18,7 @@ public static class MockFileSystemExtensions
 		string driveName = "".PrefixRoot(mockFileSystem);
 		return mockFileSystem.DriveInfo
 			.GetDrives()
-			.First(d => d.Name.StartsWith(driveName));
+			.First(d => d.Name.StartsWith(driveName, StringComparison.OrdinalIgnoreCase));
 	}
 
 	/// <summary>
