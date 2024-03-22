@@ -93,7 +93,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 		}
 
 		FileSystem.Initialize();
-		await FileSystem.File.WriteAllTextAsync(fileName, null);
+		FileSystem.File.WriteAllText(fileName, null);
 		FileSystemEventArgs? result = null;
 		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
@@ -108,7 +108,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 		await Task.Delay(100);
 
-		await FileSystem.File.AppendAllTextAsync(fileName, "foo");
+		FileSystem.File.AppendAllText(fileName, "foo");
 
 		ms.Wait(ExpectSuccess).Should().BeTrue();
 		result.Should().NotBeNull();
@@ -423,7 +423,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Initialize();
-		await FileSystem.File.WriteAllTextAsync(sourceName, "foo");
+		FileSystem.File.WriteAllText(sourceName, "foo");
 		RenamedEventArgs? result = null;
 		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
@@ -536,7 +536,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 		await Task.Delay(100);
 
-		await FileSystem.File.WriteAllTextAsync(fileName, "foo");
+		FileSystem.File.WriteAllText(fileName, "foo");
 
 		ms.Wait(ExpectSuccess).Should().BeTrue();
 		result.Should().NotBeNull();

@@ -34,7 +34,7 @@ public abstract partial class EventTests<TFileSystem>
 				int i = 0;
 				while (!ms.IsSet)
 				{
-					await Task.Delay(10).ConfigureAwait(false);
+					await Task.Delay(10);
 					FileSystem.File.WriteAllText(path, i++.ToString(CultureInfo.InvariantCulture));
 				}
 			});
@@ -78,7 +78,7 @@ public abstract partial class EventTests<TFileSystem>
 			{
 				while (!ms.IsSet)
 				{
-					await Task.Delay(10).ConfigureAwait(false);
+					await Task.Delay(10);
 					FileSystem.Directory.CreateDirectory(path);
 					FileSystem.Directory.Delete(path);
 				}
@@ -124,7 +124,7 @@ public abstract partial class EventTests<TFileSystem>
 			{
 				while (!ms.IsSet)
 				{
-					await Task.Delay(10).ConfigureAwait(false);
+					await Task.Delay(10);
 					FileSystem.Directory.CreateDirectory(path);
 					FileSystem.Directory.Delete(path);
 				}
@@ -173,7 +173,7 @@ public abstract partial class EventTests<TFileSystem>
 				FileSystem.File.WriteAllText($"path-{i}", "");
 				while (!ms.IsSet)
 				{
-					await Task.Delay(10).ConfigureAwait(false);
+					await Task.Delay(10);
 					FileSystem.File.Move($"path-{i}", $"path-{++i}");
 				}
 			});
