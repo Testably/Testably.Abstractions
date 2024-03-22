@@ -3,6 +3,7 @@ using System.Threading;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
+// ReSharper disable AccessToDisposedClosure
 // ReSharper disable once PartialTypeWithSinglePart
 public abstract partial class IncludeSubdirectoriesTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
@@ -65,8 +66,6 @@ public abstract partial class IncludeSubdirectoriesTests<TFileSystem>
 	public void IncludeSubdirectories_SetToTrue_ShouldTriggerNotificationOnSubdirectories(
 		string baseDirectory, string subdirectoryName)
 	{
-		SkipIfBrittleTestsShouldBeSkipped(!Test.RunsOnWindows);
-
 		FileSystem.Initialize()
 			.WithSubdirectory(baseDirectory).Initialized(s => s
 				.WithSubdirectory(subdirectoryName));
