@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using Testably.Abstractions.Testing.FileSystemInitializer;
 using Testably.Abstractions.Testing.Helpers;
+using Testably.Abstractions.Testing.Initializer;
 
 namespace Testably.Abstractions.Testing;
 
@@ -37,6 +37,7 @@ public static class FileSystemInitializerExtensions
 	///     <paramref name="relativePath" /> or should include all subdirectories.<br />
 	///     The default value is <see cref="SearchOption.AllDirectories" />.
 	/// </param>
+	#pragma warning disable MA0051 // Method is too long
 	public static void InitializeEmbeddedResourcesFromAssembly(this IFileSystem fileSystem,
 		string directoryPath,
 		Assembly assembly,
@@ -63,7 +64,7 @@ public static class FileSystemInitializerExtensions
 		foreach (string resourcePath in resourcePaths)
 		{
 			string fileName = resourcePath;
-			if (fileName.StartsWith(assemblyNamePrefix))
+			if (fileName.StartsWith(assemblyNamePrefix, StringComparison.Ordinal))
 			{
 				fileName = fileName.Substring(assemblyNamePrefix.Length);
 			}
@@ -80,7 +81,7 @@ public static class FileSystemInitializerExtensions
 
 			if (relativePath != null)
 			{
-				if (!fileName.StartsWith(relativePath))
+				if (!fileName.StartsWith(relativePath, StringComparison.Ordinal))
 				{
 					continue;
 				}
@@ -107,6 +108,7 @@ public static class FileSystemInitializerExtensions
 			}
 		}
 	}
+	#pragma warning restore MA0051 // Method is too long
 
 	/// <summary>
 	///     Initializes the <see cref="IFileSystem" /> in the <paramref name="basePath" /> with test data.

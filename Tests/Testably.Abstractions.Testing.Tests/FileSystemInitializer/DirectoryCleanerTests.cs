@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Testably.Abstractions.Testing.FileSystemInitializer;
+using Testably.Abstractions.Testing.Initializer;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;

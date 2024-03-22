@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading;
 using Testably.Abstractions.Testing.Helpers;
 
-namespace Testably.Abstractions.Testing.FileSystemInitializer;
+namespace Testably.Abstractions.Testing.Initializer;
 
 [ExcludeFromCodeCoverage]
 internal sealed class DirectoryCleaner : IDirectoryCleaner
@@ -38,7 +38,10 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 		{
 			// It is important to reset the current directory, as otherwise deleting the BasePath
 			// results in a IOException, because the process cannot access the file.
-			if (_fileSystem.Directory.GetCurrentDirectory() == BasePath)
+			if (string.Equals(
+				_fileSystem.Directory.GetCurrentDirectory(),
+				BasePath,
+				_fileSystem.ExecuteOrDefault().StringComparisonMode))
 			{
 				_fileSystem.Directory.SetCurrentDirectory(_fileSystem.Path.GetTempPath());
 			}
@@ -173,12 +176,21 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 
 		_logger?.Invoke($"Use '{basePath}' as current directory.");
 		_fileSystem.Directory.SetCurrentDirectory(basePath);
-		for (int i = 0; i <= 10 && _fileSystem.Directory.GetCurrentDirectory() != basePath; i++)
+		for (int i = 0;
+			i <= 10 &&
+			!string.Equals(
+				_fileSystem.Directory.GetCurrentDirectory(),
+				basePath,
+				_fileSystem.ExecuteOrDefault().StringComparisonMode);
+			i++)
 		{
 			Thread.Sleep(5);
 		}
 
-		if (_fileSystem.Directory.GetCurrentDirectory() != basePath)
+		if (!string.Equals(
+			_fileSystem.Directory.GetCurrentDirectory(),
+			basePath,
+			_fileSystem.ExecuteOrDefault().StringComparisonMode))
 		{
 			throw new TestingException(
 				$"Could not set current directory to '{basePath}' for tests");

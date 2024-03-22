@@ -127,6 +127,7 @@ public abstract partial class Tests<TFileSystem>
 
 	#region Helpers
 
+	#pragma warning disable MA0018
 	public static TheoryData<string, Encoding, bool> EntryNameEncoding()
 	{
 		// ReSharper disable StringLiteralTypo
@@ -142,6 +143,7 @@ public abstract partial class Tests<TFileSystem>
 		// ReSharper restore StringLiteralTypo
 		return theoryData;
 	}
+	#pragma warning restore MA0018
 
 	#endregion
 }

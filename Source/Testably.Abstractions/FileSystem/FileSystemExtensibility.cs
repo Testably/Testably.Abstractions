@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Testably.Abstractions.Helpers;
 
@@ -6,7 +7,7 @@ namespace Testably.Abstractions.FileSystem;
 
 internal class FileSystemExtensibility : IFileSystemExtensibility
 {
-	private readonly Dictionary<string, object?> _metadata = new();
+	private readonly Dictionary<string, object?> _metadata = new(StringComparer.Ordinal);
 	private readonly object _wrappedInstance;
 
 	public FileSystemExtensibility(object wrappedInstance)

@@ -7,18 +7,18 @@ namespace Testably.Abstractions.Parity.Tests.TestHelpers;
 
 public class ParityCheck
 {
-	public List<Type> ExcludedBaseTypes { get; } = new()
-	{
+	public List<Type> ExcludedBaseTypes { get; } =
+	[
 		typeof(object),
 		typeof(MarshalByRefObject)
-	};
+	];
 
-	public List<ConstructorInfo?> MissingConstructors { get; } = new();
+	public List<ConstructorInfo?> MissingConstructors { get; } = [];
 
-	public List<FieldInfo?> MissingFields { get; } = new();
+	public List<FieldInfo?> MissingFields { get; } = [];
 
-	public List<MethodInfo?> MissingMethods { get; } = new();
-	public List<PropertyInfo?> MissingProperties { get; } = new();
+	public List<MethodInfo?> MissingMethods { get; } = [];
+	public List<PropertyInfo?> MissingProperties { get; } = [];
 
 	public ParityCheck(Type[]? excludeBaseTypes = null,
 		FieldInfo?[]? excludeFields = null,
@@ -55,7 +55,7 @@ public class ParityCheck
 	public List<string> GetErrorsToExtensionMethods<TAbstraction>(
 		Type systemType, ITestOutputHelper testOutputHelper)
 	{
-		List<string> parityErrors = new();
+		List<string> parityErrors = [];
 		parityErrors.AddRange(GetParityErrorsBetweenExtensionMethods<TAbstraction>(
 			systemType, testOutputHelper));
 		return parityErrors;
@@ -64,7 +64,7 @@ public class ParityCheck
 	public List<string> GetErrorsToInstanceType<TAbstraction>(
 		Type systemType, ITestOutputHelper testOutputHelper)
 	{
-		List<string> parityErrors = new();
+		List<string> parityErrors = [];
 		parityErrors.AddRange(GetParityErrorsBetweenInstanceProperties<TAbstraction>(
 			systemType, testOutputHelper));
 		parityErrors.AddRange(GetParityErrorsBetweenInstanceMethods<TAbstraction>(
@@ -75,7 +75,7 @@ public class ParityCheck
 	public List<string> GetErrorsToInstanceType<TAbstraction, TAbstractionFactory>(
 		Type systemType, ITestOutputHelper testOutputHelper)
 	{
-		List<string> parityErrors = new();
+		List<string> parityErrors = [];
 		parityErrors.AddRange(
 			GetParityErrorsBetweenInstanceConstructors<TAbstractionFactory>(
 				systemType, testOutputHelper));
@@ -89,7 +89,7 @@ public class ParityCheck
 	public List<string> GetErrorsToStaticType<TAbstraction>(
 		Type systemType, ITestOutputHelper testOutputHelper)
 	{
-		List<string> parityErrors = new();
+		List<string> parityErrors = [];
 		parityErrors.AddRange(GetParityErrorsBetweenStaticFields<TAbstraction>(
 			systemType, testOutputHelper));
 		parityErrors.AddRange(GetParityErrorsBetweenStaticMethods<TAbstraction>(

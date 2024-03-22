@@ -124,6 +124,7 @@ public static class AssertionHelpers
 	{
 		if (messageContains != null)
 		{
+			#pragma warning disable MA0074
 			Execute.Assertion
 				.ForCondition(exception.Message.Contains(messageContains))
 				.BecauseOf(because, becauseArgs)
@@ -132,6 +133,7 @@ public static class AssertionHelpers
 					"Expected {context} to have a message containing {0}{reason}, but found {1}.",
 					messageContains,
 					exception.Message);
+			#pragma warning restore MA0074
 		}
 	}
 
@@ -144,7 +146,10 @@ public static class AssertionHelpers
 			if (exception is ArgumentException argumentException)
 			{
 				Execute.Assertion
-					.ForCondition(argumentException.ParamName == paramName)
+					.ForCondition(string.Equals(
+						argumentException.ParamName,
+						paramName,
+						StringComparison.Ordinal))
 					.BecauseOf(because, becauseArgs)
 					.WithDefaultIdentifier("type")
 					.FailWith(

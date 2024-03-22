@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using Testably.Abstractions.Helpers;
-using Testably.Abstractions.Testing.FileSystemInitializer;
+using Testably.Abstractions.Testing.Initializer;
 using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Tests.Internal;

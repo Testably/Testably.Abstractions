@@ -1,4 +1,4 @@
-﻿namespace Testably.Abstractions.Testing.FileSystemInitializer;
+﻿namespace Testably.Abstractions.Testing.Initializer;
 
 /// <summary>
 ///     The description of a file for the <see cref="IFileSystem" />.

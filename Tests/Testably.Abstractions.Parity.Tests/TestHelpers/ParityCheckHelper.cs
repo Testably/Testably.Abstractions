@@ -12,7 +12,7 @@ internal static class ParityCheckHelper
 				BindingFlags.Public |
 				BindingFlags.Instance |
 				BindingFlags.FlattenHierarchy)
-			.Where(x => x.Name == systemMethod.Name)
+			.Where(x => string.Equals(x.Name, systemMethod.Name, StringComparison.Ordinal))
 			.Any(abstractionMethod => AreExtensionMethodsEqual(systemMethod, abstractionMethod)))
 		{
 			return true;
@@ -34,7 +34,7 @@ internal static class ParityCheckHelper
 				BindingFlags.Public |
 				BindingFlags.Instance |
 				BindingFlags.FlattenHierarchy)
-			.Where(x => x.Name == systemMethod.Name)
+			.Where(x => string.Equals(x.Name, systemMethod.Name, StringComparison.Ordinal))
 			.Any(abstractionMethod => AreMethodsEqual(systemMethod, abstractionMethod)))
 		{
 			return true;
@@ -56,7 +56,7 @@ internal static class ParityCheckHelper
 				BindingFlags.Public |
 				BindingFlags.Instance |
 				BindingFlags.FlattenHierarchy)
-			.Where(x => x.Name == "New")
+			.Where(x => string.Equals(x.Name, "New", StringComparison.Ordinal))
 			.Any(abstractionMethod => AreMethodsEqual(systemConstructor, abstractionMethod)))
 		{
 			return true;
@@ -72,7 +72,7 @@ internal static class ParityCheckHelper
 				BindingFlags.Public |
 				BindingFlags.Instance |
 				BindingFlags.FlattenHierarchy)
-			.Where(x => x.Name == systemProperty.Name)
+			.Where(x => string.Equals(x.Name, systemProperty.Name, StringComparison.Ordinal))
 			.Any(abstractionProperty => ArePropertiesEqual(systemProperty, abstractionProperty)))
 		{
 			return true;
@@ -94,7 +94,7 @@ internal static class ParityCheckHelper
 				BindingFlags.Public |
 				BindingFlags.Instance |
 				BindingFlags.FlattenHierarchy)
-			.Where(x => x.Name == systemField.Name)
+			.Where(x => string.Equals(x.Name, systemField.Name, StringComparison.Ordinal))
 			.Any(abstractionProperty => ArePropertiesEqual(systemField, abstractionProperty)))
 		{
 			return true;

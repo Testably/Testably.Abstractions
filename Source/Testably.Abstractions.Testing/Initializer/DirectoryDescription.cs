@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
-namespace Testably.Abstractions.Testing.FileSystemInitializer;
+namespace Testably.Abstractions.Testing.Initializer;
 
 /// <summary>
 ///     The description of a directory for the <see cref="IFileSystem" />.
@@ -35,7 +36,7 @@ public class DirectoryDescription : FileSystemInfoDescription
 	public DirectoryDescription(string name)
 		: base(name)
 	{
-		_children = new Dictionary<string, FileSystemInfoDescription>();
+		_children = new Dictionary<string, FileSystemInfoDescription>(StringComparer.Ordinal);
 	}
 
 	/// <summary>
@@ -44,7 +45,7 @@ public class DirectoryDescription : FileSystemInfoDescription
 	public DirectoryDescription(string name, params FileSystemInfoDescription[] children)
 		: base(name)
 	{
-		_children = children.ToDictionary(c => c.Name);
+		_children = children.ToDictionary(c => c.Name, StringComparer.Ordinal);
 	}
 
 	private FileSystemInfoDescription[] GetChildren()

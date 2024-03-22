@@ -13,6 +13,7 @@ public class Net48ParityTests : ParityTests
 	///     <para />
 	///     As we only support .NET Standard 2.0 these are blacklisted.
 	/// </summary>
+	#pragma warning disable MA0051 // Method is too long
 	public Net48ParityTests(ITestOutputHelper testOutputHelper)
 		: base(new TestHelpers.Parity(), testOutputHelper)
 	{
@@ -200,5 +201,6 @@ public class Net48ParityTests : ParityTests
 
 		#endregion
 	}
+	#pragma warning restore MA0051 // Method is too long
 }
 #endif

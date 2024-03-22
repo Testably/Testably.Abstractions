@@ -17,8 +17,10 @@ internal static class LocationExtensions
 		{
 			IStorageLocation? parentLocation = location.GetParent();
 			if (parentLocation != null &&
-			    fileSystem.Execute.Path.GetPathRoot(parentLocation.FullPath) !=
-			    parentLocation.FullPath &&
+			    !string.Equals(
+				    fileSystem.Execute.Path.GetPathRoot(parentLocation.FullPath),
+				    parentLocation.FullPath,
+				    fileSystem.Execute.StringComparisonMode) &&
 			    fileSystem.Storage.GetContainer(parentLocation) is NullContainer)
 			{
 				throw onDirectoryNotFound?.Invoke(location.FullPath)
@@ -52,8 +54,10 @@ internal static class LocationExtensions
 			IStorageLocation? parentLocation = location?.GetParent();
 			if (directoryNotFoundException != null &&
 			    parentLocation != null &&
-			    fileSystem.Execute.Path.GetPathRoot(parentLocation.FullPath) !=
-			    parentLocation.FullPath &&
+			    !string.Equals(
+				    fileSystem.Execute.Path.GetPathRoot(parentLocation.FullPath),
+				    parentLocation.FullPath,
+				    fileSystem.Execute.StringComparisonMode) &&
 			    fileSystem.Storage.GetContainer(parentLocation) is NullContainer)
 			{
 				directoryNotFoundException.Invoke();

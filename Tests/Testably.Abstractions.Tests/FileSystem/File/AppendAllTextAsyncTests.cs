@@ -63,7 +63,7 @@ public abstract partial class AppendAllTextAsyncTests<TFileSystem>
 		string filePath = FileSystem.Path.Combine(missingPath, fileName);
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
-			await FileSystem.File.AppendAllTextAsync(filePath, contents);
+			await FileSystem.File.AppendAllTextAsync(filePath, contents).ConfigureAwait(false);
 		});
 
 		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
@@ -102,7 +102,7 @@ public abstract partial class AppendAllTextAsyncTests<TFileSystem>
 
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
-			await FileSystem.File.AppendAllTextAsync(path, contents);
+			await FileSystem.File.AppendAllTextAsync(path, contents).ConfigureAwait(false);
 		});
 
 		exception.Should().BeException<UnauthorizedAccessException>(

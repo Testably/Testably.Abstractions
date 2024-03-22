@@ -33,7 +33,7 @@ public abstract partial class Tests<TFileSystem>
 			{
 				while (!ms.IsSet)
 				{
-					await Task.Delay(10);
+					await Task.Delay(10).ConfigureAwait(false);
 					FileSystem.Directory.CreateDirectory(path);
 					FileSystem.Directory.Delete(path);
 				}
@@ -85,7 +85,7 @@ public abstract partial class Tests<TFileSystem>
 			{
 				while (!ms.IsSet)
 				{
-					await Task.Delay(10);
+					await Task.Delay(10).ConfigureAwait(false);
 					FileSystem.Directory.CreateDirectory(path);
 					FileSystem.Directory.Delete(path);
 				}

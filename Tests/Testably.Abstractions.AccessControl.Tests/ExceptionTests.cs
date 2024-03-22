@@ -64,6 +64,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	#region Helpers
 
+	#pragma warning disable MA0018 // Do not declare static members on generic types
 	public static TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> GetFileCallbacks(
 		int baseType)
 	{
@@ -77,6 +78,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		return theoryData;
 	}
+	#pragma warning restore MA0018 // Do not declare static members on generic types
 
 	private static
 		IEnumerable<(
@@ -144,6 +146,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	#endregion
 
+	#pragma warning disable MA0062
 	[Flags]
 	public enum BaseTypes
 	{
@@ -155,6 +158,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 		None = 0,
 		All = ~None
 	}
+	#pragma warning restore MA0062
 
 	public enum MethodType
 	{

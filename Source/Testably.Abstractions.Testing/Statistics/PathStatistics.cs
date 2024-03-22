@@ -9,7 +9,7 @@ internal class PathStatistics : CallStatistics, IPathStatistics
 {
 	private readonly MockFileSystem _fileSystem;
 
-	private readonly ConcurrentDictionary<string, CallStatistics> _statistics = new();
+	private readonly ConcurrentDictionary<string, CallStatistics> _statistics;
 	private readonly IStatisticsGate _statisticsGate;
 
 	public PathStatistics(
@@ -18,6 +18,10 @@ internal class PathStatistics : CallStatistics, IPathStatistics
 		string name)
 		: base(statisticsGate, name)
 	{
+		_statistics = new ConcurrentDictionary<string, CallStatistics>(
+			fileSystem.Execute.StringComparisonMode == StringComparison.Ordinal
+				? StringComparer.Ordinal
+				: StringComparer.OrdinalIgnoreCase);
 		_statisticsGate = statisticsGate;
 		_fileSystem = fileSystem;
 	}
@@ -73,8 +77,8 @@ internal class PathStatistics : CallStatistics, IPathStatistics
 			return key;
 		}
 
-		if (path.StartsWith("//") ||
-		    path.StartsWith(@"\\") ||
+		if (path.StartsWith("//", StringComparison.Ordinal) ||
+		    path.StartsWith(@"\\", StringComparison.Ordinal) ||
 		    (path.Length >= 2 && path[1] == ':' && path[0].IsAsciiLetter()))
 		{
 			key = path;

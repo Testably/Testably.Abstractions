@@ -208,7 +208,7 @@ public abstract partial class WriteTests<TFileSystem>
 			{
 				// ReSharper disable once AccessToDisposedClosure
 				#pragma warning disable CA1835
-				await stream.WriteAsync(buffer, 0, bytes.Length, cts.Token);
+				await stream.WriteAsync(buffer, 0, bytes.Length, cts.Token).ConfigureAwait(false);
 				#pragma warning restore CA1835
 			});
 		}

@@ -13,8 +13,7 @@ public partial class RandomProviderTests
 		{
 			int maxRange = 100;
 			IEnumerable<int> enumerable = Enumerable.Range(0, maxRange);
-			RandomProvider.Generator<int> sut =
-				RandomProvider.Generator<int>.FromEnumerable(enumerable);
+			RandomProvider.Generator<int> sut = RandomProvider.Generator.FromEnumerable(enumerable);
 			sut.GetNext();
 			sut.GetNext();
 
@@ -31,7 +30,7 @@ public partial class RandomProviderTests
 		[AutoData]
 		public void FromArray_Overflow_ShouldStartAgain(Guid[] values)
 		{
-			RandomProvider.Generator<Guid> sut = RandomProvider.Generator<Guid>.FromArray(values);
+			RandomProvider.Generator<Guid> sut = RandomProvider.Generator.FromArray(values);
 
 			Guid[] results = new Guid[values.Length * 2];
 			for (int i = 0; i < values.Length * 2; i++)
@@ -46,7 +45,7 @@ public partial class RandomProviderTests
 		[AutoData]
 		public void FromArray_ShouldIterateThroughArrayValue(Guid[] values)
 		{
-			RandomProvider.Generator<Guid> sut = RandomProvider.Generator<Guid>.FromArray(values);
+			RandomProvider.Generator<Guid> sut = RandomProvider.Generator.FromArray(values);
 
 			Guid[] results = new Guid[values.Length];
 			for (int i = 0; i < values.Length; i++)
@@ -63,7 +62,7 @@ public partial class RandomProviderTests
 			int iterations = 30;
 			int startValue = 10;
 			int executionCount = 0;
-			RandomProvider.Generator<int> sut = RandomProvider.Generator<int>.FromCallback(
+			RandomProvider.Generator<int> sut = RandomProvider.Generator.FromCallback(
 				() => startValue + executionCount++);
 
 			int[] results = new int[iterations];
@@ -81,7 +80,7 @@ public partial class RandomProviderTests
 		{
 			EnumerableMock enumerable = new();
 			RandomProvider.Generator<int> sut =
-				RandomProvider.Generator<int>.FromEnumerable(enumerable);
+				RandomProvider.Generator.FromEnumerable(enumerable);
 
 			sut.Dispose();
 
@@ -96,7 +95,7 @@ public partial class RandomProviderTests
 			List<int> values = Enumerable.Range(0, maxRange).ToList();
 			IEnumerable<int> enumerable = values;
 			RandomProvider.Generator<int> sut =
-				RandomProvider.Generator<int>.FromEnumerable(enumerable);
+				RandomProvider.Generator.FromEnumerable(enumerable);
 
 			int[] results = new int[maxRange * 2];
 			for (int i = 0; i < maxRange * 2; i++)
@@ -113,7 +112,7 @@ public partial class RandomProviderTests
 			int maxRange = 100;
 			IEnumerable<int> enumerable = Enumerable.Range(0, maxRange);
 			RandomProvider.Generator<int> sut =
-				RandomProvider.Generator<int>.FromEnumerable(enumerable);
+				RandomProvider.Generator.FromEnumerable(enumerable);
 
 			for (int i = 0; i < maxRange; i++)
 			{
@@ -135,7 +134,7 @@ public partial class RandomProviderTests
 			int maxRange = 100;
 			IEnumerable<int> enumerable = Enumerable.Range(0, maxRange);
 			RandomProvider.Generator<int> sut =
-				RandomProvider.Generator<int>.FromEnumerable(enumerable);
+				RandomProvider.Generator.FromEnumerable(enumerable);
 
 			int[] results = new int[maxRange];
 			for (int i = 0; i < maxRange; i++)
@@ -151,7 +150,7 @@ public partial class RandomProviderTests
 		public void FromValue_ShouldReturnFixedValue(Guid value)
 		{
 			int maxRange = 100;
-			RandomProvider.Generator<Guid> sut = RandomProvider.Generator<Guid>.FromValue(value);
+			RandomProvider.Generator<Guid> sut = RandomProvider.Generator.FromValue(value);
 
 			Guid[] results = new Guid[maxRange];
 			for (int i = 0; i < maxRange; i++)

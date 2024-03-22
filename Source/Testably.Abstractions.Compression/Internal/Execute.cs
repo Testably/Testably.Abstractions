@@ -34,5 +34,6 @@ internal static class Execute
 			: onMockFileSystem();
 
 	private static bool IsRealFileSystem(IFileSystem fileSystem)
-		=> fileSystem.GetType().Name == "RealFileSystem";
+		=> string.Equals(fileSystem.GetType().Name, "RealFileSystem",
+			StringComparison.Ordinal);
 }
