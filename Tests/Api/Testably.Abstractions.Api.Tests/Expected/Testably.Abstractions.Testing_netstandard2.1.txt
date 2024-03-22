@@ -59,85 +59,16 @@ namespace Testably.Abstractions.Testing.FileSystem
         public System.IO.FileShare Share { get; }
     }
 }
-namespace Testably.Abstractions.Testing.FileSystemInitializer
-{
-    public class DirectoryDescription : Testably.Abstractions.Testing.FileSystemInitializer.FileSystemInfoDescription
-    {
-        public DirectoryDescription(string name) { }
-        public DirectoryDescription(string name, params Testably.Abstractions.Testing.FileSystemInitializer.FileSystemInfoDescription[] children) { }
-        public Testably.Abstractions.Testing.FileSystemInitializer.FileSystemInfoDescription[] Children { get; }
-        public override Testably.Abstractions.Testing.FileSystemInitializer.FileSystemInfoDescription this[string path] { get; }
-    }
-    public class FileDescription : Testably.Abstractions.Testing.FileSystemInitializer.FileSystemInfoDescription
-    {
-        public FileDescription(string name, byte[] bytes) { }
-        public FileDescription(string name, string? content = null) { }
-        public byte[]? Bytes { get; }
-        public string? Content { get; }
-        public bool IsReadOnly { get; set; }
-        public override Testably.Abstractions.Testing.FileSystemInitializer.FileSystemInfoDescription this[string? path] { get; }
-    }
-    public abstract class FileSystemInfoDescription
-    {
-        protected FileSystemInfoDescription(string name) { }
-        public abstract Testably.Abstractions.Testing.FileSystemInitializer.FileSystemInfoDescription this[string path] { get; }
-        public string Name { get; }
-    }
-    public interface IDirectoryCleaner : System.IDisposable
-    {
-        string BasePath { get; }
-    }
-    public interface IFileManipulator : System.IO.Abstractions.IFileSystemEntity
-    {
-        System.IO.Abstractions.IFileInfo File { get; }
-        Testably.Abstractions.Testing.FileSystemInitializer.IFileManipulator HasBytesContent(byte[] bytes);
-        Testably.Abstractions.Testing.FileSystemInitializer.IFileManipulator HasStringContent(string contents);
-    }
-    public interface IFileSystemDirectoryInitializer<out TFileSystem> : Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemInitializer<TFileSystem>
-        where out TFileSystem : System.IO.Abstractions.IFileSystem
-    {
-        System.IO.Abstractions.IDirectoryInfo Directory { get; }
-        Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> Initialized(System.Action<Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemInitializer<TFileSystem>> subdirectoryInitializer);
-    }
-    public interface IFileSystemFileInitializer<out TFileSystem> : Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemInitializer<TFileSystem>
-        where out TFileSystem : System.IO.Abstractions.IFileSystem
-    {
-        System.IO.Abstractions.IFileInfo File { get; }
-        Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemFileInitializer<TFileSystem> Which(System.Action<Testably.Abstractions.Testing.FileSystemInitializer.IFileManipulator> fileManipulation);
-    }
-    public interface IFileSystemInitializer<out TFileSystem>
-        where out TFileSystem : System.IO.Abstractions.IFileSystem
-    {
-        System.IO.Abstractions.IDirectoryInfo BaseDirectory { get; }
-        TFileSystem FileSystem { get; }
-        System.IO.Abstractions.IFileSystemInfo this[int index] { get; }
-        Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemInitializer<TFileSystem> With(params Testably.Abstractions.Testing.FileSystemInitializer.FileSystemInfoDescription[] descriptions);
-        Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemInitializer<TFileSystem> With<TDescription>(TDescription[] descriptions)
-            where TDescription : Testably.Abstractions.Testing.FileSystemInitializer.FileSystemInfoDescription;
-        Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemFileInitializer<TFileSystem> WithAFile(string? extension = null);
-        Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> WithASubdirectory();
-        Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemFileInitializer<TFileSystem> WithFile(string fileName);
-        Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemInitializer<TFileSystem> WithSubdirectories(params string[] paths);
-        Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemDirectoryInitializer<TFileSystem> WithSubdirectory(string directoryName);
-    }
-    [System.Serializable]
-    public class TestingException : System.Exception
-    {
-        public TestingException(string message) { }
-        protected TestingException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
-        public TestingException(string message, System.Exception inner) { }
-    }
-}
 namespace Testably.Abstractions.Testing
 {
     public static class FileSystemInitializerExtensions
     {
-        public static Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemInitializer<TFileSystem> Initialize<TFileSystem>(this TFileSystem fileSystem, System.Action<Testably.Abstractions.Testing.FileSystemInitializerOptions>? options = null)
+        public static Testably.Abstractions.Testing.Initializer.IFileSystemInitializer<TFileSystem> Initialize<TFileSystem>(this TFileSystem fileSystem, System.Action<Testably.Abstractions.Testing.FileSystemInitializerOptions>? options = null)
             where TFileSystem : System.IO.Abstractions.IFileSystem { }
         public static void InitializeEmbeddedResourcesFromAssembly(this System.IO.Abstractions.IFileSystem fileSystem, string directoryPath, System.Reflection.Assembly assembly, string? relativePath = null, string searchPattern = "*", System.IO.SearchOption searchOption = 1) { }
-        public static Testably.Abstractions.Testing.FileSystemInitializer.IFileSystemInitializer<TFileSystem> InitializeIn<TFileSystem>(this TFileSystem fileSystem, string basePath, System.Action<Testably.Abstractions.Testing.FileSystemInitializerOptions>? options = null)
+        public static Testably.Abstractions.Testing.Initializer.IFileSystemInitializer<TFileSystem> InitializeIn<TFileSystem>(this TFileSystem fileSystem, string basePath, System.Action<Testably.Abstractions.Testing.FileSystemInitializerOptions>? options = null)
             where TFileSystem : System.IO.Abstractions.IFileSystem { }
-        public static Testably.Abstractions.Testing.FileSystemInitializer.IDirectoryCleaner SetCurrentDirectoryToEmptyTemporaryDirectory(this System.IO.Abstractions.IFileSystem fileSystem, string? prefix = null, System.Action<string>? logger = null) { }
+        public static Testably.Abstractions.Testing.Initializer.IDirectoryCleaner SetCurrentDirectoryToEmptyTemporaryDirectory(this System.IO.Abstractions.IFileSystem fileSystem, string? prefix = null, System.Action<string>? logger = null) { }
     }
     public class FileSystemInitializerOptions
     {
@@ -231,14 +162,18 @@ namespace Testably.Abstractions.Testing
     {
         public static Testably.Abstractions.Testing.RandomSystem.IRandomProvider Default() { }
         public static Testably.Abstractions.Testing.RandomSystem.IRandomProvider Generate(int seed = -1, Testably.Abstractions.Testing.RandomProvider.Generator<System.Guid>? guidGenerator = null, Testably.Abstractions.Testing.RandomProvider.Generator<int>? intGenerator = null, Testably.Abstractions.Testing.RandomProvider.Generator<double>? doubleGenerator = null, Testably.Abstractions.Testing.RandomProvider.Generator<byte[]>? byteGenerator = null) { }
-        public sealed class Generator<T> : System.IDisposable
+        public abstract class Generator
+        {
+            protected Generator() { }
+            public static Testably.Abstractions.Testing.RandomProvider.Generator<T> FromArray<T>(T[] values) { }
+            public static Testably.Abstractions.Testing.RandomProvider.Generator<T> FromCallback<T>(System.Func<T> callback) { }
+            public static Testably.Abstractions.Testing.RandomProvider.Generator<T> FromEnumerable<T>(System.Collections.Generic.IEnumerable<T> enumerable) { }
+            public static Testably.Abstractions.Testing.RandomProvider.Generator<T> FromValue<T>(T value) { }
+        }
+        public sealed class Generator<T> : Testably.Abstractions.Testing.RandomProvider.Generator, System.IDisposable
         {
             public void Dispose() { }
             public T GetNext() { }
-            public static Testably.Abstractions.Testing.RandomProvider.Generator<T> FromArray(T[] values) { }
-            public static Testably.Abstractions.Testing.RandomProvider.Generator<T> FromCallback(System.Func<T> callback) { }
-            public static Testably.Abstractions.Testing.RandomProvider.Generator<T> FromEnumerable(System.Collections.Generic.IEnumerable<T> enumerable) { }
-            public static Testably.Abstractions.Testing.RandomProvider.Generator<T> FromValue(T value) { }
             public static Testably.Abstractions.Testing.RandomProvider.Generator<T> op_Implicit(System.Func<T> callback) { }
             public static Testably.Abstractions.Testing.RandomProvider.Generator<T> op_Implicit(T value) { }
             public static Testably.Abstractions.Testing.RandomProvider.Generator<T> op_Implicit(T[] values) { }
@@ -249,6 +184,75 @@ namespace Testably.Abstractions.Testing
         public static Testably.Abstractions.Testing.TimeSystem.ITimeProvider Now() { }
         public static Testably.Abstractions.Testing.TimeSystem.ITimeProvider Random() { }
         public static Testably.Abstractions.Testing.TimeSystem.ITimeProvider Use(System.DateTime time) { }
+    }
+}
+namespace Testably.Abstractions.Testing.Initializer
+{
+    public class DirectoryDescription : Testably.Abstractions.Testing.Initializer.FileSystemInfoDescription
+    {
+        public DirectoryDescription(string name) { }
+        public DirectoryDescription(string name, params Testably.Abstractions.Testing.Initializer.FileSystemInfoDescription[] children) { }
+        public Testably.Abstractions.Testing.Initializer.FileSystemInfoDescription[] Children { get; }
+        public override Testably.Abstractions.Testing.Initializer.FileSystemInfoDescription this[string path] { get; }
+    }
+    public class FileDescription : Testably.Abstractions.Testing.Initializer.FileSystemInfoDescription
+    {
+        public FileDescription(string name, byte[] bytes) { }
+        public FileDescription(string name, string? content = null) { }
+        public byte[]? Bytes { get; }
+        public string? Content { get; }
+        public bool IsReadOnly { get; set; }
+        public override Testably.Abstractions.Testing.Initializer.FileSystemInfoDescription this[string? path] { get; }
+    }
+    public abstract class FileSystemInfoDescription
+    {
+        protected FileSystemInfoDescription(string name) { }
+        public abstract Testably.Abstractions.Testing.Initializer.FileSystemInfoDescription this[string path] { get; }
+        public string Name { get; }
+    }
+    public interface IDirectoryCleaner : System.IDisposable
+    {
+        string BasePath { get; }
+    }
+    public interface IFileManipulator : System.IO.Abstractions.IFileSystemEntity
+    {
+        System.IO.Abstractions.IFileInfo File { get; }
+        Testably.Abstractions.Testing.Initializer.IFileManipulator HasBytesContent(byte[] bytes);
+        Testably.Abstractions.Testing.Initializer.IFileManipulator HasStringContent(string contents);
+    }
+    public interface IFileSystemDirectoryInitializer<out TFileSystem> : Testably.Abstractions.Testing.Initializer.IFileSystemInitializer<TFileSystem>
+        where out TFileSystem : System.IO.Abstractions.IFileSystem
+    {
+        System.IO.Abstractions.IDirectoryInfo Directory { get; }
+        Testably.Abstractions.Testing.Initializer.IFileSystemDirectoryInitializer<TFileSystem> Initialized(System.Action<Testably.Abstractions.Testing.Initializer.IFileSystemInitializer<TFileSystem>> subdirectoryInitializer);
+    }
+    public interface IFileSystemFileInitializer<out TFileSystem> : Testably.Abstractions.Testing.Initializer.IFileSystemInitializer<TFileSystem>
+        where out TFileSystem : System.IO.Abstractions.IFileSystem
+    {
+        System.IO.Abstractions.IFileInfo File { get; }
+        Testably.Abstractions.Testing.Initializer.IFileSystemFileInitializer<TFileSystem> Which(System.Action<Testably.Abstractions.Testing.Initializer.IFileManipulator> fileManipulation);
+    }
+    public interface IFileSystemInitializer<out TFileSystem>
+        where out TFileSystem : System.IO.Abstractions.IFileSystem
+    {
+        System.IO.Abstractions.IDirectoryInfo BaseDirectory { get; }
+        TFileSystem FileSystem { get; }
+        System.IO.Abstractions.IFileSystemInfo this[int index] { get; }
+        Testably.Abstractions.Testing.Initializer.IFileSystemInitializer<TFileSystem> With(params Testably.Abstractions.Testing.Initializer.FileSystemInfoDescription[] descriptions);
+        Testably.Abstractions.Testing.Initializer.IFileSystemInitializer<TFileSystem> With<TDescription>(TDescription[] descriptions)
+            where TDescription : Testably.Abstractions.Testing.Initializer.FileSystemInfoDescription;
+        Testably.Abstractions.Testing.Initializer.IFileSystemFileInitializer<TFileSystem> WithAFile(string? extension = null);
+        Testably.Abstractions.Testing.Initializer.IFileSystemDirectoryInitializer<TFileSystem> WithASubdirectory();
+        Testably.Abstractions.Testing.Initializer.IFileSystemFileInitializer<TFileSystem> WithFile(string fileName);
+        Testably.Abstractions.Testing.Initializer.IFileSystemInitializer<TFileSystem> WithSubdirectories(params string[] paths);
+        Testably.Abstractions.Testing.Initializer.IFileSystemDirectoryInitializer<TFileSystem> WithSubdirectory(string directoryName);
+    }
+    [System.Serializable]
+    public class TestingException : System.Exception
+    {
+        public TestingException(string message) { }
+        protected TestingException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
+        public TestingException(string message, System.Exception inner) { }
     }
 }
 namespace Testably.Abstractions.Testing.RandomSystem
