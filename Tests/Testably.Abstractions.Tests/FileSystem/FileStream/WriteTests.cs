@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
+// ReSharper disable AccessToDisposedClosure
 // ReSharper disable once PartialTypeWithSinglePart
 public abstract partial class WriteTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
