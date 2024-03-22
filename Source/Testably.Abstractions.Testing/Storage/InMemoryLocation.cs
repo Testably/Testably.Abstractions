@@ -23,7 +23,8 @@ internal sealed class InMemoryLocation : IStorageLocation
 		_fileSystem.Execute.OnNetFramework(()
 			=> friendlyName = friendlyName.TrimOnWindows(_fileSystem));
 
-		IsRooted = string.Equals(drive?.Name, fullPath, StringComparison.OrdinalIgnoreCase) ||
+		IsRooted = string.Equals(drive?.Name, fullPath,
+			           StringComparison.OrdinalIgnoreCase) ||
 		           string.Equals(drive?.Name.Substring(1), fullPath,
 			           StringComparison.OrdinalIgnoreCase);
 		FriendlyName = friendlyName;

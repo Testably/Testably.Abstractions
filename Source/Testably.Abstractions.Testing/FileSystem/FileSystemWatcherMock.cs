@@ -327,7 +327,8 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				return false;
 			}
 		}
-		else if (!string.Equals(_fileSystem.Execute.Path.GetDirectoryName(changeDescription.Path),
+		else if (!string.Equals(
+			_fileSystem.Execute.Path.GetDirectoryName(changeDescription.Path),
 			fullPath))
 		{
 			return false;

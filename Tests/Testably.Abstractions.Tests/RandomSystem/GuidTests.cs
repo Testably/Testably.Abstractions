@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 #if FEATURE_GUID_PARSE
 using System.Collections.Generic;
 #endif
+#if FEATURE_GUID_FORMATPROVIDER
+using System.Globalization;
+#endif
 
 namespace Testably.Abstractions.Tests.RandomSystem;
 

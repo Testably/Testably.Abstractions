@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.Initializer;
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
+using System.Globalization;
+#endif
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
