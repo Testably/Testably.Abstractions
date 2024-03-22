@@ -176,15 +176,12 @@ internal sealed class InMemoryStorage : IStorage
 
 		string fullPath = location.FullPath;
 		string fullPathWithoutTrailingSlash = fullPath;
-#if NETSTANDARD2_0
-		if (!fullPath.EndsWith($"{_fileSystem.Execute.Path.DirectorySeparatorChar}"))
-#else
 		if (!fullPath.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar))
-#endif
 		{
 			fullPath += _fileSystem.Execute.Path.DirectorySeparatorChar;
 		}
-		else if (_fileSystem.Execute.Path.GetPathRoot(fullPath) != fullPath)
+		else if (!string.Equals(_fileSystem.Execute.Path.GetPathRoot(fullPath), fullPath,
+			_fileSystem.Execute.StringComparisonMode))
 		{
 			fullPathWithoutTrailingSlash =
 				fullPathWithoutTrailingSlash.TrimEnd(
@@ -368,6 +365,7 @@ internal sealed class InMemoryStorage : IStorage
 	}
 
 	/// <inheritdoc cref="IStorage.Replace(IStorageLocation, IStorageLocation, IStorageLocation?, bool)" />
+	#pragma warning disable MA0051 // Method is too long
 	public IStorageLocation? Replace(IStorageLocation source,
 		IStorageLocation destination,
 		IStorageLocation? backup,
@@ -457,6 +455,7 @@ internal sealed class InMemoryStorage : IStorage
 			}
 		}
 	}
+	#pragma warning restore MA0051 // Method is too long
 
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IStorage.ResolveLinkTarget(IStorageLocation, bool)" />
@@ -621,6 +620,7 @@ internal sealed class InMemoryStorage : IStorage
 		}
 	}
 
+	#pragma warning disable MA0051 // Method is too long
 	private IStorageLocation? MoveInternal(IStorageLocation source,
 		IStorageLocation destination,
 		bool overwrite,
@@ -708,6 +708,7 @@ internal sealed class InMemoryStorage : IStorage
 
 		return source;
 	}
+	#pragma warning restore MA0051 // Method is too long
 
 #if FEATURE_FILESYSTEM_LINK
 	private IStorageLocation? ResolveFinalLinkTarget(IStorageContainer container,
@@ -748,8 +749,10 @@ internal sealed class InMemoryStorage : IStorage
 	{
 		IStorageLocation? parentLocation = location.GetParent();
 		if (parentLocation != null &&
-		    _fileSystem.Execute.Path.GetPathRoot(parentLocation.FullPath) !=
-		    parentLocation.FullPath &&
+		    !string.Equals(
+			    _fileSystem.Execute.Path.GetPathRoot(parentLocation.FullPath),
+			    parentLocation.FullPath,
+			    _fileSystem.Execute.StringComparisonMode) &&
 		    !_containers.TryGetValue(parentLocation, out _))
 		{
 			throw exceptionCallback(parentLocation);
@@ -758,7 +761,7 @@ internal sealed class InMemoryStorage : IStorage
 
 	private static void ValidateExpression(string expression)
 	{
-		if (expression.Contains('\0'))
+		if (expression.Contains('\0', StringComparison.Ordinal))
 		{
 			throw ExceptionFactory.PathHasIllegalCharacters(expression);
 		}

@@ -118,7 +118,8 @@ public abstract partial class CreateTests<TFileSystem>
 		}
 		else
 		{
-			Skip.If(suffix == "\\" || suffix == " ",
+			Skip.If(string.Equals(suffix, "\\", StringComparison.Ordinal) ||
+			        string.Equals(suffix, " ", StringComparison.Ordinal),
 				$"The case with '{suffix}' as suffix is only supported on Windows.");
 		}
 

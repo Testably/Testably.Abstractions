@@ -25,7 +25,7 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 			{
 				while (!ms.IsSet)
 				{
-					await Task.Delay(10);
+					await Task.Delay(10).ConfigureAwait(false);
 					FileSystem.Directory.CreateDirectory(path);
 					FileSystem.Directory.Delete(path);
 				}
@@ -67,7 +67,7 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 			{
 				while (!ms.IsSet)
 				{
-					await Task.Delay(10);
+					await Task.Delay(10).ConfigureAwait(false);
 					FileSystem.Directory.CreateDirectory(path);
 					FileSystem.Directory.Delete(path);
 				}
@@ -86,9 +86,10 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 		}
 	}
 
-	#region Helpers
+    #region Helpers
 
-	public static TheoryData<string, Func<IFileSystemWatcher, IWaitForChangedResult>>
+    #pragma warning disable MA0018
+    public static TheoryData<string, Func<IFileSystemWatcher, IWaitForChangedResult>>
 		GetWaitForChangedTimeoutParameters()
 	{
 		TheoryData<string, Func<IFileSystemWatcher, IWaitForChangedResult>> theoryData = new()
@@ -108,6 +109,7 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 #endif
 		return theoryData;
 	}
+	#pragma warning restore MA0018
 
-	#endregion
+    #endregion
 }

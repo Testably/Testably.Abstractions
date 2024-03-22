@@ -45,7 +45,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		_fileSystem = fileSystem;
 	}
 
-	private event EventHandler<ChangeDescription>? InternalEvent;
+	private event EventHandler<ChangeDescriptionEventArgs>? InternalEvent;
 
 	#region IFileSystemWatcher Members
 
@@ -321,12 +321,12 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		string fullPath = _fileSystem.Execute.Path.GetFullPath(Path);
 		if (IncludeSubdirectories)
 		{
-			if (!changeDescription.Path.StartsWith(fullPath))
+			if (!changeDescription.Path.StartsWith(fullPath, _fileSystem.Execute.StringComparisonMode))
 			{
 				return false;
 			}
 		}
-		else if (_fileSystem.Execute.Path.GetDirectoryName(changeDescription.Path) != fullPath)
+		else if (!string.Equals(_fileSystem.Execute.Path.GetDirectoryName(changeDescription.Path), fullPath))
 		{
 			return false;
 		}
@@ -351,7 +351,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 	private void NotifyChange(ChangeDescription item)
 	{
-		InternalEvent?.Invoke(this, item);
+		InternalEvent?.Invoke(this, new ChangeDescriptionEventArgs(item));
 		if (MatchesFilter(item))
 		{
 			if (item.ChangeType.HasFlag(WatcherChangeTypes.Created))
@@ -507,7 +507,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			transformedName = _fileSystem.Execute.Path.GetFileName(changeDescriptionPath);
 			path = _fileSystem.Execute.Path.GetDirectoryName(path);
 		}
-		else if (path.EndsWith(transformedName))
+		else if (path.EndsWith(transformedName, _fileSystem.Execute.StringComparisonMode))
 		{
 			path = path.Substring(0, path.Length - transformedName.Length);
 		}
@@ -579,12 +579,15 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		TaskCompletionSource<IWaitForChangedResult>
 			tcs = new();
 
-		void EventHandler(object? _, ChangeDescription c)
+		void EventHandler(object? _, ChangeDescriptionEventArgs c)
 		{
-			if ((c.ChangeType & changeType) != 0)
+			if ((c.ChangeDescription.ChangeType & changeType) != 0)
 			{
-				tcs.TrySetResult(new WaitForChangedResultMock(c.ChangeType, c.Name,
-					oldName: c.OldName, timedOut: false));
+				tcs.TrySetResult(new WaitForChangedResultMock(
+					c.ChangeDescription.ChangeType,
+					c.ChangeDescription.Name,
+					oldName: c.ChangeDescription.OldName,
+					timedOut: false));
 			}
 		}
 
@@ -647,5 +650,10 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 
 		/// <inheritdoc cref="IWaitForChangedResult.TimedOut" />
 		public bool TimedOut { get; }
+	}
+
+	internal class ChangeDescriptionEventArgs(ChangeDescription changeDescription) : EventArgs
+	{
+		public ChangeDescription ChangeDescription { get; } = changeDescription;
 	}
 }

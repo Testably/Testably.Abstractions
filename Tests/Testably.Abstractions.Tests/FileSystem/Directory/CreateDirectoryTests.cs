@@ -303,7 +303,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		{
 			expectedName = expectedName.TrimEnd(' ');
 		}
-		else if (suffix == "\\")
+		else if (string.Equals(suffix, "\\", StringComparison.Ordinal))
 		{
 			//This case is only supported on Windows
 			return;

@@ -17,18 +17,18 @@ internal static class StorageExtensions
 			throw new ArgumentNullException(nameof(searchPattern));
 		}
 
-		fileSystem.Execute.OnNetFrameworkIf(searchPattern.EndsWith(".."),
+		fileSystem.Execute.OnNetFrameworkIf(searchPattern.EndsWith("..", StringComparison.Ordinal),
 			() => throw ExceptionFactory.SearchPatternCannotContainTwoDots());
 
 		IStorageLocation location = storage.GetLocation(path);
 		string givenPath = location.FriendlyName;
-		if (searchPattern.StartsWith(".."))
+		if (searchPattern.StartsWith("..", StringComparison.Ordinal))
 		{
 			Stack<string> parentDirectories = new();
 			StringBuilder givenPathPrefix = new();
 
-			while (searchPattern.StartsWith(".." + Path.DirectorySeparatorChar) ||
-			       searchPattern.StartsWith(".." + Path.AltDirectorySeparatorChar))
+			while (searchPattern.StartsWith(".." + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
+			       searchPattern.StartsWith(".." + Path.AltDirectorySeparatorChar, StringComparison.Ordinal))
 			{
 				fileSystem.Execute.OnNetFramework(
 					() => throw ExceptionFactory.SearchPatternCannotContainTwoDots());

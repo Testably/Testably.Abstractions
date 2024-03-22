@@ -282,7 +282,10 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		{
 			using IDisposable registration = RegisterProperty(nameof(Name), PropertyAccess.Get);
 
-			return _fileSystem.Execute.Path.GetPathRoot(Location.FullPath) == Location.FullPath
+			return string.Equals(
+				_fileSystem.Execute.Path.GetPathRoot(Location.FullPath),
+				Location.FullPath,
+				_fileSystem.Execute.StringComparisonMode)
 				? Location.FullPath
 				: _fileSystem.Execute.Path.GetFileName(Location.FullPath.TrimEnd(
 					_fileSystem.Execute.Path.DirectorySeparatorChar,

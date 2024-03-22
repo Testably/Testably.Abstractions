@@ -1,4 +1,5 @@
 #if FEATURE_FILESYSTEM_LINK
+using System.Globalization;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
@@ -45,7 +46,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 		FileSystem.Directory.CreateDirectory(pathToTarget);
 		FileSystem.Directory.CreateSymbolicLink(path, targetFullPath);
 		FileSystem.Directory.Delete(pathToTarget);
-		FileSystem.Directory.CreateDirectory(pathToTarget.ToUpper());
+		FileSystem.Directory.CreateDirectory(pathToTarget.ToUpper(CultureInfo.InvariantCulture));
 
 		IFileSystemInfo? target =
 			FileSystem.Directory.ResolveLinkTarget(path, false);

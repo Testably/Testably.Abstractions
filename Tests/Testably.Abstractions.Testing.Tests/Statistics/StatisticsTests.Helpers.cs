@@ -39,16 +39,17 @@ public sealed partial class StatisticsTests
 			string expectedName = $"Method_{methodInfo.Name}_{string.Join("_", methodInfo
 				.GetParameters()
 				.Select(x => FirstCharToUpperAsSpan(GetName(x.ParameterType, true)
-					.Replace("<", "")
-					.Replace(">", "")
-					.Replace("IEnumerablestring", "IEnumerableString")
-					.Replace("[]", "Array"))))}{(parameters.Length > 0 ? "_" : "")}ShouldRegisterCall";
+					.Replace("<", "", StringComparison.Ordinal)
+					.Replace(">", "", StringComparison.Ordinal)
+					.Replace("IEnumerablestring", "IEnumerableString", StringComparison.Ordinal)
+					.Replace("[]", "Array", StringComparison.Ordinal))))}{(parameters.Length > 0 ? "_" : "")}ShouldRegisterCall";
 			if (testType.GetMethod(expectedName) != null)
 			{
 				return;
 			}
 
 			bool isAsync = typeof(Task).IsAssignableFrom(methodInfo.ReturnType);
+			#pragma warning disable MA0011 // IFormatProvider is missing
 			builder.AppendLine("\t[SkippableFact]");
 			builder.Append(isAsync ? "\tpublic async Task " : "\tpublic void ");
 			builder.Append(expectedName);
@@ -69,6 +70,7 @@ public sealed partial class StatisticsTests
 				$"\t\tsut.Statistics.{className}{(requireInstance ? "[\"foo\"]" : "")}.ShouldOnlyContainMethodCall(nameof({mockType.Name}.{methodInfo.Name}){(parameters.Length > 0 ? ",\n\t\t\t" : "")}{string.Join(", ", methodInfo.GetParameters().Select(p => p.Name))});");
 			builder.AppendLine("\t}");
 			builder.AppendLine();
+			#pragma warning restore MA0011 // IFormatProvider is missing
 		}
 
 		private static void CheckMethods(StringBuilder builder,
@@ -120,7 +122,7 @@ public sealed partial class StatisticsTests
 					.OrderBy(m => m.Name))
 			{
 				if (propertyInfo.GetCustomAttribute<ObsoleteAttribute>() != null ||
-				    propertyInfo.Name == nameof(IFileSystemEntity.FileSystem))
+				    string.Equals(propertyInfo.Name, nameof(IFileSystemEntity.FileSystem), StringComparison.Ordinal))
 				{
 					continue;
 				}
@@ -158,6 +160,7 @@ public sealed partial class StatisticsTests
 				return;
 			}
 
+			#pragma warning disable MA0011 // IFormatProvider is missing
 			builder.AppendLine("\t[SkippableFact]");
 			builder.Append("\tpublic void ");
 			builder.Append(expectedName);
@@ -172,6 +175,7 @@ public sealed partial class StatisticsTests
 				$"\t\tsut.Statistics.{className}{(requireInstance ? "[\"foo\"]" : "")}.ShouldOnlyContainPropertyGetAccess(nameof({mockType.Name}.{propertyInfo.Name}));");
 			builder.AppendLine("\t}");
 			builder.AppendLine();
+			#pragma warning restore MA0011 // IFormatProvider is missing
 		}
 
 		private static void CheckPropertySetAccess(StringBuilder builder,
@@ -187,6 +191,7 @@ public sealed partial class StatisticsTests
 				return;
 			}
 
+			#pragma warning disable MA0011 // IFormatProvider is missing
 			builder.AppendLine("\t[SkippableFact]");
 			builder.Append("\tpublic void ");
 			builder.Append(expectedName);
@@ -203,6 +208,7 @@ public sealed partial class StatisticsTests
 				$"\t\tsut.Statistics.{className}{(requireInstance ? "[\"foo\"]" : "")}.ShouldOnlyContainPropertySetAccess(nameof({mockType.Name}.{propertyInfo.Name}));");
 			builder.AppendLine("\t}");
 			builder.AppendLine();
+			#pragma warning restore MA0011 // IFormatProvider is missing
 		}
 
 		private static string FirstCharToUpperAsSpan(string input)
@@ -289,7 +295,7 @@ public sealed partial class StatisticsTests
 
 		private static string GetName(Type type, bool firstCharUpperCase)
 		{
-			if (type.Name == "Int32&")
+			if (string.Equals(type.Name, "Int32&", StringComparison.Ordinal))
 			{
 				return "OutInt";
 			}

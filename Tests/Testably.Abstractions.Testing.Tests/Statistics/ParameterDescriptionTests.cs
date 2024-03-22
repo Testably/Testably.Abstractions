@@ -1,4 +1,5 @@
-﻿using Testably.Abstractions.Testing.Statistics;
+﻿using System.Globalization;
+using Testably.Abstractions.Testing.Statistics;
 
 namespace Testably.Abstractions.Testing.Tests.Statistics;
 
@@ -78,7 +79,7 @@ public sealed class ParameterDescriptionTests
 
 		string? result = sut.ToString();
 
-		result.Should().Be(value.ToString());
+		result.Should().Be(value.ToString(CultureInfo.InvariantCulture));
 	}
 
 #if FEATURE_SPAN

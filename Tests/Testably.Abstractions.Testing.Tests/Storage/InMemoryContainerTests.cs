@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Storage;
@@ -267,7 +268,7 @@ public class InMemoryContainerTests
 		string path, DateTime time)
 	{
 		time = DateTime.SpecifyKind(time, DateTimeKind.Local);
-		string expectedString = time.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ssZ");
+		string expectedString = time.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ssZ", CultureInfo.InvariantCulture);
 		MockFileSystem fileSystem = new();
 		IStorageLocation location = InMemoryLocation.New(fileSystem, null, path);
 		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);

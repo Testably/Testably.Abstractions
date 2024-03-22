@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
-using Testably.Abstractions.Testing.FileSystemInitializer;
+using Testably.Abstractions.Testing.Initializer;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
@@ -158,7 +159,7 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 
 		List<string> result = FileSystem.Directory
 			.EnumerateFiles(".",
-				initialized[2].Name.ToUpper(),
+				initialized[2].Name.ToUpper(CultureInfo.InvariantCulture),
 				new EnumerationOptions
 				{
 					MatchCasing = MatchCasing.CaseInsensitive,

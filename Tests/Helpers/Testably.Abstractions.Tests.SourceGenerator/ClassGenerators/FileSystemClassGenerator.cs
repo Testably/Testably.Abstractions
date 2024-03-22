@@ -13,7 +13,7 @@ internal class FileSystemClassGenerator : ClassGeneratorBase
 	/// <inheritdoc cref="ClassGeneratorBase.GenerateSource(StringBuilder, ClassModel)" />
 	protected override void GenerateSource(StringBuilder sourceBuilder, ClassModel @class)
 		=> sourceBuilder.Append(@$"
-using Testably.Abstractions.Testing.FileSystemInitializer;
+using Testably.Abstractions.Testing.Initializer;
 using Testably.Abstractions.TestHelpers;
 using Testably.Abstractions.TestHelpers.Settings;
 using Xunit.Abstractions;

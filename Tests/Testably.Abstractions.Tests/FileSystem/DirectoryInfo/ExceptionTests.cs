@@ -114,9 +114,10 @@ public abstract partial class ExceptionTests<TFileSystem>
 		}
 	}
 
-	#region Helpers
+    #region Helpers
 
-	public static TheoryData<Expression<Action<IDirectoryInfo>>, string, bool>
+    #pragma warning disable MA0018
+    public static TheoryData<Expression<Action<IDirectoryInfo>>, string, bool>
 		GetDirectoryInfoCallbacks(string? path)
 	{
 		TheoryData<Expression<Action<IDirectoryInfo>>, string, bool> theoryData = new();
@@ -134,8 +135,9 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		return theoryData;
 	}
+	#pragma warning restore MA0018
 
-	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
+    private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
 			Expression<Action<IDirectoryInfo>> Callback)>
 		GetDirectoryInfoCallbackTestParameters(string value)
 	{

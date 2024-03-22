@@ -1,4 +1,5 @@
 #if FEATURE_FILESYSTEM_LINK
+using System.Globalization;
 using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
@@ -44,7 +45,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 		FileSystem.File.WriteAllText(pathToTarget, "foo");
 		FileSystem.File.CreateSymbolicLink(path, targetFullPath);
 		FileSystem.File.Delete(pathToTarget);
-		FileSystem.File.WriteAllText(pathToTarget.ToUpper(), contents);
+		FileSystem.File.WriteAllText(pathToTarget.ToUpper(CultureInfo.InvariantCulture), contents);
 
 		IFileSystemInfo? target =
 			FileSystem.File.ResolveLinkTarget(path, false);

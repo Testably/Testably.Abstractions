@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
 using System.Collections.Generic;
 using Testably.Abstractions.Tests.SourceGenerator.Model;
 
@@ -7,7 +8,7 @@ namespace Testably.Abstractions.Tests.SourceGenerator;
 
 internal sealed class SyntaxReceiver : ISyntaxReceiver
 {
-	private readonly Dictionary<string, List<ClassModel>> _classModels = new();
+	private readonly Dictionary<string, List<ClassModel>> _classModels = new(StringComparer.Ordinal);
 
 	public SyntaxReceiver(IEnumerable<ClassGeneratorBase> classGenerators)
 	{

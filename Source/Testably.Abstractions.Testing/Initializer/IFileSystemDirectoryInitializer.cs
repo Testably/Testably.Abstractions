@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Testably.Abstractions.Testing.FileSystemInitializer;
+namespace Testably.Abstractions.Testing.Initializer;
 
 /// <summary>
 ///     Initializes a directory in the <see cref="IFileSystem" /> with test data.

@@ -34,7 +34,7 @@ internal static class FileSystemExtensions
 		IStorageLocation source,
 		IStorageLocation destination)
 	{
-		if (!location.FullPath.StartsWith(source.FullPath))
+		if (!location.FullPath.StartsWith(source.FullPath, fileSystem.Execute.StringComparisonMode))
 		{
 			throw new NotSupportedException(
 				$"The location '{location.FullPath}' is not under source '{source.FullPath}'!");
@@ -60,11 +60,11 @@ internal static class FileSystemExtensions
 		}
 
 		string currentDirectory = fileSystem.Execute.Path.GetFullPath(givenPath);
-		if (currentDirectory == string.Empty.PrefixRoot(fileSystem))
+		if (string.Equals(currentDirectory, string.Empty.PrefixRoot(fileSystem), fileSystem.Execute.StringComparisonMode))
 		{
 			fullFilePath = fullFilePath.Substring(currentDirectory.Length);
 		}
-		else if (fullFilePath.StartsWith(currentDirectory + Path.DirectorySeparatorChar))
+		else if (fullFilePath.StartsWith(currentDirectory + Path.DirectorySeparatorChar, fileSystem.Execute.StringComparisonMode))
 		{
 			fullFilePath = fullFilePath.Substring(currentDirectory.Length + 1);
 		}
@@ -72,7 +72,7 @@ internal static class FileSystemExtensions
 		{
 			string? parentName = currentDirectory;
 			while (parentName != null &&
-			       !fullFilePath.StartsWith(parentName + Path.DirectorySeparatorChar))
+			       !fullFilePath.StartsWith(parentName + Path.DirectorySeparatorChar, fileSystem.Execute.StringComparisonMode))
 			{
 				parentName = Path.GetDirectoryName(parentName);
 				int lastIndex = givenPath.LastIndexOf(Path.DirectorySeparatorChar);
@@ -88,7 +88,7 @@ internal static class FileSystemExtensions
 			}
 		}
 
-		if (!fullFilePath.StartsWith(givenPath + fileSystem.Execute.Path.DirectorySeparatorChar))
+		if (!fullFilePath.StartsWith(givenPath + fileSystem.Execute.Path.DirectorySeparatorChar, fileSystem.Execute.StringComparisonMode))
 		{
 			return fileSystem.Execute.Path.Combine(givenPath, fullFilePath);
 		}

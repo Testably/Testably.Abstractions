@@ -79,7 +79,9 @@ public static class FileSystemName
 	/// </remarks>
 	public static string TranslateWin32Expression(string? expression)
 	{
-		if (string.IsNullOrEmpty(expression) || expression == "*" || expression == "*.*")
+		if (string.IsNullOrEmpty(expression) ||
+		    string.Equals(expression, "*", StringComparison.Ordinal) ||
+		    string.Equals(expression, "*.*", StringComparison.Ordinal))
 		{
 			return "*";
 		}
@@ -178,6 +180,7 @@ public static class FileSystemName
 	//		   set of contiguous DOS_QMs.
 	//	   DOS_DOT matches either a . or zero characters beyond name string.
 
+	#pragma warning disable MA0051 // Method is too long
 	private static bool MatchPattern(string expression, string name, bool ignoreCase,
 		bool useExtendedWildcards)
 	{
@@ -466,5 +469,6 @@ public static class FileSystemName
 
 		return currentState == maxState;
 	}
+	#pragma warning restore MA0051 // Method is too long
 }
 #endif

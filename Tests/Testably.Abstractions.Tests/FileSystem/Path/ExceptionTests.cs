@@ -64,9 +64,10 @@ public abstract partial class ExceptionTests<TFileSystem>
 			$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	#region Helpers
+    #region Helpers
 
-	public static TheoryData<Expression<Action<IPath>>, string, bool> GetPathCallbacks(string? path)
+    #pragma warning disable MA0018
+    public static TheoryData<Expression<Action<IPath>>, string, bool> GetPathCallbacks(string? path)
 	{
 		TheoryData<Expression<Action<IPath>>, string, bool> theoryData = new();
 		foreach ((ExceptionTestHelper.TestTypes TestType,
@@ -82,8 +83,9 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		return theoryData;
 	}
+	#pragma warning restore MA0018
 
-	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
+    private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
 			Expression<Action<IPath>> Callback)>
 		GetPathCallbackTestParameters(string value)
 	{

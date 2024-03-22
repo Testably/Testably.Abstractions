@@ -59,18 +59,18 @@ public static class RandomProvider
 	/// <summary>
 	///     Replaces random element generation of type <typeparamref name="T" />.
 	/// </summary>
-	public sealed class Generator<T> : IDisposable
+	public sealed class Generator<T> : Generator, IDisposable
 	{
 		private readonly Func<T> _callback;
 		private readonly IEnumerator<T>? _enumerator;
 		private bool _isDisposed;
 
-		private Generator(Func<T> callback)
+		internal Generator(Func<T> callback)
 		{
 			_callback = callback;
 		}
 
-		private Generator(IEnumerable<T> enumerable)
+		internal Generator(IEnumerable<T> enumerable)
 		{
 			_enumerator = enumerable.GetEnumerator();
 			_callback = () =>
@@ -95,41 +95,6 @@ public static class RandomProvider
 		}
 
 		#endregion
-
-		/// <summary>
-		///     Creates a generator the iterates over the provided <paramref name="values" />.
-		///     <para />
-		///     When the end of the array is reached, the values are repeated again from the beginning.
-		/// </summary>
-		public static Generator<T> FromArray(T[] values)
-		{
-			int index = 0;
-			return new Generator<T>(() => values[index++ % values.Length]);
-		}
-
-		/// <summary>
-		///     Creates a generator that gets the elements from the provided <paramref name="callback" />
-		/// </summary>
-		public static Generator<T> FromCallback(Func<T> callback)
-		{
-			return new Generator<T>(callback);
-		}
-
-		/// <summary>
-		///     Creates a generator the iterates over the provided <paramref name="enumerable" />.
-		/// </summary>
-		public static Generator<T> FromEnumerable(IEnumerable<T> enumerable)
-		{
-			return new Generator<T>(enumerable);
-		}
-
-		/// <summary>
-		///     Creates a generator that always returns the fixed <paramref name="value" />.
-		/// </summary>
-		public static Generator<T> FromValue(T value)
-		{
-			return new Generator<T>(() => value);
-		}
 
 		/// <summary>
 		///     Gets the next value of <typeparamref name="T" />
@@ -162,5 +127,47 @@ public static class RandomProvider
 		/// </summary>
 		public static implicit operator Generator<T>(T value)
 			=> FromValue(value);
+	}
+
+	/// <summary>
+	///     Replaces random element generation.
+	/// </summary>
+	public abstract class Generator
+	{
+
+		/// <summary>
+		///     Creates a generator the iterates over the provided <paramref name="values" />.
+		///     <para />
+		///     When the end of the array is reached, the values are repeated again from the beginning.
+		/// </summary>
+		public static Generator<T> FromArray<T>(T[] values)
+		{
+			int index = 0;
+			return new Generator<T>(() => values[index++ % values.Length]);
+		}
+
+		/// <summary>
+		///     Creates a generator that gets the elements from the provided <paramref name="callback" />
+		/// </summary>
+		public static Generator<T> FromCallback<T>(Func<T> callback)
+		{
+			return new Generator<T>(callback);
+		}
+
+		/// <summary>
+		///     Creates a generator the iterates over the provided <paramref name="enumerable" />.
+		/// </summary>
+		public static Generator<T> FromEnumerable<T>(IEnumerable<T> enumerable)
+		{
+			return new Generator<T>(enumerable);
+		}
+
+		/// <summary>
+		///     Creates a generator that always returns the fixed <paramref name="value" />.
+		/// </summary>
+		public static Generator<T> FromValue<T>(T value)
+		{
+			return new Generator<T>(() => value);
+		}
 	}
 }

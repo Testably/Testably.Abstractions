@@ -102,9 +102,9 @@ internal static class PathHelper
 		}
 
 		return fileSystem.Execute.OnWindows(
-			() => path.StartsWith(new string(fileSystem.Execute.Path.DirectorySeparatorChar, 2)) ||
-			      path.StartsWith(new string(fileSystem.Execute.Path.AltDirectorySeparatorChar, 2)),
-			() => path.StartsWith(new string(fileSystem.Execute.Path.DirectorySeparatorChar, 2)));
+			() => path.StartsWith(new string(fileSystem.Execute.Path.DirectorySeparatorChar, 2), StringComparison.OrdinalIgnoreCase) ||
+			      path.StartsWith(new string(fileSystem.Execute.Path.AltDirectorySeparatorChar, 2), StringComparison.OrdinalIgnoreCase),
+			() => path.StartsWith(new string(fileSystem.Execute.Path.DirectorySeparatorChar, 2), StringComparison.OrdinalIgnoreCase));
 	}
 
 	internal static void ThrowCommonExceptionsIfPathToTargetIsInvalid(

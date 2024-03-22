@@ -52,7 +52,7 @@ public abstract partial class SearchFilterTests<TFileSystem>
 			.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
 
 		result.Length.Should().Be(expectedMatchingFiles);
-		if (!searchPattern.EndsWith("a*"))
+		if (!searchPattern.EndsWith("a*", StringComparison.Ordinal))
 		{
 			result.Should().Contain(System.IO.Path.Combine(".", "../..", "bar"));
 			result.Should().Contain(System.IO.Path.Combine(".", "../..", "bar", "xyz"));
@@ -82,7 +82,7 @@ public abstract partial class SearchFilterTests<TFileSystem>
 			.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
 
 		result.Length.Should().Be(expectedMatchingFiles);
-		if (!searchPattern.EndsWith("a*"))
+		if (!searchPattern.EndsWith("a*", StringComparison.Ordinal))
 		{
 			result.Should().Contain(System.IO.Path.Combine(".", "../../..", "foo"));
 			result.Should()
@@ -141,7 +141,7 @@ public abstract partial class SearchFilterTests<TFileSystem>
 		string currentDirectory = FileSystem.Directory.GetCurrentDirectory();
 		int directoryCount = currentDirectory.Length -
 		                     currentDirectory
-			                     .Replace($"{FileSystem.Path.DirectorySeparatorChar}", "")
+			                     .Replace($"{FileSystem.Path.DirectorySeparatorChar}", "", StringComparison.Ordinal)
 			                     .Length;
 
 		StringBuilder sb = new();

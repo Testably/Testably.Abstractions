@@ -38,9 +38,11 @@ public abstract partial class GuidTests<TRandomSystem>
 	{
 		ReadOnlySpan<char> serializedGuid = guid.ToString().AsSpan();
 
-		Guid result = RandomSystem.Guid.Parse(serializedGuid);
+		#pragma warning disable MA0011
+        Guid result = RandomSystem.Guid.Parse(serializedGuid);
+        #pragma warning restore MA0011
 
-		result.Should().Be(guid);
+        result.Should().Be(guid);
 	}
 #endif
 
@@ -51,9 +53,11 @@ public abstract partial class GuidTests<TRandomSystem>
 	{
 		string serializedGuid = guid.ToString();
 
-		Guid result = RandomSystem.Guid.Parse(serializedGuid);
+		#pragma warning disable MA0011
+        Guid result = RandomSystem.Guid.Parse(serializedGuid);
+        #pragma warning restore MA0011
 
-		result.Should().Be(guid);
+        result.Should().Be(guid);
 	}
 #endif
 
@@ -117,9 +121,11 @@ public abstract partial class GuidTests<TRandomSystem>
 	{
 		ReadOnlySpan<char> serializedGuid = guid.ToString().AsSpan();
 
-		bool result = RandomSystem.Guid.TryParse(serializedGuid, out Guid value);
+		#pragma warning disable MA0011
+        bool result = RandomSystem.Guid.TryParse(serializedGuid, out Guid value);
+        #pragma warning restore MA0011
 
-		result.Should().BeTrue();
+        result.Should().BeTrue();
 		value.Should().Be(guid);
 	}
 #endif
@@ -131,9 +137,11 @@ public abstract partial class GuidTests<TRandomSystem>
 	{
 		string serializedGuid = guid.ToString();
 
-		bool result = RandomSystem.Guid.TryParse(serializedGuid, out Guid value);
+		#pragma warning disable MA0011
+        bool result = RandomSystem.Guid.TryParse(serializedGuid, out Guid value);
+        #pragma warning restore MA0011
 
-		result.Should().BeTrue();
+        result.Should().BeTrue();
 		value.Should().Be(guid);
 	}
 #endif
@@ -203,6 +211,7 @@ public abstract partial class GuidTests<TRandomSystem>
 	#region Helpers
 
 #if FEATURE_GUID_PARSE
+	#pragma warning disable MA0018
 	public static IEnumerable<object[]> GuidFormats()
 	{
 		yield return new object[]
@@ -226,7 +235,8 @@ public abstract partial class GuidTests<TRandomSystem>
 			"X"
 		};
 	}
+	#pragma warning restore MA0018
 #endif
 
-	#endregion
+    #endregion
 }

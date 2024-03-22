@@ -82,9 +82,10 @@ public abstract partial class ExceptionTests<TFileSystem>
 			$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	#region Helpers
+    #region Helpers
 
-	public static TheoryData<Expression<Action<IFileInfo>>, string, bool> GetFileInfoCallbacks(
+    #pragma warning disable MA0018
+    public static TheoryData<Expression<Action<IFileInfo>>, string, bool> GetFileInfoCallbacks(
 		string? path)
 	{
 		TheoryData<Expression<Action<IFileInfo>>, string, bool> theoryData = new();
@@ -101,8 +102,9 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		return theoryData;
 	}
+	#pragma warning restore MA0018
 
-	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
+    private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
 			Expression<Action<IFileInfo>> Callback)>
 		GetFileInfoCallbackTestParameters(string value)
 	{

@@ -1,4 +1,5 @@
 ﻿#if NETSTANDARD2_0
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Testably.Abstractions.Polyfills;
@@ -16,7 +17,9 @@ internal static class StringExtensionMethods
 		this string @this,
 		char value)
 	{
+		#pragma warning disable MA0074
 		return @this.EndsWith($"{value}");
+		#pragma warning restore MA0074
 	}
 }
 #endif

@@ -1,7 +1,7 @@
 ﻿#if !NET8_0_OR_GREATER
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using Testably.Abstractions.Testing.FileSystemInitializer;
+using Testably.Abstractions.Testing.Initializer;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
 
