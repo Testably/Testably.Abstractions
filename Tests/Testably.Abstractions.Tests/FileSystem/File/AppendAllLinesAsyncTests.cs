@@ -68,7 +68,7 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 		string filePath = FileSystem.Path.Combine(missingPath, fileName);
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
-			await FileSystem.File.AppendAllLinesAsync(filePath, contents).ConfigureAwait(false);
+			await FileSystem.File.AppendAllLinesAsync(filePath, contents);
 		});
 
 		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
@@ -95,7 +95,7 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 	{
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
-			await FileSystem.File.AppendAllLinesAsync(path, null!).ConfigureAwait(false);
+			await FileSystem.File.AppendAllLinesAsync(path, null!);
 		});
 
 		exception.Should().BeException<ArgumentNullException>(
@@ -110,7 +110,7 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 	{
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
-			await FileSystem.File.AppendAllLinesAsync(path, new List<string>(), null!).ConfigureAwait(false);
+			await FileSystem.File.AppendAllLinesAsync(path, new List<string>(), null!);
 		});
 
 		exception.Should().BeException<ArgumentNullException>(
@@ -144,7 +144,7 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
-			await FileSystem.File.AppendAllLinesAsync(path, contents).ConfigureAwait(false);
+			await FileSystem.File.AppendAllLinesAsync(path, contents);
 		});
 
 		exception.Should().BeException<UnauthorizedAccessException>(

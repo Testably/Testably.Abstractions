@@ -169,7 +169,7 @@ public abstract partial class TimerTests<TTimeSystem>
 					ms3.Set();
 				}
 
-				await Task.Delay(10).ConfigureAwait(false);
+				await Task.Delay(10);
 			},
 			null, 0 * TimerMultiplier, 200 * TimerMultiplier);
 		ms.Wait(30000).Should().BeTrue();
@@ -224,7 +224,7 @@ public abstract partial class TimerTests<TTimeSystem>
 					ms3.Set();
 				}
 
-				await Task.Delay(10).ConfigureAwait(false);
+				await Task.Delay(10);
 			},
 			null, 0L * TimerMultiplier, 200L * TimerMultiplier);
 		ms.Wait(30000).Should().BeTrue();
@@ -279,7 +279,7 @@ public abstract partial class TimerTests<TTimeSystem>
 					ms3.Set();
 				}
 
-				await Task.Delay(10).ConfigureAwait(false);
+				await Task.Delay(10);
 			}, null, TimeSpan.FromMilliseconds(0 * TimerMultiplier),
 			TimeSpan.FromMilliseconds(200 * TimerMultiplier));
 		ms.Wait(30000).Should().BeTrue();

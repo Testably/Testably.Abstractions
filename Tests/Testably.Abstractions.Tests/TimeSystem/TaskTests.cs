@@ -20,7 +20,7 @@ public abstract partial class TaskTests<TTimeSystem>
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
 			await TimeSystem.Task.Delay(millisecondsTimeout, cts.Token)
-				.ConfigureAwait(false);
+				;
 		});
 
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
@@ -32,8 +32,8 @@ public abstract partial class TaskTests<TTimeSystem>
 	{
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
-			await TimeSystem.Task.Delay(-2).ConfigureAwait(false);
-		}).ConfigureAwait(false);
+			await TimeSystem.Task.Delay(-2);
+		});
 
 		exception.Should().BeException<ArgumentOutOfRangeException>(hResult: -2146233086);
 	}
@@ -45,7 +45,7 @@ public abstract partial class TaskTests<TTimeSystem>
 		int millisecondsTimeout = 100;
 
 		DateTime before = TimeSystem.DateTime.UtcNow;
-		await TimeSystem.Task.Delay(millisecondsTimeout).ConfigureAwait(false);
+		await TimeSystem.Task.Delay(millisecondsTimeout);
 		DateTime after = TimeSystem.DateTime.UtcNow;
 
 		after.Should().BeOnOrAfter(before.AddMilliseconds(millisecondsTimeout)
@@ -63,7 +63,7 @@ public abstract partial class TaskTests<TTimeSystem>
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
 			await TimeSystem.Task.Delay(timeout, cts.Token)
-				.ConfigureAwait(false);
+				;
 		});
 
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
@@ -77,8 +77,8 @@ public abstract partial class TaskTests<TTimeSystem>
 		{
 			await TimeSystem.Task
 				.Delay(TimeSpan.FromMilliseconds(-2))
-				.ConfigureAwait(false);
-		}).ConfigureAwait(false);
+				;
+		});
 
 		exception.Should().BeException<ArgumentOutOfRangeException>(hResult: -2146233086);
 	}
@@ -90,7 +90,7 @@ public abstract partial class TaskTests<TTimeSystem>
 		TimeSpan timeout = TimeSpan.FromMilliseconds(100);
 
 		DateTime before = TimeSystem.DateTime.UtcNow;
-		await TimeSystem.Task.Delay(timeout).ConfigureAwait(false);
+		await TimeSystem.Task.Delay(timeout);
 		DateTime after = TimeSystem.DateTime.UtcNow;
 
 		after.Should().BeOnOrAfter(before.Add(timeout).ApplySystemClockTolerance());
