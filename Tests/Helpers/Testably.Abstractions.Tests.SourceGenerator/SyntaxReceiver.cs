@@ -8,7 +8,8 @@ namespace Testably.Abstractions.Tests.SourceGenerator;
 
 internal sealed class SyntaxReceiver : ISyntaxReceiver
 {
-	private readonly Dictionary<string, List<ClassModel>> _classModels = new(StringComparer.Ordinal);
+	private readonly Dictionary<string, List<ClassModel>>
+		_classModels = new(StringComparer.Ordinal);
 
 	public SyntaxReceiver(IEnumerable<ClassGeneratorBase> classGenerators)
 	{

@@ -339,7 +339,8 @@ internal class InMemoryContainer : IStorageContainer
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
-			=> _time.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ssZ", CultureInfo.InvariantCulture);
+			=> _time.ToUniversalTime()
+				.ToString("yyyy-MM-dd HH:mm:ssZ", CultureInfo.InvariantCulture);
 	}
 
 	private sealed class FileHandle : IStorageAccessHandle

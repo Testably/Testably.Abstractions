@@ -70,10 +70,10 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		}
 	}
 
-    #region Helpers
+	#region Helpers
 
-    #pragma warning disable MA0018
-    public static TheoryData<Expression<Action<IFile, string>>, Func<Test, bool>> GetFileCallbacks(
+	#pragma warning disable MA0018
+	public static TheoryData<Expression<Action<IFile, string>>, Func<Test, bool>> GetFileCallbacks(
 		int testCases)
 	{
 		TheoryData<Expression<Action<IFile, string>>, Func<Test, bool>> theoryData = new();
@@ -89,7 +89,7 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 	}
 	#pragma warning restore MA0018
 
-    private static IEnumerable<(MissingFileTestCases TestCase, ExpectedExceptionType ExceptionType,
+	private static IEnumerable<(MissingFileTestCases TestCase, ExpectedExceptionType ExceptionType,
 			Expression<Action<IFile, string>> Callback, Func<Test, bool>? SkipTest)>
 		GetFileCallbackTestParameters()
 	{

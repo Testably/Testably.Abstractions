@@ -145,7 +145,8 @@ public abstract partial class Tests<TFileSystem>
 		{
 			driveInfo = FileSystem.DriveInfo.New($"{c}");
 			if (FileSystem.DriveInfo.GetDrives()
-				.All(d => !string.Equals(d.Name, driveInfo.Name, StringComparison.OrdinalIgnoreCase)))
+				.All(d => !string.Equals(d.Name, driveInfo.Name,
+					StringComparison.OrdinalIgnoreCase)))
 			{
 				break;
 			}

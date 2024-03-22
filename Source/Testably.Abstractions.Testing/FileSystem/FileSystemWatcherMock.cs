@@ -321,12 +321,14 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		string fullPath = _fileSystem.Execute.Path.GetFullPath(Path);
 		if (IncludeSubdirectories)
 		{
-			if (!changeDescription.Path.StartsWith(fullPath, _fileSystem.Execute.StringComparisonMode))
+			if (!changeDescription.Path.StartsWith(fullPath,
+				_fileSystem.Execute.StringComparisonMode))
 			{
 				return false;
 			}
 		}
-		else if (!string.Equals(_fileSystem.Execute.Path.GetDirectoryName(changeDescription.Path), fullPath))
+		else if (!string.Equals(_fileSystem.Execute.Path.GetDirectoryName(changeDescription.Path),
+			fullPath))
 		{
 			return false;
 		}

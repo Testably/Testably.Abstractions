@@ -26,7 +26,7 @@ internal static class Helper
 		{
 			string path = GetTestSettingsPath();
 			string content = File.ReadAllText(path);
-			JsonSerializerOptions options = new JsonSerializerOptions();
+			JsonSerializerOptions options = new();
 			options.Converters.Add(new JsonStringEnumConverter());
 			return JsonSerializer.Deserialize<TestEnvironment>(content, options)
 			       ?? throw new NotSupportedException("The file has an invalid syntax!");

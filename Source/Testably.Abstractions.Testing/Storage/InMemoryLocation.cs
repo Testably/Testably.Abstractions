@@ -24,7 +24,8 @@ internal sealed class InMemoryLocation : IStorageLocation
 			=> friendlyName = friendlyName.TrimOnWindows(_fileSystem));
 
 		IsRooted = string.Equals(drive?.Name, fullPath, StringComparison.OrdinalIgnoreCase) ||
-		           string.Equals(drive?.Name.Substring(1), fullPath, StringComparison.OrdinalIgnoreCase);
+		           string.Equals(drive?.Name.Substring(1), fullPath,
+			           StringComparison.OrdinalIgnoreCase);
 		FriendlyName = friendlyName;
 		Drive = drive;
 	}
@@ -74,9 +75,9 @@ internal sealed class InMemoryLocation : IStorageLocation
 #if NETSTANDARD2_0
 	/// <inheritdoc cref="object.GetHashCode()" />
 	public override int GetHashCode()
-#pragma warning disable MA0021 // Use StringComparer.GetHashCode
+		#pragma warning disable MA0021 // Use StringComparer.GetHashCode
 		=> _key.ToLowerInvariant().GetHashCode();
-#pragma warning restore MA0021 // Use StringComparer.GetHashCode
+	#pragma warning restore MA0021 // Use StringComparer.GetHashCode
 #else
 	/// <inheritdoc cref="object.GetHashCode()" />
 	public override int GetHashCode()
@@ -88,9 +89,9 @@ internal sealed class InMemoryLocation : IStorageLocation
 	{
 		string? parentPath = _fileSystem.Execute.Path.GetDirectoryName(FullPath);
 		if (string.Equals(
-				_fileSystem.Execute.Path.GetPathRoot(FullPath),
-				FullPath,
-				_fileSystem.Execute.StringComparisonMode)
+			    _fileSystem.Execute.Path.GetPathRoot(FullPath),
+			    FullPath,
+			    _fileSystem.Execute.StringComparisonMode)
 		    || parentPath == null)
 		{
 			return null;

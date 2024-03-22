@@ -46,7 +46,8 @@ internal static class ChangeDescriptionExtensions
 			return false;
 		}
 
-		if (!string.Equals(searchPattern, EnumerationOptionsHelper.DefaultSearchPattern, StringComparison.Ordinal) &&
+		if (!string.Equals(searchPattern, EnumerationOptionsHelper.DefaultSearchPattern,
+			    StringComparison.Ordinal) &&
 		    (changeDescription.Name == null ||
 		     !EnumerationOptionsHelper.MatchesPattern(
 			     execute,

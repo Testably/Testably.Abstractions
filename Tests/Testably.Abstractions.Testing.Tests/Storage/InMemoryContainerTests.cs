@@ -268,7 +268,8 @@ public class InMemoryContainerTests
 		string path, DateTime time)
 	{
 		time = DateTime.SpecifyKind(time, DateTimeKind.Local);
-		string expectedString = time.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ssZ", CultureInfo.InvariantCulture);
+		string expectedString = time.ToUniversalTime()
+			.ToString("yyyy-MM-dd HH:mm:ssZ", CultureInfo.InvariantCulture);
 		MockFileSystem fileSystem = new();
 		IStorageLocation location = InMemoryLocation.New(fileSystem, null, path);
 		IStorageContainer fileContainer = InMemoryContainer.NewFile(location, fileSystem);

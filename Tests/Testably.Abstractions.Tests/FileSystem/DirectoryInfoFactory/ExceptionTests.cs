@@ -92,10 +92,10 @@ public abstract partial class ExceptionTests<TFileSystem>
 			$"\n{callback}\n has whitespace parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-    #region Helpers
+	#region Helpers
 
-    #pragma warning disable MA0018
-    public static TheoryData<Expression<Action<IDirectoryInfoFactory>>, string, bool>
+	#pragma warning disable MA0018
+	public static TheoryData<Expression<Action<IDirectoryInfoFactory>>, string, bool>
 		GetDirectoryInfoFactoryCallbacks(string? path)
 	{
 		TheoryData<Expression<Action<IDirectoryInfoFactory>>, string, bool> theoryData = new();
@@ -115,7 +115,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	}
 	#pragma warning restore MA0018
 
-    private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
+	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
 			Expression<Action<IDirectoryInfoFactory>> Callback)>
 		GetDirectoryInfoFactoryCallbackTestParameters(string value)
 	{

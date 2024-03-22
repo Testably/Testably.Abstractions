@@ -176,10 +176,12 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 
 		_logger?.Invoke($"Use '{basePath}' as current directory.");
 		_fileSystem.Directory.SetCurrentDirectory(basePath);
-		for (int i = 0; i <= 10 && !string.Equals(
+		for (int i = 0;
+			i <= 10 && !string.Equals(
 				_fileSystem.Directory.GetCurrentDirectory(),
 				basePath,
-				_fileSystem.ExecuteOrDefault().StringComparisonMode); i++)
+				_fileSystem.ExecuteOrDefault().StringComparisonMode);
+			i++)
 		{
 			Thread.Sleep(5);
 		}

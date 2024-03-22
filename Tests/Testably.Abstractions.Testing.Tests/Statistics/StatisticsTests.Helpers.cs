@@ -122,7 +122,8 @@ public sealed partial class StatisticsTests
 					.OrderBy(m => m.Name))
 			{
 				if (propertyInfo.GetCustomAttribute<ObsoleteAttribute>() != null ||
-				    string.Equals(propertyInfo.Name, nameof(IFileSystemEntity.FileSystem), StringComparison.Ordinal))
+				    string.Equals(propertyInfo.Name, nameof(IFileSystemEntity.FileSystem),
+					    StringComparison.Ordinal))
 				{
 					continue;
 				}

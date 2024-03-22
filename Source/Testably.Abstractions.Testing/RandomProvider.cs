@@ -134,7 +134,6 @@ public static class RandomProvider
 	/// </summary>
 	public abstract class Generator
 	{
-
 		/// <summary>
 		///     Creates a generator the iterates over the provided <paramref name="values" />.
 		///     <para />

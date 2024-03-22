@@ -75,14 +75,14 @@ public abstract partial class DisposeTests<TFileSystem>
 			.BeEmpty($"\n{callback}\n executed after Dispose() was called.");
 	}
 
-    #region Helpers
+	#region Helpers
 
-    #pragma warning disable MA0018
-    public static TheoryData<Expression<Action<FileSystemStream>>> GetFileStreamCallbacks()
+	#pragma warning disable MA0018
+	public static TheoryData<Expression<Action<FileSystemStream>>> GetFileStreamCallbacks()
 		=> new(GetFileStreamCallbackTestParameters());
-    #pragma warning restore MA0018
+	#pragma warning restore MA0018
 
-    private static IEnumerable<Expression<Action<FileSystemStream>>>
+	private static IEnumerable<Expression<Action<FileSystemStream>>>
 		GetFileStreamCallbackTestParameters()
 	{
 		yield return fileStream => fileStream.BeginRead(Array.Empty<byte>(), 0, 0, null, null);

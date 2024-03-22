@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Globalization;
 using System.Threading.Tasks;
 #if FEATURE_GUID_PARSE
 using System.Collections.Generic;
@@ -238,5 +237,5 @@ public abstract partial class GuidTests<TRandomSystem>
 	#pragma warning restore MA0018
 #endif
 
-    #endregion
+	#endregion
 }

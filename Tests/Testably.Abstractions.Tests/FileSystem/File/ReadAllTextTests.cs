@@ -162,12 +162,12 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 		exception.Should().NotBeNull();
 	}
 
-    #region Helpers
+	#region Helpers
 
-    #pragma warning disable MA0018
-    public static TheoryData<Encoding> GetEncodingsForReadAllText()
+	#pragma warning disable MA0018
+	public static TheoryData<Encoding> GetEncodingsForReadAllText()
 	{
-		return new()
+		return new TheoryData<Encoding>
 		{
 			// little endian
 			new UTF32Encoding(false, true, true),
@@ -179,5 +179,5 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 	}
 	#pragma warning restore MA0018
 
-    #endregion
+	#endregion
 }

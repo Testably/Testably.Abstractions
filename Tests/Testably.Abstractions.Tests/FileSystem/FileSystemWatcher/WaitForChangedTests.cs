@@ -86,10 +86,10 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 		}
 	}
 
-    #region Helpers
+	#region Helpers
 
-    #pragma warning disable MA0018
-    public static TheoryData<string, Func<IFileSystemWatcher, IWaitForChangedResult>>
+	#pragma warning disable MA0018
+	public static TheoryData<string, Func<IFileSystemWatcher, IWaitForChangedResult>>
 		GetWaitForChangedTimeoutParameters()
 	{
 		TheoryData<string, Func<IFileSystemWatcher, IWaitForChangedResult>> theoryData = new()
@@ -111,5 +111,5 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 	}
 	#pragma warning restore MA0018
 
-    #endregion
+	#endregion
 }
