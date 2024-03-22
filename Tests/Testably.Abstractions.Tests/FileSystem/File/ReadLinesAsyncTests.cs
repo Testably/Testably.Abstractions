@@ -24,7 +24,7 @@ public abstract partial class ReadLinesAsyncTests<TFileSystem>
 
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
-			await foreach (string _ in FileSystem.File.ReadLinesAsync(path, cts.Token).ConfigureAwait(false))
+			await foreach (string _ in FileSystem.File.ReadLinesAsync(path, cts.Token))
 			{
 				// do nothing
 			}
@@ -46,7 +46,7 @@ public abstract partial class ReadLinesAsyncTests<TFileSystem>
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
 			await foreach (string _ in FileSystem.File.ReadLinesAsync(path, Encoding.UTF8,
-				cts.Token).ConfigureAwait(false))
+				cts.Token))
 			{
 				// do nothing
 			}
@@ -62,7 +62,7 @@ public abstract partial class ReadLinesAsyncTests<TFileSystem>
 	{
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
-			await foreach (string _ in FileSystem.File.ReadLinesAsync(path).ConfigureAwait(false))
+			await foreach (string _ in FileSystem.File.ReadLinesAsync(path))
 			{
 				// do nothing
 			}

@@ -25,7 +25,7 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 			{
 				while (!ms.IsSet)
 				{
-					await Task.Delay(10).ConfigureAwait(false);
+					await Task.Delay(10);
 					FileSystem.Directory.CreateDirectory(path);
 					FileSystem.Directory.Delete(path);
 				}
@@ -67,7 +67,7 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 			{
 				while (!ms.IsSet)
 				{
-					await Task.Delay(10).ConfigureAwait(false);
+					await Task.Delay(10);
 					FileSystem.Directory.CreateDirectory(path);
 					FileSystem.Directory.Delete(path);
 				}

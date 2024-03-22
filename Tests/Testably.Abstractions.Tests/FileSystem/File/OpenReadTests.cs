@@ -82,7 +82,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 			// ReSharper disable once UseAwaitUsing
 			using FileSystemStream stream = FileSystem.File.OpenRead(path);
 			#pragma warning disable CA1835
-			await stream.WriteAsync(bytes, 0, bytes.Length).ConfigureAwait(false);
+			await stream.WriteAsync(bytes, 0, bytes.Length);
 			#pragma warning restore CA1835
 		});
 
@@ -100,7 +100,7 @@ public abstract partial class OpenReadTests<TFileSystem>
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
 			using FileSystemStream stream = FileSystem.File.OpenRead(path);
-			await stream.WriteAsync(bytes.AsMemory()).ConfigureAwait(false);
+			await stream.WriteAsync(bytes.AsMemory());
 		});
 
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);

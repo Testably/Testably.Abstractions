@@ -100,7 +100,7 @@ public abstract partial class Tests<TFileSystem>
 		{
 			using FileSystemStream stream = FileSystem.File.OpenRead(path);
 			using MemoryStream destination = new(buffer);
-			await stream.CopyToAsync(destination, 0).ConfigureAwait(false);
+			await stream.CopyToAsync(destination, 0);
 		});
 
 		exception.Should().BeException<ArgumentOutOfRangeException>(
@@ -222,7 +222,7 @@ public abstract partial class Tests<TFileSystem>
 		{
 			// ReSharper disable once UseAwaitUsing
 			using FileSystemStream stream = FileSystem.File.Create(path);
-			await stream.FlushAsync(cts.Token).ConfigureAwait(false);
+			await stream.FlushAsync(cts.Token);
 		});
 
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);

@@ -57,7 +57,7 @@ public abstract partial class WriteAllBytesAsyncTests<TFileSystem>
 	{
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
-			await FileSystem.File.WriteAllBytesAsync(path, null!).ConfigureAwait(false);
+			await FileSystem.File.WriteAllBytesAsync(path, null!);
 		});
 
 		exception.Should().BeException<ArgumentNullException>(paramName: "bytes");
@@ -73,7 +73,7 @@ public abstract partial class WriteAllBytesAsyncTests<TFileSystem>
 
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
-			await FileSystem.File.WriteAllBytesAsync(path, bytes).ConfigureAwait(false);
+			await FileSystem.File.WriteAllBytesAsync(path, bytes);
 		});
 
 		exception.Should().BeException<UnauthorizedAccessException>(
@@ -95,7 +95,7 @@ public abstract partial class WriteAllBytesAsyncTests<TFileSystem>
 
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
-			await FileSystem.File.WriteAllBytesAsync(path, bytes).ConfigureAwait(false);
+			await FileSystem.File.WriteAllBytesAsync(path, bytes);
 		});
 
 		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
