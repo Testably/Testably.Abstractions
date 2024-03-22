@@ -11,7 +11,7 @@ public class RandomSystemExtensionsTests
 	{
 		MockRandomSystem randomSystem = new(
 			RandomProvider.Generate(
-				intGenerator: RandomProvider.Generator<int>.FromEnumerable(
+				intGenerator: RandomProvider.Generator.FromEnumerable(
 					Enumerable.Range(0, 1000))));
 
 		List<string> fileExtensions = new();
@@ -39,7 +39,7 @@ public class RandomSystemExtensionsTests
 	{
 		MockRandomSystem randomSystem = new(
 			RandomProvider.Generate(
-				intGenerator: RandomProvider.Generator<int>.FromEnumerable(
+				intGenerator: RandomProvider.Generator.FromEnumerable(
 					Enumerable.Range(0, 1000))));
 
 		List<string> fileNames = new();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Testably.Abstractions.Helpers;
@@ -338,7 +339,8 @@ internal class InMemoryContainer : IStorageContainer
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
-			=> _time.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ssZ");
+			=> _time.ToUniversalTime()
+				.ToString("yyyy-MM-dd HH:mm:ssZ", CultureInfo.InvariantCulture);
 	}
 
 	private sealed class FileHandle : IStorageAccessHandle

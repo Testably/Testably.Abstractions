@@ -162,6 +162,7 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 
 	#region Helpers
 
+	#pragma warning disable MA0018 // Do not declare static members on generic types
 	public static TheoryData<Action<IFileSystem, string>, BaseTypes, MethodType> GetFileCallbacks(
 		int baseType)
 	{
@@ -175,6 +176,7 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 
 		return theoryData;
 	}
+	#pragma warning restore MA0018 // Do not declare static members on generic types
 
 	private static
 		IEnumerable<(
@@ -226,6 +228,7 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 
 	#endregion
 
+	#pragma warning disable MA0062 // Non-flags enums should not be marked with "FlagsAttribute"
 	[Flags]
 	public enum BaseTypes
 	{
@@ -237,6 +240,7 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		None = 0,
 		All = ~None
 	}
+	#pragma warning restore MA0062 // Non-flags enums should not be marked with "FlagsAttribute"
 
 	public enum MethodType
 	{

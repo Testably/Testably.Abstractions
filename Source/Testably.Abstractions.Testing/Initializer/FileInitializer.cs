@@ -1,7 +1,7 @@
 ﻿using System;
 using Testably.Abstractions.Testing.Helpers;
 
-namespace Testably.Abstractions.Testing.FileSystemInitializer;
+namespace Testably.Abstractions.Testing.Initializer;
 
 internal sealed class FileInitializer<TFileSystem>
 	: FileSystemInitializer<TFileSystem>,

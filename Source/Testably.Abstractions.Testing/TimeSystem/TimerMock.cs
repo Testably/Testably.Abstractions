@@ -220,7 +220,7 @@ internal sealed class TimerMock : ITimerMock
 
 	private async Task RunTimer(CancellationToken cancellationToken = default)
 	{
-		await _mockTimeSystem.Task.Delay(_dueTime, cancellationToken);
+		await _mockTimeSystem.Task.Delay(_dueTime, cancellationToken).ConfigureAwait(false);
 		if (_dueTime.TotalMilliseconds < 0)
 		{
 			cancellationToken.WaitHandle.WaitOne(_dueTime);
@@ -259,7 +259,7 @@ internal sealed class TimerMock : ITimerMock
 			TimeSpan delay = nextPlannedExecution - _mockTimeSystem.DateTime.UtcNow;
 			if (delay > TimeSpan.Zero)
 			{
-				await _mockTimeSystem.Task.Delay(delay, cancellationToken);
+				await _mockTimeSystem.Task.Delay(delay, cancellationToken).ConfigureAwait(false);
 			}
 		}
 	}
@@ -280,7 +280,7 @@ internal sealed class TimerMock : ITimerMock
 				async () =>
 				{
 					startCreateTimerThreads.Set();
-					await RunTimer(token);
+					await RunTimer(token).ConfigureAwait(false);
 				},
 				cancellationToken: token)
 			.ContinueWith(_ =>

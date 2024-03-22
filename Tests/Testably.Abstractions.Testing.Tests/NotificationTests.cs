@@ -21,11 +21,11 @@ public class NotificationTests
 
 		_ = Task.Run(async () =>
 		{
-			await Task.Delay(10);
+			await Task.Delay(10).ConfigureAwait(false);
 			for (int i = 1; i <= 10; i++)
 			{
 				timeSystem.Thread.Sleep(i);
-				await Task.Delay(1);
+				await Task.Delay(1).ConfigureAwait(false);
 			}
 		});
 
@@ -84,11 +84,11 @@ public class NotificationTests
 
 		_ = Task.Run(async () =>
 		{
-			await Task.Delay(10);
+			await Task.Delay(10).ConfigureAwait(false);
 			for (int i = 1; i <= 10; i++)
 			{
 				timeSystem.Thread.Sleep(i);
-				await Task.Delay(1);
+				await Task.Delay(1).ConfigureAwait(false);
 			}
 		});
 
@@ -109,11 +109,11 @@ public class NotificationTests
 
 		_ = Task.Run(async () =>
 		{
-			await Task.Delay(10);
+			await Task.Delay(10).ConfigureAwait(false);
 			for (int i = 1; i <= 10; i++)
 			{
 				timeSystem.Thread.Sleep(i);
-				await Task.Delay(1);
+				await Task.Delay(1).ConfigureAwait(false);
 			}
 
 			ms.Set();
@@ -142,7 +142,7 @@ public class NotificationTests
 				while (!ms.IsSet)
 				{
 					timeSystem.Thread.Sleep(1);
-					await Task.Delay(1);
+					await Task.Delay(1).ConfigureAwait(false);
 				}
 			});
 

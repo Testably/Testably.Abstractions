@@ -55,7 +55,8 @@ internal partial class Execute
 		IsLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 		IsMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
 		IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-		IsNetFramework = RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework");
+		IsNetFramework = RuntimeInformation.FrameworkDescription
+			.StartsWith(".NET Framework", StringComparison.OrdinalIgnoreCase);
 		StringComparisonMode = IsLinux
 			? StringComparison.Ordinal
 			: StringComparison.OrdinalIgnoreCase;

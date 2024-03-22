@@ -1,7 +1,9 @@
-﻿using System.IO;
-using System.IO.Compression;
+﻿using System.IO.Compression;
 using System.Text;
 using Testably.Abstractions.Internal;
+#if FEATURE_COMPRESSION_STREAM
+using System.IO;
+#endif
 
 namespace Testably.Abstractions;
 

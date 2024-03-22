@@ -84,6 +84,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	#region Helpers
 
+	#pragma warning disable MA0018
 	public static TheoryData<Expression<Action<IFileInfo>>, string, bool> GetFileInfoCallbacks(
 		string? path)
 	{
@@ -101,6 +102,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 		return theoryData;
 	}
+	#pragma warning restore MA0018
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
 			Expression<Action<IFileInfo>> Callback)>

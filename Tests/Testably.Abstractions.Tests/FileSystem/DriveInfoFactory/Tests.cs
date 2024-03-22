@@ -144,7 +144,9 @@ public abstract partial class Tests<TFileSystem>
 		for (char c = 'A'; c <= 'Z'; c++)
 		{
 			driveInfo = FileSystem.DriveInfo.New($"{c}");
-			if (FileSystem.DriveInfo.GetDrives().All(d => d.Name != driveInfo.Name))
+			if (FileSystem.DriveInfo.GetDrives()
+				.All(d => !string.Equals(d.Name, driveInfo.Name,
+					StringComparison.OrdinalIgnoreCase)))
 			{
 				break;
 			}

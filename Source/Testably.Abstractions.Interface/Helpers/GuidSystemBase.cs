@@ -33,15 +33,19 @@ public abstract class GuidSystemBase : IGuid
 	public abstract Guid NewGuid();
 
 #if FEATURE_GUID_PARSE
+	#pragma warning disable MA0011
 	/// <inheritdoc cref="IGuid.Parse(string)" />
 	public Guid Parse(string input)
 		=> Guid.Parse(input);
+	#pragma warning restore MA0011
 #endif
 
 #if FEATURE_GUID_PARSE
+#pragma warning disable MA0011
 	/// <inheritdoc cref="IGuid.Parse(ReadOnlySpan{char})" />
 	public Guid Parse(ReadOnlySpan<char> input)
 		=> Guid.Parse(input);
+	#pragma warning restore MA0011
 #endif
 
 #if FEATURE_GUID_FORMATPROVIDER
@@ -69,15 +73,19 @@ public abstract class GuidSystemBase : IGuid
 #endif
 
 #if FEATURE_GUID_PARSE
+	#pragma warning disable MA0011
 	/// <inheritdoc cref="IGuid.TryParse(string, out Guid)" />
 	public bool TryParse(string? input, out Guid result)
 		=> Guid.TryParse(input, out result);
+	#pragma warning restore MA0011
 #endif
 
 #if FEATURE_GUID_PARSE
+	#pragma warning disable MA0011
 	/// <inheritdoc cref="IGuid.TryParse(ReadOnlySpan{char}, out Guid)" />
 	public bool TryParse(ReadOnlySpan<char> input, out Guid result)
 		=> Guid.TryParse(input, out result);
+	#pragma warning restore MA0011
 #endif
 
 #if FEATURE_GUID_FORMATPROVIDER

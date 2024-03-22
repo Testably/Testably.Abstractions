@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Testably.Abstractions.Testing.FileSystemInitializer;
+namespace Testably.Abstractions.Testing.Initializer;
 
 internal sealed class DirectoryInitializer<TFileSystem>
 	: FileSystemInitializer<TFileSystem>,

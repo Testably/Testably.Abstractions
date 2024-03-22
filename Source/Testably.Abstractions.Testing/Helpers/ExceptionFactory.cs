@@ -137,6 +137,7 @@ internal static class ExceptionFactory
 
 	internal static ArgumentException PathCannotBeEmpty(Execute execute, string paramName = "path")
 		=> execute.OnNetFramework(
+			#pragma warning disable MA0015 // Specify the parameter name
 			() => new ArgumentException(
 				"Path cannot be the empty string or all whitespace.")
 			{
@@ -144,6 +145,7 @@ internal static class ExceptionFactory
 				HResult = -2147024809
 #endif
 			},
+			#pragma warning restore MA0015 // Specify the parameter name
 			() => new ArgumentException(
 				"Path cannot be the empty string or all whitespace.", paramName)
 			{
@@ -181,9 +183,11 @@ internal static class ExceptionFactory
 			$"The process cannot access the file '{path}' because it is being used by another process.",
 			hResult);
 
+	#pragma warning disable MA0015 // Specify the parameter name
 	internal static ArgumentException SearchPatternCannotContainTwoDots()
 		=> new(
 			"Search pattern cannot contain \"..\" to move up directories and can be contained only internally in file/directory names, as in \"a..b\".");
+	#pragma warning restore MA0015 // Specify the parameter name
 
 	internal static IOException SeekBackwardNotPossibleInAppendMode()
 		=> new(

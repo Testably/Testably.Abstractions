@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Threading;
-using Testably.Abstractions.Testing.FileSystemInitializer;
+using Testably.Abstractions.Testing.Initializer;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
 

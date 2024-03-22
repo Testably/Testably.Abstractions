@@ -195,7 +195,7 @@ public abstract partial class ReadTests<TFileSystem>
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			#pragma warning disable CA1835
-			_ = await stream.ReadAsync(buffer, 0, bytes.Length, cts.Token);
+			_ = await stream.ReadAsync(buffer, 0, bytes.Length, cts.Token).ConfigureAwait(false);
 			#pragma warning restore CA1835
 		});
 
@@ -220,7 +220,7 @@ public abstract partial class ReadTests<TFileSystem>
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			#pragma warning disable CA1835
-			_ = await stream.ReadAsync(buffer.AsMemory(), cts.Token);
+			_ = await stream.ReadAsync(buffer.AsMemory(), cts.Token).ConfigureAwait(false);
 			#pragma warning restore CA1835
 		});
 

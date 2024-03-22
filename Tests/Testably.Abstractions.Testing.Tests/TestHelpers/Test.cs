@@ -10,8 +10,8 @@ public static class Test
 	{
 		get
 		{
-			_isNetFramework ??= RuntimeInformation
-				.FrameworkDescription.StartsWith(".NET Framework");
+			_isNetFramework ??= RuntimeInformation.FrameworkDescription
+				.StartsWith(".NET Framework", StringComparison.OrdinalIgnoreCase);
 			return _isNetFramework.Value;
 		}
 	}

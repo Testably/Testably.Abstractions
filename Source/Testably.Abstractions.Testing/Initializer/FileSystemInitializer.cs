@@ -4,7 +4,7 @@ using System.Linq;
 using Testably.Abstractions.RandomSystem;
 using Testably.Abstractions.Testing.Helpers;
 
-namespace Testably.Abstractions.Testing.FileSystemInitializer;
+namespace Testably.Abstractions.Testing.Initializer;
 
 internal class FileSystemInitializer<TFileSystem>
 	: IFileSystemInitializer<TFileSystem>
