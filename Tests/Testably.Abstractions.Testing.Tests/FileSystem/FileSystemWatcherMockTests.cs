@@ -40,8 +40,8 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		FileSystem.Directory.CreateDirectory(path);
 		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
-		ManualResetEventSlim block1 = new();
-		ManualResetEventSlim block2 = new();
+		using ManualResetEventSlim block1 = new();
+		using ManualResetEventSlim block2 = new();
 		ErrorEventArgs? result = null;
 		fileSystemWatcher.Error += (_, eventArgs) =>
 		{
@@ -81,8 +81,8 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		FileSystem.Directory.CreateDirectory(path);
 		IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
-		ManualResetEventSlim block1 = new();
-		ManualResetEventSlim block2 = new();
+		using ManualResetEventSlim block1 = new();
+		using ManualResetEventSlim block2 = new();
 		ErrorEventArgs? result = null;
 		fileSystemWatcher.Error += (_, eventArgs) =>
 		{
@@ -144,8 +144,8 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
-		ManualResetEventSlim block1 = new();
-		ManualResetEventSlim block2 = new();
+		using ManualResetEventSlim block1 = new();
+		using ManualResetEventSlim block2 = new();
 		ErrorEventArgs? result = null;
 		fileSystemWatcher.Error += (_, eventArgs) =>
 		{

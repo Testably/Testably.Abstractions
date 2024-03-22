@@ -99,6 +99,7 @@ public static class Notification
 			public void Dispose()
 			{
 				_factory.UnRegisterCallback(_key);
+				_reset.Dispose();
 			}
 
 			/// <inheritdoc cref="IAwaitableCallback{TValue}.Wait(Func{TValue, bool}?, int, int, Action?)" />

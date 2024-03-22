@@ -114,6 +114,7 @@ internal sealed class TimerMock : ITimerMock
 			{
 				_cancellationTokenSource?.Dispose();
 				_cancellationTokenSource = null;
+				_continueEvent.Dispose();
 			}
 		}
 	}
@@ -274,7 +275,7 @@ internal sealed class TimerMock : ITimerMock
 		}
 
 		CancellationToken token = runningCancellationTokenSource.Token;
-		ManualResetEventSlim startCreateTimerThreads = new();
+		using ManualResetEventSlim startCreateTimerThreads = new();
 		Task.Run(
 				async () =>
 				{

@@ -180,7 +180,7 @@ public class TimerMockTests
 			new TimerStrategy(swallowExceptions: true));
 		Exception exception = new("foo");
 		int count = 0;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 			if (count++ == 1)
@@ -274,7 +274,7 @@ public class TimerMockTests
 	{
 		MockTimeSystem timeSystem = new();
 		ITimerHandler timerHandler = timeSystem.TimerHandler;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 
 		int count = 0;
 		using ITimer timer = timeSystem.Timer.New(_ =>

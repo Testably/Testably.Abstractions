@@ -35,7 +35,7 @@ public abstract partial class ReadTests<TFileSystem>
 	public void BeginRead_ShouldCopyContentsToBuffer(
 		string path, byte[] bytes)
 	{
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		FileSystem.File.WriteAllBytes(path, bytes);
 		using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
@@ -74,7 +74,7 @@ public abstract partial class ReadTests<TFileSystem>
 	{
 		SkipIfBrittleTestsShouldBeSkipped();
 
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
 		FileSystem.File.WriteAllBytes(path, bytes);
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;

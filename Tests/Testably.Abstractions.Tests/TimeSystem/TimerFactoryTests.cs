@@ -119,7 +119,7 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 	public void New_WithPeriod_ShouldStartTimer()
 	{
 		int count = 0;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using ITimer timer = TimeSystem.Timer.New(_ =>
 		{
 			count++;
@@ -137,7 +137,7 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 	public async Task New_WithDueTime_ShouldStartTimerOnce()
 	{
 		int count = 0;
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using ITimer timer = TimeSystem.Timer.New(_ =>
 		{
 			count++;
@@ -152,7 +152,7 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 	[SkippableFact]
 	public void New_WithoutPeriod_ShouldNotStartTimer()
 	{
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using ITimer timer = TimeSystem.Timer.New(_ =>
 		{
 			ms.Set();

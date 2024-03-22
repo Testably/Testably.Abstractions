@@ -17,7 +17,7 @@ public abstract partial class FilterTests<TFileSystem>
 	public void Filter_Matching_ShouldTriggerNotification(string path)
 	{
 		FileSystem.Initialize().WithSubdirectory(path);
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		FileSystemEventArgs? result = null;
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
@@ -45,7 +45,7 @@ public abstract partial class FilterTests<TFileSystem>
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Initialize().WithSubdirectory(path);
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		FileSystemEventArgs? result = null;
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);

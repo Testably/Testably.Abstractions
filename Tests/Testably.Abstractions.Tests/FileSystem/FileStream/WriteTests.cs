@@ -36,7 +36,7 @@ public abstract partial class WriteTests<TFileSystem>
 	public void BeginWrite_ShouldCopyContentsToFile(
 		string path, byte[] bytes)
 	{
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using (FileSystemStream stream = FileSystem.File.Create(path))
 		{
 			stream.Flush();
@@ -76,7 +76,7 @@ public abstract partial class WriteTests<TFileSystem>
 	{
 		SkipIfBrittleTestsShouldBeSkipped();
 
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
 		FileSystem.File.WriteAllBytes(path, bytes);
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;

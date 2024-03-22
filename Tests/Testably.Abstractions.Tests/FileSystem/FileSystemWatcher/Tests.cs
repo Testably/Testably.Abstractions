@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
+// ReSharper disable AccessToDisposedClosure
 // ReSharper disable once PartialTypeWithSinglePart
 public abstract partial class Tests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
@@ -17,7 +18,7 @@ public abstract partial class Tests<TFileSystem>
 		SkipIfBrittleTestsShouldBeSkipped();
 
 		FileSystem.Initialize();
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.EnableRaisingEvents = true;
@@ -70,7 +71,7 @@ public abstract partial class Tests<TFileSystem>
 		SkipIfBrittleTestsShouldBeSkipped();
 
 		FileSystem.Initialize();
-		ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.EnableRaisingEvents = true;

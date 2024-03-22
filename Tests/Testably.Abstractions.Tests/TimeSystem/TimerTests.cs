@@ -152,9 +152,9 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		List<int> triggerTimes = new();
 		DateTime previousTime = TimeSystem.DateTime.Now;
-		ManualResetEventSlim ms = new();
-		ManualResetEventSlim ms2 = new();
-		ManualResetEventSlim ms3 = new();
+		using ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms2 = new();
+		using ManualResetEventSlim ms3 = new();
 		// ReSharper disable once AsyncVoidLambda
 		using ITimer timer1 = TimeSystem.Timer.New(async _ =>
 			{
@@ -207,9 +207,9 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		List<int> triggerTimes = new();
 		DateTime previousTime = TimeSystem.DateTime.Now;
-		ManualResetEventSlim ms = new();
-		ManualResetEventSlim ms2 = new();
-		ManualResetEventSlim ms3 = new();
+		using ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms2 = new();
+		using ManualResetEventSlim ms3 = new();
 		// ReSharper disable once AsyncVoidLambda
 		using ITimer timer1 = TimeSystem.Timer.New(async _ =>
 			{
@@ -262,9 +262,9 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		List<int> triggerTimes = new();
 		DateTime previousTime = TimeSystem.DateTime.Now;
-		ManualResetEventSlim ms = new();
-		ManualResetEventSlim ms2 = new();
-		ManualResetEventSlim ms3 = new();
+		using ManualResetEventSlim ms = new();
+		using ManualResetEventSlim ms2 = new();
+		using ManualResetEventSlim ms3 = new();
 		// ReSharper disable once AsyncVoidLambda
 		using ITimer timer1 = TimeSystem.Timer.New(async _ =>
 			{
