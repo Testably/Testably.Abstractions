@@ -27,7 +27,9 @@ public static class StringExtensions
 		string newValue,
 		StringComparison comparisonType)
 	{
+		#pragma warning disable MA0074 // Avoid implicit culture-sensitive methods
 		return @this.Replace(oldValue, newValue);
+		#pragma warning restore MA0074 // Avoid implicit culture-sensitive methods
 	}
 }
 #endif
