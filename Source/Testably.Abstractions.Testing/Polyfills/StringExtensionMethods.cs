@@ -53,7 +53,9 @@ internal static class StringExtensionMethods
 		string newValue,
 		StringComparison comparisonType)
 	{
+		#pragma warning disable MA0074
 		return @this.Replace(oldValue, newValue);
+		#pragma warning restore MA0074
 	}
 
 	/// <summary>
