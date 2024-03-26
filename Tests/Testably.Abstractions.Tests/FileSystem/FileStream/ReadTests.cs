@@ -79,7 +79,6 @@ public abstract partial class ReadTests<TFileSystem>
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
 		FileSystem.File.WriteAllBytes(path, bytes);
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
-		DateTime updateTime = DateTime.MinValue;
 
 		using (FileSystemStream stream = FileSystem.File.OpenRead(path))
 		{
@@ -89,7 +88,6 @@ public abstract partial class ReadTests<TFileSystem>
 				TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
 				// ReSharper disable once AccessToDisposedClosure
 				stream.EndRead(ar);
-				updateTime = TimeSystem.DateTime.UtcNow;
 				ms.Set();
 			}, null);
 
