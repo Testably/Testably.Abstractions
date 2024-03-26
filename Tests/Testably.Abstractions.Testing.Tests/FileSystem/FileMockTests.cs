@@ -10,6 +10,31 @@ namespace Testably.Abstractions.Testing.Tests.FileSystem;
 public class FileMockTests
 {
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	[SkippableTheory]
+	[AutoData]
+	public void GetUnixFileMode_SafeFileHandle_ShouldThrowPlatformNotSupportedExceptionOnWindows(
+		string path)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		SafeFileHandle fileHandle = new();
+		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText(path, "some content");
+		fileSystem.WithSafeFileHandleStrategy(
+			new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
+
+		Exception? exception = Record.Exception(() =>
+		{
+			#pragma warning disable CA1416
+			fileSystem.File.GetUnixFileMode(fileHandle);
+			#pragma warning restore CA1416
+		});
+
+		exception.Should().BeOfType<PlatformNotSupportedException>();
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[Theory]
 	[AutoData]
 	public void SetAttributes_SafeFileHandle_ShouldUpdateValue(
@@ -30,6 +55,7 @@ public class FileMockTests
 		result.Should().Be(expectedAttributes);
 	}
 #endif
+
 	[Theory]
 	[AutoData]
 	public void SetCreationTime(string path, DateTime creationTime)
