@@ -104,7 +104,7 @@ public abstract partial class WriteTests<TFileSystem>
 			creationTime.Should()
 				.BeBetween(creationTimeStart, creationTimeEnd);
 			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime);
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
