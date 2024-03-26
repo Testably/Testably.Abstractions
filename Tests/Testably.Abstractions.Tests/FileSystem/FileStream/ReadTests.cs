@@ -97,14 +97,11 @@ public abstract partial class ReadTests<TFileSystem>
 		DateTime lastWriteTime = FileSystem.File.GetLastWriteTimeUtc(path);
 
 		creationTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 		lastAccessTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 		lastWriteTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 	}
 
 #if FEATURE_SPAN

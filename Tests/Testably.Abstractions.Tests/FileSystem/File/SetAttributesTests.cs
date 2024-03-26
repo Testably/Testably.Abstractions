@@ -40,15 +40,12 @@ public abstract partial class SetAttributesTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
 		lastAccessTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 		lastWriteTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 	}
 }

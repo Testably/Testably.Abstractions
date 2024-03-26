@@ -102,16 +102,14 @@ public abstract partial class WriteTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 			lastAccessTime.Should()
 				.BeOnOrAfter(updateTime);
 		}
 		else
 		{
 			lastAccessTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
 		lastWriteTime.Should()

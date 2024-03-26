@@ -1,3 +1,5 @@
+using Testably.Abstractions.Tests.TestHelpers;
+
 namespace Testably.Abstractions.Tests.TimeSystem;
 
 // ReSharper disable once PartialTypeWithSinglePart
@@ -29,15 +31,14 @@ public abstract partial class DateTimeTests<TTimeSystem>
 	public void Now_ShouldBeSetToNow()
 	{
 		// Tests are brittle on the build system
-		const int tolerance = 250;
+		TimeSpan tolerance = TimeSpan.FromMilliseconds(250);
 
 		DateTime before = DateTime.Now;
 		DateTime result = TimeSystem.DateTime.Now;
 		DateTime after = DateTime.Now;
 
 		result.Kind.Should().Be(DateTimeKind.Local);
-		result.Should().BeOnOrAfter(before.ApplySystemClockTolerance(tolerance));
-		result.ApplySystemClockTolerance(tolerance).Should().BeOnOrBefore(after);
+		result.Should().BeBetween(before, after, tolerance);
 	}
 
 	[SkippableFact]
@@ -50,8 +51,7 @@ public abstract partial class DateTimeTests<TTimeSystem>
 		result.Hour.Should().Be(0);
 		result.Minute.Should().Be(0);
 		result.Second.Should().Be(0);
-		result.Should().BeOnOrAfter(before.ApplySystemClockTolerance());
-		result.ApplySystemClockTolerance().Should().BeOnOrBefore(after);
+		result.Should().BeBetween(before, after);
 	}
 
 	[SkippableFact]
@@ -68,14 +68,13 @@ public abstract partial class DateTimeTests<TTimeSystem>
 	public void UtcNow_ShouldBeSetToUtcNow()
 	{
 		// Tests are brittle on the build system
-		const int tolerance = 250;
+		TimeSpan tolerance = TimeSpan.FromMilliseconds(250);
 
 		DateTime before = DateTime.UtcNow;
 		DateTime result = TimeSystem.DateTime.UtcNow;
 		DateTime after = DateTime.UtcNow;
 
 		result.Kind.Should().Be(DateTimeKind.Utc);
-		result.Should().BeOnOrAfter(before.ApplySystemClockTolerance(tolerance));
-		result.ApplySystemClockTolerance(tolerance).Should().BeOnOrBefore(after);
+		result.Should().BeBetween(before, after, tolerance);
 	}
 }

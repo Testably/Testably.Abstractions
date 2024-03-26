@@ -16,13 +16,14 @@ public abstract partial class ThreadTests<TTimeSystem>
 	[SkippableFact]
 	public void Sleep_Milliseconds_ShouldSleepForSpecifiedMilliseconds()
 	{
-		int millisecondsTimeout = 10;
+		int millisecondsTimeout = 100;
 
 		DateTime before = TimeSystem.DateTime.UtcNow;
 		TimeSystem.Thread.Sleep(millisecondsTimeout);
 		DateTime after = TimeSystem.DateTime.UtcNow;
 
-		after.Should().BeOnOrAfter(before.AddMilliseconds(millisecondsTimeout));
+		after.Should().BeOnOrAfter(
+			before.AddMilliseconds(millisecondsTimeout).ApplySystemClockTolerance());
 	}
 
 	[SkippableFact]
@@ -38,12 +39,13 @@ public abstract partial class ThreadTests<TTimeSystem>
 	[SkippableFact]
 	public void Sleep_Timespan_ShouldSleepForSpecifiedMilliseconds()
 	{
-		TimeSpan timeout = TimeSpan.FromMilliseconds(10);
+		TimeSpan timeout = TimeSpan.FromMilliseconds(100);
 
 		DateTime before = TimeSystem.DateTime.UtcNow;
 		TimeSystem.Thread.Sleep(timeout);
 		DateTime after = TimeSystem.DateTime.UtcNow;
 
-		after.Should().BeOnOrAfter(before.Add(timeout));
+		after.Should().BeOnOrAfter(
+			before.Add(timeout).ApplySystemClockTolerance());
 	}
 }

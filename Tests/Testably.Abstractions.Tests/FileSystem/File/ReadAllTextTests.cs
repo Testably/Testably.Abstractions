@@ -82,13 +82,9 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance())
-				.And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 			lastAccessTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance())
-				.And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 		else
 		{
@@ -97,9 +93,7 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 		}
 
 		lastWriteTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance())
-			.And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 	}
 
 	[SkippableTheory]
