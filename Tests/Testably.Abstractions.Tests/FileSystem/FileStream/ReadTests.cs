@@ -100,16 +100,8 @@ public abstract partial class ReadTests<TFileSystem>
 
 		creationTime.Should()
 			.BeBetween(creationTimeStart, creationTimeEnd);
-		if (Test.RunsOnWindows)
-		{
-			lastAccessTime.Should()
-				.BeBetween(creationTimeStart, creationTimeEnd);
-		}
-		else
-		{
-			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
-		}
+		lastAccessTime.Should()
+			.BeBetween(creationTimeStart, creationTimeEnd);
 		lastWriteTime.Should()
 			.BeBetween(creationTimeStart, creationTimeEnd);
 	}
