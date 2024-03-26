@@ -73,6 +73,8 @@ public abstract partial class ReadTests<TFileSystem>
 	[AutoData]
 	public void EndRead_ShouldNotAdjustTimes(string path, byte[] bytes)
 	{
+		SkipIfBrittleTestsShouldBeSkipped(Test.RunsOnMac);
+
 		using ManualResetEventSlim ms = new();
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
 		FileSystem.File.WriteAllBytes(path, bytes);
