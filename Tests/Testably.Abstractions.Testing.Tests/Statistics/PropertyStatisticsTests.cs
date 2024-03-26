@@ -6,6 +6,16 @@ namespace Testably.Abstractions.Testing.Tests.Statistics;
 public sealed class PropertyStatisticsTests
 {
 	[Fact]
+	public void Counter_ShouldBeInitializedWithOne()
+	{
+		MockFileSystem fileSystem = new();
+		_ = fileSystem.Path.DirectorySeparatorChar;
+		PropertyStatistic sut = fileSystem.Statistics.Path.Properties.First();
+
+		sut.Counter.Should().Be(1);
+	}
+
+	[Fact]
 	public void ToString_Get_ShouldContainNameAndGet()
 	{
 		MockFileSystem fileSystem = new();

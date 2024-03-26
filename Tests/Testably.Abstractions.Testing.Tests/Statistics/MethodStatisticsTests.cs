@@ -6,6 +6,16 @@ namespace Testably.Abstractions.Testing.Tests.Statistics;
 public sealed class MethodStatisticsTests
 {
 	[Fact]
+	public void Counter_ShouldBeInitializedWithOne()
+	{
+		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "bar");
+		MethodStatistic sut = fileSystem.Statistics.File.Methods.First();
+
+		sut.Counter.Should().Be(1);
+	}
+
+	[Fact]
 	public void ToString_ShouldContainName()
 	{
 		MockFileSystem fileSystem = new();

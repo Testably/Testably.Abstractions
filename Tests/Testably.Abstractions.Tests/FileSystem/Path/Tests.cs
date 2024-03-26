@@ -29,6 +29,14 @@ public abstract partial class Tests<TFileSystem>
 		result.Should().BeEquivalentTo(System.IO.Path.GetInvalidFileNameChars());
 	}
 
+	[SkippableFact]
+	public void GetInvalidPathChars_ShouldReturnDefaultValue()
+	{
+		char[] result = FileSystem.Path.GetInvalidPathChars();
+
+		result.Should().BeEquivalentTo(System.IO.Path.GetInvalidPathChars());
+	}
+
 	[SkippableTheory]
 	[AutoData]
 	public void GetPathRoot_ShouldReturnDefaultValue(string path)
