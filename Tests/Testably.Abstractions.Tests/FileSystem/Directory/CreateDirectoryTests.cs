@@ -121,16 +121,14 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 			lastAccessTime.Should()
 				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
 			lastAccessTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
 		lastWriteTime.Should()
@@ -168,11 +166,9 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 				FileSystem.Directory.GetLastWriteTimeUtc(path);
 
 			lastAccessTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 			lastWriteTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 	}
 
@@ -184,9 +180,9 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 
 		FileSystem.Directory.CreateDirectory(path);
 
+		DateTime end = TimeSystem.DateTime.Now;
 		DateTime result = FileSystem.Directory.GetCreationTime(path);
-		result.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
-		result.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
+		result.Should().BeBetween(start, end);
 		result.Kind.Should().Be(DateTimeKind.Local);
 	}
 
@@ -198,9 +194,9 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 
 		FileSystem.Directory.CreateDirectory(path);
 
+		DateTime end = TimeSystem.DateTime.UtcNow;
 		DateTime result = FileSystem.Directory.GetCreationTimeUtc(path);
-		result.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
-		result.Should().BeOnOrBefore(TimeSystem.DateTime.UtcNow);
+		result.Should().BeBetween(start, end);
 		result.Kind.Should().Be(DateTimeKind.Utc);
 	}
 

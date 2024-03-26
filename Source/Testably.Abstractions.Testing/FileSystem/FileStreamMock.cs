@@ -329,7 +329,6 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		using IDisposable registration = RegisterMethod(nameof(EndRead),
 			asyncResult);
 
-		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 		return base.EndRead(asyncResult);
 	}
 

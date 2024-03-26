@@ -47,8 +47,8 @@ public abstract partial class TaskTests<TTimeSystem>
 		await TimeSystem.Task.Delay(millisecondsTimeout);
 		DateTime after = TimeSystem.DateTime.UtcNow;
 
-		after.Should().BeOnOrAfter(before.AddMilliseconds(millisecondsTimeout)
-			.ApplySystemClockTolerance());
+		after.Should().BeOnOrAfter(
+			before.AddMilliseconds(millisecondsTimeout).ApplySystemClockTolerance());
 	}
 
 	[SkippableFact]

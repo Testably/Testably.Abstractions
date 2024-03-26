@@ -30,16 +30,14 @@ public abstract partial class Tests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			parentCreationTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 			parentLastAccessTime.Should()
 				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
 			parentLastAccessTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
 		parentLastWriteTime.Should()
@@ -50,14 +48,11 @@ public abstract partial class Tests<TFileSystem>
 		DateTime rootLastWriteTime = FileSystem.Directory.GetLastWriteTimeUtc(path1);
 
 		rootCreationTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 		rootLastAccessTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 		rootLastWriteTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 	}
 
 #if FEATURE_FILESYSTEM_LINK
@@ -90,16 +85,14 @@ public abstract partial class Tests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			parentCreationTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 			parentLastAccessTime.Should()
 				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
 			parentLastAccessTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
 		parentLastWriteTime.Should()
@@ -110,14 +103,11 @@ public abstract partial class Tests<TFileSystem>
 		DateTime rootLastWriteTime = FileSystem.Directory.GetLastWriteTimeUtc(path1);
 
 		rootCreationTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 		rootLastAccessTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 		rootLastWriteTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 	}
 #endif
 
@@ -149,16 +139,14 @@ public abstract partial class Tests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			parentCreationTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 			parentLastAccessTime.Should()
 				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
 			parentLastAccessTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
 		parentLastWriteTime.Should()
@@ -169,14 +157,11 @@ public abstract partial class Tests<TFileSystem>
 		DateTime rootLastWriteTime = FileSystem.Directory.GetLastWriteTimeUtc(path1);
 
 		rootCreationTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 		rootLastAccessTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 		rootLastWriteTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 	}
 
 	[SkippableTheory]
@@ -207,8 +192,7 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.Directory.GetLastWriteTimeUtc(subdirectoryPath);
 
 		parentCreationTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 		if (Test.RunsOnWindows)
 		{
 			parentLastAccessTime.Should()
@@ -217,12 +201,10 @@ public abstract partial class Tests<TFileSystem>
 		else
 		{
 			parentLastAccessTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
 		parentLastWriteTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 	}
 }

@@ -88,17 +88,16 @@ public abstract partial class Tests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			result.LastAccessTime.Should()
-				.BeOnOrAfter(sleepTime.ApplySystemClockTolerance());
-			result.LastAccessTime.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
+				.BeBetween(sleepTime, TimeSystem.DateTime.Now);
 		}
 		else
 		{
-			result.LastAccessTime.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
-			result.LastAccessTime.Should().BeBefore(sleepTime);
+			result.LastAccessTime.Should()
+				.BeBetween(start, sleepTime);
 		}
 
-		result.LastWriteTime.Should().BeOnOrAfter(sleepTime.ApplySystemClockTolerance());
-		result.LastWriteTime.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
+		result.LastWriteTime.Should()
+			.BeBetween(sleepTime, TimeSystem.DateTime.Now);
 	}
 
 	[SkippableTheory]
@@ -110,8 +109,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.Directory.CreateDirectory(path);
 
 		DateTime result = FileSystem.Directory.GetLastAccessTime(path);
-		result.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
-		result.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
+		result.Should().BeBetween(start, TimeSystem.DateTime.Now);
 		result.Kind.Should().Be(DateTimeKind.Local);
 	}
 
@@ -124,8 +122,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.Directory.CreateDirectory(path);
 
 		DateTime result = FileSystem.Directory.GetLastAccessTimeUtc(path);
-		result.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
-		result.Should().BeOnOrBefore(TimeSystem.DateTime.UtcNow);
+		result.Should().BeBetween(start, TimeSystem.DateTime.UtcNow);
 		result.Kind.Should().Be(DateTimeKind.Utc);
 	}
 
@@ -138,8 +135,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.Directory.CreateDirectory(path);
 
 		DateTime result = FileSystem.Directory.GetLastWriteTime(path);
-		result.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
-		result.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
+		result.Should().BeBetween(start, TimeSystem.DateTime.Now);
 		result.Kind.Should().Be(DateTimeKind.Local);
 	}
 
@@ -152,8 +148,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.Directory.CreateDirectory(path);
 
 		DateTime result = FileSystem.Directory.GetLastWriteTimeUtc(path);
-		result.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
-		result.Should().BeOnOrBefore(TimeSystem.DateTime.UtcNow);
+		result.Should().BeBetween(start, TimeSystem.DateTime.UtcNow);
 		result.Kind.Should().Be(DateTimeKind.Utc);
 	}
 

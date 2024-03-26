@@ -80,8 +80,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.WriteAllText(path, null);
 
 		DateTime result = FileSystem.File.GetLastAccessTime(path);
-		result.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
-		result.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
+		result.Should().BeBetween(start, TimeSystem.DateTime.Now);
 		result.Kind.Should().Be(DateTimeKind.Local);
 	}
 
@@ -94,8 +93,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.WriteAllText(path, null);
 
 		DateTime result = FileSystem.File.GetLastAccessTimeUtc(path);
-		result.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
-		result.Should().BeOnOrBefore(TimeSystem.DateTime.UtcNow);
+		result.Should().BeBetween(start, TimeSystem.DateTime.UtcNow);
 		result.Kind.Should().Be(DateTimeKind.Utc);
 	}
 
@@ -108,8 +106,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.WriteAllText(path, null);
 
 		DateTime result = FileSystem.File.GetLastWriteTime(path);
-		result.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
-		result.Should().BeOnOrBefore(TimeSystem.DateTime.Now);
+		result.Should().BeBetween(start, TimeSystem.DateTime.Now);
 		result.Kind.Should().Be(DateTimeKind.Local);
 	}
 
@@ -122,8 +119,7 @@ public abstract partial class Tests<TFileSystem>
 		FileSystem.File.WriteAllText(path, null);
 
 		DateTime result = FileSystem.File.GetLastWriteTimeUtc(path);
-		result.Should().BeOnOrAfter(start.ApplySystemClockTolerance());
-		result.Should().BeOnOrBefore(TimeSystem.DateTime.UtcNow);
+		result.Should().BeBetween(start, TimeSystem.DateTime.UtcNow);
 		result.Kind.Should().Be(DateTimeKind.Utc);
 	}
 

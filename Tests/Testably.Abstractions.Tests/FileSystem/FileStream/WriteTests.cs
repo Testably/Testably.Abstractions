@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
+// ReSharper disable AccessToDisposedClosure
 // ReSharper disable once PartialTypeWithSinglePart
 public abstract partial class WriteTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
@@ -74,8 +75,6 @@ public abstract partial class WriteTests<TFileSystem>
 	[AutoData]
 	public void EndWrite_ShouldAdjustTimes(string path, byte[] bytes)
 	{
-		SkipIfBrittleTestsShouldBeSkipped();
-
 		using ManualResetEventSlim ms = new();
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
 		FileSystem.File.WriteAllBytes(path, bytes);
@@ -103,16 +102,14 @@ public abstract partial class WriteTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			creationTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 			lastAccessTime.Should()
-				.BeOnOrAfter(updateTime);
+				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 		}
 		else
 		{
 			lastAccessTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
 		lastWriteTime.Should()

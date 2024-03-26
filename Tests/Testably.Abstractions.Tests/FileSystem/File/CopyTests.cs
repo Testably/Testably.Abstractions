@@ -154,14 +154,12 @@ public abstract partial class CopyTests<TFileSystem>
 			FileSystem.File.GetLastWriteTimeUtc(destination);
 
 		sourceCreationTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 		if (Test.RunsOnMac)
 		{
 #if NET8_0_OR_GREATER
 			sourceLastAccessTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 #else
 			sourceLastAccessTime.Should()
 				.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
@@ -170,8 +168,7 @@ public abstract partial class CopyTests<TFileSystem>
 		else if (Test.RunsOnWindows)
 		{
 			sourceLastAccessTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 		else
 		{
@@ -180,8 +177,7 @@ public abstract partial class CopyTests<TFileSystem>
 		}
 
 		sourceLastWriteTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 		if (Test.RunsOnWindows)
 		{
 			destinationCreationTime.Should()
@@ -190,8 +186,7 @@ public abstract partial class CopyTests<TFileSystem>
 		else
 		{
 			destinationCreationTime.Should()
-				.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-				.BeOnOrBefore(creationTimeEnd);
+				.BeBetween(creationTimeStart, creationTimeEnd);
 		}
 
 		if (!Test.RunsOnMac)
@@ -201,8 +196,7 @@ public abstract partial class CopyTests<TFileSystem>
 		}
 
 		destinationLastWriteTime.Should()
-			.BeOnOrAfter(creationTimeStart.ApplySystemClockTolerance()).And
-			.BeOnOrBefore(creationTimeEnd);
+			.BeBetween(creationTimeStart, creationTimeEnd);
 	}
 
 	[SkippableTheory]

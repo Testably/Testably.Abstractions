@@ -169,8 +169,6 @@ public abstract partial class Tests<TFileSystem>
 	public void Flush_ShouldNotUpdateFileContentWhenAlreadyFlushed(
 		string path, byte[] bytes1, byte[] bytes2)
 	{
-		SkipIfBrittleTestsShouldBeSkipped();
-
 		using (FileSystemStream stream1 = FileSystem.File.Open(
 			path,
 			FileMode.OpenOrCreate,
