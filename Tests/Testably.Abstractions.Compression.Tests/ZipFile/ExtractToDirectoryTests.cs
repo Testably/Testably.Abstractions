@@ -88,6 +88,32 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 	}
 #endif
 
+#if FEATURE_COMPRESSION_OVERWRITE
+	[SkippableTheory]
+	[AutoData]
+	public void ExtractToDirectory_WithEncoding_Overwrite_ShouldOverwriteFile(
+		string contents,
+		Encoding encoding)
+	{
+		FileSystem.Initialize()
+			.WithSubdirectory("bar").Initialized(s => s
+				.WithFile("test.txt"))
+			.WithSubdirectory("foo").Initialized(s => s
+				.WithFile("test.txt"));
+		FileSystem.File.WriteAllText(FileSystem.Path.Combine("foo", "test.txt"),
+			contents);
+
+		FileSystem.ZipFile().CreateFromDirectory("foo", "destination.zip");
+
+		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "bar", encoding, true);
+
+		FileSystem.File.Exists(FileSystem.Path.Combine("bar", "test.txt"))
+			.Should().BeTrue();
+		FileSystem.File.ReadAllText(FileSystem.Path.Combine("bar", "test.txt"))
+			.Should().Be(contents);
+	}
+#endif
+
 	[SkippableTheory]
 	[AutoData]
 	public void ExtractToDirectory_WithEncoding_ShouldZipDirectoryContent(
@@ -224,6 +250,33 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[AutoData]
+	public void ExtractToDirectory_WithStream_WithEncoding_Overwrite_ShouldOverwriteFile(
+		string contents,
+		Encoding encoding)
+	{
+		FileSystem.Initialize()
+			.WithSubdirectory("bar").Initialized(s => s
+				.WithFile("test.txt"))
+			.WithSubdirectory("foo").Initialized(s => s
+				.WithFile("test.txt"));
+		FileSystem.File.WriteAllText(FileSystem.Path.Combine("foo", "test.txt"),
+			contents);
+		using MemoryStream stream = new();
+
+		FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+
+		FileSystem.ZipFile().ExtractToDirectory(stream, "bar", encoding, true);
+
+		FileSystem.File.Exists(FileSystem.Path.Combine("bar", "test.txt"))
+			.Should().BeTrue();
+		FileSystem.File.ReadAllText(FileSystem.Path.Combine("bar", "test.txt"))
+			.Should().Be(contents);
+	}
+#endif
+
+#if FEATURE_COMPRESSION_STREAM
+	[SkippableTheory]
+	[AutoData]
 	public void ExtractToDirectory_WithStream_WithEncoding_ShouldZipDirectoryContent(
 		Encoding encoding)
 	{
@@ -267,6 +320,7 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			FileSystem.ZipFile().ExtractToDirectory(stream, "bar");
 		});
 
