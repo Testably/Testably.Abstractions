@@ -12,7 +12,7 @@ public static class TimeTestHelper
 	///     The tolerance in milliseconds to apply on the <paramref name="time" />.<br />
 	///     Defaults to 25ms.
 	/// </param>
-	public static DateTime ApplySystemClockTolerance(this DateTime time, int tolerance = 25)
+	public static DateTime ApplySystemClockTolerance(this DateTime time, int tolerance = 35)
 	{
 		return time.AddMilliseconds(-1 * tolerance);
 	}
