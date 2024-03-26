@@ -10,6 +10,25 @@ namespace Testably.Abstractions.Testing.Tests.FileSystem;
 public class FileMockTests
 {
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
+	[Theory]
+	[AutoData]
+	public void GetAttributes_SafeFileHandle_WithMissingFile_ShouldThrowFileNotFoundException(
+		string path)
+	{
+		SafeFileHandle fileHandle = new();
+		MockFileSystem fileSystem = new();
+		fileSystem.WithSafeFileHandleStrategy(
+			new DefaultSafeFileHandleStrategy(_ => new SafeFileHandleMock(path)));
+
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = fileSystem.File.GetAttributes(fileHandle);
+		});
+
+		exception.Should().BeOfType<FileNotFoundException>();
+	}
+#endif
+#if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 	[SkippableTheory]
 	[AutoData]
 	public void GetUnixFileMode_SafeFileHandle_ShouldThrowPlatformNotSupportedExceptionOnWindows(
