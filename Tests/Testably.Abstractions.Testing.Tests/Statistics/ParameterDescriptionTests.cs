@@ -50,6 +50,31 @@ public sealed class ParameterDescriptionTests
 #endif
 
 	[Theory]
+	[InlineAutoData(true)]
+	[InlineAutoData(false)]
+	public void Is_WithComparer_ShouldUseComparerResult(bool comparerResult, string value)
+	{
+		ParameterDescription sut = ParameterDescription.FromParameter(value);
+
+		bool result = sut.Is<string>(_ => comparerResult);
+
+		result.Should().Be(comparerResult);
+	}
+
+	[Theory]
+	[InlineAutoData(true)]
+	[InlineAutoData(false)]
+	public void Is_WithComparer_WithIncompatibleType_ShouldReturnFalse(bool comparerResult,
+		string value)
+	{
+		ParameterDescription sut = ParameterDescription.FromParameter(value);
+
+		bool result = sut.Is<int>(_ => comparerResult);
+
+		result.Should().BeFalse();
+	}
+
+	[Theory]
 	[AutoData]
 	public void Is_WithFromOutParameter_ShouldCheckForMatchingValue(int value)
 	{
