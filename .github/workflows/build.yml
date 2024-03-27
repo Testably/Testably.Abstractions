@@ -108,7 +108,15 @@ jobs:
       - name: Build solution
         run: msbuild.exe Testably.Abstractions.sln /p:NetFrameworkOnly=True /p:platform="Any CPU" /p:configuration="Release" -t:restore,build -p:RestorePackagesConfig=true
       - name: Run tests
-        run: vstest.console.exe .\Build\Tests\Testably.Abstractions.Tests\net48\Testably.Abstractions.Tests.dll .\Build\Tests\Testably.Abstractions.Parity.Tests\net48\Testably.Abstractions.Parity.Tests.dll .\Build\Tests\Testably.Abstractions.Testing.Tests\net48\Testably.Abstractions.Testing.Tests.dll
+        uses: Wandalen/wretry.action@v1.4.10
+        with:
+          command: vstest.console.exe .\Build\Tests\Testably.Abstractions.Tests\net48\Testably.Abstractions.Tests.dll .\Build\Tests\Testably.Abstractions.Parity.Tests\net48\Testably.Abstractions.Parity.Tests.dll .\Build\Tests\Testably.Abstractions.Testing.Tests\net48\Testably.Abstractions.Testing.Tests.dll /Logger:trx /ResultsDirectory:TestResults /collect:"Code Coverage;Format=Cobertura"
+          attempt_limit: 2
+      - name: Upload coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: Code coverage (.NET Framework)
+          path: "**/coverage.cobertura.xml"
         
   test-examples:
     name: Test (Examples)
@@ -161,6 +169,11 @@ jobs:
         with:
           name: Code coverage (Windows)
           path: Coverage/Windows
+      - name: Download code coverage files (.NET Framework)
+        uses: actions/download-artifact@v3
+        with:
+          name: Code coverage (.NET Framework)
+          path: Coverage/.NET Framework
       - name: Generate coverage report
         uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
         with:
