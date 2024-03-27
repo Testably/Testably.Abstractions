@@ -129,7 +129,7 @@ jobs:
       - name: Run tests
         uses: Wandalen/wretry.action@v1.4.10
         with:
-          command: vstest.console.exe .\Build\Tests\Testably.Abstractions.Tests\net48\Testably.Abstractions.Tests.dll .\Build\Tests\Testably.Abstractions.Parity.Tests\net48\Testably.Abstractions.Parity.Tests.dll .\Build\Tests\Testably.Abstractions.Testing.Tests\net48\Testably.Abstractions.Testing.Tests.dll /Logger:trx /ResultsDirectory:TestResults
+          command: vstest.console.exe .\Build\Tests\Testably.Abstractions.Tests\net48\Testably.Abstractions.Tests.dll .\Build\Tests\Testably.Abstractions.Parity.Tests\net48\Testably.Abstractions.Parity.Tests.dll .\Build\Tests\Testably.Abstractions.Testing.Tests\net48\Testably.Abstractions.Testing.Tests.dll /Logger:trx /ResultsDirectory:TestResults /collect:"Code Coverage;Format=Cobertura"
           attempt_limit: 2
       - name: Upload test results (.NET Framework)
         if: ${{ always() }}
@@ -137,6 +137,11 @@ jobs:
         with:
           name: Test results (.NET Framework)
           path: TestResults
+      - name: Upload coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: Code coverage (.NET Framework)
+          path: "**/*.cobertura.xml"
         
   test-examples:
     name: Test (Examples)
