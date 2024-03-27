@@ -141,7 +141,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Code coverage (.NET Framework)
-          path: "**/coverage.cobertura.xml"
+          path: "**/*.cobertura.xml"
         
   test-examples:
     name: Test (Examples)
