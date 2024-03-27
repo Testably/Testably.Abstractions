@@ -177,7 +177,7 @@ jobs:
       - name: Generate coverage report
         uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
         with:
-          reports: "Coverage/**/coverage.cobertura.xml"
+          reports: "Coverage/**/*.cobertura.xml"
           targetdir: "coverage-report"
           reporttypes: "Cobertura"
       - name: Publish coverage report to Codacy
