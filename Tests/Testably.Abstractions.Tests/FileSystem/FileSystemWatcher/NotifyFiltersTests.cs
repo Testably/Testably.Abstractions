@@ -3,7 +3,6 @@ using System.Threading;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
-// ReSharper disable AccessToDisposedClosure
 // ReSharper disable once PartialTypeWithSinglePart
 public abstract partial class NotifyFiltersTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
@@ -36,8 +35,16 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Changed += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName |
 		                                 NotifyFilters.FileName;
@@ -99,8 +106,16 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Changed += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.NotifyFilter = notifyFilter;
 		fileSystemWatcher.EnableRaisingEvents = true;
@@ -127,8 +142,16 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Created += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes |
 		                                 NotifyFilters.CreationTime |
@@ -159,8 +182,16 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Created += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.NotifyFilter = notifyFilter;
 		fileSystemWatcher.EnableRaisingEvents = true;
@@ -187,8 +218,16 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes |
 		                                 NotifyFilters.CreationTime |
@@ -219,8 +258,16 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.NotifyFilter = notifyFilter;
 		fileSystemWatcher.EnableRaisingEvents = true;
@@ -247,8 +294,16 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes |
 		                                 NotifyFilters.CreationTime |
@@ -279,8 +334,16 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.NotifyFilter = notifyFilter;
 		fileSystemWatcher.EnableRaisingEvents = true;
@@ -314,8 +377,16 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Renamed += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 
 		fileSystemWatcher.IncludeSubdirectories = true;
@@ -357,8 +428,16 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Renamed += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 
 		fileSystemWatcher.IncludeSubdirectories = true;
@@ -387,8 +466,16 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Renamed += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes |
 		                                 NotifyFilters.CreationTime |
@@ -421,8 +508,16 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Renamed += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 
 		fileSystemWatcher.NotifyFilter = notifyFilter;
@@ -454,8 +549,16 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Changed += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName |
 		                                 NotifyFilters.FileName;
@@ -517,8 +620,16 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Changed += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.NotifyFilter = notifyFilter;
 		fileSystemWatcher.EnableRaisingEvents = true;

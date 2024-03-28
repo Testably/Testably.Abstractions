@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
-// ReSharper disable AccessToDisposedClosure
 // ReSharper disable once PartialTypeWithSinglePart
 public abstract partial class ReadTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
@@ -44,8 +43,16 @@ public abstract partial class ReadTests<TFileSystem>
 		stream.BeginRead(buffer, 0, buffer.Length, ar =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			stream.EndRead(ar);
-			ms.Set();
+			try
+			{
+				stream.EndRead(ar);
+				// ReSharper disable once AccessToDisposedClosure
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		}, null);
 
 		ms.Wait(30000);
@@ -85,10 +92,18 @@ public abstract partial class ReadTests<TFileSystem>
 			byte[] buffer = new byte[bytes.Length];
 			stream.BeginRead(buffer, 0, buffer.Length, ar =>
 			{
-				TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
 				// ReSharper disable once AccessToDisposedClosure
-				stream.EndRead(ar);
-				ms.Set();
+				try
+				{
+					TimeSystem.Thread.Sleep(FileTestHelper.AdjustTimesDelay);
+					stream.EndRead(ar);
+					// ReSharper disable once AccessToDisposedClosure
+					ms.Set();
+				}
+				catch (ObjectDisposedException)
+				{
+					// Ignore any ObjectDisposedException
+				}
 			}, null);
 
 			ms.Wait(10000);
