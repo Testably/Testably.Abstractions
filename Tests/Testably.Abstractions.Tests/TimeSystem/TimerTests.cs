@@ -5,6 +5,7 @@ using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
 
+// ReSharper disable AccessToDisposedClosure
 // ReSharper disable once PartialTypeWithSinglePart
 public abstract partial class TimerTests<TTimeSystem>
 	: TimeSystemTestBase<TTimeSystem>
@@ -26,7 +27,6 @@ public abstract partial class TimerTests<TTimeSystem>
 		timer.Dispose();
 		Exception? exception = Record.Exception(() =>
 		{
-			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(100, 200);
 		});
 
@@ -46,7 +46,6 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
-			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(Timeout.Infinite, 0);
 		});
 
@@ -62,7 +61,6 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
-			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, Timeout.Infinite);
 		});
 
@@ -80,7 +78,6 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
-			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(dueTime, 0);
 		});
 
@@ -100,7 +97,6 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
-			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, period);
 		});
 
@@ -156,34 +152,47 @@ public abstract partial class TimerTests<TTimeSystem>
 		using ManualResetEventSlim ms2 = new();
 		using ManualResetEventSlim ms3 = new();
 		// ReSharper disable once AsyncVoidLambda
-		using ITimer timer1 = TimeSystem.Timer.New(async _ =>
+		using (ITimer timer1 = TimeSystem.Timer.New(async _ =>
 			{
-				DateTime now = TimeSystem.DateTime.Now;
-				double diff = (now - previousTime).TotalMilliseconds;
-				previousTime = now;
-				ms.Set();
-				triggerTimes.Add((int)diff);
-				ms2.Wait(30000);
-				if (triggerTimes.Count > 3)
+				try
 				{
-					ms3.Set();
+					DateTime now = TimeSystem.DateTime.Now;
+					double diff = (now - previousTime).TotalMilliseconds;
+					previousTime = now;
+					ms.Set();
+					triggerTimes.Add((int)diff);
+					ms2.Wait(30000);
+					if (triggerTimes.Count > 3)
+					{
+						ms3.Set();
+					}
+
+					await Task.Delay(10);
 				}
-
-				await Task.Delay(10);
+				catch (ObjectDisposedException)
+				{
+					// Ignore any ObjectDisposedException
+				}
 			},
-			null, 0 * TimerMultiplier, 200 * TimerMultiplier);
-		ms.Wait(30000).Should().BeTrue();
-		using ITimer timer2 = TimeSystem.Timer.New(_ =>
+			null, 0 * TimerMultiplier, 200 * TimerMultiplier))
 		{
-			// ReSharper disable once AccessToDisposedClosure
-			timer1.Change(0 * TimerMultiplier, 200 * TimerMultiplier);
-			ms2.Set();
-		}, null, 100 * TimerMultiplier, 0 * TimerMultiplier);
+			ms.Wait(30000).Should().BeTrue();
+			using ITimer timer2 = TimeSystem.Timer.New(_ =>
+			{
+				try
+				{
+					timer1.Change(0 * TimerMultiplier, 200 * TimerMultiplier);
+					ms2.Set();
+				}
+				catch (ObjectDisposedException)
+				{
+					// Ignore any ObjectDisposedException
+				}
+			}, null, 100 * TimerMultiplier, 0 * TimerMultiplier);
 
-		ms3.Wait(10000 * TimerMultiplier);
+			ms3.Wait(10000 * TimerMultiplier);
+		}
 
-		timer1.Dispose();
-		timer2.Dispose();
 		if (triggerTimes[0] < 30 * TimerMultiplier)
 		{
 			triggerTimes.RemoveAt(0);
@@ -211,34 +220,47 @@ public abstract partial class TimerTests<TTimeSystem>
 		using ManualResetEventSlim ms2 = new();
 		using ManualResetEventSlim ms3 = new();
 		// ReSharper disable once AsyncVoidLambda
-		using ITimer timer1 = TimeSystem.Timer.New(async _ =>
+		using (ITimer timer1 = TimeSystem.Timer.New(async _ =>
 			{
-				DateTime now = TimeSystem.DateTime.Now;
-				double diff = (now - previousTime).TotalMilliseconds;
-				previousTime = now;
-				ms.Set();
-				triggerTimes.Add((int)diff);
-				ms2.Wait(30000);
-				if (triggerTimes.Count > 3)
+				try
 				{
-					ms3.Set();
+					DateTime now = TimeSystem.DateTime.Now;
+					double diff = (now - previousTime).TotalMilliseconds;
+					previousTime = now;
+					ms.Set();
+					triggerTimes.Add((int)diff);
+					ms2.Wait(30000);
+					if (triggerTimes.Count > 3)
+					{
+						ms3.Set();
+					}
+
+					await Task.Delay(10);
 				}
-
-				await Task.Delay(10);
+				catch (ObjectDisposedException)
+				{
+					// Ignore any ObjectDisposedException
+				}
 			},
-			null, 0L * TimerMultiplier, 200L * TimerMultiplier);
-		ms.Wait(30000).Should().BeTrue();
-		using ITimer timer2 = TimeSystem.Timer.New(_ =>
+			null, 0L * TimerMultiplier, 200L * TimerMultiplier))
 		{
-			// ReSharper disable once AccessToDisposedClosure
-			timer1.Change(0L * TimerMultiplier, 200L * TimerMultiplier);
-			ms2.Set();
-		}, null, 100L * TimerMultiplier, 0L * TimerMultiplier);
+			ms.Wait(30000).Should().BeTrue();
+			using ITimer timer2 = TimeSystem.Timer.New(_ =>
+			{
+				try
+				{
+					timer1.Change(0L * TimerMultiplier, 200L * TimerMultiplier);
+					ms2.Set();
+				}
+				catch (ObjectDisposedException)
+				{
+					// Ignore any ObjectDisposedException
+				}
+			}, null, 100L * TimerMultiplier, 0L * TimerMultiplier);
 
-		ms3.Wait(10000);
+			ms3.Wait(10000);
+		}
 
-		timer1.Dispose();
-		timer2.Dispose();
 		if (triggerTimes[0] < 30 * TimerMultiplier)
 		{
 			triggerTimes.RemoveAt(0);
@@ -266,36 +288,49 @@ public abstract partial class TimerTests<TTimeSystem>
 		using ManualResetEventSlim ms2 = new();
 		using ManualResetEventSlim ms3 = new();
 		// ReSharper disable once AsyncVoidLambda
-		using ITimer timer1 = TimeSystem.Timer.New(async _ =>
+		using (ITimer timer1 = TimeSystem.Timer.New(async _ =>
 			{
-				DateTime now = TimeSystem.DateTime.Now;
-				double diff = (now - previousTime).TotalMilliseconds;
-				previousTime = now;
-				ms.Set();
-				triggerTimes.Add((int)diff);
-				ms2.Wait(30000);
-				if (triggerTimes.Count > 3)
+				try
 				{
-					ms3.Set();
+					DateTime now = TimeSystem.DateTime.Now;
+					double diff = (now - previousTime).TotalMilliseconds;
+					previousTime = now;
+					ms.Set();
+					triggerTimes.Add((int)diff);
+					ms2.Wait(30000);
+					if (triggerTimes.Count > 3)
+					{
+						ms3.Set();
+					}
+
+					await Task.Delay(10);
 				}
-
-				await Task.Delay(10);
+				catch (ObjectDisposedException)
+				{
+					// Ignore any ObjectDisposedException
+				}
 			}, null, TimeSpan.FromMilliseconds(0 * TimerMultiplier),
-			TimeSpan.FromMilliseconds(200 * TimerMultiplier));
-		ms.Wait(30000).Should().BeTrue();
-		using ITimer timer2 = TimeSystem.Timer.New(_ =>
-			{
-				// ReSharper disable once AccessToDisposedClosure
-				timer1.Change(TimeSpan.FromMilliseconds(0 * TimerMultiplier),
-					TimeSpan.FromMilliseconds(200 * TimerMultiplier));
-				ms2.Set();
-			}, null, TimeSpan.FromMilliseconds(100 * TimerMultiplier),
-			TimeSpan.FromMilliseconds(0 * TimerMultiplier));
+			TimeSpan.FromMilliseconds(200 * TimerMultiplier)))
+		{
+			ms.Wait(30000).Should().BeTrue();
+			using ITimer timer2 = TimeSystem.Timer.New(_ =>
+				{
+					try
+					{
+						timer1.Change(TimeSpan.FromMilliseconds(0 * TimerMultiplier),
+							TimeSpan.FromMilliseconds(200 * TimerMultiplier));
+						ms2.Set();
+					}
+					catch (ObjectDisposedException)
+					{
+						// Ignore any ObjectDisposedException
+					}
+				}, null, TimeSpan.FromMilliseconds(100 * TimerMultiplier),
+				TimeSpan.FromMilliseconds(0 * TimerMultiplier));
 
-		ms3.Wait(10000);
+			ms3.Wait(10000);
+		}
 
-		timer1.Dispose();
-		timer2.Dispose();
 		if (triggerTimes[0] < 30 * TimerMultiplier)
 		{
 			triggerTimes.RemoveAt(0);
@@ -323,7 +358,6 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		waitHandle.WaitOne(1000).Should().BeTrue();
 		result.Should().BeTrue();
-		// ReSharper disable once AccessToDisposedClosure
 		Exception? exception = Record.Exception(() =>
 		{
 			timer.Change(0, 0);
@@ -347,7 +381,6 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		waitHandle.WaitOne(1000).Should().BeTrue();
 		result.Should().BeTrue();
-		// ReSharper disable once AccessToDisposedClosure
 		Exception? exception = Record.Exception(() =>
 		{
 			timer.Change(0, 0);
@@ -371,7 +404,6 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		waitHandle.WaitOne(1000).Should().BeTrue();
 		result.Should().BeTrue();
-		// ReSharper disable once AccessToDisposedClosure
 		Exception? exception = Record.Exception(() =>
 		{
 			timer.Change(0, 0);
@@ -402,12 +434,12 @@ public abstract partial class TimerTests<TTimeSystem>
 	[SkippableFact]
 	public async Task DisposeAsync_ShouldDisposeTimer()
 	{
-		using ITimer timer = TimeSystem.Timer.New(_ =>
+		await using ITimer timer = TimeSystem.Timer.New(_ =>
 		{
 		}, null, 100, 200);
+		// ReSharper disable once DisposeOnUsingVariable
 		await timer.DisposeAsync();
 
-		// ReSharper disable once AccessToDisposedClosure
 		Exception? exception = Record.Exception(() =>
 		{
 			timer.Change(0, 0);
