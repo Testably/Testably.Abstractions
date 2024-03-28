@@ -175,6 +175,12 @@ internal sealed class InMemoryStorage : IStorage
 		enumerationOptions ??= EnumerationOptionsHelper.Compatible;
 
 		string fullPath = location.FullPath;
+
+		if (_fileSystem.Execute.IsNetFramework)
+		{
+			searchPattern = AdjustSearchPatternOnNetFramework(searchPattern);
+		}
+
 		if (enumerationOptions.MatchType == MatchType.Win32)
 		{
 			EnumerationOptionsHelper.NormalizeInputs(_fileSystem.Execute,
@@ -225,6 +231,30 @@ internal sealed class InMemoryStorage : IStorage
 				yield return item.Key;
 			}
 		}
+	}
+
+	/// <summary>
+	///     When you use the asterisk wildcard character in <paramref name="searchPattern" /> and you specify a three-character
+	///     file extension, for example, "*.txt", this method also returns files with extensions that begin with the specified
+	///     extension.
+	/// </summary>
+	/// <remarks>
+	///     For example, the search pattern "*.xls" returns both "book.xls" and "book.xlsx". This behavior only occurs if an
+	///     asterisk is used in the search pattern and the file extension provided is exactly three characters. If you use the
+	///     question mark wildcard character somewhere in the search pattern, this method returns only files that match the
+	///     specified file extension exactly.
+	///     <para />
+	///     <see href="https://learn.microsoft.com/en-us/dotnet/api/system.io.directory.enumeratefiles?view=netframework-4.8" />
+	/// </remarks>
+	private static string AdjustSearchPatternOnNetFramework(string searchPattern)
+	{
+		if (searchPattern.Length == 5 &&
+		    searchPattern.StartsWith("*.", StringComparison.Ordinal))
+		{
+			searchPattern += "*";
+		}
+
+		return searchPattern;
 	}
 
 	/// <inheritdoc cref="IStorage.GetContainer(IStorageLocation)" />
