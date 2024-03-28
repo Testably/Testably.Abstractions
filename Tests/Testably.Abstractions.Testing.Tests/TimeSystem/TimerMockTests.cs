@@ -6,20 +6,9 @@ using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 
-// ReSharper disable AccessToDisposedClosure
-public class TimerMockTests
+// ReSharper disable UseAwaitUsing
+public class TimerMockTests(ITestOutputHelper testOutputHelper)
 {
-	#region Test Setup
-
-	private readonly ITestOutputHelper _testOutputHelper;
-
-	public TimerMockTests(ITestOutputHelper testOutputHelper)
-	{
-		_testOutputHelper = testOutputHelper;
-	}
-
-	#endregion
-
 	[SkippableTheory]
 	[InlineData(-1)]
 	[InlineData(0)]
@@ -33,6 +22,7 @@ public class TimerMockTests
 
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(dueTime, 0);
 		});
 
@@ -52,6 +42,7 @@ public class TimerMockTests
 
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, period);
 		});
 
@@ -70,6 +61,7 @@ public class TimerMockTests
 
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, 0);
 		});
 
@@ -94,7 +86,10 @@ public class TimerMockTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			timer.Dispose(waitHandle);
+			// ReSharper disable once AccessToDisposedClosure
+			timer
+				// ReSharper disable once AccessToDisposedClosure
+				.Dispose(waitHandle);
 		});
 
 		exception.Should().BeOfType<NotSupportedException>()
@@ -114,6 +109,7 @@ public class TimerMockTests
 
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, 0);
 		});
 
@@ -183,14 +179,22 @@ public class TimerMockTests
 		using ManualResetEventSlim ms = new();
 		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
-			if (count++ == 1)
+			// ReSharper disable once AccessToDisposedClosure
+			try
 			{
-				throw exception;
-			}
+				if (count++ == 1)
+				{
+					throw exception;
+				}
 
-			if (count == 3)
+				if (count == 3)
+				{
+					ms.Set();
+				}
+			}
+			catch (ObjectDisposedException)
 			{
-				ms.Set();
+				// Ignore any ObjectDisposedException
 			}
 		}, null, 0, 20);
 
@@ -279,8 +283,16 @@ public class TimerMockTests
 		int count = 0;
 		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
-			count++;
-			ms.Wait();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				count++;
+				ms.Wait();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		}, null, 0, 100);
 
 		Exception? exception = Record.Exception(() =>
@@ -305,19 +317,19 @@ public class TimerMockTests
 		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 			count++;
-			_testOutputHelper.WriteLine($"Execute: {count}");
+			testOutputHelper.WriteLine($"Execute: {count}");
 		}, null, 0, 100);
 
-		_testOutputHelper.WriteLine($"Waiting {executionCount} times...");
+		testOutputHelper.WriteLine($"Waiting {executionCount} times...");
 		timerHandler[0].Wait(executionCount, callback: _ =>
-			_testOutputHelper.WriteLine("Waiting completed."));
-		_testOutputHelper.WriteLine($"Waiting {executionCount} times...");
+			testOutputHelper.WriteLine("Waiting completed."));
+		testOutputHelper.WriteLine($"Waiting {executionCount} times...");
 		timerHandler[0].Wait(executionCount, callback: t =>
 		{
-			_testOutputHelper.WriteLine("Waiting completed.");
-			_testOutputHelper.WriteLine("Disposing...");
+			testOutputHelper.WriteLine("Waiting completed.");
+			testOutputHelper.WriteLine("Disposing...");
 			t.Dispose();
-			_testOutputHelper.WriteLine("Disposed.");
+			testOutputHelper.WriteLine("Disposed.");
 		}, timeout: 10000);
 		count.Should().BeGreaterOrEqualTo(2 * executionCount);
 	}
@@ -334,19 +346,19 @@ public class TimerMockTests
 		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
 			count++;
-			_testOutputHelper.WriteLine($"Execute: {count}");
+			testOutputHelper.WriteLine($"Execute: {count}");
 		}, null, 0, 100);
 
 		count.Should().Be(0);
 		timerHandler[0].Wait(executionCount, callback: t =>
 		{
-			_testOutputHelper.WriteLine("Disposing...");
+			testOutputHelper.WriteLine("Disposing...");
 			t.Dispose();
-			_testOutputHelper.WriteLine("Disposed.");
+			testOutputHelper.WriteLine("Disposed.");
 		}, timeout: 10000);
-		_testOutputHelper.WriteLine("Waiting 100ms...");
+		testOutputHelper.WriteLine("Waiting 100ms...");
 		await Task.Delay(1000);
-		_testOutputHelper.WriteLine("Waiting completed.");
+		testOutputHelper.WriteLine("Waiting completed.");
 		count.Should().Be(executionCount);
 	}
 
