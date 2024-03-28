@@ -31,6 +31,41 @@ public abstract partial class GetFilesTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void GetFiles_Path_NotOnLinux_ShouldBeCaseInsensitive(string path)
+	{
+		Skip.If(Test.RunsOnLinux);
+
+		FileSystem.Initialize()
+			.WithSubdirectory(path.ToUpperInvariant()).Initialized(s => s
+				.WithAFile());
+
+		string[] result = FileSystem.Directory.GetFiles(path.ToLowerInvariant());
+
+		result.Length.Should().Be(1);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void GetFiles_Path_OnLinux_ShouldBeCaseSensitive(string path)
+	{
+		Skip.IfNot(Test.RunsOnLinux);
+
+		FileSystem.Initialize()
+			.WithSubdirectory(path.ToUpperInvariant()).Initialized(s => s
+				.WithAFile());
+
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = FileSystem.Directory.GetFiles(path.ToLowerInvariant());
+		});
+		string[] result2 = FileSystem.Directory.GetFiles(path.ToUpperInvariant());
+
+		exception.Should().BeOfType<DirectoryNotFoundException>();
+		result2.Length.Should().Be(1);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void
 		GetFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
 			string path)
@@ -104,6 +139,55 @@ public abstract partial class GetFilesTests<TFileSystem>
 			result.Should()
 				.BeEmpty($"{fileName} should not match {searchPattern}");
 		}
+	}
+
+	[SkippableFact]
+	public void GetFiles_SearchPatternForFileWithoutExtension_ShouldWorkConsistently()
+	{
+		FileSystem.Initialize()
+			.WithFile("file_without_extension")
+			.WithFile("file.with.an.extension");
+
+		string[] result = FileSystem.Directory.GetFiles(".", "*.");
+
+		result.Length.Should().Be(1);
+	}
+
+	[SkippableFact]
+	public void
+		GetFiles_SearchPatternWithDirectorySeparator_ShouldReturnFilesInSubdirectoryOnWindows()
+	{
+		FileSystem.Initialize()
+			.WithSubdirectory("foo").Initialized(d => d
+				.WithFile("bar.txt").Which(f => f.HasStringContent("inner")))
+			.WithFile("bar.txt").Which(f => f.HasStringContent("outer"));
+
+		string[] result1 = FileSystem.Directory.GetFiles(".", "foo\\*.txt");
+		string[] result2 = FileSystem.Directory.GetFiles(".", ".\\*.txt");
+
+		if (Test.RunsOnWindows)
+		{
+			result1.Length.Should().Be(1);
+			FileSystem.File.ReadAllText(result1[0]).Should().Be("inner");
+			result2.Length.Should().Be(1);
+			FileSystem.File.ReadAllText(result2[0]).Should().Be("outer");
+		}
+		else
+		{
+			result1.Should().BeEmpty();
+			result2.Should().BeEmpty();
+		}
+	}
+
+	[SkippableFact]
+	public void GetFiles_SearchPatternWithTooManyAsterisk_ShouldWorkConsistently()
+	{
+		FileSystem.Initialize()
+			.WithFile("result.test.001.txt");
+
+		string[] result = FileSystem.Directory.GetFiles(".", "*.test.*.*.*.*");
+
+		result.Length.Should().Be(1);
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS

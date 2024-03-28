@@ -175,6 +175,13 @@ internal sealed class InMemoryStorage : IStorage
 		enumerationOptions ??= EnumerationOptionsHelper.Compatible;
 
 		string fullPath = location.FullPath;
+		if (enumerationOptions.MatchType == MatchType.Win32)
+		{
+			EnumerationOptionsHelper.NormalizeInputs(_fileSystem.Execute,
+				ref fullPath,
+				ref searchPattern);
+		}
+
 		string fullPathWithoutTrailingSlash = fullPath;
 		if (!fullPath.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar))
 		{

@@ -80,6 +80,41 @@ internal static class EnumerationOptionsHelper
 			: Compatible;
 	}
 
+	/// <summary>
+	///     Validates the directory and expression strings.<br />
+	///     If the expression string begins with a directory name, the directory name is moved and appended at the end of the
+	///     directory string.
+	///     <para />
+	///     <see
+	///         href="https://github.com/dotnet/runtime/blob/v8.0.0/src/libraries/System.Private.CoreLib/src/System/IO/Enumeration/FileSystemEnumerableFactory.cs#L27" />
+	/// </summary>
+	internal static void NormalizeInputs(Execute execute,
+		ref string directory,
+		ref string expression)
+	{
+		if (!expression.Contains(
+			execute.Path.DirectorySeparatorChar,
+			StringComparison.Ordinal))
+		{
+			return;
+		}
+
+		// We always allowed breaking the passed ref directory and filter to be separated
+		// any way the user wanted. Looking for "C:\foo\*.cs" could be passed as "C:\" and
+		// "foo\*.cs" or "C:\foo" and "*.cs", for example. As such we need to combine and
+		// split the inputs if the expression contains a directory separator.
+		//
+		// We also allowed for expression to be "foo\" which would translate to "foo\*".
+		string? directoryName = execute.Path.GetDirectoryName(expression);
+		if (directoryName?.Length > 0)
+		{
+			// Need to fix up the input paths
+			directory = execute.Path.GetFullPath(
+				execute.Path.Combine(directory, directoryName));
+			expression = expression.Substring(directoryName.Length + 1);
+		}
+	}
+
 	private static bool MatchPattern(Execute execute,
 		string searchString,
 		string name,
