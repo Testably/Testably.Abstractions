@@ -74,14 +74,14 @@ jobs:
         run: |
           prNumber="${{ github.event.number }}"
           commentsUrl="https://api.github.com/repos/Testably/Testably.Abstractions/issues/$prNumber/comments"
-          dashboardLink="[Stryker dashboard](https://dashboard.stryker-mutator.io/reports/github.com/Testably/Testably.Abstractions/${GITHUB_HEAD_REF}) on the build pipeline"
+          dashboardLink="[Stryker.NET](https://stryker-mutator.io/docs/stryker-net/introduction/) was executed on the changes in the pull request:  \n[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FTestably%2FTestably.Abstractions%2F${GITHUB_HEAD_REF})](https://dashboard.stryker-mutator.io/reports/github.com/Testably/Testably.Abstractions/${GITHUB_HEAD_REF})"
           echo "Search for comment in PR#$prNumber containing $dashboardLink..."
           result=$(curl -X GET $commentsUrl \
             -H "Content-Type: application/json" \
             -H "Authorization: token $GITHUB_TOKEN")
           if [[ $result != *"$dashboardLink"* ]]
           then
-            body="{\"body\":\"Please check the $dashboardLink.\"}"
+            body="{\"body\":\"$dashboardLink\"}"
             curl -X POST $commentsUrl \
               -H "Accept: application/vnd.github+json" \
               -H "Authorization: token $GITHUB_TOKEN" \
