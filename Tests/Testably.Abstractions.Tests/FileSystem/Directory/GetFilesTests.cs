@@ -39,11 +39,14 @@ public abstract partial class GetFilesTests<TFileSystem>
 			.WithSubdirectory(path.ToUpperInvariant()).Initialized(s => s
 				.WithAFile());
 
-		string[] result1 = FileSystem.Directory.GetFiles(path.ToLowerInvariant());
-		string[] result2 = FileSystem.Directory.GetFiles(path.ToUpperInvariant());
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = FileSystem.Directory.GetFiles(path.ToLowerInvariant());
+		});
+		string[] result = FileSystem.Directory.GetFiles(path.ToUpperInvariant());
 
-		result1.Length.Should().Be(0);
-		result2.Length.Should().Be(1);
+		exception.Should().BeOfType<DirectoryNotFoundException>();
+		result.Length.Should().Be(1);
 	}
 
 	[SkippableTheory]
@@ -151,7 +154,7 @@ public abstract partial class GetFilesTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void GetFiles_SearchPatternWithDirectorySeparator_ShouldReturnFilesInSubdirectory()
+	public void GetFiles_SearchPatternWithDirectorySeparator_ShouldReturnFilesInSubdirectoryOnWindows()
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo").Initialized(d => d
@@ -161,8 +164,15 @@ public abstract partial class GetFilesTests<TFileSystem>
 		string[] result1 = FileSystem.Directory.GetFiles(".", "foo\\*.txt");
 		string[] result2 = FileSystem.Directory.GetFiles(".", ".\\*.txt");
 
-		result1.Length.Should().Be(1);
-		FileSystem.File.ReadAllText(result1[0]).Should().Be("inner");
+		if (Test.RunsOnWindows)
+		{
+			result1.Length.Should().Be(1);
+			FileSystem.File.ReadAllText(result1[0]).Should().Be("inner");
+		}
+		else
+		{
+			result1.Should().BeEmpty();
+		}
 
 		result2.Length.Should().Be(1);
 		FileSystem.File.ReadAllText(result2[0]).Should().Be("outer");

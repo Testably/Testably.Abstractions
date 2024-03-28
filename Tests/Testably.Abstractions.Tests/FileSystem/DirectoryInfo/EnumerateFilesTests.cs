@@ -178,7 +178,7 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 
 	[SkippableFact]
 	public void
-		EnumerateFiles_WithSearchPatternWithDirectorySeparator_ShouldReturnFilesInSubdirectory()
+		EnumerateFiles_WithSearchPatternWithDirectorySeparator_ShouldReturnFilesInSubdirectoryOnWindows()
 	{
 		IDirectoryInfo baseDirectory =
 			FileSystem.Initialize()
@@ -190,8 +190,15 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 		List<IFileInfo> result1 = baseDirectory.EnumerateFiles("foo\\*.txt").ToList();
 		List<IFileInfo> result2 = baseDirectory.EnumerateFiles(".\\*.txt").ToList();
 
-		result1.Count.Should().Be(1);
-		FileSystem.File.ReadAllText(result1.Single().FullName).Should().Be("inner");
+		if (Test.RunsOnWindows)
+		{
+			result1.Count.Should().Be(1);
+			FileSystem.File.ReadAllText(result1.Single().FullName).Should().Be("inner");
+		}
+		else
+		{
+			result1.Should().BeEmpty();
+		}
 
 		result2.Count.Should().Be(1);
 		FileSystem.File.ReadAllText(result2.Single().FullName).Should().Be("outer");
