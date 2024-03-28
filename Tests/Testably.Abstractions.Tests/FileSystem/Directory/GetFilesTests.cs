@@ -39,14 +39,24 @@ public abstract partial class GetFilesTests<TFileSystem>
 			.WithSubdirectory(path.ToUpperInvariant()).Initialized(s => s
 				.WithAFile());
 
+		string[] result1 = Array.Empty<string>();
 		Exception? exception = Record.Exception(() =>
 		{
-			_ = FileSystem.Directory.GetFiles(path.ToLowerInvariant());
+			result1 = FileSystem.Directory.GetFiles(path.ToLowerInvariant());
 		});
-		string[] result = FileSystem.Directory.GetFiles(path.ToUpperInvariant());
+		string[] result2 = FileSystem.Directory.GetFiles(path.ToUpperInvariant());
 
-		exception.Should().BeOfType<DirectoryNotFoundException>();
-		result.Length.Should().Be(1);
+		if (Test.RunsOnLinux)
+		{
+			exception.Should().BeOfType<DirectoryNotFoundException>();
+		}
+		else
+		{
+			exception.Should().BeNull();
+			result1.Should().BeEmpty();
+		}
+
+		result2.Length.Should().Be(1);
 	}
 
 	[SkippableTheory]
