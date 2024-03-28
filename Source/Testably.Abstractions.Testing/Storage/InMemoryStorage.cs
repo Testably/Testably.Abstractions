@@ -177,8 +177,9 @@ internal sealed class InMemoryStorage : IStorage
 		string fullPath = location.FullPath;
 		if (enumerationOptions.MatchType == MatchType.Win32)
 		{
-			EnumerationOptionsHelper.NormalizeInputs(_fileSystem.Execute, ref fullPath, ref searchPattern);
-			fullPath = _fileSystem.Execute.Path.GetFullPath(fullPath);
+			EnumerationOptionsHelper.NormalizeInputs(_fileSystem.Execute,
+				ref fullPath,
+				ref searchPattern);
 		}
 
 		string fullPathWithoutTrailingSlash = fullPath;

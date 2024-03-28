@@ -81,9 +81,8 @@ internal static class EnumerationOptionsHelper
 	}
 
 	/// <summary>
-	///     Validates the directory and expression strings to check that they have no invalid characters, any special DOS
-	///     wildcard characters in Win32 in the expression get replaced with their proper escaped representation, and if the
-	///     expression string begins with a directory name, the directory name is moved and appended at the end of the
+	///     Validates the directory and expression strings.
+	///     If the expression string begins with a directory name, the directory name is moved and appended at the end of the
 	///     directory string.
 	///     <para />
 	///     <see
@@ -112,7 +111,8 @@ internal static class EnumerationOptionsHelper
 		if (directoryName?.Length > 0)
 		{
 			// Need to fix up the input paths
-			directory = execute.Path.Combine(directory, directoryName);
+			directory = execute.Path.GetFullPath(
+				execute.Path.Combine(directory, directoryName));
 			expression = expression.Substring(directoryName.Length + 1);
 		}
 	}
