@@ -31,39 +31,9 @@ public abstract partial class GetFilesTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void GetFiles_Path_NotOnWindows_ShouldBeCaseSensitive(string path)
+	public void GetFiles_Path_NotOnLinux_ShouldBeCaseInsensitive(string path)
 	{
-		Skip.If(Test.RunsOnWindows);
-
-		FileSystem.Initialize()
-			.WithSubdirectory(path.ToUpperInvariant()).Initialized(s => s
-				.WithAFile());
-
-		string[] result1 = Array.Empty<string>();
-		Exception? exception = Record.Exception(() =>
-		{
-			result1 = FileSystem.Directory.GetFiles(path.ToLowerInvariant());
-		});
-		string[] result2 = FileSystem.Directory.GetFiles(path.ToUpperInvariant());
-
-		if (Test.RunsOnLinux)
-		{
-			exception.Should().BeOfType<DirectoryNotFoundException>();
-		}
-		else
-		{
-			exception.Should().BeNull();
-			result1.Should().BeEmpty();
-		}
-
-		result2.Length.Should().Be(1);
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void GetFiles_Path_OnWindows_ShouldBeCaseInsensitive(string path)
-	{
-		Skip.IfNot(Test.RunsOnWindows);
+		Skip.If(Test.RunsOnLinux);
 
 		FileSystem.Initialize()
 			.WithSubdirectory(path.ToUpperInvariant()).Initialized(s => s
@@ -72,6 +42,26 @@ public abstract partial class GetFilesTests<TFileSystem>
 		string[] result = FileSystem.Directory.GetFiles(path.ToLowerInvariant());
 
 		result.Length.Should().Be(1);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void GetFiles_Path_OnLinux_ShouldBeCaseSensitive(string path)
+	{
+		Skip.IfNot(Test.RunsOnLinux);
+
+		FileSystem.Initialize()
+			.WithSubdirectory(path.ToUpperInvariant()).Initialized(s => s
+				.WithAFile());
+
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = FileSystem.Directory.GetFiles(path.ToLowerInvariant());
+		});
+		string[] result2 = FileSystem.Directory.GetFiles(path.ToUpperInvariant());
+
+		exception.Should().BeOfType<DirectoryNotFoundException>();
+		result2.Length.Should().Be(1);
 	}
 
 	[SkippableTheory]
