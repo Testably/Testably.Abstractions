@@ -23,8 +23,16 @@ public abstract partial class FilterTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.Filter = path;
 		fileSystemWatcher.EnableRaisingEvents = true;
@@ -51,8 +59,16 @@ public abstract partial class FilterTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.Filter = filter;
 		fileSystemWatcher.EnableRaisingEvents = true;

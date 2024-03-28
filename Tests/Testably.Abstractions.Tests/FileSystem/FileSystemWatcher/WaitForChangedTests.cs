@@ -1,7 +1,6 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-// ReSharper disable AccessToDisposedClosure
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
@@ -21,11 +20,19 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 		{
 			_ = Task.Run(async () =>
 			{
-				while (!ms.IsSet)
+				// ReSharper disable once AccessToDisposedClosure
+				try
 				{
-					await Task.Delay(10);
-					FileSystem.Directory.CreateDirectory(path);
-					FileSystem.Directory.Delete(path);
+					while (!ms.IsSet)
+					{
+						await Task.Delay(10);
+						FileSystem.Directory.CreateDirectory(path);
+						FileSystem.Directory.Delete(path);
+					}
+				}
+				catch (ObjectDisposedException)
+				{
+					// Ignore any ObjectDisposedException
 				}
 			});
 
@@ -62,11 +69,19 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 			fileSystemWatcher.EnableRaisingEvents = true;
 			_ = Task.Run(async () =>
 			{
-				while (!ms.IsSet)
+				// ReSharper disable once AccessToDisposedClosure
+				try
 				{
-					await Task.Delay(10);
-					FileSystem.Directory.CreateDirectory(fullPath);
-					FileSystem.Directory.Delete(fullPath);
+					while (!ms.IsSet)
+					{
+						await Task.Delay(10);
+						FileSystem.Directory.CreateDirectory(fullPath);
+						FileSystem.Directory.Delete(fullPath);
+					}
+				}
+				catch (ObjectDisposedException)
+				{
+					// Ignore any ObjectDisposedException
 				}
 			});
 			IWaitForChangedResult result = callback(fileSystemWatcher);

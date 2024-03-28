@@ -17,7 +17,15 @@ public abstract partial class EnableRaisingEventsTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, _) =>
 		{
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(path1);
@@ -40,7 +48,15 @@ public abstract partial class EnableRaisingEventsTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, _) =>
 		{
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 
 		FileSystem.Directory.Delete(path);

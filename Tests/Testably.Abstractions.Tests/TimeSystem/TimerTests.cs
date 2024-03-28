@@ -5,7 +5,6 @@ using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
 
-// ReSharper disable AccessToDisposedClosure
 // ReSharper disable once PartialTypeWithSinglePart
 public abstract partial class TimerTests<TTimeSystem>
 	: TimeSystemTestBase<TTimeSystem>
@@ -27,6 +26,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		timer.Dispose();
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(100, 200);
 		});
 
@@ -46,6 +46,7 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(Timeout.Infinite, 0);
 		});
 
@@ -61,6 +62,7 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, Timeout.Infinite);
 		});
 
@@ -78,6 +80,7 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(dueTime, 0);
 		});
 
@@ -97,6 +100,7 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, period);
 		});
 
@@ -154,6 +158,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		// ReSharper disable once AsyncVoidLambda
 		using (ITimer timer1 = TimeSystem.Timer.New(async _ =>
 			{
+				// ReSharper disable once AccessToDisposedClosure
 				try
 				{
 					DateTime now = TimeSystem.DateTime.Now;
@@ -161,9 +166,11 @@ public abstract partial class TimerTests<TTimeSystem>
 					previousTime = now;
 					ms.Set();
 					triggerTimes.Add((int)diff);
+					// ReSharper disable once AccessToDisposedClosure
 					ms2.Wait(30000);
 					if (triggerTimes.Count > 3)
 					{
+						// ReSharper disable once AccessToDisposedClosure
 						ms3.Set();
 					}
 
@@ -179,9 +186,11 @@ public abstract partial class TimerTests<TTimeSystem>
 			ms.Wait(30000).Should().BeTrue();
 			using ITimer timer2 = TimeSystem.Timer.New(_ =>
 			{
+				// ReSharper disable once AccessToDisposedClosure
 				try
 				{
 					timer1.Change(0 * TimerMultiplier, 200 * TimerMultiplier);
+					// ReSharper disable once AccessToDisposedClosure
 					ms2.Set();
 				}
 				catch (ObjectDisposedException)
@@ -222,6 +231,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		// ReSharper disable once AsyncVoidLambda
 		using (ITimer timer1 = TimeSystem.Timer.New(async _ =>
 			{
+				// ReSharper disable once AccessToDisposedClosure
 				try
 				{
 					DateTime now = TimeSystem.DateTime.Now;
@@ -229,9 +239,11 @@ public abstract partial class TimerTests<TTimeSystem>
 					previousTime = now;
 					ms.Set();
 					triggerTimes.Add((int)diff);
+					// ReSharper disable once AccessToDisposedClosure
 					ms2.Wait(30000);
 					if (triggerTimes.Count > 3)
 					{
+						// ReSharper disable once AccessToDisposedClosure
 						ms3.Set();
 					}
 
@@ -247,9 +259,11 @@ public abstract partial class TimerTests<TTimeSystem>
 			ms.Wait(30000).Should().BeTrue();
 			using ITimer timer2 = TimeSystem.Timer.New(_ =>
 			{
+				// ReSharper disable once AccessToDisposedClosure
 				try
 				{
 					timer1.Change(0L * TimerMultiplier, 200L * TimerMultiplier);
+					// ReSharper disable once AccessToDisposedClosure
 					ms2.Set();
 				}
 				catch (ObjectDisposedException)
@@ -290,6 +304,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		// ReSharper disable once AsyncVoidLambda
 		using (ITimer timer1 = TimeSystem.Timer.New(async _ =>
 			{
+				// ReSharper disable once AccessToDisposedClosure
 				try
 				{
 					DateTime now = TimeSystem.DateTime.Now;
@@ -297,9 +312,11 @@ public abstract partial class TimerTests<TTimeSystem>
 					previousTime = now;
 					ms.Set();
 					triggerTimes.Add((int)diff);
+					// ReSharper disable once AccessToDisposedClosure
 					ms2.Wait(30000);
 					if (triggerTimes.Count > 3)
 					{
+						// ReSharper disable once AccessToDisposedClosure
 						ms3.Set();
 					}
 
@@ -315,10 +332,12 @@ public abstract partial class TimerTests<TTimeSystem>
 			ms.Wait(30000).Should().BeTrue();
 			using ITimer timer2 = TimeSystem.Timer.New(_ =>
 				{
+					// ReSharper disable once AccessToDisposedClosure
 					try
 					{
 						timer1.Change(TimeSpan.FromMilliseconds(0 * TimerMultiplier),
 							TimeSpan.FromMilliseconds(200 * TimerMultiplier));
+						// ReSharper disable once AccessToDisposedClosure
 						ms2.Set();
 					}
 					catch (ObjectDisposedException)
@@ -360,6 +379,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		result.Should().BeTrue();
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, 0);
 		});
 
@@ -383,6 +403,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		result.Should().BeTrue();
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, 0);
 		});
 
@@ -406,6 +427,7 @@ public abstract partial class TimerTests<TTimeSystem>
 		result.Should().BeTrue();
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, 0);
 		});
 
@@ -442,6 +464,7 @@ public abstract partial class TimerTests<TTimeSystem>
 
 		Exception? exception = Record.Exception(() =>
 		{
+			// ReSharper disable once AccessToDisposedClosure
 			timer.Change(0, 0);
 		});
 

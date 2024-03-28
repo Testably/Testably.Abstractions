@@ -3,7 +3,6 @@ using System.Threading;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
-// ReSharper disable AccessToDisposedClosure
 // ReSharper disable once PartialTypeWithSinglePart
 public abstract partial class IncludeSubdirectoriesTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
@@ -23,8 +22,16 @@ public abstract partial class IncludeSubdirectoriesTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.IncludeSubdirectories = false;
 		fileSystemWatcher.EnableRaisingEvents = true;
@@ -50,8 +57,16 @@ public abstract partial class IncludeSubdirectoriesTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(baseDirectory);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.IncludeSubdirectories = true;
 		fileSystemWatcher.EnableRaisingEvents = true;
@@ -77,8 +92,16 @@ public abstract partial class IncludeSubdirectoriesTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.IncludeSubdirectories = true;
 		fileSystemWatcher.EnableRaisingEvents = true;

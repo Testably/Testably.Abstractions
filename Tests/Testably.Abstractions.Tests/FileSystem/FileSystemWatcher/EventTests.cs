@@ -23,19 +23,40 @@ public abstract partial class EventTests<TFileSystem>
 
 		void FileSystemWatcherOnChanged(object sender, FileSystemEventArgs e)
 		{
-			callCount++;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				callCount++;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		}
 
 		try
 		{
 			_ = Task.Run(async () =>
 			{
-				int i = 0;
-				while (!ms.IsSet)
+				// ReSharper disable once AccessToDisposedClosure
+				try
 				{
-					await Task.Delay(10);
-					FileSystem.File.WriteAllText(path, i++.ToString(CultureInfo.InvariantCulture));
+					int i = 0;
+					while (!ms.IsSet)
+					{
+						FileSystem.File.WriteAllText(path,
+							i++.ToString(CultureInfo.InvariantCulture));
+						await Task.Delay(10);
+					}
+				}
+				catch (IOException)
+				{
+					// Ignore any IOException
+				}
+				catch (ObjectDisposedException)
+				{
+					// Ignore any ObjectDisposedException
 				}
 			});
 
@@ -68,19 +89,35 @@ public abstract partial class EventTests<TFileSystem>
 
 		void FileSystemWatcherOnCreated(object sender, FileSystemEventArgs e)
 		{
-			callCount++;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				callCount++;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		}
 
 		try
 		{
 			_ = Task.Run(async () =>
 			{
-				while (!ms.IsSet)
+				// ReSharper disable once AccessToDisposedClosure
+				try
 				{
-					await Task.Delay(10);
-					FileSystem.Directory.CreateDirectory(path);
-					FileSystem.Directory.Delete(path);
+					while (!ms.IsSet)
+					{
+						FileSystem.Directory.CreateDirectory(path);
+						FileSystem.Directory.Delete(path);
+						await Task.Delay(10);
+					}
+				}
+				catch (ObjectDisposedException)
+				{
+					// Ignore any ObjectDisposedException
 				}
 			});
 
@@ -114,19 +151,35 @@ public abstract partial class EventTests<TFileSystem>
 
 		void FileSystemWatcherOnDeleted(object sender, FileSystemEventArgs e)
 		{
-			callCount++;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				callCount++;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		}
 
 		try
 		{
 			_ = Task.Run(async () =>
 			{
-				while (!ms.IsSet)
+				// ReSharper disable once AccessToDisposedClosure
+				try
 				{
-					await Task.Delay(10);
-					FileSystem.Directory.CreateDirectory(path);
-					FileSystem.Directory.Delete(path);
+					while (!ms.IsSet)
+					{
+						FileSystem.Directory.CreateDirectory(path);
+						FileSystem.Directory.Delete(path);
+						await Task.Delay(10);
+					}
+				}
+				catch (ObjectDisposedException)
+				{
+					// Ignore any ObjectDisposedException
 				}
 			});
 
@@ -161,20 +214,36 @@ public abstract partial class EventTests<TFileSystem>
 
 		void FileSystemWatcherOnRenamed(object sender, FileSystemEventArgs e)
 		{
-			callCount++;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				callCount++;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		}
 
 		try
 		{
 			_ = Task.Run(async () =>
 			{
-				int i = 0;
-				FileSystem.File.WriteAllText($"path-{i}", "");
-				while (!ms.IsSet)
+				// ReSharper disable once AccessToDisposedClosure
+				try
 				{
-					await Task.Delay(10);
-					FileSystem.File.Move($"path-{i}", $"path-{++i}");
+					int i = 0;
+					FileSystem.File.WriteAllText($"path-{i}", "");
+					while (!ms.IsSet)
+					{
+						FileSystem.File.Move($"path-{i}", $"path-{++i}");
+						await Task.Delay(10);
+					}
+				}
+				catch (ObjectDisposedException)
+				{
+					// Ignore any ObjectDisposedException
 				}
 			});
 
