@@ -150,6 +150,39 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 		}
 	}
 
+	[SkippableTheory]
+	[InlineAutoData(true, "*.xls", ".xls")]
+	[InlineAutoData(false, "*.x", ".xls")]
+#if NETFRAMEWORK
+	[InlineAutoData(true, "*.xls", ".xlsx")]
+#else
+	[InlineAutoData(false, "*.xls", ".xlsx")]
+#endif
+	[InlineAutoData(false, "foo.x", ".xls", "foo")]
+	[InlineAutoData(false, "?.xls", ".xlsx", "a")]
+	public void EnumerateDirectories_SearchPattern_WithFileExtension_ShouldReturnExpectedValue(
+		bool expectToBeFound, string searchPattern, string extension,
+		string fileNameWithoutExtension)
+	{
+		string fileName = $"{fileNameWithoutExtension}{extension}";
+		FileSystem.Initialize().WithSubdirectory(fileName);
+
+		List<string> result = FileSystem.Directory
+			.EnumerateDirectories(".", searchPattern).ToList();
+
+		if (expectToBeFound)
+		{
+			result.Should().ContainSingle(
+				extension,
+				$"it should match {searchPattern}");
+		}
+		else
+		{
+			result.Should()
+				.BeEmpty($"{extension} should not match {searchPattern}");
+		}
+	}
+
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 	[SkippableTheory]
 	[AutoData]
