@@ -194,13 +194,13 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 		{
 			result1.Count.Should().Be(1);
 			FileSystem.File.ReadAllText(result1.Single().FullName).Should().Be("inner");
+			result2.Count.Should().Be(1);
+			FileSystem.File.ReadAllText(result2.Single().FullName).Should().Be("outer");
 		}
 		else
 		{
 			result1.Should().BeEmpty();
+			result2.Should().BeEmpty();
 		}
-
-		result2.Count.Should().Be(1);
-		FileSystem.File.ReadAllText(result2.Single().FullName).Should().Be("outer");
 	}
 }

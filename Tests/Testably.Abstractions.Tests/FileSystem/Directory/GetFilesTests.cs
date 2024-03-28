@@ -154,7 +154,8 @@ public abstract partial class GetFilesTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void GetFiles_SearchPatternWithDirectorySeparator_ShouldReturnFilesInSubdirectoryOnWindows()
+	public void
+		GetFiles_SearchPatternWithDirectorySeparator_ShouldReturnFilesInSubdirectoryOnWindows()
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo").Initialized(d => d
@@ -168,14 +169,14 @@ public abstract partial class GetFilesTests<TFileSystem>
 		{
 			result1.Length.Should().Be(1);
 			FileSystem.File.ReadAllText(result1[0]).Should().Be("inner");
+			result2.Length.Should().Be(1);
+			FileSystem.File.ReadAllText(result2[0]).Should().Be("outer");
 		}
 		else
 		{
 			result1.Should().BeEmpty();
+			result2.Should().BeEmpty();
 		}
-
-		result2.Length.Should().Be(1);
-		FileSystem.File.ReadAllText(result2[0]).Should().Be("outer");
 	}
 
 	[SkippableFact]

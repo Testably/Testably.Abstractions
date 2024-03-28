@@ -106,24 +106,12 @@ internal static class EnumerationOptionsHelper
 	/// <exception cref="ArgumentOutOfRangeException">
 	///     The match type is out of the range of the valid MatchType enum values.
 	/// </exception>
-	internal static bool NormalizeInputs(ref string directory, ref string expression,
+	internal static bool NormalizeInputs(
+		ref string directory,
+		ref string expression,
 		MatchType matchType)
 	{
-		char[] s_unixEscapeChars =
-		{
-			'\\',
-			'"',
-			'<',
-			'>'
-		};
-		//if (Path.IsPathRooted(expression))
-		//	throw new ArgumentException(SR.Arg_Path2IsRooted, nameof(expression));
-
-		//if (expression.Contains('\0'))
-		//	throw new ArgumentException(SR.Argument_NullCharInPath, expression);
-
-		//if (directory.Contains('\0'))
-		//	throw new ArgumentException(SR.Argument_NullCharInPath, directory);
+		char[] unixEscapeChars = ['\\', '"', '<', '>'];
 
 		// We always allowed breaking the passed ref directory and filter to be separated
 		// any way the user wanted. Looking for "C:\foo\*.cs" could be passed as "C:\" and
@@ -168,7 +156,7 @@ internal static class EnumerationOptionsHelper
 					// special case wildcards that we'll convert some * and ? into. They're also valid as filenames on Unix,
 					// which is not true in Windows and as such we'll escape any that occur on the input string.
 					if (Path.DirectorySeparatorChar != '\\' &&
-					    expression.IndexOfAny(s_unixEscapeChars) != -1)
+					    expression.IndexOfAny(unixEscapeChars) != -1)
 					{
 						// Backslash isn't the default separator, need to escape (e.g. Unix)
 						expression = expression.Replace("\\", "\\\\", StringComparison.Ordinal);
