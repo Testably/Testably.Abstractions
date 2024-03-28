@@ -169,11 +169,6 @@ jobs:
         with:
           name: Code coverage (Windows)
           path: Coverage/Windows
-      - name: Download code coverage files (.NET Framework)
-        uses: actions/download-artifact@v3
-        with:
-          name: Code coverage (.NET Framework)
-          path: Coverage/.NET Framework
       - name: Generate coverage report
         uses: danielpalme/ReportGenerator-GitHub-Action@5.2.4
         with:
