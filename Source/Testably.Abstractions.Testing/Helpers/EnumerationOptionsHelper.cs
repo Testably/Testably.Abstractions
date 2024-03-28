@@ -85,33 +85,20 @@ internal static class EnumerationOptionsHelper
 	///     wildcard characters in Win32 in the expression get replaced with their proper escaped representation, and if the
 	///     expression string begins with a directory name, the directory name is moved and appended at the end of the
 	///     directory string.
+	///     <para />
+	///     <see
+	///         href="https://github.com/dotnet/runtime/blob/v8.0.0/src/libraries/System.Private.CoreLib/src/System/IO/Enumeration/FileSystemEnumerableFactory.cs#L27" />
 	/// </summary>
-	/// <param name="directory">A reference to a directory string that we will be checking for normalization.</param>
-	/// <param name="expression">A reference to a expression string that we will be checking for normalization.</param>
-	/// <param name="matchType">
-	///     The kind of matching we want to check in the expression. If the value is Win32, we will replace
-	///     special DOS wild characters to their safely escaped representation. This replacement does not affect the
-	///     normalization status of the expression.
-	/// </param>
-	/// <returns>
-	///     <cref langword="false" /> if the directory reference string get modified inside this function due to the
-	///     expression beginning with a directory name. <cref langword="true" /> if the directory reference string was not
-	///     modified.
-	/// </returns>
-	/// <exception cref="ArgumentException">
-	///     The expression is a rooted path.
-	///     -or-
-	///     The directory or the expression reference strings contain a null character.
-	/// </exception>
-	/// <exception cref="ArgumentOutOfRangeException">
-	///     The match type is out of the range of the valid MatchType enum values.
-	/// </exception>
-	internal static bool NormalizeInputs(
+	internal static void NormalizeInputs(Execute execute,
 		ref string directory,
-		ref string expression,
-		MatchType matchType)
+		ref string expression)
 	{
-		char[] unixEscapeChars = ['\\', '"', '<', '>'];
+		if (!expression.Contains(
+			execute.Path.DirectorySeparatorChar,
+			StringComparison.Ordinal))
+		{
+			return;
+		}
 
 		// We always allowed breaking the passed ref directory and filter to be separated
 		// any way the user wanted. Looking for "C:\foo\*.cs" could be passed as "C:\" and
@@ -120,65 +107,14 @@ internal static class EnumerationOptionsHelper
 		//
 		// We also allowed for expression to be "foo\" which would translate to "foo\*".
 
-		string? directoryName = Path.GetDirectoryName(expression);
-
-		bool isDirectoryModified = true;
+		string? directoryName = execute.Path.GetDirectoryName(expression);
 
 		if (directoryName?.Length > 0)
 		{
 			// Need to fix up the input paths
-			directory = Path.Combine(directory, directoryName);
+			directory = execute.Path.Combine(directory, directoryName);
 			expression = expression.Substring(directoryName.Length + 1);
-
-			isDirectoryModified = false;
 		}
-
-		switch (matchType)
-		{
-			case MatchType.Win32:
-				if (string.Equals(expression, "*", StringComparison.Ordinal))
-				{
-					// Most common case
-					break;
-				}
-
-				if (string.IsNullOrEmpty(expression) ||
-				    string.Equals(expression, ".", StringComparison.Ordinal) ||
-				    string.Equals(expression, "*.*", StringComparison.Ordinal))
-				{
-					// Historically we always treated "." as "*"
-					expression = "*";
-				}
-				else
-				{
-					// These all have special meaning in DOS name matching. '\' is the escaping character (which conveniently
-					// is the directory separator and cannot be part of any path segment in Windows). The other three are the
-					// special case wildcards that we'll convert some * and ? into. They're also valid as filenames on Unix,
-					// which is not true in Windows and as such we'll escape any that occur on the input string.
-					if (Path.DirectorySeparatorChar != '\\' &&
-					    expression.IndexOfAny(unixEscapeChars) != -1)
-					{
-						// Backslash isn't the default separator, need to escape (e.g. Unix)
-						expression = expression.Replace("\\", "\\\\", StringComparison.Ordinal);
-
-						// Also need to escape the other special wild characters ('"', '<', and '>')
-						expression = expression.Replace("\"", "\\\"", StringComparison.Ordinal);
-						expression = expression.Replace(">", "\\>", StringComparison.Ordinal);
-						expression = expression.Replace("<", "\\<", StringComparison.Ordinal);
-					}
-
-					// Need to convert the expression to match Win32 behavior
-					expression = FileSystemName.TranslateWin32Expression(expression);
-				}
-
-				break;
-			case MatchType.Simple:
-				break;
-			default:
-				throw new ArgumentOutOfRangeException(nameof(matchType));
-		}
-
-		return isDirectoryModified;
 	}
 
 	private static bool MatchPattern(Execute execute,

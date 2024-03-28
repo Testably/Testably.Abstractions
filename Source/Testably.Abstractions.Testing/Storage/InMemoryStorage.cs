@@ -175,12 +175,9 @@ internal sealed class InMemoryStorage : IStorage
 		enumerationOptions ??= EnumerationOptionsHelper.Compatible;
 
 		string fullPath = location.FullPath;
-		if (searchPattern.Contains(
-			_fileSystem.Execute.Path.DirectorySeparatorChar,
-			StringComparison.Ordinal))
+		if (enumerationOptions.MatchType == MatchType.Win32)
 		{
-			EnumerationOptionsHelper.NormalizeInputs(ref fullPath, ref searchPattern,
-				enumerationOptions.MatchType);
+			EnumerationOptionsHelper.NormalizeInputs(_fileSystem.Execute, ref fullPath, ref searchPattern);
 			fullPath = _fileSystem.Execute.Path.GetFullPath(fullPath);
 		}
 
