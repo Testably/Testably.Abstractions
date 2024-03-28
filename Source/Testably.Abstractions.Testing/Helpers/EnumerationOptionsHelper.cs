@@ -81,7 +81,7 @@ internal static class EnumerationOptionsHelper
 	}
 
 	/// <summary>
-	///     Validates the directory and expression strings.
+	///     Validates the directory and expression strings.<br />
 	///     If the expression string begins with a directory name, the directory name is moved and appended at the end of the
 	///     directory string.
 	///     <para />
@@ -105,9 +105,7 @@ internal static class EnumerationOptionsHelper
 		// split the inputs if the expression contains a directory separator.
 		//
 		// We also allowed for expression to be "foo\" which would translate to "foo\*".
-
 		string? directoryName = execute.Path.GetDirectoryName(expression);
-
 		if (directoryName?.Length > 0)
 		{
 			// Need to fix up the input paths
