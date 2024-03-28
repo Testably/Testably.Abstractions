@@ -212,24 +212,21 @@ internal sealed class InMemoryStorage : IStorage
 				continue;
 			}
 
-			string name = _fileSystem.Execute.Path.GetFileName(item.Key.FullPath);
-			if (!EnumerationOptionsHelper.MatchesPattern(
-				_fileSystem.Execute,
-				enumerationOptions,
-				name,
-				searchPattern))
-			{
-				if (!_fileSystem.Execute.IsNetFramework ||
-				    !SearchPatternMatchesFileExtensionOnNetFramework(searchPattern,
-					    _fileSystem.Execute.Path.GetExtension(name)))
-				{
-					continue;
-				}
-			}
-
 			if (type.HasFlag(item.Value.Type))
 			{
-				yield return item.Key;
+				string name = _fileSystem.Execute.Path.GetFileName(item.Key.FullPath);
+				if (EnumerationOptionsHelper.MatchesPattern(
+					    _fileSystem.Execute,
+					    enumerationOptions,
+					    name,
+					    searchPattern) ||
+				    (_fileSystem.Execute.IsNetFramework &&
+				     SearchPatternMatchesFileExtensionOnNetFramework(
+					     searchPattern,
+					     _fileSystem.Execute.Path.GetExtension(name))))
+				{
+					yield return item.Key;
+				}
 			}
 		}
 	}
