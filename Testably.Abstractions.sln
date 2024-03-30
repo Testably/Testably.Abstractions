@@ -62,7 +62,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\ci-stryker.yml = .github\workflows\ci-stryker.yml
 		.github\workflows\ci.yml = .github\workflows\ci.yml
 		.github\workflows\pr.yml = .github\workflows\pr.yml
-		.github\workflows\release.yml = .github\workflows\release.yml
 		.github\workflows\stryker.yml = .github\workflows\stryker.yml
 		.github\workflows\test-report.yml = .github\workflows\test-report.yml
 	EndProjectSection
