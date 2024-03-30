@@ -2,7 +2,7 @@ name: "Build"
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'release/v[0-9]+.[0-9]+.[0-9]+']
     
 jobs:
   test-macos:
@@ -13,6 +13,12 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
           fetch-depth: 0
+      - name: Tag current commit
+        if: startsWith(github.ref, 'refs/heads/release/')
+        shell: bash
+        run: |
+          version="${GITHUB_REF#refs/heads/release/}"
+          git tag "${version}"
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -41,6 +47,12 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
           fetch-depth: 0
+      - name: Tag current commit
+        if: startsWith(github.ref, 'refs/heads/release/')
+        shell: bash
+        run: |
+          version="${GITHUB_REF#refs/heads/release/}"
+          git tag "${version}"
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -69,6 +81,12 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
           fetch-depth: 0
+      - name: Tag current commit
+        if: startsWith(github.ref, 'refs/heads/release/')
+        shell: bash
+        run: |
+          version="${GITHUB_REF#refs/heads/release/}"
+          git tag "${version}"
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -97,6 +115,12 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
           fetch-depth: 0
+      - name: Tag current commit
+        if: startsWith(github.ref, 'refs/heads/release/')
+        shell: bash
+        run: |
+          version="${GITHUB_REF#refs/heads/release/}"
+          git tag "${version}"
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
       - name: Setup MSBuild
@@ -126,6 +150,12 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
           fetch-depth: 0
+      - name: Tag current commit
+        if: startsWith(github.ref, 'refs/heads/release/')
+        shell: bash
+        run: |
+          version="${GITHUB_REF#refs/heads/release/}"
+          git tag "${version}"
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -180,3 +210,161 @@ jobs:
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: coverage-report/Cobertura.xml
+
+  stryker-ubuntu:
+    name: Analyze quality of unit test coverage with .NET Stryker (Ubuntu)
+    if: startsWith(github.ref, 'refs/heads/release/')
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        with:
+          fetch-depth: 0
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            7.0.x
+            8.0.x
+      - name: Install .NET Stryker
+        shell: bash
+        run: |
+          dotnet tool install dotnet-stryker --tool-path ../tools
+      - name: Analyze Testably.Abstractions.Testing
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        shell: bash
+        run: |
+          cd Tests
+          ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.Testing.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
+
+  stryker-windows:
+    name: Analyze quality of unit test coverage with .NET Stryker (Windows)
+    if: startsWith(github.ref, 'refs/heads/release/')
+    runs-on: windows-latest
+    timeout-minutes: 300
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        with:
+          fetch-depth: 0
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            7.0.x
+            8.0.x
+      - name: Install .NET Stryker
+        shell: bash
+        run: |
+          dotnet tool install dotnet-stryker --tool-path ../tools
+      - name: Analyze Testably.Abstractions
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        shell: bash
+        run: |
+          cd Tests
+          ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
+      - name: Analyze Testably.Abstractions.AccessControl
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        shell: bash
+        run: |
+          cd Tests
+          ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.AccessControl.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
+      - name: Analyze Testably.Abstractions.Compression
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        shell: bash
+        run: |
+          cd Tests
+          ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.Compression.json -v "${GITHUB_REF#refs/heads/}" -r "Dashboard" -r "cleartext"
+
+  deploy:
+    name: Deploy
+    if: startsWith(github.ref, 'refs/heads/release/')
+    runs-on: ubuntu-latest
+    environment: production
+    needs: [test-macos, test-ubuntu, test-windows, test-net-framework, test-examples]
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        with:
+          fetch-depth: 0
+      - name: Tag current commit
+        id: tag
+        shell: bash
+        run: |
+          version="${GITHUB_REF#refs/heads/release/}"
+          git tag "${version}"
+          git push origin "${version}"
+          echo "release_version=${version}" >> "$GITHUB_OUTPUT"
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2.0.0
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            7.0.x
+            8.0.x
+      - name: Prepare README.md
+        shell: bash
+        run: |
+          version="${GITHUB_REF#refs/heads/release/}"
+          # Add changelog badge to README.md
+          sed -i -e "2 a\[!\[Changelog](https:\/\/img\.shields\.io\/badge\/Changelog-${version}-blue)](https:\/\/github\.com\/Testably\/Testably\.Abstractions\/releases\/tag\/${version})" "./README.md"
+          for f in "README.md" "Docs/AccessControl.md" "Docs/Compression.md" "Docs/Interface.md" "Docs/Testing.md"
+          do
+            echo "Processing $f" # always double quote "$f" filename
+            # do something on $f
+            # Remove the codacy badge as it is not aligned to the release
+            grep -v "Codacy Badge" "./$f" > "./$f.backup" && mv "./$f.backup" "./$f"
+            # Change status badges to display explicit version
+            sed -i -e "s/branch=main/branch=release%2F${version}/g" "./$f"
+            sed -i -e "s/Testably.Abstractions%2Fmain/Testably.Abstractions%2Frelease%2F${version}/g" "./$f"
+            sed -i -e "s/Testably.Abstractions%2Fmain/Testably.Abstractions%2Frelease%2F${version}/g" "./$f"
+            sed -i -e "s/Testably.Abstractions\/main)/Testably.Abstractions\/release\/${version})/g" "./$f"
+            # Add absolute path to example section
+            sed -i -e 's/\(Examples\/README.md\)/https:\/\/github.com\/Testably\/Testably.Abstractions\/blob\/main\/Examples\/README.md/g' "./$f"
+          done
+      - name: Build
+        run: dotnet build --configuration "Release"
+      - name: Publish
+        run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ steps.tag.outputs.release_version }}
+          tag_name: ${{ steps.tag.outputs.release_version }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          generate_release_notes: true
+
+  cleanup:
+    name: Cleanup
+    if: startsWith(github.ref, 'refs/heads/release/')
+    runs-on: ubuntu-latest
+    needs: [deploy, stryker-windows, stryker-ubuntu]
+    steps:
+      - name: Comment relevant issues and pull requests
+        uses: apexskier/github-release-commenter@v1.3.6
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          comment-template: |
+            This is addressed in release {release_link}.
+          label-template: |
+            state: released
+          skip-label: |
+            state: released
+      - name: Checkout sources
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        with:
+          fetch-depth: 0
+      - name: Delete release branch
+        shell: bash
+        run: |
+          version="${GITHUB_REF#refs/heads/release/}"
+          git push origin -d "refs/heads/release/${version}"
