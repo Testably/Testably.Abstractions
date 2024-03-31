@@ -26,10 +26,10 @@ public class Parity
 		typeof(DirectoryInfo).GetMethod(nameof(System.IO.DirectoryInfo.ToString))
 	});
 
-	public ParityCheck Drive { get; } = new(excludeMethods: new[]
-	{
+	public ParityCheck Drive { get; } = new(excludeMethods:
+	[
 		typeof(DriveInfo).GetMethod(nameof(DriveInfo.ToString))
-	});
+	]);
 
 	public ParityCheck File { get; } = new();
 
@@ -51,11 +51,11 @@ public class Parity
 		typeof(FileSystemInfo).GetMethod(nameof(ToString))
 	});
 
-	public ParityCheck FileSystemWatcher { get; } = new(excludeMethods: new[]
-	{
+	public ParityCheck FileSystemWatcher { get; } = new(excludeMethods:
+	[
 		typeof(FileSystemWatcher).GetMethod(
 			nameof(System.IO.FileSystemWatcher.ToString))
-	});
+	]);
 
 	public ParityCheck Guid { get; } = new();
 
@@ -68,29 +68,27 @@ public class Parity
 
 	public ParityCheck Random { get; } = new();
 
-	public ParityCheck Timer { get; } = new(excludeMethods: new[]
-	{
-		typeof(Timer).GetMethod(nameof(System.Threading.Timer.Change), new[]
-		{
+	public ParityCheck Timer { get; } = new(excludeMethods:
+	[
+		typeof(Timer).GetMethod(nameof(System.Threading.Timer.Change), [
 			typeof(uint), typeof(uint)
-		})
-	}, excludeConstructors: new[]
-	{
-		typeof(Timer).GetConstructor(new[]
-		{
+		])
+	], excludeConstructors:
+	[
+		typeof(Timer).GetConstructor([
 			typeof(TimerCallback),
 			typeof(object),
 			typeof(uint),
 			typeof(uint)
-		})
-	});
+		])
+	]);
 
 	public ParityCheck ZipArchive { get; } = new();
 
-	public ParityCheck ZipArchiveEntry { get; } = new(excludeMethods: new[]
-	{
+	public ParityCheck ZipArchiveEntry { get; } = new(excludeMethods:
+	[
 		typeof(ZipArchiveEntry).GetMethod(nameof(ToString))
-	});
+	]);
 
 	public ParityCheck ZipFile { get; } = new();
 }

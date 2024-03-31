@@ -71,7 +71,7 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 		string path)
 	{
 		char[] specialCharacters =
-		{
+		[
 			'Ä',
 			'Ö',
 			'Ü',
@@ -79,7 +79,7 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 			'ö',
 			'ü',
 			'ß'
-		};
+		];
 		foreach (char specialCharacter in specialCharacters)
 		{
 			string contents = "_" + specialCharacter;

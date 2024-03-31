@@ -24,7 +24,7 @@ public class DirectoryCleanerTests
 		Exception exception)
 	{
 		MockFileSystem sut = new();
-		List<string> receivedLogs = new();
+		List<string> receivedLogs = [];
 		IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(logger: m => receivedLogs.Add(m));
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
@@ -61,7 +61,7 @@ public class DirectoryCleanerTests
 	public void Dispose_ShouldForceDeleteCurrentDirectory()
 	{
 		MockFileSystem sut = new();
-		List<string> receivedLogs = new();
+		List<string> receivedLogs = [];
 		IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(logger: m => receivedLogs.Add(m));
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
@@ -108,7 +108,7 @@ public class DirectoryCleanerTests
 	public void InitializeBasePath_ShouldCreateDirectoryAndLogBasePath()
 	{
 		MockFileSystem sut = new();
-		List<string> receivedLogs = new();
+		List<string> receivedLogs = [];
 
 		using IDirectoryCleaner directoryCleaner =
 			sut.SetCurrentDirectoryToEmptyTemporaryDirectory(logger: t => receivedLogs.Add(t));

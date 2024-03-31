@@ -192,7 +192,7 @@ public abstract partial class FileAccessTests<TFileSystem>
 	public async Task MultipleParallelReads_ShouldBeAllowed(string path, string contents)
 	{
 		FileSystem.File.WriteAllText(path, contents);
-		ConcurrentBag<string> results = new();
+		ConcurrentBag<string> results = [];
 
 		ParallelLoopResult wait = Parallel.For(0, 100, _ =>
 		{

@@ -109,18 +109,16 @@ public abstract partial class DeleteTests<TFileSystem>
 			.WithSubdirectory(path);
 		string filePath = FileSystem.Path.Combine(path, filename);
 		FileSystemStream openFile = FileSystem.File.OpenWrite(filePath);
-		openFile.Write(new byte[]
-		{
+		openFile.Write([
 			0
-		}, 0, 1);
+		], 0, 1);
 		openFile.Flush();
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Directory.Delete(path, true);
-			openFile.Write(new byte[]
-			{
+			openFile.Write([
 				0
-			}, 0, 1);
+			], 0, 1);
 			openFile.Flush();
 		});
 

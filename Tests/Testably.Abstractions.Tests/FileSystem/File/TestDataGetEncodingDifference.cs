@@ -12,10 +12,10 @@ public class TestDataGetEncodingDifference : IEnumerable<object[]>
 
 	public IEnumerator<object[]> GetEnumerator()
 	{
-		yield return new object[]
-		{
+		yield return
+		[
 			SpecialCharactersContent, Encoding.ASCII, Encoding.UTF8
-		};
+		];
 	}
 
 	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

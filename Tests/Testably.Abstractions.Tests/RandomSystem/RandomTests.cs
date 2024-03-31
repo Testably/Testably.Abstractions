@@ -147,7 +147,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	public void Next_MaxValue_ShouldOnlyReturnValidValues()
 	{
 		int maxValue = 10;
-		ConcurrentBag<int> results = new();
+		ConcurrentBag<int> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -162,7 +162,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	{
 		int minValue = 10;
 		int maxValue = 20;
-		ConcurrentBag<int> results = new();
+		ConcurrentBag<int> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -175,7 +175,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[SkippableFact]
 	public void Next_ShouldBeThreadSafe()
 	{
-		ConcurrentBag<int> results = new();
+		ConcurrentBag<int> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -188,7 +188,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[SkippableFact]
 	public void NextBytes_ShouldBeThreadSafe()
 	{
-		ConcurrentBag<byte[]> results = new();
+		ConcurrentBag<byte[]> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -204,7 +204,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[SkippableFact]
 	public void NextBytes_Span_ShouldBeThreadSafe()
 	{
-		ConcurrentBag<byte[]> results = new();
+		ConcurrentBag<byte[]> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -220,7 +220,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[SkippableFact]
 	public void NextDouble_ShouldBeThreadSafe()
 	{
-		ConcurrentBag<double> results = new();
+		ConcurrentBag<double> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -235,7 +235,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	public void NextInt64_MaxValue_ShouldOnlyReturnValidValues()
 	{
 		long maxValue = 10;
-		ConcurrentBag<long> results = new();
+		ConcurrentBag<long> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -252,7 +252,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	{
 		long minValue = 10;
 		long maxValue = 20;
-		ConcurrentBag<long> results = new();
+		ConcurrentBag<long> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -267,7 +267,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[SkippableFact]
 	public void NextInt64_ShouldBeThreadSafe()
 	{
-		ConcurrentBag<long> results = new();
+		ConcurrentBag<long> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -282,7 +282,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[SkippableFact]
 	public void NextSingle_ShouldBeThreadSafe()
 	{
-		ConcurrentBag<float> results = new();
+		ConcurrentBag<float> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{

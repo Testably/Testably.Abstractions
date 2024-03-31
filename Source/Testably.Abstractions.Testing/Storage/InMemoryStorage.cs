@@ -353,7 +353,7 @@ internal sealed class InMemoryStorage : IStorage
 	{
 		ThrowIfParentDoesNotExist(destination, _ => ExceptionFactory.DirectoryNotFound());
 
-		List<Rollback> rollbacks = new();
+		List<Rollback> rollbacks = [];
 		try
 		{
 			return MoveInternal(source, destination, overwrite, recursive, null,
@@ -596,7 +596,7 @@ internal sealed class InMemoryStorage : IStorage
 
 	private void CreateParents(MockFileSystem fileSystem, IStorageLocation location)
 	{
-		List<string> parents = new();
+		List<string> parents = [];
 		string? parent = fileSystem.Execute.Path.GetDirectoryName(
 			location.FullPath.TrimEnd(fileSystem.Execute.Path.DirectorySeparatorChar,
 				fileSystem.Execute.Path.AltDirectorySeparatorChar));
@@ -608,7 +608,7 @@ internal sealed class InMemoryStorage : IStorage
 
 		parents.Reverse();
 
-		List<IStorageAccessHandle> accessHandles = new();
+		List<IStorageAccessHandle> accessHandles = [];
 		try
 		{
 			foreach (string? parentPath in parents)

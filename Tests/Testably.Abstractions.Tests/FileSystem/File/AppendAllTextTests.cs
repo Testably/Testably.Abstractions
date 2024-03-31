@@ -53,7 +53,7 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 		string path)
 	{
 		byte[] expectedBytes =
-		{
+		[
 			255,
 			254,
 			0,
@@ -66,7 +66,7 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 			0,
 			0,
 			0
-		};
+		];
 
 		FileSystem.File.AppendAllText(path, "AA", Encoding.UTF32);
 

@@ -78,7 +78,7 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 		string path)
 	{
 		byte[] expectedBytes =
-		{
+		[
 			255,
 			254,
 			0,
@@ -91,7 +91,7 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 			0,
 			0,
 			0
-		};
+		];
 
 		FileSystem.File.WriteAllText(path, "AA", Encoding.UTF32);
 
@@ -114,7 +114,7 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 	public void WriteAllText_SpecialCharacters_ShouldReturnSameText(string path)
 	{
 		char[] specialCharacters =
-		{
+		[
 			'Ä',
 			'Ö',
 			'Ü',
@@ -122,7 +122,7 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 			'ö',
 			'ü',
 			'ß'
-		};
+		];
 		foreach (char specialCharacter in specialCharacters)
 		{
 			string contents = "_" + specialCharacter;

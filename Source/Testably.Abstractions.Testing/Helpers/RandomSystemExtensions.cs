@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Testing.Helpers;
 internal static class RandomSystemExtensions
 {
 	private static readonly string[] FileExtensions =
-	{
+	[
 		".avi",
 		".bat",
 		".bin",
@@ -30,17 +30,17 @@ internal static class RandomSystemExtensions
 		".txt",
 		".xlsx",
 		".zip"
-	};
+	];
 
 	private static readonly string[] FileNames =
-	{
+	[
 		"~WRL001",
 		"foo",
 		"bar",
 		"_",
 		"With whitespace",
 		".hidden"
-	};
+	];
 
 	/// <summary>
 	///     Generates a random file extension without a leading dot (<c>.</c>).

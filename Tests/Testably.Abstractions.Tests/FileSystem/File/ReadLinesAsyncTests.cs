@@ -79,7 +79,7 @@ public abstract partial class ReadLinesAsyncTests<TFileSystem>
 	{
 		string contents = string.Join(Environment.NewLine, lines);
 		await FileSystem.File.WriteAllTextAsync(path, contents);
-		List<string> results = new();
+		List<string> results = [];
 
 		await foreach (string line in FileSystem.File.ReadLinesAsync(path))
 		{
@@ -99,7 +99,7 @@ public abstract partial class ReadLinesAsyncTests<TFileSystem>
 		lines[1] = specialLine;
 		string contents = string.Join(Environment.NewLine, lines);
 		await FileSystem.File.WriteAllTextAsync(path, contents, writeEncoding);
-		List<string> results = new();
+		List<string> results = [];
 
 		await foreach (string line in FileSystem.File.ReadLinesAsync(path, readEncoding))
 		{

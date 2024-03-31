@@ -73,9 +73,9 @@ public abstract partial class AppendAllLinesTests<TFileSystem>
 	public void AppendAllLines_ShouldEndWithNewline(string path)
 	{
 		string[] contents =
-		{
+		[
 			"foo", "bar"
-		};
+		];
 		string expectedResult = "foo" + Environment.NewLine + "bar" + Environment.NewLine;
 
 		FileSystem.File.AppendAllLines(path, contents);

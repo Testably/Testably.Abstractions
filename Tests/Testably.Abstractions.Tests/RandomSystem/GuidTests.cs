@@ -23,7 +23,7 @@ public abstract partial class GuidTests<TRandomSystem>
 	[SkippableFact]
 	public void NewGuid_ShouldBeThreadSafeAndReturnUniqueItems()
 	{
-		ConcurrentBag<Guid> results = new();
+		ConcurrentBag<Guid> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -216,26 +216,26 @@ public abstract partial class GuidTests<TRandomSystem>
 	#pragma warning disable MA0018
 	public static IEnumerable<object[]> GuidFormats()
 	{
-		yield return new object[]
-		{
+		yield return
+		[
 			"N"
-		};
-		yield return new object[]
-		{
+		];
+		yield return
+		[
 			"D"
-		};
-		yield return new object[]
-		{
+		];
+		yield return
+		[
 			"B"
-		};
-		yield return new object[]
-		{
+		];
+		yield return
+		[
 			"P"
-		};
-		yield return new object[]
-		{
+		];
+		yield return
+		[
 			"X"
-		};
+		];
 	}
 	#pragma warning restore MA0018
 #endif
