@@ -13,8 +13,9 @@ public class TimerHandlerTests
 			.WithTimerStrategy(new TimerStrategy(TimerMode.StartOnMockWait));
 		ITimerHandler sut = timeSystem.TimerHandler;
 
-		using ITimer timer0 = timeSystem.Timer.New(_ => { }, null, 0, 100);
-		timer0.Dispose();
+		using (timeSystem.Timer.New(_ => { }, null, 0, 100))
+		{
+		}
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -47,6 +48,7 @@ public class TimerHandlerTests
 
 		using ITimer timer0 = timeSystem.Timer.New(_ => { }, null, 0, 100);
 		using ITimer timer1 = timeSystem.Timer.New(_ => { }, null, 0, 100);
+		// ReSharper disable once DisposeOnUsingVariable
 		timer0.Dispose();
 		using ITimer timer2 = timeSystem.Timer.New(_ => { }, null, 0, 100);
 

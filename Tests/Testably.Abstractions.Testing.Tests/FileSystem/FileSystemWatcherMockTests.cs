@@ -45,13 +45,30 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		ErrorEventArgs? result = null;
 		fileSystemWatcher.Error += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			block1.Set();
-			block2.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				block1.Set();
+				// ReSharper disable once AccessToDisposedClosure
+				block2.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.Deleted += (_, _) =>
 		{
-			block1.Wait(10000);
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				block1.Wait(10000);
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(path);
@@ -86,13 +103,30 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		ErrorEventArgs? result = null;
 		fileSystemWatcher.Error += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			block1.Set();
-			block2.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				block1.Set();
+				// ReSharper disable once AccessToDisposedClosure
+				block2.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.Deleted += (_, _) =>
 		{
-			block1.Wait(5000);
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				block1.Wait(5000);
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.EnableRaisingEvents = true;
 		fileSystemWatcher.InternalBufferSize = internalBufferSize;
@@ -146,16 +180,33 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			FileSystem.FileSystemWatcher.New(BasePath);
 		using ManualResetEventSlim block1 = new();
 		using ManualResetEventSlim block2 = new();
-		ErrorEventArgs? result = null;
+		ErrorEventArgs result = null;
 		fileSystemWatcher.Error += (_, eventArgs) =>
 		{
-			result = eventArgs;
-			block1.Set();
-			block2.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				block1.Set();
+				// ReSharper disable once AccessToDisposedClosure
+				block2.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.Created += (_, _) =>
 		{
-			block1.Wait(100);
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				block1.Wait(100);
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		};
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.CreateDirectory(path1);

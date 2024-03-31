@@ -109,14 +109,22 @@ public class NotificationTests
 
 		_ = Task.Run(async () =>
 		{
-			await Task.Delay(10);
-			for (int i = 1; i <= 10; i++)
+			// ReSharper disable once AccessToDisposedClosure
+			try
 			{
-				timeSystem.Thread.Sleep(i);
-				await Task.Delay(1);
-			}
+				await Task.Delay(10);
+				for (int i = 1; i <= 10; i++)
+				{
+					timeSystem.Thread.Sleep(i);
+					await Task.Delay(1);
+				}
 
-			ms.Set();
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		});
 
 		ms.Wait(30000);
@@ -139,10 +147,18 @@ public class NotificationTests
 
 			_ = Task.Run(async () =>
 			{
-				while (!ms.IsSet)
+				// ReSharper disable once AccessToDisposedClosure
+				try
 				{
-					timeSystem.Thread.Sleep(1);
-					await Task.Delay(1);
+					while (!ms.IsSet)
+					{
+						timeSystem.Thread.Sleep(1);
+						await Task.Delay(1);
+					}
+				}
+				catch (ObjectDisposedException)
+				{
+					// Ignore any ObjectDisposedException
 				}
 			});
 
@@ -168,9 +184,17 @@ public class NotificationTests
 			});
 		new Thread(() =>
 		{
-			// Delay larger than timeout of 10ms
-			ms.Wait();
-			timeSystem.Thread.Sleep(1);
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				// Delay larger than timeout of 10ms
+				ms.Wait();
+				timeSystem.Thread.Sleep(1);
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		}).Start();
 
 		Exception? exception = Record.Exception(() =>
@@ -200,22 +224,50 @@ public class NotificationTests
 					{
 						isCalledFromSecondThread = true;
 					}
-				}).ExecuteWhileWaiting(() => listening.Set());
+				}).ExecuteWhileWaiting(() =>
+				{
+					// ReSharper disable once AccessToDisposedClosure
+					try
+					{
+						listening.Set();
+					}
+					catch (ObjectDisposedException)
+					{
+						// Ignore any ObjectDisposedException
+					}
+				});
 		new Thread(() =>
 		{
-			listening.Wait(1000);
-			timeSystem.Thread.Sleep(firstThreadMilliseconds);
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				listening.Wait(1000);
+				timeSystem.Thread.Sleep(firstThreadMilliseconds);
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		}).Start();
 		wait.Wait();
 		listening.Reset();
 
 		new Thread(() =>
 		{
-			listening.Wait(1000);
-			if (!ms.IsSet)
+			// ReSharper disable once AccessToDisposedClosure
+			try
 			{
-				// Should only trigger, if the second call to `Wait` still blocks
-				timeSystem.Thread.Sleep(secondThreadMilliseconds);
+				listening.Wait(1000);
+				// ReSharper disable once AccessToDisposedClosure
+				if (!ms.IsSet)
+				{
+					// Should only trigger, if the second call to `Wait` still blocks
+					timeSystem.Thread.Sleep(secondThreadMilliseconds);
+				}
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
 			}
 		}).Start();
 
