@@ -203,9 +203,7 @@ internal sealed class RandomMock : IRandom
 
 			if (j != i)
 			{
-				T temp = values[i];
-				values[i] = values[j];
-				values[j] = temp;
+				(values[i], values[j]) = (values[j], values[i]);
 			}
 		}
 	}
