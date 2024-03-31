@@ -288,6 +288,7 @@ internal sealed class TimerMock : ITimerMock
 					{
 						// Ignore any ObjectDisposedException
 					}
+
 					await RunTimer(token).ConfigureAwait(false);
 				},
 				cancellationToken: token)

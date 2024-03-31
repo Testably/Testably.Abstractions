@@ -1,8 +1,14 @@
 <Project>
 
 	<PropertyGroup>
-		<IS_NET21_OR_HIGHER Condition="'$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net7.0' OR '$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'netstandard2.1'">1</IS_NET21_OR_HIGHER>
-		<IS_NET6_OR_HIGHER Condition="'$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net7.0' OR '$(TargetFramework)' == 'net8.0'">1</IS_NET6_OR_HIGHER>
+		<IS_NET21_OR_HIGHER
+			Condition="'$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net7.0' OR '$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'netstandard2.1'">
+			1
+		</IS_NET21_OR_HIGHER>
+		<IS_NET6_OR_HIGHER
+			Condition="'$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net7.0' OR '$(TargetFramework)' == 'net8.0'">
+			1
+		</IS_NET6_OR_HIGHER>
 		<IS_NET7_OR_HIGHER Condition="'$(TargetFramework)' == 'net7.0' OR '$(TargetFramework)' == 'net8.0'">1</IS_NET7_OR_HIGHER>
 		<IS_NET8_OR_HIGHER Condition="'$(TargetFramework)' == 'net8.0'">1</IS_NET8_OR_HIGHER>
 

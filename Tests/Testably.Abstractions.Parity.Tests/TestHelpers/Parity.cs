@@ -69,19 +69,19 @@ public class Parity
 	public ParityCheck Random { get; } = new();
 
 	public ParityCheck Timer { get; } = new(excludeMethods:
-	[
-		typeof(Timer).GetMethod(nameof(System.Threading.Timer.Change), [
-			typeof(uint), typeof(uint)
-		])
-	], excludeConstructors:
-	[
-		typeof(Timer).GetConstructor([
-			typeof(TimerCallback),
-			typeof(object),
-			typeof(uint),
-			typeof(uint)
-		])
-	]);
+		[
+			typeof(Timer).GetMethod(nameof(System.Threading.Timer.Change), [
+				typeof(uint), typeof(uint)
+			])
+		], excludeConstructors:
+		[
+			typeof(Timer).GetConstructor([
+				typeof(TimerCallback),
+				typeof(object),
+				typeof(uint),
+				typeof(uint)
+			])
+		]);
 
 	public ParityCheck ZipArchive { get; } = new();
 

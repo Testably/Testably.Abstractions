@@ -6,10 +6,7 @@ namespace Testably.Abstractions.Testing.Helpers;
 
 internal static class PathHelper
 {
-	private static readonly char[] AdditionalInvalidPathChars =
-	[
-		'*', '?'
-	];
+	private static readonly char[] AdditionalInvalidPathChars = ['*', '?'];
 
 	internal static string EnsureValidArgument(
 		[NotNull] this string? path, MockFileSystem fileSystem, string? paramName = null)

@@ -50,7 +50,7 @@ public static class FileSystemName
 	/// <returns><see langword="true" /> if the given expression matches the given name; otherwise, <see langword="false" />.</returns>
 	/// <remarks>
 	///     The syntax of the <paramref name="expression" /> parameter is based on the syntax used by FileSystemWatcher, which
-	///     is based on RtlIsNameInExpression, which defines the rules for
+	///     is based on [RtlIsNameInExpression](/windows/win32/devnotes/rtlisnameinexpression), which defines the rules for
 	///     matching DOS wildcards (`'*'`, `'?'`, `'&lt;'`, `'&gt;'`, `'"'`).
 	///     Matching will not correspond to Win32 behavior unless you transform the expression using
 	///     <see cref="FileSystemName.TranslateWin32Expression(string)" />.
@@ -172,7 +172,7 @@ public static class FileSystemName
 	//		   set of contiguous DOS_QMs.
 	//	   DOS_DOT matches either a . or zero characters beyond name string.
 
-	#pragma warning disable MA0051 // Method is too long
+#pragma warning disable MA0051 // Method is too long
 	private static bool MatchPattern(string expression, string name, bool ignoreCase,
 		bool useExtendedWildcards)
 	{
@@ -462,6 +462,6 @@ public static class FileSystemName
 
 		return currentState == maxState;
 	}
-	#pragma warning restore MA0051 // Method is too long
+#pragma warning restore MA0051 // Method is too long
 }
 #endif

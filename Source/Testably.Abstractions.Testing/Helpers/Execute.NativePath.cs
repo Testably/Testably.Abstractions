@@ -1,8 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.IO;
-#if FEATURE_SPAN
+﻿#if FEATURE_SPAN
 using System;
 #endif
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 #if FEATURE_FILESYSTEM_NET7
 using Testably.Abstractions.Testing.Storage;
 #endif
