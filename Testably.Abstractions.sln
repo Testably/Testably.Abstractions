@@ -60,7 +60,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build.yml = .github\workflows\build.yml
 		.github\workflows\ci.yml = .github\workflows\ci.yml
-		.github\workflows\test-report.yml = .github\workflows\test-report.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.Parity.Tests", "Tests\Testably.Abstractions.Parity.Tests\Testably.Abstractions.Parity.Tests.csproj", "{E9A42D82-0609-4D6B-B270-A30176B4FCF2}"
