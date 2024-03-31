@@ -27,7 +27,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	private IDisposable? _changeHandler;
 	private bool _enableRaisingEvents;
 	private readonly MockFileSystem _fileSystem;
-	private readonly Collection<string> _filters = new();
+	private readonly Collection<string> _filters = [];
 	private bool _includeSubdirectories;
 	private int _internalBufferSize = 8192;
 	private bool _isInitializing;

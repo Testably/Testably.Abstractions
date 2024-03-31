@@ -21,7 +21,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[InlineData(@"/temp\\folder")]
-	[InlineData(@"/temp/folder")]
+	[InlineData("/temp/folder")]
 	[InlineData(@"/temp/\\/folder")]
 	public void FullName_ShouldNotNormalizePathOnLinux(string path)
 	{

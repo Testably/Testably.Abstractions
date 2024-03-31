@@ -137,7 +137,7 @@ public static class RandomProvider
 		/// <summary>
 		///     Creates a generator the iterates over the provided <paramref name="values" />.
 		///     <para />
-		///     When the end of the array is reached, the values are repeated again from the beginning.
+		///     When the end of the array is reached, the values are again repeated from the beginning.
 		/// </summary>
 		public static Generator<T> FromArray<T>(T[] values)
 		{

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- https://learn.microsoft.com/en-us/dotnet/core/additional-tools/dotnet-coverage#settings -->
 
 <Configuration>
+	<!-- https://learn.microsoft.com/en-us/dotnet/core/additional-tools/dotnet-coverage#settings -->
 	<CodeCoverage>
 		<Attributes>
 			<Exclude>

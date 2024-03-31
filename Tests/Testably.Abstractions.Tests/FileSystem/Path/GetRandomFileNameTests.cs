@@ -26,7 +26,7 @@ public abstract partial class GetRandomFileNameTests<TFileSystem>
 	[SkippableFact]
 	public void GetRandomFileName_ShouldReturnRandomStrings()
 	{
-		ConcurrentBag<string> results = new();
+		ConcurrentBag<string> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{

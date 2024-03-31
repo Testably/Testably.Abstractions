@@ -16,7 +16,7 @@ public abstract partial class ReadAllBytesAsyncTests<TFileSystem>
 		string path)
 	{
 		using CancellationTokenSource cts = new();
-		cts.Cancel();
+		await cts.CancelAsync();
 
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.ReadAllBytesAsync(path, cts.Token));

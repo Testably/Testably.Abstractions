@@ -15,12 +15,12 @@ namespace Testably.Abstractions.Tests.SourceGenerator;
 [Generator]
 public sealed class Generator : ISourceGenerator
 {
-	private readonly List<ClassGeneratorBase> _classGenerators = new()
-	{
+	private readonly List<ClassGeneratorBase> _classGenerators =
+	[
 		new FileSystemClassGenerator(),
 		new RandomSystemClassGenerator(),
 		new TimeSystemClassGenerator()
-	};
+	];
 
 	private SyntaxReceiver? _syntaxReceiver;
 

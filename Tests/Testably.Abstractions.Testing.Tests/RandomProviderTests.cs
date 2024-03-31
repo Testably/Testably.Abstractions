@@ -10,7 +10,7 @@ public partial class RandomProviderTests
 	[Fact]
 	public void Default_ShouldReturnRandomGuid()
 	{
-		List<Guid> results = new();
+		List<Guid> results = [];
 		IRandomProvider
 			randomProvider = RandomProvider.Default();
 
@@ -25,7 +25,7 @@ public partial class RandomProviderTests
 	[Fact]
 	public void Default_ShouldReturnRandomNumbers()
 	{
-		List<int> results = new();
+		List<int> results = [];
 		IRandomProvider
 			randomProvider = RandomProvider.Default();
 
@@ -41,7 +41,7 @@ public partial class RandomProviderTests
 	[AutoData]
 	public void GenerateGuid_ShouldReturnSpecifiedGuid(Guid guid)
 	{
-		List<Guid> results = new();
+		List<Guid> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate(guidGenerator: guid);
 
@@ -57,7 +57,7 @@ public partial class RandomProviderTests
 	[AutoData]
 	public void GenerateGuid_ShouldReturnSpecifiedGuids(Guid[] guids)
 	{
-		List<Guid> results = new();
+		List<Guid> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate(guidGenerator: guids);
 
@@ -73,7 +73,7 @@ public partial class RandomProviderTests
 	[AutoData]
 	public void GenerateRandom_Next_ShouldReturnSpecifiedValue(int seed, int value)
 	{
-		List<int> results = new();
+		List<int> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate(seed, intGenerator: value);
 
@@ -90,7 +90,7 @@ public partial class RandomProviderTests
 	[AutoData]
 	public void GenerateRandom_Next_ShouldReturnSpecifiedValues(int seed, int[] values)
 	{
-		List<int> results = new();
+		List<int> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate(intGenerator: values);
 
@@ -109,7 +109,7 @@ public partial class RandomProviderTests
 		int seed, int value)
 	{
 		int maxValue = value - 1;
-		List<int> results = new();
+		List<int> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate(intGenerator: value);
 		int expectedValue = maxValue - 1;
@@ -130,7 +130,7 @@ public partial class RandomProviderTests
 	{
 		int minValue = value - 10;
 		int maxValue = value - 1;
-		List<int> results = new();
+		List<int> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate(intGenerator: value);
 		int expectedValue = maxValue - 1;
@@ -151,7 +151,7 @@ public partial class RandomProviderTests
 	{
 		int minValue = value + 1;
 		int maxValue = minValue + 10;
-		List<int> results = new();
+		List<int> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate(intGenerator: value);
 
@@ -168,7 +168,7 @@ public partial class RandomProviderTests
 	[AutoData]
 	public void GenerateRandom_Next_WithoutGenerator_ShouldReturnRandomValues(int seed)
 	{
-		List<int> results = new();
+		List<int> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate();
 
@@ -186,7 +186,7 @@ public partial class RandomProviderTests
 	public void GenerateRandom_NextBytes_ShouldReturnSpecifiedValue(
 		int seed, byte[] value)
 	{
-		List<byte[]> results = new();
+		List<byte[]> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate(byteGenerator: value);
 
@@ -207,7 +207,7 @@ public partial class RandomProviderTests
 	public void GenerateRandom_NextBytes_Span_ShouldReturnSpecifiedValue(
 		int seed, byte[] value)
 	{
-		List<byte[]> results = new();
+		List<byte[]> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate(byteGenerator: value);
 
@@ -229,7 +229,7 @@ public partial class RandomProviderTests
 	public void GenerateRandom_NextBytes_Span_WithoutGenerator_ShouldReturnRandomValues(
 		int seed)
 	{
-		List<byte[]> results = new();
+		List<byte[]> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate();
 
@@ -252,7 +252,7 @@ public partial class RandomProviderTests
 		GenerateRandom_NextBytes_Span_WithSmallerBuffer_ShouldReturnPartlyInitializedBytes(
 			int seed, byte[] value)
 	{
-		List<byte[]> results = new();
+		List<byte[]> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate(byteGenerator: value);
 
@@ -276,7 +276,7 @@ public partial class RandomProviderTests
 	public void GenerateRandom_NextBytes_WithoutGenerator_ShouldReturnRandomValues(
 		int seed)
 	{
-		List<byte[]> results = new();
+		List<byte[]> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate();
 
@@ -297,7 +297,7 @@ public partial class RandomProviderTests
 		GenerateRandom_NextBytes_WithSmallerBuffer_ShouldReturnPartlyInitializedBytes(
 			int seed, byte[] value)
 	{
-		List<byte[]> results = new();
+		List<byte[]> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate(byteGenerator: value);
 
@@ -320,7 +320,7 @@ public partial class RandomProviderTests
 	public void GenerateRandom_NextDouble_ShouldReturnSpecifiedValue(
 		int seed, double value)
 	{
-		List<double> results = new();
+		List<double> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate(doubleGenerator: value);
 
@@ -338,7 +338,7 @@ public partial class RandomProviderTests
 	public void GenerateRandom_NextDouble_WithoutGenerator_ShouldReturnRandomValues(
 		int seed)
 	{
-		List<double> results = new();
+		List<double> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate();
 
@@ -356,7 +356,7 @@ public partial class RandomProviderTests
 	[AutoData]
 	public void GenerateRandom_NextInt64_ShouldReturnSpecifiedValue(int seed, long value)
 	{
-		List<long> results = new();
+		List<long> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate(longGenerator: value);
 
@@ -377,7 +377,7 @@ public partial class RandomProviderTests
 		int seed, long value)
 	{
 		long maxValue = value - 1;
-		List<long> results = new();
+		List<long> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate(longGenerator: value);
 		long expectedValue = maxValue - 1;
@@ -401,7 +401,7 @@ public partial class RandomProviderTests
 	{
 		long minValue = value - 10;
 		long maxValue = value - 1;
-		List<long> results = new();
+		List<long> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate(longGenerator: value);
 		long expectedValue = maxValue - 1;
@@ -425,7 +425,7 @@ public partial class RandomProviderTests
 	{
 		long minValue = value + 1;
 		long maxValue = minValue + 10;
-		List<long> results = new();
+		List<long> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate(longGenerator: value);
 		long expectedValue = minValue;
@@ -446,7 +446,7 @@ public partial class RandomProviderTests
 	public void GenerateRandom_NextInt64_WithoutGenerator_ShouldReturnRandomValues(
 		int seed)
 	{
-		List<long> results = new();
+		List<long> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate();
 
@@ -466,7 +466,7 @@ public partial class RandomProviderTests
 	public void GenerateRandom_NextSingle_ShouldReturnSpecifiedValue(
 		int seed, float value)
 	{
-		List<float> results = new();
+		List<float> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate(singleGenerator: value);
 
@@ -486,7 +486,7 @@ public partial class RandomProviderTests
 	public void GenerateRandom_NextSingle_WithoutGenerator_ShouldReturnRandomValues(
 		int seed)
 	{
-		List<float> results = new();
+		List<float> results = [];
 		IRandomProvider randomProvider =
 			RandomProvider.Generate();
 

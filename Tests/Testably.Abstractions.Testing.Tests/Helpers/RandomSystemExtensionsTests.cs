@@ -14,7 +14,7 @@ public class RandomSystemExtensionsTests
 				intGenerator: RandomProvider.Generator.FromEnumerable(
 					Enumerable.Range(0, 1000))));
 
-		List<string> fileExtensions = new();
+		List<string> fileExtensions = [];
 		while (true)
 		{
 			string fileExtension = randomSystem.Random.Shared.GenerateFileExtension();
@@ -42,7 +42,7 @@ public class RandomSystemExtensionsTests
 				intGenerator: RandomProvider.Generator.FromEnumerable(
 					Enumerable.Range(0, 1000))));
 
-		List<string> fileNames = new();
+		List<string> fileNames = [];
 		while (true)
 		{
 			string fileName = randomSystem.Random.Shared.GenerateFileName();

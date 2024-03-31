@@ -180,9 +180,9 @@ internal static class ZipUtilities
 				else if (file is IDirectoryInfo directoryInfo &&
 				         directoryInfo.GetFileSystemInfos().Length == 0)
 				{
-#pragma warning disable CA1845
+					#pragma warning disable CA1845
 					string entryName = file.FullName.Substring(basePath.Length + 1) + "/";
-#pragma warning restore CA1845
+					#pragma warning restore CA1845
 					archive.CreateEntry(entryName);
 				}
 			}

@@ -122,10 +122,7 @@ public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
 	[AutoData]
 	public async Task AppendAllLinesAsync_ShouldEndWithNewline(string path)
 	{
-		string[] contents =
-		{
-			"foo", "bar"
-		};
+		string[] contents = ["foo", "bar"];
 		string expectedResult = "foo" + Environment.NewLine + "bar" + Environment.NewLine;
 
 		await FileSystem.File.AppendAllLinesAsync(path, contents);

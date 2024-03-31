@@ -9,12 +9,7 @@ public class DefaultSafeFileHandleStrategyTests
 {
 	#region Test Setup
 
-	public MockFileSystem FileSystem { get; }
-
-	public DefaultSafeFileHandleStrategyTests()
-	{
-		FileSystem = new MockFileSystem();
-	}
+	public MockFileSystem FileSystem { get; } = new();
 
 	#endregion
 

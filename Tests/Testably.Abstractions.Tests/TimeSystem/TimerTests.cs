@@ -150,7 +150,7 @@ public abstract partial class TimerTests<TTimeSystem>
 	{
 		SkipIfBrittleTestsShouldBeSkipped();
 
-		List<int> triggerTimes = new();
+		List<int> triggerTimes = [];
 		DateTime previousTime = TimeSystem.DateTime.Now;
 		using ManualResetEventSlim ms = new();
 		using ManualResetEventSlim ms2 = new();
@@ -223,7 +223,7 @@ public abstract partial class TimerTests<TTimeSystem>
 	{
 		SkipIfBrittleTestsShouldBeSkipped();
 
-		List<int> triggerTimes = new();
+		List<int> triggerTimes = [];
 		DateTime previousTime = TimeSystem.DateTime.Now;
 		using ManualResetEventSlim ms = new();
 		using ManualResetEventSlim ms2 = new();
@@ -296,7 +296,7 @@ public abstract partial class TimerTests<TTimeSystem>
 	{
 		SkipIfBrittleTestsShouldBeSkipped();
 
-		List<int> triggerTimes = new();
+		List<int> triggerTimes = [];
 		DateTime previousTime = TimeSystem.DateTime.Now;
 		using ManualResetEventSlim ms = new();
 		using ManualResetEventSlim ms2 = new();

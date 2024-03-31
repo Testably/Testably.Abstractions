@@ -21,34 +21,29 @@ public class Net48ParityTests : ParityTests
 
 		Parity.Directory.MissingMethods.Add(typeof(Directory).GetMethod(
 			nameof(Directory.CreateDirectory),
-			new[]
-			{
+			[
 				typeof(string), typeof(DirectorySecurity)
-			}));
+			]));
 		Parity.Directory.MissingMethods.Add(typeof(Directory).GetMethod(
 			nameof(Directory.GetAccessControl),
-			new[]
-			{
+			[
 				typeof(string)
-			}));
+			]));
 		Parity.Directory.MissingMethods.Add(typeof(Directory).GetMethod(
 			nameof(Directory.GetAccessControl),
-			new[]
-			{
+			[
 				typeof(string), typeof(AccessControlSections)
-			}));
+			]));
 		Parity.Directory.MissingMethods.Add(typeof(Directory).GetMethod(
 			nameof(Directory.SetAccessControl),
-			new[]
-			{
+			[
 				typeof(string), typeof(DirectorySecurity)
-			}));
+			]));
 		Parity.Directory.MissingMethods.Add(typeof(Directory).GetMethod(
 			nameof(Directory.GetParent),
-			new[]
-			{
+			[
 				typeof(string)
-			}));
+			]));
 
 		#endregion
 
@@ -56,31 +51,27 @@ public class Net48ParityTests : ParityTests
 
 		Parity.DirectoryInfo.MissingMethods.Add(typeof(DirectoryInfo).GetMethod(
 			nameof(DirectoryInfo.Create),
-			new[]
-			{
+			[
 				typeof(DirectorySecurity)
-			}));
+			]));
 		Parity.DirectoryInfo.MissingMethods.Add(typeof(DirectoryInfo).GetMethod(
 			nameof(DirectoryInfo.CreateSubdirectory),
-			new[]
-			{
+			[
 				typeof(string), typeof(DirectorySecurity)
-			}));
+			]));
 		Parity.DirectoryInfo.MissingMethods.Add(typeof(DirectoryInfo).GetMethod(
 			nameof(DirectoryInfo.GetAccessControl),
 			Type.EmptyTypes));
 		Parity.DirectoryInfo.MissingMethods.Add(typeof(DirectoryInfo).GetMethod(
 			nameof(DirectoryInfo.GetAccessControl),
-			new[]
-			{
+			[
 				typeof(AccessControlSections)
-			}));
+			]));
 		Parity.DirectoryInfo.MissingMethods.Add(typeof(DirectoryInfo).GetMethod(
 			nameof(DirectoryInfo.SetAccessControl),
-			new[]
-			{
+			[
 				typeof(DirectorySecurity)
-			}));
+			]));
 
 		#endregion
 
@@ -88,31 +79,27 @@ public class Net48ParityTests : ParityTests
 
 		Parity.File.MissingMethods.Add(typeof(File).GetMethod(
 			nameof(File.Create),
-			new[]
-			{
+			[
 				typeof(string),
 				typeof(int),
 				typeof(FileOptions),
 				typeof(FileSecurity)
-			}));
+			]));
 		Parity.File.MissingMethods.Add(typeof(File).GetMethod(
 			nameof(File.GetAccessControl),
-			new[]
-			{
+			[
 				typeof(string)
-			}));
+			]));
 		Parity.File.MissingMethods.Add(typeof(File).GetMethod(
 			nameof(File.GetAccessControl),
-			new[]
-			{
+			[
 				typeof(string), typeof(AccessControlSections)
-			}));
+			]));
 		Parity.File.MissingMethods.Add(typeof(File).GetMethod(
 			nameof(File.SetAccessControl),
-			new[]
-			{
+			[
 				typeof(string), typeof(FileSecurity)
-			}));
+			]));
 
 		#endregion
 
@@ -123,16 +110,14 @@ public class Net48ParityTests : ParityTests
 			Type.EmptyTypes));
 		Parity.FileInfo.MissingMethods.Add(typeof(FileInfo).GetMethod(
 			nameof(FileInfo.GetAccessControl),
-			new[]
-			{
+			[
 				typeof(AccessControlSections)
-			}));
+			]));
 		Parity.FileInfo.MissingMethods.Add(typeof(FileInfo).GetMethod(
 			nameof(FileInfo.SetAccessControl),
-			new[]
-			{
+			[
 				typeof(FileSecurity)
-			}));
+			]));
 
 		#endregion
 
@@ -140,28 +125,24 @@ public class Net48ParityTests : ParityTests
 
 		Parity.Guid.MissingMethods.Add(typeof(Guid).GetMethod(
 			nameof(Guid.Parse),
-			new[]
-			{
+			[
 				typeof(string)
-			}));
+			]));
 		Parity.Guid.MissingMethods.Add(typeof(Guid).GetMethod(
 			nameof(Guid.ParseExact),
-			new[]
-			{
+			[
 				typeof(string), typeof(string)
-			}));
+			]));
 		Parity.Guid.MissingMethods.Add(typeof(Guid).GetMethod(
 			nameof(Guid.TryParse),
-			new[]
-			{
+			[
 				typeof(string), typeof(Guid).MakeByRefType()
-			}));
+			]));
 		Parity.Guid.MissingMethods.Add(typeof(Guid).GetMethod(
 			nameof(Guid.TryParseExact),
-			new[]
-			{
+			[
 				typeof(string), typeof(string), typeof(Guid).MakeByRefType()
-			}));
+			]));
 
 		#endregion
 
@@ -169,28 +150,24 @@ public class Net48ParityTests : ParityTests
 
 		Parity.Path.MissingMethods.Add(typeof(Path).GetMethod(
 			nameof(Path.ChangeExtension),
-			new[]
-			{
+			[
 				typeof(string), typeof(string)
-			}));
+			]));
 		Parity.Path.MissingMethods.Add(typeof(Path).GetMethod(
 			nameof(Path.GetExtension),
-			new[]
-			{
+			[
 				typeof(string)
-			}));
+			]));
 		Parity.Path.MissingMethods.Add(typeof(Path).GetMethod(
 			nameof(Path.GetFileName),
-			new[]
-			{
+			[
 				typeof(string)
-			}));
+			]));
 		Parity.Path.MissingMethods.Add(typeof(Path).GetMethod(
 			nameof(Path.GetFileNameWithoutExtension),
-			new[]
-			{
+			[
 				typeof(string)
-			}));
+			]));
 
 		#endregion
 

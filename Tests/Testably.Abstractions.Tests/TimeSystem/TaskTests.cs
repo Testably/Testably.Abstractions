@@ -15,7 +15,7 @@ public abstract partial class TaskTests<TTimeSystem>
 		int millisecondsTimeout = 100;
 
 		using CancellationTokenSource cts = new();
-		cts.Cancel();
+		await cts.CancelAsync();
 
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
@@ -57,7 +57,7 @@ public abstract partial class TaskTests<TTimeSystem>
 	{
 		TimeSpan timeout = TimeSpan.FromMilliseconds(100);
 		using CancellationTokenSource cts = new();
-		cts.Cancel();
+		await cts.CancelAsync();
 
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
@@ -74,7 +74,7 @@ public abstract partial class TaskTests<TTimeSystem>
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
 			await TimeSystem.Task
-					.Delay(TimeSpan.FromMilliseconds(-2));
+				.Delay(TimeSpan.FromMilliseconds(-2));
 		});
 
 		exception.Should().BeException<ArgumentOutOfRangeException>(hResult: -2146233086);

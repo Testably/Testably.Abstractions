@@ -9,20 +9,13 @@ using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
 namespace Testably.Abstractions.Parity.Tests;
 
-public abstract class ParityTests
+public abstract class ParityTests(
+	TestHelpers.Parity parity,
+	ITestOutputHelper testOutputHelper)
 {
 	#region Test Setup
 
-	public TestHelpers.Parity Parity { get; }
-
-	private readonly ITestOutputHelper _testOutputHelper;
-
-	protected ParityTests(TestHelpers.Parity parity,
-		ITestOutputHelper testOutputHelper)
-	{
-		Parity = parity;
-		_testOutputHelper = testOutputHelper;
-	}
+	public TestHelpers.Parity Parity { get; } = parity;
 
 	#endregion
 
@@ -32,7 +25,7 @@ public abstract class ParityTests
 		List<string> parityErrors = Parity.Directory
 			.GetErrorsToStaticType<IDirectory>(
 				typeof(Directory),
-				_testOutputHelper);
+				testOutputHelper);
 
 		parityErrors.Should().BeEmpty();
 	}
@@ -43,7 +36,7 @@ public abstract class ParityTests
 		List<string> parityErrors = Parity.DirectoryInfo
 			.GetErrorsToInstanceType<IDirectoryInfo, IDirectoryInfoFactory>(
 				typeof(DirectoryInfo),
-				_testOutputHelper);
+				testOutputHelper);
 
 		parityErrors.Should().BeEmpty();
 	}
@@ -54,7 +47,7 @@ public abstract class ParityTests
 		List<string> parityErrors = Parity.Drive
 			.GetErrorsToInstanceType<IDriveInfo, IDriveInfoFactory>(
 				typeof(DriveInfo),
-				_testOutputHelper);
+				testOutputHelper);
 
 		parityErrors.Should().BeEmpty();
 	}
@@ -65,7 +58,7 @@ public abstract class ParityTests
 		List<string> parityErrors = Parity.File
 			.GetErrorsToStaticType<IFile>(
 				typeof(File),
-				_testOutputHelper);
+				testOutputHelper);
 
 		parityErrors.Should().BeEmpty();
 	}
@@ -76,7 +69,7 @@ public abstract class ParityTests
 		List<string> parityErrors = Parity.FileInfo
 			.GetErrorsToInstanceType<IFileInfo, IFileInfoFactory>(
 				typeof(FileInfo),
-				_testOutputHelper);
+				testOutputHelper);
 
 		parityErrors.Should().BeEmpty();
 	}
@@ -87,7 +80,7 @@ public abstract class ParityTests
 		List<string> parityErrors = Parity.FileSystemInfo
 			.GetErrorsToInstanceType<IFileSystemInfo>(
 				typeof(FileSystemInfo),
-				_testOutputHelper);
+				testOutputHelper);
 
 		parityErrors.Should().BeEmpty();
 	}
@@ -99,7 +92,7 @@ public abstract class ParityTests
 		List<string> parityErrors = Parity.FileSystemWatcher
 			.GetErrorsToInstanceType<IFileSystemWatcher, IFileSystemWatcherFactory>(
 				typeof(FileSystemWatcher),
-				_testOutputHelper);
+				testOutputHelper);
 
 		parityErrors.Should().BeEmpty();
 	}
@@ -110,7 +103,7 @@ public abstract class ParityTests
 		List<string> parityErrors = Parity.Guid
 			.GetErrorsToStaticType<IGuid>(
 				typeof(Guid),
-				_testOutputHelper);
+				testOutputHelper);
 
 		parityErrors.Should().BeEmpty();
 	}
@@ -121,7 +114,7 @@ public abstract class ParityTests
 		List<string> parityErrors = Parity.Path
 			.GetErrorsToStaticType<IPath>(
 				typeof(Path),
-				_testOutputHelper);
+				testOutputHelper);
 
 		parityErrors.Should().BeEmpty();
 	}
@@ -132,7 +125,7 @@ public abstract class ParityTests
 		List<string> parityErrors = Parity.Random
 			.GetErrorsToInstanceType<IRandom, IRandomFactory>(
 				typeof(Random),
-				_testOutputHelper);
+				testOutputHelper);
 
 		parityErrors.Should().BeEmpty();
 	}
@@ -144,7 +137,7 @@ public abstract class ParityTests
 		List<string> parityErrors = Parity.Timer
 			.GetErrorsToInstanceType<ITimer, ITimerFactory>(
 				typeof(Timer),
-				_testOutputHelper);
+				testOutputHelper);
 
 		parityErrors.Should().BeEmpty();
 	}
@@ -155,7 +148,7 @@ public abstract class ParityTests
 		List<string> parityErrors = Parity.ZipArchive
 			.GetErrorsToInstanceType<IZipArchive>(
 				typeof(ZipArchive),
-				_testOutputHelper);
+				testOutputHelper);
 
 		parityErrors.Should().BeEmpty();
 	}
@@ -166,7 +159,7 @@ public abstract class ParityTests
 		List<string> parityErrors = Parity.ZipArchive
 			.GetErrorsToExtensionMethods<IZipArchive>(
 				typeof(ZipFileExtensions),
-				_testOutputHelper);
+				testOutputHelper);
 
 		parityErrors.Should().BeEmpty();
 	}
@@ -177,7 +170,7 @@ public abstract class ParityTests
 		List<string> parityErrors = Parity.ZipArchiveEntry
 			.GetErrorsToInstanceType<IZipArchiveEntry>(
 				typeof(ZipArchiveEntry),
-				_testOutputHelper);
+				testOutputHelper);
 
 		parityErrors.Should().BeEmpty();
 	}
@@ -188,7 +181,7 @@ public abstract class ParityTests
 		List<string> parityErrors = Parity.ZipArchiveEntry
 			.GetErrorsToExtensionMethods<IZipArchiveEntry>(
 				typeof(ZipFileExtensions),
-				_testOutputHelper);
+				testOutputHelper);
 
 		parityErrors.Should().BeEmpty();
 	}
@@ -199,7 +192,7 @@ public abstract class ParityTests
 		List<string> parityErrors = Parity.ZipFile
 			.GetErrorsToStaticType<IZipFile>(
 				typeof(ZipFile),
-				_testOutputHelper);
+				testOutputHelper);
 
 		parityErrors.Should().BeEmpty();
 	}

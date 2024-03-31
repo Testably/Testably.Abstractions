@@ -4,6 +4,7 @@ using System.IO;
 
 namespace Testably.Abstractions.TestHelpers.Settings;
 
+// ReSharper disable once UnusedMember.Global
 public class TestSettingsFixture
 {
 	public TestSettingStatus BrittleTests { get; }

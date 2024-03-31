@@ -44,7 +44,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2FDB2AAE
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{5E35E265-7110-47A0-9E3E-B5180BBB5AA6}"
 	ProjectSection(SolutionItems) = preProject
-		coverage-settings.xml = coverage-settings.xml
+		.github\coverage-settings.xml = .github\coverage-settings.xml
 		.github\mergify.yml = .github\mergify.yml
 	EndProjectSection
 EndProject

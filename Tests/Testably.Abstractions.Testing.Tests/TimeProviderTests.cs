@@ -24,7 +24,7 @@ public class TimeProviderTests
 	[Fact]
 	public void Random_ShouldReturnRandomDateTime()
 	{
-		ConcurrentBag<DateTime> results = new();
+		ConcurrentBag<DateTime> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{

@@ -90,7 +90,7 @@ public abstract partial class FilterTests<TFileSystem>
 		}
 
 		CountdownEvent ms = new(filteredPaths.Length);
-		List<FileSystemEventArgs> results = new();
+		List<FileSystemEventArgs> results = [];
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		fileSystemWatcher.Deleted += (_, eventArgs) =>
