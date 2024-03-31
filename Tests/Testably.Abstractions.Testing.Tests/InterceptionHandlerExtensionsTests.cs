@@ -4,12 +4,7 @@ public class InterceptionHandlerExtensionsTests
 {
 	#region Test Setup
 
-	public MockFileSystem FileSystem { get; }
-
-	public InterceptionHandlerExtensionsTests()
-	{
-		FileSystem = new MockFileSystem();
-	}
+	public MockFileSystem FileSystem { get; } = new();
 
 	#endregion
 

@@ -7,12 +7,7 @@ public class DefaultAccessControlStrategyTests
 {
 	#region Test Setup
 
-	public MockFileSystem FileSystem { get; }
-
-	public DefaultAccessControlStrategyTests()
-	{
-		FileSystem = new MockFileSystem();
-	}
+	public MockFileSystem FileSystem { get; } = new();
 
 	#endregion
 
