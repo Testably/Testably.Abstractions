@@ -267,12 +267,7 @@ internal sealed class InMemoryStorage : IStorage
 		}
 
 		DriveInfoMock drive = DriveInfoMock.New(driveName, _fileSystem);
-		if (_drives.TryGetValue(drive.GetName(), out IStorageDrive? d))
-		{
-			return d;
-		}
-
-		return null;
+		return _drives.GetValueOrDefault(drive.GetName());
 	}
 
 	/// <inheritdoc cref="IStorage.GetDrives()" />
