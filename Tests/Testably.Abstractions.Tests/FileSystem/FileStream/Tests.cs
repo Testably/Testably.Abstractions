@@ -214,7 +214,7 @@ public abstract partial class Tests<TFileSystem>
 		string path)
 	{
 		using CancellationTokenSource cts = new();
-		cts.Cancel();
+		await cts.CancelAsync();
 
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{

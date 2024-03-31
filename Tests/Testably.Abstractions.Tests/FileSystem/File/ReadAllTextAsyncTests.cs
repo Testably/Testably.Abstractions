@@ -18,7 +18,7 @@ public abstract partial class ReadAllTextAsyncTests<TFileSystem>
 		string path)
 	{
 		using CancellationTokenSource cts = new();
-		cts.Cancel();
+		await cts.CancelAsync();
 
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.ReadAllTextAsync(path, cts.Token));
@@ -33,7 +33,7 @@ public abstract partial class ReadAllTextAsyncTests<TFileSystem>
 			string path)
 	{
 		using CancellationTokenSource cts = new();
-		cts.Cancel();
+		await cts.CancelAsync();
 
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.ReadAllTextAsync(path, Encoding.UTF8, cts.Token));

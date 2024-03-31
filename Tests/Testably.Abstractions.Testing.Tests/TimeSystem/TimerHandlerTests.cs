@@ -15,6 +15,7 @@ public class TimerHandlerTests
 
 		using (timeSystem.Timer.New(_ => { }, null, 0, 100))
 		{
+			// Immediately dispose the created timer.
 		}
 
 		Exception? exception = Record.Exception(() =>

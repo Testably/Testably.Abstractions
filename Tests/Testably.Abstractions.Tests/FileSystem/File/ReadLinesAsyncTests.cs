@@ -20,7 +20,7 @@ public abstract partial class ReadLinesAsyncTests<TFileSystem>
 	{
 		await FileSystem.File.WriteAllTextAsync(path, "some content");
 		using CancellationTokenSource cts = new();
-		cts.Cancel();
+		await cts.CancelAsync();
 
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{
@@ -41,7 +41,7 @@ public abstract partial class ReadLinesAsyncTests<TFileSystem>
 	{
 		await FileSystem.File.WriteAllTextAsync(path, "some content");
 		using CancellationTokenSource cts = new();
-		cts.Cancel();
+		await cts.CancelAsync();
 
 		Exception? exception = await Record.ExceptionAsync(async () =>
 		{

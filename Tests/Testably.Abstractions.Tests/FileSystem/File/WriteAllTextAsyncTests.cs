@@ -17,7 +17,7 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 		string path, string? contents)
 	{
 		using CancellationTokenSource cts = new();
-		cts.Cancel();
+		await cts.CancelAsync();
 
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.WriteAllTextAsync(path, contents, cts.Token));
@@ -32,7 +32,7 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 			string path, string? contents)
 	{
 		using CancellationTokenSource cts = new();
-		cts.Cancel();
+		await cts.CancelAsync();
 
 		Exception? exception = await Record.ExceptionAsync(() =>
 			FileSystem.File.WriteAllTextAsync(path, contents, Encoding.UTF8, cts.Token));
