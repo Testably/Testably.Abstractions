@@ -58,7 +58,7 @@ public static class FileSystemName
 	/// <returns><see langword="true" /> if the given expression matches the given name; otherwise, <see langword="false" />.</returns>
 	/// <remarks>
 	///     The syntax of the <paramref name="expression" /> parameter is based on the syntax used by FileSystemWatcher, which
-	///     is based on [RtlIsNameInExpression](/windows/win32/devnotes/rtlisnameinexpression), which defines the rules for
+	///     is based on RtlIsNameInExpression, which defines the rules for
 	///     matching DOS wildcards (`'*'`, `'?'`, `'&lt;'`, `'&gt;'`, `'"'`).
 	///     Matching will not correspond to Win32 behavior unless you transform the expression using
 	///     <see cref="FileSystemName.TranslateWin32Expression(string)" />.
@@ -256,7 +256,7 @@ public static class FileSystemName
 		//  offset.  Each character in the expression can represent one or two
 		//  states.  * and DOS_STAR generate two states: expressionOffset * 2 and
 		//  expressionOffset * 2 + 1.  All other expression characters can produce
-		//  only a single state.  Thus expressionOffset = currentState / 2.
+		//  only a single state. Thus: expressionOffset = currentState / 2.
 
 		while (!nameFinished)
 		{
@@ -352,7 +352,7 @@ public static class FileSystemName
 					{
 						// '>' (DOS_QM) is the most complicated. If the name is finished,
 						// we can match zero characters. If this name is a '.', we
-						// don't match, but look at the next expression.  Otherwise
+						// don't match, but look at the next expression. Otherwise,
 						// we match a single character.
 						if (nameFinished || nameChar == '.')
 						{
@@ -365,6 +365,7 @@ public static class FileSystemName
 
 					if (useExtendedWildcards && expressionChar == '"')
 					{
+						// ReSharper disable once GrammarMistakeInComment
 						// A '"' (DOS_DOT) can match either a period, or zero characters
 						// beyond the end of name.
 						if (nameFinished)

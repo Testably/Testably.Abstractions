@@ -127,11 +127,10 @@ public class PathHelperTests
 	{
 		// TODO: Enable this test again when the Execute method in MockFileSystem is writable
 		Skip.If(true, "Check how to update this test");
-
-		FileSystemMockForPath mockFileSystem = new(invalidChars);
+		_ = new FileSystemMockForPath(invalidChars);
 		string path = invalidChars[0] + "foo";
 
-		Exception? exception = Record.Exception(() =>
+		Exception exception = Record.Exception(() =>
 		{
 			path.EnsureValidFormat(null!);
 		});

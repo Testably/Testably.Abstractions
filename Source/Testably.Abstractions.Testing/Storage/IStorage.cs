@@ -83,7 +83,7 @@ internal interface IStorage
 	/// </summary>
 	/// <param name="location">The location at which to look for the container.</param>
 	/// <returns>
-	///     <see langword="null" />, if <paramref name="location" /> is null. Otherwise it returns the found container or
+	///     <see langword="null" />, if <paramref name="location" /> is null. Otherwise, it returns the found container or
 	///     <see cref="NullContainer" />.
 	/// </returns>
 	[return: NotNullIfNotNull("location")]

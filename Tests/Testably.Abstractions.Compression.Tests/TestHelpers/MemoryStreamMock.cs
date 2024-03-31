@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿#if FEATURE_COMPRESSION_STREAM
+using System.IO;
 
 namespace Testably.Abstractions.Compression.Tests.TestHelpers;
 
@@ -14,3 +15,4 @@ internal sealed class MemoryStreamMock : MemoryStream
 		CanRead = canRead;
 	}
 }
+#endif

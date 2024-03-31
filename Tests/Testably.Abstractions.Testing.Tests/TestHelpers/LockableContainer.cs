@@ -21,9 +21,8 @@ internal sealed class LockableContainer : IStorageContainer
 
 	/// <summary>
 	///     Simulate a locked file, if set to <see langword="true" />.<br />
-	///     In this case <see cref="RequestAccess(FileAccess, FileShare, bool, bool, int?)" /> throws an
-	///     <see cref="IOException" />,
-	///     otherwise it will succeed.
+	///     In this case <see cref="RequestAccess(FileAccess, FileShare, bool, bool, int?)" /> throws
+	///     an <see cref="IOException" />, otherwise it will succeed.
 	/// </summary>
 	public bool IsLocked { get; set; }
 

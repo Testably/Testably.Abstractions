@@ -40,7 +40,7 @@ internal sealed class ClassModel
 		// (could be a nested type, for example)
 		SyntaxNode? potentialNamespaceParent = syntaxNode.Parent;
 
-		// Keep moving "out" of nested classes etc until we get to a namespace
+		// Keep moving "out" of nested classes until we get to a namespace
 		// or until we run out of parents
 		while (potentialNamespaceParent != null &&
 		       potentialNamespaceParent is not NamespaceDeclarationSyntax
