@@ -77,21 +77,7 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 	public void WriteAllText_ShouldCreateFileWithByteOrderMark(
 		string path)
 	{
-		byte[] expectedBytes =
-		[
-			255,
-			254,
-			0,
-			0,
-			65,
-			0,
-			0,
-			0,
-			65,
-			0,
-			0,
-			0
-		];
+		byte[] expectedBytes = [255, 254, 0, 0, 65, 0, 0, 0, 65, 0, 0, 0];
 
 		FileSystem.File.WriteAllText(path, "AA", Encoding.UTF32);
 

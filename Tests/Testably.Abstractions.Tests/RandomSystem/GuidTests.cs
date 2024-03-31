@@ -216,26 +216,11 @@ public abstract partial class GuidTests<TRandomSystem>
 	#pragma warning disable MA0018
 	public static IEnumerable<object[]> GuidFormats()
 	{
-		yield return
-		[
-			"N"
-		];
-		yield return
-		[
-			"D"
-		];
-		yield return
-		[
-			"B"
-		];
-		yield return
-		[
-			"P"
-		];
-		yield return
-		[
-			"X"
-		];
+		yield return ["N"];
+		yield return ["D"];
+		yield return ["B"];
+		yield return ["P"];
+		yield return ["X"];
 	}
 	#pragma warning restore MA0018
 #endif

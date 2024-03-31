@@ -50,9 +50,7 @@ public abstract partial class ReadAllLinesTests<TFileSystem>
 	[AutoData]
 	public void ReadAllLines_ShouldNotReturnByteOrderMark(string path, string content)
 	{
-		FileSystem.File.WriteAllLines(path, [
-			content
-		], Encoding.UTF32);
+		FileSystem.File.WriteAllLines(path, [content], Encoding.UTF32);
 
 		string[] result = FileSystem.File.ReadAllLines(path, Encoding.UTF32);
 

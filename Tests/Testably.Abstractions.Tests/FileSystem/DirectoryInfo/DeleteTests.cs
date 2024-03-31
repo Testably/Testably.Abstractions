@@ -32,17 +32,13 @@ public abstract partial class DeleteTests<TFileSystem>
 			.WithSubdirectory(path);
 		string filePath = FileSystem.Path.Combine(path, filename);
 		FileSystemStream openFile = FileSystem.File.OpenWrite(filePath);
-		openFile.Write([
-			0
-		], 0, 1);
+		openFile.Write([0], 0, 1);
 		openFile.Flush();
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 		Exception? exception = Record.Exception(() =>
 		{
 			sut.Delete(true);
-			openFile.Write([
-				0
-			], 0, 1);
+			openFile.Write([0], 0, 1);
 			openFile.Flush();
 		});
 
