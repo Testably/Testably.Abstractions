@@ -20,8 +20,9 @@ public class Parity
 
 	public ParityCheck DirectoryInfo { get; } = new(excludeMethods: new[]
 	{
-		typeof(DirectoryInfo).GetMethod(nameof(System.IO.DirectoryInfo
-			.GetObjectData)),
+		#pragma warning disable SYSLIB0051
+		typeof(DirectoryInfo).GetMethod(nameof(System.IO.DirectoryInfo.GetObjectData)),
+		#pragma warning restore SYSLIB0051
 		typeof(DirectoryInfo).GetMethod(nameof(System.IO.DirectoryInfo.ToString))
 	});
 
@@ -34,7 +35,9 @@ public class Parity
 
 	public ParityCheck FileInfo { get; } = new(excludeMethods: new[]
 	{
+		#pragma warning disable SYSLIB0051
 		typeof(FileInfo).GetMethod(nameof(System.IO.FileInfo.GetObjectData)),
+		#pragma warning restore SYSLIB0051
 		typeof(FileInfo).GetMethod(nameof(System.IO.FileInfo.ToString))
 	});
 
@@ -42,8 +45,9 @@ public class Parity
 
 	public ParityCheck FileSystemInfo { get; } = new(excludeMethods: new[]
 	{
-		typeof(FileSystemInfo).GetMethod(
-			nameof(System.IO.FileSystemInfo.GetObjectData)),
+		#pragma warning disable SYSLIB0051
+		typeof(FileSystemInfo).GetMethod(nameof(System.IO.FileSystemInfo.GetObjectData)),
+		#pragma warning restore SYSLIB0051
 		typeof(FileSystemInfo).GetMethod(nameof(ToString))
 	});
 

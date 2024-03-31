@@ -2,6 +2,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
+// ReSharper disable InconsistentNaming
+// ReSharper disable TooWideLocalVariableScope
 // ReSharper disable once CheckNamespace
 namespace System.IO.Enumeration;
 
@@ -11,21 +13,11 @@ namespace System.IO.Enumeration;
 [ExcludeFromCodeCoverage]
 public static class FileSystemName
 {
-	private static readonly char[] s_simpleWildcardChars =
-	{
-		'*', '?'
-	};
+	private static readonly char[] s_simpleWildcardChars = ['*', '?'];
 
 	// [MS - FSA] 2.1.4.4 Algorithm for Determining if a FileName Is in an Expression
 	// https://msdn.microsoft.com/en-us/library/ff469270.aspx
-	private static readonly char[] s_wildcardChars =
-	{
-		'\"',
-		'<',
-		'>',
-		'*',
-		'?'
-	};
+	private static readonly char[] s_wildcardChars = ['\"', '<', '>', '*', '?'];
 
 	/// <summary>
 	///     Verifies whether the given expression matches the given name. Supports the following wildcards: '*' and '?'.
@@ -229,7 +221,7 @@ public static class FileSystemName
 		char nameChar = '\0';
 		char expressionChar;
 
-		int[] temp = new int[0];
+		int[] temp;
 		int[] currentMatches = new int[16];
 		int[] priorMatches = new int[16];
 		priorMatches[0] = 0;

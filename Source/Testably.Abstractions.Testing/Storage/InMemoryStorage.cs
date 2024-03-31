@@ -126,7 +126,7 @@ internal sealed class InMemoryStorage : IStorage
 			{
 				foreach (IStorageLocation key in children)
 				{
-					DeleteContainer(key, recursive);
+					DeleteContainer(key, recursive: true);
 				}
 			}
 			else if (children.Any())
@@ -685,7 +685,7 @@ internal sealed class InMemoryStorage : IStorage
 				{
 					IStorageLocation childDestination = _fileSystem
 						.GetMoveLocation(child, source, destination);
-					MoveInternal(child, childDestination, overwrite, recursive,
+					MoveInternal(child, childDestination, overwrite, recursive: true,
 						sourceType,
 						rollbacks: rollbacks);
 				}
