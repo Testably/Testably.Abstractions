@@ -560,25 +560,6 @@ internal sealed class InMemoryStorage : IStorage
 		return drive;
 	}
 
-	/// <summary>
-	///     When you use the asterisk wildcard character in <paramref name="searchPattern" /> and you specify a three-character
-	///     file extension, for example, "*.txt", this method also returns files with extensions that begin with the specified
-	///     extension.
-	/// </summary>
-	/// <remarks>
-	///     For example, the search pattern "*.xls" returns both "book.xls" and "book.xlsx". This behavior only occurs if an
-	///     asterisk is used in the search pattern and the file extension provided is exactly three characters. If you use the
-	///     question mark wildcard character somewhere in the search pattern, this method returns only files that match the
-	///     specified file extension exactly.
-	///     <para />
-	///     <see href="https://learn.microsoft.com/en-us/dotnet/api/system.io.directory.enumeratefiles?view=netframework-4.8" />
-	/// </remarks>
-	private static bool SearchPatternMatchesFileExtensionOnNetFramework(string searchPattern,
-		string extension)
-		=> searchPattern.Length == 5 &&
-		   searchPattern.StartsWith("*.", StringComparison.Ordinal) &&
-		   extension.StartsWith(searchPattern.Substring(1), StringComparison.OrdinalIgnoreCase);
-
 	private void CheckAndAdjustParentDirectoryTimes(IStorageLocation location)
 	{
 		IStorageContainer? parentContainer = GetContainer(location.GetParent());
@@ -767,6 +748,25 @@ internal sealed class InMemoryStorage : IStorage
 		return nextLocation;
 	}
 #endif
+
+	/// <summary>
+	///     When you use the asterisk wildcard character in <paramref name="searchPattern" /> and you specify a three-character
+	///     file extension, for example, "*.txt", this method also returns files with extensions that begin with the specified
+	///     extension.
+	/// </summary>
+	/// <remarks>
+	///     For example, the search pattern "*.xls" returns both "book.xls" and "book.xlsx". This behavior only occurs if an
+	///     asterisk is used in the search pattern and the file extension provided is exactly three characters. If you use the
+	///     question mark wildcard character somewhere in the search pattern, this method returns only files that match the
+	///     specified file extension exactly.
+	///     <para />
+	///     <see href="https://learn.microsoft.com/en-us/dotnet/api/system.io.directory.enumeratefiles?view=netframework-4.8" />
+	/// </remarks>
+	private static bool SearchPatternMatchesFileExtensionOnNetFramework(string searchPattern,
+		string extension)
+		=> searchPattern.Length == 5 &&
+		   searchPattern.StartsWith("*.", StringComparison.Ordinal) &&
+		   extension.StartsWith(searchPattern.Substring(1), StringComparison.OrdinalIgnoreCase);
 
 	private void ThrowIfParentDoesNotExist(IStorageLocation location,
 		Func<IStorageLocation, IOException>

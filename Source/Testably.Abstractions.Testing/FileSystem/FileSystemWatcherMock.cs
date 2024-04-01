@@ -443,7 +443,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 						InternalBufferSize, channelCapacity)));
 			}
 		});
-		Task.Run(() =>
+		_ = Task.Run(() =>
 				{
 					try
 					{
@@ -461,11 +461,11 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 					}
 				},
 				token)
-			.ContinueWith(_ =>
+			.ContinueWith(__ =>
 			{
 				if (channel.Writer.TryComplete())
 				{
-					channel.Reader.Completion.ContinueWith(_ =>
+					_ = channel.Reader.Completion.ContinueWith(_ =>
 					{
 						cancellationTokenSource.Dispose();
 					}, CancellationToken.None);

@@ -155,33 +155,35 @@ public abstract partial class TimerTests<TTimeSystem>
 		using ManualResetEventSlim ms = new();
 		using ManualResetEventSlim ms2 = new();
 		using ManualResetEventSlim ms3 = new();
+		#pragma warning disable MA0147 // Avoid async void method for delegate
 		// ReSharper disable once AsyncVoidLambda
 		using (ITimer timer1 = TimeSystem.Timer.New(async _ =>
-			{
-				// ReSharper disable once AccessToDisposedClosure
-				try
 				{
-					DateTime now = TimeSystem.DateTime.Now;
-					double diff = (now - previousTime).TotalMilliseconds;
-					previousTime = now;
-					ms.Set();
-					triggerTimes.Add((int)diff);
 					// ReSharper disable once AccessToDisposedClosure
-					ms2.Wait(30000);
-					if (triggerTimes.Count > 3)
+					try
 					{
+						DateTime now = TimeSystem.DateTime.Now;
+						double diff = (now - previousTime).TotalMilliseconds;
+						previousTime = now;
+						ms.Set();
+						triggerTimes.Add((int)diff);
 						// ReSharper disable once AccessToDisposedClosure
-						ms3.Set();
-					}
+						ms2.Wait(30000);
+						if (triggerTimes.Count > 3)
+						{
+							// ReSharper disable once AccessToDisposedClosure
+							ms3.Set();
+						}
 
-					await Task.Delay(10);
-				}
-				catch (ObjectDisposedException)
-				{
-					// Ignore any ObjectDisposedException
-				}
-			},
-			null, 0 * TimerMultiplier, 200 * TimerMultiplier))
+						await Task.Delay(10);
+					}
+					catch (ObjectDisposedException)
+					{
+						// Ignore any ObjectDisposedException
+					}
+				},
+				null, 0 * TimerMultiplier, 200 * TimerMultiplier))
+			#pragma warning restore MA0147 // Avoid async void method for delegate
 		{
 			ms.Wait(30000).Should().BeTrue();
 			using ITimer timer2 = TimeSystem.Timer.New(_ =>
@@ -228,33 +230,35 @@ public abstract partial class TimerTests<TTimeSystem>
 		using ManualResetEventSlim ms = new();
 		using ManualResetEventSlim ms2 = new();
 		using ManualResetEventSlim ms3 = new();
+		#pragma warning disable MA0147 // Avoid async void method for delegate
 		// ReSharper disable once AsyncVoidLambda
 		using (ITimer timer1 = TimeSystem.Timer.New(async _ =>
-			{
-				// ReSharper disable once AccessToDisposedClosure
-				try
 				{
-					DateTime now = TimeSystem.DateTime.Now;
-					double diff = (now - previousTime).TotalMilliseconds;
-					previousTime = now;
-					ms.Set();
-					triggerTimes.Add((int)diff);
 					// ReSharper disable once AccessToDisposedClosure
-					ms2.Wait(30000);
-					if (triggerTimes.Count > 3)
+					try
 					{
+						DateTime now = TimeSystem.DateTime.Now;
+						double diff = (now - previousTime).TotalMilliseconds;
+						previousTime = now;
+						ms.Set();
+						triggerTimes.Add((int)diff);
 						// ReSharper disable once AccessToDisposedClosure
-						ms3.Set();
-					}
+						ms2.Wait(30000);
+						if (triggerTimes.Count > 3)
+						{
+							// ReSharper disable once AccessToDisposedClosure
+							ms3.Set();
+						}
 
-					await Task.Delay(10);
-				}
-				catch (ObjectDisposedException)
-				{
-					// Ignore any ObjectDisposedException
-				}
-			},
-			null, 0L * TimerMultiplier, 200L * TimerMultiplier))
+						await Task.Delay(10);
+					}
+					catch (ObjectDisposedException)
+					{
+						// Ignore any ObjectDisposedException
+					}
+				},
+				null, 0L * TimerMultiplier, 200L * TimerMultiplier))
+			#pragma warning restore MA0147 // Avoid async void method for delegate
 		{
 			ms.Wait(30000).Should().BeTrue();
 			using ITimer timer2 = TimeSystem.Timer.New(_ =>
@@ -301,33 +305,35 @@ public abstract partial class TimerTests<TTimeSystem>
 		using ManualResetEventSlim ms = new();
 		using ManualResetEventSlim ms2 = new();
 		using ManualResetEventSlim ms3 = new();
+		#pragma warning disable MA0147 // Avoid async void method for delegate
 		// ReSharper disable once AsyncVoidLambda
 		using (ITimer timer1 = TimeSystem.Timer.New(async _ =>
-			{
-				// ReSharper disable once AccessToDisposedClosure
-				try
 				{
-					DateTime now = TimeSystem.DateTime.Now;
-					double diff = (now - previousTime).TotalMilliseconds;
-					previousTime = now;
-					ms.Set();
-					triggerTimes.Add((int)diff);
 					// ReSharper disable once AccessToDisposedClosure
-					ms2.Wait(30000);
-					if (triggerTimes.Count > 3)
+					try
 					{
+						DateTime now = TimeSystem.DateTime.Now;
+						double diff = (now - previousTime).TotalMilliseconds;
+						previousTime = now;
+						ms.Set();
+						triggerTimes.Add((int)diff);
 						// ReSharper disable once AccessToDisposedClosure
-						ms3.Set();
-					}
+						ms2.Wait(30000);
+						if (triggerTimes.Count > 3)
+						{
+							// ReSharper disable once AccessToDisposedClosure
+							ms3.Set();
+						}
 
-					await Task.Delay(10);
-				}
-				catch (ObjectDisposedException)
-				{
-					// Ignore any ObjectDisposedException
-				}
-			}, null, TimeSpan.FromMilliseconds(0 * TimerMultiplier),
-			TimeSpan.FromMilliseconds(200 * TimerMultiplier)))
+						await Task.Delay(10);
+					}
+					catch (ObjectDisposedException)
+					{
+						// Ignore any ObjectDisposedException
+					}
+				}, null, TimeSpan.FromMilliseconds(0 * TimerMultiplier),
+				TimeSpan.FromMilliseconds(200 * TimerMultiplier)))
+			#pragma warning restore MA0147 // Avoid async void method for delegate
 		{
 			ms.Wait(30000).Should().BeTrue();
 			using ITimer timer2 = TimeSystem.Timer.New(_ =>

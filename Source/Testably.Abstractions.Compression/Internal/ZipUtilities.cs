@@ -35,7 +35,7 @@ internal static class ZipUtilities
 				lastWrite = new DateTime(1980, 1, 1, 0, 0, 0);
 			}
 
-			entry.LastWriteTime = lastWrite;
+			entry.LastWriteTime = new DateTimeOffset(lastWrite);
 
 			using (Stream es = entry.Open())
 			{
