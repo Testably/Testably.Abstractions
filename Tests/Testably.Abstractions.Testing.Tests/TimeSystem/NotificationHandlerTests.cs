@@ -102,7 +102,7 @@ public class NotificationHandlerTests
 		IDisposable disposable = timeSystem.On.TaskDelay(d => receivedDelay = d);
 
 		disposable.Dispose();
-		timeSystem.Task.Delay(millisecondsDelay);
+		_ = timeSystem.Task.Delay(millisecondsDelay);
 
 		receivedDelay.Should().BeNull();
 	}
@@ -119,7 +119,7 @@ public class NotificationHandlerTests
 		using (timeSystem.On.TaskDelay(d => receivedDelay1 = d))
 		{
 			timeSystem.On.TaskDelay(d => receivedDelay2 = d).Dispose();
-			timeSystem.Task.Delay(expectedDelay);
+			_ = timeSystem.Task.Delay(expectedDelay);
 		}
 
 		receivedDelay1.Should().Be(expectedDelay);
@@ -139,7 +139,7 @@ public class NotificationHandlerTests
 		{
 			using (timeSystem.On.TaskDelay(d => receivedDelay2 = d))
 			{
-				timeSystem.Task.Delay(expectedDelay);
+				_ = timeSystem.Task.Delay(expectedDelay);
 			}
 		}
 
@@ -157,7 +157,7 @@ public class NotificationHandlerTests
 
 		using (timeSystem.On.TaskDelay(d => receivedDelay = d))
 		{
-			timeSystem.Task.Delay(millisecondsDelay, CancellationToken.None);
+			_ = timeSystem.Task.Delay(millisecondsDelay, CancellationToken.None);
 		}
 
 		receivedDelay.TotalMilliseconds.Should().Be(millisecondsDelay);
@@ -173,7 +173,7 @@ public class NotificationHandlerTests
 
 		using (timeSystem.On.TaskDelay(d => receivedDelay = d))
 		{
-			timeSystem.Task.Delay(millisecondsDelay);
+			_ = timeSystem.Task.Delay(millisecondsDelay);
 		}
 
 		receivedDelay.TotalMilliseconds.Should().Be(millisecondsDelay);
@@ -189,7 +189,7 @@ public class NotificationHandlerTests
 
 		using (timeSystem.On.TaskDelay(d => receivedDelay = d))
 		{
-			timeSystem.Task.Delay(expectedDelay, CancellationToken.None);
+			_ = timeSystem.Task.Delay(expectedDelay, CancellationToken.None);
 		}
 
 		receivedDelay.Should().Be(expectedDelay);
@@ -205,7 +205,7 @@ public class NotificationHandlerTests
 
 		using (timeSystem.On.TaskDelay(d => receivedDelay = d))
 		{
-			timeSystem.Task.Delay(expectedDelay);
+			_ = timeSystem.Task.Delay(expectedDelay);
 		}
 
 		receivedDelay.Should().Be(expectedDelay);
