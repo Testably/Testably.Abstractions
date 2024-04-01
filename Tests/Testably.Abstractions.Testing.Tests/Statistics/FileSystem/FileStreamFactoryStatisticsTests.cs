@@ -209,7 +209,8 @@ public class FileStreamFactoryStatisticsTests
 	[SkippableFact]
 	public void ToString_ShouldBeFileStream()
 	{
-		IPathStatistics sut = new MockFileSystem().Statistics.FileStream;
+		IPathStatistics<IFileStreamFactory, FileSystemStream> sut
+			= new MockFileSystem().Statistics.FileStream;
 
 		string? result = sut.ToString();
 

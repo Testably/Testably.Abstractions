@@ -47,7 +47,8 @@ public sealed class DriveInfoFactoryStatisticsTests
 	[SkippableFact]
 	public void ToString_ShouldBeDriveInfo()
 	{
-		IPathStatistics sut = new MockFileSystem().Statistics.DriveInfo;
+		IPathStatistics<IDriveInfoFactory, IDriveInfo> sut
+			= new MockFileSystem().Statistics.DriveInfo;
 
 		string? result = sut.ToString();
 

@@ -67,7 +67,8 @@ public class FileSystemWatcherFactoryStatisticsTests
 	[SkippableFact]
 	public void ToString_ShouldBeFileSystemWatcher()
 	{
-		IPathStatistics sut = new MockFileSystem().Statistics.FileSystemWatcher;
+		IPathStatistics<IFileSystemWatcherFactory, IFileSystemWatcher> sut
+			= new MockFileSystem().Statistics.FileSystemWatcher;
 
 		string? result = sut.ToString();
 
