@@ -6,12 +6,12 @@
 /// <remarks>
 ///     See also <seealso cref="IStatistics" /> .
 /// </remarks>
-public interface IPathStatistics : IStatistics
+public interface IPathStatistics<TFactory, TType> : IStatistics<TFactory>
 {
 	/// <summary>
 	///     Returns the underlying <see cref="IStatistics" /> under <paramref name="path" />.
 	/// </summary>
-	IStatistics this[string path]
+	IStatistics<TType> this[string path]
 	{
 		get;
 	}

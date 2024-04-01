@@ -35,7 +35,8 @@ public class FileInfoFactoryStatisticsTests
 	[SkippableFact]
 	public void ToString_ShouldBeFileInfo()
 	{
-		IPathStatistics sut = new MockFileSystem().Statistics.FileInfo;
+		IPathStatistics<IFileInfoFactory, IFileInfo> sut
+			= new MockFileSystem().Statistics.FileInfo;
 
 		string? result = sut.ToString();
 

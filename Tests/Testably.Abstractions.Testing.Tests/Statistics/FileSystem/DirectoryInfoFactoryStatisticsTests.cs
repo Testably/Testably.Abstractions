@@ -35,7 +35,8 @@ public sealed class DirectoryInfoFactoryStatisticsTests
 	[SkippableFact]
 	public void ToString_ShouldBeDirectoryInfo()
 	{
-		IPathStatistics sut = new MockFileSystem().Statistics.DirectoryInfo;
+		IPathStatistics<IDirectoryInfoFactory, IDirectoryInfo> sut
+			= new MockFileSystem().Statistics.DirectoryInfo;
 
 		string? result = sut.ToString();
 

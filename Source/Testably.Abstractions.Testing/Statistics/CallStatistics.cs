@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 
 namespace Testably.Abstractions.Testing.Statistics;
 
-internal class CallStatistics : IStatistics
+internal class CallStatistics<TType> : IStatistics<TType>
 {
 	private readonly ConcurrentQueue<MethodStatistic> _methods = new();
 	private readonly string _name;
