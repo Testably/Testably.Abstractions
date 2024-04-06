@@ -23,9 +23,17 @@ internal partial class Execute
 			       (length >= 2 && IsValidDriveChar(path![0]) && path[1] == VolumeSeparatorChar);
 		}
 
+		/// <summary>
+		///     True if the given character is a directory separator.
+		/// </summary>
+		/// <remarks>https://github.com/dotnet/runtime/blob/v8.0.3/src/libraries/Common/src/System/IO/PathInternal.Windows.cs#L280</remarks>
 		private static bool IsDirectorySeparator(char c)
 			=> c == '\\' || c == '/';
 
+		/// <summary>
+		///     Returns true if the given character is a valid drive letter
+		/// </summary>
+		/// <remarks>https://github.com/dotnet/runtime/blob/v8.0.3/src/libraries/Common/src/System/IO/PathInternal.Windows.cs#L72</remarks>
 		private static bool IsValidDriveChar(char value)
 			=> (uint)((value | 0x20) - 'a') <= 'z' - 'a';
 	}
