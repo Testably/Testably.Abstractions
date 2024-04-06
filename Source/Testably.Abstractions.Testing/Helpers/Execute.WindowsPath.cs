@@ -1,8 +1,8 @@
-﻿#if FEATURE_SPAN
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
+#if FEATURE_SPAN
 using System;
 #endif
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
 #if FEATURE_FILESYSTEM_NET7
 using Testably.Abstractions.Testing.Storage;
 #endif
@@ -11,7 +11,7 @@ namespace Testably.Abstractions.Testing.Helpers;
 
 internal partial class Execute
 {
-	private sealed class NativePath(MockFileSystem fileSystem) : IPath
+	private sealed class WindowsPath(MockFileSystem fileSystem) : IPath
 	{
 		#region IPath Members
 
@@ -229,13 +229,16 @@ internal partial class Execute
 #if FEATURE_SPAN
 		/// <inheritdoc cref="Path.IsPathRooted(ReadOnlySpan{char})" />
 		public bool IsPathRooted(ReadOnlySpan<char> path)
-			=> System.IO.Path.IsPathRooted(path);
+			=> IsPathRooted(path.ToString());
 #endif
 
 		/// <inheritdoc cref="Path.IsPathRooted(string)" />
 		public bool IsPathRooted(string? path)
-			=> System.IO.Path.IsPathRooted(path);
-
+		{
+			int? length = path?.Length;
+			return (length >= 1 && IsDirectorySeparator(path![0])) ||
+			       (length >= 2 && IsValidDriveChar(path![0]) && path[1] == VolumeSeparatorChar);
+		}
 #if FEATURE_PATH_JOIN
 		/// <inheritdoc cref="Path.Join(ReadOnlySpan{char}, ReadOnlySpan{char})" />
 		public string Join(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2)
@@ -315,5 +318,11 @@ internal partial class Execute
 #endif
 
 		#endregion
+
+		private static bool IsDirectorySeparator(char c)
+			=> c == '\\' || c == '/';
+
+		private static bool IsValidDriveChar(char value)
+			=> (uint)((value | 0x20) - 'a') <= 'z' - 'a';
 	}
 }

@@ -11,7 +11,7 @@ namespace Testably.Abstractions.Testing.Helpers;
 
 internal partial class Execute
 {
-	private sealed class NativePath(MockFileSystem fileSystem) : IPath
+	private class LinuxPath(MockFileSystem fileSystem) : IPath
 	{
 		#region IPath Members
 
@@ -229,12 +229,12 @@ internal partial class Execute
 #if FEATURE_SPAN
 		/// <inheritdoc cref="Path.IsPathRooted(ReadOnlySpan{char})" />
 		public bool IsPathRooted(ReadOnlySpan<char> path)
-			=> System.IO.Path.IsPathRooted(path);
+			=> IsPathRooted(path.ToString());
 #endif
 
 		/// <inheritdoc cref="Path.IsPathRooted(string)" />
 		public bool IsPathRooted(string? path)
-			=> System.IO.Path.IsPathRooted(path);
+			=> path?.Length > 0 && path[0] == '/';
 
 #if FEATURE_PATH_JOIN
 		/// <inheritdoc cref="Path.Join(ReadOnlySpan{char}, ReadOnlySpan{char})" />
