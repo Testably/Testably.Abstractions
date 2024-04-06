@@ -47,7 +47,23 @@ internal partial class Execute
 		StringComparisonMode = IsLinux
 			? StringComparison.Ordinal
 			: StringComparison.OrdinalIgnoreCase;
-		Path = new NativePath(fileSystem);
+		if (IsLinux)
+		{
+			Path = new LinuxPath(fileSystem);
+		}
+		else if (IsMac)
+		{
+			Path = new MacPath(fileSystem);
+		}
+		else if (IsWindows)
+		{
+			Path = new WindowsPath(fileSystem);
+		}
+		else
+		{
+			throw new NotSupportedException(
+				"The operating system must be one of Linux, OSX or Windows");
+		}
 	}
 
 	internal Execute(MockFileSystem fileSystem)
