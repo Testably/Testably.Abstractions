@@ -56,7 +56,7 @@ public sealed class PathStatisticsTests
 	[Fact]
 	public void Key_ShouldSimplifyRelativePaths()
 	{
-		MockFileSystem fileSystem = new();
+		MockFileSystem fileSystem = new(o => o.UseCurrentDirectory());
 		fileSystem.InitializeIn("/foo/bar");
 		IPathStatistics<IFileInfoFactory, IFileInfo> sut = fileSystem.Statistics.FileInfo;
 

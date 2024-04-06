@@ -92,18 +92,20 @@ public class MockFileSystemTests
 		drive.VolumeLabel.Should().NotBeNullOrEmpty();
 	}
 
-	[SkippableFact]
-	public void FileSystemMock_ShouldInitializeDriveFromCurrentDirectory()
+	[SkippableTheory]
+	[InlineData('A')]
+	[InlineData('G')]
+	[InlineData('z')]
+	public void FileSystemMock_ShouldInitializeDriveFromCurrentDirectory(char driveLetter)
 	{
-		string? driveName = Path.GetPathRoot(Directory.GetCurrentDirectory());
+		Skip.If(!Test.RunsOnWindows);
 
-		Skip.If(!Test.RunsOnWindows || driveName?.StartsWith('C') != false);
-
-		MockFileSystem sut = new();
+		MockFileSystem sut = new(o => o.UseCurrentDirectory($"{driveLetter}:/foo/bar"));
 
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 		drives.Length.Should().Be(2);
-		drives.Should().Contain(d => d.Name == driveName);
+		drives.Should().Contain(d => d.Name == "C:\\");
+		drives.Should().Contain(d => d.Name == $"{driveLetter}:\\");
 	}
 
 	[SkippableFact]
