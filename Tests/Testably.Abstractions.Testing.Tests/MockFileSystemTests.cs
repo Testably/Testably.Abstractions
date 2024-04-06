@@ -93,19 +93,19 @@ public class MockFileSystemTests
 	}
 
 	[SkippableTheory]
-	[InlineData('A')]
-	[InlineData('G')]
-	[InlineData('z')]
-	public void FileSystemMock_ShouldInitializeDriveFromCurrentDirectory(char driveLetter)
+	[InlineData("A:\\")]
+	[InlineData("G:\\")]
+	[InlineData("z:\\")]
+	public void FileSystemMock_ShouldInitializeDriveFromCurrentDirectory(string driveName)
 	{
 		Skip.If(!Test.RunsOnWindows);
 
-		MockFileSystem sut = new(o => o.UseCurrentDirectory($"{driveLetter}:/foo/bar"));
+		MockFileSystem sut = new(o => o.UseCurrentDirectory($"{driveName}foo\\bar"));
 
 		IDriveInfo[] drives = sut.DriveInfo.GetDrives();
 		drives.Length.Should().Be(2);
 		drives.Should().Contain(d => d.Name == "C:\\");
-		drives.Should().Contain(d => d.Name == $"{driveLetter}:\\");
+		drives.Should().Contain(d => d.Name == driveName);
 	}
 
 	[SkippableFact]

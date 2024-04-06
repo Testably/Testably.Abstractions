@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.IO;
+using System.Runtime.InteropServices;
 #if NET6_0_OR_GREATER
 #endif
 
@@ -42,6 +43,41 @@ public class MockFileSystemInitializationTests
 		sut.Execute.IsNetFramework.Should().BeFalse();
 	}
 
+	[Fact]
+	public void MockFileSystem_WithCurrentDirectory_ShouldInitializeCurrentDirectory()
+	{
+		string expected = Directory.GetCurrentDirectory();
+		MockFileSystem sut = new(o => o.UseCurrentDirectory());
+
+		string result = sut.Directory.GetCurrentDirectory();
+
+		result.Should().Be(expected);
+	}
+
+	[Theory]
+	[AutoData]
+	public void MockFileSystem_WithExplicitCurrentDirectory_ShouldInitializeCurrentDirectory(
+		string path)
+	{
+		string expected = Path.Combine("C:\\", path);
+		MockFileSystem sut = new(o => o.UseCurrentDirectory(path));
+
+		string result = sut.Directory.GetCurrentDirectory();
+
+		result.Should().Be(expected);
+	}
+
+	[Fact]
+	public void MockFileSystem_WithoutCurrentDirectory_ShouldUseDefaultDriveAsCurrentDirectory()
+	{
+		string expected = "C:\\";
+		MockFileSystem sut = new();
+
+		string result = sut.Directory.GetCurrentDirectory();
+
+		result.Should().Be(expected);
+	}
+
 #if !NET48
 	[Fact]
 	public void SimulatingOperatingSystem_FreeBSD_ShouldThrowNotSupportedException()
@@ -72,6 +108,30 @@ public class MockFileSystemInitializationTests
 
 		result.OperatingSystem.Should().Be(osPlatform);
 		sut.OperatingSystem.Should().Be(osPlatform);
+	}
+
+	[Fact]
+	public void UseCurrentDirectory_Empty_ShouldUseCurrentDirectory()
+	{
+		string expected = Directory.GetCurrentDirectory();
+		MockFileSystem.Initialization sut = new();
+
+		MockFileSystem.Initialization result = sut.UseCurrentDirectory();
+
+		result.CurrentDirectory.Should().Be(expected);
+		sut.CurrentDirectory.Should().Be(expected);
+	}
+
+	[Theory]
+	[AutoData]
+	public void UseCurrentDirectory_WithPath_ShouldUsePathCurrentDirectory(string path)
+	{
+		MockFileSystem.Initialization sut = new();
+
+		MockFileSystem.Initialization result = sut.UseCurrentDirectory(path);
+
+		result.CurrentDirectory.Should().Be(path);
+		sut.CurrentDirectory.Should().Be(path);
 	}
 
 	#region Helpers
