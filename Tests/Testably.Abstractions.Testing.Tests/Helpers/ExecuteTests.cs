@@ -5,6 +5,23 @@ namespace Testably.Abstractions.Testing.Tests.Helpers;
 
 public sealed class ExecuteTests
 {
+#if !NET48
+	[Fact]
+	public void Constructor_ForFreeBSD_ShouldThrowNotSupportedException()
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = new Execute(new MockFileSystem(), OSPlatform.FreeBSD);
+		});
+
+		exception.Should().BeOfType<NotSupportedException>()
+			.Which.Message.Should()
+			.Contain("Linux").And
+			.Contain("Windows").And
+			.Contain("OSX");
+	}
+#endif
+
 	[Fact]
 	public void Constructor_ForLinux_ShouldInitializeAccordingly()
 	{
