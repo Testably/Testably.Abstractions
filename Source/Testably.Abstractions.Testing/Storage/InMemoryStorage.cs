@@ -295,8 +295,14 @@ internal sealed class InMemoryStorage : IStorage
 	}
 
 	/// <inheritdoc cref="IStorage.GetOrAddDrive(string)" />
-	public IStorageDrive GetOrAddDrive(string driveName)
+	[return: NotNullIfNotNull("driveName")]
+	public IStorageDrive? GetOrAddDrive(string? driveName)
 	{
+		if (driveName == null)
+		{
+			return null;
+		}
+
 		DriveInfoMock drive = DriveInfoMock.New(driveName, _fileSystem);
 		return _drives.GetOrAdd(drive.GetName(), _ => drive);
 	}

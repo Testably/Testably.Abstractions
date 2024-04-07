@@ -112,7 +112,8 @@ internal interface IStorage
 	/// <summary>
 	///     Returns the drives that are present.
 	/// </summary>
-	IStorageDrive GetOrAddDrive(string driveName);
+	[return: NotNullIfNotNull("driveName")]
+	IStorageDrive? GetOrAddDrive(string? driveName);
 
 	/// <summary>
 	///     Returns an existing container at <paramref name="location" />.<br />
