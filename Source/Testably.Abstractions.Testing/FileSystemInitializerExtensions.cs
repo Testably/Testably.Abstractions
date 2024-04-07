@@ -50,7 +50,7 @@ public static class FileSystemInitializerExtensions
 			EnumerationOptionsHelper.FromSearchOption(searchOption);
 
 		string[] resourcePaths = assembly.GetManifestResourceNames();
-		string assemblyNamePrefix = $"{assembly.GetName().Name ?? ""}.";
+		string assemblyNamePrefix = $"{assembly.GetName().GetNameOrDefault()}.";
 
 		if (relativePath != null)
 		{
