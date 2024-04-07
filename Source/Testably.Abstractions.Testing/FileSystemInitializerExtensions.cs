@@ -89,13 +89,11 @@ public static class FileSystemInitializerExtensions
 				fileName = fileName.Substring(relativePath.Length);
 			}
 
-			#pragma warning disable CA2249 // string.Contains with char is not supported on netstandard2.0
 			if (!enumerationOptions.RecurseSubdirectories &&
-			    fileName.IndexOf(Path.DirectorySeparatorChar) >= 0)
+			    fileName.Contains(Path.DirectorySeparatorChar, StringComparison.Ordinal))
 			{
 				continue;
 			}
-			#pragma warning restore CA2249
 
 			if (EnumerationOptionsHelper.MatchesPattern(
 				fileSystem.ExecuteOrDefault(),
