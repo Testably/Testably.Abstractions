@@ -177,9 +177,47 @@ jobs:
           command: dotnet test Examples --no-build
           attempt_limit: 2
         
-  stryker:
-    name: Mutation testing
+  stryker-ubuntu:
+    name: Stryker mutation testing (Ubuntu)
     runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        with:
+          fetch-depth: 0
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            7.0.x
+            8.0.x
+      - name: Install .NET Stryker
+        shell: bash
+        run: |
+          dotnet tool install dotnet-stryker --tool-path ../tools
+      - name: Prepare Reports directory
+        shell: bash
+        run: |
+          mkdir Tests/StrykerOutput/Reports -p
+      - name: Analyze Testably.Abstractions.Testing
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        shell: bash
+        run: |
+          cd Tests
+          ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.Testing.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "html" -r "cleartext" --since:main
+          mv ./StrykerOutput/**/reports/*.html ./StrykerOutput/Reports/Testably.Abstractions.Testing-report.html
+      - name: Upload Stryker reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: Stryker
+          path: Tests/StrykerOutput/Reports/*
+        
+  stryker-windows:
+    name: Stryker mutation testing (Windows)
+    runs-on: windows-latest
     timeout-minutes: 300
     steps:
       - name: Checkout sources
@@ -225,19 +263,17 @@ jobs:
           cd Tests
           ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.Compression.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "html" -r "cleartext" --since:main
           mv ./StrykerOutput/**/reports/*.html ./StrykerOutput/Reports/Testably.Abstractions.Compression-report.html
-      - name: Analyze Testably.Abstractions.Testing
-        env:
-          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-        shell: bash
-        run: |
-          cd Tests
-          ../../tools/dotnet-stryker -f ../.github/stryker/Stryker.Config.Testing.json -v "${GITHUB_HEAD_REF}" -r "Dashboard" -r "html" -r "cleartext" --since:main
-          mv ./StrykerOutput/**/reports/*.html ./StrykerOutput/Reports/Testably.Abstractions.Testing-report.html
       - name: Upload Stryker reports
         uses: actions/upload-artifact@v3
         with:
           name: Stryker
           path: Tests/StrykerOutput/Reports/*
+
+  stryker:
+    name: Stryker mutation testing result
+    runs-on: ubuntu-latest
+    needs: [stryker-windows, stryker-ubuntu]
+    steps:
       - name: Add comment to pull request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

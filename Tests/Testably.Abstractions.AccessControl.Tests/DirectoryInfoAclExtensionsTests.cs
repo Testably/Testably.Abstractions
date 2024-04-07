@@ -28,21 +28,22 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 			.Which.ParamName.Should().Be("directorySecurity");
 	}
 
-	[SkippableFact]
-	public void Create_ShouldChangeAccessControl()
+	[SkippableTheory]
+	[InlineData("foo")]
+	[InlineData("foo\\bar")]
+	public void Create_ShouldChangeAccessControl(string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystem.Directory.CreateDirectory("foo");
 		#pragma warning disable CA1416
 		DirectorySecurity directorySecurity = FileSystem.CreateDirectorySecurity();
 
-		FileSystem.DirectoryInfo.New("foo").Create(directorySecurity);
-		DirectorySecurity result = FileSystem.Directory.GetAccessControl("foo");
+		FileSystem.DirectoryInfo.New(path).Create(directorySecurity);
+		DirectorySecurity result = FileSystem.Directory.GetAccessControl(path);
 		#pragma warning restore CA1416
 
 		result.HasSameAccessRightsAs(directorySecurity).Should().BeTrue();
-		FileSystem.Directory.Exists("foo").Should().BeTrue();
+		FileSystem.Directory.Exists(path).Should().BeTrue();
 	}
 
 	[SkippableFact]
@@ -54,7 +55,7 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 		Exception? exception = Record.Exception(() =>
 		{
 			#pragma warning disable CA1416
-			sut.GetAccessControl();
+			_ = sut.GetAccessControl();
 			#pragma warning restore CA1416
 		});
 
@@ -78,6 +79,45 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 	}
 
 	[SkippableFact]
+	public void GetAccessControl_ShouldReturnSetResult()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+		Skip.If(FileSystem is RealFileSystem);
+
+		FileSystem.Directory.CreateDirectory("foo");
+
+		#pragma warning disable CA1416
+		DirectorySecurity originalResult =
+			FileSystem.DirectoryInfo.New("foo").GetAccessControl();
+
+		FileSystem.DirectoryInfo.New("foo").SetAccessControl(originalResult);
+
+		DirectorySecurity result =
+			FileSystem.DirectoryInfo.New("foo").GetAccessControl();
+		#pragma warning restore CA1416
+
+		result.Should().Be(originalResult);
+	}
+
+	[SkippableFact]
+	public void
+		GetAccessControl_WithAccessControlSections_MissingDirectory_ShouldThrowDirectoryNotFoundException()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("foo");
+
+		Exception? exception = Record.Exception(() =>
+		{
+			#pragma warning disable CA1416
+			_ = sut.GetAccessControl(AccessControlSections.None);
+			#pragma warning restore CA1416
+		});
+
+		exception.Should().BeOfType<DirectoryNotFoundException>()
+			.Which.HResult.Should().Be(-2147024893);
+	}
+
+	[SkippableFact]
 	public void GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -91,6 +131,27 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 		#pragma warning restore CA1416
 
 		result.Should().NotBeNull();
+	}
+
+	[SkippableFact]
+	public void GetAccessControl_WithAccessControlSections_ShouldReturnSetResult()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+		Skip.If(FileSystem is RealFileSystem);
+
+		FileSystem.Directory.CreateDirectory("foo");
+
+		#pragma warning disable CA1416
+		DirectorySecurity originalResult =
+			FileSystem.DirectoryInfo.New("foo").GetAccessControl(AccessControlSections.None);
+
+		FileSystem.DirectoryInfo.New("foo").SetAccessControl(originalResult);
+
+		DirectorySecurity result =
+			FileSystem.DirectoryInfo.New("foo").GetAccessControl(AccessControlSections.None);
+		#pragma warning restore CA1416
+
+		result.Should().Be(originalResult);
 	}
 
 	[SkippableFact]
