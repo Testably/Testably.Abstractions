@@ -16,6 +16,28 @@ public abstract partial class TimerTests<TTimeSystem>
 
 	#endregion
 
+#if NET8_0_OR_GREATER
+	[SkippableFact]
+	public void Change_DisposedTimer_ShouldReturnFalse()
+	{
+		using ITimer timer = TimeSystem.Timer.New(_ =>
+		{
+		}, null, 0, 200);
+		// ReSharper disable once DisposeOnUsingVariable
+		timer.Dispose();
+		bool result = true;
+		Exception? exception = Record.Exception(() =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			result = timer.Change(100, 200);
+		});
+
+		exception.Should().BeNull();
+		result.Should().BeFalse();
+	}
+#endif
+
+#if !NET8_0_OR_GREATER
 	[SkippableFact]
 	public void Change_DisposedTimer_ShouldThrowObjectDisposedException()
 	{
@@ -27,15 +49,12 @@ public abstract partial class TimerTests<TTimeSystem>
 		Exception? exception = Record.Exception(() =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
-			timer.Change(100, 200);
+			_ = timer.Change(100, 200);
 		});
 
-#if NET8_0_OR_GREATER
-		exception.Should().BeNull();
-#else
 		exception.Should().BeOfType<ObjectDisposedException>();
-#endif
 	}
+#endif
 
 	[SkippableFact]
 	public void Change_Infinite_ShouldBeValidDueTime()
