@@ -272,7 +272,6 @@ jobs:
   stryker:
     name: Stryker mutation testing result
     runs-on: ubuntu-latest
-    environment: production
     needs: [stryker-windows, stryker-ubuntu]
     steps:
       - name: Add comment to pull request
