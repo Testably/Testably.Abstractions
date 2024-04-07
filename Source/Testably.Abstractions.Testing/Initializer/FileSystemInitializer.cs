@@ -71,8 +71,7 @@ internal class FileSystemInitializer<TFileSystem>
 	public IFileSystemFileInitializer<TFileSystem> WithAFile(string? extension = null)
 	{
 		using IDisposable release = FileSystem.IgnoreStatistics();
-		IRandom random = (FileSystem as MockFileSystem)?
-			.RandomSystem.Random.Shared ?? RandomFactory.Shared;
+		IRandom random = FileSystem.RandomOrDefault();
 		string fileName;
 		do
 		{
@@ -88,8 +87,7 @@ internal class FileSystemInitializer<TFileSystem>
 	public IFileSystemDirectoryInitializer<TFileSystem> WithASubdirectory()
 	{
 		using IDisposable release = FileSystem.IgnoreStatistics();
-		IRandom random = (FileSystem as MockFileSystem)?
-			.RandomSystem.Random.Shared ?? RandomFactory.Shared;
+		IRandom random = FileSystem.RandomOrDefault();
 		string directoryName;
 		do
 		{
@@ -148,13 +146,10 @@ internal class FileSystemInitializer<TFileSystem>
 
 		FileSystem.Directory.CreateDirectory(directoryInfo.FullName);
 
-		if (directory.Children.Length > 0)
+		FileSystemInitializer<TFileSystem> subdirectoryInitializer = new(this, directoryInfo);
+		foreach (FileSystemInfoDescription children in directory.Children)
 		{
-			FileSystemInitializer<TFileSystem> subdirectoryInitializer = new(this, directoryInfo);
-			foreach (FileSystemInfoDescription children in directory.Children)
-			{
-				subdirectoryInitializer.WithFileOrDirectory(children);
-			}
+			subdirectoryInitializer.WithFileOrDirectory(children);
 		}
 
 		_initializedFileSystemInfos.Add(

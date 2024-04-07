@@ -1,4 +1,5 @@
-﻿using Testably.Abstractions.Testing.Helpers;
+﻿using Testably.Abstractions.RandomSystem;
+using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.Tests.Helpers;
 
@@ -21,5 +22,27 @@ public class FileSystemExtensionsTests
 		exception.Should().BeOfType<NotSupportedException>().Which.Message
 			.Should().Contain($"'{sut.Path.GetFullPath(location)}'")
 			.And.Contain($"'{sut.Path.GetFullPath(source)}'");
+	}
+
+	[Fact]
+	public void RandomOrDefault_WithMockFileSystem_ShouldUseRandomFromRandomSystem()
+	{
+		MockFileSystem fileSystem = new();
+		IFileSystem sut = fileSystem;
+
+		IRandom result = sut.RandomOrDefault();
+
+		result.Should().Be(fileSystem.RandomSystem.Random.Shared);
+	}
+
+	[Fact]
+	public void RandomOrDefault_WithRealFileSystem_ShouldUseSharedRandom()
+	{
+		RealFileSystem fileSystem = new();
+		IFileSystem sut = fileSystem;
+
+		IRandom result = sut.RandomOrDefault();
+
+		result.Should().Be(RandomFactory.Shared);
 	}
 }

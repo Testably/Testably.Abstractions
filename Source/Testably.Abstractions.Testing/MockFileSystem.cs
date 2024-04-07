@@ -203,11 +203,7 @@ public sealed class MockFileSystem : IFileSystem
 			}
 
 			string? root = Execute.Path.GetPathRoot(Directory.GetCurrentDirectory());
-			if (root != null &&
-			    root[0] != _storage.MainDrive.Name[0])
-			{
-				Storage.GetOrAddDrive(root);
-			}
+			Storage.GetOrAddDrive(root);
 		}
 		catch (IOException)
 		{
