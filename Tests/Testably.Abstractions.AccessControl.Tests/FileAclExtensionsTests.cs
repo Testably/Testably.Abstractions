@@ -23,6 +23,26 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 	}
 
 	[SkippableFact]
+	public void GetAccessControl_ShouldReturnSetResult()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+		Skip.If(FileSystem is RealFileSystem);
+
+		FileSystem.File.WriteAllText("foo", null);
+
+		#pragma warning disable CA1416
+		FileSecurity originalResult = FileSystem.File.GetAccessControl("foo");
+
+		FileSystem.File.SetAccessControl("foo", originalResult);
+
+		FileSecurity result =
+			FileSystem.File.GetAccessControl("foo");
+		#pragma warning restore CA1416
+
+		result.Should().Be(originalResult);
+	}
+
+	[SkippableFact]
 	public void GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -35,6 +55,27 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 		#pragma warning restore CA1416
 
 		result.Should().NotBeNull();
+	}
+
+	[SkippableFact]
+	public void GetAccessControl_WithAccessControlSections_ShouldReturnSetResult()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+		Skip.If(FileSystem is RealFileSystem);
+
+		FileSystem.File.WriteAllText("foo", null);
+
+		#pragma warning disable CA1416
+		FileSecurity originalResult =
+			FileSystem.File.GetAccessControl("foo", AccessControlSections.None);
+
+		FileSystem.File.SetAccessControl("foo", originalResult);
+
+		FileSecurity result =
+			FileSystem.File.GetAccessControl("foo", AccessControlSections.None);
+		#pragma warning restore CA1416
+
+		result.Should().Be(originalResult);
 	}
 
 	[SkippableFact]

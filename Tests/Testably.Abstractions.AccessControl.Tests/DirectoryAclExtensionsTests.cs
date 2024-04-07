@@ -14,7 +14,6 @@ public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		FileSystem.Directory.CreateDirectory("foo");
 		#pragma warning disable CA1416
 		Exception? exception = Record.Exception(() =>
 		{
@@ -58,6 +57,27 @@ public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
 	}
 
 	[SkippableFact]
+	public void GetAccessControl_ShouldReturnSetResult()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+		Skip.If(FileSystem is RealFileSystem);
+
+		FileSystem.Directory.CreateDirectory("foo");
+
+		#pragma warning disable CA1416
+		DirectorySecurity originalResult =
+			FileSystem.Directory.GetAccessControl("foo");
+
+		FileSystem.Directory.SetAccessControl("foo", originalResult);
+
+		DirectorySecurity result =
+			FileSystem.Directory.GetAccessControl("foo");
+		#pragma warning restore CA1416
+
+		result.Should().Be(originalResult);
+	}
+
+	[SkippableFact]
 	public void GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -71,6 +91,27 @@ public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
 		#pragma warning restore CA1416
 
 		result.Should().NotBeNull();
+	}
+
+	[SkippableFact]
+	public void GetAccessControl_WithAccessControlSections_ShouldReturnSetResult()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+		Skip.If(FileSystem is RealFileSystem);
+
+		FileSystem.Directory.CreateDirectory("foo");
+
+		#pragma warning disable CA1416
+		DirectorySecurity originalResult =
+			FileSystem.Directory.GetAccessControl("foo", AccessControlSections.None);
+
+		FileSystem.Directory.SetAccessControl("foo", originalResult);
+
+		DirectorySecurity result =
+			FileSystem.Directory.GetAccessControl("foo", AccessControlSections.None);
+		#pragma warning restore CA1416
+
+		result.Should().Be(originalResult);
 	}
 
 	[SkippableFact]
