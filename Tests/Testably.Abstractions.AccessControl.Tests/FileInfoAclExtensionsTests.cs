@@ -18,7 +18,7 @@ public abstract partial class FileInfoAclExtensionsTests<TFileSystem>
 		Exception? exception = Record.Exception(() =>
 		{
 			#pragma warning disable CA1416
-			sut.GetAccessControl();
+			_ = sut.GetAccessControl();
 			#pragma warning restore CA1416
 		});
 
@@ -72,7 +72,7 @@ public abstract partial class FileInfoAclExtensionsTests<TFileSystem>
 		Exception? exception = Record.Exception(() =>
 		{
 			#pragma warning disable CA1416
-			sut.GetAccessControl(AccessControlSections.None);
+			_ = sut.GetAccessControl(AccessControlSections.None);
 			#pragma warning restore CA1416
 		});
 

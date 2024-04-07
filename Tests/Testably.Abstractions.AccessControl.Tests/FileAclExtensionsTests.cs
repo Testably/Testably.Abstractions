@@ -1,4 +1,5 @@
-﻿using System.Security.AccessControl;
+﻿using System.IO;
+using System.Security.AccessControl;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
 
 namespace Testably.Abstractions.AccessControl.Tests;
@@ -8,6 +9,22 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
+	[SkippableFact]
+	public void GetAccessControl_MissingFile_ShouldThrowFileNotFoundException()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			#pragma warning disable CA1416
+			_ = FileSystem.File.GetAccessControl("foo");
+			#pragma warning restore CA1416
+		});
+
+		exception.Should().BeOfType<FileNotFoundException>()
+			.Which.HResult.Should().Be(-2147024894);
+	}
+
 	[SkippableFact]
 	public void GetAccessControl_ShouldBeInitializedWithNotNullValue()
 	{
@@ -40,6 +57,23 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 		#pragma warning restore CA1416
 
 		result.Should().Be(originalResult);
+	}
+
+	[SkippableFact]
+	public void
+		GetAccessControl_WithAccessControlSections_MissingFile_ShouldThrowFileNotFoundException()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			#pragma warning disable CA1416
+			_ = FileSystem.File.GetAccessControl("foo", AccessControlSections.None);
+			#pragma warning restore CA1416
+		});
+
+		exception.Should().BeOfType<FileNotFoundException>()
+			.Which.HResult.Should().Be(-2147024894);
 	}
 
 	[SkippableFact]
