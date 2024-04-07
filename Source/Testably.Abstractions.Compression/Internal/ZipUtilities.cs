@@ -8,6 +8,7 @@ namespace Testably.Abstractions.Internal;
 internal static class ZipUtilities
 {
 	private const string SearchPattern = "*";
+	private static readonly DateTime FallbackTime = new(1980, 1, 1, 0, 0, 0);
 
 	internal static IZipArchiveEntry CreateEntryFromFile(
 		IZipArchive destination,
@@ -32,7 +33,7 @@ internal static class ZipUtilities
 
 			if (lastWrite.Year is < 1980 or > 2107)
 			{
-				lastWrite = new DateTime(1980, 1, 1, 0, 0, 0);
+				lastWrite = FallbackTime;
 			}
 
 			entry.LastWriteTime = new DateTimeOffset(lastWrite);
