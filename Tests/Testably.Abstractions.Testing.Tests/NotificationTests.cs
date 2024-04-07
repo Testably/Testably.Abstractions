@@ -330,4 +330,43 @@ public class NotificationTests
 		actualResult.Should().Be(result);
 		isExecuted.Should().BeTrue();
 	}
+
+	[Fact]
+	public void ExecuteWhileWaiting_ShouldExecuteCallback()
+	{
+		MockTimeSystem timeSystem = new();
+		bool isExecuted = false;
+
+		timeSystem.On
+			.ThreadSleep()
+			.ExecuteWhileWaiting(() =>
+			{
+				isExecuted = true;
+				timeSystem.Thread.Sleep(10);
+			})
+			.Wait();
+
+		isExecuted.Should().BeTrue();
+	}
+
+	[Theory]
+	[AutoData]
+	public void ExecuteWhileWaiting_WithReturnValue_ShouldExecuteCallback(int result)
+	{
+		MockTimeSystem timeSystem = new();
+		bool isExecuted = false;
+
+		int actualResult = timeSystem.On
+			.ThreadSleep()
+			.ExecuteWhileWaiting(() =>
+			{
+				isExecuted = true;
+				timeSystem.Thread.Sleep(10);
+				return result;
+			})
+			.Wait();
+
+		actualResult.Should().Be(result);
+		isExecuted.Should().BeTrue();
+	}
 }
