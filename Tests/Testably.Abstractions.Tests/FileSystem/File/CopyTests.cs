@@ -264,6 +264,27 @@ public abstract partial class CopyTests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[InlineAutoData(FileShare.Read)]
+	[InlineAutoData(FileShare.ReadWrite)]
+	public void Copy_SourceAccessedWithReadShare_ShouldNotThrow(
+		FileShare fileShare,
+		string sourcePath,
+		string destinationPath,
+		string sourceContents)
+	{
+		FileSystem.Initialize().WithFile(sourcePath)
+			.Which(f => f.HasStringContent(sourceContents));
+		using (FileSystem.FileStream
+			.New(sourcePath, FileMode.Open, FileAccess.Read, fileShare))
+		{
+			FileSystem.File.Copy(sourcePath, destinationPath);
+		}
+
+		FileSystem.File.Exists(destinationPath).Should().BeTrue();
+		FileSystem.File.ReadAllText(destinationPath).Should().Be(sourceContents);
+	}
+
+	[SkippableTheory]
 	[AutoData]
 	public void Copy_SourceIsDirectory_ShouldThrowUnauthorizedAccessException_AndNotCopyFile(
 		string sourceName,
@@ -286,14 +307,16 @@ public abstract partial class CopyTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[AutoData]
+	[InlineAutoData(FileShare.None)]
+	[InlineAutoData(FileShare.Write)]
 	public void Copy_SourceLocked_ShouldThrowIOException(
+		FileShare fileShare,
 		string sourceName,
 		string destinationName)
 	{
 		FileSystem.File.WriteAllText(sourceName, null);
 		using FileSystemStream stream = FileSystem.File.Open(sourceName, FileMode.Open,
-			FileAccess.Read, FileShare.None);
+			FileAccess.Read, fileShare);
 
 		Exception? exception = Record.Exception(() =>
 		{
