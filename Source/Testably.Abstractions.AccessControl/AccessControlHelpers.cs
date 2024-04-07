@@ -44,15 +44,4 @@ internal static class AccessControlHelpers
 
 		return fileSystemInfo;
 	}
-
-	public static IDirectoryInfo ThrowIfParentMissing(
-		this IDirectoryInfo fileSystemInfo)
-	{
-		if (fileSystemInfo.Parent?.Exists != true)
-		{
-			throw new UnauthorizedAccessException();
-		}
-
-		return fileSystemInfo;
-	}
 }

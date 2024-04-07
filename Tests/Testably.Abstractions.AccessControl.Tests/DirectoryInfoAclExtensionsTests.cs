@@ -28,20 +28,22 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 			.Which.ParamName.Should().Be("directorySecurity");
 	}
 
-	[SkippableFact]
-	public void Create_ShouldChangeAccessControl()
+	[SkippableTheory]
+	[InlineData("foo")]
+	[InlineData("foo\\bar")]
+	public void Create_ShouldChangeAccessControl(string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		#pragma warning disable CA1416
+#pragma warning disable CA1416
 		DirectorySecurity directorySecurity = FileSystem.CreateDirectorySecurity();
 
-		FileSystem.DirectoryInfo.New("foo").Create(directorySecurity);
-		DirectorySecurity result = FileSystem.Directory.GetAccessControl("foo");
+		FileSystem.DirectoryInfo.New(path).Create(directorySecurity);
+		DirectorySecurity result = FileSystem.Directory.GetAccessControl(path);
 		#pragma warning restore CA1416
 
 		result.HasSameAccessRightsAs(directorySecurity).Should().BeTrue();
-		FileSystem.Directory.Exists("foo").Should().BeTrue();
+		FileSystem.Directory.Exists(path).Should().BeTrue();
 	}
 
 	[SkippableFact]
