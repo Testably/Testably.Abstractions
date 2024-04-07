@@ -58,7 +58,7 @@ internal sealed class InMemoryStorage : IStorage
 			throw ExceptionFactory.AccessToPathDenied(source.FullPath);
 		}
 
-		using (_ = sourceContainer.RequestAccess(FileAccess.ReadWrite, FileShare.None))
+		using (_ = sourceContainer.RequestAccess(FileAccess.Read, FileShare.ReadWrite))
 		{
 			if (overwrite &&
 			    _containers.TryRemove(destination,
