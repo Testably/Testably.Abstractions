@@ -35,7 +35,7 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-#pragma warning disable CA1416
+		#pragma warning disable CA1416
 		DirectorySecurity directorySecurity = FileSystem.CreateDirectorySecurity();
 
 		FileSystem.DirectoryInfo.New(path).Create(directorySecurity);
