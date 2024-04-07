@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Testing.Tests;
 
 public class MockFileSystemInitializationTests
 {
-	[Fact]
+	[SkippableFact]
 	public void MockFileSystem_WhenSimulatingLinux_ShouldBeLinux()
 	{
 		Skip.IfNot(Test.RunsOnLinux,
@@ -23,7 +23,7 @@ public class MockFileSystemInitializationTests
 		sut.Execute.IsNetFramework.Should().BeFalse();
 	}
 
-	[Fact]
+	[SkippableFact]
 	public void MockFileSystem_WhenSimulatingOSX_ShouldBeMac()
 	{
 		Skip.IfNot(Test.RunsOnMac,
