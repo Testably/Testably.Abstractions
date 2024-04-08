@@ -236,14 +236,27 @@ public abstract partial class MoveToTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[AutoData]
+	[InlineAutoData(FileAccess.Read, FileShare.None)]
+	[InlineAutoData(FileAccess.Read, FileShare.Read)]
+	[InlineAutoData(FileAccess.Read, FileShare.ReadWrite)]
+	[InlineAutoData(FileAccess.Read, FileShare.Write)]
+	[InlineAutoData(FileAccess.ReadWrite, FileShare.None)]
+	[InlineAutoData(FileAccess.ReadWrite, FileShare.Read)]
+	[InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite)]
+	[InlineAutoData(FileAccess.ReadWrite, FileShare.Write)]
+	[InlineAutoData(FileAccess.Write, FileShare.None)]
+	[InlineAutoData(FileAccess.Write, FileShare.Read)]
+	[InlineAutoData(FileAccess.Write, FileShare.ReadWrite)]
+	[InlineAutoData(FileAccess.Write, FileShare.Write)]
 	public void MoveTo_SourceLocked_ShouldThrowIOException(
+		FileAccess fileAccess,
+		FileShare fileShare,
 		string sourceName,
 		string destinationName)
 	{
 		FileSystem.File.WriteAllText(sourceName, null);
-		using FileSystemStream stream = FileSystem.File.Open(sourceName, FileMode.Open,
-			FileAccess.Read, FileShare.Read);
+		using FileSystemStream stream = FileSystem.File.Open(
+			sourceName, FileMode.Open, fileAccess, fileShare);
 		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
 		Exception? exception = Record.Exception(() =>
@@ -254,10 +267,12 @@ public abstract partial class MoveToTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeException<IOException>(hResult: -2147024864);
+			FileSystem.Should().HaveFile(sourceName);
 			FileSystem.Should().NotHaveFile(destinationName);
 		}
 		else
 		{
+			// https://github.com/dotnet/runtime/issues/52700
 			FileSystem.Should().NotHaveFile(sourceName);
 			FileSystem.Should().HaveFile(destinationName);
 		}

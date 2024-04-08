@@ -289,9 +289,6 @@ public abstract partial class CopyTests<TFileSystem>
 		FileSystem.File.ReadAllText(destinationPath).Should().Be(sourceContents);
 	}
 
-	/// <summary>
-	///     https://github.com/dotnet/runtime/issues/52700
-	/// </summary>
 	[SkippableTheory]
 	[InlineAutoData(FileAccess.Read)]
 	[InlineAutoData(FileAccess.ReadWrite)]
@@ -302,7 +299,7 @@ public abstract partial class CopyTests<TFileSystem>
 		string destinationPath,
 		string sourceContents)
 	{
-		Skip.If(Test.RunsOnWindows);
+		Skip.If(Test.RunsOnWindows, "see https://github.com/dotnet/runtime/issues/52700");
 
 		FileSystem.Initialize().WithFile(sourcePath)
 			.Which(f => f.HasStringContent(sourceContents));
@@ -346,11 +343,12 @@ public abstract partial class CopyTests<TFileSystem>
 		string sourceName,
 		string destinationName)
 	{
-		Skip.If(!Test.RunsOnWindows && fileShare == FileShare.Write, "see https://github.com/dotnet/runtime/issues/52700");
+		Skip.If(!Test.RunsOnWindows && fileShare == FileShare.Write,
+			"see https://github.com/dotnet/runtime/issues/52700");
 
 		FileSystem.File.WriteAllText(sourceName, null);
-		using FileSystemStream stream = FileSystem.File.Open(sourceName, FileMode.Open,
-			FileAccess.Read, fileShare);
+		using FileSystemStream stream = FileSystem.File.Open(
+			sourceName, FileMode.Open, FileAccess.Read, fileShare);
 
 		Exception? exception = Record.Exception(() =>
 		{
