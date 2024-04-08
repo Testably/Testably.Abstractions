@@ -266,13 +266,10 @@ public abstract partial class CopyTests<TFileSystem>
 	[SkippableTheory]
 	[InlineAutoData(FileAccess.Read, FileShare.Read)]
 	[InlineAutoData(FileAccess.Read, FileShare.ReadWrite)]
-	[InlineAutoData(FileAccess.Read, FileShare.Write)]
 	[InlineAutoData(FileAccess.ReadWrite, FileShare.Read)]
 	[InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite)]
-	[InlineAutoData(FileAccess.ReadWrite, FileShare.Write)]
 	[InlineAutoData(FileAccess.Write, FileShare.Read)]
 	[InlineAutoData(FileAccess.Write, FileShare.ReadWrite)]
-	[InlineAutoData(FileAccess.Write, FileShare.Write)]
 	public void Copy_SourceAccessedWithReadShare_ShouldNotThrow(
 		FileAccess fileAccess,
 		FileShare fileShare,
@@ -280,12 +277,37 @@ public abstract partial class CopyTests<TFileSystem>
 		string destinationPath,
 		string sourceContents)
 	{
-		Skip.If(Test.RunsOnWindows && fileShare == FileShare.Write);
-
 		FileSystem.Initialize().WithFile(sourcePath)
 			.Which(f => f.HasStringContent(sourceContents));
 		using (FileSystem.FileStream
 			.New(sourcePath, FileMode.Open, fileAccess, fileShare))
+		{
+			FileSystem.File.Copy(sourcePath, destinationPath);
+		}
+
+		FileSystem.File.Exists(destinationPath).Should().BeTrue();
+		FileSystem.File.ReadAllText(destinationPath).Should().Be(sourceContents);
+	}
+
+	/// <summary>
+	///     https://github.com/dotnet/runtime/issues/52700
+	/// </summary>
+	[SkippableTheory]
+	[InlineAutoData(FileAccess.Read)]
+	[InlineAutoData(FileAccess.ReadWrite)]
+	[InlineAutoData(FileAccess.Write)]
+	public void Copy_SourceAccessedWithWriteShare_ShouldNotThrowOnLinuxOrMac(
+		FileAccess fileAccess,
+		string sourcePath,
+		string destinationPath,
+		string sourceContents)
+	{
+		Skip.If(Test.RunsOnWindows);
+
+		FileSystem.Initialize().WithFile(sourcePath)
+			.Which(f => f.HasStringContent(sourceContents));
+		using (FileSystem.FileStream
+			.New(sourcePath, FileMode.Open, fileAccess, FileShare.Write))
 		{
 			FileSystem.File.Copy(sourcePath, destinationPath);
 		}
@@ -324,7 +346,7 @@ public abstract partial class CopyTests<TFileSystem>
 		string sourceName,
 		string destinationName)
 	{
-		Skip.If(!Test.RunsOnWindows && fileShare == FileShare.Write);
+		Skip.If(!Test.RunsOnWindows && fileShare == FileShare.Write, "see https://github.com/dotnet/runtime/issues/52700");
 
 		FileSystem.File.WriteAllText(sourceName, null);
 		using FileSystemStream stream = FileSystem.File.Open(sourceName, FileMode.Open,

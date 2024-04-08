@@ -146,6 +146,33 @@ public abstract partial class MoveTests<TFileSystem>
 			.BeBetween(creationTimeStart, creationTimeEnd);
 	}
 
+	/// <summary>
+	///     https://github.com/dotnet/runtime/issues/52700
+	/// </summary>
+	[SkippableTheory]
+	[InlineAutoData(FileAccess.Read)]
+	[InlineAutoData(FileAccess.ReadWrite)]
+	[InlineAutoData(FileAccess.Write)]
+	public void Move_SourceAccessedWithWriteShare_ShouldNotThrowOnLinuxOrMac(
+		FileAccess fileAccess,
+		string sourcePath,
+		string destinationPath,
+		string sourceContents)
+	{
+		Skip.If(Test.RunsOnWindows);
+
+		FileSystem.Initialize().WithFile(sourcePath)
+			.Which(f => f.HasStringContent(sourceContents));
+		using (FileSystem.FileStream
+			.New(sourcePath, FileMode.Open, fileAccess, FileShare.Write))
+		{
+			FileSystem.File.Move(sourcePath, destinationPath);
+		}
+
+		FileSystem.File.Exists(destinationPath).Should().BeTrue();
+		FileSystem.File.ReadAllText(destinationPath).Should().Be(sourceContents);
+	}
+
 	[SkippableTheory]
 	[AutoData]
 	public void Move_SourceAndDestinationIdentical_ShouldNotThrowException(string path)
@@ -181,14 +208,26 @@ public abstract partial class MoveTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[AutoData]
+	[InlineAutoData(FileAccess.Read, FileShare.None)]
+	[InlineAutoData(FileAccess.Read, FileShare.Read)]
+	[InlineAutoData(FileAccess.Read, FileShare.ReadWrite)]
+	[InlineAutoData(FileAccess.Read, FileShare.Write)]
+	[InlineAutoData(FileAccess.ReadWrite, FileShare.None)]
+	[InlineAutoData(FileAccess.ReadWrite, FileShare.Read)]
+	[InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite)]
+	[InlineAutoData(FileAccess.ReadWrite, FileShare.Write)]
+	[InlineAutoData(FileAccess.Write, FileShare.None)]
+	[InlineAutoData(FileAccess.Write, FileShare.Read)]
+	[InlineAutoData(FileAccess.Write, FileShare.ReadWrite)]
+	[InlineAutoData(FileAccess.Write, FileShare.Write)]
 	public void Move_SourceLocked_ShouldThrowIOException_OnWindows(
+		FileShare fileShare,
 		string sourceName,
 		string destinationName)
 	{
 		FileSystem.File.WriteAllText(sourceName, null);
 		using FileSystemStream stream = FileSystem.File.Open(sourceName, FileMode.Open,
-			FileAccess.Read, FileShare.Read);
+			FileAccess.Read, fileShare);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -197,8 +236,7 @@ public abstract partial class MoveTests<TFileSystem>
 
 		if (Test.RunsOnWindows)
 		{
-			exception.Should().BeException<IOException>(
-				hResult: -2147024864);
+			exception.Should().BeException<IOException>(hResult: -2147024864);
 			FileSystem.Should().NotHaveFile(destinationName);
 		}
 		else
