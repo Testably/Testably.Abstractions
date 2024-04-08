@@ -34,8 +34,8 @@
 		<PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageVersion Include="Testably.Abstractions" Version="2.6.1" />
-		<PackageVersion Include="Testably.Abstractions.Testing" Version="2.6.1" />
+		<PackageVersion Include="Testably.Abstractions" Version="3.1.1" />
+		<PackageVersion Include="Testably.Abstractions.Testing" Version="3.1.1" />
 		<PackageVersion Include="Testably.Abstractions.FluentAssertions" Version="1.0.2" />
 	</ItemGroup>
 	<ItemGroup>
