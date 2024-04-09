@@ -409,12 +409,14 @@ internal sealed class InMemoryStorage : IStorage
 		using (_ = sourceContainer.RequestAccess(
 			FileAccess.ReadWrite,
 			FileShare.None,
-			ignoreMetadataErrors: ignoreMetadataErrors))
+			ignoreMetadataErrors: ignoreMetadataErrors,
+			ignoreFileShare: true))
 		{
 			using (_ = destinationContainer.RequestAccess(
 				FileAccess.ReadWrite,
 				FileShare.None,
-				ignoreMetadataErrors: ignoreMetadataErrors))
+				ignoreMetadataErrors: ignoreMetadataErrors,
+				ignoreFileShare: true))
 			{
 				if (_containers.TryRemove(destination,
 					out IStorageContainer? existingDestinationContainer))
@@ -664,6 +666,7 @@ internal sealed class InMemoryStorage : IStorage
 		}
 
 		using (container.RequestAccess(FileAccess.Write, FileShare.None,
+			ignoreFileShare: true,
 			hResult: sourceType == FileSystemTypes.Directory ? -2147024891 : -2147024864))
 		{
 			if (children.Any() && recursive)
