@@ -122,10 +122,18 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 		using ManualResetEventSlim ms = new();
 		using ITimer timer = TimeSystem.Timer.New(_ =>
 		{
-			count++;
-			if (count > 1)
+			// ReSharper disable once AccessToDisposedClosure
+			try
 			{
-				ms.Set();
+				count++;
+				if (count > 1)
+				{
+					ms.Set();
+				}
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
 			}
 		}, null, 0, 50);
 
@@ -140,8 +148,16 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 		using ManualResetEventSlim ms = new();
 		using ITimer timer = TimeSystem.Timer.New(_ =>
 		{
-			count++;
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				count++;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		}, null, 5, 0);
 
 		ms.Wait(30000).Should().BeTrue();
@@ -155,7 +171,15 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 		using ManualResetEventSlim ms = new();
 		using ITimer timer = TimeSystem.Timer.New(_ =>
 		{
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		});
 
 		ms.Wait(300).Should().BeFalse();

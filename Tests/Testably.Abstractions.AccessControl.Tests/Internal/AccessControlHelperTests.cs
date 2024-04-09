@@ -116,10 +116,5 @@ public sealed class AccessControlHelperTests
 		exception!.Message.Should().Contain($"'{sut.FullName}'");
 	}
 
-	private class CustomFileSystemStream : FileSystemStream
-	{
-		public CustomFileSystemStream() : base(Null, ".", false)
-		{
-		}
-	}
+	private class CustomFileSystemStream() : FileSystemStream(Null, ".", false);
 }

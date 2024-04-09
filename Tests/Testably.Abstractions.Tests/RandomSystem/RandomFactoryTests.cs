@@ -12,7 +12,7 @@ public abstract partial class RandomFactoryTests<TRandomSystem>
 	[SkippableFact]
 	public void New_Next_ShouldReturnDifferentValues()
 	{
-		List<int> results = new();
+		List<int> results = [];
 
 		for (int i = 0; i < 100; i++)
 		{
@@ -26,7 +26,7 @@ public abstract partial class RandomFactoryTests<TRandomSystem>
 	[AutoData]
 	public void New_Next_WithSeed_ShouldReturnSameValue(int seed)
 	{
-		List<int> results = new();
+		List<int> results = [];
 
 		for (int i = 0; i < 100; i++)
 		{
@@ -39,7 +39,7 @@ public abstract partial class RandomFactoryTests<TRandomSystem>
 	[SkippableFact]
 	public void New_Shared_ShouldReturnDifferentValues()
 	{
-		List<int> results = new();
+		List<int> results = [];
 
 		for (int i = 0; i < 100; i++)
 		{

@@ -1,8 +1,8 @@
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
 #if FEATURE_GUID_PARSE
 using System.Collections.Generic;
 #endif
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 #if FEATURE_GUID_FORMATPROVIDER
 using System.Globalization;
 #endif
@@ -23,7 +23,7 @@ public abstract partial class GuidTests<TRandomSystem>
 	[SkippableFact]
 	public void NewGuid_ShouldBeThreadSafeAndReturnUniqueItems()
 	{
-		ConcurrentBag<Guid> results = new();
+		ConcurrentBag<Guid> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -216,26 +216,11 @@ public abstract partial class GuidTests<TRandomSystem>
 	#pragma warning disable MA0018
 	public static IEnumerable<object[]> GuidFormats()
 	{
-		yield return new object[]
-		{
-			"N"
-		};
-		yield return new object[]
-		{
-			"D"
-		};
-		yield return new object[]
-		{
-			"B"
-		};
-		yield return new object[]
-		{
-			"P"
-		};
-		yield return new object[]
-		{
-			"X"
-		};
+		yield return ["N"];
+		yield return ["D"];
+		yield return ["B"];
+		yield return ["P"];
+		yield return ["X"];
 	}
 	#pragma warning restore MA0018
 #endif

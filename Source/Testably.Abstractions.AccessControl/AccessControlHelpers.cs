@@ -33,34 +33,13 @@ internal static class AccessControlHelpers
 			if (fileSystemInfo is IDirectoryInfo directoryInfo)
 			{
 				throw new DirectoryNotFoundException(
-					$"Could not find a part of the path '{directoryInfo.FullName}'.")
-				{
-#if FEATURE_EXCEPTION_HRESULT
-					HResult = -2147024893
-#endif
-				};
+					$"Could not find a part of the path '{directoryInfo.FullName}'.");
 			}
 
 			if (fileSystemInfo is IFileInfo fileInfo)
 			{
-				throw new FileNotFoundException($"Could not find file '{fileInfo.FullName}'.")
-				{
-#if FEATURE_EXCEPTION_HRESULT
-					HResult = -2147024894
-#endif
-				};
+				throw new FileNotFoundException($"Could not find file '{fileInfo.FullName}'.");
 			}
-		}
-
-		return fileSystemInfo;
-	}
-
-	public static IDirectoryInfo ThrowIfParentMissing(
-		this IDirectoryInfo fileSystemInfo)
-	{
-		if (fileSystemInfo.Parent?.Exists != true)
-		{
-			throw new UnauthorizedAccessException();
 		}
 
 		return fileSystemInfo;

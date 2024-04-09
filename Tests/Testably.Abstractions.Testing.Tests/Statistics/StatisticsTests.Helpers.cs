@@ -41,6 +41,7 @@ public sealed partial class StatisticsTests
 				.Select(x => FirstCharToUpperAsSpan(GetName(x.ParameterType, true)
 					.Replace("<", "", StringComparison.Ordinal)
 					.Replace(">", "", StringComparison.Ordinal)
+					// ReSharper disable once StringLiteralTypo
 					.Replace("IEnumerablestring", "IEnumerableString", StringComparison.Ordinal)
 					.Replace("[]", "Array", StringComparison.Ordinal))))}{(parameters.Length > 0 ? "_" : "")}ShouldRegisterCall";
 			if (testType.GetMethod(expectedName) != null)

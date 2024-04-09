@@ -63,19 +63,13 @@ public abstract partial class DeleteTests<TFileSystem>
 	{
 		FileSystem.Initialize();
 		FileSystemStream openFile = FileSystem.File.OpenWrite(filename);
-		openFile.Write(new byte[]
-		{
-			0
-		}, 0, 1);
+		openFile.Write([0], 0, 1);
 		openFile.Flush();
 		IFileInfo sut = FileSystem.FileInfo.New(filename);
 		Exception? exception = Record.Exception(() =>
 		{
 			sut.Delete();
-			openFile.Write(new byte[]
-			{
-				0
-			}, 0, 1);
+			openFile.Write([0], 0, 1);
 			openFile.Flush();
 		});
 

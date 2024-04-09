@@ -58,7 +58,7 @@ internal sealed class InMemoryStorage : IStorage
 			throw ExceptionFactory.AccessToPathDenied(source.FullPath);
 		}
 
-		using (_ = sourceContainer.RequestAccess(FileAccess.ReadWrite, FileShare.None))
+		using (_ = sourceContainer.RequestAccess(FileAccess.Read, FileShare.ReadWrite))
 		{
 			if (overwrite &&
 			    _containers.TryRemove(destination,
@@ -126,7 +126,7 @@ internal sealed class InMemoryStorage : IStorage
 			{
 				foreach (IStorageLocation key in children)
 				{
-					DeleteContainer(key, recursive);
+					DeleteContainer(key, recursive: true);
 				}
 			}
 			else if (children.Any())
@@ -267,12 +267,7 @@ internal sealed class InMemoryStorage : IStorage
 		}
 
 		DriveInfoMock drive = DriveInfoMock.New(driveName, _fileSystem);
-		if (_drives.TryGetValue(drive.GetName(), out IStorageDrive? d))
-		{
-			return d;
-		}
-
-		return null;
+		return _drives.GetValueOrDefault(drive.GetName());
 	}
 
 	/// <inheritdoc cref="IStorage.GetDrives()" />
@@ -300,8 +295,14 @@ internal sealed class InMemoryStorage : IStorage
 	}
 
 	/// <inheritdoc cref="IStorage.GetOrAddDrive(string)" />
-	public IStorageDrive GetOrAddDrive(string driveName)
+	[return: NotNullIfNotNull("driveName")]
+	public IStorageDrive? GetOrAddDrive(string? driveName)
 	{
+		if (driveName == null)
+		{
+			return null;
+		}
+
 		DriveInfoMock drive = DriveInfoMock.New(driveName, _fileSystem);
 		return _drives.GetOrAdd(drive.GetName(), _ => drive);
 	}
@@ -358,7 +359,7 @@ internal sealed class InMemoryStorage : IStorage
 	{
 		ThrowIfParentDoesNotExist(destination, _ => ExceptionFactory.DirectoryNotFound());
 
-		List<Rollback> rollbacks = new();
+		List<Rollback> rollbacks = [];
 		try
 		{
 			return MoveInternal(source, destination, overwrite, recursive, null,
@@ -408,12 +409,14 @@ internal sealed class InMemoryStorage : IStorage
 		using (_ = sourceContainer.RequestAccess(
 			FileAccess.ReadWrite,
 			FileShare.None,
-			ignoreMetadataErrors: ignoreMetadataErrors))
+			ignoreMetadataErrors: ignoreMetadataErrors,
+			ignoreFileShare: true))
 		{
 			using (_ = destinationContainer.RequestAccess(
 				FileAccess.ReadWrite,
 				FileShare.None,
-				ignoreMetadataErrors: ignoreMetadataErrors))
+				ignoreMetadataErrors: ignoreMetadataErrors,
+				ignoreFileShare: true))
 			{
 				if (_containers.TryRemove(destination,
 					out IStorageContainer? existingDestinationContainer))
@@ -565,25 +568,6 @@ internal sealed class InMemoryStorage : IStorage
 		return drive;
 	}
 
-	/// <summary>
-	///     When you use the asterisk wildcard character in <paramref name="searchPattern" /> and you specify a three-character
-	///     file extension, for example, "*.txt", this method also returns files with extensions that begin with the specified
-	///     extension.
-	/// </summary>
-	/// <remarks>
-	///     For example, the search pattern "*.xls" returns both "book.xls" and "book.xlsx". This behavior only occurs if an
-	///     asterisk is used in the search pattern and the file extension provided is exactly three characters. If you use the
-	///     question mark wildcard character somewhere in the search pattern, this method returns only files that match the
-	///     specified file extension exactly.
-	///     <para />
-	///     <see href="https://learn.microsoft.com/en-us/dotnet/api/system.io.directory.enumeratefiles?view=netframework-4.8" />
-	/// </remarks>
-	private static bool SearchPatternMatchesFileExtensionOnNetFramework(string searchPattern,
-		string extension)
-		=> searchPattern.Length == 5 &&
-		   searchPattern.StartsWith("*.", StringComparison.Ordinal) &&
-		   extension.StartsWith(searchPattern.Substring(1), StringComparison.OrdinalIgnoreCase);
-
 	private void CheckAndAdjustParentDirectoryTimes(IStorageLocation location)
 	{
 		IStorageContainer? parentContainer = GetContainer(location.GetParent());
@@ -601,7 +585,7 @@ internal sealed class InMemoryStorage : IStorage
 
 	private void CreateParents(MockFileSystem fileSystem, IStorageLocation location)
 	{
-		List<string> parents = new();
+		List<string> parents = [];
 		string? parent = fileSystem.Execute.Path.GetDirectoryName(
 			location.FullPath.TrimEnd(fileSystem.Execute.Path.DirectorySeparatorChar,
 				fileSystem.Execute.Path.AltDirectorySeparatorChar));
@@ -613,7 +597,7 @@ internal sealed class InMemoryStorage : IStorage
 
 		parents.Reverse();
 
-		List<IStorageAccessHandle> accessHandles = new();
+		List<IStorageAccessHandle> accessHandles = [];
 		try
 		{
 			foreach (string? parentPath in parents)
@@ -682,6 +666,7 @@ internal sealed class InMemoryStorage : IStorage
 		}
 
 		using (container.RequestAccess(FileAccess.Write, FileShare.None,
+			ignoreFileShare: true,
 			hResult: sourceType == FileSystemTypes.Directory ? -2147024891 : -2147024864))
 		{
 			if (children.Any() && recursive)
@@ -690,7 +675,7 @@ internal sealed class InMemoryStorage : IStorage
 				{
 					IStorageLocation childDestination = _fileSystem
 						.GetMoveLocation(child, source, destination);
-					MoveInternal(child, childDestination, overwrite, recursive,
+					MoveInternal(child, childDestination, overwrite, recursive: true,
 						sourceType,
 						rollbacks: rollbacks);
 				}
@@ -772,6 +757,25 @@ internal sealed class InMemoryStorage : IStorage
 		return nextLocation;
 	}
 #endif
+
+	/// <summary>
+	///     When you use the asterisk wildcard character in <paramref name="searchPattern" /> and you specify a three-character
+	///     file extension, for example, "*.txt", this method also returns files with extensions that begin with the specified
+	///     extension.
+	/// </summary>
+	/// <remarks>
+	///     For example, the search pattern "*.xls" returns both "book.xls" and "book.xlsx". This behavior only occurs if an
+	///     asterisk is used in the search pattern and the file extension provided is exactly three characters. If you use the
+	///     question mark wildcard character somewhere in the search pattern, this method returns only files that match the
+	///     specified file extension exactly.
+	///     <para />
+	///     <see href="https://learn.microsoft.com/en-us/dotnet/api/system.io.directory.enumeratefiles?view=netframework-4.8" />
+	/// </remarks>
+	private static bool SearchPatternMatchesFileExtensionOnNetFramework(string searchPattern,
+		string extension)
+		=> searchPattern.Length == 5 &&
+		   searchPattern.StartsWith("*.", StringComparison.Ordinal) &&
+		   extension.StartsWith(searchPattern.Substring(1), StringComparison.OrdinalIgnoreCase);
 
 	private void ThrowIfParentDoesNotExist(IStorageLocation location,
 		Func<IStorageLocation, IOException>

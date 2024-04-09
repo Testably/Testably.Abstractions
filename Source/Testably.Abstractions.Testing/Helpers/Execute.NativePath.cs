@@ -1,8 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.IO;
-#if FEATURE_SPAN
+﻿#if FEATURE_SPAN
 using System;
 #endif
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 #if FEATURE_FILESYSTEM_NET7
 using Testably.Abstractions.Testing.Storage;
 #endif
@@ -11,15 +11,8 @@ namespace Testably.Abstractions.Testing.Helpers;
 
 internal partial class Execute
 {
-	private sealed class NativePath : IPath
+	private class NativePath(MockFileSystem fileSystem) : IPath
 	{
-		private readonly MockFileSystem _fileSystem;
-
-		public NativePath(MockFileSystem fileSystem)
-		{
-			_fileSystem = fileSystem;
-		}
-
 		#region IPath Members
 
 		/// <inheritdoc cref="Path.AltDirectorySeparatorChar" />
@@ -31,7 +24,7 @@ internal partial class Execute
 			=> System.IO.Path.DirectorySeparatorChar;
 
 		/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
-		public IFileSystem FileSystem => _fileSystem;
+		public IFileSystem FileSystem => fileSystem;
 
 		/// <inheritdoc cref="Path.PathSeparator" />
 		public char PathSeparator
@@ -83,7 +76,7 @@ internal partial class Execute
 				return false;
 			}
 
-			return _fileSystem.Storage.GetContainer(_fileSystem.Storage.GetLocation(path))
+			return fileSystem.Storage.GetContainer(fileSystem.Storage.GetLocation(path))
 				is not NullContainer;
 		}
 #endif
@@ -134,11 +127,11 @@ internal partial class Execute
 		/// <inheritdoc cref="Path.GetFullPath(string)" />
 		public string GetFullPath(string path)
 		{
-			path.EnsureValidArgument(_fileSystem, nameof(path));
+			path.EnsureValidArgument(fileSystem, nameof(path));
 
 			string? pathRoot = System.IO.Path.GetPathRoot(path);
 			string? directoryRoot =
-				System.IO.Path.GetPathRoot(_fileSystem.Storage.CurrentDirectory);
+				System.IO.Path.GetPathRoot(fileSystem.Storage.CurrentDirectory);
 			if (!string.IsNullOrEmpty(pathRoot) && !string.IsNullOrEmpty(directoryRoot))
 			{
 				if (char.ToUpperInvariant(pathRoot[0]) != char.ToUpperInvariant(directoryRoot[0]))
@@ -153,7 +146,7 @@ internal partial class Execute
 			}
 
 			return System.IO.Path.GetFullPath(System.IO.Path.Combine(
-				_fileSystem.Storage.CurrentDirectory,
+				fileSystem.Storage.CurrentDirectory,
 				path));
 		}
 
@@ -189,11 +182,11 @@ internal partial class Execute
 		/// <inheritdoc cref="Path.GetRelativePath(string, string)" />
 		public string GetRelativePath(string relativeTo, string path)
 		{
-			relativeTo.EnsureValidArgument(_fileSystem, nameof(relativeTo));
-			path.EnsureValidArgument(_fileSystem, nameof(path));
+			relativeTo.EnsureValidArgument(fileSystem, nameof(relativeTo));
+			path.EnsureValidArgument(fileSystem, nameof(path));
 
-			relativeTo = _fileSystem.Execute.Path.GetFullPath(relativeTo);
-			path = _fileSystem.Execute.Path.GetFullPath(path);
+			relativeTo = fileSystem.Execute.Path.GetFullPath(relativeTo);
+			path = fileSystem.Execute.Path.GetFullPath(path);
 
 			return System.IO.Path.GetRelativePath(relativeTo, path);
 		}
@@ -235,12 +228,12 @@ internal partial class Execute
 
 #if FEATURE_SPAN
 		/// <inheritdoc cref="Path.IsPathRooted(ReadOnlySpan{char})" />
-		public bool IsPathRooted(ReadOnlySpan<char> path)
+		public virtual bool IsPathRooted(ReadOnlySpan<char> path)
 			=> System.IO.Path.IsPathRooted(path);
 #endif
 
 		/// <inheritdoc cref="Path.IsPathRooted(string)" />
-		public bool IsPathRooted(string? path)
+		public virtual bool IsPathRooted(string? path)
 			=> System.IO.Path.IsPathRooted(path);
 
 #if FEATURE_PATH_JOIN

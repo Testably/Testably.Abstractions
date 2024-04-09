@@ -89,7 +89,7 @@ internal sealed class DirectoryInfoMock
 			_fileSystem.Storage.GetLocation(
 				_fileSystem.Execute.Path.Combine(FullName, path
 					.EnsureValidFormat(_fileSystem, nameof(path),
-						_fileSystem.Execute.IsWindows && !_fileSystem.Execute.IsNetFramework))),
+						_fileSystem.Execute is { IsWindows: true, IsNetFramework: false }))),
 			_fileSystem);
 		directory.Create();
 		return directory;

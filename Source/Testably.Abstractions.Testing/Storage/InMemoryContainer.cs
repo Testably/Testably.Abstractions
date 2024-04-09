@@ -137,9 +137,10 @@ internal class InMemoryContainer : IStorageContainer
 	/// <inheritdoc cref="IStorageContainer.GetBytes()" />
 	public byte[] GetBytes() => _bytes;
 
-	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool, int?)" />
+	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool, bool, int?)" />
 	public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share,
 		bool deleteAccess = false,
+		bool ignoreFileShare = false,
 		bool ignoreMetadataErrors = true,
 		int? hResult = null)
 	{
@@ -163,7 +164,7 @@ internal class InMemoryContainer : IStorageContainer
 			throw ExceptionFactory.AclAccessToPathDenied(_location.FullPath);
 		}
 
-		if (CanGetAccess(access, share, deleteAccess))
+		if (CanGetAccess(access, share, deleteAccess, ignoreFileShare))
 		{
 			Guid guid = Guid.NewGuid();
 			FileHandle fileHandle =
@@ -289,11 +290,11 @@ internal class InMemoryContainer : IStorageContainer
 		return attributes;
 	}
 
-	private bool CanGetAccess(FileAccess access, FileShare share, bool deleteAccess)
+	private bool CanGetAccess(FileAccess access, FileShare share, bool deleteAccess, bool ignoreFileShare)
 	{
 		foreach (KeyValuePair<Guid, FileHandle> fileHandle in _fileHandles)
 		{
-			if (!fileHandle.Value.GrantAccess(access, share, deleteAccess))
+			if (!fileHandle.Value.GrantAccess(access, share, deleteAccess, ignoreFileShare))
 			{
 				return false;
 			}
@@ -385,17 +386,20 @@ internal class InMemoryContainer : IStorageContainer
 
 		#endregion
 
-		public bool GrantAccess(FileAccess access, FileShare share, bool deleteAccess)
+		public bool GrantAccess(FileAccess access, FileShare share, bool deleteAccess, bool ignoreFileShare)
 		{
 			FileShare usedShare = share;
+			FileShare currentShare = Share;
 			_fileSystem.Execute.NotOnWindows(()
 				=> usedShare = FileShare.ReadWrite);
+			_fileSystem.Execute.NotOnWindowsIf(ignoreFileShare, ()
+				=> currentShare = FileShare.ReadWrite);
 			if (deleteAccess)
 			{
 				return !_fileSystem.Execute.IsWindows || Share == FileShare.Delete;
 			}
 
-			return CheckAccessWithShare(access, Share) &&
+			return CheckAccessWithShare(access, currentShare) &&
 			       CheckAccessWithShare(Access, usedShare);
 		}
 

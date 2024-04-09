@@ -15,3 +15,12 @@ public interface IStatistics
 	/// </summary>
 	PropertyStatistic[] Properties { get; }
 }
+
+/// <summary>
+///     Contains statistical information about the mock usage.
+/// </summary>
+// ReSharper disable once UnusedTypeParameter
+public interface IStatistics<TType> : IStatistics
+{
+	// Empty wrapper interface to by type-safe.
+}

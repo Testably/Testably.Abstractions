@@ -16,7 +16,7 @@ public interface INotificationHandler : IFileSystemEntity
 	///     (optional) A predicate used to filter which callbacks should be notified.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are notified.
 	/// </param>
-	/// <returns>An <see cref="Notification.IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
+	/// <returns>A <see cref="Notification.IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
 	Notification.IAwaitableCallback<ChangeDescription> OnEvent(
 		Action<ChangeDescription>? notificationCallback = null,
 		Func<ChangeDescription, bool>? predicate = null);

@@ -276,10 +276,19 @@ internal sealed class TimerMock : ITimerMock
 
 		CancellationToken token = runningCancellationTokenSource.Token;
 		using ManualResetEventSlim startCreateTimerThreads = new();
-		Task.Run(
+		_ = Task.Run(
 				async () =>
 				{
-					startCreateTimerThreads.Set();
+					// ReSharper disable once AccessToDisposedClosure
+					try
+					{
+						startCreateTimerThreads.Set();
+					}
+					catch (ObjectDisposedException)
+					{
+						// Ignore any ObjectDisposedException
+					}
+
 					await RunTimer(token).ConfigureAwait(false);
 				},
 				cancellationToken: token)

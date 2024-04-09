@@ -145,13 +145,7 @@ internal static class EnumerationOptionsHelper
 	/// </summary>
 	private static string SimplifyExpression(Execute execute, string searchString)
 	{
-		char[] unixEscapeChars =
-		{
-			'\\',
-			'"',
-			'<',
-			'>'
-		};
+		char[] unixEscapeChars = ['\\', '"', '<', '>'];
 		if (string.Equals(searchString, DefaultSearchPattern, StringComparison.Ordinal))
 		{
 			return searchString;

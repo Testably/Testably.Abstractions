@@ -174,6 +174,58 @@ public abstract partial class CopyToTests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[InlineAutoData(FileAccess.Read, FileShare.Read)]
+	[InlineAutoData(FileAccess.Read, FileShare.ReadWrite)]
+	[InlineAutoData(FileAccess.ReadWrite, FileShare.Read)]
+	[InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite)]
+	[InlineAutoData(FileAccess.Write, FileShare.Read)]
+	[InlineAutoData(FileAccess.Write, FileShare.ReadWrite)]
+	public void CopyTo_SourceAccessedWithReadShare_ShouldNotThrow(
+		FileAccess fileAccess,
+		FileShare fileShare,
+		string sourcePath,
+		string destinationPath,
+		string sourceContents)
+	{
+		FileSystem.Initialize().WithFile(sourcePath)
+			.Which(f => f.HasStringContent(sourceContents));
+		IFileInfo sut = FileSystem.FileInfo.New(sourcePath);
+		using (FileSystem.FileStream
+			.New(sourcePath, FileMode.Open, fileAccess, fileShare))
+		{
+			sut.CopyTo(destinationPath);
+		}
+
+		FileSystem.File.Exists(destinationPath).Should().BeTrue();
+		FileSystem.File.ReadAllText(destinationPath).Should().Be(sourceContents);
+	}
+
+	[SkippableTheory]
+	[InlineAutoData(FileAccess.Read)]
+	[InlineAutoData(FileAccess.ReadWrite)]
+	[InlineAutoData(FileAccess.Write)]
+	public void CopyTo_SourceAccessedWithWriteShare_ShouldNotThrowOnLinuxOrMac(
+		FileAccess fileAccess,
+		string sourcePath,
+		string destinationPath,
+		string sourceContents)
+	{
+		Skip.If(Test.RunsOnWindows, "see https://github.com/dotnet/runtime/issues/52700");
+
+		FileSystem.Initialize().WithFile(sourcePath)
+			.Which(f => f.HasStringContent(sourceContents));
+		IFileInfo sut = FileSystem.FileInfo.New(sourcePath);
+		using (FileSystem.FileStream
+			.New(sourcePath, FileMode.Open, fileAccess, FileShare.Write))
+		{
+			sut.CopyTo(destinationPath);
+		}
+
+		FileSystem.File.Exists(destinationPath).Should().BeTrue();
+		FileSystem.File.ReadAllText(destinationPath).Should().Be(sourceContents);
+	}
+
+	[SkippableTheory]
 	[AutoData]
 	public void CopyTo_SourceIsDirectory_ShouldThrowUnauthorizedAccessException_AndNotCopyFile(
 		string sourceName,
@@ -195,14 +247,19 @@ public abstract partial class CopyToTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[AutoData]
+	[InlineAutoData(FileShare.None)]
+	[InlineAutoData(FileShare.Write)]
 	public void CopyTo_SourceLocked_ShouldThrowIOException(
+		FileShare fileShare,
 		string sourceName,
 		string destinationName)
 	{
+		Skip.If(!Test.RunsOnWindows && fileShare == FileShare.Write,
+			"see https://github.com/dotnet/runtime/issues/52700");
+
 		FileSystem.File.WriteAllText(sourceName, null);
 		using FileSystemStream stream = FileSystem.File.Open(sourceName, FileMode.Open,
-			FileAccess.Read, FileShare.None);
+			FileAccess.Read, fileShare);
 		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
 		Exception? exception = Record.Exception(() =>

@@ -160,17 +160,14 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 
 	#pragma warning disable MA0018
 	public static TheoryData<Encoding> GetEncodingsForReadAllText()
-	{
-		return new TheoryData<Encoding>
+		=> new()
 		{
-			// little endian
 			new UTF32Encoding(false, true, true),
 			// big endian
 			new UTF32Encoding(true, true, true),
 			new UTF8Encoding(true, true),
 			new ASCIIEncoding()
 		};
-	}
 	#pragma warning restore MA0018
 
 	#endregion

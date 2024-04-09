@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Testably.Abstractions.RandomSystem;
 using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Storage;
 
@@ -8,7 +9,8 @@ namespace Testably.Abstractions.Testing.Helpers;
 internal static class FileSystemExtensions
 {
 	/// <summary>
-	///     Ignores all registrations on the <see cref="MockFileSystem.Statistics" /> until the return value is disposed.
+	///     Returns the <see cref="Execute" /> from the <paramref name="fileSystem" />, if it is a
+	///     <see cref="MockFileSystem" />, otherwise a default <see cref="Execute" />.
 	/// </summary>
 	internal static Execute ExecuteOrDefault(this IFileSystem fileSystem)
 	{
@@ -120,5 +122,19 @@ internal static class FileSystemExtensions
 		}
 
 		return new NoOpDisposable();
+	}
+
+	/// <summary>
+	///     Returns the shared <see cref="IRandom" /> instance from the <paramref name="fileSystem" />, if it is a
+	///     <see cref="MockFileSystem" />, otherwise <see cref="RandomFactory.Shared" />.
+	/// </summary>
+	internal static IRandom RandomOrDefault(this IFileSystem fileSystem)
+	{
+		if (fileSystem is MockFileSystem mockFileSystem)
+		{
+			return mockFileSystem.RandomSystem.Random.Shared;
+		}
+
+		return RandomFactory.Shared;
 	}
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Statistics;
@@ -82,9 +83,19 @@ public sealed class MockFileSystem : IFileSystem
 	/// <summary>
 	///     Initializes the <see cref="MockFileSystem" />.
 	/// </summary>
-	public MockFileSystem()
+	public MockFileSystem() : this(_ => { }) { }
+
+	/// <summary>
+	///     Initializes the <see cref="MockFileSystem" /> with the <paramref name="initializationCallback" />.
+	/// </summary>
+	internal MockFileSystem(Action<Initialization> initializationCallback)
 	{
-		Execute = new Execute(this);
+		Initialization initialization = new();
+		initializationCallback(initialization);
+
+		Execute = initialization.OperatingSystem == null
+			? new Execute(this)
+			: new Execute(this, initialization.OperatingSystem.Value);
 		StatisticsRegistration = new FileSystemStatistics(this);
 		using IDisposable release = StatisticsRegistration.Ignore();
 		RandomSystem = new MockRandomSystem();
@@ -101,7 +112,7 @@ public sealed class MockFileSystem : IFileSystem
 		FileSystemWatcher = new FileSystemWatcherFactoryMock(this);
 		SafeFileHandleStrategy = new NullSafeFileHandleStrategy();
 		AccessControlStrategy = new NullAccessControlStrategy();
-		AddDriveFromCurrentDirectory();
+		InitializeFileSystem(initialization);
 	}
 
 	#region IFileSystem Members
@@ -181,21 +192,80 @@ public sealed class MockFileSystem : IFileSystem
 		return this;
 	}
 
-	private void AddDriveFromCurrentDirectory()
+	private void InitializeFileSystem(Initialization initialization)
 	{
 		try
 		{
-			string? root = Path.GetPathRoot(System.IO.Directory.GetCurrentDirectory());
-			if (root != null &&
-			    root[0] != _storage.MainDrive.Name[0])
+			if (initialization.CurrentDirectory != null)
 			{
-				Storage.GetOrAddDrive(root);
+				IDirectoryInfo directoryInfo = DirectoryInfo.New(initialization.CurrentDirectory);
+				Storage.CurrentDirectory = directoryInfo.FullName;
 			}
+
+			string? root = Execute.Path.GetPathRoot(Directory.GetCurrentDirectory());
+			Storage.GetOrAddDrive(root);
 		}
 		catch (IOException)
 		{
 			// Ignore any IOException, when trying to read the current directory
 			// due to brittle tests on MacOS
+		}
+	}
+
+	/// <summary>
+	///     The initialization options for the <see cref="MockFileSystem" />.
+	/// </summary>
+	internal class Initialization
+	{
+		/// <summary>
+		///     The current directory.
+		/// </summary>
+		internal string? CurrentDirectory { get; private set; }
+
+		/// <summary>
+		///     The simulated operating system.
+		/// </summary>
+		internal OSPlatform? OperatingSystem { get; private set; }
+
+		/// <summary>
+		///     Specify the operating system that should be simulated.
+		/// </summary>
+		/// <remarks>
+		///     Supported values are<br />
+		///     - <see cref="OSPlatform.Linux" /><br />
+		///     - <see cref="OSPlatform.OSX" /><br />
+		///     - <see cref="OSPlatform.Windows" />
+		/// </remarks>
+		internal Initialization SimulatingOperatingSystem(OSPlatform operatingSystem)
+		{
+			if (operatingSystem != OSPlatform.Linux &&
+			    operatingSystem != OSPlatform.OSX &&
+			    operatingSystem != OSPlatform.Windows)
+			{
+				throw new NotSupportedException(
+					"Only Linux, OSX and Windows are supported operating systems.");
+			}
+
+			OperatingSystem = operatingSystem;
+			return this;
+		}
+
+		/// <summary>
+		///     Use the provided <paramref name="path" /> as current directory.
+		/// </summary>
+		internal Initialization UseCurrentDirectory(string path)
+		{
+			CurrentDirectory = path;
+			return this;
+		}
+
+		/// <summary>
+		///     Use <see cref="Directory.GetCurrentDirectory()" /> as current directory.
+		/// </summary>
+		internal Initialization UseCurrentDirectory()
+		{
+			CurrentDirectory = System.IO.Directory.GetCurrentDirectory();
+			return this;
 		}
 	}
 }

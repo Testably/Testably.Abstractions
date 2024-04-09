@@ -15,7 +15,7 @@ internal sealed class SyntaxReceiver : ISyntaxReceiver
 	{
 		foreach (ClassGeneratorBase classGenerator in classGenerators)
 		{
-			_classModels.Add(classGenerator.Marker, new List<ClassModel>());
+			_classModels.Add(classGenerator.Marker, []);
 		}
 	}
 
@@ -47,6 +47,6 @@ internal sealed class SyntaxReceiver : ISyntaxReceiver
 			return classModels!;
 		}
 
-		return new List<ClassModel>();
+		return [];
 	}
 }

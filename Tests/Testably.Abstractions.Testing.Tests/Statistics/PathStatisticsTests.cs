@@ -9,7 +9,7 @@ public sealed class PathStatisticsTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.InitializeIn("/foo");
-		IPathStatistics sut = fileSystem.Statistics.FileInfo;
+		IPathStatistics<IFileInfoFactory, IFileInfo> sut = fileSystem.Statistics.FileInfo;
 
 		IStatistics absolutPath = sut["/foo"];
 		IStatistics relativePath = sut["."];
@@ -21,7 +21,7 @@ public sealed class PathStatisticsTests
 	public void Key_DifferentDrives_ShouldBeConsideredDifferent()
 	{
 		MockFileSystem fileSystem = new();
-		IPathStatistics sut = fileSystem.Statistics.FileInfo;
+		IPathStatistics<IFileInfoFactory, IFileInfo> sut = fileSystem.Statistics.FileInfo;
 
 		IStatistics result1 = sut[@"C:\"];
 		IStatistics result2 = sut[@"D:\"];
@@ -33,7 +33,7 @@ public sealed class PathStatisticsTests
 	public void Key_DifferentUncRootPaths_ShouldBeConsideredDifferent()
 	{
 		MockFileSystem fileSystem = new();
-		IPathStatistics sut = fileSystem.Statistics.FileInfo;
+		IPathStatistics<IFileInfoFactory, IFileInfo> sut = fileSystem.Statistics.FileInfo;
 
 		IStatistics result1 = sut[@"\\foo1"];
 		IStatistics result2 = sut[@"\\foo2"];
@@ -45,7 +45,7 @@ public sealed class PathStatisticsTests
 	public void Key_NullShouldBeSameAsEmptyKey()
 	{
 		MockFileSystem fileSystem = new();
-		IPathStatistics sut = fileSystem.Statistics.FileInfo;
+		IPathStatistics<IFileInfoFactory, IFileInfo> sut = fileSystem.Statistics.FileInfo;
 
 		IStatistics nullKey = sut[null!];
 		IStatistics emptyKey = sut[""];
@@ -56,9 +56,9 @@ public sealed class PathStatisticsTests
 	[Fact]
 	public void Key_ShouldSimplifyRelativePaths()
 	{
-		MockFileSystem fileSystem = new();
+		MockFileSystem fileSystem = new(o => o.UseCurrentDirectory());
 		fileSystem.InitializeIn("/foo/bar");
-		IPathStatistics sut = fileSystem.Statistics.FileInfo;
+		IPathStatistics<IFileInfoFactory, IFileInfo> sut = fileSystem.Statistics.FileInfo;
 
 		IStatistics absolutPath = sut["/foo"];
 		IStatistics relativePath = sut[".."];
@@ -73,7 +73,7 @@ public sealed class PathStatisticsTests
 	{
 		const string key = @"C:";
 		MockFileSystem fileSystem = new();
-		IPathStatistics sut = fileSystem.Statistics.FileInfo;
+		IPathStatistics<IFileInfoFactory, IFileInfo> sut = fileSystem.Statistics.FileInfo;
 
 		IStatistics result1 = sut[key];
 		IStatistics result2 = sut[key + separator];
@@ -88,7 +88,7 @@ public sealed class PathStatisticsTests
 	{
 		const string key = @"C:\foo";
 		MockFileSystem fileSystem = new();
-		IPathStatistics sut = fileSystem.Statistics.FileInfo;
+		IPathStatistics<IFileInfoFactory, IFileInfo> sut = fileSystem.Statistics.FileInfo;
 
 		IStatistics result1 = sut[key];
 		IStatistics result2 = sut[key + separator];
@@ -103,7 +103,7 @@ public sealed class PathStatisticsTests
 	{
 		const string key = @"\\server1\foo";
 		MockFileSystem fileSystem = new();
-		IPathStatistics sut = fileSystem.Statistics.FileInfo;
+		IPathStatistics<IFileInfoFactory, IFileInfo> sut = fileSystem.Statistics.FileInfo;
 
 		IStatistics result1 = sut[key];
 		IStatistics result2 = sut[key + separator];
@@ -115,7 +115,7 @@ public sealed class PathStatisticsTests
 	public void Key_WithNull_ShouldNotThrow()
 	{
 		MockFileSystem fileSystem = new();
-		IPathStatistics sut = fileSystem.Statistics.FileInfo;
+		IPathStatistics<IFileInfoFactory, IFileInfo> sut = fileSystem.Statistics.FileInfo;
 
 		Exception? exception = Record.Exception(() => _ = sut[null!]);
 

@@ -88,6 +88,14 @@ public class InMemoryStorageTests
 	}
 
 	[Fact]
+	public void GetOrAddDrive_Null_ShouldReturnNull()
+	{
+		IStorageDrive? result = Storage.GetOrAddDrive(driveName: null);
+
+		result.Should().BeNull();
+	}
+
+	[Fact]
 	public void GetOrCreateContainer_WithMetadata_ShouldBeKept()
 	{
 		FileSystemExtensibility extensibility = new();

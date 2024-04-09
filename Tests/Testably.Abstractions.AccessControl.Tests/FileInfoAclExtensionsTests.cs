@@ -10,7 +10,7 @@ public abstract partial class FileInfoAclExtensionsTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
-	public void GetAccessControl_MissingFile_ShouldThrowDirectoryNotFoundException()
+	public void GetAccessControl_MissingFile_ShouldThrowFileNotFoundException()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 		IFileInfo sut = FileSystem.FileInfo.New("foo");
@@ -18,7 +18,7 @@ public abstract partial class FileInfoAclExtensionsTests<TFileSystem>
 		Exception? exception = Record.Exception(() =>
 		{
 			#pragma warning disable CA1416
-			sut.GetAccessControl();
+			_ = sut.GetAccessControl();
 			#pragma warning restore CA1416
 		});
 
@@ -42,6 +42,45 @@ public abstract partial class FileInfoAclExtensionsTests<TFileSystem>
 	}
 
 	[SkippableFact]
+	public void GetAccessControl_ShouldReturnSetResult()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+		Skip.If(FileSystem is RealFileSystem);
+
+		FileSystem.File.WriteAllText("foo", null);
+
+		#pragma warning disable CA1416
+		FileSecurity originalResult =
+			FileSystem.FileInfo.New("foo").GetAccessControl();
+
+		FileSystem.FileInfo.New("foo").SetAccessControl(originalResult);
+
+		FileSecurity result =
+			FileSystem.FileInfo.New("foo").GetAccessControl();
+		#pragma warning restore CA1416
+
+		result.Should().Be(originalResult);
+	}
+
+	[SkippableFact]
+	public void
+		GetAccessControl_WithAccessControlSections_MissingFile_ShouldThrowFileNotFoundException()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+		IFileInfo sut = FileSystem.FileInfo.New("foo");
+
+		Exception? exception = Record.Exception(() =>
+		{
+			#pragma warning disable CA1416
+			_ = sut.GetAccessControl(AccessControlSections.None);
+			#pragma warning restore CA1416
+		});
+
+		exception.Should().BeOfType<FileNotFoundException>()
+			.Which.HResult.Should().Be(-2147024894);
+	}
+
+	[SkippableFact]
 	public void GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -55,6 +94,27 @@ public abstract partial class FileInfoAclExtensionsTests<TFileSystem>
 		#pragma warning restore CA1416
 
 		result.Should().NotBeNull();
+	}
+
+	[SkippableFact]
+	public void GetAccessControl_WithAccessControlSections_ShouldReturnSetResult()
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+		Skip.If(FileSystem is RealFileSystem);
+
+		FileSystem.File.WriteAllText("foo", null);
+
+		#pragma warning disable CA1416
+		FileSecurity originalResult =
+			FileSystem.FileInfo.New("foo").GetAccessControl(AccessControlSections.None);
+
+		FileSystem.FileInfo.New("foo").SetAccessControl(originalResult);
+
+		FileSecurity result =
+			FileSystem.FileInfo.New("foo").GetAccessControl(AccessControlSections.None);
+		#pragma warning restore CA1416
+
+		result.Should().Be(originalResult);
 	}
 
 	[SkippableFact]

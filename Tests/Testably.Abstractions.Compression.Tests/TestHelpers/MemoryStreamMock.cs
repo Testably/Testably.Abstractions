@@ -1,16 +1,12 @@
-﻿using System.IO;
+﻿#if FEATURE_COMPRESSION_STREAM
+using System.IO;
 
 namespace Testably.Abstractions.Compression.Tests.TestHelpers;
 
-internal sealed class MemoryStreamMock : MemoryStream
+internal sealed class MemoryStreamMock(bool canWrite = true, bool canRead = true) : MemoryStream
 {
-	public override bool CanRead { get; }
+	public override bool CanRead { get; } = canRead;
 
-	public override bool CanWrite { get; }
-
-	public MemoryStreamMock(bool canWrite = true, bool canRead = true)
-	{
-		CanWrite = canWrite;
-		CanRead = canRead;
-	}
+	public override bool CanWrite { get; } = canWrite;
 }
+#endif

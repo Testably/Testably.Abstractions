@@ -147,24 +147,18 @@ public class InMemoryLocationTests
 		location.ToString().Should().Be(path);
 	}
 
-	private sealed class DummyLocation : IStorageLocation
+	private sealed class DummyLocation(string fullPath) : IStorageLocation
 	{
-		public DummyLocation(string fullPath)
-		{
-			FullPath = fullPath;
-			FriendlyName = fullPath;
-		}
-
 		#region IStorageLocation Members
 
 		/// <inheritdoc cref="IStorageLocation.Drive" />
 		public IStorageDrive? Drive => null;
 
 		/// <inheritdoc cref="IStorageLocation.FriendlyName" />
-		public string FriendlyName { get; }
+		public string FriendlyName { get; } = fullPath;
 
 		/// <inheritdoc cref="IStorageLocation.FullPath" />
-		public string FullPath { get; }
+		public string FullPath { get; } = fullPath;
 
 		/// <inheritdoc cref="IStorageLocation.IsRooted" />
 		public bool IsRooted

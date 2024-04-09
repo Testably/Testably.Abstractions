@@ -259,7 +259,7 @@ public abstract partial class Tests<TFileSystem>
 		IZipArchiveEntry entry1 = archive.Entries[0];
 		Exception? exception = Record.Exception(() =>
 		{
-			entry1.LastWriteTime = lastWriteTime;
+			entry1.LastWriteTime = new DateTimeOffset(lastWriteTime);
 		});
 
 		exception.Should().BeOfType<NotSupportedException>();
@@ -285,9 +285,9 @@ public abstract partial class Tests<TFileSystem>
 		IZipArchiveEntry entry1 = archive.Entries[0];
 		IZipArchiveEntry entry2 = archive.Entries[1];
 
-		entry1.LastWriteTime = lastWriteTime;
-		entry1.LastWriteTime.Should().Be(lastWriteTime);
-		entry2.LastWriteTime.Should().NotBe(lastWriteTime);
+		entry1.LastWriteTime = new DateTimeOffset(lastWriteTime);
+		entry1.LastWriteTime.DateTime.Should().Be(lastWriteTime);
+		entry2.LastWriteTime.DateTime.Should().NotBe(lastWriteTime);
 	}
 
 	[SkippableFact]

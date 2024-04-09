@@ -127,11 +127,10 @@ public class PathHelperTests
 	{
 		// TODO: Enable this test again when the Execute method in MockFileSystem is writable
 		Skip.If(true, "Check how to update this test");
-
-		FileSystemMockForPath mockFileSystem = new(invalidChars);
+		_ = new FileSystemMockForPath(invalidChars);
 		string path = invalidChars[0] + "foo";
 
-		Exception? exception = Record.Exception(() =>
+		Exception exception = Record.Exception(() =>
 		{
 			path.EnsureValidFormat(null!);
 		});
@@ -161,13 +160,8 @@ public class PathHelperTests
 			.Which.Message.Should().Contain($"'{path}'");
 	}
 
-	private sealed class FileSystemMockForPath : IFileSystem
+	private sealed class FileSystemMockForPath(char[] invalidChars) : IFileSystem
 	{
-		public FileSystemMockForPath(char[] invalidChars)
-		{
-			Path = new PathMockWithInvalidChars(invalidChars);
-		}
-
 		#region IFileSystem Members
 
 		public IDirectory Directory
@@ -191,19 +185,12 @@ public class PathHelperTests
 		public IFileSystemWatcherFactory FileSystemWatcher
 			=> throw new NotSupportedException();
 
-		public IPath Path { get; }
+		public IPath Path { get; } = new PathMockWithInvalidChars(invalidChars);
 
 		#endregion
 
-		private sealed class PathMockWithInvalidChars : IPath
+		private sealed class PathMockWithInvalidChars(char[] invalidChars) : IPath
 		{
-			private readonly char[] _invalidChars;
-
-			public PathMockWithInvalidChars(char[] invalidChars)
-			{
-				_invalidChars = invalidChars;
-			}
-
 			#region IPath Members
 
 			public char AltDirectorySeparatorChar
@@ -295,7 +282,7 @@ public class PathHelperTests
 				=> throw new NotSupportedException();
 
 			public char[] GetInvalidPathChars()
-				=> _invalidChars;
+				=> invalidChars;
 
 #if FEATURE_SPAN
 			public ReadOnlySpan<char> GetPathRoot(ReadOnlySpan<char> path)

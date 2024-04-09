@@ -13,7 +13,15 @@ public class TimerFactoryMockTests
 		using ManualResetEventSlim ms = new();
 		using ITimer timer = timeSystem.Timer.New(_ =>
 		{
-			ms.Set();
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
 		});
 
 		ms.Wait(300).Should().BeFalse();

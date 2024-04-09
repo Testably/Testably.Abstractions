@@ -183,6 +183,7 @@ internal sealed class DriveInfoMock : IStorageDrive
 			using IDisposable registration =
 				RegisterProperty(nameof(VolumeLabel), PropertyAccess.Set);
 
+			// ReSharper disable once ConstantNullCoalescingCondition
 			_volumeLabel = value ?? _volumeLabel;
 			_fileSystem.Execute.NotOnWindows(
 				() => throw ExceptionFactory.OperationNotSupportedOnThisPlatform());

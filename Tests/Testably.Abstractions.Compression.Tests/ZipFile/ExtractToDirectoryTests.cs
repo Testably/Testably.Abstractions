@@ -330,4 +330,30 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 			.Should().NotBe(contents);
 	}
 #endif
+
+#if FEATURE_COMPRESSION_STREAM
+	[SkippableFact]
+	public void ExtractToDirectory_WithWriteOnlyStream_ShouldThrowArgumentException()
+	{
+		FileSystem.Initialize()
+			.WithFile("target.zip")
+			.WithSubdirectory("foo").Initialized(s => s
+				.WithFile("test.txt"));
+		using FileSystemStream stream = FileSystem.FileStream.New(
+			"target.zip", FileMode.Open, FileAccess.Write);
+
+		FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			FileSystem.ZipFile().ExtractToDirectory(stream, "bar");
+		});
+
+		exception.Should().BeException<ArgumentException>(
+			paramName: "source",
+			hResult: -2147024809,
+			messageContains: "stream is unreadable");
+	}
+#endif
 }

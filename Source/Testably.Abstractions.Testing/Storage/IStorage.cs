@@ -83,7 +83,7 @@ internal interface IStorage
 	/// </summary>
 	/// <param name="location">The location at which to look for the container.</param>
 	/// <returns>
-	///     <see langword="null" />, if <paramref name="location" /> is null. Otherwise it returns the found container or
+	///     <see langword="null" />, if <paramref name="location" /> is null. Otherwise, it returns the found container or
 	///     <see cref="NullContainer" />.
 	/// </returns>
 	[return: NotNullIfNotNull("location")]
@@ -112,7 +112,8 @@ internal interface IStorage
 	/// <summary>
 	///     Returns the drives that are present.
 	/// </summary>
-	IStorageDrive GetOrAddDrive(string driveName);
+	[return: NotNullIfNotNull("driveName")]
+	IStorageDrive? GetOrAddDrive(string? driveName);
 
 	/// <summary>
 	///     Returns an existing container at <paramref name="location" />.<br />

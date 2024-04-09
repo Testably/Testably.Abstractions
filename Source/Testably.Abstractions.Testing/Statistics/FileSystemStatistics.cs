@@ -13,54 +13,64 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsG
 	/// </summary>
 	public int TotalCount => _counter;
 
-	internal readonly CallStatistics Directory;
-	internal readonly PathStatistics DirectoryInfo;
-	internal readonly PathStatistics DriveInfo;
-	internal readonly CallStatistics File;
-	internal readonly PathStatistics FileInfo;
-	internal readonly PathStatistics FileStream;
-	internal readonly PathStatistics FileSystemWatcher;
-	internal readonly CallStatistics Path;
+	internal readonly CallStatistics<IDirectory> Directory;
+	internal readonly PathStatistics<IDirectoryInfoFactory, IDirectoryInfo> DirectoryInfo;
+	internal readonly PathStatistics<IDriveInfoFactory, IDriveInfo> DriveInfo;
+	internal readonly CallStatistics<IFile> File;
+	internal readonly PathStatistics<IFileInfoFactory, IFileInfo> FileInfo;
+	internal readonly PathStatistics<IFileStreamFactory, FileSystemStream> FileStream;
+
+	internal readonly PathStatistics<IFileSystemWatcherFactory, IFileSystemWatcher>
+		FileSystemWatcher;
+
+	internal readonly CallStatistics<IPath> Path;
 	private int _counter;
 
 	public FileSystemStatistics(MockFileSystem fileSystem)
 	{
-		DirectoryInfo = new PathStatistics(this, fileSystem, nameof(IFileSystem.DirectoryInfo));
-		DriveInfo = new PathStatistics(this, fileSystem, nameof(IFileSystem.DriveInfo));
-		FileInfo = new PathStatistics(this, fileSystem, nameof(IFileSystem.FileInfo));
-		FileStream = new PathStatistics(this, fileSystem, nameof(IFileSystem.FileStream));
-		FileSystemWatcher =
-			new PathStatistics(this, fileSystem, nameof(IFileSystem.FileSystemWatcher));
-		File = new CallStatistics(this, nameof(IFileSystem.File));
-		Directory = new CallStatistics(this, nameof(IFileSystem.Directory));
-		Path = new CallStatistics(this, nameof(IFileSystem.Path));
+		Directory = new CallStatistics<IDirectory>(this, nameof(IFileSystem.Directory));
+		DirectoryInfo = new PathStatistics<IDirectoryInfoFactory, IDirectoryInfo>(
+			this, fileSystem, nameof(IFileSystem.DirectoryInfo));
+		DriveInfo = new PathStatistics<IDriveInfoFactory, IDriveInfo>(
+			this, fileSystem, nameof(IFileSystem.DriveInfo));
+		File = new CallStatistics<IFile>(this, nameof(IFileSystem.File));
+		FileInfo = new PathStatistics<IFileInfoFactory, IFileInfo>(
+			this, fileSystem, nameof(IFileSystem.FileInfo));
+		FileStream = new PathStatistics<IFileStreamFactory, FileSystemStream>(
+			this, fileSystem, nameof(IFileSystem.FileStream));
+		FileSystemWatcher = new PathStatistics<IFileSystemWatcherFactory, IFileSystemWatcher>(
+			this, fileSystem, nameof(IFileSystem.FileSystemWatcher));
+		Path = new CallStatistics<IPath>(this, nameof(IFileSystem.Path));
 	}
 
 	#region IFileSystemStatistics Members
 
 	/// <inheritdoc cref="IFileSystemStatistics.Directory" />
-	IStatistics IFileSystemStatistics.Directory => Directory;
+	IStatistics<IDirectory> IFileSystemStatistics.Directory => Directory;
 
 	/// <inheritdoc cref="IFileSystemStatistics.DirectoryInfo" />
-	IPathStatistics IFileSystemStatistics.DirectoryInfo => DirectoryInfo;
+	IPathStatistics<IDirectoryInfoFactory, IDirectoryInfo> IFileSystemStatistics.DirectoryInfo
+		=> DirectoryInfo;
 
 	/// <inheritdoc cref="IFileSystemStatistics.DriveInfo" />
-	IPathStatistics IFileSystemStatistics.DriveInfo => DriveInfo;
+	IPathStatistics<IDriveInfoFactory, IDriveInfo> IFileSystemStatistics.DriveInfo => DriveInfo;
 
 	/// <inheritdoc cref="IFileSystemStatistics.File" />
-	IStatistics IFileSystemStatistics.File => File;
+	IStatistics<IFile> IFileSystemStatistics.File => File;
 
 	/// <inheritdoc cref="IFileSystemStatistics.FileInfo" />
-	IPathStatistics IFileSystemStatistics.FileInfo => FileInfo;
+	IPathStatistics<IFileInfoFactory, IFileInfo> IFileSystemStatistics.FileInfo => FileInfo;
 
 	/// <inheritdoc cref="IFileSystemStatistics.FileStream" />
-	IPathStatistics IFileSystemStatistics.FileStream => FileStream;
+	IPathStatistics<IFileStreamFactory, FileSystemStream> IFileSystemStatistics.FileStream
+		=> FileStream;
 
 	/// <inheritdoc cref="IFileSystemStatistics.FileSystemWatcher" />
-	IPathStatistics IFileSystemStatistics.FileSystemWatcher => FileSystemWatcher;
+	IPathStatistics<IFileSystemWatcherFactory, IFileSystemWatcher> IFileSystemStatistics.
+		FileSystemWatcher => FileSystemWatcher;
 
 	/// <inheritdoc cref="IFileSystemStatistics.Path" />
-	IStatistics IFileSystemStatistics.Path => Path;
+	IStatistics<IPath> IFileSystemStatistics.Path => Path;
 
 	#endregion
 

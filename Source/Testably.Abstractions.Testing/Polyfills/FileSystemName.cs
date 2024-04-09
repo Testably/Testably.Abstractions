@@ -2,6 +2,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
+// ReSharper disable InconsistentNaming
+// ReSharper disable TooWideLocalVariableScope
 // ReSharper disable once CheckNamespace
 namespace System.IO.Enumeration;
 
@@ -11,21 +13,11 @@ namespace System.IO.Enumeration;
 [ExcludeFromCodeCoverage]
 public static class FileSystemName
 {
-	private static readonly char[] s_simpleWildcardChars =
-	{
-		'*', '?'
-	};
+	private static readonly char[] s_simpleWildcardChars = ['*', '?'];
 
 	// [MS - FSA] 2.1.4.4 Algorithm for Determining if a FileName Is in an Expression
 	// https://msdn.microsoft.com/en-us/library/ff469270.aspx
-	private static readonly char[] s_wildcardChars =
-	{
-		'\"',
-		'<',
-		'>',
-		'*',
-		'?'
-	};
+	private static readonly char[] s_wildcardChars = ['\"', '<', '>', '*', '?'];
 
 	/// <summary>
 	///     Verifies whether the given expression matches the given name. Supports the following wildcards: '*' and '?'.
@@ -180,7 +172,7 @@ public static class FileSystemName
 	//		   set of contiguous DOS_QMs.
 	//	   DOS_DOT matches either a . or zero characters beyond name string.
 
-	#pragma warning disable MA0051 // Method is too long
+#pragma warning disable MA0051 // Method is too long
 	private static bool MatchPattern(string expression, string name, bool ignoreCase,
 		bool useExtendedWildcards)
 	{
@@ -229,7 +221,7 @@ public static class FileSystemName
 		char nameChar = '\0';
 		char expressionChar;
 
-		int[] temp = new int[0];
+		int[] temp;
 		int[] currentMatches = new int[16];
 		int[] priorMatches = new int[16];
 		priorMatches[0] = 0;
@@ -256,7 +248,7 @@ public static class FileSystemName
 		//  offset.  Each character in the expression can represent one or two
 		//  states.  * and DOS_STAR generate two states: expressionOffset * 2 and
 		//  expressionOffset * 2 + 1.  All other expression characters can produce
-		//  only a single state.  Thus expressionOffset = currentState / 2.
+		//  only a single state. Thus: expressionOffset = currentState / 2.
 
 		while (!nameFinished)
 		{
@@ -352,7 +344,7 @@ public static class FileSystemName
 					{
 						// '>' (DOS_QM) is the most complicated. If the name is finished,
 						// we can match zero characters. If this name is a '.', we
-						// don't match, but look at the next expression.  Otherwise
+						// don't match, but look at the next expression. Otherwise,
 						// we match a single character.
 						if (nameFinished || nameChar == '.')
 						{
@@ -365,6 +357,7 @@ public static class FileSystemName
 
 					if (useExtendedWildcards && expressionChar == '"')
 					{
+						// ReSharper disable once GrammarMistakeInComment
 						// A '"' (DOS_DOT) can match either a period, or zero characters
 						// beyond the end of name.
 						if (nameFinished)
@@ -469,6 +462,6 @@ public static class FileSystemName
 
 		return currentState == maxState;
 	}
-	#pragma warning restore MA0051 // Method is too long
+#pragma warning restore MA0051 // Method is too long
 }
 #endif

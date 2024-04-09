@@ -302,12 +302,12 @@ internal static class ParityCheckHelper
 
 		if (systemField.IsInitOnly)
 		{
-			return abstractionProperty.CanRead && !abstractionProperty.CanWrite;
+			return abstractionProperty is { CanRead: true, CanWrite: false };
 		}
 
 		if (systemField.IsPublic)
 		{
-			return abstractionProperty.CanRead && abstractionProperty.CanWrite;
+			return abstractionProperty is { CanRead: true, CanWrite: true };
 		}
 
 		return true;

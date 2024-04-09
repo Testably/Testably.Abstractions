@@ -239,17 +239,12 @@ public abstract partial class Tests<TFileSystem>
 			#endregion
 		}
 
-		private sealed class ComponentMock : IComponent
+		private sealed class ComponentMock(ISite site) : IComponent
 		{
-			public ComponentMock(ISite site)
-			{
-				Site = site;
-			}
-
 			#region IComponent Members
 
 			/// <inheritdoc cref="IComponent.Site" />
-			public ISite? Site { get; set; }
+			public ISite? Site { get; set; } = site;
 
 			/// <inheritdoc cref="IDisposable.Dispose()" />
 			public void Dispose()

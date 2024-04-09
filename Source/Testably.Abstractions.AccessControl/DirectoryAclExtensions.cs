@@ -26,7 +26,6 @@ public static class DirectoryAclExtensions
 		else
 		{
 			_ = directorySecurity ?? throw new ArgumentNullException(nameof(directorySecurity));
-			directoryInfo.ThrowIfParentMissing();
 			directoryInfo.Create();
 			extensibility.StoreMetadata(AccessControlHelpers.AccessControl,
 				directorySecurity);

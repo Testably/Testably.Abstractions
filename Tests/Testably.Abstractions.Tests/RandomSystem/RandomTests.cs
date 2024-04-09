@@ -31,7 +31,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[Fact]
 	public void GetItems_Array_LengthLargerThanChoices_ShouldIncludeDuplicateValues()
 	{
-		int[] choices = Enumerable.Range(0, 10).ToArray();
+		int[] choices = Enumerable.Range(1, 10).ToArray();
 
 		int[] result = RandomSystem.Random.Shared.GetItems(choices, 100);
 
@@ -46,7 +46,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[InlineData(-200)]
 	public void GetItems_Array_NegativeLength_ShouldThrowArgumentOutOfRangeException(int length)
 	{
-		int[] choices = Enumerable.Range(0, 10).ToArray();
+		int[] choices = Enumerable.Range(1, 10).ToArray();
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -79,7 +79,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[Fact]
 	public void GetItems_Array_ShouldSelectRandomElements()
 	{
-		int[] choices = Enumerable.Range(0, 100).ToArray();
+		int[] choices = Enumerable.Range(1, 100).ToArray();
 
 		int[] result = RandomSystem.Random.Shared.GetItems(choices, 10);
 
@@ -92,12 +92,12 @@ public abstract partial class RandomTests<TRandomSystem>
 	[Fact]
 	public void GetItems_ReadOnlySpan_LengthLargerThanChoices_ShouldIncludeDuplicateValues()
 	{
-		ReadOnlySpan<int> choices = Enumerable.Range(0, 10).ToArray().AsSpan();
+		ReadOnlySpan<int> choices = Enumerable.Range(1, 10).ToArray().AsSpan();
 
 		int[] result = RandomSystem.Random.Shared.GetItems(choices, 100);
 
 		result.Length.Should().Be(100);
-		result.Should().OnlyContain(r => r >= 0 && r < 10);
+		result.Should().OnlyContain(r => r >= 1 && r <= 10);
 	}
 #endif
 
@@ -105,12 +105,12 @@ public abstract partial class RandomTests<TRandomSystem>
 	[Fact]
 	public void GetItems_ReadOnlySpan_ShouldSelectRandomElements()
 	{
-		ReadOnlySpan<int> choices = Enumerable.Range(0, 100).ToArray().AsSpan();
+		ReadOnlySpan<int> choices = Enumerable.Range(1, 100).ToArray().AsSpan();
 
 		int[] result = RandomSystem.Random.Shared.GetItems(choices, 10);
 
 		result.Length.Should().Be(10);
-		result.Should().OnlyContain(r => r >= 0 && r < 100);
+		result.Should().OnlyContain(r => r >= 1 && r <= 100);
 	}
 #endif
 
@@ -120,12 +120,12 @@ public abstract partial class RandomTests<TRandomSystem>
 	{
 		int[] buffer = new int[100];
 		Span<int> destination = new(buffer);
-		ReadOnlySpan<int> choices = Enumerable.Range(0, 10).ToArray().AsSpan();
+		ReadOnlySpan<int> choices = Enumerable.Range(1, 10).ToArray().AsSpan();
 
 		RandomSystem.Random.Shared.GetItems(choices, destination);
 
 		destination.Length.Should().Be(100);
-		destination.ToArray().Should().OnlyContain(r => r >= 0 && r < 10);
+		destination.ToArray().Should().OnlyContain(r => r >= 1 && r <= 10);
 	}
 #endif
 
@@ -135,19 +135,19 @@ public abstract partial class RandomTests<TRandomSystem>
 	{
 		int[] buffer = new int[10];
 		Span<int> destination = new(buffer);
-		ReadOnlySpan<int> choices = Enumerable.Range(0, 100).ToArray().AsSpan();
+		ReadOnlySpan<int> choices = Enumerable.Range(1, 100).ToArray().AsSpan();
 
 		RandomSystem.Random.Shared.GetItems(choices, destination);
 
 		destination.Length.Should().Be(10);
-		destination.ToArray().Should().OnlyContain(r => r >= 0 && r < 100);
+		destination.ToArray().Should().OnlyContain(r => r >= 1 && r <= 100);
 	}
 #endif
 	[SkippableFact]
 	public void Next_MaxValue_ShouldOnlyReturnValidValues()
 	{
 		int maxValue = 10;
-		ConcurrentBag<int> results = new();
+		ConcurrentBag<int> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -162,7 +162,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	{
 		int minValue = 10;
 		int maxValue = 20;
-		ConcurrentBag<int> results = new();
+		ConcurrentBag<int> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -175,7 +175,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[SkippableFact]
 	public void Next_ShouldBeThreadSafe()
 	{
-		ConcurrentBag<int> results = new();
+		ConcurrentBag<int> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -188,7 +188,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[SkippableFact]
 	public void NextBytes_ShouldBeThreadSafe()
 	{
-		ConcurrentBag<byte[]> results = new();
+		ConcurrentBag<byte[]> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -204,7 +204,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[SkippableFact]
 	public void NextBytes_Span_ShouldBeThreadSafe()
 	{
-		ConcurrentBag<byte[]> results = new();
+		ConcurrentBag<byte[]> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -220,7 +220,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[SkippableFact]
 	public void NextDouble_ShouldBeThreadSafe()
 	{
-		ConcurrentBag<double> results = new();
+		ConcurrentBag<double> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -235,7 +235,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	public void NextInt64_MaxValue_ShouldOnlyReturnValidValues()
 	{
 		long maxValue = 10;
-		ConcurrentBag<long> results = new();
+		ConcurrentBag<long> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -252,7 +252,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	{
 		long minValue = 10;
 		long maxValue = 20;
-		ConcurrentBag<long> results = new();
+		ConcurrentBag<long> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -267,7 +267,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[SkippableFact]
 	public void NextInt64_ShouldBeThreadSafe()
 	{
-		ConcurrentBag<long> results = new();
+		ConcurrentBag<long> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -282,7 +282,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[SkippableFact]
 	public void NextSingle_ShouldBeThreadSafe()
 	{
-		ConcurrentBag<float> results = new();
+		ConcurrentBag<float> results = [];
 
 		Parallel.For(0, 100, _ =>
 		{
@@ -313,7 +313,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[Fact]
 	public void Shuffle_Array_ShouldShuffleItemsInPlace()
 	{
-		int[] originalValues = Enumerable.Range(0, 100).ToArray();
+		int[] originalValues = Enumerable.Range(1, 100).ToArray();
 		int[] values = originalValues.ToArray();
 
 		RandomSystem.Random.Shared.Shuffle(values);
@@ -328,7 +328,7 @@ public abstract partial class RandomTests<TRandomSystem>
 	[Fact]
 	public void Shuffle_Span_ShouldShuffleItemsInPlace()
 	{
-		int[] originalValues = Enumerable.Range(0, 100).ToArray();
+		int[] originalValues = Enumerable.Range(1, 100).ToArray();
 		int[] buffer = originalValues.ToArray();
 		Span<int> values = new(buffer);
 

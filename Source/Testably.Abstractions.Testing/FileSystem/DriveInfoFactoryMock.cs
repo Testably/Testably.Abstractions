@@ -30,6 +30,7 @@ internal sealed class DriveInfoFactoryMock : IDriveInfoFactory
 		return _fileSystem.Storage.GetDrives()
 			.Where(x => !x.IsUncPath)
 			.Cast<IDriveInfo>()
+			.OrderBy(x => x.Name)
 			.ToArray();
 	}
 

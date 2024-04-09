@@ -43,7 +43,7 @@ public class EnumerationOptions
 	///     is <see langword="true" />.
 	/// </summary>
 	/// <value>
-	///     <see langword="true" /> to skip innacessible files or directories; otherwise, <see langword="false" />.
+	///     <see langword="true" /> to skip inaccessible files or directories; otherwise, <see langword="false" />.
 	/// </value>
 	public bool IgnoreInaccessible { get; set; }
 

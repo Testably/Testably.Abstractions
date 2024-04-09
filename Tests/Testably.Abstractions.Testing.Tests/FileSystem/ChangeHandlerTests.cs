@@ -3,18 +3,11 @@ using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
-public class ChangeHandlerTests
+public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 {
 	#region Test Setup
 
-	public MockFileSystem FileSystem { get; }
-	private readonly ITestOutputHelper _testOutputHelper;
-
-	public ChangeHandlerTests(ITestOutputHelper testOutputHelper)
-	{
-		_testOutputHelper = testOutputHelper;
-		FileSystem = new MockFileSystem();
-	}
+	public MockFileSystem FileSystem { get; } = new();
 
 	#endregion
 
@@ -66,7 +59,7 @@ public class ChangeHandlerTests
 		FileSystem.Notify
 			.OnEvent(c =>
 				{
-					_testOutputHelper.WriteLine($"Received event {c}");
+					testOutputHelper.WriteLine($"Received event {c}");
 					eventCount++;
 				},
 				c => c.ChangeType == WatcherChangeTypes.Created)

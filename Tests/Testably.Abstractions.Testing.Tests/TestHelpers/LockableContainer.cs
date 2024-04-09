@@ -12,31 +12,24 @@ namespace Testably.Abstractions.Testing.Tests.TestHelpers;
 ///     A <see cref="IStorageContainer" /> for testing purposes.
 ///     <para />
 ///     Set <see cref="IsLocked" /> to <see langword="true" /> to simulate a locked file
-///     (<see cref="RequestAccess(FileAccess, FileShare, bool, bool, int?)" /> throws an <see cref="IOException" />).
+///     (<see cref="RequestAccess(FileAccess, FileShare, bool, bool, bool, int?)" /> throws an <see cref="IOException" />).
 /// </summary>
-internal sealed class LockableContainer : IStorageContainer
+internal sealed class LockableContainer(
+	MockFileSystem fileSystem,
+	FileSystemTypes containerType = FileSystemTypes.DirectoryOrFile)
+	: IStorageContainer
 {
 	/// <inheritdoc cref="FileSystemSecurity" />
 	public FileSystemSecurity? AccessControl { get; set; }
 
 	/// <summary>
 	///     Simulate a locked file, if set to <see langword="true" />.<br />
-	///     In this case <see cref="RequestAccess(FileAccess, FileShare, bool, bool, int?)" /> throws an
-	///     <see cref="IOException" />,
-	///     otherwise it will succeed.
+	///     In this case <see cref="RequestAccess(FileAccess, FileShare, bool, bool, bool, int?)" /> throws
+	///     an <see cref="IOException" />, otherwise it will succeed.
 	/// </summary>
 	public bool IsLocked { get; set; }
 
 	private byte[] _bytes = Array.Empty<byte>();
-
-	public LockableContainer(MockFileSystem fileSystem,
-		FileSystemTypes containerType =
-			FileSystemTypes.DirectoryOrFile)
-	{
-		FileSystem = fileSystem;
-		TimeSystem = fileSystem.TimeSystem;
-		Type = containerType;
-	}
 
 	#region IStorageContainer Members
 
@@ -52,7 +45,7 @@ internal sealed class LockableContainer : IStorageContainer
 		= new FileSystemExtensibility();
 
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
-	public IFileSystem FileSystem { get; }
+	public IFileSystem FileSystem { get; } = fileSystem;
 
 	/// <inheritdoc cref="IStorageContainer.LastAccessTime" />
 	public IStorageContainer.ITimeContainer LastAccessTime { get; }
@@ -66,10 +59,10 @@ internal sealed class LockableContainer : IStorageContainer
 	public string? LinkTarget { get; set; }
 
 	/// <inheritdoc cref="ITimeSystemEntity.TimeSystem" />
-	public ITimeSystem TimeSystem { get; }
+	public ITimeSystem TimeSystem { get; } = fileSystem.TimeSystem;
 
 	/// <inheritdoc cref="IStorageContainer.Type" />
-	public FileSystemTypes Type { get; }
+	public FileSystemTypes Type { get; } = containerType;
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 	/// <inheritdoc cref="IStorageContainer.UnixFileMode" />
@@ -96,9 +89,10 @@ internal sealed class LockableContainer : IStorageContainer
 	public byte[] GetBytes()
 		=> _bytes;
 
-	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool, int?)" />
+	/// <inheritdoc cref="IStorageContainer.RequestAccess(FileAccess, FileShare, bool, bool, bool, int?)" />
 	public IStorageAccessHandle RequestAccess(FileAccess access, FileShare share,
 		bool deleteAccess = false,
+		bool ignoreFileShare = false,
 		bool ignoreMetadataErrors = true,
 		int? hResult = null)
 	{
@@ -116,25 +110,19 @@ internal sealed class LockableContainer : IStorageContainer
 
 	#endregion
 
-	private sealed class AccessHandle : IStorageAccessHandle
+	private sealed class AccessHandle(FileAccess access, FileShare share, bool deleteAccess)
+		: IStorageAccessHandle
 	{
-		public AccessHandle(FileAccess access, FileShare share, bool deleteAccess)
-		{
-			Access = access;
-			Share = share;
-			DeleteAccess = deleteAccess;
-		}
-
 		#region IStorageAccessHandle Members
 
 		/// <inheritdoc cref="IStorageAccessHandle.Access" />
-		public FileAccess Access { get; }
+		public FileAccess Access { get; } = access;
 
 		/// <inheritdoc cref="IStorageAccessHandle.DeleteAccess" />
-		public bool DeleteAccess { get; }
+		public bool DeleteAccess { get; } = deleteAccess;
 
 		/// <inheritdoc cref="IStorageAccessHandle.Access" />
-		public FileShare Share { get; }
+		public FileShare Share { get; } = share;
 
 		/// <inheritdoc cref="IDisposable.Dispose()" />
 		public void Dispose()

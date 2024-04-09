@@ -11,12 +11,12 @@ public interface ITimerMock : ITimer
 {
 	/// <summary>
 	///     Blocks the current thread, until the timer is executed <paramref name="executionCount" /> times.<br />
-	///     Throws an <see cref="TimeoutException" />
+	///     Throws a <see cref="TimeoutException" />
 	/// </summary>
 	/// <param name="executionCount">The number of execution cycles the thread is blocked.</param>
 	/// <param name="timeout">
 	///     The timeout in milliseconds for blocking the current thread.<br />
-	///     Throws an <see cref="TimeoutException" /> when the timeout is expired.
+	///     Throws a <see cref="TimeoutException" /> when the timeout is expired.
 	/// </param>
 	/// <param name="callback">
 	///     A callback to execute after the execution count, before the next execution is triggered.

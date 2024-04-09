@@ -1,5 +1,3 @@
-using Testably.Abstractions.Tests.TestHelpers;
-
 namespace Testably.Abstractions.Tests.TimeSystem;
 
 // ReSharper disable once PartialTypeWithSinglePart

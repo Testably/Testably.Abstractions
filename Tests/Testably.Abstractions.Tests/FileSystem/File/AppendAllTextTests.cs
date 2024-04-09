@@ -52,21 +52,7 @@ public abstract partial class AppendAllTextTests<TFileSystem>
 	public void AppendAllText_MissingFile_ShouldCreateFileWithByteOrderMark(
 		string path)
 	{
-		byte[] expectedBytes =
-		{
-			255,
-			254,
-			0,
-			0,
-			65,
-			0,
-			0,
-			0,
-			65,
-			0,
-			0,
-			0
-		};
+		byte[] expectedBytes = [255, 254, 0, 0, 65, 0, 0, 0, 65, 0, 0, 0];
 
 		FileSystem.File.AppendAllText(path, "AA", Encoding.UTF32);
 

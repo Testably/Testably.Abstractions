@@ -267,24 +267,25 @@ namespace Testably.Abstractions.Testing.Statistics
 {
     public interface IFileSystemStatistics
     {
-        Testably.Abstractions.Testing.Statistics.IStatistics Directory { get; }
-        Testably.Abstractions.Testing.Statistics.IPathStatistics DirectoryInfo { get; }
-        Testably.Abstractions.Testing.Statistics.IPathStatistics DriveInfo { get; }
-        Testably.Abstractions.Testing.Statistics.IStatistics File { get; }
-        Testably.Abstractions.Testing.Statistics.IPathStatistics FileInfo { get; }
-        Testably.Abstractions.Testing.Statistics.IPathStatistics FileStream { get; }
-        Testably.Abstractions.Testing.Statistics.IPathStatistics FileSystemWatcher { get; }
-        Testably.Abstractions.Testing.Statistics.IStatistics Path { get; }
+        Testably.Abstractions.Testing.Statistics.IStatistics<System.IO.Abstractions.IDirectory> Directory { get; }
+        Testably.Abstractions.Testing.Statistics.IPathStatistics<System.IO.Abstractions.IDirectoryInfoFactory, System.IO.Abstractions.IDirectoryInfo> DirectoryInfo { get; }
+        Testably.Abstractions.Testing.Statistics.IPathStatistics<System.IO.Abstractions.IDriveInfoFactory, System.IO.Abstractions.IDriveInfo> DriveInfo { get; }
+        Testably.Abstractions.Testing.Statistics.IStatistics<System.IO.Abstractions.IFile> File { get; }
+        Testably.Abstractions.Testing.Statistics.IPathStatistics<System.IO.Abstractions.IFileInfoFactory, System.IO.Abstractions.IFileInfo> FileInfo { get; }
+        Testably.Abstractions.Testing.Statistics.IPathStatistics<System.IO.Abstractions.IFileStreamFactory, System.IO.Abstractions.FileSystemStream> FileStream { get; }
+        Testably.Abstractions.Testing.Statistics.IPathStatistics<System.IO.Abstractions.IFileSystemWatcherFactory, System.IO.Abstractions.IFileSystemWatcher> FileSystemWatcher { get; }
+        Testably.Abstractions.Testing.Statistics.IStatistics<System.IO.Abstractions.IPath> Path { get; }
     }
-    public interface IPathStatistics : Testably.Abstractions.Testing.Statistics.IStatistics
+    public interface IPathStatistics<TFactory, TType> : Testably.Abstractions.Testing.Statistics.IStatistics, Testably.Abstractions.Testing.Statistics.IStatistics<TFactory>
     {
-        Testably.Abstractions.Testing.Statistics.IStatistics this[string path] { get; }
+        Testably.Abstractions.Testing.Statistics.IStatistics<TType> this[string path] { get; }
     }
     public interface IStatistics
     {
         Testably.Abstractions.Testing.Statistics.MethodStatistic[] Methods { get; }
         Testably.Abstractions.Testing.Statistics.PropertyStatistic[] Properties { get; }
     }
+    public interface IStatistics<TType> : Testably.Abstractions.Testing.Statistics.IStatistics { }
     public sealed class MethodStatistic
     {
         public int Counter { get; }

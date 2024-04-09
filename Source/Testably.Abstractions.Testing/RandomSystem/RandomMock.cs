@@ -197,15 +197,13 @@ internal sealed class RandomMock : IRandom
 	{
 		int n = values.Length;
 
-		for (int i = 0; i < n - 1; i++)
+		for (int i = 0; i < n; i++)
 		{
 			int j = Next(i, n);
 
 			if (j != i)
 			{
-				T temp = values[i];
-				values[i] = values[j];
-				values[j] = temp;
+				(values[i], values[j]) = (values[j], values[i]);
 			}
 		}
 	}

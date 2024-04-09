@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
+using Testably.Abstractions.AccessControl.Tests.TestHelpers;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
@@ -29,9 +29,8 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		{
 			case MethodType.Create:
 				exception.Should()
-					.BeOfType<UnauthorizedAccessException>(
-						$"\n{exceptionType} on {baseType}\n was called with a missing directory")
-					.Which.HResult.Should().Be(-2147024891);
+					.BeNull(
+						$"\n{exceptionType} on {baseType}\n was called with a missing directory");
 				break;
 			case MethodType.GetAccessControl:
 				exception.Should()
@@ -188,25 +187,28 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		#pragma warning disable CA1416
 		yield return (BaseTypes.Directory, MethodType.Create,
 			(fileSystem, path)
-				=> fileSystem.Directory.CreateDirectory(path, new DirectorySecurity()));
+				=> fileSystem.Directory.CreateDirectory(path,
+					fileSystem.CreateDirectorySecurity()));
 		yield return (BaseTypes.Directory, MethodType.GetAccessControl,
 			(fileSystem, path)
 				=> fileSystem.Directory.GetAccessControl(path));
 
 		yield return (BaseTypes.Directory, MethodType.SetAccessControl,
 			(fileSystem, path)
-				=> fileSystem.Directory.SetAccessControl(path, new DirectorySecurity()));
+				=> fileSystem.Directory.SetAccessControl(path,
+					fileSystem.CreateDirectorySecurity()));
 
 		yield return (BaseTypes.DirectoryInfo, MethodType.Create,
 			(fileSystem, path)
-				=> fileSystem.DirectoryInfo.New(path).Create(new DirectorySecurity()));
+				=> fileSystem.DirectoryInfo.New(path).Create(fileSystem.CreateDirectorySecurity()));
 		yield return (BaseTypes.DirectoryInfo, MethodType.GetAccessControl,
 			(fileSystem, path)
 				=> fileSystem.DirectoryInfo.New(path).GetAccessControl());
 
 		yield return (BaseTypes.DirectoryInfo, MethodType.SetAccessControl,
 			(fileSystem, path)
-				=> fileSystem.DirectoryInfo.New(path).SetAccessControl(new DirectorySecurity()));
+				=> fileSystem.DirectoryInfo.New(path)
+					.SetAccessControl(fileSystem.CreateDirectorySecurity()));
 
 		yield return (BaseTypes.File, MethodType.GetAccessControl,
 			(fileSystem, path)
@@ -214,7 +216,7 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 
 		yield return (BaseTypes.File, MethodType.SetAccessControl,
 			(fileSystem, path)
-				=> fileSystem.File.SetAccessControl(path, new FileSecurity()));
+				=> fileSystem.File.SetAccessControl(path, fileSystem.CreateFileSecurity()));
 
 		yield return (BaseTypes.FileInfo, MethodType.GetAccessControl,
 			(fileSystem, path)
@@ -222,7 +224,7 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 
 		yield return (BaseTypes.FileInfo, MethodType.SetAccessControl,
 			(fileSystem, path)
-				=> fileSystem.FileInfo.New(path).SetAccessControl(new FileSecurity()));
+				=> fileSystem.FileInfo.New(path).SetAccessControl(fileSystem.CreateFileSecurity()));
 		#pragma warning restore CA1416
 	}
 
