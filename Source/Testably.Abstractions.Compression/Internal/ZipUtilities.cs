@@ -136,10 +136,7 @@ internal static class ZipUtilities
 		ArgumentNullException.ThrowIfNull(destination);
 		if (!destination.CanWrite)
 		{
-			throw new ArgumentException("The stream is unwritable.", nameof(destination))
-			{
-				HResult = -2147024809
-			};
+			throw new ArgumentException("The stream is unwritable.", nameof(destination));
 		}
 
 		sourceDirectoryName = fileSystem.Path.GetFullPath(sourceDirectoryName);
@@ -275,10 +272,7 @@ internal static class ZipUtilities
 		ArgumentNullException.ThrowIfNull(source);
 		if (!source.CanRead)
 		{
-			throw new ArgumentException("The stream is unreadable.", nameof(source))
-			{
-				HResult = -2147024809
-			};
+			throw new ArgumentException("The stream is unreadable.", nameof(source));
 		}
 
 		using (ZipArchive archive = new(source, ZipArchiveMode.Read, true, entryNameEncoding))
