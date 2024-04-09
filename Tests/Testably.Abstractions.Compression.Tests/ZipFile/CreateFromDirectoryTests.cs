@@ -160,6 +160,30 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 	}
 
 #if FEATURE_COMPRESSION_STREAM
+	[SkippableFact]
+	public void CreateFromDirectory_WithReadOnlyStream_ShouldThrowArgumentException()
+	{
+		FileSystem.Initialize()
+			.WithFile("target.zip")
+			.WithSubdirectory("foo").Initialized(s => s
+				.WithFile("test.txt"));
+		using FileSystemStream stream = FileSystem.FileStream.New(
+			"target.zip", FileMode.Open, FileAccess.Read);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			FileSystem.ZipFile().CreateFromDirectory("foo", stream);
+		});
+
+		exception.Should().BeException<ArgumentException>(
+			paramName: "destination",
+			hResult: -2147024809,
+			messageContains: "stream is unwritable");
+	}
+#endif
+
+#if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[AutoData]
 	public void

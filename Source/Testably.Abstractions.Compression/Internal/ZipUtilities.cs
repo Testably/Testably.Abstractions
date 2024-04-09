@@ -8,6 +8,7 @@ namespace Testably.Abstractions.Internal;
 internal static class ZipUtilities
 {
 	private const string SearchPattern = "*";
+	private static readonly DateTime FallbackTime = new(1980, 1, 1, 0, 0, 0);
 
 	internal static IZipArchiveEntry CreateEntryFromFile(
 		IZipArchive destination,
@@ -32,7 +33,7 @@ internal static class ZipUtilities
 
 			if (lastWrite.Year is < 1980 or > 2107)
 			{
-				lastWrite = new DateTime(1980, 1, 1, 0, 0, 0);
+				lastWrite = FallbackTime;
 			}
 
 			entry.LastWriteTime = new DateTimeOffset(lastWrite);
@@ -135,10 +136,7 @@ internal static class ZipUtilities
 		ArgumentNullException.ThrowIfNull(destination);
 		if (!destination.CanWrite)
 		{
-			throw new ArgumentException("The stream is unwritable.", nameof(destination))
-			{
-				HResult = -2147024809
-			};
+			throw new ArgumentException("The stream is unwritable.", nameof(destination));
 		}
 
 		sourceDirectoryName = fileSystem.Path.GetFullPath(sourceDirectoryName);
@@ -206,13 +204,6 @@ internal static class ZipUtilities
 				source.FullName.TrimStart(
 					source.FileSystem.Path.DirectorySeparatorChar,
 					source.FileSystem.Path.AltDirectorySeparatorChar));
-		string? directoryPath =
-			source.FileSystem.Path.GetDirectoryName(fileDestinationPath);
-		if (directoryPath != null &&
-		    !source.FileSystem.Directory.Exists(directoryPath))
-		{
-			source.FileSystem.Directory.CreateDirectory(directoryPath);
-		}
 
 		if (source.FullName.EndsWith('/'))
 		{
@@ -226,6 +217,8 @@ internal static class ZipUtilities
 		}
 		else
 		{
+			source.FileSystem.Directory.CreateDirectory(
+				source.FileSystem.Path.GetDirectoryName(fileDestinationPath) ?? ".");
 			ExtractToFile(source, fileDestinationPath, overwrite);
 		}
 	}
@@ -274,10 +267,7 @@ internal static class ZipUtilities
 		ArgumentNullException.ThrowIfNull(source);
 		if (!source.CanRead)
 		{
-			throw new ArgumentException("The stream is unreadable.", nameof(source))
-			{
-				HResult = -2147024809
-			};
+			throw new ArgumentException("The stream is unreadable.", nameof(source));
 		}
 
 		using (ZipArchive archive = new(source, ZipArchiveMode.Read, true, entryNameEncoding))
