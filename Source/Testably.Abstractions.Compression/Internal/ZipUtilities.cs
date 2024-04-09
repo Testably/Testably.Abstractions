@@ -204,13 +204,6 @@ internal static class ZipUtilities
 				source.FullName.TrimStart(
 					source.FileSystem.Path.DirectorySeparatorChar,
 					source.FileSystem.Path.AltDirectorySeparatorChar));
-		string? directoryPath =
-			source.FileSystem.Path.GetDirectoryName(fileDestinationPath);
-		if (directoryPath != null &&
-		    !source.FileSystem.Directory.Exists(directoryPath))
-		{
-			source.FileSystem.Directory.CreateDirectory(directoryPath);
-		}
 
 		if (source.FullName.EndsWith('/'))
 		{
@@ -224,6 +217,8 @@ internal static class ZipUtilities
 		}
 		else
 		{
+			source.FileSystem.Directory.CreateDirectory(
+				source.FileSystem.Path.GetDirectoryName(fileDestinationPath) ?? ".");
 			ExtractToFile(source, fileDestinationPath, overwrite);
 		}
 	}
