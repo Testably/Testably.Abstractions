@@ -328,6 +328,8 @@ jobs:
             sed -i -e "s/Testably.Abstractions%2Fmain/Testably.Abstractions%2Frelease%2F${version}/g" "./$f"
             sed -i -e "s/Testably.Abstractions%2Fmain/Testably.Abstractions%2Frelease%2F${version}/g" "./$f"
             sed -i -e "s/Testably.Abstractions\/main)/Testably.Abstractions\/release\/${version})/g" "./$f"
+            sed -i -e "s/Testably.Abstractions\/actions\/workflows\/build.yml\/badge.svg)/Testably.Abstractions\/actions\/workflows\/build.yml\/badge.svg?branch=release\/${version})/g" "./$f"
+            sed -i -e "s/Testably.Abstractions\/actions\/workflows\/build.yml)/Testably.Abstractions\/actions\/workflows\/build.yml?query=branch%3Arelease%2F${version})/g" "./$f"
             # Add absolute path to example section
             sed -i -e 's/\(Examples\/README.md\)/https:\/\/github.com\/Testably\/Testably.Abstractions\/blob\/main\/Examples\/README.md/g' "./$f"
           done
