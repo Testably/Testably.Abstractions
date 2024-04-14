@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using Testably.Abstractions.Tests.SourceGenerator.Model;
 // ReSharper disable StringLiteralTypo
 
@@ -12,7 +13,9 @@ internal class FileSystemClassGenerator : ClassGeneratorBase
 
 	/// <inheritdoc cref="ClassGeneratorBase.GenerateSource(StringBuilder, ClassModel)" />
 	protected override void GenerateSource(StringBuilder sourceBuilder, ClassModel @class)
-		=> sourceBuilder.Append(@$"
+	{
+		sourceBuilder.Append(@$"
+using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Initializer;
 using Testably.Abstractions.TestHelpers;
 using Testably.Abstractions.TestHelpers.Settings;
@@ -130,4 +133,129 @@ namespace {@class.Namespace}.{@class.Name}
 #endif
 	}}
 }}");
+		if (@class.Namespace.EndsWith(".Path", StringComparison.Ordinal))
+		{
+			sourceBuilder.Append(@$"
+
+namespace {@class.Namespace}.{@class.Name}
+{{
+	// ReSharper disable once UnusedMember.Global
+	public sealed class LinuxFileSystemTests : {@class.Name}<MockFileSystem>, IDisposable
+	{{
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
+		public override string BasePath => _directoryCleaner.BasePath;
+
+		private readonly IDirectoryCleaner _directoryCleaner;
+
+		public LinuxFileSystemTests() : this(new MockFileSystem(i =>
+			i.SimulatingOperatingSystem(OSPlatform.Linux)))
+		{{
+		}}
+
+		private LinuxFileSystemTests(MockFileSystem mockFileSystem) : base(
+			new Test(),
+			mockFileSystem,
+			mockFileSystem.TimeSystem)
+		{{
+			_directoryCleaner = FileSystem
+			   .SetCurrentDirectoryToEmptyTemporaryDirectory();
+		}}
+
+		/// <inheritdoc cref=""IDisposable.Dispose()"" />
+		public void Dispose()
+			=> _directoryCleaner.Dispose();
+
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
+		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+		{{
+			// Brittle tests are never skipped against the mock file system!
+		}}
+
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
+		public override void SkipIfLongRunningTestsShouldBeSkipped()
+		{{
+			// Long-running tests are never skipped against the mock file system!
+		}}
+	}}
+
+	// ReSharper disable once UnusedMember.Global
+	public sealed class MacFileSystemTests : {@class.Name}<MockFileSystem>, IDisposable
+	{{
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
+		public override string BasePath => _directoryCleaner.BasePath;
+
+		private readonly IDirectoryCleaner _directoryCleaner;
+
+		public MacFileSystemTests() : this(new MockFileSystem(i =>
+			i.SimulatingOperatingSystem(OSPlatform.OSX)))
+		{{
+		}}
+
+		private MacFileSystemTests(MockFileSystem mockFileSystem) : base(
+			new Test(),
+			mockFileSystem,
+			mockFileSystem.TimeSystem)
+		{{
+			_directoryCleaner = FileSystem
+			   .SetCurrentDirectoryToEmptyTemporaryDirectory();
+		}}
+
+		/// <inheritdoc cref=""IDisposable.Dispose()"" />
+		public void Dispose()
+			=> _directoryCleaner.Dispose();
+
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
+		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+		{{
+			// Brittle tests are never skipped against the mock file system!
+		}}
+
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
+		public override void SkipIfLongRunningTestsShouldBeSkipped()
+		{{
+			// Long-running tests are never skipped against the mock file system!
+		}}
+	}}
+
+	// ReSharper disable once UnusedMember.Global
+	public sealed class WindowsFileSystemTests : {@class.Name}<MockFileSystem>, IDisposable
+	{{
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
+		public override string BasePath => _directoryCleaner.BasePath;
+
+		private readonly IDirectoryCleaner _directoryCleaner;
+
+		public WindowsFileSystemTests() : this(new MockFileSystem(i =>
+			i.SimulatingOperatingSystem(OSPlatform.Windows)))
+		{{
+		}}
+
+		private WindowsFileSystemTests(MockFileSystem mockFileSystem) : base(
+			new Test(),
+			mockFileSystem,
+			mockFileSystem.TimeSystem)
+		{{
+			_directoryCleaner = FileSystem
+			   .SetCurrentDirectoryToEmptyTemporaryDirectory();
+		}}
+
+		/// <inheritdoc cref=""IDisposable.Dispose()"" />
+		public void Dispose()
+			=> _directoryCleaner.Dispose();
+
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
+		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+		{{
+			// Brittle tests are never skipped against the mock file system!
+		}}
+
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
+		public override void SkipIfLongRunningTestsShouldBeSkipped()
+		{{
+			// Long-running tests are never skipped against the mock file system!
+		}}
+	}}
+}}");
+		}
+	}
 }

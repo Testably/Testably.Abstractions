@@ -27,4 +27,12 @@ public class Test
 		IsNetFramework = RuntimeInformation.FrameworkDescription
 			.StartsWith(".NET Framework", StringComparison.OrdinalIgnoreCase);
 	}
+
+	public Test(OSPlatform osPlatform, bool isNetFramework = false)
+	{
+		RunsOnLinux = osPlatform == OSPlatform.Linux;
+		RunsOnMac = osPlatform == OSPlatform.OSX;
+		RunsOnWindows = osPlatform == OSPlatform.Windows;
+		IsNetFramework = isNetFramework && RunsOnWindows;
+	}
 }

@@ -25,12 +25,39 @@ public abstract partial class ChangeExtensionTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void ChangeExtension_WhenExtensionIsNull_ShouldRemovePreviousExtension(
+		string fileName)
+	{
+		string path = fileName + "..foo";
+		string expectedResult = fileName + ".";
+
+		string result = FileSystem.Path.ChangeExtension(path, null);
+
+		result.Should().Be(expectedResult);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void ChangeExtension_WithDirectory_ShouldIncludeDirectory(
 		string directory, string fileName, string extension)
 	{
 		string path = FileSystem.Path.Combine(directory, fileName + ".foo");
 		string expectedResult =
 			FileSystem.Path.Combine(directory, fileName + "." + extension);
+
+		string result = FileSystem.Path.ChangeExtension(path, extension);
+
+		result.Should().Be(expectedResult);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void ChangeExtension_WithDotOnlyInDirectory_ShouldAppendExtensionToPath(
+		string directory, string fileName, string extension)
+	{
+		directory = directory + "." + "with-dot";
+		string path = FileSystem.Path.Combine(directory, fileName);
+		string expectedResult = path + "." + extension;
 
 		string result = FileSystem.Path.ChangeExtension(path, extension);
 
