@@ -123,12 +123,13 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[InlineData("D:")]
-	public void GetPathRoot_WithoutTrailingSeparatorChar_ShouldReturnDefaultValue(string path)
+	public void GetPathRoot_RootedDrive_ShouldReturnDriveOnWindows(string path)
 	{
-		string? expectedResult = System.IO.Path.GetPathRoot(path);
+		Skip.IfNot(Test.RunsOnWindows);
+
 		string? result = FileSystem.Path.GetPathRoot(path);
 
-		result.Should().Be(expectedResult);
+		result.Should().Be(path);
 	}
 
 	[SkippableTheory]

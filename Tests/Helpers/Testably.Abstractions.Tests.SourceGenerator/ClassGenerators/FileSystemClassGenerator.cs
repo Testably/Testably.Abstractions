@@ -73,67 +73,68 @@ namespace {@class.Namespace}.{@class.Name}
 	}}
 }}
 
-namespace {@class.Namespace}.{@class.Name}
-{{
-	// ReSharper disable once UnusedMember.Global
-	[Collection(nameof(RealFileSystemTests))]
-	public sealed class RealFileSystemTests : {@class.Name}<RealFileSystem>, IDisposable
-	{{
-		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
-		public override string BasePath => _directoryCleaner.BasePath;
+//namespace {@class.Namespace}.{@class.Name}
+//{{
+//	// ReSharper disable once UnusedMember.Global
+//	[Collection(nameof(RealFileSystemTests))]
+//	public sealed class RealFileSystemTests : {@class.Name}<RealFileSystem>, IDisposable
+//	{{
+//		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
+//		public override string BasePath => _directoryCleaner.BasePath;
 
-		private readonly IDirectoryCleaner _directoryCleaner;
-		private readonly TestSettingsFixture _fixture;
+//		private readonly IDirectoryCleaner _directoryCleaner;
+//		private readonly TestSettingsFixture _fixture;
 
-		public RealFileSystemTests(ITestOutputHelper testOutputHelper, TestSettingsFixture fixture)
-			: base(new Test(), new RealFileSystem(), new RealTimeSystem())
-		{{
-#if DEBUG
-			if (fixture.RealFileSystemTests != TestSettingStatus.AlwaysEnabled)
-			{{
-				throw new SkipException($""Tests against the real file system are {{fixture.RealFileSystemTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests."");
-			}}
-#else
-			if (fixture.RealFileSystemTests == TestSettingStatus.AlwaysDisabled)
-			{{
-				throw new SkipException($""Tests against the real file system are {{fixture.RealFileSystemTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests."");
-			}}
-#endif
-			_fixture = fixture;
-			_directoryCleaner = FileSystem
-			   .SetCurrentDirectoryToEmptyTemporaryDirectory($""{@class.Namespace}{{FileSystem.Path.DirectorySeparatorChar}}{@class.Name}-"", testOutputHelper.WriteLine);
-		}}
+//		public RealFileSystemTests(ITestOutputHelper testOutputHelper, TestSettingsFixture fixture)
+//			: base(new Test(), new RealFileSystem(), new RealTimeSystem())
+//		{{
+//#if DEBUG
+//			if (fixture.RealFileSystemTests != TestSettingStatus.AlwaysEnabled)
+//			{{
+//				throw new SkipException($""Tests against the real file system are {{fixture.RealFileSystemTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests."");
+//			}}
+//#else
+//			if (fixture.RealFileSystemTests == TestSettingStatus.AlwaysDisabled)
+//			{{
+//				throw new SkipException($""Tests against the real file system are {{fixture.RealFileSystemTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests."");
+//			}}
+//#endif
+//			_fixture = fixture;
+//			_directoryCleaner = FileSystem
+//			   .SetCurrentDirectoryToEmptyTemporaryDirectory($""{@class.Namespace}{{FileSystem.Path.DirectorySeparatorChar}}{@class.Name}-"", testOutputHelper.WriteLine);
+//		}}
 
-		/// <inheritdoc cref=""IDisposable.Dispose()"" />
-		public void Dispose()
-			=> _directoryCleaner.Dispose();
+//		/// <inheritdoc cref=""IDisposable.Dispose()"" />
+//		public void Dispose()
+//			=> _directoryCleaner.Dispose();
 
-#if DEBUG
-		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
-		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
-			=> Skip.If(condition && _fixture.BrittleTests != TestSettingStatus.AlwaysEnabled,
-				$""Brittle tests are {{_fixture.BrittleTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests."");
-#else
-		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
-		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
-			=> Skip.If(condition && _fixture.BrittleTests == TestSettingStatus.AlwaysDisabled,
-				$""Brittle tests are {{_fixture.BrittleTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests."");
-#endif
+//#if DEBUG
+//		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
+//		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+//			=> Skip.If(condition && _fixture.BrittleTests != TestSettingStatus.AlwaysEnabled,
+//				$""Brittle tests are {{_fixture.BrittleTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests."");
+//#else
+//		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
+//		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+//			=> Skip.If(condition && _fixture.BrittleTests == TestSettingStatus.AlwaysDisabled,
+//				$""Brittle tests are {{_fixture.BrittleTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests."");
+//#endif
 
-#if DEBUG
-		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
-		public override void SkipIfLongRunningTestsShouldBeSkipped()
-			=> Skip.If(_fixture.LongRunningTests != TestSettingStatus.AlwaysEnabled,
-				$""Long-running tests are {{_fixture.LongRunningTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.LongRunningTests."");
-#else
-		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
-		public override void SkipIfLongRunningTestsShouldBeSkipped()
-			=> Skip.If(_fixture.LongRunningTests == TestSettingStatus.AlwaysDisabled,
-				$""Long-running tests are {{_fixture.LongRunningTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.LongRunningTests."");
-#endif
-	}}
-}}");
-		if (@class.Namespace.EndsWith(".Path", StringComparison.Ordinal))
+//#if DEBUG
+//		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
+//		public override void SkipIfLongRunningTestsShouldBeSkipped()
+//			=> Skip.If(_fixture.LongRunningTests != TestSettingStatus.AlwaysEnabled,
+//				$""Long-running tests are {{_fixture.LongRunningTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.LongRunningTests."");
+//#else
+//		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
+//		public override void SkipIfLongRunningTestsShouldBeSkipped()
+//			=> Skip.If(_fixture.LongRunningTests == TestSettingStatus.AlwaysDisabled,
+//				$""Long-running tests are {{_fixture.LongRunningTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.LongRunningTests."");
+//#endif
+//	}}
+//}}
+");
+		if (@class.Namespace.StartsWith("Testably.Abstractions.Tests.FileSystem.", StringComparison.Ordinal))
 		{
 			sourceBuilder.Append(@$"
 
@@ -153,7 +154,7 @@ namespace {@class.Namespace}.{@class.Name}
 		}}
 
 		private LinuxFileSystemTests(MockFileSystem mockFileSystem) : base(
-			new Test(),
+			new Test(OSPlatform.Linux),
 			mockFileSystem,
 			mockFileSystem.TimeSystem)
 		{{
@@ -192,7 +193,7 @@ namespace {@class.Namespace}.{@class.Name}
 		}}
 
 		private MacFileSystemTests(MockFileSystem mockFileSystem) : base(
-			new Test(),
+			new Test(OSPlatform.OSX),
 			mockFileSystem,
 			mockFileSystem.TimeSystem)
 		{{
@@ -231,7 +232,7 @@ namespace {@class.Namespace}.{@class.Name}
 		}}
 
 		private WindowsFileSystemTests(MockFileSystem mockFileSystem) : base(
-			new Test(),
+			new Test(OSPlatform.Windows),
 			mockFileSystem,
 			mockFileSystem.TimeSystem)
 		{{

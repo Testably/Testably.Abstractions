@@ -30,6 +30,24 @@ public abstract partial class GetFullPathTests<TFileSystem>
 #endif
 
 #if FEATURE_PATH_RELATIVE
+	[SkippableFact]
+	public void GetFullPath_Relative_RelativeBasePath_ShouldThrowArgumentException()
+	{
+		string relativeBasePath = "not-fully-qualified-base-path";
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.Path.GetFullPath("foo", relativeBasePath);
+		});
+
+		exception.Should().BeException<ArgumentException>(
+			paramName: "basePath",
+			messageContains: "Basepath argument is not fully qualified",
+			hResult: -2147024809);
+	}
+#endif
+
+#if FEATURE_PATH_RELATIVE
 	[SkippableTheory]
 	[InlineData("top/../most/file", "foo/bar", "foo/bar/most/file")]
 	[InlineData("top/../most/../dir/file", "foo", "foo/dir/file")]
@@ -39,9 +57,10 @@ public abstract partial class GetFullPathTests<TFileSystem>
 	{
 		string expectedRootedPath = FileTestHelper.RootDrive(Test,
 			expected.Replace('/', FileSystem.Path.DirectorySeparatorChar));
+		basePath = FileTestHelper.RootDrive(Test, basePath);
 
 		string result = FileSystem.Path
-			.GetFullPath(input, FileTestHelper.RootDrive(Test, basePath));
+			.GetFullPath(input, basePath);
 
 		result.Should().Be(expectedRootedPath);
 	}

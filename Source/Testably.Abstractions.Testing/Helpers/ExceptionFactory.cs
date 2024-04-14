@@ -6,6 +6,14 @@ namespace Testably.Abstractions.Testing.Helpers;
 
 internal static class ExceptionFactory
 {
+	public static ArgumentException BasePathNotFullyQualified(string paramName)
+		=> new("Basepath argument is not fully qualified.", paramName)
+		{
+#if FEATURE_EXCEPTION_HRESULT
+			HResult = -2147024809
+#endif
+		};
+
 	internal static UnauthorizedAccessException AccessToPathDenied(string path = "")
 		=> new(string.IsNullOrEmpty(path)
 			? "Access to the path is denied."
