@@ -101,6 +101,17 @@ public abstract partial class Tests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[InlineData("D:")]
+	public void GetPathRoot_RootedDrive_ShouldReturnDriveOnWindows(string path)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		string? result = FileSystem.Path.GetPathRoot(path);
+
+		result.Should().Be(path);
+	}
+
+	[SkippableTheory]
 	[AutoData]
 	public void GetPathRoot_ShouldReturnDefaultValue(string path)
 	{
@@ -120,17 +131,6 @@ public abstract partial class Tests<TFileSystem>
 			System.IO.Path.GetPathRoot(path.AsSpan()).ToArray());
 	}
 #endif
-
-	[SkippableTheory]
-	[InlineData("D:")]
-	public void GetPathRoot_RootedDrive_ShouldReturnDriveOnWindows(string path)
-	{
-		Skip.IfNot(Test.RunsOnWindows);
-
-		string? result = FileSystem.Path.GetPathRoot(path);
-
-		result.Should().Be(path);
-	}
 
 	[SkippableTheory]
 	[InlineData("/foo")]
