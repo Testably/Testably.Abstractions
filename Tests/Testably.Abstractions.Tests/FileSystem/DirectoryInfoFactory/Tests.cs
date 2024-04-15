@@ -50,6 +50,9 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableFact]
 	public void Wrap_Null_ShouldReturnNull()
 	{
+		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
+		        mockFileSystem.SimulationMode != SimulationMode.Native);
+
 		IDirectoryInfo? result = FileSystem.DirectoryInfo.Wrap(null);
 
 		result.Should().BeNull();
@@ -59,11 +62,33 @@ public abstract partial class Tests<TFileSystem>
 	[AutoData]
 	public void Wrap_ShouldWrapFromDirectoryInfo(string path)
 	{
+		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
+		        mockFileSystem.SimulationMode != SimulationMode.Native);
+
 		System.IO.DirectoryInfo directoryInfo = new("S:\\" + path);
 
 		IDirectoryInfo result = FileSystem.DirectoryInfo.Wrap(directoryInfo);
 
 		result.FullName.Should().Be(directoryInfo.FullName);
 		result.Exists.Should().Be(directoryInfo.Exists);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Wrap_WithSimulatedMockFileSystem_ShouldThrowNotSupportedException(string path)
+	{
+		Skip.IfNot(FileSystem is MockFileSystem mockFileSystem &&
+		           mockFileSystem.SimulationMode != SimulationMode.Native);
+
+		System.IO.DirectoryInfo directoryInfo = new("S:\\" + path);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = FileSystem.DirectoryInfo.Wrap(directoryInfo);
+		});
+
+		exception.Should().BeOfType<NotSupportedException>().Which
+			.Message.Should()
+			.Contain("Wrapping a DirectoryInfo in a simulated file system is not supported");
 	}
 }

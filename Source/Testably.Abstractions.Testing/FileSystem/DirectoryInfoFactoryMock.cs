@@ -40,6 +40,12 @@ internal sealed class DirectoryInfoFactoryMock : IDirectoryInfoFactory
 		using IDisposable registration = RegisterMethod(nameof(Wrap),
 			directoryInfo);
 
+		if (_fileSystem.SimulationMode != SimulationMode.Native)
+		{
+			throw new NotSupportedException(
+				"Wrapping a DirectoryInfo in a simulated file system is not supported!");
+		}
+
 		return DirectoryInfoMock.New(
 			_fileSystem.Storage.GetLocation(
 				directoryInfo?.FullName,

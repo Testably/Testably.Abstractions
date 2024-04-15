@@ -119,6 +119,9 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableFact]
 	public void Wrap_Null_ShouldReturnNull()
 	{
+		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
+		        mockFileSystem.SimulationMode != SimulationMode.Native);
+
 		IFileInfo? result = FileSystem.FileInfo.Wrap(null);
 
 		result.Should().BeNull();
@@ -128,11 +131,33 @@ public abstract partial class Tests<TFileSystem>
 	[AutoData]
 	public void Wrap_ShouldWrapFromFileInfo(string path)
 	{
+		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
+		        mockFileSystem.SimulationMode != SimulationMode.Native);
+
 		System.IO.FileInfo fileInfo = new(path);
 
 		IFileInfo result = FileSystem.FileInfo.Wrap(fileInfo);
 
 		result.FullName.Should().Be(fileInfo.FullName);
 		result.Exists.Should().Be(fileInfo.Exists);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Wrap_WithSimulatedMockFileSystem_ShouldThrowNotSupportedException(string path)
+	{
+		Skip.IfNot(FileSystem is MockFileSystem mockFileSystem &&
+		           mockFileSystem.SimulationMode != SimulationMode.Native);
+
+		System.IO.FileInfo fileInfo = new(path);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = FileSystem.FileInfo.Wrap(fileInfo);
+		});
+
+		exception.Should().BeOfType<NotSupportedException>().Which
+			.Message.Should()
+			.Contain("Wrapping a FileInfo in a simulated file system is not supported");
 	}
 }
