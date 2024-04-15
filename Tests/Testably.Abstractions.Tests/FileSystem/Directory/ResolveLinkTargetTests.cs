@@ -78,7 +78,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 		{
 			string newPath = $"{path}-{i}";
 			FileSystem.Directory.CreateSymbolicLink(newPath,
-				System.IO.Path.Combine(BasePath, previousPath));
+				FileSystem.Path.Combine(BasePath, previousPath));
 			previousPath = newPath;
 		}
 
@@ -102,7 +102,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 		{
 			string newPath = $"{path}-{i}";
 			FileSystem.Directory.CreateSymbolicLink(newPath,
-				System.IO.Path.Combine(BasePath, previousPath));
+				FileSystem.Path.Combine(BasePath, previousPath));
 			previousPath = newPath;
 		}
 
@@ -125,9 +125,9 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 
 		FileSystem.Directory.CreateDirectory(pathToFinalTarget);
 		FileSystem.Directory.CreateSymbolicLink(pathToMissingDirectory,
-			System.IO.Path.Combine(BasePath, pathToFinalTarget));
+			FileSystem.Path.Combine(BasePath, pathToFinalTarget));
 		FileSystem.Directory.CreateSymbolicLink(path,
-			System.IO.Path.Combine(BasePath, pathToMissingDirectory));
+			FileSystem.Path.Combine(BasePath, pathToMissingDirectory));
 		FileSystem.Directory.Delete(pathToMissingDirectory);
 
 		IFileSystemInfo? target =

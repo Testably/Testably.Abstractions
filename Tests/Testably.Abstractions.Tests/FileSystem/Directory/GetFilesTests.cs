@@ -19,7 +19,7 @@ public abstract partial class GetFilesTests<TFileSystem>
 		GetFiles_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
 	{
-		string expectedPath = System.IO.Path.Combine(BasePath, path);
+		string expectedPath = FileSystem.Path.Combine(BasePath, path);
 		Exception? exception =
 			Record.Exception(()
 				=> FileSystem.Directory.GetFiles(path).ToList());
@@ -266,17 +266,17 @@ public abstract partial class GetFilesTests<TFileSystem>
 	public void GetFiles_WithRelativePathAndSubfolders_ShouldReturnRelativeFilePath(
 		string subfolder1, string subfolder2, string[] files)
 	{
-		string workingDirectory = System.IO.Path.Combine(BasePath, subfolder1, subfolder2);
+		string workingDirectory = FileSystem.Path.Combine(BasePath, subfolder1, subfolder2);
 		FileSystem.Directory.CreateDirectory(workingDirectory);
 		foreach (string file in files)
 		{
-			FileSystem.File.Create(System.IO.Path.Combine(workingDirectory, file));
+			FileSystem.File.Create(FileSystem.Path.Combine(workingDirectory, file));
 		}
 
 		FileSystem.Directory.SetCurrentDirectory(subfolder1);
 		IEnumerable<string> expectation =
-			files.Select(f => System.IO.Path.Combine("..", subfolder1, subfolder2, f));
-		string path = System.IO.Path.Combine("..", subfolder1, subfolder2);
+			files.Select(f => FileSystem.Path.Combine("..", subfolder1, subfolder2, f));
+		string path = FileSystem.Path.Combine("..", subfolder1, subfolder2);
 
 		List<string> result = FileSystem.Directory.GetFiles(path).ToList();
 

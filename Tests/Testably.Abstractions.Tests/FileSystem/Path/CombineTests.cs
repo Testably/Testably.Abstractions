@@ -26,8 +26,10 @@ public abstract partial class CombineTests<TFileSystem>
 		Exception? exception2 = Record.Exception(() =>
 			FileSystem.Path.Combine(null!, path));
 
-		exception1.Should().BeException<ArgumentNullException>(hResult: -2147467261);
-		exception2.Should().BeException<ArgumentNullException>(hResult: -2147467261);
+		exception1.Should()
+			.BeException<ArgumentNullException>(paramName: "path2", hResult: -2147467261);
+		exception2.Should()
+			.BeException<ArgumentNullException>(paramName: "path1", hResult: -2147467261);
 	}
 
 	[SkippableTheory]
@@ -35,8 +37,8 @@ public abstract partial class CombineTests<TFileSystem>
 	public void Combine_2Paths_Rooted_ShouldReturnLastRootedPath(
 		string path1, string path2)
 	{
-		path1 = System.IO.Path.DirectorySeparatorChar + path1;
-		path2 = System.IO.Path.DirectorySeparatorChar + path2;
+		path1 = FileSystem.Path.DirectorySeparatorChar + path1;
+		path2 = FileSystem.Path.DirectorySeparatorChar + path2;
 
 		string result = FileSystem.Path.Combine(path1, path2);
 
@@ -44,7 +46,9 @@ public abstract partial class CombineTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[AutoData]
+	[InlineAutoData]
+	[InlineAutoData(" ")]
+	[InlineAutoData("foo", " ")]
 	public void Combine_2Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2)
 	{
@@ -61,7 +65,7 @@ public abstract partial class CombineTests<TFileSystem>
 	public void Combine_3Paths_OneEmpty_ShouldReturnCombinationOfOtherParts(
 		string pathA, string pathB)
 	{
-		string expectedPath = System.IO.Path.Combine(pathA, pathB);
+		string expectedPath = FileSystem.Path.Combine(pathA, pathB);
 
 		string result1 = FileSystem.Path.Combine(string.Empty, pathA, pathB);
 		string result2 = FileSystem.Path.Combine(pathA, string.Empty, pathB);
@@ -74,18 +78,21 @@ public abstract partial class CombineTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Combine_3Paths_OneNull_ShouldThrowArgumentNullException(string path)
+	public void Combine_3Paths_OneNull_ShouldThrowArgumentNullException(string pathA, string pathB)
 	{
 		Exception? exception1 = Record.Exception(() =>
-			FileSystem.Path.Combine(path, null!, null!));
+			FileSystem.Path.Combine(pathA, pathB, null!));
 		Exception? exception2 = Record.Exception(() =>
-			FileSystem.Path.Combine(null!, path, null!));
+			FileSystem.Path.Combine(null!, pathA, pathB));
 		Exception? exception3 = Record.Exception(() =>
-			FileSystem.Path.Combine(null!, null!, path));
+			FileSystem.Path.Combine(pathA, null!, pathB));
 
-		exception1.Should().BeException<ArgumentNullException>(hResult: -2147467261);
-		exception2.Should().BeException<ArgumentNullException>(hResult: -2147467261);
-		exception3.Should().BeException<ArgumentNullException>(hResult: -2147467261);
+		exception1.Should()
+			.BeException<ArgumentNullException>(paramName: "path3", hResult: -2147467261);
+		exception2.Should()
+			.BeException<ArgumentNullException>(paramName: "path1", hResult: -2147467261);
+		exception3.Should()
+			.BeException<ArgumentNullException>(paramName: "path2", hResult: -2147467261);
 	}
 
 	[SkippableTheory]
@@ -93,9 +100,9 @@ public abstract partial class CombineTests<TFileSystem>
 	public void Combine_3Paths_Rooted_ShouldReturnLastRootedPath(
 		string path1, string path2, string path3)
 	{
-		path1 = System.IO.Path.AltDirectorySeparatorChar + path1;
-		path2 = System.IO.Path.AltDirectorySeparatorChar + path2;
-		path3 = System.IO.Path.AltDirectorySeparatorChar + path3;
+		path1 = FileSystem.Path.DirectorySeparatorChar + path1;
+		path2 = FileSystem.Path.DirectorySeparatorChar + path2;
+		path3 = FileSystem.Path.DirectorySeparatorChar + path3;
 
 		string result = FileSystem.Path.Combine(path1, path2, path3);
 
@@ -103,7 +110,10 @@ public abstract partial class CombineTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[AutoData]
+	[InlineAutoData]
+	[InlineAutoData(" ")]
+	[InlineAutoData("foo", " ")]
+	[InlineAutoData("foo", "bar", " ")]
 	public void Combine_3Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3)
 	{
@@ -121,7 +131,7 @@ public abstract partial class CombineTests<TFileSystem>
 	public void Combine_4Paths_OneEmpty_ShouldReturnCombinationOfOtherParts(
 		string pathA, string pathB, string pathC)
 	{
-		string expectedPath = System.IO.Path.Combine(pathA, pathB, pathC);
+		string expectedPath = FileSystem.Path.Combine(pathA, pathB, pathC);
 
 		string result1 = FileSystem.Path.Combine(string.Empty, pathA, pathB, pathC);
 		string result2 = FileSystem.Path.Combine(pathA, string.Empty, pathB, pathC);
@@ -136,21 +146,26 @@ public abstract partial class CombineTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Combine_4Paths_OneNull_ShouldThrowArgumentNullException(string path)
+	public void Combine_4Paths_OneNull_ShouldThrowArgumentNullException(string pathA, string pathB,
+		string pathC)
 	{
 		Exception? exception1 = Record.Exception(() =>
-			FileSystem.Path.Combine(path, null!, null!, null!));
+			FileSystem.Path.Combine(pathA, pathB, pathC, null!));
 		Exception? exception2 = Record.Exception(() =>
-			FileSystem.Path.Combine(null!, path, null!, null!));
+			FileSystem.Path.Combine(null!, pathA, pathB, pathC));
 		Exception? exception3 = Record.Exception(() =>
-			FileSystem.Path.Combine(null!, null!, path, null!));
+			FileSystem.Path.Combine(pathA, null!, pathB, pathC));
 		Exception? exception4 = Record.Exception(() =>
-			FileSystem.Path.Combine(null!, null!, null!, path));
+			FileSystem.Path.Combine(pathA, pathB, null!, pathC));
 
-		exception1.Should().BeException<ArgumentNullException>(hResult: -2147467261);
-		exception2.Should().BeException<ArgumentNullException>(hResult: -2147467261);
-		exception3.Should().BeException<ArgumentNullException>(hResult: -2147467261);
-		exception4.Should().BeException<ArgumentNullException>(hResult: -2147467261);
+		exception1.Should()
+			.BeException<ArgumentNullException>(paramName: "path4", hResult: -2147467261);
+		exception2.Should()
+			.BeException<ArgumentNullException>(paramName: "path1", hResult: -2147467261);
+		exception3.Should()
+			.BeException<ArgumentNullException>(paramName: "path2", hResult: -2147467261);
+		exception4.Should()
+			.BeException<ArgumentNullException>(paramName: "path3", hResult: -2147467261);
 	}
 
 	[SkippableTheory]
@@ -158,10 +173,10 @@ public abstract partial class CombineTests<TFileSystem>
 	public void Combine_4Paths_Rooted_ShouldReturnLastRootedPath(
 		string path1, string path2, string path3, string path4)
 	{
-		path1 = System.IO.Path.DirectorySeparatorChar + path1;
-		path2 = System.IO.Path.DirectorySeparatorChar + path2;
-		path3 = System.IO.Path.DirectorySeparatorChar + path3;
-		path4 = System.IO.Path.DirectorySeparatorChar + path4;
+		path1 = FileSystem.Path.DirectorySeparatorChar + path1;
+		path2 = FileSystem.Path.DirectorySeparatorChar + path2;
+		path3 = FileSystem.Path.DirectorySeparatorChar + path3;
+		path4 = FileSystem.Path.DirectorySeparatorChar + path4;
 
 		string result = FileSystem.Path.Combine(path1, path2, path3, path4);
 
@@ -169,7 +184,11 @@ public abstract partial class CombineTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[AutoData]
+	[InlineAutoData]
+	[InlineAutoData(" ")]
+	[InlineAutoData("foo", " ")]
+	[InlineAutoData("foo", "bar", " ")]
+	[InlineAutoData("foo", "bar", "baz", " ")]
 	public void Combine_4Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4)
 	{
@@ -189,7 +208,8 @@ public abstract partial class CombineTests<TFileSystem>
 		Exception? exception = Record.Exception(() =>
 			FileSystem.Path.Combine(null!));
 
-		exception.Should().BeException<ArgumentNullException>(hResult: -2147467261);
+		exception.Should()
+			.BeException<ArgumentNullException>(paramName: "paths", hResult: -2147467261);
 	}
 
 	[SkippableTheory]
@@ -197,7 +217,7 @@ public abstract partial class CombineTests<TFileSystem>
 	public void Combine_ParamPaths_OneEmpty_ShouldReturnCombinationOfOtherParts(
 		string path1, string path2, string path3, string path4)
 	{
-		string expectedPath = System.IO.Path.Combine(path1, path2, path3, path4);
+		string expectedPath = FileSystem.Path.Combine(path1, path2, path3, path4);
 
 		string result1 =
 			FileSystem.Path.Combine(string.Empty, path1, path2, path3, path4);
@@ -220,24 +240,29 @@ public abstract partial class CombineTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void Combine_ParamPaths_OneNull_ShouldThrowArgumentNullException(
-		string path)
+		string pathA, string pathB, string pathC, string pathD)
 	{
 		Exception? exception1 = Record.Exception(() =>
-			FileSystem.Path.Combine(path, null!, null!, null!, null!));
+			FileSystem.Path.Combine(pathA, pathB, pathC, pathD, null!));
 		Exception? exception2 = Record.Exception(() =>
-			FileSystem.Path.Combine(null!, path, null!, null!, null!));
+			FileSystem.Path.Combine(null!, pathA, pathB, pathC, pathD));
 		Exception? exception3 = Record.Exception(() =>
-			FileSystem.Path.Combine(null!, null!, path, null!, null!));
+			FileSystem.Path.Combine(pathA, null!, pathB, pathC, pathD));
 		Exception? exception4 = Record.Exception(() =>
-			FileSystem.Path.Combine(null!, null!, null!, path, null!));
+			FileSystem.Path.Combine(pathA, pathB, null!, pathC, pathD));
 		Exception? exception5 = Record.Exception(() =>
-			FileSystem.Path.Combine(null!, null!, null!, null!, path));
+			FileSystem.Path.Combine(pathA, pathB, pathC, null!, pathD));
 
-		exception1.Should().BeException<ArgumentNullException>(hResult: -2147467261);
-		exception2.Should().BeException<ArgumentNullException>(hResult: -2147467261);
-		exception3.Should().BeException<ArgumentNullException>(hResult: -2147467261);
-		exception4.Should().BeException<ArgumentNullException>(hResult: -2147467261);
-		exception5.Should().BeException<ArgumentNullException>(hResult: -2147467261);
+		exception1.Should()
+			.BeException<ArgumentNullException>(paramName: "paths", hResult: -2147467261);
+		exception2.Should()
+			.BeException<ArgumentNullException>(paramName: "paths", hResult: -2147467261);
+		exception3.Should()
+			.BeException<ArgumentNullException>(paramName: "paths", hResult: -2147467261);
+		exception4.Should()
+			.BeException<ArgumentNullException>(paramName: "paths", hResult: -2147467261);
+		exception5.Should()
+			.BeException<ArgumentNullException>(paramName: "paths", hResult: -2147467261);
 	}
 
 	[SkippableTheory]
@@ -245,11 +270,11 @@ public abstract partial class CombineTests<TFileSystem>
 	public void Combine_ParamPaths_Rooted_ShouldReturnLastRootedPath(
 		string path1, string path2, string path3, string path4, string path5)
 	{
-		path1 = System.IO.Path.DirectorySeparatorChar + path1;
-		path2 = System.IO.Path.DirectorySeparatorChar + path2;
-		path3 = System.IO.Path.DirectorySeparatorChar + path3;
-		path4 = System.IO.Path.DirectorySeparatorChar + path4;
-		path5 = System.IO.Path.DirectorySeparatorChar + path5;
+		path1 = FileSystem.Path.DirectorySeparatorChar + path1;
+		path2 = FileSystem.Path.DirectorySeparatorChar + path2;
+		path3 = FileSystem.Path.DirectorySeparatorChar + path3;
+		path4 = FileSystem.Path.DirectorySeparatorChar + path4;
+		path5 = FileSystem.Path.DirectorySeparatorChar + path5;
 
 		string result = FileSystem.Path.Combine(path1, path2, path3, path4, path5);
 
@@ -257,7 +282,12 @@ public abstract partial class CombineTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[AutoData]
+	[InlineAutoData]
+	[InlineAutoData(" ")]
+	[InlineAutoData("foo", " ")]
+	[InlineAutoData("foo", "bar", " ")]
+	[InlineAutoData("foo", "bar", "baz", " ")]
+	[InlineAutoData("foo", "bar", "baz", "muh", " ")]
 	public void Combine_ParamPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4, string path5)
 	{

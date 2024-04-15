@@ -15,10 +15,15 @@ public abstract partial class Tests<TFileSystem>
 #else
 		string expectedMessage = "Illegal characters in path.";
 #endif
-		Exception? exception =
-			Record.Exception(() => FileSystem.DirectoryInfo.New(path));
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = FileSystem.DirectoryInfo.New(path);
+		});
 
 		exception.Should().BeException<ArgumentException>(expectedMessage,
+#if !NETFRAMEWORK
+			paramName: "path",
+#endif
 			hResult: -2147024809);
 	}
 

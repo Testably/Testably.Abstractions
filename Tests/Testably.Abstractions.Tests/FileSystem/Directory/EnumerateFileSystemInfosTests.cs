@@ -19,7 +19,7 @@ public abstract partial class EnumerateFileSystemInfosTests<TFileSystem>
 		EnumerateFileSystemEntries_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 			string path)
 	{
-		string expectedPath = System.IO.Path.Combine(BasePath, path);
+		string expectedPath = FileSystem.Path.Combine(BasePath, path);
 		Exception? exception =
 			Record.Exception(()
 				=> FileSystem.Directory.EnumerateFileSystemEntries(path).ToList());
