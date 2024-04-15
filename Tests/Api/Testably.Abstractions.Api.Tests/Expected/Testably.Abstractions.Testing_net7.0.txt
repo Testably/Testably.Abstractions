@@ -105,6 +105,7 @@ namespace Testably.Abstractions.Testing
         public Testably.Abstractions.Testing.FileSystem.INotificationHandler Notify { get; }
         public System.IO.Abstractions.IPath Path { get; }
         public Testably.Abstractions.IRandomSystem RandomSystem { get; }
+        public Testably.Abstractions.Testing.SimulationMode SimulationMode { get; }
         public Testably.Abstractions.Testing.Statistics.IFileSystemStatistics Statistics { get; }
         public Testably.Abstractions.ITimeSystem TimeSystem { get; }
         public override string ToString() { }
@@ -181,6 +182,13 @@ namespace Testably.Abstractions.Testing
             public static Testably.Abstractions.Testing.RandomProvider.Generator<T> op_Implicit(T value) { }
             public static Testably.Abstractions.Testing.RandomProvider.Generator<T> op_Implicit(T[] values) { }
         }
+    }
+    public enum SimulationMode
+    {
+        Native = 0,
+        Linux = 1,
+        MacOS = 2,
+        Windows = 3,
     }
     public static class TimeProvider
     {

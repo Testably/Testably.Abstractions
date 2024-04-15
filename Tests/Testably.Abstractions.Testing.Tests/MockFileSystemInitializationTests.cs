@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 #if NET6_0_OR_GREATER
 #endif
@@ -24,7 +23,7 @@ public class MockFileSystemInitializationTests
 	}
 
 	[SkippableFact]
-	public void MockFileSystem_WhenSimulatingOSX_ShouldBeMac()
+	public void MockFileSystem_WhenSimulatingMacOS_ShouldBeMac()
 	{
 		Skip.IfNot(Test.RunsOnMac,
 			"TODO: Enable again, once the Path implementation is sufficiently complete!");
@@ -91,14 +90,14 @@ public class MockFileSystemInitializationTests
 	[Theory]
 	[MemberData(nameof(ValidOperatingSystems))]
 	public void SimulatingOperatingSystem_ValidOSPlatform_ShouldSetOperatingSystem(
-		SimulationMode osPlatform)
+		SimulationMode simulationMode)
 	{
 		MockFileSystem.Initialization sut = new();
 
-		MockFileSystem.Initialization result = sut.SimulatingOperatingSystem(osPlatform);
+		MockFileSystem.Initialization result = sut.SimulatingOperatingSystem(simulationMode);
 
-		result.SimulationMode.Should().Be(osPlatform);
-		sut.SimulationMode.Should().Be(osPlatform);
+		result.SimulationMode.Should().Be(simulationMode);
+		sut.SimulationMode.Should().Be(simulationMode);
 	}
 
 	[Fact]

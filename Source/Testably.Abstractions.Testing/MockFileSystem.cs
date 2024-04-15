@@ -30,9 +30,12 @@ public sealed class MockFileSystem : IFileSystem
 	public IRandomSystem RandomSystem { get; }
 
 	/// <summary>
-	/// The simulation mode for the underlying operating system.
+	///     The simulation mode for the underlying operating system.
 	/// </summary>
-	/// <remarks>Can be changed by setting <see cref="Initialization.SimulatingOperatingSystem(SimulationMode)"/> in the constructor.</remarks>
+	/// <remarks>
+	///     Can be changed by setting <see cref="Initialization.SimulatingOperatingSystem(Testing.SimulationMode)" /> in
+	///     the constructor.
+	/// </remarks>
 	public SimulationMode SimulationMode { get; }
 
 	/// <summary>
@@ -98,10 +101,10 @@ public sealed class MockFileSystem : IFileSystem
 		Initialization initialization = new();
 		initializationCallback(initialization);
 
-		Execute = initialization.SimulationMode == SimulationMode.Native
-			? new Execute(this)
-			: new Execute(this, initialization.SimulationMode);
 		SimulationMode = initialization.SimulationMode;
+		Execute = SimulationMode == SimulationMode.Native
+			? new Execute(this)
+			: new Execute(this, SimulationMode);
 		StatisticsRegistration = new FileSystemStatistics(this);
 		using IDisposable release = StatisticsRegistration.Ignore();
 		RandomSystem = new MockRandomSystem();

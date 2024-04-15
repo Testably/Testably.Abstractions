@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfoFactory;
 
 // ReSharper disable once PartialTypeWithSinglePart
@@ -90,6 +88,7 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<NotSupportedException>().Which
-			.Message.Should().Contain("Wrapping a DirectoryInfo in a simulated file system is not supported");
+			.Message.Should()
+			.Contain("Wrapping a DirectoryInfo in a simulated file system is not supported");
 	}
 }

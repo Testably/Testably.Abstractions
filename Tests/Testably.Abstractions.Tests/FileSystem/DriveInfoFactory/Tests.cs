@@ -146,7 +146,7 @@ public abstract partial class Tests<TFileSystem>
 	public void Wrap_WithSimulatedMockFileSystem_ShouldThrowNotSupportedException()
 	{
 		Skip.IfNot(FileSystem is MockFileSystem mockFileSystem &&
-		        mockFileSystem.SimulationMode != SimulationMode.Native);
+		           mockFileSystem.SimulationMode != SimulationMode.Native);
 
 		System.IO.DriveInfo driveInfo = System.IO.DriveInfo.GetDrives().First();
 
@@ -156,7 +156,8 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<NotSupportedException>().Which
-			.Message.Should().Contain("Wrapping a DriveInfo in a simulated file system is not supported");
+			.Message.Should()
+			.Contain("Wrapping a DriveInfo in a simulated file system is not supported");
 	}
 
 	#region Helpers

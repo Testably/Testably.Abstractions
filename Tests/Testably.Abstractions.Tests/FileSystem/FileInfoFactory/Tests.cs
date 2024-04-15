@@ -157,6 +157,7 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<NotSupportedException>().Which
-			.Message.Should().Contain("Wrapping a FileInfo in a simulated file system is not supported");
+			.Message.Should()
+			.Contain("Wrapping a FileInfo in a simulated file system is not supported");
 	}
 }

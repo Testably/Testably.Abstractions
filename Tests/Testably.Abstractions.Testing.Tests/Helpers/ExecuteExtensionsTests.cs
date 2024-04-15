@@ -1,17 +1,15 @@
-﻿using System.Runtime.InteropServices;
-using Testably.Abstractions.Testing.Helpers;
+﻿using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.Tests.Helpers;
 
 public sealed class ExecuteExtensionsTests
 {
 	[Theory]
-	[InlineData(ExecuteType.Linux, true)]
-	[InlineData(ExecuteType.Mac, true)]
-	[InlineData(ExecuteType.NetFramework, false)]
-	[InlineData(ExecuteType.Windows, true)]
+	[InlineData(SimulationMode.Linux, true)]
+	[InlineData(SimulationMode.MacOS, true)]
+	[InlineData(SimulationMode.Windows, true)]
 	public void NotOnNetFramework_ShouldExecuteDependingOnOperatingSystem(
-		ExecuteType type, bool shouldExecute)
+		SimulationMode type, bool shouldExecute)
 	{
 		bool isExecuted = false;
 		Execute sut = FromType(type);
@@ -22,12 +20,11 @@ public sealed class ExecuteExtensionsTests
 	}
 
 	[Theory]
-	[InlineData(ExecuteType.Linux, true)]
-	[InlineData(ExecuteType.Mac, true)]
-	[InlineData(ExecuteType.NetFramework, false)]
-	[InlineData(ExecuteType.Windows, false)]
+	[InlineData(SimulationMode.Linux, true)]
+	[InlineData(SimulationMode.MacOS, true)]
+	[InlineData(SimulationMode.Windows, false)]
 	public void NotOnWindows_ShouldExecuteDependingOnOperatingSystem(
-		ExecuteType type, bool shouldExecute)
+		SimulationMode type, bool shouldExecute)
 	{
 		bool isExecuted = false;
 		Execute sut = FromType(type);
@@ -38,16 +35,14 @@ public sealed class ExecuteExtensionsTests
 	}
 
 	[Theory]
-	[InlineData(ExecuteType.Linux, false, false)]
-	[InlineData(ExecuteType.Linux, true, true)]
-	[InlineData(ExecuteType.Mac, false, false)]
-	[InlineData(ExecuteType.Mac, true, true)]
-	[InlineData(ExecuteType.NetFramework, false, false)]
-	[InlineData(ExecuteType.NetFramework, true, false)]
-	[InlineData(ExecuteType.Windows, false, false)]
-	[InlineData(ExecuteType.Windows, true, false)]
+	[InlineData(SimulationMode.Linux, false, false)]
+	[InlineData(SimulationMode.Linux, true, true)]
+	[InlineData(SimulationMode.MacOS, false, false)]
+	[InlineData(SimulationMode.MacOS, true, true)]
+	[InlineData(SimulationMode.Windows, false, false)]
+	[InlineData(SimulationMode.Windows, true, false)]
 	public void NotOnWindowsIf_ShouldExecuteDependingOnOperatingSystem(
-		ExecuteType type, bool predicate, bool shouldExecute)
+		SimulationMode type, bool predicate, bool shouldExecute)
 	{
 		bool isExecuted = false;
 		Execute sut = FromType(type);
@@ -58,12 +53,11 @@ public sealed class ExecuteExtensionsTests
 	}
 
 	[Theory]
-	[InlineData(ExecuteType.Linux, true)]
-	[InlineData(ExecuteType.Mac, false)]
-	[InlineData(ExecuteType.NetFramework, false)]
-	[InlineData(ExecuteType.Windows, false)]
+	[InlineData(SimulationMode.Linux, true)]
+	[InlineData(SimulationMode.MacOS, false)]
+	[InlineData(SimulationMode.Windows, false)]
 	public void OnLinux_ShouldExecuteDependingOnOperatingSystem(
-		ExecuteType type, bool shouldExecute)
+		SimulationMode type, bool shouldExecute)
 	{
 		bool isExecuted = false;
 		Execute sut = FromType(type);
@@ -74,12 +68,11 @@ public sealed class ExecuteExtensionsTests
 	}
 
 	[Theory]
-	[InlineData(ExecuteType.Linux, 3, 4, 3)]
-	[InlineData(ExecuteType.Mac, 5, 6, 6)]
-	[InlineData(ExecuteType.NetFramework, 7, 8, 8)]
-	[InlineData(ExecuteType.Windows, 1, 2, 2)]
+	[InlineData(SimulationMode.Linux, 3, 4, 3)]
+	[InlineData(SimulationMode.MacOS, 5, 6, 6)]
+	[InlineData(SimulationMode.Windows, 1, 2, 2)]
 	public void OnLinux_WithValue_ShouldExecuteDependingOnOperatingSystem(
-		ExecuteType type, int value, int alternativeValue, int expectedValue)
+		SimulationMode type, int value, int alternativeValue, int expectedValue)
 	{
 		Execute sut = FromType(type);
 
@@ -89,12 +82,11 @@ public sealed class ExecuteExtensionsTests
 	}
 
 	[Theory]
-	[InlineData(ExecuteType.Linux, false)]
-	[InlineData(ExecuteType.Mac, true)]
-	[InlineData(ExecuteType.NetFramework, false)]
-	[InlineData(ExecuteType.Windows, false)]
+	[InlineData(SimulationMode.Linux, false)]
+	[InlineData(SimulationMode.MacOS, true)]
+	[InlineData(SimulationMode.Windows, false)]
 	public void OnMac_ShouldExecuteDependingOnOperatingSystem(
-		ExecuteType type, bool shouldExecute)
+		SimulationMode type, bool shouldExecute)
 	{
 		bool isExecuted = false;
 		Execute sut = FromType(type);
@@ -105,12 +97,11 @@ public sealed class ExecuteExtensionsTests
 	}
 
 	[Theory]
-	[InlineData(ExecuteType.Linux, false)]
-	[InlineData(ExecuteType.Mac, false)]
-	[InlineData(ExecuteType.NetFramework, true)]
-	[InlineData(ExecuteType.Windows, false)]
+	[InlineData(SimulationMode.Linux, false)]
+	[InlineData(SimulationMode.MacOS, false)]
+	[InlineData(SimulationMode.Windows, false)]
 	public void OnNetFramework_ShouldExecuteDependingOnOperatingSystem(
-		ExecuteType type, bool shouldExecute)
+		SimulationMode type, bool shouldExecute)
 	{
 		bool isExecuted = false;
 		Execute sut = FromType(type);
@@ -121,12 +112,11 @@ public sealed class ExecuteExtensionsTests
 	}
 
 	[Theory]
-	[InlineData(ExecuteType.Linux, 3, 4, 4)]
-	[InlineData(ExecuteType.Mac, 5, 6, 6)]
-	[InlineData(ExecuteType.NetFramework, 7, 8, 7)]
-	[InlineData(ExecuteType.Windows, 1, 2, 2)]
+	[InlineData(SimulationMode.Linux, 3, 4, 4)]
+	[InlineData(SimulationMode.MacOS, 5, 6, 6)]
+	[InlineData(SimulationMode.Windows, 1, 2, 2)]
 	public void OnNetFramework_WithValue_ShouldExecuteDependingOnOperatingSystem(
-		ExecuteType type, int value, int alternativeValue, int expectedValue)
+		SimulationMode type, int value, int alternativeValue, int expectedValue)
 	{
 		Execute sut = FromType(type);
 
@@ -136,16 +126,14 @@ public sealed class ExecuteExtensionsTests
 	}
 
 	[Theory]
-	[InlineData(ExecuteType.Linux, false, false)]
-	[InlineData(ExecuteType.Linux, true, false)]
-	[InlineData(ExecuteType.Mac, false, false)]
-	[InlineData(ExecuteType.Mac, true, false)]
-	[InlineData(ExecuteType.NetFramework, false, false)]
-	[InlineData(ExecuteType.NetFramework, true, true)]
-	[InlineData(ExecuteType.Windows, false, false)]
-	[InlineData(ExecuteType.Windows, true, false)]
+	[InlineData(SimulationMode.Linux, false, false)]
+	[InlineData(SimulationMode.Linux, true, false)]
+	[InlineData(SimulationMode.MacOS, false, false)]
+	[InlineData(SimulationMode.MacOS, true, false)]
+	[InlineData(SimulationMode.Windows, false, false)]
+	[InlineData(SimulationMode.Windows, true, false)]
 	public void OnNetFrameworkIf_ShouldExecuteDependingOnOperatingSystem(
-		ExecuteType type, bool predicate, bool shouldExecute)
+		SimulationMode type, bool predicate, bool shouldExecute)
 	{
 		bool isExecuted = false;
 		Execute sut = FromType(type);
@@ -156,12 +144,11 @@ public sealed class ExecuteExtensionsTests
 	}
 
 	[Theory]
-	[InlineData(ExecuteType.Linux, false)]
-	[InlineData(ExecuteType.Mac, false)]
-	[InlineData(ExecuteType.NetFramework, true)]
-	[InlineData(ExecuteType.Windows, true)]
+	[InlineData(SimulationMode.Linux, false)]
+	[InlineData(SimulationMode.MacOS, false)]
+	[InlineData(SimulationMode.Windows, true)]
 	public void OnWindows_ShouldExecuteDependingOnOperatingSystem(
-		ExecuteType type, bool shouldExecute)
+		SimulationMode type, bool shouldExecute)
 	{
 		bool isExecuted = false;
 		Execute sut = FromType(type);
@@ -172,12 +159,11 @@ public sealed class ExecuteExtensionsTests
 	}
 
 	[Theory]
-	[InlineData(ExecuteType.Linux, 3, 4, 4)]
-	[InlineData(ExecuteType.Mac, 5, 6, 6)]
-	[InlineData(ExecuteType.NetFramework, 7, 8, 7)]
-	[InlineData(ExecuteType.Windows, 1, 2, 1)]
+	[InlineData(SimulationMode.Linux, 3, 4, 4)]
+	[InlineData(SimulationMode.MacOS, 5, 6, 6)]
+	[InlineData(SimulationMode.Windows, 1, 2, 1)]
 	public void OnWindows_WithValue_ShouldExecuteDependingOnOperatingSystem(
-		ExecuteType type, int value, int alternativeValue, int expectedValue)
+		SimulationMode type, int value, int alternativeValue, int expectedValue)
 	{
 		Execute sut = FromType(type);
 
@@ -187,16 +173,14 @@ public sealed class ExecuteExtensionsTests
 	}
 
 	[Theory]
-	[InlineData(ExecuteType.Linux, false, false)]
-	[InlineData(ExecuteType.Linux, true, false)]
-	[InlineData(ExecuteType.Mac, false, false)]
-	[InlineData(ExecuteType.Mac, true, false)]
-	[InlineData(ExecuteType.NetFramework, false, false)]
-	[InlineData(ExecuteType.NetFramework, true, true)]
-	[InlineData(ExecuteType.Windows, false, false)]
-	[InlineData(ExecuteType.Windows, true, true)]
+	[InlineData(SimulationMode.Linux, false, false)]
+	[InlineData(SimulationMode.Linux, true, false)]
+	[InlineData(SimulationMode.MacOS, false, false)]
+	[InlineData(SimulationMode.MacOS, true, false)]
+	[InlineData(SimulationMode.Windows, false, false)]
+	[InlineData(SimulationMode.Windows, true, true)]
 	public void OnWindowsIf_ShouldExecuteDependingOnOperatingSystem(
-		ExecuteType type, bool predicate, bool shouldExecute)
+		SimulationMode type, bool predicate, bool shouldExecute)
 	{
 		bool isExecuted = false;
 		Execute sut = FromType(type);
@@ -208,23 +192,8 @@ public sealed class ExecuteExtensionsTests
 
 	#region Helpers
 
-	private static Execute FromType(ExecuteType type)
-		=> type switch
-		{
-			ExecuteType.Windows => new Execute(new MockFileSystem(), SimulationMode.Windows),
-			ExecuteType.Linux => new Execute(new MockFileSystem(), SimulationMode.Linux),
-			ExecuteType.Mac => new Execute(new MockFileSystem(), SimulationMode.MacOS),
-			ExecuteType.NetFramework => new Execute(new MockFileSystem(), SimulationMode.Windows, true),
-			_ => throw new NotSupportedException()
-		};
+	private static Execute FromType(SimulationMode type)
+		=> new(new MockFileSystem(), type);
 
 	#endregion
-
-	public enum ExecuteType
-	{
-		Windows,
-		Linux,
-		Mac,
-		NetFramework
-	}
 }
