@@ -15,7 +15,7 @@ public abstract partial class DeleteTests<TFileSystem>
 	{
 		directoryName = directoryName.ToLowerInvariant();
 		FileSystem.Directory.CreateDirectory(directoryName.ToUpperInvariant());
-		string expectedPath = System.IO.Path.Combine(BasePath, directoryName);
+		string expectedPath = FileSystem.Path.Combine(BasePath, directoryName);
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Directory.Delete(directoryName);
@@ -51,7 +51,7 @@ public abstract partial class DeleteTests<TFileSystem>
 	public void Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string directoryName)
 	{
-		string expectedPath = System.IO.Path.Combine(BasePath, directoryName);
+		string expectedPath = FileSystem.Path.Combine(BasePath, directoryName);
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Directory.Delete(directoryName);
@@ -66,7 +66,7 @@ public abstract partial class DeleteTests<TFileSystem>
 	public void Delete_Recursive_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string directoryName)
 	{
-		string expectedPath = System.IO.Path.Combine(BasePath, directoryName);
+		string expectedPath = FileSystem.Path.Combine(BasePath, directoryName);
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Directory.Delete(directoryName, true);
@@ -248,7 +248,7 @@ public abstract partial class DeleteTests<TFileSystem>
 			// Path information only included in exception message on Windows and not in .NET Framework
 			messageContains: !Test.RunsOnWindows || Test.IsNetFramework
 				? null
-				: $"'{System.IO.Path.Combine(BasePath, path)}'");
+				: $"'{FileSystem.Path.Combine(BasePath, path)}'");
 		FileSystem.Should().HaveDirectory(path);
 	}
 }

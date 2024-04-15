@@ -53,7 +53,7 @@ public abstract partial class JoinTests<TFileSystem>
 	public void Join_3Paths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
 		string? missingPath, string path1, string path2)
 	{
-		string expectedPath = System.IO.Path.Join(path1, path2);
+		string expectedPath = $"{path1}{FileSystem.Path.DirectorySeparatorChar}{path2}";
 
 		string result1 = FileSystem.Path.Join(missingPath, path1, path2);
 		string result2 = FileSystem.Path.Join(path1, missingPath, path2);
@@ -101,7 +101,8 @@ public abstract partial class JoinTests<TFileSystem>
 	public void Join_4Paths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
 		string? missingPath, string path1, string path2, string path3)
 	{
-		string expectedPath = System.IO.Path.Join(path1, path2, path3);
+		string expectedPath =
+			$"{path1}{FileSystem.Path.DirectorySeparatorChar}{path2}{FileSystem.Path.DirectorySeparatorChar}{path3}";
 
 		string result1 = FileSystem.Path.Join(missingPath, path1, path2, path3);
 		string result2 = FileSystem.Path.Join(path1, missingPath, path2, path3);
@@ -154,7 +155,8 @@ public abstract partial class JoinTests<TFileSystem>
 	public void Join_ParamPaths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
 		string? missingPath, string path1, string path2, string path3, string path4)
 	{
-		string expectedPath = System.IO.Path.Join(path1, path2, path3, path4);
+		string expectedPath =
+			$"{path1}{FileSystem.Path.DirectorySeparatorChar}{path2}{FileSystem.Path.DirectorySeparatorChar}{path3}{FileSystem.Path.DirectorySeparatorChar}{path4}";
 
 		string result1 =
 			FileSystem.Path.Join(missingPath, path1, path2, path3, path4);

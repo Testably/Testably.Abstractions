@@ -41,7 +41,7 @@ internal static class PathHelper
 			return path ?? string.Empty;
 		}
 
-		return fileSystem.Path.GetFullPath(path);
+		return fileSystem.ExecuteOrDefault().Path.GetFullPath(path);
 	}
 
 	/// <summary>

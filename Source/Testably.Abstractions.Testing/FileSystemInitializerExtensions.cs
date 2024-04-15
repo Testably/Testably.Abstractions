@@ -131,7 +131,7 @@ public static class FileSystemInitializerExtensions
 		options?.Invoke(optionsValue);
 		if (optionsValue.InitializeTempDirectory)
 		{
-			fileSystem.Directory.CreateDirectory(Path.GetTempPath());
+			fileSystem.Directory.CreateDirectory(fileSystem.ExecuteOrDefault().Path.GetTempPath());
 		}
 
 		return new FileSystemInitializer<TFileSystem>(fileSystem, ".");
