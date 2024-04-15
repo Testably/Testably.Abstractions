@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 #if NET6_0_OR_GREATER
 #endif
@@ -15,7 +14,7 @@ public class MockFileSystemInitializationTests
 			"TODO: Enable again, once the Path implementation is sufficiently complete!");
 
 		MockFileSystem sut = new(o => o
-			.SimulatingOperatingSystem(OSPlatform.Linux));
+			.SimulatingOperatingSystem(SimulationMode.Linux));
 
 		sut.Execute.IsLinux.Should().BeTrue();
 		sut.Execute.IsMac.Should().BeFalse();
@@ -24,13 +23,13 @@ public class MockFileSystemInitializationTests
 	}
 
 	[SkippableFact]
-	public void MockFileSystem_WhenSimulatingOSX_ShouldBeMac()
+	public void MockFileSystem_WhenSimulatingMacOS_ShouldBeMac()
 	{
 		Skip.IfNot(Test.RunsOnMac,
 			"TODO: Enable again, once the Path implementation is sufficiently complete!");
 
 		MockFileSystem sut = new(o => o
-			.SimulatingOperatingSystem(OSPlatform.OSX));
+			.SimulatingOperatingSystem(SimulationMode.MacOS));
 
 		sut.Execute.IsLinux.Should().BeFalse();
 		sut.Execute.IsMac.Should().BeTrue();
@@ -45,7 +44,7 @@ public class MockFileSystemInitializationTests
 			"TODO: Enable again, once the Path implementation is sufficiently complete!");
 
 		MockFileSystem sut = new(o => o
-			.SimulatingOperatingSystem(OSPlatform.Windows));
+			.SimulatingOperatingSystem(SimulationMode.Windows));
 
 		sut.Execute.IsLinux.Should().BeFalse();
 		sut.Execute.IsMac.Should().BeFalse();
@@ -88,36 +87,17 @@ public class MockFileSystemInitializationTests
 		result.Should().Be(expected);
 	}
 
-#if !NET48
-	[Fact]
-	public void SimulatingOperatingSystem_FreeBSD_ShouldThrowNotSupportedException()
-	{
-		MockFileSystem.Initialization sut = new();
-
-		Exception? exception = Record.Exception(() =>
-		{
-			sut.SimulatingOperatingSystem(OSPlatform.FreeBSD);
-		});
-
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.Message.Should()
-			.Contain("Linux").And
-			.Contain("Windows").And
-			.Contain("OSX");
-	}
-#endif
-
 	[Theory]
 	[MemberData(nameof(ValidOperatingSystems))]
 	public void SimulatingOperatingSystem_ValidOSPlatform_ShouldSetOperatingSystem(
-		OSPlatform osPlatform)
+		SimulationMode simulationMode)
 	{
 		MockFileSystem.Initialization sut = new();
 
-		MockFileSystem.Initialization result = sut.SimulatingOperatingSystem(osPlatform);
+		MockFileSystem.Initialization result = sut.SimulatingOperatingSystem(simulationMode);
 
-		result.OperatingSystem.Should().Be(osPlatform);
-		sut.OperatingSystem.Should().Be(osPlatform);
+		result.SimulationMode.Should().Be(simulationMode);
+		sut.SimulationMode.Should().Be(simulationMode);
 	}
 
 	[Fact]
@@ -146,8 +126,8 @@ public class MockFileSystemInitializationTests
 
 	#region Helpers
 
-	public static TheoryData<OSPlatform> ValidOperatingSystems()
-		=> new(OSPlatform.Linux, OSPlatform.OSX, OSPlatform.Windows);
+	public static TheoryData<SimulationMode> ValidOperatingSystems()
+		=> new(SimulationMode.Linux, SimulationMode.MacOS, SimulationMode.Windows);
 
 	#endregion
 }

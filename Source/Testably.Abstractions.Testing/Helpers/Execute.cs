@@ -38,12 +38,12 @@ internal partial class Execute
 	/// </summary>
 	public StringComparison StringComparisonMode { get; }
 
-	internal Execute(MockFileSystem fileSystem, OSPlatform osPlatform, bool isNetFramework = false)
+	internal Execute(MockFileSystem fileSystem, SimulationMode simulationMode)
 	{
-		IsLinux = osPlatform == OSPlatform.Linux;
-		IsMac = osPlatform == OSPlatform.OSX;
-		IsWindows = osPlatform == OSPlatform.Windows;
-		IsNetFramework = isNetFramework && IsWindows;
+		IsLinux = simulationMode == SimulationMode.Linux;
+		IsMac = simulationMode == SimulationMode.MacOS;
+		IsWindows = simulationMode == SimulationMode.Windows;
+		IsNetFramework = false;
 		StringComparisonMode = IsLinux
 			? StringComparison.Ordinal
 			: StringComparison.OrdinalIgnoreCase;
