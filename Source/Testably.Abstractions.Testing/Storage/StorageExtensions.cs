@@ -28,13 +28,13 @@ internal static class StorageExtensions
 			StringBuilder givenPathPrefix = new();
 
 			while (searchPattern.StartsWith(
-				       ".." + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
+				       ".." + fileSystem.Execute.Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
 			       searchPattern.StartsWith(
-				       ".." + Path.AltDirectorySeparatorChar, StringComparison.Ordinal))
+				       ".." + fileSystem.Execute.Path.AltDirectorySeparatorChar, StringComparison.Ordinal))
 			{
 				fileSystem.Execute.OnNetFramework(
 					() => throw ExceptionFactory.SearchPatternCannotContainTwoDots());
-				parentDirectories.Push(Path.GetFileName(location.FullPath));
+				parentDirectories.Push(fileSystem.Execute.Path.GetFileName(location.FullPath));
 				location = location.GetParent() ??
 				           throw new UnauthorizedAccessException(
 					           $"The searchPattern '{searchPattern}' has too many '../' for path '{path}'");
@@ -47,10 +47,10 @@ internal static class StorageExtensions
 			if (parentDirectories.Any())
 			{
 				givenPathPrefix.Length--;
-				givenPath = Path.Combine(
+				givenPath = fileSystem.Execute.Path.Combine(
 					givenPath,
 					givenPathPrefix.ToString(),
-					Path.Combine(parentDirectories.ToArray()));
+					fileSystem.Execute.Path.Combine(parentDirectories.ToArray()));
 			}
 		}
 

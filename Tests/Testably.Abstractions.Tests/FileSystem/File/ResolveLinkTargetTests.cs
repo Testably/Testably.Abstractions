@@ -1,6 +1,5 @@
 #if FEATURE_FILESYSTEM_LINK
 using System.Globalization;
-using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
@@ -100,7 +99,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 		{
 			string newPath = $"{path}-{i}";
 			FileSystem.File.CreateSymbolicLink(newPath,
-				System.IO.Path.Combine(BasePath, previousPath));
+				FileSystem.Path.Combine(BasePath, previousPath));
 			previousPath = newPath;
 		}
 
@@ -122,7 +121,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 		{
 			string newPath = $"{path}-{i}";
 			FileSystem.File.CreateSymbolicLink(newPath,
-				System.IO.Path.Combine(BasePath, previousPath));
+				FileSystem.Path.Combine(BasePath, previousPath));
 			previousPath = newPath;
 		}
 
@@ -131,7 +130,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 			_ = FileSystem.File.ResolveLinkTarget(previousPath, true);
 		});
 
-		exception.Should().BeException<IOException>($"'{previousPath}'",
+		exception.Should().BeException<System.IO.IOException>($"'{previousPath}'",
 			hResult: Test.RunsOnWindows ? -2147022975 : -2146232800);
 	}
 
@@ -142,9 +141,9 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(pathToFinalTarget, null);
 		FileSystem.File.CreateSymbolicLink(pathToMissingFile,
-			System.IO.Path.Combine(BasePath, pathToFinalTarget));
+			FileSystem.Path.Combine(BasePath, pathToFinalTarget));
 		FileSystem.File.CreateSymbolicLink(path,
-			System.IO.Path.Combine(BasePath, pathToMissingFile));
+			FileSystem.Path.Combine(BasePath, pathToMissingFile));
 		FileSystem.File.Delete(pathToMissingFile);
 
 		IFileSystemInfo? target =
@@ -163,11 +162,11 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(pathToFinalTarget, null);
 		FileSystem.File.CreateSymbolicLink(pathToMissingFile,
-			System.IO.Path.Combine(BasePath, pathToFinalTarget));
+			FileSystem.Path.Combine(BasePath, pathToFinalTarget));
 		FileSystem.File.CreateSymbolicLink(pathToIntermediateTarget,
-			System.IO.Path.Combine(BasePath, pathToMissingFile));
+			FileSystem.Path.Combine(BasePath, pathToMissingFile));
 		FileSystem.File.CreateSymbolicLink(path,
-			System.IO.Path.Combine(BasePath, pathToIntermediateTarget));
+			FileSystem.Path.Combine(BasePath, pathToIntermediateTarget));
 		FileSystem.File.Delete(pathToMissingFile);
 
 		IFileSystemInfo? target =

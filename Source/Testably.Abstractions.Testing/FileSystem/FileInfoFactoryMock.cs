@@ -49,6 +49,12 @@ internal sealed class FileInfoFactoryMock : IFileInfoFactory
 		using IDisposable registration = RegisterMethod(nameof(Wrap),
 			fileInfo);
 
+		if (_fileSystem.SimulationMode != SimulationMode.Native)
+		{
+			throw new NotSupportedException(
+				"Wrapping a FileInfo in a simulated file system is not supported!");
+		}
+
 		return FileInfoMock.New(
 			_fileSystem.Storage.GetLocation(
 				fileInfo?.FullName,

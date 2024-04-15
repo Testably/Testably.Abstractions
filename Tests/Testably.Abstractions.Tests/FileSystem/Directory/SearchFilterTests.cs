@@ -29,7 +29,7 @@ public abstract partial class SearchFilterTests<TFileSystem>
 			.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
 
 		result.Length.Should().Be(expectedMatchingFiles);
-		result.Should().Contain(System.IO.Path.Combine(".", "..", "xyz", "a.test"));
+		result.Should().Contain(FileSystem.Path.Combine(".", "..", "xyz", "a.test"));
 	}
 
 	[SkippableTheory]
@@ -54,12 +54,12 @@ public abstract partial class SearchFilterTests<TFileSystem>
 		result.Length.Should().Be(expectedMatchingFiles);
 		if (!searchPattern.EndsWith("a*", StringComparison.Ordinal))
 		{
-			result.Should().Contain(System.IO.Path.Combine(".", "../..", "bar"));
-			result.Should().Contain(System.IO.Path.Combine(".", "../..", "bar", "xyz"));
+			result.Should().Contain(FileSystem.Path.Combine(".", "../..", "bar"));
+			result.Should().Contain(FileSystem.Path.Combine(".", "../..", "bar", "xyz"));
 		}
 
 		result.Should()
-			.Contain(System.IO.Path.Combine(".", "../..", "bar", "xyz", "a.test"));
+			.Contain(FileSystem.Path.Combine(".", "../..", "bar", "xyz", "a.test"));
 	}
 
 	[SkippableTheory]
@@ -84,16 +84,16 @@ public abstract partial class SearchFilterTests<TFileSystem>
 		result.Length.Should().Be(expectedMatchingFiles);
 		if (!searchPattern.EndsWith("a*", StringComparison.Ordinal))
 		{
-			result.Should().Contain(System.IO.Path.Combine(".", "../../..", "foo"));
+			result.Should().Contain(FileSystem.Path.Combine(".", "../../..", "foo"));
 			result.Should()
-				.Contain(System.IO.Path.Combine(".", "../../..", "foo", "bar"));
+				.Contain(FileSystem.Path.Combine(".", "../../..", "foo", "bar"));
 			result.Should()
-				.Contain(System.IO.Path.Combine(".", "../../..", "foo", "bar", "xyz"));
+				.Contain(FileSystem.Path.Combine(".", "../../..", "foo", "bar", "xyz"));
 		}
 
 		result.Should()
 			.Contain(
-				System.IO.Path.Combine(".", "../../..", "foo", "bar", "xyz", "a.test"));
+				FileSystem.Path.Combine(".", "../../..", "foo", "bar", "xyz", "a.test"));
 	}
 
 	[SkippableFact]
@@ -109,8 +109,8 @@ public abstract partial class SearchFilterTests<TFileSystem>
 			.GetFileSystemEntries(".", "a*.t*.", SearchOption.AllDirectories);
 
 		result.Length.Should().Be(2);
-		result.Should().Contain(System.IO.Path.Combine(".", "a.test"));
-		result.Should().Contain(System.IO.Path.Combine(".", "another.test"));
+		result.Should().Contain(FileSystem.Path.Combine(".", "a.test"));
+		result.Should().Contain(FileSystem.Path.Combine(".", "another.test"));
 	}
 
 	[SkippableFact]
@@ -126,7 +126,7 @@ public abstract partial class SearchFilterTests<TFileSystem>
 			.GetFileSystemEntries(".", "a-??s*", SearchOption.AllDirectories);
 
 		result.Length.Should().Be(1);
-		result[0].Should().Be(System.IO.Path.Combine(".", "a-test"));
+		result[0].Should().Be(FileSystem.Path.Combine(".", "a-test"));
 	}
 
 	[SkippableFact]
@@ -181,7 +181,7 @@ public abstract partial class SearchFilterTests<TFileSystem>
 			.GetFileSystemEntries(".", searchPattern, SearchOption.AllDirectories);
 
 		result.Length.Should().Be(expectedMatchingFiles);
-		result.Should().Contain(System.IO.Path.Combine(".", "..", path, "a.test"));
+		result.Should().Contain(FileSystem.Path.Combine(".", "..", path, "a.test"));
 	}
 
 	[SkippableTheory]
@@ -240,7 +240,7 @@ public abstract partial class SearchFilterTests<TFileSystem>
 		else
 		{
 			result.Length.Should().Be(1);
-			result.Should().Contain(System.IO.Path.Combine(".", "test.."));
+			result.Should().Contain(FileSystem.Path.Combine(".", "test.."));
 		}
 	}
 
@@ -290,12 +290,12 @@ public abstract partial class SearchFilterTests<TFileSystem>
 		if (Test.RunsOnWindows)
 		{
 			result.Length.Should().Be(1);
-			result.Should().Contain(System.IO.Path.Combine(".", "test"));
+			result.Should().Contain(FileSystem.Path.Combine(".", "test"));
 		}
 		else
 		{
 			result.Length.Should().Be(3);
-			result.Should().Contain(System.IO.Path.Combine(".", "test."));
+			result.Should().Contain(FileSystem.Path.Combine(".", "test."));
 		}
 	}
 

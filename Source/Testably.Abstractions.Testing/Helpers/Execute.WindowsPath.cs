@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -63,6 +64,13 @@ internal partial class Execute
 			string fullPath =
 				NormalizeDirectorySeparators(RemoveRelativeSegments(candidate,
 					GetRootLength(candidate)));
+			fullPath = fullPath.TrimEnd('.');
+
+			if (fullPath.Contains('\0', StringComparison.Ordinal))
+			{
+				throw ExceptionFactory.NullCharacterInPath(nameof(path));
+			}
+
 			if (fullPath.Length > 2 && fullPath[1] == ':' && fullPath[2] != DirectorySeparatorChar)
 			{
 				return fullPath.Substring(0, 2) + DirectorySeparatorChar + fullPath.Substring(2);

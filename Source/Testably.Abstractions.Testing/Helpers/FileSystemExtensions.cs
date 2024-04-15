@@ -67,7 +67,7 @@ internal static class FileSystemExtensions
 		{
 			fullFilePath = fullFilePath.Substring(currentDirectory.Length);
 		}
-		else if (fullFilePath.StartsWith(currentDirectory + Path.DirectorySeparatorChar,
+		else if (fullFilePath.StartsWith(currentDirectory + fileSystem.Execute.Path.DirectorySeparatorChar,
 			fileSystem.Execute.StringComparisonMode))
 		{
 			fullFilePath = fullFilePath.Substring(currentDirectory.Length + 1);
@@ -76,11 +76,11 @@ internal static class FileSystemExtensions
 		{
 			string? parentName = currentDirectory;
 			while (parentName != null &&
-			       !fullFilePath.StartsWith(parentName + Path.DirectorySeparatorChar,
+			       !fullFilePath.StartsWith(parentName + fileSystem.Execute.Path.DirectorySeparatorChar,
 				       fileSystem.Execute.StringComparisonMode))
 			{
-				parentName = Path.GetDirectoryName(parentName);
-				int lastIndex = givenPath.LastIndexOf(Path.DirectorySeparatorChar);
+				parentName = fileSystem.Execute.Path.GetDirectoryName(parentName);
+				int lastIndex = givenPath.LastIndexOf(fileSystem.Execute.Path.DirectorySeparatorChar);
 				if (lastIndex >= 0)
 				{
 					givenPath = givenPath.Substring(0, lastIndex);

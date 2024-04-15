@@ -131,7 +131,7 @@ public abstract partial class CreateTests<TFileSystem>
 		result.Name.Should().Be(expectedName.TrimEnd(
 			FileSystem.Path.DirectorySeparatorChar,
 			FileSystem.Path.AltDirectorySeparatorChar));
-		result.FullName.Should().Be(System.IO.Path.Combine(BasePath, expectedName
+		result.FullName.Should().Be(FileSystem.Path.Combine(BasePath, expectedName
 			.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 				FileSystem.Path.DirectorySeparatorChar)));
 		FileSystem.Should().HaveDirectory(nameWithSuffix);

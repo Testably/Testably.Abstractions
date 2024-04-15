@@ -155,7 +155,7 @@ internal partial class Execute
 					path = path.Substring(0, path.Length - 1);
 				}
 
-				return path;
+				return NormalizeDirectorySeparators(path);
 			}
 
 			if (paths == null)

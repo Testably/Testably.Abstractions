@@ -121,6 +121,9 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableFact]
 	public void Wrap_Null_ShouldReturnNull()
 	{
+		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
+		        mockFileSystem.SimulationMode != SimulationMode.Native);
+
 		IDriveInfo? result = FileSystem.DriveInfo.Wrap(null);
 
 		result.Should().BeNull();
@@ -129,11 +132,31 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableFact]
 	public void Wrap_ShouldReturnDriveInfoWithSameName()
 	{
+		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
+		        mockFileSystem.SimulationMode != SimulationMode.Native);
+
 		System.IO.DriveInfo driveInfo = System.IO.DriveInfo.GetDrives().First();
 
 		IDriveInfo result = FileSystem.DriveInfo.Wrap(driveInfo);
 
 		result.Name.Should().Be(driveInfo.Name);
+	}
+
+	[SkippableFact]
+	public void Wrap_WithSimulatedMockFileSystem_ShouldThrowNotSupportedException()
+	{
+		Skip.IfNot(FileSystem is MockFileSystem mockFileSystem &&
+		        mockFileSystem.SimulationMode != SimulationMode.Native);
+
+		System.IO.DriveInfo driveInfo = System.IO.DriveInfo.GetDrives().First();
+
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = FileSystem.DriveInfo.Wrap(driveInfo);
+		});
+
+		exception.Should().BeOfType<NotSupportedException>().Which
+			.Message.Should().Contain("Wrapping a DriveInfo in a simulated file system is not supported");
 	}
 
 	#region Helpers

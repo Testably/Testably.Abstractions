@@ -1,31 +1,13 @@
-﻿using System.Runtime.InteropServices;
-using Testably.Abstractions.Testing.Helpers;
+﻿using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.Tests.Helpers;
 
 public sealed class ExecuteTests
 {
-#if !NET48
-	[Fact]
-	public void Constructor_ForFreeBSD_ShouldThrowNotSupportedException()
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			_ = new Execute(new MockFileSystem(), OSPlatform.FreeBSD);
-		});
-
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.Message.Should()
-			.Contain("Linux").And
-			.Contain("Windows").And
-			.Contain("OSX");
-	}
-#endif
-
 	[Fact]
 	public void Constructor_ForLinux_ShouldInitializeAccordingly()
 	{
-		Execute sut = new(new MockFileSystem(), OSPlatform.Linux);
+		Execute sut = new(new MockFileSystem(), SimulationMode.Linux);
 
 		sut.IsLinux.Should().BeTrue();
 		sut.IsMac.Should().BeFalse();
@@ -37,7 +19,7 @@ public sealed class ExecuteTests
 	[Fact]
 	public void Constructor_ForNetFramework_ShouldInitializeAccordingly()
 	{
-		Execute sut = new(new MockFileSystem(), OSPlatform.Windows, true);
+		Execute sut = new(new MockFileSystem(), SimulationMode.Windows, true);
 
 		sut.IsLinux.Should().BeFalse();
 		sut.IsMac.Should().BeFalse();
@@ -49,7 +31,7 @@ public sealed class ExecuteTests
 	[Fact]
 	public void Constructor_ForNetFramework_WithLinux_ShouldInitializeLinux()
 	{
-		Execute sut = new(new MockFileSystem(), OSPlatform.Linux, true);
+		Execute sut = new(new MockFileSystem(), SimulationMode.Linux, true);
 
 		sut.IsLinux.Should().BeTrue();
 		sut.IsMac.Should().BeFalse();
@@ -61,7 +43,7 @@ public sealed class ExecuteTests
 	[Fact]
 	public void Constructor_ForNetFramework_WithOSX_ShouldInitializeMac()
 	{
-		Execute sut = new(new MockFileSystem(), OSPlatform.OSX, true);
+		Execute sut = new(new MockFileSystem(), SimulationMode.MacOS, true);
 
 		sut.IsLinux.Should().BeFalse();
 		sut.IsMac.Should().BeTrue();
@@ -73,7 +55,7 @@ public sealed class ExecuteTests
 	[Fact]
 	public void Constructor_ForOSX_ShouldInitializeAccordingly()
 	{
-		Execute sut = new(new MockFileSystem(), OSPlatform.OSX);
+		Execute sut = new(new MockFileSystem(), SimulationMode.MacOS);
 
 		sut.IsLinux.Should().BeFalse();
 		sut.IsMac.Should().BeTrue();
@@ -85,7 +67,7 @@ public sealed class ExecuteTests
 	[Fact]
 	public void Constructor_ForWindows_ShouldInitializeAccordingly()
 	{
-		Execute sut = new(new MockFileSystem(), OSPlatform.Windows);
+		Execute sut = new(new MockFileSystem(), SimulationMode.Windows);
 
 		sut.IsLinux.Should().BeFalse();
 		sut.IsMac.Should().BeFalse();

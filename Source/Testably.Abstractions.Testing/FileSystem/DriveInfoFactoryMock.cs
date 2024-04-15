@@ -57,6 +57,12 @@ internal sealed class DriveInfoFactoryMock : IDriveInfoFactory
 		using IDisposable registration = RegisterMethod(nameof(Wrap),
 			driveInfo);
 
+		if (_fileSystem.SimulationMode != SimulationMode.Native)
+		{
+			throw new NotSupportedException(
+				"Wrapping a DriveInfo in a simulated file system is not supported!");
+		}
+
 		if (driveInfo?.Name == null)
 		{
 			return null;

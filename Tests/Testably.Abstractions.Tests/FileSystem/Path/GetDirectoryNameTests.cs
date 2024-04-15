@@ -7,7 +7,9 @@ public abstract partial class GetDirectoryNameTests<TFileSystem>
 {
 	[SkippableTheory]
 	[InlineData((string?)null)]
+#if !NETFRAMEWORK
 	[InlineData("")]
+#endif
 	public void GetDirectoryName_NullOrEmpty_ShouldReturnNull(string? path)
 	{
 		string? result = FileSystem.Path.GetDirectoryName(path);
@@ -15,6 +17,25 @@ public abstract partial class GetDirectoryNameTests<TFileSystem>
 		result.Should().BeNull();
 	}
 
+#if NETFRAMEWORK
+	[SkippableTheory]
+	[InlineData("")]
+	[InlineData(" ")]
+	[InlineData("    ")]
+	[InlineData("\t")]
+	[InlineData("\n")]
+	public void GetDirectoryName_EmptyOrWhiteSpace_ShouldThrowArgumentException(string path)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = FileSystem.Path.GetDirectoryName(path);
+		});
+
+		exception.Should().BeOfType<ArgumentException>();
+	}
+#endif
+
+#if !NETFRAMEWORK
 	[SkippableTheory]
 	[InlineData(" ")]
 	[InlineData("    ")]
@@ -31,7 +52,9 @@ public abstract partial class GetDirectoryNameTests<TFileSystem>
 			result.Should().Be("");
 		}
 	}
+#endif
 
+#if !NETFRAMEWORK
 	[SkippableTheory]
 	[InlineData("\t")]
 	[InlineData("\n")]
@@ -41,6 +64,7 @@ public abstract partial class GetDirectoryNameTests<TFileSystem>
 
 		result.Should().Be("");
 	}
+#endif
 
 	[SkippableTheory]
 	[AutoData]

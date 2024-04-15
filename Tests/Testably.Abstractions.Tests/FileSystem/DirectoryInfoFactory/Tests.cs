@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfoFactory;
 
 // ReSharper disable once PartialTypeWithSinglePart
@@ -15,10 +17,15 @@ public abstract partial class Tests<TFileSystem>
 #else
 		string expectedMessage = "Illegal characters in path.";
 #endif
-		Exception? exception =
-			Record.Exception(() => FileSystem.DirectoryInfo.New(path));
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = FileSystem.DirectoryInfo.New(path);
+		});
 
 		exception.Should().BeException<ArgumentException>(expectedMessage,
+#if !NETFRAMEWORK
+			paramName: "path",
+#endif
 			hResult: -2147024809);
 	}
 
@@ -45,6 +52,9 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableFact]
 	public void Wrap_Null_ShouldReturnNull()
 	{
+		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
+		        mockFileSystem.SimulationMode != SimulationMode.Native);
+
 		IDirectoryInfo? result = FileSystem.DirectoryInfo.Wrap(null);
 
 		result.Should().BeNull();
@@ -54,11 +64,32 @@ public abstract partial class Tests<TFileSystem>
 	[AutoData]
 	public void Wrap_ShouldWrapFromDirectoryInfo(string path)
 	{
+		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
+		        mockFileSystem.SimulationMode != SimulationMode.Native);
+
 		System.IO.DirectoryInfo directoryInfo = new("S:\\" + path);
 
 		IDirectoryInfo result = FileSystem.DirectoryInfo.Wrap(directoryInfo);
 
 		result.FullName.Should().Be(directoryInfo.FullName);
 		result.Exists.Should().Be(directoryInfo.Exists);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void Wrap_WithSimulatedMockFileSystem_ShouldThrowNotSupportedException(string path)
+	{
+		Skip.IfNot(FileSystem is MockFileSystem mockFileSystem &&
+		           mockFileSystem.SimulationMode != SimulationMode.Native);
+
+		System.IO.DirectoryInfo directoryInfo = new("S:\\" + path);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = FileSystem.DirectoryInfo.Wrap(directoryInfo);
+		});
+
+		exception.Should().BeOfType<NotSupportedException>().Which
+			.Message.Should().Contain("Wrapping a DirectoryInfo in a simulated file system is not supported");
 	}
 }

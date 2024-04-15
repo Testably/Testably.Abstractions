@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace Testably.Abstractions.Testing.Helpers;
 
@@ -36,6 +37,11 @@ internal partial class Execute
 			string result = collapsedString.Length == 0
 				? $"{DirectorySeparatorChar}"
 				: collapsedString;
+
+			if (result.Contains('\0', StringComparison.Ordinal))
+			{
+				throw ExceptionFactory.NullCharacterInPath(nameof(path));
+			}
 
 			return result;
 		}

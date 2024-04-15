@@ -91,6 +91,13 @@ internal static class ExceptionFactory
 	internal static ArgumentException HandleIsInvalid(string? paramName = "handle")
 		=> new("Invalid handle.", paramName);
 
+	internal static ArgumentException NullCharacterInPath(string paramName)
+#if NET8_0_OR_GREATER
+		=> new("Null character in path.", paramName);
+#else
+		=> new ("Illegal characters in path.", paramName);
+#endif
+
 	internal static InternalBufferOverflowException InternalBufferOverflowException(
 		int internalBufferSize, int messages)
 		=> new(

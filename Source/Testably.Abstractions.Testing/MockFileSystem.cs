@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
 using Testably.Abstractions.Testing.Statistics;
@@ -29,6 +28,12 @@ public sealed class MockFileSystem : IFileSystem
 	///     The used random system.
 	/// </summary>
 	public IRandomSystem RandomSystem { get; }
+
+	/// <summary>
+	/// The simulation mode for the underlying operating system.
+	/// </summary>
+	/// <remarks>Can be changed by setting <see cref="Initialization.SimulatingOperatingSystem(SimulationMode)"/> in the constructor.</remarks>
+	public SimulationMode SimulationMode { get; }
 
 	/// <summary>
 	///     Contains statistical information about the file system usage.
@@ -93,9 +98,10 @@ public sealed class MockFileSystem : IFileSystem
 		Initialization initialization = new();
 		initializationCallback(initialization);
 
-		Execute = initialization.OperatingSystem == null
+		Execute = initialization.SimulationMode == SimulationMode.Native
 			? new Execute(this)
-			: new Execute(this, initialization.OperatingSystem.Value);
+			: new Execute(this, initialization.SimulationMode);
+		SimulationMode = initialization.SimulationMode;
 		StatisticsRegistration = new FileSystemStatistics(this);
 		using IDisposable release = StatisticsRegistration.Ignore();
 		RandomSystem = new MockRandomSystem();
@@ -225,28 +231,14 @@ public sealed class MockFileSystem : IFileSystem
 		/// <summary>
 		///     The simulated operating system.
 		/// </summary>
-		internal OSPlatform? OperatingSystem { get; private set; }
+		internal SimulationMode SimulationMode { get; private set; } = SimulationMode.Native;
 
 		/// <summary>
 		///     Specify the operating system that should be simulated.
 		/// </summary>
-		/// <remarks>
-		///     Supported values are<br />
-		///     - <see cref="OSPlatform.Linux" /><br />
-		///     - <see cref="OSPlatform.OSX" /><br />
-		///     - <see cref="OSPlatform.Windows" />
-		/// </remarks>
-		internal Initialization SimulatingOperatingSystem(OSPlatform operatingSystem)
+		internal Initialization SimulatingOperatingSystem(SimulationMode simulationMode)
 		{
-			if (operatingSystem != OSPlatform.Linux &&
-			    operatingSystem != OSPlatform.OSX &&
-			    operatingSystem != OSPlatform.Windows)
-			{
-				throw new NotSupportedException(
-					"Only Linux, OSX and Windows are supported operating systems.");
-			}
-
-			OperatingSystem = operatingSystem;
+			SimulationMode = simulationMode;
 			return this;
 		}
 
