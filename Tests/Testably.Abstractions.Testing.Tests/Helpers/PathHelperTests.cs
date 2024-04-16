@@ -121,26 +121,27 @@ public class PathHelperTests
 	}
 
 	[SkippableTheory]
-	[AutoData]
+	[InlineData('|')]
+	[InlineData((char)1)]
+	[InlineData((char)31)]
 	public void ThrowCommonExceptionsIfPathIsInvalid_WithInvalidCharacters(
-		char[] invalidChars)
+		char invalidChar)
 	{
-		// TODO: Enable this test again when the Execute method in MockFileSystem is writable
-		Skip.If(true, "Check how to update this test");
-		_ = new FileSystemMockForPath(invalidChars);
-		string path = invalidChars[0] + "foo";
+		MockFileSystem fileSystem = new(i => i
+			.SimulatingOperatingSystem(SimulationMode.Windows));
+		string path = invalidChar + "path";
 
-		Exception exception = Record.Exception(() =>
+		Exception? exception = Record.Exception(() =>
 		{
-			path.EnsureValidFormat(null!);
+			path.EnsureValidFormat(fileSystem);
 		});
 
 #if NETFRAMEWORK
 		exception.Should().BeOfType<ArgumentException>()
-			.Which.Message.Should().Contain($"'{path}'");
+			.Which.Message.Should().Contain("path");
 #else
 		exception.Should().BeOfType<IOException>()
-			.Which.Message.Should().Contain($"'{path}'");
+			.Which.Message.Should().Contain(path);
 #endif
 	}
 
@@ -158,241 +159,5 @@ public class PathHelperTests
 
 		exception.Should().BeOfType<ArgumentException>()
 			.Which.Message.Should().Contain($"'{path}'");
-	}
-
-	private sealed class FileSystemMockForPath(char[] invalidChars) : IFileSystem
-	{
-		#region IFileSystem Members
-
-		public IDirectory Directory
-			=> throw new NotSupportedException();
-
-		public IDirectoryInfoFactory DirectoryInfo
-			=> throw new NotSupportedException();
-
-		public IDriveInfoFactory DriveInfo
-			=> throw new NotSupportedException();
-
-		public IFile File
-			=> throw new NotSupportedException();
-
-		public IFileInfoFactory FileInfo
-			=> throw new NotSupportedException();
-
-		public IFileStreamFactory FileStream
-			=> throw new NotSupportedException();
-
-		public IFileSystemWatcherFactory FileSystemWatcher
-			=> throw new NotSupportedException();
-
-		public IPath Path { get; } = new PathMockWithInvalidChars(invalidChars);
-
-		#endregion
-
-		private sealed class PathMockWithInvalidChars(char[] invalidChars) : IPath
-		{
-			#region IPath Members
-
-			public char AltDirectorySeparatorChar
-				=> throw new NotSupportedException();
-
-			public char DirectorySeparatorChar
-				=> throw new NotSupportedException();
-
-			public IFileSystem FileSystem
-				=> throw new NotSupportedException();
-
-			public char PathSeparator
-				=> throw new NotSupportedException();
-
-			public char VolumeSeparatorChar
-				=> throw new NotSupportedException();
-
-			public string ChangeExtension(string? path, string? extension)
-				=> throw new NotSupportedException();
-
-			public string Combine(string path1, string path2)
-				=> throw new NotSupportedException();
-
-			public string Combine(string path1, string path2, string path3)
-				=> throw new NotSupportedException();
-
-			public string Combine(string path1, string path2, string path3, string path4)
-				=> throw new NotSupportedException();
-
-			public string Combine(params string[] paths)
-				=> throw new NotSupportedException();
-
-#if FEATURE_PATH_ADVANCED
-			public bool EndsInDirectorySeparator(ReadOnlySpan<char> path)
-				=> throw new NotSupportedException();
-#endif
-
-#if FEATURE_PATH_ADVANCED
-			public bool EndsInDirectorySeparator(string path)
-				=> throw new NotSupportedException();
-#endif
-
-#if FEATURE_FILESYSTEM_NET7
-			public bool Exists(string? path)
-				=> throw new NotSupportedException();
-#endif
-
-#if FEATURE_SPAN
-			public ReadOnlySpan<char> GetDirectoryName(ReadOnlySpan<char> path)
-				=> throw new NotSupportedException();
-#endif
-
-			public string GetDirectoryName(string? path)
-				=> throw new NotSupportedException();
-
-#if FEATURE_SPAN
-			public ReadOnlySpan<char> GetExtension(ReadOnlySpan<char> path)
-				=> throw new NotSupportedException();
-#endif
-
-			public string GetExtension(string? path)
-				=> throw new NotSupportedException();
-
-#if FEATURE_SPAN
-			public ReadOnlySpan<char> GetFileName(ReadOnlySpan<char> path)
-				=> throw new NotSupportedException();
-#endif
-
-			public string GetFileName(string? path)
-				=> throw new NotSupportedException();
-
-#if FEATURE_SPAN
-			public ReadOnlySpan<char> GetFileNameWithoutExtension(ReadOnlySpan<char> path)
-				=> throw new NotSupportedException();
-#endif
-
-			public string GetFileNameWithoutExtension(string? path)
-				=> throw new NotSupportedException();
-
-			public string GetFullPath(string path)
-				=> path;
-
-#if FEATURE_PATH_RELATIVE
-			public string GetFullPath(string path, string basePath)
-				=> throw new NotSupportedException();
-#endif
-
-			public char[] GetInvalidFileNameChars()
-				=> throw new NotSupportedException();
-
-			public char[] GetInvalidPathChars()
-				=> invalidChars;
-
-#if FEATURE_SPAN
-			public ReadOnlySpan<char> GetPathRoot(ReadOnlySpan<char> path)
-				=> throw new NotSupportedException();
-#endif
-
-			public string GetPathRoot(string? path)
-				=> throw new NotSupportedException();
-
-			public string GetRandomFileName()
-				=> throw new NotSupportedException();
-
-#if FEATURE_PATH_RELATIVE
-			public string GetRelativePath(string relativeTo, string path)
-				=> throw new NotSupportedException();
-#endif
-
-			public string GetTempFileName()
-				=> throw new NotSupportedException();
-
-			public string GetTempPath()
-				=> throw new NotSupportedException();
-
-#if FEATURE_SPAN
-			public bool HasExtension(ReadOnlySpan<char> path)
-				=> throw new NotSupportedException();
-#endif
-
-			public bool HasExtension(string? path)
-				=> throw new NotSupportedException();
-
-#if FEATURE_SPAN
-			public bool IsPathFullyQualified(ReadOnlySpan<char> path)
-				=> throw new NotSupportedException();
-#endif
-
-#if FEATURE_PATH_RELATIVE
-			public bool IsPathFullyQualified(string path)
-				=> throw new NotSupportedException();
-#endif
-
-#if FEATURE_SPAN
-			public bool IsPathRooted(ReadOnlySpan<char> path)
-				=> throw new NotSupportedException();
-#endif
-
-			public bool IsPathRooted(string? path)
-				=> throw new NotSupportedException();
-
-#if FEATURE_PATH_JOIN
-			public string Join(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2)
-				=> throw new NotSupportedException();
-#endif
-
-#if FEATURE_PATH_JOIN
-			public string Join(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2,
-				ReadOnlySpan<char> path3)
-				=> throw new NotSupportedException();
-#endif
-
-#if FEATURE_PATH_ADVANCED
-			public string Join(string? path1, string? path2)
-				=> throw new NotSupportedException();
-#endif
-
-#if FEATURE_PATH_ADVANCED
-			public string Join(string? path1, string? path2, string? path3)
-				=> throw new NotSupportedException();
-#endif
-
-#if FEATURE_PATH_ADVANCED
-			public string Join(params string?[] paths)
-				=> throw new NotSupportedException();
-#endif
-
-#if FEATURE_PATH_ADVANCED
-			public string Join(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2,
-				ReadOnlySpan<char> path3, ReadOnlySpan<char> path4)
-				=> throw new NotSupportedException();
-#endif
-
-#if FEATURE_PATH_ADVANCED
-			public string Join(string? path1, string? path2, string? path3, string? path4)
-				=> throw new NotSupportedException();
-#endif
-
-#if FEATURE_PATH_ADVANCED
-			public ReadOnlySpan<char> TrimEndingDirectorySeparator(ReadOnlySpan<char> path)
-				=> throw new NotSupportedException();
-#endif
-
-#if FEATURE_PATH_ADVANCED
-			public string TrimEndingDirectorySeparator(string path)
-				=> throw new NotSupportedException();
-#endif
-
-#if FEATURE_PATH_JOIN
-			public bool TryJoin(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2,
-				Span<char> destination, out int charsWritten)
-				=> throw new NotSupportedException();
-#endif
-
-#if FEATURE_PATH_JOIN
-			public bool TryJoin(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2,
-				ReadOnlySpan<char> path3, Span<char> destination,
-				out int charsWritten)
-				=> throw new NotSupportedException();
-#endif
-
-			#endregion
-		}
 	}
 }
