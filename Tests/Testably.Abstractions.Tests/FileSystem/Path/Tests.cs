@@ -102,6 +102,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[InlineData("D:")]
+	[InlineData("D:\\")]
 	public void GetPathRoot_RootedDrive_ShouldReturnDriveOnWindows(string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows);

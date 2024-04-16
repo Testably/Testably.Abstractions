@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions.Testing.Helpers;
+﻿using System;
+
+namespace Testably.Abstractions.Testing.Helpers;
 
 internal partial class Execute
 {
@@ -19,7 +21,7 @@ internal partial class Execute
 		/// <inheritdoc cref="IPath.GetInvalidFileNameChars()" />
 		public override char[] GetInvalidFileNameChars() =>
 		[
-			'|', '\0',
+			'\"', '<', '>', '|', '\0',
 			(char)1, (char)2, (char)3, (char)4, (char)5, (char)6, (char)7, (char)8, (char)9,
 			(char)10, (char)11, (char)12, (char)13, (char)14, (char)15, (char)16, (char)17,
 			(char)18, (char)19, (char)20, (char)21, (char)22, (char)23, (char)24, (char)25,
@@ -45,7 +47,7 @@ internal partial class Execute
 			}
 
 			return IsPathRooted(path)
-				? path.Substring(0,3)
+				? path.Substring(0, Math.Min(3, path.Length))
 				: string.Empty;
 		}
 

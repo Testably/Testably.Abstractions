@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Linq;
+using System.Text;
 using Testably.Abstractions.Tests.SourceGenerator.Model;
 // ReSharper disable StringLiteralTypo
 
@@ -12,7 +14,9 @@ internal class FileSystemClassGenerator : ClassGeneratorBase
 
 	/// <inheritdoc cref="ClassGeneratorBase.GenerateSource(StringBuilder, ClassModel)" />
 	protected override void GenerateSource(StringBuilder sourceBuilder, ClassModel @class)
-		=> sourceBuilder.Append(@$"
+	{
+		sourceBuilder.Append(@$"
+using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Initializer;
 using Testably.Abstractions.TestHelpers;
 using Testably.Abstractions.TestHelpers.Settings;
@@ -130,4 +134,104 @@ namespace {@class.Namespace}.{@class.Name}
 #endif
 	}}
 }}");
+		if (IncludeSimulatedTests(@class))
+		{
+			sourceBuilder.Append(@$"
+#if !NETFRAMEWORK
+namespace {@class.Namespace}.{@class.Name}
+{{
+	// ReSharper disable once UnusedMember.Global
+	public sealed class LinuxFileSystemTests : {@class.Name}<MockFileSystem>
+	{{
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
+		public override string BasePath => ""/"";
+		public LinuxFileSystemTests() : this(new MockFileSystem(i =>
+			i.SimulatingOperatingSystem(SimulationMode.Linux)))
+		{{
+		}}
+		private LinuxFileSystemTests(MockFileSystem mockFileSystem) : base(
+			new Test(OSPlatform.Linux),
+			mockFileSystem,
+			mockFileSystem.TimeSystem)
+		{{
+		}}
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
+		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+		{{
+			// Brittle tests are never skipped against the mock file system!
+		}}
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
+		public override void SkipIfLongRunningTestsShouldBeSkipped()
+		{{
+			// Long-running tests are never skipped against the mock file system!
+		}}
+	}}
+#endif
+#if !NETFRAMEWORK
+	// ReSharper disable once UnusedMember.Global
+	public sealed class MacFileSystemTests : {@class.Name}<MockFileSystem>
+	{{
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
+		public override string BasePath => ""/"";
+		public MacFileSystemTests() : this(new MockFileSystem(i =>
+			i.SimulatingOperatingSystem(SimulationMode.MacOS)))
+		{{
+		}}
+		private MacFileSystemTests(MockFileSystem mockFileSystem) : base(
+			new Test(OSPlatform.OSX),
+			mockFileSystem,
+			mockFileSystem.TimeSystem)
+		{{
+		}}
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
+		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+		{{
+			// Brittle tests are never skipped against the mock file system!
+		}}
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
+		public override void SkipIfLongRunningTestsShouldBeSkipped()
+		{{
+			// Long-running tests are never skipped against the mock file system!
+		}}
+	}}
+#endif
+#if !NETFRAMEWORK
+	// ReSharper disable once UnusedMember.Global
+	public sealed class WindowsFileSystemTests : {@class.Name}<MockFileSystem>
+	{{
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
+		public override string BasePath => ""C:\\"";
+		public WindowsFileSystemTests() : this(new MockFileSystem(i =>
+			i.SimulatingOperatingSystem(SimulationMode.Windows)))
+		{{
+		}}
+		private WindowsFileSystemTests(MockFileSystem mockFileSystem) : base(
+			new Test(OSPlatform.Windows),
+			mockFileSystem,
+			mockFileSystem.TimeSystem)
+		{{
+		}}
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
+		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+		{{
+			// Brittle tests are never skipped against the mock file system!
+		}}
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
+		public override void SkipIfLongRunningTestsShouldBeSkipped()
+		{{
+			// Long-running tests are never skipped against the mock file system!
+		}}
+	}}
+}}
+#endif");
+		}
+	}
+
+	private bool IncludeSimulatedTests(ClassModel @class)
+	{
+		string[] supportedTests = ["Tests", "GetRandomFileNameTests"];
+		return @class.Namespace
+			.StartsWith("Testably.Abstractions.Tests.FileSystem.Path", StringComparison.Ordinal)
+		       && supportedTests.Contains(@class.Name);
+	}
 }
