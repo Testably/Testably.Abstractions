@@ -43,7 +43,7 @@ internal partial class Execute
 
 			if (extension == null)
 			{
-				extension ??= "";
+				extension = "";
 			}
 			else if (!extension.StartsWith('.'))
 			{

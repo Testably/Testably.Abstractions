@@ -66,6 +66,19 @@ public abstract partial class ChangeExtensionTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void ChangeExtension_WithFileStartingWithDot_ShouldAppendExtensionToPath(
+		string fileName, string extension)
+	{
+		string path = $".{fileName}";
+		string expectedResult = $".{extension}";
+
+		string result = FileSystem.Path.ChangeExtension(path, extension);
+
+		result.Should().Be(expectedResult);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void ChangeExtension_WithLeadingDotInExtension_ShouldNotIncludeTwoDots(
 		string fileName, string extension)
 	{
