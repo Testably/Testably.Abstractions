@@ -1,8 +1,8 @@
-﻿#if FEATURE_SPAN
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
+#if FEATURE_SPAN
 using System;
 #endif
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
 #if FEATURE_FILESYSTEM_NET7
 using Testably.Abstractions.Testing.Storage;
 #endif
@@ -11,7 +11,7 @@ namespace Testably.Abstractions.Testing.Helpers;
 
 internal partial class Execute
 {
-	private class NativePath(MockFileSystem fileSystem) : IPath
+	private sealed class NativePath(MockFileSystem fileSystem) : IPath
 	{
 		#region IPath Members
 
@@ -228,12 +228,12 @@ internal partial class Execute
 
 #if FEATURE_SPAN
 		/// <inheritdoc cref="Path.IsPathRooted(ReadOnlySpan{char})" />
-		public virtual bool IsPathRooted(ReadOnlySpan<char> path)
+		public bool IsPathRooted(ReadOnlySpan<char> path)
 			=> System.IO.Path.IsPathRooted(path);
 #endif
 
 		/// <inheritdoc cref="Path.IsPathRooted(string)" />
-		public virtual bool IsPathRooted(string? path)
+		public bool IsPathRooted(string? path)
 			=> System.IO.Path.IsPathRooted(path);
 
 #if FEATURE_PATH_JOIN
