@@ -1,5 +1,6 @@
 #if FEATURE_FILESYSTEM_LINK
 using System.Globalization;
+using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
@@ -110,7 +111,7 @@ public abstract partial class ResolveLinkTargetTests<TFileSystem>
 			_ = FileSystem.Directory.ResolveLinkTarget(previousPath, true);
 		});
 
-		exception.Should().BeException<System.IO.IOException>($"'{previousPath}'",
+		exception.Should().BeException<IOException>($"'{previousPath}'",
 			hResult: Test.RunsOnWindows ? -2147022975 : -2146232800);
 	}
 

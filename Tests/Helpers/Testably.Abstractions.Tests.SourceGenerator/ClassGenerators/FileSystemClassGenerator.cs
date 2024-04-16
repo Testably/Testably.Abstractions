@@ -91,12 +91,12 @@ namespace {@class.Namespace}.{@class.Name}
 #if DEBUG
 			if (fixture.RealFileSystemTests != TestSettingStatus.AlwaysEnabled)
 			{{
-				throw new SkipException($""Tests against the real file system are {{fixture.RealFileSystemTests}}. You can enable them by executing he corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests."");
+				throw new SkipException($""Tests against the real file system are {{fixture.RealFileSystemTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests."");
 			}}
 #else
 			if (fixture.RealFileSystemTests == TestSettingStatus.AlwaysDisabled)
 			{{
-				throw new SkipException($""Tests against the real file system are {{fixture.RealFileSystemTests}}. You can enable them by executing he corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests."");
+				throw new SkipException($""Tests against the real file system are {{fixture.RealFileSystemTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests."");
 			}}
 #endif
 			_fixture = fixture;
@@ -112,24 +112,24 @@ namespace {@class.Namespace}.{@class.Name}
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
 		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
 			=> Skip.If(condition && _fixture.BrittleTests != TestSettingStatus.AlwaysEnabled,
-				$""Brittle tests are {{_fixture.BrittleTests}}. You can enable them by executing the corresponding tests in estably.Abstractions.TestSettings.BrittleTests."");
+				$""Brittle tests are {{_fixture.BrittleTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests."");
 #else
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
 		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
 			=> Skip.If(condition && _fixture.BrittleTests == TestSettingStatus.AlwaysDisabled,
-				$""Brittle tests are {{_fixture.BrittleTests}}. You can enable them by executing the corresponding tests in estably.Abstractions.TestSettings.BrittleTests."");
+				$""Brittle tests are {{_fixture.BrittleTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests."");
 #endif
 
 #if DEBUG
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
 		public override void SkipIfLongRunningTestsShouldBeSkipped()
 			=> Skip.If(_fixture.LongRunningTests != TestSettingStatus.AlwaysEnabled,
-				$""Long-running tests are {{_fixture.LongRunningTests}}. You can enable them by executing the corresponding tests in estably.Abstractions.TestSettings.LongRunningTests."");
+				$""Long-running tests are {{_fixture.LongRunningTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.LongRunningTests."");
 #else
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
 		public override void SkipIfLongRunningTestsShouldBeSkipped()
 			=> Skip.If(_fixture.LongRunningTests == TestSettingStatus.AlwaysDisabled,
-				$""Long-running tests are {{_fixture.LongRunningTests}}. You can enable them by executing the corresponding tests in estably.Abstractions.TestSettings.LongRunningTests."");
+				$""Long-running tests are {{_fixture.LongRunningTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.LongRunningTests."");
 #endif
 	}}
 }}
