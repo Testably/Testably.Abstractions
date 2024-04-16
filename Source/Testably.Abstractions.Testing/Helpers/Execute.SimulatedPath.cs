@@ -213,8 +213,7 @@ internal partial class Execute
 #endif
 
 		/// <inheritdoc cref="IPath.GetPathRoot(string?)" />
-		public string? GetPathRoot(string? path)
-			=> System.IO.Path.GetPathRoot(path);
+		public abstract string? GetPathRoot(string? path);
 
 		/// <inheritdoc cref="IPath.GetRandomFileName()" />
 		public string GetRandomFileName()
