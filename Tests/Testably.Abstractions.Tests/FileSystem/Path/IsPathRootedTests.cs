@@ -62,16 +62,16 @@ public abstract partial class IsPathRootedTests<TFileSystem>
 				"Z:", TestOs.Windows
 			},
 			{
-				"@:", TestOs.None
+				"@:", TestOs.Framework
 			},
 			{
-				"[:", TestOs.None
+				"[:", TestOs.Framework
 			},
 			{
-				"`:", TestOs.None
+				"`:", TestOs.Framework
 			},
 			{
-				"{:", TestOs.None
+				"{:", TestOs.Framework
 			},
 		};
 	}

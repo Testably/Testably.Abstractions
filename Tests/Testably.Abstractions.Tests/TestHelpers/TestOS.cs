@@ -3,9 +3,10 @@ namespace Testably.Abstractions.Tests.TestHelpers;
 [Flags]
 public enum TestOs
 {
-	Windows = 1,
-	Linux = 2,
-	Mac = 4,
-	All = Windows | Linux | Mac,
+	Linux = 1,
+	Mac = 2,
+	Windows = 4,
+	Framework = 8,
+	All = Linux | Mac | Windows | Framework,
 	None = 0
 }
