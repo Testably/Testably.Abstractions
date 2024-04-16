@@ -233,6 +233,7 @@ namespace {@class.Namespace}.{@class.Name}
 		[
 			"ChangeExtensionTests",
 			"EndsInDirectorySeparatorTests",
+			"GetExtensionTests",
 			"GetPathRootTests",
 			"GetRandomFileNameTests",
 			"GetTempPathTests",

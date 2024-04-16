@@ -41,33 +41,21 @@ internal partial class Execute
 				return string.Empty;
 			}
 
-			int dotIndex = path.Length;
-			for (int i = path.Length - 1; i >= 0; i--)
-			{
-				char ch = path[i];
-
-				if (ch == '.')
-				{
-					dotIndex = i;
-					break;
-				}
-
-				if (ch == DirectorySeparatorChar || ch == AltDirectorySeparatorChar)
-				{
-					break;
-				}
-			}
-
 			if (extension == null)
 			{
-				extension = "";
+				extension ??= "";
 			}
 			else if (!extension.StartsWith('.'))
 			{
 				extension = "." + extension;
 			}
 
-			return path.Substring(0, dotIndex) + extension;
+			if (!TryGetExtensionIndex(path, out int? dotIndex))
+			{
+				return path + extension;
+			}
+
+			return path.Substring(0, dotIndex.Value) + extension;
 		}
 
 		/// <inheritdoc cref="IPath.Combine(string, string)" />
@@ -182,7 +170,21 @@ internal partial class Execute
 		/// <inheritdoc cref="IPath.GetExtension(string)" />
 		[return: NotNullIfNotNull("path")]
 		public string? GetExtension(string? path)
-			=> System.IO.Path.GetExtension(path);
+		{
+			if (path == null)
+			{
+				return null;
+			}
+
+			if (TryGetExtensionIndex(path, out int? dotIndex))
+			{
+				return dotIndex != path.Length - 1
+					? path.Substring(dotIndex.Value)
+					: string.Empty;
+			}
+
+			return string.Empty;
+		}
 
 #if FEATURE_SPAN
 		/// <inheritdoc cref="IPath.GetFileName(ReadOnlySpan{char})" />
@@ -454,5 +456,27 @@ internal partial class Execute
 		private static string JoinInternal(string?[] paths)
 			=> System.IO.Path.Join(paths);
 #endif
+
+		private bool TryGetExtensionIndex(string path, [NotNullWhen(true)] out int? dotIndex)
+		{
+			for (int i = path.Length - 1; i >= 0; i--)
+			{
+				char ch = path[i];
+
+				if (ch == '.')
+				{
+					dotIndex = i;
+					return true;
+				}
+
+				if (IsDirectorySeparator(ch))
+				{
+					break;
+				}
+			}
+
+			dotIndex = null;
+			return false;
+		}
 	}
 }
