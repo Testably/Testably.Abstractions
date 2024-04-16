@@ -22,7 +22,7 @@ public abstract partial class GetTempPathTests<TFileSystem>
 
 		string result = FileSystem.Path.GetTempPath();
 
-		result.Should().Match("/var/folders/??/??_*/T/");
+		result.Should().Match("/var/folders/??/*/T/");
 	}
 
 	[SkippableFact]
