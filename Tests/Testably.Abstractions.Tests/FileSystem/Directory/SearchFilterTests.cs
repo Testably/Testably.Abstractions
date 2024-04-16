@@ -141,8 +141,7 @@ public abstract partial class SearchFilterTests<TFileSystem>
 		string currentDirectory = FileSystem.Directory.GetCurrentDirectory();
 		int directoryCount = currentDirectory.Length -
 		                     currentDirectory
-			                     .Replace($"{FileSystem.Path.DirectorySeparatorChar}", "",
-				                     StringComparison.Ordinal)
+			                     .Replace($"{FileSystem.Path.DirectorySeparatorChar}", "")
 			                     .Length;
 
 		StringBuilder sb = new();

@@ -1,6 +1,7 @@
 [assembly: System.CLSCompliant(true)]
 [assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/Testably/Testably.Abstractions.git")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Testably.Abstractions.Testing.Tests")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Testably.Abstractions.Tests")]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETStandard,Version=v2.0", FrameworkDisplayName=".NET Standard 2.0")]
 namespace Testably.Abstractions.Testing.FileSystem
 {
