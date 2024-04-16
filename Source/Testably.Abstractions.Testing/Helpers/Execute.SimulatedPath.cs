@@ -243,8 +243,7 @@ internal partial class Execute
 			=> System.IO.Path.GetTempFileName();
 
 		/// <inheritdoc cref="IPath.GetTempPath()" />
-		public string GetTempPath()
-			=> System.IO.Path.GetTempPath();
+		public abstract string GetTempPath();
 
 #if FEATURE_SPAN
 		/// <inheritdoc cref="IPath.HasExtension(ReadOnlySpan{char})" />

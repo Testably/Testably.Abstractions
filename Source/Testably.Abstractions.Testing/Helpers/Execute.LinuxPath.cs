@@ -22,6 +22,10 @@ internal partial class Execute
 		/// <inheritdoc cref="IPath.GetInvalidPathChars()" />
 		public override char[] GetInvalidPathChars() => ['\0'];
 
+		/// <inheritdoc cref="IPath.GetTempPath()" />
+		public override string GetTempPath()
+			=> "/tmp/";
+
 		/// <inheritdoc cref="IPath.IsPathRooted(string)" />
 		public override bool IsPathRooted(string? path)
 			=> path?.Length > 0 && path[0] == '/';

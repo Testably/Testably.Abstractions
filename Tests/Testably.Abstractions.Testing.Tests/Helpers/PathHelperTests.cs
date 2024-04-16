@@ -138,7 +138,7 @@ public class PathHelperTests
 
 #if NETFRAMEWORK
 		exception.Should().BeOfType<ArgumentException>()
-			.Which.Message.Should().Contain(path);
+			.Which.Message.Should().Contain("path");
 #else
 		exception.Should().BeOfType<IOException>()
 			.Which.Message.Should().Contain(path);

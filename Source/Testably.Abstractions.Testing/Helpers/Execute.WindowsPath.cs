@@ -36,6 +36,10 @@ internal partial class Execute
 			(char)26, (char)27, (char)28, (char)29, (char)30, (char)31
 		];
 
+		/// <inheritdoc cref="IPath.GetTempPath()" />
+		public override string GetTempPath()
+			=> @"C:\Windows\Temp";
+
 		/// <inheritdoc cref="IPath.IsPathRooted(string)" />
 		public override bool IsPathRooted(string? path)
 		{
