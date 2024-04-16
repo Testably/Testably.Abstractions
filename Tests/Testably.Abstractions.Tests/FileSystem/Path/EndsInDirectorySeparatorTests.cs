@@ -47,6 +47,19 @@ public abstract partial class EndsInDirectorySeparatorTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
+		EndsInDirectorySeparator_Span_WithTrailingAltDirectorySeparator_ShouldReturnTrue(
+			string path)
+	{
+		path += FileSystem.Path.AltDirectorySeparatorChar;
+
+		bool result = FileSystem.Path.EndsInDirectorySeparator(path.AsSpan());
+
+		result.Should().BeTrue();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void
 		EndsInDirectorySeparator_Span_WithTrailingDirectorySeparator_ShouldReturnTrue(
 			string path)
 	{
@@ -69,6 +82,18 @@ public abstract partial class EndsInDirectorySeparatorTests<TFileSystem>
 		bool result = FileSystem.Path.EndsInDirectorySeparator(path);
 
 		result.Should().BeFalse();
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void EndsInDirectorySeparator_WithTrailingAltDirectorySeparator_ShouldReturnTrue(
+		string path)
+	{
+		path += FileSystem.Path.AltDirectorySeparatorChar;
+
+		bool result = FileSystem.Path.EndsInDirectorySeparator(path);
+
+		result.Should().BeTrue();
 	}
 
 	[SkippableTheory]

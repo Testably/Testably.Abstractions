@@ -146,7 +146,7 @@ internal partial class Execute
 #if FEATURE_PATH_ADVANCED
 		/// <inheritdoc cref="IPath.EndsInDirectorySeparator(string)" />
 		public bool EndsInDirectorySeparator(string path)
-			=> System.IO.Path.EndsInDirectorySeparator(path);
+			=> !string.IsNullOrEmpty(path) && IsDirectorySeparator(path[path.Length - 1]);
 #endif
 
 #if FEATURE_FILESYSTEM_NET7
@@ -447,6 +447,8 @@ internal partial class Execute
 
 		private static string CombineInternal(string[] paths)
 			=> System.IO.Path.Combine(paths);
+
+		protected abstract bool IsDirectorySeparator(char c);
 
 #if FEATURE_PATH_ADVANCED
 		private static string JoinInternal(string?[] paths)
