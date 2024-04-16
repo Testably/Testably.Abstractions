@@ -7,7 +7,7 @@ public abstract partial class IsPathRootedTests<TFileSystem>
 {
 	[SkippableTheory]
 	[MemberData(nameof(TestData))]
-	public void IsPathRooted_ShouldReturnDefaultValue(string path, TestOs isRootedOn)
+	public void IsPathRooted_ShouldReturnDefaultValue(string path, TestOS isRootedOn)
 	{
 		bool result = FileSystem.Path.IsPathRooted(path);
 
@@ -17,7 +17,7 @@ public abstract partial class IsPathRootedTests<TFileSystem>
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[MemberData(nameof(TestData))]
-	public void IsPathRooted_Span_ShouldReturnDefaultValue(string path, TestOs isRootedOn)
+	public void IsPathRooted_Span_ShouldReturnDefaultValue(string path, TestOS isRootedOn)
 	{
 		bool result = FileSystem.Path.IsPathRooted(path.AsSpan());
 
@@ -27,51 +27,51 @@ public abstract partial class IsPathRootedTests<TFileSystem>
 
 	#region Helpers
 
-	public static TheoryData<string, TestOs> TestData()
+	public static TheoryData<string, TestOS> TestData()
 	{
-		return new TheoryData<string, TestOs>
+		return new TheoryData<string, TestOS>
 		{
 			{
-				"", TestOs.None
+				"", TestOS.None
 			},
 			{
-				"/", TestOs.All
+				"/", TestOS.All
 			},
 			{
-				@"\", TestOs.Windows
+				@"\", TestOS.Windows
 			},
 			{
-				"/foo", TestOs.All
+				"/foo", TestOS.All
 			},
 			{
-				@"\foo", TestOs.Windows
+				@"\foo", TestOS.Windows
 			},
 			{
-				"foo/bar", TestOs.None
+				"foo/bar", TestOS.None
 			},
 			{
-				"a:", TestOs.Windows
+				"a:", TestOS.Windows
 			},
 			{
-				"z:", TestOs.Windows
+				"z:", TestOS.Windows
 			},
 			{
-				"A:", TestOs.Windows
+				"A:", TestOS.Windows
 			},
 			{
-				"Z:", TestOs.Windows
+				"Z:", TestOS.Windows
 			},
 			{
-				"@:", TestOs.Framework
+				"@:", TestOS.Framework
 			},
 			{
-				"[:", TestOs.Framework
+				"[:", TestOS.Framework
 			},
 			{
-				"`:", TestOs.Framework
+				"`:", TestOS.Framework
 			},
 			{
-				"{:", TestOs.Framework
+				"{:", TestOS.Framework
 			},
 		};
 	}
