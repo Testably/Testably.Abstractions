@@ -56,7 +56,7 @@ public abstract partial class ChangeExtensionTests<TFileSystem>
 		string directory, string fileName, string extension)
 	{
 		directory = directory + "." + "with-dot";
-		string path = FileSystem.Path.Combine(directory, fileName);
+		string path = $"{directory}{FileSystem.Path.DirectorySeparatorChar}{fileName}";
 		string expectedResult = path + "." + extension;
 
 		string result = FileSystem.Path.ChangeExtension(path, extension);

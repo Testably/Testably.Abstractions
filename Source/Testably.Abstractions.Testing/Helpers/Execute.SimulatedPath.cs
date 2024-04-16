@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 #if FEATURE_FILESYSTEM_NET7
 using Testably.Abstractions.Testing.Storage;
@@ -30,7 +30,45 @@ internal partial class Execute
 		/// <inheritdoc cref="IPath.ChangeExtension(string, string)" />
 		[return: NotNullIfNotNull("path")]
 		public string? ChangeExtension(string? path, string? extension)
-			=> System.IO.Path.ChangeExtension(path, extension);
+		{
+			if (path == null)
+			{
+				return null;
+			}
+
+			if (path == string.Empty)
+			{
+				return string.Empty;
+			}
+
+			int dotIndex = path.Length;
+			for (int i = path.Length - 1; i >= 0; i--)
+			{
+				char ch = path[i];
+
+				if (ch == '.')
+				{
+					dotIndex = i;
+					break;
+				}
+
+				if (ch == DirectorySeparatorChar || ch == AltDirectorySeparatorChar)
+				{
+					break;
+				}
+			}
+
+			if (extension == null)
+			{
+				extension = "";
+			}
+			else if (!extension.StartsWith('.'))
+			{
+				extension = "." + extension;
+			}
+
+			return path.Substring(0, dotIndex) + extension;
+		}
 
 		/// <inheritdoc cref="IPath.Combine(string, string)" />
 		public string Combine(string path1, string path2)
@@ -295,7 +333,8 @@ internal partial class Execute
 			ReadOnlySpan<char> path2,
 			ReadOnlySpan<char> path3,
 			ReadOnlySpan<char> path4)
-			=> JoinInternal([path1.ToString(), path2.ToString(), path3.ToString(), path4.ToString()]);
+			=> JoinInternal(
+				[path1.ToString(), path2.ToString(), path3.ToString(), path4.ToString()]);
 #endif
 
 #if FEATURE_PATH_ADVANCED
