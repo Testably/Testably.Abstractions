@@ -27,6 +27,7 @@ public class Test
 		IsNetFramework = RuntimeInformation.FrameworkDescription
 			.StartsWith(".NET Framework", StringComparison.OrdinalIgnoreCase);
 	}
+
 	public Test(OSPlatform osPlatform)
 	{
 		RunsOnLinux = osPlatform == OSPlatform.Linux;

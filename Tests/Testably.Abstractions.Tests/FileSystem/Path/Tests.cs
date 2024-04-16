@@ -100,28 +100,6 @@ public abstract partial class Tests<TFileSystem>
 		result.Should().BeEquivalentTo(expected);
 	}
 
-	[SkippableTheory]
-	[InlineData("/foo")]
-	[InlineData("foo/bar")]
-	public void IsPathRooted_ShouldReturnDefaultValue(string path)
-	{
-		bool result = FileSystem.Path.IsPathRooted(path);
-
-		result.Should().Be(System.IO.Path.IsPathRooted(path));
-	}
-
-#if FEATURE_SPAN
-	[SkippableTheory]
-	[InlineData("/foo")]
-	[InlineData("foo/bar")]
-	public void IsPathRooted_Span_ShouldReturnDefaultValue(string path)
-	{
-		bool result = FileSystem.Path.IsPathRooted(path.AsSpan());
-
-		result.Should().Be(System.IO.Path.IsPathRooted(path.AsSpan()));
-	}
-#endif
-
 	[SkippableFact]
 	public void PathSeparator_WhenNotOnWindows_ShouldReturnColon()
 	{
