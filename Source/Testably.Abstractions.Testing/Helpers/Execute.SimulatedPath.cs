@@ -45,7 +45,7 @@ internal partial class Execute
 				throw new ArgumentNullException(nameof(path2));
 			}
 
-			return Combine([path1, path2]);
+			return CombineInternal([path1, path2]);
 		}
 
 		/// <inheritdoc cref="IPath.Combine(string, string, string)" />
@@ -66,7 +66,7 @@ internal partial class Execute
 				throw new ArgumentNullException(nameof(path3));
 			}
 
-			return Combine([path1, path2, path3]);
+			return CombineInternal([path1, path2, path3]);
 		}
 
 		/// <inheritdoc cref="IPath.Combine(string, string, string, string)" />
@@ -92,12 +92,12 @@ internal partial class Execute
 				throw new ArgumentNullException(nameof(path4));
 			}
 
-			return Combine([path1, path2, path3, path4]);
+			return CombineInternal([path1, path2, path3, path4]);
 		}
 
 		/// <inheritdoc cref="IPath.Combine(string[])" />
 		public string Combine(params string[] paths)
-			=> System.IO.Path.Combine(paths);
+			=> CombineInternal(paths);
 
 #if FEATURE_PATH_ADVANCED
 		/// <inheritdoc cref="IPath.EndsInDirectorySeparator(ReadOnlySpan{char})" />
@@ -280,7 +280,7 @@ internal partial class Execute
 #if FEATURE_PATH_JOIN
 		/// <inheritdoc cref="IPath.Join(ReadOnlySpan{char}, ReadOnlySpan{char})" />
 		public string Join(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2)
-			=> Join(path1.ToString(), path2.ToString());
+			=> System.IO.Path.Join(path1, path2);
 #endif
 
 #if FEATURE_PATH_JOIN
@@ -288,7 +288,7 @@ internal partial class Execute
 		public string Join(ReadOnlySpan<char> path1,
 			ReadOnlySpan<char> path2,
 			ReadOnlySpan<char> path3)
-			=> Join(path1.ToString(), path2.ToString(), path3.ToString());
+			=> System.IO.Path.Join(path1, path2, path3);
 #endif
 
 #if FEATURE_PATH_ADVANCED
@@ -297,7 +297,7 @@ internal partial class Execute
 			ReadOnlySpan<char> path2,
 			ReadOnlySpan<char> path3,
 			ReadOnlySpan<char> path4)
-			=> Join(path1.ToString(), path2.ToString(), path3.ToString(), path4.ToString());
+			=> JoinInternal([path1.ToString(), path2.ToString(), path3.ToString(), path4.ToString()]);
 #endif
 
 #if FEATURE_PATH_ADVANCED
@@ -314,7 +314,7 @@ internal partial class Execute
 				return path1;
 			}
 
-			return Join([path1, path2]);
+			return JoinInternal([path1, path2]);
 		}
 #endif
 
@@ -337,7 +337,7 @@ internal partial class Execute
 				return Join(path1, path2);
 			}
 
-			return Join([path1, path2, path3]);
+			return JoinInternal([path1, path2, path3]);
 		}
 #endif
 
@@ -365,14 +365,14 @@ internal partial class Execute
 				return Join(path1, path2, path3);
 			}
 
-			return Join([path1, path2, path3, path4]);
+			return JoinInternal([path1, path2, path3, path4]);
 		}
 #endif
 
 #if FEATURE_PATH_ADVANCED
 		/// <inheritdoc cref="IPath.Join(string[])" />
 		public string Join(params string?[] paths)
-			=> System.IO.Path.Join(paths);
+			=> JoinInternal(paths);
 #endif
 
 #if FEATURE_PATH_ADVANCED
@@ -407,5 +407,13 @@ internal partial class Execute
 #endif
 
 		#endregion
+
+		private static string CombineInternal(string[] paths)
+			=> System.IO.Path.Combine(paths);
+
+#if FEATURE_PATH_ADVANCED
+		private static string JoinInternal(string?[] paths)
+			=> System.IO.Path.Join(paths);
+#endif
 	}
 }
