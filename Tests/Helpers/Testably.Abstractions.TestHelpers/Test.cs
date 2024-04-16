@@ -28,11 +28,11 @@ public class Test
 			.StartsWith(".NET Framework", StringComparison.OrdinalIgnoreCase);
 	}
 
-	public Test(OSPlatform osPlatform, bool isNetFramework = false)
+	public Test(OSPlatform osPlatform)
 	{
 		RunsOnLinux = osPlatform == OSPlatform.Linux;
 		RunsOnMac = osPlatform == OSPlatform.OSX;
 		RunsOnWindows = osPlatform == OSPlatform.Windows;
-		IsNetFramework = isNetFramework && RunsOnWindows;
+		IsNetFramework = false;
 	}
 }

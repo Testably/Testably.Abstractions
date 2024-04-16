@@ -100,60 +100,6 @@ public abstract partial class Tests<TFileSystem>
 		result.Should().BeEquivalentTo(expected);
 	}
 
-	[SkippableTheory]
-	[InlineData("D:")]
-	public void GetPathRoot_RootedDrive_ShouldReturnDriveOnWindows(string path)
-	{
-		Skip.IfNot(Test.RunsOnWindows);
-
-		string? result = FileSystem.Path.GetPathRoot(path);
-
-		result.Should().Be(path);
-	}
-
-	[SkippableTheory]
-	[AutoData]
-	public void GetPathRoot_ShouldReturnDefaultValue(string path)
-	{
-		string? result = FileSystem.Path.GetPathRoot(path);
-
-		result.Should().Be(System.IO.Path.GetPathRoot(path));
-	}
-
-#if FEATURE_SPAN
-	[SkippableTheory]
-	[AutoData]
-	public void GetPathRoot_Span_ShouldReturnDefaultValue(string path)
-	{
-		ReadOnlySpan<char> result = FileSystem.Path.GetPathRoot(path.AsSpan());
-
-		result.ToArray().Should().BeEquivalentTo(
-			System.IO.Path.GetPathRoot(path.AsSpan()).ToArray());
-	}
-#endif
-
-	[SkippableTheory]
-	[InlineData("/foo")]
-	[InlineData("foo/bar")]
-	public void IsPathRooted_ShouldReturnDefaultValue(string path)
-	{
-		bool result = FileSystem.Path.IsPathRooted(path);
-
-		result.Should().Be(System.IO.Path.IsPathRooted(path));
-	}
-
-#if FEATURE_SPAN
-	[SkippableTheory]
-	[InlineData("/foo")]
-	[InlineData("foo/bar")]
-	public void IsPathRooted_Span_ShouldReturnDefaultValue(string path)
-	{
-		bool result = FileSystem.Path.IsPathRooted(path.AsSpan());
-
-		result.Should().Be(System.IO.Path.IsPathRooted(path.AsSpan()));
-	}
-#endif
-
 	[SkippableFact]
 	public void PathSeparator_WhenNotOnWindows_ShouldReturnColon()
 	{

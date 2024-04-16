@@ -57,7 +57,7 @@ internal partial class Execute
 		}
 		else if (IsWindows)
 		{
-			Path = new WindowsPath(fileSystem, isNetFramework);
+			Path = new WindowsPath(fileSystem, IsNetFramework);
 		}
 		else
 		{

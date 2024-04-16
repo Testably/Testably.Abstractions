@@ -138,14 +138,14 @@ internal partial class Execute
 				return null;
 			}
 
-			int pathRoot = GetRootLength(path);
-			string? result = pathRoot <= 0 ? string.Empty : path.Substring(0, pathRoot);
-			return NormalizeDirectorySeparators(result);
+			return IsPathRooted(path)
+				? path.Substring(0,3)
+				: string.Empty;
 		}
 
 		/// <inheritdoc />
 		public override string GetTempPath()
-			=> @"C:\Windows\Temp";
+			=> @"C:\Windows\Temp\";
 
 		/// <inheritdoc cref="IPath.IsPathRooted(string)" />
 		public override bool IsPathRooted(string? path)
