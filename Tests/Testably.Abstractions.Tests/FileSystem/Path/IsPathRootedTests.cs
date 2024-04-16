@@ -1,5 +1,3 @@
-using System.Linq;
-
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 // ReSharper disable once PartialTypeWithSinglePart
@@ -8,10 +6,10 @@ public abstract partial class IsPathRootedTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
-	[InlineData("/foo", TestOS.All)]
-	[InlineData(@"\foo", TestOS.Windows)]
-	[InlineData("foo/bar", TestOS.None)]
-	public void IsPathRooted_ShouldReturnDefaultValue(string path, TestOS isRootedOn)
+	[InlineData("/foo", TestOs.All)]
+	[InlineData(@"\foo", TestOs.Windows)]
+	[InlineData("foo/bar", TestOs.None)]
+	public void IsPathRooted_ShouldReturnDefaultValue(string path, TestOs isRootedOn)
 	{
 		bool result = FileSystem.Path.IsPathRooted(path);
 
@@ -20,10 +18,10 @@ public abstract partial class IsPathRootedTests<TFileSystem>
 
 #if FEATURE_SPAN
 	[SkippableTheory]
-	[InlineData("/foo", TestOS.All)]
-	[InlineData(@"\foo", TestOS.Windows)]
-	[InlineData("foo/bar", TestOS.None)]
-	public void IsPathRooted_Span_ShouldReturnDefaultValue(string path, TestOS isRootedOn)
+	[InlineData("/foo", TestOs.All)]
+	[InlineData(@"\foo", TestOs.Windows)]
+	[InlineData("foo/bar", TestOs.None)]
+	public void IsPathRooted_Span_ShouldReturnDefaultValue(string path, TestOs isRootedOn)
 	{
 		bool result = FileSystem.Path.IsPathRooted(path.AsSpan());
 

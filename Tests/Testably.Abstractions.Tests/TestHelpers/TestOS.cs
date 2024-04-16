@@ -1,7 +1,7 @@
 namespace Testably.Abstractions.Tests.TestHelpers;
 
 [Flags]
-public enum TestOS
+public enum TestOs
 {
 	Windows = 1,
 	Linux = 2,

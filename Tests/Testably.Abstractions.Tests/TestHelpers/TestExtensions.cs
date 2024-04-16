@@ -16,4 +16,9 @@ internal static class TestExtensions
 
 		return linux;
 	}
+
+	public static bool RunsOn(this Test test, TestOs operatingSystem)
+		=> (operatingSystem.HasFlag(TestOs.Linux) && test.RunsOnLinux) ||
+		   (operatingSystem.HasFlag(TestOs.Mac) && test.RunsOnMac) ||
+		   (operatingSystem.HasFlag(TestOs.Windows) && test.RunsOnWindows);
 }
