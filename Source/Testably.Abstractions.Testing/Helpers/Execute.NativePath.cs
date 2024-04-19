@@ -198,7 +198,7 @@ internal partial class Execute
 			"Insecure temporary file creation methods should not be used. Use `Path.Combine(Path.GetTempPath(), Path.GetRandomFileName())` instead.")]
 #endif
 		public string GetTempFileName()
-			=> System.IO.Path.GetTempFileName();
+			=> CreateTempFileName(fileSystem);
 
 		/// <inheritdoc cref="Path.GetTempPath()" />
 		public string GetTempPath()

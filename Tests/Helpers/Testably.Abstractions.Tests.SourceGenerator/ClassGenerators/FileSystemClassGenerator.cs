@@ -238,6 +238,7 @@ namespace {@class.Namespace}.{@class.Name}
 			"GetFileNameWithoutExtensionTests",
 			"GetPathRootTests",
 			"GetRandomFileNameTests",
+			"GetTempFileNameTests",
 			"GetTempPathTests",
 			"IsPathRootedTests",
 			"JoinTests",
