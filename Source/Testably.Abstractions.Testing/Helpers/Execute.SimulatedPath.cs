@@ -221,7 +221,16 @@ internal partial class Execute
 		/// <inheritdoc cref="IPath.GetFileNameWithoutExtension(string)" />
 		[return: NotNullIfNotNull("path")]
 		public string? GetFileNameWithoutExtension(string? path)
-			=> System.IO.Path.GetFileNameWithoutExtension(path);
+		{
+			if (path == null)
+			{
+				return null;
+			}
+
+			string fileName = GetFileName(path);
+			int lastPeriod = fileName.LastIndexOf('.');
+			return lastPeriod < 0 ? fileName : fileName.Substring(0, lastPeriod);
+		}
 
 		/// <inheritdoc cref="IPath.GetFullPath(string)" />
 		public string GetFullPath(string path)
