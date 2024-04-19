@@ -64,11 +64,10 @@ internal partial class Execute
 		}
 
 		/// <summary>
-		///     True if the given character is a directory separator.
+		///     https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/Common/src/System/IO/PathInternal.Windows.cs#L280
 		/// </summary>
-		/// <remarks>https://github.com/dotnet/runtime/blob/v8.0.3/src/libraries/Common/src/System/IO/PathInternal.Windows.cs#L280</remarks>
-		private static bool IsDirectorySeparator(char c)
-			=> c == '\\' || c == '/';
+		protected override bool IsDirectorySeparator(char c)
+			=> c == DirectorySeparatorChar || c == AltDirectorySeparatorChar;
 
 		/// <summary>
 		///     Returns true if the given character is a valid drive letter

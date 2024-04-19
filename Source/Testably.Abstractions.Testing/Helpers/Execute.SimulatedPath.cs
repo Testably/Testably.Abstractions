@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 #if FEATURE_FILESYSTEM_NET7
 using Testably.Abstractions.Testing.Storage;
@@ -30,7 +30,33 @@ internal partial class Execute
 		/// <inheritdoc cref="IPath.ChangeExtension(string, string)" />
 		[return: NotNullIfNotNull("path")]
 		public string? ChangeExtension(string? path, string? extension)
-			=> System.IO.Path.ChangeExtension(path, extension);
+		{
+			if (path == null)
+			{
+				return null;
+			}
+
+			if (path == string.Empty)
+			{
+				return string.Empty;
+			}
+
+			if (extension == null)
+			{
+				extension = "";
+			}
+			else if (!extension.StartsWith('.'))
+			{
+				extension = "." + extension;
+			}
+
+			if (!TryGetExtensionIndex(path, out int? dotIndex))
+			{
+				return path + extension;
+			}
+
+			return path.Substring(0, dotIndex.Value) + extension;
+		}
 
 		/// <inheritdoc cref="IPath.Combine(string, string)" />
 		public string Combine(string path1, string path2)
@@ -108,7 +134,7 @@ internal partial class Execute
 #if FEATURE_PATH_ADVANCED
 		/// <inheritdoc cref="IPath.EndsInDirectorySeparator(string)" />
 		public bool EndsInDirectorySeparator(string path)
-			=> System.IO.Path.EndsInDirectorySeparator(path);
+			=> !string.IsNullOrEmpty(path) && IsDirectorySeparator(path[path.Length - 1]);
 #endif
 
 #if FEATURE_FILESYSTEM_NET7
@@ -144,7 +170,21 @@ internal partial class Execute
 		/// <inheritdoc cref="IPath.GetExtension(string)" />
 		[return: NotNullIfNotNull("path")]
 		public string? GetExtension(string? path)
-			=> System.IO.Path.GetExtension(path);
+		{
+			if (path == null)
+			{
+				return null;
+			}
+
+			if (TryGetExtensionIndex(path, out int? dotIndex))
+			{
+				return dotIndex != path.Length - 1
+					? path.Substring(dotIndex.Value)
+					: string.Empty;
+			}
+
+			return string.Empty;
+		}
 
 #if FEATURE_SPAN
 		/// <inheritdoc cref="IPath.GetFileName(ReadOnlySpan{char})" />
@@ -155,7 +195,22 @@ internal partial class Execute
 		/// <inheritdoc cref="IPath.GetFileName(string)" />
 		[return: NotNullIfNotNull("path")]
 		public string? GetFileName(string? path)
-			=> System.IO.Path.GetFileName(path);
+		{
+			if (path == null)
+			{
+				return null;
+			}
+
+			for (int i = path.Length - 1; i >= 0; i--)
+			{
+				if (IsDirectorySeparator(path[i]))
+				{
+					return path.Substring(i + 1);
+				}
+			}
+
+			return path;
+		}
 
 #if FEATURE_SPAN
 		/// <inheritdoc cref="IPath.GetFileNameWithoutExtension(ReadOnlySpan{char})" />
@@ -166,7 +221,16 @@ internal partial class Execute
 		/// <inheritdoc cref="IPath.GetFileNameWithoutExtension(string)" />
 		[return: NotNullIfNotNull("path")]
 		public string? GetFileNameWithoutExtension(string? path)
-			=> System.IO.Path.GetFileNameWithoutExtension(path);
+		{
+			if (path == null)
+			{
+				return null;
+			}
+
+			string fileName = GetFileName(path);
+			int lastPeriod = fileName.LastIndexOf('.');
+			return lastPeriod < 0 ? fileName : fileName.Substring(0, lastPeriod);
+		}
 
 		/// <inheritdoc cref="IPath.GetFullPath(string)" />
 		public string GetFullPath(string path)
@@ -295,7 +359,8 @@ internal partial class Execute
 			ReadOnlySpan<char> path2,
 			ReadOnlySpan<char> path3,
 			ReadOnlySpan<char> path4)
-			=> JoinInternal([path1.ToString(), path2.ToString(), path3.ToString(), path4.ToString()]);
+			=> JoinInternal(
+				[path1.ToString(), path2.ToString(), path3.ToString(), path4.ToString()]);
 #endif
 
 #if FEATURE_PATH_ADVANCED
@@ -409,9 +474,33 @@ internal partial class Execute
 		private static string CombineInternal(string[] paths)
 			=> System.IO.Path.Combine(paths);
 
+		protected abstract bool IsDirectorySeparator(char c);
+
 #if FEATURE_PATH_ADVANCED
 		private static string JoinInternal(string?[] paths)
 			=> System.IO.Path.Join(paths);
 #endif
+
+		private bool TryGetExtensionIndex(string path, [NotNullWhen(true)] out int? dotIndex)
+		{
+			for (int i = path.Length - 1; i >= 0; i--)
+			{
+				char ch = path[i];
+
+				if (ch == '.')
+				{
+					dotIndex = i;
+					return true;
+				}
+
+				if (IsDirectorySeparator(ch))
+				{
+					break;
+				}
+			}
+
+			dotIndex = null;
+			return false;
+		}
 	}
 }

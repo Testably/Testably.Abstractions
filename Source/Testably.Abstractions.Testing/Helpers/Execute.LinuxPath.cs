@@ -42,5 +42,11 @@ internal partial class Execute
 		/// <inheritdoc cref="IPath.IsPathRooted(string)" />
 		public override bool IsPathRooted(string? path)
 			=> path?.Length > 0 && path[0] == '/';
+
+		/// <summary>
+		///     https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/Common/src/System/IO/PathInternal.Unix.cs#L27
+		/// </summary>
+		protected override bool IsDirectorySeparator(char c)
+			=> c == DirectorySeparatorChar;
 	}
 }

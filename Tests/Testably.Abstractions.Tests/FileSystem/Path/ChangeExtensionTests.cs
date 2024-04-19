@@ -56,8 +56,21 @@ public abstract partial class ChangeExtensionTests<TFileSystem>
 		string directory, string fileName, string extension)
 	{
 		directory = directory + "." + "with-dot";
-		string path = FileSystem.Path.Combine(directory, fileName);
+		string path = $"{directory}{FileSystem.Path.DirectorySeparatorChar}{fileName}";
 		string expectedResult = path + "." + extension;
+
+		string result = FileSystem.Path.ChangeExtension(path, extension);
+
+		result.Should().Be(expectedResult);
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void ChangeExtension_WithFileStartingWithDot_ShouldAppendExtensionToPath(
+		string fileName, string extension)
+	{
+		string path = $".{fileName}";
+		string expectedResult = $".{extension}";
 
 		string result = FileSystem.Path.ChangeExtension(path, extension);
 

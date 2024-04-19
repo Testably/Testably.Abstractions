@@ -6,6 +6,14 @@ public abstract partial class GetExtensionTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
+	public void GetExtension_Empty_ShouldReturnEmpty()
+	{
+		string? result = FileSystem.Path.GetExtension(string.Empty);
+
+		result.Should().BeEmpty();
+	}
+
+	[SkippableFact]
 	public void GetExtension_Null_ShouldReturnNull()
 	{
 		string? result = FileSystem.Path.GetExtension(null);
@@ -15,7 +23,7 @@ public abstract partial class GetExtensionTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void GetExtension_ShouldReturnExtension(
+	public void GetExtension_ShouldReturnExtensionWithLeadingDot(
 		string directory, string filename, string extension)
 	{
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + filename +
@@ -29,7 +37,7 @@ public abstract partial class GetExtensionTests<TFileSystem>
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
-	public void GetExtension_Span_ShouldReturnExtension(
+	public void GetExtension_Span_ShouldReturnExtensionWithLeadingDot(
 		string directory, string filename, string extension)
 	{
 		string path = directory + FileSystem.Path.DirectorySeparatorChar + filename +
@@ -51,5 +59,17 @@ public abstract partial class GetExtensionTests<TFileSystem>
 		string result = FileSystem.Path.GetExtension(path);
 
 		result.Should().Be("");
+	}
+
+	[SkippableTheory]
+	[AutoData]
+	public void GetExtension_StartingDot_ShouldReturnCompleteFileName(
+		string directory, string filename)
+	{
+		string path = directory + FileSystem.Path.DirectorySeparatorChar + "." + filename;
+
+		string result = FileSystem.Path.GetExtension(path);
+
+		result.Should().Be("." + filename);
 	}
 }

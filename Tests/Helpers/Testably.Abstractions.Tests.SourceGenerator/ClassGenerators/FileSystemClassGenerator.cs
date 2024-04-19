@@ -229,7 +229,19 @@ namespace {@class.Namespace}.{@class.Name}
 
 	private bool IncludeSimulatedTests(ClassModel @class)
 	{
-		string[] supportedPathTests = ["Tests", "GetRandomFileNameTests", "GetPathRootTests", "GetTempPathTests", "IsPathRootedTests"];
+		string[] supportedPathTests =
+		[
+			"ChangeExtensionTests",
+			"EndsInDirectorySeparatorTests",
+			"GetExtensionTests",
+			"GetFileNameTests",
+			"GetFileNameWithoutExtensionTests",
+			"GetPathRootTests",
+			"GetRandomFileNameTests",
+			"GetTempPathTests",
+			"IsPathRootedTests",
+			"Tests"
+		];
 		return @class.Namespace
 			.StartsWith("Testably.Abstractions.Tests.FileSystem.Path", StringComparison.Ordinal)
 		       && supportedPathTests.Contains(@class.Name);
