@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
 #if FEATURE_FILESYSTEM_NET7
 using Testably.Abstractions.Testing.Storage;
 #endif
@@ -409,42 +408,15 @@ internal partial class Execute
 			Span<char> destination,
 			out int charsWritten)
 		{
-			charsWritten = 0;
-			if (path1.Length == 0 && path2.Length == 0)
+			string result = Join(path1, path2);
+			if (destination.Length < result.Length)
 			{
-				return true;
-			}
-
-			if (path1.Length == 0 || path2.Length == 0)
-			{
-				ref ReadOnlySpan<char> pathToUse = ref path1.Length == 0 ? ref path2 : ref path1;
-				if (destination.Length < pathToUse.Length)
-				{
-					return false;
-				}
-
-				pathToUse.CopyTo(destination);
-				charsWritten = pathToUse.Length;
-				return true;
-			}
-
-			bool needsSeparator =
-				!(path1.Length > 0 && IsDirectorySeparator(path1[path1.Length - 1]) || path2.Length > 0 && IsDirectorySeparator(path2[0]));
-			int charsNeeded = path1.Length + path2.Length + (needsSeparator ? 1 : 0);
-			if (destination.Length < charsNeeded)
-			{
+				charsWritten = 0;
 				return false;
 			}
 
-			path1.CopyTo(destination);
-			if (needsSeparator)
-			{
-				destination[path1.Length] = DirectorySeparatorChar;
-			}
-
-			path2.CopyTo(destination.Slice(path1.Length + (needsSeparator ? 1 : 0)));
-
-			charsWritten = charsNeeded;
+			result.AsSpan().CopyTo(destination);
+			charsWritten = result.Length;
 			return true;
 		}
 #endif
@@ -457,52 +429,15 @@ internal partial class Execute
 			Span<char> destination,
 			out int charsWritten)
 		{
-			charsWritten = 0;
-			if (path1.Length == 0 && path2.Length == 0 && path3.Length == 0)
+			string result = Join(path1, path2, path3);
+			if (destination.Length < result.Length)
 			{
-				return true;
-			}
-
-			if (path1.Length == 0)
-			{
-				return TryJoin(path2, path3, destination, out charsWritten);
-			}
-
-			if (path2.Length == 0)
-			{
-				return TryJoin(path1, path3, destination, out charsWritten);
-			}
-
-			if (path3.Length == 0)
-			{
-				return TryJoin(path1, path2, destination, out charsWritten);
-			}
-			int neededSeparators =
-				path1.Length > 0 && IsDirectorySeparator(path1[path1.Length - 1]) || path2.Length > 0 && IsDirectorySeparator(path2[0]) ? 0 : 1;
-			bool needsSecondSeparator =
-				!(path2.Length > 0 && IsDirectorySeparator(path2[path2.Length - 1]) || path3.Length > 0 && IsDirectorySeparator(path3[0]));
-			if (needsSecondSeparator)
-			{
-				neededSeparators++;
-			}
-
-			int charsNeeded = path1.Length + path2.Length + path3.Length + neededSeparators;
-			if (destination.Length < charsNeeded)
-			{
+				charsWritten = 0;
 				return false;
 			}
 
-			bool result = TryJoin(path1, path2, destination, out charsWritten);
-			Debug.Assert(result, "should never fail joining first two paths");
-
-			if (needsSecondSeparator)
-			{
-				destination[charsWritten++] = DirectorySeparatorChar;
-			}
-
-			path3.CopyTo(destination.Slice(charsWritten));
-			charsWritten += path3.Length;
-
+			result.AsSpan().CopyTo(destination);
+			charsWritten = result.Length;
 			return true;
 		}
 #endif
@@ -527,7 +462,7 @@ internal partial class Execute
 				return string.Empty;
 			}
 
-			StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new();
 			foreach (string? path in paths)
 			{
 				if (string.IsNullOrEmpty(path))
