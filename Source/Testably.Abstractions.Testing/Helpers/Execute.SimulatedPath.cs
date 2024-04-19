@@ -368,70 +368,19 @@ internal partial class Execute
 #if FEATURE_PATH_ADVANCED
 		/// <inheritdoc cref="IPath.Join(string, string)" />
 		public string Join(string? path1, string? path2)
-		{
-			if (string.IsNullOrEmpty(path1))
-			{
-				return path2 ?? string.Empty;
-			}
-
-			if (string.IsNullOrEmpty(path2))
-			{
-				return path1;
-			}
-
-			return JoinInternal([path1, path2]);
-		}
+			=> JoinInternal([path1, path2]);
 #endif
 
 #if FEATURE_PATH_ADVANCED
 		/// <inheritdoc cref="IPath.Join(string, string, string)" />
 		public string Join(string? path1, string? path2, string? path3)
-		{
-			if (string.IsNullOrEmpty(path1))
-			{
-				return Join(path2, path3);
-			}
-
-			if (string.IsNullOrEmpty(path2))
-			{
-				return Join(path1, path3);
-			}
-
-			if (string.IsNullOrEmpty(path3))
-			{
-				return Join(path1, path2);
-			}
-
-			return JoinInternal([path1, path2, path3]);
-		}
+			=> JoinInternal([path1, path2, path3]);
 #endif
 
 #if FEATURE_PATH_ADVANCED
 		/// <inheritdoc cref="IPath.Join(string, string, string, string)" />
 		public string Join(string? path1, string? path2, string? path3, string? path4)
-		{
-			if (string.IsNullOrEmpty(path1))
-			{
-				return Join(path2, path3, path4);
-			}
-
-			if (string.IsNullOrEmpty(path2))
-			{
-				return Join(path1, path3, path4);
-			}
-
-			if (string.IsNullOrEmpty(path3))
-			{
-				return Join(path1, path2, path4);
-			}
-
-			if (string.IsNullOrEmpty(path4))
-			{
-				return Join(path1, path2, path3);
-			}
-
-			return JoinInternal([path1, path2, path3, path4]);
-		}
+			=> JoinInternal([path1, path2, path3, path4]);
 #endif
 
 #if FEATURE_PATH_ADVANCED
