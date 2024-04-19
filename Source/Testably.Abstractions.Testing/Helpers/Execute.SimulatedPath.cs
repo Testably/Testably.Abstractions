@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
+
 #if FEATURE_FILESYSTEM_NET7
 using Testably.Abstractions.Testing.Storage;
 #endif
@@ -342,7 +344,7 @@ internal partial class Execute
 #if FEATURE_PATH_JOIN
 		/// <inheritdoc cref="IPath.Join(ReadOnlySpan{char}, ReadOnlySpan{char})" />
 		public string Join(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2)
-			=> System.IO.Path.Join(path1, path2);
+			=> JoinInternal([path1.ToString(), path2.ToString()]);
 #endif
 
 #if FEATURE_PATH_JOIN
@@ -350,7 +352,7 @@ internal partial class Execute
 		public string Join(ReadOnlySpan<char> path1,
 			ReadOnlySpan<char> path2,
 			ReadOnlySpan<char> path3)
-			=> System.IO.Path.Join(path1, path2, path3);
+			=> JoinInternal([path1.ToString(), path2.ToString(), path3.ToString()]);
 #endif
 
 #if FEATURE_PATH_ADVANCED
@@ -476,9 +478,44 @@ internal partial class Execute
 
 		protected abstract bool IsDirectorySeparator(char c);
 
-#if FEATURE_PATH_ADVANCED
-		private static string JoinInternal(string?[] paths)
-			=> System.IO.Path.Join(paths);
+#if FEATURE_PATH_JOIN || FEATURE_PATH_ADVANCED
+		private string JoinInternal(string?[] paths)
+		{
+			if (paths == null)
+			{
+				throw new ArgumentNullException(nameof(paths));
+			}
+
+			if (paths.Length == 0)
+			{
+				return string.Empty;
+			}
+
+			StringBuilder sb = new StringBuilder();
+			foreach (string? path in paths)
+			{
+				if (string.IsNullOrEmpty(path))
+				{
+					continue;
+				}
+
+				if (sb.Length == 0)
+				{
+					sb.Append(path);
+				}
+				else
+				{
+					if (!IsDirectorySeparator(sb[sb.Length - 1]) && !IsDirectorySeparator(path[0]))
+					{
+						sb.Append(DirectorySeparatorChar);
+					}
+
+					sb.Append(path);
+				}
+			}
+
+			return sb.ToString();
+		}
 #endif
 
 		private bool TryGetExtensionIndex(string path, [NotNullWhen(true)] out int? dotIndex)

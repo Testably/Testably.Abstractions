@@ -240,6 +240,7 @@ namespace {@class.Namespace}.{@class.Name}
 			"GetRandomFileNameTests",
 			"GetTempPathTests",
 			"IsPathRootedTests",
+			"JoinTests",
 			"Tests"
 		];
 		return @class.Namespace
