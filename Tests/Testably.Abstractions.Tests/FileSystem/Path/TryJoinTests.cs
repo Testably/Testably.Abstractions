@@ -43,7 +43,11 @@ public abstract partial class TryJoinTests<TFileSystem>
 		char[] buffer = new char[expectedResult.Length];
 		Span<char> destination = new(buffer);
 
-		bool result = FileSystem.Path.TryJoin(path1, path2, destination, out int charsWritten);
+		bool result = FileSystem.Path.TryJoin(
+			path1.AsSpan(),
+			path2.AsSpan(),
+			destination,
+			out int charsWritten);
 
 		result.Should().BeTrue();
 		charsWritten.Should().Be(expectedResult.Length);
@@ -113,8 +117,12 @@ public abstract partial class TryJoinTests<TFileSystem>
 		char[] buffer = new char[expectedResult.Length];
 		Span<char> destination = new(buffer);
 
-		bool result =
-			FileSystem.Path.TryJoin(path1, path2, path3, destination, out int charsWritten);
+		bool result = FileSystem.Path.TryJoin(
+			path1.AsSpan(),
+			path2.AsSpan(),
+			path3.AsSpan(),
+			destination,
+			out int charsWritten);
 
 		result.Should().BeTrue();
 		charsWritten.Should().Be(expectedResult.Length);
