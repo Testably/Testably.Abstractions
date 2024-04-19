@@ -120,7 +120,7 @@ namespace Testably.Abstractions.Testing
     public sealed class MockRandomSystem : Testably.Abstractions.IRandomSystem
     {
         public MockRandomSystem() { }
-        public MockRandomSystem(Testably.Abstractions.Testing.RandomSystem.IRandomProvider randomProviderProvider) { }
+        public MockRandomSystem(Testably.Abstractions.Testing.RandomSystem.IRandomProvider randomProvider) { }
         public Testably.Abstractions.RandomSystem.IGuid Guid { get; }
         public Testably.Abstractions.RandomSystem.IRandomFactory Random { get; }
         public Testably.Abstractions.Testing.RandomSystem.IRandomProvider RandomProvider { get; }

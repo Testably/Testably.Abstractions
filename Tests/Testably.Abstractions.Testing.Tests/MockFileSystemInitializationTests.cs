@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
 #if NET6_0_OR_GREATER
 #endif
@@ -122,6 +124,22 @@ public class MockFileSystemInitializationTests
 
 		result.CurrentDirectory.Should().Be(path);
 		sut.CurrentDirectory.Should().Be(path);
+	}
+
+	[Theory]
+	[AutoData]
+	public void UseRandomProvider_ShouldUseFixedRandomValue(int fixedRandomValue)
+	{
+		MockFileSystem fileSystem = new(i => i
+			.UseRandomProvider(RandomProvider.Generate(
+				intGenerator: new RandomProvider.Generator<int>(() => fixedRandomValue))));
+
+		List<int> results = Enumerable.Range(1, 100)
+			.Select(_ => fileSystem.RandomSystem.Random.New().Next())
+			.ToList();
+		results.Add(fileSystem.RandomSystem.Random.Shared.Next());
+
+		results.Should().AllBeEquivalentTo(fixedRandomValue);
 	}
 
 	#region Helpers
