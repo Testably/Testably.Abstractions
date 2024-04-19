@@ -20,6 +20,25 @@ public abstract partial class JoinTests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[InlineAutoData("/foo/", "/bar/", "/foo//bar/")]
+	[InlineAutoData("foo/", "/bar", "foo//bar")]
+	[InlineAutoData("foo/", "bar", "foo/bar")]
+	[InlineAutoData("foo", "/bar", "foo/bar")]
+	[InlineAutoData("foo", "bar", "foo/bar")]
+	[InlineAutoData("/foo", "bar/", "/foo/bar/")]
+	public void Join_2Paths_ShouldReturnExpectedResult(
+		string path1, string path2, string expectedResult)
+	{
+		path1 = path1.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path2 = path2.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		expectedResult = expectedResult.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+
+		string result = FileSystem.Path.Join(path1, path2);
+
+		result.Should().Be(expectedResult);
+	}
+
+	[SkippableTheory]
 	[AutoData]
 	public void Join_2Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2)
@@ -62,6 +81,27 @@ public abstract partial class JoinTests<TFileSystem>
 		result1.Should().Be(expectedPath);
 		result2.Should().Be(expectedPath);
 		result3.Should().Be(expectedPath);
+	}
+
+	[SkippableTheory]
+	[InlineAutoData("/foo/", "/bar/", "/baz/", "/foo//bar//baz/")]
+	[InlineAutoData("foo/", "/bar/", "/baz", "foo//bar//baz")]
+	[InlineAutoData("foo/", "bar", "/baz", "foo/bar/baz")]
+	[InlineAutoData("foo", "/bar", "/baz", "foo/bar/baz")]
+	[InlineAutoData("foo", "/bar/", "baz", "foo/bar/baz")]
+	[InlineAutoData("foo", "bar", "baz", "foo/bar/baz")]
+	[InlineAutoData("/foo", "bar", "baz/", "/foo/bar/baz/")]
+	public void Join_3Paths_ShouldReturnExpectedResult(
+		string path1, string path2, string path3, string expectedResult)
+	{
+		path1 = path1.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path2 = path2.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path3 = path3.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		expectedResult = expectedResult.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+
+		string result = FileSystem.Path.Join(path1, path2, path3);
+
+		result.Should().Be(expectedResult);
 	}
 
 	[SkippableTheory]
@@ -116,6 +156,28 @@ public abstract partial class JoinTests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[InlineAutoData("/foo/", "/bar/", "/baz/", "/muh/", "/foo//bar//baz//muh/")]
+	[InlineAutoData("foo/", "/bar/", "/baz/", "/muh", "foo//bar//baz//muh")]
+	[InlineAutoData("foo/", "bar", "/baz", "/muh", "foo/bar/baz/muh")]
+	[InlineAutoData("foo", "/bar", "/baz", "/muh", "foo/bar/baz/muh")]
+	[InlineAutoData("foo", "/bar/", "baz/", "muh", "foo/bar/baz/muh")]
+	[InlineAutoData("foo", "bar", "baz", "muh", "foo/bar/baz/muh")]
+	[InlineAutoData("/foo", "bar", "baz", "muh/", "/foo/bar/baz/muh/")]
+	public void Join_4Paths_ShouldReturnExpectedResult(
+		string path1, string path2, string path3, string path4, string expectedResult)
+	{
+		path1 = path1.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path2 = path2.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path3 = path3.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path4 = path4.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		expectedResult = expectedResult.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+
+		string result = FileSystem.Path.Join(path1, path2, path3, path4);
+
+		result.Should().Be(expectedResult);
+	}
+
+	[SkippableTheory]
 	[AutoData]
 	public void Join_4Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4)
@@ -149,6 +211,27 @@ public abstract partial class JoinTests<TFileSystem>
 		result.Should().Be(expectedResult);
 	}
 
+	[SkippableFact]
+	public void Join_ParamPaths_Empty_ShouldReturnEmptyString()
+	{
+		string?[] paths = Array.Empty<string?>();
+
+		string result = FileSystem.Path.Join(paths);
+
+		result.Should().Be(string.Empty);
+	}
+
+	[SkippableFact]
+	public void Join_ParamPaths_Null_ShouldThrow()
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = FileSystem.Path.Join(null!);
+		});
+
+		exception.Should().BeException<ArgumentNullException>(paramName: "paths");
+	}
+
 	[SkippableTheory]
 	[InlineAutoData((string?)null)]
 	[InlineAutoData("")]
@@ -174,6 +257,29 @@ public abstract partial class JoinTests<TFileSystem>
 		result3.Should().Be(expectedPath);
 		result4.Should().Be(expectedPath);
 		result5.Should().Be(expectedPath);
+	}
+
+	[SkippableTheory]
+	[InlineAutoData("/foo/", "/bar/", "/baz/", "/muh/", "/maeh/", "/foo//bar//baz//muh//maeh/")]
+	[InlineAutoData("foo/", "/bar/", "/baz/", "/muh", "/maeh", "foo//bar//baz//muh/maeh")]
+	[InlineAutoData("foo/", "bar", "/baz", "/muh", "/maeh", "foo/bar/baz/muh/maeh")]
+	[InlineAutoData("foo", "/bar", "/baz", "/muh", "/maeh", "foo/bar/baz/muh/maeh")]
+	[InlineAutoData("foo", "/bar/", "baz/", "muh/", "maeh", "foo/bar/baz/muh/maeh")]
+	[InlineAutoData("foo", "bar", "baz", "muh", "maeh", "foo/bar/baz/muh/maeh")]
+	[InlineAutoData("/foo", "bar", "baz", "muh", "maeh/", "/foo/bar/baz/muh/maeh/")]
+	public void Join_ParamPaths_ShouldReturnExpectedResult(
+		string path1, string path2, string path3, string path4, string path5, string expectedResult)
+	{
+		path1 = path1.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path2 = path2.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path3 = path3.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path4 = path4.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path5 = path5.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		expectedResult = expectedResult.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+
+		string result = FileSystem.Path.Join(path1, path2, path3, path4, path5);
+
+		result.Should().Be(expectedResult);
 	}
 
 	[SkippableTheory]
