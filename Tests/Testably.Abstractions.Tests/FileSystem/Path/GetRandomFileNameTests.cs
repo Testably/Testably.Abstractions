@@ -9,6 +9,14 @@ public abstract partial class GetRandomFileNameTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
+	public void GetRandomFileName_ShouldMatch8Dot3Pattern()
+	{
+		string result = FileSystem.Path.GetRandomFileName();
+
+		result.Should().Match("????????.???");
+	}
+
+	[SkippableFact]
 	public void GetRandomFileName_ShouldReturnRandomFileNameWithExtension()
 	{
 		string result = FileSystem.Path.GetRandomFileName();
