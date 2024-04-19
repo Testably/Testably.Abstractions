@@ -195,7 +195,22 @@ internal partial class Execute
 		/// <inheritdoc cref="IPath.GetFileName(string)" />
 		[return: NotNullIfNotNull("path")]
 		public string? GetFileName(string? path)
-			=> System.IO.Path.GetFileName(path);
+		{
+			if (path == null)
+			{
+				return null;
+			}
+
+			for (int i = path.Length - 1; i >= 0; i--)
+			{
+				if (IsDirectorySeparator(path[i]))
+				{
+					return path.Substring(i + 1);
+				}
+			}
+
+			return path;
+		}
 
 #if FEATURE_SPAN
 		/// <inheritdoc cref="IPath.GetFileNameWithoutExtension(ReadOnlySpan{char})" />
