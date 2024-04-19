@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-
 #if FEATURE_FILESYSTEM_NET7
 using Testably.Abstractions.Testing.Storage;
 #endif
@@ -407,7 +407,18 @@ internal partial class Execute
 			ReadOnlySpan<char> path2,
 			Span<char> destination,
 			out int charsWritten)
-			=> System.IO.Path.TryJoin(path1, path2, destination, out charsWritten);
+		{
+			string result = Join(path1, path2);
+			if (destination.Length < result.Length)
+			{
+				charsWritten = 0;
+				return false;
+			}
+
+			result.AsSpan().CopyTo(destination);
+			charsWritten = result.Length;
+			return true;
+		}
 #endif
 
 #if FEATURE_PATH_JOIN
@@ -417,7 +428,18 @@ internal partial class Execute
 			ReadOnlySpan<char> path3,
 			Span<char> destination,
 			out int charsWritten)
-			=> System.IO.Path.TryJoin(path1, path2, path3, destination, out charsWritten);
+		{
+			string result = Join(path1, path2, path3);
+			if (destination.Length < result.Length)
+			{
+				charsWritten = 0;
+				return false;
+			}
+
+			result.AsSpan().CopyTo(destination);
+			charsWritten = result.Length;
+			return true;
+		}
 #endif
 
 		#endregion
@@ -440,7 +462,7 @@ internal partial class Execute
 				return string.Empty;
 			}
 
-			StringBuilder sb = new StringBuilder();
+			StringBuilder sb = new();
 			foreach (string? path in paths)
 			{
 				if (string.IsNullOrEmpty(path))

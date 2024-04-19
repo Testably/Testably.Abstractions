@@ -241,7 +241,8 @@ namespace {@class.Namespace}.{@class.Name}
 			"GetTempPathTests",
 			"IsPathRootedTests",
 			"JoinTests",
-			"Tests"
+			"Tests",
+			"TryJoinTests"
 		];
 		return @class.Namespace
 			.StartsWith("Testably.Abstractions.Tests.FileSystem.Path", StringComparison.Ordinal)
