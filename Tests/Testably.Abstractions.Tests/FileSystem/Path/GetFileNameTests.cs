@@ -13,19 +13,6 @@ public abstract partial class GetFileNameTests<TFileSystem>
 		result.Should().Be(string.Empty);
 	}
 
-	[SkippableTheory]
-	[InlineData("foo/", "", TestOS.All)]
-	[InlineData("bar\\", "", TestOS.Windows)]
-	public void GetFileName_EndingWithDirectorySeparator_ShouldReturnExpectedResult(
-		string? path, string? expected, TestOS operatingSystem)
-	{
-		Skip.IfNot(Test.RunsOn(operatingSystem));
-
-		string? result = FileSystem.Path.GetFileName(path);
-
-		result.Should().Be(expected);
-	}
-
 	[SkippableFact]
 	public void GetFileName_Null_ShouldReturnNull()
 	{
@@ -62,6 +49,21 @@ public abstract partial class GetFileNameTests<TFileSystem>
 		result.ToString().Should().Be(filename + "." + extension);
 	}
 #endif
+
+	[SkippableTheory]
+	[InlineData("foo/", "", TestOS.All)]
+	[InlineData("bar\\", "", TestOS.Windows)]
+	[InlineData("/foo", "foo", TestOS.All)]
+	[InlineData("\\bar", "bar", TestOS.Windows)]
+	public void GetFileName_SpecialCases_ShouldReturnExpectedResult(
+		string? path, string? expected, TestOS operatingSystem)
+	{
+		Skip.IfNot(Test.RunsOn(operatingSystem));
+
+		string? result = FileSystem.Path.GetFileName(path);
+
+		result.Should().Be(expected);
+	}
 
 	[SkippableTheory]
 	[AutoData]
