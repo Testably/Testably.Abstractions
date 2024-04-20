@@ -161,7 +161,60 @@ internal partial class Execute
 
 		/// <inheritdoc cref="IPath.GetDirectoryName(string)" />
 		public string? GetDirectoryName(string? path)
-			=> System.IO.Path.GetDirectoryName(path);
+		{
+			int GetDirectoryNameOffset(string p)
+			{
+				int rootLength = GetRootLength(p);
+				int end = p.Length;
+				if (end <= rootLength)
+				{
+					return -1;
+				}
+
+				while (end > rootLength && !IsDirectorySeparator(p[--end]))
+				{
+					// Do nothing
+				}
+
+				// Trim off any remaining separators (to deal with C:\foo\\bar)
+				while (end > rootLength && IsDirectorySeparator(p[end - 1]))
+				{
+					end--;
+				}
+
+				return end;
+			}
+
+			if (path == null || IsEffectivelyEmpty(path))
+			{
+				return null;
+			}
+
+			int end = GetDirectoryNameOffset(path);
+			if (end >= 0)
+			{
+				return NormalizeDirectorySeparators(path.Substring(0, end));
+			}
+
+			return null;
+			//if (path == null || IsEffectivelyEmpty(path))
+			//{
+			//	return null;
+			//}
+
+			//int rootLength = GetRootLength(path);
+			//for (int i = path.Length - 1; i >= 0; i--)
+			//{
+			//	char ch = path[i];
+
+			//	if (IsDirectorySeparator(ch) && i > rootLength)
+			//	{
+			//		return path.Substring(0, i);
+			//	}
+			//}
+
+			//return null;
+		}
 
 #if FEATURE_SPAN
 		/// <inheritdoc cref="IPath.GetExtension(ReadOnlySpan{char})" />
@@ -447,7 +500,9 @@ internal partial class Execute
 		private static string CombineInternal(string[] paths)
 			=> System.IO.Path.Combine(paths);
 
+		protected abstract int GetRootLength(string path);
 		protected abstract bool IsDirectorySeparator(char c);
+		protected abstract bool IsEffectivelyEmpty(string path);
 
 #if FEATURE_PATH_JOIN || FEATURE_PATH_ADVANCED
 		private string JoinInternal(string?[] paths)
@@ -488,6 +543,9 @@ internal partial class Execute
 			return sb.ToString();
 		}
 #endif
+
+		[return: NotNullIfNotNull(nameof(path))]
+		protected abstract string? NormalizeDirectorySeparators(string? path);
 
 		protected string RandomString(int length)
 		{

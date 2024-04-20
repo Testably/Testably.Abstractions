@@ -79,6 +79,20 @@ public abstract partial class GetDirectoryNameTests<TFileSystem>
 		result.Should().Be(directory);
 	}
 
+	[SkippableTheory]
+	[AutoData]
+	public void GetDirectoryName_ShouldNormalizeDirectorySeparators(
+		string parentDirectory, string directory, string filename)
+	{
+		string path = parentDirectory + FileSystem.Path.AltDirectorySeparatorChar + directory +
+		              FileSystem.Path.AltDirectorySeparatorChar + filename;
+		string expected = parentDirectory + FileSystem.Path.DirectorySeparatorChar + directory;
+
+		string? result = FileSystem.Path.GetDirectoryName(path);
+
+		result.Should().Be(expected);
+	}
+
 #if FEATURE_SPAN
 	[SkippableTheory]
 	[AutoData]
@@ -93,4 +107,64 @@ public abstract partial class GetDirectoryNameTests<TFileSystem>
 		result.ToString().Should().Be(directory);
 	}
 #endif
+
+	[SkippableTheory]
+	[InlineData("//", null, TestOS.Windows)]
+	[InlineData(@"\\", null, TestOS.Windows)]
+	[InlineData(@"\\", "", TestOS.Linux | TestOS.Mac)]
+	[InlineData(@"\", "", TestOS.Linux | TestOS.Mac)]
+	[InlineData(@"/", null, TestOS.Linux | TestOS.Mac)]
+	[InlineData(@"/a", "/", TestOS.Linux | TestOS.Mac)]
+	[InlineData(@"/a\b", @"/", TestOS.Linux | TestOS.Mac)]
+	[InlineData(@"/a\b/c", @"/a\b", TestOS.Linux | TestOS.Mac)]
+	[InlineData(@"/a/b/c", @"/a/b", TestOS.Linux | TestOS.Mac)]
+	[InlineData(@"/a/b", "/a", TestOS.Linux | TestOS.Mac)]
+	[InlineData("//?/G:/", null, TestOS.Windows)]
+	[InlineData("/??/H:/", @"\??\H:", TestOS.Windows)]
+	[InlineData("//?/I:/a", @"\\?\I:\", TestOS.Windows)]
+	[InlineData("/??/J:/a", @"\??\J:", TestOS.Windows)]
+	[InlineData(@"\\?\K:\", null, TestOS.Windows)]
+	[InlineData(@"\??\L:\", null, TestOS.Windows)]
+	[InlineData(@"\\?\M:\a", @"\\?\M:\", TestOS.Windows)]
+	[InlineData(@"\??\N:\a", @"\??\N:\", TestOS.Windows)]
+	[InlineData(@"\\?\UNC\", null, TestOS.Windows)]
+	[InlineData(@"//?/UNC/", null, TestOS.Windows)]
+	[InlineData(@"\??\UNC\", null, TestOS.Windows)]
+	[InlineData(@"/??/UNC/", @"\??\UNC", TestOS.Windows)]
+	[InlineData(@"\\?\UNC\a", null, TestOS.Windows)]
+	[InlineData(@"//?/UNC/a", null, TestOS.Windows)]
+	[InlineData(@"\??\UNC\a", null, TestOS.Windows)]
+	[InlineData(@"/??/UNC/a", @"\??\UNC", TestOS.Windows)]
+	[InlineData(@"\\?\ABC\", null, TestOS.Windows)]
+	[InlineData(@"//?/ABC/", null, TestOS.Windows)]
+	[InlineData(@"\??\XYZ\", null, TestOS.Windows)]
+	[InlineData(@"/??/XYZ/", @"\??\XYZ", TestOS.Windows)]
+	[InlineData(@"\\?\unc\a", @"\\?\unc\", TestOS.Windows)]
+	[InlineData(@"//?/unc/a", @"\\?\unc\", TestOS.Windows)]
+	[InlineData(@"\??\unc\a", @"\??\unc\", TestOS.Windows)]
+	[InlineData(@"/??/unc/a", @"\??\unc", TestOS.Windows)]
+	[InlineData("//./", null, TestOS.Windows)]
+	[InlineData(@"\\.\", null, TestOS.Windows)]
+	[InlineData("//?/", null, TestOS.Windows)]
+	[InlineData(@"\\?\", null, TestOS.Windows)]
+	[InlineData("//a/", null, TestOS.Windows)]
+	[InlineData(@"\\a\", null, TestOS.Windows)]
+	[InlineData(@"C:", null, TestOS.Windows)]
+	[InlineData(@"D:\", null, TestOS.Windows)]
+	[InlineData(@"E:/", null, TestOS.Windows)]
+	[InlineData(@"F:\a", @"F:\", TestOS.Windows)]
+	[InlineData(@"F:\b\c", @"F:\b", TestOS.Windows)]
+	[InlineData(@"F:\d/e", @"F:\d", TestOS.Windows)]
+	[InlineData(@"G:/f", @"G:\", TestOS.Windows)]
+	[InlineData(@"F:/g\h", @"F:\g", TestOS.Windows)]
+	[InlineData(@"G:/i/j", @"G:\i", TestOS.Windows)]
+	public void GetDirectoryName_SpecialCases_ShouldReturnExpectedValue(
+		string path, string? expected, TestOS operatingSystem)
+	{
+		Skip.IfNot(Test.RunsOn(operatingSystem));
+
+		string? result = FileSystem.Path.GetDirectoryName(path);
+
+		result.Should().Be(expected);
+	}
 }
