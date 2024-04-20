@@ -318,7 +318,15 @@ internal partial class Execute
 
 		/// <inheritdoc cref="IPath.HasExtension(string)" />
 		public bool HasExtension([NotNullWhen(true)] string? path)
-			=> System.IO.Path.HasExtension(path);
+		{
+			if (path == null)
+			{
+				return false;
+			}
+
+			return TryGetExtensionIndex(path, out var dotIndex)
+			       && dotIndex < path.Length - 1;
+		}
 
 #if FEATURE_SPAN
 		/// <inheritdoc cref="IPath.IsPathFullyQualified(ReadOnlySpan{char})" />
@@ -405,7 +413,11 @@ internal partial class Execute
 #if FEATURE_PATH_ADVANCED
 		/// <inheritdoc cref="IPath.TrimEndingDirectorySeparator(string)" />
 		public string TrimEndingDirectorySeparator(string path)
-			=> System.IO.Path.TrimEndingDirectorySeparator(path);
+		{
+			return EndsInDirectorySeparator(path) && path.Length != GetRootLength(path)
+				? path.Substring(0, path.Length - 1)
+				: path;
+		}
 #endif
 
 #if FEATURE_PATH_JOIN

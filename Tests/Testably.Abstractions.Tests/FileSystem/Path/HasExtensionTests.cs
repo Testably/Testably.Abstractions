@@ -14,6 +14,7 @@ public abstract partial class HasExtensionTests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[InlineAutoData("abc.", false)]
 	[InlineAutoData(".foo", true)]
 	[InlineAutoData(".abc.xyz", true)]
 	[InlineAutoData("foo", false)]
@@ -30,6 +31,7 @@ public abstract partial class HasExtensionTests<TFileSystem>
 
 #if FEATURE_SPAN
 	[SkippableTheory]
+	[InlineAutoData("abc.", false)]
 	[InlineAutoData(".foo", true)]
 	[InlineAutoData(".abc.xyz", true)]
 	[InlineAutoData("foo", false)]
