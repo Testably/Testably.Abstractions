@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace Testably.Abstractions.Testing.Helpers;
 
@@ -17,6 +18,54 @@ internal partial class Execute
 
 		/// <inheritdoc cref="IPath.VolumeSeparatorChar" />
 		public override char VolumeSeparatorChar => '/';
+
+		private readonly MockFileSystem _fileSystem = fileSystem;
+
+		/// <inheritdoc cref="IPath.GetFullPath(string)" />
+		public override string GetFullPath(string path)
+		{
+			path.EnsureValidArgument(_fileSystem, nameof(path));
+
+			if (!IsPathRooted(path))
+			{
+				path = Combine(_fileSystem.Storage.CurrentDirectory, path);
+			}
+
+			// We would ideally use realpath to do this, but it resolves symlinks and requires that the file actually exist.
+			string collapsedString = RemoveRelativeSegments(path, GetRootLength(path));
+
+			string result = collapsedString.Length == 0
+				? $"{DirectorySeparatorChar}"
+				: collapsedString;
+
+			if (result.Contains('\0', StringComparison.Ordinal))
+			{
+				throw ExceptionFactory.NullCharacterInPath(nameof(path));
+			}
+
+			return result;
+		}
+
+#if FEATURE_PATH_RELATIVE
+		/// <inheritdoc cref="IPath.GetFullPath(string, string)" />
+		public override string GetFullPath(string path, string basePath)
+		{
+			path.EnsureValidArgument(_fileSystem, nameof(path));
+			basePath.EnsureValidArgument(_fileSystem, nameof(basePath));
+
+			if (!IsPathFullyQualified(basePath))
+			{
+				throw ExceptionFactory.BasePathNotFullyQualified(nameof(basePath));
+			}
+
+			if (IsPathFullyQualified(path))
+			{
+				return GetFullPath(path);
+			}
+
+			return GetFullPath(Combine(basePath, path));
+		}
+#endif
 
 		/// <inheritdoc cref="IPath.GetInvalidFileNameChars()" />
 		public override char[] GetInvalidFileNameChars() => ['\0', '/'];
@@ -64,6 +113,12 @@ internal partial class Execute
 		/// </summary>
 		protected override bool IsEffectivelyEmpty(string path)
 			=> string.IsNullOrEmpty(path);
+
+		/// <summary>
+		///     https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/Common/src/System/IO/PathInternal.Unix.cs#L77
+		/// </summary>
+		protected override bool IsPartiallyQualified(string path)
+			=> !IsPathRooted(path);
 
 		/// <summary>
 		///     https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/Common/src/System/IO/PathInternal.Unix.cs#L39

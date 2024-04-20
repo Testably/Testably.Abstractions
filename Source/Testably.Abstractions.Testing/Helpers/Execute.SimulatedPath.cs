@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -259,35 +260,11 @@ internal partial class Execute
 		}
 
 		/// <inheritdoc cref="IPath.GetFullPath(string)" />
-		public string GetFullPath(string path)
-		{
-			path.EnsureValidArgument(fileSystem, nameof(path));
-
-			string? pathRoot = System.IO.Path.GetPathRoot(path);
-			string? directoryRoot =
-				System.IO.Path.GetPathRoot(fileSystem.Storage.CurrentDirectory);
-			if (!string.IsNullOrEmpty(pathRoot) && !string.IsNullOrEmpty(directoryRoot))
-			{
-				if (char.ToUpperInvariant(pathRoot[0]) != char.ToUpperInvariant(directoryRoot[0]))
-				{
-					return System.IO.Path.GetFullPath(path);
-				}
-
-				if (pathRoot.Length < directoryRoot.Length)
-				{
-					path = path.Substring(pathRoot.Length);
-				}
-			}
-
-			return System.IO.Path.GetFullPath(System.IO.Path.Combine(
-				fileSystem.Storage.CurrentDirectory,
-				path));
-		}
+		public abstract string GetFullPath(string path);
 
 #if FEATURE_PATH_RELATIVE
 		/// <inheritdoc cref="IPath.GetFullPath(string, string)" />
-		public string GetFullPath(string path, string basePath)
-			=> System.IO.Path.GetFullPath(path, basePath);
+		public abstract string GetFullPath(string path, string basePath);
 #endif
 
 		/// <inheritdoc cref="IPath.GetInvalidFileNameChars()" />
@@ -353,7 +330,14 @@ internal partial class Execute
 #if FEATURE_PATH_RELATIVE
 		/// <inheritdoc cref="IPath.IsPathFullyQualified(string)" />
 		public bool IsPathFullyQualified(string path)
-			=> System.IO.Path.IsPathFullyQualified(path);
+		{
+			if (path == null)
+			{
+				throw new ArgumentNullException(nameof(path));
+			}
+
+			return !IsPartiallyQualified(path);
+		}
 #endif
 
 #if FEATURE_SPAN
@@ -533,6 +517,8 @@ internal partial class Execute
 		protected abstract bool IsDirectorySeparator(char c);
 		protected abstract bool IsEffectivelyEmpty(string path);
 
+		protected abstract bool IsPartiallyQualified(string path);
+
 #if FEATURE_PATH_JOIN || FEATURE_PATH_ADVANCED
 		private string JoinInternal(string?[] paths)
 		{
@@ -580,6 +566,110 @@ internal partial class Execute
 			const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
 			return new string(Enumerable.Repeat(chars, length)
 				.Select(s => s[fileSystem.RandomSystem.Random.Shared.Next(s.Length)]).ToArray());
+		}
+
+		/// <summary>
+		///     Remove relative segments from the given path (without combining with a root).
+		/// </summary>
+		protected string RemoveRelativeSegments(string path, int rootLength)
+		{
+			Debug.Assert(rootLength > 0);
+			bool flippedSeparator = false;
+
+			StringBuilder sb = new();
+
+			int skip = rootLength;
+			// We treat "\.." , "\." and "\\" as a relative segment. We want to collapse the first separator past the root presuming
+			// the root actually ends in a separator. Otherwise the first segment for RemoveRelativeSegments
+			// in cases like "\\?\C:\.\" and "\\?\C:\..\", the first segment after the root will be ".\" and "..\" which is not considered as a relative segment and hence not be removed.
+			if (IsDirectorySeparator(path[skip - 1]))
+			{
+				skip--;
+			}
+
+			// Remove "//", "/./", and "/../" from the path by copying each character to the output,
+			// except the ones we're removing, such that the builder contains the normalized path
+			// at the end.
+			if (skip > 0)
+			{
+				sb.Append(path.Substring(0, skip));
+			}
+
+			for (int i = skip; i < path.Length; i++)
+			{
+				char c = path[i];
+
+				if (IsDirectorySeparator(c) && i + 1 < path.Length)
+				{
+					// Skip this character if it's a directory separator and if the next character is, too,
+					// e.g. "parent//child" => "parent/child"
+					if (IsDirectorySeparator(path[i + 1]))
+					{
+						continue;
+					}
+
+					// Skip this character and the next if it's referring to the current directory,
+					// e.g. "parent/./child" => "parent/child"
+					if ((i + 2 == path.Length || IsDirectorySeparator(path[i + 2])) &&
+					    path[i + 1] == '.')
+					{
+						i++;
+						continue;
+					}
+
+					// Skip this character and the next two if it's referring to the parent directory,
+					// e.g. "parent/child/../grandchild" => "parent/grandchild"
+					if (i + 2 < path.Length &&
+					    (i + 3 == path.Length || IsDirectorySeparator(path[i + 3])) &&
+					    path[i + 1] == '.' && path[i + 2] == '.')
+					{
+						// Unwind back to the last slash (and if there isn't one, clear out everything).
+						int s;
+						for (s = sb.Length - 1; s >= skip; s--)
+						{
+							if (IsDirectorySeparator(sb[s]))
+							{
+								sb.Length =
+									i + 3 >= path.Length && s == skip
+										? s + 1
+										: s; // to avoid removing the complete "\tmp\" segment in cases like \\?\C:\tmp\..\, C:\tmp\..
+								break;
+							}
+						}
+
+						if (s < skip)
+						{
+							sb.Length = skip;
+						}
+
+						i += 2;
+						continue;
+					}
+				}
+
+				// Normalize the directory separator if needed
+				if (c != DirectorySeparatorChar && c == AltDirectorySeparatorChar)
+				{
+					c = DirectorySeparatorChar;
+					flippedSeparator = true;
+				}
+
+				sb.Append(c);
+			}
+
+			// If we haven't changed the source path, return the original
+			if (!flippedSeparator && sb.Length == path.Length)
+			{
+				return path;
+			}
+
+			// We may have eaten the trailing separator from the root when we started and not replaced it
+			if (skip != rootLength && sb.Length < rootLength)
+			{
+				sb.Append(path[rootLength - 1]);
+			}
+
+			return sb.ToString();
 		}
 
 		private bool TryGetExtensionIndex(string path, [NotNullWhen(true)] out int? dotIndex)
