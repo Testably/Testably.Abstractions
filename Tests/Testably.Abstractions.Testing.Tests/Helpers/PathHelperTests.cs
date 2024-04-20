@@ -127,6 +127,8 @@ public class PathHelperTests
 	public void ThrowCommonExceptionsIfPathIsInvalid_WithInvalidCharacters(
 		char invalidChar)
 	{
+		Skip.If(Test.IsNetFramework);
+
 		MockFileSystem fileSystem = new(i => i
 			.SimulatingOperatingSystem(SimulationMode.Windows));
 		string path = invalidChar + "path";
