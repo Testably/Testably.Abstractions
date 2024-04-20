@@ -29,6 +29,14 @@ internal static class ExceptionFactory
 #endif
 		};
 
+	internal static ArgumentException BasePathNotFullyQualified(string paramName)
+		=> new("Basepath argument is not fully qualified.", paramName)
+		{
+#if FEATURE_EXCEPTION_HRESULT
+			HResult = -2147024809
+#endif
+		};
+
 	internal static IOException CannotCreateFileAsAlreadyExists(Execute execute, string path)
 		=> new(
 			$"Cannot create '{path}' because a file or directory with the same name already exists.",
@@ -126,6 +134,13 @@ internal static class ExceptionFactory
 
 	internal static NotSupportedException NotSupportedTimerWrapping()
 		=> new("You cannot wrap an existing Timer in the MockTimeSystem instance!");
+
+	internal static ArgumentException NullCharacterInPath(string paramName)
+#if NET8_0_OR_GREATER
+		=> new("Null character in path.", paramName);
+#else
+		=> new("Illegal characters in path.", paramName);
+#endif
 
 	internal static PlatformNotSupportedException OperationNotSupportedOnThisPlatform()
 		=> new("Operation is not supported on this platform.")

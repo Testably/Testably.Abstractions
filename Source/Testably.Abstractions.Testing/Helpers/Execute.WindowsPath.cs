@@ -20,6 +20,85 @@ internal partial class Execute
 		/// <inheritdoc cref="IPath.VolumeSeparatorChar" />
 		public override char VolumeSeparatorChar => ':';
 
+		private readonly MockFileSystem _fileSystem = fileSystem;
+
+		/// <inheritdoc cref="IPath.GetFullPath(string)" />
+		public override string GetFullPath(string path)
+		{
+			path.EnsureValidArgument(_fileSystem, nameof(path));
+
+			if (path.Length >= 4
+			    && path[0] == '\\'
+			    && (path[1] == '\\' || path[1] == '?')
+			    && path[2] == '?'
+			    && path[3] == '\\')
+			{
+				return path;
+			}
+
+			string? pathRoot = GetPathRoot(path);
+			string? directoryRoot = GetPathRoot(_fileSystem.Storage.CurrentDirectory);
+			string candidate;
+			if (!string.IsNullOrEmpty(pathRoot) && !string.IsNullOrEmpty(directoryRoot))
+			{
+				if (char.ToUpperInvariant(pathRoot[0]) != char.ToUpperInvariant(directoryRoot[0]))
+				{
+					candidate = path;
+				}
+				else if (pathRoot.Length < directoryRoot.Length)
+				{
+					candidate = Combine(_fileSystem.Storage.CurrentDirectory,
+						path.Substring(pathRoot.Length));
+				}
+				else
+				{
+					candidate = Combine(_fileSystem.Storage.CurrentDirectory, path);
+				}
+			}
+			else
+			{
+				candidate = Combine(_fileSystem.Storage.CurrentDirectory, path);
+			}
+
+			string fullPath =
+				NormalizeDirectorySeparators(RemoveRelativeSegments(candidate,
+					GetRootLength(candidate)));
+			fullPath = fullPath.TrimEnd('.');
+
+			if (fullPath.Contains('\0', StringComparison.Ordinal))
+			{
+				throw ExceptionFactory.NullCharacterInPath(nameof(path));
+			}
+
+			if (fullPath.Length > 2 && fullPath[1] == ':' && fullPath[2] != DirectorySeparatorChar)
+			{
+				return fullPath.Substring(0, 2) + DirectorySeparatorChar + fullPath.Substring(2);
+			}
+
+			return fullPath;
+		}
+
+#if FEATURE_PATH_RELATIVE
+		/// <inheritdoc cref="IPath.GetFullPath(string, string)" />
+		public override string GetFullPath(string path, string basePath)
+		{
+			path.EnsureValidArgument(_fileSystem, nameof(path));
+			basePath.EnsureValidArgument(_fileSystem, nameof(basePath));
+
+			if (!IsPathFullyQualified(basePath))
+			{
+				throw ExceptionFactory.BasePathNotFullyQualified(nameof(basePath));
+			}
+
+			if (IsPathFullyQualified(path))
+			{
+				return GetFullPath(path);
+			}
+
+			return GetFullPath(Combine(basePath, path));
+		}
+#endif
+
 		/// <inheritdoc cref="IPath.GetInvalidFileNameChars()" />
 		public override char[] GetInvalidFileNameChars() =>
 		[
@@ -188,6 +267,35 @@ internal partial class Execute
 			}
 
 			return path.All(c => c == ' ');
+		}
+
+		/// <summary>
+		///     https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/Common/src/System/IO/PathInternal.Windows.cs#L250
+		/// </summary>
+		protected override bool IsPartiallyQualified(string path)
+		{
+			if (path.Length < 2)
+			{
+				// It isn't fixed, it must be relative.  There is no way to specify a fixed
+				// path with one character (or less).
+				return true;
+			}
+
+			if (IsDirectorySeparator(path[0]))
+			{
+				// There is no valid way to specify a relative path with two initial slashes or
+				// \? as ? isn't valid for drive relative paths and \??\ is equivalent to \\?\
+				return !(path[1] == '?' || IsDirectorySeparator(path[1]));
+			}
+
+			// The only way to specify a fixed path that doesn't begin with two slashes
+			// is the drive, colon, slash format- i.e. C:\
+			return !(path.Length >= 3
+			         && path[1] == VolumeSeparatorChar
+			         && IsDirectorySeparator(path[2])
+			         // To match old behavior we'll check the drive character for validity as the path is technically
+			         // not qualified if you don't have a valid drive. "=:\" is the "=" file's default data stream.
+			         && IsValidDriveChar(path[0]));
 		}
 
 		/// <summary>
