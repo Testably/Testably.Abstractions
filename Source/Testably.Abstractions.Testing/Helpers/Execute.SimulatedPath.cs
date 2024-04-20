@@ -430,7 +430,11 @@ internal partial class Execute
 #if FEATURE_PATH_ADVANCED
 		/// <inheritdoc cref="IPath.TrimEndingDirectorySeparator(string)" />
 		public string TrimEndingDirectorySeparator(string path)
-			=> System.IO.Path.TrimEndingDirectorySeparator(path);
+		{
+			return EndsInDirectorySeparator(path) && path.Length != GetRootLength(path)
+				? path.Substring(0, path.Length - 1)
+				: path;
+		}
 #endif
 
 #if FEATURE_PATH_JOIN

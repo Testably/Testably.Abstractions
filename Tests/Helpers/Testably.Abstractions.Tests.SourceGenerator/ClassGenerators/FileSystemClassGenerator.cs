@@ -245,6 +245,7 @@ namespace {@class.Namespace}.{@class.Name}
 			"IsPathRootedTests",
 			"JoinTests",
 			"Tests",
+			"TrimEndingDirectorySeparatorTests",
 			"TryJoinTests"
 		];
 		return @class.Namespace
