@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
 
 namespace Testably.Abstractions.Testing.Helpers;
 
@@ -75,33 +76,23 @@ internal partial class Execute
 				return path;
 			}
 
-			// Make a pass to see if we need to normalize so we can potentially skip allocating
-			bool normalized = true;
-
-			for (int i = 0; i < path.Length; i++)
-			{
-				if (IsDirectorySeparator(path[i])
-				    && i + 1 < path.Length && IsDirectorySeparator(path[i + 1]))
-				{
-					normalized = false;
-					break;
-				}
-			}
-
-			if (normalized)
+			bool isAlreadyNormalized = Enumerable
+				.Range(0, path.Length - 1)
+				.All(i => !IsDirectorySeparator(path[i]) ||
+				          !IsDirectorySeparator(path[i + 1]));
+			if (isAlreadyNormalized)
 			{
 				return path;
 			}
 
 			StringBuilder builder = new(path.Length);
 
-			for (int i = 0; i < path.Length; i++)
+			for (int j = 0; j < path.Length - 1; j++)
 			{
-				char current = path[i];
+				char current = path[j];
 
-				// Skip if we have another separator following
 				if (IsDirectorySeparator(current)
-				    && i + 1 < path.Length && IsDirectorySeparator(path[i + 1]))
+				    && IsDirectorySeparator(path[j + 1]))
 				{
 					continue;
 				}

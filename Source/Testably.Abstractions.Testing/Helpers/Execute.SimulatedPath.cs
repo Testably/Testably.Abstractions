@@ -162,58 +162,29 @@ internal partial class Execute
 		/// <inheritdoc cref="IPath.GetDirectoryName(string)" />
 		public string? GetDirectoryName(string? path)
 		{
-			int GetDirectoryNameOffset(string p)
-			{
-				int rootLength = GetRootLength(p);
-				int end = p.Length;
-				if (end <= rootLength)
-				{
-					return -1;
-				}
-
-				while (end > rootLength && !IsDirectorySeparator(p[--end]))
-				{
-					// Do nothing
-				}
-
-				// Trim off any remaining separators (to deal with C:\foo\\bar)
-				while (end > rootLength && IsDirectorySeparator(p[end - 1]))
-				{
-					end--;
-				}
-
-				return end;
-			}
-
 			if (path == null || IsEffectivelyEmpty(path))
 			{
 				return null;
 			}
 
-			int end = GetDirectoryNameOffset(path);
-			if (end >= 0)
+			int rootLength = GetRootLength(path);
+			if (path.Length <= rootLength)
 			{
-				return NormalizeDirectorySeparators(path.Substring(0, end));
+				return null;
 			}
 
-			return null;
-			//if (path == null || IsEffectivelyEmpty(path))
-			//{
-			//	return null;
-			//}
+			int end = path.Length;
+			while (end > rootLength && !IsDirectorySeparator(path[end - 1]))
+			{
+				end--;
+			}
 
-			//int rootLength = GetRootLength(path);
-			//for (int i = path.Length - 1; i >= 0; i--)
-			//{
-			//	char ch = path[i];
+			while (end > rootLength && IsDirectorySeparator(path[end - 1]))
+			{
+				end--;
+			}
 
-			//	if (IsDirectorySeparator(ch) && i > rootLength)
-			//	{
-			//		return path.Substring(0, i);
-			//	}
-			//}
-
-			//return null;
+			return NormalizeDirectorySeparators(path.Substring(0, end));
 		}
 
 #if FEATURE_SPAN
