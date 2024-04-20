@@ -46,6 +46,25 @@ public abstract partial class CombineTests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[InlineAutoData("/foo/", "/bar/", "/bar/")]
+	[InlineAutoData("foo/", "/bar", "/bar")]
+	[InlineAutoData("foo/", "bar", "foo/bar")]
+	[InlineAutoData("foo", "/bar", "/bar")]
+	[InlineAutoData("foo", "bar", "foo/bar")]
+	[InlineAutoData("/foo", "bar/", "/foo/bar/")]
+	public void Combine_2Paths_ShouldReturnExpectedResult(
+		string path1, string path2, string expectedResult)
+	{
+		path1 = path1.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path2 = path2.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		expectedResult = expectedResult.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+
+		string result = FileSystem.Path.Combine(path1, path2);
+
+		result.Should().Be(expectedResult);
+	}
+
+	[SkippableTheory]
 	[InlineAutoData]
 	[InlineAutoData(" ")]
 	[InlineAutoData("foo", " ")]
@@ -107,6 +126,27 @@ public abstract partial class CombineTests<TFileSystem>
 		string result = FileSystem.Path.Combine(path1, path2, path3);
 
 		result.Should().Be(path3);
+	}
+
+	[SkippableTheory]
+	[InlineAutoData("/foo/", "/bar/", "/baz/", "/baz/")]
+	[InlineAutoData("foo/", "/bar/", "/baz", "/baz")]
+	[InlineAutoData("foo/", "bar", "/baz", "/baz")]
+	[InlineAutoData("foo", "/bar", "/baz", "/baz")]
+	[InlineAutoData("foo", "/bar/", "baz", "/bar/baz")]
+	[InlineAutoData("foo", "bar", "baz", "foo/bar/baz")]
+	[InlineAutoData("/foo", "bar", "baz/", "/foo/bar/baz/")]
+	public void Combine_3Paths_ShouldReturnExpectedResult(
+		string path1, string path2, string path3, string expectedResult)
+	{
+		path1 = path1.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path2 = path2.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path3 = path3.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		expectedResult = expectedResult.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+
+		string result = FileSystem.Path.Combine(path1, path2, path3);
+
+		result.Should().Be(expectedResult);
 	}
 
 	[SkippableTheory]
@@ -181,6 +221,28 @@ public abstract partial class CombineTests<TFileSystem>
 		string result = FileSystem.Path.Combine(path1, path2, path3, path4);
 
 		result.Should().Be(path4);
+	}
+
+	[SkippableTheory]
+	[InlineAutoData("/foo/", "/bar/", "/baz/", "/muh/", "/muh/")]
+	[InlineAutoData("foo/", "/bar/", "/baz/", "/muh", "/muh")]
+	[InlineAutoData("foo/", "bar", "/baz", "/muh", "/muh")]
+	[InlineAutoData("foo", "/bar", "/baz", "/muh", "/muh")]
+	[InlineAutoData("foo", "/bar/", "baz/", "muh", "/bar/baz/muh")]
+	[InlineAutoData("foo", "bar", "baz", "muh", "foo/bar/baz/muh")]
+	[InlineAutoData("/foo", "bar", "baz", "muh/", "/foo/bar/baz/muh/")]
+	public void Combine_4Paths_ShouldReturnExpectedResult(
+		string path1, string path2, string path3, string path4, string expectedResult)
+	{
+		path1 = path1.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path2 = path2.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path3 = path3.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path4 = path4.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		expectedResult = expectedResult.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+
+		string result = FileSystem.Path.Combine(path1, path2, path3, path4);
+
+		result.Should().Be(expectedResult);
 	}
 
 	[SkippableTheory]
@@ -279,6 +341,29 @@ public abstract partial class CombineTests<TFileSystem>
 		string result = FileSystem.Path.Combine(path1, path2, path3, path4, path5);
 
 		result.Should().Be(path5);
+	}
+
+	[SkippableTheory]
+	[InlineAutoData("/foo/", "/bar/", "/baz/", "/muh/", "/maeh/", "/maeh/")]
+	[InlineAutoData("foo/", "/bar/", "/baz/", "/muh", "/maeh", "/maeh")]
+	[InlineAutoData("foo/", "bar", "/baz", "/muh", "/maeh", "/maeh")]
+	[InlineAutoData("foo", "/bar", "/baz", "/muh", "/maeh", "/maeh")]
+	[InlineAutoData("foo", "/bar/", "baz/", "muh/", "maeh", "/bar/baz/muh/maeh")]
+	[InlineAutoData("foo", "bar", "baz", "muh", "maeh", "foo/bar/baz/muh/maeh")]
+	[InlineAutoData("/foo", "bar", "baz", "muh", "maeh/", "/foo/bar/baz/muh/maeh/")]
+	public void Combine_ParamPaths_ShouldReturnExpectedResult(
+		string path1, string path2, string path3, string path4, string path5, string expectedResult)
+	{
+		path1 = path1.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path2 = path2.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path3 = path3.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path4 = path4.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path5 = path5.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		expectedResult = expectedResult.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+
+		string result = FileSystem.Path.Combine(path1, path2, path3, path4, path5);
+
+		result.Should().Be(expectedResult);
 	}
 
 	[SkippableTheory]
