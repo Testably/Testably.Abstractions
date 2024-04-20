@@ -128,7 +128,7 @@ internal partial class Execute
 			}
 
 			return IsPathRooted(path)
-				? path.Substring(0, Math.Min(3, path.Length))
+				? path.Substring(0, GetRootLength(path))
 				: string.Empty;
 		}
 

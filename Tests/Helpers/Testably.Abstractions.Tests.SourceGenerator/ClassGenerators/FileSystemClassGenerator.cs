@@ -141,20 +141,31 @@ namespace {@class.Namespace}.{@class.Name}
 namespace {@class.Namespace}.{@class.Name}
 {{
 	// ReSharper disable once UnusedMember.Global
-	public sealed class LinuxFileSystemTests : {@class.Name}<MockFileSystem>
+	public sealed class LinuxFileSystemTests : {@class.Name}<MockFileSystem>, IDisposable
 	{{
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
-		public override string BasePath => ""/"";
+		public override string BasePath => _directoryCleaner.BasePath;
+
+		private readonly IDirectoryCleaner _directoryCleaner;
+
 		public LinuxFileSystemTests() : this(new MockFileSystem(i =>
 			i.SimulatingOperatingSystem(SimulationMode.Linux)))
 		{{
 		}}
+
 		private LinuxFileSystemTests(MockFileSystem mockFileSystem) : base(
 			new Test(OSPlatform.Linux),
 			mockFileSystem,
 			mockFileSystem.TimeSystem)
 		{{
+			_directoryCleaner = FileSystem
+			   .SetCurrentDirectoryToEmptyTemporaryDirectory();
 		}}
+
+		/// <inheritdoc cref=""IDisposable.Dispose()"" />
+		public void Dispose()
+			=> _directoryCleaner.Dispose();
+
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
 		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
 		{{
@@ -169,10 +180,13 @@ namespace {@class.Namespace}.{@class.Name}
 #endif
 #if !NETFRAMEWORK
 	// ReSharper disable once UnusedMember.Global
-	public sealed class MacFileSystemTests : {@class.Name}<MockFileSystem>
+	public sealed class MacFileSystemTests : {@class.Name}<MockFileSystem>, IDisposable
 	{{
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
-		public override string BasePath => ""/"";
+		public override string BasePath => _directoryCleaner.BasePath;
+
+		private readonly IDirectoryCleaner _directoryCleaner;
+
 		public MacFileSystemTests() : this(new MockFileSystem(i =>
 			i.SimulatingOperatingSystem(SimulationMode.MacOS)))
 		{{
@@ -182,7 +196,14 @@ namespace {@class.Namespace}.{@class.Name}
 			mockFileSystem,
 			mockFileSystem.TimeSystem)
 		{{
+			_directoryCleaner = FileSystem
+			   .SetCurrentDirectoryToEmptyTemporaryDirectory();
 		}}
+
+		/// <inheritdoc cref=""IDisposable.Dispose()"" />
+		public void Dispose()
+			=> _directoryCleaner.Dispose();
+
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
 		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
 		{{
@@ -197,10 +218,13 @@ namespace {@class.Namespace}.{@class.Name}
 #endif
 #if !NETFRAMEWORK
 	// ReSharper disable once UnusedMember.Global
-	public sealed class WindowsFileSystemTests : {@class.Name}<MockFileSystem>
+	public sealed class WindowsFileSystemTests : {@class.Name}<MockFileSystem>, IDisposable
 	{{
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
-		public override string BasePath => ""C:\\"";
+		public override string BasePath => _directoryCleaner.BasePath;
+
+		private readonly IDirectoryCleaner _directoryCleaner;
+
 		public WindowsFileSystemTests() : this(new MockFileSystem(i =>
 			i.SimulatingOperatingSystem(SimulationMode.Windows)))
 		{{
@@ -210,7 +234,14 @@ namespace {@class.Namespace}.{@class.Name}
 			mockFileSystem,
 			mockFileSystem.TimeSystem)
 		{{
+			_directoryCleaner = FileSystem
+			   .SetCurrentDirectoryToEmptyTemporaryDirectory();
 		}}
+
+		/// <inheritdoc cref=""IDisposable.Dispose()"" />
+		public void Dispose()
+			=> _directoryCleaner.Dispose();
+
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
 		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
 		{{
