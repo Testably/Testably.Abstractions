@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Text;
+﻿using System.Text;
 
 namespace Testably.Abstractions.Testing.Helpers;
 
@@ -69,18 +68,23 @@ internal partial class Execute
 		/// <summary>
 		///     https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/Common/src/System/IO/PathInternal.Unix.cs#L39
 		/// </summary>
-		protected override string? NormalizeDirectorySeparators(string? path)
+		protected override string NormalizeDirectorySeparators(string path)
 		{
-			if (string.IsNullOrEmpty(path))
+			bool IsAlreadyNormalized()
 			{
-				return path;
+				for (int i = 0; i < path.Length - 1; i++)
+				{
+					if (IsDirectorySeparator(path[i]) &&
+					    IsDirectorySeparator(path[i + 1]))
+					{
+						return false;
+					}
+				}
+
+				return true;
 			}
 
-			bool isAlreadyNormalized = Enumerable
-				.Range(0, path.Length - 1)
-				.All(i => !IsDirectorySeparator(path[i]) ||
-				          !IsDirectorySeparator(path[i + 1]));
-			if (isAlreadyNormalized)
+			if (IsAlreadyNormalized())
 			{
 				return path;
 			}
@@ -100,6 +104,7 @@ internal partial class Execute
 				builder.Append(current);
 			}
 
+			builder.Append(path[path.Length - 1]);
 			return builder.ToString();
 		}
 	}

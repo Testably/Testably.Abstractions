@@ -515,8 +515,7 @@ internal partial class Execute
 		}
 #endif
 
-		[return: NotNullIfNotNull(nameof(path))]
-		protected abstract string? NormalizeDirectorySeparators(string? path);
+		protected abstract string NormalizeDirectorySeparators(string path);
 
 		protected string RandomString(int length)
 		{

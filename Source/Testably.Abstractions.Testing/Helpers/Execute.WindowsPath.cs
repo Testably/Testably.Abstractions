@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -201,8 +200,7 @@ internal partial class Execute
 		/// <summary>
 		///     https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/Common/src/System/IO/PathInternal.Windows.cs#L318
 		/// </summary>
-		[return: NotNullIfNotNull(nameof(path))]
-		protected override string? NormalizeDirectorySeparators(string? path)
+		protected override string NormalizeDirectorySeparators(string path)
 		{
 			bool IsAlreadyNormalized()
 			{
@@ -220,7 +218,7 @@ internal partial class Execute
 				return true;
 			}
 
-			if (string.IsNullOrEmpty(path) || IsAlreadyNormalized())
+			if (IsAlreadyNormalized())
 			{
 				return path;
 			}

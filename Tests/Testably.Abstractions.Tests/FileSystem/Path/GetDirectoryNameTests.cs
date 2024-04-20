@@ -58,6 +58,8 @@ public abstract partial class GetDirectoryNameTests<TFileSystem>
 	[SkippableTheory]
 	[InlineData("\t")]
 	[InlineData("\n")]
+	[InlineData(" \t")]
+	[InlineData("\n  ")]
 	public void GetDirectoryName_TabOrNewline_ShouldReturnEmptyString(string? path)
 	{
 		string? result = FileSystem.Path.GetDirectoryName(path);
@@ -81,12 +83,29 @@ public abstract partial class GetDirectoryNameTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void GetDirectoryName_ShouldNormalizeDirectorySeparators(
+	public void GetDirectoryName_ShouldReplaceAltDirectorySeparator(
 		string parentDirectory, string directory, string filename)
 	{
 		string path = parentDirectory + FileSystem.Path.AltDirectorySeparatorChar + directory +
 		              FileSystem.Path.AltDirectorySeparatorChar + filename;
 		string expected = parentDirectory + FileSystem.Path.DirectorySeparatorChar + directory;
+
+		string? result = FileSystem.Path.GetDirectoryName(path);
+
+		result.Should().Be(expected);
+	}
+
+	[SkippableTheory]
+	[InlineData("foo//bar/file", "foo/bar", TestOS.All)]
+	[InlineData("foo///bar/file", "foo/bar", TestOS.All)]
+	[InlineData(@"foo\\bar/file", "foo/bar", TestOS.Windows)]
+	[InlineData(@"foo\\\bar/file", "foo/bar", TestOS.Windows)]
+	public void GetDirectoryName_ShouldNormalizeDirectorySeparators(
+		string path, string expected, TestOS operatingSystem)
+	{
+		Skip.IfNot(Test.RunsOn(operatingSystem));
+
+		expected = expected.Replace('/', FileSystem.Path.DirectorySeparatorChar);
 
 		string? result = FileSystem.Path.GetDirectoryName(path);
 
