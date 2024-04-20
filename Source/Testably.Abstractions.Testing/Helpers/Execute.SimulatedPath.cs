@@ -468,8 +468,66 @@ internal partial class Execute
 
 		#endregion
 
-		private static string CombineInternal(string[] paths)
-			=> System.IO.Path.Combine(paths);
+		private string CombineInternal(string[] paths)
+		{
+			string NormalizePath(string path, bool ignoreStartingSeparator)
+			{
+				if (!ignoreStartingSeparator && (
+					path[0] == DirectorySeparatorChar ||
+					path[0] == AltDirectorySeparatorChar))
+				{
+					path = path.Substring(1);
+				}
+
+				if (path[path.Length - 1] == DirectorySeparatorChar ||
+				    path[path.Length - 1] == AltDirectorySeparatorChar)
+				{
+					path = path.Substring(0, path.Length - 1);
+				}
+
+				return NormalizeDirectorySeparators(path);
+			}
+
+			if (paths == null)
+			{
+				throw new ArgumentNullException(nameof(paths));
+			}
+
+			StringBuilder sb = new();
+
+			bool isFirst = true;
+			bool endsWithDirectorySeparator = false;
+			foreach (string path in paths)
+			{
+				if (path == null)
+				{
+					throw new ArgumentNullException(nameof(paths));
+				}
+
+				if (string.IsNullOrEmpty(path))
+				{
+					continue;
+				}
+
+				if (IsPathRooted(path))
+				{
+					sb.Clear();
+					isFirst = true;
+				}
+
+				sb.Append(NormalizePath(path, isFirst));
+				sb.Append(DirectorySeparatorChar);
+				endsWithDirectorySeparator = path.EndsWith(DirectorySeparatorChar) ||
+				                             path.EndsWith(AltDirectorySeparatorChar);
+			}
+
+			if (!endsWithDirectorySeparator)
+			{
+				return sb.ToString(0, sb.Length - 1);
+			}
+
+			return sb.ToString();
+		}
 
 		protected abstract int GetRootLength(string path);
 		protected abstract bool IsDirectorySeparator(char c);
