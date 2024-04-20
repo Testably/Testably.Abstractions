@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text;
 #if FEATURE_FILESYSTEM_NET7
 using Testably.Abstractions.Testing.Storage;
@@ -284,7 +283,7 @@ internal partial class Execute
 
 		/// <inheritdoc cref="IPath.GetRandomFileName()" />
 		public string GetRandomFileName()
-			=> $"{RandomString(8)}.{RandomString(3)}";
+			=> $"{RandomString(fileSystem, 8)}.{RandomString(fileSystem, 3)}";
 
 #if FEATURE_PATH_RELATIVE
 		/// <inheritdoc cref="IPath.GetRelativePath(string, string)" />
@@ -306,7 +305,7 @@ internal partial class Execute
 			"Insecure temporary file creation methods should not be used. Use `Path.Combine(Path.GetTempPath(), Path.GetRandomFileName())` instead.")]
 #endif
 		public string GetTempFileName()
-			=> System.IO.Path.GetTempFileName();
+			=> CreateTempFileName(fileSystem);
 
 		/// <inheritdoc cref="IPath.GetTempPath()" />
 		public abstract string GetTempPath();
@@ -572,13 +571,6 @@ internal partial class Execute
 #endif
 
 		protected abstract string NormalizeDirectorySeparators(string path);
-
-		protected string RandomString(int length)
-		{
-			const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-			return new string(Enumerable.Repeat(chars, length)
-				.Select(s => s[fileSystem.RandomSystem.Random.Shared.Next(s.Length)]).ToArray());
-		}
 
 		/// <summary>
 		///     Remove relative segments from the given path (without combining with a root).

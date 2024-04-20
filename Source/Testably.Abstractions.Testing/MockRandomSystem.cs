@@ -26,11 +26,11 @@ public sealed class MockRandomSystem : IRandomSystem
 	}
 
 	/// <summary>
-	///     Initializes the <see cref="MockRandomSystem" /> with the specified <paramref name="randomProviderProvider" />.
+	///     Initializes the <see cref="MockRandomSystem" /> with the specified <paramref name="randomProvider" />.
 	/// </summary>
-	public MockRandomSystem(IRandomProvider randomProviderProvider)
+	public MockRandomSystem(IRandomProvider randomProvider)
 	{
-		RandomProvider = randomProviderProvider;
+		RandomProvider = randomProvider;
 		_guidMock = new GuidMock(this);
 		_randomFactoryMock = new RandomFactoryMock(this);
 	}

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
+using Testably.Abstractions.Testing.RandomSystem;
 using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Storage;
 
@@ -107,7 +108,7 @@ public sealed class MockFileSystem : IFileSystem
 			: new Execute(this, SimulationMode);
 		StatisticsRegistration = new FileSystemStatistics(this);
 		using IDisposable release = StatisticsRegistration.Ignore();
-		RandomSystem = new MockRandomSystem();
+		RandomSystem = new MockRandomSystem(initialization.RandomProvider ?? RandomProvider.Default());
 		TimeSystem = new MockTimeSystem(TimeProvider.Now());
 		_pathMock = new PathMock(this);
 		_storage = new InMemoryStorage(this);
@@ -232,6 +233,11 @@ public sealed class MockFileSystem : IFileSystem
 		internal string? CurrentDirectory { get; private set; }
 
 		/// <summary>
+		///     The <see cref="IRandomProvider" /> for the <see cref="RandomSystem" />.
+		/// </summary>
+		internal IRandomProvider? RandomProvider { get; private set; }
+
+		/// <summary>
 		///     The simulated operating system.
 		/// </summary>
 		internal SimulationMode SimulationMode { get; private set; } = SimulationMode.Native;
@@ -260,6 +266,15 @@ public sealed class MockFileSystem : IFileSystem
 		internal Initialization UseCurrentDirectory()
 		{
 			CurrentDirectory = System.IO.Directory.GetCurrentDirectory();
+			return this;
+		}
+
+		/// <summary>
+		///     Use the given <paramref name="randomProvider" /> for the <see cref="RandomSystem" />.
+		/// </summary>
+		internal Initialization UseRandomProvider(IRandomProvider randomProvider)
+		{
+			RandomProvider = randomProvider;
 			return this;
 		}
 	}

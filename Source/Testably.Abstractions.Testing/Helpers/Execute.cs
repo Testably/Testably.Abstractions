@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Testing.Helpers;
@@ -77,5 +79,33 @@ internal partial class Execute
 			? StringComparison.Ordinal
 			: StringComparison.OrdinalIgnoreCase;
 		Path = new NativePath(fileSystem);
+	}
+
+	internal static string CreateTempFileName(MockFileSystem fileSystem)
+	{
+		int i = 0;
+		string tempPath = fileSystem.Path.GetTempPath();
+		fileSystem.Directory.CreateDirectory(tempPath);
+		while (true)
+		{
+			string fileName = $"{RandomString(fileSystem, 8)}.tmp";
+			string path = string.Concat(tempPath, fileName);
+			try
+			{
+				fileSystem.File.Open(path, FileMode.CreateNew, FileAccess.Write).Dispose();
+				return path;
+			}
+			catch (IOException) when (i < 100)
+			{
+				i++; // Don't let unforeseen circumstances cause us to loop forever
+			}
+		}
+	}
+
+	internal static string RandomString(MockFileSystem fileSystem, int length)
+	{
+		const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+		return new string(Enumerable.Repeat(chars, length)
+			.Select(s => s[fileSystem.RandomSystem.Random.Shared.Next(s.Length)]).ToArray());
 	}
 }
