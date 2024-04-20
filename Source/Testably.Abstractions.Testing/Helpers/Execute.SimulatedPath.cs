@@ -161,7 +161,31 @@ internal partial class Execute
 
 		/// <inheritdoc cref="IPath.GetDirectoryName(string)" />
 		public string? GetDirectoryName(string? path)
-			=> System.IO.Path.GetDirectoryName(path);
+		{
+			if (path == null || IsEffectivelyEmpty(path))
+			{
+				return null;
+			}
+
+			int rootLength = GetRootLength(path);
+			if (path.Length <= rootLength)
+			{
+				return null;
+			}
+
+			int end = path.Length;
+			while (end > rootLength && !IsDirectorySeparator(path[end - 1]))
+			{
+				end--;
+			}
+
+			while (end > rootLength && IsDirectorySeparator(path[end - 1]))
+			{
+				end--;
+			}
+
+			return NormalizeDirectorySeparators(path.Substring(0, end));
+		}
 
 #if FEATURE_SPAN
 		/// <inheritdoc cref="IPath.GetExtension(ReadOnlySpan{char})" />
@@ -447,7 +471,9 @@ internal partial class Execute
 		private static string CombineInternal(string[] paths)
 			=> System.IO.Path.Combine(paths);
 
+		protected abstract int GetRootLength(string path);
 		protected abstract bool IsDirectorySeparator(char c);
+		protected abstract bool IsEffectivelyEmpty(string path);
 
 #if FEATURE_PATH_JOIN || FEATURE_PATH_ADVANCED
 		private string JoinInternal(string?[] paths)
@@ -488,6 +514,8 @@ internal partial class Execute
 			return sb.ToString();
 		}
 #endif
+
+		protected abstract string NormalizeDirectorySeparators(string path);
 
 		protected string RandomString(int length)
 		{

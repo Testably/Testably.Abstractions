@@ -38,28 +38,28 @@ public abstract partial class IsPathRootedTests<TFileSystem>
 				"/", TestOS.All
 			},
 			{
-				@"\", TestOS.Windows
+				@"\", TestOS.Windows | TestOS.Framework
 			},
 			{
 				"/foo", TestOS.All
 			},
 			{
-				@"\foo", TestOS.Windows
+				@"\foo", TestOS.Windows | TestOS.Framework
 			},
 			{
 				"foo/bar", TestOS.None
 			},
 			{
-				"a:", TestOS.Windows
+				"a:", TestOS.Windows | TestOS.Framework
 			},
 			{
-				"z:", TestOS.Windows
+				"z:", TestOS.Windows | TestOS.Framework
 			},
 			{
-				"A:", TestOS.Windows
+				"A:", TestOS.Windows | TestOS.Framework
 			},
 			{
-				"Z:", TestOS.Windows
+				"Z:", TestOS.Windows | TestOS.Framework
 			},
 			{
 				"@:", TestOS.Framework

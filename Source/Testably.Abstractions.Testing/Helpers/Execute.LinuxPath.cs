@@ -1,4 +1,6 @@
-﻿namespace Testably.Abstractions.Testing.Helpers;
+﻿using System.Text;
+
+namespace Testably.Abstractions.Testing.Helpers;
 
 internal partial class Execute
 {
@@ -44,9 +46,66 @@ internal partial class Execute
 			=> path?.Length > 0 && path[0] == '/';
 
 		/// <summary>
+		///     https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/Common/src/System/IO/PathInternal.Unix.cs#L22
+		/// </summary>
+		protected override int GetRootLength(string path)
+		{
+			return path.Length > 0 && IsDirectorySeparator(path[0]) ? 1 : 0;
+		}
+
+		/// <summary>
 		///     https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/Common/src/System/IO/PathInternal.Unix.cs#L27
 		/// </summary>
 		protected override bool IsDirectorySeparator(char c)
 			=> c == DirectorySeparatorChar;
+
+		/// <summary>
+		///     https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/Common/src/System/IO/PathInternal.Unix.cs#L89
+		/// </summary>
+		protected override bool IsEffectivelyEmpty(string path)
+			=> string.IsNullOrEmpty(path);
+
+		/// <summary>
+		///     https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/Common/src/System/IO/PathInternal.Unix.cs#L39
+		/// </summary>
+		protected override string NormalizeDirectorySeparators(string path)
+		{
+			bool IsAlreadyNormalized()
+			{
+				for (int i = 0; i < path.Length - 1; i++)
+				{
+					if (IsDirectorySeparator(path[i]) &&
+					    IsDirectorySeparator(path[i + 1]))
+					{
+						return false;
+					}
+				}
+
+				return true;
+			}
+
+			if (IsAlreadyNormalized())
+			{
+				return path;
+			}
+
+			StringBuilder builder = new(path.Length);
+
+			for (int j = 0; j < path.Length - 1; j++)
+			{
+				char current = path[j];
+
+				if (IsDirectorySeparator(current)
+				    && IsDirectorySeparator(path[j + 1]))
+				{
+					continue;
+				}
+
+				builder.Append(current);
+			}
+
+			builder.Append(path[path.Length - 1]);
+			return builder.ToString();
+		}
 	}
 }
