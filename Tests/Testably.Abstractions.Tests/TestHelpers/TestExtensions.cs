@@ -20,6 +20,6 @@ internal static class TestExtensions
 	public static bool RunsOn(this Test test, TestOS operatingSystem)
 		=> (operatingSystem.HasFlag(TestOS.Linux) && test.RunsOnLinux) ||
 		   (operatingSystem.HasFlag(TestOS.Mac) && test.RunsOnMac) ||
-		   (operatingSystem.HasFlag(TestOS.Windows) && test.RunsOnWindows) ||
+		   (operatingSystem.HasFlag(TestOS.Windows) && test is { RunsOnWindows: true, IsNetFramework: false }) ||
 		   (operatingSystem.HasFlag(TestOS.Framework) && test.IsNetFramework);
 }
