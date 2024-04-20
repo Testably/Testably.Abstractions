@@ -232,6 +232,7 @@ namespace {@class.Namespace}.{@class.Name}
 		string[] supportedPathTests =
 		[
 			"ChangeExtensionTests",
+			"CombineTests",
 			"EndsInDirectorySeparatorTests",
 			"GetDirectoryNameTests",
 			"GetExtensionTests",
