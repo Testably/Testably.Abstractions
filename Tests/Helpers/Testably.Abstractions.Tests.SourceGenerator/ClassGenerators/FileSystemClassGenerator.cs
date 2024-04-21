@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using Testably.Abstractions.Tests.SourceGenerator.Model;
 
 namespace Testably.Abstractions.Tests.SourceGenerator.ClassGenerators;
@@ -131,8 +132,10 @@ namespace {@class.Namespace}.{@class.Name}
 				$""Long-running tests are {{_fixture.LongRunningTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.LongRunningTests."");
 #endif
 	}}
-}}
-
+}}");
+		if (!@class.Namespace.Equals("Testably.Abstractions.AccessControl.Tests", StringComparison.Ordinal))
+		{
+			sourceBuilder.Append(@$"
 #if !NETFRAMEWORK
 namespace {@class.Namespace}.{@class.Name}
 {{
@@ -253,5 +256,6 @@ namespace {@class.Namespace}.{@class.Name}
 	}}
 }}
 #endif");
+		}
 	}
 }
