@@ -35,6 +35,33 @@ public abstract partial class GetRelativePathTests<TFileSystem>
 		result.Should().Be(path2);
 	}
 
+	[SkippableTheory]
+	[InlineData(@"C:\FOO", @"C:\foo", ".", TestOS.Windows)]
+	[InlineData("/FOO", "/foo", "../foo", TestOS.Linux)]
+	[InlineData("/FOO", "/foo", ".", TestOS.Mac)]
+	[InlineData("foo", "foo/", ".", TestOS.All)]
+	[InlineData(@"C:\Foo", @"C:\Bar", @"..\Bar", TestOS.Windows)]
+	[InlineData(@"C:\Foo", @"C:\Foo\Bar", "Bar", TestOS.Windows)]
+	[InlineData(@"C:\Foo\Bar", @"C:\Bar\Bar", @"..\..\Bar\Bar", TestOS.Windows)]
+	[InlineData(@"C:\Foo\Foo", @"C:\Foo\Bar", @"..\Bar", TestOS.Windows)]
+	[InlineData("/Foo", "/Bar", "../Bar", TestOS.Linux | TestOS.Mac)]
+	[InlineData("/Foo", "/Foo/Bar", "Bar", TestOS.Linux | TestOS.Mac)]
+	[InlineData("/Foo/Bar", "/Bar/Bar", "../../Bar/Bar", TestOS.Linux | TestOS.Mac)]
+	[InlineData("/Foo/Foo", "/Foo/Bar", "../Bar", TestOS.Linux | TestOS.Mac)]
+	public void GetRelativePath_EdgeCases_ShouldReturnExpectedValue(string relativeTo, string path,
+		string expected, TestOS operatingSystem)
+	{
+		Skip.IfNot(Test.RunsOn(operatingSystem));
+		if (operatingSystem == TestOS.All)
+		{
+			expected = expected.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		}
+
+		string result = FileSystem.Path.GetRelativePath(relativeTo, path);
+
+		result.Should().Be(expected);
+	}
+
 	[SkippableFact]
 	public void GetRelativePath_FromAbsolutePathInCurrentDirectory_ShouldReturnRelativePath()
 	{
