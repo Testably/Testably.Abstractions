@@ -97,18 +97,29 @@ public sealed class MockFileSystem : IFileSystem
 	/// <summary>
 	///     Initializes the <see cref="MockFileSystem" /> with the <paramref name="initializationCallback" />.
 	/// </summary>
-	internal MockFileSystem(Action<Initialization> initializationCallback)
+	public MockFileSystem(Action<Initialization> initializationCallback)
 	{
 		Initialization initialization = new();
 		initializationCallback(initialization);
 
 		SimulationMode = initialization.SimulationMode;
+#if CAN_SIMULATE_OTHER_OS
 		Execute = SimulationMode == SimulationMode.Native
 			? new Execute(this)
 			: new Execute(this, SimulationMode);
+#else
+		if (SimulationMode != SimulationMode.Native)
+		{
+			throw new NotSupportedException(
+				"Simulating other operating systems is not supported on .NET Framework");
+		}
+
+		Execute = new Execute(this);
+#endif
 		StatisticsRegistration = new FileSystemStatistics(this);
 		using IDisposable release = StatisticsRegistration.Ignore();
-		RandomSystem = new MockRandomSystem(initialization.RandomProvider ?? RandomProvider.Default());
+		RandomSystem =
+			new MockRandomSystem(initialization.RandomProvider ?? RandomProvider.Default());
 		TimeSystem = new MockTimeSystem(TimeProvider.Now());
 		_pathMock = new PathMock(this);
 		_storage = new InMemoryStorage(this);
@@ -225,7 +236,7 @@ public sealed class MockFileSystem : IFileSystem
 	/// <summary>
 	///     The initialization options for the <see cref="MockFileSystem" />.
 	/// </summary>
-	internal class Initialization
+	public class Initialization
 	{
 		/// <summary>
 		///     The current directory.
@@ -242,10 +253,18 @@ public sealed class MockFileSystem : IFileSystem
 		/// </summary>
 		internal SimulationMode SimulationMode { get; private set; } = SimulationMode.Native;
 
+		internal Initialization()
+		{
+			// Avoid public constructor
+		}
+
 		/// <summary>
 		///     Specify the operating system that should be simulated.
 		/// </summary>
-		internal Initialization SimulatingOperatingSystem(SimulationMode simulationMode)
+#if !CAN_SIMULATE_OTHER_OS
+		[Obsolete("Simulating other operating systems is not supported on .NET Framework")]
+#endif
+		public Initialization SimulatingOperatingSystem(SimulationMode simulationMode)
 		{
 			SimulationMode = simulationMode;
 			return this;
@@ -254,7 +273,7 @@ public sealed class MockFileSystem : IFileSystem
 		/// <summary>
 		///     Use the provided <paramref name="path" /> as current directory.
 		/// </summary>
-		internal Initialization UseCurrentDirectory(string path)
+		public Initialization UseCurrentDirectory(string path)
 		{
 			CurrentDirectory = path;
 			return this;
@@ -263,7 +282,7 @@ public sealed class MockFileSystem : IFileSystem
 		/// <summary>
 		///     Use <see cref="Directory.GetCurrentDirectory()" /> as current directory.
 		/// </summary>
-		internal Initialization UseCurrentDirectory()
+		public Initialization UseCurrentDirectory()
 		{
 			CurrentDirectory = System.IO.Directory.GetCurrentDirectory();
 			return this;
@@ -272,7 +291,7 @@ public sealed class MockFileSystem : IFileSystem
 		/// <summary>
 		///     Use the given <paramref name="randomProvider" /> for the <see cref="RandomSystem" />.
 		/// </summary>
-		internal Initialization UseRandomProvider(IRandomProvider randomProvider)
+		public Initialization UseRandomProvider(IRandomProvider randomProvider)
 		{
 			RandomProvider = randomProvider;
 			return this;

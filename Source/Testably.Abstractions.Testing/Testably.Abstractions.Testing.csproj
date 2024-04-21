@@ -21,9 +21,6 @@
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
 			<_Parameter1>Testably.Abstractions.Testing.Tests</_Parameter1>
 		</AssemblyAttribute>
-		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-			<_Parameter1>Testably.Abstractions.Tests</_Parameter1>
-		</AssemblyAttribute>
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using Testably.Abstractions.Tests.SourceGenerator.Model;
-// ReSharper disable StringLiteralTypo
 
 namespace Testably.Abstractions.Tests.SourceGenerator.ClassGenerators;
 
+// ReSharper disable StringLiteralTypo
 internal class FileSystemClassGenerator : ClassGeneratorBase
 {
 	/// <inheritdoc cref="ClassGeneratorBase.Marker" />
@@ -132,10 +131,8 @@ namespace {@class.Namespace}.{@class.Name}
 				$""Long-running tests are {{_fixture.LongRunningTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.LongRunningTests."");
 #endif
 	}}
-}}");
-		if (IncludeSimulatedTests(@class))
-		{
-			sourceBuilder.Append(@$"
+}}
+
 #if !NETFRAMEWORK
 namespace {@class.Namespace}.{@class.Name}
 {{
@@ -177,6 +174,7 @@ namespace {@class.Namespace}.{@class.Name}
 		}}
 	}}
 #endif
+
 #if !NETFRAMEWORK
 	// ReSharper disable once UnusedMember.Global
 	public sealed class MacFileSystemTests : {@class.Name}<MockFileSystem>, IDisposable
@@ -215,6 +213,7 @@ namespace {@class.Namespace}.{@class.Name}
 		}}
 	}}
 #endif
+
 #if !NETFRAMEWORK
 	// ReSharper disable once UnusedMember.Global
 	public sealed class WindowsFileSystemTests : {@class.Name}<MockFileSystem>, IDisposable
@@ -254,12 +253,5 @@ namespace {@class.Namespace}.{@class.Name}
 	}}
 }}
 #endif");
-		}
-	}
-
-	private bool IncludeSimulatedTests(ClassModel @class)
-	{
-		return @class.Namespace
-			.StartsWith("Testably.Abstractions.Tests.FileSystem", StringComparison.Ordinal);
 	}
 }

@@ -92,6 +92,25 @@ public class MockFileSystemTests
 		drive.VolumeLabel.Should().NotBeNullOrEmpty();
 	}
 
+#if NETFRAMEWORK
+	[SkippableTheory]
+	[InlineData(SimulationMode.Linux)]
+	[InlineData(SimulationMode.MacOS)]
+	[InlineData(SimulationMode.Windows)]
+	public void FileSystemMock_ShouldNotSupportSimulatingOtherOperatingSystemsOnNetFramework(
+		SimulationMode simulationMode)
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = new MockFileSystem(i => i.SimulatingOperatingSystem(simulationMode));
+		});
+
+		exception.Should().BeOfType<NotSupportedException>()
+			.Which.Message.Should()
+			.Contain("Simulating other operating systems is not supported on .NET Framework");
+	}
+#endif
+
 	[SkippableTheory]
 	[InlineData("A:\\")]
 	[InlineData("G:\\")]

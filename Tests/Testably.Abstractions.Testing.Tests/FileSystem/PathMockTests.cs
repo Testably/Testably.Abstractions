@@ -6,9 +6,11 @@ public sealed class PathMockTests
 {
 	[Theory]
 	[InlineAutoData(SimulationMode.Native)]
+#if !NETFRAMEWORK
 	[InlineAutoData(SimulationMode.Linux)]
 	[InlineAutoData(SimulationMode.MacOS)]
 	[InlineAutoData(SimulationMode.Windows)]
+#endif
 	public void GetTempFileName_WithCollisions_ShouldThrowIOException(
 		SimulationMode simulationMode, int fixedRandomValue)
 	{
