@@ -273,10 +273,13 @@ namespace {@class.Namespace}.{@class.Name}
 			"GetPathRootTests",
 			"GetRandomFileNameTests",
 			"GetRelativePathTests",
+			"GetTempFileNameTests",
 			"GetTempPathTests",
+			"HasExtensionTests",
 			"IsPathRootedTests",
 			"JoinTests",
 			"Tests",
+			"TrimEndingDirectorySeparatorTests",
 			"TryJoinTests"
 		];
 		return @class.Namespace
