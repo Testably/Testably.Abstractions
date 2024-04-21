@@ -301,9 +301,13 @@ internal partial class Execute
 				return path;
 			}
 
-			int commonLength = GetCommonPathLength(relativeTo, path,
-				ignoreCase: fileSystem.Execute.StringComparisonMode ==
-				            StringComparison.OrdinalIgnoreCase);
+			Func<char, char, bool> charComparer = (c1, c2) => c1 == c2;
+			if (fileSystem.Execute.StringComparisonMode == StringComparison.OrdinalIgnoreCase)
+			{
+				charComparer = (c1, c2) => char.ToUpperInvariant(c1) == char.ToUpperInvariant(c2);
+			}
+
+			int commonLength = GetCommonPathLength(relativeTo, path, charComparer);
 
 			// If there is nothing in common they can't share the same root, return the "to" path as is.
 			if (commonLength == 0)
@@ -331,58 +335,9 @@ internal partial class Execute
 				return ".";
 			}
 
-			// We have the same root, we need to calculate the difference now using the
-			// common Length and Segment count past the length.
-			//
-			// Some examples:
-			//
-			//  C:\Foo C:\Bar L3, S1 -> ..\Bar
-			//  C:\Foo C:\Foo\Bar L6, S0 -> Bar
-			//  C:\Foo\Bar C:\Bar\Bar L3, S2 -> ..\..\Bar\Bar
-			//  C:\Foo\Foo C:\Foo\Bar L7, S1 -> ..\Bar
-
-			StringBuilder sb = new StringBuilder();
-			sb.EnsureCapacity(Math.Max(relativeTo.Length, path.Length));
-
-			// Add parent segments for segments past the common on the "from" path
-			if (commonLength < relativeToLength)
-			{
-				sb.Append("..");
-
-				for (int i = commonLength + 1; i < relativeToLength; i++)
-				{
-					if (IsDirectorySeparator(relativeTo[i]))
-					{
-						sb.Append(DirectorySeparatorChar);
-						sb.Append("..");
-					}
-				}
-			}
-			else if (IsDirectorySeparator(path[commonLength]))
-			{
-				// No parent segments and we need to eat the initial separator
-				//  (C:\Foo C:\Foo\Bar case)
-				commonLength++;
-			}
-
-			// Now add the rest of the "to" path, adding back the trailing separator
-			int differenceLength = pathLength - commonLength;
-			if (pathEndsInSeparator)
-			{
-				differenceLength++;
-			}
-
-			if (differenceLength > 0)
-			{
-				if (sb.Length > 0)
-				{
-					sb.Append(DirectorySeparatorChar);
-				}
-
-				sb.Append(path.AsSpan(commonLength, differenceLength));
-			}
-
-			return sb.ToString();
+			return CreateRelativePath(relativeTo, path,
+				commonLength, relativeToLength, pathLength,
+				pathEndsInSeparator);
 		}
 #endif
 
@@ -411,7 +366,7 @@ internal partial class Execute
 				return false;
 			}
 
-			return TryGetExtensionIndex(path, out var dotIndex)
+			return TryGetExtensionIndex(path, out int? dotIndex)
 			       && dotIndex < path.Length - 1;
 		}
 
@@ -630,9 +585,67 @@ internal partial class Execute
 		}
 
 		/// <summary>
+		///     We have the same root, we need to calculate the difference now using the
+		///     common Length and Segment count past the length.
+		/// </summary>
+		/// <remarks>
+		///     Some examples:
+		///     <para />
+		///     C:\Foo C:\Bar L3, S1 -> ..\Bar<br />
+		///     C:\Foo C:\Foo\Bar L6, S0 -> Bar<br />
+		///     C:\Foo\Bar C:\Bar\Bar L3, S2 -> ..\..\Bar\Bar<br />
+		///     C:\Foo\Foo C:\Foo\Bar L7, S1 -> ..\Bar<br />
+		/// </remarks>
+		private string CreateRelativePath(string relativeTo, string path, int commonLength,
+			int relativeToLength, int pathLength, bool pathEndsInSeparator)
+		{
+			StringBuilder sb = new();
+
+			// Add parent segments for segments past the common on the "from" path
+			if (commonLength < relativeToLength)
+			{
+				sb.Append("..");
+
+				for (int i = commonLength + 1; i < relativeToLength; i++)
+				{
+					if (IsDirectorySeparator(relativeTo[i]))
+					{
+						sb.Append(DirectorySeparatorChar);
+						sb.Append("..");
+					}
+				}
+			}
+			else if (IsDirectorySeparator(path[commonLength]))
+			{
+				// No parent segments, and we need to eat the initial separator
+				commonLength++;
+			}
+
+			// Now add the rest of the "to" path, adding back the trailing separator
+			int differenceLength = pathLength - commonLength;
+			if (pathEndsInSeparator)
+			{
+				differenceLength++;
+			}
+
+			if (differenceLength > 0)
+			{
+				if (sb.Length > 0)
+				{
+					sb.Append(DirectorySeparatorChar);
+				}
+
+				sb.Append(path.Substring(commonLength, differenceLength));
+			}
+
+			return sb.ToString();
+		}
+
+		/// <summary>
 		///     Get the common path length from the start of the string.
 		/// </summary>
-		private int GetCommonPathLength(string first, string second, bool ignoreCase)
+		private int GetCommonPathLength(string first, string second,
+			Func<char, char, bool> charComparer)
 		{
 			int commonChars = 0;
 			for (; commonChars < first.Length; commonChars++)
@@ -642,9 +655,7 @@ internal partial class Execute
 					break;
 				}
 
-				if (first[commonChars] != second[commonChars] &&
-				    (!ignoreCase || char.ToUpperInvariant(first[commonChars]) !=
-					    char.ToUpperInvariant(second[commonChars])))
+				if (!charComparer(first[commonChars], second[commonChars]))
 				{
 					break;
 				}
