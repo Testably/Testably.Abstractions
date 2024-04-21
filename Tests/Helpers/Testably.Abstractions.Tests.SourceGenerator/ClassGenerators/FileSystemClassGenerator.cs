@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
 using Testably.Abstractions.Tests.SourceGenerator.Model;
 // ReSharper disable StringLiteralTypo
@@ -260,30 +259,7 @@ namespace {@class.Namespace}.{@class.Name}
 
 	private bool IncludeSimulatedTests(ClassModel @class)
 	{
-		string[] supportedPathTests =
-		[
-			"ChangeExtensionTests",
-			"CombineTests",
-			"EndsInDirectorySeparatorTests",
-			"GetDirectoryNameTests",
-			"GetExtensionTests",
-			"GetFileNameTests",
-			"GetFileNameWithoutExtensionTests",
-			"GetFullPathTests",
-			"GetPathRootTests",
-			"GetRandomFileNameTests",
-			"GetRelativePathTests",
-			"GetTempFileNameTests",
-			"GetTempPathTests",
-			"HasExtensionTests",
-			"IsPathRootedTests",
-			"JoinTests",
-			"Tests",
-			"TrimEndingDirectorySeparatorTests",
-			"TryJoinTests"
-		];
 		return @class.Namespace
-			.StartsWith("Testably.Abstractions.Tests.FileSystem.Path", StringComparison.Ordinal)
-		       && supportedPathTests.Contains(@class.Name);
+			.StartsWith("Testably.Abstractions.Tests.FileSystem", StringComparison.Ordinal);
 	}
 }
