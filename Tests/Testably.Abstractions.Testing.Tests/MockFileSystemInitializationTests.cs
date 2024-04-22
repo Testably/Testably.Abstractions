@@ -2,8 +2,6 @@
 using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
-#if NET6_0_OR_GREATER
-#endif
 
 namespace Testably.Abstractions.Testing.Tests;
 
@@ -93,7 +91,9 @@ public class MockFileSystemInitializationTests
 	{
 		MockFileSystem.Initialization sut = new();
 
+		#pragma warning disable CS0618
 		MockFileSystem.Initialization result = sut.SimulatingOperatingSystem(simulationMode);
+		#pragma warning restore CS0618
 
 		result.SimulationMode.Should().Be(simulationMode);
 		sut.SimulationMode.Should().Be(simulationMode);

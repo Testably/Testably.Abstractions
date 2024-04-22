@@ -120,6 +120,7 @@ public class PathHelperTests
 			.Which.Message.Should().Contain($"'{path}'");
 	}
 
+#if !NETFRAMEWORK
 	[SkippableTheory]
 	[InlineData('|')]
 	[InlineData((char)1)]
@@ -127,8 +128,6 @@ public class PathHelperTests
 	public void ThrowCommonExceptionsIfPathIsInvalid_WithInvalidCharacters(
 		char invalidChar)
 	{
-		Skip.If(Test.IsNetFramework);
-
 		MockFileSystem fileSystem = new(i => i
 			.SimulatingOperatingSystem(SimulationMode.Windows));
 		string path = invalidChar + "path";
@@ -137,15 +136,10 @@ public class PathHelperTests
 		{
 			path.EnsureValidFormat(fileSystem);
 		});
-
-#if NETFRAMEWORK
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.Message.Should().Contain("path");
-#else
 		exception.Should().BeOfType<IOException>()
 			.Which.Message.Should().Contain(path);
-#endif
 	}
+#endif
 
 	[Fact]
 	public void

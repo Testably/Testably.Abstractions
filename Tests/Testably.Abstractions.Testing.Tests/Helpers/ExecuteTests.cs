@@ -7,7 +7,9 @@ public sealed class ExecuteTests
 	[Fact]
 	public void Constructor_ForLinux_ShouldInitializeAccordingly()
 	{
+		#pragma warning disable CS0618
 		Execute sut = new(new MockFileSystem(), SimulationMode.Linux);
+		#pragma warning restore CS0618
 
 		sut.IsLinux.Should().BeTrue();
 		sut.IsMac.Should().BeFalse();
@@ -19,7 +21,9 @@ public sealed class ExecuteTests
 	[Fact]
 	public void Constructor_ForMacOS_ShouldInitializeAccordingly()
 	{
+		#pragma warning disable CS0618
 		Execute sut = new(new MockFileSystem(), SimulationMode.MacOS);
+		#pragma warning restore CS0618
 
 		sut.IsLinux.Should().BeFalse();
 		sut.IsMac.Should().BeTrue();
@@ -31,7 +35,9 @@ public sealed class ExecuteTests
 	[Fact]
 	public void Constructor_ForWindows_ShouldInitializeAccordingly()
 	{
+		#pragma warning disable CS0618
 		Execute sut = new(new MockFileSystem(), SimulationMode.Windows);
+		#pragma warning restore CS0618
 
 		sut.IsLinux.Should().BeFalse();
 		sut.IsMac.Should().BeFalse();

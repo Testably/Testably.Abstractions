@@ -192,8 +192,10 @@ public sealed class ExecuteExtensionsTests
 
 	#region Helpers
 
+	#pragma warning disable CS0618
 	private static Execute FromType(SimulationMode type)
 		=> new(new MockFileSystem(), type);
+	#pragma warning restore CS0618
 
 	#endregion
 }

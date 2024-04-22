@@ -102,7 +102,9 @@ public class MockFileSystemTests
 	{
 		Exception? exception = Record.Exception(() =>
 		{
+			#pragma warning disable CS0618
 			_ = new MockFileSystem(i => i.SimulatingOperatingSystem(simulationMode));
+			#pragma warning restore CS0618
 		});
 
 		exception.Should().BeOfType<NotSupportedException>()

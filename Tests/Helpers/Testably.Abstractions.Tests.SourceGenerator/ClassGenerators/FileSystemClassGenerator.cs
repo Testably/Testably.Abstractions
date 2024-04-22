@@ -133,7 +133,7 @@ namespace {@class.Namespace}.{@class.Name}
 #endif
 	}}
 }}");
-		if (!@class.Namespace.Equals("Testably.Abstractions.AccessControl.Tests", StringComparison.Ordinal))
+		if (IncludeSimulatedTests(@class))
 		{
 			sourceBuilder.Append(@$"
 #if !NETFRAMEWORK
@@ -257,5 +257,11 @@ namespace {@class.Namespace}.{@class.Name}
 }}
 #endif");
 		}
+	}
+
+	private bool IncludeSimulatedTests(ClassModel @class)
+	{
+		return !@class.Namespace.Equals(
+			"Testably.Abstractions.AccessControl.Tests", StringComparison.Ordinal);
 	}
 }
