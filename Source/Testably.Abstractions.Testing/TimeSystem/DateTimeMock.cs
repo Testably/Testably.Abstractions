@@ -45,7 +45,7 @@ internal sealed class DateTimeMock : IDateTime
 	{
 		get
 		{
-			DateTime value = _mockTimeSystem.TimeProvider.Read().Date;
+			DateTime value = _mockTimeSystem.TimeProvider.Read().ToLocalTime().Date;
 			_callbackHandler.InvokeDateTimeReadCallbacks(value);
 			return value;
 		}
