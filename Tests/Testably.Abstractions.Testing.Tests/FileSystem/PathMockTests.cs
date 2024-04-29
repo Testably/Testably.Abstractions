@@ -6,16 +6,20 @@ public sealed class PathMockTests
 {
 	[Theory]
 	[InlineAutoData(SimulationMode.Native)]
+#if !NETFRAMEWORK
 	[InlineAutoData(SimulationMode.Linux)]
 	[InlineAutoData(SimulationMode.MacOS)]
 	[InlineAutoData(SimulationMode.Windows)]
+#endif
 	public void GetTempFileName_WithCollisions_ShouldThrowIOException(
 		SimulationMode simulationMode, int fixedRandomValue)
 	{
+		#pragma warning disable CS0618
 		MockFileSystem fileSystem = new(i => i
 			.SimulatingOperatingSystem(simulationMode)
 			.UseRandomProvider(RandomProvider.Generate(
 				intGenerator: new RandomProvider.Generator<int>(() => fixedRandomValue))));
+		#pragma warning restore CS0618
 		string result = fileSystem.Path.GetTempFileName();
 
 		Exception? exception = Record.Exception(() =>

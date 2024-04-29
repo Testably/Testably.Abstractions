@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
 using Testably.Abstractions.Tests.SourceGenerator.Model;
-// ReSharper disable StringLiteralTypo
 
 namespace Testably.Abstractions.Tests.SourceGenerator.ClassGenerators;
 
+// ReSharper disable StringLiteralTypo
 internal class FileSystemClassGenerator : ClassGeneratorBase
 {
 	/// <inheritdoc cref="ClassGeneratorBase.Marker" />
@@ -178,6 +177,7 @@ namespace {@class.Namespace}.{@class.Name}
 		}}
 	}}
 #endif
+
 #if !NETFRAMEWORK
 	// ReSharper disable once UnusedMember.Global
 	public sealed class MacFileSystemTests : {@class.Name}<MockFileSystem>, IDisposable
@@ -216,6 +216,7 @@ namespace {@class.Namespace}.{@class.Name}
 		}}
 	}}
 #endif
+
 #if !NETFRAMEWORK
 	// ReSharper disable once UnusedMember.Global
 	public sealed class WindowsFileSystemTests : {@class.Name}<MockFileSystem>, IDisposable
@@ -260,30 +261,7 @@ namespace {@class.Namespace}.{@class.Name}
 
 	private bool IncludeSimulatedTests(ClassModel @class)
 	{
-		string[] supportedPathTests =
-		[
-			"ChangeExtensionTests",
-			"CombineTests",
-			"EndsInDirectorySeparatorTests",
-			"GetDirectoryNameTests",
-			"GetExtensionTests",
-			"GetFileNameTests",
-			"GetFileNameWithoutExtensionTests",
-			"GetFullPathTests",
-			"GetPathRootTests",
-			"GetRandomFileNameTests",
-			"GetRelativePathTests",
-			"GetTempFileNameTests",
-			"GetTempPathTests",
-			"HasExtensionTests",
-			"IsPathRootedTests",
-			"JoinTests",
-			"Tests",
-			"TrimEndingDirectorySeparatorTests",
-			"TryJoinTests"
-		];
-		return @class.Namespace
-			.StartsWith("Testably.Abstractions.Tests.FileSystem.Path", StringComparison.Ordinal)
-		       && supportedPathTests.Contains(@class.Name);
+		return !@class.Namespace.Equals(
+			"Testably.Abstractions.AccessControl.Tests", StringComparison.Ordinal);
 	}
 }

@@ -2,19 +2,15 @@
 using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
-#if NET6_0_OR_GREATER
-#endif
 
 namespace Testably.Abstractions.Testing.Tests;
 
 public class MockFileSystemInitializationTests
 {
+#if !NETFRAMEWORK
 	[SkippableFact]
 	public void MockFileSystem_WhenSimulatingLinux_ShouldBeLinux()
 	{
-		Skip.IfNot(Test.RunsOnLinux,
-			"TODO: Enable again, once the Path implementation is sufficiently complete!");
-
 		MockFileSystem sut = new(o => o
 			.SimulatingOperatingSystem(SimulationMode.Linux));
 
@@ -23,13 +19,12 @@ public class MockFileSystemInitializationTests
 		sut.Execute.IsWindows.Should().BeFalse();
 		sut.Execute.IsNetFramework.Should().BeFalse();
 	}
+#endif
 
+#if !NETFRAMEWORK
 	[SkippableFact]
 	public void MockFileSystem_WhenSimulatingMacOS_ShouldBeMac()
 	{
-		Skip.IfNot(Test.RunsOnMac,
-			"TODO: Enable again, once the Path implementation is sufficiently complete!");
-
 		MockFileSystem sut = new(o => o
 			.SimulatingOperatingSystem(SimulationMode.MacOS));
 
@@ -38,13 +33,12 @@ public class MockFileSystemInitializationTests
 		sut.Execute.IsWindows.Should().BeFalse();
 		sut.Execute.IsNetFramework.Should().BeFalse();
 	}
+#endif
 
+#if !NETFRAMEWORK
 	[SkippableFact]
 	public void MockFileSystem_WhenSimulatingWindows_ShouldBeWindows()
 	{
-		Skip.IfNot(Test.RunsOnWindows,
-			"TODO: Enable again, once the Path implementation is sufficiently complete!");
-
 		MockFileSystem sut = new(o => o
 			.SimulatingOperatingSystem(SimulationMode.Windows));
 
@@ -53,6 +47,7 @@ public class MockFileSystemInitializationTests
 		sut.Execute.IsWindows.Should().BeTrue();
 		sut.Execute.IsNetFramework.Should().BeFalse();
 	}
+#endif
 
 	[Fact]
 	public void MockFileSystem_WithCurrentDirectory_ShouldInitializeCurrentDirectory()
@@ -96,7 +91,9 @@ public class MockFileSystemInitializationTests
 	{
 		MockFileSystem.Initialization sut = new();
 
+		#pragma warning disable CS0618
 		MockFileSystem.Initialization result = sut.SimulatingOperatingSystem(simulationMode);
+		#pragma warning restore CS0618
 
 		result.SimulationMode.Should().Be(simulationMode);
 		sut.SimulationMode.Should().Be(simulationMode);

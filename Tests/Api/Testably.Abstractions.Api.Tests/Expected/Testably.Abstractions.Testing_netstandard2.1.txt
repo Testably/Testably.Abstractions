@@ -1,7 +1,6 @@
 [assembly: System.CLSCompliant(true)]
 [assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/Testably/Testably.Abstractions.git")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Testably.Abstractions.Testing.Tests")]
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Testably.Abstractions.Tests")]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETStandard,Version=v2.1", FrameworkDisplayName=".NET Standard 2.1")]
 namespace Testably.Abstractions.Testing.FileSystem
 {
@@ -92,6 +91,7 @@ namespace Testably.Abstractions.Testing
     public sealed class MockFileSystem : System.IO.Abstractions.IFileSystem
     {
         public MockFileSystem() { }
+        public MockFileSystem(System.Action<Testably.Abstractions.Testing.MockFileSystem.Initialization> initializationCallback) { }
         public System.IO.Abstractions.IDirectory Directory { get; }
         public System.IO.Abstractions.IDirectoryInfoFactory DirectoryInfo { get; }
         public System.IO.Abstractions.IDriveInfoFactory DriveInfo { get; }
@@ -110,6 +110,13 @@ namespace Testably.Abstractions.Testing
         public Testably.Abstractions.Testing.MockFileSystem WithAccessControlStrategy(Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy accessControlStrategy) { }
         public Testably.Abstractions.Testing.MockFileSystem WithDrive(string? drive, System.Action<Testably.Abstractions.Testing.Storage.IStorageDrive>? driveCallback = null) { }
         public Testably.Abstractions.Testing.MockFileSystem WithSafeFileHandleStrategy(Testably.Abstractions.Testing.FileSystem.ISafeFileHandleStrategy safeFileHandleStrategy) { }
+        public class Initialization
+        {
+            public Testably.Abstractions.Testing.MockFileSystem.Initialization SimulatingOperatingSystem(Testably.Abstractions.Testing.SimulationMode simulationMode) { }
+            public Testably.Abstractions.Testing.MockFileSystem.Initialization UseCurrentDirectory() { }
+            public Testably.Abstractions.Testing.MockFileSystem.Initialization UseCurrentDirectory(string path) { }
+            public Testably.Abstractions.Testing.MockFileSystem.Initialization UseRandomProvider(Testably.Abstractions.Testing.RandomSystem.IRandomProvider randomProvider) { }
+        }
     }
     public static class MockFileSystemExtensions
     {

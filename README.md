@@ -14,7 +14,7 @@ The testing helper also supports advanced scenarios like
 
 The companion projects [Testably.Abstractions.Compression](https://www.nuget.org/packages/Testably.Abstractions.Compression) and [Testably.Abstractions.AccessControl](https://www.nuget.org/packages/Testably.Abstractions.AccessControl) allow working with [Zip-Files](Examples/ZipFile/README.md) and [Access Control Lists](Examples/AccessControlLists/README.md) respectively.
 
-As the test suite runs both against the mocked and the real file system, the behaviour between the two is identical.
+As the test suite runs both against the mocked and the real file system, the behaviour between the two is identical and it also allows [simulating the file system on other operating systems](#simulating-other-operating-systems) (Linux, MacOS and Windows).
 
 In addition, the following interfaces are defined:
 - The `ITimeSystem` interface abstracts away time-related functionality:  
@@ -110,6 +110,25 @@ fileSystem.Initialize()
 		.WithFile("bar.txt"))
 	.WithFile("foo.txt").Which(f => f.HasStringContent("some file content"));
 ```
+
+### Simulating other operating systems
+
+The `MockFileSystem` can also simulate other operating systems than the one it is currently running on. This can be achieved, by providing the corresponding `SimulationMode` in the constructor:
+
+```csharp
+var linuxFileSystem = new MockFileSystem(o => o.SimulatingOperatingSystem(SimulationMode.Linux));
+// The `linuxFileSystem` now behaves like a Linux file system even under Windows:
+// - case-sensitive
+// - slash as directory separator
+
+var windowsFileSystem = new MockFileSystem(o => o.SimulatingOperatingSystem(SimulationMode.Windows));
+// The `windowsFileSystem` now behaves like a Windows file system even under Linux or MacOS:
+// - multiple drives
+// - case-insensitive
+// - backslash as directory separator
+```
+
+By running all tests against the real file system and the simulated under Linux, MacOS and Windows, the behaviour is consistent between the native and simulated mock file systems.
 
 ### Drive management
 ```csharp
