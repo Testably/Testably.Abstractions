@@ -45,4 +45,19 @@ public sealed class ExecuteTests
 		sut.IsWindows.Should().BeTrue();
 		sut.StringComparisonMode.Should().Be(StringComparison.OrdinalIgnoreCase);
 	}
+
+	[Fact]
+	public void Constructor_UnsupportedSimulationMode_ShouldThrowNotSupportedException()
+	{
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = new Execute(new MockFileSystem(), (SimulationMode)42);
+		});
+
+		exception.Should().BeOfType<NotSupportedException>()
+			.Which.Message.Should()
+			.Contain(nameof(SimulationMode.Linux)).And
+			.Contain(nameof(SimulationMode.MacOS)).And
+			.Contain(nameof(SimulationMode.Windows));
+	}
 }
