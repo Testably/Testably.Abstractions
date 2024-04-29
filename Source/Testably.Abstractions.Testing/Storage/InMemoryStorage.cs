@@ -135,14 +135,12 @@ internal sealed class InMemoryStorage : IStorage
 			}
 		}
 
-		NotifyFilters notifyFilters =
-			container.Type == FileSystemTypes.Directory
-				? NotifyFilters.DirectoryName
-				: NotifyFilters.FileName;
 		ChangeDescription fileSystemChange =
-			_fileSystem.ChangeHandler.NotifyPendingChange(WatcherChangeTypes.Deleted,
+			_fileSystem.ChangeHandler.NotifyPendingChange(
+				WatcherChangeTypes.Deleted,
 				container.Type,
-				notifyFilters, location);
+				ToNotifyFilters(container.Type),
+				location);
 
 		using (container.RequestAccess(FileAccess.Write, FileShare.ReadWrite,
 			deleteAccess: true))
@@ -342,7 +340,8 @@ internal sealed class InMemoryStorage : IStorage
 					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
 						WatcherChangeTypes.Created,
 						container.Type,
-						NotifyFilters.DirectoryName, location);
+						ToNotifyFilters(container.Type),
+						location);
 				}
 
 				return container;
@@ -527,7 +526,8 @@ internal sealed class InMemoryStorage : IStorage
 					fileSystemChange = _fileSystem.ChangeHandler.NotifyPendingChange(
 						WatcherChangeTypes.Created,
 						container.Type,
-						NotifyFilters.DirectoryName, location);
+						ToNotifyFilters(container.Type),
+						location);
 				}
 
 				CheckAndAdjustParentDirectoryTimes(location);
@@ -618,7 +618,8 @@ internal sealed class InMemoryStorage : IStorage
 							fileSystem.ChangeHandler.NotifyPendingChange(
 								WatcherChangeTypes.Created,
 								container.Type,
-								NotifyFilters.DirectoryName, parentLocation);
+								ToNotifyFilters(container.Type),
+								parentLocation);
 						return container;
 					},
 					(_, f) => f);
@@ -792,6 +793,11 @@ internal sealed class InMemoryStorage : IStorage
 			throw exceptionCallback(parentLocation);
 		}
 	}
+
+	private static NotifyFilters ToNotifyFilters(FileSystemTypes type)
+		=> type == FileSystemTypes.Directory
+			? NotifyFilters.DirectoryName
+			: NotifyFilters.FileName;
 
 	private static void ValidateExpression(string expression)
 	{
