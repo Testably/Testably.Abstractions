@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -493,8 +494,18 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			changeName,
 			out string name);
 
-		return new FileSystemEventArgs(changeType,
-			path, name);
+		FileSystemEventArgs eventArgs = new(changeType, path, name);
+		if (_fileSystem.SimulationMode != SimulationMode.Native)
+		{
+			// FileSystemEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
+			// HACK: Have to resort to Reflection to override this behavior!
+			string fullPath = _fileSystem.Execute.Path.Combine(path, name);
+			typeof(FileSystemEventArgs)
+				.GetField("_fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+				.SetValue(eventArgs, fullPath);
+		}
+
+		return eventArgs;
 	}
 
 	private string TransformPathAndName(
@@ -571,8 +582,21 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 			path,
 			name,
 			oldName);
-		return System.IO.Path.GetDirectoryName(changeDescription.Path)?
-			.Equals(System.IO.Path.GetDirectoryName(changeDescription.OldPath),
+		if (_fileSystem.SimulationMode != SimulationMode.Native)
+		{
+			// RenamedEventArgs implicitly combines the path in https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/System.IO.FileSystem.Watcher/src/System/IO/RenamedEventArgs.cs
+			// HACK: Have to resort to Reflection to override this behavior!
+			string fullPath = _fileSystem.Execute.Path.Combine(path, name);
+			typeof(FileSystemEventArgs)
+				.GetField("_fullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+				.SetValue(eventArgs, fullPath);
+			string oldFullPath = _fileSystem.Execute.Path.Combine(path, oldName);
+			typeof(RenamedEventArgs)
+				.GetField("_oldFullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
+				.SetValue(eventArgs, oldFullPath);
+		}
+		return _fileSystem.Execute.Path.GetDirectoryName(changeDescription.Path)?
+			.Equals(_fileSystem.Execute.Path.GetDirectoryName(changeDescription.OldPath),
 				_fileSystem.Execute.StringComparisonMode) ?? true;
 	}
 
