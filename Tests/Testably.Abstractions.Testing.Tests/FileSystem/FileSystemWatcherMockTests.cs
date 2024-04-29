@@ -234,7 +234,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		result.Should().BeNull();
 	}
 
-	public class EventArgsTests
+	public sealed class EventArgsTests
 	{
 		[SkippableTheory]
 		[InlineAutoData(SimulationMode.Linux)]
