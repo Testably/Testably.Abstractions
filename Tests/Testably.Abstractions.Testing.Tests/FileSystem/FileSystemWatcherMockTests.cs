@@ -234,6 +234,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		result.Should().BeNull();
 	}
 
+#if !NETFRAMEWORK
 	public sealed class EventArgsTests
 	{
 		[SkippableTheory]
@@ -326,4 +327,5 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			result.ChangeType.Should().Be(WatcherChangeTypes.Renamed);
 		}
 	}
+#endif
 }
