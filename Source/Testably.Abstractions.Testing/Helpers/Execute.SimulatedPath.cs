@@ -290,7 +290,6 @@ internal partial class Execute
 		public string GetRelativePath(string relativeTo, string path)
 		{
 			relativeTo.EnsureValidArgument(fileSystem, nameof(relativeTo));
-			path.EnsureValidArgument(fileSystem, nameof(path));
 
 			relativeTo = fileSystem.Execute.Path.GetFullPath(relativeTo);
 			path = fileSystem.Execute.Path.GetFullPath(path);
