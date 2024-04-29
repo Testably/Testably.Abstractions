@@ -234,7 +234,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		result.Should().BeNull();
 	}
 
-#if !NETFRAMEWORK
+#if CAN_SIMULATE_OTHER_OS
 	public sealed class EventArgsTests
 	{
 		[SkippableTheory]
@@ -244,7 +244,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		public void FileSystemEventArgs_ShouldUseDirectorySeparatorFromSimulatedFileSystem(
 			SimulationMode simulationMode, string parentDirectory, string directoryName)
 		{
-			MockFileSystem fileSystem = new(s => s.SimulatingOperatingSystem(simulationMode));
+			MockFileSystem fileSystem = new(o => o.SimulatingOperatingSystem(simulationMode));
 			fileSystem.Directory.CreateDirectory(parentDirectory);
 			FileSystemEventArgs? result = null;
 			string expectedFullPath = fileSystem.Path.GetFullPath(
@@ -277,7 +277,9 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			result.Name.Should().Be(expectedName);
 			result.ChangeType.Should().Be(WatcherChangeTypes.Created);
 		}
+#endif
 
+#if CAN_SIMULATE_OTHER_OS
 		[SkippableTheory]
 		[InlineAutoData(SimulationMode.Linux)]
 		[InlineAutoData(SimulationMode.MacOS)]
@@ -286,7 +288,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			SimulationMode simulationMode, string parentDirectory,
 			string sourceName, string destinationName)
 		{
-			MockFileSystem fileSystem = new(s => s.SimulatingOperatingSystem(simulationMode));
+			MockFileSystem fileSystem = new(o => o.SimulatingOperatingSystem(simulationMode));
 			fileSystem.Directory.CreateDirectory(parentDirectory);
 			RenamedEventArgs? result = null;
 			string expectedOldFullPath = fileSystem.Path.GetFullPath(

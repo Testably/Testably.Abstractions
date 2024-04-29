@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Testing.Tests;
 
 public class MockFileSystemInitializationTests
 {
-#if !NETFRAMEWORK
+#if CAN_SIMULATE_OTHER_OS
 	[SkippableFact]
 	public void MockFileSystem_WhenSimulatingLinux_ShouldBeLinux()
 	{
@@ -21,7 +21,7 @@ public class MockFileSystemInitializationTests
 	}
 #endif
 
-#if !NETFRAMEWORK
+#if CAN_SIMULATE_OTHER_OS
 	[SkippableFact]
 	public void MockFileSystem_WhenSimulatingMacOS_ShouldBeMac()
 	{
@@ -35,7 +35,7 @@ public class MockFileSystemInitializationTests
 	}
 #endif
 
-#if !NETFRAMEWORK
+#if CAN_SIMULATE_OTHER_OS
 	[SkippableFact]
 	public void MockFileSystem_WhenSimulatingWindows_ShouldBeWindows()
 	{

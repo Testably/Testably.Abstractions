@@ -147,8 +147,8 @@ namespace {@class.Namespace}.{@class.Name}
 
 		private readonly IDirectoryCleaner _directoryCleaner;
 
-		public LinuxFileSystemTests() : this(new MockFileSystem(i =>
-			i.SimulatingOperatingSystem(SimulationMode.Linux)))
+		public LinuxFileSystemTests() : this(new MockFileSystem(o =>
+			o.SimulatingOperatingSystem(SimulationMode.Linux)))
 		{{
 		}}
 
@@ -187,8 +187,8 @@ namespace {@class.Namespace}.{@class.Name}
 
 		private readonly IDirectoryCleaner _directoryCleaner;
 
-		public MacFileSystemTests() : this(new MockFileSystem(i =>
-			i.SimulatingOperatingSystem(SimulationMode.MacOS)))
+		public MacFileSystemTests() : this(new MockFileSystem(o =>
+			o.SimulatingOperatingSystem(SimulationMode.MacOS)))
 		{{
 		}}
 		private MacFileSystemTests(MockFileSystem mockFileSystem) : base(
@@ -226,8 +226,8 @@ namespace {@class.Namespace}.{@class.Name}
 
 		private readonly IDirectoryCleaner _directoryCleaner;
 
-		public WindowsFileSystemTests() : this(new MockFileSystem(i =>
-			i.SimulatingOperatingSystem(SimulationMode.Windows)))
+		public WindowsFileSystemTests() : this(new MockFileSystem(o =>
+			o.SimulatingOperatingSystem(SimulationMode.Windows)))
 		{{
 		}}
 		private WindowsFileSystemTests(MockFileSystem mockFileSystem) : base(

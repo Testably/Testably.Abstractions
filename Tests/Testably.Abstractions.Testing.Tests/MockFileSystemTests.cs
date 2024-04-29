@@ -92,7 +92,7 @@ public class MockFileSystemTests
 		drive.VolumeLabel.Should().NotBeNullOrEmpty();
 	}
 
-#if NETFRAMEWORK
+#if !CAN_SIMULATE_OTHER_OS
 	[SkippableTheory]
 	[InlineData(SimulationMode.Linux)]
 	[InlineData(SimulationMode.MacOS)]
@@ -103,7 +103,7 @@ public class MockFileSystemTests
 		Exception? exception = Record.Exception(() =>
 		{
 			#pragma warning disable CS0618
-			_ = new MockFileSystem(i => i.SimulatingOperatingSystem(simulationMode));
+			_ = new MockFileSystem(o => o.SimulatingOperatingSystem(simulationMode));
 			#pragma warning restore CS0618
 		});
 

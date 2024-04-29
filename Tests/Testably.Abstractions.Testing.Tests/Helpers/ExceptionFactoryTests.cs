@@ -26,7 +26,9 @@ public sealed class ExceptionFactoryTests
 	public void PathCannotBeEmpty_ShouldSetParamNameExceptOnNetFramework(
 		SimulationMode type, bool isNetFramework, string paramName)
 	{
+		#pragma warning disable CS0618
 		Execute execute = new(new MockFileSystem(), type, isNetFramework);
+		#pragma warning restore CS0618
 		ArgumentException sut = ExceptionFactory.PathCannotBeEmpty(execute, paramName);
 
 		sut.Message.Should().Contain("Path cannot be the empty string or all whitespace");

@@ -51,7 +51,9 @@ public sealed partial class ExecuteTests
 	{
 		Exception? exception = Record.Exception(() =>
 		{
+			#pragma warning disable CS0618
 			_ = new Execute(new MockFileSystem(), (SimulationMode)42);
+			#pragma warning restore CS0618
 		});
 
 		exception.Should().BeOfType<NotSupportedException>()
