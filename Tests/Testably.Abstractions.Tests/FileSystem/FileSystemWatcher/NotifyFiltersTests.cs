@@ -208,6 +208,82 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void NotifyFilter_CreateFile_ShouldNotNotifyOnOtherFilters(string path)
+	{
+		SkipIfLongRunningTestsShouldBeSkipped();
+
+		FileSystem.Initialize();
+		FileSystemEventArgs? result = null;
+		using ManualResetEventSlim ms = new();
+		using IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+		fileSystemWatcher.Created += (_, eventArgs) =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
+		};
+		fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes |
+		                                 NotifyFilters.CreationTime |
+		                                 NotifyFilters.DirectoryName |
+		                                 NotifyFilters.LastAccess |
+		                                 NotifyFilters.LastWrite |
+		                                 NotifyFilters.Security |
+		                                 NotifyFilters.Size;
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		FileSystem.File.WriteAllText(path, "foo");
+
+		ms.Wait(ExpectTimeout).Should().BeFalse();
+		result.Should().BeNull();
+	}
+
+	[SkippableTheory]
+	[InlineAutoData(NotifyFilters.FileName)]
+	public void NotifyFilter_CreateFile_ShouldTriggerCreatedEventOnNotifyFilters(
+		NotifyFilters notifyFilter, string path)
+	{
+		SkipIfLongRunningTestsShouldBeSkipped();
+
+		FileSystem.Initialize();
+		FileSystemEventArgs? result = null;
+		using ManualResetEventSlim ms = new();
+		using IFileSystemWatcher fileSystemWatcher =
+			FileSystem.FileSystemWatcher.New(BasePath);
+		fileSystemWatcher.Created += (_, eventArgs) =>
+		{
+			// ReSharper disable once AccessToDisposedClosure
+			try
+			{
+				result = eventArgs;
+				ms.Set();
+			}
+			catch (ObjectDisposedException)
+			{
+				// Ignore any ObjectDisposedException
+			}
+		};
+		fileSystemWatcher.NotifyFilter = notifyFilter;
+		fileSystemWatcher.EnableRaisingEvents = true;
+
+		FileSystem.File.WriteAllText(path, "foo");
+
+		ms.Wait(ExpectSuccess).Should().BeTrue();
+		result.Should().NotBeNull();
+		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(path));
+		result.ChangeType.Should().Be(WatcherChangeTypes.Created);
+		result.Name.Should().Be(FileSystem.Path.GetFileName(path));
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void NotifyFilter_DeleteDirectory_ShouldNotNotifyOnOtherFilters(string path)
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();
