@@ -3,6 +3,7 @@ using System.Threading;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
 // ReSharper disable once PartialTypeWithSinglePart
+[Collection("RealFileSystemTests")]
 public abstract partial class EnableRaisingEventsTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem

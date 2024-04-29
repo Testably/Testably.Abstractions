@@ -38,7 +38,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		string path)
 	{
 		FileSystem.Directory.CreateDirectory(path);
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		using ManualResetEventSlim block1 = new();
 		using ManualResetEventSlim block2 = new();
@@ -83,7 +83,6 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		}
 
 		block2.Wait(10000).Should().BeTrue();
-		fileSystemWatcher.Dispose();
 		result.Should().NotBeNull();
 		result!.GetException().Should().BeOfType<InternalBufferOverflowException>();
 	}
@@ -96,7 +95,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 	{
 		int maxMessages = internalBufferSize / 128;
 		FileSystem.Directory.CreateDirectory(path);
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		using ManualResetEventSlim block1 = new();
 		using ManualResetEventSlim block2 = new();
@@ -142,7 +141,6 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		}
 
 		block2.Wait(5000).Should().BeTrue();
-		fileSystemWatcher.Dispose();
 		result.Should().NotBeNull();
 		result!.GetException().Should().BeOfType<InternalBufferOverflowException>();
 	}
@@ -153,7 +151,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 	public void Filter_ShouldResetFiltersToOnlyContainASingleValue(
 		string[] filters, string expectedFilter)
 	{
-		IFileSystemWatcher fileSystemWatcher =
+		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 		foreach (string filter in filters)
 		{
@@ -235,4 +233,99 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		block2.Wait(100).Should().BeFalse();
 		result.Should().BeNull();
 	}
+
+#if !NETFRAMEWORK
+	public sealed class EventArgsTests
+	{
+		[SkippableTheory]
+		[InlineAutoData(SimulationMode.Linux)]
+		[InlineAutoData(SimulationMode.MacOS)]
+		[InlineAutoData(SimulationMode.Windows)]
+		public void FileSystemEventArgs_ShouldUseDirectorySeparatorFromSimulatedFileSystem(
+			SimulationMode simulationMode, string parentDirectory, string directoryName)
+		{
+			MockFileSystem fileSystem =
+				new MockFileSystem(s => s.SimulatingOperatingSystem(simulationMode));
+			fileSystem.Directory.CreateDirectory(parentDirectory);
+			FileSystemEventArgs? result = null;
+			string expectedFullPath = fileSystem.Path.GetFullPath(
+				fileSystem.Path.Combine(parentDirectory, directoryName));
+			string expectedName = fileSystem.Path.Combine(parentDirectory, directoryName);
+
+			using IFileSystemWatcher fileSystemWatcher =
+				fileSystem.FileSystemWatcher.New(parentDirectory);
+			using ManualResetEventSlim ms = new();
+			fileSystemWatcher.Created += (_, eventArgs) =>
+			{
+				result = eventArgs;
+				// ReSharper disable once AccessToDisposedClosure
+				try
+				{
+					ms.Set();
+				}
+				catch (ObjectDisposedException)
+				{
+					// Ignore any ObjectDisposedException
+				}
+			};
+			fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
+			fileSystemWatcher.EnableRaisingEvents = true;
+			fileSystem.Directory.CreateDirectory(expectedName);
+			ms.Wait(5000);
+
+			result.Should().NotBeNull();
+			result!.FullPath.Should().Be(expectedFullPath);
+			result.Name.Should().Be(expectedName);
+			result.ChangeType.Should().Be(WatcherChangeTypes.Created);
+		}
+
+		[SkippableTheory]
+		[InlineAutoData(SimulationMode.Linux)]
+		[InlineAutoData(SimulationMode.MacOS)]
+		[InlineAutoData(SimulationMode.Windows)]
+		public void RenamedEventArgs_ShouldUseDirectorySeparatorFromSimulatedFileSystem(
+			SimulationMode simulationMode, string parentDirectory,
+			string sourceName, string destinationName)
+		{
+			MockFileSystem fileSystem =
+				new MockFileSystem(s => s.SimulatingOperatingSystem(simulationMode));
+			fileSystem.Directory.CreateDirectory(parentDirectory);
+			RenamedEventArgs? result = null;
+			string expectedOldFullPath = fileSystem.Path.GetFullPath(
+				fileSystem.Path.Combine(parentDirectory, sourceName));
+			string expectedFullPath = fileSystem.Path.GetFullPath(
+				fileSystem.Path.Combine(parentDirectory, destinationName));
+			fileSystem.Directory.CreateDirectory(parentDirectory);
+			fileSystem.File.WriteAllText(expectedOldFullPath, "foo");
+
+			using IFileSystemWatcher fileSystemWatcher =
+				fileSystem.FileSystemWatcher.New(parentDirectory);
+			using ManualResetEventSlim ms = new();
+			fileSystemWatcher.Renamed += (_, eventArgs) =>
+			{
+				result = eventArgs;
+				// ReSharper disable once AccessToDisposedClosure
+				try
+				{
+					ms.Set();
+				}
+				catch (ObjectDisposedException)
+				{
+					// Ignore any ObjectDisposedException
+				}
+			};
+			fileSystemWatcher.NotifyFilter = NotifyFilters.FileName;
+			fileSystemWatcher.EnableRaisingEvents = true;
+			fileSystem.File.Move(expectedOldFullPath, expectedFullPath);
+			ms.Wait(5000);
+
+			result.Should().NotBeNull();
+			result!.FullPath.Should().Be(expectedFullPath);
+			result.Name.Should().Be(destinationName);
+			result!.OldFullPath.Should().Be(expectedOldFullPath);
+			result.OldName.Should().Be(sourceName);
+			result.ChangeType.Should().Be(WatcherChangeTypes.Renamed);
+		}
+	}
+#endif
 }
