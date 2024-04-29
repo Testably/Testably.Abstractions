@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 
 namespace Testably.Abstractions.Testing.Helpers;
 
@@ -161,9 +160,7 @@ internal static class PathHelper
 				fileSystem.Execute.Path.GetFullPath(path), hResult);
 		}
 
-		fileSystem.Execute.OnWindowsIf(path.LastIndexOf(':') > 1 &&
-		                               path.LastIndexOf(':') <
-		                               path.IndexOf(Path.DirectorySeparatorChar),
+		fileSystem.Execute.OnWindowsIf(path.LastIndexOf(':') > 1,
 			() => throw ExceptionFactory.PathHasIncorrectSyntax(
 				fileSystem.Execute.Path.GetFullPath(path), hResult));
 	}
