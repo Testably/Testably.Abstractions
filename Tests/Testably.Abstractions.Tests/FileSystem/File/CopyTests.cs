@@ -107,7 +107,10 @@ public abstract partial class CopyTests<TFileSystem>
 		}
 		else
 		{
-			exception.Should().BeException<IOException>(hResult: -2147024773);
+			exception.Should().BeException<IOException>(
+				messageContains:
+				"The filename, directory name, or volume label syntax is incorrect",
+				hResult: -2147024773);
 		}
 	}
 
@@ -315,6 +318,27 @@ public abstract partial class CopyTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
+	public void Copy_SourceDirectoryMissing_ShouldThrowDirectoryNotFoundException(
+		string missingDirectory,
+		string sourceName,
+		string destinationName)
+	{
+		string source = FileSystem.Path.Combine(missingDirectory, sourceName);
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.Copy(source, destinationName);
+		});
+
+		exception.Should().BeException<DirectoryNotFoundException>(
+			messageContains: Test.IsNetFramework
+				? null
+				: $"'{FileSystem.Path.GetFullPath(source)}'",
+			hResult: -2147024893);
+		FileSystem.Should().NotHaveFile(destinationName);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Copy_SourceIsDirectory_ShouldThrowUnauthorizedAccessException_AndNotCopyFile(
 		string sourceName,
 		string destinationName)
@@ -327,10 +351,10 @@ public abstract partial class CopyTests<TFileSystem>
 		});
 
 		exception.Should().BeException<UnauthorizedAccessException>(
-			hResult: -2147024891,
 			messageContains: Test.IsNetFramework
 				? $"'{sourceName}'"
-				: $"'{FileSystem.Path.GetFullPath(sourceName)}'");
+				: $"'{FileSystem.Path.GetFullPath(sourceName)}'",
+			hResult: -2147024891);
 		FileSystem.Should().HaveDirectory(sourceName);
 		FileSystem.Should().NotHaveFile(destinationName);
 	}
@@ -379,10 +403,10 @@ public abstract partial class CopyTests<TFileSystem>
 		});
 
 		exception.Should().BeException<FileNotFoundException>(
-			hResult: -2147024894,
 			messageContains: Test.IsNetFramework
 				? null
-				: $"'{FileSystem.Path.GetFullPath(sourceName)}'");
+				: $"'{FileSystem.Path.GetFullPath(sourceName)}'",
+			hResult: -2147024894);
 		FileSystem.Should().NotHaveFile(destinationName);
 	}
 }
