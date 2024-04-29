@@ -208,6 +208,23 @@ public class NotificationTests
 	}
 
 	[SkippableFact]
+	public void AwaitableCallback_Wait_AfterDispose_ShouldThrowObjectDisposedException()
+	{
+		MockTimeSystem timeSystem = new();
+		Notification.IAwaitableCallback<TimeSpan> wait =
+			timeSystem.On.ThreadSleep();
+
+		wait.Dispose();
+
+		Exception? exception = Record.Exception(() =>
+		{
+			wait.Wait(timeout: 100);
+		});
+
+		exception.Should().BeOfType<ObjectDisposedException>();
+	}
+
+	[SkippableFact]
 	public void AwaitableCallback_WaitedPreviously_ShouldWaitAgainForCallbackExecution()
 	{
 		int secondThreadMilliseconds = 42;
