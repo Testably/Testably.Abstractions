@@ -6,7 +6,7 @@ public sealed class PathMockTests
 {
 	[Theory]
 	[InlineAutoData(SimulationMode.Native)]
-#if !NETFRAMEWORK
+#if CAN_SIMULATE_OTHER_OS
 	[InlineAutoData(SimulationMode.Linux)]
 	[InlineAutoData(SimulationMode.MacOS)]
 	[InlineAutoData(SimulationMode.Windows)]
@@ -15,7 +15,7 @@ public sealed class PathMockTests
 		SimulationMode simulationMode, int fixedRandomValue)
 	{
 		#pragma warning disable CS0618
-		MockFileSystem fileSystem = new(i => i
+		MockFileSystem fileSystem = new(o => o
 			.SimulatingOperatingSystem(simulationMode)
 			.UseRandomProvider(RandomProvider.Generate(
 				intGenerator: new RandomProvider.Generator<int>(() => fixedRandomValue))));

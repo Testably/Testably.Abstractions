@@ -41,7 +41,7 @@ public abstract class GuidSystemBase : IGuid
 #endif
 
 #if FEATURE_GUID_PARSE
-#pragma warning disable MA0011
+	#pragma warning disable MA0011
 	/// <inheritdoc cref="IGuid.Parse(ReadOnlySpan{char})" />
 	public Guid Parse(ReadOnlySpan<char> input)
 		=> Guid.Parse(input);

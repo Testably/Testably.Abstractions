@@ -5,7 +5,8 @@ using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.Statistics;
 
-internal class PathStatistics<TFactory, TType> : CallStatistics<TFactory>, IPathStatistics<TFactory, TType>
+internal class PathStatistics<TFactory, TType> : CallStatistics<TFactory>,
+	IPathStatistics<TFactory, TType>
 {
 	private readonly MockFileSystem _fileSystem;
 
@@ -26,7 +27,7 @@ internal class PathStatistics<TFactory, TType> : CallStatistics<TFactory>, IPath
 		_fileSystem = fileSystem;
 	}
 
-	#region IPathStatistics Members
+	#region IPathStatistics<TFactory,TType> Members
 
 	/// <inheritdoc cref="IPathStatistics{TFactory,TType}.this[string]" />
 	public IStatistics<TType> this[string path]

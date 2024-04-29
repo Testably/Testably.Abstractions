@@ -15,6 +15,28 @@ public abstract partial class GetFullPathTests<TFileSystem>
 		result.Should().Be(expectedFullPath);
 	}
 
+	[SkippableTheory]
+	[InlineData(@"C:\foo", @"C:\foo", TestOS.Windows)]
+	[InlineData(@"C:\foo\", @"C:\foo\", TestOS.Windows)]
+	[InlineData(@"\\?\foo", @"\\?\foo", TestOS.Windows)]
+	[InlineData(@"\??\BAR", @"\??\BAR", TestOS.Windows)]
+	[InlineData("/foo", "/foo", TestOS.Linux | TestOS.Mac)]
+	[InlineData("/foo/", "/foo/", TestOS.Linux | TestOS.Mac)]
+	public void GetFullPath_EdgeCases_ShouldReturnExpectedValue(string path,
+		string expected, TestOS operatingSystem)
+	{
+		Skip.IfNot(Test.RunsOn(operatingSystem));
+
+		if (operatingSystem == TestOS.All)
+		{
+			expected = expected.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		}
+
+		string result = FileSystem.Path.GetFullPath(path);
+
+		result.Should().Be(expected);
+	}
+
 #if FEATURE_PATH_RELATIVE
 	[SkippableFact]
 	public void GetFullPath_Relative_NullBasePath_ShouldThrowArgumentNullException()
@@ -63,6 +85,23 @@ public abstract partial class GetFullPathTests<TFileSystem>
 			.GetFullPath(input, basePath);
 
 		result.Should().Be(expectedRootedPath);
+	}
+#endif
+
+#if FEATURE_PATH_RELATIVE
+	[SkippableTheory]
+	[InlineData(@"C:\top\..\most\file", @"C:\foo\bar", @"C:\most\file", TestOS.Windows)]
+	[InlineData(@"C:\top\..\most\file", @"D:\foo\bar", @"C:\most\file", TestOS.Windows)]
+	[InlineData("/top/../most/file", "/foo/bar", "/most/file", TestOS.Linux | TestOS.Mac)]
+	public void GetFullPath_Relative_WithRootedPath_ShouldIgnoreBasePath(
+		string path, string basePath, string expected, TestOS operatingSystem)
+	{
+		Skip.IfNot(Test.RunsOn(operatingSystem));
+
+		string result = FileSystem.Path
+			.GetFullPath(path, basePath);
+
+		result.Should().Be(expected);
 	}
 #endif
 

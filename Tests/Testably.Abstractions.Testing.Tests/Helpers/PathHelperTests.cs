@@ -120,7 +120,7 @@ public class PathHelperTests
 			.Which.Message.Should().Contain($"'{path}'");
 	}
 
-#if !NETFRAMEWORK
+#if CAN_SIMULATE_OTHER_OS
 	[SkippableTheory]
 	[InlineData('|')]
 	[InlineData((char)1)]
@@ -128,7 +128,7 @@ public class PathHelperTests
 	public void ThrowCommonExceptionsIfPathIsInvalid_WithInvalidCharacters(
 		char invalidChar)
 	{
-		MockFileSystem fileSystem = new(i => i
+		MockFileSystem fileSystem = new(o => o
 			.SimulatingOperatingSystem(SimulationMode.Windows));
 		string path = invalidChar + "path";
 

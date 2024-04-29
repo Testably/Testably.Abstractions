@@ -132,17 +132,15 @@ internal partial class Execute
 			string? pathRoot = System.IO.Path.GetPathRoot(path);
 			string? directoryRoot =
 				System.IO.Path.GetPathRoot(fileSystem.Storage.CurrentDirectory);
-			if (!string.IsNullOrEmpty(pathRoot) && !string.IsNullOrEmpty(directoryRoot))
+			if (pathRoot?.Length < directoryRoot?.Length)
 			{
-				if (char.ToUpperInvariant(pathRoot[0]) != char.ToUpperInvariant(directoryRoot[0]))
+				if (pathRoot.Length > 0 &&
+				    char.ToUpperInvariant(pathRoot[0]) != char.ToUpperInvariant(directoryRoot[0]))
 				{
 					return System.IO.Path.GetFullPath(path);
 				}
 
-				if (pathRoot.Length < directoryRoot.Length)
-				{
-					path = path.Substring(pathRoot.Length);
-				}
+				path = path.Substring(pathRoot.Length);
 			}
 
 			return System.IO.Path.GetFullPath(System.IO.Path.Combine(
@@ -183,7 +181,6 @@ internal partial class Execute
 		public string GetRelativePath(string relativeTo, string path)
 		{
 			relativeTo.EnsureValidArgument(fileSystem, nameof(relativeTo));
-			path.EnsureValidArgument(fileSystem, nameof(path));
 
 			relativeTo = fileSystem.Execute.Path.GetFullPath(relativeTo);
 			path = fileSystem.Execute.Path.GetFullPath(path);

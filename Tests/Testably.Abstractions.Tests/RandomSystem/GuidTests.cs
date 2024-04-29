@@ -1,8 +1,8 @@
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 #if FEATURE_GUID_PARSE
 using System.Collections.Generic;
 #endif
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
 #if FEATURE_GUID_FORMATPROVIDER
 using System.Globalization;
 #endif
@@ -41,10 +41,10 @@ public abstract partial class GuidTests<TRandomSystem>
 		ReadOnlySpan<char> serializedGuid = guid.ToString().AsSpan();
 
 		#pragma warning disable MA0011
-        Guid result = RandomSystem.Guid.Parse(serializedGuid);
-        #pragma warning restore MA0011
+		Guid result = RandomSystem.Guid.Parse(serializedGuid);
+		#pragma warning restore MA0011
 
-        result.Should().Be(guid);
+		result.Should().Be(guid);
 	}
 #endif
 
@@ -56,10 +56,10 @@ public abstract partial class GuidTests<TRandomSystem>
 		string serializedGuid = guid.ToString();
 
 		#pragma warning disable MA0011
-        Guid result = RandomSystem.Guid.Parse(serializedGuid);
-        #pragma warning restore MA0011
+		Guid result = RandomSystem.Guid.Parse(serializedGuid);
+		#pragma warning restore MA0011
 
-        result.Should().Be(guid);
+		result.Should().Be(guid);
 	}
 #endif
 
@@ -124,10 +124,10 @@ public abstract partial class GuidTests<TRandomSystem>
 		ReadOnlySpan<char> serializedGuid = guid.ToString().AsSpan();
 
 		#pragma warning disable MA0011
-        bool result = RandomSystem.Guid.TryParse(serializedGuid, out Guid value);
-        #pragma warning restore MA0011
+		bool result = RandomSystem.Guid.TryParse(serializedGuid, out Guid value);
+		#pragma warning restore MA0011
 
-        result.Should().BeTrue();
+		result.Should().BeTrue();
 		value.Should().Be(guid);
 	}
 #endif
@@ -140,10 +140,10 @@ public abstract partial class GuidTests<TRandomSystem>
 		string serializedGuid = guid.ToString();
 
 		#pragma warning disable MA0011
-        bool result = RandomSystem.Guid.TryParse(serializedGuid, out Guid value);
-        #pragma warning restore MA0011
+		bool result = RandomSystem.Guid.TryParse(serializedGuid, out Guid value);
+		#pragma warning restore MA0011
 
-        result.Should().BeTrue();
+		result.Should().BeTrue();
 		value.Should().Be(guid);
 	}
 #endif

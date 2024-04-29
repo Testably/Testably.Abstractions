@@ -290,16 +290,9 @@ internal partial class Execute
 		public string GetRelativePath(string relativeTo, string path)
 		{
 			relativeTo.EnsureValidArgument(fileSystem, nameof(relativeTo));
-			path.EnsureValidArgument(fileSystem, nameof(path));
 
 			relativeTo = fileSystem.Execute.Path.GetFullPath(relativeTo);
 			path = fileSystem.Execute.Path.GetFullPath(path);
-
-			// Need to check if the roots are different- if they are we need to return the "to" path.
-			if (!AreRootsEqual(relativeTo, path, fileSystem.Execute.StringComparisonMode))
-			{
-				return path;
-			}
 
 			Func<char, char, bool> charComparer = (c1, c2) => c1 == c2;
 			if (fileSystem.Execute.StringComparisonMode == StringComparison.OrdinalIgnoreCase)
@@ -505,35 +498,10 @@ internal partial class Execute
 
 		#endregion
 
-		/// <summary>
-		///     Returns true if the two paths have the same root
-		/// </summary>
-		private bool AreRootsEqual(string first, string second, StringComparison comparisonType)
-		{
-			int firstRootLength = GetRootLength(first);
-			int secondRootLength = GetRootLength(second);
-
-			return firstRootLength == secondRootLength
-			       && string.Compare(
-				       strA: first,
-				       indexA: 0,
-				       strB: second,
-				       indexB: 0,
-				       length: firstRootLength,
-				       comparisonType: comparisonType) == 0;
-		}
-
 		private string CombineInternal(string[] paths)
 		{
-			string NormalizePath(string path, bool ignoreStartingSeparator)
+			string NormalizePath(string path)
 			{
-				if (!ignoreStartingSeparator && (
-					path[0] == DirectorySeparatorChar ||
-					path[0] == AltDirectorySeparatorChar))
-				{
-					path = path.Substring(1);
-				}
-
 				if (path[path.Length - 1] == DirectorySeparatorChar ||
 				    path[path.Length - 1] == AltDirectorySeparatorChar)
 				{
@@ -550,7 +518,6 @@ internal partial class Execute
 
 			StringBuilder sb = new();
 
-			bool isFirst = true;
 			bool endsWithDirectorySeparator = false;
 			foreach (string path in paths)
 			{
@@ -567,10 +534,9 @@ internal partial class Execute
 				if (IsPathRooted(path))
 				{
 					sb.Clear();
-					isFirst = true;
 				}
 
-				sb.Append(NormalizePath(path, isFirst));
+				sb.Append(NormalizePath(path));
 				sb.Append(DirectorySeparatorChar);
 				endsWithDirectorySeparator = path.EndsWith(DirectorySeparatorChar) ||
 				                             path.EndsWith(AltDirectorySeparatorChar);
@@ -650,7 +616,7 @@ internal partial class Execute
 			int commonChars = 0;
 			for (; commonChars < first.Length; commonChars++)
 			{
-				if (second.Length < commonChars)
+				if (second.Length <= commonChars)
 				{
 					break;
 				}
@@ -668,13 +634,13 @@ internal partial class Execute
 			}
 
 			// Or we're a full string and equal length or match to a separator
-			if (commonChars == first.Length
-			    && (commonChars == second.Length || IsDirectorySeparator(second[commonChars])))
+			if (commonChars == first.Length && commonChars == second.Length)
 			{
 				return commonChars;
 			}
 
-			if (commonChars == second.Length && IsDirectorySeparator(first[commonChars]))
+			if ((second.Length > commonChars && IsDirectorySeparator(second[commonChars])) ||
+			    IsDirectorySeparator(first[commonChars - 1]))
 			{
 				return commonChars;
 			}

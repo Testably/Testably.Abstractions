@@ -595,6 +595,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				.GetField("_oldFullPath", BindingFlags.Instance | BindingFlags.NonPublic)?
 				.SetValue(eventArgs, oldFullPath);
 		}
+
 		return _fileSystem.Execute.Path.GetDirectoryName(changeDescription.Path)?
 			.Equals(_fileSystem.Execute.Path.GetDirectoryName(changeDescription.OldPath),
 				_fileSystem.Execute.StringComparisonMode) ?? true;

@@ -16,7 +16,7 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		_name = name;
 	}
 
-	#region IStatistics Members
+	#region IStatistics<TType> Members
 
 	/// <inheritdoc cref="IStatistics.Methods" />
 	public MethodStatistic[] Methods => _methods.ToArray();

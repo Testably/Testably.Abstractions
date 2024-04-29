@@ -290,7 +290,11 @@ internal class InMemoryContainer : IStorageContainer
 		return attributes;
 	}
 
-	private bool CanGetAccess(FileAccess access, FileShare share, bool deleteAccess, bool ignoreFileShare)
+	private bool CanGetAccess(
+		FileAccess access,
+		FileShare share,
+		bool deleteAccess,
+		bool ignoreFileShare)
 	{
 		foreach (KeyValuePair<Guid, FileHandle> fileHandle in _fileHandles)
 		{
@@ -386,7 +390,11 @@ internal class InMemoryContainer : IStorageContainer
 
 		#endregion
 
-		public bool GrantAccess(FileAccess access, FileShare share, bool deleteAccess, bool ignoreFileShare)
+		public bool GrantAccess(
+			FileAccess access,
+			FileShare share,
+			bool deleteAccess,
+			bool ignoreFileShare)
 		{
 			FileShare usedShare = share;
 			FileShare currentShare = Share;

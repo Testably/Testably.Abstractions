@@ -43,12 +43,13 @@ internal partial class Execute
 #if !CAN_SIMULATE_OTHER_OS
 	[Obsolete("Simulating other operating systems is not supported on .NET Framework")]
 #endif
-	internal Execute(MockFileSystem fileSystem, SimulationMode simulationMode)
+	internal Execute(MockFileSystem fileSystem, SimulationMode simulationMode,
+		bool isNetFramework = false)
 	{
 		IsLinux = simulationMode == SimulationMode.Linux;
 		IsMac = simulationMode == SimulationMode.MacOS;
 		IsWindows = simulationMode == SimulationMode.Windows;
-		IsNetFramework = false;
+		IsNetFramework = IsWindows && isNetFramework;
 		StringComparisonMode = IsLinux
 			? StringComparison.Ordinal
 			: StringComparison.OrdinalIgnoreCase;
@@ -67,7 +68,7 @@ internal partial class Execute
 		else
 		{
 			throw new NotSupportedException(
-				"The operating system must be one of Linux, OSX or Windows");
+				"The operating system must be one of Linux, MacOS or Windows");
 		}
 	}
 

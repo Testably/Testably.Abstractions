@@ -7,6 +7,25 @@ public abstract partial class IsPathFullyQualifiedTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
+	[InlineData("C", false, TestOS.Windows)]
+	[InlineData("//", true, TestOS.All)]
+	[InlineData("/Foo", true, TestOS.Linux | TestOS.Mac)]
+	[InlineData("/Foo", false, TestOS.Windows)]
+	[InlineData(@"\\", true, TestOS.Windows)]
+	[InlineData("/?", true, TestOS.Windows)]
+	[InlineData(@"\?", true, TestOS.Windows)]
+	public void IsPathFullyQualified_EdgeCases_ShouldReturnExpectedValue(
+		string path, bool expected, TestOS operatingSystem)
+	{
+		Skip.IfNot(Test.RunsOn(operatingSystem));
+
+		bool result = FileSystem.Path
+			.IsPathFullyQualified(path);
+
+		result.Should().Be(expected);
+	}
+
+	[SkippableTheory]
 	[AutoData]
 	public void IsPathFullyQualified_PrefixedRoot_ShouldReturnTrue(
 		string directory)
