@@ -2,7 +2,7 @@
 
 namespace Testably.Abstractions.Testing.Tests.Helpers;
 
-public sealed class ExecuteTests
+public sealed partial class ExecuteTests
 {
 	[Fact]
 	public void Constructor_ForLinux_ShouldInitializeAccordingly()
