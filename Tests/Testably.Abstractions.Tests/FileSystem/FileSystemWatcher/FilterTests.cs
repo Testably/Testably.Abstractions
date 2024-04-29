@@ -8,6 +8,7 @@ using System.Linq;
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
 // ReSharper disable once PartialTypeWithSinglePart
+[Collection("RealFileSystemTests")]
 public abstract partial class FilterTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
