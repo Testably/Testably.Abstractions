@@ -640,7 +640,7 @@ internal partial class Execute
 				return commonChars;
 			}
 
-			if (second.Length > commonChars && IsDirectorySeparator(second[commonChars]) ||
+			if ((second.Length > commonChars && IsDirectorySeparator(second[commonChars])) ||
 			    IsDirectorySeparator(first[commonChars - 1]))
 			{
 				return commonChars;

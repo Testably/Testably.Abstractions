@@ -27,9 +27,11 @@ internal static class StorageExtensions
 			StringBuilder givenPathPrefix = new();
 
 			while (searchPattern.StartsWith(
-				       ".." + fileSystem.Execute.Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
+				       ".." + fileSystem.Execute.Path.DirectorySeparatorChar,
+				       StringComparison.Ordinal) ||
 			       searchPattern.StartsWith(
-				       ".." + fileSystem.Execute.Path.AltDirectorySeparatorChar, StringComparison.Ordinal))
+				       ".." + fileSystem.Execute.Path.AltDirectorySeparatorChar,
+				       StringComparison.Ordinal))
 			{
 				fileSystem.Execute.OnNetFramework(
 					() => throw ExceptionFactory.SearchPatternCannotContainTwoDots());

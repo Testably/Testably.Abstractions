@@ -244,8 +244,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		public void FileSystemEventArgs_ShouldUseDirectorySeparatorFromSimulatedFileSystem(
 			SimulationMode simulationMode, string parentDirectory, string directoryName)
 		{
-			MockFileSystem fileSystem =
-				new MockFileSystem(s => s.SimulatingOperatingSystem(simulationMode));
+			MockFileSystem fileSystem = new(s => s.SimulatingOperatingSystem(simulationMode));
 			fileSystem.Directory.CreateDirectory(parentDirectory);
 			FileSystemEventArgs? result = null;
 			string expectedFullPath = fileSystem.Path.GetFullPath(
@@ -287,8 +286,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			SimulationMode simulationMode, string parentDirectory,
 			string sourceName, string destinationName)
 		{
-			MockFileSystem fileSystem =
-				new MockFileSystem(s => s.SimulatingOperatingSystem(simulationMode));
+			MockFileSystem fileSystem = new(s => s.SimulatingOperatingSystem(simulationMode));
 			fileSystem.Directory.CreateDirectory(parentDirectory);
 			RenamedEventArgs? result = null;
 			string expectedOldFullPath = fileSystem.Path.GetFullPath(

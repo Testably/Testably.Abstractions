@@ -46,13 +46,16 @@ public sealed class ZipUtilitiesTests
 		Stream? stream = null)
 		: IZipArchiveEntry
 	{
+		/// <inheritdoc cref="IZipArchiveEntry.Comment" />
+		public string Comment { get; set; } = comment;
+
+		/// <inheritdoc cref="IZipArchiveEntry.IsEncrypted" />
+		public bool IsEncrypted { get; } = isEncrypted;
+
 		#region IZipArchiveEntry Members
 
 		/// <inheritdoc cref="IZipArchiveEntry.Archive" />
 		public IZipArchive Archive => archive ?? throw new NotSupportedException();
-
-		/// <inheritdoc cref="IZipArchiveEntry.Comment" />
-		public string Comment { get; set; } = comment;
 
 		/// <inheritdoc cref="IZipArchiveEntry.CompressedLength" />
 		public long CompressedLength => stream?.Length ?? 0L;
@@ -68,9 +71,6 @@ public sealed class ZipUtilitiesTests
 
 		/// <inheritdoc cref="IZipArchiveEntry.FullName" />
 		public string FullName { get; } = fullName ?? "";
-
-		/// <inheritdoc cref="IZipArchiveEntry.IsEncrypted" />
-		public bool IsEncrypted { get; } = isEncrypted;
 
 		/// <inheritdoc cref="IZipArchiveEntry.LastWriteTime" />
 		public DateTimeOffset LastWriteTime { get; set; }

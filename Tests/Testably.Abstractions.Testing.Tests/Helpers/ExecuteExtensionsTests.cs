@@ -78,7 +78,11 @@ public sealed class ExecuteExtensionsTests
 	[InlineData(SimulationMode.MacOS, false, 5, 6, 6)]
 	[InlineData(SimulationMode.Windows, false, 1, 2, 2)]
 	public void OnLinux_WithValue_ShouldExecuteDependingOnOperatingSystem(
-		SimulationMode type, bool isNetFramework, int value, int alternativeValue, int expectedValue)
+		SimulationMode type,
+		bool isNetFramework,
+		int value,
+		int alternativeValue,
+		int expectedValue)
 	{
 		Execute sut = FromType(type, isNetFramework);
 
@@ -128,7 +132,11 @@ public sealed class ExecuteExtensionsTests
 	[InlineData(SimulationMode.MacOS, true, 5, 6, 6)]
 	[InlineData(SimulationMode.Windows, true, 1, 2, 1)]
 	public void OnNetFramework_WithValue_ShouldExecuteDependingOnOperatingSystem(
-		SimulationMode type, bool isNetFramework, int value, int alternativeValue, int expectedValue)
+		SimulationMode type,
+		bool isNetFramework,
+		int value,
+		int alternativeValue,
+		int expectedValue)
 	{
 		Execute sut = FromType(type, isNetFramework);
 
@@ -183,7 +191,11 @@ public sealed class ExecuteExtensionsTests
 	[InlineData(SimulationMode.Windows, false, 1, 2, 1)]
 	[InlineData(SimulationMode.Windows, true, 1, 2, 1)]
 	public void OnWindows_WithValue_ShouldExecuteDependingOnOperatingSystem(
-		SimulationMode type, bool isNetFramework, int value, int alternativeValue, int expectedValue)
+		SimulationMode type,
+		bool isNetFramework,
+		int value,
+		int alternativeValue,
+		int expectedValue)
 	{
 		Execute sut = FromType(type, isNetFramework);
 

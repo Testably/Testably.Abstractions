@@ -43,7 +43,8 @@ internal partial class Execute
 #if !CAN_SIMULATE_OTHER_OS
 	[Obsolete("Simulating other operating systems is not supported on .NET Framework")]
 #endif
-	internal Execute(MockFileSystem fileSystem, SimulationMode simulationMode, bool isNetFramework = false)
+	internal Execute(MockFileSystem fileSystem, SimulationMode simulationMode,
+		bool isNetFramework = false)
 	{
 		IsLinux = simulationMode == SimulationMode.Linux;
 		IsMac = simulationMode == SimulationMode.MacOS;
