@@ -25,8 +25,8 @@ public abstract partial class GetFullPathTests<TFileSystem>
 	[InlineData(@"\??\BAR", @"\??\BAR", TestOS.Windows)]
 	[InlineData("/foo", "/foo", TestOS.Linux | TestOS.Mac)]
 	[InlineData("/foo/", "/foo/", TestOS.Linux | TestOS.Mac)]
-	public void GetFullPath_EdgeCases_ShouldReturnExpectedValue(string path,
-		string expected, TestOS operatingSystem)
+	public void GetFullPath_EdgeCases_ShouldReturnExpectedValue(
+		string path, string expected, TestOS operatingSystem)
 	{
 		Skip.IfNot(Test.RunsOn(operatingSystem));
 

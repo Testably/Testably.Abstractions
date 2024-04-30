@@ -112,9 +112,8 @@ internal partial class Execute
 				return null;
 			}
 
-			return IsPathRooted(path)
-				? path.Substring(0, GetRootLength(path))
-				: string.Empty;
+			return path.Substring(0, GetRootLength(path))
+				.Replace(AltDirectorySeparatorChar, DirectorySeparatorChar);
 		}
 
 		/// <inheritdoc cref="IPath.GetTempPath()" />
@@ -135,7 +134,7 @@ internal partial class Execute
 		protected override int GetRootLength(string path)
 		{
 			bool IsDeviceUNC(string p)
-				=> p.Length >= 8
+				=> p.Length > 7
 				   && IsDevice(p)
 				   && IsDirectorySeparator(p[7])
 				   && p[4] == 'U'
@@ -146,7 +145,7 @@ internal partial class Execute
 				=> IsExtended(p)
 				   ||
 				   (
-					   p.Length >= 4
+					   p.Length > 3
 					   && IsDirectorySeparator(p[0])
 					   && IsDirectorySeparator(p[1])
 					   && (p[2] == '.' || p[2] == '?')
@@ -154,7 +153,7 @@ internal partial class Execute
 				   );
 
 			bool IsExtended(string p)
-				=> p.Length >= 4
+				=> p.Length > 3
 				   && p[0] == '\\'
 				   && (p[1] == '\\' || p[1] == '?')
 				   && p[2] == '?'
