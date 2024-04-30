@@ -449,7 +449,7 @@ internal partial class Execute
 		/// <inheritdoc cref="IPath.TrimEndingDirectorySeparator(string)" />
 		public string TrimEndingDirectorySeparator(string path)
 		{
-			return EndsInDirectorySeparator(path) && path.Length != GetRootLength(path)
+			return path.Length != GetRootLength(path) && EndsInDirectorySeparator(path)
 				? path.Substring(0, path.Length - 1)
 				: path;
 		}

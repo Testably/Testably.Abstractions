@@ -34,33 +34,23 @@ internal partial class Execute
 			// We would ideally use realpath to do this, but it resolves symlinks and requires that the file actually exist.
 			string collapsedString = RemoveRelativeSegments(path, GetRootLength(path));
 
-			string result = collapsedString.Length == 0
-				? $"{DirectorySeparatorChar}"
-				: collapsedString;
-
-			if (result.Contains('\0', StringComparison.Ordinal))
+			if (collapsedString.Contains('\0', StringComparison.Ordinal))
 			{
 				throw ExceptionFactory.NullCharacterInPath(nameof(path));
 			}
 
-			return result;
+			return collapsedString;
 		}
 
 #if FEATURE_PATH_RELATIVE
 		/// <inheritdoc cref="IPath.GetFullPath(string, string)" />
 		public override string GetFullPath(string path, string basePath)
 		{
-			path.EnsureValidArgument(_fileSystem, nameof(path));
 			basePath.EnsureValidArgument(_fileSystem, nameof(basePath));
 
 			if (!IsPathFullyQualified(basePath))
 			{
 				throw ExceptionFactory.BasePathNotFullyQualified(nameof(basePath));
-			}
-
-			if (IsPathFullyQualified(path))
-			{
-				return GetFullPath(path);
 			}
 
 			return GetFullPath(Combine(basePath, path));
@@ -125,21 +115,7 @@ internal partial class Execute
 		/// </summary>
 		protected override string NormalizeDirectorySeparators(string path)
 		{
-			bool IsAlreadyNormalized()
-			{
-				for (int i = 0; i < path.Length - 1; i++)
-				{
-					if (IsDirectorySeparator(path[i]) &&
-					    IsDirectorySeparator(path[i + 1]))
-					{
-						return false;
-					}
-				}
-
-				return true;
-			}
-
-			if (IsAlreadyNormalized())
+			if (string.IsNullOrEmpty(path))
 			{
 				return path;
 			}

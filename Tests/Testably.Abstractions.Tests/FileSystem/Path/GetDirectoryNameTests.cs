@@ -98,6 +98,7 @@ public abstract partial class GetDirectoryNameTests<TFileSystem>
 	[SkippableTheory]
 	[InlineData("foo//bar/file", "foo/bar", TestOS.All)]
 	[InlineData("foo///bar/file", "foo/bar", TestOS.All)]
+	[InlineData("//foo//bar/file", "/foo/bar", TestOS.Linux | TestOS.Mac)]
 	[InlineData(@"foo\\bar/file", "foo/bar", TestOS.Windows)]
 	[InlineData(@"foo\\\bar/file", "foo/bar", TestOS.Windows)]
 	public void GetDirectoryName_ShouldNormalizeDirectorySeparators(

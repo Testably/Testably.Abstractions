@@ -19,6 +19,14 @@ public abstract partial class TrimEndingDirectorySeparatorTests<TFileSystem>
 	}
 
 	[SkippableFact]
+	public void TrimEndingDirectorySeparator_EmptyString_ShouldReturnEmptyString()
+	{
+		string result = FileSystem.Path.TrimEndingDirectorySeparator(string.Empty);
+
+		result.Should().Be(string.Empty);
+	}
+
+	[SkippableFact]
 	public void TrimEndingDirectorySeparator_Root_ShouldReturnUnchanged()
 	{
 		string path = FileTestHelper.RootDrive(Test);
