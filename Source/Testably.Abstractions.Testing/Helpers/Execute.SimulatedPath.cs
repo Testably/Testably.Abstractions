@@ -518,7 +518,7 @@ internal partial class Execute
 
 			StringBuilder sb = new();
 
-			bool endsWithDirectorySeparator = false;
+			bool endsWithDirectorySeparator = true;
 			foreach (string path in paths)
 			{
 				if (path == null)
