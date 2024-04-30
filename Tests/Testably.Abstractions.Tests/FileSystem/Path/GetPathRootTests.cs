@@ -5,6 +5,38 @@ public abstract partial class GetPathRootTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
+	[SkippableTheory]
+	[InlineData(@"\\?\foo", @"\\?\foo", TestOS.Windows)]
+	[InlineData(@"\\.\BAR", @"\\.\BAR", TestOS.Windows)]
+	[InlineData(@"\\.\.", @"\\.\.", TestOS.Windows)]
+	[InlineData(@"\\.\\", @"\\.\", TestOS.Windows)]
+	[InlineData(@"\\.\a\", @"\\.\a\", TestOS.Windows)]
+	[InlineData(@"\\?\\", @"\\?\", TestOS.Windows)]
+	[InlineData(@"\\?\a\", @"\\?\a\", TestOS.Windows)]
+	[InlineData(@"\\?\UNC\", @"\\?\UNC\", TestOS.Windows)]
+	[InlineData(@"\\?\UNC\Bar", @"\\?\UNC\Bar", TestOS.Windows)]
+	[InlineData(@"\\?\UNC\a\b\c\d", @"\\?\UNC\a\b", TestOS.Windows)]
+	[InlineData(@"//?/UNC/a\b\c\d", @"\\?\UNC\a\b", TestOS.Windows)]
+	[InlineData(@"\\.\UNC\a\b\c\d", @"\\.\UNC\a\b", TestOS.Windows)]
+	[InlineData(@"//./UNC/a\b\c\d", @"\\.\UNC\a\b", TestOS.Windows)]
+	[InlineData(@"\\?\ABC\a\b\c\d", @"\\?\ABC\", TestOS.Windows)]
+	[InlineData(@"//?/ABC\a\b\c\d", @"\\?\ABC\", TestOS.Windows)]
+	[InlineData(@"\\.\ABC\a\b\c\d", @"\\.\ABC\", TestOS.Windows)]
+	[InlineData(@"//./ABC\a\b\c\d", @"\\.\ABC\", TestOS.Windows)]
+	[InlineData(@"\\X\ABC\a\b\c\d", @"\\X\ABC", TestOS.Windows)]
+	[InlineData(@"//X\ABC\a\b\c\d", @"\\X\ABC", TestOS.Windows)]
+	[InlineData(@"\??\ABC\a\b\c\d", @"\??\ABC\", TestOS.Windows)]
+	[InlineData(@"/??/ABC\a\b\c\d", @"\", TestOS.Windows)]
+	public void GetPathRoot_EdgeCases_ShouldReturnExpectedValue(
+		string path, string expected, TestOS operatingSystem)
+	{
+		Skip.IfNot(Test.RunsOn(operatingSystem));
+
+		string? result = FileSystem.Path.GetPathRoot(path);
+
+		result.Should().Be(expected);
+	}
+
 	[SkippableFact]
 	public void GetPathRoot_Null_ShouldReturnNull()
 	{

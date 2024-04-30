@@ -27,15 +27,6 @@ internal partial class Execute
 		{
 			path.EnsureValidArgument(_fileSystem, nameof(path));
 
-			if (path.Length >= 4
-			    && path[0] == '\\'
-			    && (path[1] == '\\' || path[1] == '?')
-			    && path[2] == '?'
-			    && path[3] == '\\')
-			{
-				return path;
-			}
-
 			string? pathRoot = GetPathRoot(path);
 			string? directoryRoot = GetPathRoot(_fileSystem.Storage.CurrentDirectory);
 			string candidate;
@@ -60,9 +51,7 @@ internal partial class Execute
 				candidate = Combine(_fileSystem.Storage.CurrentDirectory, path);
 			}
 
-			string fullPath =
-				NormalizeDirectorySeparators(RemoveRelativeSegments(candidate,
-					GetRootLength(candidate)));
+			string fullPath = RemoveRelativeSegments(candidate, GetRootLength(candidate));
 			fullPath = fullPath.TrimEnd('.');
 
 			if (fullPath.Contains('\0', StringComparison.Ordinal))
@@ -70,7 +59,7 @@ internal partial class Execute
 				throw ExceptionFactory.NullCharacterInPath(nameof(path));
 			}
 
-			if (fullPath.Length > 2 && fullPath[1] == ':' && fullPath[2] != DirectorySeparatorChar)
+			if (fullPath.Length > 2 && fullPath[2] != DirectorySeparatorChar && fullPath[1] == ':')
 			{
 				return fullPath.Substring(0, 2) + DirectorySeparatorChar + fullPath.Substring(2);
 			}
@@ -82,17 +71,11 @@ internal partial class Execute
 		/// <inheritdoc cref="IPath.GetFullPath(string, string)" />
 		public override string GetFullPath(string path, string basePath)
 		{
-			path.EnsureValidArgument(_fileSystem, nameof(path));
 			basePath.EnsureValidArgument(_fileSystem, nameof(basePath));
 
 			if (!IsPathFullyQualified(basePath))
 			{
 				throw ExceptionFactory.BasePathNotFullyQualified(nameof(basePath));
-			}
-
-			if (IsPathFullyQualified(path))
-			{
-				return GetFullPath(path);
 			}
 
 			return GetFullPath(Combine(basePath, path));
@@ -127,9 +110,8 @@ internal partial class Execute
 				return null;
 			}
 
-			return IsPathRooted(path)
-				? path.Substring(0, GetRootLength(path))
-				: string.Empty;
+			return path.Substring(0, GetRootLength(path))
+				.Replace(AltDirectorySeparatorChar, DirectorySeparatorChar);
 		}
 
 		/// <inheritdoc cref="IPath.GetTempPath()" />
@@ -150,7 +132,7 @@ internal partial class Execute
 		protected override int GetRootLength(string path)
 		{
 			bool IsDeviceUNC(string p)
-				=> p.Length >= 8
+				=> p.Length > 7
 				   && IsDevice(p)
 				   && IsDirectorySeparator(p[7])
 				   && p[4] == 'U'
@@ -161,7 +143,7 @@ internal partial class Execute
 				=> IsExtended(p)
 				   ||
 				   (
-					   p.Length >= 4
+					   p.Length > 3
 					   && IsDirectorySeparator(p[0])
 					   && IsDirectorySeparator(p[1])
 					   && (p[2] == '.' || p[2] == '?')
@@ -169,7 +151,7 @@ internal partial class Execute
 				   );
 
 			bool IsExtended(string p)
-				=> p.Length >= 4
+				=> p.Length > 3
 				   && p[0] == '\\'
 				   && (p[1] == '\\' || p[1] == '?')
 				   && p[2] == '?'

@@ -46,12 +46,13 @@ public abstract partial class CombineTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[InlineAutoData("/foo/", "/bar/", "/bar/")]
-	[InlineAutoData("foo/", "/bar", "/bar")]
-	[InlineAutoData("foo/", "bar", "foo/bar")]
-	[InlineAutoData("foo", "/bar", "/bar")]
-	[InlineAutoData("foo", "bar", "foo/bar")]
-	[InlineAutoData("/foo", "bar/", "/foo/bar/")]
+	[InlineData("", "", "")]
+	[InlineData("/foo/", "/bar/", "/bar/")]
+	[InlineData("foo/", "/bar", "/bar")]
+	[InlineData("foo/", "bar", "foo/bar")]
+	[InlineData("foo", "/bar", "/bar")]
+	[InlineData("foo", "bar", "foo/bar")]
+	[InlineData("/foo", "bar/", "/foo/bar/")]
 	public void Combine_2Paths_ShouldReturnExpectedResult(
 		string path1, string path2, string expectedResult)
 	{
@@ -129,13 +130,14 @@ public abstract partial class CombineTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[InlineAutoData("/foo/", "/bar/", "/baz/", "/baz/")]
-	[InlineAutoData("foo/", "/bar/", "/baz", "/baz")]
-	[InlineAutoData("foo/", "bar", "/baz", "/baz")]
-	[InlineAutoData("foo", "/bar", "/baz", "/baz")]
-	[InlineAutoData("foo", "/bar/", "baz", "/bar/baz")]
-	[InlineAutoData("foo", "bar", "baz", "foo/bar/baz")]
-	[InlineAutoData("/foo", "bar", "baz/", "/foo/bar/baz/")]
+	[InlineData("", "", "", "")]
+	[InlineData("/foo/", "/bar/", "/baz/", "/baz/")]
+	[InlineData("foo/", "/bar/", "/baz", "/baz")]
+	[InlineData("foo/", "bar", "/baz", "/baz")]
+	[InlineData("foo", "/bar", "/baz", "/baz")]
+	[InlineData("foo", "/bar/", "baz", "/bar/baz")]
+	[InlineData("foo", "bar", "baz", "foo/bar/baz")]
+	[InlineData("/foo", "bar", "baz/", "/foo/bar/baz/")]
 	public void Combine_3Paths_ShouldReturnExpectedResult(
 		string path1, string path2, string path3, string expectedResult)
 	{
@@ -224,13 +226,14 @@ public abstract partial class CombineTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[InlineAutoData("/foo/", "/bar/", "/baz/", "/muh/", "/muh/")]
-	[InlineAutoData("foo/", "/bar/", "/baz/", "/muh", "/muh")]
-	[InlineAutoData("foo/", "bar", "/baz", "/muh", "/muh")]
-	[InlineAutoData("foo", "/bar", "/baz", "/muh", "/muh")]
-	[InlineAutoData("foo", "/bar/", "baz/", "muh", "/bar/baz/muh")]
-	[InlineAutoData("foo", "bar", "baz", "muh", "foo/bar/baz/muh")]
-	[InlineAutoData("/foo", "bar", "baz", "muh/", "/foo/bar/baz/muh/")]
+	[InlineData("", "", "", "", "")]
+	[InlineData("/foo/", "/bar/", "/baz/", "/muh/", "/muh/")]
+	[InlineData("foo/", "/bar/", "/baz/", "/muh", "/muh")]
+	[InlineData("foo/", "bar", "/baz", "/muh", "/muh")]
+	[InlineData("foo", "/bar", "/baz", "/muh", "/muh")]
+	[InlineData("foo", "/bar/", "baz/", "muh", "/bar/baz/muh")]
+	[InlineData("foo", "bar", "baz", "muh", "foo/bar/baz/muh")]
+	[InlineData("/foo", "bar", "baz", "muh/", "/foo/bar/baz/muh/")]
 	public void Combine_4Paths_ShouldReturnExpectedResult(
 		string path1, string path2, string path3, string path4, string expectedResult)
 	{
@@ -344,13 +347,14 @@ public abstract partial class CombineTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[InlineAutoData("/foo/", "/bar/", "/baz/", "/muh/", "/maeh/", "/maeh/")]
-	[InlineAutoData("foo/", "/bar/", "/baz/", "/muh", "/maeh", "/maeh")]
-	[InlineAutoData("foo/", "bar", "/baz", "/muh", "/maeh", "/maeh")]
-	[InlineAutoData("foo", "/bar", "/baz", "/muh", "/maeh", "/maeh")]
-	[InlineAutoData("foo", "/bar/", "baz/", "muh/", "maeh", "/bar/baz/muh/maeh")]
-	[InlineAutoData("foo", "bar", "baz", "muh", "maeh", "foo/bar/baz/muh/maeh")]
-	[InlineAutoData("/foo", "bar", "baz", "muh", "maeh/", "/foo/bar/baz/muh/maeh/")]
+	[InlineData("", "", "", "", "", "")]
+	[InlineData("/foo/", "/bar/", "/baz/", "/muh/", "/maeh/", "/maeh/")]
+	[InlineData("foo/", "/bar/", "/baz/", "/muh", "/maeh", "/maeh")]
+	[InlineData("foo/", "bar", "/baz", "/muh", "/maeh", "/maeh")]
+	[InlineData("foo", "/bar", "/baz", "/muh", "/maeh", "/maeh")]
+	[InlineData("foo", "/bar/", "baz/", "muh/", "maeh", "/bar/baz/muh/maeh")]
+	[InlineData("foo", "bar", "baz", "muh", "maeh", "foo/bar/baz/muh/maeh")]
+	[InlineData("/foo", "bar", "baz", "muh", "maeh/", "/foo/bar/baz/muh/maeh/")]
 	public void Combine_ParamPaths_ShouldReturnExpectedResult(
 		string path1, string path2, string path3, string path4, string path5, string expectedResult)
 	{
