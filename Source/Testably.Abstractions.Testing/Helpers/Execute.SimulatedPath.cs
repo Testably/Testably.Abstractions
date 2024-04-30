@@ -721,14 +721,11 @@ internal partial class Execute
 				skip--;
 			}
 
+			sb.Append(path.Substring(0, skip));
+
 			// Remove "//", "/./", and "/../" from the path by copying each character to the output,
 			// except the ones we're removing, such that the builder contains the normalized path
 			// at the end.
-			if (skip > 0)
-			{
-				sb.Append(path.Substring(0, skip));
-			}
-
 			for (int i = skip; i < path.Length; i++)
 			{
 				char c = path[i];
@@ -758,8 +755,7 @@ internal partial class Execute
 					    path[i + 1] == '.' && path[i + 2] == '.')
 					{
 						// Unwind back to the last slash (and if there isn't one, clear out everything).
-						int s;
-						for (s = sb.Length - 1; s >= skip; s--)
+						for (int s = sb.Length - 1; s >= skip; s--)
 						{
 							if (IsDirectorySeparator(sb[s]))
 							{
@@ -769,11 +765,6 @@ internal partial class Execute
 										: s; // to avoid removing the complete "\tmp\" segment in cases like \\?\C:\tmp\..\, C:\tmp\..
 								break;
 							}
-						}
-
-						if (s < skip)
-						{
-							sb.Length = skip;
 						}
 
 						i += 2;

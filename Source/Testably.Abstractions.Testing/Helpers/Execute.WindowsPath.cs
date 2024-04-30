@@ -60,9 +60,7 @@ internal partial class Execute
 				candidate = Combine(_fileSystem.Storage.CurrentDirectory, path);
 			}
 
-			string fullPath =
-				NormalizeDirectorySeparators(RemoveRelativeSegments(candidate,
-					GetRootLength(candidate)));
+			string fullPath = RemoveRelativeSegments(candidate, GetRootLength(candidate));
 			fullPath = fullPath.TrimEnd('.');
 
 			if (fullPath.Contains('\0', StringComparison.Ordinal))

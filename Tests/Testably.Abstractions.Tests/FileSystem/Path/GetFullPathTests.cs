@@ -16,6 +16,7 @@ public abstract partial class GetFullPathTests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[InlineData(@"C:\..", @"C:\", TestOS.Windows)]
 	[InlineData(@"C:\foo", @"C:\foo", TestOS.Windows)]
 	[InlineData(@"C:\foo\", @"C:\foo\", TestOS.Windows)]
 	[InlineData(@"\\?\foo", @"\\?\foo", TestOS.Windows)]
@@ -31,6 +32,19 @@ public abstract partial class GetFullPathTests<TFileSystem>
 		{
 			expected = expected.Replace('/', FileSystem.Path.DirectorySeparatorChar);
 		}
+
+		string result = FileSystem.Path.GetFullPath(path);
+
+		result.Should().Be(expected);
+	}
+
+	[SkippableTheory]
+	[InlineData(@"C:\..", @"C:\", TestOS.Windows)]
+	[InlineData("/..", "/", TestOS.Linux | TestOS.Mac)]
+	public void GetFullPath_ParentOfRoot_ShouldReturnRoot(string path,
+		string expected, TestOS operatingSystem)
+	{
+		Skip.IfNot(Test.RunsOn(operatingSystem));
 
 		string result = FileSystem.Path.GetFullPath(path);
 
@@ -74,7 +88,7 @@ public abstract partial class GetFullPathTests<TFileSystem>
 	[InlineData("top/../most/file", "foo/bar", "foo/bar/most/file")]
 	[InlineData("top/../most/../dir/file", "foo", "foo/dir/file")]
 	[InlineData("top/../../most/file", "foo/bar", "foo/most/file")]
-	public void GetFullPath_Relative_ShouldNormalizeProvidedPath(string input, string basePath,
+	public void GetFullPath_Relative_ShouldRemoveRelativeSegments(string input, string basePath,
 		string expected)
 	{
 		string expectedRootedPath = FileTestHelper.RootDrive(Test,
@@ -141,10 +155,28 @@ public abstract partial class GetFullPathTests<TFileSystem>
 	}
 
 	[SkippableTheory]
+	[InlineData(@"X:\foo/bar", @"X:\foo\bar")]
+	[InlineData(@"Y:\foo/bar/", @"Y:\foo\bar\")]
+	public void GetFullPath_ShouldFlipAltDirectorySeparators(string path,
+		string expected)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		string result = FileSystem.Path.GetFullPath(path);
+
+		result.Should().Be(expected);
+	}
+
+	[SkippableTheory]
 	[InlineData("top/../most/file", "most/file")]
 	[InlineData("top/../most/../dir/file", "dir/file")]
 	[InlineData("top/../../most/file", "most/file")]
-	public void GetFullPath_ShouldNormalizeProvidedPath(string input, string expected)
+	[InlineData("top/..//../most/file", "most/file")]
+	[InlineData("top//most//file", "top/most/file")]
+	[InlineData("top//.//file", "top/file")]
+	[InlineData("top/most/file/..", "top/most")]
+	[InlineData("top/..most/file", "top/..most/file")]
+	public void GetFullPath_ShouldRemoveRelativeSegments(string input, string expected)
 	{
 		string expectedRootedPath = FileTestHelper.RootDrive(Test,
 			expected.Replace('/', FileSystem.Path.DirectorySeparatorChar));
