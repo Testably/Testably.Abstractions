@@ -258,17 +258,16 @@ public sealed class MockFileSystem : IFileSystem
 			// Avoid public constructor
 		}
 
+#if CAN_SIMULATE_OTHER_OS
 		/// <summary>
 		///     Specify the operating system that should be simulated.
 		/// </summary>
-#if !CAN_SIMULATE_OTHER_OS
-		[Obsolete("Simulating other operating systems is not supported on .NET Framework")]
-#endif
 		public Initialization SimulatingOperatingSystem(SimulationMode simulationMode)
 		{
 			SimulationMode = simulationMode;
 			return this;
 		}
+#endif
 
 		/// <summary>
 		///     Use the provided <paramref name="path" /> as current directory.

@@ -84,6 +84,7 @@ public class MockFileSystemInitializationTests
 		result.Should().Be(expected);
 	}
 
+#if CAN_SIMULATE_OTHER_OS
 	[Theory]
 	[MemberData(nameof(ValidOperatingSystems))]
 	public void SimulatingOperatingSystem_ValidOSPlatform_ShouldSetOperatingSystem(
@@ -91,13 +92,12 @@ public class MockFileSystemInitializationTests
 	{
 		MockFileSystem.Initialization sut = new();
 
-		#pragma warning disable CS0618
 		MockFileSystem.Initialization result = sut.SimulatingOperatingSystem(simulationMode);
-		#pragma warning restore CS0618
 
 		result.SimulationMode.Should().Be(simulationMode);
 		sut.SimulationMode.Should().Be(simulationMode);
 	}
+#endif
 
 	[Fact]
 	public void UseCurrentDirectory_Empty_ShouldUseCurrentDirectory()
@@ -141,8 +141,10 @@ public class MockFileSystemInitializationTests
 
 	#region Helpers
 
+#if CAN_SIMULATE_OTHER_OS
 	public static TheoryData<SimulationMode> ValidOperatingSystems()
 		=> new(SimulationMode.Linux, SimulationMode.MacOS, SimulationMode.Windows);
+#endif
 
 	#endregion
 }
