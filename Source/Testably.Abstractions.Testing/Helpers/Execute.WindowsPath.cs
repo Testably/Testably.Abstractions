@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -26,15 +27,6 @@ internal partial class Execute
 		public override string GetFullPath(string path)
 		{
 			path.EnsureValidArgument(_fileSystem, nameof(path));
-
-			if (path.Length >= 4
-			    && path[0] == '\\'
-			    && (path[1] == '\\' || path[1] == '?')
-			    && path[2] == '?'
-			    && path[3] == '\\')
-			{
-				return path;
-			}
 
 			string? pathRoot = GetPathRoot(path);
 			string? directoryRoot = GetPathRoot(_fileSystem.Storage.CurrentDirectory);
@@ -68,7 +60,8 @@ internal partial class Execute
 				throw ExceptionFactory.NullCharacterInPath(nameof(path));
 			}
 
-			if (fullPath.Length > 2 && fullPath[1] == ':' && fullPath[2] != DirectorySeparatorChar)
+			Debug.Assert(fullPath.Length > 2);
+			if (fullPath[1] == ':' && fullPath[2] != DirectorySeparatorChar)
 			{
 				return fullPath.Substring(0, 2) + DirectorySeparatorChar + fullPath.Substring(2);
 			}
@@ -80,17 +73,11 @@ internal partial class Execute
 		/// <inheritdoc cref="IPath.GetFullPath(string, string)" />
 		public override string GetFullPath(string path, string basePath)
 		{
-			path.EnsureValidArgument(_fileSystem, nameof(path));
 			basePath.EnsureValidArgument(_fileSystem, nameof(basePath));
 
 			if (!IsPathFullyQualified(basePath))
 			{
 				throw ExceptionFactory.BasePathNotFullyQualified(nameof(basePath));
-			}
-
-			if (IsPathFullyQualified(path))
-			{
-				return GetFullPath(path);
 			}
 
 			return GetFullPath(Combine(basePath, path));
