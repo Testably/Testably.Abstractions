@@ -30,6 +30,7 @@ public sealed class MockFileSystem : IFileSystem
 	/// </summary>
 	public IRandomSystem RandomSystem { get; }
 
+#if CAN_SIMULATE_OTHER_OS
 	/// <summary>
 	///     The simulation mode for the underlying operating system.
 	/// </summary>
@@ -37,6 +38,14 @@ public sealed class MockFileSystem : IFileSystem
 	///     Can be changed by setting <see cref="Initialization.SimulatingOperatingSystem(Testing.SimulationMode)" /> in
 	///     the constructor.
 	/// </remarks>
+#else
+	/// <summary>
+	///     The simulation mode for the underlying operating system.
+	/// </summary>
+	/// <remarks>
+	///     This functionality is only supported on .NET 6 or newer.
+	/// </remarks>
+#endif
 	public SimulationMode SimulationMode { get; }
 
 	/// <summary>
@@ -102,18 +111,13 @@ public sealed class MockFileSystem : IFileSystem
 		Initialization initialization = new();
 		initializationCallback(initialization);
 
-		SimulationMode = initialization.SimulationMode;
 #if CAN_SIMULATE_OTHER_OS
+		SimulationMode = initialization.SimulationMode;
 		Execute = SimulationMode == SimulationMode.Native
 			? new Execute(this)
 			: new Execute(this, SimulationMode);
 #else
-		if (SimulationMode != SimulationMode.Native)
-		{
-			throw new NotSupportedException(
-				"Simulating other operating systems is not supported on .NET Framework");
-		}
-
+		SimulationMode = SimulationMode.Native;
 		Execute = new Execute(this);
 #endif
 		StatisticsRegistration = new FileSystemStatistics(this);
@@ -258,17 +262,16 @@ public sealed class MockFileSystem : IFileSystem
 			// Avoid public constructor
 		}
 
+#if CAN_SIMULATE_OTHER_OS
 		/// <summary>
 		///     Specify the operating system that should be simulated.
 		/// </summary>
-#if !CAN_SIMULATE_OTHER_OS
-		[Obsolete("Simulating other operating systems is not supported on .NET Framework")]
-#endif
 		public Initialization SimulatingOperatingSystem(SimulationMode simulationMode)
 		{
 			SimulationMode = simulationMode;
 			return this;
 		}
+#endif
 
 		/// <summary>
 		///     Use the provided <paramref name="path" /> as current directory.

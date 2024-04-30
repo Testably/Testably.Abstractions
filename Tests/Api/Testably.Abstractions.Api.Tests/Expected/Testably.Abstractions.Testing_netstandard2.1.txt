@@ -112,7 +112,6 @@ namespace Testably.Abstractions.Testing
         public Testably.Abstractions.Testing.MockFileSystem WithSafeFileHandleStrategy(Testably.Abstractions.Testing.FileSystem.ISafeFileHandleStrategy safeFileHandleStrategy) { }
         public class Initialization
         {
-            public Testably.Abstractions.Testing.MockFileSystem.Initialization SimulatingOperatingSystem(Testably.Abstractions.Testing.SimulationMode simulationMode) { }
             public Testably.Abstractions.Testing.MockFileSystem.Initialization UseCurrentDirectory() { }
             public Testably.Abstractions.Testing.MockFileSystem.Initialization UseCurrentDirectory(string path) { }
             public Testably.Abstractions.Testing.MockFileSystem.Initialization UseRandomProvider(Testably.Abstractions.Testing.RandomSystem.IRandomProvider randomProvider) { }
