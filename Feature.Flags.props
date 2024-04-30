@@ -7,7 +7,7 @@
 		<IS_NET8_OR_HIGHER Condition="'$(TargetFramework)' == 'net8.0'">1</IS_NET8_OR_HIGHER>
 
 		<DefineConstants Condition="'$(TargetFramework)' == 'net48' OR '$(TargetFramework)' == 'netstandard2.0'">$(DefineConstants);NETFRAMEWORK</DefineConstants>
-		<DefineConstants Condition="'$(IS_NET21_OR_HIGHER)' == '1'">$(DefineConstants);CAN_SIMULATE_OTHER_OS</DefineConstants>
+		<DefineConstants Condition="'$(IS_NET6_OR_HIGHER)' == '1'">$(DefineConstants);CAN_SIMULATE_OTHER_OS</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET21_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_FILESYSTEM_ASYNC</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET21_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_FILESYSTEM_ENUMERATION_OPTIONS</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET21_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_PATH_JOIN</DefineConstants>
