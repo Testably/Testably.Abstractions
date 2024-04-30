@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -60,8 +59,7 @@ internal partial class Execute
 				throw ExceptionFactory.NullCharacterInPath(nameof(path));
 			}
 
-			Debug.Assert(fullPath.Length > 2);
-			if (fullPath[1] == ':' && fullPath[2] != DirectorySeparatorChar)
+			if (fullPath.Length > 2 && fullPath[2] != DirectorySeparatorChar && fullPath[1] == ':')
 			{
 				return fullPath.Substring(0, 2) + DirectorySeparatorChar + fullPath.Substring(2);
 			}
