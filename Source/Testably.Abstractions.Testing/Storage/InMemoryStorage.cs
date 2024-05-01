@@ -250,6 +250,17 @@ internal sealed class InMemoryStorage : IStorage
 #endif
 			}
 
+#if NET8_0_OR_GREATER
+			FileAttributes defaultAttributeToSkip = FileAttributes.None;
+#else
+			FileAttributes defaultAttributeToSkip = 0;
+#endif
+			if (enumerationOptions.AttributesToSkip != defaultAttributeToSkip &&
+			    item.Value.Attributes.HasFlag(enumerationOptions.AttributesToSkip))
+			{
+				continue;
+			}
+
 			if (type.HasFlag(item.Value.Type))
 			{
 				string name = _fileSystem.Execute.Path.GetFileName(item.Key.FullPath);
