@@ -194,6 +194,28 @@ internal sealed class InMemoryStorage : IStorage
 					_fileSystem.Execute.Path.DirectorySeparatorChar);
 		}
 
+		if (enumerationOptions.ReturnSpecialDirectories &&
+		    type == FileSystemTypes.Directory)
+		{
+			IStorageDrive? drive = _fileSystem.Storage.GetDrive(fullPath);
+			if (drive == null &&
+			    !fullPath.IsUncPath(_fileSystem))
+			{
+				drive = _fileSystem.Storage.MainDrive;
+			}
+
+			yield return InMemoryLocation.New(_fileSystem, drive, fullPath,
+				$"{location.FriendlyName}{_fileSystem.Execute.Path.DirectorySeparatorChar}.");
+			string? parentPath = _fileSystem.Execute.Path.GetDirectoryName(
+				fullPath.TrimEnd(_fileSystem.Execute.Path
+					.DirectorySeparatorChar));
+			if (parentPath != null)
+			{
+				yield return InMemoryLocation.New(_fileSystem, drive, parentPath,
+					$"{location.FriendlyName}{_fileSystem.Execute.Path.DirectorySeparatorChar}..");
+			}
+		}
+
 		foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers
 			.Where(x => x.Key.FullPath.StartsWith(fullPath,
 				            _fileSystem.Execute.StringComparisonMode) &&
@@ -207,6 +229,7 @@ internal sealed class InMemoryStorage : IStorage
 			{
 				continue;
 			}
+
 			if (!parentPath.Equals(fullPathWithoutTrailingSlash,
 				_fileSystem.Execute.StringComparisonMode))
 			{
@@ -393,7 +416,7 @@ internal sealed class InMemoryStorage : IStorage
 	}
 
 	/// <inheritdoc cref="IStorage.Replace(IStorageLocation, IStorageLocation, IStorageLocation?, bool)" />
-#pragma warning disable MA0051 // Method is too long
+	#pragma warning disable MA0051 // Method is too long
 	public IStorageLocation? Replace(IStorageLocation source,
 		IStorageLocation destination,
 		IStorageLocation? backup,
@@ -485,7 +508,7 @@ internal sealed class InMemoryStorage : IStorage
 			}
 		}
 	}
-#pragma warning restore MA0051 // Method is too long
+	#pragma warning restore MA0051 // Method is too long
 
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IStorage.ResolveLinkTarget(IStorageLocation, bool)" />
@@ -561,7 +584,7 @@ internal sealed class InMemoryStorage : IStorage
 		return false;
 	}
 
-#endregion
+	#endregion
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
@@ -652,7 +675,7 @@ internal sealed class InMemoryStorage : IStorage
 		}
 	}
 
-#pragma warning disable MA0051 // Method is too long
+	#pragma warning disable MA0051 // Method is too long
 	private IStorageLocation? MoveInternal(IStorageLocation source,
 		IStorageLocation destination,
 		bool overwrite,
@@ -741,7 +764,7 @@ internal sealed class InMemoryStorage : IStorage
 
 		return source;
 	}
-#pragma warning restore MA0051 // Method is too long
+	#pragma warning restore MA0051 // Method is too long
 
 #if FEATURE_FILESYSTEM_LINK
 	private IStorageLocation? ResolveFinalLinkTarget(IStorageContainer container,

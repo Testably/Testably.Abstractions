@@ -53,6 +53,7 @@ internal static class FileSystemExtensions
 	/// </summary>
 	internal static string GetSubdirectoryPath(this MockFileSystem fileSystem,
 		string fullFilePath,
+		string friendlyName,
 		string givenPath)
 	{
 		if (fileSystem.Execute.Path.IsPathRooted(givenPath))
@@ -66,11 +67,23 @@ internal static class FileSystemExtensions
 		{
 			fullFilePath = fullFilePath.Substring(currentDirectory.Length);
 		}
+		else if (fullFilePath.Equals(
+			currentDirectory + fileSystem.Execute.Path.DirectorySeparatorChar,
+			fileSystem.Execute.StringComparisonMode))
+		{
+			fullFilePath = ".";
+		}
 		else if (fullFilePath.StartsWith(
 			currentDirectory + fileSystem.Execute.Path.DirectorySeparatorChar,
 			fileSystem.Execute.StringComparisonMode))
 		{
 			fullFilePath = fullFilePath.Substring(currentDirectory.Length + 1);
+		}
+		else if (friendlyName.EndsWith(
+			$"{fileSystem.Execute.Path.DirectorySeparatorChar}..",
+			StringComparison.Ordinal))
+		{
+			fullFilePath = "..";
 		}
 		else
 		{
