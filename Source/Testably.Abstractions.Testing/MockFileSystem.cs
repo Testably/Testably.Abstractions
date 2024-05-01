@@ -35,7 +35,7 @@ public sealed class MockFileSystem : IFileSystem
 	///     The simulation mode for the underlying operating system.
 	/// </summary>
 	/// <remarks>
-	///     Can be changed by setting <see cref="Initialization.SimulatingOperatingSystem(Testing.SimulationMode)" /> in
+	///     Can be changed by setting <see cref="MockFileSystemOptions.SimulatingOperatingSystem(Testing.SimulationMode)" /> in
 	///     the constructor.
 	/// </remarks>
 #else
@@ -101,15 +101,15 @@ public sealed class MockFileSystem : IFileSystem
 	/// <summary>
 	///     Initializes the <see cref="MockFileSystem" />.
 	/// </summary>
-	public MockFileSystem() : this(_ => { }) { }
+	public MockFileSystem() : this(o => o) { }
 
 	/// <summary>
-	///     Initializes the <see cref="MockFileSystem" /> with the <paramref name="initializationCallback" />.
+	///     Initializes the <see cref="MockFileSystem" /> with the <paramref name="options" />.
 	/// </summary>
-	public MockFileSystem(Action<Initialization> initializationCallback)
+	public MockFileSystem(Func<MockFileSystemOptions, MockFileSystemOptions> options)
 	{
-		Initialization initialization = new();
-		initializationCallback(initialization);
+		MockFileSystemOptions initialization = new();
+		initialization = options(initialization);
 
 #if CAN_SIMULATE_OTHER_OS
 		SimulationMode = initialization.SimulationMode;
@@ -217,7 +217,7 @@ public sealed class MockFileSystem : IFileSystem
 		return this;
 	}
 
-	private void InitializeFileSystem(Initialization initialization)
+	private void InitializeFileSystem(MockFileSystemOptions initialization)
 	{
 		try
 		{
@@ -240,7 +240,7 @@ public sealed class MockFileSystem : IFileSystem
 	/// <summary>
 	///     The initialization options for the <see cref="MockFileSystem" />.
 	/// </summary>
-	public class Initialization
+	public class MockFileSystemOptions
 	{
 		/// <summary>
 		///     The current directory.
@@ -257,16 +257,11 @@ public sealed class MockFileSystem : IFileSystem
 		/// </summary>
 		internal SimulationMode SimulationMode { get; private set; } = SimulationMode.Native;
 
-		internal Initialization()
-		{
-			// Avoid public constructor
-		}
-
 #if CAN_SIMULATE_OTHER_OS
 		/// <summary>
 		///     Specify the operating system that should be simulated.
 		/// </summary>
-		public Initialization SimulatingOperatingSystem(SimulationMode simulationMode)
+		public MockFileSystemOptions SimulatingOperatingSystem(SimulationMode simulationMode)
 		{
 			SimulationMode = simulationMode;
 			return this;
@@ -276,7 +271,7 @@ public sealed class MockFileSystem : IFileSystem
 		/// <summary>
 		///     Use the provided <paramref name="path" /> as current directory.
 		/// </summary>
-		public Initialization UseCurrentDirectory(string path)
+		public MockFileSystemOptions UseCurrentDirectory(string path)
 		{
 			CurrentDirectory = path;
 			return this;
@@ -285,7 +280,7 @@ public sealed class MockFileSystem : IFileSystem
 		/// <summary>
 		///     Use <see cref="Directory.GetCurrentDirectory()" /> as current directory.
 		/// </summary>
-		public Initialization UseCurrentDirectory()
+		public MockFileSystemOptions UseCurrentDirectory()
 		{
 			CurrentDirectory = System.IO.Directory.GetCurrentDirectory();
 			return this;
@@ -294,7 +289,7 @@ public sealed class MockFileSystem : IFileSystem
 		/// <summary>
 		///     Use the given <paramref name="randomProvider" /> for the <see cref="RandomSystem" />.
 		/// </summary>
-		public Initialization UseRandomProvider(IRandomProvider randomProvider)
+		public MockFileSystemOptions UseRandomProvider(IRandomProvider randomProvider)
 		{
 			RandomProvider = randomProvider;
 			return this;
