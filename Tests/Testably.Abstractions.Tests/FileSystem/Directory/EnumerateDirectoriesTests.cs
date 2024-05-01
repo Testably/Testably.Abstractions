@@ -187,28 +187,202 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderSetOptions(
+		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderAttributesToSkip(
 			string path)
 	{
+		EnumerationOptions enumerationOptions = new()
+		{
+			AttributesToSkip = FileAttributes.ReadOnly
+		};
 		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
-		baseDirectory.CreateSubdirectory("foo/xyz");
+		baseDirectory.CreateSubdirectory("foo");
+		baseDirectory.CreateSubdirectory("bar").Attributes = FileAttributes.ReadOnly;
+
+		List<string> result = FileSystem.Directory
+			.EnumerateDirectories(path, "*", enumerationOptions).ToList();
+
+		result.Count.Should().Be(1);
+		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
+		result.Should().NotContain(FileSystem.Path.Combine(path, "bar"));
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
+	[SkippableTheory]
+	[InlineAutoData(MatchCasing.CaseInsensitive)]
+	[InlineAutoData(MatchCasing.CaseSensitive)]
+	public void
+		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderMatchCasing(
+			MatchCasing matchCasing,
+			string path)
+	{
+		EnumerationOptions enumerationOptions = new()
+		{
+			MatchCasing = matchCasing
+		};
+		IDirectoryInfo baseDirectory =
+			FileSystem.Directory.CreateDirectory(path);
+		baseDirectory.CreateSubdirectory("foo");
 		baseDirectory.CreateSubdirectory("bar");
 
 		List<string> result = FileSystem.Directory
-			.EnumerateDirectories(path, "XYZ",
-				new EnumerationOptions
-				{
-					MatchCasing = MatchCasing.CaseInsensitive,
-					RecurseSubdirectories = true,
-					// Filename could start with a leading '.' indicating it as Hidden in Linux
-					AttributesToSkip = FileAttributes.System
-				}).ToList();
+			.EnumerateDirectories(path, "FOO", enumerationOptions).ToList();
 
-		result.Count.Should().Be(1);
-		result.Should().NotContain(FileSystem.Path.Combine(path, "foo"));
-		result.Should().Contain(FileSystem.Path.Combine(path, "foo", "xyz"));
+		result.Count.Should().Be(matchCasing == MatchCasing.CaseInsensitive ? 1 : 0);
+		if (matchCasing == MatchCasing.CaseInsensitive)
+		{
+			result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
+		}
+
 		result.Should().NotContain(FileSystem.Path.Combine(path, "bar"));
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
+	[SkippableTheory]
+	[InlineAutoData(MatchType.Simple)]
+	[InlineAutoData(MatchType.Win32)]
+	public void
+		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderMatchType(
+			MatchType matchType,
+			string path)
+	{
+		EnumerationOptions enumerationOptions = new()
+		{
+			MatchType = matchType
+		};
+		IDirectoryInfo baseDirectory =
+			FileSystem.Directory.CreateDirectory(path);
+		baseDirectory.CreateSubdirectory("foo");
+		baseDirectory.CreateSubdirectory("bar");
+
+		List<string> result = FileSystem.Directory
+			.EnumerateDirectories(path, "*.", enumerationOptions).ToList();
+
+		result.Count.Should().Be(matchType == MatchType.Win32 ? 2 : 0);
+		if (matchType == MatchType.Win32)
+		{
+			result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
+			result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
+		}
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
+	[SkippableTheory]
+	[InlineAutoData(true, 0)]
+	[InlineAutoData(true, 1)]
+	[InlineAutoData(true, 2)]
+	[InlineAutoData(true, 3)]
+	[InlineAutoData(false, 2)]
+	public void
+		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderMaxRecursionDepthWhenRecurseSubdirectoriesIsSet(
+			bool recurseSubdirectories,
+			int maxRecursionDepth,
+			string path)
+	{
+		EnumerationOptions enumerationOptions = new()
+		{
+			MaxRecursionDepth = maxRecursionDepth,
+			RecurseSubdirectories = recurseSubdirectories
+		};
+		IDirectoryInfo baseDirectory =
+			FileSystem.Directory.CreateDirectory(path);
+		baseDirectory.CreateSubdirectory("a/b/c/d/e/foo");
+		baseDirectory.CreateSubdirectory("a/b/c/d/foo");
+		baseDirectory.CreateSubdirectory("a/b/c/foo");
+		baseDirectory.CreateSubdirectory("a/b/foo");
+		baseDirectory.CreateSubdirectory("a/foo");
+		baseDirectory.CreateSubdirectory("bar");
+
+		List<string> result = FileSystem.Directory
+			.EnumerateDirectories(path, "foo", enumerationOptions).ToList();
+
+		result.Count.Should().Be(recurseSubdirectories ? maxRecursionDepth : 0);
+		if (recurseSubdirectories)
+		{
+			if (maxRecursionDepth > 0)
+			{
+				result.Should().Contain(FileSystem.Path.Combine(path, "a", "foo"));
+			}
+
+			if (maxRecursionDepth > 1)
+			{
+				result.Should().Contain(FileSystem.Path.Combine(path, "a", "b", "foo"));
+			}
+
+			if (maxRecursionDepth > 2)
+			{
+				result.Should().Contain(FileSystem.Path.Combine(path, "a", "b", "c", "foo"));
+			}
+		}
+
+		result.Should().NotContain(FileSystem.Path.Combine(path, "bar"));
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
+	[SkippableTheory]
+	[InlineAutoData(true)]
+	[InlineAutoData(false)]
+	public void
+		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderRecurseSubdirectories(
+			bool recurseSubdirectories,
+			string path)
+	{
+		EnumerationOptions enumerationOptions = new()
+		{
+			RecurseSubdirectories = recurseSubdirectories
+		};
+		IDirectoryInfo baseDirectory =
+			FileSystem.Directory.CreateDirectory(path);
+		baseDirectory.CreateSubdirectory("xyz/foo");
+		baseDirectory.CreateSubdirectory("bar");
+
+		List<string> result = FileSystem.Directory
+			.EnumerateDirectories(path, "foo", enumerationOptions).ToList();
+
+		result.Count.Should().Be(recurseSubdirectories ? 1 : 0);
+		result.Should().NotContain(FileSystem.Path.Combine(path, "xyz"));
+		if (recurseSubdirectories)
+		{
+			result.Should().Contain(FileSystem.Path.Combine(path, "xyz", "foo"));
+		}
+
+		result.Should().NotContain(FileSystem.Path.Combine(path, "bar"));
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
+	[SkippableTheory]
+	[InlineAutoData(true)]
+	[InlineAutoData(false)]
+	public void
+		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderReturnSpecialDirectories(
+			bool returnSpecialDirectories,
+			string path)
+	{
+		EnumerationOptions enumerationOptions = new()
+		{
+			ReturnSpecialDirectories = returnSpecialDirectories
+		};
+		IDirectoryInfo baseDirectory =
+			FileSystem.Directory.CreateDirectory(path);
+		baseDirectory.CreateSubdirectory("foo");
+		baseDirectory.CreateSubdirectory("bar");
+
+		List<string> result = FileSystem.Directory
+			.EnumerateDirectories(path, "*", enumerationOptions).ToList();
+
+		result.Count.Should().Be(returnSpecialDirectories ? 4 : 2);
+		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
+		result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
+		if (returnSpecialDirectories)
+		{
+			result.Should().Contain(FileSystem.Path.Combine(path, "."));
+			result.Should().Contain(FileSystem.Path.Combine(path, ".."));
+		}
 	}
 #endif
 

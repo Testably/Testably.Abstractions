@@ -2,9 +2,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.Initializer;
-#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-using System.Globalization;
-#endif
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
@@ -144,29 +141,199 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 	[SkippableTheory]
 	[AutoData]
 	public void
-		EnumerateFiles_WithEnumerationOptions_ShouldConsiderSetOptions(
+		EnumerateFiles_WithEnumerationOptions_ShouldConsiderAttributesToSkip(
 			string path)
 	{
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
-			FileSystem.InitializeIn(path)
-				.WithAFile()
-				.WithASubdirectory().Initialized(s => s
-					.WithAFile());
+		EnumerationOptions enumerationOptions = new()
+		{
+			AttributesToSkip = FileAttributes.ReadOnly
+		};
+		FileSystem.Directory.CreateDirectory(path);
+		FileSystem.File.WriteAllText(FileSystem.Path.Combine(path, "foo"), "");
+		FileSystem.File.WriteAllText(FileSystem.Path.Combine(path, "bar"), "");
+		FileSystem.File.SetAttributes(FileSystem.Path.Combine(path, "bar"),
+			FileAttributes.ReadOnly);
 
 		List<string> result = FileSystem.Directory
-			.EnumerateFiles(".",
-				initialized[2].Name.ToUpper(CultureInfo.InvariantCulture),
-				new EnumerationOptions
-				{
-					MatchCasing = MatchCasing.CaseInsensitive,
-					RecurseSubdirectories = true,
-					// Filename could start with a leading '.' indicating it as Hidden in Linux
-					AttributesToSkip = FileAttributes.System
-				}).ToList();
+			.EnumerateFiles(path, "*", enumerationOptions).ToList();
 
 		result.Count.Should().Be(1);
-		result.Should().NotContain(initialized[0].ToString());
-		result.Should().Contain(initialized[2].ToString());
+		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
+		result.Should().NotContain(FileSystem.Path.Combine(path, "bar"));
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
+	[SkippableTheory]
+	[InlineAutoData(MatchCasing.CaseInsensitive)]
+	[InlineAutoData(MatchCasing.CaseSensitive)]
+	public void
+		EnumerateFiles_WithEnumerationOptions_ShouldConsiderMatchCasing(
+			MatchCasing matchCasing,
+			string path)
+	{
+		EnumerationOptions enumerationOptions = new()
+		{
+			MatchCasing = matchCasing
+		};
+		FileSystem.Directory.CreateDirectory(path);
+		FileSystem.File.WriteAllText(FileSystem.Path.Combine(path, "foo"), "");
+		FileSystem.File.WriteAllText(FileSystem.Path.Combine(path, "bar"), "");
+
+		List<string> result = FileSystem.Directory
+			.EnumerateFiles(path, "FOO", enumerationOptions).ToList();
+
+		result.Count.Should().Be(matchCasing == MatchCasing.CaseInsensitive ? 1 : 0);
+		if (matchCasing == MatchCasing.CaseInsensitive)
+		{
+			result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
+		}
+
+		result.Should().NotContain(FileSystem.Path.Combine(path, "bar"));
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
+	[SkippableTheory]
+	[InlineAutoData(MatchType.Simple)]
+	[InlineAutoData(MatchType.Win32)]
+	public void
+		EnumerateFiles_WithEnumerationOptions_ShouldConsiderMatchType(
+			MatchType matchType,
+			string path)
+	{
+		EnumerationOptions enumerationOptions = new()
+		{
+			MatchType = matchType
+		};
+		FileSystem.Directory.CreateDirectory(path);
+		FileSystem.File.WriteAllText(FileSystem.Path.Combine(path, "foo"), "");
+		FileSystem.File.WriteAllText(FileSystem.Path.Combine(path, "bar"), "");
+
+		List<string> result = FileSystem.Directory
+			.EnumerateFiles(path, "*.", enumerationOptions).ToList();
+
+		result.Count.Should().Be(matchType == MatchType.Win32 ? 2 : 0);
+		if (matchType == MatchType.Win32)
+		{
+			result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
+			result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
+		}
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
+	[SkippableTheory]
+	[InlineAutoData(true, 0)]
+	[InlineAutoData(true, 1)]
+	[InlineAutoData(true, 2)]
+	[InlineAutoData(true, 3)]
+	[InlineAutoData(false, 2)]
+	public void
+		EnumerateFiles_WithEnumerationOptions_ShouldConsiderMaxRecursionDepthWhenRecurseSubdirectoriesIsSet(
+			bool recurseSubdirectories,
+			int maxRecursionDepth,
+			string path)
+	{
+		EnumerationOptions enumerationOptions = new()
+		{
+			MaxRecursionDepth = maxRecursionDepth,
+			RecurseSubdirectories = recurseSubdirectories
+		};
+		FileSystem.Directory.CreateDirectory(
+			FileSystem.Path.Combine(path, "a", "b", "c", "d", "e"));
+		FileSystem.File.WriteAllText(
+			FileSystem.Path.Combine(path, "a", "b", "c", "d", "e", "foo"), "");
+		FileSystem.File.WriteAllText(
+			FileSystem.Path.Combine(path, "a", "b", "c", "d", "foo"), "");
+		FileSystem.File.WriteAllText(
+			FileSystem.Path.Combine(path, "a", "b", "c", "foo"), "");
+		FileSystem.File.WriteAllText(
+			FileSystem.Path.Combine(path, "a", "b", "foo"), "");
+		FileSystem.File.WriteAllText(
+			FileSystem.Path.Combine(path, "a", "foo"), "");
+		FileSystem.File.WriteAllText(FileSystem.Path.Combine(path, "bar"), "");
+
+		List<string> result = FileSystem.Directory
+			.EnumerateFiles(path, "foo", enumerationOptions).ToList();
+
+		result.Count.Should().Be(recurseSubdirectories ? maxRecursionDepth : 0);
+		if (recurseSubdirectories)
+		{
+			if (maxRecursionDepth > 0)
+			{
+				result.Should().Contain(FileSystem.Path.Combine(path, "a", "foo"));
+			}
+
+			if (maxRecursionDepth > 1)
+			{
+				result.Should().Contain(FileSystem.Path.Combine(path, "a", "b", "foo"));
+			}
+
+			if (maxRecursionDepth > 2)
+			{
+				result.Should().Contain(FileSystem.Path.Combine(path, "a", "b", "c", "foo"));
+			}
+		}
+
+		result.Should().NotContain(FileSystem.Path.Combine(path, "bar"));
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
+	[SkippableTheory]
+	[InlineAutoData(true)]
+	[InlineAutoData(false)]
+	public void
+		EnumerateFiles_WithEnumerationOptions_ShouldConsiderRecurseSubdirectories(
+			bool recurseSubdirectories,
+			string path)
+	{
+		EnumerationOptions enumerationOptions = new()
+		{
+			RecurseSubdirectories = recurseSubdirectories
+		};
+		FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(path, "xyz"));
+		FileSystem.File.WriteAllText(FileSystem.Path.Combine(path, "xyz", "foo"), "");
+		FileSystem.File.WriteAllText(FileSystem.Path.Combine(path, "bar"), "");
+
+		List<string> result = FileSystem.Directory
+			.EnumerateFiles(path, "foo", enumerationOptions).ToList();
+
+		result.Count.Should().Be(recurseSubdirectories ? 1 : 0);
+		result.Should().NotContain(FileSystem.Path.Combine(path, "xyz"));
+		if (recurseSubdirectories)
+		{
+			result.Should().Contain(FileSystem.Path.Combine(path, "xyz", "foo"));
+		}
+
+		result.Should().NotContain(FileSystem.Path.Combine(path, "bar"));
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
+	[SkippableTheory]
+	[InlineAutoData(true)]
+	[InlineAutoData(false)]
+	public void
+		EnumerateFiles_WithEnumerationOptions_ShouldIgnoreReturnSpecialDirectories(
+			bool returnSpecialDirectories,
+			string path)
+	{
+		EnumerationOptions enumerationOptions = new()
+		{
+			ReturnSpecialDirectories = returnSpecialDirectories
+		};
+		FileSystem.Directory.CreateDirectory(path);
+		FileSystem.File.WriteAllText(FileSystem.Path.Combine(path, "foo"), "");
+		FileSystem.File.WriteAllText(FileSystem.Path.Combine(path, "bar"), "");
+
+		List<string> result = FileSystem.Directory
+			.EnumerateFiles(path, "*", enumerationOptions).ToList();
+
+		result.Count.Should().Be(2);
+		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
+		result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
 	}
 #endif
 

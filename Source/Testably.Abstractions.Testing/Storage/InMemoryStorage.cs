@@ -194,6 +194,28 @@ internal sealed class InMemoryStorage : IStorage
 					_fileSystem.Execute.Path.DirectorySeparatorChar);
 		}
 
+		if (enumerationOptions.ReturnSpecialDirectories &&
+		    type == FileSystemTypes.Directory)
+		{
+			IStorageDrive? drive = _fileSystem.Storage.GetDrive(fullPath);
+			if (drive == null &&
+			    !fullPath.IsUncPath(_fileSystem))
+			{
+				drive = _fileSystem.Storage.MainDrive;
+			}
+
+			yield return InMemoryLocation.New(_fileSystem, drive, fullPath,
+				$"{location.FriendlyName}{_fileSystem.Execute.Path.DirectorySeparatorChar}.");
+			string? parentPath = _fileSystem.Execute.Path.GetDirectoryName(
+				fullPath.TrimEnd(_fileSystem.Execute.Path
+					.DirectorySeparatorChar));
+			if (parentPath != null)
+			{
+				yield return InMemoryLocation.New(_fileSystem, drive, parentPath,
+					$"{location.FriendlyName}{_fileSystem.Execute.Path.DirectorySeparatorChar}..");
+			}
+		}
+
 		foreach (KeyValuePair<IStorageLocation, IStorageContainer> item in _containers
 			.Where(x => x.Key.FullPath.StartsWith(fullPath,
 				            _fileSystem.Execute.StringComparisonMode) &&
@@ -203,9 +225,38 @@ internal sealed class InMemoryStorage : IStorage
 				_fileSystem.Execute.Path.GetDirectoryName(
 					item.Key.FullPath.TrimEnd(_fileSystem.Execute.Path
 						.DirectorySeparatorChar));
-			if (!enumerationOptions.RecurseSubdirectories &&
-			    parentPath?.Equals(fullPathWithoutTrailingSlash,
-				    _fileSystem.Execute.StringComparisonMode) != true)
+			if (parentPath == null)
+			{
+				continue;
+			}
+
+			if (!parentPath.Equals(fullPathWithoutTrailingSlash,
+				_fileSystem.Execute.StringComparisonMode))
+			{
+#if NETSTANDARD2_1
+				if (!enumerationOptions.RecurseSubdirectories)
+				{
+					continue;
+				}
+#else
+				int recursionDepth = parentPath
+					.Substring(fullPathWithoutTrailingSlash.Length)
+					.Count(x => x == _fileSystem.Execute.Path.DirectorySeparatorChar);
+				if (!enumerationOptions.RecurseSubdirectories ||
+				    recursionDepth > enumerationOptions.MaxRecursionDepth)
+				{
+					continue;
+				}
+#endif
+			}
+
+#if NET8_0_OR_GREATER
+			FileAttributes defaultAttributeToSkip = FileAttributes.None;
+#else
+			FileAttributes defaultAttributeToSkip = 0;
+#endif
+			if (enumerationOptions.AttributesToSkip != defaultAttributeToSkip &&
+			    item.Value.Attributes.HasFlag(enumerationOptions.AttributesToSkip))
 			{
 				continue;
 			}
