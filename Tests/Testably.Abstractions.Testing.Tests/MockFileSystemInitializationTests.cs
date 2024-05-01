@@ -90,9 +90,9 @@ public class MockFileSystemInitializationTests
 	public void SimulatingOperatingSystem_ValidOSPlatform_ShouldSetOperatingSystem(
 		SimulationMode simulationMode)
 	{
-		MockFileSystem.Initialization sut = new();
+		MockFileSystem.MockFileSystemOptions sut = new();
 
-		MockFileSystem.Initialization result = sut.SimulatingOperatingSystem(simulationMode);
+		MockFileSystem.MockFileSystemOptions result = sut.SimulatingOperatingSystem(simulationMode);
 
 		result.SimulationMode.Should().Be(simulationMode);
 		sut.SimulationMode.Should().Be(simulationMode);
@@ -103,9 +103,9 @@ public class MockFileSystemInitializationTests
 	public void UseCurrentDirectory_Empty_ShouldUseCurrentDirectory()
 	{
 		string expected = Directory.GetCurrentDirectory();
-		MockFileSystem.Initialization sut = new();
+		MockFileSystem.MockFileSystemOptions sut = new();
 
-		MockFileSystem.Initialization result = sut.UseCurrentDirectory();
+		MockFileSystem.MockFileSystemOptions result = sut.UseCurrentDirectory();
 
 		result.CurrentDirectory.Should().Be(expected);
 		sut.CurrentDirectory.Should().Be(expected);
@@ -115,9 +115,9 @@ public class MockFileSystemInitializationTests
 	[AutoData]
 	public void UseCurrentDirectory_WithPath_ShouldUsePathCurrentDirectory(string path)
 	{
-		MockFileSystem.Initialization sut = new();
+		MockFileSystem.MockFileSystemOptions sut = new();
 
-		MockFileSystem.Initialization result = sut.UseCurrentDirectory(path);
+		MockFileSystem.MockFileSystemOptions result = sut.UseCurrentDirectory(path);
 
 		result.CurrentDirectory.Should().Be(path);
 		sut.CurrentDirectory.Should().Be(path);
