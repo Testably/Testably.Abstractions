@@ -58,6 +58,11 @@ internal static class FileSystemExtensions
 	{
 		if (fileSystem.Execute.Path.IsPathRooted(givenPath))
 		{
+			if (friendlyName is "/." or "/..")
+			{
+				return friendlyName;
+			}
+
 			return fullFilePath;
 		}
 
