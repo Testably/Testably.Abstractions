@@ -124,7 +124,6 @@ internal static class ZipUtilities
 	///     <see
 	///         href="https://github.com/dotnet/runtime/blob/v6.0.10/src/libraries/System.IO.Compression.ZipFile/src/System/IO/Compression/ZipFile.Create.cs#L354" />
 	/// </remarks>
-	#pragma warning disable MA0051 // Method is too long
 	internal static void CreateFromDirectory(
 		IFileSystem fileSystem,
 		string sourceDirectoryName,
@@ -192,7 +191,6 @@ internal static class ZipUtilities
 			}
 		}
 	}
-	#pragma warning restore MA0051 // Method is too long
 #endif
 
 	internal static void ExtractRelativeToDirectory(this IZipArchiveEntry source,

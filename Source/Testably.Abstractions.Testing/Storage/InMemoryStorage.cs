@@ -393,7 +393,6 @@ internal sealed class InMemoryStorage : IStorage
 	}
 
 	/// <inheritdoc cref="IStorage.Replace(IStorageLocation, IStorageLocation, IStorageLocation?, bool)" />
-	#pragma warning disable MA0051 // Method is too long
 	public IStorageLocation? Replace(IStorageLocation source,
 		IStorageLocation destination,
 		IStorageLocation? backup,
@@ -485,7 +484,6 @@ internal sealed class InMemoryStorage : IStorage
 			}
 		}
 	}
-	#pragma warning restore MA0051 // Method is too long
 
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IStorage.ResolveLinkTarget(IStorageLocation, bool)" />
@@ -757,7 +755,6 @@ internal sealed class InMemoryStorage : IStorage
 		return true;
 	}
 
-#pragma warning disable MA0051 // Method is too long
 	private IStorageLocation? MoveInternal(IStorageLocation source,
 		IStorageLocation destination,
 		bool overwrite,
@@ -846,7 +843,6 @@ internal sealed class InMemoryStorage : IStorage
 
 		return source;
 	}
-#pragma warning restore MA0051 // Method is too long
 
 #if FEATURE_FILESYSTEM_LINK
 	private IStorageLocation? ResolveFinalLinkTarget(IStorageContainer container,
