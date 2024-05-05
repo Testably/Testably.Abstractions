@@ -266,6 +266,17 @@ internal sealed class InMemoryStorage : IStorage
 				continue;
 			}
 
+			if (!_fileSystem.AccessControlStrategy
+				.IsAccessGranted(item.Key.FullPath, item.Value.Extensibility))
+			{
+				if (!enumerationOptions.IgnoreInaccessible)
+				{
+					throw ExceptionFactory.AccessToPathDenied(item.Key.FullPath);
+				}
+
+				continue;
+			}
+
 			if (type.HasFlag(item.Value.Type))
 			{
 				string name = _fileSystem.Execute.Path.GetFileName(item.Key.FullPath);
