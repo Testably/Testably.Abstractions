@@ -226,58 +226,8 @@ internal sealed class InMemoryStorage : IStorage
 				            _fileSystem.Execute.StringComparisonMode) &&
 			            !x.Key.Equals(location)))
 		{
-			string? parentPath =
-				_fileSystem.Execute.Path.GetDirectoryName(
-					item.Key.FullPath.TrimEnd(_fileSystem.Execute.Path
-						.DirectorySeparatorChar));
-			if (parentPath == null)
-			{
-				continue;
-			}
-
-			if (!parentPath.Equals(fullPathWithoutTrailingSlash,
-				_fileSystem.Execute.StringComparisonMode))
-			{
-#if NETSTANDARD2_1
-				if (!enumerationOptions.RecurseSubdirectories)
-				{
-					continue;
-				}
-#else
-				int recursionDepth = parentPath
-					.Substring(fullPathWithoutTrailingSlash.Length)
-					.Count(x => x == _fileSystem.Execute.Path.DirectorySeparatorChar);
-				if (!enumerationOptions.RecurseSubdirectories ||
-				    recursionDepth > enumerationOptions.MaxRecursionDepth)
-				{
-					continue;
-				}
-#endif
-			}
-
-#if NET8_0_OR_GREATER
-			FileAttributes defaultAttributeToSkip = FileAttributes.None;
-#else
-			FileAttributes defaultAttributeToSkip = 0;
-#endif
-			if (enumerationOptions.AttributesToSkip != defaultAttributeToSkip &&
-			    item.Value.Attributes.HasFlag(enumerationOptions.AttributesToSkip))
-			{
-				continue;
-			}
-
-			if (!_fileSystem.AccessControlStrategy
-				.IsAccessGranted(item.Key.FullPath, item.Value.Extensibility))
-			{
-				if (!enumerationOptions.IgnoreInaccessible)
-				{
-					throw ExceptionFactory.AccessToPathDenied(item.Key.FullPath);
-				}
-
-				continue;
-			}
-
-			if (type.HasFlag(item.Value.Type))
+			if (type.HasFlag(item.Value.Type) &&
+			    IncludeItemInEnumeration(item, fullPathWithoutTrailingSlash, enumerationOptions))
 			{
 				string name = _fileSystem.Execute.Path.GetFileName(item.Key.FullPath);
 				if (EnumerationOptionsHelper.MatchesPattern(
@@ -443,7 +393,6 @@ internal sealed class InMemoryStorage : IStorage
 	}
 
 	/// <inheritdoc cref="IStorage.Replace(IStorageLocation, IStorageLocation, IStorageLocation?, bool)" />
-	#pragma warning disable MA0051 // Method is too long
 	public IStorageLocation? Replace(IStorageLocation source,
 		IStorageLocation destination,
 		IStorageLocation? backup,
@@ -535,7 +484,6 @@ internal sealed class InMemoryStorage : IStorage
 			}
 		}
 	}
-	#pragma warning restore MA0051 // Method is too long
 
 #if FEATURE_FILESYSTEM_LINK
 	/// <inheritdoc cref="IStorage.ResolveLinkTarget(IStorageLocation, bool)" />
@@ -702,7 +650,111 @@ internal sealed class InMemoryStorage : IStorage
 		}
 	}
 
-	#pragma warning disable MA0051 // Method is too long
+#if NETSTANDARD2_1
+	/// <summary>
+	///     Checks, if the <paramref name="item" /> should be included during enumeration, depending on the
+	///     <paramref name="directoryPath" /> to enumerate and the <paramref name="enumerationOptions" />.
+	/// </summary>
+	/// <remarks>
+	///     <see cref="EnumerationOptions.RecurseSubdirectories" />:<br />
+	///     If not set, only items directly in <paramref name="directoryPath" /> are included
+	///     <para />
+	///     <see cref="EnumerationOptions.AttributesToSkip" />:<br />
+	///     If set, only items with the given attributes are included
+	///     <para />
+	///     If the item is not granted access by the <see cref="IAccessControlStrategy" />:<br />
+	///     When <see cref="EnumerationOptions.IgnoreInaccessible" /> is set, the item is ignored, otherwise this method throws
+	///     an <see cref="UnauthorizedAccessException" />.
+	/// </remarks>
+	/// <exception cref="UnauthorizedAccessException">
+	///     When an item is not granted access by the
+	///     <see cref="IAccessControlStrategy" /> and <see cref="EnumerationOptions.IgnoreInaccessible" /> is not set to
+	///     <see langword="true" />.
+	/// </exception>
+#else
+	/// <summary>
+	///     Checks, if the <paramref name="item" /> should be included during enumeration, depending on the
+	///     <paramref name="directoryPath" /> to enumerate and the <paramref name="enumerationOptions" />.
+	/// </summary>
+	/// <remarks>
+	///     <see cref="EnumerationOptions.RecurseSubdirectories" />:<br />
+	///     If not set, only items directly in <paramref name="directoryPath" /> are included
+	///     <para />
+	///     <see cref="EnumerationOptions.MaxRecursionDepth" />:<br />
+	///     If set, only items within the given value of recursion are included
+	///     <para />
+	///     <see cref="EnumerationOptions.AttributesToSkip" />:<br />
+	///     If set, only items with the given attributes are included
+	///     <para />
+	///     If the item is not granted access by the <see cref="IAccessControlStrategy" />:<br />
+	///     When <see cref="EnumerationOptions.IgnoreInaccessible" /> is set, the item is ignored, otherwise this method throws
+	///     an <see cref="UnauthorizedAccessException" />.
+	/// </remarks>
+	/// <exception cref="UnauthorizedAccessException">
+	///     When an item is not granted access by the
+	///     <see cref="IAccessControlStrategy" /> and <see cref="EnumerationOptions.IgnoreInaccessible" /> is not set to
+	///     <see langword="true" />.
+	/// </exception>
+#endif
+	private bool IncludeItemInEnumeration(
+		KeyValuePair<IStorageLocation, IStorageContainer> item,
+		string directoryPath,
+		EnumerationOptions enumerationOptions)
+	{
+		string? parentPath =
+			_fileSystem.Execute.Path.GetDirectoryName(
+				item.Key.FullPath.TrimEnd(_fileSystem.Execute.Path
+					.DirectorySeparatorChar));
+		if (parentPath == null)
+		{
+			return false;
+		}
+
+		if (!parentPath.Equals(directoryPath,
+			_fileSystem.Execute.StringComparisonMode))
+		{
+#if NETSTANDARD2_1
+			if (!enumerationOptions.RecurseSubdirectories)
+			{
+				return false;
+			}
+#else
+			int recursionDepth = parentPath
+				.Substring(directoryPath.Length)
+				.Count(x => x == _fileSystem.Execute.Path.DirectorySeparatorChar);
+			if (!enumerationOptions.RecurseSubdirectories ||
+			    recursionDepth > enumerationOptions.MaxRecursionDepth)
+			{
+				return false;
+			}
+#endif
+		}
+
+#if NET8_0_OR_GREATER
+			FileAttributes defaultAttributeToSkip = FileAttributes.None;
+#else
+		FileAttributes defaultAttributeToSkip = 0;
+#endif
+		if (enumerationOptions.AttributesToSkip != defaultAttributeToSkip &&
+		    item.Value.Attributes.HasFlag(enumerationOptions.AttributesToSkip))
+		{
+			return false;
+		}
+
+		if (!_fileSystem.AccessControlStrategy
+			.IsAccessGranted(item.Key.FullPath, item.Value.Extensibility))
+		{
+			if (!enumerationOptions.IgnoreInaccessible)
+			{
+				throw ExceptionFactory.AccessToPathDenied(item.Key.FullPath);
+			}
+
+			return false;
+		}
+
+		return true;
+	}
+
 	private IStorageLocation? MoveInternal(IStorageLocation source,
 		IStorageLocation destination,
 		bool overwrite,
@@ -791,7 +843,6 @@ internal sealed class InMemoryStorage : IStorage
 
 		return source;
 	}
-	#pragma warning restore MA0051 // Method is too long
 
 #if FEATURE_FILESYSTEM_LINK
 	private IStorageLocation? ResolveFinalLinkTarget(IStorageContainer container,

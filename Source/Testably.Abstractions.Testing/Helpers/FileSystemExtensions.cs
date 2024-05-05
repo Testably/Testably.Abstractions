@@ -58,7 +58,8 @@ internal static class FileSystemExtensions
 	{
 		if (fileSystem.Execute.Path.IsPathRooted(givenPath))
 		{
-			if (friendlyName is "/." or "/..")
+			if (friendlyName.Equals("/.", StringComparison.Ordinal) ||
+			    friendlyName.Equals("/..", StringComparison.Ordinal))
 			{
 				return friendlyName;
 			}
