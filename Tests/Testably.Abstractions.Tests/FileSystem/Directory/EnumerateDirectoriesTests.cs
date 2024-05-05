@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Testably.Abstractions.Testing.FileSystem;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
@@ -205,6 +206,52 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 		result.Count.Should().Be(1);
 		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
 		result.Should().NotContain(FileSystem.Path.Combine(path, "bar"));
+	}
+#endif
+
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
+	[SkippableTheory]
+	[InlineData(true)]
+	[InlineData(false)]
+	public void
+		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderIgnoreInaccessible(
+			bool ignoreInaccessible)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		string path = @"C:\Windows\System32";
+		EnumerationOptions enumerationOptions = new()
+		{
+			IgnoreInaccessible = ignoreInaccessible,
+			RecurseSubdirectories = true
+		};
+		if (FileSystem is MockFileSystem mockFileSystem)
+		{
+			FileSystem.Directory.CreateDirectory(
+				FileSystem.Path.Combine(path, "bar"));
+			FileSystem.Directory.CreateDirectory(
+				FileSystem.Path.Combine(path, "foo"));
+			mockFileSystem.WithAccessControlStrategy(
+				new DefaultAccessControlStrategy((p, _)
+					=> !p.EndsWith("foo", StringComparison.Ordinal)));
+		}
+
+		Exception? exception = Record.Exception(() =>
+		{
+			_ = FileSystem.Directory
+				.EnumerateDirectories(path, "*", enumerationOptions).ToList();
+		});
+
+		if (ignoreInaccessible)
+		{
+			exception.Should().BeNull();
+		}
+		else
+		{
+			exception.Should().BeException<UnauthorizedAccessException>(
+				messageContains: @"Access to the path 'C:\Windows\System32\",
+				hResult: -2147024891);
+		}
 	}
 #endif
 
