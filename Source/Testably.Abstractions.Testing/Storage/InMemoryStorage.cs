@@ -204,15 +204,20 @@ internal sealed class InMemoryStorage : IStorage
 				drive = _fileSystem.Storage.MainDrive;
 			}
 
+			string prefix =
+				location.FriendlyName.EndsWith(_fileSystem.Execute.Path.DirectorySeparatorChar)
+					? location.FriendlyName
+					: location.FriendlyName + _fileSystem.Execute.Path.DirectorySeparatorChar;
+
 			yield return InMemoryLocation.New(_fileSystem, drive, fullPath,
-				$"{location.FriendlyName}{_fileSystem.Execute.Path.DirectorySeparatorChar}.");
+				$"{prefix}.");
 			string? parentPath = _fileSystem.Execute.Path.GetDirectoryName(
 				fullPath.TrimEnd(_fileSystem.Execute.Path
 					.DirectorySeparatorChar));
-			if (parentPath != null)
+			if (parentPath != null || !_fileSystem.Execute.IsWindows)
 			{
-				yield return InMemoryLocation.New(_fileSystem, drive, parentPath,
-					$"{location.FriendlyName}{_fileSystem.Execute.Path.DirectorySeparatorChar}..");
+				yield return InMemoryLocation.New(_fileSystem, drive, parentPath ?? "/",
+					$"{prefix}..");
 			}
 		}
 

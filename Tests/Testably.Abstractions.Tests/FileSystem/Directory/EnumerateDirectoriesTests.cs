@@ -433,6 +433,33 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 	}
 #endif
 
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
+	[SkippableFact]
+	public void
+		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderReturnSpecialDirectoriesCorrectlyForPathRoots()
+	{
+		string root = FileSystem.Path.GetPathRoot(FileSystem.Directory.GetCurrentDirectory())!;
+		EnumerationOptions enumerationOptions = new()
+		{
+			ReturnSpecialDirectories = true
+		};
+
+		List<string> result = FileSystem.Directory
+			.EnumerateDirectories(root, "*", enumerationOptions).ToList();
+
+		if (Test.RunsOnWindows)
+		{
+			result.Should().NotContain(FileSystem.Path.Combine(root, "."));
+			result.Should().NotContain(FileSystem.Path.Combine(root, ".."));
+		}
+		else
+		{
+			result.Should().Contain(FileSystem.Path.Combine(root, "."));
+			result.Should().Contain(FileSystem.Path.Combine(root, ".."));
+		}
+	}
+#endif
+
 	[SkippableTheory]
 	[AutoData]
 	public void EnumerateDirectories_WithNewline_ShouldThrowArgumentException(
