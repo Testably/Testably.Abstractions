@@ -30,13 +30,13 @@ public abstract partial class EnableRaisingEventsTests<TFileSystem>
 		};
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(path1);
-		ms.Wait(10000).Should().BeTrue();
+		ms.Wait(ExpectSuccess).Should().BeTrue();
 		ms.Reset();
 
 		fileSystemWatcher.EnableRaisingEvents = false;
 
 		FileSystem.Directory.Delete(path2);
-		ms.Wait(30).Should().BeFalse();
+		ms.Wait(ExpectTimeout).Should().BeFalse();
 	}
 
 	[SkippableTheory]
@@ -62,6 +62,6 @@ public abstract partial class EnableRaisingEventsTests<TFileSystem>
 
 		FileSystem.Directory.Delete(path);
 
-		ms.Wait(30).Should().BeFalse();
+		ms.Wait(ExpectTimeout).Should().BeFalse();
 	}
 }

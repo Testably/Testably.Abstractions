@@ -187,7 +187,7 @@ public abstract partial class TimerTests<TTimeSystem>
 						ms.Set();
 						triggerTimes.Add((int)diff);
 						// ReSharper disable once AccessToDisposedClosure
-						ms2.Wait(30000);
+						ms2.Wait(ExpectSuccess).Should().BeTrue();
 						if (triggerTimes.Count > 3)
 						{
 							// ReSharper disable once AccessToDisposedClosure
@@ -204,7 +204,7 @@ public abstract partial class TimerTests<TTimeSystem>
 				null, 0 * TimerMultiplier, 200 * TimerMultiplier))
 			#pragma warning restore MA0147 // Avoid async void method for delegate
 		{
-			ms.Wait(30000).Should().BeTrue();
+			ms.Wait(ExpectSuccess).Should().BeTrue();
 			using ITimer timer2 = TimeSystem.Timer.New(_ =>
 			{
 				// ReSharper disable once AccessToDisposedClosure
@@ -220,7 +220,7 @@ public abstract partial class TimerTests<TTimeSystem>
 				}
 			}, null, 100 * TimerMultiplier, 0 * TimerMultiplier);
 
-			ms3.Wait(10000 * TimerMultiplier);
+			ms3.Wait(ExpectSuccess * TimerMultiplier).Should().BeTrue();
 		}
 
 		if (triggerTimes[0] < 30 * TimerMultiplier)
@@ -262,7 +262,7 @@ public abstract partial class TimerTests<TTimeSystem>
 						ms.Set();
 						triggerTimes.Add((int)diff);
 						// ReSharper disable once AccessToDisposedClosure
-						ms2.Wait(30000);
+						ms2.Wait(ExpectSuccess).Should().BeTrue();
 						if (triggerTimes.Count > 3)
 						{
 							// ReSharper disable once AccessToDisposedClosure
@@ -279,7 +279,7 @@ public abstract partial class TimerTests<TTimeSystem>
 				null, 0L * TimerMultiplier, 200L * TimerMultiplier))
 			#pragma warning restore MA0147 // Avoid async void method for delegate
 		{
-			ms.Wait(30000).Should().BeTrue();
+			ms.Wait(ExpectSuccess).Should().BeTrue();
 			using ITimer timer2 = TimeSystem.Timer.New(_ =>
 			{
 				// ReSharper disable once AccessToDisposedClosure
@@ -295,7 +295,7 @@ public abstract partial class TimerTests<TTimeSystem>
 				}
 			}, null, 100L * TimerMultiplier, 0L * TimerMultiplier);
 
-			ms3.Wait(10000);
+			ms3.Wait(ExpectSuccess).Should().BeTrue();
 		}
 
 		if (triggerTimes[0] < 30 * TimerMultiplier)
@@ -337,7 +337,7 @@ public abstract partial class TimerTests<TTimeSystem>
 						ms.Set();
 						triggerTimes.Add((int)diff);
 						// ReSharper disable once AccessToDisposedClosure
-						ms2.Wait(30000);
+						ms2.Wait(ExpectSuccess).Should().BeTrue();
 						if (triggerTimes.Count > 3)
 						{
 							// ReSharper disable once AccessToDisposedClosure
@@ -354,7 +354,7 @@ public abstract partial class TimerTests<TTimeSystem>
 				TimeSpan.FromMilliseconds(200 * TimerMultiplier)))
 			#pragma warning restore MA0147 // Avoid async void method for delegate
 		{
-			ms.Wait(30000).Should().BeTrue();
+			ms.Wait(ExpectSuccess).Should().BeTrue();
 			using ITimer timer2 = TimeSystem.Timer.New(_ =>
 				{
 					// ReSharper disable once AccessToDisposedClosure
@@ -372,7 +372,7 @@ public abstract partial class TimerTests<TTimeSystem>
 				}, null, TimeSpan.FromMilliseconds(100 * TimerMultiplier),
 				TimeSpan.FromMilliseconds(0 * TimerMultiplier));
 
-			ms3.Wait(10000);
+			ms3.Wait(ExpectSuccess).Should().BeTrue();
 		}
 
 		if (triggerTimes[0] < 30 * TimerMultiplier)

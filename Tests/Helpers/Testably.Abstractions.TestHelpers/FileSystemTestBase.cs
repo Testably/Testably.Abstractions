@@ -13,7 +13,7 @@ namespace Testably.Abstractions.TestHelpers;
 /// <remarks>
 ///     Important: You have to mark your class as ´partial`!
 /// </remarks>
-public abstract class FileSystemTestBase<TFileSystem>
+public abstract class FileSystemTestBase<TFileSystem> : TestBase
 	where TFileSystem : IFileSystem
 {
 	public abstract string BasePath { get; }

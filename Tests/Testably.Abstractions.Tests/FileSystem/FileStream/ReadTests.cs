@@ -56,7 +56,7 @@ public abstract partial class ReadTests<TFileSystem>
 			}
 		}, null);
 
-		ms.Wait(30000);
+		ms.Wait(ExpectSuccess).Should().BeTrue();
 		buffer.Should().BeEquivalentTo(bytes);
 	}
 
@@ -107,7 +107,7 @@ public abstract partial class ReadTests<TFileSystem>
 				}
 			}, null);
 
-			ms.Wait(10000);
+			ms.Wait(ExpectSuccess).Should().BeTrue();
 		}
 
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
@@ -202,7 +202,7 @@ public abstract partial class ReadTests<TFileSystem>
 	public async Task ReadAsync_CanReadFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
-		using CancellationTokenSource cts = new(30000);
+		using CancellationTokenSource cts = new(ExpectSuccess);
 		byte[] buffer = new byte[bytes.Length];
 		await FileSystem.File.WriteAllBytesAsync(path, bytes, cts.Token);
 		Exception? exception;
@@ -228,7 +228,7 @@ public abstract partial class ReadTests<TFileSystem>
 	public async Task ReadAsync_Memory_CanReadFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
-		using CancellationTokenSource cts = new(30000);
+		using CancellationTokenSource cts = new(ExpectSuccess);
 		byte[] buffer = new byte[bytes.Length];
 		await FileSystem.File.WriteAllBytesAsync(path, bytes, cts.Token);
 		Exception? exception;
@@ -253,7 +253,7 @@ public abstract partial class ReadTests<TFileSystem>
 	[AutoData]
 	public async Task ReadAsync_ShouldFillBuffer(string path, byte[] bytes)
 	{
-		using CancellationTokenSource cts = new(30000);
+		using CancellationTokenSource cts = new(ExpectSuccess);
 		byte[] buffer = new byte[bytes.Length];
 		await FileSystem.File.WriteAllBytesAsync(path, bytes, cts.Token);
 		await using FileSystemStream stream = FileSystem.File.OpenRead(path);

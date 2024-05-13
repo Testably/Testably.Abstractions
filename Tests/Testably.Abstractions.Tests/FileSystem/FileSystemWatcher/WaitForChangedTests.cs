@@ -37,7 +37,7 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 				}
 			});
 
-			using (CancellationTokenSource cts = new(5000))
+			using (CancellationTokenSource cts = new(ExpectSuccess))
 			{
 				cts.Token.Register(() => throw new TimeoutException());
 				IWaitForChangedResult result =

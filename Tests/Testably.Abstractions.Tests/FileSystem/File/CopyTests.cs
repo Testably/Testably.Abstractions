@@ -257,7 +257,7 @@ public abstract partial class CopyTests<TFileSystem>
 
 		FileSystem.File.WriteAllText(sourceName, contents);
 
-		TimeSystem.Thread.Sleep(1000);
+		TimeSystem.Thread.Sleep(EnsureTimeout);
 
 		FileSystem.File.Copy(sourceName, destinationName);
 		FileSystem.Should().HaveFile(sourceName)

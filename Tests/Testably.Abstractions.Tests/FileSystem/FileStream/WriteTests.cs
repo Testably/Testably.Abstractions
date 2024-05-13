@@ -57,7 +57,7 @@ public abstract partial class WriteTests<TFileSystem>
 				}
 			}, null);
 
-			ms.Wait(30000);
+			ms.Wait(ExpectSuccess).Should().BeTrue();
 		}
 
 		FileSystem.Should().HaveFile(path)
@@ -108,7 +108,7 @@ public abstract partial class WriteTests<TFileSystem>
 				}
 			}, null);
 
-			ms.Wait(10000);
+			ms.Wait(ExpectSuccess).Should().BeTrue();
 		}
 
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);
@@ -210,7 +210,7 @@ public abstract partial class WriteTests<TFileSystem>
 	public async Task WriteAsync_CanWriteFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
-		using CancellationTokenSource cts = new(30000);
+		using CancellationTokenSource cts = new(ExpectSuccess);
 		byte[] buffer = new byte[bytes.Length];
 		await FileSystem.File.WriteAllBytesAsync(path, bytes, cts.Token);
 		Exception? exception;
@@ -236,7 +236,7 @@ public abstract partial class WriteTests<TFileSystem>
 	[AutoData]
 	public async Task WriteAsync_ShouldFillBuffer(string path, byte[] bytes)
 	{
-		using CancellationTokenSource cts = new(30000);
+		using CancellationTokenSource cts = new(ExpectSuccess);
 
 		await using (FileSystemStream stream = FileSystem.File.Create(path))
 		{

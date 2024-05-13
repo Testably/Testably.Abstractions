@@ -18,7 +18,7 @@ public abstract partial class EventTests<TFileSystem>
 		int callCount = 0;
 		FileSystem.InitializeIn(BasePath);
 		FileSystem.File.WriteAllText(path, "");
-		using CancellationTokenSource cts = new(30000);
+		using CancellationTokenSource cts = new(ExpectSuccess);
 		CancellationToken token = cts.Token;
 		using ManualResetEventSlim ms1 = new();
 		using ManualResetEventSlim ms2 = new();
@@ -70,7 +70,7 @@ public abstract partial class EventTests<TFileSystem>
 		}
 		finally
 		{
-			ms2.Wait(10000).Should().BeTrue();
+			ms2.Wait(ExpectSuccess).Should().BeTrue();
 			fileSystemWatcher.Changed -= FileSystemWatcherOnChanged;
 		}
 
@@ -78,7 +78,7 @@ public abstract partial class EventTests<TFileSystem>
 		int previousCallCount = callCount;
 
 		ms1.Reset();
-		ms1.Wait(10000).Should().BeTrue();
+		ms1.Wait(ExpectSuccess).Should().BeTrue();
 		callCount.Should().Be(previousCallCount);
 		cts.Cancel();
 	}
@@ -89,7 +89,7 @@ public abstract partial class EventTests<TFileSystem>
 	{
 		int callCount = 0;
 		FileSystem.Initialize();
-		using CancellationTokenSource cts = new(30000);
+		using CancellationTokenSource cts = new(ExpectSuccess);
 		CancellationToken token = cts.Token;
 		using ManualResetEventSlim ms1 = new();
 		using ManualResetEventSlim ms2 = new();
@@ -136,7 +136,7 @@ public abstract partial class EventTests<TFileSystem>
 		}
 		finally
 		{
-			ms2.Wait(10000).Should().BeTrue();
+			ms2.Wait(ExpectSuccess).Should().BeTrue();
 			fileSystemWatcher.Created -= FileSystemWatcherOnCreated;
 		}
 
@@ -144,7 +144,7 @@ public abstract partial class EventTests<TFileSystem>
 		int previousCallCount = callCount;
 
 		ms1.Reset();
-		ms1.Wait(10000).Should().BeTrue();
+		ms1.Wait(ExpectSuccess).Should().BeTrue();
 		FileSystem.Directory.CreateDirectory("other" + path);
 		FileSystem.Directory.Delete("other" + path);
 		callCount.Should().Be(previousCallCount);
@@ -157,7 +157,7 @@ public abstract partial class EventTests<TFileSystem>
 	{
 		int callCount = 0;
 		FileSystem.Initialize();
-		using CancellationTokenSource cts = new(30000);
+		using CancellationTokenSource cts = new(ExpectSuccess);
 		CancellationToken token = cts.Token;
 		using ManualResetEventSlim ms1 = new();
 		using ManualResetEventSlim ms2 = new();
@@ -204,7 +204,7 @@ public abstract partial class EventTests<TFileSystem>
 		}
 		finally
 		{
-			ms2.Wait(10000).Should().BeTrue();
+			ms2.Wait(ExpectSuccess).Should().BeTrue();
 			fileSystemWatcher.Deleted -= FileSystemWatcherOnDeleted;
 		}
 
@@ -212,7 +212,7 @@ public abstract partial class EventTests<TFileSystem>
 		int previousCallCount = callCount;
 
 		ms1.Reset();
-		ms1.Wait(10000).Should().BeTrue();
+		ms1.Wait(ExpectSuccess).Should().BeTrue();
 		FileSystem.Directory.CreateDirectory("other" + path);
 		FileSystem.Directory.Delete("other" + path);
 		callCount.Should().Be(previousCallCount);
@@ -226,7 +226,7 @@ public abstract partial class EventTests<TFileSystem>
 		int callCount = 0;
 		FileSystem.InitializeIn(BasePath);
 		FileSystem.File.WriteAllText(path, "");
-		using CancellationTokenSource cts = new(30000);
+		using CancellationTokenSource cts = new(ExpectSuccess);
 		CancellationToken token = cts.Token;
 		using ManualResetEventSlim ms1 = new();
 		using ManualResetEventSlim ms2 = new();
@@ -274,7 +274,7 @@ public abstract partial class EventTests<TFileSystem>
 		}
 		finally
 		{
-			ms2.Wait(10000).Should().BeTrue();
+			ms2.Wait(ExpectSuccess).Should().BeTrue();
 			fileSystemWatcher.Renamed -= FileSystemWatcherOnRenamed;
 		}
 
@@ -282,7 +282,7 @@ public abstract partial class EventTests<TFileSystem>
 		int previousCallCount = callCount;
 
 		ms1.Reset();
-		ms1.Wait(10000).Should().BeTrue();
+		ms1.Wait(ExpectSuccess).Should().BeTrue();
 		FileSystem.File.Move(path, "other-path");
 		callCount.Should().Be(previousCallCount);
 		cts.Cancel();
