@@ -66,33 +66,6 @@ public class FileSystemWatcherStatisticsTests
 				timeout);
 	}
 
-	[SkippableFact(Skip = "Temporarily disable test without timeout")]
-	public void Method_WaitForChanged_WatcherChangeTypes_ShouldRegisterCall()
-	{
-		MockFileSystem sut = new();
-		sut.Initialize().WithSubdirectory("foo");
-		using IFileSystemWatcher fileSystemWatcher = sut.FileSystemWatcher.New("foo");
-		// Changes in the background are necessary, so that FileSystemWatcher.WaitForChanged returns.
-		using CancellationTokenSource cts = new(TimeSpan.FromSeconds(1));
-		CancellationToken token = cts.Token;
-		_ = Task.Run(() =>
-		{
-			while (!token.IsCancellationRequested)
-			{
-				Thread.Sleep(10);
-				sut.Directory.CreateDirectory(sut.Path.Combine("foo", "some-directory"));
-				sut.Directory.Delete(sut.Path.Combine("foo", "some-directory"));
-			}
-		}, token);
-		WatcherChangeTypes changeType = WatcherChangeTypes.Created;
-
-		fileSystemWatcher.WaitForChanged(changeType);
-		cts.Cancel();
-
-		sut.Statistics.FileSystemWatcher["foo"]
-			.ShouldOnlyContainMethodCall(nameof(IFileSystemWatcher.WaitForChanged), changeType);
-	}
-
 #if FEATURE_FILESYSTEM_NET7
 	[SkippableFact]
 	public void Method_WaitForChanged_WatcherChangeTypes_TimeSpan_ShouldRegisterCall()
