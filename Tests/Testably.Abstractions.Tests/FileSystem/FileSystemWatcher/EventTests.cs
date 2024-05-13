@@ -72,6 +72,8 @@ public abstract partial class EventTests<TFileSystem>
 		{
 			ms2.Wait(ExpectSuccess).Should().BeTrue();
 			fileSystemWatcher.Changed -= FileSystemWatcherOnChanged;
+			ms1.Reset();
+			ms1.Wait(ExpectSuccess).Should().BeTrue();
 		}
 
 		callCount.Should().BeGreaterThanOrEqualTo(1);
@@ -138,6 +140,8 @@ public abstract partial class EventTests<TFileSystem>
 		{
 			ms2.Wait(ExpectSuccess).Should().BeTrue();
 			fileSystemWatcher.Created -= FileSystemWatcherOnCreated;
+			ms1.Reset();
+			ms1.Wait(ExpectSuccess).Should().BeTrue();
 		}
 
 		callCount.Should().BeGreaterThanOrEqualTo(1);
@@ -206,6 +210,8 @@ public abstract partial class EventTests<TFileSystem>
 		{
 			ms2.Wait(ExpectSuccess).Should().BeTrue();
 			fileSystemWatcher.Deleted -= FileSystemWatcherOnDeleted;
+			ms1.Reset();
+			ms1.Wait(ExpectSuccess).Should().BeTrue();
 		}
 
 		callCount.Should().BeGreaterThanOrEqualTo(1);
@@ -276,6 +282,8 @@ public abstract partial class EventTests<TFileSystem>
 		{
 			ms2.Wait(ExpectSuccess).Should().BeTrue();
 			fileSystemWatcher.Renamed -= FileSystemWatcherOnRenamed;
+			ms1.Reset();
+			ms1.Wait(ExpectSuccess).Should().BeTrue();
 		}
 
 		callCount.Should().BeGreaterThanOrEqualTo(1);
