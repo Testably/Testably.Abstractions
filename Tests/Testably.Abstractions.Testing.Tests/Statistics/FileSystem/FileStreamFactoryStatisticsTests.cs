@@ -189,21 +189,29 @@ public class FileStreamFactoryStatisticsTests
 	[SkippableFact]
 	public void Method_Wrap_FileStream_ShouldRegisterCall()
 	{
+		string path = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 		MockFileSystem sut = new();
-		FileStream fileStream = new("foo", FileMode.OpenOrCreate);
-
 		try
 		{
-			using FileSystemStream result = sut.FileStream.Wrap(fileStream);
-		}
-		catch (NotSupportedException)
-		{
-			// Wrap is not possible on the MockFileSystem, but should still be registered!
-		}
+			using FileStream fileStream = new(path, FileMode.OpenOrCreate);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
-		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.Wrap),
-			fileStream);
+			try
+			{
+				using FileSystemStream result = sut.FileStream.Wrap(fileStream);
+			}
+			catch (NotSupportedException)
+			{
+				// Wrap is not possible on the MockFileSystem, but should still be registered!
+			}
+
+			sut.StatisticsRegistration.TotalCount.Should().Be(1);
+			sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.Wrap),
+				fileStream);
+		}
+		finally
+		{
+			File.Delete(path);
+		}
 	}
 
 	[SkippableFact]
