@@ -77,7 +77,7 @@ public class FileSystemWatcherStatisticsTests
 		CancellationToken token = cts.Token;
 		_ = Task.Run(async () =>
 		{
-			for (int i = 0; i < 100 && !token.IsCancellationRequested; i++)
+			while (!token.IsCancellationRequested)
 			{
 				await Task.Delay(10, token);
 				sut.Directory.CreateDirectory(sut.Path.Combine("foo", "some-directory"));
@@ -86,12 +86,7 @@ public class FileSystemWatcherStatisticsTests
 		}, token);
 		WatcherChangeTypes changeType = WatcherChangeTypes.Created;
 
-		Task.Run(() =>
-		{
-			// ReSharper disable once AccessToDisposedClosure
-			fileSystemWatcher.WaitForChanged(changeType);
-		}, token)
-			.Wait(token);
+		fileSystemWatcher.WaitForChanged(changeType);
 		cts.Cancel();
 
 		sut.Statistics.FileSystemWatcher["foo"]
