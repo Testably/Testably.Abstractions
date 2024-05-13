@@ -471,7 +471,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 						cancellationTokenSource.Dispose();
 					}, CancellationToken.None);
 				}
-			}, TaskScheduler.Default);
+			}, TaskScheduler.Current);
 	}
 
 	private void Stop()

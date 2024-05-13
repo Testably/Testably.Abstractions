@@ -303,7 +303,7 @@ internal sealed class TimerMock : ITimerMock
 						_cancellationTokenSource = null;
 					}
 				}
-			}, TaskScheduler.Default);
+			}, TaskScheduler.Current);
 		startCreateTimerThreads.Wait(token);
 	}
 

@@ -150,10 +150,10 @@ public class NotificationTests
 				// ReSharper disable once AccessToDisposedClosure
 				try
 				{
-					while (!ms.IsSet)
+					for (int i = 0; i < 1000 && !ms.IsSet; i++)
 					{
 						timeSystem.Thread.Sleep(1);
-						await Task.Delay(1);
+						await Task.Delay(5);
 					}
 				}
 				catch (ObjectDisposedException)

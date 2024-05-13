@@ -15,7 +15,7 @@ public class RandomSystemExtensionsTests
 					Enumerable.Range(0, 1000))));
 
 		List<string> fileExtensions = [];
-		while (true)
+		for (int i = 0; i < 1000; i++)
 		{
 			string fileExtension = randomSystem.Random.Shared.GenerateFileExtension();
 			if (fileExtensions.Contains(fileExtension, StringComparer.Ordinal))
@@ -43,7 +43,7 @@ public class RandomSystemExtensionsTests
 					Enumerable.Range(0, 1000))));
 
 		List<string> fileNames = [];
-		while (true)
+		for (int i = 0; i < 1000; i++)
 		{
 			string fileName = randomSystem.Random.Shared.GenerateFileName();
 			if (fileNames.Contains(fileName, StringComparer.Ordinal))
