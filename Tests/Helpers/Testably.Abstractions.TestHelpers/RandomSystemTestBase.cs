@@ -12,7 +12,7 @@ namespace Testably.Abstractions.TestHelpers;
 /// <remarks>
 ///     Important: You have to mark your class as ´partial`!
 /// </remarks>
-public abstract class RandomSystemTestBase<TRandomSystem>
+public abstract class RandomSystemTestBase<TRandomSystem> : TestBase
 	where TRandomSystem : IRandomSystem
 {
 	public TRandomSystem RandomSystem { get; }

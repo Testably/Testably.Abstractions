@@ -12,7 +12,7 @@ namespace Testably.Abstractions.TestHelpers;
 /// <remarks>
 ///     Important: You have to mark your class as ´partial`!
 /// </remarks>
-public abstract class TimeSystemTestBase<TTimeSystem>
+public abstract class TimeSystemTestBase<TTimeSystem> : TestBase
 	where TTimeSystem : ITimeSystem
 {
 	public TTimeSystem TimeSystem { get; }

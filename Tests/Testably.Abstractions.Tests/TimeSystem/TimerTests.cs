@@ -204,7 +204,7 @@ public abstract partial class TimerTests<TTimeSystem>
 				null, 0 * TimerMultiplier, 200 * TimerMultiplier))
 			#pragma warning restore MA0147 // Avoid async void method for delegate
 		{
-			ms.Wait(30000).Should().BeTrue();
+			ms.Wait(ExpectSuccess).Should().BeTrue();
 			using ITimer timer2 = TimeSystem.Timer.New(_ =>
 			{
 				// ReSharper disable once AccessToDisposedClosure
@@ -279,7 +279,7 @@ public abstract partial class TimerTests<TTimeSystem>
 				null, 0L * TimerMultiplier, 200L * TimerMultiplier))
 			#pragma warning restore MA0147 // Avoid async void method for delegate
 		{
-			ms.Wait(30000).Should().BeTrue();
+			ms.Wait(ExpectSuccess).Should().BeTrue();
 			using ITimer timer2 = TimeSystem.Timer.New(_ =>
 			{
 				// ReSharper disable once AccessToDisposedClosure
@@ -354,7 +354,7 @@ public abstract partial class TimerTests<TTimeSystem>
 				TimeSpan.FromMilliseconds(200 * TimerMultiplier)))
 			#pragma warning restore MA0147 // Avoid async void method for delegate
 		{
-			ms.Wait(30000).Should().BeTrue();
+			ms.Wait(ExpectSuccess).Should().BeTrue();
 			using ITimer timer2 = TimeSystem.Timer.New(_ =>
 				{
 					// ReSharper disable once AccessToDisposedClosure

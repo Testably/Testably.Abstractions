@@ -9,20 +9,6 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	#region Test Setup
-
-	/// <summary>
-	///     The delay in milliseconds when expecting a success in the test.
-	/// </summary>
-	private const int ExpectSuccess = 5000;
-
-	/// <summary>
-	///     The delay in milliseconds when expecting a timeout in the test.
-	/// </summary>
-	private const int ExpectTimeout = 500;
-
-	#endregion
-
 	[SkippableTheory]
 	[AutoData]
 	public void NotifyFilter_AppendFile_ShouldNotNotifyOnOtherFilters(string fileName)
@@ -67,7 +53,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 		FileSystem.File.AppendAllText(fileName, "foo");
 
-		ms.Wait(ExpectTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -165,7 +151,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 		FileSystem.Directory.CreateDirectory(path);
 
-		ms.Wait(ExpectTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -241,7 +227,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 		FileSystem.File.WriteAllText(path, "foo");
 
-		ms.Wait(ExpectTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -317,7 +303,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 		FileSystem.Directory.Delete(path);
 
-		ms.Wait(ExpectTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -393,7 +379,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 		FileSystem.File.Delete(path);
 
-		ms.Wait(ExpectTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -524,7 +510,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 			FileSystem.Path.Combine(sourcePath, sourceName),
 			FileSystem.Path.Combine(destinationPath, destinationName));
 
-		ms.Wait(ExpectTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -566,7 +552,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 		FileSystem.File.Move(sourceName, destinationName);
 
-		ms.Wait(ExpectTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -657,7 +643,7 @@ public abstract partial class NotifyFiltersTests<TFileSystem>
 
 		FileSystem.File.WriteAllText(fileName, "foo");
 
-		ms.Wait(ExpectTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout).Should().BeFalse();
 		result.Should().BeNull();
 	}
 

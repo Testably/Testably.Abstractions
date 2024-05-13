@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
 // ReSharper disable once PartialTypeWithSinglePart
+[Collection("RealFileSystemTests")]
 public abstract partial class ReadTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
@@ -55,7 +56,7 @@ public abstract partial class ReadTests<TFileSystem>
 			}
 		}, null);
 
-		ms.Wait(30000);
+		ms.Wait(ExpectSuccess).Should().BeTrue();
 		buffer.Should().BeEquivalentTo(bytes);
 	}
 
@@ -106,7 +107,7 @@ public abstract partial class ReadTests<TFileSystem>
 				}
 			}, null);
 
-			ms.Wait(10000);
+			ms.Wait(ExpectSuccess).Should().BeTrue();
 		}
 
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);

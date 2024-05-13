@@ -66,7 +66,7 @@ public abstract partial class EventTests<TFileSystem>
 		}
 		finally
 		{
-			ms.Wait(10000);
+			ms.Wait(ExpectSuccess).Should().BeTrue();
 			fileSystemWatcher.Changed -= FileSystemWatcherOnChanged;
 		}
 
@@ -127,7 +127,7 @@ public abstract partial class EventTests<TFileSystem>
 		}
 		finally
 		{
-			ms.Wait(10000);
+			ms.Wait(ExpectSuccess).Should().BeTrue();
 			fileSystemWatcher.Created -= FileSystemWatcherOnCreated;
 		}
 
@@ -189,7 +189,7 @@ public abstract partial class EventTests<TFileSystem>
 		}
 		finally
 		{
-			ms.Wait(10000);
+			ms.Wait(ExpectSuccess).Should().BeTrue();
 			fileSystemWatcher.Deleted -= FileSystemWatcherOnDeleted;
 		}
 
@@ -253,7 +253,7 @@ public abstract partial class EventTests<TFileSystem>
 		}
 		finally
 		{
-			ms.Wait(10000);
+			ms.Wait(ExpectSuccess).Should().BeTrue();
 			fileSystemWatcher.Renamed -= FileSystemWatcherOnRenamed;
 		}
 
