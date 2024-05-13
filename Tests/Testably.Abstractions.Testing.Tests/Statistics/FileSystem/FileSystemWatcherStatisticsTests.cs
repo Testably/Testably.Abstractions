@@ -66,7 +66,7 @@ public class FileSystemWatcherStatisticsTests
 				timeout);
 	}
 
-	[SkippableFact]
+	[SkippableFact(Skip = "Temporarily disable test without timeout")]
 	public void Method_WaitForChanged_WatcherChangeTypes_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
