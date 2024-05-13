@@ -97,9 +97,9 @@ internal sealed class FileInfoMock
 			    Container.Type != FileSystemTypes.File)
 			{
 				throw ExceptionFactory.FileNotFound(
-					_fileSystem.Execute.OnNetFramework(
-						() => Location.FriendlyName,
-						() => Location.FullPath));
+					_fileSystem.Execute.IsNetFramework
+						? Location.FriendlyName
+						: Location.FullPath);
 			}
 
 			return Container.GetBytes().Length;
@@ -165,7 +165,11 @@ internal sealed class FileInfoMock
 	{
 		using IDisposable registration = RegisterMethod(nameof(Create));
 
-		_fileSystem.Execute.NotOnNetFramework(Refresh);
+		if (!_fileSystem.Execute.IsNetFramework)
+		{
+			Refresh();
+		}
+
 		return _fileSystem.File.Create(FullName);
 	}
 
@@ -234,8 +238,10 @@ internal sealed class FileInfoMock
 		using IDisposable registration = RegisterMethod(nameof(Open),
 			mode);
 
-		_fileSystem.Execute.OnNetFrameworkIf(mode == FileMode.Append,
-			() => throw ExceptionFactory.AppendAccessOnlyInWriteOnlyMode());
+		if (_fileSystem.Execute.IsNetFramework && mode == FileMode.Append)
+		{
+			throw ExceptionFactory.AppendAccessOnlyInWriteOnlyMode();
+		}
 
 		return new FileStreamMock(
 			_fileSystem,

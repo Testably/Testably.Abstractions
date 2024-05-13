@@ -185,8 +185,10 @@ internal sealed class DriveInfoMock : IStorageDrive
 
 			// ReSharper disable once ConstantNullCoalescingCondition
 			_volumeLabel = value ?? _volumeLabel;
-			_fileSystem.Execute.NotOnWindows(
-				() => throw ExceptionFactory.OperationNotSupportedOnThisPlatform());
+			if (!_fileSystem.Execute.IsWindows)
+			{
+				throw ExceptionFactory.OperationNotSupportedOnThisPlatform();
+			}
 		}
 	}
 
@@ -286,12 +288,13 @@ internal sealed class DriveInfoMock : IStorageDrive
 
 		if (fileSystem.Execute.Path.IsPathRooted(driveName))
 		{
-			return fileSystem.Execute.OnWindows(() =>
-				{
-					string rootedPath = fileSystem.Execute.Path.GetPathRoot(driveName)!;
-					return $"{rootedPath.TrimEnd('\\')}\\";
-				},
-				() => fileSystem.Execute.Path.GetPathRoot(driveName)!);
+			if (fileSystem.Execute.IsWindows)
+			{
+				string rootedPath = fileSystem.Execute.Path.GetPathRoot(driveName)!;
+				return $"{rootedPath.TrimEnd('\\')}\\";
+			}
+
+			return fileSystem.Execute.Path.GetPathRoot(driveName)!;
 		}
 
 		throw ExceptionFactory.InvalidDriveName();

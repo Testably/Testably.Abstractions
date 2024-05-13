@@ -310,8 +310,10 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 			using IDisposable registration =
 				RegisterProperty(nameof(UnixFileMode), PropertyAccess.Set);
 
-			_fileSystem.Execute.OnWindows(
-				() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform());
+			if (_fileSystem.Execute.IsWindows)
+			{
+				throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform();
+			}
 
 			Container.UnixFileMode = value;
 		}

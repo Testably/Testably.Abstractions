@@ -135,7 +135,11 @@ internal sealed class DirectoryCleaner : IDirectoryCleaner
 				_fileSystem.Path.GetTempPath(),
 				prefix + _fileSystem.Path.GetFileNameWithoutExtension(
 					_fileSystem.Path.GetRandomFileName()));
-			execute.OnMac(() => localBasePath = "/private" + localBasePath);
+			if (execute.IsMac)
+			{
+				localBasePath = "/private" + localBasePath;
+			}
+
 			basePath = localBasePath;
 		} while (_fileSystem.Directory.Exists(basePath));
 

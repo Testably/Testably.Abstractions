@@ -86,7 +86,10 @@ internal sealed class DirectoryMock : IDirectory
 				_fileSystem.Execute.Path.GetTempPath(),
 				(prefix ?? "") + _fileSystem.Execute.Path.GetFileNameWithoutExtension(
 					_fileSystem.Execute.Path.GetRandomFileName()));
-			_fileSystem.Execute.OnMac(() => localBasePath = "/private" + localBasePath);
+			if (_fileSystem.Execute.IsMac)
+			{
+				localBasePath = "/private" + localBasePath;
+			}
 			basePath = localBasePath;
 		} while (_fileSystem.Directory.Exists(basePath));
 
@@ -689,39 +692,31 @@ internal sealed class DirectoryMock : IDirectory
 	private static void ThrowMissingFileCreatedTimeException(MockFileSystem fileSystem, string path)
 	{
 #if NET7_0_OR_GREATER
-		fileSystem.Execute.OnMac(
-			() =>
-				throw ExceptionFactory.DirectoryNotFound(
-					fileSystem.Execute.Path.GetFullPath(path)),
-			() =>
-				throw ExceptionFactory.FileNotFound(
-					fileSystem.Execute.Path.GetFullPath(path)));
+		if (!fileSystem.Execute.IsMac)
 #else
-		fileSystem.Execute.OnWindows(
-			() =>
-				throw ExceptionFactory.FileNotFound(
-					fileSystem.Execute.Path.GetFullPath(path)),
-			() =>
-				throw ExceptionFactory.DirectoryNotFound(
-					fileSystem.Execute.Path.GetFullPath(path)));
+		if (fileSystem.Execute.IsWindows)
 #endif
+		{
+			throw ExceptionFactory.FileNotFound(
+				fileSystem.Execute.Path.GetFullPath(path));
+		}
+
+		throw ExceptionFactory.DirectoryNotFound(
+			fileSystem.Execute.Path.GetFullPath(path));
 	}
 
 	private static void ThrowMissingFileLastAccessOrLastWriteTimeException(
 		MockFileSystem fileSystem,
 		string path)
 	{
-#if NET7_0_OR_GREATER
+#if !NET7_0_OR_GREATER
+		if (!fileSystem.Execute.IsWindows)
+		{
+			throw ExceptionFactory.DirectoryNotFound(
+				fileSystem.Execute.Path.GetFullPath(path));
+		}
+#endif
 		throw ExceptionFactory.FileNotFound(
 			fileSystem.Execute.Path.GetFullPath(path));
-#else
-		fileSystem.Execute.OnWindows(
-			() =>
-				throw ExceptionFactory.FileNotFound(
-					fileSystem.Execute.Path.GetFullPath(path)),
-			() =>
-				throw ExceptionFactory.DirectoryNotFound(
-					fileSystem.Execute.Path.GetFullPath(path)));
-#endif
 	}
 }

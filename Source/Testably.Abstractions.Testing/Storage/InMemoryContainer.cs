@@ -40,22 +40,29 @@ internal class InMemoryContainer : IStorageContainer
 		get => AdjustAttributes(_attributes);
 		set
 		{
-			value &= _fileSystem.Execute.OnWindows(
-				() => FileAttributes.Directory |
-				      FileAttributes.ReadOnly |
-				      FileAttributes.Archive |
-				      FileAttributes.Hidden |
-				      FileAttributes.NoScrubData |
-				      FileAttributes.NotContentIndexed |
-				      FileAttributes.Offline |
-				      FileAttributes.System |
-				      FileAttributes.Temporary,
-				() => _fileSystem.Execute.OnLinux(
-					() => FileAttributes.Directory |
-					      FileAttributes.ReadOnly,
-					() => FileAttributes.Hidden |
-					      FileAttributes.Directory |
-					      FileAttributes.ReadOnly));
+			if (_fileSystem.Execute.IsWindows)
+			{
+				value &= FileAttributes.Directory |
+				         FileAttributes.ReadOnly |
+				         FileAttributes.Archive |
+				         FileAttributes.Hidden |
+				         FileAttributes.NoScrubData |
+				         FileAttributes.NotContentIndexed |
+				         FileAttributes.Offline |
+				         FileAttributes.System |
+				         FileAttributes.Temporary;
+			}
+			else if (_fileSystem.Execute.IsLinux)
+			{
+				value &= FileAttributes.Directory |
+				         FileAttributes.ReadOnly;
+			}
+			else
+			{
+				value &= FileAttributes.Hidden |
+				         FileAttributes.Directory |
+				         FileAttributes.ReadOnly;
+			}
 
 			_attributes = value;
 		}
@@ -154,9 +161,12 @@ internal class InMemoryContainer : IStorageContainer
 			throw ExceptionFactory.NetworkPathNotFound(_location.FullPath);
 		}
 
-		_fileSystem.Execute.OnWindowsIf(
-			!ignoreMetadataErrors && Attributes.HasFlag(FileAttributes.ReadOnly),
-			() => throw ExceptionFactory.AccessToPathDenied());
+		if (_fileSystem.Execute.IsWindows &&
+		    !ignoreMetadataErrors &&
+		    Attributes.HasFlag(FileAttributes.ReadOnly))
+		{
+			throw ExceptionFactory.AccessToPathDenied();
+		}
 
 		if (!_fileSystem.AccessControlStrategy
 			.IsAccessGranted(_location.FullPath, Extensibility))
@@ -183,14 +193,20 @@ internal class InMemoryContainer : IStorageContainer
 		NotifyFilters notifyFilters = NotifyFilters.LastAccess |
 		                              NotifyFilters.LastWrite |
 		                              NotifyFilters.Size;
-		_fileSystem.Execute.OnLinux(()
-			=> notifyFilters |= NotifyFilters.Security);
-		_fileSystem.Execute.OnMac(()
-			=> notifyFilters |= NotifyFilters.CreationTime);
+		if (_fileSystem.Execute.IsLinux)
+		{
+			notifyFilters |= NotifyFilters.Security;
+		}
+		else if (_fileSystem.Execute.IsMac)
+		{
+			notifyFilters |= NotifyFilters.CreationTime;
+		}
 
 		TimeAdjustments timeAdjustment = TimeAdjustments.LastWriteTime;
-		_fileSystem.Execute.OnWindows(()
-			=> timeAdjustment |= TimeAdjustments.LastAccessTime);
+		if (_fileSystem.Execute.IsWindows)
+		{
+			timeAdjustment |= TimeAdjustments.LastAccessTime;
+		}
 
 		ChangeDescription fileSystemChange =
 			_fileSystem.ChangeHandler.NotifyPendingChange(WatcherChangeTypes.Changed,
@@ -200,7 +216,7 @@ internal class InMemoryContainer : IStorageContainer
 		_location.Drive?.ChangeUsedBytes(bytes.Length - _bytes.Length);
 		_bytes = bytes;
 		this.AdjustTimes(timeAdjustment);
-		_fileSystem.Execute.OnWindows(() =>
+		if (_fileSystem.Execute.IsWindows)
 		{
 			IStorageContainer? directoryContainer =
 				_fileSystem.Storage.GetContainer(_location.GetParent());
@@ -209,7 +225,7 @@ internal class InMemoryContainer : IStorageContainer
 			{
 				directoryContainer.AdjustTimes(TimeAdjustments.LastAccessTime);
 			}
-		});
+		}
 		_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
 	}
 
@@ -253,12 +269,10 @@ internal class InMemoryContainer : IStorageContainer
 
 	internal FileAttributes AdjustAttributes(FileAttributes attributes)
 	{
-		if (Path.GetFileName(_location.FullPath).StartsWith('.'))
+		if (_fileSystem.Execute.IsLinux &&
+		    _fileSystem.Execute.Path.GetFileName(_location.FullPath).StartsWith('.'))
 		{
-			FileAttributes attr = attributes;
-			attributes = _fileSystem.Execute.OnLinux(
-				() => attr | FileAttributes.Hidden,
-				() => attr);
+			attributes |= FileAttributes.Hidden;
 		}
 
 #if FEATURE_FILESYSTEM_LINK
@@ -362,11 +376,16 @@ internal class InMemoryContainer : IStorageContainer
 			_releaseCallback = releaseCallback;
 			Access = access;
 			DeleteAccess = deleteAccess;
-			Share = _fileSystem.Execute.OnWindows(
-				() => share,
-				() => share == FileShare.None
+			if (_fileSystem.Execute.IsWindows)
+			{
+				Share = share;
+			}
+			else
+			{
+				Share = share == FileShare.None
 					? FileShare.None
-					: FileShare.ReadWrite);
+					: FileShare.ReadWrite;
+			}
 
 			_key = key;
 		}
@@ -398,10 +417,14 @@ internal class InMemoryContainer : IStorageContainer
 		{
 			FileShare usedShare = share;
 			FileShare currentShare = Share;
-			_fileSystem.Execute.NotOnWindows(()
-				=> usedShare = FileShare.ReadWrite);
-			_fileSystem.Execute.NotOnWindowsIf(ignoreFileShare, ()
-				=> currentShare = FileShare.ReadWrite);
+			if (!_fileSystem.Execute.IsWindows)
+			{
+				usedShare = FileShare.ReadWrite;
+				if (ignoreFileShare)
+				{
+					currentShare = FileShare.ReadWrite;
+				}
+			}
 			if (deleteAccess)
 			{
 				return !_fileSystem.Execute.IsWindows || Share == FileShare.Delete;

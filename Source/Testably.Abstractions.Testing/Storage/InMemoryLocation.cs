@@ -20,8 +20,10 @@ internal sealed class InMemoryLocation : IStorageLocation
 			.NormalizePath(_fileSystem)
 			.TrimOnWindows(_fileSystem);
 		_key = NormalizeKey(_fileSystem, FullPath);
-		_fileSystem.Execute.OnNetFramework(()
-			=> friendlyName = friendlyName.TrimOnWindows(_fileSystem));
+		if (_fileSystem.Execute.IsNetFramework)
+		{
+			friendlyName = friendlyName.TrimOnWindows(_fileSystem);
+		}
 
 		IsRooted = string.Equals(drive?.Name, fullPath,
 			           StringComparison.OrdinalIgnoreCase) ||
@@ -106,9 +108,14 @@ internal sealed class InMemoryLocation : IStorageLocation
 	}
 
 	private string GetFriendlyNameParent(string parentPath)
-		=> _fileSystem.Execute.OnNetFramework(
-			() => _fileSystem.Execute.Path.GetFileName(parentPath),
-			() => parentPath);
+	{
+		if (_fileSystem.Execute.IsNetFramework)
+		{
+			return _fileSystem.Execute.Path.GetFileName(parentPath);
+		}
+
+		return parentPath;
+	}
 
 	#endregion
 

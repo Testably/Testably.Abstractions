@@ -13,6 +13,7 @@ using Microsoft.Win32.SafeHandles;
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading;
 using System.Threading.Tasks;
+using System.ComponentModel;
 #endif
 
 // ReSharper disable PossibleMultipleEnumeration
@@ -179,12 +180,9 @@ internal sealed class FileMock : IFile
 				.New(sourceFileName)
 				.CopyTo(destFileName);
 		}
-		catch (UnauthorizedAccessException)
+		catch (UnauthorizedAccessException) when (_fileSystem.Execute.IsNetFramework)
 		{
-			_fileSystem.Execute.OnNetFramework(()
-				=> throw ExceptionFactory.AccessToPathDenied(sourceFileName));
-
-			throw;
+			throw ExceptionFactory.AccessToPathDenied(sourceFileName);
 		}
 	}
 
@@ -194,29 +192,28 @@ internal sealed class FileMock : IFile
 		using IDisposable registration = RegisterMethod(nameof(Copy),
 			sourceFileName, destFileName, overwrite);
 
-		_fileSystem.Execute.OnNetFramework(
-			() =>
-			{
-				try
-				{
-					_fileSystem.FileInfo.New(sourceFileName
-							.EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
-						.CopyTo(destFileName
-								.EnsureValidFormat(_fileSystem, nameof(destFileName)),
-							overwrite);
-				}
-				catch (UnauthorizedAccessException)
-				{
-					throw ExceptionFactory.AccessToPathDenied(sourceFileName);
-				}
-			},
-			() =>
+		if (_fileSystem.Execute.IsNetFramework)
+		{
+			try
 			{
 				_fileSystem.FileInfo.New(sourceFileName
 						.EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
 					.CopyTo(destFileName
-						.EnsureValidFormat(_fileSystem, nameof(destFileName)), overwrite);
-			});
+							.EnsureValidFormat(_fileSystem, nameof(destFileName)),
+						overwrite);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				throw ExceptionFactory.AccessToPathDenied(sourceFileName);
+			}
+		}
+		else
+		{
+			_fileSystem.FileInfo.New(sourceFileName
+					.EnsureValidFormat(_fileSystem, nameof(sourceFileName)))
+				.CopyTo(destFileName
+					.EnsureValidFormat(_fileSystem, nameof(destFileName)), overwrite);
+		}
 	}
 
 	/// <inheritdoc cref="IFile.Create(string)" />
@@ -517,15 +514,18 @@ internal sealed class FileMock : IFile
 	public UnixFileMode GetUnixFileMode(string path)
 	{
 		using IDisposable registration = RegisterMethod(nameof(GetUnixFileMode),
-			path);
+		path);
 
-		return _fileSystem.Execute.OnWindows(
-			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform(),
-			() => _fileSystem.Storage.GetContainer(
-					_fileSystem.Storage.GetLocation(
-							path.EnsureValidFormat(_fileSystem))
-						.ThrowExceptionIfNotFound(_fileSystem))
-				.UnixFileMode);
+		if (_fileSystem.Execute.IsWindows)
+		{
+			throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform();
+		}
+
+		return _fileSystem.Storage.GetContainer(
+				_fileSystem.Storage.GetLocation(
+						path.EnsureValidFormat(_fileSystem))
+					.ThrowExceptionIfNotFound(_fileSystem))
+			.UnixFileMode;
 	}
 #endif
 
@@ -537,10 +537,12 @@ internal sealed class FileMock : IFile
 		using IDisposable registration = RegisterMethod(nameof(GetUnixFileMode),
 			fileHandle);
 
-		return _fileSystem.Execute.OnWindows(
-			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform(),
-			() => GetContainerFromSafeFileHandle(fileHandle)
-				.UnixFileMode);
+		if (_fileSystem.Execute.IsWindows)
+		{
+			throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform();
+		}
+
+		return GetContainerFromSafeFileHandle(fileHandle).UnixFileMode;
 	}
 #endif
 
@@ -683,8 +685,10 @@ internal sealed class FileMock : IFile
 			FileAccess.Read,
 			FileStreamFactoryMock.DefaultShare))
 		{
-			_fileSystem.Execute.NotOnWindows(() =>
-				container.AdjustTimes(TimeAdjustments.LastAccessTime));
+			if (!_fileSystem.Execute.IsWindows)
+			{
+				container.AdjustTimes(TimeAdjustments.LastAccessTime);
+			}
 
 			return container.GetBytes().ToArray();
 		}
@@ -769,8 +773,10 @@ internal sealed class FileMock : IFile
 			FileAccess.Read,
 			FileStreamFactoryMock.DefaultShare))
 		{
-			_fileSystem.Execute.NotOnWindows(() =>
-				container.AdjustTimes(TimeAdjustments.LastAccessTime));
+			if (!_fileSystem.Execute.IsWindows)
+			{
+				container.AdjustTimes(TimeAdjustments.LastAccessTime);
+			}
 
 			using (MemoryStream ms = new(container.GetBytes()))
 			using (StreamReader sr = new(ms, encoding))
@@ -895,10 +901,16 @@ internal sealed class FileMock : IFile
 		IStorageLocation location =
 			_fileSystem.Storage.GetLocation(linkPath
 				.EnsureValidFormat(_fileSystem, nameof(linkPath)));
-		_fileSystem.Execute.OnWindows(
-			() => location.ThrowExceptionIfNotFound(_fileSystem),
-			() => location.ThrowExceptionIfNotFound(_fileSystem,
-				onDirectoryNotFound: ExceptionFactory.FileNotFound));
+		if (_fileSystem.Execute.IsWindows)
+		{
+			location.ThrowExceptionIfNotFound(_fileSystem);
+		}
+		else
+		{
+			location.ThrowExceptionIfNotFound(_fileSystem,
+				onDirectoryNotFound: ExceptionFactory.FileNotFound);
+		}
+
 		try
 		{
 			IStorageLocation? targetLocation =
@@ -1087,8 +1099,10 @@ internal sealed class FileMock : IFile
 		using IDisposable registration = RegisterMethod(nameof(SetUnixFileMode),
 			path, mode);
 
-		_fileSystem.Execute.OnWindows(
-			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform());
+		if (_fileSystem.Execute.IsWindows)
+		{
+			throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform();
+		}
 
 		IStorageContainer container = GetContainerFromPath(path);
 		container.UnixFileMode = mode;
@@ -1103,8 +1117,10 @@ internal sealed class FileMock : IFile
 		using IDisposable registration = RegisterMethod(nameof(SetUnixFileMode),
 			fileHandle, mode);
 
-		_fileSystem.Execute.OnWindows(
-			() => throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform());
+		if (_fileSystem.Execute.IsWindows)
+		{
+			throw ExceptionFactory.UnixFileModeNotSupportedOnThisPlatform();
+		}
 
 		IStorageContainer container = GetContainerFromSafeFileHandle(fileHandle);
 		container.UnixFileMode = mode;
@@ -1134,9 +1150,11 @@ internal sealed class FileMock : IFile
 			throw ExceptionFactory.AccessToPathDenied(path);
 		}
 
-		_fileSystem.Execute.OnWindowsIf(
-			container.Attributes.HasFlag(FileAttributes.Hidden),
-			() => throw ExceptionFactory.AccessToPathDenied());
+		if (_fileSystem.Execute.IsWindows && container.Attributes.HasFlag(FileAttributes.Hidden))
+		{
+			throw ExceptionFactory.AccessToPathDenied();
+		}
+
 		using (container.RequestAccess(
 			FileAccess.Write,
 			FileStreamFactoryMock.DefaultShare))
@@ -1267,9 +1285,12 @@ internal sealed class FileMock : IFile
 
 		if (contents != null)
 		{
-			_fileSystem.Execute.OnWindowsIf(
-				container.Attributes.HasFlag(FileAttributes.Hidden),
-				() => throw ExceptionFactory.AccessToPathDenied());
+
+			if (_fileSystem.Execute.IsWindows && container.Attributes.HasFlag(FileAttributes.Hidden))
+			{
+				throw ExceptionFactory.AccessToPathDenied();
+			}
+
 			using (container.RequestAccess(
 				FileAccess.Write,
 				FileStreamFactoryMock.DefaultShare))
@@ -1326,10 +1347,15 @@ internal sealed class FileMock : IFile
 		IStorageLocation location = _fileSystem.Storage.GetLocation(path);
 		if (exceptionMode == ExceptionMode.FileNotFoundExceptionOnLinuxAndMac)
 		{
-			_fileSystem.Execute.OnWindows(
-				() => location.ThrowExceptionIfNotFound(_fileSystem),
-				() => location.ThrowExceptionIfNotFound(_fileSystem,
-					onDirectoryNotFound: ExceptionFactory.FileNotFound));
+			if (_fileSystem.Execute.IsWindows)
+			{
+				location.ThrowExceptionIfNotFound(_fileSystem);
+			}
+			else
+			{
+				location.ThrowExceptionIfNotFound(_fileSystem,
+					onDirectoryNotFound: ExceptionFactory.FileNotFound);
+			}
 		}
 
 		if (exceptionMode == ExceptionMode.Default)

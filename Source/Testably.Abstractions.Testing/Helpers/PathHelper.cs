@@ -55,9 +55,12 @@ internal static class PathHelper
 			return true;
 		}
 
-		return fileSystem.Execute.OnWindows(
-			() => path.IndexOfAny(AdditionalInvalidPathChars) >= 0,
-			() => false);
+		if (!fileSystem.Execute.IsWindows)
+		{
+			return false;
+		}
+
+		return path.IndexOfAny(AdditionalInvalidPathChars) >= 0;
 	}
 
 	/// <summary>
@@ -72,22 +75,25 @@ internal static class PathHelper
 			return true;
 		}
 
-		return fileSystem.Execute.OnWindows(
-			() => fileSystem.Execute.OnNetFramework(
-				() => string.IsNullOrWhiteSpace(path),
-				() =>
-				{
-					foreach (char c in path)
-					{
-						if (c != ' ')
-						{
-							return false;
-						}
-					}
+		if (fileSystem.Execute.IsWindows)
+		{
+			if (fileSystem.Execute.IsNetFramework)
+			{
+				return string.IsNullOrWhiteSpace(path);
+			}
 
-					return true;
-				}),
-			() => false);
+			foreach (char c in path)
+			{
+				if (c != ' ')
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 	internal static bool IsUncPath([NotNullWhen(true)] this string? path, MockFileSystem fileSystem)
@@ -97,16 +103,20 @@ internal static class PathHelper
 			return false;
 		}
 
-		return fileSystem.Execute.OnWindows(
-			() => path.StartsWith(
-				      new string(fileSystem.Execute.Path.DirectorySeparatorChar, 2),
-				      StringComparison.OrdinalIgnoreCase) ||
-			      path.StartsWith(
-				      new string(fileSystem.Execute.Path.AltDirectorySeparatorChar, 2),
-				      StringComparison.OrdinalIgnoreCase),
-			() => path.StartsWith(
-				new string(fileSystem.Execute.Path.DirectorySeparatorChar, 2),
-				StringComparison.OrdinalIgnoreCase));
+		if (fileSystem.Execute.IsWindows)
+		{
+			return path.StartsWith(
+				       new string(fileSystem.Execute.Path.DirectorySeparatorChar, 2),
+				       StringComparison.OrdinalIgnoreCase) ||
+			       path.StartsWith(
+				       new string(fileSystem.Execute.Path.AltDirectorySeparatorChar, 2),
+				       StringComparison.OrdinalIgnoreCase);
+		}
+
+
+		return path.StartsWith(
+			new string(fileSystem.Execute.Path.DirectorySeparatorChar, 2),
+			StringComparison.OrdinalIgnoreCase);
 	}
 
 	internal static void ThrowCommonExceptionsIfPathToTargetIsInvalid(
@@ -117,9 +127,14 @@ internal static class PathHelper
 	}
 
 	internal static string TrimOnWindows(this string path, MockFileSystem fileSystem)
-		=> fileSystem.Execute.OnWindows(
-			() => path.TrimEnd(' '),
-			() => path);
+	{
+		if (fileSystem.Execute.IsWindows)
+		{
+			return path.TrimEnd(' ');
+		}
+
+		return path;
+	}
 
 	private static void CheckPathArgument(Execute execute, [NotNull] string? path, string paramName,
 		bool includeIsEmptyCheck)
@@ -152,16 +167,19 @@ internal static class PathHelper
 
 		if (path.HasIllegalCharacters(fileSystem))
 		{
-			fileSystem.Execute.OnNetFramework(()
-				=> throw ExceptionFactory.PathHasIllegalCharacters(path, paramName,
-					hResult));
+			if (fileSystem.Execute.IsNetFramework)
+			{
+				throw ExceptionFactory.PathHasIllegalCharacters(path, paramName, hResult);
+			}
 
 			throw ExceptionFactory.PathHasIncorrectSyntax(
 				fileSystem.Execute.Path.GetFullPath(path), hResult);
 		}
 
-		fileSystem.Execute.OnWindowsIf(path.LastIndexOf(':') > 1,
-			() => throw ExceptionFactory.PathHasIncorrectSyntax(
-				fileSystem.Execute.Path.GetFullPath(path), hResult));
+		if (fileSystem.Execute.IsWindows && path.LastIndexOf(':') > 1)
+		{
+			throw ExceptionFactory.PathHasIncorrectSyntax(
+				fileSystem.Execute.Path.GetFullPath(path), hResult);
+		}
 	}
 }
