@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Testably.Abstractions.Testing.Helpers;
-using Testably.Abstractions.Testing.Statistics;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
@@ -96,10 +95,10 @@ internal sealed class FileSystemWatcherFactoryMock
 
 	private IDisposable RegisterMethod<T1>(string name, T1 parameter1)
 		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1));
+			parameter1);
 
 	private IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, T2 parameter2)
 		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2));
+			parameter1,
+			parameter2);
 }

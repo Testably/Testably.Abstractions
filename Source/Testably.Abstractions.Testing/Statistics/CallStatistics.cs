@@ -46,6 +46,151 @@ internal class CallStatistics<TType> : IStatistics<TType>
 	}
 
 	/// <summary>
+	///     Registers the method <paramref name="name" /> with <paramref name="parameter1" />.
+	/// </summary>
+	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
+	internal IDisposable RegisterMethod<T1>(string name, T1 parameter1)
+	{
+		if (_statisticsGate.TryGetLock(out IDisposable release))
+		{
+			int counter = _statisticsGate.GetCounter();
+			_methods.Enqueue(new MethodStatistic(counter, name, new[]
+			{
+				ParameterDescription.FromParameter(parameter1)
+			}));
+		}
+
+		return release;
+	}
+
+	/// <summary>
+	///     Registers the method <paramref name="name" /> with <paramref name="parameter1" /> and
+	///     <paramref name="parameter2" />.
+	/// </summary>
+	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
+	internal IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, T2 parameter2)
+	{
+		if (_statisticsGate.TryGetLock(out IDisposable release))
+		{
+			int counter = _statisticsGate.GetCounter();
+			_methods.Enqueue(new MethodStatistic(counter, name, new[]
+			{
+				ParameterDescription.FromParameter(parameter1),
+				ParameterDescription.FromParameter(parameter2)
+			}));
+		}
+
+		return release;
+	}
+
+	/// <summary>
+	///     Registers the method <paramref name="name" /> with <paramref name="parameter1" />, <paramref name="parameter2" />
+	///     and <paramref name="parameter3" />.
+	/// </summary>
+	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
+	internal IDisposable RegisterMethod<T1, T2, T3>(string name, T1 parameter1, T2 parameter2,
+		T3 parameter3)
+	{
+		if (_statisticsGate.TryGetLock(out IDisposable release))
+		{
+			int counter = _statisticsGate.GetCounter();
+			_methods.Enqueue(new MethodStatistic(counter, name, new[]
+			{
+				ParameterDescription.FromParameter(parameter1),
+				ParameterDescription.FromParameter(parameter2),
+				ParameterDescription.FromParameter(parameter3)
+			}));
+		}
+
+		return release;
+	}
+
+	/// <summary>
+	///     Registers the method <paramref name="name" /> with <paramref name="parameter1" />, <paramref name="parameter2" />,
+	///     <paramref name="parameter3" /> and <paramref name="parameter4" />.
+	/// </summary>
+	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
+	internal IDisposable RegisterMethod<T1, T2, T3, T4>(string name, T1 parameter1, T2 parameter2,
+		T3 parameter3, T4 parameter4)
+	{
+		if (_statisticsGate.TryGetLock(out IDisposable release))
+		{
+			int counter = _statisticsGate.GetCounter();
+			_methods.Enqueue(new MethodStatistic(counter, name, new[]
+			{
+				ParameterDescription.FromParameter(parameter1),
+				ParameterDescription.FromParameter(parameter2),
+				ParameterDescription.FromParameter(parameter3),
+				ParameterDescription.FromParameter(parameter4)
+			}));
+		}
+
+		return release;
+	}
+
+	/// <summary>
+	///     Registers the method <paramref name="name" /> with <paramref name="parameter1" />, <paramref name="parameter2" />,
+	///     <paramref name="parameter3" />, <paramref name="parameter4" /> and <paramref name="parameter5" />.
+	/// </summary>
+	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
+	internal IDisposable RegisterMethod<T1, T2, T3, T4, T5>(string name, T1 parameter1,
+		T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5)
+	{
+		if (_statisticsGate.TryGetLock(out IDisposable release))
+		{
+			int counter = _statisticsGate.GetCounter();
+			_methods.Enqueue(new MethodStatistic(counter, name, new[]
+			{
+				ParameterDescription.FromParameter(parameter1),
+				ParameterDescription.FromParameter(parameter2),
+				ParameterDescription.FromParameter(parameter3),
+				ParameterDescription.FromParameter(parameter4),
+				ParameterDescription.FromParameter(parameter5)
+			}));
+		}
+
+		return release;
+	}
+
+	/// <summary>
+	///     Registers the method <paramref name="name" /> with <paramref name="parameter1" />, <paramref name="parameter2" />,
+	///     <paramref name="parameter3" />, <paramref name="parameter4" />, <paramref name="parameter5" /> and
+	///     <paramref name="parameter6" />.
+	/// </summary>
+	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
+	internal IDisposable RegisterMethod<T1, T2, T3, T4, T5, T6>(string name, T1 parameter1,
+		T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5, T6 parameter6)
+	{
+		if (_statisticsGate.TryGetLock(out IDisposable release))
+		{
+			int counter = _statisticsGate.GetCounter();
+			_methods.Enqueue(new MethodStatistic(counter, name, new[]
+			{
+				ParameterDescription.FromParameter(parameter1),
+				ParameterDescription.FromParameter(parameter2),
+				ParameterDescription.FromParameter(parameter3),
+				ParameterDescription.FromParameter(parameter4),
+				ParameterDescription.FromParameter(parameter5),
+				ParameterDescription.FromParameter(parameter6)
+			}));
+		}
+
+		return release;
+	}
+
+	/// <summary>
+	///     Registers the method <paramref name="name" /> with <paramref name="parameters" />.
+	/// </summary>
+	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
+	internal IDisposable RegisterMethodWithoutLock(IDisposable release, string name,
+		params ParameterDescription[] parameters)
+	{
+		int counter = _statisticsGate.GetCounter();
+		_methods.Enqueue(new MethodStatistic(counter, name, parameters));
+		return release;
+	}
+
+	/// <summary>
 	///     Registers the property <paramref name="name" /> callback with <paramref name="access" /> access.
 	/// </summary>
 	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
@@ -57,6 +202,18 @@ internal class CallStatistics<TType> : IStatistics<TType>
 			_properties.Enqueue(new PropertyStatistic(counter, name, access));
 		}
 
+		return release;
+	}
+
+	/// <summary>
+	///     Registers the property <paramref name="name" /> callback with <paramref name="access" /> access.
+	/// </summary>
+	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
+	internal IDisposable RegisterPropertyWithoutLock(IDisposable release, string name,
+		PropertyAccess access)
+	{
+		int counter = _statisticsGate.GetCounter();
+		_properties.Enqueue(new PropertyStatistic(counter, name, access));
 		return release;
 	}
 }

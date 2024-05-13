@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.Helpers;
-using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;
@@ -675,19 +674,19 @@ internal sealed class DirectoryMock : IDirectory
 
 	private IDisposable RegisterMethod<T1>(string name, T1 parameter1)
 		=> _fileSystem.StatisticsRegistration.Directory.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1));
+			parameter1);
 
 	private IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, T2 parameter2)
 		=> _fileSystem.StatisticsRegistration.Directory.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2));
+			parameter1,
+			parameter2);
 
 	private IDisposable RegisterMethod<T1, T2, T3>(string name, T1 parameter1, T2 parameter2,
 		T3 parameter3)
 		=> _fileSystem.StatisticsRegistration.Directory.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2),
-			ParameterDescription.FromParameter(parameter3));
+			parameter1,
+			parameter2,
+			parameter3);
 
 	private static void ThrowMissingFileCreatedTimeException(MockFileSystem fileSystem, string path)
 	{

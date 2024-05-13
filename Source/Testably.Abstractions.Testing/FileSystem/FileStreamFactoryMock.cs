@@ -2,7 +2,6 @@
 using System;
 using System.IO;
 using Testably.Abstractions.Testing.Helpers;
-using Testably.Abstractions.Testing.Statistics;
 #if NET6_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 #endif
@@ -199,44 +198,44 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 
 	private void RegisterMethod<T1>(string name, T1 parameter1)
 		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1));
+			parameter1);
 
 	private IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, T2 parameter2)
 		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2));
+			parameter1,
+			parameter2);
 
 	private IDisposable RegisterMethod<T1, T2, T3>(string name, T1 parameter1, T2 parameter2,
 		T3 parameter3)
 		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2),
-			ParameterDescription.FromParameter(parameter3));
+			parameter1,
+			parameter2,
+			parameter3);
 
 	private IDisposable RegisterMethod<T1, T2, T3, T4>(string name, T1 parameter1, T2 parameter2,
 		T3 parameter3, T4 parameter4)
 		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2),
-			ParameterDescription.FromParameter(parameter3),
-			ParameterDescription.FromParameter(parameter4));
+			parameter1,
+			parameter2,
+			parameter3,
+			parameter4);
 
 	private IDisposable RegisterMethod<T1, T2, T3, T4, T5>(string name, T1 parameter1,
 		T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5)
 		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2),
-			ParameterDescription.FromParameter(parameter3),
-			ParameterDescription.FromParameter(parameter4),
-			ParameterDescription.FromParameter(parameter5));
+			parameter1,
+			parameter2,
+			parameter3,
+			parameter4,
+			parameter5);
 
 	private IDisposable RegisterMethod<T1, T2, T3, T4, T5, T6>(string name, T1 parameter1,
 		T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5, T6 parameter6)
 		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2),
-			ParameterDescription.FromParameter(parameter3),
-			ParameterDescription.FromParameter(parameter4),
-			ParameterDescription.FromParameter(parameter5),
-			ParameterDescription.FromParameter(parameter6));
+			parameter1,
+			parameter2,
+			parameter3,
+			parameter4,
+			parameter5,
+			parameter6);
 }

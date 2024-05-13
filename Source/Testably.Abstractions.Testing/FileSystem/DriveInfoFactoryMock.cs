@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;
@@ -78,5 +77,5 @@ internal sealed class DriveInfoFactoryMock : IDriveInfoFactory
 
 	private IDisposable RegisterMethod<T1>(string name, T1 parameter1)
 		=> _fileSystem.StatisticsRegistration.DriveInfo.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1));
+			parameter1);
 }

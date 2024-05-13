@@ -443,12 +443,12 @@ internal sealed class DirectoryInfoMock
 
 	protected override IDisposable RegisterMethod<T1>(string name, T1 parameter1)
 		=> _fileSystem.StatisticsRegistration.DirectoryInfo.RegisterMethod(Location.FullPath, name,
-			ParameterDescription.FromParameter(parameter1));
+			parameter1);
 
 	private IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, T2 parameter2)
 		=> _fileSystem.StatisticsRegistration.DirectoryInfo.RegisterMethod(Location.FullPath, name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2));
+			parameter1,
+			parameter2);
 
 	protected override IDisposable RegisterProperty(string name, PropertyAccess access)
 		=> _fileSystem.StatisticsRegistration.DirectoryInfo.RegisterProperty(Location.FullPath,

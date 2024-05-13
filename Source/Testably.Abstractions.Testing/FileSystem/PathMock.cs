@@ -554,7 +554,7 @@ internal sealed class PathMock : IPath
 
 	private IDisposable RegisterMethod<T1>(string name, T1 parameter1)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1));
+			parameter1);
 
 #if FEATURE_SPAN
 	private IDisposable RegisterMethod<T1>(string name, ReadOnlySpan<T1> parameter1)
@@ -591,23 +591,23 @@ internal sealed class PathMock : IPath
 
 	private IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, T2 parameter2)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2));
+			parameter1,
+			parameter2);
 
 	private IDisposable RegisterMethod<T1, T2, T3>(string name, T1 parameter1, T2 parameter2,
 		T3 parameter3)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2),
-			ParameterDescription.FromParameter(parameter3));
+			parameter1,
+			parameter2,
+			parameter3);
 
 	private IDisposable RegisterMethod<T1, T2, T3, T4>(string name, T1 parameter1, T2 parameter2,
 		T3 parameter3, T4 parameter4)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2),
-			ParameterDescription.FromParameter(parameter3),
-			ParameterDescription.FromParameter(parameter4));
+			parameter1,
+			parameter2,
+			parameter3,
+			parameter4);
 
 	private IDisposable RegisterProperty(string name, PropertyAccess access = PropertyAccess.Get)
 		=> _fileSystem.StatisticsRegistration.Path.RegisterProperty(name, access);

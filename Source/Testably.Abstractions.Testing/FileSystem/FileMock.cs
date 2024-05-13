@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Testably.Abstractions.Testing.Helpers;
-using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Storage;
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
 using Microsoft.Win32.SafeHandles;
@@ -1387,28 +1386,28 @@ internal sealed class FileMock : IFile
 	private IDisposable RegisterMethod<T1>(string name,
 		T1 parameter1)
 		=> _fileSystem.StatisticsRegistration.File.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1));
+			parameter1);
 
 	private IDisposable RegisterMethod<T1, T2>(string name,
 		T1 parameter1, T2 parameter2)
 		=> _fileSystem.StatisticsRegistration.File.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2));
+			parameter1,
+			parameter2);
 
 	private IDisposable RegisterMethod<T1, T2, T3>(string name,
 		T1 parameter1, T2 parameter2, T3 parameter3)
 		=> _fileSystem.StatisticsRegistration.File.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2),
-			ParameterDescription.FromParameter(parameter3));
+			parameter1,
+			parameter2,
+			parameter3);
 
 	private IDisposable RegisterMethod<T1, T2, T3, T4>(string name,
 		T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4)
 		=> _fileSystem.StatisticsRegistration.File.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2),
-			ParameterDescription.FromParameter(parameter3),
-			ParameterDescription.FromParameter(parameter4));
+			parameter1,
+			parameter2,
+			parameter3,
+			parameter4);
 
 #if FEATURE_FILESYSTEM_ASYNC
 	private static void ThrowIfCancelled(CancellationToken cancellationToken)

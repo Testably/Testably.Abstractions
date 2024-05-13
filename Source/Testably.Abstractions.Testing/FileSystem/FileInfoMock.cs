@@ -417,19 +417,19 @@ internal sealed class FileInfoMock
 
 	protected override IDisposable RegisterMethod<T1>(string name, T1 parameter1)
 		=> _fileSystem.StatisticsRegistration.FileInfo.RegisterMethod(Location.FullPath, name,
-			ParameterDescription.FromParameter(parameter1));
+			parameter1);
 
 	private IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, T2 parameter2)
 		=> _fileSystem.StatisticsRegistration.FileInfo.RegisterMethod(Location.FullPath, name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2));
+			parameter1,
+			parameter2);
 
 	private IDisposable RegisterMethod<T1, T2, T3>(string name, T1 parameter1, T2 parameter2,
 		T3 parameter3)
 		=> _fileSystem.StatisticsRegistration.FileInfo.RegisterMethod(Location.FullPath, name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2),
-			ParameterDescription.FromParameter(parameter3));
+			parameter1,
+			parameter2,
+			parameter3);
 
 	protected override IDisposable RegisterProperty(string name, PropertyAccess access)
 		=> _fileSystem.StatisticsRegistration.FileInfo.RegisterProperty(Location.FullPath, name,
