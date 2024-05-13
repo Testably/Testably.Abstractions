@@ -41,7 +41,7 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 			{
 				lock (timers)
 				{
-					timers.Add(TimeSystem.Timer.New(TimerCallback, null, 60000, 60000));
+					timers.Add(TimeSystem.Timer.New(TimerCallback, null, ExpectSuccess, ExpectSuccess));
 					Assert.True(TimeSystem.Timer.ActiveCount >= timers.Count);
 				}
 			}
@@ -137,7 +137,7 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 			}
 		}, null, 0, 50);
 
-		ms.Wait(30000).Should().BeTrue();
+		ms.Wait(ExpectSuccess).Should().BeTrue();
 		count.Should().BeGreaterOrEqualTo(2);
 	}
 
@@ -160,7 +160,7 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 			}
 		}, null, 5, 0);
 
-		ms.Wait(30000).Should().BeTrue();
+		ms.Wait(ExpectSuccess).Should().BeTrue();
 		await Task.Delay(100);
 		count.Should().Be(1);
 	}
@@ -182,6 +182,6 @@ public abstract partial class TimerFactoryTests<TTimeSystem>
 			}
 		});
 
-		ms.Wait(300).Should().BeFalse();
+		ms.Wait(EnsureTimeout).Should().BeFalse();
 	}
 }

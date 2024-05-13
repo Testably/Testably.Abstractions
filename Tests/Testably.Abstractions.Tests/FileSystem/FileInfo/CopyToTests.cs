@@ -112,7 +112,7 @@ public abstract partial class CopyToTests<TFileSystem>
 		FileSystem.File.WriteAllText(sourceName, contents);
 		IFileInfo sut = FileSystem.FileInfo.New(sourceName);
 
-		TimeSystem.Thread.Sleep(1000);
+		TimeSystem.Thread.Sleep(EnsureTimeout);
 
 		IFileInfo result = sut.CopyTo(destinationName);
 

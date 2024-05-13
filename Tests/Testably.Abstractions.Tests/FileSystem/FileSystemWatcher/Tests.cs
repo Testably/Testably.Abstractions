@@ -104,7 +104,7 @@ public abstract partial class Tests<TFileSystem>
 				}
 			});
 			IWaitForChangedResult result =
-				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, 30000);
+				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, ExpectSuccess);
 
 			fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
 			result.TimedOut.Should().BeFalse();

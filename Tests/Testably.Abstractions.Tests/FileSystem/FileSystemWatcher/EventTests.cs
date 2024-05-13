@@ -13,12 +13,15 @@ public abstract partial class EventTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public async Task Changed_ShouldTriggerUntilEventIsRemoved(string path)
+	public void Changed_ShouldTriggerUntilEventIsRemoved(string path)
 	{
 		int callCount = 0;
 		FileSystem.InitializeIn(BasePath);
 		FileSystem.File.WriteAllText(path, "");
-		using ManualResetEventSlim ms = new();
+		using CancellationTokenSource cts = new(ExpectSuccess);
+		CancellationToken token = cts.Token;
+		using ManualResetEventSlim ms1 = new();
+		using ManualResetEventSlim ms2 = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
@@ -28,7 +31,7 @@ public abstract partial class EventTests<TFileSystem>
 			try
 			{
 				callCount++;
-				ms.Set();
+				ms2.Set();
 			}
 			catch (ObjectDisposedException)
 			{
@@ -44,11 +47,12 @@ public abstract partial class EventTests<TFileSystem>
 				try
 				{
 					int i = 0;
-					while (!ms.IsSet)
+					while (!token.IsCancellationRequested)
 					{
-						FileSystem.File.WriteAllText(path,
-							i++.ToString(CultureInfo.InvariantCulture));
+						string content = i++.ToString(CultureInfo.InvariantCulture);
+						FileSystem.File.WriteAllText(path, content);
 						Thread.Sleep(10);
+						ms1.Set();
 					}
 				}
 				catch (IOException)
@@ -59,32 +63,38 @@ public abstract partial class EventTests<TFileSystem>
 				{
 					// Ignore any ObjectDisposedException
 				}
-			});
+			}, token);
 
 			fileSystemWatcher.Changed += FileSystemWatcherOnChanged;
 			fileSystemWatcher.EnableRaisingEvents = true;
 		}
 		finally
 		{
-			ms.Wait(10000);
+			ms2.Wait(ExpectSuccess).Should().BeTrue();
 			fileSystemWatcher.Changed -= FileSystemWatcherOnChanged;
+			ms1.Reset();
+			ms1.Wait(ExpectSuccess).Should().BeTrue();
 		}
 
 		callCount.Should().BeGreaterThanOrEqualTo(1);
 		int previousCallCount = callCount;
 
-		await Task.Delay(10);
-		FileSystem.File.WriteAllText(path, "foo");
+		ms1.Reset();
+		ms1.Wait(ExpectSuccess).Should().BeTrue();
 		callCount.Should().Be(previousCallCount);
+		cts.Cancel();
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public async Task Created_ShouldTriggerUntilEventIsRemoved(string path)
+	public void Created_ShouldTriggerUntilEventIsRemoved(string path)
 	{
 		int callCount = 0;
 		FileSystem.Initialize();
-		using ManualResetEventSlim ms = new();
+		using CancellationTokenSource cts = new(ExpectSuccess);
+		CancellationToken token = cts.Token;
+		using ManualResetEventSlim ms1 = new();
+		using ManualResetEventSlim ms2 = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
@@ -94,7 +104,7 @@ public abstract partial class EventTests<TFileSystem>
 			try
 			{
 				callCount++;
-				ms.Set();
+				ms2.Set();
 			}
 			catch (ObjectDisposedException)
 			{
@@ -109,44 +119,52 @@ public abstract partial class EventTests<TFileSystem>
 				// ReSharper disable once AccessToDisposedClosure
 				try
 				{
-					while (!ms.IsSet)
+					while (!token.IsCancellationRequested)
 					{
 						FileSystem.Directory.CreateDirectory(path);
 						FileSystem.Directory.Delete(path);
 						Thread.Sleep(10);
+						ms1.Set();
 					}
 				}
 				catch (ObjectDisposedException)
 				{
 					// Ignore any ObjectDisposedException
 				}
-			});
+			}, token);
 
 			fileSystemWatcher.Created += FileSystemWatcherOnCreated;
 			fileSystemWatcher.EnableRaisingEvents = true;
 		}
 		finally
 		{
-			ms.Wait(10000);
+			ms2.Wait(ExpectSuccess).Should().BeTrue();
 			fileSystemWatcher.Created -= FileSystemWatcherOnCreated;
+			ms1.Reset();
+			ms1.Wait(ExpectSuccess).Should().BeTrue();
 		}
 
 		callCount.Should().BeGreaterThanOrEqualTo(1);
 		int previousCallCount = callCount;
 
-		await Task.Delay(10);
+		ms1.Reset();
+		ms1.Wait(ExpectSuccess).Should().BeTrue();
 		FileSystem.Directory.CreateDirectory("other" + path);
 		FileSystem.Directory.Delete("other" + path);
 		callCount.Should().Be(previousCallCount);
+		cts.Cancel();
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public async Task Deleted_ShouldTriggerUntilEventIsRemoved(string path)
+	public void Deleted_ShouldTriggerUntilEventIsRemoved(string path)
 	{
 		int callCount = 0;
 		FileSystem.Initialize();
-		using ManualResetEventSlim ms = new();
+		using CancellationTokenSource cts = new(ExpectSuccess);
+		CancellationToken token = cts.Token;
+		using ManualResetEventSlim ms1 = new();
+		using ManualResetEventSlim ms2 = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
@@ -156,7 +174,7 @@ public abstract partial class EventTests<TFileSystem>
 			try
 			{
 				callCount++;
-				ms.Set();
+				ms2.Set();
 			}
 			catch (ObjectDisposedException)
 			{
@@ -171,45 +189,53 @@ public abstract partial class EventTests<TFileSystem>
 				// ReSharper disable once AccessToDisposedClosure
 				try
 				{
-					while (!ms.IsSet)
+					while (!token.IsCancellationRequested)
 					{
 						FileSystem.Directory.CreateDirectory(path);
 						FileSystem.Directory.Delete(path);
 						Thread.Sleep(10);
+						ms1.Set();
 					}
 				}
 				catch (ObjectDisposedException)
 				{
 					// Ignore any ObjectDisposedException
 				}
-			});
+			}, token);
 
 			fileSystemWatcher.Deleted += FileSystemWatcherOnDeleted;
 			fileSystemWatcher.EnableRaisingEvents = true;
 		}
 		finally
 		{
-			ms.Wait(10000);
+			ms2.Wait(ExpectSuccess).Should().BeTrue();
 			fileSystemWatcher.Deleted -= FileSystemWatcherOnDeleted;
+			ms1.Reset();
+			ms1.Wait(ExpectSuccess).Should().BeTrue();
 		}
 
 		callCount.Should().BeGreaterThanOrEqualTo(1);
 		int previousCallCount = callCount;
 
-		await Task.Delay(10);
+		ms1.Reset();
+		ms1.Wait(ExpectSuccess).Should().BeTrue();
 		FileSystem.Directory.CreateDirectory("other" + path);
 		FileSystem.Directory.Delete("other" + path);
 		callCount.Should().Be(previousCallCount);
+		cts.Cancel();
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public async Task Renamed_ShouldTriggerUntilEventIsRemoved(string path)
+	public void Renamed_ShouldTriggerUntilEventIsRemoved(string path)
 	{
 		int callCount = 0;
 		FileSystem.InitializeIn(BasePath);
 		FileSystem.File.WriteAllText(path, "");
-		using ManualResetEventSlim ms = new();
+		using CancellationTokenSource cts = new(ExpectSuccess);
+		CancellationToken token = cts.Token;
+		using ManualResetEventSlim ms1 = new();
+		using ManualResetEventSlim ms2 = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
 
@@ -219,7 +245,7 @@ public abstract partial class EventTests<TFileSystem>
 			try
 			{
 				callCount++;
-				ms.Set();
+				ms2.Set();
 			}
 			catch (ObjectDisposedException)
 			{
@@ -236,32 +262,37 @@ public abstract partial class EventTests<TFileSystem>
 				{
 					int i = 0;
 					FileSystem.File.WriteAllText($"path-{i}", "");
-					while (!ms.IsSet)
+					while (!token.IsCancellationRequested)
 					{
 						FileSystem.File.Move($"path-{i}", $"path-{++i}");
 						Thread.Sleep(10);
+						ms1.Set();
 					}
 				}
 				catch (ObjectDisposedException)
 				{
 					// Ignore any ObjectDisposedException
 				}
-			});
+			}, token);
 
 			fileSystemWatcher.Renamed += FileSystemWatcherOnRenamed;
 			fileSystemWatcher.EnableRaisingEvents = true;
 		}
 		finally
 		{
-			ms.Wait(10000);
+			ms2.Wait(ExpectSuccess).Should().BeTrue();
 			fileSystemWatcher.Renamed -= FileSystemWatcherOnRenamed;
+			ms1.Reset();
+			ms1.Wait(ExpectSuccess).Should().BeTrue();
 		}
 
 		callCount.Should().BeGreaterThanOrEqualTo(1);
 		int previousCallCount = callCount;
 
-		await Task.Delay(10);
+		ms1.Reset();
+		ms1.Wait(ExpectSuccess).Should().BeTrue();
 		FileSystem.File.Move(path, "other-path");
 		callCount.Should().Be(previousCallCount);
+		cts.Cancel();
 	}
 }
