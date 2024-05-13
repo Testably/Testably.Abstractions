@@ -16,8 +16,11 @@ internal static class StorageExtensions
 			throw new ArgumentNullException(nameof(searchPattern));
 		}
 
-		fileSystem.Execute.OnNetFrameworkIf(searchPattern.EndsWith("..", StringComparison.Ordinal),
-			() => throw ExceptionFactory.SearchPatternCannotContainTwoDots());
+		if (fileSystem.Execute.IsNetFramework &&
+		    searchPattern.EndsWith("..", StringComparison.Ordinal))
+		{
+			throw ExceptionFactory.SearchPatternCannotContainTwoDots();
+		}
 
 		IStorageLocation location = storage.GetLocation(path);
 		string givenPath = location.FriendlyName;
@@ -33,8 +36,11 @@ internal static class StorageExtensions
 				       ".." + fileSystem.Execute.Path.AltDirectorySeparatorChar,
 				       StringComparison.Ordinal))
 			{
-				fileSystem.Execute.OnNetFramework(
-					() => throw ExceptionFactory.SearchPatternCannotContainTwoDots());
+				if (fileSystem.Execute.IsNetFramework)
+				{
+					throw ExceptionFactory.SearchPatternCannotContainTwoDots();
+				}
+
 				parentDirectories.Push(fileSystem.Execute.Path.GetFileName(location.FullPath));
 				location = location.GetParent() ??
 				           throw new UnauthorizedAccessException(

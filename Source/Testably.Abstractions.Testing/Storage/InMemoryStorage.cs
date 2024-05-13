@@ -72,25 +72,37 @@ internal sealed class InMemoryStorage : IStorage
 			if (_containers.TryAdd(destination, copiedContainer))
 			{
 				copiedContainer.WriteBytes(sourceContainer.GetBytes().ToArray());
-				_fileSystem.Execute.OnMac(
-					() => copiedContainer.LastAccessTime.Set(
+				if (_fileSystem.Execute.IsMac)
+				{
+					copiedContainer.LastAccessTime.Set(
 						sourceContainer.LastAccessTime.Get(DateTimeKind.Local),
-						DateTimeKind.Local));
+						DateTimeKind.Local);
+				}
+
 #if NET8_0_OR_GREATER
-				_fileSystem.Execute.OnLinux(()
-					=> sourceContainer.AdjustTimes(TimeAdjustments.LastAccessTime));
+				if (_fileSystem.Execute.IsLinux)
 #else
-				_fileSystem.Execute.NotOnWindows(()
-					=> sourceContainer.AdjustTimes(TimeAdjustments.LastAccessTime));
+				if (!_fileSystem.Execute.IsWindows)
 #endif
+				{
+					sourceContainer.AdjustTimes(TimeAdjustments.LastAccessTime);
+				}
 
 				copiedContainer.Attributes = sourceContainer.Attributes;
-				_fileSystem.Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
-					() => copiedContainer.Attributes |= FileAttributes.Archive);
-				_fileSystem.Execute.NotOnWindows(
-					() => copiedContainer.CreationTime.Set(
+				if (_fileSystem.Execute.IsWindows)
+				{
+					if (sourceContainer.Type == FileSystemTypes.File)
+					{
+						copiedContainer.Attributes |= FileAttributes.Archive;
+					}
+				}
+				else
+				{
+					copiedContainer.CreationTime.Set(
 						sourceContainer.CreationTime.Get(DateTimeKind.Local),
-						DateTimeKind.Local));
+						DateTimeKind.Local);
+				}
+
 				copiedContainer.LastWriteTime.Set(
 					sourceContainer.LastWriteTime.Get(DateTimeKind.Local),
 					DateTimeKind.Local);
@@ -398,10 +410,15 @@ internal sealed class InMemoryStorage : IStorage
 		IStorageLocation? backup,
 		bool ignoreMetadataErrors = false)
 	{
-		ThrowIfParentDoesNotExist(destination, location
-			=> _fileSystem.Execute.OnWindows<IOException>(
-				() => ExceptionFactory.DirectoryNotFound(location.FullPath),
-				() => ExceptionFactory.FileNotFound(location.FullPath)));
+		ThrowIfParentDoesNotExist(destination, location =>
+		{
+			if (_fileSystem.Execute.IsWindows)
+			{
+				throw ExceptionFactory.DirectoryNotFound(location.FullPath);
+			}
+
+			throw ExceptionFactory.FileNotFound(location.FullPath);
+		});
 
 		if (!_containers.TryGetValue(source,
 			out IStorageContainer? sourceContainer))
@@ -442,10 +459,12 @@ internal sealed class InMemoryStorage : IStorage
 					if (backup != null &&
 					    _containers.TryAdd(backup, existingDestinationContainer))
 					{
-						_fileSystem.Execute.OnWindowsIf(
-							sourceContainer.Type == FileSystemTypes.File,
-							() => existingDestinationContainer.Attributes |=
-								FileAttributes.Archive);
+						if (_fileSystem.Execute.IsWindows &&
+						    sourceContainer.Type == FileSystemTypes.File)
+						{
+							existingDestinationContainer.Attributes |= FileAttributes.Archive;
+						}
+
 						backup.Drive?.ChangeUsedBytes(destinationBytesLength);
 					}
 
@@ -455,26 +474,26 @@ internal sealed class InMemoryStorage : IStorage
 						int sourceBytesLength = existingSourceContainer.GetBytes().Length;
 						source.Drive?.ChangeUsedBytes(-1 * sourceBytesLength);
 						destination.Drive?.ChangeUsedBytes(sourceBytesLength);
-						_fileSystem.Execute.OnWindowsIf(
-							sourceContainer.Type == FileSystemTypes.File,
-							() =>
+						if (_fileSystem.Execute.IsWindows &&
+						    sourceContainer.Type == FileSystemTypes.File)
+						{
+							FileAttributes targetAttributes =
+								existingDestinationContainer.Attributes |
+								FileAttributes.Archive;
+							if (existingSourceContainer.Attributes.HasFlag(FileAttributes
+								.ReadOnly))
 							{
-								FileAttributes targetAttributes =
-									existingDestinationContainer.Attributes |
-									FileAttributes.Archive;
-								if (existingSourceContainer.Attributes.HasFlag(FileAttributes
-									.ReadOnly))
-								{
-									targetAttributes |= FileAttributes.ReadOnly;
-								}
+								targetAttributes |= FileAttributes.ReadOnly;
+							}
 
-								existingSourceContainer.Attributes = targetAttributes;
+							existingSourceContainer.Attributes = targetAttributes;
 
-								existingSourceContainer.CreationTime.Set(
-									existingDestinationContainer.CreationTime.Get(
-										DateTimeKind.Utc),
-									DateTimeKind.Utc);
-							});
+							existingSourceContainer.CreationTime.Set(
+								existingDestinationContainer.CreationTime.Get(
+									DateTimeKind.Utc),
+								DateTimeKind.Utc);
+						}
+
 						_containers.TryAdd(destination, existingSourceContainer);
 						return destination;
 					}
@@ -588,12 +607,18 @@ internal sealed class InMemoryStorage : IStorage
 		IStorageContainer? parentContainer = GetContainer(location.GetParent());
 		if (parentContainer != null && parentContainer is not NullContainer)
 		{
-			_fileSystem.Execute.NotOnWindowsIf(
-				parentContainer.Attributes.HasFlag(FileAttributes.ReadOnly),
-				() => throw ExceptionFactory.AccessToPathDenied(location.FullPath));
+			if (!_fileSystem.Execute.IsWindows &&
+			    parentContainer.Attributes.HasFlag(FileAttributes.ReadOnly))
+			{
+				throw ExceptionFactory.AccessToPathDenied(location.FullPath);
+			}
+
 			TimeAdjustments timeAdjustment = TimeAdjustments.LastWriteTime;
-			_fileSystem.Execute.OnWindows(()
-				=> timeAdjustment |= TimeAdjustments.LastAccessTime);
+			if (_fileSystem.Execute.IsWindows)
+			{
+				timeAdjustment |= TimeAdjustments.LastAccessTime;
+			}
+
 			parentContainer.AdjustTimes(timeAdjustment);
 		}
 	}
@@ -821,8 +846,12 @@ internal sealed class InMemoryStorage : IStorage
 					int bytesLength = sourceContainer.GetBytes().Length;
 					source.Drive?.ChangeUsedBytes(-1 * bytesLength);
 					destination.Drive?.ChangeUsedBytes(bytesLength);
-					_fileSystem.Execute.OnWindowsIf(sourceContainer.Type == FileSystemTypes.File,
-						() => sourceContainer.Attributes |= FileAttributes.Archive);
+					if (_fileSystem.Execute.IsWindows &&
+					    sourceContainer.Type == FileSystemTypes.File)
+					{
+						sourceContainer.Attributes |= FileAttributes.Archive;
+					}
+
 					rollbacks?.Add(new Rollback(
 						() => MoveInternal(destination, source, true, false,
 							sourceType)));

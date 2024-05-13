@@ -531,31 +531,32 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 	}
 
 	private void TriggerRenameNotification(ChangeDescription item)
-		=> _fileSystem.Execute.OnWindows(
-			() =>
+	{
+		if (_fileSystem.Execute.IsWindows)
+		{
+			if (TryMakeRenamedEventArgs(item,
+				out RenamedEventArgs? eventArgs))
 			{
-				if (TryMakeRenamedEventArgs(item,
-					out RenamedEventArgs? eventArgs))
-				{
-					Renamed?.Invoke(this, eventArgs);
-				}
-				else if (item.OldPath != null)
-				{
-					Deleted?.Invoke(this, ToFileSystemEventArgs(
-						item.ChangeType, item.OldPath, item.OldName));
-					Created?.Invoke(this, ToFileSystemEventArgs(
-						item.ChangeType, item.Path, item.Name));
-				}
-			},
-			() =>
+				Renamed?.Invoke(this, eventArgs);
+			}
+			else if (item.OldPath != null)
 			{
-				TryMakeRenamedEventArgs(item,
-					out RenamedEventArgs? eventArgs);
-				if (eventArgs != null)
-				{
-					Renamed?.Invoke(this, eventArgs);
-				}
-			});
+				Deleted?.Invoke(this, ToFileSystemEventArgs(
+					item.ChangeType, item.OldPath, item.OldName));
+				Created?.Invoke(this, ToFileSystemEventArgs(
+					item.ChangeType, item.Path, item.Name));
+			}
+		}
+		else
+		{
+			TryMakeRenamedEventArgs(item,
+				out RenamedEventArgs? eventArgs);
+			if (eventArgs != null)
+			{
+				Renamed?.Invoke(this, eventArgs);
+			}
+		}
+	}
 
 	private bool TryMakeRenamedEventArgs(
 		ChangeDescription changeDescription,

@@ -219,13 +219,14 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		}
 		else if (file.Type == FileSystemTypes.Directory)
 		{
-			_fileSystem.Execute.OnWindows(
-				() =>
-					throw ExceptionFactory.AccessToPathDenied(
-						_fileSystem.Execute.Path.GetFullPath(base.Name)),
-				() =>
-					throw ExceptionFactory.FileAlreadyExists(
-						_fileSystem.Execute.Path.GetFullPath(base.Name), 17));
+			if (_fileSystem.Execute.IsWindows)
+			{
+				throw ExceptionFactory.AccessToPathDenied(
+					_fileSystem.Execute.Path.GetFullPath(base.Name));
+			}
+
+			throw ExceptionFactory.FileAlreadyExists(
+				_fileSystem.Execute.Path.GetFullPath(base.Name), 17);
 		}
 		else if (_mode.Equals(FileMode.CreateNew))
 		{
@@ -307,8 +308,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		using IDisposable registration = RegisterMethod(nameof(CopyTo),
 			destination, bufferSize);
 
-		_fileSystem.Execute.NotOnWindows(() =>
-			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
+		if (!_fileSystem.Execute.IsWindows)
+		{
+			_container.AdjustTimes(TimeAdjustments.LastAccessTime);
+		}
+
 		base.CopyTo(destination, bufferSize);
 	}
 
@@ -386,8 +390,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportReading();
 		}
 
-		_fileSystem.Execute.NotOnWindows(() =>
-			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
+		if (!_fileSystem.Execute.IsWindows)
+		{
+			_container.AdjustTimes(TimeAdjustments.LastAccessTime);
+		}
+
 		return base.Read(buffer, offset, count);
 	}
 
@@ -403,8 +410,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportReading();
 		}
 
-		_fileSystem.Execute.NotOnWindows(() =>
-			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
+		if (!_fileSystem.Execute.IsWindows)
+		{
+			_container.AdjustTimes(TimeAdjustments.LastAccessTime);
+		}
+
 		return base.Read(buffer);
 	}
 #endif
@@ -421,8 +431,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportReading();
 		}
 
-		_fileSystem.Execute.NotOnWindows(() =>
-			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
+		if (!_fileSystem.Execute.IsWindows)
+		{
+			_container.AdjustTimes(TimeAdjustments.LastAccessTime);
+		}
+
 		return base.ReadAsync(buffer, offset, count, cancellationToken);
 	}
 
@@ -439,8 +452,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportReading();
 		}
 
-		_fileSystem.Execute.NotOnWindows(() =>
-			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
+		if (!_fileSystem.Execute.IsWindows)
+		{
+			_container.AdjustTimes(TimeAdjustments.LastAccessTime);
+		}
+
 		return base.ReadAsync(buffer, cancellationToken);
 	}
 #endif
@@ -455,8 +471,11 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.StreamDoesNotSupportReading();
 		}
 
-		_fileSystem.Execute.NotOnWindows(() =>
-			_container.AdjustTimes(TimeAdjustments.LastAccessTime));
+		if (!_fileSystem.Execute.IsWindows)
+		{
+			_container.AdjustTimes(TimeAdjustments.LastAccessTime);
+		}
+
 		return base.ReadByte();
 	}
 

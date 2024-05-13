@@ -151,23 +151,28 @@ internal static class ExceptionFactory
 		};
 
 	internal static ArgumentException PathCannotBeEmpty(Execute execute, string paramName = "path")
-		=> execute.OnNetFramework(
+	{
+		if (execute.IsNetFramework)
+		{
 			#pragma warning disable MA0015 // Specify the parameter name
-			() => new ArgumentException(
+			return new ArgumentException(
 				"Path cannot be the empty string or all whitespace.")
 			{
 #if FEATURE_EXCEPTION_HRESULT
 				HResult = -2147024809
 #endif
-			},
+			};
 			#pragma warning restore MA0015 // Specify the parameter name
-			() => new ArgumentException(
-				"Path cannot be the empty string or all whitespace.", paramName)
-			{
+		}
+
+		return new ArgumentException(
+			"Path cannot be the empty string or all whitespace.", paramName)
+		{
 #if FEATURE_EXCEPTION_HRESULT
-				HResult = -2147024809
+			HResult = -2147024809
 #endif
-			});
+		};
+	}
 
 	internal static ArgumentException PathHasIllegalCharacters(
 		string path, string paramName = "path", int? hResult = -2147024809)

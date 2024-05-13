@@ -172,14 +172,13 @@ internal sealed class NullContainer : IStorageContainer
 		/// <inheritdoc cref="IStorageContainer.ITimeContainer.Set(DateTime, DateTimeKind)" />
 		public virtual void Set(DateTime time, DateTimeKind kind)
 		{
-#if NET7_0_OR_GREATER
-			throw ExceptionFactory.FileNotFound(string.Empty);
-#else
-			FileSystem.Execute.OnWindows(()
-				=> throw ExceptionFactory.FileNotFound(string.Empty));
-
-			throw ExceptionFactory.DirectoryNotFound(string.Empty);
+#if !NET7_0_OR_GREATER
+			if (!FileSystem.Execute.IsWindows)
+			{
+				throw ExceptionFactory.DirectoryNotFound(string.Empty);
+			}
 #endif
+			throw ExceptionFactory.FileNotFound(string.Empty);
 		}
 
 		#endregion
@@ -196,16 +195,15 @@ internal sealed class NullContainer : IStorageContainer
 		public override void Set(DateTime time, DateTimeKind kind)
 		{
 #if NET7_0_OR_GREATER
-			FileSystem.Execute.OnMac(()
-				=> throw ExceptionFactory.DirectoryNotFound(string.Empty));
+			if (FileSystem.Execute.IsMac)
+#else
+			if (!FileSystem.Execute.IsWindows)
+#endif
+			{
+				throw ExceptionFactory.DirectoryNotFound(string.Empty);
+			}
 
 			throw ExceptionFactory.FileNotFound(string.Empty);
-#else
-			FileSystem.Execute.OnWindows(()
-				=> throw ExceptionFactory.FileNotFound(string.Empty));
-
-			throw ExceptionFactory.DirectoryNotFound(string.Empty);
-#endif
 		}
 	}
 }

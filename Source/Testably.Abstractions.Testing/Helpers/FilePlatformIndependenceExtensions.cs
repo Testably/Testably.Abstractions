@@ -26,14 +26,17 @@ internal static class FilePlatformIndependenceExtensions
 			return null;
 		}
 
-		return fileSystem.Execute.OnWindows(
-			() => path
+		if (fileSystem.Execute.IsWindows)
+		{
+			return path
 				.Replace(fileSystem.Execute.Path.AltDirectorySeparatorChar,
-					fileSystem.Execute.Path.DirectorySeparatorChar),
-			() => PathTransformRegex
-				.Replace(path, "${path}")
-				.Replace(fileSystem.Execute.Path.AltDirectorySeparatorChar,
-					fileSystem.Execute.Path.DirectorySeparatorChar));
+					fileSystem.Execute.Path.DirectorySeparatorChar);
+		}
+
+		return PathTransformRegex
+			.Replace(path, "${path}")
+			.Replace(fileSystem.Execute.Path.AltDirectorySeparatorChar,
+				fileSystem.Execute.Path.DirectorySeparatorChar);
 	}
 
 	/// <summary>
@@ -53,8 +56,11 @@ internal static class FilePlatformIndependenceExtensions
 			return path;
 		}
 
-		return fileSystem.Execute.OnWindows(
-			() => driveLetter + ":\\" + path,
-			() => "/" + path);
+		if (fileSystem.Execute.IsWindows)
+		{
+			return driveLetter + ":\\" + path;
+		}
+
+		return "/" + path;
 	}
 }
