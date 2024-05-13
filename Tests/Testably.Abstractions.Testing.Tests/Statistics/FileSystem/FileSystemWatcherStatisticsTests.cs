@@ -46,11 +46,11 @@ public class FileSystemWatcherStatisticsTests
 		// Changes in the background are necessary, so that FileSystemWatcher.WaitForChanged returns.
 		using CancellationTokenSource cts = new(TimeSpan.FromSeconds(1));
 		CancellationToken token = cts.Token;
-		_ = Task.Run(async () =>
+		_ = Task.Run(() =>
 		{
 			while (!token.IsCancellationRequested)
 			{
-				await Task.Delay(10, token);
+				Thread.Sleep(10);
 				sut.Directory.CreateDirectory(sut.Path.Combine("foo", "some-directory"));
 				sut.Directory.Delete(sut.Path.Combine("foo", "some-directory"));
 			}
@@ -75,11 +75,11 @@ public class FileSystemWatcherStatisticsTests
 		// Changes in the background are necessary, so that FileSystemWatcher.WaitForChanged returns.
 		using CancellationTokenSource cts = new(TimeSpan.FromSeconds(1));
 		CancellationToken token = cts.Token;
-		_ = Task.Run(async () =>
+		_ = Task.Run(() =>
 		{
 			while (!token.IsCancellationRequested)
 			{
-				await Task.Delay(10, token);
+				Thread.Sleep(10);
 				sut.Directory.CreateDirectory(sut.Path.Combine("foo", "some-directory"));
 				sut.Directory.Delete(sut.Path.Combine("foo", "some-directory"));
 			}
@@ -103,11 +103,11 @@ public class FileSystemWatcherStatisticsTests
 		// Changes in the background are necessary, so that FileSystemWatcher.WaitForChanged returns.
 		using CancellationTokenSource cts = new(TimeSpan.FromSeconds(1));
 		CancellationToken token = cts.Token;
-		_ = Task.Run(async () =>
+		_ = Task.Run(() =>
 		{
 			while (!token.IsCancellationRequested)
 			{
-				await Task.Delay(10, token);
+				Thread.Sleep(10);
 				sut.Directory.CreateDirectory(sut.Path.Combine("foo", "some-directory"));
 				sut.Directory.Delete(sut.Path.Combine("foo", "some-directory"));
 			}
