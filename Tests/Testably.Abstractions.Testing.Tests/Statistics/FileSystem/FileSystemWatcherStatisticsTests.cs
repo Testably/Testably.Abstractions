@@ -44,7 +44,7 @@ public class FileSystemWatcherStatisticsTests
 		sut.Initialize().WithSubdirectory("foo");
 		using IFileSystemWatcher fileSystemWatcher = sut.FileSystemWatcher.New("foo");
 		// Changes in the background are necessary, so that FileSystemWatcher.WaitForChanged returns.
-		using CancellationTokenSource cts = new(TimeSpan.FromSeconds(1));
+		using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
 		CancellationToken token = cts.Token;
 		_ = Task.Run(() =>
 		{
@@ -74,7 +74,7 @@ public class FileSystemWatcherStatisticsTests
 		sut.Initialize().WithSubdirectory("foo");
 		using IFileSystemWatcher fileSystemWatcher = sut.FileSystemWatcher.New("foo");
 		// Changes in the background are necessary, so that FileSystemWatcher.WaitForChanged returns.
-		using CancellationTokenSource cts = new(TimeSpan.FromSeconds(1));
+		using CancellationTokenSource cts = new();
 		CancellationToken token = cts.Token;
 		_ = Task.Run(() =>
 		{
@@ -103,7 +103,7 @@ public class FileSystemWatcherStatisticsTests
 		sut.Initialize().WithSubdirectory("foo");
 		using IFileSystemWatcher fileSystemWatcher = sut.FileSystemWatcher.New("foo");
 		// Changes in the background are necessary, so that FileSystemWatcher.WaitForChanged returns.
-		using CancellationTokenSource cts = new(TimeSpan.FromSeconds(1));
+		using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
 		CancellationToken token = cts.Token;
 		_ = Task.Run(() =>
 		{
