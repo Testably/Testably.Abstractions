@@ -20,7 +20,8 @@ internal sealed class PathMock : IPath
 	{
 		get
 		{
-			using IDisposable register = RegisterProperty(nameof(AltDirectorySeparatorChar));
+			using IDisposable register = _fileSystem.StatisticsRegistration
+				.Path.RegisterProperty(nameof(AltDirectorySeparatorChar), PropertyAccess.Get);
 
 			return _fileSystem.Execute.Path.AltDirectorySeparatorChar;
 		}
@@ -31,7 +32,8 @@ internal sealed class PathMock : IPath
 	{
 		get
 		{
-			using IDisposable register = RegisterProperty(nameof(DirectorySeparatorChar));
+			using IDisposable register = _fileSystem.StatisticsRegistration
+				.Path.RegisterProperty(nameof(DirectorySeparatorChar), PropertyAccess.Get);
 
 			return _fileSystem.Execute.Path.DirectorySeparatorChar;
 		}
@@ -46,7 +48,8 @@ internal sealed class PathMock : IPath
 	{
 		get
 		{
-			using IDisposable register = RegisterProperty(nameof(PathSeparator));
+			using IDisposable register = _fileSystem.StatisticsRegistration
+				.Path.RegisterProperty(nameof(PathSeparator), PropertyAccess.Get);
 
 			return _fileSystem.Execute.Path.PathSeparator;
 		}
@@ -57,7 +60,8 @@ internal sealed class PathMock : IPath
 	{
 		get
 		{
-			using IDisposable register = RegisterProperty(nameof(VolumeSeparatorChar));
+			using IDisposable register = _fileSystem.StatisticsRegistration
+				.Path.RegisterProperty(nameof(VolumeSeparatorChar), PropertyAccess.Get);
 
 			return _fileSystem.Execute.Path.VolumeSeparatorChar;
 		}
@@ -67,8 +71,9 @@ internal sealed class PathMock : IPath
 	[return: NotNullIfNotNull("path")]
 	public string? ChangeExtension(string? path, string? extension)
 	{
-		using IDisposable register = RegisterMethod(nameof(ChangeExtension),
-			path, extension);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(ChangeExtension),
+				path, extension);
 
 		return _fileSystem.Execute.Path.ChangeExtension(path, extension);
 	}
@@ -76,8 +81,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.Combine(string, string)" />
 	public string Combine(string path1, string path2)
 	{
-		using IDisposable register = RegisterMethod(nameof(Combine),
-			path1, path2);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(Combine),
+				path1, path2);
 
 		return _fileSystem.Execute.Path.Combine(path1, path2);
 	}
@@ -85,8 +91,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.Combine(string, string, string)" />
 	public string Combine(string path1, string path2, string path3)
 	{
-		using IDisposable register = RegisterMethod(nameof(Combine),
-			path1, path2, path3);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(Combine),
+				path1, path2, path3);
 
 		return _fileSystem.Execute.Path.Combine(path1, path2, path3);
 	}
@@ -94,8 +101,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.Combine(string, string, string, string)" />
 	public string Combine(string path1, string path2, string path3, string path4)
 	{
-		using IDisposable register = RegisterMethod(nameof(Combine),
-			path1, path2, path3, path4);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(Combine),
+				path1, path2, path3, path4);
 
 		return _fileSystem.Execute.Path.Combine(path1, path2, path3, path4);
 	}
@@ -103,8 +111,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.Combine(string[])" />
 	public string Combine(params string[] paths)
 	{
-		using IDisposable register = RegisterMethod(nameof(Combine),
-			paths);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(Combine),
+				paths);
 
 		return _fileSystem.Execute.Path.Combine(paths);
 	}
@@ -113,8 +122,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.EndsInDirectorySeparator(ReadOnlySpan{char})" />
 	public bool EndsInDirectorySeparator(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = RegisterMethod(nameof(EndsInDirectorySeparator),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(EndsInDirectorySeparator),
+				path);
 
 		return _fileSystem.Execute.Path.EndsInDirectorySeparator(path);
 	}
@@ -124,8 +134,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.EndsInDirectorySeparator(string)" />
 	public bool EndsInDirectorySeparator(string path)
 	{
-		using IDisposable register = RegisterMethod(nameof(EndsInDirectorySeparator),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(EndsInDirectorySeparator),
+				path);
 
 		return _fileSystem.Execute.Path.EndsInDirectorySeparator(path);
 	}
@@ -135,8 +146,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.Exists(string)" />
 	public bool Exists([NotNullWhen(true)] string? path)
 	{
-		using IDisposable register = RegisterMethod(nameof(Exists),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(Exists),
+				path);
 
 		return _fileSystem.Execute.Path.Exists(path);
 	}
@@ -146,8 +158,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.GetDirectoryName(ReadOnlySpan{char})" />
 	public ReadOnlySpan<char> GetDirectoryName(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = RegisterMethod(nameof(GetDirectoryName),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(GetDirectoryName),
+				path);
 
 		return _fileSystem.Execute.Path.GetDirectoryName(path);
 	}
@@ -156,8 +169,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.GetDirectoryName(string)" />
 	public string? GetDirectoryName(string? path)
 	{
-		using IDisposable register = RegisterMethod(nameof(GetDirectoryName),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(GetDirectoryName),
+				path);
 
 		return _fileSystem.Execute.Path.GetDirectoryName(path);
 	}
@@ -166,8 +180,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.GetExtension(ReadOnlySpan{char})" />
 	public ReadOnlySpan<char> GetExtension(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = RegisterMethod(nameof(GetExtension),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(GetExtension),
+				path);
 
 		return _fileSystem.Execute.Path.GetExtension(path);
 	}
@@ -177,8 +192,9 @@ internal sealed class PathMock : IPath
 	[return: NotNullIfNotNull("path")]
 	public string? GetExtension(string? path)
 	{
-		using IDisposable register = RegisterMethod(nameof(GetExtension),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(GetExtension),
+				path);
 
 		return _fileSystem.Execute.Path.GetExtension(path);
 	}
@@ -187,8 +203,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.GetFileName(ReadOnlySpan{char})" />
 	public ReadOnlySpan<char> GetFileName(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = RegisterMethod(nameof(GetFileName),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(GetFileName),
+				path);
 
 		return _fileSystem.Execute.Path.GetFileName(path);
 	}
@@ -198,8 +215,9 @@ internal sealed class PathMock : IPath
 	[return: NotNullIfNotNull("path")]
 	public string? GetFileName(string? path)
 	{
-		using IDisposable register = RegisterMethod(nameof(GetFileName),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(GetFileName),
+				path);
 
 		return _fileSystem.Execute.Path.GetFileName(path);
 	}
@@ -208,8 +226,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.GetFileNameWithoutExtension(ReadOnlySpan{char})" />
 	public ReadOnlySpan<char> GetFileNameWithoutExtension(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = RegisterMethod(nameof(GetFileNameWithoutExtension),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(GetFileNameWithoutExtension),
+				path);
 
 		return _fileSystem.Execute.Path.GetFileNameWithoutExtension(path);
 	}
@@ -219,8 +238,9 @@ internal sealed class PathMock : IPath
 	[return: NotNullIfNotNull("path")]
 	public string? GetFileNameWithoutExtension(string? path)
 	{
-		using IDisposable register = RegisterMethod(nameof(GetFileNameWithoutExtension),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(GetFileNameWithoutExtension),
+				path);
 
 		return _fileSystem.Execute.Path.GetFileNameWithoutExtension(path);
 	}
@@ -228,8 +248,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.GetFullPath(string)" />
 	public string GetFullPath(string path)
 	{
-		using IDisposable register = RegisterMethod(nameof(GetFullPath),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(GetFullPath),
+				path);
 
 		return _fileSystem.Execute.Path.GetFullPath(path);
 	}
@@ -238,8 +259,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.GetFullPath(string, string)" />
 	public string GetFullPath(string path, string basePath)
 	{
-		using IDisposable register = RegisterMethod(nameof(GetFullPath),
-			path, basePath);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(GetFullPath),
+				path, basePath);
 
 		return _fileSystem.Execute.Path.GetFullPath(path, basePath);
 	}
@@ -248,7 +270,8 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.GetInvalidFileNameChars()" />
 	public char[] GetInvalidFileNameChars()
 	{
-		using IDisposable register = RegisterMethod(nameof(GetInvalidFileNameChars));
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(GetInvalidFileNameChars));
 
 		return _fileSystem.Execute.Path.GetInvalidFileNameChars();
 	}
@@ -256,7 +279,8 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.GetInvalidPathChars()" />
 	public char[] GetInvalidPathChars()
 	{
-		using IDisposable register = RegisterMethod(nameof(GetInvalidPathChars));
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(GetInvalidPathChars));
 
 		return _fileSystem.Execute.Path.GetInvalidPathChars();
 	}
@@ -265,8 +289,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.GetPathRoot(ReadOnlySpan{char})" />
 	public ReadOnlySpan<char> GetPathRoot(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = RegisterMethod(nameof(GetPathRoot),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(GetPathRoot),
+				path);
 
 		return _fileSystem.Execute.Path.GetPathRoot(path);
 	}
@@ -275,8 +300,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.GetPathRoot(string?)" />
 	public string? GetPathRoot(string? path)
 	{
-		using IDisposable register = RegisterMethod(nameof(GetPathRoot),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(GetPathRoot),
+				path);
 
 		return _fileSystem.Execute.Path.GetPathRoot(path);
 	}
@@ -284,7 +310,8 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.GetRandomFileName()" />
 	public string GetRandomFileName()
 	{
-		using IDisposable register = RegisterMethod(nameof(GetRandomFileName));
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(GetRandomFileName));
 
 		return _fileSystem.Execute.Path.GetRandomFileName();
 	}
@@ -293,8 +320,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.GetRelativePath(string, string)" />
 	public string GetRelativePath(string relativeTo, string path)
 	{
-		using IDisposable register = RegisterMethod(nameof(GetRelativePath),
-			relativeTo, path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(GetRelativePath),
+				relativeTo, path);
 
 		return _fileSystem.Execute.Path.GetRelativePath(relativeTo, path);
 	}
@@ -308,7 +336,8 @@ internal sealed class PathMock : IPath
 #endif
 	public string GetTempFileName()
 	{
-		using IDisposable register = RegisterMethod(nameof(GetTempFileName));
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(GetTempFileName));
 
 		return _fileSystem.Execute.Path.GetTempFileName();
 	}
@@ -316,7 +345,8 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.GetTempPath()" />
 	public string GetTempPath()
 	{
-		using IDisposable register = RegisterMethod(nameof(GetTempPath));
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(GetTempPath));
 
 		return _fileSystem.Execute.Path.GetTempPath();
 	}
@@ -325,8 +355,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.HasExtension(ReadOnlySpan{char})" />
 	public bool HasExtension(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = RegisterMethod(nameof(HasExtension),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(HasExtension),
+				path);
 
 		return _fileSystem.Execute.Path.HasExtension(path);
 	}
@@ -335,8 +366,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.HasExtension(string)" />
 	public bool HasExtension([NotNullWhen(true)] string? path)
 	{
-		using IDisposable register = RegisterMethod(nameof(HasExtension),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(HasExtension),
+				path);
 
 		return _fileSystem.Execute.Path.HasExtension(path);
 	}
@@ -345,8 +377,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.IsPathFullyQualified(ReadOnlySpan{char})" />
 	public bool IsPathFullyQualified(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = RegisterMethod(nameof(IsPathFullyQualified),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(IsPathFullyQualified),
+				path);
 
 		return _fileSystem.Execute.Path.IsPathFullyQualified(path);
 	}
@@ -356,8 +389,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.IsPathFullyQualified(string)" />
 	public bool IsPathFullyQualified(string path)
 	{
-		using IDisposable register = RegisterMethod(nameof(IsPathFullyQualified),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(IsPathFullyQualified),
+				path);
 
 		return _fileSystem.Execute.Path.IsPathFullyQualified(path);
 	}
@@ -367,8 +401,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.IsPathRooted(ReadOnlySpan{char})" />
 	public bool IsPathRooted(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = RegisterMethod(nameof(IsPathRooted),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(IsPathRooted),
+				path);
 
 		return _fileSystem.Execute.Path.IsPathRooted(path);
 	}
@@ -377,8 +412,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.IsPathRooted(string)" />
 	public bool IsPathRooted(string? path)
 	{
-		using IDisposable register = RegisterMethod(nameof(IsPathRooted),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(IsPathRooted),
+				path);
 
 		return _fileSystem.Execute.Path.IsPathRooted(path);
 	}
@@ -387,8 +423,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.Join(ReadOnlySpan{char}, ReadOnlySpan{char})" />
 	public string Join(ReadOnlySpan<char> path1, ReadOnlySpan<char> path2)
 	{
-		using IDisposable register = RegisterMethod(nameof(Join),
-			path1, path2);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(Join),
+				path1, path2);
 
 		return _fileSystem.Execute.Path.Join(path1, path2);
 	}
@@ -400,10 +437,11 @@ internal sealed class PathMock : IPath
 		ReadOnlySpan<char> path2,
 		ReadOnlySpan<char> path3)
 	{
-		using IDisposable register = RegisterMethod(nameof(Join),
-			path1,
-			path2,
-			path3);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(Join),
+				path1,
+				path2,
+				path3);
 
 		return _fileSystem.Execute.Path.Join(path1, path2, path3);
 	}
@@ -416,11 +454,12 @@ internal sealed class PathMock : IPath
 		ReadOnlySpan<char> path3,
 		ReadOnlySpan<char> path4)
 	{
-		using IDisposable register = RegisterMethod(nameof(Join),
-			path1,
-			path2,
-			path3,
-			path4);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(Join),
+				path1,
+				path2,
+				path3,
+				path4);
 
 		return _fileSystem.Execute.Path.Join(path1, path2, path3, path4);
 	}
@@ -430,8 +469,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.Join(string, string)" />
 	public string Join(string? path1, string? path2)
 	{
-		using IDisposable register = RegisterMethod(nameof(Join),
-			path1, path2);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(Join),
+				path1, path2);
 
 		return _fileSystem.Execute.Path.Join(path1, path2);
 	}
@@ -441,8 +481,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.Join(string, string, string)" />
 	public string Join(string? path1, string? path2, string? path3)
 	{
-		using IDisposable register = RegisterMethod(nameof(Join),
-			path1, path2, path3);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(Join),
+				path1, path2, path3);
 
 		return _fileSystem.Execute.Path.Join(path1, path2, path3);
 	}
@@ -452,8 +493,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.Join(string, string, string, string)" />
 	public string Join(string? path1, string? path2, string? path3, string? path4)
 	{
-		using IDisposable register = RegisterMethod(nameof(Join),
-			path1, path2, path3, path4);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(Join),
+				path1, path2, path3, path4);
 
 		return _fileSystem.Execute.Path.Join(path1, path2, path3, path4);
 	}
@@ -463,8 +505,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.Join(string[])" />
 	public string Join(params string?[] paths)
 	{
-		using IDisposable register = RegisterMethod(nameof(Join),
-			paths);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(Join),
+				paths);
 
 		return _fileSystem.Execute.Path.Join(paths);
 	}
@@ -474,8 +517,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.TrimEndingDirectorySeparator(ReadOnlySpan{char})" />
 	public ReadOnlySpan<char> TrimEndingDirectorySeparator(ReadOnlySpan<char> path)
 	{
-		using IDisposable register = RegisterMethod(nameof(TrimEndingDirectorySeparator),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(TrimEndingDirectorySeparator),
+				path);
 
 		return _fileSystem.Execute.Path.TrimEndingDirectorySeparator(path);
 	}
@@ -485,8 +529,9 @@ internal sealed class PathMock : IPath
 	/// <inheritdoc cref="IPath.TrimEndingDirectorySeparator(string)" />
 	public string TrimEndingDirectorySeparator(string path)
 	{
-		using IDisposable register = RegisterMethod(nameof(TrimEndingDirectorySeparator),
-			path);
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(TrimEndingDirectorySeparator),
+				path);
 
 		return _fileSystem.Execute.Path.TrimEndingDirectorySeparator(path);
 	}
@@ -548,67 +593,4 @@ internal sealed class PathMock : IPath
 #endif
 
 	#endregion
-
-	private IDisposable RegisterMethod(string name)
-		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name);
-
-	private IDisposable RegisterMethod<T1>(string name, T1 parameter1)
-		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
-			parameter1);
-
-#if FEATURE_SPAN
-	private IDisposable RegisterMethod<T1>(string name, ReadOnlySpan<T1> parameter1)
-		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1));
-#endif
-
-#if FEATURE_PATH_JOIN
-	private IDisposable RegisterMethod<T1, T2>(string name, ReadOnlySpan<T1> parameter1,
-		ReadOnlySpan<T2> parameter2)
-		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2));
-#endif
-
-#if FEATURE_PATH_JOIN
-	private IDisposable RegisterMethod<T1, T2, T3>(string name, ReadOnlySpan<T1> parameter1,
-		ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3)
-		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2),
-			ParameterDescription.FromParameter(parameter3));
-#endif
-
-#if FEATURE_PATH_ADVANCED
-	private IDisposable RegisterMethod<T1, T2, T3, T4>(string name, ReadOnlySpan<T1> parameter1,
-		ReadOnlySpan<T2> parameter2, ReadOnlySpan<T3> parameter3, ReadOnlySpan<T4> parameter4)
-		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2),
-			ParameterDescription.FromParameter(parameter3),
-			ParameterDescription.FromParameter(parameter4));
-#endif
-
-	private IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, T2 parameter2)
-		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
-			parameter1,
-			parameter2);
-
-	private IDisposable RegisterMethod<T1, T2, T3>(string name, T1 parameter1, T2 parameter2,
-		T3 parameter3)
-		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
-			parameter1,
-			parameter2,
-			parameter3);
-
-	private IDisposable RegisterMethod<T1, T2, T3, T4>(string name, T1 parameter1, T2 parameter2,
-		T3 parameter3, T4 parameter4)
-		=> _fileSystem.StatisticsRegistration.Path.RegisterMethod(name,
-			parameter1,
-			parameter2,
-			parameter3,
-			parameter4);
-
-	private IDisposable RegisterProperty(string name, PropertyAccess access = PropertyAccess.Get)
-		=> _fileSystem.StatisticsRegistration.Path.RegisterProperty(name, access);
 }
