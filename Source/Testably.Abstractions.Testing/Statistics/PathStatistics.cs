@@ -46,8 +46,8 @@ internal class PathStatistics<TFactory, TType> : CallStatistics<TFactory>,
 	///     Registers the <paramref name="name" /> callback with <paramref name="parameters" /> under <paramref name="path" />.
 	/// </summary>
 	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
-	internal IDisposable RegisterMethod(string path, string name,
-		params ParameterDescription[] parameters)
+	internal IDisposable RegisterPathMethod(string path, string name,
+		ParameterDescription[] parameters)
 	{
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
@@ -62,10 +62,28 @@ internal class PathStatistics<TFactory, TType> : CallStatistics<TFactory>,
 	}
 
 	/// <summary>
+	///     Registers the <paramref name="name" /> callback without parameters under <paramref name="path" />.
+	/// </summary>
+	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
+	internal IDisposable RegisterPathMethod(string path, string name)
+	{
+		if (_statisticsGate.TryGetLock(out IDisposable release))
+		{
+			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
+			CallStatistics<TType> callStatistics =
+				_statistics.GetOrAdd(key,
+					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
+			return callStatistics.RegisterMethodWithoutLock(release, name);
+		}
+
+		return release;
+	}
+
+	/// <summary>
 	///     Registers the <paramref name="name" /> callback with <paramref name="parameter1" /> under <paramref name="path" />.
 	/// </summary>
 	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
-	internal IDisposable RegisterMethod<T1>(string path, string name,
+	internal IDisposable RegisterPathMethod<T1>(string path, string name,
 		T1 parameter1)
 	{
 		if (_statisticsGate.TryGetLock(out IDisposable release))
@@ -74,20 +92,63 @@ internal class PathStatistics<TFactory, TType> : CallStatistics<TFactory>,
 			CallStatistics<TType> callStatistics =
 				_statistics.GetOrAdd(key,
 					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
-			return callStatistics.RegisterMethodWithoutLock(release, name, new[]
-			{
-				ParameterDescription.FromParameter(parameter1)
-			});
+			return callStatistics.RegisterMethodWithoutLock(release, name,
+				ParameterDescription.FromParameter(parameter1));
 		}
 
 		return release;
 	}
 
+#if FEATURE_SPAN
 	/// <summary>
-	///     Registers the <paramref name="name" /> callback with <paramref name="parameter1" /> and <paramref name="parameter2" /> under <paramref name="path" />.
+	///     Registers the <paramref name="name" /> callback with <paramref name="parameter1" /> under <paramref name="path" />.
 	/// </summary>
 	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
-	internal IDisposable RegisterMethod<T1, T2>(string path, string name,
+	internal IDisposable RegisterPathMethod<T1>(string path, string name,
+		ReadOnlySpan<T1> parameter1)
+	{
+		if (_statisticsGate.TryGetLock(out IDisposable release))
+		{
+			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
+			CallStatistics<TType> callStatistics =
+				_statistics.GetOrAdd(key,
+					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
+			return callStatistics.RegisterMethodWithoutLock(release, name,
+				ParameterDescription.FromParameter(parameter1));
+		}
+
+		return release;
+	}
+#endif
+
+#if FEATURE_SPAN
+	/// <summary>
+	///     Registers the <paramref name="name" /> callback with <paramref name="parameter1" /> under <paramref name="path" />.
+	/// </summary>
+	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
+	internal IDisposable RegisterPathMethod<T1>(string path, string name,
+		Span<T1> parameter1)
+	{
+		if (_statisticsGate.TryGetLock(out IDisposable release))
+		{
+			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
+			CallStatistics<TType> callStatistics =
+				_statistics.GetOrAdd(key,
+					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
+			return callStatistics.RegisterMethodWithoutLock(release, name,
+				ParameterDescription.FromParameter(parameter1));
+		}
+
+		return release;
+	}
+#endif
+
+	/// <summary>
+	///     Registers the <paramref name="name" /> callback with <paramref name="parameter1" /> and
+	///     <paramref name="parameter2" /> under <paramref name="path" />.
+	/// </summary>
+	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
+	internal IDisposable RegisterPathMethod<T1, T2>(string path, string name,
 		T1 parameter1, T2 parameter2)
 	{
 		if (_statisticsGate.TryGetLock(out IDisposable release))
@@ -96,21 +157,20 @@ internal class PathStatistics<TFactory, TType> : CallStatistics<TFactory>,
 			CallStatistics<TType> callStatistics =
 				_statistics.GetOrAdd(key,
 					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
-			return callStatistics.RegisterMethodWithoutLock(release, name, new[]
-			{
+			return callStatistics.RegisterMethodWithoutLock(release, name,
 				ParameterDescription.FromParameter(parameter1),
-				ParameterDescription.FromParameter(parameter2)
-			});
+				ParameterDescription.FromParameter(parameter2));
 		}
 
 		return release;
 	}
 
 	/// <summary>
-	///     Registers the <paramref name="name" /> callback with <paramref name="parameter1" />, <paramref name="parameter2" /> and <paramref name="parameter3" /> under <paramref name="path" />.
+	///     Registers the <paramref name="name" /> callback with <paramref name="parameter1" />, <paramref name="parameter2" />
+	///     and <paramref name="parameter3" /> under <paramref name="path" />.
 	/// </summary>
 	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
-	internal IDisposable RegisterMethod<T1, T2, T3>(string path, string name,
+	internal IDisposable RegisterPathMethod<T1, T2, T3>(string path, string name,
 		T1 parameter1, T2 parameter2, T3 parameter3)
 	{
 		if (_statisticsGate.TryGetLock(out IDisposable release))
@@ -119,22 +179,21 @@ internal class PathStatistics<TFactory, TType> : CallStatistics<TFactory>,
 			CallStatistics<TType> callStatistics =
 				_statistics.GetOrAdd(key,
 					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
-			return callStatistics.RegisterMethodWithoutLock(release, name, new[]
-			{
+			return callStatistics.RegisterMethodWithoutLock(release, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2),
-				ParameterDescription.FromParameter(parameter3)
-			});
+				ParameterDescription.FromParameter(parameter3));
 		}
 
 		return release;
 	}
 
 	/// <summary>
-	///     Registers the <paramref name="name" /> callback with <paramref name="parameter1" />, <paramref name="parameter2" />, <paramref name="parameter3" /> and <paramref name="parameter4" /> under <paramref name="path" />.
+	///     Registers the <paramref name="name" /> callback with <paramref name="parameter1" />, <paramref name="parameter2" />
+	///     , <paramref name="parameter3" /> and <paramref name="parameter4" /> under <paramref name="path" />.
 	/// </summary>
 	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
-	internal IDisposable RegisterMethod<T1, T2, T3, T4>(string path, string name,
+	internal IDisposable RegisterPathMethod<T1, T2, T3, T4>(string path, string name,
 		T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4)
 	{
 		if (_statisticsGate.TryGetLock(out IDisposable release))
@@ -143,24 +202,23 @@ internal class PathStatistics<TFactory, TType> : CallStatistics<TFactory>,
 			CallStatistics<TType> callStatistics =
 				_statistics.GetOrAdd(key,
 					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
-			return callStatistics.RegisterMethodWithoutLock(release, name, new[]
-			{
+			return callStatistics.RegisterMethodWithoutLock(release, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2),
 				ParameterDescription.FromParameter(parameter3),
-				ParameterDescription.FromParameter(parameter4)
-			});
+				ParameterDescription.FromParameter(parameter4));
 		}
 
 		return release;
 	}
 
-
 	/// <summary>
-	///     Registers the <paramref name="name" /> callback with <paramref name="parameter1" />, <paramref name="parameter2" />, <paramref name="parameter3" />, <paramref name="parameter4" /> and <paramref name="parameter5" /> under <paramref name="path" />.
+	///     Registers the <paramref name="name" /> callback with <paramref name="parameter1" />, <paramref name="parameter2" />
+	///     , <paramref name="parameter3" />, <paramref name="parameter4" /> and <paramref name="parameter5" /> under
+	///     <paramref name="path" />.
 	/// </summary>
 	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
-	internal IDisposable RegisterMethod<T1, T2, T3, T4, T5>(string path, string name,
+	internal IDisposable RegisterPathMethod<T1, T2, T3, T4, T5>(string path, string name,
 		T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5)
 	{
 		if (_statisticsGate.TryGetLock(out IDisposable release))
@@ -169,14 +227,12 @@ internal class PathStatistics<TFactory, TType> : CallStatistics<TFactory>,
 			CallStatistics<TType> callStatistics =
 				_statistics.GetOrAdd(key,
 					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
-			return callStatistics.RegisterMethodWithoutLock(release, name, new[]
-			{
+			return callStatistics.RegisterMethodWithoutLock(release, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2),
 				ParameterDescription.FromParameter(parameter3),
 				ParameterDescription.FromParameter(parameter4),
-				ParameterDescription.FromParameter(parameter5)
-			});
+				ParameterDescription.FromParameter(parameter5));
 		}
 
 		return release;
@@ -187,7 +243,7 @@ internal class PathStatistics<TFactory, TType> : CallStatistics<TFactory>,
 	///     <paramref name="path" />.
 	/// </summary>
 	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
-	internal IDisposable RegisterProperty(string path, string name, PropertyAccess access)
+	internal IDisposable RegisterPathProperty(string path, string name, PropertyAccess access)
 	{
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
@@ -197,6 +253,7 @@ internal class PathStatistics<TFactory, TType> : CallStatistics<TFactory>,
 					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
 			return callStatistics.RegisterPropertyWithoutLock(release, name, access);
 		}
+
 		return release;
 	}
 

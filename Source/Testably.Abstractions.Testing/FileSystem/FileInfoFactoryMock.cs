@@ -23,8 +23,9 @@ internal sealed class FileInfoFactoryMock : IFileInfoFactory
 	/// <inheritdoc cref="IFileInfoFactory.New(string)" />
 	public IFileInfo New(string fileName)
 	{
-		using IDisposable registration = RegisterMethod(nameof(New),
-			fileName);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileInfo.RegisterMethod(nameof(New),
+				fileName);
 
 		if (fileName == null)
 		{
@@ -45,8 +46,9 @@ internal sealed class FileInfoFactoryMock : IFileInfoFactory
 	[return: NotNullIfNotNull("fileInfo")]
 	public IFileInfo? Wrap(FileInfo? fileInfo)
 	{
-		using IDisposable registration = RegisterMethod(nameof(Wrap),
-			fileInfo);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileInfo.RegisterMethod(nameof(Wrap),
+				fileInfo);
 
 		if (_fileSystem.SimulationMode != SimulationMode.Native)
 		{
@@ -62,8 +64,4 @@ internal sealed class FileInfoFactoryMock : IFileInfoFactory
 	}
 
 	#endregion
-
-	private IDisposable RegisterMethod<T1>(string name, T1 parameter1)
-		=> _fileSystem.StatisticsRegistration.FileInfo.RegisterMethod(name,
-			parameter1);
 }

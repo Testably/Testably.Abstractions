@@ -22,7 +22,7 @@ public sealed class MethodStatistic
 	/// </summary>
 	public ParameterDescription[] Parameters { get; }
 
-	internal MethodStatistic(int counter, string name, ParameterDescription[] parameters)
+	internal MethodStatistic(int counter, string name, params ParameterDescription[] parameters)
 	{
 		Counter = counter;
 		Name = name;

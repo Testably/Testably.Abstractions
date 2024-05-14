@@ -29,8 +29,9 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	/// <inheritdoc cref="IFileStreamFactory.New(string, FileMode)" />
 	public FileSystemStream New(string path, FileMode mode)
 	{
-		using IDisposable registration = RegisterMethod(nameof(New),
-			path, mode);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterMethod(nameof(New),
+				path, mode);
 
 		return New(path,
 			mode,
@@ -43,8 +44,9 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	/// <inheritdoc cref="IFileStreamFactory.New(string, FileMode, FileAccess)" />
 	public FileSystemStream New(string path, FileMode mode, FileAccess access)
 	{
-		using IDisposable registration = RegisterMethod(nameof(New),
-			path, mode, access);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterMethod(nameof(New),
+				path, mode, access);
 
 		return New(path, mode, access, DefaultShare, DefaultBufferSize, DefaultUseAsync);
 	}
@@ -55,8 +57,9 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 		FileAccess access,
 		FileShare share)
 	{
-		using IDisposable registration = RegisterMethod(nameof(New),
-			path, mode, access, share);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterMethod(nameof(New),
+				path, mode, access, share);
 
 		return New(path, mode, access, share, DefaultBufferSize, DefaultUseAsync);
 	}
@@ -68,8 +71,9 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 		FileShare share,
 		int bufferSize)
 	{
-		using IDisposable registration = RegisterMethod(nameof(New),
-			path, mode, access, share, bufferSize);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterMethod(nameof(New),
+				path, mode, access, share, bufferSize);
 
 		return New(path, mode, access, share, bufferSize, DefaultUseAsync);
 	}
@@ -82,8 +86,9 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 		int bufferSize,
 		bool useAsync)
 	{
-		using IDisposable registration = RegisterMethod(nameof(New),
-			path, mode, access, share, bufferSize, useAsync);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterMethod(nameof(New),
+				path, mode, access, share, bufferSize, useAsync);
 
 		return New(path,
 			mode,
@@ -101,8 +106,9 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 		int bufferSize,
 		FileOptions options)
 	{
-		using IDisposable registration = RegisterMethod(nameof(New),
-			path, mode, access, share, bufferSize, options);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterMethod(nameof(New),
+				path, mode, access, share, bufferSize, options);
 
 		return new FileStreamMock(_fileSystem,
 			path,
@@ -119,8 +125,9 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 #endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access)
 	{
-		using IDisposable registration = RegisterMethod(nameof(New),
-			handle, access);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterMethod(nameof(New),
+				handle, access);
 
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
 			.SafeFileHandleStrategy.MapSafeFileHandle(handle);
@@ -137,8 +144,9 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 #endif
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize)
 	{
-		using IDisposable registration = RegisterMethod(nameof(New),
-			handle, access, bufferSize);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterMethod(nameof(New),
+				handle, access, bufferSize);
 
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
 			.SafeFileHandleStrategy.MapSafeFileHandle(handle);
@@ -157,8 +165,9 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	public FileSystemStream New(SafeFileHandle handle, FileAccess access, int bufferSize,
 		bool isAsync)
 	{
-		using IDisposable registration = RegisterMethod(nameof(New),
-			handle, access, bufferSize, isAsync);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterMethod(nameof(New),
+				handle, access, bufferSize, isAsync);
 
 		SafeFileHandleMock safeFileHandleMock = _fileSystem
 			.SafeFileHandleStrategy.MapSafeFileHandle(handle);
@@ -175,8 +184,9 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	/// <inheritdoc cref="IFileStreamFactory.New(string, FileStreamOptions)" />
 	public FileSystemStream New(string path, FileStreamOptions options)
 	{
-		using IDisposable registration = RegisterMethod(nameof(New),
-			path, options);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterMethod(nameof(New),
+				path, options);
 
 		return New(path,
 			options.Mode,
@@ -190,52 +200,10 @@ internal sealed class FileStreamFactoryMock : IFileStreamFactory
 	/// <inheritdoc cref="IFileStreamFactory.Wrap(FileStream)" />
 	public FileSystemStream Wrap(FileStream fileStream)
 	{
-		RegisterMethod(nameof(Wrap), fileStream);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterMethod(nameof(Wrap), fileStream);
 		throw ExceptionFactory.NotSupportedFileStreamWrapping();
 	}
 
 	#endregion
-
-	private void RegisterMethod<T1>(string name, T1 parameter1)
-		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(name,
-			parameter1);
-
-	private IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, T2 parameter2)
-		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(name,
-			parameter1,
-			parameter2);
-
-	private IDisposable RegisterMethod<T1, T2, T3>(string name, T1 parameter1, T2 parameter2,
-		T3 parameter3)
-		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(name,
-			parameter1,
-			parameter2,
-			parameter3);
-
-	private IDisposable RegisterMethod<T1, T2, T3, T4>(string name, T1 parameter1, T2 parameter2,
-		T3 parameter3, T4 parameter4)
-		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(name,
-			parameter1,
-			parameter2,
-			parameter3,
-			parameter4);
-
-	private IDisposable RegisterMethod<T1, T2, T3, T4, T5>(string name, T1 parameter1,
-		T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5)
-		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(name,
-			parameter1,
-			parameter2,
-			parameter3,
-			parameter4,
-			parameter5);
-
-	private IDisposable RegisterMethod<T1, T2, T3, T4, T5, T6>(string name, T1 parameter1,
-		T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5, T6 parameter6)
-		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(name,
-			parameter1,
-			parameter2,
-			parameter3,
-			parameter4,
-			parameter5,
-			parameter6);
 }

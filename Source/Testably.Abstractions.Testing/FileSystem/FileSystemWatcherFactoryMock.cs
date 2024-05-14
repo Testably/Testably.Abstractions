@@ -24,7 +24,8 @@ internal sealed class FileSystemWatcherFactoryMock
 	/// <inheritdoc cref="IFileSystemWatcherFactory.New()" />
 	public IFileSystemWatcher New()
 	{
-		using IDisposable registration = RegisterMethod(nameof(New));
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileSystemWatcher.RegisterMethod(nameof(New));
 
 		return FileSystemWatcherMock.New(_fileSystem);
 	}
@@ -32,8 +33,9 @@ internal sealed class FileSystemWatcherFactoryMock
 	/// <inheritdoc cref="IFileSystemWatcherFactory.New(string)" />
 	public IFileSystemWatcher New(string path)
 	{
-		using IDisposable registration = RegisterMethod(nameof(New),
-			path);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileSystemWatcher.RegisterMethod(nameof(New),
+				path);
 
 		FileSystemWatcherMock fileSystemWatcherMock =
 			FileSystemWatcherMock.New(_fileSystem);
@@ -44,8 +46,9 @@ internal sealed class FileSystemWatcherFactoryMock
 	/// <inheritdoc cref="IFileSystemWatcherFactory.New(string, string)" />
 	public IFileSystemWatcher New(string path, string filter)
 	{
-		using IDisposable registration = RegisterMethod(nameof(New),
-			path, filter);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileSystemWatcher.RegisterMethod(nameof(New),
+				path, filter);
 
 		FileSystemWatcherMock fileSystemWatcherMock =
 			FileSystemWatcherMock.New(_fileSystem);
@@ -59,8 +62,9 @@ internal sealed class FileSystemWatcherFactoryMock
 	// ReSharper disable once ReturnTypeCanBeNotNullable
 	public IFileSystemWatcher? Wrap(FileSystemWatcher? fileSystemWatcher)
 	{
-		using IDisposable registration = RegisterMethod(nameof(Wrap),
-			fileSystemWatcher);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileSystemWatcher.RegisterMethod(nameof(Wrap),
+				fileSystemWatcher);
 
 		if (fileSystemWatcher == null)
 		{
@@ -89,16 +93,4 @@ internal sealed class FileSystemWatcherFactoryMock
 	}
 
 	#endregion
-
-	private IDisposable RegisterMethod(string name)
-		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.RegisterMethod(name);
-
-	private IDisposable RegisterMethod<T1>(string name, T1 parameter1)
-		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.RegisterMethod(name,
-			parameter1);
-
-	private IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, T2 parameter2)
-		=> _fileSystem.StatisticsRegistration.FileSystemWatcher.RegisterMethod(name,
-			parameter1,
-			parameter2);
 }

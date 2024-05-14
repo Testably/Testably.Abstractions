@@ -54,10 +54,23 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name, new[]
-			{
-				ParameterDescription.FromParameter(parameter1)
-			}));
+			_methods.Enqueue(new MethodStatistic(counter, name,
+				ParameterDescription.FromParameter(parameter1)));
+		}
+
+		return release;
+	}
+
+	/// <summary>
+	///     Registers the method <paramref name="name" /> without parameters.
+	/// </summary>
+	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
+	internal IDisposable RegisterMethod(string name)
+	{
+		if (_statisticsGate.TryGetLock(out IDisposable release))
+		{
+			int counter = _statisticsGate.GetCounter();
+			_methods.Enqueue(new MethodStatistic(counter, name));
 		}
 
 		return release;
@@ -73,11 +86,9 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name, new[]
-			{
+			_methods.Enqueue(new MethodStatistic(counter, name,
 				ParameterDescription.FromParameter(parameter1),
-				ParameterDescription.FromParameter(parameter2)
-			}));
+				ParameterDescription.FromParameter(parameter2)));
 		}
 
 		return release;
@@ -94,12 +105,10 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name, new[]
-			{
+			_methods.Enqueue(new MethodStatistic(counter, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2),
-				ParameterDescription.FromParameter(parameter3)
-			}));
+				ParameterDescription.FromParameter(parameter3)));
 		}
 
 		return release;
@@ -116,13 +125,11 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name, new[]
-			{
+			_methods.Enqueue(new MethodStatistic(counter, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2),
 				ParameterDescription.FromParameter(parameter3),
-				ParameterDescription.FromParameter(parameter4)
-			}));
+				ParameterDescription.FromParameter(parameter4)));
 		}
 
 		return release;
@@ -139,14 +146,12 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name, new[]
-			{
+			_methods.Enqueue(new MethodStatistic(counter, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2),
 				ParameterDescription.FromParameter(parameter3),
 				ParameterDescription.FromParameter(parameter4),
-				ParameterDescription.FromParameter(parameter5)
-			}));
+				ParameterDescription.FromParameter(parameter5)));
 		}
 
 		return release;
@@ -164,15 +169,13 @@ internal class CallStatistics<TType> : IStatistics<TType>
 		if (_statisticsGate.TryGetLock(out IDisposable release))
 		{
 			int counter = _statisticsGate.GetCounter();
-			_methods.Enqueue(new MethodStatistic(counter, name, new[]
-			{
+			_methods.Enqueue(new MethodStatistic(counter, name,
 				ParameterDescription.FromParameter(parameter1),
 				ParameterDescription.FromParameter(parameter2),
 				ParameterDescription.FromParameter(parameter3),
 				ParameterDescription.FromParameter(parameter4),
 				ParameterDescription.FromParameter(parameter5),
-				ParameterDescription.FromParameter(parameter6)
-			}));
+				ParameterDescription.FromParameter(parameter6)));
 		}
 
 		return release;
