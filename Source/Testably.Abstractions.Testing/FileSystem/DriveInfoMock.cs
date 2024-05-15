@@ -68,8 +68,9 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		get
 		{
-			using IDisposable registration =
-				RegisterProperty(nameof(AvailableFreeSpace), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.DriveInfo
+				.RegisterPathProperty(_name, nameof(AvailableFreeSpace), PropertyAccess.Get);
 
 			return TotalFreeSpace;
 		}
@@ -80,8 +81,8 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		get
 		{
-			using IDisposable registration =
-				RegisterProperty(nameof(DriveFormat), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.DriveInfo.RegisterPathProperty(_name, nameof(DriveFormat), PropertyAccess.Get);
 
 			return _driveFormat;
 		}
@@ -92,8 +93,8 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		get
 		{
-			using IDisposable registration =
-				RegisterProperty(nameof(DriveType), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.DriveInfo.RegisterPathProperty(_name, nameof(DriveType), PropertyAccess.Get);
 
 			return _driveType;
 		}
@@ -108,7 +109,8 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(IsReady), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.DriveInfo.RegisterPathProperty(_name, nameof(IsReady), PropertyAccess.Get);
 
 			return _isReady;
 		}
@@ -124,7 +126,8 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(Name), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.DriveInfo.RegisterPathProperty(_name, nameof(Name), PropertyAccess.Get);
 
 			return _name;
 		}
@@ -135,8 +138,8 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		get
 		{
-			using IDisposable registration =
-				RegisterProperty(nameof(RootDirectory), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.DriveInfo.RegisterPathProperty(_name, nameof(RootDirectory), PropertyAccess.Get);
 
 			return DirectoryInfoMock.New(_fileSystem.Storage.GetLocation(Name), _fileSystem);
 		}
@@ -147,8 +150,8 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		get
 		{
-			using IDisposable registration =
-				RegisterProperty(nameof(TotalFreeSpace), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.DriveInfo.RegisterPathProperty(_name, nameof(TotalFreeSpace), PropertyAccess.Get);
 
 			return _totalSize - _usedBytes;
 		}
@@ -159,8 +162,8 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		get
 		{
-			using IDisposable registration =
-				RegisterProperty(nameof(TotalSize), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.DriveInfo.RegisterPathProperty(_name, nameof(TotalSize), PropertyAccess.Get);
 
 			return _totalSize;
 		}
@@ -172,16 +175,16 @@ internal sealed class DriveInfoMock : IStorageDrive
 	{
 		get
 		{
-			using IDisposable registration =
-				RegisterProperty(nameof(VolumeLabel), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.DriveInfo.RegisterPathProperty(_name, nameof(VolumeLabel), PropertyAccess.Get);
 
 			return _volumeLabel;
 		}
 		[SupportedOSPlatform("windows")]
 		set
 		{
-			using IDisposable registration =
-				RegisterProperty(nameof(VolumeLabel), PropertyAccess.Set);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.DriveInfo.RegisterPathProperty(_name, nameof(VolumeLabel), PropertyAccess.Set);
 
 			// ReSharper disable once ConstantNullCoalescingCondition
 			_volumeLabel = value ?? _volumeLabel;
@@ -273,9 +276,6 @@ internal sealed class DriveInfoMock : IStorageDrive
 
 		return path;
 	}
-
-	private IDisposable RegisterProperty(string name, PropertyAccess access)
-		=> _fileSystem.StatisticsRegistration.DriveInfo.RegisterProperty(_name, name, access);
 
 	private static string ValidateDriveLetter(string driveName,
 		MockFileSystem fileSystem)

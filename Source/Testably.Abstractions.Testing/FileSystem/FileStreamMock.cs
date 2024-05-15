@@ -20,7 +20,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(CanRead), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.FileStream.RegisterPathProperty(_location.FullPath,
+					nameof(CanRead), PropertyAccess.Get);
 
 			return _access.HasFlag(FileAccess.Read);
 		}
@@ -31,7 +33,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(CanSeek), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.FileStream.RegisterPathProperty(_location.FullPath,
+					nameof(CanSeek), PropertyAccess.Get);
 
 			return base.CanSeek;
 		}
@@ -42,8 +46,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	{
 		get
 		{
-			using IDisposable registration =
-				RegisterProperty(nameof(CanTimeout), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.FileStream.RegisterPathProperty(_location.FullPath,
+					nameof(CanTimeout), PropertyAccess.Get);
 
 			return base.CanTimeout;
 		}
@@ -54,7 +59,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(CanWrite), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.FileStream.RegisterPathProperty(_location.FullPath,
+					nameof(CanWrite), PropertyAccess.Get);
 
 			return _access.HasFlag(FileAccess.Write);
 		}
@@ -65,7 +72,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(IsAsync), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.FileStream.RegisterPathProperty(_location.FullPath,
+					nameof(IsAsync), PropertyAccess.Get);
 
 			return base.IsAsync;
 		}
@@ -76,7 +85,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(Length), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.FileStream.RegisterPathProperty(_location.FullPath,
+					nameof(Length), PropertyAccess.Get);
 
 			return base.Length;
 		}
@@ -87,7 +98,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(Name), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.FileStream.RegisterPathProperty(_location.FullPath,
+					nameof(Name), PropertyAccess.Get);
 
 			return base.Name;
 		}
@@ -98,13 +111,17 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(Position), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.FileStream.RegisterPathProperty(_location.FullPath,
+					nameof(Position), PropertyAccess.Get);
 
 			return base.Position;
 		}
 		set
 		{
-			using IDisposable registration = RegisterProperty(nameof(Position), PropertyAccess.Set);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.FileStream.RegisterPathProperty(_location.FullPath,
+					nameof(Position), PropertyAccess.Set);
 
 			base.Position = value;
 		}
@@ -115,15 +132,17 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	{
 		get
 		{
-			using IDisposable registration =
-				RegisterProperty(nameof(ReadTimeout), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.FileStream.RegisterPathProperty(_location.FullPath,
+					nameof(ReadTimeout), PropertyAccess.Get);
 
 			return base.ReadTimeout;
 		}
 		set
 		{
-			using IDisposable registration =
-				RegisterProperty(nameof(ReadTimeout), PropertyAccess.Set);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.FileStream.RegisterPathProperty(_location.FullPath,
+					nameof(ReadTimeout), PropertyAccess.Set);
 
 			base.ReadTimeout = value;
 		}
@@ -134,15 +153,17 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	{
 		get
 		{
-			using IDisposable registration =
-				RegisterProperty(nameof(WriteTimeout), PropertyAccess.Get);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.FileStream.RegisterPathProperty(_location.FullPath,
+					nameof(WriteTimeout), PropertyAccess.Get);
 
 			return base.WriteTimeout;
 		}
 		set
 		{
-			using IDisposable registration =
-				RegisterProperty(nameof(WriteTimeout), PropertyAccess.Set);
+			using IDisposable registration = _fileSystem.StatisticsRegistration
+				.FileStream.RegisterPathProperty(_location.FullPath,
+					nameof(WriteTimeout), PropertyAccess.Set);
 
 			base.WriteTimeout = value;
 		}
@@ -271,8 +292,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		AsyncCallback? callback,
 		object? state)
 	{
-		using IDisposable registration = RegisterMethod(nameof(BeginRead),
-			buffer, offset, count, callback, state);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(BeginRead),
+				buffer, offset, count, callback, state);
 
 		ThrowIfDisposed();
 		if (!CanRead)
@@ -290,8 +312,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		AsyncCallback? callback,
 		object? state)
 	{
-		using IDisposable registration = RegisterMethod(nameof(BeginWrite),
-			buffer, offset, count, callback, state);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(BeginWrite),
+				buffer, offset, count, callback, state);
 
 		ThrowIfDisposed();
 		if (!CanWrite)
@@ -305,8 +328,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.CopyTo(Stream, int)" />
 	public override void CopyTo(Stream destination, int bufferSize)
 	{
-		using IDisposable registration = RegisterMethod(nameof(CopyTo),
-			destination, bufferSize);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(CopyTo),
+				destination, bufferSize);
 
 		if (!_fileSystem.Execute.IsWindows)
 		{
@@ -320,8 +344,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	public override Task CopyToAsync(Stream destination, int bufferSize,
 		CancellationToken cancellationToken)
 	{
-		using IDisposable registration = RegisterMethod(nameof(CopyToAsync),
-			destination, bufferSize, cancellationToken);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(CopyToAsync),
+				destination, bufferSize, cancellationToken);
 
 		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 		return base.CopyToAsync(destination, bufferSize, cancellationToken);
@@ -330,8 +355,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.EndRead(IAsyncResult)" />
 	public override int EndRead(IAsyncResult asyncResult)
 	{
-		using IDisposable registration = RegisterMethod(nameof(EndRead),
-			asyncResult);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(EndRead),
+				asyncResult);
 
 		return base.EndRead(asyncResult);
 	}
@@ -339,8 +365,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.EndWrite(IAsyncResult)" />
 	public override void EndWrite(IAsyncResult asyncResult)
 	{
-		using IDisposable registration = RegisterMethod(nameof(EndWrite),
-			asyncResult);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(EndWrite),
+				asyncResult);
 
 		_isContentChanged = true;
 		base.EndWrite(asyncResult);
@@ -349,7 +376,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.Flush()" />
 	public override void Flush()
 	{
-		using IDisposable registration = RegisterMethod(nameof(Flush));
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(Flush));
 
 		ThrowIfDisposed();
 		InternalFlush();
@@ -358,8 +386,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.Flush(bool)" />
 	public override void Flush(bool flushToDisk)
 	{
-		using IDisposable registration = RegisterMethod(nameof(Flush),
-			flushToDisk);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(Flush),
+				flushToDisk);
 
 		Flush();
 	}
@@ -367,8 +396,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.FlushAsync(CancellationToken)" />
 	public override Task FlushAsync(CancellationToken cancellationToken)
 	{
-		using IDisposable registration = RegisterMethod(nameof(FlushAsync),
-			cancellationToken);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(FlushAsync),
+				cancellationToken);
 
 		if (cancellationToken.IsCancellationRequested)
 		{
@@ -382,8 +412,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.Read(byte[], int, int)" />
 	public override int Read(byte[] buffer, int offset, int count)
 	{
-		using IDisposable registration = RegisterMethod(nameof(Read),
-			buffer, offset, count);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(Read),
+				buffer, offset, count);
 
 		if (!CanRead)
 		{
@@ -402,8 +433,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.Read(Span{byte})" />
 	public override int Read(Span<byte> buffer)
 	{
-		using IDisposable registration = RegisterMethod(nameof(Read),
-			buffer);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(Read),
+				buffer);
 
 		if (!CanRead)
 		{
@@ -423,8 +455,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	public override Task<int> ReadAsync(byte[] buffer, int offset, int count,
 		CancellationToken cancellationToken)
 	{
-		using IDisposable registration = RegisterMethod(nameof(ReadAsync),
-			buffer, offset, count, cancellationToken);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(ReadAsync),
+				buffer, offset, count, cancellationToken);
 
 		if (!CanRead)
 		{
@@ -444,8 +477,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	public override ValueTask<int> ReadAsync(Memory<byte> buffer,
 		CancellationToken cancellationToken = new())
 	{
-		using IDisposable registration = RegisterMethod(nameof(ReadAsync),
-			buffer, cancellationToken);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(ReadAsync),
+				buffer, cancellationToken);
 
 		if (!CanRead)
 		{
@@ -464,7 +498,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.ReadByte()" />
 	public override int ReadByte()
 	{
-		using IDisposable registration = RegisterMethod(nameof(ReadByte));
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(ReadByte));
 
 		if (!CanRead)
 		{
@@ -482,8 +517,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.Seek(long, SeekOrigin)" />
 	public override long Seek(long offset, SeekOrigin origin)
 	{
-		using IDisposable registration = RegisterMethod(nameof(Seek),
-			offset, origin);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(Seek),
+				offset, origin);
 
 		if (_mode == FileMode.Append && offset <= _initialPosition)
 		{
@@ -496,8 +532,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.SetLength(long)" />
 	public override void SetLength(long value)
 	{
-		using IDisposable registration = RegisterMethod(nameof(SetLength),
-			value);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(SetLength),
+				value);
 
 		ThrowIfDisposed();
 		if (!CanWrite)
@@ -511,7 +548,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.ToString()" />
 	public override string? ToString()
 	{
-		using IDisposable registration = RegisterMethod(nameof(ToString));
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(ToString));
 
 		return base.ToString();
 	}
@@ -519,8 +557,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.Write(byte[], int, int)" />
 	public override void Write(byte[] buffer, int offset, int count)
 	{
-		using IDisposable registration = RegisterMethod(nameof(Write),
-			buffer, offset, count);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(Write),
+				buffer, offset, count);
 
 		if (!CanWrite)
 		{
@@ -535,8 +574,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.Write(ReadOnlySpan{byte})" />
 	public override void Write(ReadOnlySpan<byte> buffer)
 	{
-		using IDisposable registration = RegisterMethod(nameof(Write),
-			buffer);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(Write),
+				buffer);
 
 		if (!CanWrite)
 		{
@@ -552,8 +592,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	public override Task WriteAsync(byte[] buffer, int offset, int count,
 		CancellationToken cancellationToken)
 	{
-		using IDisposable registration = RegisterMethod(nameof(WriteAsync),
-			buffer, offset, count, cancellationToken);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(WriteAsync),
+				buffer, offset, count, cancellationToken);
 
 		if (!CanWrite)
 		{
@@ -569,8 +610,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer,
 		CancellationToken cancellationToken = new())
 	{
-		using IDisposable registration = RegisterMethod(nameof(WriteAsync),
-			buffer, cancellationToken);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(WriteAsync),
+				buffer, cancellationToken);
 
 		if (!CanWrite)
 		{
@@ -585,8 +627,9 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	/// <inheritdoc cref="FileSystemStream.WriteByte(byte)" />
 	public override void WriteByte(byte value)
 	{
-		using IDisposable registration = RegisterMethod(nameof(WriteByte),
-			value);
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(WriteByte),
+				value);
 
 		if (!CanWrite)
 		{
@@ -653,58 +696,6 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 				_fileSystem.Storage.GetLocation(Name));
 		}
 	}
-
-	private IDisposable RegisterMethod(string name)
-		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(_location.FullPath, name);
-
-	private IDisposable RegisterMethod<T1>(string name, T1 parameter1)
-		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(_location.FullPath, name,
-			ParameterDescription.FromParameter(parameter1));
-
-#if FEATURE_SPAN
-	private IDisposable RegisterMethod<T1>(string name, Span<T1> parameter1)
-		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(_location.FullPath, name,
-			ParameterDescription.FromParameter(parameter1));
-#endif
-
-#if FEATURE_SPAN
-	private IDisposable RegisterMethod<T1>(string name, ReadOnlySpan<T1> parameter1)
-		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(_location.FullPath, name,
-			ParameterDescription.FromParameter(parameter1));
-#endif
-
-	private IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, T2 parameter2)
-		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(_location.FullPath, name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2));
-
-	private IDisposable RegisterMethod<T1, T2, T3>(string name, T1 parameter1, T2 parameter2,
-		T3 parameter3)
-		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(_location.FullPath, name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2),
-			ParameterDescription.FromParameter(parameter3));
-
-	private IDisposable RegisterMethod<T1, T2, T3, T4>(string name, T1 parameter1, T2 parameter2,
-		T3 parameter3, T4 parameter4)
-		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(_location.FullPath, name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2),
-			ParameterDescription.FromParameter(parameter3),
-			ParameterDescription.FromParameter(parameter4));
-
-	private IDisposable RegisterMethod<T1, T2, T3, T4, T5>(string name, T1 parameter1,
-		T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5)
-		=> _fileSystem.StatisticsRegistration.FileStream.RegisterMethod(_location.FullPath, name,
-			ParameterDescription.FromParameter(parameter1),
-			ParameterDescription.FromParameter(parameter2),
-			ParameterDescription.FromParameter(parameter3),
-			ParameterDescription.FromParameter(parameter4),
-			ParameterDescription.FromParameter(parameter5));
-
-	private IDisposable RegisterProperty(string name, PropertyAccess access)
-		=> _fileSystem.StatisticsRegistration.FileStream.RegisterProperty(_location.FullPath, name,
-			access);
 
 	private void ThrowIfDisposed()
 	{

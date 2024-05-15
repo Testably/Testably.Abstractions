@@ -51,14 +51,14 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		get
 		{
 			using IDisposable registration =
-				RegisterProperty(nameof(Attributes), PropertyAccess.Get);
+				RegisterPathProperty(nameof(Attributes), PropertyAccess.Get);
 
 			return Container.Attributes;
 		}
 		set
 		{
 			using IDisposable registration =
-				RegisterProperty(nameof(Attributes), PropertyAccess.Set);
+				RegisterPathProperty(nameof(Attributes), PropertyAccess.Set);
 
 			Container.Attributes = value;
 		}
@@ -68,7 +68,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.CreateAsSymbolicLink(string)" />
 	public void CreateAsSymbolicLink(string pathToTarget)
 	{
-		using IDisposable registration = RegisterMethod(nameof(CreateAsSymbolicLink),
+		using IDisposable registration = RegisterPathMethod(nameof(CreateAsSymbolicLink),
 			pathToTarget);
 
 		if (!_fileSystem.Execute.IsWindows && string.IsNullOrWhiteSpace(FullName))
@@ -99,14 +99,14 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		get
 		{
 			using IDisposable registration =
-				RegisterProperty(nameof(CreationTime), PropertyAccess.Get);
+				RegisterPathProperty(nameof(CreationTime), PropertyAccess.Get);
 
 			return Container.CreationTime.Get(DateTimeKind.Local);
 		}
 		set
 		{
 			using IDisposable registration =
-				RegisterProperty(nameof(CreationTime), PropertyAccess.Set);
+				RegisterPathProperty(nameof(CreationTime), PropertyAccess.Set);
 
 			Container.CreationTime.Set(value, DateTimeKind.Local);
 		}
@@ -118,14 +118,14 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		get
 		{
 			using IDisposable registration =
-				RegisterProperty(nameof(CreationTimeUtc), PropertyAccess.Get);
+				RegisterPathProperty(nameof(CreationTimeUtc), PropertyAccess.Get);
 
 			return Container.CreationTime.Get(DateTimeKind.Utc);
 		}
 		set
 		{
 			using IDisposable registration =
-				RegisterProperty(nameof(CreationTimeUtc), PropertyAccess.Set);
+				RegisterPathProperty(nameof(CreationTimeUtc), PropertyAccess.Set);
 
 			Container.CreationTime.Set(value, DateTimeKind.Utc);
 		}
@@ -134,7 +134,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.Delete()" />
 	public virtual void Delete()
 	{
-		using IDisposable registration = RegisterMethod(nameof(Delete));
+		using IDisposable registration = RegisterPathMethod(nameof(Delete));
 
 		_fileSystem.Storage.DeleteContainer(Location);
 		ResetCache(!_fileSystem.Execute.IsNetFramework);
@@ -158,7 +158,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		get
 		{
 			using IDisposable registration =
-				RegisterProperty(nameof(Extension), PropertyAccess.Get);
+				RegisterPathProperty(nameof(Extension), PropertyAccess.Get);
 
 			if (Location.FullPath.EndsWith('.') &&
 			    !_fileSystem.Execute.IsWindows)
@@ -179,7 +179,8 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(FullName), PropertyAccess.Get);
+			using IDisposable registration =
+				RegisterPathProperty(nameof(FullName), PropertyAccess.Get);
 
 			return Location.FullPath;
 		}
@@ -191,14 +192,14 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		get
 		{
 			using IDisposable registration =
-				RegisterProperty(nameof(LastAccessTime), PropertyAccess.Get);
+				RegisterPathProperty(nameof(LastAccessTime), PropertyAccess.Get);
 
 			return Container.LastAccessTime.Get(DateTimeKind.Local);
 		}
 		set
 		{
 			using IDisposable registration =
-				RegisterProperty(nameof(LastAccessTime), PropertyAccess.Set);
+				RegisterPathProperty(nameof(LastAccessTime), PropertyAccess.Set);
 
 			Container.LastAccessTime.Set(value, DateTimeKind.Local);
 		}
@@ -210,14 +211,14 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		get
 		{
 			using IDisposable registration =
-				RegisterProperty(nameof(LastAccessTimeUtc), PropertyAccess.Get);
+				RegisterPathProperty(nameof(LastAccessTimeUtc), PropertyAccess.Get);
 
 			return Container.LastAccessTime.Get(DateTimeKind.Utc);
 		}
 		set
 		{
 			using IDisposable registration =
-				RegisterProperty(nameof(LastAccessTimeUtc), PropertyAccess.Set);
+				RegisterPathProperty(nameof(LastAccessTimeUtc), PropertyAccess.Set);
 
 			Container.LastAccessTime.Set(value, DateTimeKind.Utc);
 		}
@@ -229,14 +230,14 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		get
 		{
 			using IDisposable registration =
-				RegisterProperty(nameof(LastWriteTime), PropertyAccess.Get);
+				RegisterPathProperty(nameof(LastWriteTime), PropertyAccess.Get);
 
 			return Container.LastWriteTime.Get(DateTimeKind.Local);
 		}
 		set
 		{
 			using IDisposable registration =
-				RegisterProperty(nameof(LastWriteTime), PropertyAccess.Set);
+				RegisterPathProperty(nameof(LastWriteTime), PropertyAccess.Set);
 
 			Container.LastWriteTime.Set(value, DateTimeKind.Local);
 		}
@@ -248,14 +249,14 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		get
 		{
 			using IDisposable registration =
-				RegisterProperty(nameof(LastWriteTimeUtc), PropertyAccess.Get);
+				RegisterPathProperty(nameof(LastWriteTimeUtc), PropertyAccess.Get);
 
 			return Container.LastWriteTime.Get(DateTimeKind.Utc);
 		}
 		set
 		{
 			using IDisposable registration =
-				RegisterProperty(nameof(LastWriteTimeUtc), PropertyAccess.Set);
+				RegisterPathProperty(nameof(LastWriteTimeUtc), PropertyAccess.Set);
 
 			Container.LastWriteTime.Set(value, DateTimeKind.Utc);
 		}
@@ -268,7 +269,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		get
 		{
 			using IDisposable registration =
-				RegisterProperty(nameof(LinkTarget), PropertyAccess.Get);
+				RegisterPathProperty(nameof(LinkTarget), PropertyAccess.Get);
 
 			return Container.LinkTarget;
 		}
@@ -280,7 +281,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	{
 		get
 		{
-			using IDisposable registration = RegisterProperty(nameof(Name), PropertyAccess.Get);
+			using IDisposable registration = RegisterPathProperty(nameof(Name), PropertyAccess.Get);
 
 			return string.Equals(
 				_fileSystem.Execute.Path.GetPathRoot(Location.FullPath),
@@ -300,7 +301,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		get
 		{
 			using IDisposable registration =
-				RegisterProperty(nameof(UnixFileMode), PropertyAccess.Get);
+				RegisterPathProperty(nameof(UnixFileMode), PropertyAccess.Get);
 
 			return Container.UnixFileMode;
 		}
@@ -308,7 +309,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		set
 		{
 			using IDisposable registration =
-				RegisterProperty(nameof(UnixFileMode), PropertyAccess.Set);
+				RegisterPathProperty(nameof(UnixFileMode), PropertyAccess.Set);
 
 			if (_fileSystem.Execute.IsWindows)
 			{
@@ -323,7 +324,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.Refresh()" />
 	public void Refresh()
 	{
-		using IDisposable registration = RegisterMethod(nameof(Refresh));
+		using IDisposable registration = RegisterPathMethod(nameof(Refresh));
 
 		ResetCache(true);
 	}
@@ -332,7 +333,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	/// <inheritdoc cref="IFileSystemInfo.ResolveLinkTarget(bool)" />
 	public IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget)
 	{
-		using IDisposable registration = RegisterMethod(nameof(ResolveLinkTarget),
+		using IDisposable registration = RegisterPathMethod(nameof(ResolveLinkTarget),
 			returnFinalTarget);
 
 		try
@@ -417,12 +418,12 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 		_isInitialized = true;
 	}
 
-	protected virtual IDisposable RegisterProperty(string name, PropertyAccess access)
+	protected virtual IDisposable RegisterPathProperty(string name, PropertyAccess access)
 		=> new NoOpDisposable();
 
-	protected virtual IDisposable RegisterMethod(string name)
+	protected virtual IDisposable RegisterPathMethod(string name)
 		=> new NoOpDisposable();
 
-	protected virtual IDisposable RegisterMethod<T1>(string name, T1 parameter1)
+	protected virtual IDisposable RegisterPathMethod<T1>(string name, T1 parameter1)
 		=> new NoOpDisposable();
 }
