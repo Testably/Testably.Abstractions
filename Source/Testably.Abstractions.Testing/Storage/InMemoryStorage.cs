@@ -18,6 +18,9 @@ internal sealed class InMemoryStorage : IStorage
 	private readonly ConcurrentDictionary<IStorageLocation, IStorageContainer>
 		_containers = new();
 
+	private readonly ConcurrentDictionary<IStorageLocation, ConcurrentDictionary<Guid, FileHandle>>
+		_fileHandles = new();
+
 	private readonly ConcurrentDictionary<string, IStorageDrive> _drives =
 		new(StringComparer.OrdinalIgnoreCase);
 
@@ -576,6 +579,72 @@ internal sealed class InMemoryStorage : IStorage
 
 		container = null;
 		return false;
+	}
+
+	/// <inheritdoc cref="IStorage.TryGetFileAccess(IStorageLocation,FileAccess,FileShare,bool,bool,out FileHandle?)" />
+	public bool TryGetFileAccess(
+		IStorageLocation location,
+		FileAccess access,
+		FileShare share,
+		bool deleteAccess,
+		bool ignoreFileShare,
+		[NotNullWhen(true)] out FileHandle? fileHandle)
+	{
+		if (CanGetAccess(location, access, share, deleteAccess, ignoreFileShare))
+		{
+			Guid guid = Guid.NewGuid();
+			FileHandle handle = new FileHandle(_fileSystem, guid, g => ReleaseAccess(g, location),
+				access, share, deleteAccess);
+			_fileHandles.AddOrUpdate(location, _ =>
+			{
+				ConcurrentDictionary<Guid, FileHandle> dict =
+					new ConcurrentDictionary<Guid, FileHandle>();
+				dict.TryAdd(guid, handle);
+				return dict;
+			}, (_, dict) =>
+			{
+				dict.TryAdd(guid, handle);
+				return dict;
+			});
+			fileHandle = handle;
+			return true;
+		}
+
+		fileHandle = null;
+		return false;
+	}
+
+	private void ReleaseAccess(Guid guid, IStorageLocation location)
+	{
+		if (_fileHandles.TryGetValue(location, out ConcurrentDictionary<Guid, FileHandle>? dict))
+		{
+			dict.TryRemove(guid, out _);
+			if (dict.IsEmpty)
+			{
+				_fileHandles.TryRemove(location, out _);
+			}
+		}
+	}
+
+	private bool CanGetAccess(
+		IStorageLocation location,
+		FileAccess access,
+		FileShare share,
+		bool deleteAccess,
+		bool ignoreFileShare)
+	{
+		if (_fileHandles.TryGetValue(location, out ConcurrentDictionary<Guid, FileHandle>? dict))
+		{
+			foreach (KeyValuePair<Guid, FileHandle> fileHandle in dict)
+			{
+				if (!fileHandle.Value.GrantAccess(access, share, deleteAccess, ignoreFileShare))
+				{
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 
 	#endregion

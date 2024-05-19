@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -17,7 +15,6 @@ internal class InMemoryContainer : IStorageContainer
 	private FileAttributes _attributes;
 	private byte[] _bytes = Array.Empty<byte>();
 	private readonly FileSystemExtensibility _extensibility = new();
-	private readonly ConcurrentDictionary<Guid, FileHandle> _fileHandles = new();
 	private readonly MockFileSystem _fileSystem;
 	private bool _isEncrypted;
 	private readonly IStorageLocation _location;
@@ -151,6 +148,11 @@ internal class InMemoryContainer : IStorageContainer
 		bool ignoreMetadataErrors = true,
 		int? hResult = null)
 	{
+		if (_fileSystem.StatisticsRegistration.IsInitializing())
+		{
+			return FileHandle.Ignore;
+		}
+
 		if (_location.Drive == null)
 		{
 			throw ExceptionFactory.DirectoryNotFound(_location.FullPath);
@@ -174,12 +176,14 @@ internal class InMemoryContainer : IStorageContainer
 			throw ExceptionFactory.AclAccessToPathDenied(_location.FullPath);
 		}
 
-		if (CanGetAccess(access, share, deleteAccess, ignoreFileShare))
+		if (_fileSystem.Storage.TryGetFileAccess(
+			_location,
+			access,
+			share,
+			deleteAccess,
+			ignoreFileShare,
+			out FileHandle? fileHandle))
 		{
-			Guid guid = Guid.NewGuid();
-			FileHandle fileHandle =
-				new(_fileSystem, guid, ReleaseAccess, access, share, deleteAccess);
-			_fileHandles.TryAdd(guid, fileHandle);
 			return fileHandle;
 		}
 
@@ -226,6 +230,7 @@ internal class InMemoryContainer : IStorageContainer
 				directoryContainer.AdjustTimes(TimeAdjustments.LastAccessTime);
 			}
 		}
+
 		_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
 	}
 
@@ -304,28 +309,6 @@ internal class InMemoryContainer : IStorageContainer
 		return attributes;
 	}
 
-	private bool CanGetAccess(
-		FileAccess access,
-		FileShare share,
-		bool deleteAccess,
-		bool ignoreFileShare)
-	{
-		foreach (KeyValuePair<Guid, FileHandle> fileHandle in _fileHandles)
-		{
-			if (!fileHandle.Value.GrantAccess(access, share, deleteAccess, ignoreFileShare))
-			{
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	private void ReleaseAccess(Guid guid)
-	{
-		_fileHandles.TryRemove(guid, out _);
-	}
-
 	internal sealed class TimeContainer : ITimeContainer
 	{
 		private DateTime _time;
@@ -360,95 +343,5 @@ internal class InMemoryContainer : IStorageContainer
 		public override string ToString()
 			=> _time.ToUniversalTime()
 				.ToString("yyyy-MM-dd HH:mm:ssZ", CultureInfo.InvariantCulture);
-	}
-
-	private sealed class FileHandle : IStorageAccessHandle
-	{
-		private readonly MockFileSystem _fileSystem;
-		private readonly Guid _key;
-		private readonly Action<Guid> _releaseCallback;
-
-		public FileHandle(MockFileSystem fileSystem, Guid key, Action<Guid> releaseCallback,
-			FileAccess access,
-			FileShare share, bool deleteAccess)
-		{
-			_fileSystem = fileSystem;
-			_releaseCallback = releaseCallback;
-			Access = access;
-			DeleteAccess = deleteAccess;
-			if (_fileSystem.Execute.IsWindows)
-			{
-				Share = share;
-			}
-			else
-			{
-				Share = share == FileShare.None
-					? FileShare.None
-					: FileShare.ReadWrite;
-			}
-
-			_key = key;
-		}
-
-		#region IStorageAccessHandle Members
-
-		/// <inheritdoc cref="IStorageAccessHandle.Access" />
-		public FileAccess Access { get; }
-
-		/// <inheritdoc cref="IStorageAccessHandle.DeleteAccess" />
-		public bool DeleteAccess { get; }
-
-		/// <inheritdoc cref="IStorageAccessHandle.Share" />
-		public FileShare Share { get; }
-
-		/// <inheritdoc cref="IDisposable.Dispose()" />
-		public void Dispose()
-		{
-			_releaseCallback.Invoke(_key);
-		}
-
-		#endregion
-
-		public bool GrantAccess(
-			FileAccess access,
-			FileShare share,
-			bool deleteAccess,
-			bool ignoreFileShare)
-		{
-			FileShare usedShare = share;
-			FileShare currentShare = Share;
-			if (!_fileSystem.Execute.IsWindows)
-			{
-				usedShare = FileShare.ReadWrite;
-				if (ignoreFileShare)
-				{
-					currentShare = FileShare.ReadWrite;
-				}
-			}
-			if (deleteAccess)
-			{
-				return !_fileSystem.Execute.IsWindows || Share == FileShare.Delete;
-			}
-
-			return CheckAccessWithShare(access, currentShare) &&
-			       CheckAccessWithShare(Access, usedShare);
-		}
-
-		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString()
-			=> $"{(DeleteAccess ? "Delete" : Access)} | {Share}";
-
-		private static bool CheckAccessWithShare(FileAccess access, FileShare share)
-		{
-			switch (access)
-			{
-				case FileAccess.Read:
-					return share.HasFlag(FileShare.Read);
-				case FileAccess.Write:
-					return share.HasFlag(FileShare.Write);
-				default:
-					return share == FileShare.ReadWrite;
-			}
-		}
 	}
 }

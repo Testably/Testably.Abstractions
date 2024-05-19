@@ -202,4 +202,28 @@ internal interface IStorage
 		Func<IStorageLocation, MockFileSystem, IStorageContainer>
 			containerGenerator,
 		[NotNullWhen(true)] out IStorageContainer? container);
+
+	/// <summary>
+	///     Tries to get access to the file at <paramref name="location" /> with <paramref name="access" /> and
+	///     <paramref name="share" />.
+	/// </summary>
+	/// <param name="location">The location of the file.</param>
+	/// <param name="access">The requested file access.</param>
+	/// <param name="share">The requested file share.</param>
+	/// <param name="deleteAccess">Flag, indicating if the access comes from a delete request.</param>
+	/// <param name="ignoreFileShare">
+	///     Flag, indicating if the file share should be ignored.
+	///     <para />
+	///     This parameter is required due to OS-specific differences.
+	/// </param>
+	/// <param name="fileHandle">(out) The file handle.</param>
+	/// <returns>
+	///     <see langword="true" /> if the access to the file was granted, otherwise <see langword="false" />.
+	/// </returns>
+	bool TryGetFileAccess(IStorageLocation location,
+		FileAccess access,
+		FileShare share,
+		bool deleteAccess,
+		bool ignoreFileShare,
+		[NotNullWhen(true)] out FileHandle? fileHandle);
 }

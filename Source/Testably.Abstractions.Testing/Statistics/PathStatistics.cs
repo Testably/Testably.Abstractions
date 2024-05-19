@@ -43,25 +43,6 @@ internal class PathStatistics<TFactory, TType> : CallStatistics<TFactory>,
 	#endregion
 
 	/// <summary>
-	///     Registers the <paramref name="name" /> callback with <paramref name="parameters" /> under <paramref name="path" />.
-	/// </summary>
-	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
-	internal IDisposable RegisterPathMethod(string path, string name,
-		ParameterDescription[] parameters)
-	{
-		if (_statisticsGate.TryGetLock(out IDisposable release))
-		{
-			string key = CreateKey(_fileSystem.Storage.CurrentDirectory, path);
-			CallStatistics<TType> callStatistics =
-				_statistics.GetOrAdd(key,
-					k => new CallStatistics<TType>(_statisticsGate, $"{ToString()}[{k}]"));
-			return callStatistics.RegisterMethodWithoutLock(release, name, parameters);
-		}
-
-		return release;
-	}
-
-	/// <summary>
 	///     Registers the <paramref name="name" /> callback without parameters under <paramref name="path" />.
 	/// </summary>
 	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
