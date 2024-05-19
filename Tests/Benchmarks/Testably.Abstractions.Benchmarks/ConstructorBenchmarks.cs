@@ -16,6 +16,23 @@ public class ConstructorBenchmarks
 {
 	private readonly Dictionary<string, string> _testData = CreateTestData();
 
+	[Benchmark]
+	public IFileSystem ConstructorEmpty_TestableIO()
+		=> new System.IO.Abstractions.TestingHelpers.MockFileSystem();
+
+	[Benchmark]
+	public IFileSystem ConstructorEmpty_Testably() => new MockFileSystem();
+
+	[Benchmark]
+	public IFileSystem ConstructorWithInitialization_1000_TestableIO()
+		=> new System.IO.Abstractions.TestingHelpers.MockFileSystem(
+			_testData.ToDictionary(x => x.Key, x => new MockFileData(x.Value)));
+
+	[Benchmark]
+	public IFileSystem ConstructorWithInitialization_1000_Testably() => new MockFileSystem()
+		.Initialize()
+		.With(_testData.Select(x => new FileDescription(x.Key, x.Value)).ToArray()).FileSystem;
+
 	public static Dictionary<string, string> CreateTestData()
 	{
 		int filesCount = 1000;
@@ -25,20 +42,4 @@ public class ConstructorBenchmarks
 				i => @$"C:\{string.Join(@"\", Enumerable.Range(0, (i % maxDirectoryDepth) + 1).Select(j => j.ToString(CultureInfo.InvariantCulture)))}\{i}.bin",
 				i => i.ToString(CultureInfo.InvariantCulture));
 	}
-
-	[Benchmark]
-	public IFileSystem TestableIO_1000()
-		=> new System.IO.Abstractions.TestingHelpers.MockFileSystem(
-			_testData.ToDictionary(x => x.Key, x => new MockFileData(x.Value)));
-
-	[Benchmark]
-	public IFileSystem TestableIO_Empty()
-		=> new System.IO.Abstractions.TestingHelpers.MockFileSystem();
-
-	[Benchmark]
-	public IFileSystem Testably_1000() => new MockFileSystem().Initialize()
-		.With(_testData.Select(x => new FileDescription(x.Key, x.Value)).ToArray()).FileSystem;
-
-	[Benchmark]
-	public IFileSystem Testably_Empty() => new MockFileSystem();
 }
