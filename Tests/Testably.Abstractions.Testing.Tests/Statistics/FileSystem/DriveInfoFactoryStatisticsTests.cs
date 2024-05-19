@@ -14,7 +14,7 @@ public sealed class DriveInfoFactoryStatisticsTests
 
 		sut.DriveInfo.GetDrives();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.DriveInfo.ShouldOnlyContainMethodCall(nameof(IDriveInfoFactory.GetDrives));
 	}
 
@@ -26,7 +26,7 @@ public sealed class DriveInfoFactoryStatisticsTests
 
 		sut.DriveInfo.New(driveName);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.DriveInfo.ShouldOnlyContainMethodCall(nameof(IDriveInfoFactory.New),
 			driveName);
 	}
@@ -39,7 +39,7 @@ public sealed class DriveInfoFactoryStatisticsTests
 
 		sut.DriveInfo.Wrap(driveInfo);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.DriveInfo.ShouldOnlyContainMethodCall(nameof(IDriveInfoFactory.Wrap),
 			driveInfo);
 	}

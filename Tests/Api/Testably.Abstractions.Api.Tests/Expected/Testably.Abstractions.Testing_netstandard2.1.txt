@@ -291,6 +291,7 @@ namespace Testably.Abstractions.Testing.Statistics
         Testably.Abstractions.Testing.Statistics.IPathStatistics<System.IO.Abstractions.IFileStreamFactory, System.IO.Abstractions.FileSystemStream> FileStream { get; }
         Testably.Abstractions.Testing.Statistics.IPathStatistics<System.IO.Abstractions.IFileSystemWatcherFactory, System.IO.Abstractions.IFileSystemWatcher> FileSystemWatcher { get; }
         Testably.Abstractions.Testing.Statistics.IStatistics<System.IO.Abstractions.IPath> Path { get; }
+        int TotalCount { get; }
     }
     public interface IPathStatistics<TFactory, TType> : Testably.Abstractions.Testing.Statistics.IStatistics, Testably.Abstractions.Testing.Statistics.IStatistics<TFactory>
     {

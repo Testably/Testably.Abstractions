@@ -14,7 +14,7 @@ public sealed class DirectoryInfoFactoryStatisticsTests
 
 		sut.DirectoryInfo.New(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.DirectoryInfo.ShouldOnlyContainMethodCall(nameof(IDirectoryInfoFactory.New),
 			path);
 	}
@@ -27,7 +27,7 @@ public sealed class DirectoryInfoFactoryStatisticsTests
 
 		sut.DirectoryInfo.Wrap(directoryInfo);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.DirectoryInfo.ShouldOnlyContainMethodCall(nameof(IDirectoryInfoFactory.Wrap),
 			directoryInfo);
 	}

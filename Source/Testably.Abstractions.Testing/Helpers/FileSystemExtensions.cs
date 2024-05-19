@@ -129,7 +129,7 @@ internal static class FileSystemExtensions
 	{
 		if (fileSystem is MockFileSystem mockFileSystem)
 		{
-			return mockFileSystem.StatisticsRegistration.Ignore();
+			return mockFileSystem.Registration.Ignore();
 		}
 
 		return new NoOpDisposable();

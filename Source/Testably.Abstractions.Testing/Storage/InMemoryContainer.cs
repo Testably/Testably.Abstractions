@@ -148,7 +148,7 @@ internal class InMemoryContainer : IStorageContainer
 		bool ignoreMetadataErrors = true,
 		int? hResult = null)
 	{
-		if (_fileSystem.StatisticsRegistration.IsInitializing())
+		if (_fileSystem.Registration.IsInitializing())
 		{
 			return FileHandle.Ignore;
 		}

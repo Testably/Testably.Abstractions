@@ -18,7 +18,7 @@ public class FileSystemWatcherStatisticsTests
 
 		fileSystemWatcher.BeginInit();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileSystemWatcher.BeginInit));
 	}
@@ -32,7 +32,7 @@ public class FileSystemWatcherStatisticsTests
 
 		fileSystemWatcher.EndInit();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileSystemWatcher.EndInit));
 	}
@@ -135,7 +135,7 @@ public class FileSystemWatcherStatisticsTests
 
 		_ = sut.FileSystemWatcher.New("foo").EnableRaisingEvents;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileSystemWatcher.EnableRaisingEvents));
 	}
@@ -149,7 +149,7 @@ public class FileSystemWatcherStatisticsTests
 
 		sut.FileSystemWatcher.New("foo").EnableRaisingEvents = value;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileSystemWatcher.EnableRaisingEvents));
 	}
@@ -162,7 +162,7 @@ public class FileSystemWatcherStatisticsTests
 
 		_ = sut.FileSystemWatcher.New("foo").Filter;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileSystemWatcher.Filter));
 	}
@@ -176,7 +176,7 @@ public class FileSystemWatcherStatisticsTests
 
 		sut.FileSystemWatcher.New("foo").Filter = value;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileSystemWatcher.Filter));
 	}
@@ -190,7 +190,7 @@ public class FileSystemWatcherStatisticsTests
 
 		_ = sut.FileSystemWatcher.New("foo").Filters;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileSystemWatcher.Filters));
 	}
@@ -204,7 +204,7 @@ public class FileSystemWatcherStatisticsTests
 
 		_ = sut.FileSystemWatcher.New("foo").IncludeSubdirectories;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileSystemWatcher.IncludeSubdirectories));
 	}
@@ -218,7 +218,7 @@ public class FileSystemWatcherStatisticsTests
 
 		sut.FileSystemWatcher.New("foo").IncludeSubdirectories = value;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileSystemWatcher.IncludeSubdirectories));
 	}
@@ -231,7 +231,7 @@ public class FileSystemWatcherStatisticsTests
 
 		_ = sut.FileSystemWatcher.New("foo").InternalBufferSize;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileSystemWatcher.InternalBufferSize));
 	}
@@ -245,7 +245,7 @@ public class FileSystemWatcherStatisticsTests
 
 		sut.FileSystemWatcher.New("foo").InternalBufferSize = value;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileSystemWatcher.InternalBufferSize));
 	}
@@ -258,7 +258,7 @@ public class FileSystemWatcherStatisticsTests
 
 		_ = sut.FileSystemWatcher.New("foo").NotifyFilter;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileSystemWatcher.NotifyFilter));
 	}
@@ -272,7 +272,7 @@ public class FileSystemWatcherStatisticsTests
 
 		sut.FileSystemWatcher.New("foo").NotifyFilter = value;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileSystemWatcher.NotifyFilter));
 	}
@@ -285,7 +285,7 @@ public class FileSystemWatcherStatisticsTests
 
 		_ = sut.FileSystemWatcher.New("foo").Path;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileSystemWatcher.Path));
 	}
@@ -299,7 +299,7 @@ public class FileSystemWatcherStatisticsTests
 
 		sut.FileSystemWatcher.New("foo").Path = value;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileSystemWatcher.Path));
 	}
@@ -312,7 +312,7 @@ public class FileSystemWatcherStatisticsTests
 
 		_ = sut.FileSystemWatcher.New("foo").Site;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileSystemWatcher.Site));
 	}
@@ -326,7 +326,7 @@ public class FileSystemWatcherStatisticsTests
 
 		sut.FileSystemWatcher.New("foo").Site = value;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileSystemWatcher.Site));
 	}
@@ -339,7 +339,7 @@ public class FileSystemWatcherStatisticsTests
 
 		_ = sut.FileSystemWatcher.New("foo").SynchronizingObject;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileSystemWatcher.SynchronizingObject));
 	}
@@ -353,7 +353,7 @@ public class FileSystemWatcherStatisticsTests
 
 		sut.FileSystemWatcher.New("foo").SynchronizingObject = value;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileSystemWatcher["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileSystemWatcher.SynchronizingObject));
 	}
