@@ -14,7 +14,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.CreateDirectory(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.CreateDirectory),
 			path);
 	}
@@ -31,7 +31,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.CreateDirectory(path, unixCreateMode);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.CreateDirectory),
 			path, unixCreateMode);
 	}
@@ -47,7 +47,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.CreateSymbolicLink(path, pathToTarget);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.CreateSymbolicLink),
 			path, pathToTarget);
 	}
@@ -62,7 +62,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.CreateTempSubdirectory(prefix);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(
 			nameof(IDirectory.CreateTempSubdirectory),
 			prefix);
@@ -79,7 +79,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.Delete(path, recursive);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.Delete),
 			path, recursive);
 	}
@@ -93,7 +93,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.Delete(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.Delete),
 			path);
 	}
@@ -106,7 +106,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.EnumerateDirectories(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(
 			nameof(IDirectory.EnumerateDirectories),
 			path);
@@ -123,7 +123,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.EnumerateDirectories(path, searchPattern, enumerationOptions);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(
 			nameof(IDirectory.EnumerateDirectories),
 			path, searchPattern, enumerationOptions);
@@ -140,7 +140,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.EnumerateDirectories(path, searchPattern, searchOption);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(
 			nameof(IDirectory.EnumerateDirectories),
 			path, searchPattern, searchOption);
@@ -155,7 +155,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.EnumerateDirectories(path, searchPattern);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(
 			nameof(IDirectory.EnumerateDirectories),
 			path, searchPattern);
@@ -169,7 +169,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.EnumerateFiles(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.EnumerateFiles),
 			path);
 	}
@@ -185,7 +185,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.EnumerateFiles(path, searchPattern, enumerationOptions);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.EnumerateFiles),
 			path, searchPattern, enumerationOptions);
 	}
@@ -201,7 +201,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.EnumerateFiles(path, searchPattern, searchOption);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.EnumerateFiles),
 			path, searchPattern, searchOption);
 	}
@@ -215,7 +215,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.EnumerateFiles(path, searchPattern);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.EnumerateFiles),
 			path, searchPattern);
 	}
@@ -228,7 +228,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.EnumerateFileSystemEntries(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(
 			nameof(IDirectory.EnumerateFileSystemEntries),
 			path);
@@ -246,7 +246,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.EnumerateFileSystemEntries(path, searchPattern, enumerationOptions);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(
 			nameof(IDirectory.EnumerateFileSystemEntries),
 			path, searchPattern, enumerationOptions);
@@ -263,7 +263,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.EnumerateFileSystemEntries(path, searchPattern, searchOption);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(
 			nameof(IDirectory.EnumerateFileSystemEntries),
 			path, searchPattern, searchOption);
@@ -278,7 +278,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.EnumerateFileSystemEntries(path, searchPattern);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(
 			nameof(IDirectory.EnumerateFileSystemEntries),
 			path, searchPattern);
@@ -292,7 +292,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.Exists(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.Exists),
 			path);
 	}
@@ -305,7 +305,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetCreationTime(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.GetCreationTime),
 			path);
 	}
@@ -318,7 +318,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetCreationTimeUtc(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.GetCreationTimeUtc),
 			path);
 	}
@@ -330,7 +330,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetCurrentDirectory();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(
 			nameof(IDirectory.GetCurrentDirectory));
 	}
@@ -344,7 +344,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetDirectories(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.GetDirectories),
 			path);
 	}
@@ -361,7 +361,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetDirectories(path, searchPattern, enumerationOptions);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.GetDirectories),
 			path, searchPattern, enumerationOptions);
 	}
@@ -378,7 +378,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetDirectories(path, searchPattern, searchOption);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.GetDirectories),
 			path, searchPattern, searchOption);
 	}
@@ -393,7 +393,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetDirectories(path, searchPattern);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.GetDirectories),
 			path, searchPattern);
 	}
@@ -406,7 +406,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetDirectoryRoot(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.GetDirectoryRoot),
 			path);
 	}
@@ -420,7 +420,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetFiles(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.GetFiles),
 			path);
 	}
@@ -437,7 +437,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetFiles(path, searchPattern, enumerationOptions);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.GetFiles),
 			path, searchPattern, enumerationOptions);
 	}
@@ -454,7 +454,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetFiles(path, searchPattern, searchOption);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.GetFiles),
 			path, searchPattern, searchOption);
 	}
@@ -469,7 +469,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetFiles(path, searchPattern);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.GetFiles),
 			path, searchPattern);
 	}
@@ -483,7 +483,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetFileSystemEntries(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(
 			nameof(IDirectory.GetFileSystemEntries),
 			path);
@@ -501,7 +501,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetFileSystemEntries(path, searchPattern, enumerationOptions);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(
 			nameof(IDirectory.GetFileSystemEntries),
 			path, searchPattern, enumerationOptions);
@@ -519,7 +519,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetFileSystemEntries(path, searchPattern, searchOption);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(
 			nameof(IDirectory.GetFileSystemEntries),
 			path, searchPattern, searchOption);
@@ -535,7 +535,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetFileSystemEntries(path, searchPattern);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(
 			nameof(IDirectory.GetFileSystemEntries),
 			path, searchPattern);
@@ -549,7 +549,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetLastAccessTime(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.GetLastAccessTime),
 			path);
 	}
@@ -562,7 +562,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetLastAccessTimeUtc(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(
 			nameof(IDirectory.GetLastAccessTimeUtc),
 			path);
@@ -576,7 +576,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetLastWriteTime(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.GetLastWriteTime),
 			path);
 	}
@@ -589,7 +589,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetLastWriteTimeUtc(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.GetLastWriteTimeUtc),
 			path);
 	}
@@ -601,7 +601,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetLogicalDrives();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.GetLogicalDrives));
 	}
 
@@ -613,7 +613,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.GetParent(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.GetParent),
 			path);
 	}
@@ -628,7 +628,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.Move(sourceDirName, destDirName);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.Move),
 			sourceDirName, destDirName);
 	}
@@ -643,7 +643,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.ResolveLinkTarget(linkPath, returnFinalTarget);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.ResolveLinkTarget),
 			linkPath, returnFinalTarget);
 	}
@@ -659,7 +659,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.SetCreationTime(path, creationTime);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.SetCreationTime),
 			path, creationTime);
 	}
@@ -674,7 +674,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.SetCreationTimeUtc(path, creationTimeUtc);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.SetCreationTimeUtc),
 			path, creationTimeUtc);
 	}
@@ -688,7 +688,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.SetCurrentDirectory(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.SetCurrentDirectory),
 			path);
 	}
@@ -703,7 +703,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.SetLastAccessTime(path, lastAccessTime);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.SetLastAccessTime),
 			path, lastAccessTime);
 	}
@@ -718,7 +718,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.SetLastAccessTimeUtc(path, lastAccessTimeUtc);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(
 			nameof(IDirectory.SetLastAccessTimeUtc),
 			path, lastAccessTimeUtc);
@@ -734,7 +734,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.SetLastWriteTime(path, lastWriteTime);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.SetLastWriteTime),
 			path, lastWriteTime);
 	}
@@ -749,7 +749,7 @@ public sealed class DirectoryStatisticsTests
 
 		sut.Directory.SetLastWriteTimeUtc(path, lastWriteTimeUtc);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Directory.ShouldOnlyContainMethodCall(nameof(IDirectory.SetLastWriteTimeUtc),
 			path, lastWriteTimeUtc);
 	}

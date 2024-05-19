@@ -80,6 +80,8 @@ public sealed class MockFileSystem : IFileSystem
 		private set;
 	}
 
+	internal FileSystemStatistics StatisticsRegistration { get; }
+
 	/// <summary>
 	///     The underlying storage of directories and files.
 	/// </summary>
@@ -91,7 +93,7 @@ public sealed class MockFileSystem : IFileSystem
 	internal IReadOnlyList<IStorageContainer> StorageContainers
 		=> _storage.GetContainers();
 
-	internal readonly FileSystemStatistics StatisticsRegistration;
+	internal FileSystemRegistration Registration { get; }
 
 	private readonly DirectoryMock _directoryMock;
 	private readonly FileMock _fileMock;
@@ -120,8 +122,9 @@ public sealed class MockFileSystem : IFileSystem
 		SimulationMode = SimulationMode.Native;
 		Execute = new Execute(this);
 #endif
+		Registration = new FileSystemRegistration();
 		StatisticsRegistration = new FileSystemStatistics(this);
-		using IDisposable release = StatisticsRegistration.Ignore();
+		using IDisposable release = Registration.Ignore();
 		RandomSystem =
 			new MockRandomSystem(initialization.RandomProvider ?? RandomProvider.Default());
 		TimeSystem = new MockTimeSystem(TimeProvider.Now());

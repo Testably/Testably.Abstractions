@@ -25,7 +25,7 @@ public class FileStreamFactoryStatisticsTests
 
 		using FileSystemStream result = sut.FileStream.New(handle, access, bufferSize, isAsync);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
 			handle, access, bufferSize, isAsync);
 	}
@@ -45,7 +45,7 @@ public class FileStreamFactoryStatisticsTests
 
 		using FileSystemStream result = sut.FileStream.New(handle, access, bufferSize);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
 			handle, access, bufferSize);
 	}
@@ -63,7 +63,7 @@ public class FileStreamFactoryStatisticsTests
 
 		using FileSystemStream result = sut.FileStream.New(handle, access);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
 			handle, access);
 	}
@@ -83,7 +83,7 @@ public class FileStreamFactoryStatisticsTests
 		using FileSystemStream result =
 			sut.FileStream.New(path, mode, access, share, bufferSize, useAsync);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
 			path, mode, access, share, bufferSize, useAsync);
 	}
@@ -102,7 +102,7 @@ public class FileStreamFactoryStatisticsTests
 		using FileSystemStream result =
 			sut.FileStream.New(path, mode, access, share, bufferSize, options);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
 			path, mode, access, share, bufferSize, options);
 	}
@@ -119,7 +119,7 @@ public class FileStreamFactoryStatisticsTests
 
 		using FileSystemStream result = sut.FileStream.New(path, mode, access, share, bufferSize);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
 			path, mode, access, share, bufferSize);
 	}
@@ -135,7 +135,7 @@ public class FileStreamFactoryStatisticsTests
 
 		using FileSystemStream result = sut.FileStream.New(path, mode, access, share);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
 			path, mode, access, share);
 	}
@@ -150,7 +150,7 @@ public class FileStreamFactoryStatisticsTests
 
 		using FileSystemStream result = sut.FileStream.New(path, mode, access);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
 			path, mode, access);
 	}
@@ -164,7 +164,7 @@ public class FileStreamFactoryStatisticsTests
 
 		using FileSystemStream result = sut.FileStream.New(path, mode);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
 			path, mode);
 	}
@@ -180,7 +180,7 @@ public class FileStreamFactoryStatisticsTests
 
 		using FileSystemStream result = sut.FileStream.New(path, options);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.New),
 			path, options);
 	}
@@ -204,7 +204,7 @@ public class FileStreamFactoryStatisticsTests
 				// Wrap is not possible on the MockFileSystem, but should still be registered!
 			}
 
-			sut.StatisticsRegistration.TotalCount.Should().Be(1);
+			sut.Statistics.TotalCount.Should().Be(1);
 			sut.Statistics.FileStream.ShouldOnlyContainMethodCall(nameof(IFileStreamFactory.Wrap),
 				fileStream);
 		}

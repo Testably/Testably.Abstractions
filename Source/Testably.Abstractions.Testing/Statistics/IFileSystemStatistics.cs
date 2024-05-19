@@ -44,4 +44,9 @@ public interface IFileSystemStatistics
 	///     Statistical information about calls to <see cref="IFileSystem.Path" />.
 	/// </summary>
 	IStatistics<IPath> Path { get; }
+
+	/// <summary>
+	///     The sum of all registered statistic calls.
+	/// </summary>
+	int TotalCount { get; }
 }

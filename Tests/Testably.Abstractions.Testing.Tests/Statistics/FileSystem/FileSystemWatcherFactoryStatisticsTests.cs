@@ -13,7 +13,7 @@ public class FileSystemWatcherFactoryStatisticsTests
 
 		using IFileSystemWatcher result = sut.FileSystemWatcher.New();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.FileSystemWatcher.ShouldOnlyContainMethodCall(
 			nameof(IFileSystemWatcherFactory.New));
 	}
@@ -27,7 +27,7 @@ public class FileSystemWatcherFactoryStatisticsTests
 
 		using IFileSystemWatcher result = sut.FileSystemWatcher.New(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.FileSystemWatcher.ShouldOnlyContainMethodCall(
 			nameof(IFileSystemWatcherFactory.New),
 			path);
@@ -43,7 +43,7 @@ public class FileSystemWatcherFactoryStatisticsTests
 
 		using IFileSystemWatcher result = sut.FileSystemWatcher.New(path, filter);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.FileSystemWatcher.ShouldOnlyContainMethodCall(
 			nameof(IFileSystemWatcherFactory.New),
 			path, filter);
@@ -58,7 +58,7 @@ public class FileSystemWatcherFactoryStatisticsTests
 
 		using IFileSystemWatcher result = sut.FileSystemWatcher.Wrap(fileSystemWatcher);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.FileSystemWatcher.ShouldOnlyContainMethodCall(
 			nameof(IFileSystemWatcherFactory.Wrap),
 			fileSystemWatcher);

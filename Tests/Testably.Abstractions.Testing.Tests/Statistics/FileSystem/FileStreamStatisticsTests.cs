@@ -22,7 +22,7 @@ public class FileStreamStatisticsTests
 
 		fileStream.BeginRead(buffer, offset, count, callback, state);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.BeginRead),
 				buffer, offset, count, callback, state);
@@ -41,7 +41,7 @@ public class FileStreamStatisticsTests
 
 		fileStream.BeginWrite(buffer, offset, count, callback, state);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.BeginWrite),
 				buffer, offset, count, callback, state);
@@ -57,7 +57,7 @@ public class FileStreamStatisticsTests
 
 		fileStream.CopyTo(destination, bufferSize);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.CopyTo),
 				destination, bufferSize);
@@ -74,7 +74,7 @@ public class FileStreamStatisticsTests
 
 		await fileStream.CopyToAsync(destination, bufferSize, cancellationToken);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.CopyToAsync),
 				destination, bufferSize, cancellationToken);
@@ -90,7 +90,7 @@ public class FileStreamStatisticsTests
 
 		fileStream.EndRead(asyncResult);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(3);
+		sut.Statistics.TotalCount.Should().Be(3);
 		sut.Statistics.FileStream["foo"].Methods.Length.Should().Be(2);
 		sut.Statistics.FileStream["foo"].Methods.Should()
 			.ContainSingle(c => c.Name == nameof(FileSystemStream.EndRead) &&
@@ -108,7 +108,7 @@ public class FileStreamStatisticsTests
 
 		fileStream.EndWrite(asyncResult);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(3);
+		sut.Statistics.TotalCount.Should().Be(3);
 		sut.Statistics.FileStream["foo"].Methods.Length.Should().Be(2);
 		sut.Statistics.FileStream["foo"].Methods.Should()
 			.ContainSingle(c => c.Name == nameof(FileSystemStream.EndWrite) &&
@@ -125,7 +125,7 @@ public class FileStreamStatisticsTests
 
 		fileStream.Flush(flushToDisk);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Flush),
 				flushToDisk);
@@ -139,7 +139,7 @@ public class FileStreamStatisticsTests
 
 		fileStream.Flush();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Flush));
 	}
@@ -153,7 +153,7 @@ public class FileStreamStatisticsTests
 
 		await fileStream.FlushAsync(cancellationToken);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.FlushAsync),
 				cancellationToken);
@@ -170,7 +170,7 @@ public class FileStreamStatisticsTests
 
 		_ = fileStream.Read(buffer, offset, count);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Read),
 				buffer, offset, count);
@@ -186,7 +186,7 @@ public class FileStreamStatisticsTests
 
 		_ = fileStream.Read(buffer);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Read),
 				buffer);
@@ -205,7 +205,7 @@ public class FileStreamStatisticsTests
 
 		_ = await fileStream.ReadAsync(buffer, offset, count, cancellationToken);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.ReadAsync),
 				buffer, offset, count, cancellationToken);
@@ -222,7 +222,7 @@ public class FileStreamStatisticsTests
 
 		_ = await fileStream.ReadAsync(buffer, cancellationToken);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.ReadAsync),
 				buffer, cancellationToken);
@@ -237,7 +237,7 @@ public class FileStreamStatisticsTests
 
 		fileStream.ReadByte();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.ReadByte));
 	}
@@ -252,7 +252,7 @@ public class FileStreamStatisticsTests
 
 		fileStream.Seek(offset, origin);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Seek),
 				offset, origin);
@@ -267,7 +267,7 @@ public class FileStreamStatisticsTests
 
 		fileStream.SetLength(value);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.SetLength),
 				value);
@@ -281,7 +281,7 @@ public class FileStreamStatisticsTests
 
 		_ = fileStream.ToString();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.ToString));
 	}
@@ -297,7 +297,7 @@ public class FileStreamStatisticsTests
 
 		fileStream.Write(buffer, offset, count);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Write),
 				buffer, offset, count);
@@ -313,7 +313,7 @@ public class FileStreamStatisticsTests
 
 		fileStream.Write(buffer);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Write),
 				buffer);
@@ -332,7 +332,7 @@ public class FileStreamStatisticsTests
 
 		await fileStream.WriteAsync(buffer, offset, count, cancellationToken);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.WriteAsync),
 				buffer, offset, count, cancellationToken);
@@ -349,7 +349,7 @@ public class FileStreamStatisticsTests
 
 		await fileStream.WriteAsync(buffer, cancellationToken);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.WriteAsync),
 				buffer, cancellationToken);
@@ -365,7 +365,7 @@ public class FileStreamStatisticsTests
 
 		fileStream.WriteByte(value);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.WriteByte),
 				value);
@@ -379,7 +379,7 @@ public class FileStreamStatisticsTests
 
 		_ = fileStream.CanRead;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.CanRead));
 	}
@@ -392,7 +392,7 @@ public class FileStreamStatisticsTests
 
 		_ = fileStream.CanSeek;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.CanSeek));
 	}
@@ -405,7 +405,7 @@ public class FileStreamStatisticsTests
 
 		_ = fileStream.CanTimeout;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.CanTimeout));
 	}
@@ -418,7 +418,7 @@ public class FileStreamStatisticsTests
 
 		_ = fileStream.CanWrite;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.CanWrite));
 	}
@@ -431,7 +431,7 @@ public class FileStreamStatisticsTests
 
 		_ = fileStream.IsAsync;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.IsAsync));
 	}
@@ -444,7 +444,7 @@ public class FileStreamStatisticsTests
 
 		_ = fileStream.Length;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.Length));
 	}
@@ -457,7 +457,7 @@ public class FileStreamStatisticsTests
 
 		_ = fileStream.Name;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.Name));
 	}
@@ -470,7 +470,7 @@ public class FileStreamStatisticsTests
 
 		_ = fileStream.Position;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.Position));
 	}
@@ -484,7 +484,7 @@ public class FileStreamStatisticsTests
 
 		fileStream.Position = value;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(FileSystemStream.Position));
 	}
@@ -504,7 +504,7 @@ public class FileStreamStatisticsTests
 			// Timeouts are not supported on this stream.
 		}
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.ReadTimeout));
 	}
@@ -525,7 +525,7 @@ public class FileStreamStatisticsTests
 			// Timeouts are not supported on this stream.
 		}
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(FileSystemStream.ReadTimeout));
 	}
@@ -545,7 +545,7 @@ public class FileStreamStatisticsTests
 			// Timeouts are not supported on this stream.
 		}
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.WriteTimeout));
 	}
@@ -566,7 +566,7 @@ public class FileStreamStatisticsTests
 			// Timeouts are not supported on this stream.
 		}
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(FileSystemStream.WriteTimeout));
 	}

@@ -17,7 +17,7 @@ public class PathStatisticsTests
 
 		sut.Path.ChangeExtension(path, extension);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.ChangeExtension),
 			path, extension);
 	}
@@ -31,7 +31,7 @@ public class PathStatisticsTests
 
 		sut.Path.Combine(path1, path2);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Combine),
 			path1, path2);
 	}
@@ -46,7 +46,7 @@ public class PathStatisticsTests
 
 		sut.Path.Combine(path1, path2, path3);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Combine),
 			path1, path2, path3);
 	}
@@ -62,7 +62,7 @@ public class PathStatisticsTests
 
 		sut.Path.Combine(path1, path2, path3, path4);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Combine),
 			path1, path2, path3, path4);
 	}
@@ -75,7 +75,7 @@ public class PathStatisticsTests
 
 		sut.Path.Combine(paths);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Combine),
 			paths);
 	}
@@ -89,7 +89,7 @@ public class PathStatisticsTests
 
 		sut.Path.EndsInDirectorySeparator(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.EndsInDirectorySeparator),
 			path);
 	}
@@ -104,7 +104,7 @@ public class PathStatisticsTests
 
 		sut.Path.EndsInDirectorySeparator(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.EndsInDirectorySeparator),
 			path);
 	}
@@ -119,7 +119,7 @@ public class PathStatisticsTests
 
 		sut.Path.Exists(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Exists),
 			path);
 	}
@@ -134,7 +134,7 @@ public class PathStatisticsTests
 
 		sut.Path.GetDirectoryName(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetDirectoryName),
 			path);
 	}
@@ -148,7 +148,7 @@ public class PathStatisticsTests
 
 		sut.Path.GetDirectoryName(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetDirectoryName),
 			path);
 	}
@@ -162,7 +162,7 @@ public class PathStatisticsTests
 
 		sut.Path.GetExtension(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetExtension),
 			path);
 	}
@@ -176,7 +176,7 @@ public class PathStatisticsTests
 
 		sut.Path.GetExtension(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetExtension),
 			path);
 	}
@@ -190,7 +190,7 @@ public class PathStatisticsTests
 
 		sut.Path.GetFileName(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetFileName),
 			path);
 	}
@@ -204,7 +204,7 @@ public class PathStatisticsTests
 
 		sut.Path.GetFileName(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetFileName),
 			path);
 	}
@@ -218,7 +218,7 @@ public class PathStatisticsTests
 
 		sut.Path.GetFileNameWithoutExtension(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetFileNameWithoutExtension),
 			path);
 	}
@@ -232,7 +232,7 @@ public class PathStatisticsTests
 
 		sut.Path.GetFileNameWithoutExtension(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetFileNameWithoutExtension),
 			path);
 	}
@@ -245,7 +245,7 @@ public class PathStatisticsTests
 
 		sut.Path.GetFullPath(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetFullPath),
 			path);
 	}
@@ -260,7 +260,7 @@ public class PathStatisticsTests
 
 		sut.Path.GetFullPath(path, basePath);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetFullPath),
 			path, basePath);
 	}
@@ -273,7 +273,7 @@ public class PathStatisticsTests
 
 		sut.Path.GetInvalidFileNameChars();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetInvalidFileNameChars));
 	}
 
@@ -284,7 +284,7 @@ public class PathStatisticsTests
 
 		sut.Path.GetInvalidPathChars();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetInvalidPathChars));
 	}
 
@@ -297,7 +297,7 @@ public class PathStatisticsTests
 
 		sut.Path.GetPathRoot(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetPathRoot),
 			path);
 	}
@@ -311,7 +311,7 @@ public class PathStatisticsTests
 
 		sut.Path.GetPathRoot(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetPathRoot),
 			path);
 	}
@@ -323,7 +323,7 @@ public class PathStatisticsTests
 
 		sut.Path.GetRandomFileName();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetRandomFileName));
 	}
 
@@ -337,7 +337,7 @@ public class PathStatisticsTests
 
 		sut.Path.GetRelativePath(relativeTo, path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetRelativePath),
 			relativeTo, path);
 	}
@@ -350,7 +350,7 @@ public class PathStatisticsTests
 
 		sut.Path.GetTempFileName();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetTempFileName));
 	}
 
@@ -361,7 +361,7 @@ public class PathStatisticsTests
 
 		sut.Path.GetTempPath();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetTempPath));
 	}
 
@@ -374,7 +374,7 @@ public class PathStatisticsTests
 
 		sut.Path.HasExtension(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.HasExtension),
 			path);
 	}
@@ -388,7 +388,7 @@ public class PathStatisticsTests
 
 		sut.Path.HasExtension(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.HasExtension),
 			path);
 	}
@@ -402,7 +402,7 @@ public class PathStatisticsTests
 
 		sut.Path.IsPathFullyQualified(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.IsPathFullyQualified),
 			path);
 	}
@@ -417,7 +417,7 @@ public class PathStatisticsTests
 
 		sut.Path.IsPathFullyQualified(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.IsPathFullyQualified),
 			path);
 	}
@@ -432,7 +432,7 @@ public class PathStatisticsTests
 
 		sut.Path.IsPathRooted(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.IsPathRooted),
 			path);
 	}
@@ -446,7 +446,7 @@ public class PathStatisticsTests
 
 		sut.Path.IsPathRooted(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.IsPathRooted),
 			path);
 	}
@@ -464,7 +464,7 @@ public class PathStatisticsTests
 
 		sut.Path.Join(path1, path2, path3, path4);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
 			path1, path2, path3, path4);
 	}
@@ -481,7 +481,7 @@ public class PathStatisticsTests
 
 		sut.Path.Join(path1, path2, path3);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
 			path1, path2, path3);
 	}
@@ -497,7 +497,7 @@ public class PathStatisticsTests
 
 		sut.Path.Join(path1, path2);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
 			path1, path2);
 	}
@@ -513,7 +513,7 @@ public class PathStatisticsTests
 
 		sut.Path.Join(path1, path2);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
 			path1, path2);
 	}
@@ -530,7 +530,7 @@ public class PathStatisticsTests
 
 		sut.Path.Join(path1, path2, path3);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
 			path1, path2, path3);
 	}
@@ -548,7 +548,7 @@ public class PathStatisticsTests
 
 		sut.Path.Join(path1, path2, path3, path4);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
 			path1, path2, path3, path4);
 	}
@@ -563,7 +563,7 @@ public class PathStatisticsTests
 
 		sut.Path.Join(paths);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
 			paths);
 	}
@@ -578,7 +578,7 @@ public class PathStatisticsTests
 
 		sut.Path.TrimEndingDirectorySeparator(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.TrimEndingDirectorySeparator),
 			path);
 	}
@@ -593,7 +593,7 @@ public class PathStatisticsTests
 
 		sut.Path.TrimEndingDirectorySeparator(path);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.TrimEndingDirectorySeparator),
 			path);
 	}
@@ -612,7 +612,7 @@ public class PathStatisticsTests
 
 		sut.Path.TryJoin(path1, path2, path3, destination, out int charsWritten);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.TryJoin),
 			path1, path2, path3, destination, charsWritten);
 	}
@@ -630,7 +630,7 @@ public class PathStatisticsTests
 
 		sut.Path.TryJoin(path1, path2, destination, out int charsWritten);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.TryJoin),
 			path1, path2, destination, charsWritten);
 	}
@@ -643,7 +643,7 @@ public class PathStatisticsTests
 
 		_ = sut.Path.AltDirectorySeparatorChar;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainPropertyGetAccess(
 			nameof(IPath.AltDirectorySeparatorChar));
 	}
@@ -655,7 +655,7 @@ public class PathStatisticsTests
 
 		_ = sut.Path.DirectorySeparatorChar;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainPropertyGetAccess(
 			nameof(IPath.DirectorySeparatorChar));
 	}
@@ -667,7 +667,7 @@ public class PathStatisticsTests
 
 		_ = sut.Path.PathSeparator;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainPropertyGetAccess(nameof(IPath.PathSeparator));
 	}
 
@@ -678,7 +678,7 @@ public class PathStatisticsTests
 
 		_ = sut.Path.VolumeSeparatorChar;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainPropertyGetAccess(nameof(IPath.VolumeSeparatorChar));
 	}
 

@@ -14,7 +14,7 @@ public class FileInfoFactoryStatisticsTests
 
 		sut.FileInfo.New(fileName);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.FileInfo.ShouldOnlyContainMethodCall(nameof(IFileInfoFactory.New),
 			fileName);
 	}
@@ -27,7 +27,7 @@ public class FileInfoFactoryStatisticsTests
 
 		sut.FileInfo.Wrap(fileInfo);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(1);
+		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.FileInfo.ShouldOnlyContainMethodCall(nameof(IFileInfoFactory.Wrap),
 			fileInfo);
 	}

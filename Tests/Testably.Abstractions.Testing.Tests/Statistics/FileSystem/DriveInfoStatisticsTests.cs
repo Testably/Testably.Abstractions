@@ -14,7 +14,7 @@ public sealed class DriveInfoStatisticsTests
 
 		_ = sut.DriveInfo.New("F:").AvailableFreeSpace;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.DriveInfo["F:"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDriveInfo.AvailableFreeSpace));
 	}
@@ -28,7 +28,7 @@ public sealed class DriveInfoStatisticsTests
 
 		_ = sut.DriveInfo.New("F:").DriveFormat;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.DriveInfo["F:"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDriveInfo.DriveFormat));
 	}
@@ -42,7 +42,7 @@ public sealed class DriveInfoStatisticsTests
 
 		_ = sut.DriveInfo.New("F:").DriveType;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.DriveInfo["F:"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDriveInfo.DriveType));
 	}
@@ -56,7 +56,7 @@ public sealed class DriveInfoStatisticsTests
 
 		_ = sut.DriveInfo.New("F:").IsReady;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.DriveInfo["F:"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDriveInfo.IsReady));
 	}
@@ -70,7 +70,7 @@ public sealed class DriveInfoStatisticsTests
 
 		_ = sut.DriveInfo.New("F:").Name;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.DriveInfo["F:"].ShouldOnlyContainPropertyGetAccess(nameof(IDriveInfo.Name));
 	}
 
@@ -83,7 +83,7 @@ public sealed class DriveInfoStatisticsTests
 
 		_ = sut.DriveInfo.New("F:").RootDirectory;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.DriveInfo["F:"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDriveInfo.RootDirectory));
 	}
@@ -97,7 +97,7 @@ public sealed class DriveInfoStatisticsTests
 
 		_ = sut.DriveInfo.New("F:").TotalFreeSpace;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.DriveInfo["F:"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDriveInfo.TotalFreeSpace));
 	}
@@ -111,7 +111,7 @@ public sealed class DriveInfoStatisticsTests
 
 		_ = sut.DriveInfo.New("F:").TotalSize;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.DriveInfo["F:"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDriveInfo.TotalSize));
 	}
@@ -125,7 +125,7 @@ public sealed class DriveInfoStatisticsTests
 
 		_ = sut.DriveInfo.New("F:").VolumeLabel;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.DriveInfo["F:"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDriveInfo.VolumeLabel));
 	}
@@ -142,7 +142,7 @@ public sealed class DriveInfoStatisticsTests
 		sut.DriveInfo.New("F:").VolumeLabel = value;
 		#pragma warning restore CA1416
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.DriveInfo["F:"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IDriveInfo.VolumeLabel));
 	}

@@ -16,7 +16,7 @@ public class FileSystemInitializerTests
 
 		sut.With(directories);
 
-		fileSystem.StatisticsRegistration.TotalCount.Should().Be(0);
+		fileSystem.Statistics.TotalCount.Should().Be(0);
 		foreach (DirectoryDescription directory in directories)
 		{
 			fileSystem.Should().HaveDirectory(directory.Name);
@@ -35,7 +35,7 @@ public class FileSystemInitializerTests
 
 		sut.With(directoryDescription);
 
-		fileSystem.StatisticsRegistration.TotalCount.Should().Be(0);
+		fileSystem.Statistics.TotalCount.Should().Be(0);
 		foreach (DirectoryDescription directory in directories)
 		{
 			fileSystem.Should().HaveDirectory(Path.Combine(parent, directory.Name));
@@ -52,7 +52,7 @@ public class FileSystemInitializerTests
 
 		sut.With(description);
 
-		fileSystem.StatisticsRegistration.TotalCount.Should().Be(0);
+		fileSystem.Statistics.TotalCount.Should().Be(0);
 		fileSystem.Should().HaveFile(name)
 			.Which.HasContent(bytes);
 	}
@@ -68,7 +68,7 @@ public class FileSystemInitializerTests
 
 		sut.With(description);
 
-		fileSystem.StatisticsRegistration.TotalCount.Should().Be(0);
+		fileSystem.Statistics.TotalCount.Should().Be(0);
 		fileSystem.Should().HaveFile(name)
 			.Which.HasContent(content);
 	}
@@ -82,7 +82,7 @@ public class FileSystemInitializerTests
 
 		sut.With(files);
 
-		fileSystem.StatisticsRegistration.TotalCount.Should().Be(0);
+		fileSystem.Statistics.TotalCount.Should().Be(0);
 		foreach (FileDescription file in files)
 		{
 			fileSystem.Should().HaveFile(file.Name);
@@ -103,7 +103,7 @@ public class FileSystemInitializerTests
 
 		sut.With(description);
 
-		fileSystem.StatisticsRegistration.TotalCount.Should().Be(0);
+		fileSystem.Statistics.TotalCount.Should().Be(0);
 		fileSystem.Should().HaveFile(name);
 		fileSystem.FileInfo.New(name).IsReadOnly.Should().Be(isReadOnly);
 	}
@@ -119,7 +119,7 @@ public class FileSystemInitializerTests
 
 		sut.With(fileDescription, directoryDescription);
 
-		fileSystem.StatisticsRegistration.TotalCount.Should().Be(0);
+		fileSystem.Statistics.TotalCount.Should().Be(0);
 		fileSystem.Should().HaveFile(fileName);
 		fileSystem.Should().HaveDirectory(directoryName);
 	}
@@ -165,7 +165,7 @@ public class FileSystemInitializerTests
 
 		sut.WithFile(path).Which(f => f.HasStringContent("foo"));
 
-		fileSystem.StatisticsRegistration.TotalCount.Should().Be(0);
+		fileSystem.Statistics.TotalCount.Should().Be(0);
 		fileSystem.Should().HaveFile(path)
 			.Which.HasContent("foo");
 	}
@@ -181,7 +181,7 @@ public class FileSystemInitializerTests
 
 		sut.WithFile(path);
 
-		fileSystem.StatisticsRegistration.TotalCount.Should().Be(0);
+		fileSystem.Statistics.TotalCount.Should().Be(0);
 		fileSystem.Should().HaveFile(path);
 		fileSystem.Should().HaveDirectory(directoryPath);
 	}
@@ -196,7 +196,7 @@ public class FileSystemInitializerTests
 		IFileSystemInitializer<MockFileSystem> result = sut
 			.WithSubdirectories(paths);
 
-		fileSystem.StatisticsRegistration.TotalCount.Should().Be(0);
+		fileSystem.Statistics.TotalCount.Should().Be(0);
 		foreach (string path in paths)
 		{
 			fileSystem.Should().HaveDirectory(path);
@@ -246,7 +246,7 @@ public class FileSystemInitializerTests
 		IFileSystemDirectoryInitializer<MockFileSystem> result = sut
 			.WithSubdirectory(path);
 
-		fileSystem.StatisticsRegistration.TotalCount.Should().Be(0);
+		fileSystem.Statistics.TotalCount.Should().Be(0);
 		fileSystem.Should().HaveDirectory(path);
 		result.FileSystem.Should().BeSameAs(fileSystem);
 	}

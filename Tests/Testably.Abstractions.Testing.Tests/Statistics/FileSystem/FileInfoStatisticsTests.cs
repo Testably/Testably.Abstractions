@@ -13,7 +13,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").AppendText();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.AppendText));
 	}
@@ -28,7 +28,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").CopyTo(destFileName, overwrite);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.CopyTo),
 				destFileName, overwrite);
@@ -43,7 +43,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").CopyTo(destFileName);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.CopyTo),
 				destFileName);
@@ -56,7 +56,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Create();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Create));
 	}
@@ -70,7 +70,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").CreateAsSymbolicLink(pathToTarget);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.CreateAsSymbolicLink),
 				pathToTarget);
@@ -84,7 +84,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").CreateText();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.CreateText));
 	}
@@ -100,7 +100,7 @@ public class FileInfoStatisticsTests
 		sut.FileInfo.New("foo").Decrypt();
 		#pragma warning restore CA1416
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Decrypt));
 	}
@@ -113,7 +113,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Delete();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Delete));
 	}
@@ -129,7 +129,7 @@ public class FileInfoStatisticsTests
 		sut.FileInfo.New("foo").Encrypt();
 		#pragma warning restore CA1416
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Encrypt));
 	}
@@ -145,7 +145,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").MoveTo(destFileName, overwrite);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.MoveTo),
 				destFileName, overwrite);
@@ -161,7 +161,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").MoveTo(destFileName);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.MoveTo),
 				destFileName);
@@ -177,7 +177,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Open(mode, access, share);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Open),
 				mode, access, share);
@@ -192,7 +192,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Open(mode, access);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Open),
 				mode, access);
@@ -206,7 +206,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Open(mode);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Open),
 				mode);
@@ -222,7 +222,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Open(options);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Open),
 				options);
@@ -237,7 +237,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").OpenRead();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.OpenRead));
 	}
@@ -250,7 +250,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").OpenText();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.OpenText));
 	}
@@ -262,7 +262,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").OpenWrite();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.OpenWrite));
 	}
@@ -274,7 +274,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Refresh();
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Refresh));
 	}
@@ -291,7 +291,7 @@ public class FileInfoStatisticsTests
 		sut.FileInfo.New("foo").Replace(destinationFileName, destinationBackupFileName,
 			ignoreMetadataErrors);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Replace),
 				destinationFileName, destinationBackupFileName, ignoreMetadataErrors);
@@ -307,7 +307,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Replace(destinationFileName, destinationBackupFileName);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(nameof(IFileInfo.Replace),
 				destinationFileName, destinationBackupFileName);
@@ -322,7 +322,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").ResolveLinkTarget(returnFinalTarget);
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainMethodCall(
 				nameof(IFileInfo.ResolveLinkTarget),
@@ -338,7 +338,7 @@ public class FileInfoStatisticsTests
 
 		_ = sut.FileInfo.New("foo").Attributes;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.Attributes));
 	}
@@ -352,7 +352,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").Attributes = value;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.Attributes));
 	}
@@ -365,7 +365,7 @@ public class FileInfoStatisticsTests
 
 		_ = sut.FileInfo.New("foo").CreationTime;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.CreationTime));
 	}
@@ -379,7 +379,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").CreationTime = value;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.CreationTime));
 	}
@@ -392,7 +392,7 @@ public class FileInfoStatisticsTests
 
 		_ = sut.FileInfo.New("foo").CreationTimeUtc;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.CreationTimeUtc));
 	}
@@ -406,7 +406,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").CreationTimeUtc = value;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.CreationTimeUtc));
 	}
@@ -419,7 +419,7 @@ public class FileInfoStatisticsTests
 
 		_ = sut.FileInfo.New("foo").Directory;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.Directory));
 	}
@@ -432,7 +432,7 @@ public class FileInfoStatisticsTests
 
 		_ = sut.FileInfo.New("foo").DirectoryName;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.DirectoryName));
 	}
@@ -445,7 +445,7 @@ public class FileInfoStatisticsTests
 
 		_ = sut.FileInfo.New("foo").Exists;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"].ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.Exists));
 	}
 
@@ -457,7 +457,7 @@ public class FileInfoStatisticsTests
 
 		_ = sut.FileInfo.New("foo").Extension;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.Extension));
 	}
@@ -470,7 +470,7 @@ public class FileInfoStatisticsTests
 
 		_ = sut.FileInfo.New("foo").FullName;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.FullName));
 	}
@@ -483,7 +483,7 @@ public class FileInfoStatisticsTests
 
 		_ = sut.FileInfo.New("foo").IsReadOnly;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.IsReadOnly));
 	}
@@ -497,7 +497,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").IsReadOnly = value;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.IsReadOnly));
 	}
@@ -510,7 +510,7 @@ public class FileInfoStatisticsTests
 
 		_ = sut.FileInfo.New("foo").LastAccessTime;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.LastAccessTime));
 	}
@@ -524,7 +524,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").LastAccessTime = value;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.LastAccessTime));
 	}
@@ -537,7 +537,7 @@ public class FileInfoStatisticsTests
 
 		_ = sut.FileInfo.New("foo").LastAccessTimeUtc;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.LastAccessTimeUtc));
 	}
@@ -551,7 +551,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").LastAccessTimeUtc = value;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.LastAccessTimeUtc));
 	}
@@ -564,7 +564,7 @@ public class FileInfoStatisticsTests
 
 		_ = sut.FileInfo.New("foo").LastWriteTime;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.LastWriteTime));
 	}
@@ -578,7 +578,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").LastWriteTime = value;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.LastWriteTime));
 	}
@@ -591,7 +591,7 @@ public class FileInfoStatisticsTests
 
 		_ = sut.FileInfo.New("foo").LastWriteTimeUtc;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.LastWriteTimeUtc));
 	}
@@ -605,7 +605,7 @@ public class FileInfoStatisticsTests
 
 		sut.FileInfo.New("foo").LastWriteTimeUtc = value;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.LastWriteTimeUtc));
 	}
@@ -618,7 +618,7 @@ public class FileInfoStatisticsTests
 
 		_ = sut.FileInfo.New("foo").Length;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"].ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.Length));
 	}
 
@@ -631,7 +631,7 @@ public class FileInfoStatisticsTests
 
 		_ = sut.FileInfo.New("foo").LinkTarget;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.LinkTarget));
 	}
@@ -645,7 +645,7 @@ public class FileInfoStatisticsTests
 
 		_ = sut.FileInfo.New("foo").Name;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"].ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.Name));
 	}
 
@@ -658,7 +658,7 @@ public class FileInfoStatisticsTests
 
 		_ = sut.FileInfo.New("foo").UnixFileMode;
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileInfo.UnixFileMode));
 	}
@@ -678,7 +678,7 @@ public class FileInfoStatisticsTests
 		sut.FileInfo.New("foo").UnixFileMode = value;
 		#pragma warning restore CA1416
 
-		sut.StatisticsRegistration.TotalCount.Should().Be(2);
+		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileInfo["foo"]
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileInfo.UnixFileMode));
 	}
