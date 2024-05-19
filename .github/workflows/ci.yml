@@ -309,22 +309,24 @@ jobs:
       - name: Store ConstructorBenchmarks results
         uses: rhysd/github-action-benchmark@v1
         with:
-          name: Constructor Benchmarks
+          name: Benchmarks
           tool: 'benchmarkdotnet'
           output-file-path: Tests/Benchmarks/Testably.Abstractions.Benchmarks/BenchmarkDotNet.Artifacts/results/Testably.Abstractions.Benchmarks.ConstructorBenchmarks-report-full-compressed.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: false
           alert-threshold: '150%'
+          summary-always: true
           comment-on-alert: true
           fail-on-alert: true
       - name: Store UsageBenchmarks results
         uses: rhysd/github-action-benchmark@v1
         with:
-          name: Usage Benchmarks
+          name: Benchmarks
           tool: 'benchmarkdotnet'
           output-file-path: Tests/Benchmarks/Testably.Abstractions.Benchmarks/BenchmarkDotNet.Artifacts/results/Testably.Abstractions.Benchmarks.UsageBenchmarks-report-full-compressed.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: false
           alert-threshold: '150%'
+          summary-always: true
           comment-on-alert: true
           fail-on-alert: true
