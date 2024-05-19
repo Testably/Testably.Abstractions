@@ -306,24 +306,12 @@ jobs:
           dotnet-version: 8.0.x
       - name: Run benchmark tests
         run: cd Tests/Benchmarks/Testably.Abstractions.Benchmarks && dotnet run -c Release --framework net8.0 --exporters json --filter '*'
-      - name: Store ConstructorBenchmarks results
+      - name: Store benchmark results
         uses: rhysd/github-action-benchmark@v1
         with:
           name: Benchmarks
           tool: 'benchmarkdotnet'
-          output-file-path: Tests/Benchmarks/Testably.Abstractions.Benchmarks/BenchmarkDotNet.Artifacts/results/Testably.Abstractions.Benchmarks.ConstructorBenchmarks-report-full-compressed.json
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          auto-push: false
-          alert-threshold: '150%'
-          summary-always: true
-          comment-on-alert: true
-          fail-on-alert: true
-      - name: Store UsageBenchmarks results
-        uses: rhysd/github-action-benchmark@v1
-        with:
-          name: Benchmarks
-          tool: 'benchmarkdotnet'
-          output-file-path: Tests/Benchmarks/Testably.Abstractions.Benchmarks/BenchmarkDotNet.Artifacts/results/Testably.Abstractions.Benchmarks.UsageBenchmarks-report-full-compressed.json
+          output-file-path: Tests/Benchmarks/Testably.Abstractions.Benchmarks/BenchmarkDotNet.Artifacts/results/Testably.Abstractions.Benchmarks.Benchmarks-report-full-compressed.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: false
           alert-threshold: '150%'

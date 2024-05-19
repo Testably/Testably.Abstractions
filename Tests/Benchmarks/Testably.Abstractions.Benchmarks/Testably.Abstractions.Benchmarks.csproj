@@ -6,10 +6,10 @@
 		<GenerateProgramFile>false</GenerateProgramFile>
 		<OutputPath>..\..\..\Build\Tests\$(MSBuildProjectName)</OutputPath>
 		<TargetFrameworks>net8.0</TargetFrameworks>
+		<NoWarn>$(NoWarn);MA0049</NoWarn>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="BenchmarkDotNet" />
-		<PackageReference Include="TestableIO.System.IO.Abstractions.TestingHelpers" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj" />
