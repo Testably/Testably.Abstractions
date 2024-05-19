@@ -7,6 +7,7 @@ namespace Testably.Abstractions.Testing.Statistics;
 internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsGate
 {
 	private static readonly AsyncLocal<bool> IsDisabled = new();
+	private static readonly AsyncLocal<bool> IsInit = new();
 
 	/// <summary>
 	///     The total count of registered statistic calls.
@@ -97,6 +98,28 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics, IStatisticsG
 	}
 
 	#endregion
+
+	/// <summary>
+	///     Ignores all registrations until the return value is disposed.
+	/// </summary>
+	internal IDisposable Ignore()
+	{
+		if (IsDisabled.Value)
+		{
+			return TemporaryDisable.None;
+		}
+
+		IsDisabled.Value = true;
+		IsInit.Value = true;
+		return new TemporaryDisable(() =>
+		{
+			IsDisabled.Value = false;
+			IsInit.Value = false;
+		});
+	}
+
+	internal bool IsInitializing()
+		=> IsInit.Value;
 
 	private sealed class TemporaryDisable : IDisposable
 	{
