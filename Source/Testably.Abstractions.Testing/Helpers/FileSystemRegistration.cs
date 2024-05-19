@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
-using Testably.Abstractions.Testing.Helpers;
+using Testably.Abstractions.Testing.Statistics;
 
-namespace Testably.Abstractions.Testing.Statistics;
+namespace Testably.Abstractions.Testing.Helpers;
 
 internal sealed class FileSystemRegistration : IStatisticsGate
 {
