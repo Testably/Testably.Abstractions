@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+		<IsTestable>false</IsTestable>
+		<OutputType>Exe</OutputType>
+		<GenerateProgramFile>false</GenerateProgramFile>
+		<OutputPath>..\..\..\Build\Tests\$(MSBuildProjectName)</OutputPath>
+		<TargetFrameworks>net8.0</TargetFrameworks>
+		<NoWarn>$(NoWarn);MA0049</NoWarn>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="BenchmarkDotNet" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj" />
+	</ItemGroup>
+</Project>
