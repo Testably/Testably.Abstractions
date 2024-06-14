@@ -19,6 +19,7 @@ using System.Runtime.InteropServices;
 using Testably.Abstractions.Testing.Initializer;
 using Testably.Abstractions.TestHelpers;
 using Testably.Abstractions.TestHelpers.Settings;
+using System.IO.Abstractions.TestingHelpers;
 using Xunit.Abstractions;
 
 namespace {@class.Namespace}
@@ -35,21 +36,62 @@ namespace {@class.Namespace}
 namespace {@class.Namespace}.{@class.Name}
 {{
 	// ReSharper disable once UnusedMember.Global
-	public sealed class MockFileSystemTests : {@class.Name}<MockFileSystem>, IDisposable
+	public sealed class MockFileSystemTests : {@class.Name}<Testably.Abstractions.Testing.MockFileSystem>, IDisposable
 	{{
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
 		public override string BasePath => _directoryCleaner.BasePath;
 
 		private readonly IDirectoryCleaner _directoryCleaner;
 
-		public MockFileSystemTests() : this(new MockFileSystem())
+		public MockFileSystemTests() : this(new Testably.Abstractions.Testing.MockFileSystem())
 		{{
 		}}
 
-		private MockFileSystemTests(MockFileSystem mockFileSystem) : base(
+		private MockFileSystemTests(Testably.Abstractions.Testing.MockFileSystem mockFileSystem) : base(
 			new Test(),
 			mockFileSystem,
 			mockFileSystem.TimeSystem)
+		{{
+			_directoryCleaner = FileSystem
+			   .SetCurrentDirectoryToEmptyTemporaryDirectory();
+		}}
+
+		/// <inheritdoc cref=""IDisposable.Dispose()"" />
+		public void Dispose()
+			=> _directoryCleaner.Dispose();
+
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.SkipIfBrittleTestsShouldBeSkipped(bool)"" />
+		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+		{{
+			// Brittle tests are never skipped against the mock file system!
+		}}
+
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.LongRunningTestsShouldBeSkipped()"" />
+		public override void SkipIfLongRunningTestsShouldBeSkipped()
+		{{
+			// Long-running tests are never skipped against the mock file system!
+		}}
+	}}
+}}
+
+namespace {@class.Namespace}.{@class.Name}
+{{
+	// ReSharper disable once UnusedMember.Global
+	public sealed class TestableIoMockFileSystemTests : {@class.Name}<System.IO.Abstractions.TestingHelpers.MockFileSystem>, IDisposable
+	{{
+		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
+		public override string BasePath => _directoryCleaner.BasePath;
+
+		private readonly IDirectoryCleaner _directoryCleaner;
+
+		public TestableIoMockFileSystemTests() : this(new System.IO.Abstractions.TestingHelpers.MockFileSystem())
+		{{
+		}}
+
+		private TestableIoMockFileSystemTests(System.IO.Abstractions.TestingHelpers.MockFileSystem mockFileSystem) : base(
+			new Test(),
+			mockFileSystem,
+			new RealTimeSystem())
 		{{
 			_directoryCleaner = FileSystem
 			   .SetCurrentDirectoryToEmptyTemporaryDirectory();
@@ -140,19 +182,19 @@ namespace {@class.Namespace}.{@class.Name}
 namespace {@class.Namespace}.{@class.Name}
 {{
 	// ReSharper disable once UnusedMember.Global
-	public sealed class LinuxFileSystemTests : {@class.Name}<MockFileSystem>, IDisposable
+	public sealed class LinuxFileSystemTests : {@class.Name}<Testably.Abstractions.Testing.MockFileSystem>, IDisposable
 	{{
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
 		public override string BasePath => _directoryCleaner.BasePath;
 
 		private readonly IDirectoryCleaner _directoryCleaner;
 
-		public LinuxFileSystemTests() : this(new MockFileSystem(o =>
+		public LinuxFileSystemTests() : this(new Testably.Abstractions.Testing.MockFileSystem(o =>
 			o.SimulatingOperatingSystem(SimulationMode.Linux)))
 		{{
 		}}
 
-		private LinuxFileSystemTests(MockFileSystem mockFileSystem) : base(
+		private LinuxFileSystemTests(Testably.Abstractions.Testing.MockFileSystem mockFileSystem) : base(
 			new Test(OSPlatform.Linux),
 			mockFileSystem,
 			mockFileSystem.TimeSystem)
@@ -180,18 +222,18 @@ namespace {@class.Namespace}.{@class.Name}
 
 #if !NETFRAMEWORK
 	// ReSharper disable once UnusedMember.Global
-	public sealed class MacFileSystemTests : {@class.Name}<MockFileSystem>, IDisposable
+	public sealed class MacFileSystemTests : {@class.Name}<Testably.Abstractions.Testing.MockFileSystem>, IDisposable
 	{{
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
 		public override string BasePath => _directoryCleaner.BasePath;
 
 		private readonly IDirectoryCleaner _directoryCleaner;
 
-		public MacFileSystemTests() : this(new MockFileSystem(o =>
+		public MacFileSystemTests() : this(new Testably.Abstractions.Testing.MockFileSystem(o =>
 			o.SimulatingOperatingSystem(SimulationMode.MacOS)))
 		{{
 		}}
-		private MacFileSystemTests(MockFileSystem mockFileSystem) : base(
+		private MacFileSystemTests(Testably.Abstractions.Testing.MockFileSystem mockFileSystem) : base(
 			new Test(OSPlatform.OSX),
 			mockFileSystem,
 			mockFileSystem.TimeSystem)
@@ -219,18 +261,18 @@ namespace {@class.Namespace}.{@class.Name}
 
 #if !NETFRAMEWORK
 	// ReSharper disable once UnusedMember.Global
-	public sealed class WindowsFileSystemTests : {@class.Name}<MockFileSystem>, IDisposable
+	public sealed class WindowsFileSystemTests : {@class.Name}<Testably.Abstractions.Testing.MockFileSystem>, IDisposable
 	{{
 		/// <inheritdoc cref=""{@class.Name}{{TFileSystem}}.BasePath"" />
 		public override string BasePath => _directoryCleaner.BasePath;
 
 		private readonly IDirectoryCleaner _directoryCleaner;
 
-		public WindowsFileSystemTests() : this(new MockFileSystem(o =>
+		public WindowsFileSystemTests() : this(new Testably.Abstractions.Testing.MockFileSystem(o =>
 			o.SimulatingOperatingSystem(SimulationMode.Windows)))
 		{{
 		}}
-		private WindowsFileSystemTests(MockFileSystem mockFileSystem) : base(
+		private WindowsFileSystemTests(Testably.Abstractions.Testing.MockFileSystem mockFileSystem) : base(
 			new Test(OSPlatform.Windows),
 			mockFileSystem,
 			mockFileSystem.TimeSystem)
