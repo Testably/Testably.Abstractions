@@ -73,9 +73,15 @@ internal sealed class LockableContainer(
 	public void AppendBytes(byte[] bytes)
 		=> WriteBytes(_bytes.Concat(bytes).ToArray());
 
+	/// <inheritdoc cref="IStorageContainer.BytesChanged" />
+	public event EventHandler? BytesChanged;
+
 	/// <inheritdoc cref="IStorageContainer.ClearBytes()" />
 	public void ClearBytes()
-		=> _bytes = Array.Empty<byte>();
+	{
+		_bytes = Array.Empty<byte>();
+		BytesChanged?.Invoke(this, EventArgs.Empty);
+	}
 
 	/// <inheritdoc cref="IStorageContainer.Decrypt()" />
 	public void Decrypt()
@@ -106,7 +112,10 @@ internal sealed class LockableContainer(
 
 	/// <inheritdoc cref="IStorageContainer.WriteBytes(byte[])" />
 	public void WriteBytes(byte[] bytes)
-		=> _bytes = bytes;
+	{
+		_bytes = bytes;
+		BytesChanged?.Invoke(this, EventArgs.Empty);
+	}
 
 	#endregion
 

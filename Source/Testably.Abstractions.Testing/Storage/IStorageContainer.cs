@@ -47,6 +47,11 @@ internal interface IStorageContainer : IFileSystemEntity, ITimeSystemEntity
 #endif
 
 	/// <summary>
+	///     An event triggered, when the underlying buffer is changed.
+	/// </summary>
+	event EventHandler? BytesChanged;
+
+	/// <summary>
 	///     Appends the <paramref name="bytes" /> to the <see cref="IFileInfo" />.
 	/// </summary>
 	void AppendBytes(byte[] bytes);

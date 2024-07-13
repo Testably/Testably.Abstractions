@@ -1,4 +1,8 @@
 using System.Threading;
+#if FEATURE_SPAN
+using System.Collections.Generic;
+using System.IO;
+#endif
 #if FEATURE_FILESYSTEM_ASYNC
 using System.Threading.Tasks;
 #endif
@@ -158,6 +162,34 @@ public abstract partial class ReadTests<TFileSystem>
 
 		result.Should().Be(bytes.Length);
 		buffer.Should().BeEquivalentTo(bytes);
+	}
+#endif
+
+#if FEATURE_SPAN
+	[SkippableTheory]
+	[AutoData]
+	public void Read_AsSpan_ShouldUseSharedBuffer(string path)
+	{
+		List<int> results = [];
+		using FileSystemStream fileStream1 = FileSystem.FileStream.New(
+			path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+		using FileSystemStream fileStream2 = FileSystem.FileStream.New(
+			path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+		byte[] buffer = new byte[4];
+
+		for (int ix = 0; ix < 10; ix++)
+		{
+			fileStream1.Position = 0;
+			fileStream1.Write(BitConverter.GetBytes(ix));
+			fileStream1.Flush();
+
+			fileStream2.Position = 0;
+			fileStream2.Flush();
+			_ = fileStream2.Read(buffer);
+			results.Add(BitConverter.ToInt32(buffer));
+		}
+
+		results.Should().BeEquivalentTo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
 	}
 #endif
 
