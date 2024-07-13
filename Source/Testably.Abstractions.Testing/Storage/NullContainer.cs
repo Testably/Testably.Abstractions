@@ -69,6 +69,11 @@ internal sealed class NullContainer : IStorageContainer
 		// Do nothing in NullContainer
 	}
 
+	#pragma warning disable CS0067 // Event is never used
+	/// <inheritdoc cref="IStorageContainer.BytesChanged" />
+	public event EventHandler? BytesChanged;
+	#pragma warning restore CS0067
+
 	/// <inheritdoc cref="IStorageContainer.ClearBytes()" />
 	public void ClearBytes()
 	{

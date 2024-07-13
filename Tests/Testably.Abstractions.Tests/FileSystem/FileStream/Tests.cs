@@ -2,6 +2,9 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Helpers;
+#if FEATURE_SPAN
+using System.Text;
+#endif
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
@@ -265,6 +268,36 @@ public abstract partial class Tests<TFileSystem>
 		stream.ReadByte();
 		stream.Position.Should().Be(1);
 	}
+
+#if FEATURE_SPAN
+	[SkippableTheory]
+	[AutoData]
+	public void Position_ShouldNotChangeSharedBufferStreamsWhenWriting(
+		string path, string contents, string changedContents)
+	{
+		FileSystem.File.WriteAllText(path, contents);
+
+		using FileSystemStream fileStream1 = FileSystem.FileStream.New(
+			path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+		using FileSystemStream fileStream2 = FileSystem.FileStream.New(
+			path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+		long initialPosition1 = 3L;
+		long initialPosition2 = 4L;
+
+		fileStream1.Position = initialPosition1;
+		fileStream2.Position = initialPosition2;
+
+		fileStream1.Write(Encoding.UTF8.GetBytes(changedContents));
+
+		fileStream1.Position.Should().Be(initialPosition1 + changedContents.Length);
+		fileStream2.Position.Should().Be(initialPosition2);
+
+		fileStream1.Flush();
+
+		fileStream1.Position.Should().Be(initialPosition1 + changedContents.Length);
+		fileStream2.Position.Should().Be(initialPosition2);
+	}
+#endif
 
 	[SkippableTheory]
 	[AutoData]

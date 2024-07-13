@@ -101,11 +101,15 @@ internal class InMemoryContainer : IStorageContainer
 		WriteBytes(_bytes.Concat(bytes).ToArray());
 	}
 
+	/// <inheritdoc cref="IStorageContainer.BytesChanged" />
+	public event EventHandler? BytesChanged;
+
 	/// <inheritdoc cref="IStorageContainer.ClearBytes()" />
 	public void ClearBytes()
 	{
 		_location.Drive?.ChangeUsedBytes(0 - _bytes.Length);
 		_bytes = Array.Empty<byte>();
+		BytesChanged?.Invoke(this, EventArgs.Empty);
 	}
 
 	/// <inheritdoc cref="IStorageContainer.Decrypt()" />
@@ -232,6 +236,7 @@ internal class InMemoryContainer : IStorageContainer
 		}
 
 		_fileSystem.ChangeHandler.NotifyCompletedChange(fileSystemChange);
+		BytesChanged?.Invoke(this, EventArgs.Empty);
 	}
 
 	#endregion

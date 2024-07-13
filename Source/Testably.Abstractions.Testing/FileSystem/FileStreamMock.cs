@@ -648,6 +648,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			return;
 		}
 
+		_container.BytesChanged -= OnBytesChanged;
 		_accessLock.Dispose();
 		InternalFlush();
 		base.Dispose(disposing);
@@ -657,6 +658,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 
 	private void InitializeStream()
 	{
+		_container.BytesChanged += OnBytesChanged;
 		if (_mode != FileMode.Create &&
 		    _mode != FileMode.Truncate)
 		{
@@ -686,6 +688,15 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		_ = _stream.Read(data, 0, (int)Length);
 		_stream.Seek(position, SeekOrigin.Begin);
 		_container.WriteBytes(data);
+	}
+
+	private void OnBytesChanged(object? sender, EventArgs e)
+	{
+		byte[] existingContents = _container.GetBytes();
+		long position = _stream.Position;
+		_stream.Position = 0;
+		_stream.Write(existingContents, 0, existingContents.Length);
+		_stream.Position = position;
 	}
 
 	private void OnClose()
