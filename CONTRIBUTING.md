@@ -2,7 +2,7 @@
 
 ## Pull requests
 **Pull requests are welcome!**  
-Please include a clear description of the changes you have made with your request; the title should follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) guideline with one of the following [prefixes](https://github.com/conventional-changelog/commitlint/tree/master/%40commitlint/config-conventional):
+Please include a clear description of the changes you have made with your request. The title should follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) guideline with one of the following [prefixes](https://github.com/conventional-changelog/commitlint/tree/master/%40commitlint/config-conventional):
 - `feat:` A new feature
 - `fix:` A bug fix
 - `docs:` Documentation only changes
