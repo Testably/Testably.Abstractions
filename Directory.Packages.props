@@ -31,7 +31,7 @@
 		<PackageVersion Include="PublicApiGenerator" Version="11.1.0" />
 		<PackageVersion Include="NUnit" Version="4.1.0" />
 		<PackageVersion Include="NUnit.Analyzers" Version="4.2.0" />
-		<PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
+		<PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageVersion Include="Testably.Abstractions" Version="3.2.1" />
