@@ -15,13 +15,25 @@ public abstract partial class ReplaceTests<TFileSystem>
 		string sourceName = name.ToLowerInvariant();
 		string destinationName = name.ToUpperInvariant();
 		FileSystem.File.WriteAllText(sourceName, contents);
+		FileSystem.File.WriteAllText(destinationName, "other-content");
 
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.File.Replace(sourceName, destinationName, null);
 		});
 
-		exception.Should().BeException<IOException>(hResult: -2147024864);
+
+		if (Test.RunsOnLinux)
+		{
+			exception.Should().BeNull();
+			FileSystem.File.Exists(sourceName).Should().BeFalse();
+			FileSystem.File.Exists(destinationName).Should().BeTrue();
+		}
+		else
+		{
+			exception.Should().BeException<IOException>(
+				hResult: Test.RunsOnWindows ? -2147024864 : -2147024894);
+		}
 	}
 
 	[SkippableTheory]
