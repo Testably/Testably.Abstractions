@@ -26,6 +26,8 @@ public abstract partial class MoveTests<TFileSystem>
 
 		FileSystem.Should().HaveFile(destinationName)
 			.Which.HasContent(contents);
+		FileSystem.Directory.GetFiles(".").Should()
+			.ContainSingle(d => d.Contains(destinationName, StringComparison.Ordinal));
 	}
 
 	[SkippableTheory]

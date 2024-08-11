@@ -9,6 +9,23 @@ public abstract partial class ReplaceTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
+	public void Replace_CaseOnlyChange_ShouldThrowIOException(
+		string name, string contents)
+	{
+		string sourceName = name.ToLowerInvariant();
+		string destinationName = name.ToUpperInvariant();
+		FileSystem.File.WriteAllText(sourceName, contents);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.Replace(sourceName, destinationName, null);
+		});
+
+		exception.Should().BeException<IOException>(hResult: -2147024864);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void
 		Replace_DestinationDirectoryDoesNotExist_ShouldThrowCorrectException(
 			string source)

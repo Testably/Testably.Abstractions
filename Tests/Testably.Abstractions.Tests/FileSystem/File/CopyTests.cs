@@ -9,6 +9,33 @@ public abstract partial class CopyTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
+	public void Copy_CaseOnlyChange_ShouldThrowIOException_ExceptOnLinux(
+		string name, string contents)
+	{
+		string sourceName = name.ToLowerInvariant();
+		string destinationName = name.ToUpperInvariant();
+		FileSystem.File.WriteAllText(sourceName, contents);
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.Copy(sourceName, destinationName);
+		});
+
+		if (Test.RunsOnLinux)
+		{
+			exception.Should().BeNull();
+			FileSystem.File.Exists(sourceName).Should().BeTrue();
+			FileSystem.File.Exists(destinationName).Should().BeTrue();
+		}
+		else
+		{
+			exception.Should()
+				.BeException<IOException>(hResult: Test.RunsOnWindows ? -2147024816 : 17);
+		}
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void
 		Copy_DestinationDirectoryDoesNotExist_ShouldThrowDirectoryNotFoundException(
 			string source)
