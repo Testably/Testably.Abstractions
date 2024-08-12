@@ -441,6 +441,12 @@ internal sealed class InMemoryStorage : IStorage
 			throw ExceptionFactory.AccessToPathDenied(source.FullPath);
 		}
 
+		if (_fileSystem.Execute.IsMac &&
+		    source.FullPath.Equals(destination.FullPath, StringComparison.OrdinalIgnoreCase))
+		{
+			throw ExceptionFactory.MoveSourceMustBeDifferentThanDestination();
+		}
+
 		using (_ = sourceContainer.RequestAccess(
 			FileAccess.ReadWrite,
 			FileShare.None,

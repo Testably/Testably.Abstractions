@@ -29,10 +29,17 @@ public abstract partial class ReplaceTests<TFileSystem>
 			FileSystem.File.Exists(sourceName).Should().BeFalse();
 			FileSystem.File.Exists(destinationName).Should().BeTrue();
 		}
+		else if (Test.RunsOnMac)
+		{
+			exception.Should().BeException<IOException>(
+				hResult: -2146232800,
+				messageContains: "Source and destination path must be different");
+		}
 		else
 		{
 			exception.Should().BeException<IOException>(
-				hResult: Test.RunsOnWindows ? -2147024864 : -2147024894);
+				hResult:  -2147024864,
+				messageContains: "The process cannot access the file");
 		}
 	}
 
