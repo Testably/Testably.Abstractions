@@ -33,7 +33,7 @@ public abstract partial class ReplaceTests<TFileSystem>
 		{
 			exception.Should().BeException<IOException>(
 				hResult: -2146232800,
-				messageContains: "Source and destination path must be different");
+				messageContains: $"The source '{FileSystem.Path.GetFullPath(sourceName)}' and destination '{FileSystem.Path.GetFullPath(destinationName)}' are the same file");
 		}
 		else
 		{

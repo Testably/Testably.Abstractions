@@ -444,7 +444,7 @@ internal sealed class InMemoryStorage : IStorage
 		if (_fileSystem.Execute.IsMac &&
 		    source.FullPath.Equals(destination.FullPath, StringComparison.OrdinalIgnoreCase))
 		{
-			throw ExceptionFactory.MoveSourceMustBeDifferentThanDestination();
+			throw ExceptionFactory.ReplaceSourceMustBeDifferentThanDestination(source.FullPath, destination.FullPath);
 		}
 
 		using (_ = sourceContainer.RequestAccess(
