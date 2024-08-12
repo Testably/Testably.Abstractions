@@ -203,6 +203,10 @@ internal static class ExceptionFactory
 			$"The process cannot access the file '{path}' because it is being used by another process.",
 			hResult);
 
+	internal static IOException ReplaceSourceMustBeDifferentThanDestination(
+		string sourcePath, string destinationPath)
+		=> new($"The source '{sourcePath}' and destination '{destinationPath}' are the same file.", -2146232800);
+
 	#pragma warning disable MA0015 // Specify the parameter name
 	internal static ArgumentException SearchPatternCannotContainTwoDots()
 		=> new(

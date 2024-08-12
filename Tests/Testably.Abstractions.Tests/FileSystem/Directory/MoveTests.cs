@@ -29,7 +29,7 @@ public abstract partial class MoveTests<TFileSystem>
 		FileSystem.Directory.Exists(source).Should().Be(!Test.RunsOnLinux);
 		FileSystem.Should().HaveDirectory(destination);
 		FileSystem.Directory.GetDirectories(".").Should()
-			.ContainSingle(d => d.Contains(destination));
+			.ContainSingle(d => d.Contains(destination, StringComparison.Ordinal));
 		FileSystem.Directory.GetFiles(destination, initialized[1].Name)
 			.Should().ContainSingle();
 		FileSystem.Directory.GetDirectories(destination, initialized[2].Name)

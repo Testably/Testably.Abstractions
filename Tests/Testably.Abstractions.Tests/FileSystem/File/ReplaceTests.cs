@@ -9,6 +9,42 @@ public abstract partial class ReplaceTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
+	public void Replace_CaseOnlyChange_ShouldThrowIOException(
+		string name, string contents)
+	{
+		string sourceName = name.ToLowerInvariant();
+		string destinationName = name.ToUpperInvariant();
+		FileSystem.File.WriteAllText(sourceName, contents);
+		FileSystem.File.WriteAllText(destinationName, "other-content");
+
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.Replace(sourceName, destinationName, null);
+		});
+
+
+		if (Test.RunsOnLinux)
+		{
+			exception.Should().BeNull();
+			FileSystem.File.Exists(sourceName).Should().BeFalse();
+			FileSystem.File.Exists(destinationName).Should().BeTrue();
+		}
+		else if (Test.RunsOnMac)
+		{
+			exception.Should().BeException<IOException>(
+				hResult: -2146232800,
+				messageContains: $"The source '{FileSystem.Path.GetFullPath(sourceName)}' and destination '{FileSystem.Path.GetFullPath(destinationName)}' are the same file");
+		}
+		else
+		{
+			exception.Should().BeException<IOException>(
+				hResult:  -2147024864,
+				messageContains: "The process cannot access the file");
+		}
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void
 		Replace_DestinationDirectoryDoesNotExist_ShouldThrowCorrectException(
 			string source)
