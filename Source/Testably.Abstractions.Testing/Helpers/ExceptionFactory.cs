@@ -207,7 +207,7 @@ internal static class ExceptionFactory
 		string sourcePath, string destinationPath)
 		=> new($"The source '{sourcePath}' and destination '{destinationPath}' are the same file.", -2146232800);
 
-#pragma warning disable MA0015 // Specify the parameter name
+	#pragma warning disable MA0015 // Specify the parameter name
 	internal static ArgumentException SearchPatternCannotContainTwoDots()
 		=> new(
 			"Search pattern cannot contain \"..\" to move up directories and can be contained only internally in file/directory names, as in \"a..b\".");
