@@ -13,7 +13,7 @@ namespace Testably.Abstractions.TestHelpers;
 public class AutoDomainDataAttribute : AutoDataAttribute
 {
 	private Type? _customizeWith;
-	FixtureFactory _fixtureFactory;
+	private readonly FixtureFactory _fixtureFactory;
 
 	/// <summary>
 	///     Extension of <see cref="AutoDataAttribute"/> that uses applies domain-specific customizations.
@@ -44,7 +44,7 @@ public class AutoDomainDataAttribute : AutoDataAttribute
 		}
 	}
 
-	private class FixtureFactory
+	private sealed class FixtureFactory
 	{
 		private ICustomization? _customizeWith;
 		private static Lazy<ICustomization[]> _domainCustomisation { get; } = new(Initialize);
