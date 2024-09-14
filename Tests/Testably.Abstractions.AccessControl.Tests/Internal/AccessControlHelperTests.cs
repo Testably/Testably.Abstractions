@@ -1,16 +1,14 @@
-﻿using NSubstitute;
-using System.IO;
+﻿using System.IO;
 using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions.AccessControl.Tests.Internal;
 
 public sealed class AccessControlHelperTests
 {
-	[Fact]
-	public void GetExtensibilityOrThrow_CustomDirectoryInfo_ShouldThrowNotSupportedException()
+	[Theory]
+	[AutoDomainData]
+	public void GetExtensibilityOrThrow_CustomDirectoryInfo_ShouldThrowNotSupportedException(IDirectoryInfo sut)
 	{
-		IDirectoryInfo? sut = Substitute.For<IDirectoryInfo>();
-
 		Exception? exception = Record.Exception(() =>
 		{
 			sut.GetExtensibilityOrThrow();
@@ -22,11 +20,10 @@ public sealed class AccessControlHelperTests
 			.Contain(sut.GetType().Name);
 	}
 
-	[Fact]
-	public void GetExtensibilityOrThrow_CustomFileInfo_ShouldThrowNotSupportedException()
+	[Theory]
+	[AutoDomainData]
+	public void GetExtensibilityOrThrow_CustomFileInfo_ShouldThrowNotSupportedException(IFileInfo sut)
 	{
-		IFileInfo? sut = Substitute.For<IFileInfo>();
-
 		Exception? exception = Record.Exception(() =>
 		{
 			sut.GetExtensibilityOrThrow();
