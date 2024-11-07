@@ -45,7 +45,10 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		UnixFileMode expected = (UnixFileMode)(-1);
+		UnixFileMode expected = UnixFileMode.OtherRead |
+		                        UnixFileMode.GroupRead |
+		                        UnixFileMode.UserWrite |
+		                        UnixFileMode.UserRead;
 		FileSystem.File.WriteAllText(path, "some content");
 		IFileInfo fileSystemInfo = FileSystem.FileInfo.New(path);
 

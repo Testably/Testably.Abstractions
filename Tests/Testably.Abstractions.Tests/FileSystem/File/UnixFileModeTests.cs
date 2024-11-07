@@ -16,12 +16,16 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 		Skip.If(Test.RunsOnWindows);
 		
 		FileSystem.File.WriteAllText(path, "");
+		UnixFileMode expected = UnixFileMode.OtherRead |
+		                        UnixFileMode.GroupRead |
+		                        UnixFileMode.UserWrite |
+		                        UnixFileMode.UserRead;
 
 		#pragma warning disable CA1416
 		UnixFileMode result = FileSystem.File.GetUnixFileMode(path);
 		#pragma warning restore CA1416
 
-		result.Should().Be((UnixFileMode)(-1));
+		result.Should().Be(expected);
 	}
 
 	[SkippableTheory]

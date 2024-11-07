@@ -92,7 +92,10 @@ internal class InMemoryContainer : IStorageContainer
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
 	/// <inheritdoc cref="IStorageContainer.UnixFileMode" />
-	public UnixFileMode UnixFileMode { get; set; } = (UnixFileMode)(-1);
+	public UnixFileMode UnixFileMode { get; set; } = UnixFileMode.OtherRead |
+	                                                 UnixFileMode.GroupRead |
+	                                                 UnixFileMode.UserWrite |
+	                                                 UnixFileMode.UserRead;
 #endif
 
 	/// <inheritdoc cref="IStorageContainer.AppendBytes(byte[])" />
