@@ -14,6 +14,8 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 		string path)
 	{
 		Skip.If(Test.RunsOnWindows);
+		
+		FileSystem.File.WriteAllText(path, "");
 
 		#pragma warning disable CA1416
 		UnixFileMode result = FileSystem.File.GetUnixFileMode(path);
