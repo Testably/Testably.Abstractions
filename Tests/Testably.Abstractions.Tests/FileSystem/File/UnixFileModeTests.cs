@@ -10,6 +10,20 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
+	public void GetUnixFileMode_ShouldBeInitializedWithMinusOne(
+		string path)
+	{
+		Skip.If(Test.RunsOnWindows);
+
+		#pragma warning disable CA1416
+		UnixFileMode result = FileSystem.File.GetUnixFileMode(path);
+		#pragma warning restore CA1416
+
+		result.Should().Be((UnixFileMode)(-1));
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void GetUnixFileMode_ShouldThrowPlatformNotSupportedException_OnWindows(
 		string path)
 	{
