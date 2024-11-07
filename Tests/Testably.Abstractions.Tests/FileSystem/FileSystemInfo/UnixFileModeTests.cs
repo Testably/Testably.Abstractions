@@ -40,10 +40,10 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void UnixFileMode_ShouldBeInitializedToMinusOne(
+	public void UnixFileMode_ShouldBeInitializedCorrectly(
 		string path)
 	{
-		Skip.IfNot(Test.RunsOnWindows);
+		Skip.If(Test.RunsOnWindows);
 
 		UnixFileMode expected = UnixFileMode.OtherRead |
 		                        UnixFileMode.GroupRead |

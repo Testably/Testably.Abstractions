@@ -10,7 +10,7 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public void GetUnixFileMode_ShouldBeInitializedWithMinusOne(
+	public void GetUnixFileMode_ShouldBeInitializedCorrectly(
 		string path)
 	{
 		Skip.If(Test.RunsOnWindows);
