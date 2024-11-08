@@ -48,6 +48,18 @@ public class FileStreamStatisticsTests
 	}
 
 	[SkippableFact]
+	public void Method_Close_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		using FileSystemStream fileStream = sut.FileStream.New("foo", FileMode.OpenOrCreate);
+			
+		fileStream.Close();
+
+		sut.Statistics.FileStream["foo"]
+			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Close));
+	}
+
+	[SkippableFact]
 	public void Method_CopyTo_Stream_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
