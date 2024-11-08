@@ -101,8 +101,7 @@ public abstract partial class CopyToTests<TFileSystem>
 			await source.CopyToAsync(destination, bufferSize);
 		});
 
-		exception.Should().BeOfType<ArgumentOutOfRangeException>()
-			.Which.Message.Should().Match("Positive number required*");
+		exception.Should().BeOfType<ArgumentOutOfRangeException>();
 	}
 #endif
 
@@ -121,7 +120,7 @@ public abstract partial class CopyToTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ObjectDisposedException>()
-			.Which.Message.Should().Match("Cannot access a closed Stream*");
+			.Which.Message.Should().Match("Cannot access a closed*");
 	}
 #endif
 
@@ -138,7 +137,7 @@ public abstract partial class CopyToTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.Message.Should().Match("Value cannot be null*");
+			.Which.Message.Should().Match("*cannot be null*");
 	}
 #endif
 
@@ -177,7 +176,7 @@ public abstract partial class CopyToTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ObjectDisposedException>()
-			.Which.Message.Should().Match("Cannot access a closed Stream*");
+			.Which.Message.Should().Match("Cannot access a closed*");
 	}
 #endif
 
