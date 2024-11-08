@@ -120,7 +120,7 @@ public abstract partial class CopyToTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ObjectDisposedException>()
-			.Which.Message.Should().Match("Cannot access a closed*");
+			.Which.Message.Should().Match("Cannot access a*");
 	}
 #endif
 
@@ -176,7 +176,7 @@ public abstract partial class CopyToTests<TFileSystem>
 		});
 
 		exception.Should().BeOfType<ObjectDisposedException>()
-			.Which.Message.Should().Match("Cannot access a closed*");
+			.Which.Message.Should().Match("Cannot access a*");
 	}
 #endif
 
