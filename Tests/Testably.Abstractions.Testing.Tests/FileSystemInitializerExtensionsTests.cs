@@ -2,32 +2,35 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Initializer;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
+using Testably.Expectations;
+using Skip = Xunit.Skip;
 
 namespace Testably.Abstractions.Testing.Tests;
 
 public class FileSystemInitializerExtensionsTests
 {
 	[Fact]
-	public void Initialize_WithAFile_ShouldCreateFile()
+	public async Task Initialize_WithAFile_ShouldCreateFile()
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithAFile();
 
-		sut.Statistics.TotalCount.Should().Be(0);
+		await Expect.That(sut.Statistics.TotalCount).Should().Be(0);
 		sut.Directory.EnumerateFiles(".").Should().ContainSingle();
 	}
 
 	[Theory]
 	[AutoData]
-	public void Initialize_WithAFile_WithExtension_ShouldCreateFileWithExtension(
+	public async Task Initialize_WithAFile_WithExtension_ShouldCreateFileWithExtension(
 		string extension)
 	{
 		MockFileSystem sut = new();
 		sut.Initialize().WithAFile(extension);
 
-		sut.Statistics.TotalCount.Should().Be(0);
+		await Expect.That(sut.Statistics.TotalCount).Should().Be(0);
 		sut.Directory.EnumerateFiles(".", $"*.{extension}").Should().ContainSingle();
 	}
 
