@@ -10,6 +10,26 @@ public abstract partial class UnixFileModeTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
+	public void GetUnixFileMode_ShouldBeInitializedCorrectly(
+		string path)
+	{
+		Skip.If(Test.RunsOnWindows);
+		
+		FileSystem.File.WriteAllText(path, "");
+		UnixFileMode expected = UnixFileMode.OtherRead |
+		                        UnixFileMode.GroupRead |
+		                        UnixFileMode.UserWrite |
+		                        UnixFileMode.UserRead;
+
+		#pragma warning disable CA1416
+		UnixFileMode result = FileSystem.File.GetUnixFileMode(path);
+		#pragma warning restore CA1416
+
+		result.Should().Be(expected);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void GetUnixFileMode_ShouldThrowPlatformNotSupportedException_OnWindows(
 		string path)
 	{
