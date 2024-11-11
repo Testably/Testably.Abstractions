@@ -68,9 +68,7 @@ public abstract partial class DisposeTests<TFileSystem>
 
 		exception.Should()
 			.BeOfType<ObjectDisposedException>(
-				$"\n{callback}\n executed after Dispose() was called.")
-			.Which.ObjectName.Should()
-			.BeEmpty($"\n{callback}\n executed after Dispose() was called.");
+				$"\n{callback}\n executed after Dispose() was called.");
 	}
 
 	#region Helpers

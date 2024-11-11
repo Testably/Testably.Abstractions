@@ -325,6 +325,15 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		return base.BeginWrite(buffer, offset, count, callback, state);
 	}
 
+	/// <inheritdoc cref="FileSystemStream.Close()" />
+	public override void Close()
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.FileStream.RegisterPathMethod(_location.FullPath, nameof(Close));
+
+		base.Close();
+	}
+
 	/// <inheritdoc cref="FileSystemStream.CopyTo(Stream, int)" />
 	public override void CopyTo(Stream destination, int bufferSize)
 	{
