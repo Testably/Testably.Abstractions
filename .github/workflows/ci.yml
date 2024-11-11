@@ -196,7 +196,7 @@ jobs:
       - name: Install .NET Stryker
         shell: bash
         run: |
-          dotnet tool install dotnet-stryker --tool-path ../tools --version 4.3.0
+          dotnet tool install dotnet-stryker --tool-path ../tools
       - name: Prepare Reports directory
         shell: bash
         run: |
