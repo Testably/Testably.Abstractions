@@ -361,6 +361,7 @@ jobs:
             state: released
           skip-label: |
             state: released
+            dependencies
       - name: Checkout sources
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
