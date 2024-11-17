@@ -10,5 +10,6 @@
 		}
 	],
 	"ignoreDeps": [ "actions/download-artifact", "actions/upload-artifact" ],
-	"schedule": ["before 4am on monday"]
+	"schedule": ["before 4am on monday"],
+	"labels": ["dependencies"]
 }
