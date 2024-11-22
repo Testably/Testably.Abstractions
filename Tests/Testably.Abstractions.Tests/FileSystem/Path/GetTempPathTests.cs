@@ -26,6 +26,16 @@ public abstract partial class GetTempPathTests<TFileSystem>
 	}
 
 	[SkippableFact]
+	public void GetTempPath_ShouldEndWithDirectorySeparator()
+	{
+		string directorySeparator = FileSystem.Path.DirectorySeparatorChar.ToString();
+
+		string result = FileSystem.Path.GetTempPath();
+
+		result.Should().EndWith(directorySeparator);
+	}
+
+	[SkippableFact]
 	public void GetTempPath_ShouldRemainTheSame()
 	{
 		string result1 = FileSystem.Path.GetTempPath();
