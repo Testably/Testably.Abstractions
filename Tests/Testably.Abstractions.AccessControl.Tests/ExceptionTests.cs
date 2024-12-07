@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.AccessControl;
+using Skip = Xunit.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
@@ -12,7 +13,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks),
 		parameters: (int)BaseTypes.All)]
-	public void Operations_WhenPathIsEmpty_ShouldThrowArgumentException(
+	public async Task Operations_WhenPathIsEmpty_ShouldThrowArgumentException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
 		Skip.IfNot(Test.RunsOnWindows || exceptionType == MethodType.GetAccessControl);
@@ -30,7 +31,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks),
 		parameters: (int)BaseTypes.All)]
-	public void Operations_WhenPathIsNull_ShouldThrowArgumentNullException(
+	public async Task Operations_WhenPathIsNull_ShouldThrowArgumentNullException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
 		Skip.IfNot(Test.RunsOnWindows || exceptionType == MethodType.GetAccessControl);
@@ -47,7 +48,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks),
 		parameters: (int)BaseTypes.All)]
-	public void Operations_WhenPathIsWhiteSpace_ShouldThrowArgumentException(
+	public async Task Operations_WhenPathIsWhiteSpace_ShouldThrowArgumentException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
 		Skip.IfNot(Test.RunsOnWindows);

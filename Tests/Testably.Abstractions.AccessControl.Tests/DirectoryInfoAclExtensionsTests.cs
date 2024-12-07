@@ -3,6 +3,7 @@ using System.IO;
 using System.Security.AccessControl;
 using System.Threading.Tasks;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
+using Skip = Xunit.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
@@ -12,7 +13,7 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
-	public void Create_NullDirectorySecurity_ShouldThrowArgumentNullException()
+	public async Task Create_NullDirectorySecurity_ShouldThrowArgumentNullException()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -31,7 +32,7 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 	[SkippableTheory]
 	[InlineData("foo")]
 	[InlineData("foo\\bar")]
-	public void Create_ShouldChangeAccessControl(string path)
+	public async Task Create_ShouldChangeAccessControl(string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -47,7 +48,7 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void GetAccessControl_MissingDirectory_ShouldThrowDirectoryNotFoundException()
+	public async Task GetAccessControl_MissingDirectory_ShouldThrowDirectoryNotFoundException()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("foo");
@@ -64,7 +65,7 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void GetAccessControl_ShouldBeInitializedWithNotNullValue()
+	public async Task GetAccessControl_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -79,7 +80,7 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void GetAccessControl_ShouldReturnSetResult()
+	public async Task GetAccessControl_ShouldReturnSetResult()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 		Skip.If(FileSystem is RealFileSystem);
@@ -100,7 +101,7 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void
+	public async Task
 		GetAccessControl_WithAccessControlSections_MissingDirectory_ShouldThrowDirectoryNotFoundException()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -118,7 +119,7 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
+	public async Task GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -134,7 +135,7 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void GetAccessControl_WithAccessControlSections_ShouldReturnSetResult()
+	public async Task GetAccessControl_WithAccessControlSections_ShouldReturnSetResult()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 		Skip.If(FileSystem is RealFileSystem);
@@ -155,7 +156,7 @@ public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void SetAccessControl_ShouldChangeAccessControl()
+	public async Task SetAccessControl_ShouldChangeAccessControl()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 

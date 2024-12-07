@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Security.AccessControl;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
+using Skip = Xunit.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
@@ -10,7 +11,7 @@ public abstract partial class FileInfoAclExtensionsTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
-	public void GetAccessControl_MissingFile_ShouldThrowFileNotFoundException()
+	public async Task GetAccessControl_MissingFile_ShouldThrowFileNotFoundException()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 		IFileInfo sut = FileSystem.FileInfo.New("foo");
@@ -27,7 +28,7 @@ public abstract partial class FileInfoAclExtensionsTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void GetAccessControl_ShouldBeInitializedWithNotNullValue()
+	public async Task GetAccessControl_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -42,7 +43,7 @@ public abstract partial class FileInfoAclExtensionsTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void GetAccessControl_ShouldReturnSetResult()
+	public async Task GetAccessControl_ShouldReturnSetResult()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 		Skip.If(FileSystem is RealFileSystem);
@@ -63,7 +64,7 @@ public abstract partial class FileInfoAclExtensionsTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void
+	public async Task
 		GetAccessControl_WithAccessControlSections_MissingFile_ShouldThrowFileNotFoundException()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -81,7 +82,7 @@ public abstract partial class FileInfoAclExtensionsTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
+	public async Task GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -97,7 +98,7 @@ public abstract partial class FileInfoAclExtensionsTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void GetAccessControl_WithAccessControlSections_ShouldReturnSetResult()
+	public async Task GetAccessControl_WithAccessControlSections_ShouldReturnSetResult()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 		Skip.If(FileSystem is RealFileSystem);
@@ -118,7 +119,7 @@ public abstract partial class FileInfoAclExtensionsTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void SetAccessControl_ShouldChangeAccessControl()
+	public async Task SetAccessControl_ShouldChangeAccessControl()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 

@@ -1,6 +1,8 @@
+using aweXpect;
 using System.Security.AccessControl;
 using System.Threading.Tasks;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
+using Skip = Xunit.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
@@ -10,25 +12,23 @@ public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
-	public void CreateDirectory_NullDirectorySecurity_ShouldThrowArgumentNullException()
+	public async Task CreateDirectory_NullDirectorySecurity_ShouldThrowArgumentNullException()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
 		#pragma warning disable CA1416
-		Exception? exception = Record.Exception(() =>
-		{
+		void Act() =>
 			FileSystem.Directory.CreateDirectory("foo", null!);
-		});
 		#pragma warning restore CA1416
 
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.ParamName.Should().Be("directorySecurity");
+		await That(Act).Should().Throw<ArgumentNullException>()
+			.WithParamName("directorySecurity");
 	}
 
 	[SkippableTheory]
 	[InlineData("bar")]
 	[InlineData("bar\\foo")]
-	public void CreateDirectory_ShouldChangeAccessControl(string path)
+	public async Task CreateDirectory_ShouldChangeAccessControl(string path)
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -39,12 +39,12 @@ public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
 		DirectorySecurity result = FileSystem.Directory.GetAccessControl(path);
 		#pragma warning restore CA1416
 
-		result.HasSameAccessRightsAs(directorySecurity).Should().BeTrue();
-		FileSystem.Directory.Exists(path).Should().BeTrue();
+		await That(result.HasSameAccessRightsAs(directorySecurity)).Should().BeTrue();
+		await That(FileSystem.Directory.Exists(path)).Should().BeTrue();
 	}
 
 	[SkippableFact]
-	public void GetAccessControl_ShouldBeInitializedWithNotNullValue()
+	public async Task GetAccessControl_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -53,13 +53,13 @@ public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
 		#pragma warning disable CA1416
 		DirectorySecurity result =
 			FileSystem.Directory.GetAccessControl("foo");
-		#pragma warning restore CA1416
 
-		result.Should().NotBeNull();
+		await That(result).Should().NotBeNull();
+		#pragma warning restore CA1416
 	}
 
 	[SkippableFact]
-	public void GetAccessControl_ShouldReturnSetResult()
+	public async Task GetAccessControl_ShouldReturnSetResult()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 		Skip.If(FileSystem is RealFileSystem);
@@ -74,13 +74,13 @@ public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
 
 		DirectorySecurity result =
 			FileSystem.Directory.GetAccessControl("foo");
-		#pragma warning restore CA1416
 
-		result.Should().Be(originalResult);
+		await That(result).Should().Be(originalResult);
+		#pragma warning restore CA1416
 	}
 
 	[SkippableFact]
-	public void GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
+	public async Task GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -90,13 +90,13 @@ public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
 		#pragma warning disable CA1416
 		DirectorySecurity result =
 			FileSystem.Directory.GetAccessControl("foo", AccessControlSections.None);
-		#pragma warning restore CA1416
 
-		result.Should().NotBeNull();
+		await That(result).Should().NotBeNull();
+		#pragma warning restore CA1416
 	}
 
 	[SkippableFact]
-	public void GetAccessControl_WithAccessControlSections_ShouldReturnSetResult()
+	public async Task GetAccessControl_WithAccessControlSections_ShouldReturnSetResult()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 		Skip.If(FileSystem is RealFileSystem);
@@ -111,13 +111,13 @@ public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
 
 		DirectorySecurity result =
 			FileSystem.Directory.GetAccessControl("foo", AccessControlSections.None);
-		#pragma warning restore CA1416
 
-		result.Should().Be(originalResult);
+		await That(result).Should().Be(originalResult);
+		#pragma warning restore CA1416
 	}
 
 	[SkippableFact]
-	public void SetAccessControl_ShouldChangeAccessControl()
+	public async Task SetAccessControl_ShouldChangeAccessControl()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -131,7 +131,7 @@ public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
 				AccessControlSections.Access);
 		#pragma warning restore CA1416
 
-		currentAccessControl.HasSameAccessRightsAs(originalAccessControl)
+		await That(currentAccessControl.HasSameAccessRightsAs(originalAccessControl))
 			.Should().BeTrue();
 	}
 
@@ -154,8 +154,8 @@ public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
 		DateTime lastAccessTimeUtc = FileSystem.File.GetLastAccessTimeUtc("foo.txt");
 		DateTime lastWriteTimeUtc = FileSystem.File.GetLastWriteTimeUtc("foo.txt");
 
-		creationTimeUtc.Should().Be(previousCreationTimeUtc);
-		lastAccessTimeUtc.Should().Be(previousLastAccessTimeUtc);
-		lastWriteTimeUtc.Should().Be(previousLastWriteTimeUtc);
+		await That(creationTimeUtc).Should().Be(previousCreationTimeUtc);
+		await That(lastAccessTimeUtc).Should().Be(previousLastAccessTimeUtc);
+		await That(lastWriteTimeUtc).Should().Be(previousLastWriteTimeUtc);
 	}
 }
