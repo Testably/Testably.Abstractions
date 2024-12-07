@@ -24,6 +24,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="aweXpect" />
 		<PackageReference Include="AutoFixture.Xunit2" />
 		<PackageReference Include="FluentAssertions" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
