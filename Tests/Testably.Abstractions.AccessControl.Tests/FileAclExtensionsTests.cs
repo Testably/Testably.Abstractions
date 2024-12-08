@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Security.AccessControl;
-using System.Threading.Tasks;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
 using Skip = Xunit.Skip;
 
@@ -16,15 +15,15 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			#pragma warning disable CA1416
 			_ = FileSystem.File.GetAccessControl("foo");
 			#pragma warning restore CA1416
-		});
+		}
 
-		exception.Should().BeOfType<FileNotFoundException>()
-			.Which.HResult.Should().Be(-2147024894);
+		await That(Act).Should().Throw<FileNotFoundException>()
+			.WithHResult(-2147024894);
 	}
 
 	[SkippableFact]
@@ -36,9 +35,9 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 
 		#pragma warning disable CA1416
 		FileSecurity result = FileSystem.File.GetAccessControl("foo");
-		#pragma warning restore CA1416
 
-		result.Should().NotBeNull();
+		await That(result).Should().NotBeNull();
+		#pragma warning restore CA1416
 	}
 
 	[SkippableFact]
@@ -56,9 +55,9 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 
 		FileSecurity result =
 			FileSystem.File.GetAccessControl("foo");
-		#pragma warning restore CA1416
 
-		result.Should().Be(originalResult);
+		await That(result).Should().Be(originalResult);
+		#pragma warning restore CA1416
 	}
 
 	[SkippableFact]
@@ -67,15 +66,15 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			#pragma warning disable CA1416
 			_ = FileSystem.File.GetAccessControl("foo", AccessControlSections.None);
 			#pragma warning restore CA1416
-		});
+		}
 
-		exception.Should().BeOfType<FileNotFoundException>()
-			.Which.HResult.Should().Be(-2147024894);
+		await That(Act).Should().Throw<FileNotFoundException>()
+			.WithHResult(-2147024894);
 	}
 
 	[SkippableFact]
@@ -88,9 +87,9 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 
 		#pragma warning disable CA1416
 		FileSecurity result = FileSystem.File.GetAccessControl("foo", AccessControlSections.None);
-		#pragma warning restore CA1416
 
-		result.Should().NotBeNull();
+		await That(result).Should().NotBeNull();
+		#pragma warning restore CA1416
 	}
 
 	[SkippableFact]
@@ -109,9 +108,9 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 
 		FileSecurity result =
 			FileSystem.File.GetAccessControl("foo", AccessControlSections.None);
-		#pragma warning restore CA1416
 
-		result.Should().Be(originalResult);
+		await That(result).Should().Be(originalResult);
+		#pragma warning restore CA1416
 	}
 
 	[SkippableFact]
@@ -128,7 +127,7 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 			FileSystem.File.GetAccessControl("foo", AccessControlSections.Access);
 		#pragma warning restore CA1416
 
-		currentAccessControl.HasSameAccessRightsAs(originalAccessControl)
+		await That(currentAccessControl.HasSameAccessRightsAs(originalAccessControl))
 			.Should().BeTrue();
 	}
 }

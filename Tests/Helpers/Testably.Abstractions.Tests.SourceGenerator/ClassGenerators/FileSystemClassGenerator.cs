@@ -91,12 +91,12 @@ namespace {@class.Namespace}.{@class.Name}
 #if DEBUG
 			if (fixture.RealFileSystemTests != TestSettingStatus.AlwaysEnabled)
 			{{
-				throw new SkipException($""Tests against the real file system are {{fixture.RealFileSystemTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests."");
+				throw new Xunit.SkipException($""Tests against the real file system are {{fixture.RealFileSystemTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests."");
 			}}
 #else
 			if (fixture.RealFileSystemTests == TestSettingStatus.AlwaysDisabled)
 			{{
-				throw new SkipException($""Tests against the real file system are {{fixture.RealFileSystemTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests."");
+				throw new Xunit.SkipException($""Tests against the real file system are {{fixture.RealFileSystemTests}}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests."");
 			}}
 #endif
 			_fixture = fixture;

@@ -7,48 +7,45 @@ public sealed class AccessControlHelperTests
 {
 	[Theory]
 	[AutoDomainData]
-	public async Task GetExtensibilityOrThrow_CustomDirectoryInfo_ShouldThrowNotSupportedException(IDirectoryInfo sut)
+	public async Task GetExtensibilityOrThrow_CustomDirectoryInfo_ShouldThrowNotSupportedException(
+		IDirectoryInfo sut)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.GetExtensibilityOrThrow();
-		});
+		}
 
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.Message.Should()
-			.Contain(nameof(IFileSystemExtensibility)).And
-			.Contain(sut.GetType().Name);
+		await That(Act).Should().Throw<NotSupportedException>()
+			.WithMessage($"*{sut.GetType().Name}*{nameof(IFileSystemExtensibility)}*").AsWildcard();
 	}
 
 	[Theory]
 	[AutoDomainData]
-	public async Task GetExtensibilityOrThrow_CustomFileInfo_ShouldThrowNotSupportedException(IFileInfo sut)
+	public async Task GetExtensibilityOrThrow_CustomFileInfo_ShouldThrowNotSupportedException(
+		IFileInfo sut)
 	{
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.GetExtensibilityOrThrow();
-		});
+		}
 
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.Message.Should()
-			.Contain(nameof(IFileSystemExtensibility)).And
-			.Contain(sut.GetType().Name);
+		await That(Act).Should().Throw<NotSupportedException>()
+			.WithMessage($"*{sut.GetType().Name}*{nameof(IFileSystemExtensibility)}*").AsWildcard();
 	}
 
 	[Fact]
-	public async Task GetExtensibilityOrThrow_CustomFileSystemStream_ShouldThrowNotSupportedException()
+	public async Task
+		GetExtensibilityOrThrow_CustomFileSystemStream_ShouldThrowNotSupportedException()
 	{
 		FileSystemStream sut = new CustomFileSystemStream();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.GetExtensibilityOrThrow();
-		});
+		}
 
-		exception.Should().BeOfType<NotSupportedException>()
-			.Which.Message.Should()
-			.Contain(nameof(IFileSystemExtensibility)).And
-			.Contain(sut.GetType().Name);
+		await That(Act).Should().Throw<NotSupportedException>()
+			.WithMessage($"*{sut.GetType().Name}*{nameof(IFileSystemExtensibility)}*").AsWildcard();
 	}
 
 	[Fact]
@@ -58,12 +55,12 @@ public sealed class AccessControlHelperTests
 		IDirectoryInfo sut = fileSystem.DirectoryInfo.New("foo");
 		fileSystem.Directory.CreateDirectory("foo");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.ThrowIfMissing();
-		});
+		}
 
-		exception.Should().BeNull();
+		await That(Act).Should().NotThrow();
 	}
 
 	[Fact]
@@ -73,12 +70,12 @@ public sealed class AccessControlHelperTests
 		IFileInfo sut = fileSystem.FileInfo.New("foo");
 		fileSystem.File.WriteAllText("foo", "some content");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.ThrowIfMissing();
-		});
+		}
 
-		exception.Should().BeNull();
+		await That(Act).Should().NotThrow();
 	}
 
 	[Fact]
@@ -87,14 +84,14 @@ public sealed class AccessControlHelperTests
 		MockFileSystem fileSystem = new();
 		IDirectoryInfo sut = fileSystem.DirectoryInfo.New("foo");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.ThrowIfMissing();
-		});
+		}
 
-		exception.Should().BeOfType<DirectoryNotFoundException>()
-			.Which.HResult.Should().Be(-2147024893);
-		exception!.Message.Should().Contain($"'{sut.FullName}'");
+		await That(Act).Should().Throw<DirectoryNotFoundException>()
+			.WithHResult(-2147024893).And
+			.WithMessage($"*'{sut.FullName}'*").AsWildcard();
 	}
 
 	[Fact]
@@ -103,14 +100,14 @@ public sealed class AccessControlHelperTests
 		MockFileSystem fileSystem = new();
 		IFileInfo sut = fileSystem.FileInfo.New("foo");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			sut.ThrowIfMissing();
-		});
+		}
 
-		exception.Should().BeOfType<FileNotFoundException>()
-			.Which.HResult.Should().Be(-2147024894);
-		exception!.Message.Should().Contain($"'{sut.FullName}'");
+		await That(Act).Should().Throw<FileNotFoundException>()
+			.WithHResult(-2147024894).And
+			.WithMessage($"*'{sut.FullName}'*").AsWildcard();
 	}
 
 	private sealed class CustomFileSystemStream() : FileSystemStream(Null, ".", false);
