@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Compression.Tests.Internal;
 public sealed class ExecuteTests
 {
 	[Fact]
-	public void WhenRealFileSystem_MockFileSystem_WithActionCallback_ShouldExecuteOnMockFileSystem()
+	public async Task WhenRealFileSystem_MockFileSystem_WithActionCallback_ShouldExecuteOnMockFileSystem()
 	{
 		bool onRealFileSystemExecuted = false;
 		bool onMockFileSystemExecuted = false;
@@ -20,12 +20,12 @@ public sealed class ExecuteTests
 				onMockFileSystemExecuted = true;
 			});
 
-		onRealFileSystemExecuted.Should().BeFalse();
-		onMockFileSystemExecuted.Should().BeTrue();
+		await That(onRealFileSystemExecuted).Should().BeFalse();
+		await That(onMockFileSystemExecuted).Should().BeTrue();
 	}
 
 	[Fact]
-	public void WhenRealFileSystem_MockFileSystem_WithFuncCallback_ShouldExecuteOnMockFileSystem()
+	public async Task WhenRealFileSystem_MockFileSystem_WithFuncCallback_ShouldExecuteOnMockFileSystem()
 	{
 		bool onRealFileSystemExecuted = false;
 		bool onMockFileSystemExecuted = false;
@@ -40,12 +40,12 @@ public sealed class ExecuteTests
 				return onMockFileSystemExecuted = true;
 			});
 
-		onRealFileSystemExecuted.Should().BeFalse();
-		onMockFileSystemExecuted.Should().BeTrue();
+		await That(onRealFileSystemExecuted).Should().BeFalse();
+		await That(onMockFileSystemExecuted).Should().BeTrue();
 	}
 
 	[Fact]
-	public void WhenRealFileSystem_RealFileSystem_WithActionCallback_ShouldExecuteOnRealFileSystem()
+	public async Task WhenRealFileSystem_RealFileSystem_WithActionCallback_ShouldExecuteOnRealFileSystem()
 	{
 		bool onRealFileSystemExecuted = false;
 		bool onMockFileSystemExecuted = false;
@@ -60,12 +60,12 @@ public sealed class ExecuteTests
 				onMockFileSystemExecuted = true;
 			});
 
-		onRealFileSystemExecuted.Should().BeTrue();
-		onMockFileSystemExecuted.Should().BeFalse();
+		await That(onRealFileSystemExecuted).Should().BeTrue();
+		await That(onMockFileSystemExecuted).Should().BeFalse();
 	}
 
 	[Fact]
-	public void WhenRealFileSystem_RealFileSystem_WithFuncCallback_ShouldExecuteOnRealFileSystem()
+	public async Task WhenRealFileSystem_RealFileSystem_WithFuncCallback_ShouldExecuteOnRealFileSystem()
 	{
 		bool onRealFileSystemExecuted = false;
 		bool onMockFileSystemExecuted = false;
@@ -80,7 +80,7 @@ public sealed class ExecuteTests
 				return onMockFileSystemExecuted = true;
 			});
 
-		onRealFileSystemExecuted.Should().BeTrue();
-		onMockFileSystemExecuted.Should().BeFalse();
+		await That(onRealFileSystemExecuted).Should().BeTrue();
+		await That(onMockFileSystemExecuted).Should().BeFalse();
 	}
 }

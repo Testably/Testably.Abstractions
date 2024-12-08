@@ -14,7 +14,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 {
 	[SkippableTheory]
 	[AutoData]
-	public void
+	public async Task
 		CreateFromDirectory_EmptyDirectory_ShouldBeIncluded(
 			CompressionLevel compressionLevel)
 	{
@@ -34,7 +34,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateFromDirectory_EmptySource_DoNotIncludeBaseDirectory_ShouldBeEmpty(
+	public async Task CreateFromDirectory_EmptySource_DoNotIncludeBaseDirectory_ShouldBeEmpty(
 		CompressionLevel compressionLevel)
 	{
 		FileSystem.Initialize()
@@ -51,7 +51,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void
+	public async Task
 		CreateFromDirectory_EmptySource_IncludeBaseDirectory_ShouldPrependDirectoryName(
 			CompressionLevel compressionLevel)
 	{
@@ -70,7 +70,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[MemberData(nameof(EntryNameEncoding))]
-	public void CreateFromDirectory_EntryNameEncoding_ShouldUseEncoding(
+	public async Task CreateFromDirectory_EntryNameEncoding_ShouldUseEncoding(
 		string entryName, Encoding encoding, bool encodedCorrectly)
 	{
 		FileSystem.Initialize()
@@ -97,7 +97,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void CreateFromDirectory_IncludeBaseDirectory_ShouldPrependDirectoryName(
+	public async Task CreateFromDirectory_IncludeBaseDirectory_ShouldPrependDirectoryName(
 		CompressionLevel compressionLevel)
 	{
 		FileSystem.Initialize()
@@ -117,7 +117,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 #if FEATURE_COMPRESSION_OVERWRITE
 	[SkippableTheory]
 	[AutoData]
-	public void CreateFromDirectory_Overwrite_WithEncoding_ShouldOverwriteFile(
+	public async Task CreateFromDirectory_Overwrite_WithEncoding_ShouldOverwriteFile(
 		string contents, Encoding encoding)
 	{
 		FileSystem.Initialize()
@@ -140,7 +140,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 #endif
 
 	[SkippableFact]
-	public void CreateFromDirectory_ShouldZipDirectoryContent()
+	public async Task CreateFromDirectory_ShouldZipDirectoryContent()
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("destination")
@@ -161,7 +161,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableFact]
-	public void CreateFromDirectory_WithReadOnlyStream_ShouldThrowArgumentException()
+	public async Task CreateFromDirectory_WithReadOnlyStream_ShouldThrowArgumentException()
 	{
 		FileSystem.Initialize()
 			.WithFile("target.zip")
@@ -186,7 +186,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[AutoData]
-	public void
+	public async Task
 		CreateFromDirectory_WithStream_EmptyDirectory_ShouldBeIncluded(
 			CompressionLevel compressionLevel)
 	{
@@ -208,7 +208,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[AutoData]
-	public void CreateFromDirectory_WithStream_EmptySource_DoNotIncludeBaseDirectory_ShouldBeEmpty(
+	public async Task CreateFromDirectory_WithStream_EmptySource_DoNotIncludeBaseDirectory_ShouldBeEmpty(
 		CompressionLevel compressionLevel)
 	{
 		FileSystem.Initialize()
@@ -227,7 +227,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[AutoData]
-	public void
+	public async Task
 		CreateFromDirectory_WithStream_EmptySource_IncludeBaseDirectory_ShouldPrependDirectoryName(
 			CompressionLevel compressionLevel)
 	{
@@ -248,7 +248,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[MemberData(nameof(EntryNameEncoding))]
-	public void CreateFromDirectory_WithStream_EntryNameEncoding_ShouldUseEncoding(
+	public async Task CreateFromDirectory_WithStream_EntryNameEncoding_ShouldUseEncoding(
 		string entryName, Encoding encoding, bool encodedCorrectly)
 	{
 		FileSystem.Initialize()
@@ -277,7 +277,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[AutoData]
-	public void CreateFromDirectory_WithStream_IncludeBaseDirectory_ShouldPrependDirectoryName(
+	public async Task CreateFromDirectory_WithStream_IncludeBaseDirectory_ShouldPrependDirectoryName(
 		CompressionLevel compressionLevel)
 	{
 		FileSystem.Initialize()
@@ -297,7 +297,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableFact]
-	public void
+	public async Task
 		CreateFromDirectory_WithStream_NotWritable_ShouldThrowArgumentException()
 	{
 		Stream stream = new MemoryStreamMock(canWrite: false);
@@ -314,7 +314,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableFact]
-	public void
+	public async Task
 		CreateFromDirectory_WithStream_Null_ShouldThrowArgumentNullException()
 	{
 		Stream stream = null!;
@@ -332,7 +332,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[AutoData]
-	public void CreateFromDirectory_WithStream_Overwrite_WithEncoding_ShouldOverwriteFile(
+	public async Task CreateFromDirectory_WithStream_Overwrite_WithEncoding_ShouldOverwriteFile(
 		string contents, Encoding encoding)
 	{
 		FileSystem.Initialize()
@@ -357,7 +357,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableFact]
-	public void CreateFromDirectory_WithStream_ShouldZipDirectoryContent()
+	public async Task CreateFromDirectory_WithStream_ShouldZipDirectoryContent()
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("destination")
