@@ -29,20 +29,20 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		switch (exceptionType)
 		{
 			case MethodType.Create:
-				exception.Should()
-					.BeNull(
+				await That(exception).Should()
+					.BeNull().Because(
 						$"\n{exceptionType} on {baseType}\n was called with a missing directory");
 				break;
 			case MethodType.GetAccessControl:
-				exception.Should()
-					.BeOfType<DirectoryNotFoundException>(
-						$"\n{exceptionType} on {baseType}\n was called with a missing directory")
-					.Which.HResult.Should().Be(-2147024893);
+				await That(exception).Should()
+					.Be<DirectoryNotFoundException>()
+					.Because($"\n{exceptionType} on {baseType}\n was called with a missing directory")
+					.Which(e => e.HResult, h => h.Should().Be(-2147024893));
 				break;
 			case MethodType.SetAccessControl:
-				exception.Should()
-					.BeNull(
-						$"\n{exceptionType} on {baseType}\n was called with a missing directory");
+				await That(exception).Should()
+					.BeNull()
+					.Because($"\n{exceptionType} on {baseType}\n was called with a missing directory");
 				break;
 			default:
 				throw new NotSupportedException();
@@ -67,18 +67,20 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		switch (exceptionType)
 		{
 			case MethodType.Create:
-				exception.Should()
-					.BeNull($"\n{exceptionType} on {baseType}\n was called with a missing file");
+				await That(exception).Should()
+					.BeNull()
+					.Because($"\n{exceptionType} on {baseType}\n was called with a missing file");
 				break;
 			case MethodType.GetAccessControl:
-				exception.Should()
-					.BeOfType<DirectoryNotFoundException>(
-						$"\n{exceptionType} on {baseType}\n was called with a missing file")
-					.Which.HResult.Should().Be(-2147024893);
+				await That(exception).Should()
+					.Be<DirectoryNotFoundException>()
+					.Because($"\n{exceptionType} on {baseType}\n was called with a missing file")
+					.Which(e => e.HResult, h => h.Should().Be(-2147024893));
 				break;
 			case MethodType.SetAccessControl:
-				exception.Should()
-					.BeNull($"\n{exceptionType} on {baseType}\n was called with a missing file");
+				await That(exception).Should()
+					.BeNull()
+					.Because($"\n{exceptionType} on {baseType}\n was called with a missing file");
 				break;
 			default:
 				throw new NotSupportedException();
@@ -103,21 +105,21 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		switch (exceptionType)
 		{
 			case MethodType.Create:
-				exception.Should()
-					.BeOfType<UnauthorizedAccessException>(
-						$"\n{exceptionType} on {baseType}\n was called with a missing directory")
-					.Which.HResult.Should().Be(-2147024891);
+				await That(exception).Should()
+					.Be<UnauthorizedAccessException>()
+					.Because($"\n{exceptionType} on {baseType}\n was called with a missing directory")
+					.Which(e => e.HResult, h => h.Should().Be(-2147024891));
 				break;
 			case MethodType.GetAccessControl:
-				exception.Should()
-					.BeOfType<FileNotFoundException>(
-						$"\n{exceptionType} on {baseType}\n was called with a missing directory")
-					.Which.HResult.Should().Be(-2147024894);
+				await That(exception).Should()
+					.Be<FileNotFoundException>()
+					.Because($"\n{exceptionType} on {baseType}\n was called with a missing directory")
+					.Which(e => e.HResult, h => h.Should().Be(-2147024894));
 				break;
 			case MethodType.SetAccessControl:
-				exception.Should()
-					.BeNull(
-						$"\n{exceptionType} on {baseType}\n was called with a missing directory");
+				await That(exception).Should()
+					.BeNull()
+					.Because($"\n{exceptionType} on {baseType}\n was called with a missing directory");
 				break;
 			default:
 				throw new NotSupportedException();
@@ -142,18 +144,20 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		switch (exceptionType)
 		{
 			case MethodType.Create:
-				exception.Should()
-					.BeNull($"\n{exceptionType} on {baseType}\n was called with a missing file");
+				await That(exception).Should()
+					.BeNull()
+					.Because($"\n{exceptionType} on {baseType}\n was called with a missing file");
 				break;
 			case MethodType.GetAccessControl:
-				exception.Should()
-					.BeOfType<FileNotFoundException>(
-						$"\n{exceptionType} on {baseType}\n was called with a missing file")
-					.Which.HResult.Should().Be(-2147024894);
+				await That(exception).Should()
+					.Be<FileNotFoundException>()
+					.Because($"\n{exceptionType} on {baseType}\n was called with a missing file")
+					.Which(e => e.HResult, h => h.Should().Be(-2147024894));
 				break;
 			case MethodType.SetAccessControl:
-				exception.Should()
-					.BeNull($"\n{exceptionType} on {baseType}\n was called with a missing file");
+				await That(exception).Should()
+					.BeNull()
+					.Because($"\n{exceptionType} on {baseType}\n was called with a missing file");
 				break;
 			default:
 				throw new NotSupportedException();
