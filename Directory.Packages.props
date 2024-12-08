@@ -22,6 +22,7 @@
 	<ItemGroup>
 		<PackageVersion Include="AutoFixture.AutoNSubstitute" Version="4.18.1" />
 		<PackageVersion Include="AutoFixture.Xunit2" Version="4.18.1" />
+		<PackageVersion Include="aweXpect" Version="0.7.0" />
 		<PackageVersion Include="FluentAssertions" Version="7.0.0" />
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
 		<PackageVersion Include="Xunit.SkippableFact" Version="1.4.13" />

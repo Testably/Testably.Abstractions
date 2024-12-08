@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Security.AccessControl;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
+using Skip = Xunit.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
@@ -10,23 +11,23 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
-	public void GetAccessControl_MissingFile_ShouldThrowFileNotFoundException()
+	public async Task GetAccessControl_MissingFile_ShouldThrowFileNotFoundException()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			#pragma warning disable CA1416
 			_ = FileSystem.File.GetAccessControl("foo");
 			#pragma warning restore CA1416
-		});
+		}
 
-		exception.Should().BeOfType<FileNotFoundException>()
-			.Which.HResult.Should().Be(-2147024894);
+		await That(Act).Should().Throw<FileNotFoundException>()
+			.WithHResult(-2147024894);
 	}
 
 	[SkippableFact]
-	public void GetAccessControl_ShouldBeInitializedWithNotNullValue()
+	public async Task GetAccessControl_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -34,13 +35,13 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 
 		#pragma warning disable CA1416
 		FileSecurity result = FileSystem.File.GetAccessControl("foo");
-		#pragma warning restore CA1416
 
-		result.Should().NotBeNull();
+		await That(result).Should().NotBeNull();
+		#pragma warning restore CA1416
 	}
 
 	[SkippableFact]
-	public void GetAccessControl_ShouldReturnSetResult()
+	public async Task GetAccessControl_ShouldReturnSetResult()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 		Skip.If(FileSystem is RealFileSystem);
@@ -54,30 +55,30 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 
 		FileSecurity result =
 			FileSystem.File.GetAccessControl("foo");
-		#pragma warning restore CA1416
 
-		result.Should().Be(originalResult);
+		await That(result).Should().Be(originalResult);
+		#pragma warning restore CA1416
 	}
 
 	[SkippableFact]
-	public void
+	public async Task
 		GetAccessControl_WithAccessControlSections_MissingFile_ShouldThrowFileNotFoundException()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			#pragma warning disable CA1416
 			_ = FileSystem.File.GetAccessControl("foo", AccessControlSections.None);
 			#pragma warning restore CA1416
-		});
+		}
 
-		exception.Should().BeOfType<FileNotFoundException>()
-			.Which.HResult.Should().Be(-2147024894);
+		await That(Act).Should().Throw<FileNotFoundException>()
+			.WithHResult(-2147024894);
 	}
 
 	[SkippableFact]
-	public void GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
+	public async Task GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 		SkipIfLongRunningTestsShouldBeSkipped();
@@ -86,13 +87,13 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 
 		#pragma warning disable CA1416
 		FileSecurity result = FileSystem.File.GetAccessControl("foo", AccessControlSections.None);
-		#pragma warning restore CA1416
 
-		result.Should().NotBeNull();
+		await That(result).Should().NotBeNull();
+		#pragma warning restore CA1416
 	}
 
 	[SkippableFact]
-	public void GetAccessControl_WithAccessControlSections_ShouldReturnSetResult()
+	public async Task GetAccessControl_WithAccessControlSections_ShouldReturnSetResult()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 		Skip.If(FileSystem is RealFileSystem);
@@ -107,13 +108,13 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 
 		FileSecurity result =
 			FileSystem.File.GetAccessControl("foo", AccessControlSections.None);
-		#pragma warning restore CA1416
 
-		result.Should().Be(originalResult);
+		await That(result).Should().Be(originalResult);
+		#pragma warning restore CA1416
 	}
 
 	[SkippableFact]
-	public void SetAccessControl_ShouldChangeAccessControl()
+	public async Task SetAccessControl_ShouldChangeAccessControl()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
@@ -126,7 +127,7 @@ public abstract partial class FileAclExtensionsTests<TFileSystem>
 			FileSystem.File.GetAccessControl("foo", AccessControlSections.Access);
 		#pragma warning restore CA1416
 
-		currentAccessControl.HasSameAccessRightsAs(originalAccessControl)
+		await That(currentAccessControl.HasSameAccessRightsAs(originalAccessControl))
 			.Should().BeTrue();
 	}
 }

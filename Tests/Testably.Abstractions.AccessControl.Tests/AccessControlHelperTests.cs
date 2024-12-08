@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using aweXpect;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
@@ -8,41 +10,26 @@ public abstract partial class AccessControlHelperTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
-	public void GetExtensibilityOrThrow_DirectoryInfo_ShouldNotThrow()
+	public async Task GetExtensibilityOrThrow_DirectoryInfo_ShouldNotThrow()
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("foo");
 
-		Exception? exception = Record.Exception(() =>
-		{
-			sut.GetExtensibilityOrThrow();
-		});
-
-		exception.Should().BeNull();
+		await That(() => sut.GetExtensibilityOrThrow()).Should().NotThrow();
 	}
 
 	[SkippableFact]
-	public void GetExtensibilityOrThrow_FileInfo_ShouldNotThrow()
+	public async Task GetExtensibilityOrThrow_FileInfo_ShouldNotThrow()
 	{
 		IFileInfo sut = FileSystem.FileInfo.New("foo");
 
-		Exception? exception = Record.Exception(() =>
-		{
-			sut.GetExtensibilityOrThrow();
-		});
-
-		exception.Should().BeNull();
+		await That(() => sut.GetExtensibilityOrThrow()).Should().NotThrow();
 	}
 
 	[SkippableFact]
-	public void GetExtensibilityOrThrow_FileSystemStream_ShouldNotThrow()
+	public async Task GetExtensibilityOrThrow_FileSystemStream_ShouldNotThrow()
 	{
 		FileSystemStream sut = FileSystem.FileStream.New("foo", FileMode.Create);
 
-		Exception? exception = Record.Exception(() =>
-		{
-			sut.GetExtensibilityOrThrow();
-		});
-
-		exception.Should().BeNull();
+		await That(() => sut.GetExtensibilityOrThrow()).Should().NotThrow();
 	}
 }
