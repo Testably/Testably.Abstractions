@@ -10,6 +10,6 @@ public abstract partial class Tests<TFileSystem>
 	{
 		IZipFile result = FileSystem.ZipFile();
 
-		result.FileSystem.Should().Be(FileSystem);
+		await That(result.FileSystem).Should().Be(FileSystem);
 	}
 }

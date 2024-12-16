@@ -1,4 +1,5 @@
-﻿using System.IO.Compression;
+﻿using FluentAssertions;
+using System.IO.Compression;
 using System.Text;
 #if FEATURE_COMPRESSION_STREAM
 using System.IO;
@@ -28,8 +29,8 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
-		archive.Entries.Count.Should().Be(1);
-		archive.Entries.Should().Contain(e => e.FullName.Equals("bar/"));
+		await That(archive.Entries).Should().HaveSingle()
+			.Which.For(x => x.FullName, f => f.Should().Be("bar/"));
 	}
 
 	[SkippableTheory]
@@ -46,7 +47,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
-		archive.Entries.Count.Should().Be(0);
+		await That(archive.Entries).Should().BeEmpty();
 	}
 
 	[SkippableTheory]
@@ -64,8 +65,8 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
-		archive.Entries.Count.Should().Be(1);
-		archive.Entries.Should().Contain(e => e.FullName.Equals("foo/"));
+		await That(archive.Entries).Should().HaveSingle()
+			.Which.For(x => x.FullName, f => f.Should().Be("foo/"));
 	}
 
 	[SkippableTheory]
@@ -84,14 +85,14 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
-		archive.Entries.Count.Should().Be(1);
+		var singleEntry = await That(archive.Entries).Should().HaveSingle();
 		if (encodedCorrectly)
 		{
-			archive.Entries.Should().Contain(e => e.Name == entryName);
+			await That(singleEntry.Name).Should().Be(entryName);
 		}
 		else
 		{
-			archive.Entries.Should().NotContain(e => e.Name == entryName);
+			await That(singleEntry.Name).Should().NotBe(entryName);
 		}
 	}
 
@@ -110,8 +111,8 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
-		archive.Entries.Count.Should().Be(1);
-		archive.Entries.Should().Contain(e => e.FullName.Equals("foo/test.txt"));
+		await That(archive.Entries).Should().HaveSingle()
+			.Which.For(x => x.FullName, f => f.Should().Be("foo/test.txt"));
 	}
 
 #if FEATURE_COMPRESSION_OVERWRITE
@@ -134,8 +135,8 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 		IZipArchive archive = FileSystem.ZipFile()
 			.Open("destination.zip", ZipArchiveMode.Read, encoding);
 
-		archive.Entries.Count.Should().Be(1);
-		archive.Entries.Should().Contain(e => e.FullName.Equals("test.txt"));
+		await That(archive.Entries).Should().HaveSingle()
+			.Which.For(x => x.FullName, f => f.Should().Be("test.txt"));
 	}
 #endif
 
@@ -152,11 +153,9 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 
 		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "destination");
 
-		FileSystem.File.Exists("destination/bar/test.txt")
-			.Should().BeTrue();
-		FileSystem.File.ReadAllBytes("destination/bar/test.txt")
-			.Should().BeEquivalentTo(
-				FileSystem.File.ReadAllBytes("foo/bar/test.txt"));
+		await That(FileSystem).Should().HaveFile("destination/bar/test.txt");
+		await That(FileSystem.File.ReadAllBytes("destination/bar/test.txt"))
+			.Should().Be(FileSystem.File.ReadAllBytes("foo/bar/test.txt"));
 	}
 
 #if FEATURE_COMPRESSION_STREAM
@@ -170,16 +169,16 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 		using FileSystemStream stream = FileSystem.FileStream.New(
 			"target.zip", FileMode.Open, FileAccess.Read);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			FileSystem.ZipFile().CreateFromDirectory("foo", stream);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>(
-			paramName: "destination",
-			hResult: -2147024809,
-			messageContains: "stream is unwritable");
+		await That(Act).Should().Throw<ArgumentException>()
+			.WithParamName("destination").And
+			.WithHResult(-2147024809).And
+			.WithMessage("*stream is unwritable*").AsWildcard();
 	}
 #endif
 
@@ -200,8 +199,8 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 
 		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
-		archive.Entries.Count.Should().Be(1);
-		archive.Entries.Should().Contain(e => e.FullName.Equals("bar/"));
+		await That(archive.Entries).Should().HaveSingle()
+			.Which.For(x => x.FullName, f => f.Should().Be("bar/"));
 	}
 #endif
 
@@ -220,7 +219,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 
 		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
-		archive.Entries.Count.Should().Be(0);
+		await That(archive.Entries).Should().BeEmpty();
 	}
 #endif
 
@@ -240,8 +239,8 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 
 		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
-		archive.Entries.Count.Should().Be(1);
-		archive.Entries.Should().Contain(e => e.FullName.Equals("foo/"));
+		await That(archive.Entries).Should().HaveSingle()
+			.Which.For(x => x.FullName, f => f.Should().Be("foo/"));
 	}
 #endif
 
@@ -262,14 +261,14 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 
 		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
-		archive.Entries.Count.Should().Be(1);
+		var singleEntry = await That(archive.Entries).Should().HaveSingle();
 		if (encodedCorrectly)
 		{
-			archive.Entries.Should().Contain(e => e.Name == entryName);
+			await That(singleEntry.Name).Should().Be(entryName);
 		}
 		else
 		{
-			archive.Entries.Should().NotContain(e => e.Name == entryName);
+			await That(singleEntry.Name).Should().NotBe(entryName);
 		}
 	}
 #endif
@@ -290,8 +289,8 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 
 		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
-		archive.Entries.Count.Should().Be(1);
-		archive.Entries.Should().Contain(e => e.FullName.Equals("foo/test.txt"));
+		await That(archive.Entries).Should().HaveSingle()
+			.Which.For(x => x.FullName, f => f.Should().Be("foo/test.txt"));
 	}
 #endif
 
@@ -302,13 +301,15 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 	{
 		Stream stream = new MemoryStreamMock(canWrite: false);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.ZipFile().CreateFromDirectory("foo", stream);
-		});
+		}
 
-		exception.Should().BeException<ArgumentException>("The stream is unwritable",
-			paramName: "destination", hResult: -2147024809);
+		await That(Act).Should().Throw<ArgumentException>()
+			.WithMessage("The stream is unwritable").And
+			.WithParamName("destination").And
+			.WithHResult(-2147024809);
 	}
 #endif
 
@@ -319,13 +320,13 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 	{
 		Stream stream = null!;
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			FileSystem.ZipFile().CreateFromDirectory("foo", stream);
-		});
+		}
 
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.ParamName.Should().Be("destination");
+		await That(Act).Should().Throw<ArgumentNullException>()
+			.WithParamName("destination");
 	}
 #endif
 
@@ -350,8 +351,8 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 		IZipArchive archive =
 			FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read, true, encoding);
 
-		archive.Entries.Count.Should().Be(1);
-		archive.Entries.Should().Contain(e => e.FullName.Equals("test.txt"));
+		await That(archive.Entries).Should().HaveSingle()
+			.Which.For(x => x.FullName, f => f.Should().Be("test.txt"));
 	}
 #endif
 
@@ -370,11 +371,9 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 
 		FileSystem.ZipFile().ExtractToDirectory(stream, "destination");
 
-		FileSystem.File.Exists("destination/bar/test.txt")
-			.Should().BeTrue();
-		FileSystem.File.ReadAllBytes("destination/bar/test.txt")
-			.Should().BeEquivalentTo(
-				FileSystem.File.ReadAllBytes("foo/bar/test.txt"));
+		await That(FileSystem).Should().HaveFile("destination/bar/test.txt");
+		await That(FileSystem.File.ReadAllBytes("destination/bar/test.txt"))
+			.Should().Be(FileSystem.File.ReadAllBytes("foo/bar/test.txt"));
 	}
 #endif
 
