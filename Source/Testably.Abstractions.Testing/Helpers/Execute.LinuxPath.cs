@@ -104,11 +104,13 @@ internal partial class Execute
 		protected override bool IsEffectivelyEmpty(string path)
 			=> string.IsNullOrEmpty(path);
 
+#if FEATURE_PATH_RELATIVE
 		/// <summary>
 		///     https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/Common/src/System/IO/PathInternal.Unix.cs#L77
 		/// </summary>
 		protected override bool IsPartiallyQualified(string path)
 			=> !IsPathRooted(path);
+#endif
 
 		/// <summary>
 		///     https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/Common/src/System/IO/PathInternal.Unix.cs#L39

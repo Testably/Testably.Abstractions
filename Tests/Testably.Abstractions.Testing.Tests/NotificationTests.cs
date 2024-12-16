@@ -19,13 +19,13 @@ public class NotificationTests
 				}
 			});
 
-		_ = Task.Run(() =>
+		_ = Task.Run(async () =>
 		{
-			Thread.Sleep(10);
+			await Task.Delay(10);
 			for (int i = 1; i <= 10; i++)
 			{
 				timeSystem.Thread.Sleep(i);
-				Thread.Sleep(1);
+				await Task.Delay(1);
 			}
 		});
 
@@ -82,13 +82,13 @@ public class NotificationTests
 				receivedCount++;
 			});
 
-		_ = Task.Run(() =>
+		_ = Task.Run(async () =>
 		{
-			Thread.Sleep(10);
+			await Task.Delay(10);
 			for (int i = 1; i <= 10; i++)
 			{
 				timeSystem.Thread.Sleep(i);
-				Thread.Sleep(1);
+				await Task.Delay(1);
 			}
 		});
 
@@ -107,16 +107,16 @@ public class NotificationTests
 			receivedCount++;
 		}, t => t.TotalMilliseconds > 6);
 
-		_ = Task.Run(() =>
+		_ = Task.Run(async () =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				Thread.Sleep(10);
+				await Task.Delay(10);
 				for (int i = 1; i <= 10; i++)
 				{
 					timeSystem.Thread.Sleep(i);
-					Thread.Sleep(1);
+					await Task.Delay(1);
 				}
 
 				ms.Set();
@@ -145,7 +145,7 @@ public class NotificationTests
 					isCalled = true;
 				});
 
-			_ = Task.Run(() =>
+			_ = Task.Run(async () =>
 			{
 				// ReSharper disable once AccessToDisposedClosure
 				try
@@ -153,7 +153,7 @@ public class NotificationTests
 					while (!ms.IsSet)
 					{
 						timeSystem.Thread.Sleep(1);
-						Thread.Sleep(1);
+						await Task.Delay(1);
 					}
 				}
 				catch (ObjectDisposedException)
