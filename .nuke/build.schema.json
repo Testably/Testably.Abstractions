@@ -35,6 +35,8 @@
         "DotNetFrameworkUnitTests",
         "DotNetUnitTests",
         "MutationTests",
+        "MutationTestsLinux",
+        "MutationTestsWindows",
         "Pack",
         "Restore",
         "UnitTests",
