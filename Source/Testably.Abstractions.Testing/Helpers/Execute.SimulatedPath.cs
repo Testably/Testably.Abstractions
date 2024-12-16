@@ -550,6 +550,7 @@ internal partial class Execute
 			return sb.ToString();
 		}
 
+#if FEATURE_PATH_RELATIVE
 		/// <summary>
 		///     We have the same root, we need to calculate the difference now using the
 		///     common Length and Segment count past the length.
@@ -606,7 +607,9 @@ internal partial class Execute
 
 			return sb.ToString();
 		}
+#endif
 
+#if FEATURE_PATH_RELATIVE
 		/// <summary>
 		///     Get the common path length from the start of the string.
 		/// </summary>
@@ -653,12 +656,15 @@ internal partial class Execute
 
 			return commonChars;
 		}
+#endif
 
 		protected abstract int GetRootLength(string path);
 		protected abstract bool IsDirectorySeparator(char c);
 		protected abstract bool IsEffectivelyEmpty(string path);
 
+#if FEATURE_PATH_RELATIVE
 		protected abstract bool IsPartiallyQualified(string path);
+#endif
 
 #if FEATURE_PATH_JOIN || FEATURE_PATH_ADVANCED
 		private string JoinInternal(string?[] paths)
