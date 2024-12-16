@@ -7,33 +7,33 @@ public sealed class ZipUtilitiesTests
 {
 	[Theory]
 	[AutoData]
-	public void ExtractRelativeToDirectory_FileWithTrailingSlash_ShouldThrowIOException(
+	public async Task ExtractRelativeToDirectory_FileWithTrailingSlash_ShouldThrowIOException(
 		byte[] bytes)
 	{
 		MockFileSystem fileSystem = new();
 		using MemoryStream stream = new(bytes);
 		DummyZipArchiveEntry zipArchiveEntry = new(fileSystem, fullName: "foo/", stream: stream);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			zipArchiveEntry.ExtractRelativeToDirectory("foo", false);
-		});
+		}
 
-		exception.Should().BeException<IOException>(
-			messageContains:
-			"Zip entry name ends in directory separator character but contains data");
+		await That(Act).Should().Throw<IOException>()
+			.WithMessage("*Zip entry name ends in directory separator character but contains data*")
+			.AsWildcard();
 	}
 
 	[Fact]
-	public void ExtractRelativeToDirectory_WithSubdirectory_ShouldCreateSubdirectory()
+	public async Task ExtractRelativeToDirectory_WithSubdirectory_ShouldCreateSubdirectory()
 	{
 		MockFileSystem fileSystem = new();
 		DummyZipArchiveEntry zipArchiveEntry = new(fileSystem, fullName: "foo/");
 
 		zipArchiveEntry.ExtractRelativeToDirectory("bar", false);
 
-		fileSystem.Directory.Exists("bar").Should().BeTrue();
-		fileSystem.Directory.Exists("bar/foo").Should().BeTrue();
+		await That(fileSystem).Should().HaveDirectory("bar");
+		await That(fileSystem).Should().HaveDirectory("bar/foo");
 	}
 
 	private sealed class DummyZipArchiveEntry(
@@ -46,16 +46,13 @@ public sealed class ZipUtilitiesTests
 		Stream? stream = null)
 		: IZipArchiveEntry
 	{
-		/// <inheritdoc cref="IZipArchiveEntry.Comment" />
-		public string Comment { get; set; } = comment;
-
-		/// <inheritdoc cref="IZipArchiveEntry.IsEncrypted" />
-		public bool IsEncrypted { get; } = isEncrypted;
-
 		#region IZipArchiveEntry Members
 
 		/// <inheritdoc cref="IZipArchiveEntry.Archive" />
 		public IZipArchive Archive => archive ?? throw new NotSupportedException();
+
+		/// <inheritdoc cref="IZipArchiveEntry.Comment" />
+		public string Comment { get; set; } = comment;
 
 		/// <inheritdoc cref="IZipArchiveEntry.CompressedLength" />
 		public long CompressedLength => stream?.Length ?? 0L;
@@ -71,6 +68,9 @@ public sealed class ZipUtilitiesTests
 
 		/// <inheritdoc cref="IZipArchiveEntry.FullName" />
 		public string FullName { get; } = fullName ?? "";
+
+		/// <inheritdoc cref="IZipArchiveEntry.IsEncrypted" />
+		public bool IsEncrypted { get; } = isEncrypted;
 
 		/// <inheritdoc cref="IZipArchiveEntry.LastWriteTime" />
 		public DateTimeOffset LastWriteTime { get; set; }

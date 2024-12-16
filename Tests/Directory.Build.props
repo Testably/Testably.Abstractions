@@ -24,6 +24,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="aweXpect" />
+		<PackageReference Include="aweXpect.Testably" />
 		<PackageReference Include="AutoFixture.Xunit2" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 		<PackageReference Include="Xunit.SkippableFact" />

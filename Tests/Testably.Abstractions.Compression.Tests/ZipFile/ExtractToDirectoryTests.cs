@@ -13,7 +13,7 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
-	public void ExtractToDirectory_MissingDestinationDirectory_ShouldCreateDirectory()
+	public async Task ExtractToDirectory_MissingDestinationDirectory_ShouldCreateDirectory()
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo").Initialized(s => s
@@ -31,7 +31,7 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void
+	public async Task
 		ExtractToDirectory_MissingSourceFileName_ShouldThrowArgumentNullException()
 	{
 		FileSystem.Initialize();
@@ -48,7 +48,7 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void
+	public async Task
 		ExtractToDirectory_NullAsSourceFileName_ShouldThrowArgumentNullException()
 	{
 		FileSystem.Initialize();
@@ -66,7 +66,7 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 #if FEATURE_COMPRESSION_OVERWRITE
 	[SkippableTheory]
 	[AutoData]
-	public void ExtractToDirectory_Overwrite_ShouldOverwriteFile(
+	public async Task ExtractToDirectory_Overwrite_ShouldOverwriteFile(
 		string contents)
 	{
 		FileSystem.Initialize()
@@ -91,7 +91,7 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 #if FEATURE_COMPRESSION_OVERWRITE
 	[SkippableTheory]
 	[AutoData]
-	public void ExtractToDirectory_WithEncoding_Overwrite_ShouldOverwriteFile(
+	public async Task ExtractToDirectory_WithEncoding_Overwrite_ShouldOverwriteFile(
 		string contents,
 		Encoding encoding)
 	{
@@ -116,7 +116,7 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void ExtractToDirectory_WithEncoding_ShouldZipDirectoryContent(
+	public async Task ExtractToDirectory_WithEncoding_ShouldZipDirectoryContent(
 		Encoding encoding)
 	{
 		FileSystem.Initialize()
@@ -138,7 +138,7 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void ExtractToDirectory_WithoutOverwriteAndExistingFile_ShouldOverwriteFile(
+	public async Task ExtractToDirectory_WithoutOverwriteAndExistingFile_ShouldOverwriteFile(
 		string contents)
 	{
 		FileSystem.Initialize()
@@ -166,7 +166,7 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableFact]
-	public void ExtractToDirectory_WithStream_MissingDestinationDirectory_ShouldCreateDirectory()
+	public async Task ExtractToDirectory_WithStream_MissingDestinationDirectory_ShouldCreateDirectory()
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo").Initialized(s => s
@@ -187,7 +187,7 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableFact]
-	public void
+	public async Task
 		ExtractToDirectory_WithStream_NotReadable_ShouldThrowArgumentNullException()
 	{
 		FileSystem.Initialize();
@@ -205,7 +205,7 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableFact]
-	public void
+	public async Task
 		ExtractToDirectory_WithStream_Null_ShouldThrowArgumentNullException()
 	{
 		FileSystem.Initialize();
@@ -224,7 +224,7 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[AutoData]
-	public void ExtractToDirectory_WithStream_Overwrite_ShouldOverwriteFile(
+	public async Task ExtractToDirectory_WithStream_Overwrite_ShouldOverwriteFile(
 		string contents)
 	{
 		FileSystem.Initialize()
@@ -250,7 +250,7 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[AutoData]
-	public void ExtractToDirectory_WithStream_WithEncoding_Overwrite_ShouldOverwriteFile(
+	public async Task ExtractToDirectory_WithStream_WithEncoding_Overwrite_ShouldOverwriteFile(
 		string contents,
 		Encoding encoding)
 	{
@@ -277,7 +277,7 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[AutoData]
-	public void ExtractToDirectory_WithStream_WithEncoding_ShouldZipDirectoryContent(
+	public async Task ExtractToDirectory_WithStream_WithEncoding_ShouldZipDirectoryContent(
 		Encoding encoding)
 	{
 		FileSystem.Initialize()
@@ -302,7 +302,7 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableTheory]
 	[AutoData]
-	public void ExtractToDirectory_WithStream_WithoutOverwriteAndExistingFile_ShouldOverwriteFile(
+	public async Task ExtractToDirectory_WithStream_WithoutOverwriteAndExistingFile_ShouldOverwriteFile(
 		string contents)
 	{
 		FileSystem.Initialize()
@@ -333,7 +333,7 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 
 #if FEATURE_COMPRESSION_STREAM
 	[SkippableFact]
-	public void ExtractToDirectory_WithWriteOnlyStream_ShouldThrowArgumentException()
+	public async Task ExtractToDirectory_WithWriteOnlyStream_ShouldThrowArgumentException()
 	{
 		FileSystem.Initialize()
 			.WithFile("target.zip")

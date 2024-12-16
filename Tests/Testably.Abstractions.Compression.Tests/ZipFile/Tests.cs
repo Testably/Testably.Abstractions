@@ -6,7 +6,7 @@ public abstract partial class Tests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
-	public void FileSystemExtension_ShouldBeSet()
+	public async Task FileSystemExtension_ShouldBeSet()
 	{
 		IZipFile result = FileSystem.ZipFile();
 
