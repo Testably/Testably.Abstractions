@@ -4,7 +4,6 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Testably_Testably.Abstractions) 
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Testably_Testably.Abstractions) 
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FTestably%2FTestably.Abstractions%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/Testably/Testably.Abstractions/main) 
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FTestably%2FTestably.Abstractions.svg?type=shield&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2FTestably%2FTestably.Abstractions?ref=badge_shield&issueType=license)
 
 This library is a feature complete testing helper for the [IFileSystem abstractions for I/O-related functionality](https://github.com/TestableIO/System.IO.Abstractions) from the `System.IO` namespace. It uses an in-memory file system that behaves exactly like the real file system and can be used in unit tests for dependency injection.  
 The testing helper also supports advanced scenarios like
