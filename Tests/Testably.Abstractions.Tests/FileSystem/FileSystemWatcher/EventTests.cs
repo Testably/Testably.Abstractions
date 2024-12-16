@@ -41,7 +41,7 @@ public abstract partial class EventTests<TFileSystem>
 
 		try
 		{
-			_ = Task.Run(() =>
+			_ = Task.Run(async () =>
 			{
 				// ReSharper disable once AccessToDisposedClosure
 				try
@@ -51,7 +51,7 @@ public abstract partial class EventTests<TFileSystem>
 					{
 						string content = i++.ToString(CultureInfo.InvariantCulture);
 						FileSystem.File.WriteAllText(path, content);
-						Thread.Sleep(10);
+						await Task.Delay(10);
 						ms1.Set();
 					}
 				}
@@ -114,7 +114,7 @@ public abstract partial class EventTests<TFileSystem>
 
 		try
 		{
-			_ = Task.Run(() =>
+			_ = Task.Run(async () =>
 			{
 				// ReSharper disable once AccessToDisposedClosure
 				try
@@ -123,7 +123,7 @@ public abstract partial class EventTests<TFileSystem>
 					{
 						FileSystem.Directory.CreateDirectory(path);
 						FileSystem.Directory.Delete(path);
-						Thread.Sleep(10);
+						await Task.Delay(10);
 						ms1.Set();
 					}
 				}
@@ -184,7 +184,7 @@ public abstract partial class EventTests<TFileSystem>
 
 		try
 		{
-			_ = Task.Run(() =>
+			_ = Task.Run(async () =>
 			{
 				// ReSharper disable once AccessToDisposedClosure
 				try
@@ -193,7 +193,7 @@ public abstract partial class EventTests<TFileSystem>
 					{
 						FileSystem.Directory.CreateDirectory(path);
 						FileSystem.Directory.Delete(path);
-						Thread.Sleep(10);
+						await Task.Delay(10);
 						ms1.Set();
 					}
 				}
@@ -255,7 +255,7 @@ public abstract partial class EventTests<TFileSystem>
 
 		try
 		{
-			_ = Task.Run(() =>
+			_ = Task.Run(async () =>
 			{
 				// ReSharper disable once AccessToDisposedClosure
 				try
@@ -265,7 +265,7 @@ public abstract partial class EventTests<TFileSystem>
 					while (!token.IsCancellationRequested)
 					{
 						FileSystem.File.Move($"path-{i}", $"path-{++i}");
-						Thread.Sleep(10);
+						await Task.Delay(10);
 						ms1.Set();
 					}
 				}

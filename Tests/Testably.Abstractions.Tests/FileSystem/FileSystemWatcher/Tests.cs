@@ -28,14 +28,14 @@ public abstract partial class Tests<TFileSystem>
 		fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
 		try
 		{
-			_ = Task.Run(() =>
+			_ = Task.Run(async () =>
 			{
 				// ReSharper disable once AccessToDisposedClosure
 				try
 				{
 					while (!ms.IsSet)
 					{
-						Thread.Sleep(10);
+						await Task.Delay(10);
 						FileSystem.Directory.CreateDirectory(path);
 						FileSystem.Directory.Delete(path);
 					}
@@ -86,14 +86,14 @@ public abstract partial class Tests<TFileSystem>
 		fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();
 		try
 		{
-			_ = Task.Run(() =>
+			_ = Task.Run(async () =>
 			{
 				// ReSharper disable once AccessToDisposedClosure
 				try
 				{
 					while (!ms.IsSet)
 					{
-						Thread.Sleep(10);
+						await Task.Delay(10);
 						FileSystem.Directory.CreateDirectory(path);
 						FileSystem.Directory.Delete(path);
 					}
