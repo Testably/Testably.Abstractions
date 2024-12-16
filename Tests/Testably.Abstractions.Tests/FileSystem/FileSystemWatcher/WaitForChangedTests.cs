@@ -19,14 +19,14 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 			FileSystem.FileSystemWatcher.New(BasePath);
 		try
 		{
-			_ = Task.Run(() =>
+			_ = Task.Run(async () =>
 			{
 				// ReSharper disable once AccessToDisposedClosure
 				try
 				{
 					while (!ms.IsSet)
 					{
-						Thread.Sleep(10);
+						await Task.Delay(10);
 						FileSystem.Directory.CreateDirectory(path);
 						FileSystem.Directory.Delete(path);
 					}
@@ -68,14 +68,14 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 		try
 		{
 			fileSystemWatcher.EnableRaisingEvents = true;
-			_ = Task.Run(() =>
+			_ = Task.Run(async () =>
 			{
 				// ReSharper disable once AccessToDisposedClosure
 				try
 				{
 					while (!ms.IsSet)
 					{
-						Thread.Sleep(10);
+						await Task.Delay(10);
 						FileSystem.Directory.CreateDirectory(fullPath);
 						FileSystem.Directory.Delete(fullPath);
 					}

@@ -251,6 +251,7 @@ internal partial class Execute
 			return path.All(c => c == ' ');
 		}
 
+#if FEATURE_PATH_RELATIVE
 		/// <summary>
 		///     https://github.com/dotnet/runtime/blob/v8.0.4/src/libraries/Common/src/System/IO/PathInternal.Windows.cs#L250
 		/// </summary>
@@ -279,6 +280,7 @@ internal partial class Execute
 			         // not qualified if you don't have a valid drive. "=:\" is the "=" file's default data stream.
 			         && IsValidDriveChar(path[0]));
 		}
+#endif
 
 		/// <summary>
 		///     Returns true if the given character is a valid drive letter

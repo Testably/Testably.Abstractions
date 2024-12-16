@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
+// ReSharper disable MethodSupportsCancellation
 
 namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
@@ -46,11 +47,11 @@ public class FileSystemWatcherStatisticsTests
 		// Changes in the background are necessary, so that FileSystemWatcher.WaitForChanged returns.
 		using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
 		CancellationToken token = cts.Token;
-		_ = Task.Run(() =>
+		_ = Task.Run(async () =>
 		{
 			while (!token.IsCancellationRequested)
 			{
-				Thread.Sleep(10);
+				await Task.Delay(10);
 				sut.Directory.CreateDirectory(sut.Path.Combine("foo", "some-directory"));
 				sut.Directory.Delete(sut.Path.Combine("foo", "some-directory"));
 			}
@@ -76,11 +77,11 @@ public class FileSystemWatcherStatisticsTests
 		// Changes in the background are necessary, so that FileSystemWatcher.WaitForChanged returns.
 		using CancellationTokenSource cts = new();
 		CancellationToken token = cts.Token;
-		_ = Task.Run(() =>
+		_ = Task.Run(async () =>
 		{
 			while (!token.IsCancellationRequested)
 			{
-				Thread.Sleep(10);
+				await Task.Delay(10);
 				sut.Directory.CreateDirectory(sut.Path.Combine("foo", "some-directory"));
 				sut.Directory.Delete(sut.Path.Combine("foo", "some-directory"));
 			}
@@ -105,11 +106,11 @@ public class FileSystemWatcherStatisticsTests
 		// Changes in the background are necessary, so that FileSystemWatcher.WaitForChanged returns.
 		using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
 		CancellationToken token = cts.Token;
-		_ = Task.Run(() =>
+		_ = Task.Run(async () =>
 		{
 			while (!token.IsCancellationRequested)
 			{
-				Thread.Sleep(10);
+				await Task.Delay(10);
 				sut.Directory.CreateDirectory(sut.Path.Combine("foo", "some-directory"));
 				sut.Directory.Delete(sut.Path.Combine("foo", "some-directory"));
 			}
