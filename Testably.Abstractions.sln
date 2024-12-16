@@ -18,6 +18,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{94F99274-3518-45
 		nuget.config = nuget.config
 		README.md = README.md
 		renovate.json = renovate.json
+		build.cmd = build.cmd
+		build.ps1 = build.ps1
+		build.sh = build.sh
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{61F335A6-9CE0-4040-A34F-E70B1A55077D}"
@@ -100,6 +103,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.TestS
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Settings", "Settings", "{D32170F4-1455-4839-8EF4-9530F3AA642A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipeline", "Pipeline", "{6C54481B-E85D-4207-9FE7-F4FBE7325DB0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Build", "Pipeline\Build.csproj", "{5C03DA5C-4F3B-44F5-ACED-28B38B5EE68F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -162,6 +169,8 @@ Global
 		{241E6413-819C-4B06-A739-4D10C2A81365}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{241E6413-819C-4B06-A739-4D10C2A81365}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{241E6413-819C-4B06-A739-4D10C2A81365}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C03DA5C-4F3B-44F5-ACED-28B38B5EE68F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C03DA5C-4F3B-44F5-ACED-28B38B5EE68F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -186,6 +195,7 @@ Global
 		{0AEBB1A6-07D6-46DC-BC78-9771D380EBC0} = {2FDB2AAE-E5CE-483E-A1A6-EC0B0A4AD67B}
 		{241E6413-819C-4B06-A739-4D10C2A81365} = {D32170F4-1455-4839-8EF4-9530F3AA642A}
 		{D32170F4-1455-4839-8EF4-9530F3AA642A} = {61F335A6-9CE0-4040-A34F-E70B1A55077D}
+		{5C03DA5C-4F3B-44F5-ACED-28B38B5EE68F} = {6C54481B-E85D-4207-9FE7-F4FBE7325DB0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EC4D8481-B9FD-41B5-832A-369210993DF4}
