@@ -2,6 +2,8 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+// ReSharper disable MethodSupportsCancellation
+// ReSharper disable MethodHasAsyncOverloadWithCancellation
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 

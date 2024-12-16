@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Tests.TestHelpers;
+// ReSharper disable MethodSupportsCancellation
 
 namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
