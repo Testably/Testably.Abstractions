@@ -13,7 +13,12 @@ public static class Helper
 {
 	public static string CreatePublicApi(string framework, string assemblyName)
 	{
-		string assemblyFile = CombinedPaths("Build", "Binaries", framework, $"{assemblyName}.dll");
+#if DEBUG
+		string configuration = "Debug";
+#else
+		string configuration = "Release";
+#endif
+		string assemblyFile = CombinedPaths("Source", assemblyName, "bin", configuration, framework, $"{assemblyName}.dll");
 		Assembly assembly = Assembly.LoadFile(assemblyFile);
 		string publicApi = assembly.GeneratePublicApi(options: null);
 		return publicApi.Replace("\r\n", "\n");

@@ -6,8 +6,9 @@
 # https://learn.microsoft.com/en-us/visualstudio/test/remote-testing
 /testenvironments.json
 
-# Directory for build output
-/Build
+# Artifact and test results directories
+/Artifacts
+/TestResults
 
 # Generated files
 /Tests/*/Generated

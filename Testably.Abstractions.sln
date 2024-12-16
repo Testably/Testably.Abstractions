@@ -18,6 +18,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{94F99274-3518-45
 		nuget.config = nuget.config
 		README.md = README.md
 		renovate.json = renovate.json
+		build.cmd = build.cmd
+		build.ps1 = build.ps1
+		build.sh = build.sh
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{61F335A6-9CE0-4040-A34F-E70B1A55077D}"
@@ -48,19 +51,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{5E35
 		.github\mergify.yml = .github\mergify.yml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stryker", "stryker", "{4D8D7391-1E7B-4051-AD7E-4086AFD4E024}"
-	ProjectSection(SolutionItems) = preProject
-		.github\stryker\Stryker.Config.AccessControl.json = .github\stryker\Stryker.Config.AccessControl.json
-		.github\stryker\Stryker.Config.Compression.json = .github\stryker\Stryker.Config.Compression.json
-		.github\stryker\Stryker.Config.json = .github\stryker\Stryker.Config.json
-		.github\stryker\Stryker.Config.Testing.json = .github\stryker\Stryker.Config.Testing.json
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{8FD8E33B-2072-48CA-8164-DE2AA5DCB8FD}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build.yml = .github\workflows\build.yml
 		.github\workflows\ci.yml = .github\workflows\ci.yml
-		.github\workflows\test-report.yml = .github\workflows\test-report.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.Parity.Tests", "Tests\Testably.Abstractions.Parity.Tests\Testably.Abstractions.Parity.Tests.csproj", "{E9A42D82-0609-4D6B-B270-A30176B4FCF2}"
@@ -99,6 +93,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testably.Abstractions.TestSettings", "Tests\Settings\Testably.Abstractions.TestSettings\Testably.Abstractions.TestSettings.csproj", "{241E6413-819C-4B06-A739-4D10C2A81365}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Settings", "Settings", "{D32170F4-1455-4839-8EF4-9530F3AA642A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipeline", "Pipeline", "{6C54481B-E85D-4207-9FE7-F4FBE7325DB0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Build", "Pipeline\Build.csproj", "{5C03DA5C-4F3B-44F5-ACED-28B38B5EE68F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -162,6 +160,8 @@ Global
 		{241E6413-819C-4B06-A739-4D10C2A81365}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{241E6413-819C-4B06-A739-4D10C2A81365}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{241E6413-819C-4B06-A739-4D10C2A81365}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C03DA5C-4F3B-44F5-ACED-28B38B5EE68F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C03DA5C-4F3B-44F5-ACED-28B38B5EE68F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -172,7 +172,6 @@ Global
 		{7545AC28-1399-4AF5-9C63-0507F78F017A} = {94F99274-3518-45D0-83A4-6F370D6FE74B}
 		{2FDB2AAE-E5CE-483E-A1A6-EC0B0A4AD67B} = {94F99274-3518-45D0-83A4-6F370D6FE74B}
 		{5E35E265-7110-47A0-9E3E-B5180BBB5AA6} = {94F99274-3518-45D0-83A4-6F370D6FE74B}
-		{4D8D7391-1E7B-4051-AD7E-4086AFD4E024} = {5E35E265-7110-47A0-9E3E-B5180BBB5AA6}
 		{8FD8E33B-2072-48CA-8164-DE2AA5DCB8FD} = {5E35E265-7110-47A0-9E3E-B5180BBB5AA6}
 		{E9A42D82-0609-4D6B-B270-A30176B4FCF2} = {61F335A6-9CE0-4040-A34F-E70B1A55077D}
 		{1B078385-7AAA-4B8D-A88E-2CBCD3011F0D} = {61F335A6-9CE0-4040-A34F-E70B1A55077D}
@@ -186,6 +185,7 @@ Global
 		{0AEBB1A6-07D6-46DC-BC78-9771D380EBC0} = {2FDB2AAE-E5CE-483E-A1A6-EC0B0A4AD67B}
 		{241E6413-819C-4B06-A739-4D10C2A81365} = {D32170F4-1455-4839-8EF4-9530F3AA642A}
 		{D32170F4-1455-4839-8EF4-9530F3AA642A} = {61F335A6-9CE0-4040-A34F-E70B1A55077D}
+		{5C03DA5C-4F3B-44F5-ACED-28B38B5EE68F} = {6C54481B-E85D-4207-9FE7-F4FBE7325DB0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EC4D8481-B9FD-41B5-832A-369210993DF4}
