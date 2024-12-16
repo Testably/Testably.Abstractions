@@ -10,7 +10,7 @@ public abstract partial class Tests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
-	public void New_ShouldOpenWithReadMode()
+	public async Task New_ShouldOpenWithReadMode()
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
@@ -23,12 +23,12 @@ public abstract partial class Tests<TFileSystem>
 
 		IZipArchive archive = FileSystem.ZipArchive().New(stream);
 
-		archive.Mode.Should().Be(ZipArchiveMode.Read);
-		archive.Entries.Should().HaveCount(1);
+		await That(archive.Mode).Should().Be(ZipArchiveMode.Read);
+		await That(archive.Entries).Should().HaveExactly(1).Items();
 	}
 
 	[SkippableFact]
-	public void New_UpdateMode_ReadOnlyStream_ShouldThrowArgumentException()
+	public async Task New_UpdateMode_ReadOnlyStream_ShouldThrowArgumentException()
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
@@ -39,17 +39,17 @@ public abstract partial class Tests<TFileSystem>
 
 		FileSystemStream stream = FileSystem.File.OpenRead("destination.zip");
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			_ = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
-		});
-
-		exception.Should().BeOfType<ArgumentException>()
-			.Which.HResult.Should().Be(-2147024809);
+		}
+		
+		await That(Act).Should().Throw<ArgumentException>()
+			.WithHResult(-2147024809);
 	}
 
 	[SkippableFact]
-	public void New_UpdateMode_ShouldOpenArchive()
+	public async Task New_UpdateMode_ShouldOpenArchive()
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
@@ -63,14 +63,14 @@ public abstract partial class Tests<TFileSystem>
 
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
 
-		archive.Mode.Should().Be(ZipArchiveMode.Update);
-		archive.Entries.Should().HaveCount(1);
+		await That(archive.Mode).Should().Be(ZipArchiveMode.Update);
+		await That(archive.Entries).Should().HaveExactly(1).Items();
 	}
 
 	[SkippableTheory]
 	[InlineData(true)]
 	[InlineData(false)]
-	public void New_WhenLeaveOpen_ShouldDisposeStreamWhenDisposingArchive(bool leaveOpen)
+	public async Task New_WhenLeaveOpen_ShouldDisposeStreamWhenDisposingArchive(bool leaveOpen)
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
@@ -85,20 +85,14 @@ public abstract partial class Tests<TFileSystem>
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update, leaveOpen);
 
 		archive.Dispose();
-		Exception? exception = Record.Exception(() => stream.ReadByte());
-		if (leaveOpen)
-		{
-			exception.Should().BeNull();
-		}
-		else
-		{
-			exception.Should().BeOfType<ObjectDisposedException>();
-		}
+		void Act() => stream.ReadByte();
+		
+		await That(Act).Should().Throw<ObjectDisposedException>().OnlyIf(!leaveOpen);
 	}
 
 	[SkippableTheory]
 	[MemberData(nameof(EntryNameEncoding))]
-	public void New_WithEntryNameEncoding_ShouldUseEncoding(
+	public async Task New_WithEntryNameEncoding_ShouldUseEncoding(
 		string entryName, Encoding encoding, bool encodedCorrectly)
 	{
 		FileSystem.Initialize()
@@ -117,11 +111,13 @@ public abstract partial class Tests<TFileSystem>
 		readArchive.Entries.Count.Should().Be(1);
 		if (encodedCorrectly)
 		{
-			readArchive.Entries.Should().Contain(e => e.Name == entryName);
+			await That(readArchive.Entries).Should()
+				.Contain(e => string.Equals(e.Name, entryName, StringComparison.Ordinal));
 		}
 		else
 		{
-			readArchive.Entries.Should().NotContain(e => e.Name == entryName);
+			await That(readArchive.Entries).Should()
+				.NotContain(e => string.Equals(e.Name, entryName, StringComparison.Ordinal));
 		}
 	}
 

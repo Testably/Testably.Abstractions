@@ -10,7 +10,7 @@ public abstract partial class Tests<TFileSystem>
 {
 #if FEATURE_ZIPFILE_NET7
 	[SkippableFact]
-	public void Comment_ShouldBeInitializedEmpty()
+	public async Task Comment_ShouldBeInitializedEmpty()
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
@@ -23,13 +23,13 @@ public abstract partial class Tests<TFileSystem>
 
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
-		archive.Comment.Should().Be("");
+		await That(archive.Comment).Should().Be("");
 	}
 #endif
 #if FEATURE_ZIPFILE_NET7
 	[SkippableTheory]
 	[AutoData]
-	public void Comment_ShouldBeSettable(string comment)
+	public async Task Comment_ShouldBeSettable(string comment)
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
@@ -43,12 +43,12 @@ public abstract partial class Tests<TFileSystem>
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 		archive.Comment = comment;
 
-		archive.Comment.Should().Be(comment);
+		await That(archive.Comment).Should().Be(comment);
 	}
 #endif
 
 	[SkippableFact]
-	public void Entries_CreateMode_ShouldThrowNotSupportedException()
+	public async Task Entries_CreateMode_ShouldThrowNotSupportedException()
 	{
 		using FileSystemStream stream =
 			FileSystem.File.Open("destination.zip", FileMode.Create, FileAccess.ReadWrite);
@@ -62,7 +62,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void FileSystem_ShouldBeSet(
+	public async Task FileSystem_ShouldBeSet(
 		CompressionLevel compressionLevel)
 	{
 		FileSystem.Initialize()
@@ -78,7 +78,7 @@ public abstract partial class Tests<TFileSystem>
 	}
 
 	[SkippableFact]
-	public void GetEntry_WhenNameIsNotFound_ShouldReturnNull()
+	public async Task GetEntry_WhenNameIsNotFound_ShouldReturnNull()
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
@@ -97,7 +97,7 @@ public abstract partial class Tests<TFileSystem>
 
 	[SkippableTheory]
 	[AutoData]
-	public void Mode_ShouldBeSetCorrectly(ZipArchiveMode mode)
+	public async Task Mode_ShouldBeSetCorrectly(ZipArchiveMode mode)
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");

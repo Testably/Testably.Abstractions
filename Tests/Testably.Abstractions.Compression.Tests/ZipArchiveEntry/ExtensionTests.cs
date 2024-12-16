@@ -11,7 +11,7 @@ public abstract partial class ExtensionTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableFact]
-	public void
+	public async Task
 		ExtractToFile_AccessLengthOnWritableStream_ShouldThrowInvalidOperationException()
 	{
 		FileSystem.Initialize()
@@ -25,17 +25,15 @@ public abstract partial class ExtensionTests<TFileSystem>
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
 		archive.CreateEntryFromFile("foo.txt", "foo/");
 
-		Exception? exception = Record.Exception(() =>
-		{
-			archive.ExtractToDirectory("bar");
-		});
+		void Act()
+			=> archive.ExtractToDirectory("bar");
 
-		exception.Should().BeOfType<InvalidOperationException>();
+		await That(Act).Should().Throw<InvalidOperationException>();
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public void ExtractToFile_DestinationNull_ShouldThrowArgumentNullException(
+	public async Task ExtractToFile_DestinationNull_ShouldThrowArgumentNullException(
 		CompressionLevel compressionLevel)
 	{
 		FileSystem.Initialize()
@@ -45,21 +43,21 @@ public abstract partial class ExtensionTests<TFileSystem>
 		FileSystem.ZipFile()
 			.CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			using IZipArchive archive =
 				FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
 			archive.Entries.Single().ExtractToFile(null!);
-		});
+		}
 
-		exception.Should().BeOfType<ArgumentNullException>()
-			.Which.ParamName.Should().Be("destinationFileName");
+		await That(Act).Should().Throw<ArgumentNullException>()
+			.WithParamName("destinationFileName");
 	}
 
 	[SkippableTheory]
 	[AutoData]
-	public void
+	public async Task
 		ExtractToFile_DestinationNull_WithOverwrite_ShouldThrowArgumentNullException(
 			CompressionLevel compressionLevel)
 	{
@@ -70,19 +68,19 @@ public abstract partial class ExtensionTests<TFileSystem>
 		FileSystem.ZipFile()
 			.CreateFromDirectory("foo", "destination.zip", compressionLevel, false);
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			using IZipArchive archive =
 				FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
 			archive.Entries.Single().ExtractToFile(null!, true);
-		});
+		}
 
-		exception.Should().BeOfType<ArgumentNullException>();
+		await That(Act).Should().Throw<ArgumentNullException>();
 	}
 
 	[SkippableFact]
-	public void ExtractToFile_IncorrectEntryType_ShouldThrowIOException()
+	public async Task ExtractToFile_IncorrectEntryType_ShouldThrowIOException()
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
@@ -99,19 +97,17 @@ public abstract partial class ExtensionTests<TFileSystem>
 		using FileSystemStream stream2 = FileSystem.File.OpenRead("destination.zip");
 		IZipArchive archive2 = FileSystem.ZipArchive().New(stream2, ZipArchiveMode.Read);
 
-		Exception? exception = Record.Exception(() =>
-		{
-			archive2.ExtractToDirectory("bar");
-		});
+		void Act()
+			=> archive2.ExtractToDirectory("bar");
 
-		exception.Should().BeOfType<IOException>();
+		await That(Act).Should().Throw<IOException>();
 	}
 
 	[SkippableTheory]
 	[InlineData("2000-01-01T12:14:15")]
 	[InlineData("1980-01-01T00:00:00")]
 	[InlineData("2107-12-31T23:59:59")]
-	public void ExtractToFile_LastWriteTime_ShouldBeCopiedFromFile(string lastWriteTimeString)
+	public async Task ExtractToFile_LastWriteTime_ShouldBeCopiedFromFile(string lastWriteTimeString)
 	{
 		DateTime lastWriteTime = DateTime.Parse(lastWriteTimeString, CultureInfo.InvariantCulture);
 		FileSystem.Initialize()
@@ -132,13 +128,13 @@ public abstract partial class ExtensionTests<TFileSystem>
 
 		entry.ExtractToFile("bar/bar.txt", true);
 
-		FileSystem.File.ReadAllText("bar/bar.txt")
-			.Should().Be("FooFooFoo");
-		FileSystem.FileInfo.New("bar/bar.txt").LastWriteTime.Should().Be(lastWriteTime);
+		await That(FileSystem).Should().HaveFile("bar/bar.txt")
+			.WithContent("FooFooFoo").And
+			.WithLastWriteTime(lastWriteTime);
 	}
 
 	[SkippableFact]
-	public void ExtractToFile_WithoutOverwrite_ShouldThrowIOException()
+	public async Task ExtractToFile_WithoutOverwrite_ShouldThrowIOException()
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo")
@@ -152,20 +148,19 @@ public abstract partial class ExtensionTests<TFileSystem>
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 		IZipArchiveEntry entry = archive.Entries.Single();
 
-		Exception? exception = Record.Exception(() =>
+		void Act()
 		{
 			entry.ExtractToFile("bar/bar.txt");
-		});
+		}
 
-		exception.Should().BeOfType<IOException>()
-			.Which.Message.Should()
-			.Contain($"'{FileSystem.Path.GetFullPath("bar/bar.txt")}'");
-		FileSystem.File.ReadAllText("bar/bar.txt")
-			.Should().NotBe("FooFooFoo");
+		await That(Act).Should().Throw<IOException>()
+			.WithMessage($"*'{FileSystem.Path.GetFullPath("bar/bar.txt")}'*").AsWildcard();
+		await That(FileSystem).Should().HaveFile("bar/bar.txt")
+			.WhichContent(f => f.Should().NotBe("FooFooFoo"));
 	}
 
 	[SkippableFact]
-	public void ExtractToFile_WithOverwrite_ShouldOverwriteExistingFile()
+	public async Task ExtractToFile_WithOverwrite_ShouldOverwriteExistingFile()
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo")
@@ -181,7 +176,7 @@ public abstract partial class ExtensionTests<TFileSystem>
 
 		entry.ExtractToFile("bar/bar.txt", true);
 
-		FileSystem.File.ReadAllText("bar/bar.txt")
-			.Should().Be("FooFooFoo");
+		await That(FileSystem).Should().HaveFile("bar/bar.txt")
+			.WithContent("FooFooFoo");
 	}
 }
