@@ -20,6 +20,8 @@ jobs:
                 uses: actions/setup-dotnet@v4
                 with:
                     dotnet-version: |
+                        6.0.x
+                        7.0.x
                         8.0.x
             -   name: Run unit tests (windows)
                 if: matrix.os == 'windows-latest'
@@ -49,6 +51,8 @@ jobs:
                 uses: actions/setup-dotnet@v4
                 with:
                     dotnet-version: |
+                        6.0.x
+                        7.0.x
                         8.0.x
             -   name: API checks
                 run: ./build.sh ApiChecks
@@ -76,6 +80,8 @@ jobs:
                 uses: actions/setup-dotnet@v4
                 with:
                     dotnet-version: |
+                        6.0.x
+                        7.0.x
                         8.0.x
             -   name: Run mutation tests
                 run: ./build.sh MutationTestsLinux
@@ -95,6 +101,8 @@ jobs:
                 uses: actions/setup-dotnet@v4
                 with:
                     dotnet-version: |
+                        6.0.x
+                        7.0.x
                         8.0.x
             -   name: Run mutation tests
                 run: ./build.ps1 MutationTestsWindows
@@ -114,6 +122,8 @@ jobs:
                 uses: actions/setup-dotnet@v4
                 with:
                     dotnet-version: |
+                        6.0.x
+                        7.0.x
                         8.0.x
             -   name: Run sonarcloud analysis
                 run: ./build.sh CodeAnalysis
@@ -151,6 +161,8 @@ jobs:
                 uses: actions/setup-dotnet@v4
                 with:
                     dotnet-version: |
+                        6.0.x
+                        7.0.x
                         8.0.x
             -   name: Pack nuget packages
                 run: ./build.sh Pack
