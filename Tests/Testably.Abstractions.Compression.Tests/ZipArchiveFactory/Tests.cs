@@ -108,16 +108,14 @@ public abstract partial class Tests<TFileSystem>
 		using IZipArchive readArchive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
-		readArchive.Entries.Count.Should().Be(1);
+		var singleEntry = await That(readArchive.Entries).Should().HaveSingle();
 		if (encodedCorrectly)
 		{
-			await That(readArchive.Entries).Should()
-				.Contain(e => string.Equals(e.Name, entryName, StringComparison.Ordinal));
+			await That(singleEntry.Name).Should().Be(entryName);
 		}
 		else
 		{
-			await That(readArchive.Entries).Should()
-				.NotContain(e => string.Equals(e.Name, entryName, StringComparison.Ordinal));
+			await That(singleEntry.Name).Should().NotBe(entryName);
 		}
 	}
 

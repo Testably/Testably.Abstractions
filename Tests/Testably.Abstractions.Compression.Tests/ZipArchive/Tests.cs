@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.ObjectModel;
+using System.IO;
 using System.IO.Compression;
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchive;
@@ -55,9 +56,9 @@ public abstract partial class Tests<TFileSystem>
 
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Create);
 
-		Exception? exception = Record.Exception(() => archive.Entries);
+		ReadOnlyCollection<IZipArchiveEntry> Act() => archive.Entries;
 
-		exception.Should().BeOfType<NotSupportedException>();
+		await That(Act).Should().Throw<NotSupportedException>();
 	}
 
 	[SkippableTheory]
@@ -74,7 +75,7 @@ public abstract partial class Tests<TFileSystem>
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
-		archive.FileSystem.Should().Be(FileSystem);
+		await That(archive.FileSystem).Should().Be(FileSystem);
 	}
 
 	[SkippableFact]
@@ -90,9 +91,9 @@ public abstract partial class Tests<TFileSystem>
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
-		archive.GetEntry("bar.txt").Should().BeNull();
-		archive.GetEntry("foo.txt").Should().BeNull();
-		archive.GetEntry("foo/foo.txt").Should().NotBeNull();
+		await That(archive.GetEntry("bar.txt")).Should().BeNull();
+		await That(archive.GetEntry("foo.txt")).Should().BeNull();
+		await That(archive.GetEntry("foo/foo.txt")).Should().NotBeNull();
 	}
 
 	[SkippableTheory]
@@ -108,6 +109,6 @@ public abstract partial class Tests<TFileSystem>
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", mode);
 
-		archive.Mode.Should().Be(mode);
+		await That(archive.Mode).Should().Be(mode);
 	}
 }
