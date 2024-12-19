@@ -72,6 +72,8 @@ jobs:
         env:
             STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
             DOTNET_NOLOGO: true
+        permissions:
+            pull-requests: write
         steps:
             -   uses: actions/checkout@v4
                 with:
@@ -84,7 +86,9 @@ jobs:
                         7.0.x
                         8.0.x
             -   name: Run mutation tests
-                run: ./build.sh MutationTestsLinux
+                run: ./build.sh MutationTestsLinux MutationComment
+                env:
+                    GithubToken: ${{ secrets.GITHUB_TOKEN }}
     
     mutation-tests-windows:
         name: "Mutation tests (Windows)"
@@ -93,6 +97,8 @@ jobs:
         env:
             STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
             DOTNET_NOLOGO: true
+        permissions:
+            pull-requests: write
         steps:
             -   uses: actions/checkout@v4
                 with:
@@ -105,7 +111,9 @@ jobs:
                         7.0.x
                         8.0.x
             -   name: Run mutation tests
-                run: ./build.ps1 MutationTestsWindows
+                run: ./build.ps1 MutationTestsWindows MutationComment
+                env:
+                    GithubToken: ${{ secrets.GITHUB_TOKEN }}
     
     static-code-analysis:
         name: "Static code analysis"
