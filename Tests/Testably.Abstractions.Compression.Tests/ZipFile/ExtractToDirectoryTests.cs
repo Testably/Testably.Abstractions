@@ -188,7 +188,7 @@ public abstract partial class ExtractToDirectoryTests<TFileSystem>
 		}
 
 		await That(Act).Should().Throw<ArgumentException>()
-			.WithMessage("The stream is unreadable").And
+			.WithMessage("The stream is unreadable*").AsWildcard().And
 			.WithParamName("source").And
 			.WithHResult(-2147024809);
 	}
