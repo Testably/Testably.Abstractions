@@ -42,8 +42,8 @@ partial class Build
 				Credentials tokenAuth = new(GithubToken);
 				gitHubClient.Credentials = tokenAuth;
 				IReadOnlyList<IssueComment> comments =
-					await gitHubClient.Issue.Comment.GetAllForIssue("Textably",
-						"Textably.Abstractions", prId.Value);
+					await gitHubClient.Issue.Comment.GetAllForIssue("Testably",
+						"Testably.Abstractions", prId.Value);
 				IssueComment? existingComment = null;
 				Log.Information($"Found {comments.Count} comments");
 				foreach (IssueComment comment in comments)
@@ -59,12 +59,12 @@ partial class Build
 				{
 					string body = "## :alien: Mutation Results"
 					              + Environment.NewLine
-					              + $"[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FTextably%2FTextably.Abstractions%2Fpull/{prId}/merge)](https://dashboard.stryker-mutator.io/reports/github.com/Textably/Textably.Abstractions/pull/{prId}/merge)"
+					              + $"[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FTestably%2FTestably.Abstractions%2Fpull/{prId}/merge)](https://dashboard.stryker-mutator.io/reports/github.com/Testably/Testably.Abstractions/pull/{prId}/merge)"
 					              + Environment.NewLine
 					              + string.Join(Environment.NewLine, MutationCommentBodies.Values);
 
 					Log.Information($"Create comment:\n{body}");
-					await gitHubClient.Issue.Comment.Create("Textably", "Textably.Abstractions",
+					await gitHubClient.Issue.Comment.Create("Testably", "Testably.Abstractions",
 						prId.Value, body);
 				}
 				else
@@ -76,7 +76,7 @@ partial class Build
 					}
 
 					Log.Information($"Update comment:\n{body}");
-					await gitHubClient.Issue.Comment.Update("Textably", "Textably.Abstractions",
+					await gitHubClient.Issue.Comment.Update("Testably", "Testably.Abstractions",
 						existingComment.Id, body);
 				}
 			}
