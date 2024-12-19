@@ -86,7 +86,7 @@ jobs:
                         7.0.x
                         8.0.x
             -   name: Run mutation tests
-                run: ./build.sh MutationTestsLinux
+                run: ./build.sh MutationTestsLinux MutationComment
                 env:
                     GithubToken: ${{ secrets.GITHUB_TOKEN }}
     
@@ -111,7 +111,7 @@ jobs:
                         7.0.x
                         8.0.x
             -   name: Run mutation tests
-                run: ./build.ps1 MutationTestsWindows
+                run: ./build.ps1 MutationTestsWindows MutationComment
                 env:
                     GithubToken: ${{ secrets.GITHUB_TOKEN }}
     

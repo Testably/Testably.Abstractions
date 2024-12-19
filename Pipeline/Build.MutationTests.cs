@@ -18,7 +18,10 @@ namespace Build;
 
 partial class Build
 {
-	static readonly Dictionary<string, string> MutationCommentBody = new();
+	/// <summary>
+	///     The markdown texts for each project.
+	/// </summary>
+	static readonly Dictionary<string, string> MutationCommentBodies = new();
 
 	Target MutationComment => _ => _
 		.After(MutationTestsLinux)
@@ -28,7 +31,7 @@ partial class Build
 		{
 			int? prId = GitHubActions.PullRequestNumber;
 			Log.Debug("Pull request number: {PullRequestId}", prId);
-			if (MutationCommentBody.Count == 0)
+			if (MutationCommentBodies.Count == 0)
 			{
 				return;
 			}
@@ -58,7 +61,7 @@ partial class Build
 					              + Environment.NewLine
 					              + $"[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FTextably%2FTextably.Abstractions%2Fpull/{prId}/merge)](https://dashboard.stryker-mutator.io/reports/github.com/Textably/Textably.Abstractions/pull/{prId}/merge)"
 					              + Environment.NewLine
-					              + string.Join(Environment.NewLine, MutationCommentBody.Values);
+					              + string.Join(Environment.NewLine, MutationCommentBodies.Values);
 
 					Log.Information($"Create comment:\n{body}");
 					await gitHubClient.Issue.Comment.Create("Textably", "Textably.Abstractions",
@@ -67,7 +70,7 @@ partial class Build
 				else
 				{
 					string body = existingComment.Body;
-					foreach ((string project, string value) in MutationCommentBody)
+					foreach ((string project, string value) in MutationCommentBodies)
 					{
 						body = ReplaceProject(body, project, value);
 					}
@@ -105,8 +108,7 @@ partial class Build
 			Dictionary<Project, Project[]> projects = new()
 			{
 				{
-					Solution.Testably_Abstractions_Testing,
-					[
+					Solution.Testably_Abstractions_Testing, [
 						Solution.Tests.Testably_Abstractions_Testing_Tests,
 						Solution.Tests.Testably_Abstractions_Tests
 					]
@@ -200,7 +202,7 @@ partial class Build
 						$"Stryker did not execute successfully for {project.Key.Name}: (exit code {process.ExitCode}).");
 				}
 
-				MutationCommentBody.Add(project.Key.Name,
+				MutationCommentBodies.Add(project.Key.Name,
 					CreateMutationCommentBody(project.Key.Name));
 			}
 		});
@@ -222,8 +224,7 @@ partial class Build
 					[Solution.Tests.Testably_Abstractions_Compression_Tests]
 				},
 				{
-					Solution.Testably_Abstractions,
-					[
+					Solution.Testably_Abstractions, [
 						Solution.Tests.Testably_Abstractions_Testing_Tests,
 						Solution.Tests.Testably_Abstractions_Tests
 					]
@@ -289,7 +290,7 @@ partial class Build
 						$"Stryker did not execute successfully for {project.Key.Name}: (exit code {process.ExitCode}).");
 				}
 
-				MutationCommentBody.Add(project.Key.Name,
+				MutationCommentBodies.Add(project.Key.Name,
 					CreateMutationCommentBody(project.Key.Name));
 			}
 		});
