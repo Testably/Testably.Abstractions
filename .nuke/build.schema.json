@@ -34,6 +34,8 @@
         "Compile",
         "DotNetFrameworkUnitTests",
         "DotNetUnitTests",
+        "MutationComment",
+        "MutationTestPreparation",
         "MutationTests",
         "MutationTestsLinux",
         "MutationTestsWindows",
