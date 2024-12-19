@@ -307,7 +307,7 @@ public abstract partial class CreateFromDirectoryTests<TFileSystem>
 		}
 
 		await That(Act).Should().Throw<ArgumentException>()
-			.WithMessage("The stream is unwritable").And
+			.WithMessage("The stream is unwritable*").AsWildcard().And
 			.WithParamName("destination").And
 			.WithHResult(-2147024809);
 	}
