@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Threading;
@@ -93,6 +94,18 @@ public abstract class ParityTests(
 		List<string> parityErrors = Parity.FileSystemWatcher
 			.GetErrorsToInstanceType<IFileSystemWatcher, IFileSystemWatcherFactory>(
 				typeof(FileSystemWatcher),
+				testOutputHelper);
+
+		await That(parityErrors).Should().BeEmpty();
+	}
+
+	[Fact]
+	public async Task
+		IFileVersionInfoAndIFileVersionInfoFactory_EnsureParityWith_FileVersionInfo()
+	{
+		List<string> parityErrors = Parity.FileVersionInfo
+			.GetErrorsToInstanceType<IFileVersionInfo, IFileVersionInfoFactory>(
+				typeof(FileVersionInfo),
 				testOutputHelper);
 
 		await That(parityErrors).Should().BeEmpty();

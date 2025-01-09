@@ -99,6 +99,7 @@ namespace Testably.Abstractions.Testing
         public System.IO.Abstractions.IFileInfoFactory FileInfo { get; }
         public System.IO.Abstractions.IFileStreamFactory FileStream { get; }
         public System.IO.Abstractions.IFileSystemWatcherFactory FileSystemWatcher { get; }
+        public System.IO.Abstractions.IFileVersionInfoFactory FileVersionInfo { get; }
         public Testably.Abstractions.Testing.FileSystem.IInterceptionHandler Intercept { get; }
         public Testably.Abstractions.Testing.FileSystem.INotificationHandler Notify { get; }
         public System.IO.Abstractions.IPath Path { get; }
@@ -290,6 +291,7 @@ namespace Testably.Abstractions.Testing.Statistics
         Testably.Abstractions.Testing.Statistics.IPathStatistics<System.IO.Abstractions.IFileInfoFactory, System.IO.Abstractions.IFileInfo> FileInfo { get; }
         Testably.Abstractions.Testing.Statistics.IPathStatistics<System.IO.Abstractions.IFileStreamFactory, System.IO.Abstractions.FileSystemStream> FileStream { get; }
         Testably.Abstractions.Testing.Statistics.IPathStatistics<System.IO.Abstractions.IFileSystemWatcherFactory, System.IO.Abstractions.IFileSystemWatcher> FileSystemWatcher { get; }
+        Testably.Abstractions.Testing.Statistics.IPathStatistics<System.IO.Abstractions.IFileVersionInfoFactory, System.IO.Abstractions.IFileVersionInfo> FileVersionInfo { get; }
         Testably.Abstractions.Testing.Statistics.IStatistics<System.IO.Abstractions.IPath> Path { get; }
         int TotalCount { get; }
     }

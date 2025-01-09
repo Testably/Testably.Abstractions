@@ -41,6 +41,11 @@ public interface IFileSystemStatistics
 	IPathStatistics<IFileSystemWatcherFactory, IFileSystemWatcher> FileSystemWatcher { get; }
 
 	/// <summary>
+	///     Statistical information about calls to <see cref="IFileSystem.FileVersionInfo" />.
+	/// </summary>
+	IPathStatistics<IFileVersionInfoFactory, IFileVersionInfo> FileVersionInfo { get; }
+
+	/// <summary>
 	///     Statistical information about calls to <see cref="IFileSystem.Path" />.
 	/// </summary>
 	IStatistics<IPath> Path { get; }

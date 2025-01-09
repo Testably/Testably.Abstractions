@@ -14,6 +14,7 @@ namespace Testably.Abstractions
         public System.IO.Abstractions.IFileInfoFactory FileInfo { get; }
         public System.IO.Abstractions.IFileStreamFactory FileStream { get; }
         public System.IO.Abstractions.IFileSystemWatcherFactory FileSystemWatcher { get; }
+        public System.IO.Abstractions.IFileVersionInfoFactory FileVersionInfo { get; }
         public System.IO.Abstractions.IPath Path { get; }
     }
     public sealed class RealRandomSystem : Testably.Abstractions.IRandomSystem

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Threading;
@@ -55,6 +56,12 @@ public class Parity
 	[
 		typeof(FileSystemWatcher).GetMethod(
 			nameof(System.IO.FileSystemWatcher.ToString))
+	]);
+
+	public ParityCheck FileVersionInfo { get; } = new(excludeMethods:
+	[
+		typeof(FileVersionInfo).GetMethod(
+			nameof(System.Diagnostics.FileVersionInfo.ToString))
 	]);
 
 	public ParityCheck Guid { get; } = new();
