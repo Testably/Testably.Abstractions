@@ -138,6 +138,7 @@ public sealed class MockFileSystem : IFileSystem
 		FileInfo = new FileInfoFactoryMock(this);
 		FileStream = new FileStreamFactoryMock(this);
 		FileSystemWatcher = new FileSystemWatcherFactoryMock(this);
+		FileVersionInfo = new FileVersionInfoFactoryMock(this);
 		SafeFileHandleStrategy = new NullSafeFileHandleStrategy();
 		AccessControlStrategy = new NullAccessControlStrategy();
 		InitializeFileSystem(initialization);
@@ -167,6 +168,9 @@ public sealed class MockFileSystem : IFileSystem
 
 	/// <inheritdoc cref="IFileSystem.FileSystemWatcher" />
 	public IFileSystemWatcherFactory FileSystemWatcher { get; }
+
+	/// <inheritdoc cref="IFileSystem.FileVersionInfo" />
+	public IFileVersionInfoFactory FileVersionInfo { get; }
 
 	/// <inheritdoc cref="IFileSystem.Path" />
 	public IPath Path

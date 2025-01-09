@@ -11,6 +11,8 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics
 
 	internal readonly PathStatistics<IFileSystemWatcherFactory, IFileSystemWatcher>
 		FileSystemWatcher;
+	internal readonly PathStatistics<IFileVersionInfoFactory, IFileVersionInfo>
+		FileVersionInfo;
 
 	internal readonly CallStatistics<IPath> Path;
 	private readonly MockFileSystem _fileSystem;
@@ -34,6 +36,8 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics
 			statisticsGate, fileSystem, nameof(IFileSystem.FileStream));
 		FileSystemWatcher = new PathStatistics<IFileSystemWatcherFactory, IFileSystemWatcher>(
 			statisticsGate, fileSystem, nameof(IFileSystem.FileSystemWatcher));
+		FileVersionInfo = new PathStatistics<IFileVersionInfoFactory, IFileVersionInfo>(
+			statisticsGate, fileSystem, nameof(IFileSystem.FileVersionInfo));
 		Path = new CallStatistics<IPath>(
 			statisticsGate, nameof(IFileSystem.Path));
 	}
@@ -72,6 +76,11 @@ internal sealed class FileSystemStatistics : IFileSystemStatistics
 	IPathStatistics<IFileSystemWatcherFactory, IFileSystemWatcher>
 		IFileSystemStatistics.FileSystemWatcher
 		=> FileSystemWatcher;
+
+	/// <inheritdoc cref="IFileSystemStatistics.FileSystemWatcher" />
+	IPathStatistics<IFileVersionInfoFactory, IFileVersionInfo>
+		IFileSystemStatistics.FileVersionInfo 
+		=> FileVersionInfo;
 
 	/// <inheritdoc cref="IFileSystemStatistics.Path" />
 	IStatistics<IPath> IFileSystemStatistics.Path

@@ -50,6 +50,10 @@ public sealed partial class StatisticsTests
 		typeof(IFileSystemWatcherFactory), typeof(FileSystemWatcherFactoryStatisticsTests))]
 	[InlineData(nameof(MockFileSystem.FileSystemWatcher), true,
 		typeof(IFileSystemWatcher), typeof(FileSystemWatcherStatisticsTests))]
+	[InlineData(nameof(MockFileSystem.FileVersionInfo), false,
+		typeof(IFileVersionInfoFactory), typeof(FileVersionInfoFactoryStatisticsTests))]
+	[InlineData(nameof(MockFileSystem.FileVersionInfo), true,
+		typeof(IFileVersionInfo), typeof(FileVersionInfoStatisticsTests))]
 	[InlineData(nameof(MockFileSystem.Path), false,
 		typeof(IPath), typeof(FileSystem.PathStatisticsTests))]
 	public void ShouldHaveTestedAllFileSystemMethods(string className, bool requireInstance,

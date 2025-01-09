@@ -22,6 +22,7 @@ public sealed class RealFileSystem : IFileSystem
 		FileInfo = new FileInfoFactory(this);
 		FileStream = new FileStreamFactory(this);
 		FileSystemWatcher = new FileSystemWatcherFactory(this);
+		FileVersionInfo = new FileVersionInfoFactory(this);
 		Path = new PathWrapper(this);
 	}
 
@@ -47,6 +48,9 @@ public sealed class RealFileSystem : IFileSystem
 
 	/// <inheritdoc cref="IFileSystem.FileSystemWatcher" />
 	public IFileSystemWatcherFactory FileSystemWatcher { get; }
+
+	/// <inheritdoc cref="IFileSystem.FileVersionInfo" />
+	public IFileVersionInfoFactory FileVersionInfo { get; }
 
 	/// <inheritdoc cref="IFileSystem.Path" />
 	public IPath Path { get; }
