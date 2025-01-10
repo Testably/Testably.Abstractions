@@ -11,7 +11,7 @@ public sealed class FileVersionInfoFactoryMockTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.Initialize().WithFile("abc.foo");
-		fileSystem.WithFileVersion("*.foo", b => b.WithComments(comments));
+		fileSystem.WithFileVersionInfo("*.foo", b => b.SetComments(comments));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("abc.foo");
 
@@ -25,7 +25,7 @@ public sealed class FileVersionInfoFactoryMockTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.Initialize().WithFile("abc.bar");
-		fileSystem.WithFileVersion("*.foo", b => b.WithComments(comments));
+		fileSystem.WithFileVersionInfo("*.foo", b => b.SetComments(comments));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("abc.bar");
 

@@ -8,7 +8,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithComments(comments));
+		fileSystem.WithFileVersionInfo("*", b => b.SetComments(comments));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
@@ -21,7 +21,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithCompanyName(companyName));
+		fileSystem.WithFileVersionInfo("*", b => b.SetCompanyName(companyName));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
@@ -34,7 +34,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithFileDescription(fileDescription));
+		fileSystem.WithFileVersionInfo("*", b => b.SetFileDescription(fileDescription));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
@@ -53,7 +53,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithFileVersion("9.8.7.6").WithFileVersion(fileVersion));
+		fileSystem.WithFileVersionInfo("*", b => b.SetFileVersion("9.8.7.6").SetFileVersion(fileVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 		result.FileVersion.Should().Be(fileVersion);
@@ -85,7 +85,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithFileVersion(fileVersion));
+		fileSystem.WithFileVersionInfo("*", b => b.SetFileVersion(fileVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 		result.FileVersion.Should().Be(fileVersion);
@@ -105,8 +105,8 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithFileVersion("1.2.3.4")
-			.WithFileVersion(fileVersion));
+		fileSystem.WithFileVersionInfo("*", b => b.SetFileVersion("1.2.3.4")
+			.SetFileVersion(fileVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 		result.FileVersion.Should().Be(fileVersion);
@@ -122,7 +122,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithInternalName(internalName));
+		fileSystem.WithFileVersionInfo("*", b => b.SetInternalName(internalName));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
@@ -135,7 +135,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithIsDebug(isDebug));
+		fileSystem.WithFileVersionInfo("*", b => b.SetIsDebug(isDebug));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
@@ -148,7 +148,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithIsPatched(isPatched));
+		fileSystem.WithFileVersionInfo("*", b => b.SetIsPatched(isPatched));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
@@ -161,7 +161,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithIsPreRelease(isPreRelease));
+		fileSystem.WithFileVersionInfo("*", b => b.SetIsPreRelease(isPreRelease));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
@@ -174,7 +174,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithIsPrivateBuild(isPrivateBuild));
+		fileSystem.WithFileVersionInfo("*", b => b.SetIsPrivateBuild(isPrivateBuild));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
@@ -187,7 +187,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithIsSpecialBuild(isSpecialBuild));
+		fileSystem.WithFileVersionInfo("*", b => b.SetIsSpecialBuild(isSpecialBuild));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
@@ -200,7 +200,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithLanguage(language));
+		fileSystem.WithFileVersionInfo("*", b => b.SetLanguage(language));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
@@ -213,7 +213,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithLegalCopyright(legalCopyright));
+		fileSystem.WithFileVersionInfo("*", b => b.SetLegalCopyright(legalCopyright));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
@@ -226,7 +226,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithLegalTrademarks(legalTrademarks));
+		fileSystem.WithFileVersionInfo("*", b => b.SetLegalTrademarks(legalTrademarks));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
@@ -239,7 +239,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithOriginalFilename(originalFilename));
+		fileSystem.WithFileVersionInfo("*", b => b.SetOriginalFilename(originalFilename));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
@@ -252,7 +252,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithPrivateBuild(privateBuild));
+		fileSystem.WithFileVersionInfo("*", b => b.SetPrivateBuild(privateBuild));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
@@ -265,7 +265,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithProductName(productName));
+		fileSystem.WithFileVersionInfo("*", b => b.SetProductName(productName));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
@@ -284,7 +284,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithProductVersion("9.8.7.6").WithProductVersion(productVersion));
+		fileSystem.WithFileVersionInfo("*", b => b.SetProductVersion("9.8.7.6").SetProductVersion(productVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 		result.ProductVersion.Should().Be(productVersion);
@@ -316,7 +316,7 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithProductVersion(productVersion));
+		fileSystem.WithFileVersionInfo("*", b => b.SetProductVersion(productVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 		result.ProductVersion.Should().Be(productVersion);
@@ -336,8 +336,8 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithProductVersion("1.2.3.4")
-			.WithProductVersion(productVersion));
+		fileSystem.WithFileVersionInfo("*", b => b.SetProductVersion("1.2.3.4")
+			.SetProductVersion(productVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 		result.ProductVersion.Should().Be(productVersion);
@@ -353,10 +353,76 @@ public class FileVersionInfoBuilderTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "");
-		fileSystem.WithFileVersion("*", b => b.WithSpecialBuild(specialBuild));
+		fileSystem.WithFileVersionInfo("*", b => b.SetSpecialBuild(specialBuild));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
 
+		result.SpecialBuild.Should().Be(specialBuild);
+	}
+	
+	[Theory]
+	[AutoData]
+	public void ShouldBePossibleToChainMethods(
+		string comments,
+		string companyName,
+		string fileDescription,
+		string internalName,
+		bool isDebug,
+		bool isPatched,
+		bool isPreRelease,
+		bool isPrivateBuild,
+		bool isSpecialBuild,
+		string language,
+		string legalCopyright,
+		string legalTrademarks,
+		string originalFilename,
+		string privateBuild,
+		string productName,
+		string specialBuild)
+	{
+		string fileVersion = "1.2.3.4-foo";
+		string productVersion = "255.255.255.65432+bar";
+		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
+		fileSystem.WithFileVersionInfo("*", b => b
+			.SetComments(comments)
+			.SetCompanyName(companyName)
+			.SetFileDescription(fileDescription)
+			.SetFileVersion(fileVersion)
+			.SetInternalName(internalName)
+			.SetIsDebug(isDebug)
+			.SetIsPatched(isPatched)
+			.SetIsPreRelease(isPreRelease)
+			.SetIsPrivateBuild(isPrivateBuild)
+			.SetIsSpecialBuild(isSpecialBuild)
+			.SetLanguage(language)
+			.SetLegalCopyright(legalCopyright)
+			.SetLegalTrademarks(legalTrademarks)
+			.SetOriginalFilename(originalFilename)
+			.SetPrivateBuild(privateBuild)
+			.SetProductName(productName)
+			.SetProductVersion(productVersion)
+			.SetSpecialBuild(specialBuild)
+			.SetComments(comments));
+
+		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
+
+		result.Comments.Should().Be(comments);
+		result.CompanyName.Should().Be(companyName);
+		result.FileDescription.Should().Be(fileDescription);
+		result.FileVersion.Should().Be(fileVersion);
+		result.InternalName.Should().Be(internalName);
+		result.IsDebug.Should().Be(isDebug);
+		result.IsPatched.Should().Be(isPatched);
+		result.IsPreRelease.Should().Be(isPreRelease);
+		result.IsSpecialBuild.Should().Be(isSpecialBuild);
+		result.Language.Should().Be(language);
+		result.LegalCopyright.Should().Be(legalCopyright);
+		result.LegalTrademarks.Should().Be(legalTrademarks);
+		result.OriginalFilename.Should().Be(originalFilename);
+		result.PrivateBuild.Should().Be(privateBuild);
+		result.ProductName.Should().Be(productName);
+		result.ProductVersion.Should().Be(productVersion);
 		result.SpecialBuild.Should().Be(specialBuild);
 	}
 }

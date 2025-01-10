@@ -218,7 +218,7 @@ public sealed class MockFileSystem : IFileSystem
 	///     the <paramref name="fileVersionInfoBuilder" /> returned for
 	///     all files matching the <paramref name="searchPattern" />.
 	/// </summary>
-	public MockFileSystem WithFileVersion(string searchPattern,
+	public MockFileSystem WithFileVersionInfo(string searchPattern,
 		Action<FileVersionInfoBuilder> fileVersionInfoBuilder)
 	{
 		FileVersionInfoBuilder builder = new();

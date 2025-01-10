@@ -12,7 +12,7 @@ public sealed class FileVersionInfoBuilder
 	/// <summary>
 	///     Sets the <see cref="IFileVersionInfo.Comments" />.
 	/// </summary>
-	public FileVersionInfoBuilder WithComments(string? comments)
+	public FileVersionInfoBuilder SetComments(string? comments)
 	{
 		_container.Comments = comments;
 		return this;
@@ -21,7 +21,7 @@ public sealed class FileVersionInfoBuilder
 	/// <summary>
 	///     Sets the <see cref="IFileVersionInfo.CompanyName" />.
 	/// </summary>
-	public FileVersionInfoBuilder WithCompanyName(string? companyName)
+	public FileVersionInfoBuilder SetCompanyName(string? companyName)
 	{
 		_container.CompanyName = companyName;
 		return this;
@@ -30,7 +30,7 @@ public sealed class FileVersionInfoBuilder
 	/// <summary>
 	///     Sets the <see cref="IFileVersionInfo.FileDescription" />.
 	/// </summary>
-	public FileVersionInfoBuilder WithFileDescription(string? fileDescription)
+	public FileVersionInfoBuilder SetFileDescription(string? fileDescription)
 	{
 		_container.FileDescription = fileDescription;
 		return this;
@@ -39,7 +39,7 @@ public sealed class FileVersionInfoBuilder
 	/// <summary>
 	///     Sets the <see cref="IFileVersionInfo.FileVersion" />.
 	/// </summary>
-	public FileVersionInfoBuilder WithFileVersion(string? fileVersion)
+	public FileVersionInfoBuilder SetFileVersion(string? fileVersion)
 	{
 		_container.FileVersion = fileVersion;
 		return this;
@@ -48,7 +48,7 @@ public sealed class FileVersionInfoBuilder
 	/// <summary>
 	///     Sets the <see cref="IFileVersionInfo.InternalName" />.
 	/// </summary>
-	public FileVersionInfoBuilder WithInternalName(string? internalName)
+	public FileVersionInfoBuilder SetInternalName(string? internalName)
 	{
 		_container.InternalName = internalName;
 		return this;
@@ -57,7 +57,7 @@ public sealed class FileVersionInfoBuilder
 	/// <summary>
 	///     Sets the <see cref="IFileVersionInfo.IsDebug" />.
 	/// </summary>
-	public FileVersionInfoBuilder WithIsDebug(bool isDebug)
+	public FileVersionInfoBuilder SetIsDebug(bool isDebug)
 	{
 		_container.IsDebug = isDebug;
 		return this;
@@ -66,7 +66,7 @@ public sealed class FileVersionInfoBuilder
 	/// <summary>
 	///     Sets the <see cref="IFileVersionInfo.IsPatched" />.
 	/// </summary>
-	public FileVersionInfoBuilder WithIsPatched(bool isPatched)
+	public FileVersionInfoBuilder SetIsPatched(bool isPatched)
 	{
 		_container.IsPatched = isPatched;
 		return this;
@@ -75,7 +75,7 @@ public sealed class FileVersionInfoBuilder
 	/// <summary>
 	///     Sets the <see cref="IFileVersionInfo.IsPreRelease" />.
 	/// </summary>
-	public FileVersionInfoBuilder WithIsPreRelease(bool isPreRelease)
+	public FileVersionInfoBuilder SetIsPreRelease(bool isPreRelease)
 	{
 		_container.IsPreRelease = isPreRelease;
 		return this;
@@ -84,7 +84,7 @@ public sealed class FileVersionInfoBuilder
 	/// <summary>
 	///     Sets the <see cref="IFileVersionInfo.IsPrivateBuild" />.
 	/// </summary>
-	public FileVersionInfoBuilder WithIsPrivateBuild(bool isPrivateBuild)
+	public FileVersionInfoBuilder SetIsPrivateBuild(bool isPrivateBuild)
 	{
 		_container.IsPrivateBuild = isPrivateBuild;
 		return this;
@@ -93,7 +93,7 @@ public sealed class FileVersionInfoBuilder
 	/// <summary>
 	///     Sets the <see cref="IFileVersionInfo.IsSpecialBuild" />.
 	/// </summary>
-	public FileVersionInfoBuilder WithIsSpecialBuild(bool isSpecialBuild)
+	public FileVersionInfoBuilder SetIsSpecialBuild(bool isSpecialBuild)
 	{
 		_container.IsSpecialBuild = isSpecialBuild;
 		return this;
@@ -102,7 +102,7 @@ public sealed class FileVersionInfoBuilder
 	/// <summary>
 	///     Sets the <see cref="IFileVersionInfo.Language" />.
 	/// </summary>
-	public FileVersionInfoBuilder WithLanguage(string? language)
+	public FileVersionInfoBuilder SetLanguage(string? language)
 	{
 		_container.Language = language;
 		return this;
@@ -111,7 +111,7 @@ public sealed class FileVersionInfoBuilder
 	/// <summary>
 	///     Sets the <see cref="IFileVersionInfo.LegalCopyright" />.
 	/// </summary>
-	public FileVersionInfoBuilder WithLegalCopyright(string? legalCopyright)
+	public FileVersionInfoBuilder SetLegalCopyright(string? legalCopyright)
 	{
 		_container.LegalCopyright = legalCopyright;
 		return this;
@@ -120,7 +120,7 @@ public sealed class FileVersionInfoBuilder
 	/// <summary>
 	///     Sets the <see cref="IFileVersionInfo.LegalTrademarks" />.
 	/// </summary>
-	public FileVersionInfoBuilder WithLegalTrademarks(string? legalTrademarks)
+	public FileVersionInfoBuilder SetLegalTrademarks(string? legalTrademarks)
 	{
 		_container.LegalTrademarks = legalTrademarks;
 		return this;
@@ -129,7 +129,7 @@ public sealed class FileVersionInfoBuilder
 	/// <summary>
 	///     Sets the <see cref="IFileVersionInfo.OriginalFilename" />.
 	/// </summary>
-	public FileVersionInfoBuilder WithOriginalFilename(string? originalFilename)
+	public FileVersionInfoBuilder SetOriginalFilename(string? originalFilename)
 	{
 		_container.OriginalFilename = originalFilename;
 		return this;
@@ -138,7 +138,7 @@ public sealed class FileVersionInfoBuilder
 	/// <summary>
 	///     Sets the <see cref="IFileVersionInfo.PrivateBuild" />.
 	/// </summary>
-	public FileVersionInfoBuilder WithPrivateBuild(string? privateBuild)
+	public FileVersionInfoBuilder SetPrivateBuild(string? privateBuild)
 	{
 		_container.PrivateBuild = privateBuild;
 		return this;
@@ -147,7 +147,7 @@ public sealed class FileVersionInfoBuilder
 	/// <summary>
 	///     Sets the <see cref="IFileVersionInfo.ProductName" />.
 	/// </summary>
-	public FileVersionInfoBuilder WithProductName(string? productName)
+	public FileVersionInfoBuilder SetProductName(string? productName)
 	{
 		_container.ProductName = productName;
 		return this;
@@ -156,7 +156,7 @@ public sealed class FileVersionInfoBuilder
 	/// <summary>
 	///     Sets the <see cref="IFileVersionInfo.ProductVersion" />.
 	/// </summary>
-	public FileVersionInfoBuilder WithProductVersion(string? productVersion)
+	public FileVersionInfoBuilder SetProductVersion(string? productVersion)
 	{
 		_container.ProductVersion = productVersion;
 		return this;
@@ -165,7 +165,7 @@ public sealed class FileVersionInfoBuilder
 	/// <summary>
 	///     Sets the <see cref="IFileVersionInfo.SpecialBuild" />.
 	/// </summary>
-	public FileVersionInfoBuilder WithSpecialBuild(string? specialBuild)
+	public FileVersionInfoBuilder SetSpecialBuild(string? specialBuild)
 	{
 		_container.SpecialBuild = specialBuild;
 		return this;
