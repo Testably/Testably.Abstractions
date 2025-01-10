@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -10,7 +11,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
-	[MemberData(nameof(GetFileInfoFactoryCallbacks),
+	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks),
 		parameters: "Illegal\tCharacter?InPath")]
 	public void
 		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowArgumentException_OnNetFramework(
@@ -31,14 +32,14 @@ public abstract partial class ExceptionTests<TFileSystem>
 		}
 		else
 		{
-			exception.Should()
-				.BeNull(
-					$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
+			exception.Should().BeException<IOException>(
+				hResult: -2147024773,
+				because: $"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 	}
 
 	[SkippableTheory]
-	[MemberData(nameof(GetFileInfoFactoryCallbacks), parameters: "")]
+	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), parameters: "")]
 	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileVersionInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -56,7 +57,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[MemberData(nameof(GetFileInfoFactoryCallbacks), parameters: (string?)null)]
+	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), parameters: (string?)null)]
 	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileVersionInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -73,7 +74,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 	}
 
 	[SkippableTheory]
-	[MemberData(nameof(GetFileInfoFactoryCallbacks), parameters: "  ")]
+	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), parameters: "  ")]
 	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IFileVersionInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -96,13 +97,13 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	#pragma warning disable MA0018
 	public static TheoryData<Expression<Action<IFileVersionInfoFactory>>, string, bool>
-		GetFileInfoFactoryCallbacks(string? path)
+		GetFileVersionInfoFactoryCallbacks(string? path)
 	{
 		TheoryData<Expression<Action<IFileVersionInfoFactory>>, string, bool> theoryData = new();
 		foreach ((ExceptionTestHelper.TestTypes TestType,
 			string ParamName,
 			Expression<Action<IFileVersionInfoFactory>> Callback) item in
-			GetFileInfoFactoryCallbackTestParameters(path!)
+			GetFileVersionInfoFactoryCallbackTestParameters(path!)
 				.Where(item => item.TestType.HasFlag(path.ToTestType())))
 		{
 			theoryData.Add(
@@ -117,10 +118,10 @@ public abstract partial class ExceptionTests<TFileSystem>
 
 	private static IEnumerable<(ExceptionTestHelper.TestTypes TestType, string ParamName,
 			Expression<Action<IFileVersionInfoFactory>> Callback)>
-		GetFileInfoFactoryCallbackTestParameters(string value)
+		GetFileVersionInfoFactoryCallbackTestParameters(string value)
 	{
-		yield return (ExceptionTestHelper.TestTypes.All, "fileName", fileInfoFactory
-			=> fileInfoFactory.GetVersionInfo(value));
+		yield return (ExceptionTestHelper.TestTypes.All, "fileName", fileVersionInfoFactory
+			=> fileVersionInfoFactory.GetVersionInfo(value));
 	}
 
 	#endregion

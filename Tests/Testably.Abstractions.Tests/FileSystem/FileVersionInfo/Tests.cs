@@ -6,15 +6,15 @@ public abstract partial class Tests<TFileSystem>
 	where TFileSystem : IFileSystem
 {
 	[SkippableTheory]
-	[InlineData("/foo")]
-	[InlineData("./foo")]
-	[InlineData("foo")]
-	public void ToString_ShouldReturnProvidedPath(string path)
+	[AutoData]
+	public void ToString_ShouldReturnProvidedPath(string fileName)
 	{
-		IFileVersionInfo fileInfo = FileSystem.FileVersionInfo.GetVersionInfo(path);
+		FileSystem.File.WriteAllText(fileName, "");
+		string fullPath = FileSystem.Path.GetFullPath(fileName);
+		IFileVersionInfo fileInfo = FileSystem.FileVersionInfo.GetVersionInfo(fileName);
 
 		string? result = fileInfo.ToString();
 
-		result.Should().Be(path);
+		result.Should().Contain(fullPath);
 	}
 }

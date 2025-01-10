@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Storage;
 
@@ -381,6 +382,29 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 	}
 
 	#endregion
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		// An initial capacity of 512 was chosen because it is large enough to cover
+		// the size of the static strings with enough capacity left over to cover
+		// average length property values.
+		StringBuilder sb = new(512);
+		sb.Append("File:             ").AppendLine(FileName);
+		sb.Append("InternalName:     ").AppendLine(InternalName);
+		sb.Append("OriginalFilename: ").AppendLine(OriginalFilename);
+		sb.Append("FileVersion:      ").AppendLine(FileVersion);
+		sb.Append("FileDescription:  ").AppendLine(FileDescription);
+		sb.Append("Product:          ").AppendLine(ProductName);
+		sb.Append("ProductVersion:   ").AppendLine(ProductVersion);
+		sb.Append("Debug:            ").AppendLine(IsDebug.ToString());
+		sb.Append("Patched:          ").AppendLine(IsPatched.ToString());
+		sb.Append("PreRelease:       ").AppendLine(IsPreRelease.ToString());
+		sb.Append("PrivateBuild:     ").AppendLine(IsPrivateBuild.ToString());
+		sb.Append("SpecialBuild:     ").AppendLine(IsSpecialBuild.ToString());
+		sb.Append("Language:         ").AppendLine(Language);
+		return sb.ToString();
+	}
 
 	internal static FileVersionInfoMock New(
 		IStorageLocation location,
