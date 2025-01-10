@@ -26,10 +26,10 @@ partial class Build
 	Target MutationComment => _ => _
 		.After(MutationTestsLinux)
 		.After(MutationTestsWindows)
-		.OnlyWhenDynamic(() => GitHubActions.IsPullRequest)
+		.OnlyWhenDynamic(() => GitHubActions?.IsPullRequest == true)
 		.Executes(async () =>
 		{
-			int? prId = GitHubActions.PullRequestNumber;
+			int? prId = GitHubActions?.PullRequestNumber;
 			Log.Debug("Pull request number: {PullRequestId}", prId);
 			if (MutationCommentBodies.Count == 0)
 			{
@@ -117,7 +117,7 @@ partial class Build
 
 			foreach (KeyValuePair<Project, Project[]> project in projects)
 			{
-				string branchName = GitVersion.BranchName;
+				string? branchName = GitVersion?.BranchName;
 				if (GitHubActions?.Ref.StartsWith("refs/tags/",
 					StringComparison.OrdinalIgnoreCase) == true)
 				{
@@ -141,7 +141,7 @@ partial class Build
 				                      		"target-framework": "net8.0",
 				                      		"since": {
 				                      			"target": "main",
-				                      			"enabled": {{(GitVersion.BranchName != "main").ToString().ToLowerInvariant()}},
+				                      			"enabled": {{(GitVersion?.BranchName != "main").ToString().ToLowerInvariant()}},
 				                      			"ignore-changes-in": [
 				                      				"**/.github/**/*.*"
 				                      			]
@@ -233,7 +233,7 @@ partial class Build
 
 			foreach (KeyValuePair<Project, Project[]> project in projects)
 			{
-				string branchName = GitVersion.BranchName;
+				string? branchName = GitVersion?.BranchName;
 				if (GitHubActions?.Ref.StartsWith("refs/tags/",
 					StringComparison.OrdinalIgnoreCase) == true)
 				{
@@ -257,7 +257,7 @@ partial class Build
 				                      		"target-framework": "net8.0",
 				                      		"since": {
 				                      			"target": "main",
-				                      			"enabled": {{(GitVersion.BranchName != "main").ToString().ToLowerInvariant()}},
+				                      			"enabled": {{(GitVersion?.BranchName != "main").ToString().ToLowerInvariant()}},
 				                      			"ignore-changes-in": [
 				                      				"**/.github/**/*.*"
 				                      			]

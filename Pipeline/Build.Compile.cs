@@ -2,7 +2,6 @@ using Nuke.Common;
 using Nuke.Common.IO;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Utilities.Collections;
-using Nuke.Components;
 using Serilog;
 using System;
 using System.Linq;
@@ -15,15 +14,15 @@ namespace Build;
 
 partial class Build
 {
-	string SemVer;
+	string? SemVer;
 
 	Target CalculateNugetVersion => _ => _
 		.Unlisted()
 		.Executes(() =>
 		{
-			SemVer = GitVersion.SemVer;
+			SemVer = GitVersion?.SemVer;
 
-			if (GitHubActions?.IsPullRequest == true)
+			if (GitHubActions?.IsPullRequest == true && GitVersion != null)
 			{
 				string buildNumber = GitHubActions.RunNumber.ToString();
 				Console.WriteLine(
@@ -73,8 +72,8 @@ partial class Build
 				.EnableNoLogo()
 				.EnableNoRestore()
 				.SetVersion(SemVer)
-				.SetAssemblyVersion(GitVersion.AssemblySemVer)
-				.SetFileVersion(GitVersion.AssemblySemFileVer)
-				.SetInformationalVersion(GitVersion.InformationalVersion));
+				.SetAssemblyVersion(GitVersion?.AssemblySemVer)
+				.SetFileVersion(GitVersion?.AssemblySemFileVer)
+				.SetInformationalVersion(GitVersion?.InformationalVersion));
 		});
 }
