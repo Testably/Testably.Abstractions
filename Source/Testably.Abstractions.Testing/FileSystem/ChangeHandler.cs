@@ -27,13 +27,10 @@ internal sealed class ChangeHandler : IInterceptionHandler,
 
 	/// <inheritdoc
 	///     cref="IInterceptionHandler.Event" />
-	public MockFileSystem Event(
+	public IAwaitableCallback<ChangeDescription> Event(
 		Action<ChangeDescription> interceptionCallback,
 		Func<ChangeDescription, bool>? predicate = null)
-	{
-		_changeOccurringCallbacks.RegisterCallback(interceptionCallback, predicate);
-		return _mockFileSystem;
-	}
+		=> _changeOccurringCallbacks.RegisterCallback(interceptionCallback, predicate);
 
 	#endregion
 
@@ -41,7 +38,7 @@ internal sealed class ChangeHandler : IInterceptionHandler,
 
 	/// <inheritdoc
 	///     cref="INotificationHandler.OnEvent" />
-	public Notification.IAwaitableCallback<ChangeDescription> OnEvent(
+	public IAwaitableCallback<ChangeDescription> OnEvent(
 		Action<ChangeDescription>? notificationCallback = null,
 		Func<ChangeDescription, bool>? predicate = null)
 		=> _changeOccurredCallbacks.RegisterCallback(notificationCallback, predicate);

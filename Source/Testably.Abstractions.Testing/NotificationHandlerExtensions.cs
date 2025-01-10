@@ -30,8 +30,8 @@ public static class NotificationHandlerExtensions
 	///     (optional) A predicate used to filter which callbacks should be notified.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are notified.
 	/// </param>
-	/// <returns>A <see cref="Notification.IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
-	public static Notification.IAwaitableCallback<ChangeDescription>
+	/// <returns>A <see cref="IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
+	public static IAwaitableCallback<ChangeDescription>
 		OnChanged(
 			this INotificationHandler handler,
 			FileSystemTypes fileSystemType,
@@ -68,8 +68,8 @@ public static class NotificationHandlerExtensions
 	///     (optional) A predicate used to filter which callbacks should be notified.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are notified.
 	/// </param>
-	/// <returns>A <see cref="Notification.IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
-	public static Notification.IAwaitableCallback<ChangeDescription>
+	/// <returns>A <see cref="IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
+	public static IAwaitableCallback<ChangeDescription>
 		OnCreated(
 			this INotificationHandler handler,
 			FileSystemTypes fileSystemType,
@@ -106,8 +106,8 @@ public static class NotificationHandlerExtensions
 	///     (optional) A predicate used to filter which callbacks should be notified.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are notified.
 	/// </param>
-	/// <returns>A <see cref="Notification.IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
-	public static Notification.IAwaitableCallback<ChangeDescription>
+	/// <returns>A <see cref="IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
+	public static IAwaitableCallback<ChangeDescription>
 		OnDeleted(
 			this INotificationHandler handler,
 			FileSystemTypes fileSystemType,

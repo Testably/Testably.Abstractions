@@ -36,7 +36,7 @@ namespace Testably.Abstractions.Testing.FileSystem
     }
     public interface INotificationHandler : System.IO.Abstractions.IFileSystemEntity
     {
-        Testably.Abstractions.Testing.Notification.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnEvent(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
+        Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnEvent(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
     }
     public interface ISafeFileHandleStrategy
     {
@@ -155,22 +155,22 @@ namespace Testably.Abstractions.Testing
     }
     public static class Notification
     {
-        public static Testably.Abstractions.Testing.Notification.IAwaitableCallback<TValue> ExecuteWhileWaiting<TValue>(this Testably.Abstractions.Testing.Notification.IAwaitableCallback<TValue> awaitable, System.Action callback) { }
-        public static Testably.Abstractions.Testing.Notification.IAwaitableCallback<TValue, TFunc> ExecuteWhileWaiting<TValue, TFunc>(this Testably.Abstractions.Testing.Notification.IAwaitableCallback<TValue> awaitable, System.Func<TFunc> callback) { }
+        public static Testably.Abstractions.Testing.IAwaitableCallback<TValue> ExecuteWhileWaiting<TValue>(this Testably.Abstractions.Testing.IAwaitableCallback<TValue> awaitable, System.Action callback) { }
+        public static Testably.Abstractions.Testing.IAwaitableCallback<TValue, TFunc> ExecuteWhileWaiting<TValue, TFunc>(this Testably.Abstractions.Testing.IAwaitableCallback<TValue> awaitable, System.Func<TFunc> callback) { }
         public interface IAwaitableCallback<out TValue> : System.IDisposable
         {
             void Wait(System.Func<TValue, bool>? filter = null, int timeout = 30000, int count = 1, System.Action? executeWhenWaiting = null);
         }
-        public interface IAwaitableCallback<out TValue, out TFunc> : System.IDisposable, Testably.Abstractions.Testing.Notification.IAwaitableCallback<TValue>
+        public interface IAwaitableCallback<out TValue, out TFunc> : System.IDisposable, Testably.Abstractions.Testing.IAwaitableCallback<TValue>
         {
             TFunc Wait(System.Func<TValue, bool>? filter = null, int timeout = 30000, int count = 1, System.Action? executeWhenWaiting = null);
         }
     }
     public static class NotificationHandlerExtensions
     {
-        public static Testably.Abstractions.Testing.Notification.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnChanged(this Testably.Abstractions.Testing.FileSystem.INotificationHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, string path = "", string searchPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
-        public static Testably.Abstractions.Testing.Notification.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnCreated(this Testably.Abstractions.Testing.FileSystem.INotificationHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, string path = "", string searchPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
-        public static Testably.Abstractions.Testing.Notification.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnDeleted(this Testably.Abstractions.Testing.FileSystem.INotificationHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, string path = "", string searchPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
+        public static Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnChanged(this Testably.Abstractions.Testing.FileSystem.INotificationHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, string path = "", string searchPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
+        public static Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnCreated(this Testably.Abstractions.Testing.FileSystem.INotificationHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, string path = "", string searchPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
+        public static Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnDeleted(this Testably.Abstractions.Testing.FileSystem.INotificationHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, string path = "", string searchPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
     }
     public static class RandomProvider
     {
@@ -379,9 +379,9 @@ namespace Testably.Abstractions.Testing.TimeSystem
 {
     public interface INotificationHandler
     {
-        Testably.Abstractions.Testing.Notification.IAwaitableCallback<System.DateTime> DateTimeRead(System.Action<System.DateTime>? callback = null, System.Func<System.DateTime, bool>? predicate = null);
-        Testably.Abstractions.Testing.Notification.IAwaitableCallback<System.TimeSpan> TaskDelay(System.Action<System.TimeSpan>? callback = null, System.Func<System.TimeSpan, bool>? predicate = null);
-        Testably.Abstractions.Testing.Notification.IAwaitableCallback<System.TimeSpan> ThreadSleep(System.Action<System.TimeSpan>? callback = null, System.Func<System.TimeSpan, bool>? predicate = null);
+        Testably.Abstractions.Testing.IAwaitableCallback<System.DateTime> DateTimeRead(System.Action<System.DateTime>? callback = null, System.Func<System.DateTime, bool>? predicate = null);
+        Testably.Abstractions.Testing.IAwaitableCallback<System.TimeSpan> TaskDelay(System.Action<System.TimeSpan>? callback = null, System.Func<System.TimeSpan, bool>? predicate = null);
+        Testably.Abstractions.Testing.IAwaitableCallback<System.TimeSpan> ThreadSleep(System.Action<System.TimeSpan>? callback = null, System.Func<System.TimeSpan, bool>? predicate = null);
     }
     public interface ITimeProvider
     {

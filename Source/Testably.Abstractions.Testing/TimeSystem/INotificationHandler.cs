@@ -20,8 +20,8 @@ public interface INotificationHandler
 	///     (optional) A predicate used to filter which callbacks should be notified.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are notified.
 	/// </param>
-	/// <returns>A <see cref="Notification.IAwaitableCallback{DateTime}" /> to un-register the callback on dispose.</returns>
-	Notification.IAwaitableCallback<DateTime> DateTimeRead(
+	/// <returns>A <see cref="IAwaitableCallback{DateTime}" /> to un-register the callback on dispose.</returns>
+	IAwaitableCallback<DateTime> DateTimeRead(
 		Action<DateTime>? callback = null,
 		Func<DateTime, bool>? predicate = null);
 
@@ -37,8 +37,8 @@ public interface INotificationHandler
 	///     (optional) A predicate used to filter which callbacks should be notified.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are notified.
 	/// </param>
-	/// <returns>A <see cref="Notification.IAwaitableCallback{TimeSpan}" /> to un-register the callback on dispose.</returns>
-	Notification.IAwaitableCallback<TimeSpan> TaskDelay(
+	/// <returns>A <see cref="IAwaitableCallback{TimeSpan}" /> to un-register the callback on dispose.</returns>
+	IAwaitableCallback<TimeSpan> TaskDelay(
 		Action<TimeSpan>? callback = null,
 		Func<TimeSpan, bool>? predicate = null);
 
@@ -52,8 +52,8 @@ public interface INotificationHandler
 	///     (optional) A predicate used to filter which callbacks should be notified.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are notified.
 	/// </param>
-	/// <returns>A <see cref="Notification.IAwaitableCallback{TimeSpan}" /> to un-register the callback on dispose.</returns>
-	Notification.IAwaitableCallback<TimeSpan> ThreadSleep(
+	/// <returns>A <see cref="IAwaitableCallback{TimeSpan}" /> to un-register the callback on dispose.</returns>
+	IAwaitableCallback<TimeSpan> ThreadSleep(
 		Action<TimeSpan>? callback = null,
 		Func<TimeSpan, bool>? predicate = null);
 }

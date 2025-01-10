@@ -17,6 +17,6 @@ public interface IInterceptionHandler : IFileSystemEntity
 	///     If set to <see langword="null" /> (default value) all callbacks are intercepted.
 	/// </param>
 	/// <remarks>This allows e.g. to throw custom exceptions instead.</remarks>
-	MockFileSystem Event(Action<ChangeDescription> interceptionCallback,
+	IAwaitableCallback<ChangeDescription> Event(Action<ChangeDescription> interceptionCallback,
 		Func<ChangeDescription, bool>? predicate = null);
 }

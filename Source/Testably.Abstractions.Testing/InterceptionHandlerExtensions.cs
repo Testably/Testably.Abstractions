@@ -29,9 +29,9 @@ public static class InterceptionHandlerExtensions
 	///     (optional) A predicate used to filter which callbacks should be intercepted.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are intercepted.
 	/// </param>
-	/// <returns>The <see cref="MockFileSystem" />.</returns>
+	/// <returns>An <see cref="IAwaitableCallback{TValue}"/> for this event registration.</returns>
 	/// <remarks>This allows e.g. to throw custom exceptions instead.</remarks>
-	public static MockFileSystem Changing(
+	public static IAwaitableCallback<ChangeDescription> Changing(
 		this IInterceptionHandler handler,
 		FileSystemTypes fileSystemType,
 		Action<ChangeDescription> interceptionCallback,
@@ -66,9 +66,9 @@ public static class InterceptionHandlerExtensions
 	///     (optional) A predicate used to filter which callbacks should be intercepted.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are intercepted.
 	/// </param>
-	/// <returns>The <see cref="MockFileSystem" />.</returns>
+	/// <returns>An <see cref="IAwaitableCallback{TValue}"/> for this event registration.</returns>
 	/// <remarks>This allows e.g. to throw custom exceptions instead.</remarks>
-	public static MockFileSystem Creating(
+	public static IAwaitableCallback<ChangeDescription> Creating(
 		this IInterceptionHandler handler,
 		FileSystemTypes fileSystemType,
 		Action<ChangeDescription> interceptionCallback,
@@ -103,9 +103,9 @@ public static class InterceptionHandlerExtensions
 	///     (optional) A predicate used to filter which callbacks should be intercepted.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are intercepted.
 	/// </param>
-	/// <returns>The <see cref="MockFileSystem" />.</returns>
+	/// <returns>An <see cref="IAwaitableCallback{TValue}"/> for this event registration.</returns>
 	/// <remarks>This allows e.g. to throw custom exceptions instead.</remarks>
-	public static MockFileSystem Deleting(
+	public static IAwaitableCallback<ChangeDescription> Deleting(
 		this IInterceptionHandler handler,
 		FileSystemTypes fileSystemType,
 		Action<ChangeDescription> interceptionCallback,

@@ -10,7 +10,7 @@ public class NotificationTests
 	{
 		MockTimeSystem timeSystem = new();
 		int receivedCount = 0;
-		Notification.IAwaitableCallback<TimeSpan> wait =
+		IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On.ThreadSleep(t =>
 			{
 				if (t.TotalMilliseconds > 0)
@@ -38,7 +38,7 @@ public class NotificationTests
 	{
 		MockTimeSystem timeSystem = new();
 		bool isCalled = false;
-		Notification.IAwaitableCallback<TimeSpan> wait =
+		IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On.ThreadSleep(_ =>
 			{
 				isCalled = true;
@@ -56,7 +56,7 @@ public class NotificationTests
 	{
 		MockTimeSystem timeSystem = new();
 		bool isCalled = false;
-		Notification.IAwaitableCallback<TimeSpan> wait =
+		IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On
 				.ThreadSleep(_ =>
 				{
@@ -76,7 +76,7 @@ public class NotificationTests
 	{
 		MockTimeSystem timeSystem = new();
 		int receivedCount = 0;
-		Notification.IAwaitableCallback<TimeSpan> wait =
+		IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On.ThreadSleep(_ =>
 			{
 				receivedCount++;
@@ -139,7 +139,7 @@ public class NotificationTests
 		{
 			MockTimeSystem timeSystem = new();
 			bool isCalled = false;
-			Notification.IAwaitableCallback<TimeSpan> wait =
+			IAwaitableCallback<TimeSpan> wait =
 				timeSystem.On.ThreadSleep(_ =>
 				{
 					isCalled = true;
@@ -177,7 +177,7 @@ public class NotificationTests
 		MockTimeSystem timeSystem = new();
 		bool isCalled = false;
 		using ManualResetEventSlim ms = new();
-		Notification.IAwaitableCallback<TimeSpan> wait =
+		IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On.ThreadSleep(_ =>
 			{
 				isCalled = true;
@@ -211,7 +211,7 @@ public class NotificationTests
 	public void AwaitableCallback_Wait_AfterDispose_ShouldThrowObjectDisposedException()
 	{
 		MockTimeSystem timeSystem = new();
-		Notification.IAwaitableCallback<TimeSpan> wait =
+		IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On.ThreadSleep();
 
 		wait.Dispose();
@@ -233,7 +233,7 @@ public class NotificationTests
 		MockTimeSystem timeSystem = new();
 		bool isCalledFromSecondThread = false;
 		using ManualResetEventSlim listening = new();
-		Notification.IAwaitableCallback<TimeSpan> wait =
+		IAwaitableCallback<TimeSpan> wait =
 			timeSystem.On
 				.ThreadSleep(t =>
 				{
