@@ -112,7 +112,7 @@ namespace Testably.Abstractions.Testing
         public override string ToString() { }
         public Testably.Abstractions.Testing.MockFileSystem WithAccessControlStrategy(Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy accessControlStrategy) { }
         public Testably.Abstractions.Testing.MockFileSystem WithDrive(string? drive, System.Action<Testably.Abstractions.Testing.Storage.IStorageDrive>? driveCallback = null) { }
-        public Testably.Abstractions.Testing.MockFileSystem WithFileVersion(string searchPattern, System.Action<Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder> fileVersionInfoBuilder) { }
+        public Testably.Abstractions.Testing.MockFileSystem WithFileVersionInfo(string searchPattern, System.Action<Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder> fileVersionInfoBuilder) { }
         public Testably.Abstractions.Testing.MockFileSystem WithSafeFileHandleStrategy(Testably.Abstractions.Testing.FileSystem.ISafeFileHandleStrategy safeFileHandleStrategy) { }
         public class MockFileSystemOptions
         {
@@ -234,24 +234,24 @@ namespace Testably.Abstractions.Testing.Initializer
     public sealed class FileVersionInfoBuilder
     {
         public FileVersionInfoBuilder() { }
-        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder WithComments(string? comments) { }
-        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder WithCompanyName(string? companyName) { }
-        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder WithFileDescription(string? fileDescription) { }
-        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder WithFileVersion(string? fileVersion) { }
-        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder WithInternalName(string? internalName) { }
-        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder WithIsDebug(bool isDebug) { }
-        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder WithIsPatched(bool isPatched) { }
-        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder WithIsPreRelease(bool isPreRelease) { }
-        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder WithIsPrivateBuild(bool isPrivateBuild) { }
-        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder WithIsSpecialBuild(bool isSpecialBuild) { }
-        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder WithLanguage(string? language) { }
-        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder WithLegalCopyright(string? legalCopyright) { }
-        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder WithLegalTrademarks(string? legalTrademarks) { }
-        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder WithOriginalFilename(string? originalFilename) { }
-        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder WithPrivateBuild(string? privateBuild) { }
-        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder WithProductName(string? productName) { }
-        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder WithProductVersion(string? productVersion) { }
-        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder WithSpecialBuild(string? specialBuild) { }
+        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder SetComments(string? comments) { }
+        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder SetCompanyName(string? companyName) { }
+        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder SetFileDescription(string? fileDescription) { }
+        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder SetFileVersion(string? fileVersion) { }
+        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder SetInternalName(string? internalName) { }
+        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder SetIsDebug(bool isDebug) { }
+        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder SetIsPatched(bool isPatched) { }
+        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder SetIsPreRelease(bool isPreRelease) { }
+        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder SetIsPrivateBuild(bool isPrivateBuild) { }
+        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder SetIsSpecialBuild(bool isSpecialBuild) { }
+        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder SetLanguage(string? language) { }
+        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder SetLegalCopyright(string? legalCopyright) { }
+        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder SetLegalTrademarks(string? legalTrademarks) { }
+        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder SetOriginalFilename(string? originalFilename) { }
+        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder SetPrivateBuild(string? privateBuild) { }
+        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder SetProductName(string? productName) { }
+        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder SetProductVersion(string? productVersion) { }
+        public Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder SetSpecialBuild(string? specialBuild) { }
     }
     public interface IDirectoryCleaner : System.IDisposable
     {
