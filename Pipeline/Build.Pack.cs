@@ -2,7 +2,6 @@ using Nuke.Common;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Utilities.Collections;
-using Nuke.Components;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -20,6 +19,11 @@ partial class Build
 		.Before(Compile)
 		.Executes(() =>
 		{
+			if (GitVersion == null)
+			{
+				return;
+			}
+			
 			string version = string.Join('.', GitVersion.SemVer.Split('.').Take(3));
 			if (version.IndexOf('-') != -1)
 			{
@@ -60,6 +64,7 @@ partial class Build
 			File.WriteAllText(ArtifactsDirectory / "README.md", sb.ToString());
 		});
 
+	// ReSharper disable once UnusedMember.Local
 	Target Pack => _ => _
 		.DependsOn(UpdateReadme)
 		.DependsOn(Compile)

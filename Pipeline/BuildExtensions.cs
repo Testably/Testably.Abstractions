@@ -10,8 +10,8 @@ public static class BuildExtensions
 {
 	public static SonarScannerBeginSettings SetPullRequestOrBranchName(
 		this SonarScannerBeginSettings settings,
-		GitHubActions gitHubActions,
-		GitVersion gitVersion)
+		GitHubActions? gitHubActions,
+		GitVersion? gitVersion)
 	{
 		if (gitHubActions?.IsPullRequest == true)
 		{
@@ -30,7 +30,7 @@ public static class BuildExtensions
 			return settings.SetBranchName(branchName);
 		}
 
-		Log.Information("Use branch analysis for '{BranchName}'", gitVersion.BranchName);
-		return settings.SetBranchName(gitVersion.BranchName);
+		Log.Information("Use branch analysis for '{BranchName}'", gitVersion?.BranchName);
+		return settings.SetBranchName(gitVersion?.BranchName);
 	}
 }
