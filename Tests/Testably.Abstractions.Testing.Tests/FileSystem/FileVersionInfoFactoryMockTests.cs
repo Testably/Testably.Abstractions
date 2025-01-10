@@ -10,6 +10,7 @@ public sealed class FileVersionInfoFactoryMockTests
 		string comments)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.Initialize().WithFile("abc.foo");
 		fileSystem.WithFileVersion("*.foo", b => b.WithComments(comments));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("abc.foo");
@@ -23,6 +24,7 @@ public sealed class FileVersionInfoFactoryMockTests
 		string comments)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.Initialize().WithFile("abc.bar");
 		fileSystem.WithFileVersion("*.foo", b => b.WithComments(comments));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("abc.bar");

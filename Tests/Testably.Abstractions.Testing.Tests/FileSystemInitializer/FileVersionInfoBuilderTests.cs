@@ -7,6 +7,7 @@ public class FileVersionInfoBuilderTests
 	public void WithComments_ShouldSetComments(string comments)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithComments(comments));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -19,6 +20,7 @@ public class FileVersionInfoBuilderTests
 	public void WithCompanyName_ShouldSetCompanyName(string? companyName)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithCompanyName(companyName));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -31,6 +33,7 @@ public class FileVersionInfoBuilderTests
 	public void WithFileDescription_ShouldSetFileDescription(string? fileDescription)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithFileDescription(fileDescription));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -49,6 +52,7 @@ public class FileVersionInfoBuilderTests
 		int fileMajorPart, int fileMinorPart, int fileBuildPart = 0, int filePrivatePart = 0)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithFileVersion("9.8.7.6").WithFileVersion(fileVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -80,6 +84,7 @@ public class FileVersionInfoBuilderTests
 		int fileMajorPart, int fileMinorPart, int fileBuildPart = 0, int filePrivatePart = 0)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithFileVersion(fileVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -99,6 +104,7 @@ public class FileVersionInfoBuilderTests
 		string? fileVersion)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithFileVersion("1.2.3.4")
 			.WithFileVersion(fileVersion));
 
@@ -115,6 +121,7 @@ public class FileVersionInfoBuilderTests
 	public void WithInternalName_ShouldSetInternalName(string? internalName)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithInternalName(internalName));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -127,6 +134,7 @@ public class FileVersionInfoBuilderTests
 	public void WithIsDebug_ShouldSetIsDebug(bool isDebug)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithIsDebug(isDebug));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -139,6 +147,7 @@ public class FileVersionInfoBuilderTests
 	public void WithIsPatched_ShouldSetIsPatched(bool isPatched)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithIsPatched(isPatched));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -151,6 +160,7 @@ public class FileVersionInfoBuilderTests
 	public void WithIsPreRelease_ShouldSetIsPreRelease(bool isPreRelease)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithIsPreRelease(isPreRelease));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -163,6 +173,7 @@ public class FileVersionInfoBuilderTests
 	public void WithIsPrivateBuild_ShouldSetIsPrivateBuild(bool isPrivateBuild)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithIsPrivateBuild(isPrivateBuild));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -175,6 +186,7 @@ public class FileVersionInfoBuilderTests
 	public void WithIsSpecialBuild_ShouldSetIsSpecialBuild(bool isSpecialBuild)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithIsSpecialBuild(isSpecialBuild));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -187,6 +199,7 @@ public class FileVersionInfoBuilderTests
 	public void WithLanguage_ShouldSetLanguage(string? language)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithLanguage(language));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -199,6 +212,7 @@ public class FileVersionInfoBuilderTests
 	public void WithLegalCopyright_ShouldSetLegalCopyright(string? legalCopyright)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithLegalCopyright(legalCopyright));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -211,6 +225,7 @@ public class FileVersionInfoBuilderTests
 	public void WithLegalTrademarks_ShouldSetLegalTrademarks(string? legalTrademarks)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithLegalTrademarks(legalTrademarks));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -223,6 +238,7 @@ public class FileVersionInfoBuilderTests
 	public void WithOriginalFilename_ShouldSetOriginalFilename(string? originalFilename)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithOriginalFilename(originalFilename));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -235,6 +251,7 @@ public class FileVersionInfoBuilderTests
 	public void WithPrivateBuild_ShouldSetPrivateBuild(string? privateBuild)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithPrivateBuild(privateBuild));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -247,6 +264,7 @@ public class FileVersionInfoBuilderTests
 	public void WithProductName_ShouldSetProductName(string? productName)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithProductName(productName));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -265,6 +283,7 @@ public class FileVersionInfoBuilderTests
 		int fileMajorPart, int fileMinorPart, int fileBuildPart = 0, int filePrivatePart = 0)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithProductVersion("9.8.7.6").WithProductVersion(productVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -296,6 +315,7 @@ public class FileVersionInfoBuilderTests
 		int fileMajorPart, int fileMinorPart, int fileBuildPart = 0, int filePrivatePart = 0)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithProductVersion(productVersion));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");
@@ -315,6 +335,7 @@ public class FileVersionInfoBuilderTests
 		string? productVersion)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithProductVersion("1.2.3.4")
 			.WithProductVersion(productVersion));
 
@@ -331,6 +352,7 @@ public class FileVersionInfoBuilderTests
 	public void WithSpecialBuild_ShouldSetSpecialBuild(string? specialBuild)
 	{
 		MockFileSystem fileSystem = new();
+		fileSystem.File.WriteAllText("foo", "");
 		fileSystem.WithFileVersion("*", b => b.WithSpecialBuild(specialBuild));
 
 		IFileVersionInfo result = fileSystem.FileVersionInfo.GetVersionInfo("foo");

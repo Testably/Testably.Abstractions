@@ -9,6 +9,7 @@ public class FileVersionInfoFactoryStatisticsTests
 	{
 		MockFileSystem sut = new();
 		string fileName = "foo";
+		sut.Initialize().WithFile(fileName);
 
 		sut.FileVersionInfo.GetVersionInfo(fileName);
 
