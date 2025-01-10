@@ -19,17 +19,17 @@ internal sealed class RandomMock : IRandom
 #if FEATURE_RANDOM_ADVANCED
 	/// <summary>
 	///     Initializes a new instance of <see cref="RandomMock" /> which allows specifying explicit generators:<br />
-	///     - <paramref name="intGenerator" />: The generator for <c>int</c> values.
-	///     - <paramref name="longGenerator" />: The generator for <c>long</c> values.
-	///     - <paramref name="singleGenerator" />: The generator for <c>float</c> values.
-	///     - <paramref name="doubleGenerator" />: The generator for <c>double</c> values.
+	///     - <paramref name="intGenerator" />: The generator for <see langword="int" /> values.
+	///     - <paramref name="longGenerator" />: The generator for <see langword="long" /> values.
+	///     - <paramref name="singleGenerator" />: The generator for <see langword="float" /> values.
+	///     - <paramref name="doubleGenerator" />: The generator for <see langword="double" /> values.
 	///     - <paramref name="byteGenerator" />: The generator for <c>byte[]</c> values.
 	/// </summary>
 #else
 	/// <summary>
 	///     Initializes a new instance of <see cref="RandomMock" /> which allows specifying explicit generators:<br />
-	///     - <paramref name="intGenerator" />: The generator for <c>int</c> values.
-	///     - <paramref name="doubleGenerator" />: The generator for <c>double</c> values.
+	///     - <paramref name="intGenerator" />: The generator for <see langword="int" /> values.
+	///     - <paramref name="doubleGenerator" />: The generator for <see langword="double" /> values.
 	///     - <paramref name="byteGenerator" />: The generator for <c>byte[]</c> values.
 	/// </summary>
 #endif
