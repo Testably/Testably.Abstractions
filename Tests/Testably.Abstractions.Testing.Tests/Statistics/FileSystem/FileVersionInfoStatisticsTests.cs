@@ -9,6 +9,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_Comments_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").Comments;
 
@@ -20,6 +21,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_CompanyName_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").CompanyName;
 
@@ -31,6 +33,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_FileBuildPart_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").FileBuildPart;
 
@@ -42,6 +45,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_FileDescription_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").FileDescription;
 
@@ -53,6 +57,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_FileMajorPart_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").FileMajorPart;
 
@@ -64,6 +69,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_FileMinorPart_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").FileMinorPart;
 
@@ -75,6 +81,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_FileName_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").FileName;
 
@@ -86,6 +93,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_FilePrivatePart_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").FilePrivatePart;
 
@@ -97,6 +105,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_FileVersion_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").FileVersion;
 
@@ -108,6 +117,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_InternalName_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").InternalName;
 
@@ -119,6 +129,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_IsDebug_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").IsDebug;
 
@@ -130,6 +141,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_IsPatched_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").IsPatched;
 
@@ -141,6 +153,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_IsPreRelease_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").IsPreRelease;
 
@@ -152,6 +165,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_IsPrivateBuild_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").IsPrivateBuild;
 
@@ -163,6 +177,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_IsSpecialBuild_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").IsSpecialBuild;
 
@@ -174,6 +189,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_Language_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").Language;
 
@@ -185,6 +201,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_LegalCopyright_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").LegalCopyright;
 
@@ -196,6 +213,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_LegalTrademarks_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").LegalTrademarks;
 
@@ -207,6 +225,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_OriginalFilename_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").OriginalFilename;
 
@@ -218,6 +237,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_PrivateBuild_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").PrivateBuild;
 
@@ -229,6 +249,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_ProductBuildPart_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").ProductBuildPart;
 
@@ -240,6 +261,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_ProductMajorPart_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").ProductMajorPart;
 
@@ -251,6 +273,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_ProductMinorPart_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").ProductMinorPart;
 
@@ -262,6 +285,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_ProductName_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").ProductName;
 
@@ -273,6 +297,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_ProductPrivatePart_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").ProductPrivatePart;
 
@@ -284,6 +309,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_ProductVersion_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").ProductVersion;
 
@@ -295,6 +321,7 @@ public class FileVersionInfoStatisticsTests
 	public void Property_SpecialBuild_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
+		sut.Initialize().WithFile("foo");
 
 		_ = sut.FileVersionInfo.GetVersionInfo("foo").SpecialBuild;
 

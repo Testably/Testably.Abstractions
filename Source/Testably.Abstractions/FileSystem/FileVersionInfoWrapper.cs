@@ -5,6 +5,9 @@ namespace Testably.Abstractions.FileSystem;
 
 internal sealed class FileVersionInfoWrapper : IFileVersionInfo
 {
+	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
+	public IFileSystem FileSystem { get; }
+
 	private readonly FileVersionInfo _instance;
 
 	private FileVersionInfoWrapper(FileVersionInfo fileSystemWatcher,
@@ -47,9 +50,6 @@ internal sealed class FileVersionInfoWrapper : IFileVersionInfo
 	/// <inheritdoc cref="IFileVersionInfo.FilePrivatePart" />
 	public int FilePrivatePart
 		=> _instance.FilePrivatePart;
-
-	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
-	public IFileSystem FileSystem { get; }
 
 	/// <inheritdoc cref="IFileVersionInfo.FileVersion" />
 	public string? FileVersion
@@ -128,6 +128,10 @@ internal sealed class FileVersionInfoWrapper : IFileVersionInfo
 		=> _instance.SpecialBuild;
 
 	#endregion
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> _instance.ToString();
 
 	[return: NotNullIfNotNull("instance")]
 	internal static FileVersionInfoWrapper? FromFileVersionInfo(

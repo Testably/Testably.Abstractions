@@ -1,4 +1,6 @@
 ﻿using System;
+using Testably.Abstractions.Testing.Helpers;
+using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.FileSystem;
 
@@ -24,7 +26,15 @@ internal sealed class FileVersionInfoFactoryMock
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.FileVersionInfo.RegisterMethod(nameof(GetVersionInfo), fileName);
 
-		return FileVersionInfoMock.New(_fileSystem.Storage.GetLocation(fileName), _fileSystem);
+		fileName.EnsureValidFormat(_fileSystem, nameof(fileName));
+		IStorageLocation location = _fileSystem.Storage.GetLocation(fileName);
+		location.ThrowExceptionIfNotFound(_fileSystem);
+
+		FileVersionInfoContainer container = _fileSystem.Storage.GetVersionInfo(location)
+		                                     ?? FileVersionInfoContainer.None;
+
+		return FileVersionInfoMock.New(_fileSystem.Storage.GetLocation(fileName), container,
+			_fileSystem);
 	}
 
 	#endregion

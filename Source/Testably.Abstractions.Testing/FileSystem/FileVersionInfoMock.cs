@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Storage;
 
@@ -13,11 +14,16 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 	public IFileSystem FileSystem
 		=> _fileSystem;
 
+	private readonly FileVersionInfoContainer _container;
 	private readonly MockFileSystem _fileSystem;
 	private readonly string _path;
 
-	private FileVersionInfoMock(IStorageLocation location, MockFileSystem fileSystem)
+	private FileVersionInfoMock(
+		IStorageLocation location,
+		FileVersionInfoContainer container,
+		MockFileSystem fileSystem)
 	{
+		_container = container;
 		_fileSystem = fileSystem;
 		_path = location.FullPath;
 	}
@@ -33,7 +39,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(Comments), PropertyAccess.Get);
 
-			return "";
+			return _container.Comments;
 		}
 	}
 
@@ -46,7 +52,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(CompanyName), PropertyAccess.Get);
 
-			return "";
+			return _container.CompanyName;
 		}
 	}
 
@@ -59,7 +65,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(FileBuildPart), PropertyAccess.Get);
 
-			return 0;
+			return _container.FileBuildPart;
 		}
 	}
 
@@ -72,7 +78,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(FileDescription), PropertyAccess.Get);
 
-			return "";
+			return _container.FileDescription;
 		}
 	}
 
@@ -85,7 +91,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(FileMajorPart), PropertyAccess.Get);
 
-			return 0;
+			return _container.FileMajorPart;
 		}
 	}
 
@@ -98,7 +104,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(FileMinorPart), PropertyAccess.Get);
 
-			return 0;
+			return _container.FileMinorPart;
 		}
 	}
 
@@ -111,7 +117,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(FileName), PropertyAccess.Get);
 
-			return "";
+			return _path;
 		}
 	}
 
@@ -124,7 +130,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(FilePrivatePart), PropertyAccess.Get);
 
-			return 0;
+			return _container.FilePrivatePart;
 		}
 	}
 
@@ -137,7 +143,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(FileVersion), PropertyAccess.Get);
 
-			return "";
+			return _container.FileVersion;
 		}
 	}
 
@@ -150,7 +156,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(InternalName), PropertyAccess.Get);
 
-			return "";
+			return _container.InternalName;
 		}
 	}
 
@@ -163,7 +169,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(IsDebug), PropertyAccess.Get);
 
-			return false;
+			return _container.IsDebug;
 		}
 	}
 
@@ -176,7 +182,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(IsPatched), PropertyAccess.Get);
 
-			return false;
+			return _container.IsPatched;
 		}
 	}
 
@@ -189,7 +195,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(IsPreRelease), PropertyAccess.Get);
 
-			return false;
+			return _container.IsPreRelease;
 		}
 	}
 
@@ -202,7 +208,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(IsPrivateBuild), PropertyAccess.Get);
 
-			return false;
+			return _container.IsPrivateBuild;
 		}
 	}
 
@@ -215,7 +221,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(IsSpecialBuild), PropertyAccess.Get);
 
-			return false;
+			return _container.IsSpecialBuild;
 		}
 	}
 
@@ -228,7 +234,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(Language), PropertyAccess.Get);
 
-			return "";
+			return _container.Language;
 		}
 	}
 
@@ -241,7 +247,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(LegalCopyright), PropertyAccess.Get);
 
-			return "";
+			return _container.LegalCopyright;
 		}
 	}
 
@@ -254,7 +260,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(LegalTrademarks), PropertyAccess.Get);
 
-			return "";
+			return _container.LegalTrademarks;
 		}
 	}
 
@@ -267,7 +273,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(OriginalFilename), PropertyAccess.Get);
 
-			return "";
+			return _container.OriginalFilename;
 		}
 	}
 
@@ -280,7 +286,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(PrivateBuild), PropertyAccess.Get);
 
-			return "";
+			return _container.PrivateBuild;
 		}
 	}
 
@@ -293,7 +299,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(ProductBuildPart), PropertyAccess.Get);
 
-			return 0;
+			return _container.ProductBuildPart;
 		}
 	}
 
@@ -306,7 +312,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(ProductMajorPart), PropertyAccess.Get);
 
-			return 0;
+			return _container.ProductMajorPart;
 		}
 	}
 
@@ -319,7 +325,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(ProductMinorPart), PropertyAccess.Get);
 
-			return 0;
+			return _container.ProductMinorPart;
 		}
 	}
 
@@ -332,7 +338,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(ProductName), PropertyAccess.Get);
 
-			return "";
+			return _container.ProductName;
 		}
 	}
 
@@ -345,7 +351,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(ProductPrivatePart), PropertyAccess.Get);
 
-			return 0;
+			return _container.ProductPrivatePart;
 		}
 	}
 
@@ -358,7 +364,7 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(ProductVersion), PropertyAccess.Get);
 
-			return "";
+			return _container.ProductVersion;
 		}
 	}
 
@@ -371,12 +377,38 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 				.FileVersionInfo.RegisterPathProperty(_path,
 					nameof(SpecialBuild), PropertyAccess.Get);
 
-			return "";
+			return _container.SpecialBuild;
 		}
 	}
 
 	#endregion
 
-	internal static FileVersionInfoMock New(IStorageLocation location, MockFileSystem fileSystem)
-		=> new(location, fileSystem);
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+	{
+		// An initial capacity of 512 was chosen because it is large enough to cover
+		// the size of the static strings with enough capacity left over to cover
+		// average length property values.
+		StringBuilder sb = new(512);
+		sb.Append("File:             ").AppendLine(FileName);
+		sb.Append("InternalName:     ").AppendLine(InternalName);
+		sb.Append("OriginalFilename: ").AppendLine(OriginalFilename);
+		sb.Append("FileVersion:      ").AppendLine(FileVersion);
+		sb.Append("FileDescription:  ").AppendLine(FileDescription);
+		sb.Append("Product:          ").AppendLine(ProductName);
+		sb.Append("ProductVersion:   ").AppendLine(ProductVersion);
+		sb.Append("Debug:            ").AppendLine(IsDebug.ToString());
+		sb.Append("Patched:          ").AppendLine(IsPatched.ToString());
+		sb.Append("PreRelease:       ").AppendLine(IsPreRelease.ToString());
+		sb.Append("PrivateBuild:     ").AppendLine(IsPrivateBuild.ToString());
+		sb.Append("SpecialBuild:     ").AppendLine(IsSpecialBuild.ToString());
+		sb.Append("Language:         ").AppendLine(Language);
+		return sb.ToString();
+	}
+
+	internal static FileVersionInfoMock New(
+		IStorageLocation location,
+		FileVersionInfoContainer container,
+		MockFileSystem fileSystem)
+		=> new(location, container, fileSystem);
 }
