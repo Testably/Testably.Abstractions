@@ -6,7 +6,7 @@ using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions.Testing.Helpers;
 
-internal class FileSystemExtensibility : IFileSystemExtensibility
+internal sealed class FileSystemExtensibility : IFileSystemExtensibility
 {
 	private readonly Dictionary<string, object?> _metadata = new(StringComparer.Ordinal);
 

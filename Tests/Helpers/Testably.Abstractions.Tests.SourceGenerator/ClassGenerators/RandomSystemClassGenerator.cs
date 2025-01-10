@@ -4,7 +4,7 @@ using Testably.Abstractions.Tests.SourceGenerator.Model;
 
 namespace Testably.Abstractions.Tests.SourceGenerator.ClassGenerators;
 
-internal class RandomSystemClassGenerator : ClassGeneratorBase
+internal sealed class RandomSystemClassGenerator : ClassGeneratorBase
 {
 	/// <inheritdoc cref="ClassGeneratorBase.Marker" />
 	public override string Marker

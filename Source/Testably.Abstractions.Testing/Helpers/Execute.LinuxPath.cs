@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Testably.Abstractions.Testing.Helpers;
 
-internal partial class Execute
+internal sealed partial class Execute
 {
 	private class LinuxPath(MockFileSystem fileSystem) : SimulatedPath(fileSystem)
 	{

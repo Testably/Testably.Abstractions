@@ -64,7 +64,7 @@ internal static class StorageExtensions
 		return new AdjustedLocation(location, searchPattern, givenPath);
 	}
 
-	internal class AdjustedLocation
+	internal sealed class AdjustedLocation
 	{
 		public string GivenPath { get; }
 

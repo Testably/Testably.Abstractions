@@ -8,7 +8,7 @@ using Testably.Abstractions.Testing.Storage;
 
 namespace Testably.Abstractions.Testing.Helpers;
 
-internal partial class Execute
+internal sealed partial class Execute
 {
 	private abstract class SimulatedPath(MockFileSystem fileSystem) : IPath
 	{
