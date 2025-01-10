@@ -15,7 +15,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
-		<NoWarn>$(NoWarn);701;1702;CA1845;MA0003;MA0004;xUnit1044;xUnit1045;NU1603</NoWarn>
+		<NoWarn>$(NoWarn);701;1702;CA1845;MA0003;MA0004;MA0042;MA0076;xUnit1044;xUnit1045;NU1603</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
