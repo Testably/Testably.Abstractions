@@ -25,7 +25,7 @@ partial class Build : NukeBuild
 
 	AbsolutePath ArtifactsDirectory => RootDirectory / "Artifacts";
 	AbsolutePath TestResultsDirectory => RootDirectory / "TestResults";
-	GitHubActions? GitHubActions => GitHubActions.Instance;
+	GitHubActions GitHubActions => GitHubActions.Instance;
 
 	public static int Main() => Execute<Build>([
 		x => x.ApiChecks,

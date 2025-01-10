@@ -26,10 +26,10 @@ partial class Build
 	Target MutationComment => _ => _
 		.After(MutationTestsLinux)
 		.After(MutationTestsWindows)
-		.OnlyWhenDynamic(() => GitHubActions?.IsPullRequest == true)
+		.OnlyWhenDynamic(() => GitHubActions.IsPullRequest)
 		.Executes(async () =>
 		{
-			int? prId = GitHubActions?.PullRequestNumber;
+			int? prId = GitHubActions.PullRequestNumber;
 			Log.Debug("Pull request number: {PullRequestId}", prId);
 			if (MutationCommentBodies.Count == 0)
 			{

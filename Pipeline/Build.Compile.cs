@@ -22,7 +22,7 @@ partial class Build
 		{
 			SemVer = GitVersion?.SemVer;
 
-			if (GitHubActions?.IsPullRequest == true && GitVersion != null)
+			if (GitHubActions.IsPullRequest && GitVersion != null)
 			{
 				string buildNumber = GitHubActions.RunNumber.ToString();
 				Console.WriteLine(
