@@ -30,10 +30,16 @@ public abstract partial class ExceptionTests<TFileSystem>
 				because:
 				$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
-		else
+		else if (Test.RunsOnWindows)
 		{
 			exception.Should().BeException<IOException>(
 				hResult: -2147024773,
+				because: $"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
+		}
+		else
+		{
+			exception.Should().BeException<FileNotFoundException>(
+				hResult: -2147024894,
 				because: $"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
 	}
@@ -120,7 +126,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 			Expression<Action<IFileVersionInfoFactory>> Callback)>
 		GetFileVersionInfoFactoryCallbackTestParameters(string value)
 	{
-		yield return (ExceptionTestHelper.TestTypes.All, "fileName", fileVersionInfoFactory
+		yield return (ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "fileName", fileVersionInfoFactory
 			=> fileVersionInfoFactory.GetVersionInfo(value));
 	}
 

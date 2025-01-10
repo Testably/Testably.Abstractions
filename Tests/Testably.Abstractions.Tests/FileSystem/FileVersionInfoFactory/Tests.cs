@@ -28,7 +28,7 @@ public abstract partial class Tests<TFileSystem>
 			FileSystem.FileVersionInfo.GetVersionInfo(path));
 
 		exception.Should().BeException<FileNotFoundException>(
-			$"'{FileSystem.Path.GetFullPath(path)}'",
+			FileSystem.Path.GetFullPath(path),
 			hResult: -2147024894);
 	}
 }
