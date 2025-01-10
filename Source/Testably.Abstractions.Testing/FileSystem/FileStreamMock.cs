@@ -350,7 +350,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 	}
 
 	/// <inheritdoc cref="FileSystemStream.CopyToAsync(Stream, int, CancellationToken)" />
-	public override Task CopyToAsync(Stream destination, int bufferSize,
+	public override async Task CopyToAsync(Stream destination, int bufferSize,
 		CancellationToken cancellationToken)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
@@ -358,7 +358,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 				destination, bufferSize, cancellationToken);
 
 		_container.AdjustTimes(TimeAdjustments.LastAccessTime);
-		return base.CopyToAsync(destination, bufferSize, cancellationToken);
+		await base.CopyToAsync(destination, bufferSize, cancellationToken);
 	}
 
 	/// <inheritdoc cref="FileSystemStream.EndRead(IAsyncResult)" />
@@ -461,7 +461,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 #endif
 
 	/// <inheritdoc cref="FileSystemStream.ReadAsync(byte[], int, int, CancellationToken)" />
-	public override Task<int> ReadAsync(byte[] buffer, int offset, int count,
+	public override async Task<int> ReadAsync(byte[] buffer, int offset, int count,
 		CancellationToken cancellationToken)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
@@ -478,12 +478,12 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 		}
 
-		return base.ReadAsync(buffer, offset, count, cancellationToken);
+		return await base.ReadAsync(buffer, offset, count, cancellationToken);
 	}
 
 #if FEATURE_SPAN
 	/// <inheritdoc cref="FileSystemStream.ReadAsync(Memory{byte}, CancellationToken)" />
-	public override ValueTask<int> ReadAsync(Memory<byte> buffer,
+	public override async ValueTask<int> ReadAsync(Memory<byte> buffer,
 		CancellationToken cancellationToken = new())
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
@@ -500,7 +500,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			_container.AdjustTimes(TimeAdjustments.LastAccessTime);
 		}
 
-		return base.ReadAsync(buffer, cancellationToken);
+		return await base.ReadAsync(buffer, cancellationToken);
 	}
 #endif
 
@@ -598,7 +598,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 #endif
 
 	/// <inheritdoc cref="FileSystemStream.WriteAsync(byte[], int, int, CancellationToken)" />
-	public override Task WriteAsync(byte[] buffer, int offset, int count,
+	public override async Task WriteAsync(byte[] buffer, int offset, int count,
 		CancellationToken cancellationToken)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
@@ -611,12 +611,12 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		}
 
 		_isContentChanged = true;
-		return base.WriteAsync(buffer, offset, count, cancellationToken);
+		await base.WriteAsync(buffer, offset, count, cancellationToken);
 	}
 
 #if FEATURE_SPAN
 	/// <inheritdoc cref="FileSystemStream.WriteAsync(ReadOnlyMemory{byte}, CancellationToken)" />
-	public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer,
+	public override async ValueTask WriteAsync(ReadOnlyMemory<byte> buffer,
 		CancellationToken cancellationToken = new())
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
@@ -629,7 +629,7 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		}
 
 		_isContentChanged = true;
-		return base.WriteAsync(buffer, cancellationToken);
+		await base.WriteAsync(buffer, cancellationToken);
 	}
 #endif
 

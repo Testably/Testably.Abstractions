@@ -21,5 +21,18 @@ internal static class StringExtensionMethods
 		return @this.EndsWith($"{value}");
 		#pragma warning restore MA0074
 	}
+
+	/// <summary>
+	///     Returns a new string in which all occurrences of a specified string in the current instance are replaced with another specified string, using the provided comparison type.
+	/// </summary>
+	internal static string Replace(
+		this string @this,
+		// ReSharper disable once UnusedParameter.Global
+		string oldValue, string? newValue, StringComparison comparisonType)
+	{
+		#pragma warning disable MA0074
+		return @this.Replace(oldValue, newValue);
+		#pragma warning restore MA0074
+	}
 }
 #endif

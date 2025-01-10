@@ -62,14 +62,14 @@ internal sealed class FileMock : IFile
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.AppendAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
-	public Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
+	public async Task AppendAllLinesAsync(string path, IEnumerable<string> contents,
 		CancellationToken cancellationToken = default)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.File.RegisterMethod(nameof(AppendAllLinesAsync),
 				path, contents, cancellationToken);
 
-		return AppendAllLinesAsync(path, contents, Encoding.Default, cancellationToken);
+		await AppendAllLinesAsync(path, contents, Encoding.Default, cancellationToken);
 	}
 #endif
 
@@ -135,14 +135,14 @@ internal sealed class FileMock : IFile
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.AppendAllTextAsync(string, string?, CancellationToken)" />
-	public Task AppendAllTextAsync(string path, string? contents,
+	public async Task AppendAllTextAsync(string path, string? contents,
 		CancellationToken cancellationToken = default)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.File.RegisterMethod(nameof(AppendAllTextAsync),
 				path, contents, cancellationToken);
 
-		return AppendAllTextAsync(path, contents, Encoding.Default, cancellationToken);
+		await AppendAllTextAsync(path, contents, Encoding.Default, cancellationToken);
 	}
 #endif
 
@@ -774,7 +774,7 @@ internal sealed class FileMock : IFile
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.ReadAllLinesAsync(string, CancellationToken)" />
-	public Task<string[]> ReadAllLinesAsync(
+	public async Task<string[]> ReadAllLinesAsync(
 		string path,
 		CancellationToken cancellationToken = default)
 	{
@@ -782,7 +782,7 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(ReadAllLinesAsync),
 				path, cancellationToken);
 
-		return ReadAllLinesAsync(path, Encoding.Default, cancellationToken);
+		return await ReadAllLinesAsync(path, Encoding.Default, cancellationToken);
 	}
 #endif
 
@@ -839,7 +839,7 @@ internal sealed class FileMock : IFile
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.ReadAllTextAsync(string, CancellationToken)" />
-	public Task<string> ReadAllTextAsync(
+	public async Task<string> ReadAllTextAsync(
 		string path,
 		CancellationToken cancellationToken = default)
 	{
@@ -847,7 +847,7 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(ReadAllTextAsync),
 				path, cancellationToken);
 
-		return ReadAllTextAsync(path, Encoding.Default, cancellationToken);
+		return await ReadAllTextAsync(path, Encoding.Default, cancellationToken);
 	}
 #endif
 
@@ -1307,7 +1307,7 @@ internal sealed class FileMock : IFile
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.WriteAllLinesAsync(string, IEnumerable{string}, CancellationToken)" />
-	public Task WriteAllLinesAsync(
+	public async Task WriteAllLinesAsync(
 		string path,
 		IEnumerable<string> contents,
 		CancellationToken cancellationToken = default)
@@ -1316,7 +1316,7 @@ internal sealed class FileMock : IFile
 			.File.RegisterMethod(nameof(WriteAllLinesAsync),
 				path, contents, cancellationToken);
 
-		return WriteAllLinesAsync(path, contents, Encoding.Default, cancellationToken);
+		await WriteAllLinesAsync(path, contents, Encoding.Default, cancellationToken);
 	}
 #endif
 
@@ -1390,14 +1390,14 @@ internal sealed class FileMock : IFile
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.WriteAllTextAsync(string, string?, CancellationToken)" />
-	public Task WriteAllTextAsync(string path, string? contents,
+	public async Task WriteAllTextAsync(string path, string? contents,
 		CancellationToken cancellationToken = default)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.File.RegisterMethod(nameof(WriteAllTextAsync),
 				path, contents, cancellationToken);
 
-		return WriteAllTextAsync(path, contents, Encoding.Default, cancellationToken);
+		await WriteAllTextAsync(path, contents, Encoding.Default, cancellationToken);
 	}
 #endif
 

@@ -88,7 +88,7 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 	public void ExtractToFile(string destinationFileName)
 		=> Execute.WhenRealFileSystem(FileSystem,
 			() => _instance.ExtractToFile(destinationFileName),
-			() => ExtractToFile(destinationFileName, false));
+			() => ExtractToFile(destinationFileName, overwrite: false));
 
 	/// <inheritdoc cref="IZipArchiveEntry.ExtractToFile(string, bool)" />
 	public void ExtractToFile(string destinationFileName, bool overwrite)
