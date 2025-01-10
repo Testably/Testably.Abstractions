@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using Testably.Abstractions.Testing.FileSystem;
 using Testably.Abstractions.Testing.Helpers;
+using Testably.Abstractions.Testing.Initializer;
 using Testably.Abstractions.Testing.RandomSystem;
 using Testably.Abstractions.Testing.Statistics;
 using Testably.Abstractions.Testing.Storage;
@@ -74,6 +75,8 @@ public sealed class MockFileSystem : IFileSystem
 	/// </summary>
 	internal Execute Execute { get; }
 
+	internal FileSystemRegistration Registration { get; }
+
 	internal ISafeFileHandleStrategy SafeFileHandleStrategy
 	{
 		get;
@@ -92,8 +95,6 @@ public sealed class MockFileSystem : IFileSystem
 	/// </summary>
 	internal IReadOnlyList<IStorageContainer> StorageContainers
 		=> _storage.GetContainers();
-
-	internal FileSystemRegistration Registration { get; }
 
 	private readonly DirectoryMock _directoryMock;
 	private readonly FileMock _fileMock;
@@ -213,6 +214,21 @@ public sealed class MockFileSystem : IFileSystem
 	}
 
 	/// <summary>
+	///     Registers a new <see cref="IFileVersionInfo" /> with values from
+	///     the <paramref name="fileVersionInfoBuilder" /> returned for
+	///     all files matching the <paramref name="searchPattern" />.
+	/// </summary>
+	public MockFileSystem WithFileVersion(string searchPattern,
+		Action<FileVersionInfoBuilder> fileVersionInfoBuilder)
+	{
+		FileVersionInfoBuilder builder = new();
+		fileVersionInfoBuilder(builder);
+		FileVersionInfoContainer container = builder.Create();
+		_storage.AddFileVersion(searchPattern, container);
+		return this;
+	}
+
+	/// <summary>
 	///     Registers the strategy how to deal with <see cref="SafeFileHandle" />s in the <see cref="MockFileSystem" />.
 	///     <para />
 	///     Defaults to <see cref="NullSafeFileHandleStrategy" />, if nothing is provided.
@@ -240,7 +256,7 @@ public sealed class MockFileSystem : IFileSystem
 		catch (IOException)
 		{
 			// Ignore any IOException, when trying to read the current directory
-			// due to brittle tests on MacOS
+			// due to brittle tests on macOS
 		}
 	}
 

@@ -21,6 +21,9 @@ internal sealed class InMemoryStorage : IStorage
 	private readonly ConcurrentDictionary<IStorageLocation, ConcurrentDictionary<Guid, FileHandle>>
 		_fileHandles = new();
 
+	private readonly List<(string, FileVersionInfoContainer)>
+		_fileVersions = new();
+
 	private readonly ConcurrentDictionary<string, IStorageDrive> _drives =
 		new(StringComparer.OrdinalIgnoreCase);
 
@@ -382,6 +385,29 @@ internal sealed class InMemoryStorage : IStorage
 		return container;
 	}
 
+	/// <inheritdoc cref="IStorage.GetVersionInfo(IStorageLocation)" />
+	public FileVersionInfoContainer? GetVersionInfo(IStorageLocation location)
+	{
+		EnumerationOptions enumerationOptions = new();
+		foreach (var (searchPattern, container) in _fileVersions)
+		{
+			if (EnumerationOptionsHelper.MatchesPattern(
+				    _fileSystem.Execute,
+				    enumerationOptions,
+				    location.FullPath,
+				    searchPattern) ||
+			    (_fileSystem.Execute.IsNetFramework &&
+			     SearchPatternMatchesFileExtensionOnNetFramework(
+				     searchPattern,
+				     _fileSystem.Execute.Path.GetExtension(location.FullPath))))
+			{
+				return container;
+			}
+		}
+
+		return null;
+	}
+
 	/// <inheritdoc cref="IStorage.Move(IStorageLocation, IStorageLocation, bool, bool)" />
 	public IStorageLocation? Move(IStorageLocation source,
 		IStorageLocation destination,
@@ -444,7 +470,8 @@ internal sealed class InMemoryStorage : IStorage
 		if (_fileSystem.Execute.IsMac &&
 		    source.FullPath.Equals(destination.FullPath, StringComparison.OrdinalIgnoreCase))
 		{
-			throw ExceptionFactory.ReplaceSourceMustBeDifferentThanDestination(source.FullPath, destination.FullPath);
+			throw ExceptionFactory.ReplaceSourceMustBeDifferentThanDestination(source.FullPath,
+				destination.FullPath);
 		}
 
 		using (_ = sourceContainer.RequestAccess(
@@ -599,12 +626,11 @@ internal sealed class InMemoryStorage : IStorage
 		if (CanGetAccess(location, access, share, deleteAccess, ignoreFileShare))
 		{
 			Guid guid = Guid.NewGuid();
-			FileHandle handle = new FileHandle(_fileSystem, guid, g => ReleaseAccess(g, location),
+			FileHandle handle = new(_fileSystem, guid, g => ReleaseAccess(g, location),
 				access, share, deleteAccess);
 			_fileHandles.AddOrUpdate(location, _ =>
 			{
-				ConcurrentDictionary<Guid, FileHandle> dict =
-					new ConcurrentDictionary<Guid, FileHandle>();
+				ConcurrentDictionary<Guid, FileHandle> dict = new();
 				dict.TryAdd(guid, handle);
 				return dict;
 			}, (_, dict) =>
@@ -658,6 +684,12 @@ internal sealed class InMemoryStorage : IStorage
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> $"directories: {_containers.Count(x => x.Value.Type == FileSystemTypes.Directory)}, files: {_containers.Count(x => x.Value.Type == FileSystemTypes.File)}";
+
+	/// <summary>
+	///     Register a file version.
+	/// </summary>
+	internal void AddFileVersion(string searchPattern, FileVersionInfoContainer container)
+		=> _fileVersions.Add((searchPattern, container));
 
 	/// <summary>
 	///     Returns an ordered list of all stored containers.

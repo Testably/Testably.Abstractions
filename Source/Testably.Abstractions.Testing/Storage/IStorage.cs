@@ -129,6 +129,13 @@ internal interface IStorage
 		IFileSystemExtensibility? fileSystemExtensibility = null);
 
 	/// <summary>
+	///     Get an associated <see cref="FileVersionInfoContainer" /> for the given <paramref name="location" />.
+	/// </summary>
+	/// <param name="location">The location of the <see cref="FileVersionInfoContainer" />.</param>
+	/// <returns>The <see cref="FileVersionInfoContainer" /> if one was registered; or <see langword="null" /> otherwise.</returns>
+	FileVersionInfoContainer? GetVersionInfo(IStorageLocation location);
+
+	/// <summary>
 	///     Moves a specified file or directory to a new location and potentially a new file name.<br />
 	///     This method does work across volumes.
 	/// </summary>
