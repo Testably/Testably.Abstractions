@@ -30,15 +30,9 @@ public abstract partial class ExceptionTests<TFileSystem>
 				because:
 				$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
-		else if (Test.RunsOnWindows)
-		{
-			exception.Should().BeException<IOException>(
-				hResult: -2147024773,
-				because: $"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
-		}
 		else
 		{
-			exception.Should().BeException<FileNotFoundException>(
+			exception.Should().BeException<IOException>(
 				hResult: -2147024894,
 				because: $"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
 		}
