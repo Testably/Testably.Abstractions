@@ -33,7 +33,7 @@ public abstract partial class RandomFactoryTests<TRandomSystem>
 			results.Add(RandomSystem.Random.New(seed).Next());
 		}
 
-		results.Should().AllBeEquivalentTo(results.First());
+		results.Should().AllBeEquivalentTo(results[0]);
 	}
 
 	[SkippableFact]

@@ -10,7 +10,7 @@ public sealed class MethodStatisticsTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "bar");
-		MethodStatistic sut = fileSystem.Statistics.File.Methods.First();
+		MethodStatistic sut = fileSystem.Statistics.File.Methods[0];
 
 		sut.Counter.Should().Be(1);
 	}
@@ -20,7 +20,7 @@ public sealed class MethodStatisticsTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.Directory.CreateDirectory("foo");
-		MethodStatistic sut = fileSystem.Statistics.Directory.Methods.First();
+		MethodStatistic sut = fileSystem.Statistics.Directory.Methods[0];
 
 		string result = sut.ToString();
 
@@ -35,7 +35,7 @@ public sealed class MethodStatisticsTests
 	{
 		MockFileSystem fileSystem = new();
 		fileSystem.File.WriteAllText("foo", "bar");
-		MethodStatistic sut = fileSystem.Statistics.File.Methods.First();
+		MethodStatistic sut = fileSystem.Statistics.File.Methods[0];
 
 		string result = sut.ToString();
 

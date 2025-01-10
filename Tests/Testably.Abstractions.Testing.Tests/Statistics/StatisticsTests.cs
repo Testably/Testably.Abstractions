@@ -152,19 +152,19 @@ public sealed partial class StatisticsTests
 		using FileSystemStream stream = fileInfo.Open(FileMode.Open, FileAccess.Read);
 		_ = new StreamReader(stream).ReadToEnd();
 
-		sut.Statistics.Directory.Methods.First()
+		sut.Statistics.Directory.Methods[0]
 			.Should().Match<MethodStatistic>(m =>
 				m.Name == nameof(IDirectory.CreateDirectory) &&
 				m.Counter == 1);
-		sut.Statistics.File.Methods.First()
+		sut.Statistics.File.Methods[0]
 			.Should().Match<MethodStatistic>(m =>
 				m.Name == nameof(IFile.WriteAllText) &&
 				m.Counter == 2);
-		sut.Statistics.FileInfo.Methods.First()
+		sut.Statistics.FileInfo.Methods[0]
 			.Should().Match<MethodStatistic>(m =>
 				m.Name == nameof(IFileInfoFactory.New) &&
 				m.Counter == 3);
-		sut.Statistics.FileInfo["bar.txt"].Methods.First()
+		sut.Statistics.FileInfo["bar.txt"].Methods[0]
 			.Should().Match<MethodStatistic>(m =>
 				m.Name == nameof(IFileInfo.Open) &&
 				// Note: Index 4 could be used internally for creating the full path of the file info.
