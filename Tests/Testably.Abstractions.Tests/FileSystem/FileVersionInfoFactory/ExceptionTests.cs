@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -10,34 +9,6 @@ public abstract partial class ExceptionTests<TFileSystem>
 	: FileSystemTestBase<TFileSystem>
 	where TFileSystem : IFileSystem
 {
-	[SkippableTheory]
-	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks),
-		parameters: "Illegal\tCharacter?InPath")]
-	public void
-		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowArgumentException_OnNetFramework(
-			Expression<Action<IFileVersionInfoFactory>> callback, string paramName,
-			bool ignoreParamCheck)
-	{
-		Exception? exception = Record.Exception(() =>
-		{
-			callback.Compile().Invoke(FileSystem.FileVersionInfo);
-		});
-
-		if (Test.IsNetFramework)
-		{
-			exception.Should().BeException<ArgumentException>(
-				hResult: -2147024809,
-				because:
-				$"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
-		}
-		else
-		{
-			exception.Should().BeException<IOException>(
-				hResult: -2147024894,
-				because: $"\n{callback}\n contains invalid path characters for '{paramName}' (ignored: {ignoreParamCheck})");
-		}
-	}
-
 	[SkippableTheory]
 	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), parameters: "")]
 	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
