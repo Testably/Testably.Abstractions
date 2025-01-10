@@ -3,7 +3,6 @@
 	<PropertyGroup>
 		<Description>Testing helpers for `Testably.Abstractions` to write testable code by abstracting away system dependencies.</Description>
 		<PackageReadmeFile>Docs/Testing.md</PackageReadmeFile>
-		<NoWarn>$(NoWarn);MA0042</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
