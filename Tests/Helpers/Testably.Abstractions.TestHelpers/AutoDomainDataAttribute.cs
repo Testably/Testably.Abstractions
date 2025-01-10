@@ -88,8 +88,7 @@ public class AutoDomainDataAttribute : AutoDataAttribute
 			Type autoDataCustomizationInterface = typeof(IAutoDataCustomization);
 			foreach (Type type in AppDomain.CurrentDomain.GetAssemblies()
 				.SelectMany(a => a.GetTypes())
-				.Where(x => x.IsClass)
-				.Where(autoDataCustomizationInterface.IsAssignableFrom))
+				.Where(x => x.IsClass && autoDataCustomizationInterface.IsAssignableFrom(x)))
 			{
 				try
 				{

@@ -4,7 +4,7 @@ using System.Reflection;
 using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Parity.Tests.TestHelpers;
-
+#pragma warning disable MA0029 // Combine 'Where' with 'Where'
 public class ParityCheck
 {
 	public List<Type> ExcludedBaseTypes { get; } =
@@ -154,8 +154,8 @@ public class ParityCheck
 			.GetMethods(
 				BindingFlags.Public |
 				BindingFlags.Instance)
-			.Where(p => p.DeclaringType == null ||
-			            !ExcludedBaseTypes.Contains(p.DeclaringType))
+			.Where(m => m.DeclaringType == null ||
+			            !ExcludedBaseTypes.Contains(m.DeclaringType))
 			.Where(m => !MissingMethods.Contains(m))
 			.Where(m => !m.IsSpecialName)
 			.OrderBy(m => m.Name)
@@ -237,3 +237,4 @@ public class ParityCheck
 		}
 	}
 }
+#pragma warning restore MA0029
