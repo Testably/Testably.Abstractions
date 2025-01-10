@@ -11,7 +11,7 @@ public abstract partial class Tests<TFileSystem>
 	{
 		FileSystem.File.WriteAllText(fileName, "");
 		string fullPath = FileSystem.Path.GetFullPath(fileName);
-		IFileVersionInfo fileInfo = FileSystem.FileVersionInfo.GetVersionInfo(fileName);
+		IFileVersionInfo fileInfo = FileSystem.FileVersionInfo.GetVersionInfo(fullPath);
 
 		string? result = fileInfo.ToString();
 

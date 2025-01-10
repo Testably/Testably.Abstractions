@@ -13,6 +13,11 @@ public abstract partial class Tests<TFileSystem>
 	{
 		string filePath = FileSystem.Path.GetFullPath(fileName);
 		FileSystem.File.WriteAllText(fileName, "foo");
+		if (Test.IsNetFramework)
+		{
+			// On .NET Framework an absolute path is required
+			fileName = filePath;
+		}
 
 		IFileVersionInfo result = FileSystem.FileVersionInfo.GetVersionInfo(fileName);
 
@@ -24,6 +29,11 @@ public abstract partial class Tests<TFileSystem>
 	public void GetVersionInfo_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
+		if (Test.IsNetFramework)
+		{
+			path = FileSystem.Path.GetFullPath(path);
+		}
+		
 		Exception? exception = Record.Exception(() =>
 			FileSystem.FileVersionInfo.GetVersionInfo(path));
 
