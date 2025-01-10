@@ -10,7 +10,7 @@ public sealed class PropertyStatisticsTests
 	{
 		MockFileSystem fileSystem = new();
 		_ = fileSystem.Path.DirectorySeparatorChar;
-		PropertyStatistic sut = fileSystem.Statistics.Path.Properties.First();
+		PropertyStatistic sut = fileSystem.Statistics.Path.Properties[0];
 
 		sut.Counter.Should().Be(1);
 	}
@@ -22,7 +22,7 @@ public sealed class PropertyStatisticsTests
 		fileSystem.Initialize().WithFile("foo");
 		IFileInfo fileInfo = fileSystem.FileInfo.New("foo");
 		_ = fileInfo.IsReadOnly;
-		PropertyStatistic sut = fileSystem.Statistics.FileInfo["foo"].Properties.First();
+		PropertyStatistic sut = fileSystem.Statistics.FileInfo["foo"].Properties[0];
 
 		string result = sut.ToString();
 
@@ -38,7 +38,7 @@ public sealed class PropertyStatisticsTests
 		fileSystem.Initialize().WithFile("foo");
 		IFileInfo fileInfo = fileSystem.FileInfo.New("foo");
 		fileInfo.IsReadOnly = false;
-		PropertyStatistic sut = fileSystem.Statistics.FileInfo["foo"].Properties.First();
+		PropertyStatistic sut = fileSystem.Statistics.FileInfo["foo"].Properties[0];
 
 		string result = sut.ToString();
 

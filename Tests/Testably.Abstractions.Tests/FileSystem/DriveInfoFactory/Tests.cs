@@ -135,7 +135,7 @@ public abstract partial class Tests<TFileSystem>
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
 		        mockFileSystem.SimulationMode != SimulationMode.Native);
 
-		System.IO.DriveInfo driveInfo = System.IO.DriveInfo.GetDrives().First();
+		System.IO.DriveInfo driveInfo = System.IO.DriveInfo.GetDrives()[0];
 
 		IDriveInfo result = FileSystem.DriveInfo.Wrap(driveInfo);
 
@@ -148,7 +148,7 @@ public abstract partial class Tests<TFileSystem>
 		Skip.IfNot(FileSystem is MockFileSystem mockFileSystem &&
 		           mockFileSystem.SimulationMode != SimulationMode.Native);
 
-		System.IO.DriveInfo driveInfo = System.IO.DriveInfo.GetDrives().First();
+		System.IO.DriveInfo driveInfo = System.IO.DriveInfo.GetDrives()[0];
 
 		Exception? exception = Record.Exception(() =>
 		{

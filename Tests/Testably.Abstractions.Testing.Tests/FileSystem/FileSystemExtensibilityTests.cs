@@ -52,7 +52,7 @@ public class FileSystemExtensibilityTests
 	[MemberData(nameof(GetFileSystems))]
 	public void DriveInfo_ShouldSetExtensionPoint(IFileSystem fileSystem)
 	{
-		IDriveInfo sut = fileSystem.DriveInfo.GetDrives().First();
+		IDriveInfo sut = fileSystem.DriveInfo.GetDrives()[0];
 
 		IFileSystem result = sut.FileSystem;
 

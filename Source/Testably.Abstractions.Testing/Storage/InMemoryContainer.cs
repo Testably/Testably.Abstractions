@@ -10,7 +10,7 @@ using static Testably.Abstractions.Testing.Storage.IStorageContainer;
 
 namespace Testably.Abstractions.Testing.Storage;
 
-internal class InMemoryContainer : IStorageContainer
+internal sealed class InMemoryContainer : IStorageContainer
 {
 	private FileAttributes _attributes;
 	private byte[] _bytes = Array.Empty<byte>();

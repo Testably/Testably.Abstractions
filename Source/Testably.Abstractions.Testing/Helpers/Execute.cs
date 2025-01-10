@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace Testably.Abstractions.Testing.Helpers;
 
-internal partial class Execute
+internal sealed partial class Execute
 {
 	/// <summary>
 	///     Flag indicating if the code runs on <see cref="OSPlatform.Linux" />.

@@ -5,7 +5,7 @@ using Testably.Abstractions.Tests.SourceGenerator.Model;
 namespace Testably.Abstractions.Tests.SourceGenerator.ClassGenerators;
 
 // ReSharper disable StringLiteralTypo
-internal class FileSystemClassGenerator : ClassGeneratorBase
+internal sealed class FileSystemClassGenerator : ClassGeneratorBase
 {
 	/// <inheritdoc cref="ClassGeneratorBase.Marker" />
 	public override string Marker

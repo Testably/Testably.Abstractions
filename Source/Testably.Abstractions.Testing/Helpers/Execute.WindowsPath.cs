@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Testably.Abstractions.Testing.Helpers;
 
-internal partial class Execute
+internal sealed partial class Execute
 {
 	private sealed class WindowsPath(MockFileSystem fileSystem) : SimulatedPath(fileSystem)
 	{

@@ -90,7 +90,7 @@ internal static class ZipUtilities
 					#pragma warning disable MA0074
 					string entryName = file.FullName
 						.Substring(basePath.Length + 1)
-						.Replace("\\", "/");
+						.Replace('\\', '/');
 					#pragma warning restore MA0074
 					ZipArchiveEntry entry = compressionLevel.HasValue
 						? archive.CreateEntry(entryName, compressionLevel.Value)
@@ -166,7 +166,7 @@ internal static class ZipUtilities
 					#pragma warning disable MA0074
 					string entryName = file.FullName
 						.Substring(basePath.Length + 1)
-						.Replace("\\", "/");
+						.Replace('\\', '/');
 					#pragma warning restore MA0074
 					ZipArchiveEntry entry = compressionLevel.HasValue
 						? archive.CreateEntry(entryName, compressionLevel.Value)
@@ -268,7 +268,8 @@ internal static class ZipUtilities
 			throw new ArgumentException("The stream is unreadable.", nameof(source));
 		}
 
-		using (ZipArchive archive = new(source, ZipArchiveMode.Read, true, entryNameEncoding))
+		using (ZipArchive archive = new(source, ZipArchiveMode.Read,
+			leaveOpen: true, entryNameEncoding))
 		{
 			ZipArchiveWrapper wrappedArchive = new(fileSystem, archive);
 			foreach (ZipArchiveEntry entry in archive.Entries)

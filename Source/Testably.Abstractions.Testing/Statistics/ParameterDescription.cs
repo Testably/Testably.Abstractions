@@ -9,7 +9,7 @@ namespace Testably.Abstractions.Testing.Statistics;
 public abstract class ParameterDescription
 {
 	/// <summary>
-	///     Specifies, if the parameter was used as an <c>out</c> parameter.
+	///     Specifies, if the parameter was used as an <see langword="out" /> parameter.
 	/// </summary>
 	public bool IsOutParameter { get; }
 
@@ -23,7 +23,7 @@ public abstract class ParameterDescription
 	}
 
 	/// <summary>
-	///     Creates a <see cref="ParameterDescription" /> from the <paramref name="value" /> used as an <c>out</c> parameter.
+	///     Creates a <see cref="ParameterDescription" /> from the <paramref name="value" /> used as an <see langword="out" /> parameter.
 	/// </summary>
 	public static ParameterDescription FromOutParameter<T>(T value)
 	{

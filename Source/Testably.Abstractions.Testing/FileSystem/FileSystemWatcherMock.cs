@@ -689,7 +689,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		public bool TimedOut { get; }
 	}
 
-	internal class ChangeDescriptionEventArgs(ChangeDescription changeDescription) : EventArgs
+	internal sealed class ChangeDescriptionEventArgs(ChangeDescription changeDescription) : EventArgs
 	{
 		public ChangeDescription ChangeDescription { get; } = changeDescription;
 	}

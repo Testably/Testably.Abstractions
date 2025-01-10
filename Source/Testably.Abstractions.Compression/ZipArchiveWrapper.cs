@@ -91,7 +91,7 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 			{
 				foreach (IZipArchiveEntry entry in Entries)
 				{
-					entry.ExtractRelativeToDirectory(destinationDirectoryName, false);
+					entry.ExtractRelativeToDirectory(destinationDirectoryName, overwrite: false);
 				}
 			});
 	}

@@ -35,7 +35,7 @@ public sealed class DriveInfoFactoryStatisticsTests
 	public void Method_Wrap_DriveInfo_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
-		DriveInfo driveInfo = DriveInfo.GetDrives().First();
+		DriveInfo driveInfo = DriveInfo.GetDrives()[0];
 
 		sut.DriveInfo.Wrap(driveInfo);
 

@@ -5,7 +5,7 @@ using Testably.Abstractions.Testing.Helpers;
 
 namespace Testably.Abstractions.Testing.Statistics;
 
-internal class PathStatistics<TFactory, TType> : CallStatistics<TFactory>,
+internal sealed class PathStatistics<TFactory, TType> : CallStatistics<TFactory>,
 	IPathStatistics<TFactory, TType>
 {
 	private readonly MockFileSystem _fileSystem;

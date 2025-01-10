@@ -3,6 +3,7 @@ using System.Reflection;
 
 namespace Testably.Abstractions.Parity.Tests.TestHelpers;
 
+#pragma warning disable MA0029 // Combine 'Where' with 'Where'
 internal static class ParityCheckHelper
 {
 	public static bool ContainsEquivalentExtensionMethod(this Type abstractionType,
@@ -341,3 +342,5 @@ internal static class ParityCheckHelper
 		return true;
 	}
 }
+
+#pragma warning restore MA0029

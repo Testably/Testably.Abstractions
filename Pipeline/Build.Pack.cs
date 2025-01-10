@@ -32,7 +32,7 @@ partial class Build
 
 			StringBuilder sb = new();
 			string[] lines = File.ReadAllLines(Solution.Directory / "README.md");
-			sb.AppendLine(lines.First());
+			sb.AppendLine(lines[0]);
 			sb.AppendLine(
 				$"[![Changelog](https://img.shields.io/badge/Changelog-v{version}-blue)](https://github.com/Testably/Testably.Abstractions/releases/tag/v{version})");
 			foreach (string line in lines.Skip(1))
