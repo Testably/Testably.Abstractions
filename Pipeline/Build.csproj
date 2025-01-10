@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
+		<Nullable>enable</Nullable>
 		<TargetFramework>net8.0</TargetFramework>
 		<NoWarn>CS0649;CS0169;CA1050;CA1822;CA2211;IDE1006</NoWarn>
 		<NukeRootDirectory>..</NukeRootDirectory>

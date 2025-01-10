@@ -117,7 +117,7 @@ partial class Build
 
 			foreach (KeyValuePair<Project, Project[]> project in projects)
 			{
-				string branchName = GitVersion.BranchName;
+				string? branchName = GitVersion?.BranchName;
 				if (GitHubActions?.Ref.StartsWith("refs/tags/",
 					StringComparison.OrdinalIgnoreCase) == true)
 				{
@@ -141,7 +141,7 @@ partial class Build
 				                      		"target-framework": "net8.0",
 				                      		"since": {
 				                      			"target": "main",
-				                      			"enabled": {{(GitVersion.BranchName != "main").ToString().ToLowerInvariant()}},
+				                      			"enabled": {{(GitVersion?.BranchName != "main").ToString().ToLowerInvariant()}},
 				                      			"ignore-changes-in": [
 				                      				"**/.github/**/*.*"
 				                      			]
@@ -233,7 +233,7 @@ partial class Build
 
 			foreach (KeyValuePair<Project, Project[]> project in projects)
 			{
-				string branchName = GitVersion.BranchName;
+				string? branchName = GitVersion?.BranchName;
 				if (GitHubActions?.Ref.StartsWith("refs/tags/",
 					StringComparison.OrdinalIgnoreCase) == true)
 				{
@@ -257,7 +257,7 @@ partial class Build
 				                      		"target-framework": "net8.0",
 				                      		"since": {
 				                      			"target": "main",
-				                      			"enabled": {{(GitVersion.BranchName != "main").ToString().ToLowerInvariant()}},
+				                      			"enabled": {{(GitVersion?.BranchName != "main").ToString().ToLowerInvariant()}},
 				                      			"ignore-changes-in": [
 				                      				"**/.github/**/*.*"
 				                      			]
@@ -355,7 +355,7 @@ partial class Build
 		if (startIndex >= 0 && endIndex > startIndex)
 		{
 			string prefix = body.Substring(0, startIndex);
-			string suffix = body.Substring(endIndex + 1);
+			string suffix = body.Substring(endIndex + $"<!-- END {project} -->".Length);
 			return prefix + value + suffix;
 		}
 

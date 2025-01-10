@@ -17,11 +17,11 @@ partial class Build : NukeBuild
 	[Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
 	readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-	[Parameter("Github Token")] readonly string GithubToken;
+	[Parameter("Github Token")] readonly string? GithubToken;
 
-	[Required] [GitVersion(Framework = "net8.0", NoCache = true, NoFetch = true)] readonly GitVersion GitVersion;
+	[Required] [GitVersion(Framework = "net8.0", NoCache = true, NoFetch = true)] readonly GitVersion? GitVersion;
 
-	[Solution(GenerateProjects = true)] readonly Solution Solution;
+	[Solution(GenerateProjects = true)] readonly Solution Solution = null!;
 
 	AbsolutePath ArtifactsDirectory => RootDirectory / "Artifacts";
 	AbsolutePath TestResultsDirectory => RootDirectory / "TestResults";
@@ -30,5 +30,6 @@ partial class Build : NukeBuild
 	public static int Main() => Execute<Build>([
 		x => x.ApiChecks,
 		x => x.UnitTests,
+		x => x.MutationTests,
 	]);
 }

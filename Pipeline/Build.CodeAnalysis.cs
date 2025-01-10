@@ -7,7 +7,7 @@ namespace Build;
 
 partial class Build
 {
-	[Parameter("The key to push to sonarcloud")] [Secret] readonly string SonarToken;
+	[Parameter("The key to push to sonarcloud")] [Secret] readonly string? SonarToken;
 
 	Target CodeAnalysisBegin => _ => _
 		.Unlisted()
@@ -21,7 +21,7 @@ partial class Build
 				.AddVSTestReports(TestResultsDirectory / "*.trx")
 				.AddOpenCoverPaths(TestResultsDirectory / "reports" / "OpenCover.xml")
 				.SetPullRequestOrBranchName(GitHubActions, GitVersion)
-				.SetVersion(GitVersion.SemVer)
+				.SetVersion(GitVersion?.SemVer)
 				.SetToken(SonarToken));
 		});
 
@@ -36,6 +36,7 @@ partial class Build
 				.SetToken(SonarToken));
 		});
 
+	// ReSharper disable once UnusedMember.Local
 	Target CodeAnalysis => _ => _
 		.DependsOn(CodeAnalysisBegin)
 		.DependsOn(CodeAnalysisEnd);
