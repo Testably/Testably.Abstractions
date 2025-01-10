@@ -126,7 +126,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 			Expression<Action<IFileVersionInfoFactory>> Callback)>
 		GetFileVersionInfoFactoryCallbackTestParameters(string value)
 	{
-		yield return (ExceptionTestHelper.TestTypes.IgnoreParamNameCheck, "fileName", fileVersionInfoFactory
+		yield return (ExceptionTestHelper.TestTypes.IgnoreParamNameCheck | ExceptionTestHelper.TestTypes.All, "fileName", fileVersionInfoFactory
 			=> fileVersionInfoFactory.GetVersionInfo(value));
 	}
 
