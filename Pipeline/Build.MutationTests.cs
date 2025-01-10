@@ -355,7 +355,7 @@ partial class Build
 		if (startIndex >= 0 && endIndex > startIndex)
 		{
 			string prefix = body.Substring(0, startIndex);
-			string suffix = body.Substring(endIndex + 1);
+			string suffix = body.Substring(endIndex + $"<!-- END {project} -->".Length);
 			return prefix + value + suffix;
 		}
 
