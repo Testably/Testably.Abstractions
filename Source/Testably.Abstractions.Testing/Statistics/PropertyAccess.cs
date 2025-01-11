@@ -13,5 +13,5 @@ public enum PropertyAccess
 	/// <summary>
 	///     The property was written to.
 	/// </summary>
-	Set
+	Set,
 }

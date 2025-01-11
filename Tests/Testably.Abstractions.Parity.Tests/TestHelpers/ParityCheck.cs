@@ -10,7 +10,7 @@ public class ParityCheck
 	public List<Type> ExcludedBaseTypes { get; } =
 	[
 		typeof(object),
-		typeof(MarshalByRefObject)
+		typeof(MarshalByRefObject),
 	];
 
 	public List<ConstructorInfo?> MissingConstructors { get; } = [];

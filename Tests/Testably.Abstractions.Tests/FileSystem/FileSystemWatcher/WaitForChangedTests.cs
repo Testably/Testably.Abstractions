@@ -110,7 +110,7 @@ public abstract partial class WaitForChangedTests<TFileSystem>
 			{
 				"foo.dll", fileSystemWatcher
 					=> fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed, 100)
-			}
+			},
 		};
 #if FEATURE_FILESYSTEM_NET7
 		theoryData.Add(

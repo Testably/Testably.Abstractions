@@ -37,7 +37,7 @@ public class DefaultSafeFileHandleStrategyTests
 			},
 			{
 				barSafeFileHandle, new SafeFileHandleMock("bar")
-			}
+			},
 		};
 		FileSystem.File.WriteAllText("foo", "foo-content");
 		FileSystem.File.WriteAllText("bar", "bar-content");

@@ -266,7 +266,7 @@ public partial class RandomProviderTests
 
 		results.Should().AllBeEquivalentTo(value.Concat(new[]
 		{
-			(byte)0
+			(byte)0,
 		}));
 	}
 #endif
@@ -311,7 +311,7 @@ public partial class RandomProviderTests
 
 		results.Should().AllBeEquivalentTo(value.Concat(new[]
 		{
-			(byte)0
+			(byte)0,
 		}));
 	}
 

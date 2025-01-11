@@ -19,7 +19,7 @@ public sealed class Generator : ISourceGenerator
 	[
 		new FileSystemClassGenerator(),
 		new RandomSystemClassGenerator(),
-		new TimeSystemClassGenerator()
+		new TimeSystemClassGenerator(),
 	];
 
 	private SyntaxReceiver? _syntaxReceiver;

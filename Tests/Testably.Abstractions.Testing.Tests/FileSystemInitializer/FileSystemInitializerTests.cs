@@ -96,7 +96,7 @@ public class FileSystemInitializerTests
 	{
 		FileDescription description = new(name)
 		{
-			IsReadOnly = isReadOnly
+			IsReadOnly = isReadOnly,
 		};
 		MockFileSystem fileSystem = new();
 		IFileSystemInitializer<MockFileSystem> sut = fileSystem.Initialize();

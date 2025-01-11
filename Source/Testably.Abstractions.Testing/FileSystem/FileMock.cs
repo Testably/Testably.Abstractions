@@ -1486,6 +1486,6 @@ internal sealed class FileMock : IFile
 	private enum ExceptionMode
 	{
 		Default,
-		FileNotFoundExceptionOnLinuxAndMac
+		FileNotFoundExceptionOnLinuxAndMac,
 	}
 }

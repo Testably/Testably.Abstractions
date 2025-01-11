@@ -25,5 +25,5 @@ public enum SimulationMode
 	/// <summary>
 	///     Simulates <see cref="OSPlatform.Windows" />.
 	/// </summary>
-	Windows = 3
+	Windows = 3,
 }

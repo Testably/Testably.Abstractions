@@ -12,7 +12,7 @@ internal static class ExceptionFactory
 			: $"Access to the path '{path}' is denied.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2147024891
+			HResult = -2147024891,
 #endif
 		};
 
@@ -25,7 +25,7 @@ internal static class ExceptionFactory
 			paramName)
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2147024809
+			HResult = -2147024809,
 #endif
 		};
 
@@ -33,7 +33,7 @@ internal static class ExceptionFactory
 		=> new("Basepath argument is not fully qualified.", paramName)
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2147024809
+			HResult = -2147024809,
 #endif
 		};
 
@@ -50,7 +50,7 @@ internal static class ExceptionFactory
 		=> new($"The directory name '{path}' does not exist.", paramName)
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2147024809
+			HResult = -2147024809,
 #endif
 		};
 
@@ -68,7 +68,7 @@ internal static class ExceptionFactory
 			: $"Could not find a part of the path '{path}'.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2147024893
+			HResult = -2147024893,
 #endif
 		};
 
@@ -84,7 +84,7 @@ internal static class ExceptionFactory
 		=> new($"Could not find file '{path}'.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2147024894
+			HResult = -2147024894,
 #endif
 		};
 
@@ -102,7 +102,7 @@ internal static class ExceptionFactory
 			nameof(access))
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2147024809
+			HResult = -2147024809,
 #endif
 		};
 
@@ -112,7 +112,7 @@ internal static class ExceptionFactory
 			paramName)
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2147024809
+			HResult = -2147024809,
 #endif
 		};
 
@@ -146,7 +146,7 @@ internal static class ExceptionFactory
 		=> new("Operation is not supported on this platform.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2146233031
+			HResult = -2146233031,
 #endif
 		};
 
@@ -159,7 +159,7 @@ internal static class ExceptionFactory
 				"Path cannot be the empty string or all whitespace.")
 			{
 #if FEATURE_EXCEPTION_HRESULT
-				HResult = -2147024809
+				HResult = -2147024809,
 #endif
 			};
 			#pragma warning restore MA0015 // Specify the parameter name
@@ -169,7 +169,7 @@ internal static class ExceptionFactory
 			"Path cannot be the empty string or all whitespace.", paramName)
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2147024809
+			HResult = -2147024809,
 #endif
 		};
 	}
@@ -179,7 +179,7 @@ internal static class ExceptionFactory
 		=> new($"Illegal characters in path '{path}'", paramName)
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = hResult ?? -2147024809
+			HResult = hResult ?? -2147024809,
 #endif
 		};
 
@@ -194,7 +194,7 @@ internal static class ExceptionFactory
 		=> new("The path is empty.", paramName)
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = hResult
+			HResult = hResult,
 #endif
 		};
 
@@ -222,7 +222,7 @@ internal static class ExceptionFactory
 		=> new("Span may not be empty.", paramName)
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2147024809
+			HResult = -2147024809,
 #endif
 		};
 
@@ -230,7 +230,7 @@ internal static class ExceptionFactory
 		=> new("Stream does not support reading.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2146233067
+			HResult = -2146233067,
 #endif
 		};
 
@@ -238,7 +238,7 @@ internal static class ExceptionFactory
 		=> new("Stream does not support writing.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2146233067
+			HResult = -2146233067,
 #endif
 		};
 
@@ -247,7 +247,7 @@ internal static class ExceptionFactory
 			"The value needs to be either -1 (signifying an infinite timeout), 0 or a positive integer.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2146233086
+			HResult = -2146233086,
 #endif
 		};
 
@@ -255,7 +255,7 @@ internal static class ExceptionFactory
 		=> new("A task was canceled.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2146233029
+			HResult = -2146233029,
 #endif
 		};
 
@@ -264,7 +264,7 @@ internal static class ExceptionFactory
 			"Number must be either non-negative and less than or equal to Int32.MaxValue or -1.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2146233086
+			HResult = -2146233086,
 #endif
 		};
 
@@ -277,7 +277,7 @@ internal static class ExceptionFactory
 			"Number must be either non-negative and less than or equal to Int32.MaxValue or -1")
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2146233086
+			HResult = -2146233086,
 #endif
 		};
 
@@ -288,7 +288,7 @@ internal static class ExceptionFactory
 		=> new("Unix file modes are not supported on this platform.")
 		{
 #if FEATURE_EXCEPTION_HRESULT
-			HResult = -2146233031
+			HResult = -2146233031,
 #endif
 		};
 }

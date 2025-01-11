@@ -329,7 +329,7 @@ internal sealed class InMemoryContainer : IStorageContainer
 			{
 				DateTimeKind.Utc => _time.ToUniversalTime(),
 				DateTimeKind.Local => _time.ToLocalTime(),
-				_ => _time
+				_ => _time,
 			};
 
 		/// <inheritdoc cref="ITimeContainer.Set(DateTime, DateTimeKind)" />

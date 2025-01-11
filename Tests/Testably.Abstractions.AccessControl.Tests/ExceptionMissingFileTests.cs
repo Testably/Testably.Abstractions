@@ -245,7 +245,7 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 		FileInfo = 8,
 		FileStream = 16,
 		None = 0,
-		All = ~None
+		All = ~None,
 	}
 	#pragma warning restore MA0062 // Non-flags enums should not be marked with "FlagsAttribute"
 
@@ -253,6 +253,6 @@ public abstract partial class ExceptionMissingFileTests<TFileSystem>
 	{
 		Create,
 		GetAccessControl,
-		SetAccessControl
+		SetAccessControl,
 	}
 }

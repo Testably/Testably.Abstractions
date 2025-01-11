@@ -61,6 +61,6 @@ internal static class ExceptionTestHelper
 		All = Null | Empty | Whitespace | InvalidPath,
 		AllExceptNull = All & ~Null,
 		AllExceptWhitespace = All & ~Whitespace,
-		AllExceptInvalidPath = All & ~InvalidPath
+		AllExceptInvalidPath = All & ~InvalidPath,
 	}
 }

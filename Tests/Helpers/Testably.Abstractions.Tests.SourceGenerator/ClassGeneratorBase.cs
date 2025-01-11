@@ -31,7 +31,7 @@ internal abstract class ClassGeneratorBase
 		List<string> namespacePrefixes =
 		[
 			"Testably.Abstractions.Tests.FileSystem.",
-			"Testably.Abstractions."
+			"Testably.Abstractions.",
 		];
 
 		string? namespacePrefix = namespacePrefixes

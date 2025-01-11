@@ -101,13 +101,13 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 	{
 		char[] specialCharacters =
 		[
-			'Ä',
-			'Ö',
-			'Ü',
-			'ä',
-			'ö',
-			'ü',
-			'ß'
+			'ï¿½',
+			'ï¿½',
+			'ï¿½',
+			'ï¿½',
+			'ï¿½',
+			'ï¿½',
+			'ï¿½',
 		];
 		foreach (char specialCharacter in specialCharacters)
 		{
