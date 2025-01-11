@@ -55,8 +55,8 @@ public class NotificationHandlerExtensionsTests
 	[Theory]
 	[InlineData("foo", "f*o", true)]
 	[InlineData("foo", "*fo", false)]
-	public void OnChanged_File_ShouldConsiderSearchPattern(
-		string path, string searchPattern, bool expectedResult)
+	public void OnChanged_File_ShouldConsiderGlobPattern(
+		string path, string globPattern, bool expectedResult)
 	{
 		bool isNotified = false;
 		FileSystem.File.WriteAllText(path, null);
@@ -65,7 +65,7 @@ public class NotificationHandlerExtensionsTests
 		{
 			FileSystem.Notify
 				.OnChanged(FileSystemTypes.File, _ => isNotified = true,
-					searchPattern: searchPattern)
+					globPattern)
 				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.AppendAllText(path, "foo");
@@ -182,7 +182,7 @@ public class NotificationHandlerExtensionsTests
 	[InlineData("foo", "f*o", true)]
 	[InlineData("foo", "*fo", false)]
 	public void OnCreated_Directory_ShouldConsiderSearchPattern(
-		string path, string searchPattern, bool expectedResult)
+		string path, string globPattern, bool expectedResult)
 	{
 		bool isNotified = false;
 
@@ -190,7 +190,7 @@ public class NotificationHandlerExtensionsTests
 		{
 			FileSystem.Notify
 				.OnCreated(FileSystemTypes.Directory, _ => isNotified = true,
-					searchPattern: searchPattern)
+					globPattern)
 				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.CreateDirectory(path);
@@ -305,7 +305,7 @@ public class NotificationHandlerExtensionsTests
 	[InlineData("foo", "f*o", true)]
 	[InlineData("foo", "*fo", false)]
 	public void OnCreated_File_ShouldConsiderSearchPattern(
-		string path, string searchPattern, bool expectedResult)
+		string path, string globPattern, bool expectedResult)
 	{
 		bool isNotified = false;
 
@@ -313,7 +313,7 @@ public class NotificationHandlerExtensionsTests
 		{
 			FileSystem.Notify
 				.OnCreated(FileSystemTypes.File, _ => isNotified = true,
-					searchPattern: searchPattern)
+					globPattern)
 				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.WriteAllText(path, null);
@@ -429,7 +429,7 @@ public class NotificationHandlerExtensionsTests
 	[InlineData("foo", "f*o", true)]
 	[InlineData("foo", "*fo", false)]
 	public void OnDeleted_Directory_ShouldConsiderSearchPattern(
-		string path, string searchPattern, bool expectedResult)
+		string path, string globPattern, bool expectedResult)
 	{
 		bool isNotified = false;
 		FileSystem.Directory.CreateDirectory(path);
@@ -438,7 +438,7 @@ public class NotificationHandlerExtensionsTests
 		{
 			FileSystem.Notify
 				.OnDeleted(FileSystemTypes.Directory, _ => isNotified = true,
-					searchPattern: searchPattern)
+					globPattern)
 				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.Directory.Delete(path);
@@ -556,7 +556,7 @@ public class NotificationHandlerExtensionsTests
 	[InlineData("foo", "f*o", true)]
 	[InlineData("foo", "*fo", false)]
 	public void OnDeleted_File_ShouldConsiderSearchPattern(
-		string path, string searchPattern, bool expectedResult)
+		string path, string globPattern, bool expectedResult)
 	{
 		bool isNotified = false;
 		FileSystem.File.WriteAllText(path, null);
@@ -565,7 +565,7 @@ public class NotificationHandlerExtensionsTests
 		{
 			FileSystem.Notify
 				.OnDeleted(FileSystemTypes.File, _ => isNotified = true,
-					searchPattern: searchPattern)
+					globPattern)
 				.ExecuteWhileWaiting(() =>
 				{
 					FileSystem.File.Delete(path);

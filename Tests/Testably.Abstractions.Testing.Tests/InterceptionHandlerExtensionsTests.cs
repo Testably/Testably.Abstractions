@@ -48,7 +48,7 @@ public class InterceptionHandlerExtensionsTests
 	[InlineAutoData("foo", "f*o", true)]
 	[InlineAutoData("foo", "*fo", false)]
 	public void Changing_File_ShouldConsiderSearchPattern(
-		string path, string searchPattern, bool expectedResult,
+		string path, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -57,7 +57,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			isNotified = true;
 			throw exceptionToThrow;
-		}, path, searchPattern: searchPattern);
+		}, globPattern);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -146,7 +146,7 @@ public class InterceptionHandlerExtensionsTests
 	[InlineAutoData("foo", "f*o", true)]
 	[InlineAutoData("foo", "*fo", false)]
 	public void Creating_Directory_ShouldConsiderSearchPattern(
-		string path, string searchPattern, bool expectedResult,
+		string path, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -154,7 +154,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			isNotified = true;
 			throw exceptionToThrow;
-		}, path, searchPattern: searchPattern);
+		}, globPattern);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -242,7 +242,7 @@ public class InterceptionHandlerExtensionsTests
 	[InlineAutoData("foo", "f*o", true)]
 	[InlineAutoData("foo", "*fo", false)]
 	public void Creating_File_ShouldConsiderSearchPattern(
-		string path, string searchPattern, bool expectedResult,
+		string path, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -250,7 +250,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			isNotified = true;
 			throw exceptionToThrow;
-		}, path, searchPattern: searchPattern);
+		}, globPattern);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -338,7 +338,7 @@ public class InterceptionHandlerExtensionsTests
 	[InlineAutoData("foo", "f*o", true)]
 	[InlineAutoData("foo", "*fo", false)]
 	public void Deleting_Directory_ShouldConsiderSearchPattern(
-		string path, string searchPattern, bool expectedResult,
+		string path, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -347,7 +347,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			isNotified = true;
 			throw exceptionToThrow;
-		}, path, searchPattern: searchPattern);
+		}, globPattern);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -436,7 +436,7 @@ public class InterceptionHandlerExtensionsTests
 	[InlineAutoData("foo", "f*o", true)]
 	[InlineAutoData("foo", "*fo", false)]
 	public void Deleting_File_ShouldConsiderSearchPattern(
-		string path, string searchPattern, bool expectedResult,
+		string path, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
@@ -445,7 +445,7 @@ public class InterceptionHandlerExtensionsTests
 		{
 			isNotified = true;
 			throw exceptionToThrow;
-		}, path, searchPattern: searchPattern);
+		}, globPattern);
 
 		Exception? exception = Record.Exception(() =>
 		{

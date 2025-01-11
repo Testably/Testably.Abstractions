@@ -22,7 +22,7 @@ internal sealed class InMemoryStorage : IStorage
 	private readonly ConcurrentDictionary<IStorageLocation, ConcurrentDictionary<Guid, FileHandle>>
 		_fileHandles = new();
 
-	private readonly List<(Glob, FileVersionInfoContainer)>
+	private readonly List<(Glob, bool, FileVersionInfoContainer)>
 		_fileVersions = new();
 
 	private readonly ConcurrentDictionary<string, IStorageDrive> _drives =
@@ -389,9 +389,10 @@ internal sealed class InMemoryStorage : IStorage
 	/// <inheritdoc cref="IStorage.GetVersionInfo(IStorageLocation)" />
 	public FileVersionInfoContainer? GetVersionInfo(IStorageLocation location)
 	{
-		foreach (var (glob, container) in _fileVersions)
+		foreach (var (glob, usePath, container) in _fileVersions)
 		{
-			if (glob.IsMatch(location.FullPath))
+			if (usePath && glob.IsMatch(location.FullPath) ||
+			    !usePath && glob.IsMatch(location.FriendlyName))
 			{
 				return container;
 			}
@@ -682,7 +683,7 @@ internal sealed class InMemoryStorage : IStorage
 	/// </summary>
 	internal void AddFileVersion(string globPattern, FileVersionInfoContainer container)
 	{
-		_fileVersions.Add((Glob.Parse(globPattern, _fileSystem.Execute.GlobOptions), container));
+		_fileVersions.Add((Glob.Parse(globPattern, _fileSystem.Execute.GlobOptions), globPattern.Contains(_fileSystem.Execute.Path.PathSeparator, StringComparison.Ordinal), container));
 	}
 
 	/// <summary>
