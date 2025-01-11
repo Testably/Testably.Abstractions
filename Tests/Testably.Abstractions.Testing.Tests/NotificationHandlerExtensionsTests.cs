@@ -181,7 +181,7 @@ public class NotificationHandlerExtensionsTests
 	[Theory]
 	[InlineData("foo", "f*o", true)]
 	[InlineData("foo", "*fo", false)]
-	public void OnCreated_Directory_ShouldConsiderSearchPattern(
+	public void OnCreated_Directory_ShouldConsiderGlobPattern(
 		string path, string globPattern, bool expectedResult)
 	{
 		bool isNotified = false;
@@ -304,7 +304,7 @@ public class NotificationHandlerExtensionsTests
 	[Theory]
 	[InlineData("foo", "f*o", true)]
 	[InlineData("foo", "*fo", false)]
-	public void OnCreated_File_ShouldConsiderSearchPattern(
+	public void OnCreated_File_ShouldConsiderGlobPattern(
 		string path, string globPattern, bool expectedResult)
 	{
 		bool isNotified = false;
@@ -428,7 +428,7 @@ public class NotificationHandlerExtensionsTests
 	[Theory]
 	[InlineData("foo", "f*o", true)]
 	[InlineData("foo", "*fo", false)]
-	public void OnDeleted_Directory_ShouldConsiderSearchPattern(
+	public void OnDeleted_Directory_ShouldConsiderGlobPattern(
 		string path, string globPattern, bool expectedResult)
 	{
 		bool isNotified = false;
@@ -555,7 +555,7 @@ public class NotificationHandlerExtensionsTests
 	[Theory]
 	[InlineData("foo", "f*o", true)]
 	[InlineData("foo", "*fo", false)]
-	public void OnDeleted_File_ShouldConsiderSearchPattern(
+	public void OnDeleted_File_ShouldConsiderGlobPattern(
 		string path, string globPattern, bool expectedResult)
 	{
 		bool isNotified = false;

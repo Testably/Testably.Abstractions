@@ -47,7 +47,7 @@ public class InterceptionHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData("foo", "f*o", true)]
 	[InlineAutoData("foo", "*fo", false)]
-	public void Changing_File_ShouldConsiderSearchPattern(
+	public void Changing_File_ShouldConsiderGlobPattern(
 		string path, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
@@ -145,7 +145,7 @@ public class InterceptionHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData("foo", "f*o", true)]
 	[InlineAutoData("foo", "*fo", false)]
-	public void Creating_Directory_ShouldConsiderSearchPattern(
+	public void Creating_Directory_ShouldConsiderGlobPattern(
 		string path, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
@@ -241,7 +241,7 @@ public class InterceptionHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData("foo", "f*o", true)]
 	[InlineAutoData("foo", "*fo", false)]
-	public void Creating_File_ShouldConsiderSearchPattern(
+	public void Creating_File_ShouldConsiderGlobPattern(
 		string path, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
@@ -337,7 +337,7 @@ public class InterceptionHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData("foo", "f*o", true)]
 	[InlineAutoData("foo", "*fo", false)]
-	public void Deleting_Directory_ShouldConsiderSearchPattern(
+	public void Deleting_Directory_ShouldConsiderGlobPattern(
 		string path, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
@@ -435,7 +435,7 @@ public class InterceptionHandlerExtensionsTests
 	[Theory]
 	[InlineAutoData("foo", "f*o", true)]
 	[InlineAutoData("foo", "*fo", false)]
-	public void Deleting_File_ShouldConsiderSearchPattern(
+	public void Deleting_File_ShouldConsiderGlobPattern(
 		string path, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{

@@ -19,7 +19,7 @@ public static class InterceptionHandlerExtensions
 	/// <param name="interceptionCallback">The callback to execute before the <paramref name="fileSystemType" /> is changed.</param>
 	/// <param name="globPattern">
 	///     (optional) The glob pattern that the <paramref name="fileSystemType" /> path must match.<br />
-	///     Defaults to "**/*" which matches everything.
+	///     Defaults to "*" which matches everything.
 	/// </param>
 	/// <param name="predicate">
 	///     (optional) A predicate used to filter which callbacks should be intercepted.<br />
@@ -31,7 +31,7 @@ public static class InterceptionHandlerExtensions
 		this IInterceptionHandler handler,
 		FileSystemTypes fileSystemType,
 		Action<ChangeDescription> interceptionCallback,
-		string globPattern = "**/*",
+		string globPattern = "*",
 		Func<ChangeDescription, bool>? predicate = null)
 		=> handler.Event(interceptionCallback,
 			changeDescription => changeDescription.Matches(
@@ -50,7 +50,7 @@ public static class InterceptionHandlerExtensions
 	/// <param name="interceptionCallback">The callback to execute before the <paramref name="fileSystemType" /> is created.</param>
 	/// <param name="globPattern">
 	///     (optional) The glob pattern that the <paramref name="fileSystemType" /> path must match.<br />
-	///     Defaults to "**/*" which matches everything.
+	///     Defaults to "*" which matches everything.
 	/// </param>
 	/// <param name="predicate">
 	///     (optional) A predicate used to filter which callbacks should be intercepted.<br />
@@ -62,7 +62,7 @@ public static class InterceptionHandlerExtensions
 		this IInterceptionHandler handler,
 		FileSystemTypes fileSystemType,
 		Action<ChangeDescription> interceptionCallback,
-		string globPattern = "**/*",
+		string globPattern = "*",
 		Func<ChangeDescription, bool>? predicate = null)
 		=> handler.Event(interceptionCallback,
 			changeDescription => changeDescription.Matches(
@@ -81,7 +81,7 @@ public static class InterceptionHandlerExtensions
 	/// <param name="interceptionCallback">The callback to execute before the <paramref name="fileSystemType" /> is deleted.</param>
 	/// <param name="globPattern">
 	///     (optional) The glob pattern that the <paramref name="fileSystemType" /> path must match.<br />
-	///     Defaults to "**/*" which matches everything.
+	///     Defaults to "*" which matches everything.
 	/// </param>
 	/// <param name="predicate">
 	///     (optional) A predicate used to filter which callbacks should be intercepted.<br />
@@ -93,7 +93,7 @@ public static class InterceptionHandlerExtensions
 		this IInterceptionHandler handler,
 		FileSystemTypes fileSystemType,
 		Action<ChangeDescription> interceptionCallback,
-		string globPattern = "**/*",
+		string globPattern = "*",
 		Func<ChangeDescription, bool>? predicate = null)
 		=> handler.Event(interceptionCallback,
 			changeDescription => changeDescription.Matches(

@@ -17,6 +17,7 @@ public interface IInterceptionHandler : IFileSystemEntity
 	///     If set to <see langword="null" /> (default value) all callbacks are intercepted.
 	/// </param>
 	/// <remarks>This allows e.g. to throw custom exceptions instead.</remarks>
+	/// <returns>An <see cref="IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
 	IAwaitableCallback<ChangeDescription> Event(Action<ChangeDescription> interceptionCallback,
 		Func<ChangeDescription, bool>? predicate = null);
 }

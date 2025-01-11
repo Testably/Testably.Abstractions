@@ -19,7 +19,7 @@ public static class NotificationHandlerExtensions
 	/// <param name="notificationCallback">The callback to execute after the <paramref name="fileSystemType" /> was changed.</param>
 	/// <param name="globPattern">
 	///     (optional) The glob pattern that the <paramref name="fileSystemType" /> path must match.<br />
-	///     Defaults to "**/*" which matches everything.
+	///     Defaults to "*" which matches everything.
 	/// </param>
 	/// <param name="predicate">
 	///     (optional) A predicate used to filter which callbacks should be notified.<br />
@@ -31,7 +31,7 @@ public static class NotificationHandlerExtensions
 			this INotificationHandler handler,
 			FileSystemTypes fileSystemType,
 			Action<ChangeDescription>? notificationCallback = null,
-			string globPattern = "**/*",
+			string globPattern = "*",
 			Func<ChangeDescription, bool>? predicate = null)
 		=> handler.OnEvent(notificationCallback,
 			changeDescription => changeDescription.Matches(
@@ -50,7 +50,7 @@ public static class NotificationHandlerExtensions
 	/// <param name="notificationCallback">The callback to execute after the <paramref name="fileSystemType" /> was created.</param>
 	/// <param name="globPattern">
 	///     (optional) The glob pattern that the <paramref name="fileSystemType" /> path must match.<br />
-	///     Defaults to "**/*" which matches everything.
+	///     Defaults to "*" which matches everything.
 	/// </param>
 	/// <param name="predicate">
 	///     (optional) A predicate used to filter which callbacks should be notified.<br />
@@ -62,7 +62,7 @@ public static class NotificationHandlerExtensions
 			this INotificationHandler handler,
 			FileSystemTypes fileSystemType,
 			Action<ChangeDescription>? notificationCallback = null,
-			string globPattern = "**/*",
+			string globPattern = "*",
 			Func<ChangeDescription, bool>? predicate = null)
 		=> handler.OnEvent(notificationCallback,
 			changeDescription => changeDescription.Matches(
@@ -81,7 +81,7 @@ public static class NotificationHandlerExtensions
 	/// <param name="notificationCallback">The callback to execute after the <paramref name="fileSystemType" /> was deleted.</param>
 	/// <param name="globPattern">
 	///     (optional) The glob pattern that the <paramref name="fileSystemType" /> path must match.<br />
-	///     Defaults to "**/*" which matches everything.
+	///     Defaults to "*" which matches everything.
 	/// </param>
 	/// <param name="predicate">
 	///     (optional) A predicate used to filter which callbacks should be notified.<br />
@@ -93,7 +93,7 @@ public static class NotificationHandlerExtensions
 			this INotificationHandler handler,
 			FileSystemTypes fileSystemType,
 			Action<ChangeDescription>? notificationCallback = null,
-			string globPattern = "**/*",
+			string globPattern = "*",
 			Func<ChangeDescription, bool>? predicate = null)
 		=> handler.OnEvent(notificationCallback,
 			changeDescription => changeDescription.Matches(
