@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotNet.Globbing;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -21,7 +22,7 @@ internal sealed class InMemoryStorage : IStorage
 	private readonly ConcurrentDictionary<IStorageLocation, ConcurrentDictionary<Guid, FileHandle>>
 		_fileHandles = new();
 
-	private readonly List<(string, FileVersionInfoContainer)>
+	private readonly List<(Glob, FileVersionInfoContainer)>
 		_fileVersions = new();
 
 	private readonly ConcurrentDictionary<string, IStorageDrive> _drives =
@@ -388,18 +389,9 @@ internal sealed class InMemoryStorage : IStorage
 	/// <inheritdoc cref="IStorage.GetVersionInfo(IStorageLocation)" />
 	public FileVersionInfoContainer? GetVersionInfo(IStorageLocation location)
 	{
-		EnumerationOptions enumerationOptions = new();
-		foreach (var (searchPattern, container) in _fileVersions)
+		foreach (var (glob, container) in _fileVersions)
 		{
-			if (EnumerationOptionsHelper.MatchesPattern(
-				    _fileSystem.Execute,
-				    enumerationOptions,
-				    location.FullPath,
-				    searchPattern) ||
-			    (_fileSystem.Execute.IsNetFramework &&
-			     SearchPatternMatchesFileExtensionOnNetFramework(
-				     searchPattern,
-				     _fileSystem.Execute.Path.GetExtension(location.FullPath))))
+			if (glob.IsMatch(location.FullPath))
 			{
 				return container;
 			}
@@ -688,8 +680,10 @@ internal sealed class InMemoryStorage : IStorage
 	/// <summary>
 	///     Register a file version.
 	/// </summary>
-	internal void AddFileVersion(string searchPattern, FileVersionInfoContainer container)
-		=> _fileVersions.Add((searchPattern, container));
+	internal void AddFileVersion(string globPattern, FileVersionInfoContainer container)
+	{
+		_fileVersions.Add((Glob.Parse(globPattern, _fileSystem.Execute.GlobOptions), container));
+	}
 
 	/// <summary>
 	///     Returns an ordered list of all stored containers.
