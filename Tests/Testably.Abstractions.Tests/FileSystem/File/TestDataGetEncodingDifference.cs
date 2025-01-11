@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 
 public class TestDataGetEncodingDifference : IEnumerable<object[]>
 {
-	private const string SpecialCharactersContent = "_€_Ä_Ö_Ü";
+	private const string SpecialCharactersContent = "_â‚¬_Ã„_Ã–_Ãœ";
 
 	#region IEnumerable<object[]> Members
 
