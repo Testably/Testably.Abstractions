@@ -32,7 +32,7 @@ namespace Testably.Abstractions.Testing.FileSystem
     }
     public interface IInterceptionHandler : System.IO.Abstractions.IFileSystemEntity
     {
-        Testably.Abstractions.Testing.MockFileSystem Event(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription> interceptionCallback, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
+        Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> Event(System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription> interceptionCallback, System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null);
     }
     public interface INotificationHandler : System.IO.Abstractions.IFileSystemEntity
     {
@@ -84,11 +84,15 @@ namespace Testably.Abstractions.Testing
         File = 2,
         DirectoryOrFile = 3,
     }
+    public interface IAwaitableCallback<out TValue> : System.IDisposable
+    {
+        void Wait(System.Func<TValue, bool>? filter = null, int timeout = 30000, int count = 1, System.Action? executeWhenWaiting = null);
+    }
     public static class InterceptionHandlerExtensions
     {
-        public static Testably.Abstractions.Testing.MockFileSystem Changing(this Testably.Abstractions.Testing.FileSystem.IInterceptionHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription> interceptionCallback, string path = "", string searchPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
-        public static Testably.Abstractions.Testing.MockFileSystem Creating(this Testably.Abstractions.Testing.FileSystem.IInterceptionHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription> interceptionCallback, string path = "", string searchPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
-        public static Testably.Abstractions.Testing.MockFileSystem Deleting(this Testably.Abstractions.Testing.FileSystem.IInterceptionHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription> interceptionCallback, string path = "", string searchPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
+        public static Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> Changing(this Testably.Abstractions.Testing.FileSystem.IInterceptionHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription> interceptionCallback, string globPattern = "**/*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
+        public static Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> Creating(this Testably.Abstractions.Testing.FileSystem.IInterceptionHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription> interceptionCallback, string globPattern = "**/*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
+        public static Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> Deleting(this Testably.Abstractions.Testing.FileSystem.IInterceptionHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription> interceptionCallback, string globPattern = "**/*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
     }
     public sealed class MockFileSystem : System.IO.Abstractions.IFileSystem
     {
@@ -112,7 +116,7 @@ namespace Testably.Abstractions.Testing
         public override string ToString() { }
         public Testably.Abstractions.Testing.MockFileSystem WithAccessControlStrategy(Testably.Abstractions.Testing.FileSystem.IAccessControlStrategy accessControlStrategy) { }
         public Testably.Abstractions.Testing.MockFileSystem WithDrive(string? drive, System.Action<Testably.Abstractions.Testing.Storage.IStorageDrive>? driveCallback = null) { }
-        public Testably.Abstractions.Testing.MockFileSystem WithFileVersionInfo(string searchPattern, System.Action<Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder> fileVersionInfoBuilder) { }
+        public Testably.Abstractions.Testing.MockFileSystem WithFileVersionInfo(string globPattern, System.Action<Testably.Abstractions.Testing.Initializer.FileVersionInfoBuilder> fileVersionInfoBuilder) { }
         public Testably.Abstractions.Testing.MockFileSystem WithSafeFileHandleStrategy(Testably.Abstractions.Testing.FileSystem.ISafeFileHandleStrategy safeFileHandleStrategy) { }
         public class MockFileSystemOptions
         {
@@ -156,11 +160,7 @@ namespace Testably.Abstractions.Testing
     public static class Notification
     {
         public static Testably.Abstractions.Testing.IAwaitableCallback<TValue> ExecuteWhileWaiting<TValue>(this Testably.Abstractions.Testing.IAwaitableCallback<TValue> awaitable, System.Action callback) { }
-        public static Testably.Abstractions.Testing.IAwaitableCallback<TValue, TFunc> ExecuteWhileWaiting<TValue, TFunc>(this Testably.Abstractions.Testing.IAwaitableCallback<TValue> awaitable, System.Func<TFunc> callback) { }
-        public interface IAwaitableCallback<out TValue> : System.IDisposable
-        {
-            void Wait(System.Func<TValue, bool>? filter = null, int timeout = 30000, int count = 1, System.Action? executeWhenWaiting = null);
-        }
+        public static Testably.Abstractions.Testing.Notification.IAwaitableCallback<TValue, TFunc> ExecuteWhileWaiting<TValue, TFunc>(this Testably.Abstractions.Testing.IAwaitableCallback<TValue> awaitable, System.Func<TFunc> callback) { }
         public interface IAwaitableCallback<out TValue, out TFunc> : System.IDisposable, Testably.Abstractions.Testing.IAwaitableCallback<TValue>
         {
             TFunc Wait(System.Func<TValue, bool>? filter = null, int timeout = 30000, int count = 1, System.Action? executeWhenWaiting = null);
@@ -168,9 +168,9 @@ namespace Testably.Abstractions.Testing
     }
     public static class NotificationHandlerExtensions
     {
-        public static Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnChanged(this Testably.Abstractions.Testing.FileSystem.INotificationHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, string path = "", string searchPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
-        public static Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnCreated(this Testably.Abstractions.Testing.FileSystem.INotificationHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, string path = "", string searchPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
-        public static Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnDeleted(this Testably.Abstractions.Testing.FileSystem.INotificationHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, string path = "", string searchPattern = "*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
+        public static Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnChanged(this Testably.Abstractions.Testing.FileSystem.INotificationHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, string globPattern = "**/*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
+        public static Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnCreated(this Testably.Abstractions.Testing.FileSystem.INotificationHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, string globPattern = "**/*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
+        public static Testably.Abstractions.Testing.IAwaitableCallback<Testably.Abstractions.Testing.FileSystem.ChangeDescription> OnDeleted(this Testably.Abstractions.Testing.FileSystem.INotificationHandler handler, Testably.Abstractions.Testing.FileSystemTypes fileSystemType, System.Action<Testably.Abstractions.Testing.FileSystem.ChangeDescription>? notificationCallback = null, string globPattern = "**/*", System.Func<Testably.Abstractions.Testing.FileSystem.ChangeDescription, bool>? predicate = null) { }
     }
     public static class RandomProvider
     {
