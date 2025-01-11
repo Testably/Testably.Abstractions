@@ -107,7 +107,7 @@ public abstract partial class WriteAllTextTests<TFileSystem>
 			'ä',
 			'ö',
 			'ü',
-			'ß'
+			'ß',
 		];
 		foreach (char specialCharacter in specialCharacters)
 		{
