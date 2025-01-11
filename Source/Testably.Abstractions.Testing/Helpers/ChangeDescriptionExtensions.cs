@@ -38,14 +38,17 @@ internal static class ChangeDescriptionExtensions
 		}
 
 		Glob? glob = Glob.Parse(globPattern, execute.GlobOptions);
-		if (globPattern.Contains(execute.Path.PathSeparator, StringComparison.Ordinal))
+		if (globPattern.IndexOfAny([
+				execute.Path.DirectorySeparatorChar,
+				execute.Path.AltDirectorySeparatorChar
+			]) >= 0)
 		{
-			if (!glob.IsMatch(changeDescription.Path))
+			if (!glob.IsMatch(changeDescription.Path.Replace('\\', '/')))
 			{
 				return false;
 			}
 		}
-		else if (!glob.IsMatch(changeDescription.Name))
+		else if (!glob.IsMatch(execute.Path.GetFileName(changeDescription.Name)))
 		{
 			return false;
 		}

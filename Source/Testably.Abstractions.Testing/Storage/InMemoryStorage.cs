@@ -391,8 +391,9 @@ internal sealed class InMemoryStorage : IStorage
 	{
 		foreach (var (glob, usePath, container) in _fileVersions)
 		{
-			if (usePath && glob.IsMatch(location.FullPath) ||
-			    !usePath && glob.IsMatch(location.FriendlyName))
+			if ((usePath && glob.IsMatch(location.FullPath.Replace('\\', '/'))) ||
+			    (!usePath &&
+			     glob.IsMatch(_fileSystem.Execute.Path.GetFileName(location.FriendlyName))))
 			{
 				return container;
 			}
@@ -683,7 +684,13 @@ internal sealed class InMemoryStorage : IStorage
 	/// </summary>
 	internal void AddFileVersion(string globPattern, FileVersionInfoContainer container)
 	{
-		_fileVersions.Add((Glob.Parse(globPattern, _fileSystem.Execute.GlobOptions), globPattern.Contains(_fileSystem.Execute.Path.PathSeparator, StringComparison.Ordinal), container));
+		_fileVersions.Add((
+			Glob.Parse(globPattern, _fileSystem.Execute.GlobOptions),
+			globPattern.IndexOfAny([
+				_fileSystem.Execute.Path.DirectorySeparatorChar,
+				_fileSystem.Execute.Path.AltDirectorySeparatorChar
+			]) >= 0,
+			container));
 	}
 
 	/// <summary>
@@ -858,7 +865,7 @@ internal sealed class InMemoryStorage : IStorage
 		}
 
 #if NET8_0_OR_GREATER
-			FileAttributes defaultAttributeToSkip = FileAttributes.None;
+		FileAttributes defaultAttributeToSkip = FileAttributes.None;
 #else
 		FileAttributes defaultAttributeToSkip = 0;
 #endif

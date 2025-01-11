@@ -45,14 +45,20 @@ public class InterceptionHandlerExtensionsTests
 	}
 
 	[Theory]
-	[InlineAutoData("foo", "f*o", true)]
-	[InlineAutoData("foo", "*fo", false)]
+	[InlineAutoData(".", "foo", "f*o", true)]
+	[InlineAutoData(".", "foo", "*fo", false)]
+	[InlineAutoData("bar", "foo", "f*o", true)]
+	[InlineAutoData("bar", "foo", "baz/f*o", false)]
+	[InlineAutoData("bar", "foo", "/f*o", false)]
+	[InlineAutoData("bar", "foo", "**/f*o", true)]
 	public void Changing_File_ShouldConsiderGlobPattern(
-		string path, string globPattern, bool expectedResult,
+		string basePath, string fileName, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
-		FileSystem.File.WriteAllText(path, null);
+		string filePath = FileSystem.Path.Combine(basePath, fileName);
+		FileSystem.Directory.CreateDirectory(basePath);
+		FileSystem.File.WriteAllText(filePath, null);
 		FileSystem.Intercept.Changing(FileSystemTypes.File, _ =>
 		{
 			isNotified = true;
@@ -61,7 +67,7 @@ public class InterceptionHandlerExtensionsTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.File.AppendAllText(path, "foo");
+			FileSystem.File.AppendAllText(filePath, "foo");
 		});
 
 		if (expectedResult)
@@ -143,13 +149,20 @@ public class InterceptionHandlerExtensionsTests
 	}
 
 	[Theory]
-	[InlineAutoData("foo", "f*o", true)]
-	[InlineAutoData("foo", "*fo", false)]
+	[InlineAutoData(".", "foo", "f*o", true)]
+	[InlineAutoData(".", "foo", "*fo", false)]
+	[InlineAutoData("bar", "foo", "f*o", true)]
+	[InlineAutoData("bar", "foo", "baz/f*o", false)]
+	[InlineAutoData("bar", "foo", "/f*o", false)]
+	[InlineAutoData("bar", "foo", "**/f*o", true)]
 	public void Creating_Directory_ShouldConsiderGlobPattern(
-		string path, string globPattern, bool expectedResult,
+		string basePath, string fileName, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
+		string filePath = FileSystem.Path.Combine(basePath, fileName);
+		FileSystem.Directory.CreateDirectory(basePath);
+		
 		FileSystem.Intercept.Creating(FileSystemTypes.Directory, _ =>
 		{
 			isNotified = true;
@@ -158,7 +171,7 @@ public class InterceptionHandlerExtensionsTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Directory.CreateDirectory(path);
+			FileSystem.Directory.CreateDirectory(filePath);
 		});
 
 		if (expectedResult)
@@ -239,13 +252,20 @@ public class InterceptionHandlerExtensionsTests
 	}
 
 	[Theory]
-	[InlineAutoData("foo", "f*o", true)]
-	[InlineAutoData("foo", "*fo", false)]
+	[InlineAutoData(".", "foo", "f*o", true)]
+	[InlineAutoData(".", "foo", "*fo", false)]
+	[InlineAutoData("bar", "foo", "f*o", true)]
+	[InlineAutoData("bar", "foo", "baz/f*o", false)]
+	[InlineAutoData("bar", "foo", "/f*o", false)]
+	[InlineAutoData("bar", "foo", "**/f*o", true)]
 	public void Creating_File_ShouldConsiderGlobPattern(
-		string path, string globPattern, bool expectedResult,
+		string basePath, string fileName, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
+		string filePath = FileSystem.Path.Combine(basePath, fileName);
+		FileSystem.Directory.CreateDirectory(basePath);
+		
 		FileSystem.Intercept.Creating(FileSystemTypes.File, _ =>
 		{
 			isNotified = true;
@@ -254,7 +274,7 @@ public class InterceptionHandlerExtensionsTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.File.WriteAllText(path, null);
+			FileSystem.File.WriteAllText(filePath, null);
 		});
 
 		if (expectedResult)
@@ -335,14 +355,20 @@ public class InterceptionHandlerExtensionsTests
 	}
 
 	[Theory]
-	[InlineAutoData("foo", "f*o", true)]
-	[InlineAutoData("foo", "*fo", false)]
+	[InlineAutoData(".", "foo", "f*o", true)]
+	[InlineAutoData(".", "foo", "*fo", false)]
+	[InlineAutoData("bar", "foo", "f*o", true)]
+	[InlineAutoData("bar", "foo", "baz/f*o", false)]
+	[InlineAutoData("bar", "foo", "/f*o", false)]
+	[InlineAutoData("bar", "foo", "**/f*o", true)]
 	public void Deleting_Directory_ShouldConsiderGlobPattern(
-		string path, string globPattern, bool expectedResult,
+		string basePath, string directoryName, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
-		FileSystem.Directory.CreateDirectory(path);
+		string directoryPath = FileSystem.Path.Combine(basePath, directoryName);
+		FileSystem.Directory.CreateDirectory(basePath);
+		FileSystem.Directory.CreateDirectory(directoryPath);
 		FileSystem.Intercept.Deleting(FileSystemTypes.Directory, _ =>
 		{
 			isNotified = true;
@@ -351,7 +377,7 @@ public class InterceptionHandlerExtensionsTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.Directory.Delete(path);
+			FileSystem.Directory.Delete(directoryPath);
 		});
 
 		if (expectedResult)
@@ -433,14 +459,20 @@ public class InterceptionHandlerExtensionsTests
 	}
 
 	[Theory]
-	[InlineAutoData("foo", "f*o", true)]
-	[InlineAutoData("foo", "*fo", false)]
+	[InlineAutoData(".", "foo", "f*o", true)]
+	[InlineAutoData(".", "foo", "*fo", false)]
+	[InlineAutoData("bar", "foo", "f*o", true)]
+	[InlineAutoData("bar", "foo", "baz/f*o", false)]
+	[InlineAutoData("bar", "foo", "/f*o", false)]
+	[InlineAutoData("bar", "foo", "**/f*o", true)]
 	public void Deleting_File_ShouldConsiderGlobPattern(
-		string path, string globPattern, bool expectedResult,
+		string basePath, string fileName, string globPattern, bool expectedResult,
 		Exception exceptionToThrow)
 	{
 		bool isNotified = false;
-		FileSystem.File.WriteAllText(path, null);
+		string filePath = FileSystem.Path.Combine(basePath, fileName);
+		FileSystem.Directory.CreateDirectory(basePath);
+		FileSystem.File.WriteAllText(filePath, null);
 		FileSystem.Intercept.Deleting(FileSystemTypes.File, _ =>
 		{
 			isNotified = true;
@@ -449,7 +481,7 @@ public class InterceptionHandlerExtensionsTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.File.Delete(path);
+			FileSystem.File.Delete(filePath);
 		});
 
 		if (expectedResult)

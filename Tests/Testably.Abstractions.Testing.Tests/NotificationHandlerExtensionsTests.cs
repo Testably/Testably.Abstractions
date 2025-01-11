@@ -53,22 +53,27 @@ public class NotificationHandlerExtensionsTests
 	}
 
 	[Theory]
-	[InlineData("foo", "f*o", true)]
-	[InlineData("foo", "*fo", false)]
+	[InlineData(".", "foo", "f*o", true)]
+	[InlineData(".", "foo", "*fo", false)]
+	[InlineData("bar", "foo", "f*o", true)]
+	[InlineData("bar", "foo", "baz/f*o", false)]
+	[InlineData("bar", "foo", "/f*o", false)]
+	[InlineData("bar", "foo", "**/f*o", true)]
 	public void OnChanged_File_ShouldConsiderGlobPattern(
-		string path, string globPattern, bool expectedResult)
+		string directoryPath, string fileName, string globPattern, bool expectedResult)
 	{
 		bool isNotified = false;
-		FileSystem.File.WriteAllText(path, null);
+		string filePath = FileSystem.Path.Combine(directoryPath, fileName);
+		FileSystem.Directory.CreateDirectory(directoryPath);
+		FileSystem.File.WriteAllText(filePath, null);
 
 		Exception? exception = Record.Exception(() =>
 		{
 			FileSystem.Notify
-				.OnChanged(FileSystemTypes.File, _ => isNotified = true,
-					globPattern)
+				.OnChanged(FileSystemTypes.File, _ => isNotified = true, globPattern)
 				.ExecuteWhileWaiting(() =>
 				{
-					FileSystem.File.AppendAllText(path, "foo");
+					FileSystem.File.AppendAllText(filePath, "foo");
 				})
 				.Wait(timeout: expectedResult ? 30000 : 50);
 		});
@@ -179,11 +184,17 @@ public class NotificationHandlerExtensionsTests
 	}
 
 	[Theory]
-	[InlineData("foo", "f*o", true)]
-	[InlineData("foo", "*fo", false)]
+	[InlineData(".", "foo", "f*o", true)]
+	[InlineData(".", "foo", "*fo", false)]
+	[InlineData("bar", "foo", "f*o", true)]
+	[InlineData("bar", "foo", "baz/f*o", false)]
+	[InlineData("bar", "foo", "/f*o", false)]
+	[InlineData("bar", "foo", "**/f*o", true)]
 	public void OnCreated_Directory_ShouldConsiderGlobPattern(
-		string path, string globPattern, bool expectedResult)
+		string directoryPath, string fileName, string globPattern, bool expectedResult)
 	{
+		string filePath = FileSystem.Path.Combine(directoryPath, fileName);
+		FileSystem.Directory.CreateDirectory(directoryPath);
 		bool isNotified = false;
 
 		Exception? exception = Record.Exception(() =>
@@ -193,7 +204,7 @@ public class NotificationHandlerExtensionsTests
 					globPattern)
 				.ExecuteWhileWaiting(() =>
 				{
-					FileSystem.Directory.CreateDirectory(path);
+					FileSystem.Directory.CreateDirectory(filePath);
 				})
 				.Wait(timeout: expectedResult ? 30000 : 50);
 		});
@@ -302,11 +313,17 @@ public class NotificationHandlerExtensionsTests
 	}
 
 	[Theory]
-	[InlineData("foo", "f*o", true)]
-	[InlineData("foo", "*fo", false)]
+	[InlineData(".", "foo", "f*o", true)]
+	[InlineData(".", "foo", "*fo", false)]
+	[InlineData("bar", "foo", "f*o", true)]
+	[InlineData("bar", "foo", "baz/f*o", false)]
+	[InlineData("bar", "foo", "/f*o", false)]
+	[InlineData("bar", "foo", "**/f*o", true)]
 	public void OnCreated_File_ShouldConsiderGlobPattern(
-		string path, string globPattern, bool expectedResult)
+		string directoryPath, string fileName, string globPattern, bool expectedResult)
 	{
+		string filePath = FileSystem.Path.Combine(directoryPath, fileName);
+		FileSystem.Directory.CreateDirectory(directoryPath);
 		bool isNotified = false;
 
 		Exception? exception = Record.Exception(() =>
@@ -316,7 +333,7 @@ public class NotificationHandlerExtensionsTests
 					globPattern)
 				.ExecuteWhileWaiting(() =>
 				{
-					FileSystem.File.WriteAllText(path, null);
+					FileSystem.File.WriteAllText(filePath, null);
 				})
 				.Wait(timeout: expectedResult ? 30000 : 50);
 		});
@@ -426,13 +443,19 @@ public class NotificationHandlerExtensionsTests
 	}
 
 	[Theory]
-	[InlineData("foo", "f*o", true)]
-	[InlineData("foo", "*fo", false)]
+	[InlineData(".", "foo", "f*o", true)]
+	[InlineData(".", "foo", "*fo", false)]
+	[InlineData("bar", "foo", "f*o", true)]
+	[InlineData("bar", "foo", "baz/f*o", false)]
+	[InlineData("bar", "foo", "/f*o", false)]
+	[InlineData("bar", "foo", "**/f*o", true)]
 	public void OnDeleted_Directory_ShouldConsiderGlobPattern(
-		string path, string globPattern, bool expectedResult)
+		string basePath, string directoryName, string globPattern, bool expectedResult)
 	{
 		bool isNotified = false;
-		FileSystem.Directory.CreateDirectory(path);
+		string directoryPath = FileSystem.Path.Combine(basePath, directoryName);
+		FileSystem.Directory.CreateDirectory(basePath);
+		FileSystem.Directory.CreateDirectory(directoryPath);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -441,7 +464,7 @@ public class NotificationHandlerExtensionsTests
 					globPattern)
 				.ExecuteWhileWaiting(() =>
 				{
-					FileSystem.Directory.Delete(path);
+					FileSystem.Directory.Delete(directoryPath);
 				})
 				.Wait(timeout: expectedResult ? 30000 : 50);
 		});
@@ -553,13 +576,19 @@ public class NotificationHandlerExtensionsTests
 	}
 
 	[Theory]
-	[InlineData("foo", "f*o", true)]
-	[InlineData("foo", "*fo", false)]
+	[InlineData(".", "foo", "f*o", true)]
+	[InlineData(".", "foo", "*fo", false)]
+	[InlineData("bar", "foo", "f*o", true)]
+	[InlineData("bar", "foo", "baz/f*o", false)]
+	[InlineData("bar", "foo", "/f*o", false)]
+	[InlineData("bar", "foo", "**/f*o", true)]
 	public void OnDeleted_File_ShouldConsiderGlobPattern(
-		string path, string globPattern, bool expectedResult)
+		string directoryPath, string fileName, string globPattern, bool expectedResult)
 	{
 		bool isNotified = false;
-		FileSystem.File.WriteAllText(path, null);
+		string filePath = FileSystem.Path.Combine(directoryPath, fileName);
+		FileSystem.Directory.CreateDirectory(directoryPath);
+		FileSystem.File.WriteAllText(filePath, null);
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -568,7 +597,7 @@ public class NotificationHandlerExtensionsTests
 					globPattern)
 				.ExecuteWhileWaiting(() =>
 				{
-					FileSystem.File.Delete(path);
+					FileSystem.File.Delete(filePath);
 				})
 				.Wait(timeout: expectedResult ? 30000 : 50);
 		});
