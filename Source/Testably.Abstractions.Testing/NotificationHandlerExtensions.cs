@@ -11,116 +11,95 @@ namespace Testably.Abstractions.Testing;
 public static class NotificationHandlerExtensions
 {
 	/// <summary>
-	///     Callback executed when a <paramref name="fileSystemType" /> under <paramref name="path" /> matching the
-	///     <paramref name="searchPattern" />
-	///     was changed.
+	///     Callback executed when a <paramref name="fileSystemType" /> matching the
+	///     <paramref name="globPattern" /> was changed.
 	/// </summary>
 	/// <param name="handler">The notification handler</param>
 	/// <param name="fileSystemType">The type of the file system entry.</param>
 	/// <param name="notificationCallback">The callback to execute after the <paramref name="fileSystemType" /> was changed.</param>
-	/// <param name="path">
-	///     (optional) The root path in which to search for a changed <paramref name="fileSystemType" />.<br />
-	///     Defaults to the empty string, which matches all root directories.
-	/// </param>
-	/// <param name="searchPattern">
-	///     (optional) The search pattern that the <paramref name="fileSystemType" /> name must match.<br />
-	///     Defaults to "*" which matches all <paramref name="fileSystemType" /> names.
+	/// <param name="globPattern">
+	///     (optional) The glob pattern that the <paramref name="fileSystemType" /> path must match.<br />
+	///     Defaults to "*" which matches everything.
 	/// </param>
 	/// <param name="predicate">
 	///     (optional) A predicate used to filter which callbacks should be notified.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are notified.
 	/// </param>
-	/// <returns>A <see cref="Notification.IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
-	public static Notification.IAwaitableCallback<ChangeDescription>
+	/// <returns>A <see cref="IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
+	public static IAwaitableCallback<ChangeDescription>
 		OnChanged(
 			this INotificationHandler handler,
 			FileSystemTypes fileSystemType,
 			Action<ChangeDescription>? notificationCallback = null,
-			string path = "",
-			string searchPattern = "*",
+			string globPattern = "*",
 			Func<ChangeDescription, bool>? predicate = null)
 		=> handler.OnEvent(notificationCallback,
 			changeDescription => changeDescription.Matches(
 				handler.FileSystem.ExecuteOrDefault(),
 				fileSystemType,
 				WatcherChangeTypes.Changed,
-				path.GetFullPathOrWhiteSpace(handler.FileSystem),
-				searchPattern,
+				globPattern,
 				predicate));
 
 	/// <summary>
-	///     Callback executed when a <paramref name="fileSystemType" /> under <paramref name="path" /> matching the
-	///     <paramref name="searchPattern" />
-	///     was created.
+	///     Callback executed when a <paramref name="fileSystemType" /> matching the
+	///     <paramref name="globPattern" /> was created.
 	/// </summary>
 	/// <param name="handler">The notification handler</param>
 	/// <param name="fileSystemType">The type of the file system entry.</param>
 	/// <param name="notificationCallback">The callback to execute after the <paramref name="fileSystemType" /> was created.</param>
-	/// <param name="path">
-	///     (optional) The root path in which to search for a created <paramref name="fileSystemType" />.<br />
-	///     Defaults to the empty string, which matches all root directories.
-	/// </param>
-	/// <param name="searchPattern">
-	///     (optional) The search pattern that the <paramref name="fileSystemType" /> name must match.<br />
-	///     Defaults to "*" which matches all <paramref name="fileSystemType" /> names.
+	/// <param name="globPattern">
+	///     (optional) The glob pattern that the <paramref name="fileSystemType" /> path must match.<br />
+	///     Defaults to "*" which matches everything.
 	/// </param>
 	/// <param name="predicate">
 	///     (optional) A predicate used to filter which callbacks should be notified.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are notified.
 	/// </param>
-	/// <returns>A <see cref="Notification.IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
-	public static Notification.IAwaitableCallback<ChangeDescription>
+	/// <returns>A <see cref="IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
+	public static IAwaitableCallback<ChangeDescription>
 		OnCreated(
 			this INotificationHandler handler,
 			FileSystemTypes fileSystemType,
 			Action<ChangeDescription>? notificationCallback = null,
-			string path = "",
-			string searchPattern = "*",
+			string globPattern = "*",
 			Func<ChangeDescription, bool>? predicate = null)
 		=> handler.OnEvent(notificationCallback,
 			changeDescription => changeDescription.Matches(
 				handler.FileSystem.ExecuteOrDefault(),
 				fileSystemType,
 				WatcherChangeTypes.Created,
-				path.GetFullPathOrWhiteSpace(handler.FileSystem),
-				searchPattern,
+				globPattern,
 				predicate));
 
 	/// <summary>
-	///     Callback executed when a <paramref name="fileSystemType" /> under <paramref name="path" /> matching the
-	///     <paramref name="searchPattern" />
-	///     was deleted.
+	///     Callback executed when a <paramref name="fileSystemType" /> matching the
+	///     <paramref name="globPattern" /> was deleted.
 	/// </summary>
 	/// <param name="handler">The notification handler</param>
 	/// <param name="fileSystemType">The type of the file system entry.</param>
 	/// <param name="notificationCallback">The callback to execute after the <paramref name="fileSystemType" /> was deleted.</param>
-	/// <param name="path">
-	///     (optional) The root path in which to search for a deleted <paramref name="fileSystemType" />.<br />
-	///     Defaults to the empty string, which matches all root directories.
-	/// </param>
-	/// <param name="searchPattern">
-	///     (optional) The search pattern that the <paramref name="fileSystemType" /> name must match.<br />
-	///     Defaults to "*" which matches all <paramref name="fileSystemType" /> names.
+	/// <param name="globPattern">
+	///     (optional) The glob pattern that the <paramref name="fileSystemType" /> path must match.<br />
+	///     Defaults to "*" which matches everything.
 	/// </param>
 	/// <param name="predicate">
 	///     (optional) A predicate used to filter which callbacks should be notified.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are notified.
 	/// </param>
-	/// <returns>A <see cref="Notification.IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
-	public static Notification.IAwaitableCallback<ChangeDescription>
+	/// <returns>A <see cref="IAwaitableCallback{ChangeDescription}" /> to un-register the callback on dispose.</returns>
+	public static IAwaitableCallback<ChangeDescription>
 		OnDeleted(
 			this INotificationHandler handler,
 			FileSystemTypes fileSystemType,
 			Action<ChangeDescription>? notificationCallback = null,
-			string path = "",
-			string searchPattern = "*",
+			string globPattern = "*",
 			Func<ChangeDescription, bool>? predicate = null)
 		=> handler.OnEvent(notificationCallback,
 			changeDescription => changeDescription.Matches(
 				handler.FileSystem.ExecuteOrDefault(),
 				fileSystemType,
 				WatcherChangeTypes.Deleted,
-				path.GetFullPathOrWhiteSpace(handler.FileSystem),
-				searchPattern,
+				globPattern,
 				predicate));
 }

@@ -24,6 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="DotNet.Glob" />
 		<PackageReference Include="System.Linq.Async" />
 		<PackageReference Include="System.Threading.Channels" />
 	</ItemGroup>

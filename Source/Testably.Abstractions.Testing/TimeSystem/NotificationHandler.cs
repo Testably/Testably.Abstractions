@@ -16,19 +16,19 @@ internal sealed class NotificationHandler : INotificationHandler
 	#region INotificationHandler Members
 
 	/// <inheritdoc cref="INotificationHandler.DateTimeRead(Action{DateTime}?, Func{DateTime, bool}?)" />
-	public Notification.IAwaitableCallback<DateTime> DateTimeRead(
+	public IAwaitableCallback<DateTime> DateTimeRead(
 		Action<DateTime>? callback = null,
 		Func<DateTime, bool>? predicate = null)
 		=> _dateTimeReadCallbacks.RegisterCallback(callback, predicate);
 
 	/// <inheritdoc cref="INotificationHandler.TaskDelay(Action{TimeSpan}?, Func{TimeSpan, bool}?)" />
-	public Notification.IAwaitableCallback<TimeSpan> TaskDelay(
+	public IAwaitableCallback<TimeSpan> TaskDelay(
 		Action<TimeSpan>? callback = null,
 		Func<TimeSpan, bool>? predicate = null)
 		=> _taskDelayCallbacks.RegisterCallback(callback, predicate);
 
 	/// <inheritdoc cref="INotificationHandler.ThreadSleep(Action{TimeSpan}?, Func{TimeSpan, bool}?)" />
-	public Notification.IAwaitableCallback<TimeSpan> ThreadSleep(
+	public IAwaitableCallback<TimeSpan> ThreadSleep(
 		Action<TimeSpan>? callback = null,
 		Func<TimeSpan, bool>? predicate = null)
 		=> _threadSleepCallbacks.RegisterCallback(callback, predicate);

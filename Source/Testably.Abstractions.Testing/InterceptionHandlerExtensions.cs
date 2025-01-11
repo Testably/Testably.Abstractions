@@ -11,113 +11,95 @@ namespace Testably.Abstractions.Testing;
 public static class InterceptionHandlerExtensions
 {
 	/// <summary>
-	///     Callback executed before a <paramref name="fileSystemType" /> under <paramref name="path" /> matching the
-	///     <paramref name="searchPattern" /> is about to get changed.
+	///     Callback executed before a <paramref name="fileSystemType" /> matching the
+	///     <paramref name="globPattern" /> is about to get changed.
 	/// </summary>
 	/// <param name="handler">The interception handler</param>
 	/// <param name="fileSystemType">The type of the file system entry.</param>
 	/// <param name="interceptionCallback">The callback to execute before the <paramref name="fileSystemType" /> is changed.</param>
-	/// <param name="path">
-	///     (optional) The root path in which to search for a changed <paramref name="fileSystemType" />.<br />
-	///     Defaults to the empty string, which matches all root directories.
-	/// </param>
-	/// <param name="searchPattern">
-	///     (optional) The search pattern that the <paramref name="fileSystemType" /> name must match.<br />
-	///     Defaults to "*" which matches all <paramref name="fileSystemType" /> names.
+	/// <param name="globPattern">
+	///     (optional) The glob pattern that the <paramref name="fileSystemType" /> path must match.<br />
+	///     Defaults to "*" which matches everything.
 	/// </param>
 	/// <param name="predicate">
 	///     (optional) A predicate used to filter which callbacks should be intercepted.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are intercepted.
 	/// </param>
-	/// <returns>The <see cref="MockFileSystem" />.</returns>
+	/// <returns>An <see cref="IAwaitableCallback{TValue}"/> for this event registration.</returns>
 	/// <remarks>This allows e.g. to throw custom exceptions instead.</remarks>
-	public static MockFileSystem Changing(
+	public static IAwaitableCallback<ChangeDescription> Changing(
 		this IInterceptionHandler handler,
 		FileSystemTypes fileSystemType,
 		Action<ChangeDescription> interceptionCallback,
-		string path = "",
-		string searchPattern = "*",
+		string globPattern = "*",
 		Func<ChangeDescription, bool>? predicate = null)
 		=> handler.Event(interceptionCallback,
 			changeDescription => changeDescription.Matches(
 				handler.FileSystem.ExecuteOrDefault(),
 				fileSystemType,
 				WatcherChangeTypes.Changed,
-				path.GetFullPathOrWhiteSpace(handler.FileSystem),
-				searchPattern,
+				globPattern,
 				predicate));
 
 	/// <summary>
-	///     Callback executed before a <paramref name="fileSystemType" /> under <paramref name="path" /> matching the
-	///     <paramref name="searchPattern" /> is about to get created.
+	///     Callback executed before a <paramref name="fileSystemType" /> matching the
+	///     <paramref name="globPattern" /> is about to get created.
 	/// </summary>
 	/// <param name="handler">The interception handler</param>
 	/// <param name="fileSystemType">The type of the file system entry.</param>
 	/// <param name="interceptionCallback">The callback to execute before the <paramref name="fileSystemType" /> is created.</param>
-	/// <param name="path">
-	///     (optional) The root path in which to search for a created <paramref name="fileSystemType" />.<br />
-	///     Defaults to the empty string, which matches all root directories.
-	/// </param>
-	/// <param name="searchPattern">
-	///     (optional) The search pattern that the <paramref name="fileSystemType" /> name must match.<br />
-	///     Defaults to "*" which matches all <paramref name="fileSystemType" /> names.
+	/// <param name="globPattern">
+	///     (optional) The glob pattern that the <paramref name="fileSystemType" /> path must match.<br />
+	///     Defaults to "*" which matches everything.
 	/// </param>
 	/// <param name="predicate">
 	///     (optional) A predicate used to filter which callbacks should be intercepted.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are intercepted.
 	/// </param>
-	/// <returns>The <see cref="MockFileSystem" />.</returns>
+	/// <returns>An <see cref="IAwaitableCallback{TValue}"/> for this event registration.</returns>
 	/// <remarks>This allows e.g. to throw custom exceptions instead.</remarks>
-	public static MockFileSystem Creating(
+	public static IAwaitableCallback<ChangeDescription> Creating(
 		this IInterceptionHandler handler,
 		FileSystemTypes fileSystemType,
 		Action<ChangeDescription> interceptionCallback,
-		string path = "",
-		string searchPattern = "*",
+		string globPattern = "*",
 		Func<ChangeDescription, bool>? predicate = null)
 		=> handler.Event(interceptionCallback,
 			changeDescription => changeDescription.Matches(
 				handler.FileSystem.ExecuteOrDefault(),
 				fileSystemType,
 				WatcherChangeTypes.Created,
-				path.GetFullPathOrWhiteSpace(handler.FileSystem),
-				searchPattern,
+				globPattern,
 				predicate));
 
 	/// <summary>
-	///     Callback executed before a <paramref name="fileSystemType" /> under <paramref name="path" /> matching the
-	///     <paramref name="searchPattern" /> is about to get deleted.
+	///     Callback executed before a <paramref name="fileSystemType" /> matching the
+	///     <paramref name="globPattern" /> is about to get deleted.
 	/// </summary>
 	/// <param name="handler">The interception handler</param>
 	/// <param name="fileSystemType">The type of the file system entry.</param>
 	/// <param name="interceptionCallback">The callback to execute before the <paramref name="fileSystemType" /> is deleted.</param>
-	/// <param name="path">
-	///     (optional) The root path in which to search for a deleted <paramref name="fileSystemType" />.<br />
-	///     Defaults to the empty string, which matches all root directories.
-	/// </param>
-	/// <param name="searchPattern">
-	///     (optional) The search pattern that the <paramref name="fileSystemType" /> name must match.<br />
-	///     Defaults to "*" which matches all <paramref name="fileSystemType" /> names.
+	/// <param name="globPattern">
+	///     (optional) The glob pattern that the <paramref name="fileSystemType" /> path must match.<br />
+	///     Defaults to "*" which matches everything.
 	/// </param>
 	/// <param name="predicate">
 	///     (optional) A predicate used to filter which callbacks should be intercepted.<br />
 	///     If set to <see langword="null" /> (default value) all callbacks are intercepted.
 	/// </param>
-	/// <returns>The <see cref="MockFileSystem" />.</returns>
+	/// <returns>An <see cref="IAwaitableCallback{TValue}"/> for this event registration.</returns>
 	/// <remarks>This allows e.g. to throw custom exceptions instead.</remarks>
-	public static MockFileSystem Deleting(
+	public static IAwaitableCallback<ChangeDescription> Deleting(
 		this IInterceptionHandler handler,
 		FileSystemTypes fileSystemType,
 		Action<ChangeDescription> interceptionCallback,
-		string path = "",
-		string searchPattern = "*",
+		string globPattern = "*",
 		Func<ChangeDescription, bool>? predicate = null)
 		=> handler.Event(interceptionCallback,
 			changeDescription => changeDescription.Matches(
 				handler.FileSystem.ExecuteOrDefault(),
 				fileSystemType,
 				WatcherChangeTypes.Deleted,
-				path.GetFullPathOrWhiteSpace(handler.FileSystem),
-				searchPattern,
+				globPattern,
 				predicate));
 }

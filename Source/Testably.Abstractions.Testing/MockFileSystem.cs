@@ -216,15 +216,15 @@ public sealed class MockFileSystem : IFileSystem
 	/// <summary>
 	///     Registers a new <see cref="IFileVersionInfo" /> with values from
 	///     the <paramref name="fileVersionInfoBuilder" /> returned for
-	///     all files matching the <paramref name="searchPattern" />.
+	///     all files matching the <paramref name="globPattern" />.
 	/// </summary>
-	public MockFileSystem WithFileVersionInfo(string searchPattern,
+	public MockFileSystem WithFileVersionInfo(string globPattern,
 		Action<FileVersionInfoBuilder> fileVersionInfoBuilder)
 	{
 		FileVersionInfoBuilder builder = new();
 		fileVersionInfoBuilder(builder);
 		FileVersionInfoContainer container = builder.Create();
-		_storage.AddFileVersion(searchPattern, container);
+		_storage.AddFileVersion(globPattern, container);
 		return this;
 	}
 

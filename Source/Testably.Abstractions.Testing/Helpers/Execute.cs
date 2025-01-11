@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotNet.Globbing;
+using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -7,6 +8,24 @@ namespace Testably.Abstractions.Testing.Helpers;
 
 internal sealed partial class Execute
 {
+	/// <summary>
+	///     The <see cref="GlobOptions" /> that use case sensitivity depending on the simulated OS.
+	/// </summary>
+	public GlobOptions GlobOptions
+	{
+		get
+		{
+			_globOptions ??= new GlobOptions
+			{
+				Evaluation =
+				{
+					CaseInsensitive = !IsLinux,
+				},
+			};
+			return _globOptions;
+		}
+	}
+
 	/// <summary>
 	///     Flag indicating if the code runs on <see cref="OSPlatform.Linux" />.
 	/// </summary>
@@ -39,6 +58,8 @@ internal sealed partial class Execute
 	///     The default <see cref="StringComparison" /> used for comparing paths.
 	/// </summary>
 	public StringComparison StringComparisonMode { get; }
+
+	private GlobOptions? _globOptions;
 
 #if !CAN_SIMULATE_OTHER_OS
 	[Obsolete("Simulating other operating systems is not supported on .NET Framework")]
