@@ -9,6 +9,24 @@ namespace Testably.Abstractions.Testing.Helpers;
 internal sealed partial class Execute
 {
 	/// <summary>
+	///     The <see cref="GlobOptions" /> that use case sensitivity depending on the simulated OS.
+	/// </summary>
+	public GlobOptions GlobOptions
+	{
+		get
+		{
+			_globOptions ??= new GlobOptions
+			{
+				Evaluation =
+				{
+					CaseInsensitive = !IsLinux,
+				},
+			};
+			return _globOptions;
+		}
+	}
+
+	/// <summary>
 	///     Flag indicating if the code runs on <see cref="OSPlatform.Linux" />.
 	/// </summary>
 	public bool IsLinux { get; }
@@ -40,24 +58,6 @@ internal sealed partial class Execute
 	///     The default <see cref="StringComparison" /> used for comparing paths.
 	/// </summary>
 	public StringComparison StringComparisonMode { get; }
-
-	/// <summary>
-	/// The <see cref="GlobOptions"/> that use case sensitivity depending on the simulated OS.
-	/// </summary>
-	public GlobOptions GlobOptions
-	{
-		get
-		{
-			_globOptions ??= new GlobOptions
-			{
-				Evaluation =
-				{
-					CaseInsensitive = !IsLinux
-				}
-			};
-			return _globOptions;
-		}
-	}
 
 	private GlobOptions? _globOptions;
 
