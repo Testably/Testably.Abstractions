@@ -1,0 +1,9 @@
+{
+	"$schema": "http://json.schemastore.org/launchsettings.json",
+	"profiles": {
+		"Generators": {
+			"commandName": "DebugRoslynComponent",
+			"targetProject": "../../Testably.Abstractions.Tests/Testably.Abstractions.Tests.csproj"
+		}
+	}
+}
