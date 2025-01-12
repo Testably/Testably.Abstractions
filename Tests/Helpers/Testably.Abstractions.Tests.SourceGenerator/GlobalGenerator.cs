@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Testably.Abstractions.Tests.SourceGenerator;
 
-public class GlobalGenerator
+public static class GlobalGenerator
 {
-	public void GenerateClass(GeneratorExecutionContext context)
+	public static void GenerateClass(GeneratorExecutionContext context)
 	{
 		StringBuilder sourceBuilder = GetSourceBuilder();
 		GenerateSource(sourceBuilder);
