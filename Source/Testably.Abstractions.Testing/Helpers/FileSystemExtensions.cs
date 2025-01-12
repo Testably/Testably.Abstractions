@@ -126,14 +126,7 @@ internal static class FileSystemExtensions
 	///     Ignores all registrations on the <see cref="MockFileSystem.Statistics" /> until the return value is disposed.
 	/// </summary>
 	internal static IDisposable IgnoreStatistics(this IFileSystem fileSystem)
-	{
-		if (fileSystem is MockFileSystem mockFileSystem)
-		{
-			return FileSystemRegistration.Ignore();
-		}
-
-		return new NoOpDisposable();
-	}
+		=> FileSystemRegistration.Ignore();
 
 	/// <summary>
 	///     Returns the shared <see cref="IRandom" /> instance from the <paramref name="fileSystem" />, if it is a

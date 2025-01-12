@@ -47,7 +47,7 @@ partial class Build
 				{
 					if (retry == 0)
 					{
-						Log.Error($"All {MaxRetries} tries failed: {ex}");
+						Log.Error($"All {MaxRetries + 1} tries failed: {ex}");
 						throw;
 					}
 
@@ -91,7 +91,7 @@ partial class Build
 				{
 					if (retry == 0)
 					{
-						Log.Error($"All {MaxRetries} tries failed: {ex}");
+						Log.Error($"All {MaxRetries + 1} tries failed: {ex}");
 						throw;
 					}
 
