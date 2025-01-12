@@ -215,7 +215,9 @@ public class FileStreamStatisticsTests
 		int count = 2;
 		CancellationToken cancellationToken = CancellationToken.None;
 
+		#pragma warning disable CA1835 // Change the 'ReadAsync' method call to use the 'Stream.ReadAsync(Memory<byte>, CancellationToken)' overload
 		_ = await fileStream.ReadAsync(buffer, offset, count, cancellationToken);
+		#pragma warning restore CA1835
 
 		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
@@ -342,7 +344,9 @@ public class FileStreamStatisticsTests
 		int count = 2;
 		CancellationToken cancellationToken = CancellationToken.None;
 
+		#pragma warning disable CA1835 // Change the 'WriteAsync' method call to use the 'Stream.WriteAsync(ReadOnlyMemory<byte>, CancellationToken)' overload
 		await fileStream.WriteAsync(buffer, offset, count, cancellationToken);
+		#pragma warning restore CA1835
 
 		sut.Statistics.TotalCount.Should().Be(2);
 		sut.Statistics.FileStream["foo"]
