@@ -14,7 +14,7 @@ public class TestDataGetEncodingDifference : IEnumerable<object[]>
 	{
 		yield return
 		[
-			SpecialCharactersContent, Encoding.ASCII, Encoding.UTF8
+			SpecialCharactersContent, Encoding.ASCII, Encoding.UTF8,
 		];
 	}
 

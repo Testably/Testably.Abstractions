@@ -132,7 +132,7 @@ public abstract partial class Tests<TFileSystem>
 			},
 			{
 				"Dans mes rêves.mp3", Encoding.ASCII, false
-			}
+			},
 		};
 		// ReSharper restore StringLiteralTypo
 		return theoryData;

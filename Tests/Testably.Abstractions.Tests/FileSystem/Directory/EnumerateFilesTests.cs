@@ -146,7 +146,7 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 	{
 		EnumerationOptions enumerationOptions = new()
 		{
-			AttributesToSkip = FileAttributes.ReadOnly
+			AttributesToSkip = FileAttributes.ReadOnly,
 		};
 		FileSystem.Directory.CreateDirectory(path);
 		FileSystem.File.WriteAllText(FileSystem.Path.Combine(path, "foo"), "");
@@ -174,7 +174,7 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 	{
 		EnumerationOptions enumerationOptions = new()
 		{
-			MatchCasing = matchCasing
+			MatchCasing = matchCasing,
 		};
 		FileSystem.Directory.CreateDirectory(path);
 		FileSystem.File.WriteAllText(FileSystem.Path.Combine(path, "foo"), "");
@@ -204,7 +204,7 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 	{
 		EnumerationOptions enumerationOptions = new()
 		{
-			MatchType = matchType
+			MatchType = matchType,
 		};
 		FileSystem.Directory.CreateDirectory(path);
 		FileSystem.File.WriteAllText(FileSystem.Path.Combine(path, "foo"), "");
@@ -238,7 +238,7 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 		EnumerationOptions enumerationOptions = new()
 		{
 			MaxRecursionDepth = maxRecursionDepth,
-			RecurseSubdirectories = recurseSubdirectories
+			RecurseSubdirectories = recurseSubdirectories,
 		};
 		FileSystem.Directory.CreateDirectory(
 			FileSystem.Path.Combine(path, "a", "b", "c", "d", "e"));
@@ -291,7 +291,7 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 	{
 		EnumerationOptions enumerationOptions = new()
 		{
-			RecurseSubdirectories = recurseSubdirectories
+			RecurseSubdirectories = recurseSubdirectories,
 		};
 		FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(path, "xyz"));
 		FileSystem.File.WriteAllText(FileSystem.Path.Combine(path, "xyz", "foo"), "");
@@ -322,7 +322,7 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 	{
 		EnumerationOptions enumerationOptions = new()
 		{
-			ReturnSpecialDirectories = returnSpecialDirectories
+			ReturnSpecialDirectories = returnSpecialDirectories,
 		};
 		FileSystem.Directory.CreateDirectory(path);
 		FileSystem.File.WriteAllText(FileSystem.Path.Combine(path, "foo"), "");

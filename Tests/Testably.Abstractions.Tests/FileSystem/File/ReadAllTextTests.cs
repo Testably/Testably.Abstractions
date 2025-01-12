@@ -166,7 +166,7 @@ public abstract partial class ReadAllTextTests<TFileSystem>
 			// big endian
 			new UTF32Encoding(true, true, true),
 			new UTF8Encoding(true, true),
-			new ASCIIEncoding()
+			new ASCIIEncoding(),
 		};
 	#pragma warning restore MA0018
 

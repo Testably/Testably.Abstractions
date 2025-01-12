@@ -688,7 +688,7 @@ internal sealed class InMemoryStorage : IStorage
 			Glob.Parse(globPattern, _fileSystem.Execute.GlobOptions),
 			globPattern.IndexOfAny([
 				_fileSystem.Execute.Path.DirectorySeparatorChar,
-				_fileSystem.Execute.Path.AltDirectorySeparatorChar
+				_fileSystem.Execute.Path.AltDirectorySeparatorChar,
 			]) >= 0,
 			container));
 	}

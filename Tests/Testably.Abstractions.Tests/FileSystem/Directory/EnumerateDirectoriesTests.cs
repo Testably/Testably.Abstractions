@@ -193,7 +193,7 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 	{
 		EnumerationOptions enumerationOptions = new()
 		{
-			AttributesToSkip = FileAttributes.ReadOnly
+			AttributesToSkip = FileAttributes.ReadOnly,
 		};
 		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
@@ -223,7 +223,7 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 		EnumerationOptions enumerationOptions = new()
 		{
 			IgnoreInaccessible = ignoreInaccessible,
-			RecurseSubdirectories = true
+			RecurseSubdirectories = true,
 		};
 		if (FileSystem is MockFileSystem mockFileSystem)
 		{
@@ -266,7 +266,7 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 	{
 		EnumerationOptions enumerationOptions = new()
 		{
-			MatchCasing = matchCasing
+			MatchCasing = matchCasing,
 		};
 		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
@@ -297,7 +297,7 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 	{
 		EnumerationOptions enumerationOptions = new()
 		{
-			MatchType = matchType
+			MatchType = matchType,
 		};
 		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
@@ -332,7 +332,7 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 		EnumerationOptions enumerationOptions = new()
 		{
 			MaxRecursionDepth = maxRecursionDepth,
-			RecurseSubdirectories = recurseSubdirectories
+			RecurseSubdirectories = recurseSubdirectories,
 		};
 		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
@@ -380,7 +380,7 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 	{
 		EnumerationOptions enumerationOptions = new()
 		{
-			RecurseSubdirectories = recurseSubdirectories
+			RecurseSubdirectories = recurseSubdirectories,
 		};
 		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
@@ -412,7 +412,7 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 	{
 		EnumerationOptions enumerationOptions = new()
 		{
-			ReturnSpecialDirectories = returnSpecialDirectories
+			ReturnSpecialDirectories = returnSpecialDirectories,
 		};
 		IDirectoryInfo baseDirectory =
 			FileSystem.Directory.CreateDirectory(path);
@@ -441,7 +441,7 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 		string root = FileSystem.Path.GetPathRoot(FileSystem.Directory.GetCurrentDirectory())!;
 		EnumerationOptions enumerationOptions = new()
 		{
-			ReturnSpecialDirectories = true
+			ReturnSpecialDirectories = true,
 		};
 
 		List<string> result = FileSystem.Directory

@@ -40,7 +40,7 @@ internal static class ChangeDescriptionExtensions
 		Glob? glob = Glob.Parse(globPattern, execute.GlobOptions);
 		if (globPattern.IndexOfAny([
 				execute.Path.DirectorySeparatorChar,
-				execute.Path.AltDirectorySeparatorChar
+				execute.Path.AltDirectorySeparatorChar,
 			]) >= 0)
 		{
 			if (!glob.IsMatch(changeDescription.Path.Replace('\\', '/')))

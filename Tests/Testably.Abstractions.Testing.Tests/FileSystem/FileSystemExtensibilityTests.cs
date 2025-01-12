@@ -10,7 +10,7 @@ public class FileSystemExtensibilityTests
 		=> new()
 		{
 			new RealFileSystem(),
-			new MockFileSystem()
+			new MockFileSystem(),
 		};
 
 	#endregion

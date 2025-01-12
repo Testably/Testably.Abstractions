@@ -42,7 +42,7 @@ public class FilePlatformIndependenceExtensionsTests
 		char[] separatorChars =
 		[
 			Path.DirectorySeparatorChar,
-			Path.AltDirectorySeparatorChar
+			Path.AltDirectorySeparatorChar,
 		];
 		foreach (char separatorChar in separatorChars)
 		{
@@ -64,7 +64,7 @@ public class FilePlatformIndependenceExtensionsTests
 		char[] separatorChars =
 		[
 			Path.DirectorySeparatorChar,
-			Path.AltDirectorySeparatorChar
+			Path.AltDirectorySeparatorChar,
 		];
 		foreach (char separatorChar in separatorChars)
 		{

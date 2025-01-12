@@ -46,7 +46,7 @@ internal static class StorageExtensions
 				           throw new UnauthorizedAccessException(
 					           $"The searchPattern '{searchPattern}' has too many '../' for path '{path}'");
 				#pragma warning disable CA1846
-				givenPathPrefix.Append(searchPattern.Substring(0, 3));
+				givenPathPrefix.Append(searchPattern, 0, 3);
 				#pragma warning restore CA1846
 				searchPattern = searchPattern.Substring(3);
 			}

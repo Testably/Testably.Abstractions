@@ -132,7 +132,7 @@ public abstract partial class GetFileSystemInfosTests<TFileSystem>
 					MatchCasing = MatchCasing.CaseInsensitive,
 					RecurseSubdirectories = true,
 					// Filename could start with a leading '.' indicating it as Hidden in Linux
-					AttributesToSkip = FileAttributes.System
+					AttributesToSkip = FileAttributes.System,
 				}).ToList();
 
 		result.Count.Should().Be(1, $"{initialized[2]} should be found.");

@@ -143,7 +143,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 		FileInfo = 8,
 		FileStream = 16,
 		None = 0,
-		All = ~None
+		All = ~None,
 	}
 	#pragma warning restore MA0062
 
@@ -151,6 +151,6 @@ public abstract partial class ExceptionTests<TFileSystem>
 	{
 		Create,
 		GetAccessControl,
-		SetAccessControl
+		SetAccessControl,
 	}
 }

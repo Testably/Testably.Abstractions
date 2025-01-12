@@ -195,7 +195,7 @@ internal sealed class TimerMock : ITimerMock
 			Start();
 		}
 
-		if (_countdownEvent?.Wait(timeout) == false)
+		if (_countdownEvent?.Wait(timeout, CancellationToken.None) == false)
 		{
 			throw ExceptionFactory.TimerWaitTimeoutException(executionCount, timeout);
 		}

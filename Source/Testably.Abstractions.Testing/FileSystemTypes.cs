@@ -21,5 +21,5 @@ public enum FileSystemTypes
 	/// <summary>
 	///     The entry is a file or directory.
 	/// </summary>
-	DirectoryOrFile = Directory | File
+	DirectoryOrFile = Directory | File,
 }

@@ -637,7 +637,9 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 				EnableRaisingEvents = true;
 			}
 
+			#pragma warning disable MA0040
 			tcs.Task.Wait(timeout);
+			#pragma warning restore MA0040
 			EnableRaisingEvents = wasEnabled;
 		}
 		finally

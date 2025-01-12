@@ -146,14 +146,14 @@ public abstract partial class ExceptionTests<TFileSystem>
 			file
 				=> file.AppendAllLines(value, new[]
 				{
-					"foo"
+					"foo",
 				}),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
 			file
 				=> file.AppendAllLines(value, new[]
 				{
-					"foo"
+					"foo",
 				}, Encoding.UTF8),
 			null);
 #if FEATURE_FILESYSTEM_ASYNC
@@ -161,7 +161,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 			file
 				=> file.AppendAllLinesAsync(value, new[]
 					{
-						"foo"
+						"foo",
 					}, CancellationToken.None)
 					.GetAwaiter().GetResult(),
 			null);
@@ -171,7 +171,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 			file
 				=> file.AppendAllLinesAsync(value, new[]
 					{
-						"foo"
+						"foo",
 					}, Encoding.UTF8,
 					CancellationToken.None).GetAwaiter().GetResult(),
 			null);
@@ -539,7 +539,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 			file
 				=> file.WriteAllBytes(value, new byte[]
 				{
-					0, 1
+					0, 1,
 				}),
 			null);
 #if FEATURE_FILESYSTEM_ASYNC
@@ -547,7 +547,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 			file
 				=> file.WriteAllBytesAsync(value, new byte[]
 					{
-						0, 1
+						0, 1,
 					},
 					CancellationToken.None).GetAwaiter().GetResult(),
 			null);
@@ -556,14 +556,14 @@ public abstract partial class ExceptionTests<TFileSystem>
 			file
 				=> file.WriteAllLines(value, new[]
 				{
-					"foo"
+					"foo",
 				}),
 			null);
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
 			file
 				=> file.WriteAllLines(value, new[]
 				{
-					"foo"
+					"foo",
 				}, Encoding.UTF8),
 			null);
 #if FEATURE_FILESYSTEM_ASYNC
@@ -571,7 +571,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 			file
 				=> file.WriteAllLinesAsync(value, new[]
 					{
-						"foo"
+						"foo",
 					}, CancellationToken.None)
 					.GetAwaiter().GetResult(),
 			null);
@@ -581,7 +581,7 @@ public abstract partial class ExceptionTests<TFileSystem>
 			file
 				=> file.WriteAllLinesAsync(value, new[]
 					{
-						"foo"
+						"foo",
 					}, Encoding.UTF8,
 					CancellationToken.None).GetAwaiter().GetResult(),
 			null);

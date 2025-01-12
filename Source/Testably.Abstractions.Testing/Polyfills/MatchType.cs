@@ -24,6 +24,6 @@ public enum MatchType
 	///         match <c>file.t</c>, <c>file.at</c>, and <c>file.txt</c>.
 	///     </para>
 	/// </summary>
-	Win32
+	Win32,
 }
 #endif

@@ -59,16 +59,17 @@ public sealed partial class StatisticsTests
 			builder.AppendLine("\t\tMockFileSystem sut = new();");
 			foreach (ParameterInfo parameterInfo in methodInfo.GetParameters())
 			{
-				builder.AppendLine(
-					$"\t\t{GetName(parameterInfo.ParameterType, false)} {parameterInfo.Name} = {GetDefaultValue(parameterInfo.ParameterType)};");
+				builder.Append("\t\t").Append(GetName(parameterInfo.ParameterType, false)).Append(' ').Append(parameterInfo.Name).Append(" = ").Append(GetDefaultValue(parameterInfo.ParameterType)).Append(';').AppendLine();
 			}
 
 			builder.AppendLine();
+			#pragma warning disable MA0028
 			builder.AppendLine(
 				$"\t\t{(isAsync ? "await " : "")}sut.{className}{(requireInstance ? ".New(\"foo\")" : "")}.{methodInfo.Name}({string.Join(", ", methodInfo.GetParameters().Select(p => p.Name))});");
 			builder.AppendLine();
 			builder.AppendLine(
 				$"\t\tsut.Statistics.{className}{(requireInstance ? "[\"foo\"]" : "")}.ShouldOnlyContainMethodCall(nameof({mockType.Name}.{methodInfo.Name}){(parameters.Length > 0 ? ",\n\t\t\t" : "")}{string.Join(", ", methodInfo.GetParameters().Select(p => p.Name))});");
+			#pragma warning restore MA0028
 			builder.AppendLine("\t}");
 			builder.AppendLine();
 			#pragma warning restore MA0011 // IFormatProvider is missing
@@ -170,11 +171,9 @@ public sealed partial class StatisticsTests
 			builder.AppendLine("\t{");
 			builder.AppendLine("\t\tMockFileSystem sut = new();");
 			builder.AppendLine();
-			builder.AppendLine(
-				$"\t\t_ = sut.{className}{(requireInstance ? ".New(\"foo\")" : "")}.{propertyInfo.Name};");
+			builder.Append("\t\t_ = sut.").Append(className).Append(requireInstance ? ".New(\"foo\")" : "").Append('.').Append(propertyInfo.Name).Append(';').AppendLine();
 			builder.AppendLine();
-			builder.AppendLine(
-				$"\t\tsut.Statistics.{className}{(requireInstance ? "[\"foo\"]" : "")}.ShouldOnlyContainPropertyGetAccess(nameof({mockType.Name}.{propertyInfo.Name}));");
+			builder.Append("\t\tsut.Statistics.").Append(className).Append(requireInstance ? "[\"foo\"]" : "").Append(".ShouldOnlyContainPropertyGetAccess(nameof(").Append(mockType.Name).Append('.').Append(propertyInfo.Name).AppendLine("));");
 			builder.AppendLine("\t}");
 			builder.AppendLine();
 			#pragma warning restore MA0011 // IFormatProvider is missing
@@ -200,14 +199,11 @@ public sealed partial class StatisticsTests
 			builder.AppendLine("()");
 			builder.AppendLine("\t{");
 			builder.AppendLine("\t\tMockFileSystem sut = new();");
-			builder.AppendLine(
-				$"\t\t{GetName(propertyInfo.PropertyType, false)} value = {GetDefaultValue(propertyInfo.PropertyType)};");
+			builder.Append("\t\t").Append(GetName(propertyInfo.PropertyType, false)).Append(" value = ").Append(GetDefaultValue(propertyInfo.PropertyType)).Append(';').AppendLine();
 			builder.AppendLine();
-			builder.AppendLine(
-				$"\t\tsut.{className}{(requireInstance ? ".New(\"foo\")" : "")}.{propertyInfo.Name} = value;");
+			builder.Append("\t\tsut.").Append(className).Append(requireInstance ? ".New(\"foo\")" : "").Append('.').Append(propertyInfo.Name).AppendLine(" = value;");
 			builder.AppendLine();
-			builder.AppendLine(
-				$"\t\tsut.Statistics.{className}{(requireInstance ? "[\"foo\"]" : "")}.ShouldOnlyContainPropertySetAccess(nameof({mockType.Name}.{propertyInfo.Name}));");
+			builder.Append("\t\tsut.Statistics.").Append(className).Append(requireInstance ? "[\"foo\"]" : "").Append(".ShouldOnlyContainPropertySetAccess(nameof(").Append(mockType.Name).Append('.').Append(propertyInfo.Name).AppendLine("));");
 			builder.AppendLine("\t}");
 			builder.AppendLine();
 			#pragma warning restore MA0011 // IFormatProvider is missing

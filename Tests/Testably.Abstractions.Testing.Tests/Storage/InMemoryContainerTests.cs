@@ -86,7 +86,7 @@ public class InMemoryContainerTests
 
 		InMemoryContainer container = new(FileSystemTypes.File, location, fileSystem)
 		{
-			LinkTarget = linkTarget
+			LinkTarget = linkTarget,
 		};
 
 		FileAttributes result = container.AdjustAttributes(FileAttributes.Normal);

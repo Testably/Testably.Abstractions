@@ -20,6 +20,6 @@ public enum MatchCasing
 	/// <summary>
 	///     Matches ignoring character casing.
 	/// </summary>
-	CaseInsensitive
+	CaseInsensitive,
 }
 #endif

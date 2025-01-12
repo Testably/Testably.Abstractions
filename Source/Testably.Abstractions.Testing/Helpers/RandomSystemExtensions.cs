@@ -29,7 +29,7 @@ internal static class RandomSystemExtensions
 		".tmp",
 		".txt",
 		".xlsx",
-		".zip"
+		".zip",
 	];
 
 	private static readonly string[] FileNames =
@@ -39,7 +39,7 @@ internal static class RandomSystemExtensions
 		"bar",
 		"_",
 		"With whitespace",
-		".hidden"
+		".hidden",
 	];
 
 	/// <summary>

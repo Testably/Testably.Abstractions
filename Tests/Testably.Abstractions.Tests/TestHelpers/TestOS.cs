@@ -8,5 +8,5 @@ public enum TestOS
 	Windows = 4,
 	Framework = 8,
 	All = Linux | Mac | Windows | Framework,
-	None = 0
+	None = 0,
 }

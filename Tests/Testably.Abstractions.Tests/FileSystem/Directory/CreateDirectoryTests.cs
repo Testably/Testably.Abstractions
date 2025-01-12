@@ -157,7 +157,7 @@ public abstract partial class CreateDirectoryTests<TFileSystem>
 
 		foreach (string path in new[]
 			{
-				rootPath, subdirectoryLevel1Path
+				rootPath, subdirectoryLevel1Path,
 			})
 		{
 			DateTime lastAccessTime =

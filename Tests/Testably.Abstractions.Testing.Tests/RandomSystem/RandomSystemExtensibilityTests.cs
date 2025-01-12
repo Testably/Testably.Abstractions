@@ -10,7 +10,7 @@ public class RandomSystemExtensibilityTests
 		=> new()
 		{
 			new RealRandomSystem(),
-			new MockRandomSystem()
+			new MockRandomSystem(),
 		};
 
 	#endregion

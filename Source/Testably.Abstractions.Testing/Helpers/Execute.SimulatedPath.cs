@@ -602,7 +602,7 @@ internal sealed partial class Execute
 					sb.Append(DirectorySeparatorChar);
 				}
 
-				sb.Append(path.Substring(commonLength, differenceLength));
+				sb.Append(path, commonLength, differenceLength);
 			}
 
 			return sb.ToString();
@@ -727,7 +727,7 @@ internal sealed partial class Execute
 				skip--;
 			}
 
-			sb.Append(path.Substring(0, skip));
+			sb.Append(path, 0, skip);
 
 			// Remove "//", "/./", and "/../" from the path by copying each character to the output,
 			// except the ones we're removing, such that the builder contains the normalized path

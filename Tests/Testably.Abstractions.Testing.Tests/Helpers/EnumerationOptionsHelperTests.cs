@@ -24,7 +24,7 @@ public class EnumerationOptionsHelperTests
 	{
 		EnumerationOptions invalidEnumerationOptions = new()
 		{
-			MatchType = (MatchType)(-1)
+			MatchType = (MatchType)(-1),
 		};
 
 		Exception? exception = Record.Exception(() =>
