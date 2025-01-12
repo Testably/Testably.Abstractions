@@ -166,11 +166,11 @@ internal static class ParityCheckHelper
 		}
 
 		return systemTypeName != null &&
-		       (abstractionTypeName.Equals(systemTypeName) ||
-		        abstractionTypeName.Equals("I" + systemTypeName) ||
+		       (abstractionTypeName.Equals(systemTypeName, StringComparison.Ordinal) ||
+		        abstractionTypeName.Equals("I" + systemTypeName, StringComparison.Ordinal) ||
 		        (Parity.AcceptedTypeMapping.TryGetValue(systemTypeName,
 			         out string? acceptedName) &&
-		         acceptedName.Equals(abstractionTypeName)));
+		         acceptedName.Equals(abstractionTypeName, StringComparison.Ordinal)));
 	}
 
 	private static bool AreExtensionMethodsEqual(MethodInfo systemMethod,
@@ -186,7 +186,7 @@ internal static class ParityCheckHelper
 		for (int i = 0; i < systemParameters.Length - 1; i++)
 		{
 			if (!string.Equals(systemParameters[i + 1].Name,
-				abstractionParameters[i].Name))
+				abstractionParameters[i].Name, StringComparison.Ordinal))
 			{
 				return false;
 			}
@@ -225,7 +225,8 @@ internal static class ParityCheckHelper
 
 		for (int i = 0; i < systemParameters.Length; i++)
 		{
-			if (!string.Equals(systemParameters[i].Name, abstractionParameters[i].Name))
+			if (!string.Equals(systemParameters[i].Name, abstractionParameters[i].Name,
+				StringComparison.Ordinal))
 			{
 				return false;
 			}

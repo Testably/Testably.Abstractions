@@ -126,7 +126,7 @@ public static class AssertionHelpers
 		{
 			#pragma warning disable MA0074
 			Execute.Assertion
-				.ForCondition(exception.Message.Contains(messageContains))
+				.ForCondition(exception.Message.Contains(messageContains, StringComparison.Ordinal))
 				.BecauseOf(because, becauseArgs)
 				.WithDefaultIdentifier("type")
 				.FailWith(
