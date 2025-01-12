@@ -29,7 +29,9 @@ public sealed class MethodStatistic
 		Parameters = parameters;
 	}
 
+	#pragma warning disable MA0089 // Use an overload with char instead of string
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> $"{Name}({string.Join(",", Parameters.Select(p => p.ToString()))})";
+	#pragma warning restore MA0089
 }

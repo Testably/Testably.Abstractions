@@ -149,9 +149,12 @@ internal static class ParityCheckHelper
 
 		if (type.GenericTypeArguments.Length > 0)
 		{
+			
+			#pragma warning disable MA0089 // Use an overload with char instead of string
 			return type.Name.Substring(0, type.Name.Length - 2) +
 			       "<" + string.Join(",",
 				       type.GenericTypeArguments.Select(x => x.PrintType())) + ">";
+			#pragma warning restore MA0089
 		}
 
 		return type.Name;

@@ -24,8 +24,7 @@ public class FilePlatformIndependenceExtensionsTests
 
 		MockFileSystem fileSystem = new();
 
-		string path =
-			fileSystem.GetDefaultDrive().Name.Replace("\\", "/", StringComparison.Ordinal) + part1;
+		string path = fileSystem.GetDefaultDrive().Name.Replace('\\', '/') + part1;
 		string expectedPath = part1.PrefixRoot(fileSystem);
 		path = path.NormalizePath(fileSystem);
 
