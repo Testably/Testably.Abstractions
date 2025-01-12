@@ -57,8 +57,10 @@ public sealed class ZipUtilitiesTests
 		/// <inheritdoc cref="IZipArchiveEntry.CompressedLength" />
 		public long CompressedLength => stream?.Length ?? 0L;
 
+		#pragma warning disable MA0041
 		/// <inheritdoc cref="IZipArchiveEntry.Crc32" />
 		public uint Crc32 => 0u;
+		#pragma warning restore MA0041
 
 		/// <inheritdoc cref="IZipArchiveEntry.ExternalAttributes" />
 		public int ExternalAttributes { get; set; }
