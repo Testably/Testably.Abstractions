@@ -10,7 +10,7 @@ public class TimeSystemExtensibilityTests
 		=> new()
 		{
 			new RealTimeSystem(),
-			new MockTimeSystem()
+			new MockTimeSystem(),
 		};
 
 	#endregion

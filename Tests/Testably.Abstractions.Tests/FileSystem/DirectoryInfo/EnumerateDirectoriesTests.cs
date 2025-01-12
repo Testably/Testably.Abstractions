@@ -88,7 +88,7 @@ public abstract partial class EnumerateDirectoriesTests<TFileSystem>
 					MatchCasing = MatchCasing.CaseInsensitive,
 					RecurseSubdirectories = true,
 					// Filename could start with a leading '.' indicating it as Hidden in Linux
-					AttributesToSkip = FileAttributes.System
+					AttributesToSkip = FileAttributes.System,
 				}).ToArray();
 
 		result.Length.Should().Be(1);

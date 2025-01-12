@@ -171,7 +171,7 @@ internal sealed class NullContainer : IStorageContainer
 			{
 				DateTimeKind.Utc => _time.ToUniversalTime(),
 				DateTimeKind.Local => _time.ToLocalTime(),
-				_ => _time
+				_ => _time,
 			};
 
 		/// <inheritdoc cref="IStorageContainer.ITimeContainer.Set(DateTime, DateTimeKind)" />

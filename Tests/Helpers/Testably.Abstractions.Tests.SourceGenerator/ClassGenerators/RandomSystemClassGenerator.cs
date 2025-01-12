@@ -12,37 +12,40 @@ internal sealed class RandomSystemClassGenerator : ClassGeneratorBase
 
 	/// <inheritdoc cref="ClassGeneratorBase.GenerateSource(StringBuilder, ClassModel)" />
 	protected override void GenerateSource(StringBuilder sourceBuilder, ClassModel @class)
-		=> sourceBuilder.Append(@$"
-using Testably.Abstractions.TestHelpers;
-using Xunit.Abstractions;
+		#pragma warning disable MA0028
+		=> sourceBuilder.Append($$"""
+		                          using Testably.Abstractions.TestHelpers;
+		                          using Xunit.Abstractions;
 
-namespace {@class.Namespace}
-{{
-	public abstract partial class {@class.Name}<TRandomSystem>
-	{{
-		protected {@class.Name}(TRandomSystem randomSystem)
-			: base(randomSystem)
-		{{
-		}}
-	}}
-}}
+		                          namespace {{@class.Namespace}}
+		                          {
+		                          	public abstract partial class {{@class.Name}}<TRandomSystem>
+		                          	{
+		                          		protected {{@class.Name}}(TRandomSystem randomSystem)
+		                          			: base(randomSystem)
+		                          		{
+		                          		}
+		                          	}
+		                          }
 
-namespace {@class.Namespace}.{@class.Name}
-{{
-	// ReSharper disable once UnusedMember.Global
-	public sealed class MockRandomSystemTests : {@class.Name}<MockRandomSystem>
-	{{
-		public MockRandomSystemTests() : base(new MockRandomSystem())
-		{{
-		}}
-	}}
-
-	// ReSharper disable once UnusedMember.Global
-	public sealed class RealRandomSystemTests : {@class.Name}<RealRandomSystem>
-	{{
-		public RealRandomSystemTests() : base(new RealRandomSystem())
-		{{
-		}}
-	}}
-}}");
+		                          namespace {{@class.Namespace}}.{{@class.Name}}
+		                          {
+		                          	// ReSharper disable once UnusedMember.Global
+		                          	public sealed class MockRandomSystemTests : {{@class.Name}}<MockRandomSystem>
+		                          	{
+		                          		public MockRandomSystemTests() : base(new MockRandomSystem())
+		                          		{
+		                          		}
+		                          	}
+		                          
+		                          	// ReSharper disable once UnusedMember.Global
+		                          	public sealed class RealRandomSystemTests : {{@class.Name}}<RealRandomSystem>
+		                          	{
+		                          		public RealRandomSystemTests() : base(new RealRandomSystem())
+		                          		{
+		                          		}
+		                          	}
+		                          }
+		                          """);
+	#pragma warning restore MA0028
 }

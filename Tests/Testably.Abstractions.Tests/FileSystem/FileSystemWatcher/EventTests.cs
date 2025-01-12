@@ -53,7 +53,7 @@ public abstract partial class EventTests<TFileSystem>
 					{
 						string content = i++.ToString(CultureInfo.InvariantCulture);
 						FileSystem.File.WriteAllText(path, content);
-						await Task.Delay(10);
+						await Task.Delay(10, token);
 						ms1.Set();
 					}
 				}
@@ -72,17 +72,17 @@ public abstract partial class EventTests<TFileSystem>
 		}
 		finally
 		{
-			ms2.Wait(ExpectSuccess).Should().BeTrue();
+			ms2.Wait(ExpectSuccess, token).Should().BeTrue();
 			fileSystemWatcher.Changed -= FileSystemWatcherOnChanged;
 			ms1.Reset();
-			ms1.Wait(ExpectSuccess).Should().BeTrue();
+			ms1.Wait(ExpectSuccess, token).Should().BeTrue();
 		}
 
 		callCount.Should().BeGreaterThanOrEqualTo(1);
 		int previousCallCount = callCount;
 
 		ms1.Reset();
-		ms1.Wait(ExpectSuccess).Should().BeTrue();
+		ms1.Wait(ExpectSuccess, token).Should().BeTrue();
 		callCount.Should().Be(previousCallCount);
 		cts.Cancel();
 	}
@@ -125,7 +125,7 @@ public abstract partial class EventTests<TFileSystem>
 					{
 						FileSystem.Directory.CreateDirectory(path);
 						FileSystem.Directory.Delete(path);
-						await Task.Delay(10);
+						await Task.Delay(10, token);
 						ms1.Set();
 					}
 				}
@@ -140,17 +140,17 @@ public abstract partial class EventTests<TFileSystem>
 		}
 		finally
 		{
-			ms2.Wait(ExpectSuccess).Should().BeTrue();
+			ms2.Wait(ExpectSuccess, token).Should().BeTrue();
 			fileSystemWatcher.Created -= FileSystemWatcherOnCreated;
 			ms1.Reset();
-			ms1.Wait(ExpectSuccess).Should().BeTrue();
+			ms1.Wait(ExpectSuccess, token).Should().BeTrue();
 		}
 
 		callCount.Should().BeGreaterThanOrEqualTo(1);
 		int previousCallCount = callCount;
 
 		ms1.Reset();
-		ms1.Wait(ExpectSuccess).Should().BeTrue();
+		ms1.Wait(ExpectSuccess, token).Should().BeTrue();
 		FileSystem.Directory.CreateDirectory("other" + path);
 		FileSystem.Directory.Delete("other" + path);
 		callCount.Should().Be(previousCallCount);
@@ -195,7 +195,7 @@ public abstract partial class EventTests<TFileSystem>
 					{
 						FileSystem.Directory.CreateDirectory(path);
 						FileSystem.Directory.Delete(path);
-						await Task.Delay(10);
+						await Task.Delay(10, token);
 						ms1.Set();
 					}
 				}
@@ -210,17 +210,17 @@ public abstract partial class EventTests<TFileSystem>
 		}
 		finally
 		{
-			ms2.Wait(ExpectSuccess).Should().BeTrue();
+			ms2.Wait(ExpectSuccess, token).Should().BeTrue();
 			fileSystemWatcher.Deleted -= FileSystemWatcherOnDeleted;
 			ms1.Reset();
-			ms1.Wait(ExpectSuccess).Should().BeTrue();
+			ms1.Wait(ExpectSuccess, token).Should().BeTrue();
 		}
 
 		callCount.Should().BeGreaterThanOrEqualTo(1);
 		int previousCallCount = callCount;
 
 		ms1.Reset();
-		ms1.Wait(ExpectSuccess).Should().BeTrue();
+		ms1.Wait(ExpectSuccess, token).Should().BeTrue();
 		FileSystem.Directory.CreateDirectory("other" + path);
 		FileSystem.Directory.Delete("other" + path);
 		callCount.Should().Be(previousCallCount);
@@ -267,7 +267,7 @@ public abstract partial class EventTests<TFileSystem>
 					while (!token.IsCancellationRequested)
 					{
 						FileSystem.File.Move($"path-{i}", $"path-{++i}");
-						await Task.Delay(10);
+						await Task.Delay(10, token);
 						ms1.Set();
 					}
 				}
@@ -282,17 +282,17 @@ public abstract partial class EventTests<TFileSystem>
 		}
 		finally
 		{
-			ms2.Wait(ExpectSuccess).Should().BeTrue();
+			ms2.Wait(ExpectSuccess, token).Should().BeTrue();
 			fileSystemWatcher.Renamed -= FileSystemWatcherOnRenamed;
 			ms1.Reset();
-			ms1.Wait(ExpectSuccess).Should().BeTrue();
+			ms1.Wait(ExpectSuccess, token).Should().BeTrue();
 		}
 
 		callCount.Should().BeGreaterThanOrEqualTo(1);
 		int previousCallCount = callCount;
 
 		ms1.Reset();
-		ms1.Wait(ExpectSuccess).Should().BeTrue();
+		ms1.Wait(ExpectSuccess, token).Should().BeTrue();
 		FileSystem.File.Move(path, "other-path");
 		callCount.Should().Be(previousCallCount);
 		cts.Cancel();

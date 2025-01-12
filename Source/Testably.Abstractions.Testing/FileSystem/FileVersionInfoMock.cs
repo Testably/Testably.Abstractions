@@ -397,11 +397,11 @@ internal sealed class FileVersionInfoMock : IFileVersionInfo
 		sb.Append("FileDescription:  ").AppendLine(FileDescription);
 		sb.Append("Product:          ").AppendLine(ProductName);
 		sb.Append("ProductVersion:   ").AppendLine(ProductVersion);
-		sb.Append("Debug:            ").AppendLine(IsDebug.ToString());
-		sb.Append("Patched:          ").AppendLine(IsPatched.ToString());
-		sb.Append("PreRelease:       ").AppendLine(IsPreRelease.ToString());
-		sb.Append("PrivateBuild:     ").AppendLine(IsPrivateBuild.ToString());
-		sb.Append("SpecialBuild:     ").AppendLine(IsSpecialBuild.ToString());
+		sb.Append("Debug:            ").Append(IsDebug).AppendLine();
+		sb.Append("Patched:          ").Append(IsPatched).AppendLine();
+		sb.Append("PreRelease:       ").Append(IsPreRelease).AppendLine();
+		sb.Append("PrivateBuild:     ").Append(IsPrivateBuild).AppendLine();
+		sb.Append("SpecialBuild:     ").Append(IsSpecialBuild).AppendLine();
 		sb.Append("Language:         ").AppendLine(Language);
 		return sb.ToString();
 	}

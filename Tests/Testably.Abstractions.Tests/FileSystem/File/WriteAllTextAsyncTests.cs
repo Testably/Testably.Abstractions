@@ -70,7 +70,15 @@ public abstract partial class WriteAllTextAsyncTests<TFileSystem>
 	public async Task WriteAllTextAsync_SpecialCharacters_ShouldReturnSameText(
 		string path)
 	{
-		char[] specialCharacters = ['Ä', 'Ö', 'Ü', 'ä', 'ö', 'ü', 'ß'];
+		char[] specialCharacters = [
+			'Ã„',
+			'Ã–',
+			'Ãœ',
+			'Ã¤',
+			'Ã¶',
+			'Ã¼',
+			'ÃŸ',
+		];
 		foreach (char specialCharacter in specialCharacters)
 		{
 			string contents = "_" + specialCharacter;

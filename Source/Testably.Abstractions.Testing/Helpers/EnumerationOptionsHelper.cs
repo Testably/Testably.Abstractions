@@ -24,7 +24,7 @@ internal static class EnumerationOptionsHelper
 		{
 			MatchType = MatchType.Win32,
 			AttributesToSkip = 0,
-			IgnoreInaccessible = false
+			IgnoreInaccessible = false,
 		};
 
 	/// <summary>
@@ -37,7 +37,7 @@ internal static class EnumerationOptionsHelper
 			RecurseSubdirectories = true,
 			MatchType = MatchType.Win32,
 			AttributesToSkip = 0,
-			IgnoreInaccessible = false
+			IgnoreInaccessible = false,
 		};
 
 	/// <summary>

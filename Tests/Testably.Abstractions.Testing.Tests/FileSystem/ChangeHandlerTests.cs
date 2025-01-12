@@ -130,7 +130,7 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 			{
 				(f, p) => f.File.WriteAllText(p, null), (f, p) => f.File.Delete(p),
 				WatcherChangeTypes.Deleted, FileSystemTypes.File, $"path_{Guid.NewGuid()}"
-			}
+			},
 		};
 	}
 

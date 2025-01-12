@@ -15,5 +15,5 @@ public enum TestSettingStatus
 	/// <summary>
 	///     The tests are always disabled.
 	/// </summary>
-	AlwaysDisabled
+	AlwaysDisabled,
 }

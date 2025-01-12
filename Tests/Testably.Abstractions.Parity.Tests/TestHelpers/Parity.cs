@@ -14,7 +14,7 @@ public class Parity
 		{
 			{
 				nameof(FileStream), nameof(FileSystemStream)
-			}
+			},
 		});
 
 	public ParityCheck Directory { get; } = new();
@@ -24,12 +24,12 @@ public class Parity
 		#pragma warning disable SYSLIB0051
 		typeof(DirectoryInfo).GetMethod(nameof(System.IO.DirectoryInfo.GetObjectData)),
 		#pragma warning restore SYSLIB0051
-		typeof(DirectoryInfo).GetMethod(nameof(System.IO.DirectoryInfo.ToString))
+		typeof(DirectoryInfo).GetMethod(nameof(System.IO.DirectoryInfo.ToString)),
 	});
 
 	public ParityCheck Drive { get; } = new(excludeMethods:
 	[
-		typeof(DriveInfo).GetMethod(nameof(DriveInfo.ToString))
+		typeof(DriveInfo).GetMethod(nameof(DriveInfo.ToString)),
 	]);
 
 	public ParityCheck File { get; } = new();
@@ -39,7 +39,7 @@ public class Parity
 		#pragma warning disable SYSLIB0051
 		typeof(FileInfo).GetMethod(nameof(System.IO.FileInfo.GetObjectData)),
 		#pragma warning restore SYSLIB0051
-		typeof(FileInfo).GetMethod(nameof(System.IO.FileInfo.ToString))
+		typeof(FileInfo).GetMethod(nameof(System.IO.FileInfo.ToString)),
 	});
 
 	public ParityCheck FileStream { get; } = new();
@@ -49,19 +49,19 @@ public class Parity
 		#pragma warning disable SYSLIB0051
 		typeof(FileSystemInfo).GetMethod(nameof(System.IO.FileSystemInfo.GetObjectData)),
 		#pragma warning restore SYSLIB0051
-		typeof(FileSystemInfo).GetMethod(nameof(ToString))
+		typeof(FileSystemInfo).GetMethod(nameof(ToString)),
 	});
 
 	public ParityCheck FileSystemWatcher { get; } = new(excludeMethods:
 	[
 		typeof(FileSystemWatcher).GetMethod(
-			nameof(System.IO.FileSystemWatcher.ToString))
+			nameof(System.IO.FileSystemWatcher.ToString)),
 	]);
 
 	public ParityCheck FileVersionInfo { get; } = new(excludeMethods:
 	[
 		typeof(FileVersionInfo).GetMethod(
-			nameof(System.Diagnostics.FileVersionInfo.ToString))
+			nameof(System.Diagnostics.FileVersionInfo.ToString)),
 	]);
 
 	public ParityCheck Guid { get; } = new();
@@ -69,7 +69,7 @@ public class Parity
 	public ParityCheck Path { get; } = new(excludeFields: new[]
 	{
 		#pragma warning disable CS0618
-		typeof(Path).GetField(nameof(System.IO.Path.InvalidPathChars))
+		typeof(Path).GetField(nameof(System.IO.Path.InvalidPathChars)),
 		#pragma warning restore CS0618
 	});
 
@@ -78,23 +78,23 @@ public class Parity
 	public ParityCheck Timer { get; } = new(excludeMethods:
 		[
 			typeof(Timer).GetMethod(nameof(System.Threading.Timer.Change), [
-				typeof(uint), typeof(uint)
-			])
+				typeof(uint), typeof(uint),
+			]),
 		], excludeConstructors:
 		[
 			typeof(Timer).GetConstructor([
 				typeof(TimerCallback),
 				typeof(object),
 				typeof(uint),
-				typeof(uint)
-			])
+				typeof(uint),
+			]),
 		]);
 
 	public ParityCheck ZipArchive { get; } = new();
 
 	public ParityCheck ZipArchiveEntry { get; } = new(excludeMethods:
 	[
-		typeof(ZipArchiveEntry).GetMethod(nameof(ToString))
+		typeof(ZipArchiveEntry).GetMethod(nameof(ToString)),
 	]);
 
 	public ParityCheck ZipFile { get; } = new();
