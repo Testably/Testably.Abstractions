@@ -302,7 +302,7 @@ public sealed partial class StatisticsTests
 
 			if (type.IsGenericType)
 			{
-				int idx = type.Name.IndexOf('`', StringComparison.Ordinal);
+				int idx = type.Name.IndexOf('`');
 				if (idx > 0)
 				{
 					#pragma warning disable MA0089 // Use an overload with char instead of string
