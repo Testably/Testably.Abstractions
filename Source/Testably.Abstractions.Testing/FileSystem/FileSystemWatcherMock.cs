@@ -358,7 +358,8 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		}
 		else if (!string.Equals(
 			_fileSystem.Execute.Path.GetDirectoryName(changeDescription.Path),
-			fullPath))
+			fullPath,
+			_fileSystem.Execute.StringComparisonMode))
 		{
 			return false;
 		}

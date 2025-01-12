@@ -157,7 +157,7 @@ public abstract class ParameterDescription
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
-			=> $"[{string.Join(",", Value)}]";
+			=> $"[{string.Join(',', Value)}]";
 	}
 #endif
 }

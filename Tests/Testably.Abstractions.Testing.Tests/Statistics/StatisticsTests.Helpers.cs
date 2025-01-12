@@ -36,6 +36,7 @@ public sealed partial class StatisticsTests
 			Type mockType,
 			Type testType)
 		{
+			#pragma warning disable MA0089 // Use an overload with char instead of string
 			string expectedName = $"Method_{methodInfo.Name}_{string.Join("_", methodInfo
 				.GetParameters()
 				.Select(x => FirstCharToUpperAsSpan(GetName(x.ParameterType, true)
@@ -44,6 +45,7 @@ public sealed partial class StatisticsTests
 					// ReSharper disable once StringLiteralTypo
 					.Replace("IEnumerablestring", "IEnumerableString", StringComparison.Ordinal)
 					.Replace("[]", "Array", StringComparison.Ordinal))))}{(parameters.Length > 0 ? "_" : "")}ShouldRegisterCall";
+			#pragma warning restore MA0089
 			if (testType.GetMethod(expectedName) != null)
 			{
 				return;
@@ -303,8 +305,10 @@ public sealed partial class StatisticsTests
 				int idx = type.Name.IndexOf('`', StringComparison.Ordinal);
 				if (idx > 0)
 				{
+					#pragma warning disable MA0089 // Use an overload with char instead of string
 					return
 						$"{type.Name.Substring(0, idx)}<{string.Join(",", type.GenericTypeArguments.Select(x => GetName(x, firstCharUpperCase)))}>";
+					#pragma warning restore MA0089
 				}
 
 				return type.ToString();

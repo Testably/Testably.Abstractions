@@ -159,7 +159,7 @@ internal static class PathHelper
 		string paramName, int? hResult)
 	{
 		#pragma warning disable CA2249 // Consider using String.Contains with char instead of String.IndexOf not possible in .NETSTANDARD2.0
-		if (path.IndexOf('\0') >= 0)
+		if (path.IndexOf('\0', StringComparison.Ordinal) >= 0)
 			#pragma warning restore CA2249
 		{
 			throw ExceptionFactory.PathHasIllegalCharacters(path, paramName, hResult);

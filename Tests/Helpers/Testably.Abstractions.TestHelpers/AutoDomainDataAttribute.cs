@@ -49,7 +49,7 @@ public class AutoDomainDataAttribute : AutoDataAttribute
 		private ICustomization? _customizeWith;
 		private static Lazy<ICustomization[]> _domainCustomisation { get; } = new(Initialize);
 
-		public IFixture GetFixtureFactory()
+		public Fixture GetFixtureFactory()
 		{
 			var fixture = new Fixture();
 			fixture.Customize(new AutoNSubstituteCustomization());

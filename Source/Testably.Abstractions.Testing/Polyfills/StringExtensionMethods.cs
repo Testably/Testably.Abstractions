@@ -39,6 +39,18 @@ internal static class StringExtensionMethods
 	}
 
 	/// <summary>
+	///     Reports the zero-based index of the first occurrence of the specified Unicode character in this string. A parameter
+	///     specifies the type of search to use for the specified character.
+	/// </summary>
+	internal static int IndexOf(
+		this string @this,
+		char value,
+		StringComparison comparisonType)
+	{
+		return @this.IndexOf(value);
+	}
+
+	/// <summary>
 	///     Returns a new string in which all occurrences of a specified string in the current instance are replaced with
 	///     another specified string, using the provided comparison type.
 	/// </summary>

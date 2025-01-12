@@ -8,6 +8,23 @@ namespace Testably.Abstractions.TestSettings;
 
 internal static class Helper
 {
+	private static readonly JsonSerializerOptions ReadJsonSerializerOptions;
+	private static readonly JsonSerializerOptions WriteJsonSerializerOptions;
+
+	static Helper()
+	{
+		ReadJsonSerializerOptions = new JsonSerializerOptions();
+		ReadJsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+		WriteJsonSerializerOptions = new JsonSerializerOptions
+		{
+			WriteIndented = true,
+			Converters =
+			{
+				new JsonStringEnumConverter()
+			}
+		};
+	}
+
 	public static TestEnvironment ChangeTestSettings(
 		Action<TestEnvironment> change)
 	{
@@ -26,9 +43,7 @@ internal static class Helper
 		{
 			string path = GetTestSettingsPath();
 			string content = File.ReadAllText(path);
-			JsonSerializerOptions options = new();
-			options.Converters.Add(new JsonStringEnumConverter());
-			return JsonSerializer.Deserialize<TestEnvironment>(content, options)
+			return JsonSerializer.Deserialize<TestEnvironment>(content, ReadJsonSerializerOptions)
 			       ?? throw new NotSupportedException("The file has an invalid syntax!");
 		}
 		catch (Exception)
@@ -39,14 +54,7 @@ internal static class Helper
 
 	private static void WriteTestSettings(TestEnvironment environment)
 	{
-		string content = JsonSerializer.Serialize(environment, new JsonSerializerOptions
-		{
-			WriteIndented = true,
-			Converters =
-			{
-				new JsonStringEnumConverter()
-			}
-		});
+		string content = JsonSerializer.Serialize(environment, WriteJsonSerializerOptions);
 		string path = GetTestSettingsPath();
 		File.WriteAllText(path, content);
 	}

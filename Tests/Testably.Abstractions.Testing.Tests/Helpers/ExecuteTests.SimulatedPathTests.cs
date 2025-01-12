@@ -2,9 +2,9 @@
 
 public sealed partial class ExecuteTests
 {
+#if CAN_SIMULATE_OTHER_OS
 	public sealed class SimulatedPathTests
 	{
-#if CAN_SIMULATE_OTHER_OS
 		[Theory]
 		[InlineData(SimulationMode.Linux)]
 		[InlineData(SimulationMode.MacOS)]
@@ -15,6 +15,6 @@ public sealed partial class ExecuteTests
 
 			sut.Execute.Path.FileSystem.Should().BeSameAs(sut);
 		}
-#endif
 	}
+#endif
 }

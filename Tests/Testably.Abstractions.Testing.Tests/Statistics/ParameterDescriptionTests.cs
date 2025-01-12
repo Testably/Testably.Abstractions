@@ -114,7 +114,7 @@ public sealed class ParameterDescriptionTests
 	{
 		ReadOnlySpan<char> value = buffer.AsSpan();
 		ParameterDescription sut = ParameterDescription.FromParameter(value);
-		string expectedString = $"[{string.Join(",", buffer.ToCharArray())}]";
+		string expectedString = $"[{string.Join(',', buffer.ToCharArray())}]";
 
 		string? result = sut.ToString();
 
@@ -129,7 +129,7 @@ public sealed class ParameterDescriptionTests
 	{
 		Span<int> value = buffer.AsSpan();
 		ParameterDescription sut = ParameterDescription.FromParameter(value);
-		string expectedString = $"[{string.Join(",", buffer)}]";
+		string expectedString = $"[{string.Join(',', buffer)}]";
 
 		string? result = sut.ToString();
 

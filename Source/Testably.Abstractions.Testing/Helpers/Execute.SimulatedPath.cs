@@ -57,7 +57,9 @@ internal sealed partial class Execute
 				return path + extension;
 			}
 
+			#pragma warning disable CA1845 // Use span-based 'string.Concat' and 'AsSpan' instead of 'Substring
 			return path.Substring(0, dotIndex.Value) + extension;
+			#pragma warning restore CA1845
 		}
 
 		/// <inheritdoc cref="IPath.Combine(string, string)" />
