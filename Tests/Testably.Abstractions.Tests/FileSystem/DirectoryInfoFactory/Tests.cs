@@ -22,7 +22,7 @@ public abstract partial class Tests<TFileSystem>
 
 		exception.Should().BeException<ArgumentException>(expectedMessage,
 #if !NETFRAMEWORK
-			paramName: "path",
+			paramName: nameof(path),
 #endif
 			hResult: -2147024809);
 	}
