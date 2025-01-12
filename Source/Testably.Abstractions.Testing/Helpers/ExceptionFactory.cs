@@ -21,7 +21,7 @@ internal static class ExceptionFactory
 
 	internal static ArgumentException AppendAccessOnlyInWriteOnlyMode(
 		string paramName = "access")
-		=> new($"{FileMode.Append} access can be requested only in write-only mode.",
+		=> new($"{nameof(FileMode.Append)} access can be requested only in write-only mode.",
 			paramName)
 		{
 #if FEATURE_EXCEPTION_HRESULT

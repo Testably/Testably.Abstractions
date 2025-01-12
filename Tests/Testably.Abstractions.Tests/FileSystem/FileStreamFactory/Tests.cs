@@ -18,7 +18,7 @@ public abstract partial class Tests<TFileSystem>
 		});
 
 		exception.Should().BeException<ArgumentException>(
-			messageContains: FileMode.Append.ToString(),
+			messageContains: nameof(FileMode.Append),
 			hResult: -2147024809,
 			paramName: Test.IsNetFramework ? null : "access");
 	}
