@@ -249,7 +249,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 			throw ExceptionFactory.FileAlreadyExists(
 				_fileSystem.Execute.Path.GetFullPath(base.Name), 17);
 		}
-		else if (_mode.Equals(FileMode.CreateNew))
+
+		if (_mode.Equals(FileMode.CreateNew))
 		{
 			throw ExceptionFactory.FileAlreadyExists(
 				_fileSystem.Execute.Path.GetFullPath(Name),
