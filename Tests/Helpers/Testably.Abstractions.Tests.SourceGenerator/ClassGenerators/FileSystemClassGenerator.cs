@@ -264,7 +264,7 @@ internal sealed class FileSystemClassGenerator : ClassGeneratorBase
 		}
 	}
 
-	private bool IncludeSimulatedTests(ClassModel @class)
+	private static bool IncludeSimulatedTests(ClassModel @class)
 	{
 		return !@class.Namespace.Equals(
 			"Testably.Abstractions.AccessControl.Tests", StringComparison.Ordinal);

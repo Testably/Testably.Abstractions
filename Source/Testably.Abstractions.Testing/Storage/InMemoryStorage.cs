@@ -128,8 +128,7 @@ internal sealed class InMemoryStorage : IStorage
 		if (!_containers.TryGetValue(location, out IStorageContainer? container))
 		{
 			IStorageLocation? parentLocation = location.GetParent();
-			if (parentLocation != null &&
-			    !_containers.TryGetValue(parentLocation, out _))
+			if (parentLocation != null && !_containers.ContainsKey(parentLocation))
 			{
 				throw ExceptionFactory.DirectoryNotFound(parentLocation.FullPath);
 			}
@@ -1044,7 +1043,7 @@ internal sealed class InMemoryStorage : IStorage
 			    _fileSystem.Execute.Path.GetPathRoot(parentLocation.FullPath),
 			    parentLocation.FullPath,
 			    _fileSystem.Execute.StringComparisonMode) &&
-		    !_containers.TryGetValue(parentLocation, out _))
+		    !_containers.ContainsKey(parentLocation))
 		{
 			throw exceptionCallback(parentLocation);
 		}

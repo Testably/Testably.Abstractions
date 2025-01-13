@@ -125,7 +125,7 @@ public sealed class MockFileSystem : IFileSystem
 #endif
 		Registration = new FileSystemRegistration();
 		StatisticsRegistration = new FileSystemStatistics(this);
-		using IDisposable release = Registration.Ignore();
+		using IDisposable release = FileSystemRegistration.Ignore();
 		RandomSystem =
 			new MockRandomSystem(initialization.RandomProvider ?? RandomProvider.Default());
 		TimeSystem = new MockTimeSystem(TimeProvider.Now());

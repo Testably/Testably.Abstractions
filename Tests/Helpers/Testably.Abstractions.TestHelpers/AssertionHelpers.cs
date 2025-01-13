@@ -124,7 +124,8 @@ public static class AssertionHelpers
 	{
 		if (messageContains != null)
 		{
-			#pragma warning disable MA0074
+			#pragma warning disable MA0074 // Avoid implicit culture-sensitive methods
+			#pragma warning disable MA0001 // Use an overload of 'Contains' that has a StringComparison parameter
 			Execute.Assertion
 				.ForCondition(exception.Message.Contains(messageContains))
 				.BecauseOf(because, becauseArgs)
@@ -133,6 +134,7 @@ public static class AssertionHelpers
 					"Expected {context} to have a message containing {0}{reason}, but found {1}.",
 					messageContains,
 					exception.Message);
+			#pragma warning restore MA0001
 			#pragma warning restore MA0074
 		}
 	}

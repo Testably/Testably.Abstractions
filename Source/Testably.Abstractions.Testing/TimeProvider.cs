@@ -24,8 +24,10 @@ public static class TimeProvider
 	/// </summary>
 	public static ITimeProvider Random()
 	{
+		#pragma warning disable MA0113 // Use DateTime.UnixEpoch
 		DateTime randomTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
 			.AddSeconds(RandomFactory.Shared.Next());
+		#pragma warning restore MA0113
 		return new TimeProviderMock(randomTime, "Random");
 	}
 

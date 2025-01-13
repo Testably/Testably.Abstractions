@@ -138,7 +138,7 @@ public class DriveInfoMockTests
 		expectedName = expectedName
 			.Replace('/', FileSystem.Path.DirectorySeparatorChar);
 
-		IDriveInfo drive =
+		DriveInfoMock drive =
 			DriveInfoMock.New(driveName, FileSystem);
 
 		drive.Name.Should().Be(expectedName);

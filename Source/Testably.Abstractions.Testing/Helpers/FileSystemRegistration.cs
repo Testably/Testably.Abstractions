@@ -43,7 +43,7 @@ internal sealed class FileSystemRegistration : IStatisticsGate
 	/// <summary>
 	///     Ignores all registrations until the return value is disposed.
 	/// </summary>
-	internal IDisposable Ignore()
+	internal static IDisposable Ignore()
 	{
 		if (IsDisabled.Value)
 		{
@@ -59,7 +59,7 @@ internal sealed class FileSystemRegistration : IStatisticsGate
 		});
 	}
 
-	internal bool IsInitializing()
+	internal static bool IsInitializing()
 		=> IsInit.Value;
 
 	private sealed class TemporaryDisable : IDisposable
