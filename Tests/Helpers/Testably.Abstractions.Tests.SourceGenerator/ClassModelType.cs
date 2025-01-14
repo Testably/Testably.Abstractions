@@ -4,5 +4,5 @@ internal enum ClassModelType
 {
 	FileSystem,
 	RandomSystem,
-	TimeSystem
+	TimeSystem,
 }

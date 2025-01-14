@@ -4,6 +4,7 @@ using System.Text;
 namespace Testably.Abstractions.Tests.SourceGenerator;
 
 #pragma warning disable MA0051
+#pragma warning disable MA0028
 internal static partial class SourceGenerationHelper
 {
 	public static string GenerateFileSystemTestClasses(ClassModel model)
@@ -292,4 +293,5 @@ internal static partial class SourceGenerationHelper
 				"Testably.Abstractions.AccessControl.Tests", StringComparison.Ordinal);
 	}
 }
+#pragma warning restore MA0028
 #pragma warning restore MA0051

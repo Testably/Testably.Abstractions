@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace Testably.Abstractions.Tests.SourceGenerator;
 
@@ -79,7 +80,8 @@ internal static partial class SourceGenerationHelper
 		{
 			ClassModelType.FileSystem => GenerateFileSystemTestClasses(model),
 			ClassModelType.TimeSystem => GenerateTimeSystemTestClasses(model),
-			ClassModelType.RandomSystem => GenerateRandomSystemTestClasses(model)
+			ClassModelType.RandomSystem => GenerateRandomSystemTestClasses(model),
+			_ => throw new NotSupportedException(),
 		};
 
 	private static StringBuilder GetSourceBuilder()
