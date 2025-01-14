@@ -9,10 +9,8 @@ using System.Threading;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class ExceptionMissingFileTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class ExceptionMissingFileTests
 {
 	[SkippableTheory]
 	[MemberData(nameof(GetFileCallbacks), parameters: (int)MissingFileTestCases.DirectoryMissing)]

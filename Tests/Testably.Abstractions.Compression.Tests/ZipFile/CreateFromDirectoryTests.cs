@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using System.IO.Compression;
+﻿using System.IO.Compression;
 using System.Text;
 #if FEATURE_COMPRESSION_STREAM
 using System.IO;
@@ -8,10 +7,8 @@ using Testably.Abstractions.Compression.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Compression.Tests.ZipFile;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class CreateFromDirectoryTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class CreateFromDirectoryTests
 {
 	[SkippableTheory]
 	[AutoData]

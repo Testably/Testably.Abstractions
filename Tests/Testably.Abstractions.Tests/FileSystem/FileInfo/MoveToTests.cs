@@ -2,10 +2,8 @@ using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class MoveToTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class MoveToTests
 {
 	[SkippableTheory]
 	[AutoData]

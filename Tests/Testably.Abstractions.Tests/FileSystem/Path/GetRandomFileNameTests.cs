@@ -3,10 +3,8 @@ using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class GetRandomFileNameTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class GetRandomFileNameTests
 {
 	[SkippableFact]
 	public void GetRandomFileName_ShouldMatch8Dot3Pattern()

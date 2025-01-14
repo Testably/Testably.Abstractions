@@ -5,10 +5,8 @@ using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class TimerTests<TTimeSystem>
-	: TimeSystemTestBase<TTimeSystem>
-	where TTimeSystem : ITimeSystem
+[TimeSystemTests]
+public partial class TimerTests
 {
 	#region Test Setup
 

@@ -1,15 +1,11 @@
-using aweXpect;
 using System.Security.AccessControl;
-using System.Threading.Tasks;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
 using Skip = Xunit.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class DirectoryAclExtensionsTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class DirectoryAclExtensionsTests
 {
 	[SkippableFact]
 	public async Task CreateDirectory_NullDirectorySecurity_ShouldThrowArgumentNullException()

@@ -5,10 +5,8 @@ using Skip = Xunit.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class FileInfoAclExtensionsTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class FileInfoAclExtensionsTests
 {
 	[SkippableFact]
 	public async Task GetAccessControl_MissingFile_ShouldThrowFileNotFoundException()

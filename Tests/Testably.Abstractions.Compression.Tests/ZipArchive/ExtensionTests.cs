@@ -5,10 +5,8 @@ using System.Linq;
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchive;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class ExtensionTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class ExtensionTests
 {
 	[SkippableTheory]
 	[InlineData("2000-01-01T12:14:15")]

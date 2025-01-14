@@ -4,11 +4,8 @@ using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 
-// ReSharper disable once PartialTypeWithSinglePart
-[Collection("RealFileSystemTests")]
-public abstract partial class WaitForChangedTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class WaitForChangedTests
 {
 	[SkippableTheory]
 	[AutoData]

@@ -3,10 +3,8 @@ using Testably.Abstractions.Testing.Initializer;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class MoveTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class MoveTests
 {
 	[SkippableTheory]
 	[AutoData]
@@ -16,7 +14,7 @@ public abstract partial class MoveTests<TFileSystem>
 
 		string source = path.ToLowerInvariant();
 		string destination = path.ToUpperInvariant();
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
 				.WithSubdirectory(source).Initialized(s => s
 					.WithAFile()
@@ -98,7 +96,7 @@ public abstract partial class MoveTests<TFileSystem>
 	[AutoData]
 	public void Move_ShouldMoveDirectoryWithContent(string source, string destination)
 	{
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
 				.WithSubdirectory(source).Initialized(s => s
 					.WithAFile()
@@ -178,7 +176,7 @@ public abstract partial class MoveTests<TFileSystem>
 	{
 		Skip.If(Test.RunsOnWindows);
 
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
 				.WithSubdirectory(source).Initialized(s => s
 					.WithAFile()
@@ -219,7 +217,7 @@ public abstract partial class MoveTests<TFileSystem>
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
 				.WithSubdirectory(source).Initialized(s => s
 					.WithAFile()
@@ -257,7 +255,7 @@ public abstract partial class MoveTests<TFileSystem>
 	public void Move_WithReadOnlyFile_ShouldMoveDirectoryWithContent(
 		string source, string destination)
 	{
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
 				.WithSubdirectory(source).Initialized(s => s
 					.WithAFile()

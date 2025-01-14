@@ -1,10 +1,8 @@
 #if FEATURE_PATH_JOIN
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class JoinTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class JoinTests
 {
 	[SkippableTheory]
 	[InlineAutoData((string?)null)]

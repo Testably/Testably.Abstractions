@@ -5,10 +5,8 @@ using Testably.Abstractions.Testing.Initializer;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class EnumerateFilesTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class EnumerateFilesTests
 {
 	[SkippableTheory]
 	[AutoData]
@@ -33,7 +31,7 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 		EnumerateFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
 			string path)
 	{
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.InitializeIn(path)
 				.WithAFile()
 				.WithASubdirectory().Initialized(s => s
@@ -54,7 +52,7 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 	public void EnumerateFiles_SearchOptionAllDirectories_ShouldReturnAllFiles(
 		string path)
 	{
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.InitializeIn(path)
 				.WithAFile()
 				.WithASubdirectory().Initialized(s => s
@@ -361,7 +359,7 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 		EnumerateFiles_WithoutSearchString_ShouldReturnAllFilesInDirectSubdirectories(
 			string path)
 	{
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.InitializeIn(path)
 				.WithAFile()
 				.WithAFile()
@@ -383,7 +381,7 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 	public void EnumerateFiles_WithSearchPattern_ShouldReturnMatchingFiles(
 		string path)
 	{
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.InitializeIn(path)
 				.WithAFile()
 				.WithAFile()
@@ -404,7 +402,7 @@ public abstract partial class EnumerateFilesTests<TFileSystem>
 	public void
 		EnumerateFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
 	{
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
 				.WithASubdirectory().Initialized(s => s
 					.WithAFile("foobar"))

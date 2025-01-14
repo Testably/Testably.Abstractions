@@ -4,10 +4,8 @@ using System.IO.Compression;
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchive;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class Tests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class Tests
 {
 #if FEATURE_ZIPFILE_NET7
 	[SkippableFact]

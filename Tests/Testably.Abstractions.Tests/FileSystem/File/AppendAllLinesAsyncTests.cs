@@ -10,10 +10,8 @@ using System.Threading.Tasks;
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
 // ReSharper disable MethodHasAsyncOverload
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class AppendAllLinesAsyncTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class AppendAllLinesAsyncTests
 {
 	[SkippableTheory]
 	[AutoData]

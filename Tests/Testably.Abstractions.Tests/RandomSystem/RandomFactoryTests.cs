@@ -4,10 +4,8 @@ using Testably.Abstractions.RandomSystem;
 
 namespace Testably.Abstractions.Tests.RandomSystem;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class RandomFactoryTests<TRandomSystem>
-	: RandomSystemTestBase<TRandomSystem>
-	where TRandomSystem : IRandomSystem
+[RandomSystemTests]
+public partial class RandomFactoryTests
 {
 	[SkippableFact]
 	public void New_Next_ShouldReturnDifferentValues()

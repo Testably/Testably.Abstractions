@@ -6,10 +6,8 @@ using Skip = Xunit.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class DirectoryInfoAclExtensionsTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class DirectoryInfoAclExtensionsTests
 {
 	[SkippableFact]
 	public async Task Create_NullDirectorySecurity_ShouldThrowArgumentNullException()

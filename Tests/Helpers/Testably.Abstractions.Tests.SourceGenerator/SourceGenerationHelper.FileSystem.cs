@@ -18,244 +18,273 @@ internal static partial class SourceGenerationHelper
 
 		                namespace {{model.Namespace}}
 		                {
-		                	public abstract partial class {{model.Name}}<TFileSystem>
+		                	public abstract partial class {{model.Name}}
 		                	{
-		                		protected {{model.Name}}(Test test, TFileSystem fileSystem, ITimeSystem timeSystem)
-		                			: base(test, fileSystem, timeSystem)
-		                		{
-		                		}
-		                	}
-		                }
-
-		                namespace {{model.Namespace}}.{{model.Name}}
-		                {
-		                	// ReSharper disable once UnusedMember.Global
-		                	public sealed class MockFileSystemTests : {{model.Name}}<MockFileSystem>, IDisposable
-		                	{
-		                		/// <inheritdoc cref="{{model.Name}}{TFileSystem}.BasePath" />
-		                		public override string BasePath => _directoryCleaner.BasePath;
+		                		/// <summary>
+		                		///     The delay in milliseconds when wanting to ensure a timeout in the test.
+		                		/// </summary>
+		                		public const int EnsureTimeout = 500;
 		                
-		                		private readonly IDirectoryCleaner _directoryCleaner;
+		                		/// <summary>
+		                		///     The delay in milliseconds when expecting a success in the test.
+		                		/// </summary>
+		                		public const int ExpectSuccess = 30000;
 		                
-		                		public MockFileSystemTests() : this(new MockFileSystem())
-		                		{
-		                		}
+		                		/// <summary>
+		                		///     The delay in milliseconds when expecting a timeout in the test.
+		                		/// </summary>
+		                		public const int ExpectTimeout = 30;
 		                
-		                		private MockFileSystemTests(MockFileSystem mockFileSystem) : base(
-		                			new Test(),
-		                			mockFileSystem,
-		                			mockFileSystem.TimeSystem)
+		                		public abstract string BasePath { get; }
+		                		public IFileSystem FileSystem { get; }
+		                		public Test Test { get; }
+		                		public ITimeSystem TimeSystem { get; }
+		                
+		                		protected {{model.Name}}(Test test, IFileSystem fileSystem, ITimeSystem timeSystem)
 		                		{
-		                			_directoryCleaner = FileSystem
-		                			   .SetCurrentDirectoryToEmptyTemporaryDirectory();
+		                			Test = test;
+		                			FileSystem = fileSystem;
+		                			TimeSystem = timeSystem;
 		                		}
 		                
-		                		/// <inheritdoc cref="IDisposable.Dispose()" />
-		                		public void Dispose()
-		                			=> _directoryCleaner.Dispose();
+		                		/// <summary>
+		                		///     Specifies, if brittle tests should be skipped on the real file system.
+		                		/// </summary>
+		                		/// <param name="condition">
+		                		///     (optional) A condition that must be <see langword="true" /> for the test to be skipped on the
+		                		///     real file system.
+		                		/// </param>
+		                		public abstract void SkipIfBrittleTestsShouldBeSkipped(bool condition = true);
 		                
-		                		/// <inheritdoc cref="{{model.Name}}{TFileSystem}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
-		                		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+		                		/// <summary>
+		                		///     Specifies, if long-running tests should be skipped on the real file system.
+		                		/// </summary>
+		                		public abstract void SkipIfLongRunningTestsShouldBeSkipped();
+		                
+		                
+		                		// ReSharper disable once UnusedMember.Global
+		                		public sealed class MockFileSystemTests : {{model.Name}}, IDisposable
 		                		{
-		                			// Brittle tests are never skipped against the mock file system!
-		                		}
+		                			/// <inheritdoc cref="{{model.Name}}.BasePath" />
+		                			public override string BasePath => _directoryCleaner.BasePath;
 		                
-		                		/// <inheritdoc cref="{{model.Name}}{TFileSystem}.LongRunningTestsShouldBeSkipped()" />
-		                		public override void SkipIfLongRunningTestsShouldBeSkipped()
-		                		{
-		                			// Long-running tests are never skipped against the mock file system!
-		                		}
-		                	}
-		                }
-
-		                namespace {{model.Namespace}}.{{model.Name}}
-		                {
-		                	// ReSharper disable once UnusedMember.Global
-		                	[Collection(nameof(RealFileSystemTests))]
-		                	public sealed class RealFileSystemTests : {{model.Name}}<RealFileSystem>, IDisposable
-		                	{
-		                		/// <inheritdoc cref="{{model.Name}}{TFileSystem}.BasePath" />
-		                		public override string BasePath => _directoryCleaner.BasePath;
+		                			private readonly IDirectoryCleaner _directoryCleaner;
 		                
-		                		private readonly IDirectoryCleaner _directoryCleaner;
-		                		private readonly TestSettingsFixture _fixture;
-		                
-		                		public RealFileSystemTests(ITestOutputHelper testOutputHelper, TestSettingsFixture fixture)
-		                			: base(new Test(), new RealFileSystem(), new RealTimeSystem())
-		                		{
-		                #if DEBUG
-		                			if (fixture.RealFileSystemTests != TestSettingStatus.AlwaysEnabled)
+		                			public MockFileSystemTests() : this(new MockFileSystem())
 		                			{
-		                				throw new Xunit.SkipException($"Tests against the real file system are {fixture.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
 		                			}
-		                #else
-		                			if (fixture.RealFileSystemTests == TestSettingStatus.AlwaysDisabled)
-		                			{
-		                				throw new Xunit.SkipException($"Tests against the real file system are {fixture.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
-		                			}
-		                #endif
-		                			_fixture = fixture;
-		                			_directoryCleaner = FileSystem
-		                			   .SetCurrentDirectoryToEmptyTemporaryDirectory($"{{model.Namespace}}{FileSystem.Path.DirectorySeparatorChar}{{model.Name}}-", testOutputHelper.WriteLine);
-		                		}
 		                
-		                		/// <inheritdoc cref="IDisposable.Dispose()" />
-		                		public void Dispose()
-		                			=> _directoryCleaner.Dispose();
+		                			private MockFileSystemTests(MockFileSystem mockFileSystem) : base(
+		                				new Test(),
+		                				mockFileSystem,
+		                				mockFileSystem.TimeSystem)
+		                			{
+		                				_directoryCleaner = FileSystem
+		                				   .SetCurrentDirectoryToEmptyTemporaryDirectory();
+		                			}
+		                
+		                			/// <inheritdoc cref="IDisposable.Dispose()" />
+		                			public void Dispose()
+		                				=> _directoryCleaner.Dispose();
+		                
+		                			/// <inheritdoc cref="{{model.Name}}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
+		                			public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+		                			{
+		                				// Brittle tests are never skipped against the mock file system!
+		                			}
+		                
+		                			/// <inheritdoc cref="{{model.Name}}.LongRunningTestsShouldBeSkipped()" />
+		                			public override void SkipIfLongRunningTestsShouldBeSkipped()
+		                			{
+		                				// Long-running tests are never skipped against the mock file system!
+		                			}
+		                		}
+		                		// ReSharper disable once UnusedMember.Global
+		                		[Collection("RealFileSystemTests")]
+		                		public sealed class RealFileSystemTests : {{model.Name}}, IDisposable
+		                		{
+		                			/// <inheritdoc cref="{{model.Name}}.BasePath" />
+		                			public override string BasePath => _directoryCleaner.BasePath;
+		                
+		                			private readonly IDirectoryCleaner _directoryCleaner;
+		                			private readonly TestSettingsFixture _fixture;
+		                
+		                			public RealFileSystemTests(ITestOutputHelper testOutputHelper, TestSettingsFixture fixture)
+		                				: base(new Test(), new RealFileSystem(), new RealTimeSystem())
+		                			{
+		                #if DEBUG
+		                				if (fixture.RealFileSystemTests != TestSettingStatus.AlwaysEnabled)
+		                				{
+		                					throw new Xunit.SkipException($"Tests against the real file system are {fixture.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
+		                				}
+		                #else
+		                				if (fixture.RealFileSystemTests == TestSettingStatus.AlwaysDisabled)
+		                				{
+		                					throw new Xunit.SkipException($"Tests against the real file system are {fixture.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
+		                				}
+		                #endif
+		                				_fixture = fixture;
+		                				_directoryCleaner = FileSystem
+		                				   .SetCurrentDirectoryToEmptyTemporaryDirectory($"{{model.Namespace}}{FileSystem.Path.DirectorySeparatorChar}{{model.Name}}-", testOutputHelper.WriteLine);
+		                			}
+		                
+		                			/// <inheritdoc cref="IDisposable.Dispose()" />
+		                			public void Dispose()
+		                				=> _directoryCleaner.Dispose();
 
 		                #if DEBUG
-		                		/// <inheritdoc cref="{{model.Name}}{TFileSystem}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
-		                		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
-		                			=> Xunit.Skip.If(condition && _fixture.BrittleTests != TestSettingStatus.AlwaysEnabled,
-		                				$"Brittle tests are {_fixture.BrittleTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests.");
+		                			/// <inheritdoc cref="{{model.Name}}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
+		                			public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+		                				=> Xunit.Skip.If(condition && _fixture.BrittleTests != TestSettingStatus.AlwaysEnabled,
+		                					$"Brittle tests are {_fixture.BrittleTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests.");
 		                #else
-		                		/// <inheritdoc cref="{{model.Name}}{TFileSystem}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
-		                		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
-		                			=> Xunit.Skip.If(condition && _fixture.BrittleTests == TestSettingStatus.AlwaysDisabled,
-		                				$"Brittle tests are {_fixture.BrittleTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests.");
+		                			/// <inheritdoc cref="{{model.Name}}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
+		                			public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+		                				=> Xunit.Skip.If(condition && _fixture.BrittleTests == TestSettingStatus.AlwaysDisabled,
+		                					$"Brittle tests are {_fixture.BrittleTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests.");
 		                #endif
 
 		                #if DEBUG
-		                		/// <inheritdoc cref="{{model.Name}}{TFileSystem}.LongRunningTestsShouldBeSkipped()" />
-		                		public override void SkipIfLongRunningTestsShouldBeSkipped()
-		                			=> Xunit.Skip.If(_fixture.LongRunningTests != TestSettingStatus.AlwaysEnabled,
-		                				$"Long-running tests are {_fixture.LongRunningTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.LongRunningTests.");
+		                			/// <inheritdoc cref="{{model.Name}}.LongRunningTestsShouldBeSkipped()" />
+		                			public override void SkipIfLongRunningTestsShouldBeSkipped()
+		                				=> Xunit.Skip.If(_fixture.LongRunningTests != TestSettingStatus.AlwaysEnabled,
+		                					$"Long-running tests are {_fixture.LongRunningTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.LongRunningTests.");
 		                #else
-		                		/// <inheritdoc cref="{{model.Name}}{TFileSystem}.LongRunningTestsShouldBeSkipped()" />
-		                		public override void SkipIfLongRunningTestsShouldBeSkipped()
-		                			=> Xunit.Skip.If(_fixture.LongRunningTests == TestSettingStatus.AlwaysDisabled,
-		                				$"Long-running tests are {_fixture.LongRunningTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.LongRunningTests.");
+		                			/// <inheritdoc cref="{{model.Name}}.LongRunningTestsShouldBeSkipped()" />
+		                			public override void SkipIfLongRunningTestsShouldBeSkipped()
+		                				=> Xunit.Skip.If(_fixture.LongRunningTests == TestSettingStatus.AlwaysDisabled,
+		                					$"Long-running tests are {_fixture.LongRunningTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.LongRunningTests.");
 		                #endif
-		                	}
-		                }
+		                		}
 		                """);
 		if (IncludeSimulatedTests(model))
 		{
 			sb.AppendLine($$"""
 
 			                #if !NETFRAMEWORK
-			                namespace {{model.Namespace}}.{{model.Name}}
-			                {
-			                	// ReSharper disable once UnusedMember.Global
-			                	public sealed class LinuxFileSystemTests : {{model.Name}}<MockFileSystem>, IDisposable
-			                	{
-			                		/// <inheritdoc cref="{{model.Name}}{TFileSystem}.BasePath" />
-			                		public override string BasePath => _directoryCleaner.BasePath;
-			                
-			                		private readonly IDirectoryCleaner _directoryCleaner;
-			                
-			                		public LinuxFileSystemTests() : this(new MockFileSystem(o =>
-			                			o.SimulatingOperatingSystem(SimulationMode.Linux)))
+			                		// ReSharper disable once UnusedMember.Global
+			                		public sealed class LinuxFileSystemTests : {{model.Name}}, IDisposable
 			                		{
-			                		}
+			                			/// <inheritdoc cref="{{model.Name}}.BasePath" />
+			                			public override string BasePath => _directoryCleaner.BasePath;
 			                
-			                		private LinuxFileSystemTests(MockFileSystem mockFileSystem) : base(
-			                			new Test(OSPlatform.Linux),
-			                			mockFileSystem,
-			                			mockFileSystem.TimeSystem)
-			                		{
-			                			_directoryCleaner = FileSystem
-			                			   .SetCurrentDirectoryToEmptyTemporaryDirectory();
-			                		}
+			                			private readonly IDirectoryCleaner _directoryCleaner;
 			                
-			                		/// <inheritdoc cref="IDisposable.Dispose()" />
-			                		public void Dispose()
-			                			=> _directoryCleaner.Dispose();
+			                			public LinuxFileSystemTests() : this(new MockFileSystem(o =>
+			                				o.SimulatingOperatingSystem(SimulationMode.Linux)))
+			                			{
+			                			}
 			                
-			                		/// <inheritdoc cref="{{model.Name}}{TFileSystem}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
-			                		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
-			                		{
-			                			// Brittle tests are never skipped against the mock file system!
+			                			private LinuxFileSystemTests(MockFileSystem mockFileSystem) : base(
+			                				new Test(OSPlatform.Linux),
+			                				mockFileSystem,
+			                				mockFileSystem.TimeSystem)
+			                			{
+			                				_directoryCleaner = FileSystem
+			                				   .SetCurrentDirectoryToEmptyTemporaryDirectory();
+			                			}
+			                
+			                			/// <inheritdoc cref="IDisposable.Dispose()" />
+			                			public void Dispose()
+			                				=> _directoryCleaner.Dispose();
+			                
+			                			/// <inheritdoc cref="{{model.Name}}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
+			                			public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+			                			{
+			                				// Brittle tests are never skipped against the mock file system!
+			                			}
+			                			/// <inheritdoc cref="{{model.Name}}.LongRunningTestsShouldBeSkipped()" />
+			                			public override void SkipIfLongRunningTestsShouldBeSkipped()
+			                			{
+			                				// Long-running tests are never skipped against the mock file system!
+			                			}
 			                		}
-			                		/// <inheritdoc cref="{{model.Name}}{TFileSystem}.LongRunningTestsShouldBeSkipped()" />
-			                		public override void SkipIfLongRunningTestsShouldBeSkipped()
-			                		{
-			                			// Long-running tests are never skipped against the mock file system!
-			                		}
-			                	}
 			                #endif
 
 			                #if !NETFRAMEWORK
-			                	// ReSharper disable once UnusedMember.Global
-			                	public sealed class MacFileSystemTests : {{model.Name}}<MockFileSystem>, IDisposable
-			                	{
-			                		/// <inheritdoc cref="{{model.Name}}{TFileSystem}.BasePath" />
-			                		public override string BasePath => _directoryCleaner.BasePath;
-			                
-			                		private readonly IDirectoryCleaner _directoryCleaner;
-			                
-			                		public MacFileSystemTests() : this(new MockFileSystem(o =>
-			                			o.SimulatingOperatingSystem(SimulationMode.MacOS)))
+			                		// ReSharper disable once UnusedMember.Global
+			                		public sealed class MacFileSystemTests : {{model.Name}}, IDisposable
 			                		{
-			                		}
-			                		private MacFileSystemTests(MockFileSystem mockFileSystem) : base(
-			                			new Test(OSPlatform.OSX),
-			                			mockFileSystem,
-			                			mockFileSystem.TimeSystem)
-			                		{
-			                			_directoryCleaner = FileSystem
-			                			   .SetCurrentDirectoryToEmptyTemporaryDirectory();
-			                		}
+			                			/// <inheritdoc cref="{{model.Name}}.BasePath" />
+			                			public override string BasePath => _directoryCleaner.BasePath;
 			                
-			                		/// <inheritdoc cref="IDisposable.Dispose()" />
-			                		public void Dispose()
-			                			=> _directoryCleaner.Dispose();
+			                			private readonly IDirectoryCleaner _directoryCleaner;
 			                
-			                		/// <inheritdoc cref="{{model.Name}}{TFileSystem}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
-			                		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
-			                		{
-			                			// Brittle tests are never skipped against the mock file system!
+			                			public MacFileSystemTests() : this(new MockFileSystem(o =>
+			                				o.SimulatingOperatingSystem(SimulationMode.MacOS)))
+			                			{
+			                			}
+			                			private MacFileSystemTests(MockFileSystem mockFileSystem) : base(
+			                				new Test(OSPlatform.OSX),
+			                				mockFileSystem,
+			                				mockFileSystem.TimeSystem)
+			                			{
+			                				_directoryCleaner = FileSystem
+			                				   .SetCurrentDirectoryToEmptyTemporaryDirectory();
+			                			}
+			                
+			                			/// <inheritdoc cref="IDisposable.Dispose()" />
+			                			public void Dispose()
+			                				=> _directoryCleaner.Dispose();
+			                
+			                			/// <inheritdoc cref="{{model.Name}}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
+			                			public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+			                			{
+			                				// Brittle tests are never skipped against the mock file system!
+			                			}
+			                			/// <inheritdoc cref="{{model.Name}}.LongRunningTestsShouldBeSkipped()" />
+			                			public override void SkipIfLongRunningTestsShouldBeSkipped()
+			                			{
+			                				// Long-running tests are never skipped against the mock file system!
+			                			}
 			                		}
-			                		/// <inheritdoc cref="{{model.Name}}{TFileSystem}.LongRunningTestsShouldBeSkipped()" />
-			                		public override void SkipIfLongRunningTestsShouldBeSkipped()
-			                		{
-			                			// Long-running tests are never skipped against the mock file system!
-			                		}
-			                	}
 			                #endif
 
 			                #if !NETFRAMEWORK
-			                	// ReSharper disable once UnusedMember.Global
-			                	public sealed class WindowsFileSystemTests : {{model.Name}}<MockFileSystem>, IDisposable
-			                	{
-			                		/// <inheritdoc cref="{{model.Name}}{TFileSystem}.BasePath" />
-			                		public override string BasePath => _directoryCleaner.BasePath;
-			                
-			                		private readonly IDirectoryCleaner _directoryCleaner;
-			                
-			                		public WindowsFileSystemTests() : this(new MockFileSystem(o =>
-			                			o.SimulatingOperatingSystem(SimulationMode.Windows)))
+			                		// ReSharper disable once UnusedMember.Global
+			                		public sealed class WindowsFileSystemTests : {{model.Name}}, IDisposable
 			                		{
-			                		}
-			                		private WindowsFileSystemTests(MockFileSystem mockFileSystem) : base(
-			                			new Test(OSPlatform.Windows),
-			                			mockFileSystem,
-			                			mockFileSystem.TimeSystem)
-			                		{
-			                			_directoryCleaner = FileSystem
-			                			   .SetCurrentDirectoryToEmptyTemporaryDirectory();
-			                		}
+			                			/// <inheritdoc cref="{{model.Name}}.BasePath" />
+			                			public override string BasePath => _directoryCleaner.BasePath;
 			                
-			                		/// <inheritdoc cref="IDisposable.Dispose()" />
-			                		public void Dispose()
-			                			=> _directoryCleaner.Dispose();
+			                			private readonly IDirectoryCleaner _directoryCleaner;
 			                
-			                		/// <inheritdoc cref="{{model.Name}}{TFileSystem}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
-			                		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
-			                		{
-			                			// Brittle tests are never skipped against the mock file system!
+			                			public WindowsFileSystemTests() : this(new MockFileSystem(o =>
+			                				o.SimulatingOperatingSystem(SimulationMode.Windows)))
+			                			{
+			                			}
+			                			private WindowsFileSystemTests(MockFileSystem mockFileSystem) : base(
+			                				new Test(OSPlatform.Windows),
+			                				mockFileSystem,
+			                				mockFileSystem.TimeSystem)
+			                			{
+			                				_directoryCleaner = FileSystem
+			                				   .SetCurrentDirectoryToEmptyTemporaryDirectory();
+			                			}
+			                
+			                			/// <inheritdoc cref="IDisposable.Dispose()" />
+			                			public void Dispose()
+			                				=> _directoryCleaner.Dispose();
+			                
+			                			/// <inheritdoc cref="{{model.Name}}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
+			                			public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+			                			{
+			                				// Brittle tests are never skipped against the mock file system!
+			                			}
+			                			/// <inheritdoc cref="{{model.Name}}.LongRunningTestsShouldBeSkipped()" />
+			                			public override void SkipIfLongRunningTestsShouldBeSkipped()
+			                			{
+			                				// Long-running tests are never skipped against the mock file system!
+			                			}
 			                		}
-			                		/// <inheritdoc cref="{{model.Name}}{TFileSystem}.LongRunningTestsShouldBeSkipped()" />
-			                		public override void SkipIfLongRunningTestsShouldBeSkipped()
-			                		{
-			                			// Long-running tests are never skipped against the mock file system!
-			                		}
-			                	}
-			                }
 			                #endif
 			                """);
 		}
 
+		sb.AppendLine("""
+		              	}
+		              }
+		              """);
 		return sb.ToString();
 
 		static bool IncludeSimulatedTests(ClassModel model)

@@ -1,13 +1,9 @@
-﻿using aweXpect;
-using System.IO;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class AccessControlHelperTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class AccessControlHelperTests
 {
 	[SkippableFact]
 	public async Task GetExtensibilityOrThrow_DirectoryInfo_ShouldNotThrow()

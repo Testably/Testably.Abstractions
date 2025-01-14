@@ -31,6 +31,48 @@ internal static partial class SourceGenerationHelper
 		          """);
 		return sb.ToString();
 	}
+	public static string GenerateMarkerAttributes()
+	{
+		StringBuilder? sb = GetSourceBuilder();
+		sb.Append("""
+		          namespace Testably.Abstractions.TestHelpers
+		          {
+		              /// <summary>
+		              ///     Marks a class to contain tests for the <see cref="IFileSystem"/> that runs against mock and real implementations.
+		              /// </summary>
+		              /// <remarks>
+		              ///     The class must be abstract and partial and will get an `IFileSystem FileSystem` property injected
+		              /// </remarks>
+		              [System.AttributeUsage(System.AttributeTargets.Class)]
+		              public class FileSystemTestsAttribute : System.Attribute
+		              {
+		              }
+		              
+		              /// <summary>
+		              ///     Marks a class to contain tests for the <see cref="ITimeSystem"/> that runs against mock and real implementations.
+		              /// </summary>
+		              /// <remarks>
+		              ///     The class must be abstract and partial and will get an `ITimeSystem TimeSystem` property injected
+		              /// </remarks>
+		              [System.AttributeUsage(System.AttributeTargets.Class)]
+		              public class TimeSystemTestsAttribute : System.Attribute
+		              {
+		              }
+		          
+		              /// <summary>
+		              ///     Marks a class to contain tests for the <see cref="IRandomSystem"/> that runs against mock and real implementations.
+		              /// </summary>
+		              /// <remarks>
+		              ///     The class must be abstract and partial and will get an `IRandomSystem RandomSystem` property injected
+		              /// </remarks>
+		              [System.AttributeUsage(System.AttributeTargets.Class)]
+		              public class RandomSystemTestsAttribute : System.Attribute
+		              {
+		              }
+		          }
+		          """);
+		return sb.ToString();
+	}
 
 	public static string GenerateTestClasses(ClassModel model)
 		=> model.Type switch

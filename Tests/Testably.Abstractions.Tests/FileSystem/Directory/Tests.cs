@@ -2,10 +2,8 @@ using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class Tests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class Tests
 {
 #if FEATURE_FILESYSTEM_NET7
 	[SkippableFact]

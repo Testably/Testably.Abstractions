@@ -17,8 +17,6 @@ namespace Testably.Abstractions.Tests.SourceGenerator;
 [Generator]
 public sealed class Generator : IIncrementalGenerator
 {
-	private static readonly HashSet<string> GeneratedFiles = [];
-
 	#region IIncrementalGenerator Members
 
 	/// <inheritdoc cref="IIncrementalGenerator.Initialize(IncrementalGeneratorInitializationContext)" />
@@ -26,9 +24,14 @@ public sealed class Generator : IIncrementalGenerator
 	{
 		// Add the marker attribute to the compilation
 		context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
-			"XunitCollectionFixtures.g.cs", 
+			"MarkerAttributes.g.cs",
+			SourceText.From(SourceGenerationHelper.GenerateMarkerAttributes(), Encoding.UTF8)));
+
+		// Add the marker attribute to the compilation
+		context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
+			"CollectionFixtures.g.cs",
 			SourceText.From(SourceGenerationHelper.GenerateCollectionFixtures(), Encoding.UTF8)));
-		
+
 		// Do a simple filter for enums
 		IncrementalValuesProvider<ClassModel?> classesToGenerate = context.SyntaxProvider
 			.CreateSyntaxProvider(
@@ -48,7 +51,8 @@ public sealed class Generator : IIncrementalGenerator
 	private static string CreateFileName(ClassModel model)
 	{
 		string? prefix = model.Namespace + ".";
-		string[] exclusions = [
+		string[] exclusions =
+		[
 			"Testably.Abstractions.Tests.",
 			"Testably.Abstractions.",
 		];
@@ -68,11 +72,6 @@ public sealed class Generator : IIncrementalGenerator
 		if (model is not null)
 		{
 			string? fileName = CreateFileName(model.Value);
-			if (!GeneratedFiles.Add(fileName))
-			{
-				return;
-			}
-
 			// generate the source code and add it to the output
 			string result = SourceGenerationHelper.GenerateTestClasses(model.Value);
 			// Create a separate partial class file for each test class
@@ -80,45 +79,101 @@ public sealed class Generator : IIncrementalGenerator
 		}
 	}
 
+	private static ClassModel? GetClassModelToGenerate(ClassModelType type,
+		SemanticModel semanticModel, ClassDeclarationSyntax classDeclarationSyntax)
+	{
+		// Get the semantic representation of the enum syntax
+		if (semanticModel.GetDeclaredSymbol(classDeclarationSyntax) is not INamedTypeSymbol
+			classSymbol)
+		{
+			// something went wrong
+			return null;
+		}
+
+		return new ClassModel(type, GetNamespace(classDeclarationSyntax), classSymbol.Name);
+	}
+
+	/// <summary>
+	///     Determine the namespace the class/enum/struct is declared in, if any
+	/// </summary>
+	private static string GetNamespace(BaseTypeDeclarationSyntax syntax)
+	{
+		// If we don't have a namespace at all we'll return an empty string
+		// This accounts for the "default namespace" case
+		string @namespace = string.Empty;
+
+		// Get the containing syntax node for the type declaration
+		// (could be a nested type, for example)
+		SyntaxNode? potentialNamespaceParent = syntax.Parent;
+
+		// Keep moving "out" of nested classes etc until we get to a namespace
+		// or until we run out of parents
+		while (potentialNamespaceParent != null &&
+		       potentialNamespaceParent is not NamespaceDeclarationSyntax
+		       && potentialNamespaceParent is not FileScopedNamespaceDeclarationSyntax)
+		{
+			potentialNamespaceParent = potentialNamespaceParent.Parent;
+		}
+
+		// Build up the final namespace by looping until we no longer have a namespace declaration
+		if (potentialNamespaceParent is BaseNamespaceDeclarationSyntax namespaceParent)
+		{
+			// We have a namespace. Use that as the type
+			@namespace = namespaceParent.Name.ToString();
+
+			// Keep moving "out" of the namespace declarations until we 
+			// run out of nested namespace declarations
+			while (true)
+			{
+				if (namespaceParent.Parent is not NamespaceDeclarationSyntax parent)
+				{
+					break;
+				}
+
+				// Add the outer namespace as a prefix to the final namespace
+				@namespace = $"{namespaceParent.Name}.{@namespace}";
+				namespaceParent = parent;
+			}
+		}
+
+		// return the final namespace
+		return @namespace;
+	}
+
 	private static ClassModel? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
 	{
 		// we know the node is a ClassDeclarationSyntax thanks to IsSyntaxTargetForGeneration
 		ClassDeclarationSyntax? classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
 
-		ISymbol? typeSymbol = context.SemanticModel.GetDeclaredSymbol(classDeclarationSyntax);
-		if (typeSymbol is not INamedTypeSymbol namedTypeSymbol)
+		// loop through all the attributes on the method
+		foreach (AttributeListSyntax attributeListSyntax in classDeclarationSyntax.AttributeLists)
 		{
-			return null;
-		}
+			foreach (AttributeSyntax attributeSyntax in attributeListSyntax.Attributes)
+			{
+				if (context.SemanticModel.GetSymbolInfo(attributeSyntax).Symbol is not IMethodSymbol
+					attributeSymbol)
+				{
+					// weird, we couldn't get the symbol, ignore it
+					continue;
+				}
 
-		INamedTypeSymbol? parentTypeSymbol = namedTypeSymbol.BaseType;
-		if (parentTypeSymbol is null)
-		{
-			return null;
-		}
+				INamedTypeSymbol attributeContainingTypeSymbol = attributeSymbol.ContainingType;
+				string fullName = attributeContainingTypeSymbol.ToDisplayString();
 
-		if (!string.Equals(parentTypeSymbol.ContainingNamespace.ToString(),
-			"Testably.Abstractions.TestHelpers", StringComparison.Ordinal))
-		{
-			return null;
-		}
-
-		if (parentTypeSymbol.IsGenericType &&
-		    string.Equals(parentTypeSymbol.Name, "FileSystemTestBase", StringComparison.Ordinal))
-		{
-			return new ClassModel(ClassModelType.FileSystem, typeSymbol.ContainingNamespace.ToString(), typeSymbol.Name);
-		}
-
-		if (parentTypeSymbol.IsGenericType &&
-		    string.Equals(parentTypeSymbol.Name, "TimeSystemTestBase", StringComparison.Ordinal))
-		{
-			return new ClassModel(ClassModelType.TimeSystem, typeSymbol.ContainingNamespace.ToString(), typeSymbol.Name);
-		}
-
-		if (parentTypeSymbol.IsGenericType &&
-		    string.Equals(parentTypeSymbol.Name, "RandomSystemTestBase", StringComparison.Ordinal))
-		{
-			return new ClassModel(ClassModelType.RandomSystem, typeSymbol.ContainingNamespace.ToString(), typeSymbol.Name);
+				return fullName switch
+				{
+					"Testably.Abstractions.TestHelpers.FileSystemTestsAttribute" =>
+						GetClassModelToGenerate(ClassModelType.FileSystem,
+							context.SemanticModel, classDeclarationSyntax),
+					"Testably.Abstractions.TestHelpers.TimeSystemTestsAttribute" =>
+						GetClassModelToGenerate(ClassModelType.TimeSystem,
+							context.SemanticModel, classDeclarationSyntax),
+					"Testably.Abstractions.TestHelpers.RandomSystemTestsAttribute" =>
+						GetClassModelToGenerate(ClassModelType.RandomSystem,
+							context.SemanticModel, classDeclarationSyntax),
+					_ => null,
+				};
+			}
 		}
 
 		return null;
@@ -126,6 +181,6 @@ public sealed class Generator : IIncrementalGenerator
 
 	private static bool IsSyntaxTargetForGeneration(SyntaxNode syntaxNode)
 	{
-		return syntaxNode is ClassDeclarationSyntax;
+		return syntaxNode is ClassDeclarationSyntax { AttributeLists.Count: > 0 };
 	}
 }

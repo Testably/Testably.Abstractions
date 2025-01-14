@@ -14,30 +14,29 @@ internal static partial class SourceGenerationHelper
 
 		                namespace {{model.Namespace}}
 		                {
-		                	public abstract partial class {{model.Name}}<TRandomSystem>
+		                	public abstract partial class {{model.Name}}
 		                	{
-		                		protected {{model.Name}}(TRandomSystem randomSystem)
-		                			: base(randomSystem)
-		                		{
-		                		}
-		                	}
-		                }
-
-		                namespace {{model.Namespace}}.{{model.Name}}
-		                {
-		                	// ReSharper disable once UnusedMember.Global
-		                	public sealed class MockRandomSystemTests : {{model.Name}}<MockRandomSystem>
-		                	{
-		                		public MockRandomSystemTests() : base(new MockRandomSystem())
-		                		{
-		                		}
-		                	}
+		                		public IRandomSystem RandomSystem { get; }
 		                
-		                	// ReSharper disable once UnusedMember.Global
-		                	public sealed class RealRandomSystemTests : {{model.Name}}<RealRandomSystem>
-		                	{
-		                		public RealRandomSystemTests() : base(new RealRandomSystem())
+		                		protected {{model.Name}}(IRandomSystem randomSystem)
 		                		{
+		                			RandomSystem = randomSystem;
+		                		}
+		                
+		                		// ReSharper disable once UnusedMember.Global
+		                		public sealed class MockRandomSystemTests : {{model.Name}}
+		                		{
+		                			public MockRandomSystemTests() : base(new MockRandomSystem())
+		                			{
+		                			}
+		                		}
+		                
+		                		// ReSharper disable once UnusedMember.Global
+		                		public sealed class RealRandomSystemTests : {{model.Name}}
+		                		{
+		                			public RealRandomSystemTests() : base(new RealRandomSystem())
+		                			{
+		                			}
 		                		}
 		                	}
 		                }

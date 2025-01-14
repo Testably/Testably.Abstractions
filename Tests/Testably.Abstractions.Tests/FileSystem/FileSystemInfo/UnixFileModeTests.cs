@@ -3,10 +3,8 @@ using System.IO;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemInfo;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class UnixFileModeTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class UnixFileModeTests
 {
 	[SkippableTheory]
 	[AutoData]

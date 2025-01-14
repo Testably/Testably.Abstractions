@@ -15,53 +15,76 @@ internal static partial class SourceGenerationHelper
 
 		                namespace {{model.Namespace}}
 		                {
-		                	public abstract partial class {{model.Name}}<TTimeSystem>
+		                	public abstract partial class {{model.Name}}
 		                	{
-		                		protected {{model.Name}}(TTimeSystem timeSystem)
-		                			: base(timeSystem)
+		                		/// <summary>
+		                		///     The delay in milliseconds when wanting to ensure a timeout in the test.
+		                		/// </summary>
+		                		public const int EnsureTimeout = 500;
+		                
+		                		/// <summary>
+		                		///     The delay in milliseconds when expecting a success in the test.
+		                		/// </summary>
+		                		public const int ExpectSuccess = 30000;
+		                
+		                		/// <summary>
+		                		///     The delay in milliseconds when expecting a timeout in the test.
+		                		/// </summary>
+		                		public const int ExpectTimeout = 30;
+		                
+		                		public ITimeSystem TimeSystem { get; }
+		                
+		                		protected {{model.Name}}(ITimeSystem timeSystem)
 		                		{
-		                		}
-		                	}
-		                }
-
-		                namespace {{model.Namespace}}.{{model.Name}}
-		                {
-		                	// ReSharper disable once UnusedMember.Global
-		                	public sealed class MockTimeSystemTests : {{model.Name}}<MockTimeSystem>
-		                	{
-		                		public MockTimeSystemTests() : base(new MockTimeSystem(Testing.TimeProvider.Now()))
-		                		{
+		                			TimeSystem = timeSystem;
 		                		}
 		                
-		                		/// <inheritdoc cref="{{model.Name}}{TTimeSystem}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
-		                		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
-		                		{
-		                			// Brittle tests are never skipped against the mock time system!
-		                		}
-		                	}
+		                		/// <summary>
+		                		///     Specifies, if brittle tests should be skipped on the real time system.
+		                		/// </summary>
+		                		/// <param name="condition">
+		                		///     (optional) A condition that must be <see langword="true" /> for the test to be skipped on the
+		                		///     real time system.
+		                		/// </param>
+		                		public abstract void SkipIfBrittleTestsShouldBeSkipped(bool condition = true);
 		                
-		                	// ReSharper disable once UnusedMember.Global
-		                	[Collection(nameof(RealTimeSystemTests))]
-		                	public sealed class RealTimeSystemTests : {{model.Name}}<RealTimeSystem>
-		                	{
-		                		private readonly TestSettingsFixture _fixture;
-		                
-		                		public RealTimeSystemTests(TestSettingsFixture fixture) : base(new RealTimeSystem())
+		                		// ReSharper disable once UnusedMember.Global
+		                		public sealed class MockTimeSystemTests : {{model.Name}}
 		                		{
-		                			_fixture = fixture;
+		                			public MockTimeSystemTests() : base(new MockTimeSystem(Testing.TimeProvider.Now()))
+		                			{
+		                			}
+		                
+		                			/// <inheritdoc cref="{{model.Name}}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
+		                			public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+		                			{
+		                				// Brittle tests are never skipped against the mock time system!
+		                			}
 		                		}
+		                
+		                		// ReSharper disable once UnusedMember.Global
+		                		[Collection("RealTimeSystemTests")]
+		                		public sealed class RealTimeSystemTests : {{model.Name}}
+		                		{
+		                			private readonly TestSettingsFixture _fixture;
+		                
+		                			public RealTimeSystemTests(TestSettingsFixture fixture) : base(new RealTimeSystem())
+		                			{
+		                				_fixture = fixture;
+		                			}
 
 		                #if DEBUG
-		                		/// <inheritdoc cref="{{model.Name}}{TTimeSystem}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
-		                		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
-		                			=> Xunit.Skip.If(condition && _fixture.BrittleTests != TestSettingStatus.AlwaysEnabled,
-		                				$"Brittle tests are {_fixture.BrittleTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests.");
+		                			/// <inheritdoc cref="{{model.Name}}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
+		                			public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+		                				=> Xunit.Skip.If(condition && _fixture.BrittleTests != TestSettingStatus.AlwaysEnabled,
+		                					$"Brittle tests are {_fixture.BrittleTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests.");
 		                #else
-		                		/// <inheritdoc cref="{{model.Name}}{TTimeSystem}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
-		                		public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
-		                			=> Xunit.Skip.If(condition && _fixture.BrittleTests == TestSettingStatus.AlwaysDisabled,
-		                				$"Brittle tests are {_fixture.BrittleTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests.");
+		                			/// <inheritdoc cref="{{model.Name}}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
+		                			public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
+		                				=> Xunit.Skip.If(condition && _fixture.BrittleTests == TestSettingStatus.AlwaysDisabled,
+		                					$"Brittle tests are {_fixture.BrittleTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests.");
 		                #endif
+		                		}
 		                	}
 		                }
 		                """);

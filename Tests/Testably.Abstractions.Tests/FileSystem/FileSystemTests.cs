@@ -1,9 +1,7 @@
 namespace Testably.Abstractions.Tests.FileSystem;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class FileSystemTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class FileSystemTests
 {
 	[SkippableFact]
 	public void Paths_UnderWindows_ShouldUseNormalSlashAndBackslashInterchangeable()
