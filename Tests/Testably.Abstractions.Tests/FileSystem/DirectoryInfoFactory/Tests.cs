@@ -63,7 +63,7 @@ public partial class Tests
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
 		        mockFileSystem.SimulationMode != SimulationMode.Native);
 
-		System.IO.DirectoryInfo directoryInfo = new("S:\\" + path);
+		System.IO.DirectoryInfo directoryInfo = new(path);
 
 		IDirectoryInfo result = FileSystem.DirectoryInfo.Wrap(directoryInfo);
 
@@ -78,7 +78,7 @@ public partial class Tests
 		Skip.IfNot(FileSystem is MockFileSystem mockFileSystem &&
 		           mockFileSystem.SimulationMode != SimulationMode.Native);
 
-		System.IO.DirectoryInfo directoryInfo = new("S:\\" + path);
+		System.IO.DirectoryInfo directoryInfo = new(path);
 
 		Exception? exception = Record.Exception(() =>
 		{
