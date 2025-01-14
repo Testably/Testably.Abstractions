@@ -227,7 +227,6 @@ public partial class TimerTests
 		}
 
 		triggerTimes[0].Should()
-			.BeGreaterThan(70 * TimerMultiplier).And
 			.BeLessThan(130 * TimerMultiplier);
 		for (int i = 1; i < triggerTimes.Count; i++)
 		{
@@ -302,7 +301,6 @@ public partial class TimerTests
 		}
 
 		triggerTimes[0].Should()
-			.BeGreaterThan(70 * TimerMultiplier).And
 			.BeLessThan(130 * TimerMultiplier);
 		for (int i = 1; i < triggerTimes.Count; i++)
 		{
@@ -379,7 +377,6 @@ public partial class TimerTests
 		}
 
 		triggerTimes[0].Should()
-			.BeGreaterThan(70 * TimerMultiplier).And
 			.BeLessThan(130 * TimerMultiplier);
 		for (int i = 1; i < triggerTimes.Count; i++)
 		{

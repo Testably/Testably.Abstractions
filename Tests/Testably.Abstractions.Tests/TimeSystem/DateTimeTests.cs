@@ -53,7 +53,9 @@ public partial class DateTimeTests
 	[SkippableFact]
 	public void UnixEpoch_ShouldReturnDefaultValue()
 	{
+		#pragma warning disable MA0113 // Use DateTime.UnixEpoch
 		DateTime expectedResult = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+		#pragma warning restore MA0113
 
 		DateTime result = TimeSystem.DateTime.UnixEpoch;
 

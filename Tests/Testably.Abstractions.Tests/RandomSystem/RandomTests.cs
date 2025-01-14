@@ -318,7 +318,7 @@ public partial class RandomTests
 
 		values.Should().OnlyHaveUniqueItems();
 		values.Should().NotContainInOrder(originalValues);
-		values.OrderBy(x => x).Should().ContainInOrder(originalValues);
+		values.Order().Should().ContainInOrder(originalValues);
 	}
 #endif
 
@@ -335,7 +335,7 @@ public partial class RandomTests
 		int[] result = values.ToArray();
 		result.Should().OnlyHaveUniqueItems();
 		result.Should().NotContainInOrder(originalValues);
-		result.OrderBy(x => x).Should().ContainInOrder(originalValues);
+		result.Order().Should().ContainInOrder(originalValues);
 	}
 #endif
 }
