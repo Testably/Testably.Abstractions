@@ -4,10 +4,8 @@ using System.Text;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class SearchFilterTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class SearchFilterTests
 {
 	[SkippableTheory]
 	[InlineAutoData("../", 4)]

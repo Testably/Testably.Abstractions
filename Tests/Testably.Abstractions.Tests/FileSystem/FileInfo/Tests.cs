@@ -3,10 +3,8 @@ using Testably.Abstractions.Testing.Initializer;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class Tests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class Tests
 {
 	[SkippableTheory]
 	[AutoData]
@@ -36,7 +34,7 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableFact]
 	public void Directory_ShouldReturnParentDirectory()
 	{
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
 				.WithASubdirectory().Initialized(s => s
 					.WithAFile());
@@ -49,7 +47,7 @@ public abstract partial class Tests<TFileSystem>
 	[SkippableFact]
 	public void DirectoryName_ShouldReturnNameOfParentDirectory()
 	{
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
 				.WithASubdirectory().Initialized(s => s
 					.WithAFile());

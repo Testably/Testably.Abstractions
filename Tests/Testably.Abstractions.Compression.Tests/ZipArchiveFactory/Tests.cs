@@ -4,10 +4,8 @@ using System.Text;
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchiveFactory;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class Tests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class Tests
 {
 	[SkippableFact]
 	public async Task New_ShouldOpenWithReadMode()

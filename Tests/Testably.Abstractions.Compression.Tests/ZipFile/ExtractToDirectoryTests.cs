@@ -7,10 +7,8 @@ using Testably.Abstractions.Compression.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Compression.Tests.ZipFile;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class ExtractToDirectoryTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class ExtractToDirectoryTests
 {
 	[SkippableFact]
 	public async Task ExtractToDirectory_MissingDestinationDirectory_ShouldCreateDirectory()

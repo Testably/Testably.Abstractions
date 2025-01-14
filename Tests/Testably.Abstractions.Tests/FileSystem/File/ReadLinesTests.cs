@@ -5,10 +5,8 @@ using System.Text;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class ReadLinesTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class ReadLinesTests
 {
 	[SkippableTheory]
 	[AutoData]

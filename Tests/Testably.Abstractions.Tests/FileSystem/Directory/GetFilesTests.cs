@@ -8,10 +8,8 @@ using System.Globalization;
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class GetFilesTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class GetFilesTests
 {
 	[SkippableTheory]
 	[AutoData]
@@ -70,7 +68,7 @@ public abstract partial class GetFilesTests<TFileSystem>
 		GetFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
 			string path)
 	{
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.InitializeIn(path)
 				.WithAFile()
 				.WithASubdirectory().Initialized(s => s
@@ -91,7 +89,7 @@ public abstract partial class GetFilesTests<TFileSystem>
 	public void GetFiles_SearchOptionAllDirectories_ShouldReturnAllFiles(
 		string path)
 	{
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.InitializeIn(path)
 				.WithAFile()
 				.WithASubdirectory().Initialized(s => s
@@ -197,7 +195,7 @@ public abstract partial class GetFilesTests<TFileSystem>
 		GetFiles_WithEnumerationOptions_ShouldConsiderSetOptions(
 			string path)
 	{
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.InitializeIn(path)
 				.WithAFile()
 				.WithASubdirectory().Initialized(s => s
@@ -244,7 +242,7 @@ public abstract partial class GetFilesTests<TFileSystem>
 		GetFiles_WithoutSearchString_ShouldReturnAllFilesInDirectSubdirectories(
 			string path)
 	{
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.InitializeIn(path)
 				.WithAFile()
 				.WithAFile()
@@ -288,7 +286,7 @@ public abstract partial class GetFilesTests<TFileSystem>
 	public void GetFiles_WithSearchPattern_ShouldReturnMatchingFiles(
 		string path)
 	{
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.InitializeIn(path)
 				.WithAFile()
 				.WithAFile()
@@ -309,7 +307,7 @@ public abstract partial class GetFilesTests<TFileSystem>
 	public void
 		GetFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
 	{
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
 				.WithASubdirectory().Initialized(s => s
 					.WithAFile("foobar"))

@@ -1,9 +1,7 @@
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class HasExtensionTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class HasExtensionTests
 {
 	[SkippableFact]
 	public void HasExtension_Null_ShouldReturnFalse()

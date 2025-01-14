@@ -4,10 +4,8 @@ using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
 namespace Testably.Abstractions.Tests.TimeSystem;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class TimerFactoryTests<TTimeSystem>
-	: TimeSystemTestBase<TTimeSystem>
-	where TTimeSystem : ITimeSystem
+[TimeSystemTests]
+public partial class TimeFactoryTests
 {
 #if FEATURE_TIMER_COUNT
 	[SkippableFact]

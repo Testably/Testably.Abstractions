@@ -9,10 +9,8 @@ using System.Globalization;
 
 namespace Testably.Abstractions.Tests.RandomSystem;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class GuidTests<TRandomSystem>
-	: RandomSystemTestBase<TRandomSystem>
-	where TRandomSystem : IRandomSystem
+[RandomSystemTests]
+public partial class GuidTests
 {
 	[SkippableFact]
 	public void Empty_ShouldReturnEmptyGuid()

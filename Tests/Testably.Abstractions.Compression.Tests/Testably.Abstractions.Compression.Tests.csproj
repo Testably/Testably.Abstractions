@@ -17,16 +17,13 @@
 
 	<PropertyGroup>
 		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-		<CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+		<GeneratedFolder>Generated</GeneratedFolder>
+		<CompilerGeneratedFilesOutputPath>$(GeneratedFolder)\$(TargetFramework)</CompilerGeneratedFilesOutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Remove="Generated\**" />
-		<Content Include="Generated\**" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Generated\" />
+		<Compile Remove="$(GeneratedFolder)/**/*.cs" />
+		<Content Include="$(CompilerGeneratedFilesOutputPath)/**" />
 	</ItemGroup>
 
 </Project>

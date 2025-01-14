@@ -3,16 +3,14 @@ using Testably.Abstractions.Testing.Initializer;
 
 namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class MoveToTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class MoveToTests
 {
 	[SkippableTheory]
 	[AutoData]
 	public void MoveTo_ShouldMoveDirectoryWithContent(string source, string destination)
 	{
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
 				.WithSubdirectory(source).Initialized(s => s
 					.WithAFile()
@@ -63,7 +61,7 @@ public abstract partial class MoveToTests<TFileSystem>
 	{
 		Skip.If(Test.RunsOnWindows);
 
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
 				.WithSubdirectory(source).Initialized(s => s
 					.WithAFile()
@@ -105,7 +103,7 @@ public abstract partial class MoveToTests<TFileSystem>
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
 				.WithSubdirectory(source).Initialized(s => s
 					.WithAFile()
@@ -154,7 +152,7 @@ public abstract partial class MoveToTests<TFileSystem>
 	public void MoveTo_WithReadOnlyFile_ShouldMoveDirectoryWithContent(
 		string source, string destination)
 	{
-		IFileSystemDirectoryInitializer<TFileSystem> initialized =
+		IFileSystemDirectoryInitializer<IFileSystem> initialized =
 			FileSystem.Initialize()
 				.WithSubdirectory(source).Initialized(s => s
 					.WithAFile()

@@ -1,9 +1,7 @@
 namespace Testably.Abstractions.Tests.FileSystem.DriveInfo;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class Tests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class Tests
 {
 	[SkippableFact]
 	public void ToString_ShouldReturnDriveName()

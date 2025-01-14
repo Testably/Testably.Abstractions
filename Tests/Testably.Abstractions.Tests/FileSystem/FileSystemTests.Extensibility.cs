@@ -2,8 +2,7 @@ using Testably.Abstractions.Helpers;
 
 namespace Testably.Abstractions.Tests.FileSystem;
 
-public abstract partial class FileSystemTests<TFileSystem>
-	where TFileSystem : IFileSystem
+public partial class FileSystemTests
 {
 	[SkippableTheory]
 	[AutoData]

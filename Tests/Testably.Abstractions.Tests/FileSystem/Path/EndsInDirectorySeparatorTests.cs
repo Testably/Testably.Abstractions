@@ -1,10 +1,8 @@
 #if FEATURE_PATH_ADVANCED
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class EndsInDirectorySeparatorTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class EndsInDirectorySeparatorTests
 {
 	[SkippableFact]
 	public void EndsInDirectorySeparator_Empty_ShouldReturnExpectedResult()

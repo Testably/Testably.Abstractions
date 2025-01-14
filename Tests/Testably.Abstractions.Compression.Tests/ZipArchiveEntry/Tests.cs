@@ -5,10 +5,8 @@ using Skip = Xunit.Skip;
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchiveEntry;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class Tests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class Tests
 {
 	[SkippableFact]
 	public async Task Archive_ShouldBeSetToArchive()

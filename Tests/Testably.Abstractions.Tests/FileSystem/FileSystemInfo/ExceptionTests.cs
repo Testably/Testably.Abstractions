@@ -5,10 +5,8 @@ using System.Linq.Expressions;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileSystemInfo;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class ExceptionTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class ExceptionTests
 {
 	[SkippableTheory]
 	[MemberData(nameof(GetFileSystemInfoCallbacks), parameters: "")]

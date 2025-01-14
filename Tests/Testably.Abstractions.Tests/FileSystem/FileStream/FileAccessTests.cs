@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class FileAccessTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class FileAccessTests
 {
 	[SkippableTheory]
 	[InlineAutoData(FileAccess.Read, FileShare.Read,

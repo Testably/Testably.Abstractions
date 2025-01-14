@@ -5,10 +5,8 @@ using System.Linq;
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchiveEntry;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class ExtensionTests<TFileSystem>
-	: FileSystemTestBase<TFileSystem>
-	where TFileSystem : IFileSystem
+[FileSystemTests]
+public partial class ExtensionTests
 {
 	[SkippableFact]
 	public async Task

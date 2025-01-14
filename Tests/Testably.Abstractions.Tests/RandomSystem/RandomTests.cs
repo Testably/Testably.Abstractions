@@ -6,10 +6,8 @@ using System.Linq;
 
 namespace Testably.Abstractions.Tests.RandomSystem;
 
-// ReSharper disable once PartialTypeWithSinglePart
-public abstract partial class RandomTests<TRandomSystem>
-	: RandomSystemTestBase<TRandomSystem>
-	where TRandomSystem : IRandomSystem
+[RandomSystemTests]
+public partial class RandomTests
 {
 #if FEATURE_RANDOM_ITEMS
 	[Fact]
