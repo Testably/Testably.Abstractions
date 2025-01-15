@@ -89,6 +89,7 @@ partial class Build
 
 			DotNetToolInstall(_ => _
 				.SetPackageName("dotnet-stryker")
+				.SetVersion("4.0.6")
 				.SetToolInstallationPath(StrykerToolPath));
 
 			StrykerOutputDirectory.CreateOrCleanDirectory();
