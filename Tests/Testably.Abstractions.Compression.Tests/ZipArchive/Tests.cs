@@ -22,7 +22,7 @@ public partial class Tests
 
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
-		await That(archive.Comment).Should().Be("");
+		await That(archive.Comment).Is("");
 	}
 #endif
 #if FEATURE_ZIPFILE_NET7
@@ -42,7 +42,7 @@ public partial class Tests
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 		archive.Comment = comment;
 
-		await That(archive.Comment).Should().Be(comment);
+		await That(archive.Comment).Is(comment);
 	}
 #endif
 
@@ -56,7 +56,7 @@ public partial class Tests
 
 		ReadOnlyCollection<IZipArchiveEntry> Act() => archive.Entries;
 
-		await That(Act).Should().Throw<NotSupportedException>();
+		await That(Act).Throws<NotSupportedException>();
 	}
 
 	[SkippableTheory]
@@ -73,7 +73,7 @@ public partial class Tests
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
-		await That(archive.FileSystem).Should().Be(FileSystem);
+		await That(archive.FileSystem).Is(FileSystem);
 	}
 
 	[SkippableFact]
@@ -89,9 +89,9 @@ public partial class Tests
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
-		await That(archive.GetEntry("bar.txt")).Should().BeNull();
-		await That(archive.GetEntry("foo.txt")).Should().BeNull();
-		await That(archive.GetEntry("foo/foo.txt")).Should().NotBeNull();
+		await That(archive.GetEntry("bar.txt")).IsNull();
+		await That(archive.GetEntry("foo.txt")).IsNull();
+		await That(archive.GetEntry("foo/foo.txt")).IsNotNull();
 	}
 
 	[SkippableTheory]
@@ -107,6 +107,6 @@ public partial class Tests
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", mode);
 
-		await That(archive.Mode).Should().Be(mode);
+		await That(archive.Mode).Is(mode);
 	}
 }

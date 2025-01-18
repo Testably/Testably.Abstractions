@@ -29,7 +29,7 @@ public abstract class ParityTests(
 				typeof(Directory),
 				testOutputHelper);
 
-		await That(parityErrors).Should().BeEmpty();
+		await That(parityErrors).IsEmpty();
 	}
 
 	[Fact]
@@ -40,7 +40,7 @@ public abstract class ParityTests(
 				typeof(DirectoryInfo),
 				testOutputHelper);
 
-		await That(parityErrors).Should().BeEmpty();
+		await That(parityErrors).IsEmpty();
 	}
 
 	[Fact]
@@ -51,7 +51,7 @@ public abstract class ParityTests(
 				typeof(DriveInfo),
 				testOutputHelper);
 
-		await That(parityErrors).Should().BeEmpty();
+		await That(parityErrors).IsEmpty();
 	}
 
 	[Fact]
@@ -62,7 +62,7 @@ public abstract class ParityTests(
 				typeof(File),
 				testOutputHelper);
 
-		await That(parityErrors).Should().BeEmpty();
+		await That(parityErrors).IsEmpty();
 	}
 
 	[Fact]
@@ -73,7 +73,7 @@ public abstract class ParityTests(
 				typeof(FileInfo),
 				testOutputHelper);
 
-		await That(parityErrors).Should().BeEmpty();
+		await That(parityErrors).IsEmpty();
 	}
 
 	[Fact]
@@ -84,7 +84,7 @@ public abstract class ParityTests(
 				typeof(FileSystemInfo),
 				testOutputHelper);
 
-		await That(parityErrors).Should().BeEmpty();
+		await That(parityErrors).IsEmpty();
 	}
 
 	[Fact]
@@ -96,7 +96,7 @@ public abstract class ParityTests(
 				typeof(FileSystemWatcher),
 				testOutputHelper);
 
-		await That(parityErrors).Should().BeEmpty();
+		await That(parityErrors).IsEmpty();
 	}
 
 	[Fact]
@@ -108,7 +108,7 @@ public abstract class ParityTests(
 				typeof(FileVersionInfo),
 				testOutputHelper);
 
-		await That(parityErrors).Should().BeEmpty();
+		await That(parityErrors).IsEmpty();
 	}
 
 	[Fact]
@@ -119,7 +119,7 @@ public abstract class ParityTests(
 				typeof(Guid),
 				testOutputHelper);
 
-		await That(parityErrors).Should().BeEmpty();
+		await That(parityErrors).IsEmpty();
 	}
 
 	[Fact]
@@ -130,7 +130,7 @@ public abstract class ParityTests(
 				typeof(Path),
 				testOutputHelper);
 
-		await That(parityErrors).Should().BeEmpty();
+		await That(parityErrors).IsEmpty();
 	}
 
 	[Fact]
@@ -141,7 +141,7 @@ public abstract class ParityTests(
 				typeof(Random),
 				testOutputHelper);
 
-		await That(parityErrors).Should().BeEmpty();
+		await That(parityErrors).IsEmpty();
 	}
 
 	[Fact]
@@ -153,7 +153,7 @@ public abstract class ParityTests(
 				typeof(Timer),
 				testOutputHelper);
 
-		await That(parityErrors).Should().BeEmpty();
+		await That(parityErrors).IsEmpty();
 	}
 
 	[Fact]
@@ -164,7 +164,7 @@ public abstract class ParityTests(
 				typeof(ZipArchive),
 				testOutputHelper);
 
-		await That(parityErrors).Should().BeEmpty();
+		await That(parityErrors).IsEmpty();
 	}
 
 	[Fact]
@@ -175,7 +175,7 @@ public abstract class ParityTests(
 				typeof(ZipFileExtensions),
 				testOutputHelper);
 
-		await That(parityErrors).Should().BeEmpty();
+		await That(parityErrors).IsEmpty();
 	}
 
 	[Fact]
@@ -186,7 +186,7 @@ public abstract class ParityTests(
 				typeof(ZipArchiveEntry),
 				testOutputHelper);
 
-		await That(parityErrors).Should().BeEmpty();
+		await That(parityErrors).IsEmpty();
 	}
 
 	[Fact]
@@ -197,7 +197,7 @@ public abstract class ParityTests(
 				typeof(ZipFileExtensions),
 				testOutputHelper);
 
-		await That(parityErrors).Should().BeEmpty();
+		await That(parityErrors).IsEmpty();
 	}
 
 	[Fact]
@@ -208,6 +208,6 @@ public abstract class ParityTests(
 				typeof(ZipFile),
 				testOutputHelper);
 
-		await That(parityErrors).Should().BeEmpty();
+		await That(parityErrors).IsEmpty();
 	}
 }

@@ -27,13 +27,13 @@ public partial class ExtensionTests
 		using FileSystemStream stream = FileSystem.File.Open("destination.zip",
 			FileMode.Open, FileAccess.ReadWrite);
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
-		await That(archive.Entries).Should().BeEmpty();
+		await That(archive.Entries).IsEmpty();
 
 		archive.CreateEntryFromFile("bar/foo.txt", "foo/bar.txt",
 			CompressionLevel.NoCompression);
 
 		IZipArchiveEntry entry = archive.Entries.Single();
-		await That(entry.LastWriteTime.DateTime).Should().Be(lastWriteTime);
+		await That(entry.LastWriteTime.DateTime).Is(lastWriteTime);
 	}
 
 	[SkippableTheory]
@@ -58,13 +58,13 @@ public partial class ExtensionTests
 		using FileSystemStream stream = FileSystem.File.Open("destination.zip",
 			FileMode.Open, FileAccess.ReadWrite);
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
-		await That(archive.Entries).Should().BeEmpty();
+		await That(archive.Entries).IsEmpty();
 
 		archive.CreateEntryFromFile("bar/foo.txt", "foo/bar.txt",
 			CompressionLevel.NoCompression);
 
 		IZipArchiveEntry entry = archive.Entries.Single();
-		await That(entry.LastWriteTime.DateTime).Should().Be(expectedTime);
+		await That(entry.LastWriteTime.DateTime).Is(expectedTime);
 	}
 
 	[SkippableFact]
@@ -80,12 +80,12 @@ public partial class ExtensionTests
 		using FileSystemStream stream = FileSystem.File.Open("destination.zip",
 			FileMode.Open, FileAccess.ReadWrite);
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
-		await That(archive.Entries).Should().BeEmpty();
+		await That(archive.Entries).IsEmpty();
 
 		void Act()
 			=> archive.CreateEntryFromFile("bar/foo.txt", null!);
 
-		await That(Act).Should().Throw<ArgumentNullException>()
+		await That(Act).Throws<ArgumentNullException>()
 			.WithParamName("entryName");
 	}
 
@@ -102,13 +102,13 @@ public partial class ExtensionTests
 		using FileSystemStream stream = FileSystem.File.Open("destination.zip",
 			FileMode.Open, FileAccess.ReadWrite);
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
-		await That(archive.Entries).Should().BeEmpty();
+		await That(archive.Entries).IsEmpty();
 
 		void Act()
 			=> archive.CreateEntryFromFile(null!, "foo/bar.txt",
 				CompressionLevel.NoCompression);
 
-		await That(Act).Should().Throw<ArgumentNullException>()
+		await That(Act).Throws<ArgumentNullException>()
 			.WithParamName("sourceFileName");
 	}
 
@@ -125,12 +125,12 @@ public partial class ExtensionTests
 		using FileSystemStream stream = FileSystem.File.Open("destination.zip",
 			FileMode.Open, FileAccess.ReadWrite);
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
-		await That(archive.Entries).Should().BeEmpty();
+		await That(archive.Entries).IsEmpty();
 
 		void Act()
 			=> archive.CreateEntryFromFile("bar/foo.txt", "foo/bar.txt");
 
-		await That(Act).Should().Throw<NotSupportedException>();
+		await That(Act).Throws<NotSupportedException>();
 	}
 
 	[SkippableFact]
@@ -146,16 +146,16 @@ public partial class ExtensionTests
 		using FileSystemStream stream = FileSystem.File.Open("destination.zip",
 			FileMode.Open, FileAccess.ReadWrite);
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
-		await That(archive.Entries).Should().BeEmpty();
+		await That(archive.Entries).IsEmpty();
 
 		archive.CreateEntryFromFile("bar/foo.txt", "foo/bar.txt",
 			CompressionLevel.NoCompression);
 
 		IZipArchiveEntry entry = archive.Entries.Single();
-		await That(entry.FullName).Should().Be("foo/bar.txt");
+		await That(entry.FullName).Is("foo/bar.txt");
 
 		entry.ExtractToFile("test.txt");
-		await That(FileSystem).Should().HaveFile("test.txt").WithContent("FooFooFoo");
+		await That(FileSystem).HasFile("test.txt").WithContent("FooFooFoo");
 	}
 
 	[SkippableTheory]
@@ -177,7 +177,7 @@ public partial class ExtensionTests
 			archive.ExtractToDirectory(null!);
 		}
 
-		await That(Act).Should().Throw<ArgumentNullException>()
+		await That(Act).Throws<ArgumentNullException>()
 			.WithParamName("destinationDirectoryName");
 	}
 
@@ -202,7 +202,7 @@ public partial class ExtensionTests
 			archive.ExtractToDirectory(null!, true);
 		}
 
-		await That(Act).Should().Throw<ArgumentNullException>();
+		await That(Act).Throws<ArgumentNullException>();
 	}
 #endif
 
@@ -222,9 +222,9 @@ public partial class ExtensionTests
 
 		archive.ExtractToDirectory("bar");
 
-		await That(FileSystem).Should().HaveFile("bar/foo.txt").WithContent("FooFooFoo");
-		await That(FileSystem).Should().HaveDirectory("bar/bar");
-		await That(FileSystem).Should().HaveFile("bar/bar.txt");
+		await That(FileSystem).HasFile("bar/foo.txt").WithContent("FooFooFoo");
+		await That(FileSystem).HasDirectory("bar/bar");
+		await That(FileSystem).HasFile("bar/bar.txt");
 	}
 
 	[SkippableFact]
@@ -246,10 +246,10 @@ public partial class ExtensionTests
 			archive.ExtractToDirectory("bar");
 		}
 
-		await That(Act).Should().Throw<IOException>()
+		await That(Act).Throws<IOException>()
 			.WithMessage($"*'{FileSystem.Path.GetFullPath("bar/foo.txt")}'*").AsWildcard();
-		await That(FileSystem).Should().HaveFile("bar/foo.txt")
-			.WhichContent(c => c.Should().NotBe("FooFooFoo"));
+		await That(FileSystem).HasFile("bar/foo.txt")
+			.WhichContent(c => c.IsNot("FooFooFoo"));
 	}
 
 #if FEATURE_COMPRESSION_ADVANCED
@@ -269,7 +269,7 @@ public partial class ExtensionTests
 
 		archive.ExtractToDirectory("bar", true);
 
-		await That(FileSystem).Should().HaveFile("bar/foo.txt")
+		await That(FileSystem).HasFile("bar/foo.txt")
 			.WithContent("FooFooFoo");
 	}
 #endif

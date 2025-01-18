@@ -20,8 +20,8 @@ public sealed class ExecuteTests
 				onMockFileSystemExecuted = true;
 			});
 
-		await That(onRealFileSystemExecuted).Should().BeFalse();
-		await That(onMockFileSystemExecuted).Should().BeTrue();
+		await That(onRealFileSystemExecuted).IsFalse();
+		await That(onMockFileSystemExecuted).IsTrue();
 	}
 
 	[Fact]
@@ -40,8 +40,8 @@ public sealed class ExecuteTests
 				return onMockFileSystemExecuted = true;
 			});
 
-		await That(onRealFileSystemExecuted).Should().BeFalse();
-		await That(onMockFileSystemExecuted).Should().BeTrue();
+		await That(onRealFileSystemExecuted).IsFalse();
+		await That(onMockFileSystemExecuted).IsTrue();
 	}
 
 	[Fact]
@@ -60,8 +60,8 @@ public sealed class ExecuteTests
 				onMockFileSystemExecuted = true;
 			});
 
-		await That(onRealFileSystemExecuted).Should().BeTrue();
-		await That(onMockFileSystemExecuted).Should().BeFalse();
+		await That(onRealFileSystemExecuted).IsTrue();
+		await That(onMockFileSystemExecuted).IsFalse();
 	}
 
 	[Fact]
@@ -80,7 +80,7 @@ public sealed class ExecuteTests
 				return onMockFileSystemExecuted = true;
 			});
 
-		await That(onRealFileSystemExecuted).Should().BeTrue();
-		await That(onMockFileSystemExecuted).Should().BeFalse();
+		await That(onRealFileSystemExecuted).IsTrue();
+		await That(onMockFileSystemExecuted).IsFalse();
 	}
 }

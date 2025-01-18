@@ -20,7 +20,7 @@ public partial class DirectoryInfoAclExtensionsTests
 		void Act() => FileSystem.DirectoryInfo.New("foo").Create(null!);
 		#pragma warning restore CA1416
 
-		await That(Act).Should().Throw<ArgumentNullException>()
+		await That(Act).Throws<ArgumentNullException>()
 			.WithParamName("directorySecurity");
 	}
 
@@ -38,8 +38,8 @@ public partial class DirectoryInfoAclExtensionsTests
 		DirectorySecurity result = FileSystem.Directory.GetAccessControl(path);
 		#pragma warning restore CA1416
 
-		await That(result.HasSameAccessRightsAs(directorySecurity)).Should().BeTrue();
-		await That(FileSystem.Directory.Exists(path)).Should().BeTrue();
+		await That(result.HasSameAccessRightsAs(directorySecurity)).IsTrue();
+		await That(FileSystem.Directory.Exists(path)).IsTrue();
 	}
 
 	[SkippableFact]
@@ -52,7 +52,7 @@ public partial class DirectoryInfoAclExtensionsTests
 		void Act() => sut.GetAccessControl();
 		#pragma warning restore CA1416
 
-		await That(Act).Should().Throw<DirectoryNotFoundException>()
+		await That(Act).Throws<DirectoryNotFoundException>()
 			.WithHResult(-2147024893);
 	}
 
@@ -67,7 +67,7 @@ public partial class DirectoryInfoAclExtensionsTests
 		DirectorySecurity result =
 			FileSystem.DirectoryInfo.New("foo").GetAccessControl();
 
-		await That(result).Should().NotBeNull();
+		await That(result).IsNotNull();
 		#pragma warning restore CA1416
 	}
 
@@ -88,7 +88,7 @@ public partial class DirectoryInfoAclExtensionsTests
 		DirectorySecurity result =
 			FileSystem.DirectoryInfo.New("foo").GetAccessControl();
 
-		await That(result).Should().Be(originalResult);
+		await That(result).Is(originalResult);
 		#pragma warning restore CA1416
 	}
 
@@ -103,7 +103,7 @@ public partial class DirectoryInfoAclExtensionsTests
 		void Act() => sut.GetAccessControl(AccessControlSections.None);
 		#pragma warning restore CA1416
 
-		await That(Act).Should().Throw<DirectoryNotFoundException>()
+		await That(Act).Throws<DirectoryNotFoundException>()
 			.WithHResult(-2147024893);
 	}
 
@@ -120,7 +120,7 @@ public partial class DirectoryInfoAclExtensionsTests
 		DirectorySecurity result =
 			FileSystem.DirectoryInfo.New("foo").GetAccessControl(AccessControlSections.None);
 
-		await That(result).Should().NotBeNull();
+		await That(result).IsNotNull();
 		#pragma warning restore CA1416
 	}
 
@@ -141,7 +141,7 @@ public partial class DirectoryInfoAclExtensionsTests
 		DirectorySecurity result =
 			FileSystem.DirectoryInfo.New("foo").GetAccessControl(AccessControlSections.None);
 
-		await That(result).Should().Be(originalResult);
+		await That(result).Is(originalResult);
 		#pragma warning restore CA1416
 	}
 
@@ -161,7 +161,7 @@ public partial class DirectoryInfoAclExtensionsTests
 		#pragma warning restore CA1416
 
 		await That(currentAccessControl.HasSameAccessRightsAs(originalAccessControl))
-			.Should().BeTrue();
+			.IsTrue();
 	}
 
 	[SkippableTheory]
@@ -184,8 +184,8 @@ public partial class DirectoryInfoAclExtensionsTests
 		DateTime lastAccessTimeUtc = FileSystem.File.GetLastAccessTimeUtc(path);
 		DateTime lastWriteTimeUtc = FileSystem.File.GetLastWriteTimeUtc(path);
 
-		await That(creationTimeUtc).Should().Be(previousCreationTimeUtc);
-		await That(lastAccessTimeUtc).Should().Be(previousLastAccessTimeUtc);
-		await That(lastWriteTimeUtc).Should().Be(previousLastWriteTimeUtc);
+		await That(creationTimeUtc).Is(previousCreationTimeUtc);
+		await That(lastAccessTimeUtc).Is(previousLastAccessTimeUtc);
+		await That(lastWriteTimeUtc).Is(previousLastWriteTimeUtc);
 	}
 }
