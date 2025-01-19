@@ -15,7 +15,7 @@ public sealed class AccessControlHelperTests
 			sut.GetExtensibilityOrThrow();
 		}
 
-		await That(Act).Should().Throw<NotSupportedException>()
+		await That(Act).Throws<NotSupportedException>()
 			.WithMessage($"*{sut.GetType().Name}*{nameof(IFileSystemExtensibility)}*").AsWildcard();
 	}
 
@@ -29,7 +29,7 @@ public sealed class AccessControlHelperTests
 			sut.GetExtensibilityOrThrow();
 		}
 
-		await That(Act).Should().Throw<NotSupportedException>()
+		await That(Act).Throws<NotSupportedException>()
 			.WithMessage($"*{sut.GetType().Name}*{nameof(IFileSystemExtensibility)}*").AsWildcard();
 	}
 
@@ -44,7 +44,7 @@ public sealed class AccessControlHelperTests
 			sut.GetExtensibilityOrThrow();
 		}
 
-		await That(Act).Should().Throw<NotSupportedException>()
+		await That(Act).Throws<NotSupportedException>()
 			.WithMessage($"*{sut.GetType().Name}*{nameof(IFileSystemExtensibility)}*").AsWildcard();
 	}
 
@@ -60,7 +60,7 @@ public sealed class AccessControlHelperTests
 			sut.ThrowIfMissing();
 		}
 
-		await That(Act).Should().NotThrow();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Fact]
@@ -75,7 +75,7 @@ public sealed class AccessControlHelperTests
 			sut.ThrowIfMissing();
 		}
 
-		await That(Act).Should().NotThrow();
+		await That(Act).DoesNotThrow();
 	}
 
 	[Fact]
@@ -89,9 +89,9 @@ public sealed class AccessControlHelperTests
 			sut.ThrowIfMissing();
 		}
 
-		await That(Act).Should().Throw<DirectoryNotFoundException>()
-			.WithHResult(-2147024893).And
-			.WithMessage($"*'{sut.FullName}'*").AsWildcard();
+		await That(Act).Throws<DirectoryNotFoundException>()
+			.WithMessage($"*'{sut.FullName}'*").AsWildcard().And
+			.WithHResult(-2147024893);
 	}
 
 	[Fact]
@@ -105,9 +105,9 @@ public sealed class AccessControlHelperTests
 			sut.ThrowIfMissing();
 		}
 
-		await That(Act).Should().Throw<FileNotFoundException>()
-			.WithHResult(-2147024894).And
-			.WithMessage($"*'{sut.FullName}'*").AsWildcard();
+		await That(Act).Throws<FileNotFoundException>()
+			.WithMessage($"*'{sut.FullName}'*").AsWildcard().And
+			.WithHResult(-2147024894);
 	}
 
 	private sealed class CustomFileSystemStream() : FileSystemStream(Null, ".", false);

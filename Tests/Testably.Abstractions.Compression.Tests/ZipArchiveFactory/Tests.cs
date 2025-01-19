@@ -21,8 +21,8 @@ public partial class Tests
 
 		IZipArchive archive = FileSystem.ZipArchive().New(stream);
 
-		await That(archive.Mode).Should().Be(ZipArchiveMode.Read);
-		await That(archive.Entries).Should().HaveExactly(1).Items();
+		await That(archive.Mode).Is(ZipArchiveMode.Read);
+		await That(archive.Entries).Has().Exactly(1).Items();
 	}
 
 	[SkippableFact]
@@ -42,7 +42,7 @@ public partial class Tests
 			_ = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
 		}
 		
-		await That(Act).Should().Throw<ArgumentException>()
+		await That(Act).Throws<ArgumentException>()
 			.WithHResult(-2147024809);
 	}
 
@@ -61,8 +61,8 @@ public partial class Tests
 
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
 
-		await That(archive.Mode).Should().Be(ZipArchiveMode.Update);
-		await That(archive.Entries).Should().HaveExactly(1).Items();
+		await That(archive.Mode).Is(ZipArchiveMode.Update);
+		await That(archive.Entries).Has().Exactly(1).Items();
 	}
 
 	[SkippableTheory]
@@ -85,7 +85,7 @@ public partial class Tests
 		archive.Dispose();
 		void Act() => stream.ReadByte();
 		
-		await That(Act).Should().Throw<ObjectDisposedException>().OnlyIf(!leaveOpen);
+		await That(Act).Throws<ObjectDisposedException>().OnlyIf(!leaveOpen);
 	}
 
 	[SkippableTheory]
@@ -106,14 +106,14 @@ public partial class Tests
 		using IZipArchive readArchive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
-		var singleEntry = await That(readArchive.Entries).Should().HaveSingle();
+		var singleEntry = await That(readArchive.Entries).HasSingle();
 		if (encodedCorrectly)
 		{
-			await That(singleEntry.Name).Should().Be(entryName);
+			await That(singleEntry.Name).Is(entryName);
 		}
 		else
 		{
-			await That(singleEntry.Name).Should().NotBe(entryName);
+			await That(singleEntry.Name).IsNot(entryName);
 		}
 	}
 

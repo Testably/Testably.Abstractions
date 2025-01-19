@@ -24,7 +24,7 @@ public partial class Tests
 
 		IZipArchiveEntry entry = archive.Entries.Single();
 
-		await That(entry.Archive).Should().Be(archive);
+		await That(entry.Archive).Is(archive);
 	}
 
 #if FEATURE_ZIPFILE_NET7
@@ -43,7 +43,7 @@ public partial class Tests
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 		IZipArchiveEntry entry = archive.Entries.Single();
 
-		await That(entry.Comment).Should().Be("");
+		await That(entry.Comment).Is("");
 	}
 #endif
 
@@ -66,7 +66,7 @@ public partial class Tests
 
 		entry.Comment = comment;
 
-		await That(entry.Comment).Should().Be(comment);
+		await That(entry.Comment).Is(comment);
 	}
 #endif
 
@@ -87,8 +87,8 @@ public partial class Tests
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries.Single())
-			.For(x => x.Length, l => l.Should().Be(9)).And
-			.For(x => x.CompressedLength, l => l.Should().Be(9));
+			.For(x => x.Length, l => l.Is(9)).And
+			.For(x => x.CompressedLength, l => l.Is(9));
 	}
 
 	[SkippableFact]
@@ -106,8 +106,8 @@ public partial class Tests
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries.Single())
-			.For(x => x.Length, l => l.Should().Be(9)).And
-			.For(x => x.CompressedLength, l => l.Should().BeLessThan(9));
+			.For(x => x.Length, l => l.Is(9)).And
+			.For(x => x.CompressedLength, l => l.IsLessThan(9));
 	}
 
 #if FEATURE_COMPRESSION_ADVANCED
@@ -129,7 +129,7 @@ public partial class Tests
 		IZipArchiveEntry entry1 = archive.Entries[0];
 		IZipArchiveEntry entry2 = archive.Entries[1];
 
-		await That(entry1.Crc32).Should().NotBe(entry2.Crc32);
+		await That(entry1.Crc32).IsNot(entry2.Crc32);
 	}
 #endif
 
@@ -151,7 +151,7 @@ public partial class Tests
 
 		void Act() => entry.Delete();
 
-		await That(Act).Should().Throw<NotSupportedException>();
+		await That(Act).Throws<NotSupportedException>();
 	}
 
 	[SkippableFact]
@@ -172,7 +172,7 @@ public partial class Tests
 
 		entry.Delete();
 
-		await That(archive.Entries).Should().BeEmpty();
+		await That(archive.Entries).IsEmpty();
 	}
 
 #if FEATURE_COMPRESSION_ADVANCED
@@ -196,8 +196,8 @@ public partial class Tests
 		IZipArchiveEntry entry2 = archive.Entries[1];
 
 		entry1.ExternalAttributes = externalAttributes;
-		await That(entry1.ExternalAttributes).Should().Be(externalAttributes);
-		await That(entry2.ExternalAttributes).Should().NotBe(externalAttributes);
+		await That(entry1.ExternalAttributes).Is(externalAttributes);
+		await That(entry2.ExternalAttributes).IsNot(externalAttributes);
 	}
 #endif
 
@@ -217,7 +217,7 @@ public partial class Tests
 
 		IZipArchiveEntry entry = archive.Entries.Single();
 
-		await That(entry.FileSystem).Should().Be(FileSystem);
+		await That(entry.FileSystem).Is(FileSystem);
 	}
 
 	[SkippableFact]
@@ -236,8 +236,8 @@ public partial class Tests
 
 		IZipArchiveEntry entry = archive.Entries.Single();
 
-		await That(entry.FullName).Should().Be("foo/foo.txt");
-		await That(entry.Name).Should().Be("foo.txt");
+		await That(entry.FullName).Is("foo/foo.txt");
+		await That(entry.Name).Is("foo.txt");
 	}
 
 	[SkippableTheory]
@@ -263,7 +263,7 @@ public partial class Tests
 			entry1.LastWriteTime = new DateTimeOffset(lastWriteTime);
 		}
 
-		await That(Act).Should().Throw<NotSupportedException>();
+		await That(Act).Throws<NotSupportedException>();
 	}
 
 	[SkippableTheory]
@@ -287,8 +287,8 @@ public partial class Tests
 		IZipArchiveEntry entry2 = archive.Entries[1];
 
 		entry1.LastWriteTime = new DateTimeOffset(lastWriteTime);
-		await That(entry1.LastWriteTime.DateTime).Should().Be(lastWriteTime);
-		await That(entry2.LastWriteTime.DateTime).Should().NotBe(lastWriteTime);
+		await That(entry1.LastWriteTime.DateTime).Is(lastWriteTime);
+		await That(entry2.LastWriteTime.DateTime).IsNot(lastWriteTime);
 	}
 
 	[SkippableFact]
@@ -309,6 +309,6 @@ public partial class Tests
 
 		string? result = entry.ToString();
 
-		await That(result).Should().Be("foo.txt");
+		await That(result).Is("foo.txt");
 	}
 }

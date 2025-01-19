@@ -8,6 +8,6 @@ public partial class Tests
 	{
 		IZipFile result = FileSystem.ZipFile();
 
-		await That(result.FileSystem).Should().Be(FileSystem);
+		await That(result.FileSystem).Is(FileSystem);
 	}
 }

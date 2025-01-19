@@ -20,7 +20,7 @@ public partial class FileAclExtensionsTests
 			#pragma warning restore CA1416
 		}
 
-		await That(Act).Should().Throw<FileNotFoundException>()
+		await That(Act).Throws<FileNotFoundException>()
 			.WithHResult(-2147024894);
 	}
 
@@ -34,7 +34,7 @@ public partial class FileAclExtensionsTests
 		#pragma warning disable CA1416
 		FileSecurity result = FileSystem.File.GetAccessControl("foo");
 
-		await That(result).Should().NotBeNull();
+		await That(result).IsNotNull();
 		#pragma warning restore CA1416
 	}
 
@@ -54,7 +54,7 @@ public partial class FileAclExtensionsTests
 		FileSecurity result =
 			FileSystem.File.GetAccessControl("foo");
 
-		await That(result).Should().Be(originalResult);
+		await That(result).Is(originalResult);
 		#pragma warning restore CA1416
 	}
 
@@ -71,7 +71,7 @@ public partial class FileAclExtensionsTests
 			#pragma warning restore CA1416
 		}
 
-		await That(Act).Should().Throw<FileNotFoundException>()
+		await That(Act).Throws<FileNotFoundException>()
 			.WithHResult(-2147024894);
 	}
 
@@ -86,7 +86,7 @@ public partial class FileAclExtensionsTests
 		#pragma warning disable CA1416
 		FileSecurity result = FileSystem.File.GetAccessControl("foo", AccessControlSections.None);
 
-		await That(result).Should().NotBeNull();
+		await That(result).IsNotNull();
 		#pragma warning restore CA1416
 	}
 
@@ -107,7 +107,7 @@ public partial class FileAclExtensionsTests
 		FileSecurity result =
 			FileSystem.File.GetAccessControl("foo", AccessControlSections.None);
 
-		await That(result).Should().Be(originalResult);
+		await That(result).Is(originalResult);
 		#pragma warning restore CA1416
 	}
 
@@ -126,6 +126,6 @@ public partial class FileAclExtensionsTests
 		#pragma warning restore CA1416
 
 		await That(currentAccessControl.HasSameAccessRightsAs(originalAccessControl))
-			.Should().BeTrue();
+			.IsTrue();
 	}
 }

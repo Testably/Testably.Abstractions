@@ -19,7 +19,7 @@ public sealed class ZipUtilitiesTests
 			zipArchiveEntry.ExtractRelativeToDirectory("foo", false);
 		}
 
-		await That(Act).Should().Throw<IOException>()
+		await That(Act).Throws<IOException>()
 			.WithMessage("*Zip entry name ends in directory separator character but contains data*")
 			.AsWildcard();
 	}
@@ -32,8 +32,8 @@ public sealed class ZipUtilitiesTests
 
 		zipArchiveEntry.ExtractRelativeToDirectory("bar", false);
 
-		await That(fileSystem).Should().HaveDirectory("bar");
-		await That(fileSystem).Should().HaveDirectory("bar/foo");
+		await That(fileSystem).HasDirectory("bar");
+		await That(fileSystem).HasDirectory("bar/foo");
 	}
 
 	private sealed class DummyZipArchiveEntry(

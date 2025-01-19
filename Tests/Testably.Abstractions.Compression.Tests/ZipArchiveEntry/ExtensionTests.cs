@@ -26,7 +26,7 @@ public partial class ExtensionTests
 		void Act()
 			=> archive.ExtractToDirectory("bar");
 
-		await That(Act).Should().Throw<InvalidOperationException>();
+		await That(Act).Throws<InvalidOperationException>();
 	}
 
 	[SkippableTheory]
@@ -49,7 +49,7 @@ public partial class ExtensionTests
 			archive.Entries.Single().ExtractToFile(null!);
 		}
 
-		await That(Act).Should().Throw<ArgumentNullException>()
+		await That(Act).Throws<ArgumentNullException>()
 			.WithParamName("destinationFileName");
 	}
 
@@ -74,7 +74,7 @@ public partial class ExtensionTests
 			archive.Entries.Single().ExtractToFile(null!, true);
 		}
 
-		await That(Act).Should().Throw<ArgumentNullException>();
+		await That(Act).Throws<ArgumentNullException>();
 	}
 
 	[SkippableFact]
@@ -98,7 +98,7 @@ public partial class ExtensionTests
 		void Act()
 			=> archive2.ExtractToDirectory("bar");
 
-		await That(Act).Should().Throw<IOException>();
+		await That(Act).Throws<IOException>();
 	}
 
 	[SkippableTheory]
@@ -126,7 +126,7 @@ public partial class ExtensionTests
 
 		entry.ExtractToFile("bar/bar.txt", true);
 
-		await That(FileSystem).Should().HaveFile("bar/bar.txt")
+		await That(FileSystem).HasFile("bar/bar.txt")
 			.WithContent("FooFooFoo").And
 			.WithLastWriteTime(lastWriteTime);
 	}
@@ -151,10 +151,10 @@ public partial class ExtensionTests
 			entry.ExtractToFile("bar/bar.txt");
 		}
 
-		await That(Act).Should().Throw<IOException>()
+		await That(Act).Throws<IOException>()
 			.WithMessage($"*'{FileSystem.Path.GetFullPath("bar/bar.txt")}'*").AsWildcard();
-		await That(FileSystem).Should().HaveFile("bar/bar.txt")
-			.WhichContent(f => f.Should().NotBe("FooFooFoo"));
+		await That(FileSystem).HasFile("bar/bar.txt")
+			.WhichContent(f => f.IsNot("FooFooFoo"));
 	}
 
 	[SkippableFact]
@@ -174,7 +174,7 @@ public partial class ExtensionTests
 
 		entry.ExtractToFile("bar/bar.txt", true);
 
-		await That(FileSystem).Should().HaveFile("bar/bar.txt")
+		await That(FileSystem).HasFile("bar/bar.txt")
 			.WithContent("FooFooFoo");
 	}
 }

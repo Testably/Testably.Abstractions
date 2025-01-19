@@ -17,7 +17,7 @@ public partial class FileStreamAclExtensionsTests
 		#pragma warning disable CA1416
 		FileSecurity result = fileStream.GetAccessControl();
 
-		await That(result).Should().NotBeNull();
+		await That(result).IsNotNull();
 		#pragma warning restore CA1416
 	}
 
@@ -35,6 +35,6 @@ public partial class FileStreamAclExtensionsTests
 		#pragma warning restore CA1416
 
 		await That(currentAccessControl.HasSameAccessRightsAs(originalAccessControl))
-			.Should().BeTrue();
+			.IsTrue();
 	}
 }

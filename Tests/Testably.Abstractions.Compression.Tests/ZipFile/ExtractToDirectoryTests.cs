@@ -21,9 +21,9 @@ public partial class ExtractToDirectoryTests
 
 		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "bar");
 
-		await That(FileSystem).Should().HaveFile("bar/test.txt");
+		await That(FileSystem).HasFile("bar/test.txt");
 		await That(FileSystem.File.ReadAllBytes("bar/test.txt"))
-			.Should().Be(FileSystem.File.ReadAllBytes("foo/test.txt"));
+			.Is(FileSystem.File.ReadAllBytes("foo/test.txt"));
 	}
 
 	[SkippableFact]
@@ -38,7 +38,7 @@ public partial class ExtractToDirectoryTests
 			FileSystem.ZipFile().ExtractToDirectory(sourceArchiveFileName, "bar");
 		}
 
-		await That(Act).Should().Throw<FileNotFoundException>()
+		await That(Act).Throws<FileNotFoundException>()
 			.WithMessage($"*'{FileSystem.Path.GetFullPath(sourceArchiveFileName)}*").AsWildcard();
 	}
 
@@ -54,7 +54,7 @@ public partial class ExtractToDirectoryTests
 			FileSystem.ZipFile().ExtractToDirectory(sourceArchiveFileName, "bar");
 		}
 
-		await That(Act).Should().Throw<ArgumentNullException>()
+		await That(Act).Throws<ArgumentNullException>()
 			.WithParamName("sourceArchiveFileName");
 	}
 
@@ -76,7 +76,7 @@ public partial class ExtractToDirectoryTests
 
 		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "bar", true);
 
-		await That(FileSystem).Should().HaveFile(FileSystem.Path.Combine("bar", "test.txt"))
+		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
 			.WithContent(contents);
 	}
 #endif
@@ -100,7 +100,7 @@ public partial class ExtractToDirectoryTests
 
 		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "bar", encoding, true);
 
-		await That(FileSystem).Should().HaveFile(FileSystem.Path.Combine("bar", "test.txt"))
+		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
 			.WithContent(contents);
 	}
 #endif
@@ -120,9 +120,9 @@ public partial class ExtractToDirectoryTests
 
 		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "bar", encoding);
 
-		await That(FileSystem).Should().HaveFile(FileSystem.Path.Combine("bar", "test.txt"));
+		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"));
 		await That(FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("bar", "test.txt")))
-			.Should().Be(FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("foo", "test.txt")));
+			.Is(FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("foo", "test.txt")));
 	}
 
 	[SkippableTheory]
@@ -147,10 +147,10 @@ public partial class ExtractToDirectoryTests
 			FileSystem.ZipFile().ExtractToDirectory("destination.zip", "bar");
 		}
 
-		await That(Act).Should().Throw<IOException>()
+		await That(Act).Throws<IOException>()
 			.WithMessage($"*'{destinationPath}'*").AsWildcard();
 		await That(FileSystem.File.ReadAllText(destinationPath))
-			.Should().NotBe(contents);
+			.IsNot(contents);
 	}
 
 #if FEATURE_COMPRESSION_STREAM
@@ -166,9 +166,9 @@ public partial class ExtractToDirectoryTests
 
 		FileSystem.ZipFile().ExtractToDirectory(stream, "bar");
 
-		await That(FileSystem).Should().HaveFile("bar/test.txt");
+		await That(FileSystem).HasFile("bar/test.txt");
 		await That(FileSystem.File.ReadAllBytes("bar/test.txt"))
-			.Should().Be(FileSystem.File.ReadAllBytes("foo/test.txt"));
+			.Is(FileSystem.File.ReadAllBytes("foo/test.txt"));
 	}
 #endif
 
@@ -185,7 +185,7 @@ public partial class ExtractToDirectoryTests
 			FileSystem.ZipFile().ExtractToDirectory(source, "bar");
 		}
 
-		await That(Act).Should().Throw<ArgumentException>()
+		await That(Act).Throws<ArgumentException>()
 			.WithMessage("The stream is unreadable*").AsWildcard().And
 			.WithParamName("source").And
 			.WithHResult(-2147024809);
@@ -205,7 +205,7 @@ public partial class ExtractToDirectoryTests
 			FileSystem.ZipFile().ExtractToDirectory(source, "bar");
 		}
 
-		await That(Act).Should().Throw<ArgumentNullException>()
+		await That(Act).Throws<ArgumentNullException>()
 			.WithParamName("source");
 	}
 #endif
@@ -229,7 +229,7 @@ public partial class ExtractToDirectoryTests
 
 		FileSystem.ZipFile().ExtractToDirectory(stream, "bar", true);
 
-		await That(FileSystem).Should().HaveFile(FileSystem.Path.Combine("bar", "test.txt"))
+		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
 			.WithContent(contents);
 	}
 #endif
@@ -254,7 +254,7 @@ public partial class ExtractToDirectoryTests
 
 		FileSystem.ZipFile().ExtractToDirectory(stream, "bar", encoding, true);
 
-		await That(FileSystem).Should().HaveFile(FileSystem.Path.Combine("bar", "test.txt"))
+		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
 			.WithContent(contents);
 	}
 #endif
@@ -276,9 +276,9 @@ public partial class ExtractToDirectoryTests
 
 		FileSystem.ZipFile().ExtractToDirectory(stream, "bar", encoding);
 
-		await That(FileSystem).Should().HaveFile(FileSystem.Path.Combine("bar", "test.txt"));
+		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"));
 		await That(FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("bar", "test.txt")))
-			.Should().Be(FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("foo", "test.txt")));
+			.Is(FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("foo", "test.txt")));
 	}
 #endif
 
@@ -307,10 +307,10 @@ public partial class ExtractToDirectoryTests
 			FileSystem.ZipFile().ExtractToDirectory(stream, "bar");
 		}
 
-		await That(Act).Should().Throw<IOException>()
+		await That(Act).Throws<IOException>()
 			.WithMessage($"*'{destinationPath}'*").AsWildcard();
 		await That(FileSystem.File.ReadAllText(destinationPath))
-			.Should().NotBe(contents);
+			.IsNot(contents);
 	}
 #endif
 
@@ -333,10 +333,10 @@ public partial class ExtractToDirectoryTests
 			FileSystem.ZipFile().ExtractToDirectory(stream, "bar");
 		}
 
-		await That(Act).Should().Throw<ArgumentException>()
+		await That(Act).Throws<ArgumentException>()
+			.WithMessage("*stream is unreadable*").AsWildcard().And
 			.WithParamName("source").And
-			.WithHResult(-2147024809).And
-			.WithMessage("*stream is unreadable*").AsWildcard();
+			.WithHResult(-2147024809);
 	}
 #endif
 }

@@ -10,7 +10,7 @@ public partial class AccessControlHelperTests
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("foo");
 
-		await That(() => sut.GetExtensibilityOrThrow()).Should().NotThrow();
+		await That(() => sut.GetExtensibilityOrThrow()).DoesNotThrow();
 	}
 
 	[SkippableFact]
@@ -18,7 +18,7 @@ public partial class AccessControlHelperTests
 	{
 		IFileInfo sut = FileSystem.FileInfo.New("foo");
 
-		await That(() => sut.GetExtensibilityOrThrow()).Should().NotThrow();
+		await That(() => sut.GetExtensibilityOrThrow()).DoesNotThrow();
 	}
 
 	[SkippableFact]
@@ -26,6 +26,6 @@ public partial class AccessControlHelperTests
 	{
 		FileSystemStream sut = FileSystem.FileStream.New("foo", FileMode.Create);
 
-		await That(() => sut.GetExtensibilityOrThrow()).Should().NotThrow();
+		await That(() => sut.GetExtensibilityOrThrow()).DoesNotThrow();
 	}
 }

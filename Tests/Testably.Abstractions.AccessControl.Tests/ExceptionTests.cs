@@ -16,8 +16,8 @@ public partial class ExceptionTests
 	{
 		Skip.IfNot(Test.RunsOnWindows || exceptionType == MethodType.GetAccessControl);
 
-		await That(() => callback.Invoke(FileSystem, "")).Should()
-			.Throw<ArgumentException>().WithHResult(-2147024809)
+		await That(() => callback.Invoke(FileSystem, ""))
+			.Throws<ArgumentException>().WithHResult(-2147024809)
 			.Because($"\n{exceptionType} on {baseType}\n was called with an empty path");
 	}
 
@@ -29,8 +29,8 @@ public partial class ExceptionTests
 	{
 		Skip.IfNot(Test.RunsOnWindows || exceptionType == MethodType.GetAccessControl);
 
-		await That(() => callback.Invoke(FileSystem, null!)).Should()
-			.Throw<ArgumentNullException>()
+		await That(() => callback.Invoke(FileSystem, null!))
+			.Throws<ArgumentNullException>()
 			.Because($"\n{exceptionType} on {baseType}\n was called with a null path");
 	}
 
@@ -42,8 +42,8 @@ public partial class ExceptionTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		await That(() => callback.Invoke(FileSystem, "  ")).Should()
-			.Throw<ArgumentException>().WithHResult(-2147024809)
+		await That(() => callback.Invoke(FileSystem, "  "))
+			.Throws<ArgumentException>().WithHResult(-2147024809)
 			.Because($"\n{exceptionType} on {baseType}\n was called with a whitespace path");
 	}
 
