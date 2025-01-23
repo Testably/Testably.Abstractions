@@ -136,7 +136,7 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 	{
 		using IDisposable registration = RegisterPathMethod(nameof(Delete));
 
-		_fileSystem.Storage.DeleteContainer(Location);
+		_fileSystem.Storage.DeleteContainer(Location, FileSystemType);
 		ResetCache(!_fileSystem.Execute.IsNetFramework);
 	}
 

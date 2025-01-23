@@ -76,6 +76,22 @@ public partial class DeleteTests
 
 	[SkippableTheory]
 	[AutoData]
+	public void Delete_WhenFile_ShouldThrowIOException(
+		string directoryName)
+	{
+		FileSystem.File.WriteAllText(directoryName, "");
+		string expectedPath = FileSystem.Path.Combine(BasePath, directoryName);
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.Directory.Delete(directoryName, true);
+		});
+
+		exception.Should().BeException<IOException>($"The directory name is invalid*{expectedPath}",
+			hResult: -2147024629);
+	}
+
+	[SkippableTheory]
+	[AutoData]
 	public void Delete_Recursive_WithFileInSubdirectory_ShouldDeleteDirectoryWithContent(
 		string path, string subdirectory, string fileName, string fileContent)
 	{

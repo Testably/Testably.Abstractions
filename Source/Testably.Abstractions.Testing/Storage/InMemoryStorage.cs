@@ -122,8 +122,8 @@ internal sealed class InMemoryStorage : IStorage
 		}
 	}
 
-	/// <inheritdoc cref="IStorage.DeleteContainer(IStorageLocation, bool)" />
-	public bool DeleteContainer(IStorageLocation location, bool recursive = false)
+	/// <inheritdoc cref="IStorage.DeleteContainer(IStorageLocation, FileSystemTypes, bool)" />
+	public bool DeleteContainer(IStorageLocation location, FileSystemTypes expectedType, bool recursive = false)
 	{
 		if (!_containers.TryGetValue(location, out IStorageContainer? container))
 		{
@@ -136,6 +136,18 @@ internal sealed class InMemoryStorage : IStorage
 			return false;
 		}
 
+		if (container.Type != expectedType)
+		{
+			if (expectedType == FileSystemTypes.Directory)
+			{
+				throw ExceptionFactory.InvalidDirectoryName(location.FullPath);
+			}
+			if (expectedType == FileSystemTypes.File)
+			{
+				throw ExceptionFactory.AccessToPathDenied(location.FullPath);
+			}
+		}
+
 		if (container.Type == FileSystemTypes.Directory)
 		{
 			IEnumerable<IStorageLocation> children =
@@ -144,7 +156,7 @@ internal sealed class InMemoryStorage : IStorage
 			{
 				foreach (IStorageLocation key in children)
 				{
-					DeleteContainer(key, recursive: true);
+					DeleteContainer(key, FileSystemTypes.DirectoryOrFile, recursive: true);
 				}
 			}
 			else if (children.Any())

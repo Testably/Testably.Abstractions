@@ -323,7 +323,8 @@ internal sealed class FileMock : IFile
 
 		_fileSystem.Storage.DeleteContainer(
 			_fileSystem.Storage.GetLocation(
-				path.EnsureValidFormat(_fileSystem)));
+				path.EnsureValidFormat(_fileSystem)),
+			FileSystemTypes.File);
 	}
 
 	/// <inheritdoc cref="IFile.Encrypt(string)" />
