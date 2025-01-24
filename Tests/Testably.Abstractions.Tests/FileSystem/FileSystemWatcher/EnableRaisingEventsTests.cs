@@ -27,7 +27,7 @@ public partial class EnableRaisingEventsTests
 		};
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(path1);
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		ms.Reset();
 
 		fileSystemWatcher.EnableRaisingEvents = false;

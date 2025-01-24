@@ -57,7 +57,7 @@ public partial class ReadTests
 			}
 		}, null);
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		buffer.Should().BeEquivalentTo(bytes);
 	}
 
@@ -108,7 +108,7 @@ public partial class ReadTests
 				}
 			}, null);
 
-			ms.Wait(ExpectSuccess).Should().BeTrue();
+			ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		}
 
 		DateTime creationTime = FileSystem.File.GetCreationTimeUtc(path);

@@ -35,7 +35,7 @@ public partial class FilterTests
 		fileSystemWatcher.Filter = path;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(path);
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(path));
@@ -107,7 +107,7 @@ public partial class FilterTests
 			FileSystem.Directory.Delete(path);
 		}
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 
 		foreach (string path in otherPaths)
 		{

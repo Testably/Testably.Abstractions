@@ -185,14 +185,14 @@ public partial class TimerTests
 						ms1.Set();
 						triggerTimes.Add((int)diff);
 						// ReSharper disable once AccessToDisposedClosure
-						ms2.Wait(ExpectSuccess).Should().BeTrue();
+						ms2.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 						if (triggerTimes.Count > 3)
 						{
 							// ReSharper disable once AccessToDisposedClosure
 							ms3.Set();
 						}
 
-						await Task.Delay(10);
+						await Task.Delay(10, TestContext.Current.CancellationToken);
 					}
 					catch (ObjectDisposedException)
 					{
@@ -202,7 +202,7 @@ public partial class TimerTests
 				null, 0 * TimerMultiplier, 200 * TimerMultiplier))
 			#pragma warning restore MA0147 // Avoid async void method for delegate
 		{
-			ms1.Wait(ExpectSuccess).Should().BeTrue();
+			ms1.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 			using ITimer timer2 = TimeSystem.Timer.New(_ =>
 			{
 				// ReSharper disable once AccessToDisposedClosure
@@ -218,7 +218,7 @@ public partial class TimerTests
 				}
 			}, null, 100 * TimerMultiplier, 0 * TimerMultiplier);
 
-			ms3.Wait(ExpectSuccess * TimerMultiplier).Should().BeTrue();
+			ms3.Wait(ExpectSuccess * TimerMultiplier, TestContext.Current.CancellationToken).Should().BeTrue();
 		}
 
 		if (triggerTimes[0] < 30 * TimerMultiplier)
@@ -259,14 +259,14 @@ public partial class TimerTests
 						ms1.Set();
 						triggerTimes.Add((int)diff);
 						// ReSharper disable once AccessToDisposedClosure
-						ms2.Wait(ExpectSuccess).Should().BeTrue();
+						ms2.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 						if (triggerTimes.Count > 3)
 						{
 							// ReSharper disable once AccessToDisposedClosure
 							ms3.Set();
 						}
 
-						await Task.Delay(10);
+						await Task.Delay(10, TestContext.Current.CancellationToken);
 					}
 					catch (ObjectDisposedException)
 					{
@@ -276,7 +276,7 @@ public partial class TimerTests
 				null, 0L * TimerMultiplier, 200L * TimerMultiplier))
 			#pragma warning restore MA0147 // Avoid async void method for delegate
 		{
-			ms1.Wait(ExpectSuccess).Should().BeTrue();
+			ms1.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 			using ITimer timer2 = TimeSystem.Timer.New(_ =>
 			{
 				// ReSharper disable once AccessToDisposedClosure
@@ -292,7 +292,7 @@ public partial class TimerTests
 				}
 			}, null, 100L * TimerMultiplier, 0L * TimerMultiplier);
 
-			ms3.Wait(ExpectSuccess).Should().BeTrue();
+			ms3.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		}
 
 		if (triggerTimes[0] < 30 * TimerMultiplier)
@@ -333,14 +333,14 @@ public partial class TimerTests
 						ms1.Set();
 						triggerTimes.Add((int)diff);
 						// ReSharper disable once AccessToDisposedClosure
-						ms2.Wait(ExpectSuccess).Should().BeTrue();
+						ms2.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 						if (triggerTimes.Count > 3)
 						{
 							// ReSharper disable once AccessToDisposedClosure
 							ms3.Set();
 						}
 
-						await Task.Delay(10);
+						await Task.Delay(10, TestContext.Current.CancellationToken);
 					}
 					catch (ObjectDisposedException)
 					{
@@ -350,7 +350,7 @@ public partial class TimerTests
 				TimeSpan.FromMilliseconds(200 * TimerMultiplier)))
 			#pragma warning restore MA0147 // Avoid async void method for delegate
 		{
-			ms1.Wait(ExpectSuccess).Should().BeTrue();
+			ms1.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 			using ITimer timer2 = TimeSystem.Timer.New(_ =>
 				{
 					// ReSharper disable once AccessToDisposedClosure
@@ -368,7 +368,7 @@ public partial class TimerTests
 				}, null, TimeSpan.FromMilliseconds(100 * TimerMultiplier),
 				TimeSpan.FromMilliseconds(0 * TimerMultiplier));
 
-			ms3.Wait(ExpectSuccess).Should().BeTrue();
+			ms3.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		}
 
 		if (triggerTimes[0] < 30 * TimerMultiplier)

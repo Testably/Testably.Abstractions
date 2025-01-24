@@ -202,7 +202,7 @@ public partial class FileAccessTests
 
 		while (!wait.IsCompleted)
 		{
-			await Task.Delay(10);
+			await Task.Delay(10, TestContext.Current.CancellationToken);
 		}
 
 		results.Should().HaveCount(100);

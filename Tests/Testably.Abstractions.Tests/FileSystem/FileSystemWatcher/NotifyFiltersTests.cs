@@ -50,7 +50,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.AppendAllText(fileName, "foo");
 
-		ms.Wait(EnsureTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -106,7 +106,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.AppendAllText(fileName, "foo");
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(fileName));
 		result.ChangeType.Should().Be(WatcherChangeTypes.Changed);
@@ -148,7 +148,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.CreateDirectory(path);
 
-		ms.Wait(EnsureTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -182,7 +182,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.CreateDirectory(path);
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(path));
 		result.ChangeType.Should().Be(WatcherChangeTypes.Created);
@@ -224,7 +224,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.WriteAllText(path, "foo");
 
-		ms.Wait(EnsureTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -258,7 +258,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.WriteAllText(path, "foo");
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(path));
 		result.ChangeType.Should().Be(WatcherChangeTypes.Created);
@@ -300,7 +300,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.Delete(path);
 
-		ms.Wait(EnsureTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -334,7 +334,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.Delete(path);
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(path));
 		result.ChangeType.Should().Be(WatcherChangeTypes.Deleted);
@@ -376,7 +376,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.Delete(path);
 
-		ms.Wait(EnsureTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -410,7 +410,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.Delete(path);
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(path));
 		result.ChangeType.Should().Be(WatcherChangeTypes.Deleted);
@@ -456,7 +456,7 @@ public partial class NotifyFiltersTests
 			FileSystem.Path.Combine(sourcePath, sourceName),
 			FileSystem.Path.Combine(destinationPath, destinationName));
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.ChangeType.Should().Be(WatcherChangeTypes.Renamed);
 		result.FullPath.Should()
@@ -507,7 +507,7 @@ public partial class NotifyFiltersTests
 			FileSystem.Path.Combine(sourcePath, sourceName),
 			FileSystem.Path.Combine(destinationPath, destinationName));
 
-		ms.Wait(EnsureTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -549,7 +549,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.Move(sourceName, destinationName);
 
-		ms.Wait(EnsureTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -586,7 +586,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.Move(sourceName, destinationName);
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.ChangeType.Should().Be(WatcherChangeTypes.Renamed);
 		result.FullPath.Should().Be(FileSystem.Path.GetFullPath(destinationName));
@@ -640,7 +640,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.WriteAllText(fileName, "foo");
 
-		ms.Wait(EnsureTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -696,7 +696,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.WriteAllText(fileName, "foo");
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(fileName));
 		result.ChangeType.Should().Be(WatcherChangeTypes.Changed);

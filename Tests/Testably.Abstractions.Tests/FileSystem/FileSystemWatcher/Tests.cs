@@ -32,7 +32,7 @@ public partial class Tests
 				{
 					while (!ms.IsSet)
 					{
-						await Task.Delay(10);
+						await Task.Delay(10, TestContext.Current.CancellationToken);
 						FileSystem.Directory.CreateDirectory(path);
 						FileSystem.Directory.Delete(path);
 					}
@@ -90,7 +90,7 @@ public partial class Tests
 				{
 					while (!ms.IsSet)
 					{
-						await Task.Delay(10);
+						await Task.Delay(10, TestContext.Current.CancellationToken);
 						FileSystem.Directory.CreateDirectory(path);
 						FileSystem.Directory.Delete(path);
 					}

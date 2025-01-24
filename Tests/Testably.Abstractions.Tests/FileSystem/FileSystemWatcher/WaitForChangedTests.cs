@@ -23,7 +23,7 @@ public partial class WaitForChangedTests
 				{
 					while (!ms.IsSet)
 					{
-						await Task.Delay(10);
+						await Task.Delay(10, TestContext.Current.CancellationToken);
 						FileSystem.Directory.CreateDirectory(path);
 						FileSystem.Directory.Delete(path);
 					}
@@ -72,7 +72,7 @@ public partial class WaitForChangedTests
 				{
 					while (!ms.IsSet)
 					{
-						await Task.Delay(10);
+						await Task.Delay(10, TestContext.Current.CancellationToken);
 						FileSystem.Directory.CreateDirectory(fullPath);
 						FileSystem.Directory.Delete(fullPath);
 					}

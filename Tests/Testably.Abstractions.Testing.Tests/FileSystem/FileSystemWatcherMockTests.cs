@@ -83,7 +83,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			FileSystem.Directory.CreateDirectory($"{i}_{path}");
 		}
 
-		block2.Wait(10000).Should().BeTrue();
+		block2.Wait(10000, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.GetException().Should().BeOfType<InternalBufferOverflowException>();
 	}
@@ -141,7 +141,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			FileSystem.Directory.CreateDirectory($"{i}_{path}");
 		}
 
-		block2.Wait(5000).Should().BeTrue();
+		block2.Wait(5000, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.GetException().Should().BeOfType<InternalBufferOverflowException>();
 	}
@@ -231,7 +231,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			FileSystem.Directory.CreateDirectory($"{i}_{path2}");
 		}
 
-		block2.Wait(100).Should().BeFalse();
+		block2.Wait(100, TestContext.Current.CancellationToken).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
@@ -271,7 +271,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
 			fileSystemWatcher.EnableRaisingEvents = true;
 			fileSystem.Directory.CreateDirectory(expectedName);
-			ms.Wait(5000);
+			ms.Wait(5000, TestContext.Current.CancellationToken);
 
 			result.Should().NotBeNull();
 			result!.FullPath.Should().Be(expectedFullPath);
@@ -318,7 +318,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			fileSystemWatcher.NotifyFilter = NotifyFilters.FileName;
 			fileSystemWatcher.EnableRaisingEvents = true;
 			fileSystem.File.Move(expectedOldFullPath, expectedFullPath);
-			ms.Wait(5000);
+			ms.Wait(5000, TestContext.Current.CancellationToken);
 
 			result.Should().NotBeNull();
 			result!.FullPath.Should().Be(expectedFullPath);

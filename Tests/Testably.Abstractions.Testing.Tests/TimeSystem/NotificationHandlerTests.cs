@@ -102,7 +102,7 @@ public class NotificationHandlerTests
 		IDisposable disposable = timeSystem.On.TaskDelay(d => receivedDelay = d);
 
 		disposable.Dispose();
-		_ = timeSystem.Task.Delay(millisecondsDelay);
+		_ = timeSystem.Task.Delay(millisecondsDelay, TestContext.Current.CancellationToken);
 
 		receivedDelay.Should().BeNull();
 	}
@@ -119,7 +119,7 @@ public class NotificationHandlerTests
 		using (timeSystem.On.TaskDelay(d => receivedDelay1 = d))
 		{
 			timeSystem.On.TaskDelay(d => receivedDelay2 = d).Dispose();
-			_ = timeSystem.Task.Delay(expectedDelay);
+			_ = timeSystem.Task.Delay(expectedDelay, TestContext.Current.CancellationToken);
 		}
 
 		receivedDelay1.Should().Be(expectedDelay);
@@ -139,7 +139,7 @@ public class NotificationHandlerTests
 		{
 			using (timeSystem.On.TaskDelay(d => receivedDelay2 = d))
 			{
-				_ = timeSystem.Task.Delay(expectedDelay);
+				_ = timeSystem.Task.Delay(expectedDelay, TestContext.Current.CancellationToken);
 			}
 		}
 
@@ -173,7 +173,7 @@ public class NotificationHandlerTests
 
 		using (timeSystem.On.TaskDelay(d => receivedDelay = d))
 		{
-			_ = timeSystem.Task.Delay(millisecondsDelay);
+			_ = timeSystem.Task.Delay(millisecondsDelay, TestContext.Current.CancellationToken);
 		}
 
 		receivedDelay.TotalMilliseconds.Should().Be(millisecondsDelay);
@@ -205,7 +205,7 @@ public class NotificationHandlerTests
 
 		using (timeSystem.On.TaskDelay(d => receivedDelay = d))
 		{
-			_ = timeSystem.Task.Delay(expectedDelay);
+			_ = timeSystem.Task.Delay(expectedDelay, TestContext.Current.CancellationToken);
 		}
 
 		receivedDelay.Should().Be(expectedDelay);

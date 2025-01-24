@@ -144,7 +144,7 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 			timeSystem.TimerHandler[0].Wait();
 		});
 
-		await Task.Delay(10);
+		await Task.Delay(10, TestContext.Current.CancellationToken);
 		exception.Should().Be(expectedException);
 		count.Should().Be(1);
 	}
@@ -198,7 +198,7 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 			}
 		}, null, 0, 20);
 
-		ms.Wait(10000).Should().BeTrue();
+		ms.Wait(10000, TestContext.Current.CancellationToken).Should().BeTrue();
 
 		count.Should().BeGreaterThanOrEqualTo(3);
 	}
@@ -213,7 +213,7 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 		int count = 0;
 		using ITimer timer = timeSystem.Timer.New(_ => count++, null, 0, 100);
 
-		await Task.Delay(10);
+		await Task.Delay(10, TestContext.Current.CancellationToken);
 		count.Should().Be(0);
 		timerHandler[0].Wait();
 		count.Should().BeGreaterThan(0);
@@ -357,7 +357,7 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 			testOutputHelper.WriteLine("Disposed.");
 		}, timeout: 10000);
 		testOutputHelper.WriteLine("Waiting 100ms...");
-		await Task.Delay(1000);
+		await Task.Delay(1000, TestContext.Current.CancellationToken);
 		testOutputHelper.WriteLine("Waiting completed.");
 		count.Should().Be(executionCount);
 	}

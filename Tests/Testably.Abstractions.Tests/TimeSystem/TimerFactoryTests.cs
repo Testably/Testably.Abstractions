@@ -135,7 +135,7 @@ public partial class TimeFactoryTests
 			}
 		}, null, 0, 50);
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		count.Should().BeGreaterOrEqualTo(2);
 	}
 
@@ -158,8 +158,8 @@ public partial class TimeFactoryTests
 			}
 		}, null, 5, 0);
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
-		await Task.Delay(100);
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
+		await Task.Delay(100, TestContext.Current.CancellationToken);
 		count.Should().Be(1);
 	}
 
@@ -180,6 +180,6 @@ public partial class TimeFactoryTests
 			}
 		});
 
-		ms.Wait(EnsureTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 	}
 }

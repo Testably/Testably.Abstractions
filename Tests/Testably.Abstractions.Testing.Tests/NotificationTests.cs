@@ -21,13 +21,13 @@ public class NotificationTests
 
 		_ = Task.Run(async () =>
 		{
-			await Task.Delay(10);
+			await Task.Delay(10, TestContext.Current.CancellationToken);
 			for (int i = 1; i <= 10; i++)
 			{
 				timeSystem.Thread.Sleep(i);
-				await Task.Delay(1);
+				await Task.Delay(1, TestContext.Current.CancellationToken);
 			}
-		});
+		}, TestContext.Current.CancellationToken);
 
 		wait.Wait(count: 7);
 		receivedCount.Should().BeGreaterOrEqualTo(7);
@@ -47,7 +47,7 @@ public class NotificationTests
 		wait.Dispose();
 
 		timeSystem.Thread.Sleep(1);
-		await Task.Delay(10);
+		await Task.Delay(10, TestContext.Current.CancellationToken);
 		isCalled.Should().BeFalse();
 	}
 
@@ -67,7 +67,7 @@ public class NotificationTests
 		wait.Dispose();
 
 		timeSystem.Thread.Sleep(1);
-		await Task.Delay(10);
+		await Task.Delay(10, TestContext.Current.CancellationToken);
 		isCalled.Should().BeFalse();
 	}
 
@@ -84,13 +84,13 @@ public class NotificationTests
 
 		_ = Task.Run(async () =>
 		{
-			await Task.Delay(10);
+			await Task.Delay(10, TestContext.Current.CancellationToken);
 			for (int i = 1; i <= 10; i++)
 			{
 				timeSystem.Thread.Sleep(i);
-				await Task.Delay(1);
+				await Task.Delay(1, TestContext.Current.CancellationToken);
 			}
-		});
+		}, TestContext.Current.CancellationToken);
 
 		wait.Wait(t => t.TotalMilliseconds > 6);
 		receivedCount.Should().BeGreaterOrEqualTo(6);
@@ -112,11 +112,11 @@ public class NotificationTests
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				await Task.Delay(10);
+				await Task.Delay(10, TestContext.Current.CancellationToken);
 				for (int i = 1; i <= 10; i++)
 				{
 					timeSystem.Thread.Sleep(i);
-					await Task.Delay(1);
+					await Task.Delay(1, TestContext.Current.CancellationToken);
 				}
 
 				ms.Set();
@@ -125,9 +125,9 @@ public class NotificationTests
 			{
 				// Ignore any ObjectDisposedException
 			}
-		});
+		}, TestContext.Current.CancellationToken);
 
-		ms.Wait(30000);
+		ms.Wait(30000, TestContext.Current.CancellationToken);
 		receivedCount.Should().BeLessOrEqualTo(4);
 	}
 
@@ -153,14 +153,14 @@ public class NotificationTests
 					while (!ms.IsSet)
 					{
 						timeSystem.Thread.Sleep(1);
-						await Task.Delay(1);
+						await Task.Delay(1, TestContext.Current.CancellationToken);
 					}
 				}
 				catch (ObjectDisposedException)
 				{
 					// Ignore any ObjectDisposedException
 				}
-			});
+			}, TestContext.Current.CancellationToken);
 
 			wait.Wait();
 			isCalled.Should().BeTrue();

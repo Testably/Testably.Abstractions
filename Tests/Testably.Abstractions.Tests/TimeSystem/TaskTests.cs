@@ -42,7 +42,7 @@ public partial class TaskTests
 		int millisecondsTimeout = 100;
 
 		DateTime before = TimeSystem.DateTime.UtcNow;
-		await TimeSystem.Task.Delay(millisecondsTimeout);
+		await TimeSystem.Task.Delay(millisecondsTimeout, TestContext.Current.CancellationToken);
 		DateTime after = TimeSystem.DateTime.UtcNow;
 
 		after.Should().BeOnOrAfter(
@@ -84,7 +84,7 @@ public partial class TaskTests
 		TimeSpan timeout = TimeSpan.FromMilliseconds(100);
 
 		DateTime before = TimeSystem.DateTime.UtcNow;
-		await TimeSystem.Task.Delay(timeout);
+		await TimeSystem.Task.Delay(timeout, TestContext.Current.CancellationToken);
 		DateTime after = TimeSystem.DateTime.UtcNow;
 
 		after.Should().BeOnOrAfter(before.Add(timeout).ApplySystemClockTolerance());
