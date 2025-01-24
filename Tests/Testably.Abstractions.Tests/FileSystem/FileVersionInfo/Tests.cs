@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileVersionInfo;
 [FileSystemTests]
 public partial class Tests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ToString_ShouldReturnProvidedPath(string fileName)
 	{

@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 [FileSystemTests]
 public partial class ExistsTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Exists_ArbitraryPath_ShouldBeFalse(string path)
 	{
@@ -13,7 +13,7 @@ public partial class ExistsTests
 		FileSystem.Should().NotHaveDirectory(sut.FullName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Exists_ExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
 	{
@@ -26,7 +26,7 @@ public partial class ExistsTests
 		FileSystem.Should().NotHaveDirectory(sut.FullName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Exists_File_ShouldReturnFalse(string path)
 	{
@@ -36,7 +36,7 @@ public partial class ExistsTests
 		sut.Should().NotExist();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Exists_NotExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
 	{
@@ -48,7 +48,7 @@ public partial class ExistsTests
 		FileSystem.Should().HaveDirectory(sut.FullName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Exists_ShouldNotChangeOnMoveTo(string path, string destination)
 	{
@@ -61,7 +61,7 @@ public partial class ExistsTests
 		sut.Should().Exist();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Exists_ShouldUpdateOnCreateWhenNotNetFramework(string path)
 	{
@@ -73,7 +73,7 @@ public partial class ExistsTests
 		sut.Exists.Should().Be(!Test.IsNetFramework);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Exists_ShouldUpdateOnDeleteWhenNotNetFramework(string path)
 	{
@@ -86,7 +86,7 @@ public partial class ExistsTests
 		sut.Exists.Should().Be(Test.IsNetFramework);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Exists_ShouldUpdateOnRecursiveDeleteWhenNotNetFramework(string path)
 	{
@@ -99,7 +99,7 @@ public partial class ExistsTests
 		sut.Exists.Should().Be(Test.IsNetFramework);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Exists_ShouldUpdateOnRefresh(string path)
 	{

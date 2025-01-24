@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Parity.Tests.TestHelpers;
 #pragma warning disable MA0029 // Combine 'Where' with 'Where'

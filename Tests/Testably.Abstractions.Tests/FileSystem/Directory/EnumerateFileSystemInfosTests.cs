@@ -11,7 +11,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 [FileSystemTests]
 public partial class EnumerateFileSystemInfosTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateFileSystemEntries_MissingDirectory_ShouldThrowDirectoryNotFoundException(
@@ -28,7 +28,7 @@ public partial class EnumerateFileSystemInfosTests
 		FileSystem.Should().NotHaveDirectory(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateFileSystemEntries_SearchOptionAllDirectories_FullPath_ShouldReturnAllFileSystemEntriesWithFullPath(
@@ -53,7 +53,7 @@ public partial class EnumerateFileSystemInfosTests
 		result.Should().Contain(initialized[2].FullName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateFileSystemEntries_SearchOptionAllDirectories_ShouldReturnAllFileSystemEntries(
@@ -75,7 +75,7 @@ public partial class EnumerateFileSystemInfosTests
 		result.Should().Contain(initialized[2].ToString());
 	}
 
-	[SkippableTheory]
+	[Theory]
 #if NETFRAMEWORK
 	[InlineAutoData(false, "")]
 #else
@@ -111,7 +111,7 @@ public partial class EnumerateFileSystemInfosTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateFileSystemEntries_WithEnumerationOptions_ShouldConsiderSetOptions(
@@ -140,7 +140,7 @@ public partial class EnumerateFileSystemInfosTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateFileSystemEntries_WithFileNameStartingWithDirectoryName_ShouldNotBeIncluded(
@@ -157,7 +157,7 @@ public partial class EnumerateFileSystemInfosTests
 		result.Should().BeEmpty();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EnumerateFileSystemEntries_WithNewline_ShouldThrowArgumentException(
 		string path)
@@ -175,7 +175,7 @@ public partial class EnumerateFileSystemInfosTests
 			messageContains: Test.IsNetFramework ? null : $"'{searchPattern}'");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateFileSystemEntries_WithoutSearchString_ShouldReturnAllFileSystemEntriesInDirectSubdirectories(
@@ -200,7 +200,7 @@ public partial class EnumerateFileSystemInfosTests
 		result.Should().NotContain(initialized[3].ToString());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateFileSystemEntries_WithSearchPattern_ShouldReturnMatchingFileSystemEntries(
@@ -223,7 +223,7 @@ public partial class EnumerateFileSystemInfosTests
 		result.Should().NotContain(initialized[3].ToString());
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void
 		EnumerateFileSystemEntries_WithSearchPatternInSubdirectory_ShouldReturnMatchingFileSystemEntriesInSubdirectories()
 	{

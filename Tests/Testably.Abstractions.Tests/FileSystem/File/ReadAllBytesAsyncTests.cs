@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class ReadAllBytesAsyncTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadAllBytesAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path)
@@ -22,7 +22,7 @@ public partial class ReadAllBytesAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadAllBytesAsync_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
@@ -35,7 +35,7 @@ public partial class ReadAllBytesAsyncTests
 			hResult: -2147024894);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadAllBytesAsync_ShouldReturnWrittenBytes(
 		byte[] bytes, string path)

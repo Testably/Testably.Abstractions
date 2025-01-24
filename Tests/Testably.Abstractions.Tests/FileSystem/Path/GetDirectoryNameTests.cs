@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class GetDirectoryNameTests
 {
-	[SkippableTheory]
+	[Theory]
 	[InlineData((string?)null)]
 #if !NETFRAMEWORK
 	[InlineData("")]
@@ -16,7 +16,7 @@ public partial class GetDirectoryNameTests
 	}
 
 #if NETFRAMEWORK
-	[SkippableTheory]
+	[Theory]
 	[InlineData("")]
 	[InlineData(" ")]
 	[InlineData("    ")]
@@ -34,7 +34,7 @@ public partial class GetDirectoryNameTests
 #endif
 
 #if !NETFRAMEWORK
-	[SkippableTheory]
+	[Theory]
 	[InlineData(" ")]
 	[InlineData("    ")]
 	public void GetDirectoryName_Spaces_ShouldReturnNullOnWindowsOtherwiseEmpty(string? path)
@@ -53,7 +53,7 @@ public partial class GetDirectoryNameTests
 #endif
 
 #if !NETFRAMEWORK
-	[SkippableTheory]
+	[Theory]
 	[InlineData("\t")]
 	[InlineData("\n")]
 	[InlineData(" \t")]
@@ -66,7 +66,7 @@ public partial class GetDirectoryNameTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetDirectoryName_ShouldReturnDirectory(
 		string directory, string filename, string extension)
@@ -79,7 +79,7 @@ public partial class GetDirectoryNameTests
 		result.Should().Be(directory);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetDirectoryName_ShouldReplaceAltDirectorySeparator(
 		string parentDirectory, string directory, string filename)
@@ -93,7 +93,7 @@ public partial class GetDirectoryNameTests
 		result.Should().Be(expected);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("foo//bar/file", "foo/bar", TestOS.All)]
 	[InlineData("foo///bar/file", "foo/bar", TestOS.All)]
 	[InlineData("//foo//bar/file", "/foo/bar", TestOS.Linux | TestOS.Mac)]
@@ -112,7 +112,7 @@ public partial class GetDirectoryNameTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetDirectoryName_Span_ShouldReturnDirectory(
 		string directory, string filename, string extension)
@@ -126,7 +126,7 @@ public partial class GetDirectoryNameTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("//", null, TestOS.Windows)]
 	[InlineData(@"\\", null, TestOS.Windows)]
 	[InlineData(@"\\", "", TestOS.Linux | TestOS.Mac)]

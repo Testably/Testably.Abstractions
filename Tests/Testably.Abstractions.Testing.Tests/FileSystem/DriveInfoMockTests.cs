@@ -12,7 +12,7 @@ public class DriveInfoMockTests
 
 	#endregion
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AvailableFreeSpace_CannotGetNegative(long size)
 	{
@@ -24,7 +24,7 @@ public class DriveInfoMockTests
 		drive.AvailableFreeSpace.Should().Be(size);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AvailableFreeSpace_NotEnoughSpace_ShouldThrowIOException(
 		int fileSize, string path)
@@ -44,7 +44,7 @@ public class DriveInfoMockTests
 		drive.AvailableFreeSpace.Should().Be(fileSize - 1);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AvailableFreeSpace_ShouldBeChangedWhenAppendingToAFile(
 		string fileContent1, string fileContent2, int expectedRemainingBytes,
@@ -63,7 +63,7 @@ public class DriveInfoMockTests
 		drive.AvailableFreeSpace.Should().Be(expectedRemainingBytes);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(0)]
 	[InlineAutoData(1)]
 	[InlineAutoData(10)]
@@ -84,7 +84,7 @@ public class DriveInfoMockTests
 		drive.AvailableFreeSpace.Should().Be(previousFreeSpace + reduceLength);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AvailableFreeSpace_ShouldBeReducedByWritingToFile(
 		int fileSize, string path)
@@ -100,7 +100,7 @@ public class DriveInfoMockTests
 		drive.AvailableFreeSpace.Should().Be(0);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AvailableFreeSpace_ShouldBeReleasedWhenDeletingAFile(
 		int fileSize, string path)
@@ -117,7 +117,7 @@ public class DriveInfoMockTests
 		drive.AvailableFreeSpace.Should().Be(fileSize);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AvailableFreeSpace_ShouldBeSetTotalSize(long size)
 	{
@@ -128,7 +128,7 @@ public class DriveInfoMockTests
 		drive.AvailableFreeSpace.Should().Be(size);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData(@"//foo", @"//foo")]
 	[InlineData(@"//foo/bar", @"//foo")]
 	[InlineData(@"//foo/bar/xyz", @"//foo")]
@@ -144,7 +144,7 @@ public class DriveInfoMockTests
 		drive.Name.Should().Be(expectedName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("foo")]
 	public void New_InvalidDriveName_ShouldThrowArgumentException(string driveName)
 	{
@@ -156,7 +156,7 @@ public class DriveInfoMockTests
 		exception.Should().BeOfType<ArgumentException>();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void New_Null_ShouldReturnNull()
 	{
 		IDriveInfo? drive =
@@ -165,7 +165,7 @@ public class DriveInfoMockTests
 		drive.Should().BeNull();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void New_UncPath_ShouldSetFlag()
 	{
 		IDriveInfo drive =
@@ -174,7 +174,7 @@ public class DriveInfoMockTests
 		(drive as DriveInfoMock)?.IsUncPath.Should().BeTrue();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("C", "C:\\")]
 	[InlineData("d", "D:\\")]
 	public void New_ValidDriveName_ShouldAppendColonAndSlash(
@@ -186,7 +186,7 @@ public class DriveInfoMockTests
 		result.Name.Should().Be(expectedDriveName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void NotReady_AccessDirectory_ShouldThrowIOException(
 		string path)
@@ -201,7 +201,7 @@ public class DriveInfoMockTests
 		exception.Should().BeOfType<IOException>();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void NotReady_AccessFile_ShouldThrowIOException(
 		string path, string contents)
@@ -217,7 +217,7 @@ public class DriveInfoMockTests
 		exception.Should().BeOfType<IOException>();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void SetDriveFormat_Default_ShouldBeNTFS()
 	{
 		FileSystem.WithDrive(d => d.SetDriveFormat());
@@ -226,7 +226,7 @@ public class DriveInfoMockTests
 		drive.DriveFormat.Should().Be("NTFS");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetDriveFormat_ShouldChangeDriveFormat(string driveFormat)
 	{
@@ -236,7 +236,7 @@ public class DriveInfoMockTests
 		drive.DriveFormat.Should().Be(driveFormat);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void SetDriveType_Default_ShouldBeFixed()
 	{
 		FileSystem.WithDrive(d => d.SetDriveType());
@@ -245,7 +245,7 @@ public class DriveInfoMockTests
 		drive.DriveType.Should().Be(DriveType.Fixed);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetDriveType_ShouldChangeDriveType(DriveType driveType)
 	{
@@ -255,7 +255,7 @@ public class DriveInfoMockTests
 		drive.DriveType.Should().Be(driveType);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
 	public void SetIsReady_ShouldChangeIsReady(bool isReady)
@@ -266,7 +266,7 @@ public class DriveInfoMockTests
 		drive.IsReady.Should().Be(isReady);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void SetTotalSize_Default_ShouldBe1Gigabyte()
 	{
 		FileSystem.WithDrive(d => d.SetTotalSize());

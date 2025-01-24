@@ -7,8 +7,8 @@ namespace Testably.Abstractions.Tests.FileSystem.FileVersionInfoFactory;
 [FileSystemTests]
 public partial class ExceptionTests
 {
-	[SkippableTheory]
-	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), parameters: "")]
+	[Theory]
+	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), "")]
 	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileVersionInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -25,8 +25,8 @@ public partial class ExceptionTests
 			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), parameters: (string?)null)]
+	[Theory]
+	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), (string?)null)]
 	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileVersionInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -42,8 +42,8 @@ public partial class ExceptionTests
 			$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), parameters: "  ")]
+	[Theory]
+	[MemberData(nameof(GetFileVersionInfoFactoryCallbacks), "  ")]
 	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IFileVersionInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)

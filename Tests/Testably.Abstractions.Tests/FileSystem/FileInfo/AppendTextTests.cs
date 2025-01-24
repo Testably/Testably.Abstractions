@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 [FileSystemTests]
 public partial class AppendTextTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AppendText_MissingFile_ShouldCreateFile(
 		string path, string appendText)
@@ -21,7 +21,7 @@ public partial class AppendTextTests
 			.Which.HasContent(appendText);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AppendText_ShouldAddTextToExistingFile(
 		string path, string contents, string appendText)

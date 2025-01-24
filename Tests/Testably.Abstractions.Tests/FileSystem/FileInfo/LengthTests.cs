@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 [FileSystemTests]
 public partial class LengthTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Length_MissingDirectory_ShouldThrowFileNotFoundException(
 		string missingDirectory, string fileName)
@@ -25,7 +25,7 @@ public partial class LengthTests
 				: $"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Length_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
@@ -43,7 +43,7 @@ public partial class LengthTests
 				: $"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Length_PathIsDirectory_ShouldThrowFileNotFoundException(string path)
 	{
@@ -62,7 +62,7 @@ public partial class LengthTests
 				: $"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Length_WhenFileExists_ShouldBeSetCorrectly(string path, byte[] bytes)
 	{
@@ -74,7 +74,7 @@ public partial class LengthTests
 		result.Should().Be(bytes.Length);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Length_WhenFileIsCreated_ShouldBeSetCorrectly(string path, byte[] bytes)
 	{
@@ -87,7 +87,7 @@ public partial class LengthTests
 		result.Should().Be(bytes.Length);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Length_WhenFileIsCreatedAfterAccessed_ShouldBeSetCorrectly(
 		string path, byte[] bytes)
@@ -107,7 +107,7 @@ public partial class LengthTests
 		result.Should().Be(bytes.Length);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		Length_WhenFileIsCreatedAfterLengthAccessed_ShouldThrowFileNotFoundExceptionAgain(

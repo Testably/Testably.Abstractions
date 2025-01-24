@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileVersionInfoFactory;
 [FileSystemTests]
 public partial class Tests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetVersionInfo_ArbitraryFile_ShouldHaveFileNameSet(string fileName)
 	{
@@ -22,7 +22,7 @@ public partial class Tests
 		result.FileName.Should().Be(filePath);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetVersionInfo_MissingFile_ShouldThrowFileNotFoundException(
 		string path)

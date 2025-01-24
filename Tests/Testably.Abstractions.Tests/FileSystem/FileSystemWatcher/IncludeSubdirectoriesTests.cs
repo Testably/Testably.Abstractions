@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 [FileSystemTests]
 public partial class IncludeSubdirectoriesTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void IncludeSubdirectories_SetToFalse_ShouldNotTriggerNotification(
 		string baseDirectory, string path)
@@ -39,7 +39,7 @@ public partial class IncludeSubdirectoriesTests
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		IncludeSubdirectories_SetToTrue_ShouldOnlyTriggerNotificationOnSubdirectories(
@@ -74,7 +74,7 @@ public partial class IncludeSubdirectoriesTests
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void IncludeSubdirectories_SetToTrue_ShouldTriggerNotificationOnSubdirectories(
 		string baseDirectory, string subdirectoryName)

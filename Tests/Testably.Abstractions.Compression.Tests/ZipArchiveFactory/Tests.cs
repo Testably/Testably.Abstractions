@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Compression.Tests.ZipArchiveFactory;
 [FileSystemTests]
 public partial class Tests
 {
-	[SkippableFact]
+	[Fact]
 	public async Task New_ShouldOpenWithReadMode()
 	{
 		FileSystem.Initialize()
@@ -25,7 +25,7 @@ public partial class Tests
 		await That(archive.Entries).Has().Exactly(1).Items();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task New_UpdateMode_ReadOnlyStream_ShouldThrowArgumentException()
 	{
 		FileSystem.Initialize()
@@ -46,7 +46,7 @@ public partial class Tests
 			.WithHResult(-2147024809);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task New_UpdateMode_ShouldOpenArchive()
 	{
 		FileSystem.Initialize()
@@ -65,7 +65,7 @@ public partial class Tests
 		await That(archive.Entries).Has().Exactly(1).Items();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
 	public async Task New_WhenLeaveOpen_ShouldDisposeStreamWhenDisposingArchive(bool leaveOpen)
@@ -88,7 +88,7 @@ public partial class Tests
 		await That(Act).Throws<ObjectDisposedException>().OnlyIf(!leaveOpen);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(EntryNameEncoding))]
 	public async Task New_WithEntryNameEncoding_ShouldUseEncoding(
 		string entryName, Encoding encoding, bool encodedCorrectly)

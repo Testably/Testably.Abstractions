@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 [FileSystemTests]
 public partial class OpenTextTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void OpenText_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
@@ -22,7 +22,7 @@ public partial class OpenTextTests
 			hResult: -2147024894);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void OpenText_ShouldReturnFileContent(
 		string path, string contents)

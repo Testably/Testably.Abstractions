@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Testing.Tests.Storage;
 
 public sealed class LocationExtensionsTests
 {
-	[SkippableFact]
+	[Fact]
 	public void ThrowExceptionIfNotFound_MissingDirectory_ShouldThrowDirectoryNotFoundException()
 	{
 		MockFileSystem fileSystem = new();
@@ -19,7 +19,7 @@ public sealed class LocationExtensionsTests
 		exception.Should().BeOfType<DirectoryNotFoundException>();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		ThrowExceptionIfNotFound_MissingDirectory_WithCustomCallback_ShouldThrowExceptionFromCallback(
@@ -37,7 +37,7 @@ public sealed class LocationExtensionsTests
 		exception.Should().BeSameAs(expectedException);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void ThrowExceptionIfNotFound_MissingFile_ShouldThrowFileNotFoundException()
 	{
 		MockFileSystem fileSystem = new();
@@ -51,7 +51,7 @@ public sealed class LocationExtensionsTests
 		exception.Should().BeOfType<FileNotFoundException>();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		ThrowExceptionIfNotFound_MissingFile_WithCustomCallback_ShouldThrowExceptionFromCallback(
@@ -68,7 +68,7 @@ public sealed class LocationExtensionsTests
 		exception.Should().BeSameAs(expectedException);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ThrowIfNotFound_MissingDirectory_ShouldExecuteFileNotFoundAction(
 		Exception expectedException)
@@ -85,7 +85,7 @@ public sealed class LocationExtensionsTests
 		exception.Should().BeSameAs(expectedException);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ThrowIfNotFound_MissingFile_ShouldExecuteFileNotFoundAction(
 		Exception expectedException)
@@ -101,7 +101,7 @@ public sealed class LocationExtensionsTests
 		exception.Should().BeSameAs(expectedException);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ThrowIfNotFound_Null_ShouldExecuteFileNotFoundAction(Exception expectedException)
 	{

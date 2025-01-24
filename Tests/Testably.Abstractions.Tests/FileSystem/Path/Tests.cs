@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class Tests
 {
-	[SkippableFact]
+	[Fact]
 	public void AltDirectorySeparatorChar_ShouldReturnSlash()
 	{
 		char result = FileSystem.Path.AltDirectorySeparatorChar;
@@ -13,7 +13,7 @@ public partial class Tests
 		result.Should().Be('/');
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void DirectorySeparatorChar_WhenNotOnWindows_ShouldReturnSlash()
 	{
 		Skip.If(Test.RunsOnWindows);
@@ -23,7 +23,7 @@ public partial class Tests
 		result.Should().Be('/');
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void DirectorySeparatorChar_WhenOnWindows_ShouldReturnBackslash()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -33,7 +33,7 @@ public partial class Tests
 		result.Should().Be('\\');
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetInvalidFileNameChars_WhenNotOnWindows_ShouldReturnCorrectValues()
 	{
 		Skip.If(Test.RunsOnWindows);
@@ -45,7 +45,7 @@ public partial class Tests
 		result.Should().BeEquivalentTo(expected);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetInvalidFileNameChars_WhenOnWindows_ShouldReturnCorrectValues()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -64,7 +64,7 @@ public partial class Tests
 		result.Should().BeEquivalentTo(expected);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetInvalidPathChars_WhenNotOnWindows_ShouldReturnCorrectValues()
 	{
 		Skip.If(Test.RunsOnWindows);
@@ -76,7 +76,7 @@ public partial class Tests
 		result.Should().BeEquivalentTo(expected);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetInvalidPathChars_WhenOnWindows_ShouldReturnCorrectValues()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -98,7 +98,7 @@ public partial class Tests
 		result.Should().BeEquivalentTo(expected);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void PathSeparator_WhenNotOnWindows_ShouldReturnColon()
 	{
 		Skip.If(Test.RunsOnWindows);
@@ -108,7 +108,7 @@ public partial class Tests
 		result.Should().Be(':');
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void PathSeparator_WhenOnWindows_ShouldReturnSemicolon()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -118,7 +118,7 @@ public partial class Tests
 		result.Should().Be(';');
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void VolumeSeparatorChar_WhenNotOnWindows_ShouldReturnSlash()
 	{
 		Skip.If(Test.RunsOnWindows);
@@ -128,7 +128,7 @@ public partial class Tests
 		result.Should().Be('/');
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void VolumeSeparatorChar_WhenOnWindows_ShouldReturnColon()
 	{
 		Skip.IfNot(Test.RunsOnWindows);

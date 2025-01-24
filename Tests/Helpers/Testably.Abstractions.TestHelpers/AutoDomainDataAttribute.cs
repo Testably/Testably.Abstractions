@@ -1,5 +1,5 @@
 ﻿using AutoFixture;
-using AutoFixture.Xunit2;
+using AutoFixture.Xunit3;
 using AutoFixture.AutoNSubstitute;
 using System;
 using System.Linq;
@@ -13,16 +13,16 @@ namespace Testably.Abstractions.TestHelpers;
 public class AutoDomainDataAttribute : AutoDataAttribute
 {
 	private Type? _customizeWith;
-	private readonly FixtureFactory _fixtureFactory;
+	private readonly DomainFixtureFactory _fixtureFactory;
 
 	/// <summary>
 	///     Extension of <see cref="AutoDataAttribute"/> that uses applies domain-specific customizations.
 	/// </summary>
-	public AutoDomainDataAttribute() : this(new FixtureFactory())
+	public AutoDomainDataAttribute() : this(new DomainFixtureFactory())
 	{
 	}
 
-	private AutoDomainDataAttribute(FixtureFactory fixtureFactory)
+	private AutoDomainDataAttribute(DomainFixtureFactory fixtureFactory)
 		: base(fixtureFactory.GetFixtureFactory)
 	{
 		_fixtureFactory = fixtureFactory;
@@ -44,7 +44,7 @@ public class AutoDomainDataAttribute : AutoDataAttribute
 		}
 	}
 
-	private sealed class FixtureFactory
+	private sealed class DomainFixtureFactory
 	{
 		private ICustomization? _customizeWith;
 		private static Lazy<ICustomization[]> _domainCustomisation { get; } = new(Initialize);

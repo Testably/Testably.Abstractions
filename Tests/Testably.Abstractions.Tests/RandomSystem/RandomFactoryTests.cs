@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Tests.RandomSystem;
 [RandomSystemTests]
 public partial class RandomFactoryTests
 {
-	[SkippableFact]
+	[Fact]
 	public void New_Next_ShouldReturnDifferentValues()
 	{
 		List<int> results = [];
@@ -20,7 +20,7 @@ public partial class RandomFactoryTests
 		results.Should().OnlyHaveUniqueItems();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_Next_WithSeed_ShouldReturnSameValue(int seed)
 	{
@@ -34,7 +34,7 @@ public partial class RandomFactoryTests
 		results.Should().AllBeEquivalentTo(results[0]);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void New_Shared_ShouldReturnDifferentValues()
 	{
 		List<int> results = [];
@@ -47,7 +47,7 @@ public partial class RandomFactoryTests
 		results.Should().OnlyHaveUniqueItems();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Shared_ShouldReturnSameReference()
 	{
 		IRandom shared1 = RandomSystem.Random.Shared;

@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 [FileSystemTests]
 public partial class CreateTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Create_FileWithSameNameAlreadyExists_ShouldThrowIOException(string name)
 	{
@@ -22,7 +22,7 @@ public partial class CreateTests
 		FileSystem.Should().NotHaveDirectory(name);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Create_ShouldCreateDirectory(string path)
 	{
@@ -40,7 +40,7 @@ public partial class CreateTests
 		FileSystem.Should().HaveDirectory(sut.FullName);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Create_ShouldCreateInBasePath()
 	{
 		IDirectoryInfo result = FileSystem.DirectoryInfo.New("foo");
@@ -51,7 +51,7 @@ public partial class CreateTests
 		result.FullName.Should().StartWith(BasePath);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Create_ShouldCreateParentDirectories()
 	{
 		string directoryLevel1 = "lvl1";
@@ -72,7 +72,7 @@ public partial class CreateTests
 		result.ToString().Should().Be(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Create_ShouldRefreshExistsCacheForCurrentItem_ExceptOnNetFramework(string path)
 	{
@@ -101,7 +101,7 @@ public partial class CreateTests
 		FileSystem.Should().HaveDirectory(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("")]
 	[InlineData("/")]
 	[InlineData("\\")]

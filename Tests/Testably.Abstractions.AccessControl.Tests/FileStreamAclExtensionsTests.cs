@@ -1,13 +1,13 @@
 ﻿using System.Security.AccessControl;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
-using Skip = Xunit.Skip;
+using Skip = Testably.Abstractions.TestHelpers.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
 [FileSystemTests]
 public partial class FileStreamAclExtensionsTests
 {
-	[SkippableFact]
+	[Fact]
 	public async Task GetAccessControl_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -21,7 +21,7 @@ public partial class FileStreamAclExtensionsTests
 		#pragma warning restore CA1416
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task SetAccessControl_ShouldChangeAccessControl()
 	{
 		Skip.IfNot(Test.RunsOnWindows);

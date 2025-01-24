@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfoFactory;
 [FileSystemTests]
 public partial class Tests
 {
-	[SkippableTheory]
+	[Theory]
 	[InlineData("\0foo")]
 	[InlineData("foo\0bar")]
 	public void New_NullCharacter_ShouldThrowArgumentException(string path)
@@ -25,7 +25,7 @@ public partial class Tests
 			hResult: -2147024809);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_ShouldCreateNewDirectoryInfoFromPath(string path)
 	{
@@ -35,7 +35,7 @@ public partial class Tests
 		result.Should().NotExist();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_WithTrailingDirectorySeparatorChar_ShouldHavePathAsName(string path)
 	{
@@ -45,7 +45,7 @@ public partial class Tests
 		result.Name.Should().Be(path);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Wrap_Null_ShouldReturnNull()
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
@@ -56,7 +56,7 @@ public partial class Tests
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Wrap_ShouldWrapFromDirectoryInfo(string path)
 	{
@@ -71,7 +71,7 @@ public partial class Tests
 		result.Exists.Should().Be(directoryInfo.Exists);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Wrap_WithSimulatedMockFileSystem_ShouldThrowNotSupportedException(string path)
 	{

@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class GetRelativePathTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetRelativePath_CommonParentDirectory_ShouldReturnRelativePath(
 		string baseDirectory, string directory1, string directory2)
@@ -19,7 +19,7 @@ public partial class GetRelativePathTests
 		result.Should().Be(expectedRelativePath);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetRelativePath_DifferentDrives_ShouldReturnAbsolutePath(
 		string path1, string path2)
@@ -33,7 +33,7 @@ public partial class GetRelativePathTests
 		result.Should().Be(path2);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData(@"C:\FOO", @"C:\foo", ".", TestOS.Windows)]
 	[InlineData("/FOO", "/foo", "../foo", TestOS.Linux)]
 	[InlineData("/FOO", "/foo", ".", TestOS.Mac)]
@@ -68,7 +68,7 @@ public partial class GetRelativePathTests
 		result.Should().Be(expected);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetRelativePath_FromAbsolutePathInCurrentDirectory_ShouldReturnRelativePath()
 	{
 		string rootedPath = FileSystem.Path.Combine(BasePath, "input");
@@ -80,7 +80,7 @@ public partial class GetRelativePathTests
 		Assert.Equal("a.txt", result);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetRelativePath_RootedPath_ShouldReturnAbsolutePath(
 		string baseDirectory, string directory1, string directory2)
@@ -94,7 +94,7 @@ public partial class GetRelativePathTests
 		result.Should().Be(expectedRelativePath);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetRelativePath_RootedPath_ShouldWorkOnAnyDrive()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -108,7 +108,7 @@ public partial class GetRelativePathTests
 		result.Should().Be("subDirectory");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetRelativePath_ToItself_ShouldReturnDot(string path)
 	{

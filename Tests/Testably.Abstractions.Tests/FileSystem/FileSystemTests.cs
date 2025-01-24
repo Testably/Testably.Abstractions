@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem;
 [FileSystemTests]
 public partial class FileSystemTests
 {
-	[SkippableFact]
+	[Fact]
 	public void Paths_UnderWindows_ShouldUseNormalSlashAndBackslashInterchangeable()
 	{
 		Skip.IfNot(Test.RunsOnWindows);

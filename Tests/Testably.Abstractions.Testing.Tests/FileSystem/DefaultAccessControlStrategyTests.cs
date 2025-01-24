@@ -11,7 +11,7 @@ public class DefaultAccessControlStrategyTests
 
 	#endregion
 
-	[SkippableFact]
+	[Fact]
 	public void Constructor_NullCallback_ShouldThrowArgumentNullException()
 	{
 		Exception? exception = Record.Exception(() =>
@@ -23,7 +23,7 @@ public class DefaultAccessControlStrategyTests
 			.Which.ParamName.Should().Be("callback");
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void IsAccessGranted_ShouldUseCallback()
 	{
 		DefaultAccessControlStrategy sut = new((p, _) => p.StartsWith('a'));

@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 [FileSystemTests]
 public partial class PathTests
 {
-	[SkippableFact]
+	[Fact]
 	public void Path_Empty_ShouldNotThrowException()
 	{
 		using IFileSystemWatcher fileSystemWatcher =
@@ -18,7 +18,7 @@ public partial class PathTests
 		exception.Should().BeNull();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Path_Null_ShouldNotThrowException()
 	{
 		using IFileSystemWatcher fileSystemWatcher =
@@ -33,7 +33,7 @@ public partial class PathTests
 		exception.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Path_SetToNotExistingPath_ShouldThrowArgumentException(string path)
 	{
@@ -51,7 +51,7 @@ public partial class PathTests
 			messageContains: path);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Path_Whitespace_ShouldThrowArgumentException()
 	{
 		using IFileSystemWatcher fileSystemWatcher =

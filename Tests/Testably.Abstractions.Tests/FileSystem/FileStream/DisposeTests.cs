@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 [FileSystemTests]
 public partial class DisposeTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Dispose_CalledTwiceShouldDoNothing(
 		string path, byte[] bytes)
@@ -29,7 +29,7 @@ public partial class DisposeTests
 		FileSystem.Should().HaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Dispose_ShouldNotResurrectFile(string path, string contents)
 	{
@@ -50,7 +50,7 @@ public partial class DisposeTests
 		fileCount3.Should().Be(0, "Dispose should not have resurrected the file");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileStreamCallbacks))]
 	public void Operations_ShouldThrowAfterStreamIsDisposed(
 		Expression<Action<FileSystemStream>> callback)

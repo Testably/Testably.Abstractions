@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class WriteAllBytesTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllBytes_PreviousFile_ShouldOverwriteFileWithBytes(
 		string path, byte[] bytes)
@@ -19,7 +19,7 @@ public partial class WriteAllBytesTests
 			.Which.HasContent(bytes);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllBytes_ShouldCreateFileWithBytes(string path, byte[] bytes)
 	{
@@ -29,7 +29,7 @@ public partial class WriteAllBytesTests
 			.Which.HasContent(bytes);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllBytes_WhenBytesAreNull_ShouldThrowArgumentNullException(string path)
 	{
@@ -41,7 +41,7 @@ public partial class WriteAllBytesTests
 		exception.Should().BeException<ArgumentNullException>(paramName: "bytes");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		WriteAllBytes_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
@@ -60,7 +60,7 @@ public partial class WriteAllBytesTests
 		FileSystem.Should().NotHaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllBytes_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 		string path, byte[] bytes)

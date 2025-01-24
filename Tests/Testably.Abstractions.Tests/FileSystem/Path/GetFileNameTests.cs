@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class GetFileNameTests
 {
-	[SkippableFact]
+	[Fact]
 	public void GetFileName_EmptyString_ShouldReturnEmptyString()
 	{
 		string result = FileSystem.Path.GetFileName(string.Empty);
@@ -11,7 +11,7 @@ public partial class GetFileNameTests
 		result.Should().Be(string.Empty);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetFileName_Null_ShouldReturnNull()
 	{
 		string? result = FileSystem.Path.GetFileName(null);
@@ -19,7 +19,7 @@ public partial class GetFileNameTests
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetFileName_ShouldReturnFilename(string directory, string filename,
 		string extension)
@@ -33,7 +33,7 @@ public partial class GetFileNameTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetFileName_Span_ShouldReturnDirectory(
 		string directory, string filename,
@@ -48,7 +48,7 @@ public partial class GetFileNameTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("foo/", "", TestOS.All)]
 	[InlineData("bar\\", "", TestOS.Windows)]
 	[InlineData("/foo", "foo", TestOS.All)]
@@ -63,7 +63,7 @@ public partial class GetFileNameTests
 		result.Should().Be(expected);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetFileName_WithoutDirectory_ShouldReturnFilename(string filename)
 	{

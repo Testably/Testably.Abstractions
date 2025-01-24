@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcherFactory;
 [FileSystemTests]
 public partial class Tests
 {
-	[SkippableFact]
+	[Fact]
 	public void New_ShouldInitializeWithDefaultValues()
 	{
 		using IFileSystemWatcher result =
@@ -25,7 +25,7 @@ public partial class Tests
 		result.EnableRaisingEvents.Should().BeFalse();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_WithPath_ShouldInitializeWithDefaultValues(string path)
 	{
@@ -47,7 +47,7 @@ public partial class Tests
 		result.EnableRaisingEvents.Should().BeFalse();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_WithPathAndFilter_ShouldInitializeWithDefaultValues(
 		string path, string filter)
@@ -66,7 +66,7 @@ public partial class Tests
 		result.EnableRaisingEvents.Should().BeFalse();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Wrap_Null_ShouldReturnNull()
 	{
 		using IFileSystemWatcher? result = FileSystem.FileSystemWatcher.Wrap(null);

@@ -27,7 +27,7 @@ public sealed class FileStreamFactoryMockTests : IDisposable
 
 	#endregion
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		Wrap_ShouldThrowNotSupportedException(

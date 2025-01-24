@@ -10,7 +10,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class ReadAllLinesAsyncTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadAllLinesAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path)
@@ -24,7 +24,7 @@ public partial class ReadAllLinesAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		ReadAllLinesAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
@@ -39,7 +39,7 @@ public partial class ReadAllLinesAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadAllLinesAsync_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
@@ -52,7 +52,7 @@ public partial class ReadAllLinesAsyncTests
 			hResult: -2147024894);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadAllLinesAsync_ShouldEnumerateLines(string path, string[] lines)
 	{
@@ -64,7 +64,7 @@ public partial class ReadAllLinesAsyncTests
 		results.Should().BeEquivalentTo(lines, o => o.WithStrictOrdering());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
 	public async Task ReadAllLinesAsync_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string specialLine, Encoding writeEncoding, Encoding readEncoding)

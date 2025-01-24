@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Testing.Tests;
 
 public class NotificationTests
 {
-	[SkippableFact]
+	[Fact]
 	public void AwaitableCallback_Amount_ShouldOnlyReturnAfterNumberOfCallbacks()
 	{
 		MockTimeSystem timeSystem = new();
@@ -33,7 +33,7 @@ public class NotificationTests
 		receivedCount.Should().BeGreaterOrEqualTo(7);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task AwaitableCallback_Dispose_ShouldStopListening()
 	{
 		MockTimeSystem timeSystem = new();
@@ -51,7 +51,7 @@ public class NotificationTests
 		isCalled.Should().BeFalse();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task AwaitableCallback_DisposeFromExecuteWhileWaiting_ShouldStopListening()
 	{
 		MockTimeSystem timeSystem = new();
@@ -71,7 +71,7 @@ public class NotificationTests
 		isCalled.Should().BeFalse();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void AwaitableCallback_Filter_ShouldOnlyUpdateAfterFilteredValue()
 	{
 		MockTimeSystem timeSystem = new();
@@ -96,7 +96,7 @@ public class NotificationTests
 		receivedCount.Should().BeGreaterOrEqualTo(6);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void AwaitableCallback_Predicate_ShouldOnlyUpdateAfterFilteredValue()
 	{
 		MockTimeSystem timeSystem = new();
@@ -131,7 +131,7 @@ public class NotificationTests
 		receivedCount.Should().BeLessOrEqualTo(4);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void AwaitableCallback_ShouldWaitForCallbackExecution()
 	{
 		using ManualResetEventSlim ms = new();
@@ -171,7 +171,7 @@ public class NotificationTests
 		}
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void AwaitableCallback_TimeoutExpired_ShouldThrowTimeoutException()
 	{
 		MockTimeSystem timeSystem = new();
@@ -207,7 +207,7 @@ public class NotificationTests
 		ms.Set();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void AwaitableCallback_Wait_AfterDispose_ShouldThrowObjectDisposedException()
 	{
 		MockTimeSystem timeSystem = new();
@@ -224,7 +224,7 @@ public class NotificationTests
 		exception.Should().BeOfType<ObjectDisposedException>();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void AwaitableCallback_WaitedPreviously_ShouldWaitAgainForCallbackExecution()
 	{
 		int secondThreadMilliseconds = 42;

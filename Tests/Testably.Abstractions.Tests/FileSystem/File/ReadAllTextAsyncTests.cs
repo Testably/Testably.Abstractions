@@ -10,7 +10,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class ReadAllTextAsyncTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadAllTextAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path)
@@ -24,7 +24,7 @@ public partial class ReadAllTextAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		ReadAllTextAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
@@ -39,7 +39,7 @@ public partial class ReadAllTextAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadAllTextAsync_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
@@ -52,7 +52,7 @@ public partial class ReadAllTextAsyncTests
 			hResult: -2147024894);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
 	public async Task ReadAllTextAsync_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string contents, Encoding writeEncoding, Encoding readEncoding)

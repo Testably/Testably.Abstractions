@@ -10,7 +10,7 @@ namespace Testably.Abstractions.Compression.Tests.ZipFile;
 [FileSystemTests]
 public partial class CreateFromDirectoryTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		CreateFromDirectory_EmptyDirectory_ShouldBeIncluded(
@@ -30,7 +30,7 @@ public partial class CreateFromDirectoryTests
 			.Which.For(x => x.FullName, f => f.Is("bar/"));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task CreateFromDirectory_EmptySource_DoNotIncludeBaseDirectory_ShouldBeEmpty(
 		CompressionLevel compressionLevel)
@@ -47,7 +47,7 @@ public partial class CreateFromDirectoryTests
 		await That(archive.Entries).IsEmpty();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		CreateFromDirectory_EmptySource_IncludeBaseDirectory_ShouldPrependDirectoryName(
@@ -66,7 +66,7 @@ public partial class CreateFromDirectoryTests
 			.Which.For(x => x.FullName, f => f.Is("foo/"));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(EntryNameEncoding))]
 	public async Task CreateFromDirectory_EntryNameEncoding_ShouldUseEncoding(
 		string entryName, Encoding encoding, bool encodedCorrectly)
@@ -93,7 +93,7 @@ public partial class CreateFromDirectoryTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task CreateFromDirectory_IncludeBaseDirectory_ShouldPrependDirectoryName(
 		CompressionLevel compressionLevel)
@@ -113,7 +113,7 @@ public partial class CreateFromDirectoryTests
 	}
 
 #if FEATURE_COMPRESSION_OVERWRITE
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task CreateFromDirectory_Overwrite_WithEncoding_ShouldOverwriteFile(
 		string contents, Encoding encoding)
@@ -137,7 +137,7 @@ public partial class CreateFromDirectoryTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public async Task CreateFromDirectory_ShouldZipDirectoryContent()
 	{
 		FileSystem.Initialize()
@@ -156,7 +156,7 @@ public partial class CreateFromDirectoryTests
 	}
 
 #if FEATURE_COMPRESSION_STREAM
-	[SkippableFact]
+	[Fact]
 	public async Task CreateFromDirectory_WithReadOnlyStream_ShouldThrowArgumentException()
 	{
 		FileSystem.Initialize()
@@ -180,7 +180,7 @@ public partial class CreateFromDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		CreateFromDirectory_WithStream_EmptyDirectory_ShouldBeIncluded(
@@ -202,7 +202,7 @@ public partial class CreateFromDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task CreateFromDirectory_WithStream_EmptySource_DoNotIncludeBaseDirectory_ShouldBeEmpty(
 		CompressionLevel compressionLevel)
@@ -221,7 +221,7 @@ public partial class CreateFromDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		CreateFromDirectory_WithStream_EmptySource_IncludeBaseDirectory_ShouldPrependDirectoryName(
@@ -242,7 +242,7 @@ public partial class CreateFromDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(EntryNameEncoding))]
 	public async Task CreateFromDirectory_WithStream_EntryNameEncoding_ShouldUseEncoding(
 		string entryName, Encoding encoding, bool encodedCorrectly)
@@ -271,7 +271,7 @@ public partial class CreateFromDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task CreateFromDirectory_WithStream_IncludeBaseDirectory_ShouldPrependDirectoryName(
 		CompressionLevel compressionLevel)
@@ -292,7 +292,7 @@ public partial class CreateFromDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[SkippableFact]
+	[Fact]
 	public async Task
 		CreateFromDirectory_WithStream_NotWritable_ShouldThrowArgumentException()
 	{
@@ -311,7 +311,7 @@ public partial class CreateFromDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[SkippableFact]
+	[Fact]
 	public async Task
 		CreateFromDirectory_WithStream_Null_ShouldThrowArgumentNullException()
 	{
@@ -328,7 +328,7 @@ public partial class CreateFromDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task CreateFromDirectory_WithStream_Overwrite_WithEncoding_ShouldOverwriteFile(
 		string contents, Encoding encoding)
@@ -354,7 +354,7 @@ public partial class CreateFromDirectoryTests
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
-	[SkippableFact]
+	[Fact]
 	public async Task CreateFromDirectory_WithStream_ShouldZipDirectoryContent()
 	{
 		FileSystem.Initialize()

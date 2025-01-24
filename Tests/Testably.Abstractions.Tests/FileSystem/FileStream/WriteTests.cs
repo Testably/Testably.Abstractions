@@ -9,7 +9,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 [FileSystemTests]
 public partial class WriteTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void BeginWrite_CanWriteFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
@@ -29,7 +29,7 @@ public partial class WriteTests
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void BeginWrite_ShouldCopyContentsToFile(
 		string path, byte[] bytes)
@@ -61,7 +61,7 @@ public partial class WriteTests
 			.Which.HasContent(bytes);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EndWrite_Null_ShouldThrowArgumentNullException(string path)
 	{
@@ -76,7 +76,7 @@ public partial class WriteTests
 		exception.Should().BeException<ArgumentNullException>(hResult: -2147467261);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EndWrite_ShouldAdjustTimes(string path, byte[] bytes)
 	{
@@ -130,7 +130,7 @@ public partial class WriteTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Write_AsSpan_CanWriteFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
@@ -153,7 +153,7 @@ public partial class WriteTests
 #endif
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Write_AsSpan_ShouldFillBuffer(string path, byte[] bytes)
 	{
@@ -167,7 +167,7 @@ public partial class WriteTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Write_CanWriteFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
@@ -188,7 +188,7 @@ public partial class WriteTests
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Write_ShouldFillBuffer(string path, byte[] bytes)
 	{
@@ -202,7 +202,7 @@ public partial class WriteTests
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAsync_CanWriteFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
@@ -214,13 +214,15 @@ public partial class WriteTests
 
 		await using (FileSystemStream stream = FileSystem.File.OpenRead(path))
 		{
-			exception = await Record.ExceptionAsync(async () =>
+			async Task Act()
 			{
 				// ReSharper disable once AccessToDisposedClosure
 				#pragma warning disable CA1835
 				await stream.WriteAsync(buffer, 0, bytes.Length, cts.Token);
 				#pragma warning restore CA1835
-			});
+			}
+			
+			exception = await Record.ExceptionAsync(Act);
 		}
 
 		exception.Should().BeException<NotSupportedException>(
@@ -229,7 +231,7 @@ public partial class WriteTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAsync_ShouldFillBuffer(string path, byte[] bytes)
 	{
@@ -247,7 +249,7 @@ public partial class WriteTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteByte_HiddenFile_ShouldNotThrow(
 		string path, byte[] bytes)
@@ -268,7 +270,7 @@ public partial class WriteTests
 		exception.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteByte_ShouldWriteSingleByteAndAdvancePosition(
 		string path, byte byte1, byte byte2)
@@ -285,7 +287,7 @@ public partial class WriteTests
 			.Which.HasContent([byte1, byte2]);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteTimeout_ShouldThrowInvalidOperationException(
 		string path, string contents)

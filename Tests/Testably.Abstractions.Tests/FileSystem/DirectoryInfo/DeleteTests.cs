@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 [FileSystemTests]
 public partial class DeleteTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(string path)
 	{
@@ -21,7 +21,7 @@ public partial class DeleteTests
 			hResult: -2147024893);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_Recursive_WithOpenFile_ShouldThrowIOException_OnWindows(
 		string path, string filename)
@@ -53,7 +53,7 @@ public partial class DeleteTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_Recursive_WithSubdirectory_ShouldDeleteDirectoryWithContent(
 		string path, string subdirectory)
@@ -75,7 +75,7 @@ public partial class DeleteTests
 		FileSystem.Should().NotHaveDirectory(subdirectoryPath);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_ShouldDeleteDirectory(string path)
 	{
@@ -94,7 +94,7 @@ public partial class DeleteTests
 		FileSystem.Should().NotHaveDirectory(sut.FullName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_WithSubdirectory_ShouldThrowIOException_AndNotDeleteDirectory(
 		string path, string subdirectory)

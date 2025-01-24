@@ -12,7 +12,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 [FileSystemTests]
 public partial class ReadTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void BeginRead_CanReadFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
@@ -32,7 +32,7 @@ public partial class ReadTests
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void BeginRead_ShouldCopyContentsToBuffer(
 		string path, byte[] bytes)
@@ -61,7 +61,7 @@ public partial class ReadTests
 		buffer.Should().BeEquivalentTo(bytes);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EndRead_Null_ShouldThrowArgumentNullException(
 		string path, byte[] bytes)
@@ -78,7 +78,7 @@ public partial class ReadTests
 		exception.Should().BeException<ArgumentNullException>(hResult: -2147467261);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EndRead_ShouldNotAdjustTimes(string path, byte[] bytes)
 	{
@@ -124,7 +124,7 @@ public partial class ReadTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Read_AsSpan_CanReadFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
@@ -147,7 +147,7 @@ public partial class ReadTests
 #endif
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Read_AsSpan_ShouldFillBuffer(string path, byte[] bytes)
 	{
@@ -163,7 +163,7 @@ public partial class ReadTests
 #endif
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Read_AsSpan_ShouldUseSharedBuffer(string path)
 	{
@@ -190,7 +190,7 @@ public partial class ReadTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Read_CanReadFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
@@ -211,7 +211,7 @@ public partial class ReadTests
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Read_ShouldFillBuffer(string path, byte[] bytes)
 	{
@@ -226,7 +226,7 @@ public partial class ReadTests
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadAsync_CanReadFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
@@ -238,13 +238,15 @@ public partial class ReadTests
 
 		await using (FileSystemStream stream = FileSystem.File.OpenWrite(path))
 		{
-			exception = await Record.ExceptionAsync(async () =>
+			async Task Act()
 			{
 				// ReSharper disable once AccessToDisposedClosure
 				#pragma warning disable CA1835
 				_ = await stream.ReadAsync(buffer, 0, bytes.Length, cts.Token);
 				#pragma warning restore CA1835
-			});
+			}
+
+			exception = await Record.ExceptionAsync(Act);
 		}
 
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
@@ -252,7 +254,7 @@ public partial class ReadTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadAsync_Memory_CanReadFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
@@ -264,13 +266,15 @@ public partial class ReadTests
 
 		await using (FileSystemStream stream = FileSystem.File.OpenWrite(path))
 		{
-			exception = await Record.ExceptionAsync(async () =>
+			async Task Act()
 			{
 				// ReSharper disable once AccessToDisposedClosure
 				#pragma warning disable CA1835
 				_ = await stream.ReadAsync(buffer.AsMemory(), cts.Token);
 				#pragma warning restore CA1835
-			});
+			}
+
+			exception = await Record.ExceptionAsync(Act);
 		}
 
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
@@ -278,7 +282,7 @@ public partial class ReadTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadAsync_ShouldFillBuffer(string path, byte[] bytes)
 	{
@@ -296,7 +300,7 @@ public partial class ReadTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadByte_CanReadFalse_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
@@ -316,7 +320,7 @@ public partial class ReadTests
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadByte_ShouldReadSingleByteAndAdvancePosition(
 		string path, byte[] bytes)
@@ -333,7 +337,7 @@ public partial class ReadTests
 		result2.Should().Be(bytes[1]);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadTimeout_ShouldThrowInvalidOperationException(
 		string path, string contents)

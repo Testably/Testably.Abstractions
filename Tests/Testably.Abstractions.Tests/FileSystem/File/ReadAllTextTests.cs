@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class ReadAllTextTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadAllText_FilenameNotOnWindows_ShouldBeCaseSensitive(
 		string path, string contents1, string contents2)
@@ -23,7 +23,7 @@ public partial class ReadAllTextTests
 		result.Should().Be(contents2);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadAllText_FilenameOnWindows_ShouldBeCaseInsensitive(
 		string path, string contents)
@@ -38,7 +38,7 @@ public partial class ReadAllTextTests
 		result.Should().Be(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadAllText_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
@@ -57,7 +57,7 @@ public partial class ReadAllTextTests
 			.Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadAllText_ShouldAdjustTimes(string path, string contents)
 	{
@@ -94,7 +94,7 @@ public partial class ReadAllTextTests
 			.BeBetween(creationTimeStart, creationTimeEnd);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadAllText_ShouldTolerateAltDirectorySeparatorChar(
 		string contents, string directory, string fileName)
@@ -109,7 +109,7 @@ public partial class ReadAllTextTests
 		result.Should().Be(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
 	public void ReadAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string contents, Encoding writeEncoding, Encoding readEncoding)
@@ -124,7 +124,7 @@ public partial class ReadAllTextTests
 				$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetEncodingsForReadAllText))]
 	public void ReadAllText_WithoutReadEncoding_ShouldReturnWrittenText(
 		Encoding writeEncoding)
@@ -139,7 +139,7 @@ public partial class ReadAllTextTests
 			$"{contents} should not be different when no read encoding is used for write encoding: {writeEncoding}.");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadAllText_WithStarCharacter_ShouldThrowFileNotFoundException(
 		string path, string contents)
@@ -160,11 +160,11 @@ public partial class ReadAllTextTests
 	public static TheoryData<Encoding> GetEncodingsForReadAllText()
 		=> new()
 		{
-			new UTF32Encoding(false, true, true),
+			(Encoding)new UTF32Encoding(false, true, true),
 			// big endian
-			new UTF32Encoding(true, true, true),
-			new UTF8Encoding(true, true),
-			new ASCIIEncoding(),
+			(Encoding)new UTF32Encoding(true, true, true),
+			(Encoding)new UTF8Encoding(true, true),
+			(Encoding)new ASCIIEncoding(),
 		};
 	#pragma warning restore MA0018
 

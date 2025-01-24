@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class ReadLinesTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadLines_EmptyFile_ShouldEnumerateLines(string path)
 	{
@@ -19,7 +19,7 @@ public partial class ReadLinesTests
 		results.Should().BeEmpty();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadLines_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
@@ -33,7 +33,7 @@ public partial class ReadLinesTests
 			hResult: -2147024894);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadLines_ShouldEnumerateLines(string path, string[] lines)
 	{
@@ -45,7 +45,7 @@ public partial class ReadLinesTests
 		results.Should().BeEquivalentTo(lines);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
 	public void ReadLines_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string specialLine, Encoding writeEncoding, Encoding readEncoding)

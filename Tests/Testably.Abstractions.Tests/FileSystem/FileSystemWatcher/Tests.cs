@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 [FileSystemTests]
 public partial class Tests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void BeginInit_ShouldStopListening(string path)
 	{
@@ -57,7 +57,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Container_ShouldBeInitializedWithNull()
 	{
 		FileSystem.Initialize();
@@ -67,7 +67,7 @@ public partial class Tests
 		fileSystemWatcher.Container.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EndInit_ShouldRestartListening(string path)
 	{
@@ -112,7 +112,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData(-1, 4096)]
 	[InlineData(4095, 4096)]
 	[InlineData(4097, 4097)]
@@ -128,7 +128,7 @@ public partial class Tests
 		fileSystemWatcher.InternalBufferSize.Should().Be(expectedBytes);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Site_ShouldBeInitializedWithNull()
 	{
 		FileSystem.Initialize();
@@ -138,7 +138,7 @@ public partial class Tests
 		fileSystemWatcher.Site.Should().BeNull();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Site_ShouldBeWritable()
 	{
 		ISite site = new MockSite();
@@ -151,7 +151,7 @@ public partial class Tests
 		fileSystemWatcher.Site.Should().Be(site);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void SynchronizingObject_ShouldBeInitializedWithNull()
 	{
 		FileSystem.Initialize();
@@ -161,7 +161,7 @@ public partial class Tests
 		fileSystemWatcher.SynchronizingObject.Should().BeNull();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void SynchronizingObject_ShouldBeWritable()
 	{
 		ISynchronizeInvoke synchronizingObject = new MockSynchronizeInvoke();

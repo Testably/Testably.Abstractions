@@ -11,7 +11,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 [FileSystemTests]
 public partial class GetFilesTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		GetFiles_MissingDirectory_ShouldThrowDirectoryNotFoundException(
@@ -27,7 +27,7 @@ public partial class GetFilesTests
 		FileSystem.Should().NotHaveDirectory(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetFiles_Path_NotOnLinux_ShouldBeCaseInsensitive(string path)
 	{
@@ -42,7 +42,7 @@ public partial class GetFilesTests
 		result.Length.Should().Be(1);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetFiles_Path_OnLinux_ShouldBeCaseSensitive(string path)
 	{
@@ -62,7 +62,7 @@ public partial class GetFilesTests
 		result2.Length.Should().Be(1);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		GetFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
@@ -84,7 +84,7 @@ public partial class GetFilesTests
 		result.Should().Contain(initialized[2].FullName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetFiles_SearchOptionAllDirectories_ShouldReturnAllFiles(
 		string path)
@@ -104,7 +104,7 @@ public partial class GetFilesTests
 		result.Should().Contain(initialized[2].ToString());
 	}
 
-	[SkippableTheory]
+	[Theory]
 #if NETFRAMEWORK
 	[InlineAutoData(false, "")]
 #else
@@ -139,7 +139,7 @@ public partial class GetFilesTests
 		}
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetFiles_SearchPatternForFileWithoutExtension_ShouldWorkConsistently()
 	{
 		FileSystem.Initialize()
@@ -151,7 +151,7 @@ public partial class GetFilesTests
 		result.Length.Should().Be(1);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void
 		GetFiles_SearchPatternWithDirectorySeparator_ShouldReturnFilesInSubdirectoryOnWindows()
 	{
@@ -177,7 +177,7 @@ public partial class GetFilesTests
 		}
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetFiles_SearchPatternWithTooManyAsterisk_ShouldWorkConsistently()
 	{
 		FileSystem.Initialize()
@@ -189,7 +189,7 @@ public partial class GetFilesTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		GetFiles_WithEnumerationOptions_ShouldConsiderSetOptions(
@@ -218,7 +218,7 @@ public partial class GetFilesTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetFiles_WithNewline_ShouldThrowArgumentException(
 		string path)
@@ -236,7 +236,7 @@ public partial class GetFilesTests
 			messageContains: Test.IsNetFramework ? null : $"'{searchPattern}'");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		GetFiles_WithoutSearchString_ShouldReturnAllFilesInDirectSubdirectories(
@@ -259,7 +259,7 @@ public partial class GetFilesTests
 		result.Should().NotContain(initialized[3].ToString());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetFiles_WithRelativePathAndSubfolders_ShouldReturnRelativeFilePath(
 		string subfolder1, string subfolder2, string[] files)
@@ -281,7 +281,7 @@ public partial class GetFilesTests
 		result.Should().BeEquivalentTo(expectation);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetFiles_WithSearchPattern_ShouldReturnMatchingFiles(
 		string path)
@@ -303,7 +303,7 @@ public partial class GetFilesTests
 		result.Should().NotContain(initialized[3].ToString());
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void
 		GetFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
 	{

@@ -1,14 +1,14 @@
 ﻿using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using Skip = Xunit.Skip;
+using Skip = Testably.Abstractions.TestHelpers.Skip;
 
 namespace Testably.Abstractions.Compression.Tests.ZipArchiveEntry;
 
 [FileSystemTests]
 public partial class Tests
 {
-	[SkippableFact]
+	[Fact]
 	public async Task Archive_ShouldBeSetToArchive()
 	{
 		FileSystem.Initialize()
@@ -28,7 +28,7 @@ public partial class Tests
 	}
 
 #if FEATURE_ZIPFILE_NET7
-	[SkippableFact]
+	[Fact]
 	public async Task Comment_ShouldBeInitializedEmpty()
 	{
 		FileSystem.Initialize()
@@ -48,7 +48,7 @@ public partial class Tests
 #endif
 
 #if FEATURE_ZIPFILE_NET7
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task Comment_ShouldBeSettable(string comment)
 	{
@@ -70,7 +70,7 @@ public partial class Tests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public async Task CompressedLength_WithNoCompression_ShouldBeFileLength()
 	{
 		Skip.If(Test.IsNetFramework, "Test is brittle on .NET Framework.");
@@ -91,7 +91,7 @@ public partial class Tests
 			.For(x => x.CompressedLength, l => l.Is(9));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task CompressedLength_WithOptimalCompressionLevel_ShouldBeLessThanFileLength()
 	{
 		FileSystem.Initialize()
@@ -111,7 +111,7 @@ public partial class Tests
 	}
 
 #if FEATURE_COMPRESSION_ADVANCED
-	[SkippableFact]
+	[Fact]
 	public async Task Crc32_ShouldBeCalculatedFromTheFileContent()
 	{
 		FileSystem.Initialize()
@@ -133,7 +133,7 @@ public partial class Tests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public async Task Delete_ReadMode_ShouldThrowNotSupportedException()
 	{
 		FileSystem.Initialize()
@@ -154,7 +154,7 @@ public partial class Tests
 		await That(Act).Throws<NotSupportedException>();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task Delete_ShouldRemoveEntryFromArchive()
 	{
 		FileSystem.Initialize()
@@ -176,7 +176,7 @@ public partial class Tests
 	}
 
 #if FEATURE_COMPRESSION_ADVANCED
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ExternalAttributes_ShouldBeSettable(int externalAttributes)
 	{
@@ -201,7 +201,7 @@ public partial class Tests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public async Task FileSystemExtension_ShouldBeSet()
 	{
 		FileSystem.Initialize()
@@ -220,7 +220,7 @@ public partial class Tests
 		await That(entry.FileSystem).Is(FileSystem);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task FullName_ShouldIncludeDirectory()
 	{
 		FileSystem.Initialize()
@@ -240,7 +240,7 @@ public partial class Tests
 		await That(entry.Name).Is("foo.txt");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task LastWriteTime_ReadOnlyArchive_ShouldThrowNotSupportedException(
 		DateTime lastWriteTime)
@@ -266,7 +266,7 @@ public partial class Tests
 		await That(Act).Throws<NotSupportedException>();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task LastWriteTime_ShouldBeSettable(DateTime lastWriteTime)
 	{
@@ -291,7 +291,7 @@ public partial class Tests
 		await That(entry2.LastWriteTime.DateTime).IsNot(lastWriteTime);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task ToString_ShouldBeSetToFileName()
 	{
 		FileSystem.Initialize()

@@ -8,9 +8,9 @@ namespace Testably.Abstractions.Tests.FileSystem.FileStreamFactory;
 [FileSystemTests]
 public partial class ExceptionTests
 {
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileStreamFactoryCallbacks),
-		parameters: "Illegal\tCharacter?InPath")]
+		"Illegal\tCharacter?InPath")]
 	public void
 		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowCorrectException_OnWindows(
 			Expression<Action<IFileStreamFactory>> callback, string paramName,
@@ -48,8 +48,8 @@ public partial class ExceptionTests
 		}
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetFileStreamFactoryCallbacks), parameters: "")]
+	[Theory]
+	[MemberData(nameof(GetFileStreamFactoryCallbacks), "")]
 	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileStreamFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -66,8 +66,8 @@ public partial class ExceptionTests
 			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetFileStreamFactoryCallbacks), parameters: (string?)null)]
+	[Theory]
+	[MemberData(nameof(GetFileStreamFactoryCallbacks), (string?)null)]
 	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileStreamFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -83,8 +83,8 @@ public partial class ExceptionTests
 			$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetFileStreamFactoryCallbacks), parameters: "  ")]
+	[Theory]
+	[MemberData(nameof(GetFileStreamFactoryCallbacks), "  ")]
 	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IFileStreamFactory>> callback, string paramName,
 		bool ignoreParamCheck)

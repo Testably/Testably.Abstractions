@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 [FileSystemTests]
 public partial class CreateSubdirectoryTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateSubdirectory_FileWithSameNameAlreadyExists_ShouldThrowIOException(
 		string name)
@@ -23,7 +23,7 @@ public partial class CreateSubdirectoryTests
 		FileSystem.Should().NotHaveDirectory(name);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateSubdirectory_MissingParent_ShouldCreateDirectory(
 		string path, string subdirectory)
@@ -38,7 +38,7 @@ public partial class CreateSubdirectoryTests
 		FileSystem.Should().HaveDirectory(result.FullName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateSubdirectory_ShouldCreateDirectory(string path, string subdirectory)
 	{

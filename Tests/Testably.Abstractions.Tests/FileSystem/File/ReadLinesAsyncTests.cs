@@ -11,7 +11,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class ReadLinesAsyncTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadLinesAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path)
@@ -20,18 +20,20 @@ public partial class ReadLinesAsyncTests
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
 			await foreach (string _ in FileSystem.File.ReadLinesAsync(path, cts.Token))
 			{
 				// do nothing
 			}
-		});
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		ReadLinesAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
@@ -41,37 +43,41 @@ public partial class ReadLinesAsyncTests
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
 			await foreach (string _ in FileSystem.File.ReadLinesAsync(path, Encoding.UTF8,
 				cts.Token))
 			{
 				// do nothing
 			}
-		});
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadLinesAsync_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
 			await foreach (string _ in FileSystem.File.ReadLinesAsync(path))
 			{
 				// do nothing
 			}
-		});
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<FileNotFoundException>(
 			$"'{FileSystem.Path.GetFullPath(path)}'",
 			hResult: -2147024894);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadLinesAsync_ShouldEnumerateLines(string path, string[] lines)
 	{
@@ -87,7 +93,7 @@ public partial class ReadLinesAsyncTests
 		results.Should().BeEquivalentTo(lines, o => o.WithStrictOrdering());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
 	public async Task ReadLinesAsync_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string specialLine, Encoding writeEncoding, Encoding readEncoding)

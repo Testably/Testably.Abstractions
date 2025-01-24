@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 [FileSystemTests]
 public partial class CreateAsSymbolicLinkTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateAsSymbolicLink_ShouldCreateAsSymbolicLink(
 		string path, string pathToTarget)
@@ -20,7 +20,7 @@ public partial class CreateAsSymbolicLinkTests
 			.Should().BeTrue();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateAsSymbolicLink_SourceDirectoryAlreadyExists_ShouldThrowIOException(
 		string path, string pathToTarget)
@@ -37,7 +37,7 @@ public partial class CreateAsSymbolicLinkTests
 			hResult: Test.RunsOnWindows ? -2147024713 : 17);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateAsSymbolicLink_TargetDirectoryMissing_ShouldNotThrowException(
 		string path, string pathToTarget)
@@ -50,7 +50,7 @@ public partial class CreateAsSymbolicLinkTests
 		exception.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateAsSymbolicLink_WithIllegalCharactersInTarget_ShouldThrowIOException(
 		string path)
@@ -67,7 +67,7 @@ public partial class CreateAsSymbolicLinkTests
 		exception.Should().BeException<IOException>(hResult: -2147024713);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateAsSymbolicLink_WithIllegalTarget_ShouldNotThrowException(string path)
 	{

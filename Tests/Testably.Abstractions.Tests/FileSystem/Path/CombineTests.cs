@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class CombineTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Combine_2Paths_OneEmpty_ShouldReturnCombinationOfOtherParts(
 		string path)
@@ -15,7 +15,7 @@ public partial class CombineTests
 		result2.Should().Be(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Combine_2Paths_OneNull_ShouldThrowArgumentNullException(string path)
 	{
@@ -30,7 +30,7 @@ public partial class CombineTests
 			.BeException<ArgumentNullException>(paramName: "path1", hResult: -2147467261);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Combine_2Paths_Rooted_ShouldReturnLastRootedPath(
 		string path1, string path2)
@@ -43,7 +43,7 @@ public partial class CombineTests
 		result.Should().Be(path2);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("", "", "")]
 	[InlineData("/foo/", "/bar/", "/bar/")]
 	[InlineData("foo/", "/bar", "/bar")]
@@ -63,7 +63,7 @@ public partial class CombineTests
 		result.Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData]
 	[InlineAutoData(" ")]
 	[InlineAutoData("foo", " ")]
@@ -78,7 +78,7 @@ public partial class CombineTests
 		result.Should().Be(expectedPath);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Combine_3Paths_OneEmpty_ShouldReturnCombinationOfOtherParts(
 		string pathA, string pathB)
@@ -94,7 +94,7 @@ public partial class CombineTests
 		result3.Should().Be(expectedPath);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Combine_3Paths_OneNull_ShouldThrowArgumentNullException(string pathA, string pathB)
 	{
@@ -113,7 +113,7 @@ public partial class CombineTests
 			.BeException<ArgumentNullException>(paramName: "path2", hResult: -2147467261);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Combine_3Paths_Rooted_ShouldReturnLastRootedPath(
 		string path1, string path2, string path3)
@@ -127,7 +127,7 @@ public partial class CombineTests
 		result.Should().Be(path3);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("", "", "", "")]
 	[InlineData("/foo/", "/bar/", "/baz/", "/baz/")]
 	[InlineData("foo/", "/bar/", "/baz", "/baz")]
@@ -149,7 +149,7 @@ public partial class CombineTests
 		result.Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData]
 	[InlineAutoData(" ")]
 	[InlineAutoData("foo", " ")]
@@ -166,7 +166,7 @@ public partial class CombineTests
 		result.Should().Be(expectedPath);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Combine_4Paths_OneEmpty_ShouldReturnCombinationOfOtherParts(
 		string pathA, string pathB, string pathC)
@@ -184,7 +184,7 @@ public partial class CombineTests
 		result4.Should().Be(expectedPath);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Combine_4Paths_OneNull_ShouldThrowArgumentNullException(string pathA, string pathB,
 		string pathC)
@@ -208,7 +208,7 @@ public partial class CombineTests
 			.BeException<ArgumentNullException>(paramName: "path3", hResult: -2147467261);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Combine_4Paths_Rooted_ShouldReturnLastRootedPath(
 		string path1, string path2, string path3, string path4)
@@ -223,7 +223,7 @@ public partial class CombineTests
 		result.Should().Be(path4);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("", "", "", "", "")]
 	[InlineData("/foo/", "/bar/", "/baz/", "/muh/", "/muh/")]
 	[InlineData("foo/", "/bar/", "/baz/", "/muh", "/muh")]
@@ -246,7 +246,7 @@ public partial class CombineTests
 		result.Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData]
 	[InlineAutoData(" ")]
 	[InlineAutoData("foo", " ")]
@@ -265,7 +265,7 @@ public partial class CombineTests
 		result.Should().Be(expectedPath);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Combine_ParamPaths_Null_ShouldThrowArgumentNullException()
 	{
 		Exception? exception = Record.Exception(() =>
@@ -275,7 +275,7 @@ public partial class CombineTests
 			.BeException<ArgumentNullException>(paramName: "paths", hResult: -2147467261);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Combine_ParamPaths_OneEmpty_ShouldReturnCombinationOfOtherParts(
 		string path1, string path2, string path3, string path4)
@@ -300,7 +300,7 @@ public partial class CombineTests
 		result5.Should().Be(expectedPath);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Combine_ParamPaths_OneNull_ShouldThrowArgumentNullException(
 		string pathA, string pathB, string pathC, string pathD)
@@ -328,7 +328,7 @@ public partial class CombineTests
 			.BeException<ArgumentNullException>(paramName: "paths", hResult: -2147467261);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Combine_ParamPaths_Rooted_ShouldReturnLastRootedPath(
 		string path1, string path2, string path3, string path4, string path5)
@@ -344,7 +344,7 @@ public partial class CombineTests
 		result.Should().Be(path5);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("", "", "", "", "", "")]
 	[InlineData("/foo/", "/bar/", "/baz/", "/muh/", "/maeh/", "/maeh/")]
 	[InlineData("foo/", "/bar/", "/baz/", "/muh", "/maeh", "/maeh")]
@@ -368,7 +368,7 @@ public partial class CombineTests
 		result.Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData]
 	[InlineAutoData(" ")]
 	[InlineAutoData("foo", " ")]

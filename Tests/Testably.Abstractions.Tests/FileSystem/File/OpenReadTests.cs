@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class OpenReadTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void OpenRead_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
@@ -20,7 +20,7 @@ public partial class OpenReadTests
 			hResult: -2147024894);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void OpenRead_SetLength_ShouldThrowNotSupportedException(string path)
 	{
@@ -35,7 +35,7 @@ public partial class OpenReadTests
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void OpenRead_ShouldUseReadAccessAndReadShare(string path)
 	{
@@ -52,7 +52,7 @@ public partial class OpenReadTests
 		stream.CanTimeout.Should().BeFalse();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void OpenRead_Write_ShouldThrowNotSupportedException(string path, byte[] bytes)
 	{
@@ -67,7 +67,7 @@ public partial class OpenReadTests
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task OpenRead_WriteAsync_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
@@ -75,37 +75,40 @@ public partial class OpenReadTests
 		// ReSharper disable once MethodHasAsyncOverload
 		FileSystem.File.WriteAllText(path, null);
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
 			// ReSharper disable once UseAwaitUsing
 			using FileSystemStream stream = FileSystem.File.OpenRead(path);
 			#pragma warning disable CA1835
 			await stream.WriteAsync(bytes, 0, bytes.Length);
 			#pragma warning restore CA1835
-		});
-
+		}
+		
+		Exception? exception = await Record.ExceptionAsync(Act);
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task OpenRead_WriteAsyncWithMemory_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
 		await FileSystem.File.WriteAllTextAsync(path, null);
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
 			using FileSystemStream stream = FileSystem.File.OpenRead(path);
 			await stream.WriteAsync(bytes.AsMemory());
-		});
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void OpenRead_WriteByte_ShouldThrowNotSupportedException(string path)
 	{
@@ -121,7 +124,7 @@ public partial class OpenReadTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void OpenRead_WriteWithSpan_ShouldThrowNotSupportedException(string path, byte[] bytes)
 	{

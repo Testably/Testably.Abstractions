@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 public sealed class DirectoryInfoStatisticsTests
 {
-	[SkippableFact]
+	[Fact]
 	public void Method_Create_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -19,7 +19,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_LINK
-	[SkippableFact]
+	[Fact]
 	public void Method_CreateAsSymbolicLink_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -34,7 +34,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Method_CreateSubdirectory_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -48,7 +48,7 @@ public sealed class DirectoryInfoStatisticsTests
 				path);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_Delete_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -63,7 +63,7 @@ public sealed class DirectoryInfoStatisticsTests
 				recursive);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_Delete_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -76,7 +76,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainMethodCall(nameof(IDirectoryInfo.Delete));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_EnumerateDirectories_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -89,7 +89,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableFact]
+	[Fact]
 	public void Method_EnumerateDirectories_String_EnumerationOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -105,7 +105,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Method_EnumerateDirectories_String_SearchOption_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -120,7 +120,7 @@ public sealed class DirectoryInfoStatisticsTests
 				searchPattern, searchOption);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_EnumerateDirectories_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -134,7 +134,7 @@ public sealed class DirectoryInfoStatisticsTests
 				searchPattern);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_EnumerateFiles_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -147,7 +147,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableFact]
+	[Fact]
 	public void Method_EnumerateFiles_String_EnumerationOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -163,7 +163,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Method_EnumerateFiles_String_SearchOption_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -178,7 +178,7 @@ public sealed class DirectoryInfoStatisticsTests
 				searchPattern, searchOption);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_EnumerateFiles_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -192,7 +192,7 @@ public sealed class DirectoryInfoStatisticsTests
 				searchPattern);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_EnumerateFileSystemInfos_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -205,7 +205,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableFact]
+	[Fact]
 	public void Method_EnumerateFileSystemInfos_String_EnumerationOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -221,7 +221,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Method_EnumerateFileSystemInfos_String_SearchOption_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -236,7 +236,7 @@ public sealed class DirectoryInfoStatisticsTests
 				searchPattern, searchOption);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_EnumerateFileSystemInfos_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -250,7 +250,7 @@ public sealed class DirectoryInfoStatisticsTests
 				searchPattern);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetDirectories_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -264,7 +264,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableFact]
+	[Fact]
 	public void Method_GetDirectories_String_EnumerationOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -281,7 +281,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetDirectories_String_SearchOption_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -297,7 +297,7 @@ public sealed class DirectoryInfoStatisticsTests
 				searchPattern, searchOption);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetDirectories_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -312,7 +312,7 @@ public sealed class DirectoryInfoStatisticsTests
 				searchPattern);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetFiles_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -326,7 +326,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableFact]
+	[Fact]
 	public void Method_GetFiles_String_EnumerationOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -343,7 +343,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetFiles_String_SearchOption_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -359,7 +359,7 @@ public sealed class DirectoryInfoStatisticsTests
 				searchPattern, searchOption);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetFiles_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -374,7 +374,7 @@ public sealed class DirectoryInfoStatisticsTests
 				searchPattern);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetFileSystemInfos_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -388,7 +388,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableFact]
+	[Fact]
 	public void Method_GetFileSystemInfos_String_EnumerationOptions_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -405,7 +405,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetFileSystemInfos_String_SearchOption_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -421,7 +421,7 @@ public sealed class DirectoryInfoStatisticsTests
 				searchPattern, searchOption);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetFileSystemInfos_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -436,7 +436,7 @@ public sealed class DirectoryInfoStatisticsTests
 				searchPattern);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_MoveTo_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -451,7 +451,7 @@ public sealed class DirectoryInfoStatisticsTests
 				destDirName);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_Refresh_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -464,7 +464,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_LINK
-	[SkippableFact]
+	[Fact]
 	public void Method_ResolveLinkTarget_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -478,7 +478,7 @@ public sealed class DirectoryInfoStatisticsTests
 				returnFinalTarget);
 	}
 #endif
-	[SkippableFact]
+	[Fact]
 	public void Property_Attributes_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -491,7 +491,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.Attributes));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_Attributes_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -505,7 +505,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainPropertySetAccess(nameof(IDirectoryInfo.Attributes));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_CreationTime_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -518,7 +518,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.CreationTime));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_CreationTime_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -532,7 +532,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainPropertySetAccess(nameof(IDirectoryInfo.CreationTime));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_CreationTimeUtc_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -545,7 +545,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.CreationTimeUtc));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_CreationTimeUtc_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -559,7 +559,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainPropertySetAccess(nameof(IDirectoryInfo.CreationTimeUtc));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_Exists_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -572,7 +572,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.Exists));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_Extension_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -585,7 +585,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.Extension));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_FullName_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -598,7 +598,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.FullName));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_LastAccessTime_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -611,7 +611,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.LastAccessTime));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_LastAccessTime_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -625,7 +625,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainPropertySetAccess(nameof(IDirectoryInfo.LastAccessTime));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_LastAccessTimeUtc_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -638,7 +638,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.LastAccessTimeUtc));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_LastAccessTimeUtc_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -652,7 +652,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainPropertySetAccess(nameof(IDirectoryInfo.LastAccessTimeUtc));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_LastWriteTime_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -665,7 +665,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.LastWriteTime));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_LastWriteTime_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -679,7 +679,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainPropertySetAccess(nameof(IDirectoryInfo.LastWriteTime));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_LastWriteTimeUtc_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -692,7 +692,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.LastWriteTimeUtc));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_LastWriteTimeUtc_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -707,7 +707,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_LINK
-	[SkippableFact]
+	[Fact]
 	public void Property_LinkTarget_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -721,7 +721,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Property_Name_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -734,7 +734,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.Name));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_Parent_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -747,7 +747,7 @@ public sealed class DirectoryInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDirectoryInfo.Parent));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_Root_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -761,7 +761,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
-	[SkippableFact]
+	[Fact]
 	public void Property_UnixFileMode_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -776,7 +776,7 @@ public sealed class DirectoryInfoStatisticsTests
 #endif
 
 #if FEATURE_FILESYSTEM_UNIXFILEMODE
-	[SkippableFact]
+	[Fact]
 	public void Property_UnixFileMode_Set_ShouldRegisterPropertyAccess()
 	{
 		Skip.If(Test.RunsOnWindows);
@@ -795,7 +795,7 @@ public sealed class DirectoryInfoStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void ToString_ShouldBeDirectoryInfoWithPath()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.DirectoryInfo[@"\\some\path"];

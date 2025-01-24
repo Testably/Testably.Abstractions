@@ -10,7 +10,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class WriteAllBytesAsyncTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAllBytesAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path, byte[] bytes)
@@ -24,7 +24,7 @@ public partial class WriteAllBytesAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAllBytesAsync_PreviousFile_ShouldOverwriteFileWithBytes(
 		string path, byte[] bytes)
@@ -37,7 +37,7 @@ public partial class WriteAllBytesAsyncTests
 			.Which.HasContent(bytes);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAllBytesAsync_ShouldCreateFileWithBytes(
 		string path, byte[] bytes)
@@ -48,20 +48,22 @@ public partial class WriteAllBytesAsyncTests
 			.Which.HasContent(bytes);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAllBytesAsync_WhenBytesAreNull_ShouldThrowArgumentNullException(
 		string path)
 	{
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
 			await FileSystem.File.WriteAllBytesAsync(path, null!);
-		});
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<ArgumentNullException>(paramName: "bytes");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		WriteAllBytesAsync_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
@@ -69,10 +71,12 @@ public partial class WriteAllBytesAsyncTests
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
 			await FileSystem.File.WriteAllBytesAsync(path, bytes);
-		});
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
@@ -80,7 +84,7 @@ public partial class WriteAllBytesAsyncTests
 		FileSystem.Should().NotHaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		WriteAllTextAsync_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
@@ -91,10 +95,12 @@ public partial class WriteAllBytesAsyncTests
 		await FileSystem.File.WriteAllTextAsync(path, null);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
 			await FileSystem.File.WriteAllBytesAsync(path, bytes);
-		});
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}

@@ -9,7 +9,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class WriteAllTextAsyncTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAllTextAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path, string? contents)
@@ -23,7 +23,7 @@ public partial class WriteAllTextAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		WriteAllTextAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
@@ -38,7 +38,7 @@ public partial class WriteAllTextAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAllTextAsync_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string contents)
@@ -51,7 +51,7 @@ public partial class WriteAllTextAsyncTests
 		result.Should().Be(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAllTextAsync_ShouldCreateFileWithText(
 		string path, string contents)
@@ -63,7 +63,7 @@ public partial class WriteAllTextAsyncTests
 		result.Should().Be(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAllTextAsync_SpecialCharacters_ShouldReturnSameText(
 		string path)
@@ -89,19 +89,20 @@ public partial class WriteAllTextAsyncTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAllTextAsync_WhenContentIsNull_ShouldNotThrowException(string path)
 	{
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
 			await FileSystem.File.WriteAllTextAsync(path, null);
-		});
-
+		}
+		
+		Exception? exception = await Record.ExceptionAsync(Act);
 		exception.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		WriteAllTextAsync_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
@@ -109,10 +110,12 @@ public partial class WriteAllTextAsyncTests
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
 			await FileSystem.File.WriteAllTextAsync(path, contents);
-		});
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
@@ -120,7 +123,7 @@ public partial class WriteAllTextAsyncTests
 		FileSystem.Should().NotHaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		WriteAllTextAsync_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
@@ -131,10 +134,12 @@ public partial class WriteAllTextAsyncTests
 		await FileSystem.File.WriteAllTextAsync(path, null);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
 			await FileSystem.File.WriteAllTextAsync(path, contents);
-		});
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}

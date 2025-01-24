@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Testing.Tests;
 public class MockFileSystemInitializationTests
 {
 #if CAN_SIMULATE_OTHER_OS
-	[SkippableFact]
+	[Fact]
 	public void MockFileSystem_WhenSimulatingLinux_ShouldBeLinux()
 	{
 		MockFileSystem sut = new(o => o
@@ -22,7 +22,7 @@ public class MockFileSystemInitializationTests
 #endif
 
 #if CAN_SIMULATE_OTHER_OS
-	[SkippableFact]
+	[Fact]
 	public void MockFileSystem_WhenSimulatingMacOS_ShouldBeMac()
 	{
 		MockFileSystem sut = new(o => o
@@ -36,7 +36,7 @@ public class MockFileSystemInitializationTests
 #endif
 
 #if CAN_SIMULATE_OTHER_OS
-	[SkippableFact]
+	[Fact]
 	public void MockFileSystem_WhenSimulatingWindows_ShouldBeWindows()
 	{
 		MockFileSystem sut = new(o => o

@@ -10,7 +10,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 public class FileSystemWatcherStatisticsTests
 {
-	[SkippableFact]
+	[Fact]
 	public void Method_BeginInit_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -24,7 +24,7 @@ public class FileSystemWatcherStatisticsTests
 			.ShouldOnlyContainMethodCall(nameof(IFileSystemWatcher.BeginInit));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_EndInit_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -38,7 +38,7 @@ public class FileSystemWatcherStatisticsTests
 			.ShouldOnlyContainMethodCall(nameof(IFileSystemWatcher.EndInit));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_WaitForChanged_WatcherChangeTypes_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -68,7 +68,7 @@ public class FileSystemWatcherStatisticsTests
 				timeout);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_WaitForChanged_WatcherChangeTypes_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -97,7 +97,7 @@ public class FileSystemWatcherStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEM_NET7
-	[SkippableFact]
+	[Fact]
 	public void Method_WaitForChanged_WatcherChangeTypes_TimeSpan_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -128,7 +128,7 @@ public class FileSystemWatcherStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Property_EnableRaisingEvents_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -141,7 +141,7 @@ public class FileSystemWatcherStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileSystemWatcher.EnableRaisingEvents));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_EnableRaisingEvents_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -155,7 +155,7 @@ public class FileSystemWatcherStatisticsTests
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileSystemWatcher.EnableRaisingEvents));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_Filter_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -168,7 +168,7 @@ public class FileSystemWatcherStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileSystemWatcher.Filter));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_Filter_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -183,7 +183,7 @@ public class FileSystemWatcherStatisticsTests
 	}
 
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
-	[SkippableFact]
+	[Fact]
 	public void Property_Filters_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -197,7 +197,7 @@ public class FileSystemWatcherStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Property_IncludeSubdirectories_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -210,7 +210,7 @@ public class FileSystemWatcherStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileSystemWatcher.IncludeSubdirectories));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_IncludeSubdirectories_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -224,7 +224,7 @@ public class FileSystemWatcherStatisticsTests
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileSystemWatcher.IncludeSubdirectories));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_InternalBufferSize_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -237,7 +237,7 @@ public class FileSystemWatcherStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileSystemWatcher.InternalBufferSize));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_InternalBufferSize_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -251,7 +251,7 @@ public class FileSystemWatcherStatisticsTests
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileSystemWatcher.InternalBufferSize));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_NotifyFilter_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -264,7 +264,7 @@ public class FileSystemWatcherStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileSystemWatcher.NotifyFilter));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_NotifyFilter_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -278,7 +278,7 @@ public class FileSystemWatcherStatisticsTests
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileSystemWatcher.NotifyFilter));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_Path_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -291,7 +291,7 @@ public class FileSystemWatcherStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileSystemWatcher.Path));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_Path_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -305,7 +305,7 @@ public class FileSystemWatcherStatisticsTests
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileSystemWatcher.Path));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_Site_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -318,7 +318,7 @@ public class FileSystemWatcherStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileSystemWatcher.Site));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_Site_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -332,7 +332,7 @@ public class FileSystemWatcherStatisticsTests
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileSystemWatcher.Site));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_SynchronizingObject_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -345,7 +345,7 @@ public class FileSystemWatcherStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IFileSystemWatcher.SynchronizingObject));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_SynchronizingObject_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -359,7 +359,7 @@ public class FileSystemWatcherStatisticsTests
 			.ShouldOnlyContainPropertySetAccess(nameof(IFileSystemWatcher.SynchronizingObject));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void ToString_ShouldBeFileSystemWatcherWithPath()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.FileSystemWatcher[@"\\some\path"];

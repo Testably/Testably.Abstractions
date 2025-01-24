@@ -10,7 +10,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 [FileSystemTests]
 public partial class EventTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Changed_ShouldTriggerUntilEventIsRemoved(string path)
 	{
@@ -84,7 +84,7 @@ public partial class EventTests
 		cts.Cancel();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Created_ShouldTriggerUntilEventIsRemoved(string path)
 	{
@@ -154,7 +154,7 @@ public partial class EventTests
 		cts.Cancel();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Deleted_ShouldTriggerUntilEventIsRemoved(string path)
 	{
@@ -224,7 +224,7 @@ public partial class EventTests
 		cts.Cancel();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Renamed_ShouldTriggerUntilEventIsRemoved(string path)
 	{

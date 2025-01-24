@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Tests.FileSystem.DriveInfoFactory;
 [FileSystemTests]
 public partial class ExceptionTests
 {
-	[SkippableTheory]
+	[Theory]
 	[InlineData("?invalid-drive-name")]
 	[InlineData("invalid")]
 	[InlineData(" ")]
@@ -24,8 +24,8 @@ public partial class ExceptionTests
 		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetDriveInfoFactoryCallbacks), parameters: "")]
+	[Theory]
+	[MemberData(nameof(GetDriveInfoFactoryCallbacks), "")]
 	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IDriveInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -42,8 +42,8 @@ public partial class ExceptionTests
 			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetDriveInfoFactoryCallbacks), parameters: (string?)null)]
+	[Theory]
+	[MemberData(nameof(GetDriveInfoFactoryCallbacks), (string?)null)]
 	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IDriveInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)

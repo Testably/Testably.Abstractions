@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class CreateTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Create_ExistingFile_ShouldBeOverwritten(
 		string path, string originalContent, string newContent)
@@ -22,7 +22,7 @@ public partial class CreateTests
 			.Which.HasContent(newContent);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Create_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingDirectory, string fileName)
@@ -37,7 +37,7 @@ public partial class CreateTests
 		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Create_MissingFile_ShouldCreateFile(string path)
 	{
@@ -46,7 +46,7 @@ public partial class CreateTests
 		FileSystem.Should().HaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Create_ReadOnlyFile_ShouldThrowUnauthorizedAccessException(
 		string path, string content)
@@ -62,7 +62,7 @@ public partial class CreateTests
 		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Create_ShouldUseReadWriteAccessAndNoneShare(string path)
 	{
@@ -76,7 +76,7 @@ public partial class CreateTests
 		stream.CanTimeout.Should().BeFalse();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Create_WithBufferSize_ShouldUseReadWriteAccessAndNoneShare(
 		string path, int bufferSize)
@@ -90,7 +90,7 @@ public partial class CreateTests
 		FileTestHelper.CheckFileShare(FileSystem, path).Should().Be(FileShare.None);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Create_WithBufferSizeAndFileOptions_ShouldUseReadWriteAccessAndNoneShare(
 		string path, int bufferSize)

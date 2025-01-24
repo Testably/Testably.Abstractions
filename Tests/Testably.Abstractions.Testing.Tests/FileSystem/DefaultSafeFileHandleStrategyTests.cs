@@ -13,7 +13,7 @@ public class DefaultSafeFileHandleStrategyTests
 
 	#endregion
 
-	[SkippableFact]
+	[Fact]
 	public void Constructor_NullCallback_ShouldThrowArgumentNullException()
 	{
 		Exception? exception = Record.Exception(() =>
@@ -25,7 +25,7 @@ public class DefaultSafeFileHandleStrategyTests
 			.Which.ParamName.Should().Be("callback");
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void MapSafeFileHandle_ShouldReturnExpectedValue()
 	{
 		SafeFileHandle fooSafeFileHandle = new();

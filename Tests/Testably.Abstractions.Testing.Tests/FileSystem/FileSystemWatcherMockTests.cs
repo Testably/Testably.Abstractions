@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading;
 using Testably.Abstractions.Testing.Initializer;
+using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
@@ -32,7 +33,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 
 	#endregion
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Error_DefaultTo64Messages_ShouldBeTriggeredWhenBufferOverflows(
 		string path)
@@ -87,7 +88,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 		result!.GetException().Should().BeOfType<InternalBufferOverflowException>();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(4096)]
 	[InlineAutoData(8192)]
 	public void Error_ShouldBeTriggeredWhenBufferOverflows(
@@ -146,7 +147,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 	}
 
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Filter_ShouldResetFiltersToOnlyContainASingleValue(
 		string[] filters, string expectedFilter)
@@ -168,7 +169,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void InternalBufferSize_ShouldResetQueue(string path1, string path2)
 	{
@@ -178,7 +179,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			FileSystem.FileSystemWatcher.New(BasePath);
 		using ManualResetEventSlim block1 = new();
 		using ManualResetEventSlim block2 = new();
-		ErrorEventArgs result = null;
+		ErrorEventArgs result = null!;
 		fileSystemWatcher.Error += (_, eventArgs) =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
@@ -237,7 +238,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 #if CAN_SIMULATE_OTHER_OS
 	public sealed class EventArgsTests
 	{
-		[SkippableTheory]
+		[Theory]
 		[InlineAutoData(SimulationMode.Linux)]
 		[InlineAutoData(SimulationMode.MacOS)]
 		[InlineAutoData(SimulationMode.Windows)]
@@ -280,7 +281,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 #endif
 
 #if CAN_SIMULATE_OTHER_OS
-		[SkippableTheory]
+		[Theory]
 		[InlineAutoData(SimulationMode.Linux)]
 		[InlineAutoData(SimulationMode.MacOS)]
 		[InlineAutoData(SimulationMode.Windows)]

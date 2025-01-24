@@ -11,7 +11,6 @@ internal static partial class SourceGenerationHelper
 		StringBuilder? sb = GetSourceBuilder();
 		sb.AppendLine($$"""
 		                using Testably.Abstractions.TestHelpers;
-		                using Xunit.Abstractions;
 
 		                namespace {{model.Namespace}}
 		                {

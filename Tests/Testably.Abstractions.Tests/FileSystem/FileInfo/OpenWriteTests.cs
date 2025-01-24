@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 [FileSystemTests]
 public partial class OpenWriteTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void OpenWrite_MissingFile_ShouldCreateFile(string path)
 	{
@@ -16,7 +16,7 @@ public partial class OpenWriteTests
 		FileSystem.Should().HaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void OpenWrite_ShouldUseWriteAccessAndNoneShare(string path)
 	{

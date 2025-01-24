@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class ReplaceTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Replace_CaseOnlyChange_ShouldThrowIOException(
 		string name, string contents)
@@ -41,7 +41,7 @@ public partial class ReplaceTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		Replace_DestinationDirectoryDoesNotExist_ShouldThrowCorrectException(
@@ -66,7 +66,7 @@ public partial class ReplaceTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Replace_DestinationIsDirectory_ShouldThrowUnauthorizedAccessException(
 		string sourceName,
@@ -84,7 +84,7 @@ public partial class ReplaceTests
 		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Replace_DestinationMissing_ShouldThrowFileNotFoundException(
 		string sourceName,
@@ -102,7 +102,7 @@ public partial class ReplaceTests
 		FileSystem.Should().NotHaveFile(backupName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Replace_ReadOnly_WithIgnoreMetadataError_ShouldReplaceFile(
 		string sourceName,
@@ -125,7 +125,7 @@ public partial class ReplaceTests
 			.Which.HasContent(destinationContents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		Replace_ReadOnly_WithoutIgnoreMetadataError_ShouldThrowUnauthorizedAccessException_OnWindows(
@@ -166,7 +166,7 @@ public partial class ReplaceTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Replace_ShouldReplaceFile(
 		string sourceName,
@@ -187,7 +187,7 @@ public partial class ReplaceTests
 			.Which.HasContent(destinationContents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Replace_SourceIsDirectory_ShouldThrowUnauthorizedAccessException(
 		string sourceName,
@@ -207,7 +207,7 @@ public partial class ReplaceTests
 		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAccess.Read, FileShare.None)]
 	[InlineAutoData(FileAccess.Read, FileShare.Read)]
 	[InlineAutoData(FileAccess.Read, FileShare.ReadWrite)]
@@ -264,7 +264,7 @@ public partial class ReplaceTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Replace_SourceMissing_ShouldThrowFileNotFoundException(
 		string sourceName,
@@ -286,7 +286,7 @@ public partial class ReplaceTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Replace_WithExistingBackupFile_ShouldIgnoreBackup(
 		string sourceName,
@@ -309,7 +309,7 @@ public partial class ReplaceTests
 			.Which.HasContent(backupContents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Replace_WithoutBackup_ShouldReplaceFile(
 		string sourceName,

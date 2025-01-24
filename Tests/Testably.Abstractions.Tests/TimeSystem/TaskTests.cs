@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.TimeSystem;
 [TimeSystemTests]
 public partial class TaskTests
 {
-	[SkippableFact]
+	[Fact]
 	public async Task
 		Delay_Milliseconds_Cancelled_ShouldThrowTaskCanceledException()
 	{
@@ -14,28 +14,28 @@ public partial class TaskTests
 
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
-
-		Exception? exception = await Record.ExceptionAsync(async () =>
-		{
-			await TimeSystem.Task.Delay(millisecondsTimeout, cts.Token);
-		});
+		
+		async Task Act()
+			=> await TimeSystem.Task.Delay(millisecondsTimeout, cts.Token);
+		
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task
 		Delay_Milliseconds_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
-		Exception? exception = await Record.ExceptionAsync(async () =>
-		{
-			await TimeSystem.Task.Delay(-2);
-		});
+		async Task Act()
+			=> await TimeSystem.Task.Delay(-2);
+		
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<ArgumentOutOfRangeException>(hResult: -2146233086);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task
 		Delay_Milliseconds_ShouldDelayForSpecifiedMilliseconds()
 	{
@@ -49,7 +49,7 @@ public partial class TaskTests
 			before.AddMilliseconds(millisecondsTimeout).ApplySystemClockTolerance());
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task
 		Delay_Timespan_Cancelled_ShouldThrowTaskCanceledException()
 	{
@@ -57,28 +57,27 @@ public partial class TaskTests
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
-		{
-			await TimeSystem.Task.Delay(timeout, cts.Token);
-		});
+		async Task Act()
+			=> await TimeSystem.Task.Delay(timeout, cts.Token);
+		
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task
 		Delay_Timespan_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
-		Exception? exception = await Record.ExceptionAsync(async () =>
-		{
-			await TimeSystem.Task
-				.Delay(TimeSpan.FromMilliseconds(-2));
-		});
+		async Task Act()
+			=> await TimeSystem.Task.Delay(TimeSpan.FromMilliseconds(-2));
+		
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<ArgumentOutOfRangeException>(hResult: -2146233086);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task
 		Delay_Timespan_ShouldDelayForSpecifiedMilliseconds()
 	{

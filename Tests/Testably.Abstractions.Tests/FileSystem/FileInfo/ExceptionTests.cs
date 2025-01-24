@@ -8,8 +8,8 @@ namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 [FileSystemTests]
 public partial class ExceptionTests
 {
-	[SkippableTheory]
-	[MemberData(nameof(GetFileInfoCallbacks), parameters: "Illegal\tCharacter?InPath")]
+	[Theory]
+	[MemberData(nameof(GetFileInfoCallbacks), "Illegal\tCharacter?InPath")]
 	public void
 		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowCorrectException_OnWindows(
 			Expression<Action<IFileInfo>> callback, string paramName,
@@ -47,8 +47,8 @@ public partial class ExceptionTests
 		}
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetFileInfoCallbacks), parameters: "")]
+	[Theory]
+	[MemberData(nameof(GetFileInfoCallbacks), "")]
 	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileInfo>> callback, string paramName, bool ignoreParamCheck)
 	{
@@ -64,8 +64,8 @@ public partial class ExceptionTests
 			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetFileInfoCallbacks), parameters: (string?)null)]
+	[Theory]
+	[MemberData(nameof(GetFileInfoCallbacks), (string?)null)]
 	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileInfo>> callback, string paramName, bool ignoreParamCheck)
 	{

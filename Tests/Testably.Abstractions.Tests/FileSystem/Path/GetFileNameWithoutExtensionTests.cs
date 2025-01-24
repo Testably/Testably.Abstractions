@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class GetFileNameWithoutExtensionTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetFileNameWithoutExtension_MultipleDots_ShouldReturnOnlyRemoveTheLastExtension(
 		string directory, string filename1, string filename2, string extension)
@@ -17,7 +17,7 @@ public partial class GetFileNameWithoutExtensionTests
 		result.Should().Be(filename);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetFileNameWithoutExtension_Null_ShouldReturnNull()
 	{
 		string? result = FileSystem.Path.GetFileNameWithoutExtension(null);
@@ -25,7 +25,7 @@ public partial class GetFileNameWithoutExtensionTests
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetFileNameWithoutExtension_ShouldReturnFileNameWithoutExtension(
 		string directory, string filename, string extension)
@@ -39,7 +39,7 @@ public partial class GetFileNameWithoutExtensionTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetFileNameWithoutExtension_Span_ShouldReturnFileNameWithoutExtension(
 		string directory, string filename, string extension)
@@ -54,7 +54,7 @@ public partial class GetFileNameWithoutExtensionTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetFileNameWithoutExtension_StartingDot_ShouldReturnEmptyString(
 		string directory, string filename)
@@ -66,7 +66,7 @@ public partial class GetFileNameWithoutExtensionTests
 		result.Should().Be("");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetFileNameWithoutExtension_TrailingDot_ShouldReturnFilenameWithoutTrailingDot(
 		string directory, string filename)

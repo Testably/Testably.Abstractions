@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 [FileSystemTests]
 public partial class EnableRaisingEventsTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EnableRaisingEvents_SetToFalse_ShouldStop(string path1, string path2)
 	{
@@ -36,7 +36,7 @@ public partial class EnableRaisingEventsTests
 		ms.Wait(ExpectTimeout).Should().BeFalse();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EnableRaisingEvents_ShouldBeInitializedAsFalse(string path)
 	{

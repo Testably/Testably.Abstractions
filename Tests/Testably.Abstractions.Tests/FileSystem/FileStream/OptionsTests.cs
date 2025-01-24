@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 [FileSystemTests]
 public partial class OptionsTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Options_DeleteOnClose_ShouldDeleteFileOnClose(
 		string path, string contents)
@@ -22,7 +22,7 @@ public partial class OptionsTests
 		FileSystem.Should().NotHaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Options_DeleteOnClose_ShouldDeleteFileOnDispose(
 		string path, string contents)
@@ -38,7 +38,7 @@ public partial class OptionsTests
 		FileSystem.Should().NotHaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	[SupportedOSPlatform("windows")]
 	public void Options_Encrypt_ShouldKeepEncryptionFlag(
@@ -63,7 +63,7 @@ public partial class OptionsTests
 			.And.HasAttribute(FileAttributes.Encrypted);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Options_Encrypt_Unencrypted_ShouldBeIgnored(
 		string path, string contents1, string contents2)
@@ -82,7 +82,7 @@ public partial class OptionsTests
 		FileSystem.File.ReadAllText(path).Should().Be(contents2);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	[SupportedOSPlatform("windows")]
 	public void Options_EncryptedWithoutEncryptionOption_ShouldKeepEncryptionFlag(

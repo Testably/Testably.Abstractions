@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 [FileSystemTests]
 public partial class AdjustTimesTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CopyTo_ShouldAdjustTimes(string path, byte[] bytes)
 	{
@@ -51,7 +51,7 @@ public partial class AdjustTimesTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Read_AsSpan_ShouldAdjustTimes(string path, byte[] bytes)
 	{
@@ -90,7 +90,7 @@ public partial class AdjustTimesTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Read_ShouldAdjustTimes(string path, byte[] bytes)
 	{
@@ -131,7 +131,7 @@ public partial class AdjustTimesTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadAsync_AsMemory_ShouldAdjustTimes(string path, byte[] bytes)
 	{
@@ -171,7 +171,7 @@ public partial class AdjustTimesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadAsync_ShouldAdjustTimes(string path, byte[] bytes)
 	{
@@ -214,7 +214,7 @@ public partial class AdjustTimesTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadByte_ShouldAdjustTimes(string path, byte[] bytes)
 	{
@@ -253,7 +253,7 @@ public partial class AdjustTimesTests
 			.BeBetween(creationTimeStart, creationTimeEnd);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Seek_ShouldNotAdjustTimes(string path, byte[] bytes)
 	{
@@ -286,7 +286,7 @@ public partial class AdjustTimesTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Write_AsSpan_ShouldAdjustTimes(string path, byte[] bytes)
 	{
@@ -326,7 +326,7 @@ public partial class AdjustTimesTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Write_ShouldAdjustTimes(string path, byte[] bytes)
 	{
@@ -368,7 +368,7 @@ public partial class AdjustTimesTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAsync_AsMemory_ShouldAdjustTimes(string path, byte[] bytes)
 	{
@@ -409,7 +409,7 @@ public partial class AdjustTimesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAsync_ShouldAdjustTimes(string path, byte[] bytes)
 	{
@@ -453,7 +453,7 @@ public partial class AdjustTimesTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteByte_ShouldAdjustTimes(string path, byte[] bytes, byte singleByte)
 	{

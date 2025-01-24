@@ -10,7 +10,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 [FileSystemTests]
 public partial class FilterTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Filter_Matching_ShouldTriggerNotification(string path)
 	{
@@ -43,7 +43,7 @@ public partial class FilterTests
 		result.Name.Should().Be(FileSystem.Path.GetFileName(path));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Filter_NotMatching_ShouldNotTriggerNotification(
 		string path, string filter)
@@ -77,7 +77,7 @@ public partial class FilterTests
 	}
 
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Filters_ShouldMatchAnyOfTheSpecifiedFilters(
 		string[] filteredPaths, string[] otherPaths)

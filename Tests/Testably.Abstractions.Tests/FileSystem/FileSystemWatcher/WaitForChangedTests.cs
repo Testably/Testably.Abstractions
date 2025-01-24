@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 [FileSystemTests]
 public partial class WaitForChangedTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WaitForChanged_ShouldBlockUntilEventHappens(string path)
 	{
@@ -52,7 +52,7 @@ public partial class WaitForChangedTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetWaitForChangedTimeoutParameters))]
 	public void WaitForChanged_Timeout_ShouldReturnTimedOut(string path,
 		Func<IFileSystemWatcher, IWaitForChangedResult> callback)

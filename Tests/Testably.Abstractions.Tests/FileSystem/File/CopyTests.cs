@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class CopyTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Copy_CaseOnlyChange_ShouldThrowIOException_ExceptOnLinux(
 		string name, string contents)
@@ -32,7 +32,7 @@ public partial class CopyTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		Copy_DestinationDirectoryDoesNotExist_ShouldThrowDirectoryNotFoundException(
@@ -50,7 +50,7 @@ public partial class CopyTests
 		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Copy_DestinationExists_ShouldThrowIOException_AndNotCopyFile(
 		string sourceName,
@@ -75,7 +75,7 @@ public partial class CopyTests
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Copy_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
 		string sourceName,
@@ -95,7 +95,7 @@ public partial class CopyTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData(@"0:\something\demo.txt", @"C:\elsewhere\demo.txt")]
 	[InlineData(@"C:\something\demo.txt", @"^:\elsewhere\demo.txt")]
 	[InlineData(@"C:\something\demo.txt", @"C:\elsewhere:\demo.txt")]
@@ -113,7 +113,7 @@ public partial class CopyTests
 		exception.Should().BeException<NotSupportedException>(hResult: -2146233067);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData(@"C::\something\demo.txt", @"C:\elsewhere\demo.txt")]
 	public void
 		Copy_InvalidPath_ShouldThrowCorrectException(
@@ -139,7 +139,7 @@ public partial class CopyTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Copy_ReadOnly_ShouldCopyFile(
 		string sourceName, string destinationName, string contents)
@@ -156,7 +156,7 @@ public partial class CopyTests
 			.And.HasAttribute(FileAttributes.ReadOnly);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Copy_ShouldAdjustTimes(
 		string source, string destination)
@@ -227,7 +227,7 @@ public partial class CopyTests
 			.BeBetween(creationTimeStart, creationTimeEnd);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Copy_ShouldCloneBinaryContent(
 		string source, string destination, byte[] original)
@@ -251,7 +251,7 @@ public partial class CopyTests
 			.NotBeEquivalentTo(FileSystem.File.ReadAllBytes(source));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Copy_ShouldCloneTextContent(
 		string source, string destination, string contents)
@@ -273,7 +273,7 @@ public partial class CopyTests
 			.NotBe(FileSystem.File.ReadAllText(destination));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Copy_ShouldCopyFileWithContent(
 		string sourceName, string destinationName, string contents)
@@ -291,7 +291,7 @@ public partial class CopyTests
 			.Which.HasContent(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAccess.Read, FileShare.Read)]
 	[InlineAutoData(FileAccess.Read, FileShare.ReadWrite)]
 	[InlineAutoData(FileAccess.ReadWrite, FileShare.Read)]
@@ -317,7 +317,7 @@ public partial class CopyTests
 		FileSystem.File.ReadAllText(destinationPath).Should().Be(sourceContents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAccess.Read)]
 	[InlineAutoData(FileAccess.ReadWrite)]
 	[InlineAutoData(FileAccess.Write)]
@@ -341,7 +341,7 @@ public partial class CopyTests
 		FileSystem.File.ReadAllText(destinationPath).Should().Be(sourceContents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Copy_SourceDirectoryMissing_ShouldThrowDirectoryNotFoundException(
 		string missingDirectory,
@@ -362,7 +362,7 @@ public partial class CopyTests
 		FileSystem.Should().NotHaveFile(destinationName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Copy_SourceIsDirectory_ShouldThrowUnauthorizedAccessException_AndNotCopyFile(
 		string sourceName,
@@ -384,7 +384,7 @@ public partial class CopyTests
 		FileSystem.Should().NotHaveFile(destinationName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileShare.None)]
 	[InlineAutoData(FileShare.Write)]
 	public void Copy_SourceLocked_ShouldThrowIOException(
@@ -416,7 +416,7 @@ public partial class CopyTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Copy_SourceMissing_ShouldThrowFileNotFoundException(
 		string sourceName,

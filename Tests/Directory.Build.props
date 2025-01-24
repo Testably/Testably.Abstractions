@@ -5,8 +5,8 @@
 	<Import Project="$([MSBuild]::GetPathOfFileAbove('Feature.Flags.props', '$(MSBuildThisFileDirectory)/../'))" />
 
 	<PropertyGroup>
-		<TargetFrameworks Condition="'$(NetCoreOnly)' != 'True'">net6.0;net7.0;net8.0;net48</TargetFrameworks>
-		<TargetFrameworks Condition="'$(NetCoreOnly)' == 'True'">net6.0;net7.0;net8.0</TargetFrameworks>
+		<TargetFrameworks Condition="'$(NetCoreOnly)' != 'True'">net6.0;net8.0;net48</TargetFrameworks>
+		<TargetFrameworks Condition="'$(NetCoreOnly)' == 'True'">net6.0;net8.0</TargetFrameworks>
 		<TargetFrameworks Condition="'$(NetFrameworkOnly)' == 'True'">net48</TargetFrameworks>
 	</PropertyGroup>
 
@@ -15,7 +15,8 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
-		<NoWarn>$(NoWarn);701;1702;CA1845;MA0003;MA0004;MA0018;MA0020;MA0042;MA0076;xUnit1044;xUnit1045;NU1603</NoWarn>
+		<OutputType>Exe</OutputType>
+		<NoWarn>$(NoWarn);701;1702;CA1845;MA0003;MA0004;MA0018;MA0020;MA0042;MA0076;xUnit1044;xUnit1045;xUnit1051;NU1603</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
@@ -25,10 +26,9 @@
 	<ItemGroup>
 		<PackageReference Include="aweXpect" />
 		<PackageReference Include="aweXpect.Testably" />
-		<PackageReference Include="AutoFixture.Xunit2" />
+		<PackageReference Include="AutoFixture.Xunit3" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
-		<PackageReference Include="Xunit.SkippableFact" />
-		<PackageReference Include="xunit" />
+		<PackageReference Include="xunit.v3" />
 		<PackageReference Include="xunit.runner.visualstudio">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>

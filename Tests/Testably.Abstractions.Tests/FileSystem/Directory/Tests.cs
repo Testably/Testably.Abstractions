@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 public partial class Tests
 {
 #if FEATURE_FILESYSTEM_NET7
-	[SkippableFact]
+	[Fact]
 	public void CreateTempSubdirectory_ShouldCreateTheTemporaryDirectory()
 	{
 		IDirectoryInfo result = FileSystem.Directory.CreateTempSubdirectory();
@@ -16,7 +16,7 @@ public partial class Tests
 #endif
 
 #if FEATURE_FILESYSTEM_NET7
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateTempSubdirectory_WithPrefix_ShouldStartWithPrefix(string prefix)
 	{
@@ -25,7 +25,7 @@ public partial class Tests
 		result.Name.Should().StartWith(prefix);
 	}
 #endif
-	[SkippableFact]
+	[Fact]
 	public void GetCurrentDirectory_ShouldNotBeRooted()
 	{
 		string result = FileSystem.Directory.GetCurrentDirectory();
@@ -33,7 +33,7 @@ public partial class Tests
 		result.Should().NotBe(FileTestHelper.RootDrive(Test));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetDirectoryRoot_ShouldReturnRoot(string path)
 	{
@@ -45,7 +45,7 @@ public partial class Tests
 		result.Should().Be(root);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetLogicalDrives_ShouldNotBeEmpty()
 	{
 		string[] result = FileSystem.Directory.GetLogicalDrives();
@@ -54,7 +54,7 @@ public partial class Tests
 		result.Should().Contain(FileTestHelper.RootDrive(Test));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetParent_ArbitraryPaths_ShouldNotBeNull(string path1,
 		string path2,
@@ -70,7 +70,7 @@ public partial class Tests
 		result!.FullName.Should().Be(expectedParent.FullName);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetParent_Root_ShouldReturnNull()
 	{
 		string path = FileTestHelper.RootDrive(Test);
@@ -80,7 +80,7 @@ public partial class Tests
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		SetCurrentDirectory_MissingDirectory_ShouldThrowDirectoryNotFoundException(
@@ -104,7 +104,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetCurrentDirectory_RelativePath_ShouldBeFullyQualified(string path)
 	{

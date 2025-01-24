@@ -9,13 +9,13 @@ public class TimeSystemExtensibilityTests
 	public static TheoryData<ITimeSystem> GetTimeSystems
 		=> new()
 		{
-			new RealTimeSystem(),
-			new MockTimeSystem(),
+			(ITimeSystem)new RealTimeSystem(),
+			(ITimeSystem)new MockTimeSystem(),
 		};
 
 	#endregion
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetTimeSystems))]
 	public void DateTime_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
@@ -26,7 +26,7 @@ public class TimeSystemExtensibilityTests
 		result.Should().Be(timeSystem);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetTimeSystems))]
 	public void Task_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
@@ -37,7 +37,7 @@ public class TimeSystemExtensibilityTests
 		result.Should().Be(timeSystem);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetTimeSystems))]
 	public void Thread_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
@@ -48,7 +48,7 @@ public class TimeSystemExtensibilityTests
 		result.Should().Be(timeSystem);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetTimeSystems))]
 	public void Timer_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{
@@ -59,7 +59,7 @@ public class TimeSystemExtensibilityTests
 		result.Should().Be(timeSystem);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetTimeSystems))]
 	public void TimerFactory_ShouldSetExtensionPoint(ITimeSystem timeSystem)
 	{

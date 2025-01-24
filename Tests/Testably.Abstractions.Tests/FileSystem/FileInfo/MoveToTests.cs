@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 [FileSystemTests]
 public partial class MoveToTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void MoveTo_DestinationExists_ShouldThrowIOException_AndNotMoveFile(
 		string sourceName,
@@ -33,7 +33,7 @@ public partial class MoveToTests
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void MoveTo_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
 		string sourceName,
@@ -56,7 +56,7 @@ public partial class MoveToTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void MoveTo_Itself_ShouldDoNothing(
 		string sourceName,
@@ -73,7 +73,7 @@ public partial class MoveToTests
 		exception.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void MoveTo_Itself_SourceMissing_ShouldThrowFileNotFoundException(
 		string sourceName)
@@ -93,7 +93,7 @@ public partial class MoveToTests
 		FileSystem.Should().NotHaveFile(sourceName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		MoveTo_MissingDestinationDirectory_ShouldThrowDirectoryNotFoundException_AndNotMoveFile(
@@ -120,7 +120,7 @@ public partial class MoveToTests
 		FileSystem.Should().NotHaveFile(destinationName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void MoveTo_ReadOnly_ShouldMoveFile(
 		string sourceName, string destinationName, string contents)
@@ -137,7 +137,7 @@ public partial class MoveToTests
 			.And.HasAttribute(FileAttributes.ReadOnly);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAttributes.ReadOnly)]
 	[InlineAutoData(FileAttributes.System)]
 	public void MoveTo_ShouldAddArchiveAttribute_OnWindows(
@@ -162,7 +162,7 @@ public partial class MoveToTests
 			.Should().Be(expectedAttributes);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void MoveTo_ShouldKeepMetadata(
 		string sourceName,
@@ -189,7 +189,7 @@ public partial class MoveToTests
 			.Should().Be(sourceLastWriteTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void MoveTo_ShouldMoveFileWithContent(
 		string sourceName, string destinationName, string contents)
@@ -206,7 +206,7 @@ public partial class MoveToTests
 			.Which.HasContent(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void MoveTo_ShouldNotAdjustTimes(string source, string destination)
 	{
@@ -233,7 +233,7 @@ public partial class MoveToTests
 		lastWriteTime.Should().Be(expectedLastWriteTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAccess.Read, FileShare.None)]
 	[InlineAutoData(FileAccess.Read, FileShare.Read)]
 	[InlineAutoData(FileAccess.Read, FileShare.ReadWrite)]
@@ -276,7 +276,7 @@ public partial class MoveToTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void MoveTo_SourceMissing_ShouldThrowFileNotFoundException(
 		string sourceName,

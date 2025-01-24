@@ -1,7 +1,7 @@
-﻿using System.Threading;
+﻿using FluentAssertions.Common;
+using System.Threading;
 using System.Threading.Tasks;
 using Testably.Abstractions.Testing.TimeSystem;
-using Xunit.Abstractions;
 using ITimer = Testably.Abstractions.TimeSystem.ITimer;
 
 namespace Testably.Abstractions.Testing.Tests.TimeSystem;
@@ -9,7 +9,7 @@ namespace Testably.Abstractions.Testing.Tests.TimeSystem;
 // ReSharper disable UseAwaitUsing
 public class TimerMockTests(ITestOutputHelper testOutputHelper)
 {
-	[SkippableTheory]
+	[Theory]
 	[InlineData(-1)]
 	[InlineData(0)]
 	[InlineData(2000)]
@@ -29,7 +29,7 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 		exception.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData(-1)]
 	[InlineData(0)]
 	[InlineData(2000)]
@@ -219,7 +219,7 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 		count.Should().BeGreaterThan(0);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Wait_Infinite_ShouldBeValidTimeout()
 	{
 		MockTimeSystem timeSystem = new MockTimeSystem()

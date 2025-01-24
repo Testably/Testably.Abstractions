@@ -1,4 +1,4 @@
-﻿global using AutoFixture.Xunit2;
+﻿global using AutoFixture.Xunit3;
 global using System;
 global using System.Threading.Tasks;
 global using System.IO.Abstractions;

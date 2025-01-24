@@ -2,7 +2,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 public partial class Tests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AdjustTimes_WhenCreatingAFile_ShouldAdjustTimes(
 		string path1, string path2, string fileName)
@@ -55,7 +55,7 @@ public partial class Tests
 	}
 
 #if FEATURE_FILESYSTEM_LINK
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AdjustTimes_WhenCreatingASymbolicLink_ShouldAdjustTimes(
 		string path1, string path2, string fileName, string pathToTarget)
@@ -110,7 +110,7 @@ public partial class Tests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AdjustTimes_WhenDeletingAFile_ShouldAdjustTimes(
 		string path1, string path2, string fileName)
@@ -163,7 +163,7 @@ public partial class Tests
 			.BeBetween(creationTimeStart, creationTimeEnd);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AdjustTimes_WhenUpdatingAFile_ShouldAdjustTimesOnlyOnWindows(
 		string path1, string path2, string fileName)

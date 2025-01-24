@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 [FileSystemTests]
 public partial class AttributesTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Attributes_SetDirectoryAttribute_ShouldRemainFile(string path)
 	{
@@ -17,7 +17,7 @@ public partial class AttributesTests
 		sut.Attributes.Should().NotHaveFlag(FileAttributes.Directory);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Attributes_ShouldNotHaveDirectoryAttribute(string path)
 	{

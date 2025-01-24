@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class MoveTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_CaseOnlyChange_ShouldMoveFileWithContent(
 		string name, string contents)
@@ -28,7 +28,7 @@ public partial class MoveTests
 			.ContainSingle(d => d.Contains(destinationName, StringComparison.Ordinal));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		Move_DestinationDirectoryDoesNotExist_ShouldThrowDirectoryNotFoundException(
@@ -46,7 +46,7 @@ public partial class MoveTests
 		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_DestinationExists_ShouldThrowIOException_AndNotMoveFile(
 		string sourceName,
@@ -72,7 +72,7 @@ public partial class MoveTests
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
 		string sourceName,
@@ -91,7 +91,7 @@ public partial class MoveTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_ReadOnly_ShouldMoveFile(
 		string sourceName, string destinationName, string contents)
@@ -107,7 +107,7 @@ public partial class MoveTests
 			.And.HasAttribute(FileAttributes.ReadOnly);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_ShouldMoveFileWithContent(
 		string sourceName, string destinationName, string contents)
@@ -121,7 +121,7 @@ public partial class MoveTests
 			.Which.HasContent(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_ShouldNotAdjustTimes(string source, string destination)
 	{
@@ -146,7 +146,7 @@ public partial class MoveTests
 			.BeBetween(creationTimeStart, creationTimeEnd);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_SourceAndDestinationIdentical_ShouldNotThrowException(string path)
 	{
@@ -161,7 +161,7 @@ public partial class MoveTests
 		exception.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_SourceDirectoryMissing_ShouldThrowFileNotFoundException(
 		string missingDirectory,
@@ -180,7 +180,7 @@ public partial class MoveTests
 		FileSystem.Should().NotHaveFile(destinationName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAccess.Read, FileShare.None)]
 	[InlineAutoData(FileAccess.Read, FileShare.Read)]
 	[InlineAutoData(FileAccess.Read, FileShare.ReadWrite)]
@@ -222,7 +222,7 @@ public partial class MoveTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_SourceMissing_CopyToItself_ShouldThrowFileNotFoundException(
 		string sourceName)
@@ -237,7 +237,7 @@ public partial class MoveTests
 			hResult: -2147024894);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_SourceMissing_ShouldThrowFileNotFoundException(
 		string sourceName,

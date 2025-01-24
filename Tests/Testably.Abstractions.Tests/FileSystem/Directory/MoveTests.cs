@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 [FileSystemTests]
 public partial class MoveTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_CaseOnlyChange_ShouldMoveDirectoryWithContent(string path)
 	{
@@ -40,7 +40,7 @@ public partial class MoveTests
 			.Should().ContainSingle();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_CaseOnlyChange_ShouldThrowIOException_OnNetFramework(string path)
 	{
@@ -59,7 +59,7 @@ public partial class MoveTests
 		exception.Should().BeException<IOException>(hResult: -2146232800);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_DestinationDoesNotExist_ShouldThrowDirectoryNotFoundException(
 		string source)
@@ -76,7 +76,7 @@ public partial class MoveTests
 		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_ShouldMoveAttributes(string source, string destination)
 	{
@@ -92,7 +92,7 @@ public partial class MoveTests
 			.Should().Be(expectedAttributes);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_ShouldMoveDirectoryWithContent(string source, string destination)
 	{
@@ -120,7 +120,7 @@ public partial class MoveTests
 			.Should().ContainSingle();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_ShouldNotAdjustTimes(string source, string destination)
 	{
@@ -154,7 +154,7 @@ public partial class MoveTests
 			.BeBetween(creationTimeStart, creationTimeEnd);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_SourceAndDestinationIdentical_ShouldThrowIOException(string path)
 	{
@@ -169,7 +169,7 @@ public partial class MoveTests
 		exception.Should().BeException<IOException>(hResult: -2146232800);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_WithLockedFile_ShouldStillMoveDirectory_NotOnWindows(
 		string source, string destination)
@@ -210,7 +210,7 @@ public partial class MoveTests
 			.Should().ContainSingle();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_WithLockedFile_ShouldThrowIOException_AndNotMoveDirectoryAtAll_OnWindows(
 		string source, string destination)
@@ -250,7 +250,7 @@ public partial class MoveTests
 			.Should().ContainSingle();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Move_WithReadOnlyFile_ShouldMoveDirectoryWithContent(
 		string source, string destination)

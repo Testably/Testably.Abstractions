@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileInfoFactory;
 [FileSystemTests]
 public partial class Tests
 {
-	[SkippableTheory]
+	[Theory]
 	[InlineData(259)]
 	[InlineData(260)]
 	public void New_PathTooLong_ShouldThrowPathTooLongException_OnNetFramework(
@@ -28,7 +28,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_ShouldCreateNewFileInfoFromPath(string path)
 	{
@@ -38,7 +38,7 @@ public partial class Tests
 		result.Should().NotExist();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_ShouldOpenWithExistingContent(string path, string contents)
 	{
@@ -51,7 +51,7 @@ public partial class Tests
 		result.Should().Be(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_ShouldSetLength(string path, byte[] bytes)
 	{
@@ -68,7 +68,7 @@ public partial class Tests
 		result.Should().Be(bytes.Length);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_WithTrailingDirectorySeparatorChar_ShouldHaveEmptyName(string path)
 	{
@@ -78,7 +78,7 @@ public partial class Tests
 		result.Name.Should().Be(string.Empty);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void New_WithUnicodeWhitespace_ShouldNotThrow()
 	{
 		Exception? exception = Record.Exception(() =>
@@ -96,7 +96,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void New_WithWhitespace_ShouldThrowOnlyOnWindows()
 	{
 		Exception? exception = Record.Exception(() =>
@@ -114,7 +114,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Wrap_Null_ShouldReturnNull()
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
@@ -125,7 +125,7 @@ public partial class Tests
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Wrap_ShouldWrapFromFileInfo(string path)
 	{
@@ -140,7 +140,7 @@ public partial class Tests
 		result.Exists.Should().Be(fileInfo.Exists);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Wrap_WithSimulatedMockFileSystem_ShouldThrowNotSupportedException(string path)
 	{

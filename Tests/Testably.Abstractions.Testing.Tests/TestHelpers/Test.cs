@@ -4,24 +4,17 @@ namespace Testably.Abstractions.Testing.Tests.TestHelpers;
 
 public static class Test
 {
-	private static bool? _isNetFramework;
+	private static Testably.Abstractions.TestHelpers.Test _test = new();
 
 	public static bool IsNetFramework
-	{
-		get
-		{
-			_isNetFramework ??= RuntimeInformation.FrameworkDescription
-				.StartsWith(".NET Framework", StringComparison.OrdinalIgnoreCase);
-			return _isNetFramework.Value;
-		}
-	}
+		=> _test.IsNetFramework;
 
 	public static bool RunsOnLinux
-		=> RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+		=> _test.RunsOnLinux;
 
 	public static bool RunsOnMac
-		=> RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+		=> _test.RunsOnMac;
 
 	public static bool RunsOnWindows
-		=> RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+		=> _test.RunsOnWindows;
 }

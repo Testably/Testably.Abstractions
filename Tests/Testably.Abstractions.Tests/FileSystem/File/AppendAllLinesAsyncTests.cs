@@ -13,7 +13,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class AppendAllLinesAsyncTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task AppendAllLinesAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path, List<string> contents)
@@ -27,7 +27,7 @@ public partial class AppendAllLinesAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		AppendAllLinesAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
@@ -43,7 +43,7 @@ public partial class AppendAllLinesAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task AppendAllLinesAsync_ExistingFile_ShouldAppendLinesToFile(
 		string path, List<string> previousContents, List<string> contents)
@@ -58,21 +58,24 @@ public partial class AppendAllLinesAsyncTests
 			.Which.HasContent(expectedContent);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task AppendAllLinesAsync_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingPath, string fileName, List<string> contents)
 	{
 		string filePath = FileSystem.Path.Combine(missingPath, fileName);
-		Exception? exception = await Record.ExceptionAsync(async () =>
+
+		async Task Act()
 		{
 			await FileSystem.File.AppendAllLinesAsync(filePath, contents);
-		});
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task AppendAllLinesAsync_MissingFile_ShouldCreateFile(
 		string path, List<string> contents)
@@ -86,37 +89,41 @@ public partial class AppendAllLinesAsyncTests
 			.Which.HasContent(expectedContent);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task AppendAllLinesAsync_NullContent_ShouldThrowArgumentNullException(
 		string path)
 	{
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
 			await FileSystem.File.AppendAllLinesAsync(path, null!);
-		});
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<ArgumentNullException>(
 			hResult: -2147467261,
 			paramName: "contents");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task AppendAllLinesAsync_NullEncoding_ShouldThrowArgumentNullException(
 		string path)
 	{
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
 			await FileSystem.File.AppendAllLinesAsync(path, new List<string>(), null!);
-		});
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<ArgumentNullException>(
 			hResult: -2147467261,
 			paramName: "encoding");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task AppendAllLinesAsync_ShouldEndWithNewline(string path)
 	{
@@ -129,7 +136,7 @@ public partial class AppendAllLinesAsyncTests
 			.Which.HasContent(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		AppendAllLinesAsync_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
@@ -137,10 +144,12 @@ public partial class AppendAllLinesAsyncTests
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
 			await FileSystem.File.AppendAllLinesAsync(path, contents);
-		});
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
@@ -148,7 +157,7 @@ public partial class AppendAllLinesAsyncTests
 		FileSystem.Should().NotHaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
 	public async Task
 		AppendAllLinesAsync_WithDifferentEncoding_ShouldNotReturnWrittenText(
