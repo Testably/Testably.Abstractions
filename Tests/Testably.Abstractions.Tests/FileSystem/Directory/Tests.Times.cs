@@ -75,6 +75,8 @@ public partial class Tests
 	public void LastAccessTime_CreateSubDirectory_ShouldUpdateLastAccessAndLastWriteTime(
 		string path, string subPath)
 	{
+		SkipIfBrittleTestsShouldBeSkipped();
+		
 		DateTime start = TimeSystem.DateTime.Now;
 		IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
 		TimeSystem.Thread.Sleep(100);

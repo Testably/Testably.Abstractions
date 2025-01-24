@@ -11,6 +11,8 @@ public partial class WaitForChangedTests
 	[AutoData]
 	public void WaitForChanged_ShouldBlockUntilEventHappens(string path)
 	{
+		SkipIfBrittleTestsShouldBeSkipped();
+		
 		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
