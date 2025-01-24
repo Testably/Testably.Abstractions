@@ -28,7 +28,7 @@ public partial class TaskTests
 		Delay_Milliseconds_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
 		async Task Act()
-			=> await TimeSystem.Task.Delay(-2);
+			=> await TimeSystem.Task.Delay(-2, TestContext.Current.CancellationToken);
 		
 		Exception? exception = await Record.ExceptionAsync(Act);
 
@@ -70,7 +70,7 @@ public partial class TaskTests
 		Delay_Timespan_LessThanNegativeOne_ShouldThrowArgumentOutOfRangeException()
 	{
 		async Task Act()
-			=> await TimeSystem.Task.Delay(TimeSpan.FromMilliseconds(-2));
+			=> await TimeSystem.Task.Delay(TimeSpan.FromMilliseconds(-2), TestContext.Current.CancellationToken);
 		
 		Exception? exception = await Record.ExceptionAsync(Act);
 

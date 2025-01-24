@@ -95,7 +95,7 @@ public partial class WriteAllTextAsyncTests
 	{
 		async Task Act()
 		{
-			await FileSystem.File.WriteAllTextAsync(path, null);
+			await FileSystem.File.WriteAllTextAsync(path, null, TestContext.Current.CancellationToken);
 		}
 		
 		Exception? exception = await Record.ExceptionAsync(Act);
@@ -112,7 +112,7 @@ public partial class WriteAllTextAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.File.WriteAllTextAsync(path, contents);
+			await FileSystem.File.WriteAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 		}
 
 		Exception? exception = await Record.ExceptionAsync(Act);
@@ -136,7 +136,7 @@ public partial class WriteAllTextAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.File.WriteAllTextAsync(path, contents);
+			await FileSystem.File.WriteAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 		}
 
 		Exception? exception = await Record.ExceptionAsync(Act);

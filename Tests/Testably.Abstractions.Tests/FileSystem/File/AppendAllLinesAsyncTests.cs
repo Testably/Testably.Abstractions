@@ -67,7 +67,7 @@ public partial class AppendAllLinesAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.File.AppendAllLinesAsync(filePath, contents);
+			await FileSystem.File.AppendAllLinesAsync(filePath, contents, TestContext.Current.CancellationToken);
 		}
 
 		Exception? exception = await Record.ExceptionAsync(Act);
@@ -96,7 +96,7 @@ public partial class AppendAllLinesAsyncTests
 	{
 		async Task Act()
 		{
-			await FileSystem.File.AppendAllLinesAsync(path, null!);
+			await FileSystem.File.AppendAllLinesAsync(path, null!, TestContext.Current.CancellationToken);
 		}
 
 		Exception? exception = await Record.ExceptionAsync(Act);
@@ -113,7 +113,7 @@ public partial class AppendAllLinesAsyncTests
 	{
 		async Task Act()
 		{
-			await FileSystem.File.AppendAllLinesAsync(path, new List<string>(), null!);
+			await FileSystem.File.AppendAllLinesAsync(path, new List<string>(), null!, TestContext.Current.CancellationToken);
 		}
 
 		Exception? exception = await Record.ExceptionAsync(Act);
@@ -146,7 +146,7 @@ public partial class AppendAllLinesAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.File.AppendAllLinesAsync(path, contents);
+			await FileSystem.File.AppendAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 		}
 
 		Exception? exception = await Record.ExceptionAsync(Act);

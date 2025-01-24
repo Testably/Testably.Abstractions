@@ -287,7 +287,7 @@ public class TimerMockTests(ITestOutputHelper testOutputHelper)
 			try
 			{
 				count++;
-				ms.Wait();
+				ms.Wait(TestContext.Current.CancellationToken);
 			}
 			catch (ObjectDisposedException)
 			{

@@ -64,7 +64,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				block1.Wait(10000);
+				block1.Wait(10000, TestContext.Current.CancellationToken);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -121,7 +121,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				block1.Wait(5000);
+				block1.Wait(5000, TestContext.Current.CancellationToken);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -200,7 +200,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				block1.Wait(100);
+				block1.Wait(100, TestContext.Current.CancellationToken);
 			}
 			catch (ObjectDisposedException)
 			{

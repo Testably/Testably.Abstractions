@@ -55,7 +55,7 @@ public partial class WriteAllBytesAsyncTests
 	{
 		async Task Act()
 		{
-			await FileSystem.File.WriteAllBytesAsync(path, null!);
+			await FileSystem.File.WriteAllBytesAsync(path, null!, TestContext.Current.CancellationToken);
 		}
 
 		Exception? exception = await Record.ExceptionAsync(Act);
@@ -73,7 +73,7 @@ public partial class WriteAllBytesAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.File.WriteAllBytesAsync(path, bytes);
+			await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
 		}
 
 		Exception? exception = await Record.ExceptionAsync(Act);

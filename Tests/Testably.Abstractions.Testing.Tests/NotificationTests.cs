@@ -188,7 +188,7 @@ public class NotificationTests
 			try
 			{
 				// Delay larger than timeout of 10ms
-				ms.Wait();
+				ms.Wait(TestContext.Current.CancellationToken);
 				timeSystem.Thread.Sleep(1);
 			}
 			catch (ObjectDisposedException)
@@ -258,7 +258,7 @@ public class NotificationTests
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				listening.Wait(1000);
+				listening.Wait(1000, TestContext.Current.CancellationToken);
 				timeSystem.Thread.Sleep(firstThreadMilliseconds);
 			}
 			catch (ObjectDisposedException)
@@ -274,7 +274,7 @@ public class NotificationTests
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				listening.Wait(1000);
+				listening.Wait(1000, TestContext.Current.CancellationToken);
 				// ReSharper disable once AccessToDisposedClosure
 				if (!ms.IsSet)
 				{

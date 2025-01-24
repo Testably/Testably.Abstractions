@@ -92,13 +92,13 @@ public partial class DisposeTests
 		// ReSharper disable once MustUseReturnValue
 		yield return fileStream => fileStream.Read(Array.Empty<byte>(), 0, 0);
 		#pragma warning restore MA0060
-		yield return fileStream => fileStream.ReadAsync(Array.Empty<byte>(), 0, 0)
+		yield return fileStream => fileStream.ReadAsync(Array.Empty<byte>(), 0, 0, TestContext.Current.CancellationToken)
 			.GetAwaiter().GetResult();
 		yield return fileStream => fileStream.ReadByte();
 		yield return fileStream => fileStream.Seek(0, SeekOrigin.Begin);
 		yield return fileStream => fileStream.SetLength(0);
 		yield return fileStream => fileStream.Write(Array.Empty<byte>(), 0, 0);
-		yield return fileStream => fileStream.WriteAsync(Array.Empty<byte>(), 0, 0)
+		yield return fileStream => fileStream.WriteAsync(Array.Empty<byte>(), 0, 0, TestContext.Current.CancellationToken)
 			.GetAwaiter().GetResult();
 		yield return fileStream => fileStream.WriteByte(0x42);
 	}

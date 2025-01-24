@@ -4,21 +4,20 @@ using System.Text;
 
 namespace Testably.Abstractions.Tests.FileSystem.File;
 
-public class TestDataGetEncodingDifference : IEnumerable<object[]>
+public class TestDataGetEncodingDifference : IEnumerable<TheoryDataRow<string, Encoding, Encoding>>
 {
 	private const string SpecialCharactersContent = "_€_Ä_Ö_Ü";
 
-	#region IEnumerable<object[]> Members
+	#region IEnumerable<TheoryDataRow<string, Encoding, Encoding>> Members
 
-	public IEnumerator<object[]> GetEnumerator()
+	public IEnumerator<TheoryDataRow<string, Encoding, Encoding>> GetEnumerator()
 	{
-		yield return
-		[
-			SpecialCharactersContent, Encoding.ASCII, Encoding.UTF8,
-		];
+		yield return new(SpecialCharactersContent, Encoding.ASCII, Encoding.UTF8);
 	}
 
-	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
 	#endregion
+
+	/// <inheritdoc />
+	IEnumerator IEnumerable.GetEnumerator()
+		=> GetEnumerator();
 }

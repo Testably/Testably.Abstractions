@@ -62,7 +62,7 @@ public partial class AppendAllTextAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.File.AppendAllTextAsync(filePath, contents);
+			await FileSystem.File.AppendAllTextAsync(filePath, contents, TestContext.Current.CancellationToken);
 		}
 
 		Exception? exception = await Record.ExceptionAsync(Act);
@@ -103,7 +103,7 @@ public partial class AppendAllTextAsyncTests
 
 		async Task Act()
 		{
-			await FileSystem.File.AppendAllTextAsync(path, contents);
+			await FileSystem.File.AppendAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 		}
 
 		Exception? exception = await Record.ExceptionAsync(Act);

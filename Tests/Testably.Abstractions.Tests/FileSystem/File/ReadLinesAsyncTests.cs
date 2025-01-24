@@ -64,7 +64,7 @@ public partial class ReadLinesAsyncTests
 	{
 		async Task Act()
 		{
-			await foreach (string _ in FileSystem.File.ReadLinesAsync(path))
+			await foreach (string _ in FileSystem.File.ReadLinesAsync(path, TestContext.Current.CancellationToken))
 			{
 				// do nothing
 			}

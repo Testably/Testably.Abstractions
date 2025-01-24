@@ -80,7 +80,7 @@ public partial class OpenReadTests
 			// ReSharper disable once UseAwaitUsing
 			using FileSystemStream stream = FileSystem.File.OpenRead(path);
 			#pragma warning disable CA1835
-			await stream.WriteAsync(bytes, 0, bytes.Length);
+			await stream.WriteAsync(bytes, 0, bytes.Length, TestContext.Current.CancellationToken);
 			#pragma warning restore CA1835
 		}
 		

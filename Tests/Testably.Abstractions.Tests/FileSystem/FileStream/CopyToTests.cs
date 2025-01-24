@@ -56,7 +56,7 @@ public partial class CopyToTests
 		{
 			await using FileSystemStream stream = FileSystem.File.OpenRead(path);
 			using MemoryStream destination = new(buffer);
-			await stream.CopyToAsync(destination, 0);
+			await stream.CopyToAsync(destination, 0, TestContext.Current.CancellationToken);
 		}
 		
 		Exception? exception = await Record.ExceptionAsync(Act);
@@ -98,7 +98,7 @@ public partial class CopyToTests
 
 		async Task Act()
 		{
-			await source.CopyToAsync(destination, bufferSize);
+			await source.CopyToAsync(destination, bufferSize, TestContext.Current.CancellationToken);
 		}
 
 		Exception? exception = await Record.ExceptionAsync(Act);
@@ -118,7 +118,7 @@ public partial class CopyToTests
 
 		async Task Act()
 		{
-			await source.CopyToAsync(destination);
+			await source.CopyToAsync(destination, TestContext.Current.CancellationToken);
 		}
 		
 		Exception? exception = await Record.ExceptionAsync(Act);
@@ -137,7 +137,7 @@ public partial class CopyToTests
 
 		async Task Act()
 		{
-			await source.CopyToAsync(null!);
+			await source.CopyToAsync(null!, TestContext.Current.CancellationToken);
 		}
 
 		Exception? exception = await Record.ExceptionAsync(Act);
@@ -158,7 +158,7 @@ public partial class CopyToTests
 
 		async Task Act()
 		{
-			await source.CopyToAsync(destination);
+			await source.CopyToAsync(destination, TestContext.Current.CancellationToken);
 		}
 
 		Exception? exception = await Record.ExceptionAsync(Act);
@@ -180,7 +180,7 @@ public partial class CopyToTests
 
 		async Task Act()
 		{
-			await source.CopyToAsync(destination);
+			await source.CopyToAsync(destination, TestContext.Current.CancellationToken);
 		}
 
 		Exception? exception = await Record.ExceptionAsync(Act);
@@ -201,7 +201,7 @@ public partial class CopyToTests
 
 		async Task Act()
 		{
-			await source.CopyToAsync(destination);
+			await source.CopyToAsync(destination, TestContext.Current.CancellationToken);
 		}
 
 		Exception? exception = await Record.ExceptionAsync(Act);
