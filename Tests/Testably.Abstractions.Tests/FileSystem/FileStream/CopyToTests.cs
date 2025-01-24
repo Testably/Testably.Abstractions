@@ -50,7 +50,7 @@ public partial class CopyToTests
 		string path, byte[] bytes)
 	{
 		byte[] buffer = new byte[bytes.Length];
-		await FileSystem.File.WriteAllBytesAsync(path, bytes);
+		await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
 
 		async Task Act()
 		{
@@ -73,13 +73,13 @@ public partial class CopyToTests
 		string path, byte[] bytes)
 	{
 		byte[] buffer = new byte[bytes.Length];
-		await FileSystem.File.WriteAllBytesAsync(path, bytes);
+		await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
 		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
 		using MemoryStream destination = new(buffer);
 
-		await stream.CopyToAsync(destination);
+		await stream.CopyToAsync(destination, TestContext.Current.CancellationToken);
 
-		await destination.FlushAsync();
+		await destination.FlushAsync(TestContext.Current.CancellationToken);
 		buffer.Should().BeEquivalentTo(bytes);
 	}
 #endif
@@ -91,8 +91,8 @@ public partial class CopyToTests
 	public async Task CopyToAsync_WhenBufferSizeIsNotPositive_ShouldThrowArgumentNullException(
 		int bufferSize)
 	{
-		await FileSystem.File.WriteAllTextAsync("foo.txt", "");
-		await FileSystem.File.WriteAllTextAsync("bar.txt", "");
+		await FileSystem.File.WriteAllTextAsync("foo.txt", "", TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync("bar.txt", "", TestContext.Current.CancellationToken);
 		await using FileSystemStream source = FileSystem.FileInfo.New("foo.txt").OpenRead();
 		await using FileSystemStream destination = FileSystem.FileInfo.New("bar.txt").OpenWrite();
 
@@ -111,7 +111,7 @@ public partial class CopyToTests
 	[Fact]
 	public async Task CopyToAsync_WhenDestinationIsClosed_ShouldThrowObjectDisposedException()
 	{
-		await FileSystem.File.WriteAllTextAsync("foo.txt", "");
+		await FileSystem.File.WriteAllTextAsync("foo.txt", "", TestContext.Current.CancellationToken);
 		await using FileSystemStream source = FileSystem.FileInfo.New("foo.txt").OpenRead();
 		using MemoryStream destination = new();
 		destination.Close();
@@ -132,7 +132,7 @@ public partial class CopyToTests
 	[Fact]
 	public async Task CopyToAsync_WhenDestinationIsNull_ShouldThrowArgumentNullException()
 	{
-		await FileSystem.File.WriteAllTextAsync("foo.txt", "");
+		await FileSystem.File.WriteAllTextAsync("foo.txt", "", TestContext.Current.CancellationToken);
 		await using FileSystemStream source = FileSystem.FileInfo.New("foo.txt").OpenRead();
 
 		async Task Act()
@@ -151,8 +151,8 @@ public partial class CopyToTests
 	[Fact]
 	public async Task CopyToAsync_WhenDestinationIsReadOnly_ShouldThrowNotSupportedException()
 	{
-		await FileSystem.File.WriteAllTextAsync("foo.txt", "");
-		await FileSystem.File.WriteAllTextAsync("bar.txt", "");
+		await FileSystem.File.WriteAllTextAsync("foo.txt", "", TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync("bar.txt", "", TestContext.Current.CancellationToken);
 		await using FileSystemStream source = FileSystem.FileInfo.New("foo.txt").OpenRead();
 		await using FileSystemStream destination = FileSystem.FileInfo.New("bar.txt").OpenRead();
 
@@ -172,8 +172,8 @@ public partial class CopyToTests
 	[Fact]
 	public async Task CopyToAsync_WhenSourceIsClosed_ShouldThrowObjectDisposedException()
 	{
-		await FileSystem.File.WriteAllTextAsync("foo.txt", "");
-		await FileSystem.File.WriteAllTextAsync("bar.txt", "");
+		await FileSystem.File.WriteAllTextAsync("foo.txt", "", TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync("bar.txt", "", TestContext.Current.CancellationToken);
 		await using FileSystemStream source = FileSystem.FileInfo.New("foo.txt").OpenRead();
 		await using FileSystemStream destination = FileSystem.FileInfo.New("bar.txt").OpenWrite();
 		source.Close();
@@ -194,8 +194,8 @@ public partial class CopyToTests
 	[Fact]
 	public async Task CopyToAsync_WhenSourceIsWriteOnly_ShouldThrowNotSupportedException()
 	{
-		await FileSystem.File.WriteAllTextAsync("foo.txt", "");
-		await FileSystem.File.WriteAllTextAsync("bar.txt", "");
+		await FileSystem.File.WriteAllTextAsync("foo.txt", "", TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync("bar.txt", "", TestContext.Current.CancellationToken);
 		await using FileSystemStream source = FileSystem.FileInfo.New("foo.txt").OpenWrite();
 		await using FileSystemStream destination = FileSystem.FileInfo.New("bar.txt").OpenWrite();
 

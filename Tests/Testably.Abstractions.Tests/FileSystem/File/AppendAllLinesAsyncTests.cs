@@ -50,9 +50,9 @@ public partial class AppendAllLinesAsyncTests
 	{
 		string expectedContent = string.Join(Environment.NewLine, previousContents.Concat(contents))
 		                         + Environment.NewLine;
-		await FileSystem.File.AppendAllLinesAsync(path, previousContents);
+		await FileSystem.File.AppendAllLinesAsync(path, previousContents, TestContext.Current.CancellationToken);
 
-		await FileSystem.File.AppendAllLinesAsync(path, contents);
+		await FileSystem.File.AppendAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(expectedContent);
@@ -83,7 +83,7 @@ public partial class AppendAllLinesAsyncTests
 		string expectedContent = string.Join(Environment.NewLine, contents)
 		                         + Environment.NewLine;
 
-		await FileSystem.File.AppendAllLinesAsync(path, contents);
+		await FileSystem.File.AppendAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(expectedContent);
@@ -130,7 +130,7 @@ public partial class AppendAllLinesAsyncTests
 		string[] contents = ["foo", "bar"];
 		string expectedResult = "foo" + Environment.NewLine + "bar" + Environment.NewLine;
 
-		await FileSystem.File.AppendAllLinesAsync(path, contents);
+		await FileSystem.File.AppendAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(expectedResult);
@@ -166,7 +166,7 @@ public partial class AppendAllLinesAsyncTests
 		string path = new Fixture().Create<string>();
 		string[] lines = new Fixture().Create<string[]>();
 		lines[1] = specialLine;
-		await FileSystem.File.AppendAllLinesAsync(path, lines, writeEncoding);
+		await FileSystem.File.AppendAllLinesAsync(path, lines, writeEncoding, TestContext.Current.CancellationToken);
 
 		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);
 

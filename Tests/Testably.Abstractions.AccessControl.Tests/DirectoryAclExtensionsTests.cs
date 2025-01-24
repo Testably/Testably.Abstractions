@@ -138,7 +138,7 @@ public partial class DirectoryAclExtensionsTests
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.File.WriteAllText("foo.txt", "abc");
-		await TimeSystem.Task.Delay(3000);
+		await TimeSystem.Task.Delay(3000, TestContext.Current.CancellationToken);
 		DateTime previousCreationTimeUtc = FileSystem.File.GetCreationTimeUtc("foo.txt");
 		DateTime previousLastAccessTimeUtc = FileSystem.File.GetLastAccessTimeUtc("foo.txt");
 		DateTime previousLastWriteTimeUtc = FileSystem.File.GetLastWriteTimeUtc("foo.txt");

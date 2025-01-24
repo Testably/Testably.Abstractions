@@ -16,7 +16,7 @@ public partial class ReadLinesAsyncTests
 	public async Task ReadLinesAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path)
 	{
-		await FileSystem.File.WriteAllTextAsync(path, "some content");
+		await FileSystem.File.WriteAllTextAsync(path, "some content", TestContext.Current.CancellationToken);
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
@@ -39,7 +39,7 @@ public partial class ReadLinesAsyncTests
 		ReadLinesAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
 			string path)
 	{
-		await FileSystem.File.WriteAllTextAsync(path, "some content");
+		await FileSystem.File.WriteAllTextAsync(path, "some content", TestContext.Current.CancellationToken);
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
@@ -82,10 +82,10 @@ public partial class ReadLinesAsyncTests
 	public async Task ReadLinesAsync_ShouldEnumerateLines(string path, string[] lines)
 	{
 		string contents = string.Join(Environment.NewLine, lines);
-		await FileSystem.File.WriteAllTextAsync(path, contents);
+		await FileSystem.File.WriteAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 		List<string> results = [];
 
-		await foreach (string line in FileSystem.File.ReadLinesAsync(path))
+		await foreach (string line in FileSystem.File.ReadLinesAsync(path, TestContext.Current.CancellationToken))
 		{
 			results.Add(line);
 		}
@@ -102,10 +102,10 @@ public partial class ReadLinesAsyncTests
 		string[] lines = new Fixture().Create<string[]>();
 		lines[1] = specialLine;
 		string contents = string.Join(Environment.NewLine, lines);
-		await FileSystem.File.WriteAllTextAsync(path, contents, writeEncoding);
+		await FileSystem.File.WriteAllTextAsync(path, contents, writeEncoding, TestContext.Current.CancellationToken);
 		List<string> results = [];
 
-		await foreach (string line in FileSystem.File.ReadLinesAsync(path, readEncoding))
+		await foreach (string line in FileSystem.File.ReadLinesAsync(path, readEncoding, TestContext.Current.CancellationToken))
 		{
 			results.Add(line);
 		}

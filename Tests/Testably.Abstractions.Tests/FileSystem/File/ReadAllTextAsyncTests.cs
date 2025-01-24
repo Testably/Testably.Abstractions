@@ -45,7 +45,7 @@ public partial class ReadAllTextAsyncTests
 		string path)
 	{
 		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.ReadAllTextAsync(path));
+			FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken));
 
 		exception.Should().BeException<FileNotFoundException>(
 			$"'{FileSystem.Path.GetFullPath(path)}'",
@@ -58,9 +58,9 @@ public partial class ReadAllTextAsyncTests
 		string contents, Encoding writeEncoding, Encoding readEncoding)
 	{
 		string path = new Fixture().Create<string>();
-		await FileSystem.File.WriteAllTextAsync(path, contents, writeEncoding);
+		await FileSystem.File.WriteAllTextAsync(path, contents, writeEncoding, TestContext.Current.CancellationToken);
 
-		string result = await FileSystem.File.ReadAllTextAsync(path, readEncoding);
+		string result = await FileSystem.File.ReadAllTextAsync(path, readEncoding, TestContext.Current.CancellationToken);
 
 		result.Should().NotBe(contents,
 			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");

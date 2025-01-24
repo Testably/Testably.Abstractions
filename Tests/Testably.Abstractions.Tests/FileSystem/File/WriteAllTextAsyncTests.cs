@@ -43,10 +43,10 @@ public partial class WriteAllTextAsyncTests
 	public async Task WriteAllTextAsync_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string contents)
 	{
-		await FileSystem.File.WriteAllTextAsync(path, "foo");
-		await FileSystem.File.WriteAllTextAsync(path, contents);
+		await FileSystem.File.WriteAllTextAsync(path, "foo", TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 
-		string result = await FileSystem.File.ReadAllTextAsync(path);
+		string result = await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
 		result.Should().Be(contents);
 	}
@@ -56,9 +56,9 @@ public partial class WriteAllTextAsyncTests
 	public async Task WriteAllTextAsync_ShouldCreateFileWithText(
 		string path, string contents)
 	{
-		await FileSystem.File.WriteAllTextAsync(path, contents);
+		await FileSystem.File.WriteAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 
-		string result = await FileSystem.File.ReadAllTextAsync(path);
+		string result = await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
 		result.Should().Be(contents);
 	}
@@ -80,9 +80,9 @@ public partial class WriteAllTextAsyncTests
 		foreach (char specialCharacter in specialCharacters)
 		{
 			string contents = "_" + specialCharacter;
-			await FileSystem.File.WriteAllTextAsync(path, contents);
+			await FileSystem.File.WriteAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 
-			string result = await FileSystem.File.ReadAllTextAsync(path);
+			string result = await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
 			result.Should().Be(contents,
 				$"{contents} should be encoded and decoded identical.");
@@ -131,7 +131,7 @@ public partial class WriteAllTextAsyncTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		await FileSystem.File.WriteAllTextAsync(path, null);
+		await FileSystem.File.WriteAllTextAsync(path, null, TestContext.Current.CancellationToken);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
 		async Task Act()

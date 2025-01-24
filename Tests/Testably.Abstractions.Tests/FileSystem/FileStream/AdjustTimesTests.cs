@@ -139,13 +139,13 @@ public partial class AdjustTimesTests
 
 		byte[] buffer = new byte[2];
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
-		await FileSystem.File.WriteAllBytesAsync(path, bytes);
+		await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
-		await TimeSystem.Task.Delay(FileTestHelper.AdjustTimesDelay);
+		await TimeSystem.Task.Delay(FileTestHelper.AdjustTimesDelay, TestContext.Current.CancellationToken);
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
 		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
-		_ = await stream.ReadAsync(buffer.AsMemory());
+		_ = await stream.ReadAsync(buffer.AsMemory(), TestContext.Current.CancellationToken);
 
 		DateTime lastAccessTime = WaitToBeUpdatedToAfter(
 			() => FileSystem.File.GetLastAccessTimeUtc(path), updateTime);
@@ -181,14 +181,14 @@ public partial class AdjustTimesTests
 
 		byte[] buffer = new byte[2];
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
-		await FileSystem.File.WriteAllBytesAsync(path, bytes);
+		await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
-		await TimeSystem.Task.Delay(FileTestHelper.AdjustTimesDelay);
+		await TimeSystem.Task.Delay(FileTestHelper.AdjustTimesDelay, TestContext.Current.CancellationToken);
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
 		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
 
 		#pragma warning disable CA1835
-		_ = await stream.ReadAsync(buffer, 0, 2);
+		_ = await stream.ReadAsync(buffer, 0, 2, TestContext.Current.CancellationToken);
 		#pragma warning restore CA1835
 
 		DateTime lastAccessTime = WaitToBeUpdatedToAfter(
@@ -375,14 +375,14 @@ public partial class AdjustTimesTests
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
-		await FileSystem.File.WriteAllBytesAsync(path, Array.Empty<byte>());
+		await FileSystem.File.WriteAllBytesAsync(path, Array.Empty<byte>(), TestContext.Current.CancellationToken);
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
-		await TimeSystem.Task.Delay(FileTestHelper.AdjustTimesDelay);
+		await TimeSystem.Task.Delay(FileTestHelper.AdjustTimesDelay, TestContext.Current.CancellationToken);
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
 
 		await using (FileSystemStream stream = FileSystem.File.OpenWrite(path))
 		{
-			await stream.WriteAsync(bytes.AsMemory());
+			await stream.WriteAsync(bytes.AsMemory(), TestContext.Current.CancellationToken);
 		}
 
 		DateTime lastWriteTime = WaitToBeUpdatedToAfter(
@@ -418,15 +418,15 @@ public partial class AdjustTimesTests
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		DateTime creationTimeStart = TimeSystem.DateTime.UtcNow;
-		await FileSystem.File.WriteAllBytesAsync(path, Array.Empty<byte>());
+		await FileSystem.File.WriteAllBytesAsync(path, Array.Empty<byte>(), TestContext.Current.CancellationToken);
 		DateTime creationTimeEnd = TimeSystem.DateTime.UtcNow;
-		await TimeSystem.Task.Delay(FileTestHelper.AdjustTimesDelay);
+		await TimeSystem.Task.Delay(FileTestHelper.AdjustTimesDelay, TestContext.Current.CancellationToken);
 		DateTime updateTime = TimeSystem.DateTime.UtcNow;
 
 		await using (FileSystemStream stream = FileSystem.File.OpenWrite(path))
 		{
 			#pragma warning disable CA1835
-			await stream.WriteAsync(bytes, 0, 2);
+			await stream.WriteAsync(bytes, 0, 2, TestContext.Current.CancellationToken);
 			#pragma warning restore CA1835
 		}
 

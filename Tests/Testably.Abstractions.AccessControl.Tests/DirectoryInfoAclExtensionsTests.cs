@@ -172,7 +172,7 @@ public partial class DirectoryInfoAclExtensionsTests
 		SkipIfLongRunningTestsShouldBeSkipped();
 
 		FileSystem.Directory.CreateDirectory(path);
-		await TimeSystem.Task.Delay(3000);
+		await TimeSystem.Task.Delay(3000, TestContext.Current.CancellationToken);
 		DateTime previousCreationTimeUtc = FileSystem.File.GetCreationTimeUtc(path);
 		DateTime previousLastAccessTimeUtc = FileSystem.File.GetLastAccessTimeUtc(path);
 		DateTime previousLastWriteTimeUtc = FileSystem.File.GetLastWriteTimeUtc(path);

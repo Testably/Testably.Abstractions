@@ -41,7 +41,7 @@ public partial class Tests
 				{
 					// Ignore any ObjectDisposedException
 				}
-			});
+			}, TestContext.Current.CancellationToken);
 			IWaitForChangedResult result =
 				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, 250);
 
@@ -99,7 +99,7 @@ public partial class Tests
 				{
 					// Ignore any ObjectDisposedException
 				}
-			});
+			}, TestContext.Current.CancellationToken);
 			IWaitForChangedResult result =
 				fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Created, ExpectSuccess);
 

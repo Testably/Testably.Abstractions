@@ -76,11 +76,11 @@ public partial class WriteAllLinesAsyncTests
 		WriteAllLinesAsync_Enumerable_PreviousFile_ShouldOverwriteFileWithText(
 			string path, string[] contents)
 	{
-		await FileSystem.File.WriteAllTextAsync(path, "foo");
+		await FileSystem.File.WriteAllTextAsync(path, "foo", TestContext.Current.CancellationToken);
 
-		await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable());
+		await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(), TestContext.Current.CancellationToken);
 
-		string[] result = await FileSystem.File.ReadAllLinesAsync(path);
+		string[] result = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
 		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
 	}
 
@@ -89,9 +89,9 @@ public partial class WriteAllLinesAsyncTests
 	public async Task WriteAllLinesAsync_Enumerable_ShouldCreateFileWithText(
 		string path, string[] contents)
 	{
-		await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable());
+		await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(), TestContext.Current.CancellationToken);
 
-		string[] result = await FileSystem.File.ReadAllLinesAsync(path);
+		string[] result = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
 		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
 	}
 
@@ -100,11 +100,11 @@ public partial class WriteAllLinesAsyncTests
 	public async Task WriteAllLinesAsync_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string[] contents)
 	{
-		await FileSystem.File.WriteAllTextAsync(path, "foo");
+		await FileSystem.File.WriteAllTextAsync(path, "foo", TestContext.Current.CancellationToken);
 
-		await FileSystem.File.WriteAllLinesAsync(path, contents);
+		await FileSystem.File.WriteAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 
-		string[] result = await FileSystem.File.ReadAllLinesAsync(path);
+		string[] result = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
 		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
 	}
 
@@ -113,9 +113,9 @@ public partial class WriteAllLinesAsyncTests
 	public async Task WriteAllLinesAsync_ShouldCreateFileWithText(
 		string path, string[] contents)
 	{
-		await FileSystem.File.WriteAllLinesAsync(path, contents);
+		await FileSystem.File.WriteAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 
-		string[] result = await FileSystem.File.ReadAllLinesAsync(path);
+		string[] result = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
 		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
 	}
 
@@ -148,7 +148,7 @@ public partial class WriteAllLinesAsyncTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		await FileSystem.File.WriteAllTextAsync(path, null);
+		await FileSystem.File.WriteAllTextAsync(path, null, TestContext.Current.CancellationToken);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
 		async Task Act()

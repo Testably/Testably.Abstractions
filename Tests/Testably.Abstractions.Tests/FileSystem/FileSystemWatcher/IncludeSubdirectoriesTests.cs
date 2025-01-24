@@ -34,7 +34,7 @@ public partial class IncludeSubdirectoriesTests
 		fileSystemWatcher.IncludeSubdirectories = false;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(FileSystem.Path.Combine(baseDirectory, path));
-		ms.Wait(ExpectTimeout).Should().BeFalse();
+		ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 
 		result.Should().BeNull();
 	}
@@ -69,7 +69,7 @@ public partial class IncludeSubdirectoriesTests
 		fileSystemWatcher.IncludeSubdirectories = true;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(otherDirectory);
-		ms.Wait(ExpectTimeout).Should().BeFalse();
+		ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 
 		result.Should().BeNull();
 	}

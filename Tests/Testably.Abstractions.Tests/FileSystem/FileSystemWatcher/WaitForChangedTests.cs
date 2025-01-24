@@ -32,7 +32,7 @@ public partial class WaitForChangedTests
 				{
 					// Ignore any ObjectDisposedException
 				}
-			});
+			}, TestContext.Current.CancellationToken);
 
 			using (CancellationTokenSource cts = new(ExpectSuccess))
 			{
@@ -81,7 +81,7 @@ public partial class WaitForChangedTests
 				{
 					// Ignore any ObjectDisposedException
 				}
-			});
+			}, TestContext.Current.CancellationToken);
 			IWaitForChangedResult result = callback(fileSystemWatcher);
 
 			fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();

@@ -33,7 +33,7 @@ public partial class EnableRaisingEventsTests
 		fileSystemWatcher.EnableRaisingEvents = false;
 
 		FileSystem.Directory.Delete(path2);
-		ms.Wait(ExpectTimeout).Should().BeFalse();
+		ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 	}
 
 	[Theory]
@@ -59,6 +59,6 @@ public partial class EnableRaisingEventsTests
 
 		FileSystem.Directory.Delete(path);
 
-		ms.Wait(ExpectTimeout).Should().BeFalse();
+		ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 	}
 }

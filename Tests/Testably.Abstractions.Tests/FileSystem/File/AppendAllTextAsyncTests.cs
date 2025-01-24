@@ -45,9 +45,9 @@ public partial class AppendAllTextAsyncTests
 	public async Task AppendAllTextAsync_ExistingFile_ShouldAppendLinesToFile(
 		string path, string previousContents, string contents)
 	{
-		await FileSystem.File.AppendAllTextAsync(path, previousContents);
+		await FileSystem.File.AppendAllTextAsync(path, previousContents, TestContext.Current.CancellationToken);
 
-		await FileSystem.File.AppendAllTextAsync(path, contents);
+		await FileSystem.File.AppendAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(previousContents + contents);
@@ -75,7 +75,7 @@ public partial class AppendAllTextAsyncTests
 	public async Task AppendAllTextAsync_MissingFile_ShouldCreateFile(
 		string path, string contents)
 	{
-		await FileSystem.File.AppendAllTextAsync(path, contents);
+		await FileSystem.File.AppendAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(contents);
@@ -87,7 +87,7 @@ public partial class AppendAllTextAsyncTests
 	{
 		string contents = "foo";
 
-		await FileSystem.File.AppendAllTextAsync(path, contents);
+		await FileSystem.File.AppendAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(contents);
@@ -120,7 +120,7 @@ public partial class AppendAllTextAsyncTests
 		string contents, Encoding writeEncoding, Encoding readEncoding)
 	{
 		string path = new Fixture().Create<string>();
-		await FileSystem.File.AppendAllTextAsync(path, contents, writeEncoding);
+		await FileSystem.File.AppendAllTextAsync(path, contents, writeEncoding, TestContext.Current.CancellationToken);
 
 		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);
 

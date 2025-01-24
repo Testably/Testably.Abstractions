@@ -166,7 +166,7 @@ public partial class Tests
 		stream.Seek(2, SeekOrigin.Begin);
 		stream.Position.Should().Be(2);
 
-		await stream.FlushAsync();
+		await stream.FlushAsync(TestContext.Current.CancellationToken);
 
 		stream.Position.Should().Be(2);
 	}

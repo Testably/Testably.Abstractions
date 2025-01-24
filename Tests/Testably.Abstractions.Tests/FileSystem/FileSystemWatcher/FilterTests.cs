@@ -71,7 +71,7 @@ public partial class FilterTests
 		fileSystemWatcher.Filter = filter;
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(path);
-		ms.Wait(ExpectTimeout).Should().BeFalse();
+		ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 
 		result.Should().BeNull();
 	}
