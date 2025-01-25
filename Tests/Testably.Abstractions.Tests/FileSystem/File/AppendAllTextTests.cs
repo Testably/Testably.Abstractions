@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class AppendAllTextTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AppendAllText_ExistingFile_ShouldAppendLinesToFile(
 		string path, string previousContents, string contents)
@@ -20,7 +20,7 @@ public partial class AppendAllTextTests
 			.Which.HasContent(previousContents + contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AppendAllText_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingPath, string fileName, string contents)
@@ -34,7 +34,7 @@ public partial class AppendAllTextTests
 		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AppendAllText_MissingFile_ShouldCreateFile(
 		string path, string contents)
@@ -45,7 +45,7 @@ public partial class AppendAllTextTests
 			.Which.HasContent(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AppendAllText_MissingFile_ShouldCreateFileWithByteOrderMark(
 		string path)
@@ -58,7 +58,7 @@ public partial class AppendAllTextTests
 			.Which.HasContent(expectedBytes);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AppendAllText_ShouldAdjustTimes(string path, string contents)
 	{
@@ -93,7 +93,7 @@ public partial class AppendAllTextTests
 			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AppendAllText_ShouldNotEndWithNewline(string path)
 	{
@@ -105,7 +105,7 @@ public partial class AppendAllTextTests
 			.Which.HasContent(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		AppendAllText_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
@@ -124,7 +124,7 @@ public partial class AppendAllTextTests
 		FileSystem.Should().NotHaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AppendAllText_WhenFileIsHidden_ShouldNotThrowException(
 		string path, string contents)
@@ -140,7 +140,7 @@ public partial class AppendAllTextTests
 		exception.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
 	public void AppendAllText_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string contents, Encoding writeEncoding, Encoding readEncoding)

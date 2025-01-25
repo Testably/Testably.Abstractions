@@ -10,7 +10,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class ReadAllLinesAsyncTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadAllLinesAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path)
@@ -24,7 +24,7 @@ public partial class ReadAllLinesAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		ReadAllLinesAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
@@ -39,32 +39,32 @@ public partial class ReadAllLinesAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadAllLinesAsync_MissingFile_ShouldThrowFileNotFoundException(
 		string path)
 	{
 		Exception? exception = await Record.ExceptionAsync(() =>
-			FileSystem.File.ReadAllLinesAsync(path));
+			FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken));
 
 		exception.Should().BeException<FileNotFoundException>(
 			$"'{FileSystem.Path.GetFullPath(path)}'",
 			hResult: -2147024894);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ReadAllLinesAsync_ShouldEnumerateLines(string path, string[] lines)
 	{
 		string contents = string.Join(Environment.NewLine, lines);
-		await FileSystem.File.WriteAllTextAsync(path, contents);
+		await FileSystem.File.WriteAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 
-		string[] results = await FileSystem.File.ReadAllLinesAsync(path);
+		string[] results = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
 
 		results.Should().BeEquivalentTo(lines, o => o.WithStrictOrdering());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
 	public async Task ReadAllLinesAsync_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string specialLine, Encoding writeEncoding, Encoding readEncoding)
@@ -73,9 +73,9 @@ public partial class ReadAllLinesAsyncTests
 		string[] lines = new Fixture().Create<string[]>();
 		lines[1] = specialLine;
 		string contents = string.Join(Environment.NewLine, lines);
-		await FileSystem.File.WriteAllTextAsync(path, contents, writeEncoding);
+		await FileSystem.File.WriteAllTextAsync(path, contents, writeEncoding, TestContext.Current.CancellationToken);
 
-		string[] result = await FileSystem.File.ReadAllLinesAsync(path, readEncoding);
+		string[] result = await FileSystem.File.ReadAllLinesAsync(path, readEncoding, TestContext.Current.CancellationToken);
 
 		result.Should().NotBeEquivalentTo(lines,
 			$"{contents} should be different when encoding from {writeEncoding} to {readEncoding}.");

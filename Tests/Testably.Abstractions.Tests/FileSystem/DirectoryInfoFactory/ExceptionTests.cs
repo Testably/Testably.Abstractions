@@ -7,9 +7,9 @@ namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfoFactory;
 [FileSystemTests]
 public partial class ExceptionTests
 {
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks),
-		parameters: "Illegal\tCharacter?InPath")]
+		"Illegal\tCharacter?InPath")]
 	public void
 		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowArgumentException_OnNetFramework(
 			Expression<Action<IDirectoryInfoFactory>> callback, string paramName,
@@ -35,8 +35,8 @@ public partial class ExceptionTests
 		}
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks), parameters: "")]
+	[Theory]
+	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks), "")]
 	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IDirectoryInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -53,8 +53,8 @@ public partial class ExceptionTests
 			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks), parameters: (string?)null)]
+	[Theory]
+	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks), (string?)null)]
 	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IDirectoryInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -70,8 +70,8 @@ public partial class ExceptionTests
 			$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks), parameters: "  ")]
+	[Theory]
+	[MemberData(nameof(GetDirectoryInfoFactoryCallbacks), "  ")]
 	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IDirectoryInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)

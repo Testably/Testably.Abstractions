@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 [FileSystemTests]
 public partial class CopyToTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CopyTo_BufferSizeZero_ShouldThrowArgumentOutOfRangeException(
 		string path, byte[] bytes)
@@ -27,7 +27,7 @@ public partial class CopyToTests
 			paramName: "bufferSize");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CopyTo_ShouldCopyBytes(
 		string path, byte[] bytes)
@@ -44,20 +44,22 @@ public partial class CopyToTests
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task CopyToAsync_BufferSizeZero_ShouldThrowArgumentOutOfRangeException(
 		string path, byte[] bytes)
 	{
 		byte[] buffer = new byte[bytes.Length];
-		await FileSystem.File.WriteAllBytesAsync(path, bytes);
+		await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
 			await using FileSystemStream stream = FileSystem.File.OpenRead(path);
 			using MemoryStream destination = new(buffer);
-			await stream.CopyToAsync(destination, 0);
-		});
+			await stream.CopyToAsync(destination, 0, TestContext.Current.CancellationToken);
+		}
+		
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<ArgumentOutOfRangeException>(
 			paramName: "bufferSize");
@@ -65,19 +67,19 @@ public partial class CopyToTests
 #endif
 
 #if FEATURE_FILESYSTEM_ASYNC
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task CopyToAsync_ShouldCopyBytes(
 		string path, byte[] bytes)
 	{
 		byte[] buffer = new byte[bytes.Length];
-		await FileSystem.File.WriteAllBytesAsync(path, bytes);
+		await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
 		await using FileSystemStream stream = FileSystem.File.OpenRead(path);
 		using MemoryStream destination = new(buffer);
 
-		await stream.CopyToAsync(destination);
+		await stream.CopyToAsync(destination, TestContext.Current.CancellationToken);
 
-		await destination.FlushAsync();
+		await destination.FlushAsync(TestContext.Current.CancellationToken);
 		buffer.Should().BeEquivalentTo(bytes);
 	}
 #endif
@@ -89,15 +91,17 @@ public partial class CopyToTests
 	public async Task CopyToAsync_WhenBufferSizeIsNotPositive_ShouldThrowArgumentNullException(
 		int bufferSize)
 	{
-		await FileSystem.File.WriteAllTextAsync("foo.txt", "");
-		await FileSystem.File.WriteAllTextAsync("bar.txt", "");
+		await FileSystem.File.WriteAllTextAsync("foo.txt", "", TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync("bar.txt", "", TestContext.Current.CancellationToken);
 		await using FileSystemStream source = FileSystem.FileInfo.New("foo.txt").OpenRead();
 		await using FileSystemStream destination = FileSystem.FileInfo.New("bar.txt").OpenWrite();
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
-			await source.CopyToAsync(destination, bufferSize);
-		});
+			await source.CopyToAsync(destination, bufferSize, TestContext.Current.CancellationToken);
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeOfType<ArgumentOutOfRangeException>();
 	}
@@ -107,15 +111,17 @@ public partial class CopyToTests
 	[Fact]
 	public async Task CopyToAsync_WhenDestinationIsClosed_ShouldThrowObjectDisposedException()
 	{
-		await FileSystem.File.WriteAllTextAsync("foo.txt", "");
+		await FileSystem.File.WriteAllTextAsync("foo.txt", "", TestContext.Current.CancellationToken);
 		await using FileSystemStream source = FileSystem.FileInfo.New("foo.txt").OpenRead();
 		using MemoryStream destination = new();
 		destination.Close();
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
-			await source.CopyToAsync(destination);
-		});
+			await source.CopyToAsync(destination, TestContext.Current.CancellationToken);
+		}
+		
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeOfType<ObjectDisposedException>()
 			.Which.Message.Should().Match("Cannot access a*");
@@ -126,13 +132,15 @@ public partial class CopyToTests
 	[Fact]
 	public async Task CopyToAsync_WhenDestinationIsNull_ShouldThrowArgumentNullException()
 	{
-		await FileSystem.File.WriteAllTextAsync("foo.txt", "");
+		await FileSystem.File.WriteAllTextAsync("foo.txt", "", TestContext.Current.CancellationToken);
 		await using FileSystemStream source = FileSystem.FileInfo.New("foo.txt").OpenRead();
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
-			await source.CopyToAsync(null!);
-		});
+			await source.CopyToAsync(null!, TestContext.Current.CancellationToken);
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeOfType<ArgumentNullException>()
 			.Which.Message.Should().Match("*cannot be null*");
@@ -143,15 +151,17 @@ public partial class CopyToTests
 	[Fact]
 	public async Task CopyToAsync_WhenDestinationIsReadOnly_ShouldThrowNotSupportedException()
 	{
-		await FileSystem.File.WriteAllTextAsync("foo.txt", "");
-		await FileSystem.File.WriteAllTextAsync("bar.txt", "");
+		await FileSystem.File.WriteAllTextAsync("foo.txt", "", TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync("bar.txt", "", TestContext.Current.CancellationToken);
 		await using FileSystemStream source = FileSystem.FileInfo.New("foo.txt").OpenRead();
 		await using FileSystemStream destination = FileSystem.FileInfo.New("bar.txt").OpenRead();
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
-			await source.CopyToAsync(destination);
-		});
+			await source.CopyToAsync(destination, TestContext.Current.CancellationToken);
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeOfType<NotSupportedException>()
 			.Which.Message.Should().Match("Stream does not support writing*");
@@ -162,16 +172,18 @@ public partial class CopyToTests
 	[Fact]
 	public async Task CopyToAsync_WhenSourceIsClosed_ShouldThrowObjectDisposedException()
 	{
-		await FileSystem.File.WriteAllTextAsync("foo.txt", "");
-		await FileSystem.File.WriteAllTextAsync("bar.txt", "");
+		await FileSystem.File.WriteAllTextAsync("foo.txt", "", TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync("bar.txt", "", TestContext.Current.CancellationToken);
 		await using FileSystemStream source = FileSystem.FileInfo.New("foo.txt").OpenRead();
 		await using FileSystemStream destination = FileSystem.FileInfo.New("bar.txt").OpenWrite();
 		source.Close();
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
-			await source.CopyToAsync(destination);
-		});
+			await source.CopyToAsync(destination, TestContext.Current.CancellationToken);
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeOfType<ObjectDisposedException>()
 			.Which.Message.Should().Match("Cannot access a*");
@@ -182,15 +194,17 @@ public partial class CopyToTests
 	[Fact]
 	public async Task CopyToAsync_WhenSourceIsWriteOnly_ShouldThrowNotSupportedException()
 	{
-		await FileSystem.File.WriteAllTextAsync("foo.txt", "");
-		await FileSystem.File.WriteAllTextAsync("bar.txt", "");
+		await FileSystem.File.WriteAllTextAsync("foo.txt", "", TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync("bar.txt", "", TestContext.Current.CancellationToken);
 		await using FileSystemStream source = FileSystem.FileInfo.New("foo.txt").OpenWrite();
 		await using FileSystemStream destination = FileSystem.FileInfo.New("bar.txt").OpenWrite();
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
-			await source.CopyToAsync(destination);
-		});
+			await source.CopyToAsync(destination, TestContext.Current.CancellationToken);
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeOfType<NotSupportedException>()
 			.Which.Message.Should().Match("Stream does not support reading*");

@@ -7,10 +7,12 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 [FileSystemTests]
 public partial class WaitForChangedTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WaitForChanged_ShouldBlockUntilEventHappens(string path)
 	{
+		SkipIfBrittleTestsShouldBeSkipped();
+		
 		using ManualResetEventSlim ms = new();
 		using IFileSystemWatcher fileSystemWatcher =
 			FileSystem.FileSystemWatcher.New(BasePath);
@@ -23,7 +25,7 @@ public partial class WaitForChangedTests
 				{
 					while (!ms.IsSet)
 					{
-						await Task.Delay(10);
+						await Task.Delay(10, TestContext.Current.CancellationToken);
 						FileSystem.Directory.CreateDirectory(path);
 						FileSystem.Directory.Delete(path);
 					}
@@ -32,7 +34,7 @@ public partial class WaitForChangedTests
 				{
 					// Ignore any ObjectDisposedException
 				}
-			});
+			}, TestContext.Current.CancellationToken);
 
 			using (CancellationTokenSource cts = new(ExpectSuccess))
 			{
@@ -52,7 +54,7 @@ public partial class WaitForChangedTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetWaitForChangedTimeoutParameters))]
 	public void WaitForChanged_Timeout_ShouldReturnTimedOut(string path,
 		Func<IFileSystemWatcher, IWaitForChangedResult> callback)
@@ -72,7 +74,7 @@ public partial class WaitForChangedTests
 				{
 					while (!ms.IsSet)
 					{
-						await Task.Delay(10);
+						await Task.Delay(10, TestContext.Current.CancellationToken);
 						FileSystem.Directory.CreateDirectory(fullPath);
 						FileSystem.Directory.Delete(fullPath);
 					}
@@ -81,7 +83,7 @@ public partial class WaitForChangedTests
 				{
 					// Ignore any ObjectDisposedException
 				}
-			});
+			}, TestContext.Current.CancellationToken);
 			IWaitForChangedResult result = callback(fileSystemWatcher);
 
 			fileSystemWatcher.EnableRaisingEvents.Should().BeTrue();

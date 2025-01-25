@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class IsPathFullyQualifiedTests
 {
-	[SkippableTheory]
+	[Theory]
 	[InlineData("C", false, TestOS.Windows)]
 	[InlineData("//", true, TestOS.All)]
 	[InlineData("/Foo", true, TestOS.Linux | TestOS.Mac)]
@@ -23,7 +23,7 @@ public partial class IsPathFullyQualifiedTests
 		result.Should().Be(expected);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void IsPathFullyQualified_PrefixedRoot_ShouldReturnTrue(
 		string directory)
@@ -35,7 +35,7 @@ public partial class IsPathFullyQualifiedTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void IsPathFullyQualified_Span_PrefixedRoot_ShouldReturnTrue(
 		string directory)
@@ -48,7 +48,7 @@ public partial class IsPathFullyQualifiedTests
 #endif
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void IsPathFullyQualified_Span_WithoutPrefixedRoot_ShouldReturnFalse(
 		string path)
@@ -59,7 +59,7 @@ public partial class IsPathFullyQualifiedTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void IsPathFullyQualified_WithoutPrefixedRoot_ShouldReturnFalse(
 		string path)

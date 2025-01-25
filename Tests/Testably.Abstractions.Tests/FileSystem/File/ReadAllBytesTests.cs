@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class ReadAllBytesTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadAllBytes_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
@@ -25,7 +25,7 @@ public partial class ReadAllBytesTests
 			.Contain($"'{FileSystem.Path.GetFullPath(path)}'");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadAllBytes_ShouldAdjustTimes(string path, byte[] bytes)
 	{
@@ -62,7 +62,7 @@ public partial class ReadAllBytesTests
 			.BeBetween(creationTimeStart, creationTimeEnd);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadAllBytes_ShouldNotGetAReferenceToFileContent(
 		string path, byte[] bytes)
@@ -77,7 +77,7 @@ public partial class ReadAllBytesTests
 		result.Should().BeEquivalentTo(bytes);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadAllBytes_ShouldReturnWrittenBytes(
 		byte[] bytes, string path)
@@ -89,7 +89,7 @@ public partial class ReadAllBytesTests
 		result.Should().BeEquivalentTo(bytes);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadAllBytes_ShouldTolerateAltDirectorySeparatorChar(
 		byte[] bytes, string directory, string fileName)

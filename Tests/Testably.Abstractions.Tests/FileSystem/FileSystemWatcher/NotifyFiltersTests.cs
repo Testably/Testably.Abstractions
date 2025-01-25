@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 [FileSystemTests]
 public partial class NotifyFiltersTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void NotifyFilter_AppendFile_ShouldNotNotifyOnOtherFilters(string fileName)
 	{
@@ -50,11 +50,11 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.AppendAllText(fileName, "foo");
 
-		ms.Wait(EnsureTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(NotifyFilters.CreationTime)]
 	[InlineAutoData(NotifyFilters.LastAccess)]
 	[InlineAutoData(NotifyFilters.LastWrite)]
@@ -106,14 +106,14 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.AppendAllText(fileName, "foo");
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(fileName));
 		result.ChangeType.Should().Be(WatcherChangeTypes.Changed);
 		result.Name.Should().Be(FileSystem.Path.GetFileName(fileName));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void NotifyFilter_CreateDirectory_ShouldNotNotifyOnOtherFilters(string path)
 	{
@@ -148,11 +148,11 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.CreateDirectory(path);
 
-		ms.Wait(EnsureTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(NotifyFilters.DirectoryName)]
 	public void NotifyFilter_CreateDirectory_ShouldTriggerCreatedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
@@ -182,14 +182,14 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.CreateDirectory(path);
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(path));
 		result.ChangeType.Should().Be(WatcherChangeTypes.Created);
 		result.Name.Should().Be(FileSystem.Path.GetFileName(path));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void NotifyFilter_CreateFile_ShouldNotNotifyOnOtherFilters(string path)
 	{
@@ -224,11 +224,11 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.WriteAllText(path, "foo");
 
-		ms.Wait(EnsureTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(NotifyFilters.FileName)]
 	public void NotifyFilter_CreateFile_ShouldTriggerCreatedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
@@ -258,14 +258,14 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.WriteAllText(path, "foo");
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(path));
 		result.ChangeType.Should().Be(WatcherChangeTypes.Created);
 		result.Name.Should().Be(FileSystem.Path.GetFileName(path));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void NotifyFilter_DeleteDirectory_ShouldNotNotifyOnOtherFilters(string path)
 	{
@@ -300,11 +300,11 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.Delete(path);
 
-		ms.Wait(EnsureTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(NotifyFilters.DirectoryName)]
 	public void NotifyFilter_DeleteDirectory_ShouldTriggerDeletedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
@@ -334,14 +334,14 @@ public partial class NotifyFiltersTests
 
 		FileSystem.Directory.Delete(path);
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(path));
 		result.ChangeType.Should().Be(WatcherChangeTypes.Deleted);
 		result.Name.Should().Be(FileSystem.Path.GetFileName(path));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void NotifyFilter_DeleteFile_ShouldNotNotifyOnOtherFilters(string path)
 	{
@@ -376,11 +376,11 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.Delete(path);
 
-		ms.Wait(EnsureTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(NotifyFilters.FileName)]
 	public void NotifyFilter_DeleteFile_ShouldTriggerDeletedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string path)
@@ -410,14 +410,14 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.Delete(path);
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(path));
 		result.ChangeType.Should().Be(WatcherChangeTypes.Deleted);
 		result.Name.Should().Be(FileSystem.Path.GetFileName(path));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		NotifyFilter_MoveFile_DifferentDirectories_ShouldNotifyOnLinuxOrMac(
@@ -456,7 +456,7 @@ public partial class NotifyFiltersTests
 			FileSystem.Path.Combine(sourcePath, sourceName),
 			FileSystem.Path.Combine(destinationPath, destinationName));
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.ChangeType.Should().Be(WatcherChangeTypes.Renamed);
 		result.FullPath.Should()
@@ -468,7 +468,7 @@ public partial class NotifyFiltersTests
 		result.OldName.Should().Be(FileSystem.Path.Combine(sourcePath, sourceName));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		NotifyFilter_MoveFile_DifferentDirectories_ShouldNotNotify_OnWindows(
@@ -507,11 +507,11 @@ public partial class NotifyFiltersTests
 			FileSystem.Path.Combine(sourcePath, sourceName),
 			FileSystem.Path.Combine(destinationPath, destinationName));
 
-		ms.Wait(EnsureTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void NotifyFilter_MoveFile_ShouldNotNotifyOnOtherFilters(
 		string sourceName, string destinationName)
@@ -549,11 +549,11 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.Move(sourceName, destinationName);
 
-		ms.Wait(EnsureTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(NotifyFilters.FileName)]
 	public void NotifyFilter_MoveFile_ShouldTriggerChangedEventOnNotifyFilters(
 		NotifyFilters notifyFilter, string sourceName, string destinationName)
@@ -586,7 +586,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.Move(sourceName, destinationName);
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.ChangeType.Should().Be(WatcherChangeTypes.Renamed);
 		result.FullPath.Should().Be(FileSystem.Path.GetFullPath(destinationName));
@@ -595,7 +595,7 @@ public partial class NotifyFiltersTests
 		result.OldName.Should().Be(FileSystem.Path.GetFileName(sourceName));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void NotifyFilter_WriteFile_ShouldNotNotifyOnOtherFilters(string fileName)
 	{
@@ -640,11 +640,11 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.WriteAllText(fileName, "foo");
 
-		ms.Wait(EnsureTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(NotifyFilters.CreationTime)]
 	[InlineAutoData(NotifyFilters.LastAccess)]
 	[InlineAutoData(NotifyFilters.LastWrite)]
@@ -696,7 +696,7 @@ public partial class NotifyFiltersTests
 
 		FileSystem.File.WriteAllText(fileName, "foo");
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.FullPath.Should().Be(FileSystem.Path.GetFullPath(fileName));
 		result.ChangeType.Should().Be(WatcherChangeTypes.Changed);

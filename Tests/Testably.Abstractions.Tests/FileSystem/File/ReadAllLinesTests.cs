@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class ReadAllLinesTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadAllLines_Empty_ShouldReturnEmptyArray(string path)
 	{
@@ -18,7 +18,7 @@ public partial class ReadAllLinesTests
 		results.Should().BeEmpty();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadAllLines_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
@@ -32,7 +32,7 @@ public partial class ReadAllLinesTests
 			hResult: -2147024894);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadAllLines_ShouldEnumerateLines(string path, string[] lines)
 	{
@@ -44,7 +44,7 @@ public partial class ReadAllLinesTests
 		results.Should().BeEquivalentTo(lines, o => o.WithStrictOrdering());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ReadAllLines_ShouldNotReturnByteOrderMark(string path, string content)
 	{
@@ -59,7 +59,7 @@ public partial class ReadAllLinesTests
 		result[0].Should().Be(content);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
 	public void ReadAllLines_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string specialLine, Encoding writeEncoding, Encoding readEncoding)

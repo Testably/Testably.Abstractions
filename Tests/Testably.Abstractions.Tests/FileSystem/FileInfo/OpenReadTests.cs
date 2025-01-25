@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 [FileSystemTests]
 public partial class OpenReadTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void OpenRead_MissingFile_ShouldThrowFileNotFoundException(string path)
 	{
@@ -21,7 +21,7 @@ public partial class OpenReadTests
 			hResult: -2147024894);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void OpenRead_ShouldUseReadAccessAndReadShare(string path)
 	{

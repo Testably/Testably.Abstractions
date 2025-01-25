@@ -11,7 +11,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 [FileSystemTests]
 public partial class Tests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CanSeek_ShouldReturnTrue(
 		string path, string contents)
@@ -23,7 +23,7 @@ public partial class Tests
 		stream.CanSeek.Should().BeTrue();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CanTimeout_ShouldReturnFalse(
 		string path, string contents)
@@ -35,7 +35,7 @@ public partial class Tests
 		stream.CanTimeout.Should().BeFalse();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Close_CalledMultipleTimes_ShouldNotThrow(
 		string path, string contents)
@@ -53,7 +53,7 @@ public partial class Tests
 		exception.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Extensibility_ShouldWrapFileStreamOnRealFileSystem(
 		string path)
@@ -76,7 +76,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Flush_ShouldNotChangePosition(
 		string path, byte[] bytes)
@@ -91,7 +91,7 @@ public partial class Tests
 		stream.Position.Should().Be(2);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Flush_ShouldNotUpdateFileContentWhenAlreadyFlushed(
 		string path, byte[] bytes1, byte[] bytes2)
@@ -119,7 +119,7 @@ public partial class Tests
 			.Which.HasContent(bytes2);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
 	public void Flush_WriteToDisk_ShouldNotChangePosition(
@@ -135,7 +135,7 @@ public partial class Tests
 		stream.Position.Should().Be(2);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task FlushAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path)
@@ -143,17 +143,19 @@ public partial class Tests
 		using CancellationTokenSource cts = new();
 		await cts.CancelAsync();
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
 			// ReSharper disable once UseAwaitUsing
 			using FileSystemStream stream = FileSystem.File.Create(path);
 			await stream.FlushAsync(cts.Token);
-		});
+		}
+		
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task FlushAsync_ShouldNotChangePosition(
 		string path, byte[] bytes)
@@ -164,12 +166,12 @@ public partial class Tests
 		stream.Seek(2, SeekOrigin.Begin);
 		stream.Position.Should().Be(2);
 
-		await stream.FlushAsync();
+		await stream.FlushAsync(TestContext.Current.CancellationToken);
 
 		stream.Position.Should().Be(2);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Name_ShouldReturnFullPath(string path)
 	{
@@ -179,7 +181,7 @@ public partial class Tests
 		stream.Name.Should().Be(expectedName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Position_ShouldChangeWhenReading(
 		string path, string contents)
@@ -194,7 +196,7 @@ public partial class Tests
 	}
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Position_ShouldNotChangeSharedBufferStreamsWhenWriting(
 		string path, string contents, string changedContents)
@@ -223,7 +225,7 @@ public partial class Tests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Seek_Begin_ShouldSetAbsolutePositionFromBegin(
 		string path, string contents)
@@ -237,7 +239,7 @@ public partial class Tests
 		stream.Position.Should().Be(4);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Seek_Current_ShouldSetRelativePosition(string path, string contents)
 	{
@@ -254,7 +256,7 @@ public partial class Tests
 		stream.Position.Should().Be(6);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Seek_End_ShouldSetAbsolutePositionFromEnd(string path, string contents)
 	{
@@ -267,7 +269,7 @@ public partial class Tests
 		stream.Position.Should().Be(contents.Length - 4);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetLength(string path, int length)
 	{
@@ -278,7 +280,7 @@ public partial class Tests
 		stream.Length.Should().Be(length);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetLength_ReadOnlyStream_ShouldThrowNotSupportedException(
 		string path, int length)

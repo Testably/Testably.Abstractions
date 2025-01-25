@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class GetTempPathTests
 {
-	[SkippableFact]
+	[Fact]
 	public void GetTempPath_Linux_ShouldBeTmp()
 	{
 		Skip.IfNot(Test.RunsOnLinux);
@@ -13,7 +13,7 @@ public partial class GetTempPathTests
 		result.Should().Be("/tmp/");
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetTempPath_MacOs_ShouldBeTmp()
 	{
 		Skip.IfNot(Test.RunsOnMac);
@@ -23,7 +23,7 @@ public partial class GetTempPathTests
 		result.Should().Match("/var/folders/??/*/T/");
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetTempPath_ShouldEndWithDirectorySeparator()
 	{
 		string directorySeparator = FileSystem.Path.DirectorySeparatorChar.ToString();
@@ -33,7 +33,7 @@ public partial class GetTempPathTests
 		result.Should().EndWith(directorySeparator);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetTempPath_ShouldRemainTheSame()
 	{
 		string result1 = FileSystem.Path.GetTempPath();
@@ -42,7 +42,7 @@ public partial class GetTempPathTests
 		result1.Should().Be(result2);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetTempPath_Windows_ShouldBeOnDriveC()
 	{
 		Skip.IfNot(Test.RunsOnWindows);

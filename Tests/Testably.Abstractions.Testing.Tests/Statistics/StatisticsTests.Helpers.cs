@@ -53,7 +53,7 @@ public sealed partial class StatisticsTests
 
 			bool isAsync = typeof(Task).IsAssignableFrom(methodInfo.ReturnType);
 			#pragma warning disable MA0011 // IFormatProvider is missing
-			builder.AppendLine("\t[SkippableFact]");
+			builder.AppendLine("\t[Fact]");
 			builder.Append(isAsync ? "\tpublic async Task " : "\tpublic void ");
 			builder.Append(expectedName);
 			builder.AppendLine("()");
@@ -166,7 +166,7 @@ public sealed partial class StatisticsTests
 			}
 
 			#pragma warning disable MA0011 // IFormatProvider is missing
-			builder.AppendLine("\t[SkippableFact]");
+			builder.AppendLine("\t[Fact]");
 			builder.Append("\tpublic void ");
 			builder.Append(expectedName);
 			builder.AppendLine("()");
@@ -195,7 +195,7 @@ public sealed partial class StatisticsTests
 			}
 
 			#pragma warning disable MA0011 // IFormatProvider is missing
-			builder.AppendLine("\t[SkippableFact]");
+			builder.AppendLine("\t[Fact]");
 			builder.Append("\tpublic void ");
 			builder.Append(expectedName);
 			builder.AppendLine("()");

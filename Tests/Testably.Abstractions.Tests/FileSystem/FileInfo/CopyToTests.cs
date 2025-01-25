@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 [FileSystemTests]
 public partial class CopyToTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CopyTo_DestinationExists_ShouldThrowIOException_AndNotCopyFile(
 		string sourceName,
@@ -32,7 +32,7 @@ public partial class CopyToTests
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CopyTo_DestinationExists_WithOverwrite_ShouldOverwriteDestination(
 		string sourceName,
@@ -57,7 +57,7 @@ public partial class CopyToTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CopyTo_ReadOnly_ShouldCopyFile(
 		string sourceName, string destinationName, string contents)
@@ -74,7 +74,7 @@ public partial class CopyToTests
 			.And.HasAttribute(FileAttributes.ReadOnly);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAttributes.ReadOnly)]
 	[InlineAutoData(FileAttributes.System)]
 	public void CopyTo_ShouldAddArchiveAttribute_OnWindows(
@@ -100,7 +100,7 @@ public partial class CopyToTests
 			.Should().Be(expectedAttributes);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CopyTo_ShouldCopyFileWithContent(
 		string sourceName, string destinationName, string contents)
@@ -124,7 +124,7 @@ public partial class CopyToTests
 			.Which.HasContent(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CopyTo_ShouldKeepMetadata(
 		string sourceName,
@@ -171,7 +171,7 @@ public partial class CopyToTests
 			.Should().Be(sourceLastWriteTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAccess.Read, FileShare.Read)]
 	[InlineAutoData(FileAccess.Read, FileShare.ReadWrite)]
 	[InlineAutoData(FileAccess.ReadWrite, FileShare.Read)]
@@ -198,7 +198,7 @@ public partial class CopyToTests
 		FileSystem.File.ReadAllText(destinationPath).Should().Be(sourceContents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAccess.Read)]
 	[InlineAutoData(FileAccess.ReadWrite)]
 	[InlineAutoData(FileAccess.Write)]
@@ -223,7 +223,7 @@ public partial class CopyToTests
 		FileSystem.File.ReadAllText(destinationPath).Should().Be(sourceContents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CopyTo_SourceIsDirectory_ShouldThrowUnauthorizedAccessException_AndNotCopyFile(
 		string sourceName,
@@ -244,7 +244,7 @@ public partial class CopyToTests
 		FileSystem.Should().NotHaveFile(destinationName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileShare.None)]
 	[InlineAutoData(FileShare.Write)]
 	public void CopyTo_SourceLocked_ShouldThrowIOException(
@@ -277,7 +277,7 @@ public partial class CopyToTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CopyTo_SourceMissing_ShouldThrowFileNotFoundException(
 		string sourceName,

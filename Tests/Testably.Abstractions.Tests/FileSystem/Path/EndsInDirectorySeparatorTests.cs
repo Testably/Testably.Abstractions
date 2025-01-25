@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class EndsInDirectorySeparatorTests
 {
-	[SkippableFact]
+	[Fact]
 	public void EndsInDirectorySeparator_Empty_ShouldReturnExpectedResult()
 	{
 		bool result = FileSystem.Path.EndsInDirectorySeparator(string.Empty);
@@ -12,7 +12,7 @@ public partial class EndsInDirectorySeparatorTests
 		result.Should().BeFalse();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void EndsInDirectorySeparator_Null_ShouldReturnExpectedResult()
 	{
 		bool result = FileSystem.Path.EndsInDirectorySeparator(null!);
@@ -20,7 +20,7 @@ public partial class EndsInDirectorySeparatorTests
 		result.Should().BeFalse();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void EndsInDirectorySeparator_Span_Empty_ShouldReturnExpectedResult()
 	{
 		bool result = FileSystem.Path.EndsInDirectorySeparator(string.Empty.AsSpan());
@@ -28,7 +28,7 @@ public partial class EndsInDirectorySeparatorTests
 		result.Should().BeFalse();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData('.')]
 	[InlineAutoData('a')]
 	public void
@@ -42,7 +42,7 @@ public partial class EndsInDirectorySeparatorTests
 		result.Should().BeFalse();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EndsInDirectorySeparator_Span_WithTrailingAltDirectorySeparator_ShouldReturnTrue(
@@ -55,7 +55,7 @@ public partial class EndsInDirectorySeparatorTests
 		result.Should().BeTrue();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EndsInDirectorySeparator_Span_WithTrailingDirectorySeparator_ShouldReturnTrue(
@@ -68,7 +68,7 @@ public partial class EndsInDirectorySeparatorTests
 		result.Should().BeTrue();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData('.')]
 	[InlineAutoData('a')]
 	public void
@@ -82,7 +82,7 @@ public partial class EndsInDirectorySeparatorTests
 		result.Should().BeFalse();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EndsInDirectorySeparator_WithTrailingAltDirectorySeparator_ShouldReturnTrue(
 		string path)
@@ -94,7 +94,7 @@ public partial class EndsInDirectorySeparatorTests
 		result.Should().BeTrue();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EndsInDirectorySeparator_WithTrailingDirectorySeparator_ShouldReturnTrue(
 		string path)

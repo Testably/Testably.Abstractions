@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class HasExtensionTests
 {
-	[SkippableFact]
+	[Fact]
 	public void HasExtension_Null_ShouldReturnFalse()
 	{
 		bool result = FileSystem.Path.HasExtension(null);
@@ -11,7 +11,7 @@ public partial class HasExtensionTests
 		result.Should().BeFalse();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData("abc.", false)]
 	[InlineAutoData(".foo", true)]
 	[InlineAutoData(".abc.xyz", true)]
@@ -28,7 +28,7 @@ public partial class HasExtensionTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData("abc.", false)]
 	[InlineAutoData(".foo", true)]
 	[InlineAutoData(".abc.xyz", true)]

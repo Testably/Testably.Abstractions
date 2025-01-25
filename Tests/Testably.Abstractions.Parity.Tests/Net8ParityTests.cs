@@ -1,6 +1,5 @@
 ﻿#if NET8_0
 using System.IO;
-using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Parity.Tests;
 

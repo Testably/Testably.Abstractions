@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.DriveInfoFactory;
 [FileSystemTests]
 public partial class Tests
 {
-	[SkippableFact]
+	[Fact]
 	public void GetDrives_ShouldNotBeEmpty()
 	{
 		IDriveInfo[] result = FileSystem.DriveInfo.GetDrives();
@@ -14,7 +14,7 @@ public partial class Tests
 		result.Should().NotBeEmpty();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void MissingDrive_CreateDirectoryInfo_ShouldOnlyThrowWhenAccessingData(
 		string path, string subPath)
@@ -37,7 +37,7 @@ public partial class Tests
 			hResult: -2147024893);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void MissingDrive_WriteAllBytes_ShouldThrowDirectoryNotFoundException(
 		string path, byte[] bytes)
@@ -57,7 +57,7 @@ public partial class Tests
 			hResult: -2147024893);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void New_DefaultDrive_ShouldBeFixed()
 	{
 		IDriveInfo result =
@@ -73,7 +73,7 @@ public partial class Tests
 		result.VolumeLabel.Should().NotBeEmpty();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_InvalidDriveName_ShouldThrowArgumentException(
 		string invalidDriveName)
@@ -88,7 +88,7 @@ public partial class Tests
 		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData('A')]
 	[InlineData('C')]
 	[InlineData('X')]
@@ -101,7 +101,7 @@ public partial class Tests
 		result.Name.Should().Be($"{driveLetter}:\\");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData('A')]
 	[InlineAutoData('C')]
 	[InlineAutoData('Y')]
@@ -116,7 +116,7 @@ public partial class Tests
 		result.Name.Should().Be($"{driveLetter}:\\");
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Wrap_Null_ShouldReturnNull()
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
@@ -127,7 +127,7 @@ public partial class Tests
 		result.Should().BeNull();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Wrap_ShouldReturnDriveInfoWithSameName()
 	{
 		Skip.If(FileSystem is MockFileSystem mockFileSystem &&
@@ -140,7 +140,7 @@ public partial class Tests
 		result.Name.Should().Be(driveInfo.Name);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Wrap_WithSimulatedMockFileSystem_ShouldThrowNotSupportedException()
 	{
 		Skip.IfNot(FileSystem is MockFileSystem mockFileSystem &&

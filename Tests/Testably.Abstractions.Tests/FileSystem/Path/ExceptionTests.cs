@@ -7,8 +7,8 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class ExceptionTests
 {
-	[SkippableTheory]
-	[MemberData(nameof(GetPathCallbacks), parameters: "")]
+	[Theory]
+	[MemberData(nameof(GetPathCallbacks), "")]
 	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IPath>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -25,8 +25,8 @@ public partial class ExceptionTests
 			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetPathCallbacks), parameters: (string?)null)]
+	[Theory]
+	[MemberData(nameof(GetPathCallbacks), (string?)null)]
 	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IPath>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -42,8 +42,8 @@ public partial class ExceptionTests
 			$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetPathCallbacks), parameters: "  ")]
+	[Theory]
+	[MemberData(nameof(GetPathCallbacks), "  ")]
 	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IPath>> callback, string paramName,
 		bool ignoreParamCheck)

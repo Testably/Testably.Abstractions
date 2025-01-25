@@ -9,13 +9,13 @@ public class RandomSystemExtensibilityTests
 	public static TheoryData<IRandomSystem> GetRandomSystems
 		=> new()
 		{
-			new RealRandomSystem(),
-			new MockRandomSystem(),
+			(IRandomSystem)new RealRandomSystem(),
+			(IRandomSystem)new MockRandomSystem(),
 		};
 
 	#endregion
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetRandomSystems))]
 	public void Guid_ShouldSetExtensionPoint(IRandomSystem randomSystem)
 	{
@@ -26,7 +26,7 @@ public class RandomSystemExtensibilityTests
 		result.Should().Be(randomSystem);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetRandomSystems))]
 	public void RandomFactory_ShouldSetExtensionPoint(IRandomSystem randomSystem)
 	{

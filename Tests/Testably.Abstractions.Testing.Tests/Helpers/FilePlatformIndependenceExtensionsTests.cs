@@ -16,7 +16,7 @@ public class FilePlatformIndependenceExtensionsTests
 		path.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void NormalizePath_Unix_RootedPath_ShouldRemoveDriveInfo(string part1)
 	{
@@ -31,7 +31,7 @@ public class FilePlatformIndependenceExtensionsTests
 		path.Should().Be(expectedPath);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void NormalizePath_Unix_ShouldReplaceAltDirectorySeparatorChar(
 		string part1, string part2)
@@ -53,7 +53,7 @@ public class FilePlatformIndependenceExtensionsTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void NormalizePath_Windows_ShouldAlsoKeepAltDirectorySeparatorChar(
 		string part1, string part2)

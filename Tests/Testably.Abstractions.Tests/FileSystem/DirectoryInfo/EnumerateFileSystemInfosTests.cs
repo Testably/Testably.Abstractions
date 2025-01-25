@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 [FileSystemTests]
 public partial class EnumerateFileSystemInfosTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateFileSystemInfos_SearchOptionAllFiles_ShouldReturnAllFiles(
@@ -36,7 +36,7 @@ public partial class EnumerateFileSystemInfosTests
 		result.Should().Contain(d => d.Name == initialized[5].Name);
 	}
 
-	[SkippableTheory]
+	[Theory]
 #if NETFRAMEWORK
 	[InlineAutoData(false, "")]
 #else
@@ -73,7 +73,7 @@ public partial class EnumerateFileSystemInfosTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateFileSystemInfos_ShouldMatchTypes(string path)
@@ -97,7 +97,7 @@ public partial class EnumerateFileSystemInfosTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableFact]
+	[Fact]
 	public void
 		EnumerateFileSystemInfos_WithEnumerationOptions_ShouldConsiderSetOptions()
 	{
@@ -125,7 +125,7 @@ public partial class EnumerateFileSystemInfosTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EnumerateFileSystemInfos_WithNewline_ShouldThrowArgumentException(
 		string path)
@@ -142,7 +142,7 @@ public partial class EnumerateFileSystemInfosTests
 		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void
 		EnumerateFileSystemInfos_WithoutSearchString_ShouldReturnAllDirectFilesAndDirectories()
 	{
@@ -164,7 +164,7 @@ public partial class EnumerateFileSystemInfosTests
 		result.Should().Contain(d => d.Name == "bar");
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void EnumerateFileSystemInfos_WithSearchPattern_ShouldReturnMatchingFiles()
 	{
 		IDirectoryInfo baseDirectory =
@@ -180,7 +180,7 @@ public partial class EnumerateFileSystemInfosTests
 		result.Count().Should().Be(1);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void
 		EnumerateFileSystemInfos_WithSearchPatternInSubdirectory_ShouldReturnMatchingFiles()
 	{

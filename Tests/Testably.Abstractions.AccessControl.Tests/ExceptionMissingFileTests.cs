@@ -2,16 +2,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
-using Skip = Xunit.Skip;
+using Skip = Testably.Abstractions.TestHelpers.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
 [FileSystemTests]
 public partial class ExceptionMissingFileTests
 {
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileCallbacks),
-		parameters: (int)(BaseTypes.Directory | BaseTypes.DirectoryInfo))]
+		(int)(BaseTypes.Directory | BaseTypes.DirectoryInfo))]
 	public async Task DirectoryOperations_WhenDirectoryIsMissing_ShouldThrowDirectoryNotFoundException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
@@ -44,9 +44,9 @@ public partial class ExceptionMissingFileTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileCallbacks),
-		parameters: (int)(BaseTypes.Directory | BaseTypes.DirectoryInfo))]
+		(int)(BaseTypes.Directory | BaseTypes.DirectoryInfo))]
 	public async Task DirectoryOperations_WhenFileIsMissing_ShouldThrowFileNotFoundException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
@@ -79,9 +79,9 @@ public partial class ExceptionMissingFileTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileCallbacks),
-		parameters: (int)(BaseTypes.File | BaseTypes.FileInfo | BaseTypes.FileStream))]
+		(int)(BaseTypes.File | BaseTypes.FileInfo | BaseTypes.FileStream))]
 	public async Task FileOperations_WhenDirectoryIsMissing_ShouldThrowDirectoryNotFoundException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
@@ -115,9 +115,9 @@ public partial class ExceptionMissingFileTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileCallbacks),
-		parameters: (int)(BaseTypes.File | BaseTypes.FileInfo | BaseTypes.FileStream))]
+		(int)(BaseTypes.File | BaseTypes.FileInfo | BaseTypes.FileStream))]
 	public async Task FileOperations_WhenFileIsMissing_ShouldThrowFileNotFoundException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{

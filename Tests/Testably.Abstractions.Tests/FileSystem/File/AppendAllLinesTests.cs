@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class AppendAllLinesTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AppendAllLines_ExistingFile_ShouldAppendLinesToFile(
 		string path, List<string> previousContents, List<string> contents)
@@ -23,7 +23,7 @@ public partial class AppendAllLinesTests
 			.Which.HasContent(expectedContent);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AppendAllLines_MissingFile_ShouldCreateFile(
 		string path, List<string> contents)
@@ -36,7 +36,7 @@ public partial class AppendAllLinesTests
 			.Which.HasContent(expectedContent);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AppendAllLines_NullContent_ShouldThrowArgumentNullException(
 		string path)
@@ -51,7 +51,7 @@ public partial class AppendAllLinesTests
 			paramName: "contents");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AppendAllLines_NullEncoding_ShouldThrowArgumentNullException(
 		string path)
@@ -66,7 +66,7 @@ public partial class AppendAllLinesTests
 			paramName: "encoding");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void AppendAllLines_ShouldEndWithNewline(string path)
 	{
@@ -79,7 +79,7 @@ public partial class AppendAllLinesTests
 			.Which.HasContent(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		AppendAllLines_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
@@ -98,7 +98,7 @@ public partial class AppendAllLinesTests
 		FileSystem.Should().NotHaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
 	public void AppendAllLines_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string specialLine, Encoding writeEncoding, Encoding readEncoding)

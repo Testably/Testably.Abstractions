@@ -29,7 +29,7 @@ public class FileMockTests
 	}
 #endif
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetUnixFileMode_SafeFileHandle_ShouldThrowPlatformNotSupportedExceptionOnWindows(
 		string path)
@@ -220,7 +220,7 @@ public class FileMockTests
 #endif
 
 #if FEATURE_FILESYSTEM_SAFEFILEHANDLE
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetUnixFileMode_SafeFileHandle_ShouldUpdateValue(
 		string path, UnixFileMode mode)

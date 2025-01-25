@@ -25,6 +25,7 @@
 	<ItemGroup>
 		<Compile Remove="$(GeneratedFolder)/**/*.cs" />
 		<Content Include="$(CompilerGeneratedFilesOutputPath)/**" />
+		<Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 
 </Project>

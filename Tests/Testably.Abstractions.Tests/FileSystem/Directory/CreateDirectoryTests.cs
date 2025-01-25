@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 [FileSystemTests]
 public partial class CreateDirectoryTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateDirectory_AlreadyExisting_ShouldDoNothing(string path)
 	{
@@ -20,7 +20,7 @@ public partial class CreateDirectoryTests
 		FileSystem.Should().HaveDirectory(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateDirectory_ReadOnlyParent_ShouldStillCreateDirectoryUnderWindows(string parent,
 		string subdirectory)
@@ -48,7 +48,7 @@ public partial class CreateDirectoryTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateDirectory_FileWithSameNameAlreadyExists_ShouldThrowIOException(string name)
 	{
@@ -64,7 +64,7 @@ public partial class CreateDirectoryTests
 		FileSystem.Should().NotHaveDirectory(name);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void CreateDirectory_Root_ShouldNotThrowException()
 	{
 		string path = FileTestHelper.RootDrive(Test);
@@ -79,7 +79,7 @@ public partial class CreateDirectoryTests
 		FileSystem.Should().HaveDirectory(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateDirectory_ShouldTrimTrailingSpaces_OnWindows(string path)
 	{
@@ -97,7 +97,7 @@ public partial class CreateDirectoryTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateDirectory_ShouldAdjustTimes(string path, string subdirectoryName)
 	{
@@ -133,7 +133,7 @@ public partial class CreateDirectoryTests
 			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateDirectory_ShouldAdjustTimesOnlyForDirectParentDirectory(
 		string rootPath)
@@ -170,7 +170,7 @@ public partial class CreateDirectoryTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateDirectory_ShouldSetCreationTime(string path)
 	{
@@ -184,7 +184,7 @@ public partial class CreateDirectoryTests
 		result.Kind.Should().Be(DateTimeKind.Local);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateDirectory_ShouldSetCreationTimeUtc(string path)
 	{
@@ -198,7 +198,7 @@ public partial class CreateDirectoryTests
 		result.Kind.Should().Be(DateTimeKind.Utc);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void CreateDirectory_NullCharacter_ShouldThrowArgumentException()
 	{
 		string path = "foo\0bar";
@@ -208,7 +208,7 @@ public partial class CreateDirectoryTests
 		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void CreateDirectory_ShouldCreateDirectoryInBasePath()
 	{
 		IDirectoryInfo result = FileSystem.Directory.CreateDirectory("foo");
@@ -217,7 +217,7 @@ public partial class CreateDirectoryTests
 		result.FullName.Should().StartWith(BasePath);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void CreateDirectory_ShouldCreateParentDirectories()
 	{
 		string directoryLevel1 = "lvl1";
@@ -237,7 +237,7 @@ public partial class CreateDirectoryTests
 	}
 
 #if NETFRAMEWORK
-	[SkippableTheory]
+	[Theory]
 	[InlineData("/")]
 	[InlineData("\\")]
 	public void CreateDirectory_TrailingDirectorySeparator_ShouldNotBeTrimmed(
@@ -261,7 +261,7 @@ public partial class CreateDirectoryTests
 #endif
 
 #if NETFRAMEWORK
-	[SkippableTheory]
+	[Theory]
 	[InlineData("")]
 	[InlineData(" ")]
 	public void CreateDirectory_EmptyOrWhitespace_ShouldReturnEmptyString(
@@ -283,7 +283,7 @@ public partial class CreateDirectoryTests
 		FileSystem.Should().HaveDirectory(nameWithSuffix);
 	}
 #else
-	[SkippableTheory]
+	[Theory]
 	[InlineData("")]
 	[InlineData(" ")]
 	[InlineData("/")]

@@ -243,7 +243,7 @@ public class FileSystemInitializerExtensionsTests
 		result.Should().Contain(x => x.EndsWith("SubResourceFile1.txt"));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void InitializeIn_MissingDrive_ShouldCreateDrive(string directoryName)
 	{

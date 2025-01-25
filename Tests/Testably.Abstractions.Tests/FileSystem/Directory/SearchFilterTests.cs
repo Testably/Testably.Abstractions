@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 [FileSystemTests]
 public partial class SearchFilterTests
 {
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData("../", 4)]
 	[InlineAutoData("../*", 4)]
 	[InlineAutoData("../a*", 2)]
@@ -30,7 +30,7 @@ public partial class SearchFilterTests
 		result.Should().Contain(FileSystem.Path.Combine(".", "..", "xyz", "a.test"));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData("../../", 5)]
 	[InlineAutoData("../../*", 5)]
 	[InlineAutoData("../../a*", 2)]
@@ -60,7 +60,7 @@ public partial class SearchFilterTests
 			.Contain(FileSystem.Path.Combine(".", "../..", "bar", "xyz", "a.test"));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData("../../../", 6)]
 	[InlineAutoData("../../../*", 6)]
 	[InlineAutoData("../../../a*", 2)]
@@ -94,7 +94,7 @@ public partial class SearchFilterTests
 				FileSystem.Path.Combine(".", "../../..", "foo", "bar", "xyz", "a.test"));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void SearchPattern_ContainingAsterisk_ShouldReturnMatchingFiles()
 	{
 		FileSystem.Initialize()
@@ -111,7 +111,7 @@ public partial class SearchFilterTests
 		result.Should().Contain(FileSystem.Path.Combine(".", "another.test"));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void SearchPattern_ContainingQuestionMark_ShouldReturnMatchingFiles()
 	{
 		FileSystem.Initialize()
@@ -127,7 +127,7 @@ public partial class SearchFilterTests
 		result[0].Should().Be(FileSystem.Path.Combine(".", "a-test"));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void
 		SearchPattern_ContainingTooManyInstancesOfMultipleTwoDotsAndDirectorySeparator_ShouldThrowUnauthorizedAccessException()
 	{
@@ -160,7 +160,7 @@ public partial class SearchFilterTests
 		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData("../", 4)]
 	[InlineAutoData("../*", 4)]
 	[InlineAutoData("../a*", 2)]
@@ -182,7 +182,7 @@ public partial class SearchFilterTests
 		result.Should().Contain(FileSystem.Path.Combine(".", "..", path, "a.test"));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData("../")]
 	[InlineAutoData("../*")]
 	[InlineAutoData("../a*")]
@@ -204,7 +204,7 @@ public partial class SearchFilterTests
 		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void SearchPattern_ContainingWithTwoDots_ShouldContainMatchingFiles()
 	{
 		FileSystem.Initialize()
@@ -218,7 +218,7 @@ public partial class SearchFilterTests
 		result.Length.Should().Be(1);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void SearchPattern_EndingWithTwoDots_ShouldNotMatchAnyFile()
 	{
 		Skip.If(Test.IsNetFramework);
@@ -242,7 +242,7 @@ public partial class SearchFilterTests
 		}
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void SearchPattern_Extension_ShouldReturnAllFilesWithTheExtension()
 	{
 		FileSystem.Initialize()
@@ -260,7 +260,7 @@ public partial class SearchFilterTests
 		result.Length.Should().Be(3);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void SearchPattern_Null_ShouldThrowArgumentNullException()
 	{
 		FileSystem.Initialize();
@@ -274,7 +274,7 @@ public partial class SearchFilterTests
 		exception.Should().BeException<ArgumentNullException>(paramName: "searchPattern");
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void SearchPattern_StarDot_ShouldReturnFilesWithoutExtension()
 	{
 		FileSystem.Initialize()
@@ -297,7 +297,7 @@ public partial class SearchFilterTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 #if NETFRAMEWORK
 	[InlineAutoData(false, "")]
 #else

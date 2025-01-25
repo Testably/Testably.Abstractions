@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading;
 using Testably.Abstractions.Testing.Initializer;
+using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
@@ -32,7 +33,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 
 	#endregion
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Error_DefaultTo64Messages_ShouldBeTriggeredWhenBufferOverflows(
 		string path)
@@ -63,7 +64,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				block1.Wait(10000);
+				block1.Wait(10000, TestContext.Current.CancellationToken);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -82,12 +83,12 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			FileSystem.Directory.CreateDirectory($"{i}_{path}");
 		}
 
-		block2.Wait(10000).Should().BeTrue();
+		block2.Wait(10000, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.GetException().Should().BeOfType<InternalBufferOverflowException>();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(4096)]
 	[InlineAutoData(8192)]
 	public void Error_ShouldBeTriggeredWhenBufferOverflows(
@@ -120,7 +121,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				block1.Wait(5000);
+				block1.Wait(5000, TestContext.Current.CancellationToken);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -140,13 +141,13 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			FileSystem.Directory.CreateDirectory($"{i}_{path}");
 		}
 
-		block2.Wait(5000).Should().BeTrue();
+		block2.Wait(5000, TestContext.Current.CancellationToken).Should().BeTrue();
 		result.Should().NotBeNull();
 		result!.GetException().Should().BeOfType<InternalBufferOverflowException>();
 	}
 
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Filter_ShouldResetFiltersToOnlyContainASingleValue(
 		string[] filters, string expectedFilter)
@@ -168,7 +169,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void InternalBufferSize_ShouldResetQueue(string path1, string path2)
 	{
@@ -178,7 +179,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			FileSystem.FileSystemWatcher.New(BasePath);
 		using ManualResetEventSlim block1 = new();
 		using ManualResetEventSlim block2 = new();
-		ErrorEventArgs result = null;
+		ErrorEventArgs result = null!;
 		fileSystemWatcher.Error += (_, eventArgs) =>
 		{
 			// ReSharper disable once AccessToDisposedClosure
@@ -199,7 +200,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				block1.Wait(100);
+				block1.Wait(100, TestContext.Current.CancellationToken);
 			}
 			catch (ObjectDisposedException)
 			{
@@ -230,14 +231,14 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			FileSystem.Directory.CreateDirectory($"{i}_{path2}");
 		}
 
-		block2.Wait(100).Should().BeFalse();
+		block2.Wait(100, TestContext.Current.CancellationToken).Should().BeFalse();
 		result.Should().BeNull();
 	}
 
 #if CAN_SIMULATE_OTHER_OS
 	public sealed class EventArgsTests
 	{
-		[SkippableTheory]
+		[Theory]
 		[InlineAutoData(SimulationMode.Linux)]
 		[InlineAutoData(SimulationMode.MacOS)]
 		[InlineAutoData(SimulationMode.Windows)]
@@ -270,7 +271,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
 			fileSystemWatcher.EnableRaisingEvents = true;
 			fileSystem.Directory.CreateDirectory(expectedName);
-			ms.Wait(5000);
+			ms.Wait(5000, TestContext.Current.CancellationToken);
 
 			result.Should().NotBeNull();
 			result!.FullPath.Should().Be(expectedFullPath);
@@ -280,7 +281,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 #endif
 
 #if CAN_SIMULATE_OTHER_OS
-		[SkippableTheory]
+		[Theory]
 		[InlineAutoData(SimulationMode.Linux)]
 		[InlineAutoData(SimulationMode.MacOS)]
 		[InlineAutoData(SimulationMode.Windows)]
@@ -317,7 +318,7 @@ public sealed class FileSystemWatcherMockTests : IDisposable
 			fileSystemWatcher.NotifyFilter = NotifyFilters.FileName;
 			fileSystemWatcher.EnableRaisingEvents = true;
 			fileSystem.File.Move(expectedOldFullPath, expectedFullPath);
-			ms.Wait(5000);
+			ms.Wait(5000, TestContext.Current.CancellationToken);
 
 			result.Should().NotBeNull();
 			result!.FullPath.Should().Be(expectedFullPath);

@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using Testably.Abstractions.Testing.Initializer;
-using Testably.Abstractions.Testing.Tests.TestHelpers;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystemInitializer;
 
@@ -18,7 +17,7 @@ public class DirectoryCleanerTests
 
 	#endregion
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Dispose_PermanentFailure_ShouldNotThrowException(
 		Exception exception)
@@ -57,7 +56,7 @@ public class DirectoryCleanerTests
 		receivedLogs.Should().NotContain("Cleanup was successful :-)");
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Dispose_ShouldForceDeleteCurrentDirectory()
 	{
 		MockFileSystem sut = new();
@@ -71,7 +70,7 @@ public class DirectoryCleanerTests
 		receivedLogs.Should().Contain("Cleanup was successful :-)");
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Dispose_ShouldResetCurrentDirectory()
 	{
 		MockFileSystem sut = new();
@@ -82,7 +81,7 @@ public class DirectoryCleanerTests
 		sut.Directory.GetCurrentDirectory().Should().NotBe(currentDirectory);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Dispose_TemporaryFailure_ShouldRetryAgain(
 		Exception exception)
@@ -104,7 +103,7 @@ public class DirectoryCleanerTests
 		sut.Should().NotHaveDirectory(currentDirectory);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void InitializeBasePath_ShouldCreateDirectoryAndLogBasePath()
 	{
 		MockFileSystem sut = new();

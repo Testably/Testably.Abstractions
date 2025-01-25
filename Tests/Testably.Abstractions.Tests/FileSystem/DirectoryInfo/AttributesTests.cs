@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 [FileSystemTests]
 public partial class AttributesTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Attributes_ClearAllAttributes_ShouldRemainDirectory(string path)
 	{
@@ -19,7 +19,7 @@ public partial class AttributesTests
 		sut.Attributes.Should().HaveFlag(FileAttributes.Directory);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAttributes.ReadOnly)]
 	[InlineAutoData(FileAttributes.Normal)]
 	public void Attributes_WhenFileIsExisting_SetterShouldChangeAttributesOnFileSystem(
@@ -35,7 +35,7 @@ public partial class AttributesTests
 		sut2.Attributes.Should().Be(expectedAttributes);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Attributes_WhenFileIsMissing_SetterShouldThrowFileNotFoundException()
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("missing file");
@@ -48,7 +48,7 @@ public partial class AttributesTests
 		exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Attributes_WhenFileIsMissing_ShouldReturnMinusOne()
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("missing file");

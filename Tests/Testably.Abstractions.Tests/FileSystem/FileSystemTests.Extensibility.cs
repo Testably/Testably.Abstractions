@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Tests.FileSystem;
 
 public partial class FileSystemTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		Extensibility_HasWrappedInstance_WithCorrectType_ShouldReturnTrueOnRealFileSystem(
@@ -27,7 +27,7 @@ public partial class FileSystemTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		Extensibility_HasWrappedInstance_WithIncorrectType_ShouldReturnAlwaysFalse(
@@ -44,7 +44,7 @@ public partial class FileSystemTests
 		directoryInfo.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		Extensibility_RetrieveMetadata_CorrectKeyAndType_ShouldReturnStoredValue(
@@ -61,7 +61,7 @@ public partial class FileSystemTests
 		result.Should().Be(time);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Extensibility_RetrieveMetadata_DifferentKey_ShouldReturnNull(
 		string name)
@@ -77,7 +77,7 @@ public partial class FileSystemTests
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Extensibility_RetrieveMetadata_DifferentType_ShouldReturnNull(
 		string name)
@@ -93,7 +93,7 @@ public partial class FileSystemTests
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Extensibility_RetrieveMetadata_NotRegisteredKey_ShouldReturnNull(
 		string name)

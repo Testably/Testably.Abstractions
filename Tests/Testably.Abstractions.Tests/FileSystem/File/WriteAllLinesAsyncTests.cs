@@ -10,7 +10,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class WriteAllLinesAsyncTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAllLinesAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path, string[] contents)
@@ -24,7 +24,7 @@ public partial class WriteAllLinesAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		WriteAllLinesAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
@@ -39,7 +39,7 @@ public partial class WriteAllLinesAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		WriteAllLinesAsync_Enumerable_Cancelled_ShouldThrowTaskCanceledException(
@@ -54,7 +54,7 @@ public partial class WriteAllLinesAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		WriteAllLinesAsync_Enumerable_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
@@ -70,56 +70,56 @@ public partial class WriteAllLinesAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		WriteAllLinesAsync_Enumerable_PreviousFile_ShouldOverwriteFileWithText(
 			string path, string[] contents)
 	{
-		await FileSystem.File.WriteAllTextAsync(path, "foo");
+		await FileSystem.File.WriteAllTextAsync(path, "foo", TestContext.Current.CancellationToken);
 
-		await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable());
+		await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(), TestContext.Current.CancellationToken);
 
-		string[] result = await FileSystem.File.ReadAllLinesAsync(path);
+		string[] result = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
 		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAllLinesAsync_Enumerable_ShouldCreateFileWithText(
 		string path, string[] contents)
 	{
-		await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable());
+		await FileSystem.File.WriteAllLinesAsync(path, contents.AsEnumerable(), TestContext.Current.CancellationToken);
 
-		string[] result = await FileSystem.File.ReadAllLinesAsync(path);
+		string[] result = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
 		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAllLinesAsync_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string[] contents)
 	{
-		await FileSystem.File.WriteAllTextAsync(path, "foo");
+		await FileSystem.File.WriteAllTextAsync(path, "foo", TestContext.Current.CancellationToken);
 
-		await FileSystem.File.WriteAllLinesAsync(path, contents);
+		await FileSystem.File.WriteAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 
-		string[] result = await FileSystem.File.ReadAllLinesAsync(path);
+		string[] result = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
 		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAllLinesAsync_ShouldCreateFileWithText(
 		string path, string[] contents)
 	{
-		await FileSystem.File.WriteAllLinesAsync(path, contents);
+		await FileSystem.File.WriteAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 
-		string[] result = await FileSystem.File.ReadAllLinesAsync(path);
+		string[] result = await FileSystem.File.ReadAllLinesAsync(path, TestContext.Current.CancellationToken);
 		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		WriteAllLinesAsync_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
@@ -127,10 +127,12 @@ public partial class WriteAllLinesAsyncTests
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
-			await FileSystem.File.WriteAllLinesAsync(path, contents);
-		});
+			await FileSystem.File.WriteAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
@@ -138,7 +140,7 @@ public partial class WriteAllLinesAsyncTests
 		FileSystem.Should().NotHaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		WriteAllLinesAsync_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
@@ -146,13 +148,15 @@ public partial class WriteAllLinesAsyncTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		await FileSystem.File.WriteAllTextAsync(path, null);
+		await FileSystem.File.WriteAllTextAsync(path, null, TestContext.Current.CancellationToken);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
-			await FileSystem.File.WriteAllLinesAsync(path, contents);
-		});
+			await FileSystem.File.WriteAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}

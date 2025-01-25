@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Tests.TimeSystem;
 public partial class TimeFactoryTests
 {
 #if FEATURE_TIMER_COUNT
-	[SkippableFact]
+	[Fact]
 	public void ActiveCount_ShouldBeIncrementedWhenCreatingANewTimer()
 	{
 		using ITimer timer = TimeSystem.Timer.New(_ => { });
@@ -17,7 +17,7 @@ public partial class TimeFactoryTests
 #endif
 
 #if FEATURE_TIMER_COUNT
-	[SkippableFact]
+	[Fact]
 	public void ActiveCount_ShouldBeResetWhenDisposingATimer()
 	{
 		const int timersPerThread = 64;
@@ -79,7 +79,7 @@ public partial class TimeFactoryTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData(-2)]
 	[InlineData(-500)]
 	public void New_InvalidDueTime_ShouldThrowArgumentOutOfRangeException(int dueTime)
@@ -96,7 +96,7 @@ public partial class TimeFactoryTests
 				paramName: nameof(dueTime));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData(-2)]
 	[InlineData(-500)]
 	public void New_InvalidPeriod_ShouldThrowArgumentOutOfRangeException(int period)
@@ -113,7 +113,7 @@ public partial class TimeFactoryTests
 				paramName: nameof(period));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void New_WithPeriod_ShouldStartTimer()
 	{
 		int count = 0;
@@ -135,11 +135,11 @@ public partial class TimeFactoryTests
 			}
 		}, null, 0, 50);
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		count.Should().BeGreaterOrEqualTo(2);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task New_WithDueTime_ShouldStartTimerOnce()
 	{
 		int count = 0;
@@ -158,12 +158,12 @@ public partial class TimeFactoryTests
 			}
 		}, null, 5, 0);
 
-		ms.Wait(ExpectSuccess).Should().BeTrue();
-		await Task.Delay(100);
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
+		await Task.Delay(100, TestContext.Current.CancellationToken);
 		count.Should().Be(1);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void New_WithoutPeriod_ShouldNotStartTimer()
 	{
 		using ManualResetEventSlim ms = new();
@@ -180,6 +180,6 @@ public partial class TimeFactoryTests
 			}
 		});
 
-		ms.Wait(EnsureTimeout).Should().BeFalse();
+		ms.Wait(EnsureTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 	}
 }

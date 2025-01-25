@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 public sealed class DriveInfoFactoryStatisticsTests
 {
-	[SkippableFact]
+	[Fact]
 	public void Method_GetDrives_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -18,7 +18,7 @@ public sealed class DriveInfoFactoryStatisticsTests
 		sut.Statistics.DriveInfo.ShouldOnlyContainMethodCall(nameof(IDriveInfoFactory.GetDrives));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_New_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -31,7 +31,7 @@ public sealed class DriveInfoFactoryStatisticsTests
 			driveName);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_Wrap_DriveInfo_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -44,7 +44,7 @@ public sealed class DriveInfoFactoryStatisticsTests
 			driveInfo);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void ToString_ShouldBeDriveInfo()
 	{
 		IPathStatistics<IDriveInfoFactory, IDriveInfo> sut

@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class TryJoinTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void TryJoin_2Paths_BufferTooLittle_ShouldReturnFalse(
 		string path1, string path2)
@@ -25,7 +25,7 @@ public partial class TryJoinTests
 		charsWritten.Should().Be(0);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData("/foo/", "/bar/", "/foo//bar/")]
 	[InlineAutoData("foo/", "/bar", "foo//bar")]
 	[InlineAutoData("foo/", "bar", "foo/bar")]
@@ -52,7 +52,7 @@ public partial class TryJoinTests
 		destination.Slice(0, charsWritten).ToString().Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void TryJoin_2Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2)
@@ -74,7 +74,7 @@ public partial class TryJoinTests
 		destination.Slice(0, charsWritten).ToString().Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void TryJoin_3Paths_BufferTooLittle_ShouldReturnFalse(
 		string path1, string path2, string path3)
@@ -97,7 +97,7 @@ public partial class TryJoinTests
 		charsWritten.Should().Be(0);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData("/foo/", "/bar/", "/baz/", "/foo//bar//baz/")]
 	[InlineAutoData("foo/", "/bar/", "/baz", "foo//bar//baz")]
 	[InlineAutoData("foo/", "bar", "/baz", "foo/bar/baz")]
@@ -127,7 +127,7 @@ public partial class TryJoinTests
 		destination.Slice(0, charsWritten).ToString().Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void TryJoin_3Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3)

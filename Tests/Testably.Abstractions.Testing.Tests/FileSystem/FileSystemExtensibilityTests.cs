@@ -9,13 +9,13 @@ public class FileSystemExtensibilityTests
 	public static TheoryData<IFileSystem> GetFileSystems
 		=> new()
 		{
-			new RealFileSystem(),
-			new MockFileSystem(),
+			(IFileSystem)new RealFileSystem(),
+			(IFileSystem)new MockFileSystem(),
 		};
 
 	#endregion
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileSystems))]
 	public void Directory_ShouldSetExtensionPoint(IFileSystem fileSystem)
 	{
@@ -26,7 +26,7 @@ public class FileSystemExtensibilityTests
 		result.Should().BeSameAs(fileSystem);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileSystems))]
 	public void DirectoryInfo_ShouldSetExtensionPoint(IFileSystem fileSystem)
 	{
@@ -37,7 +37,7 @@ public class FileSystemExtensibilityTests
 		result.Should().BeSameAs(fileSystem);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileSystems))]
 	public void DirectoryInfoFactory_ShouldSetExtensionPoint(IFileSystem fileSystem)
 	{
@@ -48,7 +48,7 @@ public class FileSystemExtensibilityTests
 		result.Should().BeSameAs(fileSystem);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileSystems))]
 	public void DriveInfo_ShouldSetExtensionPoint(IFileSystem fileSystem)
 	{
@@ -59,7 +59,7 @@ public class FileSystemExtensibilityTests
 		result.Should().BeSameAs(fileSystem);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileSystems))]
 	public void DriveInfoFactory_ShouldSetExtensionPoint(IFileSystem fileSystem)
 	{
@@ -70,7 +70,7 @@ public class FileSystemExtensibilityTests
 		result.Should().BeSameAs(fileSystem);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileSystems))]
 	public void File_ShouldSetExtensionPoint(IFileSystem fileSystem)
 	{
@@ -81,7 +81,7 @@ public class FileSystemExtensibilityTests
 		result.Should().BeSameAs(fileSystem);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileSystems))]
 	public void FileInfo_ShouldSetExtensionPoint(IFileSystem fileSystem)
 	{
@@ -92,7 +92,7 @@ public class FileSystemExtensibilityTests
 		result.Should().BeSameAs(fileSystem);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileSystems))]
 	public void FileInfoFactory_ShouldSetExtensionPoint(IFileSystem fileSystem)
 	{
@@ -103,7 +103,7 @@ public class FileSystemExtensibilityTests
 		result.Should().BeSameAs(fileSystem);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileSystems))]
 	public void FileStreamFactory_ShouldSetExtensionPoint(IFileSystem fileSystem)
 	{
@@ -114,7 +114,7 @@ public class FileSystemExtensibilityTests
 		result.Should().BeSameAs(fileSystem);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileSystems))]
 	public void FileSystemInfo_ShouldSetExtensionPoint(IFileSystem fileSystem)
 	{
@@ -125,7 +125,7 @@ public class FileSystemExtensibilityTests
 		result.Should().BeSameAs(fileSystem);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileSystems))]
 	public void FileSystemWatcher_ShouldSetExtensionPoint(IFileSystem fileSystem)
 	{
@@ -136,7 +136,7 @@ public class FileSystemExtensibilityTests
 		result.Should().BeSameAs(fileSystem);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileSystems))]
 	public void FileSystemWatcherFactory_ShouldSetExtensionPoint(IFileSystem fileSystem)
 	{
@@ -147,7 +147,7 @@ public class FileSystemExtensibilityTests
 		result.Should().BeSameAs(fileSystem);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileSystems))]
 	public void Path_ShouldSetExtensionPoint(IFileSystem fileSystem)
 	{

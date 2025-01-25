@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileStreamFactory;
 [FileSystemTests]
 public partial class Tests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_AppendAccessWithReadWriteMode_ShouldThrowArgumentException(
 		string path)
@@ -21,7 +21,7 @@ public partial class Tests
 			paramName: Test.IsNetFramework ? null : "access");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_ExistingFileWithCreateMode_ShouldIgnoreContent(
 		string path)
@@ -33,7 +33,7 @@ public partial class Tests
 		FileSystem.File.ReadAllText(path).Should().BeEmpty();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_ExistingFileWithCreateNewMode_ShouldThrowIOException(
 		string path)
@@ -49,7 +49,7 @@ public partial class Tests
 			hResult: Test.RunsOnWindows ? -2147024816 : 17);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_ExistingFileWithTruncateMode_ShouldIgnoreContent(
 		string path)
@@ -61,7 +61,7 @@ public partial class Tests
 		FileSystem.File.ReadAllText(path).Should().BeEmpty();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileMode.Append)]
 	[InlineAutoData(FileMode.Truncate)]
 	[InlineAutoData(FileMode.Create)]
@@ -84,7 +84,7 @@ public partial class Tests
 			.Contain(access.ToString());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileMode.Open)]
 	[InlineAutoData(FileMode.Truncate)]
 	public void New_MissingFileWithIncorrectMode_ShouldThrowFileNotFoundException(
@@ -100,7 +100,7 @@ public partial class Tests
 			hResult: -2147024894);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_MissingFileWithTruncateMode_ShouldThrowFileNotFoundException(
 		string path)
@@ -115,7 +115,7 @@ public partial class Tests
 			hResult: -2147024894);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAccess.Read)]
 	[InlineAutoData(FileAccess.ReadWrite)]
 	[InlineAutoData(FileAccess.Write)]
@@ -141,7 +141,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_SamePathAsExistingDirectory_ShouldThrowCorrectException(
 		string path)
@@ -166,7 +166,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(false)]
 	[InlineAutoData(true)]
 	public void New_WithUseAsyncSet_ShouldSetProperty(bool useAsync, string path)

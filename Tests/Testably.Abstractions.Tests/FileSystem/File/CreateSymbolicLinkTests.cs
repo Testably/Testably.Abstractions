@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class CreateSymbolicLinkTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateSymbolicLink_ShouldCreateSymbolicLink(
 		string path, string pathToTarget)
@@ -20,7 +20,7 @@ public partial class CreateSymbolicLinkTests
 			.Should().BeTrue();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateSymbolicLink_SourceFileAlreadyExists_ShouldThrowIOException(
 		string path, string pathToTarget)
@@ -37,7 +37,7 @@ public partial class CreateSymbolicLinkTests
 			hResult: Test.RunsOnWindows ? -2147024713 : 17);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateSymbolicLink_TargetFileMissing_ShouldNotThrowException(
 		string path, string pathToTarget)

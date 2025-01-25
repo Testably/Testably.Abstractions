@@ -11,7 +11,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 [FileSystemTests]
 public partial class GetFileSystemInfosTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		GetFileSystemEntries_MissingDirectory_ShouldThrowDirectoryNotFoundException(
@@ -27,7 +27,7 @@ public partial class GetFileSystemInfosTests
 		FileSystem.Should().NotHaveDirectory(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		GetFileSystemEntries_SearchOptionAllDirectories_FullPath_ShouldReturnAllFileSystemEntriesWithFullPath(
@@ -52,7 +52,7 @@ public partial class GetFileSystemInfosTests
 		result.Should().Contain(initialized[2].FullName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		GetFileSystemEntries_SearchOptionAllDirectories_ShouldReturnAllFileSystemEntries(
@@ -74,7 +74,7 @@ public partial class GetFileSystemInfosTests
 		result.Should().Contain(initialized[2].ToString());
 	}
 
-	[SkippableTheory]
+	[Theory]
 #if NETFRAMEWORK
 	[InlineAutoData(false, "")]
 #else
@@ -110,7 +110,7 @@ public partial class GetFileSystemInfosTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		GetFileSystemEntries_WithEnumerationOptions_ShouldConsiderSetOptions(
@@ -139,7 +139,7 @@ public partial class GetFileSystemInfosTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetFileSystemEntries_WithNewline_ShouldThrowArgumentException(
 		string path)
@@ -157,7 +157,7 @@ public partial class GetFileSystemInfosTests
 			messageContains: Test.IsNetFramework ? null : $"'{searchPattern}'");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		GetFileSystemEntries_WithoutSearchString_ShouldReturnAllFileSystemEntriesInDirectSubdirectories(
@@ -182,7 +182,7 @@ public partial class GetFileSystemInfosTests
 		result.Should().NotContain(initialized[3].ToString());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		GetFileSystemEntries_WithSearchPattern_ShouldReturnMatchingFileSystemEntries(
@@ -205,7 +205,7 @@ public partial class GetFileSystemInfosTests
 		result.Should().NotContain(initialized[3].ToString());
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void
 		GetFileSystemEntries_WithSearchPatternInSubdirectory_ShouldReturnMatchingFileSystemEntriesInSubdirectories()
 	{

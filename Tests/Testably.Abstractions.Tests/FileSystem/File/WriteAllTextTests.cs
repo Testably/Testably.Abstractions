@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class WriteAllTextTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllText_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string directory, string path)
@@ -22,7 +22,7 @@ public partial class WriteAllTextTests
 			messageContains: $"'{FileSystem.Path.GetFullPath(fullPath)}'");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllText_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string contents)
@@ -35,7 +35,7 @@ public partial class WriteAllTextTests
 		result.Should().Be(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllText_ShouldAdjustTimes(string path, string contents)
 	{
@@ -70,7 +70,7 @@ public partial class WriteAllTextTests
 			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllText_ShouldCreateFileWithByteOrderMark(
 		string path)
@@ -83,7 +83,7 @@ public partial class WriteAllTextTests
 			.Which.HasContent(expectedBytes);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllText_ShouldCreateFileWithText(string path, string contents)
 	{
@@ -93,7 +93,7 @@ public partial class WriteAllTextTests
 		result.Should().Be(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllText_SpecialCharacters_ShouldReturnSameText(string path)
 	{
@@ -119,7 +119,7 @@ public partial class WriteAllTextTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllText_WhenContentIsNull_ShouldNotThrowException(string path)
 	{
@@ -131,7 +131,7 @@ public partial class WriteAllTextTests
 		exception.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllText_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
 		string path)
@@ -149,7 +149,7 @@ public partial class WriteAllTextTests
 		FileSystem.Should().NotHaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllText_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 		string path, string contents)

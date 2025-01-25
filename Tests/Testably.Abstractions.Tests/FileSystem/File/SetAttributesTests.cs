@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class SetAttributesTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetAttributes_Directory_ShouldRemainFile(string path)
 	{
@@ -17,7 +17,7 @@ public partial class SetAttributesTests
 		FileSystem.Should().HaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAttributes.ReadOnly)]
 	[InlineAutoData(FileAttributes.Normal)]
 	public void SetAttributes_ShouldNotAdjustTimes(FileAttributes attributes, string path)

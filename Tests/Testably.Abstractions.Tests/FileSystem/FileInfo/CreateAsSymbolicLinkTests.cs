@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 [FileSystemTests]
 public partial class CreateAsSymbolicLinkTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateAsSymbolicLink_ShouldCreateSymbolicLink(
 		string path, string pathToTarget)
@@ -20,7 +20,7 @@ public partial class CreateAsSymbolicLinkTests
 			.Should().BeTrue();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateAsSymbolicLink_SourceFileAlreadyExists_ShouldThrowIOException(
 		string path, string pathToTarget)
@@ -37,7 +37,7 @@ public partial class CreateAsSymbolicLinkTests
 			hResult: Test.RunsOnWindows ? -2147024713 : 17);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateAsSymbolicLink_TargetFileMissing_ShouldNotThrowException(
 		string path, string pathToTarget)
@@ -50,7 +50,7 @@ public partial class CreateAsSymbolicLinkTests
 		exception.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateAsSymbolicLink_WithEmptyPath_ShouldThrowArgumentException(
 		string pathToTarget)
@@ -65,7 +65,7 @@ public partial class CreateAsSymbolicLinkTests
 		exception.Should().BeException<ArgumentException>(paramName: "path");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateAsSymbolicLink_WithEmptyTarget_ShouldThrowArgumentException(
 		string path)
@@ -80,7 +80,7 @@ public partial class CreateAsSymbolicLinkTests
 		exception.Should().BeException<ArgumentException>(paramName: "pathToTarget");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateAsSymbolicLink_WithIllegalCharactersInPath_ShouldThrowIOException(
 		string pathToTarget)
@@ -97,7 +97,7 @@ public partial class CreateAsSymbolicLinkTests
 		exception.Should().BeException<IOException>(hResult: -2147024773);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateAsSymbolicLink_WithIllegalCharactersInTarget_ShouldThrowIOException(
 		string path)
@@ -114,7 +114,7 @@ public partial class CreateAsSymbolicLinkTests
 		exception.Should().BeException<IOException>(hResult: -2147024713);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		CreateAsSymbolicLink_WithIllegalPath_ShouldThrowArgumentException_OnWindows(
@@ -137,7 +137,7 @@ public partial class CreateAsSymbolicLinkTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateAsSymbolicLink_WithIllegalTarget_ShouldNotThrowException(
 		string path)
@@ -150,7 +150,7 @@ public partial class CreateAsSymbolicLinkTests
 		exception.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateAsSymbolicLink_WithNullPath_ShouldThrowArgumentNullException(
 		string pathToTarget)
@@ -165,7 +165,7 @@ public partial class CreateAsSymbolicLinkTests
 		exception.Should().BeException<ArgumentNullException>(paramName: "fileName");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateAsSymbolicLink_WithNullTarget_ShouldThrowArgumentNullException(
 		string path)

@@ -81,7 +81,7 @@ public class PathHelperTests
 		result.Should().BeTrue();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void IsUncPath_MixedDirectorySeparatorChars_ShouldReturnFalse(string path)
 	{
@@ -121,7 +121,7 @@ public class PathHelperTests
 	}
 
 #if CAN_SIMULATE_OTHER_OS
-	[SkippableTheory]
+	[Theory]
 	[InlineData('|')]
 	[InlineData((char)1)]
 	[InlineData((char)31)]

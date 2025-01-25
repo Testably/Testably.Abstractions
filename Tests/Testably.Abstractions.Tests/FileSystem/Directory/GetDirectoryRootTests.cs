@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 [FileSystemTests]
 public partial class GetDirectoryRootTests
 {
-	[SkippableFact]
+	[Fact]
 	public void GetDirectoryRoot_Empty_ShouldThrowArgumentException()
 	{
 		Exception? exception = Record.Exception(() =>
@@ -14,7 +14,7 @@ public partial class GetDirectoryRootTests
 		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetDirectoryRoot_ShouldReturnDefaultRoot()
 	{
 		string expectedRoot = FileTestHelper.RootDrive(Test);
@@ -24,7 +24,7 @@ public partial class GetDirectoryRootTests
 		result.Should().Be(expectedRoot);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData('A')]
 	[InlineData('C')]
 	[InlineData('X')]

@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class OpenWriteTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void OpenWrite_MissingFile_ShouldCreateFile(string path)
 	{
@@ -14,7 +14,7 @@ public partial class OpenWriteTests
 		FileSystem.Should().HaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void OpenWrite_ShouldOverwriteExistingFile(string path, string previousContent)
 	{
@@ -32,7 +32,7 @@ public partial class OpenWriteTests
 		result.Length.Should().Be(previousContent.Length);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void OpenWrite_ShouldUseWriteAccessAndNoneShare(string path)
 	{
@@ -48,7 +48,7 @@ public partial class OpenWriteTests
 		stream.CanTimeout.Should().BeFalse();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void OpenWrite_StreamShouldNotThrowExceptionWhenReading(string path)
 	{

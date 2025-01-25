@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 [FileSystemTests]
 public partial class MoveToTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void MoveTo_ShouldMoveDirectoryWithContent(string source, string destination)
 	{
@@ -35,7 +35,7 @@ public partial class MoveToTests
 			.Should().ContainSingle();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void MoveTo_ShouldUpdatePropertiesOfDirectoryInfo(
 		string source, string destination)
@@ -54,7 +54,7 @@ public partial class MoveToTests
 			.Should().Be(FileSystem.Path.GetFullPath(destination));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void MoveTo_WithLockedFile_ShouldMoveDirectory_NotOnWindows(
 		string source, string destination)
@@ -96,7 +96,7 @@ public partial class MoveToTests
 			.Should().ContainSingle();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void MoveTo_WithLockedFile_ShouldThrowIOException_AndNotMoveDirectory_OnWindows(
 		string source, string destination)
@@ -147,7 +147,7 @@ public partial class MoveToTests
 			.Should().ContainSingle();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void MoveTo_WithReadOnlyFile_ShouldMoveDirectoryWithContent(
 		string source, string destination)

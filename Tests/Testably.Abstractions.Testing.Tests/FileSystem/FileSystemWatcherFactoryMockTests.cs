@@ -29,7 +29,7 @@ public sealed class FileSystemWatcherFactoryMockTests : IDisposable
 
 	#endregion
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Wrap_ShouldUsePropertiesFromFileSystemWatcher(
 		string path, bool includeSubdirectories, NotifyFilters notifyFilter,
@@ -56,7 +56,7 @@ public sealed class FileSystemWatcherFactoryMockTests : IDisposable
 	}
 
 #if FEATURE_FILESYSTEMWATCHER_ADVANCED
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Wrap_WithFilters_ShouldUsePropertiesFromFileSystemWatcher(
 		string[] filters)

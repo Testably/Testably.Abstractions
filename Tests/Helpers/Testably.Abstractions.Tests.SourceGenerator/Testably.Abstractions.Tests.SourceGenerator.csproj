@@ -4,6 +4,7 @@
 		<TargetFrameworks>netstandard2.0</TargetFrameworks>
 		<IncludeBuildOutput>false</IncludeBuildOutput>
 		<LangVersion>latest</LangVersion>
+		<OutputType>Library</OutputType>
 		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
 	</PropertyGroup>
 
@@ -21,11 +22,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Remove="AutoFixture.Xunit2" />
+		<PackageReference Remove="AutoFixture.Xunit3" />
 		<PackageReference Remove="FluentAssertions" />
 		<PackageReference Remove="Microsoft.NET.Test.Sdk" />
-		<PackageReference Remove="Xunit.SkippableFact" />
-		<PackageReference Remove="xunit" />
+		<PackageReference Remove="xunit.v3" />
 		<PackageReference Remove="xunit.runner.visualstudio" />
 		<PackageReference Remove="coverlet.collector" />
 	</ItemGroup>

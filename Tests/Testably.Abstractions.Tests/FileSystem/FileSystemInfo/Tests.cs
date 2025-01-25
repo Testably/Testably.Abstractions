@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemInfo;
 [FileSystemTests]
 public partial class Tests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Extensibility_ShouldWrapFileSystemInfoOnRealFileSystem(
 		string path)
@@ -32,7 +32,7 @@ public partial class Tests
 	}
 
 #if FEATURE_FILESYSTEM_LINK
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void LinkTarget_ShouldBeSetByCreateAsSymbolicLink(
 		string path, string pathToTarget)
@@ -47,7 +47,7 @@ public partial class Tests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetAttributes_Hidden_OnFileStartingWithDot_ShouldBeSet(string path)
 	{
@@ -64,7 +64,7 @@ public partial class Tests
 		result2.Should().Be(FileAttributes.Hidden);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetAttributes_Hidden_OnNormalFile_ShouldBeIgnored(string path)
 	{
@@ -80,7 +80,7 @@ public partial class Tests
 		result2.Should().Be(FileAttributes.Normal);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAttributes.Compressed)]
 	[InlineAutoData(FileAttributes.Device)]
 	[InlineAutoData(FileAttributes.Encrypted)]
@@ -98,7 +98,7 @@ public partial class Tests
 		result.Should().Be(FileAttributes.Normal);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAttributes.Hidden)]
 	public void SetAttributes_ShouldBeIgnoredOnLinux(FileAttributes attributes,
 		string path)
@@ -118,7 +118,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAttributes.ReadOnly)]
 	public void SetAttributes_ShouldBeSupportedOnAllPlatforms(
 		FileAttributes attributes,
@@ -132,7 +132,7 @@ public partial class Tests
 		result.Should().Be(attributes);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAttributes.Archive)]
 	[InlineAutoData(FileAttributes.NoScrubData)]
 	[InlineAutoData(FileAttributes.NotContentIndexed)]

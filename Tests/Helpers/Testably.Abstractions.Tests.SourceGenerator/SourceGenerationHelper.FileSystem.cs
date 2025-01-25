@@ -15,7 +15,6 @@ internal static partial class SourceGenerationHelper
 		                using Testably.Abstractions.Testing.Initializer;
 		                using Testably.Abstractions.TestHelpers;
 		                using Testably.Abstractions.TestHelpers.Settings;
-		                using Xunit.Abstractions;
 
 		                namespace {{model.Namespace}}
 		                {
@@ -116,12 +115,12 @@ internal static partial class SourceGenerationHelper
 		                #if DEBUG
 		                				if (fixture.RealFileSystemTests != TestSettingStatus.AlwaysEnabled)
 		                				{
-		                					throw new Xunit.SkipException($"Tests against the real file system are {fixture.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
+		                					aweXpect.Skip.Test($"Tests against the real file system are {fixture.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
 		                				}
 		                #else
 		                				if (fixture.RealFileSystemTests == TestSettingStatus.AlwaysDisabled)
 		                				{
-		                					throw new Xunit.SkipException($"Tests against the real file system are {fixture.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
+		                					aweXpect.Skip.Test($"Tests against the real file system are {fixture.RealFileSystemTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.RealFileSystemTests.");
 		                				}
 		                #endif
 		                				_fixture = fixture;
@@ -136,24 +135,24 @@ internal static partial class SourceGenerationHelper
 		                #if DEBUG
 		                			/// <inheritdoc cref="{{model.Name}}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
 		                			public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
-		                				=> Xunit.Skip.If(condition && _fixture.BrittleTests != TestSettingStatus.AlwaysEnabled,
+		                				=> aweXpect.Skip.When(condition && _fixture.BrittleTests != TestSettingStatus.AlwaysEnabled,
 		                					$"Brittle tests are {_fixture.BrittleTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests.");
 		                #else
 		                			/// <inheritdoc cref="{{model.Name}}.SkipIfBrittleTestsShouldBeSkipped(bool)" />
 		                			public override void SkipIfBrittleTestsShouldBeSkipped(bool condition = true)
-		                				=> Xunit.Skip.If(condition && _fixture.BrittleTests == TestSettingStatus.AlwaysDisabled,
+		                				=> aweXpect.Skip.When(condition && _fixture.BrittleTests == TestSettingStatus.AlwaysDisabled,
 		                					$"Brittle tests are {_fixture.BrittleTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.BrittleTests.");
 		                #endif
 
 		                #if DEBUG
 		                			/// <inheritdoc cref="{{model.Name}}.LongRunningTestsShouldBeSkipped()" />
 		                			public override void SkipIfLongRunningTestsShouldBeSkipped()
-		                				=> Xunit.Skip.If(_fixture.LongRunningTests != TestSettingStatus.AlwaysEnabled,
+		                				=> aweXpect.Skip.When(_fixture.LongRunningTests != TestSettingStatus.AlwaysEnabled,
 		                					$"Long-running tests are {_fixture.LongRunningTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.LongRunningTests.");
 		                #else
 		                			/// <inheritdoc cref="{{model.Name}}.LongRunningTestsShouldBeSkipped()" />
 		                			public override void SkipIfLongRunningTestsShouldBeSkipped()
-		                				=> Xunit.Skip.If(_fixture.LongRunningTests == TestSettingStatus.AlwaysDisabled,
+		                				=> aweXpect.Skip.When(_fixture.LongRunningTests == TestSettingStatus.AlwaysDisabled,
 		                					$"Long-running tests are {_fixture.LongRunningTests}. You can enable them by executing the corresponding tests in Testably.Abstractions.TestSettings.LongRunningTests.");
 		                #endif
 		                		}

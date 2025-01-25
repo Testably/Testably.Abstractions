@@ -11,7 +11,7 @@ namespace Testably.Abstractions.Testing.Tests;
 
 public class MockFileSystemTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void FileSystemMock_File_Decrypt(string path, string contents)
 	{
@@ -28,7 +28,7 @@ public class MockFileSystemTests
 		sut.File.ReadAllText(path).Should().Be(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void FileSystemMock_File_Encrypt(string path, string contents)
 	{
@@ -42,7 +42,7 @@ public class MockFileSystemTests
 		sut.File.ReadAllText(path).Should().NotBe(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void FileSystemMock_FileInfo_Decrypt(string path, string contents)
 	{
@@ -59,7 +59,7 @@ public class MockFileSystemTests
 		sut.File.ReadAllText(path).Should().Be(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void FileSystemMock_FileInfo_Encrypt(string path, string contents)
 	{
@@ -73,7 +73,7 @@ public class MockFileSystemTests
 		sut.File.ReadAllText(path).Should().NotBe(contents);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void FileSystemMock_ShouldBeInitializedWithADefaultDrive()
 	{
 		MockFileSystem sut = new();
@@ -92,7 +92,7 @@ public class MockFileSystemTests
 		drive.VolumeLabel.Should().NotBeNullOrEmpty();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("A:\\")]
 	[InlineData("G:\\")]
 	[InlineData("z:\\")]
@@ -108,7 +108,7 @@ public class MockFileSystemTests
 		drives.Should().Contain(d => d.Name == driveName);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void ToString_ShouldContainStorageInformation()
 	{
 		MockFileSystem sut = new();
@@ -119,7 +119,7 @@ public class MockFileSystemTests
 		result.Should().Contain("directories: 0, files: 1");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WithAccessControl_Denied_CreateDirectoryShouldThrowIOException(
 		string path)
@@ -136,7 +136,7 @@ public class MockFileSystemTests
 		exception.Should().BeOfType<IOException>();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WithAccessControl_ShouldConsiderPath(
 		string allowedPath, string deniedPath)
@@ -155,7 +155,7 @@ public class MockFileSystemTests
 		exception.Should().BeOfType<IOException>();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("D:\\")]
 	public void WithDrive_Duplicate_ShouldUpdateExistingDrive(string driveName)
 	{
@@ -173,7 +173,7 @@ public class MockFileSystemTests
 		drive.TotalSize.Should().Be(200);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void WithDrive_ExistingName_ShouldUpdateDrive()
 	{
 		MockFileSystem sut = new();
@@ -186,7 +186,7 @@ public class MockFileSystemTests
 		drives.Should().ContainSingle(d => d.Name == driveName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("D:\\")]
 	public void WithDrive_NewName_ShouldCreateNewDrives(string driveName)
 	{
@@ -201,7 +201,7 @@ public class MockFileSystemTests
 		drives.Should().ContainSingle(d => d.Name == driveName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("D")]
 	[InlineData("D:")]
 	public void WithDrive_ShouldHavePathSeparatorSuffix(string driveName)
@@ -218,7 +218,7 @@ public class MockFileSystemTests
 		drives.Should().ContainSingle(d => d.Name == expectedDriveName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WithDrive_WithCallback_ShouldUpdateDrive(long totalSize)
 	{
@@ -233,7 +233,7 @@ public class MockFileSystemTests
 	}
 
 #if NET6_0_OR_GREATER
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		WithSafeFileHandleStrategy_DefaultStrategy_ShouldUseMappedSafeFileHandleMock(
@@ -254,7 +254,7 @@ public class MockFileSystemTests
 #endif
 
 #if NET6_0_OR_GREATER
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WithSafeFileHandleStrategy_NullStrategy_ShouldThrowException(
 		string path, string contents)
@@ -272,7 +272,7 @@ public class MockFileSystemTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WithUncDrive_ShouldCreateUncDrive(
 		string path, string contents)
@@ -286,7 +286,7 @@ public class MockFileSystemTests
 		result.Should().Be(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WithUncDrive_ShouldNotBeIncludedInGetDrives(
 		string server)
@@ -303,7 +303,7 @@ public class MockFileSystemTests
 		sut.DriveInfo.GetDrives().Length.Should().Be(expectedDrives);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WithUncDrive_WriteBytes_ShouldReduceAvailableFreeSpace(
 		string server, string path, byte[] bytes)
@@ -320,7 +320,7 @@ public class MockFileSystemTests
 		drive.AvailableFreeSpace.Should().Be(previousFreeSpace - bytes.Length);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllText_OnUncPath_ShouldThrowDirectoryNotFoundException(
 		string path, string contents)

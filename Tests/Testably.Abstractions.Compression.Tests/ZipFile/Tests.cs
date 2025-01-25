@@ -3,7 +3,7 @@
 [FileSystemTests]
 public partial class Tests
 {
-	[SkippableFact]
+	[Fact]
 	public async Task FileSystemExtension_ShouldBeSet()
 	{
 		IZipFile result = FileSystem.ZipFile();

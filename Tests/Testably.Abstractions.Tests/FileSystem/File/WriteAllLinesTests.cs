@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class WriteAllLinesTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllLines_Enumerable_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string[] contents)
@@ -20,7 +20,7 @@ public partial class WriteAllLinesTests
 		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllLines_Enumerable_ShouldCreateFileWithText(
 		string path, string[] contents)
@@ -31,7 +31,7 @@ public partial class WriteAllLinesTests
 		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllLines_Enumerable_WithEncoding_ShouldCreateFileWithText(
 		Encoding encoding, string path, string[] contents)
@@ -42,7 +42,7 @@ public partial class WriteAllLinesTests
 		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllLines_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string[] contents)
@@ -55,7 +55,7 @@ public partial class WriteAllLinesTests
 		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllLines_ShouldCreateFileWithText(string path, string[] contents)
 	{
@@ -65,7 +65,7 @@ public partial class WriteAllLinesTests
 		result.Should().BeEquivalentTo(contents, o => o.WithStrictOrdering());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		WriteAllLines_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
@@ -84,7 +84,7 @@ public partial class WriteAllLinesTests
 		FileSystem.Should().NotHaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllLines_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
 		string path, string[] contents)
@@ -102,7 +102,7 @@ public partial class WriteAllLinesTests
 		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void WriteAllLines_WithEncoding_ShouldCreateFileWithText(
 		Encoding encoding, string path, string[] contents)

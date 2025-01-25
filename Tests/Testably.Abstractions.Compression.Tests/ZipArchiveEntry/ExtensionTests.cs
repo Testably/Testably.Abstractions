@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Compression.Tests.ZipArchiveEntry;
 [FileSystemTests]
 public partial class ExtensionTests
 {
-	[SkippableFact]
+	[Fact]
 	public async Task
 		ExtractToFile_AccessLengthOnWritableStream_ShouldThrowInvalidOperationException()
 	{
@@ -29,7 +29,7 @@ public partial class ExtensionTests
 		await That(Act).Throws<InvalidOperationException>();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ExtractToFile_DestinationNull_ShouldThrowArgumentNullException(
 		CompressionLevel compressionLevel)
@@ -53,7 +53,7 @@ public partial class ExtensionTests
 			.WithParamName("destinationFileName");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		ExtractToFile_DestinationNull_WithOverwrite_ShouldThrowArgumentNullException(
@@ -77,7 +77,7 @@ public partial class ExtensionTests
 		await That(Act).Throws<ArgumentNullException>();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task ExtractToFile_IncorrectEntryType_ShouldThrowIOException()
 	{
 		FileSystem.Initialize()
@@ -101,7 +101,7 @@ public partial class ExtensionTests
 		await That(Act).Throws<IOException>();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("2000-01-01T12:14:15")]
 	[InlineData("1980-01-01T00:00:00")]
 	[InlineData("2107-12-31T23:59:59")]
@@ -131,7 +131,7 @@ public partial class ExtensionTests
 			.WithLastWriteTime(lastWriteTime);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task ExtractToFile_WithoutOverwrite_ShouldThrowIOException()
 	{
 		FileSystem.Initialize()
@@ -157,7 +157,7 @@ public partial class ExtensionTests
 			.WhichContent(f => f.IsNot("FooFooFoo"));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task ExtractToFile_WithOverwrite_ShouldOverwriteExistingFile()
 	{
 		FileSystem.Initialize()

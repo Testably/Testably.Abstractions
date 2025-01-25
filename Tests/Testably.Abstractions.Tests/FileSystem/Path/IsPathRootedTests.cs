@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class IsPathRootedTests
 {
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(TestData))]
 	public void IsPathRooted_ShouldReturnDefaultValue(string path, TestOS isRootedOn)
 	{
@@ -13,7 +13,7 @@ public partial class IsPathRootedTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(TestData))]
 	public void IsPathRooted_Span_ShouldReturnDefaultValue(string path, TestOS isRootedOn)
 	{
