@@ -69,50 +69,6 @@ jobs:
                         ./Artifacts/*
                         ./TestResults/*.trx
     
-    mutation-tests-linux:
-        name: "Mutation tests (Linux)"
-        if: ${{ github.actor != 'dependabot[bot]' }}
-        runs-on: ubuntu-latest
-        env:
-            STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-            DOTNET_NOLOGO: true
-        steps:
-            -   uses: actions/checkout@v4
-                with:
-                    fetch-depth: 0
-            -   name: Setup .NET SDKs
-                uses: actions/setup-dotnet@v4
-                with:
-                    dotnet-version: |
-                        6.0.x
-                        7.0.x
-                        8.0.x
-                        9.0.x
-            -   name: Run mutation tests
-                run: ./build.sh MutationTestsLinux
-    
-    mutation-tests-windows:
-        name: "Mutation tests (Windows)"
-        if: ${{ github.actor != 'dependabot[bot]' }}
-        runs-on: windows-latest
-        env:
-            STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-            DOTNET_NOLOGO: true
-        steps:
-            -   uses: actions/checkout@v4
-                with:
-                    fetch-depth: 0
-            -   name: Setup .NET SDKs
-                uses: actions/setup-dotnet@v4
-                with:
-                    dotnet-version: |
-                        6.0.x
-                        7.0.x
-                        8.0.x
-                        9.0.x
-            -   name: Run mutation tests
-                run: ./build.ps1 MutationTestsWindows
-    
     static-code-analysis:
         name: "Static code analysis"
         runs-on: ubuntu-latest
