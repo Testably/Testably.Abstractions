@@ -15,13 +15,13 @@
 
 	<ItemGroup Condition="'$(UseFileReferenceToTestablyLibraries)' == 'True'">
 		<Reference Include="Testably.Abstractions">
-			<HintPath>..\..\..\Build\Binaries\net7.0\Testably.Abstractions.dll</HintPath>
+			<HintPath>..\..\..\Build\Binaries\net8.0\Testably.Abstractions.dll</HintPath>
 		</Reference>
 		<Reference Include="Testably.Abstractions.Interface">
-			<HintPath>..\..\..\Build\Binaries\net7.0\Testably.Abstractions.Interface.dll</HintPath>
+			<HintPath>..\..\..\Build\Binaries\net8.0\Testably.Abstractions.Interface.dll</HintPath>
 		</Reference>
 		<Reference Include="Testably.Abstractions.Testing">
-			<HintPath>..\..\..\Build\Binaries\net7.0\Testably.Abstractions.Testing.dll</HintPath>
+			<HintPath>..\..\..\Build\Binaries\net8.0\Testably.Abstractions.Testing.dll</HintPath>
 		</Reference>
 		<PackageReference Include="TestableIO.System.IO.Abstractions" />
 	</ItemGroup>

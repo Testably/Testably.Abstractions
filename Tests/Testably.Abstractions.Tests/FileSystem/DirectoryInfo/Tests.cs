@@ -105,7 +105,7 @@ public partial class Tests
 			sut.CreationTime = creationTime;
 		});
 
-		if (Test.RunsOnWindows || (Test.IsNet7OrGreater && !Test.RunsOnMac))
+		if (Test.RunsOnWindows || (Test.IsNet8OrGreater && !Test.RunsOnMac))
 		{
 			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 		}
@@ -130,7 +130,7 @@ public partial class Tests
 			sut.CreationTimeUtc = creationTimeUtc;
 		});
 
-		if (Test.RunsOnWindows || (Test.IsNet7OrGreater && !Test.RunsOnMac))
+		if (Test.RunsOnWindows || (Test.IsNet8OrGreater && !Test.RunsOnMac))
 		{
 			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 		}
@@ -155,7 +155,7 @@ public partial class Tests
 			sut.LastAccessTime = lastAccessTime;
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 		}
@@ -180,7 +180,7 @@ public partial class Tests
 			sut.LastAccessTimeUtc = lastAccessTimeUtc;
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 		}
@@ -205,7 +205,7 @@ public partial class Tests
 			sut.LastWriteTime = lastWriteTime;
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 		}
@@ -230,7 +230,7 @@ public partial class Tests
 			sut.LastWriteTimeUtc = lastWriteTimeUtc;
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 		}

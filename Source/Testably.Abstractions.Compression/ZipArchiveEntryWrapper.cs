@@ -24,7 +24,7 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 	/// <inheritdoc cref="IZipArchiveEntry.Archive" />
 	public IZipArchive Archive { get; }
 
-#if FEATURE_ZIPFILE_NET7
+#if FEATURE_FILESYSTEM_COMMENT_ENCRYPTED
 	/// <inheritdoc cref="IZipArchiveEntry.Comment" />
 	public string Comment
 	{
@@ -59,7 +59,7 @@ internal sealed class ZipArchiveEntryWrapper : IZipArchiveEntry
 	public string FullName
 		=> _instance.FullName;
 
-#if FEATURE_ZIPFILE_NET7
+#if FEATURE_FILESYSTEM_COMMENT_ENCRYPTED
 	/// <inheritdoc cref="IZipArchiveEntry.IsEncrypted" />
 	public bool IsEncrypted
 		=> _instance.IsEncrypted;

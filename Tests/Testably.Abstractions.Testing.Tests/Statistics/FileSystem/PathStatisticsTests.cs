@@ -110,7 +110,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 	[Fact]
 	public void Method_Exists_String_ShouldRegisterCall()
 	{

@@ -163,7 +163,7 @@ public partial class Tests
 			FileSystem.Directory.SetCreationTime(path, creationTime);
 		});
 
-		if (Test.RunsOnWindows || (Test.IsNet7OrGreater && !Test.RunsOnMac))
+		if (Test.RunsOnWindows || (Test.IsNet8OrGreater && !Test.RunsOnMac))
 		{
 			exception.Should().BeException<FileNotFoundException>(
 				$"'{FileSystem.Path.GetFullPath(path)}'",
@@ -226,7 +226,7 @@ public partial class Tests
 			FileSystem.Directory.SetCreationTimeUtc(path, creationTime);
 		});
 
-		if (Test.RunsOnWindows || (Test.IsNet7OrGreater && !Test.RunsOnMac))
+		if (Test.RunsOnWindows || (Test.IsNet8OrGreater && !Test.RunsOnMac))
 		{
 			exception.Should().BeException<FileNotFoundException>(
 				$"'{FileSystem.Path.GetFullPath(path)}'",
@@ -289,7 +289,7 @@ public partial class Tests
 			FileSystem.Directory.SetLastAccessTime(path, lastAccessTime);
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			exception.Should().BeException<FileNotFoundException>(
 				$"'{FileSystem.Path.GetFullPath(path)}'",
@@ -346,7 +346,7 @@ public partial class Tests
 			FileSystem.Directory.SetLastAccessTimeUtc(path, lastAccessTime);
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			exception.Should().BeException<FileNotFoundException>(
 				$"'{FileSystem.Path.GetFullPath(path)}'",
@@ -403,7 +403,7 @@ public partial class Tests
 			FileSystem.Directory.SetLastWriteTime(path, lastWriteTime);
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			exception.Should().BeException<FileNotFoundException>(
 				$"'{FileSystem.Path.GetFullPath(path)}'",
@@ -460,7 +460,7 @@ public partial class Tests
 			FileSystem.Directory.SetLastWriteTimeUtc(path, lastWriteTime);
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			exception.Should().BeException<FileNotFoundException>(
 				$"'{FileSystem.Path.GetFullPath(path)}'",

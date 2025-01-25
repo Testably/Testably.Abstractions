@@ -1,9 +1,9 @@
 <Project>
 
 	<PropertyGroup>
-		<IS_NET21_OR_HIGHER Condition="'$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net9.0' OR '$(TargetFramework)' == 'netstandard2.1'">1</IS_NET21_OR_HIGHER>
-		<IS_NET6_OR_HIGHER Condition="'$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net9.0'">1</IS_NET6_OR_HIGHER>
-		<IS_NET8_OR_HIGHER Condition="'$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net9.0'">1</IS_NET8_OR_HIGHER>
+		<IS_NET21_OR_HIGHER Condition="'$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'netstandard2.1'">1</IS_NET21_OR_HIGHER>
+		<IS_NET6_OR_HIGHER Condition="'$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net8.0'">1</IS_NET6_OR_HIGHER>
+		<IS_NET8_OR_HIGHER Condition="'$(TargetFramework)' == 'net8.0'">1</IS_NET8_OR_HIGHER>
 
 		<DefineConstants Condition="'$(TargetFramework)' == 'net48' OR '$(TargetFramework)' == 'netstandard2.0'">$(DefineConstants);NETFRAMEWORK</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET6_OR_HIGHER)' == '1'">$(DefineConstants);CAN_SIMULATE_OTHER_OS</DefineConstants>
@@ -24,9 +24,8 @@
 		<DefineConstants Condition="'$(IS_NET6_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_RANDOM_ADVANCED</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET6_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_FILESYSTEMWATCHER_ADVANCED</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET6_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_EXCEPTION_HRESULT</DefineConstants>
-		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_ZIPFILE_NET7</DefineConstants>
-		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_FILESYSTEM_NET7</DefineConstants>
-		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_FILESYSTEM_SAFEFILEHANDLE</DefineConstants>
+		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_FILESYSTEM_COMMENT_ENCRYPTED</DefineConstants>
+		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_FILESYSTEM_NET_7_OR_GREATER</DefineConstants>		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_FILESYSTEM_SAFEFILEHANDLE</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_FILESYSTEM_UNIXFILEMODE</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_GUID_FORMATPROVIDER</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_RANDOM_ITEMS</DefineConstants>

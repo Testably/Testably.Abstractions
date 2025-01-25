@@ -7,7 +7,7 @@ namespace Testably.Abstractions;
 /// <inheritdoc cref="ZipArchive" />
 public interface IZipArchive : IFileSystemEntity, IDisposable
 {
-#if FEATURE_ZIPFILE_NET7
+#if FEATURE_FILESYSTEM_COMMENT_ENCRYPTED
 	/// <inheritdoc cref="ZipArchiveEntry.Comment" />
 	string Comment { get; set; }
 #endif

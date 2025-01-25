@@ -177,7 +177,7 @@ internal sealed class NullContainer : IStorageContainer
 		/// <inheritdoc cref="IStorageContainer.ITimeContainer.Set(DateTime, DateTimeKind)" />
 		public virtual void Set(DateTime time, DateTimeKind kind)
 		{
-#if !NET7_0_OR_GREATER
+#if !NET8_0_OR_GREATER
 			if (!FileSystem.Execute.IsWindows)
 			{
 				throw ExceptionFactory.DirectoryNotFound(string.Empty);
@@ -199,7 +199,7 @@ internal sealed class NullContainer : IStorageContainer
 		/// <inheritdoc cref="NullTime.Set(DateTime, DateTimeKind)" />
 		public override void Set(DateTime time, DateTimeKind kind)
 		{
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
 			if (FileSystem.Execute.IsMac)
 #else
 			if (!FileSystem.Execute.IsWindows)

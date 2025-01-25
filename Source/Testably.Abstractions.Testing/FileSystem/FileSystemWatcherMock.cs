@@ -316,7 +316,7 @@ internal sealed class FileSystemWatcherMock : Component, IFileSystemWatcher
 		return WaitForChangedInternal(changeType, TimeSpan.FromMilliseconds(timeout));
 	}
 
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 	/// <inheritdoc cref="IFileSystemWatcher.WaitForChanged(WatcherChangeTypes, TimeSpan)" />
 	public IWaitForChangedResult WaitForChanged(
 		WatcherChangeTypes changeType, TimeSpan timeout)

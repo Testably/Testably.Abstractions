@@ -339,13 +339,13 @@ public partial class ExceptionMissingFileTests
 			(file, path)
 				=> file.ReadLines(path, Encoding.UTF8),
 			null);
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 		yield return (MissingFileTestCases.All, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.ReadLinesAsync(path, CancellationToken.None),
 			null);
 #endif
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 		yield return (MissingFileTestCases.All, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.ReadLinesAsync(path, Encoding.UTF8, CancellationToken.None),

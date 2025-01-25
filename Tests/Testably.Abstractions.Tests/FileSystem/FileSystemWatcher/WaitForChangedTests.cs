@@ -111,7 +111,7 @@ public partial class WaitForChangedTests
 					=> fileSystemWatcher.WaitForChanged(WatcherChangeTypes.Changed, 100)
 			},
 		};
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 		theoryData.Add(
 			"bar.txt",
 			fileSystemWatcher

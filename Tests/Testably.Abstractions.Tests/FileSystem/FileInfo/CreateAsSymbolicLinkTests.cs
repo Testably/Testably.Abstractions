@@ -162,12 +162,7 @@ public partial class CreateAsSymbolicLinkTests
 			FileSystem.FileInfo.New(null!).CreateAsSymbolicLink(pathToTarget);
 		});
 
-#if NET7_0
-		// https://github.com/dotnet/runtime/issues/78224
-		exception.Should().BeException<ArgumentNullException>();
-#else
 		exception.Should().BeException<ArgumentNullException>(paramName: "fileName");
-#endif
 	}
 
 	[Theory]

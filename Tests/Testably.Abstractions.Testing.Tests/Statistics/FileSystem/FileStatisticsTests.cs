@@ -917,7 +917,7 @@ public sealed class FileStatisticsTests
 			path);
 	}
 
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 	[Fact]
 	public void Method_ReadLinesAsync_String_CancellationToken_ShouldRegisterCall()
 	{
@@ -934,7 +934,7 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 	[Fact]
 	public void Method_ReadLinesAsync_String_Encoding_CancellationToken_ShouldRegisterCall()
 	{
