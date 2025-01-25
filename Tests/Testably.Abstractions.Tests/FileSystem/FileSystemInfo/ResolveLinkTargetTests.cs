@@ -18,7 +18,7 @@ public partial class ResolveLinkTargetTests
 
 	#endregion
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ResolveLinkTarget_FileWithDifferentCase_ShouldReturnPathToMissingFile(
 		string path, string pathToTarget, string contents)
@@ -44,7 +44,7 @@ public partial class ResolveLinkTargetTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ResolveLinkTarget_FinalTarget_ShouldFollowSymbolicLinkToFinalTarget(
 		string path, string pathToFinalTarget)
@@ -68,7 +68,7 @@ public partial class ResolveLinkTargetTests
 		target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToFinalTarget));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ResolveLinkTarget_FinalTargetWithTooManyLevels_ShouldThrowIOException(
 		string path, string pathToFinalTarget)
@@ -96,7 +96,7 @@ public partial class ResolveLinkTargetTests
 			messageContains: $"'{fileInfo.FullName}'");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ResolveLinkTarget_MissingFileInLinkChain_ShouldReturnPathToMissingFile(
 		string path, string pathToFinalTarget, string pathToMissingFile)
@@ -113,7 +113,7 @@ public partial class ResolveLinkTargetTests
 		target!.FullName.Should().Be(FileSystem.Path.GetFullPath(pathToMissingFile));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ResolveLinkTarget_NormalDirectory_ShouldReturnNull(
 		string path)
@@ -126,7 +126,7 @@ public partial class ResolveLinkTargetTests
 		target.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ResolveLinkTarget_NormalFile_ShouldReturnNull(
 		string path)
@@ -139,7 +139,7 @@ public partial class ResolveLinkTargetTests
 		target.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ResolveLinkTarget_ShouldFollowSymbolicLink(
 		string path, string pathToTarget)
@@ -155,7 +155,7 @@ public partial class ResolveLinkTargetTests
 		target.Should().Exist();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ResolveLinkTarget_TargetDeletedAfterLinkCreation_ShouldReturnNull(
 		string path, string pathToTarget)

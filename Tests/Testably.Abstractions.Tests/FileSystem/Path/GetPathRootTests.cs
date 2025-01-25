@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class GetPathRootTests
 {
-	[SkippableTheory]
+	[Theory]
 	[InlineData(@"\\?\foo", @"\\?\foo", TestOS.Windows)]
 	[InlineData(@"\\.\BAR", @"\\.\BAR", TestOS.Windows)]
 	[InlineData(@"\\.\.", @"\\.\.", TestOS.Windows)]
@@ -35,7 +35,7 @@ public partial class GetPathRootTests
 		result.Should().Be(expected);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetPathRoot_Null_ShouldReturnNull()
 	{
 		string? result = FileSystem.Path.GetPathRoot(null);
@@ -43,7 +43,7 @@ public partial class GetPathRootTests
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("D:")]
 	[InlineData("D:\\")]
 	public void GetPathRoot_RootedDrive_ShouldReturnDriveOnWindows(string path)
@@ -55,7 +55,7 @@ public partial class GetPathRootTests
 		result.Should().Be(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("D:some-path", "D:")]
 	[InlineData("D:\\some-path", "D:\\")]
 	public void GetPathRoot_RootedDriveWithPath_ShouldReturnDriveOnWindows(
@@ -68,7 +68,7 @@ public partial class GetPathRootTests
 		result.Should().Be(expected);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetPathRoot_ShouldReturnDefaultValue(string path)
 	{
@@ -78,7 +78,7 @@ public partial class GetPathRootTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetPathRoot_Span_ShouldReturnDefaultValue(string path)
 	{

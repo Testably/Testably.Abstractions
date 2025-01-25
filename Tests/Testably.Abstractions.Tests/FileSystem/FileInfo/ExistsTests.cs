@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 [FileSystemTests]
 public partial class ExistsTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Exists_Directory_ShouldReturnFalse(string path)
 	{
@@ -13,7 +13,7 @@ public partial class ExistsTests
 		sut.Should().NotExist();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("foo", "foo.")]
 	[InlineData("foo.", "foo")]
 	[InlineData("foo", "foo..")]
@@ -26,7 +26,7 @@ public partial class ExistsTests
 		sut.Exists.Should().Be(Test.RunsOnWindows);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Exists_ShouldReturnCachedValueUntilRefresh(string path)
 	{

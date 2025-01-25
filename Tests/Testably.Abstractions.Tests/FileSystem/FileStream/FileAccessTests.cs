@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileStream;
 [FileSystemTests]
 public partial class FileAccessTests
 {
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAccess.Read, FileShare.Read,
 		FileAccess.ReadWrite, FileShare.Read)]
 	[InlineAutoData(FileAccess.ReadWrite, FileShare.Read,
@@ -50,7 +50,7 @@ public partial class FileAccessTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAccess.Read, FileShare.Read, FileAccess.Read, FileShare.Read)]
 	[InlineAutoData(FileAccess.Read, FileShare.ReadWrite, FileAccess.ReadWrite,
 		FileShare.Read)]
@@ -75,7 +75,7 @@ public partial class FileAccessTests
 		result2.Should().Be(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAccess.Write, FileShare.Write, FileAccess.Write, FileShare.Write)]
 	[InlineAutoData(FileAccess.ReadWrite, FileShare.ReadWrite, FileAccess.ReadWrite,
 		FileShare.ReadWrite)]
@@ -106,7 +106,7 @@ public partial class FileAccessTests
 		result.Should().Be(contents2);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void FileAccess_ReadAfterFirstAppend_ShouldContainBothContents(
 		string path, string contents1, string contents2)
@@ -132,7 +132,7 @@ public partial class FileAccessTests
 		result.Should().Be(contents1 + contents2);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void FileAccess_ReadBeforeFirstAppend_ShouldOnlyContainSecondContent(
 		string path, string contents1, string contents2)
@@ -158,7 +158,7 @@ public partial class FileAccessTests
 		result.Should().Be(contents2);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void FileAccess_ReadWhileWriteLockActive_ShouldThrowIOException(
 		string path, string contents)
@@ -185,7 +185,7 @@ public partial class FileAccessTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task MultipleParallelReads_ShouldBeAllowed(string path, string contents)
 	{
@@ -202,14 +202,14 @@ public partial class FileAccessTests
 
 		while (!wait.IsCompleted)
 		{
-			await Task.Delay(10);
+			await Task.Delay(10, TestContext.Current.CancellationToken);
 		}
 
 		results.Should().HaveCount(100);
 		results.Should().AllBeEquivalentTo(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Read_ShouldCreateValidFileStream(string path, string contents)
 	{
@@ -221,7 +221,7 @@ public partial class FileAccessTests
 		result.Should().Be(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Write_ShouldCreateValidFileStream(string path, string contents)
 	{

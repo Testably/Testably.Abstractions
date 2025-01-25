@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.DriveInfo;
 [FileSystemTests]
 public partial class Tests
 {
-	[SkippableFact]
+	[Fact]
 	public void ToString_ShouldReturnDriveName()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -14,7 +14,7 @@ public partial class Tests
 		result.ToString().Should().Be("C:\\");
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void VolumeLabel_ShouldBeWritable_OnWindows()
 	{
 		SkipIfLongRunningTestsShouldBeSkipped();

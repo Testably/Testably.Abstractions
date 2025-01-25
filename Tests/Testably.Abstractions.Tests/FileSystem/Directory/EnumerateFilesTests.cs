@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 [FileSystemTests]
 public partial class EnumerateFilesTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateFiles_MissingDirectory_ShouldThrowDirectoryNotFoundException(
@@ -25,7 +25,7 @@ public partial class EnumerateFilesTests
 		FileSystem.Should().NotHaveDirectory(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateFiles_SearchOptionAllDirectories_FullPath_ShouldReturnAllFilesWithFullPath(
@@ -47,7 +47,7 @@ public partial class EnumerateFilesTests
 		result.Should().Contain(initialized[2].FullName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EnumerateFiles_SearchOptionAllDirectories_ShouldReturnAllFiles(
 		string path)
@@ -67,7 +67,7 @@ public partial class EnumerateFilesTests
 		result.Should().Contain(initialized[2].ToString());
 	}
 
-	[SkippableTheory]
+	[Theory]
 #if NETFRAMEWORK
 	[InlineAutoData(false, "")]
 #else
@@ -102,7 +102,7 @@ public partial class EnumerateFilesTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(true, "*.xls", ".xls")]
 	[InlineAutoData(false, "*.x", ".xls")]
 #if NETFRAMEWORK
@@ -136,7 +136,7 @@ public partial class EnumerateFilesTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateFiles_WithEnumerationOptions_ShouldConsiderAttributesToSkip(
@@ -162,7 +162,7 @@ public partial class EnumerateFilesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(MatchCasing.CaseInsensitive)]
 	[InlineAutoData(MatchCasing.CaseSensitive)]
 	public void
@@ -192,7 +192,7 @@ public partial class EnumerateFilesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(MatchType.Simple)]
 	[InlineAutoData(MatchType.Win32)]
 	public void
@@ -221,7 +221,7 @@ public partial class EnumerateFilesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(true, 0)]
 	[InlineAutoData(true, 1)]
 	[InlineAutoData(true, 2)]
@@ -279,7 +279,7 @@ public partial class EnumerateFilesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(true)]
 	[InlineAutoData(false)]
 	public void
@@ -310,7 +310,7 @@ public partial class EnumerateFilesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(true)]
 	[InlineAutoData(false)]
 	public void
@@ -335,7 +335,7 @@ public partial class EnumerateFilesTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EnumerateFiles_WithNewline_ShouldThrowArgumentException(
 		string path)
@@ -353,7 +353,7 @@ public partial class EnumerateFilesTests
 			messageContains: Test.IsNetFramework ? null : $"'{searchPattern}'");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateFiles_WithoutSearchString_ShouldReturnAllFilesInDirectSubdirectories(
@@ -376,7 +376,7 @@ public partial class EnumerateFilesTests
 		result.Should().NotContain(initialized[3].ToString());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EnumerateFiles_WithSearchPattern_ShouldReturnMatchingFiles(
 		string path)
@@ -398,7 +398,7 @@ public partial class EnumerateFilesTests
 		result.Should().NotContain(initialized[3].ToString());
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void
 		EnumerateFiles_WithSearchPatternInSubdirectory_ShouldReturnMatchingFilesInSubdirectories()
 	{

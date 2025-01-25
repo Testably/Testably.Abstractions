@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 [FileSystemTests]
 public partial class EnumerateDirectoriesTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateDirectories_SearchOptionAllDirectories_ShouldReturnAllSubdirectories(
@@ -31,7 +31,7 @@ public partial class EnumerateDirectoriesTests
 		result.Should().Contain(d => d.Name == "xyz");
 	}
 
-	[SkippableTheory]
+	[Theory]
 #if NETFRAMEWORK
 	[InlineAutoData(false, "")]
 #else
@@ -68,7 +68,7 @@ public partial class EnumerateDirectoriesTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderSetOptions(
@@ -96,7 +96,7 @@ public partial class EnumerateDirectoriesTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EnumerateDirectories_WithNewline_ShouldThrowArgumentException(
 		string path)
@@ -113,7 +113,7 @@ public partial class EnumerateDirectoriesTests
 		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
@@ -133,7 +133,7 @@ public partial class EnumerateDirectoriesTests
 		result.Should().Contain(d => d.Name == "bar");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EnumerateDirectories_WithSearchPattern_ShouldReturnMatchingSubdirectory(
 		string path)
@@ -149,7 +149,7 @@ public partial class EnumerateDirectoriesTests
 		result.Should().ContainSingle(d => d.Name == "foo");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateDirectories_WithSearchPatternInSubdirectory_ShouldReturnMatchingSubdirectory(

@@ -1,14 +1,14 @@
 ﻿using System.IO;
 using System.Security.AccessControl;
 using Testably.Abstractions.AccessControl.Tests.TestHelpers;
-using Skip = Xunit.Skip;
+using Skip = Testably.Abstractions.TestHelpers.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
 [FileSystemTests]
 public partial class FileInfoAclExtensionsTests
 {
-	[SkippableFact]
+	[Fact]
 	public async Task GetAccessControl_MissingFile_ShouldThrowFileNotFoundException()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -25,7 +25,7 @@ public partial class FileInfoAclExtensionsTests
 			.WithHResult(-2147024894);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task GetAccessControl_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -40,7 +40,7 @@ public partial class FileInfoAclExtensionsTests
 		#pragma warning restore CA1416
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task GetAccessControl_ShouldReturnSetResult()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -61,7 +61,7 @@ public partial class FileInfoAclExtensionsTests
 		#pragma warning restore CA1416
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task
 		GetAccessControl_WithAccessControlSections_MissingFile_ShouldThrowFileNotFoundException()
 	{
@@ -79,7 +79,7 @@ public partial class FileInfoAclExtensionsTests
 			.WithHResult(-2147024894);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task GetAccessControl_WithAccessControlSections_ShouldBeInitializedWithNotNullValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -95,7 +95,7 @@ public partial class FileInfoAclExtensionsTests
 		#pragma warning restore CA1416
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task GetAccessControl_WithAccessControlSections_ShouldReturnSetResult()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -116,7 +116,7 @@ public partial class FileInfoAclExtensionsTests
 		#pragma warning restore CA1416
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task SetAccessControl_ShouldChangeAccessControl()
 	{
 		Skip.IfNot(Test.RunsOnWindows);

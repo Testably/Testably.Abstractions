@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 [FileSystemTests]
 public partial class DeleteTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingDirectory, string fileName)
@@ -20,7 +20,7 @@ public partial class DeleteTests
 		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_MissingFile_ShouldDoNothing(
 		string fileName)
@@ -33,7 +33,7 @@ public partial class DeleteTests
 		exception.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_ShouldRefreshExistsCache_ExceptOnNetFramework(string path)
 	{
@@ -55,7 +55,7 @@ public partial class DeleteTests
 		FileSystem.Should().NotHaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_WithOpenFile_ShouldThrowIOException_OnWindows(string filename)
 	{

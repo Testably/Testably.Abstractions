@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 public class PathStatisticsTests
 {
-	[SkippableFact]
+	[Fact]
 	public void Method_ChangeExtension_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -22,7 +22,7 @@ public class PathStatisticsTests
 			path, extension);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_Combine_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -36,7 +36,7 @@ public class PathStatisticsTests
 			path1, path2);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_Combine_String_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -51,7 +51,7 @@ public class PathStatisticsTests
 			path1, path2, path3);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_Combine_String_String_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -67,7 +67,7 @@ public class PathStatisticsTests
 			path1, path2, path3, path4);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_Combine_StringArray_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -81,7 +81,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_PATH_ADVANCED
-	[SkippableFact]
+	[Fact]
 	public void Method_EndsInDirectorySeparator_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -96,7 +96,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_ADVANCED
-	[SkippableFact]
+	[Fact]
 	public void Method_EndsInDirectorySeparator_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -110,8 +110,8 @@ public class PathStatisticsTests
 	}
 #endif
 
-#if FEATURE_FILESYSTEM_NET7
-	[SkippableFact]
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
+	[Fact]
 	public void Method_Exists_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -126,7 +126,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_SPAN
-	[SkippableFact]
+	[Fact]
 	public void Method_GetDirectoryName_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -140,7 +140,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetDirectoryName_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -154,7 +154,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableFact]
+	[Fact]
 	public void Method_GetExtension_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -168,7 +168,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetExtension_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -182,7 +182,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableFact]
+	[Fact]
 	public void Method_GetFileName_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -196,7 +196,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetFileName_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -210,7 +210,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableFact]
+	[Fact]
 	public void Method_GetFileNameWithoutExtension_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -224,7 +224,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetFileNameWithoutExtension_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -237,7 +237,7 @@ public class PathStatisticsTests
 			path);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetFullPath_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -251,7 +251,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_PATH_RELATIVE
-	[SkippableFact]
+	[Fact]
 	public void Method_GetFullPath_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -266,7 +266,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetInvalidFileNameChars_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -277,7 +277,7 @@ public class PathStatisticsTests
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetInvalidFileNameChars));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetInvalidPathChars_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -289,7 +289,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableFact]
+	[Fact]
 	public void Method_GetPathRoot_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -303,7 +303,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetPathRoot_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -316,7 +316,7 @@ public class PathStatisticsTests
 			path);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetRandomFileName_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -328,7 +328,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_PATH_RELATIVE
-	[SkippableFact]
+	[Fact]
 	public void Method_GetRelativePath_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -343,7 +343,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetTempFileName_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -354,7 +354,7 @@ public class PathStatisticsTests
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetTempFileName));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_GetTempPath_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -366,7 +366,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableFact]
+	[Fact]
 	public void Method_HasExtension_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -380,7 +380,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Method_HasExtension_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -394,7 +394,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableFact]
+	[Fact]
 	public void Method_IsPathFullyQualified_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -409,7 +409,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_RELATIVE
-	[SkippableFact]
+	[Fact]
 	public void Method_IsPathFullyQualified_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -424,7 +424,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_SPAN
-	[SkippableFact]
+	[Fact]
 	public void Method_IsPathRooted_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -438,7 +438,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Method_IsPathRooted_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -452,7 +452,7 @@ public class PathStatisticsTests
 	}
 
 #if FEATURE_PATH_JOIN
-	[SkippableFact]
+	[Fact]
 	public void
 		Method_Join_ReadOnlySpanChar_ReadOnlySpanChar_ReadOnlySpanChar_ReadOnlySpanChar_ShouldRegisterCall()
 	{
@@ -471,7 +471,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_JOIN
-	[SkippableFact]
+	[Fact]
 	public void Method_Join_ReadOnlySpanChar_ReadOnlySpanChar_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -488,7 +488,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_JOIN
-	[SkippableFact]
+	[Fact]
 	public void Method_Join_ReadOnlySpanChar_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -504,7 +504,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_JOIN
-	[SkippableFact]
+	[Fact]
 	public void Method_Join_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -520,7 +520,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_JOIN
-	[SkippableFact]
+	[Fact]
 	public void Method_Join_String_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -537,7 +537,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_JOIN
-	[SkippableFact]
+	[Fact]
 	public void Method_Join_String_String_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -555,7 +555,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_JOIN
-	[SkippableFact]
+	[Fact]
 	public void Method_Join_StringArray_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -570,7 +570,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_ADVANCED
-	[SkippableFact]
+	[Fact]
 	public void Method_TrimEndingDirectorySeparator_ReadOnlySpanChar_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -585,7 +585,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_ADVANCED
-	[SkippableFact]
+	[Fact]
 	public void Method_TrimEndingDirectorySeparator_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -600,7 +600,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_JOIN
-	[SkippableFact]
+	[Fact]
 	public void
 		Method_TryJoin_ReadOnlySpanChar_ReadOnlySpanChar_ReadOnlySpanChar_SpanChar_OutInt_ShouldRegisterCall()
 	{
@@ -619,7 +619,7 @@ public class PathStatisticsTests
 #endif
 
 #if FEATURE_PATH_JOIN
-	[SkippableFact]
+	[Fact]
 	public void
 		Method_TryJoin_ReadOnlySpanChar_ReadOnlySpanChar_SpanChar_OutInt_ShouldRegisterCall()
 	{
@@ -636,7 +636,7 @@ public class PathStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Property_AltDirectorySeparatorChar_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -648,7 +648,7 @@ public class PathStatisticsTests
 			nameof(IPath.AltDirectorySeparatorChar));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_DirectorySeparatorChar_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -660,7 +660,7 @@ public class PathStatisticsTests
 			nameof(IPath.DirectorySeparatorChar));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_PathSeparator_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -671,7 +671,7 @@ public class PathStatisticsTests
 		sut.Statistics.Path.ShouldOnlyContainPropertyGetAccess(nameof(IPath.PathSeparator));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_VolumeSeparatorChar_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -682,7 +682,7 @@ public class PathStatisticsTests
 		sut.Statistics.Path.ShouldOnlyContainPropertyGetAccess(nameof(IPath.VolumeSeparatorChar));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void ToString_ShouldBePath()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.Path;

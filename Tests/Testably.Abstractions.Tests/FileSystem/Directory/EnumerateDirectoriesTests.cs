@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 [FileSystemTests]
 public partial class EnumerateDirectoriesTests
 {
-	[SkippableFact]
+	[Fact]
 	public void EnumerateDirectories_AbsolutePath_ShouldNotIncludeTrailingSlash()
 	{
 		FileSystem.Directory.CreateDirectory("foo");
@@ -22,7 +22,7 @@ public partial class EnumerateDirectoriesTests
 		result.Should().Contain(FileSystem.Path.Combine(BasePath, "bar"));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateDirectories_MissingDirectory_ShouldThrowDirectoryNotFoundException(
@@ -39,7 +39,7 @@ public partial class EnumerateDirectoriesTests
 		FileSystem.Should().NotHaveDirectory(path);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void EnumerateDirectories_RelativePath_ShouldNotIncludeTrailingSlash()
 	{
 		string path = ".";
@@ -54,7 +54,7 @@ public partial class EnumerateDirectoriesTests
 		result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void
 		EnumerateDirectories_RelativePathToParentDirectory_ShouldNotIncludeTrailingSlash()
 	{
@@ -70,7 +70,7 @@ public partial class EnumerateDirectoriesTests
 		result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateDirectories_SearchOptionAllDirectories_FullPath_ShouldReturnAllSubdirectoriesWithFullPath(
@@ -92,7 +92,7 @@ public partial class EnumerateDirectoriesTests
 		result.Should().Contain(FileSystem.Path.Combine(baseDirectory.FullName, "bar"));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateDirectories_SearchOptionAllDirectories_ShouldReturnAllSubdirectories(
@@ -112,7 +112,7 @@ public partial class EnumerateDirectoriesTests
 		result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
 	}
 
-	[SkippableTheory]
+	[Theory]
 #if NETFRAMEWORK
 	[InlineAutoData(false, "")]
 #else
@@ -149,7 +149,7 @@ public partial class EnumerateDirectoriesTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(true, "*.xls", ".xls")]
 	[InlineAutoData(false, "*.x", ".xls")]
 #if NETFRAMEWORK
@@ -183,7 +183,7 @@ public partial class EnumerateDirectoriesTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderAttributesToSkip(
@@ -208,7 +208,7 @@ public partial class EnumerateDirectoriesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableTheory]
+	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
 	public void
@@ -254,7 +254,7 @@ public partial class EnumerateDirectoriesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(MatchCasing.CaseInsensitive)]
 	[InlineAutoData(MatchCasing.CaseSensitive)]
 	public void
@@ -285,7 +285,7 @@ public partial class EnumerateDirectoriesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(MatchType.Simple)]
 	[InlineAutoData(MatchType.Win32)]
 	public void
@@ -315,7 +315,7 @@ public partial class EnumerateDirectoriesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(true, 0)]
 	[InlineAutoData(true, 1)]
 	[InlineAutoData(true, 2)]
@@ -368,7 +368,7 @@ public partial class EnumerateDirectoriesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(true)]
 	[InlineAutoData(false)]
 	public void
@@ -400,7 +400,7 @@ public partial class EnumerateDirectoriesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(true)]
 	[InlineAutoData(false)]
 	public void
@@ -432,7 +432,7 @@ public partial class EnumerateDirectoriesTests
 #endif
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableFact]
+	[Fact]
 	public void
 		EnumerateDirectories_WithEnumerationOptions_ShouldConsiderReturnSpecialDirectoriesCorrectlyForPathRoots()
 	{
@@ -458,7 +458,7 @@ public partial class EnumerateDirectoriesTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EnumerateDirectories_WithNewline_ShouldThrowArgumentException(
 		string path)
@@ -474,7 +474,7 @@ public partial class EnumerateDirectoriesTests
 		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
@@ -493,7 +493,7 @@ public partial class EnumerateDirectoriesTests
 		result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EnumerateDirectories_WithSearchPattern_ShouldReturnMatchingSubdirectory(
 		string path)
@@ -509,7 +509,7 @@ public partial class EnumerateDirectoriesTests
 		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		EnumerateDirectories_WithSearchPatternInSubdirectory_ShouldReturnMatchingSubdirectory(
@@ -526,7 +526,7 @@ public partial class EnumerateDirectoriesTests
 		result.Count().Should().Be(2);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void EnumerateDirectories_WithTrailingSlash_ShouldEnumerateSubdirectories()
 	{
 		string queryPath = "foo" + FileSystem.Path.DirectorySeparatorChar;

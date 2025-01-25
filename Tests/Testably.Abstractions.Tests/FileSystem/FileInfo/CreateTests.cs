@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 [FileSystemTests]
 public partial class CreateTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Create_MissingFile_ShouldCreateFile(string path)
 	{
@@ -17,7 +17,7 @@ public partial class CreateTests
 		FileSystem.Should().HaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Create_ShouldRefreshExistsCacheForCurrentItem_ExceptOnNetFramework(string path)
 	{
@@ -46,7 +46,7 @@ public partial class CreateTests
 		FileSystem.Should().HaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Create_ShouldUseReadWriteAccessAndNoneShare(string path)
 	{

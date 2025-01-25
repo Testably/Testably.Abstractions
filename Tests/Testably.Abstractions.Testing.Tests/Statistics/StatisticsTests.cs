@@ -124,7 +124,7 @@ public sealed partial class StatisticsTests
 			tasks[taskId] = Task.Run(() =>
 			{
 				sut.Directory.CreateDirectory(directories[taskId]);
-			});
+			}, TestContext.Current.CancellationToken);
 		}
 
 		await Task.WhenAll(tasks);

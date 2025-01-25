@@ -12,8 +12,8 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class ExceptionTests
 {
-	[SkippableTheory]
-	[MemberData(nameof(GetFileCallbacks), parameters: "Illegal\tCharacter?InPath")]
+	[Theory]
+	[MemberData(nameof(GetFileCallbacks), "Illegal\tCharacter?InPath")]
 	public void
 		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowCorrectException_OnWindows(
 			Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck,
@@ -53,8 +53,8 @@ public partial class ExceptionTests
 		}
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetFileCallbacks), parameters: "")]
+	[Theory]
+	[MemberData(nameof(GetFileCallbacks), "")]
 	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck,
 		Func<Test, bool> skipTest)
@@ -73,8 +73,8 @@ public partial class ExceptionTests
 			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetFileCallbacks), parameters: (string?)null)]
+	[Theory]
+	[MemberData(nameof(GetFileCallbacks), (string?)null)]
 	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck,
 		Func<Test, bool> skipTest)
@@ -92,8 +92,8 @@ public partial class ExceptionTests
 			$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetFileCallbacks), parameters: "  ")]
+	[Theory]
+	[MemberData(nameof(GetFileCallbacks), "  ")]
 	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IFile>> callback, string paramName, bool ignoreParamCheck,
 		Func<Test, bool> skipTest)
@@ -455,13 +455,13 @@ public partial class ExceptionTests
 			file
 				=> file.ReadLines(value, Encoding.UTF8),
 			null);
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
 			file
 				=> file.ReadLinesAsync(value, CancellationToken.None),
 			null);
 #endif
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
 			file
 				=> file.ReadLinesAsync(value, Encoding.UTF8, CancellationToken.None),

@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class TrimEndingDirectorySeparatorTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void TrimEndingDirectorySeparator_DirectoryChar_ShouldTrim(
 		string directory)
@@ -16,7 +16,7 @@ public partial class TrimEndingDirectorySeparatorTests
 		result.Should().Be(directory);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void TrimEndingDirectorySeparator_EmptyString_ShouldReturnEmptyString()
 	{
 		string result = FileSystem.Path.TrimEndingDirectorySeparator(string.Empty);
@@ -24,7 +24,7 @@ public partial class TrimEndingDirectorySeparatorTests
 		result.Should().Be(string.Empty);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void TrimEndingDirectorySeparator_Root_ShouldReturnUnchanged()
 	{
 		string path = FileTestHelper.RootDrive(Test);
@@ -34,7 +34,7 @@ public partial class TrimEndingDirectorySeparatorTests
 		result.Should().Be(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void TrimEndingDirectorySeparator_Span_DirectoryChar_ShouldTrim(
 		string directory)
@@ -47,7 +47,7 @@ public partial class TrimEndingDirectorySeparatorTests
 		result.ToString().Should().Be(directory);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void TrimEndingDirectorySeparator_Span_Root_ShouldReturnUnchanged()
 	{
 		string path = FileTestHelper.RootDrive(Test);
@@ -58,7 +58,7 @@ public partial class TrimEndingDirectorySeparatorTests
 		result.ToString().Should().Be(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		TrimEndingDirectorySeparator_Span_WithoutDirectoryChar_ShouldReturnUnchanged(
@@ -70,7 +70,7 @@ public partial class TrimEndingDirectorySeparatorTests
 		result.ToString().Should().Be(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void TrimEndingDirectorySeparator_WithoutDirectoryChar_ShouldReturnUnchanged(
 		string path)

@@ -8,9 +8,8 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcherFactory;
 [FileSystemTests]
 public partial class ExceptionTests
 {
-	[SkippableTheory]
-	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks),
-		parameters: "Illegal\tCharacter?InPath")]
+	[Theory]
+	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), "Illegal\tCharacter?InPath")]
 	public void
 		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowCorrectException_OnWindows(
 			Expression<Action<IFileSystemWatcherFactory>> callback, string paramName,
@@ -38,8 +37,8 @@ public partial class ExceptionTests
 		}
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), parameters: "")]
+	[Theory]
+	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), "")]
 	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileSystemWatcherFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -56,8 +55,8 @@ public partial class ExceptionTests
 			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), parameters: (string?)null)]
+	[Theory]
+	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), (string?)null)]
 	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileSystemWatcherFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -73,8 +72,8 @@ public partial class ExceptionTests
 			$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), parameters: "  ")]
+	[Theory]
+	[MemberData(nameof(GetFileSystemWatcherFactoryCallbacks), "  ")]
 	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IFileSystemWatcherFactory>> callback, string paramName,
 		bool ignoreParamCheck)

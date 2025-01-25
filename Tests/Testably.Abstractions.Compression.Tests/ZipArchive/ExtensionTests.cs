@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Compression.Tests.ZipArchive;
 [FileSystemTests]
 public partial class ExtensionTests
 {
-	[SkippableTheory]
+	[Theory]
 	[InlineData("2000-01-01T12:14:15")]
 	[InlineData("1980-01-01T00:00:00")]
 	[InlineData("2107-12-31T23:59:59")]
@@ -36,7 +36,7 @@ public partial class ExtensionTests
 		await That(entry.LastWriteTime.DateTime).Is(lastWriteTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("1930-06-21T14:15:16")]
 	[InlineData("1979-12-31T00:00:00")]
 	[InlineData("2108-01-01T00:00:00")]
@@ -67,7 +67,7 @@ public partial class ExtensionTests
 		await That(entry.LastWriteTime.DateTime).Is(expectedTime);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task CreateEntryFromFile_NullEntryName_ShouldThrowArgumentNullException()
 	{
 		FileSystem.Initialize()
@@ -89,7 +89,7 @@ public partial class ExtensionTests
 			.WithParamName("entryName");
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task CreateEntryFromFile_NullSourceFileName_ShouldThrowArgumentNullException()
 	{
 		FileSystem.Initialize()
@@ -112,7 +112,7 @@ public partial class ExtensionTests
 			.WithParamName("sourceFileName");
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task CreateEntryFromFile_ReadOnlyArchive_ShouldThrowNotSupportedException()
 	{
 		FileSystem.Initialize()
@@ -133,7 +133,7 @@ public partial class ExtensionTests
 		await That(Act).Throws<NotSupportedException>();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task CreateEntryFromFile_ShouldCreateEntryWithFileContent()
 	{
 		FileSystem.Initialize()
@@ -158,7 +158,7 @@ public partial class ExtensionTests
 		await That(FileSystem).HasFile("test.txt").WithContent("FooFooFoo");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task ExtractToDirectory_DestinationNull_ShouldThrowArgumentNullException(
 		CompressionLevel compressionLevel)
@@ -182,7 +182,7 @@ public partial class ExtensionTests
 	}
 
 #if FEATURE_COMPRESSION_ADVANCED
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		ExtractToDirectory_DestinationNull_WithOverwrite_ShouldThrowArgumentNullException(
@@ -206,7 +206,7 @@ public partial class ExtensionTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public async Task ExtractToDirectory_ShouldExtractFilesAndDirectories()
 	{
 		FileSystem.Initialize()
@@ -227,7 +227,7 @@ public partial class ExtensionTests
 		await That(FileSystem).HasFile("bar/bar.txt");
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task ExtractToDirectory_WithoutOverwrite_ShouldThrowIOException()
 	{
 		FileSystem.Initialize()
@@ -253,7 +253,7 @@ public partial class ExtensionTests
 	}
 
 #if FEATURE_COMPRESSION_ADVANCED
-	[SkippableFact]
+	[Fact]
 	public async Task ExtractToDirectory_WithOverwrite_ShouldOverwriteExistingFile()
 	{
 		FileSystem.Initialize()

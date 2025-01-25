@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 public sealed class DriveInfoStatisticsTests
 {
-	[SkippableFact]
+	[Fact]
 	public void Property_AvailableFreeSpace_Get_ShouldRegisterPropertyAccess()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -19,7 +19,7 @@ public sealed class DriveInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDriveInfo.AvailableFreeSpace));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_DriveFormat_Get_ShouldRegisterPropertyAccess()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -33,7 +33,7 @@ public sealed class DriveInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDriveInfo.DriveFormat));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_DriveType_Get_ShouldRegisterPropertyAccess()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -47,7 +47,7 @@ public sealed class DriveInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDriveInfo.DriveType));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_IsReady_Get_ShouldRegisterPropertyAccess()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -61,7 +61,7 @@ public sealed class DriveInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDriveInfo.IsReady));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_Name_Get_ShouldRegisterPropertyAccess()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -74,7 +74,7 @@ public sealed class DriveInfoStatisticsTests
 		sut.Statistics.DriveInfo["F:"].ShouldOnlyContainPropertyGetAccess(nameof(IDriveInfo.Name));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_RootDirectory_Get_ShouldRegisterPropertyAccess()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -88,7 +88,7 @@ public sealed class DriveInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDriveInfo.RootDirectory));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_TotalFreeSpace_Get_ShouldRegisterPropertyAccess()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -102,7 +102,7 @@ public sealed class DriveInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDriveInfo.TotalFreeSpace));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_TotalSize_Get_ShouldRegisterPropertyAccess()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -116,7 +116,7 @@ public sealed class DriveInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDriveInfo.TotalSize));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_VolumeLabel_Get_ShouldRegisterPropertyAccess()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -130,7 +130,7 @@ public sealed class DriveInfoStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(IDriveInfo.VolumeLabel));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_VolumeLabel_Set_ShouldRegisterPropertyAccess()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -147,7 +147,7 @@ public sealed class DriveInfoStatisticsTests
 			.ShouldOnlyContainPropertySetAccess(nameof(IDriveInfo.VolumeLabel));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void ToString_ShouldBeDriveInfoWithPath()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.DriveInfo[@"x:"];

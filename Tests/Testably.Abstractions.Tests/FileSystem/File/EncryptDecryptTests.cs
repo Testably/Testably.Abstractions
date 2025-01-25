@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class EncryptDecryptTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	[SupportedOSPlatform("windows")]
 	public void Decrypt_EncryptedData_ShouldReturnOriginalText(
@@ -23,7 +23,7 @@ public partial class EncryptDecryptTests
 		result.Should().Be(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	[SupportedOSPlatform("windows")]
 	public void Decrypt_UnencryptedData_ShouldReturnOriginalText(
@@ -39,7 +39,7 @@ public partial class EncryptDecryptTests
 		result.Should().Be(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	[SupportedOSPlatform("windows")]
 	public void Encrypt_Decrypt_ShouldChangeEncryptedFileAttribute(
@@ -58,7 +58,7 @@ public partial class EncryptDecryptTests
 			.Which.DoesNotHaveAttribute(FileAttributes.Encrypted);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	[SupportedOSPlatform("windows")]
 	public void Encrypt_ShouldChangeData(
@@ -75,7 +75,7 @@ public partial class EncryptDecryptTests
 		result.Should().NotBeEquivalentTo(bytes);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	[SupportedOSPlatform("windows")]
 	public void Encrypt_Twice_ShouldIgnoreTheSecondTime(

@@ -12,13 +12,13 @@ namespace Testably.Abstractions.Tests.RandomSystem;
 [RandomSystemTests]
 public partial class GuidTests
 {
-	[SkippableFact]
+	[Fact]
 	public void Empty_ShouldReturnEmptyGuid()
 	{
 		RandomSystem.Guid.Empty.Should().Be(Guid.Empty);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void NewGuid_ShouldBeThreadSafeAndReturnUniqueItems()
 	{
 		ConcurrentBag<Guid> results = [];
@@ -32,7 +32,7 @@ public partial class GuidTests
 	}
 
 #if FEATURE_GUID_PARSE
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Parse_SpanArray_ShouldReturnCorrectGuid(Guid guid)
 	{
@@ -47,7 +47,7 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_PARSE
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Parse_String_ShouldReturnCorrectGuid(Guid guid)
 	{
@@ -62,7 +62,7 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_FORMATPROVIDER
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Parse_WithFormatProvider_SpanArray_ShouldReturnCorrectGuid(Guid guid)
 	{
@@ -75,7 +75,7 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_FORMATPROVIDER
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Parse_WithFormatProvider_String_ShouldReturnCorrectGuid(Guid guid)
 	{
@@ -88,7 +88,7 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_PARSE
-	[SkippableTheory]
+	[Theory]
 	[MemberAutoData(nameof(GuidFormats))]
 	public void ParseExact_SpanArray_ShouldReturnCorrectGuid(
 		string format, Guid guid)
@@ -102,7 +102,7 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_PARSE
-	[SkippableTheory]
+	[Theory]
 	[MemberAutoData(nameof(GuidFormats))]
 	public void ParseExact_String_ShouldReturnCorrectGuid(string format, Guid guid)
 	{
@@ -115,7 +115,7 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_PARSE
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void TryParse_SpanArray_ShouldReturnTrue(Guid guid)
 	{
@@ -131,7 +131,7 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_PARSE
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void TryParse_String_ShouldReturnTrue(Guid guid)
 	{
@@ -147,7 +147,7 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_FORMATPROVIDER
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void TryParse_WithFormatProvider_SpanArray_ShouldReturnTrue(Guid guid)
 	{
@@ -162,7 +162,7 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_FORMATPROVIDER
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void TryParse_WithFormatProvider_String_ShouldReturnTrue(Guid guid)
 	{
@@ -177,7 +177,7 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_PARSE
-	[SkippableTheory]
+	[Theory]
 	[MemberAutoData(nameof(GuidFormats))]
 	public void TryParseExact_SpanArray_ShouldReturnTrue(string format, Guid guid)
 	{
@@ -193,7 +193,7 @@ public partial class GuidTests
 #endif
 
 #if FEATURE_GUID_PARSE
-	[SkippableTheory]
+	[Theory]
 	[MemberAutoData(nameof(GuidFormats))]
 	public void TryParseExact_String_ShouldReturnTrue(string format, Guid guid)
 	{

@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class GetRandomFileNameTests
 {
-	[SkippableFact]
+	[Fact]
 	public void GetRandomFileName_ShouldMatch8Dot3Pattern()
 	{
 		string result = FileSystem.Path.GetRandomFileName();
@@ -14,7 +14,7 @@ public partial class GetRandomFileNameTests
 		result.Should().Match("????????.???");
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetRandomFileName_ShouldReturnRandomFileNameWithExtension()
 	{
 		string result = FileSystem.Path.GetRandomFileName();
@@ -29,7 +29,7 @@ public partial class GetRandomFileNameTests
 			.Should().NotBeEmpty();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetRandomFileName_ShouldReturnRandomStrings()
 	{
 		ConcurrentBag<string> results = [];

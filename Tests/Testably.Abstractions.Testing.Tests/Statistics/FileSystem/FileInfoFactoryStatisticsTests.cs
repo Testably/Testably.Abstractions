@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 public class FileInfoFactoryStatisticsTests
 {
-	[SkippableFact]
+	[Fact]
 	public void Method_New_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -19,7 +19,7 @@ public class FileInfoFactoryStatisticsTests
 			fileName);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_Wrap_FileInfo_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -32,7 +32,7 @@ public class FileInfoFactoryStatisticsTests
 			fileInfo);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void ToString_ShouldBeFileInfo()
 	{
 		IPathStatistics<IFileInfoFactory, IFileInfo> sut

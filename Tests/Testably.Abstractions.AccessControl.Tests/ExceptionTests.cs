@@ -1,16 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.AccessControl;
-using Skip = Xunit.Skip;
+using Skip = Testably.Abstractions.TestHelpers.Skip;
 
 namespace Testably.Abstractions.AccessControl.Tests;
 
 [FileSystemTests]
 public partial class ExceptionTests
 {
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileCallbacks),
-		parameters: (int)BaseTypes.All)]
+		(int)BaseTypes.All)]
 	public async Task Operations_WhenPathIsEmpty_ShouldThrowArgumentException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
@@ -21,9 +21,9 @@ public partial class ExceptionTests
 			.Because($"\n{exceptionType} on {baseType}\n was called with an empty path");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileCallbacks),
-		parameters: (int)BaseTypes.All)]
+		(int)BaseTypes.All)]
 	public async Task Operations_WhenPathIsNull_ShouldThrowArgumentNullException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{
@@ -34,9 +34,9 @@ public partial class ExceptionTests
 			.Because($"\n{exceptionType} on {baseType}\n was called with a null path");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(GetFileCallbacks),
-		parameters: (int)BaseTypes.All)]
+		(int)BaseTypes.All)]
 	public async Task Operations_WhenPathIsWhiteSpace_ShouldThrowArgumentException(
 		Action<IFileSystem, string> callback, BaseTypes baseType, MethodType exceptionType)
 	{

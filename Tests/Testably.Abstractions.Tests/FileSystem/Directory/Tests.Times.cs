@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
 public partial class Tests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetCreationTime_PathNotFound_ShouldReturnNullTime(string path)
 	{
@@ -15,7 +15,7 @@ public partial class Tests
 		result.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetCreationTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
 	{
@@ -26,7 +26,7 @@ public partial class Tests
 		result.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetLastAccessTime_PathNotFound_ShouldReturnNullTime(string path)
 	{
@@ -37,7 +37,7 @@ public partial class Tests
 		result.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetLastAccessTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
 	{
@@ -48,7 +48,7 @@ public partial class Tests
 		result.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetLastWriteTime_PathNotFound_ShouldReturnNullTime(string path)
 	{
@@ -59,7 +59,7 @@ public partial class Tests
 		result.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetLastWriteTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
 	{
@@ -70,11 +70,13 @@ public partial class Tests
 		result.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void LastAccessTime_CreateSubDirectory_ShouldUpdateLastAccessAndLastWriteTime(
 		string path, string subPath)
 	{
+		SkipIfBrittleTestsShouldBeSkipped();
+		
 		DateTime start = TimeSystem.DateTime.Now;
 		IDirectoryInfo result = FileSystem.Directory.CreateDirectory(path);
 		TimeSystem.Thread.Sleep(100);
@@ -99,7 +101,7 @@ public partial class Tests
 			.BeBetween(sleepTime, TimeSystem.DateTime.Now);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void LastAccessTime_ShouldBeSet(string path)
 	{
@@ -112,7 +114,7 @@ public partial class Tests
 		result.Kind.Should().Be(DateTimeKind.Local);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void LastAccessTimeUtc_ShouldBeSet(string path)
 	{
@@ -125,7 +127,7 @@ public partial class Tests
 		result.Kind.Should().Be(DateTimeKind.Utc);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void LastWriteTime_ShouldBeSet(string path)
 	{
@@ -138,7 +140,7 @@ public partial class Tests
 		result.Kind.Should().Be(DateTimeKind.Local);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void LastWriteTimeUtc_ShouldBeSet(string path)
 	{
@@ -151,7 +153,7 @@ public partial class Tests
 		result.Kind.Should().Be(DateTimeKind.Utc);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetCreationTime_PathNotFound_ShouldThrowCorrectException(
 		string path, DateTime creationTime)
@@ -161,7 +163,7 @@ public partial class Tests
 			FileSystem.Directory.SetCreationTime(path, creationTime);
 		});
 
-		if (Test.RunsOnWindows || (Test.IsNet7OrGreater && !Test.RunsOnMac))
+		if (Test.RunsOnWindows || (Test.IsNet8OrGreater && !Test.RunsOnMac))
 		{
 			exception.Should().BeException<FileNotFoundException>(
 				$"'{FileSystem.Path.GetFullPath(path)}'",
@@ -175,7 +177,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetCreationTime_ShouldChangeCreationTime(
 		string path, DateTime creationTime)
@@ -193,7 +195,7 @@ public partial class Tests
 			.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetCreationTime_Unspecified_ShouldChangeCreationTime(
 		string path, DateTime creationTime)
@@ -214,7 +216,7 @@ public partial class Tests
 			.Should().NotBe(DateTimeKind.Unspecified);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetCreationTimeUtc_PathNotFound_ShouldThrowCorrectException(
 		string path, DateTime creationTime)
@@ -224,7 +226,7 @@ public partial class Tests
 			FileSystem.Directory.SetCreationTimeUtc(path, creationTime);
 		});
 
-		if (Test.RunsOnWindows || (Test.IsNet7OrGreater && !Test.RunsOnMac))
+		if (Test.RunsOnWindows || (Test.IsNet8OrGreater && !Test.RunsOnMac))
 		{
 			exception.Should().BeException<FileNotFoundException>(
 				$"'{FileSystem.Path.GetFullPath(path)}'",
@@ -238,7 +240,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetCreationTimeUtc_ShouldChangeCreationTime(
 		string path, DateTime creationTime)
@@ -256,7 +258,7 @@ public partial class Tests
 			.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetCreationTimeUtc_Unspecified_ShouldChangeCreationTime(
 		string path, DateTime creationTime)
@@ -277,7 +279,7 @@ public partial class Tests
 			.Should().NotBe(DateTimeKind.Unspecified);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetLastAccessTime_PathNotFound_ShouldThrowCorrectException(
 		string path, DateTime lastAccessTime)
@@ -287,7 +289,7 @@ public partial class Tests
 			FileSystem.Directory.SetLastAccessTime(path, lastAccessTime);
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			exception.Should().BeException<FileNotFoundException>(
 				$"'{FileSystem.Path.GetFullPath(path)}'",
@@ -301,7 +303,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetLastAccessTime_ShouldChangeLastAccessTime(
 		string path, DateTime lastAccessTime)
@@ -316,7 +318,7 @@ public partial class Tests
 			.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetLastAccessTime_Unspecified_ShouldChangeLastAccessTime(
 		string path, DateTime lastAccessTime)
@@ -334,7 +336,7 @@ public partial class Tests
 			.Should().NotBe(DateTimeKind.Unspecified);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetLastAccessTimeUtc_PathNotFound_ShouldThrowCorrectException(
 		string path, DateTime lastAccessTime)
@@ -344,7 +346,7 @@ public partial class Tests
 			FileSystem.Directory.SetLastAccessTimeUtc(path, lastAccessTime);
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			exception.Should().BeException<FileNotFoundException>(
 				$"'{FileSystem.Path.GetFullPath(path)}'",
@@ -358,7 +360,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetLastAccessTimeUtc_ShouldChangeLastAccessTime(
 		string path, DateTime lastAccessTime)
@@ -373,7 +375,7 @@ public partial class Tests
 			.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetLastAccessTimeUtc_Unspecified_ShouldChangeLastAccessTime(
 		string path, DateTime lastAccessTime)
@@ -391,7 +393,7 @@ public partial class Tests
 			.Should().NotBe(DateTimeKind.Unspecified);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetLastWriteTime_PathNotFound_ShouldThrowCorrectException(
 		string path, DateTime lastWriteTime)
@@ -401,7 +403,7 @@ public partial class Tests
 			FileSystem.Directory.SetLastWriteTime(path, lastWriteTime);
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			exception.Should().BeException<FileNotFoundException>(
 				$"'{FileSystem.Path.GetFullPath(path)}'",
@@ -415,7 +417,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetLastWriteTime_ShouldChangeLastWriteTime(
 		string path, DateTime lastWriteTime)
@@ -430,7 +432,7 @@ public partial class Tests
 			.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetLastWriteTime_Unspecified_ShouldChangeLastWriteTime(
 		string path, DateTime lastWriteTime)
@@ -448,7 +450,7 @@ public partial class Tests
 			.Should().NotBe(DateTimeKind.Unspecified);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetLastWriteTimeUtc_PathNotFound_ShouldThrowCorrectException(
 		string path, DateTime lastWriteTime)
@@ -458,7 +460,7 @@ public partial class Tests
 			FileSystem.Directory.SetLastWriteTimeUtc(path, lastWriteTime);
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			exception.Should().BeException<FileNotFoundException>(
 				$"'{FileSystem.Path.GetFullPath(path)}'",
@@ -472,7 +474,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetLastWriteTimeUtc_ShouldChangeLastWriteTime(
 		string path, DateTime lastWriteTime)
@@ -487,7 +489,7 @@ public partial class Tests
 			.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetLastWriteTimeUtc_Unspecified_ShouldChangeLastWriteTime(
 		string path, DateTime lastWriteTime)

@@ -9,7 +9,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class WriteAllTextAsyncTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAllTextAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path, string? contents)
@@ -23,7 +23,7 @@ public partial class WriteAllTextAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		WriteAllTextAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
@@ -38,32 +38,32 @@ public partial class WriteAllTextAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAllTextAsync_PreviousFile_ShouldOverwriteFileWithText(
 		string path, string contents)
 	{
-		await FileSystem.File.WriteAllTextAsync(path, "foo");
-		await FileSystem.File.WriteAllTextAsync(path, contents);
+		await FileSystem.File.WriteAllTextAsync(path, "foo", TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 
-		string result = await FileSystem.File.ReadAllTextAsync(path);
+		string result = await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
 		result.Should().Be(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAllTextAsync_ShouldCreateFileWithText(
 		string path, string contents)
 	{
-		await FileSystem.File.WriteAllTextAsync(path, contents);
+		await FileSystem.File.WriteAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 
-		string result = await FileSystem.File.ReadAllTextAsync(path);
+		string result = await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
 		result.Should().Be(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAllTextAsync_SpecialCharacters_ShouldReturnSameText(
 		string path)
@@ -80,28 +80,29 @@ public partial class WriteAllTextAsyncTests
 		foreach (char specialCharacter in specialCharacters)
 		{
 			string contents = "_" + specialCharacter;
-			await FileSystem.File.WriteAllTextAsync(path, contents);
+			await FileSystem.File.WriteAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 
-			string result = await FileSystem.File.ReadAllTextAsync(path);
+			string result = await FileSystem.File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
 
 			result.Should().Be(contents,
 				$"{contents} should be encoded and decoded identical.");
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task WriteAllTextAsync_WhenContentIsNull_ShouldNotThrowException(string path)
 	{
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
-			await FileSystem.File.WriteAllTextAsync(path, null);
-		});
-
+			await FileSystem.File.WriteAllTextAsync(path, null, TestContext.Current.CancellationToken);
+		}
+		
+		Exception? exception = await Record.ExceptionAsync(Act);
 		exception.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		WriteAllTextAsync_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
@@ -109,10 +110,12 @@ public partial class WriteAllTextAsyncTests
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
-			await FileSystem.File.WriteAllTextAsync(path, contents);
-		});
+			await FileSystem.File.WriteAllTextAsync(path, contents, TestContext.Current.CancellationToken);
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
@@ -120,7 +123,7 @@ public partial class WriteAllTextAsyncTests
 		FileSystem.Should().NotHaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		WriteAllTextAsync_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
@@ -128,13 +131,15 @@ public partial class WriteAllTextAsyncTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		await FileSystem.File.WriteAllTextAsync(path, null);
+		await FileSystem.File.WriteAllTextAsync(path, null, TestContext.Current.CancellationToken);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
-			await FileSystem.File.WriteAllTextAsync(path, contents);
-		});
+			await FileSystem.File.WriteAllTextAsync(path, contents, TestContext.Current.CancellationToken);
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}

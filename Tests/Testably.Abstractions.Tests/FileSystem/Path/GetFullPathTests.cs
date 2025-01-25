@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class GetFullPathTests
 {
-	[SkippableFact]
+	[Fact]
 	public void GetFullPath_Dot_ShouldReturnToCurrentDirectory()
 	{
 		string expectedFullPath = FileSystem.Directory.GetCurrentDirectory();
@@ -13,7 +13,7 @@ public partial class GetFullPathTests
 		result.Should().Be(expectedFullPath);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData(@"C:\..", @"C:\", TestOS.Windows)]
 	[InlineData(@"C:\foo", @"C:\foo", TestOS.Windows)]
 	[InlineData(@"C:\foo\", @"C:\foo\", TestOS.Windows)]
@@ -38,7 +38,7 @@ public partial class GetFullPathTests
 		result.Should().Be(expected);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData(@"C:\..", @"C:\", TestOS.Windows)]
 	[InlineData("/..", "/", TestOS.Linux | TestOS.Mac)]
 	public void GetFullPath_ParentOfRoot_ShouldReturnRoot(string path,
@@ -52,7 +52,7 @@ public partial class GetFullPathTests
 	}
 
 #if FEATURE_PATH_RELATIVE
-	[SkippableFact]
+	[Fact]
 	public void GetFullPath_Relative_NullBasePath_ShouldThrowArgumentNullException()
 	{
 		Exception? exception = Record.Exception(() =>
@@ -66,7 +66,7 @@ public partial class GetFullPathTests
 #endif
 
 #if FEATURE_PATH_RELATIVE
-	[SkippableFact]
+	[Fact]
 	public void GetFullPath_Relative_RelativeBasePath_ShouldThrowArgumentException()
 	{
 		string relativeBasePath = "not-fully-qualified-base-path";
@@ -84,7 +84,7 @@ public partial class GetFullPathTests
 #endif
 
 #if FEATURE_PATH_RELATIVE
-	[SkippableTheory]
+	[Theory]
 	[InlineData("top/../most/file", "foo/bar", "foo/bar/most/file")]
 	[InlineData("top/../most/../dir/file", "foo", "foo/dir/file")]
 	[InlineData("top/../../most/file", "foo/bar", "foo/most/file")]
@@ -103,7 +103,7 @@ public partial class GetFullPathTests
 #endif
 
 #if FEATURE_PATH_RELATIVE
-	[SkippableTheory]
+	[Theory]
 	[InlineData(@"C:\top\..\most\file", @"C:\foo\bar", @"C:\most\file", TestOS.Windows)]
 	[InlineData(@"C:\top\..\most\file", @"D:\foo\bar", @"C:\most\file", TestOS.Windows)]
 	[InlineData("/top/../most/file", "/foo/bar", "/most/file", TestOS.Linux | TestOS.Mac)]
@@ -119,7 +119,7 @@ public partial class GetFullPathTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void GetFullPath_RelativePathWithDrive_ShouldReturnExpectedValue()
 	{
 		Skip.IfNot(Test.RunsOnWindows);
@@ -134,7 +134,7 @@ public partial class GetFullPathTests
 		result.Should().Be(expectedFullPath);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void
 		GetFullPath_RelativePathWithDrive_WhenCurrentDirectoryIsDifferent_ShouldReturnExpectedValue()
 	{
@@ -154,7 +154,7 @@ public partial class GetFullPathTests
 		result.Should().Be(expectedFullPath);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData(@"X:\foo/bar", @"X:\foo\bar")]
 	[InlineData(@"Y:\foo/bar/", @"Y:\foo\bar\")]
 	public void GetFullPath_ShouldFlipAltDirectorySeparators(string path,
@@ -167,7 +167,7 @@ public partial class GetFullPathTests
 		result.Should().Be(expected);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("top/../most/file", "most/file")]
 	[InlineData("top/../most/../dir/file", "dir/file")]
 	[InlineData("top/../../most/file", "most/file")]

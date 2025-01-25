@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Testing.Tests;
 
 public class NotificationTests
 {
-	[SkippableFact]
+	[Fact]
 	public void AwaitableCallback_Amount_ShouldOnlyReturnAfterNumberOfCallbacks()
 	{
 		MockTimeSystem timeSystem = new();
@@ -21,19 +21,19 @@ public class NotificationTests
 
 		_ = Task.Run(async () =>
 		{
-			await Task.Delay(10);
+			await Task.Delay(10, TestContext.Current.CancellationToken);
 			for (int i = 1; i <= 10; i++)
 			{
 				timeSystem.Thread.Sleep(i);
-				await Task.Delay(1);
+				await Task.Delay(1, TestContext.Current.CancellationToken);
 			}
-		});
+		}, TestContext.Current.CancellationToken);
 
 		wait.Wait(count: 7);
 		receivedCount.Should().BeGreaterOrEqualTo(7);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task AwaitableCallback_Dispose_ShouldStopListening()
 	{
 		MockTimeSystem timeSystem = new();
@@ -47,11 +47,11 @@ public class NotificationTests
 		wait.Dispose();
 
 		timeSystem.Thread.Sleep(1);
-		await Task.Delay(10);
+		await Task.Delay(10, TestContext.Current.CancellationToken);
 		isCalled.Should().BeFalse();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task AwaitableCallback_DisposeFromExecuteWhileWaiting_ShouldStopListening()
 	{
 		MockTimeSystem timeSystem = new();
@@ -67,11 +67,11 @@ public class NotificationTests
 		wait.Dispose();
 
 		timeSystem.Thread.Sleep(1);
-		await Task.Delay(10);
+		await Task.Delay(10, TestContext.Current.CancellationToken);
 		isCalled.Should().BeFalse();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void AwaitableCallback_Filter_ShouldOnlyUpdateAfterFilteredValue()
 	{
 		MockTimeSystem timeSystem = new();
@@ -84,19 +84,19 @@ public class NotificationTests
 
 		_ = Task.Run(async () =>
 		{
-			await Task.Delay(10);
+			await Task.Delay(10, TestContext.Current.CancellationToken);
 			for (int i = 1; i <= 10; i++)
 			{
 				timeSystem.Thread.Sleep(i);
-				await Task.Delay(1);
+				await Task.Delay(1, TestContext.Current.CancellationToken);
 			}
-		});
+		}, TestContext.Current.CancellationToken);
 
 		wait.Wait(t => t.TotalMilliseconds > 6);
 		receivedCount.Should().BeGreaterOrEqualTo(6);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void AwaitableCallback_Predicate_ShouldOnlyUpdateAfterFilteredValue()
 	{
 		MockTimeSystem timeSystem = new();
@@ -112,11 +112,11 @@ public class NotificationTests
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				await Task.Delay(10);
+				await Task.Delay(10, TestContext.Current.CancellationToken);
 				for (int i = 1; i <= 10; i++)
 				{
 					timeSystem.Thread.Sleep(i);
-					await Task.Delay(1);
+					await Task.Delay(1, TestContext.Current.CancellationToken);
 				}
 
 				ms.Set();
@@ -125,13 +125,13 @@ public class NotificationTests
 			{
 				// Ignore any ObjectDisposedException
 			}
-		});
+		}, TestContext.Current.CancellationToken);
 
-		ms.Wait(30000);
+		ms.Wait(30000, TestContext.Current.CancellationToken);
 		receivedCount.Should().BeLessOrEqualTo(4);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void AwaitableCallback_ShouldWaitForCallbackExecution()
 	{
 		using ManualResetEventSlim ms = new();
@@ -153,14 +153,14 @@ public class NotificationTests
 					while (!ms.IsSet)
 					{
 						timeSystem.Thread.Sleep(1);
-						await Task.Delay(1);
+						await Task.Delay(1, TestContext.Current.CancellationToken);
 					}
 				}
 				catch (ObjectDisposedException)
 				{
 					// Ignore any ObjectDisposedException
 				}
-			});
+			}, TestContext.Current.CancellationToken);
 
 			wait.Wait();
 			isCalled.Should().BeTrue();
@@ -171,7 +171,7 @@ public class NotificationTests
 		}
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void AwaitableCallback_TimeoutExpired_ShouldThrowTimeoutException()
 	{
 		MockTimeSystem timeSystem = new();
@@ -188,7 +188,7 @@ public class NotificationTests
 			try
 			{
 				// Delay larger than timeout of 10ms
-				ms.Wait();
+				ms.Wait(TestContext.Current.CancellationToken);
 				timeSystem.Thread.Sleep(1);
 			}
 			catch (ObjectDisposedException)
@@ -207,7 +207,7 @@ public class NotificationTests
 		ms.Set();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void AwaitableCallback_Wait_AfterDispose_ShouldThrowObjectDisposedException()
 	{
 		MockTimeSystem timeSystem = new();
@@ -224,7 +224,7 @@ public class NotificationTests
 		exception.Should().BeOfType<ObjectDisposedException>();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void AwaitableCallback_WaitedPreviously_ShouldWaitAgainForCallbackExecution()
 	{
 		int secondThreadMilliseconds = 42;
@@ -258,7 +258,7 @@ public class NotificationTests
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				listening.Wait(1000);
+				listening.Wait(1000, TestContext.Current.CancellationToken);
 				timeSystem.Thread.Sleep(firstThreadMilliseconds);
 			}
 			catch (ObjectDisposedException)
@@ -274,7 +274,7 @@ public class NotificationTests
 			// ReSharper disable once AccessToDisposedClosure
 			try
 			{
-				listening.Wait(1000);
+				listening.Wait(1000, TestContext.Current.CancellationToken);
 				// ReSharper disable once AccessToDisposedClosure
 				if (!ms.IsSet)
 				{

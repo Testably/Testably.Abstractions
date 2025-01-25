@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 [FileSystemTests]
 public partial class DeleteTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		Delete_CaseDifferentPath_ShouldThrowDirectoryNotFoundException_OnLinux(
@@ -31,7 +31,7 @@ public partial class DeleteTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_FullPath_ShouldDeleteDirectory(string directoryName)
 	{
@@ -44,7 +44,7 @@ public partial class DeleteTests
 		result.Should().NotExist();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string directoryName)
@@ -59,7 +59,7 @@ public partial class DeleteTests
 			hResult: -2147024893);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_Recursive_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string directoryName)
@@ -74,7 +74,7 @@ public partial class DeleteTests
 			hResult: -2147024893);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_WhenFile_ShouldThrowIOException(
 		string directoryName)
@@ -90,7 +90,7 @@ public partial class DeleteTests
 			hResult: -2147024629);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_Recursive_WithFileInSubdirectory_ShouldDeleteDirectoryWithContent(
 		string path, string subdirectory, string fileName, string fileContent)
@@ -114,7 +114,7 @@ public partial class DeleteTests
 		FileSystem.Should().NotHaveFile(subdirectoryFilePath);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_Recursive_WithOpenFile_ShouldThrowIOException_OnWindows(
 		string path, string filename)
@@ -145,7 +145,7 @@ public partial class DeleteTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		Delete_Recursive_WithSimilarNamedFile_ShouldOnlyDeleteDirectoryAndItsContents(
@@ -164,7 +164,7 @@ public partial class DeleteTests
 		FileSystem.Should().HaveFile(fileName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_Recursive_WithSubdirectory_ShouldDeleteDirectoryWithContent(
 		string path, string subdirectory)
@@ -179,7 +179,7 @@ public partial class DeleteTests
 		FileSystem.Should().NotHaveDirectory(subdirectoryPath);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_ShouldAdjustTimes(string path, string subdirectoryName)
 	{
@@ -215,7 +215,7 @@ public partial class DeleteTests
 			.BeOnOrAfter(updateTime.ApplySystemClockTolerance());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_ShouldDeleteDirectory(string directoryName)
 	{
@@ -228,7 +228,7 @@ public partial class DeleteTests
 		result.Should().NotExist();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_WithSimilarNamedFile_ShouldOnlyDeleteDirectory(
 		string subdirectory)
@@ -244,7 +244,7 @@ public partial class DeleteTests
 		FileSystem.Should().HaveFile(fileName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Delete_WithSubdirectory_ShouldThrowIOException_AndNotDeleteDirectory(
 		string path, string subdirectory)

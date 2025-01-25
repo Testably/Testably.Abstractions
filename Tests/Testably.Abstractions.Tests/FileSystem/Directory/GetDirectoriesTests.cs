@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 [FileSystemTests]
 public partial class GetDirectoriesTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		GetDirectories_MissingDirectory_ShouldThrowDirectoryNotFoundException(
@@ -23,7 +23,7 @@ public partial class GetDirectoriesTests
 		FileSystem.Should().NotHaveDirectory(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		GetDirectories_SearchOptionAllDirectories_FullPath_ShouldReturnAllSubdirectoriesWithFullPath(
@@ -45,7 +45,7 @@ public partial class GetDirectoriesTests
 		result.Should().Contain(FileSystem.Path.Combine(baseDirectory.FullName, "bar"));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		GetDirectories_SearchOptionAllDirectories_ShouldReturnAllSubdirectories(
@@ -65,7 +65,7 @@ public partial class GetDirectoriesTests
 		result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
 	}
 
-	[SkippableTheory]
+	[Theory]
 #if NETFRAMEWORK
 	[InlineAutoData(false, "")]
 #else
@@ -103,7 +103,7 @@ public partial class GetDirectoriesTests
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		GetDirectories_WithEnumerationOptions_ShouldConsiderSetOptions(
@@ -131,7 +131,7 @@ public partial class GetDirectoriesTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetDirectories_WithNewline_ShouldThrowArgumentException(
 		string path)
@@ -147,7 +147,7 @@ public partial class GetDirectoriesTests
 		exception.Should().BeException<ArgumentException>(hResult: -2147024809);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		GetDirectories_WithoutSearchString_ShouldReturnAllDirectSubdirectories(
@@ -166,7 +166,7 @@ public partial class GetDirectoriesTests
 		result.Should().Contain(FileSystem.Path.Combine(path, "bar"));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetDirectories_WithRelativePath_ShouldReturnRelativePaths()
 	{
 		string path = $"foo{FileSystem.Path.DirectorySeparatorChar}bar";
@@ -177,7 +177,7 @@ public partial class GetDirectoriesTests
 		result.Should().BeEquivalentTo(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetDirectories_WithSearchPattern_ShouldReturnMatchingSubdirectory(
 		string path)
@@ -193,7 +193,7 @@ public partial class GetDirectoriesTests
 		result.Should().Contain(FileSystem.Path.Combine(path, "foo"));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		GetDirectories_WithSearchPatternInSubdirectory_ShouldReturnMatchingSubdirectory(

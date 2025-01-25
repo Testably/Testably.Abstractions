@@ -11,7 +11,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class AppendAllTextAsyncTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task AppendAllTextAsync_Cancelled_ShouldThrowTaskCanceledException(
 		string path, string contents)
@@ -25,7 +25,7 @@ public partial class AppendAllTextAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		AppendAllTextAsync_Cancelled_WithEncoding_ShouldThrowTaskCanceledException(
@@ -40,57 +40,60 @@ public partial class AppendAllTextAsyncTests
 		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task AppendAllTextAsync_ExistingFile_ShouldAppendLinesToFile(
 		string path, string previousContents, string contents)
 	{
-		await FileSystem.File.AppendAllTextAsync(path, previousContents);
+		await FileSystem.File.AppendAllTextAsync(path, previousContents, TestContext.Current.CancellationToken);
 
-		await FileSystem.File.AppendAllTextAsync(path, contents);
+		await FileSystem.File.AppendAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(previousContents + contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task AppendAllTextAsync_MissingDirectory_ShouldThrowDirectoryNotFoundException(
 		string missingPath, string fileName, string contents)
 	{
 		string filePath = FileSystem.Path.Combine(missingPath, fileName);
-		Exception? exception = await Record.ExceptionAsync(async () =>
+
+		async Task Act()
 		{
-			await FileSystem.File.AppendAllTextAsync(filePath, contents);
-		});
+			await FileSystem.File.AppendAllTextAsync(filePath, contents, TestContext.Current.CancellationToken);
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task AppendAllTextAsync_MissingFile_ShouldCreateFile(
 		string path, string contents)
 	{
-		await FileSystem.File.AppendAllTextAsync(path, contents);
+		await FileSystem.File.AppendAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task AppendAllTextAsync_ShouldNotEndWithNewline(string path)
 	{
 		string contents = "foo";
 
-		await FileSystem.File.AppendAllTextAsync(path, contents);
+		await FileSystem.File.AppendAllTextAsync(path, contents, TestContext.Current.CancellationToken);
 
 		FileSystem.Should().HaveFile(path)
 			.Which.HasContent(contents);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task
 		AppendAllTextAsync_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
@@ -98,10 +101,12 @@ public partial class AppendAllTextAsyncTests
 	{
 		FileSystem.Directory.CreateDirectory(path);
 
-		Exception? exception = await Record.ExceptionAsync(async () =>
+		async Task Act()
 		{
-			await FileSystem.File.AppendAllTextAsync(path, contents);
-		});
+			await FileSystem.File.AppendAllTextAsync(path, contents, TestContext.Current.CancellationToken);
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
@@ -109,13 +114,13 @@ public partial class AppendAllTextAsyncTests
 		FileSystem.Should().NotHaveFile(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[ClassData(typeof(TestDataGetEncodingDifference))]
 	public async Task AppendAllTextAsync_WithDifferentEncoding_ShouldNotReturnWrittenText(
 		string contents, Encoding writeEncoding, Encoding readEncoding)
 	{
 		string path = new Fixture().Create<string>();
-		await FileSystem.File.AppendAllTextAsync(path, contents, writeEncoding);
+		await FileSystem.File.AppendAllTextAsync(path, contents, writeEncoding, TestContext.Current.CancellationToken);
 
 		string[] result = FileSystem.File.ReadAllLines(path, readEncoding);
 

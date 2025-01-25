@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemWatcher;
 [FileSystemTests]
 public partial class EnableRaisingEventsTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EnableRaisingEvents_SetToFalse_ShouldStop(string path1, string path2)
 	{
@@ -27,16 +27,16 @@ public partial class EnableRaisingEventsTests
 		};
 		fileSystemWatcher.EnableRaisingEvents = true;
 		FileSystem.Directory.Delete(path1);
-		ms.Wait(ExpectSuccess).Should().BeTrue();
+		ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		ms.Reset();
 
 		fileSystemWatcher.EnableRaisingEvents = false;
 
 		FileSystem.Directory.Delete(path2);
-		ms.Wait(ExpectTimeout).Should().BeFalse();
+		ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void EnableRaisingEvents_ShouldBeInitializedAsFalse(string path)
 	{
@@ -59,6 +59,6 @@ public partial class EnableRaisingEventsTests
 
 		FileSystem.Directory.Delete(path);
 
-		ms.Wait(ExpectTimeout).Should().BeFalse();
+		ms.Wait(ExpectTimeout, TestContext.Current.CancellationToken).Should().BeFalse();
 	}
 }

@@ -4,7 +4,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class JoinTests
 {
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData((string?)null)]
 	[InlineAutoData("")]
 	public void Join_2Paths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
@@ -17,7 +17,7 @@ public partial class JoinTests
 		result2.Should().Be(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData("/foo/", "/bar/", "/foo//bar/")]
 	[InlineAutoData("foo/", "/bar", "foo//bar")]
 	[InlineAutoData("foo/", "bar", "foo/bar")]
@@ -36,7 +36,7 @@ public partial class JoinTests
 		result.Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Join_2Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2)
@@ -49,7 +49,7 @@ public partial class JoinTests
 		result.Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Join_2Paths_Span_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2)
@@ -64,7 +64,7 @@ public partial class JoinTests
 		result.Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData((string?)null)]
 	[InlineAutoData("")]
 	public void Join_3Paths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
@@ -81,7 +81,7 @@ public partial class JoinTests
 		result3.Should().Be(expectedPath);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData("/foo/", "/bar/", "/baz/", "/foo//bar//baz/")]
 	[InlineAutoData("foo/", "/bar/", "/baz", "foo//bar//baz")]
 	[InlineAutoData("foo/", "bar", "/baz", "foo/bar/baz")]
@@ -102,7 +102,7 @@ public partial class JoinTests
 		result.Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Join_3Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3)
@@ -116,7 +116,7 @@ public partial class JoinTests
 		result.Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Join_3Paths_Span_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3)
@@ -133,7 +133,7 @@ public partial class JoinTests
 		result.Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData((string?)null)]
 	[InlineAutoData("")]
 	public void Join_4Paths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
@@ -153,7 +153,7 @@ public partial class JoinTests
 		result4.Should().Be(expectedPath);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData("/foo/", "/bar/", "/baz/", "/muh/", "/foo//bar//baz//muh/")]
 	[InlineAutoData("foo/", "/bar/", "/baz/", "/muh", "foo//bar//baz//muh")]
 	[InlineAutoData("foo/", "bar", "/baz", "/muh", "foo/bar/baz/muh")]
@@ -175,7 +175,7 @@ public partial class JoinTests
 		result.Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Join_4Paths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4)
@@ -190,7 +190,7 @@ public partial class JoinTests
 		result.Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Join_4Paths_Span_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4)
@@ -209,7 +209,7 @@ public partial class JoinTests
 		result.Should().Be(expectedResult);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Join_ParamPaths_Empty_ShouldReturnEmptyString()
 	{
 		string?[] paths = Array.Empty<string?>();
@@ -219,7 +219,7 @@ public partial class JoinTests
 		result.Should().Be(string.Empty);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Join_ParamPaths_Null_ShouldThrow()
 	{
 		Exception? exception = Record.Exception(() =>
@@ -230,7 +230,7 @@ public partial class JoinTests
 		exception.Should().BeException<ArgumentNullException>(paramName: "paths");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData((string?)null)]
 	[InlineAutoData("")]
 	public void Join_ParamPaths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
@@ -257,7 +257,7 @@ public partial class JoinTests
 		result5.Should().Be(expectedPath);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData("/foo/", "/bar/", "/baz/", "/muh/", "/maeh/", "/foo//bar//baz//muh//maeh/")]
 	[InlineAutoData("foo/", "/bar/", "/baz/", "/muh", "/maeh", "foo//bar//baz//muh/maeh")]
 	[InlineAutoData("foo/", "bar", "/baz", "/muh", "/maeh", "foo/bar/baz/muh/maeh")]
@@ -280,7 +280,7 @@ public partial class JoinTests
 		result.Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Join_ParamPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4, string path5)

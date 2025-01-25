@@ -1,5 +1,4 @@
 using System.IO;
-using Xunit.Abstractions;
 
 namespace Testably.Abstractions.Testing.Tests.FileSystem;
 
@@ -11,7 +10,7 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 
 	#endregion
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateDirectory_CustomException_ShouldNotCreateDirectory(
 		string path, Exception exceptionToThrow)
@@ -30,7 +29,7 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 		exception.Should().Be(exceptionToThrow);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateDirectory_CustomException_ShouldOnlyTriggerChangeOccurring(
 		string path, Exception exceptionToThrow)
@@ -46,7 +45,7 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 		receivedPath!.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		CreateDirectory_WithParentDirectories_ShouldTriggerNotificationForEachDirectory(
@@ -72,7 +71,7 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 		eventCount.Should().Be(3);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[MemberData(nameof(NotificationTriggeringMethods))]
 	public void ExecuteCallback_ShouldTriggerNotification(
 		Action<IFileSystem, string>? initialization,

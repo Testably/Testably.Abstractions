@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemInfo;
 [FileSystemTests]
 public partial class UnixFileModeTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void UnixFileMode_MissingFile_ShouldBeInitializedToMinusOne(
 		string path)
@@ -17,7 +17,7 @@ public partial class UnixFileModeTests
 		fileSystemInfo.UnixFileMode.Should().Be(expected);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void UnixFileMode_SetterShouldThrowPlatformNotSupportedException_OnWindows(
 		string path, UnixFileMode unixFileMode)
@@ -36,7 +36,7 @@ public partial class UnixFileModeTests
 		exception.Should().BeException<PlatformNotSupportedException>(hResult: -2146233031);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void UnixFileMode_ShouldBeInitializedCorrectly(
 		string path)
@@ -53,7 +53,7 @@ public partial class UnixFileModeTests
 		fileSystemInfo.UnixFileMode.Should().Be(expected);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void UnixFileMode_ShouldBeSettableOnLinux(
 		string path, UnixFileMode unixFileMode)

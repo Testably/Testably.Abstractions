@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class Tests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetCreationTime_PathNotFound_ShouldReturnNullTime(string path)
 	{
@@ -14,7 +14,7 @@ public partial class Tests
 		result.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetCreationTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
 	{
@@ -25,7 +25,7 @@ public partial class Tests
 		result.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetLastAccessTime_PathNotFound_ShouldReturnNullTime(string path)
 	{
@@ -36,7 +36,7 @@ public partial class Tests
 		result.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetLastAccessTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
 	{
@@ -47,7 +47,7 @@ public partial class Tests
 		result.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetLastWriteTime_PathNotFound_ShouldReturnNullTime(string path)
 	{
@@ -58,7 +58,7 @@ public partial class Tests
 		result.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetLastWriteTimeUtc_PathNotFound_ShouldReturnNullTime(string path)
 	{
@@ -69,7 +69,7 @@ public partial class Tests
 		result.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void LastAccessTime_ShouldBeSet(string path)
 	{
@@ -82,7 +82,7 @@ public partial class Tests
 		result.Kind.Should().Be(DateTimeKind.Local);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void LastAccessTimeUtc_ShouldBeSet(string path)
 	{
@@ -95,7 +95,7 @@ public partial class Tests
 		result.Kind.Should().Be(DateTimeKind.Utc);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void LastWriteTime_ShouldBeSet(string path)
 	{
@@ -108,7 +108,7 @@ public partial class Tests
 		result.Kind.Should().Be(DateTimeKind.Local);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void LastWriteTimeUtc_ShouldBeSet(string path)
 	{
@@ -121,7 +121,7 @@ public partial class Tests
 		result.Kind.Should().Be(DateTimeKind.Utc);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetCreationTime_ShouldChangeCreationTime(
 		string path, DateTime creationTime)
@@ -139,7 +139,7 @@ public partial class Tests
 			.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetCreationTimeUtc_ShouldChangeCreationTime(
 		string path, DateTime creationTime)
@@ -157,7 +157,7 @@ public partial class Tests
 			.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetLastAccessTime_ShouldChangeLastAccessTime(
 		string path, DateTime lastAccessTime)
@@ -172,7 +172,7 @@ public partial class Tests
 			.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetLastAccessTimeUtc_ShouldChangeLastAccessTime(
 		string path, DateTime lastAccessTime)
@@ -187,7 +187,7 @@ public partial class Tests
 			.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetLastWriteTime_ShouldChangeLastWriteTime(
 		string path, DateTime lastWriteTime)
@@ -202,7 +202,7 @@ public partial class Tests
 			.Should().Be(expectedTime);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void SetLastWriteTimeUtc_ShouldChangeLastWriteTime(
 		string path, DateTime lastWriteTime)

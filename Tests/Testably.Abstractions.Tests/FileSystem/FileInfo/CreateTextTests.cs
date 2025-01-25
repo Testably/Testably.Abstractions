@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 [FileSystemTests]
 public partial class CreateTextTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateText_MissingFile_ShouldCreateFile(
 		string path, string appendText)
@@ -22,7 +22,7 @@ public partial class CreateTextTests
 	}
 
 #if NET8_0_OR_GREATER
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateText_ShouldRefreshExistsCache(
 		string path, string appendText)
@@ -39,7 +39,7 @@ public partial class CreateTextTests
 		FileSystem.Should().HaveFile(path);
 	}
 #else
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateText_ShouldNotRefreshExistsCache(
 		string path, string appendText)
@@ -57,7 +57,7 @@ public partial class CreateTextTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void CreateText_ShouldReplaceTextInExistingFile(
 		string path, string contents, string appendText)

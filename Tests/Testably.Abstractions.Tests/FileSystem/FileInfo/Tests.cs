@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileInfo;
 [FileSystemTests]
 public partial class Tests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Attributes_WhenFileIsMissing_SetterShouldThrowFileNotFoundException(
 		string path)
@@ -21,7 +21,7 @@ public partial class Tests
 		exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Attributes_WhenFileIsMissing_ShouldReturnMinusOne(string path)
 	{
@@ -31,7 +31,7 @@ public partial class Tests
 		sut.Attributes.Should().Be(expected);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Directory_ShouldReturnParentDirectory()
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -44,7 +44,7 @@ public partial class Tests
 		file!.Directory!.FullName.Should().Be(initialized[0].FullName);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void DirectoryName_ShouldReturnNameOfParentDirectory()
 	{
 		IFileSystemDirectoryInitializer<IFileSystem> initialized =
@@ -57,7 +57,7 @@ public partial class Tests
 		file!.DirectoryName.Should().Be(initialized[0].FullName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("foo", "")]
 	[InlineData("foo.txt", ".txt")]
 	[InlineData("foo.bar.txt", ".txt")]
@@ -68,7 +68,7 @@ public partial class Tests
 		sut.Extension.Should().Be(expectedValue);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Extension_WithTrailingDot_ShouldReturnExpectedValue()
 	{
 		IFileInfo sut = FileSystem.FileInfo.New("foo.");
@@ -83,7 +83,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void IsReadOnly_MissingFile_ShouldBeTrue(string path)
 	{
@@ -92,7 +92,7 @@ public partial class Tests
 		fileInfo.IsReadOnly.Should().BeTrue();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void IsReadOnly_SetToFalse_ShouldRemoveReadOnlyAttribute(string path)
 	{
@@ -106,7 +106,7 @@ public partial class Tests
 		fileInfo.Attributes.Should().Be(FileAttributes.Normal);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void IsReadOnly_SetToTrue_ShouldAddReadOnlyAttribute(string path)
 	{
@@ -129,7 +129,7 @@ public partial class Tests
 		fileInfo.Attributes.Should().NotHaveFlag(FileAttributes.ReadOnly);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void IsReadOnly_ShouldChangeWhenSettingReadOnlyAttribute(string path)
 	{
@@ -142,7 +142,7 @@ public partial class Tests
 		fileInfo.Attributes.Should().HaveFlag(FileAttributes.ReadOnly);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void IsReadOnly_ShouldInitializeToReadOnlyAttribute(string path)
 	{
@@ -153,7 +153,7 @@ public partial class Tests
 		fileInfo.Attributes.Should().NotHaveFlag(FileAttributes.ReadOnly);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("/foo")]
 	[InlineData("./foo")]
 	[InlineData("foo")]

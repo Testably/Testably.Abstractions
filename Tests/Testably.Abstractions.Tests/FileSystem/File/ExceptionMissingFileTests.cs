@@ -12,8 +12,8 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class ExceptionMissingFileTests
 {
-	[SkippableTheory]
-	[MemberData(nameof(GetFileCallbacks), parameters: (int)MissingFileTestCases.DirectoryMissing)]
+	[Theory]
+	[MemberData(nameof(GetFileCallbacks), (int)MissingFileTestCases.DirectoryMissing)]
 	public void Operations_WhenDirectoryIsMissing_ShouldThrowDirectoryNotFoundException(
 		Expression<Action<IFile, string>> callback, Func<Test, bool> skipTest)
 	{
@@ -40,8 +40,8 @@ public partial class ExceptionMissingFileTests
 		}
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetFileCallbacks), parameters: (int)MissingFileTestCases.FileMissing)]
+	[Theory]
+	[MemberData(nameof(GetFileCallbacks), (int)MissingFileTestCases.FileMissing)]
 	public void Operations_WhenFileIsMissing_ShouldThrowFileNotFoundException(
 		Expression<Action<IFile, string>> callback, Func<Test, bool> skipTest)
 	{
@@ -339,13 +339,13 @@ public partial class ExceptionMissingFileTests
 			(file, path)
 				=> file.ReadLines(path, Encoding.UTF8),
 			null);
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 		yield return (MissingFileTestCases.All, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.ReadLinesAsync(path, CancellationToken.None),
 			null);
 #endif
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 		yield return (MissingFileTestCases.All, ExpectedExceptionType.Default,
 			(file, path)
 				=> file.ReadLinesAsync(path, Encoding.UTF8, CancellationToken.None),

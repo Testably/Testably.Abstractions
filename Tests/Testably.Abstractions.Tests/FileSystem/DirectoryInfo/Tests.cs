@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.DirectoryInfo;
 [FileSystemTests]
 public partial class Tests
 {
-	[SkippableTheory]
+	[Theory]
 	[InlineData("foo")]
 	[InlineData("foo/")]
 	public void Extension_ShouldReturnEmptyString(string path)
@@ -17,7 +17,7 @@ public partial class Tests
 		result.Should().BeEmpty();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData(@"/temp\\folder")]
 	[InlineData("/temp/folder")]
 	[InlineData(@"/temp/\\/folder")]
@@ -30,7 +30,7 @@ public partial class Tests
 		sut.FullName.Should().Be(path);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("foo")]
 	[InlineData("foo/")]
 	public void FullName_ShouldReturnFullPath(string path)
@@ -41,7 +41,7 @@ public partial class Tests
 		sut.FullName.Should().Be(expectedPath);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData(@"\\unc\folder", @"\\unc\folder")]
 	[InlineData(@"\\unc/folder\\foo", @"\\unc\folder\foo")]
 	[InlineData(@"c:\temp\\folder", @"c:\temp\folder")]
@@ -57,7 +57,7 @@ public partial class Tests
 		sut.FullName.Should().Be(expectedPath);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void FullName_ShouldTrimTrailingSpaces_OnWindows(string path)
 	{
@@ -76,7 +76,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		MissingFile_Attributes_ShouldAlwaysBeNegativeOne_AndSetterShouldThrowFileNotFoundException(
@@ -92,7 +92,7 @@ public partial class Tests
 		sut.Attributes.Should().Be((FileAttributes)(-1));
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		MissingFile_CreationTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
@@ -105,7 +105,7 @@ public partial class Tests
 			sut.CreationTime = creationTime;
 		});
 
-		if (Test.RunsOnWindows || (Test.IsNet7OrGreater && !Test.RunsOnMac))
+		if (Test.RunsOnWindows || (Test.IsNet8OrGreater && !Test.RunsOnMac))
 		{
 			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 		}
@@ -117,7 +117,7 @@ public partial class Tests
 		sut.CreationTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		MissingFile_CreationTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
@@ -130,7 +130,7 @@ public partial class Tests
 			sut.CreationTimeUtc = creationTimeUtc;
 		});
 
-		if (Test.RunsOnWindows || (Test.IsNet7OrGreater && !Test.RunsOnMac))
+		if (Test.RunsOnWindows || (Test.IsNet8OrGreater && !Test.RunsOnMac))
 		{
 			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 		}
@@ -142,7 +142,7 @@ public partial class Tests
 		sut.CreationTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		MissingFile_LastAccessTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
@@ -155,7 +155,7 @@ public partial class Tests
 			sut.LastAccessTime = lastAccessTime;
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 		}
@@ -167,7 +167,7 @@ public partial class Tests
 		sut.LastAccessTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		MissingFile_LastAccessTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
@@ -180,7 +180,7 @@ public partial class Tests
 			sut.LastAccessTimeUtc = lastAccessTimeUtc;
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 		}
@@ -192,7 +192,7 @@ public partial class Tests
 		sut.LastAccessTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		MissingFile_LastWriteTime_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
@@ -205,7 +205,7 @@ public partial class Tests
 			sut.LastWriteTime = lastWriteTime;
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 		}
@@ -217,7 +217,7 @@ public partial class Tests
 		sut.LastWriteTime.Should().Be(FileTestHelper.NullTime.ToLocalTime());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		MissingFile_LastWriteTimeUtc_ShouldAlwaysBeNullTime_AndSetterShouldThrowCorrectException(
@@ -230,7 +230,7 @@ public partial class Tests
 			sut.LastWriteTimeUtc = lastWriteTimeUtc;
 		});
 
-		if (Test.RunsOnWindows || Test.IsNet7OrGreater)
+		if (Test.RunsOnWindows || Test.IsNet8OrGreater)
 		{
 			exception.Should().BeException<FileNotFoundException>(hResult: -2147024894);
 		}
@@ -242,7 +242,7 @@ public partial class Tests
 		sut.LastWriteTimeUtc.Should().Be(FileTestHelper.NullTime.ToUniversalTime());
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Name_ShouldTrimTrailingSpaces_OnWindows(string path)
 	{
@@ -260,7 +260,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Parent_ArbitraryPaths_ShouldNotBeNull(string path1,
 		string path2,
@@ -276,8 +276,7 @@ public partial class Tests
 		sut.Parent?.Parent.Should().NotExist();
 	}
 
-	[SkippableFact]
-	[AutoData]
+	[Fact]
 	public void Parent_Root_ShouldBeNull()
 	{
 		IDirectoryInfo sut =
@@ -286,7 +285,7 @@ public partial class Tests
 		sut.Parent.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData("./foo/bar", "foo")]
 	[InlineAutoData("./foo", ".")]
 	public void Parent_ToString_ShouldBeAbsolutePathOnNetCore(
@@ -311,7 +310,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData("./foo/bar", "foo")]
 	[InlineAutoData("./foo", "bar", "bar")]
 	public void Parent_ToString_ShouldBeDirectoryNameOnNetFramework(
@@ -336,8 +335,7 @@ public partial class Tests
 		}
 	}
 
-	[SkippableFact]
-	[AutoData]
+	[Fact]
 	public void Root_Name_ShouldBeCorrect()
 	{
 		string rootName = FileTestHelper.RootDrive(Test);
@@ -348,7 +346,7 @@ public partial class Tests
 		sut.Name.Should().Be(rootName);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Root_ShouldExist(string path)
 	{
@@ -359,7 +357,7 @@ public partial class Tests
 		result.Root.FullName.Should().Be(expectedRoot);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("/foo")]
 	[InlineData("./foo")]
 	[InlineData("foo")]

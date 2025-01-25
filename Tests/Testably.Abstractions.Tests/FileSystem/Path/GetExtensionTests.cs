@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class GetExtensionTests
 {
-	[SkippableFact]
+	[Fact]
 	public void GetExtension_Empty_ShouldReturnEmpty()
 	{
 		string? result = FileSystem.Path.GetExtension(string.Empty);
@@ -11,7 +11,7 @@ public partial class GetExtensionTests
 		result.Should().BeEmpty();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetExtension_Null_ShouldReturnNull()
 	{
 		string? result = FileSystem.Path.GetExtension(null);
@@ -19,7 +19,7 @@ public partial class GetExtensionTests
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetExtension_ShouldReturnExtensionWithLeadingDot(
 		string directory, string filename, string extension)
@@ -33,7 +33,7 @@ public partial class GetExtensionTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetExtension_Span_ShouldReturnExtensionWithLeadingDot(
 		string directory, string filename, string extension)
@@ -47,7 +47,7 @@ public partial class GetExtensionTests
 	}
 #endif
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetExtension_StartingDot_ShouldReturnCompleteFileName(
 		string directory, string filename)
@@ -59,7 +59,7 @@ public partial class GetExtensionTests
 		result.Should().Be("." + filename);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void GetExtension_TrailingDot_ShouldReturnEmptyString(
 		string directory, string filename)

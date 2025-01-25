@@ -8,8 +8,8 @@ namespace Testably.Abstractions.Tests.FileSystem.FileSystemInfo;
 [FileSystemTests]
 public partial class ExceptionTests
 {
-	[SkippableTheory]
-	[MemberData(nameof(GetFileSystemInfoCallbacks), parameters: "")]
+	[Theory]
+	[MemberData(nameof(GetFileSystemInfoCallbacks), "")]
 	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileSystemInfo>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -26,8 +26,8 @@ public partial class ExceptionTests
 			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetFileSystemInfoCallbacks), parameters: (string?)null)]
+	[Theory]
+	[MemberData(nameof(GetFileSystemInfoCallbacks), (string?)null)]
 	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileSystemInfo>> callback, string paramName,
 		bool ignoreParamCheck)

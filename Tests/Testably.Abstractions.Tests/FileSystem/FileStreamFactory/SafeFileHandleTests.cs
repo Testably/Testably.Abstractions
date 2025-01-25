@@ -9,7 +9,7 @@ namespace Testably.Abstractions.Tests.FileSystem.FileStreamFactory;
 [FileSystemTests]
 public partial class SafeFileHandleTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_SafeFileHandle_InvalidHandle_ShouldThrowArgumentException(
 		string filename)
@@ -27,7 +27,7 @@ public partial class SafeFileHandleTests
 			paramName: "handle");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_SafeFileHandle_InvalidHandle_WithBufferSize_ShouldThrowArgumentException(
 		string filename)
@@ -45,7 +45,7 @@ public partial class SafeFileHandleTests
 			paramName: "handle");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		New_SafeFileHandle_InvalidHandle_WithBufferSizeAndAsync_ShouldThrowArgumentException(
@@ -64,7 +64,7 @@ public partial class SafeFileHandleTests
 			paramName: "handle");
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_SafeFileHandle_Valid_ShouldCreateWritableStream(
 		string filename, string contents)
@@ -98,7 +98,7 @@ public partial class SafeFileHandleTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void New_SafeFileHandle_Valid_WithBufferSize_ShouldCreateWritableStream(
 		string filename, string contents)
@@ -133,7 +133,7 @@ public partial class SafeFileHandleTests
 		}
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void
 		New_SafeFileHandle_Valid_WithBufferSizeAndAsync_ShouldCreateWritableStream(

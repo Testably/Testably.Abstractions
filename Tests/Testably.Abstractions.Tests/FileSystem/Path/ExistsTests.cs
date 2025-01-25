@@ -1,10 +1,10 @@
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 namespace Testably.Abstractions.Tests.FileSystem.Path;
 
 [FileSystemTests]
 public partial class ExistsTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Exists_ExistingDirectory_ShouldReturnTrue(string path)
 	{
@@ -15,7 +15,7 @@ public partial class ExistsTests
 		result.Should().BeTrue();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Exists_ExistingFile_ShouldReturnTrue(string path)
 	{
@@ -26,7 +26,7 @@ public partial class ExistsTests
 		result.Should().BeTrue();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Exists_ExistingFileOrDirectory_ShouldReturnTrue(string path)
 	{
@@ -35,7 +35,7 @@ public partial class ExistsTests
 		result.Should().BeFalse();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Exists_Null_ShouldReturnFalse()
 	{
 		bool result = FileSystem.Path.Exists(null);
@@ -43,7 +43,7 @@ public partial class ExistsTests
 		result.Should().BeFalse();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Exists_ShouldWorkWithAbsolutePaths(string path)
 	{

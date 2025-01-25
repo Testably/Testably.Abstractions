@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 [FileSystemTests]
 public partial class ExistsTests
 {
-	[SkippableTheory]
+	[Theory]
 	[InlineData("foo")]
 	[InlineData("foo/")]
 	public void Exists_ExistingDirectory_ShouldReturnTrue(string path)
@@ -15,7 +15,7 @@ public partial class ExistsTests
 		result.Should().BeTrue();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Exists_File_ShouldReturnFalse(string path)
 	{
@@ -26,7 +26,7 @@ public partial class ExistsTests
 		result.Should().BeFalse();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData(@"\\s")]
 	[InlineData("<")]
 	[InlineData("\t")]
@@ -39,7 +39,7 @@ public partial class ExistsTests
 		result.Should().BeFalse();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[InlineData("foo")]
 	[InlineData("foo/")]
 	public void Exists_MissingDirectory_ShouldReturnFalse(string path)
@@ -49,7 +49,7 @@ public partial class ExistsTests
 		result.Should().BeFalse();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Exists_Null_ShouldReturnFalse()
 	{
 		bool result = FileSystem.Directory.Exists(null);
@@ -57,7 +57,7 @@ public partial class ExistsTests
 		result.Should().BeFalse();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Exists_Whitespace_ShouldReturnFalse()
 	{
 		bool result = FileSystem.Directory.Exists("  ");

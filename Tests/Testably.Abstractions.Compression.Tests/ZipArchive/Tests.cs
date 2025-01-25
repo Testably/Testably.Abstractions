@@ -8,7 +8,7 @@ namespace Testably.Abstractions.Compression.Tests.ZipArchive;
 public partial class Tests
 {
 #if FEATURE_ZIPFILE_NET7
-	[SkippableFact]
+	[Fact]
 	public async Task Comment_ShouldBeInitializedEmpty()
 	{
 		FileSystem.Initialize()
@@ -26,7 +26,7 @@ public partial class Tests
 	}
 #endif
 #if FEATURE_ZIPFILE_NET7
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task Comment_ShouldBeSettable(string comment)
 	{
@@ -46,7 +46,7 @@ public partial class Tests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public async Task Entries_CreateMode_ShouldThrowNotSupportedException()
 	{
 		using FileSystemStream stream =
@@ -59,7 +59,7 @@ public partial class Tests
 		await That(Act).Throws<NotSupportedException>();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task FileSystem_ShouldBeSet(
 		CompressionLevel compressionLevel)
@@ -76,7 +76,7 @@ public partial class Tests
 		await That(archive.FileSystem).Is(FileSystem);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task GetEntry_WhenNameIsNotFound_ShouldReturnNull()
 	{
 		FileSystem.Initialize()
@@ -94,7 +94,7 @@ public partial class Tests
 		await That(archive.GetEntry("foo/foo.txt")).IsNotNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public async Task Mode_ShouldBeSetCorrectly(ZipArchiveMode mode)
 	{

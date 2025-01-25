@@ -6,7 +6,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 public class FileSystemWatcherFactoryStatisticsTests
 {
-	[SkippableFact]
+	[Fact]
 	public void Method_New_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -18,7 +18,7 @@ public class FileSystemWatcherFactoryStatisticsTests
 			nameof(IFileSystemWatcherFactory.New));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_New_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -33,7 +33,7 @@ public class FileSystemWatcherFactoryStatisticsTests
 			path);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_New_String_String_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -49,7 +49,7 @@ public class FileSystemWatcherFactoryStatisticsTests
 			path, filter);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_Wrap_FileSystemWatcher_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -64,7 +64,7 @@ public class FileSystemWatcherFactoryStatisticsTests
 			fileSystemWatcher);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void ToString_ShouldBeFileSystemWatcher()
 	{
 		IPathStatistics<IFileSystemWatcherFactory, IFileSystemWatcher> sut

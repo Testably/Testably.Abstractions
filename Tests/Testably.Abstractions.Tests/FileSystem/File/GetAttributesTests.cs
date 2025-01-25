@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class GetAttributesTests
 {
-	[SkippableTheory]
+	[Theory]
 	[InlineAutoData(FileAttributes.ReadOnly)]
 	[InlineAutoData(FileAttributes.Normal)]
 	public void GetAttributes_ShouldReturnAttributes(

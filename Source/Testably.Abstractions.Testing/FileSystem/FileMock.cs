@@ -888,7 +888,7 @@ internal sealed class FileMock : IFile
 		return EnumerateLines(ReadAllText(path, encoding));
 	}
 
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 	/// <inheritdoc cref="IFile.ReadLinesAsync(string, CancellationToken)" />
 	public IAsyncEnumerable<string> ReadLinesAsync(string path,
 		CancellationToken cancellationToken = default)
@@ -902,7 +902,7 @@ internal sealed class FileMock : IFile
 	}
 #endif
 
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 	/// <inheritdoc cref="IFile.ReadLinesAsync(string, Encoding, CancellationToken)" />
 	public IAsyncEnumerable<string> ReadLinesAsync(string path, Encoding encoding,
 		CancellationToken cancellationToken = default)

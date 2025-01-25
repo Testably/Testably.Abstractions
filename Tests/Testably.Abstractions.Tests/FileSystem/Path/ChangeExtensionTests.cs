@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class ChangeExtensionTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ChangeExtension_EmptyPath_ShouldReturnEmptyString(string extension)
 	{
@@ -12,7 +12,7 @@ public partial class ChangeExtensionTests
 		result.Should().BeEmpty();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ChangeExtension_NullPath_ShouldReturnNull(string extension)
 	{
@@ -21,7 +21,7 @@ public partial class ChangeExtensionTests
 		result.Should().BeNull();
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ChangeExtension_WhenExtensionIsNull_ShouldRemovePreviousExtension(
 		string fileName)
@@ -34,7 +34,7 @@ public partial class ChangeExtensionTests
 		result.Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ChangeExtension_WithDirectory_ShouldIncludeDirectory(
 		string directory, string fileName, string extension)
@@ -48,7 +48,7 @@ public partial class ChangeExtensionTests
 		result.Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ChangeExtension_WithDotOnlyInDirectory_ShouldAppendExtensionToPath(
 		string directory, string fileName, string extension)
@@ -62,7 +62,7 @@ public partial class ChangeExtensionTests
 		result.Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ChangeExtension_WithFileStartingWithDot_ShouldAppendExtensionToPath(
 		string fileName, string extension)
@@ -75,7 +75,7 @@ public partial class ChangeExtensionTests
 		result.Should().Be(expectedResult);
 	}
 
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void ChangeExtension_WithLeadingDotInExtension_ShouldNotIncludeTwoDots(
 		string fileName, string extension)

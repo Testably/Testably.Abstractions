@@ -9,7 +9,7 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 public class FileStreamStatisticsTests
 {
-	[SkippableFact]
+	[Fact]
 	public void Method_BeginRead_ByteArray_Int_Int_AsyncCallback_Object_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -28,7 +28,7 @@ public class FileStreamStatisticsTests
 				buffer, offset, count, callback, state);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_BeginWrite_ByteArray_Int_Int_AsyncCallback_Object_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -47,7 +47,7 @@ public class FileStreamStatisticsTests
 				buffer, offset, count, callback, state);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_Close_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -59,7 +59,7 @@ public class FileStreamStatisticsTests
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Close));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_CopyTo_Stream_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -75,7 +75,7 @@ public class FileStreamStatisticsTests
 				destination, bufferSize);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task Method_CopyToAsync_Stream_Int_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -92,7 +92,7 @@ public class FileStreamStatisticsTests
 				destination, bufferSize, cancellationToken);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_EndRead_IAsyncResult_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -110,7 +110,7 @@ public class FileStreamStatisticsTests
 			                    c.Parameters[0].Is(asyncResult));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_EndWrite_IAsyncResult_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -128,7 +128,7 @@ public class FileStreamStatisticsTests
 			                    c.Parameters[0].Is(asyncResult));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_Flush_Bool_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -143,7 +143,7 @@ public class FileStreamStatisticsTests
 				flushToDisk);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_Flush_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -156,7 +156,7 @@ public class FileStreamStatisticsTests
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.Flush));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public async Task Method_FlushAsync_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -171,7 +171,7 @@ public class FileStreamStatisticsTests
 				cancellationToken);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_Read_ByteArray_Int_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -189,7 +189,7 @@ public class FileStreamStatisticsTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableFact]
+	[Fact]
 	public void Method_Read_SpanByte_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -205,7 +205,7 @@ public class FileStreamStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public async Task Method_ReadAsync_ByteArray_Int_Int_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -226,7 +226,7 @@ public class FileStreamStatisticsTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableFact]
+	[Fact]
 	public async Task Method_ReadAsync_MemoryByte_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -243,7 +243,7 @@ public class FileStreamStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Method_ReadByte_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -256,7 +256,7 @@ public class FileStreamStatisticsTests
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.ReadByte));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_Seek_Int64_SeekOrigin_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -272,7 +272,7 @@ public class FileStreamStatisticsTests
 				offset, origin);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_SetLength_Int64_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -287,7 +287,7 @@ public class FileStreamStatisticsTests
 				value);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_ToString_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -300,7 +300,7 @@ public class FileStreamStatisticsTests
 			.ShouldOnlyContainMethodCall(nameof(FileSystemStream.ToString));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Method_Write_ByteArray_Int_Int_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -318,7 +318,7 @@ public class FileStreamStatisticsTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableFact]
+	[Fact]
 	public void Method_Write_ReadOnlySpanByte_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -334,7 +334,7 @@ public class FileStreamStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public async Task Method_WriteAsync_ByteArray_Int_Int_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -355,7 +355,7 @@ public class FileStreamStatisticsTests
 	}
 
 #if FEATURE_SPAN
-	[SkippableFact]
+	[Fact]
 	public async Task Method_WriteAsync_ReadOnlyMemoryByte_CancellationToken_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -372,7 +372,7 @@ public class FileStreamStatisticsTests
 	}
 #endif
 
-	[SkippableFact]
+	[Fact]
 	public void Method_WriteByte_Byte_ShouldRegisterCall()
 	{
 		MockFileSystem sut = new();
@@ -387,7 +387,7 @@ public class FileStreamStatisticsTests
 				value);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_CanRead_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -400,7 +400,7 @@ public class FileStreamStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.CanRead));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_CanSeek_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -413,7 +413,7 @@ public class FileStreamStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.CanSeek));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_CanTimeout_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -426,7 +426,7 @@ public class FileStreamStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.CanTimeout));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_CanWrite_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -439,7 +439,7 @@ public class FileStreamStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.CanWrite));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_IsAsync_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -452,7 +452,7 @@ public class FileStreamStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.IsAsync));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_Length_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -465,7 +465,7 @@ public class FileStreamStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.Length));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_Name_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -478,7 +478,7 @@ public class FileStreamStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.Name));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_Position_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -491,7 +491,7 @@ public class FileStreamStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.Position));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_Position_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -505,7 +505,7 @@ public class FileStreamStatisticsTests
 			.ShouldOnlyContainPropertySetAccess(nameof(FileSystemStream.Position));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_ReadTimeout_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -525,7 +525,7 @@ public class FileStreamStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.ReadTimeout));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_ReadTimeout_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -546,7 +546,7 @@ public class FileStreamStatisticsTests
 			.ShouldOnlyContainPropertySetAccess(nameof(FileSystemStream.ReadTimeout));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_WriteTimeout_Get_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -566,7 +566,7 @@ public class FileStreamStatisticsTests
 			.ShouldOnlyContainPropertyGetAccess(nameof(FileSystemStream.WriteTimeout));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Property_WriteTimeout_Set_ShouldRegisterPropertyAccess()
 	{
 		MockFileSystem sut = new();
@@ -587,7 +587,7 @@ public class FileStreamStatisticsTests
 			.ShouldOnlyContainPropertySetAccess(nameof(FileSystemStream.WriteTimeout));
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void ToString_ShouldBeFileStreamWithPath()
 	{
 		IStatistics sut = new MockFileSystem().Statistics.FileStream[@"\\some\path"];

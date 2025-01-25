@@ -24,7 +24,7 @@ public class TimerFactoryMockTests
 			}
 		});
 
-		ms.Wait(300).Should().BeFalse();
+		ms.Wait(300, TestContext.Current.CancellationToken).Should().BeFalse();
 		timeSystem.TimerHandler[0].Should().Be(timer);
 	}
 

@@ -7,9 +7,8 @@ namespace Testably.Abstractions.Tests.FileSystem.FileInfoFactory;
 [FileSystemTests]
 public partial class ExceptionTests
 {
-	[SkippableTheory]
-	[MemberData(nameof(GetFileInfoFactoryCallbacks),
-		parameters: "Illegal\tCharacter?InPath")]
+	[Theory]
+	[MemberData(nameof(GetFileInfoFactoryCallbacks), "Illegal\tCharacter?InPath")]
 	public void
 		Operations_WhenValueContainsIllegalPathCharacters_ShouldThrowArgumentException_OnNetFramework(
 			Expression<Action<IFileInfoFactory>> callback, string paramName,
@@ -35,8 +34,8 @@ public partial class ExceptionTests
 		}
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetFileInfoFactoryCallbacks), parameters: "")]
+	[Theory]
+	[MemberData(nameof(GetFileInfoFactoryCallbacks), "")]
 	public void Operations_WhenValueIsEmpty_ShouldThrowArgumentException(
 		Expression<Action<IFileInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -53,8 +52,8 @@ public partial class ExceptionTests
 			$"\n{callback}\n has empty parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetFileInfoFactoryCallbacks), parameters: (string?)null)]
+	[Theory]
+	[MemberData(nameof(GetFileInfoFactoryCallbacks), (string?)null)]
 	public void Operations_WhenValueIsNull_ShouldThrowArgumentNullException(
 		Expression<Action<IFileInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -70,8 +69,8 @@ public partial class ExceptionTests
 			$"\n{callback}\n has `null` parameter for '{paramName}' (ignored: {ignoreParamCheck})");
 	}
 
-	[SkippableTheory]
-	[MemberData(nameof(GetFileInfoFactoryCallbacks), parameters: "  ")]
+	[Theory]
+	[MemberData(nameof(GetFileInfoFactoryCallbacks), "  ")]
 	public void Operations_WhenValueIsWhitespace_ShouldThrowArgumentException(
 		Expression<Action<IFileInfoFactory>> callback, string paramName,
 		bool ignoreParamCheck)
@@ -119,7 +118,7 @@ public partial class ExceptionTests
 	{
 		yield return (ExceptionTestHelper.TestTypes.AllExceptNull, "path", fileInfoFactory
 			=> fileInfoFactory.New(value));
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
 		// https://github.com/dotnet/runtime/issues/78224
 		yield return (
 			ExceptionTestHelper.TestTypes.Null | ExceptionTestHelper.TestTypes.IgnoreParamNameCheck,

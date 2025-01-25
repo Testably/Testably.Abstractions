@@ -11,7 +11,7 @@ public class MockTimeSystemTests
 	{
 		MockTimeSystem timeSystem = new();
 		Exception? exception =
-			await Record.ExceptionAsync(() => timeSystem.Task.Delay(Timeout.Infinite));
+			await Record.ExceptionAsync(() => timeSystem.Task.Delay(Timeout.Infinite, TestContext.Current.CancellationToken));
 
 		exception.Should().BeNull();
 	}
@@ -22,7 +22,7 @@ public class MockTimeSystemTests
 		MockTimeSystem timeSystem = new();
 		Exception? exception =
 			await Record.ExceptionAsync(()
-				=> timeSystem.Task.Delay(Timeout.InfiniteTimeSpan));
+				=> timeSystem.Task.Delay(Timeout.InfiniteTimeSpan, TestContext.Current.CancellationToken));
 
 		exception.Should().BeNull();
 	}
@@ -32,7 +32,7 @@ public class MockTimeSystemTests
 	{
 		MockTimeSystem timeSystem = new();
 		Exception? exception =
-			await Record.ExceptionAsync(() => timeSystem.Task.Delay(-2));
+			await Record.ExceptionAsync(() => timeSystem.Task.Delay(-2, TestContext.Current.CancellationToken));
 
 		exception.Should().BeOfType<ArgumentOutOfRangeException>()
 			.Which.ParamName.Should().Be("millisecondsDelay");
@@ -44,7 +44,7 @@ public class MockTimeSystemTests
 		MockTimeSystem timeSystem = new();
 		Exception? exception =
 			await Record.ExceptionAsync(()
-				=> timeSystem.Task.Delay(TimeSpan.FromMilliseconds(-2)));
+				=> timeSystem.Task.Delay(TimeSpan.FromMilliseconds(-2), TestContext.Current.CancellationToken));
 
 		exception.Should().BeOfType<ArgumentOutOfRangeException>()
 			.Which.ParamName.Should().Be("delay");

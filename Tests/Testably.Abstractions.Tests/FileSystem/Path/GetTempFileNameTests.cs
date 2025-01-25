@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Path;
 [FileSystemTests]
 public partial class GetTempFileNameTests
 {
-	[SkippableFact]
+	[Fact]
 	public void GetTempFileName_ShouldBeInTempPath()
 	{
 		string tempPath = FileSystem.Path.GetTempPath();
@@ -13,7 +13,7 @@ public partial class GetTempFileNameTests
 		result.Should().StartWith(tempPath);
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void GetTempFileName_ShouldExist()
 	{
 		string result = FileSystem.Path.GetTempFileName();

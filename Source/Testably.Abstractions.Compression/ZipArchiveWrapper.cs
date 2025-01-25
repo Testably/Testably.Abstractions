@@ -18,7 +18,7 @@ internal sealed class ZipArchiveWrapper : IZipArchive
 
 	#region IZipArchive Members
 
-#if FEATURE_ZIPFILE_NET7
+#if FEATURE_FILESYSTEM_COMMENT_ENCRYPTED
 	/// <inheritdoc cref="IZipArchiveEntry.Comment" />
 	public string Comment
 	{

@@ -15,13 +15,13 @@
 
 	<ItemGroup Condition="'$(UseFileReferenceToTestablyLibraries)' == 'True'">
 		<Reference Include="Testably.Abstractions">
-			<HintPath>..\..\..\Build\Binaries\net7.0\Testably.Abstractions.dll</HintPath>
+			<HintPath>..\..\..\Build\Binaries\net8.0\Testably.Abstractions.dll</HintPath>
 		</Reference>
 		<Reference Include="Testably.Abstractions.Interface">
-			<HintPath>..\..\..\Build\Binaries\net7.0\Testably.Abstractions.Interface.dll</HintPath>
+			<HintPath>..\..\..\Build\Binaries\net8.0\Testably.Abstractions.Interface.dll</HintPath>
 		</Reference>
 		<Reference Include="Testably.Abstractions.Testing">
-			<HintPath>..\..\..\Build\Binaries\net7.0\Testably.Abstractions.Testing.dll</HintPath>
+			<HintPath>..\..\..\Build\Binaries\net8.0\Testably.Abstractions.Testing.dll</HintPath>
 		</Reference>
 		<PackageReference Include="TestableIO.System.IO.Abstractions" />
 	</ItemGroup>
@@ -32,11 +32,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AutoFixture.Xunit2" />
+		<PackageReference Include="AutoFixture.Xunit3" />
 		<PackageReference Include="FluentAssertions" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
-		<PackageReference Include="Xunit.SkippableFact" />
-		<PackageReference Include="xunit" />
+		<PackageReference Include="xunit.v3" />
 		<PackageReference Include="xunit.runner.visualstudio">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>

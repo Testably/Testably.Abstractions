@@ -3,7 +3,7 @@ namespace Testably.Abstractions.Tests.FileSystem.File;
 [FileSystemTests]
 public partial class ExistsTests
 {
-	[SkippableTheory]
+	[Theory]
 	[AutoData]
 	public void Exists_Directory_ShouldReturnFalse(string path)
 	{
@@ -14,7 +14,7 @@ public partial class ExistsTests
 		result.Should().BeFalse();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Exists_Empty_ShouldReturnFalse()
 	{
 		bool result = FileSystem.File.Exists(string.Empty);
@@ -22,7 +22,7 @@ public partial class ExistsTests
 		result.Should().BeFalse();
 	}
 
-	[SkippableFact]
+	[Fact]
 	public void Exists_Null_ShouldReturnFalse()
 	{
 		bool result = FileSystem.File.Exists(null);

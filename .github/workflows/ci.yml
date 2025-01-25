@@ -22,7 +22,6 @@ jobs:
                 with:
                     dotnet-version: |
                         6.0.x
-                        7.0.x
                         8.0.x
                         9.0.x
             -   name: Run unit tests (windows)
@@ -54,7 +53,6 @@ jobs:
                 with:
                     dotnet-version: |
                         6.0.x
-                        7.0.x
                         8.0.x
                         9.0.x
             -   name: API checks
@@ -86,7 +84,6 @@ jobs:
                 with:
                     dotnet-version: |
                         6.0.x
-                        7.0.x
                         8.0.x
                         9.0.x
             -   name: Run mutation tests
@@ -112,7 +109,6 @@ jobs:
                 with:
                     dotnet-version: |
                         6.0.x
-                        7.0.x
                         8.0.x
                         9.0.x
             -   name: Run mutation tests
@@ -137,7 +133,6 @@ jobs:
                 with:
                     dotnet-version: |
                         6.0.x
-                        7.0.x
                         8.0.x
                         9.0.x
             -   name: Run sonarcloud analysis
