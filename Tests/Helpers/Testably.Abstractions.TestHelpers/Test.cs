@@ -5,8 +5,8 @@ namespace Testably.Abstractions.TestHelpers;
 
 public class Test
 {
-	public static bool IsNet7OrGreater
-#if NET7_0_OR_GREATER
+	public static bool IsNet8OrGreater
+#if NET8_0_OR_GREATER
 		=> true;
 #else
 		=> false;

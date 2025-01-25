@@ -39,7 +39,7 @@ internal sealed class DirectoryWrapper : IDirectory
 			Directory.CreateSymbolicLink(path, pathToTarget), FileSystem);
 #endif
 
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 	/// <inheritdoc cref="IDirectory.CreateTempSubdirectory(string)" />
 	public IDirectoryInfo CreateTempSubdirectory(string? prefix = null)
 		=> DirectoryInfoWrapper.FromDirectoryInfo(

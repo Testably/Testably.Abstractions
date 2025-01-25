@@ -455,13 +455,13 @@ public partial class ExceptionTests
 			file
 				=> file.ReadLines(value, Encoding.UTF8),
 			null);
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
 			file
 				=> file.ReadLinesAsync(value, CancellationToken.None),
 			null);
 #endif
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 		yield return (ExceptionTestHelper.TestTypes.All, "path",
 			file
 				=> file.ReadLinesAsync(value, Encoding.UTF8, CancellationToken.None),

@@ -5,7 +5,7 @@ namespace Testably.Abstractions.Tests.FileSystem.Directory;
 [FileSystemTests]
 public partial class Tests
 {
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 	[SkippableFact]
 	public void CreateTempSubdirectory_ShouldCreateTheTemporaryDirectory()
 	{
@@ -15,7 +15,7 @@ public partial class Tests
 	}
 #endif
 
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 	[SkippableTheory]
 	[AutoData]
 	public void CreateTempSubdirectory_WithPrefix_ShouldStartWithPrefix(string prefix)

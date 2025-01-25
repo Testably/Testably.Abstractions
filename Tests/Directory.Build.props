@@ -5,8 +5,8 @@
 	<Import Project="$([MSBuild]::GetPathOfFileAbove('Feature.Flags.props', '$(MSBuildThisFileDirectory)/../'))" />
 
 	<PropertyGroup>
-		<TargetFrameworks Condition="'$(NetCoreOnly)' != 'True'">net6.0;net7.0;net8.0;net48</TargetFrameworks>
-		<TargetFrameworks Condition="'$(NetCoreOnly)' == 'True'">net6.0;net7.0;net8.0</TargetFrameworks>
+		<TargetFrameworks Condition="'$(NetCoreOnly)' != 'True'">net6.0;net8.0;net48</TargetFrameworks>
+		<TargetFrameworks Condition="'$(NetCoreOnly)' == 'True'">net6.0;net8.0</TargetFrameworks>
 		<TargetFrameworks Condition="'$(NetFrameworkOnly)' == 'True'">net48</TargetFrameworks>
 	</PropertyGroup>
 
