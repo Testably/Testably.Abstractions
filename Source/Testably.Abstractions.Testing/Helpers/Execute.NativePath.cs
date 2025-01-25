@@ -3,7 +3,7 @@ using System.IO;
 #if FEATURE_SPAN
 using System;
 #endif
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 using Testably.Abstractions.Testing.Storage;
 #endif
 
@@ -67,7 +67,7 @@ internal sealed partial class Execute
 			=> System.IO.Path.EndsInDirectorySeparator(path);
 #endif
 
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 		/// <inheritdoc cref="Path.Exists(string)" />
 		public bool Exists([NotNullWhen(true)] string? path)
 		{

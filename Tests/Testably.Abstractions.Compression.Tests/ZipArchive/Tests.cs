@@ -7,7 +7,7 @@ namespace Testably.Abstractions.Compression.Tests.ZipArchive;
 [FileSystemTests]
 public partial class Tests
 {
-#if FEATURE_ZIPFILE_NET7
+#if FEATURE_FILESYSTEM_COMMENT_ENCRYPTED
 	[SkippableFact]
 	public async Task Comment_ShouldBeInitializedEmpty()
 	{
@@ -25,7 +25,7 @@ public partial class Tests
 		await That(archive.Comment).Is("");
 	}
 #endif
-#if FEATURE_ZIPFILE_NET7
+#if FEATURE_FILESYSTEM_COMMENT_ENCRYPTED
 	[SkippableTheory]
 	[AutoData]
 	public async Task Comment_ShouldBeSettable(string comment)

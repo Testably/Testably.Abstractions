@@ -10,7 +10,7 @@ public interface IZipArchiveEntry : IFileSystemEntity
 	/// <inheritdoc cref="ZipArchiveEntry.Archive" />
 	IZipArchive Archive { get; }
 
-#if FEATURE_ZIPFILE_NET7
+#if FEATURE_FILESYSTEM_COMMENT_ENCRYPTED
 	/// <inheritdoc cref="ZipArchiveEntry.Comment" />
 	string Comment { get; set; }
 #endif
@@ -31,7 +31,7 @@ public interface IZipArchiveEntry : IFileSystemEntity
 	/// <inheritdoc cref="ZipArchiveEntry.FullName" />
 	string FullName { get; }
 
-#if FEATURE_ZIPFILE_NET7
+#if FEATURE_FILESYSTEM_COMMENT_ENCRYPTED
 	/// <inheritdoc cref="ZipArchiveEntry.IsEncrypted" />
 	bool IsEncrypted { get; }
 #endif

@@ -96,7 +96,7 @@ public class FileSystemWatcherStatisticsTests
 			.ShouldOnlyContainMethodCall(nameof(IFileSystemWatcher.WaitForChanged), changeType);
 	}
 
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 	[SkippableFact]
 	public void Method_WaitForChanged_WatcherChangeTypes_TimeSpan_ShouldRegisterCall()
 	{

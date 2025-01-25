@@ -348,7 +348,7 @@ internal sealed class FileWrapper : IFile
 	public IEnumerable<string> ReadLines(string path, Encoding encoding)
 		=> File.ReadLines(path, encoding);
 
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 	/// <inheritdoc cref="IFile.ReadLinesAsync(string, CancellationToken)" />
 	public IAsyncEnumerable<string> ReadLinesAsync(string path,
 		CancellationToken cancellationToken =
@@ -356,7 +356,7 @@ internal sealed class FileWrapper : IFile
 		=> File.ReadLinesAsync(path, cancellationToken);
 #endif
 
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 	/// <inheritdoc cref="IFile.ReadLinesAsync(string, Encoding, CancellationToken)" />
 	public IAsyncEnumerable<string> ReadLinesAsync(string path, Encoding encoding,
 		CancellationToken cancellationToken =

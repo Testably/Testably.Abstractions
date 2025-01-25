@@ -73,7 +73,7 @@ internal sealed class DirectoryMock : IDirectory
 	}
 #endif
 
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 	/// <inheritdoc cref="IDirectory.CreateTempSubdirectory(string)" />
 	public IDirectoryInfo CreateTempSubdirectory(string? prefix = null)
 	{
@@ -722,7 +722,7 @@ internal sealed class DirectoryMock : IDirectory
 
 	private static void ThrowMissingFileCreatedTimeException(MockFileSystem fileSystem, string path)
 	{
-#if NET7_0_OR_GREATER
+#if NET8_0_OR_GREATER
 		if (!fileSystem.Execute.IsMac)
 #else
 		if (fileSystem.Execute.IsWindows)
@@ -740,7 +740,7 @@ internal sealed class DirectoryMock : IDirectory
 		MockFileSystem fileSystem,
 		string path)
 	{
-#if !NET7_0_OR_GREATER
+#if !NET8_0_OR_GREATER
 		if (!fileSystem.Execute.IsWindows)
 		{
 			throw ExceptionFactory.DirectoryNotFound(

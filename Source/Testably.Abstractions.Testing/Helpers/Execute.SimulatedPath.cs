@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 using Testably.Abstractions.Testing.Storage;
 #endif
 
@@ -141,7 +141,7 @@ internal sealed partial class Execute
 			=> !string.IsNullOrEmpty(path) && IsDirectorySeparator(path[path.Length - 1]);
 #endif
 
-#if FEATURE_FILESYSTEM_NET7
+#if FEATURE_FILESYSTEM_NET_7_OR_GREATER
 		/// <inheritdoc cref="IPath.Exists(string)" />
 		public bool Exists([NotNullWhen(true)] string? path)
 		{
