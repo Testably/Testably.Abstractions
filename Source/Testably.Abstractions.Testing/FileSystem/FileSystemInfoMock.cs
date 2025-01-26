@@ -78,7 +78,10 @@ internal class FileSystemInfoMock : IFileSystemInfo, IFileSystemExtensibility
 
 		FullName.EnsureValidFormat(_fileSystem);
 		pathToTarget.ThrowCommonExceptionsIfPathToTargetIsInvalid(_fileSystem);
-		if (_fileSystem.Storage.TryAddContainer(Location, InMemoryContainer.NewFile,
+		if (_fileSystem.Storage.TryAddContainer(Location,
+			FileSystemType == FileSystemTypes.Directory
+				? InMemoryContainer.NewDirectory
+				: InMemoryContainer.NewFile,
 			out IStorageContainer? container))
 		{
 			Container = container;

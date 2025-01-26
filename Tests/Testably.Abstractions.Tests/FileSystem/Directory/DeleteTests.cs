@@ -76,22 +76,6 @@ public partial class DeleteTests
 
 	[Theory]
 	[AutoData]
-	public void Delete_WhenFile_ShouldThrowIOException(
-		string directoryName)
-	{
-		FileSystem.File.WriteAllText(directoryName, "");
-		string expectedPath = FileSystem.Path.Combine(BasePath, directoryName);
-		Exception? exception = Record.Exception(() =>
-		{
-			FileSystem.Directory.Delete(directoryName, true);
-		});
-
-		exception.Should().BeException<IOException>($"The directory name is invalid*{expectedPath}",
-			hResult: -2147024629);
-	}
-
-	[Theory]
-	[AutoData]
 	public void Delete_Recursive_WithFileInSubdirectory_ShouldDeleteDirectoryWithContent(
 		string path, string subdirectory, string fileName, string fileContent)
 	{
@@ -226,6 +210,24 @@ public partial class DeleteTests
 
 		FileSystem.Should().NotHaveDirectory(directoryName);
 		result.Should().NotExist();
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task Delete_WhenFile_ShouldThrowIOException(
+		string directoryName)
+	{
+		FileSystem.File.WriteAllText(directoryName, "");
+		string expectedPath = FileSystem.Path.Combine(BasePath, directoryName);
+
+		void Act()
+		{
+			FileSystem.Directory.Delete(directoryName, true);
+		}
+
+		await That(Act).Throws<IOException>()
+			.WithMessage($"*The directory name is invalid*{expectedPath}*").AsWildcard().And
+			.WithHResult(Test.IsNetFramework ? -2146232800 : -2147024629);
 	}
 
 	[Theory]

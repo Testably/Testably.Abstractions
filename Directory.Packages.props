@@ -37,7 +37,7 @@
   <ItemGroup>
     <PackageVersion Include="AutoFixture.AutoNSubstitute" Version="5.0.0-preview0012"/>
     <PackageVersion Include="AutoFixture.Xunit3" Version="5.0.0-preview0012"/>
-    <PackageVersion Include="aweXpect" Version="0.17.0"/>
+    <PackageVersion Include="aweXpect" Version="0.20.0"/>
     <PackageVersion Include="aweXpect.Testably" Version="0.3.0"/>
     <PackageVersion Include="FluentAssertions" Version="7.0.0"/>
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
