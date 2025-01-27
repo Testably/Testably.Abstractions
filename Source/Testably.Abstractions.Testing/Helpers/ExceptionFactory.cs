@@ -106,6 +106,14 @@ internal static class ExceptionFactory
 #endif
 		};
 
+	internal static IOException InvalidDirectoryName(string path)
+		=> new($"The directory name is invalid: '{path}'")
+		{
+#if FEATURE_EXCEPTION_HRESULT
+			HResult = -2147024629,
+#endif
+		};
+
 	internal static ArgumentException InvalidDriveName(string paramName = "driveName")
 		=> new(
 			"Drive name must be a root directory (i.e. 'C:\\') or a drive letter ('C').",

@@ -45,9 +45,10 @@ internal interface IStorage
 	///     Deletes the container stored at <paramref name="location" />.
 	/// </summary>
 	/// <param name="location">The location at which the container is located.</param>
+	/// <param name="expectedType">The expected <see cref="FileSystemTypes" /> on the <paramref name="location" />.</param>
 	/// <param name="recursive">(optional) Is set, also child-containers are deleted recursively.</param>
 	/// <returns><see langword="true" />, if the container was found and deleted, otherwise <see langword="false" />.</returns>
-	bool DeleteContainer(IStorageLocation location, bool recursive = false);
+	bool DeleteContainer(IStorageLocation location, FileSystemTypes expectedType, bool recursive = false);
 
 	/// <summary>
 	///     Enumerate the locations of files or directories stored under <paramref name="location" />.

@@ -35,6 +35,22 @@ public partial class DeleteTests
 
 	[Theory]
 	[AutoData]
+	public void Delete_WhenDirectory_ShouldThrowUnauthorizedAccessException(
+		string fileName)
+	{
+		FileSystem.Directory.CreateDirectory(fileName);
+		string expectedPath = FileSystem.Path.Combine(BasePath, fileName);
+		Exception? exception = Record.Exception(() =>
+		{
+			FileSystem.File.Delete(fileName);
+		});
+
+		exception.Should().BeException<UnauthorizedAccessException>($"'{expectedPath}'",
+			hResult: -2147024891);
+	}
+
+	[Theory]
+	[AutoData]
 	public void Delete_WithOpenFile_ShouldThrowIOException_OnWindows(string filename)
 	{
 		FileSystem.Initialize();

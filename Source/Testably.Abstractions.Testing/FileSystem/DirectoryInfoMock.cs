@@ -111,7 +111,7 @@ internal sealed class DirectoryInfoMock
 				recursive);
 
 		if (!_fileSystem.Storage.DeleteContainer(
-			_fileSystem.Storage.GetLocation(FullName), recursive))
+			_fileSystem.Storage.GetLocation(FullName), FileSystemTypes.Directory, recursive))
 		{
 			throw ExceptionFactory.DirectoryNotFound(FullName);
 		}
@@ -125,7 +125,7 @@ internal sealed class DirectoryInfoMock
 		using IDisposable registration = _fileSystem.StatisticsRegistration
 			.DirectoryInfo.RegisterPathMethod(Location.FullPath, nameof(Delete));
 
-		if (!_fileSystem.Storage.DeleteContainer(Location))
+		if (!_fileSystem.Storage.DeleteContainer(Location, FileSystemTypes.Directory))
 		{
 			throw ExceptionFactory.DirectoryNotFound(Location.FullPath);
 		}

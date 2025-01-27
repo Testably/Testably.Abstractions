@@ -214,6 +214,38 @@ public partial class DeleteTests
 
 	[Theory]
 	[AutoData]
+	public async Task Delete_WhenFile_ShouldThrowIOException(
+		string directoryName)
+	{
+		FileSystem.File.WriteAllText(directoryName, "");
+		string expectedPath = FileSystem.Path.Combine(BasePath, directoryName);
+
+		void Act()
+		{
+			FileSystem.Directory.Delete(directoryName, true);
+		}
+
+		if (Test.IsNetFramework)
+		{
+			await That(Act).Throws<IOException>()
+				.WithMessage("*The directory name is invalid*").AsWildcard();
+		}
+		else if (Test.RunsOnWindows)
+		{
+			await That(Act).Throws<IOException>()
+				.WithMessage($"*The directory name is invalid*{expectedPath}*").AsWildcard().And
+				.WithHResult(-2147024629);
+		}
+		else
+		{
+			await That(Act).Throws<DirectoryNotFoundException>()
+				.WithMessage($"*Could not find a part of the path*{expectedPath}*").AsWildcard().And
+				.WithHResult(-2147024893);
+		}
+	}
+
+	[Theory]
+	[AutoData]
 	public void Delete_WithSimilarNamedFile_ShouldOnlyDeleteDirectory(
 		string subdirectory)
 	{

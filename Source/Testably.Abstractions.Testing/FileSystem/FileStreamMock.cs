@@ -712,7 +712,8 @@ internal sealed class FileStreamMock : FileSystemStream, IFileSystemExtensibilit
 		if (_options.HasFlag(FileOptions.DeleteOnClose))
 		{
 			_fileSystem.Storage.DeleteContainer(
-				_fileSystem.Storage.GetLocation(Name));
+				_fileSystem.Storage.GetLocation(Name),
+				FileSystemTypes.File);
 		}
 	}
 
