@@ -123,7 +123,10 @@ internal sealed class InMemoryStorage : IStorage
 	}
 
 	/// <inheritdoc cref="IStorage.DeleteContainer(IStorageLocation, FileSystemTypes, bool)" />
-	public bool DeleteContainer(IStorageLocation location, FileSystemTypes expectedType, bool recursive = false)
+	public bool DeleteContainer(
+		IStorageLocation location,
+		FileSystemTypes expectedType,
+		bool recursive = false)
 	{
 		if (!_containers.TryGetValue(location, out IStorageContainer? container))
 		{
@@ -140,8 +143,11 @@ internal sealed class InMemoryStorage : IStorage
 		{
 			if (expectedType == FileSystemTypes.Directory)
 			{
-				throw ExceptionFactory.InvalidDirectoryName(location.FullPath);
+				throw _fileSystem.Execute.IsWindows
+					? ExceptionFactory.InvalidDirectoryName(location.FullPath)
+					: ExceptionFactory.DirectoryNotFound(location.FullPath);
 			}
+
 			if (expectedType == FileSystemTypes.File)
 			{
 				throw ExceptionFactory.AccessToPathDenied(location.FullPath);

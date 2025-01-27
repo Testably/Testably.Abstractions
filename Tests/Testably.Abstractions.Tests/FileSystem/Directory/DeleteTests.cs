@@ -225,9 +225,23 @@ public partial class DeleteTests
 			FileSystem.Directory.Delete(directoryName, true);
 		}
 
-		await That(Act).Throws<IOException>()
-			.WithMessage($"*The directory name is invalid*{expectedPath}*").AsWildcard().And
-			.WithHResult(Test.IsNetFramework ? -2146232800 : -2147024629);
+		if (Test.IsNetFramework)
+		{
+			await That(Act).Throws<IOException>()
+				.WithMessage("*The directory name is invalid*").AsWildcard();
+		}
+		else if (Test.RunsOnWindows)
+		{
+			await That(Act).Throws<IOException>()
+				.WithMessage($"*The directory name is invalid*{expectedPath}*").AsWildcard().And
+				.WithHResult(-2147024629);
+		}
+		else
+		{
+			await That(Act).Throws<DirectoryNotFoundException>()
+				.WithMessage($"*Could not find a part of the path*{expectedPath}*").AsWildcard().And
+				.WithHResult(-2147024893);
+		}
 	}
 
 	[Theory]
