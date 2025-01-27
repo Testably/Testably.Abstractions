@@ -139,20 +139,7 @@ internal sealed class InMemoryStorage : IStorage
 			return false;
 		}
 
-		if (container.Type != expectedType)
-		{
-			if (expectedType == FileSystemTypes.Directory)
-			{
-				throw _fileSystem.Execute.IsWindows
-					? ExceptionFactory.InvalidDirectoryName(location.FullPath)
-					: ExceptionFactory.DirectoryNotFound(location.FullPath);
-			}
-
-			if (expectedType == FileSystemTypes.File)
-			{
-				throw ExceptionFactory.AccessToPathDenied(location.FullPath);
-			}
-		}
+		ValidateContainerType(container.Type, expectedType, _fileSystem.Execute, location);
 
 		if (container.Type == FileSystemTypes.Directory)
 		{
@@ -1071,6 +1058,28 @@ internal sealed class InMemoryStorage : IStorage
 		=> type == FileSystemTypes.Directory
 			? NotifyFilters.DirectoryName
 			: NotifyFilters.FileName;
+
+	private static void ValidateContainerType(
+		FileSystemTypes actualType,
+		FileSystemTypes expectedType,
+		Execute execute,
+		IStorageLocation location)
+	{
+		if (actualType != expectedType)
+		{
+			if (expectedType == FileSystemTypes.Directory)
+			{
+				throw execute.IsWindows
+					? ExceptionFactory.InvalidDirectoryName(location.FullPath)
+					: ExceptionFactory.DirectoryNotFound(location.FullPath);
+			}
+
+			if (expectedType == FileSystemTypes.File)
+			{
+				throw ExceptionFactory.AccessToPathDenied(location.FullPath);
+			}
+		}
+	}
 
 	private static void ValidateExpression(string expression)
 	{
