@@ -1,0 +1,68 @@
+[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/Testably/Testably.Abstractions.git")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Testably.Abstractions.Compression.Tests")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v9.0", FrameworkDisplayName=".NET 9.0")]
+namespace Testably.Abstractions
+{
+    public static class FileSystemExtensions
+    {
+        public static Testably.Abstractions.IZipArchiveFactory ZipArchive(this System.IO.Abstractions.IFileSystem fileSystem) { }
+        public static Testably.Abstractions.IZipFile ZipFile(this System.IO.Abstractions.IFileSystem fileSystem) { }
+    }
+    public interface IZipArchive : System.IDisposable, System.IO.Abstractions.IFileSystemEntity
+    {
+        string Comment { get; set; }
+        System.Collections.ObjectModel.ReadOnlyCollection<Testably.Abstractions.IZipArchiveEntry> Entries { get; }
+        System.IO.Compression.ZipArchiveMode Mode { get; }
+        Testably.Abstractions.IZipArchiveEntry CreateEntry(string entryName);
+        Testably.Abstractions.IZipArchiveEntry CreateEntry(string entryName, System.IO.Compression.CompressionLevel compressionLevel);
+        Testably.Abstractions.IZipArchiveEntry CreateEntryFromFile(string sourceFileName, string entryName);
+        Testably.Abstractions.IZipArchiveEntry CreateEntryFromFile(string sourceFileName, string entryName, System.IO.Compression.CompressionLevel compressionLevel);
+        void ExtractToDirectory(string destinationDirectoryName);
+        void ExtractToDirectory(string destinationDirectoryName, bool overwriteFiles);
+        Testably.Abstractions.IZipArchiveEntry? GetEntry(string entryName);
+    }
+    public interface IZipArchiveEntry : System.IO.Abstractions.IFileSystemEntity
+    {
+        Testably.Abstractions.IZipArchive Archive { get; }
+        string Comment { get; set; }
+        long CompressedLength { get; }
+        uint Crc32 { get; }
+        int ExternalAttributes { get; set; }
+        string FullName { get; }
+        bool IsEncrypted { get; }
+        System.DateTimeOffset LastWriteTime { get; set; }
+        long Length { get; }
+        string Name { get; }
+        void Delete();
+        void ExtractToFile(string destinationFileName);
+        void ExtractToFile(string destinationFileName, bool overwrite);
+        System.IO.Stream Open();
+    }
+    public interface IZipArchiveFactory : System.IO.Abstractions.IFileSystemEntity
+    {
+        Testably.Abstractions.IZipArchive New(System.IO.Stream stream);
+        Testably.Abstractions.IZipArchive New(System.IO.Stream stream, System.IO.Compression.ZipArchiveMode mode);
+        Testably.Abstractions.IZipArchive New(System.IO.Stream stream, System.IO.Compression.ZipArchiveMode mode, bool leaveOpen);
+        Testably.Abstractions.IZipArchive New(System.IO.Stream stream, System.IO.Compression.ZipArchiveMode mode, bool leaveOpen, System.Text.Encoding? entryNameEncoding);
+    }
+    public interface IZipFile : System.IO.Abstractions.IFileSystemEntity
+    {
+        void CreateFromDirectory(string sourceDirectoryName, System.IO.Stream destination);
+        void CreateFromDirectory(string sourceDirectoryName, string destinationArchiveFileName);
+        void CreateFromDirectory(string sourceDirectoryName, System.IO.Stream destination, System.IO.Compression.CompressionLevel compressionLevel, bool includeBaseDirectory);
+        void CreateFromDirectory(string sourceDirectoryName, string destinationArchiveFileName, System.IO.Compression.CompressionLevel compressionLevel, bool includeBaseDirectory);
+        void CreateFromDirectory(string sourceDirectoryName, System.IO.Stream destination, System.IO.Compression.CompressionLevel compressionLevel, bool includeBaseDirectory, System.Text.Encoding entryNameEncoding);
+        void CreateFromDirectory(string sourceDirectoryName, string destinationArchiveFileName, System.IO.Compression.CompressionLevel compressionLevel, bool includeBaseDirectory, System.Text.Encoding entryNameEncoding);
+        void ExtractToDirectory(System.IO.Stream source, string destinationDirectoryName);
+        void ExtractToDirectory(string sourceArchiveFileName, string destinationDirectoryName);
+        void ExtractToDirectory(System.IO.Stream source, string destinationDirectoryName, bool overwriteFiles);
+        void ExtractToDirectory(System.IO.Stream source, string destinationDirectoryName, System.Text.Encoding entryNameEncoding);
+        void ExtractToDirectory(string sourceArchiveFileName, string destinationDirectoryName, bool overwriteFiles);
+        void ExtractToDirectory(string sourceArchiveFileName, string destinationDirectoryName, System.Text.Encoding? entryNameEncoding);
+        void ExtractToDirectory(System.IO.Stream source, string destinationDirectoryName, System.Text.Encoding entryNameEncoding, bool overwriteFiles);
+        void ExtractToDirectory(string sourceArchiveFileName, string destinationDirectoryName, System.Text.Encoding? entryNameEncoding, bool overwriteFiles);
+        Testably.Abstractions.IZipArchive Open(string archiveFileName, System.IO.Compression.ZipArchiveMode mode);
+        Testably.Abstractions.IZipArchive Open(string archiveFileName, System.IO.Compression.ZipArchiveMode mode, System.Text.Encoding? entryNameEncoding);
+        Testably.Abstractions.IZipArchive OpenRead(string archiveFileName);
+    }
+}
