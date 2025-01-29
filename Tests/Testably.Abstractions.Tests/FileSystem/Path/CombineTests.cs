@@ -289,7 +289,7 @@ public partial class CombineTests
 				path1,
 				path2,
 				path3,
-				path4
+				path4,
 			});
 		string result2 =
 			FileSystem.Path.Combine(new[]
@@ -298,7 +298,7 @@ public partial class CombineTests
 				string.Empty,
 				path2,
 				path3,
-				path4
+				path4,
 			});
 		string result3 =
 			FileSystem.Path.Combine(new[]
@@ -307,7 +307,7 @@ public partial class CombineTests
 				path2,
 				string.Empty,
 				path3,
-				path4
+				path4,
 			});
 		string result4 =
 			FileSystem.Path.Combine(new[]
@@ -316,7 +316,7 @@ public partial class CombineTests
 				path2,
 				path3,
 				string.Empty,
-				path4
+				path4,
 			});
 		string result5 =
 			FileSystem.Path.Combine(new[]
@@ -325,7 +325,7 @@ public partial class CombineTests
 				path2,
 				path3,
 				path4,
-				string.Empty
+				string.Empty,
 			});
 
 		result1.Should().Be(expectedPath);
@@ -347,7 +347,7 @@ public partial class CombineTests
 				pathB,
 				pathC,
 				pathD,
-				null!
+				null!,
 			}));
 		Exception? exception2 = Record.Exception(() =>
 			FileSystem.Path.Combine(new[]
@@ -356,7 +356,7 @@ public partial class CombineTests
 				pathA,
 				pathB,
 				pathC,
-				pathD
+				pathD,
 			}));
 		Exception? exception3 = Record.Exception(() =>
 			FileSystem.Path.Combine(new[]
@@ -365,7 +365,7 @@ public partial class CombineTests
 				null!,
 				pathB,
 				pathC,
-				pathD
+				pathD,
 			}));
 		Exception? exception4 = Record.Exception(() =>
 			FileSystem.Path.Combine(new[]
@@ -374,7 +374,7 @@ public partial class CombineTests
 				pathB,
 				null!,
 				pathC,
-				pathD
+				pathD,
 			}));
 		Exception? exception5 = Record.Exception(() =>
 			FileSystem.Path.Combine(new[]
@@ -383,7 +383,7 @@ public partial class CombineTests
 				pathB,
 				pathC,
 				null!,
-				pathD
+				pathD,
 			}));
 
 		exception1.Should()
@@ -415,7 +415,7 @@ public partial class CombineTests
 			path2,
 			path3,
 			path4,
-			path5
+			path5,
 		});
 
 		result.Should().Be(path5);
@@ -446,7 +446,7 @@ public partial class CombineTests
 			path2,
 			path3,
 			path4,
-			path5
+			path5,
 		});
 
 		result.Should().Be(expectedResult);
@@ -474,7 +474,7 @@ public partial class CombineTests
 			path2,
 			path3,
 			path4,
-			path5
+			path5,
 		});
 
 		result.Should().Be(expectedPath);

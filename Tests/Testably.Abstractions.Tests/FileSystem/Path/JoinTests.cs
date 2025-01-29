@@ -246,7 +246,7 @@ public partial class JoinTests
 				path1,
 				path2,
 				path3,
-				path4
+				path4,
 			});
 		string result2 =
 			FileSystem.Path.Join(new[]
@@ -255,7 +255,7 @@ public partial class JoinTests
 				missingPath,
 				path2,
 				path3,
-				path4
+				path4,
 			});
 		string result3 =
 			FileSystem.Path.Join(new[]
@@ -264,7 +264,7 @@ public partial class JoinTests
 				path2,
 				missingPath,
 				path3,
-				path4
+				path4,
 			});
 		string result4 =
 			FileSystem.Path.Join(new[]
@@ -273,7 +273,7 @@ public partial class JoinTests
 				path2,
 				path3,
 				missingPath,
-				path4
+				path4,
 			});
 		string result5 =
 			FileSystem.Path.Join(new[]
@@ -282,7 +282,7 @@ public partial class JoinTests
 				path2,
 				path3,
 				path4,
-				missingPath
+				missingPath,
 			});
 
 		result1.Should().Be(expectedPath);
@@ -316,7 +316,7 @@ public partial class JoinTests
 			path2,
 			path3,
 			path4,
-			path5
+			path5,
 		});
 
 		result.Should().Be(expectedResult);
