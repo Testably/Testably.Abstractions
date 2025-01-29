@@ -24,6 +24,30 @@ internal sealed class FileWrapper : IFile
 
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem { get; }
+	
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.AppendAllBytes(string,byte[])"/>
+	public void AppendAllBytes(string path, byte[] bytes)
+		=> File.AppendAllBytes(path, bytes);
+#endif
+
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.AppendAllBytes(string,ReadOnlySpan{byte})"/>
+	public void AppendAllBytes(string path, ReadOnlySpan<byte> bytes)
+		=> File.AppendAllBytes(path, bytes);
+#endif
+
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.AppendAllBytesAsync(string,byte[],CancellationToken)"/>
+	public Task AppendAllBytesAsync(string path, byte[] bytes, CancellationToken cancellationToken = default)
+		=> File.AppendAllBytesAsync(path, bytes, cancellationToken);
+#endif
+
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.AppendAllBytesAsync(string,ReadOnlyMemory{byte},CancellationToken)"/>
+	public Task AppendAllBytesAsync(string path, ReadOnlyMemory<byte> bytes, CancellationToken cancellationToken = default)
+		=> File.AppendAllBytesAsync(path, bytes, cancellationToken);
+#endif
 
 	/// <inheritdoc cref="IFile.AppendAllLines(string, IEnumerable{string})" />
 	public void AppendAllLines(string path, IEnumerable<string> contents)
@@ -59,6 +83,18 @@ internal sealed class FileWrapper : IFile
 	/// <inheritdoc cref="IFile.AppendAllText(string, string?, Encoding)" />
 	public void AppendAllText(string path, string? contents, Encoding encoding)
 		=> File.AppendAllText(path, contents, encoding);
+	
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.AppendAllText(string,ReadOnlySpan{char})"/>
+	public void AppendAllText(string path, ReadOnlySpan<char> contents)
+		=> File.AppendAllText(path, contents);
+#endif
+
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.AppendAllText(string,ReadOnlySpan{char},Encoding)"/>
+	public void AppendAllText(string path, ReadOnlySpan<char> contents, Encoding encoding)
+		=> File.AppendAllText(path, contents, encoding);
+#endif
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.AppendAllTextAsync(string, string?, CancellationToken)" />
@@ -75,6 +111,19 @@ internal sealed class FileWrapper : IFile
 			default)
 		=> File.AppendAllTextAsync(path, contents, encoding,
 			cancellationToken);
+#endif
+	
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.AppendAllTextAsync(string,ReadOnlyMemory{char},CancellationToken)"/>
+	public Task AppendAllTextAsync(string path, ReadOnlyMemory<char> contents, CancellationToken cancellationToken = default)
+		=> File.AppendAllTextAsync(path, contents, cancellationToken);
+#endif
+	
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.AppendAllTextAsync(string,ReadOnlyMemory{char},Encoding,CancellationToken)"/>
+	public Task AppendAllTextAsync(string path, ReadOnlyMemory<char> contents, Encoding encoding,
+		CancellationToken cancellationToken = default)
+		=> File.AppendAllTextAsync(path, contents, encoding, cancellationToken);
 #endif
 
 	/// <inheritdoc cref="IFile.AppendText(string)" />
@@ -497,12 +546,24 @@ internal sealed class FileWrapper : IFile
 	/// <inheritdoc cref="IFile.WriteAllBytes(string, byte[])" />
 	public void WriteAllBytes(string path, byte[] bytes)
 		=> File.WriteAllBytes(path, bytes);
+	
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.WriteAllBytes(string,ReadOnlySpan{byte})"/>
+	public void WriteAllBytes(string path, ReadOnlySpan<byte> bytes)
+		=> File.WriteAllBytes(path, bytes);
+#endif
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.WriteAllBytesAsync(string, byte[], CancellationToken)" />
 	public Task WriteAllBytesAsync(string path, byte[] bytes,
 		CancellationToken cancellationToken =
 			default)
+		=> File.WriteAllBytesAsync(path, bytes, cancellationToken);
+#endif
+	
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.WriteAllBytesAsync(string,ReadOnlyMemory{byte},CancellationToken)"/>
+	public Task WriteAllBytesAsync(string path, ReadOnlyMemory<byte> bytes, CancellationToken cancellationToken = default)
 		=> File.WriteAllBytesAsync(path, bytes, cancellationToken);
 #endif
 
@@ -548,6 +609,19 @@ internal sealed class FileWrapper : IFile
 	/// <inheritdoc cref="IFile.WriteAllText(string, string?, Encoding)" />
 	public void WriteAllText(string path, string? contents, Encoding encoding)
 		=> File.WriteAllText(path, contents, encoding);
+	
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.WriteAllText(string,ReadOnlySpan{char})"/>
+	public void WriteAllText(string path, ReadOnlySpan<char> contents)
+		=> File.WriteAllText(path, contents);
+#endif
+	
+#if FEATURE_FILE_SPAN
+
+	/// <inheritdoc cref="IFile.WriteAllText(string,ReadOnlySpan{char},Encoding)"/>
+	public void WriteAllText(string path, ReadOnlySpan<char> contents, Encoding encoding)
+		=> File.WriteAllText(path, contents, encoding);
+#endif
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.WriteAllTextAsync(string, string?, CancellationToken)" />
@@ -564,6 +638,19 @@ internal sealed class FileWrapper : IFile
 			default)
 		=> File.WriteAllTextAsync(path, contents, encoding,
 			cancellationToken);
+#endif
+	
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.WriteAllTextAsync(string,ReadOnlyMemory{char},CancellationToken)"/>
+	public Task WriteAllTextAsync(string path, ReadOnlyMemory<char> contents, CancellationToken cancellationToken = default)
+		=> File.WriteAllTextAsync(path, contents, cancellationToken);
+#endif
+	
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.WriteAllTextAsync(string,ReadOnlyMemory{char},Encoding,CancellationToken)"/>
+	public Task WriteAllTextAsync(string path, ReadOnlyMemory<char> contents, Encoding encoding,
+		CancellationToken cancellationToken = default)
+		=> File.WriteAllTextAsync(path, contents, encoding, cancellationToken);
 #endif
 
 	#endregion

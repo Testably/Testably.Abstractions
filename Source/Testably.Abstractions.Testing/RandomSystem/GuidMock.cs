@@ -16,4 +16,16 @@ internal sealed class GuidMock : GuidSystemBase
 	/// <inheritdoc cref="IGuid.NewGuid()" />
 	public override Guid NewGuid()
 		=> _mockRandomSystem.RandomProvider.GetGuid();
+
+#if FEATURE_GUID_V7
+	/// <inheritdoc cref="IGuid.CreateVersion7()" />
+	public override Guid CreateVersion7()
+		=> _mockRandomSystem.RandomProvider.GetGuid();
+#endif
+
+#if FEATURE_GUID_V7
+	/// <inheritdoc cref="IGuid.CreateVersion7(DateTimeOffset)" />
+	public override Guid CreateVersion7(DateTimeOffset timestamp)
+		=> _mockRandomSystem.RandomProvider.GetGuid();
+#endif
 }

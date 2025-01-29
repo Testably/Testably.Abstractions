@@ -31,6 +31,74 @@ internal sealed class FileMock : IFile
 	/// <inheritdoc cref="IFileSystemEntity.FileSystem" />
 	public IFileSystem FileSystem
 		=> _fileSystem;
+	
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.AppendAllBytes(string,byte[])"/>
+	public void AppendAllBytes(string path, byte[] bytes)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.File.RegisterMethod(nameof(AppendAllBytes),
+				path, bytes);
+
+		IStorageContainer container =
+			_fileSystem.Storage.GetOrCreateContainer(
+				_fileSystem.Storage.GetLocation(
+					path.EnsureValidFormat(_fileSystem)),
+				InMemoryContainer.NewFile);
+
+		if (container.Type != FileSystemTypes.File)
+		{
+			throw ExceptionFactory.AccessToPathDenied(path);
+		}
+
+		using (container.RequestAccess(
+			FileAccess.ReadWrite,
+			FileStreamFactoryMock.DefaultShare))
+		{
+			container.AppendBytes(bytes);
+		}
+	}
+#endif
+
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.AppendAllBytes(string,ReadOnlySpan{byte})"/>
+	public void AppendAllBytes(string path, ReadOnlySpan<byte> bytes)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.File.RegisterMethod(nameof(AppendAllBytes),
+				path, bytes);
+
+		AppendAllBytes(path, bytes.ToArray());
+	}
+#endif
+
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.AppendAllBytesAsync(string,byte[],CancellationToken)"/>
+	public Task AppendAllBytesAsync(string path, byte[] bytes, CancellationToken cancellationToken = default)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.File.RegisterMethod(nameof(AppendAllBytesAsync),
+				path, bytes, cancellationToken);
+
+		ThrowIfCancelled(cancellationToken);
+		AppendAllBytes(path, bytes);
+		return Task.CompletedTask;
+	}
+#endif
+
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.AppendAllBytesAsync(string,ReadOnlyMemory{byte},CancellationToken)"/>
+	public Task AppendAllBytesAsync(string path, ReadOnlyMemory<byte> bytes, CancellationToken cancellationToken = default)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.File.RegisterMethod(nameof(AppendAllBytesAsync),
+				path, bytes, cancellationToken);
+
+		ThrowIfCancelled(cancellationToken);
+		AppendAllBytes(path, bytes.ToArray());
+		return Task.CompletedTask;
+	}
+#endif
 
 	/// <inheritdoc cref="IFile.AppendAllLines(string, IEnumerable{string})" />
 	public void AppendAllLines(string path, IEnumerable<string> contents)
@@ -132,6 +200,30 @@ internal sealed class FileMock : IFile
 			}
 		}
 	}
+	
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.AppendAllText(string,ReadOnlySpan{char})"/>
+	public void AppendAllText(string path, ReadOnlySpan<char> contents)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.File.RegisterMethod(nameof(AppendAllText),
+				path, contents);
+
+		AppendAllText(path, contents.ToString(), Encoding.Default);
+	}
+#endif
+
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.AppendAllText(string,ReadOnlySpan{char},Encoding)"/>
+	public void AppendAllText(string path, ReadOnlySpan<char> contents, Encoding encoding)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.File.RegisterMethod(nameof(AppendAllText),
+				path, contents, encoding);
+
+		AppendAllText(path, contents.ToString(), encoding);
+	}
+#endif
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.AppendAllTextAsync(string, string?, CancellationToken)" />
@@ -157,6 +249,35 @@ internal sealed class FileMock : IFile
 
 		ThrowIfCancelled(cancellationToken);
 		AppendAllText(path, contents, encoding);
+		return Task.CompletedTask;
+	}
+#endif
+	
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.AppendAllTextAsync(string,ReadOnlyMemory{char},CancellationToken)"/>
+	public Task AppendAllTextAsync(string path, ReadOnlyMemory<char> contents, CancellationToken cancellationToken = default)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.File.RegisterMethod(nameof(AppendAllTextAsync),
+				path, contents, cancellationToken);
+
+		ThrowIfCancelled(cancellationToken);
+		AppendAllText(path, contents.ToString(), Encoding.Default);
+		return Task.CompletedTask;
+	}
+#endif
+	
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.AppendAllTextAsync(string,ReadOnlyMemory{char},Encoding,CancellationToken)"/>
+	public Task AppendAllTextAsync(string path, ReadOnlyMemory<char> contents, Encoding encoding,
+		CancellationToken cancellationToken = default)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.File.RegisterMethod(nameof(AppendAllTextAsync),
+				path, contents, encoding, cancellationToken);
+
+		ThrowIfCancelled(cancellationToken);
+		AppendAllText(path, contents.ToString(), encoding);
 		return Task.CompletedTask;
 	}
 #endif
@@ -1241,6 +1362,18 @@ internal sealed class FileMock : IFile
 			container.WriteBytes(bytes);
 		}
 	}
+	
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.WriteAllBytes(string,ReadOnlySpan{byte})"/>
+	public void WriteAllBytes(string path, ReadOnlySpan<byte> bytes)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.File.RegisterMethod(nameof(WriteAllBytes),
+				path, bytes);
+
+		WriteAllBytes(path, bytes.ToArray());
+	}
+#endif
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.WriteAllBytesAsync(string, byte[], CancellationToken)" />
@@ -1253,6 +1386,20 @@ internal sealed class FileMock : IFile
 
 		ThrowIfCancelled(cancellationToken);
 		WriteAllBytes(path, bytes);
+		return Task.CompletedTask;
+	}
+#endif
+	
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.WriteAllBytesAsync(string,ReadOnlyMemory{byte},CancellationToken)"/>
+	public Task WriteAllBytesAsync(string path, ReadOnlyMemory<byte> bytes, CancellationToken cancellationToken = default)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.File.RegisterMethod(nameof(WriteAllBytesAsync),
+				path, bytes, cancellationToken);
+
+		ThrowIfCancelled(cancellationToken);
+		WriteAllBytes(path, bytes.ToArray());
 		return Task.CompletedTask;
 	}
 #endif
@@ -1388,6 +1535,31 @@ internal sealed class FileMock : IFile
 			}
 		}
 	}
+	
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.WriteAllText(string,ReadOnlySpan{char})"/>
+	public void WriteAllText(string path, ReadOnlySpan<char> contents)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.File.RegisterMethod(nameof(WriteAllText),
+				path, contents);
+
+		WriteAllText(path, contents.ToString(), Encoding.Default);
+	}
+#endif
+	
+#if FEATURE_FILE_SPAN
+
+	/// <inheritdoc cref="IFile.WriteAllText(string,ReadOnlySpan{char},Encoding)"/>
+	public void WriteAllText(string path, ReadOnlySpan<char> contents, Encoding encoding)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.File.RegisterMethod(nameof(WriteAllText),
+				path, contents, encoding);
+
+		WriteAllText(path, contents.ToString(), encoding);
+	}
+#endif
 
 #if FEATURE_FILESYSTEM_ASYNC
 	/// <inheritdoc cref="IFile.WriteAllTextAsync(string, string?, CancellationToken)" />
@@ -1413,6 +1585,35 @@ internal sealed class FileMock : IFile
 
 		ThrowIfCancelled(cancellationToken);
 		WriteAllText(path, contents, encoding);
+		return Task.CompletedTask;
+	}
+#endif
+	
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.WriteAllTextAsync(string,ReadOnlyMemory{char},CancellationToken)"/>
+	public Task WriteAllTextAsync(string path, ReadOnlyMemory<char> contents, CancellationToken cancellationToken = default)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.File.RegisterMethod(nameof(WriteAllTextAsync),
+				path, contents, cancellationToken);
+
+		ThrowIfCancelled(cancellationToken);
+		WriteAllText(path, contents.ToString(), Encoding.Default);
+		return Task.CompletedTask;
+	}
+#endif
+	
+#if FEATURE_FILE_SPAN
+	/// <inheritdoc cref="IFile.WriteAllTextAsync(string,ReadOnlyMemory{char},Encoding,CancellationToken)"/>
+	public Task WriteAllTextAsync(string path, ReadOnlyMemory<char> contents, Encoding encoding,
+		CancellationToken cancellationToken = default)
+	{
+		using IDisposable registration = _fileSystem.StatisticsRegistration
+			.File.RegisterMethod(nameof(WriteAllTextAsync),
+				path, contents, encoding, cancellationToken);
+
+		ThrowIfCancelled(cancellationToken);
+		WriteAllText(path, contents.ToString(), encoding);
 		return Task.CompletedTask;
 	}
 #endif

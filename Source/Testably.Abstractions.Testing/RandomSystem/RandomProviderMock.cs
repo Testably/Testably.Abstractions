@@ -24,7 +24,7 @@ internal sealed class RandomProviderMock : IRandomProvider
 
 	#region IRandomProvider Members
 
-	/// <inheritdoc cref="IRandomProvider.GetGuid" />
+	/// <inheritdoc cref="IRandomProvider.GetGuid()" />
 	public Guid GetGuid()
 		=> _guidGenerator.GetNext();
 

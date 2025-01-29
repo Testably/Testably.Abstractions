@@ -17,6 +17,70 @@ namespace Testably.Abstractions.Testing.Tests.Statistics.FileSystem;
 
 public sealed class FileStatisticsTests
 {
+#if FEATURE_FILE_SPAN
+	[Fact]
+	public void Method_AppendAllBytes_String_ByteArray_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		byte[] bytes = "foo"u8.ToArray();
+
+		sut.File.AppendAllBytes(path, bytes);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllBytes),
+			path, bytes);
+	}
+#endif
+
+#if FEATURE_FILE_SPAN
+	[Fact]
+	public void Method_AppendAllBytes_String_ReadOnlySpanByte_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		ReadOnlySpan<byte> bytes = new();
+
+		sut.File.AppendAllBytes(path, bytes);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllBytes),
+			path, bytes);
+	}
+#endif
+
+#if FEATURE_FILE_SPAN
+	[Fact]
+	public async Task
+		Method_AppendAllBytesAsync_String_ByteArray_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		byte[] bytes = "foo"u8.ToArray();
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		await sut.File.AppendAllBytesAsync(path, bytes, cancellationToken);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllBytesAsync),
+			path, bytes, cancellationToken);
+	}
+#endif
+
+#if FEATURE_FILE_SPAN
+	[Fact]
+	public async Task
+		Method_AppendAllBytesAsync_String_ReadOnlyMemoryByte_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		ReadOnlyMemory<byte> bytes = new();
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		await sut.File.AppendAllBytesAsync(path, bytes, cancellationToken);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllBytesAsync),
+			path, bytes, cancellationToken);
+	}
+#endif
+
 	[Fact]
 	public void Method_AppendAllLines_String_IEnumerableString_Encoding_ShouldRegisterCall()
 	{
@@ -83,6 +147,37 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
+#if FEATURE_FILE_SPAN
+	[Fact]
+	public void Method_AppendAllText_String_ReadOnlySpanChar_Encoding_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		ReadOnlySpan<char> contents = new();
+		Encoding encoding = Encoding.UTF8;
+
+		sut.File.AppendAllText(path, contents, encoding);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllText),
+			path, contents, encoding);
+	}
+#endif
+
+#if FEATURE_FILE_SPAN
+	[Fact]
+	public void Method_AppendAllText_String_ReadOnlySpanChar_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		ReadOnlySpan<char> contents = new();
+
+		sut.File.AppendAllText(path, contents);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllText),
+			path, contents);
+	}
+#endif
+
 	[Fact]
 	public void Method_AppendAllText_String_String_Encoding_ShouldRegisterCall()
 	{
@@ -111,6 +206,41 @@ public sealed class FileStatisticsTests
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllText),
 			path, contents);
 	}
+
+#if FEATURE_FILE_SPAN
+	[Fact]
+	public async Task
+		Method_AppendAllTextAsync_String_ReadOnlyMemoryChar_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		ReadOnlyMemory<char> contents = new();
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		await sut.File.AppendAllTextAsync(path, contents, cancellationToken);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllTextAsync),
+			path, contents, cancellationToken);
+	}
+#endif
+
+#if FEATURE_FILE_SPAN
+	[Fact]
+	public async Task
+		Method_AppendAllTextAsync_String_ReadOnlyMemoryChar_Encoding_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		ReadOnlyMemory<char> contents = new();
+		Encoding encoding = Encoding.UTF8;
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		await sut.File.AppendAllTextAsync(path, contents, encoding, cancellationToken);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.AppendAllTextAsync),
+			path, contents, encoding, cancellationToken);
+	}
+#endif
 
 #if FEATURE_FILESYSTEM_ASYNC
 	[Fact]
@@ -1299,6 +1429,21 @@ public sealed class FileStatisticsTests
 			path, bytes);
 	}
 
+#if FEATURE_FILE_SPAN
+	[Fact]
+	public void Method_WriteAllBytes_String_ReadOnlySpanByte_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		ReadOnlySpan<byte> bytes = new();
+
+		sut.File.WriteAllBytes(path, bytes);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllBytes),
+			path, bytes);
+	}
+#endif
+
 #if FEATURE_FILESYSTEM_ASYNC
 	[Fact]
 	public async Task
@@ -1312,6 +1457,23 @@ public sealed class FileStatisticsTests
 		await sut.File.WriteAllBytesAsync(path, bytes, cancellationToken);
 
 		sut.Statistics.TotalCount.Should().Be(1);
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllBytesAsync),
+			path, bytes, cancellationToken);
+	}
+#endif
+
+#if FEATURE_FILE_SPAN
+	[Fact]
+	public async Task
+		Method_WriteAllBytesAsync_String_ReadOnlyMemoryByte_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		ReadOnlyMemory<byte> bytes = new();
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		await sut.File.WriteAllBytesAsync(path, bytes, cancellationToken);
+
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllBytesAsync),
 			path, bytes, cancellationToken);
 	}
@@ -1412,6 +1574,37 @@ public sealed class FileStatisticsTests
 	}
 #endif
 
+#if FEATURE_FILE_SPAN
+	[Fact]
+	public void Method_WriteAllText_String_ReadOnlySpanChar_Encoding_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		ReadOnlySpan<char> contents = new();
+		Encoding encoding = Encoding.UTF8;
+
+		sut.File.WriteAllText(path, contents, encoding);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllText),
+			path, contents, encoding);
+	}
+#endif
+
+#if FEATURE_FILE_SPAN
+	[Fact]
+	public void Method_WriteAllText_String_ReadOnlySpanChar_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		ReadOnlySpan<char> contents = new();
+
+		sut.File.WriteAllText(path, contents);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllText),
+			path, contents);
+	}
+#endif
+
 	[Fact]
 	public void Method_WriteAllText_String_String_Encoding_ShouldRegisterCall()
 	{
@@ -1440,6 +1633,41 @@ public sealed class FileStatisticsTests
 		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllText),
 			path, contents);
 	}
+
+#if FEATURE_FILE_SPAN
+	[Fact]
+	public async Task
+		Method_WriteAllTextAsync_String_ReadOnlyMemoryChar_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		ReadOnlyMemory<char> contents = new();
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		await sut.File.WriteAllTextAsync(path, contents, cancellationToken);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllTextAsync),
+			path, contents, cancellationToken);
+	}
+#endif
+
+#if FEATURE_FILE_SPAN
+	[Fact]
+	public async Task
+		Method_WriteAllTextAsync_String_ReadOnlyMemoryChar_Encoding_CancellationToken_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		string path = "foo";
+		ReadOnlyMemory<char> contents = new();
+		Encoding encoding = Encoding.UTF8;
+		CancellationToken cancellationToken = CancellationToken.None;
+
+		await sut.File.WriteAllTextAsync(path, contents, encoding, cancellationToken);
+
+		sut.Statistics.File.ShouldOnlyContainMethodCall(nameof(IFile.WriteAllTextAsync),
+			path, contents, encoding, cancellationToken);
+	}
+#endif
 
 #if FEATURE_FILESYSTEM_ASYNC
 	[Fact]

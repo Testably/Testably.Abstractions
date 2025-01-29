@@ -35,7 +35,7 @@ internal static class Helper
 	}
 
 	private static string GetTestSettingsPath() =>
-		Path.GetFullPath(Path.Combine("..", "..", "..", "..", "test.settings.json"));
+		Path.GetFullPath(Path.Combine("..", "..", "..", "..", "..", "test.settings.json"));
 
 	private static TestEnvironment ReadTestSettings()
 	{

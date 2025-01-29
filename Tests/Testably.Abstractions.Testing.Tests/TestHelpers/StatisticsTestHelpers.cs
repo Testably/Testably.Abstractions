@@ -151,6 +151,35 @@ public static class StatisticsTestHelpers
 	}
 #endif
 
+#if FEATURE_FILE_SPAN
+	public static void ShouldOnlyContainMethodCall<T1, T2>(this IStatistics statistics,
+		string name,
+		T1 parameter1, ReadOnlySpan<T2> parameter2)
+	{
+		statistics.Methods.Length.Should().Be(1);
+		MethodStatistic? statistic = statistics.Methods.Should()
+			.ContainSingle(c => c.Name == name &&
+			                    c.Parameters.Length == 2).Which;
+		statistic.Parameters[0].Is(parameter1).Should().BeTrue();
+		statistic.Parameters[1].Is(parameter2).Should().BeTrue();
+	}
+#endif
+
+#if FEATURE_FILE_SPAN
+	public static void ShouldOnlyContainMethodCall<T1, T2, T3>(this IStatistics statistics,
+		string name,
+		T1 parameter1, ReadOnlySpan<T2> parameter2, T3 parameter3)
+	{
+		statistics.Methods.Length.Should().Be(1);
+		MethodStatistic? statistic = statistics.Methods.Should()
+			.ContainSingle(c => c.Name == name &&
+			                    c.Parameters.Length == 3).Which;
+		statistic.Parameters[0].Is(parameter1).Should().BeTrue();
+		statistic.Parameters[1].Is(parameter2).Should().BeTrue();
+		statistic.Parameters[2].Is(parameter3).Should().BeTrue();
+	}
+#endif
+
 #if FEATURE_SPAN
 	public static void ShouldOnlyContainMethodCall<T1>(this IStatistics statistics, string name,
 		Span<T1> parameter1)

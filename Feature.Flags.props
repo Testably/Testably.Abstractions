@@ -1,9 +1,10 @@
 <Project>
 
 	<PropertyGroup>
-		<IS_NET21_OR_HIGHER Condition="'$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'netstandard2.1'">1</IS_NET21_OR_HIGHER>
-		<IS_NET6_OR_HIGHER Condition="'$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net8.0'">1</IS_NET6_OR_HIGHER>
-		<IS_NET8_OR_HIGHER Condition="'$(TargetFramework)' == 'net8.0'">1</IS_NET8_OR_HIGHER>
+		<IS_NET21_OR_HIGHER Condition="'$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net9.0' OR '$(TargetFramework)' == 'netstandard2.1'">1</IS_NET21_OR_HIGHER>
+		<IS_NET6_OR_HIGHER Condition="'$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net9.0'">1</IS_NET6_OR_HIGHER>
+		<IS_NET8_OR_HIGHER Condition="'$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net9.0'">1</IS_NET8_OR_HIGHER>
+		<IS_NET9_OR_HIGHER Condition="'$(TargetFramework)' == 'net9.0'">1</IS_NET9_OR_HIGHER>
 
 		<DefineConstants Condition="'$(TargetFramework)' == 'net48' OR '$(TargetFramework)' == 'netstandard2.0'">$(DefineConstants);NETFRAMEWORK</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET6_OR_HIGHER)' == '1'">$(DefineConstants);CAN_SIMULATE_OTHER_OS</DefineConstants>
@@ -30,6 +31,9 @@
 		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_GUID_FORMATPROVIDER</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_RANDOM_ITEMS</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_COMPRESSION_STREAM</DefineConstants>
+		<DefineConstants Condition="'$(IS_NET9_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_PATH_SPAN</DefineConstants>
+		<DefineConstants Condition="'$(IS_NET9_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_FILE_SPAN</DefineConstants>
+		<DefineConstants Condition="'$(IS_NET9_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_GUID_V7</DefineConstants>
 	</PropertyGroup>
 
 </Project>

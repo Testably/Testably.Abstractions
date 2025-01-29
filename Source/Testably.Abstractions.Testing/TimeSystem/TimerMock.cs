@@ -16,7 +16,11 @@ internal sealed class TimerMock : ITimerMock
 	private TimeSpan _dueTime;
 	private Exception? _exception;
 	private bool _isDisposed;
+#if NET9_0_OR_GREATER
+	private readonly Lock _lock = new();
+#else
 	private readonly object _lock = new();
+#endif
 	private readonly MockTimeSystem _mockTimeSystem;
 	private Action? _onDispose;
 	private TimeSpan _period;

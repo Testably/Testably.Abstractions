@@ -199,6 +199,45 @@ internal class CallStatistics<TType> : IStatistics<TType>
 	}
 #endif
 
+#if FEATURE_FILE_SPAN
+	/// <summary>
+	///     Registers the method <paramref name="name" /> with <paramref name="parameter1" /> and <paramref name="parameter2" />.
+	/// </summary>
+	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
+	internal IDisposable RegisterMethod<T1, T2>(string name, T1 parameter1, ReadOnlySpan<T2> parameter2)
+	{
+		if (_statisticsGate.TryGetLock(out IDisposable release))
+		{
+			int counter = _statisticsGate.GetCounter();
+			_methods.Enqueue(new MethodStatistic(counter, name,
+				ParameterDescription.FromParameter(parameter1),
+				ParameterDescription.FromParameter(parameter2)));
+		}
+
+		return release;
+	}
+#endif
+
+#if FEATURE_FILE_SPAN
+	/// <summary>
+	///     Registers the method <paramref name="name" /> with <paramref name="parameter1" />, <paramref name="parameter2" /> and <paramref name="parameter3" />.
+	/// </summary>
+	/// <returns>A disposable which ignores all registrations, until it is disposed.</returns>
+	internal IDisposable RegisterMethod<T1, T2, T3>(string name, T1 parameter1, ReadOnlySpan<T2> parameter2, T3 parameter3)
+	{
+		if (_statisticsGate.TryGetLock(out IDisposable release))
+		{
+			int counter = _statisticsGate.GetCounter();
+			_methods.Enqueue(new MethodStatistic(counter, name,
+				ParameterDescription.FromParameter(parameter1),
+				ParameterDescription.FromParameter(parameter2),
+				ParameterDescription.FromParameter(parameter3)));
+		}
+
+		return release;
+	}
+#endif
+
 #if FEATURE_SPAN
 	/// <summary>
 	///     Registers the method <paramref name="name" /> with <paramref name="parameter1" /> and

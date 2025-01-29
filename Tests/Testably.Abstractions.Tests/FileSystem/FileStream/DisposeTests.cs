@@ -90,7 +90,9 @@ public partial class DisposeTests
 			.GetAwaiter().GetResult();
 		#pragma warning disable MA0060
 		// ReSharper disable once MustUseReturnValue
+		#pragma warning disable CA2022
 		yield return fileStream => fileStream.Read(Array.Empty<byte>(), 0, 0);
+		#pragma warning restore CA2022
 		#pragma warning restore MA0060
 		yield return fileStream => fileStream.ReadAsync(Array.Empty<byte>(), 0, 0, TestContext.Current.CancellationToken)
 			.GetAwaiter().GetResult();

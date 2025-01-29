@@ -31,6 +31,36 @@ public partial class GuidTests
 		results.Should().OnlyHaveUniqueItems();
 	}
 
+#if FEATURE_GUID_V7
+	[Fact]
+	public void CreateVersion7_ShouldBeThreadSafeAndReturnUniqueItems()
+	{
+		ConcurrentBag<Guid> results = [];
+
+		Parallel.For(0, 100, _ =>
+		{
+			results.Add(RandomSystem.Guid.CreateVersion7());
+		});
+
+		results.Should().OnlyHaveUniqueItems();
+	}
+#endif
+
+#if FEATURE_GUID_V7
+	[Fact]
+	public void CreateVersion7_WithOffset_ShouldBeThreadSafeAndReturnUniqueItems()
+	{
+		ConcurrentBag<Guid> results = [];
+
+		Parallel.For(0, 100, _ =>
+		{
+			results.Add(RandomSystem.Guid.CreateVersion7(DateTimeOffset.UtcNow));
+		});
+
+		results.Should().OnlyHaveUniqueItems();
+	}
+#endif
+
 #if FEATURE_GUID_PARSE
 	[Theory]
 	[AutoData]

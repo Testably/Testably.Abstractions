@@ -16,6 +16,16 @@ public interface IGuid : IRandomSystemEntity
 	/// <inheritdoc cref="Guid.NewGuid()" />
 	Guid NewGuid();
 
+#if FEATURE_GUID_V7
+	/// <inheritdoc cref="Guid.CreateVersion7()" />
+	Guid CreateVersion7();
+#endif
+
+#if FEATURE_GUID_V7
+	/// <inheritdoc cref="Guid.CreateVersion7(DateTimeOffset)" />
+	Guid CreateVersion7(DateTimeOffset timestamp);
+#endif
+
 #if FEATURE_GUID_PARSE
 	/// <inheritdoc cref="Guid.Parse(string)" />
 	Guid Parse(string input);
