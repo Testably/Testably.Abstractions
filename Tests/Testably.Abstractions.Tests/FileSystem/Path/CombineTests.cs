@@ -283,6 +283,212 @@ public partial class CombineTests
 		string expectedPath = FileSystem.Path.Combine(path1, path2, path3, path4);
 
 		string result1 =
+			FileSystem.Path.Combine(new[]
+			{
+				string.Empty,
+				path1,
+				path2,
+				path3,
+				path4
+			});
+		string result2 =
+			FileSystem.Path.Combine(new[]
+			{
+				path1,
+				string.Empty,
+				path2,
+				path3,
+				path4
+			});
+		string result3 =
+			FileSystem.Path.Combine(new[]
+			{
+				path1,
+				path2,
+				string.Empty,
+				path3,
+				path4
+			});
+		string result4 =
+			FileSystem.Path.Combine(new[]
+			{
+				path1,
+				path2,
+				path3,
+				string.Empty,
+				path4
+			});
+		string result5 =
+			FileSystem.Path.Combine(new[]
+			{
+				path1,
+				path2,
+				path3,
+				path4,
+				string.Empty
+			});
+
+		result1.Should().Be(expectedPath);
+		result2.Should().Be(expectedPath);
+		result3.Should().Be(expectedPath);
+		result4.Should().Be(expectedPath);
+		result5.Should().Be(expectedPath);
+	}
+
+	[Theory]
+	[AutoData]
+	public void Combine_ParamPaths_OneNull_ShouldThrowArgumentNullException(
+		string pathA, string pathB, string pathC, string pathD)
+	{
+		Exception? exception1 = Record.Exception(() =>
+			FileSystem.Path.Combine(new[]
+			{
+				pathA,
+				pathB,
+				pathC,
+				pathD,
+				null!
+			}));
+		Exception? exception2 = Record.Exception(() =>
+			FileSystem.Path.Combine(new[]
+			{
+				null!,
+				pathA,
+				pathB,
+				pathC,
+				pathD
+			}));
+		Exception? exception3 = Record.Exception(() =>
+			FileSystem.Path.Combine(new[]
+			{
+				pathA,
+				null!,
+				pathB,
+				pathC,
+				pathD
+			}));
+		Exception? exception4 = Record.Exception(() =>
+			FileSystem.Path.Combine(new[]
+			{
+				pathA,
+				pathB,
+				null!,
+				pathC,
+				pathD
+			}));
+		Exception? exception5 = Record.Exception(() =>
+			FileSystem.Path.Combine(new[]
+			{
+				pathA,
+				pathB,
+				pathC,
+				null!,
+				pathD
+			}));
+
+		exception1.Should()
+			.BeException<ArgumentNullException>(paramName: "paths", hResult: -2147467261);
+		exception2.Should()
+			.BeException<ArgumentNullException>(paramName: "paths", hResult: -2147467261);
+		exception3.Should()
+			.BeException<ArgumentNullException>(paramName: "paths", hResult: -2147467261);
+		exception4.Should()
+			.BeException<ArgumentNullException>(paramName: "paths", hResult: -2147467261);
+		exception5.Should()
+			.BeException<ArgumentNullException>(paramName: "paths", hResult: -2147467261);
+	}
+
+	[Theory]
+	[AutoData]
+	public void Combine_ParamPaths_Rooted_ShouldReturnLastRootedPath(
+		string path1, string path2, string path3, string path4, string path5)
+	{
+		path1 = FileSystem.Path.DirectorySeparatorChar + path1;
+		path2 = FileSystem.Path.DirectorySeparatorChar + path2;
+		path3 = FileSystem.Path.DirectorySeparatorChar + path3;
+		path4 = FileSystem.Path.DirectorySeparatorChar + path4;
+		path5 = FileSystem.Path.DirectorySeparatorChar + path5;
+
+		string result = FileSystem.Path.Combine(new[]
+		{
+			path1,
+			path2,
+			path3,
+			path4,
+			path5
+		});
+
+		result.Should().Be(path5);
+	}
+
+	[Theory]
+	[InlineData("", "", "", "", "", "")]
+	[InlineData("/foo/", "/bar/", "/baz/", "/muh/", "/maeh/", "/maeh/")]
+	[InlineData("foo/", "/bar/", "/baz/", "/muh", "/maeh", "/maeh")]
+	[InlineData("foo/", "bar", "/baz", "/muh", "/maeh", "/maeh")]
+	[InlineData("foo", "/bar", "/baz", "/muh", "/maeh", "/maeh")]
+	[InlineData("foo", "/bar/", "baz/", "muh/", "maeh", "/bar/baz/muh/maeh")]
+	[InlineData("foo", "bar", "baz", "muh", "maeh", "foo/bar/baz/muh/maeh")]
+	[InlineData("/foo", "bar", "baz", "muh", "maeh/", "/foo/bar/baz/muh/maeh/")]
+	public void Combine_ParamPaths_ShouldReturnExpectedResult(
+		string path1, string path2, string path3, string path4, string path5, string expectedResult)
+	{
+		path1 = path1.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path2 = path2.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path3 = path3.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path4 = path4.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path5 = path5.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		expectedResult = expectedResult.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+
+		string result = FileSystem.Path.Combine(new[]
+		{
+			path1,
+			path2,
+			path3,
+			path4,
+			path5
+		});
+
+		result.Should().Be(expectedResult);
+	}
+
+	[Theory]
+	[InlineAutoData]
+	[InlineAutoData(" ")]
+	[InlineAutoData("foo", " ")]
+	[InlineAutoData("foo", "bar", " ")]
+	[InlineAutoData("foo", "bar", "baz", " ")]
+	[InlineAutoData("foo", "bar", "baz", "muh", " ")]
+	public void Combine_ParamPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
+		string path1, string path2, string path3, string path4, string path5)
+	{
+		string expectedPath = path1
+		                      + FileSystem.Path.DirectorySeparatorChar + path2
+		                      + FileSystem.Path.DirectorySeparatorChar + path3
+		                      + FileSystem.Path.DirectorySeparatorChar + path4
+		                      + FileSystem.Path.DirectorySeparatorChar + path5;
+
+		string result = FileSystem.Path.Combine(new[]
+		{
+			path1,
+			path2,
+			path3,
+			path4,
+			path5
+		});
+
+		result.Should().Be(expectedPath);
+	}
+
+#if FEATURE_PATH_SPAN
+	[Theory]
+	[AutoData]
+	public void Combine_ReadOnlySpanPaths_OneEmpty_ShouldReturnCombinationOfOtherParts(
+		string path1, string path2, string path3, string path4)
+	{
+		string expectedPath = FileSystem.Path.Combine(path1, path2, path3, path4);
+
+		string result1 =
 			FileSystem.Path.Combine(string.Empty, path1, path2, path3, path4);
 		string result2 =
 			FileSystem.Path.Combine(path1, string.Empty, path2, path3, path4);
@@ -302,7 +508,7 @@ public partial class CombineTests
 
 	[Theory]
 	[AutoData]
-	public void Combine_ParamPaths_OneNull_ShouldThrowArgumentNullException(
+	public void Combine_ReadOnlySpanPaths_OneNull_ShouldThrowArgumentNullException(
 		string pathA, string pathB, string pathC, string pathD)
 	{
 		Exception? exception1 = Record.Exception(() =>
@@ -330,7 +536,7 @@ public partial class CombineTests
 
 	[Theory]
 	[AutoData]
-	public void Combine_ParamPaths_Rooted_ShouldReturnLastRootedPath(
+	public void Combine_ReadOnlySpanPaths_Rooted_ShouldReturnLastRootedPath(
 		string path1, string path2, string path3, string path4, string path5)
 	{
 		path1 = FileSystem.Path.DirectorySeparatorChar + path1;
@@ -353,7 +559,7 @@ public partial class CombineTests
 	[InlineData("foo", "/bar/", "baz/", "muh/", "maeh", "/bar/baz/muh/maeh")]
 	[InlineData("foo", "bar", "baz", "muh", "maeh", "foo/bar/baz/muh/maeh")]
 	[InlineData("/foo", "bar", "baz", "muh", "maeh/", "/foo/bar/baz/muh/maeh/")]
-	public void Combine_ParamPaths_ShouldReturnExpectedResult(
+	public void Combine_ReadOnlySpanPaths_ShouldReturnExpectedResult(
 		string path1, string path2, string path3, string path4, string path5, string expectedResult)
 	{
 		path1 = path1.Replace('/', FileSystem.Path.DirectorySeparatorChar);
@@ -375,7 +581,7 @@ public partial class CombineTests
 	[InlineAutoData("foo", "bar", " ")]
 	[InlineAutoData("foo", "bar", "baz", " ")]
 	[InlineAutoData("foo", "bar", "baz", "muh", " ")]
-	public void Combine_ParamPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
+	public void Combine_ReadOnlySpanPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4, string path5)
 	{
 		string expectedPath = path1
@@ -388,4 +594,5 @@ public partial class CombineTests
 
 		result.Should().Be(expectedPath);
 	}
+#endif
 }

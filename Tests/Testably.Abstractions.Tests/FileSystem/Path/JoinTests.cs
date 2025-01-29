@@ -212,7 +212,7 @@ public partial class JoinTests
 	[Fact]
 	public void Join_ParamPaths_Empty_ShouldReturnEmptyString()
 	{
-		string?[] paths = Array.Empty<string?>();
+		string?[] paths = [];
 
 		string result = FileSystem.Path.Join(paths);
 
@@ -234,6 +234,126 @@ public partial class JoinTests
 	[InlineAutoData((string?)null)]
 	[InlineAutoData("")]
 	public void Join_ParamPaths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
+		string? missingPath, string path1, string path2, string path3, string path4)
+	{
+		string expectedPath =
+			$"{path1}{FileSystem.Path.DirectorySeparatorChar}{path2}{FileSystem.Path.DirectorySeparatorChar}{path3}{FileSystem.Path.DirectorySeparatorChar}{path4}";
+
+		string result1 =
+			FileSystem.Path.Join(new[]
+			{
+				missingPath,
+				path1,
+				path2,
+				path3,
+				path4
+			});
+		string result2 =
+			FileSystem.Path.Join(new[]
+			{
+				path1,
+				missingPath,
+				path2,
+				path3,
+				path4
+			});
+		string result3 =
+			FileSystem.Path.Join(new[]
+			{
+				path1,
+				path2,
+				missingPath,
+				path3,
+				path4
+			});
+		string result4 =
+			FileSystem.Path.Join(new[]
+			{
+				path1,
+				path2,
+				path3,
+				missingPath,
+				path4
+			});
+		string result5 =
+			FileSystem.Path.Join(new[]
+			{
+				path1,
+				path2,
+				path3,
+				path4,
+				missingPath
+			});
+
+		result1.Should().Be(expectedPath);
+		result2.Should().Be(expectedPath);
+		result3.Should().Be(expectedPath);
+		result4.Should().Be(expectedPath);
+		result5.Should().Be(expectedPath);
+	}
+
+	[Theory]
+	[InlineAutoData("/foo/", "/bar/", "/baz/", "/muh/", "/maeh/", "/foo//bar//baz//muh//maeh/")]
+	[InlineAutoData("foo/", "/bar/", "/baz/", "/muh", "/maeh", "foo//bar//baz//muh/maeh")]
+	[InlineAutoData("foo/", "bar", "/baz", "/muh", "/maeh", "foo/bar/baz/muh/maeh")]
+	[InlineAutoData("foo", "/bar", "/baz", "/muh", "/maeh", "foo/bar/baz/muh/maeh")]
+	[InlineAutoData("foo", "/bar/", "baz/", "muh/", "maeh", "foo/bar/baz/muh/maeh")]
+	[InlineAutoData("foo", "bar", "baz", "muh", "maeh", "foo/bar/baz/muh/maeh")]
+	[InlineAutoData("/foo", "bar", "baz", "muh", "maeh/", "/foo/bar/baz/muh/maeh/")]
+	public void Join_ParamPaths_ShouldReturnExpectedResult(
+		string path1, string path2, string path3, string path4, string path5, string expectedResult)
+	{
+		path1 = path1.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path2 = path2.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path3 = path3.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path4 = path4.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		path5 = path5.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+		expectedResult = expectedResult.Replace('/', FileSystem.Path.DirectorySeparatorChar);
+
+		string result = FileSystem.Path.Join(new[]
+		{
+			path1,
+			path2,
+			path3,
+			path4,
+			path5
+		});
+
+		result.Should().Be(expectedResult);
+	}
+
+	[Theory]
+	[AutoData]
+	public void Join_ParamPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
+		string path1, string path2, string path3, string path4, string path5)
+	{
+		string expectedResult = path1
+		                        + FileSystem.Path.DirectorySeparatorChar + path2
+		                        + FileSystem.Path.DirectorySeparatorChar + path3
+		                        + FileSystem.Path.DirectorySeparatorChar + path4
+		                        + FileSystem.Path.DirectorySeparatorChar + path5;
+
+		string result = FileSystem.Path.Join(path1, path2, path3, path4, path5);
+
+		result.Should().Be(expectedResult);
+	}
+
+#if FEATURE_PATH_SPAN
+
+	[Fact]
+	public void Join_ReadOnlySpanPaths_Empty_ShouldReturnEmptyString()
+	{
+		ReadOnlySpan<string?> paths = Array.Empty<string?>();
+
+		string result = FileSystem.Path.Join(paths);
+
+		result.Should().Be(string.Empty);
+	}
+
+	[Theory]
+	[InlineAutoData((string?)null)]
+	[InlineAutoData("")]
+	public void Join_ReadOnlySpanPaths_OneNullOrEmpty_ShouldReturnCombinationOfOtherParts(
 		string? missingPath, string path1, string path2, string path3, string path4)
 	{
 		string expectedPath =
@@ -265,7 +385,7 @@ public partial class JoinTests
 	[InlineAutoData("foo", "/bar/", "baz/", "muh/", "maeh", "foo/bar/baz/muh/maeh")]
 	[InlineAutoData("foo", "bar", "baz", "muh", "maeh", "foo/bar/baz/muh/maeh")]
 	[InlineAutoData("/foo", "bar", "baz", "muh", "maeh/", "/foo/bar/baz/muh/maeh/")]
-	public void Join_ParamPaths_ShouldReturnExpectedResult(
+	public void Join_ReadOnlySpanPaths_ShouldReturnExpectedResult(
 		string path1, string path2, string path3, string path4, string path5, string expectedResult)
 	{
 		path1 = path1.Replace('/', FileSystem.Path.DirectorySeparatorChar);
@@ -282,7 +402,7 @@ public partial class JoinTests
 
 	[Theory]
 	[AutoData]
-	public void Join_ParamPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
+	public void Join_ReadOnlySpanPaths_ShouldReturnPathsCombinedByDirectorySeparatorChar(
 		string path1, string path2, string path3, string path4, string path5)
 	{
 		string expectedResult = path1
@@ -295,5 +415,6 @@ public partial class JoinTests
 
 		result.Should().Be(expectedResult);
 	}
+#endif
 }
 #endif
