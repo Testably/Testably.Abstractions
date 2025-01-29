@@ -8,6 +8,8 @@ namespace Testably.Abstractions.Helpers
         protected GuidSystemBase(Testably.Abstractions.IRandomSystem randomSystem) { }
         public System.Guid Empty { get; }
         public Testably.Abstractions.IRandomSystem RandomSystem { get; }
+        public abstract System.Guid CreateVersion7();
+        public abstract System.Guid CreateVersion7(System.DateTimeOffset timestamp);
         public abstract System.Guid NewGuid();
         public System.Guid Parse(System.ReadOnlySpan<char> input) { }
         public System.Guid Parse(string input) { }
@@ -68,6 +70,8 @@ namespace Testably.Abstractions.RandomSystem
     public interface IGuid : Testably.Abstractions.RandomSystem.IRandomSystemEntity
     {
         System.Guid Empty { get; }
+        System.Guid CreateVersion7();
+        System.Guid CreateVersion7(System.DateTimeOffset timestamp);
         System.Guid NewGuid();
         System.Guid Parse(System.ReadOnlySpan<char> input);
         System.Guid Parse(string input);
