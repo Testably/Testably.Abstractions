@@ -33,6 +33,7 @@
 		<DefineConstants Condition="'$(IS_NET8_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_COMPRESSION_STREAM</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET9_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_PATH_SPAN</DefineConstants>
 		<DefineConstants Condition="'$(IS_NET9_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_FILE_SPAN</DefineConstants>
+		<DefineConstants Condition="'$(IS_NET9_OR_HIGHER)' == '1'">$(DefineConstants);FEATURE_GUID_V7</DefineConstants>
 	</PropertyGroup>
 
 </Project>

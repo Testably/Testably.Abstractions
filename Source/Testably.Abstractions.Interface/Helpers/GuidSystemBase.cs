@@ -32,6 +32,16 @@ public abstract class GuidSystemBase : IGuid
 	/// <inheritdoc cref="IGuid.NewGuid()" />
 	public abstract Guid NewGuid();
 
+#if FEATURE_GUID_V7
+	/// <inheritdoc cref="IGuid.CreateVersion7()" />
+	public abstract Guid CreateVersion7();
+#endif
+
+#if FEATURE_GUID_V7
+	/// <inheritdoc cref="IGuid.CreateVersion7(DateTimeOffset)" />
+	public abstract Guid CreateVersion7(DateTimeOffset timestamp);
+#endif
+
 #if FEATURE_GUID_PARSE
 	#pragma warning disable MA0011
 	/// <inheritdoc cref="IGuid.Parse(string)" />

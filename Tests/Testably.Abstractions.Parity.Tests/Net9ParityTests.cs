@@ -11,12 +11,6 @@ public class Net9ParityTests : ParityTests
 	{
 		Parity.File.MissingMethods.Add(
 			typeof(File).GetMethod(nameof(File.OpenHandle)));
-		
-		//TODO: Add support for Guid.CreateVersion7()
-		Parity.Guid.MissingMethods.Add(
-			typeof(Guid).GetMethod(nameof(Guid.CreateVersion7), types: [] ));
-		Parity.Guid.MissingMethods.Add(
-			typeof(Guid).GetMethod(nameof(Guid.CreateVersion7), types: [typeof(DateTimeOffset)] ));
 	}
 }
 
