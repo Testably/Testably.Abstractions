@@ -197,7 +197,7 @@ public partial class AppendAllBytesTests
 
 		Exception? exception = Record.Exception(() =>
 		{
-			FileSystem.File.AppendAllBytes(path, null);
+			FileSystem.File.AppendAllBytes(path, Array.Empty<byte>());
 		});
 
 		exception.Should().BeException<UnauthorizedAccessException>(
