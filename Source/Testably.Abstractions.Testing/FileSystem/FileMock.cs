@@ -1368,7 +1368,7 @@ internal sealed class FileMock : IFile
 	public void WriteAllBytes(string path, ReadOnlySpan<byte> bytes)
 	{
 		using IDisposable registration = _fileSystem.StatisticsRegistration
-			.File.RegisterMethod(nameof(WriteAllBytesAsync),
+			.File.RegisterMethod(nameof(WriteAllBytes),
 				path, bytes);
 
 		WriteAllBytes(path, bytes.ToArray());

@@ -21,6 +21,19 @@ public class PathStatisticsTests
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.ChangeExtension),
 			path, extension);
 	}
+#if FEATURE_PATH_SPAN
+	[Fact]
+	public void Method_Combine_ReadOnlySpanString_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		ReadOnlySpan<string> paths = new();
+
+		sut.Path.Combine(paths);
+
+		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Combine),
+			paths);
+	}
+#endif
 
 	[Fact]
 	public void Method_Combine_String_String_ShouldRegisterCall()
@@ -500,6 +513,20 @@ public class PathStatisticsTests
 		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
 			path1, path2);
+	}
+#endif
+
+#if FEATURE_PATH_SPAN
+	[Fact]
+	public void Method_Join_ReadOnlySpanString_ShouldRegisterCall()
+	{
+		MockFileSystem sut = new();
+		ReadOnlySpan<string?> paths = new();
+
+		sut.Path.Join(paths);
+
+		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.Join),
+			paths);
 	}
 #endif
 
