@@ -104,5 +104,87 @@ public partial class WriteAllBytesAsyncTests
 
 		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
 	}
+	
+#if FEATURE_FILE_SPAN
+	[Theory]
+	[AutoData]
+	public async Task WriteAllBytesAsync_ReadOnlyMemory_Cancelled_ShouldThrowTaskCanceledException(
+		string path, byte[] bytes)
+	{
+		using CancellationTokenSource cts = new();
+		cts.Cancel();
+
+		Exception? exception = await Record.ExceptionAsync(() =>
+			FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), cts.Token));
+
+		exception.Should().BeException<TaskCanceledException>(hResult: -2146233029);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task WriteAllBytesAsync_ReadOnlyMemory_PreviousFile_ShouldOverwriteFileWithBytes(
+		string path, byte[] bytes)
+	{
+		await FileSystem.File.WriteAllBytesAsync(path, Encoding.UTF8.GetBytes("foo"), TestContext.Current.CancellationToken);
+
+		await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), TestContext.Current.CancellationToken);
+
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(bytes);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task WriteAllBytesAsync_ReadOnlyMemory_ShouldCreateFileWithBytes(
+		string path, byte[] bytes)
+	{
+		await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), TestContext.Current.CancellationToken);
+
+		FileSystem.Should().HaveFile(path)
+			.Which.HasContent(bytes);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task
+		WriteAllBytesAsync_ReadOnlyMemory_WhenDirectoryWithSameNameExists_ShouldThrowUnauthorizedAccessException(
+			string path, byte[] bytes)
+	{
+		FileSystem.Directory.CreateDirectory(path);
+
+		async Task Act()
+		{
+			await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), TestContext.Current.CancellationToken);
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
+
+		exception.Should().BeException<UnauthorizedAccessException>(
+			hResult: -2147024891);
+		FileSystem.Should().HaveDirectory(path);
+		FileSystem.Should().NotHaveFile(path);
+	}
+
+	[Theory]
+	[AutoData]
+	public async Task
+		WriteAllTextAsync_ReadOnlyMemory_WhenFileIsHidden_ShouldThrowUnauthorizedAccessException_OnWindows(
+			string path, byte[] bytes)
+	{
+		Skip.IfNot(Test.RunsOnWindows);
+
+		await FileSystem.File.WriteAllTextAsync(path, "", TestContext.Current.CancellationToken);
+		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
+
+		async Task Act()
+		{
+			await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), TestContext.Current.CancellationToken);
+		}
+
+		Exception? exception = await Record.ExceptionAsync(Act);
+
+		exception.Should().BeException<UnauthorizedAccessException>(hResult: -2147024891);
+	}
+#endif
 }
 #endif
