@@ -117,6 +117,18 @@ internal sealed class PathMock : IPath
 
 		return _fileSystem.Execute.Path.Combine(paths);
 	}
+	
+#if FEATURE_PATH_SPAN
+	/// <inheritdoc cref="IPath.Combine(ReadOnlySpan{string})" />
+	public string Combine(params ReadOnlySpan<string> paths)
+	{
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(Combine),
+				paths);
+
+		return _fileSystem.Execute.Path.Combine(paths);
+	}
+#endif
 
 #if FEATURE_PATH_ADVANCED
 	/// <inheritdoc cref="IPath.EndsInDirectorySeparator(ReadOnlySpan{char})" />
@@ -504,6 +516,18 @@ internal sealed class PathMock : IPath
 #if FEATURE_PATH_ADVANCED
 	/// <inheritdoc cref="IPath.Join(string[])" />
 	public string Join(params string?[] paths)
+	{
+		using IDisposable register = _fileSystem.StatisticsRegistration
+			.Path.RegisterMethod(nameof(Join),
+				paths);
+
+		return _fileSystem.Execute.Path.Join(paths);
+	}
+#endif
+	
+#if FEATURE_PATH_SPAN
+	/// <inheritdoc cref="IPath.Join(ReadOnlySpan{string})" />
+	public string Join(params ReadOnlySpan<string?> paths)
 	{
 		using IDisposable register = _fileSystem.StatisticsRegistration
 			.Path.RegisterMethod(nameof(Join),

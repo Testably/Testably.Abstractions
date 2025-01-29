@@ -128,6 +128,12 @@ internal sealed partial class Execute
 		/// <inheritdoc cref="IPath.Combine(string[])" />
 		public string Combine(params string[] paths)
 			=> CombineInternal(paths);
+	
+#if FEATURE_PATH_SPAN
+		/// <inheritdoc cref="IPath.Combine(ReadOnlySpan{string})" />
+		public string Combine(params ReadOnlySpan<string> paths)
+			=> CombineInternal(paths.ToArray());
+#endif
 
 #if FEATURE_PATH_ADVANCED
 		/// <inheritdoc cref="IPath.EndsInDirectorySeparator(ReadOnlySpan{char})" />
@@ -439,6 +445,12 @@ internal sealed partial class Execute
 		/// <inheritdoc cref="IPath.Join(string[])" />
 		public string Join(params string?[] paths)
 			=> JoinInternal(paths);
+#endif
+	
+#if FEATURE_PATH_SPAN
+		/// <inheritdoc cref="IPath.Join(ReadOnlySpan{string})" />
+		public string Join(params ReadOnlySpan<string?> paths)
+			=> JoinInternal(paths.ToArray());
 #endif
 
 #if FEATURE_PATH_ADVANCED
