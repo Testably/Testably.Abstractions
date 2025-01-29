@@ -148,7 +148,7 @@ public partial class WriteAllLinesAsyncTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		await FileSystem.File.WriteAllTextAsync(path, null, TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync(path, "", TestContext.Current.CancellationToken);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
 		async Task Act()

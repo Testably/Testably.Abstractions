@@ -95,7 +95,7 @@ public partial class WriteAllTextAsyncTests
 	{
 		async Task Act()
 		{
-			await FileSystem.File.WriteAllTextAsync(path, null, TestContext.Current.CancellationToken);
+			await FileSystem.File.WriteAllTextAsync(path, (string?)null, TestContext.Current.CancellationToken);
 		}
 		
 		Exception? exception = await Record.ExceptionAsync(Act);
@@ -131,7 +131,7 @@ public partial class WriteAllTextAsyncTests
 	{
 		Skip.IfNot(Test.RunsOnWindows);
 
-		await FileSystem.File.WriteAllTextAsync(path, null, TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync(path, "", TestContext.Current.CancellationToken);
 		FileSystem.File.SetAttributes(path, FileAttributes.Hidden);
 
 		async Task Act()

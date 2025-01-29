@@ -94,7 +94,7 @@ public partial class OpenReadTests
 	public async Task OpenRead_WriteAsyncWithMemory_ShouldThrowNotSupportedException(
 		string path, byte[] bytes)
 	{
-		await FileSystem.File.WriteAllTextAsync(path, null, TestContext.Current.CancellationToken);
+		await FileSystem.File.WriteAllTextAsync(path, "", TestContext.Current.CancellationToken);
 
 		async Task Act()
 		{
