@@ -20,8 +20,8 @@ partial class Build
 				.SetProjectKey("Testably_Testably.Abstractions")
 				.AddVSTestReports(TestResultsDirectory / "*.trx")
 				.AddOpenCoverPaths(TestResultsDirectory / "reports" / "OpenCover.xml")
-				.SetPullRequestOrBranchName(GitHubActions, GitVersion)
-				.SetVersion(GitVersion?.SemVer)
+				.SetPullRequestOrBranchName(GitHubActions, BranchName)
+				.SetVersion(SemVer)
 				.SetToken(SonarToken));
 		});
 

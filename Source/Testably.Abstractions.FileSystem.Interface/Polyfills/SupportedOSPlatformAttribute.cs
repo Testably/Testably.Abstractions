@@ -19,7 +19,7 @@ namespace Testably.Abstractions.Polyfills;
                 AttributeTargets.Property |
                 AttributeTargets.Struct,
 	AllowMultiple = true, Inherited = false)]
-internal sealed class SupportedOSPlatformAttribute : Attribute
+public sealed class SupportedOSPlatformAttribute : Attribute
 {
 	/// <summary>
 	///     The platform name.

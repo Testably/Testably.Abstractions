@@ -11,14 +11,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Testably.Abstractions.FileSystem.Interface\Testably.Abstractions.FileSystem.Interface.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<AssemblyAttribute Include="System.CLSCompliant">
 			<_Parameter1>true</_Parameter1>
 			<_Parameter1_TypeName>System.Boolean</_Parameter1_TypeName>
 		</AssemblyAttribute>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageReference Include="TestableIO.System.IO.Abstractions" />
 	</ItemGroup>
 
 </Project>

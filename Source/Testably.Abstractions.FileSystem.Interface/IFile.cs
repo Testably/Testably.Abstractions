@@ -1,8 +1,11 @@
-﻿using Microsoft.Win32.SafeHandles;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Versioning;
 using System.Text;
+#if NETSTANDARD2_0 || NETSTANDARD2_1
+using Testably.Abstractions.Polyfills;
+#else
+using System.Runtime.Versioning;
+#endif
 
 namespace System.IO.Abstractions
 {

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Nuke.Common.Utilities;
+using System.Collections.Generic;
 using static Serilog.Log;
 
 // ReSharper disable AllUnderscoreLocalParameterName
@@ -15,16 +16,11 @@ namespace Build;
 partial class Build
 {
 	Target UpdateReadme => _ => _
-		.DependsOn(Clean)
+		.DependsOn(Clean, CalculateNugetVersion)
 		.Before(Compile)
 		.Executes(() =>
 		{
-			if (GitVersion == null)
-			{
-				return;
-			}
-			
-			string version = string.Join('.', GitVersion.SemVer.Split('.').Take(3));
+			string version = string.Join('.', SemVer.Split('.').Take(3));
 			if (version.IndexOf('-') != -1)
 			{
 				version = version.Substring(0, version.IndexOf('-'));
@@ -70,35 +66,49 @@ partial class Build
 		.DependsOn(Compile)
 		.Executes(() =>
 		{
-			ReportSummary(s => s
-				.WhenNotNull(SemVer, (c, semVer) => c
-					.AddPair("Packed version", semVer)));
-
 			AbsolutePath packagesDirectory = ArtifactsDirectory / "Packages";
 			packagesDirectory.CreateOrCleanDirectory();
 
-			foreach (Project project in new[]
-				{
-					Solution.Testably_Abstractions,
-					Solution.Testably_Abstractions_AccessControl,
-					Solution.Testably_Abstractions_Compression,
-					Solution.Testably_Abstractions_Interface,
-					Solution.Testably_Abstractions_Testing,
-				})
+			List<string> packages = new();
+			Directory.CreateDirectory(packagesDirectory / "Main");
+			foreach (Project mainProject in MainProjects)
 			{
 				foreach (string package in
-				         Directory.EnumerateFiles(project.Directory / "bin", "*.nupkg", SearchOption.AllDirectories))
+				         Directory.EnumerateFiles(mainProject.Directory / "bin", "*.nupkg", SearchOption.AllDirectories))
 				{
-					File.Move(package, packagesDirectory / Path.GetFileName(package));
+					File.Move(package, packagesDirectory / "Main" / Path.GetFileName(package));
 					Debug("Found nuget package: {PackagePath}", package);
+					packages.Add(Path.GetFileName(package));
 				}
 
 				foreach (string symbolPackage in
-				         Directory.EnumerateFiles(project.Directory / "bin", "*.snupkg", SearchOption.AllDirectories))
+				         Directory.EnumerateFiles(mainProject.Directory / "bin", "*.snupkg", SearchOption.AllDirectories))
 				{
-					File.Move(symbolPackage, packagesDirectory / Path.GetFileName(symbolPackage));
+					File.Move(symbolPackage, packagesDirectory / "Main" / Path.GetFileName(symbolPackage));
 					Debug("Found symbol package: {PackagePath}", symbolPackage);
 				}
 			}
+			
+			Directory.CreateDirectory(packagesDirectory / "Core");
+			foreach (Project coreProject in CoreProjects)
+			{
+				foreach (string package in
+					Directory.EnumerateFiles(coreProject.Directory / "bin", "*.nupkg", SearchOption.AllDirectories))
+				{
+					File.Move(package, packagesDirectory / "Core" / Path.GetFileName(package));
+					Debug("Found nuget package: {PackagePath}", package);
+					packages.Add(Path.GetFileName(package));
+				}
+
+				foreach (string symbolPackage in
+					Directory.EnumerateFiles(coreProject.Directory / "bin", "*.snupkg", SearchOption.AllDirectories))
+				{
+					File.Move(symbolPackage, packagesDirectory / "Core" / Path.GetFileName(symbolPackage));
+					Debug("Found symbol package: {PackagePath}", symbolPackage);
+				}
+			}
+			
+			ReportSummary(s => s
+				.AddPair("Packages", string.Join(", ", packages)));
 		});
 }
