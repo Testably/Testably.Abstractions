@@ -17,8 +17,9 @@ public sealed class ApiAcceptance
 			"Testably.Abstractions",
 			"Testably.Abstractions.AccessControl",
 			"Testably.Abstractions.Compression",
+			"Testably.Abstractions.FileSystem.Interface",
 			"Testably.Abstractions.Interface",
-			"Testably.Abstractions.Testing"
+			"Testably.Abstractions.Testing",
 		];
 
 		foreach (string assemblyName in assemblyNames)

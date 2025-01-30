@@ -18,9 +18,13 @@ public static class Helper
 #else
 		string configuration = "Release";
 #endif
-		string assemblyFile = CombinedPaths("Source", assemblyName, "bin", configuration, framework, $"{assemblyName}.dll");
+		string assemblyFile = CombinedPaths("Source", assemblyName, "bin", configuration, framework,
+			$"{assemblyName}.dll");
 		Assembly assembly = Assembly.LoadFile(assemblyFile);
-		string publicApi = assembly.GeneratePublicApi(options: null);
+		string publicApi = assembly.GeneratePublicApi(options: new ApiGeneratorOptions
+		{
+			AllowNamespacePrefixes = ["System.IO.Abstractions"],
+		});
 		return publicApi.Replace("\r\n", "\n");
 	}
 

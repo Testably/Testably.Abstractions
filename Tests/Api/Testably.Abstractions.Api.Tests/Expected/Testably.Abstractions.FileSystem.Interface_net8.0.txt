@@ -1,0 +1,483 @@
+[assembly: System.CLSCompliant(true)]
+[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/Testably/Testably.Abstractions.git")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v8.0", FrameworkDisplayName=".NET 8.0")]
+namespace System.IO.Abstractions
+{
+    public abstract class FileSystemStream : System.IO.Stream
+    {
+        protected FileSystemStream(System.IO.Stream stream, string path, bool isAsync) { }
+        public override bool CanRead { get; }
+        public override bool CanSeek { get; }
+        public override bool CanTimeout { get; }
+        public override bool CanWrite { get; }
+        public virtual bool IsAsync { get; }
+        public override long Length { get; }
+        public virtual string Name { get; }
+        public override long Position { get; set; }
+        public override int ReadTimeout { get; set; }
+        public override int WriteTimeout { get; set; }
+        public override System.IAsyncResult BeginRead(byte[] buffer, int offset, int count, System.AsyncCallback? callback, object? state) { }
+        public override System.IAsyncResult BeginWrite(byte[] buffer, int offset, int count, System.AsyncCallback? callback, object? state) { }
+        public override void Close() { }
+        public override void CopyTo(System.IO.Stream destination, int bufferSize) { }
+        public override System.Threading.Tasks.Task CopyToAsync(System.IO.Stream destination, int bufferSize, System.Threading.CancellationToken cancellationToken) { }
+        protected override void Dispose(bool disposing) { }
+        public override int EndRead(System.IAsyncResult asyncResult) { }
+        public override void EndWrite(System.IAsyncResult asyncResult) { }
+        public override void Flush() { }
+        public virtual void Flush(bool flushToDisk) { }
+        public override System.Threading.Tasks.Task FlushAsync(System.Threading.CancellationToken cancellationToken) { }
+        public override int Read(System.Span<byte> buffer) { }
+        public override int Read(byte[] buffer, int offset, int count) { }
+        public override System.Threading.Tasks.ValueTask<int> ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken = default) { }
+        public override System.Threading.Tasks.Task<int> ReadAsync(byte[] buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) { }
+        public override int ReadByte() { }
+        public override long Seek(long offset, System.IO.SeekOrigin origin) { }
+        public override void SetLength(long value) { }
+        public override string? ToString() { }
+        public override void Write(System.ReadOnlySpan<byte> buffer) { }
+        public override void Write(byte[] buffer, int offset, int count) { }
+        public override System.Threading.Tasks.ValueTask WriteAsync(System.ReadOnlyMemory<byte> buffer, System.Threading.CancellationToken cancellationToken = default) { }
+        public override System.Threading.Tasks.Task WriteAsync(byte[] buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) { }
+        public override void WriteByte(byte value) { }
+        public static System.IO.FileStream op_Explicit(System.IO.Abstractions.FileSystemStream fsStream) { }
+    }
+    public interface IDirectory : System.IO.Abstractions.IFileSystemEntity
+    {
+        System.IO.Abstractions.IDirectoryInfo CreateDirectory(string path);
+        System.IO.Abstractions.IDirectoryInfo CreateDirectory(string path, System.IO.UnixFileMode unixCreateMode);
+        System.IO.Abstractions.IFileSystemInfo CreateSymbolicLink(string path, string pathToTarget);
+        System.IO.Abstractions.IDirectoryInfo CreateTempSubdirectory(string? prefix = null);
+        void Delete(string path);
+        void Delete(string path, bool recursive);
+        System.Collections.Generic.IEnumerable<string> EnumerateDirectories(string path);
+        System.Collections.Generic.IEnumerable<string> EnumerateDirectories(string path, string searchPattern);
+        System.Collections.Generic.IEnumerable<string> EnumerateDirectories(string path, string searchPattern, System.IO.EnumerationOptions enumerationOptions);
+        System.Collections.Generic.IEnumerable<string> EnumerateDirectories(string path, string searchPattern, System.IO.SearchOption searchOption);
+        System.Collections.Generic.IEnumerable<string> EnumerateFileSystemEntries(string path);
+        System.Collections.Generic.IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern);
+        System.Collections.Generic.IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern, System.IO.EnumerationOptions enumerationOptions);
+        System.Collections.Generic.IEnumerable<string> EnumerateFileSystemEntries(string path, string searchPattern, System.IO.SearchOption searchOption);
+        System.Collections.Generic.IEnumerable<string> EnumerateFiles(string path);
+        System.Collections.Generic.IEnumerable<string> EnumerateFiles(string path, string searchPattern);
+        System.Collections.Generic.IEnumerable<string> EnumerateFiles(string path, string searchPattern, System.IO.EnumerationOptions enumerationOptions);
+        System.Collections.Generic.IEnumerable<string> EnumerateFiles(string path, string searchPattern, System.IO.SearchOption searchOption);
+        bool Exists([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path);
+        System.DateTime GetCreationTime(string path);
+        System.DateTime GetCreationTimeUtc(string path);
+        string GetCurrentDirectory();
+        string[] GetDirectories(string path);
+        string[] GetDirectories(string path, string searchPattern);
+        string[] GetDirectories(string path, string searchPattern, System.IO.EnumerationOptions enumerationOptions);
+        string[] GetDirectories(string path, string searchPattern, System.IO.SearchOption searchOption);
+        string GetDirectoryRoot(string path);
+        string[] GetFileSystemEntries(string path);
+        string[] GetFileSystemEntries(string path, string searchPattern);
+        string[] GetFileSystemEntries(string path, string searchPattern, System.IO.EnumerationOptions enumerationOptions);
+        string[] GetFileSystemEntries(string path, string searchPattern, System.IO.SearchOption searchOption);
+        string[] GetFiles(string path);
+        string[] GetFiles(string path, string searchPattern);
+        string[] GetFiles(string path, string searchPattern, System.IO.EnumerationOptions enumerationOptions);
+        string[] GetFiles(string path, string searchPattern, System.IO.SearchOption searchOption);
+        System.DateTime GetLastAccessTime(string path);
+        System.DateTime GetLastAccessTimeUtc(string path);
+        System.DateTime GetLastWriteTime(string path);
+        System.DateTime GetLastWriteTimeUtc(string path);
+        string[] GetLogicalDrives();
+        System.IO.Abstractions.IDirectoryInfo? GetParent(string path);
+        void Move(string sourceDirName, string destDirName);
+        System.IO.Abstractions.IFileSystemInfo? ResolveLinkTarget(string linkPath, bool returnFinalTarget);
+        void SetCreationTime(string path, System.DateTime creationTime);
+        void SetCreationTimeUtc(string path, System.DateTime creationTimeUtc);
+        void SetCurrentDirectory(string path);
+        void SetLastAccessTime(string path, System.DateTime lastAccessTime);
+        void SetLastAccessTimeUtc(string path, System.DateTime lastAccessTimeUtc);
+        void SetLastWriteTime(string path, System.DateTime lastWriteTime);
+        void SetLastWriteTimeUtc(string path, System.DateTime lastWriteTimeUtc);
+    }
+    public interface IDirectoryInfo : System.IO.Abstractions.IFileSystemInfo
+    {
+        System.IO.Abstractions.IDirectoryInfo? Parent { get; }
+        System.IO.Abstractions.IDirectoryInfo Root { get; }
+        void Create();
+        System.IO.Abstractions.IDirectoryInfo CreateSubdirectory(string path);
+        void Delete(bool recursive);
+        System.Collections.Generic.IEnumerable<System.IO.Abstractions.IDirectoryInfo> EnumerateDirectories();
+        System.Collections.Generic.IEnumerable<System.IO.Abstractions.IDirectoryInfo> EnumerateDirectories(string searchPattern);
+        System.Collections.Generic.IEnumerable<System.IO.Abstractions.IDirectoryInfo> EnumerateDirectories(string searchPattern, System.IO.EnumerationOptions enumerationOptions);
+        System.Collections.Generic.IEnumerable<System.IO.Abstractions.IDirectoryInfo> EnumerateDirectories(string searchPattern, System.IO.SearchOption searchOption);
+        System.Collections.Generic.IEnumerable<System.IO.Abstractions.IFileSystemInfo> EnumerateFileSystemInfos();
+        System.Collections.Generic.IEnumerable<System.IO.Abstractions.IFileSystemInfo> EnumerateFileSystemInfos(string searchPattern);
+        System.Collections.Generic.IEnumerable<System.IO.Abstractions.IFileSystemInfo> EnumerateFileSystemInfos(string searchPattern, System.IO.EnumerationOptions enumerationOptions);
+        System.Collections.Generic.IEnumerable<System.IO.Abstractions.IFileSystemInfo> EnumerateFileSystemInfos(string searchPattern, System.IO.SearchOption searchOption);
+        System.Collections.Generic.IEnumerable<System.IO.Abstractions.IFileInfo> EnumerateFiles();
+        System.Collections.Generic.IEnumerable<System.IO.Abstractions.IFileInfo> EnumerateFiles(string searchPattern);
+        System.Collections.Generic.IEnumerable<System.IO.Abstractions.IFileInfo> EnumerateFiles(string searchPattern, System.IO.EnumerationOptions enumerationOptions);
+        System.Collections.Generic.IEnumerable<System.IO.Abstractions.IFileInfo> EnumerateFiles(string searchPattern, System.IO.SearchOption searchOption);
+        System.IO.Abstractions.IDirectoryInfo[] GetDirectories();
+        System.IO.Abstractions.IDirectoryInfo[] GetDirectories(string searchPattern);
+        System.IO.Abstractions.IDirectoryInfo[] GetDirectories(string searchPattern, System.IO.EnumerationOptions enumerationOptions);
+        System.IO.Abstractions.IDirectoryInfo[] GetDirectories(string searchPattern, System.IO.SearchOption searchOption);
+        System.IO.Abstractions.IFileSystemInfo[] GetFileSystemInfos();
+        System.IO.Abstractions.IFileSystemInfo[] GetFileSystemInfos(string searchPattern);
+        System.IO.Abstractions.IFileSystemInfo[] GetFileSystemInfos(string searchPattern, System.IO.EnumerationOptions enumerationOptions);
+        System.IO.Abstractions.IFileSystemInfo[] GetFileSystemInfos(string searchPattern, System.IO.SearchOption searchOption);
+        System.IO.Abstractions.IFileInfo[] GetFiles();
+        System.IO.Abstractions.IFileInfo[] GetFiles(string searchPattern);
+        System.IO.Abstractions.IFileInfo[] GetFiles(string searchPattern, System.IO.EnumerationOptions enumerationOptions);
+        System.IO.Abstractions.IFileInfo[] GetFiles(string searchPattern, System.IO.SearchOption searchOption);
+        void MoveTo(string destDirName);
+    }
+    public interface IDirectoryInfoFactory : System.IO.Abstractions.IFileSystemEntity
+    {
+        System.IO.Abstractions.IDirectoryInfo New(string path);
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("directoryInfo")]
+        System.IO.Abstractions.IDirectoryInfo? Wrap(System.IO.DirectoryInfo? directoryInfo);
+    }
+    public interface IDriveInfo : System.IO.Abstractions.IFileSystemEntity
+    {
+        long AvailableFreeSpace { get; }
+        string DriveFormat { get; }
+        System.IO.DriveType DriveType { get; }
+        bool IsReady { get; }
+        string Name { get; }
+        System.IO.Abstractions.IDirectoryInfo RootDirectory { get; }
+        long TotalFreeSpace { get; }
+        long TotalSize { get; }
+        [set: System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        string VolumeLabel { get; set; }
+    }
+    public interface IDriveInfoFactory : System.IO.Abstractions.IFileSystemEntity
+    {
+        System.IO.Abstractions.IDriveInfo[] GetDrives();
+        System.IO.Abstractions.IDriveInfo New(string driveName);
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("driveInfo")]
+        System.IO.Abstractions.IDriveInfo? Wrap(System.IO.DriveInfo? driveInfo);
+    }
+    public interface IFile : System.IO.Abstractions.IFileSystemEntity
+    {
+        void AppendAllLines(string path, System.Collections.Generic.IEnumerable<string> contents);
+        void AppendAllLines(string path, System.Collections.Generic.IEnumerable<string> contents, System.Text.Encoding encoding);
+        System.Threading.Tasks.Task AppendAllLinesAsync(string path, System.Collections.Generic.IEnumerable<string> contents, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task AppendAllLinesAsync(string path, System.Collections.Generic.IEnumerable<string> contents, System.Text.Encoding encoding, System.Threading.CancellationToken cancellationToken = default);
+        void AppendAllText(string path, string? contents);
+        void AppendAllText(string path, string? contents, System.Text.Encoding encoding);
+        System.Threading.Tasks.Task AppendAllTextAsync(string path, string? contents, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task AppendAllTextAsync(string path, string? contents, System.Text.Encoding encoding, System.Threading.CancellationToken cancellationToken = default);
+        System.IO.StreamWriter AppendText(string path);
+        void Copy(string sourceFileName, string destFileName);
+        void Copy(string sourceFileName, string destFileName, bool overwrite);
+        System.IO.Abstractions.FileSystemStream Create(string path);
+        System.IO.Abstractions.FileSystemStream Create(string path, int bufferSize);
+        System.IO.Abstractions.FileSystemStream Create(string path, int bufferSize, System.IO.FileOptions options);
+        System.IO.Abstractions.IFileSystemInfo CreateSymbolicLink(string path, string pathToTarget);
+        System.IO.StreamWriter CreateText(string path);
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        void Decrypt(string path);
+        void Delete(string path);
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        void Encrypt(string path);
+        bool Exists([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path);
+        System.IO.FileAttributes GetAttributes(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
+        System.IO.FileAttributes GetAttributes(string path);
+        System.DateTime GetCreationTime(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
+        System.DateTime GetCreationTime(string path);
+        System.DateTime GetCreationTimeUtc(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
+        System.DateTime GetCreationTimeUtc(string path);
+        System.DateTime GetLastAccessTime(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
+        System.DateTime GetLastAccessTime(string path);
+        System.DateTime GetLastAccessTimeUtc(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
+        System.DateTime GetLastAccessTimeUtc(string path);
+        System.DateTime GetLastWriteTime(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
+        System.DateTime GetLastWriteTime(string path);
+        System.DateTime GetLastWriteTimeUtc(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
+        System.DateTime GetLastWriteTimeUtc(string path);
+        [System.Runtime.Versioning.UnsupportedOSPlatform("windows")]
+        System.IO.UnixFileMode GetUnixFileMode(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
+        [System.Runtime.Versioning.UnsupportedOSPlatform("windows")]
+        System.IO.UnixFileMode GetUnixFileMode(string path);
+        void Move(string sourceFileName, string destFileName);
+        void Move(string sourceFileName, string destFileName, bool overwrite);
+        System.IO.Abstractions.FileSystemStream Open(string path, System.IO.FileMode mode);
+        System.IO.Abstractions.FileSystemStream Open(string path, System.IO.FileStreamOptions options);
+        System.IO.Abstractions.FileSystemStream Open(string path, System.IO.FileMode mode, System.IO.FileAccess access);
+        System.IO.Abstractions.FileSystemStream Open(string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share);
+        System.IO.Abstractions.FileSystemStream OpenRead(string path);
+        System.IO.StreamReader OpenText(string path);
+        System.IO.Abstractions.FileSystemStream OpenWrite(string path);
+        byte[] ReadAllBytes(string path);
+        System.Threading.Tasks.Task<byte[]> ReadAllBytesAsync(string path, System.Threading.CancellationToken cancellationToken = default);
+        string[] ReadAllLines(string path);
+        string[] ReadAllLines(string path, System.Text.Encoding encoding);
+        System.Threading.Tasks.Task<string[]> ReadAllLinesAsync(string path, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task<string[]> ReadAllLinesAsync(string path, System.Text.Encoding encoding, System.Threading.CancellationToken cancellationToken = default);
+        string ReadAllText(string path);
+        string ReadAllText(string path, System.Text.Encoding encoding);
+        System.Threading.Tasks.Task<string> ReadAllTextAsync(string path, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task<string> ReadAllTextAsync(string path, System.Text.Encoding encoding, System.Threading.CancellationToken cancellationToken = default);
+        System.Collections.Generic.IEnumerable<string> ReadLines(string path);
+        System.Collections.Generic.IEnumerable<string> ReadLines(string path, System.Text.Encoding encoding);
+        System.Collections.Generic.IAsyncEnumerable<string> ReadLinesAsync(string path, System.Threading.CancellationToken cancellationToken = default);
+        System.Collections.Generic.IAsyncEnumerable<string> ReadLinesAsync(string path, System.Text.Encoding encoding, System.Threading.CancellationToken cancellationToken = default);
+        void Replace(string sourceFileName, string destinationFileName, string? destinationBackupFileName);
+        void Replace(string sourceFileName, string destinationFileName, string? destinationBackupFileName, bool ignoreMetadataErrors);
+        System.IO.Abstractions.IFileSystemInfo? ResolveLinkTarget(string linkPath, bool returnFinalTarget);
+        void SetAttributes(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle, System.IO.FileAttributes fileAttributes);
+        void SetAttributes(string path, System.IO.FileAttributes fileAttributes);
+        void SetCreationTime(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle, System.DateTime creationTime);
+        void SetCreationTime(string path, System.DateTime creationTime);
+        void SetCreationTimeUtc(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle, System.DateTime creationTimeUtc);
+        void SetCreationTimeUtc(string path, System.DateTime creationTimeUtc);
+        void SetLastAccessTime(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle, System.DateTime lastAccessTime);
+        void SetLastAccessTime(string path, System.DateTime lastAccessTime);
+        void SetLastAccessTimeUtc(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle, System.DateTime lastAccessTimeUtc);
+        void SetLastAccessTimeUtc(string path, System.DateTime lastAccessTimeUtc);
+        void SetLastWriteTime(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle, System.DateTime lastWriteTime);
+        void SetLastWriteTime(string path, System.DateTime lastWriteTime);
+        void SetLastWriteTimeUtc(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle, System.DateTime lastWriteTimeUtc);
+        void SetLastWriteTimeUtc(string path, System.DateTime lastWriteTimeUtc);
+        [System.Runtime.Versioning.UnsupportedOSPlatform("windows")]
+        void SetUnixFileMode(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle, System.IO.UnixFileMode mode);
+        [System.Runtime.Versioning.UnsupportedOSPlatform("windows")]
+        void SetUnixFileMode(string path, System.IO.UnixFileMode mode);
+        void WriteAllBytes(string path, byte[] bytes);
+        System.Threading.Tasks.Task WriteAllBytesAsync(string path, byte[] bytes, System.Threading.CancellationToken cancellationToken = default);
+        void WriteAllLines(string path, System.Collections.Generic.IEnumerable<string> contents);
+        void WriteAllLines(string path, string[] contents);
+        void WriteAllLines(string path, System.Collections.Generic.IEnumerable<string> contents, System.Text.Encoding encoding);
+        void WriteAllLines(string path, string[] contents, System.Text.Encoding encoding);
+        System.Threading.Tasks.Task WriteAllLinesAsync(string path, System.Collections.Generic.IEnumerable<string> contents, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task WriteAllLinesAsync(string path, System.Collections.Generic.IEnumerable<string> contents, System.Text.Encoding encoding, System.Threading.CancellationToken cancellationToken = default);
+        void WriteAllText(string path, string? contents);
+        void WriteAllText(string path, string? contents, System.Text.Encoding encoding);
+        System.Threading.Tasks.Task WriteAllTextAsync(string path, string? contents, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task WriteAllTextAsync(string path, string? contents, System.Text.Encoding encoding, System.Threading.CancellationToken cancellationToken = default);
+    }
+    public interface IFileInfo : System.IO.Abstractions.IFileSystemInfo
+    {
+        System.IO.Abstractions.IDirectoryInfo? Directory { get; }
+        string? DirectoryName { get; }
+        bool IsReadOnly { get; set; }
+        long Length { get; }
+        System.IO.StreamWriter AppendText();
+        System.IO.Abstractions.IFileInfo CopyTo(string destFileName);
+        System.IO.Abstractions.IFileInfo CopyTo(string destFileName, bool overwrite);
+        System.IO.Abstractions.FileSystemStream Create();
+        System.IO.StreamWriter CreateText();
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        void Decrypt();
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        void Encrypt();
+        void MoveTo(string destFileName);
+        void MoveTo(string destFileName, bool overwrite);
+        System.IO.Abstractions.FileSystemStream Open(System.IO.FileMode mode);
+        System.IO.Abstractions.FileSystemStream Open(System.IO.FileStreamOptions options);
+        System.IO.Abstractions.FileSystemStream Open(System.IO.FileMode mode, System.IO.FileAccess access);
+        System.IO.Abstractions.FileSystemStream Open(System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share);
+        System.IO.Abstractions.FileSystemStream OpenRead();
+        System.IO.StreamReader OpenText();
+        System.IO.Abstractions.FileSystemStream OpenWrite();
+        System.IO.Abstractions.IFileInfo Replace(string destinationFileName, string? destinationBackupFileName);
+        System.IO.Abstractions.IFileInfo Replace(string destinationFileName, string? destinationBackupFileName, bool ignoreMetadataErrors);
+    }
+    public interface IFileInfoFactory : System.IO.Abstractions.IFileSystemEntity
+    {
+        System.IO.Abstractions.IFileInfo New(string fileName);
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("fileInfo")]
+        System.IO.Abstractions.IFileInfo? Wrap(System.IO.FileInfo? fileInfo);
+    }
+    public interface IFileStreamFactory : System.IO.Abstractions.IFileSystemEntity
+    {
+        System.IO.Abstractions.FileSystemStream New(Microsoft.Win32.SafeHandles.SafeFileHandle handle, System.IO.FileAccess access);
+        System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileMode mode);
+        System.IO.Abstractions.FileSystemStream New(Microsoft.Win32.SafeHandles.SafeFileHandle handle, System.IO.FileAccess access, int bufferSize);
+        System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileMode mode, System.IO.FileAccess access);
+        System.IO.Abstractions.FileSystemStream New(Microsoft.Win32.SafeHandles.SafeFileHandle handle, System.IO.FileAccess access, int bufferSize, bool isAsync);
+        System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share);
+        System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, int bufferSize);
+        System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, int bufferSize, bool useAsync);
+        System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, int bufferSize, System.IO.FileOptions options);
+        System.IO.Abstractions.FileSystemStream Wrap(System.IO.FileStream fileStream);
+    }
+    public interface IFileSystem
+    {
+        System.IO.Abstractions.IDirectory Directory { get; }
+        System.IO.Abstractions.IDirectoryInfoFactory DirectoryInfo { get; }
+        System.IO.Abstractions.IDriveInfoFactory DriveInfo { get; }
+        System.IO.Abstractions.IFile File { get; }
+        System.IO.Abstractions.IFileInfoFactory FileInfo { get; }
+        System.IO.Abstractions.IFileStreamFactory FileStream { get; }
+        System.IO.Abstractions.IFileSystemWatcherFactory FileSystemWatcher { get; }
+        System.IO.Abstractions.IFileVersionInfoFactory FileVersionInfo { get; }
+        System.IO.Abstractions.IPath Path { get; }
+    }
+    public interface IFileSystemAclSupport
+    {
+        object GetAccessControl();
+        object GetAccessControl(System.IO.Abstractions.IFileSystemAclSupport.AccessControlSections includeSections);
+        void SetAccessControl(object value);
+        [System.Flags]
+        public enum AccessControlSections
+        {
+            None = 0,
+            Audit = 1,
+            Access = 2,
+            Owner = 4,
+            Group = 8,
+            All = 15,
+        }
+    }
+    public interface IFileSystemEntity
+    {
+        System.IO.Abstractions.IFileSystem FileSystem { get; }
+    }
+    public interface IFileSystemInfo
+    {
+        System.IO.FileAttributes Attributes { get; set; }
+        System.DateTime CreationTime { get; set; }
+        System.DateTime CreationTimeUtc { get; set; }
+        bool Exists { get; }
+        string Extension { get; }
+        System.IO.Abstractions.IFileSystem FileSystem { get; }
+        string FullName { get; }
+        System.DateTime LastAccessTime { get; set; }
+        System.DateTime LastAccessTimeUtc { get; set; }
+        System.DateTime LastWriteTime { get; set; }
+        System.DateTime LastWriteTimeUtc { get; set; }
+        string Name { get; }
+        [set: System.Runtime.Versioning.UnsupportedOSPlatform("windows")]
+        System.IO.UnixFileMode UnixFileMode { get; set; }
+        void CreateAsSymbolicLink(string pathToTarget);
+        void Delete();
+        void Refresh();
+        System.IO.Abstractions.IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget);
+    }
+    public interface IFileSystemWatcher : System.IDisposable, System.IO.Abstractions.IFileSystemEntity
+    {
+        System.ComponentModel.IContainer? Container { get; }
+        bool EnableRaisingEvents { get; set; }
+        string Filter { get; set; }
+        System.Collections.ObjectModel.Collection<string> Filters { get; }
+        bool IncludeSubdirectories { get; set; }
+        int InternalBufferSize { get; set; }
+        System.IO.NotifyFilters NotifyFilter { get; set; }
+        string Path { get; set; }
+        System.ComponentModel.ISite? Site { get; set; }
+        System.ComponentModel.ISynchronizeInvoke? SynchronizingObject { get; set; }
+        event System.IO.FileSystemEventHandler? Changed;
+        event System.IO.FileSystemEventHandler? Created;
+        event System.IO.FileSystemEventHandler? Deleted;
+        event System.IO.ErrorEventHandler? Error;
+        event System.IO.RenamedEventHandler? Renamed;
+        void BeginInit();
+        void EndInit();
+        System.IO.Abstractions.IWaitForChangedResult WaitForChanged(System.IO.WatcherChangeTypes changeType);
+        System.IO.Abstractions.IWaitForChangedResult WaitForChanged(System.IO.WatcherChangeTypes changeType, int timeout);
+        System.IO.Abstractions.IWaitForChangedResult WaitForChanged(System.IO.WatcherChangeTypes changeType, System.TimeSpan timeout);
+    }
+    public interface IFileSystemWatcherFactory : System.IO.Abstractions.IFileSystemEntity
+    {
+        System.IO.Abstractions.IFileSystemWatcher New();
+        System.IO.Abstractions.IFileSystemWatcher New(string path);
+        System.IO.Abstractions.IFileSystemWatcher New(string path, string filter);
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("fileSystemWatcher")]
+        System.IO.Abstractions.IFileSystemWatcher? Wrap(System.IO.FileSystemWatcher? fileSystemWatcher);
+    }
+    public interface IFileVersionInfo
+    {
+        string? Comments { get; }
+        string? CompanyName { get; }
+        int FileBuildPart { get; }
+        string? FileDescription { get; }
+        int FileMajorPart { get; }
+        int FileMinorPart { get; }
+        string FileName { get; }
+        int FilePrivatePart { get; }
+        string? FileVersion { get; }
+        string? InternalName { get; }
+        bool IsDebug { get; }
+        bool IsPatched { get; }
+        bool IsPreRelease { get; }
+        bool IsPrivateBuild { get; }
+        bool IsSpecialBuild { get; }
+        string? Language { get; }
+        string? LegalCopyright { get; }
+        string? LegalTrademarks { get; }
+        string? OriginalFilename { get; }
+        string? PrivateBuild { get; }
+        int ProductBuildPart { get; }
+        int ProductMajorPart { get; }
+        int ProductMinorPart { get; }
+        string? ProductName { get; }
+        int ProductPrivatePart { get; }
+        string? ProductVersion { get; }
+        string? SpecialBuild { get; }
+    }
+    public interface IFileVersionInfoFactory : System.IO.Abstractions.IFileSystemEntity
+    {
+        System.IO.Abstractions.IFileVersionInfo GetVersionInfo(string fileName);
+    }
+    public interface IPath : System.IO.Abstractions.IFileSystemEntity
+    {
+        char AltDirectorySeparatorChar { get; }
+        char DirectorySeparatorChar { get; }
+        char PathSeparator { get; }
+        char VolumeSeparatorChar { get; }
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("path")]
+        string? ChangeExtension(string? path, string? extension);
+        string Combine(params string[] paths);
+        string Combine(string path1, string path2);
+        string Combine(string path1, string path2, string path3);
+        string Combine(string path1, string path2, string path3, string path4);
+        bool EndsInDirectorySeparator(System.ReadOnlySpan<char> path);
+        bool EndsInDirectorySeparator(string path);
+        bool Exists([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path);
+        System.ReadOnlySpan<char> GetDirectoryName(System.ReadOnlySpan<char> path);
+        string? GetDirectoryName(string? path);
+        System.ReadOnlySpan<char> GetExtension(System.ReadOnlySpan<char> path);
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("path")]
+        string? GetExtension(string? path);
+        System.ReadOnlySpan<char> GetFileName(System.ReadOnlySpan<char> path);
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("path")]
+        string? GetFileName(string? path);
+        System.ReadOnlySpan<char> GetFileNameWithoutExtension(System.ReadOnlySpan<char> path);
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("path")]
+        string? GetFileNameWithoutExtension(string? path);
+        string GetFullPath(string path);
+        string GetFullPath(string path, string basePath);
+        char[] GetInvalidFileNameChars();
+        char[] GetInvalidPathChars();
+        System.ReadOnlySpan<char> GetPathRoot(System.ReadOnlySpan<char> path);
+        string? GetPathRoot(string? path);
+        string GetRandomFileName();
+        string GetRelativePath(string relativeTo, string path);
+        [System.Obsolete(("Insecure temporary file creation methods should not be used. Use `Path.Combine(Pa" +
+            "th.GetTempPath(), Path.GetRandomFileName())` instead."))]
+        string GetTempFileName();
+        string GetTempPath();
+        bool HasExtension(System.ReadOnlySpan<char> path);
+        bool HasExtension([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path);
+        bool IsPathFullyQualified(System.ReadOnlySpan<char> path);
+        bool IsPathFullyQualified(string path);
+        bool IsPathRooted(System.ReadOnlySpan<char> path);
+        bool IsPathRooted(string? path);
+        string Join(params string?[] paths);
+        string Join(System.ReadOnlySpan<char> path1, System.ReadOnlySpan<char> path2);
+        string Join(string? path1, string? path2);
+        string Join(System.ReadOnlySpan<char> path1, System.ReadOnlySpan<char> path2, System.ReadOnlySpan<char> path3);
+        string Join(string? path1, string? path2, string? path3);
+        string Join(System.ReadOnlySpan<char> path1, System.ReadOnlySpan<char> path2, System.ReadOnlySpan<char> path3, System.ReadOnlySpan<char> path4);
+        string Join(string? path1, string? path2, string? path3, string? path4);
+        System.ReadOnlySpan<char> TrimEndingDirectorySeparator(System.ReadOnlySpan<char> path);
+        string TrimEndingDirectorySeparator(string path);
+        bool TryJoin(System.ReadOnlySpan<char> path1, System.ReadOnlySpan<char> path2, System.Span<char> destination, out int charsWritten);
+        bool TryJoin(System.ReadOnlySpan<char> path1, System.ReadOnlySpan<char> path2, System.ReadOnlySpan<char> path3, System.Span<char> destination, out int charsWritten);
+    }
+    public interface IWaitForChangedResult
+    {
+        System.IO.WatcherChangeTypes ChangeType { get; }
+        string? Name { get; }
+        string? OldName { get; }
+        bool TimedOut { get; }
+    }
+}

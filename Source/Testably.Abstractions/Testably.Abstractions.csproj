@@ -7,7 +7,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="$(SolutionDir)README.md" Pack="true" PackagePath="/Docs/" Link="Docs\README.md" />
+		<None Include="$(SolutionDir)/Artifacts/README.md"
+			  Condition="Exists('$(SolutionDir)/Artifacts/README.md')"
+			  Pack="true"
+			  PackagePath="/Docs/"
+			  Link="\Docs\README.md"/>
+		<None Include="$(SolutionDir)/README.md"
+			  Condition="!Exists('$(SolutionDir)/Artifacts/README.md')"
+			  Pack="true"
+			  PackagePath="/Docs/"
+			  Link="\Docs\README.md"/>
 	</ItemGroup>
 
 	<ItemGroup>

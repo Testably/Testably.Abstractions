@@ -44,6 +44,17 @@ public sealed class ApiApprovalTests
 	}
 
 	[TestCaseSource(typeof(TargetFrameworksTheoryData))]
+	public void VerifyPublicApiForTestablyAbstractionsFileSystemInterface(string framework)
+	{
+		const string assemblyName = "Testably.Abstractions.FileSystem.Interface";
+
+		string publicApi = Helper.CreatePublicApi(framework, assemblyName);
+		string expectedApi = Helper.GetExpectedApi(framework, assemblyName);
+
+		Assert.That(publicApi, Is.EqualTo(expectedApi));
+	}
+
+	[TestCaseSource(typeof(TargetFrameworksTheoryData))]
 	public void VerifyPublicApiForTestablyAbstractionsInterface(string framework)
 	{
 		const string assemblyName = "Testably.Abstractions.Interface";
