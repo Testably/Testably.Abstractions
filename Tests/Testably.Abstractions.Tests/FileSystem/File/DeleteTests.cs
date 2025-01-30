@@ -68,12 +68,12 @@ public partial class DeleteTests
 		{
 			exception.Should().BeException<IOException>($"{filename}'",
 				hResult: -2147024864);
-			FileSystem.Should().HaveFile(filename);
+			FileSystem.File.Exists(filename).Should().BeTrue();
 		}
 		else
 		{
 			exception.Should().BeNull();
-			FileSystem.Should().NotHaveFile(filename);
+			FileSystem.File.Exists(filename).Should().BeFalse();
 		}
 	}
 }

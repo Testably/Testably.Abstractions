@@ -23,7 +23,7 @@ public partial class ExtractToDirectoryTests
 
 		await That(FileSystem).HasFile("bar/test.txt");
 		await That(FileSystem.File.ReadAllBytes("bar/test.txt"))
-			.Is(FileSystem.File.ReadAllBytes("foo/test.txt"));
+			.IsEqualTo(FileSystem.File.ReadAllBytes("foo/test.txt"));
 	}
 
 	[Fact]
@@ -122,7 +122,7 @@ public partial class ExtractToDirectoryTests
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"));
 		await That(FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("bar", "test.txt")))
-			.Is(FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("foo", "test.txt")));
+			.IsEqualTo(FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("foo", "test.txt")));
 	}
 
 	[Theory]
@@ -150,7 +150,7 @@ public partial class ExtractToDirectoryTests
 		await That(Act).Throws<IOException>()
 			.WithMessage($"*'{destinationPath}'*").AsWildcard();
 		await That(FileSystem.File.ReadAllText(destinationPath))
-			.IsNot(contents);
+			.IsNotEqualTo(contents);
 	}
 
 #if FEATURE_COMPRESSION_STREAM
@@ -168,7 +168,7 @@ public partial class ExtractToDirectoryTests
 
 		await That(FileSystem).HasFile("bar/test.txt");
 		await That(FileSystem.File.ReadAllBytes("bar/test.txt"))
-			.Is(FileSystem.File.ReadAllBytes("foo/test.txt"));
+			.IsEqualTo(FileSystem.File.ReadAllBytes("foo/test.txt"));
 	}
 #endif
 
@@ -278,7 +278,7 @@ public partial class ExtractToDirectoryTests
 
 		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"));
 		await That(FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("bar", "test.txt")))
-			.Is(FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("foo", "test.txt")));
+			.IsEqualTo(FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("foo", "test.txt")));
 	}
 #endif
 
@@ -310,7 +310,7 @@ public partial class ExtractToDirectoryTests
 		await That(Act).Throws<IOException>()
 			.WithMessage($"*'{destinationPath}'*").AsWildcard();
 		await That(FileSystem.File.ReadAllText(destinationPath))
-			.IsNot(contents);
+			.IsNotEqualTo(contents);
 	}
 #endif
 

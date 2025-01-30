@@ -35,7 +35,7 @@ public partial class Tests
 		IFileInfo result = FileSystem.FileInfo.New(path);
 
 		result.ToString().Should().Be(path);
-		result.Should().NotExist();
+		result.Exists.Should().BeFalse();
 	}
 
 	[Theory]

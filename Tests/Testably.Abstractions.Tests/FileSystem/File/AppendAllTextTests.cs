@@ -16,8 +16,8 @@ public partial class AppendAllTextTests
 
 		FileSystem.File.AppendAllText(path, contents);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(previousContents + contents);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(previousContents + contents);
 	}
 
 	[Theory]
@@ -41,8 +41,8 @@ public partial class AppendAllTextTests
 	{
 		FileSystem.File.AppendAllText(path, contents);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(contents);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents);
 	}
 
 	[Theory]
@@ -54,8 +54,8 @@ public partial class AppendAllTextTests
 
 		FileSystem.File.AppendAllText(path, "AA", Encoding.UTF32);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(expectedBytes);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(expectedBytes);
 	}
 
 	[Theory]
@@ -101,8 +101,8 @@ public partial class AppendAllTextTests
 
 		FileSystem.File.AppendAllText(path, contents);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(contents);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents);
 	}
 
 	[Theory]
@@ -120,8 +120,8 @@ public partial class AppendAllTextTests
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Should().HaveDirectory(path);
-		FileSystem.Should().NotHaveFile(path);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
 	}
 
 	[Theory]
@@ -164,8 +164,8 @@ public partial class AppendAllTextTests
 
 		FileSystem.File.AppendAllText(path, contents.AsSpan());
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(previousContents + contents);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(previousContents + contents);
 	}
 
 	[Theory]
@@ -189,8 +189,8 @@ public partial class AppendAllTextTests
 	{
 		FileSystem.File.AppendAllText(path, contents.AsSpan());
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(contents);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents);
 	}
 
 	[Theory]
@@ -202,8 +202,8 @@ public partial class AppendAllTextTests
 
 		FileSystem.File.AppendAllText(path, "AA".AsSpan(), Encoding.UTF32);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(expectedBytes);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(expectedBytes);
 	}
 
 	[Theory]
@@ -249,8 +249,8 @@ public partial class AppendAllTextTests
 
 		FileSystem.File.AppendAllText(path, contents.AsSpan());
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(contents);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents);
 	}
 
 	[Theory]
@@ -268,8 +268,8 @@ public partial class AppendAllTextTests
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Should().HaveDirectory(path);
-		FileSystem.Should().NotHaveFile(path);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
 	}
 
 	[Theory]

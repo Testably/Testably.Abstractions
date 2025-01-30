@@ -271,9 +271,9 @@ public partial class Tests
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 
 		sut.Parent.Should().NotBeNull();
-		sut.Parent.Should().NotExist();
+		sut.Parent?.Exists.Should().BeFalse();
 		sut.Parent?.Parent.Should().NotBeNull();
-		sut.Parent?.Parent.Should().NotExist();
+		sut.Parent?.Parent?.Exists.Should().BeFalse();
 	}
 
 	[Fact]
@@ -353,7 +353,7 @@ public partial class Tests
 		string expectedRoot = FileTestHelper.RootDrive(Test);
 		IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
 
-		result.Root.Should().Exist();
+		result.Root.Exists.Should().BeTrue();
 		result.Root.FullName.Should().Be(expectedRoot);
 	}
 

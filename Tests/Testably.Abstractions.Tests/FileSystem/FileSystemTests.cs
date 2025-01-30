@@ -11,7 +11,7 @@ public partial class FileSystemTests
 		FileSystem.Directory.CreateDirectory("foo\\bar");
 		FileSystem.File.WriteAllText("foo\\bar\\file.txt", "some content");
 
-		FileSystem.Should().HaveFile("foo/bar/file.txt");
+		FileSystem.File.Exists("foo/bar/file.txt").Should().BeTrue();
 		FileSystem.Directory.GetFiles("foo/bar").Length
 			.Should().Be(1);
 	}

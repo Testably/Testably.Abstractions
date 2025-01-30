@@ -21,7 +21,7 @@ public partial class Tests
 
 		IZipArchive archive = FileSystem.ZipArchive().New(stream);
 
-		await That(archive.Mode).Is(ZipArchiveMode.Read);
+		await That(archive.Mode).IsEqualTo(ZipArchiveMode.Read);
 		await That(archive.Entries).Has().Exactly(1).Items();
 	}
 
@@ -61,7 +61,7 @@ public partial class Tests
 
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
 
-		await That(archive.Mode).Is(ZipArchiveMode.Update);
+		await That(archive.Mode).IsEqualTo(ZipArchiveMode.Update);
 		await That(archive.Entries).Has().Exactly(1).Items();
 	}
 
@@ -109,11 +109,11 @@ public partial class Tests
 		var singleEntry = await That(readArchive.Entries).HasSingle();
 		if (encodedCorrectly)
 		{
-			await That(singleEntry.Name).Is(entryName);
+			await That(singleEntry.Name).IsEqualTo(entryName);
 		}
 		else
 		{
-			await That(singleEntry.Name).IsNot(entryName);
+			await That(singleEntry.Name).IsNotEqualTo(entryName);
 		}
 	}
 

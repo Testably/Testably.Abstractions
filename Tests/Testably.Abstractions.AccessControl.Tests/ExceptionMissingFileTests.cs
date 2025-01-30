@@ -33,7 +33,7 @@ public partial class ExceptionMissingFileTests
 			case MethodType.GetAccessControl:
 				await That(exception).Is<DirectoryNotFoundException>()
 					.Because($"\n{exceptionType} on {baseType}\n was called with a missing directory")
-					.Which(e => e.HResult, h => h.Is(-2147024893));
+					.Which(e => e.HResult, h => h.IsEqualTo(-2147024893));
 				break;
 			case MethodType.SetAccessControl:
 				await That(exception).IsNull()
@@ -68,7 +68,7 @@ public partial class ExceptionMissingFileTests
 			case MethodType.GetAccessControl:
 				await That(exception).Is<DirectoryNotFoundException>()
 					.Because($"\n{exceptionType} on {baseType}\n was called with a missing file")
-					.Which(e => e.HResult, h => h.Is(-2147024893));
+					.Which(e => e.HResult, h => h.IsEqualTo(-2147024893));
 				break;
 			case MethodType.SetAccessControl:
 				await That(exception).IsNull()
@@ -99,12 +99,12 @@ public partial class ExceptionMissingFileTests
 			case MethodType.Create:
 				await That(exception).Is<UnauthorizedAccessException>()
 					.Because($"\n{exceptionType} on {baseType}\n was called with a missing directory")
-					.Which(e => e.HResult, h => h.Is(-2147024891));
+					.Which(e => e.HResult, h => h.IsEqualTo(-2147024891));
 				break;
 			case MethodType.GetAccessControl:
 				await That(exception).Is<FileNotFoundException>()
 					.Because($"\n{exceptionType} on {baseType}\n was called with a missing directory")
-					.Which(e => e.HResult, h => h.Is(-2147024894));
+					.Which(e => e.HResult, h => h.IsEqualTo(-2147024894));
 				break;
 			case MethodType.SetAccessControl:
 				await That(exception).IsNull()
@@ -139,7 +139,7 @@ public partial class ExceptionMissingFileTests
 			case MethodType.GetAccessControl:
 				await That(exception).Is<FileNotFoundException>()
 					.Because($"\n{exceptionType} on {baseType}\n was called with a missing file")
-					.Which(e => e.HResult, h => h.Is(-2147024894));
+					.Which(e => e.HResult, h => h.IsEqualTo(-2147024894));
 				break;
 			case MethodType.SetAccessControl:
 				await That(exception).IsNull()

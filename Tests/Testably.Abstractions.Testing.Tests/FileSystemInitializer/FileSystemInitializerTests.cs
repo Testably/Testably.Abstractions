@@ -19,7 +19,7 @@ public class FileSystemInitializerTests
 		fileSystem.Statistics.TotalCount.Should().Be(0);
 		foreach (DirectoryDescription directory in directories)
 		{
-			fileSystem.Should().HaveDirectory(directory.Name);
+			fileSystem.Directory.Exists(directory.Name).Should().BeTrue();
 		}
 	}
 
@@ -38,7 +38,7 @@ public class FileSystemInitializerTests
 		fileSystem.Statistics.TotalCount.Should().Be(0);
 		foreach (DirectoryDescription directory in directories)
 		{
-			fileSystem.Should().HaveDirectory(Path.Combine(parent, directory.Name));
+			fileSystem.Directory.Exists(Path.Combine(parent, directory.Name)).Should().BeTrue();
 		}
 	}
 
@@ -53,8 +53,8 @@ public class FileSystemInitializerTests
 		sut.With(description);
 
 		fileSystem.Statistics.TotalCount.Should().Be(0);
-		fileSystem.Should().HaveFile(name)
-			.Which.HasContent(bytes);
+		fileSystem.File.Exists(name).Should().BeTrue();
+		fileSystem.File.ReadAllBytes(name).Should().BeEquivalentTo(bytes);
 	}
 
 	[Theory]
@@ -69,8 +69,8 @@ public class FileSystemInitializerTests
 		sut.With(description);
 
 		fileSystem.Statistics.TotalCount.Should().Be(0);
-		fileSystem.Should().HaveFile(name)
-			.Which.HasContent(content);
+		fileSystem.File.Exists(name).Should().BeTrue();
+		fileSystem.File.ReadAllText(name).Should().BeEquivalentTo(content);
 	}
 
 	[Theory]
@@ -85,7 +85,7 @@ public class FileSystemInitializerTests
 		fileSystem.Statistics.TotalCount.Should().Be(0);
 		foreach (FileDescription file in files)
 		{
-			fileSystem.Should().HaveFile(file.Name);
+			fileSystem.File.Exists(file.Name).Should().BeTrue();
 		}
 	}
 
@@ -104,7 +104,7 @@ public class FileSystemInitializerTests
 		sut.With(description);
 
 		fileSystem.Statistics.TotalCount.Should().Be(0);
-		fileSystem.Should().HaveFile(name);
+		fileSystem.File.Exists(name).Should().BeTrue();
 		fileSystem.FileInfo.New(name).IsReadOnly.Should().Be(isReadOnly);
 	}
 
@@ -120,8 +120,8 @@ public class FileSystemInitializerTests
 		sut.With(fileDescription, directoryDescription);
 
 		fileSystem.Statistics.TotalCount.Should().Be(0);
-		fileSystem.Should().HaveFile(fileName);
-		fileSystem.Should().HaveDirectory(directoryName);
+		fileSystem.File.Exists(fileName).Should().BeTrue();
+		fileSystem.Directory.Exists(directoryName).Should().BeTrue();
 	}
 
 	[Theory]
@@ -166,8 +166,8 @@ public class FileSystemInitializerTests
 		sut.WithFile(path).Which(f => f.HasStringContent("foo"));
 
 		fileSystem.Statistics.TotalCount.Should().Be(0);
-		fileSystem.Should().HaveFile(path)
-			.Which.HasContent("foo");
+		fileSystem.File.Exists(path).Should().BeTrue();
+		fileSystem.File.ReadAllText(path).Should().BeEquivalentTo("foo");
 	}
 
 	[Theory]
@@ -182,8 +182,8 @@ public class FileSystemInitializerTests
 		sut.WithFile(path);
 
 		fileSystem.Statistics.TotalCount.Should().Be(0);
-		fileSystem.Should().HaveFile(path);
-		fileSystem.Should().HaveDirectory(directoryPath);
+		fileSystem.File.Exists(path).Should().BeTrue();
+		fileSystem.Directory.Exists(directoryPath).Should().BeTrue();
 	}
 
 	[Theory]
@@ -199,7 +199,7 @@ public class FileSystemInitializerTests
 		fileSystem.Statistics.TotalCount.Should().Be(0);
 		foreach (string path in paths)
 		{
-			fileSystem.Should().HaveDirectory(path);
+			fileSystem.Directory.Exists(path).Should().BeTrue();
 		}
 
 		result.Should().Be(sut);
@@ -247,7 +247,7 @@ public class FileSystemInitializerTests
 			.WithSubdirectory(path);
 
 		fileSystem.Statistics.TotalCount.Should().Be(0);
-		fileSystem.Should().HaveDirectory(path);
+		fileSystem.Directory.Exists(path).Should().BeTrue();
 		result.FileSystem.Should().BeSameAs(fileSystem);
 	}
 }

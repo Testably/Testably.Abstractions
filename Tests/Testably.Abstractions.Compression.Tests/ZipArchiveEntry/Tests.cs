@@ -24,7 +24,7 @@ public partial class Tests
 
 		IZipArchiveEntry entry = archive.Entries.Single();
 
-		await That(entry.Archive).Is(archive);
+		await That(entry.Archive).IsEqualTo(archive);
 	}
 
 #if FEATURE_ZIPFILE_NET7
@@ -43,7 +43,7 @@ public partial class Tests
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 		IZipArchiveEntry entry = archive.Entries.Single();
 
-		await That(entry.Comment).Is("");
+		await That(entry.Comment).IsEqualTo("");
 	}
 #endif
 
@@ -66,7 +66,7 @@ public partial class Tests
 
 		entry.Comment = comment;
 
-		await That(entry.Comment).Is(comment);
+		await That(entry.Comment).IsEqualTo(comment);
 	}
 #endif
 
@@ -87,8 +87,8 @@ public partial class Tests
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries.Single())
-			.For(x => x.Length, l => l.Is(9)).And
-			.For(x => x.CompressedLength, l => l.Is(9));
+			.For(x => x.Length, l => l.IsEqualTo(9)).And
+			.For(x => x.CompressedLength, l => l.IsEqualTo(9));
 	}
 
 	[Fact]
@@ -106,7 +106,7 @@ public partial class Tests
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries.Single())
-			.For(x => x.Length, l => l.Is(9)).And
+			.For(x => x.Length, l => l.IsEqualTo(9)).And
 			.For(x => x.CompressedLength, l => l.IsLessThan(9));
 	}
 
@@ -129,7 +129,7 @@ public partial class Tests
 		IZipArchiveEntry entry1 = archive.Entries[0];
 		IZipArchiveEntry entry2 = archive.Entries[1];
 
-		await That(entry1.Crc32).IsNot(entry2.Crc32);
+		await That(entry1.Crc32).IsNotEqualTo(entry2.Crc32);
 	}
 #endif
 
@@ -196,8 +196,8 @@ public partial class Tests
 		IZipArchiveEntry entry2 = archive.Entries[1];
 
 		entry1.ExternalAttributes = externalAttributes;
-		await That(entry1.ExternalAttributes).Is(externalAttributes);
-		await That(entry2.ExternalAttributes).IsNot(externalAttributes);
+		await That(entry1.ExternalAttributes).IsEqualTo(externalAttributes);
+		await That(entry2.ExternalAttributes).IsNotEqualTo(externalAttributes);
 	}
 #endif
 
@@ -217,7 +217,7 @@ public partial class Tests
 
 		IZipArchiveEntry entry = archive.Entries.Single();
 
-		await That(entry.FileSystem).Is(FileSystem);
+		await That(entry.FileSystem).IsEqualTo(FileSystem);
 	}
 
 	[Fact]
@@ -236,8 +236,8 @@ public partial class Tests
 
 		IZipArchiveEntry entry = archive.Entries.Single();
 
-		await That(entry.FullName).Is("foo/foo.txt");
-		await That(entry.Name).Is("foo.txt");
+		await That(entry.FullName).IsEqualTo("foo/foo.txt");
+		await That(entry.Name).IsEqualTo("foo.txt");
 	}
 
 	[Theory]
@@ -287,8 +287,8 @@ public partial class Tests
 		IZipArchiveEntry entry2 = archive.Entries[1];
 
 		entry1.LastWriteTime = new DateTimeOffset(lastWriteTime);
-		await That(entry1.LastWriteTime.DateTime).Is(lastWriteTime);
-		await That(entry2.LastWriteTime.DateTime).IsNot(lastWriteTime);
+		await That(entry1.LastWriteTime.DateTime).IsEqualTo(lastWriteTime);
+		await That(entry2.LastWriteTime.DateTime).IsNotEqualTo(lastWriteTime);
 	}
 
 	[Fact]
@@ -309,6 +309,6 @@ public partial class Tests
 
 		string? result = entry.ToString();
 
-		await That(result).Is("foo.txt");
+		await That(result).IsEqualTo("foo.txt");
 	}
 }

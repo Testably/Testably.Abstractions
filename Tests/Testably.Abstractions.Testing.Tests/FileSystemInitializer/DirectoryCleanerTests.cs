@@ -66,7 +66,7 @@ public class DirectoryCleanerTests
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
 
 		directoryCleaner.Dispose();
-		sut.Should().NotHaveDirectory(currentDirectory);
+		sut.Directory.Exists(currentDirectory).Should().BeFalse();
 		receivedLogs.Should().Contain("Cleanup was successful :-)");
 	}
 
@@ -100,7 +100,7 @@ public class DirectoryCleanerTests
 			     c.ChangeType.HasFlag(WatcherChangeTypes.Deleted));
 
 		directoryCleaner.Dispose();
-		sut.Should().NotHaveDirectory(currentDirectory);
+		sut.Directory.Exists(currentDirectory).Should().BeFalse();
 	}
 
 	[Fact]
@@ -114,7 +114,7 @@ public class DirectoryCleanerTests
 
 		sut.Statistics.TotalCount.Should().Be(0);
 		string currentDirectory = sut.Directory.GetCurrentDirectory();
-		sut.Should().HaveDirectory(currentDirectory);
+		sut.Directory.Exists(currentDirectory).Should().BeTrue();
 		receivedLogs.Should().Contain(m => m.Contains($"'{currentDirectory}'"));
 	}
 }

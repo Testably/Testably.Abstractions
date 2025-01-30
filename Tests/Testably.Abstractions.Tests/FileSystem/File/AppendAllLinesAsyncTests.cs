@@ -54,8 +54,8 @@ public partial class AppendAllLinesAsyncTests
 
 		await FileSystem.File.AppendAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(expectedContent);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedContent);
 	}
 
 	[Theory]
@@ -85,8 +85,8 @@ public partial class AppendAllLinesAsyncTests
 
 		await FileSystem.File.AppendAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(expectedContent);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedContent);
 	}
 
 	[Theory]
@@ -132,8 +132,8 @@ public partial class AppendAllLinesAsyncTests
 
 		await FileSystem.File.AppendAllLinesAsync(path, contents, TestContext.Current.CancellationToken);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(expectedResult);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedResult);
 	}
 
 	[Theory]
@@ -153,8 +153,8 @@ public partial class AppendAllLinesAsyncTests
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Should().HaveDirectory(path);
-		FileSystem.Should().NotHaveFile(path);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
 	}
 
 	[Theory]

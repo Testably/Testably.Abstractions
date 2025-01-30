@@ -11,7 +11,7 @@ public partial class Tests
 	{
 		IDirectoryInfo result = FileSystem.Directory.CreateTempSubdirectory();
 
-		result.Should().Exist();
+		result.Exists.Should().BeTrue();
 	}
 #endif
 

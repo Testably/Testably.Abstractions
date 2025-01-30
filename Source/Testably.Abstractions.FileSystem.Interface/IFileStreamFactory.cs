@@ -38,7 +38,7 @@ public interface IFileStreamFactory : IFileSystemEntity
 	FileSystemStream New(string path, FileMode mode, FileAccess access,
 		FileShare share, int bufferSize, FileOptions options);
 
-#if FEATURE_FILESTREAM_OPTIONS
+#if FEATURE_FILESYSTEM_STREAM_OPTIONS
 	    /// <inheritdoc cref="FileStream(string, FileStreamOptions)" />
 	    FileSystemStream New(string path, FileStreamOptions options);
 #endif

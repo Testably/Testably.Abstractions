@@ -18,8 +18,8 @@ public partial class CreateTests
 			streamWriter.Write(newContent);
 		}
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(newContent);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(newContent);
 	}
 
 	[Theory]
@@ -43,7 +43,7 @@ public partial class CreateTests
 	{
 		using FileSystemStream stream = FileSystem.File.Create(path);
 
-		FileSystem.Should().HaveFile(path);
+		FileSystem.File.Exists(path).Should().BeTrue();
 	}
 
 	[Theory]

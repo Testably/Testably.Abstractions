@@ -13,7 +13,7 @@ public partial class OpenWriteTests
 
 		using FileSystemStream stream = sut.OpenWrite();
 
-		FileSystem.Should().HaveFile(path);
+		FileSystem.File.Exists(path).Should().BeTrue();
 	}
 
 	[Theory]

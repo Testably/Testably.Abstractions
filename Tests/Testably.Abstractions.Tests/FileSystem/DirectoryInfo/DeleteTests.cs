@@ -10,7 +10,7 @@ public partial class DeleteTests
 	public void Delete_MissingDirectory_ShouldThrowDirectoryNotFoundException(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Should().NotExist();
+		sut.Exists.Should().BeFalse();
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -44,12 +44,12 @@ public partial class DeleteTests
 		{
 			exception.Should().BeException<IOException>($"{filename}'",
 				hResult: -2147024864);
-			FileSystem.Should().HaveFile(filePath);
+			FileSystem.File.Exists(filePath).Should().BeTrue();
 		}
 		else
 		{
 			exception.Should().BeNull();
-			FileSystem.Should().NotHaveFile(filePath);
+			FileSystem.File.Exists(filePath).Should().BeFalse();
 		}
 	}
 
@@ -61,18 +61,18 @@ public partial class DeleteTests
 		string subdirectoryPath = FileSystem.Path.Combine(path, subdirectory);
 		FileSystem.Directory.CreateDirectory(subdirectoryPath);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Should().Exist();
+		sut.Exists.Should().BeTrue();
 
 		sut.Delete(true);
 
 #if NETFRAMEWORK
 		// The DirectoryInfo is not updated in .NET Framework!
-		sut.Should().Exist();
+		sut.Exists.Should().BeTrue();
 #else
-		sut.Should().NotExist();
+		sut.Exists.Should().BeFalse();
 #endif
-		FileSystem.Should().NotHaveDirectory(sut.FullName);
-		FileSystem.Should().NotHaveDirectory(subdirectoryPath);
+		FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
+		FileSystem.Directory.Exists(subdirectoryPath).Should().BeFalse();
 	}
 
 	[Theory]
@@ -81,17 +81,17 @@ public partial class DeleteTests
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Should().Exist();
+		sut.Exists.Should().BeTrue();
 
 		sut.Delete();
 
 #if NETFRAMEWORK
 		// The DirectoryInfo is not updated in .NET Framework!
-		sut.Should().Exist();
+		sut.Exists.Should().BeTrue();
 #else
-		sut.Should().NotExist();
+		sut.Exists.Should().BeFalse();
 #endif
-		FileSystem.Should().NotHaveDirectory(sut.FullName);
+		FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
 	}
 
 	[Theory]
@@ -101,7 +101,7 @@ public partial class DeleteTests
 	{
 		FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(path, subdirectory));
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Should().Exist();
+		sut.Exists.Should().BeTrue();
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -115,7 +115,7 @@ public partial class DeleteTests
 				? null
 				: $"'{sut.FullName}'");
 
-		sut.Should().Exist();
-		FileSystem.Should().HaveDirectory(sut.FullName);
+		sut.Exists.Should().BeTrue();
+		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
 	}
 }

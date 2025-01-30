@@ -21,8 +21,8 @@ public partial class MoveToTests
 
 		sut.MoveTo(destination);
 
-		FileSystem.Should().NotHaveDirectory(source);
-		FileSystem.Should().HaveDirectory(destination);
+		FileSystem.Directory.Exists(source).Should().BeFalse();
+		FileSystem.Directory.Exists(destination).Should().BeTrue();
 		FileSystem.Directory.GetFiles(destination, initialized[1].Name)
 			.Should().ContainSingle();
 		FileSystem.Directory.GetDirectories(destination, initialized[2].Name)
@@ -80,8 +80,8 @@ public partial class MoveToTests
 		});
 
 		exception.Should().BeNull();
-		FileSystem.Should().NotHaveDirectory(source);
-		FileSystem.Should().HaveDirectory(destination);
+		FileSystem.Directory.Exists(source).Should().BeFalse();
+		FileSystem.Directory.Exists(destination).Should().BeTrue();
 		IDirectoryInfo destinationDirectory =
 			FileSystem.DirectoryInfo.New(destination);
 		destinationDirectory.GetFiles(initialized[1].Name)
@@ -132,8 +132,8 @@ public partial class MoveToTests
 			exception.Should().BeException<IOException>(hResult: -2147024891);
 		}
 
-		FileSystem.Should().HaveDirectory(source);
-		FileSystem.Should().NotHaveDirectory(destination);
+		FileSystem.Directory.Exists(source).Should().BeTrue();
+		FileSystem.Directory.Exists(destination).Should().BeFalse();
 		IDirectoryInfo sourceDirectory =
 			FileSystem.DirectoryInfo.New(source);
 		sourceDirectory.GetFiles(initialized[1].Name)
@@ -164,8 +164,8 @@ public partial class MoveToTests
 
 		sut.MoveTo(destination);
 
-		FileSystem.Should().NotHaveDirectory(source);
-		FileSystem.Should().HaveDirectory(destination);
+		FileSystem.Directory.Exists(source).Should().BeFalse();
+		FileSystem.Directory.Exists(destination).Should().BeTrue();
 		IDirectoryInfo destinationDirectory =
 			FileSystem.DirectoryInfo.New(destination);
 		destinationDirectory.GetFiles(initialized[1].Name)

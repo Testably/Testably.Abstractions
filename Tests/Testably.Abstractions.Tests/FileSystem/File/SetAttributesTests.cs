@@ -13,8 +13,8 @@ public partial class SetAttributesTests
 
 		FileSystem.File.SetAttributes(path, FileAttributes.Directory);
 
-		FileSystem.Should().NotHaveDirectory(path);
-		FileSystem.Should().HaveFile(path);
+		FileSystem.Directory.Exists(path).Should().BeFalse();
+		FileSystem.File.Exists(path).Should().BeTrue();
 	}
 
 	[Theory]

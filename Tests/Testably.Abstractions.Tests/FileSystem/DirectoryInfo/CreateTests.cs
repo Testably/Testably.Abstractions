@@ -19,7 +19,7 @@ public partial class CreateTests
 
 		exception.Should().BeException<IOException>(
 			hResult: Test.RunsOnWindows ? -2147024713 : 17);
-		FileSystem.Should().NotHaveDirectory(name);
+		FileSystem.Directory.Exists(name).Should().BeFalse();
 	}
 
 	[Theory]
@@ -27,17 +27,17 @@ public partial class CreateTests
 	public void Create_ShouldCreateDirectory(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Should().NotExist();
+		sut.Exists.Should().BeFalse();
 
 		sut.Create();
 
 #if NETFRAMEWORK
 		// The DirectoryInfo is not updated in .NET Framework!
-		sut.Should().NotExist();
+		sut.Exists.Should().BeFalse();
 #else
-		sut.Should().Exist();
+		sut.Exists.Should().BeTrue();
 #endif
-		FileSystem.Should().HaveDirectory(sut.FullName);
+		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
 	}
 
 	[Fact]
@@ -47,7 +47,7 @@ public partial class CreateTests
 
 		result.Create();
 
-		FileSystem.Should().HaveDirectory("foo");
+		FileSystem.Directory.Exists("foo").Should().BeTrue();
 		result.FullName.Should().StartWith(BasePath);
 	}
 
@@ -66,9 +66,9 @@ public partial class CreateTests
 		result.Name.Should().Be(directoryLevel3);
 		result.Parent!.Name.Should().Be(directoryLevel2);
 		result.Parent.Parent!.Name.Should().Be(directoryLevel1);
-		result.Should().Exist();
-		result.Parent.Should().Exist();
-		result.Parent.Parent.Should().Exist();
+		result.Exists.Should().BeTrue();
+		result.Parent.Exists.Should().BeTrue();
+		result.Parent.Parent.Exists.Should().BeTrue();
 		result.ToString().Should().Be(path);
 	}
 
@@ -79,26 +79,26 @@ public partial class CreateTests
 		IDirectoryInfo sut1 = FileSystem.DirectoryInfo.New(path);
 		IDirectoryInfo sut2 = FileSystem.DirectoryInfo.New(path);
 		IDirectoryInfo sut3 = FileSystem.DirectoryInfo.New(path);
-		sut1.Should().NotExist();
-		sut2.Should().NotExist();
+		sut1.Exists.Should().BeFalse();
+		sut2.Exists.Should().BeFalse();
 		// Do not call Exists for `sut3`
 
 		sut1.Create();
 
 		if (Test.IsNetFramework)
 		{
-			sut1.Should().NotExist();
-			sut2.Should().NotExist();
-			sut3.Should().Exist();
+			sut1.Exists.Should().BeFalse();
+			sut2.Exists.Should().BeFalse();
+			sut3.Exists.Should().BeTrue();
 		}
 		else
 		{
-			sut1.Should().Exist();
-			sut2.Should().NotExist();
-			sut3.Should().Exist();
+			sut1.Exists.Should().BeTrue();
+			sut2.Exists.Should().BeFalse();
+			sut3.Exists.Should().BeTrue();
 		}
 
-		FileSystem.Should().HaveDirectory(path);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
 	}
 
 	[Theory]
@@ -132,6 +132,6 @@ public partial class CreateTests
 		result.FullName.Should().Be(FileSystem.Path.Combine(BasePath, expectedName
 			.Replace(FileSystem.Path.AltDirectorySeparatorChar,
 				FileSystem.Path.DirectorySeparatorChar)));
-		FileSystem.Should().HaveDirectory(nameWithSuffix);
+		FileSystem.Directory.Exists(nameWithSuffix).Should().BeTrue();
 	}
 }

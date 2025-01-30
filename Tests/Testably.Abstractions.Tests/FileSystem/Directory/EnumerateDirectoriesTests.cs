@@ -36,7 +36,7 @@ public partial class EnumerateDirectoriesTests
 		exception.Should().BeException<DirectoryNotFoundException>(
 			$"'{expectedPath}'",
 			hResult: -2147024893);
-		FileSystem.Should().NotHaveDirectory(path);
+		FileSystem.Directory.Exists(path).Should().BeFalse();
 	}
 
 	[Fact]

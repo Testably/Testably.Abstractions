@@ -9,8 +9,8 @@ public partial class ExistsTests
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 
-		sut.Should().NotExist();
-		FileSystem.Should().NotHaveDirectory(sut.FullName);
+		sut.Exists.Should().BeFalse();
+		FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
 	}
 
 	[Theory]
@@ -19,11 +19,11 @@ public partial class ExistsTests
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Should().Exist();
+		sut.Exists.Should().BeTrue();
 		FileSystem.Directory.Delete(path);
 
-		sut.Should().Exist();
-		FileSystem.Should().NotHaveDirectory(sut.FullName);
+		sut.Exists.Should().BeTrue();
+		FileSystem.Directory.Exists(sut.FullName).Should().BeFalse();
 	}
 
 	[Theory]
@@ -33,7 +33,7 @@ public partial class ExistsTests
 		FileSystem.File.WriteAllText(path, null);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
 
-		sut.Should().NotExist();
+		sut.Exists.Should().BeFalse();
 	}
 
 	[Theory]
@@ -41,11 +41,11 @@ public partial class ExistsTests
 	public void Exists_NotExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Should().NotExist();
+		sut.Exists.Should().BeFalse();
 		FileSystem.Directory.CreateDirectory(path);
 
-		sut.Should().NotExist();
-		FileSystem.Should().HaveDirectory(sut.FullName);
+		sut.Exists.Should().BeFalse();
+		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
 	}
 
 	[Theory]
@@ -54,11 +54,11 @@ public partial class ExistsTests
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Should().Exist();
+		sut.Exists.Should().BeTrue();
 
 		sut.MoveTo(destination);
 
-		sut.Should().Exist();
+		sut.Exists.Should().BeTrue();
 	}
 
 	[Theory]
@@ -66,7 +66,7 @@ public partial class ExistsTests
 	public void Exists_ShouldUpdateOnCreateWhenNotNetFramework(string path)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Should().NotExist();
+		sut.Exists.Should().BeFalse();
 
 		sut.Create();
 
@@ -79,7 +79,7 @@ public partial class ExistsTests
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Should().Exist();
+		sut.Exists.Should().BeTrue();
 
 		sut.Delete();
 
@@ -92,7 +92,7 @@ public partial class ExistsTests
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Should().Exist();
+		sut.Exists.Should().BeTrue();
 
 		sut.Delete(true);
 
@@ -105,12 +105,12 @@ public partial class ExistsTests
 	{
 		FileSystem.Directory.CreateDirectory(path);
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Should().Exist();
+		sut.Exists.Should().BeTrue();
 		FileSystem.Directory.Delete(path);
-		sut.Should().Exist();
+		sut.Exists.Should().BeTrue();
 
 		sut.Refresh();
 
-		sut.Should().NotExist();
+		sut.Exists.Should().BeFalse();
 	}
 }

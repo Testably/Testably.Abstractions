@@ -15,11 +15,11 @@ public partial class OptionsTests
 
 		using FileSystemStream stream = FileSystem.FileStream.New(path, FileMode.Open,
 			FileAccess.ReadWrite, FileShare.None, 10, FileOptions.DeleteOnClose);
-		FileSystem.Should().HaveFile(path);
+		FileSystem.File.Exists(path).Should().BeTrue();
 
 		stream.Close();
 
-		FileSystem.Should().NotHaveFile(path);
+		FileSystem.File.Exists(path).Should().BeFalse();
 	}
 
 	[Theory]
@@ -35,7 +35,7 @@ public partial class OptionsTests
 			// Delete on close
 		}
 
-		FileSystem.Should().NotHaveFile(path);
+		FileSystem.File.Exists(path).Should().BeFalse();
 	}
 
 	[Theory]
@@ -58,9 +58,9 @@ public partial class OptionsTests
 			stream.SetLength(bytes.Length);
 		}
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(contents2)
-			.And.HasAttribute(FileAttributes.Encrypted);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents2);
+		FileSystem.File.GetAttributes(path).Should().HaveFlag(FileAttributes.Encrypted);
 	}
 
 	[Theory]
@@ -102,8 +102,8 @@ public partial class OptionsTests
 			stream.SetLength(bytes.Length);
 		}
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(contents2)
-			.And.HasAttribute(FileAttributes.Encrypted);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(contents2);
+		FileSystem.File.GetAttributes(path).Should().HaveFlag(FileAttributes.Encrypted);
 	}
 }

@@ -25,11 +25,11 @@ public partial class MoveToTests
 		exception.Should().BeException<IOException>(
 			hResult: Test.RunsOnWindows ? -2147024713 : 17);
 
-		sut.Should().Exist();
-		FileSystem.Should().HaveFile(sourceName)
-			.Which.HasContent(sourceContents);
-		FileSystem.Should().HaveFile(destinationName)
-			.Which.HasContent(destinationContents);
+		sut.Exists.Should().BeTrue();
+		FileSystem.File.Exists(sourceName).Should().BeTrue();
+		FileSystem.File.ReadAllText(sourceName).Should().BeEquivalentTo(sourceContents);
+		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(destinationContents);
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
@@ -47,12 +47,12 @@ public partial class MoveToTests
 
 		sut.MoveTo(destinationName, true);
 
-		sut.Should().Exist();
+		sut.Exists.Should().BeTrue();
 		sut.ToString().Should().Be(destinationName);
 		sut.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
-		FileSystem.Should().NotHaveFile(sourceName);
-		FileSystem.Should().HaveFile(destinationName)
-			.Which.HasContent(sourceContents);
+		FileSystem.File.Exists(sourceName).Should().BeFalse();
+		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(sourceContents);
 	}
 #endif
 
@@ -90,7 +90,7 @@ public partial class MoveToTests
 			messageContains: Test.IsNetFramework
 				? null
 				: $"'{FileSystem.Path.GetFullPath(sourceName)}'");
-		FileSystem.Should().NotHaveFile(sourceName);
+		FileSystem.File.Exists(sourceName).Should().BeFalse();
 	}
 
 	[Theory]
@@ -114,10 +114,10 @@ public partial class MoveToTests
 
 		exception.Should().BeException<DirectoryNotFoundException>(hResult: -2147024893);
 
-		sut.Should().Exist();
-		FileSystem.Should().HaveFile(sourceName)
-			.Which.HasContent(sourceContents);
-		FileSystem.Should().NotHaveFile(destinationName);
+		sut.Exists.Should().BeTrue();
+		FileSystem.File.Exists(sourceName).Should().BeTrue();
+		FileSystem.File.ReadAllText(sourceName).Should().BeEquivalentTo(sourceContents);
+		FileSystem.File.Exists(destinationName).Should().BeFalse();
 	}
 
 	[Theory]
@@ -131,10 +131,10 @@ public partial class MoveToTests
 
 		sut.MoveTo(destinationName);
 
-		FileSystem.Should().NotHaveFile(sourceName);
-		FileSystem.Should().HaveFile(destinationName)
-			.Which.HasContent(contents)
-			.And.HasAttribute(FileAttributes.ReadOnly);
+		FileSystem.File.Exists(sourceName).Should().BeFalse();
+		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(contents);
+		FileSystem.File.GetAttributes(destinationName).Should().HaveFlag(FileAttributes.ReadOnly);
 	}
 
 	[Theory]
@@ -200,10 +200,10 @@ public partial class MoveToTests
 		sut.MoveTo(destinationName);
 
 		sut.FullName.Should().Be(FileSystem.Path.GetFullPath(destinationName));
-		sut.Should().Exist();
-		FileSystem.Should().NotHaveFile(sourceName);
-		FileSystem.Should().HaveFile(destinationName)
-			.Which.HasContent(contents);
+		sut.Exists.Should().BeTrue();
+		FileSystem.File.Exists(sourceName).Should().BeFalse();
+		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(contents);
 	}
 
 	[Theory]
@@ -265,14 +265,14 @@ public partial class MoveToTests
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeException<IOException>(hResult: -2147024864);
-			FileSystem.Should().HaveFile(sourceName);
-			FileSystem.Should().NotHaveFile(destinationName);
+			FileSystem.File.Exists(sourceName).Should().BeTrue();
+			FileSystem.File.Exists(destinationName).Should().BeFalse();
 		}
 		else
 		{
 			// https://github.com/dotnet/runtime/issues/52700
-			FileSystem.Should().NotHaveFile(sourceName);
-			FileSystem.Should().HaveFile(destinationName);
+			FileSystem.File.Exists(sourceName).Should().BeFalse();
+			FileSystem.File.Exists(destinationName).Should().BeTrue();
 		}
 	}
 
@@ -294,6 +294,6 @@ public partial class MoveToTests
 				? null
 				: $"'{FileSystem.Path.GetFullPath(sourceName)}'",
 			hResult: -2147024894);
-		FileSystem.Should().NotHaveFile(destinationName);
+		FileSystem.File.Exists(destinationName).Should().BeFalse();
 	}
 }

@@ -79,8 +79,8 @@ public partial class WriteAllTextTests
 
 		FileSystem.File.WriteAllText(path, "AA", Encoding.UTF32);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(expectedBytes);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(expectedBytes);
 	}
 
 	[Theory]
@@ -145,8 +145,8 @@ public partial class WriteAllTextTests
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Should().HaveDirectory(path);
-		FileSystem.Should().NotHaveFile(path);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
 	}
 
 	[Theory]
@@ -242,8 +242,8 @@ public partial class WriteAllTextTests
 
 		FileSystem.File.WriteAllText(path, "AA".AsSpan(), Encoding.UTF32);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(expectedBytes);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(expectedBytes);
 	}
 
 	[Theory]
@@ -296,8 +296,8 @@ public partial class WriteAllTextTests
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Should().HaveDirectory(path);
-		FileSystem.Should().NotHaveFile(path);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
 	}
 
 	[Theory]

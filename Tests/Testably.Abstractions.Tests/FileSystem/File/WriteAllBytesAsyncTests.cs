@@ -33,8 +33,8 @@ public partial class WriteAllBytesAsyncTests
 
 		await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(bytes);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
 	}
 
 	[Theory]
@@ -44,8 +44,8 @@ public partial class WriteAllBytesAsyncTests
 	{
 		await FileSystem.File.WriteAllBytesAsync(path, bytes, TestContext.Current.CancellationToken);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(bytes);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
 	}
 
 	[Theory]
@@ -80,8 +80,8 @@ public partial class WriteAllBytesAsyncTests
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Should().HaveDirectory(path);
-		FileSystem.Should().NotHaveFile(path);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
 	}
 
 	[Theory]
@@ -129,8 +129,8 @@ public partial class WriteAllBytesAsyncTests
 
 		await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), TestContext.Current.CancellationToken);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(bytes);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
 	}
 
 	[Theory]
@@ -140,8 +140,8 @@ public partial class WriteAllBytesAsyncTests
 	{
 		await FileSystem.File.WriteAllBytesAsync(path, bytes.AsMemory(), TestContext.Current.CancellationToken);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(bytes);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
 	}
 
 	[Theory]
@@ -161,8 +161,8 @@ public partial class WriteAllBytesAsyncTests
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Should().HaveDirectory(path);
-		FileSystem.Should().NotHaveFile(path);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
 	}
 
 	[Theory]

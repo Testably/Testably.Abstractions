@@ -51,11 +51,11 @@ public partial class EncryptDecryptTests
 		FileSystem.File.WriteAllText(path, contents);
 
 		FileSystem.File.Encrypt(path);
-		FileSystem.Should().HaveFile(path)
-			.Which.HasAttribute(FileAttributes.Encrypted);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.GetAttributes(path).Should().HaveFlag(FileAttributes.Encrypted);
 		FileSystem.File.Decrypt(path);
-		FileSystem.Should().HaveFile(path)
-			.Which.DoesNotHaveAttribute(FileAttributes.Encrypted);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.GetAttributes(path).Should().NotHaveFlag(FileAttributes.Encrypted);
 	}
 
 	[Theory]

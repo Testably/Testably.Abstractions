@@ -10,7 +10,7 @@ public partial class ExistsTests
 		FileSystem.Directory.CreateDirectory(path);
 		IFileInfo sut = FileSystem.FileInfo.New(path);
 
-		sut.Should().NotExist();
+		sut.Exists.Should().BeFalse();
 	}
 
 	[Theory]
@@ -31,14 +31,14 @@ public partial class ExistsTests
 	public void Exists_ShouldReturnCachedValueUntilRefresh(string path)
 	{
 		IFileInfo sut = FileSystem.FileInfo.New(path);
-		sut.Should().NotExist();
+		sut.Exists.Should().BeFalse();
 
 		FileSystem.File.WriteAllText(path, "some content");
 
-		sut.Should().NotExist();
+		sut.Exists.Should().BeFalse();
 
 		sut.Refresh();
 
-		sut.Should().Exist();
+		sut.Exists.Should().BeTrue();
 	}
 }

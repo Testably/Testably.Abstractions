@@ -57,8 +57,8 @@ public partial class WriteTests
 			ms.Wait(ExpectSuccess, TestContext.Current.CancellationToken).Should().BeTrue();
 		}
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(bytes);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
 	}
 
 	[Theory]
@@ -162,8 +162,8 @@ public partial class WriteTests
 			stream.Write(bytes.AsSpan());
 		}
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(bytes);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
 	}
 #endif
 
@@ -197,8 +197,8 @@ public partial class WriteTests
 			stream.Write(bytes, 0, bytes.Length);
 		}
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(bytes);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
 	}
 
 #if FEATURE_FILESYSTEM_ASYNC
@@ -244,8 +244,8 @@ public partial class WriteTests
 			#pragma warning restore CA1835
 		}
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(bytes);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
 	}
 #endif
 
@@ -283,8 +283,8 @@ public partial class WriteTests
 			stream.Position.Should().Be(2);
 		}
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent([byte1, byte2]);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo([byte1, byte2]);
 	}
 
 	[Theory]

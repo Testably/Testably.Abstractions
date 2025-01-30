@@ -88,7 +88,7 @@ public partial class DirectoryInfoAclExtensionsTests
 		DirectorySecurity result =
 			FileSystem.DirectoryInfo.New("foo").GetAccessControl();
 
-		await That(result).Is(originalResult);
+		await That(result).IsEqualTo(originalResult);
 		#pragma warning restore CA1416
 	}
 
@@ -141,7 +141,7 @@ public partial class DirectoryInfoAclExtensionsTests
 		DirectorySecurity result =
 			FileSystem.DirectoryInfo.New("foo").GetAccessControl(AccessControlSections.None);
 
-		await That(result).Is(originalResult);
+		await That(result).IsEqualTo(originalResult);
 		#pragma warning restore CA1416
 	}
 
@@ -184,8 +184,8 @@ public partial class DirectoryInfoAclExtensionsTests
 		DateTime lastAccessTimeUtc = FileSystem.File.GetLastAccessTimeUtc(path);
 		DateTime lastWriteTimeUtc = FileSystem.File.GetLastWriteTimeUtc(path);
 
-		await That(creationTimeUtc).Is(previousCreationTimeUtc);
-		await That(lastAccessTimeUtc).Is(previousLastAccessTimeUtc);
-		await That(lastWriteTimeUtc).Is(previousLastWriteTimeUtc);
+		await That(creationTimeUtc).IsEqualTo(previousCreationTimeUtc);
+		await That(lastAccessTimeUtc).IsEqualTo(previousLastAccessTimeUtc);
+		await That(lastWriteTimeUtc).IsEqualTo(previousLastWriteTimeUtc);
 	}
 }
