@@ -20,7 +20,7 @@ public partial class CreateSubdirectoryTests
 
 		exception.Should().BeException<IOException>(
 			hResult: Test.RunsOnWindows ? -2147024713 : 17);
-		FileSystem.Should().NotHaveDirectory(name);
+		FileSystem.Directory.Exists(name).Should().BeFalse();
 	}
 
 	[Theory]
@@ -29,13 +29,13 @@ public partial class CreateSubdirectoryTests
 		string path, string subdirectory)
 	{
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New(path);
-		sut.Should().NotExist();
+		sut.Exists.Should().BeFalse();
 		IDirectoryInfo result = sut.CreateSubdirectory(subdirectory);
 
-		sut.Should().NotExist();
-		FileSystem.Should().HaveDirectory(sut.FullName);
-		result.Should().Exist();
-		FileSystem.Should().HaveDirectory(result.FullName);
+		sut.Exists.Should().BeFalse();
+		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
+		result.Exists.Should().BeTrue();
+		FileSystem.Directory.Exists(result.FullName).Should().BeTrue();
 	}
 
 	[Theory]
@@ -46,9 +46,9 @@ public partial class CreateSubdirectoryTests
 		sut.Create();
 		IDirectoryInfo result = sut.CreateSubdirectory(subdirectory);
 
-		sut.Should().Exist();
-		FileSystem.Should().HaveDirectory(sut.FullName);
-		result.Should().Exist();
-		FileSystem.Should().HaveDirectory(result.FullName);
+		sut.Exists.Should().BeTrue();
+		FileSystem.Directory.Exists(sut.FullName).Should().BeTrue();
+		result.Exists.Should().BeTrue();
+		FileSystem.Directory.Exists(result.FullName).Should().BeTrue();
 	}
 }

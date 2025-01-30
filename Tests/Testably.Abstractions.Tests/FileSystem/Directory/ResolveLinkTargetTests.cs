@@ -31,7 +31,7 @@ public partial class ResolveLinkTargetTests
 			FileSystem.Directory.ResolveLinkTarget(path, false);
 
 		target!.FullName.Should().Be(targetFullPath);
-		target.Should().Exist();
+		target.Exists.Should().BeTrue();
 	}
 
 	[Theory]
@@ -52,12 +52,12 @@ public partial class ResolveLinkTargetTests
 		if (!Test.RunsOnLinux)
 		{
 			target!.FullName.Should().Be(targetFullPath);
-			target.Should().Exist();
+			target.Exists.Should().BeTrue();
 		}
 		else
 		{
 			target!.FullName.Should().Be(targetFullPath);
-			target.Should().NotExist();
+			target.Exists.Should().BeFalse();
 		}
 	}
 
@@ -173,7 +173,7 @@ public partial class ResolveLinkTargetTests
 			FileSystem.Directory.ResolveLinkTarget(path, false);
 
 		target!.FullName.Should().Be(targetFullPath);
-		target.Should().Exist();
+		target.Exists.Should().BeTrue();
 	}
 
 	[Theory]
@@ -193,7 +193,7 @@ public partial class ResolveLinkTargetTests
 
 		target!.FullName.Should().Be(targetFullPath);
 
-		target.Should().NotExist();
+		target.Exists.Should().BeFalse();
 	}
 }
 #endif

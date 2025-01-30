@@ -15,8 +15,8 @@ public partial class AppendAllBytesTests
 
 		FileSystem.File.AppendAllBytes(path, bytes);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent([..previousBytes, ..bytes]);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo([..previousBytes, ..bytes]);
 	}
 
 	[Theory]
@@ -40,8 +40,8 @@ public partial class AppendAllBytesTests
 	{
 		FileSystem.File.AppendAllBytes(path, bytes);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(bytes);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
 	}
 
 	[Theory]
@@ -88,8 +88,8 @@ public partial class AppendAllBytesTests
 
 		FileSystem.File.AppendAllBytes(path, bytes.AsSpan());
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent([..previousBytes, ..bytes]);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo([..previousBytes, ..bytes]);
 	}
 
 	[Theory]
@@ -113,8 +113,8 @@ public partial class AppendAllBytesTests
 	{
 		FileSystem.File.AppendAllBytes(path, bytes.AsSpan());
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(bytes);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
 	}
 
 	[Theory]
@@ -167,8 +167,8 @@ public partial class AppendAllBytesTests
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Should().HaveDirectory(path);
-		FileSystem.Should().NotHaveFile(path);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
 	}
 
 	[Theory]
@@ -202,8 +202,8 @@ public partial class AppendAllBytesTests
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Should().HaveDirectory(path);
-		FileSystem.Should().NotHaveFile(path);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
 	}
 
 	[Theory]

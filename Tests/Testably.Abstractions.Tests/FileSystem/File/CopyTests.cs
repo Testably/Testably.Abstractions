@@ -68,10 +68,10 @@ public partial class CopyTests
 
 		exception.Should().BeException<IOException>(hResult: Test.RunsOnWindows ? -2147024816 : 17);
 
-		FileSystem.Should().HaveFile(sourceName)
-			.Which.HasContent(sourceContents);
-		FileSystem.Should().HaveFile(destinationName)
-			.Which.HasContent(destinationContents);
+		FileSystem.File.Exists(sourceName).Should().BeTrue();
+		FileSystem.File.ReadAllText(sourceName).Should().BeEquivalentTo(sourceContents);
+		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(destinationContents);
 	}
 
 #if FEATURE_FILE_MOVETO_OVERWRITE
@@ -88,10 +88,10 @@ public partial class CopyTests
 
 		FileSystem.File.Copy(sourceName, destinationName, true);
 
-		FileSystem.Should().HaveFile(sourceName)
-			.Which.HasContent(sourceContents);
-		FileSystem.Should().HaveFile(destinationName)
-			.Which.HasContent(sourceContents);
+		FileSystem.File.Exists(sourceName).Should().BeTrue();
+		FileSystem.File.ReadAllText(sourceName).Should().BeEquivalentTo(sourceContents);
+		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(sourceContents);
 	}
 #endif
 
@@ -149,11 +149,11 @@ public partial class CopyTests
 
 		FileSystem.File.Copy(sourceName, destinationName);
 
-		FileSystem.Should().HaveFile(sourceName)
-			.Which.HasContent(contents);
-		FileSystem.Should().HaveFile(destinationName)
-			.Which.HasContent(contents)
-			.And.HasAttribute(FileAttributes.ReadOnly);
+		FileSystem.File.Exists(sourceName).Should().BeTrue();
+		FileSystem.File.ReadAllText(sourceName).Should().BeEquivalentTo(contents);
+		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(contents);
+		FileSystem.File.GetAttributes(destinationName).Should().HaveFlag(FileAttributes.ReadOnly);
 	}
 
 	[Theory]
@@ -245,8 +245,8 @@ public partial class CopyTests
 			binaryWriter.Write("Some text");
 		}
 
-		FileSystem.Should().HaveFile(destination)
-			.Which.HasContent(original);
+		FileSystem.File.Exists(destination).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(destination).Should().BeEquivalentTo(original);
 		FileSystem.File.ReadAllBytes(destination).Should()
 			.NotBeEquivalentTo(FileSystem.File.ReadAllBytes(source));
 	}
@@ -285,10 +285,10 @@ public partial class CopyTests
 		TimeSystem.Thread.Sleep(EnsureTimeout);
 
 		FileSystem.File.Copy(sourceName, destinationName);
-		FileSystem.Should().HaveFile(sourceName)
-			.Which.HasContent(contents);
-		FileSystem.Should().HaveFile(destinationName)
-			.Which.HasContent(contents);
+		FileSystem.File.Exists(sourceName).Should().BeTrue();
+		FileSystem.File.ReadAllText(sourceName).Should().BeEquivalentTo(contents);
+		FileSystem.File.Exists(destinationName).Should().BeTrue();
+		FileSystem.File.ReadAllText(destinationName).Should().BeEquivalentTo(contents);
 	}
 
 	[Theory]
@@ -359,7 +359,7 @@ public partial class CopyTests
 				? null
 				: $"'{FileSystem.Path.GetFullPath(source)}'",
 			hResult: -2147024893);
-		FileSystem.Should().NotHaveFile(destinationName);
+		FileSystem.File.Exists(destinationName).Should().BeFalse();
 	}
 
 	[Theory]
@@ -380,8 +380,8 @@ public partial class CopyTests
 				? $"'{sourceName}'"
 				: $"'{FileSystem.Path.GetFullPath(sourceName)}'",
 			hResult: -2147024891);
-		FileSystem.Should().HaveDirectory(sourceName);
-		FileSystem.Should().NotHaveFile(destinationName);
+		FileSystem.Directory.Exists(sourceName).Should().BeTrue();
+		FileSystem.File.Exists(destinationName).Should().BeFalse();
 	}
 
 	[Theory]
@@ -407,12 +407,12 @@ public partial class CopyTests
 		if (Test.RunsOnWindows)
 		{
 			exception.Should().BeException<IOException>(hResult: -2147024864);
-			FileSystem.Should().NotHaveFile(destinationName);
+			FileSystem.File.Exists(destinationName).Should().BeFalse();
 		}
 		else
 		{
-			FileSystem.Should().HaveFile(sourceName);
-			FileSystem.Should().NotHaveFile(destinationName);
+			FileSystem.File.Exists(sourceName).Should().BeTrue();
+			FileSystem.File.Exists(destinationName).Should().BeFalse();
 		}
 	}
 
@@ -432,6 +432,6 @@ public partial class CopyTests
 				? null
 				: $"'{FileSystem.Path.GetFullPath(sourceName)}'",
 			hResult: -2147024894);
-		FileSystem.Should().NotHaveFile(destinationName);
+		FileSystem.File.Exists(destinationName).Should().BeFalse();
 	}
 }

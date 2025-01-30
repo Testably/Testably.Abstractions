@@ -57,7 +57,7 @@ public partial class FileInfoAclExtensionsTests
 		FileSecurity result =
 			FileSystem.FileInfo.New("foo").GetAccessControl();
 
-		await That(result).Is(originalResult);
+		await That(result).IsEqualTo(originalResult);
 		#pragma warning restore CA1416
 	}
 
@@ -112,7 +112,7 @@ public partial class FileInfoAclExtensionsTests
 		FileSecurity result =
 			FileSystem.FileInfo.New("foo").GetAccessControl(AccessControlSections.None);
 
-		await That(result).Is(originalResult);
+		await That(result).IsEqualTo(originalResult);
 		#pragma warning restore CA1416
 	}
 

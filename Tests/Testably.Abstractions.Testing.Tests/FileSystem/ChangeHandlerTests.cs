@@ -17,7 +17,7 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 	{
 		FileSystem.Intercept.Event(_ =>
 		{
-			FileSystem.Should().NotHaveDirectory(path);
+			FileSystem.Directory.Exists(path).Should().BeFalse();
 			throw exceptionToThrow;
 		});
 		Exception? exception = Record.Exception(() =>
@@ -25,7 +25,7 @@ public class ChangeHandlerTests(ITestOutputHelper testOutputHelper)
 			FileSystem.Directory.CreateDirectory(path);
 		});
 
-		FileSystem.Should().NotHaveDirectory(path);
+		FileSystem.Directory.Exists(path).Should().BeFalse();
 		exception.Should().Be(exceptionToThrow);
 	}
 

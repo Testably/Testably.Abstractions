@@ -17,8 +17,8 @@ public partial class CreateTextTests
 			stream.Write(appendText);
 		}
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(appendText);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(appendText);
 	}
 
 #if NET8_0_OR_GREATER
@@ -28,15 +28,15 @@ public partial class CreateTextTests
 		string path, string appendText)
 	{
 		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
-		fileInfo.Should().NotExist();
+		fileInfo.Exists.Should().BeFalse();
 
 		using (StreamWriter stream = fileInfo.CreateText())
 		{
 			stream.Write(appendText);
 		}
 
-		fileInfo.Should().Exist();
-		FileSystem.Should().HaveFile(path);
+		fileInfo.Exists.Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeTrue();
 	}
 #else
 	[Theory]
@@ -45,15 +45,15 @@ public partial class CreateTextTests
 		string path, string appendText)
 	{
 		IFileInfo fileInfo = FileSystem.FileInfo.New(path);
-		fileInfo.Should().NotExist();
+		fileInfo.Exists.Should().BeFalse();
 
 		using (StreamWriter stream = fileInfo.CreateText())
 		{
 			stream.Write(appendText);
 		}
 
-		fileInfo.Should().NotExist();
-		FileSystem.Should().HaveFile(path);
+		fileInfo.Exists.Should().BeFalse();
+		FileSystem.File.Exists(path).Should().BeTrue();
 	}
 #endif
 
@@ -70,7 +70,7 @@ public partial class CreateTextTests
 			stream.Write(appendText);
 		}
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(appendText);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(appendText);
 	}
 }

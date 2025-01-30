@@ -41,15 +41,6 @@ namespace Testably.Abstractions
         Testably.Abstractions.TimeSystem.ITimerFactory Timer { get; }
     }
 }
-namespace Testably.Abstractions.Polyfills
-{
-    [System.AttributeUsage(System.AttributeTargets.Assembly | System.AttributeTargets.Module | System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Enum | System.AttributeTargets.Constructor | System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.Event | System.AttributeTargets.Interface, AllowMultiple=true, Inherited=false)]
-    public sealed class SupportedOSPlatformAttribute : System.Attribute
-    {
-        public SupportedOSPlatformAttribute(string platformName) { }
-        public string PlatformName { get; }
-    }
-}
 namespace Testably.Abstractions.RandomSystem
 {
     public interface IGuid : Testably.Abstractions.RandomSystem.IRandomSystemEntity

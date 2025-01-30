@@ -18,7 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="TestableIO.System.IO.Abstractions" />
+	  <ProjectReference Include="..\Testably.Abstractions.FileSystem.Interface\Testably.Abstractions.FileSystem.Interface.csproj" />
 	</ItemGroup>
 
 </Project>

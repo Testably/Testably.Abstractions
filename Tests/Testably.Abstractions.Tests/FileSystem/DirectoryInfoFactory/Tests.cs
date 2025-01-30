@@ -32,7 +32,7 @@ public partial class Tests
 		IDirectoryInfo result = FileSystem.DirectoryInfo.New(path);
 
 		result.ToString().Should().Be(path);
-		result.Should().NotExist();
+		result.Exists.Should().BeFalse();
 	}
 
 	[Theory]

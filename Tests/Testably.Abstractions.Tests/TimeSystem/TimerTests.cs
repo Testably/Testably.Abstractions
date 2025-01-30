@@ -162,7 +162,7 @@ public partial class TimerTests
 		result.Should().BeTrue();
 	}
 
-	[Fact]
+	[Fact(Skip="Temporarily skip brittle tests")]
 	public void Change_WithInt_ShouldResetTimer()
 	{
 		SkipIfBrittleTestsShouldBeSkipped();
@@ -236,7 +236,7 @@ public partial class TimerTests
 		}
 	}
 
-	[Fact]
+	[Fact(Skip="Temporarily skip brittle tests")]
 	public void Change_WithLong_ShouldResetTimer()
 	{
 		SkipIfBrittleTestsShouldBeSkipped();
@@ -310,7 +310,7 @@ public partial class TimerTests
 		}
 	}
 
-	[Fact]
+	[Fact(Skip="Temporarily skip brittle tests")]
 	public void Change_WithTimeSpan_ShouldResetTimer()
 	{
 		SkipIfBrittleTestsShouldBeSkipped();

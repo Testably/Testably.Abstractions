@@ -20,13 +20,13 @@ public partial class DisposeTests
 
 		// ReSharper disable once DisposeOnUsingVariable
 		stream.Dispose();
-		FileSystem.Should().NotHaveFile(path);
+		FileSystem.File.Exists(path).Should().BeFalse();
 		FileSystem.File.WriteAllText(path, "foo");
 
 		// ReSharper disable once DisposeOnUsingVariable
 		stream.Dispose();
 
-		FileSystem.Should().HaveFile(path);
+		FileSystem.File.Exists(path).Should().BeTrue();
 	}
 
 	[Theory]

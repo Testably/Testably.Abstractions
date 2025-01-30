@@ -22,7 +22,7 @@ public partial class Tests
 
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
-		await That(archive.Comment).Is("");
+		await That(archive.Comment).IsEqualTo("");
 	}
 #endif
 #if FEATURE_ZIPFILE_NET7
@@ -42,7 +42,7 @@ public partial class Tests
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 		archive.Comment = comment;
 
-		await That(archive.Comment).Is(comment);
+		await That(archive.Comment).IsEqualTo(comment);
 	}
 #endif
 
@@ -73,7 +73,7 @@ public partial class Tests
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
-		await That(archive.FileSystem).Is(FileSystem);
+		await That(archive.FileSystem).IsEqualTo(FileSystem);
 	}
 
 	[Fact]
@@ -107,6 +107,6 @@ public partial class Tests
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", mode);
 
-		await That(archive.Mode).Is(mode);
+		await That(archive.Mode).IsEqualTo(mode);
 	}
 }

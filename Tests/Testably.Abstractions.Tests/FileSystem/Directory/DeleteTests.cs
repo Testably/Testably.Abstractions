@@ -27,7 +27,7 @@ public partial class DeleteTests
 		else
 		{
 			exception.Should().BeNull();
-			FileSystem.Should().NotHaveDirectory(directoryName.ToUpperInvariant());
+			FileSystem.Directory.Exists(directoryName.ToUpperInvariant()).Should().BeFalse();
 		}
 	}
 
@@ -40,8 +40,8 @@ public partial class DeleteTests
 
 		FileSystem.Directory.Delete(result.FullName);
 
-		FileSystem.Should().NotHaveDirectory(directoryName);
-		result.Should().NotExist();
+		FileSystem.Directory.Exists(directoryName).Should().BeFalse();
+		result.Exists.Should().BeFalse();
 	}
 
 	[Theory]
@@ -88,14 +88,14 @@ public partial class DeleteTests
 		string subdirectoryFilePath = FileSystem.Path.Combine(path, subdirectory, fileName);
 		FileSystem.File.WriteAllText(subdirectoryFilePath, fileContent);
 
-		FileSystem.Should().HaveDirectory(path);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
 
 		FileSystem.Directory.Delete(path, true);
 
-		FileSystem.Should().NotHaveDirectory(path);
-		FileSystem.Should().NotHaveFile(filePath);
-		FileSystem.Should().NotHaveDirectory(subdirectoryPath);
-		FileSystem.Should().NotHaveFile(subdirectoryFilePath);
+		FileSystem.Directory.Exists(path).Should().BeFalse();
+		FileSystem.File.Exists(filePath).Should().BeFalse();
+		FileSystem.Directory.Exists(subdirectoryPath).Should().BeFalse();
+		FileSystem.File.Exists(subdirectoryFilePath).Should().BeFalse();
 	}
 
 	[Theory]
@@ -120,12 +120,12 @@ public partial class DeleteTests
 		{
 			exception.Should().BeException<IOException>($"{filename}'",
 				hResult: -2147024864);
-			FileSystem.Should().HaveFile(filePath);
+			FileSystem.File.Exists(filePath).Should().BeTrue();
 		}
 		else
 		{
 			exception.Should().BeNull();
-			FileSystem.Should().NotHaveFile(filePath);
+			FileSystem.File.Exists(filePath).Should().BeFalse();
 		}
 	}
 
@@ -144,8 +144,8 @@ public partial class DeleteTests
 
 		FileSystem.Directory.Delete(subdirectory, true);
 
-		FileSystem.Should().NotHaveDirectory(subdirectory);
-		FileSystem.Should().HaveFile(fileName);
+		FileSystem.Directory.Exists(subdirectory).Should().BeFalse();
+		FileSystem.File.Exists(fileName).Should().BeTrue();
 	}
 
 	[Theory]
@@ -155,12 +155,12 @@ public partial class DeleteTests
 	{
 		string subdirectoryPath = FileSystem.Path.Combine(path, subdirectory);
 		FileSystem.Directory.CreateDirectory(subdirectoryPath);
-		FileSystem.Should().HaveDirectory(path);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
 
 		FileSystem.Directory.Delete(path, true);
 
-		FileSystem.Should().NotHaveDirectory(path);
-		FileSystem.Should().NotHaveDirectory(subdirectoryPath);
+		FileSystem.Directory.Exists(path).Should().BeFalse();
+		FileSystem.Directory.Exists(subdirectoryPath).Should().BeFalse();
 	}
 
 	[Theory]
@@ -208,8 +208,8 @@ public partial class DeleteTests
 
 		FileSystem.Directory.Delete(directoryName);
 
-		FileSystem.Should().NotHaveDirectory(directoryName);
-		result.Should().NotExist();
+		FileSystem.Directory.Exists(directoryName).Should().BeFalse();
+		result.Exists.Should().BeFalse();
 	}
 
 	[Theory]
@@ -256,8 +256,8 @@ public partial class DeleteTests
 
 		FileSystem.Directory.Delete(subdirectory);
 
-		FileSystem.Should().NotHaveDirectory(subdirectory);
-		FileSystem.Should().HaveFile(fileName);
+		FileSystem.Directory.Exists(subdirectory).Should().BeFalse();
+		FileSystem.File.Exists(fileName).Should().BeTrue();
 	}
 
 	[Theory]
@@ -266,7 +266,7 @@ public partial class DeleteTests
 		string path, string subdirectory)
 	{
 		FileSystem.Directory.CreateDirectory(FileSystem.Path.Combine(path, subdirectory));
-		FileSystem.Should().HaveDirectory(path);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
 
 		Exception? exception = Record.Exception(() =>
 		{
@@ -279,6 +279,6 @@ public partial class DeleteTests
 			messageContains: !Test.RunsOnWindows || Test.IsNetFramework
 				? null
 				: $"'{FileSystem.Path.Combine(BasePath, path)}'");
-		FileSystem.Should().HaveDirectory(path);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
 	}
 }

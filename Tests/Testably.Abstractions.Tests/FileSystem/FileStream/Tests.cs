@@ -115,8 +115,8 @@ public partial class Tests
 			stream1.Flush();
 		}
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(bytes2);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes2);
 	}
 
 	[Theory]

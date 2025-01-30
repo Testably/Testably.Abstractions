@@ -11,7 +11,7 @@ public partial class OpenWriteTests
 	{
 		using FileSystemStream stream = FileSystem.File.OpenWrite(path);
 
-		FileSystem.Should().HaveFile(path);
+		FileSystem.File.Exists(path).Should().BeTrue();
 	}
 
 	[Theory]

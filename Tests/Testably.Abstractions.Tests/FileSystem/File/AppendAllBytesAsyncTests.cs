@@ -33,8 +33,8 @@ public partial class AppendAllBytesAsyncTests
 		await FileSystem.File.AppendAllBytesAsync(path, bytes,
 			TestContext.Current.CancellationToken);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent([..previousBytes, ..bytes]);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo([..previousBytes, ..bytes]);
 	}
 
 	[Theory]
@@ -63,8 +63,8 @@ public partial class AppendAllBytesAsyncTests
 		await FileSystem.File.AppendAllBytesAsync(path, bytes,
 			TestContext.Current.CancellationToken);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(bytes);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
 	}
 
 	[Theory]
@@ -92,8 +92,8 @@ public partial class AppendAllBytesAsyncTests
 		await FileSystem.File.AppendAllBytesAsync(path, bytes.AsMemory(),
 			TestContext.Current.CancellationToken);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent([..previousBytes, ..bytes]);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo([..previousBytes, ..bytes]);
 	}
 
 	[Theory]
@@ -123,8 +123,8 @@ public partial class AppendAllBytesAsyncTests
 		await FileSystem.File.AppendAllBytesAsync(path, bytes.AsMemory(),
 			TestContext.Current.CancellationToken);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(bytes);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllBytes(path).Should().BeEquivalentTo(bytes);
 	}
 
 	[Theory]
@@ -145,8 +145,8 @@ public partial class AppendAllBytesAsyncTests
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Should().HaveDirectory(path);
-		FileSystem.Should().NotHaveFile(path);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
 	}
 
 	[Theory]
@@ -167,8 +167,8 @@ public partial class AppendAllBytesAsyncTests
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Should().HaveDirectory(path);
-		FileSystem.Should().NotHaveFile(path);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
 	}
 }
 #endif

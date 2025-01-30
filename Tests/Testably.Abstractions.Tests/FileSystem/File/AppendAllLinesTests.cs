@@ -19,8 +19,8 @@ public partial class AppendAllLinesTests
 
 		FileSystem.File.AppendAllLines(path, contents);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(expectedContent);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedContent);
 	}
 
 	[Theory]
@@ -32,8 +32,8 @@ public partial class AppendAllLinesTests
 		                         + Environment.NewLine;
 		FileSystem.File.AppendAllLines(path, contents);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(expectedContent);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedContent);
 	}
 
 	[Theory]
@@ -75,8 +75,8 @@ public partial class AppendAllLinesTests
 
 		FileSystem.File.AppendAllLines(path, contents);
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(expectedResult);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(expectedResult);
 	}
 
 	[Theory]
@@ -94,8 +94,8 @@ public partial class AppendAllLinesTests
 
 		exception.Should().BeException<UnauthorizedAccessException>(
 			hResult: -2147024891);
-		FileSystem.Should().HaveDirectory(path);
-		FileSystem.Should().NotHaveFile(path);
+		FileSystem.Directory.Exists(path).Should().BeTrue();
+		FileSystem.File.Exists(path).Should().BeFalse();
 	}
 
 	[Theory]

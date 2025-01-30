@@ -33,7 +33,7 @@ public partial class ExtensionTests
 			CompressionLevel.NoCompression);
 
 		IZipArchiveEntry entry = archive.Entries.Single();
-		await That(entry.LastWriteTime.DateTime).Is(lastWriteTime);
+		await That(entry.LastWriteTime.DateTime).IsEqualTo(lastWriteTime);
 	}
 
 	[Theory]
@@ -64,7 +64,7 @@ public partial class ExtensionTests
 			CompressionLevel.NoCompression);
 
 		IZipArchiveEntry entry = archive.Entries.Single();
-		await That(entry.LastWriteTime.DateTime).Is(expectedTime);
+		await That(entry.LastWriteTime.DateTime).IsEqualTo(expectedTime);
 	}
 
 	[Fact]
@@ -152,7 +152,7 @@ public partial class ExtensionTests
 			CompressionLevel.NoCompression);
 
 		IZipArchiveEntry entry = archive.Entries.Single();
-		await That(entry.FullName).Is("foo/bar.txt");
+		await That(entry.FullName).IsEqualTo("foo/bar.txt");
 
 		entry.ExtractToFile("test.txt");
 		await That(FileSystem).HasFile("test.txt").WithContent("FooFooFoo");
@@ -249,7 +249,7 @@ public partial class ExtensionTests
 		await That(Act).Throws<IOException>()
 			.WithMessage($"*'{FileSystem.Path.GetFullPath("bar/foo.txt")}'*").AsWildcard();
 		await That(FileSystem).HasFile("bar/foo.txt")
-			.WhichContent(c => c.IsNot("FooFooFoo"));
+			.WhichContent(c => c.IsNotEqualTo("FooFooFoo"));
 	}
 
 #if FEATURE_COMPRESSION_ADVANCED

@@ -39,20 +39,20 @@ public partial class DeleteTests
 	{
 		FileSystem.File.WriteAllText(path, "some content");
 		IFileInfo sut = FileSystem.FileInfo.New(path);
-		sut.Should().Exist();
+		sut.Exists.Should().BeTrue();
 
 		sut.Delete();
 
 		if (Test.IsNetFramework)
 		{
-			sut.Should().Exist();
+			sut.Exists.Should().BeTrue();
 		}
 		else
 		{
-			sut.Should().NotExist();
+			sut.Exists.Should().BeFalse();
 		}
 
-		FileSystem.Should().NotHaveFile(path);
+		FileSystem.File.Exists(path).Should().BeFalse();
 	}
 
 	[Theory]
@@ -76,12 +76,12 @@ public partial class DeleteTests
 			exception.Should().BeException<IOException>(
 				messageContains: $"{filename}'",
 				hResult: -2147024864);
-			FileSystem.Should().HaveFile(filename);
+			FileSystem.File.Exists(filename).Should().BeTrue();
 		}
 		else
 		{
 			exception.Should().BeNull();
-			FileSystem.Should().NotHaveFile(filename);
+			FileSystem.File.Exists(filename).Should().BeFalse();
 		}
 	}
 }

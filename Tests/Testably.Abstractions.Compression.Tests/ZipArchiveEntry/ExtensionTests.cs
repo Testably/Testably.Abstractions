@@ -154,7 +154,7 @@ public partial class ExtensionTests
 		await That(Act).Throws<IOException>()
 			.WithMessage($"*'{FileSystem.Path.GetFullPath("bar/bar.txt")}'*").AsWildcard();
 		await That(FileSystem).HasFile("bar/bar.txt")
-			.WhichContent(f => f.IsNot("FooFooFoo"));
+			.WhichContent(f => f.IsNotEqualTo("FooFooFoo"));
 	}
 
 	[Fact]

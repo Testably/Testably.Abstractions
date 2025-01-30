@@ -43,7 +43,7 @@ namespace System.IO.Abstractions
         /// <inheritdoc cref="FileSystemInfo.LastWriteTimeUtc" />
         DateTime LastWriteTimeUtc { get; set; }
 
-#if FEATURE_FILE_SYSTEM_INFO_LINK_TARGET
+#if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="FileSystemInfo.LinkTarget" />
         string? LinkTarget { get; }
 #endif

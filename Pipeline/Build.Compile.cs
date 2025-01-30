@@ -44,6 +44,17 @@ partial class Build
 				Solution.Testably_Abstractions_Interface,
 				Solution.Testably_Abstractions_FileSystem_Interface,
 			];
+
+			string preRelease = "-CI";
+			if (GitHubActions == null)
+			{
+				preRelease = "-DEV";
+			}
+			else if (GitHubActions.Ref.StartsWith("refs/tags/", StringComparison.OrdinalIgnoreCase) == true)
+			{
+				int preReleaseIndex = GitHubActions.Ref.IndexOf('-');
+				preRelease = preReleaseIndex > 0 ? GitHubActions.Ref[preReleaseIndex..] : "";
+			}
 			
 			CoreVersion = AssemblyVersion.FromGitVersion(GitVersionTasks.GitVersion(s => s
 					.SetFramework("net8.0")
@@ -52,7 +63,7 @@ partial class Build
 					.DisableProcessOutputLogging()
 					.SetUpdateAssemblyInfo(false)
 					.AddProcessAdditionalArguments("/overrideconfig", "tag-prefix=core/v"))
-				.Result);
+				.Result, preRelease);
 
 			GitVersion gitVersion = GitVersionTasks.GitVersion(s => s
 					.SetFramework("net8.0")
@@ -62,7 +73,7 @@ partial class Build
 					.SetUpdateAssemblyInfo(false))
 				.Result;
 
-			MainVersion = AssemblyVersion.FromGitVersion(gitVersion);
+			MainVersion = AssemblyVersion.FromGitVersion(gitVersion, preRelease);
 			SemVer = gitVersion.SemVer;
 			BranchName = gitVersion.BranchName;
 
@@ -121,7 +132,7 @@ partial class Build
 				.SetConfiguration(Configuration)
 				.EnableNoLogo()
 				.EnableNoRestore()
-				.SetVersion(MainVersion!.FileVersion)
+				.SetVersion(MainVersion!.FileVersion + CoreVersion.PreRelease)
 				.SetAssemblyVersion(MainVersion!.FileVersion)
 				.SetFileVersion(MainVersion!.FileVersion));
 			
@@ -135,23 +146,23 @@ partial class Build
 					.EnableNoLogo()
 					.EnableNoRestore()
 					.SetProcessAdditionalArguments($"/p:SolutionDir={RootDirectory}/")
-					.SetVersion(CoreVersion!.FileVersion)
+					.SetVersion(CoreVersion!.FileVersion + CoreVersion.PreRelease)
 					.SetAssemblyVersion(CoreVersion!.FileVersion)
 					.SetFileVersion(CoreVersion!.FileVersion));
 			}
 		});
 	
-	public record AssemblyVersion(string FileVersion, string InformationalVersion)
+	public record AssemblyVersion(string FileVersion, string InformationalVersion, string PreRelease)
 	{
 		[return: NotNullIfNotNull(nameof(gitVersion))]
-		public static AssemblyVersion? FromGitVersion(GitVersion gitVersion)
+		public static AssemblyVersion? FromGitVersion(GitVersion gitVersion, string preRelease)
 		{
 			if (gitVersion is null)
 			{
 				return null;
 			}
 
-			return new AssemblyVersion(gitVersion.AssemblySemVer, gitVersion.InformationalVersion);
+			return new AssemblyVersion(gitVersion.AssemblySemVer, gitVersion.InformationalVersion, preRelease);
 		}
 	}
 

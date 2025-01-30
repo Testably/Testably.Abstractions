@@ -15,8 +15,8 @@ public partial class CreateTextTests
 			stream.Write(appendText);
 		}
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(appendText);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(appendText);
 	}
 
 	[Theory]
@@ -31,7 +31,7 @@ public partial class CreateTextTests
 			stream.Write(appendText);
 		}
 
-		FileSystem.Should().HaveFile(path)
-			.Which.HasContent(appendText);
+		FileSystem.File.Exists(path).Should().BeTrue();
+		FileSystem.File.ReadAllText(path).Should().BeEquivalentTo(appendText);
 	}
 }

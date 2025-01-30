@@ -27,7 +27,7 @@ public partial class CreateFromDirectoryTests
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
 		await That(archive.Entries).HasSingle()
-			.Which.For(x => x.FullName, f => f.Is("bar/"));
+			.Which.For(x => x.FullName, f => f.IsEqualTo("bar/"));
 	}
 
 	[Theory]
@@ -63,7 +63,7 @@ public partial class CreateFromDirectoryTests
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
 		await That(archive.Entries).HasSingle()
-			.Which.For(x => x.FullName, f => f.Is("foo/"));
+			.Which.For(x => x.FullName, f => f.IsEqualTo("foo/"));
 	}
 
 	[Theory]
@@ -85,11 +85,11 @@ public partial class CreateFromDirectoryTests
 		var singleEntry = await That(archive.Entries).HasSingle();
 		if (encodedCorrectly)
 		{
-			await That(singleEntry.Name).Is(entryName);
+			await That(singleEntry.Name).IsEqualTo(entryName);
 		}
 		else
 		{
-			await That(singleEntry.Name).IsNot(entryName);
+			await That(singleEntry.Name).IsNotEqualTo(entryName);
 		}
 	}
 
@@ -109,7 +109,7 @@ public partial class CreateFromDirectoryTests
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
 		await That(archive.Entries).HasSingle()
-			.Which.For(x => x.FullName, f => f.Is("foo/test.txt"));
+			.Which.For(x => x.FullName, f => f.IsEqualTo("foo/test.txt"));
 	}
 
 #if FEATURE_COMPRESSION_OVERWRITE
@@ -133,7 +133,7 @@ public partial class CreateFromDirectoryTests
 			.Open("destination.zip", ZipArchiveMode.Read, encoding);
 
 		await That(archive.Entries).HasSingle()
-			.Which.For(x => x.FullName, f => f.Is("test.txt"));
+			.Which.For(x => x.FullName, f => f.IsEqualTo("test.txt"));
 	}
 #endif
 
@@ -152,7 +152,7 @@ public partial class CreateFromDirectoryTests
 
 		await That(FileSystem).HasFile("destination/bar/test.txt");
 		await That(FileSystem.File.ReadAllBytes("destination/bar/test.txt"))
-			.Is(FileSystem.File.ReadAllBytes("foo/bar/test.txt"));
+			.IsEqualTo(FileSystem.File.ReadAllBytes("foo/bar/test.txt"));
 	}
 
 #if FEATURE_COMPRESSION_STREAM
@@ -197,7 +197,7 @@ public partial class CreateFromDirectoryTests
 		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries).HasSingle()
-			.Which.For(x => x.FullName, f => f.Is("bar/"));
+			.Which.For(x => x.FullName, f => f.IsEqualTo("bar/"));
 	}
 #endif
 
@@ -237,7 +237,7 @@ public partial class CreateFromDirectoryTests
 		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries).HasSingle()
-			.Which.For(x => x.FullName, f => f.Is("foo/"));
+			.Which.For(x => x.FullName, f => f.IsEqualTo("foo/"));
 	}
 #endif
 
@@ -261,11 +261,11 @@ public partial class CreateFromDirectoryTests
 		var singleEntry = await That(archive.Entries).HasSingle();
 		if (encodedCorrectly)
 		{
-			await That(singleEntry.Name).Is(entryName);
+			await That(singleEntry.Name).IsEqualTo(entryName);
 		}
 		else
 		{
-			await That(singleEntry.Name).IsNot(entryName);
+			await That(singleEntry.Name).IsNotEqualTo(entryName);
 		}
 	}
 #endif
@@ -287,7 +287,7 @@ public partial class CreateFromDirectoryTests
 		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
 		await That(archive.Entries).HasSingle()
-			.Which.For(x => x.FullName, f => f.Is("foo/test.txt"));
+			.Which.For(x => x.FullName, f => f.IsEqualTo("foo/test.txt"));
 	}
 #endif
 
@@ -349,7 +349,7 @@ public partial class CreateFromDirectoryTests
 			FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read, true, encoding);
 
 		await That(archive.Entries).HasSingle()
-			.Which.For(x => x.FullName, f => f.Is("test.txt"));
+			.Which.For(x => x.FullName, f => f.IsEqualTo("test.txt"));
 	}
 #endif
 
@@ -370,7 +370,7 @@ public partial class CreateFromDirectoryTests
 
 		await That(FileSystem).HasFile("destination/bar/test.txt");
 		await That(FileSystem.File.ReadAllBytes("destination/bar/test.txt"))
-			.Is(FileSystem.File.ReadAllBytes("foo/bar/test.txt"));
+			.IsEqualTo(FileSystem.File.ReadAllBytes("foo/bar/test.txt"));
 	}
 #endif
 
