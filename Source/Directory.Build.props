@@ -9,7 +9,6 @@
 		<PackageProjectUrl>https://github.com/Testably/Testably.Abstractions</PackageProjectUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageIcon>Docs/logo_256x256.png</PackageIcon>
-		<MinVerTagPrefix>v</MinVerTagPrefix>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -24,7 +23,7 @@
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
 
-	<PropertyGroup Condition=" '$(Configuration)' != 'Debug' ">
+	<PropertyGroup>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<IncludeSymbols>true</IncludeSymbols>
@@ -36,10 +35,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MinVer">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 		<PackageReference Include="Nullable">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

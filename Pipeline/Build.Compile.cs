@@ -9,7 +9,9 @@ using Serilog;
 using System;
 using System.Linq;
 using Nuke.Common.Utilities;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Text;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 // ReSharper disable AllUnderscoreLocalParameterName
@@ -22,8 +24,8 @@ partial class Build
 	AssemblyVersion? CoreVersion;
 	AssemblyVersion? MainVersion;
 	string? SemVer;
-	Project[] MainProjects;
-	Project[] CoreProjects;
+	Project[] MainProjects = [];
+	Project[] CoreProjects = [];
 
 	Target CalculateNugetVersion => _ => _
 		.Unlisted()
@@ -113,15 +115,17 @@ partial class Build
 				ClearNugetPackages(mainProject.Directory / "bin");
 			}
 			
+			UpdateReadme(MainVersion.FileVersion, false);
 			DotNetBuild(s => s
 				.SetProjectFile(Solution)
 				.SetConfiguration(Configuration)
 				.EnableNoLogo()
 				.EnableNoRestore()
-				.SetVersion(MainVersion.FileVersion)
-				.SetAssemblyVersion(MainVersion.FileVersion)
-				.SetFileVersion(MainVersion.FileVersion));
+				.SetVersion(MainVersion!.FileVersion)
+				.SetAssemblyVersion(MainVersion!.FileVersion)
+				.SetFileVersion(MainVersion!.FileVersion));
 			
+			UpdateReadme(CoreVersion.FileVersion, true);
 			foreach (var coreProject in CoreProjects)
 			{
 				ClearNugetPackages(coreProject.Directory / "bin");
@@ -130,16 +134,17 @@ partial class Build
 					.SetConfiguration(Configuration)
 					.EnableNoLogo()
 					.EnableNoRestore()
-					.SetProcessAdditionalArguments($"/p:SolutionDir={RootDirectory}")
-					.SetVersion(CoreVersion.FileVersion)
-					.SetAssemblyVersion(CoreVersion.FileVersion)
-					.SetFileVersion(CoreVersion.FileVersion));
+					.SetProcessAdditionalArguments($"/p:SolutionDir={RootDirectory}/")
+					.SetVersion(CoreVersion!.FileVersion)
+					.SetAssemblyVersion(CoreVersion!.FileVersion)
+					.SetFileVersion(CoreVersion!.FileVersion));
 			}
 		});
 	
 	public record AssemblyVersion(string FileVersion, string InformationalVersion)
 	{
-		public static AssemblyVersion FromGitVersion(GitVersion gitVersion)
+		[return: NotNullIfNotNull(nameof(gitVersion))]
+		public static AssemblyVersion? FromGitVersion(GitVersion gitVersion)
 		{
 			if (gitVersion is null)
 			{
@@ -148,6 +153,61 @@ partial class Build
 
 			return new AssemblyVersion(gitVersion.AssemblySemVer, gitVersion.InformationalVersion);
 		}
+	}
+
+	private void UpdateReadme(string fileVersion, bool forCore)
+	{
+		string version;
+		if (GitHubActions?.Ref.StartsWith("refs/tags/", StringComparison.OrdinalIgnoreCase) == true)
+		{
+			version = GitHubActions.Ref.Substring("refs/tags/".Length);
+		}
+		else
+		{
+			version = string.Join('.', fileVersion.Split('.').Take(3));
+			if (version.IndexOf('-') != -1)
+			{
+				version = "v" + version.Substring(0, version.IndexOf('-'));
+			}
+		}
+		
+		Log.Information("Update readme using '{Version}' as version", version);
+
+		StringBuilder sb = new();
+		string[] lines = File.ReadAllLines(Solution.Directory / "README.md");
+		sb.AppendLine(lines[0]);
+		sb.AppendLine(
+			$"[![Changelog](https://img.shields.io/badge/Changelog-v{version}-blue)](https://github.com/Testably/Testably.Abstractions/releases/tag/v{version})");
+		foreach (string line in lines.Skip(1))
+		{
+			if (line.StartsWith(
+				    "[![Build](https://github.com/Testably/Testably.Abstractions/actions/workflows/build.yml") ||
+			    line.StartsWith(
+				    "[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure"))
+			{
+				continue;
+			}
+
+			if (line.StartsWith(
+				"[![Coverage](https://sonarcloud.io/api/project_badges/measure"))
+			{
+				sb.AppendLine(line
+					.Replace(")", $"&branch=release/v{version})"));
+				continue;
+			}
+
+			if (line.StartsWith("[![Mutation testing badge](https://img.shields.io/endpoint"))
+			{
+				sb.AppendLine(line
+					.Replace("%2Fmain)", $"%2Frelease%2Fv{version})")
+					.Replace("/main)", $"/release/v{version})"));
+				continue;
+			}
+
+			sb.AppendLine(line);
+		}
+
+		File.WriteAllText(ArtifactsDirectory / "README.md", sb.ToString());
 	}
 
 	private static void ClearNugetPackages(string binPath)

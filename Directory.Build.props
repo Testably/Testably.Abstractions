@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Authors>Testably</Authors>
-		<Copyright>Copyright (c) 2024 Testably</Copyright>
+		<Copyright>Copyright (c) 2024- $([System.DateTime]::Now.ToString('yyyy')) Testably</Copyright>
 		<RepositoryUrl>https://github.com/Testably/Testably.Abstractions.git</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 	</PropertyGroup>
