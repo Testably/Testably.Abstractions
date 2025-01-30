@@ -54,6 +54,6 @@
     <PackageVersion Include="Testably.Abstractions.FluentAssertions" Version="1.1.0"/>
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="Meziantou.Analyzer" Version="2.0.185"/>
+    <PackageVersion Include="Meziantou.Analyzer" Version="2.0.186"/>
   </ItemGroup>
 </Project>
