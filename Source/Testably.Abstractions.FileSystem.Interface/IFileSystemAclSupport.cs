@@ -39,7 +39,7 @@ public interface IFileSystemAclSupport
 		/// <summary>
 		///     The entire security descriptor.
 		/// </summary>
-		All = Group | Owner | Access | Audit
+		All = Group | Owner | Access | Audit,
 	}
 
 	/// <summary>
