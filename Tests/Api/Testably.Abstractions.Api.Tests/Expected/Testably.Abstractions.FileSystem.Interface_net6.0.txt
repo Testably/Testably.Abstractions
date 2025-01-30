@@ -264,6 +264,7 @@ namespace System.IO.Abstractions
     {
         System.IO.Abstractions.FileSystemStream New(Microsoft.Win32.SafeHandles.SafeFileHandle handle, System.IO.FileAccess access);
         System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileMode mode);
+        System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileStreamOptions options);
         System.IO.Abstractions.FileSystemStream New(Microsoft.Win32.SafeHandles.SafeFileHandle handle, System.IO.FileAccess access, int bufferSize);
         System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileMode mode, System.IO.FileAccess access);
         System.IO.Abstractions.FileSystemStream New(Microsoft.Win32.SafeHandles.SafeFileHandle handle, System.IO.FileAccess access, int bufferSize, bool isAsync);
@@ -318,6 +319,7 @@ namespace System.IO.Abstractions
         System.DateTime LastAccessTimeUtc { get; set; }
         System.DateTime LastWriteTime { get; set; }
         System.DateTime LastWriteTimeUtc { get; set; }
+        string? LinkTarget { get; }
         string Name { get; }
         void CreateAsSymbolicLink(string pathToTarget);
         void Delete();
