@@ -51,7 +51,7 @@ namespace System.IO.Abstractions
         /// <inheritdoc cref="FileSystemInfo.Name" />
         string Name { get; }
 
-#if FEATURE_UNIX_FILE_MODE
+#if FEATURE_FILESYSTEM_UNIXFILEMODE
         /// <inheritdoc cref="FileSystemInfo.UnixFileMode" />
         UnixFileMode UnixFileMode
         {
@@ -61,7 +61,7 @@ namespace System.IO.Abstractions
         }
 #endif
 
-#if FEATURE_CREATE_SYMBOLIC_LINK
+#if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="FileSystemInfo.CreateAsSymbolicLink(string)" />
         void CreateAsSymbolicLink(string pathToTarget);
 #endif
@@ -72,7 +72,7 @@ namespace System.IO.Abstractions
         /// <inheritdoc cref="FileSystemInfo.Refresh()" />
         void Refresh();
 
-#if FEATURE_CREATE_SYMBOLIC_LINK
+#if FEATURE_FILESYSTEM_LINK
         /// <inheritdoc cref="FileSystemInfo.ResolveLinkTarget(bool)" />
         IFileSystemInfo? ResolveLinkTarget(bool returnFinalTarget);
 #endif
