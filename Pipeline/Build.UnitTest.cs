@@ -29,9 +29,8 @@ partial class Build
 				try
 				{
 					DotNetTest(s => s
-							.SetConfiguration(Configuration)
+							.SetConfiguration(Configuration.Debug)
 							.SetProcessEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE", "en-US")
-							.EnableNoBuild()
 							.SetDataCollector("XPlat Code Coverage")
 							.SetResultsDirectory(TestResultsDirectory)
 							.CombineWith(
