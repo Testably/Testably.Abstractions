@@ -5,8 +5,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Testably.Abstractions.Interface" />
 		<ProjectReference Include="..\..\Source\Testably.Abstractions.Compression\Testably.Abstractions.Compression.csproj" />
-		<ProjectReference Include="..\..\Source\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
 	</ItemGroup>
 
 </Project>
