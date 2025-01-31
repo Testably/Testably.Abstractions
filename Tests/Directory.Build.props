@@ -16,6 +16,7 @@
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
 		<OutputType>Exe</OutputType>
+		<SignAssembly>False</SignAssembly>
 		<NoWarn>$(NoWarn);701;1702;CA1845;MA0003;MA0004;MA0018;MA0020;MA0042;MA0076;xUnit1044;xUnit1045;NU1603</NoWarn>
 	</PropertyGroup>
 
