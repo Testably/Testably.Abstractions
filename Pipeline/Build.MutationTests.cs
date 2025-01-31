@@ -224,7 +224,7 @@ partial class Build
 					[Solution.Tests.Testably_Abstractions_Compression_Tests]
 				},
 				{
-					Solution.Testably_Abstractions, [
+					Solution.Core.Testably_Abstractions, [
 						Solution.Tests.Testably_Abstractions_Testing_Tests,
 						Solution.Tests.Testably_Abstractions_Tests
 					]

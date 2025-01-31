@@ -40,9 +40,9 @@ partial class Build
 			
 			CoreProjects =
 			[
-				Solution.Testably_Abstractions,
-				Solution.Testably_Abstractions_Interface,
-				Solution.Testably_Abstractions_FileSystem_Interface,
+				Solution.Core.Testably_Abstractions,
+				Solution.Core.Testably_Abstractions_Interface,
+				Solution.Core.Testably_Abstractions_FileSystem_Interface,
 			];
 
 			string preRelease = "-CI";
@@ -120,23 +120,23 @@ partial class Build
 			ReportSummary(s => s
 				.WhenNotNull(SemVer, (summary, semVer) => summary
 					.AddPair("Version", semVer)));
-
+			
+			UpdateReadme(MainVersion!.FileVersion, false);
 			foreach (var mainProject in MainProjects)
 			{
 				ClearNugetPackages(mainProject.Directory / "bin");
+				DotNetBuild(s => s
+					.SetProjectFile(mainProject)
+					.SetConfiguration(Configuration)
+					.EnableNoLogo()
+					.EnableNoRestore()
+					.SetProcessAdditionalArguments($"/p:SolutionDir={RootDirectory}/")
+					.SetVersion(MainVersion.FileVersion + CoreVersion!.PreRelease)
+					.SetAssemblyVersion(MainVersion.FileVersion)
+					.SetFileVersion(MainVersion.FileVersion));
 			}
 			
-			UpdateReadme(MainVersion.FileVersion, false);
-			DotNetBuild(s => s
-				.SetProjectFile(Solution)
-				.SetConfiguration(Configuration)
-				.EnableNoLogo()
-				.EnableNoRestore()
-				.SetVersion(MainVersion!.FileVersion + CoreVersion.PreRelease)
-				.SetAssemblyVersion(MainVersion!.FileVersion)
-				.SetFileVersion(MainVersion!.FileVersion));
-			
-			UpdateReadme(CoreVersion.FileVersion, true);
+			UpdateReadme(CoreVersion!.FileVersion, true);
 			foreach (var coreProject in CoreProjects)
 			{
 				ClearNugetPackages(coreProject.Directory / "bin");
@@ -146,9 +146,9 @@ partial class Build
 					.EnableNoLogo()
 					.EnableNoRestore()
 					.SetProcessAdditionalArguments($"/p:SolutionDir={RootDirectory}/")
-					.SetVersion(CoreVersion!.FileVersion + CoreVersion.PreRelease)
-					.SetAssemblyVersion(CoreVersion!.FileVersion)
-					.SetFileVersion(CoreVersion!.FileVersion));
+					.SetVersion(CoreVersion.FileVersion + CoreVersion.PreRelease)
+					.SetAssemblyVersion(CoreVersion.FileVersion)
+					.SetFileVersion(CoreVersion.FileVersion));
 			}
 		});
 	
