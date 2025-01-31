@@ -40,9 +40,9 @@ partial class Build
 			
 			CoreProjects =
 			[
-				Solution.Testably_Abstractions,
-				Solution.Testably_Abstractions_Interface,
-				Solution.Testably_Abstractions_FileSystem_Interface,
+				Solution.Core.Testably_Abstractions,
+				Solution.Core.Testably_Abstractions_Interface,
+				Solution.Core.Testably_Abstractions_FileSystem_Interface,
 			];
 
 			string preRelease = "-CI";
