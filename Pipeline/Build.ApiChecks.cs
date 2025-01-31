@@ -16,7 +16,7 @@ partial class Build
 			Project project = Solution.Tests.Api.Testably_Abstractions_Api_Tests;
 
 			DotNetTest(s => s
-				.SetConfiguration(Configuration.Debug)
+				.SetConfiguration(Configuration)
 				.SetProcessEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE", "en-US")
 				.SetResultsDirectory(TestResultsDirectory)
 				.CombineWith(cc => cc
