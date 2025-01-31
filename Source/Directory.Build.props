@@ -19,7 +19,7 @@
 	<PropertyGroup>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
-		<NoWarn>$(NoWarn);1701;1702;MA0003;MA0004;MA0042;MA0076;MA0105;MA0106</NoWarn>
+		<NoWarn>$(NoWarn);1701;1702;MA0003;MA0004;MA0042;MA0076;MA0105;MA0106;NU5104</NoWarn>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
 

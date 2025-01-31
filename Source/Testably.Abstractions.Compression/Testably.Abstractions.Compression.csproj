@@ -21,7 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Testably.Abstractions.Compression.Tests" />
+		<InternalsVisibleTo Include="Testably.Abstractions.Compression.Tests" PublicKey="$(PublicKey)" />
 	</ItemGroup>
 
 </Project>

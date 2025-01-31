@@ -18,7 +18,7 @@
 			<_Parameter1>true</_Parameter1>
 			<_Parameter1_TypeName>System.Boolean</_Parameter1_TypeName>
 		</AssemblyAttribute>
-		<InternalsVisibleTo Include="Testably.Abstractions.Testing.Tests" />
+		<InternalsVisibleTo Include="Testably.Abstractions.Testing.Tests" PublicKey="$(PublicKey)" />
 	</ItemGroup>
 
 	<ItemGroup>
