@@ -6,49 +6,33 @@ namespace Testably.Abstractions
 {
     public static class DirectoryAclExtensions
     {
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform("windows")]
         public static void CreateDirectory(this System.IO.Abstractions.IDirectory directory, string path, System.Security.AccessControl.DirectorySecurity directorySecurity) { }
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform("windows")]
         public static System.Security.AccessControl.DirectorySecurity GetAccessControl(this System.IO.Abstractions.IDirectory directory, string path) { }
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform("windows")]
         public static System.Security.AccessControl.DirectorySecurity GetAccessControl(this System.IO.Abstractions.IDirectory directory, string path, System.Security.AccessControl.AccessControlSections includeSections) { }
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform("windows")]
         public static void SetAccessControl(this System.IO.Abstractions.IDirectory directory, string path, System.Security.AccessControl.DirectorySecurity directorySecurity) { }
     }
     public static class DirectoryInfoAclExtensions
     {
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform("windows")]
         public static void Create(this System.IO.Abstractions.IDirectoryInfo directoryInfo, System.Security.AccessControl.DirectorySecurity directorySecurity) { }
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform("windows")]
         public static System.Security.AccessControl.DirectorySecurity GetAccessControl(this System.IO.Abstractions.IDirectoryInfo directoryInfo) { }
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform("windows")]
         public static System.Security.AccessControl.DirectorySecurity GetAccessControl(this System.IO.Abstractions.IDirectoryInfo directoryInfo, System.Security.AccessControl.AccessControlSections includeSections) { }
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform("windows")]
         public static void SetAccessControl(this System.IO.Abstractions.IDirectoryInfo directoryInfo, System.Security.AccessControl.DirectorySecurity directorySecurity) { }
     }
     public static class FileAclExtensions
     {
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform("windows")]
         public static System.Security.AccessControl.FileSecurity GetAccessControl(this System.IO.Abstractions.IFile file, string path) { }
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform("windows")]
         public static System.Security.AccessControl.FileSecurity GetAccessControl(this System.IO.Abstractions.IFile file, string path, System.Security.AccessControl.AccessControlSections includeSections) { }
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform("windows")]
         public static void SetAccessControl(this System.IO.Abstractions.IFile file, string path, System.Security.AccessControl.FileSecurity fileSecurity) { }
     }
     public static class FileInfoAclExtensions
     {
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform("windows")]
         public static System.Security.AccessControl.FileSecurity GetAccessControl(this System.IO.Abstractions.IFileInfo fileInfo) { }
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform("windows")]
         public static System.Security.AccessControl.FileSecurity GetAccessControl(this System.IO.Abstractions.IFileInfo fileInfo, System.Security.AccessControl.AccessControlSections includeSections) { }
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform("windows")]
         public static void SetAccessControl(this System.IO.Abstractions.IFileInfo fileInfo, System.Security.AccessControl.FileSecurity fileSecurity) { }
     }
     public static class FileStreamAclExtensions
     {
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform("windows")]
         public static System.Security.AccessControl.FileSecurity GetAccessControl(this System.IO.Abstractions.FileSystemStream fileStream) { }
-        [Testably.Abstractions.Polyfills.SupportedOSPlatform("windows")]
         public static void SetAccessControl(this System.IO.Abstractions.FileSystemStream fileStream, System.Security.AccessControl.FileSecurity fileSecurity) { }
     }
 }
