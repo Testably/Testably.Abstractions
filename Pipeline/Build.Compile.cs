@@ -121,7 +121,7 @@ partial class Build
 				.WhenNotNull(SemVer, (summary, semVer) => summary
 					.AddPair("Version", semVer)));
 			
-			UpdateReadme(MainVersion.FileVersion, false);
+			UpdateReadme(MainVersion!.FileVersion, false);
 			foreach (var mainProject in MainProjects)
 			{
 				ClearNugetPackages(mainProject.Directory / "bin");
@@ -131,12 +131,12 @@ partial class Build
 					.EnableNoLogo()
 					.EnableNoRestore()
 					.SetProcessAdditionalArguments($"/p:SolutionDir={RootDirectory}/")
-					.SetVersion(MainVersion!.FileVersion + CoreVersion.PreRelease)
-					.SetAssemblyVersion(MainVersion!.FileVersion)
-					.SetFileVersion(MainVersion!.FileVersion));
+					.SetVersion(MainVersion.FileVersion + CoreVersion!.PreRelease)
+					.SetAssemblyVersion(MainVersion.FileVersion)
+					.SetFileVersion(MainVersion.FileVersion));
 			}
 			
-			UpdateReadme(CoreVersion.FileVersion, true);
+			UpdateReadme(CoreVersion!.FileVersion, true);
 			foreach (var coreProject in CoreProjects)
 			{
 				ClearNugetPackages(coreProject.Directory / "bin");
@@ -146,9 +146,9 @@ partial class Build
 					.EnableNoLogo()
 					.EnableNoRestore()
 					.SetProcessAdditionalArguments($"/p:SolutionDir={RootDirectory}/")
-					.SetVersion(CoreVersion!.FileVersion + CoreVersion.PreRelease)
-					.SetAssemblyVersion(CoreVersion!.FileVersion)
-					.SetFileVersion(CoreVersion!.FileVersion));
+					.SetVersion(CoreVersion.FileVersion + CoreVersion.PreRelease)
+					.SetAssemblyVersion(CoreVersion.FileVersion)
+					.SetFileVersion(CoreVersion.FileVersion));
 			}
 		});
 	
