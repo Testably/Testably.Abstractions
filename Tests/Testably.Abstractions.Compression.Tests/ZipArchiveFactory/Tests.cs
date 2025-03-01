@@ -22,7 +22,7 @@ public partial class Tests
 		IZipArchive archive = FileSystem.ZipArchive().New(stream);
 
 		await That(archive.Mode).IsEqualTo(ZipArchiveMode.Read);
-		await That(archive.Entries).Has().Exactly(1).Items();
+		await That(archive.Entries).HasCount().EqualTo(1);
 	}
 
 	[Fact]
@@ -62,7 +62,7 @@ public partial class Tests
 		IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Update);
 
 		await That(archive.Mode).IsEqualTo(ZipArchiveMode.Update);
-		await That(archive.Entries).Has().Exactly(1).Items();
+		await That(archive.Entries).HasCount().EqualTo(1);
 	}
 
 	[Theory]
