@@ -13,14 +13,21 @@ partial class Build
 		.DependsOn(Compile)
 		.Executes(() =>
 		{
-			Project project = Solution.Tests.Api.Testably_Abstractions_Api_Tests;
+			Project[] projects =
+			[
+				Solution.Tests.Api.Testably_Abstractions_Api_Tests,
+				Solution.Tests.Api.Testably_Abstractions_Core_Api_Tests,
+			];
 
 			DotNetTest(s => s
-				.SetConfiguration(Configuration)
-				.SetProcessEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE", "en-US")
-				.SetResultsDirectory(TestResultsDirectory)
-				.CombineWith(cc => cc
-					.SetProjectFile(project)
-					.AddLoggers($"trx;LogFileName={project.Name}.trx")), completeOnFailure: true);
+					.SetConfiguration(Configuration)
+					.SetProcessEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE", "en-US")
+					.SetResultsDirectory(TestResultsDirectory)
+					.CombineWith(
+						projects,
+						(settings, project) => settings
+							.SetProjectFile(project)
+							.AddLoggers($"trx;LogFileName={project.Name}.trx")),
+				completeOnFailure: true);
 		});
 }
