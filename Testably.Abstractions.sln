@@ -102,6 +102,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testably.Abstractions.FileS
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{F049D1AF-3FB0-43F0-B7EE-225C37D5D142}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testably.Abstractions.Core.Api.Tests", "Tests\Api\Testably.Abstractions.Core.Api.Tests\Testably.Abstractions.Core.Api.Tests.csproj", "{CF5BBD40-DC43-4B0C-8521-ACD3B8ABFF20}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -170,6 +172,10 @@ Global
 		{B9DFD3C7-44B7-4A38-A2B7-A96B5BC3651C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9DFD3C7-44B7-4A38-A2B7-A96B5BC3651C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9DFD3C7-44B7-4A38-A2B7-A96B5BC3651C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF5BBD40-DC43-4B0C-8521-ACD3B8ABFF20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF5BBD40-DC43-4B0C-8521-ACD3B8ABFF20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF5BBD40-DC43-4B0C-8521-ACD3B8ABFF20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF5BBD40-DC43-4B0C-8521-ACD3B8ABFF20}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -197,6 +203,7 @@ Global
 		{735108ED-5257-4DEC-8C6A-B09397CBDB29} = {F049D1AF-3FB0-43F0-B7EE-225C37D5D142}
 		{B9DFD3C7-44B7-4A38-A2B7-A96B5BC3651C} = {F049D1AF-3FB0-43F0-B7EE-225C37D5D142}
 		{E447F0BC-7630-41E2-9EA3-DC065827694C} = {F049D1AF-3FB0-43F0-B7EE-225C37D5D142}
+		{CF5BBD40-DC43-4B0C-8521-ACD3B8ABFF20} = {8A44FA00-968E-4CEC-90E6-94A878B9DEB2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EC4D8481-B9FD-41B5-832A-369210993DF4}

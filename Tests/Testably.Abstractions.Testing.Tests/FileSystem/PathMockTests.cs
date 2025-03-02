@@ -13,18 +13,18 @@ public sealed class PathMockTests
 	public void GetTempFileName_WithCollisions_ShouldThrowIOException(
 		SimulationMode simulationMode, int fixedRandomValue)
 	{
-		#pragma warning disable CS0618
 		MockFileSystem fileSystem = new(o => o
 			.SimulatingOperatingSystem(simulationMode)
 			.UseRandomProvider(RandomProvider.Generate(
 				intGenerator: new RandomProvider.Generator<int>(() => fixedRandomValue))));
-		#pragma warning restore CS0618
+		#pragma warning disable CS0618
 		string result = fileSystem.Path.GetTempFileName();
 
 		Exception? exception = Record.Exception(() =>
 		{
 			_ = fileSystem.Path.GetTempFileName();
 		});
+		#pragma warning restore CS0618
 
 		exception.Should().BeOfType<IOException>();
 		fileSystem.File.Exists(result).Should().BeTrue();
