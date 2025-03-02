@@ -21,9 +21,8 @@ public partial class ExtractToDirectoryTests
 
 		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "bar");
 
-		await That(FileSystem).HasFile("bar/test.txt");
-		await That(FileSystem.File.ReadAllBytes("bar/test.txt"))
-			.IsEqualTo(FileSystem.File.ReadAllBytes("foo/test.txt"));
+		await That(FileSystem).HasFile("bar/test.txt")
+			.WithContent().SameAs("foo/test.txt");
 	}
 
 	[Fact]
@@ -120,9 +119,8 @@ public partial class ExtractToDirectoryTests
 
 		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "bar", encoding);
 
-		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"));
-		await That(FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("bar", "test.txt")))
-			.IsEqualTo(FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("foo", "test.txt")));
+		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
+			.WithContent().SameAs(FileSystem.Path.Combine("foo", "test.txt"));
 	}
 
 	[Theory]
@@ -155,7 +153,8 @@ public partial class ExtractToDirectoryTests
 
 #if FEATURE_COMPRESSION_STREAM
 	[Fact]
-	public async Task ExtractToDirectory_WithStream_MissingDestinationDirectory_ShouldCreateDirectory()
+	public async Task
+		ExtractToDirectory_WithStream_MissingDestinationDirectory_ShouldCreateDirectory()
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo").Initialized(s => s
@@ -166,9 +165,8 @@ public partial class ExtractToDirectoryTests
 
 		FileSystem.ZipFile().ExtractToDirectory(stream, "bar");
 
-		await That(FileSystem).HasFile("bar/test.txt");
-		await That(FileSystem.File.ReadAllBytes("bar/test.txt"))
-			.IsEqualTo(FileSystem.File.ReadAllBytes("foo/test.txt"));
+		await That(FileSystem).HasFile("bar/test.txt")
+			.WithContent().SameAs("foo/test.txt");
 	}
 #endif
 
@@ -276,17 +274,17 @@ public partial class ExtractToDirectoryTests
 
 		FileSystem.ZipFile().ExtractToDirectory(stream, "bar", encoding);
 
-		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"));
-		await That(FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("bar", "test.txt")))
-			.IsEqualTo(FileSystem.File.ReadAllBytes(FileSystem.Path.Combine("foo", "test.txt")));
+		await That(FileSystem).HasFile(FileSystem.Path.Combine("bar", "test.txt"))
+			.WithContent().SameAs(FileSystem.Path.Combine("foo", "test.txt"));
 	}
 #endif
 
 #if FEATURE_COMPRESSION_STREAM
 	[Theory]
 	[AutoData]
-	public async Task ExtractToDirectory_WithStream_WithoutOverwriteAndExistingFile_ShouldOverwriteFile(
-		string contents)
+	public async Task
+		ExtractToDirectory_WithStream_WithoutOverwriteAndExistingFile_ShouldOverwriteFile(
+			string contents)
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("bar").Initialized(s => s
