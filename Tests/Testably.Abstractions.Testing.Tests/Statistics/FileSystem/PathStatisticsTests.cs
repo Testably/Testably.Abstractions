@@ -361,7 +361,9 @@ public class PathStatisticsTests
 	{
 		MockFileSystem sut = new();
 
+		#pragma warning disable CS0618
 		sut.Path.GetTempFileName();
+		#pragma warning restore CS0618
 
 		sut.Statistics.TotalCount.Should().Be(1);
 		sut.Statistics.Path.ShouldOnlyContainMethodCall(nameof(IPath.GetTempFileName));
