@@ -28,7 +28,7 @@
 		<PackageVersion Include="SharpCompress" Version="0.39.0"/>
 	</ItemGroup>
 	<ItemGroup>
-		<PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0"/>
+		<PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0"/>
 		<PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0"/>
 		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2"/>
 	</ItemGroup>
