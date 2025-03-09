@@ -26,6 +26,24 @@ public partial class ExistsTests
 		result.Should().BeFalse();
 	}
 
+	[Fact]
+	public void Exists_ForwardSlash_ShouldReturnTrue()
+	{
+		bool result = FileSystem.Directory.Exists("/");
+
+		result.Should().BeTrue();
+	}
+
+	[Fact]
+	public void Exists_ForwardSlashWithDirectory_ShouldReturnTrue()
+	{
+		FileSystem.Directory.CreateDirectory("/temp");
+		
+		bool result = FileSystem.Directory.Exists("/temp");
+
+		result.Should().BeTrue();
+	}
+
 	[Theory]
 	[InlineData(@"\\s")]
 	[InlineData("<")]

@@ -32,7 +32,11 @@ internal sealed partial class Execute
 			string candidate;
 			if (!string.IsNullOrEmpty(pathRoot) && !string.IsNullOrEmpty(directoryRoot))
 			{
-				if (char.ToUpperInvariant(pathRoot[0]) != char.ToUpperInvariant(directoryRoot[0]))
+				if (pathRoot[0] == DirectorySeparatorChar && pathRoot.Length == 1)
+				{
+					candidate = directoryRoot + path.Substring(1);
+				}
+				else if (char.ToUpperInvariant(pathRoot[0]) != char.ToUpperInvariant(directoryRoot[0]))
 				{
 					candidate = path;
 				}

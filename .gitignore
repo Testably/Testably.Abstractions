@@ -1,6 +1,6 @@
 # Ignore the test.settings.json as it should reflect the individual developer experience.
 # > https://github.com/Testably/Testably.Abstractions/blob/main/CONTRIBUTING.md#tests
-/test.settings.json
+/Tests/test.settings.json
 
 # Set up Visual Studio to use WSL to execute unit tests in Ubuntu:
 # https://learn.microsoft.com/en-us/visualstudio/test/remote-testing
