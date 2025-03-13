@@ -39,6 +39,8 @@ public partial class ExistsTests
 	[Fact]
 	public void Exists_ForwardSlash_ShouldReturnTrue()
 	{
+		FileSystem.Initialize();
+
 		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("/");
 
 		sut.Exists.Should().BeTrue();
