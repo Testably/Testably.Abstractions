@@ -270,8 +270,8 @@ namespace System.IO.Abstractions
         System.IO.Abstractions.FileSystemStream New(Microsoft.Win32.SafeHandles.SafeFileHandle handle, System.IO.FileAccess access, int bufferSize, bool isAsync);
         System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share);
         System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, int bufferSize);
-        System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, int bufferSize, bool useAsync);
         System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, int bufferSize, System.IO.FileOptions options);
+        System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, int bufferSize, bool useAsync);
         System.IO.Abstractions.FileSystemStream Wrap(System.IO.FileStream fileStream);
     }
     public interface IFileSystem

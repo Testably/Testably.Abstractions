@@ -156,10 +156,10 @@ namespace System.IO.Abstractions
     }
     public interface IFile : System.IO.Abstractions.IFileSystemEntity
     {
-        void AppendAllBytes(string path, byte[] bytes);
         void AppendAllBytes(string path, System.ReadOnlySpan<byte> bytes);
-        System.Threading.Tasks.Task AppendAllBytesAsync(string path, byte[] bytes, System.Threading.CancellationToken cancellationToken = default);
+        void AppendAllBytes(string path, byte[] bytes);
         System.Threading.Tasks.Task AppendAllBytesAsync(string path, System.ReadOnlyMemory<byte> bytes, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task AppendAllBytesAsync(string path, byte[] bytes, System.Threading.CancellationToken cancellationToken = default);
         void AppendAllLines(string path, System.Collections.Generic.IEnumerable<string> contents);
         void AppendAllLines(string path, System.Collections.Generic.IEnumerable<string> contents, System.Text.Encoding encoding);
         System.Threading.Tasks.Task AppendAllLinesAsync(string path, System.Collections.Generic.IEnumerable<string> contents, System.Threading.CancellationToken cancellationToken = default);
@@ -248,10 +248,10 @@ namespace System.IO.Abstractions
         void SetUnixFileMode(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle, System.IO.UnixFileMode mode);
         [System.Runtime.Versioning.UnsupportedOSPlatform("windows")]
         void SetUnixFileMode(string path, System.IO.UnixFileMode mode);
-        void WriteAllBytes(string path, byte[] bytes);
         void WriteAllBytes(string path, System.ReadOnlySpan<byte> bytes);
-        System.Threading.Tasks.Task WriteAllBytesAsync(string path, byte[] bytes, System.Threading.CancellationToken cancellationToken = default);
+        void WriteAllBytes(string path, byte[] bytes);
         System.Threading.Tasks.Task WriteAllBytesAsync(string path, System.ReadOnlyMemory<byte> bytes, System.Threading.CancellationToken cancellationToken = default);
+        System.Threading.Tasks.Task WriteAllBytesAsync(string path, byte[] bytes, System.Threading.CancellationToken cancellationToken = default);
         void WriteAllLines(string path, System.Collections.Generic.IEnumerable<string> contents);
         void WriteAllLines(string path, string[] contents);
         void WriteAllLines(string path, System.Collections.Generic.IEnumerable<string> contents, System.Text.Encoding encoding);
@@ -310,8 +310,8 @@ namespace System.IO.Abstractions
         System.IO.Abstractions.FileSystemStream New(Microsoft.Win32.SafeHandles.SafeFileHandle handle, System.IO.FileAccess access, int bufferSize, bool isAsync);
         System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share);
         System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, int bufferSize);
-        System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, int bufferSize, bool useAsync);
         System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, int bufferSize, System.IO.FileOptions options);
+        System.IO.Abstractions.FileSystemStream New(string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, int bufferSize, bool useAsync);
         System.IO.Abstractions.FileSystemStream Wrap(System.IO.FileStream fileStream);
     }
     public interface IFileSystem
@@ -388,8 +388,8 @@ namespace System.IO.Abstractions
         void BeginInit();
         void EndInit();
         System.IO.Abstractions.IWaitForChangedResult WaitForChanged(System.IO.WatcherChangeTypes changeType);
-        System.IO.Abstractions.IWaitForChangedResult WaitForChanged(System.IO.WatcherChangeTypes changeType, int timeout);
         System.IO.Abstractions.IWaitForChangedResult WaitForChanged(System.IO.WatcherChangeTypes changeType, System.TimeSpan timeout);
+        System.IO.Abstractions.IWaitForChangedResult WaitForChanged(System.IO.WatcherChangeTypes changeType, int timeout);
     }
     public interface IFileSystemWatcherFactory : System.IO.Abstractions.IFileSystemEntity
     {
