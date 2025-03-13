@@ -374,6 +374,21 @@ public partial class CreateFromDirectoryTests
 	}
 #endif
 
+	[Fact]
+	public async Task ShouldNotLock()
+	{
+		string directory = "ToBeZipped";
+		string archive = "zippedDirectory.zip";
+		FileSystem.Directory.CreateDirectory(directory);
+		FileSystem.File.WriteAllText(FileSystem.Path.Combine(directory, "file.txt"),
+			"Some content");
+		void Act() => FileSystem.Directory.Delete(directory, true);
+
+		FileSystem.ZipFile().CreateFromDirectory(directory, archive);
+
+		await That(Act).DoesNotThrow();
+	}
+
 	#region Helpers
 
 	#pragma warning disable MA0018
