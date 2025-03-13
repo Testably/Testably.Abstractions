@@ -37,9 +37,9 @@ public partial class ExistsTests
 	[Fact]
 	public void Exists_ForwardSlashWithDirectory_ShouldReturnTrue()
 	{
-		FileSystem.Directory.CreateDirectory("/temp");
+		FileSystem.Directory.CreateDirectory("/tmp");
 		
-		bool result = FileSystem.Directory.Exists("/temp");
+		bool result = FileSystem.Directory.Exists("/tmp");
 
 		result.Should().BeTrue();
 	}
