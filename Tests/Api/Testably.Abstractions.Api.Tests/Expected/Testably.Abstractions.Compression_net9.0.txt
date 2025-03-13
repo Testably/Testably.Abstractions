@@ -55,10 +55,10 @@ namespace Testably.Abstractions
         void CreateFromDirectory(string sourceDirectoryName, string destinationArchiveFileName, System.IO.Compression.CompressionLevel compressionLevel, bool includeBaseDirectory, System.Text.Encoding entryNameEncoding);
         void ExtractToDirectory(System.IO.Stream source, string destinationDirectoryName);
         void ExtractToDirectory(string sourceArchiveFileName, string destinationDirectoryName);
-        void ExtractToDirectory(System.IO.Stream source, string destinationDirectoryName, bool overwriteFiles);
         void ExtractToDirectory(System.IO.Stream source, string destinationDirectoryName, System.Text.Encoding entryNameEncoding);
-        void ExtractToDirectory(string sourceArchiveFileName, string destinationDirectoryName, bool overwriteFiles);
+        void ExtractToDirectory(System.IO.Stream source, string destinationDirectoryName, bool overwriteFiles);
         void ExtractToDirectory(string sourceArchiveFileName, string destinationDirectoryName, System.Text.Encoding? entryNameEncoding);
+        void ExtractToDirectory(string sourceArchiveFileName, string destinationDirectoryName, bool overwriteFiles);
         void ExtractToDirectory(System.IO.Stream source, string destinationDirectoryName, System.Text.Encoding entryNameEncoding, bool overwriteFiles);
         void ExtractToDirectory(string sourceArchiveFileName, string destinationDirectoryName, System.Text.Encoding? entryNameEncoding, bool overwriteFiles);
         Testably.Abstractions.IZipArchive Open(string archiveFileName, System.IO.Compression.ZipArchiveMode mode);
