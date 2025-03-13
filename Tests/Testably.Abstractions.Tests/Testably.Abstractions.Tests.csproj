@@ -1,9 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup Condition="'$(NCrunch)' == '1'">
-		<TargetFrameworks>net6.0</TargetFrameworks>
-	</PropertyGroup>
-
 	<ItemGroup>
 		<PackageReference Include="Testably.Abstractions.Interface" />
 		<ProjectReference Include="..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj" />
