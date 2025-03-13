@@ -82,7 +82,7 @@ public partial class CreateFromDirectoryTests
 		using IZipArchive archive =
 			FileSystem.ZipFile().Open("destination.zip", ZipArchiveMode.Read);
 
-		var singleEntry = await That(archive.Entries).HasSingle();
+		IZipArchiveEntry singleEntry = await That(archive.Entries).HasSingle();
 		if (encodedCorrectly)
 		{
 			await That(singleEntry.Name).IsEqualTo(entryName);
@@ -150,9 +150,8 @@ public partial class CreateFromDirectoryTests
 
 		FileSystem.ZipFile().ExtractToDirectory("destination.zip", "destination");
 
-		await That(FileSystem).HasFile("destination/bar/test.txt");
-		await That(FileSystem.File.ReadAllBytes("destination/bar/test.txt"))
-			.IsEqualTo(FileSystem.File.ReadAllBytes("foo/bar/test.txt"));
+		await That(FileSystem).HasFile("destination/bar/test.txt")
+			.WithContent().SameAs("foo/bar/test.txt");
 	}
 
 #if FEATURE_COMPRESSION_STREAM
@@ -204,8 +203,9 @@ public partial class CreateFromDirectoryTests
 #if FEATURE_COMPRESSION_STREAM
 	[Theory]
 	[AutoData]
-	public async Task CreateFromDirectory_WithStream_EmptySource_DoNotIncludeBaseDirectory_ShouldBeEmpty(
-		CompressionLevel compressionLevel)
+	public async Task
+		CreateFromDirectory_WithStream_EmptySource_DoNotIncludeBaseDirectory_ShouldBeEmpty(
+			CompressionLevel compressionLevel)
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo");
@@ -258,7 +258,7 @@ public partial class CreateFromDirectoryTests
 
 		using IZipArchive archive = FileSystem.ZipArchive().New(stream, ZipArchiveMode.Read);
 
-		var singleEntry = await That(archive.Entries).HasSingle();
+		IZipArchiveEntry singleEntry = await That(archive.Entries).HasSingle();
 		if (encodedCorrectly)
 		{
 			await That(singleEntry.Name).IsEqualTo(entryName);
@@ -273,8 +273,9 @@ public partial class CreateFromDirectoryTests
 #if FEATURE_COMPRESSION_STREAM
 	[Theory]
 	[AutoData]
-	public async Task CreateFromDirectory_WithStream_IncludeBaseDirectory_ShouldPrependDirectoryName(
-		CompressionLevel compressionLevel)
+	public async Task
+		CreateFromDirectory_WithStream_IncludeBaseDirectory_ShouldPrependDirectoryName(
+			CompressionLevel compressionLevel)
 	{
 		FileSystem.Initialize()
 			.WithSubdirectory("foo").Initialized(s => s
@@ -368,9 +369,8 @@ public partial class CreateFromDirectoryTests
 
 		FileSystem.ZipFile().ExtractToDirectory(stream, "destination");
 
-		await That(FileSystem).HasFile("destination/bar/test.txt");
-		await That(FileSystem.File.ReadAllBytes("destination/bar/test.txt"))
-			.IsEqualTo(FileSystem.File.ReadAllBytes("foo/bar/test.txt"));
+		await That(FileSystem).HasFile("destination/bar/test.txt")
+			.WithContent().SameAs("foo/bar/test.txt");
 	}
 #endif
 

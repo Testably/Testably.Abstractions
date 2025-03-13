@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 
-namespace Testably.Abstractions.Api.Tests;
+namespace Testably.Abstractions.Core.Api.Tests;
 
 public sealed class ApiAcceptance
 {
@@ -14,10 +14,8 @@ public sealed class ApiAcceptance
 	{
 		string[] assemblyNames =
 		[
-			"Testably.Abstractions.AccessControl",
-			"Testably.Abstractions.Compression",
-			"Testably.Abstractions.Testing",
-			"Testably.Abstractions",
+			"Testably.Abstractions.FileSystem.Interface",
+			"Testably.Abstractions.Interface",
 		];
 
 		foreach (string assemblyName in assemblyNames)

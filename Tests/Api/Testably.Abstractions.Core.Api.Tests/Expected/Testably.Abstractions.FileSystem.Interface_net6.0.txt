@@ -1,6 +1,6 @@
 [assembly: System.CLSCompliant(true)]
 [assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/Testably/Testably.Abstractions.git")]
-[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v9.0", FrameworkDisplayName=".NET 9.0")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v6.0", FrameworkDisplayName=".NET 6.0")]
 namespace System.IO.Abstractions
 {
     public abstract class FileSystemStream : System.IO.Stream
@@ -45,9 +45,7 @@ namespace System.IO.Abstractions
     public interface IDirectory : System.IO.Abstractions.IFileSystemEntity
     {
         System.IO.Abstractions.IDirectoryInfo CreateDirectory(string path);
-        System.IO.Abstractions.IDirectoryInfo CreateDirectory(string path, System.IO.UnixFileMode unixCreateMode);
         System.IO.Abstractions.IFileSystemInfo CreateSymbolicLink(string path, string pathToTarget);
-        System.IO.Abstractions.IDirectoryInfo CreateTempSubdirectory(string? prefix = null);
         void Delete(string path);
         void Delete(string path, bool recursive);
         System.Collections.Generic.IEnumerable<string> EnumerateDirectories(string path);
@@ -156,21 +154,13 @@ namespace System.IO.Abstractions
     }
     public interface IFile : System.IO.Abstractions.IFileSystemEntity
     {
-        void AppendAllBytes(string path, byte[] bytes);
-        void AppendAllBytes(string path, System.ReadOnlySpan<byte> bytes);
-        System.Threading.Tasks.Task AppendAllBytesAsync(string path, byte[] bytes, System.Threading.CancellationToken cancellationToken = default);
-        System.Threading.Tasks.Task AppendAllBytesAsync(string path, System.ReadOnlyMemory<byte> bytes, System.Threading.CancellationToken cancellationToken = default);
         void AppendAllLines(string path, System.Collections.Generic.IEnumerable<string> contents);
         void AppendAllLines(string path, System.Collections.Generic.IEnumerable<string> contents, System.Text.Encoding encoding);
         System.Threading.Tasks.Task AppendAllLinesAsync(string path, System.Collections.Generic.IEnumerable<string> contents, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task AppendAllLinesAsync(string path, System.Collections.Generic.IEnumerable<string> contents, System.Text.Encoding encoding, System.Threading.CancellationToken cancellationToken = default);
-        void AppendAllText(string path, System.ReadOnlySpan<char> contents);
         void AppendAllText(string path, string? contents);
-        void AppendAllText(string path, System.ReadOnlySpan<char> contents, System.Text.Encoding encoding);
         void AppendAllText(string path, string? contents, System.Text.Encoding encoding);
-        System.Threading.Tasks.Task AppendAllTextAsync(string path, System.ReadOnlyMemory<char> contents, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task AppendAllTextAsync(string path, string? contents, System.Threading.CancellationToken cancellationToken = default);
-        System.Threading.Tasks.Task AppendAllTextAsync(string path, System.ReadOnlyMemory<char> contents, System.Text.Encoding encoding, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task AppendAllTextAsync(string path, string? contents, System.Text.Encoding encoding, System.Threading.CancellationToken cancellationToken = default);
         System.IO.StreamWriter AppendText(string path);
         void Copy(string sourceFileName, string destFileName);
@@ -186,24 +176,13 @@ namespace System.IO.Abstractions
         [System.Runtime.Versioning.SupportedOSPlatform("windows")]
         void Encrypt(string path);
         bool Exists([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path);
-        System.IO.FileAttributes GetAttributes(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
         System.IO.FileAttributes GetAttributes(string path);
-        System.DateTime GetCreationTime(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
         System.DateTime GetCreationTime(string path);
-        System.DateTime GetCreationTimeUtc(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
         System.DateTime GetCreationTimeUtc(string path);
-        System.DateTime GetLastAccessTime(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
         System.DateTime GetLastAccessTime(string path);
-        System.DateTime GetLastAccessTimeUtc(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
         System.DateTime GetLastAccessTimeUtc(string path);
-        System.DateTime GetLastWriteTime(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
         System.DateTime GetLastWriteTime(string path);
-        System.DateTime GetLastWriteTimeUtc(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
         System.DateTime GetLastWriteTimeUtc(string path);
-        [System.Runtime.Versioning.UnsupportedOSPlatform("windows")]
-        System.IO.UnixFileMode GetUnixFileMode(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle);
-        [System.Runtime.Versioning.UnsupportedOSPlatform("windows")]
-        System.IO.UnixFileMode GetUnixFileMode(string path);
         void Move(string sourceFileName, string destFileName);
         void Move(string sourceFileName, string destFileName, bool overwrite);
         System.IO.Abstractions.FileSystemStream Open(string path, System.IO.FileMode mode);
@@ -225,46 +204,27 @@ namespace System.IO.Abstractions
         System.Threading.Tasks.Task<string> ReadAllTextAsync(string path, System.Text.Encoding encoding, System.Threading.CancellationToken cancellationToken = default);
         System.Collections.Generic.IEnumerable<string> ReadLines(string path);
         System.Collections.Generic.IEnumerable<string> ReadLines(string path, System.Text.Encoding encoding);
-        System.Collections.Generic.IAsyncEnumerable<string> ReadLinesAsync(string path, System.Threading.CancellationToken cancellationToken = default);
-        System.Collections.Generic.IAsyncEnumerable<string> ReadLinesAsync(string path, System.Text.Encoding encoding, System.Threading.CancellationToken cancellationToken = default);
         void Replace(string sourceFileName, string destinationFileName, string? destinationBackupFileName);
         void Replace(string sourceFileName, string destinationFileName, string? destinationBackupFileName, bool ignoreMetadataErrors);
         System.IO.Abstractions.IFileSystemInfo? ResolveLinkTarget(string linkPath, bool returnFinalTarget);
-        void SetAttributes(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle, System.IO.FileAttributes fileAttributes);
         void SetAttributes(string path, System.IO.FileAttributes fileAttributes);
-        void SetCreationTime(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle, System.DateTime creationTime);
         void SetCreationTime(string path, System.DateTime creationTime);
-        void SetCreationTimeUtc(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle, System.DateTime creationTimeUtc);
         void SetCreationTimeUtc(string path, System.DateTime creationTimeUtc);
-        void SetLastAccessTime(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle, System.DateTime lastAccessTime);
         void SetLastAccessTime(string path, System.DateTime lastAccessTime);
-        void SetLastAccessTimeUtc(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle, System.DateTime lastAccessTimeUtc);
         void SetLastAccessTimeUtc(string path, System.DateTime lastAccessTimeUtc);
-        void SetLastWriteTime(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle, System.DateTime lastWriteTime);
         void SetLastWriteTime(string path, System.DateTime lastWriteTime);
-        void SetLastWriteTimeUtc(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle, System.DateTime lastWriteTimeUtc);
         void SetLastWriteTimeUtc(string path, System.DateTime lastWriteTimeUtc);
-        [System.Runtime.Versioning.UnsupportedOSPlatform("windows")]
-        void SetUnixFileMode(Microsoft.Win32.SafeHandles.SafeFileHandle fileHandle, System.IO.UnixFileMode mode);
-        [System.Runtime.Versioning.UnsupportedOSPlatform("windows")]
-        void SetUnixFileMode(string path, System.IO.UnixFileMode mode);
         void WriteAllBytes(string path, byte[] bytes);
-        void WriteAllBytes(string path, System.ReadOnlySpan<byte> bytes);
         System.Threading.Tasks.Task WriteAllBytesAsync(string path, byte[] bytes, System.Threading.CancellationToken cancellationToken = default);
-        System.Threading.Tasks.Task WriteAllBytesAsync(string path, System.ReadOnlyMemory<byte> bytes, System.Threading.CancellationToken cancellationToken = default);
         void WriteAllLines(string path, System.Collections.Generic.IEnumerable<string> contents);
         void WriteAllLines(string path, string[] contents);
         void WriteAllLines(string path, System.Collections.Generic.IEnumerable<string> contents, System.Text.Encoding encoding);
         void WriteAllLines(string path, string[] contents, System.Text.Encoding encoding);
         System.Threading.Tasks.Task WriteAllLinesAsync(string path, System.Collections.Generic.IEnumerable<string> contents, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task WriteAllLinesAsync(string path, System.Collections.Generic.IEnumerable<string> contents, System.Text.Encoding encoding, System.Threading.CancellationToken cancellationToken = default);
-        void WriteAllText(string path, System.ReadOnlySpan<char> contents);
         void WriteAllText(string path, string? contents);
-        void WriteAllText(string path, System.ReadOnlySpan<char> contents, System.Text.Encoding encoding);
         void WriteAllText(string path, string? contents, System.Text.Encoding encoding);
-        System.Threading.Tasks.Task WriteAllTextAsync(string path, System.ReadOnlyMemory<char> contents, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task WriteAllTextAsync(string path, string? contents, System.Threading.CancellationToken cancellationToken = default);
-        System.Threading.Tasks.Task WriteAllTextAsync(string path, System.ReadOnlyMemory<char> contents, System.Text.Encoding encoding, System.Threading.CancellationToken cancellationToken = default);
         System.Threading.Tasks.Task WriteAllTextAsync(string path, string? contents, System.Text.Encoding encoding, System.Threading.CancellationToken cancellationToken = default);
     }
     public interface IFileInfo : System.IO.Abstractions.IFileSystemInfo
@@ -361,8 +321,6 @@ namespace System.IO.Abstractions
         System.DateTime LastWriteTimeUtc { get; set; }
         string? LinkTarget { get; }
         string Name { get; }
-        [set: System.Runtime.Versioning.UnsupportedOSPlatform("windows")]
-        System.IO.UnixFileMode UnixFileMode { get; set; }
         void CreateAsSymbolicLink(string pathToTarget);
         void Delete();
         void Refresh();
@@ -389,7 +347,6 @@ namespace System.IO.Abstractions
         void EndInit();
         System.IO.Abstractions.IWaitForChangedResult WaitForChanged(System.IO.WatcherChangeTypes changeType);
         System.IO.Abstractions.IWaitForChangedResult WaitForChanged(System.IO.WatcherChangeTypes changeType, int timeout);
-        System.IO.Abstractions.IWaitForChangedResult WaitForChanged(System.IO.WatcherChangeTypes changeType, System.TimeSpan timeout);
     }
     public interface IFileSystemWatcherFactory : System.IO.Abstractions.IFileSystemEntity
     {
@@ -441,14 +398,12 @@ namespace System.IO.Abstractions
         char VolumeSeparatorChar { get; }
         [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("path")]
         string? ChangeExtension(string? path, string? extension);
-        string Combine([System.Runtime.CompilerServices.ScopedRef] System.ReadOnlySpan<string> paths);
         string Combine(params string[] paths);
         string Combine(string path1, string path2);
         string Combine(string path1, string path2, string path3);
         string Combine(string path1, string path2, string path3, string path4);
         bool EndsInDirectorySeparator(System.ReadOnlySpan<char> path);
         bool EndsInDirectorySeparator(string path);
-        bool Exists([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? path);
         System.ReadOnlySpan<char> GetDirectoryName(System.ReadOnlySpan<char> path);
         string? GetDirectoryName(string? path);
         System.ReadOnlySpan<char> GetExtension(System.ReadOnlySpan<char> path);
@@ -468,8 +423,8 @@ namespace System.IO.Abstractions
         string? GetPathRoot(string? path);
         string GetRandomFileName();
         string GetRelativePath(string relativeTo, string path);
-        [System.Obsolete(("Insecure temporary file creation methods should not be used. Use `Path.Combine(Pa" +
-            "th.GetTempPath(), Path.GetRandomFileName())` instead."))]
+        [System.Obsolete("Insecure temporary file creation methods should not be used. Use `Path.Combine(Pa" +
+            "th.GetTempPath(), Path.GetRandomFileName())` instead.")]
         string GetTempFileName();
         string GetTempPath();
         bool HasExtension(System.ReadOnlySpan<char> path);
@@ -478,7 +433,6 @@ namespace System.IO.Abstractions
         bool IsPathFullyQualified(string path);
         bool IsPathRooted(System.ReadOnlySpan<char> path);
         bool IsPathRooted(string? path);
-        string Join([System.Runtime.CompilerServices.ScopedRef] System.ReadOnlySpan<string?> paths);
         string Join(params string?[] paths);
         string Join(System.ReadOnlySpan<char> path1, System.ReadOnlySpan<char> path2);
         string Join(string? path1, string? path2);

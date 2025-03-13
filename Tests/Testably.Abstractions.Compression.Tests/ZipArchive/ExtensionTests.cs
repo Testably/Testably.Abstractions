@@ -249,7 +249,7 @@ public partial class ExtensionTests
 		await That(Act).Throws<IOException>()
 			.WithMessage($"*'{FileSystem.Path.GetFullPath("bar/foo.txt")}'*").AsWildcard();
 		await That(FileSystem).HasFile("bar/foo.txt")
-			.WhichContent(c => c.IsNotEqualTo("FooFooFoo"));
+			.WhoseContent(c => c.IsNotEqualTo("FooFooFoo"));
 	}
 
 #if FEATURE_COMPRESSION_ADVANCED

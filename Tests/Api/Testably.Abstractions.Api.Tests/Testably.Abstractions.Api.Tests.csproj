@@ -1,20 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup Condition="'$(NCrunch)' == '1'">
-		<TargetFrameworks>net8.0</TargetFrameworks>
-	</PropertyGroup>
-
 	<ItemGroup>
-		<PackageReference Include="PublicApiGenerator" />
+		<PackageReference Include="PublicApiGenerator"/>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\Source\Testably.Abstractions.AccessControl\Testably.Abstractions.AccessControl.csproj" />
-	  <ProjectReference Include="..\..\..\Source\Testably.Abstractions.Compression\Testably.Abstractions.Compression.csproj" />
-	  <ProjectReference Include="..\..\..\Source\Testably.Abstractions.FileSystem.Interface\Testably.Abstractions.FileSystem.Interface.csproj" />
-	  <ProjectReference Include="..\..\..\Source\Testably.Abstractions.Interface\Testably.Abstractions.Interface.csproj" />
-	  <ProjectReference Include="..\..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj" />
-	  <ProjectReference Include="..\..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj" />
+		<ProjectReference Include="..\..\..\Source\Testably.Abstractions.AccessControl\Testably.Abstractions.AccessControl.csproj"/>
+		<ProjectReference Include="..\..\..\Source\Testably.Abstractions.Compression\Testably.Abstractions.Compression.csproj"/>
+		<ProjectReference Include="..\..\..\Source\Testably.Abstractions.Testing\Testably.Abstractions.Testing.csproj"/>
+		<ProjectReference Include="..\..\..\Source\Testably.Abstractions\Testably.Abstractions.csproj"/>
 	</ItemGroup>
 
 </Project>

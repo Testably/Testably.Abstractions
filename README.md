@@ -1,5 +1,6 @@
-![Testably.Abstractions](https://raw.githubusercontent.com/Testably/Testably.Abstractions/main/Docs/Images/social-preview.png)  
-[![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions.Testing)](https://www.nuget.org/packages/Testably.Abstractions.Testing) 
+![Testably.Abstractions](https://raw.githubusercontent.com/Testably/Testably.Abstractions/main/Docs/Images/social-preview.png)
+[![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions?label=Testably.Abstractions)](https://www.nuget.org/packages/Testably.Abstractions)
+[![Nuget](https://img.shields.io/nuget/v/Testably.Abstractions.Testing?label=Testing)](https://www.nuget.org/packages/Testably.Abstractions.Testing)
 [![Build](https://github.com/Testably/Testably.Abstractions/actions/workflows/build.yml/badge.svg)](https://github.com/Testably/Testably.Abstractions/actions/workflows/build.yml) 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Testably_Testably.Abstractions) 
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Testably_Testably.Abstractions&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Testably_Testably.Abstractions) 
