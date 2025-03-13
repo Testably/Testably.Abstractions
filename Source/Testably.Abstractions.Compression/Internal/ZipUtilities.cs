@@ -96,7 +96,8 @@ internal static class ZipUtilities
 						? archive.CreateEntry(entryName, compressionLevel.Value)
 						: archive.CreateEntry(entryName);
 					using Stream stream = entry.Open();
-					fileInfo.OpenRead().CopyTo(stream);
+					using FileSystemStream fileStream = fileInfo.OpenRead();
+					fileStream.CopyTo(stream);
 				}
 				else if (file is IDirectoryInfo directoryInfo &&
 				         directoryInfo.GetFileSystemInfos().Length == 0)
@@ -172,7 +173,8 @@ internal static class ZipUtilities
 						? archive.CreateEntry(entryName, compressionLevel.Value)
 						: archive.CreateEntry(entryName);
 					using Stream stream = entry.Open();
-					fileInfo.OpenRead().CopyTo(stream);
+					using FileSystemStream fileStream = fileInfo.OpenRead();
+					fileStream.CopyTo(stream);
 				}
 				else if (file is IDirectoryInfo directoryInfo &&
 				         directoryInfo.GetFileSystemInfos().Length == 0)
