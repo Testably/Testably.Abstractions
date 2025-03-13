@@ -36,6 +36,16 @@ public partial class ExistsTests
 		sut.Exists.Should().BeFalse();
 	}
 
+	[Fact]
+	public void Exists_ForwardSlash_ShouldReturnTrue()
+	{
+		FileSystem.InitializeIn("D:");
+
+		IDirectoryInfo sut = FileSystem.DirectoryInfo.New("/");
+
+		sut.Exists.Should().BeTrue();
+	}
+
 	[Theory]
 	[AutoData]
 	public void Exists_NotExistedPreviously_ShouldOnlyUpdateOnInitialization(string path)
