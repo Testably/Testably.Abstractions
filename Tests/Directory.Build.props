@@ -4,10 +4,14 @@
 	        Condition="Exists('$(MSBuildThisFileDirectory)/../Directory.Build.props')" />
 	<Import Project="$([MSBuild]::GetPathOfFileAbove('Feature.Flags.props', '$(MSBuildThisFileDirectory)/../'))" />
 
-	<PropertyGroup>
+	<PropertyGroup Condition="'$(NCrunch)' != '1'">
 		<TargetFrameworks Condition="'$(NetCoreOnly)' != 'True'">net6.0;net8.0;net9.0;net48</TargetFrameworks>
 		<TargetFrameworks Condition="'$(NetCoreOnly)' == 'True'">net6.0;net8.0;net9.0</TargetFrameworks>
 		<TargetFrameworks Condition="'$(NetFrameworkOnly)' == 'True'">net48</TargetFrameworks>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(NCrunch)' == '1'">
+		<TargetFrameworks>net9.0</TargetFrameworks>
 	</PropertyGroup>
 
 	<PropertyGroup>

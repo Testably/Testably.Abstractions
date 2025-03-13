@@ -1,9 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup Condition="'$(NCrunch)' == '1'">
-		<TargetFrameworks>net6.0</TargetFrameworks>
-	</PropertyGroup>
-
 	<ItemGroup>
 	  <None Remove="TestResources\SubResource\SubResourceFile1.txt" />
 	  <None Remove="TestResources\TestFile1.txt" />
