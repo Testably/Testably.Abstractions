@@ -53,6 +53,6 @@
 		<PackageVersion Include="Testably.Abstractions.Testing" Version="4.0.1"/>
 	</ItemGroup>
 	<ItemGroup>
-		<PackageVersion Include="Meziantou.Analyzer" Version="2.0.201"/>
+		<PackageVersion Include="Meziantou.Analyzer" Version="2.0.203"/>
 	</ItemGroup>
 </Project>
