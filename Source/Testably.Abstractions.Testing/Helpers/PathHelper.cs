@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace Testably.Abstractions.Testing.Helpers;
 
@@ -21,6 +22,7 @@ internal static class PathHelper
 		string? paramName = null,
 		bool? includeIsEmptyCheck = null)
 	{
+		path = RemoveNtDeviceAliasPrefix(path, fileSystem.Execute);
 		CheckPathArgument(fileSystem.Execute, path, paramName ?? nameof(path),
 			includeIsEmptyCheck ?? fileSystem.Execute.IsWindows);
 		CheckPathCharacters(path, fileSystem, paramName ?? nameof(path), null);
@@ -96,6 +98,21 @@ internal static class PathHelper
 		return false;
 	}
 
+	/// <summary>
+	///     Checks if the path is a Windows NT device alias, meaning it starts with <c>\\?\</c>, <c>\??\</c> or <c>\\.\</c>.
+	/// </summary>
+	internal static bool IsNtDeviceAlias(this string path, Execute execute)
+	{
+		if (execute.IsWindows && path.StartsWith('\\'))
+		{
+			string[] specialPaths = [@"\\?\", @"\??\", @"\\.\",];
+			return specialPaths.Any(specialPath
+				=> path.StartsWith(specialPath, StringComparison.Ordinal));
+		}
+
+		return false;
+	}
+
 	internal static bool IsUncPath([NotNullWhen(true)] this string? path, MockFileSystem fileSystem)
 	{
 		if (path == null)
@@ -113,15 +130,37 @@ internal static class PathHelper
 				       StringComparison.OrdinalIgnoreCase);
 		}
 
-
 		return path.StartsWith(
 			new string(fileSystem.Execute.Path.DirectorySeparatorChar, 2),
 			StringComparison.OrdinalIgnoreCase);
 	}
 
+	/// <summary>
+	///     Removes the Windows NT device alias prefix from <paramref name="path" />, if it has any.
+	/// </summary>
+	/// <remarks>
+	///     A Windows NT device alias starts with <c>\\?\</c>, <c>\??\</c> or <c>\\.\</c>.
+	/// </remarks>
+	[return: NotNullIfNotNull(nameof(path))]
+	internal static string? RemoveNtDeviceAliasPrefix(this string? path, Execute execute)
+	{
+		if (path is null)
+		{
+			return null;
+		}
+
+		if (path.IsNtDeviceAlias(execute))
+		{
+			return path.Substring(4);
+		}
+
+		return path;
+	}
+
 	internal static void ThrowCommonExceptionsIfPathToTargetIsInvalid(
 		[NotNull] this string? pathToTarget, MockFileSystem fileSystem)
 	{
+		pathToTarget = RemoveNtDeviceAliasPrefix(pathToTarget, fileSystem.Execute);
 		CheckPathArgument(fileSystem.Execute, pathToTarget, nameof(pathToTarget), false);
 		CheckPathCharacters(pathToTarget, fileSystem, nameof(pathToTarget), -2147024713);
 	}

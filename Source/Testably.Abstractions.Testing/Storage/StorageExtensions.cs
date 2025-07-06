@@ -22,8 +22,8 @@ internal static class StorageExtensions
 			throw ExceptionFactory.SearchPatternCannotContainTwoDots();
 		}
 
-		IStorageLocation location = storage.GetLocation(path);
-		string givenPath = location.FriendlyName;
+		IStorageLocation location = storage.GetLocation(path.EnsureValidFormat(fileSystem));
+		string givenPath = path.StartsWith('\\') ? path : location.FriendlyName;
 		if (searchPattern.StartsWith("..", StringComparison.Ordinal))
 		{
 			Stack<string> parentDirectories = new();

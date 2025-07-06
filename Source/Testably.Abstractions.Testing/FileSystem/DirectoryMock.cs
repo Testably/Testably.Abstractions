@@ -696,7 +696,7 @@ internal sealed class DirectoryMock : IDirectory
 	{
 		StorageExtensions.AdjustedLocation adjustedLocation = _fileSystem.Storage
 			.AdjustLocationFromSearchPattern(_fileSystem,
-				path.EnsureValidFormat(_fileSystem),
+				path,
 				searchPattern);
 		return _fileSystem.Storage.EnumerateLocations(
 				adjustedLocation.Location,
