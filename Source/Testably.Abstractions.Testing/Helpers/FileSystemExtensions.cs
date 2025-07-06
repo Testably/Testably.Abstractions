@@ -63,6 +63,11 @@ internal static class FileSystemExtensions
 				return friendlyName;
 			}
 
+			if (givenPath.IsNtDeviceAlias(fileSystem.Execute))
+			{
+				return givenPath.Substring(0, 4) + fullFilePath;
+			}
+
 			return fullFilePath;
 		}
 

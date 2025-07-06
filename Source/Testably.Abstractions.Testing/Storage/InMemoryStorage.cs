@@ -304,6 +304,8 @@ internal sealed class InMemoryStorage : IStorage
 			}
 		}
 
+		driveName = driveName.RemoveNtDeviceAliasPrefix(_fileSystem.Execute);
+
 		DriveInfoMock drive = DriveInfoMock.New(driveName, _fileSystem);
 		return _drives.GetValueOrDefault(drive.GetName());
 	}

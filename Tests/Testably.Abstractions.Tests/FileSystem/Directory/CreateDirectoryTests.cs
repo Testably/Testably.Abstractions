@@ -48,6 +48,16 @@ public partial class CreateDirectoryTests
 		}
 	}
 
+	[Fact]
+	public async Task CreateDirectory_ShouldSupportExtendedLengthPaths()
+	{
+		Skip.If(!Test.RunsOnWindows);
+
+		FileSystem.DirectoryInfo.New(@"\\?\c:\bar").Create();
+
+		await That(FileSystem.Directory.Exists(@"\\?\c:\bar")).IsTrue();
+	}
+
 	[Theory]
 	[AutoData]
 	public void CreateDirectory_FileWithSameNameAlreadyExists_ShouldThrowIOException(string name)

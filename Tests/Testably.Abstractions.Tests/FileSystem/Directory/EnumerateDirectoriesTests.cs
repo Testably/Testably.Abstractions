@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+#if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS
 using Testably.Abstractions.Testing.FileSystem;
+#endif
 
 namespace Testably.Abstractions.Tests.FileSystem.Directory;
 
@@ -180,6 +182,38 @@ public partial class EnumerateDirectoriesTests
 			result.Should()
 				.BeEmpty($"{extension} should not match {searchPattern}");
 		}
+	}
+
+	[Fact]
+	public async Task EnumerateDirectories_ShouldSupportExtendedLengthPaths1()
+	{
+		Skip.If(!Test.RunsOnWindows);
+
+		FileSystem.Directory.CreateDirectory(@"\\?\c:\bar");
+		FileSystem.File.WriteAllText(@"\\?\c:\bar\foo1.txt", "foo1");
+		FileSystem.File.WriteAllText(@"\\?\c:\bar\foo2.txt", "foo2");
+
+		IEnumerable<string> result = FileSystem.Directory.EnumerateFiles(@"c:\bar");
+
+		await That(result)
+			.IsEqualTo([@"c:\bar\foo1.txt", @"c:\bar\foo2.txt"])
+			.InAnyOrder();
+	}
+
+	[Fact]
+	public async Task EnumerateDirectories_ShouldSupportExtendedLengthPaths2()
+	{
+		Skip.If(!Test.RunsOnWindows);
+
+		FileSystem.Directory.CreateDirectory(@"\\?\c:\bar");
+		FileSystem.File.WriteAllText(@"\\?\c:\bar\foo1.txt", "foo1");
+		FileSystem.File.WriteAllText(@"\\?\c:\bar\foo2.txt", "foo2");
+
+		IEnumerable<string> result = FileSystem.Directory.EnumerateFiles(@"\\?\c:\bar");
+
+		await That(result)
+			.IsEqualTo([@"\\?\c:\bar\foo1.txt", @"\\?\c:\bar\foo2.txt"])
+			.InAnyOrder();
 	}
 
 #if FEATURE_FILESYSTEM_ENUMERATION_OPTIONS

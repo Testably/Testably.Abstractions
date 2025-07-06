@@ -148,6 +148,7 @@ internal sealed class InMemoryLocation : IStorageLocation
 
 	private static string NormalizeKey(MockFileSystem fileSystem, string fullPath)
 	{
+		fullPath = fullPath.RemoveNtDeviceAliasPrefix(fileSystem.Execute);
 #if FEATURE_PATH_ADVANCED
 		return fileSystem.Execute.Path.TrimEndingDirectorySeparator(fullPath);
 #else
