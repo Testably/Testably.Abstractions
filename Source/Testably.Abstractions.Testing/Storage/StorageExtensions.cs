@@ -23,7 +23,7 @@ internal static class StorageExtensions
 		}
 
 		IStorageLocation location = storage.GetLocation(path.EnsureValidFormat(fileSystem));
-		string givenPath = path.StartsWith(@"\", StringComparison.Ordinal) ? path : location.FriendlyName;
+		string givenPath = path.StartsWith('\\') ? path : location.FriendlyName;
 		if (searchPattern.StartsWith("..", StringComparison.Ordinal))
 		{
 			Stack<string> parentDirectories = new();

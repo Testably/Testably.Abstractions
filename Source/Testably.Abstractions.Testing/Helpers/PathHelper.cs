@@ -103,7 +103,7 @@ internal static class PathHelper
 	/// </summary>
 	internal static bool IsNtDeviceAlias(this string path, Execute execute)
 	{
-		if (execute.IsWindows && path.StartsWith(@"\", StringComparison.Ordinal))
+		if (execute.IsWindows && path.StartsWith('\\'))
 		{
 			string[] specialPaths = [@"\\?\", @"\??\", @"\\.\",];
 			return specialPaths.Any(specialPath
